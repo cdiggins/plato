@@ -110,8 +110,10 @@ public static class TirRewrite
     /// is evaluated (a non-cheap argument bound to a parameter used more than once, or used under a
     /// nested lambda). A coercion wrapping the lambda target — the delegate target-typing this
     /// reduction eliminates — is transparent.</summary>
-    public static bool TryBetaReduce(TirInvoke invoke, out TirNode reduced)
+    public static bool TryBetaReduce(TirInvoke invoke, out TirNode reduced,
+        System.Func<TirNode, bool> isCheap = null)
     {
+        isCheap = isCheap ?? IsCheap;
         reduced = null;
         if (invoke?.Target == null)
             return false;
@@ -124,7 +126,7 @@ public static class TirRewrite
         Dictionary<ParameterDef, (int Count, bool UnderLambda)> uses = null;
         for (var i = 0; i < pars.Count; i++)
         {
-            if (IsCheap(invoke.Args[i]))
+            if (isCheap(invoke.Args[i]))
                 continue;
             uses = uses ?? CountParamUses(lam.Body);
             if (uses.TryGetValue(pars[i], out var u) && (u.Count > 1 || u.UnderLambda))

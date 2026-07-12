@@ -70,7 +70,7 @@ namespace Ara3D.Geometry.CSharpWriter
         //                (CLI --no-tir) for the legacy path.
         // optimizeArrays = true: loop-into-buffer lowering of multi-consumed Map/MapRange results
         //                (--optimize-arrays, optimizer stage 2 increment 1; see TirArrayMaterializer).
-        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false, bool useTir = true, bool optimizeArrays = false, bool inlineCalls = false, bool methodsOnly = false, bool lowerLoops = false, string tirDumpDir = null, bool noProperties = false)
+        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false, bool useTir = true, bool optimizeArrays = false, bool inlineCalls = false, bool methodsOnly = false, bool lowerLoops = false, string tirDumpDir = null, bool noProperties = false, bool inlineReport = false)
         {
             // --no-properties is a strict superset of --methods.
             methodsOnly = methodsOnly || noProperties;
@@ -81,7 +81,11 @@ namespace Ara3D.Geometry.CSharpWriter
             if (lowerLoops && !useTir)
                 throw new NotSupportedException("--loops requires the TIR emit path (no --no-tir)");
             var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase, UseTir = useTir, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, MethodsOnly = methodsOnly, NoProperties = noProperties, LowerLoops = lowerLoops, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
+            if (inlineReport)
+                writer.InlineReport = new InlineReport();
             writer.WriteAll("float");
+            if (writer.InlineReport != null)
+                Console.Error.WriteLine(writer.InlineReport.ToTable());
 
             // Output documentation 
             var docWriter = new DocWriter(compilation);

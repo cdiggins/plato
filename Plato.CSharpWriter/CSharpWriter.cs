@@ -249,6 +249,10 @@ namespace Ara3D.Geometry.CSharpWriter
         public string TirDumpDir;
         private readonly Dictionary<string, StringBuilder> _tirDumps = new Dictionary<string, StringBuilder>();
 
+        // --inline-report (null = off): per-generation aggregation of inliner refusals + success
+        // totals, printed after WriteAll. A diagnostic; no effect on emitted C#. See InlineReport.
+        public InlineReport InlineReport;
+
         /// <summary>Applies the four optimizer TIR passes in order (inline → component-unroll →
         /// array-materialize → loop-lower) and returns the transformed function. Shared by every
         /// body-emit site so the pass pipeline is defined once. With <see cref="TirDumpDir"/> set,
@@ -324,6 +328,11 @@ namespace Ara3D.Geometry.CSharpWriter
         /// specialized for the receiver's solved concrete type name.</summary>
         public TirFunction TryGetGroundTirByTypeName(FunctionDef original, string concreteTypeName)
             => UseTir ? TirSource.TryGetGroundTir(original, concreteTypeName) : null;
+
+        /// <summary>Test helper: the ground input TIR for a (concrete type name, function name),
+        /// for in-proc inliner shape tests (M0). Returns null unless <see cref="UseTir"/> is set.</summary>
+        public TirFunction TestGetGroundTir(string concreteTypeName, string functionName)
+            => UseTir ? TirSource.TryGetGroundTirByNames(concreteTypeName, functionName) : null;
 
         // When true (--methods), the generated output declares NO C# properties or indexers:
         //   - concept interfaces (Interfaces.g.cs) declare no-arg obligations as METHODS with

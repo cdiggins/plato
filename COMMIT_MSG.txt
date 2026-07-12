@@ -1,43 +1,61 @@
-TIR emit for ALL styles + writers; intrinsics declared to checker; solids surfaces
+Optimizer completion M0+M1: inline instrumentation + tuple ctor-call rewrite
 
-Item 1 — the Typed IR now drives every emit path (previously default C# style only):
-- Extension style: TirCSharpBodyWriter gains bare-name re-qualification + moved-no-arg "()"
-  (WriteBareName); moved bodies route through the ground TIR in ExtensionStyleWriter.
-- Optimize: TirComponentUnroller mirrors ComponentUnroller on the TIR (marker nodes
-  TirComponentAccess/TirConstructorCall/TirBooleanChain).
-- Scalar erasure: ScalarEraseAnalysis (the legacy float-land decision procedures over Origin
-  symbols) + scalar mode in TirCSharpBodyWriter. scalar+optimize combo stays legacy.
-- TS/Rust: TirTypeScriptBodyWriter / TirRustBodyWriter + UseTir on both writers (CLI --no-tir
-  plumbed); AMBIGUOUS-comment symbol-id leak retired from TS/Rust output.
-- Shared: TirEmitSource (one checker run, two lookups) extracted from CSharpWriter;
-  TirLambdaCaptureRewriter moved to PlatoCompiler/Checking.
-- Flip proofs: {Extension,TypeScript,Rust,Optimize,Scalar}EmitFlagOnTests — flag-on output
-  byte-identical to flag-off on the full library, fallback 0 everywhere.
+Plan: docs/plato-optimizer-completion-plan-2026-07-12.md (M0, M1).
 
-Item 2 — handwritten intrinsics declared in plato-src/intrinsics.plato (Number MinValue/
-MaxValue/ReciprocalSquareRootEstimate/Linear/Quadratic/Cubic, IOrderable Equals/NotEquals,
-Angle(x: Number) cast + Number.Angle wrapper property; hardwired scalar Number shims retired
-in favor of the generated forwarders; scalar shim skips bodiless statics). Checker
-diagnostics 78 -> 68 of 823 (CHK201 22 -> 13); CheckerDiagnosticsSummaryTests is the burn-down
-report.
+M0 — inliner instrumentation + fast in-proc tests:
+- InlineReport.cs: InlineRefusal enum + per-generation aggregation (refusals keyed by
+  caller->callee->reason, plus inlined/beta/tuple-ctor totals). TirInliner records a reason
+  at every refusal site. New CLI flag --inline-report prints the table to stderr after
+  emission (no effect on emitted C#). CSharpWriter.InlineReport field; wired through ToCSharp.
+- TirEmitSource.TryGetGroundTirByNames + CSharpWriter.TestGetGroundTir: name-keyed ground-TIR
+  lookup for tests.
+- PlatoTests/InlinerTests.cs: compiles the stdlib once, runs TirInliner.Inline in-proc (~5s vs
+  the ~60s regen+build+test cycle) and pins flagship shapes with reusable matchers
+  AssertNoDelegateInvoke / AssertCollapsed / CountNodes<T>. Point3D.Transform fully collapses;
+  Bounds3D.Transform drops its delegate; TriangleMesh3D.Transform rewrites to a constructor.
 
-Item 3 — library Solids (plato-src/solids.plato): Eval/ClosedX/ClosedY for all 11 ISolid
-types (sphere/ellipsoid/torus/cone/cone-segment/capsule/tube/N-prism/N-pyramid/box/pyramid)
-with NGonPoint/SquarePoint/UnitSphere helpers; the NotImplementedException stubs are gone.
-Numerically verified (poles/corners/edge midpoints exact).
+M1 — tuple bodies via position-independent constructor-call rewrite:
+- When inlining a callee whose ROOT is Tuple_N(...) and whose declared return type is a struct
+  with a matching-arity field constructor, emit new T(elem...) (TirConstructorCall) instead of
+  the bare tuple. Valid in any expression slot under any scalar setting — replaces the old
+  tail-position + wrapper-tuple tail-lift, which is deleted (InlineTails + the tailPosition
+  parameter are gone). Excludes genuinely Tuple-named return types.
+- Guard: refuse any inline that would leave a residual immediately-invoked lambda (an IIFE the
+  emitter cannot render). With the cheap-projection relaxation below it now fires only for
+  genuinely non-duplicable arguments.
+- Cheap-projection relaxation: TryBetaReduce takes an optional cheapness predicate;
+  TirInliner.IsCheapProjection additionally treats a pure FIELD projection over a cheap receiver
+  (self.A, p.X -- a declared field of the receiver's type, recursively) as cheap. Duplicating it
+  re-runs only struct field loads, never a call/allocation, so beta-reduction may fire when a
+  lambda reads its parameter several times (p.X/p.Y/p.Z). This collapses the immediate-apply
+  family: Triangle3D.Transform now emits new Triangle3D(new Vector3((float)this.A.X, this.A.Y,
+  this.A.Z).Transform(t.Matrix), ...) -- no delegate, no Deform, no tuple; same for
+  Quad3D/Line3D/Ray3D. Computed properties (Magnitude, etc.) are NOT projections, so they still
+  block, preserving evaluation-count for real work.
+- Golden refreshed (Plato.Generated.Optimized): mesh + tuple-helper + immediate-apply Transform
+  family collapses; residual diff is _lp loop-temp renumbering from the changed inline order.
 
-Item 4 — docs/optimizer-stage2-plan.md (loop-into-buffer lowering increments; not implemented).
+Cost-based cheapness + M4 relaxations + M2 measurement:
+- ProjectionCost: a bounded evaluation-cost estimate over the TIR replacing the field-name-only
+  rule. Cheap: leaves, field/component reads, whitelisted scalar/vector operators over cheap
+  operands. Expensive (short-circuiting): allocations, control flow, computed members, and opaque
+  handwritten intrinsics (unknown body => assume expensive; Magnitude's sqrt still blocks).
+  Wired into β-reduction and, GATED ON --no-properties (V2), the multi-use compound-arg and
+  insideLambda gates. Effect: inlined 2724->2942, tuple ctor rewrites 271->345, MultiUseCompound
+  refusals 671->521, InsideLambda 174->100. V1 property-ful recipes keep the frozen baseline.
+- InvokeResultNavigated guard: refuse inlining a lambda arg whose application is used as a
+  member-call RECEIVER (f(x).Foo()) -- the delegate-return coercion (lambda body Vector3 vs Func
+  return Point3D) is lost in the non-converting receiver slot. Fixes Ray3D.Direction re-normalize.
+- optimizer-smoke/Bench (M2): true A/B via extern alias on the Optimized vs Unoptimized goldens.
+  Triangle3D.Transform ~1.0x (JIT devirtualizes the monomorphic delegate); TriangleMesh3D.Transform
+  0.77x (eager materialization of the STORED result array costs allocation the lazy Map avoids).
+  Recorded in the plan doc; the data picks M3(a) fusion over M3(b) but shows M3's payoff on this
+  stdlib is marginal (transient fuseable arrays tiny, big arrays stored, chains are law functions).
 
-Gates: check-all ALL PASS (regen-diff, lint, conformance V1/V2/Opt/Scalar, SDK build,
-GeometryTests); PlatoTests 86/86; regen applied (_Number forwarders + solids members).
+Gates: check-all ALL PASS (regen-diff off-flag byte-identical, lint, conformance
+V1/V2/Opt/Scalar, SDK build, GeometryTests); V2Runtime 204/204; Scalar 204/204;
+PlatoTests 103/103.
 
-Optimizer stage 2 increment 1 (--optimize-arrays): loop-into-buffer lowering of
-multi-consumed Map/MapRange results. Eager MapEager/MapRangeEager intrinsics in
-Plato.Intrinsics/ArrayExtensions.cs (array fill; overload set mirrors Map exactly);
-TirArrayMaterializer renames call sites in materialization positions — constructor/
-struct-tuple arguments (the mesh Deform/To3D family, 10 stdlib sites) and multi- or
-loop-referenced lets. Opt conformance now generates with --optimize --optimize-arrays
-(204/204 + MapEager presence check); ArrayMaterializerTests pins the transform footprint
-(rename-only diff); probe: 1.37x on 4-pass consumption of a stored 1M-point map, each
-element evaluated exactly once. Plan + measurements: docs/optimizer-stage2-plan.md.
-PlatoTests 87/87; check-all ALL PASS.
+Not included (data-deferred): M3 loop fusion / statement-body inlining and M5 non-erased runtime
+port -- marginal payoff on this stdlib per M2, per the plan's measure-first / no-speculative-build
+guidance. Remaining M4 nested-lambda relaxation (6 refusals) low-value/high-risk.

@@ -67,6 +67,10 @@ namespace Ara3D.Geometry.CLI
             // invocations).
             var useTir = !args.Contains("--no-tir");
 
+            // --inline-report: print a per-generation table of inliner refusals + success totals
+            // to stderr after emission (M0 optimizer instrumentation). No effect on emitted C#.
+            var inlineReport = args.Contains("--inline-report");
+
             // C# writer style (roadmap P2.2). "default" = original writer (byte-identical output);
             // "extensions" = C# 14 extension-block output (requires LangVersion 14 to compile).
             var csharpStyle = args.Where(a => a.StartsWith("--csharp-style="))
@@ -144,7 +148,7 @@ namespace Ara3D.Geometry.CLI
             else
             {
                 logger.Log("Writing C# Files");
-                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", useTir, optimizeArrays, inline, methods, loops, tirDumpDir, noProperties);
+                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", useTir, optimizeArrays, inline, methods, loops, tirDumpDir, noProperties, inlineReport);
                 logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}; legacy fallback bodies: {output.TirFallbackBodies}");
                 foreach (var kv in output.Files)
                 {

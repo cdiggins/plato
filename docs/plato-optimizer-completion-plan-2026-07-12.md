@@ -97,7 +97,26 @@ it) instead of the bare tuple.
 - Gates: V2Runtime 204/204, Scalar V1 unaffected, golden refresh showing the mesh/Triangle/Quad
   `Transform` family collapsing, `InlinerTests` pins.
 
-### M2 — Measure (½ day; before deciding M3)
+### M2 — Measure — DONE 2026-07-12
+
+Benchmark `optimizer-smoke/Bench` (true A/B via extern alias on the Optimized vs Unoptimized
+goldens). Best-of-5, net8.0 Release, x64:
+
+| path | unoptimized | optimized | speedup |
+|---|---|---|---|
+| `Triangle3D.Transform` ×50M (scalar) | ~0.86–0.96 s | ~0.93 s | ≈1.0× (noise) |
+| `TriangleMesh3D.Transform` 200k pts ×200, full consumption | ~0.30 s | ~0.39 s | **0.77×** |
+
+**Findings.** (1) The scalar collapse is throughput-neutral: the JIT already devirtualizes the
+monomorphic `Deform` delegate, so removing it is ~free — its value is code size / enabling further
+passes, not raw speed. (2) The mesh collapse is *slower* for SINGLE consumption because the
+optimized body eagerly materializes a fresh `Point3D[]` each call (allocation/GC churn) that the
+lazy `Map` avoids — this is the known `--optimize-arrays` tension (materialization wins only under
+multi-consumption; the array materializer earned 1.37× on its 4-pass probe). **Conclusion: the real
+throughput prize is eliminating the intermediate array entirely via loop FUSION (M3a), which the
+allocation-bound mesh number directly motivates.** The data picks **M3(a)** over M3(b).
+
+### M2 (original brief) — Measure (½ day; before deciding M3)
 
 The `optimizer-smoke/` harness (see `optimizer-smoke/README.md`) already builds min/full,
 opt/non-opt project pairs. Add micro-benchmarks for the collapsed family: `TriangleMesh3D.Transform`

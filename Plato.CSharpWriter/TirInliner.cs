@@ -67,22 +67,19 @@ public static class TirInliner
             // shape the emitter recovers as a bare member name.
             body = TirRewrite.Rewrite(body, n =>
                 etaDepth == 0 && n is TirCall call
-                && TryInlineCall(call, tir, writer, ownerTypeName, lambdaDepth > 0, callerNames, false, out var inlined)
+                && TryInlineCall(call, tir, writer, ownerTypeName, lambdaDepth > 0, callerNames, out var inlined)
                     ? Bump(count, inlined)
                     : n,
                 enter: n => { if (n is TirLambda l) { lambdaDepth++; if (IsEtaShaped(l)) etaDepth++; } },
                 exit: n => { if (n is TirLambda l) { lambdaDepth--; if (IsEtaShaped(l)) etaDepth--; } });
 
-            // Tail-position sweep: a tuple->struct return body inlines only where its result lands
-            // in a slot typed as the callee's return type (see the tuple tail-lift). This is a
-            // top-down property, so it runs as a separate walk of the tail spine, not the
-            // bottom-up rewrite above.
-            body = InlineTails(body, tir, writer, ownerTypeName, callerNames, count);
-
             if (count[0] == 0)
                 break;
             inlinedCalls += count[0];
         }
+
+        if (writer.InlineReport != null)
+            writer.InlineReport.CallsInlined += inlinedCalls;
 
         return inlinedCalls == 0
             ? tir
@@ -96,50 +93,29 @@ public static class TirInliner
         return n;
     }
 
-    /// <summary>Top-down walk of a body's TAIL spine (the whole body, a return value, both branches
-    /// of a conditional, the inner of a suppressed coercion, the value of a block's trailing
-    /// return), inlining a tail-position call under the tuple tail-lift. Non-tail subtrees are left
-    /// to the bottom-up pass; this only reaches calls whose result flows to the caller's return
-    /// slot.</summary>
-    private static TirNode InlineTails(TirNode n, TirFunction tir, CSharpWriter writer,
-        string ownerTypeName, HashSet<string> callerNames, int[] count)
-    {
-        switch (n)
-        {
-            case TirCall c when TryInlineCall(c, tir, writer, ownerTypeName, false, callerNames, true, out var inlined):
-                return Bump(count, inlined);
-            case TirCoerce co:
-                return new TirCoerce(InlineTails(co.Inner, tir, writer, ownerTypeName, callerNames, count),
-                    co.FromType, co.ToType, co.ConversionFn, co.Origin);
-            case TirConditional cond:
-                return new TirConditional(cond.Condition,
-                    InlineTails(cond.IfTrue, tir, writer, ownerTypeName, callerNames, count),
-                    InlineTails(cond.IfFalse, tir, writer, ownerTypeName, callerNames, count), cond.Type, cond.Origin);
-            case TirReturn r:
-                return new TirReturn(InlineTails(r.Value, tir, writer, ownerTypeName, callerNames, count), r.Origin);
-            case TirBlock b when b.Statements.Count > 0 && b.Statements[b.Statements.Count - 1] is TirReturn:
-                var stmts = b.Statements.ToList();
-                stmts[stmts.Count - 1] = InlineTails(stmts[stmts.Count - 1], tir, writer, ownerTypeName, callerNames, count);
-                return new TirBlock(stmts, b.Origin);
-            default:
-                return n;
-        }
-    }
-
     private static bool TryInlineCall(TirCall call, TirFunction callerTir, CSharpWriter writer,
-        string ownerTypeName, bool insideLambda, HashSet<string> callerNames, bool tailPosition, out TirNode inlined)
+        string ownerTypeName, bool insideLambda, HashSet<string> callerNames, out TirNode inlined)
     {
         inlined = null;
+
+        var report = writer.InlineReport;
+        var callerName = callerTir?.Original?.Name;
+        var calleeName = call.Callee?.Name;
+        bool Refuse(InlineRefusal r) { report?.Refuse(callerName, calleeName, r); return false; }
 
         // A resolved member call with an explicit receiver; operators/conversions/properties are
         // all fine (they are ordinary functions in Plato), but the callee must be known.
         if (call.Callee?.Body == null)
-            return false;
+            return Refuse(InlineRefusal.NoCalleeBody);
 
         // Nullary call (emitted as Constants.X): inline the static TIR body under the same
         // self-containment rules — there are no parameters to substitute.
         if (call.Args.Count == 0)
-            return TryInlineNullary(call, writer, insideLambda, out inlined);
+        {
+            if (TryInlineNullary(call, writer, insideLambda, out inlined))
+                return true;
+            return Refuse(InlineRefusal.NullaryRefused);
+        }
 
         // The callee's body, specialized for the receiver's solved concrete type. The receiver
         // type comes from TRUSTED sources (the caller's zonked signature for parameters, the
@@ -149,39 +125,39 @@ public static class TirInliner
         var calleeTir = writer.TryGetGroundTirByTypeName(call.Callee, receiverTypeName);
         var calleeBody = calleeTir?.Body;
         if (calleeBody == null)
-            return false;
+            return Refuse(InlineRefusal.NoGroundTir);
 
         // Expression bodies only, within budget, and self-contained under a foreign type.
         if (IsStatementNode(calleeBody))
-            return false;
+            return Refuse(InlineRefusal.StatementBody);
 
         // The body's value type must BE the declared return type: a mismatch means the function
         // relies on a return-position implicit conversion (Number -> Angle in `Turns`,
-        // tuple -> struct), which evaporates when the body moves to the call site — EXCEPT in tail
-        // position, where the inlined result occupies a slot whose target type is the callee's
-        // return type, so a tuple->struct conversion still fires (the emitter renders a tuple body
-        // bare and lets C# convert). Restricted to tuple bodies: other mismatches (Number->Angle)
-        // need an implicit operator that may not exist for the surrounding position.
-        //
-        // NOT under scalar erasure: the struct's implicit operator is defined for the WRAPPER-typed
-        // tuple ((Number,Number,Number)), but the erased body yields (float,float,float), which does
-        // not convert. The original callee body compiles because its own return renders the wrapper
-        // tuple; moving it to a foreign scalar call site loses that. (Wrapper-aware tuple emission
-        // under erasure is the follow-up that lifts the mesh/tuple family into the scalar recipe.)
+        // tuple -> struct), which evaporates when the body moves to the call site — EXCEPT a
+        // tuple-returning body whose declared return type is a struct with a matching-arity field
+        // constructor, which is rewritten to an explicit `new T(elem...)` (TirConstructorCall).
+        // That rewrite is POSITION-INDEPENDENT and ERASURE-INDEPENDENT: `new Triangle3D(a,b,c)` is
+        // valid in any expression slot under any scalar setting, so it replaces the old
+        // tail-position + wrapper-tuple tail-lift (M1). The arity gate excludes shapes like
+        // Translation3D (1-arg Vector3 ctor vs a 3-element tuple), which stay uninlined.
         var bodyTypeName = calleeBody.Type?.Name;
         var returnTypeName = (calleeTir.ZonkedReturnType ?? calleeTir.ReturnType)?.Name;
-        var tupleTailLift = tailPosition && !writer.ScalarErase
-            && bodyTypeName != null && bodyTypeName.StartsWith("Tuple") && returnTypeName != null;
+        var tupleCtorRewrite = bodyTypeName != null && bodyTypeName.StartsWith("Tuple")
+            && returnTypeName != null && TupleCtorArityMatches(writer, calleeBody, returnTypeName);
         if (bodyTypeName == null || returnTypeName == null
-            || (bodyTypeName != returnTypeName && !tupleTailLift))
-            return false;
-        if (!IsSelfContained(writer, calleeBody, tupleTailLift, out var calleeHasLambda))
-            return false;
+            || (bodyTypeName != returnTypeName && !tupleCtorRewrite))
+            return Refuse(InlineRefusal.ReturnTypeMismatch);
+        if (!IsSelfContained(writer, calleeBody, tupleCtorRewrite, out var calleeHasLambda))
+            return Refuse(InlineRefusal.NotSelfContained);
 
         // Under a lambda at the CALL SITE: only lambda-free callee bodies with all-cheap
         // arguments (see Inline).
-        if (insideLambda && (calleeHasLambda || !call.Args.All(TirRewrite.IsCheap)))
-            return false;
+        // Under a lambda, args must be cheap. The cost-based cheap-projection relaxation is a
+        // V2-recipe (--no-properties) feature; the property-ful recipes keep the frozen leaf-only
+        // rule (the property/method duality flips coercion emission in inlined bodies otherwise).
+        bool CheapArg(TirNode a) => writer.NoProperties ? IsCheapProjection(writer, a) : TirRewrite.IsCheap(a);
+        if (insideLambda && (calleeHasLambda || !call.Args.All(CheapArg)))
+            return Refuse(InlineRefusal.InsideLambda);
 
         // Argument discipline: a CHEAP leaf (receiver/parameter/variable/literal/type ref)
         // substitutes anywhere; a compound argument substitutes only when its parameter is
@@ -189,7 +165,7 @@ public static class TirInliner
         // capture). Lambda literals never substitute (delegate target-typing).
         var paramDefs = calleeTir.Parameters;
         if (paramDefs == null || paramDefs.Count != call.Args.Count)
-            return false;
+            return Refuse(InlineRefusal.ArityMismatch);
         Dictionary<ParameterDef, (int Count, bool UnderLambda)> uses = null;
         for (var i = 0; i < call.Args.Count; i++)
         {
@@ -202,7 +178,7 @@ public static class TirInliner
             var paramTypeName = ResolvedParamTypeName(writer, calleeTir, paramDefs, i, receiverTypeName);
             var argTypeName = TrustedTypeName(callerTir, arg, writer, ownerTypeName);
             if (paramTypeName != null && argTypeName != null && paramTypeName != argTypeName)
-                return false;
+                return Refuse(InlineRefusal.ArgTypeMismatch);
 
             if (TirRewrite.IsCheap(arg))
                 continue;
@@ -216,7 +192,7 @@ public static class TirInliner
                 // method-form surface (--no-properties). Under the property-ful recipes it stays
                 // OFF — a lambda argument is refused, exactly as the pre-increment inliner did.
                 if (!writer.NoProperties)
-                    return false;
+                    return Refuse(InlineRefusal.LambdaArgRefused);
                 // A lambda substitutes into a delegate-typed parameter only when EVERY use is a
                 // CONSUMING position: the target of an application (which then β-reduces away — no
                 // residual lambda) or a direct call argument (target-typed by the callee's Func
@@ -224,16 +200,28 @@ public static class TirInliner
                 // total substituted lambda-body size is bounded to cap code growth on multi-use
                 // parameters (the f(A)/f(B)/f(C) tuple bodies apply f several times).
                 if (u.UnderLambda || !AllUsesConsuming(calleeBody, paramDefs[i]))
-                    return false;
+                    return Refuse(InlineRefusal.LambdaArgRefused);
+                // A delegate application whose RESULT is navigated as a member-call receiver
+                // (f(x).Foo()) loses the delegate-return coercion when β-reduced: the lambda body
+                // type (e.g. Vector3) can differ from the Func's declared return (Point3D), and the
+                // receiver position does not re-apply the conversion, so .Foo() would dispatch on
+                // the wrong type. Refuse — the result stays uninlined (Ray3D.Direction re-normalize
+                // is the case). Converting positions (tuple/ctor args) are fine and stay inlinable.
+                if (InvokeResultNavigated(calleeBody, paramDefs[i]))
+                    return Refuse(InlineRefusal.LambdaArgRefused);
                 if (u.Count * lamArg.Descendants().Count() > MaxBodyNodes)
-                    return false;
+                    return Refuse(InlineRefusal.LambdaArgRefused);
                 continue;
             }
 
             // A compound (non-lambda) argument substitutes only when its parameter is used at
-            // most once, outside any lambda (single evaluation, no capture).
-            if (u.Count > 1 || u.UnderLambda)
-                return false;
+            // most once, outside any lambda (single evaluation, no capture) — EXCEPT a cheap
+            // projection (field/component read, scalar arithmetic), which may be duplicated across
+            // multiple uses because re-running it costs only a few machine ops. The under-lambda
+            // refusal stands regardless: substituting into a captured position trips the emitter's
+            // per-lambda capture hoist (an emission constraint, not an evaluation-count one).
+            if ((u.Count > 1 && !(writer.NoProperties && IsCheapProjection(writer, arg))) || u.UnderLambda)
+                return Refuse(InlineRefusal.MultiUseCompound);
         }
 
         // Substitute parameters by arguments, and rebind `Self` to the receiver's concrete type
@@ -266,8 +254,12 @@ public static class TirInliner
             // `(λ….e)(x)`; β-reduce it away so no lambda is left in applied position. The
             // lambda body is the caller's own (no callee params / Self inside), so the reduced
             // node needs no further callee-side rewriting.
-            if (n is TirInvoke invk && TirRewrite.TryBetaReduce(invk, out var reduced))
+            if (n is TirInvoke invk
+                && TirRewrite.TryBetaReduce(invk, out var reduced, x => IsCheapProjection(writer, x)))
+            {
+                if (report != null) report.BetaReductions++;
                 return reduced;
+            }
             if (n is TirParameter p && p.Def != null && byDef.TryGetValue(p.Def, out var arg))
                 return arg;
             if (n is TirTypeRef t && t.TypeDef?.Name == "Self" && selfDef != null)
@@ -275,13 +267,107 @@ public static class TirInliner
             return n;
         });
 
+        // Tuple-returning body: replace the ROOT Tuple_N(...) with an explicit constructor call for
+        // the struct return type, so the tuple->struct conversion no longer depends on position or
+        // wrapper types (M1). Substitution preserves the root node kind, so the root is still the
+        // tuple call here.
+        if (tupleCtorRewrite && inlined is TirCall rootTuple
+            && rootTuple.Name != null && rootTuple.Name.StartsWith("Tuple"))
+        {
+            inlined = new TirConstructorCall(returnTypeName, rootTuple.Args);
+            if (report != null) report.TupleConstructorRewrites++;
+        }
+
         // Alpha-rename any lambda parameter in the FINAL inlined tree that collides with a
         // caller-bound name (CS0136 once the body lands in the caller's scope). Computed over the
         // rewritten result — not just the callee body — so it also covers a substituted
         // caller-lambda argument and any lambda a β-reduction left exposed.
         inlined = AlphaRenameCollidingLambdas(inlined, callerNames);
+
+        // Refuse if a substituted lambda argument was left in APPLIED position without β-reducing
+        // (an immediately-invoked lambda). That happens when the argument to the application is not
+        // cheap and the parameter is used more than once (e.g. a struct-conversion body expanded
+        // the parameter), so reducing would re-evaluate it. The emitter does not render such an
+        // IIFE, and duplicating would break the evaluation-count discipline — so leave the call
+        // uninlined rather than emit invalid C#. (The immediate-apply tuple bodies — Triangle/Quad/
+        // Line/Ray — stay here; the mesh family, whose delegate is a Map combinator argument,
+        // β-reduces cleanly and collapses.)
+        if (HasResidualLambdaInvoke(inlined))
+            return Refuse(InlineRefusal.LambdaArgRefused);
         return true;
     }
+
+    // Cost threshold below which duplicating an expression during substitution is considered
+    // acceptable (a handful of field loads / scalar ops). A sentinel for "do not duplicate".
+    private const int MaxCheapCost = 4;
+    private const int ExpensiveCost = 1000;
+
+    // Intrinsic operators cheap enough to re-run: scalar/vector arithmetic, comparison and logic
+    // map to a few machine ops with no allocation or hidden call. Everything else with no visible,
+    // trivially-cheap body (Magnitude's sqrt, Normalize, trig, ...) is assumed expensive.
+    private static readonly HashSet<string> CheapOperators = new HashSet<string>
+    {
+        "Add", "Subtract", "Multiply", "Divide", "Modulo", "Negate",
+        "GreaterThan", "LessThan", "GreaterThanOrEquals", "LessThanOrEquals",
+        "Equals", "NotEquals", "And", "Or", "Not", "Min", "Max",
+    };
+
+    /// <summary>Whether re-running <paramref name="n"/> is cheap enough to DUPLICATE it during
+    /// β-reduction / substitution (its <see cref="ProjectionCost"/> is under
+    /// <see cref="MaxCheapCost"/>). Replaces the earlier field-name-only rule with a bounded cost
+    /// estimate — see <see cref="ProjectionCost"/>.</summary>
+    private static bool IsCheapProjection(CSharpWriter writer, TirNode n)
+        => ProjectionCost(writer, n) < MaxCheapCost;
+
+    /// <summary>A rough evaluation-cost estimate over the TIR, for the duplicate-or-not decision.
+    /// Cheap: leaves (0), a <see cref="TirComponentAccess"/> or a stored-FIELD read (the receiver's
+    /// cost + 1), and a whitelisted scalar/vector OPERATOR over cheap operands (operands + 1).
+    /// Expensive (<see cref="ExpensiveCost"/>, short-circuiting): allocations
+    /// (<see cref="TirNew"/>/<see cref="TirArray"/>/<see cref="TirConstructorCall"/>), control flow
+    /// (<see cref="TirConditional"/>/loops/<see cref="TirInvoke"/>/<see cref="TirLambda"/>), and any
+    /// member call that is neither a field read nor a cheap operator — a computed property or a
+    /// handwritten intrinsic whose body we cannot see is conservatively assumed to hide real
+    /// work.</summary>
+    private static int ProjectionCost(CSharpWriter writer, TirNode n)
+    {
+        n = TirRewrite.StripCoerce(n);
+        if (n == null)
+            return 0;
+        if (n is TirParameter || n is TirVariable || n is TirLiteral || n is TirTypeRef || n is TirDefault)
+            return 0;
+        if (n is TirComponentAccess ca)
+            return ProjectionCost(writer, ca.Receiver);
+        if (n is TirCall c && c.Name != null && c.Args.Count >= 1)
+        {
+            var recv = TirRewrite.StripCoerce(c.Args[0]);
+            var typeName = recv?.Type?.Name;
+            var typeDef = typeName == null ? null : writer.Compilation.GetTypeDef(typeName);
+            // A pure stored-field read.
+            if (typeDef != null && typeDef.Fields.Any(f => f.Name == c.Name))
+                return Cap(ProjectionCost(writer, recv) + 1);
+            // A whitelisted operator over cheap operands.
+            if (CheapOperators.Contains(c.Name))
+            {
+                var sum = 1;
+                foreach (var a in c.Args)
+                {
+                    sum += ProjectionCost(writer, a);
+                    if (sum >= ExpensiveCost) return ExpensiveCost;
+                }
+                return Cap(sum);
+            }
+        }
+        // Allocations, control flow, computed members, opaque intrinsics: not cheap to duplicate.
+        return ExpensiveCost;
+    }
+
+    private static int Cap(int c) => c >= ExpensiveCost ? ExpensiveCost : c;
+
+    /// <summary>Whether any <see cref="TirInvoke"/> in the tree still applies a lambda literal
+    /// directly (β-reduction did not fire) — an IIFE the emitter cannot render.</summary>
+    private static bool HasResidualLambdaInvoke(TirNode node)
+        => node != null && node.Descendants().OfType<TirInvoke>()
+            .Any(inv => TirRewrite.StripCoerce(inv.Target) is TirLambda);
 
     /// <summary>Rename every lambda parameter in <paramref name="node"/> whose name collides with a
     /// caller-bound name to a fresh clone (<c>{name}_{N}</c>), updating both the lambda's parameter
@@ -332,6 +418,20 @@ public static class TirInliner
         }
         Walk(body);
         return total > 0 && total == consuming;
+    }
+
+    /// <summary>Whether any member call in <paramref name="body"/> uses an APPLICATION of the
+    /// delegate parameter <paramref name="pd"/> as its receiver (arg 0), i.e. <c>f(x).Foo(...)</c>.
+    /// Such a navigated result loses the delegate-return coercion under β-reduction (the lambda
+    /// body type may differ from the Func's declared return, and the receiver slot does not convert),
+    /// so the substitution is unsound to emit.</summary>
+    private static bool InvokeResultNavigated(TirNode body, ParameterDef pd)
+    {
+        bool IsInvokeOfPd(TirNode n)
+            => TirRewrite.StripCoerce(n) is TirInvoke inv
+               && TirRewrite.StripCoerce(inv.Target) is TirParameter p && p.Def == pd;
+        return body.Descendants().OfType<TirCall>()
+            .Any(c => c.Args.Count >= 1 && IsInvokeOfPd(c.Args[0]));
     }
 
     /// <summary>Every name bound in the caller: function parameters, lambda parameters and let
@@ -526,6 +626,22 @@ public static class TirInliner
 
     private static bool IsConcreteName(CSharpWriter writer, string name)
         => CSharpWriter.ScalarPrimitives.ContainsKey(name) || writer.GetExtensionPlanByTypeName(name) != null;
+
+    /// <summary>Whether the callee body's ROOT is a tuple literal whose arity equals the field
+    /// count of the struct <paramref name="returnTypeName"/> — i.e. the struct has a
+    /// field-wise constructor accepting the tuple elements in order, so the tuple can be rewritten
+    /// to <c>new T(elem...)</c> (M1). A concrete, generated struct only; excludes scalar
+    /// primitives and any type whose field arity differs from the tuple's.</summary>
+    private static bool TupleCtorArityMatches(CSharpWriter writer, TirNode calleeBody, string returnTypeName)
+    {
+        if (!(calleeBody is TirCall tuple) || tuple.Name == null || !tuple.Name.StartsWith("Tuple"))
+            return false;
+        if (returnTypeName.StartsWith("Tuple"))
+            return false; // a genuinely tuple-typed return, not a struct with a field ctor
+        var typeDef = writer.Compilation.GetTypeDef(returnTypeName);
+        return typeDef != null && !typeDef.IsInterface()
+            && typeDef.Fields.Count == tuple.Args.Count;
+    }
 
     /// <summary>A nullary call (emitted as <c>Constants.X</c>): inline the static TIR body when
     /// it is a self-contained ground expression within budget whose value type matches the

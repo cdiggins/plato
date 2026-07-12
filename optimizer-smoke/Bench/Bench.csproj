@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    optimizer-smoke Bench (M2): a true A/B micro-benchmark of the collapsed hot paths.
+    References BOTH generated goldens via extern alias so the SAME operation can be timed on the
+    optimized (inlined, delegate-free) and unoptimized (Deform plus Func delegate) library at once.
+    Run: dotnet run -c Release from this folder.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>$(NoWarn);CS0108;CS0114;CS0660;CS0661;CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Generated\Plato.Generated.Optimized\Plato.Generated.Optimized.csproj">
+      <Aliases>opt</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Generated\Plato.Generated.Unoptimized\Plato.Generated.Unoptimized.csproj">
+      <Aliases>unopt</Aliases>
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>

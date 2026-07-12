@@ -58,5 +58,15 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// function's elaboration has unresolved nodes.</summary>
         public TirFunction TryGetStaticTir(FunctionDef original)
             => original != null && _staticTirByFn.TryGetValue(original, out var tir) ? tir : null;
+
+        /// <summary>Test helper: the ground TIR for a (concrete type name, function name) pair,
+        /// looked up by NAME rather than by <see cref="FunctionDef"/> identity — for in-proc TIR
+        /// shape tests that pin flagship functions (M0 optimizer instrumentation). Returns the
+        /// first match; null when none exists.</summary>
+        public TirFunction TryGetGroundTirByNames(string typeName, string functionName)
+            => _groundTirByKey
+                .Where(kv => kv.Key.Item2 == typeName && kv.Key.Item1?.Name == functionName)
+                .Select(kv => kv.Value)
+                .FirstOrDefault();
     }
 }
