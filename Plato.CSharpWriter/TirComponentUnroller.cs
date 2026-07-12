@@ -106,7 +106,7 @@ public static class TirComponentUnroller
     public static TirNode TryUnroll(TirNode body, CSharpFunctionInfo fi, CSharpWriter writer)
     {
         // Same scope rule as the legacy unroller: expression bodies only.
-        if (body == null || IsStatementNode(body))
+        if (body == null || TirRewrite.IsStatementNode(body))
             return null;
 
         if (!body.Descendants().OfType<TirCall>().Any(IsCandidateCall))
@@ -143,9 +143,6 @@ public static class TirComponentUnroller
 
         return result;
     }
-
-    private static bool IsStatementNode(TirNode n)
-        => n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop;
 
     private static bool IsCandidateCall(TirCall call)
         => call.Name != null

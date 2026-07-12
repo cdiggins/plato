@@ -128,7 +128,7 @@ public static class TirInliner
             return Refuse(InlineRefusal.NoGroundTir);
 
         // Expression bodies only, within budget, and self-contained under a foreign type.
-        if (IsStatementNode(calleeBody))
+        if (TirRewrite.IsStatementNode(calleeBody))
             return Refuse(InlineRefusal.StatementBody);
 
         // The body's value type must BE the declared return type: a mismatch means the function
@@ -653,7 +653,7 @@ public static class TirInliner
         var body = calleeTir?.Body;
         if (body == null || (calleeTir.Parameters?.Count ?? 0) != 0)
             return false;
-        if (IsStatementNode(body))
+        if (TirRewrite.IsStatementNode(body))
             return false;
         var bodyTypeName = body.Type?.Name;
         var returnTypeName = (calleeTir.ZonkedReturnType ?? calleeTir.ReturnType)?.Name;
@@ -665,8 +665,6 @@ public static class TirInliner
         return true;
     }
 
-    private static bool IsStatementNode(TirNode n)
-        => n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop;
 
     // Same shape TirCSharpBodyWriter recovers as a bare member-group name (Normalizer R3).
     private static bool IsEtaShaped(TirLambda lam)

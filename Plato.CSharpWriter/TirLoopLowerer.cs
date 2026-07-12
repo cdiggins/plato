@@ -169,10 +169,10 @@ public static class TirLoopLowerer
         TirNode fn = null, seed = null, includeFirst = null;
 
         bool IsListTyped(TirNode node)
-            => StripCoerce(node)?.Type?.Name == "IArray";
+            => TirRewrite.StripCoerce(node)?.Type?.Name == "IArray";
         bool FnOk(TirNode f, int arity)
         {
-            f = StripCoerce(f);
+            f = TirRewrite.StripCoerce(f);
             if (f is TirLambda lam)
                 return lam.Parameters.Count == arity
                        && !(lam.Parameters.Count > 0 && lam.Parameters.All(p => p.Name != null && p.Name.StartsWith("_eta")));
@@ -244,7 +244,7 @@ public static class TirLoopLowerer
             {
                 fn == null ? null : FnReturnType(fn),
                 c.Type?.Name == "IArray" && c.Type.TypeArgs.Count == 1 ? c.Type.TypeArgs[0] : null,
-                kind == "Reverse" && StripCoerce(sources[0])?.Type is TypeExpression st
+                kind == "Reverse" && TirRewrite.StripCoerce(sources[0])?.Type is TypeExpression st
                     && st.Name == "IArray" && st.TypeArgs.Count == 1 ? st.TypeArgs[0] : null,
             };
             elem = candidates.FirstOrDefault(IsRenderableConcrete);
@@ -281,7 +281,7 @@ public static class TirLoopLowerer
     /// Function{N} type (lambda node type or delegate parameter's declared type).</summary>
     private static TypeExpression FnReturnType(TirNode fn)
     {
-        fn = StripCoerce(fn);
+        fn = TirRewrite.StripCoerce(fn);
         var t = fn is TirLambda lam ? lam.Type
             : (fn as TirParameter)?.Def?.Type ?? (fn as TirVariable)?.Def?.Type;
         return t?.Name != null && t.Name.StartsWith("Function") && t.TypeArgs.Count > 0
@@ -294,6 +294,4 @@ public static class TirLoopLowerer
     private static bool ResultIsList(TirCall c)
         => c.Type?.Name == "IArray" && c.Type.TypeArgs.Count == 1 && c.Type.TypeArgs[0]?.Name != null;
 
-    private static TirNode StripCoerce(TirNode n)
-        => n is TirCoerce c ? StripCoerce(c.Inner) : n;
 }

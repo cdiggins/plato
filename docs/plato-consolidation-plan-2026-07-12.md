@@ -118,7 +118,37 @@ NoProperties gating forks in TirInliner, the pins, ScalarEraseAnalysis special c
 - **Gates:** API snapshot unchanged-or-intentionally-extended · conformance 204/204 · golden diff
   reviewed · optimizer-smoke builds.
 
-### C4 — Emitter separation + the delete list (2–3 days; the payoff)
+### C4 — Emitter separation + the delete list — IN PROGRESS 2026-07-12
+
+**Findings (investigation done):**
+- Under the V2 recipe the emitter reports **`legacy fallback bodies: 0`** (2365 TIR bodies). So the
+  legacy `CSharpFunctionBodyWriter` never serves a *bodied* member/static under V2.
+- BUT it is still reached (`CSharpTypeWriter` line ~258) for **bodiless functions** (interface
+  obligations / stubs) without counting as a fallback — so it is not trivially dead. Deleting it
+  needs bodiless-function emission migrated to a small dedicated path first. That + retiring the
+  default-style emit path (only `regen-plato.ps1` uses it; the V1 library it regenerates is now
+  frozen) + deleting the pin machinery is the remaining "2–3 day" core.
+
+**Done (safe, golden-neutral cleanups):**
+- Consolidated the duplicate helpers into `TirRewrite`: `IsStatementNode` (was 3 private copies in
+  `TirInliner` / `TirComponentUnroller` / `TirCSharpBodyWriter` — the body-writer superset incl.
+  `TirLoweredLoop` is the one home) and `StripCoerce` call sites (`TirLoopLowerer` /
+  `TirCSharpBodyWriter` now use `TirRewrite.StripCoerce`). Deleted `Plato.CSharpWriter/unused.txt`.
+  (`TirLambdaCaptureRewriter.ReplaceNode` stays — it is in `PlatoCompiler`, which cannot reference
+  `TirRewrite` in `Plato.CSharpWriter`.)
+- **Gate:** both V2 goldens byte-identical (184/184); PlatoTests 103/103.
+
+**Remaining (the payoff, next focused session — write the emit-snapshot rigor first):**
+1. Migrate bodiless-function emission off `CSharpFunctionBodyWriter`.
+2. Retire the default-style emit path + `regen-plato.ps1` (V1 is frozen; the tripwire guards it).
+3. Delete `CSharpFunctionBodyWriter` (~750 lines) + the now-dead fallbacks.
+4. Collapse `MethodsOnly`/`NoProperties` to one flag; delete `PropertySyntaxNames` /
+   `HandwrittenPropertySyntaxNames` / `StaticNoArgMethodNames` pins and the `NoProperties` forks in
+   `TirInliner` (they become unconditional) — the property/method duality the plan calls the risk
+   surface. Under V2 the pins are already empty, so this should be golden-neutral.
+5. Shrink `ScalarEraseAnalysis` to a pure type substitution under the uniform surface.
+
+### C4 (original brief) — Emitter separation + the delete list (2–3 days; the payoff)
 
 The risk in emitter work today comes from one writer serving six recipes through context-sensitive
 decision webs. With C0–C2 done, only one recipe remains, so:

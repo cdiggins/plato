@@ -22,8 +22,15 @@ freeze the ara3d-sdk Geometry artifacts (never touch), make the emitter simple +
       Vector2/3/4/8, Matrix3x2/4x4, Quaternion, Plane. Pattern: move behavioural instance methods to
       <Type>Intrinsics (keep operators/conversions/withers/statics/field-props/obligations), regen
       goldens, re-baseline snapshot (PLATO_UPDATE_API_SNAPSHOT=1), check-all.
-- [ ] C4 Emitter extraction + delete list: V2-only writer; emit-snapshot tests; delete legacy
-      body writer, ScalarEraseAnalysis remnants, pins, NoProperties forks. (The payoff.)
+- [~] C4 Emitter extraction + delete list: FINDINGS — V2 recipe has legacy fallback bodies = 0
+      (2365 TIR), but CSharpFunctionBodyWriter still emits BODILESS functions (not counted as
+      fallback), so not trivially dead. DONE (safe, golden-neutral): consolidated IsStatementNode
+      (3 copies) + StripCoerce call sites into TirRewrite; deleted unused.txt (184/184 both goldens,
+      PlatoTests 103/103). REMAINING (payoff): migrate bodiless emission off legacy writer; retire
+      default-style path + regen-plato; delete CSharpFunctionBodyWriter (~750 lines); collapse
+      MethodsOnly/NoProperties + delete pins (golden-neutral under V2); shrink ScalarEraseAnalysis.
+      Write emit-snapshot rigor first.
+- [ ] C5 Naming pass (optional, last): rename V2Runtime->ConformanceTests, Intrinsics.V2->Intrinsics.
 - [ ] C5 Naming pass (optional, last).
 
 Gates: check-all ALL PASS; V2Runtime 204/204. Frozen artifacts (ara3d-sdk) must stay byte-frozen

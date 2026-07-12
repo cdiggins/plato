@@ -209,8 +209,6 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
     // --- statements ----------------------------------------------------------
 
-    private static bool IsStatementNode(TirNode n)
-        => n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop || n is TirLoweredLoop;
 
     private void WriteStatement(TirNode n)
     {
@@ -221,7 +219,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 foreach (var s in b.Statements)
                 {
                     if (s == null) continue;
-                    if (IsStatementNode(s))
+                    if (TirRewrite.IsStatementNode(s))
                     {
                         WriteStatement(s);
                     }
@@ -470,7 +468,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 // re-runs the capture hoist on the lambda's own body, and writes " => " only for
                 // an expression body. Mirror both (a hoisted lambda body is block-shaped).
                 var lamBody = TirLambdaCaptureRewriter.Rewrite(lam.Body);
-                if (IsStatementNode(lamBody))
+                if (TirRewrite.IsStatementNode(lamBody))
                 {
                     // A C# lambda with a statement body still needs the arrow. No such lambda
                     // occurs in any non-inline output (the flag differentials pin that), but the
@@ -539,15 +537,13 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         }
     }
 
-    private static TirNode StripCoerce(TirNode n)
-        => n is TirCoerce c ? StripCoerce(c.Inner) : n;
 
     // Scalar erasure only: the primitive a TIR NODE is known to erase to, when the origin-symbol
     // analysis cannot know it. The one case: component-access markers substituted by the
     // TIR unroller (--optimize) — their origin still shows the pre-unroll lambda parameter, so
     // the marker carries the primitive itself (mirrors the legacy ScalarComponentPrim channel).
     private string NodeScalarPrim(TirNode n)
-        => StripCoerce(n) is TirComponentAccess ca ? ca.ScalarComponentPrim : null;
+        => TirRewrite.StripCoerce(n) is TirComponentAccess ca ? ca.ScalarComponentPrim : null;
 
     // Scalar erasure + --inline only: the erased primitive of a LITERAL node. Inlining puts
     // literals in receiver/argument positions whose enclosing call's origin symbols still point
@@ -576,7 +572,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             if (_tw.Writer.GetExtensionPlanByTypeName(c.ToType.Name) != null)
                 return null;
         }
-        var stripped = StripCoerce(n);
+        var stripped = TirRewrite.StripCoerce(n);
         if (stripped is TirLiteral lit)
             switch (lit.LiteralType)
             {
@@ -634,7 +630,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         }
 
         // A lowered-loop result temp is a C# ARRAY: Count reads become Length.
-        if (name == "Count" && args.Count == 1 && StripCoerce(args[0]) is TirTempRef)
+        if (name == "Count" && args.Count == 1 && TirRewrite.StripCoerce(args[0]) is TirTempRef)
         {
             WriteNode(args[0]);
             Write(".Length");
@@ -646,7 +642,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // other unknown receivers keep their own indexers).
         if (name == "At")
         {
-            var recvType = StripCoerce(args[0])?.Type?.Name;
+            var recvType = TirRewrite.StripCoerce(args[0])?.Type?.Name;
             if (_tw.Writer.MethodsOnly && recvType != null
                 && _tw.Writer.GetExtensionPlanByTypeName(recvType) != null
                 && !CSharpWriter.ScalarPrimitives.ContainsKey(recvType))
@@ -669,7 +665,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // (or lambda/assignment) receiver must be parenthesized or the member access binds to its
         // last operand; such receivers only arise from the inliner (the flag differentials pin
         // that no non-inline output has them).
-        var recvNode = StripCoerce(args[0]);
+        var recvNode = TirRewrite.StripCoerce(args[0]);
         if (recvNode is TirConditional || recvNode is TirLambda || recvNode is TirAssign
             || recvNode is TirBooleanChain)
         {
@@ -716,7 +712,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             // statics (Number.MinValue) keep member syntax.
             if (_tw.Writer.MethodsOnly)
             {
-                if (StripCoerce(args[0]) is TirTypeRef recvT)
+                if (TirRewrite.StripCoerce(args[0]) is TirTypeRef recvT)
                 {
                     var recvPlan = _tw.Writer.GetExtensionPlanByTypeName(recvT.TypeDef?.Name);
                     if (recvPlan != null && recvPlan.GeneratedNoArgStaticNames.Contains(name))
@@ -823,7 +819,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             var name = ll.Sources.Count == 1 ? $"_s{k}" : $"_s{k}{(char)('a' + s)}";
             srcNames.Add(name);
             // A source that is itself a lowered-loop result is a C# ARRAY: Length, not Count.
-            srcCounts.Add(StripCoerce(ll.Sources[s]) is TirTempRef ? $"{name}.Length" : $"{name}.Count");
+            srcCounts.Add(TirRewrite.StripCoerce(ll.Sources[s]) is TirTempRef ? $"{name}.Length" : $"{name}.Count");
             Write($"var {name} = ");
             WriteNode(ll.Sources[s]);
             WriteLine(";");
@@ -842,7 +838,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
         // The function argument: a lambda literal's body is emitted INLINE with its parameters
         // declared as loop locals; a delegate-typed reference is invoked.
-        var fn = ll.Fn == null ? null : StripCoerce(ll.Fn);
+        var fn = ll.Fn == null ? null : TirRewrite.StripCoerce(ll.Fn);
         var lam = fn as TirLambda;
         void DeclareParams(params string[] elems)
         {
@@ -1024,7 +1020,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             return argPrim;
         // Receiver-surface fallback: a same-name overload with a scalar parameter here means
         // the primitive binds exactly.
-        var recvNode = StripCoerce(call.Args[0]);
+        var recvNode = TirRewrite.StripCoerce(call.Args[0]);
         var recvType = recvNode is TirTypeRef tr ? tr.TypeDef?.Name : recvNode?.Type?.Name;
         var plan = declared == null ? _tw.Writer.GetExtensionPlanByTypeName(recvType) : null;
         if (plan != null)

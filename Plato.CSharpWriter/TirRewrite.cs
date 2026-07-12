@@ -144,6 +144,13 @@ public static class TirRewrite
     public static TirNode StripCoerce(TirNode n)
         => n is TirCoerce c ? StripCoerce(c.Inner) : n;
 
+    /// <summary>Whether a node is a STATEMENT tree rather than an expression: a block, return, if,
+    /// loop, or a lowered-loop marker. The one home for the check the inliner, unroller and body
+    /// writer each used to keep a private copy of (the pre-lowering passes never see a
+    /// <see cref="TirLoweredLoop"/>, so including it here is a harmless superset for them).</summary>
+    public static bool IsStatementNode(TirNode n)
+        => n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop || n is TirLoweredLoop;
+
     /// <summary>A leaf whose repeated substitution costs nothing (parameter / variable / literal /
     /// type ref / default) — safe to substitute regardless of use count.</summary>
     public static bool IsCheap(TirNode n)
