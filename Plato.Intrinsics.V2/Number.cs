@@ -1,20 +1,22 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using static System.Runtime.CompilerServices.MethodImplOptions;
 
 namespace Ara3D.Geometry
 {
     /// <summary>
-    /// A simple wrapper around the built-in <c>float</c> type, 
+    /// A simple wrapper around the built-in <c>float</c> type,
     /// forwarding all arithmetic and common methods to <c>float</c>.
+    /// The Plato math intrinsics live in <see cref="NumberIntrinsics"/> as extension methods
+    /// (all-extension-methods runtime: struct = field + constructor + operators + conversions).
     /// </summary>
     [DataContract]
-    public partial struct Number 
+    public partial struct Number
     {
         // -------------------------------------------------------------------------------
         // Field (the wrapped float)
         // -------------------------------------------------------------------------------
-        
+
         [DataMember] public readonly float Value;
 
         // -------------------------------------------------------------------------------
@@ -36,7 +38,7 @@ namespace Ara3D.Geometry
 
         [MethodImpl(AggressiveInlining)]
         public static implicit operator float(Number n) => n.Value;
-        
+
         // -------------------------------------------------------------------------------
         // Operators (forward to float)
         // -------------------------------------------------------------------------------
@@ -84,222 +86,6 @@ namespace Ara3D.Geometry
         public Integer CompareTo(Number other)
             => Value.CompareTo(other.Value);
 
-        //-------------------------------------------------------------------------------
-        // Math Intrinsic Functions
-        //-------------------------------------------------------------------------------
-
-        /// <summary>
-        /// The absolute value of a single-precision floating-point number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Abs() => MathF.Abs(Value);
-
-        /// <summary>
-        /// The angle whose cosine is the specified number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Angle Acos() => MathF.Acos(Value);
-
-        /// <summary>
-        /// The angle whose hyperbolic cosine is the specified number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Angle Acosh() => MathF.Acosh(Value);
-
-        /// <summary>
-        /// The angle whose sine is the specified number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Angle Asin() => MathF.Asin(Value);
-
-        /// <summary>
-        /// The angle whose hyperbolic sine is the specified number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Angle Asinh() => MathF.Asinh(Value);
-
-        /// <summary>
-        /// The angle whose tangent is the specified number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Angle Atan() => MathF.Atan(Value);
-
-        /// <summary>
-        /// The angle whose tangent is the quotient of this number with another.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Angle Atan2(Number x) => MathF.Atan2(Value, x);
-
-        /// <summary>
-        /// The angle whose hyperbolic tangent is the specified number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Angle Atanh() => MathF.Atanh(Value);
-
-        /// <summary>
-        /// The largest value that compares less than the value.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number BitDecrement() => MathF.BitDecrement(Value);
-
-        /// <summary>
-        /// The smallest value that compares greater than the value.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number BitIncrement() => MathF.BitIncrement(Value);
-
-        /// <summary>
-        /// The cube root of the number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Cbrt() => MathF.Cbrt(Value);
-
-        /// <summary>
-        /// The smallest integral value that is greater than or equal to the specified single-precision floating-point number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Ceiling() => MathF.Ceiling(Value);
-
-        /// <summary>
-        /// A value with the magnitude of this number and the sign of another number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Number CopySign(Number y) => MathF.CopySign(Value, y);
-
-        /// <summary>
-        /// Returns e raised to the specified power.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Exp() => MathF.Exp(Value);
-
-        /// <summary>
-        /// The largest integral value less than or equal to this value.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Floor() => MathF.Floor(Value);
-
-        /// <summary>
-        /// Returns (Value * y) + z, rounded as one ternary operation.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Number FusedMultiplyAdd(Number y, Number z) => MathF.FusedMultiplyAdd(Value, y, z);
-
-        /// <summary>
-        /// The remainder resulting from the division of by another number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Number IEEERemainder(Number y) => MathF.IEEERemainder(Value, y);
-
-        /// <summary>
-        /// The base 2 integer logarithm of the number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number ILogB() => MathF.ILogB(Value);
-
-        /// <summary>
-        /// The logarithm of the number in the base.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Number Log(Number newBase) => MathF.Log(Value, newBase);
-
-        /// <summary>
-        /// The natural (base e) logarithm of the number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number NaturalLog() => MathF.Log(Value);
-
-        /// <summary>
-        /// The base 10 logarithm of the number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Log10() => MathF.Log10(Value);
-
-        /// <summary>
-        /// The base 2 logarithm of the number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Log2() => MathF.Log2(Value);
-
-        /// <summary>
-        /// The larger of two single-precision floating-point numbers.
-        /// </summary>  
-        [MethodImpl(AggressiveInlining)]
-        public Number Max(Number other) => MathF.Max(Value, other);
-
-        /// <summary>
-        /// The larger magnitude of two single-precision floating-point numbers.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Number MaxMagnitude(Number other) => MathF.MaxMagnitude(Value, other);
-
-        /// <summary>
-        /// The smaller of two single-precision floating-point numbers.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Number Min(Number other) => MathF.Min(Value, other);
-
-        /// <summary>
-        /// The smaller magnitude of two single-precision floating-point numbers.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Number MinMagnitude(Number other) => MathF.MinMagnitude(Value, other);
-
-        /// <summary>
-        /// The number raised to the specified power.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Number Pow(Number power) => MathF.Pow(Value, power);
-
-        /// <summary>
-        /// Clamp number within the range of two numbers.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Number Clamp(Number a, Number b) => MathF.Max(a, MathF.Min(Value, b));
-
-        /// <summary>
-        /// The reciprocal of the number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Reciprocal() => 1f / Value;
-
-        /// <summary>
-        /// An estimate of the reciprocal of the number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number ReciprocalEstimate() => MathF.ReciprocalEstimate(Value);
-
-        /// <summary>
-        /// An estimate of the reciprocal square root of the number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number ReciprocalSqrtEstimate() => MathF.ReciprocalSqrtEstimate(Value);
-
-        /// <summary>
-        /// Rounds the value to an integer using the specified rounding convention.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Number RoundToZero(int digits = 0) => MathF.Round(Value, digits, MidpointRounding.ToZero);
-
-        /// <summary>
-        /// Rounds the value to an integer using the specified rounding convention.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Number RoundAwayFromZero(int digits = 0) => MathF.Round(Value, digits, MidpointRounding.AwayFromZero);
-
-        /// <summary>
-        /// Rounds the value to the nearest integral value, rounding midpoint values to the nearest even number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Number Round(int digits = 0) => MathF.Round(Value, digits);
-
-        /// <summary>
-        /// Returns x multiplied by 2 raised to the power of n, computed efficiently.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public Number ScaleB(Integer n) => MathF.ScaleB(Value, n);
-
-        /// <summary>
-        /// An integer that indicates the sign of the number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Integer Sign() => MathF.Sign(Value);
-
-        /// <summary>
-        /// The square root of the number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Sqrt() => MathF.Sqrt(Value);
-
-        /// <summary>
-        /// The square root of the number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Square() => Value * Value;
-
-        /// <summary>
-        /// Calculates the integral part of the single-precision floating-point number.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Truncate() => MathF.Truncate(Value);
-
-        [MethodImpl(AggressiveInlining)] public Number ReciprocalSquareRootEstimate() => MathF.ReciprocalSqrtEstimate(Value);
-
         /// <summary>The implicit Number -> Angle conversion as a member, so the generated
         /// conversion forwarder (declared in plato-src/intrinsics.plato) has a target -
         /// same pattern as Integer.Number.</summary>
@@ -309,12 +95,235 @@ namespace Ara3D.Geometry
         public static Number MaxValue = float.MaxValue;
         public static Number Zero = 0;
         public static Number One = 1;
+    }
+
+    /// <summary>
+    /// Plato math intrinsics for <see cref="Number"/>, as extension methods (the
+    /// all-extension-methods runtime). Call sites are unchanged: <c>x.Abs()</c> binds to an
+    /// extension exactly as it did to the former instance method.
+    /// </summary>
+    public static class NumberIntrinsics
+    {
+        //-------------------------------------------------------------------------------
+        // Math Intrinsic Functions
+        //-------------------------------------------------------------------------------
+
+        /// <summary>
+        /// The absolute value of a single-precision floating-point number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number Abs(this Number self) => MathF.Abs(self.Value);
+
+        /// <summary>
+        /// The angle whose cosine is the specified number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Angle Acos(this Number self) => MathF.Acos(self.Value);
+
+        /// <summary>
+        /// The angle whose hyperbolic cosine is the specified number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Angle Acosh(this Number self) => MathF.Acosh(self.Value);
+
+        /// <summary>
+        /// The angle whose sine is the specified number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Angle Asin(this Number self) => MathF.Asin(self.Value);
+
+        /// <summary>
+        /// The angle whose hyperbolic sine is the specified number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Angle Asinh(this Number self) => MathF.Asinh(self.Value);
+
+        /// <summary>
+        /// The angle whose tangent is the specified number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Angle Atan(this Number self) => MathF.Atan(self.Value);
+
+        /// <summary>
+        /// The angle whose tangent is the quotient of this number with another.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Angle Atan2(this Number self, Number x) => MathF.Atan2(self.Value, x);
+
+        /// <summary>
+        /// The angle whose hyperbolic tangent is the specified number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Angle Atanh(this Number self) => MathF.Atanh(self.Value);
+
+        /// <summary>
+        /// The largest value that compares less than the value.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number BitDecrement(this Number self) => MathF.BitDecrement(self.Value);
+
+        /// <summary>
+        /// The smallest value that compares greater than the value.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number BitIncrement(this Number self) => MathF.BitIncrement(self.Value);
+
+        /// <summary>
+        /// The cube root of the number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number Cbrt(this Number self) => MathF.Cbrt(self.Value);
+
+        /// <summary>
+        /// The smallest integral value that is greater than or equal to the specified single-precision floating-point number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number Ceiling(this Number self) => MathF.Ceiling(self.Value);
+
+        /// <summary>
+        /// A value with the magnitude of this number and the sign of another number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number CopySign(this Number self, Number y) => MathF.CopySign(self.Value, y);
+
+        /// <summary>
+        /// Returns e raised to the specified power.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number Exp(this Number self) => MathF.Exp(self.Value);
+
+        /// <summary>
+        /// The largest integral value less than or equal to this value.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number Floor(this Number self) => MathF.Floor(self.Value);
+
+        /// <summary>
+        /// Returns (Value * y) + z, rounded as one ternary operation.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number FusedMultiplyAdd(this Number self, Number y, Number z) => MathF.FusedMultiplyAdd(self.Value, y, z);
+
+        /// <summary>
+        /// The remainder resulting from the division of by another number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number IEEERemainder(this Number self, Number y) => MathF.IEEERemainder(self.Value, y);
+
+        /// <summary>
+        /// The base 2 integer logarithm of the number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number ILogB(this Number self) => MathF.ILogB(self.Value);
+
+        /// <summary>
+        /// The logarithm of the number in the base.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number Log(this Number self, Number newBase) => MathF.Log(self.Value, newBase);
+
+        /// <summary>
+        /// The natural (base e) logarithm of the number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number NaturalLog(this Number self) => MathF.Log(self.Value);
+
+        /// <summary>
+        /// The base 10 logarithm of the number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number Log10(this Number self) => MathF.Log10(self.Value);
+
+        /// <summary>
+        /// The base 2 logarithm of the number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number Log2(this Number self) => MathF.Log2(self.Value);
+
+        /// <summary>
+        /// The larger of two single-precision floating-point numbers.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number Max(this Number self, Number other) => MathF.Max(self.Value, other);
+
+        /// <summary>
+        /// The larger magnitude of two single-precision floating-point numbers.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number MaxMagnitude(this Number self, Number other) => MathF.MaxMagnitude(self.Value, other);
+
+        /// <summary>
+        /// The smaller of two single-precision floating-point numbers.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number Min(this Number self, Number other) => MathF.Min(self.Value, other);
+
+        /// <summary>
+        /// The smaller magnitude of two single-precision floating-point numbers.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number MinMagnitude(this Number self, Number other) => MathF.MinMagnitude(self.Value, other);
+
+        /// <summary>
+        /// The number raised to the specified power.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number Pow(this Number self, Number power) => MathF.Pow(self.Value, power);
+
+        /// <summary>
+        /// Clamp number within the range of two numbers.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number Clamp(this Number self, Number a, Number b) => MathF.Max(a, MathF.Min(self.Value, b));
+
+        /// <summary>
+        /// The reciprocal of the number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number Reciprocal(this Number self) => 1f / self.Value;
+
+        /// <summary>
+        /// An estimate of the reciprocal of the number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number ReciprocalEstimate(this Number self) => MathF.ReciprocalEstimate(self.Value);
+
+        /// <summary>
+        /// An estimate of the reciprocal square root of the number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number ReciprocalSqrtEstimate(this Number self) => MathF.ReciprocalSqrtEstimate(self.Value);
+
+        /// <summary>
+        /// Rounds the value to an integer using the specified rounding convention.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number RoundToZero(this Number self, int digits = 0) => MathF.Round(self.Value, digits, MidpointRounding.ToZero);
+
+        /// <summary>
+        /// Rounds the value to an integer using the specified rounding convention.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number RoundAwayFromZero(this Number self, int digits = 0) => MathF.Round(self.Value, digits, MidpointRounding.AwayFromZero);
+
+        /// <summary>
+        /// Rounds the value to the nearest integral value, rounding midpoint values to the nearest even number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number Round(this Number self, int digits = 0) => MathF.Round(self.Value, digits);
+
+        /// <summary>
+        /// Returns x multiplied by 2 raised to the power of n, computed efficiently.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number ScaleB(this Number self, Integer n) => MathF.ScaleB(self.Value, n);
+
+        /// <summary>
+        /// An integer that indicates the sign of the number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Integer Sign(this Number self) => MathF.Sign(self.Value);
+
+        /// <summary>
+        /// The square root of the number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number Sqrt(this Number self) => MathF.Sqrt(self.Value);
+
+        /// <summary>
+        /// The square root of the number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number Square(this Number self) => self.Value * self.Value;
+
+        /// <summary>
+        /// Calculates the integral part of the single-precision floating-point number.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)] public static Number Truncate(this Number self) => MathF.Truncate(self.Value);
+
+        [MethodImpl(AggressiveInlining)] public static Number ReciprocalSquareRootEstimate(this Number self) => MathF.ReciprocalSqrtEstimate(self.Value);
 
         // TODO: Figure out why these aren't being provided by Plato
 
-        public Number Cubic(Number a, Number b, Number c, Number d) => a.Pow3() * this + b.Pow2() * this + c * this + d;
-        public Number Linear(Number a, Number b) => a * this + b;
-        public Number Quadratic(Number a, Number b, Number c) => a.Pow2() * this + b * this + c;
-
+        public static Number Cubic(this Number self, Number a, Number b, Number c, Number d) => a.Pow3() * self + b.Pow2() * self + c * self + d;
+        public static Number Linear(this Number self, Number a, Number b) => a * self + b;
+        public static Number Quadratic(this Number self, Number a, Number b, Number c) => a.Pow2() * self + b * self + c;
     }
 }

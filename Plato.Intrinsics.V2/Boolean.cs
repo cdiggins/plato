@@ -101,9 +101,16 @@ using System.Runtime.Serialization;
             [MethodImpl(AggressiveInlining)]
             public int CompareTo(Boolean other)
                 => Value.CompareTo(other);
+        }
 
-
-            public Boolean ExclusiveOr(Boolean other)
-                => Value ^ other;
+        /// <summary>
+        /// Plato member functions for <see cref="Boolean"/>, as extension methods (the
+        /// all-extension-methods runtime: struct = fields + operators, behaviour = extensions).
+        /// </summary>
+        public static class BooleanIntrinsics
+        {
+            [MethodImpl(AggressiveInlining)]
+            public static Boolean ExclusiveOr(this Boolean self, Boolean other)
+                => self.Value ^ other;
         }
     }
