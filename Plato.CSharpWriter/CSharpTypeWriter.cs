@@ -207,8 +207,19 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         throw new Exception("Only 'At' or 'Count' supported");
     }
 
+    // The fixed body of an interface obligation / stub (Function.Implementation.Body == null):
+    // a one-liner with no body-writer heuristics. Reproduces CSharpFunctionBodyWriter's Body==null
+    // early return byte-for-byte (WriteLine appends Environment.NewLine) so the legacy writer is no
+    // longer on the body-less path (consolidation plan C4 step 1).
+    private static readonly string BodilessBodyText =
+        " => throw new NotImplementedException();" + Environment.NewLine;
+
     public CSharpTypeWriter WriteBody(CSharpFunctionInfo f, bool isStatic)
     {
+        // Body-less function: emit the fixed stub directly, off the legacy CSharpFunctionBodyWriter.
+        if (f.Body == null)
+            return WriteBodyText(BodilessBodyText);
+
         // Off-by-default TIR retarget (Writer.UseTir): for the member-instance body path in the
         // pure default style, emit from the monomorphized TIR when a fully-ground one exists for
         // this (function, concrete type), falling back to the current writer otherwise. With the
