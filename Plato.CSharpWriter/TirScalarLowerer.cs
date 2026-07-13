@@ -151,11 +151,11 @@ public static class TirScalarLowerer
 
             // --- optimizer marker nodes (Plato.CSharpWriter) --------------------
             case TirComponentAccess ca:
-                return new TirComponentAccess(LowerNode(ca.Receiver, m), ca.FieldName, ca.CastTo, ca.ScalarComponentPrim);
+                return new TirComponentAccess(LowerNode(ca.Receiver, m), ca.FieldName, ca.CastTo, ca.ScalarComponentPrim, LowerType(ca.Type, m));
             case TirConstructorCall cc:
-                return new TirConstructorCall(cc.TypeName, LowerNodes(cc.Args, m));
+                return new TirConstructorCall(cc.TypeName, LowerNodes(cc.Args, m), LowerType(cc.Type, m));
             case TirBooleanChain bc:
-                return new TirBooleanChain(bc.Op, LowerNodes(bc.Terms, m));
+                return new TirBooleanChain(bc.Op, LowerNodes(bc.Terms, m), LowerType(bc.Type, m));
             case TirLoweredLoop ll:
                 return LowerLoweredLoop(ll, m);
 

@@ -26,8 +26,8 @@ public class TirComponentAccess : TirNode
     // parameters), so the marker itself carries the knowledge.
     public string ScalarComponentPrim { get; }
 
-    public TirComponentAccess(TirNode receiver, string fieldName, string castTo, string scalarComponentPrim = null)
-        : base(null, receiver?.Origin)
+    public TirComponentAccess(TirNode receiver, string fieldName, string castTo, string scalarComponentPrim = null, TypeExpression type = null)
+        : base(type, receiver?.Origin)
     {
         Receiver = receiver;
         FieldName = fieldName;
@@ -46,8 +46,8 @@ public class TirConstructorCall : TirNode
     public string TypeName { get; }
     public IReadOnlyList<TirNode> Args { get; }
 
-    public TirConstructorCall(string typeName, IReadOnlyList<TirNode> args)
-        : base(null, null)
+    public TirConstructorCall(string typeName, IReadOnlyList<TirNode> args, TypeExpression type = null)
+        : base(type, null)
     {
         TypeName = typeName;
         Args = args ?? new List<TirNode>();
@@ -64,8 +64,8 @@ public class TirBooleanChain : TirNode
     public string Op { get; }
     public IReadOnlyList<TirNode> Terms { get; }
 
-    public TirBooleanChain(string op, IReadOnlyList<TirNode> terms)
-        : base(null, null)
+    public TirBooleanChain(string op, IReadOnlyList<TirNode> terms, TypeExpression type = null)
+        : base(type, null)
     {
         Op = op;
         Terms = terms ?? new List<TirNode>();
@@ -224,13 +224,18 @@ public static class TirComponentUnroller
         var castTo = writer.ScalarErase
             ? (isPrimitive && prim != "float" ? "float" : null)
             : (isPrimitive && prim == "float" ? "Number" : null);
+        var compPlatoType = writer.GetComponentPlatoType(typeName);
         string scalarComponentPrim = null;
-        if (writer.ScalarErase)
-        {
-            var compType = writer.GetComponentPlatoType(typeName);
-            if (compType != null && CSharpWriter.ScalarPrimitives.TryGetValue(compType, out var compPrim))
-                scalarComponentPrim = compPrim;
-        }
+        if (writer.ScalarErase && compPlatoType != null
+            && CSharpWriter.ScalarPrimitives.TryGetValue(compPlatoType, out var compPrim))
+            scalarComponentPrim = compPrim;
+
+        // The semantic (pre-erasure) types the emission markers carry, so the type-directed writer
+        // and TirScalarLowerer see them like any other node. Best-effort: a null keeps the legacy
+        // string channels authoritative.
+        var componentType = compPlatoType == null ? null : writer.Compilation.GetTypeDef(compPlatoType)?.ToTypeExpression();
+        var constructedType = writer.Compilation.GetTypeDef(typeName)?.ToTypeExpression();
+        var boolType = writer.Compilation.GetTypeDef("Boolean")?.ToTypeExpression();
 
         switch (name)
         {
@@ -239,9 +244,9 @@ public static class TirComponentUnroller
             {
                 var args = fields
                     .Select(fd => Substitute(lambdaBody, lambdaParams,
-                        vecArgs.Select(v => Component(v, fd, castTo, scalarComponentPrim)).ToArray()))
+                        vecArgs.Select(v => Component(v, fd, castTo, scalarComponentPrim, componentType)).ToArray()))
                     .ToList();
-                return new TirConstructorCall(typeName, args);
+                return new TirConstructorCall(typeName, args, constructedType);
             }
 
             case "AllZipComponents":
@@ -252,9 +257,9 @@ public static class TirComponentUnroller
                 var op = name.StartsWith("All") ? "&&" : "||";
                 var terms = fields
                     .Select(fd => Substitute(lambdaBody, lambdaParams,
-                        vecArgs.Select(v => Component(v, fd, castTo, scalarComponentPrim)).ToArray()))
+                        vecArgs.Select(v => Component(v, fd, castTo, scalarComponentPrim, componentType)).ToArray()))
                     .ToList();
-                return terms.Count == 1 ? terms[0] : new TirBooleanChain(op, terms);
+                return terms.Count == 1 ? terms[0] : new TirBooleanChain(op, terms, boolType);
             }
 
             case "Reduce":
@@ -270,7 +275,7 @@ public static class TirComponentUnroller
 
                 var acc = init;
                 foreach (var fd in fields)
-                    acc = Substitute(lambdaBody, lambdaParams, new[] { acc, Component(vecArgs[0], fd, castTo, scalarComponentPrim) });
+                    acc = Substitute(lambdaBody, lambdaParams, new[] { acc, Component(vecArgs[0], fd, castTo, scalarComponentPrim, componentType) });
                 return acc;
             }
         }
@@ -278,8 +283,8 @@ public static class TirComponentUnroller
         return null;
     }
 
-    private static TirNode Component(TirNode receiver, string fieldName, string castTo, string scalarComponentPrim)
-        => new TirComponentAccess(receiver, fieldName, castTo, scalarComponentPrim);
+    private static TirNode Component(TirNode receiver, string fieldName, string castTo, string scalarComponentPrim, TypeExpression componentType)
+        => new TirComponentAccess(receiver, fieldName, castTo, scalarComponentPrim, componentType);
 
     /// <summary>Beta reduction: a copy of the lambda body with each reference to a lambda
     /// parameter replaced by the corresponding expression.</summary>
@@ -334,11 +339,11 @@ public static class TirComponentUnroller
             case TirLoop l:
                 return f(new TirLoop(Rewrite(l.Condition, f), Rewrite(l.Body, f), l.Origin));
             case TirComponentAccess ca:
-                return f(new TirComponentAccess(Rewrite(ca.Receiver, f), ca.FieldName, ca.CastTo, ca.ScalarComponentPrim));
+                return f(new TirComponentAccess(Rewrite(ca.Receiver, f), ca.FieldName, ca.CastTo, ca.ScalarComponentPrim, ca.Type));
             case TirConstructorCall cc:
-                return f(new TirConstructorCall(cc.TypeName, Rw(cc.Args)));
+                return f(new TirConstructorCall(cc.TypeName, Rw(cc.Args), cc.Type));
             case TirBooleanChain bc:
-                return f(new TirBooleanChain(bc.Op, Rw(bc.Terms)));
+                return f(new TirBooleanChain(bc.Op, Rw(bc.Terms), bc.Type));
             default:
                 return f(n); // leaves
         }

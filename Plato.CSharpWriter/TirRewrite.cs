@@ -81,11 +81,11 @@ public static class TirRewrite
             case TirLoop l:
                 return f(new TirLoop(Rewrite(l.Condition, f, enter, exit), Rewrite(l.Body, f, enter, exit), l.Origin));
             case TirComponentAccess ca:
-                return f(new TirComponentAccess(Rewrite(ca.Receiver, f, enter, exit), ca.FieldName, ca.CastTo, ca.ScalarComponentPrim));
+                return f(new TirComponentAccess(Rewrite(ca.Receiver, f, enter, exit), ca.FieldName, ca.CastTo, ca.ScalarComponentPrim, ca.Type));
             case TirConstructorCall cc:
-                return f(new TirConstructorCall(cc.TypeName, Rw(cc.Args)));
+                return f(new TirConstructorCall(cc.TypeName, Rw(cc.Args), cc.Type));
             case TirBooleanChain bc:
-                return f(new TirBooleanChain(bc.Op, Rw(bc.Terms)));
+                return f(new TirBooleanChain(bc.Op, Rw(bc.Terms), bc.Type));
             default:
                 return f(n); // leaves
         }
