@@ -162,8 +162,11 @@ namespace Ara3D.Geometry.Compiler.Checking
                     continue;
                 // Only ground-concrete-vs-ground-concrete NAME mismatches are hard: a var / Self /
                 // interface / type-parameter on either side is a legitimate wildcard the reifier or
-                // C#'s implicit conversions absorb.
-                if (IsGroundConcrete(pt) && IsGroundConcrete(at) && !TypeNameEq(pt, at))
+                // C#'s implicit conversions absorb. A SCALAR argument at a concrete non-scalar
+                // parameter is a broadcast (Number -> Vector3) — a real implicit conversion the
+                // runtime supports and the writer restores at the emit boundary — not a mismatch.
+                if (IsGroundConcrete(pt) && IsGroundConcrete(at) && !TypeNameEq(pt, at)
+                    && !IsScalarBroadcast(at, pt))
                     Add(TirVerifyRule.R4_ArgParamMismatch, scope, $"{call.Name}: arg {at} vs param {pt}");
             }
         }
@@ -206,6 +209,16 @@ namespace Ara3D.Geometry.Compiler.Checking
                && !ContainsKind(t, TypeKind.TypeVariable)
                && !ContainsKind(t, TypeKind.TypeParameter)
                && !ContainsKind(t, TypeKind.SelfType);
+
+        private static readonly HashSet<string> ScalarWrapperNames = new HashSet<string>
+            { "Number", "Integer", "Boolean", "Character", "String" };
+
+        /// <summary>A scalar wrapper argument at a non-scalar concrete parameter — an implicit
+        /// broadcast (<c>Number</c> → <c>Vector3</c>) the runtime supports, not a hard mismatch.</summary>
+        private static bool IsScalarBroadcast(TypeExpression at, TypeExpression pt)
+            => at?.Def != null && pt?.Def != null
+               && ScalarWrapperNames.Contains(at.Def.Name)
+               && !ScalarWrapperNames.Contains(pt.Def.Name);
 
         private static bool TypeNameEq(TypeExpression a, TypeExpression b)
             => (a?.ToString() ?? "∅") == (b?.ToString() ?? "∅");

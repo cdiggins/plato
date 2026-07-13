@@ -241,6 +241,29 @@ namespace Ara3D.Geometry.Compiler.Checking
             var type = _sub.Apply(call.Type);
             var args = SpecializeNodes(call.Args);
 
+            // Ground a Self-refined CONCEPT parameter to the concrete argument type. A concept method
+            // records every Self position as its owning interface (Add's parameters as IArithmetic);
+            // once the arguments are concrete, that interface IS the Self type here, so leaving it
+            // abstract keeps the writer from telling a genuine vector broadcast
+            // (`Vector2.Add((Number)3f)`) from a purely scalar operation (the same body reified onto
+            // Number). Ground each self-constrained-interface parameter from its argument — using the
+            // receiver's concrete type for a scalar broadcast argument (all Self positions are one
+            // type) and wrapping that scalar argument in an explicit broadcast coercion so the TIR
+            // stays type-consistent. This is the concrete-parameter fidelity the scalar-lowering pass
+            // relies on.
+            ps = GroundConceptParameters(ps, args);
+
+            // Ground a Self-refined RETURN / value type (also recorded as the owning concept
+            // interface — `Multiply(self, other): Self`) to the receiver's concrete type. Without
+            // this the result of a scalar operation like `t.Multiply(t)` stays typed as its interface,
+            // and an enclosing call then reads a non-scalar receiver and mis-broadcasts it.
+            var recvType = args != null && args.Count > 0 ? args[0]?.Type : null;
+            if (recvType?.Def != null && recvType.Def.IsConcrete() && TypeSubstitution.IsGround(recvType))
+            {
+                if (IsSelfConstrainedInterface(ret)) ret = recvType;
+                if (IsSelfConstrainedInterface(type)) type = recvType;
+            }
+
             var callee = call.Callee;
 
             // Concept re-dispatch (direct case only): a call whose callee is an abstract concept
@@ -263,6 +286,45 @@ namespace Ara3D.Geometry.Compiler.Checking
             }
 
             return new TirCall(callee, call.EmissionKind, ps, ret, args, type, call.Origin, call.Name);
+        }
+
+        private static bool IsSelfConstrainedInterface(TypeExpression t)
+            => t?.Def != null && t.Def.IsInterface() && t.Def.IsSelfConstrained();
+
+        private static readonly HashSet<string> ScalarWrapperNames = new HashSet<string>
+            { "Number", "Integer", "Boolean", "Character", "String" };
+
+        /// <summary>Replace each Self-refined concept parameter type (a self-constrained interface,
+        /// left abstract by the checker's Self machinery) with the concrete type it denotes at this
+        /// call: the argument's own concrete type, or — for a scalar argument being broadcast — the
+        /// receiver's concrete type (every Self position shares one type). Only the parameter TYPE is
+        /// sharpened; the scalar broadcast itself stays IMPLICIT (no inserted coercion), because a
+        /// broadcast coercion node interacts badly with the downstream component unroller — the writer
+        /// restores the wrapper at the (post-unroll) emit boundary instead. Non-concept parameters and
+        /// non-ground arguments are left untouched, so this only ever sharpens the signature.</summary>
+        private IReadOnlyList<TypeExpression> GroundConceptParameters(
+            IReadOnlyList<TypeExpression> ps, IReadOnlyList<TirNode> args)
+        {
+            if (ps == null || args == null)
+                return ps;
+            var recv = args.Count > 0 ? args[0]?.Type : null;
+            var recvBroadcast = recv?.Def != null && recv.Def.IsConcrete()
+                && !ScalarWrapperNames.Contains(recv.Def.Name) && TypeSubstitution.IsGround(recv);
+            TypeExpression[] grounded = null;
+            for (var i = 0; i < ps.Count && i < args.Count; i++)
+            {
+                var p = ps[i];
+                if (p?.Def == null || !p.Def.IsInterface() || !p.Def.IsSelfConstrained())
+                    continue;
+                var at = args[i]?.Type;
+                if (at?.Def == null || !at.Def.IsConcrete() || !TypeSubstitution.IsGround(at))
+                    continue;
+                // A scalar argument at a self-constrained-interface parameter is a broadcast: its
+                // target is the receiver's (concrete non-scalar) type, not its own scalar type.
+                grounded ??= ps.ToArray();
+                grounded[i] = ScalarWrapperNames.Contains(at.Def.Name) && recvBroadcast ? recv : at;
+            }
+            return grounded ?? ps;
         }
 
         // --- residual grounding ----------------------------------------------------

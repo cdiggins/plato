@@ -82,14 +82,27 @@ public static class TirScalarLowerer
         {
             if (!(n is TirCall call) || call.ParameterTypes == null || call.Args.Count == 0)
                 return n;
+            // A call whose RECEIVER (arg 0) is itself an erased scalar is a purely scalar operation —
+            // e.g. an inlined `float.Multiply(float)` (t*t from Pow3) whose call node still carries a
+            // loose vector/interface parameter type. Broadcasting its arguments to (Number) would turn
+            // that into an ambiguous `Number.Multiply(Vector2|Vector8)`. Strip any wrapper tag the
+            // inliner left on the receiver before deciding. A genuine scalar-receiver broadcast
+            // (`0.5 * vector`) has a NON-scalar argument, which is never wrapped here anyway.
+            var recv0 = TirRewrite.StripCoerce(call.Args[0])?.Type;
+            if (recv0?.Def != null && CSharpWriter.ScalarPrimitives.ContainsValue(recv0.Def.Name))
+                return n;
             List<TirNode> newArgs = null;
             for (var i = 0; i < call.Args.Count; i++)
             {
                 var pt = i < call.ParameterTypes.Count ? call.ParameterTypes[i] : null;
                 if (pt?.Def == null || CSharpWriter.ScalarPrimitives.ContainsValue(pt.Def.Name))
                     continue; // scalar param: phase A handled it
+                // Only a CONCRETE struct/primitive parameter carries a Number-sourced broadcast we
+                // can pin. An interface parameter (INumerical) is not grounded to its concrete type
+                // here, so a scalar argument at one is instead routed to the legacy path by
+                // IsGroundBody (which cannot tell a vector broadcast from a scalar operation).
                 if (pt.Def.Kind != TypeKind.ConcreteType && pt.Def.Kind != TypeKind.Primitive)
-                    continue; // generic / interface / Self: no concrete broadcast to satisfy
+                    continue;
                 var arg = call.Args[i];
                 if (arg is TirCoerce)
                     continue;
@@ -142,17 +155,60 @@ public static class TirScalarLowerer
                 for (var i = 0; i < call.Args.Count && i < call.ParameterTypes.Count; i++)
                 {
                     var pt = call.ParameterTypes[i];
-                    if (pt?.Def == null || !IsScalarWrapperName(pt.Def.Name))
+                    if (pt?.Def == null)
                         continue;
-                    var at = TirRewrite.StripCoerce(call.Args[i])?.Type;
-                    if (at?.Def != null && !IsScalarWrapperName(at.Def.Name)
-                        && !CSharpWriter.ScalarPrimitives.ContainsValue(at.Def.Name)
-                        && at.Def.Kind != TypeKind.TypeVariable && at.Def.Kind != TypeKind.TypeParameter)
-                        return false; // scalar param, concrete non-scalar arg: loose typing
+                    if (IsScalarWrapperName(pt.Def.Name))
+                    {
+                        var at = TirRewrite.StripCoerce(call.Args[i])?.Type;
+                        if (at?.Def != null && !IsScalarWrapperName(at.Def.Name)
+                            && !CSharpWriter.ScalarPrimitives.ContainsValue(at.Def.Name)
+                            && at.Def.Kind != TypeKind.TypeVariable && at.Def.Kind != TypeKind.TypeParameter)
+                            return false; // scalar param, concrete non-scalar arg: loose typing
+                    }
+                    // A scalar argument at an INTERFACE parameter (INumerical) is a broadcast whose
+                    // concrete target the monomorphizer did not ground here — the lowered path cannot
+                    // tell a genuine vector broadcast (`Vector2.Add((Number)3f)`) from a purely scalar
+                    // operation (INumerical reified onto Number). Route the whole body to the legacy
+                    // ScalarEraseAnalysis path, which decides from the origin symbols.
+                    else if (pt.Def.Kind == TypeKind.Interface)
+                    {
+                        var at = TirRewrite.StripCoerce(call.Args[i])?.Type;
+                        if (at?.Def != null && (IsScalarWrapperName(at.Def.Name)
+                            || CSharpWriter.ScalarPrimitives.ContainsValue(at.Def.Name)))
+                            return false;
+                    }
+                }
+            // Corrupted scalar operation: a call whose RECEIVER is scalar yet carries a scalar
+            // argument at a concrete NON-scalar parameter. This is a scalar op (`t.Multiply(t)`)
+            // whose recorded signature was inherited from a vector-generic body it was inlined from
+            // (Pow3 spliced into a Vector-reified Hermite). Broadcasting its scalar arguments would
+            // emit an ambiguous `Number.Multiply(Vector2|Vector8)`; route the body to the legacy path.
+            if (n is TirCall sc && sc.Args.Count > 1 && sc.ParameterTypes != null && IsScalarType(Recv(sc)))
+                for (var i = 1; i < sc.Args.Count && i < sc.ParameterTypes.Count; i++)
+                {
+                    var pt = sc.ParameterTypes[i];
+                    if (pt?.Def == null || IsScalarWrapperName(pt.Def.Name)
+                        || CSharpWriter.ScalarPrimitives.ContainsValue(pt.Def.Name))
+                        continue;
+                    if (pt.Def.Kind != TypeKind.ConcreteType && pt.Def.Kind != TypeKind.Primitive)
+                        continue;
+                    var at = TirRewrite.StripCoerce(sc.Args[i])?.Type;
+                    if (at?.Def != null && (IsScalarWrapperName(at.Def.Name)
+                        || CSharpWriter.ScalarPrimitives.ContainsValue(at.Def.Name)))
+                        return false; // scalar receiver + scalar arg at a vector param: corrupted
                 }
         }
         return true;
     }
+
+    // The (coercion-stripped) type of a call's receiver argument.
+    private static TypeExpression Recv(TirCall c)
+        => c.Args.Count > 0 ? TirRewrite.StripCoerce(c.Args[0])?.Type : null;
+
+    // A definitely-scalar type (wrapper or erased primitive) — null/unknown is NOT scalar here.
+    private static bool IsScalarType(TypeExpression t)
+        => t?.Def != null
+           && (IsScalarWrapperName(t.Def.Name) || CSharpWriter.ScalarPrimitives.ContainsValue(t.Def.Name));
 
     // Nodes whose erased rendering depends on knowing their type. Statements, bare names, type
     // references, lets and the `default` keyword carry no value type and are exempt.
@@ -168,13 +224,16 @@ public static class TirScalarLowerer
     {
         if (tir?.Body == null)
             return false;
+        // Only an erased PRIMITIVE (float/int/…) proves the pass ran. A wrapper-named coercion
+        // (`coerce<Number→Number>`) is NOT a lowering artifact — the inliner emits such tags into
+        // ordinary un-lowered bodies, and matching them here would flip the printer into type-directed
+        // mode on a body routed to the legacy path (rendering the tag as an ambiguous `(Number)`).
         foreach (var n in tir.AllNodes)
         {
             if (n?.Type?.Def != null && CSharpWriter.ScalarPrimitives.ContainsValue(n.Type.Def.Name))
                 return true;
             if (n is TirCoerce co && co.ToType?.Def != null
-                && (CSharpWriter.ScalarPrimitives.ContainsValue(co.ToType.Def.Name)
-                    || CSharpWriter.ScalarPrimitives.ContainsKey(co.ToType.Def.Name)))
+                && CSharpWriter.ScalarPrimitives.ContainsValue(co.ToType.Def.Name))
                 return true;
         }
         return false;

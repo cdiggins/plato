@@ -181,7 +181,7 @@ namespace Ara3D.Geometry.CSharpWriter
         // bodies (all 974 CS0121 overload ambiguities eliminated) but generic STATIC library bodies
         // still lack node types, so a handful of second-order casts are wrong there; enabling this
         // waits on typing static bodies (or routing them through the legacy path). See the plan.
-        public bool UseScalarLowering;
+        public bool UseScalarLowering = true;
 
         // The scalar wrapper types --scalar=float erases, and their native primitives. This is
         // deliberately NOT CSharpWriter.PrimitiveTypes: Angle (and every other struct) remains a

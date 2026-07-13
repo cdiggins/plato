@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler.Symbols;
 
 namespace Ara3D.Geometry.Compiler.Checking
@@ -27,9 +28,26 @@ namespace Ara3D.Geometry.Compiler.Checking
             var vars = new TypeVarFactory();
             var generator = new ConstraintGenerator(Compilation, vars);
             var system = generator.Generate(normalized);
-            var solver = new Solver(Compilation, vars);
+            var solver = new Solver(Compilation, vars) { RigidVars = SignatureVars(f) };
             solver.Solve(system);
             return new TypeCheckResult(f, normalized, system, solver);
+        }
+
+        /// <summary>The names of a function's own signature type variables ($T, $D) — the ones that
+        /// are universally quantified in its body and must stay rigid during overload matching.</summary>
+        private static HashSet<string> SignatureVars(FunctionDef f)
+        {
+            var set = new HashSet<string>();
+            void Collect(TypeExpression t)
+            {
+                if (t?.Def == null) return;
+                if (t.Def.Kind == TypeKind.TypeVariable) set.Add(t.Name);
+                foreach (var a in t.TypeArgs) Collect(a);
+            }
+            foreach (var p in f.Parameters ?? Enumerable.Empty<ParameterDef>())
+                Collect(p.Type);
+            Collect(f.ReturnType);
+            return set;
         }
 
         /// <summary>Check every function with a body and return the per-function results.</summary>

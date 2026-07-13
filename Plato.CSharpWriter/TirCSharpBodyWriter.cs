@@ -384,12 +384,26 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     // boundary (float -> Number -> Vector2, which C# will not chain implicitly).
                     // Both render as explicit casts; any other coercion is a C# implicit conversion.
                     var to = c.ToType?.Name;
+                    var innerPrim = c.Inner?.Type?.Def?.Name;
+                    // A C# cast binds tighter than `?:` / assignment, so a low-precedence inner
+                    // (a conditional) must be re-parenthesized: ((int)(cond ? a : b)), never
+                    // ((int)cond ? a : b) — the latter casts the CONDITION.
+                    var innerParens = c.Inner is TirConditional || c.Inner is TirAssign;
                     if (to != null && (CSharpWriter.ScalarPrimitives.ContainsValue(to) || CSharpWriter.ScalarPrimitives.ContainsKey(to))
                         && !IsSameScalarCast(c.Inner, to))
                     {
-                        Write($"(({to})");
-                        WriteNode(c.Inner);
-                        Write(")");
+                        WriteScalarCast(to, c.Inner, innerParens);
+                    }
+                    else if (c.ToType?.Def?.Kind == Ara3D.Geometry.AST.TypeKind.ConcreteType
+                        && innerPrim != null && CSharpWriter.ScalarPrimitives.ContainsValue(innerPrim))
+                    {
+                        // A BROADCAST coercion: a scalar value (float) to a CONCRETE struct target
+                        // (Number -> Vector3). C# will not chain float -> Number -> Vector3, so
+                        // restore the WRAPPER cast; the runtime's Number-sourced broadcast operator
+                        // then applies (`((Number)(0f))` at CreateWorld's Vector3 position). Only a
+                        // concrete target is pinned here — a scalar at an ungrounded INTERFACE target
+                        // is routed to the legacy path by TirScalarLowerer.IsGroundBody.
+                        WriteScalarCast(WrapperOfPrim(innerPrim), c.Inner, innerParens);
                     }
                     else
                     {
@@ -635,6 +649,22 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // makes an enclosing cast to it redundant (collapses `((float)((float)x))` -> `((float)x)`).
     private static bool IsSameScalarCast(TirNode inner, string prim)
         => inner is TirCoerce c && c.ToType?.Name == prim;
+
+    // Render `(({cast})inner)`, parenthesizing a low-precedence inner (a conditional would
+    // otherwise bind the cast to its condition — see the TirCoerce case).
+    private void WriteScalarCast(string cast, TirNode inner, bool innerParens)
+    {
+        Write($"(({cast})");
+        if (innerParens) Write("(");
+        WriteNode(inner);
+        if (innerParens) Write(")");
+        Write(")");
+    }
+
+    // The scalar WRAPPER for an erased primitive (float -> Number) — used to restore wrapper-ness at
+    // a broadcast boundary where C# will not chain float -> Number -> {struct} implicitly.
+    private static string WrapperOfPrim(string prim)
+        => CSharpWriter.ScalarPrimitives.FirstOrDefault(kv => kv.Value == prim).Key;
 
     private void WriteCall(TirCall call)
     {

@@ -36,6 +36,15 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <see cref="CommitCandidate"/>; ambiguous / no-match calls are absent.</summary>
         public Dictionary<FunctionCall, ResolvedCall> ResolvedCalls { get; } = new Dictionary<FunctionCall, ResolvedCall>();
 
+        /// <summary>Names of the checked function's own signature type variables ($T, $D). These are
+        /// universally quantified in the body and must not absorb a concrete type during trial
+        /// matching (see the rigidity handling in <see cref="Unify"/>). Set per function by the
+        /// <see cref="TypeChecker"/>; empty (nothing rigid) by default.</summary>
+        public HashSet<string> RigidVars { get; set; } = new HashSet<string>();
+
+        private bool IsRigid(TypeExpression t)
+            => t?.Def != null && t.Def.Kind == TypeKind.TypeVariable && RigidVars.Contains(t.Name);
+
         private readonly TypeVarFactory _vars;
         private const int MaxDepth = 512;
 
@@ -660,10 +669,30 @@ namespace Ara3D.Geometry.Compiler.Checking
 
             if (IsVar(a) && IsVar(b) && a.Name == b.Name)
                 return true;
-            if (IsVar(a))
+
+            // A signature type variable ($T from the generic function under check) is RIGID during
+            // trial / best-effort matching (record == false): it is universally quantified in the
+            // body and must never absorb a concrete type there. Otherwise a call whose argument is
+            // that bare $T (`value.Between(x.Min, x.Max)` with value: $T) commits to the scalar
+            // Between(Number,…) overload by binding $T := Number, which then poisons the whole body's
+            // view of $T — the emitted C# casts a Point2D to (float). Left free, the call binds the
+            // concept overload instead and monomorphization grounds $T to the concrete type.
+            // Rigidity is lifted for record == true (Phase-1 equalities and the committed
+            // result-unify), and flexible variables still bind toward a rigid one.
+            var aRigid = !record && IsRigid(a);
+            var bRigid = !record && IsRigid(b);
+            if (IsVar(a) && !aRigid)
                 return Bind(a, b, sub, origin, record);
-            if (IsVar(b))
+            if (IsVar(b) && !bRigid)
                 return Bind(b, a, sub, origin, record);
+            if (IsVar(a) || IsVar(b))
+            {
+                // A rigid variable remains on at least one side. It is still compatible with Self
+                // (which the reifier substitutes), but not with a concrete type at trial time.
+                if (a.Def?.Kind == TypeKind.SelfType || b.Def?.Kind == TypeKind.SelfType)
+                    return true;
+                return false;
+            }
 
             // `Self` is compatible with anything: it is a placeholder the reifier replaces with
             // the concrete type a function is stamped onto, so at generic-check time both
