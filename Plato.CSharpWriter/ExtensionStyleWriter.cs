@@ -336,8 +336,8 @@ public static class ExtensionStyleWriter
                     $"No ground TIR for moved member {m.LibraryName}.{fi.Name}; "
                     + "the legacy body writer was removed (consolidation plan C4).");
             writer.TirBodiesEmitted++;
-            tir = writer.RunOptimizerPasses(tir, fi);
-            tw.Write(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi).ToString());
+            tir = writer.RunOptimizerPasses(tir, fi, true, out var lowered);
+            tw.Write(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi, lowered: lowered).ToString());
             writer.WriteWithLineStateSync(tw.ToString());
         }
 

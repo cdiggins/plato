@@ -526,8 +526,8 @@ namespace Ara3D.Geometry.CSharpWriter
                             $"No ground TIR for scalar-erased {SimpleName}.{fi.Name}; "
                             + "the legacy body writer was removed (consolidation plan C4).");
                     Writer.TirBodiesEmitted++;
-                    tir = Writer.RunOptimizerPasses(tir, fi);
-                    tw.WriteWithLineStateSync(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi).ToString());
+                    tir = Writer.RunOptimizerPasses(tir, fi, true, out var lowered);
+                    tw.WriteWithLineStateSync(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi, lowered: lowered).ToString());
                     AddBridge(fi);
                 }
                 else if (fi.IsOperator)

@@ -235,8 +235,8 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
                 $"No ground TIR for bodied {(TypeDef != null ? TypeDef.Name + "." : "")}{f.Name}; "
                 + "the legacy body writer was removed (consolidation plan C4).");
         Writer.TirBodiesEmitted++;
-        tir = Writer.RunOptimizerPasses(tir, f, lowerScalars: isMember);
-        return WriteBodyText(new TirCSharpBodyWriter(this, tir, isStatic: !isMember, f).ToString());
+        tir = Writer.RunOptimizerPasses(tir, f, isMember, out var lowered);
+        return WriteBodyText(new TirCSharpBodyWriter(this, tir, isStatic: !isMember, f, lowered: lowered).ToString());
     }
 
     // Extension style fixes the V1 indentation quirk (see WriteWithLineStateSync);

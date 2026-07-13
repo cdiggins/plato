@@ -243,6 +243,15 @@ namespace Ara3D.Geometry.CSharpWriter
         /// body-emit site so the pass pipeline is defined once. With <see cref="TirDumpDir"/> set,
         /// records each phase that changed the tree (see the field comment).</summary>
         public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi, bool lowerScalars = true)
+            => RunOptimizerPasses(tir, fi, lowerScalars, out _);
+
+        /// <summary>As <see cref="RunOptimizerPasses(TirFunction, CSharpFunctionInfo, bool)"/>, also
+        /// reporting via <paramref name="lowered"/> whether the scalar-lowering pass actually RAN on
+        /// this body. That real per-body signal — not type-sniffing (<see cref="TirScalarLowerer.WasLowered"/>)
+        /// — is what tells the printer to render type-directed: a SCALAR-FREE ground body lowers to an
+        /// (unchanged) tree with no erased primitive, yet must still render type-directed so the legacy
+        /// <see cref="ScalarEraseAnalysis"/> path can be retired.</summary>
+        public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi, bool lowerScalars, out bool lowered)
         {
             // Scalar lowering (Mission 2) runs only on fully-typed GROUND MEMBER bodies. Static-emit
             // library bodies (lowerScalars=false) carry loosely-typed nodes and stay on the legacy
@@ -250,13 +259,14 @@ namespace Ara3D.Geometry.CSharpWriter
             bool ShouldLower(TirFunction t)
                 => ScalarErase && UseScalarLowering && lowerScalars && TirScalarLowerer.IsGroundBody(t);
 
+            lowered = false;
             if (TirDumpDir == null)
             {
                 tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _);
                 tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
                 tir = TirArrayMaterializer.Rewrite(tir, this);
                 tir = TirLoopLowerer.Rewrite(tir, this);
-                if (ShouldLower(tir)) tir = TirScalarLowerer.LowerWithCoercions(tir);
+                if (ShouldLower(tir)) { tir = TirScalarLowerer.LowerWithCoercions(tir); lowered = true; }
                 return tir;
             }
 

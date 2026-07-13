@@ -67,7 +67,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     private string _pendingLambdaParamPrim;
 
     public TirCSharpBodyWriter(CSharpTypeWriter tw, TirFunction tir, bool isStatic = false,
-        CSharpFunctionInfo fi = null, string lambdaParamPrim = null)
+        CSharpFunctionInfo fi = null, string lambdaParamPrim = null, bool lowered = false)
     {
         IndentLevel = tw.IndentLevel;
         _tw = tw;
@@ -75,8 +75,14 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         _selfType = tw.SelfType;
         _isStatic = isStatic;
         _fi = fi;
-        _lowered = tw.Writer.ScalarErase && tw.Writer.UseScalarLowering && TirScalarLowerer.WasLowered(tir);
-        // Legacy float-land path (every scalar recipe until UseScalarLowering is the default).
+        // Type-directed rendering is keyed off whether the scalar-lowering pass actually RAN on
+        // this body (threaded from RunOptimizerPasses), NOT off type-sniffing the result: a
+        // scalar-FREE ground body lowers to a tree with no erased primitive yet must still render
+        // type-directed (it has no scalar decisions, so the type-directed printer renders it
+        // identically to legacy — proving the ScalarEraseAnalysis path is redundant there).
+        _lowered = lowered;
+        // Legacy float-land path (bodies the scalar-lowering pass did not run on: generic static
+        // library bodies with loosely-typed nodes).
         if (tw.Writer.ScalarErase && !_lowered && fi != null)
             _scalar = new ScalarEraseAnalysis(tw, fi.Function.Implementation, fi.ParameterTypes, lambdaParamPrim);
         WriteFunctionBody();
