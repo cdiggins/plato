@@ -91,26 +91,6 @@ namespace Ara3D.Geometry.CSharpWriter
             foreach (var p in ExtensionPlans.Values)
                 keptNoArg.UnionWith(p.KeptNoArgPropertyNames);
 
-            // Scalar erasure: record every member-function name of the five scalar types (all of
-            // them become extension methods on the primitives; used for receiver-aware "()"),
-            // and the subset whose scalar overloads all return scalars (receiver-chain analysis).
-            if (ScalarErase)
-            {
-                ScalarMemberNames.UnionWith(HandwrittenScalarExtensionMethodNames);
-                foreach (var kv in ExtensionPlans)
-                {
-                    if (!ScalarPrimitives.ContainsKey(kv.Key.Name))
-                        continue;
-                    ScalarMemberNames.UnionWith(kv.Value.NoArgMemberFunctionNames);
-                    foreach (var sig in kv.Value.MemberFunctionSignatures)
-                    {
-                        if (!ScalarOverloads.TryGetValue(sig.Key, out var list))
-                            ScalarOverloads[sig.Key] = list = new List<(IReadOnlyList<string>, string)>();
-                        list.AddRange(sig.Value);
-                    }
-                }
-            }
-
             // Property-ful (non-NoProperties) extension style only: interface-declared no-arg
             // members are C# interface properties, so their names keep property syntax everywhere.
             // Under --no-properties interfaces declare METHODS, so nothing is seeded here.
@@ -174,15 +154,6 @@ namespace Ara3D.Geometry.CSharpWriter
         // Requires ExtensionStyle. Default (false) output is byte-identical to the original.
         public bool ScalarErase;
 
-        // Mission 2 (docs/plato-tir-scalar-lowering-plan): when true (with ScalarErase), scalar
-        // erasure runs as the TirScalarLowerer PASS (type substitution + overload-disambiguating and
-        // broadcast coercion insertion) and TirCSharpBodyWriter renders type-directed from the
-        // lowered TIR — no ScalarEraseAnalysis. OFF BY DEFAULT: the pass is proven on ground member
-        // bodies (all 974 CS0121 overload ambiguities eliminated) but generic STATIC library bodies
-        // still lack node types, so a handful of second-order casts are wrong there; enabling this
-        // waits on typing static bodies (or routing them through the legacy path). See the plan.
-        public bool UseScalarLowering = true;
-
         // The scalar wrapper types --scalar=float erases, and their native primitives. This is
         // deliberately NOT CSharpWriter.PrimitiveTypes: Angle (and every other struct) remains a
         // real type - only the five scalar wrappers erase.
@@ -193,32 +164,6 @@ namespace Ara3D.Geometry.CSharpWriter
             { "Boolean", "bool" },
             { "Character", "char" },
             { "String", "string" },
-        };
-
-        // Scalar erasure only (empty otherwise): every member-function name of the five scalar
-        // types. Under erasure these all exist as classic extension methods on the primitives,
-        // so a no-arg access on a receiver the writer can prove scalar-valued must be written
-        // with "()" even if the same name is a kept property on some non-scalar type.
-        public HashSet<string> ScalarMemberNames { get; } = new HashSet<string>();
-
-        // Scalar erasure only (empty otherwise): declared Plato signatures of the five scalar
-        // types' member functions, by name. Drives the body writer's receiver/argument
-        // analysis: a member call whose receiver and arguments are provably scalar binds an
-        // all-scalar-parameter overload (exact match beats any conversion), so its result type
-        // is that overload's (scalar) return - this lets the analysis chase chains like
-        // "1f.Subtract(t).Sqr()".
-        public Dictionary<string, List<(IReadOnlyList<string> Params, string Return)>> ScalarOverloads { get; }
-            = new Dictionary<string, List<(IReadOnlyList<string>, string)>>();
-
-        // Handwritten no-arg extension methods over the scalar primitives in Plato.Intrinsics
-        // (compiler-invisible); their call sites need "()" on scalar receivers like everything
-        // else, so they are folded into ScalarMemberNames under erasure.
-        public static HashSet<string> HandwrittenScalarExtensionMethodNames = new HashSet<string>
-        {
-            "Range", // ArrayExtensions.Range(this int count)
-            // Handwritten Number property invisible to the compiler; the scalar path emits a
-            // hardwired float forwarder for it, so scalar call sites use method syntax.
-            "ReciprocalSquareRootEstimate",
         };
 
         // Count of member/static bodies emitted from the monomorphized TIR (Elaborate →
@@ -246,18 +191,17 @@ namespace Ara3D.Geometry.CSharpWriter
             => RunOptimizerPasses(tir, fi, lowerScalars, out _);
 
         /// <summary>As <see cref="RunOptimizerPasses(TirFunction, CSharpFunctionInfo, bool)"/>, also
-        /// reporting via <paramref name="lowered"/> whether the scalar-lowering pass actually RAN on
-        /// this body. That real per-body signal — not type-sniffing (<see cref="TirScalarLowerer.WasLowered"/>)
-        /// — is what tells the printer to render type-directed: a SCALAR-FREE ground body lowers to an
-        /// (unchanged) tree with no erased primitive, yet must still render type-directed so the legacy
-        /// <see cref="ScalarEraseAnalysis"/> path can be retired.</summary>
+        /// reporting via <paramref name="lowered"/> whether <see cref="TirScalarLowerer"/> actually RAN
+        /// on this body. That real per-body signal is what tells <see cref="TirCSharpBodyWriter"/> to
+        /// render type-directed — including a SCALAR-FREE body, which lowers to an (unchanged) tree with
+        /// no erased primitive yet still renders type-directed (there being no legacy fallback).</summary>
         public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi, bool lowerScalars, out bool lowered)
         {
-            // Scalar lowering (Mission 2) runs only on fully-typed GROUND MEMBER bodies. Static-emit
-            // library bodies (lowerScalars=false) carry loosely-typed nodes and stay on the legacy
-            // ScalarEraseAnalysis path; a non-ground body likewise.
+            // Scalar lowering runs on every scalar-erased body IsGroundBody accepts — with static-body
+            // lowering (lowerScalars is true at all emit sites now) that is every emitted body. The
+            // `lowered` flag it reports is the printer's type-directed signal (no legacy fallback).
             bool ShouldLower(TirFunction t)
-                => ScalarErase && UseScalarLowering && lowerScalars && TirScalarLowerer.IsGroundBody(t);
+                => ScalarErase && lowerScalars && TirScalarLowerer.IsGroundBody(t);
 
             lowered = false;
             if (TirDumpDir == null)
@@ -287,6 +231,7 @@ namespace Ara3D.Geometry.CSharpWriter
             tir = TirComponentUnroller.UnrollFunction(tir, fi, this);  Phase("optimize / component-unroll (layer 8)", tir);
             tir = TirArrayMaterializer.Rewrite(tir, this);            Phase("optimize-arrays / materialize (layer 9)", tir);
             tir = TirLoopLowerer.Rewrite(tir, this);                  Phase("loops / lower (layer 10)", tir);
+            if (ShouldLower(tir)) { tir = TirScalarLowerer.LowerWithCoercions(tir); lowered = true; Phase("scalar-lower (layer 10.5)", tir); }
             sb.AppendLine();
             return tir;
         }

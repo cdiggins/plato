@@ -7,9 +7,9 @@ using Ara3D.Geometry.Compiler.Symbols;
 namespace Ara3D.Geometry.CSharpWriter;
 
 /// <summary>
-/// Mission 2 of the scalar-lowering endgame (docs/plato-tir-scalar-lowering-plan): make
-/// <c>--scalar</c> erasure a real TIR lowering pass instead of the emit-time
-/// <see cref="ScalarEraseAnalysis"/>. This file is the SUBSTITUTION core — it rewrites the five
+/// Mission 2 of the scalar-lowering endgame (docs/plato-tir-scalar-lowering-plan): <c>--scalar</c>
+/// erasure as a real TIR lowering pass (it replaced the emit-time scalar analysis, deleted at S3).
+/// This file is the SUBSTITUTION core — it rewrites the five
 /// scalar wrapper types (<c>Number/Integer/Boolean/Character/String</c>) to their C# primitives
 /// (<c>float/int/bool/char/string</c>) in every <see cref="TypeExpression"/> reachable from a
 /// monomorphized <see cref="TirFunction"/>: each node's <see cref="TirNode.Type"/>, a
@@ -130,8 +130,9 @@ public static class TirScalarLowerer
     /// <c>AllQuadFaceIndices</c>) are decidable. An untyped ZERO-ARG call (a bare constant reference
     /// like <c>Pi()</c> whose node the static elaboration leaves untyped) is also allowed: it renders
     /// through the type-independent <c>Constants.X()</c> path, so its missing type is harmless. Any
-    /// OTHER untyped value node still routes the body to the legacy <see cref="ScalarEraseAnalysis"/>
-    /// path (the coercion insertion cannot tell a scalar from a non-scalar there).</summary>
+    /// OTHER untyped value node makes the body un-lowerable (the coercion insertion cannot tell a
+    /// scalar from a non-scalar there); under scalar erasure that now throws at emit — see
+    /// <see cref="TirCSharpBodyWriter"/> — since there is no legacy fallback.</summary>
     public static bool IsGroundBody(TirFunction tir)
     {
         if (tir?.Body == null)
@@ -211,28 +212,6 @@ public static class TirScalarLowerer
         => !(n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop
              || n is TirName || n is TirTypeRef || n is TirLet || n is TirDefault
              || n is TirUnresolved || n is TirConstructorCall || n is TirBooleanChain);
-
-    /// <summary>Whether <paramref name="tir"/> has already been scalar-lowered — any node type
-    /// names an erased primitive (a non-lowered body would name the wrapper). The printer keys its
-    /// type-directed mode off this, so it can never disagree with what the pass actually did.</summary>
-    public static bool WasLowered(TirFunction tir)
-    {
-        if (tir?.Body == null)
-            return false;
-        // Only an erased PRIMITIVE (float/int/…) proves the pass ran. A wrapper-named coercion
-        // (`coerce<Number→Number>`) is NOT a lowering artifact — the inliner emits such tags into
-        // ordinary un-lowered bodies, and matching them here would flip the printer into type-directed
-        // mode on a body routed to the legacy path (rendering the tag as an ambiguous `(Number)`).
-        foreach (var n in tir.AllNodes)
-        {
-            if (n?.Type?.Def != null && CSharpWriter.ScalarPrimitives.ContainsValue(n.Type.Def.Name))
-                return true;
-            if (n is TirCoerce co && co.ToType?.Def != null
-                && CSharpWriter.ScalarPrimitives.ContainsValue(co.ToType.Def.Name))
-                return true;
-        }
-        return false;
-    }
 
     /// <summary>Whether a type is a scalar (wrapper or already-erased primitive) or unknown — the
     /// only cases where casting an argument to a scalar parameter is meaningful. A known non-scalar

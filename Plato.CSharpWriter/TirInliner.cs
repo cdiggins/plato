@@ -230,9 +230,10 @@ public static class TirInliner
         {
             var arg = call.Args[i];
             // Tag the substituted argument with the callee's zonked SCALAR parameter type via a
-            // transparent TirCoerce: the callee body's origins point at generic parameters, so
-            // the emitter's scalar analysis cannot see that this position is (say) Number — the
-            // tag carries it (TirCSharpBodyWriter.AuthoritativePrim reads it back).
+            // transparent TirCoerce, so the scalar-lowering pass (TirScalarLowerer) sees an explicit
+            // scalar-boundary coercion here — the callee body's origins point at generic parameters,
+            // so this position's Number-ness would otherwise be invisible after inlining. The lowerer
+            // treats an already-coerced argument as the disambiguating cast (it does not double-wrap).
             var resolvedName = ResolvedParamTypeName(writer, calleeTir, paramDefs, i, receiverTypeName);
             if (resolvedName != null && CSharpWriter.ScalarPrimitives.ContainsKey(resolvedName)
                 && !(arg is TirCoerce))
