@@ -242,15 +242,21 @@ namespace Ara3D.Geometry.CSharpWriter
         /// array-materialize → loop-lower) and returns the transformed function. Shared by every
         /// body-emit site so the pass pipeline is defined once. With <see cref="TirDumpDir"/> set,
         /// records each phase that changed the tree (see the field comment).</summary>
-        public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi)
+        public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi, bool lowerScalars = true)
         {
+            // Scalar lowering (Mission 2) runs only on fully-typed GROUND MEMBER bodies. Static-emit
+            // library bodies (lowerScalars=false) carry loosely-typed nodes and stay on the legacy
+            // ScalarEraseAnalysis path; a non-ground body likewise.
+            bool ShouldLower(TirFunction t)
+                => ScalarErase && UseScalarLowering && lowerScalars && TirScalarLowerer.IsGroundBody(t);
+
             if (TirDumpDir == null)
             {
                 tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _);
                 tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
                 tir = TirArrayMaterializer.Rewrite(tir, this);
                 tir = TirLoopLowerer.Rewrite(tir, this);
-                if (ScalarErase && UseScalarLowering) tir = TirScalarLowerer.LowerWithCoercions(tir);
+                if (ShouldLower(tir)) tir = TirScalarLowerer.LowerWithCoercions(tir);
                 return tir;
             }
 

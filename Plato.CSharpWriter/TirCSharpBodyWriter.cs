@@ -75,7 +75,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         _selfType = tw.SelfType;
         _isStatic = isStatic;
         _fi = fi;
-        _lowered = tw.Writer.ScalarErase && tw.Writer.UseScalarLowering;
+        _lowered = tw.Writer.ScalarErase && tw.Writer.UseScalarLowering && TirScalarLowerer.WasLowered(tir);
         // Legacy float-land path (every scalar recipe until UseScalarLowering is the default).
         if (tw.Writer.ScalarErase && !_lowered && fi != null)
             _scalar = new ScalarEraseAnalysis(tw, fi.Function.Implementation, fi.ParameterTypes, lambdaParamPrim);

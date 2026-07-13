@@ -109,6 +109,88 @@ public static class TirScalarLowerer
     private static bool IsScalarWrapperName(string name)
         => name != null && CSharpWriter.ScalarPrimitives.ContainsKey(name);
 
+    /// <summary>Whether every type reachable from the body is fully GROUND — no type variable or
+    /// type parameter anywhere. Type-directed lowering is only sound on ground bodies: a generic
+    /// STATIC library body (whose nodes carry <c>$T</c>-typed or untyped values) cannot be told
+    /// scalar from non-scalar, so it stays on the legacy <see cref="ScalarEraseAnalysis"/> path.</summary>
+    public static bool IsGroundBody(TirFunction tir)
+    {
+        if (tir?.Body == null)
+            return false;
+        foreach (var n in tir.AllNodes)
+        {
+            if (n == null) continue;
+            if (HasVarOrParam(n.Type)) return false;
+            // A value node with NO type is un-lowerable: the coercion insertion cannot tell a scalar
+            // from a non-scalar there (the static-emit library bodies leave receivers/args untyped),
+            // so such a body stays on the legacy path rather than being mis-cast.
+            if (NeedsType(n) && n.Type == null) return false;
+            if (n is TirCall c)
+            {
+                if (HasVarOrParam(c.ReturnType)) return false;
+                if (c.ParameterTypes != null)
+                    foreach (var p in c.ParameterTypes)
+                        if (HasVarOrParam(p)) return false;
+            }
+            if (n is TirCoerce co && (HasVarOrParam(co.FromType) || HasVarOrParam(co.ToType)))
+                return false;
+            // Untrustworthy typing: a SCALAR-wrapper parameter with a concrete NON-scalar argument
+            // (Between's Number param receiving a Point2D — the generic-library-body looseness that
+            // survives monomorphization). Casting there is wrong (CS0030/CS1503), so such a body is
+            // not safely lowerable and stays on the legacy path.
+            if (n is TirCall call && call.ParameterTypes != null)
+                for (var i = 0; i < call.Args.Count && i < call.ParameterTypes.Count; i++)
+                {
+                    var pt = call.ParameterTypes[i];
+                    if (pt?.Def == null || !IsScalarWrapperName(pt.Def.Name))
+                        continue;
+                    var at = TirRewrite.StripCoerce(call.Args[i])?.Type;
+                    if (at?.Def != null && !IsScalarWrapperName(at.Def.Name)
+                        && !CSharpWriter.ScalarPrimitives.ContainsValue(at.Def.Name)
+                        && at.Def.Kind != TypeKind.TypeVariable && at.Def.Kind != TypeKind.TypeParameter)
+                        return false; // scalar param, concrete non-scalar arg: loose typing
+                }
+        }
+        return true;
+    }
+
+    // Nodes whose erased rendering depends on knowing their type. Statements, bare names, type
+    // references, lets and the `default` keyword carry no value type and are exempt.
+    private static bool NeedsType(TirNode n)
+        => !(n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop
+             || n is TirName || n is TirTypeRef || n is TirLet || n is TirDefault
+             || n is TirUnresolved || n is TirConstructorCall || n is TirBooleanChain);
+
+    /// <summary>Whether <paramref name="tir"/> has already been scalar-lowered — any node type
+    /// names an erased primitive (a non-lowered body would name the wrapper). The printer keys its
+    /// type-directed mode off this, so it can never disagree with what the pass actually did.</summary>
+    public static bool WasLowered(TirFunction tir)
+    {
+        if (tir?.Body == null)
+            return false;
+        foreach (var n in tir.AllNodes)
+        {
+            if (n?.Type?.Def != null && CSharpWriter.ScalarPrimitives.ContainsValue(n.Type.Def.Name))
+                return true;
+            if (n is TirCoerce co && co.ToType?.Def != null
+                && (CSharpWriter.ScalarPrimitives.ContainsValue(co.ToType.Def.Name)
+                    || CSharpWriter.ScalarPrimitives.ContainsKey(co.ToType.Def.Name)))
+                return true;
+        }
+        return false;
+    }
+
+    private static bool HasVarOrParam(TypeExpression t)
+    {
+        if (t?.Def == null)
+            return false; // an untyped node is not a type variable; groundness is decided by real vars
+        if (t.Def.Kind == TypeKind.TypeVariable || t.Def.Kind == TypeKind.TypeParameter)
+            return true;
+        foreach (var a in t.TypeArgs)
+            if (HasVarOrParam(a)) return true;
+        return false;
+    }
+
     /// <summary>Whether a type is a scalar (wrapper or already-erased primitive) or unknown — the
     /// only cases where casting an argument to a scalar parameter is meaningful. A known non-scalar
     /// argument at a (loosely-typed) scalar parameter — the bounded-polymorphic
