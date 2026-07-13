@@ -43,6 +43,116 @@ public static class TirScalarLowerer
     public static TirFunction Lower(TirFunction tir)
         => Lower(tir, FloatMap);
 
+    /// <summary>The full emit-path lowering: FIRST insert the disambiguating coercions that keep
+    /// overload resolution exact after erasure, THEN substitute wrapper types to primitives. The
+    /// coercions are read straight off the resolved call signatures the checker recorded, so the
+    /// type-directed printer needs no overload re-derivation.</summary>
+    public static TirFunction LowerWithCoercions(TirFunction tir)
+        => LowerWithCoercions(tir, FloatMap);
+
+    /// <summary>See <see cref="LowerWithCoercions(TirFunction)"/>; parameterized by the scalar map
+    /// (so <c>--scalar=double</c> is a different map, not a different pass).</summary>
+    public static TirFunction LowerWithCoercions(TirFunction tir, IReadOnlyDictionary<string, TypeDef> scalarMap)
+    {
+        if (tir?.Body == null)
+            return Lower(tir, scalarMap);
+        var coerced = InsertScalarCoercions(tir.Body);
+        var withCoercions = new TirFunction(tir.Original, tir.Parameters, tir.ReturnType, coerced,
+            tir.ZonkedParameterTypes, tir.ZonkedReturnType);
+        var lowered = Lower(withCoercions, scalarMap);
+        // Post-substitution: restore the wrapper at scalar->non-scalar broadcast boundaries, where
+        // the erased primitive argument would no longer convert (float -> Vector2 is not implicit;
+        // (Number)float -> Vector2 is). Runs after lowering so the wrapper cast is not itself erased.
+        return new TirFunction(lowered.Original, lowered.Parameters, lowered.ReturnType,
+            RestoreWrapperAtBroadcasts(lowered.Body), lowered.ZonkedParameterTypes, lowered.ZonkedReturnType);
+    }
+
+    // primitive name -> a wrapper TypeExpression (float -> Number), for broadcast-boundary casts.
+    private static readonly IReadOnlyDictionary<string, TypeExpression> PrimToWrapperType =
+        CSharpWriter.ScalarPrimitives.ToDictionary(
+            kv => kv.Value,
+            kv => new TypeExpression(new TypeDef(null, TypeKind.Primitive, kv.Key)));
+
+    /// <summary>Wrap a scalar-primitive argument passed to a CONCRETE non-scalar parameter in a
+    /// coercion to its wrapper (float -> Number), so the runtime's <c>Number</c>-sourced broadcast
+    /// operator applies (C# will not chain <c>float -> Number -> Vector2</c> implicitly). Only fires
+    /// at concrete struct parameters — generic/interface/Self parameters carry no concrete broadcast.</summary>
+    private static TirNode RestoreWrapperAtBroadcasts(TirNode body)
+        => TirRewrite.Rewrite(body, n =>
+        {
+            if (!(n is TirCall call) || call.ParameterTypes == null || call.Args.Count == 0)
+                return n;
+            List<TirNode> newArgs = null;
+            for (var i = 0; i < call.Args.Count; i++)
+            {
+                var pt = i < call.ParameterTypes.Count ? call.ParameterTypes[i] : null;
+                if (pt?.Def == null || CSharpWriter.ScalarPrimitives.ContainsValue(pt.Def.Name))
+                    continue; // scalar param: phase A handled it
+                if (pt.Def.Kind != TypeKind.ConcreteType && pt.Def.Kind != TypeKind.Primitive)
+                    continue; // generic / interface / Self: no concrete broadcast to satisfy
+                var arg = call.Args[i];
+                if (arg is TirCoerce)
+                    continue;
+                var it = arg.Type;
+                if (it?.Def == null || !CSharpWriter.ScalarPrimitives.ContainsValue(it.Def.Name)
+                    || !PrimToWrapperType.TryGetValue(it.Def.Name, out var wrapper))
+                    continue; // arg is not an erased scalar primitive
+                newArgs ??= call.Args.ToList();
+                newArgs[i] = new TirCoerce(arg, arg.Type, wrapper, null, arg.Origin);
+            }
+            return newArgs == null
+                ? n
+                : new TirCall(call.Callee, call.EmissionKind, call.ParameterTypes, call.ReturnType,
+                    newArgs, call.Type, call.Origin, call.Name);
+        });
+
+    private static bool IsScalarWrapperName(string name)
+        => name != null && CSharpWriter.ScalarPrimitives.ContainsKey(name);
+
+    /// <summary>Whether a type is a scalar (wrapper or already-erased primitive) or unknown — the
+    /// only cases where casting an argument to a scalar parameter is meaningful. A known non-scalar
+    /// argument at a (loosely-typed) scalar parameter — the bounded-polymorphic
+    /// <c>Subtract($TDelta,…)</c> case — must NOT be cast to a primitive (CS0030).</summary>
+    private static bool IsScalarish(TypeExpression t)
+        => t?.Def == null
+           || IsScalarWrapperName(t.Def.Name)
+           || CSharpWriter.ScalarPrimitives.ContainsValue(t.Def.Name);
+
+    /// <summary>Wrap each SCALAR-typed argument of a resolved call in an explicit coercion to its
+    /// declared parameter type, so C# overload resolution stays exact once the wrappers erase to
+    /// primitives (a bare <c>float</c> argument could otherwise match either the <c>float</c> or the
+    /// <c>Number</c> overload — CS0121). Driven entirely by the recorded
+    /// <see cref="TirCall.ParameterTypes"/>. Idempotent: an argument already coerced to that scalar
+    /// target is left as-is. Scalar-return disambiguation falls out for free — a scalar-returning
+    /// call used as a receiver is arg 0 of the outer call and gets wrapped there.</summary>
+    private static TirNode InsertScalarCoercions(TirNode body)
+        => TirRewrite.Rewrite(body, n =>
+        {
+            if (!(n is TirCall call) || call.ParameterTypes == null || call.Args.Count == 0)
+                return n;
+            List<TirNode> newArgs = null;
+            for (var i = 0; i < call.Args.Count; i++)
+            {
+                var pt = i < call.ParameterTypes.Count ? call.ParameterTypes[i] : null;
+                if (pt?.Def == null || !IsScalarWrapperName(pt.Def.Name))
+                    continue;
+                var arg = call.Args[i];
+                var inner = TirRewrite.StripCoerce(arg);
+                if (inner is TirTypeRef || inner is TirName)
+                    continue; // a TYPE used as a static-call receiver is not a value to cast (CS0119)
+                if (!IsScalarish(inner.Type))
+                    continue; // a non-scalar value at a loosely-typed scalar param: no cast (CS0030)
+                if (arg is TirCoerce cc && cc.ToType?.Def?.Name == pt.Def.Name)
+                    continue; // already coerced to this scalar target
+                newArgs ??= call.Args.ToList();
+                newArgs[i] = new TirCoerce(arg, arg.Type, pt, null, arg.Origin);
+            }
+            return newArgs == null
+                ? n
+                : new TirCall(call.Callee, call.EmissionKind, call.ParameterTypes, call.ReturnType,
+                    newArgs, call.Type, call.Origin, call.Name);
+        });
+
     /// <summary>Lower every type in <paramref name="tir"/> through <paramref name="scalarMap"/>
     /// (wrapper type name → primitive <see cref="TypeDef"/>). Returns a new function; the original
     /// is untouched. A null or bodiless function is returned unchanged.</summary>

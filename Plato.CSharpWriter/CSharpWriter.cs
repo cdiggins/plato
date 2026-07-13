@@ -174,6 +174,15 @@ namespace Ara3D.Geometry.CSharpWriter
         // Requires ExtensionStyle. Default (false) output is byte-identical to the original.
         public bool ScalarErase;
 
+        // Mission 2 (docs/plato-tir-scalar-lowering-plan): when true (with ScalarErase), scalar
+        // erasure runs as the TirScalarLowerer PASS (type substitution + overload-disambiguating and
+        // broadcast coercion insertion) and TirCSharpBodyWriter renders type-directed from the
+        // lowered TIR — no ScalarEraseAnalysis. OFF BY DEFAULT: the pass is proven on ground member
+        // bodies (all 974 CS0121 overload ambiguities eliminated) but generic STATIC library bodies
+        // still lack node types, so a handful of second-order casts are wrong there; enabling this
+        // waits on typing static bodies (or routing them through the legacy path). See the plan.
+        public bool UseScalarLowering;
+
         // The scalar wrapper types --scalar=float erases, and their native primitives. This is
         // deliberately NOT CSharpWriter.PrimitiveTypes: Angle (and every other struct) remains a
         // real type - only the five scalar wrappers erase.
@@ -240,7 +249,9 @@ namespace Ara3D.Geometry.CSharpWriter
                 tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _);
                 tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
                 tir = TirArrayMaterializer.Rewrite(tir, this);
-                return TirLoopLowerer.Rewrite(tir, this);
+                tir = TirLoopLowerer.Rewrite(tir, this);
+                if (ScalarErase && UseScalarLowering) tir = TirScalarLowerer.LowerWithCoercions(tir);
+                return tir;
             }
 
             var key = SanitizeFileName(fi?.OwnerType?.Name ?? "Static");

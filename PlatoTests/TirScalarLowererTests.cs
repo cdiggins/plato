@@ -107,6 +107,45 @@ namespace PlatoTests
             Assert.IsTrue(checkedAny, "no candidate ground TIR was available to lower");
         }
 
+        [Test]
+        public static void LowerWithCoercionsInsertsScalarCastsAndErasesTypes()
+        {
+            var w = new CSharpWriter(CheckerTestSupport.CompileStdLib(), "unused-coerce");
+            var candidates = new[]
+            {
+                ("Vector3", "Dot"), ("Number", "Half"), ("Vector2", "Cross"), ("Vector3", "Add"),
+            };
+
+            var sawCoercions = false;
+            var checkedAny = false;
+            foreach (var (type, fn) in candidates)
+            {
+                var tir = w.TestGetGroundTir(type, fn);
+                if (tir?.Body == null)
+                    continue;
+                checkedAny = true;
+
+                var lowered = TirScalarLowerer.LowerWithCoercions(tir);
+
+                // Still fully erased (no wrapper type anywhere).
+                var offenders = lowered.AllNodes.SelectMany(TypesOf).SelectMany(TypeNames)
+                    .Where(WrapperNames.Contains).Distinct().ToList();
+                Assert.IsEmpty(offenders, $"{type}.{fn}: wrapper types survived: {string.Join(", ", offenders)}");
+
+                // Any inserted disambiguation coercion targets an erased PRIMITIVE (float/int/…),
+                // never a wrapper — the printer renders these as ((float)…).
+                foreach (var co in lowered.AllNodes.OfType<TirCoerce>())
+                {
+                    var to = co.ToType?.Def?.Name;
+                    if (to != null && (CSharpWriter.ScalarPrimitives.ContainsValue(to) || CSharpWriter.ScalarPrimitives.ContainsKey(to)))
+                        sawCoercions = true;
+                }
+            }
+
+            Assert.IsTrue(checkedAny, "no candidate ground TIR was available");
+            Assert.IsTrue(sawCoercions, "expected at least one scalar disambiguation coercion across the scalar-heavy candidates");
+        }
+
         private static IEnumerable<TypeExpression> TypesOf(TirNode n)
         {
             if (n.Type != null) yield return n.Type;

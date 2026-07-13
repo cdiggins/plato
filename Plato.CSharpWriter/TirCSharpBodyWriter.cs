@@ -54,6 +54,13 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // (each lambda gets its own parameter-primitive context, like the legacy per-lambda writers).
     private ScalarEraseAnalysis _scalar;
 
+    // Mission 2: when true (--scalar erasure), the body is a LOWERED TirFunction — its types are
+    // already the erased primitives and every scalar cast is an explicit TirCoerce node inserted by
+    // TirScalarLowerer. The printer is then type-directed: it renders coercions as casts and makes
+    // NO float-land decisions, so _scalar is never built. (The legacy ScalarEraseAnalysis path and
+    // its ~16 decision sites are retired by S3 once this is proven.)
+    private readonly bool _lowered;
+
     // Scalar erasure only: the primitive the parameters of a lambda ARGUMENT erase to, when the
     // enclosing call site could determine it (element-wise HOFs). Mirrors the legacy
     // PendingLambdaParamPrim channel.
@@ -68,7 +75,9 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         _selfType = tw.SelfType;
         _isStatic = isStatic;
         _fi = fi;
-        if (tw.Writer.ScalarErase && fi != null)
+        _lowered = tw.Writer.ScalarErase && tw.Writer.UseScalarLowering;
+        // Legacy float-land path (every scalar recipe until UseScalarLowering is the default).
+        if (tw.Writer.ScalarErase && !_lowered && fi != null)
             _scalar = new ScalarEraseAnalysis(tw, fi.Function.Implementation, fi.ParameterTypes, lambdaParamPrim);
         WriteFunctionBody();
     }
@@ -302,7 +311,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
             case TirLiteral lit:
                 // Scalar erasure: literals lose their wrapper casts and become native C# literals.
-                if (_scalar != null)
+                if (_lowered || _scalar != null)
                 {
                     var v = lit.Value.ToLiteralString();
                     Write(lit.LiteralType == Ara3D.Geometry.AST.LiteralTypesEnum.Number ? v + "f" : v);
@@ -363,6 +372,31 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 return;
 
             case TirCoerce c:
+                // Type-directed (lowered) rendering: a coercion whose target is a scalar PRIMITIVE
+                // is an explicit disambiguating cast — render it. A coercion to a non-scalar type
+                // (e.g. a float -> Vector3 broadcast) is left to C#'s implicit conversion, so the
+                // inner value is written bare. This is the whole of the erased cast logic; the
+                // TirScalarLowerer decided WHERE casts go, the printer just prints them.
+                if (_lowered)
+                {
+                    // A cast to a scalar PRIMITIVE (float) disambiguates an erased overload; a cast
+                    // to a scalar WRAPPER (Number) restores wrapper-ness at a broadcast/intrinsic
+                    // boundary (float -> Number -> Vector2, which C# will not chain implicitly).
+                    // Both render as explicit casts; any other coercion is a C# implicit conversion.
+                    var to = c.ToType?.Name;
+                    if (to != null && (CSharpWriter.ScalarPrimitives.ContainsValue(to) || CSharpWriter.ScalarPrimitives.ContainsKey(to))
+                        && !IsSameScalarCast(c.Inner, to))
+                    {
+                        Write($"(({to})");
+                        WriteNode(c.Inner);
+                        Write(")");
+                    }
+                    else
+                    {
+                        WriteNode(c.Inner);
+                    }
+                    return;
+                }
                 // A TirCoerce is ALWAYS a solver-inserted IMPLICIT-widening conversion (the
                 // Elaborator only wraps ArgMatchKind.Conversion arguments): Integer->Number,
                 // Self->interface, Number->Vector3 broadcast, etc. The reference writer never
@@ -407,7 +441,16 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
             case TirNew nw:
                 // Scalar erasure: "new Number(x)" would erase to the invalid "new float(x)";
-                // a scalar constructor call is just a cast of its single argument.
+                // a scalar constructor call is just a cast of its single argument. Lowered: the
+                // constructed type IS the primitive already; legacy: the wrapper name still maps.
+                if (_lowered && nw.Args.Count == 1 && nw.NewType?.Name != null
+                    && CSharpWriter.ScalarPrimitives.ContainsValue(nw.NewType.Name))
+                {
+                    Write($"(({nw.NewType.Name})");
+                    WriteNode(nw.Args[0]);
+                    Write(")");
+                    return;
+                }
                 if (_scalar != null && nw.Args.Count == 1
                     && CSharpWriter.ScalarPrimitives.TryGetValue(nw.NewType?.Name ?? "", out var snPrim))
                 {
@@ -587,6 +630,11 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // source, but the node itself kept ITS home origin — analyze that instead.
         return _scalar != null && stripped?.Origin is Expression oe ? _scalar.ScalarPrimOf(oe) : null;
     }
+
+    // Lowered rendering: an inner node that already renders as a cast to the same scalar primitive
+    // makes an enclosing cast to it redundant (collapses `((float)((float)x))` -> `((float)x)`).
+    private static bool IsSameScalarCast(TirNode inner, string prim)
+        => inner is TirCoerce c && c.ToType?.Name == prim;
 
     private void WriteCall(TirCall call)
     {
