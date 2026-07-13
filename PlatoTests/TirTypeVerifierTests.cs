@@ -21,8 +21,8 @@ namespace PlatoTests
         // R4 arg/param mismatch, R5 coerce-inconsistency and R6 residual-type-var are all empty.
         // The emitted TIR is fully type-consistent; Mission 2 (TirScalarLowerer) is unblocked on this
         // axis. R3 (syntactic null-callee calls) is tracked but NOT gated here — the handwritten-
-        // intrinsic census (14 names: Add/Subtract/Scale/…), the same worklist as the checker's
-        // remaining CHK201/203, shrinking as those close.
+        // intrinsic census (13 names: Add/Subtract/Scale/…), the same worklist as the checker's
+        // remaining CHK201, shrinking as those close.
         private const int MaxHardViolationsExcludingSyntactic = 0;
 
         [Test]

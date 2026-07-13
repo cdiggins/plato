@@ -165,6 +165,20 @@ namespace Ara3D.Geometry.Compiler.Checking
             var best = viable.Min(v => v.cost);
             var winners = viable.Where(v => v.cost == best).Select(v => v.cand).ToList();
 
+            // Specificity tie-break (C#-style): among equal-cost winners, prefer the MOST-DERIVED
+            // parameter types. A candidate whose every parameter is a subtype-or-equal of another's
+            // — strictly so at some position — is more specific and eliminates the other. Resolves
+            // `IArray2D`-vs-`IArray` style ties (`x.PointGrid.Map(f)`, where the 2D overload is the
+            // intended, more specific one). No effect unless it narrows a genuine tie.
+            if (winners.Count > 1)
+            {
+                var mostSpecific = winners
+                    .Where(w => !winners.Any(o => !ReferenceEquals(o, w) && MoreSpecific(o, w, Substitution)))
+                    .ToList();
+                if (mostSpecific.Count >= 1 && mostSpecific.Count < winners.Count)
+                    winners = mostSpecific;
+            }
+
             if (winners.Count == 1)
             {
                 CommitCandidate(winners[0], args, oc);
@@ -190,6 +204,20 @@ namespace Ara3D.Geometry.Compiler.Checking
                 CommitCandidate(winners[0], args, oc);
                 Report(DiagnosticSeverity.Info, "CHK202",
                     $"Call to '{oc.Name}' has {winners.Count} equally-specific overloads with a common return type", oc.Origin);
+            }
+            else if (args.Any(HasVar))
+            {
+                // A BOUNDED-POLYMORPHIC call: an argument is still an unbound (constraint-bounded)
+                // type variable — e.g. `x.Max - x.Min` in `IBounds.Size`, whose receiver has the
+                // interface's own parameter type (`$TValue : IVectorLike, IDifference<$TDelta>`). The
+                // concrete overloads only "tie" by binding that abstract variable to each concrete
+                // type, which is illegitimate: at the generic level the body genuinely cannot choose,
+                // but monomorphization dispatches the call by the GROUNDED argument type, where it is
+                // unambiguous. So this is not a real ambiguity — defer it (name+shape emission,
+                // exactly as an unresolved generic call) rather than reporting a false CHK203. A
+                // genuine ambiguity has ground arguments and so does not reach this branch.
+                Report(DiagnosticSeverity.Info, "CHK204",
+                    $"Bounded-polymorphic call to '{oc.Name}': {winners.Count} concrete overloads tie on an unbound type variable; deferred to monomorphization", oc.Origin);
             }
             else
             {
@@ -252,6 +280,43 @@ namespace Ara3D.Geometry.Compiler.Checking
                 ResolvedCalls[oc.Call] = new ResolvedCall(
                     oc.Call, cand.Function, paramTypes, Zonk(cand.Ret, Substitution), kinds, conversions);
             }
+        }
+
+        /// <summary>Whether candidate <paramref name="a"/> is STRICTLY more specific than
+        /// <paramref name="b"/>: every parameter of <paramref name="a"/> is a subtype-or-equal of the
+        /// corresponding parameter of <paramref name="b"/>, and at least one is a strict subtype
+        /// (implements/inherits it). Used to break equal-cost ties toward the most-derived overload,
+        /// mirroring C#'s better-function-member rule.</summary>
+        private bool MoreSpecific(Candidate a, Candidate b, Dictionary<string, TypeExpression> sub)
+        {
+            if (a.Ps.Length != b.Ps.Length)
+                return false;
+            var strict = false;
+            for (var i = 0; i < a.Ps.Length; i++)
+            {
+                var pa = SpecificityType(a, i, sub);
+                var pb = SpecificityType(b, i, sub);
+                if (pa?.Def == null || pb?.Def == null)
+                    return false; // not comparable — do not claim more-specific
+                if (pa.Def.Name == pb.Def.Name)
+                    continue;
+                if (ConceptClosure.FindInstance(pa, pb.Def.Name) != null)
+                    strict = true; // pa <: pb at this position
+                else
+                    return false;  // pa is not a subtype of pb — a is not uniformly more specific
+            }
+            return strict;
+        }
+
+        /// <summary>The type used to compare a candidate's parameter for specificity: a concept
+        /// parameter contributes its interface (the fresh concept var carries no usable name),
+        /// everything else the instantiated parameter, zonked.</summary>
+        private TypeExpression SpecificityType(Candidate cand, int i, Dictionary<string, TypeExpression> sub)
+        {
+            var p = cand.Ps[i];
+            if (p != null && IsVar(p) && cand.ConceptOf.TryGetValue(p.Name, out var concept))
+                return Zonk(concept, sub);
+            return Zonk(p, sub);
         }
 
         /// <summary>

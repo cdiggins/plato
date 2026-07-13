@@ -13,13 +13,14 @@ namespace PlatoTests
     [TestFixture]
     public static class CheckerCompletenessTests
     {
-        // Measured 2026-07-12 after F2 coercion (value→single-field-struct + per-element tuple
-        // coercion) AND the F1 all-variable-return tie fix (concept-method Self-var ties commit
-        // instead of erroring): 39 / 859 (down from 70). Remaining: F1 concrete-return ties
-        // (Subtract/Add/Lerp Vector2|Vector3|… on concept-constrained receivers, CHK203 ~14), F2a
-        // tuple→generic-interface returns, and library repairs. The count drifts with library growth,
-        // so the baseline is a ceiling to lower, not a fixed target.
-        private const int MaxFunctionsWithDiagnostics = 39;
+        // Measured 2026-07-12 after the ambiguity work: F2 coercion + the F1 tie fixes
+        // (all-variable-return ties commit; bounded-polymorphic ties on unbound constrained type
+        // variables defer to monomorphization; C#-style specificity tie-break picks the most-derived
+        // overload, IArray2D over IArray). **CHK203 ambiguity errors are now ZERO** (was 25). 32 / 859
+        // remain — all CHK101 (cannot-unify, 19) + CHK201 (no-match, 13): F2a tuple→generic-interface
+        // returns and library repairs, not ambiguities. The count drifts with library growth, so the
+        // baseline is a ceiling to lower, not a fixed target.
+        private const int MaxFunctionsWithDiagnostics = 32;
 
         [Test]
         public static void StdLibDiagnosticCountDoesNotRegress()
