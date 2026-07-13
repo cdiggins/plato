@@ -122,10 +122,16 @@ public static class TirScalarLowerer
     private static bool IsScalarWrapperName(string name)
         => name != null && CSharpWriter.ScalarPrimitives.ContainsKey(name);
 
-    /// <summary>Whether every type reachable from the body is fully GROUND — no type variable or
-    /// type parameter anywhere. Type-directed lowering is only sound on ground bodies: a generic
-    /// STATIC library body (whose nodes carry <c>$T</c>-typed or untyped values) cannot be told
-    /// scalar from non-scalar, so it stays on the legacy <see cref="ScalarEraseAnalysis"/> path.</summary>
+    /// <summary>Whether the body is LOWERABLE: every type is scalar-decidable. That means no unsolved
+    /// type VARIABLE (<c>$T</c> — a still-inferring node the lowerer could mis-cast), but the
+    /// function's own signature type PARAMETERS (<c>_T0</c> on a generic static library function) ARE
+    /// allowed: they are not scalar wrappers, so the substitution and coercion insertion leave them
+    /// untouched, and the scalar positions around them (the <c>bool</c>/<c>int</c> args of
+    /// <c>AllQuadFaceIndices</c>) are decidable. An untyped ZERO-ARG call (a bare constant reference
+    /// like <c>Pi()</c> whose node the static elaboration leaves untyped) is also allowed: it renders
+    /// through the type-independent <c>Constants.X()</c> path, so its missing type is harmless. Any
+    /// OTHER untyped value node still routes the body to the legacy <see cref="ScalarEraseAnalysis"/>
+    /// path (the coercion insertion cannot tell a scalar from a non-scalar there).</summary>
     public static bool IsGroundBody(TirFunction tir)
     {
         if (tir?.Body == null)
@@ -133,20 +139,18 @@ public static class TirScalarLowerer
         foreach (var n in tir.AllNodes)
         {
             if (n == null) continue;
-            if (HasVarOrParam(n.Type)) return false;
+            // NOTE: a type VARIABLE ($T, the signature generic of a static library function like
+            // AllQuadFaceIndices<$T>) is NOT a blocker — it is never a scalar wrapper, so the
+            // substitution and coercion insertion leave it inert while the scalar positions around it
+            // stay decidable. It renders as the C# generic parameter (_T0). Only genuine scalar
+            // ambiguity (below) or an untyped coercible node routes a body away from lowering.
+            //
             // A value node with NO type is un-lowerable: the coercion insertion cannot tell a scalar
             // from a non-scalar there (the static-emit library bodies leave receivers/args untyped),
-            // so such a body stays on the legacy path rather than being mis-cast.
-            if (NeedsType(n) && n.Type == null) return false;
-            if (n is TirCall c)
-            {
-                if (HasVarOrParam(c.ReturnType)) return false;
-                if (c.ParameterTypes != null)
-                    foreach (var p in c.ParameterTypes)
-                        if (HasVarOrParam(p)) return false;
-            }
-            if (n is TirCoerce co && (HasVarOrParam(co.FromType) || HasVarOrParam(co.ToType)))
-                return false;
+            // so such a body stays on the legacy path rather than being mis-cast. EXCEPT a zero-arg
+            // call (a bare constant reference the static elaboration left untyped), which renders
+            // through the type-independent Constants.X() path.
+            if (NeedsType(n) && n.Type == null && !(n is TirCall zc && zc.Args.Count == 0)) return false;
             // Untrustworthy typing: a SCALAR-wrapper parameter with a concrete NON-scalar argument
             // (Between's Number param receiving a Point2D — the generic-library-body looseness that
             // survives monomorphization). Casting there is wrong (CS0030/CS1503), so such a body is
@@ -165,18 +169,9 @@ public static class TirScalarLowerer
                             && at.Def.Kind != TypeKind.TypeVariable && at.Def.Kind != TypeKind.TypeParameter)
                             return false; // scalar param, concrete non-scalar arg: loose typing
                     }
-                    // A scalar argument at an INTERFACE parameter (INumerical) is a broadcast whose
-                    // concrete target the monomorphizer did not ground here — the lowered path cannot
-                    // tell a genuine vector broadcast (`Vector2.Add((Number)3f)`) from a purely scalar
-                    // operation (INumerical reified onto Number). Route the whole body to the legacy
-                    // ScalarEraseAnalysis path, which decides from the origin symbols.
-                    else if (pt.Def.Kind == TypeKind.Interface)
-                    {
-                        var at = TirRewrite.StripCoerce(call.Args[i])?.Type;
-                        if (at?.Def != null && (IsScalarWrapperName(at.Def.Name)
-                            || CSharpWriter.ScalarPrimitives.ContainsValue(at.Def.Name)))
-                            return false;
-                    }
+                    // (A scalar argument at an INTERFACE parameter — Pi passed to Twice(INumerical) —
+                    // is a legitimate scalar operation: the scalar type implements the interface, so
+                    // it renders as the scalar extension method with no broadcast. Not a blocker.)
                 }
             // Corrupted scalar operation: a call whose RECEIVER is scalar yet carries a scalar
             // argument at a concrete NON-scalar parameter. This is a scalar op (`t.Multiply(t)`)
@@ -236,17 +231,6 @@ public static class TirScalarLowerer
                 && CSharpWriter.ScalarPrimitives.ContainsValue(co.ToType.Def.Name))
                 return true;
         }
-        return false;
-    }
-
-    private static bool HasVarOrParam(TypeExpression t)
-    {
-        if (t?.Def == null)
-            return false; // an untyped node is not a type variable; groundness is decided by real vars
-        if (t.Def.Kind == TypeKind.TypeVariable || t.Def.Kind == TypeKind.TypeParameter)
-            return true;
-        foreach (var a in t.TypeArgs)
-            if (HasVarOrParam(a)) return true;
         return false;
     }
 

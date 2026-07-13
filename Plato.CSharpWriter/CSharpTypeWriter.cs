@@ -235,7 +235,10 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
                 $"No ground TIR for bodied {(TypeDef != null ? TypeDef.Name + "." : "")}{f.Name}; "
                 + "the legacy body writer was removed (consolidation plan C4).");
         Writer.TirBodiesEmitted++;
-        tir = Writer.RunOptimizerPasses(tir, f, isMember, out var lowered);
+        // Attempt scalar lowering on STATIC bodies too (constants, IArray library functions), not
+        // just members: IsGroundBody inside RunOptimizerPasses still gates it, so a generic/loose
+        // static body stays on the legacy path while a ground one (most constants) is lowered.
+        tir = Writer.RunOptimizerPasses(tir, f, lowerScalars: true, out var lowered);
         return WriteBodyText(new TirCSharpBodyWriter(this, tir, isStatic: !isMember, f, lowered: lowered).ToString());
     }
 

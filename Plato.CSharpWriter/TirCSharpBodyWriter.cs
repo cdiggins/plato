@@ -81,8 +81,9 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // type-directed (it has no scalar decisions, so the type-directed printer renders it
         // identically to legacy — proving the ScalarEraseAnalysis path is redundant there).
         _lowered = lowered;
-        // Legacy float-land path (bodies the scalar-lowering pass did not run on: generic static
-        // library bodies with loosely-typed nodes).
+        // Legacy float-land path (bodies the scalar-lowering pass did not run on). With static-body
+        // lowering + the relaxed IsGroundBody, NO body under the shipping recipes takes this path
+        // anymore (measured 0/0); it is retired outright in the ScalarEraseAnalysis deletion.
         if (tw.Writer.ScalarErase && !_lowered && fi != null)
             _scalar = new ScalarEraseAnalysis(tw, fi.Function.Implementation, fi.ParameterTypes, lambdaParamPrim);
         WriteFunctionBody();
