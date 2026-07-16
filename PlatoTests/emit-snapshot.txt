@@ -7,13 +7,13 @@
 @ _Number.g.cs :: float Clamp(this float self, float min, float max)
   [MethodImpl(AggressiveInlining)] public static float Clamp(this float self, float min, float max) => ((Number)self).Clamp(min, max);
 @ _Number.g.cs :: float Lerp(this float a, float b, float t)
-  [MethodImpl(AggressiveInlining)] public static float Lerp(this float a, float b, float t) => ((float)((float)a).Multiply(((float)((float)t).FromOne()))).Add(((float)((float)b).Multiply(((float)t))));
+  [MethodImpl(AggressiveInlining)] public static float Lerp(this float a, float b, float t) => a.Multiply(((float)t.FromOne())).Add(b.Multiply(t));
 @ _Number.g.cs :: int Sign(this float self)
   [MethodImpl(AggressiveInlining)] public static int Sign(this float self) => ((Number)self).Sign();
 @ _Number.g.cs :: Angle Atan2(this float self, float x)
   [MethodImpl(AggressiveInlining)] public static Angle Atan2(this float self, float x) => ((Number)self).Atan2(x);
 @ _Number.g.cs :: _T0 Multiply<_T0>(this float scalar
-  [MethodImpl(AggressiveInlining)] public static _T0 Multiply<_T0>(this float scalar, _T0 x) where _T0 : IScalarArithmetic<_T0> => x.Multiply(((float)scalar));
+  [MethodImpl(AggressiveInlining)] public static _T0 Multiply<_T0>(this float scalar, _T0 x) where _T0 : IScalarArithmetic<_T0> => x.Multiply(scalar);
 @ _Number.g.cs :: Vector3 Multiply(this float scalar, Vector3 right)
   [MethodImpl(AggressiveInlining)] public static Vector3 Multiply(this float scalar, Vector3 right) => ((Number)scalar) * right;
 @ _Number.g.cs :: Vector8 Divide(this float scalar, Vector8 right)
@@ -43,17 +43,17 @@
 @ Vectors.g.cs :: Vector2 Perpendicular(this Vector2 v)
   [MethodImpl(AggressiveInlining)] public static Vector2 Perpendicular(this Vector2 v) => (((float)((float)v.Y).Negative()), ((float)v.X));
 @ Vectors.g.cs :: Vector2 Rotate(this Vector2 v, Angle a)
-  [MethodImpl(AggressiveInlining)] public static Vector2 Rotate(this Vector2 v, Angle a) => (((float)((float)((float)v.X).Multiply(((float)a.Cos()))).Subtract(((float)((float)v.Y).Multiply(((float)a.Sin()))))), ((float)((float)((float)v.X).Multiply(((float)a.Sin()))).Add(((float)((float)v.Y).Multiply(((float)a.Cos()))))));
+  [MethodImpl(AggressiveInlining)] public static Vector2 Rotate(this Vector2 v, Angle a) => (((float)v.X).Multiply(((float)a.Cos())).Subtract(((float)v.Y).Multiply(((float)a.Sin()))), ((float)v.X).Multiply(((float)a.Sin())).Add(((float)v.Y).Multiply(((float)a.Cos()))));
 @ Vectors.g.cs :: Angle Angle(this Vector2 a, Vector2 b)
-  [MethodImpl(AggressiveInlining)] public static Angle Angle(this Vector2 a, Vector2 b) => ((float)((float)a.Dot(b)).Divide(((float)((float)a.Magnitude()).Multiply(((float)b.Magnitude()))))).Acos();
+  [MethodImpl(AggressiveInlining)] public static Angle Angle(this Vector2 a, Vector2 b) => ((float)a.Dot(b)).Divide(((float)a.Magnitude()).Multiply(((float)b.Magnitude()))).Acos();
 @ Vectors.g.cs :: bool IsParallel(this Vector2 a, Vector2 b)
-  [MethodImpl(AggressiveInlining)] public static bool IsParallel(this Vector2 a, Vector2 b) => ((float)((float)a.Dot(b)).Abs()).GreaterThanOrEquals(((float)((float)1f).Subtract(((float)Constants.Epsilon()))));
+  [MethodImpl(AggressiveInlining)] public static bool IsParallel(this Vector2 a, Vector2 b) => ((float)((float)a.Dot(b)).Abs()).GreaterThanOrEquals(1f.Subtract(((float)Constants.Epsilon())));
 @ Angles.g.cs :: float Turns(this Angle x)
   [MethodImpl(AggressiveInlining)] public static float Turns(this Angle x) => ((float)x.Radians()).Divide(((float)Constants.TwoPi()));
 @ Angles.g.cs :: Angle Turns(this float x)
-  [MethodImpl(AggressiveInlining)] public static Angle Turns(this float x) => ((float)x).Multiply(((float)Constants.TwoPi()));
+  [MethodImpl(AggressiveInlining)] public static Angle Turns(this float x) => x.Multiply(((float)Constants.TwoPi()));
 @ Angles.g.cs :: Angle Turns(this int x)
-  [MethodImpl(AggressiveInlining)] public static Angle Turns(this int x) => ((float)((int)x).Number()).Turns();
+  [MethodImpl(AggressiveInlining)] public static Angle Turns(this int x) => ((float)x.Number()).Turns();
 @ Transforms.g.cs :: Vector3 TransformNormal(this Transform3D x, Vector3 v)
   [MethodImpl(AggressiveInlining)] public static Vector3 TransformNormal(this Transform3D x, Vector3 v) => v.TransformNormal(x.Matrix);
 @ _IdentityTransform3D.g.cs :: Quaternion Quaternion =>

@@ -144,8 +144,14 @@ public static class TirInliner
         var returnTypeName = (calleeTir.ZonkedReturnType ?? calleeTir.ReturnType)?.Name;
         var tupleCtorRewrite = bodyTypeName != null && bodyTypeName.StartsWith("Tuple")
             && returnTypeName != null && TupleCtorArityMatches(writer, calleeBody, returnTypeName);
-        if (bodyTypeName == null || returnTypeName == null
-            || (bodyTypeName != returnTypeName && !tupleCtorRewrite))
+        // An ARRAY-LITERAL body (Corners = [p0..pN]) is a MakeArray call rendering as an IArray<T>;
+        // its node type (Array/IArray) may not name-match the declared IArray<T> return, but an
+        // array literal is valid in any IArray<T> slot. Inlining it exposes the fixed-size TirArray
+        // to the fixed-array combinator unroller (TirComponentUnroller), which is the whole point.
+        var arrayLiteralInline = TirRewrite.StripCoerce(calleeBody) is TirArray;
+        if (returnTypeName == null
+            || (!arrayLiteralInline && (bodyTypeName == null
+                || (bodyTypeName != returnTypeName && !tupleCtorRewrite))))
             return Refuse(InlineRefusal.ReturnTypeMismatch);
         if (!IsSelfContained(writer, calleeBody, tupleCtorRewrite, out var calleeHasLambda))
             return Refuse(InlineRefusal.NotSelfContained);
@@ -313,7 +319,8 @@ public static class TirInliner
     /// β-reduction / substitution (its <see cref="ProjectionCost"/> is under
     /// <see cref="MaxCheapCost"/>). Replaces the earlier field-name-only rule with a bounded cost
     /// estimate — see <see cref="ProjectionCost"/>.</summary>
-    private static bool IsCheapProjection(CSharpWriter writer, TirNode n)
+    // Also consumed by TirComponentUnroller (cheap-projection vector sources).
+    internal static bool IsCheapProjection(CSharpWriter writer, TirNode n)
         => ProjectionCost(writer, n) < MaxCheapCost;
 
     /// <summary>A rough evaluation-cost estimate over the TIR, for the duplicate-or-not decision.

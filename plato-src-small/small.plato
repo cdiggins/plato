@@ -1,0 +1,187 @@
+// A compact, SELF-CONTAINED Plato corpus for C# emitter/optimizer spikes.
+// It reproduces the optimizer-relevant shapes of the real geometry library
+// (Point3D/Bounds3D/Line3D component ops, Deform, Eval, ZipComponents) WITHOUT
+// pulling in System.Numerics-backed primitives, so the emitted code builds against
+// a tiny hand-written runtime (Plato.Small.Runtime) instead of Plato.Intrinsics.V2.
+//
+// Rules to keep it self-contained:
+//   * only Number/Integer/Boolean are erasable primitives (native float/int/bool);
+//   * NEVER use Vector3/Vector2/Angle/Matrix* etc. — CSharpWriter hardcodes those
+//     names to System.Numerics types (see CSharpWriter.PrimitiveTypes);
+//   * geometry types (Point3D/Bounds3D/Line3D) are plain generated structs.
+
+// ---- Concepts -------------------------------------------------------------
+
+interface IArray<T>
+{
+    Count(xs: Self): Integer;
+    At(xs: Self, n: Integer): T;
+}
+
+// Support for types that are fixed-size arrays of values (the component machinery
+// the --optimize component unroller targets).
+interface IArrayLike<T>
+{
+    NumComponents(_: Self): Integer;
+    Components(x: Self): IArray<T>;
+    CreateFromComponents(_: Self, xs: IArray<T>): Self;
+    CreateFromComponent(_: Self, x: T): Self;
+}
+
+// ---- Primitive scaffolding ------------------------------------------------
+
+type Number { }
+type Integer { }
+type Boolean { }
+type Object { }
+
+// The compiler synthesizes a tuple conversion for every type with matching fields.
+type Tuple2<T0, T1> { X0: T0; X1: T1; }
+type Tuple3<T0, T1, T2> { X0: T0; X1: T1; X2: T2; }
+
+type Function0<TR> { }
+type Function1<T0, TR> { }
+type Function2<T0, T1, TR> { }
+type Function3<T0, T1, T2, TR> { }
+
+type Array<T> implements IArray<T> { }
+
+// ---- Native operations ----------------------------------------------------
+
+// No Plato body; backends map these to native operations.
+library Intrinsics
+{
+    Add(a: Number, b: Number): Number;
+    Subtract(a: Number, b: Number): Number;
+    Multiply(a: Number, b: Number): Number;
+    Divide(a: Number, b: Number): Number;
+    Negative(x: Number): Number;
+    LessThan(a: Number, b: Number): Boolean;
+    GreaterThan(a: Number, b: Number): Boolean;
+
+    Add(a: Integer, b: Integer): Integer;
+    LessThan(a: Integer, b: Integer): Boolean;
+
+    All(xs: IArray<$T>, predicate: Function1<$T, Boolean>): Boolean;
+    Any(xs: IArray<$T>, predicate: Function1<$T, Boolean>): Boolean;
+    Map(xs: IArray<$T>, f: Function1<$T, $U>): IArray<$U>;
+    Reduce(xs: IArray<$T>, seed: $U, f: Function2<$U, $T, $U>): $U;
+    Reverse(xs: IArray<$T>): IArray<$T>;
+    Zip(xs: IArray<$T>, ys: IArray<$U>, f: Function2<$T, $U, $V>): IArray<$V>;
+    Zip(xs: IArray<$T>, ys: IArray<$U>, zs: IArray<$V>, f: Function3<$T, $U, $V, $W>): IArray<$W>;
+}
+
+// ---- Scalar library -------------------------------------------------------
+
+library Scalars
+{
+    FromOne(x: Number): Number => 1.0 - x;
+    Lerp(a: Number, b: Number, t: Number): Number => a * t.FromOne + b * t;
+    Min(a: Number, b: Number): Number => a < b ? a : b;
+    Max(a: Number, b: Number): Number => a > b ? a : b;
+}
+
+// ---- Geometry types -------------------------------------------------------
+
+type Point3D
+    implements IArrayLike<Number>
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+}
+
+type Bounds3D
+    implements IArrayLike<Point3D>
+{
+    Min: Point3D;
+    Max: Point3D;
+}
+
+type Line3D
+{
+    A: Point3D;
+    B: Point3D;
+}
+
+// ---- Array / component library --------------------------------------------
+
+library ArrayLibrary
+{
+    At(xs: IArrayLike<$T>, n: Integer): $T
+        => xs.Components[n];
+
+    Reverse(xs: IArrayLike<$T>): IArrayLike<$T>
+        => Self.CreateFromComponents(xs.Components.Reverse());
+
+    MapComponents(x: IArrayLike<$T>, f: Function1<$T, $T>): IArrayLike<$T>
+        => Self.CreateFromComponents(x.Components.Map(f));
+
+    ZipComponents(a: IArrayLike<$T>, b: IArrayLike<$T>, f: Function2<$T, $T, $T>): IArrayLike<$T>
+        => Self.CreateFromComponents(a.Components.Zip(b.Components, f));
+
+    ZipComponents(a: IArrayLike<$T>, b: IArrayLike<$T>, c: IArrayLike<$T>, f: Function3<$T, $T, $T, $T>): IArrayLike<$T>
+        => Self.CreateFromComponents(a.Components.Zip(b.Components, c.Components, f));
+
+    AllZipComponents(a: IArrayLike<$T>, b: IArrayLike<$T>, f: Function2<$T, $T, Boolean>): Boolean
+        => a.Components.Zip(b.Components, f).All(x => x);
+
+    AnyZipComponents(a: IArrayLike<$T>, b: IArrayLike<$T>, f: Function2<$T, $T, Boolean>): Boolean
+        => a.Components.Zip(b.Components, f).Any(x => x);
+
+    AllComponents(x: IArrayLike<$T>, predicate: Function1<$T, Boolean>): Boolean
+        => x.Components.All(predicate);
+
+    AnyComponent(x: IArrayLike<$T>, predicate: Function1<$T, Boolean>): Boolean
+        => x.Components.Any(predicate);
+}
+
+// ---- Point3D vector ops (component-wise) ----------------------------------
+
+library Points
+{
+    Lerp(a: Point3D, b: Point3D, t: Number): Point3D
+        => a.ZipComponents(b, (a1, b1) => a1.Lerp(b1, t));
+
+    MinComponents(a: Point3D, b: Point3D): Point3D
+        => a.ZipComponents(b, (a1, b1) => a1.Min(b1));
+
+    MaxComponents(a: Point3D, b: Point3D): Point3D
+        => a.ZipComponents(b, (a1, b1) => a1.Max(b1));
+}
+
+// ---- Bounds3D / Line3D geometry -------------------------------------------
+
+library Geometry
+{
+    Empty(_: Bounds3D): Bounds3D
+        => (new Point3D(1000000.0, 1000000.0, 1000000.0), new Point3D(-1000000.0, -1000000.0, -1000000.0));
+
+    Include(x: Bounds3D, p: Point3D): Bounds3D
+        => (x.Min.MinComponents(p), x.Max.MaxComponents(p));
+
+    Corners(x: Bounds3D): IArray<Point3D> => [
+        new Point3D(x.Min.X, x.Min.Y, x.Min.Z),
+        new Point3D(x.Max.X, x.Min.Y, x.Min.Z),
+        new Point3D(x.Min.X, x.Max.Y, x.Min.Z),
+        new Point3D(x.Max.X, x.Max.Y, x.Min.Z),
+        new Point3D(x.Min.X, x.Min.Y, x.Max.Z),
+        new Point3D(x.Max.X, x.Min.Y, x.Max.Z),
+        new Point3D(x.Min.X, x.Max.Y, x.Max.Z),
+        new Point3D(x.Max.X, x.Max.Y, x.Max.Z)];
+
+    Bounds(xs: IArray<Point3D>): Bounds3D
+        => xs.Reduce(Bounds3D.Empty, (a, b) => a.Include(b));
+
+    Eval(x: Line3D, t: Number): Point3D
+        => x.A.Lerp(x.B, t);
+
+    Deform(v: Point3D, f: Function1<Point3D, Point3D>): Point3D
+        => f(v);
+
+    Deform(x: Line3D, f: Function1<Point3D, Point3D>): Line3D
+        => (f(x.A), f(x.B));
+
+    Deform(x: Bounds3D, f: Function1<Point3D, Point3D>): Bounds3D
+        => x.Corners.Map(f).Bounds();
+}

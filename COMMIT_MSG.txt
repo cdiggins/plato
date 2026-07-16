@@ -1,61 +1,43 @@
-Optimizer completion M0+M1: inline instrumentation + tuple ctor-call rewrite
+Optimizer: fixed-size-array unrolling + redundant-cast cleanup, on a fast small corpus
 
-Plan: docs/plato-optimizer-completion-plan-2026-07-12.md (M0, M1).
+## Dev infra: a self-contained small corpus (plato-src-small + Small/)
 
-M0 — inliner instrumentation + fast in-proc tests:
-- InlineReport.cs: InlineRefusal enum + per-generation aggregation (refusals keyed by
-  caller->callee->reason, plus inlined/beta/tuple-ctor totals). TirInliner records a reason
-  at every refusal site. New CLI flag --inline-report prints the table to stderr after
-  emission (no effect on emitted C#). CSharpWriter.InlineReport field; wired through ToCSharp.
-- TirEmitSource.TryGetGroundTirByNames + CSharpWriter.TestGetGroundTir: name-keyed ground-TIR
-  lookup for tests.
-- PlatoTests/InlinerTests.cs: compiles the stdlib once, runs TirInliner.Inline in-proc (~5s vs
-  the ~60s regen+build+test cycle) and pins flagship shapes with reusable matchers
-  AssertNoDelegateInvoke / AssertCollapsed / CountNodes<T>. Point3D.Transform fully collapses;
-  Bounds3D.Transform drops its delegate; TriangleMesh3D.Transform rewrites to a constructor.
+Renamed plato-spike-src → plato-src-small and rewrote it as a small, SELF-CONTAINED
+corpus (Point3D/Bounds3D/Line3D built on Number, avoiding the System.Numerics-backed
+Vector names) that reproduces the optimizer-relevant geometry shapes without the full
+library. New Small/ tree builds two projects — Plato.Small.Generated.Unoptimized and
+Plato.Small.Optimized — against a tiny hand-written Plato.Small.Runtime (MakeArray /
+CombineHashCodes / eager IReadOnlyList combinators / Number-Integer-Boolean stubs),
+NOT Plato.Intrinsics.V2. regen-small.ps1 regenerates + builds both. A seconds-fast
+optimizer-spike loop, kept out of check-all.
 
-M1 — tuple bodies via position-independent constructor-call rewrite:
-- When inlining a callee whose ROOT is Tuple_N(...) and whose declared return type is a struct
-  with a matching-arity field constructor, emit new T(elem...) (TirConstructorCall) instead of
-  the bare tuple. Valid in any expression slot under any scalar setting — replaces the old
-  tail-position + wrapper-tuple tail-lift, which is deleted (InlineTails + the tailPosition
-  parameter are gone). Excludes genuinely Tuple-named return types.
-- Guard: refuse any inline that would leave a residual immediately-invoked lambda (an IIFE the
-  emitter cannot render). With the cheap-projection relaxation below it now fires only for
-  genuinely non-duplicable arguments.
-- Cheap-projection relaxation: TryBetaReduce takes an optional cheapness predicate;
-  TirInliner.IsCheapProjection additionally treats a pure FIELD projection over a cheap receiver
-  (self.A, p.X -- a declared field of the receiver's type, recursively) as cheap. Duplicating it
-  re-runs only struct field loads, never a call/allocation, so beta-reduction may fire when a
-  lambda reads its parameter several times (p.X/p.Y/p.Z). This collapses the immediate-apply
-  family: Triangle3D.Transform now emits new Triangle3D(new Vector3((float)this.A.X, this.A.Y,
-  this.A.Z).Transform(t.Matrix), ...) -- no delegate, no Deform, no tuple; same for
-  Quad3D/Line3D/Ray3D. Computed properties (Magnitude, etc.) are NOT projections, so they still
-  block, preserving evaluation-count for real work.
-- Golden refreshed (Plato.Generated.Optimized): mesh + tuple-helper + immediate-apply Transform
-  family collapses; residual diff is _lp loop-temp renumbering from the changed inline order.
+## Optimizer improvements (all gated on the existing flags)
 
-Cost-based cheapness + M4 relaxations + M2 measurement:
-- ProjectionCost: a bounded evaluation-cost estimate over the TIR replacing the field-name-only
-  rule. Cheap: leaves, field/component reads, whitelisted scalar/vector operators over cheap
-  operands. Expensive (short-circuiting): allocations, control flow, computed members, and opaque
-  handwritten intrinsics (unknown body => assume expensive; Magnitude's sqrt still blocks).
-  Wired into β-reduction and, GATED ON --no-properties (V2), the multi-use compound-arg and
-  insideLambda gates. Effect: inlined 2724->2942, tuple ctor rewrites 271->345, MultiUseCompound
-  refusals 671->521, InsideLambda 174->100. V1 property-ful recipes keep the frozen baseline.
-- InvokeResultNavigated guard: refuse inlining a lambda arg whose application is used as a
-  member-call RECEIVER (f(x).Foo()) -- the delegate-return coercion (lambda body Vector3 vs Func
-  return Point3D) is lost in the non-converting receiver slot. Fixes Ray3D.Direction re-normalize.
-- optimizer-smoke/Bench (M2): true A/B via extern alias on the Optimized vs Unoptimized goldens.
-  Triangle3D.Transform ~1.0x (JIT devirtualizes the monomorphic delegate); TriangleMesh3D.Transform
-  0.77x (eager materialization of the STORED result array costs allocation the lazy Map avoids).
-  Recorded in the plan doc; the data picks M3(a) fusion over M3(b) but shows M3's payoff on this
-  stdlib is marginal (transient fuseable arrays tiny, big arrays stored, chains are law functions).
+1. Component unroller accepts CHEAP-PROJECTION vector sources (`x.A`, not only bare
+   params), reusing TirInliner.IsCheapProjection. Line3D.Eval (`x.A.Lerp(x.B, t)`) now
+   emits `new Point3D(...)` instead of a Components()+Zip loop.
 
-Gates: check-all ALL PASS (regen-diff off-flag byte-identical, lint, conformance
-V1/V2/Opt/Scalar, SDK build, GeometryTests); V2Runtime 204/204; Scalar 204/204;
-PlatoTests 103/103.
+2. Fixed-size array unrolling. The inliner now inlines array-LITERAL bodies (Corners),
+   and the component unroller unrolls Map/Zip/Reduce/All/Any/Reverse over a fixed-size
+   TirArray. Bounds3D.Deform goes from a Corners()+`new Point3D[8]`+loop to
+   `MakeArray<Point3D>(f.Invoke(c0)..f.Invoke(c7)).Bounds()` — no loop. TirArray now
+   prints a typed `MakeArray<T>` so a per-element implicit conversion (Vector3→Point3D)
+   survives the loop's removal.
 
-Not included (data-deferred): M3 loop fusion / statement-body inlining and M5 non-erased runtime
-port -- marginal payoff on this stdlib per M2, per the plan's measure-first / no-speculative-build
-guidance. Remaining M4 nested-lambda relaxation (6 refusals) low-value/high-risk.
+3. Redundant-cast cleanup. A same-type `coerce<float→float>` whose inner is provably
+   already that primitive (a native literal, an erased param that is not a wrapper-struct
+   `this` receiver, a real erased component field, or a scalar-operator result) is
+   dropped. Removes the `((float)x)` noise across every scalar-erased body; a
+   wrapper-returning pseudo-field's cast is kept (it disambiguates a broadcast overload).
+
+Not done: broad `var _varN = p;` copy-let removal — the Eval case it was raised for is
+already fixed by (1); eliminating the rest means changing the shared lambda-capture hoist,
+which the out-of-scope legacy TS/Rust writers still mirror byte-for-byte. Deferred.
+
+Goldens refreshed (both recipes — the cast cleanup touches the unoptimized output too);
+both projects build on net8.0. Emit snapshot re-baselined. New ComponentUnrollerTests
+cover the Eval/fixed-array cases.
+
+Gates: PlatoTests 116/116; conformance 205/205; both goldens + both Small projects build.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>

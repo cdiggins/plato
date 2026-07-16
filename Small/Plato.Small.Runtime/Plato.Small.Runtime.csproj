@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Minimal hand-written runtime for the Plato.Small.* optimizer-spike projects (see
+    Small\README.md). Deliberately tiny and dependency-free; the full library links
+    Plato.Intrinsics.V2 instead.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Ara3D.Geometry</RootNamespace>
+  </PropertyGroup>
+
+</Project>

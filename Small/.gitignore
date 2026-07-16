@@ -1,0 +1,7 @@
+# Generator side-products (not part of the generated projects)
+**/docs.html
+**/interfaces.txt
+
+# Build output
+**/bin/
+**/obj/

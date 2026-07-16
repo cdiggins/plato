@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Plato.Small.Optimized - buildable generated output of the SELF-CONTAINED small corpus
+    (plato-src-small) with the FULL OPTIMIZER PIPELINE ON. The fast optimizer-spike target:
+    reproduces the geometry component/loop shapes (Deform/Eval/ZipComponents) of the full
+    Plato.Generated.Optimized without linking Plato.Intrinsics.V2. A dev aid, NOT part of
+    check-all. Regenerate with Small\regen-small.ps1.
+
+    Recipe: csharp-style=extensions scalar=float optimize optimize-arrays inline methods loops no-properties
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>AnyCPU;x64</Platforms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>Ara3D.Geometry</RootNamespace>
+    <NoWarn>$(NoWarn);CS0108;CS0114;CS0660;CS0661;CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Plato.Small.Runtime\Plato.Small.Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

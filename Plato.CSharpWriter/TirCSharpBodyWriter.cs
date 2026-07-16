@@ -364,6 +364,19 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 // TirScalarLowerer decided WHERE casts go, the printer just prints them.
                 if (_lowered)
                 {
+                    // A same-type coercion (coerce<float->float>) whose inner is PROVABLY already
+                    // that C# primitive is the spurious `((float)x)` noise the scalar lowerer emits
+                    // on every erased operand — drop it. Restricted to inners whose emitted type is
+                    // unambiguously the primitive (a native scalar literal, an erased param/var, or
+                    // a real erased field via the component unroller); a wrapper-returning
+                    // pseudo-field (`Vector2.X` → Number) is a TirCall and is NOT dropped, because
+                    // its cast disambiguates a broadcast overload (Multiply(float) vs Multiply(Vector2)).
+                    if (c.ToType?.Name != null && c.FromType?.Name == c.ToType.Name
+                        && RendersAsPrimitive(TirRewrite.StripCoerce(c.Inner), c.ToType.Name))
+                    {
+                        WriteNode(c.Inner);
+                        return;
+                    }
                     // A cast to a scalar PRIMITIVE (float) disambiguates an erased overload; a cast
                     // to a scalar WRAPPER (Number) restores wrapper-ness at a broadcast/intrinsic
                     // boundary (float -> Number -> Vector2, which C# will not chain implicitly).
@@ -438,12 +451,22 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 return;
 
             case TirArray arr:
-                // Approximation: the reference threads the expected IArray element type to pick a
-                // MakeArray<T> overload; the TIR does not carry the usage type here.
-                Write("Intrinsics.MakeArray(");
+            {
+                // Pin the element type with an explicit MakeArray<T> when the array's element type
+                // is a concrete renderable type. Without it, C# infers T from the arguments, which
+                // loses a per-element implicit conversion (e.g. a Vector3-valued element in a
+                // Point3D array — the case the fixed-array unroller exposes when it replaces the
+                // loop lowerer's `new Point3D[n]`, which pinned the type). Fall back to inference
+                // for a type-variable / non-renderable element.
+                var elem = arr.Type != null && arr.Type.TypeArgs.Count == 1 ? arr.Type.TypeArgs[0] : null;
+                var elemName = elem?.Name;
+                var renderable = !string.IsNullOrEmpty(elemName) && !elem.IsTypeVariable
+                    && (char.IsLetter(elemName[0]) || elemName[0] == '_');
+                Write(renderable ? $"Intrinsics.MakeArray<{_tw.ToCSharpType(elem)}>(" : "Intrinsics.MakeArray(");
                 WriteArgs(arr.Elements);
                 Write(")");
                 return;
+            }
 
             case TirAssign asg:
                 WriteNode(asg.LValue);
@@ -543,6 +566,47 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // makes an enclosing cast to it redundant (collapses `((float)((float)x))` -> `((float)x)`).
     private static bool IsSameScalarCast(TirNode inner, string prim)
         => inner is TirCoerce c && c.ToType?.Name == prim;
+
+    /// <summary>Whether <paramref name="inner"/> emits as C# code whose type is unambiguously the
+    /// scalar primitive <paramref name="to"/> (either the primitive name like "float" or its
+    /// wrapper "Number"), so a same-type cast around it is pure redundant noise. Conservative — only
+    /// cases whose EMITTED type is provably the primitive regardless of surrounding overloads:
+    ///   * a native scalar literal;
+    ///   * a real erased component field the unroller produced (`TirComponentAccess` with no wrapper
+    ///     cast, carrying its <see cref="TirComponentAccess.ScalarComponentPrim"/>);
+    ///   * an erased parameter that is NOT the `this` receiver of a scalar WRAPPER-struct instance
+    ///     member — there `this` is the wrapper (`Number`), and its cast pins a broadcast overload
+    ///     (`Number.Multiply(Vector2)` vs `(float)`); loop-temp lambda params (rendered under a
+    ///     lambda) and ordinary erased params are fine.
+    /// Excluded: pseudo-field method calls (`Vector2.X` → wrapper), `TirVariable` lets, and any
+    /// other node whose emitted type is context-dependent.</summary>
+    private bool RendersAsPrimitive(TirNode inner, string to)
+    {
+        var prim = CSharpWriter.ScalarPrimitives.TryGetValue(to, out var p) ? p : to;
+        bool ErasesTo(TypeExpression t)
+        {
+            var name = t?.Def?.Name ?? t?.Name;
+            if (name == null) return false;
+            return name == prim || (CSharpWriter.ScalarPrimitives.TryGetValue(name, out var q) && q == prim);
+        }
+        switch (inner)
+        {
+            case TirLiteral:
+                return true;
+            case TirComponentAccess ca:
+                return ca.CastTo == null && ca.ScalarComponentPrim == prim;
+            case TirParameter par:
+                var isThisReceiver = par.Def?.Index == 0 && !_isStatic && _lambdaDepth == 0;
+                return !isThisReceiver && ErasesTo(par.Type);
+            case TirCall call when call.EmissionKind == Ara3D.Geometry.Compiler.Checking.EmissionKind.Operator:
+                // A scalar OPERATOR (Add/Subtract/Multiply/...) whose result erases to the primitive:
+                // its emitted type is that primitive (a broadcast operator would have a vector result
+                // type, so ErasesTo fails and its cast is kept).
+                return ErasesTo(call.Type);
+            default:
+                return false;
+        }
+    }
 
     // Render `(({cast})inner)`, parenthesizing a low-precedence inner (a conditional would
     // otherwise bind the cast to its condition — see the TirCoerce case).
