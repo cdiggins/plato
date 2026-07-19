@@ -1,0 +1,44 @@
+// Demo 3 — Tier-1 fixed-size array: a cubic Bezier with four control points.
+//
+// Bezier4 implements IArrayLike<Vector2D>, so the GLSL writer generates its
+// accessors structurally: At(i) is an index chain over the four fields, Count/
+// NumComponents return 4, Components returns a vec2[4]. Eval indexes the array by
+// runtime i (via At) with three rounds of linear interpolation (de Casteljau).
+// This is exactly the array form GLSL can express: the size is a compile-time
+// constant.
+
+type Bezier4
+{
+    P0: Vector2D;
+    P1: Vector2D;
+    P2: Vector2D;
+    P3: Vector2D;
+}
+
+// Fixed-size array accessors. The final branch of At is the clamp: any index at or
+// past the last control point returns P3, so the shader can never read out of range
+// (GLSL has no bounds trap). Count is a compile-time constant.
+library Bezier4Array
+{
+    At(b: Bezier4, i: Integer): Vector2D
+        => i <= 0 ? b.P0 : i == 1 ? b.P1 : i == 2 ? b.P2 : b.P3;
+    Count(b: Bezier4): Integer => 4;
+}
+
+library Beziers
+{
+    // Cubic Bezier at parameter t in [0,1], via three de Casteljau rounds.
+    Eval(b: Bezier4, t: Number): Vector2D
+    {
+        var a0 = b.At(0).Lerp(b.At(1), t);
+        var a1 = b.At(1).Lerp(b.At(2), t);
+        var a2 = b.At(2).Lerp(b.At(3), t);
+        var c0 = a0.Lerp(a1, t);
+        var c1 = a1.Lerp(a2, t);
+        return c0.Lerp(c1, t);
+    }
+
+    // Approximate distance from a point to the curve, sampled at a fixed t.
+    DistanceAt(b: Bezier4, p: Vector2D, t: Number): Number
+        => b.Eval(t).Distance(p);
+}

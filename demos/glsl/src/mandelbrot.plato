@@ -1,0 +1,29 @@
+// Demo 2 — Complex numbers & the Mandelbrot set.
+//
+// A user-defined Complex type becomes a GLSL struct; its arithmetic becomes free
+// functions. Shows Plato's "distinct data type + its own algebra" mapping cleanly
+// onto GLSL. The escape-time iteration loop (runtime count) lives in the harness;
+// Plato supplies the type and one iteration step z -> z^2 + c.
+
+type Complex
+{
+    Re: Number;
+    Im: Number;
+}
+
+library Complexes
+{
+    Add(a: Complex, b: Complex): Complex
+        => new Complex(a.Re + b.Re, a.Im + b.Im);
+
+    // (a+bi)(c+di) = (ac - bd) + (ad + bc)i
+    Multiply(a: Complex, b: Complex): Complex
+        => new Complex(a.Re * b.Re - a.Im * b.Im, a.Re * b.Im + a.Im * b.Re);
+
+    NormSquared(z: Complex): Number
+        => z.Re * z.Re + z.Im * z.Im;
+
+    // One Mandelbrot / Julia step.
+    Iterate(z: Complex, c: Complex): Complex
+        => z.Multiply(z).Add(c);
+}

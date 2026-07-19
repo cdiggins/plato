@@ -226,8 +226,20 @@ public class TirGlslBodyWriter : CodeBuilder<TirGlslBodyWriter>
             case TirInvoke _:
                 throw new GlslUnsupportedException("invoking a function value (GLSL has no function pointers)");
 
-            case TirArray _:
-                throw new GlslUnsupportedException("array literals (GLSL has no dynamically sized arrays)");
+            case TirArray arr:
+            {
+                // A statically sized array literal maps to a GLSL sized-array constructor
+                // (T[N](e0, e1, ...)). This is the ONLY array GLSL can build: the length is
+                // fixed at compile time. Dynamically sized arrays remain unrepresentable.
+                if (arr.Elements.Count == 0)
+                    throw new GlslUnsupportedException("empty array literal (GLSL arrays need >= 1 element and a known size)");
+                var elem = _w.GlslTypeNameOrNull(arr.Elements[0].Type)
+                           ?? throw new GlslUnsupportedException("array element type not representable in GLSL");
+                Write($"{elem}[{arr.Elements.Count}](");
+                WriteArgs(arr.Elements);
+                Write(")");
+                return;
+            }
 
             case TirUnresolved u:
                 throw new GlslUnsupportedException($"unresolved call '{u.Original?.Name}'");
@@ -326,23 +338,23 @@ public class TirGlslBodyWriter : CodeBuilder<TirGlslBodyWriter>
             return;
         }
 
-        // A conversion named after a natively mapped type becomes a GLSL cast/constructor.
-        if (call.EmissionKind == EmissionKind.Conversion && args.Count == 1)
+        // A call named after a natively mapped type is a constructor/conversion:
+        // Vector3(a, b, c) -> vec3(a, b, c), and the single-argument broadcast
+        // Vector3(0.0) -> vec3(0.0) (GLSL fills every component). Covers Conversion,
+        // Constructor and static-factory emission kinds alike.
+        if (GlslWriter.NativeVectors.TryGetValue(name, out var vec))
         {
-            if (GlslWriter.NativePrimitives.TryGetValue(name, out var prim))
-            {
-                Write($"{prim}(");
-                WriteArgs(args);
-                Write(")");
-                return;
-            }
-            if (GlslWriter.NativeVectors.TryGetValue(name, out var vec))
-            {
-                Write($"{vec}(");
-                WriteArgs(args);
-                Write(")");
-                return;
-            }
+            Write($"{vec}(");
+            WriteArgs(args);
+            Write(")");
+            return;
+        }
+        if (GlslWriter.NativePrimitives.TryGetValue(name, out var prim) && args.Count == 1)
+        {
+            Write($"{prim}(");
+            WriteArgs(args);
+            Write(")");
+            return;
         }
 
         // Everything else: a free-function call.

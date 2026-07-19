@@ -397,18 +397,83 @@ namespace Ara3D.Geometry.GlslWriter
                 if (!supported)
                     continue;
 
+                // Tier-1/Tier-2 fixed arrays: an IArrayLike struct with N homogeneous fields is
+                // emitted with structurally generated accessors (At/Count/NumComponents/Components).
+                // These are the only forms of "array" GLSL can express: the size is a compile-time
+                // constant and At is an index chain that clamps to the last element on out-of-range
+                // (GLSL cannot trap, so clamping is the closest thing to a safe failure).
+                var handled = EmitArrayLikeMembers(ct);
+
                 foreach (var g in ct.InterfaceFunctionGroups)
                 {
                     FunctionInstance f;
                     try { f = Analyzer.ChooseBestFunction(g, out _); }
                     catch (Exception) { continue; }
+                    if (handled.Contains(f.Name)) continue;
                     if (!SkipFunction(ct, f))
                         TryEmitFunction(f, ct);
                 }
                 foreach (var f in ct.UnimplementedFunctions)
+                {
+                    if (handled.Contains(f.Name)) continue;
                     if (!SkipFunction(ct, f))
                         TryEmitFunction(f, ct);
+                }
             }
+        }
+
+        /// <summary>
+        /// A concrete struct that implements IArrayLike over N homogeneous fields is a
+        /// fixed-size array. Emit its accessors directly from the fields (the stdlib
+        /// bodies route through the dynamic IArray, which GLSL has no equivalent for).
+        /// Returns the set of member names handled here, so the normal path skips them.
+        /// </summary>
+        private HashSet<string> EmitArrayLikeMembers(ConcreteType ct)
+        {
+            var handled = new HashSet<string>();
+            var name = ct.TypeDef.Name;
+            if (!StructNames.Contains(name))
+                return handled;
+            if (!ct.AllInterfaces.Any(i => i.ToString().StartsWith("IArrayLike")
+                                           || i.ToString().StartsWith("FixedArray")))
+                return handled;
+
+            var fields = ct.TypeDef.Fields.Select(f => EscapeName(f.Name)).ToList();
+            var fieldGlslTypes = ct.TypeDef.Fields.Select(f => GlslTypeNameOrNull(f.Type)).ToList();
+            if (fields.Count == 0 || fieldGlslTypes.Any(t => t == null))
+                return handled;
+            var elem = fieldGlslTypes[0];
+            if (fieldGlslTypes.Any(t => t != elem))
+                return handled; // heterogeneous: not an array
+
+            var n = fields.Count;
+
+            // At(self, i): index chain, clamped to the last field on out-of-range.
+            var chain = fields[n - 1];
+            for (var i = n - 2; i >= 0; i--)
+                chain = $"(i <= {i} ? self.{fields[i]} : {chain})";
+            AddGenerated($"{elem} At({name} self, int i)", $" {{ return {chain}; }}");
+            handled.Add("At");
+
+            AddGenerated($"int Count({name} self)", $" {{ return {n}; }}");
+            handled.Add("Count");
+            AddGenerated($"int NumComponents({name} self)", $" {{ return {n}; }}");
+            handled.Add("NumComponents");
+
+            var comps = fields.Select(f => $"self.{f}").JoinStringsWithComma();
+            AddGenerated($"{elem}[{n}] Components({name} self)", $" {{ return {elem}[{n}]({comps}); }}");
+            handled.Add("Components");
+
+            return handled;
+        }
+
+        private void AddGenerated(string sig, string bodyWithBraces)
+        {
+            if (!_claimedSignatures.Add(sig))
+                return;
+            _prototypes.Add(sig);
+            _definitions.Add(sig + bodyWithBraces);
+            FunctionsEmitted++;
         }
 
         private void TryEmitFunction(FunctionInstance fi, ConcreteType ct)
@@ -530,6 +595,36 @@ namespace Ara3D.Geometry.GlslWriter
                 case "Angle.Cos": body = $"cos({a}.Radians)"; return true;
                 case "Angle.Sin": body = $"sin({a}.Radians)"; return true;
                 case "Angle.Tan": body = $"tan({a}.Radians)"; return true;
+            }
+
+            // Owner-agnostic mappings onto GLSL built-ins. These work uniformly for float
+            // and vecN (GLSL overloads the built-ins), so a bodiless Plato intrinsic like
+            // Vector3.Normalize or Number.Clamp lowers straight to the native call. This is
+            // both faster GLSL and how a shader author would write it by hand.
+            switch (name)
+            {
+                case "Min" when ps.Count == 2: body = $"min({a}, {b})"; return true;
+                case "Max" when ps.Count == 2: body = $"max({a}, {b})"; return true;
+                case "Clamp" when ps.Count == 3: body = $"clamp({a}, {b}, {ps[2]})"; return true;
+                case "Saturate" when ps.Count == 1: body = $"clamp({a}, 0.0, 1.0)"; return true;
+                case "Lerp" when ps.Count == 3: body = $"mix({a}, {b}, {ps[2]})"; return true;
+                case "Mix" when ps.Count == 3: body = $"mix({a}, {b}, {ps[2]})"; return true;
+                case "Step" when ps.Count == 2: body = $"step({a}, {b})"; return true;
+                case "SmoothStep" when ps.Count == 3: body = $"smoothstep({a}, {b}, {ps[2]})"; return true;
+                case "Sign" when ps.Count == 1: body = $"sign({a})"; return true;
+                case "Fract" when ps.Count == 1: body = $"fract({a})"; return true;
+                case "Sqrt" when ps.Count == 1: body = $"sqrt({a})"; return true;
+                case "Abs" when ps.Count == 1: body = $"abs({a})"; return true;
+                case "Floor" when ps.Count == 1: body = $"floor({a})"; return true;
+                case "Ceiling" when ps.Count == 1: body = $"ceil({a})"; return true;
+                case "Length" when ps.Count == 1: body = $"length({a})"; return true;
+                case "Magnitude" when ps.Count == 1: body = $"length({a})"; return true;
+                case "Dot" when ps.Count == 2: body = $"dot({a}, {b})"; return true;
+                case "Cross" when ps.Count == 2: body = $"cross({a}, {b})"; return true;
+                case "Normalize" when ps.Count == 1: body = $"normalize({a})"; return true;
+                case "Distance" when ps.Count == 2: body = $"distance({a}, {b})"; return true;
+                case "Reflect" when ps.Count == 2: body = $"reflect({a}, {b})"; return true;
+                case "Atan2" when ps.Count == 2: body = $"Angle(atan({a}, {b}))"; return true;
             }
 
             // Operator-named intrinsics on the native scalars: native GLSL operators.

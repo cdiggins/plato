@@ -1,0 +1,130 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Plato to GLSL — demo gallery</title>
+<style>
+  body{font-family:system-ui,sans-serif;background:#0e0f13;color:#d8dae0;margin:0;padding:24px}
+  h1{font-size:20px;margin:0 0 4px} p.sub{color:#8b909c;margin:0 0 20px;font-size:13px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+  .card{background:#16181e;border:1px solid #262a33;border-radius:10px;padding:14px}
+  .card h2{font-size:14px;margin:0 0 2px}
+  .card .d{color:#8b909c;font-size:12px;margin:0 0 10px;min-height:32px}
+  canvas{width:100%;aspect-ratio:1/1;border-radius:6px;background:#000;display:block}
+  .status{font-family:ui-monospace,monospace;font-size:11px;margin-top:8px;white-space:pre-wrap}
+  .ok{color:#7bd88f}.err{color:#ff6b6b}
+</style></head><body>
+<h1>Plato → GLSL</h1>
+<p class="sub">Each panel is a WebGL2 fragment shader = a Plato-generated <code>plato.glsl</code> chunk + a small hand-written <code>main()</code>. Compiled and rendered live in your browser.</p>
+<div class="grid" id="grid"></div>
+
+<script id="vs" type="x-shader">#version 300 es
+precision highp float;
+out vec2 uv;
+void main(){ vec2 p=vec2((gl_VertexID<<1)&2, gl_VertexID&2); uv=p; gl_Position=vec4(p*2.0-1.0,0.0,1.0); }
+</script>
+
+<script>
+const DEMOS = [
+  { id:'sdf', title:'1 · Signed distance fields', desc:'Plato vector library + min/max/smooth-min compose a CSG scene; the shader raymarches Scene(p).',
+    main:`
+in vec2 uv; out vec4 fragColor;
+vec3 nrm(vec3 p){ vec2 h=vec2(0.0015,0.0);
+  return normalize(vec3(Scene(p+h.xyy)-Scene(p-h.xyy),Scene(p+h.yxy)-Scene(p-h.yxy),Scene(p+h.yyx)-Scene(p-h.yyx))); }
+void main(){
+  vec2 p=uv*2.0-1.0;
+  float a=2.2; vec3 ro=vec3(3.2*sin(a),1.7,3.2*cos(a)), ta=vec3(0.0,-0.1,0.0);
+  vec3 ww=normalize(ta-ro), uu=normalize(cross(ww,vec3(0,1,0))), vv=cross(uu,ww);
+  vec3 rd=normalize(p.x*uu+p.y*vv+1.6*ww);
+  float t=0.0,d=0.0; int hit=0;
+  for(int i=0;i<120;i++){ vec3 pos=ro+rd*t; d=Scene(pos); if(d<0.001){hit=1;break;} t+=d; if(t>20.0)break; }
+  vec3 col=vec3(0.05,0.06,0.09)+0.04*uv.y;
+  if(hit==1){ vec3 pos=ro+rd*t; vec3 n=nrm(pos); vec3 l=normalize(vec3(0.5,0.8,0.35));
+    float dif=clamp(dot(n,l),0.0,1.0), amb=0.35+0.25*n.y;
+    col=vec3(0.95,0.6,0.3)*dif + vec3(0.18,0.24,0.34)*amb; }
+  fragColor=vec4(pow(col,vec3(0.4545)),1.0);
+}` },
+  { id:'mandelbrot', title:'2 · Complex numbers', desc:'A user Complex type becomes a GLSL struct; Iterate(z,c)=z²+c drives the Mandelbrot escape loop.',
+    main:`
+in vec2 uv; out vec4 fragColor;
+void main(){
+  vec2 c0=vec2(uv.x*2.6-2.0, uv.y*2.5-1.25);
+  Complex c=Complex(c0.x,c0.y), z=Complex(0.0,0.0);
+  const int MAX=160; int it=0;
+  for(int i=0;i<MAX;i++){ z=Iterate(z,c); if(NormSquared(z)>4.0)break; it++; }
+  float m=float(it)/float(MAX);
+  vec3 col = it>=MAX ? vec3(0.02,0.02,0.05)
+    : 0.5+0.5*cos(6.2831*(vec3(0.9,0.75,0.6)*m)+vec3(0.2,0.9,1.6));
+  fragColor=vec4(col,1.0);
+}` },
+  { id:'bezier', title:'3 · Tier-1 fixed array', desc:'Bezier4 = four control points; At(i) is a clamped index chain, Eval indexes it via de Casteljau.',
+    main:`
+in vec2 uv; out vec4 fragColor;
+void main(){
+  vec2 p=uv;
+  Bezier4 b=Bezier4(vec2(0.1,0.25),vec2(0.35,0.95),vec2(0.7,0.02),vec2(0.92,0.7));
+  float md=1e9; const int N=80;
+  for(int i=0;i<=N;i++){ md=min(md, distance(p, Eval(b, float(i)/float(N)))); }
+  float curve=smoothstep(0.014,0.006,md);
+  float cp=0.0;
+  for(int i=0;i<Count(b);i++){ cp=max(cp, smoothstep(0.024,0.016,distance(p,At(b,i)))); }
+  vec3 col=vec3(0.07,0.08,0.11);
+  col=mix(col,vec3(0.25,0.85,1.0),curve);
+  col=mix(col,vec3(1.0,0.65,0.2),cp);
+  fragColor=vec4(col,1.0);
+}` },
+  { id:'polygon', title:'4 · Tier-2 bounded array', desc:'Polygon6 = fixed capacity 6, clamped At; the shader loops i<count (runtime) for edge distance + winding.',
+    main:`
+in vec2 uv; out vec4 fragColor;
+void main(){
+  vec2 p=uv;
+  Polygon6 poly=Polygon6(vec2(0.5,0.88),vec2(0.86,0.62),vec2(0.74,0.18),
+                         vec2(0.34,0.14),vec2(0.14,0.52),vec2(0.42,0.72));
+  int count=6; float md=1e9; bool inside=false;
+  for(int i=0;i<count;i++){ int j=i+1; if(j>=count)j=0;
+    md=min(md, EdgeDistSq(poly,i,j,p));
+    vec2 a=At(poly,i), bb=At(poly,j);
+    if(((a.y>p.y)!=(bb.y>p.y)) && (p.x < (bb.x-a.x)*(p.y-a.y)/(bb.y-a.y)+a.x)) inside=!inside;
+  }
+  float d=sqrt(md);
+  vec3 col=vec3(0.08,0.09,0.12);
+  if(inside) col=vec3(0.16,0.22,0.34);
+  col=mix(col,vec3(1.0,0.82,0.32), smoothstep(0.02,0.006,d));
+  fragColor=vec4(col,1.0);
+}` },
+];
+
+let pass=0, fail=0;
+function panel(d){
+  const card=document.createElement('div'); card.className='card';
+  card.innerHTML=`<h2>${d.title}</h2><div class="d">${d.desc}</div>`+
+    `<canvas id="c_${d.id}" width="360" height="360"></canvas><div class="status" id="s_${d.id}">loading…</div>`;
+  document.getElementById('grid').appendChild(card);
+}
+function run(d, src){
+  const cv=document.getElementById('c_'+d.id), st=document.getElementById('s_'+d.id);
+  const gl=cv.getContext('webgl2');
+  const set=(cls,msg)=>{ st.className='status '+cls; st.textContent=msg; };
+  if(!gl){ set('err','no WebGL2'); fail++; return; }
+  // The generated chunk carries its own #version + precision directives; strip them
+  // (a fragment can only have one) and supply our own header.
+  const body=src.split('\n').filter(l=>!/^\s*#version/.test(l)&&!/^\s*precision\s/.test(l)).join('\n');
+  const fs=`#version 300 es\nprecision highp float;\nprecision highp int;\n`+body+'\n'+d.main;
+  const mk=(t,s,n)=>{ const sh=gl.createShader(t); gl.shaderSource(sh,s); gl.compileShader(sh);
+    if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS)){ set('err',n+' compile FAIL:\n'+gl.getShaderInfoLog(sh)); return null; } return sh; };
+  const vs=mk(gl.VERTEX_SHADER, document.getElementById('vs').textContent,'vertex');
+  const fsh=mk(gl.FRAGMENT_SHADER, fs,'fragment');
+  if(!vs||!fsh){ fail++; return; }
+  const pr=gl.createProgram(); gl.attachShader(pr,vs); gl.attachShader(pr,fsh); gl.linkProgram(pr);
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){ set('err','link FAIL:\n'+gl.getProgramInfoLog(pr)); fail++; return; }
+  gl.useProgram(pr); gl.viewport(0,0,360,360); gl.drawArrays(gl.TRIANGLES,0,3);
+  const px=new Uint8Array(4); gl.readPixels(180,180,1,1,gl.RGBA,gl.UNSIGNED_BYTE,px);
+  set('ok','PASS · compiled, linked, rendered · center rgba '+px.join(','));
+  pass++;
+}
+(async()=>{
+  DEMOS.forEach(panel);
+  for(const d of DEMOS){
+    try{ const r=await fetch('out/'+d.id+'.glsl'); run(d, await r.text()); }
+    catch(e){ const st=document.getElementById('s_'+d.id); st.className='status err'; st.textContent='fetch FAIL: '+e; fail++; }
+  }
+  document.title = fail===0 ? `PLATO-GLSL-ALL-PASS (${pass}/${DEMOS.length})` : `PLATO-GLSL-FAIL (${pass} ok, ${fail} fail)`;
+})();
+</script></body></html>

@@ -1,0 +1,52 @@
+// Demo 4 — Tier-2 bounded array: a polygon with fixed capacity + runtime count.
+//
+// Polygon6 is a fixed-capacity buffer (six Vector2D slots) implementing
+// IArrayLike<Vector2D>. The GLSL writer generates a CLAMPED At(i): an index past
+// the last slot returns the last vertex instead of reading out of bounds. GLSL
+// cannot trap, so clamping is the safe-failure story from the design note.
+//
+// Plato supplies the storage type and the per-edge distance/side tests; the
+// harness runs the variable-length loop (i < count) that visits the active
+// vertices, which is the part GLSL expresses and Plato source cannot (no runtime
+// loops without dynamic arrays or closures).
+
+type Polygon6
+{
+    V0: Vector2D;
+    V1: Vector2D;
+    V2: Vector2D;
+    V3: Vector2D;
+    V4: Vector2D;
+    V5: Vector2D;
+}
+
+// Fixed-capacity accessors. The final branch of At clamps: an index >= 5 returns
+// the last slot rather than reading out of bounds. The harness supplies the runtime
+// active-vertex count and loops i < count, so capacity (6) is compile-time and the
+// count is dynamic — the Tier-2 "fixed capacity + count" pattern.
+library Polygon6Array
+{
+    At(poly: Polygon6, i: Integer): Vector2D
+        => i <= 0 ? poly.V0 : i == 1 ? poly.V1 : i == 2 ? poly.V2
+         : i == 3 ? poly.V3 : i == 4 ? poly.V4 : poly.V5;
+    Count(poly: Polygon6): Integer => 6;
+}
+
+library Polygons
+{
+    // Squared distance from point p to the segment [a, b].
+    SegDistSq(p: Vector2D, a: Vector2D, b: Vector2D): Number
+    {
+        var pa = p.Subtract(a);
+        var ba = b.Subtract(a);
+        var h = (pa.Dot(ba) / ba.Dot(ba)).Clamp(0.0, 1.0);
+        return pa.Subtract(ba.Scale(h)).LengthSquared;
+    }
+
+    // Squared distance from p to the edge from vertex i to vertex j. The harness
+    // loops i over the runtime vertex count and reduces these to a min, giving a
+    // signed-distance outline of the polygon. poly.At(i) is the writer-generated
+    // clamped accessor: an out-of-range i returns the last slot, never reads OOB.
+    EdgeDistSq(poly: Polygon6, i: Integer, j: Integer, p: Vector2D): Number
+        => p.SegDistSq(poly.At(i), poly.At(j));
+}

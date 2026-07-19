@@ -1,0 +1,53 @@
+// Demo 1 — Signed distance fields & CSG (the classic Plato use case).
+//
+// Pure functions over Vector3D. Distance-field primitives are combined with min /
+// max / smooth-min into a whole scene, all in Plato; the harness only raymarches
+// the generated Scene function. Shows Plato's vector library driving a real 3D
+// renderer with zero shader-specific code in the source.
+
+library Sdf
+{
+    // Sphere of radius r, centred at the origin.
+    SdSphere(p: Vector3D, r: Number): Number
+        => p.Length - r;
+
+    // Axis-aligned box with half-extents b.
+    SdBox(p: Vector3D, b: Vector3D): Number
+    {
+        var q = p.Abs.Subtract(b);
+        var zero = new Vector3D(0.0, 0.0, 0.0);
+        return q.Max(zero).Length + q.X.Max(q.Y.Max(q.Z)).Min(0.0);
+    }
+
+    // Torus in the XZ plane: major radius R, tube radius r.
+    SdTorus(p: Vector3D, bigR: Number, smallR: Number): Number
+    {
+        var xz = new Vector2D(p.X, p.Z);
+        var q = new Vector2D(xz.Length - bigR, p.Y);
+        return q.Length - smallR;
+    }
+
+    // Horizontal ground plane at height -h.
+    SdGround(p: Vector3D, h: Number): Number
+        => p.Y + h;
+
+    OpUnion(a: Number, b: Number): Number    => a.Min(b);
+    OpSubtract(a: Number, b: Number): Number => a.Max(-b);
+    OpSmoothUnion(a: Number, b: Number, k: Number): Number
+        => a.SmoothMin(b, k);
+}
+
+// The scene: two spheres smooth-blended with a box, a torus welded on, a floor.
+library Demo
+{
+    Scene(p: Vector3D): Number
+    {
+        var s1  = p.Subtract(new Vector3D(-0.55, 0.0, 0.0)).SdSphere(0.75);
+        var s2  = p.Subtract(new Vector3D( 0.55, 0.0, 0.0)).SdSphere(0.75);
+        var box = p.SdBox(new Vector3D(0.55, 0.45, 0.55));
+        var blob    = s1.OpSmoothUnion(s2, 0.35).OpSmoothUnion(box, 0.25);
+        var ring    = p.Subtract(new Vector3D(0.0, 0.0, 0.0)).SdTorus(1.25, 0.14);
+        var solid   = blob.OpUnion(ring);
+        return solid.OpUnion(p.SdGround(1.0));
+    }
+}
