@@ -5,6 +5,7 @@ using Ara3D.Utils;
 using Ara3D.Geometry.CSharpWriter;
 using Ara3D.Geometry.TypeScriptWriter;
 using Ara3D.Geometry.RustWriter;
+using Ara3D.Geometry.GlslWriter;
 using Logger = Ara3D.Logging.Logger;
 
 namespace Ara3D.Geometry.CLI
@@ -26,6 +27,7 @@ namespace Ara3D.Geometry.CLI
 
             var typeScript = args.Contains("--typescript");
             var rust = args.Contains("--rust");
+            var glsl = args.Contains("--glsl");
 
             // Component-op unrolling optimization (roadmap P3.1). C# backend only; works with
             // both --csharp-style values. Off by default (byte-identical output without it).
@@ -116,6 +118,18 @@ namespace Ara3D.Geometry.CLI
             {
                 logger.Log("Writing TypeScript Files");
                 var output = compilation.ToTypeScript(outputFolder, true);
+                foreach (var kv in output.Files)
+                {
+                    var fp = outputFolder.RelativeFile(kv.Key);
+                    logger.Log($"Writing {kv.Key}");
+                    fp.WriteAllText(kv.Value.ToString());
+                }
+            }
+            else if (glsl)
+            {
+                logger.Log("Writing GLSL Files");
+                var output = compilation.ToGlsl(outputFolder);
+                logger.Log($"GLSL functions emitted: {output.FunctionsEmitted}, skipped: {output.Skipped.Count}");
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);
