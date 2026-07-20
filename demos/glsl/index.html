@@ -7,61 +7,91 @@
   @media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   .card{background:#16181e;border:1px solid #262a33;border-radius:10px;padding:14px}
   .card h2{font-size:14px;margin:0 0 2px}
-  .card .d{color:#8b909c;font-size:12px;margin:0 0 10px;min-height:32px}
+  .card .d{color:#8b909c;font-size:12px;margin:0 0 10px;min-height:48px}
+  .wrap{position:relative}
   canvas{width:100%;aspect-ratio:1/1;border-radius:6px;background:#000;display:block}
+  canvas.orbit{cursor:grab} canvas.orbit:active{cursor:grabbing}
+  .hint{position:absolute;left:8px;bottom:8px;font-size:10px;color:#aeb4c0;background:rgba(0,0,0,.45);
+        padding:2px 6px;border-radius:5px;pointer-events:none;opacity:.85}
   .status{font-family:ui-monospace,monospace;font-size:11px;margin-top:8px;white-space:pre-wrap}
   .ok{color:#7bd88f}.err{color:#ff6b6b}
 </style></head><body>
 <h1>Plato → GLSL</h1>
-<p class="sub">Each panel is a WebGL2 fragment shader = a Plato-generated <code>plato.glsl</code> chunk + a small hand-written <code>main()</code>. Compiled and rendered live in your browser.</p>
+<p class="sub">Each panel is a WebGL2 fragment shader = a Plato-generated <code>plato.glsl</code> chunk + a small hand-written <code>renderPixel()</code>. 2&times;2 supersampled, aspect-corrected. <b>Drag the 3D panels to orbit.</b></p>
 <div class="grid" id="grid"></div>
 
 <script id="vs" type="x-shader">#version 300 es
-precision highp float;
-out vec2 uv;
-void main(){ vec2 p=vec2((gl_VertexID<<1)&2, gl_VertexID&2); uv=p; gl_Position=vec4(p*2.0-1.0,0.0,1.0); }
+void main(){ vec2 p=vec2((gl_VertexID<<1)&2, gl_VertexID&2); gl_Position=vec4(p*2.0-1.0,0.0,1.0); }
 </script>
 
 <script>
+// Shared fragment prelude: uniforms, the orbit matrix, and a main() that
+// supersamples renderPixel() (uSamples x uSamples) and aspect-corrects the
+// coordinates. `uv` is [0,1] (2D demos); `q` is aspect-correct NDC with y in
+// [-1,1] and x scaled by the pixel aspect (3D demos); `cam` is the orbit rotation.
+const PRELUDE = `
+uniform vec2  uRes;
+uniform vec2  uOrbit;   // yaw, pitch (radians)
+uniform float uTime;
+uniform int   uSamples; // per-axis AA samples (1 while dragging, 2 at rest)
+out vec4 fragColor;
+mat3 orbitM(){
+  float cy=cos(uOrbit.x), sy=sin(uOrbit.x), cx=cos(uOrbit.y), sx=sin(uOrbit.y);
+  mat3 ry=mat3(cy,0.0,-sy, 0.0,1.0,0.0, sy,0.0,cy);
+  mat3 rx=mat3(1.0,0.0,0.0, 0.0,cx,-sx, 0.0,sx,cx);
+  return rx*ry;
+}
+vec3 renderPixel(vec2 uv, vec2 q, mat3 cam);
+void main(){
+  int S = uSamples;
+  vec3 acc = vec3(0.0);
+  mat3 cam = orbitM();
+  for(int m=0;m<S;m++) for(int n=0;n<S;n++){
+    vec2 off = (vec2(float(m),float(n))+0.5)/float(S) - 0.5;
+    vec2 fc  = gl_FragCoord.xy + off;
+    vec2 uv  = fc/uRes;
+    vec2 q   = (2.0*fc - uRes)/uRes.y;
+    acc += renderPixel(uv, q, cam);
+  }
+  fragColor = vec4(acc/float(S*S), 1.0);
+}
+`;
+
 const DEMOS = [
-  { id:'sdf', title:'1 · Signed distance fields', desc:'Plato vector library + min/max/smooth-min compose a CSG scene; the shader raymarches Scene(p).',
-    main:`
-in vec2 uv; out vec4 fragColor;
+  { id:'sdf', title:'1 · Signed distance fields', dim:'3d', orbit:[2.2,0.32],
+    desc:'Plato vector library + min/max/smooth-min compose a CSG scene; the shader raymarches Scene(p).',
+    body:`
 vec3 nrm(vec3 p){ vec2 h=vec2(0.0015,0.0);
   return normalize(vec3(Scene(p+h.xyy)-Scene(p-h.xyy),Scene(p+h.yxy)-Scene(p-h.yxy),Scene(p+h.yyx)-Scene(p-h.yyx))); }
-void main(){
-  vec2 p=uv*2.0-1.0;
-  float a=2.2; vec3 ro=vec3(3.2*sin(a),1.7,3.2*cos(a)), ta=vec3(0.0,-0.1,0.0);
-  vec3 ww=normalize(ta-ro), uu=normalize(cross(ww,vec3(0,1,0))), vv=cross(uu,ww);
-  vec3 rd=normalize(p.x*uu+p.y*vv+1.6*ww);
+vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
+  vec3 ro=cam*vec3(0.0,0.0,4.4), rd=cam*normalize(vec3(q,-1.6));
   float t=0.0,d=0.0; int hit=0;
-  for(int i=0;i<120;i++){ vec3 pos=ro+rd*t; d=Scene(pos); if(d<0.001){hit=1;break;} t+=d; if(t>20.0)break; }
-  vec3 col=vec3(0.05,0.06,0.09)+0.04*uv.y;
-  if(hit==1){ vec3 pos=ro+rd*t; vec3 n=nrm(pos); vec3 l=normalize(vec3(0.5,0.8,0.35));
+  for(int i=0;i<128;i++){ vec3 p=ro+rd*t; d=Scene(p); if(d<0.001){hit=1;break;} t+=d; if(t>26.0)break; }
+  vec3 col=vec3(0.05,0.06,0.09)+0.04*q.y;
+  if(hit==1){ vec3 p=ro+rd*t; vec3 n=nrm(p); vec3 l=normalize(vec3(0.5,0.8,0.35));
     float dif=clamp(dot(n,l),0.0,1.0), amb=0.35+0.25*n.y;
     col=vec3(0.95,0.6,0.3)*dif + vec3(0.18,0.24,0.34)*amb; }
-  fragColor=vec4(pow(col,vec3(0.4545)),1.0);
+  return pow(col,vec3(0.4545));
 }` },
-  { id:'mandelbrot', title:'2 · Complex numbers', desc:'A user Complex type becomes a GLSL struct; Iterate(z,c)=z²+c drives the Mandelbrot escape loop.',
-    main:`
-in vec2 uv; out vec4 fragColor;
-void main(){
+  { id:'mandelbrot', title:'2 · Complex numbers', dim:'2d', orbit:[0,0],
+    desc:'A user Complex type becomes a GLSL struct; Iterate(z,c)=z²+c drives the Mandelbrot escape loop.',
+    body:`
+vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
   vec2 c0=vec2(uv.x*2.6-2.0, uv.y*2.5-1.25);
   Complex c=Complex(c0.x,c0.y), z=Complex(0.0,0.0);
-  const int MAX=160; int it=0;
+  const int MAX=200; int it=0;
   for(int i=0;i<MAX;i++){ z=Iterate(z,c); if(NormSquared(z)>4.0)break; it++; }
   float m=float(it)/float(MAX);
-  vec3 col = it>=MAX ? vec3(0.02,0.02,0.05)
+  return it>=MAX ? vec3(0.02,0.02,0.05)
     : 0.5+0.5*cos(6.2831*(vec3(0.9,0.75,0.6)*m)+vec3(0.2,0.9,1.6));
-  fragColor=vec4(col,1.0);
 }` },
-  { id:'bezier', title:'3 · Tier-1 fixed array', desc:'Bezier4 = four control points; At(i) is a clamped index chain, Eval indexes it via de Casteljau.',
-    main:`
-in vec2 uv; out vec4 fragColor;
-void main(){
+  { id:'bezier', title:'3 · Tier-1 fixed array', dim:'2d', orbit:[0,0],
+    desc:'Bezier4 = four control points; At(i) is a clamped index chain, Eval indexes it via de Casteljau.',
+    body:`
+vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
   vec2 p=uv;
   Bezier4 b=Bezier4(vec2(0.1,0.25),vec2(0.35,0.95),vec2(0.7,0.02),vec2(0.92,0.7));
-  float md=1e9; const int N=80;
+  float md=1e9; const int N=120;
   for(int i=0;i<=N;i++){ md=min(md, distance(p, Eval(b, float(i)/float(N)))); }
   float curve=smoothstep(0.014,0.006,md);
   float cp=0.0;
@@ -69,12 +99,12 @@ void main(){
   vec3 col=vec3(0.07,0.08,0.11);
   col=mix(col,vec3(0.25,0.85,1.0),curve);
   col=mix(col,vec3(1.0,0.65,0.2),cp);
-  fragColor=vec4(col,1.0);
+  return col;
 }` },
-  { id:'polygon', title:'4 · Tier-2 bounded array', desc:'Polygon6 = fixed capacity 6, clamped At; the shader loops i<count (runtime) for edge distance + winding.',
-    main:`
-in vec2 uv; out vec4 fragColor;
-void main(){
+  { id:'polygon', title:'4 · Tier-2 bounded array', dim:'2d', orbit:[0,0],
+    desc:'Polygon6 = fixed capacity 6, clamped At; the shader loops i<count (runtime) for edge distance + winding.',
+    body:`
+vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
   vec2 p=uv;
   Polygon6 poly=Polygon6(vec2(0.5,0.88),vec2(0.86,0.62),vec2(0.74,0.18),
                          vec2(0.34,0.14),vec2(0.14,0.52),vec2(0.42,0.72));
@@ -88,142 +118,181 @@ void main(){
   vec3 col=vec3(0.08,0.09,0.12);
   if(inside) col=vec3(0.16,0.22,0.34);
   col=mix(col,vec3(1.0,0.82,0.32), smoothstep(0.02,0.006,d));
-  fragColor=vec4(col,1.0);
+  return col;
 }` },
-  { id:'solids', title:'5 · Platonic solids (wireframe)', desc:'Edges = cylinders, vertices = spheres. The wireframe SDF is a Plato double for-loop over a fixed vertex array; tetra / octa / cube.',
-    main:`
-in vec2 uv; out vec4 fragColor;
-mat3 rotY(float a){ float c=cos(a),s=sin(a); return mat3(c,0,-s, 0,1,0, s,0,c); }
-mat3 rotX(float a){ float c=cos(a),s=sin(a); return mat3(1,0,0, 0,c,-s, 0,s,c); }
-float T=0.7;                    // 1/sqrt(2)-ish scale
-float scene(vec3 p){
-  mat3 R=rotX(0.5)*rotY(0.9);
-  // tetrahedron (4), left
+  { id:'solids', title:'5 · Platonic solids (wireframe)', dim:'3d', orbit:[0.6,0.4],
+    desc:'Edges = cylinders, vertices = spheres. The wireframe SDF is a Plato double for-loop over a fixed vertex array; tetra / octa / cube.',
+    body:`
+float sScene(vec3 p){
   Solid4 tet=Solid4(vec3(1,1,1),vec3(1,-1,-1),vec3(-1,1,-1),vec3(-1,-1,1));
-  float dt=Wire(tet, R*((p-vec3(-2.3,0,0))/0.62)*1.0, 2.9, 0.16, 0.09)*0.62;
-  // octahedron (6), middle
+  float dt=Wire(tet,(p-vec3(-2.3,0,0))/0.62,2.9,0.16,0.09)*0.62;
   Solid6 oct=Solid6(vec3(1,0,0),vec3(-1,0,0),vec3(0,1,0),vec3(0,-1,0),vec3(0,0,1),vec3(0,0,-1));
-  float doo=Wire(oct, R*(p/0.75), 1.7, 0.16, 0.09)*0.75;
-  // cube (8), right
+  float doo=Wire(oct,p/0.75,1.7,0.16,0.09)*0.75;
   Solid8 cub=Solid8(vec3(1,1,1),vec3(1,1,-1),vec3(1,-1,1),vec3(1,-1,-1),
                     vec3(-1,1,1),vec3(-1,1,-1),vec3(-1,-1,1),vec3(-1,-1,-1));
-  float dc=Wire(cub, R*((p-vec3(2.3,0,0))/0.55), 2.3, 0.16, 0.09)*0.55;
+  float dc=Wire(cub,(p-vec3(2.3,0,0))/0.55,2.3,0.16,0.09)*0.55;
   return min(dt, min(doo, dc));
 }
 vec3 nrm(vec3 p){ vec2 h=vec2(0.002,0.0);
-  return normalize(vec3(scene(p+h.xyy)-scene(p-h.xyy),scene(p+h.yxy)-scene(p-h.yxy),scene(p+h.yyx)-scene(p-h.yyx))); }
-void main(){
-  vec2 uvp=uv*2.0-1.0;
-  vec3 ro=vec3(0.0,0.0,6.0), rd=normalize(vec3(uvp*vec2(1.7,1.0),-2.4));
+  return normalize(vec3(sScene(p+h.xyy)-sScene(p-h.xyy),sScene(p+h.yxy)-sScene(p-h.yxy),sScene(p+h.yyx)-sScene(p-h.yyx))); }
+vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
+  vec3 ro=cam*vec3(0.0,0.0,6.4), rd=cam*normalize(vec3(q,-2.6));
   float t=0.0; int hit=0;
-  for(int i=0;i<110;i++){ vec3 pos=ro+rd*t; float d=scene(pos); if(d<0.001){hit=1;break;} t+=d; if(t>14.0)break; }
-  vec3 col=vec3(0.04,0.05,0.08)+0.05*uv.y;
-  if(hit==1){ vec3 pos=ro+rd*t; vec3 nn=nrm(pos); vec3 l=normalize(vec3(0.5,0.7,0.6));
-    float dif=clamp(dot(nn,l),0.0,1.0);
-    col=vec3(0.4,0.8,1.0)*dif + vec3(0.15,0.1,0.25)*(0.4+0.6*nn.y); }
-  fragColor=vec4(pow(col,vec3(0.4545)),1.0);
+  for(int i=0;i<120;i++){ vec3 p=ro+rd*t; float d=sScene(p); if(d<0.001){hit=1;break;} t+=d; if(t>18.0)break; }
+  vec3 col=vec3(0.04,0.05,0.08)+0.05*(q.y*0.5+0.5);
+  if(hit==1){ vec3 p=ro+rd*t; vec3 n=nrm(p); vec3 l=normalize(vec3(0.5,0.7,0.6));
+    float dif=clamp(dot(n,l),0.0,1.0);
+    col=vec3(0.4,0.8,1.0)*dif + vec3(0.15,0.1,0.25)*(0.4+0.6*n.y); }
+  return pow(col,vec3(0.4545));
 }` },
-  { id:'voxel', title:'6 · Voxelized SDF', desc:'A smooth torus snapped to a grid: one small cube per surface cell. Cell size controls voxel density; all in Plato.',
-    main:`
-in vec2 uv; out vec4 fragColor;
-mat3 rotY(float a){ float c=cos(a),s=sin(a); return mat3(c,0,-s, 0,1,0, s,0,c); }
-mat3 rotX(float a){ float c=cos(a),s=sin(a); return mat3(1,0,0, 0,c,-s, 0,s,c); }
-float CELL=0.16;
-float scene(vec3 p){ mat3 R=rotX(0.6)*rotY(0.8); return Voxelize(R*p, CELL); }
+  { id:'voxel', title:'6 · Voxelized SDF', dim:'3d', orbit:[0.8,0.5],
+    desc:'A smooth torus snapped to a grid: one small cube per surface cell. Cell size controls voxel density; all in Plato.',
+    body:`
+float vScene(vec3 p){ return Voxelize(p, 0.16); }
 vec3 nrm(vec3 p){ vec2 h=vec2(0.003,0.0);
-  return normalize(vec3(scene(p+h.xyy)-scene(p-h.xyy),scene(p+h.yxy)-scene(p-h.yxy),scene(p+h.yyx)-scene(p-h.yyx))); }
-void main(){
-  vec2 uvp=uv*2.0-1.0;
-  vec3 ro=vec3(0.0,0.0,4.2), rd=normalize(vec3(uvp*vec2(1.4,1.0),-2.2));
+  return normalize(vec3(vScene(p+h.xyy)-vScene(p-h.xyy),vScene(p+h.yxy)-vScene(p-h.yxy),vScene(p+h.yyx)-vScene(p-h.yyx))); }
+vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
+  vec3 ro=cam*vec3(0.0,0.0,4.2), rd=cam*normalize(vec3(q,-2.2));
   float t=0.0; int hit=0;
-  for(int i=0;i<160;i++){ vec3 pos=ro+rd*t; float d=scene(pos);
+  for(int i=0;i<170;i++){ vec3 p=ro+rd*t; float d=vScene(p);
     if(d<0.0015){hit=1;break;} t+=max(d,0.006); if(t>10.0)break; }
-  vec3 col=vec3(0.05,0.05,0.07)+0.05*uv.y;
-  if(hit==1){ vec3 pos=ro+rd*t; vec3 nn=nrm(pos); vec3 l=normalize(vec3(0.6,0.8,0.4));
-    float dif=clamp(dot(nn,l),0.0,1.0), amb=0.35+0.25*nn.y;
-    vec3 tint=0.5+0.5*cos(6.28*(pos.y*0.4)+vec3(0.0,1.0,2.0));
+  vec3 col=vec3(0.05,0.05,0.07)+0.05*(q.y*0.5+0.5);
+  if(hit==1){ vec3 p=ro+rd*t; vec3 n=nrm(p); vec3 l=normalize(vec3(0.6,0.8,0.4));
+    float dif=clamp(dot(n,l),0.0,1.0), amb=0.35+0.25*n.y;
+    vec3 tint=0.5+0.5*cos(6.28*(p.y*0.4)+vec3(0.0,1.0,2.0));
     col=tint*dif + vec3(0.1,0.12,0.2)*amb; }
-  fragColor=vec4(pow(col,vec3(0.4545)),1.0);
+  return pow(col,vec3(0.4545));
 }` },
-  { id:'ripples', title:'7 · Parametric surface', desc:'A height field y=f(x,z): damped radial ripples + cross-wave interference. Raymarched as a Plato height-field SDF.',
-    main:`
-in vec2 uv; out vec4 fragColor;
-float PHASE=1.7;
-float scene(vec3 p){ return Map(p, PHASE); }
+  { id:'ripples', title:'7 · Parametric surface', dim:'3d', orbit:[0.0,0.62],
+    desc:'A height field y=f(x,z): damped radial ripples + cross-wave interference. Raymarched as a Plato height-field SDF.',
+    body:`
+float rScene(vec3 p){ return Map(p, 1.7); }
 vec3 nrm(vec3 p){ vec2 h=vec2(0.002,0.0);
-  return normalize(vec3(scene(p+h.xyy)-scene(p-h.xyy),scene(p+h.yxy)-scene(p-h.yxy),scene(p+h.yyx)-scene(p-h.yyx))); }
-void main(){
-  vec2 uvp=uv*2.0-1.0;
-  vec3 ro=vec3(0.0,1.7,2.9), ta=vec3(0.0,-0.15,0.0);
-  vec3 ww=normalize(ta-ro), uu=normalize(cross(ww,vec3(0,1,0))), vv=cross(uu,ww);
-  vec3 rd=normalize(uvp.x*uu+uvp.y*vv+1.7*ww);
+  return normalize(vec3(rScene(p+h.xyy)-rScene(p-h.xyy),rScene(p+h.yxy)-rScene(p-h.yxy),rScene(p+h.yyx)-rScene(p-h.yyx))); }
+vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
+  vec3 ro=cam*vec3(0.0,0.0,3.1), rd=cam*normalize(vec3(q,-1.7));
   float t=0.0; int hit=0;
-  for(int i=0;i<140;i++){ vec3 pos=ro+rd*t; float d=scene(pos); if(d<0.001){hit=1;break;} t+=max(d,0.004); if(t>16.0)break; }
-  vec3 col=vec3(0.05,0.07,0.11)+0.05*uv.y;
-  if(hit==1){ vec3 pos=ro+rd*t; vec3 nn=nrm(pos); vec3 l=normalize(vec3(0.4,0.85,0.35));
-    float dif=clamp(dot(nn,l),0.0,1.0), amb=0.3+0.3*nn.y;
-    vec3 base=mix(vec3(0.1,0.3,0.55), vec3(0.35,0.8,0.9), clamp(pos.y*1.6+0.5,0.0,1.0));
-    float spec=pow(clamp(dot(reflect(-l,nn),-rd),0.0,1.0),24.0);
+  for(int i=0;i<150;i++){ vec3 p=ro+rd*t; float d=rScene(p); if(d<0.001){hit=1;break;} t+=max(d,0.004); if(t>18.0)break; }
+  vec3 col=vec3(0.05,0.07,0.11)+0.05*(q.y*0.5+0.5);
+  if(hit==1){ vec3 p=ro+rd*t; vec3 n=nrm(p); vec3 l=normalize(vec3(0.4,0.85,0.35));
+    float dif=clamp(dot(n,l),0.0,1.0), amb=0.3+0.3*n.y;
+    vec3 base=mix(vec3(0.1,0.3,0.55), vec3(0.35,0.8,0.9), clamp(p.y*1.6+0.5,0.0,1.0));
+    float spec=pow(clamp(dot(reflect(-l,n),-rd),0.0,1.0),24.0);
     col=base*(dif+amb)+vec3(1.0)*spec*0.5; }
-  fragColor=vec4(pow(col,vec3(0.4545)),1.0);
+  return pow(col,vec3(0.4545));
 }` },
-  { id:'tube', title:'8 · Extruded tube', desc:'A circular profile swept along a parametric path: a Plato for-loop min-unions capsules between path samples.',
-    main:`
-in vec2 uv; out vec4 fragColor;
-mat3 rotY(float a){ float c=cos(a),s=sin(a); return mat3(c,0,-s, 0,1,0, s,0,c); }
-mat3 rotX(float a){ float c=cos(a),s=sin(a); return mat3(1,0,0, 0,c,-s, 0,s,c); }
-float scene(vec3 p){ mat3 R=rotX(0.6)*rotY(0.7); return Extrude(R*p, 48, 0.16); }
+  { id:'tube', title:'8 · Extruded tube', dim:'3d', orbit:[0.7,0.5],
+    desc:'A circular profile swept along a parametric path: a Plato for-loop min-unions capsules between path samples.',
+    body:`
+float tScene(vec3 p){ return Extrude(p, 48, 0.16); }
 vec3 nrm(vec3 p){ vec2 h=vec2(0.002,0.0);
-  return normalize(vec3(scene(p+h.xyy)-scene(p-h.xyy),scene(p+h.yxy)-scene(p-h.yxy),scene(p+h.yyx)-scene(p-h.yyx))); }
-void main(){
-  vec2 uvp=uv*2.0-1.0;
-  vec3 ro=vec3(0.0,0.0,4.4), rd=normalize(vec3(uvp*vec2(1.5,1.0),-2.3));
+  return normalize(vec3(tScene(p+h.xyy)-tScene(p-h.xyy),tScene(p+h.yxy)-tScene(p-h.yxy),tScene(p+h.yyx)-tScene(p-h.yyx))); }
+vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
+  vec3 ro=cam*vec3(0.0,0.0,4.4), rd=cam*normalize(vec3(q,-2.3));
   float t=0.0; int hit=0;
-  for(int i=0;i<110;i++){ vec3 pos=ro+rd*t; float d=scene(pos); if(d<0.001){hit=1;break;} t+=d; if(t>12.0)break; }
-  vec3 col=vec3(0.05,0.05,0.08)+0.05*uv.y;
-  if(hit==1){ vec3 pos=ro+rd*t; vec3 nn=nrm(pos); vec3 l=normalize(vec3(0.5,0.7,0.6));
-    float dif=clamp(dot(nn,l),0.0,1.0), amb=0.35+0.25*nn.y;
-    vec3 tint=0.5+0.5*cos(6.28*(atan(pos.x,pos.z)*0.5)+vec3(0.0,2.1,4.2));
-    float spec=pow(clamp(dot(reflect(-l,nn),-rd),0.0,1.0),32.0);
+  for(int i=0;i<120;i++){ vec3 p=ro+rd*t; float d=tScene(p); if(d<0.001){hit=1;break;} t+=d; if(t>12.0)break; }
+  vec3 col=vec3(0.05,0.05,0.08)+0.05*(q.y*0.5+0.5);
+  if(hit==1){ vec3 p=ro+rd*t; vec3 n=nrm(p); vec3 l=normalize(vec3(0.5,0.7,0.6));
+    float dif=clamp(dot(n,l),0.0,1.0), amb=0.35+0.25*n.y;
+    vec3 tint=0.5+0.5*cos(6.28*(atan(p.x,p.z)*0.5)+vec3(0.0,2.1,4.2));
+    float spec=pow(clamp(dot(reflect(-l,n),-rd),0.0,1.0),32.0);
     col=tint*(dif*0.9+amb)+vec3(1.0)*spec*0.6; }
-  fragColor=vec4(pow(col,vec3(0.4545)),1.0);
+  return pow(col,vec3(0.4545));
 }` },
 ];
 
 let pass=0, fail=0;
+const MAXDPR = 2;
+
 function panel(d){
   const card=document.createElement('div'); card.className='card';
+  const hint = d.dim==='3d' ? `<div class="hint">⟲ drag to orbit</div>` : '';
   card.innerHTML=`<h2>${d.title}</h2><div class="d">${d.desc}</div>`+
-    `<canvas id="c_${d.id}" width="360" height="360"></canvas><div class="status" id="s_${d.id}">loading…</div>`;
+    `<div class="wrap"><canvas id="c_${d.id}" class="${d.dim==='3d'?'orbit':''}"></canvas>${hint}</div>`+
+    `<div class="status" id="s_${d.id}">loading…</div>`;
   document.getElementById('grid').appendChild(card);
 }
-function run(d, src){
-  const cv=document.getElementById('c_'+d.id), st=document.getElementById('s_'+d.id);
-  const gl=cv.getContext('webgl2');
+
+function compile(gl, src, main, st){
   const set=(cls,msg)=>{ st.className='status '+cls; st.textContent=msg; };
-  if(!gl){ set('err','no WebGL2'); fail++; return; }
-  // The generated chunk carries its own #version + precision directives; strip them
-  // (a fragment can only have one) and supply our own header.
+  // Strip the generated chunk's own #version/precision (a fragment allows one).
   const body=src.split('\n').filter(l=>!/^\s*#version/.test(l)&&!/^\s*precision\s/.test(l)).join('\n');
-  const fs=`#version 300 es\nprecision highp float;\nprecision highp int;\n`+body+'\n'+d.main;
+  const fs=`#version 300 es\nprecision highp float;\nprecision highp int;\n`+body+'\n'+PRELUDE+'\n'+main;
   const mk=(t,s,n)=>{ const sh=gl.createShader(t); gl.shaderSource(sh,s); gl.compileShader(sh);
     if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS)){ set('err',n+' compile FAIL:\n'+gl.getShaderInfoLog(sh)); return null; } return sh; };
   const vs=mk(gl.VERTEX_SHADER, document.getElementById('vs').textContent,'vertex');
   const fsh=mk(gl.FRAGMENT_SHADER, fs,'fragment');
-  if(!vs||!fsh){ fail++; return; }
+  if(!vs||!fsh) return null;
   const pr=gl.createProgram(); gl.attachShader(pr,vs); gl.attachShader(pr,fsh); gl.linkProgram(pr);
-  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){ set('err','link FAIL:\n'+gl.getProgramInfoLog(pr)); fail++; return; }
-  gl.useProgram(pr); gl.viewport(0,0,360,360); gl.drawArrays(gl.TRIANGLES,0,3);
-  const px=new Uint8Array(4); gl.readPixels(180,180,1,1,gl.RGBA,gl.UNSIGNED_BYTE,px);
-  set('ok','PASS · compiled, linked, rendered · center rgba '+px.join(','));
-  pass++;
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){ set('err','link FAIL:\n'+gl.getProgramInfoLog(pr)); return null; }
+  return pr;
 }
+
+function makeState(d, src){
+  const cv=document.getElementById('c_'+d.id), st=document.getElementById('s_'+d.id);
+  const gl=cv.getContext('webgl2',{antialias:true, preserveDrawingBuffer:true});
+  if(!gl){ st.className='status err'; st.textContent='no WebGL2'; return null; }
+  const pr=compile(gl, src, d.body, st);
+  if(!pr) return null;
+  gl.useProgram(pr);
+  const u={ res:gl.getUniformLocation(pr,'uRes'), orbit:gl.getUniformLocation(pr,'uOrbit'),
+            time:gl.getUniformLocation(pr,'uTime'), samples:gl.getUniformLocation(pr,'uSamples') };
+  return { d, cv, st, gl, pr, u, orbit:[d.orbit[0], d.orbit[1]] };
+}
+
+function draw(s, samples){
+  const {gl,cv,u}=s;
+  const dpr=Math.min(window.devicePixelRatio||1, MAXDPR);
+  const size=Math.max(64, Math.round(cv.clientWidth*dpr));
+  if(cv.width!==size){ cv.width=size; cv.height=size; }
+  gl.useProgram(s.pr);
+  gl.viewport(0,0,cv.width,cv.height);
+  gl.uniform2f(u.res, cv.width, cv.height);
+  gl.uniform2f(u.orbit, s.orbit[0], s.orbit[1]);
+  gl.uniform1f(u.time, performance.now()*0.001);
+  gl.uniform1i(u.samples, samples);
+  gl.drawArrays(gl.TRIANGLES,0,3);
+}
+
+function attachOrbit(s){
+  const {cv}=s; let drag=false, lx=0, ly=0;
+  const down=e=>{ drag=true; const p=pt(e); lx=p.x; ly=p.y; cv.setPointerCapture?.(e.pointerId); };
+  const move=e=>{ if(!drag)return; const p=pt(e);
+    s.orbit[0]+=(p.x-lx)*0.01; s.orbit[1]+=(p.y-ly)*0.01;
+    s.orbit[1]=Math.max(-1.45,Math.min(1.45,s.orbit[1]));
+    lx=p.x; ly=p.y; draw(s,1); };            // fast (1 sample) while dragging
+  const up=()=>{ if(!drag)return; drag=false; draw(s,2); };  // hi-quality on release
+  const pt=e=>({x:e.clientX,y:e.clientY});
+  cv.addEventListener('pointerdown',down);
+  cv.addEventListener('pointermove',move);
+  window.addEventListener('pointerup',up);
+}
+
 (async()=>{
   DEMOS.forEach(panel);
+  const states=[];
   for(const d of DEMOS){
-    try{ const r=await fetch('out/'+d.id+'.glsl'); run(d, await r.text()); }
-    catch(e){ const st=document.getElementById('s_'+d.id); st.className='status err'; st.textContent='fetch FAIL: '+e; fail++; }
+    try{
+      const r=await fetch('out/'+d.id+'.glsl'); const src=await r.text();
+      const s=makeState(d, src);
+      if(!s){ fail++; continue; }
+      draw(s,1);                 // fast first paint; the settle-pass below upgrades to 2x2
+      const px=new Uint8Array(4);
+      s.gl.readPixels(s.cv.width>>1, s.cv.height>>1, 1,1, s.gl.RGBA, s.gl.UNSIGNED_BYTE, px);
+      s.st.className='status ok';
+      s.st.textContent='PASS · compiled, linked, rendered · center rgba '+px.join(',');
+      if(d.dim==='3d') attachOrbit(s);
+      states.push(s); pass++;
+    }catch(e){
+      const st=document.getElementById('s_'+d.id); if(st){ st.className='status err'; st.textContent='fetch/compile FAIL: '+e; }
+      fail++;
+    }
   }
+  // Redraw at high quality once layout has settled (grid column widths change canvas size).
+  let raf=0;
+  const refit=()=>{ cancelAnimationFrame(raf); raf=requestAnimationFrame(()=>states.forEach(s=>draw(s,2))); };
+  window.addEventListener('resize', refit);
+  setTimeout(refit, 60);
   document.title = fail===0 ? `PLATO-GLSL-ALL-PASS (${pass}/${DEMOS.length})` : `PLATO-GLSL-FAIL (${pass} ok, ${fail} fail)`;
 })();
 </script></body></html>
