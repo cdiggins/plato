@@ -68,7 +68,7 @@ library Solid8Lib
 
 // The wireframe assembly loops. Nodes and edges use SEPARATE accumulators: the
 // Plato compiler currently mis-resolves a variable that is reassigned at two
-// different loop-nesting depths (tracked as studio-093), so each accumulator is
+// different loop-nesting depths (tracked as studio-096), so each accumulator is
 // written at a single depth — dn in a flat vertex loop, de in the nested edge loop.
 library WireLoops
 {
