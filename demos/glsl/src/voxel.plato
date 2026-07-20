@@ -33,17 +33,22 @@ library Voxels
         return f.Scale(cell);
     }
 
-    // Voxelized distance: a cube per grid cell, but only for cells the surface
-    // actually crosses (|Field(centre)| within one cell). Cells far from the
-    // surface are pushed away so no voxel is drawn there.
+    // Voxelized distance. A grid cell is a solid cube exactly when its centre lies
+    // inside the target surface (Field(centre) < 0); the cube nearly fills the cell,
+    // so filled cells abut into a clean blocky solid. EMPTY cells return the smooth
+    // field distance (a positive guide toward the filled region) and never a phantom
+    // cube — this is what keeps the raymarch free of the speckle/line artifacts a
+    // per-cell box in empty space produces. The result is not a true SDF across cell
+    // boundaries, so the harness marches it conservatively (capped step).
     Voxelize(p: Vector3D, cell: Number): Number
     {
         var centre = p.Snap(cell);
-        var surf = centre.Field;
+        var inside = centre.Field;
         var local = p.Subtract(centre);
-        var half = cell * 0.42;
+        var half = cell * 0.48;
         var cube = local.SdBox(new Vector3D(half, half, half));
-        var outside = surf.Abs - cell;
-        return outside > 0.0 ? cube + outside : cube;
+        // filled cell -> the cube; empty cell -> max(cube, field) stays positive
+        // (no false hit even when the phantom box distance is negative).
+        return inside < 0.0 ? cube : cube.Max(inside);
     }
 }

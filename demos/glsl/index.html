@@ -191,14 +191,17 @@ vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
     controls:[{k:'Cell',l:'Voxel density',kind:'slider',def:0.4},{k:'Hue',l:'Hue',kind:'slider',def:0.4},
               {k:'PalMix',l:'Palette mix',kind:'slider',def:0.6}, ZOOM, SPIN],
     body:`
-float vScene(vec3 p){ return Voxelize(p, mix(0.30,0.075,uCell)); }
-vec3 nrm(vec3 p){ vec2 h=vec2(0.003,0.0);
+float vCell(){ return mix(0.30,0.075,uCell); }
+float vScene(vec3 p){ return Voxelize(p, vCell()); }
+vec3 nrm(vec3 p){ float e=vCell()*0.06; vec2 h=vec2(e,0.0);
   return normalize(vec3(vScene(p+h.xyy)-vScene(p-h.xyy),vScene(p+h.yxy)-vScene(p-h.yxy),vScene(p+h.yyx)-vScene(p-h.yyx))); }
 vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
   vec3 ro=cam*vec3(0.0,0.0,4.2*mix(1.5,0.7,uZoom)), rd=cam*normalize(vec3(q,-2.2));
-  float t=0.0; int hit=0;
-  for(int i=0;i<190;i++){ vec3 p=ro+rd*t; float d=vScene(p);
-    if(d<0.0015){hit=1;break;} t+=max(d,0.006); if(t>10.0)break; }
+  float cell=vCell(); float t=0.0; int hit=0;
+  // The voxel field is not Lipschitz across cell faces, so step conservatively:
+  // never advance more than half a cell, so a cube wall can't be overshot.
+  for(int i=0;i<260;i++){ vec3 p=ro+rd*t; float d=vScene(p);
+    if(d<0.001){hit=1;break;} t+=clamp(d*0.85, 0.0025, cell*0.5); if(t>10.0)break; }
   vec3 col=vec3(0.05,0.05,0.07)+0.05*(q.y*0.5+0.5);
   if(hit==1){ vec3 p=ro+rd*t; vec3 n=nrm(p); vec3 l=normalize(vec3(0.6,0.8,0.4));
     float dif=clamp(dot(n,l),0.0,1.0), amb=0.35+0.25*n.y;
