@@ -1,0 +1,47 @@
+// Demo 8 — Extruded tube: a circular profile swept along a parametric 3D path.
+//
+// Extrusion by sampling: the path P(u) is sampled at N points and the tube is the
+// union of capsules (round cylinders) between consecutive samples — a Plato for-loop
+// min-reduces the capsule distances. A capsule is exactly a circular profile swept
+// along a segment, so the loop is a discretized extrusion of the profile along the
+// curve. The path here is a trefoil-ish Lissajous loop; radius = profile size.
+
+library Tubes
+{
+    SinR(x: Number): Number => new Angle(x).Sin;
+    CosR(x: Number): Number => new Angle(x).Cos;
+
+    // The 3D path, u in [0,1] mapped to one full turn. A (2,3) Lissajous curve that
+    // closes into a knot-like loop.
+    Path(u: Number): Vector3D
+    {
+        var a = u * 6.2831853071795862;
+        var x = a.CosR + 0.5 * (3.0 * a).CosR;
+        var z = a.SinR - 0.5 * (3.0 * a).SinR;
+        var y = 0.55 * (2.0 * a).SinR;
+        return new Vector3D(x, y, z);
+    }
+
+    // Capsule (swept circular profile) of radius r from a to b.
+    SdCapsule(p: Vector3D, a: Vector3D, b: Vector3D, r: Number): Number
+    {
+        var pa = p.Subtract(a);
+        var ba = b.Subtract(a);
+        var h = (pa.Dot(ba) / ba.Dot(ba)).Clamp(0.0, 1.0);
+        return pa.Subtract(ba.Scale(h)).Length - r;
+    }
+
+    // The extruded tube: min capsule distance over `segs` samples of the path.
+    // Single accumulator written at one loop depth (avoids studio-096).
+    Extrude(p: Vector3D, segs: Integer, r: Number): Number
+    {
+        var d = 100000.0;
+        for (var i = 0; i < segs; i = i + 1)
+        {
+            var u0 = i.ToNumber / segs.ToNumber;
+            var u1 = (i + 1).ToNumber / segs.ToNumber;
+            d = d.Min(p.SdCapsule(u0.Path, u1.Path, r));
+        }
+        return d;
+    }
+}

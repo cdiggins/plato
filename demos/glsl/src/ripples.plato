@@ -1,0 +1,33 @@
+// Demo 7 — Parametric rippled surface (a height field y = f(x,z,t)).
+//
+// A parametric surface written as the graph of a Plato function: concentric ripples
+// (a damped radial sine, like a drop in water) plus a cross-wave interference term.
+// Exposed to the raymarcher as a height-field SDF (p.y - Height(x,z)), scaled to
+// stay roughly distance-like. Pure math over Vector2D / Number; the phase t is a
+// uniform the harness animates.
+
+library Ripples
+{
+    // sin / cos of a plain number (wrap it in an Angle, whose Sin/Cos are the GLSL
+    // built-ins). Kept local so the demo is self-contained.
+    SinR(x: Number): Number => new Angle(x).Sin;
+    CosR(x: Number): Number => new Angle(x).Cos;
+
+    // Surface height at planar position q, phase t.
+    Height(q: Vector2D, t: Number): Number
+    {
+        var r = q.Length;
+        var damp = 1.0 / (1.0 + r * r * 0.55);
+        var radial = (r * 7.0 - t * 2.0).SinR * 0.30 * damp;
+        var cross = (q.X * 4.0 + t).SinR * (q.Y * 4.0 - t).CosR * 0.10;
+        return radial + cross;
+    }
+
+    // Height-field distance field: signed distance to the surface, scaled by 0.55
+    // to keep it (roughly) Lipschitz so sphere tracing converges.
+    Map(p: Vector3D, t: Number): Number
+    {
+        var q = new Vector2D(p.X, p.Z);
+        return (p.Y - q.Height(t)) * 0.55;
+    }
+}

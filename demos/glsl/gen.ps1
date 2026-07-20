@@ -8,7 +8,7 @@ $out  = Join-Path $root 'out'
 $tmp  = Join-Path $root '.build'
 New-Item -ItemType Directory -Force $out | Out-Null
 
-$demos = 'sdf', 'mandelbrot', 'bezier', 'polygon', 'solids', 'voxel'
+$demos = 'sdf', 'mandelbrot', 'bezier', 'polygon', 'solids', 'voxel', 'ripples', 'tube'
 foreach ($d in $demos) {
     $dir = Join-Path $tmp $d
     New-Item -ItemType Directory -Force $dir | Out-Null
