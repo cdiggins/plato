@@ -1,27 +1,35 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><title>Plato to GLSL — demo gallery</title>
+<html><head><meta charset="utf-8"><title>Plato → GLSL — demo studio</title>
 <style>
   body{font-family:system-ui,sans-serif;background:#0e0f13;color:#d8dae0;margin:0;padding:24px}
-  h1{font-size:20px;margin:0 0 4px} p.sub{color:#8b909c;margin:0 0 20px;font-size:13px}
-  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-  @media(max-width:760px){.grid{grid-template-columns:1fr}}
-  .card{background:#16181e;border:1px solid #262a33;border-radius:10px;padding:14px}
-  .card h2{font-size:14px;margin:0 0 2px}
-  .card .d{color:#8b909c;font-size:12px;margin:0 0 10px;min-height:32px}
-  .row{display:flex;gap:12px;align-items:stretch}
-  .view{position:relative;flex:1 1 auto;min-width:0}
-  .view canvas{width:100%;aspect-ratio:1/1;border-radius:6px;background:#000;display:block}
-  .view.orbit canvas{cursor:grab} .view.orbit canvas:active{cursor:grabbing}
-  .hint{position:absolute;left:8px;bottom:8px;font-size:10px;color:#aeb4c0;background:rgba(0,0,0,.45);
-        padding:2px 6px;border-radius:5px;pointer-events:none;opacity:.85}
-  .panel{flex:0 0 188px}
-  .panel canvas{width:188px;height:100%;min-height:210px;display:block;border-radius:6px}
-  .status{font-family:ui-monospace,monospace;font-size:11px;margin-top:8px;white-space:pre-wrap}
-  .ok{color:#7bd88f}.err{color:#ff6b6b}
+  h1{font-size:20px;margin:0 0 4px} p.sub{color:#8b909c;margin:0 0 16px;font-size:13px}
+  .chooser{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+  .chooser button{font:inherit;font-size:12px;color:#c7ccd6;background:#181b22;border:1px solid #2a2f3a;
+    border-radius:8px;padding:7px 12px;cursor:pointer;transition:all .12s}
+  .chooser button:hover{background:#20242e;border-color:#3a4150}
+  .chooser button.on{background:#1e3a5f;border-color:#3f7fd6;color:#eaf2ff}
+  .stagewrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+  .stage{position:relative;flex:0 0 auto}
+  .stage canvas{width:min(58vw,560px);height:min(58vw,560px);border-radius:10px;background:#000;display:block}
+  .stage.orbit canvas{cursor:grab} .stage.orbit canvas:active{cursor:grabbing}
+  .hint{position:absolute;left:10px;bottom:10px;font-size:11px;color:#aeb4c0;background:rgba(0,0,0,.45);
+        padding:3px 8px;border-radius:6px;pointer-events:none}
+  .panel{flex:0 0 264px}
+  .panel canvas{width:264px;height:430px;display:block;border-radius:10px}
+  .meta{margin-top:12px;max-width:840px}
+  .meta .t{font-size:15px;font-weight:600;margin-bottom:2px}
+  .meta .d{color:#8b909c;font-size:13px}
+  .status{font-family:ui-monospace,monospace;font-size:11px;margin-top:8px;color:#7bd88f;white-space:pre-wrap}
+  .status.err{color:#ff6b6b}
 </style></head><body>
-<h1>Plato → GLSL</h1>
-<p class="sub">Each panel is a WebGL2 fragment shader (a Plato-generated <code>plato.glsl</code> chunk) with a live <b>Gratify</b> control panel driving its uniforms. Drag the 3D views to orbit.</p>
-<div class="grid" id="grid"></div>
+<h1>Plato → GLSL — demo studio</h1>
+<p class="sub">A Plato-generated <code>plato.glsl</code> chunk in a WebGL2 shader, tuned live by a <b>Gratify</b> control panel. Pick a demo; drag the 3D views to orbit.</p>
+<div class="chooser" id="chooser"></div>
+<div class="stagewrap">
+  <div class="stage" id="stagebox"><canvas id="stage"></canvas><div class="hint" id="hint"></div></div>
+  <div class="panel" id="panelbox"></div>
+</div>
+<div class="meta"><div class="t" id="mtitle"></div><div class="d" id="mdesc"></div><div class="status" id="status">initialising…</div></div>
 
 <script id="vs" type="x-shader">#version 300 es
 void main(){ vec2 p=vec2((gl_VertexID<<1)&2, gl_VertexID&2); gl_Position=vec4(p*2.0-1.0,0.0,1.0); }
@@ -32,11 +40,9 @@ void main(){ vec2 p=vec2((gl_VertexID<<1)&2, gl_VertexID&2); gl_Position=vec4(p*
 </script>
 
 <script type="module">
-import { mount, Stack } from "gratify";
-import { Card, Slider, Toggle, Labeled } from "./vendor/widgets.js";
+import { mount } from "gratify";
+import { Card, Slider, Toggle, Button, Labeled } from "./vendor/widgets.js";
 
-// Shared fragment prelude: uniforms, orbit matrix, a cosine palette, and a
-// main() that supersamples renderPixel() and aspect-corrects the coordinates.
 const PRELUDE = `
 uniform vec2  uRes;
 uniform vec2  uOrbit;
@@ -61,155 +67,178 @@ void main(){
   fragColor=vec4(acc/float(S*S),1.0);
 }`;
 
-// Each demo: control schema (drives Gratify panel + shader uniforms u<key>),
-// plus a renderPixel() using those uniforms. slider values are 0..1; toggles 0/1.
+// slider values are 0..1; toggle 0/1. `noU` = no shader uniform (JS-only, e.g. Spin).
+const SPIN = {k:'Spin',l:'Auto-spin',kind:'toggle',def:false,noU:true};
+const ZOOM = {k:'Zoom',l:'Zoom',kind:'slider',def:0.5};
+
 const DEMOS = [
-  { id:'sdf', title:'1 · Signed distance fields', dim:'3d', orbit:[2.2,0.32],
-    desc:'CSG raymarch of a Plato vector scene. Controls: hue, light angle, specular.',
-    controls:[{k:'Hue',l:'Hue',kind:'slider',def:0.08},{k:'Light',l:'Light',kind:'slider',def:0.4},{k:'Spec',l:'Specular',kind:'toggle',def:true}],
+  { id:'sdf', title:'Signed distance fields', dim:'3d', orbit:[2.2,0.32],
+    desc:'A Plato vector scene composed with min/max/smooth-min, raymarched as a CSG surface. Tune the material and lighting.',
+    controls:[{k:'Hue',l:'Hue',kind:'slider',def:0.08},{k:'Light',l:'Light angle',kind:'slider',def:0.4},
+              {k:'Elev',l:'Light height',kind:'slider',def:0.5},{k:'Amb',l:'Ambient',kind:'slider',def:0.5},
+              {k:'Spec',l:'Specular',kind:'toggle',def:true}, ZOOM, SPIN],
     body:`
 vec3 nrm(vec3 p){ vec2 h=vec2(0.0015,0.0);
   return normalize(vec3(Scene(p+h.xyy)-Scene(p-h.xyy),Scene(p+h.yxy)-Scene(p-h.yxy),Scene(p+h.yyx)-Scene(p-h.yyx))); }
 vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
-  vec3 ro=cam*vec3(0.0,0.0,4.4), rd=cam*normalize(vec3(q,-1.6));
+  vec3 ro=cam*vec3(0.0,0.0,4.4*mix(1.6,0.7,uZoom)), rd=cam*normalize(vec3(q,-1.6));
   float t=0.0,d=0.0; int hit=0;
   for(int i=0;i<128;i++){ vec3 p=ro+rd*t; d=Scene(p); if(d<0.001){hit=1;break;} t+=d; if(t>26.0)break; }
   vec3 col=vec3(0.05,0.06,0.09)+0.04*q.y;
   if(hit==1){ vec3 p=ro+rd*t; vec3 n=nrm(p);
-    float a=uLight*6.2831; vec3 l=normalize(vec3(cos(a),0.85,sin(a)));
-    float dif=clamp(dot(n,l),0.0,1.0), amb=0.35+0.25*n.y;
+    float az=uLight*6.2831; vec3 l=normalize(vec3(cos(az), mix(0.15,2.2,uElev), sin(az)));
+    float dif=clamp(dot(n,l),0.0,1.0), amb=0.12+0.5*uAmb;
     vec3 base=mix(vec3(0.95,0.6,0.3), pal(uHue), 0.85);
-    col=base*dif + vec3(0.18,0.24,0.34)*amb;
-    float sp=pow(clamp(dot(reflect(-l,n),-rd),0.0,1.0),40.0);
-    col+=uSpec*sp*vec3(1.0); }
+    col=base*dif + base*amb*0.6;
+    float sp=pow(clamp(dot(reflect(-l,n),-rd),0.0,1.0),40.0); col+=uSpec*sp; }
   return pow(col,vec3(0.4545));
 }` },
-  { id:'mandelbrot', title:'2 · Complex numbers', dim:'2d', orbit:[0,0],
-    desc:'Complex struct → Mandelbrot. Controls: iterations, palette phase, smooth colouring.',
-    controls:[{k:'Iter',l:'Iterations',kind:'slider',def:0.5},{k:'Phase',l:'Palette',kind:'slider',def:0.3},{k:'Smooth',l:'Smooth',kind:'toggle',def:true}],
+  { id:'mandelbrot', title:'Complex numbers', dim:'2d', orbit:[0,0],
+    desc:'A user Complex type becomes a GLSL struct; Iterate(z,c)=z²+c drives the Mandelbrot escape. Zoom into the boundary.',
+    controls:[{k:'Iter',l:'Iterations',kind:'slider',def:0.5},{k:'Phase',l:'Palette',kind:'slider',def:0.3},
+              {k:'Density',l:'Colour bands',kind:'slider',def:0.4},{k:'Zoom',l:'Zoom',kind:'slider',def:0.0},
+              {k:'Smooth',l:'Smooth',kind:'toggle',def:true}],
     body:`
 vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
-  vec2 c0=vec2(uv.x*2.6-2.0, uv.y*2.5-1.25);
+  vec2 center=vec2(-0.745,0.115);
+  vec2 c0=center+(uv-0.5)*2.6*mix(1.4,0.10,uZoom);
   Complex c=Complex(c0.x,c0.y), z=Complex(0.0,0.0);
-  int MAXI=int(40.0+uIter*260.0); int it=0; float n2=0.0;
-  for(int i=0;i<400;i++){ if(i>=MAXI)break; z=Iterate(z,c); n2=NormSquared(z); if(n2>4.0)break; it++; }
+  int MAXI=int(40.0+uIter*400.0); int it=0; float n2=0.0;
+  for(int i=0;i<500;i++){ if(i>=MAXI)break; z=Iterate(z,c); n2=NormSquared(z); if(n2>4.0)break; it++; }
   if(it>=MAXI) return vec3(0.02,0.02,0.05);
   float m=float(it) + uSmooth*(1.0-log2(max(1.0,0.5*log(max(n2,1.0001)))));
   m/=float(MAXI);
-  return pal(m*3.0+uPhase);
+  return pal(m*mix(1.0,7.0,uDensity)+uPhase);
 }` },
-  { id:'bezier', title:'3 · Tier-1 fixed array', dim:'2d', orbit:[0,0],
-    desc:'Bezier4 fixed control points. Controls: hue, thickness, show control points.',
-    controls:[{k:'Hue',l:'Hue',kind:'slider',def:0.55},{k:'Thick',l:'Thickness',kind:'slider',def:0.4},{k:'Pts',l:'Ctrl points',kind:'toggle',def:true}],
+  { id:'bezier', title:'Tier-1 fixed array', dim:'2d', orbit:[0,0],
+    desc:'Bezier4 = four control points; At(i) is a clamped index chain, Eval evaluates de Casteljau over it.',
+    controls:[{k:'Hue',l:'Hue',kind:'slider',def:0.55},{k:'Thick',l:'Thickness',kind:'slider',def:0.4},
+              {k:'PtSize',l:'Point size',kind:'slider',def:0.5},{k:'Pts',l:'Ctrl points',kind:'toggle',def:true},
+              {k:'Glow',l:'Glow',kind:'toggle',def:true}],
     body:`
 vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
   vec2 p=uv;
   Bezier4 b=Bezier4(vec2(0.1,0.25),vec2(0.35,0.95),vec2(0.7,0.02),vec2(0.92,0.7));
-  float md=1e9; const int N=120;
+  float md=1e9; const int N=140;
   for(int i=0;i<=N;i++){ md=min(md, distance(p, Eval(b, float(i)/float(N)))); }
-  float th=mix(0.004,0.02,uThick);
-  float curve=smoothstep(th,th*0.4,md);
-  float cp=0.0;
-  for(int i=0;i<Count(b);i++){ cp=max(cp, smoothstep(0.026,0.017,distance(p,At(b,i)))); }
+  float th=mix(0.004,0.024,uThick);
   vec3 col=vec3(0.07,0.08,0.11);
-  col=mix(col, pal(uHue), curve);
+  col += uGlow*pal(uHue)*smoothstep(th*5.0,th,md)*0.28;
+  col=mix(col, pal(uHue), smoothstep(th,th*0.4,md));
+  float cp=0.0, ps=mix(0.014,0.04,uPtSize);
+  for(int i=0;i<Count(b);i++){ cp=max(cp, smoothstep(ps,ps*0.6,distance(p,At(b,i)))); }
   col=mix(col, vec3(1.0,0.65,0.2), cp*uPts);
   return col;
 }` },
-  { id:'polygon', title:'4 · Tier-2 bounded array', dim:'2d', orbit:[0,0],
-    desc:'Polygon6 bounded array. Controls: hue, edge glow, fill interior.',
-    controls:[{k:'Hue',l:'Hue',kind:'slider',def:0.1},{k:'Glow',l:'Edge glow',kind:'slider',def:0.5},{k:'Fill',l:'Fill',kind:'toggle',def:true}],
+  { id:'polygon', title:'Tier-2 bounded array', dim:'2d', orbit:[0,0],
+    desc:'Polygon6 = fixed capacity 6, clamped At; the shader loops i<count for distance + winding. Spin it, fill it, glow it.',
+    controls:[{k:'Hue',l:'Hue',kind:'slider',def:0.1},{k:'Glow',l:'Edge glow',kind:'slider',def:0.5},
+              {k:'Rot',l:'Rotate',kind:'slider',def:0.0},{k:'FillA',l:'Fill opacity',kind:'slider',def:0.7},
+              {k:'Fill',l:'Fill',kind:'toggle',def:true},{k:'Verts',l:'Vertices',kind:'toggle',def:false}],
     body:`
 vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
-  vec2 p=uv;
+  float a=uRot*6.2831; vec2 ctr=vec2(0.5);
+  mat2 R=mat2(cos(a),-sin(a),sin(a),cos(a));
+  vec2 p=ctr+R*(uv-ctr);
   Polygon6 poly=Polygon6(vec2(0.5,0.88),vec2(0.86,0.62),vec2(0.74,0.18),
                          vec2(0.34,0.14),vec2(0.14,0.52),vec2(0.42,0.72));
   int count=6; float md=1e9; bool inside=false;
   for(int i=0;i<count;i++){ int j=i+1; if(j>=count)j=0;
     md=min(md, EdgeDistSq(poly,i,j,p));
-    vec2 a=At(poly,i), bb=At(poly,j);
-    if(((a.y>p.y)!=(bb.y>p.y)) && (p.x < (bb.x-a.x)*(p.y-a.y)/(bb.y-a.y)+a.x)) inside=!inside;
+    vec2 va=At(poly,i), vb=At(poly,j);
+    if(((va.y>p.y)!=(vb.y>p.y)) && (p.x < (vb.x-va.x)*(p.y-va.y)/(vb.y-va.y)+va.x)) inside=!inside;
   }
   float d=sqrt(md);
   vec3 col=vec3(0.08,0.09,0.12);
-  if(inside) col=mix(col, vec3(0.16,0.22,0.34), uFill);
+  if(inside) col=mix(col, vec3(0.16,0.22,0.34), uFillA*uFill);
   float gw=mix(0.03,0.008,uGlow);
   col=mix(col, pal(uHue), smoothstep(gw,gw*0.3,d));
+  float vd=1e9; for(int i=0;i<6;i++) vd=min(vd,distance(p,At(poly,i)));
+  col=mix(col, vec3(1.0), uVerts*smoothstep(0.022,0.012,vd));
   return col;
 }` },
-  { id:'solids', title:'5 · Platonic solids (wireframe)', dim:'3d', orbit:[0.6,0.4],
-    desc:'Wireframe SDF via a Plato loop. Controls: hue + show tetra / octa / cube.',
-    controls:[{k:'Hue',l:'Hue',kind:'slider',def:0.58},{k:'Tet',l:'Tetra',kind:'toggle',def:true},{k:'Oct',l:'Octa',kind:'toggle',def:true},{k:'Cube',l:'Cube',kind:'toggle',def:true}],
+  { id:'solids', title:'Platonic solids (wireframe)', dim:'3d', orbit:[0.6,0.4],
+    desc:'Edges = cylinders, vertices = spheres, assembled by a Plato double for-loop. Thickness feeds the Wire() radii; toggle each solid.',
+    controls:[{k:'Hue',l:'Hue',kind:'slider',def:0.58},{k:'Thick',l:'Thickness',kind:'slider',def:0.5},
+              {k:'Tet',l:'Tetrahedron',kind:'toggle',def:true},{k:'Oct',l:'Octahedron',kind:'toggle',def:true},
+              {k:'Cube',l:'Cube',kind:'toggle',def:true}, ZOOM, SPIN],
     body:`
 float sScene(vec3 p){
+  float node=mix(0.07,0.24,uThick), edge=mix(0.035,0.16,uThick);
   Solid4 tet=Solid4(vec3(1,1,1),vec3(1,-1,-1),vec3(-1,1,-1),vec3(-1,-1,1));
-  float dt=mix(1e5, Wire(tet,(p-vec3(-2.3,0,0))/0.62,2.9,0.16,0.09)*0.62, uTet);
+  float dt=mix(1e5, Wire(tet,(p-vec3(-2.3,0,0))/0.62,2.9,node,edge)*0.62, uTet);
   Solid6 oct=Solid6(vec3(1,0,0),vec3(-1,0,0),vec3(0,1,0),vec3(0,-1,0),vec3(0,0,1),vec3(0,0,-1));
-  float doo=mix(1e5, Wire(oct,p/0.75,1.7,0.16,0.09)*0.75, uOct);
+  float doo=mix(1e5, Wire(oct,p/0.75,1.7,node,edge)*0.75, uOct);
   Solid8 cub=Solid8(vec3(1,1,1),vec3(1,1,-1),vec3(1,-1,1),vec3(1,-1,-1),
                     vec3(-1,1,1),vec3(-1,1,-1),vec3(-1,-1,1),vec3(-1,-1,-1));
-  float dc=mix(1e5, Wire(cub,(p-vec3(2.3,0,0))/0.55,2.3,0.16,0.09)*0.55, uCube);
+  float dc=mix(1e5, Wire(cub,(p-vec3(2.3,0,0))/0.55,2.3,node,edge)*0.55, uCube);
   return min(dt, min(doo, dc));
 }
 vec3 nrm(vec3 p){ vec2 h=vec2(0.002,0.0);
   return normalize(vec3(sScene(p+h.xyy)-sScene(p-h.xyy),sScene(p+h.yxy)-sScene(p-h.yxy),sScene(p+h.yyx)-sScene(p-h.yyx))); }
 vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
-  vec3 ro=cam*vec3(0.0,0.0,6.4), rd=cam*normalize(vec3(q,-2.6));
+  vec3 ro=cam*vec3(0.0,0.0,6.4*mix(1.5,0.7,uZoom)), rd=cam*normalize(vec3(q,-2.6));
   float t=0.0; int hit=0;
-  for(int i=0;i<120;i++){ vec3 p=ro+rd*t; float d=sScene(p); if(d<0.001){hit=1;break;} t+=d; if(t>18.0)break; }
+  for(int i=0;i<120;i++){ vec3 p=ro+rd*t; float d=sScene(p); if(d<0.001){hit=1;break;} t+=d; if(t>20.0)break; }
   vec3 col=vec3(0.04,0.05,0.08)+0.05*(q.y*0.5+0.5);
   if(hit==1){ vec3 p=ro+rd*t; vec3 n=nrm(p); vec3 l=normalize(vec3(0.5,0.7,0.6));
     float dif=clamp(dot(n,l),0.0,1.0);
     col=pal(uHue)*dif + vec3(0.15,0.1,0.25)*(0.4+0.6*n.y); }
   return pow(col,vec3(0.4545));
 }` },
-  { id:'voxel', title:'6 · Voxelized SDF', dim:'3d', orbit:[0.8,0.5],
-    desc:'A torus snapped to a grid. The cell slider drives the Plato Voxelize(p,cell) directly.',
-    controls:[{k:'Cell',l:'Voxel density',kind:'slider',def:0.4},{k:'Hue',l:'Hue',kind:'slider',def:0.4}],
+  { id:'voxel', title:'Voxelized SDF', dim:'3d', orbit:[0.8,0.5],
+    desc:'A smooth torus snapped to a grid — one small cube per surface cell. The density slider feeds Plato Voxelize(p,cell) directly.',
+    controls:[{k:'Cell',l:'Voxel density',kind:'slider',def:0.4},{k:'Hue',l:'Hue',kind:'slider',def:0.4},
+              {k:'PalMix',l:'Palette mix',kind:'slider',def:0.6}, ZOOM, SPIN],
     body:`
-float vScene(vec3 p){ return Voxelize(p, mix(0.30,0.09,uCell)); }
+float vScene(vec3 p){ return Voxelize(p, mix(0.30,0.075,uCell)); }
 vec3 nrm(vec3 p){ vec2 h=vec2(0.003,0.0);
   return normalize(vec3(vScene(p+h.xyy)-vScene(p-h.xyy),vScene(p+h.yxy)-vScene(p-h.yxy),vScene(p+h.yyx)-vScene(p-h.yyx))); }
 vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
-  vec3 ro=cam*vec3(0.0,0.0,4.2), rd=cam*normalize(vec3(q,-2.2));
+  vec3 ro=cam*vec3(0.0,0.0,4.2*mix(1.5,0.7,uZoom)), rd=cam*normalize(vec3(q,-2.2));
   float t=0.0; int hit=0;
-  for(int i=0;i<180;i++){ vec3 p=ro+rd*t; float d=vScene(p);
+  for(int i=0;i<190;i++){ vec3 p=ro+rd*t; float d=vScene(p);
     if(d<0.0015){hit=1;break;} t+=max(d,0.006); if(t>10.0)break; }
   vec3 col=vec3(0.05,0.05,0.07)+0.05*(q.y*0.5+0.5);
   if(hit==1){ vec3 p=ro+rd*t; vec3 n=nrm(p); vec3 l=normalize(vec3(0.6,0.8,0.4));
     float dif=clamp(dot(n,l),0.0,1.0), amb=0.35+0.25*n.y;
-    vec3 tint=mix(0.5+0.5*cos(6.28*(p.y*0.4)+vec3(0.0,1.0,2.0)), pal(uHue), 0.6);
+    vec3 tint=mix(0.5+0.5*cos(6.28*(p.y*0.4)+vec3(0.0,1.0,2.0)), pal(uHue), uPalMix);
     col=tint*dif + vec3(0.1,0.12,0.2)*amb; }
   return pow(col,vec3(0.4545));
 }` },
-  { id:'ripples', title:'7 · Parametric surface', dim:'3d', orbit:[0.0,0.62],
-    desc:'Height-field ripples. The phase slider scrubs the Plato Map(p,t); hue + specular.',
-    controls:[{k:'Phase',l:'Phase',kind:'slider',def:0.17},{k:'Hue',l:'Hue',kind:'slider',def:0.55},{k:'Spec',l:'Specular',kind:'toggle',def:true}],
+  { id:'ripples', title:'Parametric surface', dim:'3d', orbit:[0.0,0.62],
+    desc:'A height field y=f(x,z): damped radial ripples + cross-wave interference. Scrub the phase, or let it animate.',
+    controls:[{k:'Phase',l:'Phase',kind:'slider',def:0.17},{k:'Hue',l:'Hue',kind:'slider',def:0.55},
+              {k:'Light',l:'Light angle',kind:'slider',def:0.35},{k:'Spec',l:'Specular',kind:'toggle',def:true},
+              {k:'Animate',l:'Animate',kind:'toggle',def:false,noU:true}, ZOOM, SPIN],
+    timeUniform:'Phase',
     body:`
 float rScene(vec3 p){ return Map(p, uPhase*12.0); }
 vec3 nrm(vec3 p){ vec2 h=vec2(0.002,0.0);
   return normalize(vec3(rScene(p+h.xyy)-rScene(p-h.xyy),rScene(p+h.yxy)-rScene(p-h.yxy),rScene(p+h.yyx)-rScene(p-h.yyx))); }
 vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
-  vec3 ro=cam*vec3(0.0,0.0,3.1), rd=cam*normalize(vec3(q,-1.7));
+  vec3 ro=cam*vec3(0.0,0.0,3.1*mix(1.5,0.7,uZoom)), rd=cam*normalize(vec3(q,-1.7));
   float t=0.0; int hit=0;
   for(int i=0;i<150;i++){ vec3 p=ro+rd*t; float d=rScene(p); if(d<0.001){hit=1;break;} t+=max(d,0.004); if(t>18.0)break; }
   vec3 col=vec3(0.05,0.07,0.11)+0.05*(q.y*0.5+0.5);
-  if(hit==1){ vec3 p=ro+rd*t; vec3 n=nrm(p); vec3 l=normalize(vec3(0.4,0.85,0.35));
+  if(hit==1){ vec3 p=ro+rd*t; vec3 n=nrm(p);
+    float az=uLight*6.2831; vec3 l=normalize(vec3(cos(az),0.9,sin(az)));
     float dif=clamp(dot(n,l),0.0,1.0), amb=0.3+0.3*n.y;
     vec3 base=mix(pal(uHue), vec3(0.9), clamp(p.y*1.6+0.5,0.0,1.0)*0.3);
     float sp=pow(clamp(dot(reflect(-l,n),-rd),0.0,1.0),24.0);
     col=base*(dif+amb)+vec3(1.0)*sp*0.5*uSpec; }
   return pow(col,vec3(0.4545));
 }` },
-  { id:'tube', title:'8 · Extruded tube', dim:'3d', orbit:[0.7,0.5],
-    desc:'Profile swept along a path. Both sliders feed the Plato Extrude(p,segments,radius).',
-    controls:[{k:'Segs',l:'Segments',kind:'slider',def:0.72},{k:'Radius',l:'Radius',kind:'slider',def:0.5},{k:'Hue',l:'Hue',kind:'slider',def:0.5}],
+  { id:'tube', title:'Extruded tube', dim:'3d', orbit:[0.7,0.5],
+    desc:'A circular profile swept along a parametric path: a Plato for-loop min-unions capsules. Both sliders feed Extrude(p,segments,radius).',
+    controls:[{k:'Segs',l:'Segments',kind:'slider',def:0.72},{k:'Radius',l:'Radius',kind:'slider',def:0.5},
+              {k:'Hue',l:'Hue',kind:'slider',def:0.5}, ZOOM, SPIN],
     body:`
 float tScene(vec3 p){ int sg=int(6.0+uSegs*58.0); return Extrude(p, sg, mix(0.06,0.26,uRadius)); }
 vec3 nrm(vec3 p){ vec2 h=vec2(0.002,0.0);
   return normalize(vec3(tScene(p+h.xyy)-tScene(p-h.xyy),tScene(p+h.yxy)-tScene(p-h.yxy),tScene(p+h.yyx)-tScene(p-h.yyx))); }
 vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
-  vec3 ro=cam*vec3(0.0,0.0,4.4), rd=cam*normalize(vec3(q,-2.3));
+  vec3 ro=cam*vec3(0.0,0.0,4.4*mix(1.5,0.7,uZoom)), rd=cam*normalize(vec3(q,-2.3));
   float t=0.0; int hit=0;
   for(int i=0;i<120;i++){ vec3 p=ro+rd*t; float d=tScene(p); if(d<0.001){hit=1;break;} t+=d; if(t>12.0)break; }
   vec3 col=vec3(0.05,0.05,0.08)+0.05*(q.y*0.5+0.5);
@@ -222,127 +251,142 @@ vec3 renderPixel(vec2 uv, vec2 q, mat3 cam){
 }` },
 ];
 
-let pass=0, fail=0;
+// ---- single WebGL2 context, one cached program per demo --------------------
+const stage=document.getElementById('stage');
+const gl=stage.getContext('webgl2',{antialias:true, preserveDrawingBuffer:true});
+const vsSrc=document.getElementById('vs').textContent;
+const status=document.getElementById('status');
+const STATES=DEMOS.map(d=>({ d, program:null, u:null, doc:null, rt:null, panel:null,
+                             orbit:[d.orbit[0],d.orbit[1]], last:null, settleAt:0, hiDone:false, dirty:true }));
+let active=0;
 
-function build(d){
-  const card=document.createElement('div'); card.className='card';
-  const hint = d.dim==='3d' ? `<div class="hint">⟲ drag to orbit</div>` : '';
-  card.innerHTML=`<h2>${d.title}</h2><div class="d">${d.desc}</div>`+
-    `<div class="row"><div class="view ${d.dim==='3d'?'orbit':''}"><canvas id="c_${d.id}"></canvas>${hint}</div>`+
-    `<div class="panel"><canvas id="p_${d.id}"></canvas></div></div>`+
-    `<div class="status" id="s_${d.id}">loading…</div>`;
-  document.getElementById('grid').appendChild(card);
-}
-
-function compile(gl, src, decls, body, st){
-  const set=(cls,msg)=>{ st.className='status '+cls; st.textContent=msg; };
+function compile(gl, src, decls, body){
   const chunk=src.split('\n').filter(l=>!/^\s*#version/.test(l)&&!/^\s*precision\s/.test(l)).join('\n');
   const fs=`#version 300 es\nprecision highp float;\nprecision highp int;\n`+chunk+'\n'+PRELUDE+'\n'+decls+'\n'+body;
   const mk=(t,s,n)=>{ const sh=gl.createShader(t); gl.shaderSource(sh,s); gl.compileShader(sh);
-    if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS)){ set('err',n+' compile FAIL:\n'+gl.getShaderInfoLog(sh)); return null; } return sh; };
-  const vs=mk(gl.VERTEX_SHADER, document.getElementById('vs').textContent,'vertex');
-  const fsh=mk(gl.FRAGMENT_SHADER, fs,'fragment');
-  if(!vs||!fsh) return null;
+    if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS)) throw new Error(n+':\n'+gl.getShaderInfoLog(sh)); return sh; };
+  const vs=mk(gl.VERTEX_SHADER, vsSrc,'vertex'), fsh=mk(gl.FRAGMENT_SHADER, fs,'fragment');
   const pr=gl.createProgram(); gl.attachShader(pr,vs); gl.attachShader(pr,fsh); gl.linkProgram(pr);
-  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){ set('err','link FAIL:\n'+gl.getProgramInfoLog(pr)); return null; }
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)) throw new Error('link:\n'+gl.getProgramInfoLog(pr));
   return pr;
 }
 
-function makeState(d, src){
-  const cv=document.getElementById('c_'+d.id), st=document.getElementById('s_'+d.id);
-  const gl=cv.getContext('webgl2',{antialias:true, preserveDrawingBuffer:true});
-  if(!gl){ st.className='status err'; st.textContent='no WebGL2'; return null; }
-  const decls = d.controls.map(c=>`uniform float u${c.k};`).join('\n');
-  const pr=compile(gl, src, decls, d.body, st);
-  if(!pr) return null;
-  gl.useProgram(pr);
-  const u={ res:gl.getUniformLocation(pr,'uRes'), orbit:gl.getUniformLocation(pr,'uOrbit'),
-            time:gl.getUniformLocation(pr,'uTime'), samples:gl.getUniformLocation(pr,'uSamples'), ctl:{} };
-  for(const c of d.controls) u.ctl[c.k]=gl.getUniformLocation(pr,'u'+c.k);
-  return { d, cv, st, gl, pr, u, orbit:[d.orbit[0], d.orbit[1]], doc:null, rt:null, last:null, settle:0 };
+async function ensureProgram(s){
+  if(s.program) return;
+  const src=await (await fetch('out/'+s.d.id+'.glsl')).text();
+  const decls=s.d.controls.filter(c=>!c.noU).map(c=>`uniform float u${c.k};`).join('\n');
+  s.program=compile(gl, src, decls, s.d.body);
+  const u={ res:gl.getUniformLocation(s.program,'uRes'), orbit:gl.getUniformLocation(s.program,'uOrbit'),
+            time:gl.getUniformLocation(s.program,'uTime'), samples:gl.getUniformLocation(s.program,'uSamples'), ctl:{} };
+  for(const c of s.d.controls) if(!c.noU) u.ctl[c.k]=gl.getUniformLocation(s.program,'u'+c.k);
+  s.u=u;
 }
 
+function docOf(s){ return s.rt ? s.rt.doc : s.doc; }
+
 function draw(s, samples){
-  const {gl,cv,u,d}=s;
   const dpr=Math.min(window.devicePixelRatio||1, 2);
-  const size=Math.max(64, Math.round(cv.clientWidth*dpr));
-  if(cv.width!==size){ cv.width=size; cv.height=size; }
-  gl.useProgram(s.pr);
-  gl.viewport(0,0,cv.width,cv.height);
-  gl.uniform2f(u.res, cv.width, cv.height);
-  gl.uniform2f(u.orbit, s.orbit[0], s.orbit[1]);
-  gl.uniform1f(u.time, performance.now()*0.001);
-  gl.uniform1i(u.samples, samples);
-  const doc=s.rt?s.rt.doc:s.doc;
-  for(const c of d.controls){
-    const val = c.kind==='toggle' ? (doc[c.k]?1:0) : doc[c.k];
-    gl.uniform1f(u.ctl[c.k], val);
+  const size=Math.max(64, Math.round(stage.clientWidth*dpr));
+  if(stage.width!==size){ stage.width=size; stage.height=size; }
+  gl.useProgram(s.program);
+  gl.viewport(0,0,stage.width,stage.height);
+  gl.uniform2f(s.u.res, stage.width, stage.height);
+  gl.uniform2f(s.u.orbit, s.orbit[0], s.orbit[1]);
+  gl.uniform1f(s.u.time, performance.now()*0.001);
+  gl.uniform1i(s.u.samples, samples);
+  const doc=docOf(s), time=performance.now()*0.001;
+  for(const c of s.d.controls){ if(c.noU) continue;
+    let val = c.kind==='toggle' ? (doc[c.k]?1:0) : doc[c.k];
+    if(s.d.timeUniform===c.k && doc.Animate) val=(time*0.05)%1.0;
+    gl.uniform1f(s.u.ctl[c.k], val);
   }
   gl.drawArrays(gl.TRIANGLES,0,3);
 }
 
-// Gratify control app for a demo: model = control values; view = a Card of
-// Sliders/Toggles. mount() returns a runtime whose .doc the WebGL loop reads.
-function mountControls(d, s){
-  const init={}; for(const c of d.controls) init[c.k]=c.kind==='toggle'?c.def:c.def;
+// ---- Gratify control panel per demo (lazy, hidden until first shown) --------
+function mountControls(s){
+  if(s.rt) return;
+  const cv=document.createElement('canvas'); cv.id='p_'+s.d.id;
+  // mount while VISIBLE so Gratify's ResizeObserver reads a real clientWidth/Height
+  // (a display:none canvas measures 0 and Gratify keeps the 300x150 default).
+  document.getElementById('panelbox').appendChild(cv);
+  s.panel=cv;
+  const init={}; for(const c of s.d.controls) init[c.k]=c.def;
   const update=(doc,i)=> i.kind==='set' ? {...doc,[i.field]:i.value}
-                       : i.kind==='toggle' ? {...doc,[i.field]:!doc[i.field]} : doc;
-  const view=(doc)=> Card('panel',{title:'Controls'}, d.controls.map(c=>
-    c.kind==='slider'
-      ? Labeled(c.k, c.l, Slider(c.k+'-s',{ value:doc[c.k], width:112, set:(v)=>({kind:'set',field:c.k,value:v}) }))
-      : Labeled(c.k, c.l, Toggle(c.k+'-t',{ on:doc[c.k], flip:{kind:'toggle',field:c.k} }))
-  ));
+                       : i.kind==='toggle' ? {...doc,[i.field]:!doc[i.field]}
+                       : i.kind==='reset' ? {...init} : doc;
+  const view=(doc)=> Card('panel',{title:s.d.title}, [
+    ...s.d.controls.map(c=> c.kind==='slider'
+      ? Labeled(c.k, c.l, Slider(c.k+'-s',{ value:doc[c.k], width:120, set:(v)=>({kind:'set',field:c.k,value:v}) }))
+      : Labeled(c.k, c.l, Toggle(c.k+'-t',{ on:doc[c.k], flip:{kind:'toggle',field:c.k} }))),
+    Button('reset',{ label:'Reset', press:{kind:'reset'} }),
+  ]);
   s.doc=init;
-  s.rt=mount(document.getElementById('p_'+d.id), { init, update, view });
+  s.rt=mount(cv, { init, update, view });
   s.last=s.rt.doc;
+  // repaint the view when a control changes, even if the rAF loop is throttled
+  cv.addEventListener('pointermove',()=>{ if(STATES[active]===s){ s.dirty=true; draw(s,1); s.settleAt=performance.now()+160; s.hiDone=false; wake(); } });
+  cv.addEventListener('pointerup',  ()=>{ if(STATES[active]===s){ s.dirty=true; s.settleAt=performance.now()+180; s.hiDone=false; wake(); } });
 }
 
-function attachOrbit(s){
-  const cv=s.cv; let drag=false, lx=0, ly=0;
-  cv.addEventListener('pointerdown',e=>{ drag=true; lx=e.clientX; ly=e.clientY; });
-  cv.addEventListener('pointermove',e=>{ if(!drag)return;
+// ---- chooser + activation --------------------------------------------------
+function buildChooser(){
+  const box=document.getElementById('chooser');
+  DEMOS.forEach((d,i)=>{ const b=document.createElement('button'); b.textContent=(i+1)+' · '+d.title;
+    b.id='tab_'+d.id; b.onclick=()=>activate(i); box.appendChild(b); });
+}
+
+async function activate(i){
+  active=i; const s=STATES[i];
+  for(const d of DEMOS) document.getElementById('tab_'+d.id).classList.toggle('on', d.id===s.d.id);
+  document.getElementById('mtitle').textContent=(i+1)+' · '+s.d.title;
+  document.getElementById('mdesc').textContent=s.d.desc;
+  document.getElementById('stagebox').classList.toggle('orbit', s.d.dim==='3d');
+  document.getElementById('hint').textContent = s.d.dim==='3d' ? '⟲ drag to orbit' : '';
+  try{
+    await ensureProgram(s);
+    mountControls(s);
+    STATES.forEach(o=>{ if(o.panel) o.panel.style.display = o===s ? 'block':'none'; });
+    s.dirty=true; s.hiDone=false; draw(s,2);
+    const px=new Uint8Array(4); gl.readPixels(stage.width>>1,stage.height>>1,1,1,gl.RGBA,gl.UNSIGNED_BYTE,px);
+    status.className='status'; status.textContent='PASS · Plato + Gratify · '+s.d.id+' · center rgba '+px.join(',');
+    wake();
+  }catch(e){ status.className='status err'; status.textContent='FAIL ('+s.d.id+'): '+e.message; }
+}
+
+// orbit on the shared stage → active demo
+(function attachOrbit(){
+  let drag=false,lx=0,ly=0;
+  stage.addEventListener('pointerdown',e=>{ if(STATES[active].d.dim!=='3d')return; drag=true; lx=e.clientX; ly=e.clientY; });
+  stage.addEventListener('pointermove',e=>{ if(!drag)return; const s=STATES[active];
     s.orbit[0]+=(e.clientX-lx)*0.01; s.orbit[1]+=(e.clientY-ly)*0.01;
-    s.orbit[1]=Math.max(-1.45,Math.min(1.45,s.orbit[1])); lx=e.clientX; ly=e.clientY; draw(s,1); });
-  window.addEventListener('pointerup',()=>{ if(drag){ drag=false; draw(s,2); } });
+    s.orbit[1]=Math.max(-1.45,Math.min(1.45,s.orbit[1])); lx=e.clientX; ly=e.clientY;
+    s.dirty=true; draw(s,1); s.settleAt=performance.now()+150; s.hiDone=false; wake(); });
+  window.addEventListener('pointerup',()=>{ drag=false; });
+})();
+
+// ---- render loop: only the active demo; runs while live, idles when static
+// (so the compositor can settle). wake() restarts it after any interaction.
+let running=false;
+function wake(){ if(!running){ running=true; requestAnimationFrame(frame); } }
+function frame(now){
+  const s=STATES[active]; let cont=false;
+  if(s && s.program){
+    const doc=docOf(s); let moving=false;
+    if(doc.Spin){ s.orbit[0]+=0.005; moving=true; }
+    if(s.d.timeUniform && doc.Animate) moving=true;
+    if(s.rt && s.rt.doc!==s.last){ s.last=s.rt.doc; moving=true; }
+    if(moving){ draw(s,1); s.settleAt=now+150; s.hiDone=false; cont=true; }
+    else if(!s.hiDone && now>s.settleAt){ draw(s,2); s.hiDone=true; }
+    if(!s.hiDone) cont=true;
+  }
+  if(cont) requestAnimationFrame(frame); else running=false;
 }
 
-(async()=>{
-  DEMOS.forEach(build);
-  const states=[];
-  for(const d of DEMOS){
-    try{
-      const r=await fetch('out/'+d.id+'.glsl'); const src=await r.text();
-      const s=makeState(d, src);
-      if(!s){ fail++; continue; }
-      mountControls(d, s);
-      draw(s,2);
-      const px=new Uint8Array(4);
-      s.gl.readPixels(s.cv.width>>1, s.cv.height>>1, 1,1, s.gl.RGBA, s.gl.UNSIGNED_BYTE, px);
-      s.st.className='status ok';
-      s.st.textContent='PASS · Plato + Gratify · center rgba '+px.join(',');
-      if(d.dim==='3d') attachOrbit(s);
-      states.push(s); pass++;
-    }catch(e){
-      const st=document.getElementById('s_'+d.id); if(st){ st.className='status err'; st.textContent='FAIL: '+e; }
-      fail++;
-    }
-  }
-  // Watcher: when a panel's Gratify doc changes (slider/toggle), repaint its
-  // WebGL view — fast (1 sample) during the change, high quality once it settles.
-  function tick(){
-    const now=performance.now();
-    for(const s of states){
-      if(s.rt.doc!==s.last){ s.last=s.rt.doc; draw(s,1); s.settle=now+140; }
-      else if(s.settle && now>s.settle){ s.settle=0; draw(s,2); }
-    }
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-  // Debug/test hook: drive a control from the console and repaint its view.
-  window.__glsl = { states, set(id,field,value){ const s=states.find(x=>x.d.id===id); s.rt.dispatch({kind:'set',field,value}); draw(s,2); return s.rt.doc; } };
-  const refit=()=>states.forEach(s=>draw(s,2));
-  window.addEventListener('resize', refit);
-  setTimeout(refit, 80);
-  document.title = fail===0 ? `PLATO-GLSL-ALL-PASS (${pass}/${DEMOS.length})` : `PLATO-GLSL-FAIL (${pass} ok, ${fail} fail)`;
-})();
+buildChooser();
+await activate(0);
+window.addEventListener('resize', ()=>{ const s=STATES[active]; if(s&&s.program){ s.dirty=true; s.hiDone=false; draw(s,2); wake(); } });
+// debug/test hook
+window.__glsl={ STATES, activate, set(field,value){ const s=STATES[active]; s.rt.dispatch({kind:'set',field,value}); draw(s,2); return s.rt.doc; },
+                toggle(field){ const s=STATES[active]; s.rt.dispatch({kind:'toggle',field}); draw(s,2); return s.rt.doc; } };
 </script></body></html>
