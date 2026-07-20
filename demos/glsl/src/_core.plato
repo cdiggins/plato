@@ -65,8 +65,11 @@ library Intrinsics
     GreaterThanOrEquals(x: Number, y: Number): Boolean;
     Compare(x: Number, y: Number): Integer;
     Compare(x: Integer, y: Integer): Integer;
+    LessThan(x: Integer, y: Integer): Boolean;
     LessThanOrEquals(x: Integer, y: Integer): Boolean;
     Equals(x: Integer, y: Integer): Boolean;
+    Add(x: Integer, y: Integer): Integer;
+    ToNumber(x: Integer): Number;
 
     And(x: Boolean, y: Boolean): Boolean;
     Or(x: Boolean, y: Boolean): Boolean;

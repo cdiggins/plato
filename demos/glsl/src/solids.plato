@@ -1,0 +1,113 @@
+// Demo 5 — Platonic solids as wireframes (edges = cylinders, vertices = spheres).
+//
+// The wireframe distance field is built with real Plato for-loops: for each vertex
+// place a sphere; for each pair of vertices close enough to be an edge, place a
+// capsule (a thick cylinder). The double loop over a fixed-size vertex array
+// lowers to nested GLSL while-loops. An edge is any vertex pair whose spacing is
+// under edgeMax, which recovers the correct edge set of the tetra / octa / cube
+// from vertices alone (nearest-neighbour connectivity).
+//
+// The harness supplies the canonical vertex sets and the rotation; Plato owns the
+// geometry (SdCapsule / SdSphere) and the loop that assembles the wireframe.
+
+library Solids
+{
+    // Sphere of radius r centred at c.
+    SdSphere(p: Vector3D, c: Vector3D, r: Number): Number
+        => p.Subtract(c).Length - r;
+
+    // Capsule (round-capped cylinder) of radius r from a to b.
+    SdCapsule(p: Vector3D, a: Vector3D, b: Vector3D, r: Number): Number
+    {
+        var pa = p.Subtract(a);
+        var ba = b.Subtract(a);
+        var h = (pa.Dot(ba) / ba.Dot(ba)).Clamp(0.0, 1.0);
+        return pa.Subtract(ba.Scale(h)).Length - r;
+    }
+}
+
+// Fixed-size vertex buffers, one per solid arity. At clamps on out-of-range; Count
+// is the compile-time vertex count. Wire is overloaded by receiver type (GLSL
+// overloads by parameter type), so all three share one name.
+
+type Solid4 { V0: Vector3D; V1: Vector3D; V2: Vector3D; V3: Vector3D; }
+type Solid6 { V0: Vector3D; V1: Vector3D; V2: Vector3D; V3: Vector3D; V4: Vector3D; V5: Vector3D; }
+type Solid8 { V0: Vector3D; V1: Vector3D; V2: Vector3D; V3: Vector3D;
+              V4: Vector3D; V5: Vector3D; V6: Vector3D; V7: Vector3D; }
+
+library Solid4Lib
+{
+    At(s: Solid4, i: Integer): Vector3D
+        => i <= 0 ? s.V0 : i == 1 ? s.V1 : i == 2 ? s.V2 : s.V3;
+    Count(s: Solid4): Integer => 4;
+
+    Wire(s: Solid4, p: Vector3D, edgeMax: Number, node: Number, edge: Number): Number
+        => WireLoop4(s, p, edgeMax, node, edge);
+}
+
+library Solid6Lib
+{
+    At(s: Solid6, i: Integer): Vector3D
+        => i <= 0 ? s.V0 : i == 1 ? s.V1 : i == 2 ? s.V2 : i == 3 ? s.V3 : i == 4 ? s.V4 : s.V5;
+    Count(s: Solid6): Integer => 6;
+
+    Wire(s: Solid6, p: Vector3D, edgeMax: Number, node: Number, edge: Number): Number
+        => WireLoop6(s, p, edgeMax, node, edge);
+}
+
+library Solid8Lib
+{
+    At(s: Solid8, i: Integer): Vector3D
+        => i <= 0 ? s.V0 : i == 1 ? s.V1 : i == 2 ? s.V2 : i == 3 ? s.V3
+         : i == 4 ? s.V4 : i == 5 ? s.V5 : i == 6 ? s.V6 : s.V7;
+    Count(s: Solid8): Integer => 8;
+
+    Wire(s: Solid8, p: Vector3D, edgeMax: Number, node: Number, edge: Number): Number
+        => WireLoop8(s, p, edgeMax, node, edge);
+}
+
+// The wireframe assembly loops. Nodes and edges use SEPARATE accumulators: the
+// Plato compiler currently mis-resolves a variable that is reassigned at two
+// different loop-nesting depths (tracked as studio-093), so each accumulator is
+// written at a single depth — dn in a flat vertex loop, de in the nested edge loop.
+library WireLoops
+{
+    WireLoop4(s: Solid4, p: Vector3D, edgeMax: Number, node: Number, edge: Number): Number
+    {
+        var n = s.Count;
+        var dn = 100000.0;
+        for (var i = 0; i < n; i = i + 1)
+            dn = dn.Min(p.SdSphere(s.At(i), node));
+        var de = 100000.0;
+        for (var i = 0; i < n; i = i + 1)
+            for (var j = i + 1; j < n; j = j + 1)
+                de = s.At(i).Distance(s.At(j)) < edgeMax ? de.Min(p.SdCapsule(s.At(i), s.At(j), edge)) : de;
+        return dn.Min(de);
+    }
+
+    WireLoop6(s: Solid6, p: Vector3D, edgeMax: Number, node: Number, edge: Number): Number
+    {
+        var n = s.Count;
+        var dn = 100000.0;
+        for (var i = 0; i < n; i = i + 1)
+            dn = dn.Min(p.SdSphere(s.At(i), node));
+        var de = 100000.0;
+        for (var i = 0; i < n; i = i + 1)
+            for (var j = i + 1; j < n; j = j + 1)
+                de = s.At(i).Distance(s.At(j)) < edgeMax ? de.Min(p.SdCapsule(s.At(i), s.At(j), edge)) : de;
+        return dn.Min(de);
+    }
+
+    WireLoop8(s: Solid8, p: Vector3D, edgeMax: Number, node: Number, edge: Number): Number
+    {
+        var n = s.Count;
+        var dn = 100000.0;
+        for (var i = 0; i < n; i = i + 1)
+            dn = dn.Min(p.SdSphere(s.At(i), node));
+        var de = 100000.0;
+        for (var i = 0; i < n; i = i + 1)
+            for (var j = i + 1; j < n; j = j + 1)
+                de = s.At(i).Distance(s.At(j)) < edgeMax ? de.Min(p.SdCapsule(s.At(i), s.At(j), edge)) : de;
+        return dn.Min(de);
+    }
+}

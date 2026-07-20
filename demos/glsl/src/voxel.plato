@@ -1,0 +1,49 @@
+// Demo 6 — Voxelized SDF (a smooth surface approximated by a grid of small cubes).
+//
+// A smooth target field (a torus) is sampled on a regular grid: each cell that the
+// surface passes through is replaced by a small cube. Domain-snapping to the grid
+// (Snap) plus a per-cell shell mask turns the smooth torus into a lattice of voxels
+// whose spacing is the `cell` argument — smaller cell, more and finer cubes.
+//
+// Pure functions over Vector3D; the harness raymarches Voxelize(p, cell).
+
+library Voxels
+{
+    // Box with half-extents b.
+    SdBox(p: Vector3D, b: Vector3D): Number
+    {
+        var q = p.Abs.Subtract(b);
+        var zero = new Vector3D(0.0, 0.0, 0.0);
+        return q.Max(zero).Length + q.X.Max(q.Y.Max(q.Z)).Min(0.0);
+    }
+
+    // Smooth target surface: a torus in the XZ plane (major R, minor r).
+    Field(p: Vector3D): Number
+    {
+        var xz = new Vector2D(p.X, p.Z);
+        var q = new Vector2D(xz.Length - 1.25, p.Y);
+        return q.Length - 0.5;
+    }
+
+    // Centre of the grid cell containing p (cell size = cell).
+    Snap(p: Vector3D, cell: Number): Vector3D
+    {
+        var g = p.Scale(1.0 / cell);
+        var f = new Vector3D(g.X.Floor + 0.5, g.Y.Floor + 0.5, g.Z.Floor + 0.5);
+        return f.Scale(cell);
+    }
+
+    // Voxelized distance: a cube per grid cell, but only for cells the surface
+    // actually crosses (|Field(centre)| within one cell). Cells far from the
+    // surface are pushed away so no voxel is drawn there.
+    Voxelize(p: Vector3D, cell: Number): Number
+    {
+        var centre = p.Snap(cell);
+        var surf = centre.Field;
+        var local = p.Subtract(centre);
+        var half = cell * 0.42;
+        var cube = local.SdBox(new Vector3D(half, half, half));
+        var outside = surf.Abs - cell;
+        return outside > 0.0 ? cube + outside : cube;
+    }
+}
