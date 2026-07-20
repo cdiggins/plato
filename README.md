@@ -202,7 +202,6 @@ source, and how to add a sample.
 Good projects for motivated and patient people:
 
 - Property-based tests for the standard library
-- A type checker and inference engine with source-anchored diagnostics
 - Plato-to-Plato optimizers (e.g., compile-time unrolling of component-wise operations)
 - Growing the TypeScript and Rust backends from proof of concept to the full standard library
 - New backends: GLSL, C++, Dart, Java, Go
