@@ -1,0 +1,14 @@
+// EXPECT: CHK304 cannot match on value of type 'Point2D': match requires a sum type
+//
+// `match` is only valid on a sum type; Point2D is an ordinary product (record) type.
+
+type Number { }
+type Point2D { X: Number; Y: Number; }
+
+library M {
+    ComponentSum(pt: Point2D): Number =>
+        match (pt) {
+            X(v) => v;
+            Y(v) => v;
+        };
+}

@@ -1,0 +1,52 @@
+// Positive fixture: the flagship sum type (SVG-style path segment verbs) plus
+// functions that match on it. Self-contained: declares the minimal primitives it
+// uses (fields only, no concepts/implements clauses) mirroring 00-primitives.plato.
+//
+// This is the "after" of plato-src-v3/40-paths.plato's PathSegmentKind+PathSegment2D
+// hand-encoding (see docs/plato-sum-types-v3-survey.md).
+
+type Number { }
+type Integer { }
+type Boolean { }
+type Point2D { X: Number; Y: Number; }
+type Vector2 { X: Number; Y: Number; }
+type Angle { Radians: Number; }
+
+// A sum type: the `=` case-list body replaces the braced field body. Cases are
+// numbered 0..5 in declaration order. `Close` is a payload-free case.
+type PathSegment2D
+    = Move(EndPoint: Point2D)
+    | Line(EndPoint: Point2D)
+    | Quadratic(Control: Point2D, EndPoint: Point2D)
+    | Cubic(Control1: Point2D, Control2: Point2D, EndPoint: Point2D)
+    | Arc(Radii: Vector2, AxisRotation: Angle, LargeArc: Boolean, Sweep: Boolean, EndPoint: Point2D)
+    | Close;
+
+library PathSegments {
+    // Exhaustive match: every case listed exactly once, no default arm.
+    // Positional binders bind case fields in declaration order.
+    EndPoint(seg: PathSegment2D, start: Point2D): Point2D =>
+        match (seg) {
+            Move(p) => p;
+            Line(p) => p;
+            Quadratic(c, p) => p;
+            Cubic(c1, c2, p) => p;
+            Arc(r, rot, large, sweep, p) => p;
+            Close => start;
+        };
+
+    // A case's binders may be ignored; the arm still declares the full arity.
+    ControlPointCount(seg: PathSegment2D): Integer =>
+        match (seg) {
+            Move(p) => 0;
+            Line(p) => 0;
+            Quadratic(c, p) => 1;
+            Cubic(c1, c2, p) => 2;
+            Arc(r, rot, large, sweep, p) => 0;
+            Close => 0;
+        };
+
+    // Per-case constructor functions are the synthesized surface for building values
+    // (baseline qualified form; bare form is an open resolver question).
+    Pen(start: Point2D): PathSegment2D => PathSegment2D.Move(start);
+}

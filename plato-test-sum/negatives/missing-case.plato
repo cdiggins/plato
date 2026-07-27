@@ -1,0 +1,23 @@
+// EXPECT: CHK300 non-exhaustive match on sum type 'PathSegment2D': missing case(s) 'Cubic', 'Arc', 'Close'
+//
+// A match must list every case exactly once; there is no default arm in v1.
+
+type Number { }
+type Point2D { X: Number; Y: Number; }
+
+type PathSegment2D
+    = Move(EndPoint: Point2D)
+    | Line(EndPoint: Point2D)
+    | Quadratic(Control: Point2D, EndPoint: Point2D)
+    | Cubic(Control1: Point2D, Control2: Point2D, EndPoint: Point2D)
+    | Arc(Center: Point2D, EndPoint: Point2D)
+    | Close;
+
+library M {
+    First(seg: PathSegment2D, start: Point2D): Point2D =>
+        match (seg) {
+            Move(p) => p;
+            Line(p) => p;
+            Quadratic(c, p) => p;
+        };
+}

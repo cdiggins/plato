@@ -1,0 +1,19 @@
+// EXPECT: CHK301 unknown case 'Curve' in match on sum type 'Shape' (cases: Circle, Square)
+//
+// A match arm names a case that the sum type does not declare.
+
+type Number { }
+type Integer { }
+
+type Shape
+    = Circle(Radius: Number)
+    | Square(Side: Number);
+
+library M {
+    Describe(s: Shape): Integer =>
+        match (s) {
+            Circle(r) => 0;
+            Square(side) => 1;
+            Curve(x) => 2;
+        };
+}

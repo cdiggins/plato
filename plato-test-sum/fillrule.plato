@@ -1,0 +1,16 @@
+// Positive fixture: a degenerate sum (enum) — every case is payload-free, so the
+// `= A | B | ...` body has no parenthesized fields. This is the shape most of the
+// plato-src-v3 `XxxKind` types collapse to (see the survey doc).
+
+type Boolean { }
+
+type FillRule = NonZero | EvenOdd;
+
+library FillRules {
+    // A payload-free case has a bare pattern (no binder parens).
+    IsEvenOdd(r: FillRule): Boolean =>
+        match (r) {
+            NonZero => false;
+            EvenOdd => true;
+        };
+}

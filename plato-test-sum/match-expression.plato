@@ -1,0 +1,31 @@
+// Positive fixture: `match` is an EXPRESSION, not a statement. It appears as a
+// call argument and as a nested sub-expression, with no reliance on any external
+// library (all callees are local) so it can be wired into elaboration tests without
+// the stdlib present.
+
+type Number { }
+type Integer { }
+
+type Shape
+    = Circle(Radius: Number)
+    | Square(Side: Number);
+
+library Shapes {
+    // A match result used as a function-call argument.
+    Classify(s: Shape): Integer =>
+        Identity(match (s) {
+            Circle(r) => 1;
+            Square(side) => 2;
+        });
+
+    // A match whose arms are themselves non-trivial expressions (calls).
+    Corners(s: Shape): Integer =>
+        match (s) {
+            Circle(r) => Zero();
+            Square(side) => Four();
+        };
+
+    Identity(n: Integer): Integer => n;
+    Zero(): Integer => 0;
+    Four(): Integer => 4;
+}

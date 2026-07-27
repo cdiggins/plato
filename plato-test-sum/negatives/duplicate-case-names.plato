@@ -1,0 +1,12 @@
+// EXPECT: CHK305 sum type 'Bad' declares case 'Move' more than once
+//
+// Case names within one sum type must be unique (they become the tag constants and
+// the Case_Field prefixes in the emitted struct).
+
+type Number { }
+type Point2D { X: Number; Y: Number; }
+
+type Bad
+    = Move(EndPoint: Point2D)
+    | Line(EndPoint: Point2D)
+    | Move(Target: Point2D);

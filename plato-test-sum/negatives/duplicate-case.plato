@@ -1,0 +1,19 @@
+// EXPECT: CHK302 duplicate match arm for case 'Circle' of sum type 'Shape'
+//
+// The same case appears in two arms of one match.
+
+type Number { }
+type Integer { }
+
+type Shape
+    = Circle(Radius: Number)
+    | Square(Side: Number);
+
+library M {
+    Describe(s: Shape): Integer =>
+        match (s) {
+            Circle(r) => 0;
+            Square(side) => 1;
+            Circle(r2) => 2;
+        };
+}

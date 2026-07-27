@@ -1,0 +1,20 @@
+// EXPECT: CHK303 case 'Quadratic' of sum type 'PathSegment2D' binds 2 field(s) (Control, EndPoint) but the pattern supplies 1
+//
+// A case pattern must supply exactly one binder per case field.
+
+type Number { }
+type Point2D { X: Number; Y: Number; }
+
+type PathSegment2D
+    = Move(EndPoint: Point2D)
+    | Quadratic(Control: Point2D, EndPoint: Point2D)
+    | Close;
+
+library M {
+    ControlOf(seg: PathSegment2D, start: Point2D): Point2D =>
+        match (seg) {
+            Move(p) => p;
+            Quadratic(c) => c;
+            Close => start;
+        };
+}

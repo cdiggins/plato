@@ -1,0 +1,27 @@
+// Positive fixture: a `match` nested inside another `match`'s arm. Uses two distinct
+// (non-recursive) sum types — recursive sum types are OUT OF SCOPE in v1 because a
+// flat value struct cannot contain itself (see the design doc open questions).
+
+type Integer { }
+
+type Inner = A | B;
+
+type Outer
+    = First(Flag: Inner)
+    | Second(Left: Inner, Right: Inner);
+
+library Nested {
+    Describe(o: Outer): Integer =>
+        match (o) {
+            First(f) =>
+                match (f) {
+                    A => 0;
+                    B => 1;
+                };
+            Second(l, r) =>
+                match (l) {
+                    A => match (r) { A => 2; B => 3; };
+                    B => 4;
+                };
+        };
+}
