@@ -274,7 +274,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     public CSharpTypeWriter WriteStaticFunction(CSharpFunctionInfo fi)
         => Write($"{fi.StaticSignature}").WriteBody(fi, true);
 
-    public CSharpTypeWriter WriteMemberFunction(CSharpFunctionInfo f, bool isPrimitive)
+    public CSharpTypeWriter WriteMemberFunction(CSharpFunctionInfo f, bool isPrimitive, Func<string, bool> hasFunction = null)
     {
         if (!isPrimitive || f.Body != null)
         {
@@ -301,7 +301,15 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         }
 
         if (f.IsOperator && !isPrimitive)
+        {
             WriteLine(f.OperatorImpl);
+
+            // C# rejects an unpaired comparison operator (CS0216). If the library does not
+            // declare the partner function, synthesize the partner by swapping the operands.
+            var partnerFn = f.PartnerFunctionName;
+            if (partnerFn != null && hasFunction != null && !hasFunction(partnerFn))
+                WriteLine(f.PairedOperatorImpl);
+        }
 
         if (f.IsIndexer && !Writer.NoProperties)
             WriteLine(f.IndexerImpl);

@@ -45,7 +45,11 @@ namespace Ara3D.Geometry.Compiler.Analysis
             if (expr.Name == Name)
             {
                 var r = Replacement;
-                if (r.Def.IsTypeVariable() && Previous != null)
+                // Chain through both $-type-variables and concept type PARAMETERS: a concept
+                // that passes its own type parameter to an inherited concept (e.g. Field<TDomain,
+                // TValue> inherits Procedural<TDomain, TValue>) maps the child's parameter to a
+                // TypeParameter expression, which must resolve through the outer substitutions.
+                if ((r.Def.IsTypeVariable() || r.Def.Kind == Ara3D.Geometry.AST.TypeKind.TypeParameter) && Previous != null)
                     return Previous.Replace(r);
                 return r;
             }

@@ -123,6 +123,25 @@ namespace Ara3D.Geometry.CSharpWriter
         public bool IsOperator => OperatorName != null;
         public string OperatorImpl => $"{Annotation} public static {ReturnType} operator {OperatorName}{StaticParametersString} => {FirstParameterName}.{Name}{MethodArgsString};";
 
+        // C# requires the comparison operators in pairs (<= with >=, < with >). When the library
+        // declares only one side (e.g. a concept with just LessThanOrEquals), the missing partner
+        // is synthesized by swapping the operands: a >= b  ==  b <= a.
+        public static readonly Dictionary<string, string> ComparisonPartners = new Dictionary<string, string>
+        {
+            { "<=", ">=" }, { ">=", "<=" }, { "<", ">" }, { ">", "<" },
+        };
+
+        public string PairedOperatorImpl
+            => ComparisonPartners.TryGetValue(OperatorName ?? "", out var partner) && ParameterNames.Count == 2
+                ? $"{Annotation} public static {ReturnType} operator {partner}{StaticParametersString} => {ParameterNames[1]}.{Name}({ParameterNames[0]});"
+                : null;
+
+        // The Plato function name whose operator pairs with this one (null when not a comparison).
+        public string PartnerFunctionName
+            => ComparisonPartners.TryGetValue(OperatorName ?? "", out var partner)
+                ? Operators.BinaryOperatorToName(partner)
+                : null;
+
         public string MethodInterface => $"{ReturnType} {Name}{MethodParametersString}" + (NumParameters > 1 || EmitAsMethod ? ";" : " { get; }");
 
         // TODO: should we not be taking into account the function type replacements?  

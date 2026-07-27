@@ -1,16 +1,27 @@
-fix(csharp-writer): map concrete Array/Array2D/Array3D types to IReadOnlyList*
+fix(compiler+csharp-writer): v3 standalone-codegen fixes — substitution chain, paired operators, interface conversions
 
-plato-src-v3 uses Array<T> directly in struct fields and signatures (plato-src
-only ever goes through the IArray concepts, which the writer already renames).
-ToCSharpTypeName now renders the concrete Array primitive types as the same
-runtime interfaces (IReadOnlyList / IReadOnlyList2D / IReadOnlyList3D), removing
-~1000 CS0308 errors from v3-generated C#.
+Three emitter/front-end fixes surfaced by compiling plato-src-v3 generated C# standalone:
 
-Goldens byte-identical (regen-generated: 184/184 identical both variants),
-frozen V1 untouched, PlatoTests 142/142, conformance 205/205.
+- PlatoCompiler/Analysis/TypeSubstitutions.cs: Replace() now chains through concept
+  TypeParameter replacements, not just $-type-variables. A concept passing its own
+  type parameter to an inherited concept (Field<TDomain,TValue> inherits
+  Procedural<TDomain,TValue>) previously leaked raw TDomain/TValue into emitted
+  obligations (CS0246 x70, CS0535 x35).
 
-v3 pipeline validation findings (not fixed here): generated v3 C# still does
-not compile standalone or against Plato.Intrinsics.V2 — v3 needs its own
-runtime/recipe (see report).
+- Plato.CSharpWriter (CSharpFunctionInfo/CSharpTypeWriter/CSharpConcreteTypeWriter):
+  when a type declares only one side of a C# comparison-operator pair (v3 Orderable
+  has only LessThanOrEquals), synthesize the partner operator by swapping operands
+  (CS0216 x86). No-op when both sides are declared (plato-src).
+
+- Plato.CSharpWriter/CSharpConcreteTypeWriter.cs: skip single-field implicit
+  converters when the field renders as IReadOnlyList* (conversions to/from an
+  interface are illegal C#, CS0552 x86).
+
+Goldens byte-identical (regen-generated 184/184 both variants), frozen V1 clean,
+PlatoTests 142/142, conformance 205/205.
+
+v3 standalone error count: 570 -> 293. Remainder is the missing-V3-runtime gap
+(Number/Integer/Boolean/String wrapper bridges, primitive-struct obligations for
+Vector*/Angle/Quaternion, Curve/Surface Self-constraint cascade), not emitter bugs.
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>

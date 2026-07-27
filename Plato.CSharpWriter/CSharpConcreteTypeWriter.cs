@@ -160,8 +160,12 @@ namespace Ara3D.Geometry.CSharpWriter
                 var fieldName = FieldNames[0];
                 var fieldType = FieldTypes[0];
 
-                // Only implicit operators if we are not an 
-                if (IsPrimitive || !ConcreteType.TypeDef.Fields[0].Type.Def.IsInterface())
+                // Only implicit operators if the field type does not render as a C# interface
+                // (user-defined conversions to/from an interface are illegal, CS0552). The
+                // IsInterface check covers concept-typed fields; the IReadOnlyList check covers
+                // the concrete Array/Array2D/Array3D types, which render as list interfaces.
+                if ((IsPrimitive || !ConcreteType.TypeDef.Fields[0].Type.Def.IsInterface())
+                    && !fieldType.StartsWith("IReadOnlyList"))
                 {
                     TypeWriter.WriteLine($"{Attr} public static implicit operator {fieldType}({Name} self) => self.{fieldName};");
                     TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}({fieldType} value) => new {Name}(value);");
@@ -831,9 +835,23 @@ namespace Ara3D.Geometry.CSharpWriter
                 // linter — generated code is not the reporting channel.
 
                 var fi = TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef);
-                TypeWriter.WriteMemberFunction(fi, IsPrimitive);
+                TypeWriter.WriteMemberFunction(fi, IsPrimitive, HasFunctionNamed);
             }
             TypeWriter.WriteLine();
+        }
+
+        // All function names visible on this concrete type (implemented, unimplemented, and
+        // concrete-library); used to detect an unpaired comparison operator (CS0216).
+        private HashSet<string> _allFunctionNames;
+        private bool HasFunctionNamed(string name)
+        {
+            if (_allFunctionNames == null)
+                _allFunctionNames = new HashSet<string>(
+                    ConcreteType.ImplementedFunctions
+                        .Concat(ConcreteType.UnimplementedFunctions)
+                        .Concat(ConcreteType.ConcreteFunctions)
+                        .Select(f => f.Name));
+            return _allFunctionNames.Contains(name);
         }
 
         public void WriteUnimplementedInterfaceFunctions()
@@ -859,7 +877,7 @@ namespace Ara3D.Geometry.CSharpWriter
                     else
                     {
                         // TODO: shouldn't this be a special function? 
-                        TypeWriter.WriteMemberFunction(TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef), IsPrimitive);
+                        TypeWriter.WriteMemberFunction(TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef), IsPrimitive, HasFunctionNamed);
                     }
                 }
             }
