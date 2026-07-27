@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Plato.Navigation — a queryable navigation index (go-to-def, find-refs, outline, search)
+    over a snapshot of Plato source. Reuses the compiler's parser and binder; it does NOT
+    contain a second resolver, a writer, MCP, a file watcher, or any IDE dependency.
+    Plan: docs/plato-navigation-index-plan.md (studio repo). Tracker: plato-236.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+    <RootNamespace>Ara3D.Geometry.Navigation</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
+    <ProjectReference Include="..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
+    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Logging\Ara3D.Logging.csproj" />
+    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
+    <ProjectReference Include="..\Plato.AST\Plato.AST.csproj" />
+    <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
+  </ItemGroup>
+
+</Project>

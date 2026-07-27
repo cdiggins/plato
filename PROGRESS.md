@@ -1,21 +1,14 @@
-# Wave-3 sum-type flagship migrations (plato-232) — DONE
+# Plato.Navigation (plato-236) — navigation index library
 
-Migrate v3 flagship kind-pattern types to real sum types; close docs + tracker.
+Plan: `../../docs/plato-navigation-index-plan.md` (§14 decisions filled 2026-07-27).
+Working in the MAIN repo (worktree `folder-approval-5f13ae` has an empty checkout; parakeet
+must not be re-checked-out there). Repo has unrelated dirty work (plato-234 GLSL) — never stage it.
 
-## Delivered (plato-src-v3)
-- 40-paths: PathSegment2D sum (6 verbs); FillRule + PathBooleanOperation enum sums.
-- 41-vector-styling: Paint sum (5) + FillStyle{Paint,Opacity} wrapper.
-- 43-scene2d: MaskSource2D sum (3) + ClipMask2D{Source,Inverted} wrapper.
-- 26-fields: ScalarFieldNode2D/3D sums (14 ops). NOT recursive (operands = Integer node
-  indices, not embedded node values) -> migratable per design-doc rules.
-- 60-signals: WindowFunction sum (8, params on Kaiser/Gaussian/Tukey) + AnalysisWindow wrapper.
-- Retired 7 XxxKind types. No cross-file references (all self-contained; carriers used only
-  by-value in Array<...>).
+- [x] M0 skeleton + SourceSnapshot + BoundSnapshot. 34 files / 5020 lines, parse 917 ms (cold),
+      bind 44 ms, 284 typedefs, 11628 SymbolsToNodes, 0 resolution errors, 0 aborts.
+- [ ] M1 def table + spans + search + outline
+- [ ] M2 ref table + type-site refs (D5) + hit-test
+- [ ] M3 harness  [ ] M4 JSON/CLI  [ ] M5 README/gates
 
-## Gates (baseline -> after)
-- lint plato-src-v3: EXIT 0, 0 parse + 0 symbol-resolution errors. 4584 -> 4549 findings.
-- lint plato-src: 193 (unchanged).
-- PlatoTests: 142/142 green (unchanged).
-
-## Docs/tracker: v3 README convention, survey DONE marks, roadmap note, plato-232 close,
-## new backlog idea (kind-pattern sweep). PUSH: env auto-pushes on commit.
+FINDING: `TypeExpression` overrides Equals/GetHashCode BY VALUE, so `SymbolsToNodes` collapses
+type-expression occurrences. D5 must record type refs into a side list, not `SymbolsToNodes`.
