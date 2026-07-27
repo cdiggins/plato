@@ -51,6 +51,21 @@ namespace Ara3D.Geometry.CSharpWriter
                 return;
             }
 
+            // Sum type (wave-2, plato-232): a tagged struct — one `int Kind` discriminant plus the
+            // flattened per-case fields — emitted by a dedicated path (design doc §5). The flattened
+            // field names serve as this writer's FieldNames so the shared library-function tail skips
+            // any collision and the plan treats them as struct-surface.
+            if (t.TypeDef.IsSum)
+            {
+                var flat = t.TypeDef.Cases.SelectMany(cs => cs.Fields).ToList();
+                FieldNames = flat.Select(f => f.FlatName).ToList();
+                FieldTypes = flat.Select(f => TypeWriter.ToCSharpType(f.Type)).ToList();
+                if (Writer.ExtensionStyle)
+                    ExtensionPlan = Writer.GetExtensionPlan(t.TypeDef);
+                WriteSumType(flat);
+                return;
+            }
+
             // Scalar erasure: the implements-list keeps wrapper types (concept interfaces are
             // not erased - see CSharpTypeWriter.WriteConceptInterface), while FIELDS erase.
             // MethodsOnly (--methods): the concept interfaces ARE erased, so the implements-list
@@ -628,6 +643,142 @@ namespace Ara3D.Geometry.CSharpWriter
                 tw.EraseScalars = true;
                 tw.WriteEndBlock();
             }
+        }
+
+        // ============================================================================
+        // Sum-type (tagged-union) emission (wave-2, plato-232). One readonly partial struct:
+        //   - int Kind discriminant (0-based, declaration order) + per-case Kind_<Case> tag consts;
+        //   - the flattened per-case fields (Case_Field), [DataMember] public readonly;
+        //   - a PRIVATE all-fields constructor (named args, so the 10-field tuple cap is irrelevant);
+        //   - one public static factory per case, setting its own fields and defaulting the rest;
+        //   - a bool Is<Case> predicate per case (the match lowering's branch condition);
+        //   - structural Equals / NotEquals / GetHashCode / ToString over Kind + all flattened fields.
+        // The ternary-chain ToString avoids the switch-expression CS8509 the design doc calls out.
+        // Case-field types erase under --scalar exactly as ordinary struct fields do.
+        // ============================================================================
+        public void WriteSumType(IReadOnlyList<Ara3D.Geometry.Compiler.Symbols.SumCaseField> flat)
+        {
+            var tw = TypeWriter;
+            var cases = ConcreteType.TypeDef.Cases;
+            var boolT = Writer.NoProperties || Writer.ScalarErase ? "bool" : "Boolean";
+
+            var implements = ConcreteType.Interfaces.Count > 0
+                ? ": " + ConcreteType.Interfaces.Select(TypeWriter.ToCSharpType).JoinStringsWithComma()
+                : "";
+
+            // Parameter names for the flattened fields (the private ctor's named args).
+            var flatParamNames = FieldNames.Select(CSharpTypeWriter.FieldNameToParameterName).ToList();
+
+            tw.WriteLine("[DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]");
+            tw.Write($"public partial struct {Name}");
+            tw.WriteLine(implements);
+            tw.WriteStartBlock();
+
+            tw.WriteLine("// Discriminant (0-based, declaration order)");
+            tw.WriteLine("[DataMember] public readonly int Kind;");
+            tw.WriteLine();
+
+            tw.WriteLine("// Case tags");
+            foreach (var c in cases)
+                tw.WriteLine($"public const int {c.TagConstName} = {c.Tag};");
+            tw.WriteLine();
+
+            if (flat.Count > 0)
+            {
+                tw.WriteLine("// Flattened per-case fields (Case_Field); inactive cases hold default.");
+                for (var i = 0; i < flat.Count; ++i)
+                    tw.WriteLine($"[DataMember] public readonly {FieldTypes[i]} {FieldNames[i]};");
+                tw.WriteLine();
+            }
+
+            // Private all-fields constructor.
+            tw.WriteLine("// All-fields constructor (private: build via the per-case factories)");
+            var ctorParams = new List<string> { "int kind" };
+            for (var i = 0; i < flat.Count; ++i)
+                ctorParams.Add($"{FieldTypes[i]} {flatParamNames[i]}");
+            var assigns = new List<string> { "Kind = kind;" };
+            for (var i = 0; i < flat.Count; ++i)
+                assigns.Add($"{FieldNames[i]} = {flatParamNames[i]};");
+            tw.WriteLine($"{Attr} private {SimpleName}({ctorParams.JoinStringsWithComma()}) {{ {string.Join(" ", assigns)} }}");
+            tw.WriteLine();
+
+            // Per-case static factories.
+            tw.WriteLine("// Per-case static factories: set own fields, default the rest.");
+            foreach (var c in cases)
+            {
+                // Factory param names come from the case's own field names (unique within the case);
+                // the private ctor above uses the flat names, which are unique across all cases.
+                var caseParamNames = c.Fields.Select(f => CSharpTypeWriter.FieldNameToParameterName(f.Name)).ToList();
+                var caseParams = c.Fields.Select((f, j) => $"{TypeWriter.ToCSharpType(f.Type)} {caseParamNames[j]}");
+                // Argument for each FLAT field: this case's own field value, else default.
+                var ctorArgs = new List<string> { c.TagConstName };
+                foreach (var f in flat)
+                {
+                    var idx = c.Fields.ToList().FindIndex(cf => ReferenceEquals(cf, f));
+                    ctorArgs.Add(idx >= 0 ? caseParamNames[idx] : "default");
+                }
+                tw.WriteLine($"{Attr} public static {Name} {c.Name}({caseParams.JoinStringsWithComma()}) => new {SimpleName}({ctorArgs.JoinStringsWithComma()});");
+            }
+            tw.WriteLine();
+
+            tw.WriteLine("// Static default implementation");
+            tw.WriteLine($"public static readonly {Name} Default = default;");
+            tw.WriteLine();
+
+            // Case predicates — the match lowering's branch conditions.
+            tw.WriteLine("// Case predicates (match lowering's branch conditions)");
+            foreach (var c in cases)
+                tw.WriteLine(Writer.NoProperties
+                    ? $"{Attr} public {boolT} {c.PredicateName}() => Kind == {c.TagConstName};"
+                    : $"public {boolT} {c.PredicateName} {{ {Attr} get => Kind == {c.TagConstName}; }}");
+            tw.WriteLine();
+
+            // Structural equality / hashing / ToString over Kind + all flattened fields.
+            tw.WriteLine("// Object virtual function overrides: Equals, GetHashCode, ToString");
+            var eqTerms = new List<string> { "Kind == other.Kind" };
+            foreach (var fn in FieldNames)
+                eqTerms.Add($"{fn}.Equals(other.{fn})");
+            var eqBody = string.Join(" && ", eqTerms);
+            tw.WriteLine($"{Attr} public {boolT} Equals({Name} other) => {eqBody};");
+            tw.WriteLine($"{Attr} public {boolT} NotEquals({Name} other) => !({eqBody});");
+            tw.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name} other ? Equals(other) : false;");
+            tw.WriteLine($"{Attr} public static {boolT} operator==({Name} a, {Name} b) => a.Equals(b);");
+            tw.WriteLine($"{Attr} public static {boolT} operator!=({Name} a, {Name} b) => !a.Equals(b);");
+            var hashArgs = new List<string> { "Kind" };
+            hashArgs.AddRange(FieldNames);
+            tw.WriteLine($"{Attr} public override int GetHashCode() => Intrinsics.CombineHashCodes({hashArgs.JoinStringsWithComma()});");
+            tw.WriteLine($"{Attr} public override string ToString() => {SumToString(cases, flat)};");
+            tw.WriteLine();
+
+            // Shared tail: the library functions over this type (EndPoint, ...) and any interface
+            // obligations, exactly as for a product type.
+            WriteImplementedInterfaceFunctions();
+            WriteUnimplementedInterfaceFunctions();
+
+            tw.WriteEndBlock();
+
+            WriteExtensionMethods();
+        }
+
+        // A tag-aware ToString rendered as a ternary chain (last case is the unconditional else,
+        // matching the exhaustive match lowering and dodging the switch-expression CS8509).
+        private static string SumToString(IReadOnlyList<Ara3D.Geometry.Compiler.Symbols.SumCaseDef> cases,
+            IReadOnlyList<Ara3D.Geometry.Compiler.Symbols.SumCaseField> flat)
+        {
+            string Body(Ara3D.Geometry.Compiler.Symbols.SumCaseDef c)
+            {
+                if (c.Fields.Count == 0)
+                    return $"\"{c.Name}\"";
+                var parts = string.Join(", ", c.Fields.Select(f => $"{{{f.FlatName}}}"));
+                return $"$\"{c.Name}({parts})\"";
+            }
+            if (cases.Count == 1)
+                return Body(cases[0]);
+            var sb = new System.Text.StringBuilder();
+            for (var i = 0; i < cases.Count - 1; ++i)
+                sb.Append($"Kind == {cases[i].TagConstName} ? {Body(cases[i])} : ");
+            sb.Append(Body(cases[cases.Count - 1]));
+            return sb.ToString();
         }
 
         public bool SkipFunction(FunctionInstance f, bool skipFields = true)

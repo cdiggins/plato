@@ -199,6 +199,22 @@ namespace Ara3D.Geometry.Compiler.Checking
                     break;
                 }
 
+                // match (wave-2): the subject's type is already fixed by its declaration; every arm
+                // body must share one result type (Plato has no join beyond interface unification).
+                // The tag test and field projections are synthesized by the elaborator, so no
+                // constraint is generated for them here. Binder references synthesize their (case
+                // field) type through the ordinary VariableRefSymbol path.
+                case MatchExpression me:
+                {
+                    Synthesize(me.Scrutinee);
+                    var result = Vars.Fresh("Match");
+                    foreach (var arm in me.Arms)
+                        if (arm.Body != null)
+                            Check(arm.Body, result);
+                    r = result;
+                    break;
+                }
+
                 case NewExpression n:
                     foreach (var a in n.Args) Synthesize(a);
                     r = n.Type;

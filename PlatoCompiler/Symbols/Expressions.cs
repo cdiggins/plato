@@ -241,6 +241,64 @@ namespace Ara3D.Geometry.Compiler.Symbols
             => f(new Lambda(Function?.Rewrite(f) as FunctionDef));
     }
 
+    /// <summary>One arm of a <see cref="MatchExpression"/> (wave-2, plato-232): the case name,
+    /// the positional binders (synthesized <see cref="VariableDef"/>s typed by the case's fields,
+    /// in declaration order — count is what the pattern supplied, which the checker validates
+    /// against the case's field count), and the arm body.</summary>
+    public class MatchArm
+    {
+        public string CaseName { get; }
+        public IReadOnlyList<VariableDef> Binders { get; }
+        public Expression Body { get; }
+
+        public MatchArm(string caseName, IReadOnlyList<VariableDef> binders, Expression body)
+            => (CaseName, Binders, Body) = (caseName, binders ?? Array.Empty<VariableDef>(), body);
+    }
+
+    /// <summary>A <c>match</c> expression over a sum type (wave-2, plato-232). Well-formedness
+    /// (exhaustiveness, unknown/duplicate cases, binder arity, non-sum subject) is validated by
+    /// <c>SumTypeChecker</c>; the elaborator lowers it into a tag-conditional chain of existing
+    /// TIR nodes. <see cref="SumType"/> is null when the subject is not a sum type (CHK304).</summary>
+    public class MatchExpression : Expression
+    {
+        public Expression Scrutinee { get; }
+        public TypeDef SumType { get; }
+        public IReadOnlyList<MatchArm> Arms { get; }
+
+        public MatchExpression(Expression scrutinee, TypeDef sumType, IReadOnlyList<MatchArm> arms)
+            : base(BuildChildren(scrutinee, arms))
+        {
+            Scrutinee = scrutinee;
+            SumType = sumType;
+            Arms = arms ?? Array.Empty<MatchArm>();
+        }
+
+        private static Expression[] BuildChildren(Expression scrutinee, IReadOnlyList<MatchArm> arms)
+            => new[] { scrutinee }
+                .Concat((arms ?? Array.Empty<MatchArm>()).Select(a => a.Body))
+                .Where(e => e != null).ToArray();
+
+        public override string Name => "match";
+
+        // The binder defs are part of the symbol tree so the checker / capture analysis see them
+        // (references to a binder resolve to a local, not a capture).
+        public override IEnumerable<Symbol> GetChildSymbols()
+            => new Symbol[] { Scrutinee }
+                .Concat(Arms.SelectMany(a => a.Binders))
+                .Concat(Arms.Select(a => (Symbol)a.Body))
+                .Where(s => s != null);
+
+        public override string ToString()
+            => $"(match {Scrutinee} {{ {string.Join(" ", Arms.Select(a => a.CaseName + " => " + a.Body))} }})";
+
+        // Binders are reused by IDENTITY (references keep resolving); only the expressions rebuild.
+        public override Symbol Rewrite(Func<Symbol, Symbol> f)
+            => f(new MatchExpression(
+                Scrutinee?.Rewrite(f) as Expression,
+                SumType,
+                Arms.Select(a => new MatchArm(a.CaseName, a.Binders, a.Body?.Rewrite(f) as Expression)).ToList()));
+    }
+
     public class ArrayLiteral : Expression
     {
         public override string Name => "[]";

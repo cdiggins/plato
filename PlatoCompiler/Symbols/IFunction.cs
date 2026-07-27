@@ -12,6 +12,9 @@ namespace Ara3D.Geometry.Compiler.Symbols
         Concept,
         Library,
         Lambda,
+        // A synthesized per-case static factory of a sum type (wave-2, plato-232):
+        // PathSegment2D.Move(p). Emitted as a static factory, called qualified.
+        SumFactory,
     }
 
     public interface IFunction

@@ -1,15 +1,31 @@
-# PROGRESS — fixed-size unroll + cast cleanup, on a small corpus — 2026-07-13
+# Wave-2 sum types + match — DONE
 
-- [x] Inc1: plato-spike-src → plato-src-small (self-contained Point3D/Bounds3D/Line3D corpus);
-      Small/ tree = Plato.Small.Runtime + Plato.Small.Generated.Unoptimized + Plato.Small.Optimized
-      + regen-small.ps1 + README. Both build; reproduce Deform/Eval/ZipComponents.
-- [x] Inc2: cheap-projection vector sources → Line3D.Eval unrolls to new Point3D(...).
-- [x] Inc3: inline TirArray-literal bodies (Corners) + unroll Map/Zip/Reduce/All/Any/Reverse over
-      fixed-size TirArray → Bounds3D.Deform loses its loop; TirArray prints typed MakeArray<T>.
-- [x] Inc4: drop redundant coerce<X→X> casts on provably-primitive inners (literal / erased param /
-      real component field / scalar-operator result). Eval fully clean.
-- [~] Inc5: Eval _var copies already gone via Inc2; broad copy-let removal DEFERRED (would need the
-      out-of-scope legacy TS/Rust symbol writer changed too — reverted the shared capture-rewriter edit).
-- [x] Goldens applied (both recipes changed by cast cleanup); both projects build. Emit snapshot
-      re-baselined. PlatoTests 116/116. Conformance 205/205.
-- [x] check-all: ALL GATES PASS (tripwire, regen-diff, lint, conformance 204, SDK build, GeometryTests).
+Symbol resolution, checking (CHK300-306/320), match lowering, C# tagged-struct emission.
+
+## Delivered
+- TypeDef.Cases (SumCaseDef/SumCaseField) + IsSum; per-case SumFactory functions.
+- MatchExpression symbol; SymbolFactory resolves AstMatch (binders typed by case fields).
+- Normalizer + ConstraintGenerator + Elaborator handle MatchExpression; Elaborator lowers
+  match -> TirConditional chain over EXISTING nodes (per-case Is<Case> predicate conditions +
+  Case_Field projections; last case = unconditional else). No new TIR node.
+- SumTypeChecker CHK300-306 (generics RESTRICTED -> CHK306: bare-T library type params
+  unsupported; sum decl resolves but consumers don't).
+- CSharpConcreteTypeWriter.WriteSumType: tag + tag consts + flattened fields + private ctor +
+  per-case factories + Is<Case> predicates + structural Equals/Hash/ToString.
+- StructSurfacePropertyNames gains sum flattened names so projections render bare.
+- TS/Rust CHK320 struct-level guard.
+- Tests: SumTypeCheckingTests (12), SumTypeCodegenTests (4, in-proc Roslyn compile+run).
+- Side fix: SymbolFactory tuple-ctor guards on TupleN existing (self-contained fixtures
+  lack Tuple2).
+
+## Gates (baseline -> after)
+- Plato.CLI Release build: PASS
+- PlatoTests: 126 -> 142 (all green)
+- conformance: 205/205 PASS (0 fail)
+- regen-generated: Unoptimized 184/184 clean; Optimized 1 PRE-EXISTING drift (_Bounds3D
+  trailing blank, verified identical on baseline w/o my changes). My changes = ZERO drift.
+- lint: plato-src 193, plato-src-v3 4584 (unchanged)
+- check-frozen-v1: PRE-EXISTING FAIL (162 dirty ara3d-sdk/Plato.Generated files at session
+  start; I touched nothing in ara3d-sdk).
+
+## PUSH: env auto-pushes on commit. One commit, pathspec, Plato repo only.

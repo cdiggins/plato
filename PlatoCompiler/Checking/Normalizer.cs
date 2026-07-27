@@ -87,6 +87,12 @@ namespace Ara3D.Geometry.Compiler.Checking
                 case ConditionalExpression c:
                     return new ConditionalExpression(Expr(c.Condition), Expr(c.IfTrue), Expr(c.IfFalse));
 
+                // match (wave-2): normalize the subject and each arm body; REUSE the binder defs by
+                // identity (references keep resolving). The SumType carries through unchanged.
+                case MatchExpression me:
+                    return new MatchExpression(Expr(me.Scrutinee), me.SumType,
+                        me.Arms.Select(a => new MatchArm(a.CaseName, a.Binders, Expr(a.Body))).ToList());
+
                 case NewExpression n:
                     // Type expression is not normalized; only the constructor arguments are.
                     return new NewExpression(n.Type, n.Args.Select(Expr).ToArray());

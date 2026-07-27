@@ -230,6 +230,38 @@ namespace Ara3D.Geometry.Compiler.Symbols
             throw new NotImplementedException();
         }
 
+        /// <summary>Resolve a match expression (wave-2, plato-232). The subject's resolved type
+        /// (a sum type in a well-formed match) determines each arm's binder types: a binder is a
+        /// local typed by the case's field in declaration order. Well-formedness (exhaustiveness,
+        /// unknown/duplicate case, binder arity, non-sum subject) is validated by SumTypeChecker;
+        /// this method stays total and best-effort so the checker can produce located diagnostics
+        /// (binders past a case's field count, or on a non-sum subject, are typed <c>Any</c>).</summary>
+        public Symbol ResolveMatch(AstMatch astMatch)
+        {
+            var scrutinee = ResolveExpr(astMatch.Scrutinee);
+            var subjectDef = (scrutinee as RefSymbol)?.Def?.Type?.Def;
+
+            var arms = new List<MatchArm>();
+            foreach (var astArm in astMatch.Arms)
+            {
+                ValueBindingsScope = ValueBindingsScope.Push();
+                var caseName = astArm.CaseName.Text;
+                var caseDef = subjectDef?.Cases?.FirstOrDefault(c => c.Name == caseName);
+                var binders = new List<VariableDef>();
+                for (var i = 0; i < astArm.Binders.Count; i++)
+                {
+                    var bName = astArm.Binders[i].Text;
+                    var bType = caseDef != null && i < caseDef.Fields.Count ? caseDef.Fields[i].Type : CreateAny();
+                    binders.Add(BindValue(bName, new VariableDef(ValueBindingsScope, bName, bType, null)));
+                }
+                var body = ResolveExpr(astArm.Body);
+                ValueBindingsScope = ValueBindingsScope.Pop();
+                arms.Add(new MatchArm(caseName, binders, body));
+            }
+
+            return new MatchExpression(scrutinee, subjectDef, arms);
+        }
+
         public Symbol NewExpression(AstNew astNew)
         {
             var args = astNew.Arguments.Select(ResolveExpr).ToArray();
@@ -372,7 +404,10 @@ namespace Ara3D.Geometry.Compiler.Symbols
                         return InternalResolve(astBinaryOp.ToInvocation());
 
                     case AstArrayLiteral astArray:
-                        return new ArrayLiteral(astArray.Nodes.Select(ResolveExpr).ToArray()); 
+                        return new ArrayLiteral(astArray.Nodes.Select(ResolveExpr).ToArray());
+
+                    case AstMatch astMatch:
+                        return ResolveMatch(astMatch);
                 }
 
                 LogResolutionError($"Node can't be evaluated", node);
@@ -422,9 +457,10 @@ namespace Ara3D.Geometry.Compiler.Symbols
                     BindType(typeDef);
                     TypeDefs.Add(typeDef);
 
-                    if (astTypeDeclaration.Kind == TypeKind.ConcreteType)
+                    // Sum types (wave-2) get per-case factories, not a product constructor.
+                    if (astTypeDeclaration.Kind == TypeKind.ConcreteType && astTypeDeclaration.Cases.Count == 0)
                     {
-                        // Add a global constructor function 
+                        // Add a global constructor function
                         var ctor = new FunctionDef(ValueBindingsScope, typeDef.Name, typeDef,
                             typeDef.ToTypeExpression(), null,
                             typeDef.Fields.Select((f, i) => new ParameterDef(ValueBindingsScope, f.Name, f.Type, i))
@@ -471,6 +507,39 @@ namespace Ara3D.Geometry.Compiler.Symbols
                     {
                         LogResolutionError($"MemberDefSymbol not recognized", m);
                         return null;
+                    }
+                }
+
+                // Sum-type cases (wave-2, plato-232): resolve each case's fields here, with the
+                // type parameters (for a generic sum) in scope. Case-field names may repeat across
+                // cases; the flattened struct disambiguates them by the "Case_" prefix.
+                for (var ci = 0; ci < astTypeDeclaration.Cases.Count; ci++)
+                {
+                    var astCase = astTypeDeclaration.Cases[ci];
+                    var fields = astCase.Fields
+                        .Select(fd => new SumCaseField(astCase.Name.Text, fd.Name.Text, ResolveType(fd.Type)))
+                        .ToList();
+                    typeDef.Cases.Add(new SumCaseDef(astCase.Name.Text, ci, fields));
+                }
+
+                // Per-case static factories (wave-2): PathSegment2D.Move(p). Created HERE — before
+                // any function body is resolved — so a qualified case-constructor call in any
+                // library resolves regardless of declaration order. One per DISTINCT case name (a
+                // duplicate is diagnosed CHK305; a second same-signature factory would trip
+                // FunctionGroupDef.Validate).
+                if (typeDef.IsSum)
+                {
+                    var seenCases = new HashSet<string>();
+                    foreach (var caseDef in typeDef.Cases)
+                    {
+                        if (!seenCases.Add(caseDef.Name))
+                            continue;
+                        var ps = caseDef.Fields
+                            .Select((f, i) => new ParameterDef(ValueBindingsScope, f.Name, f.Type, i))
+                            .ToArray();
+                        AddCompilerGeneratedFunction(typeDef,
+                            new FunctionDef(ValueBindingsScope, caseDef.Name, typeDef,
+                                typeDef.ToTypeExpression(), null, ps));
                     }
                 }
 
@@ -575,8 +644,11 @@ namespace Ara3D.Geometry.Compiler.Symbols
                     AddCompilerGeneratedFunction(typeDef, cast);
                 }
 
-                // If there are more than one fields, Add a tuple constructor and a ToTuple implicit cast function 
-                if (typeDef.Fields.Count > 1)
+                // If there are more than one fields, Add a tuple constructor and a ToTuple implicit cast function.
+                // Guard on the TupleN type existing: the production stdlib always declares Tuple2..Tuple10,
+                // but a self-contained fixture (e.g. plato-test-sum) may declare a multi-field product type
+                // without them — skip the tuple ctor there rather than crash.
+                if (typeDef.Fields.Count > 1 && GetTypeDefinition($"Tuple{typeDef.Fields.Count}") != null)
                 {
                     var tupleType = CreateTuple(typeDef.Fields.Select(f => f.Type).ToArray());
                     var ctor = new FunctionDef(ValueBindingsScope, typeDef.Name, typeDef, typeDef.ToTypeExpression(), null, 

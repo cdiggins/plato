@@ -109,6 +109,20 @@ namespace Ara3D.Geometry.CSharpWriter
                 keptNoArg.Add("Count");
                 keptNoArg.Add("NumColumns");
                 keptNoArg.Add("NumRows");
+
+                // Sum-type flattened fields (wave-2, plato-232) are genuine struct fields, so the
+                // match lowering's projections (seg.Move_EndPoint) must read with field/property
+                // syntax, never a "()" method call. The Kind tag field likewise. (Per-case Is<Case>
+                // predicates are deliberately NOT added — they are methods and keep their "()".)
+                foreach (var t in Compilation.AllTypeAndLibraryDefinitions)
+                    if (t != null && t.IsSum)
+                    {
+                        keptNoArg.Add("Kind");
+                        foreach (var c in t.Cases)
+                            foreach (var f in c.Fields)
+                                keptNoArg.Add(f.FlatName);
+                    }
+
                 StructSurfacePropertyNames = keptNoArg;
             }
 

@@ -1,43 +1,46 @@
-Optimizer: fixed-size-array unrolling + redundant-cast cleanup, on a fast small corpus
+feat(plato): sum types + match — checking, lowering, C# emission (plato-232 wave 2)
 
-## Dev infra: a self-contained small corpus (plato-src-small + Small/)
+Wave-2 back end for tagged-union types and exhaustive match, building on the wave-1 AST.
+Symbols resolve, the checker validates, match lowers during elaboration into existing TIR
+nodes, and the C# writer emits the tagged struct. Generated goldens do not drift (the stdlib
+has no sum types).
 
-Renamed plato-spike-src → plato-src-small and rewrote it as a small, SELF-CONTAINED
-corpus (Point3D/Bounds3D/Line3D built on Number, avoiding the System.Numerics-backed
-Vector names) that reproduces the optimizer-relevant geometry shapes without the full
-library. New Small/ tree builds two projects — Plato.Small.Generated.Unoptimized and
-Plato.Small.Optimized — against a tiny hand-written Plato.Small.Runtime (MakeArray /
-CombineHashCodes / eager IReadOnlyList combinators / Number-Integer-Boolean stubs),
-NOT Plato.Intrinsics.V2. regen-small.ps1 regenerates + builds both. A seconds-fast
-optimizer-spike loop, kept out of check-all.
+Symbols:
+- TypeDef.Cases (SumCaseDef/SumCaseField) + IsSum; SymbolFactory populates them and synthesizes
+  one FunctionType.SumFactory per case (PathSegment2D.Move(p)), created before any body resolves
+  so a qualified case constructor resolves regardless of declaration order.
+- MatchExpression symbol; SymbolFactory.ResolveMatch types each arm's positional binders by the
+  case's fields (best-effort/total, so the checker can locate every diagnostic).
 
-## Optimizer improvements (all gated on the existing flags)
+Checking:
+- Normalizer + ConstraintGenerator handle MatchExpression (arms share one result type).
+- Elaborator lowers match into a tag-conditional chain of EXISTING TIR nodes — per-case
+  Is<Case> predicate conditions + Case_Field projections, last case the unconditional else. No
+  new TIR node; the downstream passes (monomorphize, scalar-lower, C# body writer) are untouched.
+- SumTypeChecker: CHK300 non-exhaustive, CHK301 unknown case, CHK302 duplicate arm, CHK303
+  binder arity, CHK304 non-sum subject, CHK305 duplicate case name, CHK306 generic sum. Every
+  message names the sum type and the offending/missing cases. Generics are RESTRICTED (CHK306):
+  a generic sum declaration resolves, but a generic library consumer needs $T (bare T does not
+  resolve — a general front-end limitation, not sum-specific); option.plato is the CHK306 decider.
 
-1. Component unroller accepts CHEAP-PROJECTION vector sources (`x.A`, not only bare
-   params), reusing TirInliner.IsCheapProjection. Line3D.Eval (`x.A.Lerp(x.B, t)`) now
-   emits `new Point3D(...)` instead of a Components()+Zip loop.
+Emission (C#):
+- CSharpConcreteTypeWriter.WriteSumType: int Kind tag + Kind_<Case> consts + flattened Case_Field
+  fields + private all-fields ctor + per-case static factories (default the rest) + Is<Case>
+  predicates + structural Equals/GetHashCode/tag-aware ToString (ternary chain, dodging CS8509).
+  Flattened field names registered as struct-surface so projections render bare.
+- TS/Rust writers reject a sum type with CHK320 rather than emit garbage.
 
-2. Fixed-size array unrolling. The inliner now inlines array-LITERAL bodies (Corners),
-   and the component unroller unrolls Map/Zip/Reduce/All/Any/Reverse over a fixed-size
-   TirArray. Bounds3D.Deform goes from a Corners()+`new Point3D[8]`+loop to
-   `MakeArray<Point3D>(f.Invoke(c0)..f.Invoke(c7)).Bounds()` — no loop. TirArray now
-   prints a typed `MakeArray<T>` so a per-element implicit conversion (Vector3→Point3D)
-   survives the loop's removal.
+Side fix: SymbolFactory's tuple constructor now guards on TupleN existing (the self-contained
+plato-test-sum fixtures declare multi-field product types without Tuple2). No stdlib effect.
 
-3. Redundant-cast cleanup. A same-type `coerce<float→float>` whose inner is provably
-   already that primitive (a native literal, an erased param that is not a wrapper-struct
-   `this` receiver, a real erased component field, or a scalar-operator result) is
-   dropped. Removes the `((float)x)` noise across every scalar-erased body; a
-   wrapper-returning pseudo-field's cast is kept (it disambiguates a broadcast overload).
+Tests: SumTypeCheckingTests (12: 4 positive fixtures compile clean, 6 negatives raise their
+EXPECT diagnostic naming the right cases, generics CHK306). SumTypeCodegenTests (4: struct-shape
+assertions + in-proc Roslyn compile-and-run of the emitted struct + match function, verifying
+runtime semantics). Adds Microsoft.CodeAnalysis.CSharp to PlatoTests for the in-proc gate.
 
-Not done: broad `var _varN = p;` copy-let removal — the Eval case it was raised for is
-already fixed by (1); eliminating the rest means changing the shared lambda-capture hoist,
-which the out-of-scope legacy TS/Rust writers still mirror byte-for-byte. Deferred.
-
-Goldens refreshed (both recipes — the cast cleanup touches the unoptimized output too);
-both projects build on net8.0. Emit snapshot re-baselined. New ComponentUnrollerTests
-cover the Eval/fixed-array cases.
-
-Gates: PlatoTests 116/116; conformance 205/205; both goldens + both Small projects build.
+Gates: Plato.CLI Release builds; PlatoTests 142/142 (was 126); conformance 205/205; lint
+plato-src=193 / plato-src-v3=4584 unchanged; regen-generated Unoptimized 184/184 clean
+(Optimized carries one PRE-EXISTING _Bounds3D whitespace drift, verified identical on the
+baseline). check-frozen-v1's ara3d-sdk failure is pre-existing (dirty at session start; untouched).
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>

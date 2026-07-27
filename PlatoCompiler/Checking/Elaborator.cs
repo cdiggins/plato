@@ -46,6 +46,66 @@ namespace Ara3D.Geometry.Compiler.Checking
         private TypeExpression TypeOf(Expression e)
             => _result?.TypeOf(e);
 
+        // A match binder → its field-projection TIR on the subject. Populated by ElaborateMatch
+        // before an arm body is elaborated; consulted in the VariableRefSymbol case. Binder defs
+        // are globally unique, so entries never collide across matches/functions.
+        private readonly Dictionary<VariableDef, TirNode> _matchBinderProjections
+            = new Dictionary<VariableDef, TirNode>();
+
+        /// <summary>Lower a <c>match</c> (wave-2, plato-232) into a tag-conditional chain of
+        /// EXISTING TIR nodes — no new node type. Each non-terminal case tests a per-case predicate
+        /// (<c>subject.Is&lt;Case&gt;</c>, a struct method the writer emits), and the last case in
+        /// declaration order is the unconditional <c>else</c> (exhaustiveness guarantees the subject
+        /// is one of the cases). Binders lower to field projections (<c>subject.Case_Field</c>). The
+        /// predicate/projection calls are SYNTACTIC (null callee) so they are ground even in the
+        /// minimal self-contained fixtures whose primitives declare no operators.</summary>
+        private TirNode ElaborateMatch(MatchExpression me, TypeExpression matchType)
+        {
+            if (me.SumType == null || !me.SumType.IsSum)
+                return new TirUnresolved(me, "match subject is not a sum type");
+
+            var subject = ElaborateExpr(me.Scrutinee);
+            var sum = me.SumType;
+            var boolType = Compilation?.GetTypeDef("Boolean")?.ToTypeExpression();
+
+            // Register each arm's binders as field projections on the subject.
+            foreach (var arm in me.Arms)
+            {
+                var caseDef = sum.Cases.FirstOrDefault(c => c.Name == arm.CaseName);
+                if (caseDef == null)
+                    continue;
+                for (var i = 0; i < arm.Binders.Count && i < caseDef.Fields.Count; i++)
+                {
+                    var field = caseDef.Fields[i];
+                    _matchBinderProjections[arm.Binders[i]] = new TirCall(
+                        null, EmissionKind.Property, null, field.Type,
+                        new List<TirNode> { subject }, field.Type, me, field.FlatName);
+                }
+            }
+
+            // Build the chain in DECLARATION order; the last declared case that has an arm is the
+            // unconditional else. (Cases are mutually exclusive, so the order of the tag tests is
+            // irrelevant to correctness; using declaration order keeps the output deterministic.)
+            var ordered = sum.Cases
+                .Select(c => (Case: c, Arm: me.Arms.FirstOrDefault(a => a.CaseName == c.Name)))
+                .Where(p => p.Arm != null)
+                .ToList();
+            if (ordered.Count == 0)
+                return new TirUnresolved(me, "match has no arms for the sum's cases");
+
+            var last = ordered[ordered.Count - 1];
+            TirNode node = ElaborateExpr(last.Arm.Body);
+            var resultType = matchType ?? node?.Type;
+            for (var i = ordered.Count - 2; i >= 0; i--)
+            {
+                var (caseDef, arm) = ordered[i];
+                var cond = new TirCall(null, EmissionKind.Property, null, boolType,
+                    new List<TirNode> { subject }, boolType, me, caseDef.PredicateName);
+                node = new TirConditional(cond, ElaborateExpr(arm.Body), node, resultType, me);
+            }
+            return node;
+        }
+
         // --- statements ----------------------------------------------------------
 
         public TirNode ElaborateStatement(Symbol s)
@@ -109,6 +169,10 @@ namespace Ara3D.Geometry.Compiler.Checking
                     return new TirParameter(p.Def, type ?? p.Def?.Type, p);
 
                 case VariableRefSymbol v:
+                    // A match binder reference lowers to a field projection on the subject
+                    // (`seg.Quadratic_Control`) registered by ElaborateMatch.
+                    if (v.Def != null && _matchBinderProjections.TryGetValue(v.Def, out var proj))
+                        return proj;
                     return new TirVariable(v.Def, type ?? v.Def?.Type, v);
 
                 case TypeRefSymbol t:
@@ -120,6 +184,9 @@ namespace Ara3D.Geometry.Compiler.Checking
                 case ConditionalExpression c:
                     return new TirConditional(ElaborateExpr(c.Condition), ElaborateExpr(c.IfTrue),
                         ElaborateExpr(c.IfFalse), type, c);
+
+                case MatchExpression m:
+                    return ElaborateMatch(m, type);
 
                 case NewExpression n:
                     return new TirNew(n.Type, n.Args.Select(ElaborateExpr).ToList(), type ?? n.Type, n);

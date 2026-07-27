@@ -50,6 +50,11 @@ namespace Ara3D.Geometry.Compiler.Symbols
             {
                 FunctionType = FunctionType.Constructor;
             }
+            else if (ownerType.IsSum && ownerType.Cases.Any(c => c.Name == name))
+            {
+                // A synthesized per-case static factory (PathSegment2D.Move) — wave-2.
+                FunctionType = FunctionType.SumFactory;
+            }
             else if (name == "Cast" && parameters.Length == 1)
             {
                  FunctionType = FunctionType.Cast;
@@ -174,6 +179,13 @@ namespace Ara3D.Geometry.Compiler.Symbols
         public List<TypeExpression> Inherits { get; } = new List<TypeExpression>();
         public List<TypeExpression> Implements { get; } = new List<TypeExpression>();
         public List<FunctionDef> CompilerGeneratedFunctions { get; } = new List<FunctionDef>();
+
+        // Sum-type (tagged-union) cases when declared with the "= Case | Case | ...;" body
+        // (wave-2, plato-232). Empty for ordinary product types; non-empty exactly when this
+        // is a sum type (Kind stays ConcreteType). The cases carry the per-case fields; the
+        // flattened struct fields (Kind tag + Case_Field) are synthesized by the C# writer.
+        public List<SumCaseDef> Cases { get; } = new List<SumCaseDef>();
+        public bool IsSum => Cases.Count > 0;
 
         public TypeDef(Scope scope, TypeKind kind, string name)
             : base(scope, null, name)
@@ -384,5 +396,41 @@ namespace Ara3D.Geometry.Compiler.Symbols
 
         public override Symbol Rewrite(Func<Symbol, Symbol> f)
             => f(this);
+    }
+
+    /// <summary>One field of a sum-type case (wave-2, plato-232): a name and a resolved type.
+    /// <see cref="FlatName"/> is the name it takes in the flattened tagged struct ("Case_Field").</summary>
+    public class SumCaseField
+    {
+        public string Name { get; }
+        public TypeExpression Type { get; }
+        public string FlatName { get; }
+
+        public SumCaseField(string caseName, string name, TypeExpression type)
+        {
+            Name = name;
+            Type = type;
+            FlatName = $"{caseName}_{name}";
+        }
+    }
+
+    /// <summary>One case (variant) of a sum type (wave-2, plato-232): a name, a 0-based
+    /// declaration-order <see cref="Tag"/>, and its (possibly empty) list of fields.</summary>
+    public class SumCaseDef
+    {
+        public string Name { get; }
+        public int Tag { get; }
+        public IReadOnlyList<SumCaseField> Fields { get; }
+
+        // The names this case takes in the emitted tagged struct.
+        public string PredicateName => "Is" + Name;    // bool Is<Case>() => Kind == Kind_<Case>;
+        public string TagConstName => "Kind_" + Name;  // public const int Kind_<Case> = <Tag>;
+
+        public SumCaseDef(string name, int tag, IReadOnlyList<SumCaseField> fields)
+        {
+            Name = name;
+            Tag = tag;
+            Fields = fields ?? Array.Empty<SumCaseField>();
+        }
     }
 }

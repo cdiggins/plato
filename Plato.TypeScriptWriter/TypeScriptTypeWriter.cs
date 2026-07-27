@@ -65,6 +65,13 @@ public class TypeScriptTypeWriter : CodeBuilder<TypeScriptTypeWriter>, ITypeToTy
     public TypeScriptTypeWriter WriteConcreteType(ConcreteType ct)
     {
         Debug.Assert(ct.TypeDef == TypeDef);
+        // Sum types (wave-2, plato-232) are C#-only in v1: the TypeScript writer has no tagged-union
+        // lowering, so emit a clear rejection rather than garbage (design doc §6, CHK320).
+        if (ct.TypeDef.IsSum)
+        {
+            WriteLine($"// CHK320: sum type '{ct.TypeDef.Name}' cannot be emitted to the TypeScript target; sum types are C#-only in v1");
+            return this;
+        }
         _ = new TypeScriptConcreteTypeWriter(this, ct);
         return this;
     }
