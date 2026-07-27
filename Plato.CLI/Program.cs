@@ -144,7 +144,7 @@ namespace Ara3D.Geometry.CLI
             {
                 var dialect = cuda ? CppDialect.Cuda : CppDialect.Cpp;
                 logger.Log($"Writing {dialect.DisplayName()} Files");
-                var output = compilation.ToCpp(outputFolder, dialect);
+                var output = compilation.ToCpp(outputFolder, dialect, inline);
                 logger.Log($"{dialect.DisplayName()} functions emitted: {output.FunctionsEmitted}, skipped: {output.Skipped.Count}");
                 foreach (var kv in output.Files)
                 {

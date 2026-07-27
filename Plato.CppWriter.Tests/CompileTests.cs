@@ -41,10 +41,10 @@ public class CompileTests
     }
 
     /// <summary>Generates one dialect into its own directory and returns the writer and the file written.</summary>
-    private static (CppWriter Writer, string File) Generate(Library library, CppDialect dialect)
+    private static (CppWriter Writer, string File) Generate(Library library, CppDialect dialect, bool inlineCalls = true)
     {
         var dir = OutputDirectory($"{library}-{dialect}");
-        var writer = Compile(library).ToCpp(new DirectoryPath(dir), dialect);
+        var writer = Compile(library).ToCpp(new DirectoryPath(dir), dialect, inlineCalls);
         var file = "";
         foreach (var kv in writer.Files)
         {
@@ -53,7 +53,7 @@ public class CompileTests
         }
         Assert.That(writer.FunctionsEmitted, Is.GreaterThan(0), "nothing was emitted");
         TestContext.Out.WriteLine(
-            $"{library} / {dialect.DisplayName()}: {writer.FunctionsEmitted} functions emitted, {writer.Skipped.Count} skipped");
+            $"{library} / {dialect.DisplayName()}: {writer.FunctionsEmitted} functions emitted, {writer.Skipped.Count} skipped (inline={inlineCalls})");
         return (writer, file);
     }
 

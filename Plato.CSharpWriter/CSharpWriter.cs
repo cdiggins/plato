@@ -9,7 +9,7 @@ using Ara3D.Geometry.Compiler.Types;
 
 namespace Ara3D.Geometry.CSharpWriter
 {
-    public class CSharpWriter : CodeBuilder<CSharpWriter>
+    public class CSharpWriter : CodeBuilder<CSharpWriter>, ITirInlineHost
     {
         public CSharpWriter(Compiler.Compilation compilation, DirectoryPath outputFolder)
         {
@@ -195,7 +195,7 @@ namespace Ara3D.Geometry.CSharpWriter
 
         // --inline-report (null = off): per-generation aggregation of inliner refusals + success
         // totals, printed after WriteAll. A diagnostic; no effect on emitted C#. See InlineReport.
-        public InlineReport InlineReport;
+        public InlineReport InlineReport { get; set; }
 
         /// <summary>Applies the four optimizer TIR passes in order (inline → component-unroll →
         /// array-materialize → loop-lower) and returns the transformed function. Shared by every
@@ -289,6 +289,23 @@ namespace Ara3D.Geometry.CSharpWriter
         public TirFunction TryGetGroundTirByTypeName(FunctionDef original, string concreteTypeName)
             => TirSource.TryGetGroundTir(original, concreteTypeName);
 
+        public bool IsConcreteTypeName(string name)
+            => name != null
+               && (ScalarPrimitives.ContainsKey(name) || GetExtensionPlanByTypeName(name) != null);
+
+        public bool IsScalarPrimitiveName(string name)
+            => name != null && ScalarPrimitives.ContainsKey(name);
+
+        public ISet<string> TryGetKnownMemberNames(string typeName)
+        {
+            var plan = GetExtensionPlanByTypeName(typeName);
+            if (plan == null)
+                return null;
+            var set = new HashSet<string>(plan.InstanceNames);
+            set.UnionWith(plan.StaticNames);
+            return set;
+        }
+
         /// <summary>Test helper: the ground input TIR for a (concrete type name, function name),
         /// for in-proc inliner shape tests (M0).</summary>
         public TirFunction TestGetGroundTir(string concreteTypeName, string functionName)
@@ -332,7 +349,7 @@ namespace Ara3D.Geometry.CSharpWriter
         // component unroller and array materializer run — so HOF call sites hidden inside callees
         // become visible to those transforms. See TirInliner for the eligibility rules.
         // Default (false) output is unchanged.
-        public bool InlineCalls;
+        public bool InlineCalls { get; set; }
 
         // When true (--optimize-arrays, optimizer stage 2 increment 1), Map/MapRange call sites in
         // MATERIALIZATION positions (constructor / tuple arguments — results stored into structs —

@@ -4,6 +4,7 @@ using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.CSharpWriter;
 using Ara3D.Utils;
 
 namespace Ara3D.Geometry.CppWriter;
@@ -161,8 +162,13 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
 
     private void WriteConvertedTo(TirNode inner, string to, string toPlato)
     {
-        var from = _w.CppTypeNameOrNull(inner?.Type);
-        if (inner == null || from == null || to == null || from == to)
+        var from = InferExprCppType(inner);
+        if (inner == null || to == null || from == to)
+        {
+            WriteNode(inner);
+            return;
+        }
+        if (from == null)
         {
             WriteNode(inner);
             return;
@@ -173,6 +179,14 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             Write("(");
             WriteNode(inner);
             Write(")");
+            return;
+        }
+        // Single-field wrappers (Translation3D{Vector3D}, Transform3D{Matrix4x4}, …).
+        if (_w.TrySingleFieldOfType(to, from))
+        {
+            Write($"{to}{{ ");
+            WriteNode(inner);
+            Write(" }");
             return;
         }
         // Matching float-arity struct ↔ floatN: swizzle fields rather than a missing conversion fn.
@@ -213,9 +227,29 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         Write(")");
     }
 
+    private string InferExprCppType(TirNode n)
+    {
+        if (n == null)
+            return null;
+        var typed = _w.CppTypeNameOrNull(n.Type);
+        if (typed != null)
+            return typed;
+        switch (n)
+        {
+            case TirConstructorCall cc:
+                return ResolveConstructorCppType(cc);
+            case TirNew nw:
+                return _w.CppTypeNameOrNull(nw.NewType);
+            case TirCoerce c:
+                return _w.CppTypeNameOrNull(c.ToType);
+            default:
+                return null;
+        }
+    }
+
     private void WriteFieldReceiver(TirNode inner)
     {
-        if (inner is TirLiteral || inner is TirConditional || inner is TirAssign || inner is TirCall || inner is TirNew)
+        if (inner is TirLiteral || inner is TirConditional || inner is TirAssign || inner is TirCall || inner is TirNew || inner is TirConstructorCall)
         {
             Write("(");
             WriteNode(inner);
@@ -270,6 +304,23 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         Write($"{cppType}{{ ");
         WriteArgs(args);
         Write(" }");
+    }
+
+    private string ResolveConstructorCppType(TirConstructorCall cc)
+    {
+        if (cc.Type != null)
+        {
+            var fromType = _w.CppTypeNameOrNull(cc.Type);
+            if (fromType != null)
+                return fromType;
+        }
+        if (CppWriter.NativePrimitives.TryGetValue(cc.TypeName, out var prim))
+            return prim;
+        if (CppWriter.NativeVectors.TryGetValue(cc.TypeName, out var vec))
+            return vec;
+        if (_w.StructNames.Contains(cc.TypeName))
+            return cc.TypeName;
+        throw new CppUnsupportedException($"constructor type '{cc.TypeName}' is not representable in {_w.Dialect.DisplayName()}");
     }
 
     private void WriteNode(TirNode n)
@@ -337,6 +388,14 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             case TirNew nw:
                 WriteConstruction(_w.CppTypeName(nw.NewType), nw.Args);
                 return;
+
+            case TirConstructorCall cc:
+            {
+                // Inliner / unroller emission marker: new TypeName(args...) → braced / make_floatN.
+                var cpp = ResolveConstructorCppType(cc);
+                WriteConstruction(cpp, cc.Args);
+                return;
+            }
 
             case TirAssign asg:
                 WriteNode(asg.LValue);

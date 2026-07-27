@@ -8,12 +8,17 @@ renders from the monomorphized Typed IR, there is no legacy symbol-graph fallbac
 ```
 Plato.CLI [inputFolder] [outputFolder] --cpp
 Plato.CLI [inputFolder] [outputFolder] --cuda
+Plato.CLI [inputFolder] [outputFolder] --cpp --inline
 ```
 
 `--cpp` writes `plato.hpp` (portable C++17), `--cuda` writes `plato.cu` (nvcc). Each file is
 self-contained: preamble, structs, structural equality, reflection helpers, all function
 prototypes, all function definitions, then a trailing comment block listing everything skipped
 and why. Prototypes come first, so definition order never matters.
+
+`--inline` runs the shared `TirInliner` β-reducer before body emit (same as the C# path), so
+`Map`/`Reduce`/`Sum` and friends can specialize function values away. Off by default; the
+compile-gate tests turn it on.
 
 ## One emitter, two dialects
 
@@ -66,9 +71,8 @@ than aspirational.
 
 ## Not representable (functions using these are skipped)
 
-- **Lambdas and function values** — not lowered yet. `Map`/`Reduce`/`Sum` and friends need the
-  `--inline` beta reducer to specialize function values away first (plato-239 M5); residual
-  closures may later emit as C++ functors.
+- **Lambdas and function values** — `--inline` β-reduces many away (M5); residual closures are
+  still skipped (functors deferred). Without `--inline`, function values remain unsupported.
 - **`IArray` and array literals** — no dynamic array value type yet. Planned as a simple
   Plato-defined data type (not `std::vector`); see plato-239 M4.
 - **`String` / `Character`** — planned as simple Plato-defined data types (not `std::string`);
@@ -79,16 +83,15 @@ than aspirational.
 
 ## Status
 
-| Input | Emitted | Skipped |
-|---|---|---|
-| `demos/plato-src` | **87** | 0 |
-| `plato-src` (full standard library) | **869** | 1656 |
+| Input | Emitted | Skipped | Notes |
+|---|---|---|---|
+| `demos/plato-src` | **87** | 0 | with `--inline` (same without) |
+| `plato-src` (full standard library) | **865** | 1660 | with `--inline` (compile-gate default) |
+| same, no `--inline` | 870 | 1655 | post-M5 plumbing, inline off |
 
-(Was 461 / 1722 before statics, reflection helpers, Components, and user-struct intrinsics.)
+M5 wires shared `TirInliner` into `--cpp`/`--cuda`. Skip count does **not** improve yet:
+β-reduction still leaves many residual closures (functors deferred), and a few bodies that
+emitted without inline now skip after partial specialization. The single biggest remaining
+lever is residual-functor emission, then M3/M4.
 
-Both compile clean with MSVC (`/std:c++17 /W3`) and with nvcc when the toolkit is present (the
-test harness loads `vcvars64` before invoking nvcc so `cl.exe` is on `PATH`). The remaining
-stdlib skips are still dominated by lambdas and the callee cascade — closing the lambda gap
-(M5) is the single biggest remaining lever, exactly as for the GLSL backend.
-
-Verification lives in `../Plato.CppWriter.Tests`.
+Verification lives in `../Plato.CppWriter.Tests` (gates run with `inlineCalls: true`).
