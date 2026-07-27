@@ -65,8 +65,6 @@ library NumericStructures
     // fold or map primitive, so component reductions (SumComponents,
     // MinComponent, AvgComponent) and per-component maps (Abs, Floor, Ceiling)
     // are not derivable at the concept level; they belong on the concrete types.
-    // TODO(concept-gap): an AngleBetween returning Angle needs Number.Acos, which
-    // the v3 vocabulary does not yet declare — omitted rather than approximated.
 
     // The unit vector in the same direction. Precondition: non-zero magnitude.
     Normalize(self: Vector): Vector
@@ -108,6 +106,12 @@ library NumericStructures
     CosineSimilarity(a: Vector, b: Vector): Number
         => a.Dot(b) / (a.Magnitude * b.Magnitude);
 
+    // The unsigned angle between a and b, in [0, Pi]. The cosine similarity is
+    // clamped to [-1, 1] before Acos so floating-point drift cannot produce a NaN.
+    // Preconditions: a and b are non-zero.
+    AngleBetween(a: Vector, b: Vector): Angle
+        => a.CosineSimilarity(b).Clamp(-1.0, 1.0).Acos;
+
     // A vector in the same direction as self but with the given length.
     // Precondition: self is non-zero.
     ScaledToLength(self: Vector, length: Number): Vector
@@ -132,9 +136,11 @@ library NumericStructures
     // transpose, or row/column extraction, so only shape queries, element access,
     // and the shape-preserving interpolation conveniences are derivable here.
     //
-    // TODO(concept-gap): Trace, Transpose, and FrobeniusNorm need iteration over
-    // elements, matrix construction, and a square root respectively — none of
-    // which the MatrixLike surface (or the v3 Number vocabulary) yet provides.
+    // TODO(concept-gap): Trace, Transpose, and FrobeniusNorm remain blocked on the
+    // MatrixLike surface, not on arithmetic: Trace needs a fold over the diagonal,
+    // Transpose needs matrix construction, and FrobeniusNorm needs an element fold
+    // (the square root itself is now available via Number.Sqrt). MatrixLike exposes
+    // only ElementAt with no iteration or construction primitive, so none are derivable.
 
     // True when the matrix has equal row and column counts.
     IsSquare(self: MatrixLike): Boolean

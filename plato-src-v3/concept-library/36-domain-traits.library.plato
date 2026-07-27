@@ -99,14 +99,15 @@ library DomainTraits
     // # Image
     //
     // A raster with known dimensions (Size, Width, Height in whole pixels).
-    // TODO(concept-gap): a Number aspect ratio (Width / Height) cannot be formed
-    // here: Width and Height are Integer, and v3 exposes no Integer-to-Number
-    // widening (Whole provides ToInteger, not ToNumber), so only integer-valued
-    // and comparison helpers are derivable.
 
     // The total number of pixels: Width times Height.
     PixelCount(self: Image): Integer
         => self.Width * self.Height;
+
+    // The width-to-height ratio of the image. Width and Height are widened to
+    // Number via Integer.ToNumber. Precondition: Height is non-zero.
+    AspectRatio(self: Image): Number
+        => self.Width.ToNumber / self.Height.ToNumber;
 
     // True when the image has zero area (no pixels).
     IsEmpty(self: Image): Boolean
@@ -323,9 +324,11 @@ library DomainTraits
     // A univariate distribution exposing Mean, Variance, Pdf, and Cdf. The
     // derived surface is the tail and interval probabilities that read from Cdf,
     // plus density comparisons.
-    // TODO(concept-gap): a standard-deviation helper (sqrt of Variance) is not
-    // derivable: v3 exposes no square-root on Number, so scale helpers stay in
-    // variance units.
+
+    // The standard deviation: the square root of the variance, in the same units
+    // as the values. Precondition: the variance is non-negative.
+    StandardDeviation(self: ProbabilityDistribution): Number
+        => self.Variance.Sqrt;
 
     // The cumulative probability of drawing at most value; a readable spelling
     // of Cdf.
@@ -358,9 +361,6 @@ library DomainTraits
     // A vertex-and-edge structure exposing VertexCount, EdgeCount, and the
     // directedness flag. Helpers include the handshake-lemma degree sum and the
     // completeness test.
-    // TODO(concept-gap): the average degree and edge-density ratios (2E / V,
-    // E / max) are Numbers, but VertexCount and EdgeCount are Integer with no
-    // Integer-to-Number widening in v3, so only integer-valued helpers appear.
 
     // True when the graph is undirected.
     IsUndirected(self: GraphLike): Boolean
@@ -395,6 +395,16 @@ library DomainTraits
     // graph is simple (no self-loops or parallel edges).
     IsComplete(self: GraphLike): Boolean
         => self.EdgeCount == self.MaxPossibleEdges;
+
+    // The average vertex degree: the degree sum (2E) over the vertex count, as a
+    // Number via Integer.ToNumber. Precondition: the graph is non-empty.
+    AverageDegree(self: GraphLike): Number
+        => self.DegreeSum.ToNumber / self.VertexCount.ToNumber;
+
+    // The edge density: actual edges over the maximum possible simple edges, in
+    // [0, 1]. Precondition: the graph has at least two vertices (MaxPossibleEdges > 0).
+    EdgeDensity(self: GraphLike): Number
+        => self.EdgeCount.ToNumber / self.MaxPossibleEdges.ToNumber;
 
     //==
     // # TimeSampled

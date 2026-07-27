@@ -230,6 +230,17 @@ library CoreAlgebra
     SafeDivide(x: Real, divisor: Real, fallback: Real): Real
         => divisor.IsZero ? fallback : x / divisor;
 
+    // The fractional part of x: x minus its floor, always in [0, 1). For negative
+    // x this is the periodic fraction (e.g. FractionalPart(-0.25) = 0.75), matching Floor.
+    FractionalPart(x: Real): Real
+        => x - x.Floor;
+
+    // x rounded to the nearest whole value, halves rounding up (toward +infinity),
+    // via Floor(x + 1/2). Note: deliberately half-up, unlike the host intrinsic
+    // Round (typically banker's rounding) — do not "simplify" to Round.
+    RoundedToNearest(x: Real): Real
+        => (x + x.One.Half).Floor;
+
     //==
     // Whole
 

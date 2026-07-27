@@ -78,6 +78,13 @@ concept Real
     inherits Numerical, Comparable, Hashable, Arithmetic, Invertible
 {
     ToNumber(x: Self): Number;
+
+    // The non-negative square root. Precondition: x is not negative.
+    Sqrt(x: Self): Self;
+    // The largest whole value less than or equal to x.
+    Floor(x: Self): Self;
+    // The smallest whole value greater than or equal to x.
+    Ceiling(x: Self): Self;
 }
 
 // Whole-number semantics: exact, ordered, arithmetic without a multiplicative

@@ -21,10 +21,11 @@
 // and `ToPolyLine` helpers) needs an array-construction / linear-space / Map
 // primitive. The v3 functional and collection vocabulary exposes none at the
 // concept level, so no array-returning helpers are derivable here.
-// TODO(concept-gap): converting a polar or angular position to Cartesian, and
-// any true tangent/curvature by analytic differentiation, needs trigonometry
-// (Sin/Cos) and a square root, which the v3 Number vocabulary does not declare.
-// Such helpers are left to the concrete types.
+// TODO(concept-gap): a true tangent or curvature by analytic differentiation is
+// still not derivable — it needs the parameter derivative of the evaluation, which
+// none of these concepts expose (trigonometry and the square root are now available
+// via Angle.Cos/Sin and Number.Sqrt, so the polar-to-Cartesian conversion below is
+// derived directly). Analytic differential helpers are left to the concrete types.
 
 library CurvesSurfaces
 {
@@ -247,6 +248,11 @@ library CurvesSurfaces
     HalfPeriod(self: PeriodicCurve): Number
         => self.Period.Half;
 
+    // Floor(t / Period): the index of the period containing t (-1 for t just
+    // below zero, not truncation). Precondition: Period > 0.
+    PeriodCount(self: PeriodicCurve, t: Number): Integer
+        => (t / self.Period).Floor.ToInteger;
+
     // The number of repetitions per unit parameter (the reciprocal of the
     // period). Precondition: Period > 0.
     Frequency(self: PeriodicCurve): Number
@@ -368,15 +374,16 @@ library CurvesSurfaces
     //
     // A plane curve in polar form: RadiusAt(theta) gives the distance from the
     // origin at angle theta.
-    //
-    // TODO(concept-gap): the Cartesian position (RadiusAt(theta)*cos theta,
-    // RadiusAt(theta)*sin theta) needs trigonometry, which v3's Number vocabulary
-    // does not declare. The polar coordinate is returned instead; a concrete type
-    // converts it to a Point2D.
 
     // The polar coordinate (radius, angle) of the curve at the given angle.
     PolarPositionAt(self: PolarCurve2D, angle: Angle): PolarCoordinate
         => (self.RadiusAt(angle), angle);
+
+    // The Cartesian position of the curve at the given angle:
+    // (RadiusAt(angle)*cos angle, RadiusAt(angle)*sin angle). Note: evaluates
+    // RadiusAt twice; concrete types with expensive radii should override.
+    CartesianPositionAt(self: PolarCurve2D, angle: Angle): Point2D
+        => (self.RadiusAt(angle) * angle.Cos, self.RadiusAt(angle) * angle.Sin);
 
     // The diameter across the origin implied by the radius at the given angle.
     DiameterAt(self: PolarCurve2D, angle: Angle): Number
