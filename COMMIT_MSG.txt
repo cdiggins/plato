@@ -1,46 +1,29 @@
-feat(plato): sum types + match — checking, lowering, C# emission (plato-232 wave 2)
+feat(plato): C++ / CUDA backend with a compile-verification test project
 
-Wave-2 back end for tagged-union types and exhaustive match, building on the wave-1 AST.
-Symbols resolve, the checker validates, match lowers during elaboration into existing TIR
-nodes, and the C# writer emits the tagged struct. Generated goldens do not drift (the stdlib
-has no sum types).
+Adds Plato.CppWriter, a TIR-only proof-of-concept backend for the C++ family, and
+Plato.CppWriter.Tests, whose job is to prove the generated code compiles.
 
-Symbols:
-- TypeDef.Cases (SumCaseDef/SumCaseField) + IsSum; SymbolFactory populates them and synthesizes
-  one FunctionType.SumFactory per case (PathSegment2D.Move(p)), created before any body resolves
-  so a qualified case constructor resolves regardless of declaration order.
-- MatchExpression symbol; SymbolFactory.ResolveMatch types each arm's positional binders by the
-  case's fields (best-effort/total, so the checker can locate every diagnostic).
+One emitter, two dialects. The generated code is byte-identical for C++ and CUDA;
+only the preamble differs (vector types + the PLATO_FN qualifier), and a test
+enforces that. Modelled on Plato.GlslWriter: free functions, aggregate structs,
+native float2/float3/float4, intrinsics lowered onto <cmath> and the plato::
+helpers the preamble supplies.
 
-Checking:
-- Normalizer + ConstraintGenerator handle MatchExpression (arms share one result type).
-- Elaborator lowers match into a tag-conditional chain of EXISTING TIR nodes — per-case
-  Is<Case> predicate conditions + Case_Field projections, last case the unconditional else. No
-  new TIR node; the downstream passes (monomorphize, scalar-lower, C# body writer) are untouched.
-- SumTypeChecker: CHK300 non-exhaustive, CHK301 unknown case, CHK302 duplicate arm, CHK303
-  binder arity, CHK304 non-sum subject, CHK305 duplicate case name, CHK306 generic sum. Every
-  message names the sum type and the offending/missing cases. Generics are RESTRICTED (CHK306):
-  a generic sum declaration resolves, but a generic library consumer needs $T (bare T does not
-  resolve — a general front-end limitation, not sum-specific); option.plato is the CHK306 decider.
+Three things C++ needs that GLSL did not:
+- type-named conversion functions are renamed (Matrix4x4(Transform3D) -> ToMatrix4x4),
+  because a function may not hide a type that later signatures have to name;
+- conversions are explicit, including returns whose type differs from the declared
+  return type, since C++ has no implicit user-defined conversion;
+- a prune pass drops, to a fixpoint, any function calling a signature nothing
+  emitted, so a skipped function cannot take its callers down with it.
 
-Emission (C#):
-- CSharpConcreteTypeWriter.WriteSumType: int Kind tag + Kind_<Case> consts + flattened Case_Field
-  fields + private all-fields ctor + per-case static factories (default the rest) + Is<Case>
-  predicates + structural Equals/GetHashCode/tag-aware ToString (ternary chain, dodging CS8509).
-  Flattened field names registered as struct-surface so projections render bare.
-- TS/Rust writers reject a sum type with CHK320 rather than emit garbage.
+Wired into Plato.CLI as --cpp / --cuda.
 
-Side fix: SymbolFactory's tuple constructor now guards on TupleN existing (the self-contained
-plato-test-sum fixtures declare multi-field product types without Tuple2). No stdlib effect.
+Gates: 8/8 tests green. demos/plato-src 66 emitted / 0 skipped; plato-src 461 / 1722.
+Both compile clean under MSVC /std:c++17 /W3. The CUDA gate uses nvcc when the CUDA
+Toolkit is installed and otherwise compiles the .cu as host C++ against a test-only
+shim cuda_runtime.h; the mode is reported in the test output.
 
-Tests: SumTypeCheckingTests (12: 4 positive fixtures compile clean, 6 negatives raise their
-EXPECT diagnostic naming the right cases, generics CHK306). SumTypeCodegenTests (4: struct-shape
-assertions + in-proc Roslyn compile-and-run of the emitted struct + match function, verifying
-runtime semantics). Adds Microsoft.CodeAnalysis.CSharp to PlatoTests for the in-proc gate.
+Neither project is registered in Ara3D.Studio.sln (that file lives in the studio repo).
 
-Gates: Plato.CLI Release builds; PlatoTests 142/142 (was 126); conformance 205/205; lint
-plato-src=193 / plato-src-v3=4584 unchanged; regen-generated Unoptimized 184/184 clean
-(Optimized carries one PRE-EXISTING _Bounds3D whitespace drift, verified identical on the
-baseline). check-frozen-v1's ara3d-sdk failure is pre-existing (dirty at session start; untouched).
-
-Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Co-Authored-By: Claude <noreply@anthropic.com>
