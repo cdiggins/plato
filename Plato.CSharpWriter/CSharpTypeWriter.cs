@@ -385,6 +385,14 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
 
 
         var name = type.Name;
+
+        // The concrete Array/Array2D/Array3D primitive types render as the runtime list
+        // interfaces, same as their IArray* concepts (plato-src never uses them in emitted
+        // type positions — it goes through the IArray concepts — but plato-src-v3 uses
+        // Array<T> directly in fields and signatures).
+        if (name == "Array" || name == "Array2D" || name == "Array3D")
+            return "IReadOnlyList" + name.Substring("Array".Length);
+
         if (name.Contains("IArray"))
         {
             if (name.Contains("IArrayLike"))

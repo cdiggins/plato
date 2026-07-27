@@ -1,19 +1,16 @@
-feat(plato-232): migrate v3 flagship kind-patterns to sum types (wave 3)
+fix(csharp-writer): map concrete Array/Array2D/Array3D types to IReadOnlyList*
 
-Convert the five flagship plato-src-v3 kind-pattern carriers to real sum types
-now that the language supports them (waves 1-2):
+plato-src-v3 uses Array<T> directly in struct fields and signatures (plato-src
+only ever goes through the IArray concepts, which the writer already renames).
+ToCSharpTypeName now renders the concrete Array primitive types as the same
+runtime interfaces (IReadOnlyList / IReadOnlyList2D / IReadOnlyList3D), removing
+~1000 CS0308 errors from v3-generated C#.
 
-- 40-paths: PathSegment2D -> 6-verb sum; FillRule + PathBooleanOperation enums.
-- 41-vector-styling: Paint sum (5) + FillStyle{Paint,Opacity} wrapper.
-- 43-scene2d: MaskSource2D sum (3) + ClipMask2D{Source,Inverted} wrapper.
-- 26-fields: ScalarFieldNode2D/3D -> 14-case sums (not recursive: operands are
-  Integer node indices, not embedded node values).
-- 60-signals: WindowFunction sum (8) + AnalysisWindow wrapper.
+Goldens byte-identical (regen-generated: 184/184 identical both variants),
+frozen V1 untouched, PlatoTests 142/142, conformance 205/205.
 
-Retires 7 XxxKind types. lint plato-src-v3: 0 parse + 0 symbol errors,
-4584 -> 4549 findings; plato-src 193 unchanged; PlatoTests 142/142.
-
-Also updates the plato-src-v3 README (sum types now the preferred encoding) and
-the v3 survey (flagship five marked DONE, follow-up sweep listed).
+v3 pipeline validation findings (not fixed here): generated v3 C# still does
+not compile standalone or against Plato.Intrinsics.V2 — v3 needs its own
+runtime/recipe (see report).
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
