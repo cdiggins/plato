@@ -31,6 +31,13 @@ namespace Ara3D.Geometry.Compiler.Symbols
 
         public readonly Dictionary<Symbol, AstNode> SymbolsToNodes = new Dictionary<Symbol, AstNode>();
 
+        /// <summary>Every resolved type-name occurrence, in resolution order (Plato.Navigation,
+        /// plato-236). Deliberately NOT stored in <see cref="SymbolsToNodes"/>: TypeExpression
+        /// overrides Equals/GetHashCode by value, so a dictionary keyed by symbol collapses every
+        /// occurrence of the same type into a single entry — which erases exactly the per-site
+        /// information find-refs needs. Purely additive; nothing in the compiler reads it.</summary>
+        public readonly List<TypeReference> TypeReferences = new List<TypeReference>();
+
         public List<TypeDef> TypeDefs { get; } = new List<TypeDef>();
 
         public T BindValue<T>(string name, T value) where T : Symbol
@@ -164,16 +171,20 @@ namespace Ara3D.Geometry.Compiler.Symbols
                 return null;
             }
 
-            // TODO: maybe the symbols should contain the ast nodes instead of using dictionaries everywhere. 
+            // TODO: maybe the symbols should contain the ast nodes instead of using dictionaries everywhere.
             var args = astTypeNode.TypeArguments.Select(ResolveType).ToArray();
-            return new TypeExpression(tds, args);
+            var result = new TypeExpression(tds, args);
+            TypeReferences.Add(new TypeReference(astTypeNode, result));
+            return result;
         }
 
         public ParameterDef Resolve(AstParameterDeclaration astParameterDeclaration)
         {
-            return BindValue(astParameterDeclaration.Name,
-                new ParameterDef(ValueBindingsScope, astParameterDeclaration.Name, 
+            var result = BindValue(astParameterDeclaration.Name,
+                new ParameterDef(ValueBindingsScope, astParameterDeclaration.Name,
                     ResolveType(astParameterDeclaration.Type), astParameterDeclaration.Index));
+            SymbolsToNodes[result] = astParameterDeclaration;
+            return result;
         }
 
         public Expression ResolveExpr(AstNode node)
