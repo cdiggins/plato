@@ -1,11 +1,11 @@
 // Coordinate systems state conventions rather than hiding them in comments.
 
-type Axis2D { Origin: Point2D; Direction: Vector2; }
-type Axis3D { Origin: Point3D; Direction: Vector3; }
-type Basis2D { X: Vector2; Y: Vector2; }
-type Basis3D { X: Vector3; Y: Vector3; Z: Vector3; }
-type Frame2D { Origin: Point2D; Basis: Basis2D; }
-type Frame3D { Origin: Point3D; Basis: Basis3D; }
+type Axis2D implements IAxis<Point2D, Vector2> { Origin: Point2D; Direction: Vector2; }
+type Axis3D implements IAxis<Point3D, Vector3> { Origin: Point3D; Direction: Vector3; }
+type Basis2D implements IBasis<Vector2> { X: Vector2; Y: Vector2; }
+type Basis3D implements IBasis<Vector3> { X: Vector3; Y: Vector3; Z: Vector3; }
+type Frame2D implements ICoordinateFrame<Point2D, Basis2D> { Origin: Point2D; Basis: Basis2D; }
+type Frame3D implements ICoordinateFrame<Point3D, Basis3D> { Origin: Point3D; Basis: Basis3D; }
 type Frame4D { Origin: Point4D; Basis0: Vector4; Basis1: Vector4; Basis2: Vector4; Basis3: Vector4; }
 
 type PolarCoordinate { Radius: Number; Azimuth: Angle; }
@@ -21,6 +21,6 @@ type CoordinateConvention
     ForwardAxis: Integer;
 }
 
-type CoordinateReferenceSystem { Name: String; Authority: String; Code: String; }
-type ProjectedPosition2D { Point: Point2D; ReferenceSystem: CoordinateReferenceSystem; }
-type ProjectedPosition3D { Point: Point3D; ReferenceSystem: CoordinateReferenceSystem; }
+type CoordinateReferenceSystem implements ICoordinateSystem { Name: String; Authority: String; Code: String; }
+type ProjectedPosition2D implements IReferencedPosition<Point2D, CoordinateReferenceSystem> { Point: Point2D; ReferenceSystem: CoordinateReferenceSystem; }
+type ProjectedPosition3D implements IReferencedPosition<Point3D, CoordinateReferenceSystem> { Point: Point3D; ReferenceSystem: CoordinateReferenceSystem; }

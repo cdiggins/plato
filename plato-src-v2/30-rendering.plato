@@ -4,7 +4,7 @@ type Viewport { Origin: Integer2; Size: ImageSize; MinimumDepth: Number; Maximum
 type PerspectiveProjection { VerticalFieldOfView: Angle; AspectRatio: Number; Near: Number; Far: Number; }
 type OrthographicProjection { Width: Number; Height: Number; Near: Number; Far: Number; }
 type ObliqueProjection { Direction: Vector3; Scale: Number; }
-type Camera3D { Pose: RigidTransform3D; Projection: Matrix4x4; Viewport: Viewport; }
+type Camera3D implements ICamera { Pose: RigidTransform3D; Projection: Matrix4x4; Viewport: Viewport; }
 
 type TextureCoordinate { U: Number; V: Number; }
 type TextureTransform { Offset: Vector2; Scale: Vector2; Rotation: Angle; }
@@ -28,16 +28,16 @@ type SpecularGlossinessMaterial
 }
 
 type VolumeMaterial { Absorption: LinearRgb; Scattering: LinearRgb; Anisotropy: Number; }
-type Material { Name: String; SurfaceModel: String; Parameters: IArray<Number>; Textures: IArray<TextureReference>; }
+type Material implements IMaterial { Name: String; SurfaceModel: String; Parameters: IArray<Number>; Textures: IArray<TextureReference>; }
 
-type DirectionalLight { Direction: Vector3; Color: LinearRgb; Intensity: Number; }
-type PointLight { Position: Point3D; Color: LinearRgb; Intensity: Number; Range: Number; }
-type SpotLight { Position: Point3D; Direction: Vector3; InnerAngle: Angle; OuterAngle: Angle; Color: LinearRgb; Intensity: Number; }
-type AreaLight { Shape: Quad3D; Color: LinearRgb; Intensity: Number; }
-type EnvironmentLight { Texture: TextureReference; Intensity: Number; Rotation: Angle; }
+type DirectionalLight implements IDirectionalLight { Direction: Vector3; Color: LinearRgb; Intensity: Number; }
+type PointLight implements IPositionalLight { Position: Point3D; Color: LinearRgb; Intensity: Number; Range: Number; }
+type SpotLight implements IPositionalLight, IDirectionalLight { Position: Point3D; Direction: Vector3; InnerAngle: Angle; OuterAngle: Angle; Color: LinearRgb; Intensity: Number; }
+type AreaLight implements ILight { Shape: Quad3D; Color: LinearRgb; Intensity: Number; }
+type EnvironmentLight implements ILight { Texture: TextureReference; Intensity: Number; Rotation: Angle; }
 
-type RenderInstance { Geometry: Integer; Material: Integer; Transform: AffineTransform3D; }
-type RenderScene
+type RenderInstance implements IRenderInstance { Geometry: Integer; Material: Integer; Transform: AffineTransform3D; }
+type RenderScene implements IRenderScene
 {
     Geometries: IArray<AttributedTriangleMesh3D>;
     Materials: IArray<Material>;

@@ -10,6 +10,11 @@ interface IOne
     One(_: Self): Self;
 }
 
+interface IModulo
+{
+    Modulo(a: Self, b: Self): Self;
+}
+
 interface IAdditiveMonoid inherits IAdditive, IZero { }
 interface IMultiplicativeMonoid inherits IMultiplicative, IOne { }
 interface IRing inherits IAdditiveMonoid, IMultiplicativeMonoid { }
@@ -43,4 +48,23 @@ interface IComposable
 interface IInvertible
 {
     Inverse(value: Self): Self;
+}
+
+interface IVectorSpace<TScalar>
+    inherits IAdditive, IScalable<TScalar>
+{ }
+
+interface ILinearOperator<TVector>
+{
+    Apply(operator: Self, vector: TVector): TVector;
+}
+
+interface INormalizable
+{
+    Normalize(value: Self): Self;
+}
+
+interface IApproximateEquality<TTolerance>
+{
+    ApproximatelyEquals(a: Self, b: Self, tolerance: TTolerance): Boolean;
 }

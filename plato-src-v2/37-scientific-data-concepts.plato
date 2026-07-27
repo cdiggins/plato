@@ -1,0 +1,53 @@
+// Scientific data concepts cover naming, tabulation, observation, and experiments.
+
+interface INamedValue<T>
+    inherits IHasName
+{
+    Value(item: Self): T;
+}
+
+interface IObservation<T>
+    inherits ITimeStamped
+{
+    Value(observation: Self): T;
+}
+
+interface IObservationSeries<T>
+    inherits IHasName
+{
+    Observations(series: Self): IArray<Observation<T>>;
+}
+
+interface IDataColumn<T>
+    inherits IHasName
+{
+    Values(column: Self): IArray<T>;
+}
+
+interface IDataTable
+{
+    RowCount(table: Self): Integer;
+}
+
+interface IDataSet
+    inherits IHasName
+{
+    Tables(data: Self): IArray<NumericTable>;
+}
+
+interface IExperiment
+    inherits IIdentified<Identifier>, IHasDuration
+{
+    Results(experiment: Self): DataSet;
+}
+
+interface IChemicalStructure<TAtom, TBond>
+{
+    Atoms(structure: Self): IArray<TAtom>;
+    Bonds(structure: Self): IArray<TBond>;
+}
+
+interface IPeriodicStructure<TCell>
+{
+    Cell(structure: Self): TCell;
+}

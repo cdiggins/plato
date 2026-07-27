@@ -1,0 +1,40 @@
+// Solids expose containment, boundaries, mass properties, and construction families.
+
+interface ISolid<TPoint, TBounds>
+    inherits IVolume<TPoint>, IClosed, IBounded<TBounds>, ICentroid<TPoint>
+{ }
+
+interface IDistanceSolid<TPoint, TBounds>
+    inherits ISolid<TPoint, TBounds>, IDistanceField<TPoint, Number>
+{ }
+
+interface IExtruded<TProfile, TVector>
+{
+    Profile(value: Self): TProfile;
+    Direction(value: Self): TVector;
+}
+
+interface IRevolved<TProfile, TAxis>
+{
+    Profile(value: Self): TProfile;
+    Axis(value: Self): TAxis;
+    Domain(value: Self): AngleRange;
+}
+
+interface ISwept<TProfile, TPath>
+{
+    Profile(value: Self): TProfile;
+    Path(value: Self): TPath;
+}
+
+interface IBoundaryRepresentation<TVertex, TEdge, TFace>
+{
+    Vertices(value: Self): IArray<TVertex>;
+    Edges(value: Self): IArray<TEdge>;
+    Faces(value: Self): IArray<TFace>;
+}
+
+interface IHasMassProperties
+{
+    MassProperties(value: Self): MassProperties;
+}

@@ -1,12 +1,12 @@
 // Solid types share parameters with their surface and distance-field views.
 
-type Sphere3D implements IVolume3D, IDistanceField<Point3D, Number>, IBounded<Bounds3D>
+type Sphere3D implements IVolume3D, IDistanceSolid<Point3D, Bounds3D>
 {
     Center: Point3D;
     Radius: Number;
 }
 
-type Box3D implements IVolume3D, IDistanceField<Point3D, Number>, IBounded<Bounds3D>
+type Box3D implements IVolume3D, IDistanceSolid<Point3D, Bounds3D>
 {
     Frame: Frame3D;
     Size: Vector3;
@@ -19,11 +19,11 @@ type Cone3D { Apex: Point3D; Axis: Vector3; Height: Number; BaseRadius: Number; 
 type TruncatedCone3D { Axis: Segment3D; StartRadius: Number; EndRadius: Number; }
 type Torus3D { Frame: Frame3D; MajorRadius: Number; MinorRadius: Number; }
 type Ellipsoid3D { Frame: Frame3D; Radii: Vector3; }
-type ExtrudedSolid3D { Profile: PolygonWithHoles2D; Placement: Frame3D; Height: Number; }
-type RevolvedSolid3D { Profile: PolyCurve2D; Axis: Axis3D; Domain: AngleRange; }
-type SweptSolid3D { Profile: PolygonWithHoles2D; Path: PolyCurve3D; }
+type ExtrudedSolid3D implements IExtruded<PolygonWithHoles2D, Vector3> { Profile: PolygonWithHoles2D; Placement: Frame3D; Height: Number; }
+type RevolvedSolid3D implements IRevolved<PolyCurve2D, Axis3D> { Profile: PolyCurve2D; Axis: Axis3D; Domain: AngleRange; }
+type SweptSolid3D implements ISwept<PolygonWithHoles2D, PolyCurve3D> { Profile: PolygonWithHoles2D; Path: PolyCurve3D; }
 
-type BoundaryRepresentation3D
+type BoundaryRepresentation3D implements IBoundaryRepresentation<BrepVertex3D, BrepEdge3D, BrepFace3D>
 {
     Vertices: IArray<BrepVertex3D>;
     Edges: IArray<BrepEdge3D>;

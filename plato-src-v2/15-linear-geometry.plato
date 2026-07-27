@@ -1,10 +1,10 @@
 // Bounded segments, semi-infinite rays, and infinite lines are distinct.
 
-type Segment1D { Start: Point1D; End: Point1D; }
-type Segment2D implements IGeometry2D, IBounded<Bounds2D> { Start: Point2D; End: Point2D; }
-type Segment3D implements IGeometry3D, IBounded<Bounds3D> { Start: Point3D; End: Point3D; }
-type Segment4D implements IGeometry4D, IBounded<Bounds4D> { Start: Point4D; End: Point4D; }
-type SegmentN implements IGeometryND, IBounded<BoundsN> { Start: PointN; End: PointN; }
+type Segment1D implements ISpan<Point1D>, ICurve<Point1D>, IBounded<Bounds1D>, IPrimitiveGeometry<Point1D> { Start: Point1D; End: Point1D; }
+type Segment2D implements IGeometry2D, ISpan<Point2D>, ICurve2D, IBounded<Bounds2D>, IPrimitiveGeometry<Point2D> { Start: Point2D; End: Point2D; }
+type Segment3D implements IGeometry3D, ISpan<Point3D>, ICurve3D, IBounded<Bounds3D>, IPrimitiveGeometry<Point3D> { Start: Point3D; End: Point3D; }
+type Segment4D implements IGeometry4D, ISpan<Point4D>, ICurve4D, IBounded<Bounds4D>, IPrimitiveGeometry<Point4D> { Start: Point4D; End: Point4D; }
+type SegmentN implements IGeometryND, ISpan<PointN>, ICurveND, IBounded<BoundsN>, IPrimitiveGeometry<PointN> { Start: PointN; End: PointN; }
 
 type Ray2D implements IGeometry2D { Origin: Point2D; Direction: Vector2; }
 type Ray3D implements IGeometry3D { Origin: Point3D; Direction: Vector3; }
@@ -16,15 +16,15 @@ type InfiniteLine3D implements IGeometry3D { Origin: Point3D; Direction: Vector3
 type InfiniteLine4D implements IGeometry4D { Origin: Point4D; Direction: Vector4; }
 type InfiniteLineN implements IGeometryND { Origin: PointN; Direction: VectorN; }
 
-type Plane2D implements IGeometry2D { Normal: Vector2; Offset: Number; }
-type Plane3D implements IGeometry3D { Normal: Vector3; Offset: Number; }
-type Hyperplane4D implements IGeometry4D { Normal: Vector4; Offset: Number; }
-type HyperplaneN implements IGeometryND { Normal: VectorN; Offset: Number; }
+type Plane2D implements IGeometry2D, IOriented, IDistanceField<Point2D, Number> { Normal: Vector2; Offset: Number; }
+type Plane3D implements IGeometry3D, IOriented, IDistanceField<Point3D, Number> { Normal: Vector3; Offset: Number; }
+type Hyperplane4D implements IGeometry4D, IOriented, IDistanceField<Point4D, Number> { Normal: Vector4; Offset: Number; }
+type HyperplaneN implements IGeometryND, IOriented, IDistanceField<PointN, Number> { Normal: VectorN; Offset: Number; }
 
-type HalfPlane2D implements IGeometry2D, IImplicit<Point2D> { Boundary: Plane2D; }
-type HalfSpace3D implements IGeometry3D, IImplicit<Point3D> { Boundary: Plane3D; }
-type HalfSpace4D implements IGeometry4D, IImplicit<Point4D> { Boundary: Hyperplane4D; }
-type HalfSpaceN implements IGeometryND, IImplicit<PointN> { Boundary: HyperplaneN; }
+type HalfPlane2D implements IGeometry2D, IImplicit<Point2D>, IContains<Point2D> { Boundary: Plane2D; }
+type HalfSpace3D implements IGeometry3D, IImplicit<Point3D>, IContains<Point3D> { Boundary: Plane3D; }
+type HalfSpace4D implements IGeometry4D, IImplicit<Point4D>, IContains<Point4D> { Boundary: Hyperplane4D; }
+type HalfSpaceN implements IGeometryND, IImplicit<PointN>, IContains<PointN> { Boundary: HyperplaneN; }
 
 type Slab2D { Minimum: Plane2D; Maximum: Plane2D; }
 type Slab3D { Minimum: Plane3D; Maximum: Plane3D; }

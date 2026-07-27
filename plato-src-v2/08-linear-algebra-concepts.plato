@@ -1,0 +1,48 @@
+// Vectors, matrices, tensors, and operators share structural contracts.
+
+interface IVector<TScalar>
+    inherits IVectorSpace<TScalar>, IComponents<TScalar>,
+        IDotProduct<TScalar>, INormed<TScalar>, INormalizable
+{ }
+
+interface IMatrix<TScalar>
+{
+    Rows(matrix: Self): Integer;
+    Columns(matrix: Self): Integer;
+    At(matrix: Self, row: Integer, column: Integer): TScalar;
+}
+
+interface ISquareMatrix<TScalar>
+    inherits IMatrix<TScalar>, IInvertible
+{ }
+
+interface ISparseMatrix<TScalar>
+    inherits IMatrix<TScalar>
+{
+    NonZeroCount(matrix: Self): Integer;
+}
+
+interface ITensor<TScalar>
+    inherits IComponents<TScalar>, IShaped
+{ }
+
+interface ISymmetricTensor<TScalar>
+    inherits ITensor<TScalar>
+{ }
+
+interface IRotationRepresentation<TVector>
+    inherits IComposable, IInvertible, INormalizable
+{
+    Rotate(rotation: Self, vector: TVector): TVector;
+}
+
+interface IBasis<TVector>
+{
+    Vectors(basis: Self): IArray<TVector>;
+}
+
+interface ILinearSystem<TMatrix, TVector>
+{
+    Matrix(system: Self): TMatrix;
+    RightHandSide(system: Self): TVector;
+}

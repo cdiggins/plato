@@ -1,46 +1,19 @@
-feat(plato): sum types + match — checking, lowering, C# emission (plato-232 wave 2)
+feat(plato-232): migrate v3 flagship kind-patterns to sum types (wave 3)
 
-Wave-2 back end for tagged-union types and exhaustive match, building on the wave-1 AST.
-Symbols resolve, the checker validates, match lowers during elaboration into existing TIR
-nodes, and the C# writer emits the tagged struct. Generated goldens do not drift (the stdlib
-has no sum types).
+Convert the five flagship plato-src-v3 kind-pattern carriers to real sum types
+now that the language supports them (waves 1-2):
 
-Symbols:
-- TypeDef.Cases (SumCaseDef/SumCaseField) + IsSum; SymbolFactory populates them and synthesizes
-  one FunctionType.SumFactory per case (PathSegment2D.Move(p)), created before any body resolves
-  so a qualified case constructor resolves regardless of declaration order.
-- MatchExpression symbol; SymbolFactory.ResolveMatch types each arm's positional binders by the
-  case's fields (best-effort/total, so the checker can locate every diagnostic).
+- 40-paths: PathSegment2D -> 6-verb sum; FillRule + PathBooleanOperation enums.
+- 41-vector-styling: Paint sum (5) + FillStyle{Paint,Opacity} wrapper.
+- 43-scene2d: MaskSource2D sum (3) + ClipMask2D{Source,Inverted} wrapper.
+- 26-fields: ScalarFieldNode2D/3D -> 14-case sums (not recursive: operands are
+  Integer node indices, not embedded node values).
+- 60-signals: WindowFunction sum (8) + AnalysisWindow wrapper.
 
-Checking:
-- Normalizer + ConstraintGenerator handle MatchExpression (arms share one result type).
-- Elaborator lowers match into a tag-conditional chain of EXISTING TIR nodes — per-case
-  Is<Case> predicate conditions + Case_Field projections, last case the unconditional else. No
-  new TIR node; the downstream passes (monomorphize, scalar-lower, C# body writer) are untouched.
-- SumTypeChecker: CHK300 non-exhaustive, CHK301 unknown case, CHK302 duplicate arm, CHK303
-  binder arity, CHK304 non-sum subject, CHK305 duplicate case name, CHK306 generic sum. Every
-  message names the sum type and the offending/missing cases. Generics are RESTRICTED (CHK306):
-  a generic sum declaration resolves, but a generic library consumer needs $T (bare T does not
-  resolve — a general front-end limitation, not sum-specific); option.plato is the CHK306 decider.
+Retires 7 XxxKind types. lint plato-src-v3: 0 parse + 0 symbol errors,
+4584 -> 4549 findings; plato-src 193 unchanged; PlatoTests 142/142.
 
-Emission (C#):
-- CSharpConcreteTypeWriter.WriteSumType: int Kind tag + Kind_<Case> consts + flattened Case_Field
-  fields + private all-fields ctor + per-case static factories (default the rest) + Is<Case>
-  predicates + structural Equals/GetHashCode/tag-aware ToString (ternary chain, dodging CS8509).
-  Flattened field names registered as struct-surface so projections render bare.
-- TS/Rust writers reject a sum type with CHK320 rather than emit garbage.
-
-Side fix: SymbolFactory's tuple constructor now guards on TupleN existing (the self-contained
-plato-test-sum fixtures declare multi-field product types without Tuple2). No stdlib effect.
-
-Tests: SumTypeCheckingTests (12: 4 positive fixtures compile clean, 6 negatives raise their
-EXPECT diagnostic naming the right cases, generics CHK306). SumTypeCodegenTests (4: struct-shape
-assertions + in-proc Roslyn compile-and-run of the emitted struct + match function, verifying
-runtime semantics). Adds Microsoft.CodeAnalysis.CSharp to PlatoTests for the in-proc gate.
-
-Gates: Plato.CLI Release builds; PlatoTests 142/142 (was 126); conformance 205/205; lint
-plato-src=193 / plato-src-v3=4584 unchanged; regen-generated Unoptimized 184/184 clean
-(Optimized carries one PRE-EXISTING _Bounds3D whitespace drift, verified identical on the
-baseline). check-frozen-v1's ara3d-sdk failure is pre-existing (dirty at session start; untouched).
+Also updates the plato-src-v3 README (sum types now the preferred encoding) and
+the v3 survey (flagship five marked DONE, follow-up sweep listed).
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>

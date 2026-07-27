@@ -1,14 +1,14 @@
 // Explicit topology separates connectivity from embedded geometry.
 
-type OrientedIndex { Index: Integer; Reversed: Boolean; }
+type OrientedIndex implements IOrientedIndex { Index: Integer; Reversed: Boolean; }
 type IndexPair { A: Integer; B: Integer; }
 type IndexTriple { A: Integer; B: Integer; C: Integer; }
 type IndexQuad { A: Integer; B: Integer; C: Integer; D: Integer; }
 type IndexLoop { Indices: IArray<Integer>; }
 
-type Graph { VertexCount: Integer; Edges: IArray<IndexPair>; }
+type Graph implements IGraph { VertexCount: Integer; Edges: IArray<IndexPair>; }
 type DirectedEdge { Source: Integer; Target: Integer; }
-type DirectedGraph { VertexCount: Integer; Edges: IArray<DirectedEdge>; }
+type DirectedGraph implements IDirectedGraph { VertexCount: Integer; Edges: IArray<DirectedEdge>; }
 
 type HalfEdge
 {
@@ -19,14 +19,14 @@ type HalfEdge
     Twin: Integer;
 }
 
-type HalfEdgeTopology
+type HalfEdgeTopology implements IHalfEdgeTopology
 {
     VertexCount: Integer;
     FaceCount: Integer;
     HalfEdges: IArray<HalfEdge>;
 }
 
-type CellComplex
+type CellComplex implements ICellTopology
 {
     VertexCount: Integer;
     Edges: IArray<IndexPair>;
@@ -34,6 +34,6 @@ type CellComplex
     Cells: IArray<IndexLoop>;
 }
 
-type SimplicialComplex2D { VertexCount: Integer; Edges: IArray<IndexPair>; Triangles: IArray<IndexTriple>; }
-type SimplicialComplex3D { VertexCount: Integer; Edges: IArray<IndexPair>; Triangles: IArray<IndexTriple>; Tetrahedra: IArray<IndexQuad>; }
-type SubdivisionScheme { Name: String; Iterations: Integer; BoundaryRule: String; }
+type SimplicialComplex2D implements ISimplicialComplex<IndexTriple> { VertexCount: Integer; Edges: IArray<IndexPair>; Triangles: IArray<IndexTriple>; }
+type SimplicialComplex3D implements ISimplicialComplex<IndexQuad> { VertexCount: Integer; Edges: IArray<IndexPair>; Triangles: IArray<IndexTriple>; Tetrahedra: IArray<IndexQuad>; }
+type SubdivisionScheme implements ISubdivisionRule { Name: String; Iterations: Integer; BoundaryRule: String; }

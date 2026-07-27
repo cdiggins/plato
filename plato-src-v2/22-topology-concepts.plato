@@ -1,0 +1,49 @@
+// Connectivity concepts are independent of geometric embedding.
+
+interface IGraph
+{
+    VertexCount(graph: Self): Integer;
+    Edges(graph: Self): IArray<IndexPair>;
+}
+
+interface IDirectedGraph
+{
+    VertexCount(graph: Self): Integer;
+    Edges(graph: Self): IArray<DirectedEdge>;
+}
+
+interface IFaceTopology
+{
+    VertexCount(topology: Self): Integer;
+    Faces(topology: Self): IArray<IndexLoop>;
+}
+
+interface ICellTopology
+    inherits IFaceTopology
+{
+    Cells(topology: Self): IArray<IndexLoop>;
+}
+
+interface IHalfEdgeTopology
+    inherits IFaceTopology
+{
+    HalfEdges(topology: Self): IArray<HalfEdge>;
+}
+
+interface ISimplicialComplex<TSimplex>
+{
+    VertexCount(complex: Self): Integer;
+    Simplices(complex: Self): IArray<TSimplex>;
+}
+
+interface IOrientedIndex
+{
+    Index(value: Self): Integer;
+    Reversed(value: Self): Boolean;
+}
+
+interface ISubdivisionRule
+    inherits IHasName
+{
+    Iterations(rule: Self): Integer;
+}

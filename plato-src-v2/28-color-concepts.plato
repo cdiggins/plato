@@ -1,0 +1,46 @@
+// Color concepts distinguish channels, alpha, color spaces, and spectra.
+
+interface IColor { }
+
+interface IColor3<TChannel>
+    inherits IColor, IComponents<TChannel>
+{ }
+
+interface IColor4<TChannel>
+    inherits IColor3<TChannel>
+{
+    Alpha(color: Self): TChannel;
+}
+
+interface IColorWithHue
+    inherits IColor
+{
+    Hue(color: Self): Angle;
+}
+
+interface IColorSpace
+    inherits IHasName
+{
+    White(colorSpace: Self): WhitePoint;
+}
+
+interface IColorConvertible<TColor>
+{
+    Convert(color: Self): TColor;
+}
+
+interface ISpectralDistribution
+{
+    Wavelengths(value: Self): IArray<Length>;
+    Values(value: Self): IArray<Number>;
+}
+
+interface IColorRamp
+{
+    Sample(ramp: Self, parameter: Number): LinearRgba;
+}
+
+interface IPalette<TColor>
+{
+    Colors(palette: Self): IArray<TColor>;
+}

@@ -1,0 +1,36 @@
+// Spatial structures share query, node, and bounded-item contracts.
+
+interface ISpatialIndex<TPoint, TItem>
+{
+    Query(index: Self, point: TPoint): IArray<TItem>;
+}
+
+interface ISpatialTree<TNode>
+{
+    Nodes(tree: Self): IArray<TNode>;
+}
+
+interface IBoundedNode<TBounds>
+{
+    Bounds(node: Self): TBounds;
+    Children(node: Self): IndexPair;
+}
+
+interface ISpatialCell<TCoordinate, TItems>
+{
+    Coordinate(cell: Self): TCoordinate;
+    Items(cell: Self): TItems;
+}
+
+interface IHierarchicalCell<TBounds>
+{
+    Bounds(cell: Self): TBounds;
+    Parent(cell: Self): Integer;
+    Children(cell: Self): IArray<Integer>;
+}
+
+interface ISpatialCode<TCoordinate>
+{
+    Encode(_: Self, coordinate: TCoordinate): Integer;
+    Decode(_: Self, code: Integer): TCoordinate;
+}

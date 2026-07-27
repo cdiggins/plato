@@ -5,6 +5,11 @@ interface ITransform<TPoint>
     Apply(transform: Self, point: TPoint): TPoint;
 }
 
+interface ILinearTransform<TVector>
+    inherits ITransform<TVector>, ILinearOperator<TVector>,
+        IComposable, IInvertible
+{ }
+
 interface IAffineTransform<TPoint, TVector>
     inherits ITransform<TPoint>, IComposable, IInvertible
 {
@@ -15,6 +20,35 @@ interface IRigidTransform<TPoint, TVector>
     inherits IAffineTransform<TPoint, TVector>
 { }
 
+interface ISimilarityTransform<TPoint, TVector>
+    inherits IAffineTransform<TPoint, TVector>
+{
+    UniformScale(transform: Self): Number;
+}
+
+interface IProjectiveTransform<TPoint>
+    inherits ITransform<TPoint>, IComposable
+{ }
+
+interface IRotation<TVector>
+    inherits IRotationRepresentation<TVector>
+{ }
+
+interface ITranslation<TVector>
+{
+    Offset(transform: Self): TVector;
+}
+
+interface IScaling<TVector>
+{
+    Factors(transform: Self): TVector;
+}
+
+interface IReflection<TBoundary>
+{
+    Boundary(transform: Self): TBoundary;
+}
+
 interface ITransformable<TTransform>
 {
     Transform(value: Self, transform: TTransform): Self;
@@ -23,4 +57,9 @@ interface ITransformable<TTransform>
 interface IDeformable<TPoint>
 {
     Deform(value: Self, deformation: Function1<TPoint, TPoint>): Self;
+}
+
+interface IPose<TTransform>
+{
+    Transform(pose: Self): TTransform;
 }

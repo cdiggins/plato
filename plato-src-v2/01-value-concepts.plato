@@ -12,6 +12,26 @@ interface IOrdered
     LessThanOrEquals(a: Self, b: Self): Boolean;
 }
 
+interface IHasName
+{
+    Name(value: Self): String;
+}
+
+interface IIdentified<TIdentifier>
+{
+    Id(value: Self): TIdentifier;
+}
+
+interface IWeighted<TWeight>
+{
+    Weight(value: Self): TWeight;
+}
+
+interface IValidatable
+{
+    IsValid(value: Self): Boolean;
+}
+
 interface IAdditive
 {
     Add(a: Self, b: Self): Self;
@@ -41,7 +61,7 @@ interface IInterpolatable<TParameter>
 
 interface IRealScalar
     inherits IOrdered, IAdditive, IMultiplicative, IDivisible,
-        IScalable<Number>, IInterpolatable<Number>
+        IScalable<Number>, IInterpolatable<Number>, IFinite
 { }
 
 interface IIntegralScalar

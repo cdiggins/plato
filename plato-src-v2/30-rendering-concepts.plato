@@ -1,0 +1,51 @@
+// Backend-neutral rendering capabilities.
+
+interface IProjection
+{
+    Matrix(projection: Self): Matrix4x4;
+}
+
+interface ICamera
+{
+    Pose(camera: Self): RigidTransform3D;
+    Projection(camera: Self): Matrix4x4;
+}
+
+interface ITexture
+    inherits IHasName
+{ }
+
+interface IMaterial
+    inherits IHasName
+{ }
+
+interface ILight
+{
+    Color(light: Self): LinearRgb;
+    Intensity(light: Self): Number;
+}
+
+interface IPositionalLight
+    inherits ILight
+{
+    Position(light: Self): Point3D;
+}
+
+interface IDirectionalLight
+    inherits ILight
+{
+    Direction(light: Self): Vector3;
+}
+
+interface IRenderInstance
+{
+    Geometry(instance: Self): Integer;
+    Material(instance: Self): Integer;
+    Transform(instance: Self): AffineTransform3D;
+}
+
+interface IRenderScene
+{
+    Instances(scene: Self): IArray<RenderInstance>;
+    Cameras(scene: Self): IArray<Camera3D>;
+}

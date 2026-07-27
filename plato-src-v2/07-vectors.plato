@@ -1,19 +1,19 @@
 // Fixed-size graphics vectors plus a dimension-generic vector.
 
-type Vector2 implements IDotProduct<Number>, INormed<Number>
+type Vector2 implements IVector<Number>
 {
     X: Number;
     Y: Number;
 }
 
-type Vector3 implements IDotProduct<Number>, ICrossProduct, INormed<Number>
+type Vector3 implements IVector<Number>, ICrossProduct
 {
     X: Number;
     Y: Number;
     Z: Number;
 }
 
-type Vector4 implements IDotProduct<Number>, INormed<Number>
+type Vector4 implements IVector<Number>
 {
     X: Number;
     Y: Number;
@@ -21,21 +21,21 @@ type Vector4 implements IDotProduct<Number>, INormed<Number>
     W: Number;
 }
 
-type Vector8 implements IDotProduct<Number>, INormed<Number>
+type Vector8 implements IVector<Number>
 {
     X0: Number; X1: Number; X2: Number; X3: Number;
     X4: Number; X5: Number; X6: Number; X7: Number;
 }
 
-type VectorN implements IDotProduct<Number>, INormed<Number>
+type VectorN implements IVector<Number>
 {
     Components: IArray<Number>;
 }
 
-type Integer2 { X: Integer; Y: Integer; }
-type Integer3 { X: Integer; Y: Integer; Z: Integer; }
-type Integer4 { X: Integer; Y: Integer; Z: Integer; W: Integer; }
+type Integer2 implements IComponents<Integer> { X: Integer; Y: Integer; }
+type Integer3 implements IComponents<Integer> { X: Integer; Y: Integer; Z: Integer; }
+type Integer4 implements IComponents<Integer> { X: Integer; Y: Integer; Z: Integer; W: Integer; }
 
-type Bivector2 { XY: Number; }
-type Bivector3 { XY: Number; XZ: Number; YZ: Number; }
-type Bivector4 { XY: Number; XZ: Number; XW: Number; YZ: Number; YW: Number; ZW: Number; }
+type Bivector2 implements IVectorSpace<Number>, IComponents<Number> { XY: Number; }
+type Bivector3 implements IVectorSpace<Number>, IComponents<Number> { XY: Number; XZ: Number; YZ: Number; }
+type Bivector4 implements IVectorSpace<Number>, IComponents<Number> { XY: Number; XZ: Number; XW: Number; YZ: Number; YW: Number; ZW: Number; }

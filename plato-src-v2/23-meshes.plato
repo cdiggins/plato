@@ -1,48 +1,48 @@
 // Meshes use explicit index types and optional attribute channels.
 
-type LineMesh2D implements IIndexedGeometry<Point2D, IndexPair>
+type LineMesh2D implements IMesh<Point2D, IndexPair, Bounds2D>
 {
     Points: IArray<Point2D>;
     Indices: IArray<IndexPair>;
 }
 
-type LineMesh3D implements IIndexedGeometry<Point3D, IndexPair>
+type LineMesh3D implements IMesh<Point3D, IndexPair, Bounds3D>
 {
     Points: IArray<Point3D>;
     Indices: IArray<IndexPair>;
 }
 
-type TriangleMesh2D implements IIndexedGeometry<Point2D, IndexTriple>
+type TriangleMesh2D implements ISurfaceMesh<Point2D, IndexTriple, Bounds2D>
 {
     Points: IArray<Point2D>;
     Indices: IArray<IndexTriple>;
 }
 
-type TriangleMesh3D implements IIndexedGeometry<Point3D, IndexTriple>
+type TriangleMesh3D implements ISurfaceMesh<Point3D, IndexTriple, Bounds3D>
 {
     Points: IArray<Point3D>;
     Indices: IArray<IndexTriple>;
 }
 
-type QuadMesh3D implements IIndexedGeometry<Point3D, IndexQuad>
+type QuadMesh3D implements ISurfaceMesh<Point3D, IndexQuad, Bounds3D>
 {
     Points: IArray<Point3D>;
     Indices: IArray<IndexQuad>;
 }
 
-type PolygonMesh3D implements IIndexedGeometry<Point3D, IndexLoop>
+type PolygonMesh3D implements ISurfaceMesh<Point3D, IndexLoop, Bounds3D>
 {
     Points: IArray<Point3D>;
     Indices: IArray<IndexLoop>;
 }
 
-type TetrahedralMesh3D implements IIndexedGeometry<Point3D, IndexQuad>
+type TetrahedralMesh3D implements IVolumeMesh<Point3D, IndexQuad, Bounds3D>
 {
     Points: IArray<Point3D>;
     Indices: IArray<IndexQuad>;
 }
 
-type MeshAttribute<T>
+type MeshAttribute<T> implements IAttributeChannel<T>
 {
     Name: String;
     Association: AttributeAssociation;
@@ -58,4 +58,4 @@ type MeshAttributes
     Colors: IArray<MeshAttribute<LinearRgba>>;
 }
 
-type AttributedTriangleMesh3D { Mesh: TriangleMesh3D; Attributes: MeshAttributes; }
+type AttributedTriangleMesh3D implements IAttributedGeometry<TriangleMesh3D, MeshAttributes> { Mesh: TriangleMesh3D; Attributes: MeshAttributes; }

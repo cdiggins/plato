@@ -1,0 +1,54 @@
+// Images compose spatial extent, pixels, channels, and calibration.
+
+interface IImage<TPixel>
+{
+    Size(image: Self): ImageSize;
+    Pixels(image: Self): IArray2D<TPixel>;
+}
+
+interface IImageRegion
+{
+    Origin(region: Self): Integer2;
+    Size(region: Self): ImageSize;
+}
+
+interface IVolumeImage<TVoxel>
+{
+    Size(image: Self): Integer3;
+    Voxels(image: Self): IArray3D<TVoxel>;
+    Spacing(image: Self): Vector3;
+}
+
+interface IMipmapped<TLevel>
+{
+    Levels(value: Self): IArray<TLevel>;
+}
+
+interface IImageChannel<T>
+    inherits IHasName
+{
+    Values(channel: Self): Image<T>;
+}
+
+interface IMultiChannelImage
+{
+    Size(image: Self): ImageSize;
+    Channels(image: Self): IArray<ImageChannel<Number>>;
+}
+
+interface ICameraCalibration
+{
+    Intrinsics(camera: Self): CameraIntrinsics;
+    Extrinsics(camera: Self): CameraExtrinsics;
+}
+
+interface ICameraIntrinsics
+{
+    ImageSize(camera: Self): ImageSize;
+    PrincipalPoint(camera: Self): Point2D;
+}
+
+interface ICameraExtrinsics
+{
+    WorldToCamera(camera: Self): RigidTransform3D;
+}

@@ -1,0 +1,43 @@
+// Reusable contracts for scalar extensions, polynomials, and numeric models.
+
+interface IComplexScalar
+    inherits IAdditive, IMultiplicative, IDivisible, IConjugatable,
+        IScalable<Number>, INormed<Number>
+{
+    Real(value: Self): Number;
+    Imaginary(value: Self): Number;
+}
+
+interface IRationalScalar
+    inherits IOrdered, IAdditive, IMultiplicative, IDivisible
+{
+    Numerator(value: Self): Integer;
+    Denominator(value: Self): Integer;
+}
+
+interface IDualScalar<TValue, TDerivative>
+{
+    Value(number: Self): TValue;
+    Derivative(number: Self): TDerivative;
+}
+
+interface IPolynomial<TScalar>
+{
+    Coefficients(polynomial: Self): IArray<TScalar>;
+    Evaluate(polynomial: Self, parameter: TScalar): TScalar;
+}
+
+interface IPiecewiseFunction<TDomain, TRange>
+{
+    Evaluate(function: Self, parameter: TDomain): TRange;
+}
+
+interface IFinitePrecision
+{
+    Precision(value: Self): Integer;
+}
+
+interface IArbitraryPrecision
+{
+    LimbCount(value: Self): Integer;
+}

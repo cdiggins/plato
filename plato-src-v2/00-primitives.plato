@@ -1,7 +1,7 @@
 // Compiler-recognized primitive and callable types.
 
-type Number implements IRealScalar { }
-type Integer implements IIntegralScalar { }
+type Number implements IRealScalar, IAlgebraicField, IModulo, IApproximateEquality<Number> { }
+type Integer implements IIntegralScalar, IModulo { }
 type Boolean implements ILogical { }
 type String implements IOrdered { }
 type Character implements IOrdered { }
@@ -23,7 +23,7 @@ type Function2<T0, T1, TResult> { }
 type Function3<T0, T1, T2, TResult> { }
 type Function4<T0, T1, T2, T3, TResult> { }
 
-type Array<T> implements IArray<T> { }
-type Array2D<T> implements IArray2D<T> { }
-type Array3D<T> implements IArray3D<T> { }
-type Array4D<T> implements IArray4D<T> { }
+type Array<T> implements IArray<T>, ISliceable<T> { }
+type Array2D<T> implements IArray2D<T>, IShaped { }
+type Array3D<T> implements IArray3D<T>, IShaped { }
+type Array4D<T> implements IArray4D<T>, IShaped { }

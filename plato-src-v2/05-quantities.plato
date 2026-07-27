@@ -23,8 +23,8 @@ type Dimension
     LuminosityPower: Integer;
 }
 
-type Unit { Name: String; Symbol: String; Dimension: Dimension; Scale: Number; Offset: Number; }
-type Quantity { Value: Number; Unit: Unit; }
+type Unit implements IUnit, IDimensioned, IHasName { Name: String; Symbol: String; Dimension: Dimension; Scale: Number; Offset: Number; }
+type Quantity implements IQuantityOf<Unit>, IDimensioned { Value: Number; Unit: Unit; }
 
 type Angle implements IQuantity { Value: Number; }
 type Length implements IQuantity { Value: Number; }

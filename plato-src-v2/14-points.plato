@@ -1,23 +1,23 @@
 // Points are positions; vectors are displacements.
 
-type Point1D implements IGeometry { X: Number; }
-type Point2D implements IGeometry2D, IMetric<Number> { X: Number; Y: Number; }
-type Point3D implements IGeometry3D, IMetric<Number> { X: Number; Y: Number; Z: Number; }
-type Point4D implements IGeometry4D, IMetric<Number> { X: Number; Y: Number; Z: Number; W: Number; }
-type PointN implements IGeometryND, IMetric<Number> { Coordinates: IArray<Number>; }
+type Point1D implements IGeometry, ICoordinate<Number>, IMetric<Number>, IComponents<Number> { X: Number; }
+type Point2D implements IGeometry2D, ICoordinate<Vector2>, IMetric<Number>, IComponents<Number> { X: Number; Y: Number; }
+type Point3D implements IGeometry3D, ICoordinate<Vector3>, IMetric<Number>, IComponents<Number> { X: Number; Y: Number; Z: Number; }
+type Point4D implements IGeometry4D, ICoordinate<Vector4>, IMetric<Number>, IComponents<Number> { X: Number; Y: Number; Z: Number; W: Number; }
+type PointN implements IGeometryND, ICoordinate<VectorN>, IMetric<Number>, IComponents<Number> { Coordinates: IArray<Number>; }
 
-type HomogeneousPoint2D { X: Number; Y: Number; W: Number; }
-type HomogeneousPoint3D { X: Number; Y: Number; Z: Number; W: Number; }
+type HomogeneousPoint2D implements IHomogeneousCoordinate<Number> { X: Number; Y: Number; W: Number; }
+type HomogeneousPoint3D implements IHomogeneousCoordinate<Number> { X: Number; Y: Number; Z: Number; W: Number; }
 
-type WeightedPoint2D { Point: Point2D; Weight: Number; }
-type WeightedPoint3D { Point: Point3D; Weight: Number; }
-type WeightedPoint4D { Point: Point4D; Weight: Number; }
+type WeightedPoint2D implements IWeighted<Number> { Point: Point2D; Weight: Number; }
+type WeightedPoint3D implements IWeighted<Number> { Point: Point3D; Weight: Number; }
+type WeightedPoint4D implements IWeighted<Number> { Point: Point4D; Weight: Number; }
 
-type PointCloud2D implements IDiscreteGeometry<Point2D> { Points: IArray<Point2D>; }
-type PointCloud3D implements IDiscreteGeometry<Point3D> { Points: IArray<Point3D>; }
-type PointCloud4D implements IDiscreteGeometry<Point4D> { Points: IArray<Point4D>; }
-type PointCloudN implements IDiscreteGeometry<PointN> { Points: IArray<PointN>; }
+type PointCloud2D implements IGeometry2D, IDiscreteGeometry<Point2D>, IBounded<Bounds2D> { Points: IArray<Point2D>; }
+type PointCloud3D implements IGeometry3D, IDiscreteGeometry<Point3D>, IBounded<Bounds3D> { Points: IArray<Point3D>; }
+type PointCloud4D implements IGeometry4D, IDiscreteGeometry<Point4D>, IBounded<Bounds4D> { Points: IArray<Point4D>; }
+type PointCloudN implements IGeometryND, IDiscreteGeometry<PointN>, IBounded<BoundsN> { Points: IArray<PointN>; }
 
 type OrientedPoint2D { Position: Point2D; Normal: Vector2; }
 type OrientedPoint3D { Position: Point3D; Normal: Vector3; }
-type SamplePoint3D { Position: Point3D; Normal: Vector3; Weight: Number; }
+type SamplePoint3D implements IWeighted<Number> { Position: Point3D; Normal: Vector3; Weight: Number; }

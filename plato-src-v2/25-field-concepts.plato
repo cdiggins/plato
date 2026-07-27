@@ -9,6 +9,38 @@ interface IScalarField<TDomain> inherits IField<TDomain, Number> { }
 interface IVectorField<TDomain, TVector> inherits IField<TDomain, TVector> { }
 interface ITensorField<TDomain, TTensor> inherits IField<TDomain, TTensor> { }
 
+interface IDifferentiableField<TDomain, TValue, TGradient>
+    inherits IField<TDomain, TValue>
+{
+    Gradient(field: Self, position: TDomain): TGradient;
+}
+
+interface ITimeVaryingField<TDomain, TValue>
+{
+    Sample(field: Self, position: TDomain, time: Instant): TValue;
+}
+
+interface IBoundedField<TDomain, TValue, TBounds>
+    inherits IField<TDomain, TValue>, IBounded<TBounds>
+{ }
+
+interface IDiscreteField<TDomain, TValue>
+    inherits IField<TDomain, TValue>
+{
+    SamplePoints(field: Self): IArray<TDomain>;
+    SampleValues(field: Self): IArray<TValue>;
+}
+
+interface ISampledField<TGrid, TValue>
+{
+    Grid(field: Self): TGrid;
+    Values(field: Self): IArray<TValue>;
+}
+
+interface IOccupancyField<TDomain>
+    inherits IField<TDomain, Boolean>
+{ }
+
 type ScalarField1D implements IScalarField<Number> { Function: Function1<Number, Number>; }
 type ScalarField2D implements IScalarField<Point2D> { Function: Function1<Point2D, Number>; }
 type ScalarField3D implements IScalarField<Point3D> { Function: Function1<Point3D, Number>; }

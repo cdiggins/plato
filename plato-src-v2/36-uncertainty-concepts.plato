@@ -1,0 +1,44 @@
+// Uncertainty concepts preserve nominal value, dispersion, provenance, and ensembles.
+
+interface IUncertain<T>
+{
+    Value(uncertain: Self): T;
+}
+
+interface IBoundedUncertainty<T>
+    inherits IUncertain<T>
+{
+    Bounds(uncertain: Self): IInterval<T>;
+}
+
+interface ICovariantUncertainty<TValue, TCovariance>
+    inherits IUncertain<TValue>
+{
+    Covariance(uncertain: Self): TCovariance;
+}
+
+interface IMeasurement<T>
+    inherits IUncertain<T>, ITimeStamped
+{
+    Source(measurement: Self): String;
+}
+
+interface IMeasurementSeries<T>
+{
+    Measurements(series: Self): IArray<Measurement<T>>;
+}
+
+interface ICalibration
+    inherits IHasName
+{ }
+
+interface IEnsemble<T>
+{
+    Samples(ensemble: Self): IArray<MonteCarloSample<T>>;
+}
+
+interface IConfidenceRegion<TRegion>
+{
+    Probability(region: Self): Probability;
+    Region(region: Self): TRegion;
+}

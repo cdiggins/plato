@@ -1,18 +1,18 @@
 // Values can carry uncertainty without erasing their nominal type.
 
-type UncertainNumber { Value: Number; StandardUncertainty: Number; }
-type NumberWithBounds { Value: Number; Bounds: NumberInterval; }
-type UncertainVector2 { Value: Vector2; Covariance: SymmetricTensor2; }
-type UncertainVector3 { Value: Vector3; Covariance: SymmetricTensor3; }
-type UncertainPoint2D { Value: Point2D; Covariance: SymmetricTensor2; }
-type UncertainPoint3D { Value: Point3D; Covariance: SymmetricTensor3; }
-type UncertainPose3D { Value: RigidTransform3D; Covariance: Matrix; }
+type UncertainNumber implements IUncertain<Number> { Value: Number; StandardUncertainty: Number; }
+type NumberWithBounds implements IUncertain<Number> { Value: Number; Bounds: NumberInterval; }
+type UncertainVector2 implements ICovariantUncertainty<Vector2, SymmetricTensor2> { Value: Vector2; Covariance: SymmetricTensor2; }
+type UncertainVector3 implements ICovariantUncertainty<Vector3, SymmetricTensor3> { Value: Vector3; Covariance: SymmetricTensor3; }
+type UncertainPoint2D implements ICovariantUncertainty<Point2D, SymmetricTensor2> { Value: Point2D; Covariance: SymmetricTensor2; }
+type UncertainPoint3D implements ICovariantUncertainty<Point3D, SymmetricTensor3> { Value: Point3D; Covariance: SymmetricTensor3; }
+type UncertainPose3D implements ICovariantUncertainty<RigidTransform3D, Matrix> { Value: RigidTransform3D; Covariance: Matrix; }
 
-type Measurement<T> { Value: T; Timestamp: Instant; Source: String; Quality: Number; }
-type MeasurementSeries<T> { Measurements: IArray<Measurement<T>>; }
+type Measurement<T> implements IMeasurement<T> { Value: T; Timestamp: Instant; Source: String; Quality: Number; }
+type MeasurementSeries<T> implements IMeasurementSeries<T> { Measurements: IArray<Measurement<T>>; }
 type CalibrationParameter { Name: String; Value: UncertainNumber; Unit: Unit; }
-type CalibrationModel { Name: String; Parameters: IArray<CalibrationParameter>; }
+type CalibrationModel implements ICalibration { Name: String; Parameters: IArray<CalibrationParameter>; }
 
 type MonteCarloSample<T> { Index: Integer; Value: T; Weight: Number; }
-type Ensemble<T> { Samples: IArray<MonteCarloSample<T>>; }
-type ConfidenceInterval { Probability: Probability; Interval: NumberInterval; }
+type Ensemble<T> implements IEnsemble<T> { Samples: IArray<MonteCarloSample<T>>; }
+type ConfidenceInterval implements IConfidenceRegion<NumberInterval> { Probability: Probability; Interval: NumberInterval; }

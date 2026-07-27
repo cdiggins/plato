@@ -1,6 +1,6 @@
 // Local differential properties for curves, surfaces, and manifolds.
 
-type CurveJet2D
+type CurveJet2D implements ICurveJet<Point2D, Vector2>
 {
     Parameter: Number;
     Point: Point2D;
@@ -8,7 +8,7 @@ type CurveJet2D
     SecondDerivative: Vector2;
 }
 
-type CurveJet3D
+type CurveJet3D implements ICurveJet<Point3D, Vector3>
 {
     Parameter: Number;
     Point: Point3D;
@@ -17,7 +17,7 @@ type CurveJet3D
     ThirdDerivative: Vector3;
 }
 
-type SurfaceJet3D
+type SurfaceJet3D implements ISurfaceJet<Point3D, Vector3>
 {
     Parameter: Vector2;
     Point: Point3D;
@@ -28,9 +28,9 @@ type SurfaceJet3D
     DerivativeVV: Vector3;
 }
 
-type CurveCurvature2D { Curvature: Number; Normal: Vector2; }
-type CurveCurvature3D { Curvature: Number; Torsion: Number; Frame: Frame3D; }
-type SurfaceCurvature3D
+type CurveCurvature2D implements ICurveCurvature<Vector2> { Curvature: Number; Normal: Vector2; }
+type CurveCurvature3D implements ICurveCurvature<Vector3> { Curvature: Number; Torsion: Number; Frame: Frame3D; }
+type SurfaceCurvature3D implements ISurfaceCurvature<Vector3>
 {
     Gaussian: Number;
     Mean: Number;
@@ -40,7 +40,7 @@ type SurfaceCurvature3D
     MaximumDirection: Vector3;
 }
 
-type MetricTensor2D { Value: SymmetricTensor2; }
+type MetricTensor2D implements IMetricTensor<SymmetricTensor2> { Value: SymmetricTensor2; }
 type FundamentalForms3D { First: SymmetricTensor2; Second: SymmetricTensor2; }
-type ManifoldChart<TPoint> { Domain: DomainND; Map: Function1<PointN, TPoint>; }
-type Atlas<TPoint> { Charts: IArray<ManifoldChart<TPoint>>; }
+type ManifoldChart<TPoint> implements IManifoldChart<PointN, TPoint> { Domain: DomainND; Map: Function1<PointN, TPoint>; }
+type Atlas<TPoint> implements IAtlas<ManifoldChart<TPoint>> { Charts: IArray<ManifoldChart<TPoint>>; }

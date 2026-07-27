@@ -1,22 +1,22 @@
 // Algorithms can return rich diagnostics without exceptions or hidden state.
 
-type QueryStatus { Name: String; }
-type ClosestPointResult2D { Point: Point2D; Parameter: Number; Distance: Number; Status: QueryStatus; }
-type ClosestPointResult3D { Point: Point3D; Parameter: Number; Distance: Number; Status: QueryStatus; }
-type RayHit2D { Parameter: Number; Point: Point2D; Normal: Vector2; Feature: Integer; }
-type RayHit3D { Parameter: Number; Point: Point3D; Normal: Vector3; Feature: Integer; }
-type SegmentIntersection2D { Point: Point2D; ParameterA: Number; ParameterB: Number; Status: QueryStatus; }
-type CurveIntersection2D { Point: Point2D; ParameterA: Number; ParameterB: Number; Multiplicity: Integer; }
-type SurfaceIntersection3D { Curve: PolyCurve3D; Status: QueryStatus; }
+type QueryStatus implements IHasName { Name: String; }
+type ClosestPointResult2D implements IQueryResult, IPointResult<Point2D>, IParameterizedResult<Number>, IDistanceResult<Number> { Point: Point2D; Parameter: Number; Distance: Number; Status: QueryStatus; }
+type ClosestPointResult3D implements IQueryResult, IPointResult<Point3D>, IParameterizedResult<Number>, IDistanceResult<Number> { Point: Point3D; Parameter: Number; Distance: Number; Status: QueryStatus; }
+type RayHit2D implements IRayHit<Point2D, Vector2> { Parameter: Number; Point: Point2D; Normal: Vector2; Feature: Integer; }
+type RayHit3D implements IRayHit<Point3D, Vector3> { Parameter: Number; Point: Point3D; Normal: Vector3; Feature: Integer; }
+type SegmentIntersection2D implements IIntersectionResult<Point2D> { Point: Point2D; ParameterA: Number; ParameterB: Number; Status: QueryStatus; }
+type CurveIntersection2D implements IPointResult<Point2D> { Point: Point2D; ParameterA: Number; ParameterB: Number; Multiplicity: Integer; }
+type SurfaceIntersection3D implements IQueryResult { Curve: PolyCurve3D; Status: QueryStatus; }
 
 type FitQuality { RootMeanSquareError: Number; MaximumError: Number; SampleCount: Integer; }
-type LineFit2D { Line: InfiniteLine2D; Quality: FitQuality; }
-type LineFit3D { Line: InfiniteLine3D; Quality: FitQuality; }
-type PlaneFit3D { Plane: Plane3D; Quality: FitQuality; }
-type CircleFit2D { Circle: Circle2D; Quality: FitQuality; }
-type SphereFit3D { Sphere: Sphere3D; Quality: FitQuality; }
+type LineFit2D implements IFitResult<InfiniteLine2D> { Line: InfiniteLine2D; Quality: FitQuality; }
+type LineFit3D implements IFitResult<InfiniteLine3D> { Line: InfiniteLine3D; Quality: FitQuality; }
+type PlaneFit3D implements IFitResult<Plane3D> { Plane: Plane3D; Quality: FitQuality; }
+type CircleFit2D implements IFitResult<Circle2D> { Circle: Circle2D; Quality: FitQuality; }
+type SphereFit3D implements IFitResult<Sphere3D> { Sphere: Sphere3D; Quality: FitQuality; }
 
-type Triangulation2D { Points: IArray<Point2D>; Triangles: IArray<IndexTriple>; }
-type Tetrahedralization3D { Points: IArray<Point3D>; Tetrahedra: IArray<IndexQuad>; }
-type ConvexHull2D { Hull: Polygon2D; SourceIndices: IArray<Integer>; }
-type ConvexHull3D { Hull: TriangleMesh3D; SourceIndices: IArray<Integer>; }
+type Triangulation2D implements ITessellation<Point2D, IndexTriple> { Points: IArray<Point2D>; Triangles: IArray<IndexTriple>; }
+type Tetrahedralization3D implements ITessellation<Point3D, IndexQuad> { Points: IArray<Point3D>; Tetrahedra: IArray<IndexQuad>; }
+type ConvexHull2D implements IConvexHull<Polygon2D> { Hull: Polygon2D; SourceIndices: IArray<Integer>; }
+type ConvexHull3D implements IConvexHull<TriangleMesh3D> { Hull: TriangleMesh3D; SourceIndices: IArray<Integer>; }

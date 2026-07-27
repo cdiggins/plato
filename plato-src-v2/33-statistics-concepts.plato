@@ -1,0 +1,47 @@
+// Statistical concepts expose distributions, summaries, models, and observations.
+
+interface IStatisticalSummary<T>
+{
+    Count(summary: Self): Integer;
+    Minimum(summary: Self): T;
+    Maximum(summary: Self): T;
+    Mean(summary: Self): T;
+}
+
+interface IDistribution<T>
+{
+    ProbabilityDensity(distribution: Self, value: T): Number;
+}
+
+interface IDiscreteDistribution<T>
+    inherits IDistribution<T>
+{
+    Outcomes(distribution: Self): IArray<DiscreteOutcome<T>>;
+}
+
+interface IProbability
+{
+    Value(probability: Self): Number;
+}
+
+interface IHistogram
+{
+    Bins(histogram: Self): IArray<HistogramBin>;
+}
+
+interface IMultivariateModel
+{
+    Dimension(model: Self): Integer;
+}
+
+interface IRegressionModel<TInput, TOutput>
+{
+    Predict(model: Self, input: TInput): TOutput;
+}
+
+interface IStatisticalObservation<TInput, TOutput>
+{
+    Inputs(observation: Self): TInput;
+    Output(observation: Self): TOutput;
+    Weight(observation: Self): Number;
+}

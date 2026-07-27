@@ -1,0 +1,40 @@
+// Affine coordinates distinguish positions from displacement vectors.
+
+interface IDifference<TDelta>
+{
+    Add(point: Self, delta: TDelta): Self;
+    Subtract(point: Self, delta: TDelta): Self;
+    Difference(a: Self, b: Self): TDelta;
+}
+
+interface ICoordinate<TVector>
+    inherits IDifference<TVector>
+{ }
+
+interface IAxis<TPoint, TVector>
+{
+    Origin(axis: Self): TPoint;
+    Direction(axis: Self): TVector;
+}
+
+interface ICoordinateFrame<TPoint, TBasis>
+{
+    Origin(frame: Self): TPoint;
+    Basis(frame: Self): TBasis;
+}
+
+interface ICoordinateSystem
+    inherits IHasName
+{ }
+
+interface IReferencedPosition<TPoint, TReferenceSystem>
+{
+    Point(position: Self): TPoint;
+    ReferenceSystem(position: Self): TReferenceSystem;
+}
+
+interface IHomogeneousCoordinate<TScalar>
+    inherits IComponents<TScalar>
+{
+    Weight(point: Self): TScalar;
+}

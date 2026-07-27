@@ -1,0 +1,81 @@
+// Animation concepts separate keying, evaluation, blending, posing, and deformation.
+
+interface IKeyframe<T>
+{
+    Time(key: Self): Duration;
+    Value(key: Self): T;
+}
+
+interface ITangentKeyframe<T>
+    inherits IKeyframe<T>
+{
+    IncomingTangent(key: Self): T;
+    OutgoingTangent(key: Self): T;
+}
+
+interface IAnimationTrack<T>
+    inherits ITimeVarying<T>
+{
+    Keys(track: Self): IArray<Keyframe<T>>;
+}
+
+interface ITangentAnimationTrack<T>
+    inherits ITimeVarying<T>
+{
+    Keys(track: Self): IArray<TangentKeyframe<T>>;
+}
+
+interface IAnimationClip
+    inherits IHasName, IHasDuration
+{ }
+
+interface IBlendable<T>
+{
+    Blend(a: Self, b: Self, weight: Number): T;
+}
+
+interface IAnimationLayer
+{
+    Weight(layer: Self): Number;
+    Additive(layer: Self): Boolean;
+}
+
+interface ITransformAnimation<TVector, TRotation>
+{
+    Translation(track: Self): AnimationTrack<TVector>;
+    Rotation(track: Self): AnimationTrack<TRotation>;
+    Scale(track: Self): AnimationTrack<TVector>;
+}
+
+interface IAnimationStack
+{
+    Layers(stack: Self): IArray<AnimationLayer>;
+}
+
+interface ISkeleton
+{
+    Joints(skeleton: Self): IArray<Joint>;
+}
+
+interface ISkeletonPose
+{
+    Poses(pose: Self): IArray<JointPose>;
+}
+
+interface ISkin
+{
+    Skeleton(skin: Self): Skeleton;
+    VertexWeights(skin: Self): IArray<VertexSkinWeights>;
+}
+
+interface IMorphTarget
+    inherits IHasName
+{
+    PositionOffsets(target: Self): IArray<Vector3>;
+}
+
+interface IAnimationEvent
+    inherits IHasName
+{
+    Time(event: Self): Duration;
+}

@@ -2,23 +2,23 @@
 
 type SamplingRate { Frequency: Frequency; }
 type SignalSample<T> { Index: Integer; Time: Duration; Value: T; }
-type DiscreteSignal<T> { Rate: SamplingRate; Samples: IArray<T>; Start: Instant; }
-type SignalWindow { Name: String; Parameters: IArray<Number>; }
+type DiscreteSignal<T> implements ISampledSignal<T> { Rate: SamplingRate; Samples: IArray<T>; Start: Instant; }
+type SignalWindow implements IWindowFunction { Name: String; Parameters: IArray<Number>; }
 
-type ComplexSpectrum
+type ComplexSpectrum implements ISpectrum<Complex>
 {
     SampleRate: SamplingRate;
     Values: IArray<Complex>;
 }
 
 type MagnitudePhase { Magnitude: Number; Phase: Angle; }
-type Spectrum { Frequencies: IArray<Frequency>; Values: IArray<MagnitudePhase>; }
+type Spectrum implements ISpectrum<MagnitudePhase> { Frequencies: IArray<Frequency>; Values: IArray<MagnitudePhase>; }
 type Spectrogram { Times: IArray<Duration>; Frequencies: IArray<Frequency>; Magnitudes: IArray2D<Number>; }
 
 type FilterCoefficients { Numerator: IArray<Number>; Denominator: IArray<Number>; }
-type FiniteImpulseResponseFilter { Coefficients: IArray<Number>; }
-type InfiniteImpulseResponseFilter { Coefficients: FilterCoefficients; }
-type StateSpaceModel { A: Matrix; B: Matrix; C: Matrix; D: Matrix; }
+type FiniteImpulseResponseFilter implements IFilter<DiscreteSignal<Number>> { Coefficients: IArray<Number>; }
+type InfiniteImpulseResponseFilter implements IFilter<DiscreteSignal<Number>> { Coefficients: FilterCoefficients; }
+type StateSpaceModel implements IDynamicSystem<VectorN, VectorN, VectorN> { A: Matrix; B: Matrix; C: Matrix; D: Matrix; }
 
-type TransferFunctionModel { Numerator: Polynomial; Denominator: Polynomial; }
-type FrequencyResponse { Frequencies: IArray<Frequency>; Response: IArray<Complex>; }
+type TransferFunctionModel implements ITransferFunction { Numerator: Polynomial; Denominator: Polynomial; }
+type FrequencyResponse implements ISpectrum<Complex> { Frequencies: IArray<Frequency>; Response: IArray<Complex>; }

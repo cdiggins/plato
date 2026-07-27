@@ -3,10 +3,10 @@
 type LinearVelocity3D { Value: Vector3; }
 type AngularVelocity3D { Value: Vector3; }
 type LinearAcceleration3D { Value: Vector3; }
-type Momentum3D { Value: Vector3; }
-type AngularMomentum3D { Value: Vector3; }
-type Force3D { Value: Vector3; }
-type Torque3D { Value: Vector3; }
+type Momentum3D implements IMomentumVector<Vector3> { Value: Vector3; }
+type AngularMomentum3D implements IMomentumVector<Vector3> { Value: Vector3; }
+type Force3D implements IForceVector<Vector3> { Value: Vector3; }
+type Torque3D implements IForceVector<Vector3> { Value: Vector3; }
 
 type MassProperties
 {
@@ -15,7 +15,7 @@ type MassProperties
     Inertia: SymmetricTensor3;
 }
 
-type RigidBodyState
+type RigidBodyState implements IRigidBodyState
 {
     Pose: RigidTransform3D;
     LinearVelocity: LinearVelocity3D;
@@ -23,16 +23,16 @@ type RigidBodyState
     MassProperties: MassProperties;
 }
 
-type ParticleState { Position: Point3D; Velocity: Vector3; Mass: Mass; Age: Duration; }
-type ParticleSystemState { Particles: IArray<ParticleState>; Time: Instant; }
-type ContactPoint { Point: Point3D; Normal: Vector3; Penetration: Length; }
+type ParticleState implements IParticleState<Point3D, Vector3> { Position: Point3D; Velocity: Vector3; Mass: Mass; Age: Duration; }
+type ParticleSystemState implements IParticleSystem<ParticleState> { Particles: IArray<ParticleState>; Time: Instant; }
+type ContactPoint implements IContact<Point3D, Vector3> { Point: Point3D; Normal: Vector3; Penetration: Length; }
 type ContactManifold { BodyA: Integer; BodyB: Integer; Contacts: IArray<ContactPoint>; }
 type CollisionPair { A: Integer; B: Integer; }
 
 type Spring { A: Integer; B: Integer; RestLength: Length; Stiffness: Number; Damping: Number; }
-type Constraint { Name: String; Bodies: IndexPair; Parameters: IArray<Number>; }
+type Constraint implements IPhysicalConstraint { Name: String; Bodies: IndexPair; Parameters: IArray<Number>; }
 
-type FluidState3D
+type FluidState3D implements IContinuumState<UniformGrid3D>
 {
     Grid: UniformGrid3D;
     Velocity: IArray3D<Vector3>;
@@ -40,5 +40,5 @@ type FluidState3D
     Density: IArray3D<Number>;
 }
 
-type StressTensor3D { Value: SymmetricTensor3; }
-type StrainTensor3D { Value: SymmetricTensor3; }
+type StressTensor3D implements ISecondOrderTensorProperty<SymmetricTensor3> { Value: SymmetricTensor3; }
+type StrainTensor3D implements ISecondOrderTensorProperty<SymmetricTensor3> { Value: SymmetricTensor3; }

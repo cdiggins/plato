@@ -1,18 +1,18 @@
 // Dense, sparse, fixed-size, and tensor representations.
 
-type Matrix2x2 { Row0: Vector2; Row1: Vector2; }
-type Matrix3x2 { Row0: Vector2; Row1: Vector2; Row2: Vector2; }
-type Matrix3x3 { Row0: Vector3; Row1: Vector3; Row2: Vector3; }
-type Matrix4x4 { Row0: Vector4; Row1: Vector4; Row2: Vector4; Row3: Vector4; }
+type Matrix2x2 implements ISquareMatrix<Number>, ILinearOperator<Vector2> { Row0: Vector2; Row1: Vector2; }
+type Matrix3x2 implements IMatrix<Number> { Row0: Vector2; Row1: Vector2; Row2: Vector2; }
+type Matrix3x3 implements ISquareMatrix<Number>, ILinearOperator<Vector3> { Row0: Vector3; Row1: Vector3; Row2: Vector3; }
+type Matrix4x4 implements ISquareMatrix<Number>, ILinearOperator<Vector4> { Row0: Vector4; Row1: Vector4; Row2: Vector4; Row3: Vector4; }
 
-type Matrix
+type Matrix implements IMatrix<Number>
 {
     Rows: Integer;
     Columns: Integer;
     Values: IArray<Number>;
 }
 
-type ComplexMatrix
+type ComplexMatrix implements IMatrix<Complex>
 {
     Rows: Integer;
     Columns: Integer;
@@ -20,11 +20,11 @@ type ComplexMatrix
 }
 
 type SparseEntry { Row: Integer; Column: Integer; Value: Number; }
-type SparseMatrix { Rows: Integer; Columns: Integer; Entries: IArray<SparseEntry>; }
-type BandedMatrix { Rows: Integer; Columns: Integer; LowerBandwidth: Integer; UpperBandwidth: Integer; Values: IArray<Number>; }
+type SparseMatrix implements ISparseMatrix<Number> { Rows: Integer; Columns: Integer; Entries: IArray<SparseEntry>; }
+type BandedMatrix implements IMatrix<Number> { Rows: Integer; Columns: Integer; LowerBandwidth: Integer; UpperBandwidth: Integer; Values: IArray<Number>; }
 
-type Tensor2 { XX: Number; XY: Number; YX: Number; YY: Number; }
-type Tensor3 { Row0: Vector3; Row1: Vector3; Row2: Vector3; }
-type SymmetricTensor2 { XX: Number; XY: Number; YY: Number; }
-type SymmetricTensor3 { XX: Number; XY: Number; XZ: Number; YY: Number; YZ: Number; ZZ: Number; }
-type Tensor { Shape: ShapeND; Values: IArray<Number>; }
+type Tensor2 implements ITensor<Number> { XX: Number; XY: Number; YX: Number; YY: Number; }
+type Tensor3 implements ITensor<Number> { Row0: Vector3; Row1: Vector3; Row2: Vector3; }
+type SymmetricTensor2 implements ISymmetricTensor<Number> { XX: Number; XY: Number; YY: Number; }
+type SymmetricTensor3 implements ISymmetricTensor<Number> { XX: Number; XY: Number; XZ: Number; YY: Number; YZ: Number; ZZ: Number; }
+type Tensor implements ITensor<Number> { Shape: ShapeND; Values: IArray<Number>; }

@@ -1,10 +1,10 @@
 // Axis-aligned, oriented, spherical, and higher-dimensional bounds.
 
-type Bounds1D { Minimum: Point1D; Maximum: Point1D; }
-type Bounds2D implements IGeometry2D { Minimum: Point2D; Maximum: Point2D; }
-type Bounds3D implements IGeometry3D { Minimum: Point3D; Maximum: Point3D; }
-type Bounds4D implements IGeometry4D { Minimum: Point4D; Maximum: Point4D; }
-type BoundsN implements IGeometryND { Minimum: PointN; Maximum: PointN; }
+type Bounds1D implements IInterval<Point1D>, IContains<Point1D>, IBounded<Bounds1D> { Minimum: Point1D; Maximum: Point1D; }
+type Bounds2D implements IGeometry2D, IInterval<Point2D>, IContains<Point2D>, IBounded<Bounds2D> { Minimum: Point2D; Maximum: Point2D; }
+type Bounds3D implements IGeometry3D, IInterval<Point3D>, IContains<Point3D>, IBounded<Bounds3D> { Minimum: Point3D; Maximum: Point3D; }
+type Bounds4D implements IGeometry4D, IInterval<Point4D>, IContains<Point4D>, IBounded<Bounds4D> { Minimum: Point4D; Maximum: Point4D; }
+type BoundsN implements IGeometryND, IInterval<PointN>, IContains<PointN>, IBounded<BoundsN> { Minimum: PointN; Maximum: PointN; }
 
 type OrientedBounds2D { Frame: Frame2D; HalfExtents: Vector2; }
 type OrientedBounds3D { Frame: Frame3D; HalfExtents: Vector3; }

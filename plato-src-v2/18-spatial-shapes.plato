@@ -23,11 +23,11 @@ type Tetrahedron3D implements IGeometry3D, IClosed, IConvex
     D: Point3D;
 }
 
-type Polygon3D implements IGeometry3D, IClosed { Plane: Plane3D; Vertices: IArray<Point3D>; }
-type Polyline3D implements IGeometry3D, IOpen { Points: IArray<Point3D>; }
-type ClosedPolyline3D implements IGeometry3D, IClosed { Points: IArray<Point3D>; }
-type Polyhedron3D implements IGeometry3D, IClosed { Vertices: IArray<Point3D>; Faces: IArray<IndexLoop>; }
-type ConvexPolyhedron3D implements IGeometry3D, IClosed, IConvex { HalfSpaces: IArray<HalfSpace3D>; }
+type Polygon3D implements IGeometry3D, IPolygon<Point3D>, IBounded<Bounds3D> { Plane: Plane3D; Vertices: IArray<Point3D>; }
+type Polyline3D implements IGeometry3D, IPolyline<Point3D>, IOpen, IBounded<Bounds3D> { Points: IArray<Point3D>; }
+type ClosedPolyline3D implements IGeometry3D, IPolygon<Point3D>, IBounded<Bounds3D> { Points: IArray<Point3D>; }
+type Polyhedron3D implements IGeometry3D, IClosed, IFaceTopology, IBounded<Bounds3D>, IContains<Point3D> { Vertices: IArray<Point3D>; Faces: IArray<IndexLoop>; }
+type ConvexPolyhedron3D implements IGeometry3D, IClosed, IConvex, IBounded<Bounds3D>, IContains<Point3D> { HalfSpaces: IArray<HalfSpace3D>; }
 
 type Frustum3D { Planes: IArray<HalfSpace3D>; }
 type Wedge3D { Base: Triangle3D; Offset: Vector3; }
