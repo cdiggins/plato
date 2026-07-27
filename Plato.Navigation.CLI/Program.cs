@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Ara3D.Utils;
 
 namespace Ara3D.Geometry.Navigation.CLI;
@@ -8,6 +9,7 @@ public static class Program
         Usage: Plato.Navigation.CLI <verb> [args] --root <dir> [--root <dir> ...]
 
           stats                          index the roots and print counts and timings
+          bench                          v1 rebuild vs v2 incremental update, best of two runs
           search <name> [--kind K]       find definitions by name (K = exact|prefix|all)
           outline <file>                 list every definition in one file, in source order
           def <file> <line> <col>        definitions of the symbol at a position (0-based)
@@ -34,6 +36,8 @@ public static class Program
         var verb = args[0];
         if (verb == "stats")
             return Stats(roots);
+        if (verb == "bench")
+            return Bench(roots);
 
         var index = NavigationIndex.Build(SourceSnapshot.FromDirectories(roots));
         return verb switch
@@ -74,6 +78,48 @@ public static class Program
             Console.WriteLine($"  ! {d}");
 
         return 0;
+    }
+
+    /// <summary>Best of two runs per scenario — this machine is rarely quiet enough for a single
+    /// sample to mean anything. Every scenario builds its snapshot from text already in memory, so
+    /// the numbers are parse + bind + index and never disk.</summary>
+    private static int Bench(IReadOnlyList<DirectoryPath> roots)
+    {
+        var texts = SourceSnapshot.FromDirectories(roots).Files.ToDictionary(f => f.Path, f => f.Text);
+        var victim = texts.Keys.OrderBy(SourceSnapshot.PathKey, StringComparer.Ordinal).First();
+        var baseline = SourceSnapshot.FromTexts(texts);
+
+        Console.WriteLine($"files          : {baseline.Files.Count}");
+        Console.WriteLine($"lines          : {baseline.Files.Sum(f => f.Text.Count(c => c == '\n') + 1)}");
+
+        Report("v1 build (cold or reload)", () => NavigationIndex.Build(SourceSnapshot.FromTexts(texts)));
+        Report("v2 cold build", () => new IncrementalIndexer().Update(SourceSnapshot.FromTexts(texts)));
+
+        var indexer = new IncrementalIndexer();
+        indexer.Update(baseline);
+        Report("v2 reload, no changes", () => indexer.Update(SourceSnapshot.FromTexts(texts)));
+
+        var n = 0;
+        Report("v2 reload, 1 file changed", () =>
+            indexer.Update(SourceSnapshot.FromTexts(
+                new Dictionary<FilePath, string>(texts) { [victim] = texts[victim] + $"\n// {n++}\n" })));
+
+        var last = indexer.LastUpdate;
+        Console.WriteLine($"  last update    : parsed {last.FilesParsed} of {last.Files}, reused {last.FilesReused}, "
+                          + $"parse {last.ParseTime.TotalMilliseconds:F0} ms, bind {last.BindTime.TotalMilliseconds:F0} ms");
+        return 0;
+    }
+
+    private static void Report(string label, Action run)
+    {
+        var best = double.MaxValue;
+        for (var i = 0; i < 2; i++)
+        {
+            var timer = Stopwatch.StartNew();
+            run();
+            best = Math.Min(best, timer.Elapsed.TotalMilliseconds);
+        }
+        Console.WriteLine($"{label,-28}: {best,7:F0} ms");
     }
 
     private static int Search(NavigationIndex index, IReadOnlyList<string> positional, string? kind)

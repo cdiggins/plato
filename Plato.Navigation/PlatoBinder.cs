@@ -51,9 +51,17 @@ public sealed class BoundSnapshot
     }
 
     public static BoundSnapshot Create(SourceSnapshot snapshot, ILogger? logger = null)
+        => Create(snapshot, ParseFile, logger);
+
+    /// <summary>Binds a snapshot whose unchanged files come back from <paramref name="cache"/>
+    /// instead of the parser. Binding is whole-program, so it is always rerun in full (§6).</summary>
+    public static BoundSnapshot Create(SourceSnapshot snapshot, ParseCache cache, ILogger? logger = null)
+        => Create(snapshot, cache.Parse, logger);
+
+    private static BoundSnapshot Create(SourceSnapshot snapshot, Func<SourceFile, ParsedFile> parse, ILogger? logger)
     {
         var parseTimer = Stopwatch.StartNew();
-        var files = snapshot.Files.Select(Parse).ToList();
+        var files = snapshot.Files.Select(parse).ToList();
         parseTimer.Stop();
 
         var declarations = files
@@ -78,7 +86,7 @@ public sealed class BoundSnapshot
         return new BoundSnapshot(snapshot, files, factory, abort, parseTimer.Elapsed, bindTimer.Elapsed);
     }
 
-    private static ParsedFile Parse(SourceFile file)
+    public static ParsedFile ParseFile(SourceFile file)
     {
         var parser = CommonParsers.PlatoParser(new ParserInput(file.Text, file.Path), Logger.Null);
         if (!parser.Succeeded)

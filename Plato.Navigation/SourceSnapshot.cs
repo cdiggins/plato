@@ -71,8 +71,12 @@ public sealed class SourceSnapshot
             .OrderBy(g => g.Key, StringComparer.Ordinal)
             .Select(g => g.First());
 
-    private static string Key(FilePath path)
+    /// <summary>The identity a path has inside a snapshot: separators and case normalized. Public
+    /// so a parse cache can key on exactly the same notion of "the same file" (D10, v2).</summary>
+    public static string PathKey(FilePath path)
         => path.ToString()!.Replace('\\', '/').ToLowerInvariant();
+
+    private static string Key(FilePath path) => PathKey(path);
 
     private static string ComputeGeneration(IReadOnlyList<SourceFile> files)
     {
