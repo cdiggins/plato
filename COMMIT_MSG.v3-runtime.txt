@@ -1,0 +1,21 @@
+feat(plato-v3): Plato.Intrinsics.V3 runtime + buildable Plato.Generated.V3
+
+The v3 generated library now compiles standalone: 293 errors -> 0.
+
+- Plato.Intrinsics.V3/: handwritten net8.0 runtime seeded from V2, adapted to
+  the v3 concept surface (Magnitude/RowCount/Radians/Amount/Distance properties,
+  Hash/Lerp/Compare/NumericalLimits obligations, Number/Integer wrapper-receiver
+  bridges, matrix %/unary- operators, params CombineHashCodes, existential-field
+  cascade partials for the 8 curve/surface-field types).
+- Plato.Generated.V3/: csproj compiling regenerated v3 output + the V3 runtime
+  in one assembly (partial structs). Generated/ is script-produced.
+- Plato.Generated.V3.Tests/: NUnit smoke suite (7 tests) — vector math,
+  sum-type cases incl. payloads, quaternion/matrix transforms, plane projection.
+- Plato.CSharpWriter/CSharpTypeWriter.cs: At/Count for a single Array-typed
+  field forward to the collection (fixes VectorN); goldens byte-identical.
+
+Gates: Generated.V3 build 0 errors; smoke 7/7; PlatoTests 142/142;
+conformance 205/205; regen-generated 184/184 identical x2; frozen V1 clean.
+New projects intentionally NOT added to Ara3D.Studio.sln.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>

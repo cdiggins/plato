@@ -185,6 +185,26 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         var fs = t.TypeDef.Fields.Select(tf => tf.Name).ToList();
         Write(f.MethodSignature);
 
+        // Single collection-typed field (e.g. VectorN.Components: Array<Number>):
+        // At/Count forward to the collection rather than treating the field as a component.
+        var singleArrayField = t.TypeDef.Fields.Count == 1
+            && t.TypeDef.Fields[0].Type?.Def?.Name is "Array" or "Array2D" or "Array3D"
+            ? t.TypeDef.Fields[0].Name
+            : null;
+
+        if (f.Name == "At" && singleArrayField != null)
+        {
+            WriteLine($" => {singleArrayField}[{pns[1]}];");
+            if (!Writer.NoProperties)
+                WriteLine($"{f.IndexerSig} {{ {Annotation} get => At(n); }}");
+            return this;
+        }
+
+        if (f.Name == "Count" && singleArrayField != null)
+        {
+            return WriteLine($" {{ {Annotation} get => {singleArrayField}.Count; }}");
+        }
+
         if (f.Name == "At")
         {
             var p = pns[1];
