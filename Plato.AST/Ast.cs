@@ -214,6 +214,32 @@ namespace Ara3D.Geometry.AST
         public override string ToString() => $"{Function}({string.Join(",", Arguments)})";
     }
 
+    // One arm of a match expression: a case name, an optional positional binder list (identifiers
+    // bound to the case's fields in declaration order), and a body expression. A no-payload arm has
+    // an empty Binders list. Semantic checks (binder arity, exhaustiveness) are wave-2 work.
+    public class AstMatchArm : AstNode
+    {
+        public AstIdentifier CaseName { get; }
+        public IReadOnlyList<AstIdentifier> Binders { get; }
+        public AstNode Body { get; }
+        public AstMatchArm(ILocation location, AstIdentifier caseName, IEnumerable<AstIdentifier> binders, AstNode body)
+            : base(location) => (CaseName, Binders, Body) = (caseName, binders.ToListOrEmpty(), body);
+        public override IEnumerable<AstNode> Children => base.Children.Append(CaseName).Concat(Binders).Append(Body);
+        public override string ToString() => $"({CaseName}({string.Join(",", Binders)}) => {Body})";
+    }
+
+    // A match expression: "match (Scrutinee) { arm; arm; ... }". It is an expression, usable anywhere
+    // an expression is. No default arm in v1.
+    public class AstMatch : AstNode
+    {
+        public AstNode Scrutinee { get; }
+        public IReadOnlyList<AstMatchArm> Arms { get; }
+        public AstMatch(ILocation location, AstNode scrutinee, IEnumerable<AstMatchArm> arms)
+            : base(location) => (Scrutinee, Arms) = (scrutinee, arms.ToListOrEmpty());
+        public override IEnumerable<AstNode> Children => base.Children.Append(Scrutinee).Concat(Arms);
+        public override string ToString() => $"(match {Scrutinee} {{ {string.Join(" ", Arms)} }})";
+    }
+
     public class AstTypeNode : AstNode
     {
         public AstIdentifier Name { get; }
@@ -260,6 +286,18 @@ namespace Ara3D.Geometry.AST
         public AstParameterDeclaration(ILocation location, AstIdentifier name, AstTypeNode type, int index) : base(location, name) 
             => (Type, Index) = (type, index);
         public override IEnumerable<AstNode> Children => base.Children.Append(Type);
+    }
+
+    // One case (variant) of a sum type: a name and an optional list of typed fields. A no-payload
+    // case (e.g. "Close", "NonZero") has an empty Fields list. Fields reuse AstParameterDeclaration
+    // (positional index + name + type), the same shape produced by a FunctionParameter.
+    public class AstCaseDeclaration : AstDeclaration
+    {
+        public IReadOnlyList<AstParameterDeclaration> Fields { get; }
+        public AstCaseDeclaration(ILocation location, AstIdentifier name, IEnumerable<AstParameterDeclaration> fields)
+            : base(location, name) => Fields = fields.ToListOrEmpty();
+        public override IEnumerable<AstNode> Children => base.Children.Concat(Fields);
+        public override string ToString() => $"({Name}({string.Join(",", Fields)}))";
     }
 
     public class AstMethodDeclaration : AstMemberDeclaration
@@ -323,6 +361,12 @@ namespace Ara3D.Geometry.AST
         // Only the intrinsic builder types (List, Buffer) may carry it; the compiler
         // hard-rejects it anywhere else.
         public bool IsUnique { get; set; }
+
+        // Sum-type (tagged-union) cases when declared with the "= Case | Case | ...;" body. Empty for
+        // ordinary types (Kind stays ConcreteType); non-empty exactly when this is a sum type. Carried
+        // as a settable property (like IsUnique) so the constructor signature and all existing callers
+        // stay unchanged. Members is empty when Cases is non-empty.
+        public IReadOnlyList<AstCaseDeclaration> Cases { get; set; } = Array.Empty<AstCaseDeclaration>();
         public IReadOnlyList<AstTypeParameter> TypeParameters { get; }
         public IReadOnlyList<AstTypeNode> Inherits { get; }
         public IReadOnlyList<AstTypeNode> Implements { get; }
@@ -349,7 +393,7 @@ namespace Ara3D.Geometry.AST
         }
 
         public override IEnumerable<AstNode> Children =>
-            base.Children.Concat(TypeParameters).Concat(Inherits).Concat(Implements).Concat(Members);
+            base.Children.Concat(TypeParameters).Concat(Inherits).Concat(Implements).Concat(Members).Concat(Cases);
 
         public override string ToString()
         {

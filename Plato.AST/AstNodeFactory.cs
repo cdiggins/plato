@@ -251,6 +251,17 @@ namespace Ara3D.Geometry.AST
             return new AstFieldDeclaration(fieldDeclaration, name, type, null);
         }
 
+        // One case of a sum type: "Name" or "Name(f0: T0, f1: T1, ...)". A no-payload case has no
+        // parenthesized list and yields an empty field list. Fields reuse the FunctionParameter shape.
+        public static AstCaseDeclaration ToAst(this CstCaseDeclaration caseDeclaration)
+        {
+            var name = ToAst(caseDeclaration.Identifier.Node);
+            var fields = caseDeclaration.FunctionParameterList.Present
+                ? caseDeclaration.FunctionParameterList.Node.FunctionParameter.Nodes.Select(ToAst).ToList()
+                : new List<AstParameterDeclaration>();
+            return new AstCaseDeclaration(caseDeclaration, name, fields);
+        }
+
         public static AstConstraint ToAst(this CstConstraint constraint)
         {
             return new AstConstraint(constraint, 
@@ -341,6 +352,11 @@ namespace Ara3D.Geometry.AST
                 return expr.Identifier.ToAst();
             }
 
+            if (expr.MatchExpression.Present)
+            {
+                return ToAst(expr.MatchExpression.Node);
+            }
+
             if (expr.Default.Present)
             {
                 if (expr.Default.Node.TypeExpr.Present)
@@ -415,6 +431,27 @@ namespace Ara3D.Geometry.AST
             return ToAst(body.Expression.Node);
         }
 
+        // match (scrutinee) { arm; arm; ... } -> AstMatch. The scrutinee is unwrapped from its
+        // parentheses (same as if/while conditions) by routing the filter through the CstNode switch.
+        public static AstNode ToAst(this CstMatchExpression match)
+        {
+            var scrutinee = ToAst(match.ParenthesizedExpression);
+            var arms = match.MatchArm.Nodes.Select(ToAst).ToList();
+            return new AstMatch(match, scrutinee, arms);
+        }
+
+        // CaseName (b0, b1, ...) => body ;  -> AstMatchArm. Binders are positional identifiers; a
+        // no-payload arm omits the parentheses and yields an empty binder list.
+        public static AstMatchArm ToAst(this CstMatchArm arm)
+        {
+            var caseName = ToAst(arm.Identifier.Node);
+            var binders = arm.MatchArmBinders.Present
+                ? arm.MatchArmBinders.Node.Identifier.Nodes.Select(n => n.ToAst()).ToList()
+                : new List<AstIdentifier>();
+            var body = ToAst(arm.Expression.Node);
+            return new AstMatchArm(arm, caseName, binders, body);
+        }
+
         public static AstTypeDeclaration ToAst(this CstTopLevelDeclaration cstTopLevelDeclaration)
         {
             if (cstTopLevelDeclaration.Type.Present)
@@ -427,10 +464,17 @@ namespace Ara3D.Geometry.AST
                                  Array.Empty<AstTypeNode>();
                 var members = type.FieldDeclaration.Nodes.Select(ToAst).Cast<AstMemberDeclaration>().ToArray();
 
+                // Sum-type (tagged-union) body "= Case | Case | ...;". Empty for ordinary/braced types.
+                var cases = type.SumTypeBody.Present
+                    ? type.SumTypeBody.Node.CaseDeclaration.Nodes.Select(ToAst).ToArray()
+                    : Array.Empty<AstCaseDeclaration>();
+
                 return new AstTypeDeclaration(cstTopLevelDeclaration, TypeKind.ConcreteType, name, typeParameters, inherits, implements, Array.Empty<AstConstraint>(), members)
                 {
                     // Affine-type modifier (roadmap Phase 6): "unique type ..."
                     IsUnique = type.UniqueKeyword.Present,
+                    // Sum-type cases (empty unless declared with the "=" body).
+                    Cases = cases,
                 };
             }
 
