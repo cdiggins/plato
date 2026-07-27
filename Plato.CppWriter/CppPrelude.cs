@@ -137,6 +137,10 @@ namespace plato
     }
     PLATO_FN float3 reflect_(float3 v, float3 n) { return v - n * (2.0f * dot_(v, n)); }
     PLATO_FN float2 reflect_(float2 v, float2 n) { return v - n * (2.0f * dot_(v, n)); }
+
+    // Structural GetHashCode helpers (device-safe; not cryptographic).
+    PLATO_FN int hash_float(float x) { return (int)(x * 73856093.0f) ^ (int)x; }
+    PLATO_FN int mix_hash(int a, int b) { return a * 16777619 ^ b; }
 }
 ";
     }

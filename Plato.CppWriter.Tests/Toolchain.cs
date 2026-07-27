@@ -110,8 +110,20 @@ public static class Toolchain
         return Run("cmd.exe", "/c " + command, workingDir);
     }
 
-    public static (int ExitCode, string Output) CompileWithNvcc(string nvcc, string workingDir, string sourceFile)
-        => Run(nvcc, $"-std=c++17 -c \"{sourceFile}\" -o \"{Path.ChangeExtension(sourceFile, ".obj")}\"", workingDir);
+    public static (int ExitCode, string Output) CompileWithNvcc(string nvcc, string workingDir, string sourceFile,
+        string? vcvars = null)
+    {
+        var outObj = Path.ChangeExtension(sourceFile, ".obj");
+        var nvccArgs = $"-std=c++17 -c \"{sourceFile}\" -o \"{outObj}\"";
+        // nvcc shells out to cl.exe; without the MSVC environment it dies with
+        // "Cannot find compiler 'cl.exe' in PATH" and no ": error" line for AssertCompiles.
+        if (vcvars != null)
+        {
+            var command = $"\"\"{vcvars}\" >nul && \"{nvcc}\" {nvccArgs}\"";
+            return Run("cmd.exe", "/c " + command, workingDir);
+        }
+        return Run(nvcc, nvccArgs, workingDir);
+    }
 
     /// <summary>
     /// A stand-in for the CUDA headers, so a .cu can be compiled by a plain host C++ compiler

@@ -152,12 +152,15 @@ namespace Ara3D.Geometry.CppWriter
 
         public static HashSet<string> IgnoredFunctions = new HashSet<string>()
         {
-            "FieldNames", "FieldValues", "TypeName",
-            "Equals", "NotEquals", "GetHashCode", "ToString", "GetType",
-            // Components returns an array by value, which C/C++ cannot do without a wrapper.
-            "Components", "CreateFromComponents", "CreateFromComponent",
+            // Reflection that needs String / dynamic IArray (M3/M4) — not emitted yet.
+            "FieldNames", "FieldValues", "TypeName", "ToString", "GetType",
+            // CreateFrom* needs an IArray value type (M4); Components is generated for IArrayLike.
+            "CreateFromComponents", "CreateFromComponent",
             "Range", "MakeArray2D", "MapRange",
         };
+
+        /// <summary>Fixed-size array PODs synthesized for <c>Components</c> returns (not Plato Array).</summary>
+        private readonly Dictionary<string, (string Elem, int N)> _fixedArrays = new Dictionary<string, (string, int)>();
 
         public static HashSet<string> CppKeywords = new HashSet<string>()
         {
@@ -246,6 +249,73 @@ namespace Ara3D.Geometry.CppWriter
         public static bool IsVector(string cppType)
             => cppType == "float2" || cppType == "float3" || cppType == "float4";
 
+        public static IReadOnlyList<string> VectorFieldNames(string cppType)
+            => cppType == "float2" ? new[] { "x", "y" }
+                : cppType == "float3" ? new[] { "x", "y", "z" }
+                : cppType == "float4" ? new[] { "x", "y", "z", "w" }
+                : (IReadOnlyList<string>)Array.Empty<string>();
+
+        /// <summary>
+        /// Homogeneous float component accessors for a native vector or an emitted struct whose
+        /// fields are all <c>float</c>. Used to lower Dot/Length/ops on Point2D-like types.
+        /// </summary>
+        public bool TryFloatComponents(string cppType, out IReadOnlyList<string> fields)
+        {
+            fields = VectorFieldNames(cppType);
+            if (fields.Count > 0)
+                return true;
+            var st = _structTypes.FirstOrDefault(c => c.TypeDef.Name == cppType);
+            if (st == null)
+                return false;
+            var names = new List<string>();
+            foreach (var f in st.TypeDef.Fields)
+            {
+                if (CppTypeNameOrNull(f.Type) != "float")
+                    return false;
+                names.Add(EscapeName(f.Name));
+            }
+            if (names.Count == 0)
+                return false;
+            fields = names;
+            return true;
+        }
+
+        public static string MakeFloatVector(int arity, IEnumerable<string> args)
+            => $"make_float{arity}({args.JoinStringsWithComma()})";
+
+        public string FloatVectorExpr(string expr, string cppType)
+        {
+            if (!TryFloatComponents(cppType, out var fields))
+                return expr;
+            if (IsVector(cppType))
+                return expr;
+            return MakeFloatVector(fields.Count, fields.Select(f => $"{expr}.{f}"));
+        }
+
+        public string StructFromFloatVector(string cppType, string floatExpr)
+        {
+            if (IsVector(cppType) || !TryFloatComponents(cppType, out var fields))
+                return floatExpr;
+            var sw = new[] { "x", "y", "z", "w" };
+            var comps = fields.Select((_, i) => $"{floatExpr}.{sw[i]}");
+            return $"{cppType}{{ {comps.JoinStringsWithComma()} }}";
+        }
+
+        /// <summary>Default value expression for a C++ type (static-call type tags, etc.).</summary>
+        public string DefaultValueExpr(string cppType)
+        {
+            switch (cppType)
+            {
+                case "float": return "0.0f";
+                case "int": return "0";
+                case "bool": return "false";
+                case "float2": return "make_float2(0.0f, 0.0f)";
+                case "float3": return "make_float3(0.0f, 0.0f, 0.0f)";
+                case "float4": return "make_float4(0.0f, 0.0f, 0.0f, 0.0f)";
+                default: return $"{cppType}{{}}";
+            }
+        }
+
         /// <summary>The key at which a call is resolved against the emitted set: name and parameter types.</summary>
         public static string SignatureKey(string name, IEnumerable<string> types)
             => $"{name}({types.Select(t => t ?? "?").JoinStringsWithComma()})";
@@ -277,8 +347,10 @@ namespace Ara3D.Geometry.CppWriter
 
             ComputeStructs();
             WriteStructs();
+            WriteReflectionHelpers();
             CollectConstants();
             CollectMemberFunctions();
+            WriteFixedArrayStructs();
             PruneUnresolvedCalls();
 
             WriteLine("// ---- Function prototypes ----");
@@ -447,6 +519,92 @@ namespace Ara3D.Geometry.CppWriter
             WriteLine();
         }
 
+        private void WriteFixedArrayStructs()
+        {
+            if (_fixedArrays.Count == 0)
+                return;
+            WriteLine("// ---- Fixed-size Components return types ----");
+            foreach (var kv in _fixedArrays.OrderBy(k => k.Key))
+            {
+                var name = kv.Key;
+                var (elem, n) = kv.Value;
+                WriteLine($"struct {name}");
+                WriteLine("{");
+                IndentLevel++;
+                for (var i = 0; i < n; i++)
+                    WriteLine($"{elem} e{i};");
+                IndentLevel--;
+                WriteLine("};");
+                WriteLine();
+
+                var chain = $"a.e{n - 1}";
+                for (var i = n - 2; i >= 0; i--)
+                    chain = $"(i <= {i} ? a.e{i} : {chain})";
+                AddGenerated("At", new[] { name, "int" }, $"PLATO_FN {elem} At({name} a, int i)",
+                    $" {{ return {chain}; }}");
+                AddGenerated("Count", new[] { name }, $"PLATO_FN int Count({name} a)",
+                    $" {{ return {n}; }}");
+                AddGenerated("NumComponents", new[] { name }, $"PLATO_FN int NumComponents({name} a)",
+                    $" {{ return {n}; }}");
+            }
+        }
+
+        /// <summary>
+        /// Equals/NotEquals forward to ==/!=; GetHashCode is a structural mix of field hashes.
+        /// Emitted for every representable type so call sites that name these helpers compile.
+        /// </summary>
+        private void WriteReflectionHelpers()
+        {
+            WriteLine("// ---- Equals / NotEquals / GetHashCode ----");
+            void EmitPair(string type, string hashBody)
+            {
+                var eqKey = SignatureKey("Equals", new[] { type, type });
+                if (_claimedSignatures.Add($"Equals({type}, {type})"))
+                {
+                    var sig = $"PLATO_FN bool Equals({type} a, {type} b)";
+                    Add($"generated.Equals", eqKey, sig, $"{sig} {{ return a == b; }}", null);
+                }
+                if (_claimedSignatures.Add($"NotEquals({type}, {type})"))
+                {
+                    var sig = $"PLATO_FN bool NotEquals({type} a, {type} b)";
+                    Add($"generated.NotEquals", SignatureKey("NotEquals", new[] { type, type }),
+                        sig, $"{sig} {{ return a != b; }}", null);
+                }
+                if (_claimedSignatures.Add($"GetHashCode({type})"))
+                {
+                    var sig = $"PLATO_FN int GetHashCode({type} a)";
+                    Add($"generated.GetHashCode", SignatureKey("GetHashCode", new[] { type }),
+                        sig, $"{sig} {{ return {hashBody}; }}", null);
+                }
+            }
+
+            EmitPair("float", "plato::hash_float(a)");
+            EmitPair("int", "a");
+            EmitPair("bool", "(a ? 1 : 0)");
+            EmitPair("float2", "plato::mix_hash(plato::hash_float(a.x), plato::hash_float(a.y))");
+            EmitPair("float3", "plato::mix_hash(plato::mix_hash(plato::hash_float(a.x), plato::hash_float(a.y)), plato::hash_float(a.z))");
+            EmitPair("float4", "plato::mix_hash(plato::mix_hash(plato::mix_hash(plato::hash_float(a.x), plato::hash_float(a.y)), plato::hash_float(a.z)), plato::hash_float(a.w))");
+
+            foreach (var c in _structTypes)
+            {
+                var n = c.TypeDef.Name;
+                var fields = c.TypeDef.Fields.Select(f => EscapeName(f.Name)).ToList();
+                string hash;
+                if (fields.Count == 0)
+                    hash = "0";
+                else if (fields.Count == 1)
+                    hash = $"GetHashCode(a.{fields[0]})";
+                else
+                {
+                    hash = $"GetHashCode(a.{fields[0]})";
+                    for (var i = 1; i < fields.Count; i++)
+                        hash = $"plato::mix_hash({hash}, GetHashCode(a.{fields[i]}))";
+                }
+                EmitPair(n, hash);
+            }
+            WriteLine();
+        }
+
         // ---- Functions ----------------------------------------------------------
 
         private void CollectConstants()
@@ -567,7 +725,34 @@ namespace Ara3D.Geometry.CppWriter
             AddGenerated("NumComponents", new[] { name }, $"PLATO_FN int NumComponents({name} self)", $" {{ return {n}; }}");
             handled.Add("NumComponents");
 
+            // Components: fixed-size value (GLSL T[N]). float×2/3/4 → floatN; else a FixedArray POD.
+            var comps = fields.Select(f => $"self.{f}").JoinStringsWithComma();
+            string compsRet;
+            string compsBody;
+            if (elem == "float" && n >= 2 && n <= 4)
+            {
+                compsRet = $"float{n}";
+                compsBody = $" {{ return make_float{n}({comps}); }}";
+            }
+            else
+            {
+                compsRet = FixedArrayTypeName(elem, n);
+                var inits = fields.Select(f => $"self.{f}").JoinStringsWithComma();
+                compsBody = $" {{ return {compsRet}{{ {inits} }}; }}";
+            }
+            AddGenerated("Components", new[] { name }, $"PLATO_FN {compsRet} Components({name} self)", compsBody);
+            handled.Add("Components");
+
             return handled;
+        }
+
+        private string FixedArrayTypeName(string elem, int n)
+        {
+            var sanitized = elem.Replace("::", "_").Replace(" ", "_");
+            var name = $"FixedArray_{n}_{sanitized}";
+            if (!_fixedArrays.ContainsKey(name))
+                _fixedArrays[name] = (elem, n);
+            return name;
         }
 
         private void AddGenerated(string name, string[] paramTypes, string sig, string bodyWithBraces)
@@ -598,11 +783,9 @@ namespace Ara3D.Geometry.CppWriter
                 if (fi.ParameterNames.Count == 0)
                     return; // constants are handled by CollectConstants
 
-                if (fi.ParameterNames[0] == "_")
-                {
-                    Skipped.Add($"{label}: static member functions not emitted (POC)");
-                    return;
-                }
+                // Static members (first param "_"): still emitted as free functions. The "_"
+                // parameter stays in the signature so overloads like UnitX(Vector2) /
+                // UnitX(Vector3) remain distinct; call sites pass a default-constructed tag.
 
                 TirFunction tir = null;
                 if (fi.Implementation?.Body != null)
@@ -652,13 +835,13 @@ namespace Ara3D.Geometry.CppWriter
                 if (tir == null)
                 {
                     // Bodiless intrinsic: map onto <cmath> / the plato:: helpers when we know how.
-                    if (!TryGetIntrinsicBody(owner, fi.Name, paramNames, paramTypes, ret, out var body))
+                    if (!TryGetIntrinsicBody(owner, fi.Name, paramNames, paramTypes, ret, out var body, out var fullBody))
                     {
                         _claimedSignatures.Remove(sigKey);
                         Skipped.Add($"{label}: intrinsic without a {Dialect.DisplayName()} mapping");
                         return;
                     }
-                    definition = $"{sig} {{ return {body}; }}";
+                    definition = fullBody ? $"{sig} {body}" : $"{sig} {{ return {body}; }}";
                 }
                 else
                 {
@@ -697,18 +880,23 @@ namespace Ara3D.Geometry.CppWriter
         }
 
         public bool TryGetIntrinsicBody(string owner, string name,
-            IReadOnlyList<string> ps, IReadOnlyList<string> paramTypes, string returnType, out string body)
+            IReadOnlyList<string> ps, IReadOnlyList<string> paramTypes, string returnType,
+            out string body, out bool fullBody)
         {
             body = null;
+            fullBody = false;
             var a = ps.Count > 0 ? ps[0] : null;
             var b = ps.Count > 1 ? ps[1] : null;
 
-            // The native lowerings below are only valid on the types <cmath>, the operators and
-            // the plato:: helpers actually accept. An intrinsic over a user struct (Modulo on a
-            // Point2D, Dot on a Point3D) has no native form and must be skipped instead.
             var allNative = paramTypes.All(t => t == "float" || t == "int" || IsVector(t));
             var allScalarNumeric = paramTypes.All(t => t == "float" || t == "int");
             var allBool = paramTypes.All(t => t == "bool");
+            IReadOnlyList<string> comps0 = null;
+            var floatStruct = paramTypes.Count > 0
+                              && TryFloatComponents(paramTypes[0], out comps0)
+                              && comps0.Count >= 2 && comps0.Count <= 4
+                              && paramTypes.All(t => t == paramTypes[0] || t == "float");
+            var arity = floatStruct ? comps0.Count : 0;
 
             switch ($"{owner}.{name}")
             {
@@ -736,17 +924,20 @@ namespace Ara3D.Geometry.CppWriter
                 case "Angle.Tan": body = $"tanf({a}.Radians)"; return true;
             }
 
-            // Owner-agnostic mappings. The plato:: helpers are overloaded for float and the
-            // vector types, so a bodiless Vector3.Normalize and a Number.Clamp both land here.
-            if (allNative)
+            // Owner-agnostic mappings. Native float/floatN first; float-field structs (Point2D…)
+            // convert through make_floatN so Dot/Length/Normalize work without a C# runtime.
+            if (allNative || floatStruct)
             switch (name)
             {
-                case "Min" when ps.Count == 2: body = $"plato::min_({a}, {b})"; return true;
-                case "Max" when ps.Count == 2: body = $"plato::max_({a}, {b})"; return true;
-                case "Clamp" when ps.Count == 3: body = $"plato::clamp_({a}, {b}, {ps[2]})"; return true;
-                case "Lerp" when ps.Count == 3 && paramTypes[2] == "float": body = $"plato::mix_({a}, {b}, {ps[2]})"; return true;
-                case "Mix" when ps.Count == 3 && paramTypes[2] == "float": body = $"plato::mix_({a}, {b}, {ps[2]})"; return true;
-                // The <cmath> lowerings below have no componentwise form: scalars only.
+                case "Min" when ps.Count == 2:
+                    return TryVectorishBinary("plato::min_", a, b, paramTypes, returnType, out body, out fullBody);
+                case "Max" when ps.Count == 2:
+                    return TryVectorishBinary("plato::max_", a, b, paramTypes, returnType, out body, out fullBody);
+                case "Clamp" when ps.Count == 3:
+                    return TryVectorishTernary("plato::clamp_", a, b, ps[2], paramTypes, returnType, out body, out fullBody);
+                case "Lerp" when ps.Count == 3 && paramTypes[2] == "float":
+                case "Mix" when ps.Count == 3 && paramTypes[2] == "float":
+                    return TryVectorishTernary("plato::mix_", a, b, ps[2], paramTypes, returnType, out body, out fullBody);
                 case "Step" when allScalarNumeric && ps.Count == 2: body = $"plato::step_({a}, {b})"; return true;
                 case "SmoothStep" when allScalarNumeric && ps.Count == 3: body = $"plato::smoothstep_({a}, {b}, {ps[2]})"; return true;
                 case "Saturate" when allScalarNumeric && ps.Count == 1: body = $"plato::saturate_({a})"; return true;
@@ -756,30 +947,57 @@ namespace Ara3D.Geometry.CppWriter
                 case "Abs" when allScalarNumeric && ps.Count == 1: body = $"fabsf({a})"; return true;
                 case "Floor" when allScalarNumeric && ps.Count == 1: body = $"floorf({a})"; return true;
                 case "Ceiling" when allScalarNumeric && ps.Count == 1: body = $"ceilf({a})"; return true;
-                case "Length" when ps.Count == 1: body = $"plato::length_({a})"; return true;
-                case "Magnitude" when ps.Count == 1: body = $"plato::length_({a})"; return true;
-                case "Dot" when ps.Count == 2: body = $"plato::dot_({a}, {b})"; return true;
-                case "Cross" when ps.Count == 2: body = $"plato::cross_({a}, {b})"; return true;
-                case "Normalize" when ps.Count == 1: body = $"plato::normalize_({a})"; return true;
-                case "Distance" when ps.Count == 2: body = $"plato::distance_({a}, {b})"; return true;
-                case "Reflect" when ps.Count == 2: body = $"plato::reflect_({a}, {b})"; return true;
-                case "Atan2" when ps.Count == 2: return TryWrapAngle($"atan2f({a}, {b})", returnType, out body);
+                case "Length" when ps.Count == 1:
+                case "Magnitude" when ps.Count == 1:
+                    body = $"plato::length_({FloatVectorExpr(a, paramTypes[0])})"; return true;
+                case "Dot" when ps.Count == 2:
+                    body = $"plato::dot_({FloatVectorExpr(a, paramTypes[0])}, {FloatVectorExpr(b, paramTypes[1])})"; return true;
+                case "Cross" when ps.Count == 2 && arity == 3:
+                    return TryFloatResultToStruct($"plato::cross_({FloatVectorExpr(a, paramTypes[0])}, {FloatVectorExpr(b, paramTypes[1])})",
+                        returnType, out body, out fullBody);
+                case "Cross" when ps.Count == 2 && allNative:
+                    body = $"plato::cross_({a}, {b})"; return true;
+                case "Normalize" when ps.Count == 1:
+                    return TryFloatResultToStruct($"plato::normalize_({FloatVectorExpr(a, paramTypes[0])})",
+                        returnType, out body, out fullBody);
+                case "Distance" when ps.Count == 2:
+                    body = $"plato::distance_({FloatVectorExpr(a, paramTypes[0])}, {FloatVectorExpr(b, paramTypes[1])})"; return true;
+                case "Reflect" when ps.Count == 2:
+                    return TryFloatResultToStruct($"plato::reflect_({FloatVectorExpr(a, paramTypes[0])}, {FloatVectorExpr(b, paramTypes[1])})",
+                        returnType, out body, out fullBody);
+                case "Atan2" when allScalarNumeric && ps.Count == 2:
+                    return TryWrapAngle($"atan2f({a}, {b})", returnType, out body);
             }
 
-            // Operator-named intrinsics on the native scalars: native C++ operators.
+            // Componentwise Abs/Floor/… on float-field structs.
+            if (floatStruct && ps.Count == 1 && returnType == paramTypes[0]
+                && (name == "Abs" || name == "Floor" || name == "Ceiling" || name == "Sqrt"
+                    || name == "Saturate" || name == "Sign" || name == "Fract"))
+            {
+                var fn = name == "Abs" ? "fabsf" : name == "Floor" ? "floorf" : name == "Ceiling" ? "ceilf"
+                    : name == "Sqrt" ? "sqrtf" : name == "Saturate" ? "plato::saturate_"
+                    : name == "Sign" ? "plato::sign_" : "plato::fract_";
+                var parts = comps0.Select(f => $"{fn}({a}.{f})");
+                body = $"{returnType}{{ {parts.JoinStringsWithComma()} }}";
+                return true;
+            }
+
             var op = ps.Count == 1 ? Operators.NameToUnaryOperator(name)
                 : ps.Count == 2 ? Operators.NameToBinaryOperator(name) : null;
             if (op == null)
                 return false;
 
-            // The preamble defines vector arithmetic; comparison, modulo and logic stay scalar.
             var vectorish = paramTypes.Any(IsVector)
                             && paramTypes.All(t => IsVector(t) || t == "float")
                             && paramTypes.Where(IsVector).Distinct().Count() == 1;
+            var structOps = floatStruct && paramTypes.All(t => t == paramTypes[0] || t == "float");
             switch (op)
             {
                 case "+": case "-": case "*": case "/":
-                    if (!allScalarNumeric && !vectorish) return false;
+                    if (!allScalarNumeric && !vectorish && !structOps) return false;
+                    break;
+                case "%":
+                    if (!allScalarNumeric && !structOps) return false;
                     break;
                 case "==": case "!=":
                     if (paramTypes.Distinct().Count() != 1) return false;
@@ -792,19 +1010,93 @@ namespace Ara3D.Geometry.CppWriter
                     break;
             }
 
+            if (structOps && (op == "+" || op == "-" || op == "*" || op == "/" || op == "%"))
+            {
+                if (ps.Count == 1)
+                {
+                    var parts = comps0.Select(f => $"({op}{a}.{f})");
+                    body = $"{returnType}{{ {parts.JoinStringsWithComma()} }}";
+                    return true;
+                }
+                IEnumerable<string> parts2;
+                if (paramTypes[1] == "float")
+                {
+                    parts2 = op == "%"
+                        ? comps0.Select(f => $"fmodf({a}.{f}, {b})")
+                        : comps0.Select(f => $"({a}.{f} {op} {b})");
+                }
+                else if (paramTypes[0] == "float")
+                {
+                    parts2 = comps0.Select(f => $"({a} {op} {b}.{f})");
+                }
+                else
+                {
+                    parts2 = op == "%"
+                        ? comps0.Select(f => $"fmodf({a}.{f}, {b}.{f})")
+                        : comps0.Select(f => $"({a}.{f} {op} {b}.{f})");
+                }
+                body = $"{returnType}{{ {parts2.JoinStringsWithComma()} }}";
+                return true;
+            }
+
             if (ps.Count == 1)
             {
                 body = $"({op}{a})";
                 return true;
             }
 
-            // C++ % is integer only; float modulo is fmodf.
-            if (op == "%" && owner == "Number")
+            if (op == "%" && (owner == "Number" || paramTypes.Any(t => t == "float")))
             {
                 body = $"fmodf({a}, {b})";
                 return true;
             }
             body = $"({a} {op} {b})";
+            return true;
+        }
+
+        private bool TryVectorishBinary(string fn, string a, string b,
+            IReadOnlyList<string> paramTypes, string returnType, out string body, out bool fullBody)
+        {
+            if (IsVector(paramTypes[0]) || paramTypes[0] == "float" || paramTypes[0] == "int")
+            {
+                body = $"{fn}({a}, {b})";
+                fullBody = false;
+                return true;
+            }
+            return TryFloatResultToStruct($"{fn}({FloatVectorExpr(a, paramTypes[0])}, {FloatVectorExpr(b, paramTypes[1])})",
+                returnType, out body, out fullBody);
+        }
+
+        private bool TryVectorishTernary(string fn, string a, string b, string c,
+            IReadOnlyList<string> paramTypes, string returnType, out string body, out bool fullBody)
+        {
+            if (IsVector(paramTypes[0]) || paramTypes[0] == "float" || paramTypes[0] == "int")
+            {
+                body = $"{fn}({a}, {b}, {c})";
+                fullBody = false;
+                return true;
+            }
+            var args = paramTypes[2] == "float"
+                ? $"{FloatVectorExpr(a, paramTypes[0])}, {FloatVectorExpr(b, paramTypes[1])}, {c}"
+                : $"{FloatVectorExpr(a, paramTypes[0])}, {FloatVectorExpr(b, paramTypes[1])}, {FloatVectorExpr(c, paramTypes[2])}";
+            return TryFloatResultToStruct($"{fn}({args})", returnType, out body, out fullBody);
+        }
+
+        private bool TryFloatResultToStruct(string floatExpr, string returnType, out string body, out bool fullBody)
+        {
+            fullBody = false;
+            body = null;
+            if (IsVector(returnType) || returnType == "float")
+            {
+                body = floatExpr;
+                return true;
+            }
+            if (!TryFloatComponents(returnType, out var fields) || fields.Count < 2 || fields.Count > 4)
+                return false;
+            fullBody = true;
+            var sw = new[] { "x", "y", "z", "w" };
+            var comps = fields.Select((_, i) => $"_t.{sw[i]}").JoinStringsWithComma();
+            body = $"{{ float{fields.Count} _t = {floatExpr}; return {returnType}{{ {comps} }}; }}";
             return true;
         }
     }

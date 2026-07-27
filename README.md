@@ -2,7 +2,7 @@
 
 **Write geometry once. Run it everywhere.**
 
-**Plato** is a small, pure, statically-typed language for writing geometric and numeric libraries once, and compiling them into fast, idiomatic code for other platforms. The C# backend is in daily production use — it generates the geometry library consumed by the [Ara 3D SDK](https://github.com/ara3d/ara3d-sdk) — and the **TypeScript and Rust backends are working proofs of concept**, each with a browser demo you can try right now.
+**Plato** is a small, pure, statically-typed language for writing geometric and numeric libraries once, and compiling them into fast, idiomatic code for other platforms. The C# backend is in daily production use — it generates the geometry library consumed by the [Ara 3D SDK](https://github.com/ara3d/ara3d-sdk) — and the **TypeScript, Rust, GLSL, and C++/CUDA backends are working proofs of concept** (TS/Rust have browser demos; GLSL has WebGL2 demos; C++/CUDA is compile-verified).
 
 ### ▶ [Try the live demos](https://cdiggins.github.io/plato/)
 
@@ -20,7 +20,7 @@ Plato looks like a typed scripting language and compiles like a systems language
 What that buys you:
 
 - **One source of truth.** Your math library exists once. Every port is generated, so the ports can't drift.
-- **Native-feeling output.** C# gets packed structs and aggressive inlining; TypeScript gets fluent methods on plain `number`s; Rust gets extension traits. Each target reads like it was written by hand, by someone who likes that language.
+- **Native-feeling output.** C# gets packed structs and aggressive inlining; TypeScript gets fluent methods on plain `number`s; Rust gets extension traits; GLSL and C++/CUDA get free functions over native vectors. Each target reads like it was written by hand, by someone who likes that language.
 - **Performance by construction.** Interface-generic code is monomorphized into direct calls — no boxing, no virtual dispatch, no runtime abstraction penalty.
 - **Correctness by construction.** Distinct types for `Angle` vs. `Number` and `Point` vs. `Vector` turn geometry's classic bugs into compile errors; purity makes every function a trivial unit-test target.
 
@@ -203,8 +203,8 @@ Good projects for motivated and patient people:
 
 - Property-based tests for the standard library
 - Plato-to-Plato optimizers (e.g., compile-time unrolling of component-wise operations)
-- Growing the TypeScript and Rust backends from proof of concept to the full standard library
-- New backends: GLSL, C++, Dart, Java, Go
+- Growing the TypeScript, Rust, GLSL, and C++/CUDA backends from proof of concept toward the full standard library
+- New backends: Dart, Java, Go
 - Editor support: LSP, VS Code, Visual Studio
 
 ## Feedback

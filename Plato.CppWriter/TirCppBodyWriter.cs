@@ -175,10 +175,54 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             Write(")");
             return;
         }
+        // Matching float-arity struct ↔ floatN: swizzle fields rather than a missing conversion fn.
+        if (_w.TryFloatComponents(from, out var fromFields)
+            && _w.TryFloatComponents(to, out var toFields)
+            && fromFields.Count == toFields.Count
+            && fromFields.Count >= 2 && fromFields.Count <= 4)
+        {
+            if (CppWriter.IsVector(to))
+            {
+                Write($"make_{to}(");
+                for (var i = 0; i < fromFields.Count; i++)
+                {
+                    if (i > 0) Write(", ");
+                    WriteFieldReceiver(inner);
+                    Write($".{fromFields[i]}");
+                }
+                Write(")");
+                return;
+            }
+            if (CppWriter.IsVector(from))
+            {
+                var sw = new[] { "x", "y", "z", "w" };
+                Write($"{to}{{ ");
+                for (var i = 0; i < toFields.Count; i++)
+                {
+                    if (i > 0) Write(", ");
+                    WriteFieldReceiver(inner);
+                    Write($".{sw[i]}");
+                }
+                Write(" }");
+                return;
+            }
+        }
         RecordCall(toPlato, new[] { inner });
         Write($"{_w.FunctionName(toPlato)}(");
         WriteNode(inner);
         Write(")");
+    }
+
+    private void WriteFieldReceiver(TirNode inner)
+    {
+        if (inner is TirLiteral || inner is TirConditional || inner is TirAssign || inner is TirCall || inner is TirNew)
+        {
+            Write("(");
+            WriteNode(inner);
+            Write(")");
+        }
+        else
+            WriteNode(inner);
     }
 
     /// <summary>Writes a returned value, converted to the signature's return type.</summary>
@@ -405,16 +449,29 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             return;
         }
 
-        // Operator-named calls on native scalars/vectors inline to native operators.
+        // Operator-named calls on native scalars/vectors (and float-field structs) inline.
         if (TryWriteOperator(call))
             return;
 
-        // A type as the receiver is a static call: Type::F(x) -> F(x).
+        // A type as the receiver is a static call: Type.F(x) → F(Type{}, x). The default
+        // tag keeps overloads distinct (UnitX(float2) vs UnitX(float3)) under free functions.
         if (receiver is TirTypeRef ttr && ttr.NamespaceQualified && ttr.Type != null)
         {
-            RecordCall(name, args.Skip(1));
+            var tagType = _w.CppTypeNameOrNull(ttr.Type);
+            if (tagType == null)
+                throw new CppUnsupportedException($"static call on unrepresentable type '{ttr.TypeDef?.Name}'");
+            Callees.Add(new CppWriter.CallSite
+            {
+                Name = name,
+                Types = args.Select((a, i) => i == 0 ? tagType : _w.CppTypeNameOrNull(a.Type)).ToList(),
+            });
             Write($"{_w.FunctionName(name)}(");
-            WriteArgs(args.Skip(1));
+            Write(_w.DefaultValueExpr(tagType));
+            foreach (var arg in args.Skip(1))
+            {
+                Write(", ");
+                WriteNode(arg);
+            }
             Write(")");
             return;
         }
@@ -465,15 +522,21 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                         && types.All(t => CppWriter.IsVector(t) || t == "float")
                         && types.Where(CppWriter.IsVector).Distinct().Count() == 1;
         var sameType = types.Distinct().Count() == 1;
+        IReadOnlyList<string> sFields = null;
+        var structOps = types.Count > 0
+                        && _w.TryFloatComponents(types[0], out sFields)
+                        && sFields.Count >= 2 && sFields.Count <= 4
+                        && !CppWriter.IsVector(types[0])
+                        && types.All(t => t == types[0] || t == "float");
 
         bool ok;
         switch (op)
         {
             case "+": case "-": case "*": case "/":
-                ok = allScalarNumeric || vectorish;
+                ok = allScalarNumeric || vectorish || structOps;
                 break;
             case "%":
-                ok = allScalarNumeric;
+                ok = allScalarNumeric || structOps;
                 break;
             case "<": case ">": case "<=": case ">=":
                 ok = allScalarNumeric;
@@ -491,6 +554,13 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         }
         if (!ok)
             return false;
+
+        if (structOps && (op == "+" || op == "-" || op == "*" || op == "/" || op == "%"))
+        {
+            var resultCpp = _w.CppTypeNameOrNull(call.Type) ?? types[0];
+            WriteStructComponentOp(op, args, types, sFields, resultCpp);
+            return true;
+        }
 
         if (args.Count == 1)
         {
@@ -517,5 +587,74 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
         WriteNode(args[1]);
         Write(")");
         return true;
+    }
+
+    private void WriteStructComponentOp(string op, IReadOnlyList<TirNode> args,
+        IReadOnlyList<string> types, IReadOnlyList<string> fields, string resultCpp)
+    {
+        // Point2D - Point2D may be typed as Vector2 (float2) via IDifference — honor the
+        // call's result type, not the operand struct.
+        var asVector = CppWriter.IsVector(resultCpp);
+        var ret = asVector ? resultCpp
+            : (types[0] == "float" ? types[1] : (resultCpp ?? types[0]));
+        if (asVector)
+            Write($"make_{ret}(");
+        else
+            Write($"{ret}{{ ");
+        for (var i = 0; i < fields.Count; i++)
+        {
+            if (i > 0) Write(", ");
+            var f = fields[i];
+            if (args.Count == 1)
+            {
+                Write($"({op}");
+                WriteNode(args[0]);
+                Write($".{f})");
+            }
+            else if (types[0] == "float")
+            {
+                Write("(");
+                WriteNode(args[0]);
+                Write($" {op} ");
+                WriteNode(args[1]);
+                Write($".{f})");
+            }
+            else if (types[1] == "float")
+            {
+                if (op == "%")
+                {
+                    Write("fmodf(");
+                    WriteNode(args[0]);
+                    Write($".{f}, ");
+                    WriteNode(args[1]);
+                    Write(")");
+                }
+                else
+                {
+                    Write("(");
+                    WriteNode(args[0]);
+                    Write($".{f} {op} ");
+                    WriteNode(args[1]);
+                    Write(")");
+                }
+            }
+            else if (op == "%")
+            {
+                Write("fmodf(");
+                WriteNode(args[0]);
+                Write($".{f}, ");
+                WriteNode(args[1]);
+                Write($".{f})");
+            }
+            else
+            {
+                Write("(");
+                WriteNode(args[0]);
+                Write($".{f} {op} ");
+                WriteNode(args[1]);
+                Write($".{f})");
+            }
+        }
+        Write(asVector ? ")" : " }");
     }
 }

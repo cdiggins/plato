@@ -43,6 +43,8 @@ Paths below are relative to this submodule (`submodules/Plato/`).
 | `docs/types-and-concepts-context.txt` | Generated stdlib context (types + concepts only); regen via `tools/export-types-context.bat`. |
 | `Plato.TypeScriptWriter/` | TypeScript backend (POC). |
 | `Plato.RustWriter/` | Rust backend (POC). |
+| `Plato.GlslWriter/` | GLSL ES 3.00 / WebGL2 backend (POC). |
+| `Plato.CppWriter/` | C++17 / CUDA backend (POC; one emitter, two dialects). |
 | `Plato.Intrinsics/` | Handwritten C# runtime wrappers (source of truth; synced to SDK). |
 
 ---
@@ -55,6 +57,8 @@ All backends share the same pipeline: parse `.plato` → build AST → compile (
 plato-src/*.plato  →  Plato.CLI  →  Plato.CSharpWriter   →  ara3d-sdk/src/Plato.Generated/
                                  →  Plato.TypeScriptWriter →  plato.g.ts
                                  →  Plato.RustWriter       →  plato.rs
+                                 →  Plato.GlslWriter       →  plato.glsl
+                                 →  Plato.CppWriter        →  plato.hpp / plato.cu
 ```
 
 ### C# (production)
@@ -94,7 +98,33 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
 
 - **Output:** single module `plato.rs`. Primitives get extension traits (`NumberExt` on `f64`, etc.). Structs are `Copy` with PascalCase API for parity with C#/TS.
 
-TS and Rust backends compile a curated demo library and pass a shared conformance suite; they have not yet consumed the full `plato-src` stdlib. Live demos: [cdiggins.github.io/plato](https://cdiggins.github.io/plato/).
+### GLSL (proof of concept)
+
+- **Demo:** `demos/glsl/` — eight WebGL2 shaders generated from Plato.
+- **Command:**
+
+```bat
+dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
+  <inputFolder> <outputFolder> --glsl
+```
+
+- **Output:** single `plato.glsl` (GLSL ES 3.00). Free functions only; `Number`→`float`; vectors→`vecN`. No lambdas, no dynamic arrays, no strings. Details: [`Plato.GlslWriter/README.md`](../Plato.GlslWriter/README.md).
+
+### C++ / CUDA (proof of concept)
+
+- **Tests:** `Plato.CppWriter.Tests` — generate then compile-gate with MSVC (`/std:c++17`); CUDA uses nvcc when present, else an MSVC + `cuda_runtime.h` shim.
+- **Command:**
+
+```bat
+dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
+  <inputFolder> <outputFolder> --cpp
+dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
+  <inputFolder> <outputFolder> --cuda
+```
+
+- **Output:** `plato.hpp` (C++17) or `plato.cu` (nvcc). **Bodies are identical; only the preamble differs** (`Dialects_Differ_Only_In_The_Preamble`). Free functions; `Number`→`float`; vectors→`float2/3/4`. Same representability gaps as GLSL for lambdas / dynamic arrays / strings in V1. Details: [`Plato.CppWriter/README.md`](../Plato.CppWriter/README.md). Not in `Ara3D.Studio.sln` yet.
+
+TS and Rust backends compile a curated demo library and pass a shared conformance suite; they have not yet consumed the full `plato-src` stdlib. Live demos: [cdiggins.github.io/plato](https://cdiggins.github.io/plato/). GLSL has eight live WebGL2 demos under `demos/glsl/`. C++/CUDA is compile-verified only (no runtime demos yet).
 
 ---
 
@@ -142,3 +172,5 @@ submodules\Plato\tools\export-types-context.bat
 | [`../../../docs/plato-library-review.md`](../../../docs/plato-library-review.md) | Verified stdlib bug catalog (studio repo) |
 | [`../Plato.TypeScriptWriter/README.md`](../Plato.TypeScriptWriter/README.md) | TS output model |
 | [`../Plato.RustWriter/README.md`](../Plato.RustWriter/README.md) | Rust output model |
+| [`../Plato.GlslWriter/README.md`](../Plato.GlslWriter/README.md) | GLSL output model |
+| [`../Plato.CppWriter/README.md`](../Plato.CppWriter/README.md) | C++ / CUDA output model |

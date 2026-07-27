@@ -11,9 +11,9 @@ Plato.CLI [inputFolder] [outputFolder] --cuda
 ```
 
 `--cpp` writes `plato.hpp` (portable C++17), `--cuda` writes `plato.cu` (nvcc). Each file is
-self-contained: preamble, structs, structural equality, all function prototypes, all function
-definitions, then a trailing comment block listing everything skipped and why. Prototypes come
-first, so definition order never matters.
+self-contained: preamble, structs, structural equality, reflection helpers, all function
+prototypes, all function definitions, then a trailing comment block listing everything skipped
+and why. Prototypes come first, so definition order never matters.
 
 ## One emitter, two dialects
 
@@ -36,9 +36,11 @@ it. The body writer always emits `float2/float3/float4`, `make_floatN(...)`, nat
 | `Vector2D/3D/4D` | `float2/float3/float4`; `X/Y/Z/W` become `.x/.y/.z/.w`; constructed with `make_floatN` |
 | other non-generic concrete types | aggregate `struct`, constructed positionally (`Angle{ 1.0f }`), plus generated field-wise `operator==` / `operator!=` |
 | every function | a **free function**: `v.Length` → `Length(v)`. C++ overloading lets `Add(float2,float2)` and `Add(float3,float3)` coexist |
+| static members (`_: T`) | free functions that keep the `_` parameter as a type tag (`UnitX(float2{})`) so overloads stay distinct |
 | constants | zero-argument functions (`Pi()`) |
-| bodiless intrinsics | `<cmath>` (`sqrtf`, `powf`, `fmodf`, …) and the `plato::` helpers (`dot_`, `cross_`, `length_`, `mix_`, `clamp_`, …) |
-| `IArrayLike` value types | structural `At` / `Count` / `NumComponents` generated from the fields; `At` **clamps** out of range (device code cannot trap) |
+| bodiless intrinsics | `<cmath>` (`sqrtf`, `powf`, `fmodf`, …) and the `plato::` helpers (`dot_`, `cross_`, `length_`, `mix_`, `clamp_`, …); float-field structs (`Point2D`, …) lower componentwise / via `make_floatN` |
+| `Equals` / `NotEquals` / `GetHashCode` | generated for every representable type (`==` / `!=` / structural mix) |
+| `IArrayLike` value types | structural `At` / `Count` / `NumComponents` / `Components` from the fields; `At` **clamps** out of range (device code cannot trap); `Components` returns `floatN` or a synthesized `FixedArray_N_T` POD |
 
 `Number` is `float`, not `double`, in both dialects: CUDA device code is float-first and the two
 outputs have to agree.
@@ -51,7 +53,8 @@ outputs have to agree.
   its arguments are scalar components.
 - **Conversions are explicit.** C++ has no implicit user-defined conversion, so a `TirCoerce`
   between struct types — and a returned value whose type differs from the declared return type —
-  becomes a real call to the library's own conversion function.
+  becomes a real call to the library's own conversion function (or a field swizzle when the
+  types are matching-arity float aggregates ↔ `floatN`).
 
 ## Only-what-compiles: the prune pass
 
@@ -63,23 +66,29 @@ than aspirational.
 
 ## Not representable (functions using these are skipped)
 
-- **Lambdas and function values** — not lowered in V1. `Map`/`Reduce`/`Sum` and friends need the
-  `--inline` beta reducer to specialize function values away first.
-- **`IArray` and array literals** — no array value type in V1.
-- **`String` / `Character`** — no string type in V1.
-- **Static member functions** (first parameter `_`).
-- **Intrinsics over user structs** — `Modulo` on a `Point2D`, `Dot` on a `Point3D`: the native
-  lowerings only apply to scalars and the vector types.
+- **Lambdas and function values** — not lowered yet. `Map`/`Reduce`/`Sum` and friends need the
+  `--inline` beta reducer to specialize function values away first (plato-239 M5); residual
+  closures may later emit as C++ functors.
+- **`IArray` and array literals** — no dynamic array value type yet. Planned as a simple
+  Plato-defined data type (not `std::vector`); see plato-239 M4.
+- **`String` / `Character`** — planned as simple Plato-defined data types (not `std::string`);
+  see plato-239 M3.
+- **`FieldNames` / `FieldValues` / `TypeName` / `ToString` / `GetType`** — need String (and
+  sometimes arrays).
+- **`CreateFromComponents` / `CreateFromComponent`** — need an array value type.
 
 ## Status
 
 | Input | Emitted | Skipped |
 |---|---|---|
-| `demos/plato-src` (66 functions) | **66** | 0 |
-| `plato-src` (full standard library) | **461** | 1722 |
+| `demos/plato-src` | **87** | 0 |
+| `plato-src` (full standard library) | **869** | 1656 |
 
-Both compile clean with MSVC (`/std:c++17 /W3`). The stdlib skips are dominated by the callee
-cascade (715), unrepresentable types (404) and lambdas (300) — closing the lambda gap is the
-single biggest lever, exactly as for the GLSL backend.
+(Was 461 / 1722 before statics, reflection helpers, Components, and user-struct intrinsics.)
+
+Both compile clean with MSVC (`/std:c++17 /W3`) and with nvcc when the toolkit is present (the
+test harness loads `vcvars64` before invoking nvcc so `cl.exe` is on `PATH`). The remaining
+stdlib skips are still dominated by lambdas and the callee cascade — closing the lambda gap
+(M5) is the single biggest remaining lever, exactly as for the GLSL backend.
 
 Verification lives in `../Plato.CppWriter.Tests`.

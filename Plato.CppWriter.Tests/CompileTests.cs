@@ -96,7 +96,7 @@ public class CompileTests
         if (nvcc != null)
         {
             TestContext.Out.WriteLine($"CUDA gate: nvcc ({nvcc})");
-            var (exit, output) = Toolchain.CompileWithNvcc(nvcc, dir, file);
+            var (exit, output) = Toolchain.CompileWithNvcc(nvcc, dir, file, vcvars);
             AssertCompiles(exit, output, $"{library} CUDA (nvcc)");
             return;
         }
