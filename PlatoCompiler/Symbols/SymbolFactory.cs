@@ -152,10 +152,12 @@ namespace Ara3D.Geometry.Compiler.Symbols
                 return null;
             }
 
-            // Is it a Type Variable 
+            // Is it a Type Variable
             if (name.StartsWith("$"))
             {
-                return TypeExpression.CreateTypeVar(TypeBindingsScope, name);
+                var typeVar = TypeExpression.CreateTypeVar(TypeBindingsScope, name);
+                TypeReferences.Add(new TypeReference(astTypeNode, typeVar));
+                return typeVar;
             }
 
             var sym = TypeBindingsScope.GetValue(name);
@@ -494,6 +496,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
                         .Where(c => c.Name == tp.Name)
                         .Select(c => ResolveType(c.Constraint)).ToList();
                     var tpd = new TypeParameterDef(TypeBindingsScope, tp.Name, constraints);
+                    SymbolsToNodes[tpd] = tp;
                     BindType(tpd.Name, tpd);
                     typeDef.TypeParameters.Add(tpd);
                 }

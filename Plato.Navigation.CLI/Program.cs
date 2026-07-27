@@ -12,6 +12,7 @@ public static class Program
           outline <file>                 list every definition in one file, in source order
           def <file> <line> <col>        definitions of the symbol at a position (0-based)
           refs <file> <line> <col>       references to the symbol at a position (0-based)
+          export <out.json>              write the whole index, sources included, as JSON
         """;
 
     public static int Main(string[] args)
@@ -41,6 +42,7 @@ public static class Program
             "outline" => Outline(index, positional),
             "def" => Def(index, positional),
             "refs" => Refs(index, positional),
+            "export" => Export(index, positional),
             _ => Fail($"Unknown verb: {verb}")
         };
     }
@@ -121,6 +123,17 @@ public static class Program
         foreach (var d in index.GetDefinitions(hit))
         foreach (var r in index.FindReferences(d.Id))
             Console.WriteLine($"{index.Files[r.FileId].Path}:{r.Span.BeginLine + 1}:{r.Span.BeginColumn + 1}\t{r.Kind}\t{r.Name}");
+        return 0;
+    }
+
+    private static int Export(NavigationIndex index, IReadOnlyList<string> positional)
+    {
+        if (positional.Count < 1)
+            return Fail("export needs an output path");
+
+        var json = NavigationJson.Write(index);
+        File.WriteAllText(positional[0], json);
+        Console.WriteLine($"{positional[0]}: {json.Length} bytes, {index.Defs.Count} defs, {index.Refs.Count} refs");
         return 0;
     }
 

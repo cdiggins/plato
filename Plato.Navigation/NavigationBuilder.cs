@@ -77,7 +77,7 @@ internal static class NavigationBuilder
             if (nodeToDef.ContainsKey(kv.Value))
                 continue;
 
-            var (kind, nameNode) = kv.Value switch
+            var (kind, nameNode) = Unwrap(kv.Value) switch
             {
                 AstVarDef v when kv.Key is VariableDef => (DefKind.Variable, (AstNode)v.Name),
                 AstParameterDeclaration p when kv.Key is ParameterDef => (DefKind.Parameter, p.Name),
@@ -90,6 +90,16 @@ internal static class NavigationBuilder
                 FileOf(bound, kv.Value, fileOfNode), nameNode, kv.Value, -1);
         }
     }
+
+    /// <summary>The binder resolves a wrapper node by resolving its single child and then records
+    /// the SAME symbol against the wrapper, overwriting the inner node. So the node stored for a
+    /// local is the statement wrapper, and the declaration has to be unwrapped back out of it.</summary>
+    private static AstNode Unwrap(AstNode node) => node switch
+    {
+        AstMulti m when m.Nodes.Count == 1 => Unwrap(m.Nodes[0]),
+        AstParenthesized p when p.Inner != null => Unwrap(p.Inner),
+        _ => node
+    };
 
     private static int Add(List<DefRecord> defs, Dictionary<AstNode, int> nodeToDef,
         Dictionary<AstNode, int> fileOfNode, DefKind kind, string name, string? signature,

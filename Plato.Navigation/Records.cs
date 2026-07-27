@@ -75,7 +75,10 @@ public enum RefKind
     /// <summary>A name used in an expression body.</summary>
     Value,
     /// <summary>A type named in a signature, inherits/implements clause, or type argument.</summary>
-    Type
+    Type,
+    /// <summary>An operator token standing in for a call: <c>a + b</c> is a reference to Add. The
+    /// span covers the operator itself, not a name, so the source text there is "+", not "Add".</summary>
+    Operator
 }
 
 /// <summary>One reference occurrence. <see cref="Targets"/> holds every definition the name could

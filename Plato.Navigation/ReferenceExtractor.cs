@@ -21,32 +21,73 @@ internal static class ReferenceExtractor
 
         foreach (var kv in factory.SymbolsToNodes)
         {
-            if (kv.Key is not RefSymbol r || r.Def == null)
+            if (kv.Key is not RefSymbol r)
                 continue;
 
-            var targets = resolver.Targets(r.Def);
-            if (targets.Count == 0)
-                continue;
+            // A reference with no targets is kept, not dropped: "Self", "Any" and the "default"
+            // keyword are real name occurrences that resolve to something with no source of its
+            // own. Recording them is what lets the sweep prove nothing went missing silently.
+            var targets = r.Def == null ? Array.Empty<int>() : resolver.Targets(r.Def);
 
-            refs.Add(new RefRecord(refs.Count, RefKind.Value, r.Name,
-                NavigationBuilder.FileOf(bound, kv.Value, fileOfNode), Span.From(kv.Value), targets));
+            var fileId = NavigationBuilder.FileOf(bound, kv.Value, fileOfNode);
+            var (kind, span) = Classify(bound, fileId, Span.From(kv.Value), r.Name);
+            refs.Add(new RefRecord(refs.Count, kind, r.Name, fileId, span, targets));
         }
 
         foreach (var tr in factory.TypeReferences)
         {
             var targets = resolver.Targets(tr.Type.Def);
-            if (targets.Count == 0)
-                continue;
 
             // The identifier, not the whole type node: "Array<Number>" would otherwise enclose
             // "Number" and every position inside it would hit two overlapping type references.
             var name = tr.Node.Name;
-            refs.Add(new RefRecord(refs.Count, RefKind.Type, tr.Type.Def.Name,
-                NavigationBuilder.FileOf(bound, name, fileOfNode), Span.From(name), targets));
+            var fileId = NavigationBuilder.FileOf(bound, name, fileOfNode);
+            refs.Add(new RefRecord(refs.Count, RefKind.Type, name.Text, fileId,
+                WithSigil(bound, fileId, Span.From(name)), targets));
         }
 
         return refs;
     }
+
+    /// <summary>A binary operator reaches the binder as a synthesized call whose function
+    /// identifier carries the WHOLE expression's location (Ast.cs, AstBinaryOp.ToInvocation), so
+    /// "a + b" arrives as a reference named "Add" spanning "+ b". The span starts exactly at the
+    /// operator, so it is narrowed to the operator token and the reference is marked as such
+    /// rather than pretending the source there reads "Add".</summary>
+    private static (RefKind, Span) Classify(BoundSnapshot bound, int fileId, Span span, string name)
+    {
+        if (fileId < 0 || !span.HasValue)
+            return (RefKind.Value, span);
+
+        var text = bound.Snapshot.Files[fileId].Text;
+        if (span.End > text.Length || text.Substring(span.Begin, span.Length).Trim() == name)
+            return (RefKind.Value, span);
+
+        var end = span.Begin;
+        while (end < text.Length && IsOperatorChar(text[end]))
+            end++;
+
+        return (RefKind.Operator, end > span.Begin
+            ? span with { End = end, EndLine = span.BeginLine, EndColumn = span.BeginColumn + (end - span.Begin) }
+            : span);
+    }
+
+    /// <summary>A type variable is named "$T" but the parser's identifier range starts at the "T".
+    /// The sigil is pulled back into the span so clicking it navigates and the span reads as the
+    /// name does.</summary>
+    private static Span WithSigil(BoundSnapshot bound, int fileId, Span span)
+    {
+        if (fileId < 0 || !span.HasValue || span.Begin == 0)
+            return span;
+
+        var text = bound.Snapshot.Files[fileId].Text;
+        return text[span.Begin - 1] == '$'
+            ? span with { Begin = span.Begin - 1, BeginColumn = span.BeginColumn - 1 }
+            : span;
+    }
+
+    private static bool IsOperatorChar(char c)
+        => "+-*/%<>=!&|^~?".IndexOf(c) >= 0;
 
     /// <summary>Maps a bound definition symbol back to the AST-derived definition records. A
     /// function group maps to every overload (D4); a compiler-generated function (constructor,
