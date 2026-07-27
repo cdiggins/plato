@@ -1,0 +1,363 @@
+//==
+// # MeshesSpatial — derived functionality for meshes, topology, and spatial acceleration
+//
+// Implements P8 of the concept library: pure, expression-bodied helpers for the
+// concepts declared in
+//   30-topology.plato             (MeshTopology, HalfEdgeNavigable)
+//   31-meshes.plato               (Meshable3D, Meshable2D, TriangulatedGeometry3D)
+//   33-pointclouds-voxels.plato   (PointCloudable3D, Voxelizable3D)
+//   34-spatial-structures.plato   (SpatialIndex2D, SpatialIndex3D)
+//   35-spatial-queries.plato      (RayIntersectable2D/3D, ClosestPointQueryable2D/3D,
+//                                  NearestNeighborQueryable2D/3D)
+//
+// These concepts are new in v3 — the v1 `meshes.library.plato` carried only
+// embedded-primitive helpers (Triangle/Quad/Points/Deform), no topology or spatial
+// queries — so most of this surface has no v1 counterpart. The one carried-over idea
+// is building a concrete Triangle3D from a face's typed indices: v1
+// `Triangle(self, index: Integer3)` becomes `Triangle(self, face: FaceIndex)` using
+// the typed FaceIndex/VertexIndex structs instead of a bare Integer3.
+//
+// Lower-package generics are reused, not re-declared: Integer counts are `Whole`, so
+// P1's `IsZero`/`IsPositive`/`IsNegative` apply directly; typed element indices are
+// `Index`, so P2's `IsNone`/`IsPresent` express "-1 means none" without touching
+// `.Value`; result records expose their fields, so hit/distance predicates just read
+// them. Emptiness follows one pattern — `IsEmpty` wherever no overload clash forces a
+// prefixed spelling (per-concept `IsEmpty` collisions are disambiguated by concept type).
+
+library MeshesSpatial
+{
+    //==
+    // MeshTopology — counted mesh elements: vertices, undirected edges, faces.
+    // All derived facts follow from the three counts and the Euler relation.
+
+    // The Euler characteristic V - E + F. A closed connected manifold of genus g
+    // has Euler characteristic 2 - 2g; a disk has 1, a sphere 2, a torus 0.
+    EulerCharacteristic(self: MeshTopology): Integer
+        => self.VertexCount - self.EdgeCount + self.FaceCount;
+
+    // The genus implied by the Euler characteristic, valid ONLY for a closed,
+    // connected, 2-manifold surface: genus = (2 - EulerCharacteristic) / 2.
+    // Integer division truncates; the precondition guarantees an even numerator.
+    GenusIfClosed(self: MeshTopology): Integer
+        => (2 - self.EulerCharacteristic) / 2;
+
+    // True when the mesh has no vertices (hence no edges or faces).
+    IsEmpty(self: MeshTopology): Boolean
+        => self.VertexCount.IsZero;
+
+    // True when the mesh carries at least one face.
+    HasFaces(self: MeshTopology): Boolean
+        => self.FaceCount.IsPositive;
+
+    // True when the mesh carries at least one edge.
+    HasEdges(self: MeshTopology): Boolean
+        => self.EdgeCount.IsPositive;
+
+    // True for a non-empty mesh that carries vertices but no faces: a point set
+    // or wireframe. An empty mesh is neither, so it returns false.
+    IsPointsOrWireframe(self: MeshTopology): Boolean
+        => self.IsEmpty.Not.And(self.HasFaces.Not);
+
+    //==
+    // HalfEdgeNavigable — constant-time walks over a half-edge structure. Callers
+    // must never pass -1; absence surfaces as a -1 Value in the returned index.
+    // (Twin is -1 on a boundary edge; Face is -1 for a half-edge along a hole.)
+
+    // The vertex a half-edge points at: the origin of its next half-edge.
+    DestinationOf(self: HalfEdgeNavigable, halfEdge: HalfEdgeIndex): VertexIndex
+        => self.OriginOf(self.NextOf(halfEdge));
+
+    // True when this half-edge has an opposite half-edge (its edge is interior).
+    HasTwin(self: HalfEdgeNavigable, halfEdge: HalfEdgeIndex): Boolean
+        => self.TwinOf(halfEdge).IsPresent;
+
+    // True when this half-edge's undirected edge lies on the boundary (no twin).
+    IsBoundaryEdge(self: HalfEdgeNavigable, halfEdge: HalfEdgeIndex): Boolean
+        => self.TwinOf(halfEdge).IsNone;
+
+    // True when this half-edge runs along a hole rather than bordering a face.
+    BordersHole(self: HalfEdgeNavigable, halfEdge: HalfEdgeIndex): Boolean
+        => self.FaceOf(halfEdge).IsNone;
+
+    // The next outgoing half-edge around the same origin vertex, advancing
+    // counter-clockwise (faces wind CCW): the twin of the half-edge that arrives
+    // at the origin. Returns -1 when that arriving half-edge is on the boundary
+    // (no twin) — i.e. at the counter-clockwise end of an open fan.
+    RotateAroundOrigin(self: HalfEdgeNavigable, halfEdge: HalfEdgeIndex): HalfEdgeIndex
+        => self.TwinOf(self.PreviousOf(halfEdge));
+
+    // The two endpoint vertices of a half-edge in its own direction: A is the
+    // Origin, B is the Destination. NOT canonically ordered (A.Value may exceed
+    // B.Value); take the twin's endpoints for the reverse direction.
+    DirectedEndpointsOf(self: HalfEdgeNavigable, halfEdge: HalfEdgeIndex): VertexPair
+        => (self.OriginOf(halfEdge), self.DestinationOf(halfEdge));
+
+    //==
+    // Meshable3D — anything that can produce an indexed triangle mesh of itself.
+    // The forwards below expose the triangulation's topology without a manual
+    // ToTriangleMesh hop (TriangleMesh3D is itself MeshTopology).
+
+    // The vertex count of this object's triangle-mesh approximation.
+    MeshVertexCount(self: Meshable3D): Integer
+        => self.ToTriangleMesh.VertexCount;
+
+    // The face count of this object's triangle-mesh approximation.
+    MeshFaceCount(self: Meshable3D): Integer
+        => self.ToTriangleMesh.FaceCount;
+
+    // The Euler characteristic of this object's triangle-mesh approximation.
+    MeshEulerCharacteristic(self: Meshable3D): Integer
+        => self.ToTriangleMesh.EulerCharacteristic;
+
+    // True when the triangle-mesh approximation has no vertices.
+    MeshIsEmpty(self: Meshable3D): Boolean
+        => self.ToTriangleMesh.IsEmpty;
+
+    //==
+    // Meshable2D — anything in the plane that can triangulate itself. Same
+    // topology forwards over the produced TriangleMesh2D (also a MeshTopology).
+
+    // The vertex count of this shape's planar triangulation.
+    TriangulationVertexCount(self: Meshable2D): Integer
+        => self.Triangulate.VertexCount;
+
+    // The triangle (face) count of this shape's planar triangulation.
+    TriangulationFaceCount(self: Meshable2D): Integer
+        => self.Triangulate.FaceCount;
+
+    // True when the shape triangulates to nothing.
+    TriangulationIsEmpty(self: Meshable2D): Boolean
+        => self.Triangulate.IsEmpty;
+
+    //==
+    // TriangulatedGeometry3D — random access to an explicit indexed triangle set.
+    // Members: TriangleCount, FaceAt(FaceIndex), PositionAt(VertexIndex).
+
+    // The concrete 3D triangle at a face, resolving its three vertex indices to
+    // positions. Precondition: `face` is in [0, TriangleCount). Note: FaceAt is
+    // evaluated three times; a monomorphizer without CSE re-fetches the record.
+    Triangle(self: TriangulatedGeometry3D, face: FaceIndex): Triangle3D
+        => (self.PositionAt(self.FaceAt(face).A),
+            self.PositionAt(self.FaceAt(face).B),
+            self.PositionAt(self.FaceAt(face).C));
+
+    // True when the geometry exposes no triangles. Kept as HasNoTriangles rather
+    // than IsEmpty: TriangleMesh3D is both TriangulatedGeometry3D and MeshTopology,
+    // so an IsEmpty here would collide with MeshTopology.IsEmpty (vertex-based).
+    HasNoTriangles(self: TriangulatedGeometry3D): Boolean
+        => self.TriangleCount.IsZero;
+
+    // True when the geometry exposes at least one triangle.
+    HasTriangles(self: TriangulatedGeometry3D): Boolean
+        => self.TriangleCount.IsPositive;
+
+    //==
+    // PointCloudable3D — anything that can shed its structure to a bare point cloud.
+
+    // The number of points once reduced to a bare cloud.
+    PointCount(self: PointCloudable3D): Integer
+        => self.ToPointCloud.Positions.Count;
+
+    // The i-th point of the bare cloud. Precondition: i in [0, PointCount).
+    PointAt(self: PointCloudable3D, i: Integer): Point3D
+        => self.ToPointCloud.Positions.At(i);
+
+    // True when reducing to a bare cloud yields no points.
+    IsEmpty(self: PointCloudable3D): Boolean
+        => self.PointCount.IsZero;
+
+    //==
+    // Voxelizable3D — conservative rasterization into a binary occupancy grid.
+
+    // The total number of grid cells at the given cell size. Count of the Occupied
+    // Array3D is the TOTAL cell count (occupied plus empty), not the occupied count.
+    VoxelCellCount(self: Voxelizable3D, cellSize: Number): Integer
+        => self.ToOccupancyGrid(cellSize).Occupied.Count;
+
+    // TODO(concept-gap): the count of OCCUPIED cells is not derivable here — it needs
+    // a boolean reduction over Array3D<Boolean>, which no concept in this package
+    // exposes. Add a `CountTrue`/`Reduce` on the grid rasters (file 33) if wanted.
+
+    //==
+    // SpatialIndex2D — broad-phase candidate queries over indexed 2D primitives.
+    // Candidates may include false positives; exact tests are the caller's phase two.
+
+    // True when the index holds no primitives.
+    IsEmpty(self: SpatialIndex2D): Boolean
+        => self.ItemCount.IsZero;
+
+    // The number of candidate primitives overlapping the bounds (with false positives).
+    CandidateCountInBounds(self: SpatialIndex2D, bounds: Bounds2D): Integer
+        => self.CandidatesInBounds(bounds).Count;
+
+    // True when any candidate primitive overlaps the bounds.
+    HasCandidatesInBounds(self: SpatialIndex2D, bounds: Bounds2D): Boolean
+        => self.CandidateCountInBounds(bounds).IsPositive;
+
+    //==
+    // SpatialIndex3D — broad-phase candidate queries over indexed 3D primitives.
+
+    // True when the index holds no primitives.
+    IsEmpty(self: SpatialIndex3D): Boolean
+        => self.ItemCount.IsZero;
+
+    // The number of candidate primitives overlapping the bounds (with false positives).
+    CandidateCountInBounds(self: SpatialIndex3D, bounds: Bounds3D): Integer
+        => self.CandidatesInBounds(bounds).Count;
+
+    // True when any candidate primitive overlaps the bounds.
+    HasCandidatesInBounds(self: SpatialIndex3D, bounds: Bounds3D): Boolean
+        => self.CandidateCountInBounds(bounds).IsPositive;
+
+    //==
+    // RayIntersectable2D — anything a 2D ray can be cast against. The convenience
+    // overloads build the RayQuery record so callers can cast a bare ray. A
+    // MaxDistance of 0 means unbounded; a FilterMask of -1 accepts every category.
+
+    // An unbounded, accept-all raycast request for a bare ray.
+    UnboundedRayQuery(self: RayIntersectable2D, ray: Ray2D): RayQuery2D
+        => (ray, 0.0, -1);
+
+    // Cast a bare ray with no distance bound and no filtering.
+    Raycast(self: RayIntersectable2D, ray: Ray2D): RayHit2D
+        => self.Raycast(self.UnboundedRayQuery(ray));
+
+    // True when the query strikes something.
+    DidHit(self: RayIntersectable2D, query: RayQuery2D): Boolean
+        => self.Raycast(query).Hit;
+
+    // True when a bare unbounded, accept-all ray strikes something.
+    DidHit(self: RayIntersectable2D, ray: Ray2D): Boolean
+        => self.Raycast(ray).Hit;
+
+    // True when the query strikes nothing.
+    Missed(self: RayIntersectable2D, query: RayQuery2D): Boolean
+        => self.DidHit(query).Not;
+
+    // The distance from the ray origin to the first hit. Precondition: the query hits.
+    HitDistance(self: RayIntersectable2D, query: RayQuery2D): Number
+        => self.Raycast(query).Distance;
+
+    // The world position of the first hit. Precondition: the query hits.
+    HitPosition(self: RayIntersectable2D, query: RayQuery2D): Point2D
+        => self.Raycast(query).Position;
+
+    // The surface normal at the first hit, pointing against the ray. Precondition: hits.
+    HitNormal(self: RayIntersectable2D, query: RayQuery2D): Direction2D
+        => self.Raycast(query).Normal;
+
+    // The struck primitive's index in the caller's list (-1 when inapplicable).
+    // Precondition: the query hits.
+    HitPrimitiveIndex(self: RayIntersectable2D, query: RayQuery2D): ItemIndex
+        => self.Raycast(query).PrimitiveIndex;
+
+    //==
+    // RayIntersectable3D — anything a 3D ray can be cast against.
+
+    // An unbounded, accept-all raycast request for a bare ray.
+    UnboundedRayQuery(self: RayIntersectable3D, ray: Ray3D): RayQuery3D
+        => (ray, 0.0, -1);
+
+    // Cast a bare ray with no distance bound and no filtering.
+    Raycast(self: RayIntersectable3D, ray: Ray3D): RayHit3D
+        => self.Raycast(self.UnboundedRayQuery(ray));
+
+    // True when the query strikes something.
+    DidHit(self: RayIntersectable3D, query: RayQuery3D): Boolean
+        => self.Raycast(query).Hit;
+
+    // True when a bare unbounded, accept-all ray strikes something.
+    DidHit(self: RayIntersectable3D, ray: Ray3D): Boolean
+        => self.Raycast(ray).Hit;
+
+    // True when the query strikes nothing.
+    Missed(self: RayIntersectable3D, query: RayQuery3D): Boolean
+        => self.DidHit(query).Not;
+
+    // The distance from the ray origin to the first hit. Precondition: the query hits.
+    HitDistance(self: RayIntersectable3D, query: RayQuery3D): Number
+        => self.Raycast(query).Distance;
+
+    // The world position of the first hit. Precondition: the query hits.
+    HitPosition(self: RayIntersectable3D, query: RayQuery3D): Point3D
+        => self.Raycast(query).Position;
+
+    // The surface normal at the first hit, pointing against the ray. Precondition: hits.
+    HitNormal(self: RayIntersectable3D, query: RayQuery3D): Direction3D
+        => self.Raycast(query).Normal;
+
+    // The struck triangle of the first hit (-1 when the target is not a mesh).
+    HitFace(self: RayIntersectable3D, query: RayQuery3D): FaceIndex
+        => self.Raycast(query).Face;
+
+    // The barycentric location of the first hit within its struck triangle.
+    // Precondition: the query hits a mesh.
+    HitBarycentric(self: RayIntersectable3D, query: RayQuery3D): BarycentricCoordinate
+        => self.Raycast(query).Barycentric;
+
+    // The interpolated surface UV at the first hit ((0, 0) when the target has no
+    // UVs). Precondition: the query hits.
+    HitUv(self: RayIntersectable3D, query: RayQuery3D): UvCoordinate
+        => self.Raycast(query).Uv;
+
+    //==
+    // ClosestPointQueryable2D — reports its closest point to a 2D query point.
+
+    // The distance from `point` to the nearest point on this geometry.
+    DistanceTo(self: ClosestPointQueryable2D, point: Point2D): Number
+        => self.ClosestPoint(point).Distance;
+
+    // The position on this geometry nearest to `point`.
+    ClosestPointPosition(self: ClosestPointQueryable2D, point: Point2D): Point2D
+        => self.ClosestPoint(point).Position;
+
+    // True when `point` lies within `tolerance` of this geometry.
+    IsNear(self: ClosestPointQueryable2D, point: Point2D, tolerance: Number): Boolean
+        => self.DistanceTo(point) <= tolerance;
+
+    //==
+    // ClosestPointQueryable3D — reports its closest point to a 3D query point.
+
+    // The distance from `point` to the nearest point on this surface.
+    DistanceTo(self: ClosestPointQueryable3D, point: Point3D): Number
+        => self.ClosestPoint(point).Distance;
+
+    // The position on this surface nearest to `point`.
+    ClosestPointPosition(self: ClosestPointQueryable3D, point: Point3D): Point3D
+        => self.ClosestPoint(point).Position;
+
+    // True when `point` lies within `tolerance` of this surface.
+    IsNear(self: ClosestPointQueryable3D, point: Point3D, tolerance: Number): Boolean
+        => self.DistanceTo(point) <= tolerance;
+
+    //==
+    // NearestNeighborQueryable2D — k-nearest-neighbor search over 2D points. The
+    // convenience overloads assemble the KNearestQuery record (unbounded distance).
+
+    // A k-nearest request around `center` for `count` neighbors, distance-unbounded.
+    NearestQuery(self: NearestNeighborQueryable2D, center: Point2D, count: Integer): KNearestQuery2D
+        => (center, count, 0.0);
+
+    // The `count` nearest points to `center`, sorted ascending by distance.
+    FindNearest(self: NearestNeighborQueryable2D, center: Point2D, count: Integer): NearestNeighbors
+        => self.FindNearest(self.NearestQuery(center, count));
+
+    // The single nearest point to `center`.
+    FindNearest(self: NearestNeighborQueryable2D, center: Point2D): NearestNeighbors
+        => self.FindNearest(center, 1);
+
+    //==
+    // NearestNeighborQueryable3D — k-nearest-neighbor search over 3D points.
+
+    // A k-nearest request around `center` for `count` neighbors, distance-unbounded.
+    NearestQuery(self: NearestNeighborQueryable3D, center: Point3D, count: Integer): KNearestQuery3D
+        => (center, count, 0.0);
+
+    // The `count` nearest points to `center`, sorted ascending by distance.
+    FindNearest(self: NearestNeighborQueryable3D, center: Point3D, count: Integer): NearestNeighbors
+        => self.FindNearest(self.NearestQuery(center, count));
+
+    // The single nearest point to `center`.
+    FindNearest(self: NearestNeighborQueryable3D, center: Point3D): NearestNeighbors
+        => self.FindNearest(center, 1);
+}

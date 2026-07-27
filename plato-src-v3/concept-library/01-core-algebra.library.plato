@@ -1,0 +1,319 @@
+//==
+// # CoreAlgebra
+//
+// Derived functionality for the core (file 01) and algebra (file 02) concepts.
+// Every function's first parameter is concept-typed, so the function becomes
+// available on every type implementing that concept. Bodies are pure
+// expressions built only from members declared on the concept, its inherited
+// concepts, or other functions in this library.
+//
+// Successor to plato-src/core.library.plato + algebra.plato. Renames from v1:
+//   Sqr -> Square, Pow3 -> Cube, Twice -> Double, CompareTo -> Compare,
+//   ClampZeroOne -> Saturate, FromOne -> dropped, MultiplyEpsilon -> folded
+//   into AlmostEqual(x, y, tolerance) with an explicit tolerance.
+
+library CoreAlgebra
+{
+    //==
+    // Orderable
+
+    // True when a is strictly less than b.
+    LessThan(a: Orderable, b: Orderable): Boolean
+        => a <= b && a != b;
+
+    // True when a is strictly greater than b.
+    GreaterThan(a: Orderable, b: Orderable): Boolean
+        => b.LessThan(a);
+
+    // True when a is greater than or equal to b.
+    GreaterThanOrEquals(a: Orderable, b: Orderable): Boolean
+        => b <= a;
+
+    // The lesser of the two values, using the total order.
+    Lesser(a: Orderable, b: Orderable): Orderable
+        => a <= b ? a : b;
+
+    // The greater of the two values, using the total order.
+    Greater(a: Orderable, b: Orderable): Orderable
+        => a <= b ? b : a;
+
+    // True when x lies within the inclusive range [lower, upper].
+    Between(x: Orderable, lower: Orderable, upper: Orderable): Boolean
+        => lower <= x && x <= upper;
+
+    // Restricts x to the inclusive range [lower, upper] using the total order.
+    // Assumes lower <= upper.
+    Clamp(x: Orderable, lower: Orderable, upper: Orderable): Orderable
+        => x.Greater(lower).Lesser(upper);
+
+    // The least of three values, using the total order.
+    Min3(a: Orderable, b: Orderable, c: Orderable): Orderable
+        => a.Lesser(b).Lesser(c);
+
+    // The greatest of three values, using the total order.
+    Max3(a: Orderable, b: Orderable, c: Orderable): Orderable
+        => a.Greater(b).Greater(c);
+
+    // Three-way comparison derived from the total order: negative when a < b,
+    // zero when equal, positive when a > b. Declared as a member on Comparable,
+    // but derivable from Orderable alone, so it lives here on the base concept.
+    Compare(a: Orderable, b: Orderable): Integer
+        => a == b ? 0 : (a <= b ? -1 : 1);
+
+    //==
+    // Logical
+
+    // Negated conjunction: not (a and b).
+    Nand(a: Logical, b: Logical): Logical
+        => a.And(b).Not;
+
+    // Negated disjunction: not (a or b).
+    Nor(a: Logical, b: Logical): Logical
+        => a.Or(b).Not;
+
+    // Material implication: a implies b, i.e. (not a) or b.
+    Implies(a: Logical, b: Logical): Logical
+        => a.Not.Or(b);
+
+    //==
+    // BooleanAlgebra
+
+    // Logical equivalence (XNOR): true when a and b have the same truth value.
+    Equivalent(a: BooleanAlgebra, b: BooleanAlgebra): BooleanAlgebra
+        => a.ExclusiveOr(b).Not;
+
+    //==
+    // Bitwise
+
+    // Bitwise negated-and of the corresponding bits of a and b.
+    BitwiseNand(a: Bitwise, b: Bitwise): Bitwise
+        => a.BitwiseAnd(b).BitwiseNot;
+
+    // Bitwise negated-or of the corresponding bits of a and b.
+    BitwiseNor(a: Bitwise, b: Bitwise): Bitwise
+        => a.BitwiseOr(b).BitwiseNot;
+
+    //==
+    // Additive
+
+    // The value added to itself: x + x. (Name overlaps C#'s Double type; unambiguous
+    // here as a method and worth keeping for the additive-doubling idiom.)
+    Double(x: Additive): Additive
+        => x + x;
+
+    //==
+    // Multiplicative
+
+    // The value multiplied by itself: x * x.
+    Square(x: Multiplicative): Multiplicative
+        => x * x;
+
+    // The value raised to the third power: x * x * x.
+    Cube(x: Multiplicative): Multiplicative
+        => x * x * x;
+
+    //==
+    // Scalable
+
+    // Half of x (divides by two).
+    Half(x: Scalable): Scalable
+        => x / 2.0;
+
+    // One third of x (divides by three).
+    Third(x: Scalable): Scalable
+        => x / 3.0;
+
+    // One quarter of x (divides by four).
+    Quarter(x: Scalable): Scalable
+        => x / 4.0;
+
+    // One tenth of x.
+    Tenth(x: Scalable): Scalable
+        => x / 10.0;
+
+    // One hundredth of x.
+    Hundredth(x: Scalable): Scalable
+        => x / 100.0;
+
+    // One thousandth of x.
+    Thousandth(x: Scalable): Scalable
+        => x / 1000.0;
+
+    // Scales x by the given percentage (100 yields x unchanged).
+    Percent(x: Scalable, percent: Number): Scalable
+        => x * (percent / 100.0);
+
+    //==
+    // Interpolatable
+
+    // The midpoint between a and b (linear interpolation at t = 0.5).
+    MidPoint(a: Interpolatable, b: Interpolatable): Interpolatable
+        => a.Lerp(b, 0.5);
+
+    // Linear interpolation with the parameter t clamped to [0, 1], so the result
+    // never extrapolates beyond the a..b segment.
+    LerpClamped(a: Interpolatable, b: Interpolatable, t: Number): Interpolatable
+        => a.Lerp(b, t.Saturate);
+
+    // Interpolates from a to b with smoothstep easing: the parameter t is reshaped
+    // by the weight t*t*(3 - 2*t), giving zero slope at both ends for a gentle
+    // start and stop. Requested cross-package by P3 (Coordinate). Assumes t in [0,1].
+    SmoothLerp(a: Interpolatable, b: Interpolatable, t: Number): Interpolatable
+        => a.Lerp(b, t * t * (3.0 - 2.0 * t));
+
+    //==
+    // Numerical
+
+    // True when x equals the additive identity (zero).
+    IsZero(x: Numerical): Boolean
+        => x == x.Zero;
+
+    // True when x equals the multiplicative identity (one).
+    IsOne(x: Numerical): Boolean
+        => x == x.One;
+
+    // The weighted sum a*s + b*t of two values with scalar weights.
+    LinearCombination(a: Numerical, b: Numerical, s: Number, t: Number): Numerical
+        => a * s + b * t;
+
+    // Barycentric blend of three values: at (u,v)=(0,0) yields a, (1,0) yields b,
+    // (0,1) yields c.
+    Barycentric(a: Numerical, b: Numerical, c: Numerical, u: Number, v: Number): Numerical
+        => a + (b - a) * u + (c - a) * v;
+
+    //==
+    // Real
+
+    // The absolute value of x (its magnitude on the number line).
+    Abs(x: Real): Real
+        => x.LessThan(x.Zero) ? x.Negative : x;
+
+    // The sign of x as an integer: -1, 0, or +1.
+    Sign(x: Real): Integer
+        => x.Compare(x.Zero);
+
+    // The complement of x within the unit interval: one minus x. Handy for weights
+    // and easing (e.g. the (1 - t) factor in a Bezier blend).
+    OneMinus(x: Real): Real
+        => x.One - x;
+
+    // True when x is strictly greater than zero.
+    IsPositive(x: Real): Boolean
+        => x.Zero.LessThan(x);
+
+    // True when x is strictly less than zero.
+    IsNegative(x: Real): Boolean
+        => x.LessThan(x.Zero);
+
+    // True when x and y differ by no more than the given (non-negative) tolerance.
+    AlmostEqual(x: Real, y: Real, tolerance: Real): Boolean
+        => (x - y).Abs <= tolerance;
+
+    // True when x is within the given (non-negative) tolerance of zero.
+    AlmostZero(x: Real, tolerance: Real): Boolean
+        => x.Abs <= tolerance;
+
+    // Clamps x to the inclusive range [0, 1].
+    Saturate(x: Real): Real
+        => x.Clamp(x.Zero, x.One);
+
+    // The parameter t in [0,1] for which Lerp(a, b, t) equals value. Assumes a != b.
+    InverseLerp(a: Real, b: Real, value: Real): Number
+        => ((value - a) / (b - a)).ToNumber;
+
+    // Remaps value from the input range [inputMin, inputMax] onto the output range
+    // [outputMin, outputMax]. Assumes inputMin != inputMax.
+    Remap(value: Real, inputMin: Real, inputMax: Real, outputMin: Real, outputMax: Real): Real
+        => outputMin.Lerp(outputMax, inputMin.InverseLerp(inputMax, value));
+
+    // Divides x by divisor, returning fallback instead when divisor is zero.
+    SafeDivide(x: Real, divisor: Real, fallback: Real): Real
+        => divisor.IsZero ? fallback : x / divisor;
+
+    //==
+    // Whole
+
+    // True when x equals zero.
+    IsZero(x: Whole): Boolean
+        => x == x.Zero;
+
+    // True when x equals one.
+    IsOne(x: Whole): Boolean
+        => x == x.One;
+
+    // The absolute value of x.
+    Abs(x: Whole): Whole
+        => x.LessThan(x.Zero) ? x.Negative : x;
+
+    // The sign of x as an integer: -1, 0, or +1.
+    Sign(x: Whole): Integer
+        => x.Compare(x.Zero);
+
+    // True when x is evenly divisible by two.
+    IsEven(x: Whole): Boolean
+        => x.Modulo(x.One + x.One) == x.Zero;
+
+    // True when x is not evenly divisible by two.
+    IsOdd(x: Whole): Boolean
+        => x.IsEven.Not;
+
+    // True when x is strictly greater than zero.
+    IsPositive(x: Whole): Boolean
+        => x.Zero.LessThan(x);
+
+    // True when x is strictly less than zero.
+    IsNegative(x: Whole): Boolean
+        => x.LessThan(x.Zero);
+
+    //==
+    // Invertible
+    //
+    // No derivations: Inverse is the sole member and every useful combination
+    // (e.g. a/b as a * b.Inverse) requires Multiplicative, which Invertible does
+    // not inherit. Types that are both (Real via Arithmetic) get division directly.
+
+    //==
+    // Normed
+
+    // True when x has unit length, within the given tolerance on the squared
+    // magnitude (avoids the square root).
+    IsUnit(x: Normed, tolerance: Number): Boolean
+        => x.MagnitudeSquared.AlmostEqual(1.0, tolerance);
+
+    // True when x has (near) zero length, within the given squared-magnitude tolerance.
+    IsZeroLength(x: Normed, tolerance: Number): Boolean
+        => x.MagnitudeSquared <= tolerance;
+
+    //==
+    // MetricSpace
+
+    // True when a and b are within the given tolerance of each other.
+    IsNear(a: MetricSpace, b: MetricSpace, tolerance: Number): Boolean
+        => a.Distance(b) <= tolerance;
+
+    // True when candidate is strictly nearer to reference than other is.
+    // Example: origin.IsNearerThan(p, q) tests whether p is closer to origin than q.
+    IsNearerThan(reference: MetricSpace, candidate: MetricSpace, other: MetricSpace): Boolean
+        => reference.Distance(candidate).LessThan(reference.Distance(other));
+
+    // Whichever of a and b is nearer to reference (ties resolve to a).
+    Nearest(reference: MetricSpace, a: MetricSpace, b: MetricSpace): MetricSpace
+        => reference.Distance(a) <= reference.Distance(b) ? a : b;
+
+    //==
+    // Lattice
+
+    // Component-wise clamp of x into the inclusive box [min, max], derived from the
+    // lattice Min/Max. Assumes min <= max component-wise. (Provides the default body
+    // for the Clampable.Clamp member, since Clampable inherits Lattice.)
+    Clamp(x: Lattice, min: Lattice, max: Lattice): Lattice
+        => x.Max(min).Min(max);
+
+    //==
+    // Difference<TDelta>
+    //
+    // TODO(concept-gap): the useful derivations here (e.g. a midpoint between two
+    // positions) need to scale a TDelta by 0.5, but Difference does not constrain
+    // TDelta to Scalable, so a generic MidPoint cannot be expressed. Add(x, delta),
+    // Subtract(x, delta) and Between(a, b) remain primitive per implementing type.
+}

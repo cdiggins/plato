@@ -1,0 +1,285 @@
+//==
+// # CollectionsFunctional — derived functions for collection and functional concepts
+//
+// Bodies for the concepts declared in `03-concepts-collections.plato` and
+// `04-concepts-functional.plato`. Every function's first parameter is
+// concept-typed, so it becomes available on every implementing type. Pure
+// expressions only; collections are immutable, so "modifying" helpers return
+// new values. See `../README.md` for conventions.
+
+library CollectionsFunctional
+{
+    //==
+    // # Countable
+    //
+    // Emptiness tests derived from the element count.
+
+    // True when the collection has no elements.
+    IsEmpty(self: Countable): Boolean
+        => self.Count == 0;
+
+    // True when the collection has at least one element.
+    IsNotEmpty(self: Countable): Boolean
+        => self.Count > 0;
+
+    // True when the collection holds exactly one element.
+    IsSingleton(self: Countable): Boolean
+        => self.Count == 1;
+
+    //==
+    // # Index
+    //
+    // A typed zero-based position; Value == -1 is the "none" sentinel.
+
+    // True when the index refers to nothing. A negative value means none,
+    // conventionally -1.
+    IsNone(self: Index): Boolean
+        => self.Value < 0;
+
+    // True when the index refers to a real position (non-negative).
+    IsPresent(self: Index): Boolean
+        => self.Value >= 0;
+
+    //==
+    // # Indexable
+    //
+    // Endpoint access and bounds checking for a one-dimensional collection.
+
+    // The index of the last element (Count - 1); negative when empty.
+    LastIndex(self: Indexable<$T>): Integer
+        => self.Count - 1;
+
+    // True when index lies within [0, Count).
+    IsValidIndex(self: Indexable<$T>, index: Integer): Boolean
+        => index >= 0 && index < self.Count;
+
+    // Element access via a typed Index wrapper. Precondition: the index is present.
+    At(self: Indexable<$T>, index: Index): $T
+        => self.At(index.Value);
+
+    // True when a typed Index refers to a real position within [0, Count).
+    IsValidIndex(self: Indexable<$T>, index: Index): Boolean
+        => index.Value >= 0 && index.Value < self.Count;
+
+    // The first element. Precondition: the collection is not empty.
+    First(self: Indexable<$T>): $T
+        => self.At(0);
+
+    // The last element. Precondition: the collection is not empty.
+    Last(self: Indexable<$T>): $T
+        => self.At(self.Count - 1);
+
+    // The middle element (rounding the index down). Precondition: not empty.
+    Middle(self: Indexable<$T>): $T
+        => self.At(self.Count / 2);
+
+    //==
+    // # Indexable2D
+    //
+    // Cell access, bounds checks, and row-major flat-index conversions for a
+    // column x row grid.
+
+    // True when (column, row) lies within the grid.
+    IsValidCell(self: Indexable2D<$T>, column: Integer, row: Integer): Boolean
+        => column >= 0 && column < self.ColumnCount
+        && row >= 0 && row < self.RowCount;
+
+    // The row-major flat index of cell (column, row): row * ColumnCount + column.
+    FlattenIndex(self: Indexable2D<$T>, column: Integer, row: Integer): Integer
+        => row * self.ColumnCount + column;
+
+    // The (column, row) pair for a row-major flat index. Inverse of FlattenIndex.
+    UnflattenIndex(self: Indexable2D<$T>, index: Integer): Tuple2<Integer, Integer>
+        => (index % self.ColumnCount, index / self.ColumnCount);
+
+    // The top-left cell (0, 0). Precondition: the grid is not empty.
+    FirstCell(self: Indexable2D<$T>): $T
+        => self.At(0, 0);
+
+    // The bottom-right cell. Precondition: the grid is not empty.
+    LastCell(self: Indexable2D<$T>): $T
+        => self.At(self.ColumnCount - 1, self.RowCount - 1);
+
+    //==
+    // # Indexable3D
+    //
+    // Cell access and bounds checks for a column x row x layer volume.
+
+    // True when (column, row, layer) lies within the volume.
+    IsValidCell(self: Indexable3D<$T>, column: Integer, row: Integer, layer: Integer): Boolean
+        => column >= 0 && column < self.ColumnCount
+        && row >= 0 && row < self.RowCount
+        && layer >= 0 && layer < self.LayerCount;
+
+    // The row-major flat index of cell (column, row, layer):
+    // (layer * RowCount + row) * ColumnCount + column.
+    FlattenIndex(self: Indexable3D<$T>, column: Integer, row: Integer, layer: Integer): Integer
+        => (layer * self.RowCount + row) * self.ColumnCount + column;
+
+    // The (column, row, layer) triple for a row-major flat index. Inverse of FlattenIndex.
+    UnflattenIndex(self: Indexable3D<$T>, index: Integer): Tuple3<Integer, Integer, Integer>
+        => (index % self.ColumnCount,
+            (index / self.ColumnCount) % self.RowCount,
+            index / (self.ColumnCount * self.RowCount));
+
+    // The first cell (0, 0, 0). Precondition: not empty.
+    FirstCell(self: Indexable3D<$T>): $T
+        => self.At(0, 0, 0);
+
+    // The last cell. Precondition: not empty.
+    LastCell(self: Indexable3D<$T>): $T
+        => self.At(self.ColumnCount - 1, self.RowCount - 1, self.LayerCount - 1);
+
+    //==
+    // # Indexable4D
+    //
+    // Cell access and bounds checks for a column x row x layer x block hypervolume.
+
+    // True when (column, row, layer, block) lies within the hypervolume.
+    IsValidCell(self: Indexable4D<$T>, column: Integer, row: Integer, layer: Integer, block: Integer): Boolean
+        => column >= 0 && column < self.ColumnCount
+        && row >= 0 && row < self.RowCount
+        && layer >= 0 && layer < self.LayerCount
+        && block >= 0 && block < self.BlockCount;
+
+    // The row-major flat index of cell (column, row, layer, block).
+    FlattenIndex(self: Indexable4D<$T>, column: Integer, row: Integer, layer: Integer, block: Integer): Integer
+        => ((block * self.LayerCount + layer) * self.RowCount + row) * self.ColumnCount + column;
+
+    // The (column, row, layer, block) tuple for a row-major flat index. Inverse of FlattenIndex.
+    UnflattenIndex(self: Indexable4D<$T>, index: Integer): Tuple4<Integer, Integer, Integer, Integer>
+        => (index % self.ColumnCount,
+            (index / self.ColumnCount) % self.RowCount,
+            (index / (self.ColumnCount * self.RowCount)) % self.LayerCount,
+            index / (self.ColumnCount * self.RowCount * self.LayerCount));
+
+    // The first cell (0, 0, 0, 0). Precondition: not empty.
+    FirstCell(self: Indexable4D<$T>): $T
+        => self.At(0, 0, 0, 0);
+
+    // The last cell. Precondition: not empty.
+    LastCell(self: Indexable4D<$T>): $T
+        => self.At(self.ColumnCount - 1, self.RowCount - 1, self.LayerCount - 1, self.BlockCount - 1);
+
+    //==
+    // # Sliceable
+    //
+    // Contiguous sub-range helpers built on Slice(start, count).
+    // TODO(concept-gap): Drop / TakeLast / DropLast need the total element count;
+    // Sliceable does not inherit Countable, so they cannot be derived here.
+    // Note: these return the bare concept type Sliceable rather than the concrete
+    // implementing type, so chained calls (self.Take(n).Take(m)) resolve against
+    // the concept surface and type-check; the concrete type is simply not recovered.
+
+    // The first `count` elements: Slice(0, count).
+    Take(self: Sliceable, count: Integer): Sliceable
+        => self.Slice(0, count);
+
+    // The half-open range [start, end): Slice(start, end - start).
+    SubRange(self: Sliceable, start: Integer, end: Integer): Sliceable
+        => self.Slice(start, end - start);
+
+    //==
+    // # Concatenable
+    //
+    // Joining helpers built on Concat(a, b).
+
+    // The collection joined to itself end to end.
+    Doubled(self: Concatenable): Concatenable
+        => self.Concat(self);
+
+    //==
+    // # SetLike
+    //
+    // Membership helpers built on Contains(item).
+
+    // True when the item is not a member.
+    DoesNotContain(self: SetLike<$T>, item: $T): Boolean
+        => self.Contains(item).Not;
+
+    //==
+    // # MapLike
+    //
+    // Key-lookup helpers. MapLike inherits Countable, so IsEmpty / IsNotEmpty
+    // apply directly.
+
+    // True when the map has no entry for the given key.
+    DoesNotContainKey(self: MapLike<$TKey, $TValue>, key: $TKey): Boolean
+        => self.ContainsKey(key).Not;
+
+    //==
+    // # StackLike
+    //
+    // LIFO helpers. Push / Pop return new stacks.
+
+    // Replace the top element: pop the current top, then push the new item.
+    // Precondition: the stack is not empty.
+    ReplaceTop(self: StackLike<$T>, item: $T): StackLike<$T>
+        => self.Pop.Push(item);
+
+    //==
+    // # QueueLike
+    //
+    // FIFO helpers. Enqueue / Dequeue return new queues.
+
+    // Move the front element to the back, preserving the order of the rest.
+    // Precondition: the queue is not empty.
+    Rotate(self: QueueLike<$T>): QueueLike<$T>
+        => self.Enqueue(self.Front).Dequeue;
+
+    //==
+    // # Procedural
+    //
+    // TODO(concept-gap): Procedural on its own exposes only Eval, and mapping a
+    // whole Array<TDomain> would require a Map over Indexable that must construct
+    // a result collection — no concept here can construct one, so EvalAll is left
+    // to backends that know the concrete type.
+
+    //==
+    // # Bijective
+    //
+    // Round-trip identities for an invertible mapping.
+
+    // Map forward then back; equals the original input for a true bijection.
+    RoundTripDomain(self: Bijective<$TDomain, $TRange>, input: $TDomain): $TDomain
+        => self.EvalInverse(self.Eval(input));
+
+    // Map back then forward; equals the original output for a true bijection.
+    RoundTripRange(self: Bijective<$TDomain, $TRange>, output: $TRange): $TRange
+        => self.Eval(self.EvalInverse(output));
+
+    //==
+    // # Periodic
+    //
+    // TODO(concept-gap): meaningful wrapping helpers (e.g. WrapPhase mapping a
+    // domain value into one period) need both the domain value's type and
+    // Modulo on TPeriod. Periodic<TPeriod> declares only Period and does not
+    // inherit Procedural or constrain TPeriod to be Modular, so no wrapping
+    // helper can be written here without those constraints.
+
+    //==
+    // # ParameterDomain
+    //
+    // Convenience accessors over the preferred evaluation interval. The Domain is
+    // a NumberInterval with Start and End fields.
+
+    // The lower bound of the preferred parameter range.
+    DomainStart(self: ParameterDomain): Number
+        => self.Domain.Start;
+
+    // The upper bound of the preferred parameter range.
+    DomainEnd(self: ParameterDomain): Number
+        => self.Domain.End;
+
+    // The width of the preferred parameter range (End - Start).
+    DomainWidth(self: ParameterDomain): Number
+        => self.Domain.End - self.Domain.Start;
+
+    // The midpoint of the preferred parameter range.
+    DomainCenter(self: ParameterDomain): Number
+        => (self.Domain.Start + self.Domain.End) / 2.0;
+
+    // True when t lies within the preferred parameter range (inclusive).
+    DomainContains(self: ParameterDomain, t: Number): Boolean
+        => t >= self.Domain.Start && t <= self.Domain.End;
+}

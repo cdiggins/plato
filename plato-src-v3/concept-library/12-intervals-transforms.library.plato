@@ -1,0 +1,231 @@
+//==
+// # IntervalsTransforms — derived functionality for intervals, bounds, and transforms
+//
+// Implements P4 of the concept library: pure, expression-bodied helpers for the
+// concepts declared in `12-intervals-bounds.plato` (IntervalLike, BoundsLike) and
+// `13-transforms.plato` (Transformable, Deformable2D, Deformable3D).
+//
+// Design notes on the concept surface (see the TODO(concept-gap) banners below):
+//   * IntervalLike<T> leaves T unconstrained, but its concrete instances
+//     (Number, Angle, Length, Integer) are all Additive + Interpolatable +
+//     Comparable, so those are the only capabilities used on T here.
+//   * BoundsLike<TPoint> carries only the point type; it has no delta/vector type
+//     parameter and its point type is neither Orderable nor a Lattice. That blocks
+//     the Extent/Contains/Union/Intersection family — see the banner.
+//   * Directed intervals: Contains/Overlaps/Union/Intersection/Clamp assume the
+//     forward orientation Start <= End. Use IsForward to test, Reverse to fix.
+
+library IntervalsTransforms
+{
+    //==
+    // IntervalLike<T> — a directed one-dimensional span from Start to End.
+    // T is used only through Additive (Add/Subtract), Interpolatable (Lerp), and
+    // Comparable (LessThanOrEquals / Lesser / Greater / Clamp), the capabilities
+    // shared by every concrete interval element type (Number, Angle, Length,
+    // Integer). The comparison helpers (Lesser/Greater/Clamp) come from P1
+    // (01-core-algebra), which derives them for any Orderable.
+
+    // TODO(concept-gap): IntervalLike<T> should constrain T to
+    // (Additive + Interpolatable + Comparable). Every derived function below relies
+    // on those members, but the concept declares no bound, so resolution succeeds
+    // only by the checker's duck-typing on type parameters. Adding the constraint
+    // would make the contract explicit and let a stricter checker verify it.
+
+    // The signed span from Start to End (End - Start); negative for a reversed
+    // interval. Replaces v1 `Size`, which read ambiguously against area/volume.
+    Extent(self: IntervalLike<$T>): $T
+        => self.End.Subtract(self.Start);
+
+    // True when the interval is stored in forward orientation (Start <= End).
+    IsForward(self: IntervalLike<$T>): Boolean
+        => self.Start.LessThanOrEquals(self.End);
+
+    // True when the interval is stored reversed (Start > End).
+    IsReversed(self: IntervalLike<$T>): Boolean
+        => self.IsForward.Not;
+
+    // The point a fraction `t` of the way from Start to End. t is unclamped:
+    // 0 yields Start, 1 yields End, values outside [0,1] extrapolate.
+    Lerp(self: IntervalLike<$T>, t: Number): $T
+        => self.Start.Lerp(self.End, t);
+
+    // The midpoint of the interval.
+    Center(self: IntervalLike<$T>): $T
+        => self.Lerp(0.5);
+
+    // True when `value` lies within the closed interval [Start, End] (both
+    // endpoints inclusive). Assumes forward orientation; Reverse a reversed span.
+    Contains(self: IntervalLike<$T>, value: $T): Boolean
+        => self.Start <= value && value <= self.End;
+
+    // True when `other` lies entirely within this closed interval (endpoints
+    // inclusive). Forward orientation on both.
+    ContainsInterval(self: IntervalLike<$T>, other: IntervalLike<$T>): Boolean
+        => self.Contains(other.Start) && self.Contains(other.End);
+
+    // True when the two closed intervals share any point, endpoints inclusive
+    // (touching at a single endpoint counts). Closed-form; assumes forward
+    // orientation on both.
+    Overlaps(self: IntervalLike<$T>, other: IntervalLike<$T>): Boolean
+        => self.Start <= other.End && other.Start <= self.End;
+
+    // Restrict `value` to the closed interval [Start, End]. Assumes forward
+    // orientation. Uses P1's Clamp(Orderable, lower, upper).
+    Clamp(self: IntervalLike<$T>, value: $T): $T
+        => value.Clamp(self.Start, self.End);
+
+    // The smallest interval containing both operands (the convex hull of the two).
+    // Forward orientation: start at the lesser start, end at the greater end.
+    Union(self: IntervalLike<$T>, other: IntervalLike<$T>): IntervalLike<$T>
+        => (self.Start.Lesser(other.Start), self.End.Greater(other.End));
+
+    // The overlapping interval common to both. Forward orientation: start at the
+    // greater start, end at the lesser end. Empty (Start > End) when they are
+    // disjoint — test with IsForward.
+    Intersection(self: IntervalLike<$T>, other: IntervalLike<$T>): IntervalLike<$T>
+        => (self.Start.Greater(other.Start), self.End.Lesser(other.End));
+
+    // The same span traversed in the opposite direction (End becomes Start).
+    Reverse(self: IntervalLike<$T>): IntervalLike<$T>
+        => (self.End, self.Start);
+
+    // The interval shifted so it starts at `start`, keeping the same extent.
+    // Renamed from v1 `MoveTo` for clarity about which endpoint anchors.
+    StartAt(self: IntervalLike<$T>, start: $T): IntervalLike<$T>
+        => (start, start.Add(self.Extent));
+
+    // The interval translated by `delta`, moving both endpoints together.
+    Translate(self: IntervalLike<$T>, delta: $T): IntervalLike<$T>
+        => (self.Start.Add(delta), self.End.Add(delta));
+
+    // The interval grown symmetrically by `amount` at each end (negative shrinks).
+    // Replaces the v1 `Recenter`/half-extent dance, which needed scalar division.
+    Grow(self: IntervalLike<$T>, amount: $T): IntervalLike<$T>
+        => (self.Start.Subtract(amount), self.End.Add(amount));
+
+    // The leading sub-span from Start up to fraction `t`. Renamed from v1 `Left`,
+    // which was ambiguous for a directed span.
+    Prefix(self: IntervalLike<$T>, t: Number): IntervalLike<$T>
+        => (self.Start, self.Lerp(t));
+
+    // The trailing sub-span from fraction `t` to End. Renamed from v1 `Right`.
+    Suffix(self: IntervalLike<$T>, t: Number): IntervalLike<$T>
+        => (self.Lerp(t), self.End);
+
+    // The first half of the interval.
+    FirstHalf(self: IntervalLike<$T>): IntervalLike<$T>
+        => self.Prefix(0.5);
+
+    // The second half of the interval.
+    SecondHalf(self: IntervalLike<$T>): IntervalLike<$T>
+        => self.Suffix(0.5);
+
+    // The sub-interval covering fractions `startFraction`..`endFraction` of this one.
+    Subinterval(self: IntervalLike<$T>, startFraction: Number, endFraction: Number): IntervalLike<$T>
+        => (self.Lerp(startFraction), self.Lerp(endFraction));
+
+    // Split at fraction `t` into the leading and trailing sub-spans.
+    SplitAt(self: IntervalLike<$T>, t: Number): Tuple2<IntervalLike<$T>, IntervalLike<$T>>
+        => (self.Prefix(t), self.Suffix(t));
+
+    // Split into two equal halves.
+    Split(self: IntervalLike<$T>): Tuple2<IntervalLike<$T>, IntervalLike<$T>>
+        => self.SplitAt(0.5);
+
+    // TODO(concept-gap): Normalize (inverse Lerp: value -> fraction) is not
+    // derivable here — it needs T/T division, which only Number supports among the
+    // interval element types (Angle/Length/Integer are not Divisible by Self).
+    // Add a Number-specialized overload in the numeric package if wanted.
+
+    //==
+    // BoundsLike<TPoint> — an axis-aligned region between corner points Min and Max.
+    // Only capabilities on TPoint itself are available; its instances (Point2D/3D/4D)
+    // are Coordinate (=> Interpolatable) and Difference, but NOT Orderable/Lattice.
+
+    // The center point of the region. Uses P1's MidPoint(Interpolatable).
+    Center(self: BoundsLike<$TPoint>): $TPoint
+        => self.Min.MidPoint(self.Max);
+
+    // The point a fraction `t` of the way along the Min -> Max diagonal. t is
+    // unclamped. For per-axis interpolation use a point-typed parameter once the
+    // concept exposes component access (see the gap note).
+    Lerp(self: BoundsLike<$TPoint>, t: Number): $TPoint
+        => self.Min.Lerp(self.Max, t);
+
+    // TODO(concept-gap): the Extent/Diagonal, Contains(point|bounds), Union,
+    // Intersection, Clamp, Expand and Corner-enumeration helpers cannot be written
+    // against BoundsLike<TPoint> as declared. Extent/Diagonal would return the
+    // delta between Min and Max, but BoundsLike has no delta type parameter to name
+    // (v1's IBounds<$T,$D> carried one); and containment/union/intersection need
+    // component-wise Min/Max (a Lattice) on TPoint, which the point types do not
+    // implement. Recommended fix: declare `BoundsLike<TPoint, TDelta>` and/or make
+    // the point types Lattice/Clampable, then this surface mirrors IntervalLike.
+
+    //==
+    // Transformable<TTransform> — a value that can be carried through a transform.
+    // The convenience overloads below are named ThenTransform rather than reusing
+    // the concept's `Transform` name: overloading a concept-declared member on arity
+    // alone is easy to misread, and ThenTransform states the sequencing intent.
+
+    // Apply two transforms in order: `first` then `second`. A convenience over
+    // chaining Transform calls; the concept exposes no transform composition of its
+    // own to fold these into a single map.
+    ThenTransform(self: Transformable<$TTransform>, first: $TTransform, second: $TTransform): Self
+        => self.Transform(first).Transform(second);
+
+    // Apply three transforms in order.
+    ThenTransform(self: Transformable<$TTransform>, first: $TTransform, second: $TTransform, third: $TTransform): Self
+        => self.Transform(first).Transform(second).Transform(third);
+
+    // TODO(concept-gap): richer helpers (inverse-transform, transform-about-a-pivot,
+    // identity) need Invertible/Composable/Identity members on TTransform, which the
+    // Transformable concept does not require.
+
+    //==
+    // Deformable2D — a value reshaped by an arbitrary Point2D -> Point2D mapping.
+    // The mapping type is concrete (Function1<Point2D, Point2D>), so these build
+    // real Point2D/Vector2 lambdas.
+
+    // Translate every point by `offset`.
+    Translate(self: Deformable2D, offset: Vector2): Self
+        => self.Deform(p => p.Add(offset));
+
+    // Uniformly scale about `center` by `factor` (1 leaves the shape unchanged).
+    // Assumes Difference.Between(a, b) = b - a (the displacement from a to b).
+    ScaleAbout(self: Deformable2D, center: Point2D, factor: Number): Self
+        => self.Deform(p => center.Add(center.Between(p).Multiply(factor)));
+
+    // Non-uniformly scale about `center` by a per-axis `factors` vector.
+    // Assumes Difference.Between(a, b) = b - a.
+    ScaleAbout(self: Deformable2D, center: Point2D, factors: Vector2): Self
+        => self.Deform(p => center.Add(center.Between(p).Multiply(factors)));
+
+    // TODO(concept-gap): the ScaleAbout helpers depend on the sign of
+    // Difference.Between, which file 02 declares (Between(a, b): TDelta) without
+    // documenting its direction. This code assumes b - a; if the intended
+    // convention is a - b the scale reflects through `center`. Pin the direction in
+    // the Difference doc comment.
+
+    // TODO(concept-gap): RotateAbout is omitted — rotating a Point2D needs a point
+    // rotation operation (e.g. Rotation2D applied to a point, or Vector2 rotate-by-
+    // Angle), which is not available from the concepts in scope for this package.
+
+    //==
+    // Deformable3D — a value reshaped by an arbitrary Point3D -> Point3D mapping.
+
+    // Translate every point by `offset`.
+    Translate(self: Deformable3D, offset: Vector3): Self
+        => self.Deform(p => p.Add(offset));
+
+    // Uniformly scale about `center` by `factor`. Assumes Between(a, b) = b - a.
+    ScaleAbout(self: Deformable3D, center: Point3D, factor: Number): Self
+        => self.Deform(p => center.Add(center.Between(p).Multiply(factor)));
+
+    // Non-uniformly scale about `center` by a per-axis `factors` vector.
+    // Assumes Between(a, b) = b - a.
+    ScaleAbout(self: Deformable3D, center: Point3D, factors: Vector3): Self
+        => self.Deform(p => center.Add(center.Between(p).Multiply(factors)));
+
+    // TODO(concept-gap): RotateAbout is omitted for the same reason as Deformable2D
+    // — no point-rotation operation is reachable from this package's concepts.
+}

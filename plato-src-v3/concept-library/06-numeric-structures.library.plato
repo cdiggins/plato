@@ -1,0 +1,195 @@
+//==
+// # NumericStructures — derived functions for numeric structure concepts
+//
+// Bodies for the concepts declared in `06-quantities.plato` (Quantity),
+// `08-vectors.plato` (Vector), `09-matrices.plato` (MatrixLike), and
+// `11-points.plato` (Coordinate). Every function's first parameter is
+// concept-typed, so each helper becomes available on every implementing type.
+// Pure expressions only; all values are immutable, so nothing mutates in place.
+// See `../README.md` for naming and unit conventions.
+//
+// This library builds on `01-core-algebra.library.plato` (CoreAlgebra): the
+// generic Orderable helpers (Lesser, Greater, Clamp, Between), the Interpolatable
+// helpers (MidPoint, LerpClamped), Additive.Double, Scalable.Half, and the
+// Real helpers (Abs, Sign) already cover the inherited surface, so this file only
+// adds what is specific to these four concepts.
+
+library NumericStructures
+{
+    //==
+    // # Quantity
+    //
+    // A one-dimensional measured amount (Value, Comparable, Hashable, Additive,
+    // Scalable, Interpolatable) with an Amount projected to a raw Number.
+    // Ordering (Lesser/Greater/Clamp/Between), MidPoint, LerpClamped, Double and
+    // Half all come from CoreAlgebra via the inherited concepts; only the
+    // Amount-based sign/zero predicates and the same-type absolute value are
+    // added here. Quantity is deliberately not Arithmetic (multiplying two
+    // quantities yields a different type), so no product helper is offered.
+
+    // True when the underlying amount is exactly zero. (Quantity is not Numerical,
+    // so CoreAlgebra's IsZero does not apply.)
+    IsZero(self: Quantity): Boolean
+        => self.Amount == 0.0;
+
+    // True when the underlying amount is strictly greater than zero.
+    IsPositive(self: Quantity): Boolean
+        => self.Amount > 0.0;
+
+    // True when the underlying amount is strictly less than zero.
+    IsNegative(self: Quantity): Boolean
+        => self.Amount < 0.0;
+
+    // The sign of the quantity: 1 when positive, -1 when negative, 0 when zero.
+    Sign(self: Quantity): Integer
+        => self.Amount.Sign;
+
+    // The absolute value: the quantity with a non-negative amount.
+    Abs(self: Quantity): Quantity
+        => self.IsNegative ? self.Negative : self;
+
+    // The magnitude of the gap between two quantities; always non-negative.
+    AbsoluteDifference(a: Quantity, b: Quantity): Quantity
+        => (a - b).Abs;
+
+    //==
+    // # Vector
+    //
+    // Fixed-arity numeric vectors (Numerical, Arithmetic, Indexable<Number>,
+    // Normed, Lattice, Hashable) with a Dot product. Magnitude and
+    // MagnitudeSquared come from Normed; Min/Max are the component-wise lattice
+    // operations. MidPoint and LerpClamped come from CoreAlgebra (Interpolatable).
+    // Vector is Lattice but not Clampable, so the box clamps below stay here.
+    //
+    // TODO(concept-gap): Vector exposes only At/Count from Indexable, with no
+    // fold or map primitive, so component reductions (SumComponents,
+    // MinComponent, AvgComponent) and per-component maps (Abs, Floor, Ceiling)
+    // are not derivable at the concept level; they belong on the concrete types.
+    // TODO(concept-gap): an AngleBetween returning Angle needs Number.Acos, which
+    // the v3 vocabulary does not yet declare — omitted rather than approximated.
+
+    // The unit vector in the same direction. Precondition: non-zero magnitude.
+    Normalize(self: Vector): Vector
+        => self / self.Magnitude;
+
+    // The straight-line distance between the tips of two vectors.
+    Distance(a: Vector, b: Vector): Number
+        => (a - b).Magnitude;
+
+    // The squared distance between two vectors; avoids the square root when only
+    // relative distances are compared.
+    DistanceSquared(a: Vector, b: Vector): Number
+        => (a - b).MagnitudeSquared;
+
+    // True when b lies within the given radius of a (inclusive). Compares squared
+    // distances, so no square root is taken.
+    WithinDistance(a: Vector, b: Vector, radius: Number): Boolean
+        => a.DistanceSquared(b) <= radius * radius;
+
+    // The signed length of self projected onto onto. Precondition: onto is non-zero.
+    ScalarProjection(self: Vector, onto: Vector): Number
+        => self.Dot(onto) / onto.Magnitude;
+
+    // The component of self parallel to onto. Precondition: onto is non-zero.
+    ProjectOnto(self: Vector, onto: Vector): Vector
+        => onto * (self.Dot(onto) / onto.Dot(onto));
+
+    // The component of self perpendicular to onto. Precondition: onto is non-zero.
+    RejectFrom(self: Vector, onto: Vector): Vector
+        => self - self.ProjectOnto(onto);
+
+    // Reflects self across the plane whose normal is given. Precondition: normal
+    // is a unit vector.
+    Reflect(self: Vector, normal: Vector): Vector
+        => self - normal * (2.0 * self.Dot(normal));
+
+    // The cosine of the angle between a and b: Dot divided by the product of
+    // magnitudes. Preconditions: a and b are non-zero.
+    CosineSimilarity(a: Vector, b: Vector): Number
+        => a.Dot(b) / (a.Magnitude * b.Magnitude);
+
+    // A vector in the same direction as self but with the given length.
+    // Precondition: self is non-zero.
+    ScaledToLength(self: Vector, length: Number): Vector
+        => self.Normalize * length;
+
+    // Restricts each component of self to the box spanned by lo and hi, using the
+    // component-wise lattice operations. Precondition: lo <= hi component-wise.
+    Clamp(self: Vector, lo: Vector, hi: Vector): Vector
+        => self.Max(lo).Min(hi);
+
+    // Restricts each component of self to [0, 1] using the vector's own Zero and
+    // One elements (the component-wise analogue of CoreAlgebra's Saturate).
+    Saturate(self: Vector): Vector
+        => self.Max(self.Zero).Min(self.One);
+
+    //==
+    // # MatrixLike
+    //
+    // Dense numeric matrices (Value, Additive, Scalable) with RowCount,
+    // ColumnCount, and ElementAt(row, column). Double and Half come from
+    // CoreAlgebra (Additive / Scalable). The base concept has no multiplication,
+    // transpose, or row/column extraction, so only shape queries, element access,
+    // and the shape-preserving interpolation conveniences are derivable here.
+    //
+    // TODO(concept-gap): Trace, Transpose, and FrobeniusNorm need iteration over
+    // elements, matrix construction, and a square root respectively — none of
+    // which the MatrixLike surface (or the v3 Number vocabulary) yet provides.
+
+    // True when the matrix has equal row and column counts.
+    IsSquare(self: MatrixLike): Boolean
+        => self.RowCount == self.ColumnCount;
+
+    // The total number of elements (rows times columns).
+    ElementCount(self: MatrixLike): Integer
+        => self.RowCount * self.ColumnCount;
+
+    // True when the matrix has no elements (no rows or no columns).
+    IsEmpty(self: MatrixLike): Boolean
+        => self.RowCount == 0 || self.ColumnCount == 0;
+
+    // True when the matrix is a single row.
+    IsRowVector(self: MatrixLike): Boolean
+        => self.RowCount == 1;
+
+    // True when the matrix is a single column.
+    IsColumnVector(self: MatrixLike): Boolean
+        => self.ColumnCount == 1;
+
+    // True when two matrices have the same row and column counts.
+    SameShape(a: MatrixLike, b: MatrixLike): Boolean
+        => a.RowCount == b.RowCount && a.ColumnCount == b.ColumnCount;
+
+    // The element on the main diagonal at position i (i.e. element (i, i)).
+    // Precondition: i is a valid row and column index.
+    DiagonalElement(self: MatrixLike, i: Integer): Number
+        => self.ElementAt(i, i);
+
+    // Linear interpolation of two matrices, derived from Additive and Scalable.
+    // t is unclamped: 0 yields a, 1 yields b. Precondition: a and b share a shape.
+    Lerp(a: MatrixLike, b: MatrixLike, t: Number): MatrixLike
+        => a + (b - a) * t;
+
+    // The element-wise average of two matrices. Precondition: a and b share a shape.
+    Average(a: MatrixLike, b: MatrixLike): MatrixLike
+        => (a + b) / 2.0;
+
+    //==
+    // # Coordinate
+    //
+    // A position in some space (Value, Equatable, Interpolatable). Coordinate is a
+    // marker concept whose only operation is Lerp, and CoreAlgebra already ships
+    // MidPoint and LerpClamped on Interpolatable — which Coordinate inherits — so
+    // every interpolation convenience it can support already exists upstream and
+    // no Coordinate-specific body is added here.
+    //
+    // TODO(cross-package): CoreAlgebra (P1) should adopt a smoothstep easing on
+    // Interpolatable, e.g.
+    //   SmoothLerp(a: Interpolatable, b: Interpolatable, t: Number): Interpolatable
+    //       => a.Lerp(b, t * t * (3.0 - 2.0 * t));
+    // It uses only Lerp, so it belongs beside MidPoint/LerpClamped rather than
+    // being duplicated per concept here (was previously on Vector and Coordinate).
+    // TODO(concept-gap): Coordinate does not inherit MetricSpace or Difference, so
+    // a generic Distance or Between-two-points delta cannot be defined at the
+    // concept level; those live on the concrete point types via Difference<TDelta>.
+}
