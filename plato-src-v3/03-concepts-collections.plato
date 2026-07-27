@@ -10,6 +10,15 @@ concept Countable
     Count(x: Self): Integer;
 }
 
+// A typed zero-based position within an ordered collection. Value is the raw
+// index; -1 means "none" / "not present". Implementors are single-field
+// wrappers over Integer (Index, VertexIndex, FaceIndex, ...), so the Value
+// field satisfies this surface directly.
+concept IndexLike
+{
+    Value(x: Self): Integer;
+}
+
 // An ordered collection addressable by zero-based index.
 concept Indexable<T>
     inherits Countable

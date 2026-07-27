@@ -9,7 +9,7 @@ Target applications: geometry (primary), 2D/3D/4D and N-dimensional computation,
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
 graphics, image processing, and engineering.
 
-Current contents (2026-07-27): **70 source files, 154 concepts, 1125 types** (~13.4K lines).
+Current contents (2026-07-27): **70 source files, 155 concepts, 1125 types** (~13.4K lines).
 The folder parses and resolves cleanly (`lint`: 0 parse errors, 0 symbol-resolution errors);
 LINT001/LINT003 findings are expected until libraries implement the declared surface.
 
@@ -71,7 +71,7 @@ Foundation files:
 - `00-primitives.plato` — compiler-assumed primitives, tuples, functions, arrays.
 - `01-concepts-core.plato` — Equatable, Value, Hashable, Orderable, Comparable, Logical, Bitwise.
 - `02-concepts-algebra.plato` — Additive..Arithmetic, ScalarArithmetic, Interpolatable, Numerical, Real, Whole, Normed, Metric, Lattice, Difference.
-- `03-concepts-collections.plato` — Countable, Indexable family, Sliceable, Concatenable, SetLike, MapLike.
+- `03-concepts-collections.plato` — Countable, IndexLike, Indexable family, Sliceable, Concatenable, SetLike, MapLike.
 - `04-concepts-functional.plato` — Procedural, Bijective, Periodic, Boundable.
 - `05-numbers.plato` — Complex, Rational, Proportion, Percent, Probability, Index.
 - `06-quantities.plato` — Quantity concept, Dimension/UnitOfMeasure/DynamicQuantity, ~35 physical quantity types.
