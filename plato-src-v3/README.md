@@ -9,7 +9,7 @@ Target applications: geometry (primary), 2D/3D/4D and N-dimensional computation,
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
 graphics, image processing, and engineering.
 
-Current contents (2026-07-27): **70 source files, 155 concepts, 1143 types** (~13.4K lines).
+Current contents (2026-07-27): **70 source files, 155 concepts, 1141 types** (~13.4K lines).
 The folder parses and resolves cleanly (`lint`: 0 parse errors, 0 symbol-resolution errors);
 LINT001/LINT003 findings are expected until libraries implement the declared surface.
 
@@ -37,8 +37,9 @@ primitives in `00-primitives.plato`).
   true sums (`PathSegment2D`, `Paint`, `MaskSource2D`, `ScalarFieldNode2D/3D`, `WindowFunction`
   — the wave-3 flagship migrations). Spec: [`../docs/plato-sum-types-design-2026-07-27.md`](../docs/plato-sum-types-design-2026-07-27.md).
   The older *kind pattern* (`type FooKind { Value: Integer; }` + a value-meaning doc comment)
-  survives only on the ~100 not-yet-migrated enum-style `XxxKind` types, pending the
-  follow-up sweep — new declarations should use a sum, not a kind.
+  is fully retired — every kind-pattern type is now a sum. New declarations must use a sum,
+  not a kind. (The only remaining single-`Value: Integer` records are the typed index
+  wrappers implementing `Index`, plus opaque codes like `MortonCode2D/3D` and `FontWeight`.)
 - Quantity types carry natural-unit field names (`Radians`, `Meters`, `Kelvin`).
 - Collection fields use `Array<T>` (or `Array2D<T>`, `Array3D<T>`).
 - Cross-array references use typed index types implementing the `Index` concept
@@ -76,7 +77,7 @@ Foundation files:
 
 - `00-primitives.plato` — compiler-assumed primitives, tuples, functions, arrays.
 - `01-concepts-core.plato` — Equatable, Value, Hashable, Orderable, Comparable, Logical, Bitwise.
-- `02-concepts-algebra.plato` — Additive..Arithmetic, ScalarArithmetic, Interpolatable, Numerical, Real, Whole, Normed, Metric, Lattice, Difference.
+- `02-concepts-algebra.plato` — Additive..Arithmetic, ScalarArithmetic, Interpolatable, Numerical, Real, Whole, Normed, MetricSpace, Lattice, Difference.
 - `03-concepts-collections.plato` — Countable, Index, Indexable family, Sliceable, Concatenable, SetLike, MapLike.
 - `04-concepts-functional.plato` — Procedural, Bijective, Periodic, Boundable.
 - `05-numbers.plato` — Complex, Rational, Proportion, Percent, Probability, ItemIndex, Cardinal.
@@ -113,12 +114,12 @@ domain (`ImageHistogram`, not a second `Histogram`).
 | `VertexIndex`, `EdgeIndex`, `FaceIndex`, `CornerIndex`, `HalfEdgeIndex`, `VertexPair` | 30 (D) |
 | `TriangleMesh3D`, `QuadMesh3D`, `PolygonMesh3D`, `LineSet3D`, `PointCloud3D`, `TriangleFace` | 31 (D) |
 | `RayHit2D`, `RayHit3D` | 35 (D) |
-| `EasingKind`, `SpringParameters`, `Keyframe<T>`, `AnimationTrack<T>`, `AnimationClip` | 36-37 (E) |
+| `ClassicEasing`, `SpringParameters`, `Keyframe<T>`, `AnimationTrack<T>`, `AnimationClip` | 36-37 (E) |
 | `Bone`, `Skeleton`, `SkeletonPose` (skeletal anim; physics never uses bare `Joint`) | 38 (E) |
 | `Path2D`, `PathSegment2D` | 40 (F) |
 | `StrokeStyle`, `FillStyle` | 41 (F) |
-| `Image` concept, `Bitmap`, `PixelFormatKind` | 45 (G) |
-| `BlendModeKind` | 46 (G) |
+| `Image` concept, `Bitmap`, `PixelFormat` | 45 (G) |
+| `BlendMode` | 46 (G) |
 | `Texture2D`, `Texture3D`, `TextureCube`, `TextureSampler`, `TextureBinding` | 47 (G) |
 | `PerspectiveCamera`, `OrthographicCamera` | 48 (H) |
 | `Material` (rendering PBR material) | 50 (H) |

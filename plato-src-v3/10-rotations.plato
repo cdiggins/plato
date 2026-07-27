@@ -24,11 +24,7 @@ type AxisAngle
 }
 
 // The order in which elemental axis rotations compose.
-// Value meanings: 0=XYZ, 1=XZY, 2=YXZ, 3=YZX, 4=ZXY, 5=ZYX.
-type RotationOrder
-{
-    Value: Integer;
-}
+type RotationOrder = XYZ | XZY | YXZ | YZX | ZXY | ZYX;
 
 // Three chained elemental rotations under an explicit composition order.
 type EulerAngles

@@ -162,7 +162,7 @@ type UniformGravity2D
 // Uniform spatial gravity: the same acceleration, in meters per second
 // squared, applied to every dynamic body regardless of position (e.g.
 // (0, -9.81, 0)).
-type UniformGravity
+type UniformGravity3D
     implements Value
 {
     Acceleration: Vector3;

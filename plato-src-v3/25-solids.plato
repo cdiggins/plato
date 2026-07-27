@@ -94,8 +94,9 @@ type SweptSolid
 
 // A right regular prism: two parallel regular SideCount-gons of circumscribed
 // radius Radius in planes perpendicular to the frame's Z axis, separated by
-// Height and joined by rectangles.
-type Prism
+// Height and joined by rectangles. (The general polygon-swept prism is
+// Prism3D, file 19.)
+type RegularPrism
     implements ConvexSolid
 {
     Frame: Frame3D;
@@ -113,15 +114,6 @@ type Antiprism
     SideCount: Integer;
     Radius: Number;
     Height: Number;
-}
-
-// A pyramid: the cone of a planar polygonal base with straight faces meeting
-// at the Apex.
-type Pyramid
-    implements Solid
-{
-    Base: Polygon3D;
-    Apex: Point3D;
 }
 
 // One of the five Platonic solids.

@@ -107,8 +107,8 @@ type WorleyNoise2D
     Seed: Integer;
     Frequency: Number;
     Jitter: Number;
-    DistanceKind: WorleyDistance;
-    FeatureKind: WorleyFeature;
+    Distance: WorleyDistance;
+    Feature: WorleyFeature;
 }
 
 // Spatial Worley (cellular) noise: distances to randomly scattered feature
@@ -121,8 +121,8 @@ type WorleyNoise3D
     Seed: Integer;
     Frequency: Number;
     Jitter: Number;
-    DistanceKind: WorleyDistance;
-    FeatureKind: WorleyFeature;
+    Distance: WorleyDistance;
+    Feature: WorleyFeature;
 }
 
 // Planar Gabor noise: sparse convolution of oriented Gabor kernels, giving

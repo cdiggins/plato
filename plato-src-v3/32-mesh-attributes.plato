@@ -83,18 +83,9 @@ type UvAtlas
 
 //==
 // ## Deformation-support channels
-
-// A named displacement layer over a base mesh's vertices: blend shapes,
-// corrective sculpts. PositionDeltas[v] is added to base position v when the
-// target is applied at weight 1; deltas scale linearly with weight. An empty
-// NormalDeltas array means "recompute normals after applying".
-type MorphTarget3D
-    implements Value
-{
-    Name: String;
-    PositionDeltas: Array<Vector3>;
-    NormalDeltas: Array<Vector3>;
-}
+//
+// Blend shapes (morph targets) live with skeletal animation as MorphTarget
+// (file 38); this section holds the mesh-side selection channels.
 
 // A named weighted subset of vertices: soft selections, deformer influence
 // regions, pinning masks. Vertices and Weights are parallel arrays; weights
