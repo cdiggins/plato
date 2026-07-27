@@ -93,10 +93,44 @@ conformance suite.
 
 ## Version 2: continuously updated sources
 
-Not built yet, and nothing here changes when it is. Whole-corpus parse and bind take well under a
-second, so rebuild-the-world *is* the incremental algorithm; the only optimization v2 needs is a
-per-file parse cache keyed by content hash. Per-file *rebinding* is not on the table — the binder
-builds shared scopes across all files before resolving any body.
+Built (tracker `plato-238`), and nothing in v1 changed to make room for it — `NavigationIndex.Build`
+and `BoundSnapshot.Create` behave exactly as before.
 
-An update produces a new `NavigationIndex` and consumers swap their reference. A file watcher
-belongs in the consumer or the CLI, not in this library (decision D10).
+```csharp
+var indexer = new IncrementalIndexer();
+var index = indexer.Update(SourceSnapshot.FromDirectories(roots));   // cold build
+index = indexer.Update(SourceSnapshot.FromDirectories(roots));       // reload: reparses only edits
+```
+
+Parse is ~97% of a build (70 files: 1789 ms parse against 58 ms bind), so a per-file parse cache is
+the whole optimization. Binding is whole-program — `SymbolFactory` builds scopes shared across all
+files before resolving any body — so it is rerun in full every time, and per-file rebinding stays
+off the table.
+
+**The cache key is (path, content hash), not the content hash alone.** Every `AstNode` carries a
+range whose file path comes from the `ParserInput` it was parsed with, so reusing an AST for a
+different file with identical text would misattribute every span in it. Reuse is safe because the
+binder only reads the AST: it writes to symbols (`TypeDef.IsUnique`, `MemberDef.Function`), never to
+a node, so the mutable fields the AST does expose (`AstParenthesized.Inner`,
+`AstTypeDeclaration.Cases`) are untouched by a bind.
+
+`IncrementalIndexer.LastUpdate` reports files parsed, files reused, and parse/bind time;
+`Cache.Hits`/`Misses`/`Count` accumulate over the session. `Cache.Retain` drops superseded versions
+on every update, so an editing session does not grow the cache.
+
+The gate is that `indexer.Update(s)` is byte-identical to `NavigationIndex.Build(s)` — compared
+through the JSON export, which carries sources, defs, refs, spans, targets, file states,
+diagnostics and generation — for a first build, an unchanged snapshot, an edit, an add and a
+removal. There is deliberately no same-generation short circuit: a reload always rebinds, which
+keeps that comparison meaningful and costs ~60 ms.
+
+Measured with `Plato.Navigation.CLI bench` (best of two runs, snapshots built from in-memory text):
+
+| corpus | v1 build | v2 cold | v2 reload, 0 changes | v2 reload, 1 file |
+|---|---|---|---|---|
+| `plato-src` + `plato-test-src` (34 files, 5020 lines) | 706 ms | 503 ms | 61 ms | 69 ms |
+| `plato-src-v3` (70 files, 13234 lines) | 779 ms | 736 ms | 59 ms | 68 ms |
+
+An update produces a new `NavigationIndex` and consumers swap their reference; `PlatoNavigationMcp`
+is the worked example. A file watcher belongs in the consumer or the CLI, not in this library
+(decision D10).
