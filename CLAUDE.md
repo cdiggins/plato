@@ -5,7 +5,10 @@
 
 Plato: pure language for geometry libraries, compiled to C# (TS/Rust writers exist, out of scope).
 Part of the studio monorepo at `C:\Users\cdigg\git\studio` (this repo = `submodules/Plato`).
-Roadmap + status: `../../docs/plato-roadmap.md`. Bug catalog: `../../docs/plato-library-review.md`.
+Plan + status: `../../docs/plato-execution-plan-2026-07-09.md`; live work is tracked in
+`../../tracker/` (`python tools/track.py list --open`). Bug catalog: `../../docs/plato-library-review.md`.
+(`docs/plato-roadmap.md` was superseded and archived 2026-07-16 — it is now `docs/archive/plato-roadmap.md`,
+historical only.)
 
 **C# style:** for handwritten compiler C# (`PlatoCompiler/`, `Plato.CSharpWriter/`, etc.) follow the
 `csharp-style` skill — full reference `../../docs/csharp-style-guide-for-agents.md`. Does NOT govern
@@ -13,7 +16,7 @@ Plato-language `.plato` source, nor the C# the writers emit (that shape is set b
 
 ## Layout (what matters)
 - `plato-src/` — production stdlib source. **WRITABLE as of 2026-07-09** (content-leads
-  refactor; the old Phase-4 freeze is retired). Edit freely; each change = `regen-plato.ps1 -Apply`
+  refactor; the old Phase-4 freeze is retired). Edit freely; each change = `regen-generated.ps1 -Apply`
   + `check-all.ps1` green + commit. Plan: `../../docs/plato-execution-plan-2026-07-09.md`.
 - `plato-src-legacy/` — **FROZEN 2026-07-09 snapshot** of the pre-refactor library. Reference only;
   never edit, never compile. Diff `plato-src` against it to see how far the library has moved.
@@ -23,13 +26,17 @@ Plato-language `.plato` source, nor the C# the writers emit (that shape is set b
 - `Plato.AST/` — the old associativity bug was FIXED in `392dfa8` (2026-07-09); `../../docs/plato-assoc-bug-diagnosis.md` is historical.
 - `Plato.CSharpWriter/` — `CSharpWriter.cs` (flags: `ExtensionStyle`, `Optimize`, `ScalarErase`, `NoProperties`), `TirCSharpBodyWriter.cs` (the SOLE C# body writer — every function body renders from the monomorphized Typed IR; the legacy `CSharpFunctionBodyWriter` was deleted at C4), `ExtensionStyleWriter.cs` (classic extension methods, one static class per Plato library; moved no-arg fns are METHODS `v.Magnitude()`), `TirScalarLowerer.cs` (`--scalar=float` erasure as a TIR lowering pass — it replaced the emit-time `ScalarEraseAnalysis`, deleted at S3), `ComponentUnroller.cs` (`--optimize` field-wise unrolling table).
 - `Plato.Intrinsics/` — **FROZEN V1 runtime** (consolidation plan C0). The live runtime is `Plato.Intrinsics.V2/` (System.Numerics-backed, method-form). Both `Plato.Intrinsics` and the ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` copies are frozen — protected by `tools\check-frozen-v1.ps1` (manifest `tools\frozen-v1.sha256`), never edit/regenerate.
-- `conformance/Ara3D.SDK.ConformanceTests/` — **THE** Plato conformance suite (consolidation plan C2 retired the V1/V2/Opt/Scalar recipe suites; their shared sources moved here so it is self-contained). Runs the shipping V2 recipe against `Plato.Intrinsics.V2`. `Generated/` is script-produced, gitignored. Expected: **204 pass / 0 fail** (manifest: `KnownFailures.json`; known+passing = must fail with "remove from manifest"). Regen: `tools\regen-conformance.ps1 -Test`.
+- `conformance/Ara3D.SDK.ConformanceTests/` — **THE** Plato conformance suite (consolidation plan C2 retired the V1/V2/Opt/Scalar recipe suites; their shared sources moved here so it is self-contained). Runs the shipping V2 recipe against `Plato.Intrinsics.V2`. `Generated/` is script-produced, gitignored. Expected: **0 fail** — the pass count grows as laws are added, so compare against your previous run rather than a fixed number (205 as of 2026-07-27). Manifest: `KnownFailures.json`; known+passing = must fail with "remove from manifest". Regen: `tools\regen-conformance.ps1 -Test`.
 - `Generated/` — buildable generated projects (extension-style, scalar-erased), each a real csproj in `Ara3D.Studio.sln`: `Plato.Generated.Unoptimized` (optimizers off, readable reference) and `Plato.Generated.Optimized` (full optimizer pipeline, adoption shape). Diff-gated by `tools\regen-generated.ps1`; docs in `Generated/README.md`. Supersedes the retired `golden/Plato.Generated.V2`.
+- `Plato.Navigation/` (+ `.CLI`, `.Tests`) — navigation index over a source snapshot: go-to-def,
+  find-refs, outline, name search, JSON export, and an `IncrementalIndexer` with a per-file parse
+  cache. Reuses the parser and binder; adds no second resolver. Its README lists the known
+  imprecisions. Consumer: `labs/PlatoNavigationMcp` in the studio repo. Trackers: plato-236/237/238.
 - `parakeet/` — sub-submodule, PRE-EXISTING DIRTY STATE. Never touch, never stage.
 
 ## Commands (run from `C:\Users\cdigg\git\studio`)
 - `.\tools\check-frozen-v1.ps1` — freeze tripwire: SHA-256 of the frozen V1 artifacts (ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` + Plato-repo `Plato.Intrinsics`). Exit 1 on any drift. `-Update` re-baselines (deliberate only). Replaced regen-plato in check-all (C0); `regen-plato.ps1` + the legacy default-style emitter were deleted at C4.
-- `.\tools\regen-conformance.ps1 -Test` — regenerate merged (plato-src + plato-test-src) output into the one conformance suite and run it (204/204).
+- `.\tools\regen-conformance.ps1 -Test` — regenerate merged (plato-src + plato-test-src) output into the one conformance suite and run it (0 fail; 205 passing as of 2026-07-27).
 - `.\tools\check-all.ps1` — full gate battery, PASS/FAIL table. **Run once at the end of a mission**; iterate on a single relevant gate during development.
 - `dotnet run --project submodules\Plato\Plato.CLI -c Release -- lint submodules\Plato\plato-src` — exit 0 unless `--strict`; the finding count drifts with library content, so compare against the previous run, not a hardcoded baseline.
 
@@ -45,4 +52,9 @@ Plato-language `.plato` source, nor the C# the writers emit (that shape is set b
 
 ## Mission protocol
 - Maintain `PROGRESS.md` in your workspace (10 lines max, updated as you go) so a crashed session resumes cheaply.
-- On completion: update the relevant DONE note in `../../docs/plato-roadmap.md`, write `COMMIT_MSG.txt` (draft commit message) in the repo you changed, and keep the final report under ~300 words using: files touched / gates table / surprises / rerun commands.
+- On completion: close your tracker issue (`python tools/track.py close <id> --outcome "..."` from the
+  studio repo) and record any lasting decision in the relevant `docs/` plan, and keep the final report
+  under ~300 words using: files touched / gates table / surprises / rerun commands.
+- `PROGRESS.md` and `COMMIT_MSG.txt` at the repo root are single-slot scratch files. Sessions run
+  concurrently here — if one already holds another mission's notes, leave it alone and put yours in
+  your own commit message rather than overwriting someone's work in progress.
