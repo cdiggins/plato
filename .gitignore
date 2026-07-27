@@ -6,3 +6,6 @@
 # Scratch command output (see tools/export-types-context.ps1)
 .temp/*
 !.temp/README.md
+
+# Agent-local state: live git worktrees, machine-local symlinks, personal settings
+.claude/
