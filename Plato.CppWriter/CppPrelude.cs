@@ -141,6 +141,17 @@ namespace plato
     // Structural GetHashCode helpers (device-safe; not cryptographic).
     PLATO_FN int hash_float(float x) { return (int)(x * 73856093.0f) ^ (int)x; }
     PLATO_FN int mix_hash(int a, int b) { return a * 16777619 ^ b; }
+
+    // Fixed-size value arrays for Map/Zip results whose element type is not floatN
+    // (e.g. Zip→bool). Device-friendly: no heap, no std::function.
+    template <typename T> struct Array1 { T e0; };
+    template <typename T> struct Array2 { T e0, e1; };
+    template <typename T> struct Array3 { T e0, e1, e2; };
+    template <typename T> struct Array4 { T e0, e1, e2, e3; };
+    template <typename T> struct Array5 { T e0, e1, e2, e3, e4; };
+    template <typename T> struct Array6 { T e0, e1, e2, e3, e4, e5; };
+    template <typename T> struct Array7 { T e0, e1, e2, e3, e4, e5, e6; };
+    template <typename T> struct Array8 { T e0, e1, e2, e3, e4, e5, e6, e7; };
 }
 ";
     }

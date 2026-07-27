@@ -71,27 +71,29 @@ than aspirational.
 
 ## Not representable (functions using these are skipped)
 
-- **Lambdas and function values** — `--inline` β-reduces many away (M5); residual closures are
-  still skipped (functors deferred). Without `--inline`, function values remain unsupported.
+- **Lambdas and function values** — with `--inline`, residuals emit as local C++ functors
+  (`struct` + `operator()`) passed to templated `Map`/`Zip`/`Reduce`/`All`/`Any` over
+  `floatN` / `FixedArray_*`. No `std::function`, no heap; identical C++/CUDA bodies.
+  Higher-order library functions that still need a dynamic `IArray` (e.g. `Map` on
+  `IArray<T>`) remain skipped until M4.
 - **`IArray` and array literals** — no dynamic array value type yet. Planned as a simple
   Plato-defined data type (not `std::vector`); see plato-239 M4.
 - **`String` / `Character`** — planned as simple Plato-defined data types (not `std::string`);
   see plato-239 M3.
 - **`FieldNames` / `FieldValues` / `TypeName` / `ToString` / `GetType`** — need String (and
   sometimes arrays).
-- **`CreateFromComponents` / `CreateFromComponent`** — need an array value type.
+- **`CreateFromComponents` / `CreateFromComponent`** — generated for fixed-size `IArrayLike`
+  and `floatN`; still skipped when the input is a dynamic `IArray`.
 
 ## Status
 
 | Input | Emitted | Skipped | Notes |
 |---|---|---|---|
-| `demos/plato-src` | **87** | 0 | with `--inline` (same without) |
-| `plato-src` (full standard library) | **865** | 1660 | with `--inline` (compile-gate default) |
-| same, no `--inline` | 870 | 1655 | post-M5 plumbing, inline off |
+| `demos/plato-src` | **105** | 0 | with `--inline` + functors |
+| `plato-src` (full standard library) | **1090** | 1507 | with `--inline` + functors (compile-gate) |
+| same, M5 only (pre-functor) | 865 | 1660 | |
 
-M5 wires shared `TirInliner` into `--cpp`/`--cuda`. Skip count does **not** improve yet:
-β-reduction still leaves many residual closures (functors deferred), and a few bodies that
-emitted without inline now skip after partial specialization. The single biggest remaining
-lever is residual-functor emission, then M3/M4.
+Residual closures for fixed-size `Components` paths are lowered; remaining skips are dominated
+by dynamic `IArray` / String (M3/M4) and callee cascade.
 
 Verification lives in `../Plato.CppWriter.Tests` (gates run with `inlineCalls: true`).

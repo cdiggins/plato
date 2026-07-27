@@ -368,6 +368,10 @@ namespace Ara3D.Geometry.CppWriter
         /// </summary>
         private static bool Resolves(CallSite c, HashSet<string> known)
         {
+            // Map/Zip/Reduce/All/Any and CreateFrom* are emitted as templates / structural
+            // helpers; functor args have no C++ type, so they are not prune-tracked.
+            if (UntrackedHofNames.Contains(c.Name))
+                return true;
             if (c.Types.Any(t => t == null))
                 return false;
             if (known.Contains(SignatureKey(c.Name, c.Types)))
@@ -375,6 +379,13 @@ namespace Ara3D.Geometry.CppWriter
             var promoted = c.Types.Select(t => t == "int" ? "float" : t);
             return known.Contains(SignatureKey(c.Name, promoted));
         }
+
+        /// <summary>Higher-order / structural helpers that accept functors or IArray stand-ins.</summary>
+        public static readonly HashSet<string> UntrackedHofNames = new HashSet<string>
+        {
+            "Map", "Zip", "Reduce", "All", "Any",
+            "CreateFromComponents", "CreateFromComponent",
+        };
 
         // ---- Top level ----------------------------------------------------------
 
@@ -395,6 +406,7 @@ namespace Ara3D.Geometry.CppWriter
             CollectConstants();
             CollectMemberFunctions();
             WriteFixedArrayStructs();
+            EmitNativeVectorHofTemplates();
             PruneUnresolvedCalls();
 
             WriteLine("// ---- Function prototypes ----");
@@ -590,7 +602,143 @@ namespace Ara3D.Geometry.CppWriter
                     $" {{ return {n}; }}");
                 AddGenerated("NumComponents", new[] { name }, $"PLATO_FN int NumComponents({name} a)",
                     $" {{ return {n}; }}");
+
+                EmitHofTemplatesForFixedArray(name, elem, n);
             }
+        }
+
+        /// <summary>
+        /// Map/Zip/Reduce/All/Any over float2/3/4 so residual lambdas on Vector2D-style
+        /// Components can compile after --inline.
+        /// </summary>
+        private void EmitNativeVectorHofTemplates()
+        {
+            WriteLine("// ---- Map / Zip / Reduce / All / Any (floatN + functors) ----");
+            EmitHofTemplatesForFloatN(2, "float2", new[] { "x", "y" });
+            EmitHofTemplatesForFloatN(3, "float3", new[] { "x", "y", "z" });
+            EmitHofTemplatesForFloatN(4, "float4", new[] { "x", "y", "z", "w" });
+            WriteLine();
+        }
+
+        private void EmitHofTemplatesForFloatN(int n, string type, string[] fields)
+        {
+            var atChain = $"{type} a";
+            // At with clamp
+            var chain = $"a.{fields[n - 1]}";
+            for (var i = n - 2; i >= 0; i--)
+                chain = $"(i <= {i} ? a.{fields[i]} : {chain})";
+            AddGenerated("At", new[] { type, "int" }, $"PLATO_FN float At({type} a, int i)",
+                $" {{ return {chain}; }}");
+            AddGenerated("Count", new[] { type }, $"PLATO_FN int Count({type} a)",
+                $" {{ return {n}; }}");
+            AddGenerated("NumComponents", new[] { type }, $"PLATO_FN int NumComponents({type} a)",
+                $" {{ return {n}; }}");
+
+            var mapArgs = fields.Select(f => $"f(xs.{f})").JoinStringsWithComma();
+            AddTemplate(
+                $"template <typename F> PLATO_FN {type} Map({type} xs, F f)",
+                $" {{ return make_{type}({mapArgs}); }}");
+
+            var zip2Args = fields.Select(f => $"f(a.{f}, b.{f})").JoinStringsWithComma();
+            AddTemplate(
+                $"template <typename F> PLATO_FN auto Zip({type} a, {type} b, F f) -> plato::Array{n}<decltype(f(a.{fields[0]}, b.{fields[0]}))>",
+                $" {{ return plato::Array{n}<decltype(f(a.{fields[0]}, b.{fields[0]}))>{{ {zip2Args} }}; }}");
+
+            var zip3Args = fields.Select(f => $"f(a.{f}, b.{f}, c.{f})").JoinStringsWithComma();
+            AddTemplate(
+                $"template <typename F> PLATO_FN auto Zip({type} a, {type} b, {type} c, F f) -> plato::Array{n}<decltype(f(a.{fields[0]}, b.{fields[0]}, c.{fields[0]}))>",
+                $" {{ return plato::Array{n}<decltype(f(a.{fields[0]}, b.{fields[0]}, c.{fields[0]}))>{{ {zip3Args} }}; }}");
+
+            var reduceBody = string.Join(" ", fields.Select(f => $"acc = f(acc, xs.{f});"));
+            AddTemplate(
+                $"template <typename Acc, typename F> PLATO_FN Acc Reduce({type} xs, Acc acc, F f)",
+                $" {{ {reduceBody} return acc; }}");
+
+            // All/Any over plato::ArrayN<T> (Zip→bool results) and over floatN (rare).
+            var allArr = string.Join(" && ", Enumerable.Range(0, n).Select(i => $"f(xs.e{i})"));
+            var anyArr = string.Join(" || ", Enumerable.Range(0, n).Select(i => $"f(xs.e{i})"));
+            AddTemplate(
+                $"template <typename T, typename F> PLATO_FN bool All(plato::Array{n}<T> xs, F f)",
+                $" {{ return {allArr}; }}");
+            AddTemplate(
+                $"template <typename T, typename F> PLATO_FN bool Any(plato::Array{n}<T> xs, F f)",
+                $" {{ return {anyArr}; }}");
+            var allF = string.Join(" && ", fields.Select(f => $"f(xs.{f})"));
+            var anyF = string.Join(" || ", fields.Select(f => $"f(xs.{f})"));
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool All({type} xs, F f)",
+                $" {{ return {allF}; }}");
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool Any({type} xs, F f)",
+                $" {{ return {anyF}; }}");
+
+            var broadcast = fields.Select(_ => "x").JoinStringsWithComma();
+            AddGenerated("CreateFromComponent", new[] { type, "float" },
+                $"PLATO_FN {type} CreateFromComponent({type} _, float x)",
+                $" {{ return make_{type}({broadcast}); }}");
+            AddGenerated("CreateFromComponents", new[] { type, type },
+                $"PLATO_FN {type} CreateFromComponents({type} _, {type} c)",
+                $" {{ return c; }}");
+            var fromArr = Enumerable.Range(0, n).Select(i => $"c.e{i}").JoinStringsWithComma();
+            AddGenerated("CreateFromComponents", new[] { type, $"plato::Array{n}<float>" },
+                $"PLATO_FN {type} CreateFromComponents({type} _, plato::Array{n}<float> c)",
+                $" {{ return make_{type}({fromArr}); }}");
+        }
+
+        private void EmitHofTemplatesForFixedArray(string name, string elem, int n)
+        {
+            if (n < 1 || n > 8)
+                return;
+            var mapArgs = Enumerable.Range(0, n).Select(i => $"f(xs.e{i})").JoinStringsWithComma();
+            AddTemplate(
+                $"template <typename F> PLATO_FN {name} Map({name} xs, F f)",
+                $" {{ return {name}{{ {mapArgs} }}; }}");
+
+            var zip2Args = Enumerable.Range(0, n).Select(i => $"f(a.e{i}, b.e{i})").JoinStringsWithComma();
+            AddTemplate(
+                $"template <typename F> PLATO_FN auto Zip({name} a, {name} b, F f) -> plato::Array{n}<decltype(f(a.e0, b.e0))>",
+                $" {{ return plato::Array{n}<decltype(f(a.e0, b.e0))>{{ {zip2Args} }}; }}");
+
+            var zip3Args = Enumerable.Range(0, n).Select(i => $"f(a.e{i}, b.e{i}, c.e{i})").JoinStringsWithComma();
+            AddTemplate(
+                $"template <typename F> PLATO_FN auto Zip({name} a, {name} b, {name} c, F f) -> plato::Array{n}<decltype(f(a.e0, b.e0, c.e0))>",
+                $" {{ return plato::Array{n}<decltype(f(a.e0, b.e0, c.e0))>{{ {zip3Args} }}; }}");
+
+            var reduceBody = string.Join(" ", Enumerable.Range(0, n).Select(i => $"acc = f(acc, xs.e{i});"));
+            AddTemplate(
+                $"template <typename Acc, typename F> PLATO_FN Acc Reduce({name} xs, Acc acc, F f)",
+                $" {{ {reduceBody} return acc; }}");
+
+            var allArr = string.Join(" && ", Enumerable.Range(0, n).Select(i => $"f(xs.e{i})"));
+            var anyArr = string.Join(" || ", Enumerable.Range(0, n).Select(i => $"f(xs.e{i})"));
+            // All/Any on FixedArray itself (elem may be bool after Zip into FixedArray — rare)
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool All({name} xs, F f)",
+                $" {{ return {allArr}; }}");
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool Any({name} xs, F f)",
+                $" {{ return {anyArr}; }}");
+            if (n >= 1 && n <= 8)
+            {
+                AddTemplate(
+                    $"template <typename T, typename F> PLATO_FN bool All(plato::Array{n}<T> xs, F f)",
+                    $" {{ return {allArr}; }}");
+                AddTemplate(
+                    $"template <typename T, typename F> PLATO_FN bool Any(plato::Array{n}<T> xs, F f)",
+                    $" {{ return {anyArr}; }}");
+            }
+        }
+
+        private readonly HashSet<string> _claimedTemplates = new HashSet<string>();
+
+        private void AddTemplate(string signature, string bodyWithBraces)
+        {
+            if (!_claimedTemplates.Add(signature))
+                return;
+            // Templates are written eagerly into the file (before prototypes), not via _emitted,
+            // so they are visible to every later free function. Track as known for diagnostics.
+            WriteLine(signature + bodyWithBraces);
+            WriteLine();
         }
 
         /// <summary>
@@ -787,6 +935,38 @@ namespace Ara3D.Geometry.CppWriter
             }
             AddGenerated("Components", new[] { name }, $"PLATO_FN {compsRet} Components({name} self)", compsBody);
             handled.Add("Components");
+
+            // CreateFromComponents / CreateFromComponent: inverse of Components (fixed-size only).
+            var fieldInitsFromFloat = elem == "float" && n >= 2 && n <= 4
+                ? Enumerable.Range(0, n).Select(i => $"c.{(new[] { "x", "y", "z", "w" })[i]}").JoinStringsWithComma()
+                : null;
+            var fieldInitsFromFixed = Enumerable.Range(0, n).Select(i => $"c.e{i}").JoinStringsWithComma();
+            var fieldInitsFromArray = fieldInitsFromFixed;
+            var broadcast = Enumerable.Range(0, n).Select(_ => "x").JoinStringsWithComma();
+
+            if (fieldInitsFromFloat != null)
+            {
+                AddGenerated("CreateFromComponents", new[] { name, compsRet },
+                    $"PLATO_FN {name} CreateFromComponents({name} _, {compsRet} c)",
+                    $" {{ return {name}{{ {fieldInitsFromFloat} }}; }}");
+            }
+            else
+            {
+                AddGenerated("CreateFromComponents", new[] { name, compsRet },
+                    $"PLATO_FN {name} CreateFromComponents({name} _, {compsRet} c)",
+                    $" {{ return {name}{{ {fieldInitsFromFixed} }}; }}");
+            }
+            // Zip→plato::ArrayN<elem> overload (Lerp / Map-style paths that don't stay on floatN).
+            var arrayN = $"plato::Array{n}<{elem}>";
+            AddGenerated("CreateFromComponents", new[] { name, arrayN },
+                $"PLATO_FN {name} CreateFromComponents({name} _, {arrayN} c)",
+                $" {{ return {name}{{ {fieldInitsFromArray} }}; }}");
+            handled.Add("CreateFromComponents");
+
+            AddGenerated("CreateFromComponent", new[] { name, elem },
+                $"PLATO_FN {name} CreateFromComponent({name} _, {elem} x)",
+                $" {{ return {name}{{ {broadcast} }}; }}");
+            handled.Add("CreateFromComponent");
 
             return handled;
         }

@@ -32,16 +32,28 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
     public List<CppWriter.CallSite> Callees { get; } = new List<CppWriter.CallSite>();
 
     private void RecordCall(string name, IEnumerable<TirNode> args)
-        => Callees.Add(new CppWriter.CallSite
+    {
+        if (CppWriter.UntrackedHofNames.Contains(name))
+            return;
+        Callees.Add(new CppWriter.CallSite
         {
             Name = name,
             Types = args.Select(a => _w.CppTypeNameOrNull(a.Type)).ToList(),
         });
+    }
 
-    // The return type as it appears in the emitted signature: the body has to produce exactly
-    // this type, so returns of a different type need an explicit conversion.
     private readonly string _retCpp;
     private readonly string _retPlato;
+
+    private int _nextFunctorId;
+    private readonly Dictionary<TirLambda, FunctorInfo> _functors = new Dictionary<TirLambda, FunctorInfo>();
+    private readonly HashSet<ParameterDef> _lambdaParamScope = new HashSet<ParameterDef>();
+
+    private class FunctorInfo
+    {
+        public string TypeName;
+        public List<(string Name, string CppType)> Captures = new List<(string, string)>();
+    }
 
     public TirCppBodyWriter(CppWriter w, TirFunction tir, string retCpp = null, string retPlato = null)
     {
@@ -56,10 +68,25 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
     private void WriteFunctionBody()
     {
         var body = _tir.Body;
+        PrepareFunctors(body);
+
         if (IsStatementNode(body))
         {
             WriteLine();
-            WriteStatement(body);
+            WriteStartBlock();
+            WriteFunctorStructs();
+            WriteStatementContents(body);
+            WriteEndBlock();
+        }
+        else if (_functors.Count > 0)
+        {
+            WriteLine();
+            WriteStartBlock();
+            WriteFunctorStructs();
+            Write("return ");
+            WriteReturnValue(body);
+            WriteLine(";");
+            WriteEndBlock();
         }
         else
         {
@@ -67,6 +94,162 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             WriteReturnValue(body);
             WriteLine("; }");
         }
+    }
+
+    private void WriteStatementContents(TirNode n)
+    {
+        // Like WriteStatement but assumes we are already inside a block (no extra braces for TirBlock root).
+        if (n is TirBlock b)
+        {
+            foreach (var s in b.Statements)
+            {
+                if (s == null) continue;
+                if (IsStatementNode(s))
+                    WriteStatement(s);
+                else
+                {
+                    WriteNode(s);
+                    WriteLine(";");
+                }
+            }
+            return;
+        }
+        WriteStatement(n);
+    }
+
+    private void PrepareFunctors(TirNode root)
+    {
+        if (root == null) return;
+        var list = new List<TirNode> { root };
+        list.AddRange(root.Descendants());
+        foreach (var n in list)
+        {
+            if (n is TirLambda lam && !_functors.ContainsKey(lam))
+                _functors[lam] = BuildFunctorInfo(lam);
+        }
+    }
+
+    private FunctorInfo BuildFunctorInfo(TirLambda lam)
+    {
+        var info = new FunctorInfo { TypeName = $"__plato_f{_nextFunctorId++}" };
+        var lamParams = new HashSet<ParameterDef>(lam.Parameters.Where(p => p != null));
+        foreach (var n in lam.Body?.Descendants() ?? Enumerable.Empty<TirNode>())
+        {
+            if (n is TirParameter p && p.Def != null && !lamParams.Contains(p.Def))
+            {
+                var cpp = _w.CppTypeNameOrNull(p.Type) ?? _w.CppTypeNameOrNull(p.Def.Type);
+                if (cpp == null)
+                    throw new CppUnsupportedException($"lambda capture '{p.Def.Name}' has unrepresentable type");
+                if (info.Captures.Any(c => c.Name == p.Def.Name))
+                    continue;
+                info.Captures.Add((CppWriter.EscapeName(p.Def.Name), cpp));
+            }
+        }
+        // Body itself may be a parameter (identity lambda).
+        if (lam.Body is TirParameter bp && bp.Def != null && !lamParams.Contains(bp.Def))
+        {
+            var cpp = _w.CppTypeNameOrNull(bp.Type) ?? _w.CppTypeNameOrNull(bp.Def.Type);
+            if (cpp == null)
+                throw new CppUnsupportedException($"lambda capture '{bp.Def.Name}' has unrepresentable type");
+            if (!info.Captures.Any(c => c.Name == bp.Def.Name))
+                info.Captures.Add((CppWriter.EscapeName(bp.Def.Name), cpp));
+        }
+        return info;
+    }
+
+    private void WriteFunctorStructs()
+    {
+        foreach (var kv in _functors)
+        {
+            var lam = kv.Key;
+            var info = kv.Value;
+            WriteLine($"struct {info.TypeName}");
+            WriteStartBlock();
+            foreach (var c in info.Captures)
+                WriteLine($"{c.CppType} {c.Name};");
+
+            var paramList = new List<string>();
+            foreach (var p in lam.Parameters)
+            {
+                var cpp = ResolveLambdaParamCpp(lam, p);
+                if (cpp == null)
+                    throw new CppUnsupportedException($"lambda parameter '{p.Name}' has unrepresentable type");
+                paramList.Add($"{cpp} {CppWriter.EscapeName(p.Name)}");
+            }
+            var ret = InferLambdaReturnCpp(lam);
+            Write($"PLATO_FN {ret} operator()({paramList.JoinStringsWithComma()}) const");
+            if (IsStatementNode(lam.Body))
+            {
+                WriteLine();
+                var saved = new HashSet<ParameterDef>(_lambdaParamScope);
+                foreach (var p in lam.Parameters)
+                    if (p != null) _lambdaParamScope.Add(p);
+                WriteStatement(lam.Body);
+                _lambdaParamScope.Clear();
+                foreach (var p in saved) _lambdaParamScope.Add(p);
+            }
+            else
+            {
+                Write(" { return ");
+                var saved = new HashSet<ParameterDef>(_lambdaParamScope);
+                foreach (var p in lam.Parameters)
+                    if (p != null) _lambdaParamScope.Add(p);
+                WriteNode(lam.Body);
+                _lambdaParamScope.Clear();
+                foreach (var p in saved) _lambdaParamScope.Add(p);
+                WriteLine("; }");
+            }
+            WriteEndBlock();
+            WriteLine(";");
+        }
+    }
+
+    private string ResolveLambdaParamCpp(TirLambda lam, ParameterDef p)
+    {
+        if (p == null) return null;
+        var cpp = _w.CppTypeNameOrNull(p.Type);
+        if (cpp != null) return cpp;
+        // ParameterDef often still has a type variable; TirParameter nodes are zonked.
+        if (lam.Body is TirParameter bp && bp.Def == p)
+            return _w.CppTypeNameOrNull(bp.Type);
+        foreach (var n in lam.Body?.Descendants() ?? Enumerable.Empty<TirNode>())
+        {
+            if (n is TirParameter tp && tp.Def == p)
+            {
+                cpp = _w.CppTypeNameOrNull(tp.Type);
+                if (cpp != null) return cpp;
+            }
+        }
+        // Function1<A,R> / Function2<A,B,R> — args are parameter types then return.
+        var fn = lam.Type;
+        if (fn?.Def?.Name != null && fn.Def.Name.StartsWith("Function") && fn.TypeArgs != null)
+        {
+            var idx = lam.Parameters.ToList().IndexOf(p);
+            if (idx >= 0 && idx < fn.TypeArgs.Count - 1)
+                return _w.CppTypeNameOrNull(fn.TypeArgs[idx]);
+        }
+        return null;
+    }
+
+    private string InferLambdaReturnCpp(TirLambda lam)
+    {
+        var fromBody = _w.CppTypeNameOrNull(lam.Body?.Type);
+        if (fromBody != null && !fromBody.StartsWith("Function") && !fromBody.StartsWith("Tuple"))
+            return fromBody;
+        if (lam.Body is TirParameter bp)
+        {
+            var t = _w.CppTypeNameOrNull(bp.Type);
+            if (t != null) return t;
+        }
+        var fn = lam.Type;
+        if (fn?.Def?.Name != null && fn.Def.Name.StartsWith("Function") && fn.TypeArgs != null && fn.TypeArgs.Count > 0)
+        {
+            var last = _w.CppTypeNameOrNull(fn.TypeArgs[fn.TypeArgs.Count - 1]);
+            if (last != null) return last;
+        }
+        if (lam.Body is TirCall c && (c.Type?.Name == "Boolean" || c.Name == "LessThanOrEquals" || c.Name == "Equals"))
+            return "bool";
+        throw new CppUnsupportedException($"cannot infer C++ return type for lambda {lam}");
     }
 
     // --- statements ----------------------------------------------------------
@@ -403,11 +586,25 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 WriteNode(asg.RValue);
                 return;
 
-            case TirLambda _:
-                throw new CppUnsupportedException("lambdas / function values (POC: not lowered)");
+            case TirLambda lam:
+            {
+                if (!_functors.TryGetValue(lam, out var info))
+                    throw new CppUnsupportedException("lambdas / function values (POC: not lowered)");
+                Write($"{info.TypeName}{{ ");
+                Write(info.Captures.Select(c => c.Name).JoinStringsWithComma());
+                Write(" }");
+                return;
+            }
 
-            case TirInvoke _:
-                throw new CppUnsupportedException("invoking a function value (POC: not lowered)");
+            case TirInvoke inv:
+            {
+                Write("(");
+                WriteNode(inv.Target);
+                Write(")(");
+                WriteArgs(inv.Args);
+                Write(")");
+                return;
+            }
 
             case TirArray _:
                 throw new CppUnsupportedException("array literals (POC: no array value type)");
@@ -514,16 +711,19 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
 
         // A type as the receiver is a static call: Type.F(x) → F(Type{}, x). The default
         // tag keeps overloads distinct (UnitX(float2) vs UnitX(float3)) under free functions.
-        if (receiver is TirTypeRef ttr && ttr.NamespaceQualified && ttr.Type != null)
+        if (receiver is TirTypeRef ttr && ttr.Type != null)
         {
             var tagType = _w.CppTypeNameOrNull(ttr.Type);
             if (tagType == null)
                 throw new CppUnsupportedException($"static call on unrepresentable type '{ttr.TypeDef?.Name}'");
-            Callees.Add(new CppWriter.CallSite
+            if (!CppWriter.UntrackedHofNames.Contains(name))
             {
-                Name = name,
-                Types = args.Select((a, i) => i == 0 ? tagType : _w.CppTypeNameOrNull(a.Type)).ToList(),
-            });
+                Callees.Add(new CppWriter.CallSite
+                {
+                    Name = name,
+                    Types = args.Select((a, i) => i == 0 ? tagType : _w.CppTypeNameOrNull(a.Type)).ToList(),
+                });
+            }
             Write($"{_w.FunctionName(name)}(");
             Write(_w.DefaultValueExpr(tagType));
             foreach (var arg in args.Skip(1))
