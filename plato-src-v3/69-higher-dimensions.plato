@@ -197,9 +197,9 @@ type Polytope4D
 {
     Vertices: Array<Point4D>;
     FaceVertexOffsets: Array<Integer>;
-    FaceVertexIndices: Array<Integer>;
+    FaceVertexIndices: Array<VertexIndex>;
     CellFaceOffsets: Array<Integer>;
-    CellFaceIndices: Array<Integer>;
+    CellFaceIndices: Array<FaceIndex>;
     Edges: Array<VertexPair>;
 }
 

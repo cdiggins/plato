@@ -18,6 +18,14 @@ type CsgOperationKind
     Value: Integer;
 }
 
+// A zero-based index of a node within a CSG tree's flat node array.
+// -1 means "none" (a leaf's missing children).
+type CsgNodeIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
 // One node of a flattened CSG tree. Interior nodes combine two children by
 // Operation (PrimitiveIndex is -1); leaf nodes have LeftChild and RightChild
 // of -1 and a PrimitiveIndex into a primitive collection supplied alongside
@@ -25,9 +33,9 @@ type CsgOperationKind
 type CsgNode3D
 {
     Operation: CsgOperationKind;
-    LeftChild: Integer;
-    RightChild: Integer;
-    PrimitiveIndex: Integer;
+    LeftChild: CsgNodeIndex;
+    RightChild: CsgNodeIndex;
+    PrimitiveIndex: ItemIndex;
     Smoothing: Number;
 }
 
@@ -37,7 +45,7 @@ type CsgTree3D
     implements Solid
 {
     Nodes: Array<CsgNode3D>;
-    Root: Integer;
+    Root: CsgNodeIndex;
 }
 
 //==

@@ -4,12 +4,20 @@
 // Pure-data indexes over collections of primitives (points, triangles,
 // objects). Every structure follows the same flat-array conventions:
 //
-// - Nodes live in one array; a node refers to other nodes by plain integer
+// - Nodes live in one array; a node refers to other nodes by SpatialNodeIndex
 //   position in that array, with -1 meaning "no child". Node 0 is the root.
 // - A structure never stores primitives; it stores a permutation array of
-//   primitive indices (Array<Integer>) into the caller's primitive list.
+//   primitive indices (Array<ItemIndex>) into the caller's primitive list.
 //   Leaves reference half-open IntegerInterval ranges of that permutation.
 // - An empty range (Start equals End) means "no items".
+
+// A zero-based index of a node within a spatial structure's flat node array.
+// -1 means "no child" / "leaf".
+type SpatialNodeIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
 
 //==
 // ## Bounding volume hierarchies
@@ -22,8 +30,8 @@ type BvhNode2D
     implements Value
 {
     Bounds: Bounds2D;
-    LeftChild: Integer;
-    RightChild: Integer;
+    LeftChild: SpatialNodeIndex;
+    RightChild: SpatialNodeIndex;
     Primitives: IntegerInterval;
 }
 
@@ -34,7 +42,7 @@ type Bvh2D
     implements Value, SpatialIndex2D
 {
     Nodes: Array<BvhNode2D>;
-    PrimitiveIndices: Array<Integer>;
+    PrimitiveIndices: Array<ItemIndex>;
 }
 
 // One node of a 3D bounding volume hierarchy. Same encoding as BvhNode2D
@@ -43,8 +51,8 @@ type BvhNode3D
     implements Value
 {
     Bounds: Bounds3D;
-    LeftChild: Integer;
-    RightChild: Integer;
+    LeftChild: SpatialNodeIndex;
+    RightChild: SpatialNodeIndex;
     Primitives: IntegerInterval;
 }
 
@@ -55,7 +63,7 @@ type Bvh3D
     implements Value, SpatialIndex3D, RayIntersectable3D
 {
     Nodes: Array<BvhNode3D>;
-    PrimitiveIndices: Array<Integer>;
+    PrimitiveIndices: Array<ItemIndex>;
 }
 
 //==
@@ -68,7 +76,7 @@ type QuadtreeNode
     implements Value
 {
     Bounds: Bounds2D;
-    FirstChild: Integer;
+    FirstChild: SpatialNodeIndex;
     Items: IntegerInterval;
 }
 
@@ -80,7 +88,7 @@ type Quadtree2D
 {
     Bounds: Bounds2D;
     Nodes: Array<QuadtreeNode>;
-    ItemIndices: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
     MaxDepth: Integer;
 }
 
@@ -91,7 +99,7 @@ type OctreeNode
     implements Value
 {
     Bounds: Bounds3D;
-    FirstChild: Integer;
+    FirstChild: SpatialNodeIndex;
     Items: IntegerInterval;
 }
 
@@ -103,7 +111,7 @@ type Octree3D
 {
     Bounds: Bounds3D;
     Nodes: Array<OctreeNode>;
-    ItemIndices: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
     MaxDepth: Integer;
 }
 
@@ -129,8 +137,8 @@ type KdTreeNode2D
 {
     SplitAxis: Integer;
     SplitValue: Number;
-    LeftChild: Integer;
-    RightChild: Integer;
+    LeftChild: SpatialNodeIndex;
+    RightChild: SpatialNodeIndex;
     Items: IntegerInterval;
 }
 
@@ -142,7 +150,7 @@ type KdTree2D
 {
     Points: Array<Point2D>;
     Nodes: Array<KdTreeNode2D>;
-    PointIndices: Array<Integer>;
+    PointIndices: Array<ItemIndex>;
 }
 
 // One node of a 3D kd-tree. SplitAxis is 0 for X, 1 for Y, 2 for Z;
@@ -152,8 +160,8 @@ type KdTreeNode3D
 {
     SplitAxis: Integer;
     SplitValue: Number;
-    LeftChild: Integer;
-    RightChild: Integer;
+    LeftChild: SpatialNodeIndex;
+    RightChild: SpatialNodeIndex;
     Items: IntegerInterval;
 }
 
@@ -165,7 +173,7 @@ type KdTree3D
 {
     Points: Array<Point3D>;
     Nodes: Array<KdTreeNode3D>;
-    PointIndices: Array<Integer>;
+    PointIndices: Array<ItemIndex>;
 }
 
 //==
@@ -182,7 +190,7 @@ type SpatialHashGrid2D
     CellSize: Number;
     CellCoordinates: Array<IntegerVector2>;
     BucketOffsets: Array<Integer>;
-    ItemIndices: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
 }
 
 // A sparse uniform grid over space, keyed by integer cell coordinate. Same
@@ -193,7 +201,7 @@ type SpatialHashGrid3D
     CellSize: Number;
     CellCoordinates: Array<IntegerVector3>;
     BucketOffsets: Array<Integer>;
-    ItemIndices: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
 }
 
 // A dense uniform binning grid over a bounded 2D region: every cell has a
@@ -206,7 +214,7 @@ type BinningGrid2D
     Bounds: Bounds2D;
     CellCounts: IntegerSize2D;
     BucketOffsets: Array<Integer>;
-    ItemIndices: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
 }
 
 // A dense uniform binning grid over a bounded 3D region. Cells linearize
@@ -219,7 +227,7 @@ type BinningGrid3D
     Bounds: Bounds3D;
     CellCounts: IntegerSize3D;
     BucketOffsets: Array<Integer>;
-    ItemIndices: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
 }
 
 //==
@@ -251,7 +259,7 @@ type MortonCode3D
 concept SpatialIndex2D
 {
     ItemCount(x: Self): Integer;
-    CandidatesInBounds(x: Self, bounds: Bounds2D): Array<Integer>;
+    CandidatesInBounds(x: Self, bounds: Bounds2D): Array<ItemIndex>;
 }
 
 // A queryable acceleration structure over indexed 3D primitives. Candidate
@@ -260,5 +268,5 @@ concept SpatialIndex2D
 concept SpatialIndex3D
 {
     ItemCount(x: Self): Integer;
-    CandidatesInBounds(x: Self, bounds: Bounds3D): Array<Integer>;
+    CandidatesInBounds(x: Self, bounds: Bounds3D): Array<ItemIndex>;
 }

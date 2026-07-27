@@ -15,6 +15,14 @@ type NodeContentKind
     Value: Integer;
 }
 
+// A zero-based index of a node within Scene2D's flat node array. -1 means
+// "none" (a root's parent, a hit-test miss).
+type SceneNodeIndex2D
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
 // One node of a 2D scene, stored in Scene2D's flat node array. Parent is the
 // index of the parent node, -1 for a root. Transform places the node
 // relative to its parent; Opacity and Blend composite the node's rendered
@@ -25,14 +33,14 @@ type SceneNode2D
     implements Value
 {
     Name: String;
-    Parent: Integer;
+    Parent: SceneNodeIndex2D;
     Transform: Transform2D;
     Opacity: Proportion;
     Blend: BlendModeKind;
     Visible: Boolean;
     ContentKind: NodeContentKind;
-    ContentIndex: Integer;
-    ClipIndex: Integer;
+    ContentIndex: ItemIndex;
+    ClipIndex: ItemIndex;
 }
 
 // Where a clip/mask draws its coverage from. Path coverage is the geometric
@@ -41,8 +49,8 @@ type SceneNode2D
 type MaskSource2D
     implements Value
     = Path(Path: Path2D)                    // interior of a path under its own fill rule
-    | Alpha(SourceNodeIndex: Integer)       // alpha channel of the rendered node at this index
-    | Luminance(SourceNodeIndex: Integer);  // luminance of the rendered node at this index
+    | Alpha(SourceNode: SceneNodeIndex2D)       // alpha channel of the rendered node at this index
+    | Luminance(SourceNode: SceneNodeIndex2D);  // luminance of the rendered node at this index
 
 // A clipping or masking region applied to a scene node and its subtree.
 // Inverted swaps inside and outside.
@@ -93,6 +101,6 @@ type ExportSettings2D
 type SceneHitResult2D
     implements Value
 {
-    NodeIndex: Integer;
+    Node: SceneNodeIndex2D;
     LocalPosition: Point2D;
 }

@@ -6,6 +6,14 @@
 // -1 is the "no bone" sentinel throughout. Poses are local: each bone's pose is
 // expressed relative to its parent (roots relative to the model).
 
+// A zero-based index of a bone within the owning skeleton's bone array.
+// -1 means "no bone".
+type BoneIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
 // A named node in a skeleton hierarchy. Parent indexes the owning skeleton's
 // bone array; -1 marks a root. BindPose is the bone's rest pose relative to its
 // parent (relative to the model for roots).
@@ -13,7 +21,7 @@ type Bone
     implements Value
 {
     Name: String;
-    Parent: Integer;
+    Parent: BoneIndex;
     BindPose: Pose3D;
 }
 
@@ -40,7 +48,7 @@ type SkeletonPose
 type SkinWeight
     implements Value
 {
-    BoneIndex: Integer;
+    Bone: BoneIndex;
     Weight: Proportion;
 }
 
@@ -111,7 +119,7 @@ type IkTarget
 type IkChain
     implements Value
 {
-    BoneIndices: Array<Integer>;
+    BoneIndices: Array<BoneIndex>;
     Target: IkTarget;
     PoleTarget: Point3D;
     Solver: IkSolverKind;
@@ -125,7 +133,7 @@ type IkChain
 type LookAtConstraint
     implements Value
 {
-    BoneIndex: Integer;
+    Bone: BoneIndex;
     Target: Point3D;
     Aim: Vector3;
     Up: Vector3;
@@ -138,8 +146,8 @@ type LookAtConstraint
 type TwistConstraint
     implements Value
 {
-    BoneIndex: Integer;
-    SourceBoneIndex: Integer;
+    Bone: BoneIndex;
+    SourceBone: BoneIndex;
     Axis: Vector3;
     Fraction: Proportion;
 }
@@ -159,7 +167,7 @@ type BoneMask
 type RetargetMap
     implements Value
 {
-    TargetBoneIndices: Array<Integer>;
+    TargetBoneIndices: Array<BoneIndex>;
 }
 
 // A named socket on a bone for attaching props and accessories. Offset places
@@ -168,7 +176,7 @@ type BoneSocket
     implements Value
 {
     Name: String;
-    BoneIndex: Integer;
+    Bone: BoneIndex;
     Offset: Pose3D;
 }
 

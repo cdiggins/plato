@@ -16,21 +16,21 @@
 
 // A zero-based index of a vertex within a mesh or point set. -1 means "none".
 type VertexIndex
-    implements Value, Hashable, Comparable, IndexLike
+    implements Value, Hashable, Comparable, Index
 {
     Value: Integer;
 }
 
 // A zero-based index of an undirected edge within a mesh edge list. -1 means "none".
 type EdgeIndex
-    implements Value, Hashable, Comparable, IndexLike
+    implements Value, Hashable, Comparable, Index
 {
     Value: Integer;
 }
 
 // A zero-based index of a face within a mesh. -1 means "none".
 type FaceIndex
-    implements Value, Hashable, Comparable, IndexLike
+    implements Value, Hashable, Comparable, Index
 {
     Value: Integer;
 }
@@ -39,7 +39,7 @@ type FaceIndex
 // triangle meshes, corner c belongs to triangle c / 3 and slot c mod 3.
 // -1 means "none".
 type CornerIndex
-    implements Value, Hashable, Comparable, IndexLike
+    implements Value, Hashable, Comparable, Index
 {
     Value: Integer;
 }
@@ -47,7 +47,7 @@ type CornerIndex
 // A zero-based index of a half-edge (one directed side of an undirected
 // edge). -1 means "none".
 type HalfEdgeIndex
-    implements Value, Hashable, Comparable, IndexLike
+    implements Value, Hashable, Comparable, Index
 {
     Value: Integer;
 }
@@ -55,7 +55,7 @@ type HalfEdgeIndex
 // A zero-based index of a volumetric cell (tetrahedron, hexahedron, voxel
 // region) within a cell complex. -1 means "none".
 type CellIndex
-    implements Value, Hashable, Comparable, IndexLike
+    implements Value, Hashable, Comparable, Index
 {
     Value: Integer;
 }

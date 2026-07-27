@@ -156,6 +156,14 @@ type AnimationPlayhead
     Playing: Boolean;
 }
 
+// A zero-based index of a state within an animation state machine's States
+// array. -1 means "any state" where a transition allows it.
+type AnimationStateIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
 // A named node in an animation state machine: the clip it plays, its rate
 // multiplier, and whether it loops while active.
 type AnimationState
@@ -172,8 +180,8 @@ type AnimationState
 // means immediately); Duration is the cross-fade length shaped by Easing.
 type AnimationTransition
 {
-    FromState: Integer;
-    ToState: Integer;
+    FromState: AnimationStateIndex;
+    ToState: AnimationStateIndex;
     Duration: Duration;
     Easing: EasingKind;
     ExitTime: Proportion;
@@ -184,7 +192,7 @@ type AnimationStateMachine
 {
     States: Array<AnimationState>;
     Transitions: Array<AnimationTransition>;
-    InitialState: Integer;
+    InitialState: AnimationStateIndex;
 }
 
 // A clip placed at a position along a one-dimensional blend axis.

@@ -75,13 +75,21 @@ type BinaryImage
     Values: Array<Boolean>;
 }
 
+// A zero-based index of an entry within a palette's color array. -1 marks
+// a transparent (unmapped) pixel.
+type PaletteIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
 // A palette-indexed image: each pixel stores a zero-based index into Palette.
 // An index of -1 marks a transparent (unmapped) pixel.
 type IndexedImage
     implements Image
 {
     Size: IntegerSize2D;
-    Indices: Array<Integer>;
+    Indices: Array<PaletteIndex>;
     Palette: Palette;
 }
 

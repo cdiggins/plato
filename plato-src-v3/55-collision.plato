@@ -141,8 +141,8 @@ type TriggerVolume3D
 type CollisionPair
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
 }
 
 // A single planar contact. Position is the world contact point in meters;
@@ -181,8 +181,8 @@ type ContactPoint3D
 type ContactManifold2D
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     Points: Array<ContactPoint2D>;
     Normal: Direction2D;
     Friction: Number;
@@ -196,8 +196,8 @@ type ContactManifold2D
 type ContactManifold3D
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     Points: Array<ContactPoint3D>;
     Normal: Direction3D;
     Friction: Number;
@@ -239,7 +239,7 @@ type ShapeCastResult2D
     Fraction: Proportion;
     Position: Point2D;
     Normal: Direction2D;
-    BodyIndex: Integer;
+    Body: BodyIndex;
 }
 
 // The result of sweeping a shape through space. Hit says whether anything was
@@ -253,7 +253,7 @@ type ShapeCastResult3D
     Fraction: Proportion;
     Position: Point3D;
     Normal: Direction3D;
-    BodyIndex: Integer;
+    Body: BodyIndex;
 }
 
 // The result of an overlap query: the zero-based indices of every body whose
@@ -261,5 +261,5 @@ type ShapeCastResult3D
 type OverlapResult
     implements Value
 {
-    BodyIndices: Array<Integer>;
+    BodyIndices: Array<BodyIndex>;
 }

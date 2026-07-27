@@ -6,6 +6,14 @@
 // parameters. Linear quantities are in meters, kilograms, and seconds;
 // angular quantities are in radians.
 
+// A zero-based index of a body within an external body array (the simulation
+// world's body list). -1 means "none" / "the static environment".
+type BodyIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
 //==
 // # Motion kind and mass properties
 

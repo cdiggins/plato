@@ -63,8 +63,8 @@ type JointBreakThreshold
 type HingeJoint
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     AnchorA: Point3D;
     AnchorB: Point3D;
     AxisA: Direction3D;
@@ -80,8 +80,8 @@ type HingeJoint
 type BallSocketJoint
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     AnchorA: Point3D;
     AnchorB: Point3D;
     TwistAxisA: Direction3D;
@@ -94,8 +94,8 @@ type BallSocketJoint
 type SliderJoint
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     AnchorA: Point3D;
     AnchorB: Point3D;
     AxisA: Direction3D;
@@ -108,8 +108,8 @@ type SliderJoint
 type FixedJoint
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     RelativePose: Pose3D;
 }
 
@@ -119,8 +119,8 @@ type FixedJoint
 type DistanceJoint
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     AnchorA: Point3D;
     AnchorB: Point3D;
     MinLength: Length;
@@ -133,8 +133,8 @@ type DistanceJoint
 type SpringJoint
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     AnchorA: Point3D;
     AnchorB: Point3D;
     RestLength: Length;
@@ -148,8 +148,8 @@ type SpringJoint
 type PulleyJoint
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     GroundAnchorA: Point3D;
     GroundAnchorB: Point3D;
     AnchorA: Point3D;
@@ -164,8 +164,8 @@ type PulleyJoint
 type GenericJoint
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     FrameA: Pose3D;
     FrameB: Pose3D;
     LinearX: LinearLimit;
@@ -182,8 +182,8 @@ type GenericJoint
 type GearConstraint
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     AxisA: Direction3D;
     AxisB: Direction3D;
     Ratio: Number;
@@ -197,8 +197,8 @@ type GearConstraint
 type RevoluteJoint2D
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     AnchorA: Point2D;
     AnchorB: Point2D;
     Limit: AngularLimit;
@@ -210,8 +210,8 @@ type RevoluteJoint2D
 type PrismaticJoint2D
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     AnchorA: Point2D;
     AnchorB: Point2D;
     AxisA: Direction2D;
@@ -224,8 +224,8 @@ type PrismaticJoint2D
 type DistanceJoint2D
     implements Value
 {
-    BodyA: Integer;
-    BodyB: Integer;
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
     AnchorA: Point2D;
     AnchorB: Point2D;
     MinLength: Length;

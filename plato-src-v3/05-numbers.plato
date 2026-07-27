@@ -42,9 +42,13 @@ type Probability
     Value: Number;
 }
 
-// A zero-based position within an ordered collection. -1 means "none".
-type Index
-    implements Value, Comparable, IndexLike
+// A zero-based position within a caller-supplied or owning item list:
+// primitives handed to a spatial structure, fields referenced by a graph,
+// entries of a scene pool. -1 means "none". The general-purpose index type;
+// domains with richer element vocabularies declare their own (VertexIndex,
+// BoneIndex, ...).
+type ItemIndex
+    implements Value, Hashable, Comparable, Index
 {
     Value: Integer;
 }

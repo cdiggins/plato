@@ -222,8 +222,8 @@ type ClothVertex
 type ClothDistanceConstraint
     implements Value
 {
-    VertexA: Integer;
-    VertexB: Integer;
+    VertexA: VertexIndex;
+    VertexB: VertexIndex;
     RestLength: Length;
     Compliance: Number;
 }
@@ -235,10 +235,10 @@ type ClothDistanceConstraint
 type ClothBendConstraint
     implements Value
 {
-    VertexA: Integer;
-    VertexB: Integer;
-    VertexC: Integer;
-    VertexD: Integer;
+    VertexA: VertexIndex;
+    VertexB: VertexIndex;
+    VertexC: VertexIndex;
+    VertexD: VertexIndex;
     RestAngle: Angle;
     Compliance: Number;
 }

@@ -12,9 +12,9 @@ concept Countable
 
 // A typed zero-based position within an ordered collection. Value is the raw
 // index; -1 means "none" / "not present". Implementors are single-field
-// wrappers over Integer (Index, VertexIndex, FaceIndex, ...), so the Value
-// field satisfies this surface directly.
-concept IndexLike
+// wrappers over Integer (VertexIndex, FaceIndex, ...), so the Value field
+// satisfies this surface directly.
+concept Index
 {
     Value(x: Self): Integer;
 }

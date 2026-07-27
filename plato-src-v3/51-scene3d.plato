@@ -9,6 +9,45 @@
 // SceneResources.CameraBindings. A binding then selects into the typed arrays
 // of SceneLightSet or SceneCameraSet via its Kind.
 
+// A zero-based index of a node within Scene3D.Nodes. -1 means "none"
+// (a root's parent).
+type SceneNodeIndex3D
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of a mesh within SceneResources.Meshes. -1 means "none".
+type MeshIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of a material within SceneResources.Materials.
+// -1 means "none" / "use the mesh's default".
+type MaterialIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of a light binding within SceneResources.LightBindings.
+// -1 means "none".
+type LightBindingIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of a camera binding within
+// SceneResources.CameraBindings. -1 means "none".
+type CameraBindingIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
 // A node in the scene hierarchy. Parent is the index of the parent node in
 // Scene3D.Nodes (-1 = a root); Transform is relative to the parent. Mesh,
 // Material, Light, and Camera attach resources by index (-1 = none); a node's
@@ -19,13 +58,13 @@ type SceneNode3D
     implements Value
 {
     Name: String;
-    Parent: Integer;
+    Parent: SceneNodeIndex3D;
     Transform: Transform3D;
     Visible: Boolean;
-    Mesh: Integer;
-    Material: Integer;
-    Light: Integer;
-    Camera: Integer;
+    Mesh: MeshIndex;
+    Material: MaterialIndex;
+    Light: LightBindingIndex;
+    Camera: CameraBindingIndex;
     LayerMask: Integer;
 }
 
@@ -61,7 +100,7 @@ type SceneLightBinding
     implements Value
 {
     Kind: LightKind;
-    Index: Integer;
+    Index: ItemIndex;
 }
 
 // Which typed camera array of SceneCameraSet a binding addresses. Distinct
@@ -94,7 +133,7 @@ type SceneCameraBinding
     implements Value
 {
     Kind: SceneCameraKind;
-    Index: Integer;
+    Index: ItemIndex;
 }
 
 // The shared resource pools of a scene; node and instance indices resolve
@@ -127,8 +166,8 @@ type RenderLayer
 type MeshInstance
     implements Value
 {
-    Mesh: Integer;
-    Material: Integer;
+    Mesh: MeshIndex;
+    Material: MaterialIndex;
     Transform: Transform3D;
 }
 
@@ -139,8 +178,8 @@ type MeshInstance
 type InstanceSet
     implements Value
 {
-    Mesh: Integer;
-    Material: Integer;
+    Mesh: MeshIndex;
+    Material: MaterialIndex;
     Transforms: Array<Transform3D>;
     Colors: Array<Color>;
 }
@@ -153,7 +192,7 @@ type LodGroup
     implements Value
 {
     Center: Point3D;
-    Meshes: Array<Integer>;
+    Meshes: Array<MeshIndex>;
     SwitchDistances: Array<Number>;
 }
 

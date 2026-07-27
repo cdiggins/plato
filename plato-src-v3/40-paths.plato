@@ -45,14 +45,30 @@ type Path2D
     FillRule: FillRule;
 }
 
+// A zero-based index of a contour within a path's contour array. -1 means
+// "no contour".
+type ContourIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of a segment within a contour's segment array. -1 means
+// "no segment".
+type PathSegmentIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
 // An address on a path: which contour, which segment within that contour, and
 // the normalized parameter within that segment. An index of -1 means "no
 // location".
 type PathLocation
     implements Value
 {
-    ContourIndex: Integer;
-    SegmentIndex: Integer;
+    Contour: ContourIndex;
+    Segment: PathSegmentIndex;
     Parameter: Proportion;
 }
 

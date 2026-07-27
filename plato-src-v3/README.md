@@ -9,7 +9,7 @@ Target applications: geometry (primary), 2D/3D/4D and N-dimensional computation,
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
 graphics, image processing, and engineering.
 
-Current contents (2026-07-27): **70 source files, 155 concepts, 1125 types** (~13.4K lines).
+Current contents (2026-07-27): **70 source files, 155 concepts, 1143 types** (~13.4K lines).
 The folder parses and resolves cleanly (`lint`: 0 parse errors, 0 symbol-resolution errors);
 LINT001/LINT003 findings are expected until libraries implement the declared surface.
 
@@ -41,6 +41,12 @@ primitives in `00-primitives.plato`).
   follow-up sweep — new declarations should use a sum, not a kind.
 - Quantity types carry natural-unit field names (`Radians`, `Meters`, `Kelvin`).
 - Collection fields use `Array<T>` (or `Array2D<T>`, `Array3D<T>`).
+- Cross-array references use typed index types implementing the `Index` concept
+  (`VertexIndex`, `BoneIndex`, `GraphVertexIndex`, ...), never raw `Integer`; `-1` means
+  "none". `ItemIndex` (file 05) is the general-purpose form for caller-supplied or pool
+  lists. CSR/offset arrays stay `Array<Integer>` (they hold one-past-end boundaries, not
+  element references), as do bitmasks, counts, labels, axis selectors, and opaque host
+  handles.
 - Optional references use sentinel conventions noted in comments (e.g. `-1` for "no index",
   empty array for "none").
 - **Hard limit: at most 10 fields per type** (the compiler synthesizes a `TupleN`
@@ -71,9 +77,9 @@ Foundation files:
 - `00-primitives.plato` — compiler-assumed primitives, tuples, functions, arrays.
 - `01-concepts-core.plato` — Equatable, Value, Hashable, Orderable, Comparable, Logical, Bitwise.
 - `02-concepts-algebra.plato` — Additive..Arithmetic, ScalarArithmetic, Interpolatable, Numerical, Real, Whole, Normed, Metric, Lattice, Difference.
-- `03-concepts-collections.plato` — Countable, IndexLike, Indexable family, Sliceable, Concatenable, SetLike, MapLike.
+- `03-concepts-collections.plato` — Countable, Index, Indexable family, Sliceable, Concatenable, SetLike, MapLike.
 - `04-concepts-functional.plato` — Procedural, Bijective, Periodic, Boundable.
-- `05-numbers.plato` — Complex, Rational, Proportion, Percent, Probability, Index.
+- `05-numbers.plato` — Complex, Rational, Proportion, Percent, Probability, ItemIndex, Cardinal.
 - `06-quantities.plato` — Quantity concept, Dimension/UnitOfMeasure/DynamicQuantity, ~35 physical quantity types.
 - `07-time.plato` — Instant, Duration, TimeInterval, FrameRate, FrameTime, Timecode, Tempo, BeatTime.
 - `08-vectors.plato` — Vector concept, Vector2/3/4, VectorN, IntegerVector2/3/4, Direction2D/3D.
@@ -116,7 +122,7 @@ domain (`ImageHistogram`, not a second `Histogram`).
 | `Texture2D`, `Texture3D`, `TextureCube`, `TextureSampler`, `TextureBinding` | 47 (G) |
 | `PerspectiveCamera`, `OrthographicCamera` | 48 (H) |
 | `Material` (rendering PBR material) | 50 (H) |
-| `RigidBody2D/3D`, `MassProperties2D/3D` | 54 (I) |
+| `RigidBody2D/3D`, `MassProperties2D/3D`, `BodyIndex` | 54 (I) |
 | `Histogram`, `SummaryStatistics` | 58 (J) |
 | `RandomState`, `NormalDistribution`, `UniformDistribution` | 59 (J) |
 | `Spectrum`, `SampledSignal` | 60 (J) |

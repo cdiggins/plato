@@ -52,6 +52,14 @@ type SdfCombineKind
     Value: Integer;
 }
 
+// A zero-based index of a node within an SDF combination tree's node array.
+// Nodes only reference lower-indexed nodes; -1 means "unused".
+type SdfNodeIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
 // One node of a flat planar SDF tree. Interior nodes set Left and Right to
 // node indices and Primitive to -1; leaves set Primitive to an index into an
 // external primitive list and Left/Right to -1. Smoothing is the blend radius
@@ -60,9 +68,9 @@ type SdfNode2D
     implements Value
 {
     Combine: SdfCombineKind;
-    Left: Integer;
-    Right: Integer;
-    Primitive: Integer;
+    Left: SdfNodeIndex;
+    Right: SdfNodeIndex;
+    Primitive: ItemIndex;
     Smoothing: Number;
 }
 
@@ -73,7 +81,7 @@ type SdfTree2D
     implements Value
 {
     Nodes: Array<SdfNode2D>;
-    Root: Integer;
+    Root: SdfNodeIndex;
 }
 
 // One node of a flat spatial SDF tree. Interior nodes set Left and Right to
@@ -84,9 +92,9 @@ type SdfNode3D
     implements Value
 {
     Combine: SdfCombineKind;
-    Left: Integer;
-    Right: Integer;
-    Primitive: Integer;
+    Left: SdfNodeIndex;
+    Right: SdfNodeIndex;
+    Primitive: ItemIndex;
     Smoothing: Number;
 }
 
@@ -97,7 +105,7 @@ type SdfTree3D
     implements Value
 {
     Nodes: Array<SdfNode3D>;
-    Root: Integer;
+    Root: SdfNodeIndex;
 }
 
 //==
@@ -261,6 +269,6 @@ type SdfBendModifier3D
 type SdfDisplacementModifier3D
     implements Value
 {
-    Source: Integer;
+    Source: ItemIndex;
     Amplitude: Number;
 }

@@ -19,13 +19,22 @@ concept GraphLike
 //==
 // # Core graph types
 
+// A zero-based index of a vertex within a graph's implicit
+// [0, VertexCount) vertex range. -1 means "none" (an unreachable vertex's
+// parent, an unmatched pairing).
+type GraphVertexIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
 // A connection between two vertices, by zero-based index. In an undirected
 // graph the Source/Target order carries no meaning.
 type GraphEdge
     implements Value, Hashable
 {
-    Source: Integer;
-    Target: Integer;
+    Source: GraphVertexIndex;
+    Target: GraphVertexIndex;
 }
 
 // A graph in edge-list form. When Directed is false each edge is an unordered
@@ -43,8 +52,8 @@ type Graph
 type WeightedEdge
     implements Value
 {
-    Source: Integer;
-    Target: Integer;
+    Source: GraphVertexIndex;
+    Target: GraphVertexIndex;
     Weight: Number;
 }
 
@@ -81,7 +90,7 @@ type AdjacencyStructure
 {
     VertexCount: Integer;
     NeighborOffsets: Array<Integer>;
-    NeighborIndices: Array<Integer>;
+    NeighborIndices: Array<GraphVertexIndex>;
 }
 
 // A hypergraph: edges that join any number of vertices, in CSR form.
@@ -93,7 +102,7 @@ type Hypergraph
 {
     VertexCount: Integer;
     HyperedgeOffsets: Array<Integer>;
-    HyperedgeVertices: Array<Integer>;
+    HyperedgeVertices: Array<GraphVertexIndex>;
 }
 
 //==
@@ -105,7 +114,7 @@ type Hypergraph
 type GraphPath
     implements Value
 {
-    VertexIndices: Array<Integer>;
+    VertexIndices: Array<GraphVertexIndex>;
     TotalWeight: Number;
 }
 
@@ -116,8 +125,8 @@ type GraphPath
 type ShortestPathTree
     implements Value
 {
-    SourceIndex: Integer;
-    ParentIndices: Array<Integer>;
+    SourceIndex: GraphVertexIndex;
+    ParentIndices: Array<GraphVertexIndex>;
     Distances: Array<Number>;
 }
 
@@ -127,8 +136,8 @@ type ShortestPathTree
 type SpanningTree
     implements Value
 {
-    ParentIndices: Array<Integer>;
-    RootIndex: Integer;
+    ParentIndices: Array<GraphVertexIndex>;
+    RootIndex: GraphVertexIndex;
 }
 
 // A partition of vertices into connected components. ComponentLabels[v] is the
@@ -145,7 +154,7 @@ type ConnectedComponents
 type TopologicalOrder
     implements Value
 {
-    OrderedVertexIndices: Array<Integer>;
+    OrderedVertexIndices: Array<GraphVertexIndex>;
     IsValid: Boolean;
 }
 
@@ -179,8 +188,8 @@ type FlowNetwork
 {
     VertexCount: Integer;
     Edges: Array<WeightedEdge>;
-    SourceIndex: Integer;
-    SinkIndex: Integer;
+    SourceIndex: GraphVertexIndex;
+    SinkIndex: GraphVertexIndex;
 }
 
 // The result of a maximum-flow computation. EdgeFlows is parallel to the
@@ -202,7 +211,7 @@ type BipartiteMatching
 {
     LeftVertexCount: Integer;
     RightVertexCount: Integer;
-    MatchedRightIndices: Array<Integer>;
+    MatchedRightIndices: Array<GraphVertexIndex>;
 }
 
 //==

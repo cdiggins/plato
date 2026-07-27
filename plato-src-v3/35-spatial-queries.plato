@@ -52,7 +52,7 @@ type RayHit2D
     Distance: Number;
     Position: Point2D;
     Normal: Direction2D;
-    PrimitiveIndex: Integer;
+    PrimitiveIndex: ItemIndex;
 }
 
 // The result of a 3D raycast against triangulated geometry. When Hit is
@@ -121,7 +121,7 @@ type RadiusQuery3D
 type NearestNeighbors
     implements Value
 {
-    Indices: Array<Integer>;
+    Indices: Array<ItemIndex>;
     Distances: Array<Number>;
 }
 
@@ -134,7 +134,7 @@ type ClosestPointResult2D
 {
     Position: Point2D;
     Distance: Number;
-    PrimitiveIndex: Integer;
+    PrimitiveIndex: ItemIndex;
     Parameter: Number;
 }
 
@@ -156,8 +156,8 @@ type ClosestPointResult3D
 type ClosestPairResult
     implements Value
 {
-    IndexA: Integer;
-    IndexB: Integer;
+    IndexA: ItemIndex;
+    IndexB: ItemIndex;
     Distance: Number;
 }
 
@@ -216,8 +216,8 @@ type IntersectionResult3D
 type FrustumCullResult
     implements Value
 {
-    FullyVisible: Array<Integer>;
-    PartiallyVisible: Array<Integer>;
+    FullyVisible: Array<ItemIndex>;
+    PartiallyVisible: Array<ItemIndex>;
     CulledCount: Integer;
 }
 
