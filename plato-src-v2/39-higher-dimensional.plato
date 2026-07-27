@@ -1,0 +1,20 @@
+// Explicit 4D geometry plus dimension-generic structures.
+
+type Triangle4D { A: Point4D; B: Point4D; C: Point4D; }
+type Tetrahedron4D { A: Point4D; B: Point4D; C: Point4D; D: Point4D; }
+type Pentachoron4D { A: Point4D; B: Point4D; C: Point4D; D: Point4D; E: Point4D; }
+type Polytope4D { Vertices: IArray<Point4D>; Cells: IArray<IndexLoop>; }
+type PolytopeN { Dimension: Integer; Vertices: IArray<PointN>; Facets: IArray<IndexLoop>; }
+
+type SimplexN { Vertices: IArray<PointN>; }
+type SphereN { Center: PointN; Radius: Number; }
+type EllipsoidN { Center: PointN; QuadraticForm: Matrix; }
+type ConvexPolytopeN { Dimension: Integer; HalfSpaces: IArray<HalfSpaceN>; }
+
+type OrthonormalBasisN { Vectors: IArray<VectorN>; }
+type SubspaceN { Origin: PointN; Basis: OrthonormalBasisN; }
+type ProjectionN { SourceDimension: Integer; TargetDimension: Integer; Matrix: Matrix; }
+type CoordinateFrameN { Origin: PointN; Basis: Matrix; }
+
+type HyperGridCell4D { Coordinate: Integer4; Bounds: Bounds4D; }
+type SimplicialComplexN { Dimension: Integer; VertexCount: Integer; Simplices: IArray<IndexLoop>; }

@@ -1,0 +1,22 @@
+// Algorithms can return rich diagnostics without exceptions or hidden state.
+
+type QueryStatus { Name: String; }
+type ClosestPointResult2D { Point: Point2D; Parameter: Number; Distance: Number; Status: QueryStatus; }
+type ClosestPointResult3D { Point: Point3D; Parameter: Number; Distance: Number; Status: QueryStatus; }
+type RayHit2D { Parameter: Number; Point: Point2D; Normal: Vector2; Feature: Integer; }
+type RayHit3D { Parameter: Number; Point: Point3D; Normal: Vector3; Feature: Integer; }
+type SegmentIntersection2D { Point: Point2D; ParameterA: Number; ParameterB: Number; Status: QueryStatus; }
+type CurveIntersection2D { Point: Point2D; ParameterA: Number; ParameterB: Number; Multiplicity: Integer; }
+type SurfaceIntersection3D { Curve: PolyCurve3D; Status: QueryStatus; }
+
+type FitQuality { RootMeanSquareError: Number; MaximumError: Number; SampleCount: Integer; }
+type LineFit2D { Line: InfiniteLine2D; Quality: FitQuality; }
+type LineFit3D { Line: InfiniteLine3D; Quality: FitQuality; }
+type PlaneFit3D { Plane: Plane3D; Quality: FitQuality; }
+type CircleFit2D { Circle: Circle2D; Quality: FitQuality; }
+type SphereFit3D { Sphere: Sphere3D; Quality: FitQuality; }
+
+type Triangulation2D { Points: IArray<Point2D>; Triangles: IArray<IndexTriple>; }
+type Tetrahedralization3D { Points: IArray<Point3D>; Tetrahedra: IArray<IndexQuad>; }
+type ConvexHull2D { Hull: Polygon2D; SourceIndices: IArray<Integer>; }
+type ConvexHull3D { Hull: TriangleMesh3D; SourceIndices: IArray<Integer>; }

@@ -1,0 +1,44 @@
+// Mechanics, particles, collisions, and continuum state.
+
+type LinearVelocity3D { Value: Vector3; }
+type AngularVelocity3D { Value: Vector3; }
+type LinearAcceleration3D { Value: Vector3; }
+type Momentum3D { Value: Vector3; }
+type AngularMomentum3D { Value: Vector3; }
+type Force3D { Value: Vector3; }
+type Torque3D { Value: Vector3; }
+
+type MassProperties
+{
+    Mass: Mass;
+    CenterOfMass: Point3D;
+    Inertia: SymmetricTensor3;
+}
+
+type RigidBodyState
+{
+    Pose: RigidTransform3D;
+    LinearVelocity: LinearVelocity3D;
+    AngularVelocity: AngularVelocity3D;
+    MassProperties: MassProperties;
+}
+
+type ParticleState { Position: Point3D; Velocity: Vector3; Mass: Mass; Age: Duration; }
+type ParticleSystemState { Particles: IArray<ParticleState>; Time: Instant; }
+type ContactPoint { Point: Point3D; Normal: Vector3; Penetration: Length; }
+type ContactManifold { BodyA: Integer; BodyB: Integer; Contacts: IArray<ContactPoint>; }
+type CollisionPair { A: Integer; B: Integer; }
+
+type Spring { A: Integer; B: Integer; RestLength: Length; Stiffness: Number; Damping: Number; }
+type Constraint { Name: String; Bodies: IndexPair; Parameters: IArray<Number>; }
+
+type FluidState3D
+{
+    Grid: UniformGrid3D;
+    Velocity: IArray3D<Vector3>;
+    Pressure: IArray3D<Number>;
+    Density: IArray3D<Number>;
+}
+
+type StressTensor3D { Value: SymmetricTensor3; }
+type StrainTensor3D { Value: SymmetricTensor3; }

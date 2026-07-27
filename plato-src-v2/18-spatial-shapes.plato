@@ -1,0 +1,35 @@
+// Common bounded 3D primitives and polyhedra.
+
+type Triangle3D implements IGeometry3D, IBounded<Bounds3D>
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+}
+
+type Quad3D implements IGeometry3D, IBounded<Bounds3D>
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    D: Point3D;
+}
+
+type Tetrahedron3D implements IGeometry3D, IClosed, IConvex
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    D: Point3D;
+}
+
+type Polygon3D implements IGeometry3D, IClosed { Plane: Plane3D; Vertices: IArray<Point3D>; }
+type Polyline3D implements IGeometry3D, IOpen { Points: IArray<Point3D>; }
+type ClosedPolyline3D implements IGeometry3D, IClosed { Points: IArray<Point3D>; }
+type Polyhedron3D implements IGeometry3D, IClosed { Vertices: IArray<Point3D>; Faces: IArray<IndexLoop>; }
+type ConvexPolyhedron3D implements IGeometry3D, IClosed, IConvex { HalfSpaces: IArray<HalfSpace3D>; }
+
+type Frustum3D { Planes: IArray<HalfSpace3D>; }
+type Wedge3D { Base: Triangle3D; Offset: Vector3; }
+type Prism3D { Base: Polygon3D; Offset: Vector3; }
+type Pyramid3D { Base: Polygon3D; Apex: Point3D; }

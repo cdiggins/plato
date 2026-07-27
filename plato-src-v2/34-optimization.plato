@@ -1,0 +1,36 @@
+// Optimization data distinguishes variables, objectives, constraints, and results.
+
+type VariableBounds { Minimum: Number; Maximum: Number; }
+type OptimizationVariable { Name: String; InitialValue: Number; Bounds: VariableBounds; Scale: Number; }
+type ObjectiveValue { Value: Number; Gradient: VectorN; }
+type ConstraintValue { Value: Number; Gradient: VectorN; }
+type OptimizationProblem
+{
+    Variables: IArray<OptimizationVariable>;
+    Objective: Function1<VectorN, Number>;
+    Constraints: IArray<Function1<VectorN, Number>>;
+}
+
+type OptimizationIteration
+{
+    Index: Integer;
+    Variables: VectorN;
+    Objective: Number;
+    GradientNorm: Number;
+    StepNorm: Number;
+}
+
+type OptimizationResult
+{
+    Variables: VectorN;
+    Objective: Number;
+    Iterations: IArray<OptimizationIteration>;
+    Converged: Boolean;
+    Reason: String;
+}
+
+type LinearConstraint { Coefficients: VectorN; Relation: String; RightHandSide: Number; }
+type LinearProgram { Objective: VectorN; Constraints: IArray<LinearConstraint>; Bounds: IArray<VariableBounds>; }
+type QuadraticProgram { Quadratic: Matrix; Linear: VectorN; Constraints: IArray<LinearConstraint>; Bounds: IArray<VariableBounds>; }
+type RootBracket { Minimum: Number; Maximum: Number; MinimumValue: Number; MaximumValue: Number; }
+type RootResult { Value: Number; FunctionValue: Number; Iterations: Integer; Converged: Boolean; }

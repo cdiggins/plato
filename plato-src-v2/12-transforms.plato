@@ -1,0 +1,25 @@
+// Named transforms preserve intent and invariants.
+
+type Translation2D { Offset: Vector2; }
+type Rotation2D { Angle: Angle; }
+type Scale2D { Factors: Vector2; }
+type Shear2D { XByY: Number; YByX: Number; }
+type Reflection2D { Axis: InfiniteLine2D; }
+type RigidTransform2D implements IRigidTransform<Point2D, Vector2> { Translation: Vector2; Rotation: Angle; }
+type AffineTransform2D implements IAffineTransform<Point2D, Vector2> { Matrix: Matrix3x2; }
+
+type AxisAngle3D { Axis: Vector3; Angle: Angle; }
+type Translation3D { Offset: Vector3; }
+type Rotation3D { Orientation: Quaternion; }
+type Scale3D { Factors: Vector3; }
+type Shear3D { Matrix: Matrix3x3; }
+type Reflection3D { Plane: Plane3D; }
+type RigidTransform3D implements IRigidTransform<Point3D, Vector3> { Translation: Vector3; Rotation: Quaternion; }
+type SimilarityTransform3D { Translation: Vector3; Rotation: Quaternion; UniformScale: Number; }
+type AffineTransform3D implements IAffineTransform<Point3D, Vector3> { Matrix: Matrix4x4; }
+type ProjectiveTransform3D implements ITransform<Point3D> { Matrix: Matrix4x4; }
+type DualQuaternion { Real: Quaternion; Dual: Quaternion; }
+
+type Rotation4D { Left: Quaternion; Right: Quaternion; }
+type AffineTransform4D { Linear: Matrix4x4; Translation: Vector4; }
+type AffineTransformN { Linear: Matrix; Translation: VectorN; }

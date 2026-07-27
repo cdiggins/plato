@@ -1,0 +1,31 @@
+// Raster, volume, channel, and camera-sensor data.
+
+type PixelFormat { Name: String; Channels: Integer; BitsPerChannel: Integer; FloatingPoint: Boolean; }
+type ImageSize { Width: Integer; Height: Integer; }
+type ImageRegion { Origin: Integer2; Size: ImageSize; }
+type Image<T> { Size: ImageSize; Pixels: IArray2D<T>; }
+type MipLevel<T> { Level: Integer; Image: Image<T>; }
+type MipChain<T> { Levels: IArray<MipLevel<T>>; }
+
+type GrayImage { Pixels: Image<Number>; }
+type RgbaImage { Pixels: Image<LinearRgba>; }
+type DepthImage { Pixels: Image<Number>; Near: Number; Far: Number; }
+type NormalImage { Pixels: Image<Vector3>; }
+type LabelImage { Pixels: Image<Integer>; Labels: IArray<String>; }
+
+type VolumeImage<T> { Size: Integer3; Voxels: IArray3D<T>; Spacing: Vector3; }
+type ImageChannel<T> { Name: String; Values: Image<T>; }
+type MultiChannelImage { Size: ImageSize; Channels: IArray<ImageChannel<Number>>; }
+
+type LensDistortion { Radial: Vector3; Tangential: Vector2; }
+type CameraIntrinsics
+{
+    FocalLength: Vector2;
+    PrincipalPoint: Point2D;
+    Skew: Number;
+    ImageSize: ImageSize;
+    Distortion: LensDistortion;
+}
+
+type CameraExtrinsics { WorldToCamera: RigidTransform3D; }
+type CalibratedCamera { Intrinsics: CameraIntrinsics; Extrinsics: CameraExtrinsics; }

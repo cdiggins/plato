@@ -1,0 +1,65 @@
+// Animation separates interpolation policy, keys, tracks, clips, and rigs.
+
+type InterpolationMode { Name: String; }
+type ExtrapolationMode { Name: String; }
+
+type Keyframe<T>
+{
+    Time: Duration;
+    Value: T;
+    Interpolation: InterpolationMode;
+}
+
+type TangentKeyframe<T>
+{
+    Time: Duration;
+    Value: T;
+    IncomingTangent: T;
+    OutgoingTangent: T;
+    Interpolation: InterpolationMode;
+}
+
+type AnimationTrack<T>
+{
+    Keys: IArray<Keyframe<T>>;
+    Before: ExtrapolationMode;
+    After: ExtrapolationMode;
+}
+
+type TangentAnimationTrack<T>
+{
+    Keys: IArray<TangentKeyframe<T>>;
+    Before: ExtrapolationMode;
+    After: ExtrapolationMode;
+}
+
+type TransformTrack2D
+{
+    Translation: AnimationTrack<Vector2>;
+    Rotation: AnimationTrack<Angle>;
+    Scale: AnimationTrack<Vector2>;
+}
+
+type TransformTrack3D
+{
+    Translation: AnimationTrack<Vector3>;
+    Rotation: AnimationTrack<Quaternion>;
+    Scale: AnimationTrack<Vector3>;
+}
+
+type AnimationEvent { Time: Duration; Name: String; Payload: String; }
+type AnimationClip { Name: String; Duration: Duration; TransformTracks: IArray<TransformTrack3D>; Events: IArray<AnimationEvent>; }
+type LayerWeight { Layer: Integer; Weight: Number; }
+type AnimationLayer { Clip: AnimationClip; Weight: Number; Additive: Boolean; }
+type AnimationStack { Layers: IArray<AnimationLayer>; }
+
+type Joint { Name: String; Parent: Integer; BindPose: RigidTransform3D; }
+type Skeleton { Joints: IArray<Joint>; }
+type JointPose { Joint: Integer; Transform: RigidTransform3D; }
+type SkeletonPose { Poses: IArray<JointPose>; }
+type SkinWeight { Joint: Integer; Weight: Number; }
+type VertexSkinWeights { Weights: IArray<SkinWeight>; }
+type Skin { Skeleton: Skeleton; InverseBindPoses: IArray<AffineTransform3D>; VertexWeights: IArray<VertexSkinWeights>; }
+
+type MorphTarget { Name: String; PositionOffsets: IArray<Vector3>; NormalOffsets: IArray<Vector3>; }
+type MorphWeights { Values: IArray<Number>; }

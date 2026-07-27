@@ -1,0 +1,16 @@
+// Closed/open state is data, not an implicit naming convention.
+
+type BoundaryInclusion { IncludeMinimum: Boolean; IncludeMaximum: Boolean; }
+type NumberRange { Minimum: Number; Maximum: Number; Boundary: BoundaryInclusion; }
+type IntegerRange { Minimum: Integer; Maximum: Integer; Boundary: BoundaryInclusion; }
+type AngleRange { Minimum: Angle; Maximum: Angle; Boundary: BoundaryInclusion; }
+type ParameterRange { Minimum: Number; Maximum: Number; Periodic: Boolean; }
+type Domain2D { U: ParameterRange; V: ParameterRange; }
+type Domain3D { U: ParameterRange; V: ParameterRange; W: ParameterRange; }
+type DomainND { Axes: IArray<ParameterRange>; }
+
+type NumberInterval { Minimum: Number; Maximum: Number; }
+type ComplexRectangle { Real: NumberInterval; Imaginary: NumberInterval; }
+type BoxInterval2 { X: NumberInterval; Y: NumberInterval; }
+type BoxInterval3 { X: NumberInterval; Y: NumberInterval; Z: NumberInterval; }
+type BoxInterval4 { X: NumberInterval; Y: NumberInterval; Z: NumberInterval; W: NumberInterval; }

@@ -1,0 +1,31 @@
+// Descriptive, multivariate, and distribution types.
+
+type SampleStatistics
+{
+    Count: Integer;
+    Minimum: Number;
+    Maximum: Number;
+    Mean: Number;
+    Variance: Number;
+}
+
+type WeightedSample { Value: Number; Weight: Number; }
+type HistogramBin { Minimum: Number; Maximum: Number; Count: Integer; }
+type Histogram { Bins: IArray<HistogramBin>; Underflow: Integer; Overflow: Integer; }
+type Quantile { Probability: Number; Value: Number; }
+
+type CovarianceMatrix { Means: VectorN; Covariance: Matrix; }
+type PrincipalComponent { Direction: VectorN; Variance: Number; }
+type PrincipalComponentAnalysis { Mean: VectorN; Components: IArray<PrincipalComponent>; }
+
+type Probability { Value: Number; }
+type UniformDistribution { Minimum: Number; Maximum: Number; }
+type NormalDistribution { Mean: Number; StandardDeviation: Number; }
+type LogNormalDistribution { LogMean: Number; LogStandardDeviation: Number; }
+type ExponentialDistribution { Rate: Number; }
+type PoissonDistribution { Rate: Number; }
+type DiscreteOutcome<T> { Value: T; Probability: Probability; }
+type DiscreteDistribution<T> { Outcomes: IArray<DiscreteOutcome<T>>; }
+
+type RegressionObservation { Inputs: VectorN; Output: Number; Weight: Number; }
+type LinearRegressionModel { Intercept: Number; Coefficients: VectorN; }

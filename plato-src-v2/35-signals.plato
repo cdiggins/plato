@@ -1,0 +1,24 @@
+// Continuous/discrete signals and frequency-domain representations.
+
+type SamplingRate { Frequency: Frequency; }
+type SignalSample<T> { Index: Integer; Time: Duration; Value: T; }
+type DiscreteSignal<T> { Rate: SamplingRate; Samples: IArray<T>; Start: Instant; }
+type SignalWindow { Name: String; Parameters: IArray<Number>; }
+
+type ComplexSpectrum
+{
+    SampleRate: SamplingRate;
+    Values: IArray<Complex>;
+}
+
+type MagnitudePhase { Magnitude: Number; Phase: Angle; }
+type Spectrum { Frequencies: IArray<Frequency>; Values: IArray<MagnitudePhase>; }
+type Spectrogram { Times: IArray<Duration>; Frequencies: IArray<Frequency>; Magnitudes: IArray2D<Number>; }
+
+type FilterCoefficients { Numerator: IArray<Number>; Denominator: IArray<Number>; }
+type FiniteImpulseResponseFilter { Coefficients: IArray<Number>; }
+type InfiniteImpulseResponseFilter { Coefficients: FilterCoefficients; }
+type StateSpaceModel { A: Matrix; B: Matrix; C: Matrix; D: Matrix; }
+
+type TransferFunctionModel { Numerator: Polynomial; Denominator: Polynomial; }
+type FrequencyResponse { Frequencies: IArray<Frequency>; Response: IArray<Complex>; }

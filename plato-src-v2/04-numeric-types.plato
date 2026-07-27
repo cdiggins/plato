@@ -1,0 +1,22 @@
+// Numeric representations used by scientific and engineering algorithms.
+
+type Rational { Numerator: Integer; Denominator: Integer; }
+type Complex { Real: Number; Imaginary: Number; }
+type DualNumber { Value: Number; Derivative: Number; }
+type Bicomplex { Real: Complex; Imaginary: Complex; }
+type Quaternion
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+    W: Number;
+}
+
+type FixedPoint { RawValue: Integer; FractionalBits: Integer; }
+type BigUnsigned { Limbs: IArray<Integer>; }
+type BigInteger { Magnitude: BigUnsigned; IsNegative: Boolean; }
+type DecimalNumber { Significand: BigInteger; Exponent: Integer; }
+
+type Polynomial { Coefficients: IArray<Number>; }
+type ComplexPolynomial { Coefficients: IArray<Complex>; }
+type PiecewisePolynomial { Breaks: IArray<Number>; Pieces: IArray<Polynomial>; }

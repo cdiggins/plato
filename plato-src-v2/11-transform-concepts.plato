@@ -1,0 +1,26 @@
+// Transformation capabilities are dimension-agnostic where possible.
+
+interface ITransform<TPoint>
+{
+    Apply(transform: Self, point: TPoint): TPoint;
+}
+
+interface IAffineTransform<TPoint, TVector>
+    inherits ITransform<TPoint>, IComposable, IInvertible
+{
+    ApplyVector(transform: Self, vector: TVector): TVector;
+}
+
+interface IRigidTransform<TPoint, TVector>
+    inherits IAffineTransform<TPoint, TVector>
+{ }
+
+interface ITransformable<TTransform>
+{
+    Transform(value: Self, transform: TTransform): Self;
+}
+
+interface IDeformable<TPoint>
+{
+    Deform(value: Self, deformation: Function1<TPoint, TPoint>): Self;
+}

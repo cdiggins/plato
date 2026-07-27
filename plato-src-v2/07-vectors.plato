@@ -1,0 +1,41 @@
+// Fixed-size graphics vectors plus a dimension-generic vector.
+
+type Vector2 implements IDotProduct<Number>, INormed<Number>
+{
+    X: Number;
+    Y: Number;
+}
+
+type Vector3 implements IDotProduct<Number>, ICrossProduct, INormed<Number>
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+}
+
+type Vector4 implements IDotProduct<Number>, INormed<Number>
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+    W: Number;
+}
+
+type Vector8 implements IDotProduct<Number>, INormed<Number>
+{
+    X0: Number; X1: Number; X2: Number; X3: Number;
+    X4: Number; X5: Number; X6: Number; X7: Number;
+}
+
+type VectorN implements IDotProduct<Number>, INormed<Number>
+{
+    Components: IArray<Number>;
+}
+
+type Integer2 { X: Integer; Y: Integer; }
+type Integer3 { X: Integer; Y: Integer; Z: Integer; }
+type Integer4 { X: Integer; Y: Integer; Z: Integer; W: Integer; }
+
+type Bivector2 { XY: Number; }
+type Bivector3 { XY: Number; XZ: Number; YZ: Number; }
+type Bivector4 { XY: Number; XZ: Number; XW: Number; YZ: Number; YW: Number; ZW: Number; }

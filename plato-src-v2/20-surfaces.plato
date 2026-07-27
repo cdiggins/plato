@@ -1,0 +1,43 @@
+// Analytic and control-point surface representations.
+
+type PlaneSurface3D implements ISurface3D { Frame: Frame3D; Domain: Domain2D; }
+type SphereSurface3D implements ISurface3D, IClosed { Center: Point3D; Radius: Number; }
+type CylinderSurface3D implements ISurface3D { Axis: Axis3D; Radius: Number; Domain: Domain2D; }
+type ConeSurface3D implements ISurface3D { Apex: Point3D; Axis: Vector3; Angle: Angle; Domain: Domain2D; }
+type TorusSurface3D implements ISurface3D, IClosed { Frame: Frame3D; MajorRadius: Number; MinorRadius: Number; }
+type EllipsoidSurface3D implements ISurface3D, IClosed { Frame: Frame3D; Radii: Vector3; }
+
+type BilinearPatch3D implements ISurface3D
+{
+    P00: Point3D; P10: Point3D; P01: Point3D; P11: Point3D;
+}
+
+type BezierPatch3D implements ISurface3D
+{
+    UDegree: Integer;
+    VDegree: Integer;
+    ControlPoints: IArray2D<Point3D>;
+}
+
+type BSplineSurface3D implements ISurface3D
+{
+    UDegree: Integer;
+    VDegree: Integer;
+    UKnots: IArray<Number>;
+    VKnots: IArray<Number>;
+    ControlPoints: IArray2D<Point3D>;
+}
+
+type NurbsSurface3D implements ISurface3D
+{
+    UDegree: Integer;
+    VDegree: Integer;
+    UKnots: IArray<Number>;
+    VKnots: IArray<Number>;
+    ControlPoints: IArray2D<WeightedPoint3D>;
+}
+
+type TrimLoop2D { Curve: PolyCurve2D; }
+type TrimmedSurface3D { Surface: Function1<Vector2, Point3D>; Outer: TrimLoop2D; Holes: IArray<TrimLoop2D>; }
+type HeightFieldSurface3D { Heights: IArray2D<Number>; Placement: AffineTransform3D; }
+type SubdivisionSurface3D { ControlMesh: PolygonMesh3D; Scheme: SubdivisionScheme; }

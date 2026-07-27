@@ -1,0 +1,28 @@
+// Fields map positions or parameters to values.
+
+interface IField<TDomain, TValue>
+{
+    Sample(field: Self, position: TDomain): TValue;
+}
+
+interface IScalarField<TDomain> inherits IField<TDomain, Number> { }
+interface IVectorField<TDomain, TVector> inherits IField<TDomain, TVector> { }
+interface ITensorField<TDomain, TTensor> inherits IField<TDomain, TTensor> { }
+
+type ScalarField1D implements IScalarField<Number> { Function: Function1<Number, Number>; }
+type ScalarField2D implements IScalarField<Point2D> { Function: Function1<Point2D, Number>; }
+type ScalarField3D implements IScalarField<Point3D> { Function: Function1<Point3D, Number>; }
+type ScalarField4D implements IScalarField<Point4D> { Function: Function1<Point4D, Number>; }
+type ScalarFieldN implements IScalarField<PointN> { Function: Function1<PointN, Number>; }
+
+type VectorField2D implements IVectorField<Point2D, Vector2> { Function: Function1<Point2D, Vector2>; }
+type VectorField3D implements IVectorField<Point3D, Vector3> { Function: Function1<Point3D, Vector3>; }
+type VectorField4D implements IVectorField<Point4D, Vector4> { Function: Function1<Point4D, Vector4>; }
+type TensorField3D implements ITensorField<Point3D, Tensor3> { Function: Function1<Point3D, Tensor3>; }
+
+type TimeVaryingScalarField3D { Function: Function2<Point3D, Instant, Number>; }
+type TimeVaryingVectorField3D { Function: Function2<Point3D, Instant, Vector3>; }
+type SignedDistanceField2D implements IDistanceField<Point2D, Number> { Function: Function1<Point2D, Number>; }
+type SignedDistanceField3D implements IDistanceField<Point3D, Number> { Function: Function1<Point3D, Number>; }
+type DensityField3D { Function: Function1<Point3D, Density>; }
+type OccupancyField3D { Function: Function1<Point3D, Boolean>; }

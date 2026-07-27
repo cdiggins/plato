@@ -1,0 +1,31 @@
+// Bounded segments, semi-infinite rays, and infinite lines are distinct.
+
+type Segment1D { Start: Point1D; End: Point1D; }
+type Segment2D implements IGeometry2D, IBounded<Bounds2D> { Start: Point2D; End: Point2D; }
+type Segment3D implements IGeometry3D, IBounded<Bounds3D> { Start: Point3D; End: Point3D; }
+type Segment4D implements IGeometry4D, IBounded<Bounds4D> { Start: Point4D; End: Point4D; }
+type SegmentN implements IGeometryND, IBounded<BoundsN> { Start: PointN; End: PointN; }
+
+type Ray2D implements IGeometry2D { Origin: Point2D; Direction: Vector2; }
+type Ray3D implements IGeometry3D { Origin: Point3D; Direction: Vector3; }
+type Ray4D implements IGeometry4D { Origin: Point4D; Direction: Vector4; }
+type RayN implements IGeometryND { Origin: PointN; Direction: VectorN; }
+
+type InfiniteLine2D implements IGeometry2D { Origin: Point2D; Direction: Vector2; }
+type InfiniteLine3D implements IGeometry3D { Origin: Point3D; Direction: Vector3; }
+type InfiniteLine4D implements IGeometry4D { Origin: Point4D; Direction: Vector4; }
+type InfiniteLineN implements IGeometryND { Origin: PointN; Direction: VectorN; }
+
+type Plane2D implements IGeometry2D { Normal: Vector2; Offset: Number; }
+type Plane3D implements IGeometry3D { Normal: Vector3; Offset: Number; }
+type Hyperplane4D implements IGeometry4D { Normal: Vector4; Offset: Number; }
+type HyperplaneN implements IGeometryND { Normal: VectorN; Offset: Number; }
+
+type HalfPlane2D implements IGeometry2D, IImplicit<Point2D> { Boundary: Plane2D; }
+type HalfSpace3D implements IGeometry3D, IImplicit<Point3D> { Boundary: Plane3D; }
+type HalfSpace4D implements IGeometry4D, IImplicit<Point4D> { Boundary: Hyperplane4D; }
+type HalfSpaceN implements IGeometryND, IImplicit<PointN> { Boundary: HyperplaneN; }
+
+type Slab2D { Minimum: Plane2D; Maximum: Plane2D; }
+type Slab3D { Minimum: Plane3D; Maximum: Plane3D; }
+type LinePair3D { A: InfiniteLine3D; B: InfiniteLine3D; }

@@ -1,0 +1,27 @@
+// Sampling metadata is explicit so arrays retain spatial meaning.
+
+type GridAxis { Origin: Number; Spacing: Number; Count: Integer; }
+type GridAxisPoints { Coordinates: IArray<Number>; }
+type RectilinearGrid2D { X: GridAxisPoints; Y: GridAxisPoints; }
+type RectilinearGrid3D { X: GridAxisPoints; Y: GridAxisPoints; Z: GridAxisPoints; }
+type UniformGrid2D { Origin: Point2D; Spacing: Vector2; Size: Integer2; }
+type UniformGrid3D { Origin: Point3D; Spacing: Vector3; Size: Integer3; }
+type UniformGrid4D { Origin: Point4D; Spacing: Vector4; Size: Integer4; }
+type UniformGridN { Origin: PointN; Spacing: VectorN; Shape: ShapeND; }
+
+type SampledScalarField2D { Grid: UniformGrid2D; Values: IArray2D<Number>; }
+type SampledScalarField3D { Grid: UniformGrid3D; Values: IArray3D<Number>; }
+type SampledScalarField4D { Grid: UniformGrid4D; Values: IArray4D<Number>; }
+type SampledVectorField2D { Grid: UniformGrid2D; Values: IArray2D<Vector2>; }
+type SampledVectorField3D { Grid: UniformGrid3D; Values: IArray3D<Vector3>; }
+type SampledTensorField3D { Grid: UniformGrid3D; Values: IArray3D<Tensor3>; }
+
+type VoxelGrid<T> { Grid: UniformGrid3D; Values: IArray3D<T>; }
+type SparseVoxel<T> { Coordinate: Integer3; Value: T; }
+type SparseVoxelGrid<T> { Grid: UniformGrid3D; Values: IArray<SparseVoxel<T>>; }
+type AdaptiveCell3D { Bounds: Bounds3D; Level: Integer; Parent: Integer; Children: IArray<Integer>; }
+type AdaptiveGrid3D<T> { Cells: IArray<AdaptiveCell3D>; Values: IArray<T>; }
+
+type Sample1D<T> { Parameter: Number; Value: T; }
+type SampleSet<T> { Samples: IArray<Sample1D<T>>; }
+type PointSample<TPoint, TValue> { Point: TPoint; Value: TValue; }

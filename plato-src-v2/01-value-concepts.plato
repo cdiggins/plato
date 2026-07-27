@@ -1,0 +1,64 @@
+// Small, composable capabilities shared across domains.
+
+interface ILogical
+{
+    And(a: Self, b: Self): Self;
+    Or(a: Self, b: Self): Self;
+    Not(value: Self): Self;
+}
+
+interface IOrdered
+{
+    LessThanOrEquals(a: Self, b: Self): Boolean;
+}
+
+interface IAdditive
+{
+    Add(a: Self, b: Self): Self;
+    Subtract(a: Self, b: Self): Self;
+    Negate(value: Self): Self;
+}
+
+interface IMultiplicative
+{
+    Multiply(a: Self, b: Self): Self;
+}
+
+interface IDivisible
+{
+    Divide(a: Self, b: Self): Self;
+}
+
+interface IScalable<TScalar>
+{
+    Scale(value: Self, factor: TScalar): Self;
+}
+
+interface IInterpolatable<TParameter>
+{
+    Interpolate(a: Self, b: Self, parameter: TParameter): Self;
+}
+
+interface IRealScalar
+    inherits IOrdered, IAdditive, IMultiplicative, IDivisible,
+        IScalable<Number>, IInterpolatable<Number>
+{ }
+
+interface IIntegralScalar
+    inherits IOrdered, IAdditive, IMultiplicative
+{ }
+
+interface IMetric<TDistance>
+{
+    Distance(a: Self, b: Self): TDistance;
+}
+
+interface INormed<TMagnitude>
+{
+    Norm(value: Self): TMagnitude;
+}
+
+interface IFinite
+{
+    IsFinite(value: Self): Boolean;
+}

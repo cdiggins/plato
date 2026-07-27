@@ -1,0 +1,27 @@
+// Encodings and color spaces are distinct types.
+
+type LinearRgb { R: Number; G: Number; B: Number; }
+type LinearRgba { R: Number; G: Number; B: Number; A: Number; }
+type Srgb { R: Number; G: Number; B: Number; }
+type Srgba { R: Number; G: Number; B: Number; A: Number; }
+type ByteRgb { R: Integer; G: Integer; B: Integer; }
+type ByteRgba { R: Integer; G: Integer; B: Integer; A: Integer; }
+
+type Hsl { Hue: Angle; Saturation: Number; Lightness: Number; }
+type Hsv { Hue: Angle; Saturation: Number; Value: Number; }
+type XyzColor { X: Number; Y: Number; Z: Number; }
+type LabColor { L: Number; A: Number; B: Number; }
+type LchColor { L: Number; Chroma: Number; Hue: Angle; }
+type OklabColor { L: Number; A: Number; B: Number; }
+type OklchColor { L: Number; Chroma: Number; Hue: Angle; }
+type SpectralColor { Wavelengths: IArray<Length>; Values: IArray<Number>; }
+
+type Chromaticity { X: Number; Y: Number; }
+type WhitePoint { Chromaticity: Chromaticity; Luminance: Number; }
+type ColorPrimaries { Red: Chromaticity; Green: Chromaticity; Blue: Chromaticity; White: WhitePoint; }
+type TransferFunction { Name: String; Parameters: IArray<Number>; }
+type ColorSpace { Name: String; Primaries: ColorPrimaries; Transfer: TransferFunction; }
+
+type ColorStop { Position: Number; Color: LinearRgba; }
+type ColorGradient { Stops: IArray<ColorStop>; Interpolation: String; }
+type ColorPalette { Colors: IArray<LinearRgba>; }

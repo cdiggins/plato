@@ -1,0 +1,55 @@
+// Tolerances, materials, sections, loads, and finite elements.
+
+type AbsoluteTolerance { Value: Number; }
+type RelativeTolerance { Value: Number; }
+type GeometricTolerance { Linear: Length; Angular: Angle; }
+type NumericTolerance { Absolute: Number; Relative: Number; }
+
+type IsotropicMaterialProperties
+{
+    Density: Density;
+    YoungModulus: Pressure;
+    PoissonRatio: Number;
+    YieldStrength: Pressure;
+    ThermalExpansion: Number;
+    ThermalConductivity: Number;
+}
+
+type OrthotropicMaterialProperties
+{
+    YoungModuli: Vector3;
+    ShearModuli: Vector3;
+    PoissonRatios: Vector3;
+    Density: Density;
+}
+
+type BeamSection
+{
+    Area: Area;
+    Centroid: Point2D;
+    SecondMoment: SymmetricTensor2;
+    TorsionConstant: Number;
+}
+
+type BeamElement { Nodes: IndexPair; Section: BeamSection; Material: Integer; Orientation: Vector3; }
+type ShellElement { Nodes: IndexLoop; Thickness: Length; Material: Integer; }
+type SolidElement { Nodes: IndexLoop; Material: Integer; }
+
+type NodalLoad { Node: Integer; Force: Force3D; Moment: Torque3D; }
+type DistributedLoad { Element: Integer; Start: Force3D; End: Force3D; }
+type PressureLoad { Face: Integer; Pressure: Pressure; }
+type BoundaryCondition { Node: Integer; FixedTranslation: Integer3; FixedRotation: Integer3; }
+
+type FiniteElementModel
+{
+    Nodes: IArray<Point3D>;
+    Materials: IArray<IsotropicMaterialProperties>;
+    Beams: IArray<BeamElement>;
+    Shells: IArray<ShellElement>;
+    Solids: IArray<SolidElement>;
+    Loads: IArray<NodalLoad>;
+    Constraints: IArray<BoundaryCondition>;
+}
+
+type LinearSystem { Matrix: SparseMatrix; RightHandSide: IArray<Number>; }
+type EigenSystem { Matrix: SparseMatrix; MassMatrix: SparseMatrix; Modes: Integer; }

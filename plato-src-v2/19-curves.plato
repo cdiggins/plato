@@ -1,0 +1,32 @@
+// Analytic, polynomial, rational, piecewise, and sampled curves.
+
+type LineCurve2D implements ICurve2D { Segment: Segment2D; }
+type LineCurve3D implements ICurve3D { Segment: Segment3D; }
+type CircularArc3D implements ICurve3D { Frame: Frame3D; Radius: Number; Domain: AngleRange; }
+type Helix3D implements ICurve3D { Frame: Frame3D; Radius: Number; Pitch: Number; Domain: AngleRange; }
+
+type QuadraticBezier2D implements ICurve2D { P0: Point2D; P1: Point2D; P2: Point2D; }
+type CubicBezier2D implements ICurve2D { P0: Point2D; P1: Point2D; P2: Point2D; P3: Point2D; }
+type QuadraticBezier3D implements ICurve3D { P0: Point3D; P1: Point3D; P2: Point3D; }
+type CubicBezier3D implements ICurve3D { P0: Point3D; P1: Point3D; P2: Point3D; P3: Point3D; }
+type CubicBezier4D implements ICurve4D { P0: Point4D; P1: Point4D; P2: Point4D; P3: Point4D; }
+
+type BezierCurve2D implements ICurve2D { ControlPoints: IArray<Point2D>; }
+type BezierCurve3D implements ICurve3D { ControlPoints: IArray<Point3D>; }
+type RationalBezierCurve3D implements ICurve3D { ControlPoints: IArray<WeightedPoint3D>; }
+type BSplineCurve2D implements ICurve2D { Degree: Integer; Knots: IArray<Number>; ControlPoints: IArray<Point2D>; }
+type BSplineCurve3D implements ICurve3D { Degree: Integer; Knots: IArray<Number>; ControlPoints: IArray<Point3D>; }
+type NurbsCurve2D implements ICurve2D { Degree: Integer; Knots: IArray<Number>; ControlPoints: IArray<WeightedPoint2D>; }
+type NurbsCurve3D implements ICurve3D { Degree: Integer; Knots: IArray<Number>; ControlPoints: IArray<WeightedPoint3D>; }
+
+type CatmullRomCurve2D implements ICurve2D { ControlPoints: IArray<Point2D>; Closed: Boolean; Tension: Number; }
+type CatmullRomCurve3D implements ICurve3D { ControlPoints: IArray<Point3D>; Closed: Boolean; Tension: Number; }
+type PolyCurve2D implements ICurve2D { Segments: IArray<CurveSegment2D>; }
+type PolyCurve3D implements ICurve3D { Segments: IArray<CurveSegment3D>; }
+type CurveSegment2D { Curve: Function1<Number, Point2D>; Domain: ParameterRange; }
+type CurveSegment3D { Curve: Function1<Number, Point3D>; Domain: ParameterRange; }
+
+type CurveSample2D { Parameter: Number; Point: Point2D; Tangent: Vector2; }
+type CurveSample3D { Parameter: Number; Point: Point3D; Tangent: Vector3; Frame: Frame3D; }
+type ArcLengthSample { Parameter: Number; Length: Number; }
+type ArcLengthTable { Samples: IArray<ArcLengthSample>; TotalLength: Number; }

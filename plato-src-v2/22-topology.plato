@@ -1,0 +1,39 @@
+// Explicit topology separates connectivity from embedded geometry.
+
+type OrientedIndex { Index: Integer; Reversed: Boolean; }
+type IndexPair { A: Integer; B: Integer; }
+type IndexTriple { A: Integer; B: Integer; C: Integer; }
+type IndexQuad { A: Integer; B: Integer; C: Integer; D: Integer; }
+type IndexLoop { Indices: IArray<Integer>; }
+
+type Graph { VertexCount: Integer; Edges: IArray<IndexPair>; }
+type DirectedEdge { Source: Integer; Target: Integer; }
+type DirectedGraph { VertexCount: Integer; Edges: IArray<DirectedEdge>; }
+
+type HalfEdge
+{
+    Vertex: Integer;
+    Face: Integer;
+    Next: Integer;
+    Previous: Integer;
+    Twin: Integer;
+}
+
+type HalfEdgeTopology
+{
+    VertexCount: Integer;
+    FaceCount: Integer;
+    HalfEdges: IArray<HalfEdge>;
+}
+
+type CellComplex
+{
+    VertexCount: Integer;
+    Edges: IArray<IndexPair>;
+    Faces: IArray<IndexLoop>;
+    Cells: IArray<IndexLoop>;
+}
+
+type SimplicialComplex2D { VertexCount: Integer; Edges: IArray<IndexPair>; Triangles: IArray<IndexTriple>; }
+type SimplicialComplex3D { VertexCount: Integer; Edges: IArray<IndexPair>; Triangles: IArray<IndexTriple>; Tetrahedra: IArray<IndexQuad>; }
+type SubdivisionScheme { Name: String; Iterations: Integer; BoundaryRule: String; }

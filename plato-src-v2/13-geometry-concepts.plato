@@ -1,0 +1,54 @@
+// Geometry is classified by embedding dimension, topology, and representation.
+
+interface IGeometry { }
+interface IGeometry2D inherits IGeometry { }
+interface IGeometry3D inherits IGeometry { }
+interface IGeometry4D inherits IGeometry { }
+interface IGeometryND inherits IGeometry { }
+
+interface IBounded<TBounds>
+{
+    Bounds(value: Self): TBounds;
+}
+
+interface IOriented { }
+interface IClosed { }
+interface IOpen { }
+interface IConvex { }
+interface IManifold { }
+
+interface IParametric<TParameter, TPoint>
+{
+    Evaluate(value: Self, parameter: TParameter): TPoint;
+}
+
+interface IImplicit<TPoint>
+{
+    Contains(value: Self, point: TPoint): Boolean;
+}
+
+interface IDistanceField<TPoint, TDistance>
+{
+    Distance(value: Self, point: TPoint): TDistance;
+}
+
+interface ICurve2D inherits IGeometry2D, IParametric<Number, Point2D> { }
+interface ICurve3D inherits IGeometry3D, IParametric<Number, Point3D> { }
+interface ICurve4D inherits IGeometry4D, IParametric<Number, Point4D> { }
+interface ICurveND inherits IGeometryND, IParametric<Number, PointN> { }
+
+interface ISurface2D inherits IGeometry2D { }
+interface ISurface3D inherits IGeometry3D, IParametric<Vector2, Point3D> { }
+interface IVolume3D inherits IGeometry3D, IImplicit<Point3D> { }
+interface IHyperSurface4D inherits IGeometry4D, IParametric<Vector3, Point4D> { }
+
+interface IDiscreteGeometry<TPoint>
+{
+    Points(value: Self): IArray<TPoint>;
+}
+
+interface IIndexedGeometry<TPoint, TIndex>
+    inherits IDiscreteGeometry<TPoint>
+{
+    Indices(value: Self): IArray<TIndex>;
+}

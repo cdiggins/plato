@@ -1,0 +1,46 @@
+// Common bounded 2D geometry.
+
+type Circle2D implements IGeometry2D, IClosed, IConvex, IBounded<Bounds2D>
+{
+    Center: Point2D;
+    Radius: Number;
+}
+
+type Ellipse2D implements IGeometry2D, IClosed, IConvex, IBounded<Bounds2D>
+{
+    Frame: Frame2D;
+    Radii: Vector2;
+}
+
+type Rectangle2D implements IGeometry2D, IClosed, IConvex, IBounded<Bounds2D>
+{
+    Center: Point2D;
+    Size: Vector2;
+}
+
+type OrientedRectangle2D { Frame: Frame2D; Size: Vector2; }
+type RoundedRectangle2D { Rectangle: OrientedRectangle2D; Radius: Number; }
+type Ring2D { Center: Point2D; InnerRadius: Number; OuterRadius: Number; }
+type CircularArc2D implements ICurve2D { Circle: Circle2D; Domain: AngleRange; }
+type EllipticalArc2D implements ICurve2D { Ellipse: Ellipse2D; Domain: AngleRange; }
+
+type Triangle2D implements IGeometry2D, IClosed, IConvex
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+}
+
+type Quad2D implements IGeometry2D, IClosed
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+    D: Point2D;
+}
+
+type Polygon2D implements IGeometry2D, IClosed { Vertices: IArray<Point2D>; }
+type PolygonWithHoles2D { Outer: Polygon2D; Holes: IArray<Polygon2D>; }
+type RegularPolygon2D { Center: Point2D; Radius: Number; Sides: Integer; Rotation: Angle; }
+type Polyline2D implements IGeometry2D, IOpen { Points: IArray<Point2D>; }
+type ClosedPolyline2D implements IGeometry2D, IClosed { Points: IArray<Point2D>; }

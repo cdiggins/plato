@@ -1,0 +1,53 @@
+// Quantities keep unit-bearing values distinct from unitless scalars.
+
+interface IQuantity
+{
+    Value(quantity: Self): Number;
+}
+
+interface IUnit
+{
+    Symbol(unit: Self): String;
+    Scale(unit: Self): Number;
+    Offset(unit: Self): Number;
+}
+
+type Dimension
+{
+    LengthPower: Integer;
+    MassPower: Integer;
+    TimePower: Integer;
+    CurrentPower: Integer;
+    TemperaturePower: Integer;
+    AmountPower: Integer;
+    LuminosityPower: Integer;
+}
+
+type Unit { Name: String; Symbol: String; Dimension: Dimension; Scale: Number; Offset: Number; }
+type Quantity { Value: Number; Unit: Unit; }
+
+type Angle implements IQuantity { Value: Number; }
+type Length implements IQuantity { Value: Number; }
+type Area implements IQuantity { Value: Number; }
+type Volume implements IQuantity { Value: Number; }
+type Mass implements IQuantity { Value: Number; }
+type Temperature implements IQuantity { Value: Number; }
+type Speed implements IQuantity { Value: Number; }
+type Acceleration implements IQuantity { Value: Number; }
+type AngularSpeed implements IQuantity { Value: Number; }
+type AngularAcceleration implements IQuantity { Value: Number; }
+type Force implements IQuantity { Value: Number; }
+type Torque implements IQuantity { Value: Number; }
+type Energy implements IQuantity { Value: Number; }
+type Power implements IQuantity { Value: Number; }
+type Pressure implements IQuantity { Value: Number; }
+type Frequency implements IQuantity { Value: Number; }
+type Density implements IQuantity { Value: Number; }
+type ElectricCurrent implements IQuantity { Value: Number; }
+type ElectricCharge implements IQuantity { Value: Number; }
+type Voltage implements IQuantity { Value: Number; }
+type Resistance implements IQuantity { Value: Number; }
+type Capacitance implements IQuantity { Value: Number; }
+type Inductance implements IQuantity { Value: Number; }
+type LuminousIntensity implements IQuantity { Value: Number; }
+type AmountOfSubstance implements IQuantity { Value: Number; }

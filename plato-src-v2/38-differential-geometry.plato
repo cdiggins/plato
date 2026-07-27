@@ -1,0 +1,46 @@
+// Local differential properties for curves, surfaces, and manifolds.
+
+type CurveJet2D
+{
+    Parameter: Number;
+    Point: Point2D;
+    FirstDerivative: Vector2;
+    SecondDerivative: Vector2;
+}
+
+type CurveJet3D
+{
+    Parameter: Number;
+    Point: Point3D;
+    FirstDerivative: Vector3;
+    SecondDerivative: Vector3;
+    ThirdDerivative: Vector3;
+}
+
+type SurfaceJet3D
+{
+    Parameter: Vector2;
+    Point: Point3D;
+    DerivativeU: Vector3;
+    DerivativeV: Vector3;
+    DerivativeUU: Vector3;
+    DerivativeUV: Vector3;
+    DerivativeVV: Vector3;
+}
+
+type CurveCurvature2D { Curvature: Number; Normal: Vector2; }
+type CurveCurvature3D { Curvature: Number; Torsion: Number; Frame: Frame3D; }
+type SurfaceCurvature3D
+{
+    Gaussian: Number;
+    Mean: Number;
+    Minimum: Number;
+    Maximum: Number;
+    MinimumDirection: Vector3;
+    MaximumDirection: Vector3;
+}
+
+type MetricTensor2D { Value: SymmetricTensor2; }
+type FundamentalForms3D { First: SymmetricTensor2; Second: SymmetricTensor2; }
+type ManifoldChart<TPoint> { Domain: DomainND; Map: Function1<PointN, TPoint>; }
+type Atlas<TPoint> { Charts: IArray<ManifoldChart<TPoint>>; }

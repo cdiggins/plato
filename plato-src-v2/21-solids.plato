@@ -1,0 +1,39 @@
+// Solid types share parameters with their surface and distance-field views.
+
+type Sphere3D implements IVolume3D, IDistanceField<Point3D, Number>, IBounded<Bounds3D>
+{
+    Center: Point3D;
+    Radius: Number;
+}
+
+type Box3D implements IVolume3D, IDistanceField<Point3D, Number>, IBounded<Bounds3D>
+{
+    Frame: Frame3D;
+    Size: Vector3;
+}
+
+type RoundedBox3D { Box: Box3D; Radius: Number; }
+type Cylinder3D { Axis: Segment3D; Radius: Number; }
+type Capsule3D { Axis: Segment3D; Radius: Number; }
+type Cone3D { Apex: Point3D; Axis: Vector3; Height: Number; BaseRadius: Number; }
+type TruncatedCone3D { Axis: Segment3D; StartRadius: Number; EndRadius: Number; }
+type Torus3D { Frame: Frame3D; MajorRadius: Number; MinorRadius: Number; }
+type Ellipsoid3D { Frame: Frame3D; Radii: Vector3; }
+type ExtrudedSolid3D { Profile: PolygonWithHoles2D; Placement: Frame3D; Height: Number; }
+type RevolvedSolid3D { Profile: PolyCurve2D; Axis: Axis3D; Domain: AngleRange; }
+type SweptSolid3D { Profile: PolygonWithHoles2D; Path: PolyCurve3D; }
+
+type BoundaryRepresentation3D
+{
+    Vertices: IArray<BrepVertex3D>;
+    Edges: IArray<BrepEdge3D>;
+    Loops: IArray<BrepLoop3D>;
+    Faces: IArray<BrepFace3D>;
+    Shells: IArray<BrepShell3D>;
+}
+
+type BrepVertex3D { Point: Point3D; Tolerance: Length; }
+type BrepEdge3D { Curve: CurveSegment3D; StartVertex: Integer; EndVertex: Integer; Tolerance: Length; }
+type BrepLoop3D { OrientedEdges: IArray<OrientedIndex>; }
+type BrepFace3D { Surface: Function1<Vector2, Point3D>; Loops: IArray<Integer>; Orientation: Boolean; }
+type BrepShell3D { Faces: IArray<OrientedIndex>; Closed: Boolean; }

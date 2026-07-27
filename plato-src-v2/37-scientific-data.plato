@@ -1,0 +1,29 @@
+// General scientific observations, tables, and experiment metadata.
+
+type Identifier { Namespace: String; Value: String; }
+type NamedValue<T> { Name: String; Value: T; }
+type QuantityValue { Name: String; Value: Quantity; }
+type Observation<T> { Subject: Identifier; Time: Instant; Value: T; }
+type ObservationSeries<T> { Name: String; Observations: IArray<Observation<T>>; }
+
+type DataColumn<T> { Name: String; Unit: Unit; Values: IArray<T>; }
+type NumericTable { RowCount: Integer; Columns: IArray<DataColumn<Number>>; }
+type DataSet { Name: String; Description: String; Tables: IArray<NumericTable>; }
+
+type ExperimentParameter { Name: String; Value: Quantity; }
+type ExperimentRun
+{
+    Id: Identifier;
+    Started: Instant;
+    Duration: Duration;
+    Parameters: IArray<ExperimentParameter>;
+    Results: DataSet;
+}
+
+type ChemicalElement { AtomicNumber: Integer; Symbol: String; AtomicMass: Mass; }
+type Atom3D { Element: ChemicalElement; Position: Point3D; Charge: Number; }
+type Bond { Atoms: IndexPair; Order: Number; }
+type Molecule3D { Atoms: IArray<Atom3D>; Bonds: IArray<Bond>; }
+
+type CrystallographicCell { Basis: Basis3D; Origin: Point3D; }
+type CrystalStructure { Cell: CrystallographicCell; FractionalPositions: IArray<Point3D>; Elements: IArray<ChemicalElement>; }

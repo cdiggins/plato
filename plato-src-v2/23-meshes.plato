@@ -1,0 +1,61 @@
+// Meshes use explicit index types and optional attribute channels.
+
+type LineMesh2D implements IIndexedGeometry<Point2D, IndexPair>
+{
+    Points: IArray<Point2D>;
+    Indices: IArray<IndexPair>;
+}
+
+type LineMesh3D implements IIndexedGeometry<Point3D, IndexPair>
+{
+    Points: IArray<Point3D>;
+    Indices: IArray<IndexPair>;
+}
+
+type TriangleMesh2D implements IIndexedGeometry<Point2D, IndexTriple>
+{
+    Points: IArray<Point2D>;
+    Indices: IArray<IndexTriple>;
+}
+
+type TriangleMesh3D implements IIndexedGeometry<Point3D, IndexTriple>
+{
+    Points: IArray<Point3D>;
+    Indices: IArray<IndexTriple>;
+}
+
+type QuadMesh3D implements IIndexedGeometry<Point3D, IndexQuad>
+{
+    Points: IArray<Point3D>;
+    Indices: IArray<IndexQuad>;
+}
+
+type PolygonMesh3D implements IIndexedGeometry<Point3D, IndexLoop>
+{
+    Points: IArray<Point3D>;
+    Indices: IArray<IndexLoop>;
+}
+
+type TetrahedralMesh3D implements IIndexedGeometry<Point3D, IndexQuad>
+{
+    Points: IArray<Point3D>;
+    Indices: IArray<IndexQuad>;
+}
+
+type MeshAttribute<T>
+{
+    Name: String;
+    Association: AttributeAssociation;
+    Values: IArray<T>;
+}
+
+type AttributeAssociation { Name: String; }
+type MeshAttributes
+{
+    Scalars: IArray<MeshAttribute<Number>>;
+    Vectors2: IArray<MeshAttribute<Vector2>>;
+    Vectors3: IArray<MeshAttribute<Vector3>>;
+    Colors: IArray<MeshAttribute<LinearRgba>>;
+}
+
+type AttributedTriangleMesh3D { Mesh: TriangleMesh3D; Attributes: MeshAttributes; }
