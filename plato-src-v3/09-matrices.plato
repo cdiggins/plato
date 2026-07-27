@@ -1,0 +1,91 @@
+//==
+// # Matrices and tensors
+//
+// Dense numeric matrices stored as row vectors: RowN holds row N, so element
+// (r, c) is component c of row r. Fixed sizes cover graphics and geometry;
+// MatrixN and Tensor cover scientific computing.
+
+// The family of matrix types: element access by zero-based row and column.
+concept MatrixLike
+    inherits Value, Additive, Scalable
+{
+    RowCount(x: Self): Integer;
+    ColumnCount(x: Self): Integer;
+    ElementAt(x: Self, row: Integer, column: Integer): Number;
+}
+
+// A 2x2 matrix: 2D linear maps (rotation, scale, shear).
+type Matrix2x2
+    implements MatrixLike, Multiplicative
+{
+    Row1: Vector2;
+    Row2: Vector2;
+}
+
+// A 3x3 matrix: 3D linear maps, 2D homogeneous transforms, orientation bases.
+type Matrix3x3
+    implements MatrixLike, Multiplicative
+{
+    Row1: Vector3;
+    Row2: Vector3;
+    Row3: Vector3;
+}
+
+// A 4x4 matrix: 3D homogeneous transforms and projections.
+type Matrix4x4
+    implements MatrixLike, Multiplicative
+{
+    Row1: Vector4;
+    Row2: Vector4;
+    Row3: Vector4;
+    Row4: Vector4;
+}
+
+// A 3-row, 2-column matrix: a 2D affine map (2x2 linear part plus a translation
+// row).
+type Matrix3x2
+    implements MatrixLike
+{
+    Row1: Vector2;
+    Row2: Vector2;
+    Row3: Vector2;
+}
+
+// A 4-row, 3-column matrix: a 3D affine map (3x3 linear part plus a translation
+// row).
+type Matrix4x3
+    implements MatrixLike
+{
+    Row1: Vector3;
+    Row2: Vector3;
+    Row3: Vector3;
+    Row4: Vector3;
+}
+
+// A symmetric 3x3 matrix stored as its six unique elements: inertia tensors,
+// covariance, stress and strain states.
+type SymmetricMatrix3x3
+    implements Value
+{
+    M11: Number; M12: Number; M13: Number;
+    M22: Number; M23: Number;
+    M33: Number;
+}
+
+// A dense matrix with runtime-determined shape, row-major storage.
+type MatrixN
+    implements MatrixLike
+{
+    NumRows: Integer;
+    NumColumns: Integer;
+    Components: Array<Number>;
+}
+
+// A dense multi-dimensional numeric array with arbitrary rank. Extents lists the
+// size of each dimension; storage is row-major.
+type Tensor
+    implements Value
+{
+    Extents: Array<Integer>;
+    Components: Array<Number>;
+}

@@ -1,0 +1,126 @@
+//==
+// # Algebraic concepts
+//
+// Composable arithmetic capabilities. Each concept is one small algebraic
+// structure; numeric, vector, and quantity types assemble them as needed.
+
+// An additive group: addition, subtraction, and negation.
+concept Additive
+{
+    Add(a: Self, b: Self): Self;
+    Subtract(a: Self, b: Self): Self;
+    Negative(x: Self): Self;
+}
+
+// A multiplicative operation between two values of the same type.
+concept Multiplicative
+{
+    Multiply(a: Self, b: Self): Self;
+}
+
+// Division between two values of the same type.
+concept Divisible
+{
+    Divide(a: Self, b: Self): Self;
+}
+
+// Remainder arithmetic between two values of the same type.
+concept Modular
+{
+    Modulo(a: Self, b: Self): Self;
+}
+
+// Has a multiplicative inverse (reciprocal).
+concept Invertible
+{
+    Inverse(x: Self): Self;
+}
+
+// The four basic operations plus remainder: a field with modulo.
+concept Arithmetic
+    inherits Additive, Multiplicative, Divisible, Modular
+{ }
+
+// Can be multiplied and divided by a unitless scalar. Vectors, quantities, and
+// colors are scalable even when they cannot multiply among themselves.
+concept Scalable
+{
+    Multiply(x: Self, scalar: Number): Self;
+    Divide(x: Self, scalar: Number): Self;
+    Modulo(x: Self, scalar: Number): Self;
+}
+
+// Supports linear interpolation. The parameter t is unclamped: 0 yields a,
+// 1 yields b, values outside [0,1] extrapolate.
+concept Interpolatable
+{
+    Lerp(a: Self, b: Self, t: Number): Self;
+}
+
+// Has distinguished zero and one elements, and representable extremes.
+concept NumericalLimits
+{
+    Zero(x: Self): Self;
+    One(x: Self): Self;
+    MinValue(x: Self): Self;
+    MaxValue(x: Self): Self;
+}
+
+// The family of number-like value types: additive, scalable, interpolatable,
+// with known limits. Includes reals, complex numbers, vectors, and quantities.
+concept Numerical
+    inherits Value, Additive, Scalable, Interpolatable, NumericalLimits
+{ }
+
+// A continuous one-dimensional number with full arithmetic and total order.
+// Number is the canonical instance.
+concept Real
+    inherits Numerical, Comparable, Hashable, Arithmetic, Invertible
+{
+    ToNumber(x: Self): Number;
+}
+
+// Whole-number semantics: exact, ordered, arithmetic without a multiplicative
+// inverse (division truncates).
+concept Whole
+    inherits Value, Comparable, Hashable, Arithmetic, Interpolatable, NumericalLimits
+{
+    ToInteger(x: Self): Integer;
+}
+
+// Has a notion of length or magnitude. MagnitudeSquared avoids the square root
+// when only relative comparisons are needed.
+concept Normed
+{
+    Magnitude(x: Self): Number;
+    MagnitudeSquared(x: Self): Number;
+}
+
+// A space with a distance between any two of its values.
+concept MetricSpace
+{
+    Distance(a: Self, b: Self): Number;
+}
+
+// Supports component-wise minimum and maximum: a lattice.
+concept Lattice
+{
+    Min(a: Self, b: Self): Self;
+    Max(a: Self, b: Self): Self;
+}
+
+// Can be clamped to lie within inclusive bounds.
+concept Clampable
+    inherits Lattice
+{
+    Clamp(x: Self, min: Self, max: Self): Self;
+}
+
+// A position-like type whose difference is a separate delta type: subtracting two
+// points yields a vector; adding a vector to a point yields a point.
+concept Difference<TDelta>
+{
+    Add(x: Self, delta: TDelta): Self;
+    Subtract(x: Self, delta: TDelta): Self;
+    Between(a: Self, b: Self): TDelta;
+}

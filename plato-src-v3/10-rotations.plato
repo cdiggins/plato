@@ -1,0 +1,84 @@
+//==
+// # Rotations and orientations
+//
+// Multiple interchangeable representations of rotation. Quaternion is canonical
+// for 3D composition and interpolation; the others serve authoring, interop, and
+// geometric-algebra styles.
+
+// A unit quaternion encoding a 3D rotation. Invariant: X*X + Y*Y + Z*Z + W*W = 1.
+type Quaternion
+    implements Value, Multiplicative, Interpolatable
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+    W: Number;
+}
+
+// A rotation of Angle about a unit Axis, following the right-hand rule.
+type AxisAngle
+    implements Value
+{
+    Axis: Direction3D;
+    Angle: Angle;
+}
+
+// The order in which elemental axis rotations compose.
+// Value meanings: 0=XYZ, 1=XZY, 2=YXZ, 3=YZX, 4=ZXY, 5=ZYX.
+type RotationOrder
+{
+    Value: Integer;
+}
+
+// Three chained elemental rotations under an explicit composition order.
+type EulerAngles
+    implements Value
+{
+    Yaw: Angle;
+    Pitch: Angle;
+    Roll: Angle;
+    Order: RotationOrder;
+}
+
+// A rotation in the plane, stored as a single angle.
+type Rotation2D
+    implements Value, Multiplicative, Interpolatable
+{
+    Angle: Angle;
+}
+
+// An oriented plane element in 2D (the single XY component); the generator of
+// 2D rotations in geometric algebra.
+type Bivector2D
+    implements Value
+{
+    XY: Number;
+}
+
+// An oriented plane element in 3D, with components named by the planes they span;
+// the generator of 3D rotations in geometric algebra.
+type Bivector3D
+    implements Value
+{
+    YZ: Number;
+    ZX: Number;
+    XY: Number;
+}
+
+// A 2D geometric-algebra rotor: scalar plus bivector part. Equivalent to a unit
+// complex number.
+type Rotor2D
+    implements Value, Multiplicative
+{
+    Scalar: Number;
+    XY: Number;
+}
+
+// A 3D geometric-algebra rotor: scalar plus bivector part. Structurally a
+// quaternion, expressed in plane-based components.
+type Rotor3D
+    implements Value, Multiplicative
+{
+    Scalar: Number;
+    Bivector: Bivector3D;
+}

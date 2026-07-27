@@ -1,0 +1,62 @@
+//==
+// # Core color
+//
+// The shared color vocabulary. Color is linear-light RGBA with components
+// nominally in [0, 1]; wide-gamut and HDR values may exceed 1. Additional color
+// spaces and imaging types live in files 44-47.
+
+// A linear-light RGBA color. The canonical color type for computation;
+// interpolation and arithmetic are component-wise.
+type Color
+    implements Numerical
+{
+    R: Number;
+    G: Number;
+    B: Number;
+    A: Number;
+}
+
+// An 8-bit-per-channel RGBA color with components in [0, 255]; storage and
+// interop form, typically sRGB-encoded.
+type Color8
+    implements Value, Hashable
+{
+    R: Integer;
+    G: Integer;
+    B: Integer;
+    A: Integer;
+}
+
+// A color in hue-saturation-value form; Hue is an angle around the color wheel.
+type ColorHSV
+    implements Value
+{
+    Hue: Angle;
+    Saturation: Number;
+    Value: Number;
+}
+
+// A color in hue-saturation-lightness form; Hue is an angle around the color wheel.
+type ColorHSL
+    implements Value
+{
+    Hue: Angle;
+    Saturation: Number;
+    Lightness: Number;
+}
+
+// A color at a normalized position within a gradient; Position is in [0, 1].
+type ColorStop
+    implements Value
+{
+    Position: Number;
+    Color: Color;
+}
+
+// A sequence of color stops defining a color ramp. Stops are ordered by
+// ascending Position.
+type ColorGradient
+    implements Value
+{
+    Stops: Array<ColorStop>;
+}

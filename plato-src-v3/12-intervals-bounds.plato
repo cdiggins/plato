@@ -1,0 +1,137 @@
+//==
+// # Intervals, bounds, and sizes
+//
+// One-dimensional intervals, axis-aligned bounding regions, and extent types.
+// Bounds are inclusive on Min, inclusive on Max unless a doc comment says
+// otherwise.
+
+// A one-dimensional directed span from Start to End. Start may exceed End,
+// which encodes a reversed interval.
+concept IntervalLike<T>
+    inherits Value
+{
+    Start(x: Self): T;
+    End(x: Self): T;
+}
+
+// An axis-aligned bounding region between component-wise Min and Max corners.
+concept BoundsLike<TPoint>
+    inherits Value
+{
+    Min(x: Self): TPoint;
+    Max(x: Self): TPoint;
+}
+
+// A directed interval of unitless numbers.
+type NumberInterval
+    implements IntervalLike<Number>
+{
+    Start: Number;
+    End: Number;
+}
+
+// A directed interval of angles: arc sweeps, angular ranges.
+type AngleInterval
+    implements IntervalLike<Angle>
+{
+    Start: Angle;
+    End: Angle;
+}
+
+// A directed interval of lengths.
+type LengthInterval
+    implements IntervalLike<Length>
+{
+    Start: Length;
+    End: Length;
+}
+
+// A directed interval of whole numbers: index ranges. Contains Start, excludes End.
+type IntegerInterval
+    implements IntervalLike<Integer>
+{
+    Start: Integer;
+    End: Integer;
+}
+
+// An axis-aligned bounding rectangle in 2D.
+type Bounds2D
+    implements BoundsLike<Point2D>
+{
+    Min: Point2D;
+    Max: Point2D;
+}
+
+// An axis-aligned bounding box in 3D.
+type Bounds3D
+    implements BoundsLike<Point3D>
+{
+    Min: Point3D;
+    Max: Point3D;
+}
+
+// An axis-aligned bounding region in 4D.
+type Bounds4D
+    implements BoundsLike<Point4D>
+{
+    Min: Point4D;
+    Max: Point4D;
+}
+
+// A whole-number 2D bounding region: pixel rectangles. Contains Min, excludes Max.
+type IntegerBounds2D
+    implements Value
+{
+    Min: IntegerVector2;
+    Max: IntegerVector2;
+}
+
+// A whole-number 3D bounding region: voxel boxes. Contains Min, excludes Max.
+type IntegerBounds3D
+    implements Value
+{
+    Min: IntegerVector3;
+    Max: IntegerVector3;
+}
+
+// A continuous 2D extent: width and height.
+type Size2D
+    implements Value
+{
+    Width: Number;
+    Height: Number;
+}
+
+// A continuous 3D extent: width, height, and depth.
+type Size3D
+    implements Value
+{
+    Width: Number;
+    Height: Number;
+    Depth: Number;
+}
+
+// A discrete 2D extent: image and grid dimensions.
+type IntegerSize2D
+    implements Value, Hashable
+{
+    Width: Integer;
+    Height: Integer;
+}
+
+// A discrete 3D extent: voxel-grid dimensions.
+type IntegerSize3D
+    implements Value, Hashable
+{
+    Width: Integer;
+    Height: Integer;
+    Depth: Integer;
+}
+
+// A rectangle given by its center and size; axis-aligned.
+type Rect2D
+    implements Value
+{
+    Center: Point2D;
+    Size: Size2D;
+}

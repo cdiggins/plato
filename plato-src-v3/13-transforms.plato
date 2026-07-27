@@ -1,0 +1,121 @@
+//==
+// # Transforms
+//
+// Rigid poses, TRS transforms, affine and projective maps, and coordinate frames.
+// A transform maps points to points; concepts at the bottom mark types that can
+// be carried through a transform.
+
+// A rigid placement in the plane: position plus rotation. Also known as a 2D
+// rigid transform.
+type Pose2D
+    implements Value, Interpolatable
+{
+    Position: Point2D;
+    Rotation: Rotation2D;
+}
+
+// A rigid placement in space: position plus orientation. Also known as a 3D
+// rigid transform; composition preserves distances and angles.
+type Pose3D
+    implements Value, Interpolatable
+{
+    Position: Point3D;
+    Orientation: Quaternion;
+}
+
+// A translate-rotate-scale transform in 2D, applied scale first, then rotation,
+// then translation.
+type Transform2D
+    implements Value
+{
+    Translation: Vector2;
+    Rotation: Rotation2D;
+    Scale: Vector2;
+}
+
+// A translate-rotate-scale transform in 3D, applied scale first, then rotation,
+// then translation.
+type Transform3D
+    implements Value
+{
+    Translation: Vector3;
+    Rotation: Quaternion;
+    Scale: Vector3;
+}
+
+// A general 2D affine map: any composition of linear maps and translations.
+type AffineTransform2D
+    implements Value
+{
+    Matrix: Matrix3x2;
+}
+
+// A general 3D affine map: any composition of linear maps and translations.
+type AffineTransform3D
+    implements Value
+{
+    Matrix: Matrix4x3;
+}
+
+// A full 2D projective map (homography), operating on homogeneous coordinates.
+type ProjectiveTransform2D
+    implements Value
+{
+    Matrix: Matrix3x3;
+}
+
+// A full 3D projective map, operating on homogeneous coordinates; includes
+// perspective projections.
+type ProjectiveTransform3D
+    implements Value
+{
+    Matrix: Matrix4x4;
+}
+
+// An orthonormal coordinate frame in the plane: an origin and two perpendicular
+// unit axes.
+type Frame2D
+    implements Value
+{
+    Origin: Point2D;
+    XAxis: Direction2D;
+    YAxis: Direction2D;
+}
+
+// An orthonormal coordinate frame in space: an origin and three mutually
+// perpendicular unit axes.
+type Frame3D
+    implements Value
+{
+    Origin: Point3D;
+    XAxis: Direction3D;
+    YAxis: Direction3D;
+    ZAxis: Direction3D;
+}
+
+// Three basis vectors in 3D; not necessarily orthonormal.
+type Basis3D
+    implements Value
+{
+    X: Vector3;
+    Y: Vector3;
+    Z: Vector3;
+}
+
+// Can be carried through a transform of type TTransform, yielding a new Self.
+concept Transformable<TTransform>
+{
+    Transform(x: Self, transform: TTransform): Self;
+}
+
+// Can be deformed by an arbitrary 2D point mapping.
+concept Deformable2D
+{
+    Deform(x: Self, mapping: Function1<Point2D, Point2D>): Self;
+}
+
+// Can be deformed by an arbitrary 3D point mapping.
+concept Deformable3D
+{
+    Deform(x: Self, mapping: Function1<Point3D, Point3D>): Self;
+}

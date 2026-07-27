@@ -1,0 +1,92 @@
+//==
+// # Collection concepts
+//
+// Capabilities of ordered and keyed containers. All collections are immutable;
+// operations that "modify" return new collections.
+
+// Has a finite number of elements.
+concept Countable
+{
+    Count(x: Self): Integer;
+}
+
+// An ordered collection addressable by zero-based index.
+concept Indexable<T>
+    inherits Countable
+{
+    At(x: Self, index: Integer): T;
+}
+
+// A collection addressed by column and row (row-major count semantics).
+concept Indexable2D<T>
+    inherits Indexable<T>
+{
+    ColumnCount(x: Self): Integer;
+    RowCount(x: Self): Integer;
+    At(x: Self, column: Integer, row: Integer): T;
+}
+
+// A collection addressed by column, row, and layer.
+concept Indexable3D<T>
+    inherits Indexable<T>
+{
+    ColumnCount(x: Self): Integer;
+    RowCount(x: Self): Integer;
+    LayerCount(x: Self): Integer;
+    At(x: Self, column: Integer, row: Integer, layer: Integer): T;
+}
+
+// A collection addressed by column, row, layer, and block.
+concept Indexable4D<T>
+    inherits Indexable<T>
+{
+    ColumnCount(x: Self): Integer;
+    RowCount(x: Self): Integer;
+    LayerCount(x: Self): Integer;
+    BlockCount(x: Self): Integer;
+    At(x: Self, column: Integer, row: Integer, layer: Integer, block: Integer): T;
+}
+
+// Supports taking a contiguous sub-range.
+concept Sliceable
+{
+    Slice(x: Self, start: Integer, count: Integer): Self;
+}
+
+// Supports joining two collections end to end.
+concept Concatenable
+{
+    Concat(a: Self, b: Self): Self;
+}
+
+// Supports a membership test.
+concept SetLike<T>
+{
+    Contains(x: Self, item: T): Boolean;
+}
+
+// A keyed lookup collection.
+concept MapLike<TKey, TValue>
+    inherits Countable
+{
+    ContainsKey(x: Self, key: TKey): Boolean;
+    ValueAt(x: Self, key: TKey): TValue;
+}
+
+// Last-in-first-out access. Push and Pop return new collections.
+concept StackLike<T>
+    inherits Countable
+{
+    Peek(x: Self): T;
+    Push(x: Self, item: T): Self;
+    Pop(x: Self): Self;
+}
+
+// First-in-first-out access. Enqueue and Dequeue return new collections.
+concept QueueLike<T>
+    inherits Countable
+{
+    Front(x: Self): T;
+    Enqueue(x: Self, item: T): Self;
+    Dequeue(x: Self): Self;
+}

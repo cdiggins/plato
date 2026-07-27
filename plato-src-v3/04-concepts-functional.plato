@@ -1,0 +1,32 @@
+//==
+// # Functional concepts
+//
+// Capabilities of function-like values: things that map a domain to a range.
+// Curves, surfaces, fields, easings, and distributions are all procedural.
+
+// A pure mapping from a domain value to a range value. The unifying concept for
+// curves (Number to point), surfaces (UV to point), fields (point to value),
+// easings (Number to Number), and beyond.
+concept Procedural<TDomain, TRange>
+{
+    Eval(x: Self, input: TDomain): TRange;
+}
+
+// A procedural mapping that can be evaluated in reverse.
+concept Bijective<TDomain, TRange>
+    inherits Procedural<TDomain, TRange>
+{
+    EvalInverse(x: Self, output: TRange): TDomain;
+}
+
+// Repeats with a fixed period in its domain: Eval(t) equals Eval(t + Period).
+concept Periodic<TPeriod>
+{
+    Period(x: Self): TPeriod;
+}
+
+// Has a preferred parameter domain over which evaluation is meaningful.
+concept ParameterDomain
+{
+    Domain(x: Self): NumberInterval;
+}

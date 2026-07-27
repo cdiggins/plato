@@ -1,0 +1,89 @@
+//==
+// # Vectors
+//
+// Displacements and directions. Vectors support full component-wise arithmetic,
+// scaling, dot products, and norms. Points (file 11) are positions; vectors are
+// the differences between them.
+
+// The family of fixed-arity numeric vectors: component-wise arithmetic, norms,
+// dot product, and component-wise extremes.
+concept Vector
+    inherits Numerical, Arithmetic, Indexable<Number>, Normed, Lattice, Hashable
+{
+    Dot(a: Self, b: Self): Number;
+}
+
+// A 2D displacement or direction.
+type Vector2
+    implements Vector
+{
+    X: Number;
+    Y: Number;
+}
+
+// A 3D displacement or direction.
+type Vector3
+    implements Vector
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+}
+
+// A 4D displacement; also used for homogeneous coordinates and RGBA math.
+type Vector4
+    implements Vector
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+    W: Number;
+}
+
+// An N-dimensional vector with runtime-determined arity.
+type VectorN
+    implements Vector
+{
+    Components: Array<Number>;
+}
+
+// A pair of whole-number components: pixel offsets, grid steps.
+type IntegerVector2
+    implements Value, Hashable
+{
+    X: Integer;
+    Y: Integer;
+}
+
+// A triple of whole-number components: voxel offsets, 3D grid steps.
+type IntegerVector3
+    implements Value, Hashable
+{
+    X: Integer;
+    Y: Integer;
+    Z: Integer;
+}
+
+// A quadruple of whole-number components.
+type IntegerVector4
+    implements Value, Hashable
+{
+    X: Integer;
+    Y: Integer;
+    Z: Integer;
+    W: Integer;
+}
+
+// A 2D direction: a Vector2 with the invariant that its magnitude is one.
+type Direction2D
+    implements Value
+{
+    Vector: Vector2;
+}
+
+// A 3D direction: a Vector3 with the invariant that its magnitude is one.
+type Direction3D
+    implements Value
+{
+    Vector: Vector3;
+}

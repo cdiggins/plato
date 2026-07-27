@@ -1,0 +1,57 @@
+//==
+// # Extended numbers
+//
+// Number-like value types beyond the primitives: constrained scalars, exact
+// ratios, complex numbers, and typed indices.
+
+// A complex number with real and imaginary parts.
+type Complex
+    implements Numerical
+{
+    Real: Number;
+    Imaginary: Number;
+}
+
+// An exact ratio of two integers. Denominator is never zero.
+type Rational
+    implements Value, Comparable
+{
+    Numerator: Integer;
+    Denominator: Integer;
+}
+
+// A unitless scalar expected to lie in [0, 1]: blend weights, normalized
+// parameters, opacity.
+type Proportion
+    implements Numerical, Comparable
+{
+    Value: Number;
+}
+
+// A proportion expressed per hundred: 45.0 means 45%.
+type Percent
+    implements Numerical, Comparable
+{
+    Value: Number;
+}
+
+// A probability in [0, 1].
+type Probability
+    implements Numerical, Comparable
+{
+    Value: Number;
+}
+
+// A zero-based position within an ordered collection. -1 means "none".
+type Index
+    implements Value, Comparable
+{
+    Value: Integer;
+}
+
+// A count of items; never negative.
+type Cardinal
+    implements Value, Comparable
+{
+    Value: Integer;
+}

@@ -1,0 +1,65 @@
+//==
+// # Time
+//
+// Instants are positions on a time line; durations are differences between them.
+// Frame and beat types serve animation, video, and audio-visual work.
+
+// A span of time, stored in seconds. The delta type of Instant.
+type Duration
+    implements Quantity
+{
+    Seconds: Number;
+}
+
+// A position on a continuous time line, in seconds relative to an arbitrary epoch.
+// Subtracting two instants yields a Duration.
+type Instant
+    implements Value, Comparable, Difference<Duration>
+{
+    SecondsSinceEpoch: Number;
+}
+
+// A half-open span of time: contains Start, excludes End.
+type TimeInterval
+    implements Value
+{
+    Start: Instant;
+    End: Instant;
+}
+
+// Playback or capture rate, in frames per second.
+type FrameRate
+{
+    FramesPerSecond: Number;
+}
+
+// A discrete frame position under a given frame rate.
+type FrameTime
+    implements Value, Comparable
+{
+    Frame: Integer;
+    Rate: FrameRate;
+}
+
+// An SMPTE-style timecode under a given frame rate.
+type Timecode
+{
+    Hours: Integer;
+    Minutes: Integer;
+    Seconds: Integer;
+    Frames: Integer;
+    Rate: FrameRate;
+}
+
+// Musical tempo, in beats per minute.
+type Tempo
+{
+    BeatsPerMinute: Number;
+}
+
+// A position measured in musical beats; combine with Tempo to reach seconds.
+type BeatTime
+    implements Value, Comparable
+{
+    Beats: Number;
+}
