@@ -1,0 +1,225 @@
+//==
+// # Optimization
+//
+// Vocabulary for numerical optimization and root finding: goals, stopping
+// rules, results, and the tuning parameters of standard algorithms.
+// Parameter vectors are Array<Number> indexed by variable; solver types are
+// pure parameter records. Optional limits use -1 for "no limit".
+
+// Whether the objective is to be minimized or maximized.
+// Value meanings: 0=Minimize, 1=Maximize.
+type OptimizationGoalKind
+{
+    Value: Integer;
+}
+
+// Stopping rules for an iterative solver. Iteration stops when the step or
+// objective change falls below AbsoluteTolerance, or below RelativeTolerance
+// times the current magnitude, or when an iteration or evaluation budget is
+// exhausted. A budget of -1 means no limit.
+type ConvergenceCriteria
+    implements Value
+{
+    MaxIterations: Integer;
+    AbsoluteTolerance: Number;
+    RelativeTolerance: Number;
+    MaxEvaluations: Integer;
+}
+
+// Why an iterative solver stopped.
+// Value meanings: 0=Converged, 1=MaxIterations, 2=Stalled, 3=Failed,
+// 4=NumericalError.
+type TerminationReasonKind
+{
+    Value: Integer;
+}
+
+// The outcome of an optimization run: the best parameter vector found, its
+// objective value, the iterations spent, and how the run ended.
+type OptimizationResult
+    implements Value
+{
+    Parameters: Array<Number>;
+    ObjectiveValue: Number;
+    Iterations: Integer;
+    Converged: Boolean;
+    Reason: TerminationReasonKind;
+}
+
+//==
+// # Root finding and one-dimensional search
+
+// An interval known to contain a root: the function changes sign between
+// Lower and Upper.
+type RootBracket
+    implements Value
+{
+    Lower: Number;
+    Upper: Number;
+}
+
+// A triple bracketing a minimum: Lower < Middle < Upper with the function
+// value at Middle below the value at both ends.
+type BracketedMinimum
+    implements Value
+{
+    Lower: Number;
+    Middle: Number;
+    Upper: Number;
+}
+
+// The outcome of a root-finding run. Residual is the function value at the
+// reported Root.
+type RootFindResult
+    implements Value
+{
+    Root: Number;
+    Iterations: Integer;
+    Residual: Number;
+    Converged: Boolean;
+}
+
+// The outcome of a least-squares fit: the fitted coefficients and the
+// Euclidean norm of the residual vector at the solution.
+type LeastSquaresResult
+    implements Value
+{
+    Coefficients: Array<Number>;
+    ResidualNorm: Number;
+    Iterations: Integer;
+    Converged: Boolean;
+}
+
+// The strategy for choosing a step length along a descent direction.
+// Value meanings: 0=FixedStep, 1=Backtracking, 2=WolfeConditions,
+// 3=GoldenSection, 4=Exact.
+type LineSearchKind
+{
+    Value: Integer;
+}
+
+//==
+// # Gradient-based solver parameters
+
+// Tuning of gradient descent. LearningRate scales each step, Momentum in
+// [0, 1) blends in the previous step, and Decay multiplies the learning rate
+// after every iteration (1 keeps it constant).
+type GradientDescentParameters
+    implements Value
+{
+    LearningRate: Number;
+    Momentum: Number;
+    Decay: Number;
+}
+
+// Tuning of the limited-memory BFGS quasi-Newton method. MemorySize is the
+// number of past step/gradient pairs retained.
+type LbfgsParameters
+    implements Value
+{
+    MemorySize: Integer;
+    LineSearch: LineSearchKind;
+}
+
+//==
+// # Derivative-free solver parameters
+
+// The reflection, expansion, contraction, and shrink coefficients of the
+// Nelder-Mead simplex method (standard values 1, 2, 0.5, 0.5).
+type NelderMeadParameters
+    implements Value
+{
+    Reflection: Number;
+    Expansion: Number;
+    Contraction: Number;
+    Shrink: Number;
+}
+
+// Tuning of simulated annealing. Temperature starts at InitialTemperature
+// and is multiplied by CoolingRate (in (0, 1)) each iteration; Seed fixes
+// the random sequence.
+type SimulatedAnnealingParameters
+    implements Value
+{
+    InitialTemperature: Number;
+    CoolingRate: Number;
+    Seed: Integer;
+}
+
+// Tuning of a genetic algorithm: population size, per-gene mutation and
+// per-pair crossover probabilities, the count of elite individuals copied
+// unchanged each generation, and the random seed.
+type GeneticAlgorithmParameters
+    implements Value
+{
+    PopulationSize: Integer;
+    MutationProbability: Probability;
+    CrossoverProbability: Probability;
+    EliteCount: Integer;
+    Seed: Integer;
+}
+
+// Tuning of differential evolution: population size, the differential
+// weight F scaling donor differences, the crossover probability, and the
+// random seed.
+type DifferentialEvolutionParameters
+    implements Value
+{
+    PopulationSize: Integer;
+    DifferentialWeight: Number;
+    CrossoverProbability: Probability;
+    Seed: Integer;
+}
+
+// Tuning of particle-swarm optimization: swarm size, the inertia retained
+// from each particle's velocity, the pulls toward the particle's own best
+// (cognitive) and the swarm's best (social), and the random seed.
+type ParticleSwarmParameters
+    implements Value
+{
+    SwarmSize: Integer;
+    Inertia: Number;
+    CognitiveWeight: Number;
+    SocialWeight: Number;
+    Seed: Integer;
+}
+
+//==
+// # Constrained problems
+
+// How a constraint row relates its left side to its right side.
+// Value meanings: 0=Equality, 1=LessOrEqual, 2=GreaterOrEqual.
+type ConstraintKind
+{
+    Value: Integer;
+}
+
+// A linear program. Row i of ConstraintMatrix dotted with the variable
+// vector relates to RightHandSide[i] by ConstraintKinds[i]; the objective is
+// the dot product with ObjectiveCoefficients; LowerBounds and UpperBounds
+// run per variable.
+type LinearProgram
+    implements Value
+{
+    ObjectiveCoefficients: Array<Number>;
+    ConstraintMatrix: MatrixN;
+    ConstraintKinds: Array<ConstraintKind>;
+    RightHandSide: Array<Number>;
+    LowerBounds: Array<Number>;
+    UpperBounds: Array<Number>;
+}
+
+// A quadratic program: minimize half of x' * Quadratic * x plus
+// Linear . x, under the same constraint and bound conventions as
+// LinearProgram. Quadratic is symmetric.
+type QuadraticProgram
+    implements Value
+{
+    Quadratic: MatrixN;
+    Linear: Array<Number>;
+    ConstraintMatrix: MatrixN;
+    ConstraintKinds: Array<ConstraintKind>;
+    RightHandSide: Array<Number>;
+    LowerBounds: Array<Number>;
+    UpperBounds: Array<Number>;
+}

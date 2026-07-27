@@ -1,0 +1,137 @@
+//==
+// # Lines, rays, segments, and planes
+//
+// The flat (affine) primitives. Extent distinguishes them: a segment is bounded
+// by two endpoints, a ray extends one way from its origin, a line extends both
+// ways, and a plane extends in two dimensions. Half-planes, half-spaces, and
+// slabs are the regions these flats bound.
+
+//==
+// # Segments
+
+// A straight bounded span, directed from A to B. Degenerate when A equals B.
+type LineSegment2D
+    implements Geometry2D, OpenShape, Connected, Bounded2D, LengthMeasurable, PointSet2D, Centroid2D, NearestPoint2D, Deformable2D
+{
+    A: Point2D;
+    B: Point2D;
+}
+
+// A straight bounded span in space, directed from A to B.
+type LineSegment3D
+    implements Geometry3D, OpenShape, Connected, Bounded3D, LengthMeasurable, PointSet3D, Centroid3D, NearestPoint3D, Deformable3D
+{
+    A: Point3D;
+    B: Point3D;
+}
+
+// A straight bounded span in 4D, directed from A to B.
+type LineSegment4D
+    implements Geometry4D, OpenShape, Connected, Bounded4D, LengthMeasurable
+{
+    A: Point4D;
+    B: Point4D;
+}
+
+//==
+// # Infinite lines and rays
+
+// An infinite straight line in the plane: all points Origin + Direction * t for
+// any real t. Origin is any point on the line.
+type Line2D
+    implements Geometry2D, Connected, NearestPoint2D
+{
+    Origin: Point2D;
+    Direction: Direction2D;
+}
+
+// An infinite straight line in space: all points Origin + Direction * t for any
+// real t.
+type Line3D
+    implements Geometry3D, Connected, NearestPoint3D
+{
+    Origin: Point3D;
+    Direction: Direction3D;
+}
+
+// A half-line in the plane: starts at Origin and extends along Direction only.
+// The point at parameter t >= 0 is Origin + Direction * t.
+type Ray2D
+    implements Geometry2D, Connected, NearestPoint2D
+{
+    Origin: Point2D;
+    Direction: Direction2D;
+}
+
+// A half-line in space: starts at Origin and extends along Direction only.
+// The point at parameter t >= 0 is Origin + Direction * t.
+type Ray3D
+    implements Geometry3D, Connected, NearestPoint3D
+{
+    Origin: Point3D;
+    Direction: Direction3D;
+}
+
+// The implicit (general) form of a 2D line: the points (x, y) satisfying
+// A*x + B*y + C = 0. Coefficients need not be normalized; (A, B) is a normal
+// of the line.
+type LineEquation2D
+    implements Value
+{
+    A: Number;
+    B: Number;
+    C: Number;
+}
+
+//==
+// # Planes and half-spaces
+
+// An infinite plane in Hesse normal form: the points p with Dot(Normal, p)
+// equal to Distance. Distance is the signed distance from the world origin to
+// the plane along Normal.
+type Plane
+    implements Geometry3D, Connected, Manifold, Orientable, NearestPoint3D
+{
+    Normal: Direction3D;
+    Distance: Number;
+}
+
+// The closed 3D region on and behind a boundary plane: the points p with
+// Dot(Normal, p) <= Distance. The boundary's normal points out of the half-space.
+type HalfSpace
+    implements Geometry3D, ConvexShape, Connected, ContainsPoint3D, NearestPoint3D
+{
+    Boundary: Plane;
+}
+
+// The closed 2D region on and behind a boundary line in Hesse normal form: the
+// points p with Dot(Normal, p) <= Distance. Normal points out of the half-plane.
+type HalfPlane2D
+    implements Geometry2D, ConvexShape, Connected, ContainsPoint2D, NearestPoint2D
+{
+    Normal: Direction2D;
+    Distance: Number;
+}
+
+//==
+// # Slabs
+
+// The closed 2D region between two parallel lines: the points p whose signed
+// distance Dot(Normal, p) lies within Interval. Interval runs from the lower to
+// the upper signed distance.
+type Slab2D
+    implements Geometry2D, ConvexShape, Connected, ContainsPoint2D
+{
+    Normal: Direction2D;
+    Interval: NumberInterval;
+}
+
+// The closed 3D region between two parallel planes: the points p whose signed
+// distance Dot(Normal, p) lies within Interval. The workhorse of separating-axis
+// and ray-box tests.
+type Slab3D
+    implements Geometry3D, ConvexShape, Connected, ContainsPoint3D
+{
+    Normal: Direction3D;
+    Interval: NumberInterval;
+}

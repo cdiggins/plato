@@ -1,0 +1,264 @@
+//==
+// # Fields
+//
+// Fields map spatial positions to values: scalars, vectors, directions, colors,
+// or tensors. Every field is Procedural over a point domain, so curves, easings,
+// and fields share one evaluation vocabulary. Concrete field types (noise, SDFs,
+// sampled grids) live in files 27-29 and implement the concepts declared here.
+
+//==
+// ## Field concepts
+
+// A pure mapping from positions in a domain to values in a range. The root
+// capability for every spatial field; evaluation is side-effect free and
+// deterministic for a given field value.
+concept Field<TDomain, TValue>
+    inherits Procedural<TDomain, TValue>
+{ }
+
+// A real-valued field over the 2D plane: heightmaps, density maps, masks,
+// potentials, and signed distances.
+concept ScalarField2D
+    inherits Field<Point2D, Number>
+{ }
+
+// A real-valued field over 3D space: densities, potentials, temperatures,
+// implicit surfaces, and signed distances.
+concept ScalarField3D
+    inherits Field<Point3D, Number>
+{ }
+
+// A real-valued field over 4D space; commonly 3D space plus one extra axis
+// such as time or a morph parameter.
+concept ScalarField4D
+    inherits Field<Point4D, Number>
+{ }
+
+// A field assigning a 2D vector to every point of the plane: gradients,
+// flows, displacement maps, and wind over a surface.
+concept VectorField2D
+    inherits Field<Point2D, Vector2>
+{ }
+
+// A field assigning a 3D vector to every point of space: velocity fields,
+// force fields, and displacement fields.
+concept VectorField3D
+    inherits Field<Point3D, Vector3>
+{ }
+
+// A field of unit-length 2D directions: orientation fields for strokes,
+// hatching, and anisotropy. Magnitude carries no information.
+concept DirectionField2D
+    inherits Field<Point2D, Direction2D>
+{ }
+
+// A field of unit-length 3D directions: normal fields, grain and fiber
+// orientation, and guide fields for grooming or flow alignment.
+concept DirectionField3D
+    inherits Field<Point3D, Direction3D>
+{ }
+
+// A field assigning a color to every point of the plane: procedural textures,
+// gradients, and image-like sources evaluated in continuous coordinates.
+concept ColorField2D
+    inherits Field<Point2D, Color>
+{ }
+
+// A field assigning a color to every point of space: solid procedural
+// textures such as wood, marble, and volumetric tints.
+concept ColorField3D
+    inherits Field<Point3D, Color>
+{ }
+
+// A complex-valued field over the plane: fractal iteration, conformal
+// mapping, and 2D wave phenomena.
+concept ComplexField2D
+    inherits Field<Point2D, Complex>
+{ }
+
+// A field of 2x2 matrices over the plane: 2D stress, strain, and metric
+// tensors, and local linearizations of planar maps.
+concept TensorField2D
+    inherits Field<Point2D, Matrix2x2>
+{ }
+
+// A field of 3x3 matrices over space: stress and strain tensors, diffusion
+// tensors, and velocity-gradient tensors.
+concept TensorField3D
+    inherits Field<Point3D, Matrix3x3>
+{ }
+
+//==
+// ## Differentiable field concepts
+
+// A planar scalar field with an analytic or numeric first derivative. The
+// gradient points in the direction of steepest increase.
+concept DifferentiableScalarField2D
+    inherits ScalarField2D
+{
+    GradientAt(x: Self, point: Point2D): Vector2;
+}
+
+// A spatial scalar field with an analytic or numeric first derivative. The
+// gradient of a signed distance field is the outward surface normal direction.
+concept DifferentiableScalarField3D
+    inherits ScalarField3D
+{
+    GradientAt(x: Self, point: Point3D): Vector3;
+}
+
+// A planar vector field with first derivatives: the Jacobian, its trace
+// (divergence), and the scalar 2D curl (rotation about the plane normal).
+concept DifferentiableVectorField2D
+    inherits VectorField2D
+{
+    JacobianAt(x: Self, point: Point2D): Matrix2x2;
+    DivergenceAt(x: Self, point: Point2D): Number;
+    CurlAt(x: Self, point: Point2D): Number;
+}
+
+// A spatial vector field with first derivatives: the Jacobian, its trace
+// (divergence), and the curl vector.
+concept DifferentiableVectorField3D
+    inherits VectorField3D
+{
+    JacobianAt(x: Self, point: Point3D): Matrix3x3;
+    DivergenceAt(x: Self, point: Point3D): Number;
+    CurlAt(x: Self, point: Point3D): Vector3;
+}
+
+//==
+// ## Time-varying field concepts
+//
+// Fields whose values evolve over a timeline. The time argument is an Instant
+// on the animation or simulation timeline.
+
+// A planar scalar field that changes over time: animated masks, ripples,
+// and evolving density maps.
+concept TimeVaryingScalarField2D
+{
+    EvalAtTime(x: Self, point: Point2D, time: Instant): Number;
+}
+
+// A spatial scalar field that changes over time: simulation densities,
+// temperatures, and animated implicit shapes.
+concept TimeVaryingScalarField3D
+{
+    EvalAtTime(x: Self, point: Point3D, time: Instant): Number;
+}
+
+// A planar vector field that changes over time: 2D flows and animated
+// displacement maps.
+concept TimeVaryingVectorField2D
+{
+    EvalAtTime(x: Self, point: Point2D, time: Instant): Vector2;
+}
+
+// A spatial vector field that changes over time: velocity fields of fluids,
+// wind, and turbulence used for advection.
+concept TimeVaryingVectorField3D
+{
+    EvalAtTime(x: Self, point: Point3D, time: Instant): Vector3;
+}
+
+//==
+// ## Constant fields
+//
+// The trivial fields: the same value everywhere. Useful as defaults and as
+// leaves of field expressions.
+
+// A planar scalar field with the same value at every point.
+type ConstantScalarField2D
+    implements Value, ScalarField2D
+{
+    Value: Number;
+}
+
+// A spatial scalar field with the same value at every point.
+type ConstantScalarField3D
+    implements Value, ScalarField3D
+{
+    Value: Number;
+}
+
+// A planar vector field with the same vector at every point.
+type ConstantVectorField2D
+    implements Value, VectorField2D
+{
+    Value: Vector2;
+}
+
+// A spatial vector field with the same vector at every point.
+type ConstantVectorField3D
+    implements Value, VectorField3D
+{
+    Value: Vector3;
+}
+
+//==
+// ## Field expression graphs
+//
+// Flat, index-based combinator graphs over scalar fields. Nodes reference other
+// nodes by index into the owning graph's node array, and reference externally
+// supplied source fields by index into a caller-maintained field list. Indices
+// use -1 for "unused".
+
+// The operation a scalar-field expression node performs.
+// Value meanings: 0=Source (read external field), 1=Constant, 2=Add,
+// 3=Subtract, 4=Multiply, 5=Divide, 6=Minimum, 7=Maximum, 8=Negate,
+// 9=AbsoluteValue, 10=Lerp (InputC is the blend weight), 11=Clamp
+// (InputB/InputC are bounds), 12=Remap, 13=Threshold.
+type FieldOperationKind
+{
+    Value: Integer;
+}
+
+// One node of a flat planar scalar-field expression graph. InputA, InputB,
+// and InputC are node indices into the owning graph (-1 when unused). Source
+// is an index into an external list of planar scalar fields (-1 when unused);
+// Constant is the literal for constant nodes.
+type ScalarFieldNode2D
+    implements Value
+{
+    Operation: FieldOperationKind;
+    InputA: Integer;
+    InputB: Integer;
+    InputC: Integer;
+    Source: Integer;
+    Constant: Number;
+}
+
+// A flat expression graph combining planar scalar fields. Nodes may only
+// reference lower-indexed nodes, making the array a valid topological order;
+// Root is the index of the node producing the result.
+type ScalarFieldGraph2D
+    implements Value
+{
+    Nodes: Array<ScalarFieldNode2D>;
+    Root: Integer;
+}
+
+// One node of a flat spatial scalar-field expression graph. InputA, InputB,
+// and InputC are node indices into the owning graph (-1 when unused). Source
+// is an index into an external list of spatial scalar fields (-1 when unused);
+// Constant is the literal for constant nodes.
+type ScalarFieldNode3D
+    implements Value
+{
+    Operation: FieldOperationKind;
+    InputA: Integer;
+    InputB: Integer;
+    InputC: Integer;
+    Source: Integer;
+    Constant: Number;
+}
+
+// A flat expression graph combining spatial scalar fields. Nodes may only
+// reference lower-indexed nodes, making the array a valid topological order;
+// Root is the index of the node producing the result.
+type ScalarFieldGraph3D
+    implements Value
+{
+    Nodes: Array<ScalarFieldNode3D>;
+    Root: Integer;
+}

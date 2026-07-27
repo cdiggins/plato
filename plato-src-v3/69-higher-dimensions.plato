@@ -1,0 +1,298 @@
+//==
+// # Higher dimensions
+//
+// Geometry beyond 3D: four-dimensional primitives, rotations, and polytopes,
+// dimension-generic (N-dimensional) structures, and the escape-time fractal
+// parameter records that live naturally in 2D and 4D number systems. All
+// distances are unit-agnostic world units.
+
+//==
+// # 4D rotations and geometric algebra
+//
+// Extends the Bivector2D/3D and Rotor2D/3D family of file 10 to four
+// dimensions, where rotations act in six independent planes.
+
+// An oriented plane element in 4D, with one dimensionless component per
+// coordinate plane; the generator of 4D rotations in geometric algebra.
+type Bivector4D
+    implements Value
+{
+    XY: Number;
+    XZ: Number;
+    XW: Number;
+    YZ: Number;
+    YW: Number;
+    ZW: Number;
+}
+
+// A 4D geometric-algebra rotor: the even-grade multivector with scalar part,
+// six dimensionless bivector components, and the XYZW pseudoscalar part.
+// Rotors encoding rotations have unit magnitude.
+type Rotor4D
+    implements Value, Multiplicative
+{
+    Scalar: Number;
+    XY: Number;
+    XZ: Number;
+    XW: Number;
+    YZ: Number;
+    YW: Number;
+    ZW: Number;
+    XYZW: Number;
+}
+
+// A simple 4D rotation: turning by Angle within a single oriented plane.
+// Plane should be normalized (unit magnitude).
+type PlanarRotation4D
+    implements Value
+{
+    Plane: Bivector4D;
+    Angle: Angle;
+}
+
+// A general 4D rotation as two simple rotations in mutually orthogonal
+// planes. Equal angles give an isoclinic (Clifford) rotation.
+type DoubleRotation4D
+    implements Value
+{
+    First: PlanarRotation4D;
+    Second: PlanarRotation4D;
+}
+
+//==
+// # 4D primitives
+
+// The set of points at distance Radius (world units) from Center in 4D; a
+// 3-sphere.
+type HyperSphere4D
+    implements Value
+{
+    Center: Point4D;
+    Radius: Number;
+}
+
+// A flat 3D subspace of 4D space: points p satisfying dot(Normal, p) =
+// Distance. Normal is unit length; Distance (world units) is the signed
+// distance from the origin.
+type Hyperplane4D
+    implements Value
+{
+    Normal: Vector4;
+    Distance: Number;
+}
+
+// A half-infinite line in 4D from Origin along Direction. Direction is unit
+// length.
+type Ray4D
+    implements Value
+{
+    Origin: Point4D;
+    Direction: Vector4;
+}
+
+// A triangle embedded in 4D space.
+type Triangle4D
+    implements Value
+{
+    A: Point4D;
+    B: Point4D;
+    C: Point4D;
+}
+
+// A tetrahedron embedded in 4D space.
+type Tetrahedron4D
+    implements Value
+{
+    A: Point4D;
+    B: Point4D;
+    C: Point4D;
+    D: Point4D;
+}
+
+// The 4D simplex (5-cell, pentachoron): five affinely independent vertices.
+type Simplex4D
+    implements Value
+{
+    A: Point4D;
+    B: Point4D;
+    C: Point4D;
+    D: Point4D;
+    E: Point4D;
+}
+
+// An orthonormal coordinate frame in 4D: an origin and four mutually
+// perpendicular unit axis vectors.
+type Frame4D
+    implements Value
+{
+    Origin: Point4D;
+    XAxis: Vector4;
+    YAxis: Vector4;
+    ZAxis: Vector4;
+    WAxis: Vector4;
+}
+
+// An axis-aligned-when-unoriented 4D cube (8-cell) of uniform edge length
+// Size (world units), positioned by Center and turned by Orientation.
+type Tesseract
+    implements Value
+{
+    Center: Point4D;
+    Size: Number;
+    Orientation: Rotor4D;
+}
+
+// An oriented 4D box: per-axis half-extents (world units, in the box's local
+// axes) positioned by Center and turned by Orientation.
+type OrientedBox4D
+    implements Value
+{
+    Center: Point4D;
+    HalfExtents: Vector4;
+    Orientation: Rotor4D;
+}
+
+// The Clifford torus: the product of two circles lying in orthogonal planes,
+// with radii RadiusA and RadiusB (world units). It lies on the 3-sphere of
+// radius sqrt(RadiusA^2 + RadiusB^2) about Center.
+type CliffordTorus
+    implements Value
+{
+    Center: Point4D;
+    RadiusA: Number;
+    RadiusB: Number;
+    Orientation: Rotor4D;
+}
+
+//==
+// # 4D polytopes
+
+// The six convex regular 4-polytopes.
+// Value meanings: 0=FiveCell, 1=EightCellTesseract, 2=SixteenCell,
+// 3=TwentyFourCell, 4=OneTwentyCell, 5=SixHundredCell.
+type RegularPolytopeKind
+{
+    Value: Integer;
+}
+
+// A regular 4-polytope placed in space: which of the six it is, where its
+// center lies, its circumradius (center to vertex, world units), and its
+// orientation.
+type RegularPolytope4D
+    implements Value
+{
+    Kind: RegularPolytopeKind;
+    Center: Point4D;
+    Circumradius: Number;
+    Orientation: Rotor4D;
+}
+
+// An explicit 4-polytope boundary representation. Faces are vertex loops in
+// CSR form: FaceVertexOffsets has FaceCount + 1 entries, and face f's
+// vertex indices are FaceVertexIndices[FaceVertexOffsets[f]] up to
+// (excluding) FaceVertexIndices[FaceVertexOffsets[f + 1]]. Cells list their
+// bounding faces the same way via CellFaceOffsets / CellFaceIndices. Edges
+// are explicit vertex-index pairs for wireframe rendering.
+type Polytope4D
+{
+    Vertices: Array<Point4D>;
+    FaceVertexOffsets: Array<Integer>;
+    FaceVertexIndices: Array<Integer>;
+    CellFaceOffsets: Array<Integer>;
+    CellFaceIndices: Array<Integer>;
+    Edges: Array<VertexPair>;
+}
+
+//==
+// # Projection from 4D to 3D
+
+// How 4D geometry is flattened into 3D for display.
+// Value meanings: 0=Orthographic (drop W), 1=Perspective (divide by eye
+// distance minus W), 2=Stereographic (project from a pole of the 3-sphere).
+type Projection4DKind
+{
+    Value: Integer;
+}
+
+// A configured 4D-to-3D projection. EyeDistance (world units) is the
+// viewpoint's offset along +W for Perspective, or the projection pole's
+// distance for Stereographic; Orthographic ignores it.
+type Projection4DTo3D
+    implements Value
+{
+    Kind: Projection4DKind;
+    EyeDistance: Number;
+}
+
+//==
+// # N-dimensional structures
+
+// The set of points at distance Radius (world units) from Center in
+// N-dimensional space, where N is the arity of Center.
+type NSphere
+    implements Value
+{
+    Center: PointN;
+    Radius: Number;
+}
+
+// A flat (N-1)-dimensional subspace of N-dimensional space: points p
+// satisfying dot(Normal, p) = Distance. Normal is unit length; Distance
+// (world units) is the signed distance from the origin.
+type HyperplaneN
+    implements Value
+{
+    Normal: VectorN;
+    Distance: Number;
+}
+
+// A simplex in N-dimensional space: K + 1 affinely independent vertices span
+// a K-simplex (the vertex count sets the simplex dimension).
+type SimplexN
+{
+    Vertices: Array<PointN>;
+}
+
+// An affine subspace of N-dimensional space: an origin plus orthonormal
+// basis vectors spanning the subspace (the vector count sets its dimension).
+type SubspaceN
+{
+    Origin: PointN;
+    BasisVectors: Array<VectorN>;
+}
+
+//==
+// # Escape-time fractal parameters
+
+// Parameters of a quadratic Julia set in the complex plane: z maps to
+// z^2 + C. Iteration stops at MaxIterations or when the magnitude of z
+// exceeds EscapeRadius (complex-plane units, at least 2).
+type JuliaSetParameters
+    implements Value
+{
+    C: Complex;
+    MaxIterations: Integer;
+    EscapeRadius: Number;
+}
+
+// A view into the Mandelbrot set: the complex-plane center, a dimensionless
+// magnification (1 shows roughly the classic 4-unit-wide view; larger values
+// show proportionally smaller regions), and the iteration cap.
+type MandelbrotView
+    implements Value
+{
+    Center: Complex;
+    Zoom: Number;
+    MaxIterations: Integer;
+}
+
+// Parameters of a quaternion Julia set (a 4D fractal usually displayed as a
+// 3D slice): q maps to q^2 + C. Iteration stops at MaxIterations or when the
+// magnitude of q exceeds EscapeRadius (quaternion-space units).
+type QuaternionJuliaParameters
+    implements Value
+{
+    C: Quaternion;
+    MaxIterations: Integer;
+    EscapeRadius: Number;
+}

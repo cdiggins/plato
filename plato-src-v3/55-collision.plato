@@ -1,0 +1,265 @@
+//==
+// # Collision
+//
+// Collider shapes attached to bodies, broad-phase filtering, contact points
+// and manifolds, collision events, and shape-query results. Body and layer
+// references are zero-based indices into an external body or layer array;
+// -1 means "none". Positions are in meters.
+
+//==
+// # Filtering
+
+// Broad-phase filter bits for a collider. CategoryBits says what the collider
+// is; MaskBits says what it collides with (two colliders interact when each
+// one's category intersects the other's mask). GroupIndex overrides the bits:
+// a shared positive group always collides, a shared negative group never
+// collides, 0 defers to the bits.
+type CollisionFilter
+    implements Value
+{
+    CategoryBits: Integer;
+    MaskBits: Integer;
+    GroupIndex: Integer;
+}
+
+// A symmetric layer-versus-layer collision table. Enabled is row-major with
+// LayerCount * LayerCount entries; entry (row * LayerCount + column) says
+// whether layers row and column may collide.
+type CollisionLayerMatrix
+    implements Value
+{
+    LayerCount: Integer;
+    Enabled: Array<Boolean>;
+}
+
+//==
+// # 3D colliders
+
+// A spherical collider: a sphere placed by a pose in the owning body's local
+// frame.
+type SphereCollider
+    implements Value
+{
+    Shape: Sphere;
+    LocalPose: Pose3D;
+}
+
+// A box collider: a box placed by a pose in the owning body's local frame.
+type BoxCollider
+    implements Value
+{
+    Shape: Box3D;
+    LocalPose: Pose3D;
+}
+
+// A capsule collider: a capsule placed by a pose in the owning body's local
+// frame.
+type CapsuleCollider
+    implements Value
+{
+    Shape: Capsule3D;
+    LocalPose: Pose3D;
+}
+
+// A triangle-mesh collider placed by a pose in the owning body's local frame.
+// When Convex is true the mesh is treated as (or decomposed to) a convex
+// hull, allowing dynamic-versus-dynamic collision.
+type MeshCollider
+    implements Value
+{
+    Mesh: TriangleMesh3D;
+    Convex: Boolean;
+    LocalPose: Pose3D;
+}
+
+// A rigid group of 3D colliders sharing one owning body, stored per shape
+// kind. Any of the arrays may be empty.
+type CompoundCollider3D
+    implements Value
+{
+    Spheres: Array<SphereCollider>;
+    Boxes: Array<BoxCollider>;
+    Capsules: Array<CapsuleCollider>;
+    Meshes: Array<MeshCollider>;
+}
+
+//==
+// # 2D colliders
+
+// A circular collider: a circle placed by a pose in the owning body's local
+// frame.
+type CircleCollider2D
+    implements Value
+{
+    Shape: Circle;
+    LocalPose: Pose2D;
+}
+
+// A rectangular collider: an oriented box placed by a pose in the owning
+// body's local frame.
+type BoxCollider2D
+    implements Value
+{
+    Shape: OrientedBox2D;
+    LocalPose: Pose2D;
+}
+
+// A planar capsule collider: a 2D capsule placed by a pose in the owning
+// body's local frame.
+type CapsuleCollider2D
+    implements Value
+{
+    Shape: Capsule2D;
+    LocalPose: Pose2D;
+}
+
+// A rigid group of 2D colliders sharing one owning body, stored per shape
+// kind. Any of the arrays may be empty.
+type CompoundCollider2D
+    implements Value
+{
+    Circles: Array<CircleCollider2D>;
+    Boxes: Array<BoxCollider2D>;
+    Capsules: Array<CapsuleCollider2D>;
+}
+
+// A non-solid 3D volume that reports overlap events instead of producing
+// contact forces. Pose places the collider group in world space.
+type TriggerVolume3D
+    implements Value
+{
+    Colliders: CompoundCollider3D;
+    Pose: Pose3D;
+    Filter: CollisionFilter;
+}
+
+//==
+// # Contacts
+
+// An unordered pair of colliding bodies, stored as zero-based indices into
+// the simulation's body array (-1 = none).
+type CollisionPair
+    implements Value
+{
+    BodyA: Integer;
+    BodyB: Integer;
+}
+
+// A single planar contact. Position is the world contact point in meters;
+// Normal points from body A toward body B; Penetration is the overlap depth;
+// NormalImpulse and TangentImpulse are the solver impulses in newton-seconds
+// along the normal and tangent (0 before solving).
+type ContactPoint2D
+    implements Value
+{
+    Position: Point2D;
+    Normal: Direction2D;
+    Penetration: Length;
+    NormalImpulse: Impulse;
+    TangentImpulse: Impulse;
+}
+
+// A single spatial contact. Position is the world contact point in meters;
+// Normal points from body A toward body B; Penetration is the overlap depth;
+// NormalImpulse is the solver impulse along the normal in newton-seconds;
+// FrictionImpulse is the tangential impulse in newton-seconds (0 before
+// solving).
+type ContactPoint3D
+    implements Value
+{
+    Position: Point3D;
+    Normal: Direction3D;
+    Penetration: Length;
+    NormalImpulse: Impulse;
+    FrictionImpulse: Vector3;
+}
+
+// The set of planar contacts between one body pair in one step. BodyA and
+// BodyB are zero-based body indices (-1 = none); Normal is the shared contact
+// normal from A toward B; Friction is the combined dimensionless friction
+// coefficient; Restitution is the combined bounciness in [0, 1].
+type ContactManifold2D
+    implements Value
+{
+    BodyA: Integer;
+    BodyB: Integer;
+    Points: Array<ContactPoint2D>;
+    Normal: Direction2D;
+    Friction: Number;
+    Restitution: Proportion;
+}
+
+// The set of spatial contacts between one body pair in one step. BodyA and
+// BodyB are zero-based body indices (-1 = none); Normal is the shared contact
+// normal from A toward B; Friction is the combined dimensionless friction
+// coefficient; Restitution is the combined bounciness in [0, 1].
+type ContactManifold3D
+    implements Value
+{
+    BodyA: Integer;
+    BodyB: Integer;
+    Points: Array<ContactPoint3D>;
+    Normal: Direction3D;
+    Friction: Number;
+    Restitution: Proportion;
+}
+
+//==
+// # Events
+
+// The phase of a collision between two bodies.
+// Value meanings: 0=Begin (first touch), 1=Stay (still touching),
+// 2=End (separated).
+type CollisionEventKind
+{
+    Value: Integer;
+}
+
+// A collision notification: which pair, which phase, and the simulation time
+// at which it was raised.
+type CollisionEvent
+    implements Value
+{
+    Kind: CollisionEventKind;
+    Pair: CollisionPair;
+    Time: Instant;
+}
+
+//==
+// # Query results
+
+// The result of sweeping a shape through the plane. Hit says whether anything
+// was struck; Fraction is the normalized sweep parameter in [0, 1] at first
+// contact; Position and Normal describe the world hit point in meters and the
+// surface normal there; BodyIndex is the struck body (-1 = none).
+type ShapeCastResult2D
+    implements Value
+{
+    Hit: Boolean;
+    Fraction: Proportion;
+    Position: Point2D;
+    Normal: Direction2D;
+    BodyIndex: Integer;
+}
+
+// The result of sweeping a shape through space. Hit says whether anything was
+// struck; Fraction is the normalized sweep parameter in [0, 1] at first
+// contact; Position and Normal describe the world hit point in meters and the
+// surface normal there; BodyIndex is the struck body (-1 = none).
+type ShapeCastResult3D
+    implements Value
+{
+    Hit: Boolean;
+    Fraction: Proportion;
+    Position: Point3D;
+    Normal: Direction3D;
+    BodyIndex: Integer;
+}
+
+// The result of an overlap query: the zero-based indices of every body whose
+// colliders intersect the query shape.
+type OverlapResult
+    implements Value
+{
+    BodyIndices: Array<Integer>;
+}

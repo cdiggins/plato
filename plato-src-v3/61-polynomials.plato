@@ -1,0 +1,187 @@
+//==
+// # Polynomials and series
+//
+// Dense and sparse polynomials, fixed-degree forms, rational functions, and
+// truncated series in classical bases. Convention: dense coefficient arrays
+// are in ASCENDING powers (Coefficients[k] multiplies x^k); the fixed-degree
+// convenience types instead use the conventional school form with A on the
+// highest power, as documented per type.
+
+// A dense univariate polynomial. Coefficients[k] multiplies x^k (ascending
+// powers); an empty array is the zero polynomial, and the degree is the
+// coefficient count minus 1.
+type Polynomial
+    implements Value
+{
+    Coefficients: Array<Number>;
+}
+
+// A single term: Coefficient times x raised to a non-negative Power.
+type Monomial
+    implements Value
+{
+    Coefficient: Number;
+    Power: Integer;
+}
+
+// A sparse polynomial as parallel arrays: term i is Coefficients[i] times x
+// raised to Powers[i]. Powers are distinct, non-negative, and ascending.
+type SparsePolynomial
+    implements Value
+{
+    Powers: Array<Integer>;
+    Coefficients: Array<Number>;
+}
+
+// The quadratic A*x^2 + B*x + C (descending school form).
+type QuadraticPolynomial
+    implements Value
+{
+    A: Number;
+    B: Number;
+    C: Number;
+}
+
+// The cubic A*x^3 + B*x^2 + C*x + D (descending school form).
+type CubicPolynomial
+    implements Value
+{
+    A: Number;
+    B: Number;
+    C: Number;
+    D: Number;
+}
+
+// The quartic A*x^4 + B*x^3 + C*x^2 + D*x + E (descending school form).
+type QuarticPolynomial
+    implements Value
+{
+    A: Number;
+    B: Number;
+    C: Number;
+    D: Number;
+    E: Number;
+}
+
+// The roots of a real polynomial. RealRoots lists real roots in ascending
+// order with multiplicity; ComplexRoots lists the strictly complex roots,
+// one representative per conjugate pair (positive imaginary part).
+type PolynomialRoots
+    implements Value
+{
+    RealRoots: Array<Number>;
+    ComplexRoots: Array<Complex>;
+}
+
+// A ratio of two polynomials. The Denominator is not the zero polynomial;
+// the function is undefined at its roots (poles).
+type RationalFunction
+    implements Value
+{
+    Numerator: Polynomial;
+    Denominator: Polynomial;
+}
+
+//==
+// # Series in classical bases
+//
+// Truncated series: each stores the coefficients of finitely many basis
+// terms, ascending by term index.
+
+// A truncated power series about Center: the sum of Coefficients[k] times
+// (x - Center)^k.
+type PowerSeries
+    implements Value
+{
+    Center: Number;
+    Coefficients: Array<Number>;
+}
+
+// A truncated series over Chebyshev polynomials of the first kind:
+// Coefficients[k] weights T_k evaluated after Interval is mapped linearly
+// onto [-1, 1].
+type ChebyshevSeries
+    implements Value
+{
+    Interval: NumberInterval;
+    Coefficients: Array<Number>;
+}
+
+// A truncated series over Legendre polynomials on [-1, 1]: Coefficients[k]
+// weights P_k.
+type LegendreSeries
+    implements Value
+{
+    Coefficients: Array<Number>;
+}
+
+// A truncated series over physicists' Hermite polynomials: Coefficients[k]
+// weights H_k.
+type HermiteSeries
+    implements Value
+{
+    Coefficients: Array<Number>;
+}
+
+// A polynomial over the Bernstein basis of degree count - 1 on [0, 1]:
+// Coefficients[k] weights the k-th Bernstein basis polynomial. The
+// coefficients act as control values, as in a Bezier curve.
+type BernsteinPolynomial
+    implements Value
+{
+    Coefficients: Array<Number>;
+}
+
+// A dense polynomial in two variables. The column index of Coefficients is
+// the power of x and the row index is the power of y, so the entry at
+// (i, j) multiplies x^i * y^j.
+type BivariatePolynomial
+    implements Value
+{
+    Coefficients: Array2D<Number>;
+}
+
+// A truncated real Fourier series. Term k oscillates at k times the
+// Fundamental frequency; CosineCoefficients[0] is the constant (DC) term and
+// SineCoefficients[0] is ignored. The two arrays have equal length.
+type FourierSeries
+    implements Value
+{
+    Fundamental: Frequency;
+    CosineCoefficients: Array<Number>;
+    SineCoefficients: Array<Number>;
+}
+
+//==
+// # Composite and derived forms
+
+// A piecewise polynomial (spline in polynomial form). Breakpoints ascend and
+// number one more than Pieces; piece i applies on the half-open span from
+// Breakpoints[i] to Breakpoints[i+1] and is evaluated in the local variable
+// x - Breakpoints[i].
+type PiecewisePolynomial
+    implements Value
+{
+    Breakpoints: Array<Number>;
+    Pieces: Array<Polynomial>;
+}
+
+// A Pade approximant about Center: the rational function Numerator over
+// Denominator that matches a power series to the highest order the two
+// degrees allow. The Denominator's constant term is normalized to 1.
+type PadeApproximant
+    implements Value
+{
+    Center: Number;
+    Numerator: Polynomial;
+    Denominator: Polynomial;
+}
+
+// A Sturm sequence for counting real roots in an interval by sign changes.
+// Polynomials[0] is the original polynomial, Polynomials[1] its derivative,
+// and each later entry is the negated remainder of the two before it.
+type SturmChain
+    implements Value
+{
+    Polynomials: Array<Polynomial>;
+}

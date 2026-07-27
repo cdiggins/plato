@@ -1,0 +1,183 @@
+//==
+// # Uncertainty
+//
+// Values that carry uncertainty without losing their nominal reading:
+// measurement uncertainty, confidence intervals, engineering tolerances,
+// fuzzy numbers, and state estimation. Standard uncertainties are one
+// standard deviation (1-sigma) unless a coverage factor says otherwise.
+
+// A measured or estimated number with its standard (1-sigma) uncertainty,
+// in the same implicit unit as the value.
+type UncertainNumber
+    implements Value
+{
+    Value: Number;
+    StandardUncertainty: Number;
+}
+
+// A runtime-united measurement: an amount, its standard uncertainty in the
+// same unit, and the unit itself.
+type UncertainQuantity
+    implements Value
+{
+    Amount: Number;
+    StandardUncertainty: Number;
+    Unit: UnitOfMeasure;
+}
+
+// An expanded uncertainty per the GUM convention: the reported half-width is
+// CoverageFactor times StandardUncertainty (k = 2 gives roughly 95%
+// coverage for a normal error model).
+type ExpandedUncertainty
+    implements Value
+{
+    StandardUncertainty: Number;
+    CoverageFactor: Number;
+}
+
+// An interval asserted to contain the true value with the stated confidence
+// Level (e.g. 0.95). Lower does not exceed Upper.
+type ConfidenceInterval
+    implements Value
+{
+    Lower: Number;
+    Upper: Number;
+    Level: Probability;
+}
+
+// The alpha of a hypothesis test: the accepted probability of rejecting a
+// true null hypothesis (e.g. 0.05).
+type SignificanceLevel
+    implements Value
+{
+    Alpha: Probability;
+}
+
+// An asymmetric engineering tolerance about a nominal value. The acceptable
+// range is [Nominal - Minus, Nominal + Plus]; Plus and Minus are
+// non-negative magnitudes.
+type Tolerance
+    implements Value
+{
+    Nominal: Number;
+    Plus: Number;
+    Minus: Number;
+}
+
+// One endpoint of a one-dimensional range: the endpoint value and whether
+// the endpoint itself is included.
+type IntervalBound
+    implements Value
+{
+    Value: Number;
+    Inclusive: Boolean;
+}
+
+//==
+// # Fuzzy numbers
+//
+// Fuzzy membership functions over the real line: membership is 0 outside
+// the support, 1 on the core, and ramps linearly between.
+
+// A triangular fuzzy number: support [A, C] with full membership only at
+// the peak B, where A <= B <= C.
+type TriangularFuzzyNumber
+    implements Value
+{
+    A: Number;
+    B: Number;
+    C: Number;
+}
+
+// A trapezoidal fuzzy number: support [A, D] with full membership on the
+// core [B, C], where A <= B <= C <= D.
+type TrapezoidalFuzzyNumber
+    implements Value
+{
+    A: Number;
+    B: Number;
+    C: Number;
+    D: Number;
+}
+
+//==
+// # Uncertain geometry
+//
+// Geometric values with Gaussian uncertainty expressed as a covariance.
+
+// A 2D vector with a 2x2 covariance of its components.
+type UncertainVector2
+    implements Value
+{
+    Value: Vector2;
+    Covariance: Covariance2D;
+}
+
+// A 3D vector with a 3x3 covariance of its components.
+type UncertainVector3
+    implements Value
+{
+    Value: Vector3;
+    Covariance: Covariance3D;
+}
+
+// A 2D position with a 2x2 covariance of its coordinates.
+type UncertainPoint2D
+    implements Value
+{
+    Value: Point2D;
+    Covariance: Covariance2D;
+}
+
+// A 3D position with a 3x3 covariance of its coordinates.
+type UncertainPoint3D
+    implements Value
+{
+    Value: Point3D;
+    Covariance: Covariance3D;
+}
+
+//==
+// # State estimation
+
+// A Kalman estimate: the state mean vector and its covariance matrix, whose
+// order matches the state length.
+type KalmanState
+    implements Value
+{
+    State: Array<Number>;
+    Covariance: MatrixN;
+}
+
+// The model matrices of a linear Kalman filter: state Transition (F),
+// Observation (H), ProcessNoise covariance (Q), and ObservationNoise
+// covariance (R).
+type KalmanFilterParameters
+    implements Value
+{
+    Transition: MatrixN;
+    Observation: MatrixN;
+    ProcessNoise: MatrixN;
+    ObservationNoise: MatrixN;
+}
+
+//==
+// # Error propagation
+
+// How uncertainty is propagated through a computation.
+// Value meanings: 0=Linear (first-order Taylor), 1=MonteCarlo (sampled),
+// 2=Unscented (sigma points).
+type ErrorPropagationKind
+{
+    Value: Integer;
+}
+
+// Parameters of an error-propagation run. SampleCount and Seed apply only
+// to the MonteCarlo kind and are ignored by the others.
+type ErrorPropagationParameters
+    implements Value
+{
+    Kind: ErrorPropagationKind;
+    SampleCount: Integer;
+    Seed: Integer;
+}

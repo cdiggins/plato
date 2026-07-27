@@ -1,0 +1,184 @@
+//==
+// # Statistics
+//
+// Descriptive statistics, histograms, correlation, and fitting summaries.
+// Conventions: sample statistics use Bessel's correction (divide by n - 1);
+// kurtosis is excess kurtosis (a normal distribution scores 0); paired arrays
+// are index-aligned and equal in length.
+
+// Descriptive statistics of a univariate sample. Variance and StandardDeviation
+// use the sample (n - 1) convention; Skewness and Kurtosis are standardized
+// moments, with Kurtosis reported as excess (normal = 0).
+type SummaryStatistics
+    implements Value
+{
+    Count: Integer;
+    Sum: Number;
+    Mean: Number;
+    Variance: Number;
+    StandardDeviation: Number;
+    Minimum: Number;
+    Maximum: Number;
+    Skewness: Number;
+    Kurtosis: Number;
+}
+
+// A Welford-style streaming accumulator. M2 is the running sum of squared
+// deviations from the current mean; sample variance = M2 / (Count - 1).
+type RunningStatistics
+    implements Value
+{
+    Count: Integer;
+    Mean: Number;
+    M2: Number;
+}
+
+// A value paired with a non-negative weight, for weighted means, weighted
+// fits, and importance sampling.
+type WeightedValue<T>
+{
+    Value: T;
+    Weight: Number;
+}
+
+// Counts of values falling into uniform bins across Range. Counts[i] tallies
+// the half-open bin [Start + i*w, Start + (i+1)*w), where w is the Range
+// length divided by the bin count; the final bin also includes the Range End.
+// Values outside Range are not counted.
+type Histogram
+    implements Value
+{
+    Range: NumberInterval;
+    Counts: Array<Integer>;
+}
+
+// A joint histogram of two variables over uniform bins. The column index of
+// Counts selects the x bin, the row index selects the y bin; bin edges follow
+// the same half-open convention as Histogram.
+type Histogram2D
+    implements Value
+{
+    RangeX: NumberInterval;
+    RangeY: NumberInterval;
+    Counts: Array2D<Integer>;
+}
+
+// Sample quantiles as parallel arrays: Values[i] is the data value at
+// cumulative probability Levels[i]. Levels ascend and lie in [0, 1].
+type Quantiles
+    implements Value
+{
+    Levels: Array<Probability>;
+    Values: Array<Number>;
+}
+
+// The classic five-number summary: extremes, quartiles, and median.
+type FiveNumberSummary
+    implements Value
+{
+    Minimum: Number;
+    LowerQuartile: Number;
+    Median: Number;
+    UpperQuartile: Number;
+    Maximum: Number;
+}
+
+// Box-plot statistics: the five-number summary plus whisker ends (the most
+// extreme data values within 1.5 interquartile ranges of the quartiles) and
+// the data values lying beyond the whiskers.
+type BoxPlotStatistics
+    implements Value
+{
+    Summary: FiveNumberSummary;
+    LowerWhisker: Number;
+    UpperWhisker: Number;
+    Outliers: Array<Number>;
+}
+
+// The 2x2 symmetric covariance of a bivariate sample: Xx and Yy are the
+// variances of x and y; Xy is their covariance.
+type Covariance2D
+    implements Value
+{
+    Xx: Number;
+    Xy: Number;
+    Yy: Number;
+}
+
+// The 3x3 symmetric covariance of a trivariate sample.
+type Covariance3D
+    implements Value
+{
+    Matrix: SymmetricMatrix3x3;
+}
+
+// The correlation statistic to compute.
+// Value meanings: 0=Pearson, 1=Spearman, 2=Kendall.
+type CorrelationKind
+{
+    Value: Integer;
+}
+
+// A correlation coefficient in [-1, 1] together with the statistic used and
+// the number of paired observations behind it.
+type CorrelationCoefficient
+    implements Value
+{
+    Kind: CorrelationKind;
+    Value: Number;
+    SampleCount: Integer;
+}
+
+// An ordinary least-squares line y = Slope * x + Intercept. RSquared is the
+// coefficient of determination in [0, 1].
+type LinearFit
+    implements Value
+{
+    Slope: Number;
+    Intercept: Number;
+    RSquared: Number;
+}
+
+// A least-squares polynomial fit. Coefficients[k] multiplies x^k (ascending
+// powers). RSquared is the coefficient of determination in [0, 1].
+type PolynomialFit
+    implements Value
+{
+    Coefficients: Array<Number>;
+    RSquared: Number;
+}
+
+// The weighting shape of a moving-window smoother.
+// Value meanings: 0=Simple, 1=Exponential, 2=Gaussian.
+type MovingWindowKind
+{
+    Value: Integer;
+}
+
+// Parameters of a moving-average smoother. WindowSize is in samples.
+// SmoothingFactor is the exponential alpha in (0, 1] for Exponential, and the
+// standard deviation in samples for Gaussian; it is ignored for Simple.
+type MovingAverageParameters
+    implements Value
+{
+    Kind: MovingWindowKind;
+    WindowSize: Integer;
+    SmoothingFactor: Number;
+}
+
+// The statistic used to flag outliers.
+// Value meanings: 0=ZScore, 1=Iqr, 2=Mad.
+type OutlierDetectionKind
+{
+    Value: Integer;
+}
+
+// Parameters of an outlier test. Threshold is in the kind's native scale:
+// standard deviations for ZScore, interquartile-range multiples beyond the
+// quartiles for Iqr, and median-absolute-deviation multiples for Mad.
+type OutlierDetectionParameters
+    implements Value
+{
+    Kind: OutlierDetectionKind;
+    Threshold: Number;
+}

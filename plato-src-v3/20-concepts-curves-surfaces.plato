@@ -1,0 +1,175 @@
+//==
+// # Curve, surface, and solid concepts
+//
+// Continuous geometry as pure functions. A curve maps one parameter to a position,
+// a surface maps two, a volume maps three (the Procedural concept from file 04).
+// Unless a type documents otherwise, the canonical parameter domain of a curve is
+// the unit interval [0,1], and a UV surface's domain is the unit square. Closed
+// curves satisfy Eval(0) = Eval(1).
+
+//==
+// # Curves
+
+// A real-valued function of one real parameter, viewed as a curve: profiles,
+// envelopes, cross-section laws, and interpolated channels.
+concept Curve1D
+    inherits Procedural<Number, Number>
+{ }
+
+// A continuous map from a parameter to a position in the plane.
+concept Curve2D
+    inherits Geometry2D, Procedural<Number, Point2D>
+{ }
+
+// A continuous map from a parameter to a position in space.
+concept Curve3D
+    inherits Geometry3D, Procedural<Number, Point3D>
+{ }
+
+// A continuous map from a parameter to a 4D position: rational curve numerators
+// and other homogeneous constructions.
+concept Curve4D
+    inherits Geometry4D, Procedural<Number, Point4D>
+{ }
+
+// A 2D curve that returns to its start: Eval(0) = Eval(1) with continuous closure.
+// Marker concept; closure is a structural guarantee of the implementing type.
+concept ClosedCurve2D
+    inherits Curve2D
+{ }
+
+// A 3D curve that returns to its start: Eval(0) = Eval(1) with continuous closure.
+concept ClosedCurve3D
+    inherits Curve3D
+{ }
+
+//==
+// # Curve capabilities
+
+// A curve whose parameterization repeats: evaluating at t and t + Period yields
+// the same position. All closed curves may be traversed periodically; a periodic
+// curve makes the period explicit.
+concept PeriodicCurve
+    inherits Periodic<Number>
+{ }
+
+// A 2D curve with a defined first derivative. TangentAt is the (not necessarily
+// unit-length) velocity; CurvatureAt is the signed plane curvature (positive
+// turning left, negative turning right).
+concept DifferentiableCurve2D
+    inherits Curve2D
+{
+    TangentAt(x: Self, t: Number): Vector2;
+    CurvatureAt(x: Self, t: Number): Number;
+}
+
+// A 3D curve with a defined first derivative. TangentAt is the velocity,
+// CurvatureAt is the unsigned space curvature, and TorsionAt measures how
+// sharply the curve leaves its osculating plane.
+concept DifferentiableCurve3D
+    inherits Curve3D
+{
+    TangentAt(x: Self, t: Number): Vector3;
+    CurvatureAt(x: Self, t: Number): Number;
+    TorsionAt(x: Self, t: Number): Number;
+}
+
+// A 3D curve carrying a continuous moving frame (Frenet or rotation-minimizing):
+// the frame origin lies on the curve and its Z axis is tangent. The basis for
+// sweeps, lofts, and camera paths.
+concept FramedCurve3D
+    inherits DifferentiableCurve3D
+{
+    FrameAt(x: Self, t: Number): Frame3D;
+}
+
+// A 3D curve that lies entirely within a single plane.
+concept PlanarCurve3D
+    inherits Curve3D
+{
+    CurvePlane(x: Self): Plane;
+}
+
+// A plane curve expressed in polar form about the origin: the position at angle
+// theta is (RadiusAt(theta) * cos(theta), RadiusAt(theta) * sin(theta)).
+// The canonical [0,1] parameter maps to one full turn unless documented otherwise.
+concept PolarCurve2D
+    inherits Curve2D
+{
+    RadiusAt(x: Self, angle: Angle): Number;
+}
+
+// A curve measurable by arc length. ArcLength is the total length over the
+// canonical domain; PointAtLength walks a distance along the curve from its
+// start; ParameterAtLength converts a distance to the canonical parameter.
+// TPoint is the concrete point type of the curve (Point2D, Point3D, or Number).
+concept ArcLengthParameterized<TPoint>
+{
+    ArcLength(x: Self): Number;
+    PointAtLength(x: Self, length: Number): TPoint;
+    ParameterAtLength(x: Self, length: Number): Number;
+}
+
+//==
+// # Surfaces
+
+// A two-dimensional manifold embedded in 3D space, with or without boundary.
+// Marker concept for all surface representations.
+concept Surface
+    inherits Geometry3D
+{ }
+
+// A surface that is watertight: compact, without boundary curves (sphere, torus).
+// Marker concept; a closed surface separates space into inside and outside.
+concept ClosedSurface
+    inherits Surface
+{ }
+
+// A surface evaluated from a rectangular UV parameter domain (canonically the
+// unit square). ClosedU/ClosedV report whether the surface seams shut across
+// the U or V direction (a cylinder closes in one, a torus in both).
+concept ParametricSurface
+    inherits Surface, Procedural<UvCoordinate, Point3D>
+{
+    ClosedU(x: Self): Boolean;
+    ClosedV(x: Self): Boolean;
+}
+
+// A parametric surface with defined partial derivatives. TangentUAt/TangentVAt
+// span the tangent plane; NormalAt is their normalized cross product, oriented
+// by the right-hand rule.
+concept DifferentiableSurface
+    inherits ParametricSurface
+{
+    TangentUAt(x: Self, uv: UvCoordinate): Vector3;
+    TangentVAt(x: Self, uv: UvCoordinate): Vector3;
+    NormalAt(x: Self, uv: UvCoordinate): Direction3D;
+}
+
+// A surface expressed as an elevation over a ground plane: the domain is a
+// position in the plane (Point2D, not a normalized UV coordinate, because
+// height fields are defined over world-plane positions), and the result is the
+// height above that position.
+concept HeightFieldSurface
+    inherits Surface, Procedural<Point2D, Number>
+{ }
+
+//==
+// # Solids and volumes
+
+// A closed, bounded region of 3D space: a volume together with its watertight
+// boundary surface. Marker concept for all solid representations.
+concept Solid
+    inherits Geometry3D
+{ }
+
+// A solid that is convex: every segment between two of its points stays inside.
+concept ConvexSolid
+    inherits Solid
+{ }
+
+// A deformable volume evaluated from a UVW parameter box (canonically the unit
+// cube): trivariate patches, free-form deformation cages, solid textures spaces.
+concept ParametricVolume
+    inherits Geometry3D, Procedural<UvwCoordinate, Point3D>
+{ }

@@ -1,0 +1,219 @@
+//==
+// # Render settings
+//
+// Backend-neutral descriptions of render targets, vertex data layout,
+// post-processing, and renderer quality. Distances are unit-agnostic scene
+// Numbers; frame times are Durations; exposure compensation is in
+// photographic stops (EV).
+
+// Describes an on-screen or off-screen render target. ColorFormat uses the
+// pixel formats of file 45; SampleCount is the MSAA sample count (1 = no
+// multisampling); HasDepth requests a depth attachment.
+type RenderTargetDescriptor
+    implements Value
+{
+    Size: IntegerSize2D;
+    ColorFormat: PixelFormatKind;
+    HasDepth: Boolean;
+    SampleCount: Integer;
+}
+
+//==
+// # Vertex data layout
+
+// The semantic role of one vertex attribute stream.
+// Value meanings: 0=Position, 1=Normal, 2=Tangent, 3=Uv0, 4=Uv1, 5=Color,
+// 6=BoneWeights, 7=BoneIndices.
+type VertexAttributeKind
+{
+    Value: Integer;
+}
+
+// One attribute within a vertex: its role, the number of scalar components
+// (3 for a position, 2 for a UV), whether integer data is normalized to
+// [0, 1] when read, and its byte offset from the start of the vertex.
+type VertexAttributeDescriptor
+    implements Value
+{
+    Kind: VertexAttributeKind;
+    ComponentCount: Integer;
+    Normalized: Boolean;
+    ByteOffset: Integer;
+}
+
+// The complete interleaved layout of one vertex: its attributes plus the
+// stride in bytes between consecutive vertices.
+type VertexLayout
+    implements Value
+{
+    Attributes: Array<VertexAttributeDescriptor>;
+    ByteStride: Integer;
+}
+
+//==
+// # Tone mapping, anti-aliasing, and post-processing
+
+// The curve compressing HDR radiance into display range.
+// Value meanings: 0=None (clamp), 1=Reinhard, 2=Aces, 3=Filmic, 4=Agx.
+type TonemapKind
+{
+    Value: Integer;
+}
+
+// Tone mapping controls. ExposureCompensation is in photographic stops (EV;
+// +1 doubles brightness), applied before the curve; WhitePoint is the input
+// level mapped to display white (its exact meaning is curve-dependent).
+type ToneMappingSettings
+    implements Value
+{
+    Kind: TonemapKind;
+    ExposureCompensation: Number;
+    WhitePoint: Number;
+}
+
+// The edge anti-aliasing technique.
+// Value meanings: 0=None, 1=Msaa (hardware multisampling), 2=Fxaa (fast
+// post-process), 3=Taa (temporal), 4=Smaa (morphological).
+type AntiAliasingKind
+{
+    Value: Integer;
+}
+
+// Anti-aliasing controls. SampleCount applies to Msaa; the post-process kinds
+// ignore it.
+type AntiAliasingSettings
+    implements Value
+{
+    Kind: AntiAliasingKind;
+    SampleCount: Integer;
+}
+
+// Screen-space ambient occlusion controls. Radius is the occlusion search
+// distance in scene units; Intensity scales the darkening; Bias offsets
+// samples to avoid self-occlusion; SampleCount trades quality for speed.
+type AmbientOcclusionSettings
+    implements Value
+{
+    Enabled: Boolean;
+    Radius: Number;
+    Intensity: Number;
+    Bias: Number;
+    SampleCount: Integer;
+}
+
+// Bloom: glow bleeding from bright pixels. Threshold is the luminance above
+// which pixels contribute; Intensity scales the added glow; Radius is the
+// blur spread as a fraction of screen height.
+type BloomSettings
+    implements Value
+{
+    Enabled: Boolean;
+    Threshold: Number;
+    Intensity: Number;
+    Radius: Number;
+}
+
+// The distance-fog model.
+// Value meanings: 0=None, 1=Linear (fades between Start and End),
+// 2=Exponential, 3=ExponentialSquared, 4=Height (density falls off with
+// altitude).
+type FogKind
+{
+    Value: Integer;
+}
+
+// Fog controls. Start and End (scene units) bound Linear fog; Density drives
+// the Exponential and ExponentialSquared models; HeightFalloff is the rate at
+// which Height-fog density decays with altitude.
+type FogSettings
+    implements Value
+{
+    Kind: FogKind;
+    Color: Color;
+    Density: Number;
+    Start: Number;
+    End: Number;
+    HeightFalloff: Number;
+}
+
+//==
+// # Path tracing, shadows, and output
+
+// The denoiser applied to a path-traced image.
+// Value meanings: 0=None, 1=Fast (real-time, temporal), 2=HighQuality
+// (offline, machine-learning based).
+type DenoiserKind
+{
+    Value: Integer;
+}
+
+// Path-tracing quality controls. SamplesPerPixel and MaxBounces bound the
+// integration work; RadianceClamp caps per-sample radiance to suppress
+// fireflies (0 = unclamped); Seed makes runs reproducible.
+type PathTracingSettings
+    implements Value
+{
+    SamplesPerPixel: Integer;
+    MaxBounces: Integer;
+    RadianceClamp: Number;
+    Denoiser: DenoiserKind;
+    Seed: Integer;
+}
+
+// The shadow-map filtering technique.
+// Value meanings: 0=Hard, 1=Pcf (percentage-closer), 2=Pcss
+// (contact-hardening), 3=Vsm (variance), 4=Esm (exponential).
+type ShadowFilterKind
+{
+    Value: Integer;
+}
+
+// An overall speed-versus-fidelity preset a renderer maps onto its own knobs.
+// Value meanings: 0=Draft, 1=Preview, 2=Production.
+type QualityKind
+{
+    Value: Integer;
+}
+
+// Which triangle facing is culled during rasterization.
+// Value meanings: 0=None (draw both faces), 1=Back, 2=Front.
+type FaceCullingKind
+{
+    Value: Integer;
+}
+
+// The color encoding of the final displayed image. Distinct from working
+// color spaces (files 44-47): this names the presentation encoding only.
+// Value meanings: 0=SrgbNonlinear, 1=LinearRec709, 2=DisplayP3, 3=Rec2020Pq
+// (HDR10), 4=Rec2020Hlg.
+type DisplayColorSpaceKind
+{
+    Value: Integer;
+}
+
+// The full post-processing and output configuration of a render pipeline,
+// gathering the individual settings records into one value.
+type RenderPipelineSettings
+    implements Value
+{
+    Quality: QualityKind;
+    Target: RenderTargetDescriptor;
+    AntiAliasing: AntiAliasingSettings;
+    AmbientOcclusion: AmbientOcclusionSettings;
+    Bloom: BloomSettings;
+    Fog: FogSettings;
+    ToneMapping: ToneMappingSettings;
+    ColorSpace: DisplayColorSpaceKind;
+}
+
+// Timing and workload measurements for one rendered frame.
+type FrameStatistics
+    implements Value
+{
+    FrameIndex: Integer;
+    CpuTime: Duration;
+    GpuTime: Duration;
+    DrawCalls: Integer;
+    TriangleCount: Integer;
+    InstanceCount: Integer;
+}

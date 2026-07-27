@@ -1,0 +1,121 @@
+//==
+// # Vector paths
+//
+// Resolution-independent 2D outlines in the SVG/Skia/Canvas tradition: a path
+// is a list of contours, a contour is a connected run of segments, and a
+// segment is one drawing verb (move, line, quadratic, cubic, arc, close).
+// Styling lives in file 41, text and glyph outlines in file 42, and scene
+// composition in file 43.
+
+// The drawing verb of a path segment, following SVG path semantics.
+// Value meanings: 0=Move (start a new sub-path), 1=Line, 2=Quadratic (one
+// control point), 3=Cubic (two control points), 4=Arc (elliptical arc),
+// 5=Close (line back to the sub-path start).
+type PathSegmentKind
+{
+    Value: Integer;
+}
+
+// One drawing verb of a contour. Every segment starts at the previous
+// segment's endpoint, and the on-curve endpoint is always P3. P1 and P2 are
+// control points when Kind uses them (Quadratic: P1; Cubic: P1 then P2). The
+// arc fields follow the SVG elliptical-arc form (x/y radii, rotation of the
+// ellipse axes, large-arc and sweep flags) and apply only when Kind is Arc.
+// Fields a Kind does not use hold zeroes and are ignored.
+type PathSegment2D
+    implements Value
+{
+    Kind: PathSegmentKind;
+    P1: Point2D;
+    P2: Point2D;
+    P3: Point2D;
+    Radii: Vector2;
+    AxisRotation: Angle;
+    LargeArc: Boolean;
+    Sweep: Boolean;
+}
+
+// A connected run of segments (a sub-path). When Closed is true the contour
+// is implicitly sealed with a line back to its first point, equivalent to a
+// trailing Close segment.
+type Contour2D
+    implements Value
+{
+    Segments: Array<PathSegment2D>;
+    Closed: Boolean;
+}
+
+// How the interior of a self-intersecting or multi-contour path is decided.
+// Value meanings: 0=NonZero (inside where the winding count is nonzero),
+// 1=EvenOdd (inside where the crossing count is odd).
+type FillRuleKind
+{
+    Value: Integer;
+}
+
+// A complete vector path: zero or more contours plus the fill rule that
+// decides its interior. The canonical exchange type for 2D outlines.
+type Path2D
+    implements Value
+{
+    Contours: Array<Contour2D>;
+    FillRule: FillRuleKind;
+}
+
+// An address on a path: which contour, which segment within that contour, and
+// the normalized parameter within that segment. An index of -1 means "no
+// location".
+type PathLocation
+    implements Value
+{
+    ContourIndex: Integer;
+    SegmentIndex: Integer;
+    Parameter: Proportion;
+}
+
+// Anything that can present itself as a vector path: primitive shapes, glyph
+// outlines, dashed or offset results.
+concept PathLike
+{
+    ToPath(x: Self): Path2D;
+}
+
+// Per-corner elliptical rounding radii for converting rectangles to paths, in
+// the order top-left, top-right, bottom-right, bottom-left. Each radius is an
+// (x, y) half-extent pair; a zero pair means a sharp corner.
+type CornerRadii2D
+    implements Value
+{
+    TopLeft: Vector2;
+    TopRight: Vector2;
+    BottomRight: Vector2;
+    BottomLeft: Vector2;
+}
+
+// The boolean (clipping) operation used when combining two paths.
+// Value meanings: 0=Union, 1=Intersection, 2=Difference (first minus second),
+// 3=ExclusiveOr.
+type PathBooleanOperationKind
+{
+    Value: Integer;
+}
+
+// Controls for reducing a path's segment count while staying within a
+// geometric error budget of Tolerance (in path units). When PreserveCorners
+// is true, points where the tangent is discontinuous are never removed.
+type PathSimplifyParameters
+    implements Value
+{
+    Tolerance: Number;
+    PreserveCorners: Boolean;
+}
+
+// Controls for flattening curved segments into line segments. Tolerance is
+// the maximum allowed deviation from the true curve, in path units.
+// MaxSegmentCount caps the lines produced per curve; -1 means no cap.
+type PathFlattenParameters
+    implements Value
+{
+    Tolerance: Number;
+    MaxSegmentCount: Integer;
+}

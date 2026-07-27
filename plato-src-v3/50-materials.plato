@@ -1,0 +1,237 @@
+//==
+// # Materials
+//
+// Backend-neutral surface appearance, modeled on the glTF 2.0
+// metallic-roughness core with optional layer records mirroring the glTF
+// material extensions. Colors are linear-light. Each layer record documents
+// its own disabling convention (zero strength or black color); an absent layer
+// is simply a disabled one. Texture references use the TextureBinding type of
+// file 47.
+
+// How a material's alpha is interpreted when compositing.
+// Value meanings: 0=Opaque (alpha ignored), 1=Mask (binary cutout using
+// Cutoff), 2=Blend (alpha compositing).
+type AlphaModeKind
+{
+    Value: Integer;
+}
+
+// Transparency controls. Opacity multiplies the base color's alpha component;
+// Cutoff is the Mask-mode threshold below which fragments are discarded
+// (conventionally 0.5); Mode selects the interpretation.
+type AlphaSettings
+    implements Value
+{
+    Mode: AlphaModeKind;
+    Opacity: Proportion;
+    Cutoff: Proportion;
+}
+
+// The reflectance model a renderer should evaluate.
+// Value meanings: 0=Lambert, 1=OrenNayar, 2=GgxMetallicRoughness, 3=Disney,
+// 4=Phong, 5=BlinnPhong.
+type BrdfKind
+{
+    Value: Integer;
+}
+
+// The core physically-based material (glTF 2.0 metallic-roughness). BaseColor
+// carries albedo for dielectrics, reflectance for metals, and the surface
+// alpha. Metallic and Roughness follow the standard MR parameterization.
+// EmissiveStrength is a dimensionless multiplier on EmissiveColor; physical
+// pipelines may read the product as nits. NormalScale scales a bound normal
+// map; OcclusionStrength scales a bound occlusion map (both bind via
+// MaterialTextureSet).
+type Material
+    implements Value
+{
+    BaseColor: Color;
+    Metallic: Proportion;
+    Roughness: Proportion;
+    EmissiveColor: Color;
+    EmissiveStrength: Number;
+    NormalScale: Number;
+    OcclusionStrength: Proportion;
+    Alpha: AlphaSettings;
+    DoubleSided: Boolean;
+}
+
+// The standard texture slots of a metallic-roughness material. Following
+// glTF, the MetallicRoughness texture packs roughness in G and metallic in B,
+// and Occlusion reads from R. An unbound TextureBinding (file 47) means the
+// slot is unused and the scalar factors stand alone.
+type MaterialTextureSet
+    implements Value
+{
+    BaseColor: TextureBinding;
+    MetallicRoughness: TextureBinding;
+    Normal: TextureBinding;
+    Occlusion: TextureBinding;
+    Emissive: TextureBinding;
+}
+
+// A metallic-roughness material paired with its texture set.
+type TexturedMaterial
+    implements Value
+{
+    Base: Material;
+    Textures: MaterialTextureSet;
+}
+
+//==
+// # Material layers (glTF-extension shaped)
+
+// A thin lacquer layer over the base surface (car paint, varnish). Intensity 0
+// disables the layer. IndexOfRefraction is 1.5 in the glTF extension.
+type ClearCoatLayer
+    implements Value
+{
+    Intensity: Proportion;
+    Roughness: Proportion;
+    NormalScale: Number;
+    IndexOfRefraction: Number;
+}
+
+// Micro-fiber retroreflection for cloth (velvet, satin). A black Color
+// disables the layer.
+type SheenLayer
+    implements Value
+{
+    Color: Color;
+    Roughness: Proportion;
+}
+
+// Adjustable dielectric specular reflectance (glTF KHR_materials_specular).
+// Strength scales the reflectance amount and Color tints it; Strength 1 with
+// a white Color is the physical default.
+type SpecularLayer
+    implements Value
+{
+    Strength: Proportion;
+    Color: Color;
+}
+
+// Light transmission through the surface with volume attenuation (glass,
+// liquids, gemstones). Transmission 0 disables the layer. Thickness and
+// AttenuationDistance are in scene units: light traveling AttenuationDistance
+// through the medium is tinted to AttenuationColor.
+type TransmissionLayer
+    implements Value
+{
+    Transmission: Proportion;
+    IndexOfRefraction: Number;
+    Thickness: Number;
+    AttenuationColor: Color;
+    AttenuationDistance: Number;
+}
+
+// Thin-film interference (soap bubbles, oil slicks, beetle shells). Intensity
+// 0 disables the layer. Film thickness varies between ThicknessMinimum and
+// ThicknessMaximum, measured in nanometers per the glTF extension.
+type IridescenceLayer
+    implements Value
+{
+    Intensity: Proportion;
+    IndexOfRefraction: Number;
+    ThicknessMinimum: Number;
+    ThicknessMaximum: Number;
+}
+
+// Direction-dependent roughness (brushed metal, hair, vinyl). Strength 0
+// disables the layer; Rotation turns the tangent-space anisotropy direction.
+type AnisotropyLayer
+    implements Value
+{
+    Strength: Proportion;
+    Rotation: Angle;
+}
+
+// Sub-surface light diffusion (skin, wax, marble). Radius is the per-channel
+// mean free path in scene units, uniformly scaled by Scale (0 disables);
+// Anisotropy is the Henyey-Greenstein g in [-1, 1].
+type SubsurfaceParameters
+    implements Value
+{
+    Color: Color;
+    Radius: Vector3;
+    Scale: Number;
+    Anisotropy: Number;
+}
+
+// A fully layered surface: a textured metallic-roughness base plus every
+// optional layer. Each layer's zero/black convention (see the layer docs)
+// marks it disabled, so a plain surface is representable without waste.
+type LayeredMaterial
+    implements Value
+{
+    Base: TexturedMaterial;
+    ClearCoat: ClearCoatLayer;
+    Sheen: SheenLayer;
+    Specular: SpecularLayer;
+    Transmission: TransmissionLayer;
+    Iridescence: IridescenceLayer;
+    Anisotropy: AnisotropyLayer;
+    Subsurface: SubsurfaceParameters;
+}
+
+//==
+// # Alternative and stylized materials
+
+// The legacy specular-glossiness PBR workflow, kept for importing older
+// assets. Prefer Material (metallic-roughness) for new content.
+type SpecularGlossinessMaterial
+    implements Value
+{
+    Diffuse: Color;
+    Specular: Color;
+    Glossiness: Proportion;
+    Alpha: AlphaSettings;
+    DoubleSided: Boolean;
+}
+
+// A shadeless material: Color is output exactly as authored, ignoring all
+// lights.
+type UnlitMaterial
+    implements Value
+{
+    Color: Color;
+    Alpha: AlphaSettings;
+    DoubleSided: Boolean;
+}
+
+// Banded cel shading. StepCount is the number of discrete shading bands (2 =
+// classic two-tone); ShadeColor is the darkened band color; RimColor is added
+// at grazing angles with a RimPower falloff exponent; OutlineWidth is in
+// pixels (0 = no outline).
+type ToonMaterial
+    implements Value
+{
+    BaseColor: Color;
+    ShadeColor: Color;
+    StepCount: Integer;
+    RimColor: Color;
+    RimPower: Number;
+    OutlineColor: Color;
+    OutlineWidth: Number;
+}
+
+// Material capture: shading is looked up from a pre-lit sphere image by
+// view-space normal, baking lighting and reflectance into one texture. Tint
+// multiplies the capture (white = unchanged).
+type MatcapMaterial
+    implements Value
+{
+    Capture: TextureBinding;
+    Tint: Color;
+}
+
+// Renders triangle edges as lines of WireThickness pixels in WireColor, over
+// faces filled with FaceColor; use a fully transparent FaceColor for edges
+// only.
+type WireframeMaterial
+    implements Value
+{
+    WireColor: Color;
+    FaceColor: Color;
+    WireThickness: Number;
+}

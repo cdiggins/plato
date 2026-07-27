@@ -1,0 +1,201 @@
+//==
+// # Text and fonts
+//
+// Font selection, run and paragraph styling, layout inputs, and the shaped
+// glyph-level results that bridge text to vector paths (file 40). Rich text
+// is an array of styled runs; shaping produces glyph runs; outlining turns
+// glyphs into paths.
+
+// A font weight on the CSS 100-900 scale: 100=Thin, 300=Light, 400=Normal,
+// 500=Medium, 700=Bold, 900=Black. Intermediate values are valid for
+// variable fonts.
+type FontWeight
+    implements Value, Comparable
+{
+    Value: Integer;
+}
+
+// The slant style of a font face.
+// Value meanings: 0=Normal, 1=Italic (a designed italic face), 2=Oblique
+// (a slanted version of the normal face).
+type FontStyleKind
+{
+    Value: Integer;
+}
+
+// The width class of a font face, on the CSS nine-step scale.
+// Value meanings: 0=UltraCondensed, 1=ExtraCondensed, 2=Condensed,
+// 3=SemiCondensed, 4=Normal, 5=SemiExpanded, 6=Expanded, 7=ExtraExpanded,
+// 8=UltraExpanded.
+type FontStretchKind
+{
+    Value: Integer;
+}
+
+// A request for a concrete font: a family name plus the weight, slant, and
+// width axes used to select (or synthesize) a face.
+type FontFace
+    implements Value
+{
+    Family: String;
+    Weight: FontWeight;
+    Style: FontStyleKind;
+    Stretch: FontStretchKind;
+}
+
+// A line decoration drawn with a run of text.
+// Value meanings: 0=None, 1=Underline, 2=Overline, 3=StrikeThrough.
+type TextDecorationKind
+{
+    Value: Integer;
+}
+
+// Character-level styling for a run of text. Size is the em size in document
+// units. LetterSpacing and WordSpacing are additive adjustments in the same
+// units. LineHeight is a multiple of Size (1.0 is tight).
+type TextStyle
+    implements Value
+{
+    Font: FontFace;
+    Size: Number;
+    LetterSpacing: Number;
+    WordSpacing: Number;
+    LineHeight: Number;
+    Color: Color;
+    Decoration: TextDecorationKind;
+}
+
+// Horizontal placement of lines within a paragraph's width.
+// Value meanings: 0=Left, 1=Center, 2=Right, 3=Justify, 4=Start (left in
+// left-to-right text, right in right-to-left), 5=End (the opposite of Start).
+type TextAlignKind
+{
+    Value: Integer;
+}
+
+// The vertical reference line text is positioned by.
+// Value meanings: 0=Alphabetic, 1=Top, 2=Hanging, 3=Middle, 4=Ideographic,
+// 5=Bottom.
+type TextBaselineKind
+{
+    Value: Integer;
+}
+
+// The primary reading direction of a paragraph.
+// Value meanings: 0=LeftToRight, 1=RightToLeft.
+type TextDirectionKind
+{
+    Value: Integer;
+}
+
+// What happens to text that exceeds its layout constraints.
+// Value meanings: 0=Clip, 1=Ellipsis, 2=Fade, 3=Visible (drawn beyond the
+// bounds).
+type TextOverflowKind
+{
+    Value: Integer;
+}
+
+// Paragraph-level styling. LineHeight is a multiplier applied on top of each
+// run's own line height (1.0 is neutral). FirstLineIndent and
+// ParagraphSpacing are in document units.
+type ParagraphStyle
+    implements Value
+{
+    Align: TextAlignKind;
+    Direction: TextDirectionKind;
+    LineHeight: Number;
+    FirstLineIndent: Number;
+    ParagraphSpacing: Number;
+}
+
+// A maximal stretch of text sharing one style; rich text is a sequence of
+// runs.
+type TextRun
+    implements Value
+{
+    Text: String;
+    Style: TextStyle;
+}
+
+// The input to text layout: styled runs, paragraph settings, and wrapping
+// constraints. MaxWidth is in document units; a negative value means
+// unconstrained. MaxLineCount of -1 means unlimited. Overflow applies when
+// either constraint is exceeded.
+type TextLayout
+    implements Value
+{
+    Runs: Array<TextRun>;
+    Paragraph: ParagraphStyle;
+    MaxWidth: Number;
+    MaxLineCount: Integer;
+    Overflow: TextOverflowKind;
+}
+
+// One positioned glyph produced by shaping: the font-internal glyph
+// identifier, the placement origin relative to the run origin, and the
+// advance to the next glyph (x and y, supporting vertical scripts).
+type GlyphPlacement
+    implements Value
+{
+    GlyphId: Integer;
+    Position: Point2D;
+    Advance: Vector2;
+}
+
+// The output of shaping one run with one face at one size: a sequence of
+// positioned glyphs ready for rasterization or outlining.
+type GlyphRun
+    implements Value
+{
+    Font: FontFace;
+    Size: Number;
+    Placements: Array<GlyphPlacement>;
+}
+
+// A glyph converted to vector geometry: its outline as a path (already
+// scaled to the em size in use) and its advance.
+type GlyphOutline
+    implements Value
+{
+    GlyphId: Integer;
+    Path: Path2D;
+    Advance: Vector2;
+}
+
+// Vertical metrics of a face, expressed at a font size of one (multiply by
+// the em size in use). Descent and UnderlinePosition are positive downward
+// from the baseline.
+type FontMetrics
+    implements Value
+{
+    Ascent: Number;
+    Descent: Number;
+    LineGap: Number;
+    CapHeight: Number;
+    XHeight: Number;
+    UnderlinePosition: Number;
+    UnderlineThickness: Number;
+}
+
+// A run of text laid along a path: glyph baselines follow the path's
+// tangent. StartOffset is the arc length from the path start to the first
+// glyph; Spacing is added between glyphs, in the same units.
+type TextOnPath
+    implements Value
+{
+    Run: TextRun;
+    Path: Path2D;
+    StartOffset: Number;
+    Spacing: Number;
+}
+
+// One OpenType feature setting, such as ("liga", 1) to enable ligatures or
+// ("ss01", 1) to select a stylistic set. Tag is the four-character feature
+// tag; Value is 0=off, 1=on, or an alternate index for selector features.
+type OpenTypeFeature
+    implements Value
+{
+    Tag: String;
+    Value: Integer;
+}

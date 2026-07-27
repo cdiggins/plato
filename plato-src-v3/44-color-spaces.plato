@@ -1,0 +1,266 @@
+//==
+// # Color spaces and color science
+//
+// Device-independent and device-referred color representations beyond the core
+// linear RGBA `Color` (file 14), plus the chromaticity, primary, transfer, and
+// adaptation vocabulary needed to convert between them. Conversions themselves
+// are functions in a later pass; these types name the endpoints and the knobs.
+
+//==
+// ## Chromaticity and white points
+
+// A CIE 1931 xy chromaticity coordinate: a color's hue-and-purity position on
+// the chromaticity diagram, independent of luminance.
+type Chromaticity
+    implements Value, Hashable
+{
+    X: Number;
+    Y: Number;
+}
+
+// A reference white: the chromaticity the color space treats as achromatic,
+// with its luminance in candelas per square meter (0 when unspecified).
+type WhitePoint
+    implements Value
+{
+    Chromaticity: Chromaticity;
+    Luminance: Number;
+}
+
+// A standard CIE illuminant used as a reference white.
+// Value meanings: 0=A (incandescent), 1=B, 2=C, 3=D50, 4=D55, 5=D60, 6=D65,
+// 7=D75, 8=E (equal energy), 9=F2, 10=F7, 11=F11.
+type WhitePointKind
+{
+    Value: Integer;
+}
+
+//==
+// ## Primaries, transfer functions, and RGB color spaces
+
+// An opto-electronic transfer characteristic: how linear light is encoded to
+// (and decoded from) stored component values.
+// Value meanings: 0=Linear, 1=SRGB (piecewise sRGB), 2=Gamma18, 3=Gamma22,
+// 4=Gamma24, 5=Gamma26, 6=Rec709 (BT.1886 pair), 7=PQ (SMPTE ST 2084 HDR),
+// 8=HLG (hybrid log-gamma HDR).
+type TransferFunctionKind
+{
+    Value: Integer;
+}
+
+// The chromaticities of an RGB color space's three primaries and its white
+// point; together they fix the space's gamut and its matrix to CIE XYZ.
+type RgbPrimaries
+    implements Value
+{
+    Red: Chromaticity;
+    Green: Chromaticity;
+    Blue: Chromaticity;
+    White: Chromaticity;
+}
+
+// A fully specified RGB color space: named primaries plus a transfer
+// characteristic. Sufficient to convert between the space and CIE XYZ.
+type RgbColorSpace
+    implements Value
+{
+    Name: String;
+    Primaries: RgbPrimaries;
+    Transfer: TransferFunctionKind;
+}
+
+// A well-known RGB color space, for when a name is enough and the full
+// RgbColorSpace record is not needed.
+// Value meanings: 0=SRGB, 1=LinearSRGB, 2=DisplayP3, 3=AdobeRGB,
+// 4=ProPhotoRGB, 5=Rec709, 6=Rec2020, 7=ACEScg, 8=ACES2065.
+type ColorSpaceKind
+{
+    Value: Integer;
+}
+
+// The strategy for mapping colors between the gamuts of two color spaces
+// (the ICC rendering intents).
+// Value meanings: 0=Perceptual, 1=RelativeColorimetric, 2=Saturation,
+// 3=AbsoluteColorimetric.
+type RenderingIntentKind
+{
+    Value: Integer;
+}
+
+// A method for adapting tristimulus values from one white point to another.
+// Value meanings: 0=XyzScaling, 1=Bradford, 2=VonKries, 3=CAT02, 4=CAT16.
+type ChromaticAdaptationKind
+{
+    Value: Integer;
+}
+
+// A conversion recipe between two named color spaces, including the chromatic
+// adaptation to use when their white points differ.
+type ColorSpaceConversion
+    implements Value
+{
+    Source: ColorSpaceKind;
+    Target: ColorSpaceKind;
+    Adaptation: ChromaticAdaptationKind;
+    Intent: RenderingIntentKind;
+}
+
+//==
+// ## Device-independent color types
+
+// A color as CIE 1931 XYZ tristimulus values; the device-independent hub
+// through which color space conversions pass. Y is luminance.
+type ColorXYZ
+    implements Numerical
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+}
+
+// A color as an xy chromaticity plus luminance Y (the CIE xyY form);
+// separates "which color" from "how bright".
+type ColorXyY
+    implements Value
+{
+    Chromaticity: Chromaticity;
+    Luminance: Number;
+}
+
+// A color in CIELAB: perceptual lightness L in [0, 100] with opponent axes
+// A (green-red) and B (blue-yellow), relative to a reference white.
+type ColorLab
+    implements Value
+{
+    L: Number;
+    A: Number;
+    B: Number;
+}
+
+// CIELAB in cylindrical form: lightness, chroma (colorfulness), and hue angle.
+type ColorLCh
+    implements Value
+{
+    L: Number;
+    Chroma: Number;
+    Hue: Angle;
+}
+
+// A color in CIELUV: an alternative perceptual space favored for additive
+// (emissive) displays.
+type ColorLuv
+    implements Value
+{
+    L: Number;
+    U: Number;
+    V: Number;
+}
+
+// A color in OkLab: a modern perceptual space with better hue linearity than
+// CIELAB; the preferred space for perceptual blending and gradients.
+type ColorOkLab
+    implements Value
+{
+    L: Number;
+    A: Number;
+    B: Number;
+}
+
+// OkLab in cylindrical form: lightness, chroma, and hue angle.
+type ColorOkLCh
+    implements Value
+{
+    L: Number;
+    Chroma: Number;
+    Hue: Angle;
+}
+
+//==
+// ## Device-referred and video color types
+
+// A gamma-encoded sRGB color with alpha, components nominally in [0, 1]: the
+// interchange form of most 2D content. Decode to linear `Color` before
+// arithmetic.
+type ColorSRGB
+    implements Value
+{
+    R: Number;
+    G: Number;
+    B: Number;
+    A: Number;
+}
+
+// A color as luma Y plus U/V chroma differences (analog video convention).
+type ColorYUV
+    implements Value
+{
+    Y: Number;
+    U: Number;
+    V: Number;
+}
+
+// A color as luma Y plus Cb/Cr chroma offsets (digital video and JPEG
+// convention).
+type ColorYCbCr
+    implements Value
+{
+    Y: Number;
+    Cb: Number;
+    Cr: Number;
+}
+
+// A subtractive process color: cyan, magenta, yellow, and key (black) ink
+// coverages, each in [0, 1].
+type ColorCMYK
+    implements Value
+{
+    Cyan: Number;
+    Magenta: Number;
+    Yellow: Number;
+    Key: Number;
+}
+
+// A color as a hue angle plus whiteness and blackness mixed in (the CSS HWB
+// model); an intuitive tint/shade parameterization.
+type ColorHWB
+    implements Value
+{
+    Hue: Angle;
+    Whiteness: Number;
+    Blackness: Number;
+}
+
+// A color as a sampled spectral power distribution. Wavelengths ascend and
+// pair one-to-one with Amplitudes (relative power per sample).
+type SpectralColor
+    implements Value
+{
+    Wavelengths: Array<Length>;
+    Amplitudes: Array<Number>;
+}
+
+//==
+// ## Palettes, harmony, and difference
+
+// An ordered set of colors used together: a swatch list, an indexed-image
+// color table, or a categorical scale.
+type Palette
+    implements Value
+{
+    Colors: Array<Color>;
+}
+
+// A classical hue-wheel relationship used to derive palettes from a base color.
+// Value meanings: 0=Complementary, 1=Analogous, 2=Triadic,
+// 3=SplitComplementary, 4=Tetradic, 5=Square, 6=Monochromatic.
+type ColorHarmonyKind
+{
+    Value: Integer;
+}
+
+// A perceptual color-difference (delta E) formula.
+// Value meanings: 0=CIE76, 1=CIE94, 2=CIEDE2000, 3=CMC, 4=EuclideanOkLab.
+type ColorDifferenceKind
+{
+    Value: Integer;
+}

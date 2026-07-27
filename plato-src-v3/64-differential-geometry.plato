@@ -1,0 +1,264 @@
+//==
+// # Differential geometry
+//
+// Local properties of curves and surfaces: moving frames, derivative jets,
+// curvature, fundamental forms, and metric data. These types are unit-agnostic
+// pure geometry: lengths are in world units, curvatures in reciprocal world
+// units, and derivatives are taken with respect to the curve or surface
+// parameter.
+
+//==
+// # Moving frames along curves
+
+// The Frenet frame of a planar curve at one parameter value: position, unit
+// tangent, unit left normal, and signed curvature (reciprocal world units;
+// positive when the curve bends toward the normal).
+type FrenetFrame2D
+    implements Value
+{
+    Position: Point2D;
+    Tangent: Direction2D;
+    Normal: Direction2D;
+    Curvature: Number;
+}
+
+// The Frenet-Serret frame of a space curve at one parameter value. Curvature is
+// nonnegative (reciprocal world units); torsion (reciprocal world units) measures
+// how fast the osculating plane rotates about the tangent. Undefined where
+// curvature vanishes.
+type FrenetFrame3D
+    implements Value
+{
+    Position: Point3D;
+    Tangent: Direction3D;
+    Normal: Direction3D;
+    Binormal: Direction3D;
+    Curvature: Number;
+    Torsion: Number;
+}
+
+// A rotation-minimizing (parallel-transport) frame sample along a space curve.
+// Unlike the Frenet frame it stays stable through inflections and straight runs.
+// Parameter is the curve parameter at which the frame was sampled (unit-agnostic).
+type RotationMinimizingFrame3D
+    implements Value
+{
+    Position: Point3D;
+    Tangent: Direction3D;
+    Normal: Direction3D;
+    Binormal: Direction3D;
+    Parameter: Number;
+}
+
+// The Darboux frame of a curve lying on a surface: curve tangent, surface normal,
+// and tangent normal (surface normal cross tangent). Normal and geodesic
+// curvatures are in reciprocal world units; geodesic torsion likewise.
+type DarbouxFrame3D
+    implements Value
+{
+    Position: Point3D;
+    Tangent: Direction3D;
+    SurfaceNormal: Direction3D;
+    TangentNormal: Direction3D;
+    NormalCurvature: Number;
+    GeodesicCurvature: Number;
+    GeodesicTorsion: Number;
+}
+
+//==
+// # Derivative jets
+//
+// Raw positional derivatives from which frames and curvature are computed.
+// Derivatives are with respect to the parameter: world units per parameter unit,
+// per squared parameter unit, and so on.
+
+// A second-order jet of a planar curve: position plus first and second
+// parametric derivatives at Parameter.
+type CurveJet2D
+    implements Value
+{
+    Parameter: Number;
+    Position: Point2D;
+    FirstDerivative: Vector2;
+    SecondDerivative: Vector2;
+}
+
+// A third-order jet of a space curve: position plus first, second, and third
+// parametric derivatives at Parameter. Third order is enough for torsion.
+type CurveJet3D
+    implements Value
+{
+    Parameter: Number;
+    Position: Point3D;
+    FirstDerivative: Vector3;
+    SecondDerivative: Vector3;
+    ThirdDerivative: Vector3;
+}
+
+// A second-order jet of a parametric surface at Uv: position, both first
+// partial derivatives, and the three second partials.
+type SurfaceJet3D
+    implements Value
+{
+    Uv: UvCoordinate;
+    Position: Point3D;
+    DerivativeU: Vector3;
+    DerivativeV: Vector3;
+    DerivativeUU: Vector3;
+    DerivativeUV: Vector3;
+    DerivativeVV: Vector3;
+}
+
+//==
+// # Surface point data
+
+// An evaluated point of a parametric surface: position, unit normal, and the
+// (generally non-unit) tangent partial derivatives at parameter Uv.
+type SurfacePoint3D
+    implements Value
+{
+    Position: Point3D;
+    Normal: Direction3D;
+    TangentU: Vector3;
+    TangentV: Vector3;
+    Uv: UvCoordinate;
+}
+
+// The tangent plane of a surface at a point, as an origin, two spanning tangent
+// vectors (the partial derivatives, generally neither unit nor orthogonal), and
+// the unit normal.
+type TangentSpace3D
+    implements Value
+{
+    Origin: Point3D;
+    TangentU: Vector3;
+    TangentV: Vector3;
+    Normal: Direction3D;
+}
+
+//==
+// # Curvature of surfaces
+
+// The two principal curvatures of a surface at a point (reciprocal world units,
+// Minimum <= Maximum) and their orthogonal unit directions in the tangent plane.
+type PrincipalCurvatures
+    implements Value
+{
+    Minimum: Number;
+    Maximum: Number;
+    MinimumDirection: Direction3D;
+    MaximumDirection: Direction3D;
+}
+
+// Full curvature summary of a surface point. Gaussian is the product of the
+// principal curvatures (reciprocal squared world units); Mean is their average
+// (reciprocal world units).
+type SurfaceCurvature
+    implements Value
+{
+    Gaussian: Number;
+    Mean: Number;
+    Principal: PrincipalCurvatures;
+}
+
+// Local shape classification of a surface point by its principal curvatures.
+// Value meanings: 0=Elliptic (Gaussian > 0), 1=Parabolic (exactly one zero
+// principal curvature), 2=Hyperbolic (Gaussian < 0), 3=Planar (both zero),
+// 4=Umbilic (equal and nonzero).
+type SurfacePointShapeKind
+{
+    Value: Integer;
+}
+
+//==
+// # Fundamental forms and intrinsic data
+
+// The first fundamental form (intrinsic metric) of a surface at a point:
+// E = dot(Xu, Xu), F = dot(Xu, Xv), G = dot(Xv, Xv). Units: squared world units
+// per squared parameter unit.
+type FirstFundamentalForm
+    implements Value
+{
+    E: Number;
+    F: Number;
+    G: Number;
+}
+
+// The second fundamental form (extrinsic bending) of a surface at a point:
+// L = dot(Xuu, n), M = dot(Xuv, n), N = dot(Xvv, n) with n the unit normal.
+// Units: world units per squared parameter unit.
+type SecondFundamentalForm
+    implements Value
+{
+    L: Number;
+    M: Number;
+    N: Number;
+}
+
+// The shape (Weingarten) operator of a surface at a point, expressed as a 2x2
+// matrix in the (Xu, Xv) tangent basis. Its eigenvalues are the principal
+// curvatures; generally not symmetric in a non-orthonormal basis.
+type ShapeOperator2D
+    implements Value
+{
+    Matrix: Matrix2x2;
+}
+
+// A Riemannian metric evaluated at a point of a 2D parameter domain: the three
+// unique components of a symmetric positive-definite 2x2 tensor. G12 = G21.
+// Units: squared world units per squared parameter unit.
+type RiemannianMetric2D
+    implements Value
+{
+    G11: Number;
+    G12: Number;
+    G22: Number;
+}
+
+// The Christoffel symbols of the second kind of a 2D metric at a point.
+// Gamma-kij is written GammaKIJ: the first digit is the upper index, the last
+// two the symmetric lower indices (GammaK12 = GammaK21). Units: reciprocal
+// parameter units.
+type ChristoffelSymbols2D
+    implements Value
+{
+    Gamma111: Number;
+    Gamma112: Number;
+    Gamma122: Number;
+    Gamma211: Number;
+    Gamma212: Number;
+    Gamma222: Number;
+}
+
+//==
+// # Geodesics and curvature visualization
+
+// A geodesic (locally shortest path) traced on a surface, approximated as a
+// polyline of surface points. TotalLength is the arc length in world units.
+type GeodesicPath3D
+{
+    Points: Array<Point3D>;
+    TotalLength: Number;
+}
+
+// The osculating circle of a planar curve at a point: the circle of best
+// second-order contact. Radius (world units) is the reciprocal of the unsigned
+// curvature at ContactPoint.
+type OsculatingCircle2D
+    implements Value
+{
+    Center: Point2D;
+    Radius: Number;
+    ContactPoint: Point2D;
+}
+
+// Samples for a curvature comb visualization of a planar curve. CombTips and
+// CurvePoints are parallel arrays: each tip lies at the curve point offset along
+// the normal by curvature times Scale (Scale is in squared world units, mapping
+// reciprocal-world-unit curvature to a world-unit comb height).
+type CurvatureComb2D
+{
+    CurvePoints: Array<Point2D>;
+    CombTips: Array<Point2D>;
+    Scale: Number;
+}

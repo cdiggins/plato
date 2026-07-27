@@ -1,0 +1,228 @@
+//==
+// # Kinematics
+//
+// Motion state described without reference to forces or mass: linear and
+// angular states, spatial velocities (twists), spatial forces (wrenches),
+// sampled trajectories, and closed-form elementary motions. Unless a doc
+// comment says otherwise, linear quantities are in meters and seconds and
+// angular quantities are in radians and seconds.
+
+// A planar motion that can be sampled at any time. PositionAt returns the
+// position in meters at the given time since the motion's start; VelocityAt
+// returns the velocity in meters per second.
+concept Kinematic2D
+{
+    PositionAt(x: Self, time: Duration): Point2D;
+    VelocityAt(x: Self, time: Duration): Vector2;
+}
+
+// A spatial motion that can be sampled at any time. PositionAt returns the
+// position in meters at the given time since the motion's start; VelocityAt
+// returns the velocity in meters per second.
+concept Kinematic3D
+{
+    PositionAt(x: Self, time: Duration): Point3D;
+    VelocityAt(x: Self, time: Duration): Vector3;
+}
+
+//==
+// # Instantaneous motion state
+
+// The instantaneous linear motion of a point in the plane. Position is in
+// meters; Velocity is in meters per second; Acceleration is in meters per
+// second squared.
+type KinematicState2D
+    implements Value, Interpolatable
+{
+    Position: Point2D;
+    Velocity: Vector2;
+    Acceleration: Vector2;
+}
+
+// The instantaneous linear motion of a point in space. Position is in meters;
+// Velocity is in meters per second; Acceleration is in meters per second
+// squared.
+type KinematicState3D
+    implements Value, Interpolatable
+{
+    Position: Point3D;
+    Velocity: Vector3;
+    Acceleration: Vector3;
+}
+
+// The instantaneous rotational motion of a planar body: orientation angle,
+// signed angular velocity, and signed angular acceleration (counterclockwise
+// positive).
+type AngularState2D
+    implements Value
+{
+    Orientation: Angle;
+    AngularVelocity: AngularVelocity;
+    AngularAcceleration: AngularAcceleration;
+}
+
+// The instantaneous rotational motion of a spatial body. AngularVelocity is
+// in radians per second about each world axis (axis-scaled rotation rate);
+// AngularAcceleration is in radians per second squared about each world axis.
+type AngularState3D
+    implements Value
+{
+    Orientation: Quaternion;
+    AngularVelocity: Vector3;
+    AngularAcceleration: Vector3;
+}
+
+// The full kinematic state of a planar rigid body: pose plus linear and
+// angular rates. LinearVelocity is in meters per second; LinearAcceleration
+// is in meters per second squared; angular rates are counterclockwise
+// positive.
+type RigidKinematicState2D
+    implements Value
+{
+    Pose: Pose2D;
+    LinearVelocity: Vector2;
+    AngularVelocity: AngularVelocity;
+    LinearAcceleration: Vector2;
+    AngularAcceleration: AngularAcceleration;
+}
+
+// The full kinematic state of a spatial rigid body: pose plus linear and
+// angular rates. LinearVelocity is in meters per second; LinearAcceleration
+// is in meters per second squared; AngularVelocity is in radians per second
+// and AngularAcceleration in radians per second squared, each about the
+// world axes.
+type RigidKinematicState3D
+    implements Value
+{
+    Pose: Pose3D;
+    LinearVelocity: Vector3;
+    AngularVelocity: Vector3;
+    LinearAcceleration: Vector3;
+    AngularAcceleration: Vector3;
+}
+
+//==
+// # Spatial velocity and force
+
+// A planar spatial velocity: the linear velocity of a reference point in
+// meters per second, plus the body's signed angular velocity
+// (counterclockwise positive).
+type Twist2D
+    implements Value, Interpolatable
+{
+    Linear: Vector2;
+    Angular: AngularVelocity;
+}
+
+// A spatial velocity: the linear velocity of a reference point in meters per
+// second, plus the angular velocity in radians per second about each axis.
+type Twist3D
+    implements Value, Interpolatable
+{
+    Linear: Vector3;
+    Angular: Vector3;
+}
+
+// A planar spatial force: a force in newtons acting at a reference point,
+// plus the signed out-of-plane torque (counterclockwise positive).
+type Wrench2D
+    implements Value, Interpolatable
+{
+    Force: Vector2;
+    Torque: Torque;
+}
+
+// A spatial force: a force in newtons acting at a reference point, plus a
+// torque in newton-meters about each axis.
+type Wrench3D
+    implements Value, Interpolatable
+{
+    Force: Vector3;
+    Torque: Vector3;
+}
+
+//==
+// # Sampled trajectories
+
+// A time-sampled planar motion stored as parallel arrays: Times[i] is the
+// time since trajectory start, Positions[i] the position in meters, and
+// Velocities[i] the velocity in meters per second. Velocities may be empty
+// when unknown.
+type Trajectory2D
+    implements Value
+{
+    Times: Array<Duration>;
+    Positions: Array<Point2D>;
+    Velocities: Array<Vector2>;
+}
+
+// A time-sampled spatial motion stored as parallel arrays: Times[i] is the
+// time since trajectory start, Positions[i] the position in meters, and
+// Velocities[i] the velocity in meters per second. Velocities may be empty
+// when unknown.
+type Trajectory3D
+    implements Value
+{
+    Times: Array<Duration>;
+    Positions: Array<Point3D>;
+    Velocities: Array<Vector3>;
+}
+
+//==
+// # Closed-form motions
+
+// Projectile motion under constant gravity: position(t) = InitialPosition +
+// InitialVelocity * t + Gravity * t^2 / 2. InitialVelocity is in meters per
+// second; Gravity is a constant acceleration in meters per second squared.
+type BallisticTrajectory
+    implements Value
+{
+    InitialPosition: Point3D;
+    InitialVelocity: Vector3;
+    Gravity: Vector3;
+}
+
+// Motion at constant angular speed around a circle: the moving point orbits
+// Center in the plane perpendicular to Axis at distance Radius, starting at
+// phase InitialPhase.
+type UniformCircularMotion
+    implements Value
+{
+    Center: Point3D;
+    Axis: Direction3D;
+    Radius: Length;
+    AngularSpeed: AngularVelocity;
+    InitialPhase: Angle;
+}
+
+// Sinusoidal oscillation of a scalar: value(t) = Offset + Amplitude *
+// sin(AngularFrequency * t + Phase). Offset and Amplitude are in the units of
+// the oscillating quantity (unit-agnostic).
+type SimpleHarmonicMotion
+    implements Value
+{
+    Offset: Number;
+    Amplitude: Number;
+    AngularFrequency: AngularVelocity;
+    Phase: Angle;
+}
+
+// The physical parameters of an ideal damped pendulum. Gravity is the local
+// gravitational acceleration; Damping is the angular velocity decay rate in
+// units of one per second (0 = undamped).
+type Pendulum
+    implements Value
+{
+    ArmLength: Length;
+    Gravity: Acceleration;
+    Damping: Number;
+}
+
+// The instantaneous state of a pendulum: signed deflection from the rest
+// (hanging) direction and its rate of change.
+type PendulumState
+    implements Value
+{
+    Deflection: Angle;
+    AngularVelocity: AngularVelocity;
+}

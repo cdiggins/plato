@@ -1,0 +1,102 @@
+//==
+// # 2D scenes
+//
+// Retained scene description for 2D vector graphics: a flat node array forms
+// a tree via parent indices, and node content (styled paths, text layouts,
+// image references) lives in parallel pools addressed by index. Viewport and
+// export settings close the file. BlendModeKind is owned by file 46.
+
+// What kind of content a scene node carries.
+// Value meanings: 0=None (pure transform/group node), 1=Shape (a styled
+// path), 2=Text (a text layout), 3=Image (an image reference), 4=Group
+// (children only, composited as an isolation group).
+type NodeContentKind
+{
+    Value: Integer;
+}
+
+// One node of a 2D scene, stored in Scene2D's flat node array. Parent is the
+// index of the parent node, -1 for a root. Transform places the node
+// relative to its parent; Opacity and Blend composite the node's rendered
+// output over what lies beneath. ContentIndex addresses the pool selected by
+// ContentKind in the owning scene, -1 for no content. ClipIndex selects a
+// clip mask from the scene's clip pool, -1 for none.
+type SceneNode2D
+    implements Value
+{
+    Name: String;
+    Parent: Integer;
+    Transform: Transform2D;
+    Opacity: Proportion;
+    Blend: BlendModeKind;
+    Visible: Boolean;
+    ContentKind: NodeContentKind;
+    ContentIndex: Integer;
+    ClipIndex: Integer;
+}
+
+// How a mask converts its source into coverage.
+// Value meanings: 0=Alpha (the source's alpha channel), 1=Luminance (the
+// source's luminance), 2=Path (geometric coverage of a path's interior).
+type MaskKind
+{
+    Value: Integer;
+}
+
+// A clipping or masking region applied to a scene node and its subtree. When
+// Kind is Path, coverage is the interior of Path under the path's own fill
+// rule. When Kind is Alpha or Luminance, coverage comes from the rendered
+// output of the scene node at SourceNodeIndex (-1 when unused, i.e. when
+// Kind is Path). Inverted swaps inside and outside.
+type ClipMask2D
+    implements Value
+{
+    Path: Path2D;
+    Kind: MaskKind;
+    SourceNodeIndex: Integer;
+    Inverted: Boolean;
+}
+
+// A complete 2D scene: the parent-indexed node array plus the content pools
+// nodes address by index. ImageReferences holds opaque integer handles into
+// an external image/texture table owned by the host asset system; a node
+// with ContentKind Image stores an index into this array via ContentIndex.
+type Scene2D
+    implements Value
+{
+    Nodes: Array<SceneNode2D>;
+    Shapes: Array<StyledPath2D>;
+    Texts: Array<TextLayout>;
+    ImageReferences: Array<Integer>;
+    Clips: Array<ClipMask2D>;
+}
+
+// A mapping from scene coordinates to device pixels: the rectangular region
+// of the scene that is visible, and the pixel dimensions of the target it
+// maps onto.
+type Viewport2D
+    implements Value
+{
+    View: Bounds2D;
+    PixelSize: IntegerSize2D;
+}
+
+// Settings for exporting a scene to a raster or document format.
+// DotsPerInch scales document units to physical output; Background is
+// composited beneath the scene (zero alpha for transparent output).
+type ExportSettings2D
+    implements Value
+{
+    DotsPerInch: Number;
+    Background: Color;
+}
+
+// The result of hit-testing a point against a scene: the index of the
+// topmost node hit (-1 for a miss) and the hit position in that node's local
+// space.
+type SceneHitResult2D
+    implements Value
+{
+    NodeIndex: Integer;
+    LocalPosition: Point2D;
+}

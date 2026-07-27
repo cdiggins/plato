@@ -1,0 +1,170 @@
+//==
+// # Solids
+//
+// Closed, bounded volumes: constructive solid geometry trees, profile-generated
+// solids (extrude, revolve, loft, sweep), and classical polyhedra. Primitive
+// closed shapes (Sphere, Box3D, Cylinder, Cone, Torus...) live in file 18 and
+// serve directly as CSG leaves.
+
+//==
+// # Constructive solid geometry
+
+// The Boolean operation applied at an interior CSG node.
+// Value meanings: 0=Union, 1=Intersection, 2=Difference, 3=SmoothUnion,
+// 4=SmoothIntersection, 5=SmoothDifference. Difference subtracts the right
+// child from the left; smooth variants blend over the node's Smoothing radius.
+type CsgOperationKind
+{
+    Value: Integer;
+}
+
+// One node of a flattened CSG tree. Interior nodes combine two children by
+// Operation (PrimitiveIndex is -1); leaf nodes have LeftChild and RightChild
+// of -1 and a PrimitiveIndex into a primitive collection supplied alongside
+// the tree. Smoothing is the blend radius for smooth operations (0 for sharp).
+type CsgNode3D
+{
+    Operation: CsgOperationKind;
+    LeftChild: Integer;
+    RightChild: Integer;
+    PrimitiveIndex: Integer;
+    Smoothing: Number;
+}
+
+// A constructive solid geometry tree stored as a flat node array with child
+// indices (no pointers); Root is the index of the root node in Nodes.
+type CsgTree3D
+    implements Solid
+{
+    Nodes: Array<CsgNode3D>;
+    Root: Integer;
+}
+
+//==
+// # Profile-generated solids
+
+// The solid formed by extruding a planar profile (with optional holes) along
+// the placement frame's Z axis for the given Height. The profile lies in the
+// frame's XY plane.
+type ExtrudedSolid
+    implements Solid
+{
+    Profile: PolygonWithHoles2D;
+    Placement: Frame3D;
+    Height: Number;
+}
+
+// The solid swept by revolving a planar profile about an axis. The profile's
+// X coordinate is the radial distance from the axis and its Y coordinate runs
+// along the axis; a partial sweep over Angles is capped by two flat faces.
+type RevolvedSolid
+    implements Solid
+{
+    Profile: PolygonWithHoles2D;
+    Axis: Line3D;
+    Angles: AngleInterval;
+}
+
+// The solid interpolating an ordered stack of planar closed cross-sections,
+// capped by the first and last sections. Sections must share point counts;
+// Closed joins the last section back to the first into a ring instead.
+type LoftedSolid
+    implements Solid
+{
+    Sections: Array<Polygon3D>;
+    Closed: Boolean;
+}
+
+// The solid swept by carrying a planar profile (with optional holes) along a
+// path in the path's rotation-minimizing frame, capped at both path ends.
+type SweptSolid
+    implements Solid
+{
+    Profile: PolygonWithHoles2D;
+    Path: Curve3D;
+}
+
+//==
+// # Polyhedral solids
+
+// A right regular prism: two parallel regular SideCount-gons of circumscribed
+// radius Radius in planes perpendicular to the frame's Z axis, separated by
+// Height and joined by rectangles.
+type Prism
+    implements ConvexSolid
+{
+    Frame: Frame3D;
+    SideCount: Integer;
+    Radius: Number;
+    Height: Number;
+}
+
+// A right antiprism: two parallel regular SideCount-gons rotated a half step
+// against each other and joined by a band of 2 * SideCount triangles.
+type Antiprism
+    implements ConvexSolid
+{
+    Frame: Frame3D;
+    SideCount: Integer;
+    Radius: Number;
+    Height: Number;
+}
+
+// A pyramid: the cone of a planar polygonal base with straight faces meeting
+// at the Apex.
+type Pyramid
+    implements Solid
+{
+    Base: Polygon3D;
+    Apex: Point3D;
+}
+
+// One of the five Platonic solids.
+// Value meanings: 0=Tetrahedron, 1=Cube, 2=Octahedron, 3=Dodecahedron,
+// 4=Icosahedron.
+type PlatonicSolidKind
+{
+    Value: Integer;
+}
+
+// A regular polyhedron of the given kind, centered at the frame origin in the
+// frame's orientation, with vertices at circumscribed radius Radius.
+type PlatonicSolid
+    implements ConvexSolid
+{
+    Kind: PlatonicSolidKind;
+    Frame: Frame3D;
+    Radius: Number;
+}
+
+// One of the thirteen Archimedean solids.
+// Value meanings: 0=TruncatedTetrahedron, 1=Cuboctahedron, 2=TruncatedCube,
+// 3=TruncatedOctahedron, 4=Rhombicuboctahedron, 5=TruncatedCuboctahedron,
+// 6=SnubCube, 7=Icosidodecahedron, 8=TruncatedDodecahedron,
+// 9=TruncatedIcosahedron, 10=Rhombicosidodecahedron,
+// 11=TruncatedIcosidodecahedron, 12=SnubDodecahedron.
+type ArchimedeanSolidKind
+{
+    Value: Integer;
+}
+
+// A semi-regular polyhedron of the given kind, centered at the frame origin
+// in the frame's orientation, with vertices at circumscribed radius Radius.
+type ArchimedeanSolid
+    implements ConvexSolid
+{
+    Kind: ArchimedeanSolidKind;
+    Frame: Frame3D;
+    Radius: Number;
+}
+
+//==
+// # Derived and implicit-form solids
+
+// A convex polytope given as the intersection of half-spaces. The intersection
+// is assumed bounded; redundant half-spaces are permitted.
+type ConvexPolytope3D
+    implements ConvexSolid
+{
+    Boundaries: Array<HalfSpace>;
+}

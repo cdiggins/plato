@@ -1,0 +1,220 @@
+//==
+// # Cameras and projections
+//
+// Cameras place an eye in the scene and define how 3D points project onto the
+// image plane. The view direction is the pose's forward axis. Clip distances
+// (Near, Far) and other scene-space distances are unit-agnostic Numbers in
+// scene units. Physically parameterized types (PhysicalCamera,
+// DepthOfFieldSettings, StereoCameraRig) use Length (meters) and Duration
+// (seconds), with photographic conventions (millimeter sensors, f-stops, ISO)
+// noted per field.
+
+// A placed camera: a rigid pose plus near and far clip distances bounding the
+// rendered depth range. Invariant: 0 < Near < Far.
+concept Camera
+    inherits Value
+{
+    Pose(x: Self): Pose3D;
+    Near(x: Self): Number;
+    Far(x: Self): Number;
+}
+
+// The projection family a camera uses.
+// Value meanings: 0=Perspective, 1=Orthographic, 2=Fisheye, 3=Equirectangular,
+// 4=Panoramic (cylindrical).
+type CameraProjectionKind
+{
+    Value: Integer;
+}
+
+// A pinhole perspective camera defined by a vertical field of view.
+// AspectRatio is image width over height; the horizontal field of view follows
+// from VerticalFov and AspectRatio.
+type PerspectiveCamera
+    implements Camera
+{
+    Pose: Pose3D;
+    VerticalFov: Angle;
+    AspectRatio: Number;
+    Near: Number;
+    Far: Number;
+}
+
+// A parallel-projection camera. OrthoHeight is the vertical extent of the view
+// volume in scene units; the width is OrthoHeight times AspectRatio.
+type OrthographicCamera
+    implements Camera
+{
+    Pose: Pose3D;
+    OrthoHeight: Number;
+    AspectRatio: Number;
+    Near: Number;
+    Far: Number;
+}
+
+// A camera parameterized like a real photographic body and lens. FocalLength
+// and FocusDistance are physical lengths (a 50mm lens is 0.05 meters);
+// SensorSize is in millimeters by photographic convention; FStop is the
+// aperture number N in f/N; Iso is ISO 12232 sensitivity; ShutterTime is the
+// exposure duration. Field of view follows from FocalLength and SensorSize;
+// exposure follows from FStop, ShutterTime, and Iso.
+type PhysicalCamera
+    implements Camera
+{
+    Pose: Pose3D;
+    FocalLength: Length;
+    SensorSize: Size2D;
+    FStop: Number;
+    FocusDistance: Length;
+    Iso: Number;
+    ShutterTime: Duration;
+    Near: Number;
+    Far: Number;
+}
+
+// The radial mapping of a fisheye lens: how the angle from the optical axis
+// maps to distance from the image center.
+// Value meanings: 0=Equidistant, 1=EquisolidAngle, 2=Orthographic,
+// 3=Stereographic.
+type FisheyeMappingKind
+{
+    Value: Integer;
+}
+
+// A wide-angle camera with a fisheye radial mapping. FieldOfView is the full
+// cone angle covered by the image circle; some mappings support a full
+// hemisphere or more.
+type FisheyeCamera
+    implements Camera
+{
+    Pose: Pose3D;
+    Mapping: FisheyeMappingKind;
+    FieldOfView: Angle;
+    Near: Number;
+    Far: Number;
+}
+
+// A spherical panorama camera mapping longitude to X and latitude to Y
+// (equirectangular, lat-long). Sweeps of 360 by 180 degrees capture the whole
+// sphere; smaller sweeps crop it.
+type EquirectangularCamera
+    implements Camera
+{
+    Pose: Pose3D;
+    LongitudeSweep: AngleInterval;
+    LatitudeSweep: AngleInterval;
+    Near: Number;
+    Far: Number;
+}
+
+// A cylindrical panorama camera. HorizontalSweep is the arc covered around the
+// pose's vertical axis; VerticalFov is the perspective field of view across
+// the cylinder height.
+type PanoramicCamera
+    implements Camera
+{
+    Pose: Pose3D;
+    HorizontalSweep: Angle;
+    VerticalFov: Angle;
+    Near: Number;
+    Far: Number;
+}
+
+// A perspective camera authored by aiming: positioned at Position, looking at
+// Target, with Up resolving the roll about the view axis.
+type LookAtCamera
+    implements Value
+{
+    Position: Point3D;
+    Target: Point3D;
+    Up: Direction3D;
+    VerticalFov: Angle;
+    AspectRatio: Number;
+    Near: Number;
+    Far: Number;
+}
+
+// The world-space projection rectangle for off-axis projection, given by three
+// of its corners; the fourth follows by parallelogram completion. The plane
+// need not be perpendicular to the view direction.
+type ProjectionPlane
+    implements Value
+{
+    LowerLeft: Point3D;
+    LowerRight: Point3D;
+    UpperLeft: Point3D;
+}
+
+// An asymmetric-frustum (off-axis) camera: an eye point plus an arbitrary
+// projection rectangle in world space. Serves head-tracked displays, CAVEs,
+// portals, and tiled display walls.
+type OffAxisCamera
+    implements Value
+{
+    Eye: Point3D;
+    Screen: ProjectionPlane;
+    Near: Number;
+    Far: Number;
+}
+
+// A stereo camera pair derived from a single template camera. The template's
+// pose is the rig center; each eye is offset by half of EyeSeparation along
+// the pose's right axis (typical human separation is 0.063 meters).
+// ConvergenceDistance is where the two view axes cross: the zero-parallax
+// plane.
+type StereoCameraRig
+    implements Value
+{
+    Template: PerspectiveCamera;
+    EyeSeparation: Length;
+    ConvergenceDistance: Length;
+}
+
+//==
+// # Camera optics and output regions
+
+// The rectangular pixel region a camera renders into, plus the interval that
+// normalized device depth is mapped onto. PixelBounds contains Min, excludes
+// Max.
+type Viewport
+    implements Value
+{
+    PixelBounds: IntegerBounds2D;
+    DepthRange: NumberInterval;
+}
+
+// Brown-Conrady lens distortion coefficients: K1, K2, and K3 are radial terms;
+// P1 and P2 are tangential (decentering) terms. All zero means an ideal lens.
+type LensDistortion
+    implements Value
+{
+    K1: Number;
+    K2: Number;
+    K3: Number;
+    P1: Number;
+    P2: Number;
+}
+
+// A tilt-shift style image shift, as signed fractions of sensor width and
+// height. Zero means the optical axis meets the sensor center; positive
+// Vertical shifts the image up (the architectural facade correction).
+type LensShift
+    implements Value
+{
+    Horizontal: Number;
+    Vertical: Number;
+}
+
+// Depth-of-field rendering controls. FocusDistance is the physical distance to
+// the focal plane; FStop widens or narrows the simulated aperture (smaller
+// numbers focus more shallowly); BladeCount shapes the bokeh polygon (0 means
+// a perfect circle); BladeRotation orients that polygon.
+type DepthOfFieldSettings
+    implements Value
+{
+    Enabled: Boolean;
+    FocusDistance: Length;
+    FStop: Number;
+    BladeCount: Integer;
+    BladeRotation: Angle;
+}

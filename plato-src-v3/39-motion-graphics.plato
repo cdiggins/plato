@@ -1,0 +1,214 @@
+//==
+// # Motion graphics
+//
+// After-Effects-style animation vocabulary: layer transforms, tweens and
+// timelines, staggered choreography, procedural motion (oscillators, wiggle,
+// shake), motion paths, and time manipulation. Durations are offsets from the
+// owning composition's start.
+
+// How a finished animation continues.
+// Value meanings: 0=Once (play through and end), 1=Loop (restart from the
+// beginning), 2=PingPong (alternate forward and reverse passes), 3=Hold (play
+// once, then hold the final value).
+type CycleKind
+{
+    Value: Integer;
+}
+
+// An After-Effects-style 2D layer transform. Rotation and scale pivot about
+// Anchor, expressed in the layer's own coordinates; Position places the anchor
+// in the parent's coordinates. Opacity composites the layer over its backdrop.
+type LayerTransform2D
+    implements Value
+{
+    Anchor: Point2D;
+    Position: Point2D;
+    Rotation: Angle;
+    Scale: Vector2;
+    Opacity: Proportion;
+}
+
+// A single eased transition of one value: From at the start to To at the end of
+// Duration, shaped by Easing, after an initial Delay. Sampling before the delay
+// yields From; after Delay + Duration, To.
+type Tween<T>
+    implements TimeVarying<T>
+{
+    From: T;
+    To: T;
+    Duration: Duration;
+    Delay: Duration;
+    Easing: EasingKind;
+}
+
+// A named span scheduled on a timeline. Start is the offset from the timeline's
+// start; Easing shapes the item's local progress over its Duration.
+type TimelineItem
+    implements Value
+{
+    Name: String;
+    Start: Duration;
+    Duration: Duration;
+    Easing: EasingKind;
+}
+
+// An ordered schedule of named spans. Duration is the total length; items may
+// overlap and need not cover the whole span.
+type Timeline
+    implements Value
+{
+    Name: String;
+    Duration: Duration;
+    Items: Array<TimelineItem>;
+}
+
+// Which end of a staggered group starts animating first.
+// Value meanings: 0=First (ripple from the first item), 1=Last (ripple from the
+// last), 2=Center (ripple outward from the middle), 3=Random.
+type StaggerOriginKind
+{
+    Value: Integer;
+}
+
+// Offsets copies of one animation across a group of items: item i starts
+// ItemDelay after its predecessor in ripple order. Easing reshapes the delay
+// distribution across the group (ease-in bunches early items together).
+type Stagger
+    implements Value
+{
+    Count: Integer;
+    ItemDelay: Duration;
+    Origin: StaggerOriginKind;
+    Easing: EasingKind;
+}
+
+// The waveform of a procedural oscillator.
+// Value meanings: 0=Sine, 1=Square, 2=Triangle, 3=Sawtooth, 4=Noise (smooth
+// pseudo-random).
+type OscillatorKind
+{
+    Value: Integer;
+}
+
+// A periodic scalar signal for procedural animation:
+// Bias + Amplitude * wave(Frequency * time + Phase). Phase shifts the waveform;
+// Bias recenters it.
+type Oscillator
+    implements Value, TimeVarying<Number>
+{
+    Kind: OscillatorKind;
+    Amplitude: Number;
+    Frequency: Frequency;
+    Phase: Angle;
+    Bias: Number;
+}
+
+// After-Effects-style wiggle: smooth fractal noise added to a property.
+// Frequency is the base wiggle rate; each of Octaves noise layers doubles the
+// frequency and multiplies amplitude by Persistence. Seed selects the noise
+// stream, so equal seeds replay identical motion.
+type WiggleMotion
+    implements Value
+{
+    Frequency: Frequency;
+    Octaves: Integer;
+    Amplitude: Number;
+    Persistence: Number;
+    Seed: Integer;
+}
+
+// Animates position along a 2D path. Progress in [0, 1] maps to arc length;
+// StartOffset shifts the starting point along the path; when OrientToPath is
+// true the moving element rotates to face along the path's tangent.
+type MotionPath2D
+    implements Value
+{
+    Path: Path2D;
+    OrientToPath: Boolean;
+    StartOffset: Proportion;
+}
+
+// Animates placement along a 3D path given as an ordered run of sampled poses
+// (interpolated between samples). StartOffset shifts the starting point; when
+// OrientToPath is true, orientation follows the path tangent instead of the
+// sampled orientations.
+type MotionPath3D
+    implements Value
+{
+    Poses: Array<Pose3D>;
+    OrientToPath: Boolean;
+    StartOffset: Proportion;
+}
+
+// Procedural camera shake: seeded noise applied to the camera pose. Amplitude
+// is the peak displacement in scene units; Damping is the exponential decay
+// rate per second (0 shakes indefinitely).
+type CameraShake
+    implements Value
+{
+    Amplitude: Number;
+    Frequency: Frequency;
+    Seed: Integer;
+    Damping: Number;
+}
+
+// Motion-blur rendering settings. ShutterAngle is the exposure window as an
+// angle of the full frame cycle (180 degrees exposes half the frame interval);
+// Samples is the number of sub-frame samples accumulated.
+type MotionBlurSettings
+    implements Value
+{
+    ShutterAngle: Angle;
+    Samples: Integer;
+}
+
+// Remaps playback time: sampling the track at composition time yields the
+// source time, in seconds, to show. Non-monotone tracks scrub backwards;
+// slopes above 1 fast-forward.
+type TimeRemap
+    implements Value
+{
+    Track: AnimationTrack<Number>;
+}
+
+// A playable range of frames under a fixed frame rate: the in point is shown
+// first and the out point is exclusive. Both frame times carry Rate.
+type FrameSequence
+    implements Value
+{
+    Rate: FrameRate;
+    InPoint: FrameTime;
+    OutPoint: FrameTime;
+}
+
+// Aligns animation timing to a musical grid. Triggers fire every Subdivision
+// beats (1 is every beat, 0.5 twice per beat), starting Offset beats into the
+// piece; combine with Tempo to reach seconds.
+type BeatSync
+    implements Value
+{
+    Tempo: Tempo;
+    Offset: BeatTime;
+    Subdivision: Number;
+}
+
+// Duplicates a layer with a cumulative transform: copy i applies Offset i
+// times, fading opacity toward EndOpacity across the run of copies.
+type MotionRepeater2D
+    implements Value
+{
+    Copies: Integer;
+    Offset: LayerTransform2D;
+    EndOpacity: Proportion;
+}
+
+// A trailing-echo effect: the layer is re-composited Count times at Spacing
+// intervals behind the current time, each echo's opacity scaled by Decay
+// relative to the previous.
+type MotionEcho
+    implements Value
+{
+    Count: Integer;
+    Spacing: Duration;
+    Decay: Proportion;
+}

@@ -1,0 +1,133 @@
+//==
+// # Easing
+//
+// Easing functions shape the rate of change of an animated value: pure maps from
+// normalized time in [0, 1] to normalized progress. Progress is nominally in
+// [0, 1], but the Back and Elastic families intentionally overshoot. Keyframes,
+// tweens, and transitions select easings by EasingKind or carry one of the
+// parameterized easing records declared here.
+
+// A pure easing curve: maps normalized time to normalized progress. Eval(0)
+// yields 0 and Eval(1) yields 1; intermediate values may leave [0, 1]
+// (overshoot and anticipation).
+concept EasingFunction
+    inherits Procedural<Number, Number>
+{ }
+
+// The family (base shape) of a classic easing curve.
+// Value meanings: 0=Linear, 1=Quad, 2=Cubic, 3=Quart, 4=Quint, 5=Sine,
+// 6=Expo, 7=Circ, 8=Back, 9=Elastic, 10=Bounce.
+type EasingFamilyKind
+{
+    Value: Integer;
+}
+
+// The phase of a classic easing curve: where its acceleration is concentrated.
+// Value meanings: 0=In (accelerate from rest), 1=Out (decelerate to rest),
+// 2=InOut (accelerate then decelerate).
+type EasingPhaseKind
+{
+    Value: Integer;
+}
+
+// Selects a curve from the full classic easing catalog. Value 0 is Linear; the
+// rest enumerate ten families in three phases each, family-major:
+// Value = 1 + (family - 1) * 3 + phase, with family 1=Quad .. 10=Bounce as in
+// EasingFamilyKind and phase 0=In, 1=Out, 2=InOut as in EasingPhaseKind.
+// Full catalog:
+// 0=Linear,
+// 1=QuadIn, 2=QuadOut, 3=QuadInOut,
+// 4=CubicIn, 5=CubicOut, 6=CubicInOut,
+// 7=QuartIn, 8=QuartOut, 9=QuartInOut,
+// 10=QuintIn, 11=QuintOut, 12=QuintInOut,
+// 13=SineIn, 14=SineOut, 15=SineInOut,
+// 16=ExpoIn, 17=ExpoOut, 18=ExpoInOut,
+// 19=CircIn, 20=CircOut, 21=CircInOut,
+// 22=BackIn, 23=BackOut, 24=BackInOut,
+// 25=ElasticIn, 26=ElasticOut, 27=ElasticInOut,
+// 28=BounceIn, 29=BounceOut, 30=BounceInOut.
+type EasingKind
+{
+    Value: Integer;
+}
+
+// A CSS-style cubic Bezier easing. The curve's endpoints are pinned at (0, 0)
+// and (1, 1); P1 and P2 are the two free control points. P1.X and P2.X lie in
+// [0, 1] so the curve remains a function of time; Y components may leave [0, 1]
+// to overshoot.
+type CubicBezierEasing
+    implements Value, EasingFunction
+{
+    P1: Vector2;
+    P2: Vector2;
+}
+
+// Where the jump occurs within each interval of a stepped easing, following the
+// CSS steps() model.
+// Value meanings: 0=JumpStart (rise at interval start), 1=JumpEnd (rise at
+// interval end), 2=JumpNone (endpoints held; Steps must exceed 1),
+// 3=JumpBoth (jumps at both endpoints).
+type StepPositionKind
+{
+    Value: Integer;
+}
+
+// A staircase easing that advances in a fixed number of equal jumps rather than
+// continuously. Steps is at least 1.
+type StepEasing
+    implements Value, EasingFunction
+{
+    Steps: Integer;
+    Position: StepPositionKind;
+}
+
+// A polynomial smoothstep easing with zero derivatives at both endpoints.
+// Order selects the polynomial: 0=linear, 1=cubic smoothstep (3t^2 - 2t^3),
+// 2=quintic smootherstep; order N yields a polynomial of degree 2N + 1 with N
+// vanishing derivatives at each end.
+type SmoothstepEasing
+    implements Value, EasingFunction
+{
+    Order: Integer;
+}
+
+// Parameters of a damped spring used for physical-feeling motion. All three are
+// unitless tuning values for animation feel, not physical quantities. The
+// spring is critically damped (no oscillation, fastest settle) when Damping
+// equals twice the square root of Stiffness times Mass.
+type SpringParameters
+    implements Value
+{
+    Stiffness: Number;
+    Damping: Number;
+    Mass: Number;
+}
+
+// Shape parameters for the Elastic easing family. Amplitude scales the
+// overshoot (1 or greater; 1 is the classic curve); Period is the oscillation
+// period as a fraction of the total duration (classic value 0.3).
+type ElasticParameters
+    implements Value
+{
+    Amplitude: Number;
+    Period: Number;
+}
+
+// Shape parameter for the Back easing family. Overshoot controls how far the
+// curve pulls back before advancing (or overshoots past 1); the classic value
+// is 1.70158, which overshoots by about 10 percent.
+type BackParameters
+    implements Value
+{
+    Overshoot: Number;
+}
+
+// Shape parameters for the Bounce easing family. Bounces counts the rebounds
+// after the initial fall; Restitution is the fraction of height retained by
+// each successive bounce.
+type BounceParameters
+    implements Value
+{
+    Bounces: Integer;
+    Restitution: Proportion;
+}

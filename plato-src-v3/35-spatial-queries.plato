@@ -1,0 +1,261 @@
+//==
+// # Spatial queries
+//
+// Query descriptions and result records for raycasts, proximity searches,
+// overlap tests, and culling. Queries are plain data so they can be batched,
+// serialized, and replayed. Conventions: distances are world-space and
+// non-negative; a MaxDistance that is zero or negative means "unbounded";
+// FilterMask is a category bitmask combined with a candidate's category bits
+// by bitwise AND (non-zero passes), and -1 (all bits set) accepts everything.
+
+//==
+// ## Ray queries
+
+// A bounded, filtered 2D raycast request.
+type RayQuery2D
+    implements Value
+{
+    Ray: Ray2D;
+    MaxDistance: Number;
+    FilterMask: Integer;
+}
+
+// A bounded, filtered 3D raycast request.
+type RayQuery3D
+    implements Value
+{
+    Ray: Ray3D;
+    MaxDistance: Number;
+    FilterMask: Integer;
+}
+
+// A sphere-sweep (thick ray) request: a sphere of the given radius travels
+// along the ray until it first touches something.
+type SweepQuery3D
+    implements Value
+{
+    Ray: Ray3D;
+    Radius: Number;
+    MaxDistance: Number;
+    FilterMask: Integer;
+}
+
+// The result of a 2D raycast. When Hit is false the remaining fields are
+// meaningless. Distance is measured from the ray origin along its
+// direction; Normal points against the ray (out of the struck primitive);
+// PrimitiveIndex identifies the struck primitive in the caller's list,
+// -1 when inapplicable.
+type RayHit2D
+    implements Value
+{
+    Hit: Boolean;
+    Distance: Number;
+    Position: Point2D;
+    Normal: Direction2D;
+    PrimitiveIndex: Integer;
+}
+
+// The result of a 3D raycast against triangulated geometry. When Hit is
+// false the remaining fields are meaningless. Face is the struck triangle
+// (-1 when the target is not a mesh); Barycentric locates the hit within
+// that triangle; Uv is the interpolated surface parameter at the hit,
+// (0, 0) when the target carries no UVs.
+type RayHit3D
+    implements Value
+{
+    Hit: Boolean;
+    Distance: Number;
+    Position: Point3D;
+    Normal: Direction3D;
+    Face: FaceIndex;
+    Barycentric: BarycentricCoordinate;
+    Uv: UvCoordinate;
+}
+
+//==
+// ## Proximity queries
+
+// A k-nearest-neighbors request around a 2D point. NeighborCount is the
+// maximum number of results; MaxDistance of zero or less means unbounded.
+type KNearestQuery2D
+    implements Value
+{
+    Center: Point2D;
+    NeighborCount: Integer;
+    MaxDistance: Number;
+}
+
+// A k-nearest-neighbors request around a 3D point. NeighborCount is the
+// maximum number of results; MaxDistance of zero or less means unbounded.
+type KNearestQuery3D
+    implements Value
+{
+    Center: Point3D;
+    NeighborCount: Integer;
+    MaxDistance: Number;
+}
+
+// An all-points-within-radius request around a 2D point. MaxCount of zero
+// or less means unlimited.
+type RadiusQuery2D
+    implements Value
+{
+    Center: Point2D;
+    Radius: Number;
+    MaxCount: Integer;
+}
+
+// An all-points-within-radius request around a 3D point. MaxCount of zero
+// or less means unlimited.
+type RadiusQuery3D
+    implements Value
+{
+    Center: Point3D;
+    Radius: Number;
+    MaxCount: Integer;
+}
+
+// The result of a nearest-neighbor search: parallel arrays of item indices
+// (into the caller's item list) and their distances from the query point,
+// sorted ascending by distance. Empty arrays mean nothing was in range.
+type NearestNeighbors
+    implements Value
+{
+    Indices: Array<Integer>;
+    Distances: Array<Number>;
+}
+
+// The closest point on some 2D primitive to a query point. PrimitiveIndex
+// identifies which primitive in the caller's list (-1 when the target is a
+// single object); Parameter is the normalized position along the primitive
+// when it is curve-like, 0 otherwise.
+type ClosestPointResult2D
+    implements Value
+{
+    Position: Point2D;
+    Distance: Number;
+    PrimitiveIndex: Integer;
+    Parameter: Number;
+}
+
+// The closest point on a 3D surface to a query point. Face is the triangle
+// holding the closest point (-1 when the target is not a mesh); Barycentric
+// locates it within that triangle.
+type ClosestPointResult3D
+    implements Value
+{
+    Position: Point3D;
+    Distance: Number;
+    Face: FaceIndex;
+    Barycentric: BarycentricCoordinate;
+}
+
+// The closest pair between two indexed sets: IndexA into the first set,
+// IndexB into the second, and the separating distance (0 when touching or
+// overlapping).
+type ClosestPairResult
+    implements Value
+{
+    IndexA: Integer;
+    IndexB: Integer;
+    Distance: Number;
+}
+
+//==
+// ## Overlap and containment
+
+// How one region relates to another, from the perspective of the first
+// argument A against the second B.
+// Value meanings: 0=Disjoint (no shared points), 1=Intersects (boundaries
+// or interiors overlap without full containment), 2=Contains (A fully
+// contains B), 3=Within (A lies fully inside B).
+type ContainmentKind
+{
+    Value: Integer;
+}
+
+// A filtered request for everything overlapping a 2D axis-aligned region.
+type OverlapQuery2D
+    implements Value
+{
+    Bounds: Bounds2D;
+    FilterMask: Integer;
+}
+
+// A filtered request for everything overlapping a 3D axis-aligned region.
+type OverlapQuery3D
+    implements Value
+{
+    Bounds: Bounds3D;
+    FilterMask: Integer;
+}
+
+// The intersection of two 2D primitives: a flag plus the discrete
+// intersection points (empty when Intersects is false, or when the overlap
+// is a region rather than isolated points).
+type IntersectionResult2D
+    implements Value
+{
+    Intersects: Boolean;
+    Points: Array<Point2D>;
+}
+
+// The intersection of two 3D primitives: a flag plus the discrete
+// intersection points (empty when Intersects is false, or when the overlap
+// is a curve or region rather than isolated points).
+type IntersectionResult3D
+    implements Value
+{
+    Intersects: Boolean;
+    Points: Array<Point3D>;
+}
+
+// The outcome of culling an indexed set against a convex volume (typically
+// a camera frustum): indices fully inside, indices straddling the boundary,
+// and the count of items rejected outright.
+type FrustumCullResult
+    implements Value
+{
+    FullyVisible: Array<Integer>;
+    PartiallyVisible: Array<Integer>;
+    CulledCount: Integer;
+}
+
+//==
+// ## Query concepts
+
+// Anything a 2D ray can be cast against.
+concept RayIntersectable2D
+{
+    Raycast(x: Self, query: RayQuery2D): RayHit2D;
+}
+
+// Anything a 3D ray can be cast against.
+concept RayIntersectable3D
+{
+    Raycast(x: Self, query: RayQuery3D): RayHit3D;
+}
+
+// Anything that can report its closest point to a 2D query point.
+concept ClosestPointQueryable2D
+{
+    ClosestPoint(x: Self, point: Point2D): ClosestPointResult2D;
+}
+
+// Anything that can report its closest point to a 3D query point.
+concept ClosestPointQueryable3D
+{
+    ClosestPoint(x: Self, point: Point3D): ClosestPointResult3D;
+}
+
+// Anything that can answer k-nearest-neighbor searches over 2D points.
+concept NearestNeighborQueryable2D
+{
+    FindNearest(x: Self, query: KNearestQuery2D): NearestNeighbors;
+}
+
+// Anything that can answer k-nearest-neighbor searches over 3D points.
+concept NearestNeighborQueryable3D
+{
+    FindNearest(x: Self, query: KNearestQuery3D): NearestNeighbors;
+}

@@ -1,0 +1,247 @@
+//==
+// # Splines
+//
+// Control-point curves: Bezier, B-spline, NURBS, Hermite, Catmull-Rom, and
+// piecewise composites. Parallel arrays (points + weights, points + tangents)
+// must have equal counts; that invariant is documented rather than encoded.
+
+//==
+// # Knots
+
+// A non-decreasing sequence of parameter values partitioning a B-spline or
+// NURBS domain. For a curve with N control points of degree D the knot count
+// must be N + D + 1.
+type KnotVector
+    implements Value
+{
+    Knots: Array<Number>;
+}
+
+//==
+// # Bezier curves of arbitrary degree
+
+// A Bezier curve of arbitrary degree in the plane: degree = control point
+// count - 1. Interpolates the first and last control points.
+type BezierCurve2D
+    implements Curve2D
+{
+    ControlPoints: Array<Point2D>;
+}
+
+// A Bezier curve of arbitrary degree in space: degree = control point
+// count - 1. Interpolates the first and last control points.
+type BezierCurve3D
+    implements Curve3D
+{
+    ControlPoints: Array<Point3D>;
+}
+
+// A rational Bezier curve in the plane: per-point weights (same count as
+// ControlPoints) pull the curve toward heavier points. Represents conic
+// sections exactly.
+type RationalBezierCurve2D
+    implements Curve2D
+{
+    ControlPoints: Array<Point2D>;
+    Weights: Array<Number>;
+}
+
+// A rational Bezier curve in space: per-point weights (same count as
+// ControlPoints) pull the curve toward heavier points.
+type RationalBezierCurve3D
+    implements Curve3D
+{
+    ControlPoints: Array<Point3D>;
+    Weights: Array<Number>;
+}
+
+//==
+// # B-splines and NURBS
+
+// A piecewise-polynomial B-spline curve in the plane. Knots must hold
+// ControlPoints count + Degree + 1 values.
+type BSplineCurve2D
+    implements Curve2D
+{
+    ControlPoints: Array<Point2D>;
+    Degree: Integer;
+    Knots: KnotVector;
+}
+
+// A piecewise-polynomial B-spline curve in space. Knots must hold
+// ControlPoints count + Degree + 1 values.
+type BSplineCurve3D
+    implements Curve3D
+{
+    ControlPoints: Array<Point3D>;
+    Degree: Integer;
+    Knots: KnotVector;
+}
+
+// A non-uniform rational B-spline curve in the plane: a B-spline with
+// per-point weights (same count as ControlPoints). The CAD interchange
+// standard; represents conics exactly.
+type NurbsCurve2D
+    implements Curve2D
+{
+    ControlPoints: Array<Point2D>;
+    Weights: Array<Number>;
+    Degree: Integer;
+    Knots: KnotVector;
+}
+
+// A non-uniform rational B-spline curve in space: a B-spline with per-point
+// weights (same count as ControlPoints).
+type NurbsCurve3D
+    implements Curve3D
+{
+    ControlPoints: Array<Point3D>;
+    Weights: Array<Number>;
+    Degree: Integer;
+    Knots: KnotVector;
+}
+
+//==
+// # Hermite curves
+
+// A single cubic Hermite segment in the plane: interpolates Start to End with
+// the given outgoing and incoming tangents.
+type HermiteCurve2D
+    implements Curve2D
+{
+    Start: Point2D;
+    StartTangent: Vector2;
+    End: Point2D;
+    EndTangent: Vector2;
+}
+
+// A single cubic Hermite segment in space: interpolates Start to End with the
+// given outgoing and incoming tangents.
+type HermiteCurve3D
+    implements Curve3D
+{
+    Start: Point3D;
+    StartTangent: Vector3;
+    End: Point3D;
+    EndTangent: Vector3;
+}
+
+// A piecewise cubic Hermite spline in the plane: interpolates every point with
+// an explicit tangent per point (same count as Points). Closed joins the last
+// point back to the first.
+type HermiteSpline2D
+    implements Curve2D
+{
+    Points: Array<Point2D>;
+    Tangents: Array<Vector2>;
+    Closed: Boolean;
+}
+
+// A piecewise cubic Hermite spline in space: interpolates every point with an
+// explicit tangent per point (same count as Points).
+type HermiteSpline3D
+    implements Curve3D
+{
+    Points: Array<Point3D>;
+    Tangents: Array<Vector3>;
+    Closed: Boolean;
+}
+
+//==
+// # Interpolating splines
+
+// A Catmull-Rom spline in the plane: interpolates every point with tangents
+// derived from neighbors. Alpha selects the parameterization: 0 = uniform,
+// 0.5 = centripetal (cusp-free), 1 = chordal.
+type CatmullRomCurve2D
+    implements Curve2D
+{
+    Points: Array<Point2D>;
+    Alpha: Number;
+    Closed: Boolean;
+}
+
+// A Catmull-Rom spline in space: interpolates every point with tangents
+// derived from neighbors. Alpha selects the parameterization: 0 = uniform,
+// 0.5 = centripetal (cusp-free), 1 = chordal.
+type CatmullRomCurve3D
+    implements Curve3D
+{
+    Points: Array<Point3D>;
+    Alpha: Number;
+    Closed: Boolean;
+}
+
+// A Kochanek-Bartels (TCB) spline in the plane: per-point Tension, Continuity,
+// and Bias arrays (same count as Points) shape the tangents at each knot.
+// The classic keyframe-animation spline.
+type TcbSpline2D
+    implements Curve2D
+{
+    Points: Array<Point2D>;
+    Tensions: Array<Number>;
+    Continuities: Array<Number>;
+    Biases: Array<Number>;
+    Closed: Boolean;
+}
+
+// A Kochanek-Bartels (TCB) spline in space: per-point Tension, Continuity,
+// and Bias arrays (same count as Points) shape the tangents at each knot.
+type TcbSpline3D
+    implements Curve3D
+{
+    Points: Array<Point3D>;
+    Tensions: Array<Number>;
+    Continuities: Array<Number>;
+    Biases: Array<Number>;
+    Closed: Boolean;
+}
+
+// A piecewise-linear interpolating spline in the plane: the curve-as-function
+// view of a chain of points (the geometric chain itself is Polyline2D,
+// file 19). Closed joins the last point back to the first.
+type LinearSpline2D
+    implements Curve2D
+{
+    Points: Array<Point2D>;
+    Closed: Boolean;
+}
+
+// A piecewise-linear interpolating spline in space: the curve-as-function view
+// of a chain of points (the geometric chain itself is Polyline3D, file 19).
+type LinearSpline3D
+    implements Curve3D
+{
+    Points: Array<Point3D>;
+    Closed: Boolean;
+}
+
+// A natural cubic spline through scalar samples: interpolates Values at the
+// strictly increasing Parameters (same counts), with zero second derivative
+// at the ends. A smooth Curve1D for profiles and channels.
+type NaturalCubicSpline1D
+    implements Curve1D
+{
+    Parameters: Array<Number>;
+    Values: Array<Number>;
+}
+
+//==
+// # Composite Bezier curves
+
+// A chain of cubic Bezier segments in the plane; consecutive segments must
+// share endpoints (P3 of one equals P0 of the next). Font glyphs and vector
+// paths in curve form.
+type CompositeBezier2D
+    implements Curve2D
+{
+    Segments: Array<CubicBezier2D>;
+}
+
+// A chain of cubic Bezier segments in space; consecutive segments must share
+// endpoints (P3 of one equals P0 of the next).
+type CompositeBezier3D
+    implements Curve3D
+{
+    Segments: Array<CubicBezier3D>;
+}

@@ -1,0 +1,113 @@
+//==
+// # Mesh attributes
+//
+// Named data channels layered over a base mesh: normals, UVs, colors,
+// weights, tangents. A channel's storage length is dictated by its domain
+// (per-vertex, per-face, per-corner, per-edge, or uniform). Channels are
+// parallel arrays; they never alter the base mesh's connectivity.
+
+// Which mesh element an attribute's values attach to.
+// Value meanings: 0=PerVertex (one value per vertex), 1=PerFace (one value
+// per face), 2=PerCorner (one value per face-vertex slot, allowing seams and
+// hard edges), 3=PerEdge (one value per undirected edge), 4=Uniform (a
+// single value for the whole mesh).
+type AttributeDomainKind
+{
+    Value: Integer;
+}
+
+// A named channel of per-element values. The length of Values must equal
+// the element count implied by Domain (exactly 1 when Uniform). Names are
+// unique within one channel group of a mesh.
+type MeshAttribute<T>
+{
+    Name: String;
+    Domain: AttributeDomainKind;
+    Values: Array<T>;
+}
+
+// An orthonormal surface frame for normal mapping and anisotropic shading.
+// Handedness is +1 or -1: the sign relating Bitangent to the cross product
+// of Normal and Tangent (mirrored UV islands flip it).
+type TangentBasis
+    implements Value
+{
+    Tangent: Direction3D;
+    Bitangent: Direction3D;
+    Normal: Direction3D;
+    Handedness: Number;
+}
+
+// A triangle mesh plus typed attribute channels, grouped by value type.
+// An absent group is an empty array. Well-known channel names include
+// "normal" (PerVertex or PerCorner Vector3), "uv0" (PerCorner UvCoordinate),
+// and "color" (PerVertex Color).
+type RichMesh3D
+    implements Value, Meshable3D
+{
+    Mesh: TriangleMesh3D;
+    NumberChannels: Array<MeshAttribute<Number>>;
+    IntegerChannels: Array<MeshAttribute<Integer>>;
+    VectorChannels: Array<MeshAttribute<Vector3>>;
+    UvChannels: Array<MeshAttribute<UvCoordinate>>;
+    ColorChannels: Array<MeshAttribute<Color>>;
+    TangentChannels: Array<MeshAttribute<TangentBasis>>;
+}
+
+//==
+// ## UV layout bookkeeping
+
+// Mesh edges across which UV coordinates are discontinuous: texture seams.
+// Pairs are canonical (A.Value <= B.Value).
+type UvSeam
+    implements Value
+{
+    Edges: Array<VertexPair>;
+}
+
+// A connected set of faces that maps to one contiguous region of UV space.
+// UvBounds is that region, expressed in UV space via Bounds2D (X = U, Y = V).
+type UvChart
+    implements Value
+{
+    Faces: Array<FaceIndex>;
+    UvBounds: Bounds2D;
+}
+
+// A complete UV layout: charts packed into the unit UV square at the texel
+// resolution AtlasSize, the seams the unwrap introduced, and the padding
+// (in texels) kept between charts to avoid bleeding.
+type UvAtlas
+    implements Value
+{
+    Charts: Array<UvChart>;
+    Seams: UvSeam;
+    AtlasSize: IntegerSize2D;
+    PaddingTexels: Integer;
+}
+
+//==
+// ## Deformation-support channels
+
+// A named displacement layer over a base mesh's vertices: blend shapes,
+// corrective sculpts. PositionDeltas[v] is added to base position v when the
+// target is applied at weight 1; deltas scale linearly with weight. An empty
+// NormalDeltas array means "recompute normals after applying".
+type MorphTarget3D
+    implements Value
+{
+    Name: String;
+    PositionDeltas: Array<Vector3>;
+    NormalDeltas: Array<Vector3>;
+}
+
+// A named weighted subset of vertices: soft selections, deformer influence
+// regions, pinning masks. Vertices and Weights are parallel arrays; weights
+// lie in [0, 1]; vertices not listed have weight 0.
+type VertexGroup
+    implements Value
+{
+    Name: String;
+    Vertices: Array<VertexIndex>;
+    Weights: Array<Number>;
+}

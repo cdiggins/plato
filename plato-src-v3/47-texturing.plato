@@ -1,0 +1,195 @@
+//==
+// # Texturing
+//
+// Textures as GPU-facing descriptors plus the sampling state used to read
+// them. Descriptors carry name, dimensions, format, and mip count; the pixel
+// data itself lives in image types (file 45: Bitmap, FloatImage, MipChain,
+// VolumeImage, CubemapImage). Procedural texture types describe patterns
+// evaluated at UV coordinates rather than stored texels.
+
+//==
+// ## Sampling state
+
+// How texture coordinates outside [0, 1] are handled along one axis.
+// Value meanings: 0=Repeat, 1=ClampToEdge, 2=MirroredRepeat, 3=ClampToBorder,
+// 4=MirrorClampToEdge.
+type WrapModeKind
+{
+    Value: Integer;
+}
+
+// How texels are filtered during sampling, including across mip levels.
+// Value meanings: 0=Nearest, 1=Linear, 2=NearestMipNearest,
+// 3=LinearMipNearest, 4=NearestMipLinear, 5=LinearMipLinear (trilinear),
+// 6=Anisotropic.
+type FilterModeKind
+{
+    Value: Integer;
+}
+
+// Complete sampling state for reading a texture: per-axis wrap modes, the
+// filter, the maximum anisotropy ratio (1 disables), a mip level-of-detail
+// bias, and the border color used by ClampToBorder.
+type TextureSampler
+    implements Value
+{
+    WrapU: WrapModeKind;
+    WrapV: WrapModeKind;
+    WrapW: WrapModeKind;
+    Filter: FilterModeKind;
+    Anisotropy: Number;
+    MipBias: Number;
+    BorderColor: Color;
+}
+
+//==
+// ## Texture descriptors
+
+// A 2D texture descriptor: dimensions, texel format, and mip count. A
+// MipLevels of 0 requests a full chain down to 1x1. Pixel data lives in
+// images (Bitmap, FloatImage, or MipChain), not in the descriptor.
+type Texture2D
+    implements Value
+{
+    Name: String;
+    Size: IntegerSize2D;
+    Format: PixelFormatKind;
+    MipLevels: Integer;
+}
+
+// A 3D (volume) texture descriptor. Pixel data lives in a VolumeImage or an
+// equivalent layer stack. A MipLevels of 0 requests a full chain.
+type Texture3D
+    implements Value
+{
+    Name: String;
+    Size: IntegerSize3D;
+    Format: PixelFormatKind;
+    MipLevels: Integer;
+}
+
+// A cubemap descriptor: six square faces of FaceSize texels per side. Pixel
+// data lives in a CubemapImage. A MipLevels of 0 requests a full chain.
+type TextureCube
+    implements Value
+{
+    Name: String;
+    FaceSize: Integer;
+    Format: PixelFormatKind;
+    MipLevels: Integer;
+}
+
+// A 2D texture-array descriptor: LayerCount same-sized layers addressable by
+// index in shaders.
+type TextureArrayDescriptor
+    implements Value
+{
+    Name: String;
+    Size: IntegerSize2D;
+    LayerCount: Integer;
+    Format: PixelFormatKind;
+    MipLevels: Integer;
+}
+
+// How a cubemap or panorama is laid out when stored inside a single 2D image.
+// Value meanings: 0=HorizontalCross, 1=VerticalCross, 2=HorizontalStrip,
+// 3=VerticalStrip, 4=Equirectangular.
+type CubemapLayoutKind
+{
+    Value: Integer;
+}
+
+//==
+// ## UV addressing and bindings
+
+// An affine transform applied to UV coordinates before sampling, composed as
+// Tiling (scale) first, then Rotation, then Offset.
+type UvTransform
+    implements Value
+{
+    Offset: Vector2;
+    Rotation: Angle;
+    Tiling: Vector2;
+}
+
+// How texture coordinates are generated for a surface.
+// Value meanings: 0=Uv (authored coordinates), 1=Planar, 2=Triplanar,
+// 3=Spherical, 4=Cylindrical, 5=Box, 6=ScreenSpace.
+type TextureProjectionKind
+{
+    Value: Integer;
+}
+
+// Which channels of a sampled texel a consumer reads.
+// Value meanings: 0=R, 1=G, 2=B, 3=A, 4=RG, 5=RGB, 6=RGBA.
+type TextureChannelMaskKind
+{
+    Value: Integer;
+}
+
+// A texture wired for use: the descriptor, its sampling state, a UV
+// transform, which UV set of the mesh to use (zero-based), and which channels
+// to read. The unit of texturing that materials and shaders reference.
+type TextureBinding
+    implements Value
+{
+    Texture: Texture2D;
+    Sampler: TextureSampler;
+    Transform: UvTransform;
+    UvSet: Integer;
+    Channels: TextureChannelMaskKind;
+}
+
+//==
+// ## Procedural textures
+
+// A pattern evaluated directly at a UV coordinate instead of stored texels.
+// Implementations are resolution-independent and infinitely tileable unless
+// documented otherwise.
+concept ProceduralTexture
+    inherits Value
+{
+    ColorAt(x: Self, uv: UvCoordinate): Color;
+}
+
+// A two-color checkerboard; Tiling is the number of A/B cell pairs across
+// each UV axis.
+type CheckerTexture
+    implements ProceduralTexture
+{
+    ColorA: Color;
+    ColorB: Color;
+    Tiling: Vector2;
+}
+
+// A linear gradient across UV space: the gradient ramp swept along the given
+// direction angle (0 sweeps left to right).
+type GradientTexture
+    implements ProceduralTexture
+{
+    Gradient: ColorGradient;
+    Angle: Angle;
+}
+
+// Fractal (fBm) noise: base Frequency in cycles per UV tile, Octaves layers
+// with Lacunarity frequency growth and Gain amplitude falloff per octave,
+// deterministically seeded.
+type NoiseTexture
+    implements ProceduralTexture
+{
+    Frequency: Number;
+    Octaves: Integer;
+    Lacunarity: Number;
+    Gain: Number;
+    Seed: Integer;
+}
+
+// Triplanar projection settings: sample along each world axis and blend by
+// surface normal. Higher BlendSharpness narrows the blend bands; Tiling
+// scales the projected UVs.
+type TriplanarProjection
+    implements Value
+{
+    BlendSharpness: Number;
+    Tiling: Vector2;
+}

@@ -1,0 +1,264 @@
+//==
+// # Rigid-body dynamics
+//
+// Mass properties, rigid-body state, applied forces and impulses,
+// environmental force models, surface materials, and simulation stepping
+// parameters. Linear quantities are in meters, kilograms, and seconds;
+// angular quantities are in radians.
+
+//==
+// # Motion kind and mass properties
+
+// How a body participates in dynamics.
+// Value meanings: 0=Static (never moves), 1=Kinematic (moved externally,
+// treated as infinitely massive), 2=Dynamic (integrates forces and impulses).
+type BodyMotionKind
+{
+    Value: Integer;
+}
+
+// The inertial properties of a planar rigid body: total mass, center of mass
+// in the body's local frame (meters), and the scalar moment of inertia about
+// the out-of-plane axis through the center of mass.
+type MassProperties2D
+    implements Value
+{
+    Mass: Mass;
+    CenterOfMass: Point2D;
+    MomentOfInertia: MomentOfInertia;
+}
+
+// The inertial properties of a spatial rigid body: total mass, center of mass
+// in the body's local frame (meters), and the inertia tensor about the center
+// of mass in body space, in kilogram-square-meters.
+type MassProperties3D
+    implements Value
+{
+    Mass: Mass;
+    CenterOfMass: Point3D;
+    InertiaTensor: SymmetricMatrix3x3;
+}
+
+//==
+// # Rigid bodies
+
+// A planar rigid body. LinearVelocity is in meters per second; LinearDamping
+// and AngularDamping are exponential velocity decay rates in units of one per
+// second (0 = none); GravityScale is a dimensionless multiplier on world
+// gravity (1 = normal, 0 = unaffected).
+type RigidBody2D
+    implements Value
+{
+    Pose: Pose2D;
+    LinearVelocity: Vector2;
+    AngularVelocity: AngularVelocity;
+    MassProperties: MassProperties2D;
+    Motion: BodyMotionKind;
+    LinearDamping: Number;
+    AngularDamping: Number;
+    GravityScale: Number;
+}
+
+// A spatial rigid body. LinearVelocity is in meters per second;
+// AngularVelocity is in radians per second about each world axis;
+// LinearDamping and AngularDamping are exponential velocity decay rates in
+// units of one per second (0 = none); GravityScale is a dimensionless
+// multiplier on world gravity (1 = normal, 0 = unaffected).
+type RigidBody3D
+    implements Value
+{
+    Pose: Pose3D;
+    LinearVelocity: Vector3;
+    AngularVelocity: Vector3;
+    MassProperties: MassProperties3D;
+    Motion: BodyMotionKind;
+    LinearDamping: Number;
+    AngularDamping: Number;
+    GravityScale: Number;
+}
+
+//==
+// # Applied forces and impulses
+
+// A force applied to a planar body: the force in newtons and the world-space
+// point of application in meters.
+type AppliedForce2D
+    implements Value
+{
+    Force: Vector2;
+    ApplicationPoint: Point2D;
+}
+
+// A force applied to a spatial body: the force in newtons and the world-space
+// point of application in meters.
+type AppliedForce3D
+    implements Value
+{
+    Force: Vector3;
+    ApplicationPoint: Point3D;
+}
+
+// An instantaneous impulse applied to a planar body: the impulse in
+// newton-seconds and the world-space point of application in meters.
+type AppliedImpulse2D
+    implements Value
+{
+    Impulse: Vector2;
+    ApplicationPoint: Point2D;
+}
+
+// An instantaneous impulse applied to a spatial body: the impulse in
+// newton-seconds and the world-space point of application in meters.
+type AppliedImpulse3D
+    implements Value
+{
+    Impulse: Vector3;
+    ApplicationPoint: Point3D;
+}
+
+// An outward radial impulse (explosion): bodies within Radius of Center
+// receive an impulse of up to Magnitude directed away from Center, falling
+// off linearly to zero at Radius.
+type RadialImpulse3D
+    implements Value
+{
+    Center: Point3D;
+    Magnitude: Impulse;
+    Radius: Length;
+}
+
+//==
+// # Environmental force models
+
+// A model of an environmental force acting on planar bodies. ForceOn
+// evaluates the world-space force, in newtons, exerted on the given body in
+// its current state.
+concept ForceModel2D
+{
+    ForceOn(x: Self, body: RigidBody2D): Vector2;
+}
+
+// A model of an environmental force acting on spatial bodies. ForceOn
+// evaluates the world-space force, in newtons, exerted on the given body in
+// its current state.
+concept ForceModel3D
+{
+    ForceOn(x: Self, body: RigidBody3D): Vector3;
+}
+
+// Uniform planar gravity: the same acceleration, in meters per second
+// squared, applied to every dynamic body regardless of position.
+type UniformGravity2D
+    implements Value
+{
+    Acceleration: Vector2;
+}
+
+// Uniform spatial gravity: the same acceleration, in meters per second
+// squared, applied to every dynamic body regardless of position (e.g.
+// (0, -9.81, 0)).
+type UniformGravity
+    implements Value
+{
+    Acceleration: Vector3;
+}
+
+// Newtonian point gravity: bodies are attracted toward Center with
+// acceleration mu / r^2. GravitationalParameter is mu = G * M in cubic meters
+// per second squared.
+type PointGravity
+    implements Value
+{
+    Center: Point3D;
+    GravitationalParameter: Number;
+}
+
+// A drag force opposing velocity: force = -(LinearCoefficient * v +
+// QuadraticCoefficient * |v| * v). LinearCoefficient is in newton-seconds per
+// meter; QuadraticCoefficient is in newton-seconds-squared per square meter.
+type DragModel
+    implements Value
+{
+    LinearCoefficient: Number;
+    QuadraticCoefficient: Number;
+}
+
+// A buoyancy force model for bodies in a liquid half-space. The fluid fills
+// everything below SurfaceHeight measured along UpAxis; FluidVelocity is the
+// current in meters per second used for relative drag.
+type BuoyancyModel
+    implements Value
+{
+    FluidDensity: Density;
+    SurfaceHeight: Length;
+    UpAxis: Direction3D;
+    FluidVelocity: Vector3;
+}
+
+//==
+// # Materials
+
+// How two touching bodies' material coefficients merge into one contact
+// coefficient. Value meanings: 0=Average, 1=Min, 2=Max, 3=Multiply.
+type CombineKind
+{
+    Value: Integer;
+}
+
+// Surface response properties of a body. StaticFriction and DynamicFriction
+// are dimensionless Coulomb coefficients; Restitution is the bounciness in
+// [0, 1]; the combine kinds say how the two touching materials' values merge.
+type PhysicsMaterial
+    implements Value
+{
+    StaticFriction: Number;
+    DynamicFriction: Number;
+    Restitution: Proportion;
+    FrictionCombine: CombineKind;
+    RestitutionCombine: CombineKind;
+}
+
+//==
+// # Orbits
+
+// The six classical Keplerian orbital elements. Eccentricity is
+// dimensionless (0 = circular, less than 1 = elliptic, 1 = parabolic,
+// greater than 1 = hyperbolic); the four angles are in radians.
+type OrbitalElements
+    implements Value
+{
+    SemiMajorAxis: Length;
+    Eccentricity: Number;
+    Inclination: Angle;
+    LongitudeOfAscendingNode: Angle;
+    ArgumentOfPeriapsis: Angle;
+    TrueAnomaly: Angle;
+}
+
+//==
+// # Simulation settings
+
+// When a dynamic body is allowed to fall asleep: both velocity magnitudes
+// must stay below their thresholds for at least TimeToSleep.
+type SleepSettings
+    implements Value
+{
+    LinearThreshold: Speed;
+    AngularThreshold: AngularVelocity;
+    TimeToSleep: Duration;
+    Enabled: Boolean;
+}
+
+// Fixed-step integration parameters: the fixed step FixedDeltaTime is divided
+// into Substeps sub-integrations; VelocityIterations and PositionIterations
+// are constraint solver iteration counts; MaxStepsPerFrame caps catch-up
+// stepping when the render frame runs long.
+type TimeStepSettings
+    implements Value
+{
+    FixedDeltaTime: Duration;
+    Substeps: Integer;
+    VelocityIterations: Integer;
+    PositionIterations: Integer;
+    MaxStepsPerFrame: Integer;
+}

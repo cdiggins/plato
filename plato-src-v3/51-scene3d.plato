@@ -1,0 +1,189 @@
+//==
+// # 3D scenes
+//
+// A retained scene description: a node hierarchy plus flat resource pools.
+// All cross-references are zero-based Integer indices with -1 meaning "none".
+// Index spaces: SceneNode3D.Mesh indexes SceneResources.Meshes;
+// SceneNode3D.Material indexes SceneResources.Materials; SceneNode3D.Light
+// indexes SceneResources.LightBindings; SceneNode3D.Camera indexes
+// SceneResources.CameraBindings. A binding then selects into the typed arrays
+// of SceneLightSet or SceneCameraSet via its Kind.
+
+// A node in the scene hierarchy. Parent is the index of the parent node in
+// Scene3D.Nodes (-1 = a root); Transform is relative to the parent. Mesh,
+// Material, Light, and Camera attach resources by index (-1 = none); a node's
+// Material overrides the attached mesh's default. LayerMask is a bitmask over
+// RenderLayer indices: bit i set means the node belongs to the layer with
+// Index i.
+type SceneNode3D
+    implements Value
+{
+    Name: String;
+    Parent: Integer;
+    Transform: Transform3D;
+    Visible: Boolean;
+    Mesh: Integer;
+    Material: Integer;
+    Light: Integer;
+    Camera: Integer;
+    LayerMask: Integer;
+}
+
+// Node visibility for pipelines needing a tri-state instead of the plain
+// SceneNode3D.Visible flag.
+// Value meanings: 0=Inherited (follow the parent), 1=Visible, 2=Hidden
+// (including all descendants).
+type VisibilityKind
+{
+    Value: Integer;
+}
+
+// All lights of a scene grouped into typed arrays; SceneLightBinding entries
+// address into these. Each array is an independent zero-based index space.
+type SceneLightSet
+    implements Value
+{
+    DirectionalLights: Array<DirectionalLight>;
+    PointLights: Array<PointLight>;
+    SpotLights: Array<SpotLight>;
+    AreaLights: Array<AreaLight>;
+    DiskLights: Array<DiskLight>;
+    SphereLights: Array<SphereLight>;
+    TubeLights: Array<TubeLight>;
+    EnvironmentLights: Array<EnvironmentLight>;
+    ProceduralSkies: Array<ProceduralSky>;
+    AmbientLights: Array<AmbientLight>;
+}
+
+// A tagged reference to one light: Kind picks the typed array of SceneLightSet
+// (see LightKind, file 49) and Index is the position within that array.
+type SceneLightBinding
+    implements Value
+{
+    Kind: LightKind;
+    Index: Integer;
+}
+
+// Which typed camera array of SceneCameraSet a binding addresses. Distinct
+// from CameraProjectionKind (file 48): a PhysicalCamera projects
+// perspectively but is stored in its own array.
+// Value meanings: 0=Perspective, 1=Orthographic, 2=Physical, 3=Fisheye,
+// 4=Equirectangular, 5=Panoramic.
+type SceneCameraKind
+{
+    Value: Integer;
+}
+
+// All cameras of a scene grouped into typed arrays; SceneCameraBinding
+// entries address into these. Each array is an independent zero-based index
+// space.
+type SceneCameraSet
+    implements Value
+{
+    PerspectiveCameras: Array<PerspectiveCamera>;
+    OrthographicCameras: Array<OrthographicCamera>;
+    PhysicalCameras: Array<PhysicalCamera>;
+    FisheyeCameras: Array<FisheyeCamera>;
+    EquirectangularCameras: Array<EquirectangularCamera>;
+    PanoramicCameras: Array<PanoramicCamera>;
+}
+
+// A tagged reference to one camera: Kind picks the typed array of
+// SceneCameraSet and Index is the position within that array.
+type SceneCameraBinding
+    implements Value
+{
+    Kind: SceneCameraKind;
+    Index: Integer;
+}
+
+// The shared resource pools of a scene; node and instance indices resolve
+// here. Meshes come from file 31, materials from file 50.
+type SceneResources
+    implements Value
+{
+    Meshes: Array<TriangleMesh3D>;
+    Materials: Array<Material>;
+    Lights: SceneLightSet;
+    LightBindings: Array<SceneLightBinding>;
+    Cameras: SceneCameraSet;
+    CameraBindings: Array<SceneCameraBinding>;
+}
+
+// A named rendering layer. Index is the bit position used by SceneNode3D
+// LayerMask and LightLayerMask values; valid indices are 0 through 31.
+type RenderLayer
+    implements Value
+{
+    Name: String;
+    Index: Integer;
+}
+
+//==
+// # Instancing and levels of detail
+
+// One placed copy of a mesh: Mesh and Material index into SceneResources;
+// Transform is in world space.
+type MeshInstance
+    implements Value
+{
+    Mesh: Integer;
+    Material: Integer;
+    Transform: Transform3D;
+}
+
+// Many placed copies of one mesh (hardware instancing). Mesh and Material
+// index into SceneResources. Colors, when non-empty, runs parallel to
+// Transforms and tints each instance; an empty Colors array means no
+// per-instance color.
+type InstanceSet
+    implements Value
+{
+    Mesh: Integer;
+    Material: Integer;
+    Transforms: Array<Transform3D>;
+    Colors: Array<Color>;
+}
+
+// Discrete levels of detail for one object. Meshes (indices into
+// SceneResources.Meshes) and SwitchDistances are parallel arrays ordered by
+// ascending distance: Meshes[i] is shown while the view distance from Center
+// is below SwitchDistances[i]; beyond the last distance the object is culled.
+type LodGroup
+    implements Value
+{
+    Center: Point3D;
+    Meshes: Array<Integer>;
+    SwitchDistances: Array<Number>;
+}
+
+//==
+// # The scene
+
+// A complete scene: hierarchy, resource pools, layers, instancing, and levels
+// of detail.
+type Scene3D
+    implements Value
+{
+    Name: String;
+    Nodes: Array<SceneNode3D>;
+    Resources: SceneResources;
+    Layers: Array<RenderLayer>;
+    Instances: Array<InstanceSet>;
+    LodGroups: Array<LodGroup>;
+}
+
+// Aggregate counts summarizing a scene's contents and rendering cost.
+// LightCount and CameraCount total the binding tables across all typed arrays.
+type SceneStatistics
+    implements Value
+{
+    NodeCount: Integer;
+    MeshCount: Integer;
+    MaterialCount: Integer;
+    LightCount: Integer;
+    CameraCount: Integer;
+    InstanceCount: Integer;
+    TriangleCount: Integer;
+    VertexCount: Integer;
+}

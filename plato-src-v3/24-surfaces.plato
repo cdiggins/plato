@@ -1,0 +1,211 @@
+//==
+// # Surfaces
+//
+// Patches, control nets, and generated surfaces (revolve, extrude, rule, loft,
+// sweep). Control nets use Array2D with the U direction along columns and the
+// V direction along rows. Generator curves referenced as concepts (Curve2D,
+// Curve3D) are supplied by any concrete curve type.
+
+//==
+// # Patches and control nets
+
+// The bilinearly interpolated patch over four corner points: the simplest
+// curved quadrilateral surface.
+type BilinearPatch
+    implements ParametricSurface
+{
+    P00: Point3D;
+    P10: Point3D;
+    P01: Point3D;
+    P11: Point3D;
+}
+
+// A tensor-product Bezier patch: U degree = column count - 1, V degree =
+// row count - 1. Interpolates the four corner control points.
+type BezierPatch
+    implements ParametricSurface
+{
+    ControlPoints: Array2D<Point3D>;
+}
+
+// A tensor-product B-spline surface. UKnots must hold column count + UDegree
+// + 1 values, and VKnots row count + VDegree + 1 values.
+type BSplineSurface
+    implements ParametricSurface
+{
+    ControlPoints: Array2D<Point3D>;
+    UDegree: Integer;
+    VDegree: Integer;
+    UKnots: KnotVector;
+    VKnots: KnotVector;
+}
+
+// A non-uniform rational B-spline surface: a B-spline surface with per-point
+// Weights (same dimensions as ControlPoints). The CAD interchange standard;
+// represents quadrics exactly.
+type NurbsSurface
+    implements ParametricSurface
+{
+    ControlPoints: Array2D<Point3D>;
+    Weights: Array2D<Number>;
+    UDegree: Integer;
+    VDegree: Integer;
+    UKnots: KnotVector;
+    VKnots: KnotVector;
+}
+
+// A rectangular piece of a plane: (u, v) in Domain maps to the frame origin
+// plus u along the frame's X axis and v along its Y axis.
+type PlanarPatch
+    implements ParametricSurface
+{
+    Frame: Frame3D;
+    Domain: Bounds2D;
+}
+
+// A Coons patch: the surface blended from four boundary curves. The curves
+// must meet at the patch corners (Bottom/Top run in U, Left/Right run in V).
+type CoonsPatch
+    implements ParametricSurface
+{
+    Bottom: Curve3D;
+    Right: Curve3D;
+    Top: Curve3D;
+    Left: Curve3D;
+}
+
+// A rectangular region of a sphere bounded by azimuth and inclination
+// intervals (a latitude/longitude window).
+type SphericalPatch
+    implements ParametricSurface
+{
+    Sphere: Sphere;
+    Azimuths: AngleInterval;
+    Inclinations: AngleInterval;
+}
+
+//==
+// # Generated surfaces
+
+// The surface swept by revolving a profile curve about an axis. The profile's
+// X coordinate is the radial distance from the axis and its Y coordinate runs
+// along the axis; Angles is the sweep (a full turn closes the surface in U).
+type SurfaceOfRevolution
+    implements ParametricSurface
+{
+    Profile: Curve2D;
+    Axis: Line3D;
+    Angles: AngleInterval;
+}
+
+// The surface swept by translating a profile curve along a straight direction
+// for a distance: U follows the profile, V the extrusion.
+type ExtrudedSurface
+    implements ParametricSurface
+{
+    Profile: Curve3D;
+    Direction: Direction3D;
+    Distance: Number;
+}
+
+// The ruled surface between two curves: straight line segments join Start and
+// End at equal parameter values (U along the curves, V across the rulings).
+type RuledSurface
+    implements ParametricSurface
+{
+    Start: Curve3D;
+    End: Curve3D;
+}
+
+// The surface interpolating an ordered stack of cross-section polylines:
+// U runs around each section, V across sections. Sections must share point
+// counts; Closed wraps the last section back to the first.
+type LoftedSurface
+    implements ParametricSurface
+{
+    Sections: Array<Polyline3D>;
+    Closed: Boolean;
+}
+
+// The surface swept by a 2D profile carried along a 3D path in the path's
+// rotation-minimizing frame: U follows the profile, V the path.
+type SweptSurface
+    implements ParametricSurface
+{
+    Profile: Curve2D;
+    Path: Curve3D;
+}
+
+// A circular-section pipe around a path: the sweep of a circle of radius
+// Radius held normal to the path (U around the circle, V along the path).
+type TubeSurface
+    implements ParametricSurface
+{
+    Path: Curve3D;
+    Radius: Number;
+}
+
+// The surface displaced from a base surface by a constant Distance along its
+// normal (positive Distance follows the base orientation).
+type OffsetSurface
+    implements ParametricSurface
+{
+    Base: ParametricSurface;
+    Distance: Number;
+}
+
+//==
+// # Bounded and sampled surfaces
+
+// A parametric surface restricted to a region of its UV domain: OuterLoop is
+// a closed counter-clockwise polyline in UV space, and Holes are closed
+// clockwise loops removed from it. Not a rectangular patch, so only Surface.
+type TrimmedSurface
+    implements Surface
+{
+    Base: ParametricSurface;
+    OuterLoop: Polyline2D;
+    Holes: Array<Polyline2D>;
+}
+
+// A sampled elevation surface: Heights holds regular samples over the ground
+// rectangle Domain in the XY plane (columns along X, rows along Y), with
+// bilinear interpolation between samples. Terrain and displacement data.
+type HeightField
+    implements HeightFieldSurface
+{
+    Heights: Array2D<Number>;
+    Domain: Bounds2D;
+}
+
+//==
+// # Topological and subdivision surfaces
+
+// A Mobius band: a strip of the given Width whose centerline circle of radius
+// Radius lies in the frame's XY plane, twisted by HalfTwistCount half-turns
+// over one lap. An odd count yields the one-sided surface.
+type MobiusStrip
+    implements ParametricSurface
+{
+    Frame: Frame3D;
+    Radius: Number;
+    Width: Number;
+    HalfTwistCount: Integer;
+}
+
+// The subdivision scheme applied to a control mesh.
+// Value meanings: 0=CatmullClark, 1=Loop, 2=DooSabin.
+type SubdivisionSchemeKind
+{
+    Value: Integer;
+}
+
+// The limit surface of a control mesh under a subdivision scheme, evaluated
+// (or approximated) at the given refinement level.
+type SubdivisionSurface
+    implements Surface
+{
+    ControlMesh: PolygonMesh3D;
+    Scheme: SubdivisionSchemeKind;
+    Levels: Integer;
+}

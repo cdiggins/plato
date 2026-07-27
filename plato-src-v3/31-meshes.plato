@@ -1,0 +1,207 @@
+//==
+// # Meshes
+//
+// Indexed geometry: shared vertex position arrays referenced by typed face
+// records. All faces wind counter-clockwise when viewed from the front
+// (outside), matching WindingOrderKind 0. Face records index into the owning
+// mesh's Positions array; every index must be valid (no -1 inside faces).
+
+//==
+// ## Face records
+
+// The three vertex indices of one triangle, wound counter-clockwise when
+// viewed from the front side.
+type TriangleFace
+    implements Value, Hashable
+{
+    A: VertexIndex;
+    B: VertexIndex;
+    C: VertexIndex;
+}
+
+// The four vertex indices of one quadrilateral face, wound counter-clockwise
+// when viewed from the front side. Coplanarity is not guaranteed; consumers
+// split along the A-C diagonal when a planar approximation is needed.
+type QuadFace
+    implements Value, Hashable
+{
+    A: VertexIndex;
+    B: VertexIndex;
+    C: VertexIndex;
+    D: VertexIndex;
+}
+
+//==
+// ## Surface meshes
+
+// An indexed triangle mesh in 3D: the workhorse interchange representation
+// for surface geometry. Faces index into Positions.
+type TriangleMesh3D
+    implements Value, TriangulatedGeometry3D, MeshTopology
+{
+    Positions: Array<Point3D>;
+    Faces: Array<TriangleFace>;
+}
+
+// An indexed triangle mesh in the plane: triangulations of polygons, Delaunay
+// triangulations, finite-element meshes. Faces wind counter-clockwise.
+type TriangleMesh2D
+    implements Value, Meshable2D, MeshTopology
+{
+    Positions: Array<Point2D>;
+    Faces: Array<TriangleFace>;
+}
+
+// An indexed quadrilateral mesh in 3D: subdivision cages, quad-dominant
+// retopology, structured patches.
+type QuadMesh3D
+    implements Value, Meshable3D, MeshTopology
+{
+    Positions: Array<Point3D>;
+    Faces: Array<QuadFace>;
+}
+
+// A mesh of arbitrary-arity faces in CSR form: face f's vertices are
+// FaceVertices[FaceOffsets[f] .. FaceOffsets[f+1]) (half-open), wound
+// counter-clockwise. FaceOffsets has (face count + 1) entries and its last
+// entry equals the length of FaceVertices.
+type PolygonMesh3D
+    implements Value, Meshable3D, MeshTopology
+{
+    Positions: Array<Point3D>;
+    FaceOffsets: Array<Integer>;
+    FaceVertices: Array<VertexIndex>;
+}
+
+//==
+// ## Line sets and point clouds
+
+// Straight segments over shared vertices: wireframes, edge overlays, debug
+// lines. Each VertexPair is one independent segment, in authored direction.
+type LineSet3D
+    implements Value
+{
+    Positions: Array<Point3D>;
+    Lines: Array<VertexPair>;
+}
+
+// Straight segments over shared vertices in the plane: sketch overlays,
+// planar graphs, hatch patterns.
+type LineSet2D
+    implements Value
+{
+    Positions: Array<Point2D>;
+    Lines: Array<VertexPair>;
+}
+
+// An unstructured set of 3D positions with no connectivity: scan data,
+// particle snapshots, sampling results. Enriched variants live in file 33.
+type PointCloud3D
+    implements Value
+{
+    Positions: Array<Point3D>;
+}
+
+// An unstructured set of 2D positions with no connectivity.
+type PointCloud2D
+    implements Value
+{
+    Positions: Array<Point2D>;
+}
+
+//==
+// ## Volumetric meshes
+
+// The four vertex indices of one tetrahedron, ordered so the signed volume
+// is positive (D on the counter-clockwise side of triangle A-B-C).
+type TetrahedronCell
+    implements Value, Hashable
+{
+    A: VertexIndex;
+    B: VertexIndex;
+    C: VertexIndex;
+    D: VertexIndex;
+}
+
+// An indexed tetrahedral mesh: finite-element volumes, volumetric
+// simulations. ToTriangleMesh yields the boundary surface.
+type TetrahedralMesh3D
+    implements Value, Meshable3D
+{
+    Positions: Array<Point3D>;
+    Cells: Array<TetrahedronCell>;
+}
+
+// The eight vertex indices of one hexahedron. A, B, C, D form the bottom
+// quad wound counter-clockwise when viewed from outside (below); E, F, G, H
+// are the corresponding vertices of the top quad (E above A, and so on).
+type HexahedronCell
+    implements Value, Hashable
+{
+    A: VertexIndex;
+    B: VertexIndex;
+    C: VertexIndex;
+    D: VertexIndex;
+    E: VertexIndex;
+    F: VertexIndex;
+    G: VertexIndex;
+    H: VertexIndex;
+}
+
+// An indexed hexahedral mesh: structured simulation volumes, voxel-like
+// finite elements with shared vertices.
+type HexahedralMesh3D
+    implements Value
+{
+    Positions: Array<Point3D>;
+    Cells: Array<HexahedronCell>;
+}
+
+//==
+// ## Mesh partitioning
+
+// A contiguous run of faces tagged with a slot number: material assignment,
+// draw batching, sub-object identity. FaceRange is half-open (contains
+// Start, excludes End) and indexes faces of the owning mesh.
+type MeshSection
+    implements Value
+{
+    FaceRange: IntegerInterval;
+    SlotIndex: Integer;
+}
+
+// A triangle mesh partitioned into sections. Sections are non-overlapping,
+// sorted ascending by FaceRange.Start, and together cover every face.
+type SegmentedMesh3D
+    implements Value, Meshable3D
+{
+    Mesh: TriangleMesh3D;
+    Sections: Array<MeshSection>;
+}
+
+//==
+// ## Mesh concepts
+
+// Anything that can produce an explicit indexed triangle mesh approximation
+// of itself: solids, parametric surfaces, implicit surfaces, other meshes.
+concept Meshable3D
+{
+    ToTriangleMesh(x: Self): TriangleMesh3D;
+}
+
+// Anything in the plane that can produce a triangulation of itself:
+// polygons, planar regions, 2D meshes.
+concept Meshable2D
+{
+    Triangulate(x: Self): TriangleMesh2D;
+}
+
+// Geometry that already exposes an indexed triangle set: random access to
+// faces and vertex positions by typed index.
+concept TriangulatedGeometry3D
+    inherits Meshable3D
+{
+    TriangleCount(x: Self): Integer;
+    FaceAt(x: Self, face: FaceIndex): TriangleFace;
+    PositionAt(x: Self, vertex: VertexIndex): Point3D;
+}

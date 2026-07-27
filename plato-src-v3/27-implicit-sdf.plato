@@ -1,0 +1,266 @@
+//==
+// # Implicit shapes and signed distance fields
+//
+// Shapes described by functions rather than boundaries. A signed distance
+// field (SDF) reports how far a point is from a surface, negative inside;
+// an implicit region reports only membership. Flat, index-based node trees
+// describe constructive solid geometry over externally supplied primitives.
+
+//==
+// ## Implicit concepts
+
+// A planar scalar field whose value is the signed distance to a boundary
+// curve: negative inside, zero on the boundary, positive outside. Values are
+// exact distances or conservative lower bounds of them.
+concept SignedDistanceField2D
+    inherits ScalarField2D
+{ }
+
+// A spatial scalar field whose value is the signed distance to a surface:
+// negative inside, zero on the surface, positive outside. Values are exact
+// distances or conservative lower bounds of them.
+concept SignedDistanceField3D
+    inherits ScalarField3D
+{ }
+
+// A planar region described by a membership predicate: true when the point
+// is inside. Carries no distance information.
+concept ImplicitRegion2D
+    inherits Procedural<Point2D, Boolean>
+{ }
+
+// A spatial volume described by a membership predicate: true when the point
+// is inside. Carries no distance information.
+concept ImplicitVolume3D
+    inherits Procedural<Point3D, Boolean>
+{ }
+
+//==
+// ## SDF combination trees
+//
+// Constructive solid geometry over signed distance fields, stored as flat
+// arrays of nodes. Leaves reference primitives by index into a caller-supplied
+// primitive list; interior nodes combine two children. Indices use -1 for
+// "unused".
+
+// The Boolean or blending operation an SDF combination node applies.
+// Value meanings: 0=Union (minimum), 1=Intersection (maximum), 2=Difference
+// (left minus right), 3=SmoothUnion, 4=SmoothIntersection, 5=SmoothDifference,
+// 6=ExclusiveOr, 7=Blend (linear interpolation of distances).
+type SdfCombineKind
+{
+    Value: Integer;
+}
+
+// One node of a flat planar SDF tree. Interior nodes set Left and Right to
+// node indices and Primitive to -1; leaves set Primitive to an index into an
+// external primitive list and Left/Right to -1. Smoothing is the blend radius
+// for smooth operations; 0 means a hard combination.
+type SdfNode2D
+    implements Value
+{
+    Combine: SdfCombineKind;
+    Left: Integer;
+    Right: Integer;
+    Primitive: Integer;
+    Smoothing: Number;
+}
+
+// A flat planar SDF combination tree. Nodes may only reference lower-indexed
+// nodes; Root is the index of the node producing the final distance. Leaf
+// primitive indices resolve against a caller-supplied list of planar SDFs.
+type SdfTree2D
+    implements Value
+{
+    Nodes: Array<SdfNode2D>;
+    Root: Integer;
+}
+
+// One node of a flat spatial SDF tree. Interior nodes set Left and Right to
+// node indices and Primitive to -1; leaves set Primitive to an index into an
+// external primitive list and Left/Right to -1. Smoothing is the blend radius
+// for smooth operations; 0 means a hard combination.
+type SdfNode3D
+    implements Value
+{
+    Combine: SdfCombineKind;
+    Left: Integer;
+    Right: Integer;
+    Primitive: Integer;
+    Smoothing: Number;
+}
+
+// A flat spatial SDF combination tree. Nodes may only reference lower-indexed
+// nodes; Root is the index of the node producing the final distance. Leaf
+// primitive indices resolve against a caller-supplied list of spatial SDFs.
+type SdfTree3D
+    implements Value
+{
+    Nodes: Array<SdfNode3D>;
+    Root: Integer;
+}
+
+//==
+// ## Metaballs
+//
+// Smooth organic shapes from summed radial falloff kernels. The implicit
+// surface is the level set where the summed influence equals the threshold.
+
+// A planar metaball: a radial falloff kernel centered at a point. Influence
+// is Strength at the center and falls to zero at Radius.
+type MetaBall2D
+    implements Value
+{
+    Center: Point2D;
+    Radius: Number;
+    Strength: Number;
+}
+
+// A spatial metaball: a radial falloff kernel centered at a point. Influence
+// is Strength at the center and falls to zero at Radius. Negative strengths
+// carve away from the surface.
+type MetaBall3D
+    implements Value
+{
+    Center: Point3D;
+    Radius: Number;
+    Strength: Number;
+}
+
+// A planar blob system: the field value at a point is the summed influence
+// of all balls minus Threshold, so the zero level set is the blob outline.
+type MetaBallSystem2D
+    implements Value, ScalarField2D
+{
+    Balls: Array<MetaBall2D>;
+    Threshold: Number;
+}
+
+// A spatial blob system: the field value at a point is the summed influence
+// of all balls minus Threshold, so the zero level set is the blob surface.
+type MetaBallSystem3D
+    implements Value, ScalarField3D
+{
+    Balls: Array<MetaBall3D>;
+    Threshold: Number;
+}
+
+//==
+// ## Sampled signed distance fields
+//
+// Discretized SDFs: distance values on a regular lattice over a bounding
+// region, interpolated between samples on evaluation.
+
+// A planar SDF discretized on a regular lattice spanning Bounds. Values holds
+// one signed distance per lattice node, in row-major column/row order;
+// evaluation between nodes interpolates bilinearly.
+type SampledSdf2D
+    implements Value, SignedDistanceField2D
+{
+    Values: Array2D<Number>;
+    Bounds: Bounds2D;
+}
+
+// A spatial SDF discretized on a regular lattice spanning Bounds. Values holds
+// one signed distance per lattice node, in column/row/layer order; evaluation
+// between nodes interpolates trilinearly.
+type SampledSdf3D
+    implements Value, SignedDistanceField3D
+{
+    Values: Array3D<Number>;
+    Bounds: Bounds3D;
+}
+
+//==
+// ## SDF modifiers
+//
+// Parameter records for standard distance-field transformations. Each
+// describes how a source SDF is reshaped; the source itself is supplied by
+// the evaluation context.
+
+// Rounds sharp edges and corners by subtracting Radius from the distance,
+// inflating the shape and smoothing its features.
+type SdfRoundingModifier
+    implements Value
+{
+    Radius: Number;
+}
+
+// Replaces a solid with its shell: the region within half of Thickness on
+// either side of the original surface.
+type SdfShellModifier
+    implements Value
+{
+    Thickness: Number;
+}
+
+// Replaces a solid with Count concentric shells spaced by Thickness, like
+// the layers of an onion. Count of 1 is equivalent to a single shell.
+type SdfOnionModifier
+    implements Value
+{
+    Thickness: Number;
+    Count: Integer;
+}
+
+// Stretches a planar shape by splitting it at the origin and inserting a
+// straight section of the given extent along each axis.
+type SdfElongationModifier2D
+    implements Value
+{
+    Amount: Vector2;
+}
+
+// Stretches a spatial shape by splitting it at the origin and inserting a
+// straight section of the given extent along each axis.
+type SdfElongationModifier3D
+    implements Value
+{
+    Amount: Vector3;
+}
+
+// Tiles a planar shape on a lattice with the given period per axis. Counts
+// bounds the repetitions per axis; a non-positive count means unbounded
+// repetition along that axis.
+type SdfRepetitionModifier2D
+    implements Value
+{
+    Period: Vector2;
+    Counts: IntegerVector2;
+}
+
+// Tiles a spatial shape on a lattice with the given period per axis. Counts
+// bounds the repetitions per axis; a non-positive count means unbounded
+// repetition along that axis.
+type SdfRepetitionModifier3D
+    implements Value
+{
+    Period: Vector3;
+    Counts: IntegerVector3;
+}
+
+// Twists a spatial shape about the Z axis: each horizontal slice rotates by
+// AnglePerUnit times its height.
+type SdfTwistModifier3D
+    implements Value
+{
+    AnglePerUnit: Angle;
+}
+
+// Bends a spatial shape about the Y axis with the given curvature (turning
+// angle per unit of length along X); 0 leaves the shape unchanged.
+type SdfBendModifier3D
+    implements Value
+{
+    Curvature: Number;
+}
+
+// Displaces a surface by a scalar field: Source indexes a caller-supplied
+// list of spatial scalar fields whose value, scaled by Amplitude, offsets
+// the distance. The result is a bound, not an exact distance.
+type SdfDisplacementModifier3D
+    implements Value
+{
+    Source: Integer;
+    Amplitude: Number;
+}

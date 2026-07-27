@@ -9,6 +9,10 @@ Target applications: geometry (primary), 2D/3D/4D and N-dimensional computation,
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
 graphics, image processing, and engineering.
 
+Current contents (2026-07-27): **70 source files, 154 concepts, 1125 types** (~13.4K lines).
+The folder parses and resolves cleanly (`lint`: 0 parse errors, 0 symbol-resolution errors);
+LINT001/LINT003 findings are expected until libraries implement the declared surface.
+
 ## Validation
 
 ```

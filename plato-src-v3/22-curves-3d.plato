@@ -1,0 +1,135 @@
+//==
+// # Analytic curves in 3D
+//
+// Named closed-form space curves. Planar arcs carry a Frame3D whose origin is
+// the curve center and whose XY plane contains the curve; spirals and knots
+// wind about the frame's Z axis. The canonical [0,1] parameter maps onto the
+// documented sweep.
+
+//==
+// # Planar arcs in space
+
+// A circular arc in space: radius Radius about the frame origin, in the
+// frame's XY plane, swept over Angles measured from the frame's X axis.
+type CircularArc3D
+    implements PlanarCurve3D
+{
+    Frame: Frame3D;
+    Radius: Number;
+    Angles: AngleInterval;
+}
+
+// An elliptical arc in space: semi-axis lengths Radii along the frame's X and
+// Y axes, swept over the parametric angle interval.
+type EllipticalArc3D
+    implements PlanarCurve3D
+{
+    Frame: Frame3D;
+    Radii: Vector2;
+    Angles: AngleInterval;
+}
+
+//==
+// # Polynomial arcs
+
+// A quadratic Bezier arc in space: interpolates P0 to P2, shaped by the middle
+// control point P1.
+type QuadraticBezier3D
+    implements Curve3D
+{
+    P0: Point3D;
+    P1: Point3D;
+    P2: Point3D;
+}
+
+// A cubic Bezier arc in space: interpolates P0 to P3, shaped by the interior
+// control points P1 and P2.
+type CubicBezier3D
+    implements Curve3D
+{
+    P0: Point3D;
+    P1: Point3D;
+    P2: Point3D;
+    P3: Point3D;
+}
+
+//==
+// # Helices and spirals
+
+// A circular helix winding about the frame's Z axis at distance Radius,
+// rising Pitch per full turn (right-handed for positive Pitch), swept over
+// the angle interval.
+type Helix
+    implements Curve3D
+{
+    Frame: Frame3D;
+    Radius: Number;
+    Pitch: Number;
+    Angles: AngleInterval;
+}
+
+// A spiral on a cone about the frame's Z axis: the winding radius interpolates
+// across Radii while the curve climbs Height over the full sweep of Angles.
+type ConicalSpiral3D
+    implements Curve3D
+{
+    Frame: Frame3D;
+    Radii: NumberInterval;
+    Height: Number;
+    Angles: AngleInterval;
+}
+
+// A loxodrome: a spiral on a sphere of radius Radius crossing every meridian
+// at a constant angle, running pole to pole along the frame's Z axis and
+// completing TurnCount revolutions.
+type SphericalSpiral3D
+    implements Curve3D
+{
+    Frame: Frame3D;
+    Radius: Number;
+    TurnCount: Number;
+}
+
+//==
+// # Knots and classical space curves
+
+// The (p,q) torus knot on the torus with the given major and minor radii about
+// the frame's Z axis. AxisWindings is p (laps around the main axis) and
+// TubeWindings is q (laps through the hole); coprime windings give a true knot.
+type TorusKnot
+    implements ClosedCurve3D
+{
+    Frame: Frame3D;
+    AxisWindings: Integer;
+    TubeWindings: Integer;
+    MajorRadius: Number;
+    MinorRadius: Number;
+}
+
+// The trefoil knot, the simplest nontrivial knot (the (2,3) torus knot), in
+// its symmetric canonical form scaled by Scale.
+type TrefoilKnot
+    implements ClosedCurve3D
+{
+    Frame: Frame3D;
+    Scale: Number;
+}
+
+// The figure-eight knot (the unique four-crossing knot) in its canonical
+// parametric form scaled by Scale.
+type FigureEightKnot
+    implements ClosedCurve3D
+{
+    Frame: Frame3D;
+    Scale: Number;
+}
+
+// Viviani's curve: the figure-eight intersection of the sphere of radius
+// Radius centered at the frame origin with the cylinder of radius Radius / 2
+// tangent to the frame's Z axis.
+type VivianiCurve
+    implements ClosedCurve3D
+{
+    Frame: Frame3D;
+    Radius: Number;
+}
