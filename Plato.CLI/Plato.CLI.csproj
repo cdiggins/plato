@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Plato.RustWriter\Plato.RustWriter.csproj" />
     <ProjectReference Include="..\Plato.GlslWriter\Plato.GlslWriter.csproj" />
     <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
+    <ProjectReference Include="..\Plato.CppWriter\Plato.CppWriter.csproj" />
   </ItemGroup>
 
 </Project>

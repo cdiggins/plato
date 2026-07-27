@@ -1,27 +1,29 @@
-fix(compiler+csharp-writer): v3 standalone-codegen fixes — substitution chain, paired operators, interface conversions
+feat(plato): C++ / CUDA backend with a compile-verification test project
 
-Three emitter/front-end fixes surfaced by compiling plato-src-v3 generated C# standalone:
+Adds Plato.CppWriter, a TIR-only proof-of-concept backend for the C++ family, and
+Plato.CppWriter.Tests, whose job is to prove the generated code compiles.
 
-- PlatoCompiler/Analysis/TypeSubstitutions.cs: Replace() now chains through concept
-  TypeParameter replacements, not just $-type-variables. A concept passing its own
-  type parameter to an inherited concept (Field<TDomain,TValue> inherits
-  Procedural<TDomain,TValue>) previously leaked raw TDomain/TValue into emitted
-  obligations (CS0246 x70, CS0535 x35).
+One emitter, two dialects. The generated code is byte-identical for C++ and CUDA;
+only the preamble differs (vector types + the PLATO_FN qualifier), and a test
+enforces that. Modelled on Plato.GlslWriter: free functions, aggregate structs,
+native float2/float3/float4, intrinsics lowered onto <cmath> and the plato::
+helpers the preamble supplies.
 
-- Plato.CSharpWriter (CSharpFunctionInfo/CSharpTypeWriter/CSharpConcreteTypeWriter):
-  when a type declares only one side of a C# comparison-operator pair (v3 Orderable
-  has only LessThanOrEquals), synthesize the partner operator by swapping operands
-  (CS0216 x86). No-op when both sides are declared (plato-src).
+Three things C++ needs that GLSL did not:
+- type-named conversion functions are renamed (Matrix4x4(Transform3D) -> ToMatrix4x4),
+  because a function may not hide a type that later signatures have to name;
+- conversions are explicit, including returns whose type differs from the declared
+  return type, since C++ has no implicit user-defined conversion;
+- a prune pass drops, to a fixpoint, any function calling a signature nothing
+  emitted, so a skipped function cannot take its callers down with it.
 
-- Plato.CSharpWriter/CSharpConcreteTypeWriter.cs: skip single-field implicit
-  converters when the field renders as IReadOnlyList* (conversions to/from an
-  interface are illegal C#, CS0552 x86).
+Wired into Plato.CLI as --cpp / --cuda.
 
-Goldens byte-identical (regen-generated 184/184 both variants), frozen V1 clean,
-PlatoTests 142/142, conformance 205/205.
+Gates: 8/8 tests green. demos/plato-src 66 emitted / 0 skipped; plato-src 461 / 1722.
+Both compile clean under MSVC /std:c++17 /W3. The CUDA gate uses nvcc when the CUDA
+Toolkit is installed and otherwise compiles the .cu as host C++ against a test-only
+shim cuda_runtime.h; the mode is reported in the test output.
 
-v3 standalone error count: 570 -> 293. Remainder is the missing-V3-runtime gap
-(Number/Integer/Boolean/String wrapper bridges, primitive-struct obligations for
-Vector*/Angle/Quaternion, Curve/Surface Self-constraint cascade), not emitter bugs.
+Neither project is registered in Ara3D.Studio.sln (that file lives in the studio repo).
 
-Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Co-Authored-By: Claude <noreply@anthropic.com>

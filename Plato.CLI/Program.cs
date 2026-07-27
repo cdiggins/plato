@@ -6,13 +6,14 @@ using Ara3D.Geometry.CSharpWriter;
 using Ara3D.Geometry.TypeScriptWriter;
 using Ara3D.Geometry.RustWriter;
 using Ara3D.Geometry.GlslWriter;
+using Ara3D.Geometry.CppWriter;
 using Logger = Ara3D.Logging.Logger;
 
 namespace Ara3D.Geometry.CLI
 {
     public static class Program
     {
-        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--scalar=wrapper|float]
+        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--scalar=wrapper|float]
         //        Plato.CLI lint <inputFolder> [--strict]
         // With no arguments, the folders come from Config and C# is generated (original behavior).
         // In lint mode the sources are compiled (parse + resolve, no output) and warnings are
@@ -28,6 +29,8 @@ namespace Ara3D.Geometry.CLI
             var typeScript = args.Contains("--typescript");
             var rust = args.Contains("--rust");
             var glsl = args.Contains("--glsl");
+            var cpp = args.Contains("--cpp");
+            var cuda = args.Contains("--cuda");
 
             // Component-op unrolling optimization (roadmap P3.1). C# backend only; works with
             // both --csharp-style values. Off by default (byte-identical output without it).
@@ -130,6 +133,19 @@ namespace Ara3D.Geometry.CLI
                 logger.Log("Writing GLSL Files");
                 var output = compilation.ToGlsl(outputFolder);
                 logger.Log($"GLSL functions emitted: {output.FunctionsEmitted}, skipped: {output.Skipped.Count}");
+                foreach (var kv in output.Files)
+                {
+                    var fp = outputFolder.RelativeFile(kv.Key);
+                    logger.Log($"Writing {kv.Key}");
+                    fp.WriteAllText(kv.Value.ToString());
+                }
+            }
+            else if (cpp || cuda)
+            {
+                var dialect = cuda ? CppDialect.Cuda : CppDialect.Cpp;
+                logger.Log($"Writing {dialect.DisplayName()} Files");
+                var output = compilation.ToCpp(outputFolder, dialect);
+                logger.Log($"{dialect.DisplayName()} functions emitted: {output.FunctionsEmitted}, skipped: {output.Skipped.Count}");
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);
