@@ -13,6 +13,23 @@ Current contents (2026-07-27): **70 source files, 155 concepts, 1141 types** (~1
 The folder parses and resolves cleanly (`lint`: 0 parse errors, 0 symbol-resolution errors);
 LINT001/LINT003 findings are expected until libraries implement the declared surface.
 
+## Target backends
+
+Code generated from this vocabulary targets, **in priority order**:
+
+1. **C#** (primary; the reference runtime)
+2. **C++**
+3. **CUDA**
+4. **TypeScript**
+5. Others as capacity allows: **GLSL**, **Rust**, **Python**
+
+This ordering governs intrinsics policy (`70-intrinsics.plato`): a function may be
+declared intrinsic only if every priority-1..4 backend can supply it natively or with a
+trivial shim. Anything host-specific (C# SIMD types, IEEE nextafter-grade functions,
+midpoint-rounding variants) is excluded and noted in that file's porting notes; lower-
+priority backends may polyfill (e.g. GLSL lacks double precision — `Number` maps to
+`float` there).
+
 ## Validation
 
 ```
