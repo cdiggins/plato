@@ -6,14 +6,10 @@
 // shake), motion paths, and time manipulation. Durations are offsets from the
 // owning composition's start.
 
-// How a finished animation continues.
-// Value meanings: 0=Once (play through and end), 1=Loop (restart from the
-// beginning), 2=PingPong (alternate forward and reverse passes), 3=Hold (play
-// once, then hold the final value).
-type CycleKind
-{
-    Value: Integer;
-}
+// How a finished animation continues: play through and end (Once), restart
+// from the beginning (Loop), alternate forward and reverse passes (PingPong),
+// or play once and hold the final value (Hold).
+type PlaybackCycle = Once | Loop | PingPong | Hold;
 
 // An After-Effects-style 2D layer transform. Rotation and scale pivot about
 // Anchor, expressed in the layer's own coordinates; Position places the anchor
@@ -38,7 +34,7 @@ type Tween<T>
     To: T;
     Duration: Duration;
     Delay: Duration;
-    Easing: EasingKind;
+    Easing: ClassicEasing;
 }
 
 // A named span scheduled on a timeline. Start is the offset from the timeline's
@@ -49,7 +45,7 @@ type TimelineItem
     Name: String;
     Start: Duration;
     Duration: Duration;
-    Easing: EasingKind;
+    Easing: ClassicEasing;
 }
 
 // An ordered schedule of named spans. Duration is the total length; items may
@@ -62,13 +58,9 @@ type Timeline
     Items: Array<TimelineItem>;
 }
 
-// Which end of a staggered group starts animating first.
-// Value meanings: 0=First (ripple from the first item), 1=Last (ripple from the
-// last), 2=Center (ripple outward from the middle), 3=Random.
-type StaggerOriginKind
-{
-    Value: Integer;
-}
+// Which end of a staggered group starts animating first: ripple from the
+// first item, from the last, outward from the middle, or in random order.
+type StaggerOrigin = First | Last | Center | Random;
 
 // Offsets copies of one animation across a group of items: item i starts
 // ItemDelay after its predecessor in ripple order. Easing reshapes the delay
@@ -78,17 +70,12 @@ type Stagger
 {
     Count: Integer;
     ItemDelay: Duration;
-    Origin: StaggerOriginKind;
-    Easing: EasingKind;
+    Origin: StaggerOrigin;
+    Easing: ClassicEasing;
 }
 
-// The waveform of a procedural oscillator.
-// Value meanings: 0=Sine, 1=Square, 2=Triangle, 3=Sawtooth, 4=Noise (smooth
-// pseudo-random).
-type OscillatorKind
-{
-    Value: Integer;
-}
+// The waveform of a procedural oscillator; Noise is smooth pseudo-random.
+type OscillatorWaveform = Sine | Square | Triangle | Sawtooth | Noise;
 
 // A periodic scalar signal for procedural animation:
 // Bias + Amplitude * wave(Frequency * time + Phase). Phase shifts the waveform;
@@ -96,7 +83,7 @@ type OscillatorKind
 type Oscillator
     implements Value, TimeVarying<Number>
 {
-    Kind: OscillatorKind;
+    Waveform: OscillatorWaveform;
     Amplitude: Number;
     Frequency: Frequency;
     Phase: Angle;

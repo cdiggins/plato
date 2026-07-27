@@ -87,24 +87,26 @@ type AnalysisWindow
 //==
 // # Filters
 
-// The response shape of a second-order (biquad) filter section.
-// Value meanings: 0=LowPass, 1=HighPass, 2=BandPass, 3=Notch, 4=AllPass,
-// 5=PeakingEq, 6=LowShelf, 7=HighShelf.
-type BiquadFilterKind
-{
-    Value: Integer;
-}
+// The response shape of a second-order (biquad) filter section. The peaking
+// and shelf shapes carry their gain in decibels; the others have none.
+type BiquadResponse
+    = LowPass
+    | HighPass
+    | BandPass
+    | Notch
+    | AllPass
+    | PeakingEq(GainDecibels: Number)
+    | LowShelf(GainDecibels: Number)
+    | HighShelf(GainDecibels: Number);
 
-// A second-order filter section in design terms: corner or center Frequency,
-// quality factor Q (bandwidth), and gain in decibels. GainDecibels applies
-// only to the PeakingEq and shelf kinds.
+// A second-order filter section in design terms: the response shape, the
+// corner or center Frequency, and the quality factor Q (bandwidth).
 type BiquadFilter
     implements Value
 {
-    Kind: BiquadFilterKind;
+    Response: BiquadResponse;
     Frequency: Frequency;
     Q: Number;
-    GainDecibels: Number;
 }
 
 // A finite-impulse-response filter: the output is the convolution of the
@@ -139,78 +141,66 @@ type AdsrEnvelope
     Release: Duration;
 }
 
-// The spectral color of a noise generator.
-// Value meanings: 0=White (flat), 1=Pink (-3 dB/octave), 2=Brown
-// (-6 dB/octave), 3=Blue (+3 dB/octave).
-type SignalNoiseKind
-{
-    Value: Integer;
-}
+// The spectral color of a noise generator: White is flat, Pink -3 dB/octave,
+// Brown -6 dB/octave, Blue +3 dB/octave.
+type NoiseColor = White | Pink | Brown | Blue;
 
-// A pure description of a noise generator: spectral kind, peak amplitude,
+// A pure description of a noise generator: spectral color, peak amplitude,
 // and the seed of its deterministic random sequence.
 type NoiseSignal
     implements Value
 {
-    Kind: SignalNoiseKind;
+    Color: NoiseColor;
     Amplitude: Number;
     Seed: Integer;
 }
 
-// The shape of a periodic test or synthesis waveform.
-// Value meanings: 0=Sine, 1=Square, 2=Triangle, 3=Sawtooth, 4=Pulse.
-type WaveformKind
-{
-    Value: Integer;
-}
+// The shape of a periodic test or synthesis waveform. Pulse carries its
+// duty cycle: the high fraction of each period.
+type Waveform
+    = Sine
+    | Square
+    | Triangle
+    | Sawtooth
+    | Pulse(DutyCycle: Proportion);
 
 // A pure description of a periodic waveform generator. Phase offsets the
-// start of the cycle; DutyCycle is the high fraction of each period and
-// applies only to the Pulse kind.
+// start of the cycle.
 type WaveformGenerator
     implements Value
 {
-    Kind: WaveformKind;
+    Waveform: Waveform;
     Frequency: Frequency;
     Amplitude: Number;
     Phase: Angle;
-    DutyCycle: Proportion;
 }
 
 //==
 // # Rate conversion and mixing
 
 // The interpolation used when resampling a signal to a new rate.
-// Value meanings: 0=ZeroOrderHold, 1=Linear, 2=CubicHermite, 3=WindowedSinc.
-type ResamplingKind
-{
-    Value: Integer;
-}
+type SignalResampling = ZeroOrderHold | Linear | CubicHermite | WindowedSinc;
 
 // A sample-rate conversion request: the source and target rates and the
-// interpolation kind.
+// interpolation used between them.
 type SampleRateConversion
     implements Value
 {
     SourceRate: Frequency;
     TargetRate: Frequency;
-    Kind: ResamplingKind;
+    Interpolation: SignalResampling;
 }
 
-// The gain law of a crossfade between two signals.
-// Value meanings: 0=Linear (gains sum to 1), 1=EqualPower (squared gains sum
-// to 1), 2=SCurve (smooth-stepped linear).
-type CrossfadeKind
-{
-    Value: Integer;
-}
+// The gain law of a crossfade between two signals: gains sum to 1 (Linear),
+// squared gains sum to 1 (EqualPower), or smooth-stepped linear (SCurve).
+type CrossfadeLaw = Linear | EqualPower | SCurve;
 
 // A crossfade description: the gain law and the time taken to move fully
 // from one signal to the other.
 type CrossfadeParameters
     implements Value
 {
-    Kind: CrossfadeKind;
+    Law: CrossfadeLaw;
     Duration: Duration;
 }
 

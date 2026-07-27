@@ -9,14 +9,16 @@
 //==
 // # Constructive solid geometry
 
-// The Boolean operation applied at an interior CSG node.
-// Value meanings: 0=Union, 1=Intersection, 2=Difference, 3=SmoothUnion,
-// 4=SmoothIntersection, 5=SmoothDifference. Difference subtracts the right
-// child from the left; smooth variants blend over the node's Smoothing radius.
-type CsgOperationKind
-{
-    Value: Integer;
-}
+// The Boolean operation applied at an interior CSG node. Difference subtracts
+// the right child from the left; smooth variants blend over their own Radius
+// (in model units).
+type CsgOperation
+    = Union
+    | Intersection
+    | Difference
+    | SmoothUnion(Radius: Number)
+    | SmoothIntersection(Radius: Number)
+    | SmoothDifference(Radius: Number);
 
 // A zero-based index of a node within a CSG tree's flat node array.
 // -1 means "none" (a leaf's missing children).
@@ -27,17 +29,12 @@ type CsgNodeIndex
 }
 
 // One node of a flattened CSG tree. Interior nodes combine two children by
-// Operation (PrimitiveIndex is -1); leaf nodes have LeftChild and RightChild
-// of -1 and a PrimitiveIndex into a primitive collection supplied alongside
-// the tree. Smoothing is the blend radius for smooth operations (0 for sharp).
+// Operation; leaf nodes reference a primitive by index into a primitive
+// collection supplied alongside the tree. Child references are node indices
+// into the same flat array, never embedded nodes.
 type CsgNode3D
-{
-    Operation: CsgOperationKind;
-    LeftChild: CsgNodeIndex;
-    RightChild: CsgNodeIndex;
-    PrimitiveIndex: ItemIndex;
-    Smoothing: Number;
-}
+    = Leaf(PrimitiveIndex: ItemIndex)
+    | Interior(Operation: CsgOperation, LeftChild: CsgNodeIndex, RightChild: CsgNodeIndex);
 
 // A constructive solid geometry tree stored as a flat node array with child
 // indices (no pointers); Root is the index of the root node in Nodes.
@@ -128,12 +125,8 @@ type Pyramid
 }
 
 // One of the five Platonic solids.
-// Value meanings: 0=Tetrahedron, 1=Cube, 2=Octahedron, 3=Dodecahedron,
-// 4=Icosahedron.
 type PlatonicSolidKind
-{
-    Value: Integer;
-}
+    = Tetrahedron | Cube | Octahedron | Dodecahedron | Icosahedron;
 
 // A regular polyhedron of the given kind, centered at the frame origin in the
 // frame's orientation, with vertices at circumscribed radius Radius.
@@ -146,15 +139,20 @@ type PlatonicSolid
 }
 
 // One of the thirteen Archimedean solids.
-// Value meanings: 0=TruncatedTetrahedron, 1=Cuboctahedron, 2=TruncatedCube,
-// 3=TruncatedOctahedron, 4=Rhombicuboctahedron, 5=TruncatedCuboctahedron,
-// 6=SnubCube, 7=Icosidodecahedron, 8=TruncatedDodecahedron,
-// 9=TruncatedIcosahedron, 10=Rhombicosidodecahedron,
-// 11=TruncatedIcosidodecahedron, 12=SnubDodecahedron.
 type ArchimedeanSolidKind
-{
-    Value: Integer;
-}
+    = TruncatedTetrahedron
+    | Cuboctahedron
+    | TruncatedCube
+    | TruncatedOctahedron
+    | Rhombicuboctahedron
+    | TruncatedCuboctahedron
+    | SnubCube
+    | Icosidodecahedron
+    | TruncatedDodecahedron
+    | TruncatedIcosahedron
+    | Rhombicosidodecahedron
+    | TruncatedIcosidodecahedron
+    | SnubDodecahedron;
 
 // A semi-regular polyhedron of the given kind, centered at the frame origin
 // in the frame's orientation, with vertices at circumscribed radius Radius.

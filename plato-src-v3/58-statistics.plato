@@ -113,18 +113,14 @@ type Covariance3D
 }
 
 // The correlation statistic to compute.
-// Value meanings: 0=Pearson, 1=Spearman, 2=Kendall.
-type CorrelationKind
-{
-    Value: Integer;
-}
+type CorrelationStatistic = Pearson | Spearman | Kendall;
 
 // A correlation coefficient in [-1, 1] together with the statistic used and
 // the number of paired observations behind it.
 type CorrelationCoefficient
     implements Value
 {
-    Kind: CorrelationKind;
+    Statistic: CorrelationStatistic;
     Value: Number;
     SampleCount: Integer;
 }
@@ -148,37 +144,20 @@ type PolynomialFit
     RSquared: Number;
 }
 
-// The weighting shape of a moving-window smoother.
-// Value meanings: 0=Simple, 1=Exponential, 2=Gaussian.
-type MovingWindowKind
-{
-    Value: Integer;
-}
+// A moving-average smoother, each kind carrying exactly its own controls:
+// a flat window of WindowSize samples (Simple), an exponential smoother
+// with alpha in (0, 1] (Exponential), or a Gaussian-weighted window with
+// its standard deviation in samples (Gaussian).
+type MovingAverage
+    = Simple(WindowSize: Integer)
+    | Exponential(Alpha: Proportion)
+    | Gaussian(WindowSize: Integer, StandardDeviation: Number);
 
-// Parameters of a moving-average smoother. WindowSize is in samples.
-// SmoothingFactor is the exponential alpha in (0, 1] for Exponential, and the
-// standard deviation in samples for Gaussian; it is ignored for Simple.
-type MovingAverageParameters
-    implements Value
-{
-    Kind: MovingWindowKind;
-    WindowSize: Integer;
-    SmoothingFactor: Number;
-}
-
-// The statistic used to flag outliers.
-// Value meanings: 0=ZScore, 1=Iqr, 2=Mad.
-type OutlierDetectionKind
-{
-    Value: Integer;
-}
-
-// Parameters of an outlier test. Threshold is in the kind's native scale:
-// standard deviations for ZScore, interquartile-range multiples beyond the
-// quartiles for Iqr, and median-absolute-deviation multiples for Mad.
-type OutlierDetectionParameters
-    implements Value
-{
-    Kind: OutlierDetectionKind;
-    Threshold: Number;
-}
+// An outlier test. Each statistic carries its threshold in its own native
+// scale: standard deviations for ZScore, interquartile-range multiples
+// beyond the quartiles for Iqr, and median-absolute-deviation multiples for
+// Mad.
+type OutlierDetection
+    = ZScore(Threshold: Number)
+    | Iqr(Threshold: Number)
+    | Mad(Threshold: Number);

@@ -173,44 +173,30 @@ type SectionProperties
 //==
 // # Beams, supports, and loads
 
-// How a beam is restrained at a support point.
-// Value meanings: 0=Fixed (translation and rotation), 1=Pinned (translation
-// only), 2=Roller (transverse translation only), 3=Free (unrestrained end).
-type BeamSupportKind
-{
-    Value: Integer;
-}
+// How a beam is restrained at a support point: translation and rotation
+// (Fixed), translation only (Pinned), transverse translation only (Roller),
+// or an unrestrained end (Free).
+type BeamRestraint = Fixed | Pinned | Roller | Free;
 
 // A support placed along a beam. Position is measured from the beam's start
 // along its axis.
 type BeamSupport
     implements Value
 {
-    Kind: BeamSupportKind;
+    Restraint: BeamRestraint;
     Position: Length;
 }
 
-// The form of a load applied to a beam.
-// Value meanings: 0=PointForce, 1=DistributedForce, 2=Moment.
-type BeamLoadKind
-{
-    Value: Integer;
-}
-
-// A load on a beam. Positions are measured from the beam's start. Magnitude
-// units depend on Kind: newtons for PointForce, newtons per meter for
-// DistributedForce (uniform over StartPosition..EndPosition), newton-meters
-// for Moment. Point loads and moments act at StartPosition and set
-// EndPosition equal to StartPosition. Transverse loads are positive downward
-// by convention.
+// A load on a beam. Positions are measured from the beam's start; each case
+// carries the magnitude in its own units: newtons for PointForce, newtons
+// per meter for DistributedForce (uniform over StartPosition..EndPosition),
+// newton-meters for Moment. Transverse loads are positive downward by
+// convention.
 type BeamLoad
     implements Value
-{
-    Kind: BeamLoadKind;
-    StartPosition: Length;
-    EndPosition: Length;
-    Magnitude: Number;
-}
+    = PointForce(Position: Length, Magnitude: Number)
+    | DistributedForce(StartPosition: Length, EndPosition: Length, Magnitude: Number)
+    | Moment(Position: Length, Magnitude: Number);
 
 // A straight prismatic beam ready for 1D structural analysis: overall length,
 // section properties, material, and the supports and loads along its axis.
@@ -226,13 +212,10 @@ type Beam
 //==
 // # Fits and tolerances
 
-// The engagement class of a shaft-hole pair.
-// Value meanings: 0=Clearance (shaft always smaller), 1=Transition (may
-// clear or interfere), 2=Interference (shaft always larger).
-type FitKind
-{
-    Value: Integer;
-}
+// The engagement class of a shaft-hole pair: the shaft is always smaller
+// (Clearance), may clear or interfere (Transition), or is always larger
+// (Interference).
+type FitClass = Clearance | Transition | Interference;
 
 // A cylindrical fit between a hole and a shaft at a shared nominal diameter,
 // with a toleranced deviation for each member.
@@ -242,7 +225,7 @@ type ShaftHoleFit
     NominalDiameter: Length;
     HoleTolerance: Tolerance;
     ShaftTolerance: Tolerance;
-    Kind: FitKind;
+    Engagement: FitClass;
 }
 
 //==

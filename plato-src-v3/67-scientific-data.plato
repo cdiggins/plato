@@ -80,25 +80,21 @@ type LabeledTimeInterval
 //==
 // # Tables
 
-// The element type of a table column.
-// Value meanings: 0=Number, 1=Integer, 2=String, 3=Boolean, 4=Instant.
-type ColumnKind
-{
-    Value: Integer;
-}
+// The typed values of a table column: exactly one element type, carried by
+// the matching case.
+type ColumnValues
+    = Numbers(Values: Array<Number>)
+    | Integers(Values: Array<Integer>)
+    | Strings(Values: Array<String>)
+    | Booleans(Values: Array<Boolean>)
+    | Instants(Values: Array<Instant>);
 
-// A named, typed table column. Exactly one of the value arrays - the one
-// matching Kind - is populated; the others are empty. Numeric columns state
-// their unit via the owning dataset's metadata or the column name.
+// A named, typed table column. Numeric columns state their unit via the
+// owning dataset's metadata or the column name.
 type DataColumn
 {
     Name: String;
-    Kind: ColumnKind;
-    NumberValues: Array<Number>;
-    IntegerValues: Array<Integer>;
-    StringValues: Array<String>;
-    BooleanValues: Array<Boolean>;
-    InstantValues: Array<Instant>;
+    Values: ColumnValues;
 }
 
 // A rectangular table of typed columns. Every column's populated array has
@@ -164,17 +160,9 @@ type CalibrationCurve
 // # Policies
 
 // How samples are interpolated when a series is resampled onto new times.
-// Value meanings: 0=Nearest, 1=Linear, 2=CubicSpline, 3=HoldPrevious,
-// 4=HoldNext.
-type ResamplingPolicyKind
-{
-    Value: Integer;
-}
+type ResamplingPolicy = Nearest | Linear | CubicSpline | HoldPrevious | HoldNext;
 
-// How missing values in a series or column are treated during computation.
-// Value meanings: 0=Skip (drop the sample), 1=Zero (substitute zero),
-// 2=Interpolate (fill from neighbors), 3=Hold (repeat the previous value).
-type MissingValuePolicyKind
-{
-    Value: Integer;
-}
+// How missing values in a series or column are treated during computation:
+// drop the sample (Skip), substitute zero (Zero), fill from neighbors
+// (Interpolate), or repeat the previous value (Hold).
+type MissingValuePolicy = Skip | Zero | Interpolate | Hold;

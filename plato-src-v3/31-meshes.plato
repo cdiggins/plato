@@ -3,7 +3,7 @@
 //
 // Indexed geometry: shared vertex position arrays referenced by typed face
 // records. All faces wind counter-clockwise when viewed from the front
-// (outside), matching WindingOrderKind 0. Face records index into the owning
+// (outside), matching WindingOrder.CounterClockwise. Face records index into the owning
 // mesh's Positions array; every index must be valid (no -1 inside faces).
 
 //==

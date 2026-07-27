@@ -6,15 +6,10 @@
 // (per-vertex, per-face, per-corner, per-edge, or uniform). Channels are
 // parallel arrays; they never alter the base mesh's connectivity.
 
-// Which mesh element an attribute's values attach to.
-// Value meanings: 0=PerVertex (one value per vertex), 1=PerFace (one value
-// per face), 2=PerCorner (one value per face-vertex slot, allowing seams and
-// hard edges), 3=PerEdge (one value per undirected edge), 4=Uniform (a
-// single value for the whole mesh).
-type AttributeDomainKind
-{
-    Value: Integer;
-}
+// Which mesh element an attribute's values attach to: one value per vertex,
+// per face, per face-vertex slot (allowing seams and hard edges), per
+// undirected edge, or a single value for the whole mesh.
+type AttributeDomain = PerVertex | PerFace | PerCorner | PerEdge | Uniform;
 
 // A named channel of per-element values. The length of Values must equal
 // the element count implied by Domain (exactly 1 when Uniform). Names are
@@ -22,7 +17,7 @@ type AttributeDomainKind
 type MeshAttribute<T>
 {
     Name: String;
-    Domain: AttributeDomainKind;
+    Domain: AttributeDomain;
     Values: Array<T>;
 }
 

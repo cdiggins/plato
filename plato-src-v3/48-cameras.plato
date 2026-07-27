@@ -19,13 +19,9 @@ concept Camera
     Far(x: Self): Number;
 }
 
-// The projection family a camera uses.
-// Value meanings: 0=Perspective, 1=Orthographic, 2=Fisheye, 3=Equirectangular,
-// 4=Panoramic (cylindrical).
-type CameraProjectionKind
-{
-    Value: Integer;
-}
+// The projection family a camera uses; Panoramic is cylindrical.
+type CameraProjection
+    = Perspective | Orthographic | Fisheye | Equirectangular | Panoramic;
 
 // A pinhole perspective camera defined by a vertical field of view.
 // AspectRatio is image width over height; the horizontal field of view follows
@@ -74,12 +70,7 @@ type PhysicalCamera
 
 // The radial mapping of a fisheye lens: how the angle from the optical axis
 // maps to distance from the image center.
-// Value meanings: 0=Equidistant, 1=EquisolidAngle, 2=Orthographic,
-// 3=Stereographic.
-type FisheyeMappingKind
-{
-    Value: Integer;
-}
+type FisheyeMapping = Equidistant | EquisolidAngle | Orthographic | Stereographic;
 
 // A wide-angle camera with a fisheye radial mapping. FieldOfView is the full
 // cone angle covered by the image circle; some mappings support a full
@@ -88,7 +79,7 @@ type FisheyeCamera
     implements Camera
 {
     Pose: Pose3D;
-    Mapping: FisheyeMappingKind;
+    Mapping: FisheyeMapping;
     FieldOfView: Angle;
     Near: Number;
     Far: Number;

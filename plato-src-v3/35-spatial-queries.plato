@@ -164,15 +164,9 @@ type ClosestPairResult
 //==
 // ## Overlap and containment
 
-// How one region relates to another, from the perspective of the first
-// argument A against the second B.
-// Value meanings: 0=Disjoint (no shared points), 1=Intersects (boundaries
-// or interiors overlap without full containment), 2=Contains (A fully
-// contains B), 3=Within (A lies fully inside B).
-type ContainmentKind
-{
-    Value: Integer;
-}
+// How one region A relates to another region B: no shared points, an overlap
+// without full containment, A fully containing B, or A lying fully inside B.
+type Containment = Disjoint | Intersects | Contains | Within;
 
 // A filtered request for everything overlapping a 2D axis-aligned region.
 type OverlapQuery2D

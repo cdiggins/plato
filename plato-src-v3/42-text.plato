@@ -15,22 +15,21 @@ type FontWeight
     Value: Integer;
 }
 
-// The slant style of a font face.
-// Value meanings: 0=Normal, 1=Italic (a designed italic face), 2=Oblique
-// (a slanted version of the normal face).
-type FontStyleKind
-{
-    Value: Integer;
-}
+// The slant style of a font face: upright, a designed italic face, or a
+// slanted version of the normal face.
+type FontStyle = Normal | Italic | Oblique;
 
 // The width class of a font face, on the CSS nine-step scale.
-// Value meanings: 0=UltraCondensed, 1=ExtraCondensed, 2=Condensed,
-// 3=SemiCondensed, 4=Normal, 5=SemiExpanded, 6=Expanded, 7=ExtraExpanded,
-// 8=UltraExpanded.
-type FontStretchKind
-{
-    Value: Integer;
-}
+type FontStretch
+    = UltraCondensed
+    | ExtraCondensed
+    | Condensed
+    | SemiCondensed
+    | Normal
+    | SemiExpanded
+    | Expanded
+    | ExtraExpanded
+    | UltraExpanded;
 
 // A request for a concrete font: a family name plus the weight, slant, and
 // width axes used to select (or synthesize) a face.
@@ -39,16 +38,12 @@ type FontFace
 {
     Family: String;
     Weight: FontWeight;
-    Style: FontStyleKind;
-    Stretch: FontStretchKind;
+    Style: FontStyle;
+    Stretch: FontStretch;
 }
 
 // A line decoration drawn with a run of text.
-// Value meanings: 0=None, 1=Underline, 2=Overline, 3=StrikeThrough.
-type TextDecorationKind
-{
-    Value: Integer;
-}
+type TextDecoration = None | Underline | Overline | StrikeThrough;
 
 // Character-level styling for a run of text. Size is the em size in document
 // units. LetterSpacing and WordSpacing are additive adjustments in the same
@@ -62,39 +57,22 @@ type TextStyle
     WordSpacing: Number;
     LineHeight: Number;
     Color: Color;
-    Decoration: TextDecorationKind;
+    Decoration: TextDecoration;
 }
 
-// Horizontal placement of lines within a paragraph's width.
-// Value meanings: 0=Left, 1=Center, 2=Right, 3=Justify, 4=Start (left in
-// left-to-right text, right in right-to-left), 5=End (the opposite of Start).
-type TextAlignKind
-{
-    Value: Integer;
-}
+// Horizontal placement of lines within a paragraph's width. Start is left in
+// left-to-right text and right in right-to-left; End is the opposite.
+type TextAlign = Left | Center | Right | Justify | Start | End;
 
 // The vertical reference line text is positioned by.
-// Value meanings: 0=Alphabetic, 1=Top, 2=Hanging, 3=Middle, 4=Ideographic,
-// 5=Bottom.
-type TextBaselineKind
-{
-    Value: Integer;
-}
+type TextBaseline = Alphabetic | Top | Hanging | Middle | Ideographic | Bottom;
 
 // The primary reading direction of a paragraph.
-// Value meanings: 0=LeftToRight, 1=RightToLeft.
-type TextDirectionKind
-{
-    Value: Integer;
-}
+type TextDirection = LeftToRight | RightToLeft;
 
-// What happens to text that exceeds its layout constraints.
-// Value meanings: 0=Clip, 1=Ellipsis, 2=Fade, 3=Visible (drawn beyond the
-// bounds).
-type TextOverflowKind
-{
-    Value: Integer;
-}
+// What happens to text that exceeds its layout constraints; Visible text is
+// drawn beyond the bounds.
+type TextOverflow = Clip | Ellipsis | Fade | Visible;
 
 // Paragraph-level styling. LineHeight is a multiplier applied on top of each
 // run's own line height (1.0 is neutral). FirstLineIndent and
@@ -102,8 +80,8 @@ type TextOverflowKind
 type ParagraphStyle
     implements Value
 {
-    Align: TextAlignKind;
-    Direction: TextDirectionKind;
+    Align: TextAlign;
+    Direction: TextDirection;
     LineHeight: Number;
     FirstLineIndent: Number;
     ParagraphSpacing: Number;
@@ -129,7 +107,7 @@ type TextLayout
     Paragraph: ParagraphStyle;
     MaxWidth: Number;
     MaxLineCount: Integer;
-    Overflow: TextOverflowKind;
+    Overflow: TextOverflow;
 }
 
 // One positioned glyph produced by shaping: the font-internal glyph

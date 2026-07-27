@@ -207,20 +207,16 @@ type ContactManifold3D
 //==
 // # Events
 
-// The phase of a collision between two bodies.
-// Value meanings: 0=Begin (first touch), 1=Stay (still touching),
-// 2=End (separated).
-type CollisionEventKind
-{
-    Value: Integer;
-}
+// The phase of a collision between two bodies: first touch (Begin), still
+// touching (Stay), or separated (End).
+type CollisionPhase = Begin | Stay | End;
 
 // A collision notification: which pair, which phase, and the simulation time
 // at which it was raised.
 type CollisionEvent
     implements Value
 {
-    Kind: CollisionEventKind;
+    Phase: CollisionPhase;
     Pair: CollisionPair;
     Time: Instant;
 }

@@ -194,11 +194,7 @@ type MobiusStrip
 }
 
 // The subdivision scheme applied to a control mesh.
-// Value meanings: 0=CatmullClark, 1=Loop, 2=DooSabin.
-type SubdivisionSchemeKind
-{
-    Value: Integer;
-}
+type SubdivisionScheme = CatmullClark | Loop | DooSabin;
 
 // The limit surface of a control mesh under a subdivision scheme, evaluated
 // (or approximated) at the given refinement level.
@@ -206,6 +202,6 @@ type SubdivisionSurface
     implements Surface
 {
     ControlMesh: PolygonMesh3D;
-    Scheme: SubdivisionSchemeKind;
+    Scheme: SubdivisionScheme;
     Levels: Integer;
 }

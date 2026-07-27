@@ -71,87 +71,60 @@ type UnsharpMaskParameters
 //==
 // ## Edges, morphology, and thresholds
 
-// An edge-detection operator.
-// Value meanings: 0=Sobel, 1=Prewitt, 2=Scharr, 3=Laplacian,
-// 4=LaplacianOfGaussian, 5=Canny.
-type EdgeDetectionKind
-{
-    Value: Integer;
-}
+// An edge-detection operation. Canny carries its two hysteresis thresholds;
+// the other operators carry a single magnitude cutoff.
+type EdgeDetection
+    = Sobel(Threshold: Number)
+    | Prewitt(Threshold: Number)
+    | Scharr(Threshold: Number)
+    | Laplacian(Threshold: Number)
+    | LaplacianOfGaussian(Threshold: Number)
+    | Canny(LowThreshold: Number, HighThreshold: Number);
 
-// Edge-detection settings. Canny uses both hysteresis thresholds; the other
-// operators use LowThreshold alone as the magnitude cutoff.
-type EdgeDetectionParameters
-    implements Value
-{
-    Kind: EdgeDetectionKind;
-    LowThreshold: Number;
-    HighThreshold: Number;
-}
-
-// A mathematical-morphology operation.
-// Value meanings: 0=Erode, 1=Dilate, 2=Open, 3=Close, 4=TopHat, 5=BlackHat,
-// 6=Gradient (dilation minus erosion).
-type MorphologyKind
-{
-    Value: Integer;
-}
+// A mathematical-morphology operation; Gradient is dilation minus erosion.
+type MorphologyOperation
+    = Erode | Dilate | Open | Close | TopHat | BlackHat | Gradient;
 
 // The neighborhood shape a morphological operation sweeps over the image.
-// Value meanings: 0=Box, 1=Disk, 2=Cross, 3=Diamond.
-type StructuringElementKind
-{
-    Value: Integer;
-}
+type StructuringElement = Box | Disk | Cross | Diamond;
 
 // A complete morphological operation: what to do, with which element shape,
 // how large, and how many times.
 type MorphologyParameters
     implements Value
 {
-    Operation: MorphologyKind;
-    Element: StructuringElementKind;
+    Operation: MorphologyOperation;
+    Element: StructuringElement;
     Radius: Integer;
     Iterations: Integer;
 }
 
-// A thresholding strategy for reducing an image to two (or clamped) levels.
-// Value meanings: 0=Binary, 1=BinaryInverted, 2=Truncate, 3=ToZero,
-// 4=Otsu (automatic global level), 5=AdaptiveMean, 6=AdaptiveGaussian.
-type ThresholdKind
-{
-    Value: Integer;
-}
-
-// Threshold settings. Level is the normalized cutoff (ignored by Otsu, which
-// computes its own); BlockSize is the local window for adaptive kinds; Offset
-// biases the computed local level.
-type ThresholdParameters
-    implements Value
-{
-    Kind: ThresholdKind;
-    Level: Proportion;
-    BlockSize: Integer;
-    Offset: Number;
-}
+// A thresholding operation for reducing an image to two (or clamped) levels.
+// The fixed-level kinds carry their normalized cutoff; Otsu computes its own
+// global level; the adaptive kinds carry the local window size and an offset
+// that biases the computed local level.
+type Threshold
+    = Binary(Level: Proportion)
+    | BinaryInverted(Level: Proportion)
+    | Truncate(Level: Proportion)
+    | ToZero(Level: Proportion)
+    | Otsu
+    | AdaptiveMean(BlockSize: Integer, Offset: Number)
+    | AdaptiveGaussian(BlockSize: Integer, Offset: Number);
 
 //==
 // ## Channels and histograms
 
 // A color channel selected for analysis or adjustment.
-// Value meanings: 0=Red, 1=Green, 2=Blue, 3=Alpha, 4=Luminance, 5=Hue,
-// 6=Saturation, 7=Value, 8=Lightness.
-type ColorChannelKind
-{
-    Value: Integer;
-}
+type ColorChannel
+    = Red | Green | Blue | Alpha | Luminance | Hue | Saturation | Value | Lightness;
 
 // A distribution of one channel's pixel values. Counts holds the number of
 // pixels per bin; the bins uniformly partition Range in order.
 type ImageHistogram
     implements Value
 {
-    Channel: ColorChannelKind;
+    Channel: ColorChannel;
     Counts: Array<Integer>;
     Range: NumberInterval;
 }
@@ -261,35 +234,50 @@ type ColorLookupTable
 
 // How a source color combines with a destination color when layered
 // (Photoshop/CSS blend modes).
-// Value meanings: 0=Normal, 1=Multiply, 2=Screen, 3=Overlay, 4=Darken,
-// 5=Lighten, 6=ColorDodge, 7=ColorBurn, 8=HardLight, 9=SoftLight,
-// 10=Difference, 11=Exclusion, 12=Hue, 13=Saturation, 14=Color,
-// 15=Luminosity, 16=Add, 17=Subtract, 18=Divide.
-type BlendModeKind
-{
-    Value: Integer;
-}
+type BlendMode
+    = Normal
+    | Multiply
+    | Screen
+    | Overlay
+    | Darken
+    | Lighten
+    | ColorDodge
+    | ColorBurn
+    | HardLight
+    | SoftLight
+    | Difference
+    | Exclusion
+    | Hue
+    | Saturation
+    | Color
+    | Luminosity
+    | Add
+    | Subtract
+    | Divide;
 
 // A Porter-Duff alpha-compositing operator: how source and destination
 // coverage combine.
-// Value meanings: 0=Clear, 1=Source, 2=Destination, 3=SourceOver,
-// 4=DestinationOver, 5=SourceIn, 6=DestinationIn, 7=SourceOut,
-// 8=DestinationOut, 9=SourceAtop, 10=DestinationAtop, 11=Xor, 12=Plus.
-type PorterDuffKind
-{
-    Value: Integer;
-}
+type PorterDuff
+    = Clear
+    | Source
+    | Destination
+    | SourceOver
+    | DestinationOver
+    | SourceIn
+    | DestinationIn
+    | SourceOut
+    | DestinationOut
+    | SourceAtop
+    | DestinationAtop
+    | Xor
+    | Plus;
 
 //==
 // ## Resampling, quantization, and lens effects
 
 // A reconstruction filter used when resampling an image.
-// Value meanings: 0=Nearest, 1=Bilinear, 2=Bicubic, 3=Lanczos2, 4=Lanczos3,
-// 5=Mitchell, 6=CatmullRom, 7=Box.
-type ResampleFilterKind
-{
-    Value: Integer;
-}
+type ResampleFilter
+    = Nearest | Bilinear | Bicubic | Lanczos2 | Lanczos3 | Mitchell | CatmullRom | Box;
 
 // Resize settings. When PreserveAspect is true the image is fit within
 // TargetSize keeping its aspect ratio; otherwise it stretches to fill.
@@ -297,26 +285,25 @@ type ResizeParameters
     implements Value
 {
     TargetSize: IntegerSize2D;
-    Filter: ResampleFilterKind;
+    Filter: ResampleFilter;
     PreserveAspect: Boolean;
 }
 
 // A lossless pixel reorientation (the eight EXIF orientations).
-// Value meanings: 0=Identity, 1=FlipHorizontal, 2=Rotate180, 3=FlipVertical,
-// 4=Transpose, 5=Rotate90, 6=Transverse, 7=Rotate270.
-type ImageOrientationKind
-{
-    Value: Integer;
-}
+type ImageOrientation
+    = Identity
+    | FlipHorizontal
+    | Rotate180
+    | FlipVertical
+    | Transpose
+    | Rotate90
+    | Transverse
+    | Rotate270;
 
 // An error-diffusion or ordered-dithering pattern used when reducing color
 // depth.
-// Value meanings: 0=None, 1=Bayer2, 2=Bayer4, 3=Bayer8, 4=FloydSteinberg,
-// 5=Atkinson, 6=BlueNoise, 7=WhiteNoise.
-type DitherKind
-{
-    Value: Integer;
-}
+type Dither
+    = None | Bayer2 | Bayer4 | Bayer8 | FloydSteinberg | Atkinson | BlueNoise | WhiteNoise;
 
 // Color-quantization settings: reduce an image to at most ColorCount palette
 // entries, hiding banding with the chosen dither.
@@ -324,7 +311,7 @@ type QuantizeParameters
     implements Value
 {
     ColorCount: Integer;
-    Dither: DitherKind;
+    Dither: Dither;
 }
 
 // Edge-preserving denoise settings: Strength sets how aggressively noise is

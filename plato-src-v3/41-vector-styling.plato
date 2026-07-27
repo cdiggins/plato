@@ -6,29 +6,18 @@
 // with appearance. Consumes Path2D from file 40 and Color/ColorGradient from
 // file 14; Texture2D is owned by file 47.
 
-// The shape a stroke takes at the open end of a contour.
-// Value meanings: 0=Butt (flat at the endpoint), 1=Round (semicircular cap),
-// 2=Square (flat, extended past the endpoint by half the stroke width).
-type LineCapKind
-{
-    Value: Integer;
-}
+// The shape a stroke takes at the open end of a contour: flat at the
+// endpoint (Butt), a semicircular cap (Round), or flat but extended past the
+// endpoint by half the stroke width (Square).
+type LineCap = Butt | Round | Square;
 
-// The shape a stroke takes where two segments meet at a corner.
-// Value meanings: 0=Miter (sharp, subject to the miter limit), 1=Round,
-// 2=Bevel.
-type LineJoinKind
-{
-    Value: Integer;
-}
+// The shape a stroke takes where two segments meet at a corner. Miter is
+// sharp, subject to the miter limit.
+type LineJoin = Miter | Round | Bevel;
 
-// Where the stroke width sits relative to the path centerline.
-// Value meanings: 0=Center (half each side), 1=Inside (toward the fill),
-// 2=Outside.
-type StrokeAlignKind
-{
-    Value: Integer;
-}
+// Where the stroke width sits relative to the path centerline: half each
+// side (Center), toward the fill (Inside), or away from it (Outside).
+type StrokeAlign = Center | Inside | Outside;
 
 // An on/off dash sequence applied along a stroked contour's arc length.
 // Intervals alternate drawn and skipped lengths, starting with drawn, and
@@ -48,20 +37,16 @@ type StrokeStyle
     implements Value
 {
     Width: Number;
-    Cap: LineCapKind;
-    Join: LineJoinKind;
+    Cap: LineCap;
+    Join: LineJoin;
     MiterLimit: Number;
     Dash: DashPattern;
-    Align: StrokeAlignKind;
+    Align: StrokeAlign;
 }
 
-// How a gradient continues beyond its defining geometry.
-// Value meanings: 0=Pad (clamp to the end colors), 1=Reflect (mirror
-// repeat), 2=Repeat (tile).
-type GradientSpreadKind
-{
-    Value: Integer;
-}
+// How a gradient continues beyond its defining geometry: clamp to the end
+// colors (Pad), mirror-repeat (Reflect), or tile (Repeat).
+type GradientSpread = Pad | Reflect | Repeat;
 
 // A gradient that varies linearly from Start to End, constant along lines
 // perpendicular to the segment joining them.
@@ -71,7 +56,7 @@ type LinearGradient2D
     Start: Point2D;
     End: Point2D;
     Gradient: ColorGradient;
-    Spread: GradientSpreadKind;
+    Spread: GradientSpread;
 }
 
 // A gradient that varies radially between a focal circle (Focus, FocusRadius)
@@ -86,7 +71,7 @@ type RadialGradient2D
     Focus: Point2D;
     FocusRadius: Number;
     Gradient: ColorGradient;
-    Spread: GradientSpreadKind;
+    Spread: GradientSpread;
 }
 
 // A gradient that varies with angle around Center, starting at StartAngle and
@@ -97,7 +82,7 @@ type SweepGradient2D
     Center: Point2D;
     StartAngle: Angle;
     Gradient: ColorGradient;
-    Spread: GradientSpreadKind;
+    Spread: GradientSpread;
 }
 
 // A paint sourced from a texture (file 47), positioned by an affine transform
@@ -172,9 +157,9 @@ type PathOffsetParameters
     implements Value
 {
     Distance: Number;
-    Join: LineJoinKind;
+    Join: LineJoin;
     MiterLimit: Number;
-    Cap: LineCapKind;
+    Cap: LineCap;
 }
 
 // Controls for converting a dashed traversal of a path into concrete sub-path
@@ -185,5 +170,5 @@ type PathDashParameters
     implements Value
 {
     Pattern: DashPattern;
-    Cap: LineCapKind;
+    Cap: LineCap;
 }

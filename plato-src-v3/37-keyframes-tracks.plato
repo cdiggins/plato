@@ -13,25 +13,19 @@ concept TimeVarying<TValue>
     Sample(x: Self, time: Duration): TValue;
 }
 
-// How a track interpolates between a key and its successor.
-// Value meanings: 0=Constant (hold the key's value until the next key),
-// 1=Linear, 2=CubicSpline (smooth spline with automatic tangents),
-// 3=Bezier (explicit weighted tangent handles), 4=Hermite (explicit tangent
-// slopes), 5=Spring (damped-spring approach to the next value).
-type InterpolationKind
-{
-    Value: Integer;
-}
+// How a track interpolates between a key and its successor: hold the key's
+// value until the next key (Constant), interpolate linearly, follow a smooth
+// spline with automatic tangents (CubicSpline), use explicit weighted tangent
+// handles (Bezier) or explicit tangent slopes (Hermite), or approach the next
+// value like a damped spring (Spring).
+type KeyInterpolation = Constant | Linear | CubicSpline | Bezier | Hermite | Spring;
 
-// How a track behaves when sampled outside its keyed range.
-// Value meanings: 0=Hold (clamp to the boundary key's value), 1=Loop (repeat
-// the keyed range), 2=PingPong (alternate forward and reversed repeats),
-// 3=LinearContinue (extrapolate along the boundary slope), 4=LoopWithOffset
-// (repeat, offsetting each cycle by the range's net value change).
-type ExtrapolationKind
-{
-    Value: Integer;
-}
+// How a track behaves when sampled outside its keyed range: clamp to the
+// boundary key's value (Hold), repeat the keyed range (Loop), alternate
+// forward and reversed repeats (PingPong), extrapolate along the boundary
+// slope (LinearContinue), or repeat while offsetting each cycle by the
+// range's net value change (LoopWithOffset).
+type Extrapolation = Hold | Loop | PingPong | LinearContinue | LoopWithOffset;
 
 // A single typed key on a time line. Time is the offset from the start of the
 // owning track. Easing shapes the parameter on the segment from this key to the
@@ -40,8 +34,8 @@ type Keyframe<T>
 {
     Time: Duration;
     Value: T;
-    Interpolation: InterpolationKind;
-    Easing: EasingKind;
+    Interpolation: KeyInterpolation;
+    Easing: ClassicEasing;
 }
 
 // A key with explicit incoming and outgoing tangents for Bezier and Hermite
@@ -63,8 +57,8 @@ type AnimationTrack<T>
     implements TimeVarying<T>
 {
     Keys: Array<Keyframe<T>>;
-    Before: ExtrapolationKind;
-    After: ExtrapolationKind;
+    Before: Extrapolation;
+    After: Extrapolation;
 }
 
 // A track of tangent keyframes, for curves authored with explicit handles.
@@ -73,8 +67,8 @@ type TangentTrack<T>
     implements TimeVarying<T>
 {
     Keys: Array<TangentKeyframe<T>>;
-    Before: ExtrapolationKind;
-    After: ExtrapolationKind;
+    Before: Extrapolation;
+    After: Extrapolation;
 }
 
 // A track bound to a target name: a property path, channel name, or bone name,
@@ -140,11 +134,7 @@ type AnimationLayer
 }
 
 // The direction time advances during playback.
-// Value meanings: 0=Forward, 1=Reverse.
-type PlaybackDirectionKind
-{
-    Value: Integer;
-}
+type PlaybackDirection = Forward | Reverse;
 
 // The playback position and rate of a running animation. Time is the offset
 // into the clip; Speed is a rate multiplier (1 is natural speed).
@@ -152,7 +142,7 @@ type AnimationPlayhead
 {
     Time: Duration;
     Speed: Number;
-    Direction: PlaybackDirectionKind;
+    Direction: PlaybackDirection;
     Playing: Boolean;
 }
 
@@ -183,7 +173,7 @@ type AnimationTransition
     FromState: AnimationStateIndex;
     ToState: AnimationStateIndex;
     Duration: Duration;
-    Easing: EasingKind;
+    Easing: ClassicEasing;
     ExitTime: Proportion;
 }
 

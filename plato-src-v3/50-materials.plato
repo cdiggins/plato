@@ -8,32 +8,25 @@
 // is simply a disabled one. Texture references use the TextureBinding type of
 // file 47.
 
-// How a material's alpha is interpreted when compositing.
-// Value meanings: 0=Opaque (alpha ignored), 1=Mask (binary cutout using
-// Cutoff), 2=Blend (alpha compositing).
-type AlphaModeKind
-{
-    Value: Integer;
-}
+// How a material's alpha is interpreted when compositing: alpha ignored
+// (Opaque), a binary cutout discarding fragments below the carried Cutoff
+// threshold (Mask, conventionally 0.5), or alpha compositing (Blend).
+type AlphaMode
+    = Opaque
+    | Mask(Cutoff: Proportion)
+    | Blend;
 
-// Transparency controls. Opacity multiplies the base color's alpha component;
-// Cutoff is the Mask-mode threshold below which fragments are discarded
-// (conventionally 0.5); Mode selects the interpretation.
+// Transparency controls. Opacity multiplies the base color's alpha
+// component; Mode selects how the result is interpreted.
 type AlphaSettings
     implements Value
 {
-    Mode: AlphaModeKind;
+    Mode: AlphaMode;
     Opacity: Proportion;
-    Cutoff: Proportion;
 }
 
 // The reflectance model a renderer should evaluate.
-// Value meanings: 0=Lambert, 1=OrenNayar, 2=GgxMetallicRoughness, 3=Disney,
-// 4=Phong, 5=BlinnPhong.
-type BrdfKind
-{
-    Value: Integer;
-}
+type Brdf = Lambert | OrenNayar | GgxMetallicRoughness | Disney | Phong | BlinnPhong;
 
 // The core physically-based material (glTF 2.0 metallic-roughness). BaseColor
 // carries albedo for dielectrics, reflectance for metals, and the surface

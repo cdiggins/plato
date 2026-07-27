@@ -7,11 +7,7 @@
 // pure parameter records. Optional limits use -1 for "no limit".
 
 // Whether the objective is to be minimized or maximized.
-// Value meanings: 0=Minimize, 1=Maximize.
-type OptimizationGoalKind
-{
-    Value: Integer;
-}
+type OptimizationGoal = Minimize | Maximize;
 
 // Stopping rules for an iterative solver. Iteration stops when the step or
 // objective change falls below AbsoluteTolerance, or below RelativeTolerance
@@ -27,12 +23,7 @@ type ConvergenceCriteria
 }
 
 // Why an iterative solver stopped.
-// Value meanings: 0=Converged, 1=MaxIterations, 2=Stalled, 3=Failed,
-// 4=NumericalError.
-type TerminationReasonKind
-{
-    Value: Integer;
-}
+type TerminationReason = Converged | MaxIterations | Stalled | Failed | NumericalError;
 
 // The outcome of an optimization run: the best parameter vector found, its
 // objective value, the iterations spent, and how the run ended.
@@ -43,7 +34,7 @@ type OptimizationResult
     ObjectiveValue: Number;
     Iterations: Integer;
     Converged: Boolean;
-    Reason: TerminationReasonKind;
+    Reason: TerminationReason;
 }
 
 //==
@@ -91,12 +82,7 @@ type LeastSquaresResult
 }
 
 // The strategy for choosing a step length along a descent direction.
-// Value meanings: 0=FixedStep, 1=Backtracking, 2=WolfeConditions,
-// 3=GoldenSection, 4=Exact.
-type LineSearchKind
-{
-    Value: Integer;
-}
+type LineSearch = FixedStep | Backtracking | WolfeConditions | GoldenSection | Exact;
 
 //==
 // # Gradient-based solver parameters
@@ -118,7 +104,7 @@ type LbfgsParameters
     implements Value
 {
     MemorySize: Integer;
-    LineSearch: LineSearchKind;
+    LineSearch: LineSearch;
 }
 
 //==
@@ -188,14 +174,10 @@ type ParticleSwarmParameters
 // # Constrained problems
 
 // How a constraint row relates its left side to its right side.
-// Value meanings: 0=Equality, 1=LessOrEqual, 2=GreaterOrEqual.
-type ConstraintKind
-{
-    Value: Integer;
-}
+type ConstraintRelation = Equality | LessOrEqual | GreaterOrEqual;
 
 // A linear program. Row i of ConstraintMatrix dotted with the variable
-// vector relates to RightHandSide[i] by ConstraintKinds[i]; the objective is
+// vector relates to RightHandSide[i] by ConstraintRelations[i]; the objective is
 // the dot product with ObjectiveCoefficients; LowerBounds and UpperBounds
 // run per variable.
 type LinearProgram
@@ -203,7 +185,7 @@ type LinearProgram
 {
     ObjectiveCoefficients: Array<Number>;
     ConstraintMatrix: MatrixN;
-    ConstraintKinds: Array<ConstraintKind>;
+    ConstraintRelations: Array<ConstraintRelation>;
     RightHandSide: Array<Number>;
     LowerBounds: Array<Number>;
     UpperBounds: Array<Number>;
@@ -218,7 +200,7 @@ type QuadraticProgram
     Quadratic: MatrixN;
     Linear: Array<Number>;
     ConstraintMatrix: MatrixN;
-    ConstraintKinds: Array<ConstraintKind>;
+    ConstraintRelations: Array<ConstraintRelation>;
     RightHandSide: Array<Number>;
     LowerBounds: Array<Number>;
     UpperBounds: Array<Number>;

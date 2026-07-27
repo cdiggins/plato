@@ -91,13 +91,10 @@ type MorphWeights
     Values: Array<Proportion>;
 }
 
-// The algorithm an inverse-kinematics chain is solved with.
-// Value meanings: 0=TwoBone (analytic two-segment solve), 1=Ccd (cyclic
-// coordinate descent), 2=Fabrik (forward-and-backward reaching).
-type IkSolverKind
-{
-    Value: Integer;
-}
+// The algorithm an inverse-kinematics chain is solved with: an analytic
+// two-segment solve, cyclic coordinate descent, or forward-and-backward
+// reaching.
+type IkSolver = TwoBone | Ccd | Fabrik;
 
 // The goal of an inverse-kinematics solve: where the chain's end effector
 // should be and how it should be oriented. The two weights blend the solved
@@ -122,7 +119,7 @@ type IkChain
     BoneIndices: Array<BoneIndex>;
     Target: IkTarget;
     PoleTarget: Point3D;
-    Solver: IkSolverKind;
+    Solver: IkSolver;
     Iterations: Integer;
     Tolerance: Number;
 }

@@ -184,20 +184,13 @@ type VertexFaceAdjacency
 // ## Topological classification
 
 // The rotational direction of a face loop as seen from the front side.
-// Value meanings: 0=CounterClockwise (the library default), 1=Clockwise.
-type WindingOrderKind
-{
-    Value: Integer;
-}
+// CounterClockwise is the library default.
+type WindingOrder = CounterClockwise | Clockwise;
 
-// How close a surface is to being a 2-manifold.
-// Value meanings: 0=Unknown, 1=Manifold (every edge borders exactly two
-// faces, vertex stars are disks), 2=ManifoldWithBoundary (edges border one
-// or two faces), 3=NonManifold.
-type ManifoldnessKind
-{
-    Value: Integer;
-}
+// How close a surface is to being a 2-manifold: Manifold means every edge
+// borders exactly two faces and vertex stars are disks;
+// ManifoldWithBoundary allows edges bordering one or two faces.
+type Manifoldness = Unknown | Manifold | ManifoldWithBoundary | NonManifold;
 
 // Aggregate topological measurements of a mesh. EulerCharacteristic equals
 // VertexCount - EdgeCount + FaceCount; a closed connected manifold of genus g
@@ -211,7 +204,7 @@ type TopologySummary
     BoundaryLoopCount: Integer;
     ConnectedComponentCount: Integer;
     EulerCharacteristic: Integer;
-    Manifoldness: ManifoldnessKind;
+    Manifoldness: Manifoldness;
 }
 
 //==

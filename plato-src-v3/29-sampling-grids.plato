@@ -139,12 +139,15 @@ type SampledSurfaceGrid
 // Generation is deterministic for a given record, including its Seed.
 
 // The scattering strategy of a planar sample pattern.
-// Value meanings: 0=RegularGrid, 1=JitteredGrid, 2=Stratified, 3=PoissonDisk,
-// 4=Halton, 5=Hammersley, 6=Sobol, 7=BlueNoise.
-type SamplePatternKind
-{
-    Value: Integer;
-}
+type SamplePattern
+    = RegularGrid
+    | JitteredGrid
+    | Stratified
+    | PoissonDisk
+    | Halton
+    | Hammersley
+    | Sobol
+    | BlueNoise;
 
 // Poisson-disk scattering: random points where no two are closer than
 // MinimumDistance. MaxAttempts bounds the candidates tried per point
@@ -230,28 +233,27 @@ type BlueNoisePattern2D
 // ## Interpolation and resampling
 
 // How values between grid samples are reconstructed.
-// Value meanings: 0=Nearest, 1=Linear, 2=Bilinear, 3=Bicubic, 4=Trilinear,
-// 5=Tricubic, 6=CatmullRom, 7=CubicBSpline.
-type InterpolationSchemeKind
-{
-    Value: Integer;
-}
+type InterpolationScheme
+    = Nearest
+    | Linear
+    | Bilinear
+    | Bicubic
+    | Trilinear
+    | Tricubic
+    | CatmullRom
+    | CubicBSpline;
 
-// How a sampled grid treats coordinates outside its bounds.
-// Value meanings: 0=ClampToEdge, 1=Wrap (tile), 2=Mirror (reflect),
-// 3=ZeroOutside.
-type GridBoundaryKind
-{
-    Value: Integer;
-}
+// How a sampled grid treats coordinates outside its bounds: clamp to the
+// edge value, tile, reflect, or read zero.
+type GridBoundary = ClampToEdge | Wrap | Mirror | ZeroOutside;
 
 // A reconstruction policy for sampled grids: which interpolation scheme to
 // use between nodes and how to treat out-of-bounds coordinates.
 type GridSamplingScheme
     implements Value
 {
-    Interpolation: InterpolationSchemeKind;
-    Boundary: GridBoundaryKind;
+    Interpolation: InterpolationScheme;
+    Boundary: GridBoundary;
 }
 
 // A planar resampling operation: values defined on Source are transferred

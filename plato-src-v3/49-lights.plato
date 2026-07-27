@@ -21,22 +21,10 @@ concept LightSource
     CastsShadows(x: Self): Boolean;
 }
 
-// How light strength decays with distance from the source.
-// Value meanings: 0=None, 1=Linear, 2=Quadratic, 3=InverseSquare (physically
-// correct), 4=Smooth (inverse-square with a windowed fade to zero at Range).
-type AttenuationKind
-{
-    Value: Integer;
-}
-
-// The family a light belongs to; discriminates entries of a SceneLightSet
-// (file 51).
-// Value meanings: 0=Directional, 1=Point, 2=Spot, 3=Area, 4=Disk, 5=Sphere,
-// 6=Tube, 7=Environment, 8=ProceduralSky, 9=Ambient.
-type LightKind
-{
-    Value: Integer;
-}
+// How light strength decays with distance from the source. InverseSquare is
+// physically correct; Smooth is inverse-square with a windowed fade to zero
+// at Range.
+type Attenuation = None | Linear | Quadratic | InverseSquare | Smooth;
 
 //==
 // # Analytic light sources
@@ -66,7 +54,7 @@ type PointLight
     Color: Color;
     Flux: LuminousFlux;
     Range: Number;
-    Falloff: AttenuationKind;
+    Falloff: Attenuation;
     CastsShadows: Boolean;
 }
 
@@ -84,7 +72,7 @@ type SpotLight
     InnerAngle: Angle;
     OuterAngle: Angle;
     Range: Number;
-    Falloff: AttenuationKind;
+    Falloff: Attenuation;
     CastsShadows: Boolean;
 }
 

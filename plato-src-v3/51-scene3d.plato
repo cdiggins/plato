@@ -7,7 +7,7 @@
 // SceneNode3D.Material indexes SceneResources.Materials; SceneNode3D.Light
 // indexes SceneResources.LightBindings; SceneNode3D.Camera indexes
 // SceneResources.CameraBindings. A binding then selects into the typed arrays
-// of SceneLightSet or SceneCameraSet via its Kind.
+// of SceneLightSet or SceneCameraSet via its case.
 
 // A zero-based index of a node within Scene3D.Nodes. -1 means "none"
 // (a root's parent).
@@ -69,13 +69,9 @@ type SceneNode3D
 }
 
 // Node visibility for pipelines needing a tri-state instead of the plain
-// SceneNode3D.Visible flag.
-// Value meanings: 0=Inherited (follow the parent), 1=Visible, 2=Hidden
-// (including all descendants).
-type VisibilityKind
-{
-    Value: Integer;
-}
+// SceneNode3D.Visible flag: follow the parent (Inherited), or force the node
+// shown or hidden (including all descendants).
+type Visibility = Inherited | Visible | Hidden;
 
 // All lights of a scene grouped into typed arrays; SceneLightBinding entries
 // address into these. Each array is an independent zero-based index space.
@@ -94,24 +90,20 @@ type SceneLightSet
     AmbientLights: Array<AmbientLight>;
 }
 
-// A tagged reference to one light: Kind picks the typed array of SceneLightSet
-// (see LightKind, file 49) and Index is the position within that array.
+// A tagged reference to one light: the case picks the typed array of
+// SceneLightSet and Index is the position within that array.
 type SceneLightBinding
     implements Value
-{
-    Kind: LightKind;
-    Index: ItemIndex;
-}
-
-// Which typed camera array of SceneCameraSet a binding addresses. Distinct
-// from CameraProjectionKind (file 48): a PhysicalCamera projects
-// perspectively but is stored in its own array.
-// Value meanings: 0=Perspective, 1=Orthographic, 2=Physical, 3=Fisheye,
-// 4=Equirectangular, 5=Panoramic.
-type SceneCameraKind
-{
-    Value: Integer;
-}
+    = Directional(Index: ItemIndex)
+    | Point(Index: ItemIndex)
+    | Spot(Index: ItemIndex)
+    | Area(Index: ItemIndex)
+    | Disk(Index: ItemIndex)
+    | Sphere(Index: ItemIndex)
+    | Tube(Index: ItemIndex)
+    | Environment(Index: ItemIndex)
+    | ProceduralSkyLight(Index: ItemIndex)
+    | Ambient(Index: ItemIndex);
 
 // All cameras of a scene grouped into typed arrays; SceneCameraBinding
 // entries address into these. Each array is an independent zero-based index
@@ -127,14 +119,18 @@ type SceneCameraSet
     PanoramicCameras: Array<PanoramicCamera>;
 }
 
-// A tagged reference to one camera: Kind picks the typed array of
-// SceneCameraSet and Index is the position within that array.
+// A tagged reference to one camera: the case picks the typed array of
+// SceneCameraSet and Index is the position within that array. Distinct from
+// CameraProjection (file 48): a Physical camera projects perspectively but
+// is stored in its own array.
 type SceneCameraBinding
     implements Value
-{
-    Kind: SceneCameraKind;
-    Index: ItemIndex;
-}
+    = Perspective(Index: ItemIndex)
+    | Orthographic(Index: ItemIndex)
+    | Physical(Index: ItemIndex)
+    | Fisheye(Index: ItemIndex)
+    | Equirectangular(Index: ItemIndex)
+    | Panoramic(Index: ItemIndex);
 
 // The shared resource pools of a scene; node and instance indices resolve
 // here. Meshes come from file 31, materials from file 50.

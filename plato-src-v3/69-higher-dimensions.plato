@@ -168,12 +168,13 @@ type CliffordTorus
 // # 4D polytopes
 
 // The six convex regular 4-polytopes.
-// Value meanings: 0=FiveCell, 1=EightCellTesseract, 2=SixteenCell,
-// 3=TwentyFourCell, 4=OneTwentyCell, 5=SixHundredCell.
 type RegularPolytopeKind
-{
-    Value: Integer;
-}
+    = FiveCell
+    | EightCellTesseract
+    | SixteenCell
+    | TwentyFourCell
+    | OneTwentyCell
+    | SixHundredCell;
 
 // A regular 4-polytope placed in space: which of the six it is, where its
 // center lies, its circumradius (center to vertex, world units), and its
@@ -206,23 +207,15 @@ type Polytope4D
 //==
 // # Projection from 4D to 3D
 
-// How 4D geometry is flattened into 3D for display.
-// Value meanings: 0=Orthographic (drop W), 1=Perspective (divide by eye
-// distance minus W), 2=Stereographic (project from a pole of the 3-sphere).
-type Projection4DKind
-{
-    Value: Integer;
-}
-
-// A configured 4D-to-3D projection. EyeDistance (world units) is the
-// viewpoint's offset along +W for Perspective, or the projection pole's
-// distance for Stereographic; Orthographic ignores it.
+// A configured 4D-to-3D projection: drop W (Orthographic), divide by the
+// eye distance minus W (Perspective, carrying the viewpoint's offset along
+// +W in world units), or project from a pole of the 3-sphere
+// (Stereographic, carrying the pole's distance).
 type Projection4DTo3D
     implements Value
-{
-    Kind: Projection4DKind;
-    EyeDistance: Number;
-}
+    = Orthographic
+    | Perspective(EyeDistance: Number)
+    | Stereographic(EyeDistance: Number);
 
 //==
 // # N-dimensional structures

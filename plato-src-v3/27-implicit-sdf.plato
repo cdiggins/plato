@@ -40,17 +40,21 @@ concept ImplicitVolume3D
 //
 // Constructive solid geometry over signed distance fields, stored as flat
 // arrays of nodes. Leaves reference primitives by index into a caller-supplied
-// primitive list; interior nodes combine two children. Indices use -1 for
-// "unused".
+// primitive list; interior nodes combine two children by node index.
 
 // The Boolean or blending operation an SDF combination node applies.
-// Value meanings: 0=Union (minimum), 1=Intersection (maximum), 2=Difference
-// (left minus right), 3=SmoothUnion, 4=SmoothIntersection, 5=SmoothDifference,
-// 6=ExclusiveOr, 7=Blend (linear interpolation of distances).
-type SdfCombineKind
-{
-    Value: Integer;
-}
+// Union is the distance minimum, Intersection the maximum, Difference the
+// left child minus the right. Smooth variants blend over their own Radius;
+// Blend linearly interpolates the two child distances by Weight.
+type SdfCombine
+    = Union
+    | Intersection
+    | Difference
+    | ExclusiveOr
+    | SmoothUnion(Radius: Number)
+    | SmoothIntersection(Radius: Number)
+    | SmoothDifference(Radius: Number)
+    | Blend(Weight: Proportion);
 
 // A zero-based index of a node within an SDF combination tree's node array.
 // Nodes only reference lower-indexed nodes; -1 means "unused".
@@ -60,19 +64,13 @@ type SdfNodeIndex
     Value: Integer;
 }
 
-// One node of a flat planar SDF tree. Interior nodes set Left and Right to
-// node indices and Primitive to -1; leaves set Primitive to an index into an
-// external primitive list and Left/Right to -1. Smoothing is the blend radius
-// for smooth operations; 0 means a hard combination.
+// One node of a flat planar SDF tree. Leaves reference a primitive by index
+// into an external primitive list; interior nodes combine two lower-indexed
+// nodes. Child references are node indices, never embedded nodes.
 type SdfNode2D
     implements Value
-{
-    Combine: SdfCombineKind;
-    Left: SdfNodeIndex;
-    Right: SdfNodeIndex;
-    Primitive: ItemIndex;
-    Smoothing: Number;
-}
+    = Leaf(Primitive: ItemIndex)
+    | Interior(Combine: SdfCombine, Left: SdfNodeIndex, Right: SdfNodeIndex);
 
 // A flat planar SDF combination tree. Nodes may only reference lower-indexed
 // nodes; Root is the index of the node producing the final distance. Leaf
@@ -84,19 +82,13 @@ type SdfTree2D
     Root: SdfNodeIndex;
 }
 
-// One node of a flat spatial SDF tree. Interior nodes set Left and Right to
-// node indices and Primitive to -1; leaves set Primitive to an index into an
-// external primitive list and Left/Right to -1. Smoothing is the blend radius
-// for smooth operations; 0 means a hard combination.
+// One node of a flat spatial SDF tree. Leaves reference a primitive by index
+// into an external primitive list; interior nodes combine two lower-indexed
+// nodes. Child references are node indices, never embedded nodes.
 type SdfNode3D
     implements Value
-{
-    Combine: SdfCombineKind;
-    Left: SdfNodeIndex;
-    Right: SdfNodeIndex;
-    Primitive: ItemIndex;
-    Smoothing: Number;
-}
+    = Leaf(Primitive: ItemIndex)
+    | Interior(Combine: SdfCombine, Left: SdfNodeIndex, Right: SdfNodeIndex);
 
 // A flat spatial SDF combination tree. Nodes may only reference lower-indexed
 // nodes; Root is the index of the node producing the final distance. Leaf

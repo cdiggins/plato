@@ -161,14 +161,11 @@ type SurfaceCurvature
     Principal: PrincipalCurvatures;
 }
 
-// Local shape classification of a surface point by its principal curvatures.
-// Value meanings: 0=Elliptic (Gaussian > 0), 1=Parabolic (exactly one zero
-// principal curvature), 2=Hyperbolic (Gaussian < 0), 3=Planar (both zero),
-// 4=Umbilic (equal and nonzero).
-type SurfacePointShapeKind
-{
-    Value: Integer;
-}
+// Local shape classification of a surface point by its principal
+// curvatures: Gaussian curvature positive (Elliptic), exactly one zero
+// principal curvature (Parabolic), Gaussian negative (Hyperbolic), both
+// zero (Planar), or equal and nonzero (Umbilic).
+type SurfacePointShape = Elliptic | Parabolic | Hyperbolic | Planar | Umbilic;
 
 //==
 // # Fundamental forms and intrinsic data

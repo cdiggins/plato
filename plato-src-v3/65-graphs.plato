@@ -218,12 +218,7 @@ type BipartiteMatching
 // # Layout
 
 // The algorithm family used to position a graph's vertices for display.
-// Value meanings: 0=ForceDirected, 1=Circular, 2=Layered, 3=Grid, 4=Radial,
-// 5=Spectral.
-type GraphLayoutKind
-{
-    Value: Integer;
-}
+type GraphLayout = ForceDirected | Circular | Layered | Grid | Radial | Spectral;
 
 // A graph paired with 2D positions for its vertices (unit-agnostic canvas
 // coordinates). Positions is parallel to the implicit vertex range.

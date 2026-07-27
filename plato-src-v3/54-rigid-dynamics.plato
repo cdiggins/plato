@@ -17,13 +17,10 @@ type BodyIndex
 //==
 // # Motion kind and mass properties
 
-// How a body participates in dynamics.
-// Value meanings: 0=Static (never moves), 1=Kinematic (moved externally,
-// treated as infinitely massive), 2=Dynamic (integrates forces and impulses).
-type BodyMotionKind
-{
-    Value: Integer;
-}
+// How a body participates in dynamics: never moves (Static), is moved
+// externally and treated as infinitely massive (Kinematic), or integrates
+// forces and impulses (Dynamic).
+type BodyMotion = Static | Kinematic | Dynamic;
 
 // The inertial properties of a planar rigid body: total mass, center of mass
 // in the body's local frame (meters), and the scalar moment of inertia about
@@ -61,7 +58,7 @@ type RigidBody2D
     LinearVelocity: Vector2;
     AngularVelocity: AngularVelocity;
     MassProperties: MassProperties2D;
-    Motion: BodyMotionKind;
+    Motion: BodyMotion;
     LinearDamping: Number;
     AngularDamping: Number;
     GravityScale: Number;
@@ -79,7 +76,7 @@ type RigidBody3D
     LinearVelocity: Vector3;
     AngularVelocity: Vector3;
     MassProperties: MassProperties3D;
-    Motion: BodyMotionKind;
+    Motion: BodyMotion;
     LinearDamping: Number;
     AngularDamping: Number;
     GravityScale: Number;
@@ -207,11 +204,8 @@ type BuoyancyModel
 // # Materials
 
 // How two touching bodies' material coefficients merge into one contact
-// coefficient. Value meanings: 0=Average, 1=Min, 2=Max, 3=Multiply.
-type CombineKind
-{
-    Value: Integer;
-}
+// coefficient.
+type MaterialCombine = Average | Min | Max | Multiply;
 
 // Surface response properties of a body. StaticFriction and DynamicFriction
 // are dimensionless Coulomb coefficients; Restitution is the bounciness in
@@ -222,8 +216,8 @@ type PhysicsMaterial
     StaticFriction: Number;
     DynamicFriction: Number;
     Restitution: Proportion;
-    FrictionCombine: CombineKind;
-    RestitutionCombine: CombineKind;
+    FrictionCombine: MaterialCombine;
+    RestitutionCombine: MaterialCombine;
 }
 
 //==

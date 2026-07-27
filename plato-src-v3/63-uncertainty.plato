@@ -164,20 +164,10 @@ type KalmanFilterParameters
 //==
 // # Error propagation
 
-// How uncertainty is propagated through a computation.
-// Value meanings: 0=Linear (first-order Taylor), 1=MonteCarlo (sampled),
-// 2=Unscented (sigma points).
-type ErrorPropagationKind
-{
-    Value: Integer;
-}
-
-// Parameters of an error-propagation run. SampleCount and Seed apply only
-// to the MonteCarlo kind and are ignored by the others.
-type ErrorPropagationParameters
-    implements Value
-{
-    Kind: ErrorPropagationKind;
-    SampleCount: Integer;
-    Seed: Integer;
-}
+// How uncertainty is propagated through a computation: first-order Taylor
+// (Linear), sampled with the given count and deterministic seed
+// (MonteCarlo), or sigma points (Unscented).
+type ErrorPropagation
+    = Linear
+    | MonteCarlo(SampleCount: Integer, Seed: Integer)
+    | Unscented;

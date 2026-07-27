@@ -27,26 +27,20 @@ type WhitePoint
     Luminance: Number;
 }
 
-// A standard CIE illuminant used as a reference white.
-// Value meanings: 0=A (incandescent), 1=B, 2=C, 3=D50, 4=D55, 5=D60, 6=D65,
-// 7=D75, 8=E (equal energy), 9=F2, 10=F7, 11=F11.
-type WhitePointKind
-{
-    Value: Integer;
-}
+// A standard CIE illuminant used as a reference white. A is incandescent;
+// E is equal energy.
+type StandardIlluminant
+    = A | B | C | D50 | D55 | D60 | D65 | D75 | E | F2 | F7 | F11;
 
 //==
 // ## Primaries, transfer functions, and RGB color spaces
 
 // An opto-electronic transfer characteristic: how linear light is encoded to
-// (and decoded from) stored component values.
-// Value meanings: 0=Linear, 1=SRGB (piecewise sRGB), 2=Gamma18, 3=Gamma22,
-// 4=Gamma24, 5=Gamma26, 6=Rec709 (BT.1886 pair), 7=PQ (SMPTE ST 2084 HDR),
-// 8=HLG (hybrid log-gamma HDR).
-type TransferFunctionKind
-{
-    Value: Integer;
-}
+// (and decoded from) stored component values. SRGB is the piecewise sRGB
+// curve; Rec709 is the BT.1886 pair; PQ (SMPTE ST 2084) and HLG (hybrid
+// log-gamma) are the HDR encodings.
+type TransferFunction
+    = Linear | SRGB | Gamma18 | Gamma22 | Gamma24 | Gamma26 | Rec709 | PQ | HLG;
 
 // The chromaticities of an RGB color space's three primaries and its white
 // point; together they fix the space's gamut and its matrix to CIE XYZ.
@@ -66,43 +60,39 @@ type RgbColorSpace
 {
     Name: String;
     Primaries: RgbPrimaries;
-    Transfer: TransferFunctionKind;
+    Transfer: TransferFunction;
 }
 
 // A well-known RGB color space, for when a name is enough and the full
 // RgbColorSpace record is not needed.
-// Value meanings: 0=SRGB, 1=LinearSRGB, 2=DisplayP3, 3=AdobeRGB,
-// 4=ProPhotoRGB, 5=Rec709, 6=Rec2020, 7=ACEScg, 8=ACES2065.
-type ColorSpaceKind
-{
-    Value: Integer;
-}
+type NamedColorSpace
+    = SRGB
+    | LinearSRGB
+    | DisplayP3
+    | AdobeRGB
+    | ProPhotoRGB
+    | Rec709
+    | Rec2020
+    | ACEScg
+    | ACES2065;
 
 // The strategy for mapping colors between the gamuts of two color spaces
 // (the ICC rendering intents).
-// Value meanings: 0=Perceptual, 1=RelativeColorimetric, 2=Saturation,
-// 3=AbsoluteColorimetric.
-type RenderingIntentKind
-{
-    Value: Integer;
-}
+type RenderingIntent
+    = Perceptual | RelativeColorimetric | Saturation | AbsoluteColorimetric;
 
 // A method for adapting tristimulus values from one white point to another.
-// Value meanings: 0=XyzScaling, 1=Bradford, 2=VonKries, 3=CAT02, 4=CAT16.
-type ChromaticAdaptationKind
-{
-    Value: Integer;
-}
+type ChromaticAdaptation = XyzScaling | Bradford | VonKries | CAT02 | CAT16;
 
 // A conversion recipe between two named color spaces, including the chromatic
 // adaptation to use when their white points differ.
 type ColorSpaceConversion
     implements Value
 {
-    Source: ColorSpaceKind;
-    Target: ColorSpaceKind;
-    Adaptation: ChromaticAdaptationKind;
-    Intent: RenderingIntentKind;
+    Source: NamedColorSpace;
+    Target: NamedColorSpace;
+    Adaptation: ChromaticAdaptation;
+    Intent: RenderingIntent;
 }
 
 //==
@@ -251,16 +241,14 @@ type Palette
 }
 
 // A classical hue-wheel relationship used to derive palettes from a base color.
-// Value meanings: 0=Complementary, 1=Analogous, 2=Triadic,
-// 3=SplitComplementary, 4=Tetradic, 5=Square, 6=Monochromatic.
-type ColorHarmonyKind
-{
-    Value: Integer;
-}
+type ColorHarmony
+    = Complementary
+    | Analogous
+    | Triadic
+    | SplitComplementary
+    | Tetradic
+    | Square
+    | Monochromatic;
 
 // A perceptual color-difference (delta E) formula.
-// Value meanings: 0=CIE76, 1=CIE94, 2=CIEDE2000, 3=CMC, 4=EuclideanOkLab.
-type ColorDifferenceKind
-{
-    Value: Integer;
-}
+type ColorDifference = CIE76 | CIE94 | CIEDE2000 | CMC | EuclideanOkLab;

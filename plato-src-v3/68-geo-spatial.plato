@@ -112,22 +112,22 @@ type GeodeticDatum
 // # Map projections
 
 // The projection family used to flatten geodetic coordinates onto a plane.
-// Value meanings: 0=Mercator, 1=WebMercator, 2=Utm, 3=LambertConformalConic,
-// 4=Stereographic, 5=Equirectangular, 6=AzimuthalEquidistant.
-type MapProjectionKind
-{
-    Value: Integer;
-}
+// The conic family carries its two standard parallels.
+type MapProjectionFamily
+    = Mercator
+    | WebMercator
+    | Utm
+    | LambertConformalConic(FirstStandardParallel: Angle, SecondStandardParallel: Angle)
+    | Stereographic
+    | Equirectangular
+    | AzimuthalEquidistant;
 
-// A configured map projection. Standard parallels apply to conic kinds and
-// are zero otherwise; the false easting and northing offset all projected
-// coordinates so they stay positive across the region of use.
+// A configured map projection. The false easting and northing offset all
+// projected coordinates so they stay positive across the region of use.
 type MapProjection
 {
-    Kind: MapProjectionKind;
+    Family: MapProjectionFamily;
     CentralMeridian: Angle;
-    FirstStandardParallel: Angle;
-    SecondStandardParallel: Angle;
     FalseEasting: Length;
     FalseNorthing: Length;
 }

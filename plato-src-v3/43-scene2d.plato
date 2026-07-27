@@ -4,16 +4,17 @@
 // Retained scene description for 2D vector graphics: a flat node array forms
 // a tree via parent indices, and node content (styled paths, text layouts,
 // image references) lives in parallel pools addressed by index. Viewport and
-// export settings close the file. BlendModeKind is owned by file 46.
+// export settings close the file. BlendMode is owned by file 46.
 
-// What kind of content a scene node carries.
-// Value meanings: 0=None (pure transform/group node), 1=Shape (a styled
-// path), 2=Text (a text layout), 3=Image (an image reference), 4=Group
-// (children only, composited as an isolation group).
-type NodeContentKind
-{
-    Value: Integer;
-}
+// The content a scene node carries. None is a pure transform node; Group has
+// children only and is composited as an isolation group. The indexed cases
+// address the owning scene's parallel pools (Shapes, Texts, ImageReferences).
+type NodeContent2D
+    = None
+    | Shape(Index: ItemIndex)
+    | Text(Index: ItemIndex)
+    | Image(Index: ItemIndex)
+    | Group;
 
 // A zero-based index of a node within Scene2D's flat node array. -1 means
 // "none" (a root's parent, a hit-test miss).
@@ -26,9 +27,9 @@ type SceneNodeIndex2D
 // One node of a 2D scene, stored in Scene2D's flat node array. Parent is the
 // index of the parent node, -1 for a root. Transform places the node
 // relative to its parent; Opacity and Blend composite the node's rendered
-// output over what lies beneath. ContentIndex addresses the pool selected by
-// ContentKind in the owning scene, -1 for no content. ClipIndex selects a
-// clip mask from the scene's clip pool, -1 for none.
+// output over what lies beneath. Content selects and addresses the node's
+// payload in the owning scene's pools. ClipIndex selects a clip mask from
+// the scene's clip pool, -1 for none.
 type SceneNode2D
     implements Value
 {
@@ -36,10 +37,9 @@ type SceneNode2D
     Parent: SceneNodeIndex2D;
     Transform: Transform2D;
     Opacity: Proportion;
-    Blend: BlendModeKind;
+    Blend: BlendMode;
     Visible: Boolean;
-    ContentKind: NodeContentKind;
-    ContentIndex: ItemIndex;
+    Content: NodeContent2D;
     ClipIndex: ItemIndex;
 }
 
@@ -64,7 +64,7 @@ type ClipMask2D
 // A complete 2D scene: the parent-indexed node array plus the content pools
 // nodes address by index. ImageReferences holds opaque integer handles into
 // an external image/texture table owned by the host asset system; a node
-// with ContentKind Image stores an index into this array via ContentIndex.
+// with Image content stores an index into this array.
 type Scene2D
     implements Value
 {

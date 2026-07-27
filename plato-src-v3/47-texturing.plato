@@ -11,21 +11,19 @@
 // ## Sampling state
 
 // How texture coordinates outside [0, 1] are handled along one axis.
-// Value meanings: 0=Repeat, 1=ClampToEdge, 2=MirroredRepeat, 3=ClampToBorder,
-// 4=MirrorClampToEdge.
-type WrapModeKind
-{
-    Value: Integer;
-}
+type WrapMode
+    = Repeat | ClampToEdge | MirroredRepeat | ClampToBorder | MirrorClampToEdge;
 
-// How texels are filtered during sampling, including across mip levels.
-// Value meanings: 0=Nearest, 1=Linear, 2=NearestMipNearest,
-// 3=LinearMipNearest, 4=NearestMipLinear, 5=LinearMipLinear (trilinear),
-// 6=Anisotropic.
-type FilterModeKind
-{
-    Value: Integer;
-}
+// How texels are filtered during sampling, including across mip levels;
+// LinearMipLinear is trilinear.
+type FilterMode
+    = Nearest
+    | Linear
+    | NearestMipNearest
+    | LinearMipNearest
+    | NearestMipLinear
+    | LinearMipLinear
+    | Anisotropic;
 
 // Complete sampling state for reading a texture: per-axis wrap modes, the
 // filter, the maximum anisotropy ratio (1 disables), a mip level-of-detail
@@ -33,10 +31,10 @@ type FilterModeKind
 type TextureSampler
     implements Value
 {
-    WrapU: WrapModeKind;
-    WrapV: WrapModeKind;
-    WrapW: WrapModeKind;
-    Filter: FilterModeKind;
+    WrapU: WrapMode;
+    WrapV: WrapMode;
+    WrapW: WrapMode;
+    Filter: FilterMode;
     Anisotropy: Number;
     MipBias: Number;
     BorderColor: Color;
@@ -53,7 +51,7 @@ type Texture2D
 {
     Name: String;
     Size: IntegerSize2D;
-    Format: PixelFormatKind;
+    Format: PixelFormat;
     MipLevels: Integer;
 }
 
@@ -64,7 +62,7 @@ type Texture3D
 {
     Name: String;
     Size: IntegerSize3D;
-    Format: PixelFormatKind;
+    Format: PixelFormat;
     MipLevels: Integer;
 }
 
@@ -75,7 +73,7 @@ type TextureCube
 {
     Name: String;
     FaceSize: Integer;
-    Format: PixelFormatKind;
+    Format: PixelFormat;
     MipLevels: Integer;
 }
 
@@ -87,17 +85,13 @@ type TextureArrayDescriptor
     Name: String;
     Size: IntegerSize2D;
     LayerCount: Integer;
-    Format: PixelFormatKind;
+    Format: PixelFormat;
     MipLevels: Integer;
 }
 
 // How a cubemap or panorama is laid out when stored inside a single 2D image.
-// Value meanings: 0=HorizontalCross, 1=VerticalCross, 2=HorizontalStrip,
-// 3=VerticalStrip, 4=Equirectangular.
-type CubemapLayoutKind
-{
-    Value: Integer;
-}
+type CubemapLayout
+    = HorizontalCross | VerticalCross | HorizontalStrip | VerticalStrip | Equirectangular;
 
 //==
 // ## UV addressing and bindings
@@ -112,20 +106,13 @@ type UvTransform
     Tiling: Vector2;
 }
 
-// How texture coordinates are generated for a surface.
-// Value meanings: 0=Uv (authored coordinates), 1=Planar, 2=Triplanar,
-// 3=Spherical, 4=Cylindrical, 5=Box, 6=ScreenSpace.
-type TextureProjectionKind
-{
-    Value: Integer;
-}
+// How texture coordinates are generated for a surface; Uv means authored
+// coordinates.
+type TextureProjection
+    = Uv | Planar | Triplanar | Spherical | Cylindrical | Box | ScreenSpace;
 
 // Which channels of a sampled texel a consumer reads.
-// Value meanings: 0=R, 1=G, 2=B, 3=A, 4=RG, 5=RGB, 6=RGBA.
-type TextureChannelMaskKind
-{
-    Value: Integer;
-}
+type TextureChannelMask = R | G | B | A | RG | RGB | RGBA;
 
 // A texture wired for use: the descriptor, its sampling state, a UV
 // transform, which UV set of the mesh to use (zero-based), and which channels
@@ -137,7 +124,7 @@ type TextureBinding
     Sampler: TextureSampler;
     Transform: UvTransform;
     UvSet: Integer;
-    Channels: TextureChannelMaskKind;
+    Channels: TextureChannelMask;
 }
 
 //==

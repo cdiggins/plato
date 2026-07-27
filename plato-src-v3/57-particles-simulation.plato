@@ -48,12 +48,15 @@ type Particle3D
 //==
 // # Emitters
 
-// The region a particle emitter spawns from.
-// Value meanings: 0=Point, 1=Sphere, 2=Box, 3=Cone, 4=Circle, 5=Mesh.
-type EmitterShapeKind
-{
-    Value: Integer;
-}
+// The region a particle emitter spawns from; Cone carries the half-angle of
+// its emission cone.
+type EmitterShape
+    = Point
+    | Sphere
+    | Box
+    | Cone(HalfAngle: Angle)
+    | Circle
+    | Mesh;
 
 // A planar particle source. Rate is the continuous spawn rate; BurstCount
 // particles are also released at each burst. SpeedRange is in meters per
@@ -63,7 +66,7 @@ type EmitterShapeKind
 type ParticleEmitter2D
     implements Value
 {
-    ShapeKind: EmitterShapeKind;
+    Shape: EmitterShape;
     Pose: Pose2D;
     Rate: Frequency;
     BurstCount: Integer;
@@ -78,13 +81,12 @@ type ParticleEmitter2D
 // A spatial particle source. Rate is the continuous spawn rate; BurstCount
 // particles are also released at each burst. SpeedRange is in meters per
 // second, LifetimeRange in seconds, SizeRange in meters (each sampled
-// uniformly); ColorOverLife maps normalized age to tint; ConeAngle is the
-// half-angle used by cone-shaped emitters (ignored otherwise); Seed drives
+// uniformly); ColorOverLife maps normalized age to tint; Seed drives
 // deterministic randomness.
 type ParticleEmitter3D
     implements Value
 {
-    ShapeKind: EmitterShapeKind;
+    Shape: EmitterShape;
     Pose: Pose3D;
     Rate: Frequency;
     BurstCount: Integer;
@@ -92,7 +94,6 @@ type ParticleEmitter3D
     LifetimeRange: NumberInterval;
     SizeRange: NumberInterval;
     ColorOverLife: ColorGradient;
-    ConeAngle: Angle;
     Seed: Integer;
 }
 
