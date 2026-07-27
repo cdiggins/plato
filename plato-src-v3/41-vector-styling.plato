@@ -109,26 +109,22 @@ type TexturePaint2D
     Transform: AffineTransform2D;
 }
 
-// Which paint source a FillStyle draws from.
-// Value meanings: 0=Solid, 1=LinearGradient, 2=RadialGradient,
-// 3=SweepGradient, 4=Texture.
-type PaintKind
-{
-    Value: Integer;
-}
+// The paint source a region is filled with: a single flat color, one of three
+// gradient kinds, or a texture. Exactly one source applies per paint.
+type Paint
+    implements Value
+    = Solid(Color: Color)                  // a single flat color
+    | Linear(Gradient: LinearGradient2D)   // linear (axial) gradient
+    | Radial(Gradient: RadialGradient2D)   // radial (two-circle) gradient
+    | Sweep(Gradient: SweepGradient2D)     // angular sweep gradient
+    | Texture(Paint: TexturePaint2D);      // a texture paint
 
-// The complete description of how a region is painted. Kind selects which one
-// of Color, Linear, Radial, Sweep, or Texture is consulted; the others hold
-// defaults and are ignored. Opacity multiplies the chosen paint's alpha.
+// The complete description of how a region is painted: the paint source, and
+// an Opacity that multiplies the chosen paint's alpha.
 type FillStyle
     implements Value
 {
-    Kind: PaintKind;
-    Color: Color;
-    Linear: LinearGradient2D;
-    Radial: RadialGradient2D;
-    Sweep: SweepGradient2D;
-    Texture: TexturePaint2D;
+    Paint: Paint;
     Opacity: Proportion;
 }
 

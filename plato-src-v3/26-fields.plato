@@ -198,35 +198,34 @@ type ConstantVectorField3D
 //==
 // ## Field expression graphs
 //
-// Flat, index-based combinator graphs over scalar fields. Nodes reference other
-// nodes by index into the owning graph's node array, and reference externally
-// supplied source fields by index into a caller-maintained field list. Indices
-// use -1 for "unused".
+// Flat, index-based combinator graphs over scalar fields. Each node is one
+// operation carrying exactly the operands it consumes: operand nodes referenced
+// by index into the owning graph's node array (operands are always lower-indexed
+// nodes), and externally supplied source fields referenced by index into a
+// caller-maintained field list.
 
-// The operation a scalar-field expression node performs.
-// Value meanings: 0=Source (read external field), 1=Constant, 2=Add,
-// 3=Subtract, 4=Multiply, 5=Divide, 6=Minimum, 7=Maximum, 8=Negate,
-// 9=AbsoluteValue, 10=Lerp (InputC is the blend weight), 11=Clamp
-// (InputB/InputC are bounds), 12=Remap, 13=Threshold.
-type FieldOperationKind
-{
-    Value: Integer;
-}
-
-// One node of a flat planar scalar-field expression graph. InputA, InputB,
-// and InputC are node indices into the owning graph (-1 when unused). Source
-// is an index into an external list of planar scalar fields (-1 when unused);
-// Constant is the literal for constant nodes.
+// One node of a flat planar scalar-field expression graph: a single operation
+// carrying exactly the operands it consumes. Integer fields are node indices
+// into the owning graph; FieldIndex is an index into an external list of planar
+// scalar fields; Constant carries a literal. Lerp's Weight and Clamp's/Remap's
+// bounds are themselves nodes; Remap linearly maps Input from [FromLow, FromHigh]
+// onto the unit range [0, 1].
 type ScalarFieldNode2D
     implements Value
-{
-    Operation: FieldOperationKind;
-    InputA: Integer;
-    InputB: Integer;
-    InputC: Integer;
-    Source: Integer;
-    Constant: Number;
-}
+    = Source(FieldIndex: Integer)                                // read an external planar scalar field
+    | Constant(Value: Number)                                    // a literal constant
+    | Add(Left: Integer, Right: Integer)                         // Left + Right
+    | Subtract(Left: Integer, Right: Integer)                    // Left - Right
+    | Multiply(Left: Integer, Right: Integer)                    // Left * Right
+    | Divide(Left: Integer, Right: Integer)                      // Left / Right
+    | Minimum(Left: Integer, Right: Integer)                     // min(Left, Right)
+    | Maximum(Left: Integer, Right: Integer)                     // max(Left, Right)
+    | Negate(Input: Integer)                                     // -Input
+    | AbsoluteValue(Input: Integer)                              // |Input|
+    | Lerp(A: Integer, B: Integer, Weight: Integer)              // A blended toward B by Weight
+    | Clamp(Input: Integer, Low: Integer, High: Integer)         // Input clamped to [Low, High]
+    | Remap(Input: Integer, FromLow: Integer, FromHigh: Integer) // Input remapped from [FromLow, FromHigh] to [0, 1]
+    | Threshold(Input: Integer, Level: Integer);                 // 1 where Input >= Level, else 0
 
 // A flat expression graph combining planar scalar fields. Nodes may only
 // reference lower-indexed nodes, making the array a valid topological order;
@@ -238,20 +237,27 @@ type ScalarFieldGraph2D
     Root: Integer;
 }
 
-// One node of a flat spatial scalar-field expression graph. InputA, InputB,
-// and InputC are node indices into the owning graph (-1 when unused). Source
-// is an index into an external list of spatial scalar fields (-1 when unused);
-// Constant is the literal for constant nodes.
+// One node of a flat spatial scalar-field expression graph, mirroring
+// ScalarFieldNode2D: a single operation carrying exactly the operands it
+// consumes. Integer fields are node indices into the owning graph; FieldIndex
+// is an index into an external list of spatial scalar fields; Constant carries
+// a literal.
 type ScalarFieldNode3D
     implements Value
-{
-    Operation: FieldOperationKind;
-    InputA: Integer;
-    InputB: Integer;
-    InputC: Integer;
-    Source: Integer;
-    Constant: Number;
-}
+    = Source(FieldIndex: Integer)                                // read an external spatial scalar field
+    | Constant(Value: Number)                                    // a literal constant
+    | Add(Left: Integer, Right: Integer)                         // Left + Right
+    | Subtract(Left: Integer, Right: Integer)                    // Left - Right
+    | Multiply(Left: Integer, Right: Integer)                    // Left * Right
+    | Divide(Left: Integer, Right: Integer)                      // Left / Right
+    | Minimum(Left: Integer, Right: Integer)                     // min(Left, Right)
+    | Maximum(Left: Integer, Right: Integer)                     // max(Left, Right)
+    | Negate(Input: Integer)                                     // -Input
+    | AbsoluteValue(Input: Integer)                              // |Input|
+    | Lerp(A: Integer, B: Integer, Weight: Integer)              // A blended toward B by Weight
+    | Clamp(Input: Integer, Low: Integer, High: Integer)         // Input clamped to [Low, High]
+    | Remap(Input: Integer, FromLow: Integer, FromHigh: Integer) // Input remapped from [FromLow, FromHigh] to [0, 1]
+    | Threshold(Input: Integer, Level: Integer);                 // 1 where Input >= Level, else 0
 
 // A flat expression graph combining spatial scalar fields. Nodes may only
 // reference lower-indexed nodes, making the array a valid topological order;

@@ -7,33 +7,19 @@
 // Styling lives in file 41, text and glyph outlines in file 42, and scene
 // composition in file 43.
 
-// The drawing verb of a path segment, following SVG path semantics.
-// Value meanings: 0=Move (start a new sub-path), 1=Line, 2=Quadratic (one
-// control point), 3=Cubic (two control points), 4=Arc (elliptical arc),
-// 5=Close (line back to the sub-path start).
-type PathSegmentKind
-{
-    Value: Integer;
-}
-
-// One drawing verb of a contour. Every segment starts at the previous
-// segment's endpoint, and the on-curve endpoint is always P3. P1 and P2 are
-// control points when Kind uses them (Quadratic: P1; Cubic: P1 then P2). The
-// arc fields follow the SVG elliptical-arc form (x/y radii, rotation of the
-// ellipse axes, large-arc and sweep flags) and apply only when Kind is Arc.
-// Fields a Kind does not use hold zeroes and are ignored.
+// One drawing verb of a contour, following SVG path semantics. Every segment
+// starts at the previous segment's endpoint; each verb carries exactly the
+// control data it needs and nothing more (the on-curve endpoint is always
+// EndPoint). The arc form is the SVG elliptical arc: x/y radii, rotation of
+// the ellipse axes, and the large-arc and sweep flags.
 type PathSegment2D
     implements Value
-{
-    Kind: PathSegmentKind;
-    P1: Point2D;
-    P2: Point2D;
-    P3: Point2D;
-    Radii: Vector2;
-    AxisRotation: Angle;
-    LargeArc: Boolean;
-    Sweep: Boolean;
-}
+    = Move(EndPoint: Point2D)                                            // start a new sub-path
+    | Line(EndPoint: Point2D)                                            // straight line to EndPoint
+    | Quadratic(Control: Point2D, EndPoint: Point2D)                     // one control point
+    | Cubic(Control1: Point2D, Control2: Point2D, EndPoint: Point2D)     // two control points
+    | Arc(Radii: Vector2, AxisRotation: Angle, LargeArc: Boolean, Sweep: Boolean, EndPoint: Point2D) // SVG elliptical arc
+    | Close;                                                             // line back to the sub-path start
 
 // A connected run of segments (a sub-path). When Closed is true the contour
 // is implicitly sealed with a line back to its first point, equivalent to a
@@ -46,12 +32,9 @@ type Contour2D
 }
 
 // How the interior of a self-intersecting or multi-contour path is decided.
-// Value meanings: 0=NonZero (inside where the winding count is nonzero),
-// 1=EvenOdd (inside where the crossing count is odd).
-type FillRuleKind
-{
-    Value: Integer;
-}
+// NonZero: inside where the winding count is nonzero. EvenOdd: inside where
+// the crossing count is odd.
+type FillRule = NonZero | EvenOdd;
 
 // A complete vector path: zero or more contours plus the fill rule that
 // decides its interior. The canonical exchange type for 2D outlines.
@@ -59,7 +42,7 @@ type Path2D
     implements Value
 {
     Contours: Array<Contour2D>;
-    FillRule: FillRuleKind;
+    FillRule: FillRule;
 }
 
 // An address on a path: which contour, which segment within that contour, and
@@ -93,12 +76,8 @@ type CornerRadii2D
 }
 
 // The boolean (clipping) operation used when combining two paths.
-// Value meanings: 0=Union, 1=Intersection, 2=Difference (first minus second),
-// 3=ExclusiveOr.
-type PathBooleanOperationKind
-{
-    Value: Integer;
-}
+// Difference is the first path minus the second.
+type PathBooleanOperation = Union | Intersection | Difference | ExclusiveOr;
 
 // Controls for reducing a path's segment count while staying within a
 // geometric error budget of Tolerance (in path units). When PreserveCorners

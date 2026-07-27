@@ -6,8 +6,14 @@
 Companion survey for the sum-type feature. It enumerates every `XxxKind`
 kind-pattern declaration in `plato-src-v3`, classifies each as a **pure enum** or a
 **true sum**, and recommends the flagship migrations for wave 3. It **drafts** the
-"after" of `40-paths.plato`'s affected types — a draft only; `plato-src-v3` is not
-edited here.
+"after" of `40-paths.plato`'s affected types.
+
+> **Status — wave 3 shipped (2026-07-27).** The flagship five are **migrated** in
+> `plato-src-v3` (see §5). `26-fields` was confirmed **not** recursive (its expression-graph
+> nodes reference operands by `Integer` index, not by embedding a node value) and so was
+> migrated as planned — no substitution needed. `lint plato-src-v3` stays at 0 parse / 0
+> symbol-resolution errors (finding count 4584 → 4549). The ~100 pure-enum `XxxKind` types
+> remain as the follow-up sweep (tracked separately).
 
 ---
 
@@ -117,43 +123,58 @@ Rows are `SUM` / `SUM?` / (blank = enum). File numbers are the `plato-src-v3` pr
 | 68-geo-spatial | MapProjectionKind |
 | 69-higher-dimensions | RegularPolytopeKind, Projection4DKind |
 
-## 5. Recommended flagship migrations (wave 3)
+## 5. Recommended flagship migrations (wave 3) — DONE
 
 Five, chosen to (a) prove the feature across representative sum shapes and (b) start
-with the archetype. **`40-paths.plato` goes first.**
+with the archetype. **All five migrated 2026-07-27** (`40-paths.plato` first). The
+"→ DONE" note on each records the shipped sum shape.
 
-1. **`40-paths.plato` — `PathSegment2D`** (PathSegmentKind). The archetype: 6 verbs,
+1. **`40-paths.plato` — `PathSegment2D`** (PathSegmentKind). **→ DONE:** 6-verb sum
+   (Move/Line/Quadratic/Cubic/Arc/Close); `FillRuleKind` and `PathBooleanOperationKind`
+   collapsed to enum sums `FillRule` / `PathBooleanOperation`; `Path2D.FillRule` retyped.
+   The archetype: 6 verbs,
    heavily conditional payload, SVG-domain, high demo value. This is the "before" the
    design doc quotes. Also collapses `FillRuleKind` and `PathBooleanOperationKind` to
    enum sums in the same file. **First.**
-2. **`41-vector-styling.plato` — `FillStyle`** (PaintKind). Sibling of paths in the
-   same 2D-vector domain: a 5-way paint union (Solid | Linear | Radial | Sweep |
-   Texture). Demonstrates the *outer-product wrapper* pattern — the shared `Opacity`
-   field stays on `FillStyle`, the union becomes a `Paint` sum
-   (`type FillStyle { Paint: Paint; Opacity: Proportion; }`).
-3. **`43-scene2d.plato` — `ClipMask2D`** (MaskKind) [+ `NodeContent`]. Scene-graph
-   unions. `MaskKind` is the clean case (Path vs Alpha/Luminance, with the conditional
-   `SourceNodeIndex`); `NodeContentKind` demonstrates the harder *indexed/deferred*
-   variant where the payload is a pool index — a good stress test for the migration.
-4. **`26-fields.plato` — `ScalarFieldNode2D/3D`** (FieldOperationKind). The textbook
-   tagged-union / expression-tree node (14 operations, per-op operands). Proves sum
-   types beyond geometry, and is the shape most improved by exhaustiveness — an
-   evaluator `match`ing every op cannot silently forget one.
-5. **`60-signals.plato` — `AnalysisWindow`** (WindowFunctionKind). A crisp "parameters
-   union": `ShapeParameter` means different things per window and is ignored by most.
-   Small, self-contained, an exemplar for the ~dozen parameter-carrier true sums.
-   *(Runners-up: `57` EmitterShape, `63` ErrorPropagation — same shape, pick per wave-3
-   appetite.)*
+2. **`41-vector-styling.plato` — `FillStyle`** (PaintKind). **→ DONE:** `Paint` sum
+   (Solid/Linear/Radial/Sweep/Texture) + `type FillStyle { Paint: Paint; Opacity: Proportion; }`
+   wrapper. Sibling of paths in the
+   same 2D-vector domain, and the reference *outer-product wrapper* — the shared `Opacity`
+   field stays on `FillStyle`, the union becomes a `Paint` sum.
+3. **`43-scene2d.plato` — `ClipMask2D`** (MaskKind). **→ DONE:** `MaskSource2D` sum
+   (Path / Alpha / Luminance, the last two sharing `SourceNodeIndex`) + `ClipMask2D {
+   Source: MaskSource2D; Inverted: Boolean; }` wrapper. `NodeContentKind` on `SceneNode2D`
+   was **left for the follow-up sweep**: it is the harder *indexed/deferred* variant and
+   `SceneNode2D` carries many fields shared across all content kinds — a bigger
+   outer-product refactor than this wave scoped.
+4. **`26-fields.plato` — `ScalarFieldNode2D/3D`** (FieldOperationKind). **→ DONE:** 14-case
+   sum per node type (Source/Constant/Add/…/Remap/Threshold), operands carried per-op.
+   **Not recursive** — operand references are `Integer` node indices into the graph array,
+   never an embedded `ScalarFieldNode` value — so it is a legal v1 flat sum. The textbook
+   tagged-union / expression-tree node; the shape most improved by exhaustiveness.
+5. **`60-signals.plato` — `AnalysisWindow`** (WindowFunctionKind). **→ DONE:**
+   `WindowFunction` sum (Rectangular/Hann/Hamming/Blackman/BlackmanHarris + parameter-carrying
+   Kaiser(Beta) / Gaussian(StandardDeviation) / Tukey(TaperFraction)) + `AnalysisWindow {
+   Function; Size; HopSize; }` wrapper — the conditional `ShapeParameter` now lives only on
+   the kinds that use it. The exemplar "parameters union."
+   *(Runners-up not taken this wave: `57` EmitterShape, `63` ErrorPropagation — same shape.)*
 
-After the flagship five, the ~100 pure enums migrate in bulk mechanically (collapse
-`type XxxKind { Value: Integer; }` + its selector field into `type Xxx = A | B | …;`),
-one file at a time, gated on the same `lint` + regen checks.
+## 6. Follow-up sweep (remaining)
+
+After the flagship five, the ~100 pure-enum `XxxKind` types migrate in bulk mechanically
+(collapse `type XxxKind { Value: Integer; }` + its selector field into `type Xxx = A | B | …;`),
+one file at a time, gated on the same `lint` + regen checks. Also deferred: the borderline
+`SUM?` carriers (`LightKind`, `SdfCombineKind`, `ColumnKind`, `BrdfKind`), the non-flagship
+verified true sums (`ThresholdKind`, `AlphaModeKind`, `MovingWindowKind`, `EmitterShapeKind`,
+`ErrorPropagationKind`), and `43-scene2d`'s `NodeContentKind`/`SceneNode2D`. Tracked as a
+backlog item (see plato-232's close note).
 
 ---
 
 ## Appendix A — `40-paths.plato` affected types, drafted "after"
 
-**Draft only — `plato-src-v3` is not edited by this doc.** Shows the four affected
+**This "after" shipped in wave 3** (the draft below matches `40-paths.plato` as migrated,
+modulo doc-comment wording). Shows the four affected
 declarations. `PathSegmentKind`, `FillRuleKind`, and `PathBooleanOperationKind` are
 **removed** (absorbed into the sums). `Contour2D`, `Path2D`, `PathLocation`,
 `CornerRadii2D`, and the parameter types are unchanged except where they reference a

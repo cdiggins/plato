@@ -35,25 +35,21 @@ type SceneNode2D
     ClipIndex: Integer;
 }
 
-// How a mask converts its source into coverage.
-// Value meanings: 0=Alpha (the source's alpha channel), 1=Luminance (the
-// source's luminance), 2=Path (geometric coverage of a path's interior).
-type MaskKind
-{
-    Value: Integer;
-}
+// Where a clip/mask draws its coverage from. Path coverage is the geometric
+// interior of a path under the path's own fill rule. Alpha and Luminance take
+// coverage from the rendered output of the scene node at the given index.
+type MaskSource2D
+    implements Value
+    = Path(Path: Path2D)                    // interior of a path under its own fill rule
+    | Alpha(SourceNodeIndex: Integer)       // alpha channel of the rendered node at this index
+    | Luminance(SourceNodeIndex: Integer);  // luminance of the rendered node at this index
 
-// A clipping or masking region applied to a scene node and its subtree. When
-// Kind is Path, coverage is the interior of Path under the path's own fill
-// rule. When Kind is Alpha or Luminance, coverage comes from the rendered
-// output of the scene node at SourceNodeIndex (-1 when unused, i.e. when
-// Kind is Path). Inverted swaps inside and outside.
+// A clipping or masking region applied to a scene node and its subtree.
+// Inverted swaps inside and outside.
 type ClipMask2D
     implements Value
 {
-    Path: Path2D;
-    Kind: MaskKind;
-    SourceNodeIndex: Integer;
+    Source: MaskSource2D;
     Inverted: Boolean;
 }
 

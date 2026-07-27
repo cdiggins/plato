@@ -31,8 +31,14 @@ primitives in `00-primitives.plato`).
 - Every declaration has a `//` doc comment stating what it is and any invariants.
   Section banners use `//==`.
 - Every concept function takes `Self` as its first parameter.
-- Enumeration-style choices use the *kind pattern*: `type FooKind { Value: Integer; }`
-  with a doc comment listing the meaning of each value.
+- Tagged/variant choices use **sum types** (`type X = Case(...fields) | Case | ...;` with
+  exhaustive `match`), the preferred encoding since plato-232. Payload-free variants are
+  enums (`type FillRule = NonZero | EvenOdd;`); variants with conditional per-case data are
+  true sums (`PathSegment2D`, `Paint`, `MaskSource2D`, `ScalarFieldNode2D/3D`, `WindowFunction`
+  — the wave-3 flagship migrations). Spec: [`../docs/plato-sum-types-design-2026-07-27.md`](../docs/plato-sum-types-design-2026-07-27.md).
+  The older *kind pattern* (`type FooKind { Value: Integer; }` + a value-meaning doc comment)
+  survives only on the ~100 not-yet-migrated enum-style `XxxKind` types, pending the
+  follow-up sweep — new declarations should use a sum, not a kind.
 - Quantity types carry natural-unit field names (`Radians`, `Meters`, `Kelvin`).
 - Collection fields use `Array<T>` (or `Array2D<T>`, `Array3D<T>`).
 - Optional references use sentinel conventions noted in comments (e.g. `-1` for "no index",

@@ -61,24 +61,27 @@ type Spectrogram
 // # Analysis windows
 
 // The taper shape applied to a block of samples before spectral analysis.
-// Value meanings: 0=Rectangular, 1=Hann, 2=Hamming, 3=Blackman,
-// 4=BlackmanHarris, 5=Kaiser, 6=Gaussian, 7=Tukey.
-type WindowFunctionKind
-{
-    Value: Integer;
-}
+// The parameter-carrying kinds hold their own shape parameter; the parameter-
+// free kinds carry none.
+type WindowFunction
+    implements Value
+    = Rectangular
+    | Hann
+    | Hamming
+    | Blackman
+    | BlackmanHarris
+    | Kaiser(Beta: Number)                    // the Kaiser beta
+    | Gaussian(StandardDeviation: Number)     // standard deviation, in samples
+    | Tukey(TaperFraction: Proportion);       // fraction of the window that is tapered
 
 // A short-time analysis configuration. Size is the window length in samples;
-// HopSize is the advance between consecutive windows. ShapeParameter is the
-// Kaiser beta, the Gaussian standard deviation in samples, or the Tukey
-// taper fraction; it is ignored by the other kinds.
+// HopSize is the advance between consecutive windows.
 type AnalysisWindow
     implements Value
 {
-    Kind: WindowFunctionKind;
+    Function: WindowFunction;
     Size: Integer;
     HopSize: Integer;
-    ShapeParameter: Number;
 }
 
 //==
