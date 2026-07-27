@@ -28,6 +28,7 @@ namespace Ara3D.Geometry.GlslWriter
     /// closures and no heap, which maps to Plato as follows:
     /// - Number -> float, Integer -> int, Boolean -> bool. (GLSL ES has no double:
     ///   Plato Numbers lose precision, see README.)
+    /// - Angle -> float (radians): a fieldless primitive with no GLSL newtype to wrap it.
     /// - Vector2D/3D/4D map to the native vec2/vec3/vec4; field access X/Y/Z/W is
     ///   rewritten to the .x/.y/.z/.w swizzles, and constructors line up
     ///   positionally (new Vector3D(a,b,c) -> vec3(a,b,c)).
@@ -92,11 +93,17 @@ namespace Ara3D.Geometry.GlslWriter
 
         // ---- Type mapping -------------------------------------------------------
 
+        // Angle is a fieldless compiler-known primitive stored as radians, so its GLSL
+        // representation IS a float: GLSL has no newtypes, and a one-field struct would cost
+        // an emitted free function for every +, *, and < (GLSL has no operator overloading).
+        // The type distinction is therefore erased: overloads separated only by Angle vs
+        // Number collapse to one signature (see the duplicate-signature skip in TryEmitFunction).
         public static Dictionary<string, string> NativePrimitives = new Dictionary<string, string>()
         {
             { "Number", "float" },
             { "Integer", "int" },
             { "Boolean", "bool" },
+            { "Angle", "float" },
         };
 
         public static Dictionary<string, string> NativeVectors = new Dictionary<string, string>()
@@ -524,9 +531,16 @@ namespace Ara3D.Geometry.GlslWriter
                     ? GlslTypeName(tir.ZonkedReturnType)
                     : GlslTypeName(fi.ReturnType);
 
+                // Two Plato overloads can erase to one GLSL signature — Plato distinguishes
+                // Turns(Number):Angle from Turns(Angle):Number, GLSL sees float(float) twice.
+                // First wins, which means the loser's callers silently get the winner's body,
+                // so the drop is recorded rather than swallowed.
                 var sigKey = $"{fi.Name}({paramTypes.JoinStringsWithComma()})";
                 if (!_claimedSignatures.Add(sigKey))
-                    return; // identical overload already emitted (first wins)
+                {
+                    Skipped.Add($"{label}: overload erases to an already-emitted GLSL signature {ret} {sigKey}");
+                    return;
+                }
 
                 var parameters = paramTypes.Zip(paramNames, (t, n) => $"{t} {n}").JoinStringsWithComma();
                 var sig = $"{ret} {EscapeName(fi.Name)}({parameters})";
@@ -583,18 +597,20 @@ namespace Ara3D.Geometry.GlslWriter
                 case "Number.Ln": body = $"log({a})"; return true;
                 case "Number.Log": body = $"(log({a}) / log({b}))"; return true;
                 case "Number.Pow": body = $"pow({a}, {b})"; return true;
-                case "Number.Acos": body = $"Angle(acos({a}))"; return true;
-                case "Number.Asin": body = $"Angle(asin({a}))"; return true;
-                case "Number.Atan": body = $"Angle(atan({a}))"; return true;
+                // Angle is float (radians), so the Angle(...) conversion is the identity.
+                case "Number.Acos": body = $"acos({a})"; return true;
+                case "Number.Asin": body = $"asin({a})"; return true;
+                case "Number.Atan": body = $"atan({a})"; return true;
                 case "Number.Compare":
                 case "Integer.Compare":
                     body = $"({a} < {b} ? -1 : ({a} > {b} ? 1 : 0))"; return true;
                 case "Integer.Divide": body = $"({a} / {b})"; return true;
                 case "Integer.Modulo": body = $"({a} % {b})"; return true;
                 case "Integer.ToNumber": body = $"float({a})"; return true;
-                case "Angle.Cos": body = $"cos({a}.Radians)"; return true;
-                case "Angle.Sin": body = $"sin({a}.Radians)"; return true;
-                case "Angle.Tan": body = $"tan({a}.Radians)"; return true;
+                case "Angle.Radians": body = a; return true;
+                case "Angle.Cos": body = $"cos({a})"; return true;
+                case "Angle.Sin": body = $"sin({a})"; return true;
+                case "Angle.Tan": body = $"tan({a})"; return true;
             }
 
             // Owner-agnostic mappings onto GLSL built-ins. These work uniformly for float
@@ -624,7 +640,7 @@ namespace Ara3D.Geometry.GlslWriter
                 case "Normalize" when ps.Count == 1: body = $"normalize({a})"; return true;
                 case "Distance" when ps.Count == 2: body = $"distance({a}, {b})"; return true;
                 case "Reflect" when ps.Count == 2: body = $"reflect({a}, {b})"; return true;
-                case "Atan2" when ps.Count == 2: body = $"Angle(atan({a}, {b}))"; return true;
+                case "Atan2" when ps.Count == 2: body = $"atan({a}, {b})"; return true;
             }
 
             // Operator-named intrinsics on the native scalars: native GLSL operators.

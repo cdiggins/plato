@@ -27,18 +27,39 @@ The mapping:
 | Plato | GLSL |
 |---|---|
 | `Number` / `Integer` / `Boolean` | `float` / `int` / `bool` |
+| `Angle` | `float` (radians) — see *Erased types* below |
 | `Vector2D/3D/4D` | native `vec2/vec3/vec4`; `X/Y/Z/W` fields become `.x/.y/.z/.w` swizzles; constructors line up positionally |
 | other non-generic concrete types | `struct` (GLSL structs get a positional constructor for free, matching `TirNew` exactly) |
 | every function | a **free function**: `v.Length` → `Length(v)`. GLSL overloads by parameter types, so `Add(vec2,vec2)` and `Add(vec3,vec3)` coexist |
 | operator-named calls on native scalars/vectors | inlined native operators (`a + b`); float `Modulo` → `mod(a, b)` |
 | constants | zero-argument functions (`Pi()`) |
-| bodiless intrinsics | GLSL built-ins (`sqrt`, `abs`, `pow`, `min`, `max`, `clamp`, `mix`, `smoothstep`, `length`, `dot`, `cross`, `normalize`, `reflect`, `cos(a.Radians)`, ...) |
+| bodiless intrinsics | GLSL built-ins (`sqrt`, `abs`, `pow`, `min`, `max`, `clamp`, `mix`, `smoothstep`, `length`, `dot`, `cross`, `normalize`, `reflect`, `cos`, ...) |
 | fixed-size arrays (below) | GLSL sized arrays `T[N]` |
 
 Because the TIR is already monomorphized, interface-generic Plato code arrives
 here as ground functions per concrete type — which is exactly the only form GLSL
-can express. Distinct types survive: `Angle` is a real struct, so
-`Cos(1.0)` still refuses to compile in GLSL, same as in C#.
+can express.
+
+### Erased types
+
+GLSL has no newtypes, so a Plato primitive that carries no data of its own has
+nothing to become except its underlying representation. `Angle` is declared
+fieldless (`type Angle implements IMeasure { }`) and is stored as radians, so it
+maps to `float` — which is what a shader author writes by hand. `Angle`
+arithmetic, comparison and trig then lower to native operators and built-ins with
+no wrapper struct and no accessor calls.
+
+The cost is that overloads distinguished *only* by `Angle` vs `Number` collapse
+onto one GLSL signature. Plato's `Turns`/`Degrees`/`Gradians` are declared in both
+directions (`Number → Angle` scales by 2π, `Angle → Number` divides by it) and
+`IAngularCurve2D.Eval` has both an `Angle` (radians) and a `Number` (turns)
+parameterization; in GLSL only one of each pair can exist. The first emitted wins
+and the loser is recorded in the trailing `// Skipped` block as
+`overload erases to an already-emitted GLSL signature`. **Read that block before
+calling an angle-conversion or curve-`Eval` function: the surviving overload may
+not be the one your Plato source meant.** On the full stdlib this affects 75
+functions, of which 3 (`Angle.Turns`, `Angle.Degrees`, `Angle.Gradians`) change
+meaning; the rest are numerically identical to the `Number` overload that won.
 
 ## Fixed-size arrays (Tier 1 / Tier 2)
 
@@ -80,7 +101,7 @@ runtime-count loop over it.
 
 ## Demos
 
-`../demos/glsl/` holds four self-contained demo libraries, each generated to
+`../demos/glsl/` holds eight self-contained demo libraries, each generated to
 `out/<name>.glsl` and rendered live in a WebGL2 gallery (`index.html`, served by
 `gen.ps1` output + any static server). Regenerate with `demos/glsl/gen.ps1`.
 
@@ -90,15 +111,19 @@ runtime-count loop over it.
 | `mandelbrot` | user `Complex` type → GLSL struct; `Iterate(z,c)=z²+c` drives the escape loop |
 | `bezier` | Tier-1 fixed array: `Bezier4` with a clamped index-chain `At`, de Casteljau `Eval` |
 | `polygon` | Tier-2 bounded array: `Polygon6` fixed capacity + clamped `At`; harness loops `i < count` |
+| `solids` | Platonic solids, wireframe |
+| `voxel` | voxelized SDF |
+| `ripples` | parametric surface |
+| `tube` | extruded tube |
 
-All four compile, link and render at **0 skips** each. The shared `src/_core.plato`
+All eight compile, link and render at **0 skips** each. The shared `src/_core.plato`
 is the curated primitive + vector library each demo builds on.
 
 ## Verification
 
 The original demo library (`demos/plato-src/geometry.plato`, 66 functions) and
-all four `demos/glsl` libraries compile, link and render in WebGL2 with zero
-skips. Full stdlib (`plato-src`): 1259 emitted / 939 skipped (see below).
+all eight `demos/glsl` libraries compile, link and render in WebGL2 with zero
+skips. Full stdlib (`plato-src`): 1433 emitted / 960 skipped (see below).
 
 ## Known POC limitations
 
@@ -106,8 +131,10 @@ skips. Full stdlib (`plato-src`): 1259 emitted / 939 skipped (see below).
 - `WithX` field-update functions are not generated (call sites using them fail).
 - `Equals`/`NotEquals` functions are not emitted; call sites inline to `==`/`!=`
   (valid on GLSL scalars, vectors and structs).
-- Duplicate signatures: first wins, silently.
-- The full stdlib (`plato-src`) runs end to end but ~42% of functions still skip:
+- Duplicate signatures: first wins. The loser is recorded in the `// Skipped`
+  block, but *which* overload wins is emission order, not a deliberate choice —
+  see *Erased types*.
+- The full stdlib (`plato-src`) runs end to end but ~40% of functions still skip:
   the top reasons are lambdas / function values (no closures), unmapped
   intrinsics, and `IArray` / `FunctionN` parameter types (see the trailing
   `// Skipped` block in any full-stdlib output). Closing most of the lambda gap
