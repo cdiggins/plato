@@ -102,8 +102,10 @@ var index = indexer.Update(SourceSnapshot.FromDirectories(roots));   // cold bui
 index = indexer.Update(SourceSnapshot.FromDirectories(roots));       // reload: reparses only edits
 ```
 
-Parse is ~97% of a build (70 files: 1789 ms parse against 58 ms bind), so a per-file parse cache is
-the whole optimization. Binding is whole-program — `SymbolFactory` builds scopes shared across all
+Parse dominates a build — on a warm process, ~700 ms of parsing against ~30-60 ms of binding — so a
+per-file parse cache is the whole optimization. (A cold first parse in a fresh process reads much
+higher, ~1800 ms for 70 files; that is JIT, not a steady-state number, and the table below is
+best-of-two on a warm process.) Binding is whole-program — `SymbolFactory` builds scopes shared across all
 files before resolving any body — so it is rerun in full every time, and per-file rebinding stays
 off the table.
 
