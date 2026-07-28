@@ -354,3 +354,5 @@ vectors is generally shorter unless they are parallel.
   example block showing `t` unclamped with one extrapolation case. The comment already
   states the rule; a single numeric example (`Lerp(0, 10, 1.5) => 15`) would match how
   often extrapolation surprises newcomers who expect silent clamping.
+
+> Resolved 2026-07-28: intervals-transforms.library.plato added NumberInterval At/ParameterOf/Remap (items 466, 209, 210) and wrap-aware AngleInterval Span/Contains; scalar InverseLerp/Remap already existed on Real in core-algebra.library.plato.

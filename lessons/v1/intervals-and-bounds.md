@@ -244,3 +244,5 @@ need an explicit convention (geospatial code hits the same issue in longitude).
   the file banner says bounds are inclusive Min/Max without stating whether inverted
   `Bounds2D` is a supported empty encoding. Pin the empty-bounds convention in the
   `Bounds2D`/`Bounds3D` comments.
+
+> Resolved 2026-07-28: intervals-transforms.library.plato added concrete Bounds2D/3D Contains/Union/Overlaps/Expand/Empty/IsEmpty (items 29, 185, 186); Bounds2D/3D type comments now pin the inverted-Min>Max empty encoding (item 188). Corner enumeration deferred (no array literal).

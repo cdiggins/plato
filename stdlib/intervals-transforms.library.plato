@@ -132,7 +132,70 @@ library IntervalsTransforms
     // TODO(concept-gap): Normalize (inverse Lerp: value -> fraction) is not
     // derivable here — it needs T/T division, which only Number supports among the
     // interval element types (Angle/Length/Integer are not Divisible by Self).
-    // Add a Number-specialized overload in the numeric package if wanted.
+    // The NumberInterval-specialized ParameterOf below fills exactly this gap.
+
+    //==
+    // NumberInterval — the remap primitive (item 466).
+    // The generic IntervalLike surface above gives every interval Lerp/Clamp/Extent,
+    // but the inverse map (value -> parameter) needs T/T division, which only Number
+    // supports. NumberInterval therefore carries the three-function remap kit
+    // At / ParameterOf / Clamp; item 210's Remap composes the first two across a
+    // pair of intervals. Clamp(interval, value) is already inherited generically from
+    // IntervalLike (see above), so it is not re-declared here (LIBRARIES.md rule 11).
+
+    // The value a fraction `t` of the way from Start to End (forward lerp). The
+    // remap-primitive spelling of the inherited IntervalLike.Lerp; 0 yields Start,
+    // 1 yields End, and t outside [0,1] extrapolates.
+    At(self: NumberInterval, t: Number): Number
+        => self.Lerp(t);
+
+    // The parameter `t` for which At(self, t) equals `x` (inverse lerp): maps `x`
+    // from [Start, End] back onto the unitless fraction line, so Start -> 0 and
+    // End -> 1. Precondition: Start != End (a zero-width interval has no inverse).
+    ParameterOf(self: NumberInterval, x: Number): Number
+        => self.Start.InverseLerp(self.End, x);
+
+    // Remap `x` from the `from` interval onto the `to` interval: the two-inverse-lerp
+    // composition At(to, ParameterOf(from, x)) (item 210). Every shader/UI/animation
+    // normalized-coordinate remap is this one call. Precondition: from is not
+    // zero-width. Unclamped — pass x within `from`, or Clamp first, to stay inside `to`.
+    Remap(x: Number, from: NumberInterval, to: NumberInterval): Number
+        => to.At(from.ParameterOf(x));
+
+    // The overlapping sub-interval common to `a` and `b` (interval intersection,
+    // item 4), returned as a concrete NumberInterval so ray-box slab reductions can
+    // chain Overlap and read Start/End directly. When the two are disjoint the result
+    // is inverted (Start > End) — the empty encoding (Convention: see CONVENTIONS.md -
+    // Bounds); test it with IsForward. Specializes the generic IntervalLike.Intersection
+    // to the concrete return type.
+    Overlap(a: NumberInterval, b: NumberInterval): NumberInterval
+        => (a.Start.Greater(b.Start), a.End.Lesser(b.End));
+
+    //==
+    // AngleInterval — a directed angular range / arc sweep (items 11, 14).
+    // Convention: endpoints are INCLUSIVE and the sweep is the CCW (increasing-angle)
+    // arc from Start to End, which MAY cross the +/-pi seam — an arc from 170 deg to
+    // -170 deg is the short 20 deg sweep across the seam, not the long way round. The
+    // wrap-aware helpers below reduce every offset into [0, one turn) via Angle.Wrap
+    // (angles.library.plato) before comparing, so they are stable across the seam,
+    // unlike the generic linear IntervalLike.Contains/Extent (which read Start<=End
+    // literally and are only correct for non-wrapping ranges). Union/Intersection are
+    // deliberately NOT specialized for angular ranges: the union of two circular arcs
+    // is not always an arc, so no sound closed form exists on this type; consumers
+    // that need a set operation must work in the reduced [0, tau) parameter space.
+
+    // The CCW angular width of the arc, reduced to [0, one turn). Unlike the generic
+    // Extent (raw End - Start, which can be negative or exceed a turn), Span is the
+    // seam-stable sweep magnitude: a full-turn arc (Start == End) reads as 0.
+    Span(self: AngleInterval): Angle
+        => self.End.Subtract(self.Start).Wrap(1.0.Turns);
+
+    // True when `a` lies on the CCW arc from Start to End, endpoints inclusive and
+    // seam-crossing handled: `a`'s CCW offset from Start (reduced to [0, one turn))
+    // must not exceed the arc's Span. Correct across the +/-pi seam, where the linear
+    // IntervalLike.Contains is not.
+    Contains(self: AngleInterval, a: Angle): Boolean
+        => a.Subtract(self.Start).Wrap(1.0.Turns) <= self.End.Subtract(self.Start).Wrap(1.0.Turns);
 
     //==
     // BoundsLike<TPoint, TDelta> — an axis-aligned region between corner points
@@ -159,10 +222,110 @@ library IntervalsTransforms
     Diagonal(self: BoundsLike<$TPoint, $TDelta>): $TDelta
         => self.Extent;
 
-    // Still not derivable here: Contains(point|bounds), Union, Intersection, Clamp,
-    // Expand, and corner enumeration. They need component-wise Min/Max (a Lattice)
-    // and per-axis access on TPoint, which the point types do not implement. Making
-    // the point types Lattice/Clampable would let this surface mirror IntervalLike.
+    // Not derivable GENERICALLY here: Contains(point|bounds), Union, Intersection,
+    // Expand, and corner enumeration need component-wise Min/Max (a Lattice) on
+    // TPoint, which Point2D/Point3D do not implement. They ARE expressible on the
+    // CONCRETE Bounds2D/Bounds3D via per-axis (X/Y/Z) field access, so the mirror of
+    // the IntervalLike surface is written concretely below (items 29, 185). Making the
+    // point types Lattice/Clampable would let it collapse back to one generic body.
+
+    //==
+    // Bounds2D / Bounds3D — concrete AABB operations (items 29, 185, 186, 188).
+    // Convention: bounds are INCLUSIVE on Min and Max; an inverted box (Min greater
+    // than Max on any axis) is EMPTY and is the identity for Union — this is what makes
+    // "grow from Empty()" correct (Convention: see CONVENTIONS.md - Bounds). Endpoints
+    // reached via the Number Min/Max lattice ops, exactly as BoundsOfPoints does.
+
+    // The canonical empty box: Min at +infinity, Max at -infinity, so it contains no
+    // point and is absorbed by Union with any real box (item 186, the empty sentinel).
+    Empty(_: Bounds2D): Bounds2D
+        => (Point2D(Number.MaxValue, Number.MaxValue), Point2D(Number.MinValue, Number.MinValue));
+
+    // True when the box is empty (inverted on either axis): no point lies inside.
+    IsEmpty(self: Bounds2D): Boolean
+        => self.Min.X > self.Max.X || self.Min.Y > self.Max.Y;
+
+    // True when `p` lies within the closed box [Min, Max] on every axis (inclusive).
+    Contains(self: Bounds2D, p: Point2D): Boolean
+        => self.Min.X <= p.X && p.X <= self.Max.X
+        && self.Min.Y <= p.Y && p.Y <= self.Max.Y;
+
+    // True when `other` lies entirely within this box (both its corners inside).
+    Contains(self: Bounds2D, other: Bounds2D): Boolean
+        => self.Contains(other.Min) && self.Contains(other.Max);
+
+    // True when the two boxes share any point (closed overlap on every axis).
+    Overlaps(self: Bounds2D, other: Bounds2D): Boolean
+        => self.Min.X <= other.Max.X && other.Min.X <= self.Max.X
+        && self.Min.Y <= other.Max.Y && other.Min.Y <= self.Max.Y;
+
+    // The smallest box containing both operands (component-wise Min of mins, Max of
+    // maxs). Union with Empty() returns the other operand unchanged.
+    Union(self: Bounds2D, other: Bounds2D): Bounds2D
+        => (Point2D(self.Min.X.Min(other.Min.X), self.Min.Y.Min(other.Min.Y)),
+            Point2D(self.Max.X.Max(other.Max.X), self.Max.Y.Max(other.Max.Y)));
+
+    // The box grown to also contain `p` (the grow-from-Empty accumulation step).
+    Union(self: Bounds2D, p: Point2D): Bounds2D
+        => (Point2D(self.Min.X.Min(p.X), self.Min.Y.Min(p.Y)),
+            Point2D(self.Max.X.Max(p.X), self.Max.Y.Max(p.Y)));
+
+    // The box grown outward by `amount` on every side (negative shrinks / can empty it).
+    Expand(self: Bounds2D, amount: Number): Bounds2D
+        => (Point2D(self.Min.X - amount, self.Min.Y - amount),
+            Point2D(self.Max.X + amount, self.Max.Y + amount));
+
+    // The canonical empty box in 3D: Min at +infinity, Max at -infinity (item 186).
+    Empty(_: Bounds3D): Bounds3D
+        => (Point3D(Number.MaxValue, Number.MaxValue, Number.MaxValue),
+            Point3D(Number.MinValue, Number.MinValue, Number.MinValue));
+
+    // True when the box is empty (inverted on any axis).
+    IsEmpty(self: Bounds3D): Boolean
+        => self.Min.X > self.Max.X || self.Min.Y > self.Max.Y || self.Min.Z > self.Max.Z;
+
+    // True when `p` lies within the closed box [Min, Max] on every axis (inclusive).
+    Contains(self: Bounds3D, p: Point3D): Boolean
+        => self.Min.X <= p.X && p.X <= self.Max.X
+        && self.Min.Y <= p.Y && p.Y <= self.Max.Y
+        && self.Min.Z <= p.Z && p.Z <= self.Max.Z;
+
+    // True when `other` lies entirely within this box (both its corners inside).
+    Contains(self: Bounds3D, other: Bounds3D): Boolean
+        => self.Contains(other.Min) && self.Contains(other.Max);
+
+    // True when the two boxes share any point (closed overlap on every axis).
+    Overlaps(self: Bounds3D, other: Bounds3D): Boolean
+        => self.Min.X <= other.Max.X && other.Min.X <= self.Max.X
+        && self.Min.Y <= other.Max.Y && other.Min.Y <= self.Max.Y
+        && self.Min.Z <= other.Max.Z && other.Min.Z <= self.Max.Z;
+
+    // The smallest box containing both operands. Union with Empty() is the identity.
+    Union(self: Bounds3D, other: Bounds3D): Bounds3D
+        => (Point3D(self.Min.X.Min(other.Min.X), self.Min.Y.Min(other.Min.Y), self.Min.Z.Min(other.Min.Z)),
+            Point3D(self.Max.X.Max(other.Max.X), self.Max.Y.Max(other.Max.Y), self.Max.Z.Max(other.Max.Z)));
+
+    // The box grown to also contain `p` (the grow-from-Empty accumulation step).
+    Union(self: Bounds3D, p: Point3D): Bounds3D
+        => (Point3D(self.Min.X.Min(p.X), self.Min.Y.Min(p.Y), self.Min.Z.Min(p.Z)),
+            Point3D(self.Max.X.Max(p.X), self.Max.Y.Max(p.Y), self.Max.Z.Max(p.Z)));
+
+    // The box grown outward by `amount` on every side (negative shrinks / can empty it).
+    Expand(self: Bounds3D, amount: Number): Bounds3D
+        => (Point3D(self.Min.X - amount, self.Min.Y - amount, self.Min.Z - amount),
+            Point3D(self.Max.X + amount, self.Max.Y + amount, self.Max.Z + amount));
+
+    // The circumscribed sphere of the box: centered at the box center with radius
+    // half the Min -> Max diagonal length (item 28, the universal AABB-diagonal
+    // construction). Reuses the BoundsLike Center/Diagonal declared above; Sphere is
+    // declared in spatial-primitives.plato and only constructed here.
+    BoundingSphere(self: Bounds3D): Sphere
+        => Sphere(self.Center, self.Diagonal.Magnitude.Half);
+
+    // Corner enumeration (item 185) is left out: it needs an 8- (or 4-) element array
+    // literal of Point3D/Point2D, and this vocabulary has no array-literal constructor
+    // (arrays arrive as function inputs; see geometry.library.plato BoundsOfPoints).
+    // Add it once a literal exists, or expose corners lazily via an Indexable.
 
     //==
     // Transformable<TTransform> — a value that can be carried through a transform.

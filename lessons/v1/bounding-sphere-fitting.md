@@ -242,3 +242,5 @@ declared — show the construction from fields, and record the gap as a recommen
 - **missing-function** — `18-spatial-primitives.plato`: solids that implement `Bounded3D`
   have no reverse `BoundingSphere` sugar (`Box3D`, `Capsule3D`, `Triangle3D`). Each has a
   known closed form worth declaring beside `Volume` / `Centroid`.
+
+> Resolved 2026-07-28: intervals-transforms.library.plato added BoundingSphere(Bounds3D): Sphere via the AABB-diagonal construction (item 28); Diagonal/Extent/Union/Expand on Bounds now exist (item 29).

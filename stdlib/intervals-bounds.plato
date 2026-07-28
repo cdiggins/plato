@@ -36,7 +36,13 @@ type NumberInterval
     End: Number;
 }
 
-// A directed interval of angles: arc sweeps, angular ranges.
+// A directed interval of angles: arc sweeps, angular ranges. Endpoints are
+// INCLUSIVE and the sweep is the CCW (increasing-angle) arc from Start to End,
+// which may CROSS the +/-pi seam: an arc from 170 deg to -170 deg is the short
+// 20 deg sweep across the seam, not the long way round. Arc consumers
+// (CircularArc2D, CircularSector) read it this way. Wrap-aware Span/Contains live
+// in intervals-transforms.library.plato; the generic linear IntervalLike helpers
+// are correct only for non-wrapping ranges. Convention: see CONVENTIONS.md - Angles.
 type AngleInterval
     implements IntervalLike<Angle>
 {
@@ -60,7 +66,11 @@ type IntegerInterval
     End: Integer;
 }
 
-// An axis-aligned bounding rectangle in 2D.
+// An axis-aligned bounding rectangle in 2D. Inclusive on Min and Max. An inverted
+// box (Min greater than Max on either axis) is the EMPTY encoding: it contains no
+// point and is the identity for Union, so accumulation can start from Empty().
+// Prefer Bounds2D for culling/containment; prefer Rect2D (center+size) for layout.
+// Convention: see CONVENTIONS.md - Bounds.
 type Bounds2D
     implements BoundsLike<Point2D, Vector2D>
 {
@@ -68,7 +78,10 @@ type Bounds2D
     Max: Point2D;
 }
 
-// An axis-aligned bounding box in 3D.
+// An axis-aligned bounding box in 3D. Inclusive on Min and Max. An inverted box
+// (Min greater than Max on any axis) is the EMPTY encoding: it contains no point
+// and is the identity for Union, so accumulation can start from Empty().
+// Convention: see CONVENTIONS.md - Bounds.
 type Bounds3D
     implements BoundsLike<Point3D, Vector3D>
 {

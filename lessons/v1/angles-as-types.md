@@ -389,3 +389,5 @@ agree on conventions.
 
 - **doc-comment** — `12-intervals-bounds.plato`: `AngleInterval` should document inclusive
   endpoints and wrap-crossing behavior for arc consumers (`CircularArc2D`, `CircularSector`).
+
+> Resolved 2026-07-28: intervals-transforms.library.plato added wrap-aware AngleInterval Span/Contains (item 11, partial: circular Union/Intersection left undefined as unsound); AngleInterval type comment documents inclusive endpoints + seam-crossing (item 14).

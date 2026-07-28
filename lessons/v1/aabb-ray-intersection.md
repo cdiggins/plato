@@ -244,3 +244,7 @@ overlap test.
   primitive `Overlap(a: NumberInterval, b: NumberInterval): NumberInterval`
   (or boolean) would make the three-slab reduction a direct composition
   instead of ad-hoc min/max chains in every ray-box implementation.
+
+> Resolved 2026-07-28: lines.plato added Slabs(Bounds3D): Array<Slab3D> building the three axis-aligned slabs (item 2). Item 4 (NumberInterval Overlap) is left to the intervals-bounds owner.
+
+> Resolved 2026-07-28: intervals-transforms.library.plato added Overlap(NumberInterval, NumberInterval): NumberInterval (item 4), a concrete-typed interval intersection with the inverted empty encoding for slab-chaining.
