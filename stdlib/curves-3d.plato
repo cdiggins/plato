@@ -152,9 +152,13 @@ type VivianiCurve
 //
 // TODO(concept-gap): v1's `IAngularCurve3D` — a curve whose natural parameter
 // is an `Angle`, bridged by one `Eval(curve, t: Number) => curve.Eval(t.Turns)`
-// — has no counterpart concept here, and LIBRARIES.md rule 6 forbids declaring
-// one from a library body. The `t.Turns` conversion is therefore repeated in
-// each `Eval` below. See the matching note in `curves-2d.plato`.
+// — has no counterpart concept here. This is NOT a fold gap; the P2
+// `Reduce`/`MapRange` primitives do not touch it. The clean fix is a
+// `concept AngularCurve3D` (obligation `Eval(self, theta: Angle): Point3D`)
+// plus one bridge, whose natural home is `curves-surfaces.concepts.plato`,
+// owned by the curves package and not editable from this library-body pass.
+// Until it lands the `t.Turns` conversion is repeated in each `Eval` below.
+// See the matching note in `curves-2d.plato`.
 
 library Curves3D
 {

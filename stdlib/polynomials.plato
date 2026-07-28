@@ -360,10 +360,36 @@ library Polynomials
     //==
     // # Evaluation of the declared polynomial types
     //
-    // TODO(concept-gap): the dense/sparse/series types above store coefficient
-    // ARRAYS, and evaluating them (Horner's rule) needs a fold over Array<Number>.
-    // No fold/Reduce is reachable from the concepts in this tree, so only the
-    // fixed-degree forms get bodies here.
+    // The array-backed forms fold their coefficient arrays with the P2 `Reduce`
+    // primitive. Power-basis polynomials (dense, sparse, power series) evaluate
+    // by Horner's rule below. The classical-basis series (Chebyshev, Legendre,
+    // Hermite, Bernstein, Fourier) still await basis-specific recurrences
+    // (Clenshaw / de Casteljau) rather than plain Horner; those are also
+    // foldable but out of scope for this pass.
+
+    // Evaluates a dense coefficient array given in ASCENDING powers at x by
+    // Horner's rule: folding the highest-power coefficient first means no
+    // explicit power of x is ever formed, which is both faster and more stable.
+    // An empty array is the zero polynomial and evaluates to 0.
+    HornerEval(coefficients: Array<Number>, x: Number): Number
+        => MapRange(coefficients.Count, i => coefficients.At(coefficients.Count - 1 - i))
+               .Reduce(0.0, (acc, c) => acc * x + c);
+
+    // The value of the dense polynomial sum(Coefficients[k] * x^k) at x.
+    Eval(p: Polynomial, x: Number): Number
+        => HornerEval(p.Coefficients, x);
+
+    // The value of the sparse polynomial sum(Coefficients[i] * x^Powers[i]) at
+    // x. Each term forms its own power because the exponents are not contiguous.
+    Eval(p: SparsePolynomial, x: Number): Number
+        => MapRange(p.Powers.Count,
+                    i => p.Coefficients.At(i) * x.Pow(p.Powers.At(i).ToNumber))
+               .Reduce(0.0, (acc, term) => acc + term);
+
+    // The value of the truncated power series sum(Coefficients[k]*(x-Center)^k)
+    // at x, evaluated by Horner's rule in the shifted variable (x - Center).
+    Eval(s: PowerSeries, x: Number): Number
+        => HornerEval(s.Coefficients, x - s.Center);
 
     // The value of the single term Coefficient * x^Power at x.
     Eval(m: Monomial, x: Number): Number
@@ -393,6 +419,9 @@ library Polynomials
     Derivative(p: QuarticPolynomial, x: Number): Number
         => 4.0 * p.A * x.Square * x + 3.0 * p.B * x.Square + 2.0 * p.C * x + p.D;
 
-    // The rational function's value at x. Undefined at the Denominator's roots.
-    // TODO(concept-gap): needs dense polynomial evaluation (see above), so no body.
+    // The rational function's value at x: the Numerator's value over the
+    // Denominator's, each by Horner's rule. Undefined at the Denominator's
+    // roots (poles).
+    Eval(r: RationalFunction, x: Number): Number
+        => r.Numerator.Eval(x) / r.Denominator.Eval(x);
 }

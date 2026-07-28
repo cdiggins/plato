@@ -347,11 +347,15 @@ library Splines
     // # B-splines and NURBS
     //
     // TODO(concept-gap): Cox-de Boor evaluation needs a knot-span search plus a
-    // recurrence over degree levels indexed off that span. The search is a
-    // predicate scan over Array<Number> (a fold), which nothing in this tree
-    // exposes, so BSplineCurve2D/3D and NurbsCurve2D/3D keep no Eval here.
-    // KnotVector.Knots is read by the helper below so the declaration is not
-    // dead while that is outstanding.
+    // recurrence over degree levels indexed off that span. The span search is
+    // now expressible (a `Reduce` over Knots carrying the last index whose knot
+    // does not exceed the parameter), but the remaining blocker is the degree
+    // recurrence itself: a triangular DP where level p reads two entries of
+    // level p-1, with a zero-division guard at every repeated knot. That reads
+    // as nested `MapRange`/`Reduce` with carried per-level arrays, which does
+    // not render cleanly, so BSplineCurve2D/3D and NurbsCurve2D/3D keep no Eval
+    // here. KnotVector.Knots is read by the helper below so the declaration is
+    // not dead while that is outstanding.
 
     // The number of knots in a knot vector. For a curve with N control points
     // of degree D this must equal N + D + 1.
@@ -634,10 +638,14 @@ library Splines
     // # Natural cubic spline
     //
     // TODO(concept-gap): a natural cubic spline's second derivatives come from
-    // a tridiagonal solve over all knots (the Thomas algorithm), which needs a
-    // sequential scan with carried state. No fold, scan, or mutable builder is
-    // reachable from these concepts, so NaturalCubicSpline1D keeps no Eval.
-    // The accessors below at least give its parallel arrays a reader.
+    // a tridiagonal solve over all knots (the Thomas algorithm). `Reduce` now
+    // exists, but Thomas is a two-pass sweep: a forward elimination that builds
+    // modified super-diagonal and right-hand-side ARRAYS (each entry reading the
+    // one before it), then a backward substitution over those arrays. Expressed
+    // with fold that is a `Reduce` carrying a tuple-of-arrays accumulator plus a
+    // second reverse pass — correct but not clean — so NaturalCubicSpline1D
+    // keeps no Eval. The accessors below at least give its parallel arrays a
+    // reader.
 
     // The number of knots. Parameters and Values have equal counts.
     KnotCount(self: NaturalCubicSpline1D): Integer

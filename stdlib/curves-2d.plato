@@ -351,12 +351,14 @@ type ButterflyCurve2D
 //
 // TODO(concept-gap): v1 had an `IAngularCurve2D` concept — a curve whose
 // natural parameter is an `Angle`, with a single bridge
-// `Eval(curve, t: Number) => curve.Eval(t.Turns)`. This tree has no
-// angular-curve concept and LIBRARIES.md rule 6 forbids adding one from a
-// library body, so the roulettes and figure curves below each spell out the
-// `t.Turns` conversion in their own `Eval`. Adding `concept AngularCurve2D`
-// (and `AngularCurve3D`) to `curves-surfaces.concepts.plato` would collapse
-// those to one bridge plus one `Eval(curve, t: Angle)` per type.
+// `Eval(curve, t: Number) => curve.Eval(t.Turns)`. This is NOT a fold gap and
+// the P2 `Reduce`/`MapRange` primitives do not touch it: the block is purely a
+// missing concept surface. The clean fix is `concept AngularCurve2D` (with the
+// obligation `Eval(self, theta: Angle): Point2D`) plus one bridge, whose
+// natural home is `curves-surfaces.concepts.plato` alongside the other curve
+// concepts — a file owned by the curves package, not editable from this
+// library-body pass. Until that concept lands, the roulettes and figure curves
+// below each spell out the `t.Turns` conversion in their own `Eval`.
 
 library Curves2D
 {
@@ -490,10 +492,17 @@ library Curves2D
         => self.Eval(self.ParameterAtLength(length));
 
     // TODO(concept-gap): Eval(Clothoid2D, Number) needs the Fresnel integrals
-    // S(x) and C(x), which are not closed-form and have no series-summation
-    // primitive available here (no fold over a term count). Left unimplemented
-    // rather than approximated silently; ArcLength / ParameterAtLength /
-    // PointAtLength above are exact and independent of it.
+    // S(x) and C(x). The term SUM is now expressible —
+    // `MapRange(terms, k => fresnelTerm(k)).Reduce(0.0, +)` folds a truncated
+    // Maclaurin series — so the "no fold over a term count" reason is retired.
+    // Two blockers remain, though, so no body is shipped: (1) a fixed-term
+    // Maclaurin series for S/C is accurate only for small |x| and degrades
+    // badly over the arc-length spans real road/rail clothoids use, needing a
+    // rational/asymptotic split this vocabulary has no primitive for; and (2)
+    // the map from `Flatness`/`Domain` onto the normalized Fresnel argument is
+    // not pinned down by the type, so a body would encode a guessed scaling.
+    // Left unimplemented rather than approximated silently; ArcLength /
+    // ParameterAtLength / PointAtLength above are exact and independent of it.
 
     // The involute of a circle: x = R(cos theta + theta sin theta),
     // y = R(sin theta - theta cos theta), theta in radians.

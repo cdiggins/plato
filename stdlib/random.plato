@@ -544,9 +544,12 @@ library Random
         => self.Location;
 
     // The variance is undefined. By the convention stated on the type, this
-    // reports positive infinity, spelled as 1/0 because this vocabulary has no
-    // infinity constant. TODO(concept-gap): `NumericalLimits` offers MinValue /
-    // MaxValue / Epsilon but no PositiveInfinity.
+    // reports positive infinity, spelled as 1.0/0.0 — which is exactly the IEEE
+    // +Infinity on every float backend, so it needs no constant. Deliberately
+    // NOT adding a `PositiveInfinity` to `NumericalLimits`: that concept is
+    // declared in the core/algebra concept files (owned elsewhere) and a new
+    // member imposes a fresh obligation on every Numerical implementor
+    // tree-wide, which is out of proportion to this one call.
     Variance(self: CauchyDistribution): Number
         => 1.0 / 0.0;
 
