@@ -391,12 +391,14 @@ library Transforms
         return (Direction3D(axis), n.W.Clamp(-1.0, 1.0).Acos * 2.0);
     }
 
-    // Chain three elemental rotations in the given application order (the
-    // first-listed axis applies first, about fixed world axes). The receiver
-    // is the order because the TIR body writer currently grounds a match only
-    // when its subject is a bare parameter.
-    ChainRotations(order: RotationOrder, aboutX: Quaternion, aboutY: Quaternion, aboutZ: Quaternion): Quaternion =>
-        match (order) {
+    // The quaternion of chained elemental rotations, honoring the explicit
+    // application order (the first-listed axis applies first, about fixed
+    // world axes). X carries Pitch, Y carries Yaw, Z carries Roll.
+    Quaternion(e: EulerAngles): Quaternion {
+        var aboutX = Quaternion.CreateRotationX(e.Pitch);
+        var aboutY = Quaternion.CreateRotationY(e.Yaw);
+        var aboutZ = Quaternion.CreateRotationZ(e.Roll);
+        return match (e.Order) {
             XYZ => aboutX.Concatenate(aboutY).Concatenate(aboutZ);
             XZY => aboutX.Concatenate(aboutZ).Concatenate(aboutY);
             YXZ => aboutY.Concatenate(aboutX).Concatenate(aboutZ);
@@ -404,14 +406,7 @@ library Transforms
             ZXY => aboutZ.Concatenate(aboutX).Concatenate(aboutY);
             ZYX => aboutZ.Concatenate(aboutY).Concatenate(aboutX);
         };
-
-    // The quaternion of chained elemental rotations, honoring the explicit
-    // application order. X carries Pitch, Y carries Yaw, Z carries Roll.
-    Quaternion(e: EulerAngles): Quaternion =>
-        e.Order.ChainRotations(
-            Quaternion.CreateRotationX(e.Pitch),
-            Quaternion.CreateRotationY(e.Yaw),
-            Quaternion.CreateRotationZ(e.Roll));
+    }
 
     // The yaw-pitch-roll decomposition of a quaternion, in ZXY order (roll,
     // then pitch, then yaw — the order CreateFromYawPitchRoll applies). At the

@@ -206,7 +206,14 @@ namespace Ara3D.Geometry.Compiler.Checking
                 // field) type through the ordinary VariableRefSymbol path.
                 case MatchExpression me:
                 {
-                    Synthesize(me.Scrutinee);
+                    var subject = Synthesize(me.Scrutinee);
+                    // Anchor the subject to its resolved sum type (CHK304 guarantees the subject IS
+                    // the sum). For a bare parameter this equates the type with itself; for a subject
+                    // the overload solver leaves open — a nested match, a qualified factory call —
+                    // it is what grounds the subject's type variable.
+                    if (subject != null && me.SumType != null && me.SumType.IsSum
+                        && me.SumType.TypeParameters.Count == 0)
+                        System.Equate(subject, me.SumType.ToTypeExpression(), me);
                     var result = Vars.Fresh("Match");
                     foreach (var arm in me.Arms)
                         if (arm.Body != null)

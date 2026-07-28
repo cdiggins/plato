@@ -1,0 +1,64 @@
+// Regression fixture: the match SUBJECT may be any expression, not just a bare
+// parameter. Before the fix, ResolveMatch only derived the sum type from a
+// RefSymbol subject, so a field-read (`c.Current`), an untyped var bound to one,
+// or a nested match as subject left MatchExpression.SumType null and the body
+// died in the writer with "No ground TIR" (see the plato-src-v3 ChainRotations
+// workaround removed by the same change). Self-contained like pathsegment.plato.
+
+type Number { }
+type Integer { }
+type Boolean { }
+
+type Signal
+    = Off
+    | Level(Value: Number)
+    | Ramp(Start: Number, End: Number);
+
+// A product type carrying a sum-typed field, so `c.Current` is a field READ
+// (a call of the field-accessor group), not a parameter reference.
+type Channel
+{
+    Current: Signal;
+    Fallback: Number;
+}
+
+library Signals {
+    // Bare-parameter subject: the shape that always worked.
+    Value(s: Signal, fallback: Number): Number =>
+        match (s) {
+            Off => fallback;
+            Level(v) => v;
+            Ramp(a, b) => b;
+        };
+
+    // Field-read subject.
+    CurrentValue(c: Channel): Number =>
+        match (c.Current) {
+            Off => c.Fallback;
+            Level(v) => v;
+            Ramp(a, b) => a;
+        };
+
+    // Var-bound subject: an UNTYPED local bound to a field read.
+    BoundValue(c: Channel): Number
+    {
+        var s = c.Current;
+        return match (s) {
+            Off => c.Fallback;
+            Level(v) => v;
+            Ramp(a, b) => b;
+        };
+    }
+
+    // Nested match subject: the subject is itself a match expression.
+    Collapsed(s: Signal): Number =>
+        match (match (s) {
+            Off => Signal.Off();
+            Level(v) => Signal.Level(v);
+            Ramp(a, b) => Signal.Level(b);
+        }) {
+            Off => 0.0;
+            Level(v) => v;
+            Ramp(a, b) => a;
+        };
+}

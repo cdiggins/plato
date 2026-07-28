@@ -252,7 +252,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
         public Symbol ResolveMatch(AstMatch astMatch)
         {
             var scrutinee = ResolveExpr(astMatch.Scrutinee);
-            var subjectDef = (scrutinee as RefSymbol)?.Def?.Type?.Def;
+            var subjectDef = TryGetScrutineeTypeDef(scrutinee);
 
             var arms = new List<MatchArm>();
             foreach (var astArm in astMatch.Arms)
@@ -274,6 +274,103 @@ namespace Ara3D.Geometry.Compiler.Symbols
 
             return new MatchExpression(scrutinee, subjectDef, arms);
         }
+
+        /// <summary>Best-effort RESOLUTION-time type of a match scrutinee. Full inference runs
+        /// later (the checker), but the scrutinee's sum type is needed HERE so the arms' binders
+        /// resolve with their case-field types — so this walks the shapes whose type is already
+        /// determined by declarations alone: a parameter or typed local, a var bound to such an
+        /// expression, a call whose candidate return types agree (which covers field reads:
+        /// <c>e.Order</c> resolves to a call of the field-accessor group), a conditional, a
+        /// parenthesized expression, and a nested match (typed by its arms). Returns null when
+        /// the type is not statically evident; SumTypeChecker then reports CHK304.</summary>
+        private TypeDef TryGetScrutineeTypeDef(Expression e, int depth = 0)
+        {
+            if (e == null || depth > 8)
+                return null;
+            switch (e)
+            {
+                case Parenthesized p:
+                    return TryGetScrutineeTypeDef(p.Expression, depth + 1);
+
+                case VariableRefSymbol v:
+                    // A var's declared type wins; an untyped `var x = expr` recurses into expr.
+                    return NominalDef(v.Def?.Type) ?? TryGetScrutineeTypeDef(v.Def?.Value, depth + 1);
+
+                case FunctionGroupRefSymbol _:
+                    return null;
+
+                case RefSymbol r:
+                    return NominalDef(r.Def?.Type);
+
+                case ConditionalExpression c:
+                    return TryGetScrutineeTypeDef(c.IfTrue, depth + 1)
+                        ?? TryGetScrutineeTypeDef(c.IfFalse, depth + 1);
+
+                case MatchExpression m:
+                    foreach (var arm in m.Arms)
+                    {
+                        var t = TryGetScrutineeTypeDef(arm.Body, depth + 1);
+                        if (t != null)
+                            return t;
+                    }
+                    return null;
+
+                case FunctionCall fc when fc.Function is FunctionGroupRefSymbol g:
+                {
+                    // A field READ (`c.Current` sugar → Current(c)): answered from the receiver
+                    // type's field list, NOT the function group — the field-accessor functions are
+                    // only registered in their group after this type's bodies resolve, so the group
+                    // is empty when an earlier-resolving body asks.
+                    var receiver = fc.Args.Count >= 1 ? TryGetScrutineeTypeDef(fc.Args[0], depth + 1) : null;
+                    if (fc.Args.Count == 1 && receiver != null)
+                    {
+                        var field = receiver.Fields?.FirstOrDefault(fd => fd?.Name == g.Name);
+                        if (field != null)
+                            return NominalDef(field.Type);
+                    }
+
+                    // A QUALIFIED static call (`Signal.Level(v)`): arg 0 is the type itself (a
+                    // TypeExpression or a TypeRefSymbol, depending on how the resolver reached it),
+                    // not a value argument — drop it from the arity and keep only that type's own
+                    // functions (its case factories / constructors).
+                    var qualifier = fc.Args.Count > 0
+                        ? (fc.Args[0] as TypeExpression)?.Def ?? (fc.Args[0] as TypeRefSymbol)?.Def
+                        : null;
+                    var argCount = qualifier != null ? fc.Args.Count - 1 : fc.Args.Count;
+
+                    var candidates = (g.Def?.Functions ?? Enumerable.Empty<FunctionDef>())
+                        .Where(f => f != null && f.NumParameters == argCount)
+                        .Where(f => qualifier == null || f.OwnerType == qualifier)
+                        .ToList();
+                    var returns = candidates
+                        .Select(f => NominalDef(f.ReturnType))
+                        .Where(t => t != null)
+                        .Distinct()
+                        .ToList();
+                    if (returns.Count == 1)
+                        return returns[0];
+                    // Ambiguous group (a name shared across types): the receiver's type selects
+                    // the overload, mirroring the checker's later resolution.
+                    if (receiver == null)
+                        return null;
+                    var byReceiver = candidates
+                        .Where(f => f.OwnerType == receiver || NominalDef(f.GetParameterType(0)) == receiver)
+                        .Select(f => NominalDef(f.ReturnType))
+                        .Where(t => t != null)
+                        .Distinct()
+                        .ToList();
+                    return byReceiver.Count == 1 ? byReceiver[0] : null;
+                }
+
+                default:
+                    return null;
+            }
+        }
+
+        /// <summary>The nominal definition behind a type expression, or null when the expression
+        /// is absent, a type variable, or the untyped placeholder <c>Any</c>.</summary>
+        private static TypeDef NominalDef(TypeExpression t)
+            => t?.Def is TypeDef d && !(d is TypeVariable) && d.Name != "Any" ? d : null;
 
         public Symbol NewExpression(AstNew astNew)
         {

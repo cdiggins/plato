@@ -211,5 +211,54 @@ namespace Ara3D.Geometry
             var pen = lib.GetMethod("Pen").Invoke(null, new[] { Point(1, 1) });
             Assert.AreEqual(0, seg.GetField("Kind").GetValue(pen)); // Kind_Move
         }
+
+        // --- regression: the match subject may be any expression ------------------
+        // Before the fix, ResolveMatch only derived the sum type from a bare RefSymbol
+        // subject; a field-read, var-bound, or nested-match subject left SumType null and
+        // the body failed in the writer with "No ground TIR" (plato-src-v3 ChainRotations
+        // workaround). One fixture covers all four subject shapes.
+
+        [Test]
+        public static void MatchSubject_AnyExpression_CompilesAndRuns()
+        {
+            var w = Emit("match-subject.plato");
+            var asm = CompileAndLoad(Prelude,
+                w.Files["_Signal.g.cs"].ToString(),
+                w.Files["_Channel.g.cs"].ToString(),
+                w.Files["Signals.g.cs"].ToString());
+
+            var signal = asm.GetType("Ara3D.Geometry.Signal", true);
+            var channel = asm.GetType("Ara3D.Geometry.Channel", true);
+            var lib = asm.GetType("Ara3D.Geometry.Signals", true);
+
+            var off = signal.GetMethod("Off").Invoke(null, null);
+            var level = signal.GetMethod("Level").Invoke(null, new object[] { 5f });
+            var ramp = signal.GetMethod("Ramp").Invoke(null, new object[] { 2f, 3f });
+            object Chan(object s) => Activator.CreateInstance(channel, s, 9f);
+
+            // Bare-parameter subject.
+            var value = lib.GetMethod("Value");
+            Assert.AreEqual(7f, value.Invoke(null, new[] { off, (object)7f }));
+            Assert.AreEqual(5f, value.Invoke(null, new[] { level, (object)7f }));
+            Assert.AreEqual(3f, value.Invoke(null, new[] { ramp, (object)7f }));
+
+            // Field-read subject (match (c.Current)).
+            var currentValue = lib.GetMethod("CurrentValue");
+            Assert.AreEqual(9f, currentValue.Invoke(null, new[] { Chan(off) }));
+            Assert.AreEqual(5f, currentValue.Invoke(null, new[] { Chan(level) }));
+            Assert.AreEqual(2f, currentValue.Invoke(null, new[] { Chan(ramp) }));
+
+            // Var-bound subject (var s = c.Current; match (s)).
+            var boundValue = lib.GetMethod("BoundValue");
+            Assert.AreEqual(9f, boundValue.Invoke(null, new[] { Chan(off) }));
+            Assert.AreEqual(5f, boundValue.Invoke(null, new[] { Chan(level) }));
+            Assert.AreEqual(3f, boundValue.Invoke(null, new[] { Chan(ramp) }));
+
+            // Nested match subject (match (match (s) ...)): Ramp collapses to Level(End).
+            var collapsed = lib.GetMethod("Collapsed");
+            Assert.AreEqual(0f, collapsed.Invoke(null, new[] { off }));
+            Assert.AreEqual(5f, collapsed.Invoke(null, new[] { level }));
+            Assert.AreEqual(3f, collapsed.Invoke(null, new[] { ramp }));
+        }
     }
 }
