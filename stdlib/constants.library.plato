@@ -1,0 +1,155 @@
+//==
+// # Constants
+//
+// Named constant values: irrational and derived numbers, angle-related scalars,
+// unit-conversion factors, axis vectors, and canonical unit shapes.
+//
+// Successor to plato-src/constants.plato. Two changes from v1:
+//   1. v1 used zero-argument functions (`Pi(): Number`). This tree dispatches
+//      constants on an ignored receiver of the result type (`Pi(_: Number)`),
+//      matching the intrinsic constants in `intrinsics.plato` and the
+//      `Identity(_: Quaternion)` family in `transforms.plato`. Read them as
+//      `Number.GoldenRatio`, `Vector3D.UnitZ`, `Circle.UnitCircle`.
+//   2. `Pi`, `Tau`, `E`, `Epsilon`, `MinValue`, `MaxValue`, `Zero`, `One` and
+//      `MinusOne` are NOT redeclared here — they are intrinsics
+//      (`intrinsics.plato`) or derived in `core-algebra.library.plato`.
+
+library Constants
+{
+    //==
+    // Irrational and derived numeric constants
+
+    // The golden ratio (1 + sqrt 5) / 2, approximately 1.618034.
+    GoldenRatio(_: Number): Number
+        => (1.0 + 5.0.Sqrt) / 2.0;
+
+    // Conventional name for the golden ratio.
+    Phi(_: Number): Number
+        => Number.GoldenRatio;
+
+    // The reciprocal of the golden ratio, approximately 0.618034. Equal to
+    // Phi - 1.
+    RPhi(_: Number): Number
+        => 1.0 / Number.Phi;
+
+    // The square root of two, approximately 1.414214.
+    SqrtTwo(_: Number): Number
+        => 1.4142135623730951;
+
+    // The square root of three, approximately 1.732051.
+    SqrtThree(_: Number): Number
+        => 1.7320508075688772;
+
+    // The square root of five, approximately 2.236068.
+    SqrtFive(_: Number): Number
+        => 2.23606797749979;
+
+    // The natural logarithm of ten, approximately 2.302585.
+    Ln10(_: Number): Number
+        => 2.302585092994046;
+
+    // The natural logarithm of two, approximately 0.693147.
+    Ln2(_: Number): Number
+        => 0.6931471805599453;
+
+    // The base-ten logarithm of e, approximately 0.434294.
+    Log10E(_: Number): Number
+        => 0.4342944819032518;
+
+    //==
+    // Angle-related scalars
+    //
+    // These are raw Numbers, not Angles: they are conversion factors and
+    // radian magnitudes used to build Angle values (see `angles.library.plato`),
+    // not angles in their own right.
+
+    // Two pi: the number of radians in a full turn. Spelled `Tau` as an
+    // intrinsic; this is the conventional alternative name.
+    TwoPi(_: Number): Number
+        => Number.Tau;
+
+    // Half of pi: the number of radians in a quarter turn.
+    HalfPi(_: Number): Number
+        => Number.Pi / 2.0;
+
+    // Radians per degree: multiply a degree count by this to get radians.
+    RadiansPerDegree(_: Number): Number
+        => Number.Pi / 180.0;
+
+    // Degrees per radian: multiply a radian count by this to get degrees.
+    DegreesPerRadian(_: Number): Number
+        => 180.0 / Number.Pi;
+
+    //==
+    // Unit-conversion factors
+    //
+    // Each is named `<A>Per<B>`: the number of A in one B. Exact where the
+    // definition is exact (pound, ounce, troy ounce, mile, ton).
+
+    // Feet in one metre.
+    FeetPerMeter(_: Number): Number
+        => 3.280839895;
+
+    // Feet in one statute mile (exact).
+    FeetPerMile(_: Number): Number
+        => 5280.0;
+
+    // Kilograms in one avoirdupois pound (exact by definition).
+    PoundPerKilogram(_: Number): Number
+        => 0.45359237;
+
+    // Pounds in one US short ton (exact).
+    PoundPerTon(_: Number): Number
+        => 2000.0;
+
+    // Grams in one avoirdupois ounce (exact by definition).
+    OuncePerGram(_: Number): Number
+        => 28.349523125;
+
+    // Grams in one troy ounce (exact by definition).
+    TroyOuncePerGram(_: Number): Number
+        => 31.1034768;
+
+    // Mean days in a Gregorian calendar year.
+    GregorianYearDays(_: Number): Number
+        => 365.2425;
+
+    //==
+    // Axis vectors
+    //
+    // The standard basis. v1 named these XAxis2D/YAxis2D/XAxis3D/YAxis3D/
+    // ZAxis3D; here the dimension is carried by the receiver type, so the
+    // v1 `Vector3.UnitX` spelling is used directly.
+
+    // The 2D unit vector along +X: (1, 0).
+    UnitX(_: Vector2D): Vector2D
+        => Vector2D(1.0, 0.0);
+
+    // The 2D unit vector along +Y: (0, 1).
+    UnitY(_: Vector2D): Vector2D
+        => Vector2D(0.0, 1.0);
+
+    // The 3D unit vector along +X: (1, 0, 0).
+    UnitX(_: Vector3D): Vector3D
+        => Vector3D(1.0, 0.0, 0.0);
+
+    // The 3D unit vector along +Y: (0, 1, 0).
+    UnitY(_: Vector3D): Vector3D
+        => Vector3D(0.0, 1.0, 0.0);
+
+    // The 3D unit vector along +Z: (0, 0, 1).
+    UnitZ(_: Vector3D): Vector3D
+        => Vector3D(0.0, 0.0, 1.0);
+
+    //==
+    // Canonical unit shapes
+
+    // The interval [0, 1]: the default parameter domain for curves, surfaces,
+    // easing functions, and interpolation.
+    UnitInterval(_: NumberInterval): NumberInterval
+        => NumberInterval(0.0, 1.0);
+
+    // The circle of radius one centred at the origin.
+    UnitCircle(_: Circle): Circle
+        => Circle(Point2D(0.0, 0.0), 1.0);
+}

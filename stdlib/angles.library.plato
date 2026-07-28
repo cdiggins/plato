@@ -1,0 +1,114 @@
+//==
+// # Angles
+//
+// Unit constructors and accessors for `Angle` (`quantities.plato`), plus the
+// reciprocal trigonometric functions.
+//
+// `Angle` stores radians and the only intrinsic way to build one is the
+// radians cast `Angle(x: Number)` (`intrinsics.plato`). This library supplies
+// the other units, in both directions, so that the README rule "angles are
+// `Angle`, never raw `Number`" is actually usable: write `0.25.Turns` or
+// `90.Degrees`, never a bare number of degrees.
+//
+// Successor to plato-src/angles.plato. Unchanged in spirit; the Angle->Number
+// direction gains `ArcMinutes`/`ArcSeconds`, which v1 omitted.
+
+library Angles
+{
+    //==
+    // Number -> Angle constructors
+
+    // The angle spanning the given fraction of a full revolution.
+    // 1.0.Turns is a full circle.
+    Turns(x: Number): Angle
+        => Angle(x * Number.Tau);
+
+    // The angle of the given number of degrees; 360 degrees is one turn.
+    Degrees(x: Number): Angle
+        => (x / 360.0).Turns;
+
+    // The angle of the given number of gradians; 400 gradians is one turn.
+    Gradians(x: Number): Angle
+        => (x / 400.0).Turns;
+
+    // The angle of the given number of arc minutes; 60 arc minutes is one degree.
+    ArcMinutes(x: Number): Angle
+        => (x / 60.0).Degrees;
+
+    // The angle of the given number of arc seconds; 60 arc seconds is one
+    // arc minute.
+    ArcSeconds(x: Number): Angle
+        => (x / 60.0).ArcMinutes;
+
+    //==
+    // Integer -> Angle constructors
+    //
+    // Convenience overloads so that whole-number literals read naturally
+    // (`90.Degrees`, `2.Turns`).
+
+    // The angle spanning the given whole number of full revolutions.
+    Turns(x: Integer): Angle
+        => x.ToNumber.Turns;
+
+    // The angle of the given whole number of degrees.
+    Degrees(x: Integer): Angle
+        => x.ToNumber.Degrees;
+
+    // The angle of the given whole number of gradians.
+    Gradians(x: Integer): Angle
+        => x.ToNumber.Gradians;
+
+    // The angle of the given whole number of arc minutes.
+    ArcMinutes(x: Integer): Angle
+        => x.ToNumber.ArcMinutes;
+
+    // The angle of the given whole number of arc seconds.
+    ArcSeconds(x: Integer): Angle
+        => x.ToNumber.ArcSeconds;
+
+    //==
+    // Angle -> Number accessors
+    //
+    // The inverse of the constructors above. Not normalized: an angle larger
+    // than a full revolution reports more than one turn, and negative angles
+    // report negative unit counts.
+
+    // The angle measured in full revolutions.
+    Turns(x: Angle): Number
+        => x.Radians / Number.Tau;
+
+    // The angle measured in degrees.
+    Degrees(x: Angle): Number
+        => x.Turns * 360.0;
+
+    // The angle measured in gradians.
+    Gradians(x: Angle): Number
+        => x.Turns * 400.0;
+
+    // The angle measured in arc minutes.
+    ArcMinutes(x: Angle): Number
+        => x.Degrees * 60.0;
+
+    // The angle measured in arc seconds.
+    ArcSeconds(x: Angle): Number
+        => x.ArcMinutes * 60.0;
+
+    //==
+    // Reciprocal trigonometric functions
+    //
+    // Each is undefined (division by zero) where the corresponding primary
+    // function is zero: Sec and Tan at odd multiples of a quarter turn, Csc
+    // and Cot at multiples of a half turn.
+
+    // The secant: the reciprocal of the cosine.
+    Sec(x: Angle): Number
+        => 1.0 / x.Cos;
+
+    // The cosecant: the reciprocal of the sine.
+    Csc(x: Angle): Number
+        => 1.0 / x.Sin;
+
+    // The cotangent: the reciprocal of the tangent.
+    Cot(x: Angle): Number
+        => 1.0 / x.Tan;
+}
