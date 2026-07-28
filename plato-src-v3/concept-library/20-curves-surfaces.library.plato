@@ -152,47 +152,6 @@ library CurvesSurfaces
         => self.Eval(t - h).Between(self.Eval(t + h)) / (2.0 * h);
 
     //==
-    // # Curve4D
-    //
-    // A continuous map from a parameter to a 4D position
-    // (Procedural<Number, Point4D>): rational-curve numerators and other
-    // homogeneous constructions.
-
-    // The position for a parameter; an intent-revealing alias for Eval.
-    PointAt(self: Curve4D, t: Number): Point4D
-        => self.Eval(t);
-
-    // The curve's starting position, Eval(0).
-    StartPoint(self: Curve4D): Point4D
-        => self.Eval(0.0);
-
-    // The position at the middle of the domain, Eval(0.5).
-    MidPoint(self: Curve4D): Point4D
-        => self.Eval(0.5);
-
-    // The curve's ending position, Eval(1).
-    EndPoint(self: Curve4D): Point4D
-        => self.Eval(1.0);
-
-    // The straight-line vector from the start to the end of the curve.
-    Chord(self: Curve4D): Number4
-        => self.Eval(0.0).Between(self.Eval(1.0));
-
-    // The straight-line distance from the start to the end of the curve
-    // (Number4 is Normed).
-    ChordLength(self: Curve4D): Number
-        => self.Eval(0.0).Between(self.Eval(1.0)).Magnitude;
-
-    // The secant vector between the positions at parameters t0 and t1.
-    SecantBetween(self: Curve4D, t0: Number, t1: Number): Number4
-        => self.Eval(t0).Between(self.Eval(t1));
-
-    // A finite-difference velocity estimate at t using step h. Precondition:
-    // h > 0 and h chosen so t +/- h stays within the domain of interest.
-    VelocityAt(self: Curve4D, t: Number, h: Number): Number4
-        => self.Eval(t - h).Between(self.Eval(t + h)) / (2.0 * h);
-
-    //==
     // # ClosedCurve2D
     //
     // A 2D curve satisfying Eval(0) = Eval(1). The residual gap between the two

@@ -25,14 +25,6 @@ type LineSegment3D
     B: Point3D;
 }
 
-// A straight bounded span in 4D, directed from A to B.
-type LineSegment4D
-    implements Geometry4D, OpenShape, Connected, Bounded4D, LengthMeasurable
-{
-    A: Point4D;
-    B: Point4D;
-}
-
 //==
 // # Infinite lines and rays
 

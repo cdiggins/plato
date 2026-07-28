@@ -27,16 +27,6 @@ type Point3D
     Z: Number;
 }
 
-// A position in 4D Cartesian space.
-type Point4D
-    implements Coordinate, Difference<Number4>, Hashable
-{
-    X: Number;
-    Y: Number;
-    Z: Number;
-    W: Number;
-}
-
 // A position in N-dimensional Cartesian space.
 type PointN
     implements Coordinate, Difference<VectorN>

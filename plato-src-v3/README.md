@@ -5,11 +5,14 @@ much broader coverage, `concept` keyword with bare names (no `I` prefix), and fi
 by domain in dependency-layer order. **Declarations only** — no `library` blocks, no
 function bodies. Semantics live in doc comments; implementations come in a later pass.
 
-Target applications: geometry (primary), 2D/3D/4D and N-dimensional computation, animation,
+Target applications: geometry (primary), 2D/3D and N-dimensional computation, animation,
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
 graphics, image processing, and engineering.
 
-Current contents (2026-07-27): **70 source files, 155 concepts, 1141 types** (~13.4K lines).
+Current contents (2026-07-28): **80 source files, 150 concepts, 1111 types** (~13K lines).
+Fixed 4D geometry (Point4D, Bounds4D, Geometry4D, Curve4D, polytopes, 4D rotors) was removed
+2026-07-28 — the practical 4D uses are numeric and live on `Number4`/`Quaternion`; N-dimensional
+work uses `PointN`/`VectorN`. 4D **arrays** (`Array4D`/`Indexable4D`) are collections and remain.
 The folder parses and resolves cleanly (`lint`: 0 parse errors, 0 symbol-resolution errors);
 LINT001/LINT003 findings are expected until libraries implement the declared surface.
 
@@ -107,8 +110,8 @@ Foundation files:
 - `08-vectors.plato` — Vector concept, Number2/3/4/8, Vector2D/3D, VectorN, IntegerVector2/3/4, Direction2D/3D.
 - `09-matrices.plato` — Matrix concept, Matrix2x2..4x4, Matrix3x2, Matrix4x3, SymmetricMatrix3x3, MatrixN, Tensor.
 - `10-rotations.plato` — Quaternion, AxisAngle, EulerAngles, RotationOrder, Rotation2D, Rotor2D/3D, Bivector2D/3D.
-- `11-points.plato` — Coordinate concept, Point2D/3D/4D, PointN, homogeneous points, polar/cylindrical/spherical/barycentric, UvCoordinate, UvwCoordinate, GeoCoordinate.
-- `12-intervals-bounds.plato` — Interval concept, NumberInterval, AngleInterval, Bounds concept, Bounds2D/3D/4D, IntegerBounds2D/3D, Size2D/3D, IntegerSize2D/3D, Rect2D.
+- `11-points.plato` — Coordinate concept, Point2D/3D, PointN, homogeneous points, polar/cylindrical/spherical/barycentric, UvCoordinate, UvwCoordinate, GeoCoordinate.
+- `12-intervals-bounds.plato` — Interval concept, NumberInterval, AngleInterval, Bounds concept, Bounds2D/3D, IntegerBounds2D/3D, Size2D/3D, IntegerSize2D/3D, Rect2D.
 - `13-transforms.plato` — Transformable/Deformable concepts, Pose2D/3D, Transform2D/3D (TRS), affine/projective transforms, Frame2D/3D, Basis3D.
 - `14-color.plato` — Color (linear RGBA), Color8, ColorHSV, ColorHSL, ColorStop, ColorGradient.
 
@@ -121,7 +124,7 @@ domain (`ImageHistogram`, not a second `Histogram`).
 | Name | Owner file |
 |------|-----------|
 | Everything in files 00-14 | foundation |
-| `Geometry`, `Geometry2D/3D/4D/ND`, `Bounded2D/3D`, `PointSet2D/3D` concepts | 15 (A) |
+| `Geometry`, `Geometry2D/3D/ND`, `Bounded2D/3D`, `PointSet2D/3D` concepts | 15 (A) |
 | `Line2D/3D`, `Ray2D/3D`, `LineSegment2D/3D`, `Plane`, `HalfSpace` | 16 (A) |
 | `Triangle2D`, `Quad2D`, `Circle`, `Ellipse`, `Capsule2D`, `RegularPolygon` | 17 (A) |
 | `Sphere`, `Box3D`, `Cylinder`, `Cone`, `Capsule3D`, `Torus`, `Ellipsoid`, `Triangle3D`, `Quad3D`, `Tetrahedron` | 18 (A) |

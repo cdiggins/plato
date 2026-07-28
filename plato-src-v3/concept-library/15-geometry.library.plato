@@ -49,10 +49,6 @@ library GeometryTraits
     EmbeddingDimension(self: Geometry3D): Integer
         => 3;
 
-    // The dimension of the space this entity is embedded in: 4.
-    EmbeddingDimension(self: Geometry4D): Integer
-        => 4;
-
     //==
     // # Dimensioned
     //
@@ -222,47 +218,7 @@ library GeometryTraits
         && self.Bounds.Min.Z <= other.Bounds.Max.Z && self.Bounds.Max.Z >= other.Bounds.Min.Z;
 
     //==
-    // # Bounded4D
-    //
-    // The 4D analogues over Bounds4D (Min / Max are Point4D). No single natural
-    // "area" or "volume", so only center, extent, diagonal, containment, and the
-    // componentwise fit / overlap predicates are offered.
-
-    // The center of the 4D bounding region. Delegates to P4's Center(BoundsLike).
-    BoundsCenter(self: Bounded4D): Point4D
-        => self.Bounds.Center;
-
-    // The extent of the 4D bounding region as a vector (Max - Min).
-    BoundsSize(self: Bounded4D): Number4
-        => self.Bounds.Min.Between(self.Bounds.Max);
-
-    // The length of the 4D bounding region's diagonal.
-    BoundsDiagonalLength(self: Bounded4D): Number
-        => self.BoundsSize.Magnitude;
-
-    // True when the point lies within the 4D bounding region (inclusive).
-    BoundsContainsPoint(self: Bounded4D, point: Point4D): Boolean
-        => point.X >= self.Bounds.Min.X && point.X <= self.Bounds.Max.X
-        && point.Y >= self.Bounds.Min.Y && point.Y <= self.Bounds.Max.Y
-        && point.Z >= self.Bounds.Min.Z && point.Z <= self.Bounds.Max.Z
-        && point.W >= self.Bounds.Min.W && point.W <= self.Bounds.Max.W;
-
-    // True when this region's bounds lie entirely within `outer`'s bounds (inclusive).
-    FitsInside(self: Bounded4D, outer: Bounded4D): Boolean
-        => self.Bounds.Min.X >= outer.Bounds.Min.X && self.Bounds.Min.Y >= outer.Bounds.Min.Y
-        && self.Bounds.Min.Z >= outer.Bounds.Min.Z && self.Bounds.Min.W >= outer.Bounds.Min.W
-        && self.Bounds.Max.X <= outer.Bounds.Max.X && self.Bounds.Max.Y <= outer.Bounds.Max.Y
-        && self.Bounds.Max.Z <= outer.Bounds.Max.Z && self.Bounds.Max.W <= outer.Bounds.Max.W;
-
-    // True when the two regions' bounds overlap in all four axes (touching counts).
-    BoundsOverlaps(self: Bounded4D, other: Bounded4D): Boolean
-        => self.Bounds.Min.X <= other.Bounds.Max.X && self.Bounds.Max.X >= other.Bounds.Min.X
-        && self.Bounds.Min.Y <= other.Bounds.Max.Y && self.Bounds.Max.Y >= other.Bounds.Min.Y
-        && self.Bounds.Min.Z <= other.Bounds.Max.Z && self.Bounds.Max.Z >= other.Bounds.Min.Z
-        && self.Bounds.Min.W <= other.Bounds.Max.W && self.Bounds.Max.W >= other.Bounds.Min.W;
-
-    //==
-    // # PointSet2D / PointSet3D / PointSet4D
+    // # PointSet2D / PointSet3D
     //
     // No helpers are defined here: the defining points are an Array (Indexable), so
     // the useful per-element conveniences already come from P2's generics on the

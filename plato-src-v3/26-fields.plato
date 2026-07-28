@@ -28,12 +28,6 @@ concept ScalarField3D
     inherits Field<Point3D, Number>
 { }
 
-// A real-valued field over 4D space; commonly 3D space plus one extra axis
-// such as time or a morph parameter.
-concept ScalarField4D
-    inherits Field<Point4D, Number>
-{ }
-
 // A field assigning a 2D vector to every point of the plane: gradients,
 // flows, displacement maps, and wind over a surface.
 concept VectorField2D

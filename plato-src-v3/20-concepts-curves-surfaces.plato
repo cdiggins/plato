@@ -26,12 +26,6 @@ concept Curve3D
     inherits Geometry3D, Procedural<Number, Point3D>
 { }
 
-// A continuous map from a parameter to a 4D position: rational curve numerators
-// and other homogeneous constructions.
-concept Curve4D
-    inherits Geometry4D, Procedural<Number, Point4D>
-{ }
-
 // A 2D curve that returns to its start: Eval(0) = Eval(1) with continuous closure.
 // Marker concept; closure is a structural guarantee of the implementing type.
 concept ClosedCurve2D

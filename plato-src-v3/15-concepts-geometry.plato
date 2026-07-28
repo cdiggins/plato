@@ -27,11 +27,6 @@ concept Geometry3D
     inherits Geometry
 { }
 
-// Geometry embedded in 4D Cartesian space.
-concept Geometry4D
-    inherits Geometry
-{ }
-
 // Geometry embedded in an N-dimensional space whose dimension is known only at
 // runtime.
 concept GeometryND
@@ -97,12 +92,6 @@ concept Bounded3D
     Bounds(x: Self): Bounds3D;
 }
 
-// Has a finite axis-aligned bounding region in 4D.
-concept Bounded4D
-{
-    Bounds(x: Self): Bounds4D;
-}
-
 //==
 // # Point sets
 
@@ -119,13 +108,6 @@ concept PointSet3D
     inherits Geometry3D
 {
     Points(x: Self): Array<Point3D>;
-}
-
-// Exposes the finite ordered set of defining points of a 4D entity.
-concept PointSet4D
-    inherits Geometry4D
-{
-    Points(x: Self): Array<Point4D>;
 }
 
 //==

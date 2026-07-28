@@ -84,31 +84,6 @@ library FieldsImplicits
         => (self.Eval(point) - level).Abs <= tolerance;
 
     //==
-    // # ScalarField4D
-    //
-    // A real-valued field over 4D space (commonly 3D plus time or a morph axis).
-
-    // True where the field is strictly positive at the point. Note: near-zero
-    // values classify by sign noise; prefer IsNearLevelAt for a balanced test.
-    IsPositiveAt(self: ScalarField4D, point: Point4D): Boolean
-        => self.Eval(point) > 0.0;
-
-    // True where the field is strictly negative at the point. Note: near-zero
-    // values classify by sign noise; prefer IsNearLevelAt for a balanced test.
-    IsNegativeAt(self: ScalarField4D, point: Point4D): Boolean
-        => self.Eval(point) < 0.0;
-
-    // True where the field's value at the point is at or above level: the closed
-    // super-level-set membership test.
-    IsAtOrAboveLevel(self: ScalarField4D, point: Point4D, level: Number): Boolean
-        => self.Eval(point) >= level;
-
-    // True where the field's value at the point is within tolerance of level.
-    // Precondition: tolerance is non-negative.
-    IsNearLevelAt(self: ScalarField4D, point: Point4D, level: Number, tolerance: Number): Boolean
-        => (self.Eval(point) - level).Abs <= tolerance;
-
-    //==
     // # VectorField2D
     //
     // A planar vector field. Evaluation itself is the generic ValueAt; the helpers

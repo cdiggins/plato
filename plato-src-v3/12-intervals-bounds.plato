@@ -70,14 +70,6 @@ type Bounds3D
     Max: Point3D;
 }
 
-// An axis-aligned bounding region in 4D.
-type Bounds4D
-    implements BoundsLike<Point4D>
-{
-    Min: Point4D;
-    Max: Point4D;
-}
-
 // A whole-number 2D bounding region: pixel rectangles. Contains Min, excludes Max.
 type IntegerBounds2D
     implements Value
