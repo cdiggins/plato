@@ -6,15 +6,16 @@ Plato is a small, pure, statically typed language for geometry and numeric libra
 
 ---
 
-## Language (three constructs)
+## Language
 
-| Construct | Role |
-|-----------|------|
-| **`type`** | Immutable data (fields only). Tuples construct types: `(x, y)` → `Point2D`. |
-| **`interface`** | Type classes with a `Self` type — constrained generics, not OO virtual dispatch. |
-| **`library`** | Pure free functions; first argument is the receiver (`v.Length`, `a.Lerp(b, t)`). |
+**Normative reference: [`plato-language-semantics.md`](plato-language-semantics.md)** — what every
+construct means, resolution/coercion rules, and the explicit non-features. The 5-line version:
 
-Restrictions are intentional: no mutation, no `this`, no I/O, no exceptions. Distinct types (`Angle` vs `Number`, `Point` vs `Vector`) catch common geometry bugs at compile time. Interface-generic code is **monomorphized** into direct calls on each concrete type.
+- **`type`** — immutable data: fields only, or a sum type (`type X = A(f: T) | B;`) consumed by exhaustive `match`.
+- **`concept`** (alias `interface`) — type classes with a `Self` type; constrained generics, not OO dispatch; monomorphized.
+- **`library`** — pure free functions; first argument is the receiver (`v.Length`, `a.Lerp(b, t)`); nullary calls need no parens.
+- Conveniences: tuples construct types (`(x, y)` → `Point2D`), type-named functions are implicit conversions, operators come from well-known names (`Add` → `+`), `_: Type` first params are statics.
+- Restrictions are intentional: no mutation, no `this`, no I/O, no exceptions, no null.
 
 Example (from the stdlib):
 
@@ -166,6 +167,7 @@ submodules\Plato\tools\export-types-context.bat
 
 | Doc | Contents |
 |-----|----------|
+| [`plato-language-semantics.md`](plato-language-semantics.md) | **Normative language semantics** — construct meaning, resolution, coercions, non-features |
 | [`../README.md`](../README.md) | Full language pitch, examples, demos |
 | [`../CLAUDE.md`](../CLAUDE.md) | Repo layout, hard rules, mission protocol |
 | [`../../../docs/plato-roadmap.md`](../../../docs/plato-roadmap.md) | Compiler and library roadmap (studio repo) |

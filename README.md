@@ -81,6 +81,10 @@ A handful of conveniences carry a lot of weight:
 - Operators come from well-known function names: define `Add`, get `+`.
 - Array literals: `[x.A, x.B, x.C]`.
 
+For the precise meaning of every construct — name resolution, overload tiers, coercions, sum
+types and `match`, and what is deliberately *not* in the language — see
+[`docs/plato-language-semantics.md`](docs/plato-language-semantics.md).
+
 ## What the compiler produces
 
 The C# backend emits value types built for performance and interop:
