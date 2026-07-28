@@ -1,0 +1,654 @@
+//==
+// # Colors - color arithmetic and the named-color table
+//
+// Implementation bodies for the types declared in `color.plato`. Two parts:
+//
+//   1. The `Numerical` obligations of `Color` (Additive, Scalable, Interpolatable,
+//      NumericalLimits), computed component-wise over R/G/B/A including alpha.
+//   2. The 141 CSS/X11 named colors, ported from
+//      `stdlib-legacy/colors.constants.plato` (where they were `ByteRGB` triples).
+//
+// COLOR SPACE - read before using the named colors. The CSS/X11 names are defined
+// as **8-bit sRGB** (gamma-encoded) values, so they are declared here on `Color8`,
+// whose doc comment already states it is "typically sRGB-encoded". They are NOT
+// `Color` values: `Color` is LINEAR-light RGBA, and NO transfer-function conversion
+// happens anywhere in this file. To obtain a linear `Color` from one of these
+// constants you must decode explicitly through the sRGB transfer function - the
+// `TransferFunction`/`ColorSRGB` vocabulary in `color-spaces.plato` owns that
+// conversion. Treating a Color8 constant as if it were linear light will visibly
+// wash out any blending, filtering, or lighting done with it.
+//
+// Alpha: the legacy table stored RGB only; every constant here is fully opaque
+// (A = 255).
+//
+// Constants follow the tree-wide idiom of dispatching on an ignored receiver of the
+// result type, so they read as `Color8.AliceBlue` (see `constants.library.plato`).
+
+library Colors
+{
+    //==
+    // Color - the Numerical obligations, component-wise over R/G/B/A.
+    //
+    // Alpha participates in the arithmetic like any other component. That is the
+    // right behaviour for a linear-light value type (it makes Lerp a straight
+    // 4-vector interpolation), but it is NOT alpha compositing: premultiplication
+    // and Porter-Duff operators belong with the imaging package.
+
+    // Component-wise sum, alpha included.
+    Add(a: Color, b: Color): Color
+        => (a.R + b.R, a.G + b.G, a.B + b.B, a.A + b.A);
+
+    // Component-wise difference, alpha included.
+    Subtract(a: Color, b: Color): Color
+        => (a.R - b.R, a.G - b.G, a.B - b.B, a.A - b.A);
+
+    // Component-wise negation. Meaningful as an additive inverse, not as a color.
+    Negative(a: Color): Color
+        => (-a.R, -a.G, -a.B, -a.A);
+
+    // Component-wise linear interpolation in linear light; t is unclamped.
+    Lerp(a: Color, b: Color, t: Number): Color
+        => (a.R + (b.R - a.R) * t,
+            a.G + (b.G - a.G) * t,
+            a.B + (b.B - a.B) * t,
+            a.A + (b.A - a.A) * t);
+
+    // Scale every component, alpha included.
+    Multiply(a: Color, scalar: Number): Color
+        => (a.R * scalar, a.G * scalar, a.B * scalar, a.A * scalar);
+
+    // Divide every component, alpha included. Precondition: scalar is non-zero.
+    Divide(a: Color, scalar: Number): Color
+        => (a.R / scalar, a.G / scalar, a.B / scalar, a.A / scalar);
+
+    // Component-wise remainder against a scalar.
+    Modulo(a: Color, scalar: Number): Color
+        => (a.R.Modulo(scalar), a.G.Modulo(scalar), a.B.Modulo(scalar), a.A.Modulo(scalar));
+
+    // The additive identity: transparent black.
+    Zero(_: Color): Color
+        => (0.0, 0.0, 0.0, 0.0);
+
+    // The multiplicative unit: opaque white.
+    One(_: Color): Color
+        => (1.0, 1.0, 1.0, 1.0);
+
+    // The component-wise least representable value.
+    MinValue(_: Color): Color
+        => (Number.MinValue, Number.MinValue, Number.MinValue, Number.MinValue);
+
+    // The component-wise greatest representable value.
+    MaxValue(_: Color): Color
+        => (Number.MaxValue, Number.MaxValue, Number.MaxValue, Number.MaxValue);
+
+    //==
+    // Named colors - the 141 CSS Color Module Level 4 / X11 names.
+    //
+    // Values are 8-bit sRGB, fully opaque. Read as `Color8.CornflowerBlue`.
+    // Exact duplicates in the standard are preserved as separate names
+    // (Aqua = Cyan, Fuchsia = Magenta) because both spellings are in the spec.
+
+    // sRGB (240, 248, 255), opaque.
+    AliceBlue(_: Color8): Color8
+        => (240, 248, 255, 255);
+
+    // sRGB (250, 235, 215), opaque.
+    AntiqueWhite(_: Color8): Color8
+        => (250, 235, 215, 255);
+
+    // sRGB (0, 255, 255), opaque.
+    Aqua(_: Color8): Color8
+        => (0, 255, 255, 255);
+
+    // sRGB (127, 255, 212), opaque.
+    Aquamarine(_: Color8): Color8
+        => (127, 255, 212, 255);
+
+    // sRGB (240, 255, 255), opaque.
+    Azure(_: Color8): Color8
+        => (240, 255, 255, 255);
+
+    // sRGB (245, 245, 220), opaque.
+    Beige(_: Color8): Color8
+        => (245, 245, 220, 255);
+
+    // sRGB (255, 228, 196), opaque.
+    Bisque(_: Color8): Color8
+        => (255, 228, 196, 255);
+
+    // sRGB (0, 0, 0), opaque.
+    Black(_: Color8): Color8
+        => (0, 0, 0, 255);
+
+    // sRGB (255, 235, 205), opaque.
+    BlanchedAlmond(_: Color8): Color8
+        => (255, 235, 205, 255);
+
+    // sRGB (0, 0, 255), opaque.
+    Blue(_: Color8): Color8
+        => (0, 0, 255, 255);
+
+    // sRGB (138, 43, 226), opaque.
+    BlueViolet(_: Color8): Color8
+        => (138, 43, 226, 255);
+
+    // sRGB (165, 42, 42), opaque.
+    Brown(_: Color8): Color8
+        => (165, 42, 42, 255);
+
+    // sRGB (222, 184, 135), opaque.
+    BurlyWood(_: Color8): Color8
+        => (222, 184, 135, 255);
+
+    // sRGB (95, 158, 160), opaque.
+    CadetBlue(_: Color8): Color8
+        => (95, 158, 160, 255);
+
+    // sRGB (127, 255, 0), opaque.
+    Chartreuse(_: Color8): Color8
+        => (127, 255, 0, 255);
+
+    // sRGB (210, 105, 30), opaque.
+    Chocolate(_: Color8): Color8
+        => (210, 105, 30, 255);
+
+    // sRGB (255, 127, 80), opaque.
+    Coral(_: Color8): Color8
+        => (255, 127, 80, 255);
+
+    // sRGB (100, 149, 237), opaque.
+    CornflowerBlue(_: Color8): Color8
+        => (100, 149, 237, 255);
+
+    // sRGB (255, 248, 220), opaque.
+    Cornsilk(_: Color8): Color8
+        => (255, 248, 220, 255);
+
+    // sRGB (220, 20, 60), opaque.
+    Crimson(_: Color8): Color8
+        => (220, 20, 60, 255);
+
+    // sRGB (0, 255, 255), opaque.
+    Cyan(_: Color8): Color8
+        => (0, 255, 255, 255);
+
+    // sRGB (0, 0, 139), opaque.
+    DarkBlue(_: Color8): Color8
+        => (0, 0, 139, 255);
+
+    // sRGB (0, 139, 139), opaque.
+    DarkCyan(_: Color8): Color8
+        => (0, 139, 139, 255);
+
+    // sRGB (184, 134, 11), opaque.
+    DarkGoldenRod(_: Color8): Color8
+        => (184, 134, 11, 255);
+
+    // sRGB (169, 169, 169), opaque.
+    DarkGray(_: Color8): Color8
+        => (169, 169, 169, 255);
+
+    // sRGB (0, 100, 0), opaque.
+    DarkGreen(_: Color8): Color8
+        => (0, 100, 0, 255);
+
+    // sRGB (189, 183, 107), opaque.
+    DarkKhaki(_: Color8): Color8
+        => (189, 183, 107, 255);
+
+    // sRGB (139, 0, 139), opaque.
+    DarkMagenta(_: Color8): Color8
+        => (139, 0, 139, 255);
+
+    // sRGB (85, 107, 47), opaque.
+    DarkOliveGreen(_: Color8): Color8
+        => (85, 107, 47, 255);
+
+    // sRGB (255, 140, 0), opaque.
+    DarkOrange(_: Color8): Color8
+        => (255, 140, 0, 255);
+
+    // sRGB (153, 50, 204), opaque.
+    DarkOrchid(_: Color8): Color8
+        => (153, 50, 204, 255);
+
+    // sRGB (139, 0, 0), opaque.
+    DarkRed(_: Color8): Color8
+        => (139, 0, 0, 255);
+
+    // sRGB (233, 150, 122), opaque.
+    DarkSalmon(_: Color8): Color8
+        => (233, 150, 122, 255);
+
+    // sRGB (143, 188, 143), opaque.
+    DarkSeaGreen(_: Color8): Color8
+        => (143, 188, 143, 255);
+
+    // sRGB (72, 61, 139), opaque.
+    DarkSlateBlue(_: Color8): Color8
+        => (72, 61, 139, 255);
+
+    // sRGB (47, 79, 79), opaque.
+    DarkSlateGray(_: Color8): Color8
+        => (47, 79, 79, 255);
+
+    // sRGB (0, 206, 209), opaque.
+    DarkTurquoise(_: Color8): Color8
+        => (0, 206, 209, 255);
+
+    // sRGB (148, 0, 211), opaque.
+    DarkViolet(_: Color8): Color8
+        => (148, 0, 211, 255);
+
+    // sRGB (255, 20, 147), opaque.
+    DeepPink(_: Color8): Color8
+        => (255, 20, 147, 255);
+
+    // sRGB (0, 191, 255), opaque.
+    DeepSkyBlue(_: Color8): Color8
+        => (0, 191, 255, 255);
+
+    // sRGB (105, 105, 105), opaque.
+    DimGray(_: Color8): Color8
+        => (105, 105, 105, 255);
+
+    // sRGB (30, 144, 255), opaque.
+    DodgerBlue(_: Color8): Color8
+        => (30, 144, 255, 255);
+
+    // sRGB (178, 34, 34), opaque.
+    FireBrick(_: Color8): Color8
+        => (178, 34, 34, 255);
+
+    // sRGB (255, 250, 240), opaque.
+    FloralWhite(_: Color8): Color8
+        => (255, 250, 240, 255);
+
+    // sRGB (34, 139, 34), opaque.
+    ForestGreen(_: Color8): Color8
+        => (34, 139, 34, 255);
+
+    // sRGB (255, 0, 255), opaque.
+    Fuchsia(_: Color8): Color8
+        => (255, 0, 255, 255);
+
+    // sRGB (220, 220, 220), opaque.
+    Gainsboro(_: Color8): Color8
+        => (220, 220, 220, 255);
+
+    // sRGB (248, 248, 255), opaque.
+    GhostWhite(_: Color8): Color8
+        => (248, 248, 255, 255);
+
+    // sRGB (255, 215, 0), opaque.
+    Gold(_: Color8): Color8
+        => (255, 215, 0, 255);
+
+    // sRGB (218, 165, 32), opaque.
+    GoldenRod(_: Color8): Color8
+        => (218, 165, 32, 255);
+
+    // sRGB (128, 128, 128), opaque.
+    Gray(_: Color8): Color8
+        => (128, 128, 128, 255);
+
+    // sRGB (0, 128, 0), opaque.
+    Green(_: Color8): Color8
+        => (0, 128, 0, 255);
+
+    // sRGB (173, 255, 47), opaque.
+    GreenYellow(_: Color8): Color8
+        => (173, 255, 47, 255);
+
+    // sRGB (240, 255, 240), opaque.
+    HoneyDew(_: Color8): Color8
+        => (240, 255, 240, 255);
+
+    // sRGB (255, 105, 180), opaque.
+    HotPink(_: Color8): Color8
+        => (255, 105, 180, 255);
+
+    // sRGB (205, 92, 92), opaque.
+    IndianRed(_: Color8): Color8
+        => (205, 92, 92, 255);
+
+    // sRGB (75, 0, 130), opaque.
+    Indigo(_: Color8): Color8
+        => (75, 0, 130, 255);
+
+    // sRGB (255, 255, 240), opaque.
+    Ivory(_: Color8): Color8
+        => (255, 255, 240, 255);
+
+    // sRGB (240, 230, 140), opaque.
+    Khaki(_: Color8): Color8
+        => (240, 230, 140, 255);
+
+    // sRGB (230, 230, 250), opaque.
+    Lavender(_: Color8): Color8
+        => (230, 230, 250, 255);
+
+    // sRGB (255, 240, 245), opaque.
+    LavenderBlush(_: Color8): Color8
+        => (255, 240, 245, 255);
+
+    // sRGB (124, 252, 0), opaque.
+    LawnGreen(_: Color8): Color8
+        => (124, 252, 0, 255);
+
+    // sRGB (255, 250, 205), opaque.
+    LemonChiffon(_: Color8): Color8
+        => (255, 250, 205, 255);
+
+    // sRGB (173, 216, 230), opaque.
+    LightBlue(_: Color8): Color8
+        => (173, 216, 230, 255);
+
+    // sRGB (240, 128, 128), opaque.
+    LightCoral(_: Color8): Color8
+        => (240, 128, 128, 255);
+
+    // sRGB (224, 255, 255), opaque.
+    LightCyan(_: Color8): Color8
+        => (224, 255, 255, 255);
+
+    // sRGB (250, 250, 210), opaque.
+    LightGoldenRodYellow(_: Color8): Color8
+        => (250, 250, 210, 255);
+
+    // sRGB (211, 211, 211), opaque.
+    LightGray(_: Color8): Color8
+        => (211, 211, 211, 255);
+
+    // sRGB (144, 238, 144), opaque.
+    LightGreen(_: Color8): Color8
+        => (144, 238, 144, 255);
+
+    // sRGB (255, 182, 193), opaque.
+    LightPink(_: Color8): Color8
+        => (255, 182, 193, 255);
+
+    // sRGB (255, 160, 122), opaque.
+    LightSalmon(_: Color8): Color8
+        => (255, 160, 122, 255);
+
+    // sRGB (32, 178, 170), opaque.
+    LightSeaGreen(_: Color8): Color8
+        => (32, 178, 170, 255);
+
+    // sRGB (135, 206, 250), opaque.
+    LightSkyBlue(_: Color8): Color8
+        => (135, 206, 250, 255);
+
+    // sRGB (119, 136, 153), opaque.
+    LightSlateGray(_: Color8): Color8
+        => (119, 136, 153, 255);
+
+    // sRGB (176, 196, 222), opaque.
+    LightSteelBlue(_: Color8): Color8
+        => (176, 196, 222, 255);
+
+    // sRGB (255, 255, 224), opaque.
+    LightYellow(_: Color8): Color8
+        => (255, 255, 224, 255);
+
+    // sRGB (0, 255, 0), opaque.
+    Lime(_: Color8): Color8
+        => (0, 255, 0, 255);
+
+    // sRGB (50, 205, 50), opaque.
+    LimeGreen(_: Color8): Color8
+        => (50, 205, 50, 255);
+
+    // sRGB (250, 240, 230), opaque.
+    Linen(_: Color8): Color8
+        => (250, 240, 230, 255);
+
+    // sRGB (255, 0, 255), opaque.
+    Magenta(_: Color8): Color8
+        => (255, 0, 255, 255);
+
+    // sRGB (128, 0, 0), opaque.
+    Maroon(_: Color8): Color8
+        => (128, 0, 0, 255);
+
+    // sRGB (102, 205, 170), opaque.
+    MediumAquaMarine(_: Color8): Color8
+        => (102, 205, 170, 255);
+
+    // sRGB (0, 0, 205), opaque.
+    MediumBlue(_: Color8): Color8
+        => (0, 0, 205, 255);
+
+    // sRGB (186, 85, 211), opaque.
+    MediumOrchid(_: Color8): Color8
+        => (186, 85, 211, 255);
+
+    // sRGB (147, 112, 219), opaque.
+    MediumPurple(_: Color8): Color8
+        => (147, 112, 219, 255);
+
+    // sRGB (60, 179, 113), opaque.
+    MediumSeaGreen(_: Color8): Color8
+        => (60, 179, 113, 255);
+
+    // sRGB (123, 104, 238), opaque.
+    MediumSlateBlue(_: Color8): Color8
+        => (123, 104, 238, 255);
+
+    // sRGB (0, 250, 154), opaque.
+    MediumSpringGreen(_: Color8): Color8
+        => (0, 250, 154, 255);
+
+    // sRGB (72, 209, 204), opaque.
+    MediumTurquoise(_: Color8): Color8
+        => (72, 209, 204, 255);
+
+    // sRGB (199, 21, 133), opaque.
+    MediumVioletRed(_: Color8): Color8
+        => (199, 21, 133, 255);
+
+    // sRGB (25, 25, 112), opaque.
+    MidnightBlue(_: Color8): Color8
+        => (25, 25, 112, 255);
+
+    // sRGB (245, 255, 250), opaque.
+    MintCream(_: Color8): Color8
+        => (245, 255, 250, 255);
+
+    // sRGB (255, 228, 225), opaque.
+    MistyRose(_: Color8): Color8
+        => (255, 228, 225, 255);
+
+    // sRGB (255, 228, 181), opaque.
+    Moccasin(_: Color8): Color8
+        => (255, 228, 181, 255);
+
+    // sRGB (255, 222, 173), opaque.
+    NavajoWhite(_: Color8): Color8
+        => (255, 222, 173, 255);
+
+    // sRGB (0, 0, 128), opaque.
+    Navy(_: Color8): Color8
+        => (0, 0, 128, 255);
+
+    // sRGB (253, 245, 230), opaque.
+    OldLace(_: Color8): Color8
+        => (253, 245, 230, 255);
+
+    // sRGB (128, 128, 0), opaque.
+    Olive(_: Color8): Color8
+        => (128, 128, 0, 255);
+
+    // sRGB (107, 142, 35), opaque.
+    OliveDrab(_: Color8): Color8
+        => (107, 142, 35, 255);
+
+    // sRGB (255, 165, 0), opaque.
+    Orange(_: Color8): Color8
+        => (255, 165, 0, 255);
+
+    // sRGB (255, 69, 0), opaque.
+    OrangeRed(_: Color8): Color8
+        => (255, 69, 0, 255);
+
+    // sRGB (218, 112, 214), opaque.
+    Orchid(_: Color8): Color8
+        => (218, 112, 214, 255);
+
+    // sRGB (238, 232, 170), opaque.
+    PaleGoldenRod(_: Color8): Color8
+        => (238, 232, 170, 255);
+
+    // sRGB (152, 251, 152), opaque.
+    PaleGreen(_: Color8): Color8
+        => (152, 251, 152, 255);
+
+    // sRGB (175, 238, 238), opaque.
+    PaleTurquoise(_: Color8): Color8
+        => (175, 238, 238, 255);
+
+    // sRGB (219, 112, 147), opaque.
+    PaleVioletRed(_: Color8): Color8
+        => (219, 112, 147, 255);
+
+    // sRGB (255, 239, 213), opaque.
+    PapayaWhip(_: Color8): Color8
+        => (255, 239, 213, 255);
+
+    // sRGB (255, 218, 185), opaque.
+    PeachPuff(_: Color8): Color8
+        => (255, 218, 185, 255);
+
+    // sRGB (205, 133, 63), opaque.
+    Peru(_: Color8): Color8
+        => (205, 133, 63, 255);
+
+    // sRGB (255, 192, 203), opaque.
+    Pink(_: Color8): Color8
+        => (255, 192, 203, 255);
+
+    // sRGB (221, 160, 221), opaque.
+    Plum(_: Color8): Color8
+        => (221, 160, 221, 255);
+
+    // sRGB (176, 224, 230), opaque.
+    PowderBlue(_: Color8): Color8
+        => (176, 224, 230, 255);
+
+    // sRGB (128, 0, 128), opaque.
+    Purple(_: Color8): Color8
+        => (128, 0, 128, 255);
+
+    // sRGB (102, 51, 153), opaque.
+    RebeccaPurple(_: Color8): Color8
+        => (102, 51, 153, 255);
+
+    // sRGB (255, 0, 0), opaque.
+    Red(_: Color8): Color8
+        => (255, 0, 0, 255);
+
+    // sRGB (188, 143, 143), opaque.
+    RosyBrown(_: Color8): Color8
+        => (188, 143, 143, 255);
+
+    // sRGB (65, 105, 225), opaque.
+    RoyalBlue(_: Color8): Color8
+        => (65, 105, 225, 255);
+
+    // sRGB (139, 69, 19), opaque.
+    SaddleBrown(_: Color8): Color8
+        => (139, 69, 19, 255);
+
+    // sRGB (250, 128, 114), opaque.
+    Salmon(_: Color8): Color8
+        => (250, 128, 114, 255);
+
+    // sRGB (244, 164, 96), opaque.
+    SandyBrown(_: Color8): Color8
+        => (244, 164, 96, 255);
+
+    // sRGB (46, 139, 87), opaque.
+    SeaGreen(_: Color8): Color8
+        => (46, 139, 87, 255);
+
+    // sRGB (255, 245, 238), opaque.
+    SeaShell(_: Color8): Color8
+        => (255, 245, 238, 255);
+
+    // sRGB (160, 82, 45), opaque.
+    Sienna(_: Color8): Color8
+        => (160, 82, 45, 255);
+
+    // sRGB (192, 192, 192), opaque.
+    Silver(_: Color8): Color8
+        => (192, 192, 192, 255);
+
+    // sRGB (135, 206, 235), opaque.
+    SkyBlue(_: Color8): Color8
+        => (135, 206, 235, 255);
+
+    // sRGB (106, 90, 205), opaque.
+    SlateBlue(_: Color8): Color8
+        => (106, 90, 205, 255);
+
+    // sRGB (112, 128, 144), opaque.
+    SlateGray(_: Color8): Color8
+        => (112, 128, 144, 255);
+
+    // sRGB (255, 250, 250), opaque.
+    Snow(_: Color8): Color8
+        => (255, 250, 250, 255);
+
+    // sRGB (0, 255, 127), opaque.
+    SpringGreen(_: Color8): Color8
+        => (0, 255, 127, 255);
+
+    // sRGB (70, 130, 180), opaque.
+    SteelBlue(_: Color8): Color8
+        => (70, 130, 180, 255);
+
+    // sRGB (210, 180, 140), opaque.
+    Tan(_: Color8): Color8
+        => (210, 180, 140, 255);
+
+    // sRGB (0, 128, 128), opaque.
+    Teal(_: Color8): Color8
+        => (0, 128, 128, 255);
+
+    // sRGB (216, 191, 216), opaque.
+    Thistle(_: Color8): Color8
+        => (216, 191, 216, 255);
+
+    // sRGB (255, 99, 71), opaque.
+    Tomato(_: Color8): Color8
+        => (255, 99, 71, 255);
+
+    // sRGB (64, 224, 208), opaque.
+    Turquoise(_: Color8): Color8
+        => (64, 224, 208, 255);
+
+    // sRGB (238, 130, 238), opaque.
+    Violet(_: Color8): Color8
+        => (238, 130, 238, 255);
+
+    // sRGB (245, 222, 179), opaque.
+    Wheat(_: Color8): Color8
+        => (245, 222, 179, 255);
+
+    // sRGB (255, 255, 255), opaque.
+    White(_: Color8): Color8
+        => (255, 255, 255, 255);
+
+    // sRGB (245, 245, 245), opaque.
+    WhiteSmoke(_: Color8): Color8
+        => (245, 245, 245, 255);
+
+    // sRGB (255, 255, 0), opaque.
+    Yellow(_: Color8): Color8
+        => (255, 255, 0, 255);
+
+    // sRGB (154, 205, 50), opaque.
+    YellowGreen(_: Color8): Color8
+        => (154, 205, 50, 255);
+}

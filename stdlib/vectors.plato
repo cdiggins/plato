@@ -96,6 +96,16 @@ type Vector3D
 }
 
 // An N-dimensional vector with runtime-determined arity.
+// TODO(writer-gap): VectorN is the one Vector implementor whose components are
+// not its fields. The C# writer synthesizes At/Count from a type's FIELDS
+// (Linter.cs:107-113 exempts both as "generated from the type's fields"), so
+// VectorN would emit Count == 1 and At(0) returning the Array itself rather than
+// a component. Every generic body in numeric-structures.library.plato reads
+// Count/At as the component surface, so VectorN misbehaves at runtime while
+// linting clean -- the linter structurally cannot see this. Fix belongs in the
+// writer (special-case a single collection-typed field), or by teaching the
+// exemption list to defer to an explicit library body. Fixed-arity vectors
+// (Number2/3/4/8, Vector2D/3D) are unaffected: their fields ARE their components.
 type VectorN
     implements Vector
 {

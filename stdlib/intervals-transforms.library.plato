@@ -200,15 +200,53 @@ library IntervalsTransforms
     ScaleAbout(self: Deformable2D, center: Point2D, factors: Number2): Self
         => self.Deform(p => center.Add(center.Between(p).Multiply(factors)));
 
+    // Rotate every point about `center` by `rotation`. Assumes Between(a, b) = b - a.
+    RotateAbout(self: Deformable2D, center: Point2D, rotation: Rotation2D): Self
+        => self.Deform(p => center.Add(center.Between(p).Transform(rotation)));
+
+    // Rotate every point about `center` by `angle` (counter-clockwise).
+    RotateAbout(self: Deformable2D, center: Point2D, angle: Angle): Self
+        => self.RotateAbout(center, Rotation2D(angle));
+
+    // Rotate every point about the origin by `angle` (counter-clockwise).
+    Rotate(self: Deformable2D, angle: Angle): Self
+        => self.RotateAbout(Point2D(0.0, 0.0), angle);
+
+    // Uniformly scale about the origin by `factor`.
+    Scale(self: Deformable2D, factor: Number): Self
+        => self.ScaleAbout(Point2D(0.0, 0.0), factor);
+
+    // Non-uniformly scale about the origin by a per-axis `factors` vector.
+    Scale(self: Deformable2D, factors: Number2): Self
+        => self.ScaleAbout(Point2D(0.0, 0.0), factors);
+
+    // Scale about the origin along X only.
+    ScaleX(self: Deformable2D, factor: Number): Self
+        => self.Scale(Number2(factor, 1.0));
+
+    // Scale about the origin along Y only.
+    ScaleY(self: Deformable2D, factor: Number): Self
+        => self.Scale(Number2(1.0, factor));
+
+    // Translate along +X by `distance`.
+    TranslateX(self: Deformable2D, distance: Number): Self
+        => self.Translate(Vector2D.UnitX.Multiply(distance));
+
+    // Translate along +Y by `distance`.
+    TranslateY(self: Deformable2D, distance: Number): Self
+        => self.Translate(Vector2D.UnitY.Multiply(distance));
+
     // TODO(concept-gap): the ScaleAbout helpers depend on the sign of
     // Difference.Between, which file 02 declares (Between(a, b): TDelta) without
     // documenting its direction. This code assumes b - a; if the intended
     // convention is a - b the scale reflects through `center`. Pin the direction in
     // the Difference doc comment.
 
-    // TODO(concept-gap): RotateAbout is omitted — rotating a Point2D needs a point
-    // rotation operation (e.g. Rotation2D applied to a point, or Vector2D rotate-by-
-    // Angle), which is not available from the concepts in scope for this package.
+    // RESOLVED (was TODO(concept-gap): RotateAbout is omitted): rotating a Point2D
+    // needed a point-rotation operation, which is now reachable - `library
+    // Transforms` in transforms.plato supplies Transform(Vector2D, Rotation2D), and
+    // constants.library.plato supplies the axis vectors. RotateAbout/Rotate are
+    // implemented above.
 
     //==
     // Deformable3D — a value reshaped by an arbitrary Point3D -> Point3D mapping.
@@ -226,6 +264,129 @@ library IntervalsTransforms
     ScaleAbout(self: Deformable3D, center: Point3D, factors: Number3): Self
         => self.Deform(p => center.Add(center.Between(p).Multiply(factors)));
 
-    // TODO(concept-gap): RotateAbout is omitted for the same reason as Deformable2D
-    // — no point-rotation operation is reachable from this package's concepts.
+    // Rotate every point about `center` by `rotation`. Assumes Between(a, b) = b - a.
+    RotateAbout(self: Deformable3D, center: Point3D, rotation: Quaternion): Self
+        => self.Deform(p => center.Add(center.Between(p).Transform(rotation)));
+
+    // Rotate every point about the origin by `rotation`.
+    Rotate(self: Deformable3D, rotation: Quaternion): Self
+        => self.RotateAbout(Point3D(0.0, 0.0, 0.0), rotation);
+
+    // Rotate about the world X axis through the origin.
+    RotateX(self: Deformable3D, angle: Angle): Self
+        => self.Rotate(Quaternion.CreateRotationX(angle));
+
+    // Rotate about the world Y axis through the origin.
+    RotateY(self: Deformable3D, angle: Angle): Self
+        => self.Rotate(Quaternion.CreateRotationY(angle));
+
+    // Rotate about the world Z axis through the origin.
+    RotateZ(self: Deformable3D, angle: Angle): Self
+        => self.Rotate(Quaternion.CreateRotationZ(angle));
+
+    // Uniformly scale about the origin by `factor`.
+    Scale(self: Deformable3D, factor: Number): Self
+        => self.ScaleAbout(Point3D(0.0, 0.0, 0.0), factor);
+
+    // Non-uniformly scale about the origin by a per-axis `factors` vector.
+    Scale(self: Deformable3D, factors: Number3): Self
+        => self.ScaleAbout(Point3D(0.0, 0.0, 0.0), factors);
+
+    // Scale about the origin along X only.
+    ScaleX(self: Deformable3D, factor: Number): Self
+        => self.Scale(Number3(factor, 1.0, 1.0));
+
+    // Scale about the origin along Y only.
+    ScaleY(self: Deformable3D, factor: Number): Self
+        => self.Scale(Number3(1.0, factor, 1.0));
+
+    // Scale about the origin along Z only.
+    ScaleZ(self: Deformable3D, factor: Number): Self
+        => self.Scale(Number3(1.0, 1.0, factor));
+
+    // Translate along +X by `distance`.
+    TranslateX(self: Deformable3D, distance: Number): Self
+        => self.Translate(Vector3D.UnitX.Multiply(distance));
+
+    // Translate along +Y by `distance`.
+    TranslateY(self: Deformable3D, distance: Number): Self
+        => self.Translate(Vector3D.UnitY.Multiply(distance));
+
+    // Translate along +Z by `distance`.
+    TranslateZ(self: Deformable3D, distance: Number): Self
+        => self.Translate(Vector3D.UnitZ.Multiply(distance));
+
+    //==
+    // Deform implies Transform - the legacy insight
+    // (stdlib-legacy/meshes.library.plato:84) generalized to every transform
+    // representation. `library Transforms` in transforms.plato already applies each
+    // representation to a bare Point2D/Point3D; lifting that point map through
+    // Deform gives EVERY deformable type a complete transform surface from its
+    // single Deform primitive. Implementing Deform for a new shape therefore also
+    // satisfies Transformable<T> for all thirteen T below.
+
+    // Rotate a 2D shape about the origin.
+    Transform(self: Deformable2D, transform: Rotation2D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Rotate a 2D shape about the origin with a rotor.
+    Transform(self: Deformable2D, transform: Rotor2D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a rigid 2D placement (rotate, then translate).
+    Transform(self: Deformable2D, transform: Pose2D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a 2D TRS transform (scale, rotate, then translate).
+    Transform(self: Deformable2D, transform: Transform2D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a general 2D affine map.
+    Transform(self: Deformable2D, transform: AffineTransform2D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a 2D homography. Precondition: no point of the shape maps onto the
+    // line at infinity.
+    Transform(self: Deformable2D, transform: ProjectiveTransform2D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Rotate a 3D shape about the origin.
+    Transform(self: Deformable3D, transform: Quaternion): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Rotate a 3D shape about the origin with a rotor.
+    Transform(self: Deformable3D, transform: Rotor3D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a rigid 3D placement (rotate, then translate).
+    Transform(self: Deformable3D, transform: Pose3D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a rigid motion in motor (dual-quaternion) form.
+    Transform(self: Deformable3D, transform: Motor3D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a 3D TRS transform (scale, rotate, then translate).
+    Transform(self: Deformable3D, transform: Transform3D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a general 3D affine map.
+    Transform(self: Deformable3D, transform: AffineTransform3D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a 3D homography. Precondition: no point of the shape maps onto the
+    // plane at infinity.
+    Transform(self: Deformable3D, transform: ProjectiveTransform3D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // TODO(follow-up): the concrete per-type `Deform` bodies (Line2D/3D, Ray2D/3D,
+    // Triangle2D/3D, Quad2D/3D, Circle, Ellipse, Polygon2D/3D, Polyline2D/3D,
+    // RegularPolygon, PolygonWithHoles2D, Tetrahedron, and the mesh types) are the
+    // remaining half of this item. They are one-liners over each type's fields
+    // (see stdlib-legacy/meshes.library.plato:49-75) but belong to the packages that
+    // own those declarations, so they are not written here.
+
+    // RESOLVED (was TODO(concept-gap): RotateAbout is omitted for the same reason as
+    // Deformable2D): the Transform(Vector3D, Quaternion) intrinsic rotates the pivot
+    // displacement directly, so RotateAbout/Rotate/RotateX/Y/Z are implemented above.
 }

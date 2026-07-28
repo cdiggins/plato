@@ -152,6 +152,61 @@ library MeshesSpatial
         => self.TriangleCount.IsPositive;
 
     //==
+    // Quad-grid face indices — the shared routine behind everything grid-shaped:
+    // parametric-surface tessellation, height fields, surfaces of revolution, and
+    // the UV grids of the solids (see `library Solids` in solids.plato).
+    //
+    // A grid of nCols x nRows vertices is stored row-major, so grid vertex
+    // (col, row) has linear index row * nCols + col. Each cell contributes one
+    // quad. Wrap-around is expressed by taking the NEIGHBOUR coordinate modulo
+    // the corresponding count, so a closed direction simply reuses column/row 0
+    // rather than needing a duplicated seam ring of vertices.
+    //
+    // Ported from v1 `meshes.library.plato` (QuadFaceIndices / AllQuadFaceIndices).
+    // v1 returned a bare `Integer4`; here the result is `QuadFace`, whose four
+    // fields are `VertexIndex` — these ARE cross-array references into a position
+    // array, exactly the case README.md reserves the typed index types for, and it
+    // makes the result feed `QuadMesh3D.Faces` directly with no conversion.
+
+    // The four vertex indices of the quad cell whose low corner is grid vertex
+    // (col, row), wound counter-clockwise:
+    //
+    //     d -- c
+    //     |    |
+    //     a -- b
+    //
+    // where a == (col, row), b == (col+1, row), c == (col+1, row+1) and
+    // d == (col, row+1). The +1 neighbours wrap via `%`, so this function alone
+    // always produces a closed cell; openness is expressed by the CALLER stopping
+    // one short (see AllQuadFaceIndices). Preconditions: nCols > 0, nRows > 0, and
+    // 0 <= col < nCols, 0 <= row < nRows.
+    QuadFaceIndices(col: Integer, row: Integer, nCols: Integer, nRows: Integer): QuadFace
+    {
+        var a = (row * nCols) + col;
+        var b = (row * nCols) + ((col + 1) % nCols);
+        var c = (((row + 1) % nRows) * nCols) + ((col + 1) % nCols);
+        var d = (((row + 1) % nRows) * nCols) + col;
+        return (VertexIndex(a), VertexIndex(b), VertexIndex(c), VertexIndex(d));
+    }
+
+    // Every quad face of an nCols x nRows vertex grid. A direction that is closed
+    // contributes a full count of cells (the last one wraps back to index 0); an
+    // open direction contributes one fewer. Result dimensions are therefore
+    // (nCols - (closedU ? 0 : 1)) x (nRows - (closedV ? 0 : 1)).
+    AllQuadFaceIndices(nCols: Integer, nRows: Integer, closedU: Boolean, closedV: Boolean): Array2D<QuadFace>
+    {
+        var nx = nCols - (closedU ? 0 : 1);
+        var ny = nRows - (closedV ? 0 : 1);
+        return MakeArray2D(nx, ny, (col, row) => QuadFaceIndices(col, row, nCols, nRows));
+    }
+
+    // Every quad face of an existing 2D grid of values (points, samples, heights),
+    // taking the grid's own column and row counts. The element type is irrelevant:
+    // only the shape is read.
+    AllQuadFaceIndices(self: Indexable2D<$T>, closedU: Boolean, closedV: Boolean): Array2D<QuadFace>
+        => AllQuadFaceIndices(self.ColumnCount, self.RowCount, closedU, closedV);
+
+    //==
     // PointCloudable3D — anything that can shed its structure to a bare point cloud.
 
     // The number of points once reduced to a bare cloud.

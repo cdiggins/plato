@@ -245,3 +245,436 @@ type CompositeBezier3D
 {
     Segments: Array<CubicBezier3D>;
 }
+
+//==
+// # library Splines
+//
+// Evaluation of the control-point curves above. The cubic bases themselves
+// (Bezier, Hermite, Catmull-Rom) live in `library Polynomials`
+// (`polynomials.plato`), generic over `Numerical`; nothing is reimplemented
+// here. What this library adds is the *indexing*: turning the canonical [0,1]
+// curve parameter into a segment index plus a local parameter, and reading the
+// right control values out of the parallel arrays.
+//
+// Conventions:
+//   * A chain of n points has n - 1 spans when open and n when Closed (the
+//     last point joins back to the first).
+//   * Control points are converted to displacements with PositionVector before
+//     entering a `Numerical`-generic basis function and back with ToPoint, the
+//     explicit point/vector converters from `library Transforms`.
+
+library Splines
+{
+    //==
+    // # Piecewise indexing helpers
+
+    // The number of spans in a chain of `count` points: count - 1 when open,
+    // count when closed. Precondition: count >= 2.
+    SpanCount(count: Integer, closed: Boolean): Integer
+        => closed ? count : count - 1;
+
+    // The index of the span containing the canonical parameter t, clamped into
+    // [0, SpanCount - 1] so that t = 1 lands on the last span rather than one
+    // past it. Precondition: count >= 2.
+    SpanIndex(count: Integer, closed: Boolean, t: Number): Integer
+        => (t * count.SpanCount(closed).ToNumber).Floor.ToInteger
+               .Clamp(0, count.SpanCount(closed) - 1);
+
+    // The local parameter within the span that SpanIndex selects, in [0, 1].
+    SpanFraction(count: Integer, closed: Boolean, t: Number): Number
+        => t * count.SpanCount(closed).ToNumber
+           - count.SpanIndex(closed, t).ToNumber;
+
+    // Element i of a chain: taken modulo the count when the chain is closed and
+    // clamped to the ends when it is open. The "+ count then modulo" corrects
+    // the truncated remainder, which is negative for i = -1. Lets one body
+    // serve open and closed chains and both end conditions.
+    AtWrapped(xs: Array<$T>, i: Integer, closed: Boolean): $T
+        => closed ? xs.At(((i % xs.Count) + xs.Count) % xs.Count)
+                  : xs.At(i.Clamp(0, xs.Count - 1));
+
+    //==
+    // # Bezier curves of arbitrary degree
+    //
+    // https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
+    // De Casteljau's algorithm is the one Bezier evaluator that does not need a
+    // closed form per degree: repeatedly replace the control values by the
+    // lerps of adjacent pairs until one remains. It only needs Lerp, so it is
+    // generic over `Interpolatable` and serves points, vectors, and weights.
+
+    // The de Casteljau reduction of a control polygon at t.
+    // Precondition: xs is non-empty.
+    DeCasteljau(xs: Array<Interpolatable>, t: Number): Interpolatable
+        => xs.Count <= 1
+           ? xs.At(0)
+           : (xs.Count - 1).MapRange(i => xs.At(i).Lerp(xs.At(i + 1), t)).DeCasteljau(t);
+
+    // The point on a Bezier curve of arbitrary degree at t.
+    Eval(self: BezierCurve2D, t: Number): Point2D
+        => self.ControlPoints.DeCasteljau(t);
+
+    // The point on a Bezier curve of arbitrary degree at t.
+    Eval(self: BezierCurve3D, t: Number): Point3D
+        => self.ControlPoints.DeCasteljau(t);
+
+    //==
+    // # Rational Bezier curves
+    //
+    // https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Rational_B%C3%A9zier_curves
+    // De Casteljau is linear in its control values, so running it on the
+    // weighted points gives the numerator sum(B_i w_i P_i) and running it on
+    // the weights alone gives the denominator sum(B_i w_i).
+
+    // The point on a rational Bezier curve at t. Precondition: the weight sum
+    // at t is non-zero.
+    Eval(self: RationalBezierCurve2D, t: Number): Point2D
+        => (self.ControlPoints.Count
+                .MapRange(i => self.ControlPoints.At(i).PositionVector * self.Weights.At(i))
+                .DeCasteljau(t)
+            / self.Weights.DeCasteljau(t))
+           .ToPoint;
+
+    // The point on a rational Bezier curve at t. Precondition: the weight sum
+    // at t is non-zero.
+    Eval(self: RationalBezierCurve3D, t: Number): Point3D
+        => (self.ControlPoints.Count
+                .MapRange(i => self.ControlPoints.At(i).PositionVector * self.Weights.At(i))
+                .DeCasteljau(t)
+            / self.Weights.DeCasteljau(t))
+           .ToPoint;
+
+    //==
+    // # B-splines and NURBS
+    //
+    // TODO(concept-gap): Cox-de Boor evaluation needs a knot-span search plus a
+    // recurrence over degree levels indexed off that span. The search is a
+    // predicate scan over Array<Number> (a fold), which nothing in this tree
+    // exposes, so BSplineCurve2D/3D and NurbsCurve2D/3D keep no Eval here.
+    // KnotVector.Knots is read by the helper below so the declaration is not
+    // dead while that is outstanding.
+
+    // The number of knots in a knot vector. For a curve with N control points
+    // of degree D this must equal N + D + 1.
+    Count(self: KnotVector): Integer
+        => self.Knots.Count;
+
+    // The knot at the given position.
+    KnotAt(self: KnotVector, index: Integer): Number
+        => self.Knots.At(index);
+
+    // The parameter domain a B-spline of the given degree covers: knots
+    // [Degree, Count - Degree - 1]. Outside it the basis is not a partition of
+    // unity. Precondition: the knot count matches the degree and point count.
+    Domain(self: KnotVector, degree: Integer): NumberInterval
+        => NumberInterval(self.KnotAt(degree), self.KnotAt(self.Count - degree - 1));
+
+    // The domain of a plane B-spline: its knot vector restricted by its degree.
+    ParameterDomain(self: BSplineCurve2D): NumberInterval
+        => self.Knots.Domain(self.Degree);
+
+    // The domain of a space B-spline: its knot vector restricted by its degree.
+    ParameterDomain(self: BSplineCurve3D): NumberInterval
+        => self.Knots.Domain(self.Degree);
+
+    // The domain of a plane NURBS curve.
+    ParameterDomain(self: NurbsCurve2D): NumberInterval
+        => self.Knots.Domain(self.Degree);
+
+    // The domain of a space NURBS curve.
+    ParameterDomain(self: NurbsCurve3D): NumberInterval
+        => self.Knots.Domain(self.Degree);
+
+    // The de-homogenized control point of a NURBS curve: the control point
+    // scaled by its weight, the form Cox-de Boor consumes.
+    WeightedControlPoint(self: NurbsCurve2D, index: Integer): Vector2D
+        => self.ControlPoints.At(index).PositionVector * self.Weights.At(index);
+
+    // The de-homogenized control point of a NURBS curve.
+    WeightedControlPoint(self: NurbsCurve3D, index: Integer): Vector3D
+        => self.ControlPoints.At(index).PositionVector * self.Weights.At(index);
+
+    //==
+    // # Hermite curves
+    //
+    // https://en.wikipedia.org/wiki/Cubic_Hermite_spline
+
+    // The point on a single cubic Hermite segment at t.
+    Eval(self: HermiteCurve2D, t: Number): Point2D
+        => self.Start.PositionVector
+               .Hermite(self.End.PositionVector, self.StartTangent, self.EndTangent, t)
+               .ToPoint;
+
+    // The point on a single cubic Hermite segment at t.
+    Eval(self: HermiteCurve3D, t: Number): Point3D
+        => self.Start.PositionVector
+               .Hermite(self.End.PositionVector, self.StartTangent, self.EndTangent, t)
+               .ToPoint;
+
+    // The point on a piecewise cubic Hermite spline at t: the Hermite segment
+    // spanning the two knots that bracket t, with their explicit tangents.
+    Eval(self: HermiteSpline2D, t: Number): Point2D
+    {
+        var n = self.Points.Count;
+        var i = n.SpanIndex(self.Closed, t);
+        var u = n.SpanFraction(self.Closed, t);
+        return self.Points.AtWrapped(i, self.Closed).PositionVector
+            .Hermite(self.Points.AtWrapped(i + 1, self.Closed).PositionVector,
+                     self.Tangents.AtWrapped(i, self.Closed),
+                     self.Tangents.AtWrapped(i + 1, self.Closed),
+                     u)
+            .ToPoint;
+    }
+
+    // The point on a piecewise cubic Hermite spline at t.
+    Eval(self: HermiteSpline3D, t: Number): Point3D
+    {
+        var n = self.Points.Count;
+        var i = n.SpanIndex(self.Closed, t);
+        var u = n.SpanFraction(self.Closed, t);
+        return self.Points.AtWrapped(i, self.Closed).PositionVector
+            .Hermite(self.Points.AtWrapped(i + 1, self.Closed).PositionVector,
+                     self.Tangents.AtWrapped(i, self.Closed),
+                     self.Tangents.AtWrapped(i + 1, self.Closed),
+                     u)
+            .ToPoint;
+    }
+
+    //==
+    // # Catmull-Rom splines
+    //
+    // https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull-Rom_spline
+    //
+    // TODO(cross-package): only the UNIFORM (Alpha = 0) parameterization is
+    // evaluated here, because `library Polynomials` provides the uniform basis.
+    // Centripetal / chordal Catmull-Rom (Alpha = 0.5 / 1) needs knot spacings
+    // proportional to the chord lengths raised to Alpha, i.e. a non-uniform
+    // Hermite whose tangents are rescaled per span; that belongs next to the
+    // basis in `polynomials.plato`, not here. Until it lands, `Alpha` is
+    // documentation rather than behaviour.
+
+    // The point on a Catmull-Rom spline at t, uniform parameterization.
+    Eval(self: CatmullRomCurve2D, t: Number): Point2D
+    {
+        var n = self.Points.Count;
+        var i = n.SpanIndex(self.Closed, t);
+        var u = n.SpanFraction(self.Closed, t);
+        return self.Points.AtWrapped(i - 1, self.Closed).PositionVector
+            .CatmullRom(self.Points.AtWrapped(i, self.Closed).PositionVector,
+                        self.Points.AtWrapped(i + 1, self.Closed).PositionVector,
+                        self.Points.AtWrapped(i + 2, self.Closed).PositionVector,
+                        u)
+            .ToPoint;
+    }
+
+    // The point on a Catmull-Rom spline at t, uniform parameterization.
+    Eval(self: CatmullRomCurve3D, t: Number): Point3D
+    {
+        var n = self.Points.Count;
+        var i = n.SpanIndex(self.Closed, t);
+        var u = n.SpanFraction(self.Closed, t);
+        return self.Points.AtWrapped(i - 1, self.Closed).PositionVector
+            .CatmullRom(self.Points.AtWrapped(i, self.Closed).PositionVector,
+                        self.Points.AtWrapped(i + 1, self.Closed).PositionVector,
+                        self.Points.AtWrapped(i + 2, self.Closed).PositionVector,
+                        u)
+            .ToPoint;
+    }
+
+    //==
+    // # Kochanek-Bartels (TCB) splines
+    //
+    // https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels_spline
+    // Tension flattens the curve at the knot, Bias skews the tangent toward the
+    // incoming or outgoing chord, and Continuity breaks the tangent into
+    // distinct arriving and departing halves. Each half is a weighted sum of
+    // the two chords meeting at the knot; the four weights are pure Number
+    // expressions shared by both dimensions.
+
+    // The weight the departing tangent gives the incoming chord (p_i - p_i-1):
+    // (1 - t)(1 + b)(1 + c) / 2.
+    TcbOutgoingBackWeight(tension: Number, continuity: Number, bias: Number): Number
+        => (1.0 - tension) * (1.0 + bias) * (1.0 + continuity) * 0.5;
+
+    // The weight the departing tangent gives the outgoing chord (p_i+1 - p_i):
+    // (1 - t)(1 - b)(1 - c) / 2.
+    TcbOutgoingForwardWeight(tension: Number, continuity: Number, bias: Number): Number
+        => (1.0 - tension) * (1.0 - bias) * (1.0 - continuity) * 0.5;
+
+    // The weight the arriving tangent gives the incoming chord:
+    // (1 - t)(1 + b)(1 - c) / 2.
+    TcbIncomingBackWeight(tension: Number, continuity: Number, bias: Number): Number
+        => (1.0 - tension) * (1.0 + bias) * (1.0 - continuity) * 0.5;
+
+    // The weight the arriving tangent gives the outgoing chord:
+    // (1 - t)(1 - b)(1 + c) / 2.
+    TcbIncomingForwardWeight(tension: Number, continuity: Number, bias: Number): Number
+        => (1.0 - tension) * (1.0 - bias) * (1.0 + continuity) * 0.5;
+
+    // The chord arriving at knot i (p_i - p_i-1).
+    TcbBackChord(self: TcbSpline2D, i: Integer): Vector2D
+        => self.Points.AtWrapped(i - 1, self.Closed)
+               .Between(self.Points.AtWrapped(i, self.Closed));
+
+    // The chord leaving knot i (p_i+1 - p_i).
+    TcbForwardChord(self: TcbSpline2D, i: Integer): Vector2D
+        => self.Points.AtWrapped(i, self.Closed)
+               .Between(self.Points.AtWrapped(i + 1, self.Closed));
+
+    // The departing tangent at knot i.
+    TcbOutgoingTangent(self: TcbSpline2D, i: Integer): Vector2D
+        => self.TcbBackChord(i)
+             * self.Tensions.AtWrapped(i, self.Closed)
+                   .TcbOutgoingBackWeight(self.Continuities.AtWrapped(i, self.Closed),
+                                          self.Biases.AtWrapped(i, self.Closed))
+         + self.TcbForwardChord(i)
+             * self.Tensions.AtWrapped(i, self.Closed)
+                   .TcbOutgoingForwardWeight(self.Continuities.AtWrapped(i, self.Closed),
+                                             self.Biases.AtWrapped(i, self.Closed));
+
+    // The arriving tangent at knot i.
+    TcbIncomingTangent(self: TcbSpline2D, i: Integer): Vector2D
+        => self.TcbBackChord(i)
+             * self.Tensions.AtWrapped(i, self.Closed)
+                   .TcbIncomingBackWeight(self.Continuities.AtWrapped(i, self.Closed),
+                                          self.Biases.AtWrapped(i, self.Closed))
+         + self.TcbForwardChord(i)
+             * self.Tensions.AtWrapped(i, self.Closed)
+                   .TcbIncomingForwardWeight(self.Continuities.AtWrapped(i, self.Closed),
+                                             self.Biases.AtWrapped(i, self.Closed));
+
+    // The chord arriving at knot i (p_i - p_i-1).
+    TcbBackChord(self: TcbSpline3D, i: Integer): Vector3D
+        => self.Points.AtWrapped(i - 1, self.Closed)
+               .Between(self.Points.AtWrapped(i, self.Closed));
+
+    // The chord leaving knot i (p_i+1 - p_i).
+    TcbForwardChord(self: TcbSpline3D, i: Integer): Vector3D
+        => self.Points.AtWrapped(i, self.Closed)
+               .Between(self.Points.AtWrapped(i + 1, self.Closed));
+
+    // The departing tangent at knot i.
+    TcbOutgoingTangent(self: TcbSpline3D, i: Integer): Vector3D
+        => self.TcbBackChord(i)
+             * self.Tensions.AtWrapped(i, self.Closed)
+                   .TcbOutgoingBackWeight(self.Continuities.AtWrapped(i, self.Closed),
+                                          self.Biases.AtWrapped(i, self.Closed))
+         + self.TcbForwardChord(i)
+             * self.Tensions.AtWrapped(i, self.Closed)
+                   .TcbOutgoingForwardWeight(self.Continuities.AtWrapped(i, self.Closed),
+                                             self.Biases.AtWrapped(i, self.Closed));
+
+    // The arriving tangent at knot i.
+    TcbIncomingTangent(self: TcbSpline3D, i: Integer): Vector3D
+        => self.TcbBackChord(i)
+             * self.Tensions.AtWrapped(i, self.Closed)
+                   .TcbIncomingBackWeight(self.Continuities.AtWrapped(i, self.Closed),
+                                          self.Biases.AtWrapped(i, self.Closed))
+         + self.TcbForwardChord(i)
+             * self.Tensions.AtWrapped(i, self.Closed)
+                   .TcbIncomingForwardWeight(self.Continuities.AtWrapped(i, self.Closed),
+                                             self.Biases.AtWrapped(i, self.Closed));
+
+    // The point on a TCB spline at t: the Hermite segment between the bracketing
+    // knots, with the departing tangent of the first and the arriving tangent
+    // of the second.
+    Eval(self: TcbSpline2D, t: Number): Point2D
+        => self.Points.AtWrapped(self.Points.Count.SpanIndex(self.Closed, t), self.Closed)
+               .PositionVector
+               .Hermite(self.Points
+                            .AtWrapped(self.Points.Count.SpanIndex(self.Closed, t) + 1,
+                                       self.Closed)
+                            .PositionVector,
+                        self.TcbOutgoingTangent(
+                            self.Points.Count.SpanIndex(self.Closed, t)),
+                        self.TcbIncomingTangent(
+                            self.Points.Count.SpanIndex(self.Closed, t) + 1),
+                        self.Points.Count.SpanFraction(self.Closed, t))
+               .ToPoint;
+
+    // The point on a TCB spline at t.
+    Eval(self: TcbSpline3D, t: Number): Point3D
+        => self.Points.AtWrapped(self.Points.Count.SpanIndex(self.Closed, t), self.Closed)
+               .PositionVector
+               .Hermite(self.Points
+                            .AtWrapped(self.Points.Count.SpanIndex(self.Closed, t) + 1,
+                                       self.Closed)
+                            .PositionVector,
+                        self.TcbOutgoingTangent(
+                            self.Points.Count.SpanIndex(self.Closed, t)),
+                        self.TcbIncomingTangent(
+                            self.Points.Count.SpanIndex(self.Closed, t) + 1),
+                        self.Points.Count.SpanFraction(self.Closed, t))
+               .ToPoint;
+
+    //==
+    // # Piecewise-linear splines
+
+    // The point on a piecewise-linear spline at t: a straight lerp within the
+    // span bracketing t.
+    Eval(self: LinearSpline2D, t: Number): Point2D
+    {
+        var n = self.Points.Count;
+        var i = n.SpanIndex(self.Closed, t);
+        return self.Points.AtWrapped(i, self.Closed)
+            .Lerp(self.Points.AtWrapped(i + 1, self.Closed),
+                  n.SpanFraction(self.Closed, t));
+    }
+
+    // The point on a piecewise-linear spline at t.
+    Eval(self: LinearSpline3D, t: Number): Point3D
+    {
+        var n = self.Points.Count;
+        var i = n.SpanIndex(self.Closed, t);
+        return self.Points.AtWrapped(i, self.Closed)
+            .Lerp(self.Points.AtWrapped(i + 1, self.Closed),
+                  n.SpanFraction(self.Closed, t));
+    }
+
+    //==
+    // # Natural cubic spline
+    //
+    // TODO(concept-gap): a natural cubic spline's second derivatives come from
+    // a tridiagonal solve over all knots (the Thomas algorithm), which needs a
+    // sequential scan with carried state. No fold, scan, or mutable builder is
+    // reachable from these concepts, so NaturalCubicSpline1D keeps no Eval.
+    // The accessors below at least give its parallel arrays a reader.
+
+    // The number of knots. Parameters and Values have equal counts.
+    KnotCount(self: NaturalCubicSpline1D): Integer
+        => self.Parameters.Count;
+
+    // The parameter of the knot at the given position.
+    KnotParameter(self: NaturalCubicSpline1D, index: Integer): Number
+        => self.Parameters.At(index);
+
+    // The value of the knot at the given position.
+    KnotValue(self: NaturalCubicSpline1D, index: Integer): Number
+        => self.Values.At(index);
+
+    // The parameter range the spline interpolates over.
+    ParameterDomain(self: NaturalCubicSpline1D): NumberInterval
+        => NumberInterval(self.KnotParameter(0), self.KnotParameter(self.KnotCount - 1));
+
+    //==
+    // # Composite Bezier curves
+    //
+    // The canonical parameter is split evenly across the segments: segment i
+    // covers [i / count, (i + 1) / count]. Each segment evaluates through the
+    // CubicBezier2D / CubicBezier3D Eval in `library Curves2D` / `Curves3D`.
+
+    // The point on a chain of cubic Bezier segments at t.
+    Eval(self: CompositeBezier2D, t: Number): Point2D
+    {
+        var n = self.Segments.Count;
+        var i = (t * n.ToNumber).Floor.ToInteger.Clamp(0, n - 1);
+        return self.Segments.At(i).Eval(t * n.ToNumber - i.ToNumber);
+    }
+
+    // The point on a chain of cubic Bezier segments at t.
+    Eval(self: CompositeBezier3D, t: Number): Point3D
+    {
+        var n = self.Segments.Count;
+        var i = (t * n.ToNumber).Floor.ToInteger.Clamp(0, n - 1);
+        return self.Segments.At(i).Eval(t * n.ToNumber - i.ToNumber);
+    }
+}

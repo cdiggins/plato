@@ -97,11 +97,36 @@ type SweptSolid
 // Height and joined by rectangles. (The general polygon-swept prism is
 // Prism3D, file 19.)
 type RegularPrism
-    implements ConvexSolid
+    implements ConvexSolid, ParametricSurface
 {
     Frame: Frame3D;
     SideCount: Integer;
     Radius: Number;
+    Height: Number;
+}
+
+// A right regular pyramid: a regular SideCount-gon of circumscribed radius
+// Radius in the plane perpendicular to the frame's Z axis at -Height/2,
+// tapering to an apex on that axis at +Height/2. (The general polygon-based
+// pyramid is Pyramid3D, polygons.plato.)
+type RegularPyramid
+    implements ConvexSolid, ParametricSurface
+{
+    Frame: Frame3D;
+    SideCount: Integer;
+    Radius: Number;
+    Height: Number;
+}
+
+// A right pyramid on an axis-aligned square base of side BaseLength, centered
+// on the frame's Z axis at -Height/2, tapering to an apex at +Height/2. The
+// square-base special case kept separate from RegularPyramid because its base
+// is axis-aligned rather than inscribed in the unit circle.
+type SquarePyramid
+    implements ConvexSolid, ParametricSurface
+{
+    Frame: Frame3D;
+    BaseLength: Number;
     Height: Number;
 }
 
@@ -165,4 +190,267 @@ type ConvexPolytope3D
     implements ConvexSolid
 {
     Boundaries: Array<HalfSpace>;
+}
+
+//==
+// # Parametric surfaces for the solids
+//
+// The boundary surface of a solid, as the ParametricSurface obligations. Ported
+// from v1 `solids.plato:91-246`; the v1 convention is restated verbatim below and
+// then adapted to this tree's placed (Center/Axis/Frame-bearing) solid types.
+//
+//   > All solids are centered at the origin with Z as the up axis. UV is in
+//   > [0,1]x[0,1]: U wraps AROUND the Z axis (so ClosedX is true for every
+//   > solid), V runs up the shape (or around it, for the torus). The polygonal
+//   > solids walk their profile at constant rate with flat sides (linear between
+//   > vertices), so a UV quad grid meshes them exactly.
+//
+// Two adaptations, and no others. (1) `ClosedX`/`ClosedY` are spelled
+// `ClosedU`/`ClosedV` here, matching `concept ParametricSurface`. (2) v1's solids
+// were unplaced, so "centered at the origin with Z up" WAS the world frame; here
+// every solid carries its own placement, so that sentence describes the solid's
+// LOCAL frame and the local point is mapped to world at the end of each body —
+// through the type's own `Frame` where it has one, through its `Orientation`
+// quaternion where it has one, and otherwise through `AxisFrame`, which
+// manufactures a stable (but arbitrary) frame around a `Center`/`Axis` pair.
+// The UV seam therefore lands at an arbitrary azimuth for the Center/Axis solids,
+// which is all a seam needs; nothing downstream may assume where it is.
+//
+// Because U always wraps and V (except the torus) does not, the matching face
+// grid is `AllQuadFaceIndices(nCols, nRows, true, false)` from
+// `meshes-spatial.library.plato` — the "flat sides, constant rate" clause is what
+// makes that grid mesh the polygonal solids EXACTLY rather than approximately.
+
+library Solids
+{
+    //==
+    // Shared profile helpers
+
+    // The point at `radius` from the origin in direction `a`, in the XY plane.
+    PointOnCircle(a: Angle, radius: Number): Point2D
+        => (a.Cos * radius, a.Sin * radius);
+
+    // The point at angle `a` on the unit circle centered at the origin.
+    // NOTE(dedupe): this is v1's `UnitCircle(t: Angle): Point2D`
+    // (`stdlib-legacy/curves.plato:161`), which has no stdlib counterpart yet. It
+    // is defined here under a non-colliding name so this library is self-contained;
+    // if `curves-2d.plato` later grows the canonical evaluator, delete this and the
+    // three call sites below and call that instead.
+    PointOnUnitCircle(a: Angle): Point2D
+        => PointOnCircle(a, 1.0);
+
+    // A point on the regular n-gon inscribed in the unit circle, walked at
+    // CONSTANT RATE: t in [0,1] covers the whole perimeter and the path is linear
+    // between vertices (so the sides are genuinely flat, not chorded arcs). t is
+    // taken modulo 1, so the walk repeats. Precondition: n >= 3.
+    NGonPoint(t: Number, n: Integer): Point2D
+    {
+        var sides = n.ToNumber;
+        var p = (t - t.Floor) * sides;
+        var f = p - p.Floor;
+        var a = PointOnUnitCircle((p.Floor / sides).Turns);
+        var b = PointOnUnitCircle(((p.Floor + 1.0) / sides).Turns);
+        return a.Lerp(b, f);
+    }
+
+    // A point on the axis-aligned square with corners at (+-1, +-1), walked at
+    // constant rate: a 4-gon rotated an eighth turn and scaled by sqrt(2) so its
+    // sides — not its vertices — land on the axes.
+    SquarePoint(t: Number): Point2D
+    {
+        var c = (2.0).Sqrt;
+        var p = (t - t.Floor) * 4.0;
+        var f = p - p.Floor;
+        var a = PointOnCircle(((p.Floor + 0.5) / 4.0).Turns, c);
+        var b = PointOnCircle(((p.Floor + 1.5) / 4.0).Turns, c);
+        return a.Lerp(b, f);
+    }
+
+    // The latitude/longitude point on the unit sphere: U wraps around the equator,
+    // V runs from the north pole (V = 0) to the south pole (V = 1).
+    UnitSpherePoint(uv: UvCoordinate): Vector3D
+    {
+        var theta = uv.U.Turns;
+        var phi = (uv.V * 0.5).Turns;
+        return (phi.Sin * theta.Cos, phi.Sin * theta.Sin, phi.Cos);
+    }
+
+    // A frame-local point mapped to world coordinates: the frame origin displaced
+    // along its own axes by the local coordinates.
+    PointInFrame(f: Frame3D, local: Point3D): Point3D
+        => (f.Origin.X + f.XAxis.Vector.X * local.X + f.YAxis.Vector.X * local.Y + f.ZAxis.Vector.X * local.Z,
+            f.Origin.Y + f.XAxis.Vector.Y * local.X + f.YAxis.Vector.Y * local.Y + f.ZAxis.Vector.Y * local.Z,
+            f.Origin.Z + f.XAxis.Vector.Z * local.X + f.YAxis.Vector.Z * local.Y + f.ZAxis.Vector.Z * local.Z);
+
+    // A right-handed orthonormal frame at `center` whose Z axis is `axis`. The X
+    // axis is chosen by crossing `axis` with whichever world axis it is least
+    // aligned with, so the construction never degenerates; the resulting azimuth
+    // is arbitrary but stable, which is all a UV seam requires.
+    AxisFrame(center: Point3D, axis: Direction3D): Frame3D
+    {
+        var z = axis.Vector;
+        var helper = z.Z.Abs < 0.9 ? Vector3D(0.0, 0.0, 1.0) : Vector3D(1.0, 0.0, 0.0);
+        var x = helper.Cross(z).Normalize;
+        var y = z.Cross(x);
+        return (center, Direction3D(x), Direction3D(y), Direction3D(z));
+    }
+
+    //==
+    // Surfaces of revolution
+
+    // U wraps the equator, V runs pole to pole.
+    Eval(s: Sphere, uv: UvCoordinate): Point3D
+    {
+        var d = UnitSpherePoint(uv);
+        return (s.Center.X + d.X * s.Radius,
+                s.Center.Y + d.Y * s.Radius,
+                s.Center.Z + d.Z * s.Radius);
+    }
+    ClosedU(s: Sphere): Boolean => true;
+    ClosedV(s: Sphere): Boolean => false;
+
+    // The unit sphere scaled by the semi-axes, then rotated by Orientation.
+    Eval(s: Ellipsoid, uv: UvCoordinate): Point3D
+    {
+        var d = UnitSpherePoint(uv);
+        var local = Vector3D(d.X * s.SemiAxes.X, d.Y * s.SemiAxes.Y, d.Z * s.SemiAxes.Z);
+        var w = local.Transform(s.Orientation);
+        return (s.Center.X + w.X, s.Center.Y + w.Y, s.Center.Z + w.Z);
+    }
+    ClosedU(s: Ellipsoid): Boolean => true;
+    ClosedV(s: Ellipsoid): Boolean => false;
+
+    // https://en.wikipedia.org/wiki/Torus#Geometry: U goes around the main (Axis)
+    // circle, V around the tube — so a torus is the one solid closed in BOTH.
+    Eval(s: Torus, uv: UvCoordinate): Point3D
+    {
+        var f = AxisFrame(s.Center, s.Axis);
+        var u = uv.U.Turns;
+        var v = uv.V.Turns;
+        var ring = s.MajorRadius + s.MinorRadius * v.Cos;
+        return f.PointInFrame(Point3D(ring * u.Cos, ring * u.Sin, s.MinorRadius * v.Sin));
+    }
+    ClosedU(s: Torus): Boolean => true;
+    ClosedV(s: Torus): Boolean => true;
+
+    // The lateral wall only (the flat caps are not part of the UV rectangle):
+    // V = 0 is the -Height/2 rim, V = 1 the +Height/2 rim.
+    Eval(s: Cylinder, uv: UvCoordinate): Point3D
+    {
+        var f = AxisFrame(s.Center, s.Axis);
+        var p = PointOnCircle(uv.U.Turns, s.Radius);
+        return f.PointInFrame(Point3D(p.X, p.Y, (uv.V - 0.5) * s.Height));
+    }
+    ClosedU(s: Cylinder): Boolean => true;
+    ClosedV(s: Cylinder): Boolean => false;
+
+    // V = 0 is the base rim, V = 1 the apex (where the U circle degenerates to a
+    // point, so the last row of a UV quad grid is a fan of slivers).
+    Eval(s: Cone, uv: UvCoordinate): Point3D
+    {
+        var f = AxisFrame(s.Apex, s.Axis);
+        var p = PointOnCircle(uv.U.Turns, s.Radius * (1.0 - uv.V));
+        return f.PointInFrame(Point3D(p.X, p.Y, s.Height * (1.0 - uv.V)));
+    }
+    ClosedU(s: Cone): Boolean => true;
+    ClosedV(s: Cone): Boolean => false;
+
+    // The lateral wall, radius interpolating from BottomRadius at V = 0 to
+    // TopRadius at V = 1.
+    Eval(s: ConicalFrustum, uv: UvCoordinate): Point3D
+    {
+        var f = AxisFrame(s.Center, s.Axis);
+        var p = PointOnCircle(uv.U.Turns, s.BottomRadius.Lerp(s.TopRadius, uv.V));
+        return f.PointInFrame(Point3D(p.X, p.Y, (uv.V - 0.5) * s.Height));
+    }
+    ClosedU(s: ConicalFrustum): Boolean => true;
+    ClosedV(s: ConicalFrustum): Boolean => false;
+
+    // Cylindrical side plus two hemispherical caps: V crosses the A-end cap over
+    // [0, 0.25], the side over [0.25, 0.75], and the B-end cap over [0.75, 1].
+    Eval(s: Capsule3D, uv: UvCoordinate): Point3D
+    {
+        var seg = s.A.Between(s.B);
+        var f = AxisFrame(s.A.Lerp(s.B, 0.5), Direction3D(seg.Normalize));
+        var theta = uv.U.Turns;
+        var h = seg.Magnitude * 0.5;
+        var r = s.Radius;
+        var v = uv.V;
+        var phiB = (0.5 - 0.25 * (v * 4.0)).Turns;
+        var phiT = (0.25 - 0.25 * ((v - 0.75) * 4.0)).Turns;
+        var local = v <= 0.25
+            ? Point3D(phiB.Sin * theta.Cos * r, phiB.Sin * theta.Sin * r, phiB.Cos * r - h)
+            : (v >= 0.75
+                ? Point3D(phiT.Sin * theta.Cos * r, phiT.Sin * theta.Sin * r, phiT.Cos * r + h)
+                : Point3D(theta.Cos * r, theta.Sin * r, (v - 0.5) * 4.0 * h));
+        return f.PointInFrame(local);
+    }
+    ClosedU(s: Capsule3D): Boolean => true;
+    ClosedV(s: Capsule3D): Boolean => false;
+
+    // v1's `Tube`: the outer wall up over V in [0, 0.5], then the inner wall back
+    // down over [0.5, 1], so one UV rectangle covers both walls and the seam at
+    // V = 0.5 is the top rim.
+    Eval(s: CylindricalShell, uv: UvCoordinate): Point3D
+    {
+        var f = AxisFrame(s.Center, s.Axis);
+        var r = uv.V < 0.5 ? s.OuterRadius : s.InnerRadius;
+        var z = (uv.V < 0.5 ? (uv.V * 2.0) - 0.5 : 1.5 - (uv.V * 2.0)) * s.Height;
+        var p = PointOnCircle(uv.U.Turns, r);
+        return f.PointInFrame(Point3D(p.X, p.Y, z));
+    }
+    ClosedU(s: CylindricalShell): Boolean => true;
+    ClosedV(s: CylindricalShell): Boolean => false;
+
+    //==
+    // Polygonal prisms and pyramids
+    //
+    // These are the payoff of the constant-rate profile walk: because NGonPoint /
+    // SquarePoint are linear between vertices, a uniform UV grid puts grid lines
+    // exactly on the profile edges and the quad mesh is EXACT, not an approximation.
+
+    Eval(s: RegularPrism, uv: UvCoordinate): Point3D
+    {
+        var p = NGonPoint(uv.U, s.SideCount);
+        return s.Frame.PointInFrame(
+            Point3D(p.X * s.Radius, p.Y * s.Radius, (uv.V - 0.5) * s.Height));
+    }
+    ClosedU(s: RegularPrism): Boolean => true;
+    ClosedV(s: RegularPrism): Boolean => false;
+
+    // V = 0 is the base ring, V = 1 the apex.
+    Eval(s: RegularPyramid, uv: UvCoordinate): Point3D
+    {
+        var p = NGonPoint(uv.U, s.SideCount);
+        var r = s.Radius * (1.0 - uv.V);
+        return s.Frame.PointInFrame(
+            Point3D(p.X * r, p.Y * r, (uv.V - 0.5) * s.Height));
+    }
+    ClosedU(s: RegularPyramid): Boolean => true;
+    ClosedV(s: RegularPyramid): Boolean => false;
+
+    // V = 0 is the square base, V = 1 the apex.
+    Eval(s: SquarePyramid, uv: UvCoordinate): Point3D
+    {
+        var p = SquarePoint(uv.U);
+        var r = s.BaseLength * 0.5 * (1.0 - uv.V);
+        return s.Frame.PointInFrame(
+            Point3D(p.X * r, p.Y * r, (uv.V - 0.5) * s.Height));
+    }
+    ClosedU(s: SquarePyramid): Boolean => true;
+    ClosedV(s: SquarePyramid): Boolean => false;
+
+    // The four side walls of a box, as one closed-in-U strip. Size is the FULL
+    // extent along each local axis, so the profile is scaled by half of it.
+    Eval(s: Box3D, uv: UvCoordinate): Point3D
+    {
+        var p = SquarePoint(uv.U);
+        var local = Vector3D(p.X * s.Size.Width * 0.5,
+                             p.Y * s.Size.Height * 0.5,
+                             (uv.V - 0.5) * s.Size.Depth);
+        var w = local.Transform(s.Orientation);
+        return (s.Center.X + w.X, s.Center.Y + w.Y, s.Center.Z + w.Z);
+    }
+    ClosedU(s: Box3D): Boolean => true;
+    ClosedV(s: Box3D): Boolean => false;
 }

@@ -12,7 +12,7 @@
 // The ball of all points within Radius of Center; its boundary is the sphere
 // proper. Radius is non-negative.
 type Sphere
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, NearestPoint3D, SupportMappable3D
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, NearestPoint3D, SupportMappable3D, ParametricSurface
 {
     Center: Point3D;
     Radius: Number;
@@ -42,7 +42,7 @@ type SphericalCap
 // A solid ellipsoid with semi-axis lengths SemiAxes along its local X, Y, and Z,
 // oriented by Orientation about Center. A sphere when all semi-axes are equal.
 type Ellipsoid
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D, ParametricSurface
 {
     Center: Point3D;
     SemiAxes: Number3;
@@ -56,7 +56,7 @@ type Ellipsoid
 // axes, oriented by Orientation about Center. Axis-aligned when Orientation is
 // identity (prefer Bounds3D for that case).
 type Box3D
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, NearestPoint3D, SupportMappable3D
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, NearestPoint3D, SupportMappable3D, ParametricSurface
 {
     Center: Point3D;
     Size: Size3D;
@@ -78,7 +78,7 @@ type RoundedBox3D
 // A solid right circular cylinder with flat caps. Center is the midpoint of the
 // axis segment; the cylinder extends Height/2 each way along Axis.
 type Cylinder
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D, ParametricSurface
 {
     Center: Point3D;
     Axis: Direction3D;
@@ -86,10 +86,24 @@ type Cylinder
     Height: Number;
 }
 
+// The hollow region between two coaxial cylinders: a pipe / tube wall, closed
+// by two flat annular caps. Center is the midpoint of the axis segment and the
+// shell extends Height/2 each way along Axis.
+// Invariant: 0 <= InnerRadius <= OuterRadius.
+type CylindricalShell
+    implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, ParametricSurface
+{
+    Center: Point3D;
+    Axis: Direction3D;
+    Height: Number;
+    InnerRadius: Number;
+    OuterRadius: Number;
+}
+
 // A solid right circular cone. Axis points from Apex toward the base; the base
 // is the disk of Radius at Apex + Axis * Height, and closes the solid.
 type Cone
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D, ParametricSurface
 {
     Apex: Point3D;
     Axis: Direction3D;
@@ -102,7 +116,7 @@ type Cone
 // axis segment; the bottom disk (BottomRadius) sits at -Height/2 along Axis,
 // the top disk (TopRadius) at +Height/2.
 type ConicalFrustum
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, ParametricSurface
 {
     Center: Point3D;
     Axis: Direction3D;
@@ -114,7 +128,7 @@ type ConicalFrustum
 // All points within Radius of the segment from A to B: a cylinder with
 // hemispherical ends. The smooth, convex sweep of a ball along a segment.
 type Capsule3D
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, NearestPoint3D, SupportMappable3D
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, NearestPoint3D, SupportMappable3D, ParametricSurface
 {
     A: Point3D;
     B: Point3D;
@@ -128,7 +142,7 @@ type Capsule3D
 // about Center in the plane perpendicular to Axis. Self-intersecting when
 // MinorRadius exceeds MajorRadius.
 type Torus
-    implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
+    implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, ParametricSurface
 {
     Center: Point3D;
     Axis: Direction3D;
