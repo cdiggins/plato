@@ -112,7 +112,7 @@ Foundation files:
 - `10-rotations.plato` — Quaternion, AxisAngle, EulerAngles, RotationOrder, Rotation2D, Rotor2D/3D, Bivector2D/3D.
 - `11-points.plato` — Coordinate concept, Point2D/3D, PointN, homogeneous points, polar/cylindrical/spherical/barycentric, UvCoordinate, UvwCoordinate, GeoCoordinate.
 - `12-intervals-bounds.plato` — Interval concept, NumberInterval, AngleInterval, Bounds concept, Bounds2D/3D, IntegerBounds2D/3D, Size2D/3D, IntegerSize2D/3D, Rect2D.
-- `13-transforms.plato` — Transformable/Deformable concepts, Pose2D/3D, Transform2D/3D (TRS), affine/projective transforms, Frame2D/3D, Basis3D.
+- `13-transforms.plato` — Transformable/Deformable concepts, Pose2D/3D, Transform2D/3D (TRS), affine/projective transforms, Frame2D/3D, Basis3D, Motor3D (dual quaternion), plus `library Transforms`: conversions between all transform representations, `p.Transform(t)` application, Compose/Inverse/Identity, and the Point2D/3D Difference + Lerp implementations.
 - `14-color.plato` — Color (linear RGBA), Color8, ColorHSV, ColorHSL, ColorStop, ColorGradient.
 
 ## Cross-domain name registry
