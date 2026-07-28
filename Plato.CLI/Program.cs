@@ -18,7 +18,8 @@ namespace Ara3D.Geometry.CLI
         // With no arguments, the folders come from Config and C# is generated (original behavior).
         // In lint mode the sources are compiled (parse + resolve, no output) and warnings are
         // reported as "file(line): LINT###: message". Exit code is 0 unless --strict is passed,
-        // in which case any finding produces exit code 1 (compilation failures always exit 1).
+        // in which case an Error-severity finding produces exit code 1 (compilation failures always
+        // exit 1). Warning and Info findings never gate --strict.
         public static int Main(string[] args)
         {
             var logger = Logger.Console;
@@ -225,7 +226,14 @@ namespace Ara3D.Geometry.CLI
                     ? ": " + string.Join(", ", byCode.Select(g => $"{g.Key} x{g.Count()}"))
                     : ""));
 
-            return strict && linter.Findings.Count > 0 ? 1 : 0;
+            var bySeverity = linter.Findings.GroupBy(f => f.Severity).OrderByDescending(g => g.Key);
+            if (linter.Findings.Count > 0)
+                Console.WriteLine("By severity: " +
+                    string.Join(", ", bySeverity.Select(g => $"{g.Key} x{g.Count()}")));
+
+            // --strict gates on Errors only: Warning/Info findings report incomplete or merely
+            // shapeless declarations, which are expected on a declarations-first folder.
+            return strict && linter.ErrorCount > 0 ? 1 : 0;
         }
     }
 }

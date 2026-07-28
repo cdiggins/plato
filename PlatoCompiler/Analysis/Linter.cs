@@ -8,20 +8,36 @@ using Ara3D.Parakeet;
 namespace Ara3D.Geometry.Compiler.Analysis
 {
     /// <summary>
-    /// A single lint finding. Formats as "file(line): LINT###: message".
+    /// How much a finding matters. Only <see cref="LintSeverity.Error"/> gates `lint --strict`:
+    /// a finding is an Error when the declaration it names is unambiguously wrong (silently
+    /// dropped, silently ambiguous, or a rule violation), a Warning when it names an incomplete
+    /// but legal declaration, and Info when it only reports on the shape of the vocabulary.
+    /// </summary>
+    public enum LintSeverity
+    {
+        Info,
+        Warning,
+        Error,
+    }
+
+    /// <summary>
+    /// A single lint finding. Formats as "file(line): LINT###: message" - the severity is
+    /// deliberately NOT part of ToString(), so downstream parsers of the line format keep working.
     /// </summary>
     public class LintFinding
     {
         public string File { get; }
         public int Line { get; } // 1-based; 0 = unknown
         public string Code { get; }
+        public LintSeverity Severity { get; }
         public string Message { get; }
 
-        public LintFinding(string file, int line, string code, string message)
+        public LintFinding(string file, int line, string code, LintSeverity severity, string message)
         {
             File = file;
             Line = line;
             Code = code;
+            Severity = severity;
             Message = message;
         }
 
@@ -31,7 +47,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
 
     /// <summary>
     /// A post-compilation lint pass (docs/plato-roadmap.md P1.6, plato-library-review.md section 2.1).
-    /// Runs five structural checks over the symbol tables of a completed Compilation:
+    /// Runs structural checks over the symbol tables of a completed Compilation:
     ///   LINT001 - interface obligations with no implementation (generated code throws NotImplementedException)
     ///   LINT002 - 'where' clauses constraining undeclared type variables
     ///   LINT003 - declared-but-unused type fields
@@ -39,6 +55,10 @@ namespace Ara3D.Geometry.Compiler.Analysis
     ///   LINT005 - generic type variables used only once, or used in a return type but not inferable from parameters
     ///   LINT006 - unique (affine) builder type used as a field type (builders may not be stored in fields)
     ///   LINT007 - unique (affine) builder type used as a generic type argument (no containers of builders)
+    ///   LINT008 - concept with no concrete implementer
+    ///   LINT009 - concept that nothing in the compilation mentions at all
+    ///   LINT010 - concrete type that implements no concept and that no function or field mentions
+    ///   LINT011 - redundant 'implements' clause (already implied by another implemented concept)
     /// The pass is read-only: it never mutates the compilation and has no effect on code generation.
     /// </summary>
     public class Linter
@@ -55,24 +75,29 @@ namespace Ara3D.Geometry.Compiler.Analysis
             CheckDuplicateLibrarySignatures();
             CheckGenericTypeVariableUsage();
             CheckUniqueTypeStructuralBans();
+            CheckVocabularyReachability();
+            CheckRedundantImplements();
         }
 
         public IEnumerable<LintFinding> SortedFindings
             => Findings.OrderBy(f => f.File).ThenBy(f => f.Line).ThenBy(f => f.Code);
 
+        public int ErrorCount
+            => Findings.Count(f => f.Severity == LintSeverity.Error);
+
         private readonly HashSet<string> _seen = new HashSet<string>();
 
-        public void Add(ILocation location, string code, string message)
+        public void Add(ILocation location, string code, LintSeverity severity, string message)
         {
             var range = location?.GetRange();
             var file = range?.FilePath.ToString() ?? "<unknown>";
             var line = range != null ? range.BeginLineIndex + 1 : 0;
             if (_seen.Add($"{file}|{line}|{code}|{message}"))
-                Findings.Add(new LintFinding(file, line, code, message));
+                Findings.Add(new LintFinding(file, line, code, severity, message));
         }
 
-        public void Add(Symbol symbol, string code, string message)
-            => Add(GetLocation(symbol), code, message);
+        public void Add(Symbol symbol, string code, LintSeverity severity, string message)
+            => Add(GetLocation(symbol), code, severity, message);
 
         public ILocation GetLocation(Symbol symbol)
         {
@@ -136,7 +161,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
                         continue; // cast-to-self
 
                     var declaringInterface = fi.Implementation.OwnerType?.Name ?? fi.InterfaceName;
-                    Add(GetLocation(ct.TypeDef) ?? GetLocation(fi.Implementation), "LINT001",
+                    Add(GetLocation(ct.TypeDef) ?? GetLocation(fi.Implementation), "LINT001", LintSeverity.Warning,
                         $"type '{ct.Name}' implements '{declaringInterface}' but no implementation was found for " +
                         $"'{fi.SignatureId}'; the generated member will throw NotImplementedException");
                 }
@@ -160,7 +185,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
                     if (!declared.Contains(c.Name.Text))
                     {
                         var declaredList = declared.Count == 0 ? "none" : string.Join(", ", declared);
-                        Add(c, "LINT002",
+                        Add(c, "LINT002", LintSeverity.Error,
                             $"'where' clause of '{td.Name.Text}' constrains '{c.Name.Text}' which is not a declared " +
                             $"type parameter (declared: {declaredList}); the constraint is silently ignored");
                     }
@@ -243,7 +268,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
                         continue;
                     if (interfaceMemberNames.Contains(field.Name))
                         continue;
-                    Add(field, "LINT003",
+                    Add(field, "LINT003", LintSeverity.Warning,
                         $"field '{td.Name}.{field.Name}' is never read by any library function, " +
                         $"interface implementation, or generated member");
                 }
@@ -268,7 +293,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
                     // Report every occurrence after the first.
                     foreach (var f in g.Skip(1))
                     {
-                        Add(f, "LINT004",
+                        Add(f, "LINT004", LintSeverity.Error,
                             $"library '{lib.Name}' declares {g.Count()} functions with signature '{g.Key}'; " +
                             $"duplicate definitions are ambiguous (one silently wins)");
                     }
@@ -306,7 +331,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
 
                     foreach (var tv in returnCounts.Keys.Where(tv => !paramCounts.ContainsKey(tv)))
                     {
-                        Add(f, "LINT005",
+                        Add(f, "LINT005", LintSeverity.Error,
                             $"function '{f.Name}' in library '{lib.Name}' uses type variable '{tv}' in its return " +
                             $"type '{f.ReturnType}' but in no parameter; it can never be inferred at a call site");
                     }
@@ -316,7 +341,8 @@ namespace Ara3D.Geometry.Compiler.Analysis
                         var total = paramCounts[tv] + (returnCounts.TryGetValue(tv, out var rc) ? rc : 0);
                         if (total == 1 && inFunctionType.Contains(tv))
                         {
-                            Add(f, "LINT005",
+                            // Heuristic ("likely inconsistent"), so a Warning rather than an Error.
+                            Add(f, "LINT005", LintSeverity.Warning,
                                 $"function '{f.Name}' in library '{lib.Name}' takes a function argument producing " +
                                 $"'{tv}' but uses '{tv}' nowhere else; the declared return type '{f.ReturnType}' is " +
                                 $"likely inconsistent with the type variables used");
@@ -348,11 +374,11 @@ namespace Ara3D.Geometry.Compiler.Analysis
                 foreach (var field in td.Fields)
                 {
                     if (IsUnique(field.Type))
-                        Add(field, "LINT006",
+                        Add(field, "LINT006", LintSeverity.Error,
                             $"field '{td.Name}.{field.Name}' has unique type '{field.Type}'; " +
                             $"builders may not be stored in fields (affine rule, docs/affine-types.md)");
                     else if (ContainsUniqueArg(field.Type))
-                        Add(field, "LINT007",
+                        Add(field, "LINT007", LintSeverity.Error,
                             $"field '{td.Name}.{field.Name}' uses a unique type as a generic type argument " +
                             $"in '{field.Type}'; containers of builders are banned (affine rule, docs/affine-types.md)");
                 }
@@ -364,15 +390,129 @@ namespace Ara3D.Geometry.Compiler.Analysis
                 {
                     foreach (var p in f.Parameters)
                         if (ContainsUniqueArg(p.Type))
-                            Add(f, "LINT007",
+                            Add(f, "LINT007", LintSeverity.Error,
                                 $"parameter '{p.Name}' of function '{f.Name}' in library '{lib.Name}' uses a unique " +
                                 $"type as a generic type argument in '{p.Type}'; containers of builders are banned " +
                                 $"(affine rule, docs/affine-types.md)");
                     if (ContainsUniqueArg(f.ReturnType))
-                        Add(f, "LINT007",
+                        Add(f, "LINT007", LintSeverity.Error,
                             $"function '{f.Name}' in library '{lib.Name}' uses a unique type as a generic type " +
                             $"argument in its return type '{f.ReturnType}'; containers of builders are banned " +
                             $"(affine rule, docs/affine-types.md)");
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // LINT008/LINT009/LINT010: reachability of the vocabulary. In a concept-
+        // oriented library a declaration earns its place by being implemented or
+        // used; these three rules report the declarations that are neither.
+        //   LINT008 - a concept no concrete type implements. Either dead
+        //             vocabulary or a forgotten 'implements' line. Implementer
+        //             lookup is transitive over concept inheritance, so an
+        //             abstract intermediate concept counts as implemented as
+        //             soon as any descendant concept has an implementer.
+        //   LINT009 - a concept that nothing mentions at all: not implemented,
+        //             not inherited, never a parameter/return type, never a
+        //             'where' bound. Strictly stronger than LINT008, and
+        //             reported instead of it.
+        //   LINT010 - a concrete type that implements no concept AND that no
+        //             other declaration mentions (no function signature, no
+        //             field type). An unfinished declaration.
+        // All three are Info: on a declarations-first folder they describe the
+        // shape of the vocabulary rather than a defect.
+        // -------------------------------------------------------------------
+        public void CheckVocabularyReachability()
+        {
+            var mentioned = new HashSet<TypeDef>();     // any use outside the owning declaration
+            var inherited = new HashSet<TypeDef>();     // target of an implements/inherits clause
+
+            void Mention(TypeExpression te, TypeDef owner)
+            {
+                if (te?.Def == null)
+                    return;
+                if (te.Def != owner)
+                    mentioned.Add(te.Def);
+                foreach (var ta in te.TypeArgs)
+                    Mention(ta, owner);
+            }
+
+            foreach (var f in Compilation.FunctionDefinitions)
+                foreach (var te in f.ParametersAndReturnType)
+                    Mention(te, f.OwnerType);
+
+            foreach (var td in Compilation.AllTypeAndLibraryDefinitions)
+            {
+                foreach (var te in td.Implements.Concat(td.Inherits))
+                {
+                    Mention(te, td);
+                    if (te?.Def != null)
+                        inherited.Add(te.Def);
+                }
+            }
+
+            // 'where' bounds are dropped by the resolver (see LINT002), so read them off the AST.
+            var boundNames = Compilation.TypeDeclarations
+                .SelectMany(d => d.Constraints)
+                .Select(c => c.Constraint?.Name?.Text)
+                .Where(n => n != null)
+                .ToHashSet();
+
+            foreach (var c in Compilation.GetConcepts())
+            {
+                var used = mentioned.Contains(c) || boundNames.Contains(c.Name);
+                var implementers = Compilation.GetImplementers(c.ToTypeExpression()).ToList();
+                if (implementers.Count > 0)
+                    continue;
+                if (!used)
+                    Add(c, "LINT009", LintSeverity.Info,
+                        $"concept '{c.Name}' is unreachable: no concrete type implements it, no concept " +
+                        $"inherits it, and it appears in no parameter type, return type or 'where' bound");
+                else
+                    Add(c, "LINT008", LintSeverity.Info,
+                        $"concept '{c.Name}' has no concrete implementer" +
+                        (inherited.Contains(c) ? " (directly or through a descendant concept)" : "") +
+                        "; it is either dead vocabulary or a missing 'implements' clause");
+            }
+
+            foreach (var td in Compilation.GetConcreteTypes())
+            {
+                if (td.IsPrimitive() || td.IsUnique)
+                    continue; // intrinsic; backed by the runtime, not by declarations
+                if (td.Implements.Count > 0 || mentioned.Contains(td))
+                    continue;
+                Add(td, "LINT010", LintSeverity.Info,
+                    $"concrete type '{td.Name}' implements no concept and is mentioned by no function " +
+                    $"signature or field; it participates in nothing");
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // LINT011: an 'implements' clause already implied by another one on the
+        // same type (Sphere implements ParametricSurface and Geometry3D, where
+        // ParametricSurface already reaches Geometry3D). Legal, and sometimes
+        // written deliberately to restate the top-level category - hence Info -
+        // but it hides the real concept lattice and goes stale when the lattice
+        // is refactored.
+        // -------------------------------------------------------------------
+        public void CheckRedundantImplements()
+        {
+            foreach (var td in Compilation.GetConcreteTypes())
+            {
+                if (td.Implements.Count < 2)
+                    continue;
+                foreach (var te in td.Implements)
+                {
+                    if (te?.Def == null)
+                        continue;
+                    var implier = td.Implements.FirstOrDefault(other =>
+                        other?.Def != null && other.Def != te.Def &&
+                        other.Def.GetAllImplementedConcepts().Any(i => i.Def == te.Def));
+                    if (implier == null)
+                        continue;
+                    Add(GetLocation(te) ?? GetLocation(td), "LINT011", LintSeverity.Info,
+                        $"type '{td.Name}' implements '{te.Def.Name}' redundantly; " +
+                        $"'{implier.Def.Name}' already implies it");
                 }
             }
         }

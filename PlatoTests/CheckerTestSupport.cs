@@ -16,18 +16,26 @@ namespace PlatoTests
     /// </summary>
     public static class CheckerTestSupport
     {
-        /// <summary>Walk up from the test output directory to find the repo's stdlib-legacy folder.</summary>
-        public static string FindPlatoSrc()
+        /// <summary>Walk up from the test output directory to find a repo folder by name.</summary>
+        public static string FindFolder(string name)
         {
             for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
             {
-                var candidate = Path.Combine(dir.FullName, "stdlib-legacy");
+                var candidate = Path.Combine(dir.FullName, name);
                 if (Directory.Exists(candidate))
                     return candidate;
             }
             throw new DirectoryNotFoundException(
-                "Could not locate 'stdlib-legacy' above " + AppContext.BaseDirectory);
+                $"Could not locate '{name}' above " + AppContext.BaseDirectory);
         }
+
+        /// <summary>The shipping stdlib (stdlib-legacy) — what every existing checker fixture uses.</summary>
+        public static string FindPlatoSrc()
+            => FindFolder("stdlib-legacy");
+
+        /// <summary>The forward vocabulary (stdlib): declarations plus *.library.plato bodies, flat.</summary>
+        public static string FindForwardStdLib()
+            => FindFolder("stdlib");
 
         public static AstNode ParseFile(string path)
         {
@@ -48,5 +56,12 @@ namespace PlatoTests
 
         public static Compilation CompileStdLib()
             => CompileFolder(FindPlatoSrc());
+
+        /// <summary>
+        /// Compiles the forward vocabulary. Plato.CLI enumerates *.plato non-recursively, which picks
+        /// up both the declaration files and the *.library.plato bodies sitting flat beside them.
+        /// </summary>
+        public static Compilation CompileForwardStdLib()
+            => CompileFolder(FindForwardStdLib());
     }
 }
