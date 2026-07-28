@@ -16,7 +16,11 @@ namespace Ara3D.Geometry.CppWriter
     public static class CppPrelude
     {
         public static string Preamble(CppDialect dialect)
-            => (dialect == CppDialect.Cuda ? CudaHead : CppHead) + SharedCore + StringAndCharacterCore;
+            => (dialect == CppDialect.Cuda ? CudaHead : CppHead)
+               + SharedCore
+               + StringAndCharacterCore
+               + ArrayCore
+               + StringFormatCore;
 
         private const string CppHead = @"#pragma once
 #include <cmath>
@@ -213,6 +217,253 @@ PLATO_FN int HashString(String a)
     int h = a.len;
     for (int i = 0; i < a.len; i++) h = plato::mix_hash(h, (int)(unsigned char)a.data[i]);
     return h;
+}
+";
+
+        /// <summary>
+        /// Fixed-capacity dynamic Array&lt;T&gt; (Plato concrete type; interface is IArray).
+        /// Same host/device story as String: inline buffer, no heap, no std::vector.
+        /// Oversized Range/Map results clamp to PLATO_ARRAY_CAP.
+        /// </summary>
+        public const string ArrayCore = @"
+// ---- Array<T> (Plato dynamic array; not std::vector) ----
+// Fixed-capacity POD so C++ and CUDA bodies stay identical. Raise PLATO_ARRAY_CAP if needed.
+#ifndef PLATO_ARRAY_CAP
+#define PLATO_ARRAY_CAP 64
+#endif
+template <typename T>
+struct Array
+{
+    T data[PLATO_ARRAY_CAP];
+    int count;
+};
+
+template <typename T>
+PLATO_FN Array<T> make_array_empty()
+{
+    Array<T> r;
+    r.count = 0;
+    return r;
+}
+
+template <typename T>
+PLATO_FN int Count(Array<T> xs)
+{
+    return xs.count;
+}
+
+template <typename T>
+PLATO_FN T At(Array<T> xs, int i)
+{
+    if (xs.count <= 0) return T{};
+    if (i < 0) i = 0;
+    if (i >= xs.count) i = xs.count - 1;
+    return xs.data[i];
+}
+
+PLATO_FN Array<int> Range(int n)
+{
+    Array<int> r;
+    r.count = n < 0 ? 0 : (n > PLATO_ARRAY_CAP ? PLATO_ARRAY_CAP : n);
+    for (int i = 0; i < r.count; i++) r.data[i] = i;
+    return r;
+}
+
+template <typename F>
+PLATO_FN auto MapRange(int n, F f) -> Array<decltype(f(0))>
+{
+    Array<decltype(f(0))> r;
+    r.count = n < 0 ? 0 : (n > PLATO_ARRAY_CAP ? PLATO_ARRAY_CAP : n);
+    for (int i = 0; i < r.count; i++) r.data[i] = f(i);
+    return r;
+}
+
+template <typename T, typename F>
+PLATO_FN auto Map(Array<T> xs, F f) -> Array<decltype(f(xs.data[0]))>
+{
+    Array<decltype(f(xs.data[0]))> r;
+    r.count = xs.count;
+    for (int i = 0; i < r.count; i++) r.data[i] = f(xs.data[i]);
+    return r;
+}
+
+template <typename T, typename... Rest>
+PLATO_FN Array<T> make_array(T first, Rest... rest)
+{
+    const T vals[] = { first, static_cast<T>(rest)... };
+    Array<T> r;
+    r.count = (int)(1 + sizeof...(Rest));
+    if (r.count > PLATO_ARRAY_CAP) r.count = PLATO_ARRAY_CAP;
+    for (int i = 0; i < r.count; i++) r.data[i] = vals[i];
+    return r;
+}
+
+template <typename T, typename U, typename F>
+PLATO_FN auto Zip(Array<T> a, Array<U> b, F f) -> Array<decltype(f(a.data[0], b.data[0]))>
+{
+    Array<decltype(f(a.data[0], b.data[0]))> r;
+    r.count = a.count < b.count ? a.count : b.count;
+    for (int i = 0; i < r.count; i++) r.data[i] = f(a.data[i], b.data[i]);
+    return r;
+}
+
+template <typename T, typename U, typename V, typename F>
+PLATO_FN auto Zip(Array<T> a, Array<U> b, Array<V> c, F f) -> Array<decltype(f(a.data[0], b.data[0], c.data[0]))>
+{
+    Array<decltype(f(a.data[0], b.data[0], c.data[0]))> r;
+    r.count = a.count < b.count ? a.count : b.count;
+    if (c.count < r.count) r.count = c.count;
+    for (int i = 0; i < r.count; i++) r.data[i] = f(a.data[i], b.data[i], c.data[i]);
+    return r;
+}
+
+template <typename T, typename Acc, typename F>
+PLATO_FN Acc Reduce(Array<T> xs, Acc acc, F f)
+{
+    for (int i = 0; i < xs.count; i++) acc = f(acc, xs.data[i]);
+    return acc;
+}
+
+template <typename T, typename F>
+PLATO_FN bool All(Array<T> xs, F f)
+{
+    for (int i = 0; i < xs.count; i++) if (!f(xs.data[i])) return false;
+    return true;
+}
+
+template <typename T, typename F>
+PLATO_FN bool Any(Array<T> xs, F f)
+{
+    for (int i = 0; i < xs.count; i++) if (f(xs.data[i])) return true;
+    return false;
+}
+
+template <typename T>
+PLATO_FN Array<T> Reverse(Array<T> xs)
+{
+    Array<T> r;
+    r.count = xs.count;
+    for (int i = 0; i < r.count; i++) r.data[i] = xs.data[r.count - 1 - i];
+    return r;
+}
+
+template <typename T, typename F>
+PLATO_FN auto FlatMap(Array<T> xs, F f) -> decltype(f(xs.data[0]))
+{
+    decltype(f(xs.data[0])) r;
+    r.count = 0;
+    for (int i = 0; i < xs.count; i++)
+    {
+        auto part = f(xs.data[i]);
+        for (int j = 0; j < part.count && r.count < PLATO_ARRAY_CAP; j++)
+            r.data[r.count++] = part.data[j];
+    }
+    return r;
+}
+
+template <typename T>
+PLATO_FN Array<T> Concatenate(Array<T> xs, Array<T> ys)
+{
+    Array<T> r;
+    r.count = 0;
+    for (int i = 0; i < xs.count && r.count < PLATO_ARRAY_CAP; i++) r.data[r.count++] = xs.data[i];
+    for (int i = 0; i < ys.count && r.count < PLATO_ARRAY_CAP; i++) r.data[r.count++] = ys.data[i];
+    return r;
+}
+
+template <typename T>
+PLATO_FN Array<T> Append(Array<T> xs, T value)
+{
+    Array<T> r = xs;
+    if (r.count < PLATO_ARRAY_CAP) r.data[r.count++] = value;
+    return r;
+}
+
+template <typename T>
+PLATO_FN Array<T> Prepend(Array<T> xs, T value)
+{
+    Array<T> r;
+    r.count = 0;
+    if (r.count < PLATO_ARRAY_CAP) r.data[r.count++] = value;
+    for (int i = 0; i < xs.count && r.count < PLATO_ARRAY_CAP; i++) r.data[r.count++] = xs.data[i];
+    return r;
+}
+
+template <typename T>
+PLATO_FN bool operator==(Array<T> a, Array<T> b)
+{
+    if (a.count != b.count) return false;
+    for (int i = 0; i < a.count; i++) if (!(a.data[i] == b.data[i])) return false;
+    return true;
+}
+template <typename T>
+PLATO_FN bool operator!=(Array<T> a, Array<T> b) { return !(a == b); }
+
+template <typename T>
+PLATO_FN bool Equals(Array<T> a, Array<T> b) { return a == b; }
+template <typename T>
+PLATO_FN bool NotEquals(Array<T> a, Array<T> b) { return a != b; }
+template <typename T>
+PLATO_FN int GetHashCode(Array<T> xs)
+{
+    int h = xs.count;
+    for (int i = 0; i < xs.count; i++) h = plato::mix_hash(h, GetHashCode(xs.data[i]));
+    return h;
+}
+";
+
+        /// <summary>
+        /// Hand-rolled String append / number format (no iostream, no snprintf — device-safe).
+        /// Used by rich ToString overloads generated in the writer.
+        /// </summary>
+        public const string StringFormatCore = @"
+// ---- String formatting helpers (device-safe; no iostream / snprintf) ----
+PLATO_FN void string_clear(String* s)
+{
+    s->len = 0;
+    for (int i = 0; i < PLATO_STRING_CAP; i++) s->data[i] = '\0';
+}
+
+PLATO_FN void string_append_char(String* s, char c)
+{
+    if (s->len + 1 >= PLATO_STRING_CAP) return;
+    s->data[s->len++] = c;
+    s->data[s->len] = '\0';
+}
+
+PLATO_FN void string_append_cstr(String* s, const char* p)
+{
+    if (!p) return;
+    while (*p) string_append_char(s, *p++);
+}
+
+PLATO_FN void string_append_int(String* s, int v)
+{
+    if (v == 0) { string_append_char(s, '0'); return; }
+    if (v < 0) { string_append_char(s, '-'); v = -v; }
+    char buf[12];
+    int n = 0;
+    while (v > 0 && n < 11) { buf[n++] = (char)('0' + (v % 10)); v /= 10; }
+    while (n > 0) string_append_char(s, buf[--n]);
+}
+
+PLATO_FN void string_append_float(String* s, float v)
+{
+    if (v != v) { string_append_cstr(s, ""NaN""); return; }
+    if (v < 0.0f) { string_append_char(s, '-'); v = -v; }
+    // Cap magnitude so the fixed buffer cannot explode.
+    if (v > 1.0e9f) { string_append_cstr(s, ""inf""); return; }
+    int ip = (int)v;
+    string_append_int(s, ip);
+    string_append_char(s, '.');
+    float frac = v - (float)ip;
+    for (int i = 0; i < 4; i++)
+    {
+        frac *= 10.0f;
+        int d = (int)frac;
+        string_append_char(s, (char)('0' + d));
+        frac -= (float)d;
+    }
 }
 ";
     }

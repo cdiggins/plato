@@ -13,7 +13,7 @@ namespace Ara3D.Geometry.CppWriter;
 /// Renders a C++ / CUDA function <em>body</em> from a <see cref="TirFunction"/>. Every call
 /// becomes a free-function call (there are no methods in the output); operator-named calls on
 /// native scalars and vectors are inlined to native operators; anything the target cannot
-/// express (lambdas, function values, dynamic arrays, strings) throws
+/// express (residual lambdas / function values, Array2D, …) throws
 /// <see cref="CppUnsupportedException"/>, which makes the caller skip the whole function.
 ///
 /// The text produced here is dialect independent — see <see cref="CppPrelude"/>.
@@ -614,8 +614,23 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 return;
             }
 
-            case TirArray _:
-                throw new CppUnsupportedException("array literals (POC: no array value type)");
+            case TirArray arr:
+            {
+                if (arr.Elements.Count == 0)
+                {
+                    var emptyCpp = arr.Type != null ? _w.CppTypeNameOrNull(arr.Type) : null;
+                    if (emptyCpp == null || !emptyCpp.StartsWith("Array<"))
+                        throw new CppUnsupportedException("empty array literal without Array element type");
+                    Write(_w.DefaultValueExpr(emptyCpp));
+                    return;
+                }
+                if (arr.Elements.Count > 64) // PLATO_ARRAY_CAP default
+                    throw new CppUnsupportedException($"array literal length {arr.Elements.Count} exceeds PLATO_ARRAY_CAP");
+                Write("make_array(");
+                WriteArgs(arr.Elements);
+                Write(")");
+                return;
+            }
 
             case TirUnresolved u:
                 throw new CppUnsupportedException($"unresolved call '{u.Original?.Name}'");
@@ -666,6 +681,11 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
     private void WriteDefault(TirDefault d)
     {
         var type = _w.CppTypeName(d.Type);
+        if (type.StartsWith("Array<") && type.EndsWith(">"))
+        {
+            Write(_w.DefaultValueExpr(type));
+            return;
+        }
         switch (type)
         {
             case "float": Write("0.0f"); return;
@@ -677,7 +697,6 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             case "float3": Write("make_float3(0.0f, 0.0f, 0.0f)"); return;
             case "float4": Write("make_float4(0.0f, 0.0f, 0.0f, 0.0f)"); return;
             default:
-                // Aggregates value-initialize: every field is zeroed.
                 Write($"{type}{{}}");
                 return;
         }
