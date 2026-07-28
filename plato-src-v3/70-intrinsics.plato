@@ -410,7 +410,6 @@ library Intrinsics
     MapQuartets(xs: Array<$T>, f: Function4<$T, $T, $T, $T, $TR>): Array<$TR>;
     MapRange(n: Integer, f: Function1<Integer, $T>): Array<$T>;
     Prepend(self: Array<$T>, value: $T): Array<$T>;
-    Range(n: Integer): Array<Integer>;
     Reduce(xs: Array<$T>, acc: $U, f: Function2<$U, $T, $U>): $U;
     // First parameter is the count: the compiler requires a concrete first parameter,
     // so the V1 form Repeat(x, n) becomes Repeat(n, x).
