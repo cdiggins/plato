@@ -16,7 +16,7 @@ namespace Ara3D.Geometry.CppWriter
     public static class CppPrelude
     {
         public static string Preamble(CppDialect dialect)
-            => (dialect == CppDialect.Cuda ? CudaHead : CppHead) + SharedCore;
+            => (dialect == CppDialect.Cuda ? CudaHead : CppHead) + SharedCore + StringAndCharacterCore;
 
         private const string CppHead = @"#pragma once
 #include <cmath>
@@ -152,6 +152,67 @@ namespace plato
     template <typename T> struct Array6 { T e0, e1, e2, e3, e4, e5; };
     template <typename T> struct Array7 { T e0, e1, e2, e3, e4, e5, e6; };
     template <typename T> struct Array8 { T e0, e1, e2, e3, e4, e5, e6, e7; };
+
+    // Identity functor for All/Any over Zip→bool results (AllZipComponents path).
+    struct Id
+    {
+        template <typename T>
+        PLATO_FN T operator()(T x) const { return x; }
+    };
+}
+";
+
+        /// <summary>
+        /// Character + fixed-capacity String (no heap). Shared by C++ and CUDA so generated
+        /// bodies stay identical. Capacity is small: enough for TypeName / short literals.
+        /// </summary>
+        public const string StringAndCharacterCore = @"
+// ---- Character / String (Plato primitives; not std::string) ----
+// Character erases to char. String is a fixed-capacity POD (device-safe, no heap).
+#ifndef PLATO_STRING_CAP
+#define PLATO_STRING_CAP 64
+#endif
+struct String
+{
+    char data[PLATO_STRING_CAP];
+    int len;
+};
+
+PLATO_FN String make_string_n(const char* s, int n)
+{
+    String r;
+    r.len = n < 0 ? 0 : (n >= PLATO_STRING_CAP ? PLATO_STRING_CAP - 1 : n);
+    for (int i = 0; i < r.len; i++) r.data[i] = s[i];
+    for (int i = r.len; i < PLATO_STRING_CAP; i++) r.data[i] = '\0';
+    return r;
+}
+
+PLATO_FN bool operator==(String a, String b)
+{
+    if (a.len != b.len) return false;
+    for (int i = 0; i < a.len; i++) if (a.data[i] != b.data[i]) return false;
+    return true;
+}
+PLATO_FN bool operator!=(String a, String b) { return !(a == b); }
+PLATO_FN bool operator<=(String a, String b)
+{
+    const int n = a.len < b.len ? a.len : b.len;
+    for (int i = 0; i < n; i++)
+    {
+        if ((unsigned char)a.data[i] < (unsigned char)b.data[i]) return true;
+        if ((unsigned char)a.data[i] > (unsigned char)b.data[i]) return false;
+    }
+    return a.len <= b.len;
+}
+PLATO_FN bool operator<(String a, String b) { return a <= b && !(a == b); }
+PLATO_FN bool operator>=(String a, String b) { return b <= a; }
+PLATO_FN bool operator>(String a, String b) { return b < a; }
+
+PLATO_FN int HashString(String a)
+{
+    int h = a.len;
+    for (int i = 0; i < a.len; i++) h = plato::mix_hash(h, (int)(unsigned char)a.data[i]);
+    return h;
 }
 ";
     }

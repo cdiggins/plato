@@ -38,17 +38,27 @@ it. The body writer always emits `float2/float3/float4`, `make_floatN(...)`, nat
 | Plato | C++ / CUDA |
 |---|---|
 | `Number` / `Integer` / `Boolean` | `float` / `int` / `bool` |
+| `Character` | `char` (device+host POD) |
+| `String` | fixed-capacity POD `String { char data[PLATO_STRING_CAP]; int len; }` (default cap 64); literals via `make_string_n`; **not** `std::string` |
+| `Angle` | synthesized `struct Angle { float Radians; }` (Plato type is fieldless; matches `.Radians` intrinsics) |
 | `Vector2D/3D/4D` | `float2/float3/float4`; `X/Y/Z/W` become `.x/.y/.z/.w`; constructed with `make_floatN` |
-| other non-generic concrete types | aggregate `struct`, constructed positionally (`Angle{ 1.0f }`), plus generated field-wise `operator==` / `operator!=` |
+| other non-generic concrete types | aggregate `struct`, constructed positionally (`Point2D{ … }`), plus generated field-wise `operator==` / `operator!=` |
 | every function | a **free function**: `v.Length` → `Length(v)`. C++ overloading lets `Add(float2,float2)` and `Add(float3,float3)` coexist |
 | static members (`_: T`) | free functions that keep the `_` parameter as a type tag (`UnitX(float2{})`) so overloads stay distinct |
 | constants | zero-argument functions (`Pi()`) |
 | bodiless intrinsics | `<cmath>` (`sqrtf`, `powf`, `fmodf`, …) and the `plato::` helpers (`dot_`, `cross_`, `length_`, `mix_`, `clamp_`, …); float-field structs (`Point2D`, …) lower componentwise / via `make_floatN` |
-| `Equals` / `NotEquals` / `GetHashCode` | generated for every representable type (`==` / `!=` / structural mix) |
-| `IArrayLike` value types | structural `At` / `Count` / `NumComponents` / `Components` from the fields; `At` **clamps** out of range (device code cannot trap); `Components` returns `floatN` or a synthesized `FixedArray_N_T` POD |
+| `Equals` / `NotEquals` / `GetHashCode` / `TypeName` / `ToString` | generated for representable types (`ToString` is TypeName-based except `String`/`char`) |
+| `IArrayLike` value types | structural `At` / `Count` / `NumComponents` / `Components` / `Reverse` / `CreateFrom*`; field-expanded templates for `MapComponents` / `ZipComponents` / `All*` / `Any*`; `At` **clamps** out of range |
 
 `Number` is `float`, not `double`, in both dialects: CUDA device code is float-first and the two
 outputs have to agree.
+
+**Why fixed `String` instead of `{ptr,len}`?** Identical C++/CUDA bodies and no device heap: a
+small inline buffer is enough for `TypeName` and short literals. Raise `PLATO_STRING_CAP` if needed.
+
+**Why not dynamic `IArray` / `std::vector`?** Heap + non-identical host/device story. Tier-1 is
+fixed-size `IArrayLike` / `floatN` / `FixedArray_*` only. `Array` / `Array2D` / `Array3D` stay
+ignored; `Range` / `MapRange` / `MakeArray2D` and dynamic `Map`/`Zip` remain skipped.
 
 ### Two things C++ forces that GLSL did not
 
@@ -59,7 +69,8 @@ outputs have to agree.
 - **Conversions are explicit.** C++ has no implicit user-defined conversion, so a `TirCoerce`
   between struct types — and a returned value whose type differs from the declared return type —
   becomes a real call to the library's own conversion function (or a field swizzle when the
-  types are matching-arity float aggregates ↔ `floatN`).
+  types are matching-arity float aggregates ↔ `floatN`). `Angle` ↔ `float` uses `.Radians` /
+  `Angle{ … }`.
 
 ## Only-what-compiles: the prune pass
 
@@ -71,29 +82,22 @@ than aspirational.
 
 ## Not representable (functions using these are skipped)
 
-- **Lambdas and function values** — with `--inline`, residuals emit as local C++ functors
-  (`struct` + `operator()`) passed to templated `Map`/`Zip`/`Reduce`/`All`/`Any` over
-  `floatN` / `FixedArray_*`. No `std::function`, no heap; identical C++/CUDA bodies.
-  Higher-order library functions that still need a dynamic `IArray` (e.g. `Map` on
-  `IArray<T>`) remain skipped until M4.
-- **`IArray` and array literals** — no dynamic array value type yet. Planned as a simple
-  Plato-defined data type (not `std::vector`); see plato-239 M4.
-- **`String` / `Character`** — planned as simple Plato-defined data types (not `std::string`);
-  see plato-239 M3.
-- **`FieldNames` / `FieldValues` / `TypeName` / `ToString` / `GetType`** — need String (and
-  sometimes arrays).
-- **`CreateFromComponents` / `CreateFromComponent`** — generated for fixed-size `IArrayLike`
-  and `floatN`; still skipped when the input is a dynamic `IArray`.
+- **Dynamic `IArray` / array literals** — no heap array value type. Fixed-size path is done
+  (Components + MapComponents templates + functors). Remaining skips are mostly dynamic array
+  callees (`Range`, `Map` on `IArray<T>`, mesh builders, …).
+- **`FieldNames` / `FieldValues` / `GetType`** — need dynamic arrays of String / Type.
+- **`CreateFromComponents` / `CreateFromComponent` on dynamic `IArray`** — fixed-size overloads
+  are generated; dynamic inputs still skipped.
 
 ## Status
 
 | Input | Emitted | Skipped | Notes |
 |---|---|---|---|
-| `demos/plato-src` | **105** | 0 | with `--inline` + functors |
-| `plato-src` (full standard library) | **1090** | 1507 | with `--inline` + functors (compile-gate) |
+| `demos/plato-src` | **147** | 0 | with `--inline` + M3/M4 |
+| `plato-src` (full standard library) | **1638** | 1367 | with `--inline` + M3/M4 (compile-gate) |
+| same, post-functor (pre M3/M4) | 1090 | 1507 | |
 | same, M5 only (pre-functor) | 865 | 1660 | |
 
-Residual closures for fixed-size `Components` paths are lowered; remaining skips are dominated
-by dynamic `IArray` / String (M3/M4) and callee cascade.
+Skip delta vs post-functor: **+548 emitted / −140 skipped** (stdlib). Demos: **105 → 147**.
 
 Verification lives in `../Plato.CppWriter.Tests` (gates run with `inlineCalls: true`).

@@ -89,6 +89,7 @@ namespace Ara3D.Geometry.CppWriter
             => name != null
                && (NativePrimitives.ContainsKey(name)
                    || NativeVectors.ContainsKey(name)
+                   || PreambleTypes.Contains(name)
                    || StructNames.Contains(name)
                    || _fixedArrays.ContainsKey(name));
 
@@ -159,6 +160,7 @@ namespace Ara3D.Geometry.CppWriter
             { "Number", "float" },
             { "Integer", "int" },
             { "Boolean", "bool" },
+            { "Character", "char" },
         };
 
         public static Dictionary<string, string> NativeVectors = new Dictionary<string, string>()
@@ -171,17 +173,26 @@ namespace Ara3D.Geometry.CppWriter
             { "Vector4", "float4" },
         };
 
+        /// <summary>
+        /// Types declared in the preamble (not Plato field structs). Representable in signatures.
+        /// </summary>
+        public static HashSet<string> PreambleTypes = new HashSet<string>()
+        {
+            "String",
+        };
+
         public static HashSet<string> IgnoredTypes = new HashSet<string>()
         {
-            "Dynamic", "Type", "Error", "String", "Character",
+            "Dynamic", "Type", "Error",
+            // Dynamic heap arrays — not device-friendly without a Plato-native value type.
             "Array", "Array2D", "Array3D",
         };
 
         public static HashSet<string> IgnoredFunctions = new HashSet<string>()
         {
-            // Reflection that needs String / dynamic IArray (M3/M4) — not emitted yet.
-            "FieldNames", "FieldValues", "TypeName", "ToString", "GetType",
-            // CreateFrom* needs an IArray value type (M4); Components is generated for IArrayLike.
+            // Need dynamic IArray of String / Type values.
+            "FieldNames", "FieldValues", "GetType",
+            // CreateFrom* on dynamic IArray; fixed-size path is generated structurally.
             "CreateFromComponents", "CreateFromComponent",
             "Range", "MakeArray2D", "MapRange",
         };
@@ -237,6 +248,8 @@ namespace Ara3D.Geometry.CppWriter
                 return prim;
             if (NativeVectors.TryGetValue(name, out var vec))
                 return vec;
+            if (PreambleTypes.Contains(name))
+                return name;
             if (StructNames.Contains(name))
                 return name;
             return null;
@@ -271,7 +284,7 @@ namespace Ara3D.Geometry.CppWriter
         }
 
         public static bool IsScalar(string cppType)
-            => cppType == "float" || cppType == "int" || cppType == "bool";
+            => cppType == "float" || cppType == "int" || cppType == "bool" || cppType == "char";
 
         public static bool IsVector(string cppType)
             => cppType == "float2" || cppType == "float3" || cppType == "float4";
@@ -281,31 +294,6 @@ namespace Ara3D.Geometry.CppWriter
                 : cppType == "float3" ? new[] { "x", "y", "z" }
                 : cppType == "float4" ? new[] { "x", "y", "z", "w" }
                 : (IReadOnlyList<string>)Array.Empty<string>();
-
-        /// <summary>
-        /// Homogeneous float component accessors for a native vector or an emitted struct whose
-        /// fields are all <c>float</c>. Used to lower Dot/Length/ops on Point2D-like types.
-        /// </summary>
-        public bool TryFloatComponents(string cppType, out IReadOnlyList<string> fields)
-        {
-            fields = VectorFieldNames(cppType);
-            if (fields.Count > 0)
-                return true;
-            var st = _structTypes.FirstOrDefault(c => c.TypeDef.Name == cppType);
-            if (st == null)
-                return false;
-            var names = new List<string>();
-            foreach (var f in st.TypeDef.Fields)
-            {
-                if (CppTypeNameOrNull(f.Type) != "float")
-                    return false;
-                names.Add(EscapeName(f.Name));
-            }
-            if (names.Count == 0)
-                return false;
-            fields = names;
-            return true;
-        }
 
         public static string MakeFloatVector(int arity, IEnumerable<string> args)
             => $"make_float{arity}({args.JoinStringsWithComma()})";
@@ -334,12 +322,47 @@ namespace Ara3D.Geometry.CppWriter
         /// </summary>
         public bool TrySingleFieldOfType(string structCppName, string fieldCppType)
         {
-            if (structCppName == null || fieldCppType == null || !StructNames.Contains(structCppName))
+            if (structCppName == null || fieldCppType == null)
+                return false;
+            // Synthesized Angle { float Radians }.
+            if (structCppName == "Angle" && fieldCppType == "float")
+                return true;
+            if (!StructNames.Contains(structCppName))
                 return false;
             var st = _structTypes.FirstOrDefault(c => c.TypeDef.Name == structCppName);
             if (st == null || st.TypeDef.Fields.Count != 1)
                 return false;
             return CppTypeNameOrNull(st.TypeDef.Fields[0].Type) == fieldCppType;
+        }
+
+        /// <summary>
+        /// Homogeneous float component accessors for a native vector or an emitted struct whose
+        /// fields are all <c>float</c>. Used to lower Dot/Length/ops on Point2D-like types.
+        /// </summary>
+        public bool TryFloatComponents(string cppType, out IReadOnlyList<string> fields)
+        {
+            fields = VectorFieldNames(cppType);
+            if (fields.Count > 0)
+                return true;
+            if (cppType == "Angle")
+            {
+                fields = new[] { "Radians" };
+                return true;
+            }
+            var st = _structTypes.FirstOrDefault(c => c.TypeDef.Name == cppType);
+            if (st == null)
+                return false;
+            var names = new List<string>();
+            foreach (var f in st.TypeDef.Fields)
+            {
+                if (CppTypeNameOrNull(f.Type) != "float")
+                    return false;
+                names.Add(EscapeName(f.Name));
+            }
+            if (names.Count == 0)
+                return false;
+            fields = names;
+            return true;
         }
 
         /// <summary>Default value expression for a C++ type (static-call type tags, etc.).</summary>
@@ -350,6 +373,8 @@ namespace Ara3D.Geometry.CppWriter
                 case "float": return "0.0f";
                 case "int": return "0";
                 case "bool": return "false";
+                case "char": return "'\\0'";
+                case "String": return "make_string_n(\"\", 0)";
                 case "float2": return "make_float2(0.0f, 0.0f)";
                 case "float3": return "make_float3(0.0f, 0.0f, 0.0f)";
                 case "float4": return "make_float4(0.0f, 0.0f, 0.0f, 0.0f)";
@@ -385,6 +410,9 @@ namespace Ara3D.Geometry.CppWriter
         {
             "Map", "Zip", "Reduce", "All", "Any",
             "CreateFromComponents", "CreateFromComponent",
+            "MapComponents", "ZipComponents",
+            "AllZipComponents", "AnyZipComponents",
+            "AllComponents", "AnyComponent",
         };
 
         // ---- Top level ----------------------------------------------------------
@@ -403,6 +431,7 @@ namespace Ara3D.Geometry.CppWriter
             ComputeStructs();
             WriteStructs();
             WriteReflectionHelpers();
+            WriteStringHelpers();
             CollectConstants();
             CollectMemberFunctions();
             WriteFixedArrayStructs();
@@ -485,9 +514,18 @@ namespace Ara3D.Geometry.CppWriter
         /// </summary>
         private void ComputeStructs()
         {
+            // Angle is a fieldless Plato primitive stored as radians. Synthesize a one-field
+            // POD so Angle-dependent structs (ColorHSV, PolarCoordinate, …) and the existing
+            // .Radians intrinsics stay representable without std:: wrapping.
+            StructNames.Add("Angle");
+            FieldsByType["Angle"] = new HashSet<string> { "Radians" };
+            AllFieldNames.Add("Radians");
+
             var candidates = Compilation.ConcreteTypes
                 .Where(c => !NativePrimitives.ContainsKey(c.TypeDef.Name)
                             && !NativeVectors.ContainsKey(c.TypeDef.Name)
+                            && !PreambleTypes.Contains(c.TypeDef.Name)
+                            && c.TypeDef.Name != "Angle"
                             && !IgnoredTypes.Contains(c.TypeDef.Name)
                             && !IsTupleOrFunctionType(c.TypeDef.Name)
                             && !c.TypeDef.Name.StartsWith("Function")
@@ -526,7 +564,7 @@ namespace Ara3D.Geometry.CppWriter
                         continue;
                     var deps = c.TypeDef.Fields
                         .Select(f => PlatoTypeName(f.Type))
-                        .Where(n => StructNames.Contains(n) && n != c.TypeDef.Name);
+                        .Where(n => StructNames.Contains(n) && n != c.TypeDef.Name && n != "Angle");
                     if (deps.All(emitted.Contains))
                     {
                         ordered.Add(c);
@@ -547,6 +585,16 @@ namespace Ara3D.Geometry.CppWriter
         private void WriteStructs()
         {
             WriteLine("// ---- Structs ----");
+
+            // Synthesized Angle (not in _structTypes — zero Plato fields).
+            WriteLine("struct Angle");
+            WriteLine("{");
+            IndentLevel++;
+            WriteLine("float Radians;");
+            IndentLevel--;
+            WriteLine("};");
+            WriteLine();
+
             foreach (var c in _structTypes)
             {
                 WriteLine($"struct {c.TypeDef.Name}");
@@ -563,6 +611,8 @@ namespace Ara3D.Geometry.CppWriter
             // emitted type (C++ has no implicit structural equality; every field type either
             // is a native scalar or is itself an emitted struct with these operators).
             WriteLine("// ---- Structural equality ----");
+            WriteLine("PLATO_FN bool operator==(Angle a, Angle b) { return a.Radians == b.Radians; }");
+            WriteLine("PLATO_FN bool operator!=(Angle a, Angle b) { return !(a == b); }");
             foreach (var c in _structTypes)
             {
                 var n = c.TypeDef.Name;
@@ -573,6 +623,22 @@ namespace Ara3D.Geometry.CppWriter
                 WriteLine($"PLATO_FN bool operator!=({n} a, {n} b) {{ return !(a == b); }}");
             }
             WriteLine();
+
+            // Angle is IMeasure-like: Zero/One call CreateFromComponent(Angle, float).
+            AddGenerated("CreateFromComponent", new[] { "Angle", "float" },
+                "PLATO_FN Angle CreateFromComponent(Angle _, float x)",
+                " { return Angle{ x }; }");
+            AddGenerated("CreateFromComponents", new[] { "Angle", "float" },
+                "PLATO_FN Angle CreateFromComponents(Angle _, float x)",
+                " { return Angle{ x }; }");
+            AddGenerated("At", new[] { "Angle", "int" },
+                "PLATO_FN float At(Angle self, int i)", " { return self.Radians; }");
+            AddGenerated("Count", new[] { "Angle" },
+                "PLATO_FN int Count(Angle self)", " { return 1; }");
+            AddGenerated("NumComponents", new[] { "Angle" },
+                "PLATO_FN int NumComponents(Angle self)", " { return 1; }");
+            AddGenerated("Components", new[] { "Angle" },
+                "PLATO_FN float Components(Angle self)", " { return self.Radians; }");
         }
 
         private void WriteFixedArrayStructs()
@@ -613,11 +679,43 @@ namespace Ara3D.Geometry.CppWriter
         /// </summary>
         private void EmitNativeVectorHofTemplates()
         {
-            WriteLine("// ---- Map / Zip / Reduce / All / Any (floatN + functors) ----");
+            WriteLine("// ---- Map / Zip / Reduce / All / Any (floatN + scalar + functors) ----");
+            EmitScalarHofTemplates();
             EmitHofTemplatesForFloatN(2, "float2", new[] { "x", "y" });
             EmitHofTemplatesForFloatN(3, "float3", new[] { "x", "y", "z" });
             EmitHofTemplatesForFloatN(4, "float4", new[] { "x", "y", "z", "w" });
             WriteLine();
+        }
+
+        /// <summary>
+        /// Map/Zip/Reduce/All/Any on a single float (Angle.Components, Time.Components, …).
+        /// </summary>
+        private void EmitScalarHofTemplates()
+        {
+            AddTemplate(
+                "template <typename F> PLATO_FN auto Map(float xs, F f) -> decltype(f(xs))",
+                " { return f(xs); }");
+            AddTemplate(
+                "template <typename F> PLATO_FN auto Zip(float a, float b, F f) -> decltype(f(a, b))",
+                " { return f(a, b); }");
+            AddTemplate(
+                "template <typename F> PLATO_FN auto Zip(float a, float b, float c, F f) -> decltype(f(a, b, c))",
+                " { return f(a, b, c); }");
+            AddTemplate(
+                "template <typename Acc, typename F> PLATO_FN Acc Reduce(float xs, Acc acc, F f)",
+                " { return f(acc, xs); }");
+            AddTemplate(
+                "template <typename F> PLATO_FN bool All(float xs, F f)",
+                " { return f(xs); }");
+            AddTemplate(
+                "template <typename F> PLATO_FN bool Any(float xs, F f)",
+                " { return f(xs); }");
+            AddTemplate(
+                "template <typename F> PLATO_FN bool All(bool xs, F f)",
+                " { return f(xs); }");
+            AddTemplate(
+                "template <typename F> PLATO_FN bool Any(bool xs, F f)",
+                " { return f(xs); }");
         }
 
         private void EmitHofTemplatesForFloatN(int n, string type, string[] fields)
@@ -633,6 +731,8 @@ namespace Ara3D.Geometry.CppWriter
                 $" {{ return {n}; }}");
             AddGenerated("NumComponents", new[] { type }, $"PLATO_FN int NumComponents({type} a)",
                 $" {{ return {n}; }}");
+            AddGenerated("Components", new[] { type }, $"PLATO_FN {type} Components({type} a)",
+                " { return a; }");
 
             var mapArgs = fields.Select(f => $"f(xs.{f})").JoinStringsWithComma();
             AddTemplate(
@@ -683,6 +783,50 @@ namespace Ara3D.Geometry.CppWriter
             AddGenerated("CreateFromComponents", new[] { type, $"plato::Array{n}<float>" },
                 $"PLATO_FN {type} CreateFromComponents({type} _, plato::Array{n}<float> c)",
                 $" {{ return make_{type}({fromArr}); }}");
+
+            // Componentwise HOFs used by IVectorLike (Abs, Lerp, AlmostEqual, …).
+            // Expanded over fields so bodies do not depend on later prototypes.
+            var mapCompArgs = fields.Select(f => $"f(x.{f})").JoinStringsWithComma();
+            AddTemplate(
+                $"template <typename F> PLATO_FN {type} MapComponents({type} x, F f)",
+                $" {{ return make_{type}({mapCompArgs}); }}");
+            var zip2Comp = fields.Select(f => $"f(a.{f}, b.{f})").JoinStringsWithComma();
+            AddTemplate(
+                $"template <typename F> PLATO_FN {type} ZipComponents({type} a, {type} b, F f)",
+                $" {{ return make_{type}({zip2Comp}); }}");
+            var zip3Comp = fields.Select(f => $"f(a.{f}, b.{f}, c.{f})").JoinStringsWithComma();
+            AddTemplate(
+                $"template <typename F> PLATO_FN {type} ZipComponents({type} a, {type} b, {type} c, F f)",
+                $" {{ return make_{type}({zip3Comp}); }}");
+            var allZip2 = string.Join(" && ", fields.Select(f => $"f(a.{f}, b.{f})"));
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool AllZipComponents({type} a, {type} b, F f)",
+                $" {{ return {allZip2}; }}");
+            var allZip3 = string.Join(" && ", fields.Select(f => $"f(a.{f}, b.{f}, c.{f})"));
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool AllZipComponents({type} a, {type} b, {type} c, F f)",
+                $" {{ return {allZip3}; }}");
+            var anyZip2 = string.Join(" || ", fields.Select(f => $"f(a.{f}, b.{f})"));
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool AnyZipComponents({type} a, {type} b, F f)",
+                $" {{ return {anyZip2}; }}");
+            var anyZip3 = string.Join(" || ", fields.Select(f => $"f(a.{f}, b.{f}, c.{f})"));
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool AnyZipComponents({type} a, {type} b, {type} c, F f)",
+                $" {{ return {anyZip3}; }}");
+            var allComp = string.Join(" && ", fields.Select(f => $"f(x.{f})"));
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool AllComponents({type} x, F f)",
+                $" {{ return {allComp}; }}");
+            var anyComp = string.Join(" || ", fields.Select(f => $"f(x.{f})"));
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool AnyComponent({type} x, F f)",
+                $" {{ return {anyComp}; }}");
+
+            var revArgs = fields.Reverse().Select(f => $"a.{f}").JoinStringsWithComma();
+            AddGenerated("Reverse", new[] { type },
+                $"PLATO_FN {type} Reverse({type} a)",
+                $" {{ return make_{type}({revArgs}); }}");
         }
 
         private void EmitHofTemplatesForFixedArray(string name, string elem, int n)
@@ -727,6 +871,11 @@ namespace Ara3D.Geometry.CppWriter
                     $"template <typename T, typename F> PLATO_FN bool Any(plato::Array{n}<T> xs, F f)",
                     $" {{ return {anyArr}; }}");
             }
+
+            var revInits = Enumerable.Range(0, n).Select(i => $"xs.e{n - 1 - i}").JoinStringsWithComma();
+            AddGenerated("Reverse", new[] { name },
+                $"PLATO_FN {name} Reverse({name} xs)",
+                $" {{ return {name}{{ {revInits} }}; }}");
         }
 
         private readonly HashSet<string> _claimedTemplates = new HashSet<string>();
@@ -773,9 +922,12 @@ namespace Ara3D.Geometry.CppWriter
             EmitPair("float", "plato::hash_float(a)");
             EmitPair("int", "a");
             EmitPair("bool", "(a ? 1 : 0)");
+            EmitPair("char", "(int)(unsigned char)a");
+            EmitPair("String", "HashString(a)");
             EmitPair("float2", "plato::mix_hash(plato::hash_float(a.x), plato::hash_float(a.y))");
             EmitPair("float3", "plato::mix_hash(plato::mix_hash(plato::hash_float(a.x), plato::hash_float(a.y)), plato::hash_float(a.z))");
             EmitPair("float4", "plato::mix_hash(plato::mix_hash(plato::mix_hash(plato::hash_float(a.x), plato::hash_float(a.y)), plato::hash_float(a.z)), plato::hash_float(a.w))");
+            EmitPair("Angle", "GetHashCode(a.Radians)");
 
             foreach (var c in _structTypes)
             {
@@ -796,6 +948,81 @@ namespace Ara3D.Geometry.CppWriter
             }
             WriteLine();
         }
+
+        /// <summary>
+        /// Count/At/Compare helpers for the preamble String POD, plus TypeName/ToString for
+        /// every representable type (fixed-capacity strings — no heap formatting).
+        /// </summary>
+        private void WriteStringHelpers()
+        {
+            WriteLine("// ---- String / Character helpers + TypeName / ToString ----");
+            AddGenerated("Count", new[] { "String" },
+                "PLATO_FN int Count(String s)", " { return s.len; }");
+            AddGenerated("At", new[] { "String", "int" },
+                "PLATO_FN char At(String s, int i)",
+                " { if (i < 0) i = 0; if (i >= s.len) i = s.len > 0 ? s.len - 1 : 0; return s.len == 0 ? '\\0' : s.data[i]; }");
+            AddGenerated("LessThanOrEquals", new[] { "String", "String" },
+                "PLATO_FN bool LessThanOrEquals(String a, String b)", " { return a <= b; }");
+            AddGenerated("LessThanOrEquals", new[] { "char", "char" },
+                "PLATO_FN bool LessThanOrEquals(char a, char b)", " { return a <= b; }");
+            AddGenerated("Compare", new[] { "String", "String" },
+                "PLATO_FN int Compare(String a, String b)",
+                " { if (a < b) return -1; if (a > b) return 1; return 0; }");
+            AddGenerated("Compare", new[] { "char", "char" },
+                "PLATO_FN int Compare(char a, char b)",
+                " { if (a < b) return -1; if (a > b) return 1; return 0; }");
+
+            // Used by GetHashCode(String) — defined in the preamble as HashString.
+            void EmitTypeName(string cppType, string platoName, bool emitToString = true)
+            {
+                var lit = EscapeCppString(platoName);
+                AddGenerated("TypeName", new[] { cppType },
+                    $"PLATO_FN String TypeName({cppType} _)",
+                    $" {{ return make_string_n(\"{lit}\", {platoName.Length}); }}");
+                if (emitToString)
+                {
+                    AddGenerated("ToString", new[] { cppType },
+                        $"PLATO_FN String ToString({cppType} _)",
+                        $" {{ return TypeName({DefaultValueExpr(cppType)}); }}");
+                }
+            }
+
+            EmitTypeName("float", "Number");
+            EmitTypeName("int", "Integer");
+            EmitTypeName("bool", "Boolean");
+            EmitTypeName("char", "Character", emitToString: false);
+            EmitTypeName("float2", "Vector2");
+            EmitTypeName("float3", "Vector3");
+            EmitTypeName("float4", "Vector4");
+            EmitTypeName("Angle", "Angle");
+            AddGenerated("TypeName", new[] { "String" },
+                "PLATO_FN String TypeName(String _)",
+                " { return make_string_n(\"String\", 6); }");
+            AddGenerated("ToString", new[] { "String" },
+                "PLATO_FN String ToString(String s)", " { return s; }");
+            AddGenerated("ToString", new[] { "char" },
+                "PLATO_FN String ToString(char c)",
+                " { char buf[2] = { c, '\\0' }; return make_string_n(buf, 1); }");
+
+            foreach (var c in _structTypes)
+            {
+                var n = c.TypeDef.Name;
+                var lit = EscapeCppString(n);
+                AddGenerated("TypeName", new[] { n },
+                    $"PLATO_FN String TypeName({n} _)",
+                    $" {{ return make_string_n(\"{lit}\", {n.Length}); }}");
+                AddGenerated("ToString", new[] { n },
+                    $"PLATO_FN String ToString({n} _)",
+                    $" {{ return TypeName({n}{{}}); }}");
+            }
+            WriteLine();
+        }
+
+        public static string EscapeCppStringPublic(string s)
+            => EscapeCppString(s);
+
+        private static string EscapeCppString(string s)
+            => s.Replace("\\", "\\\\").Replace("\"", "\\\"");
 
         // ---- Functions ----------------------------------------------------------
 
@@ -854,6 +1081,7 @@ namespace Ara3D.Geometry.CppWriter
                     continue;
                 var supported = NativePrimitives.ContainsKey(name)
                                 || NativeVectors.ContainsKey(name)
+                                || PreambleTypes.Contains(name)
                                 || StructNames.Contains(name);
                 if (!supported)
                     continue;
@@ -967,6 +1195,56 @@ namespace Ara3D.Geometry.CppWriter
                 $"PLATO_FN {name} CreateFromComponent({name} _, {elem} x)",
                 $" {{ return {name}{{ {broadcast} }}; }}");
             handled.Add("CreateFromComponent");
+
+            // Componentwise HOFs — field-expanded templates (no Function1 in signatures).
+            var mapCompArgs = fields.Select(f => $"f(x.{f})").JoinStringsWithComma();
+            AddTemplate(
+                $"template <typename F> PLATO_FN {name} MapComponents({name} x, F f)",
+                $" {{ return {name}{{ {mapCompArgs} }}; }}");
+            handled.Add("MapComponents");
+            var zip2Comp = fields.Select(f => $"f(a.{f}, b.{f})").JoinStringsWithComma();
+            AddTemplate(
+                $"template <typename F> PLATO_FN {name} ZipComponents({name} a, {name} b, F f)",
+                $" {{ return {name}{{ {zip2Comp} }}; }}");
+            var zip3Comp = fields.Select(f => $"f(a.{f}, b.{f}, c.{f})").JoinStringsWithComma();
+            AddTemplate(
+                $"template <typename F> PLATO_FN {name} ZipComponents({name} a, {name} b, {name} c, F f)",
+                $" {{ return {name}{{ {zip3Comp} }}; }}");
+            handled.Add("ZipComponents");
+            var allZip2 = string.Join(" && ", fields.Select(f => $"f(a.{f}, b.{f})"));
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool AllZipComponents({name} a, {name} b, F f)",
+                $" {{ return {allZip2}; }}");
+            var allZip3 = string.Join(" && ", fields.Select(f => $"f(a.{f}, b.{f}, c.{f})"));
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool AllZipComponents({name} a, {name} b, {name} c, F f)",
+                $" {{ return {allZip3}; }}");
+            handled.Add("AllZipComponents");
+            var anyZip2 = string.Join(" || ", fields.Select(f => $"f(a.{f}, b.{f})"));
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool AnyZipComponents({name} a, {name} b, F f)",
+                $" {{ return {anyZip2}; }}");
+            var anyZip3 = string.Join(" || ", fields.Select(f => $"f(a.{f}, b.{f}, c.{f})"));
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool AnyZipComponents({name} a, {name} b, {name} c, F f)",
+                $" {{ return {anyZip3}; }}");
+            handled.Add("AnyZipComponents");
+            var allComp = string.Join(" && ", fields.Select(f => $"f(x.{f})"));
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool AllComponents({name} x, F f)",
+                $" {{ return {allComp}; }}");
+            handled.Add("AllComponents");
+            var anyComp = string.Join(" || ", fields.Select(f => $"f(x.{f})"));
+            AddTemplate(
+                $"template <typename F> PLATO_FN bool AnyComponent({name} x, F f)",
+                $" {{ return {anyComp}; }}");
+            handled.Add("AnyComponent");
+
+            var revInits = Enumerable.Range(0, n).Select(i => $"self.{fields[n - 1 - i]}").JoinStringsWithComma();
+            AddGenerated("Reverse", new[] { name },
+                $"PLATO_FN {name} Reverse({name} self)",
+                $" {{ return {name}{{ {revInits} }}; }}");
+            handled.Add("Reverse");
 
             return handled;
         }
@@ -1145,6 +1423,7 @@ namespace Ara3D.Geometry.CppWriter
                 case "Integer.Divide": body = $"({a} / {b})"; return true;
                 case "Integer.Modulo": body = $"({a} % {b})"; return true;
                 case "Integer.ToNumber": body = $"float({a})"; return true;
+                case "Angle.Radians": body = $"{a}.Radians"; return true;
                 case "Angle.Cos": body = $"cosf({a}.Radians)"; return true;
                 case "Angle.Sin": body = $"sinf({a}.Radians)"; return true;
                 case "Angle.Tan": body = $"tanf({a}.Radians)"; return true;

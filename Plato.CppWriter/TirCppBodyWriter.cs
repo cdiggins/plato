@@ -356,6 +356,14 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             WriteNode(inner);
             return;
         }
+        // Angle → float: unwrap Radians (C-style cast on a struct is invalid).
+        if (from == "Angle" && to == "float")
+        {
+            Write("(");
+            WriteNode(inner);
+            Write(").Radians");
+            return;
+        }
         if (CppWriter.IsScalar(to))
         {
             Write(to);
@@ -629,7 +637,12 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
                 Write(value);
                 return;
             case LiteralTypesEnum.String:
-                throw new CppUnsupportedException("string literals (POC: no string type)");
+            {
+                var raw = lit.Value?.ToString() ?? "";
+                var esc = CppWriter.EscapeCppStringPublic(raw);
+                Write($"make_string_n(\"{esc}\", {raw.Length})");
+                return;
+            }
             default:
                 // Booleans are native literals.
                 Write(value);
@@ -658,6 +671,8 @@ public class TirCppBodyWriter : CodeBuilder<TirCppBodyWriter>
             case "float": Write("0.0f"); return;
             case "int": Write("0"); return;
             case "bool": Write("false"); return;
+            case "char": Write("'\\0'"); return;
+            case "String": Write("make_string_n(\"\", 0)"); return;
             case "float2": Write("make_float2(0.0f, 0.0f)"); return;
             case "float3": Write("make_float3(0.0f, 0.0f, 0.0f)"); return;
             case "float4": Write("make_float4(0.0f, 0.0f, 0.0f, 0.0f)"); return;
