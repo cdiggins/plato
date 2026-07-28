@@ -112,6 +112,14 @@ library CoreAlgebra
     Cube(x: Multiplicative): Multiplicative
         => x * x * x;
 
+    // The value raised to the fourth power.
+    Pow4(x: Multiplicative): Multiplicative
+        => x.Square.Square;
+
+    // The value raised to the fifth power.
+    Pow5(x: Multiplicative): Multiplicative
+        => x.Square.Square * x;
+
     //==
     // Scalable
 
@@ -127,6 +135,15 @@ library CoreAlgebra
     Quarter(x: Scalable): Scalable
         => x / 4.0;
 
+    // One eighth of x. (v1 spelled this `Eight`, which named the wrong number;
+    // renamed per LIBRARIES.md rule 4.)
+    Eighth(x: Scalable): Scalable
+        => x / 8.0;
+
+    // One sixteenth of x.
+    Sixteenth(x: Scalable): Scalable
+        => x / 16.0;
+
     // One tenth of x.
     Tenth(x: Scalable): Scalable
         => x / 10.0;
@@ -139,9 +156,30 @@ library CoreAlgebra
     Thousandth(x: Scalable): Scalable
         => x / 1000.0;
 
+    // One millionth of x.
+    Millionth(x: Scalable): Scalable
+        => x / 1000000.0;
+
+    // One billionth of x (short-scale billion, 1e9).
+    Billionth(x: Scalable): Scalable
+        => x / 1000000000.0;
+
+    // A million times x.
+    Million(x: Scalable): Scalable
+        => x * 1000000.0;
+
+    // A billion times x (short-scale billion, 1e9).
+    Billion(x: Scalable): Scalable
+        => x * 1000000000.0;
+
     // Scales x by the given percentage (100 yields x unchanged).
     Percent(x: Scalable, percent: Number): Scalable
         => x * (percent / 100.0);
+
+    // Scalar-on-the-left multiplication, so `2.0 * v` reads as well as `v * 2.0`.
+    // Delegates to the Scalable member; adds no new semantics.
+    Multiply(scalar: Number, x: Scalable): Scalable
+        => x * scalar;
 
     //==
     // Interpolatable
@@ -213,6 +251,11 @@ library CoreAlgebra
     AlmostZero(x: Real, tolerance: Real): Boolean
         => x.Abs <= tolerance;
 
+    // True when x sits at either end of the unit interval, within the given
+    // (non-negative) tolerance. Useful for detecting degenerate curve parameters.
+    AlmostZeroOrOne(x: Real, tolerance: Real): Boolean
+        => x.AlmostZero(tolerance) || x.AlmostEqual(x.One, tolerance);
+
     // Clamps x to the inclusive range [0, 1].
     Saturate(x: Real): Real
         => x.Clamp(x.Zero, x.One);
@@ -240,6 +283,47 @@ library CoreAlgebra
     // Round (typically banker's rounding) — do not "simplify" to Round.
     RoundedToNearest(x: Real): Real
         => (x + x.One.Half).Floor;
+
+    //==
+    // Number
+    //
+    // A small set of shaping helpers that are deliberately Number-concrete rather
+    // than generic over Real: they read the `Pow` intrinsic (declared only on
+    // Number), and on a type that is simultaneously Multiplicative and Scalable a
+    // generic `x * 2.0` has two equally good readings. Vector/quantity versions
+    // belong with the component-wise lifting on `Vector` (P3), not here.
+
+    // x raised to the reciprocal power: the y-th root of x. InversePow(x, 2) is
+    // the square root, InversePow(x, 3) the cube root. Precondition: y is not zero.
+    InversePow(x: Number, y: Number): Number
+        => x.Pow(1.0 / y);
+
+    // The classic smoothstep shaping function 3x^2 - 2x^3, with zero slope at
+    // both ends of the unit interval. Assumes x is in [0, 1]; saturate first if not.
+    // (For interpolation between two values use SmoothLerp above.)
+    SmoothStep(x: Number): Number
+        => x * x * (3.0 - 2.0 * x);
+
+    // Ken Perlin's quintic shaping function 6x^5 - 15x^4 + 10x^3, with zero first
+    // AND second derivative at both ends. Assumes x is in [0, 1].
+    SmootherStep(x: Number): Number
+        => x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
+
+    // The staircase function: x quantized down to the nearest of `steps` equal
+    // treads per unit. Precondition: steps is positive.
+    // https://mathworld.wolfram.com/StaircaseFunction.html
+    StaircaseFloor(x: Number, steps: Integer): Number
+        => (x * steps.ToNumber).Floor / steps.ToNumber;
+
+    // The staircase function quantizing up to the nearest tread of `steps` per
+    // unit. Precondition: steps is positive.
+    StaircaseCeiling(x: Number, steps: Integer): Number
+        => (x * steps.ToNumber).Ceiling / steps.ToNumber;
+
+    // The staircase function quantizing to the nearest tread of `steps` per unit,
+    // halves going up. Precondition: steps is positive.
+    StaircaseRound(x: Number, steps: Integer): Number
+        => (x * steps.ToNumber).RoundedToNearest / steps.ToNumber;
 
     //==
     // Whole

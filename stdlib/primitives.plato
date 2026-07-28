@@ -91,3 +91,111 @@ type Array3D<T>
 type Array4D<T>
     implements Indexable4D<T>
 { }
+
+//==
+// # Affine builders
+//
+// The mutable half of the collection story. Every other collection in this
+// vocabulary is immutable-by-value, which leaves no way to *build* one: nothing
+// can accumulate points, sample a curve into an array, or assemble a mesh. The
+// two builder types below fill that gap without giving up value semantics
+// anywhere else, because uniqueness is confined to these two types.
+//
+// `unique` is a declaration-site modifier only. A *use* of `List<T>` or
+// `Buffer<T>` is never annotated: the type itself carries the affine
+// convention, so every pass of a builder value is a move. Only the intrinsic
+// builder names `List` and `Buffer` may be declared unique; the compiler
+// hard-rejects the modifier on any other type.
+//
+// Method effects (the compiler's `UniqueTypes` intrinsic table):
+//
+// | Effect  | Members            | Meaning                                          |
+// |---------|--------------------|--------------------------------------------------|
+// | observe | `Count`, `At`      | free use; does not invalidate the builder        |
+// | mutate  | `Add`, `AddRange`, `Set` | returns the builder — rebind or chain      |
+// | consume | `Freeze`           | zero-copy handoff to an immutable `Array<T>`; the builder is invalidated |
+//
+// Conventions, runtime-checked today (the static affine pass rides the future
+// type-checker workstream — see `../docs/affine-types.md`):
+//
+// - never store a builder in a field (LINT006) or inside another generic
+//   container (LINT007);
+// - never capture a builder in a lambda;
+// - write `Freeze` with parentheses: `xs.Freeze()`;
+// - construct with `new List<T>()` / `new Buffer<T>(n)` at concrete element
+//   types, or `xs.EmptyList()` where the element type is a type variable;
+// - rebind or chain every mutator (`xs = xs.Add(p)`, or
+//   `new List<Integer>().Add(1).Add(2).Freeze()`). Use after `Freeze()` throws
+//   at runtime.
+//
+// The backing runtimes are handwritten (`Plato.Intrinsics/PlatoList.cs`,
+// `PlatoBuffer.cs`); the compiler maps `List`/`Buffer` to `PlatoList`/
+// `PlatoBuffer` and never generates a struct for a unique type.
+
+// A growable affine builder: append elements, then promote the backing store to
+// an immutable Array<T> with Freeze().
+unique type List<T>
+{ }
+
+// A fixed-size affine builder: allocate n slots, write them by index in any
+// order, then promote the backing store to an immutable Array<T> with Freeze().
+unique type Buffer<T>
+{ }
+
+//==
+// # Affine builder intrinsics
+//
+// Bodiless host signatures for the builder types above. Without them no builder
+// call site resolves. They live here rather than in `intrinsics.plato` because
+// they are inseparable from the `unique` declarations they operate on; the v1
+// tree exiled the same signatures to its test sources only to avoid shifting
+// symbol ids under a byte-identity codegen gate, which this vocabulary is not
+// subject to.
+//
+// TODO(compiler-gap): the single-parameter members — `Count`, `Freeze`, and
+// `EmptyList` — cannot be declared here yet. `FunctionInstance.cs:162-165`
+// rejects any function of one or fewer parameters that carries a type variable
+// ("We expect there to be no type variables in functions with only one or less
+// parameters"), which aborts the whole compilation, not just the declaration.
+// The three signatures are written out below as comments so the intended
+// surface stays reviewable; uncomment them when that restriction is relaxed.
+// Until then a builder can be constructed and mutated but not observed by
+// `Count`, and — critically — not consumed: `Freeze` is the whole point of the
+// affine story, so no algorithm can be *written* against these types in stdlib
+// yet. The runtime (`PlatoList`/`PlatoBuffer`) already implements all of them.
+//
+//     Count(xs: List<$T>): Integer;
+//     Freeze(xs: List<$T>): Array<$T>;
+//     EmptyList(xs: Array<$T>): List<$T>;
+//     Count(xs: Buffer<$T>): Integer;
+//     Freeze(xs: Buffer<$T>): Array<$T>;
+
+library UniqueBuilders
+{
+    //==
+    // Growable builder: unique type List<T>.
+
+    // The element at the given index. Observes; does not consume.
+    At(xs: List<$T>, n: Integer): $T;
+
+    // Appends one element and returns the same builder. Rebind or chain.
+    Add(xs: List<$T>, x: $T): List<$T>;
+
+    // Appends every element of the array, in order, and returns the same
+    // builder. Rebind or chain.
+    AddRange(xs: List<$T>, values: Array<$T>): List<$T>;
+
+    // Overwrites the element at the given index and returns the same builder.
+    // Precondition: 0 <= i < Count.
+    Set(xs: List<$T>, i: Integer, x: $T): List<$T>;
+
+    //==
+    // Fixed-size builder: unique type Buffer<T>.
+
+    // The value written to the given slot. Observes; does not consume.
+    At(xs: Buffer<$T>, n: Integer): $T;
+
+    // Writes one slot and returns the same builder. Rebind or chain.
+    // Precondition: 0 <= i < Count.
+    Set(xs: Buffer<$T>, i: Integer, x: $T): Buffer<$T>;
+}

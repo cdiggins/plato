@@ -11,6 +11,7 @@ concept Quantity
     inherits Value, Comparable, Hashable, Additive, Scalable, Interpolatable
 {
     Amount(x: Self): Number;
+    FromAmount(_: Self, x: Number): Self;
 }
 
 //==
