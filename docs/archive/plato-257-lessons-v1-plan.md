@@ -1,4 +1,4 @@
-> **EXECUTED 2026-07-28** — see tracker issue [plato-257](../../../tracker/issues/plato-257.md). Historical record; do not execute. Archived copy: [docs/archive/plato-257-lessons-v1-plan.md](archive/plato-257-lessons-v1-plan.md).
+> **EXECUTED 2026-07-28** — see tracker issue [plato-257](../../../tracker/issues/plato-257.md). Historical record; do not execute.
 
 # plato-257 — Lessons V1: multi-agent authoring plan
 
