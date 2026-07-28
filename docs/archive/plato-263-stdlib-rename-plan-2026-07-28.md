@@ -1,3 +1,4 @@
+> **EXECUTED 2026-07-28** — plato-263 closed. Plato commits: `78a70cc` (de-number), `3e8f93b` (folders), `e10ffbd` (plan ticks). Studio: `6174ec0`. Archived to `docs/archive/`.
 # plato-263 — stdlib rename plan (folders + v3 file de-numbering)
 
 Date: 2026-07-28. Author: session with Christopher. Tracker: `tracker/issues/plato-263.md`.
@@ -299,4 +300,4 @@ Per repo rules: current branch (no new branches), pathspec commits only, push af
 - [x] Reference sweeps done (both greps return only archive/historical hits)
 - [x] vscode-plato rebuilt; navigation + checker + MCP tests green
 - [x] regen-generated no-diff; conformance 0 fail; check-frozen-v1 green; check-all green
-- [ ] Commits pushed; plato-263 closed with outcome
+- [x] Commits pushed; plato-263 closed with outcome
