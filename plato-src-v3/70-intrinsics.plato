@@ -75,6 +75,12 @@ library Intrinsics
     MinValue(_: Number): Number;
     MaxValue(_: Number): Number;
     Epsilon(_: Number): Number;
+
+    // Mathematical constants, dispatched like the limits above: 0.0.Pi reads the
+    // constant; the receiver's value is ignored.
+    Pi(_: Number): Number;
+    Tau(_: Number): Number;
+    E(_: Number): Number;
     IsNaN(self: Number): Boolean;
     IsInfinite(self: Number): Boolean;
     IsFinite(self: Number): Boolean;

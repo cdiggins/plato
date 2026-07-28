@@ -290,9 +290,6 @@ library GeometryTraits
     // # PlanarMeasurable
     //
     // Conveniences over a finite Area and boundary Perimeter.
-    // TODO(concept-gap): an isoperimetric quotient (4*Pi*Area / Perimeter^2) would
-    // be the natural compactness measure, but no Pi constant is declared in the v3
-    // vocabulary, so AreaPerimeterRatio is offered as the unitful stand-in.
 
     // True when the area is within `tolerance` of zero (a degenerate region).
     IsDegenerate(self: PlanarMeasurable, tolerance: Number): Boolean
@@ -306,6 +303,12 @@ library GeometryTraits
     // True when this region encloses more area than another.
     LargerAreaThan(self: PlanarMeasurable, other: PlanarMeasurable): Boolean
         => self.Area > other.Area;
+
+    // The isoperimetric quotient 4*Pi*Area / Perimeter^2: a scale-invariant
+    // compactness measure in (0, 1], equal to 1 only for a disc.
+    // Precondition: non-zero perimeter.
+    IsoperimetricQuotient(self: PlanarMeasurable): Number
+        => 4.0 * self.Area.Pi * self.Area / (self.Perimeter * self.Perimeter);
 
     //==
     // # SpatialMeasurable
