@@ -68,6 +68,13 @@ the informational LINT001/LINT003 finding counts shift as the libraries implemen
 
 ## Conventions
 
+The cross-cutting global conventions (row-vector matrices, CCW winding / right-handed
+space, `-1` index sentinel, radians-canonical `Angle`, inclusive bounds + empty encoding,
+linear-light straight-alpha `Color`, right-handed view space, top-left UV origin, the one
+floating-point-comparison epsilon policy, and the "no generic `Optional<T>`" ruling) are
+pinned once in [`CONVENTIONS.md`](CONVENTIONS.md). Owning declaration files cite it with a
+one-line `// Convention: see CONVENTIONS.md - <section>` comment rather than restating it.
+
 - `concept` = capability/trait (like a type class over `Self`). Bare PascalCase names, no
   `I` prefix: `Numerical`, `Curve3D`, `Transformable<T>`.
 - `type` = immutable data, fields only. Concrete nouns: `Vector3D`, `TriangleMesh3D`.

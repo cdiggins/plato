@@ -4,6 +4,7 @@
 // Dense numeric matrices stored as row vectors: RowN holds row N, so element
 // (r, c) is component c of row r. Fixed sizes cover graphics and geometry;
 // MatrixN and Tensor cover scientific computing.
+// Convention: see CONVENTIONS.md - Matrices (row-vector multiplication, v' = v M).
 
 // The family of matrix types: element access by zero-based row and column.
 concept MatrixLike

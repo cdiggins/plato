@@ -90,6 +90,7 @@ type BarycentricCoordinate
 }
 
 // A normalized 2D surface parameter: texture lookup, patch evaluation.
+// Convention: see CONVENTIONS.md - UV origin (origin top-left, U right, V down).
 type UvCoordinate
     implements Coordinate, Difference<Vector2D>
 {

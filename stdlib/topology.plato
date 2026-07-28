@@ -185,6 +185,8 @@ type VertexFaceAdjacency
 
 // The rotational direction of a face loop as seen from the front side.
 // CounterClockwise is the library default.
+// Convention: see CONVENTIONS.md - Winding, handedness, and normals (right-handed,
+// CCW-front; mirroring inverts winding).
 type WindingOrder = CounterClockwise | Clockwise;
 
 // How close a surface is to being a 2-manifold: Manifold means every edge

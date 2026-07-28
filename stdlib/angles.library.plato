@@ -111,4 +111,40 @@ library Angles
     // The cotangent: the reciprocal of the tangent.
     Cot(x: Angle): Number
         => 1.0 / x.Tan;
+
+    //==
+    // Periodicity kit
+    //
+    // Reduction, wrapping, shortest-arc interpolation, and periodic equality for
+    // angles. The canonical interval is the half-open (-pi, pi] (see
+    // CONVENTIONS.md - Canonical angle interval): +pi is included, -pi is not,
+    // matching the range of atan2. The unit constructors above (n.Degrees,
+    // n.Turns, ...) remain the way to BUILD an angle; these reduce and combine
+    // existing ones.
+
+    // The angle reduced to the canonical half-open interval (-pi, pi]. Any two
+    // angles differing by a whole number of turns map to the same result, so
+    // this is the canonical representative of a direction.
+    Normalize(self: Angle): Angle {
+        var tau = Number.Tau;
+        var m = self.Radians - tau * (self.Radians / tau).Floor;
+        return Angle(m > Number.Pi ? m - tau : m);
+    }
+
+    // The angle reduced into the half-open range [0, period) by removing whole
+    // multiples of period. Assumes period is a positive (non-zero) span.
+    Wrap(self: Angle, period: Angle): Angle
+        => Angle(self.Radians - period.Radians * (self.Radians / period.Radians).Floor);
+
+    // Interpolates from a to b along the SHORTEST arc: the signed difference is
+    // normalized to (-pi, pi] before scaling, so headings blend the short way
+    // around the circle rather than the long way. t is the usual [0, 1] parameter.
+    LerpShortest(a: Angle, b: Angle, t: Number): Angle
+        => Angle(a.Radians + (b - a).Normalize.Radians * t);
+
+    // True when a and b denote the same direction modulo a full turn, i.e. their
+    // canonical (normalized) forms coincide. Periodic equality that is stable
+    // across the 0 / 2*pi seam, unlike a raw radians comparison.
+    EquivalentAngle(a: Angle, b: Angle): Boolean
+        => a.Normalize.Radians == b.Normalize.Radians;
 }

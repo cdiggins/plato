@@ -11,6 +11,7 @@
 
 // A placed camera: a rigid pose plus near and far clip distances bounding the
 // rendered depth range. Invariant: 0 < Near < Far.
+// Convention: see CONVENTIONS.md - View space (right-handed; forward is -Z, +Y up).
 concept Camera
     inherits Value
 {

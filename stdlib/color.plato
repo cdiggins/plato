@@ -7,6 +7,8 @@
 
 // A linear-light RGBA color. The canonical color type for computation;
 // interpolation and arithmetic are component-wise.
+// Convention: see CONVENTIONS.md - Color (linear-light, straight alpha; A is
+// straight; do not lerp/construct from sRGB bytes without decoding).
 type Color
     implements Numerical
 {

@@ -4,6 +4,8 @@
 // One-dimensional intervals, axis-aligned bounding regions, and extent types.
 // Bounds are inclusive on Min, inclusive on Max unless a doc comment says
 // otherwise.
+// Convention: see CONVENTIONS.md - Bounds (inclusive Min/Max; inverted
+// Start>End / Min>Max is the empty encoding and the Union identity).
 
 // A one-dimensional directed span from Start to End. Start may exceed End,
 // which encodes a reversed interval.
