@@ -1,22 +1,32 @@
 # stdlib — comprehensive type & concept vocabulary
 
-**Forward stdlib vocabulary** — declarations only, no bodies yet. Codegen and Studio still ship from `stdlib-legacy`.
+**Forward stdlib vocabulary** — domain declarations plus the concept-library implementation
+bodies that build on them, co-located in this folder. Codegen and Studio still ship from
+`stdlib-legacy`.
 
 Third-generation Plato vocabulary. Successor to the `plato-src-v2` prototype (plato-228):
 much broader coverage, `concept` keyword with bare names (no `I` prefix), and files grouped
-by domain in dependency-layer order. **Declarations only** — no `library` blocks, no
-function bodies. Semantics live in doc comments; implementations come in a later pass.
+by domain in dependency-layer order. The declaration files carry vocabulary only (concepts and
+types, semantics in doc comments); the `*.library.plato` files carry the `library` blocks that
+implement derived functionality on those concepts (see [`LIBRARIES.md`](LIBRARIES.md)). These
+were formerly split — declarations here, bodies in a `concept-library/` subfolder — and are now
+flattened together. `transforms.plato` also carries its own `library Transforms`.
 
 Target applications: geometry (primary), 2D/3D and N-dimensional computation, animation,
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
 graphics, image processing, and engineering.
 
-Current contents (2026-07-28): **80 source files, 150 concepts, 1111 types** (~13K lines).
+Current contents (2026-07-28): **80 source files (71 declaration files + 9 concept-library
+implementation files), 150 concepts, 1111 types** (~13K lines).
 Fixed 4D geometry (Point4D, Bounds4D, Geometry4D, Curve4D, polytopes, 4D rotors) was removed
 2026-07-28 — the practical 4D uses are numeric and live on `Number4`/`Quaternion`; N-dimensional
 work uses `PointN`/`VectorN`. 4D **arrays** (`Array4D`/`Indexable4D`) are collections and remain.
 The folder parses and resolves cleanly (`lint`: 0 parse errors, 0 symbol-resolution errors);
-LINT001/LINT003 findings are expected until libraries implement the declared surface.
+LINT001 (unimplemented members) / LINT003 (unread fields) findings are expected until the
+concept libraries implement the full declared surface. Lint now enumerates the `*.library.plato`
+bodies alongside the declarations (they used to sit in a subfolder lint did not reach), so those
+finding counts reflect the implemented surface — implemented members drop out of LINT001 and
+library-read fields drop out of LINT003.
 
 ## Target backends
 
@@ -42,7 +52,10 @@ dotnet <path-to>/Plato.CLI.dll lint stdlib
 ```
 
 The folder must parse and resolve with zero errors. It is self-contained (declares its own
-primitives in `primitives.plato`).
+primitives in `primitives.plato`). Because `Plato.CLI` enumerates `*.plato` non-recursively
+(`Program.cs:101` / `:197`, `TopDirectoryOnly`), this single command now covers both the
+declaration files and the `*.library.plato` implementation bodies (see [`LIBRARIES.md`](LIBRARIES.md));
+the informational LINT001/LINT003 finding counts shift as the libraries implement more members.
 
 ## Conventions
 
@@ -103,6 +116,12 @@ This ordered index is now the canonical reading order.
 | Physics & simulation | kinematics, rigid-dynamics, collision, joints-constraints, particles-simulation | agent I |
 | Math, statistics, signals | statistics, random, signals, polynomials, optimization, uncertainty | agent J |
 | Advanced & applied | differential-geometry, graphs, engineering, scientific-data, geo-spatial, higher-dimensions, intrinsics | agent K |
+| Concept libraries (bodies) | core-algebra, collections-functional, numeric-structures, intervals-transforms, geometry, curves-surfaces, fields-implicits, meshes-spatial, domain-traits (all `.library.plato`) | see [`LIBRARIES.md`](LIBRARIES.md) |
+
+The nine `*.library.plato` files hold the `library` blocks that implement derived functionality
+on the concepts declared in the layers above (P1–P9 work packages). They are co-located here, not
+in a subfolder. Ground rules and the package-to-concept table live in [`LIBRARIES.md`](LIBRARIES.md).
+`transforms.plato` additionally carries its own inline `library Transforms`.
 
 Foundation files:
 

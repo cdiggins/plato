@@ -450,6 +450,6 @@ library Intrinsics
 //   forms; the surviving core (Map/Reduce/Zip/Slice/...) covers them.
 // - First/Last/Middle/IsEmpty/Rest/Reverse/Indices: the compiler rejects bodiless
 //   generic functions with fewer than two parameters, and the first four already
-//   exist generically on Indexable/Countable in concept-library (P2). Rest/Reverse/
+//   exist generically on Indexable/Countable in collections-functional.library.plato (P2). Rest/Reverse/
 //   Indices should be added to a collections implementation library as derived
 //   functions (Skip(1) / MapRange over Count) rather than intrinsics.

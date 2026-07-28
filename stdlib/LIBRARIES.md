@@ -1,11 +1,16 @@
-# concept-library — implementation libraries for plato-src-v3 concepts
+# stdlib concept libraries — implementation bodies
 
-This folder holds `library` blocks that implement **derived functionality for the concepts**
-declared in `plato-src-v3` domain declaration files. In Plato, a function whose first parameter is
-concept-typed is like a C# extension method on an interface: it becomes available on every
-type that implements the concept. These libraries are the v3 successor to
-`plato-src/core.library.plato` / `geometry.library.plato` — build on their good ideas,
+The `*.library.plato` files in `stdlib/` hold `library` blocks that implement **derived
+functionality for the concepts** declared in the domain declaration files. In Plato, a function
+whose first parameter is concept-typed is like a C# extension method on an interface: it becomes
+available on every type that implements the concept. These libraries are the v3 successor to
+`stdlib-legacy/core.library.plato` / `geometry.library.plato` — build on their good ideas,
 replace bad names, drop dead weight.
+
+The library files live side-by-side with the declaration files they implement (they were flattened
+out of the old `concept-library/` subfolder). Because `lint` enumerates `*.plato` non-recursively
+(`Plato.CLI/Program.cs:101` / `:197` use `GetFiles("*.plato", TopDirectoryOnly)`), the lint command
+below now genuinely covers these library bodies — which it did **not** while they sat in a subfolder.
 
 ## Ground rules
 
@@ -24,20 +29,21 @@ replace bad names, drop dead weight.
    `Lerp`, `Clamp`, `Dot`, `Cross`.
 5. **Doc comments**: every function gets a `//` comment stating what it computes and any
    preconditions. Section banners use `//==`.
-6. **No new types, no new concepts.** Declarations live in the domain declaration files; this folder
-   is bodies only. If a concept lacks a member you need, note it in a `// TODO(concept-gap):`
-   comment and work around it or skip the function.
+6. **No new types, no new concepts.** Declarations live in the domain declaration files; the
+   library files are bodies only. If a concept lacks a member you need, note it in a
+   `// TODO(concept-gap):` comment and work around it or skip the function.
 7. **Generic functions** may use type variables constrained by concepts where the concept is
    generic (`IntervalLike<T>`, `Field<TDomain,TValue>`); mirror the declaration's parameters.
 8. **Angles are `Angle`**, never raw `Number`. Respect the unit conventions in
-   `../README.md`.
+   [`README.md`](README.md).
 9. **Validate before you finish**: run
-   `dotnet run --project submodules/Plato/Plato.CLI -c Release -- lint submodules/Plato/plato-src-v3`
+   `dotnet run --project submodules/Plato/Plato.CLI -c Release -- lint submodules/Plato/stdlib`
    from `C:\Users\cdigg\git\studio` — zero parse errors, zero symbol-resolution errors.
    After every edit call `plato_reload` so the MCP index stays fresh.
 10. **Scope discipline**: implement ONLY functions for the concepts in your package. Never
-    edit the domain declaration files, other packages' library files, or anything outside
-    `concept-library/`.
+    edit the domain declaration files (`domain.plato` / `domain.concepts.plato`), and never edit
+    another package's `*.library.plato` file. The boundary is by file kind and package ownership:
+    declaration files declare, your one `*.library.plato` file implements.
 
 ## Work packages
 
