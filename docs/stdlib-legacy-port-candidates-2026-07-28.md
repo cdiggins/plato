@@ -1,8 +1,15 @@
 # Port candidates: `stdlib-legacy` → `stdlib`
 
-> **STATUS 2026-07-28: EXECUTED.** Every item below was implemented across three waves
-> (commits `ffb2976`, `eb6cdcc`, `b7fb18e`). The gate held throughout: `lint stdlib` at
-> **0 parse errors, 0 symbol-resolution errors**; LINT001 **1382 → 694**, LINT003 **2762 → 2482**.
+> **STATUS 2026-07-28: EXECUTED.** Every item below was implemented across four waves
+> (commits `ffb2976`, `eb6cdcc`, `b7fb18e`, `c356064`). The gate held throughout: `lint stdlib`
+> at **0 parse errors, 0 symbol-resolution errors**; LINT001 **1382 → 332** (−76%),
+> LINT003 2762 → 2317.
+>
+> **Read the "Execution evidence" section at the end before trusting any of this.** The lint gate
+> checks name resolution only. A verification pass emitted and ran a slice: `library Polynomials`
+> is exactly right over `Number`, but the emitted vector types are throwing stubs, whole-`stdlib`
+> emission crashes, and roughly **2% of bodied functions have ever executed**.
+>
 > This document is now a record, not a plan. Four estimates in it were wrong, corrected inline
 > below and summarised here:
 >
