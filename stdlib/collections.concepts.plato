@@ -56,8 +56,10 @@ concept Indexable4D<T>
     At(x: Self, column: Integer, row: Integer, layer: Integer, block: Integer): T;
 }
 
-// Supports taking a contiguous sub-range.
+// Supports taking a contiguous sub-range. Inherits Countable so that end-relative
+// helpers (Drop, TakeLast, DropLast) can convert a count into a start offset.
 concept Sliceable
+    inherits Countable
 {
     Slice(x: Self, start: Integer, count: Integer): Self;
 }

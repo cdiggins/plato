@@ -97,6 +97,33 @@ library CollectionsFunctional
         => self.At(self.Count / 2);
 
     //==
+    // # Indexable — fold / map family
+    //
+    // The general element-traversal primitives, usable on ANY Indexable rather
+    // than only on the concrete Array intrinsics. Each first materializes the
+    // elements in index order via `MapRange(Count, i => At(i))` and then defers
+    // to the corresponding Array intrinsic. Written with >= 2 parameters carrying
+    // a type variable, so they clear the FunctionInstance single-type-var guard.
+
+    // Folds the elements left to right from an initial accumulator: applies
+    // f(acc, element) across the collection in index order. The general reduction
+    // primitive behind sums, extents, and running aggregates on any indexable.
+    Reduce(xs: Indexable<$T>, acc: $U, f: Function2<$U, $T, $U>): $U
+        => MapRange(xs.Count, i => xs.At(i)).Reduce(acc, f);
+
+    // A new Array holding f applied to each element in index order.
+    Map(xs: Indexable<$T>, f: Function1<$T, $U>): Array<$U>
+        => MapRange(xs.Count, i => xs.At(i)).Map(f);
+
+    // True when every element satisfies the predicate (vacuously true when empty).
+    All(xs: Indexable<$T>, predicate: Function1<$T, Boolean>): Boolean
+        => MapRange(xs.Count, i => xs.At(i)).All(predicate);
+
+    // True when at least one element satisfies the predicate (false when empty).
+    Any(xs: Indexable<$T>, predicate: Function1<$T, Boolean>): Boolean
+        => MapRange(xs.Count, i => xs.At(i)).Any(predicate);
+
+    //==
     // # Indexable2D
     //
     // Cell access, bounds checks, and row-major flat-index conversions for a
@@ -187,9 +214,9 @@ library CollectionsFunctional
     //==
     // # Sliceable
     //
-    // Contiguous sub-range helpers built on Slice(start, count).
-    // TODO(concept-gap): Drop / TakeLast / DropLast need the total element count;
-    // Sliceable does not inherit Countable, so they cannot be derived here.
+    // Contiguous sub-range helpers built on Slice(start, count). The end-relative
+    // helpers (Drop, TakeLast, DropLast) read Count, which Sliceable now inherits
+    // from Countable.
     // Note: these return the bare concept type Sliceable rather than the concrete
     // implementing type, so chained calls (self.Take(n).Take(m)) resolve against
     // the concept surface and type-check; the concrete type is simply not recovered.
@@ -201,6 +228,21 @@ library CollectionsFunctional
     // The half-open range [start, end): Slice(start, end - start).
     SubRange(self: Sliceable, start: Integer, end: Integer): Sliceable
         => self.Slice(start, end - start);
+
+    // Everything after the first `count` elements: Slice(count, Count - count).
+    // Precondition: 0 <= count <= Count.
+    Drop(self: Sliceable, count: Integer): Sliceable
+        => self.Slice(count, self.Count - count);
+
+    // The last `count` elements: Slice(Count - count, count).
+    // Precondition: 0 <= count <= Count.
+    TakeLast(self: Sliceable, count: Integer): Sliceable
+        => self.Slice(self.Count - count, count);
+
+    // Everything except the last `count` elements: Slice(0, Count - count).
+    // Precondition: 0 <= count <= Count.
+    DropLast(self: Sliceable, count: Integer): Sliceable
+        => self.Slice(0, self.Count - count);
 
     //==
     // # Concatenable
@@ -253,10 +295,14 @@ library CollectionsFunctional
     //==
     // # Procedural
     //
-    // TODO(concept-gap): Procedural on its own exposes only Eval, and mapping a
-    // whole Array<TDomain> would require a Map over Indexable that must construct
-    // a result collection — no concept here can construct one, so EvalAll is left
-    // to backends that know the concrete type.
+    // Evaluation over a batch of inputs. The result collection is constructed by
+    // the Array.Map intrinsic, so this no longer needs a concept that can build
+    // one.
+
+    // Evaluate the mapping at every input, preserving order. Result element i is
+    // Eval(inputs[i]).
+    EvalAll(self: Procedural<$TDomain, $TRange>, inputs: Array<$TDomain>): Array<$TRange>
+        => inputs.Map(input => self.Eval(input));
 
     //==
     // # Bijective
@@ -274,11 +320,17 @@ library CollectionsFunctional
     //==
     // # Periodic
     //
-    // TODO(concept-gap): meaningful wrapping helpers (e.g. WrapPhase mapping a
-    // domain value into one period) need both the domain value's type and
-    // Modulo on TPeriod. Periodic<TPeriod> declares only Period and does not
-    // inherit Procedural or constrain TPeriod to be Modular, so no wrapping
-    // helper can be written here without those constraints.
+    // TODO(concept-gap): a wrapping helper (WrapPhase, mapping a domain value into
+    // [0, Period)) needs Modulo on the period type. This is NOT fixable by a
+    // deliberate concept extension the way Sliceable-inherits-Countable was,
+    // because the requirement is a *bound on the type parameter* TPeriod
+    // (TPeriod : Modular), and Plato has no type-parameter constraint syntax:
+    // there is no `where` clause and no `<T : Concept>` form anywhere in the tree
+    // (verified by grep). Nor can it be a bound on a generic function parameter —
+    // the same syntax is missing. Periodic also carries no Eval (it does not
+    // inherit Procedural), so there is no domain value on the surface to wrap.
+    // Left for the owning package once a period-typed value with modulo arithmetic
+    // is available concretely.
 
     //==
     // # ParameterDomain

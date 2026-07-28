@@ -432,7 +432,16 @@ library CoreAlgebra
     // Difference<TDelta>
     //
     // TODO(concept-gap): the useful derivations here (e.g. a midpoint between two
-    // positions) need to scale a TDelta by 0.5, but Difference does not constrain
-    // TDelta to Scalable, so a generic MidPoint cannot be expressed. Add(x, delta),
-    // Subtract(x, delta) and Between(a, b) remain primitive per implementing type.
+    // positions) need to scale a TDelta by 0.5 — i.e. they require TDelta : Scalable.
+    // That is a *bound on the type parameter*, and Plato has no type-parameter
+    // constraint syntax: no `where` clause, no `<T : Concept>` form, and no way to
+    // bound a generic function's own type variable (verified by grep across stdlib).
+    // So `MidPoint(a, b) => a.Add(a.Between(b).Multiply(0.5))` cannot type-check:
+    // `Between(a, b) : TDelta` is an unbounded variable with no Multiply(Number).
+    // The obligation also cannot be discharged from here — every Difference
+    // implementor lives in points.plato / time.plato (Vector2D/3D/N, Duration),
+    // which this package does not own. When the language gains type-parameter
+    // bounds, add TDelta : Scalable to the Difference declaration and MidPoint
+    // becomes a one-liner. Add(x, delta), Subtract(x, delta) and Between(a, b)
+    // remain primitive per implementing type until then.
 }
