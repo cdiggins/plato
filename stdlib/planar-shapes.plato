@@ -152,3 +152,685 @@ type RegularPolygon
     SideCount: Integer;
     Rotation: Angle;
 }
+
+//==
+// # Planar-shape operations
+//
+// Area, perimeter, bounds, centroid, containment, nearest-point and support
+// bodies for the types above (`LIBRARIES.md` ground rules 1 and 10 sanction an
+// inline `library` block in a declaration file).
+//
+// Conventions fixed here, and stated because nothing in the tree executes these
+// bodies before they ship:
+//
+//   * PLACED, not origin-centred. Every shape carries its own Center / Origin /
+//     endpoints; no body assumes the origin.
+//   * WINDING: counter-clockwise is positive (this file's header). Only Quad2D
+//     has a stored vertex order that can wind either way; its `Area` takes the
+//     ABSOLUTE value of the signed shoelace area, so a clockwise quad reports a
+//     positive area. `Area` is non-negative for EVERY type here.
+//   * SELF-INTERSECTION: `Quad2D` is documented "assumed simple". For a
+//     self-intersecting quad the shoelace value is the winding-weighted area, not
+//     the area of the covered point set, and the even-odd `Contains` reports the
+//     even-odd region. Neither is repaired here.
+//   * CONTAINMENT is boundary-INCLUSIVE wherever the test is an inequality on a
+//     distance or a coordinate (concept doc: "for closed shapes the boundary
+//     counts as inside"). The two even-odd tests (Quad2D, RegularPolygon) cannot
+//     honour that: a point exactly on an edge falls whichever way the floating
+//     point comparison goes. Said once here rather than on each body.
+//   * `ClosestPoint` on a filled REGION returns the query point itself when the
+//     query is contained, which `NearestPoint2D` explicitly permits ("for a region
+//     it may be an interior point"). Use `Perimeter`-side projection only via the
+//     boundary helpers if the nearest BOUNDARY point is wanted.
+//   * ANGLES are `Angle` throughout; `Number` fractions of a turn are converted
+//     with `.Turns` (`angles.library.plato`) rather than by multiplying by pi.
+//
+// Shared kernels (shoelace area, polygon centroid, even-odd containment, segment
+// projection, point-array bounds) live in `geometry.library.plato` and are not
+// respelled here.
+
+library PlanarShapes
+{
+    //==
+    // # Local-frame helpers
+    //
+    // The rotated shapes (Ellipse, SuperEllipse, OrientedBox2D, RegularPolygon)
+    // all reduce to an axis-aligned test in a frame rotated by `Rotation` about
+    // `Center`. These two conversions are the whole of that reduction.
+    // https://en.wikipedia.org/wiki/Rotation_matrix
+
+    // The displacement from `center` to `point`, expressed in the frame rotated by
+    // `rotation`: the inverse rotation R(-rotation) applied to (point - center).
+    LocalOffset(center: Point2D, rotation: Angle, point: Point2D): Vector2D
+    {
+        var v = center.Between(point);
+        var c = rotation.Cos;
+        var s = rotation.Sin;
+        return (v.X * c + v.Y * s, v.Y * c - v.X * s);
+    }
+
+    // A displacement given in the frame rotated by `rotation`, mapped back to
+    // world axes: R(rotation) applied to `local`.
+    WorldOffset(rotation: Angle, local: Vector2D): Vector2D
+    {
+        var c = rotation.Cos;
+        var s = rotation.Sin;
+        return (local.X * c - local.Y * s, local.X * s + local.Y * c);
+    }
+
+    // The axis-aligned rectangle centred on `center` with the given half-extents.
+    CenteredBounds(center: Point2D, halfWidth: Number, halfHeight: Number): Bounds2D
+        => (Point2D(center.X - halfWidth, center.Y - halfHeight),
+            Point2D(center.X + halfWidth, center.Y + halfHeight));
+
+    //==
+    // # Triangle2D
+
+    // The three vertices in stored order.
+    Points(t: Triangle2D): Array<Point2D>
+        => 3.MapRange(i => i == 0 ? t.A : (i == 1 ? t.B : t.C));
+
+    // Half the magnitude of the cross product of two edge vectors — the shoelace
+    // formula for three points, made non-negative.
+    // https://en.wikipedia.org/wiki/Triangle#Using_coordinates
+    Area(t: Triangle2D): Number
+        => TwiceSignedArea(t.A, t.B, t.C).Abs * 0.5;
+
+    // The sum of the three side lengths.
+    Perimeter(t: Triangle2D): Number
+        => t.A.Between(t.B).Magnitude
+        + t.B.Between(t.C).Magnitude
+        + t.C.Between(t.A).Magnitude;
+
+    // The arithmetic mean of the three vertices, which for a triangle is also its
+    // area centroid. https://en.wikipedia.org/wiki/Centroid#Of_a_triangle
+    Centroid(t: Triangle2D): Point2D
+        => ((t.A.X + t.B.X + t.C.X) / 3.0, (t.A.Y + t.B.Y + t.C.Y) / 3.0);
+
+    // True when `point` lies in the closed triangle: the three edge orientation
+    // tests agree in sign (a zero means the point is on that edge's line, so the
+    // boundary is included). Winding-agnostic — it accepts either orientation.
+    // https://en.wikipedia.org/wiki/Point_in_polygon
+    Contains(t: Triangle2D, point: Point2D): Boolean
+    {
+        var ab = TwiceSignedArea(t.A, t.B, point);
+        var bc = TwiceSignedArea(t.B, t.C, point);
+        var ca = TwiceSignedArea(t.C, t.A, point);
+        var anyNegative = ab < 0.0 || bc < 0.0 || ca < 0.0;
+        var anyPositive = ab > 0.0 || bc > 0.0 || ca > 0.0;
+        return (anyNegative && anyPositive).Not;
+    }
+
+    // The query point when it is inside the triangle, otherwise the nearest point
+    // of the three edges.
+    ClosestPoint(t: Triangle2D, point: Point2D): Point2D
+        => t.Contains(point) ? point : t.Points.ClosestPointOnChain(true, point);
+
+    // The triangle with all three vertices carried through the mapping.
+    Deform(t: Triangle2D, mapping: Function1<Point2D, Point2D>): Triangle2D
+        => (mapping(t.A), mapping(t.B), mapping(t.C));
+
+    //==
+    // # Quad2D
+    //
+    // Handled as a four-vertex ring, so every body is the general polygon kernel
+    // applied to `Points`. Precondition (from the declaration): the quad is simple.
+
+    // The four vertices in stored order.
+    Points(q: Quad2D): Array<Point2D>
+        => 4.MapRange(i => i == 0 ? q.A : (i == 1 ? q.B : (i == 2 ? q.C : q.D)));
+
+    // The absolute shoelace area of the four-vertex ring.
+    // https://en.wikipedia.org/wiki/Shoelace_formula
+    Area(q: Quad2D): Number
+        => q.Points.ShoelaceArea.Abs;
+
+    // The sum of the four side lengths.
+    Perimeter(q: Quad2D): Number
+        => q.Points.ChainLength(true);
+
+    // The area centroid of the quadrilateral — NOT the average of its four
+    // vertices, which is a different point for any non-parallelogram.
+    // https://en.wikipedia.org/wiki/Centroid#Of_a_polygon
+    Centroid(q: Quad2D): Point2D
+        => q.Points.PolygonAreaCentroid;
+
+    // Even-odd containment over the four-vertex ring.
+    Contains(q: Quad2D, point: Point2D): Boolean
+        => q.Points.PolygonContainsPoint(point);
+
+    // The quad with all four vertices carried through the mapping.
+    Deform(q: Quad2D, mapping: Function1<Point2D, Point2D>): Quad2D
+        => (mapping(q.A), mapping(q.B), mapping(q.C), mapping(q.D));
+
+    //==
+    // # Parallelogram2D
+
+    // The four corners in ring order: Origin, +SideA, +SideA+SideB, +SideB.
+    Corners(g: Parallelogram2D): Array<Point2D>
+        => 4.MapRange(i => i == 0 ? g.Origin
+            : (i == 1 ? g.Origin.Add(g.SideA)
+            : (i == 2 ? g.Origin.Add(g.SideA).Add(g.SideB)
+            : g.Origin.Add(g.SideB))));
+
+    // The magnitude of the cross product of the two side vectors.
+    // https://en.wikipedia.org/wiki/Parallelogram#Area_formula
+    Area(g: Parallelogram2D): Number
+        => (g.SideA.X * g.SideB.Y - g.SideA.Y * g.SideB.X).Abs;
+
+    // Twice the sum of the two side lengths.
+    Perimeter(g: Parallelogram2D): Number
+        => 2.0 * (g.SideA.Magnitude + g.SideB.Magnitude);
+
+    // The intersection of the diagonals: Origin displaced by half of each side.
+    Centroid(g: Parallelogram2D): Point2D
+        => g.Origin.Add(g.SideA.Add(g.SideB).Multiply(0.5));
+
+    // The bounds of the four corners.
+    Bounds(g: Parallelogram2D): Bounds2D
+        => g.Corners.BoundsOfPoints;
+
+    // True when `point` solves (point - Origin) = u*SideA + v*SideB with both u and
+    // v in [0, 1]. Solved by Cramer's rule on the 2x2 side matrix; boundary
+    // inclusive. Undefined (division by zero) for the degenerate parallel-sides
+    // case the declaration excludes. https://en.wikipedia.org/wiki/Cramer%27s_rule
+    Contains(g: Parallelogram2D, point: Point2D): Boolean
+    {
+        var w = g.Origin.Between(point);
+        var determinant = g.SideA.X * g.SideB.Y - g.SideA.Y * g.SideB.X;
+        var u = (w.X * g.SideB.Y - w.Y * g.SideB.X) / determinant;
+        var v = (g.SideA.X * w.Y - g.SideA.Y * w.X) / determinant;
+        return u >= 0.0 && u <= 1.0 && v >= 0.0 && v <= 1.0;
+    }
+
+    // The parallelogram with its corner and both side vectors carried through the
+    // mapping. The sides are re-derived as differences of mapped corners, so an
+    // affine mapping is reproduced exactly and a non-affine one is approximated by
+    // the affine map through those three corners.
+    Deform(g: Parallelogram2D, mapping: Function1<Point2D, Point2D>): Parallelogram2D
+    {
+        var origin = mapping(g.Origin);
+        var a = mapping(g.Origin.Add(g.SideA));
+        var b = mapping(g.Origin.Add(g.SideB));
+        return (origin, origin.Between(a), origin.Between(b));
+    }
+
+    //==
+    // # Circle
+    //
+    // The disk region. https://en.wikipedia.org/wiki/Circle
+
+    // pi * r^2.
+    Area(c: Circle): Number
+        => Number.Pi * c.Radius.Square;
+
+    // The circumference 2 * pi * r.
+    Perimeter(c: Circle): Number
+        => 2.0 * Number.Pi * c.Radius;
+
+    // The disk's centre of mass is its centre.
+    Centroid(c: Circle): Point2D
+        => c.Center;
+
+    // The square of side 2r about the centre.
+    Bounds(c: Circle): Bounds2D
+        => CenteredBounds(c.Center, c.Radius, c.Radius);
+
+    // True when the point is within Radius of the centre. Boundary inclusive;
+    // compares squared distances so no square root is taken.
+    Contains(c: Circle, point: Point2D): Boolean
+        => c.Center.Between(point).MagnitudeSquared <= c.Radius.Square;
+
+    // The query point when it lies in the disk, otherwise its radial projection
+    // onto the circle.
+    ClosestPoint(c: Circle, point: Point2D): Point2D
+        => c.Contains(point)
+        ? point
+        : c.Center.Add(c.Center.Between(point).Normalize.Multiply(c.Radius));
+
+    // The point of the circle farthest along `direction`.
+    Support(c: Circle, direction: Direction2D): Point2D
+        => c.Center.Add(direction.Vector.Multiply(c.Radius));
+
+    //==
+    // # Annulus
+    //
+    // https://en.wikipedia.org/wiki/Annulus_(mathematics)
+
+    // pi * (R^2 - r^2).
+    Area(a: Annulus): Number
+        => Number.Pi * (a.OuterRadius.Square - a.InnerRadius.Square);
+
+    // The TOTAL boundary length: both bounding circles, since the annulus has two
+    // boundary components. 2*pi*(R + r).
+    Perimeter(a: Annulus): Number
+        => 2.0 * Number.Pi * (a.OuterRadius + a.InnerRadius);
+
+    // The centre, by rotational symmetry.
+    Centroid(a: Annulus): Point2D
+        => a.Center;
+
+    // The bounds of the outer circle.
+    Bounds(a: Annulus): Bounds2D
+        => CenteredBounds(a.Center, a.OuterRadius, a.OuterRadius);
+
+    // True when the point's distance from the centre lies in [InnerRadius,
+    // OuterRadius]. Both boundaries inclusive.
+    Contains(a: Annulus, point: Point2D): Boolean
+    {
+        var distanceSquared = a.Center.Between(point).MagnitudeSquared;
+        return distanceSquared >= a.InnerRadius.Square
+            && distanceSquared <= a.OuterRadius.Square;
+    }
+
+    //==
+    // # CircularSector
+    //
+    // A pie slice. Precondition throughout: Sweep is stored forward and spans at
+    // most one full turn. https://en.wikipedia.org/wiki/Circular_sector
+
+    // Half the bisector direction of the sweep, as a unit displacement.
+    SweepBisector(sweep: AngleInterval): Vector2D
+    {
+        var mid = sweep.Start + sweep.Extent * 0.5;
+        return (mid.Cos, mid.Sin);
+    }
+
+    // (1/2) * r^2 * theta, with theta the swept angle in radians.
+    Area(s: CircularSector): Number
+        => 0.5 * s.Circle.Radius.Square * s.Sweep.Extent.Radians;
+
+    // The arc r*theta plus the two bounding radii.
+    Perimeter(s: CircularSector): Number
+        => s.Circle.Radius * s.Sweep.Extent.Radians + 2.0 * s.Circle.Radius;
+
+    // On the bisector, at 2/3 * r * sin(alpha)/alpha from the circle's centre,
+    // where alpha is the HALF angle — written here with theta = 2*alpha as
+    // 4*r*sin(theta/2) / (3*theta). Degenerates to the centre for a zero sweep.
+    // https://en.wikipedia.org/wiki/Circular_sector#Centroid
+    Centroid(s: CircularSector): Point2D
+    {
+        var theta = s.Sweep.Extent;
+        var distance = theta.Radians == 0.0
+            ? 0.0
+            : 4.0 * s.Circle.Radius * (theta * 0.5).Sin / (3.0 * theta.Radians);
+        return s.Circle.Center.Add(SweepBisector(s.Sweep).Multiply(distance));
+    }
+
+    // CONSERVATIVE, not tight: the bounds of the whole circle. A tight box needs to
+    // know which of the four axis extremes the arc actually reaches, which is a
+    // four-way angular-interval test this file does not attempt.
+    // TODO(content): tighten to the arc's own extremes.
+    Bounds(s: CircularSector): Bounds2D
+        => s.Circle.Bounds;
+
+    // True when the point is within the radius AND its bearing from the centre,
+    // measured forward from Sweep.Start, is within the swept angle. The bearing is
+    // wrapped into [0, 1) turns before the comparison, so the test is correct
+    // across the +X seam.
+    Contains(s: CircularSector, point: Point2D): Boolean
+    {
+        var v = s.Circle.Center.Between(point);
+        var offset = (v.Y.Atan2(v.X) - s.Sweep.Start).Turns;
+        var wrapped = offset - offset.Floor;
+        return v.MagnitudeSquared <= s.Circle.Radius.Square
+            && wrapped <= s.Sweep.Extent.Turns;
+    }
+
+    //==
+    // # CircularSegment
+    //
+    // The region between the chord and the arc it subtends.
+    // https://en.wikipedia.org/wiki/Circular_segment
+
+    // The chord endpoint at the start of the sweep.
+    ChordStart(s: CircularSegment): Point2D
+        => s.Circle.Center.Add(
+            Vector2D(s.Sweep.Start.Cos, s.Sweep.Start.Sin).Multiply(s.Circle.Radius));
+
+    // The chord endpoint at the end of the sweep.
+    ChordEnd(s: CircularSegment): Point2D
+        => s.Circle.Center.Add(
+            Vector2D(s.Sweep.End.Cos, s.Sweep.End.Sin).Multiply(s.Circle.Radius));
+
+    // (1/2) * r^2 * (theta - sin theta): the sector minus the triangle on the chord.
+    Area(s: CircularSegment): Number
+        => 0.5 * s.Circle.Radius.Square * (s.Sweep.Extent.Radians - s.Sweep.Extent.Sin);
+
+    // The arc r*theta plus the chord 2*r*sin(theta/2).
+    Perimeter(s: CircularSegment): Number
+        => s.Circle.Radius * s.Sweep.Extent.Radians
+        + 2.0 * s.Circle.Radius * (s.Sweep.Extent * 0.5).Sin;
+
+    // On the bisector, at 4*r*sin^3(theta/2) / (3*(theta - sin theta)) from the
+    // circle's centre. Checks out against the standard semicircle result 4r/(3pi)
+    // at theta = pi. Degenerate (division by zero) as theta approaches 0, where the
+    // segment itself vanishes. https://en.wikipedia.org/wiki/Circular_segment
+    Centroid(s: CircularSegment): Point2D
+    {
+        var theta = s.Sweep.Extent;
+        var halfSin = (theta * 0.5).Sin;
+        var denominator = 3.0 * (theta.Radians - theta.Sin);
+        var distance = denominator == 0.0
+            ? 0.0
+            : 4.0 * s.Circle.Radius * halfSin * halfSin * halfSin / denominator;
+        return s.Circle.Center.Add(SweepBisector(s.Sweep).Multiply(distance));
+    }
+
+    // CONSERVATIVE, not tight: the bounds of the whole circle (see CircularSector).
+    // TODO(content): tighten to the chord and the arc's own extremes.
+    Bounds(s: CircularSegment): Bounds2D
+        => s.Circle.Bounds;
+
+    // True when the point lies in the disk AND on the arc's side of the chord. For
+    // a forward (counter-clockwise) sweep the arc side is the CLOCKWISE side of the
+    // directed chord ChordStart -> ChordEnd, so the orientation test is <= 0; that
+    // holds for both minor (theta < pi) and major (theta > pi) segments.
+    Contains(s: CircularSegment, point: Point2D): Boolean
+        => s.Circle.Contains(point)
+        && TwiceSignedArea(s.ChordStart, s.ChordEnd, point) <= 0.0;
+
+    //==
+    // # Capsule2D
+    //
+    // The stadium: the Minkowski sum of the segment [A, B] with a disk of radius r.
+    // https://en.wikipedia.org/wiki/Stadium_(geometry)
+
+    // The length of the capsule's spine.
+    SpineLength(c: Capsule2D): Number
+        => c.A.Between(c.B).Magnitude;
+
+    // pi*r^2 (the two half-disks) + 2*r*L (the rectangular middle).
+    Area(c: Capsule2D): Number
+        => Number.Pi * c.Radius.Square + 2.0 * c.Radius * c.SpineLength;
+
+    // 2*pi*r (the two half-circle ends) + 2*L (the two straight sides).
+    Perimeter(c: Capsule2D): Number
+        => 2.0 * Number.Pi * c.Radius + 2.0 * c.SpineLength;
+
+    // The spine's midpoint, by the shape's two mirror symmetries.
+    Centroid(c: Capsule2D): Point2D
+        => c.A.MidPoint(c.B);
+
+    // The bounds of the two endpoints grown by the radius on every side.
+    Bounds(c: Capsule2D): Bounds2D
+        => (Point2D(c.A.X.Min(c.B.X) - c.Radius, c.A.Y.Min(c.B.Y) - c.Radius),
+            Point2D(c.A.X.Max(c.B.X) + c.Radius, c.A.Y.Max(c.B.Y) + c.Radius));
+
+    // True when the point is within Radius of the spine segment. Boundary
+    // inclusive.
+    Contains(c: Capsule2D, point: Point2D): Boolean
+        => DistanceToSegment(c.A, c.B, point) <= c.Radius;
+
+    // The query point when it lies in the capsule, otherwise the radial projection
+    // onto the capsule's boundary from the nearest spine point.
+    ClosestPoint(c: Capsule2D, point: Point2D): Point2D
+    {
+        var spine = ClosestPointOnSegment(c.A, c.B, point);
+        var outward = spine.Between(point);
+        return outward.MagnitudeSquared <= c.Radius.Square
+            ? point
+            : spine.Add(outward.Normalize.Multiply(c.Radius));
+    }
+
+    // The support of a Minkowski sum is the sum of the supports: the farther
+    // endpoint along `direction`, displaced by r along it.
+    Support(c: Capsule2D, direction: Direction2D): Point2D
+        => (direction.Vector.Dot(c.A.PositionVector) >= direction.Vector.Dot(c.B.PositionVector)
+            ? c.A : c.B).Add(direction.Vector.Multiply(c.Radius));
+
+    //==
+    // # Ellipse
+    //
+    // https://en.wikipedia.org/wiki/Ellipse
+
+    // pi * a * b. https://en.wikipedia.org/wiki/Ellipse#Area
+    Area(e: Ellipse): Number
+        => Number.Pi * e.SemiAxes.X * e.SemiAxes.Y;
+
+    // APPROXIMATE. The circumference of an ellipse is a complete elliptic integral
+    // of the second kind and has NO elementary closed form; this is RAMANUJAN'S
+    // SECOND APPROXIMATION,
+    //     P ~= pi (a + b) (1 + 3h / (10 + sqrt(4 - 3h))),  h = ((a-b)/(a+b))^2,
+    // which is exact for a circle (h = 0) and degrades monotonically with
+    // eccentricity: the worst case is the fully degenerate ellipse b = 0, where it
+    // returns (14/11)*pi*a = 3.99969*a against the true 4*a — a relative error of
+    // about 7.5e-5. For any ellipse with b/a >= 0.1 the relative error is below
+    // 1e-8. https://en.wikipedia.org/wiki/Ellipse#Circumference
+    Perimeter(e: Ellipse): Number
+    {
+        var a = e.SemiAxes.X;
+        var b = e.SemiAxes.Y;
+        var h = ((a - b) / (a + b)).Square;
+        return Number.Pi * (a + b) * (1.0 + 3.0 * h / (10.0 + (4.0 - 3.0 * h).Sqrt));
+    }
+
+    // The centre, by the ellipse's point symmetry.
+    Centroid(e: Ellipse): Point2D
+        => e.Center;
+
+    // TIGHT bounds for a rotated ellipse: the half-extents are
+    // sqrt(a^2 cos^2 phi + b^2 sin^2 phi) and sqrt(a^2 sin^2 phi + b^2 cos^2 phi),
+    // the support of the ellipse along each world axis.
+    // https://en.wikipedia.org/wiki/Ellipse#General_ellipse
+    Bounds(e: Ellipse): Bounds2D
+    {
+        var c = e.Rotation.Cos;
+        var s = e.Rotation.Sin;
+        var dx = ((e.SemiAxes.X * c).Square + (e.SemiAxes.Y * s).Square).Sqrt;
+        var dy = ((e.SemiAxes.X * s).Square + (e.SemiAxes.Y * c).Square).Sqrt;
+        return CenteredBounds(e.Center, dx, dy);
+    }
+
+    // True when (x/a)^2 + (y/b)^2 <= 1 in the ellipse's own frame. Boundary
+    // inclusive.
+    Contains(e: Ellipse, point: Point2D): Boolean
+    {
+        var q = LocalOffset(e.Center, e.Rotation, point);
+        return (q.X / e.SemiAxes.X).Square + (q.Y / e.SemiAxes.Y).Square <= 1.0;
+    }
+
+    //==
+    // # SuperEllipse
+    //
+    // https://en.wikipedia.org/wiki/Superellipse
+
+    // The centre, by the superellipse's point symmetry (it is symmetric in both
+    // local axes for every exponent).
+    Centroid(se: SuperEllipse): Point2D
+        => se.Center;
+
+    // CONSERVATIVE, not tight: the world-axis-aligned box of the ROTATED local
+    // bounding rectangle [-a, a] x [-b, b], which contains the superellipse for
+    // every exponent. Tight only at Exponent -> infinity (the rectangle itself);
+    // at Exponent = 2 the tight box is the ellipse formula above, which is smaller.
+    // TODO(content): the tight support function of a superellipse is
+    // a*|cos t|^(2/n) style and is not attempted here.
+    Bounds(se: SuperEllipse): Bounds2D
+    {
+        var c = se.Rotation.Cos.Abs;
+        var s = se.Rotation.Sin.Abs;
+        return CenteredBounds(se.Center,
+            se.SemiAxes.X * c + se.SemiAxes.Y * s,
+            se.SemiAxes.X * s + se.SemiAxes.Y * c);
+    }
+
+    // True when |x/a|^n + |y/b|^n <= 1 in the superellipse's own frame — the
+    // defining Lame inequality. Boundary inclusive.
+    Contains(se: SuperEllipse, point: Point2D): Boolean
+    {
+        var q = LocalOffset(se.Center, se.Rotation, point);
+        return (q.X / se.SemiAxes.X).Abs.Pow(se.Exponent)
+            + (q.Y / se.SemiAxes.Y).Abs.Pow(se.Exponent) <= 1.0;
+    }
+
+    // TODO(content): Area(SuperEllipse) is 4*a*b*Gamma(1 + 1/n)^2 / Gamma(1 + 2/n)
+    // (https://en.wikipedia.org/wiki/Superellipse#Mathematical_features). The gamma
+    // function does not exist anywhere in this tree — `intrinsics.plato` has no
+    // Gamma and no Lanczos/Stirling helper lives in any library — so the formula is
+    // not writable. Left unimplemented rather than guessed. Needs: `Gamma(Number)`.
+    //
+    // TODO(content): Perimeter(SuperEllipse) has no closed form at all for general
+    // n and no named approximation of the Ramanujan grade. It needs a numerical arc
+    // length integral over the parametrisation, which requires a quadrature helper
+    // this tree does not have. Left unimplemented.
+
+    //==
+    // # RoundedRect2D
+    //
+    // An axis-aligned rectangle Minkowski-summed with a disk of the corner radius
+    // (equivalently: the rectangle with its four corners replaced by quarter arcs).
+
+    // CornerRadius clamped to the declaration's stated range: never negative, never
+    // more than half the smaller side. Every body below reads this, not the raw
+    // field, so an out-of-range stored value degrades gracefully.
+    EffectiveCornerRadius(r: RoundedRect2D): Number
+        => r.CornerRadius.Clamp(0.0, r.Rect.Size.Width.Min(r.Rect.Size.Height) * 0.5);
+
+    // w*h minus the four corner offcuts: each corner replaces an r-by-r square with
+    // a quarter disk, removing (4 - pi) * r^2 in total.
+    Area(r: RoundedRect2D): Number
+    {
+        var radius = r.EffectiveCornerRadius;
+        return r.Rect.Size.Width * r.Rect.Size.Height - (4.0 - Number.Pi) * radius.Square;
+    }
+
+    // The four straight runs (2(w + h) - 8r) plus the four quarter arcs (2*pi*r).
+    Perimeter(r: RoundedRect2D): Number
+    {
+        var radius = r.EffectiveCornerRadius;
+        return 2.0 * (r.Rect.Size.Width + r.Rect.Size.Height)
+            - 8.0 * radius + 2.0 * Number.Pi * radius;
+    }
+
+    // The rectangle's centre: the rounding is symmetric in both axes.
+    Centroid(r: RoundedRect2D): Point2D
+        => r.Rect.Center;
+
+    // The underlying rectangle — the rounded shape touches all four sides, so this
+    // is tight.
+    Bounds(r: RoundedRect2D): Bounds2D
+        => CenteredBounds(r.Rect.Center, r.Rect.Size.Width * 0.5, r.Rect.Size.Height * 0.5);
+
+    // The standard rounded-box inside test: fold the query into the first quadrant,
+    // subtract the inner (unrounded) half-extents, and compare the resulting
+    // distance to the corner radius. Boundary inclusive.
+    // https://iquilezles.org/articles/distfunctions2d/
+    Contains(r: RoundedRect2D, point: Point2D): Boolean
+    {
+        var radius = r.EffectiveCornerRadius;
+        var qx = (point.X - r.Rect.Center.X).Abs - (r.Rect.Size.Width * 0.5 - radius);
+        var qy = (point.Y - r.Rect.Center.Y).Abs - (r.Rect.Size.Height * 0.5 - radius);
+        var outside = (qx.Max(0.0).Square + qy.Max(0.0).Square).Sqrt;
+        return outside + qx.Max(qy).Min(0.0) <= radius;
+    }
+
+    //==
+    // # OrientedBox2D
+    //
+    // A rectangle with arbitrary rotation. Size is the FULL width and height, so
+    // every body halves it. https://en.wikipedia.org/wiki/Minimum_bounding_box
+
+    // Width times height; rotation does not change area.
+    Area(b: OrientedBox2D): Number
+        => b.Size.Width * b.Size.Height;
+
+    // Twice the sum of the side lengths.
+    Perimeter(b: OrientedBox2D): Number
+        => 2.0 * (b.Size.Width + b.Size.Height);
+
+    // The stored centre.
+    Centroid(b: OrientedBox2D): Point2D
+        => b.Center;
+
+    // TIGHT bounds of a rotated rectangle: the half-extent along each world axis is
+    // the sum of the two local half-extents weighted by |cos| and |sin| — the
+    // support function of the box evaluated on that axis.
+    Bounds(b: OrientedBox2D): Bounds2D
+    {
+        var c = b.Rotation.Cos.Abs;
+        var s = b.Rotation.Sin.Abs;
+        var hx = b.Size.Width * 0.5;
+        var hy = b.Size.Height * 0.5;
+        return CenteredBounds(b.Center, hx * c + hy * s, hx * s + hy * c);
+    }
+
+    // True when the query, expressed in the box's own frame, lies within the
+    // half-extents on both axes. Boundary inclusive.
+    Contains(b: OrientedBox2D, point: Point2D): Boolean
+    {
+        var q = LocalOffset(b.Center, b.Rotation, point);
+        return q.X.Abs <= b.Size.Width * 0.5 && q.Y.Abs <= b.Size.Height * 0.5;
+    }
+
+    // The query point when it is inside, otherwise the query clamped to the box in
+    // the box's own frame and mapped back to world.
+    ClosestPoint(b: OrientedBox2D, point: Point2D): Point2D
+    {
+        var hx = b.Size.Width * 0.5;
+        var hy = b.Size.Height * 0.5;
+        var q = LocalOffset(b.Center, b.Rotation, point);
+        var clamped = Vector2D(q.X.Clamp(-hx, hx), q.Y.Clamp(-hy, hy));
+        return b.Contains(point) ? point : b.Center.Add(WorldOffset(b.Rotation, clamped));
+    }
+
+    // The corner of the box farthest along `direction`: each local axis
+    // independently takes the sign of the direction's component on it.
+    Support(b: OrientedBox2D, direction: Direction2D): Point2D
+    {
+        var d = LocalOffset(b.Center, b.Rotation, b.Center.Add(direction.Vector));
+        var hx = b.Size.Width * 0.5;
+        var hy = b.Size.Height * 0.5;
+        return b.Center.Add(WorldOffset(b.Rotation,
+            Vector2D(d.X >= 0.0 ? hx : -hx, d.Y >= 0.0 ? hy : -hy)));
+    }
+
+    //==
+    // # RegularPolygon
+    //
+    // https://en.wikipedia.org/wiki/Regular_polygon
+
+    // The SideCount vertices on the circumscribed circle, counter-clockwise from
+    // Rotation. Named distinctly from `Points` because RegularPolygon does not
+    // implement PointSet2D — its vertices are computed, not stored.
+    RegularPolygonVertices(g: RegularPolygon): Array<Point2D>
+        => g.SideCount.MapRange(i =>
+        {
+            var a = g.Rotation + (i.ToNumber / g.SideCount.ToNumber).Turns;
+            return g.Center.Add(Vector2D(a.Cos, a.Sin).Multiply(g.CircumRadius));
+        });
+
+    // (1/2) * n * R^2 * sin(2*pi/n): the n isosceles triangles from the centre.
+    // https://en.wikipedia.org/wiki/Regular_polygon#Area
+    Area(g: RegularPolygon): Number
+        => 0.5 * g.SideCount.ToNumber * g.CircumRadius.Square
+        * (1.0 / g.SideCount.ToNumber).Turns.Sin;
+
+    // 2 * n * R * sin(pi/n): the n equal chords of the circumscribed circle.
+    Perimeter(g: RegularPolygon): Number
+        => 2.0 * g.SideCount.ToNumber * g.CircumRadius
+        * (0.5 / g.SideCount.ToNumber).Turns.Sin;
+
+    // The stored centre, which is both the circumcentre and the area centroid.
+    Centroid(g: RegularPolygon): Point2D
+        => g.Center;
+
+    // TIGHT: the bounds of the computed vertices. (The circumscribed circle's box
+    // would be conservative whenever no vertex lands on an axis.)
+    Bounds(g: RegularPolygon): Bounds2D
+        => g.RegularPolygonVertices.BoundsOfPoints;
+
+    // Even-odd containment over the computed vertex ring.
+    Contains(g: RegularPolygon, point: Point2D): Boolean
+        => g.RegularPolygonVertices.PolygonContainsPoint(point);
+
+    // The vertex farthest along `direction`. Correct because the polygon is convex,
+    // so its support point is always a vertex.
+    Support(g: RegularPolygon, direction: Direction2D): Point2D
+    {
+        var vertices = g.RegularPolygonVertices;
+        return vertices.Reduce(vertices.First, (best, v) =>
+            direction.Vector.Dot(v.PositionVector) > direction.Vector.Dot(best.PositionVector)
+                ? v : best);
+    }
+}

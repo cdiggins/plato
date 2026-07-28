@@ -40,6 +40,29 @@ library CollectionsFunctional
     IsPresent(self: Index): Boolean
         => self.Value >= 0;
 
+    // The digest of a typed index. Every Index implementor is a single-field
+    // wrapper over Integer, so the raw value's hash is the whole content of the
+    // value and is therefore consistent with structural equality by construction.
+    Hash(self: Index): Integer
+        => self.Value.Hash;
+
+    // The natural total order on typed indices: compare the raw positions. This
+    // is reflexive, antisymmetric and transitive because Integer's order is, and
+    // it agrees with equality because Value is the only field. The "none"
+    // sentinel (-1) sorts below every present position, which is the conventional
+    // reading. Discharges the Orderable obligation for every Index implementor;
+    // Comparable.Compare then follows from CoreAlgebra's Compare(Orderable).
+    LessThanOrEquals(a: Index, b: Index): Boolean
+        => a.Value <= b.Value;
+
+    // Deliberately NOT covered here: MortonCode2D/3D (spatial-structures) and
+    // FontWeight (text) are also single-`Value: Integer` wrappers, but they do
+    // not implement Index and must not — they are opaque codes, not element
+    // references (README, "typed index types" convention). No concept-typed
+    // generic can reach them; their Hash / LessThanOrEquals are concrete
+    // obligations for P8 and the text domain respectively.
+    // TODO(cross-package): concrete Hash/LessThanOrEquals for those three.
+
     //==
     // # Indexable
     //

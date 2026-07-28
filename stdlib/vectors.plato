@@ -96,16 +96,19 @@ type Vector3D
 }
 
 // An N-dimensional vector with runtime-determined arity.
-// TODO(writer-gap): VectorN is the one Vector implementor whose components are
-// not its fields. The C# writer synthesizes At/Count from a type's FIELDS
-// (Linter.cs:107-113 exempts both as "generated from the type's fields"), so
-// VectorN would emit Count == 1 and At(0) returning the Array itself rather than
-// a component. Every generic body in numeric-structures.library.plato reads
-// Count/At as the component surface, so VectorN misbehaves at runtime while
-// linting clean -- the linter structurally cannot see this. Fix belongs in the
-// writer (special-case a single collection-typed field), or by teaching the
-// exemption list to defer to an explicit library body. Fixed-arity vectors
-// (Number2/3/4/8, Vector2D/3D) are unaffected: their fields ARE their components.
+// VectorN is the one Vector implementor whose components are not its fields.
+// A concern was raised (2026-07-28) that the writer synthesizes At/Count from a
+// type's FIELDS and would therefore emit Count == 1 here. That was VERIFIED AND
+// REFUTED by emitting and running the code: the writer forwards to the collection
+// field, emitting "Count { get => Components.Count; }" and
+// "At(int index) => Components[index];". Observed Count == 5 and At(2) == 3 for a
+// 5-component VectorN. The generic bodies in numeric-structures.library.plato that
+// read Count/At as the component surface are correct for VectorN.
+//
+// The real runtime gap is elsewhere and much larger: the emitted vector types
+// currently throw NotImplementedException for Add/Subtract/Multiply/Magnitude/Zero,
+// so the concept-generic bodies compute only at the Number instantiation today.
+// See docs/stdlib-legacy-port-candidates-2026-07-28.md, follow-ups section.
 type VectorN
     implements Vector
 {

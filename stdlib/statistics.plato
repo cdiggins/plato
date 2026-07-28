@@ -161,3 +161,268 @@ type OutlierDetection
     = ZScore(Threshold: Number)
     | Iqr(Threshold: Number)
     | Mad(Threshold: Number);
+
+//==
+// # Statistics bodies
+//
+// Derived quantities on the summary records declared above. Sanctioned by
+// `LIBRARIES.md` ground rule 1: a declaration file may carry its own inline
+// `library` block when the bodies belong beside the declarations.
+//
+// Scope: only relations that follow from the field definitions by identity —
+// bin geometry, the algebraic identities among the moment fields, and the
+// closed-form evaluation of a fitted model. The *estimators* (computing a
+// SummaryStatistics or a Histogram FROM a sample, quantile interpolation,
+// Spearman/Kendall correlation, the moving-average and outlier rules) are
+// deliberately absent: each depends on a sorting or accumulation surface this
+// vocabulary does not yet declare, and each has several defensible
+// conventions. See the TODO(content) notes at the end of the block.
+
+library Statistics
+{
+    //==
+    // # Histogram
+    //
+    // Convention, restated from the type: Counts[i] tallies the half-open bin
+    // [Start + i*w, Start + (i+1)*w) where w is the Range extent over the bin
+    // count, and the FINAL bin additionally includes the Range End.
+    // https://en.wikipedia.org/wiki/Histogram
+
+    // The number of bins.
+    BinCount(self: Histogram): Integer
+        => self.Counts.Count;
+
+    // The width of one bin: the Range extent divided by the bin count.
+    // Precondition: at least one bin.
+    BinWidth(self: Histogram): Number
+        => self.Range.Extent / self.Counts.Count.ToNumber;
+
+    // The total number of values tallied, across all bins. Values that fell
+    // outside Range were never counted and are not represented here.
+    TotalCount(self: Histogram): Integer
+        => self.Counts.Reduce(0, (total, count) => total + count);
+
+    // The lower edge of bin i: Start + i * BinWidth.
+    BinStart(self: Histogram, bin: Integer): Number
+        => self.Range.Start + bin.ToNumber * self.BinWidth;
+
+    // The midpoint of bin i.
+    BinCenter(self: Histogram, bin: Integer): Number
+        => self.Range.Start + (bin.ToNumber + 0.5) * self.BinWidth;
+
+    // The half-open span [BinStart(i), BinStart(i+1)) of bin i, as an interval.
+    BinInterval(self: Histogram, bin: Integer): NumberInterval
+        => NumberInterval(self.BinStart(bin), self.BinStart(bin + 1));
+
+    // The index of the bin containing value, or -1 when value lies outside
+    // Range. The Range End belongs to the final bin, per the type's convention.
+    BinIndexOf(self: Histogram, value: Number): Integer
+        => value < self.Range.Start || value > self.Range.End
+            ? -1
+            : value == self.Range.End
+                ? self.Counts.Count - 1
+                : ((value - self.Range.Start) / self.BinWidth).Floor.ToInteger;
+
+    // The relative frequency of bin i: its count over the total count, in
+    // [0, 1]. Precondition: the histogram tallied at least one value.
+    Frequency(self: Histogram, bin: Integer): Number
+        => self.Counts.At(bin).ToNumber / self.TotalCount.ToNumber;
+
+    // The empirical probability density in bin i: the relative frequency
+    // divided by the bin width, so that the bar areas sum to one. Precondition:
+    // the histogram tallied at least one value and the bin width is positive.
+    Density(self: Histogram, bin: Integer): Number
+        => self.Frequency(bin) / self.BinWidth;
+
+    //==
+    // # SummaryStatistics
+    //
+    // Convention, restated from the type: Variance and StandardDeviation use
+    // the SAMPLE (n - 1, Bessel-corrected) definition, and Kurtosis is EXCESS
+    // kurtosis (a normal sample scores 0, not 3).
+    // https://en.wikipedia.org/wiki/Descriptive_statistics
+
+    // The spread of the sample: Maximum - Minimum.
+    ValueRange(self: SummaryStatistics): Number
+        => self.Maximum - self.Minimum;
+
+    // The midpoint of the extremes: (Minimum + Maximum) / 2.
+    Midrange(self: SummaryStatistics): Number
+        => (self.Minimum + self.Maximum) / 2.0;
+
+    // The relative standard deviation: StandardDeviation / Mean. Meaningful
+    // only for ratio-scale data with a positive mean.
+    // https://en.wikipedia.org/wiki/Coefficient_of_variation
+    CoefficientOfVariation(self: SummaryStatistics): Number
+        => self.StandardDeviation / self.Mean;
+
+    // The standard error of the mean: StandardDeviation / sqrt(n).
+    // Precondition: Count > 0.
+    // https://en.wikipedia.org/wiki/Standard_error
+    StandardErrorOfMean(self: SummaryStatistics): Number
+        => self.StandardDeviation / self.Count.ToNumber.Sqrt;
+
+    // The kurtosis on the raw (non-excess) scale, where a normal sample scores
+    // 3. The stored Kurtosis field is the excess form.
+    RawKurtosis(self: SummaryStatistics): Number
+        => self.Kurtosis + 3.0;
+
+    // The population variance implied by the stored sample variance:
+    // s^2 * (n - 1) / n. Precondition: Count > 0.
+    // https://en.wikipedia.org/wiki/Bessel%27s_correction
+    PopulationVariance(self: SummaryStatistics): Number
+        => self.Variance * (self.Count - 1).ToNumber / self.Count.ToNumber;
+
+    //==
+    // # RunningStatistics
+    //
+    // Convention, restated from the type: M2 is the running sum of squared
+    // deviations from the current mean (Welford).
+    // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm
+
+    // The Bessel-corrected sample variance: M2 / (n - 1). Precondition:
+    // Count >= 2.
+    SampleVariance(self: RunningStatistics): Number
+        => self.M2 / (self.Count - 1).ToNumber;
+
+    // The population variance: M2 / n. Precondition: Count >= 1.
+    PopulationVariance(self: RunningStatistics): Number
+        => self.M2 / self.Count.ToNumber;
+
+    // The sample standard deviation: the square root of the sample variance.
+    SampleStandardDeviation(self: RunningStatistics): Number
+        => self.SampleVariance.Sqrt;
+
+    //==
+    // # FiveNumberSummary and BoxPlotStatistics
+    //
+    // https://en.wikipedia.org/wiki/Five-number_summary
+    // https://en.wikipedia.org/wiki/Box_plot
+
+    // The spread of the summary: Maximum - Minimum.
+    ValueRange(self: FiveNumberSummary): Number
+        => self.Maximum - self.Minimum;
+
+    // The interquartile range: UpperQuartile - LowerQuartile.
+    // https://en.wikipedia.org/wiki/Interquartile_range
+    InterquartileRange(self: FiveNumberSummary): Number
+        => self.UpperQuartile - self.LowerQuartile;
+
+    // The lower Tukey fence: LowerQuartile - 1.5 * IQR. Values below it are
+    // candidate outliers under the standard 1.5-IQR rule.
+    LowerFence(self: FiveNumberSummary): Number
+        => self.LowerQuartile - 1.5 * self.InterquartileRange;
+
+    // The upper Tukey fence: UpperQuartile + 1.5 * IQR.
+    UpperFence(self: FiveNumberSummary): Number
+        => self.UpperQuartile + 1.5 * self.InterquartileRange;
+
+    // The span covered by the whiskers: UpperWhisker - LowerWhisker.
+    WhiskerRange(self: BoxPlotStatistics): Number
+        => self.UpperWhisker - self.LowerWhisker;
+
+    // The number of data values lying beyond the whiskers.
+    OutlierCount(self: BoxPlotStatistics): Integer
+        => self.Outliers.Count;
+
+    // True when no value lies beyond the whiskers.
+    HasNoOutliers(self: BoxPlotStatistics): Boolean
+        => self.Outliers.Count == 0;
+
+    //==
+    // # Covariance
+    //
+    // https://en.wikipedia.org/wiki/Covariance_matrix
+
+    // The trace of the 2x2 covariance: the total variance Xx + Yy.
+    TotalVariance(self: Covariance2D): Number
+        => self.Xx + self.Yy;
+
+    // The determinant of the 2x2 covariance: Xx*Yy - Xy^2. Non-negative for any
+    // genuine covariance; zero when the sample is perfectly collinear.
+    Determinant(self: Covariance2D): Number
+        => self.Xx * self.Yy - self.Xy.Square;
+
+    // The Pearson correlation implied by the covariance:
+    // Xy / sqrt(Xx * Yy), in [-1, 1]. Precondition: both variances positive.
+    // https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
+    PearsonCorrelation(self: Covariance2D): Number
+        => self.Xy / (self.Xx * self.Yy).Sqrt;
+
+    // The standard deviation of x: the square root of its variance.
+    StandardDeviationX(self: Covariance2D): Number
+        => self.Xx.Sqrt;
+
+    // The standard deviation of y: the square root of its variance.
+    StandardDeviationY(self: Covariance2D): Number
+        => self.Yy.Sqrt;
+
+    //==
+    // # Fits
+    //
+    // https://en.wikipedia.org/wiki/Simple_linear_regression
+    // https://en.wikipedia.org/wiki/Coefficient_of_determination
+
+    // The fitted value at x: Slope * x + Intercept.
+    Predict(self: LinearFit, x: Number): Number
+        => self.Slope * x + self.Intercept;
+
+    // The x at which the fitted line crosses zero: -Intercept / Slope.
+    // Precondition: Slope is non-zero.
+    RootOfFit(self: LinearFit): Number
+        => -self.Intercept / self.Slope;
+
+    // The residual of an observation: the observed y minus the fitted value.
+    Residual(self: LinearFit, x: Number, y: Number): Number
+        => y - self.Predict(x);
+
+    // The magnitude of the correlation implied by the fit: sqrt(R^2). The sign
+    // of the correlation is the sign of the Slope, which this does not apply.
+    CorrelationMagnitude(self: LinearFit): Number
+        => self.RSquared.Sqrt;
+
+    // The degree of the fitted polynomial: the coefficient count minus one.
+    Degree(self: PolynomialFit): Integer
+        => self.Coefficients.Count - 1;
+
+    // The fitted value at x, by Horner evaluation of the ASCENDING-power
+    // coefficient array (Coefficients[k] multiplies x^k).
+    // https://en.wikipedia.org/wiki/Horner%27s_method
+    Predict(self: PolynomialFit, x: Number): Number
+        => self.Coefficients.Count.Range
+            .Map(k => self.Coefficients.At(k) * x.Pow(k.ToNumber))
+            .Reduce(0.0, (total, term) => total + term);
+
+    //==
+    // # CorrelationCoefficient
+    //
+    // https://en.wikipedia.org/wiki/Correlation
+
+    // The coefficient of determination for a correlation: the square of the
+    // coefficient, in [0, 1].
+    RSquared(self: CorrelationCoefficient): Number
+        => self.Value.Square;
+
+    // The strength of association, ignoring direction: the absolute value of
+    // the coefficient, in [0, 1].
+    Strength(self: CorrelationCoefficient): Number
+        => self.Value.Abs;
+
+    // True when the two variables move in opposite directions.
+    IsNegative(self: CorrelationCoefficient): Boolean
+        => self.Value < 0.0;
+
+    //==
+    // # Deliberate gaps
+    //
+    // TODO(content): the ESTIMATORS are not implemented here. Computing a
+    // SummaryStatistics, FiveNumberSummary, Quantiles or BoxPlotStatistics from
+    // an Array<Number> needs a sort (this vocabulary declares none) and a choice
+    // among the nine standard quantile-interpolation conventions; building a
+    // Histogram from a sample needs an accumulation surface that the affine
+    // builders cannot yet supply (see the TODO(compiler-gap) in
+    // primitives.plato). Spearman and Kendall correlation need ranking, i.e. a
+    // sort. MovingAverage and OutlierDetection are sum types describing a rule,
+    // and applying a rule to a series again needs the accumulation surface.
+    // These are gaps of missing infrastructure, not of missing formulas.
+}

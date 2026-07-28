@@ -16,6 +16,30 @@ library CoreAlgebra
 {
     //==
     // Orderable
+    //
+    // LessThanOrEquals itself cannot be derived here: it IS the primitive of
+    // Orderable, so there is nothing on the concept surface to build it from.
+    // The only mechanical lever for the outstanding LessThanOrEquals obligations
+    // is a *narrower* concept whose implementors share a carrier with a known
+    // order — that is `Index` (single `Value: Integer`), and its generic body
+    // lives in `collections-functional.library.plato` because P2 owns `Index`
+    // (LIBRARIES.md rule 10). It discharges every typed-index implementor.
+    //
+    // The remaining implementors have no shared derivable order and each needs a
+    // concrete body in its owning package, not a generic one here:
+    //   - Rational (numbers) — ordering is a/b <= c/d via cross-multiplication,
+    //     and its sign handling depends on the denominator's sign. Not mechanical.
+    //   - Proportion / Percent / Probability / Cardinal / SafetyFactor — trivially
+    //     order on their single numeric field, but they are not Index implementors
+    //     and their bodies belong to numbers.plato / engineering.plato territory.
+    //   - Instant / BeatTime (time) — single-field, order on SecondsSinceEpoch
+    //     and Beats respectively; concrete bodies for the time domain.
+    //   - FrameTime (time) — carries Frame AND Rate. Comparing on Frame alone is
+    //     WRONG whenever two FrameTimes carry different rates; a correct body
+    //     must convert both to seconds. Explicitly not mechanical.
+    //   - Boolean / String / Character (primitives) — host-intrinsic orders
+    //     (false < true, lexicographic, code-point). Not expressible on a concept.
+    // TODO(cross-package): fill the above in their owning packages.
 
     // True when a is strictly less than b.
     LessThan(a: Orderable, b: Orderable): Boolean

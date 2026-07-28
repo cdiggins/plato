@@ -127,3 +127,160 @@ type Slab3D
     Normal: Direction3D;
     Interval: NumberInterval;
 }
+
+//==
+// # Flat-primitive operations
+//
+// The measure, centroid, containment and nearest-point bodies for the types above
+// (`LIBRARIES.md` ground rules 1 and 10: an inline `library` block is the
+// sanctioned home for bodies that belong beside their declarations).
+//
+// Conventions:
+//   * `Bounds` for the two segment types comes from the generic
+//     `Bounds(PointSet2D/3D)` in `geometry.library.plato`; nothing here respells it.
+//   * Every `Direction` field is a UNIT vector by its type invariant, so the
+//     projection formulas below divide by no length.
+//   * `Contains` on the half-plane, half-space and slab regions is CLOSED: a point
+//     exactly on the bounding line/plane is contained, matching the concept doc
+//     ("for closed shapes the boundary counts as inside") and the `<=` in each
+//     declaration's own doc comment.
+//   * `ClosestPoint` on a REGION (half-plane, half-space) returns the query point
+//     itself when the query is inside, as `NearestPoint2D`/`3D` permits.
+//   * The signed distance of a point p from the world origin along a unit normal n
+//     is Dot(n, p) — written `p.PositionVector.Dot(n.Vector)` here, since a point
+//     is not a vector in this vocabulary (`transforms.plato`).
+
+library Lines
+{
+    //==
+    // # Line segments
+
+    // The two endpoints, in the segment's own direction (A first).
+    Points(s: LineSegment2D): Array<Point2D>
+        => 2.MapRange(i => i == 0 ? s.A : s.B);
+
+    // The two endpoints, A first.
+    Points(s: LineSegment3D): Array<Point3D>
+        => 2.MapRange(i => i == 0 ? s.A : s.B);
+
+    // The distance between the endpoints.
+    Length(s: LineSegment2D): Number
+        => s.A.Between(s.B).Magnitude;
+
+    // The distance between the endpoints.
+    Length(s: LineSegment3D): Number
+        => s.A.Between(s.B).Magnitude;
+
+    // The midpoint: the center of mass of a uniform-density segment.
+    Centroid(s: LineSegment2D): Point2D
+        => s.A.MidPoint(s.B);
+
+    // The midpoint of the segment.
+    Centroid(s: LineSegment3D): Point3D
+        => s.A.MidPoint(s.B);
+
+    // The point of the segment nearest to `point` (the projection clamped to the
+    // segment's span).
+    ClosestPoint(s: LineSegment2D, point: Point2D): Point2D
+        => ClosestPointOnSegment(s.A, s.B, point);
+
+    // The point of the segment nearest to `point`.
+    ClosestPoint(s: LineSegment3D, point: Point3D): Point3D
+        => ClosestPointOnSegment(s.A, s.B, point);
+
+    // The segment with both endpoints carried through the mapping.
+    Deform(s: LineSegment2D, mapping: Function1<Point2D, Point2D>): LineSegment2D
+        => (mapping(s.A), mapping(s.B));
+
+    // The segment with both endpoints carried through the mapping.
+    Deform(s: LineSegment3D, mapping: Function1<Point3D, Point3D>): LineSegment3D
+        => (mapping(s.A), mapping(s.B));
+
+    //==
+    // # Infinite lines and rays
+    //
+    // The foot of the perpendicular from `point`: Origin + Direction * t with
+    // t = Dot(point - Origin, Direction). The line takes t unrestricted; the ray
+    // clamps t to the non-negative half, so a query behind the ray's origin
+    // projects onto the origin itself.
+    // https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+
+    // The point of the line nearest to `point`.
+    ClosestPoint(l: Line2D, point: Point2D): Point2D
+        => l.Origin.Add(l.Direction.Vector.Multiply(l.Origin.Between(point).Dot(l.Direction.Vector)));
+
+    // The point of the line nearest to `point`.
+    ClosestPoint(l: Line3D, point: Point3D): Point3D
+        => l.Origin.Add(l.Direction.Vector.Multiply(l.Origin.Between(point).Dot(l.Direction.Vector)));
+
+    // The point of the ray nearest to `point`; the ray's origin when the query
+    // lies behind it.
+    ClosestPoint(r: Ray2D, point: Point2D): Point2D
+        => r.Origin.Add(r.Direction.Vector.Multiply(
+            r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0)));
+
+    // The point of the ray nearest to `point`; the ray's origin when the query
+    // lies behind it.
+    ClosestPoint(r: Ray3D, point: Point3D): Point3D
+        => r.Origin.Add(r.Direction.Vector.Multiply(
+            r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0)));
+
+    //==
+    // # Planes and half-spaces
+    //
+    // Hesse normal form: the plane is the set of p with Dot(Normal, p) = Distance,
+    // so SignedDistance(p) = Dot(Normal, p) - Distance is the signed distance from
+    // the plane, positive on the side the normal points to.
+    // https://en.wikipedia.org/wiki/Hesse_normal_form
+
+    // The signed distance from `point` to the plane, positive on the side the
+    // normal points to. Exact because Normal is a unit vector by its invariant.
+    SignedDistance(pl: Plane, point: Point3D): Number
+        => point.PositionVector.Dot(pl.Normal.Vector) - pl.Distance;
+
+    // The signed distance from `point` to the half-plane's boundary line, positive
+    // outside the half-plane.
+    SignedDistance(h: HalfPlane2D, point: Point2D): Number
+        => point.PositionVector.Dot(h.Normal.Vector) - h.Distance;
+
+    // The foot of the perpendicular from `point` onto the plane.
+    ClosestPoint(pl: Plane, point: Point3D): Point3D
+        => point.Subtract(pl.Normal.Vector.Multiply(pl.SignedDistance(point)));
+
+    // True when `point` lies on or behind the boundary plane
+    // (Dot(Normal, point) <= Distance). Boundary inclusive.
+    Contains(h: HalfSpace, point: Point3D): Boolean
+        => h.Boundary.SignedDistance(point) <= 0.0;
+
+    // The query point itself when it is inside the half-space, otherwise its
+    // projection onto the boundary plane.
+    ClosestPoint(h: HalfSpace, point: Point3D): Point3D
+        => h.Contains(point) ? point : h.Boundary.ClosestPoint(point);
+
+    // True when `point` lies on or behind the boundary line. Boundary inclusive.
+    Contains(h: HalfPlane2D, point: Point2D): Boolean
+        => h.SignedDistance(point) <= 0.0;
+
+    // The query point itself when it is inside the half-plane, otherwise its
+    // projection onto the boundary line.
+    ClosestPoint(h: HalfPlane2D, point: Point2D): Point2D
+        => h.Contains(point)
+        ? point
+        : point.Subtract(h.Normal.Vector.Multiply(h.SignedDistance(point)));
+
+    //==
+    // # Slabs
+    //
+    // A slab is the preimage of a closed number interval under the linear map
+    // p -> Dot(Normal, p), so containment is exactly interval containment.
+    // `Contains(IntervalLike, value)` (P4) is endpoint-inclusive and assumes the
+    // interval is stored forward (Start <= End), which is the slab's own invariant.
+
+    // True when the point's signed distance along Normal lies within Interval.
+    Contains(s: Slab2D, point: Point2D): Boolean
+        => s.Interval.Contains(point.PositionVector.Dot(s.Normal.Vector));
+
+    // True when the point's signed distance along Normal lies within Interval.
+    Contains(s: Slab3D, point: Point3D): Boolean
+        => s.Interval.Contains(point.PositionVector.Dot(s.Normal.Vector));
+}
