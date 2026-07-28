@@ -256,3 +256,5 @@ Using a 2-sigma rule, what should a robust classifier return?
 - **missing-function** — no bridge from `UncertainPoint2D` triples to an uncertain
   $\Delta$ (`UncertainNumber`). Without propagation helpers, covariance fields stay
   decorative in geometry kernels.
+
+> Resolved 2026-07-28: planar-shapes.plato added Orient2D(a, b, c): Integer (+1 left / -1 right / 0 collinear) (343) and SignedArea(Triangle2D) distinct from the absolute Area (344).

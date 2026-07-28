@@ -252,3 +252,5 @@ matrix will not round-trip through those conversions.
 - **missing-function** — `16-lines.plato`: no `SignedDistance(plane: Plane, point: Point3D)`
   helper. Reflection lessons (and almost every plane query) need
   $\mathbf{n}\cdot p - d$; today callers re-derive it from fields ad hoc.
+
+> Resolved 2026-07-28: SignedDistance(Plane, Point3D) confirmed present in lines.plato (item 338); Side / Flip / FromPointNormal helpers were added alongside it.

@@ -274,3 +274,5 @@ though v3 does not yet declare one for this pair.
 - **doc-comment** — `16-lines.plato`: `Plane.Distance` should state the unit-normal
   precondition in the field comment (it is implied by `Direction3D` but readers still
   confuse $d$ with Euclidean distance to an arbitrary point).
+
+> Resolved 2026-07-28: lines.plato now declares PlaneHit3D (item 207) and Intersect(Line3D/Ray3D/LineSegment3D, Plane) returning it (205); SignedDistance(Plane, Point3D) already existed (206); the Plane.Distance field doc-comment now states the unit-normal precondition (208).

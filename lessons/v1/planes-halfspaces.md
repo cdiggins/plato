@@ -219,3 +219,5 @@ Same idea; different packaging. Do not look for a `HalfSpace2D` name.
 - **doc-comment** — `16-lines.plato`: `Plane.Distance` is “signed distance from the world
   origin.” Emphasize that it is not the distance from an arbitrary reference point, and
   that units match the coordinate frame — easy to misread as a generic offset.
+
+> Resolved 2026-07-28: lines.plato gained Side(Plane, Point3D): Integer (286, beside the existing SignedDistance), Flip(Plane) and Flip(HalfSpace) (287), and FromPointNormal(point, normal): Plane (288); the Plane.Distance doc-comment now emphasizes world-origin distance and frame units (290).

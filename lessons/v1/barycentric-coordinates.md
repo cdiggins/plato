@@ -251,3 +251,5 @@ hits). Do not clamp to $0$ unless you intend closest-point-on-triangle behavior.
   unrepresentable" taste.
 
 > Resolved 2026-07-28: BarycentricCoordinate doc now states the U->A/V->B/W->C vertex binding and the U+V+W=1 support-plane invariant (item 20). The two-component (V,W) reshape was REJECTED (item 22): three fields kept, invariant documented, and an `IsNormalized(bary, tolerance)` predicate added in numeric-structures.library.plato instead. (stdlib commit pending).
+
+> Resolved 2026-07-28: planar-shapes.plato added SignedArea(Triangle2D) (21) and the Barycentric(Triangle2D, Point2D) / Point(Triangle2D, BarycentricCoordinate) maps (19); the BarycentricCoordinate type in points.plato was left untouched.

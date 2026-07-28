@@ -1010,6 +1010,18 @@ library SpatialPrimitives
     Area(t: Triangle3D): Number
         => t.TwiceVectorArea.Magnitude * 0.5;
 
+    // The unit face normal, following the right-hand rule around A, B, C (this
+    // type's stated orientation). Undefined for a degenerate (collinear) triangle,
+    // whose vector area is zero.
+    Normal(t: Triangle3D): Direction3D
+        => Direction3D(t.TwiceVectorArea.Normalize);
+
+    // The plane the triangle lies in, in Hesse form: the face normal with Distance
+    // the signed distance from the world origin (Dot(Normal, A)). The declared
+    // conversion clipping and BSP authors reach for.
+    FromTriangle(t: Triangle3D): Plane
+        => (t.Normal, t.A.PositionVector.Dot(t.Normal.Vector));
+
     // The sum of the three side lengths.
     Perimeter(t: Triangle3D): Number
         => t.A.Between(t.B).Magnitude

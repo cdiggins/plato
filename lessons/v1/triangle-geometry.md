@@ -228,3 +228,5 @@ of it as a patch. `Area` uses the 3D cross-product magnitude.
 - **doc-comment** — `18-spatial-primitives.plato`: state explicitly that `Triangle3D` is a
   zero-thickness patch (no `ContainsPoint3D`) so learners do not expect solid
   containment.
+
+> Resolved 2026-07-28: Normal(Triangle3D): Direction3D and FromTriangle(Triangle3D): Plane added to spatial-primitives.plato (438/439); SignedArea, Circumcenter, Incenter and Barycentric for Triangle2D added to planar-shapes.plato (438).

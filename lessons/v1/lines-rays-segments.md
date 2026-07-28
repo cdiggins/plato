@@ -226,3 +226,5 @@ they are not closed loops. That is unrelated to open/closed intervals on $t$.
 - **doc-comment** — `16-lines.plato`: `LineSegment2D` says “degenerate when A equals B”
   but does not state the $t\in[0,1]$ parameterization explicitly (rays/lines do state
   theirs). Align the segment comment with the same parametric contract.
+
+> Resolved 2026-07-28: lines.plato added PointAt and Parameter for line/ray/segment in 2D and 3D (220), ClosestPoints(Line3D, Line3D) plus the segment-segment pair (221), and SupportingLine / SupportingRay conversions (222); the LineSegment2D/3D doc-comments now state the t in [0,1] contract (223).

@@ -259,3 +259,5 @@ in a way that reconstructs $P$.
   time; a single documented implementation would lock the epsilon policy.
 
 > Resolved 2026-07-28 (points side): BarycentricCoordinate doc states vertex binding (U -> first vertex) and off-plane/degenerate behavior when U+V+W != 1; `Evaluate` + `IsNormalized` added in numeric-structures.library.plato. The Triangle2D<->barycentric maps (items 434/437/438) are owned by planar-shapes and left to that agent (item 436, stdlib commit pending).
+
+> Resolved 2026-07-28: planar-shapes.plato added the Barycentric / Point maps (434), SignedArea(Triangle2D) with a signed-vs-absolute doc note (435), and IsInside spelled via barycentrics (437).
