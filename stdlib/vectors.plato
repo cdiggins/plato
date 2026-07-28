@@ -96,14 +96,19 @@ type Vector3D
 }
 
 // An N-dimensional vector with runtime-determined arity.
-// VectorN is the one Vector implementor whose components are not its fields.
-// A concern was raised (2026-07-28) that the writer synthesizes At/Count from a
-// type's FIELDS and would therefore emit Count == 1 here. That was VERIFIED AND
-// REFUTED by emitting and running the code: the writer forwards to the collection
-// field, emitting "Count { get => Components.Count; }" and
-// "At(int index) => Components[index];". Observed Count == 5 and At(2) == 3 for a
-// 5-component VectorN. The generic bodies in numeric-structures.library.plato that
-// read Count/At as the component surface are correct for VectorN.
+// VectorN is the one Vector implementor whose components are not its fields, so
+// the writer's At/Count synthesis has to delegate to the field rather than count
+// fields. It does: verified by emitting and running the code, a 5-component
+// VectorN reports Count == 5 and At(2) == 3. The generic bodies in
+// numeric-structures.library.plato that read Count/At as the component surface are
+// correct here.
+//
+// This worked only because the field is spelled Array<Number>. Until 099c447 the
+// delegation was gated on a type-NAME test ("Array"/"Array2D"/"Array3D"), so an
+// IArray<T>-typed field -- the stdlib-legacy spelling -- fell through and emitted
+// Count => 1, and Array2D/Array3D matched despite having no linear Count. The fix
+// keys off the field type's concept. Keep the field's type Indexable-providing if
+// this declaration is ever reshaped.
 //
 // The real runtime gap is elsewhere and much larger: the emitted vector types
 // currently throw NotImplementedException for Add/Subtract/Multiply/Magnitude/Zero,

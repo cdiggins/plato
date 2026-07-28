@@ -316,11 +316,18 @@ Ordered by how much they block.
    `p.PositionVector().Magnitude().Subtract(radius)` and would throw rather than return `d-r`.
    This is the single largest gap between "lints clean" and "works", and it is invisible to lint.
 
-   *(A previous revision of this list claimed a `VectorN` `At`/`Count` writer bug here. That was
-   inferred from the `Linter.cs:107-113` exemption comment and is **REFUTED**: the code was
-   emitted and run, the writer forwards to the collection field, and a 5-component `VectorN`
-   reports `Count == 5`, `At(2) == 3`. Inference from a comment is not evidence; the executed
-   result is.)*
+   *(On the `VectorN` `At`/`Count` question, which this list got wrong twice in opposite
+   directions: the writer DID have a real bug of exactly that shape, fixed in `099c447`. The
+   single-collection-field special case was gated on a type-NAME test against
+   `"Array"`/`"Array2D"`/`"Array3D"`. stdlib's `VectorN` declares `Components: Array<Number>`,
+   matched that name, and emitted correctly — which is why emitting and running it showed
+   `Count == 5`. But `IArray<T>`, the spelling `stdlib-legacy` uses throughout, missed the case
+   and emitted `Count => 1` with an `At` returning the list where a `Number` was declared; and
+   `Array2D`/`Array3D` matched when they should not, having no linear `Count`. The fix keys off
+   the field type's concept instead. Latent, not live — no type in the shipping generation
+   reaches the synthesis. Lesson: the inference identified a real defect but the wrong type, and
+   the execution check tested the one spelling that worked and over-generalised from it. Neither
+   alone was sufficient.)*
 3. **LINT003 statement-body blindness** (`Linter.cs:184-198`). Fields read only inside a `var`
    initializer or a statement block are reported unread. Real in-tree false positives today:
    `Frame3D.Origin/XAxis/YAxis/ZAxis`, `AffineTransform3D.Matrix`, `CylindricalShell.*`,
