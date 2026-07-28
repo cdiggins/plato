@@ -191,7 +191,7 @@ with the same field shape: `(t.Cos, t.Sin)` in a `Point2D`-returning position *i
 This is the one structural hole in the nominal system, and it works at return and argument
 boundaries where the expected type is known. Mechanically, `(a, b)` is a construction of the
 stdlib type `Tuple2<T0, T1>` (the front end resolves it as a `Tuple2` call — a compilation
-without the `TupleN` declarations from `00-primitives.plato` rejects tuple expressions; `TupleN`
+without the `TupleN` declarations from `primitives.plato` rejects tuple expressions; `TupleN`
 exists up to 10 fields), which then coerces to the same-shape struct.
 
 **A function named after a type is a conversion.** `Point3D(v: Vector3D): Point3D => …` defines

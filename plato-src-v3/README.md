@@ -26,7 +26,7 @@ Code generated from this vocabulary targets, **in priority order**:
 4. **TypeScript**
 5. Others as capacity allows: **GLSL**, **Rust**, **Python**
 
-This ordering governs intrinsics policy (`70-intrinsics.plato`): a function may be
+This ordering governs intrinsics policy (`intrinsics.plato`): a function may be
 declared intrinsic only if every priority-1..4 backend can supply it natively or with a
 trivial shim. Anything host-specific (C# SIMD types, IEEE nextafter-grade functions,
 midpoint-rounding variants) is excluded and noted in that file's porting notes; lower-
@@ -40,7 +40,7 @@ dotnet <path-to>/Plato.CLI.dll lint plato-src-v3
 ```
 
 The folder must parse and resolve with zero errors. It is self-contained (declares its own
-primitives in `00-primitives.plato`).
+primitives in `primitives.plato`).
 
 ## Conventions
 
@@ -68,7 +68,7 @@ primitives in `00-primitives.plato`).
 - Collection fields use `Array<T>` (or `Array2D<T>`, `Array3D<T>`).
 - Cross-array references use typed index types implementing the `Index` concept
   (`VertexIndex`, `BoneIndex`, `GraphVertexIndex`, ...), never raw `Integer`; `-1` means
-  "none". `ItemIndex` (file 05) is the general-purpose form for caller-supplied or pool
+  "none". `ItemIndex` (numbers.plato) is the general-purpose form for caller-supplied or pool
   lists. CSR/offset arrays stay `Array<Integer>` (they hold one-past-end boundaries, not
   element references), as do bitmasks, counts, labels, axis selectors, and opaque host
   handles.
@@ -79,41 +79,46 @@ primitives in `00-primitives.plato`).
   into nested component types (e.g. matrices store row vectors).
 - Angles are `Angle`, never raw `Number`. Distances/positions in unit-bearing contexts may
   still use `Number` when the domain is unit-agnostic (pure math), `Length` when physical.
+- **Naming:** domain declaration files are `domain.plato`; pure concept files are
+  `domain.concepts.plato`; library files are `domain.library.plato`. There are no numeric
+  prefixes; reading order lives in this README's layer table below.
 
 ## Layers and file map
 
+This ordered index is now the canonical reading order.
+
 | Layer | Files | Owner |
 |-------|-------|-------|
-| Foundation | 00-14 | core |
-| Geometry primitives | 15-19 | agent A |
-| Curves, surfaces, solids | 20-25 | agent B |
-| Fields, implicits, noise, sampling | 26-29 | agent C |
-| Topology, meshes, spatial structures | 30-35 | agent D |
-| Animation & motion | 36-39 | agent E |
-| Vector graphics & text | 40-43 | agent F |
-| Color science & imaging | 44-47 | agent G |
-| Rendering | 48-52 | agent H |
-| Physics & simulation | 53-57 | agent I |
-| Math, statistics, signals | 58-63 | agent J |
-| Advanced & applied | 64-69 | agent K |
+| Foundation | primitives, core.concepts, algebra.concepts, collections.concepts, functional.concepts, numbers, quantities, time, vectors, matrices, rotations, points, intervals-bounds, transforms, color | core |
+| Geometry primitives | geometry.concepts, lines, planar-shapes, spatial-primitives, polygons | agent A |
+| Curves, surfaces, solids | curves-surfaces.concepts, curves-2d, curves-3d, splines, surfaces, solids | agent B |
+| Fields, implicits, noise, sampling | fields, implicit-sdf, noise, sampling-grids | agent C |
+| Topology, meshes, spatial structures | topology, meshes, mesh-attributes, pointclouds-voxels, spatial-structures, spatial-queries | agent D |
+| Animation & motion | easing, keyframes-tracks, skeletal-animation, motion-graphics | agent E |
+| Vector graphics & text | paths, vector-styling, text, scene2d | agent F |
+| Color science & imaging | color-spaces, images, image-processing, texturing | agent G |
+| Rendering | cameras, lights, materials, scene3d, render-settings | agent H |
+| Physics & simulation | kinematics, rigid-dynamics, collision, joints-constraints, particles-simulation | agent I |
+| Math, statistics, signals | statistics, random, signals, polynomials, optimization, uncertainty | agent J |
+| Advanced & applied | differential-geometry, graphs, engineering, scientific-data, geo-spatial, higher-dimensions, intrinsics | agent K |
 
 Foundation files:
 
-- `00-primitives.plato` — compiler-assumed primitives, tuples, functions, arrays.
-- `01-concepts-core.plato` — Equatable, Value, Hashable, Orderable, Comparable, Logical, Bitwise.
-- `02-concepts-algebra.plato` — Additive..Arithmetic, ScalarArithmetic, Interpolatable, Numerical, Real, Whole, Normed, MetricSpace, Lattice, Difference.
-- `03-concepts-collections.plato` — Countable, Index, Indexable family, Sliceable, Concatenable, SetLike, MapLike.
-- `04-concepts-functional.plato` — Procedural, Bijective, Periodic, Boundable.
-- `05-numbers.plato` — Complex, Rational, Proportion, Percent, Probability, ItemIndex, Cardinal.
-- `06-quantities.plato` — Quantity concept, Dimension/UnitOfMeasure/DynamicQuantity, ~35 physical quantity types.
-- `07-time.plato` — Instant, Duration, TimeInterval, FrameRate, FrameTime, Timecode, Tempo, BeatTime.
-- `08-vectors.plato` — Vector concept, Number2/3/4/8, Vector2D/3D, VectorN, IntegerVector2/3/4, Direction2D/3D.
-- `09-matrices.plato` — Matrix concept, Matrix2x2..4x4, Matrix3x2, Matrix4x3, SymmetricMatrix3x3, MatrixN, Tensor.
-- `10-rotations.plato` — Quaternion, AxisAngle, EulerAngles, RotationOrder, Rotation2D, Rotor2D/3D, Bivector2D/3D.
-- `11-points.plato` — Coordinate concept, Point2D/3D, PointN, homogeneous points, polar/cylindrical/spherical/barycentric, UvCoordinate, UvwCoordinate, GeoCoordinate.
-- `12-intervals-bounds.plato` — Interval concept, NumberInterval, AngleInterval, Bounds concept, Bounds2D/3D, IntegerBounds2D/3D, Size2D/3D, IntegerSize2D/3D, Rect2D.
-- `13-transforms.plato` — Transformable/Deformable concepts, Pose2D/3D, Transform2D/3D (TRS), affine/projective transforms, Frame2D/3D, Basis3D, Motor3D (dual quaternion), plus `library Transforms`: conversions between all transform representations, `p.Transform(t)` application, Compose/Inverse/Identity, and the Point2D/3D Difference + Lerp implementations.
-- `14-color.plato` — Color (linear RGBA), Color8, ColorHSV, ColorHSL, ColorStop, ColorGradient.
+- `primitives.plato` — compiler-assumed primitives, tuples, functions, arrays.
+- `core.concepts.plato` — Equatable, Value, Hashable, Orderable, Comparable, Logical, Bitwise.
+- `algebra.concepts.plato` — Additive..Arithmetic, ScalarArithmetic, Interpolatable, Numerical, Real, Whole, Normed, MetricSpace, Lattice, Difference.
+- `collections.concepts.plato` — Countable, Index, Indexable family, Sliceable, Concatenable, SetLike, MapLike.
+- `functional.concepts.plato` — Procedural, Bijective, Periodic, Boundable.
+- `numbers.plato` — Complex, Rational, Proportion, Percent, Probability, ItemIndex, Cardinal.
+- `quantities.plato` — Quantity concept, Dimension/UnitOfMeasure/DynamicQuantity, ~35 physical quantity types.
+- `time.plato` — Instant, Duration, TimeInterval, FrameRate, FrameTime, Timecode, Tempo, BeatTime.
+- `vectors.plato` — Vector concept, Number2/3/4/8, Vector2D/3D, VectorN, IntegerVector2/3/4, Direction2D/3D.
+- `matrices.plato` — Matrix concept, Matrix2x2..4x4, Matrix3x2, Matrix4x3, SymmetricMatrix3x3, MatrixN, Tensor.
+- `rotations.plato` — Quaternion, AxisAngle, EulerAngles, RotationOrder, Rotation2D, Rotor2D/3D, Bivector2D/3D.
+- `points.plato` — Coordinate concept, Point2D/3D, PointN, homogeneous points, polar/cylindrical/spherical/barycentric, UvCoordinate, UvwCoordinate, GeoCoordinate.
+- `intervals-bounds.plato` — Interval concept, NumberInterval, AngleInterval, Bounds concept, Bounds2D/3D, IntegerBounds2D/3D, Size2D/3D, IntegerSize2D/3D, Rect2D.
+- `transforms.plato` — Transformable/Deformable concepts, Pose2D/3D, Transform2D/3D (TRS), affine/projective transforms, Frame2D/3D, Basis3D, Motor3D (dual quaternion), plus `library Transforms`: conversions between all transform representations, `p.Transform(t)` application, Compose/Inverse/Identity, and the Point2D/3D Difference + Lerp implementations.
+- `color.plato` — Color (linear RGBA), Color8, ColorHSV, ColorHSL, ColorStop, ColorGradient.
 
 ## Cross-domain name registry
 
@@ -123,37 +128,37 @@ domain (`ImageHistogram`, not a second `Histogram`).
 
 | Name | Owner file |
 |------|-----------|
-| Everything in files 00-14 | foundation |
-| `Geometry`, `Geometry2D/3D/ND`, `Bounded2D/3D`, `PointSet2D/3D` concepts | 15 (A) |
-| `Line2D/3D`, `Ray2D/3D`, `LineSegment2D/3D`, `Plane`, `HalfSpace` | 16 (A) |
-| `Triangle2D`, `Quad2D`, `Circle`, `Ellipse`, `Capsule2D`, `RegularPolygon` | 17 (A) |
-| `Sphere`, `Box3D`, `Cylinder`, `Cone`, `Capsule3D`, `Torus`, `Ellipsoid`, `Triangle3D`, `Quad3D`, `Tetrahedron` | 18 (A) |
-| `Polygon2D`, `Polygon3D`, `Polyline2D`, `Polyline3D`, `PolygonWithHoles2D` | 19 (A) |
-| `Curve1D/2D/3D`, `ClosedCurve2D/3D`, `Surface`, `ParametricSurface`, `Solid` concepts | 20 (B) |
-| `CircularArc2D`, `QuadraticBezier2D`, `CubicBezier2D` | 21 (B) |
-| `CubicBezier3D`, `Helix` | 22 (B) |
-| `BSplineCurve2D/3D`, `NurbsCurve2D/3D`, `HermiteCurve2D/3D`, `CatmullRomCurve2D/3D` | 23 (B) |
-| `NurbsSurface`, `BezierPatch`, `SurfaceOfRevolution`, `ExtrudedSurface` | 24 (B) |
-| `ScalarField2D/3D`, `VectorField2D/3D`, `SignedDistanceField2D/3D` concepts | 26 (C) |
-| `VertexIndex`, `EdgeIndex`, `FaceIndex`, `CornerIndex`, `HalfEdgeIndex`, `VertexPair` | 30 (D) |
-| `TriangleMesh3D`, `QuadMesh3D`, `PolygonMesh3D`, `LineSet3D`, `PointCloud3D`, `TriangleFace` | 31 (D) |
-| `RayHit2D`, `RayHit3D` | 35 (D) |
-| `ClassicEasing`, `SpringParameters`, `Keyframe<T>`, `AnimationTrack<T>`, `AnimationClip` | 36-37 (E) |
-| `Bone`, `Skeleton`, `SkeletonPose` (skeletal anim; physics never uses bare `Joint`) | 38 (E) |
-| `Path2D`, `PathSegment2D` | 40 (F) |
-| `StrokeStyle`, `FillStyle` | 41 (F) |
-| `Image` concept, `Bitmap`, `PixelFormat` | 45 (G) |
-| `BlendMode` | 46 (G) |
-| `Texture2D`, `Texture3D`, `TextureCube`, `TextureSampler`, `TextureBinding` | 47 (G) |
-| `PerspectiveCamera`, `OrthographicCamera` | 48 (H) |
-| `Material` (rendering PBR material) | 50 (H) |
-| `RigidBody2D/3D`, `MassProperties2D/3D`, `BodyIndex` | 54 (I) |
-| `Histogram`, `SummaryStatistics` | 58 (J) |
-| `RandomState`, `NormalDistribution`, `UniformDistribution` | 59 (J) |
-| `Spectrum`, `SampledSignal` | 60 (J) |
-| `Polynomial` | 61 (J) |
-| `Tolerance` | 63 (J) |
-| `Graph`, `GraphEdge` | 65 (K) |
+| Foundation files (primitives…color) | foundation |
+| `Geometry`, `Geometry2D/3D/ND`, `Bounded2D/3D`, `PointSet2D/3D` concepts | geometry.concepts.plato (A) |
+| `Line2D/3D`, `Ray2D/3D`, `LineSegment2D/3D`, `Plane`, `HalfSpace` | lines.plato (A) |
+| `Triangle2D`, `Quad2D`, `Circle`, `Ellipse`, `Capsule2D`, `RegularPolygon` | planar-shapes.plato (A) |
+| `Sphere`, `Box3D`, `Cylinder`, `Cone`, `Capsule3D`, `Torus`, `Ellipsoid`, `Triangle3D`, `Quad3D`, `Tetrahedron` | spatial-primitives.plato (A) |
+| `Polygon2D`, `Polygon3D`, `Polyline2D`, `Polyline3D`, `PolygonWithHoles2D` | polygons.plato (A) |
+| `Curve1D/2D/3D`, `ClosedCurve2D/3D`, `Surface`, `ParametricSurface`, `Solid` concepts | curves-surfaces.concepts.plato (B) |
+| `CircularArc2D`, `QuadraticBezier2D`, `CubicBezier2D` | curves-2d.plato (B) |
+| `CubicBezier3D`, `Helix` | curves-3d.plato (B) |
+| `BSplineCurve2D/3D`, `NurbsCurve2D/3D`, `HermiteCurve2D/3D`, `CatmullRomCurve2D/3D` | splines.plato (B) |
+| `NurbsSurface`, `BezierPatch`, `SurfaceOfRevolution`, `ExtrudedSurface` | surfaces.plato (B) |
+| `ScalarField2D/3D`, `VectorField2D/3D`, `SignedDistanceField2D/3D` concepts | fields.plato (C) |
+| `VertexIndex`, `EdgeIndex`, `FaceIndex`, `CornerIndex`, `HalfEdgeIndex`, `VertexPair` | topology.plato (D) |
+| `TriangleMesh3D`, `QuadMesh3D`, `PolygonMesh3D`, `LineSet3D`, `PointCloud3D`, `TriangleFace` | meshes.plato (D) |
+| `RayHit2D`, `RayHit3D` | spatial-queries.plato (D) |
+| `ClassicEasing`, `SpringParameters`, `Keyframe<T>`, `AnimationTrack<T>`, `AnimationClip` | easing.plato, keyframes-tracks.plato (E) |
+| `Bone`, `Skeleton`, `SkeletonPose` (skeletal anim; physics never uses bare `Joint`) | skeletal-animation.plato (E) |
+| `Path2D`, `PathSegment2D` | paths.plato (F) |
+| `StrokeStyle`, `FillStyle` | vector-styling.plato (F) |
+| `Image` concept, `Bitmap`, `PixelFormat` | images.plato (G) |
+| `BlendMode` | image-processing.plato (G) |
+| `Texture2D`, `Texture3D`, `TextureCube`, `TextureSampler`, `TextureBinding` | texturing.plato (G) |
+| `PerspectiveCamera`, `OrthographicCamera` | cameras.plato (H) |
+| `Material` (rendering PBR material) | materials.plato (H) |
+| `RigidBody2D/3D`, `MassProperties2D/3D`, `BodyIndex` | rigid-dynamics.plato (I) |
+| `Histogram`, `SummaryStatistics` | statistics.plato (J) |
+| `RandomState`, `NormalDistribution`, `UniformDistribution` | random.plato (J) |
+| `Spectrum`, `SampledSignal` | signals.plato (J) |
+| `Polynomial` | polynomials.plato (J) |
+| `Tolerance` | uncertainty.plato (J) |
+| `Graph`, `GraphEdge` | graphs.plato (K) |
 
 Generic nouns that MUST be domain-qualified wherever declared: Node, Layer, Track, Channel,
 Sample, Grid, Cell, Filter, Kernel, Key, Frame, Edge, Vertex, Face, Segment, Weight, Style,
