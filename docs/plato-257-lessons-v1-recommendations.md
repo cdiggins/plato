@@ -1,0 +1,529 @@
+# plato-257 Lessons V1 — aggregated library recommendations
+
+Harvested from **110** lesson files under `lessons/v1/`.
+Duplication across lessons is intentional signal; items cited by multiple
+lessons are noted where obvious.
+
+## Summary by category
+
+- **doc-comment**: 100 items
+- **doc-comment / naming**: 1 items
+- **missing-concept**: 25 items
+- **missing-function**: 193 items
+- **missing-type**: 40 items
+- **missing-type / wrong-shape**: 1 items
+- **naming**: 33 items
+- **naming / doc-comment**: 1 items
+- **pedagogy**: 36 items
+- **wrong-shape**: 33 items
+
+## High-signal recurring themes
+
+- `13-transforms.plato` — cited in 23 recommendations
+- `11-points.plato` — cited in 17 recommendations
+- `10-rotations.plato` — cited in 17 recommendations
+- `16-lines.plato` — cited in 16 recommendations
+- `18-spatial-primitives.plato` — cited in 15 recommendations
+- `08-vectors.plato` — cited in 15 recommendations
+- `17-planar-shapes.plato` — cited in 14 recommendations
+- `09-matrices.plato` — cited in 14 recommendations
+- `28-noise.plato` — cited in 13 recommendations
+- `70-intrinsics.plato` — cited in 12 recommendations
+- `23-splines.plato` — cited in 12 recommendations
+- `55-collision.plato` — cited in 12 recommendations
+- `24-surfaces.plato` — cited in 11 recommendations
+- `12-intervals-bounds.plato` — cited in 10 recommendations
+- `14-color.plato` — cited in 10 recommendations
+
+## doc-comment
+
+- [aabb-ray-intersection] **doc-comment** — `35-spatial-queries.plato`: `RayHit3D` should say which
+- [affine-combinations] **doc-comment** — `02-concepts-algebra.plato`: `Difference.Between` should
+- [angles-as-types] **doc-comment** — `12-intervals-bounds.plato`: `AngleInterval` should document inclusive
+- [axis-angle] **doc-comment** — `70-intrinsics.plato`: `CreateFromAxisAngle(_: Quaternion,
+- [barycentric-coordinates] **doc-comment** — `11-points.plato`: `BarycentricCoordinate` should state the
+- [bezier-curves] **doc-comment** — `CubicBezier2D`: state explicitly that $t$ is the Bernstein parameter on
+- [bsplines-and-nurbs] **doc-comment** — `24-surfaces.plato`: `NurbsSurface` says it represents quadrics
+- [cameras-and-projection] **doc-comment** — `48-cameras.plato`: state the assumed view-space convention
+- [capsule-collision-primitive] **doc-comment** — `17-planar-shapes.plato` / `18-spatial-primitives.plato`: state the
+- [cardioid-parametric-curve] **doc-comment** — the type comment states total width $4 \times \mathrm{Radius}$ but
+- [circles-ellipses] **doc-comment** — `17-planar-shapes.plato`: `PlanarMeasurable.Perimeter` on `Ellipse`
+- [collision-basics] **doc-comment** — `55-collision.plato`: `ContactPoint3D.FrictionImpulse` is a `Vector3D`
+- [color-alpha-compositing] **doc-comment** — `14-color.plato`: `Color.A` should state whether the
+- [color-spaces] **doc-comment** — `14-color.plato`: `Color` should state up front "do not construct from
+- [contact-manifold-basics] **doc-comment** — `55-collision.plato`: `ContactPoint3D.Normal` duplicates
+- [convexity] **doc-comment** — `55-collision.plato`: `MeshCollider.Convex` should warn that a true
+- [coordinate-frames] **doc-comment** — `Frame3D`: state right-handed orthonormal invariant and
+- [cross-product] **doc-comment** — `Bivector3D`: document the dual relationship to `Vector3D` cross products
+- [curvature-and-frames] **doc-comment** / **pedagogy** — `20-concepts-curves-surfaces.plato`:
+- [dot-product] **doc-comment** — `Vector.Dot`: state the geometric formula and that inputs need not be unit;
+- [easing-functions] **doc-comment** — `36-easing.plato`: `SmoothstepEasing.Order` should state the closed
+- [engineering-tolerance-fits] **doc-comment** — `63-uncertainty.plato`: `Tolerance` should state the unit
+- [euler-angles-and-gimbal-lock] **doc-comment** — `10-rotations.plato`: `EulerAngles` fields document names
+- [fbm-terrain-intuition] **doc-comment** — `28-noise.plato`: `FbmNoise2D` should recommend default
+- [floating-point-tolerance] **doc-comment** — `Tolerance`: emphasize that Plus/Minus are **acceptance allowances**, not
+- [gaussian-distribution] **doc-comment** — `59-random.plato`: `NormalDistribution` should state the invariant
+- [geo-coordinates] **doc-comment** — `11-points.plato`: `GeoCoordinate` does not state latitude/longitude
+- [geo-distance-haversine] **doc-comment** — `68-geo-spatial.plato`: `GeoSegment` should state whether
+- [gradient-descent-step-size] **doc-comment** — `62-optimization.plato`: clarify whether `Momentum` uses classical
+- [graph-adjacency-basics] **doc-comment** — `65-graphs.plato`: `Graph` should state explicitly
+- [halfedge-topology] **doc-comment** — `30-topology.plato`: `HalfEdge.Twin` says $-1$ when the edge is on a
+- [helix] **doc-comment** — `22-curves-3d.plato`: `Helix` says angles are swept but does not
+- [higher-dimensional-vectors] **doc-comment** — `69-higher-dimensions.plato` already notes removal of fixed 4D
+- [histogram-binning] **doc-comment** — `58-statistics.plato`: state explicitly that `Range.Start < Range.End`
+- [homogeneous-coordinates] **doc-comment** — `HomogeneousPoint3D`: state the $W=1$ point / $W=0$
+- [images-as-functions] **doc-comment** — `45-images.plato`: `Bitmap` says "sRGB-encoded" and `FloatImage`
+- [indexed-meshes] **doc-comment** — `30-topology.plato`: `CornerIndex` doc ties corners to triangle index
+- [interpolating-splines] **doc-comment** — `23-splines.plato`: `CatmullRomCurve3D` documents alpha values but
+- [intervals-and-bounds] **doc-comment** — `12-intervals-bounds.plato`: `NumberInterval` allows Start > End, but
+- [inverse-transforms] **doc-comment** — `Inverse(pose: Pose3D)`: excellent formula in the comment;
+- [joint-constraints-preview] **doc-comment** — `56-joints-constraints.plato`: `BallSocketJoint` swing/twist limits
+- [lights-and-materials] **doc-comment** — `49-lights.plato`: `PointLight.Range` of zero means unlimited, while
+- [line-plane-intersection] **doc-comment** — `16-lines.plato`: `Plane.Distance` should state the unit-normal
+- [linear-interpolation] **doc-comment** — `14-color.plato` `Color`: the doc says interpolation is
+- [linear-interpolation] **doc-comment** — `08-vectors.plato` `Direction2D` / `Direction3D`: note that
+- [linear-vs-gamma] **doc-comment** — `Color8`: "typically sRGB-encoded" is soft. State the default assumption
+- [lines-rays-segments] **doc-comment** — `16-lines.plato`: `LineSegment2D` says “degenerate when A equals B”
+- [look-at-camera-basis] **doc-comment** — `48-cameras.plato`: `LookAtCamera` should state which
+- [matrices-as-machines] **doc-comment** — `Matrix3x3` / `Matrix4x4`: state in one line that Plato
+- [matrix-determinant-intuition] **doc-comment** — `09-matrices.plato`: the file banner should state
+- [mesh-normals] **doc-comment** — `32-mesh-attributes.plato`: `AttributeDomain.PerCorner` should state
+- [mesh-winding-consistency] **doc-comment** — `30-topology.plato`: `WindingOrder` should mention the
+- [motors-dual-quaternions] **doc-comment** — `13-transforms.plato`: `type Motor3D` should mention the
+- [noise] **doc-comment** — `28-noise.plato`: file banner says scalar noises nominally range over
+- [normalization-pitfalls] **doc-comment** — `08-vectors.plato` / `Direction2D`, `Direction3D`: the invariant comment should warn that arbitrary `Vector` values may violate unit length after non-rigid transforms or manual construction, and point callers at `IsUnit` for diagnostics. The type promises intent, not runtime proof.
+- [norms-and-distance] **doc-comment** — `08-vectors.plato`: **Direction2D** and **Direction3D** doc comments
+- [nyquist-aliasing-preview] **doc-comment** — `60-signals.plato`: `SampledSignal` should mention that
+- [optimization-basics] **doc-comment** — `62-optimization.plato`: `OptimizationResult` has both `Converged: Boolean`
+- [parametric-curves] **doc-comment** — `20-concepts-curves-surfaces.plato`: the banner states the canonical
+- [pbr-roughness-metallic] **doc-comment** — `Material`: spell out BaseColor's dielectric-vs-metal dual role on
+- [perlin-vs-value-noise] **doc-comment** — `28-noise.plato`: `ValueNoise2D/3D` and `PerlinNoise2D/3D`
+- [planes-halfspaces] **doc-comment** — `16-lines.plato`: `Plane.Distance` is “signed distance from the world
+- [point-clouds-voxels] **doc-comment** — `33-pointclouds-voxels.plato`: `AttributedPointCloud3D` says empty
+- [polar-cylindrical-spherical] **doc-comment** — `11-points.plato`: `SphericalCoordinate.Inclination` should
+- [polygons-and-winding] **doc-comment** — `41-vector-styling.plato`: `PathOffsetParameters` already states left-
+- [polynomials-and-roots] **doc-comment** — `61-polynomials.plato`: `BernsteinPolynomial` mentions Bezier control
+- [pose-vs-transform] **doc-comment** — `13-transforms.plato`: `Transform3D` fields are ordered
+- [quaternion-double-cover] **doc-comment** — `10-rotations.plato`: `Quaternion` should state that `q` and
+- [quaternions-without-tears] **doc-comment** — `10-rotations.plato`: `Quaternion`'s doc states the unit-length invariant but
+- [quaternions-without-tears] **doc-comment** — `10-rotations.plato`: `Rotor3D` says it is "structurally a quaternion" but does
+- [random-and-distributions] **doc-comment** — `59-random.plato`: `VonMisesDistribution` says Pdf/Cdf take radians and
+- [ray-intersection] **doc-comment** — `16-lines.plato`: `Ray3D` states $t \ge 0$ but does not say that
+- [reflection-transforms] **doc-comment** — `13-transforms.plato`: `Pose3D(m: Matrix4x4)` and `Transform3D(m)` mention
+- [robust-orientation-test] **doc-comment** — `63-uncertainty.plato`: `Tolerance` is framed as engineering
+- [rotors-and-bivectors] **doc-comment** — `10-rotations.plato`: `Rotor3D` says it is "structurally a
+- [sampling-and-grids] **doc-comment** — `45-images.plato`: `Image` deliberately omits pixel accessors, which
+- [scene-graph-hierarchy] **doc-comment** — `SceneNode3D` should restate that `Transform` is parent-relative and
+- [sdf-operations] **doc-comment** — `27-implicit-sdf.plato`: `SdfCombine.Blend` should state explicitly
+- [shear-transforms] **doc-comment** — `13-transforms.plato`: `Decompose` / `Transform3D(Matrix4x4)` mention
+- [signals-and-sampling] **doc-comment** — `60-signals.plato`: `SampledSignal` states sample $i$ at $i/f_s$ but
+- [signed-distance-fields] **doc-comment** — `ScalarField2D` / `ScalarField3D` doc comments list "signed distances" as a
+- [skeletal-animation] **doc-comment** — `38-skeletal-animation.plato`: `Bone.BindPose` should state
+- [slerp] **doc-comment** — `70-intrinsics.plato`: `Slerp` should state whether it
+- [solid-primitives] **doc-comment** — `18-spatial-primitives.plato`: `Sphere` correctly says it is the
+- [spatial-acceleration] **doc-comment** — `34-spatial-structures.plato`: `BinningGrid3D` cell linearization
+- [sphere-sphere-intersection] **doc-comment** — `18-spatial-primitives.plato`: the `Sphere` comment carefully says
+- [spring-damping-critical] **doc-comment** — `CameraShake.Damping` and `SpringParameters.Damping` share an English
+- [statistics-of-points] **doc-comment** — `58-statistics.plato`: `PolynomialFit.Coefficients` ascending-power
+- [surface-normal-consistency] **doc-comment** — `32-mesh-attributes.plato`: `AttributeDomain` should spell
+- [surfaces-of-revolution] **doc-comment** — `24-surfaces.plato`: `SurfaceOfRevolution` states the profile X/Y
+- [texture-filtering-modes] **doc-comment** — `47-texturing.plato`: `FilterMode.Anisotropic` should state required
+- [time-is-not-a-number] **doc-comment** — `Instant`: state the affine analogy in one line
+- [torus-parametric-surface] **doc-comment** — the self-intersection note is good, but the comment does not state
+- [triangle-barycentric-area] **doc-comment** — `11-points.plato`: `BarycentricCoordinate` should state the vertex
+- [triangle-geometry] **doc-comment** — `18-spatial-primitives.plato`: state explicitly that `Triangle3D` is a
+- [trs-transforms] **doc-comment** — `Transform(v: Vector3D, t: Transform3D)`: mention that
+- [tuples-vs-vectors] **doc-comment** — `Number3`: say aloud that it is **not** a geometric vector and list primary
+- [units-in-types] **doc-comment** — `Temperature` / `TemperatureDelta`: the split is correct
+- [vertex-index-safety] **doc-comment** — `03-concepts-collections.plato` / `30-topology.plato`:
+- [voxel-grid-sampling] **doc-comment** — `33-pointclouds-voxels.plato`: `DensityGrid3D` should
+
+## doc-comment / naming
+
+- [keyframes-and-tracks] **doc-comment / naming** — `37-keyframes-tracks.plato`: `TransformTrack3D` documents
+
+## missing-concept
+
+- [angles-as-types] **missing-concept** — no periodic equality (e.g. `EquivalentModPeriod(a, b, period)`).
+- [bezier-curves] **missing-concept** — `21-curves-2d.plato` / `22-curves-3d.plato`: `QuadraticBezier2D` and
+- [cardioid-parametric-curve] **missing-concept** — `21-curves-2d.plato`: `Cardioid2D` implements `ClosedCurve2D`
+- [circles-ellipses] **missing-concept** — `17-planar-shapes.plato`: `Ellipse` implements `ConvexShape` and
+- [complex-numbers-rotate] **missing-concept** — `05-numbers.plato`: `Complex` does not implement
+- [easing-functions] **missing-concept** — `36-easing.plato`: `SpringParameters` sits in the easing file but
+- [extrusion-along-path] **missing-concept** — `20-concepts-curves-surfaces.plato` / `24-surfaces.plato`:
+- [fbm-terrain-intuition] **missing-concept** — `28-noise.plato`: `FbmNoise2D/3D` (and ridged /
+- [helix] **missing-concept** — `22-curves-3d.plato`: `Helix` implements only `Curve3D`, not
+- [images-as-functions] **missing-concept** — `45-images.plato`: consider
+- [indexed-meshes] **missing-concept** — `31-meshes.plato`: no shared **`IndexedSurfaceMesh<P, F>`** (or
+- [linear-interpolation] **missing-concept** — `14-color.plato`: `ColorHSV` and `ColorHSL` implement `Value`
+- [matrices-as-machines] **missing-concept** — `09-matrices.plato`: there is no `LinearMap` /
+- [matrix-determinant-intuition] **missing-concept** — `09-matrices.plato`: `MatrixLike` exposes
+- [norms-and-distance] **missing-concept** — `08-vectors.plato`: `Vector2D`/`Vector3D` implement **Normed** but
+- [parametric-curves] **missing-concept** — `20-concepts-curves-surfaces.plato`: there is no
+- [point-clouds-voxels] **missing-concept** — `33-pointclouds-voxels.plato`: `LevelSetGrid3D` does not implement
+- [points-vs-vectors] **missing-concept** — `Point3D` (and `Point2D`, `PointN`) do not implement `MetricSpace`
+- [pose-vs-transform] **missing-concept** — `13-transforms.plato`: `Pose3D` implements
+- [random-and-distributions] **missing-concept** — `59-random.plato`: `NormalDistribution2D` / `3D` cannot implement
+- [rotors-and-bivectors] **missing-concept** — `10-rotations.plato`: no shared `Rotor` concept tying
+- [scalar-vector-fields] **missing-concept** — `26-fields.plato`: scalar expression graphs exist
+- [slerp] **missing-concept** — `02-concepts-algebra.plato`: `Interpolatable` only has
+- [surface-normal-consistency] **missing-concept** — `24-surfaces.plato`: `OffsetSurface` should implement
+- [torus-parametric-surface] **missing-concept** — `18-spatial-primitives.plato`: `Torus` is a solid only. There is
+
+## missing-function
+
+- [aabb-ray-intersection] **missing-function** — `35-spatial-queries.plato` / `12-intervals-bounds.plato`:
+- [aabb-ray-intersection] **missing-function** — `16-lines.plato`: no helper to build the three
+- [aabb-ray-intersection] **missing-function** — `12-intervals-bounds.plato`: an interval overlap
+- [affine-combinations] **missing-function** — `11-points.plato` / `13-transforms.plato`: there is no
+- [affine-combinations] **missing-function** — `11-points.plato`: `BarycentricCoordinate` stores
+- [angles-as-types] **missing-function** — `06-quantities.plato` / `70-intrinsics.plato`: `Angle` has `Add`,
+- [angles-as-types] **missing-function** — `06-quantities.plato`: no `FromDegrees(n: Number): Angle` or
+- [angles-as-types] **missing-function** — `12-intervals-bounds.plato`: `AngleInterval` declares only
+- [angles-as-types] **missing-function** — `06-quantities.plato`: `Angle` implements `Interpolatable` through
+- [axis-angle] **missing-function** — `10-rotations.plato` / transforms library: no
+- [axis-angle] **missing-function** — `10-rotations.plato`: no canonicalization helper such
+- [barycentric-coordinates] **missing-function** — `11-points.plato` / `17-planar-shapes.plato`: no
+- [barycentric-coordinates] **missing-function** — `17-planar-shapes.plato`: no
+- [bezier-curves] **missing-function** — Bézier types: no declared `Subdivide(t)`, `Split`, `Derivative`, or
+- [bezier-curves] **missing-function** — no `ArcLengthParameterized` implementation story for cubics (numeric only).
+- [bounding-sphere-fitting] **missing-function** — `12-intervals-bounds.plato` / `18-spatial-primitives.plato`: no
+- [bounding-sphere-fitting] **missing-function** — `12-intervals-bounds.plato`: `BoundsLike` still lacks
+- [bounding-sphere-fitting] **missing-function** — `18-spatial-primitives.plato`: solids that implement `Bounded3D`
+- [bsplines-and-nurbs] **missing-function** — `23-splines.plato`: no declared
+- [bsplines-and-nurbs] **missing-function** — `23-splines.plato`: no conversion
+- [cameras-and-projection] **missing-function** — `48-cameras.plato`: no declared
+- [cameras-and-projection] **missing-function** — `48-cameras.plato`: `PhysicalCamera` docs say FOV follows from
+- [capsule-collision-primitive] **missing-function** — `18-spatial-primitives.plato`: no
+- [capsule-collision-primitive] **missing-function** — `18-spatial-primitives.plato`: no `Capsule3D` factory from
+- [cardioid-parametric-curve] **missing-function** — no declared `Eval` body yet (v3 is declarations-only), and no
+- [catmull-rom-tension] **missing-function** / **doc-comment** — `23-splines.plato`:
+- [catmull-rom-tension] **missing-function** — `23-splines.plato`: no
+- [circles-ellipses] **missing-function** — `17-planar-shapes.plato`: no `PointAt(circle|ellipse, Angle)` or
+- [collision-basics] **missing-function** — `55-collision.plato`: contact and query types are pure data, with
+- [color-alpha-compositing] **missing-function** — `46-image-processing.plato`: `BlendMode` and
+- [color-alpha-compositing] **missing-function** — `14-color.plato`: `Lerp` on `Color` should be
+- [color-spaces] **missing-function** — `14-color.plato` / `44-color-spaces.plato`: conversions are
+- [color-spaces] **missing-function** — `44-color-spaces.plato`: `ColorDifference` names formulas but
+- [complex-numbers-rotate] **missing-function** — `05-numbers.plato`: `Complex` implements `Numerical`
+- [complex-numbers-rotate] **missing-function** — `05-numbers.plato` / `10-rotations.plato`: no
+- [contact-manifold-basics] **missing-function** — `55-collision.plato`: no `Flip(manifold)` that swaps `BodyA` /
+- [convexity] **missing-function** — `19-polygons.plato`: no `IsConvex(Polygon2D) → Boolean` and no
+- [convexity] **missing-function** — `15-concepts-geometry.plato` / geometry library: `ConvexShape` is
+- [coordinate-frames] **missing-function** — `13-transforms.plato`: no
+- [coordinate-frames] **missing-function** — `13-transforms.plato`: `Basis3D` has a constructor from
+- [coordinate-frames] **missing-function** — no `Compose(parent: Frame3D, childLocal: Frame3D)` or
+- [cross-product] **missing-function** — `08-vectors.plato`: `Cross` lives on the intrinsic hub for `Vector3D` but
+- [cross-product] **missing-function** — no `Wedge(Vector3D, Vector3D): Bivector3D` dual to `Cross`. The lesson's
+- [cross-product] **missing-function** — no `ScalarTriple(a,b,c): Number` or `AreParallel(a,b, eps)` helpers.
+- [curvature-and-frames] **missing-function** — `64-differential-geometry.plato`: rich frame *types* exist, but
+- [curvature-and-frames] **missing-function** — `64-differential-geometry.plato`: `FrenetFrame3D` has no
+- [dot-product] **missing-function** — `08-vectors.plato` / `Vector3D`: no `Project(Self, onto: Self)` or
+- [dot-product] **missing-function** — no `AngleBetween(Vector3D, Vector3D): Angle` (with documented stability
+- [dot-product] **missing-function** — `Direction3D`: no `Dot(Direction3D, Direction3D)` that bypasses `.Vector`
+- [easing-functions] **missing-function** — `36-easing.plato`: `ClassicEasing` does not implement
+- [engineering-tolerance-fits] **missing-function** — `66-engineering.plato`: `ShaftHoleFit` stores
+- [euler-angles-and-gimbal-lock] **missing-function** — `10-rotations.plato`: no
+- [euler-angles-and-gimbal-lock] **missing-function** — `70-intrinsics.plato` / `06-quantities.plato`: only
+- [extrusion-along-path] **missing-function** — `40-paths.plato` → `24-surfaces.plato`: no
+- [fbm-terrain-intuition] **missing-function** — `28-noise.plato`: no
+- [floating-point-tolerance] **missing-function** — `63-uncertainty.plato`: no `Contains(Tolerance, Number): Boolean`,
+- [floating-point-tolerance] **missing-function** — geometric companions: `AlmostEqual(Point3D, Point3D, …)` and
+- [gaussian-distribution] **missing-function** — `59-random.plato`: `ProbabilityDistribution` has `Pdf`/`Cdf`/
+- [gaussian-distribution] **missing-function** — `59-random.plato`: no `Standardize(x, dist) -> Number` or
+- [geo-coordinates] **missing-function** — `68-geo-spatial.plato`: `GeoSegment` and `GeoCoordinate` have no
+- [geo-coordinates] **missing-function** — `11-points.plato` / `68-geo-spatial.plato`: no declared conversion
+- [geo-distance-haversine] **missing-function** — `68-geo-spatial.plato`: no
+- [geo-distance-haversine] **missing-function** — `68-geo-spatial.plato`:
+- [gradient-descent-step-size] **missing-function** — `62-optimization.plato`: no declared step operator such as
+- [graph-adjacency-basics] **missing-function** — `65-graphs.plato`: no conversions
+- [graph-adjacency-basics] **missing-function** — `65-graphs.plato`: no
+- [halfedge-topology] **missing-function** — `30-topology.plato`: `HalfEdgeNavigable` has atomic steps but no
+- [halfedge-topology] **missing-function** — `30-topology.plato`: no `BuildHalfEdgeMesh(TriangleMesh3D)` (or
+- [helix] **missing-function** — `22-curves-3d.plato`: no `TurnCount(Helix): Number`,
+- [higher-dimensional-vectors] **missing-function** — `08-vectors.plato`: no declared `Arity`/`Count` alias on
+- [higher-dimensional-vectors] **missing-function** — no `Normalize(VectorN): VectorN` or `DirectionN` type. Unit
+- [histogram-binning] **missing-function** — `58-statistics.plato`: `Histogram` has no `BinIndex(h, x)`,
+- [histogram-binning] **missing-function** — `58-statistics.plato`: no `Density(h: Histogram): Array<Number>`
+- [homogeneous-coordinates] **missing-function** — `11-points.plato`: no `ToHomogeneous(p: Point3D): HomogeneousPoint3D`,
+- [homogeneous-coordinates] **missing-function** — `09-matrices.plato` / transforms: no
+- [images-as-functions] **missing-function** — `45-images.plato`: no
+- [indexed-meshes] **missing-function** — `31-meshes.plato`: `TriangleMesh3D` has no declared builder from
+- [indexed-meshes] **missing-function** — `31-meshes.plato` / `TriangulatedGeometry3D`: no
+- [inertia-tensor-diagonal] **missing-function** — `09-matrices.plato`: `SymmetricMatrix3x3` has no
+- [inertia-tensor-diagonal] **missing-function** — `54-rigid-dynamics.plato`: no
+- [interpolating-splines] **missing-function** — `23-splines.plato`: `CatmullRomCurve2D/3D` expose `Alpha` but
+- [intervals-and-bounds] **missing-function** — `12-intervals-bounds.plato` / `BoundsLike`: the concept library
+- [inverse-transforms] **missing-function** — `13-transforms.plato`: 3D path has
+- [inverse-transforms] **missing-function** — `13-transforms.plato`: no `Inverse(t: Transform3D)`
+- [inverse-transforms] **missing-function** — `09-matrices.plato`: `Matrix3x3` has no declared
+- [joint-constraints-preview] **missing-function** — `56-joints-constraints.plato`: no query for relative hinge
+- [keyframes-and-tracks] **missing-function** — `37-keyframes-tracks.plato`: `KeyInterpolation` has a `Spring`
+- [keyframes-and-tracks] **missing-function** — `37-keyframes-tracks.plato`: no declared
+- [lights-and-materials] **missing-function** — `49-lights.plato` / `50-materials.plato`: no declared shading
+- [line-plane-intersection] **missing-function** — `16-lines.plato`: no `Intersect(Line3D, Plane)`,
+- [line-plane-intersection] **missing-function** — `16-lines.plato`: no `SignedDistance(plane: Plane, point: Point3D)`
+- [linear-interpolation] **missing-function** — `02-concepts-algebra.plato`: add `InverseLerp(a: Self, b: Self,
+- [linear-interpolation] **missing-function** — `02-concepts-algebra.plato`: add `Remap(value: Self, fromMin:
+- [linear-vs-gamma] **missing-function** — `14-color.plato` / `44-color-spaces.plato`: no declared
+- [lines-rays-segments] **missing-function** — `16-lines.plato`: no declared `Parameter(segment|ray|line,
+- [lines-rays-segments] **missing-function** — `16-lines.plato`: no `ClosestPoints(Line3D, Line3D)` or
+- [lines-rays-segments] **missing-function** — `16-lines.plato`: no conversion helpers
+- [look-at-camera-basis] **missing-function** — `48-cameras.plato` / `13-transforms.plato`: no
+- [look-at-camera-basis] **missing-function** — `13-transforms.plato`: `Frame3D` has
+- [matrices-as-machines] **missing-function** — `09-matrices.plato`: `MatrixLike` exposes
+- [matrices-as-machines] **missing-function** — `09-matrices.plato`: no `Determinant`, `Trace`, or
+- [matrix-determinant-intuition] **missing-function** — `09-matrices.plato` / `70-intrinsics.plato`:
+- [matrix-determinant-intuition] **missing-function** — `09-matrices.plato`: a `LinearPart(m: Matrix4x4):
+- [mesh-normals] **missing-function** — `31-meshes.plato` / `08-vectors.plato`: computing a face normal
+- [mesh-normals] **missing-function** — `31-meshes.plato` or `32-mesh-attributes.plato`: no
+- [mesh-winding-consistency] **missing-function** — `31-meshes.plato`: no `FaceNormal(mesh,
+- [mesh-winding-consistency] **missing-function** — `30-topology.plato`: no
+- [motors-dual-quaternions] *(also in other lessons)* **missing-function** — `13-transforms.plato`: no
+- [motors-dual-quaternions] **missing-function** — `13-transforms.plato`: `Motor3D` has `Multiply` /
+- [noise] **missing-function** — `28-noise.plato`: there is no declared `NoiseGradientAt` /
+- [normalization-pitfalls] **missing-function** — `08-vectors.plato` / `Vector`: add `TryNormalize(self: Vector, fallback: Vector): Vector` or `NormalizeOr(self: Vector, fallback: Vector): Vector` beside the existing preconditioned `Normalize`. Teaching this lesson makes clear that every call site repeats the same `IsZeroLength` guard; the concept library already has `SafeDivide` on `Real` for the analogous scalar case.
+- [normalization-pitfalls] **missing-function** — `08-vectors.plato` / `Direction2D`, `Direction3D`: declare validated factories, e.g. `FromVector(v: Vector2D): Direction2D` (precondition: non-zero) and `TryFromVector(v: Vector2D, fallback: Direction2D): Direction2D`, plus `FromVectorUnchecked` explicitly documented as unsafe. Today tuple construction `Direction3D(v)` appears in `13-transforms.plato` but nothing in `08-vectors.plato` states when wrapping is legal or enforces `IsUnit`.
+- [norms-and-distance] **missing-function** — `02-concepts-algebra.plato`: **Normed** declares `Magnitude` and
+- [norms-and-distance] **missing-function** — `02-concepts-algebra.plato`: **MetricSpace** exposes only `Distance`,
+- [numerical-integration] **missing-function** — `53-kinematics.plato`: `BallisticTrajectory` and
+- [nyquist-aliasing-preview] **missing-function** — `60-signals.plato`: no `NyquistFrequency(s: SampledSignal): Frequency`
+- [optimization-basics] **missing-function** — `62-optimization.plato`: abundant parameter and result types, but
+- [parametric-curves] **missing-function** — `20-concepts-curves-surfaces.plato`:
+- [pbr-roughness-metallic] **missing-function** — no declared `Lerp`/`Mix` guidance for `Material` (metalness
+- [perlin-vs-value-noise] *(also in other lessons)* **missing-function** — `28-noise.plato`: no
+- [planes-halfspaces] **missing-function** — `16-lines.plato`: `Plane` has field `Distance` but no declared
+- [planes-halfspaces] **missing-function** — `16-lines.plato`: no `Flip(Plane)` / `Flip(HalfSpace)` that
+- [planes-halfspaces] **missing-function** — `16-lines.plato`: no `FromPointNormal(point, normal) → Plane`
+- [point-clouds-voxels] **missing-function** — `33-pointclouds-voxels.plato`: grids declare Origin/CellSize but
+- [points-vs-vectors] **missing-function** — `08-vectors.plato`: `Vector3D` implements `Normed` but there is no
+- [points-vs-vectors] **missing-function** — `11-points.plato`: no declared `ToPoint` / `PositionVector` pair on
+- [polar-cylindrical-spherical] **missing-function** — `11-points.plato` / `13-transforms.plato`: no
+- [polar-cylindrical-spherical] **missing-function** — `11-points.plato`: no
+- [polygons-and-winding] **missing-function** — `19-polygons.plato`: no `SignedArea`, `Winding`, or `Reverse`
+- [polygons-and-winding] **missing-function** — `19-polygons.plato`: no `ToPath(Polygon2D|PolygonWithHoles2D) →
+- [polynomial-horner-evaluation] **missing-function** — `61-polynomials.plato`: `Polynomial` has no `Evaluate(Self, Number)`
+- [polynomial-horner-evaluation] **missing-function** — `61-polynomials.plato`: no conversion helpers
+- [polynomials-and-roots] **missing-function** — `61-polynomials.plato`: no `Evaluate`, `Horner`, `Derivative`,
+- [pose-vs-transform] **missing-function** — `13-transforms.plato`: `Transform3D` has no
+- [quaternion-double-cover] **missing-function** — no declared
+- [quaternion-double-cover] **missing-function** — no declared `Canonicalize(q)` (e.g. force $W \ge 0$) for
+- [quaternions-without-tears] **missing-function** — `10-rotations.plato` / `Quaternion`: no declared `ApproximatelySameRotation(a, b, tolerance)`
+- [random-and-distributions] **missing-function** — `59-random.plato`: `RandomState` documents draws that return a new
+- [ray-intersection] **missing-function** — `35-spatial-queries.plato`: `RayIntersectable3D` declares
+- [reflection-transforms] **missing-function** — `09-matrices.plato` / `70-intrinsics.plato`: `CreateReflection` exists
+- [reflection-transforms] *(also in other lessons)* **missing-function** — `16-lines.plato`: no `SignedDistance(plane: Plane, point: Point3D)`
+- [rigid-bodies] **missing-function** — `54-rigid-dynamics.plato`: `ForceModel3D.ForceOn` is declared on
+- [robust-orientation-test] **missing-function** — `17-planar-shapes.plato` / vectors: no declared
+- [robust-orientation-test] **missing-function** — no `SignedArea(Triangle2D)` distinct from absolute
+- [robust-orientation-test] **missing-function** — no bridge from `UncertainPoint2D` triples to an uncertain
+- [rotors-and-bivectors] **missing-function** — `10-rotations.plato`: no constructor
+- [rotors-and-bivectors] **missing-function** — `10-rotations.plato`: `Bivector3D` has no
+- [sampling-and-grids] **missing-function** — `29-sampling-grids.plato`: `RegularGrid2D` / `RegularGrid3D`
+- [scalar-vector-fields] **missing-function** — `26-fields.plato`: `ScalarFieldGraph3D` has no `Eval` /
+- [scalar-vector-fields] **missing-function** — `26-fields.plato`: no `GradientField` wrapper that turns a
+- [scalar-vector-fields] **missing-function** — `08-vectors.plato` / `02-concepts-algebra.plato`: `Normed`
+- [scene-graph-hierarchy] **missing-function** — `51-scene3d.plato`: no declared `WorldTransform(scene, node)` or
+- [scene-graph-hierarchy] **missing-function** — no cycle check or `ValidateHierarchy(scene)`. Flat arrays make
+- [sdf-operations] **missing-function** — `27-implicit-sdf.plato`: `SdfTree2D` / `SdfTree3D` declare the
+- [sdf-operations] **missing-function** — `27-implicit-sdf.plato`: modifiers (`SdfRoundingModifier`,
+- [shear-transforms] **missing-function** — `70-intrinsics.plato`: no `CreateShear` / `CreateSkew` on
+- [shear-transforms] **missing-function** — `09-matrices.plato` / `70-intrinsics.plato`: `Matrix2x2` and
+- [signals-and-sampling] **missing-function** — `60-signals.plato`: `SampledSignal`, `Spectrum`, and
+- [signed-distance-fields] **missing-function** — `SignedDistanceField2D` / `SignedDistanceField3D` carry the sign
+- [signed-distance-fields] **missing-function** — `DifferentiableScalarField2D.GradientAt` returns `Vector2D`, but shading
+- [skeletal-animation] **missing-function** — `38-skeletal-animation.plato`: no declared
+- [skeletal-animation] **missing-function** — `38-skeletal-animation.plato`: `SkeletonPose` has no
+- [slerp] **missing-function** — `10-rotations.plato`: `Rotor3D` and `Rotor2D` have
+- [solid-primitives] **missing-function** — `18-spatial-primitives.plato`: primitives implement
+- [spatial-acceleration] **missing-function** — `34-spatial-structures.plato`: structures implement
+- [spatial-acceleration] **missing-function** — `35-spatial-queries.plato`: `RadiusQuery3D` exists as a request
+- [sphere-sphere-intersection] **missing-function** — `18-spatial-primitives.plato`: no `Intersect(Sphere, Sphere)` (or
+- [sphere-sphere-intersection] **missing-function** — `55-collision.plato`: no declared helper to build a
+- [spring-damping-critical] **missing-function** — `36-easing.plato`: no declared
+- [spring-damping-critical] **missing-function** — no `DampingRatio(params): Number` helper. Debugging feel is
+- [springs-and-procedural-motion] **missing-function** — `37-keyframes-tracks.plato` / `36-easing.plato`:
+- [statistics-of-points] **missing-function** — `58-statistics.plato`: rich result types (`SummaryStatistics`,
+- [surface-normal-consistency] **missing-function** — `32-mesh-attributes.plato`: no
+- [surface-normal-consistency] *(also in other lessons)* **missing-function** — `32-mesh-attributes.plato`: no
+- [surfaces-of-revolution] **missing-function** — `24-surfaces.plato`: no helpers to build the classic profiles
+- [texture-filtering-modes] **missing-function** — `47-texturing.plato`: no `Sample(binding, uv: UvCoordinate): Color`
+- [time-is-not-a-number] **missing-function** — `07-time.plato`: `Instant` implements
+- [time-is-not-a-number] **missing-function** — `07-time.plato`: no conversions
+- [time-is-not-a-number] **missing-function** — `07-time.plato`: `TimeInterval` has no
+- [torus-parametric-surface] **missing-function** — no declared `Eval(Torus, UvCoordinate): Point3D`,
+- [triangle-barycentric-area] *(also in other lessons)* **missing-function** — `11-points.plato` / `17-planar-shapes.plato`: no
+- [triangle-barycentric-area] **missing-function** — `17-planar-shapes.plato`: `PlanarMeasurable.Area` does not specify
+- [triangle-barycentric-area] **missing-function** — `17-planar-shapes.plato`: no `IsInside` spelled in terms of
+- [triangle-geometry] **missing-function** — `17-planar-shapes.plato` / `18-spatial-primitives.plato`: no
+- [triangle-geometry] **missing-function** — `18-spatial-primitives.plato`: `Triangle3D` has `NearestPoint3D`
+- [trs-transforms] **missing-function** — `13-transforms.plato`: no `Compose` / `Inverse` on
+- [trs-transforms] **missing-function** — `13-transforms.plato`: `Transform3D(m: Matrix4x4)`
+- [tuples-vs-vectors] **missing-function** — `08-vectors.plato`: no explicit `Vector3D(Number3)` / `Number3(Vector3D)`
+- [units-in-types] **missing-function** — `06-quantities.plato`: no cross-quantity operators such
+- [vertex-index-safety] **missing-function** — `30-topology.plato`: no `IsNone(i: VertexIndex):
+- [vertex-index-safety] **missing-function** — `31-meshes.plato`: `TriangulatedGeometry3D` gives
+- [voxel-grid-sampling] **missing-function** — `33-pointclouds-voxels.plato`: no
+- [voxel-grid-sampling] **missing-function** — `29-sampling-grids.plato` / `33-pointclouds-voxels.plato`:
+
+## missing-type
+
+- [catmull-rom-tension] **missing-type** / **missing-function** — `23-splines.plato`: a single
+- [collision-basics] **missing-type** — `55-collision.plato`: there is no `Collider3D` sum type unifying
+- [collision-basics] **missing-type** — `55-collision.plato`: broad-phase structures (AABB pairs, sweep-and-prune
+- [color-alpha-compositing] **missing-type** — `14-color.plato`: no `PremultipliedColor` (or a tag on
+- [contact-manifold-basics] **missing-type** — `55-collision.plato`: no explicit feature-id / contact-hash on
+- [convexity] **missing-type** — `55-collision.plato`: 2D compounds omit a mesh/polygon collider
+- [engineering-tolerance-fits] **missing-type** — `66-engineering.plato`: no ISO fit designation record
+- [extrusion-along-path] **missing-type** — `24-surfaces.plato`: no sweep with a radius/scale law along
+- [floating-point-tolerance] **missing-type** — no `FloatingPointTolerance` / `Epsilon` record with `{Absolute, Relative}`
+- [gradient-descent-step-size] **missing-type** — `62-optimization.plato`: `OptimizationResult` lacks
+- [images-as-functions] **missing-type** — `46-image-processing.plato`: compositing needs a
+- [inertia-tensor-diagonal] **missing-type** — `54-rigid-dynamics.plato`: a `PrincipalInertia` record
+- [interpolating-splines] **missing-type** — `23-splines.plato`: there is no shared
+- [intervals-and-bounds] **missing-type** — `12-intervals-bounds.plato`: no explicit empty-bounds sentinel or
+- [joint-constraints-preview] **missing-type** — `56-joints-constraints.plato`: no position/angle *servo* motor
+- [lights-and-materials] **missing-type** — `49-lights.plato`: a sum `type Light = Directional(DirectionalLight) |
+- [line-plane-intersection] **missing-type** — `16-lines.plato`: no local hit/result type for line–plane queries;
+- [linear-vs-gamma] **missing-type** — no `EncodedColor` wrapper tying `(ColorSRGB values × TransferFunction ×
+- [noise] **missing-type** — `28-noise.plato`: `CurlNoise3D` has only `Seed` and `Frequency` —
+- [numerical-integration] **missing-type** — `53-kinematics.plato` / `57-particles-simulation.plato`: there is no
+- [nyquist-aliasing-preview] **missing-type** — `60-signals.plato`: `SampleRateConversion` names interpolation but
+- [optimization-basics] **missing-type** — `62-optimization.plato`: no `Objective` / `DifferentiableObjective`
+- [optimization-basics] **missing-type** — `62-optimization.plato`: no `BoxConstraints` separate from full LP —
+- [pbr-roughness-metallic] **missing-type** — `Brdf` is declared but `Material` does not carry a `Brdf` field; the
+- [perlin-vs-value-noise] **missing-type** — `28-noise.plato`: no parameters for lattice period /
+- [polynomials-and-roots] **missing-type** — `61-polynomials.plato`: no `RootMultiplicity` pairing or interval
+- [ray-intersection] **missing-type** — `35-spatial-queries.plato`: no `RayHit3D` field or adjacent type
+- [rigid-bodies] **missing-type** — `54-rigid-dynamics.plato`: there is no `RigidBodyWorld` / simulation
+- [sampling-and-grids] **missing-type** — `29-sampling-grids.plato`: there is `SampledColorGrid2D` but no
+- [signals-and-sampling] **missing-type** — `60-signals.plato`: no explicit `NyquistLimit` helper or
+- [signed-distance-fields] **missing-type** — `27-implicit-sdf.plato` declares `SignedDistanceField2D` /
+- [signed-distance-fields] **missing-type** — `Circle` and `Sphere` implement `ContainsPoint2D` / `ContainsPoint3D` and
+- [skeletal-animation] **missing-type** — `38-skeletal-animation.plato`: `SkinBinding` hard-wires LBS via
+- [solid-primitives] **missing-type** — `18-spatial-primitives.plato` / `25-solids.plato`: there is no
+- [sphere-sphere-intersection] **missing-type** — `18-spatial-primitives.plato`: `Disk3D` is a filled patch; there is no
+- [springs-and-procedural-motion] **missing-type** — `36-easing.plato`: declare something like
+- [statistics-of-points] **missing-type** — `58-statistics.plato`: there is no `Medoid` / `GeometricMedian` result,
+- [surfaces-of-revolution] **missing-type** — `24-surfaces.plato`: partial revolves often need end-cap disks as
+- [units-in-types] **missing-type** — `06-quantities.plato`: there is `Speed` (scalar) but no
+- [voxel-grid-sampling] **missing-type** — `33-pointclouds-voxels.plato`: only isotropic `CellSize`.
+
+## missing-type / wrong-shape
+
+- [polygons-and-winding] **missing-type / wrong-shape** — `19-polygons.plato` vs `40-paths.plato`: `FillRule`
+
+## naming
+
+- [circles-ellipses] **naming** — `17-planar-shapes.plato`: type `Circle` denotes a disk region. A brief
+- [curvature-and-frames] **naming** — `20-concepts-curves-surfaces.plato`: `CurvatureAt` means signed in 2D and
+- [dot-product] **naming** — `Normed.Magnitude` / `MagnitudeSquared` vs intrinsic `Length` / `LengthSquared` on
+- [engineering-tolerance-fits] **naming** — `63-uncertainty.plato`: the type name `Tolerance` collides
+- [euler-angles-and-gimbal-lock] **naming** — `70-intrinsics.plato`: `CreateFromYawPitchRoll` hides the fixed
+- [extrusion-along-path] **naming** — `24-surfaces.plato`: `ExtrudedSurface` vs `SweptSurface` is
+- [gaussian-distribution] **naming** — `59-random.plato`: `NormalDistribution.Mean` (field) collides conceptually
+- [helix] **naming** — `22-curves-3d.plato`: `SphericalSpiral3D` uses `TurnCount: Number` while
+- [homogeneous-coordinates] **naming** — perspective divide is only described inside
+- [inertia-tensor-diagonal] **naming** — `09-matrices.plato`: fields `M11…M33` are generic; when used as inertia,
+- [interpolating-splines] **naming** — `23-splines.plato`: `CatmullRomCurve3D` is a multi-span spline, while
+- [intervals-and-bounds] **naming** — `12-intervals-bounds.plato`: `Rect2D` is center+size while `Bounds2D` is
+- [linear-vs-gamma] **naming** — `14-color.plato`: `Color` is easy to misread as "any RGB." Renaming to `LinearColor`
+- [mesh-normals] **naming** — `32-mesh-attributes.plato`: well-known channel `"normal"` is described as
+- [motors-dual-quaternions] **naming** — `13-transforms.plato`: `CreateTranslation(_: Motor3D, v)` is
+- [norms-and-distance] **naming** — `08-vectors.plato` vs `02-concepts-algebra.plato`: **Difference**.`Between(a, b)`
+- [perlin-vs-value-noise] **naming** — `28-noise.plato`: consider documenting “gradient noise” as a
+- [polar-cylindrical-spherical] **naming** — `11-points.plato`: `PolarCoordinate.Angle` vs
+- [polynomial-horner-evaluation] **naming** — `61-polynomials.plato`: fixed-degree types use school letters `A..E`
+- [polynomials-and-roots] **naming** — `61-polynomials.plato`: dual layouts (ascending dense vs descending
+- [pose-vs-transform] **naming** — `13-transforms.plato`: `Pose(t: Transform3D): Pose3D` is easy to
+- [random-and-distributions] **naming** — `59-random.plato`: `NormalDistribution` has a field also named `Mean`, while
+- [reflection-transforms] **naming** — `70-intrinsics.plato`: `Reflect(self: Vector3D, normal: Vector3D)` takes a
+- [rigid-bodies] **naming** — `54-rigid-dynamics.plato`: `RigidBody3D.AngularVelocity` is a `Vector3D`
+- [sampling-and-grids] **naming** — `29-sampling-grids.plato` vs `45-images.plato`: `SampledColorGrid2D` and
+- [slerp] **naming** — `70-intrinsics.plato`: `Lerp` on `Quaternion` is easy to grab by
+- [solid-primitives] **naming** — `25-solids.plato`: `CsgOperation.Difference` is set-difference (A minus B),
+- [texture-filtering-modes] **naming** — `47-texturing.plato`: `Nearest` / `Linear` omit "mip" and double as mag
+- [triangle-geometry] **naming** — `17-planar-shapes.plato`: `Triangle2D` documents CCW positive area;
+- [trs-transforms] **naming** — `Scale: Number3` is correct per the vector naming rule, but
+- [tuples-vs-vectors] **naming** — `IntegerVector2/3/4` vs geometric naming: consider documenting a forbidden list
+- [units-in-types] **naming** — `06-quantities.plato`: `Amount(x: Self): Number` on `Quantity`
+- [vertex-index-safety] **naming** — `31-meshes.plato`: `SlotIndex` is another typed index for
+
+## naming / doc-comment
+
+- [springs-and-procedural-motion] **naming / doc-comment** — `39-motion-graphics.plato`: `CameraShake.Damping` vs
+
+## pedagogy
+
+- [affine-combinations] **pedagogy** — `11-points.plato`: a short note on `BarycentricCoordinate`
+- [axis-angle] **pedagogy** — `10-rotations.plato`: `AxisAngle` does not implement
+- [bezier-curves] **pedagogy** — linear Bézier (two points) is absent as a named type; `LineSegment2D` covers the
+- [cardioid-parametric-curve] **pedagogy** — `Limacon2D`'s comment notes that equality of Offset and Amplitude yields
+- [catmull-rom-tension] **pedagogy** — `23-splines.plato`: the `Alpha` doc comment is excellent; add
+- [complex-numbers-rotate] **pedagogy** — `10-rotations.plato`: `Rotor2D` fields are `Scalar` and `XY`,
+- [convexity] **pedagogy** — `17-planar-shapes.plato`: `Quad2D` is not `ConvexShape` while
+- [cross-product] **pedagogy** — `Vector2D` lacks a named `Perp` / `Orthogonal` / signed-area helper
+- [fbm-terrain-intuition] **pedagogy** — `26-fields.plato`: `ScalarFieldGraph2D` is ideal for
+- [floating-point-tolerance] **pedagogy** — `ErrorPropagation` declares *how* to push uncertainty through code but nothing
+- [geo-coordinates] **pedagogy** — `68-geo-spatial.plato`: `GeoBounds.ContainsCoordinate` ignores altitude
+- [geo-distance-haversine] **pedagogy** — `11-points.plato`: `GeoCoordinate` doc comment says “above the
+- [halfedge-topology] **pedagogy** — `30-topology.plato`: `CornerTable`, `EdgeAdjacency`, and `HalfEdgeMesh`
+- [higher-dimensional-vectors] **pedagogy** — `SimplexN` and `SubspaceN` omit `implements Value` unlike neighbors.
+- [linear-interpolation] **pedagogy** — `02-concepts-algebra.plato` `Interpolatable`: consider a doc-comment
+- [linear-vs-gamma] **pedagogy** — `Color.Lerp` is component-wise on linear channels (good for light) but the type
+- [look-at-camera-basis] **pedagogy** — `13-transforms.plato`: `Basis3D` docs say "not necessarily
+- [normalization-pitfalls] **pedagogy** — `concept-library/06-numeric-structures.library.plato` / `Normalize`: pair `IsZeroLength` guidance with `Normalize` in doc comments, or add a guarded helper, so callers do not rediscover near-zero policy independently.
+- [numerical-integration] **pedagogy** — `57-particles-simulation.plato`: `SoftBodySettings` and SPH types sit beside
+- [nyquist-aliasing-preview] **pedagogy** — `60-signals.plato`: `SignalResampling.WindowedSinc` doc should state
+- [parametric-curves] **pedagogy** — `FramedCurve3D.FrameAt` returns `Frame3D` with "Z axis is tangent," but
+- [pbr-roughness-metallic] **pedagogy** — `SpecularGlossinessMaterial` says "prefer Material" but does not point at
+- [perlin-vs-value-noise] **pedagogy** — `28-noise.plato`: `NoiseBasis` lists `Value` and `Perlin` as
+- [points-vs-vectors] **pedagogy** — `02-concepts-algebra.plato`: `Difference` names the delta type parameter
+- [polynomial-horner-evaluation] **pedagogy** — `61-polynomials.plato`: `BernsteinPolynomial` should note that Horner
+- [quaternion-double-cover] **pedagogy** — `Interpolatable` on `Quaternion` does not document the hemisphere flip
+- [quaternions-without-tears] **pedagogy** — `70-intrinsics.plato` hosts `CreateFromAxisAngle`, `Slerp`, and `Concatenate`,
+- [rigid-bodies] **pedagogy** — `54-rigid-dynamics.plato`: `MassProperties3D.InertiaTensor` is a
+- [scalar-vector-fields] **pedagogy** — `26-fields.plato`: `TensorField2D/3D` and `ComplexField2D` are declared
+- [scene-graph-hierarchy] **pedagogy** — 2D and 3D share the parent-index pattern but diverge on content
+- [shear-transforms] **pedagogy** — `09-matrices.plato`: `SymmetricMatrix3x3` is documented for inertia and
+- [spring-damping-critical] **pedagogy** — `SpringParameters` does not implement `EasingFunction` and has no
+- [springs-and-procedural-motion] **pedagogy** — `39-motion-graphics.plato`: `Oscillator` implements `TimeVarying<Number>`,
+- [statistics-of-points] **pedagogy** — `58-statistics.plato`: `OutlierDetection` and `MovingAverage` are parameter
+- [torus-parametric-surface] **pedagogy** — `Direction3D` for `Axis` is correct, yet authors often pass a non-unit
+- [tuples-vs-vectors] **pedagogy** — `Vector` concept name collides with everyday "vector" meaning `Vector3D`. A remark
+
+## wrong-shape
+
+- [barycentric-coordinates] **wrong-shape** — `11-points.plato`: storing three floats with a sum-to-one
+- [bounding-sphere-fitting] **wrong-shape** — `BoundsLike<TPoint>` carries no `TDelta` parameter, so the natural
+- [bsplines-and-nurbs] **wrong-shape** — `23-splines.plato`: `Degree` is a free `Integer` on the curve while
+- [cameras-and-projection] **wrong-shape** — `48-cameras.plato`: `LookAtCamera` and `OffAxisCamera` do not
+- [capsule-collision-primitive] **wrong-shape** — `55-collision.plato`: `CapsuleCollider` stores full `Capsule3D`
+- [catmull-rom-tension] **wrong-shape** — `23-splines.plato`: `TcbSpline*` stores three parallel
+- [color-spaces] **wrong-shape** — hue types split across files: `ColorHSV`/`ColorHSL` in `14-color.plato`,
+- [contact-manifold-basics] **wrong-shape** — `55-collision.plato`: `FrictionImpulse: Vector3D` is unit-bearing in
+- [easing-functions] **wrong-shape** — `36-easing.plato`: `ElasticParameters`, `BackParameters`, and
+- [engineering-tolerance-fits] **wrong-shape** — `63-uncertainty.plato`: `Tolerance` forces non-negative
+- [euler-angles-and-gimbal-lock] **wrong-shape** — `10-rotations.plato` / `13-transforms.plato`:
+- [extrusion-along-path] **wrong-shape** — `24-surfaces.plato`: `ExtrudedSurface.Profile: Curve3D`
+- [fbm-terrain-intuition] **wrong-shape** — `28-noise.plato`: `DomainWarpNoise2D` omits `Octaves` /
+- [gradient-descent-step-size] **wrong-shape** — `62-optimization.plato`: `GradientDescentParameters` omits
+- [graph-adjacency-basics] **wrong-shape** — `65-graphs.plato`: `AdjacencyMatrix` uses zero as
+- [histogram-binning] **wrong-shape** — `58-statistics.plato`: consider a `HistogramBinning` parameter
+- [joint-constraints-preview] **wrong-shape** — `56-joints-constraints.plato`: `JointMotor.TargetVelocity` is an
+- [keyframes-and-tracks] **wrong-shape** — `37-keyframes-tracks.plato`: `Keyframe<T>.Easing` is always present,
+- [lights-and-materials] **wrong-shape** — `50-materials.plato`: `Brdf` exists as a free enum but `Material`
+- [mesh-winding-consistency] **wrong-shape** — `31-meshes.plato`: meshes do not store a
+- [noise] **wrong-shape** — `28-noise.plato`: `FbmNoise2D` / `FbmNoise3D` (and turbulence/ridged/
+- [numerical-integration] **wrong-shape** — `53-kinematics.plato`: `Trajectory3D` stores parallel arrays but declares
+- [planes-halfspaces] **wrong-shape** — `16-lines.plato`: `HalfPlane2D` stores normal+distance inline while
+- [point-clouds-voxels] **wrong-shape** — `33-pointclouds-voxels.plato` vs `29-sampling-grids.plato`: dense
+- [ray-intersection] **wrong-shape** — `35-spatial-queries.plato`: `RayHit3D` always carries mesh fields
+- [sdf-operations] **wrong-shape** — `27-implicit-sdf.plato`: `MetaBallSystem3D` implements `ScalarField3D`
+- [signals-and-sampling] **wrong-shape** — `60-signals.plato`: `Spectrogram.Magnitudes` uses column = time, row =
+- [spatial-acceleration] **wrong-shape** — `35-spatial-queries.plato`: `RayHit3D` always carries `Face`,
+- [surface-normal-consistency] **wrong-shape** — `32-mesh-attributes.plato`: well-known `"normal"` channels
+- [surfaces-of-revolution] **wrong-shape** — `24-surfaces.plato`: `ExtrudedSurface.Profile` is `Curve3D` while
+- [texture-filtering-modes] **wrong-shape** — `47-texturing.plato`: consider splitting mag filter, min filter, and
+- [tuples-vs-vectors] **wrong-shape** — `Direction3D` wraps `Vector3D` but `Number3` has no unit-channel counterpart.
+- [voxel-grid-sampling] **wrong-shape** — `29-sampling-grids.plato`: `InterpolationScheme` mixes 2D
