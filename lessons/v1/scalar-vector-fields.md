@@ -250,3 +250,5 @@ enforce the distinction: `Number` in 2D, `Vector3D` in 3D.
   with no differentiable refinements and no constant/graph companions. They are hard to
   teach alongside the scalar/vector story until Jacobian-level operations or examples
   appear in doc comments.
+
+> Resolved 2026-07-28: the unitize step is on the vocabulary surface — generic `Normalize(Vector)` + Vector3D intrinsic, plus `Direction3D.FromVector`/`NormalizeOr` in numeric-structures.library.plato, surfaced via the vectors.plato discoverability banner (item 358, stdlib commit pending).

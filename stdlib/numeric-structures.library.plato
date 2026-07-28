@@ -131,6 +131,104 @@ library NumericStructures
         => self.Max(self.Zero).Min(self.One);
 
     //==
+    // # Vector — safe normalization and directions (normalization pitfalls)
+    //
+    // Convention: see CONVENTIONS.md - Partial operations (fallback-parameter
+    // style, no generic Optional). `Normalize` above carries a non-zero
+    // precondition; these give callers a total path so the IsZeroLength guard is
+    // written once here rather than at every call site.
+
+    // The unit vector in the same direction as self, or fallback when self has
+    // (near) zero length and no direction is defined. Total: never divides by zero.
+    NormalizeOr(self: Vector, fallback: Vector): Vector
+        => self.MagnitudeSquared > 0.0 ? self.Normalize : fallback;
+
+    //==
+    // # Vector3D — cross-product neighbourhood (cross-product lesson)
+    //
+    // Cross(Vector3D, Vector3D) itself is an intrinsic (intrinsics.plato); these
+    // are the helpers that sit immediately around it. Concrete Vector3D receivers
+    // so Cross and the component accessors resolve to the 3D type.
+
+    // The scalar triple product a . (b x c): the signed volume of the
+    // parallelepiped spanned by the three vectors; zero iff they are coplanar.
+    ScalarTriple(a: Vector3D, b: Vector3D, c: Vector3D): Number
+        => a.Dot(b.Cross(c));
+
+    // True when a and b point along the same line (parallel or antiparallel),
+    // judged by the length of their cross product relative to tolerance. Zero
+    // vectors are treated as parallel to everything. tolerance is an absolute
+    // bound on the cross-product magnitude.
+    AreParallel(a: Vector3D, b: Vector3D, tolerance: Number): Boolean
+        => a.Cross(b).MagnitudeSquared <= tolerance * tolerance;
+
+    // The wedge (exterior) product a ^ b as a Bivector3D — the geometric-algebra
+    // dual of the cross product under the shared right-hand convention: the
+    // bivector components (YZ, ZX, XY) equal the (X, Y, Z) of a x b. Encodes the
+    // oriented plane element (area and orientation) spanned by a and b.
+    Wedge(a: Vector3D, b: Vector3D): Bivector3D
+        => Bivector3D(
+            a.Y * b.Z - a.Z * b.Y,
+            a.Z * b.X - a.X * b.Z,
+            a.X * b.Y - a.Y * b.X);
+
+    //==
+    // # Vector2D — planar perp and signed area (cross-product lesson, item 90)
+    //
+    // 2D has no cross product; the honest planar primitives are the perpendicular
+    // and the scalar (z-component) cross. Naming them here keeps 2D code from
+    // faking a 3D cross.
+
+    // The left perpendicular of v: v rotated +90 degrees (CCW), (-Y, X). Same
+    // length as v; the right perpendicular is its negation.
+    Perp(v: Vector2D): Vector2D
+        => Vector2D(-v.Y, v.X);
+
+    // The 2D scalar cross (perp-dot) a.X*b.Y - a.Y*b.X: the signed area of the
+    // parallelogram spanned by a and b, positive when b is CCW from a. Equals the
+    // z-component of the 3D cross of the lifted vectors.
+    Cross(a: Vector2D, b: Vector2D): Number
+        => a.X * b.Y - a.Y * b.X;
+
+    //==
+    // # Direction2D / Direction3D — validated factories (normalization pitfalls)
+    //
+    // Convention: see CONVENTIONS.md - Partial operations. `FromVector`
+    // normalizes and carries a non-zero precondition; `TryFromVector` is the
+    // total fallback form; `FromVectorUnchecked` wraps without normalizing and is
+    // only correct when the argument is already unit length.
+
+    // The unit direction of v. Precondition: v is non-zero (its length becomes the
+    // divisor); zero input is undefined. Use TryFromVector for a total path.
+    FromVector(v: Vector2D): Direction2D
+        => Direction2D(v.Normalize);
+
+    // The unit direction of v, or fallback when v has (near) zero length. Total.
+    TryFromVector(v: Vector2D, fallback: Direction2D): Direction2D
+        => v.MagnitudeSquared > 0.0 ? Direction2D(v.Normalize) : fallback;
+
+    // Wraps v as a Direction2D WITHOUT normalizing. Unsafe: the caller asserts v
+    // is already unit length; violating that silently breaks the Direction2D
+    // invariant. Prefer FromVector unless the unit length is already established.
+    FromVectorUnchecked(v: Vector2D): Direction2D
+        => Direction2D(v);
+
+    // The unit direction of v. Precondition: v is non-zero; zero input is
+    // undefined. Use TryFromVector for a total path.
+    FromVector(v: Vector3D): Direction3D
+        => Direction3D(v.Normalize);
+
+    // The unit direction of v, or fallback when v has (near) zero length. Total.
+    TryFromVector(v: Vector3D, fallback: Direction3D): Direction3D
+        => v.MagnitudeSquared > 0.0 ? Direction3D(v.Normalize) : fallback;
+
+    // Wraps v as a Direction3D WITHOUT normalizing. Unsafe: the caller asserts v
+    // is already unit length; violating that silently breaks the Direction3D
+    // invariant. Prefer FromVector unless the unit length is already established.
+    FromVectorUnchecked(v: Vector3D): Direction3D
+        => Direction3D(v);
+
+    //==
     // # Vector — component-wise lifting
     //
     // Vector declares FromComponents and Broadcast and inherits Count/At from
@@ -560,4 +658,61 @@ library NumericStructures
     // would impose a concrete Distance obligation on all five types. Both are too
     // invasive to justify here; the delta and distance stay on the concrete point
     // types via their individual Difference<TDelta>.
+    //
+    // So the Euclidean distance is provided per concrete point type below, each as
+    // `Between(a, b).Magnitude` over that type's own Difference delta. This is the
+    // sanctioned resolution of the "points lack MetricSpace" lessons (items 257,
+    // 295): concrete functions rather than a concept obligation that would force a
+    // generic-arity change on Coordinate. DistanceSquared mirrors Distance without
+    // the square root, for radius and nearest-neighbour comparisons.
+
+    // The Euclidean distance between two 2D positions.
+    Distance(a: Point2D, b: Point2D): Number
+        => a.Between(b).Magnitude;
+
+    // The squared Euclidean distance between two 2D positions; avoids the square root.
+    DistanceSquared(a: Point2D, b: Point2D): Number
+        => a.Between(b).MagnitudeSquared;
+
+    // The Euclidean distance between two 3D positions.
+    Distance(a: Point3D, b: Point3D): Number
+        => a.Between(b).Magnitude;
+
+    // The squared Euclidean distance between two 3D positions; avoids the square root.
+    DistanceSquared(a: Point3D, b: Point3D): Number
+        => a.Between(b).MagnitudeSquared;
+
+    // The Euclidean distance between two N-dimensional positions.
+    // Precondition: a and b have the same arity.
+    Distance(a: PointN, b: PointN): Number
+        => a.Between(b).Magnitude;
+
+    // The squared Euclidean distance between two N-dimensional positions.
+    // Precondition: a and b have the same arity.
+    DistanceSquared(a: PointN, b: PointN): Number
+        => a.Between(b).MagnitudeSquared;
+
+    //==
+    // # BarycentricCoordinate (barycentric / affine-combination lessons)
+    //
+    // Vertex binding U -> A, V -> B, W -> C (points.plato). Evaluate takes the
+    // three triangle vertices explicitly, so it lives in points territory rather
+    // than needing a Triangle type. Computed as A + V*(B - A) + W*(C - A), which
+    // equals U*A + V*B + W*C when U + V + W = 1 and stays well-defined regardless.
+
+    // The point at these weights on the triangle (a, b, c): the affine combination
+    // U*a + V*b + W*c on the support plane. Vertex binding U->a, V->b, W->c.
+    Evaluate(self: BarycentricCoordinate, a: Point2D, b: Point2D, c: Point2D): Point2D
+        => a.Add(a.Between(b) * self.V + a.Between(c) * self.W);
+
+    // The point at these weights on the triangle (a, b, c): the affine combination
+    // U*a + V*b + W*c on the support plane. Vertex binding U->a, V->b, W->c.
+    Evaluate(self: BarycentricCoordinate, a: Point3D, b: Point3D, c: Point3D): Point3D
+        => a.Add(a.Between(b) * self.V + a.Between(c) * self.W);
+
+    // True when the weights sum to one within tolerance (a valid affine
+    // combination identifying a point on the triangle's support plane). Does not
+    // test the convexity condition U, V, W >= 0 (see the type doc comment).
+    IsNormalized(self: BarycentricCoordinate, tolerance: Number): Boolean
+        => (self.U + self.V + self.W).AlmostEqual(1.0, tolerance);
 }

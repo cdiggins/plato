@@ -218,3 +218,5 @@ vanishes). Skip or repair before averaging into vertex normals.
   the indexing rule for triangle meshes (corner $c$ → face $c/3$, slot $c \bmod 3$),
   matching `CornerIndex` in `30-topology.plato`. Without that, channel length checks are
   folklore.
+
+> Resolved 2026-07-28 (vector part): `Cross(Vector3D,Vector3D)` exists in intrinsics.plato and is now advertised by the discoverability banner in vectors.plato, so the idiomatic face-normal one-liner has a discoverable home (item 236 vector part, stdlib commit pending).

@@ -251,3 +251,5 @@ area $=\tfrac12 \times 4 = 2$.
 - **pedagogy** — `Vector2D` lacks a named `Perp` / `Orthogonal` / signed-area helper
   (`a.X*b.Y - a.Y*b.X`). 2D code then either invents one or lifts to fake 3D crosses; a small
   planar primitive would keep the "why only 3D" story honest in APIs.
+
+> Resolved 2026-07-28: `Cross(Vector3D,Vector3D)` already exists in intrinsics.plato — surfaced via a discoverability banner in vectors.plato (item 86). Added `Wedge(Vector3D,Vector3D):Bivector3D` (GA dual, item 87), `ScalarTriple` + `AreParallel(a,b,tol)` (item 88), and 2D `Perp`/`Cross` perp-dot (item 90) in numeric-structures.library.plato; the Bivector3D<->cross dual relationship is documented on `Wedge` and the rotations.plato banner (item 89). (stdlib commit pending).

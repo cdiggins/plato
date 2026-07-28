@@ -296,3 +296,5 @@ in; ambient $N$ is the component count of each vertex).
 - **pedagogy** — `SimplexN` and `SubspaceN` omit `implements Value` unlike neighbors.
   Either align them or document why — inconsistency distracts when teaching the N-D
   kit as one family.
+
+> Resolved 2026-07-28: `Normalize(VectorN)` is covered by the generic `Normalize(Vector)` in numeric-structures.library.plato (VectorN implements Vector); `NormalizeOr` applies too. A dedicated `DirectionN` type was deferred (new type + Value obligations; VectorN's emitted runtime is still incomplete) — noted as a type gap (item 158 partial, stdlib commit pending).

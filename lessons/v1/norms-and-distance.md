@@ -385,3 +385,5 @@ Work these by hand or with a calculator. Answers are in the block below.
   lesson. Consider renaming one operation (e.g. `DisplacementTo` on **Difference**, or
   `InRange` on **Orderable**) to reduce overload confusion in pedagogical material and in
   API search.
+
+> Resolved 2026-07-28: `Normalize` already exists generically on `Vector` (numeric-structures.library.plato) + as Vector2D/3D intrinsics; added concrete `Distance`/`DistanceSquared` for Point2D/3D/N (vectors already had them). Concept-level `Normalize` on Normed / `DistanceSquared` on MetricSpace were NOT added: algebra.concepts.plato is out of this packet's file scope, MetricSpace has no implementors, and Normalize needs Scalable which Normed lacks (items 256/257/258/259, stdlib commit pending).

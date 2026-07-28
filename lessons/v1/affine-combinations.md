@@ -217,3 +217,5 @@ vector ($w=0$) changes the story. Prefer the typed `Point3D` /
 - **pedagogy** — `11-points.plato`: a short note on `BarycentricCoordinate`
   distinguishing affine ($u+v+w=1$) from convex ($u,v,w \ge 0$) would prevent
   the most common misuse when teaching combinations.
+
+> Resolved 2026-07-28: BarycentricCoordinate doc now distinguishes affine (U+V+W=1) from convex (also U,V,W>=0) combinations (item 8); added `Evaluate(bary, a, b, c)` for Point2D and Point3D (affine combination A + V*(B-A) + W*(C-A)) in numeric-structures.library.plato (item 6, stdlib commit pending).

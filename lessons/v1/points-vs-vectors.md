@@ -356,3 +356,5 @@ Work these with pencil and paper; expand the answers when you are ready.
   the point types themselves (only implied by transform libraries elsewhere). For teaching
   origin-relative vectors, explicit declared converters on `Point3D` ↔ `Vector3D` would keep
   the lesson inside the foundation files without referring to transform libraries.
+
+> Resolved 2026-07-28: added concrete `Distance`/`DistanceSquared` for Point2D/3D/N (`Between(a,b).Magnitude`) rather than a MetricSpace obligation on Coordinate (the generic-arity change the numeric-structures Coordinate marker rejects); `Normalize`/`Direction3D` factory (`FromVector`) now reachable + documented from Vector3D (items 295/296, stdlib commit pending).

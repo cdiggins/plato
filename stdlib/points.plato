@@ -80,7 +80,21 @@ type SphericalCoordinate
     Inclination: Angle;
 }
 
-// Weights relative to a triangle's vertices; U + V + W = 1 on the triangle.
+// Weights relative to a triangle's vertices. Vertex binding: U -> the first
+// vertex (A), V -> the second (B), W -> the third (C), so the point recovered on
+// the triangle's support plane is U*A + V*B + W*C (see `Evaluate` in
+// numeric-structures.library.plato).
+//
+// Invariant: U + V + W = 1 identifies a point on the support plane (an affine
+// combination). Off-plane or non-normalized triples (U + V + W != 1) are
+// degenerate for triangle evaluation; `IsNormalized` tests the sum against a
+// tolerance. The three fields are kept deliberately (a two-component (V, W) form
+// with U = 1 - V - W was rejected): the redundant U reads directly, and the
+// invariant is documented rather than enforced by shape.
+//
+// Affine vs convex (item 8): U + V + W = 1 alone is an *affine* combination and
+// may place the point anywhere on the plane; the point lies *inside* the
+// triangle (a *convex* combination) exactly when additionally U, V, W >= 0.
 type BarycentricCoordinate
     implements Value
 {

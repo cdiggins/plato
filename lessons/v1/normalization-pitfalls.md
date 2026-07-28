@@ -393,3 +393,5 @@ Speed and heading decouple precisely so this case is representable.
 - **doc-comment** — `08-vectors.plato` / `Direction2D`, `Direction3D`: the invariant comment should warn that arbitrary `Vector` values may violate unit length after non-rigid transforms or manual construction, and point callers at `IsUnit` for diagnostics. The type promises intent, not runtime proof.
 
 - **pedagogy** — `concept-library/06-numeric-structures.library.plato` / `Normalize`: pair `IsZeroLength` guidance with `Normalize` in doc comments, or add a guarded helper, so callers do not rediscover near-zero policy independently.
+
+> Resolved 2026-07-28: added `NormalizeOr(v, fallback)` (fallback style, CONVENTIONS A1) plus `Direction2D/3D` validated factories `FromVector`/`TryFromVector`/`FromVectorUnchecked` in numeric-structures.library.plato; Direction2D/3D doc comments now state the intent-not-proof invariant and safe construction path (items 252/253/254, stdlib commit pending).

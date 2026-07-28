@@ -9,6 +9,14 @@
 // geometric vectors are the differences between them. Naming rule: a bare
 // number counts components (Number3, Tuple3, IntegerVector3); a D suffix means
 // the type lives in that-dimensional space (Vector3D, Point3D, Ray3D).
+//
+// Discoverability banner (item 473): the concrete per-component and geometric
+// operations for Number2/3/4/8, Vector2D and Vector3D — Normalize, Dot, Cross,
+// Length/LengthSquared, Add/Subtract/Multiply/Divide, Reflect, Transform — are
+// declared on the intrinsic hub in `intrinsics.plato`, not restated here. The
+// concept-generic helpers (Distance, DistanceSquared, projection/rejection,
+// AngleBetween, component-wise lifts, and the safe `NormalizeOr` / Direction
+// factories below-in-spirit) live in `numeric-structures.library.plato`.
 
 // The family of fixed-arity numeric vectors: component-wise arithmetic, norms,
 // dot product, and component-wise extremes.
@@ -148,6 +156,13 @@ type IntegerVector4
 }
 
 // A 2D direction: a Vector2D with the invariant that its magnitude is one.
+// The invariant is a promise of intent, not a runtime proof: an arbitrary
+// Vector2D may violate unit length after a non-rigid transform or manual
+// construction. Construct one via normalization of a non-zero displacement —
+// the validated factories `FromVector` / `TryFromVector` (and the explicitly
+// unsafe `FromVectorUnchecked`) in `numeric-structures.library.plato`; zero
+// input is undefined. Check unit length with `IsUnit` (core-algebra) for
+// diagnostics.
 type Direction2D
     implements Value
 {
@@ -155,6 +170,13 @@ type Direction2D
 }
 
 // A 3D direction: a Vector3D with the invariant that its magnitude is one.
+// The invariant is a promise of intent, not a runtime proof: an arbitrary
+// Vector3D may violate unit length after a non-rigid transform or manual
+// construction. Construct one via normalization of a non-zero displacement —
+// the validated factories `FromVector` / `TryFromVector` (and the explicitly
+// unsafe `FromVectorUnchecked`) in `numeric-structures.library.plato`; zero
+// input is undefined. Check unit length with `IsUnit` (core-algebra) for
+// diagnostics.
 type Direction3D
     implements Value
 {

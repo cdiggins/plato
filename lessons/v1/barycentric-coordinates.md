@@ -249,3 +249,5 @@ hits). Do not clamp to $0$ unless you intend closest-point-on-triangle behavior.
   `U = 1 - V - W` (plus an optional recovered triple view) would make the
   invariant unrepresentable-as-false — matching Plato's "illegal states
   unrepresentable" taste.
+
+> Resolved 2026-07-28: BarycentricCoordinate doc now states the U->A/V->B/W->C vertex binding and the U+V+W=1 support-plane invariant (item 20). The two-component (V,W) reshape was REJECTED (item 22): three fields kept, invariant documented, and an `IsNormalized(bary, tolerance)` predicate added in numeric-structures.library.plato instead. (stdlib commit pending).
