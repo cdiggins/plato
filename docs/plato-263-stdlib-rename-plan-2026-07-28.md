@@ -293,10 +293,10 @@ Per repo rules: current branch (no new branches), pathspec commits only, push af
 
 ## Done means
 
-- [ ] All v3 files renamed per map; no `NN-` prefixes remain; lint 0/0
-- [ ] `stdlib/README.md` carries the ordered layer index + naming convention bullet
-- [ ] Four folders renamed; banners in place; mapping stated once in CLAUDE.md + plato-for-agents.md
-- [ ] Reference sweeps done (both greps return only archive/historical hits)
-- [ ] vscode-plato rebuilt; navigation + checker + MCP tests green
-- [ ] regen-generated no-diff; conformance 0 fail; check-frozen-v1 green; check-all green
+- [x] All v3 files renamed per map; no `NN-` prefixes remain; lint 0/0
+- [x] `stdlib/README.md` carries the ordered layer index + naming convention bullet
+- [x] Four folders renamed; banners in place; mapping stated once in CLAUDE.md + plato-for-agents.md
+- [x] Reference sweeps done (both greps return only archive/historical hits)
+- [x] vscode-plato rebuilt; navigation + checker + MCP tests green
+- [x] regen-generated no-diff; conformance 0 fail; check-frozen-v1 green; check-all green
 - [ ] Commits pushed; plato-263 closed with outcome
