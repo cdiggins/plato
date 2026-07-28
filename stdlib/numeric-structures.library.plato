@@ -476,15 +476,15 @@ library NumericStructures
     //
     // Dense numeric matrices (Value, Additive, Scalable) with RowCount,
     // ColumnCount, and ElementAt(row, column). Double and Half come from
-    // CoreAlgebra (Additive / Scalable). The base concept has no multiplication,
-    // transpose, or row/column extraction, so only shape queries, element access,
-    // and the shape-preserving interpolation conveniences are derivable here.
+    // CoreAlgebra (Additive / Scalable). Trace and FrobeniusNorm are now derivable
+    // as scalar folds over ElementAt (via MapRange + Array.Reduce); see below.
     //
-    // TODO(concept-gap): Trace, Transpose, and FrobeniusNorm remain blocked on the
-    // MatrixLike surface, not on arithmetic: Trace needs a fold over the diagonal,
-    // Transpose needs matrix construction, and FrobeniusNorm needs an element fold
-    // (the square root itself is now available via Number.Sqrt). MatrixLike exposes
-    // only ElementAt with no iteration or construction primitive, so none are derivable.
+    // TODO(concept-gap): Transpose remains blocked — it must CONSTRUCT a matrix, and
+    // MatrixLike exposes no construction primitive. The MakeArray2D intrinsic builds
+    // an Array2D<Number>, not a concrete MatrixLike, so a generic
+    // Transpose(MatrixLike): MatrixLike cannot be spelled here; each concrete matrix
+    // type (matrices.plato) supplies its own, returning its own type (e.g. the
+    // Matrix4x4.Transpose intrinsic).
 
     // True when the matrix has equal row and column counts.
     IsSquare(self: MatrixLike): Boolean
@@ -515,6 +515,21 @@ library NumericStructures
     DiagonalElement(self: MatrixLike, i: Integer): Number
         => self.ElementAt(i, i);
 
+    // The trace: the sum of the main-diagonal elements, folded over the diagonal
+    // indices via MapRange + Array.Reduce. Precondition: the matrix is square.
+    Trace(self: MatrixLike): Number
+        => self.RowCount.MapRange(i => self.ElementAt(i, i)).Reduce(0.0, (acc, x) => acc + x);
+
+    // The Frobenius norm: the square root of the sum of the squares of every
+    // element. The row-major flat index k maps to element (k / ColumnCount,
+    // k % ColumnCount), so the whole matrix is folded in one pass.
+    // Precondition: at least one element.
+    FrobeniusNorm(self: MatrixLike): Number
+        => self.ElementCount
+            .MapRange(k => self.ElementAt(k / self.ColumnCount, k % self.ColumnCount).Square)
+            .Reduce(0.0, (acc, x) => acc + x)
+            .Sqrt;
+
     // Linear interpolation of two matrices, derived from Additive and Scalable.
     // t is unclamped: 0 yields a, 1 yields b. Precondition: a and b share a shape.
     Lerp(a: MatrixLike, b: MatrixLike, t: Number): MatrixLike
@@ -529,17 +544,20 @@ library NumericStructures
     //
     // A position in some space (Value, Equatable, Interpolatable). Coordinate is a
     // marker concept whose only operation is Lerp, and CoreAlgebra already ships
-    // MidPoint and LerpClamped on Interpolatable — which Coordinate inherits — so
-    // every interpolation convenience it can support already exists upstream and
-    // no Coordinate-specific body is added here.
+    // MidPoint, LerpClamped and SmoothLerp on Interpolatable — which Coordinate
+    // inherits — so every interpolation convenience it can support already exists
+    // upstream (SmoothLerp landed at core-algebra.library.plato) and no
+    // Coordinate-specific body is added here.
     //
-    // TODO(cross-package): CoreAlgebra (P1) should adopt a smoothstep easing on
-    // Interpolatable, e.g.
-    //   SmoothLerp(a: Interpolatable, b: Interpolatable, t: Number): Interpolatable
-    //       => a.Lerp(b, t * t * (3.0 - 2.0 * t));
-    // It uses only Lerp, so it belongs beside MidPoint/LerpClamped rather than
-    // being duplicated per concept here (was previously on Vector and Coordinate).
-    // TODO(concept-gap): Coordinate does not inherit MetricSpace or Difference, so
-    // a generic Distance or Between-two-points delta cannot be defined at the
-    // concept level; those live on the concrete point types via Difference<TDelta>.
+    // TODO(concept-gap): a generic Distance / Between-two-points delta over
+    // Coordinate is out of reach, and NOT via a cheap concept extension. All five
+    // implementors (Point2D, Point3D, PointN, UvCoordinate, UvwCoordinate in
+    // points.plato) DO implement Difference<TDelta> — but each with a DIFFERENT
+    // delta type (Vector2D / Vector3D / VectorN). So Coordinate cannot inherit
+    // Difference<TDelta> without gaining a type parameter, which would cascade to
+    // every bare `Coordinate` mention tree-wide (a generic-arity change, not merely
+    // an added obligation). MetricSpace is likewise not inherited, and adding it
+    // would impose a concrete Distance obligation on all five types. Both are too
+    // invasive to justify here; the delta and distance stay on the concrete point
+    // types via their individual Difference<TDelta>.
 }

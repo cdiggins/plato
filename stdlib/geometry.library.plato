@@ -23,14 +23,12 @@
 //     LastIndex/IsValidIndex(Indexable<$T>) — reached via self.Points (an Array).
 //   * P4 (12-intervals-transforms): Center(BoundsLike<$TPoint>).
 //
-// TODO(concept-gap): aggregate helpers over a PointSet (centroid-of-points,
-// bounds-of-points, total polyline length) need a fold / reduce over Indexable.
-// The v3 collection surface (03-concepts-collections.plato) exposes only At and
-// Count with no reduction primitive, so these are left to the concrete types.
-// TODO(concept-gap): Difference.Between's direction — that Between(a, b) yields
-// (b - a) — is not documented on the concept in file 02; the sign of BoundsSize
-// below rests on that observed behavior, so pin it down in file 02 before relying
-// on the sign in generic code.
+// Aggregate reductions over a point list (centroid-of-points, bounds-of-points,
+// total polyline length) are folded through the P2 Indexable Reduce/Map family:
+// see the point-list kernels below, which materialize their elements once and
+// reduce. Difference.Between(a, b) yields (b - a) — pinned in the algebra concepts
+// (file 02) — so the sign of BoundsSize and every Between-based delta below rests
+// on a documented convention, not observed behavior.
 
 library GeometryTraits
 {
@@ -358,24 +356,24 @@ library GeometryTraits
     // The support mapping returns the farthest point of a convex shape in a given
     // direction. SupportExtent projects that point onto the direction, giving the
     // signed extent of the shape along it — the scalar GJK / SAT actually consume.
-    //
-    // TODO(concept-gap): with only expression bodies (no let-binding) and no
-    // point -> vector conversion at the concept level, the support point is fetched
-    // 2-3 times and dotted componentwise. A concrete type should override
-    // SupportExtent to evaluate Support once and reuse it.
+    // A `var` local fetches the support point once (LIBRARIES.md permits var locals
+    // in statement bodies) instead of re-evaluating Support per component.
 
     // The signed extent of the shape along `direction`: the support point projected
     // onto the (unit) direction vector.
     SupportExtent(self: SupportMappable2D, direction: Direction2D): Number
-        => self.Support(direction).X * direction.Vector.X
-        + self.Support(direction).Y * direction.Vector.Y;
+    {
+        var p = self.Support(direction);
+        return p.X * direction.Vector.X + p.Y * direction.Vector.Y;
+    }
 
     // The signed extent of the shape along `direction`: the support point projected
     // onto the (unit) direction vector.
     SupportExtent(self: SupportMappable3D, direction: Direction3D): Number
-        => self.Support(direction).X * direction.Vector.X
-        + self.Support(direction).Y * direction.Vector.Y
-        + self.Support(direction).Z * direction.Vector.Z;
+    {
+        var p = self.Support(direction);
+        return p.X * direction.Vector.X + p.Y * direction.Vector.Y + p.Z * direction.Vector.Z;
+    }
 
     //==
     // # Point-list kernels
@@ -424,6 +422,21 @@ library GeometryTraits
         var hi = points.Reduce(points.First, (acc, p) => Point3D(acc.X.Max(p.X), acc.Y.Max(p.Y), acc.Z.Max(p.Z)));
         return (lo, hi);
     }
+
+    // The vertex centroid of a non-empty point list: the componentwise arithmetic
+    // mean, treating every listed point as an equal point mass. Distinct from
+    // PolygonAreaCentroid, which weights by enclosed area; the two agree only for
+    // shapes whose vertices are uniformly distributed. Precondition: at least one point.
+    AverageOfPoints(points: Array<Point2D>): Point2D
+        => (SumOf(points.Map(p => p.X)) / points.Count.ToNumber,
+            SumOf(points.Map(p => p.Y)) / points.Count.ToNumber);
+
+    // The vertex centroid of a non-empty point list in space: the componentwise
+    // arithmetic mean. Precondition: at least one point.
+    AverageOfPoints(points: Array<Point3D>): Point3D
+        => (SumOf(points.Map(p => p.X)) / points.Count.ToNumber,
+            SumOf(points.Map(p => p.Y)) / points.Count.ToNumber,
+            SumOf(points.Map(p => p.Z)) / points.Count.ToNumber);
 
     // The smallest rectangle containing both operands.
     UnionOfBounds(a: Bounds2D, b: Bounds2D): Bounds2D
@@ -572,4 +585,22 @@ library GeometryTraits
     // The tightest axis-aligned box containing the shape.
     Bounds(self: PointSet3D): Bounds3D
         => self.Points.BoundsOfPoints;
+
+    //==
+    // # PointSet vertex centroid
+    //
+    // The arithmetic mean of a shape's defining points, folded over the Points
+    // array. This is the centroid of the VERTICES as equal point masses, NOT the
+    // area/volume-weighted center of mass a Centroid2D/3D implementor reports; the
+    // two differ whenever the vertices are unevenly distributed. Offered on the
+    // PointSet surface because it is well defined for any point set, including a
+    // scatter with no interior. Precondition: at least one defining point.
+
+    // The vertex centroid of the shape: the arithmetic mean of its defining points.
+    VertexCentroid(self: PointSet2D): Point2D
+        => self.Points.AverageOfPoints;
+
+    // The vertex centroid of the shape in space: the arithmetic mean of its points.
+    VertexCentroid(self: PointSet3D): Point3D
+        => self.Points.AverageOfPoints;
 }

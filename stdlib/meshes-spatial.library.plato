@@ -229,9 +229,11 @@ library MeshesSpatial
     VoxelCellCount(self: Voxelizable3D, cellSize: Number): Integer
         => self.ToOccupancyGrid(cellSize).Occupied.Count;
 
-    // TODO(concept-gap): the count of OCCUPIED cells is not derivable here — it needs
-    // a boolean reduction over Array3D<Boolean>, which no concept in this package
-    // exposes. Add a `CountTrue`/`Reduce` on the grid rasters (file 33) if wanted.
+    // The number of OCCUPIED cells at the given cell size: a boolean fold over the
+    // occupancy raster. Array3D<Boolean> inherits the flat Indexable surface, so P2's
+    // Reduce reaches every cell by flat index; the accumulator counts the true cells.
+    VoxelOccupiedCount(self: Voxelizable3D, cellSize: Number): Integer
+        => self.ToOccupancyGrid(cellSize).Occupied.Reduce(0, (acc, b) => b ? acc + 1 : acc);
 
     //==
     // SpatialIndex2D — broad-phase candidate queries over indexed 2D primitives.
