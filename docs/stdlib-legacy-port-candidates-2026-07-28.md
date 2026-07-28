@@ -300,11 +300,20 @@ Ordered by how much they block.
    `stdlib-legacy-tests` (`library UniqueIntrinsics`) declares the same signatures and *does*
    compile, so the two trees reach different paths — that is the thread to pull. Until it is
    fixed no affine algorithm is writable in stdlib.
-2. **`VectorN` has a latent runtime bug, invisible to lint.** The C# writer synthesizes `At`/`Count`
-   from a type's *fields*, and `VectorN`'s single field is its component array — so `Count` would
-   be 1 and `At(0)` would return the array. Every generic body in `numeric-structures.library.plato`
-   reads `Count`/`At` as the component surface. `Linter.cs:107-113` exempts both names, so the
-   linter structurally cannot catch it. `TODO(writer-gap)` marks the declaration.
+2. **The emitted vector types are throwing stubs — the concept-generic bodies compute only at
+   `Number`.** A 115-file minimal slice emits **713 `NotImplementedException` throws**:
+   `_Vector3D.g.cs` stubs `Add`, `Subtract`, `Multiply(float)`, `Magnitude`, `Zero`. So
+   "one definition serves Number, Vector2D, Vector3D and every quantity type" — the claim
+   item 3 and item 7 both rest on — is true at the type level and **false at runtime today**.
+   `CubicBezier` over `Vector3D` throws. `DistanceToSphere` emits as
+   `p.PositionVector().Magnitude().Subtract(radius)` and would throw rather than return `d-r`.
+   This is the single largest gap between "lints clean" and "works", and it is invisible to lint.
+
+   *(A previous revision of this list claimed a `VectorN` `At`/`Count` writer bug here. That was
+   inferred from the `Linter.cs:107-113` exemption comment and is **REFUTED**: the code was
+   emitted and run, the writer forwards to the collection field, and a 5-component `VectorN`
+   reports `Count == 5`, `At(2) == 3`. Inference from a comment is not evidence; the executed
+   result is.)*
 3. **LINT003 statement-body blindness** (`Linter.cs:184-198`). Fields read only inside a `var`
    initializer or a statement block are reported unread. Real in-tree false positives today:
    `Frame3D.Origin/XAxis/YAxis/ZAxis`, `AffineTransform3D.Matrix`, `CylindricalShell.*`,
@@ -331,3 +340,52 @@ Ordered by how much they block.
 8. **`PointOnUnitCircle` is duplicated.** Defined locally in `library Solids` with a `NOTE(dedupe)`
    because the canonical `UnitCircle(t: Angle): Point2D` still does not exist in stdlib. Pick one
    home and delete the other.
+
+---
+
+## Execution evidence (2026-07-28)
+
+A verification pass emitted a slice of `stdlib` to C#, compiled it, and ran value checks — the
+first time any of this code has executed. Method:
+
+```
+dotnet build Plato.CLI/Plato.CLI.csproj -c Release
+dotnet Plato.CLI.dll <slice> <out> --csharp-style=extensions --scalar=float --no-properties
+# then build and run a checker against <out>
+```
+
+**What passed.** All 29 functions in `library Polynomials` over `Number`, exact to float
+precision: Bezier and Hermite return their endpoints at t=0/1, `CatmullRom` midpoint is exact,
+all 12 derivative functions agree with central differences of their own base function,
+`SmoothStep`/`SmootherStep` exact at 0/0.5/1, and `Eval`/`Derivative` on all four polynomial
+types. `NGonPoint` re-hosted verbatim: vertices at exactly r=1, edge midpoints at exactly
+`cos(pi/n)`, and `NGonPoint(0) == NGonPoint(1)`.
+
+Separately verified outside the tree by numerical integration: the Zelen & Severo normal-CDF
+coefficients (max abs error 6.9e-8 against a reference `erf`, inside the published 7.5e-8), and
+the spherical-cap, conical-frustum and circular-segment centroids (agreement to ~1e-14 at
+intermediate, non-degenerate values).
+
+**Scorecard: ~35 of 1,692 bodied functions verified — about 2%**, and 0% of the vector or
+quantity instantiations of even those.
+
+**Defects the pass found**, beyond the throwing stubs in follow-up 2 above:
+
+- Whole-`stdlib` emission **crashes**: `No ground TIR for bodied AnimationTrack.ValueAt`
+  (`keyframes-tracks.plato`), and again for every generic body monomorphized against `Array4D`
+  (`collections-functional.library.plato` vs `primitives.plato`). It does not reach output.
+- `Angle` is declared here with a `Radians` field but is fieldless/intrinsic in `stdlib-legacy`,
+  so the emitted `_Angle.g.cs` duplicates conversions the handwritten `Plato.Intrinsics.V2/Angle.cs`
+  already has (CS0557) and emits `Amount()` against a symbol that does not exist.
+- Function-typed parameters lower to bare `System.Func` with no type arguments (CS0305) —
+  affects every function-valued field type added for item 5.
+- `--no-properties` emits `((int)self.Count)` against a method in 16 places (CS0030).
+- `Tuple9`/`Tuple10` call a `CombineHashCodes` overload that does not exist.
+- `MatrixLike` obligations (`RowCount`/`ColumnCount`/`ElementAt`), `Quaternion.Lerp` and
+  `Plane.ClosestPoint` are unsatisfied (CS0535).
+- Reverse direction: `Plato.Intrinsics.V2` depends on members `stdlib` never declares —
+  `Number.Pow2`/`Pow3`, a no-arg `Vector3.AlmostZero()`, `Integer.ToNumber`.
+
+**The cheapest fix for all of it**: a gate in `tools/check-all.ps1` that merely emits `stdlib`
+and compiles the result. The two crashes above fail it in under ten seconds today. Every defect
+in this section was found because someone went looking; a gate turns that into every run.
