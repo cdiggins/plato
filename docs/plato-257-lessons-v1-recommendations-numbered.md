@@ -5,6 +5,8 @@ Each row is one recommendation with a link to the originating lesson. Total: **4
 
 Use this list to triage and plan Plato library work.
 
+> _File/folder references updated 2026-07-28 to the post-plato-263 layout: the standard-library source lives in `stdlib/` (flat `*.plato`, `*.concepts.plato`, and `*.library.plato` files — no `concept-library/` subfolder), and the README is `stdlib/README.md`._
+
 > **Read the [Reviewer pass](#reviewer-pass--2026-07-28) below before assigning items to agents.**
 > It resolves cross-item conflicts, dedupes the list into work packets, drops a handful of
 > items, and adds new recommendations 464–476. Item numbers 1–463 are stable — do not renumber.
@@ -29,7 +31,7 @@ styles instead:
   - *concrete result record* with a validity field for queries: `PlaneHit3D { Hit: Boolean; Point; Parameter }`;
   - *concrete (non-generic) sum* where the classification IS the payload: item 397's
     `SphereSphereIntersection = Separate | ExternalTouch | OverlapCircle(...) | ...` is the model case.
-Pick this trio as the repo rule, write it in the v3 README, and reject any agent output that
+Pick this trio as the repo rule, write it in the stdlib README, and reject any agent output that
 invents a fourth style.
 
 **A2. One conventions document, not forty doc-comments.** Roughly a quarter of the
@@ -257,7 +259,7 @@ early just creates rebase noise against the packet work.
 
 28. [bounding-sphere-fitting](../lessons/v1/bounding-sphere-fitting.md) — **missing-function** — `intervals-bounds.plato` / `spatial-primitives.plato`: no `BoundingSphere(bounds: Bounds3D): Sphere` or `BoundingSphere(points: Array<Point3D>)`. The AABB-diagonal construction is universal and three lines; it belongs next to `Bounds3D`.
 
-29. [bounding-sphere-fitting](../lessons/v1/bounding-sphere-fitting.md) — **missing-function** — `intervals-bounds.plato`: `BoundsLike` still lacks `Diagonal` / `Extent` / `Union` / `Expand` (called out as a TODO in `concept-library/intervals-transforms.library.plato`). Fitting lessons keep re-deriving `Between(Min, Max)`.
+29. [bounding-sphere-fitting](../lessons/v1/bounding-sphere-fitting.md) — **missing-function** — `intervals-bounds.plato`: `BoundsLike` still lacks `Diagonal` / `Extent` / `Union` / `Expand` (called out as a TODO in `intervals-transforms.library.plato`). Fitting lessons keep re-deriving `Between(Min, Max)`.
 
 30. [bounding-sphere-fitting](../lessons/v1/bounding-sphere-fitting.md) — **wrong-shape** — `BoundsLike<TPoint>` carries no `TDelta` parameter, so the natural return type of `Extent` (`Vector3D` for `Bounds3D`) cannot be expressed. Reintroduce `BoundsLike<TPoint, TDelta>` as the library TODO suggests.
 
@@ -709,7 +711,7 @@ early just creates rebase noise against the packet work.
 
 254. [normalization-pitfalls](../lessons/v1/normalization-pitfalls.md) — **doc-comment** — `vectors.plato` / `Direction2D`, `Direction3D`: the invariant comment should warn that arbitrary `Vector` values may violate unit length after non-rigid transforms or manual construction, and point callers at `IsUnit` for diagnostics. The type promises intent, not runtime proof.
 
-255. [normalization-pitfalls](../lessons/v1/normalization-pitfalls.md) — **pedagogy** — `concept-library/numeric-structures.library.plato` / `Normalize`: pair `IsZeroLength` guidance with `Normalize` in doc comments, or add a guarded helper, so callers do not rediscover near-zero policy independently.
+255. [normalization-pitfalls](../lessons/v1/normalization-pitfalls.md) — **pedagogy** — `numeric-structures.library.plato` / `Normalize`: pair `IsZeroLength` guidance with `Normalize` in doc comments, or add a guarded helper, so callers do not rediscover near-zero policy independently.
 
 256. [norms-and-distance](../lessons/v1/norms-and-distance.md) — **missing-function** — `algebra.concepts.plato`: **Normed** declares `Magnitude` and `MagnitudeSquared` but not `Normalize`. Normalization is the third leg of the lesson triad (length, distance, normalize); it currently lives only on concrete types via intrinsics (`intrinsics.plato`) and as a derived helper on `Vector` in concept-library. Adding `Normalize(x: Self): Self` to **Normed** (with a documented zero-length precondition) would make the concept self-contained and let `Direction2D`/`Direction3D` factories read as `Normed`-preserving operations.
 
@@ -989,7 +991,7 @@ early just creates rebase noise against the packet work.
 
 394. [spatial-acceleration](../lessons/v1/spatial-acceleration.md) — **missing-function** — `spatial-queries.plato`: `RadiusQuery3D` exists as a request type, but no concept method `FindInRadius` parallels `FindNearest` on `NearestNeighborQueryable3D`. The query record is stranded without a capability.
 
-395. [spatial-acceleration](../lessons/v1/spatial-acceleration.md) — **wrong-shape** — `spatial-queries.plato`: `RayHit3D` always carries `Face`, `Barycentric`, and `Uv`, with sentinels when inapplicable. For BVH hits against non-mesh primitives those fields are noise. A sum type (`Miss | MeshHit(...) | PrimHit(...)`) would match the tagged-variant preference in the v3 README.
+395. [spatial-acceleration](../lessons/v1/spatial-acceleration.md) — **wrong-shape** — `spatial-queries.plato`: `RayHit3D` always carries `Face`, `Barycentric`, and `Uv`, with sentinels when inapplicable. For BVH hits against non-mesh primitives those fields are noise. A sum type (`Miss | MeshHit(...) | PrimHit(...)`) would match the tagged-variant preference in the stdlib README.
 
 396. [spatial-acceleration](../lessons/v1/spatial-acceleration.md) — **doc-comment** — `spatial-structures.plato`: `BinningGrid3D` cell linearization (X fastest, then Y, then Z) should be repeated on `SpatialHashGrid3D` consumer notes — hash grids use integer coordinates, not linearized dense buckets, and readers conflate the two CSR layouts.
 
