@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     Four variants on two axes:
-        SUBSET     full = all of plato-src ; min = the files in manifest-min.txt
+        SUBSET     full = all of stdlib-legacy ; min = the files in manifest-min.txt
         OPTIMIZER  nonopt = adoption shape only ; opt = + inline/optimize/optimize-arrays/loops
 
     The adoption SHAPE is constant across all four (--csharp-style=extensions --scalar=float
@@ -31,7 +31,7 @@ $ErrorActionPreference = 'Stop'
 $here      = $PSScriptRoot
 $platoRoot = Split-Path -Parent $here
 $cliProj   = Join-Path $platoRoot 'Plato.CLI\Plato.CLI.csproj'
-$platoSrc  = Join-Path $platoRoot 'plato-src'
+$platoSrc  = Join-Path $platoRoot 'stdlib-legacy'
 $manifest  = Join-Path $here 'manifest-min.txt'
 
 foreach ($p in @($cliProj, $platoSrc, $manifest)) {
@@ -51,7 +51,7 @@ function Get-MinInput {
         Where-Object { $_ -and -not $_.StartsWith('#') }
     foreach ($n in $names) {
         $src = Join-Path $platoSrc $n
-        if (-not (Test-Path $src)) { throw "manifest-min.txt lists '$n' but it is not in plato-src" }
+        if (-not (Test-Path $src)) { throw "manifest-min.txt lists '$n' but it is not in stdlib-legacy" }
         Copy-Item $src (Join-Path $minInput $n)
     }
     Write-Host ("   minimal subset: {0} .plato files" -f $names.Count)

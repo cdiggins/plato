@@ -1,7 +1,7 @@
 # Optimizer stage 2 — loop-into-buffer lowering (starting plan, 2026-07-10)
 
 Stage 2 per the roadmap: "loop-into-buffer lowering, functional-in-place — needs P6."
-P6's runtime slice is DONE (`unique type List<T>` / `Buffer<T>` intrinsics, `plato-src/unique.plato`),
+P6's runtime slice is DONE (`unique type List<T>` / `Buffer<T>` intrinsics, `stdlib-legacy/unique.plato`),
 so this is now unblocked. Nothing here is implemented yet; this doc pins the scope and order so the
 work starts warm.
 

@@ -7,14 +7,14 @@
 
 A functional re-expression of [mapbox/earcut](https://github.com/mapbox/earcut)
 (polygon-with-holes triangulation by ear clipping) as a Plato library, compiled
-together with the full production standard library (`plato-src`) into a
+together with the full production standard library (`stdlib-legacy`) into a
 standalone C# test library, with NUnit tests asserting the invariant the
 original earcut suite uses: the output triangles exactly tile the polygon.
 
 ```
 earcut/
   earcut.plato          the library (129 code lines incl. two types; 256 with comments)
-  regen-earcut.ps1      merge plato-src + earcut.plato -> Generated\  (-Test runs suite)
+  regen-earcut.ps1      merge stdlib-legacy + earcut.plato -> Generated\  (-Test runs suite)
   Ara3D.Earcut.Tests/   NUnit project; Generated\ is emitted, not committed
     EarcutTests.cs      20 tests
     EarcutSupport.cs    one shim for a missing array intrinsic (below)
@@ -139,7 +139,7 @@ Filed here because earcut.plato is the first consumer of several paths.
    enclosing *parameters*, generic `$T` library functions, struct accumulators
    in folds, nested `IArray<IArray<Integer>>`, operator overloading on
    `Point2D`/`Vector2`, and the two new record types. Lambda capture of
-   *locals* is unexercised in plato-src, so this port avoids it — worth a
+   *locals* is unexercised in stdlib-legacy, so this port avoids it — worth a
    conformance law either way.
 
 ## Verification approach
@@ -158,7 +158,7 @@ plus seeded random star polygons.
   plain `Range` fold — the diff is three lines and makes a good regression test.
 - Add `Concatenate` to `LinqArray`; delete `EarcutSupport.cs`.
 - Consider promoting `PolygonWithHoles`, the planar predicates, and
-  `Triangulate` into `plato-src` (requires the usual `regen-plato.ps1 -Apply`
+  `Triangulate` into `stdlib-legacy` (requires the usual `regen-plato.ps1 -Apply`
   + conformance gate cycle; this folder deliberately stayed outside it).
 - If performance ever matters: reflex-vertex caching and earcut's leftmost-hole
   ordering both fit the functional formulation without changing its shape;

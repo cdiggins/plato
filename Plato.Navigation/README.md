@@ -10,7 +10,7 @@ Plan and decisions: `docs/plato-navigation-index-plan.md` in the studio repo. Tr
 ## Using it
 
 ```csharp
-var index = NavigationIndex.Build(SourceSnapshot.FromDirectory("plato-src"));
+var index = NavigationIndex.Build(SourceSnapshot.FromDirectory("stdlib-legacy"));
 
 var hit = index.FindAt(file, line, column);
 var definitions = index.GetDefinitions(hit);          // 1..N — a call offers every overload
@@ -33,10 +33,10 @@ answers every query the original does.
 ### CLI
 
 ```bash
-dotnet run --project Plato.Navigation.CLI -c Release -- stats --root plato-src --root plato-test-src
-dotnet run --project Plato.Navigation.CLI -c Release -- search Number --kind exact --root plato-src
-dotnet run --project Plato.Navigation.CLI -c Release -- refs plato-src/primitives.plato 4 5 --root plato-src
-dotnet run --project Plato.Navigation.CLI -c Release -- export index.json --root plato-src
+dotnet run --project Plato.Navigation.CLI -c Release -- stats --root stdlib-legacy --root stdlib-legacy-tests
+dotnet run --project Plato.Navigation.CLI -c Release -- search Number --kind exact --root stdlib-legacy
+dotnet run --project Plato.Navigation.CLI -c Release -- refs stdlib-legacy/primitives.plato 4 5 --root stdlib-legacy
+dotnet run --project Plato.Navigation.CLI -c Release -- export index.json --root stdlib-legacy
 ```
 
 Positions are 0-based line and column; printed locations are 1-based.
@@ -65,7 +65,7 @@ and an `Operator` token.
   `default` keyword are compiler built-ins. They are indexed as references with an empty target
   list rather than dropped, so the correctness sweep can prove nothing went missing silently.
 - **Match-expression binders are not indexed.** They are synthesized outside the binder's recording
-  path. No file in `plato-src` uses `match`; `plato-src-v3` does.
+  path. No file in `stdlib-legacy` uses `match`; `stdlib` does.
 - **Shadowing history is lost.** `Scope.Bind` overwrites, so an inner binding hides the outer one.
 - **A hard bind abort degrades the whole build**, not one file — binding is whole-program. Parse
   failures are per-file. Either way `FileStatus` and `Diagnostics` say exactly what happened, and
@@ -73,7 +73,7 @@ and an `Operator` token.
 
 ## Correctness
 
-`Plato.Navigation.Tests` gates the library against `plato-src` + `plato-test-src` (decision D9):
+`Plato.Navigation.Tests` gates the library against `stdlib-legacy` + `stdlib-legacy-tests` (decision D9):
 
 - an **exhaustive identifier sweep** — every one of the ~7.5k identifiers the parser produces must
   be a definition site, a reference site, or a name the binder reported it could not resolve;
@@ -85,7 +85,7 @@ and an `Operator` token.
 - **a build budget** — a warm full rebuild of the corpus (34 files, ~5k lines) runs in well under
   a second.
 
-`plato-src-v3` (70 files) is a scale smoke test, not a gate.
+`stdlib` (70 files) is a scale smoke test, not a gate.
 
 The two compiler hooks this library depends on (recording type-name occurrences and parameter
 spans, decision D5) are additive and guarded by `tools\regen-generated.ps1` byte-identity and the
@@ -130,8 +130,8 @@ Measured with `Plato.Navigation.CLI bench` (best of two runs, snapshots built fr
 
 | corpus | v1 build | v2 cold | v2 reload, 0 changes | v2 reload, 1 file |
 |---|---|---|---|---|
-| `plato-src` + `plato-test-src` (34 files, 5020 lines) | 706 ms | 503 ms | 61 ms | 69 ms |
-| `plato-src-v3` (70 files, 13234 lines) | 779 ms | 736 ms | 59 ms | 68 ms |
+| `stdlib-legacy` + `stdlib-legacy-tests` (34 files, 5020 lines) | 706 ms | 503 ms | 61 ms | 69 ms |
+| `stdlib` (70 files, 13234 lines) | 779 ms | 736 ms | 59 ms | 68 ms |
 
 An update produces a new `NavigationIndex` and consumers swap their reference; `PlatoNavigationMcp`
 is the worked example. A file watcher belongs in the consumer or the CLI, not in this library

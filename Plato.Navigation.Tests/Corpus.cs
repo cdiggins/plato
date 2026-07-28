@@ -10,8 +10,8 @@ public static class Corpus
 
     public static IReadOnlyList<DirectoryPath> Roots { get; } = new[]
     {
-        RepoRoot.RelativeFolder("plato-src"),
-        RepoRoot.RelativeFolder("plato-test-src")
+        RepoRoot.RelativeFolder("stdlib-legacy"),
+        RepoRoot.RelativeFolder("stdlib-legacy-tests")
     };
 
     private static readonly Lazy<BoundSnapshot> _bound =
@@ -30,10 +30,10 @@ public static class Corpus
         var dir = new DirectoryPath(AppContext.BaseDirectory);
         for (var i = 0; i < 12 && dir.Value != null; i++)
         {
-            if (dir.RelativeFolder("plato-src").Exists())
+            if (dir.RelativeFolder("stdlib-legacy").Exists())
                 return dir;
             dir = dir.GetParent();
         }
-        throw new DirectoryNotFoundException("Could not locate the Plato repo root (no plato-src above the test binary).");
+        throw new DirectoryNotFoundException("Could not locate the Plato repo root (no stdlib-legacy above the test binary).");
     }
 }

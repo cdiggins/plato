@@ -14,7 +14,7 @@
 > [`plato-overview.md`](plato-overview.md) (author-written), the execution
 > status and decisions in [`../../../docs/plato-roadmap.md`](../../../docs/plato-roadmap.md),
 > the *verified* bug catalog in [`../../../docs/plato-library-review.md`](../../../docs/plato-library-review.md),
-> and the Plato source itself (`plato-src/`). When this doc conflicts with any
+> and the Plato source itself (`stdlib-legacy/`). When this doc conflicts with any
 > of those, they win.
 
 These are the highest-leverage recommendations for evolving the Plato standard

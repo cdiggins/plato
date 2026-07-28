@@ -3,7 +3,7 @@ namespace Ara3D.Geometry;
 using Ara3D.Collections;
 
 /// <summary>
-/// Array intrinsics that plato-src declares but Ara3D.Collections does not implement yet;
+/// Array intrinsics that stdlib-legacy declares but Ara3D.Collections does not implement yet;
 /// earcut.plato is their first consumer. See ../FINDINGS.md.
 /// </summary>
 public static class EarcutSupport

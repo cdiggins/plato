@@ -194,7 +194,7 @@ implement `Difference`; a vector is not a position.
 
 ### Naming: `Number3` is not `Vector3D`
 
-Plato enforces a suffix rule (see `plato-src-v3/README.md`):
+Plato enforces a suffix rule (see `stdlib/README.md`):
 
 - A **bare number** counts components: `Number3` is a 3-tuple of numbers for raw
   component-wise math (SIMD lanes, RGBA, homogeneous tuples).

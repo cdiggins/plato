@@ -8,7 +8,7 @@ namespace Ara3D.Geometry
 {
     /// <summary>
     /// The handwritten implementation of the affine builder type <c>unique type List&lt;T&gt;</c>
-    /// (plato-src/unique.plato, roadmap Phase 6). A growable, runtime-checked builder in the
+    /// (stdlib-legacy/unique.plato, roadmap Phase 6). A growable, runtime-checked builder in the
     /// spirit of <c>ImmutableArray&lt;T&gt;.Builder</c>: mutators return the builder (call sites
     /// use the reassignment idiom <c>xs = xs.Add(p)</c> or chaining), and <c>Freeze()</c> hands
     /// the backing array to an <see cref="IReadOnlyList{T}"/> WITHOUT copying, invalidating the

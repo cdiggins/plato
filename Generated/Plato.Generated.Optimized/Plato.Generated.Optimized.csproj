@@ -6,7 +6,7 @@
     adoption/shipping shape.
 
     Recipe (see Generated\README.md) - flags shown without the leading dashes:
-        Plato.CLI plato-src Generated\Plato.Generated.Optimized
+        Plato.CLI stdlib-legacy Generated\Plato.Generated.Optimized
             csharp-style=extensions scalar=float
             optimize optimize-arrays inline methods loops
 

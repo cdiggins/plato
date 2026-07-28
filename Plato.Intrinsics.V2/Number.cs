@@ -87,7 +87,7 @@ namespace Ara3D.Geometry
             => Value.CompareTo(other.Value);
 
         /// <summary>The implicit Number -> Angle conversion as a member, so the generated
-        /// conversion forwarder (declared in plato-src/intrinsics.plato) has a target -
+        /// conversion forwarder (declared in stdlib-legacy/intrinsics.plato) has a target -
         /// same pattern as Integer.Number.</summary>
         public Angle Angle { [MethodImpl(AggressiveInlining)] get => new(Value); }
 

@@ -4,7 +4,7 @@ A fast, decoupled loop for iterating on the Plato C# optimizer. The corpus
 [`plato-src-small`](../plato-src-small) is a small, **self-contained** Plato library that
 reproduces the optimizer-relevant shapes of the real geometry library — `Point3D`/`Bounds3D`/
 `Line3D` component ops, `Deform`, `Eval`, `ZipComponents` — without depending on
-`Plato.Intrinsics.V2` or the rest of `plato-src`. It builds against a tiny hand-written runtime
+`Plato.Intrinsics.V2` or the rest of `stdlib-legacy`. It builds against a tiny hand-written runtime
 ([`Plato.Small.Runtime`](Plato.Small.Runtime)) instead.
 
 This is a **development aid, not a release gate**: the `.g.cs` here are overwritten in place by

@@ -223,7 +223,7 @@ All in `PlatoTests`:
 - `NormalizerTests` — parser-free unit tests for R1–R3, idempotence, and the invariant verifier.
 - `CheckerTests` — parser-free unit tests for unification, occurs check, generic instantiation, and
   the four overload-resolution outcomes.
-- `CheckerIntegrationTests` — builds a real `Compilation` from `plato-src` and asserts: the stdlib
+- `CheckerIntegrationTests` — builds a real `Compilation` from `stdlib-legacy` and asserts: the stdlib
   compiles; normalization invariants hold and are idempotent across every function; the solver is
   total and every diagnostic is located; and a non-trivial subset of real functions resolves cleanly.
 

@@ -16,17 +16,17 @@ namespace PlatoTests
     /// </summary>
     public static class CheckerTestSupport
     {
-        /// <summary>Walk up from the test output directory to find the repo's plato-src folder.</summary>
+        /// <summary>Walk up from the test output directory to find the repo's stdlib-legacy folder.</summary>
         public static string FindPlatoSrc()
         {
             for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
             {
-                var candidate = Path.Combine(dir.FullName, "plato-src");
+                var candidate = Path.Combine(dir.FullName, "stdlib-legacy");
                 if (Directory.Exists(candidate))
                     return candidate;
             }
             throw new DirectoryNotFoundException(
-                "Could not locate 'plato-src' above " + AppContext.BaseDirectory);
+                "Could not locate 'stdlib-legacy' above " + AppContext.BaseDirectory);
         }
 
         public static AstNode ParseFile(string path)

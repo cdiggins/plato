@@ -1,8 +1,8 @@
-# Minimal COMPILABLE subset of plato-src, for faster optimizer-phase iteration.
-# One filename per line (copied from plato-src by regen-smoke.ps1). '#' = comment.
+# Minimal COMPILABLE subset of stdlib-legacy, for faster optimizer-phase iteration.
+# One filename per line (copied from stdlib-legacy by regen-smoke.ps1). '#' = comment.
 #
 # This is the objectively-smallest subset that still compiles, found by greedy removal
-# from the full set. plato-src is NOT cleanly layered: core.library.Sample forward-refers
+# from the full set. stdlib-legacy is NOT cleanly layered: core.library.Sample forward-refers
 # to LinearSpace (interval/curves), interval refers to Circle, intrinsics refers to Plane,
 # and geometry.types/geometry.interfaces pull in curves + transforms. So the closure is
 # large (21 files -> ~158 generated .g.cs vs 184 for full, ~14% smaller). Only the pure

@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "build:node": "tsc -p tsconfig.node.json",
-    "gen:plato": "dotnet run --project ../../../Plato.CLI -- ../../plato-src ./src/plato --typescript",
+    "gen:plato": "dotnet run --project ../../../Plato.CLI -- ../../stdlib-legacy ./src/plato --typescript",
     "test": "npm run build:node && node --test \"dist-node/tests/*.test.js\"",
     "typecheck": "tsc -p tsconfig.json"
   },

@@ -11,7 +11,7 @@ to fast, idiomatic libraries on several targets.
 
 ```
 demos/
-  plato-src/
+  stdlib-legacy/
     geometry.plato              Shared Plato source (TypeScript + Rust demos)
   typescript/
     geometry-samples/           Vite + Three.js browser demo; Node tests
@@ -22,7 +22,7 @@ demos/
 ```
 
 The curated `geometry.plato` here is a **demo subset** — not the full standard
-library in [`../plato-src/`](../plato-src/) at the repo root (which feeds C#
+library in [`../stdlib-legacy/`](../stdlib-legacy/) at the repo root (which feeds C#
 codegen for `Ara3D.Geometry`).
 
 ## Quick start

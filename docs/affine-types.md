@@ -74,7 +74,7 @@ Deferred to the future type-checker:
 
 ## Validation
 
-The conformance-only file `plato-test-src/unique.algorithms.plato` contains
+The conformance-only file `stdlib-legacy-tests/unique.algorithms.plato` contains
 the validation slice. It keeps production output additive while exercising:
 
 - append/freeze with `List<T>`;

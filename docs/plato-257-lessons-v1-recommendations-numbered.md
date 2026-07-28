@@ -13,7 +13,7 @@ Use this list to triage and plan Plato library work.
 
 ## Reviewer pass — 2026-07-28
 
-Review by Claude (against `plato-src-v3` as of 2026-07-28). The 463 lesson-derived items below
+Review by Claude (against `stdlib` as of 2026-07-28). The 463 lesson-derived items below
 are largely sound, but they were written per-lesson in isolation: many restate the same gap,
 several conflict with each other, and a few conflict with the language itself. Parallel agents
 that pick items independently will produce three styles of the same API. Resolve sections A and
@@ -37,7 +37,7 @@ invents a fourth style.
 (231, 234), right-handed / CCW winding (240, 243, 440), `-1` index sentinel (455, 457),
 radians-canonical angles (113), inclusive bounds and the empty-bounds encoding (186, 188),
 straight-vs-premultiplied alpha (63), linear-light `Color` (68, 211), view-space handedness
-(39, 226). Create `plato-src-v3/CONVENTIONS.md` (or a `00-conventions` banner file) stating
+(39, 226). Create `stdlib/CONVENTIONS.md` (or a `00-conventions` banner file) stating
 each convention exactly once; the per-type fix then becomes a one-line citation. This collapses
 ~40 items into one packet plus mechanical cross-references.
 
@@ -142,7 +142,7 @@ Then item 210's `Remap` is `At(to, ParameterOf(from, x))` and the interval type 
 in every shader-style calculation. Assign together with the 209/210 packet.
 
 467. **process** — every packet in section B that adds functions must ship matching `Law_*` /
-`Witness_*` entries in `plato-test-src` and a green `regen-conformance.ps1 -Test` in the same
+`Witness_*` entries in `stdlib-legacy-tests` and a green `regen-conformance.ps1 -Test` in the same
 change. State this in the assignment template; an API addition without a law is not done.
 (Prevents the v3 declarations-only gap from simply moving one layer down.)
 

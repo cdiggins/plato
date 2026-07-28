@@ -17,7 +17,7 @@ Plato today has no way to say "one of these shapes." The stdlib works around the
 with a **kind-pattern hand-encoding**: an `Integer`-wrapping `XxxKind` type used as a
 discriminant field on a carrier type whose remaining fields are *conditionally
 meaningful* — valid for some tag values, junk for others. The canonical example is
-`plato-src-v3/40-paths.plato`, verbatim:
+`stdlib/40-paths.plato`, verbatim:
 
 ```plato
 type PathSegmentKind

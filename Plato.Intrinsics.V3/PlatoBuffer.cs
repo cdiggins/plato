@@ -7,7 +7,7 @@ namespace Ara3D.Geometry
 {
     /// <summary>
     /// The handwritten implementation of the affine builder type <c>unique type Buffer&lt;T&gt;</c>
-    /// (plato-src/unique.plato, roadmap Phase 6). A fixed-size, runtime-checked builder:
+    /// (stdlib-legacy/unique.plato, roadmap Phase 6). A fixed-size, runtime-checked builder:
     /// allocate n slots up front (<c>new Buffer&lt;T&gt;(n)</c> in Plato), fill them by index in
     /// any order (<c>Set</c> returns the builder; call sites rebind or chain), then
     /// <c>Freeze()</c> hands the backing array to an <see cref="IReadOnlyList{T}"/> WITHOUT

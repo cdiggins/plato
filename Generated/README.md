@@ -1,7 +1,7 @@
 # Generated/ — buildable generated Plato projects
 
 This folder holds **buildable C# projects** produced by compiling the Plato standard library
-(`plato-src`) with `Plato.CLI`. Unlike `golden/` (which holds loose `.g.cs` diffed by a script),
+(`stdlib-legacy`) with `Plato.CLI`. Unlike `golden/` (which holds loose `.g.cs` diffed by a script),
 each project here is a real SDK-style `.csproj`, references the intrinsics runtime, compiles
 standalone on `net8.0`, and is a member of the root `Ara3D.Studio.sln`.
 

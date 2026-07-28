@@ -232,7 +232,7 @@ generalize to the next HOF-inlining opportunity.
   `scratchpad/increment2-wip.patch`. Touches `TirInliner.cs` (gate relaxation, `InlineTails`,
   `TryBetaReduce` wiring, tuple tail-lift, `ownerTypeName` plumbing) and `CSharpWriter.cs`
   (`fi.OwnerType.Name` passthrough).
-- To see the collapses: apply the WIP, `dotnet run --project Plato.CLI -c Release -- plato-src <out>
+- To see the collapses: apply the WIP, `dotnet run --project Plato.CLI -c Release -- stdlib-legacy <out>
   <full recipe> --dump-tir=<dir>`, read `<dir>/Bounds3D.tir.txt` etc.
 - To reproduce the V1 break: `tools/regen-conformance-scalar.ps1 -Test` (property-ful, pins).
 - To reproduce the V2 clean compile: `tools/regen-generated.ps1 -Apply` then build

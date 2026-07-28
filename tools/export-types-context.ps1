@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-    Export plato-src types and concepts for agent context.
+    Export stdlib-legacy types and concepts for agent context.
 
 .DESCRIPTION
-    Runs Plato.ContextExport on plato-src and writes:
+    Runs Plato.ContextExport on stdlib-legacy and writes:
       docs/types-and-concepts-context.txt   (tracked — commit when stdlib changes)
       .temp/types-and-concepts-context-stats.txt   (gitignored diagnostics)
 
@@ -15,7 +15,7 @@ $ErrorActionPreference = 'Stop'
 
 $PlatoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $Project = Join-Path $PlatoRoot 'Plato.ContextExport\Plato.ContextExport.csproj'
-$Source = Join-Path $PlatoRoot 'plato-src'
+$Source = Join-Path $PlatoRoot 'stdlib-legacy'
 $OutputFile = Join-Path $PlatoRoot 'docs\types-and-concepts-context.txt'
 $StatsFile = Join-Path $PlatoRoot '.temp\types-and-concepts-context-stats.txt'
 

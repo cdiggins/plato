@@ -96,8 +96,8 @@ than aspirational.
 
 | Input | Emitted | Skipped | Notes |
 |---|---|---|---|
-| `demos/plato-src` | **153** | 0 | with `--inline` + Array + rich ToString |
-| `plato-src` (full standard library) | **1716** | 1364 | with `--inline` + Array + rich ToString (compile-gate) |
+| `demos/stdlib-legacy` | **153** | 0 | with `--inline` + Array + rich ToString |
+| `stdlib-legacy` (full standard library) | **1716** | 1364 | with `--inline` + Array + rich ToString (compile-gate) |
 | same, post M3/M4 (plato-239) | 1638 | 1367 | fixed String + IArrayLike only |
 | same, post-functor (pre M3/M4) | 1090 | 1507 | |
 | same, M5 only (pre-functor) | 865 | 1660 | |

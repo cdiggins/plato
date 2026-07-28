@@ -1,17 +1,17 @@
-# Sum types in plato-src-v3 — kind-pattern migration survey
+# Sum types in stdlib — kind-pattern migration survey
 
 **Date:** 2026-07-27 · **Tracker:** [plato-232](../../../tracker/issues/plato-232.md) ·
 **Parent doc:** [`plato-sum-types-design-2026-07-27.md`](plato-sum-types-design-2026-07-27.md)
 
 Companion survey for the sum-type feature. It enumerates every `XxxKind`
-kind-pattern declaration in `plato-src-v3`, classifies each as a **pure enum** or a
+kind-pattern declaration in `stdlib`, classifies each as a **pure enum** or a
 **true sum**, and recommends the flagship migrations for wave 3. It **drafts** the
 "after" of `40-paths.plato`'s affected types.
 
 > **Status — wave 3 shipped (2026-07-27).** The flagship five are **migrated** in
-> `plato-src-v3` (see §5). `26-fields` was confirmed **not** recursive (its expression-graph
+> `stdlib` (see §5). `26-fields` was confirmed **not** recursive (its expression-graph
 > nodes reference operands by `Integer` index, not by embedding a node value) and so was
-> migrated as planned — no substitution needed. `lint plato-src-v3` stays at 0 parse / 0
+> migrated as planned — no substitution needed. `lint stdlib` stays at 0 parse / 0
 > symbol-resolution errors (finding count 4584 → 4549). The ~100 pure-enum `XxxKind` types
 > remain as the follow-up sweep (tracked separately).
 
@@ -20,11 +20,11 @@ kind-pattern declaration in `plato-src-v3`, classifies each as a **pure enum** o
 ## 1. Counts
 
 ```
-type <Name>Kind declarations in plato-src-v3 : 115
+type <Name>Kind declarations in stdlib : 115
 distinct files containing them               : 39
 ```
 
-(Reproduce: `Select-String -Path plato-src-v3\*.plato -Pattern '^type\s+\w+Kind\b'`.)
+(Reproduce: `Select-String -Path stdlib\*.plato -Pattern '^type\s+\w+Kind\b'`.)
 
 ## 2. Classification method
 
@@ -79,7 +79,7 @@ are true sums, and those carry the migration value.
 
 ## 4. Full enumeration (all 115, grouped by file)
 
-Rows are `SUM` / `SUM?` / (blank = enum). File numbers are the `plato-src-v3` prefixes.
+Rows are `SUM` / `SUM?` / (blank = enum). File numbers are the `stdlib` prefixes.
 
 | File | Kind types (class) |
 |------|--------------------|

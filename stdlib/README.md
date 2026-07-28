@@ -1,4 +1,6 @@
-# plato-src-v3 — comprehensive type & concept vocabulary
+# stdlib — comprehensive type & concept vocabulary
+
+**Forward stdlib vocabulary** — declarations only, no bodies yet. Codegen and Studio still ship from `stdlib-legacy`.
 
 Third-generation Plato vocabulary. Successor to the `plato-src-v2` prototype (plato-228):
 much broader coverage, `concept` keyword with bare names (no `I` prefix), and files grouped
@@ -36,7 +38,7 @@ priority backends may polyfill (e.g. GLSL lacks double precision — `Number` ma
 ## Validation
 
 ```
-dotnet <path-to>/Plato.CLI.dll lint plato-src-v3
+dotnet <path-to>/Plato.CLI.dll lint stdlib
 ```
 
 The folder must parse and resolve with zero errors. It is self-contained (declares its own

@@ -10,8 +10,8 @@ native primitives, extension functions, no properties) is constant across all fo
 
 | project | subset | optimizer passes |
 |---|---|---|
-| `Smoke.Full.NonOpt` | all of plato-src | none |
-| `Smoke.Full.Opt`    | all of plato-src | `--inline --optimize --optimize-arrays --loops` |
+| `Smoke.Full.NonOpt` | all of stdlib-legacy | none |
+| `Smoke.Full.Opt`    | all of stdlib-legacy | `--inline --optimize --optimize-arrays --loops` |
 | `Smoke.Min.NonOpt`  | `manifest-min.txt` | none |
 | `Smoke.Min.Opt`     | `manifest-min.txt` | `--inline --optimize --optimize-arrays --loops` |
 
@@ -32,7 +32,7 @@ Each variant's C# is generated into `Smoke.<V>/Generated/` (git-ignored, regener
 
 **It is only ~14% smaller than full** (21 files → 158 generated `.g.cs`, vs 184 for full),
 and that is the *objective floor*: found by greedily removing files from the full set while it
-still compiles. plato-src is **not cleanly layered** — `core.library.Sample` forward-refers to
+still compiles. stdlib-legacy is **not cleanly layered** — `core.library.Sample` forward-refers to
 `LinearSpace` (interval/curves), `interval` refers to `Circle`, `intrinsics` refers to `Plane`,
 and `geometry.types`/`geometry.interfaces` pull in `curves` + `transforms`. Only the pure leaf
 libraries drop out (solids, sdf3d, colors, fields, measures, meshes.library).

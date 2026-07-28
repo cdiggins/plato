@@ -15,12 +15,18 @@ historical only.)
 Plato-language `.plato` source, nor the C# the writers emit (that shape is set by the writer code).
 
 ## Layout (what matters)
-- `plato-src/` — production stdlib source. **WRITABLE as of 2026-07-09** (content-leads
-  refactor; the old Phase-4 freeze is retired). Edit freely; each change = `regen-generated.ps1 -Apply`
-  + `check-all.ps1` green + commit. Plan: `../../docs/plato-execution-plan-2026-07-09.md`.
-- `plato-src-legacy/` — **FROZEN 2026-07-09 snapshot** of the pre-refactor library. Reference only;
-  never edit, never compile. Diff `plato-src` against it to see how far the library has moved.
-- `plato-test-src/` — law/witness libraries (`Law_*`, `Witness_*` Boolean functions). Never merge into plato-src.
+
+**Stdlib mapping:** `stdlib` = forward vocabulary (declarations); `stdlib-legacy` = shipping generation
+(drives `Plato.Generated` / Studio). Do not confuse the two.
+
+- `stdlib/` — **Forward stdlib vocabulary** (ex-`plato-src-v3`). Declarations only, no bodies yet.
+  New *vocabulary* goes here. Lint with `lint submodules\Plato\stdlib` (expect 0 parse / 0 resolution).
+- `stdlib-legacy/` — **Shipping stdlib** (ex-`plato-src`). **WRITABLE as of 2026-07-09** (content-leads
+  refactor; the old Phase-4 freeze is retired). Edit freely for runtime/body fixes; each change =
+  `regen-generated.ps1 -Apply` + `check-all.ps1` green + commit. Plan: `../../docs/plato-execution-plan-2026-07-09.md`.
+- `stdlib-snapshot-2026-07-09/` — **FROZEN 2026-07-09 snapshot** of the pre-refactor library (ex-`plato-src-legacy`).
+  Reference only; never edit, never compile. Diff `stdlib-legacy` against it to see how far the library has moved.
+- `stdlib-legacy-tests/` — law/witness libraries (`Law_*`, `Witness_*` Boolean functions). Never merge into stdlib-legacy.
 - `Plato.CLI/` — entry point. `Program.cs` args: `[input] [output] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--scalar=...] [--methods] [--no-properties] [--loops]` and `lint <folder> [--strict]`. Exits 1 on parse/compile failure (fixed 2026-07-10). The legacy default C# style and `--no-tir` were retired at C4 (the TIR is the sole body writer). `--inline` is wired for the C# writer today; GLSL/C++/CUDA skip lambdas until that lowering is shared.
 - `PlatoCompiler/` — compilation + `Analysis/Linter.cs` (LINT001–005) + `Checking/` (the type checker + Typed IR: Normalize → Constrain → Solve → Elaborate → Monomorphize; handoff doc `docs/type-checker-handoff.md`).
 - `Plato.AST/` — the old associativity bug was FIXED in `392dfa8` (2026-07-09); `../../docs/plato-assoc-bug-diagnosis.md` is historical.
@@ -37,9 +43,9 @@ Plato-language `.plato` source, nor the C# the writers emit (that shape is set b
 
 ## Commands (run from `C:\Users\cdigg\git\studio`)
 - `.\tools\check-frozen-v1.ps1` — freeze tripwire: SHA-256 of the frozen V1 artifacts (ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` + Plato-repo `Plato.Intrinsics`). Exit 1 on any drift. `-Update` re-baselines (deliberate only). Replaced regen-plato in check-all (C0); `regen-plato.ps1` + the legacy default-style emitter were deleted at C4.
-- `.\tools\regen-conformance.ps1 -Test` — regenerate merged (plato-src + plato-test-src) output into the one conformance suite and run it (0 fail; 205 passing as of 2026-07-27).
+- `.\tools\regen-conformance.ps1 -Test` — regenerate merged (stdlib-legacy + stdlib-legacy-tests) output into the one conformance suite and run it (0 fail; 205 passing as of 2026-07-27).
 - `.\tools\check-all.ps1` — full gate battery, PASS/FAIL table. **Run once at the end of a mission**; iterate on a single relevant gate during development.
-- `dotnet run --project submodules\Plato\Plato.CLI -c Release -- lint submodules\Plato\plato-src` — exit 0 unless `--strict`; the finding count drifts with library content, so compare against the previous run, not a hardcoded baseline.
+- `dotnet run --project submodules\Plato\Plato.CLI -c Release -- lint submodules\Plato\stdlib-legacy` — exit 0 unless `--strict`; the finding count drifts with library content, so compare against the previous run, not a hardcoded baseline.
 
 ## Hard rules
 1. No git commits unless the mission says so; never stage parakeet or pre-existing dirty files.

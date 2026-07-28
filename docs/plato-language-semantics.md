@@ -17,7 +17,7 @@ construct is not in this document, do not rely on it.
 ## 1. The model
 
 A Plato program is a set of top-level declarations of three kinds — `type`, `concept`
-(`interface` is an accepted alias; the older `plato-src` uses it), and `library` — compiled
+(`interface` is an accepted alias; the older `stdlib-legacy` uses it), and `library` — compiled
 together from a folder of `.plato` files. There are no modules, imports, or namespaces: every
 declaration in the compilation shares one global scope, and declaration order never matters.
 Library names are organizational only; they do not scope names.
@@ -276,7 +276,7 @@ Explicitly absent, so nobody infers them from the C#-flavored syntax:
 
 ## Verifying a claim
 
-The stdlib is the oracle: `plato-src-v3/` (current idiom) and `plato-test-sum/` (sum/match
+The stdlib is the oracle: `stdlib/` (current idiom) and `plato-test-sum/` (sum/match
 fixtures) exercise everything above and compile in the repo gates. To check a construct, write a
 minimal `.plato` file and run the front end over its folder:
 

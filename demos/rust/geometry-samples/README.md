@@ -5,7 +5,7 @@ many languages**. The same `geometry.plato` file that generates the TypeScript
 library for the browser demo also generates the Rust library used by this crate.
 
 ```
-../../plato-src/geometry.plato          (shared source of truth)
+../../stdlib-legacy/geometry.plato          (shared source of truth)
         │
         │  Plato.CLI --rust             (../../../Plato.CLI)
         ▼

@@ -16,7 +16,7 @@ Expected: **8 passed / 0 failed** (~45 s, most of it MSVC compiling the standard
 | `Dialects_Differ_Only_In_The_Preamble` | the code section of the two outputs is byte-identical |
 | `Every_Emitted_Function_Has_A_Prototype` | one prototype per emitted function |
 
-Sources are found by walking up from the test binaries to `demos/plato-src` and `plato-src`, so
+Sources are found by walking up from the test binaries to `demos/stdlib-legacy` and `stdlib-legacy`, so
 the tests follow the repo rather than a configured path. Generated output goes to
 `%TEMP%\plato-cpp-tests\<library>-<dialect>`.
 

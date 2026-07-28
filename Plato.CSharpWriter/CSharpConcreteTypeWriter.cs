@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -589,7 +589,7 @@ namespace Ara3D.Geometry.CSharpWriter
             tw.WriteLine($"{CSharpTypeWriter.Annotation} public static bool NotEquals(this {SimpleName} a, {prim} b) => !(({prim})a).Equals(b);");
 
             // (The old hardwired Cubic/Linear/Quadratic/ReciprocalSquareRootEstimate float
-            // forwarders are gone: those members are now DECLARED in plato-src/intrinsics.plato,
+            // forwarders are gone: those members are now DECLARED in stdlib-legacy/intrinsics.plato,
             // so the regular intrinsic-forwarder path generates them.)
 
             if (SimpleName == "Integer")

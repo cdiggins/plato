@@ -15,7 +15,7 @@ namespace Ara3D.Geometry.CSharpWriter;
 // style, the library-function fanout is moved OUT of the partial struct into CLASSIC extension
 // methods (`public static R Name(this T recv, ...)`), organized as one plain static class per
 // Plato `library` (one file per library, e.g. Vectors.g.cs), so the generated C# mirrors
-// plato-src 1:1. Per the Phase 2 revision, C# 14 `extension` blocks / extension properties are
+// stdlib-legacy 1:1. Per the Phase 2 revision, C# 14 `extension` blocks / extension properties are
 // NOT used: the output compiles with the default LangVersion on net8.0, and no-arg moved
 // functions become extension METHODS (`v.Length()`). Consequently the emitter's own expression
 // writer must add `()` at every call site of a moved no-arg member; the global name partition

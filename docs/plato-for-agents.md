@@ -34,10 +34,15 @@ library AngularCurves2D {
 
 Paths below are relative to this submodule (`submodules/Plato/`).
 
+**Stdlib mapping:** `stdlib` = forward vocabulary (declarations); `stdlib-legacy` = shipping generation
+(drives `Plato.Generated` / Studio).
+
 | Path | Purpose |
 |------|---------|
-| `plato-src/*.plato` | Production standard library (~3,500 lines → 11,000+ lines of C#). |
-| `plato-test-src/` | Law/witness tests only — **never merge into `plato-src`**. |
+| `stdlib/` | Forward stdlib vocabulary (declarations only). New *vocabulary* goes here. |
+| `stdlib-legacy/*.plato` | Shipping standard library (~3,500 lines → 11,000+ lines of C#). |
+| `stdlib-legacy-tests/` | Law/witness tests only — **never merge into `stdlib-legacy`**. |
+| `stdlib-snapshot-2026-07-09/` | Frozen pre-refactor snapshot — reference only. |
 | `demos/plato-src/geometry.plato` | Curated demo subset for TS/Rust browsers (not the full stdlib). |
 | `Plato.CLI/` | Compiler entry point. |
 | `Plato.ContextExport/` | Compact export of types + concepts for agent context (`tools/export-types-context.bat`). |
@@ -55,7 +60,7 @@ Paths below are relative to this submodule (`submodules/Plato/`).
 All backends share the same pipeline: parse `.plato` → build AST → compile (resolve symbols) → walk compilation with a language-specific writer.
 
 ```
-plato-src/*.plato  →  Plato.CLI  →  Plato.CSharpWriter   →  ara3d-sdk/src/Plato.Generated/
+stdlib-legacy/*.plato  →  Plato.CLI  →  Plato.CSharpWriter   →  ara3d-sdk/src/Plato.Generated/
                                  →  Plato.TypeScriptWriter →  plato.g.ts
                                  →  Plato.RustWriter       →  plato.rs
                                  →  Plato.GlslWriter       →  plato.glsl
@@ -69,7 +74,7 @@ plato-src/*.plato  →  Plato.CLI  →  Plato.CSharpWriter   →  ara3d-sdk/src/
 
 ```bat
 dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
-  submodules\Plato\plato-src ara3d-sdk\src\Plato.Generated
+  submodules\Plato\stdlib-legacy ara3d-sdk\src\Plato.Generated
 ```
 
 - **Output:** one `.g.cs` per type, packed structs, aggressive inlining, `partial` for hand extensions. Flags: `--csharp-style=default|extensions`, `--optimize`, `--scalar=wrapper|float`.
@@ -125,7 +130,7 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
 
 - **Output:** `plato.hpp` (C++17) or `plato.cu` (nvcc). **Bodies are identical; only the preamble differs** (`Dialects_Differ_Only_In_The_Preamble`). Free functions; `Number`→`float`; vectors→`float2/3/4`. Same representability gaps as GLSL for lambdas / dynamic arrays / strings in V1. Details: [`Plato.CppWriter/README.md`](../Plato.CppWriter/README.md). Not in `Ara3D.Studio.sln` yet.
 
-TS and Rust backends compile a curated demo library and pass a shared conformance suite; they have not yet consumed the full `plato-src` stdlib. Live demos: [cdiggins.github.io/plato](https://cdiggins.github.io/plato/). GLSL has eight live WebGL2 demos under `demos/glsl/`. C++/CUDA is compile-verified only (no runtime demos yet).
+TS and Rust backends compile a curated demo library and pass a shared conformance suite; they have not yet consumed the full `stdlib-legacy` stdlib. Live demos: [cdiggins.github.io/plato](https://cdiggins.github.io/plato/). GLSL has eight live WebGL2 demos under `demos/glsl/`. C++/CUDA is compile-verified only (no runtime demos yet).
 
 ---
 
@@ -139,7 +144,7 @@ Run from the studio repo root unless noted.
 .\tools\regen-plato.ps1 -Apply       :: write + sync intrinsics
 
 :: Lint plato source (parse + resolve, no output)
-dotnet run --project submodules\Plato\Plato.CLI -c Release -- lint submodules\Plato\plato-src
+dotnet run --project submodules\Plato\Plato.CLI -c Release -- lint submodules\Plato\stdlib-legacy
 
 :: Export full stdlib context for agents (tracked doc + gitignored stats)
 submodules\Plato\tools\export-types-context.bat
@@ -153,8 +158,8 @@ submodules\Plato\tools\export-types-context.bat
 
 ## Rules when editing Plato
 
-1. **`plato-src/` is WRITABLE** as of 2026-07-09 (content-leads refactor; the Phase-4 freeze is retired).
-   Edit freely; the frozen pre-refactor snapshot lives in `plato-src-legacy/` (reference only). Plan:
+1. **`stdlib-legacy/` is WRITABLE** as of 2026-07-09 (content-leads refactor; the Phase-4 freeze is retired).
+   Edit freely; the frozen pre-refactor snapshot lives in `stdlib-snapshot-2026-07-09/` (reference only). Plan:
    [`docs/plato-execution-plan-2026-07-09.md`](../../../docs/plato-execution-plan-2026-07-09.md).
 2. **Do not hand-edit** `ara3d-sdk/src/Plato.Generated/` — regenerate via `regen-plato.ps1`.
 3. **Known bugs are being fixed**, tracked in `conformance/.../KnownFailures.json`; see [`docs/plato-library-review.md`](../../../docs/plato-library-review.md).

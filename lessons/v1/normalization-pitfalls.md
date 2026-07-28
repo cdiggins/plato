@@ -282,7 +282,7 @@ type Direction2D implements Value { Vector: Vector2D; }
 type Direction3D implements Value { Vector: Vector3D; }
 ```
 
-Derived behavior (concept libraries under `plato-src-v3/concept-library/`) that
+Derived behavior (concept libraries under `stdlib/concept-library/`) that
 every lesson about normalization eventually touches:
 
 | Operation | Where | Precondition / note |

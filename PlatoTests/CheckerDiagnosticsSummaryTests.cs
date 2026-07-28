@@ -10,7 +10,7 @@ namespace PlatoTests
     /// Reporting fixture for the checker-completeness burn-down (assessment item 2, "declare the
     /// handwritten intrinsics"): prints how many stdlib functions still carry located diagnostics,
     /// grouped by diagnostic code and by the call name that failed to resolve — the worklist for
-    /// plato-src/intrinsics.plato.
+    /// stdlib-legacy/intrinsics.plato.
     /// </summary>
     [TestFixture]
     public static class CheckerDiagnosticsSummaryTests

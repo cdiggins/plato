@@ -3,8 +3,8 @@
 Small, self-contained `.plato` fixtures for the sum-type / exhaustive-`match`
 feature (tracker **plato-232**, design doc
 [`docs/plato-sum-types-design-2026-07-27.md`](../docs/plato-sum-types-design-2026-07-27.md)).
-These are **fixtures, not stdlib** — never merge into `plato-src`, `plato-src-v2`,
-or `plato-src-v3`. They exercise syntax the current front end does not yet accept;
+These are **fixtures, not stdlib** — never merge into `stdlib-legacy`, `plato-src-v2`,
+or `stdlib`. They exercise syntax the current front end does not yet accept;
 the wave-2 parser/AST implementer wires them into the test suite as the feature lands.
 
 ## Layout
@@ -29,7 +29,7 @@ plato-test-sum/
 
 - **Self-contained.** Each file declares the minimal primitives it needs (`type
   Number { }`, `type Point2D { X: Number; Y: Number; }`, …), mirroring how
-  `plato-src-v3/00-primitives.plato` self-declares. `implements`/`concept`
+  `stdlib/00-primitives.plato` self-declares. `implements`/`concept`
   clauses are intentionally omitted — they are orthogonal to sum types and would
   drag in the concept lattice. The design doc shows the faithful `implements Value`
   form; the fixtures stay minimal.

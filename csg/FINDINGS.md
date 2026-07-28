@@ -9,7 +9,7 @@
 A functional re-expression of [evanw/csg.js](https://github.com/evanw/csg.js)
 (constructive solid geometry — union, intersection, difference of polyhedra) as
 a Plato library, compiled together with the full production standard library
-(`plato-src`) into a standalone C# test library. NUnit tests assert the
+(`stdlib-legacy`) into a standalone C# test library. NUnit tests assert the
 one-dimension-up analogue of the earcut port's area invariant: the boolean of
 two axis-aligned boxes is a closed solid whose enclosed volume is known
 analytically and must match the volume the returned facet soup encloses
@@ -18,7 +18,7 @@ analytically and must match the volume the returned facet soup encloses
 ```
 csg/
   csg.plato            the library (~110 code lines incl. two types; 230 with comments)
-  regen-csg.ps1        merge plato-src + csg.plato -> Generated\  (-Test runs suite)
+  regen-csg.ps1        merge stdlib-legacy + csg.plato -> Generated\  (-Test runs suite)
   Ara3D.Csg.Tests/     NUnit project; Generated\ is emitted, not committed
     CsgTests.cs        13 volume tests + 1 explicit (documents a limitation)
     CsgSupport.cs      the same one-line Concatenate shim earcut needs

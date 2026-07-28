@@ -121,9 +121,9 @@ is the curated primitive + vector library each demo builds on.
 
 ## Verification
 
-The original demo library (`demos/plato-src/geometry.plato`, 66 functions) and
+The original demo library (`demos/stdlib-legacy/geometry.plato`, 66 functions) and
 all eight `demos/glsl` libraries compile, link and render in WebGL2 with zero
-skips. Full stdlib (`plato-src`): 1433 emitted / 960 skipped (see below).
+skips. Full stdlib (`stdlib-legacy`): 1433 emitted / 960 skipped (see below).
 
 ## Known POC limitations
 
@@ -134,7 +134,7 @@ skips. Full stdlib (`plato-src`): 1433 emitted / 960 skipped (see below).
 - Duplicate signatures: first wins. The loser is recorded in the `// Skipped`
   block, but *which* overload wins is emission order, not a deliberate choice —
   see *Erased types*.
-- The full stdlib (`plato-src`) runs end to end but ~40% of functions still skip:
+- The full stdlib (`stdlib-legacy`) runs end to end but ~40% of functions still skip:
   the top reasons are lambdas / function values (no closures), unmapped
   intrinsics, and `IArray` / `FunctionN` parameter types (see the trailing
   `// Skipped` block in any full-stdlib output). Closing most of the lambda gap

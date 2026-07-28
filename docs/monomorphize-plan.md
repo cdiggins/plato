@@ -65,7 +65,7 @@ reifier fully succeeded.
    original). **Unique match only** — 0 or >1 leaves the call unchanged and counted as deferred,
    so we never mis-dispatch. EmissionKind is re-derived shape-free from the target.
 5. **Tests** — synthetic (`Specialize` grounds types; a concept-method call re-points to a
-   hand-built concrete impl) and integration over `plato-src` (total; count fully-ground TIRs;
+   hand-built concrete impl) and integration over `stdlib-legacy` (total; count fully-ground TIRs;
    assert the derived substitution reproduces every `rf` signature; report re-dispatch coverage).
 
 ## Increment 3 (2026-07-10): grounding completed

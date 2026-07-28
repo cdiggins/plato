@@ -2,7 +2,7 @@
 // contents as a string; this is browser-only, which is why it lives in app/
 // and not in the sample registry.
 
-import platoSource from '../../../../plato-src/geometry.plato?raw';
+import platoSource from '../../../../stdlib-legacy/geometry.plato?raw';
 import platoGenerated from '../plato/plato.g.ts?raw';
 
 /** Extra code-panel tabs shown for every sample. */

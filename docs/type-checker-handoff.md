@@ -93,7 +93,7 @@ block emission at all (emission is name+shape; re-dispatch is only an identity r
    scalar analysis reads the component-unrolled symbol tree). Deleting the legacy heuristics is now
    unblocked (they remain as the `--no-tir` fallback and the differentials' reference).
 3. **Checker completeness**: 68/823 stdlib functions still carry located diagnostics (was 78;
-   2026-07-10 declared the handwritten intrinsics in `plato-src/intrinsics.plato` — Number
+   2026-07-10 declared the handwritten intrinsics in `stdlib-legacy/intrinsics.plato` — Number
    MinValue/MaxValue/RSRE/Linear/Quadratic/Cubic, IOrderable equality, the Number→Angle cast —
    CHK201 22 → 13). `CheckerDiagnosticsSummaryTests` prints the remaining worklist: mostly
    concept-dispatch ambiguities (CHK203) and arg/return coercion gaps (CHK101), i.e. solver work,

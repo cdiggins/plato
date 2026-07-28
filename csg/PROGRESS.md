@@ -8,7 +8,7 @@ DONE (2026-07-12). Fold-based re-expression of evanw/csg.js; no BSP tree.
 - Ara3D.Csg.Tests: 13/13 volume-invariant tests pass (boxes: overlap, disjoint,
   contained, rotated-45 intersect). 1 Explicit test documents the coplanar
   shared-face limitation (returns 14.667 vs 16).
-- regen: .\regen-csg.ps1 -Test  (from anywhere; merges plato-src + csg.plato).
+- regen: .\regen-csg.ps1 -Test  (from anywhere; merges stdlib-legacy + csg.plato).
 
 Open: coplanar shared faces unresolved (see FINDINGS.md §compromise); fast BSP
 pass is future work.

@@ -8,7 +8,7 @@
 // Status markers used below:
 //   [PORT]  direct port of pure C# already in Ara3D.Geometry
 //   [NEW]   new capability
-//   [MOD]   modifies/replaces something already in plato-src
+//   [MOD]   modifies/replaces something already in stdlib-legacy
 //   [NEEDS] depends on a compiler feature that isn't ready yet (called out)
 //
 // This file is a DRAFT: some items are aspirational and will need refinement to
@@ -401,8 +401,8 @@ library HalfEdges
 //     then use them for procedural mesh construction.
 //
 // unique type List<T>/Buffer<T> already ship in unique.plato; the body-less
-// intrinsic signatures currently live in plato-test-src. First production use =
-// move this library into plato-src (one-time _Vector*.g.cs comment-id churn).
+// intrinsic signatures currently live in stdlib-legacy-tests. First production use =
+// move this library into stdlib-legacy (one-time _Vector*.g.cs comment-id churn).
 // ============================================================================
 
 library BuilderIntrinsics

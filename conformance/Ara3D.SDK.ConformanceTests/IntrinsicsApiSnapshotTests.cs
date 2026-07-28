@@ -68,7 +68,7 @@ namespace Ara3D.SDK.ConformanceTests
                 if (m.IsSpecialName && (m.Name.StartsWith("get_") || m.Name.StartsWith("set_")))
                     continue; // property accessors already covered
                 if (m.Name.StartsWith("Law_") || m.Name.StartsWith("Witness_"))
-                    continue; // test-only members merged from plato-test-src; not the intrinsic surface
+                    continue; // test-only members merged from stdlib-legacy-tests; not the intrinsic surface
                 var kind = m.IsSpecialName ? "op" : (m.IsStatic && !IsExtensionMethod(m) ? "static" : (IsExtensionMethod(m) ? "ext" : "method"));
                 yield return $"{kind} {Short(m.ReturnType)} {m.Name}{Params(m.GetParameters())}";
             }

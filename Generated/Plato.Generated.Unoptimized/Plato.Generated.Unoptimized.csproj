@@ -5,7 +5,7 @@
     Plato standard library with the OPTIMIZERS OFF.
 
     Recipe (see Generated\README.md) - flags shown without the leading dashes:
-        Plato.CLI plato-src Generated\Plato.Generated.Unoptimized
+        Plato.CLI stdlib-legacy Generated\Plato.Generated.Unoptimized
             csharp-style=extensions scalar=float
 
     This is the readable reference shape: classic extension methods, Number/Integer/Boolean/

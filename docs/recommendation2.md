@@ -12,12 +12,12 @@
 > [`plato-overview.md`](plato-overview.md) (author-written), the execution
 > status and decisions in [`../../../docs/plato-roadmap.md`](../../../docs/plato-roadmap.md),
 > the *verified* bug catalog in [`../../../docs/plato-library-review.md`](../../../docs/plato-library-review.md),
-> and the Plato source itself (`plato-src/`). When this doc conflicts with any
+> and the Plato source itself (`stdlib-legacy/`). When this doc conflicts with any
 > of those, they win.
 
 ---
 
-I've reviewed the exported type/concept surface, cross-checked suspicious declarations against `plato-src`, and read the companion docs (`docs/plato-library-roadmap-ideas.md` already covers *function-level* content like SDF catalogs and noise, so this review focuses on the **type and concept surface itself** — what the export actually shows). Here's my assessment.
+I've reviewed the exported type/concept surface, cross-checked suspicious declarations against `stdlib-legacy`, and read the companion docs (`docs/plato-library-roadmap-ideas.md` already covers *function-level* content like SDF catalogs and noise, so this review focuses on the **type and concept surface itself** — what the export actually shows). Here's my assessment.
 
 ## Overall
 
@@ -25,11 +25,11 @@ The foundation is genuinely good: the algebraic concept ladder (`IAdditive` → 
 
 ## 1. Defects to fix first
 
-These are bugs in the declarations themselves (verified in `plato-src`, not export artifacts):
+These are bugs in the declarations themselves (verified in `stdlib-legacy`, not export artifacts):
 
 - **`IBounds` constraint is broken** — the constraints reference a type parameter `T` that doesn't exist; the parameters are `TValue`/`TDelta`:
 
-```176:178:submodules/Plato/plato-src/core.interfaces.plato
+```176:178:submodules/Plato/stdlib-legacy/core.interfaces.plato
 interface IBounds<TValue, TDelta>    
     where T: IVectorLike, T: IDifference<TDelta>
     inherits IValue
@@ -87,4 +87,4 @@ Others, roughly in priority order:
 4. Mesh attributes, unit-vector types, `Matrix3x3`, `Complex`, grid types — each unlocks a user-visible category (rendering, robust APIs, physics/statistics, images/voxels).
 5. The consistency audit (§2) can proceed incrementally; it's mostly mechanical once conventions are decided.
 
-One caveat from the repo rules: `plato-src/` is frozen until the Phase 4 bug-fix wave except for additive new files, so §1 items should be queued into that wave, while most of §3–§5 can land as new files any time. If you'd like, I can write this up as a durable doc in `docs/` (e.g. `plato-type-surface-review.md`) alongside the existing roadmap-ideas doc.
+One caveat from the repo rules: `stdlib-legacy/` is frozen until the Phase 4 bug-fix wave except for additive new files, so §1 items should be queued into that wave, while most of §3–§5 can land as new files any time. If you'd like, I can write this up as a durable doc in `docs/` (e.g. `plato-type-surface-review.md`) alongside the existing roadmap-ideas doc.
