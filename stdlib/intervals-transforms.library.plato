@@ -5,13 +5,14 @@
 // concepts declared in `12-intervals-bounds.plato` (IntervalLike, BoundsLike) and
 // `13-transforms.plato` (Transformable, Deformable2D, Deformable3D).
 //
-// Design notes on the concept surface (see the TODO(concept-gap) banners below):
-//   * IntervalLike<T> leaves T unconstrained, but its concrete instances
-//     (Number, Angle, Length, Integer) are all Additive + Interpolatable +
-//     Comparable, so those are the only capabilities used on T here.
-//   * BoundsLike<TPoint> carries only the point type; it has no delta/vector type
-//     parameter and its point type is neither Orderable nor a Lattice. That blocks
-//     the Extent/Contains/Union/Intersection family — see the banner.
+// Design notes on the concept surface:
+//   * IntervalLike<T> now bounds T to (Additive + Interpolatable + Comparable) —
+//     every concrete instance (Number, Angle, Length, Integer) satisfies it, and
+//     those are the only capabilities used on T here.
+//   * BoundsLike<TPoint, TDelta> now carries a delta type (TDelta = the vector of
+//     TPoint, via TPoint: Difference<TDelta>), so Extent/Diagonal are expressible.
+//     Contains/Union/Intersection/Clamp still are not: they need component-wise
+//     Min/Max (a Lattice) on TPoint, which the point types do not implement.
 //   * Directed intervals: Contains/Overlaps/Union/Intersection/Clamp assume the
 //     forward orientation Start <= End. Use IsForward to test, Reverse to fix.
 
@@ -23,13 +24,9 @@ library IntervalsTransforms
     // Comparable (LessThanOrEquals / Lesser / Greater / Clamp), the capabilities
     // shared by every concrete interval element type (Number, Angle, Length,
     // Integer). The comparison helpers (Lesser/Greater/Clamp) come from P1
-    // (01-core-algebra), which derives them for any Orderable.
-
-    // TODO(concept-gap): IntervalLike<T> should constrain T to
-    // (Additive + Interpolatable + Comparable). Every derived function below relies
-    // on those members, but the concept declares no bound, so resolution succeeds
-    // only by the checker's duck-typing on type parameters. Adding the constraint
-    // would make the contract explicit and let a stricter checker verify it.
+    // (01-core-algebra), which derives them for any Orderable. The concept now
+    // states the bound explicitly: IntervalLike<T> where T: Additive,
+    // Interpolatable, Comparable.
 
     // The signed span from Start to End (End - Start); negative for a reversed
     // interval. Replaces v1 `Size`, which read ambiguously against area/volume.
@@ -138,28 +135,34 @@ library IntervalsTransforms
     // Add a Number-specialized overload in the numeric package if wanted.
 
     //==
-    // BoundsLike<TPoint> — an axis-aligned region between corner points Min and Max.
-    // Only capabilities on TPoint itself are available; its instances (Point2D/3D/4D)
-    // are Coordinate (=> Interpolatable) and Difference, but NOT Orderable/Lattice.
+    // BoundsLike<TPoint, TDelta> — an axis-aligned region between corner points
+    // Min and Max, with TDelta the displacement type (TPoint: Difference<TDelta>).
+    // TPoint's instances (Point2D/3D/4D) are Coordinate (=> Interpolatable) and
+    // Difference, but NOT Orderable/Lattice.
 
     // The center point of the region. Uses P1's MidPoint(Interpolatable).
-    Center(self: BoundsLike<$TPoint>): $TPoint
+    Center(self: BoundsLike<$TPoint, $TDelta>): $TPoint
         => self.Min.MidPoint(self.Max);
 
     // The point a fraction `t` of the way along the Min -> Max diagonal. t is
     // unclamped. For per-axis interpolation use a point-typed parameter once the
-    // concept exposes component access (see the gap note).
-    Lerp(self: BoundsLike<$TPoint>, t: Number): $TPoint
+    // concept exposes component access (see the note below).
+    Lerp(self: BoundsLike<$TPoint, $TDelta>, t: Number): $TPoint
         => self.Min.Lerp(self.Max, t);
 
-    // TODO(concept-gap): the Extent/Diagonal, Contains(point|bounds), Union,
-    // Intersection, Clamp, Expand and Corner-enumeration helpers cannot be written
-    // against BoundsLike<TPoint> as declared. Extent/Diagonal would return the
-    // delta between Min and Max, but BoundsLike has no delta type parameter to name
-    // (v1's IBounds<$T,$D> carried one); and containment/union/intersection need
-    // component-wise Min/Max (a Lattice) on TPoint, which the point types do not
-    // implement. Recommended fix: declare `BoundsLike<TPoint, TDelta>` and/or make
-    // the point types Lattice/Clampable, then this surface mirrors IntervalLike.
+    // The displacement spanning the region: Max - Min (the Min -> Max diagonal
+    // vector). Now expressible via TPoint: Difference<TDelta>.
+    Extent(self: BoundsLike<$TPoint, $TDelta>): $TDelta
+        => self.Min.Between(self.Max);
+
+    // The Min -> Max diagonal displacement; a named alias for Extent.
+    Diagonal(self: BoundsLike<$TPoint, $TDelta>): $TDelta
+        => self.Extent;
+
+    // Still not derivable here: Contains(point|bounds), Union, Intersection, Clamp,
+    // Expand, and corner enumeration. They need component-wise Min/Max (a Lattice)
+    // and per-axis access on TPoint, which the point types do not implement. Making
+    // the point types Lattice/Clampable would let this surface mirror IntervalLike.
 
     //==
     // Transformable<TTransform> — a value that can be carried through a transform.
@@ -177,9 +180,13 @@ library IntervalsTransforms
     ThenTransform(self: Transformable<$TTransform>, first: $TTransform, second: $TTransform, third: $TTransform): Self
         => self.Transform(first).Transform(second).Transform(third);
 
-    // TODO(concept-gap): richer helpers (inverse-transform, transform-about-a-pivot,
-    // identity) need Invertible/Composable/Identity members on TTransform, which the
-    // Transformable concept does not require.
+    // Deliberately NOT extended: richer helpers (inverse-transform,
+    // transform-about-a-pivot, identity) need Invertible/Composable/Identity on
+    // TTransform. Constraining Transformable that way is not sound, because the
+    // transform family is not uniformly invertible or composable — the TRS types
+    // (Transform2D/Transform3D) are not closed under composition (see
+    // transforms.plato) and the projective types expose no inverse. The pivot and
+    // identity helpers therefore live per-representation, not on the concept.
 
     //==
     // Deformable2D — a value reshaped by an arbitrary Point2D -> Point2D mapping.
@@ -191,16 +198,14 @@ library IntervalsTransforms
         => self.Deform(p => p.Add(offset));
 
     // Uniformly scale about `center` by `factor` (1 leaves the shape unchanged).
-    // Assumes Difference.Between(a, b) = b - a (the displacement from a to b).
     ScaleAbout(self: Deformable2D, center: Point2D, factor: Number): Self
         => self.Deform(p => center.Add(center.Between(p).Multiply(factor)));
 
     // Non-uniformly scale about `center` by a per-axis `factors` vector.
-    // Assumes Difference.Between(a, b) = b - a.
     ScaleAbout(self: Deformable2D, center: Point2D, factors: Number2): Self
         => self.Deform(p => center.Add(center.Between(p).Multiply(factors)));
 
-    // Rotate every point about `center` by `rotation`. Assumes Between(a, b) = b - a.
+    // Rotate every point about `center` by `rotation`.
     RotateAbout(self: Deformable2D, center: Point2D, rotation: Rotation2D): Self
         => self.Deform(p => center.Add(center.Between(p).Transform(rotation)));
 
@@ -236,11 +241,10 @@ library IntervalsTransforms
     TranslateY(self: Deformable2D, distance: Number): Self
         => self.Translate(Vector2D.UnitY.Multiply(distance));
 
-    // TODO(concept-gap): the ScaleAbout helpers depend on the sign of
-    // Difference.Between, which file 02 declares (Between(a, b): TDelta) without
-    // documenting its direction. This code assumes b - a; if the intended
-    // convention is a - b the scale reflects through `center`. Pin the direction in
-    // the Difference doc comment.
+    // The ScaleAbout/RotateAbout helpers use Difference.Between(a, b) = b - a,
+    // the displacement from a to b. That direction is now the documented contract
+    // on the Difference concept (algebra.concepts.plato), so it is relied on here
+    // rather than merely assumed.
 
     // RESOLVED (was TODO(concept-gap): RotateAbout is omitted): rotating a Point2D
     // needed a point-rotation operation, which is now reachable - `library
@@ -255,16 +259,15 @@ library IntervalsTransforms
     Translate(self: Deformable3D, offset: Vector3D): Self
         => self.Deform(p => p.Add(offset));
 
-    // Uniformly scale about `center` by `factor`. Assumes Between(a, b) = b - a.
+    // Uniformly scale about `center` by `factor`.
     ScaleAbout(self: Deformable3D, center: Point3D, factor: Number): Self
         => self.Deform(p => center.Add(center.Between(p).Multiply(factor)));
 
     // Non-uniformly scale about `center` by a per-axis `factors` vector.
-    // Assumes Between(a, b) = b - a.
     ScaleAbout(self: Deformable3D, center: Point3D, factors: Number3): Self
         => self.Deform(p => center.Add(center.Between(p).Multiply(factors)));
 
-    // Rotate every point about `center` by `rotation`. Assumes Between(a, b) = b - a.
+    // Rotate every point about `center` by `rotation`.
     RotateAbout(self: Deformable3D, center: Point3D, rotation: Quaternion): Self
         => self.Deform(p => center.Add(center.Between(p).Transform(rotation)));
 

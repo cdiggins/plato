@@ -129,5 +129,10 @@ concept Difference<TDelta>
 {
     Add(x: Self, delta: TDelta): Self;
     Subtract(x: Self, delta: TDelta): Self;
+    // The displacement FROM a TO b, i.e. b - a. Direction convention: Between and
+    // Add are inverse, so a.Add(a.Between(b)) == b. Every implementor and every
+    // caller relies on this orientation (Point2D/Point3D honor it in
+    // transforms.plato; the ScaleAbout/RotateAbout helpers in
+    // intervals-transforms.library.plato assume it).
     Between(a: Self, b: Self): TDelta;
 }

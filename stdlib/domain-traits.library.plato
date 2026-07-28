@@ -65,9 +65,13 @@ library DomainTraits
     // A value sampled at a moment in time via Sample(time: Duration). Key times
     // are Duration offsets from the owner's start, so helpers take explicit
     // boundary Durations rather than assuming a clip length.
-    // TODO(concept-gap): change/delta helpers between two sample times would need
-    // TValue to be Additive (to subtract samples); TimeVarying leaves TValue
-    // unconstrained, so only value-preserving resampling helpers live here.
+    //
+    // The change/delta helpers subtract two samples, which the type variable
+    // $TValue supports by the same duck-typing the interval helpers rely on
+    // (IntervalLike.Extent subtracts two $T). A formal `where TValue: Additive`
+    // bound on TimeVarying is deferred: its implementors span keyframes-tracks.plato
+    // (AnimationTrack/TangentTrack) and motion-graphics.plato, which are outside
+    // this package's edit scope, so the bound cannot be filled tree-wide here.
 
     // The sampled value at a time offset; a readable spelling of Sample.
     ValueAt(self: TimeVarying<$TValue>, time: Duration): $TValue
@@ -76,6 +80,11 @@ library DomainTraits
     // The value sampled at the midpoint of the [earlier, later] time span.
     SampleAtMidpoint(self: TimeVarying<$TValue>, earlier: Duration, later: Duration): $TValue
         => self.Sample(earlier.MidPoint(later));
+
+    // The signed change in value over the [earlier, later] time span:
+    // Sample(later) - Sample(earlier).
+    Change(self: TimeVarying<$TValue>, earlier: Duration, later: Duration): $TValue
+        => self.Sample(later).Subtract(self.Sample(earlier));
 
     //==
     // # PathLike
@@ -172,11 +181,11 @@ library DomainTraits
     //==
     // # Camera
     //
-    // A placed camera exposing a pose plus the near and far clip distances.
-    // Invariant: 0 < Near < Far, so DepthSpan is positive.
-    // TODO(concept-gap): aspect-derived helpers are not expressible here because
-    // AspectRatio is not part of the Camera concept (it is a field on the
-    // concrete camera types), and this folder is concept-only.
+    // A placed camera exposing a pose, near/far clip distances, and an image
+    // aspect ratio (width over height). Invariant: 0 < Near < Far, so DepthSpan is
+    // positive. AspectRatio is now a Camera concept member: PerspectiveCamera and
+    // OrthographicCamera satisfy it with their field; the bodies below discharge
+    // the obligation for the camera types that derive it from their optics.
 
     // The camera's eye position in world space: the pose's translation.
     EyePosition(self: Camera): Point3D
@@ -200,6 +209,34 @@ library DomainTraits
     // True when a scene depth lies within the rendered [Near, Far] range.
     ContainsDepth(self: Camera, depth: Number): Boolean
         => depth >= self.Near && depth <= self.Far;
+
+    // The image aspect ratio (width over height) of a physical camera, taken from
+    // its sensor dimensions. Precondition: SensorSize.Height is positive.
+    AspectRatio(self: PhysicalCamera): Number
+        => self.SensorSize.Width / self.SensorSize.Height;
+
+    // A fisheye lens draws into a square-bounded image circle, so its aspect ratio
+    // is 1 (the FieldOfView is a cone angle, not a width-to-height ratio).
+    AspectRatio(self: FisheyeCamera): Number
+        => 1.0;
+
+    // The aspect ratio of an equirectangular panorama: the longitude sweep over
+    // the latitude sweep. Precondition: the latitude sweep is non-degenerate.
+    AspectRatio(self: EquirectangularCamera): Number
+        => self.LongitudeSweep.Extent.Radians / self.LatitudeSweep.Extent.Radians;
+
+    // The aspect ratio of a cylindrical panorama: the horizontal sweep over the
+    // vertical field of view. Precondition: VerticalFov is non-degenerate.
+    AspectRatio(self: PanoramicCamera): Number
+        => self.HorizontalSweep.Radians / self.VerticalFov.Radians;
+
+    // True when the image is wider than it is tall (aspect ratio above 1).
+    IsLandscape(self: Camera): Boolean
+        => self.AspectRatio > 1.0;
+
+    // True when the image is taller than it is wide (aspect ratio below 1).
+    IsPortrait(self: Camera): Boolean
+        => self.AspectRatio < 1.0;
 
     //==
     // # LightSource

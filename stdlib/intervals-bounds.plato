@@ -8,6 +8,7 @@
 // A one-dimensional directed span from Start to End. Start may exceed End,
 // which encodes a reversed interval.
 concept IntervalLike<T>
+    where T: Additive, T: Interpolatable, T: Comparable
     inherits Value
 {
     Start(x: Self): T;
@@ -15,7 +16,10 @@ concept IntervalLike<T>
 }
 
 // An axis-aligned bounding region between component-wise Min and Max corners.
-concept BoundsLike<TPoint>
+// TDelta is the displacement type between two corner points (the vector type of
+// TPoint), so Extent/Diagonal can name the Max - Min delta.
+concept BoundsLike<TPoint, TDelta>
+    where TPoint: Difference<TDelta>
     inherits Value
 {
     Min(x: Self): TPoint;
@@ -56,7 +60,7 @@ type IntegerInterval
 
 // An axis-aligned bounding rectangle in 2D.
 type Bounds2D
-    implements BoundsLike<Point2D>
+    implements BoundsLike<Point2D, Vector2D>
 {
     Min: Point2D;
     Max: Point2D;
@@ -64,7 +68,7 @@ type Bounds2D
 
 // An axis-aligned bounding box in 3D.
 type Bounds3D
-    implements BoundsLike<Point3D>
+    implements BoundsLike<Point3D, Vector3D>
 {
     Min: Point3D;
     Max: Point3D;

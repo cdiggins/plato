@@ -257,37 +257,39 @@ library CurvesSurfaces
     // # PeriodicCurve
     //
     // A curve whose parameterization repeats with an explicit Period (Number).
-    // PeriodicCurve inherits only Periodic<Number>, so parameter arithmetic on
-    // the period is derivable but evaluation is not.
-    //
-    // TODO(concept-gap): a wrapped evaluation Eval(t mod Period) is not derivable
-    // here because PeriodicCurve does not inherit Procedural; only the period is
-    // known. WrapParameter below folds a parameter into one period so a concrete
-    // periodic curve can evaluate the wrapped value itself.
+    // PeriodicCurve<TRange> now inherits Procedural<Number, TRange> as well as
+    // Periodic<Number>, so both parameter arithmetic on the period AND wrapped
+    // evaluation are derivable. TRange is the evaluated value type.
 
     // Folds a parameter into the half-open interval [0, Period). The extra
     // "+ Period then modulo" corrects the truncated remainder, which is negative
     // for negative t. Precondition: Period > 0.
-    WrapParameter(self: PeriodicCurve, t: Number): Number
+    WrapParameter(self: PeriodicCurve<$TRange>, t: Number): Number
         => ((t % self.Period) + self.Period) % self.Period;
+
+    // The value at parameter t evaluated on the primary period: Eval(t mod Period).
+    // Any t (negative or beyond one period) maps to the equivalent value in
+    // [0, Period). Precondition: Period > 0.
+    EvalWrapped(self: PeriodicCurve<$TRange>, t: Number): $TRange
+        => self.Eval(self.WrapParameter(t));
 
     // The fraction of one period that t represents, in [0, 1). Precondition:
     // Period > 0.
-    NormalizedPhase(self: PeriodicCurve, t: Number): Number
+    NormalizedPhase(self: PeriodicCurve<$TRange>, t: Number): Number
         => self.WrapParameter(t) / self.Period;
 
     // Half of one period.
-    HalfPeriod(self: PeriodicCurve): Number
+    HalfPeriod(self: PeriodicCurve<$TRange>): Number
         => self.Period.Half;
 
     // Floor(t / Period): the index of the period containing t (-1 for t just
     // below zero, not truncation). Precondition: Period > 0.
-    PeriodCount(self: PeriodicCurve, t: Number): Integer
+    PeriodCount(self: PeriodicCurve<$TRange>, t: Number): Integer
         => (t / self.Period).Floor.ToInteger;
 
     // The number of repetitions per unit parameter (the reciprocal of the
     // period). Precondition: Period > 0.
-    Frequency(self: PeriodicCurve): Number
+    Frequency(self: PeriodicCurve<$TRange>): Number
         => self.Period.Inverse;
 
     //==
@@ -592,9 +594,9 @@ library CurvesSurfaces
     //==
     // # Surface, ClosedSurface, Solid, ConvexSolid
     //
-    // TODO(concept-gap): these are marker concepts inheriting only Geometry3D
-    // (Surface, Solid) or another marker (ClosedSurface, ConvexSolid). They add
-    // no members over their bases, and Geometry3D's own derived helpers live in
-    // the geometry package (P5). No curve/surface-specific function is derivable
-    // for them here without introducing new members, so none is offered.
+    // These marker concepts already exist (curves-surfaces.concepts.plato):
+    // Surface and Solid inherit only Geometry3D, ClosedSurface and ConvexSolid only
+    // another marker. They add no members over their bases, and Geometry3D's own
+    // derived helpers live in the geometry package (P5). No curve/surface-specific
+    // function is derivable for them here without new members, so none is offered.
 }
