@@ -1,5 +1,27 @@
 # Port candidates: `stdlib-legacy` → `stdlib`
 
+> **STATUS 2026-07-28: EXECUTED.** Every item below was implemented across three waves
+> (commits `ffb2976`, `eb6cdcc`, `b7fb18e`). The gate held throughout: `lint stdlib` at
+> **0 parse errors, 0 symbol-resolution errors**; LINT001 **1382 → 694**, LINT003 **2762 → 2482**.
+> This document is now a record, not a plan. Four estimates in it were wrong, corrected inline
+> below and summarised here:
+>
+> - **Item 4 (`unique` builders) is NOT deliverable** — compiler-blocked, not content-blocked.
+>   `Freeze`/`Count`/`EmptyList` cannot be declared at all; a builder can be constructed and
+>   mutated but never consumed. See the item for the source line.
+> - **Items 3 and 6 were ~10× cheaper than estimated.** A library function with a concept-typed
+>   first parameter discharges the obligation for *every* implementor, so item 6 went from ~490
+>   hand-written bodies to one concept member plus 100 projections. That lever was the single
+>   most valuable discovery of the port and is not mentioned anywhere in the original text.
+> - **LINT003 is not a valid progress metric.** `CheckUnusedFields` (`Linter.cs:184-198`) does not
+>   see field reads inside statement blocks or `var` initializers. Three agents hit this
+>   independently. Judge this work by LINT001 and the 0/0 requirement only.
+> - **Several item-8/10 type names in this doc collide with existing stdlib types.** The port
+>   renamed them: `NPyramid`→`RegularPyramid`, `Pyramid`→`SquarePyramid` (vs existing `Pyramid3D`),
+>   `Tube`→`CylindricalShell` (vs existing `TubeSurface`).
+>
+> Follow-ups the port opened rather than closed are listed at the end.
+
 Survey date 2026-07-28 (revised same day: claims re-verified against both trees; item 1
 redesigned around the `Vector` concept; constants promoted to Tier 0).
 Method: full read of `stdlib-legacy/*.plato` (4,465 lines, 28 files), name-by-name presence
@@ -265,3 +287,47 @@ drop, not a gap: folded into `AlmostEqual(x, y, tolerance)` —
 
 Gate each step with `dotnet run --project Plato.CLI -c Release -- lint stdlib` (0 parse errors,
 0 resolution errors); LINT001 counts should **fall** as libraries implement declared members.
+
+---
+
+## Follow-ups the port opened (2026-07-28)
+
+Ordered by how much they block.
+
+1. **`unique` builders are unusable** (item 4). `Freeze`, `Count`, `EmptyList` cannot be declared:
+   a generic function with one or fewer parameters throws at
+   `PlatoCompiler/Analysis/FunctionInstance.cs:162-165` and aborts the whole compilation.
+   `stdlib-legacy-tests` (`library UniqueIntrinsics`) declares the same signatures and *does*
+   compile, so the two trees reach different paths — that is the thread to pull. Until it is
+   fixed no affine algorithm is writable in stdlib.
+2. **`VectorN` has a latent runtime bug, invisible to lint.** The C# writer synthesizes `At`/`Count`
+   from a type's *fields*, and `VectorN`'s single field is its component array — so `Count` would
+   be 1 and `At(0)` would return the array. Every generic body in `numeric-structures.library.plato`
+   reads `Count`/`At` as the component surface. `Linter.cs:107-113` exempts both names, so the
+   linter structurally cannot catch it. `TODO(writer-gap)` marks the declaration.
+3. **LINT003 statement-body blindness** (`Linter.cs:184-198`). Fields read only inside a `var`
+   initializer or a statement block are reported unread. Real in-tree false positives today:
+   `Frame3D.Origin/XAxis/YAxis/ZAxis`, `AffineTransform3D.Matrix`, `CylindricalShell.*`,
+   `RegularPyramid.SideCount/Radius`. Fixing it would make LINT003 usable as a metric again.
+4. **`concept AngularCurve2D/3D` was declined, not rejected.** Item 8's agent fell back to
+   per-type `t.Turns` bodies because `LIBRARIES.md` rule 6 then forbade new concepts. Rule 6 has
+   since been rewritten to permit deliberate concept extension, so the collapse is now available;
+   `TODO(concept-gap)` notes in `curves-2d.plato` / `curves-3d.plato` say exactly what it buys.
+5. **A generic `Hash(self: Index) => self.Value.Hash`** would likely discharge the LINT001 `Hash`
+   obligation for the dozens of typed index types at once. Belongs in P2
+   (`collections-functional.library.plato`). Not attempted during the port to avoid a cross-agent
+   collision.
+6. **`Deform` bodies for the 13 `Deformable2D/3D` implementors** — they live in `lines.plato`,
+   `planar-shapes.plato`, `polygons.plato`, `spatial-primitives.plato`, all outside the transform
+   agent's allowlist. The `Deform`-implies-`Transform` bridge is landed and generalized to 13
+   transform representations, but discharges nothing until a type declares both `Deformable3D`
+   and `Transformable<T>` — today none does.
+7. **Content gaps left with explicit TODOs**, each needing a primitive the tree lacks:
+   `Clothoid2D.Eval` (Fresnel integrals / series summation), B-spline and NURBS `Eval`
+   (Cox–de Boor knot-span fold), `NaturalCubicSpline1D` (tridiagonal solve), Bezier/BSpline/
+   Nurbs/Coons patch `Eval`, `SurfaceOfRevolution`/`SweptSurface`/`LoftedSurface` (rotation-
+   minimizing frame or a surface normal `ParametricSurface` does not expose), dense/sparse
+   polynomial `Eval` (Horner needs a reachable fold).
+8. **`PointOnUnitCircle` is duplicated.** Defined locally in `library Solids` with a `NOTE(dedupe)`
+   because the canonical `UnitCircle(t: Angle): Point2D` still does not exist in stdlib. Pick one
+   home and delete the other.

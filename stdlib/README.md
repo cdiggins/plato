@@ -16,8 +16,17 @@ Target applications: geometry (primary), 2D/3D and N-dimensional computation, an
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
 graphics, image processing, and engineering.
 
-Current contents (2026-07-28): **80 source files (71 declaration files + 9 concept-library
-implementation files), 150 concepts, 1111 types** (~13K lines).
+Current contents (2026-07-28): **84 source files (71 declaration files + 13 library
+implementation files), 150 concepts, 1131 types**.
+
+The library count grew from 9 to 13 with the `stdlib-legacy` port (see
+[`../docs/stdlib-legacy-port-candidates-2026-07-28.md`](../docs/stdlib-legacy-port-candidates-2026-07-28.md)):
+`constants.library.plato`, `angles.library.plato`, `quantities.library.plato` and
+`color.library.plato` serve foundation domains rather than a P1–P9 concept package. Eleven
+declaration files additionally carry their own inline `library` block — `transforms`,
+`polynomials`, `primitives`, `intrinsics`, `curves-2d`, `curves-3d`, `splines`, `solids`,
+`surfaces`, `fields`, `implicit-sdf` — which is the sanctioned home for bodies that belong
+beside their declarations (`LIBRARIES.md` ground rules 1 and 10).
 Fixed 4D geometry (Point4D, Bounds4D, Geometry4D, Curve4D, polytopes, 4D rotors) was removed
 2026-07-28 — the practical 4D uses are numeric and live on `Number4`/`Quaternion`; N-dimensional
 work uses `PointN`/`VectorN`. 4D **arrays** (`Array4D`/`Indexable4D`) are collections and remain.
@@ -180,8 +189,35 @@ domain (`ImageHistogram`, not a second `Histogram`).
 | `Polynomial` | polynomials.plato (J) |
 | `Tolerance` | uncertainty.plato (J) |
 | `Graph`, `GraphEdge` | graphs.plato (K) |
+| `List<T>`, `Buffer<T>` (unique affine builders) | primitives.plato (foundation) |
+| `RegularPyramid`, `SquarePyramid` | solids.plato (B) |
+| `CylindricalShell` | spatial-primitives.plato (A) |
+| `ScalarFunctionField2D/3D`, `VectorFunctionField2D/3D` | fields.plato (C) |
+| `FunctionSdf2D/3D`, `FunctionRegion2D`, `FunctionVolume3D` | implicit-sdf.plato (C) |
+| `CycloidOfCeva2D`, `TschirnhausenCubic2D`, `ConchoidOfDeSluze2D`, `SinusoidalSpiral2D`, `TrisectrixOfMaclaurin2D`, `ButterflyCurve2D` | curves-2d.plato (B) |
 
 Generic nouns that MUST be domain-qualified wherever declared: Node, Layer, Track, Channel,
 Sample, Grid, Cell, Filter, Kernel, Key, Frame, Edge, Vertex, Face, Segment, Weight, Style,
 Event, Marker, Anchor, Handle, Buffer, Attribute, Region, Mask, Map, Range, Wave, State.
 (Exception: registry entries above that already claim a bare name.)
+
+`List` and `Buffer` are a standing exception to that rule: they are **compiler-intrinsic names**
+— the compiler maps Plato `List`/`Buffer` onto the handwritten `PlatoList`/`PlatoBuffer` runtime
+types — so they cannot be domain-qualified.
+
+## Constants
+
+Constants dispatch on an **ignored receiver of the result type**, never as zero-argument
+functions (there are none in this tree):
+
+```
+GoldenRatio(_: Number): Number => (1.0 + 5.0.Sqrt) / 2.0;
+```
+
+read at the call site as `Number.GoldenRatio`, `Vector3D.UnitX`, `Circle.UnitCircle`,
+`Color8.AliceBlue`. This matches the intrinsic constants in `intrinsics.plato` and the
+`Identity(_: Quaternion)` family in `transforms.plato`.
+
+`Angle` values are constructed through the unit constructors in `angles.library.plato` —
+`0.25.Turns`, `90.Degrees`, `100.Gradians` — which is how the "angles are `Angle`, never raw
+`Number`" rule above is satisfied in practice. The radians intrinsic is not the only door.
