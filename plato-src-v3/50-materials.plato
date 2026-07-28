@@ -146,7 +146,7 @@ type SubsurfaceParameters
     implements Value
 {
     Color: Color;
-    Radius: Vector3;
+    Radius: Number3;
     Scale: Number;
     Anisotropy: Number;
 }

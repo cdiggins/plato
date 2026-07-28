@@ -35,7 +35,7 @@ type TangentBasis
 
 // A triangle mesh plus typed attribute channels, grouped by value type.
 // An absent group is an empty array. Well-known channel names include
-// "normal" (PerVertex or PerCorner Vector3), "uv0" (PerCorner UvCoordinate),
+// "normal" (PerVertex or PerCorner Vector3D), "uv0" (PerCorner UvCoordinate),
 // and "color" (PerVertex Color).
 type RichMesh3D
     implements Value, Meshable3D
@@ -43,7 +43,7 @@ type RichMesh3D
     Mesh: TriangleMesh3D;
     NumberChannels: Array<MeshAttribute<Number>>;
     IntegerChannels: Array<MeshAttribute<Integer>>;
-    VectorChannels: Array<MeshAttribute<Vector3>>;
+    VectorChannels: Array<MeshAttribute<Vector3D>>;
     UvChannels: Array<MeshAttribute<UvCoordinate>>;
     ColorChannels: Array<MeshAttribute<Color>>;
     TangentChannels: Array<MeshAttribute<TangentBasis>>;

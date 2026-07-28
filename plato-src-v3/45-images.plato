@@ -106,7 +106,7 @@ type NormalImage
     implements Image
 {
     Size: IntegerSize2D;
-    Normals: Array<Vector3>;
+    Normals: Array<Vector3D>;
 }
 
 //==

@@ -170,7 +170,7 @@ type ColorMatrixAdjustment
     implements Value
 {
     Matrix: Matrix4x4;
-    Offset: Vector4;
+    Offset: Number4;
 }
 
 // A hue rotation with saturation scaling and lightness offset.

@@ -92,9 +92,9 @@ type AnimationEvent
 // each keyed independently.
 type TransformTrack2D
 {
-    Translation: AnimationTrack<Vector2>;
+    Translation: AnimationTrack<Vector2D>;
     Rotation: AnimationTrack<Angle>;
-    Scale: AnimationTrack<Vector2>;
+    Scale: AnimationTrack<Number2>;
 }
 
 // Per-channel animation of a 3D transform: translation, rotation, and scale
@@ -102,9 +102,9 @@ type TransformTrack2D
 // interpolation.
 type TransformTrack3D
 {
-    Translation: AnimationTrack<Vector3>;
+    Translation: AnimationTrack<Vector3D>;
     Rotation: AnimationTrack<Quaternion>;
-    Scale: AnimationTrack<Vector3>;
+    Scale: AnimationTrack<Number3>;
 }
 
 // A named, self-contained bundle of animation: typed named tracks, trigger
@@ -116,8 +116,8 @@ type AnimationClip
     Duration: Duration;
     Events: Array<AnimationEvent>;
     NumberTracks: Array<NamedTrack<Number>>;
-    Vector2Tracks: Array<NamedTrack<Vector2>>;
-    Vector3Tracks: Array<NamedTrack<Vector3>>;
+    Vector2DTracks: Array<NamedTrack<Vector2D>>;
+    Vector3DTracks: Array<NamedTrack<Vector3D>>;
     QuaternionTracks: Array<NamedTrack<Quaternion>>;
     ColorTracks: Array<NamedTrack<Color>>;
     TransformTracks: Array<NamedTrack<Transform3D>>;
@@ -203,7 +203,7 @@ type BlendSpace1D
 // A clip placed at a position on a two-dimensional blend plane.
 type BlendSpaceSample2D
 {
-    Position: Vector2;
+    Position: Number2;
     Clip: AnimationClip;
 }
 

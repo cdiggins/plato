@@ -209,7 +209,7 @@ type DiscreteDistribution
 type NormalDistribution2D
     implements Value
 {
-    Mean: Vector2;
+    Mean: Vector2D;
     Covariance: Covariance2D;
 }
 
@@ -217,6 +217,6 @@ type NormalDistribution2D
 type NormalDistribution3D
     implements Value
 {
-    Mean: Vector3;
+    Mean: Vector3D;
     Covariance: Covariance3D;
 }

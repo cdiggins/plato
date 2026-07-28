@@ -25,7 +25,7 @@ type EllipticalArc3D
     implements PlanarCurve3D
 {
     Frame: Frame3D;
-    Radii: Vector2;
+    Radii: Number2;
     Angles: AngleInterval;
 }
 

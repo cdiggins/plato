@@ -17,8 +17,13 @@
 // - `GetHashCode` renamed `Hash` (matches the v3 `Hashable` concept member).
 // - `CompareTo` renamed `Compare` (matches the v3 `Comparable` concept member).
 // - Raw-Number angles now take `Angle` (`CreateFromAxisAngle`, field-of-view, etc.).
-// - Vector8 (SIMD) section dropped: a C#-specific accelerator with no CUDA/GLSL
-//   analogue at this granularity; revisit as an optimizer concern, not a language one.
+// - V1 Vector2/3/4 split into two tiers (2026-07-28): Number2/3/4/8 own the
+//   low-level component-wise surface; Vector2D/3D own the geometric displacement
+//   algebra (Normalize/Reflect/Cross/Transform). Matrix, Quaternion, and Plane
+//   signatures now use the semantic type per argument (Point3D for positions,
+//   Vector3D for directions, Number3 for scale factors).
+// - V1 Vector8 (C# SIMD) returns as Number8: a plain 8-lane numeric tuple every
+//   priority-1..4 backend can supply natively or with a trivial shim.
 // - The `IOrderable` equality scaffolding dropped: v3's `Equatable` concept owns it.
 // - `Repeat(x: IAny, ...)` re-typed generically as `Repeat(x: $T, ...)`.
 
@@ -156,89 +161,136 @@ library Intrinsics
     Hash(self: Angle): Integer;
 
     //==
-    // Vector2
+    // Number2 — low-level numeric 2-tuple (component-wise; backend-native vector)
 
-    Normalize(self: Vector2): Vector2;
-    Length(self: Vector2): Number;
-    LengthSquared(self: Vector2): Number;
-    Abs(self: Vector2): Vector2;
-    Sqrt(self: Vector2): Vector2;
-    Add(left: Vector2, right: Vector2): Vector2;
-    Subtract(left: Vector2, right: Vector2): Vector2;
-    Multiply(left: Vector2, right: Vector2): Vector2;
-    Multiply(left: Vector2, scalar: Number): Vector2;
-    Multiply(scalar: Number, right: Vector2): Vector2;
-    Divide(left: Vector2, right: Vector2): Vector2;
-    Divide(left: Vector2, scalar: Number): Vector2;
-    Negative(value: Vector2): Vector2;
-    Dot(self: Vector2, right: Vector2): Number;
-    Distance(self: Vector2, value2: Vector2): Number;
-    DistanceSquared(self: Vector2, value2: Vector2): Number;
-    Clamp(self: Vector2, min: Vector2, max: Vector2): Vector2;
-    Reflect(self: Vector2, normal: Vector2): Vector2;
-    Transform(self: Vector2, matrix: Matrix3x2): Vector2;
-    Transform(self: Vector2, matrix: Matrix4x4): Vector2;
-    Transform(self: Vector2, rotation: Quaternion): Vector2;
-    TransformNormal(self: Vector2, matrix: Matrix3x2): Vector2;
-    TransformNormal(self: Vector2, matrix: Matrix4x4): Vector2;
-    Max(self: Vector2, value2: Vector2): Vector2;
-    Min(self: Vector2, value2: Vector2): Vector2;
-    Hash(self: Vector2): Integer;
+    Length(self: Number2): Number;
+    LengthSquared(self: Number2): Number;
+    Abs(self: Number2): Number2;
+    Sqrt(self: Number2): Number2;
+    Add(left: Number2, right: Number2): Number2;
+    Subtract(left: Number2, right: Number2): Number2;
+    Multiply(left: Number2, right: Number2): Number2;
+    Multiply(left: Number2, scalar: Number): Number2;
+    Multiply(scalar: Number, right: Number2): Number2;
+    Divide(left: Number2, right: Number2): Number2;
+    Divide(left: Number2, scalar: Number): Number2;
+    Negative(value: Number2): Number2;
+    Dot(self: Number2, right: Number2): Number;
+    Clamp(self: Number2, min: Number2, max: Number2): Number2;
+    Max(self: Number2, value2: Number2): Number2;
+    Min(self: Number2, value2: Number2): Number2;
+    Hash(self: Number2): Integer;
 
     //==
-    // Vector3
+    // Number3 — low-level numeric 3-tuple
 
-    Normalize(self: Vector3): Vector3;
-    Length(self: Vector3): Number;
-    LengthSquared(self: Vector3): Number;
-    Abs(self: Vector3): Vector3;
-    Sqrt(self: Vector3): Vector3;
-    Add(left: Vector3, right: Vector3): Vector3;
-    Subtract(left: Vector3, right: Vector3): Vector3;
-    Multiply(left: Vector3, right: Vector3): Vector3;
-    Multiply(left: Vector3, scalar: Number): Vector3;
-    Multiply(scalar: Number, right: Vector3): Vector3;
-    Divide(left: Vector3, right: Vector3): Vector3;
-    Divide(left: Vector3, scalar: Number): Vector3;
-    Negative(value: Vector3): Vector3;
-    Dot(self: Vector3, right: Vector3): Number;
-    Cross(self: Vector3, right: Vector3): Vector3;
-    Distance(self: Vector3, value2: Vector3): Number;
-    DistanceSquared(self: Vector3, value2: Vector3): Number;
-    Clamp(self: Vector3, min: Vector3, max: Vector3): Vector3;
-    Reflect(self: Vector3, normal: Vector3): Vector3;
-    Transform(self: Vector3, matrix: Matrix4x4): Vector3;
-    Transform(self: Vector3, rotation: Quaternion): Vector3;
-    TransformNormal(self: Vector3, matrix: Matrix4x4): Vector3;
-    Max(self: Vector3, value2: Vector3): Vector3;
-    Min(self: Vector3, value2: Vector3): Vector3;
-    Hash(self: Vector3): Integer;
+    Length(self: Number3): Number;
+    LengthSquared(self: Number3): Number;
+    Abs(self: Number3): Number3;
+    Sqrt(self: Number3): Number3;
+    Add(left: Number3, right: Number3): Number3;
+    Subtract(left: Number3, right: Number3): Number3;
+    Multiply(left: Number3, right: Number3): Number3;
+    Multiply(left: Number3, scalar: Number): Number3;
+    Multiply(scalar: Number, right: Number3): Number3;
+    Divide(left: Number3, right: Number3): Number3;
+    Divide(left: Number3, scalar: Number): Number3;
+    Negative(value: Number3): Number3;
+    Dot(self: Number3, right: Number3): Number;
+    Clamp(self: Number3, min: Number3, max: Number3): Number3;
+    Max(self: Number3, value2: Number3): Number3;
+    Min(self: Number3, value2: Number3): Number3;
+    Hash(self: Number3): Integer;
 
     //==
-    // Vector4
+    // Number4 — low-level numeric 4-tuple; homogeneous coordinates and RGBA math
 
-    Normalize(self: Vector4): Vector4;
-    Length(self: Vector4): Number;
-    LengthSquared(self: Vector4): Number;
-    Abs(self: Vector4): Vector4;
-    Sqrt(self: Vector4): Vector4;
-    Add(left: Vector4, right: Vector4): Vector4;
-    Subtract(left: Vector4, right: Vector4): Vector4;
-    Multiply(left: Vector4, right: Vector4): Vector4;
-    Multiply(left: Vector4, scalar: Number): Vector4;
-    Multiply(scalar: Number, right: Vector4): Vector4;
-    Divide(left: Vector4, right: Vector4): Vector4;
-    Divide(left: Vector4, scalar: Number): Vector4;
-    Negative(value: Vector4): Vector4;
-    Dot(self: Vector4, right: Vector4): Number;
-    Distance(self: Vector4, value2: Vector4): Number;
-    DistanceSquared(self: Vector4, value2: Vector4): Number;
-    Clamp(self: Vector4, min: Vector4, max: Vector4): Vector4;
-    Transform(self: Vector4, matrix: Matrix4x4): Vector4;
-    Transform(self: Vector4, rotation: Quaternion): Vector4;
-    Max(self: Vector4, value2: Vector4): Vector4;
-    Min(self: Vector4, value2: Vector4): Vector4;
-    Hash(self: Vector4): Integer;
+    Length(self: Number4): Number;
+    LengthSquared(self: Number4): Number;
+    Abs(self: Number4): Number4;
+    Sqrt(self: Number4): Number4;
+    Add(left: Number4, right: Number4): Number4;
+    Subtract(left: Number4, right: Number4): Number4;
+    Multiply(left: Number4, right: Number4): Number4;
+    Multiply(left: Number4, scalar: Number): Number4;
+    Multiply(scalar: Number, right: Number4): Number4;
+    Divide(left: Number4, right: Number4): Number4;
+    Divide(left: Number4, scalar: Number): Number4;
+    Negative(value: Number4): Number4;
+    Dot(self: Number4, right: Number4): Number;
+    Clamp(self: Number4, min: Number4, max: Number4): Number4;
+    Transform(self: Number4, matrix: Matrix4x4): Number4;
+    Transform(self: Number4, rotation: Quaternion): Number4;
+    Max(self: Number4, value2: Number4): Number4;
+    Min(self: Number4, value2: Number4): Number4;
+    Hash(self: Number4): Integer;
+
+    //==
+    // Number8 — low-level numeric 8-tuple (SIMD-width lane math). Priority-1..4
+    // backends supply it natively (C# Vector256 / System.Runtime.Intrinsics) or
+    // with a trivial 8-lane shim (C++, CUDA, TypeScript).
+
+    Add(left: Number8, right: Number8): Number8;
+    Subtract(left: Number8, right: Number8): Number8;
+    Multiply(left: Number8, right: Number8): Number8;
+    Multiply(left: Number8, scalar: Number): Number8;
+    Multiply(scalar: Number, right: Number8): Number8;
+    Divide(left: Number8, right: Number8): Number8;
+    Divide(left: Number8, scalar: Number): Number8;
+    Negative(value: Number8): Number8;
+    Abs(self: Number8): Number8;
+    Sqrt(self: Number8): Number8;
+    Dot(self: Number8, right: Number8): Number;
+    Max(self: Number8, value2: Number8): Number8;
+    Min(self: Number8, value2: Number8): Number8;
+    Hash(self: Number8): Integer;
+
+    //==
+    // Vector2D — geometric displacement in 2D. Displacement algebra only:
+    // component-wise numeric ops live on Number2.
+
+    Normalize(self: Vector2D): Vector2D;
+    Length(self: Vector2D): Number;
+    LengthSquared(self: Vector2D): Number;
+    Add(left: Vector2D, right: Vector2D): Vector2D;
+    Subtract(left: Vector2D, right: Vector2D): Vector2D;
+    Multiply(left: Vector2D, scalar: Number): Vector2D;
+    Multiply(scalar: Number, right: Vector2D): Vector2D;
+    // Non-uniform scale of a displacement by per-axis factors.
+    Multiply(left: Vector2D, factors: Number2): Vector2D;
+    Divide(left: Vector2D, scalar: Number): Vector2D;
+    Negative(value: Vector2D): Vector2D;
+    Dot(self: Vector2D, right: Vector2D): Number;
+    Reflect(self: Vector2D, normal: Vector2D): Vector2D;
+    Transform(self: Vector2D, matrix: Matrix3x2): Vector2D;
+    Transform(self: Vector2D, matrix: Matrix4x4): Vector2D;
+    Transform(self: Vector2D, rotation: Quaternion): Vector2D;
+    TransformNormal(self: Vector2D, matrix: Matrix3x2): Vector2D;
+    TransformNormal(self: Vector2D, matrix: Matrix4x4): Vector2D;
+    Hash(self: Vector2D): Integer;
+
+    //==
+    // Vector3D — geometric displacement in 3D. Displacement algebra only:
+    // component-wise numeric ops live on Number3.
+
+    Normalize(self: Vector3D): Vector3D;
+    Length(self: Vector3D): Number;
+    LengthSquared(self: Vector3D): Number;
+    Add(left: Vector3D, right: Vector3D): Vector3D;
+    Subtract(left: Vector3D, right: Vector3D): Vector3D;
+    Multiply(left: Vector3D, scalar: Number): Vector3D;
+    Multiply(scalar: Number, right: Vector3D): Vector3D;
+    // Non-uniform scale of a displacement by per-axis factors.
+    Multiply(left: Vector3D, factors: Number3): Vector3D;
+    Divide(left: Vector3D, scalar: Number): Vector3D;
+    Negative(value: Vector3D): Vector3D;
+    Dot(self: Vector3D, right: Vector3D): Number;
+    Cross(self: Vector3D, right: Vector3D): Vector3D;
+    Reflect(self: Vector3D, normal: Vector3D): Vector3D;
+    Transform(self: Vector3D, matrix: Matrix4x4): Vector3D;
+    Transform(self: Vector3D, rotation: Quaternion): Vector3D;
+    TransformNormal(self: Vector3D, matrix: Matrix4x4): Vector3D;
+    Hash(self: Vector3D): Integer;
 
     //==
     // Matrix3x2
@@ -255,12 +307,12 @@ library Intrinsics
     Lerp(self: Matrix3x2, matrix2: Matrix3x2, amount: Number): Matrix3x2;
     Hash(self: Matrix3x2): Integer;
 
-    CreateTranslation(_: Matrix3x2, position: Vector2): Matrix3x2;
+    CreateTranslation(_: Matrix3x2, position: Vector2D): Matrix3x2;
     CreateScale(_: Matrix3x2, scale: Number): Matrix3x2;
-    CreateScale(_: Matrix3x2, scales: Vector2): Matrix3x2;
-    CreateScale(_: Matrix3x2, scales: Vector2, centerPoint: Vector2): Matrix3x2;
+    CreateScale(_: Matrix3x2, scales: Number2): Matrix3x2;
+    CreateScale(_: Matrix3x2, scales: Number2, centerPoint: Point2D): Matrix3x2;
     CreateRotation(_: Matrix3x2, angle: Angle): Matrix3x2;
-    CreateRotation(_: Matrix3x2, angle: Angle, centerPoint: Vector2): Matrix3x2;
+    CreateRotation(_: Matrix3x2, angle: Angle, centerPoint: Point2D): Matrix3x2;
 
     //==
     // Matrix4x4
@@ -273,35 +325,35 @@ library Intrinsics
     Multiply(value1: Matrix4x4, f: Number): Matrix4x4;
     Multiply(f: Number, value1: Matrix4x4): Matrix4x4;
     Divide(value1: Matrix4x4, f: Number): Matrix4x4;
-    Decompose(self: Matrix4x4): Tuple4<Vector3, Quaternion, Vector3, Boolean>;
+    Decompose(self: Matrix4x4): Tuple4<Number3, Quaternion, Vector3D, Boolean>;
     Lerp(self: Matrix4x4, matrix2: Matrix4x4, amount: Number): Matrix4x4;
     Invert(self: Matrix4x4): Matrix4x4;
     CanInvert(self: Matrix4x4): Boolean;
     Hash(self: Matrix4x4): Integer;
     Rotation(self: Matrix4x4): Quaternion;
-    Translation(self: Matrix4x4): Vector3;
-    WithTranslation(self: Matrix4x4, translation: Vector3): Matrix4x4;
+    Translation(self: Matrix4x4): Vector3D;
+    WithTranslation(self: Matrix4x4, translation: Vector3D): Matrix4x4;
 
-    CreateTranslation(_: Matrix4x4, position: Vector3): Matrix4x4;
+    CreateTranslation(_: Matrix4x4, position: Vector3D): Matrix4x4;
     CreateScale(_: Matrix4x4, scale: Number): Matrix4x4;
-    CreateScale(_: Matrix4x4, scales: Vector3): Matrix4x4;
+    CreateScale(_: Matrix4x4, scales: Number3): Matrix4x4;
     CreateRotationX(_: Matrix4x4, angle: Angle): Matrix4x4;
     CreateRotationY(_: Matrix4x4, angle: Angle): Matrix4x4;
     CreateRotationZ(_: Matrix4x4, angle: Angle): Matrix4x4;
-    CreateFromAxisAngle(_: Matrix4x4, axis: Vector3, angle: Angle): Matrix4x4;
+    CreateFromAxisAngle(_: Matrix4x4, axis: Vector3D, angle: Angle): Matrix4x4;
     CreateFromQuaternion(_: Matrix4x4, quaternion: Quaternion): Matrix4x4;
     CreateFromYawPitchRoll(_: Matrix4x4, yaw: Angle, pitch: Angle, roll: Angle): Matrix4x4;
-    CreateLookAt(_: Matrix4x4, cameraPosition: Vector3, cameraTarget: Vector3, cameraUpVector: Vector3): Matrix4x4;
-    CreateWorld(_: Matrix4x4, position: Vector3, forward: Vector3, up: Vector3): Matrix4x4;
+    CreateLookAt(_: Matrix4x4, cameraPosition: Point3D, cameraTarget: Point3D, cameraUpVector: Vector3D): Matrix4x4;
+    CreateWorld(_: Matrix4x4, position: Point3D, forward: Vector3D, up: Vector3D): Matrix4x4;
     CreatePerspectiveFieldOfView(_: Matrix4x4, fieldOfView: Angle, aspectRatio: Number, nearPlane: Number, farPlane: Number): Matrix4x4;
     CreatePerspective(_: Matrix4x4, width: Number, height: Number, nearPlaneDistance: Number, farPlaneDistance: Number): Matrix4x4;
     CreatePerspectiveOffCenter(_: Matrix4x4, left: Number, right: Number, bottom: Number, top: Number, nearPlaneDistance: Number, farPlaneDistance: Number): Matrix4x4;
     CreateOrthographic(_: Matrix4x4, width: Number, height: Number, zNearPlane: Number, zFarPlane: Number): Matrix4x4;
     CreateOrthographicOffCenter(_: Matrix4x4, left: Number, right: Number, bottom: Number, top: Number, zNearPlane: Number, zFarPlane: Number): Matrix4x4;
     CreateReflection(_: Matrix4x4, value: Plane): Matrix4x4;
-    CreateShadow(_: Matrix4x4, lightDirection: Vector3, plane: Plane): Matrix4x4;
-    CreateBillboard(_: Matrix4x4, objectPosition: Vector3, cameraPosition: Vector3, cameraUpVector: Vector3, cameraForwardVector: Vector3): Matrix4x4;
-    CreateConstrainedBillboard(_: Matrix4x4, objectPosition: Vector3, cameraPosition: Vector3, rotateAxis: Vector3, cameraForwardVector: Vector3, objectForwardVector: Vector3): Matrix4x4;
+    CreateShadow(_: Matrix4x4, lightDirection: Vector3D, plane: Plane): Matrix4x4;
+    CreateBillboard(_: Matrix4x4, objectPosition: Point3D, cameraPosition: Point3D, cameraUpVector: Vector3D, cameraForwardVector: Vector3D): Matrix4x4;
+    CreateConstrainedBillboard(_: Matrix4x4, objectPosition: Point3D, cameraPosition: Point3D, rotateAxis: Vector3D, cameraForwardVector: Vector3D, objectForwardVector: Vector3D): Matrix4x4;
 
     //==
     // Quaternion
@@ -323,7 +375,7 @@ library Intrinsics
     Slerp(self: Quaternion, quaternion2: Quaternion, amount: Number): Quaternion;
     Hash(self: Quaternion): Integer;
 
-    CreateFromAxisAngle(_: Quaternion, axis: Vector3, angle: Angle): Quaternion;
+    CreateFromAxisAngle(_: Quaternion, axis: Vector3D, angle: Angle): Quaternion;
     CreateFromYawPitchRoll(_: Quaternion, yaw: Angle, pitch: Angle, roll: Angle): Quaternion;
     CreateFromRotationMatrix(_: Quaternion, matrix: Matrix4x4): Quaternion;
 
@@ -331,10 +383,10 @@ library Intrinsics
     // Plane
 
     Normalize(self: Plane): Plane;
-    CreateFromVertices(_: Plane, point1: Vector3, point2: Vector3, point3: Vector3): Plane;
-    Dot(self: Plane, value: Vector4): Number;
-    DotCoordinate(self: Plane, value: Vector3): Number;
-    DotNormal(self: Plane, value: Vector3): Number;
+    CreateFromVertices(_: Plane, point1: Point3D, point2: Point3D, point3: Point3D): Plane;
+    Dot(self: Plane, value: Number4): Number;
+    DotCoordinate(self: Plane, value: Point3D): Number;
+    DotNormal(self: Plane, value: Vector3D): Number;
     Transform(self: Plane, rotation: Quaternion): Plane;
     Transform(self: Plane, matrix: Matrix4x4): Plane;
     Hash(self: Plane): Integer;

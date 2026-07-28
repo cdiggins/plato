@@ -59,7 +59,7 @@ concept PeriodicCurve
 concept DifferentiableCurve2D
     inherits Curve2D
 {
-    TangentAt(x: Self, t: Number): Vector2;
+    TangentAt(x: Self, t: Number): Vector2D;
     CurvatureAt(x: Self, t: Number): Number;
 }
 
@@ -69,7 +69,7 @@ concept DifferentiableCurve2D
 concept DifferentiableCurve3D
     inherits Curve3D
 {
-    TangentAt(x: Self, t: Number): Vector3;
+    TangentAt(x: Self, t: Number): Vector3D;
     CurvatureAt(x: Self, t: Number): Number;
     TorsionAt(x: Self, t: Number): Number;
 }
@@ -141,8 +141,8 @@ concept ParametricSurface
 concept DifferentiableSurface
     inherits ParametricSurface
 {
-    TangentUAt(x: Self, uv: UvCoordinate): Vector3;
-    TangentVAt(x: Self, uv: UvCoordinate): Vector3;
+    TangentUAt(x: Self, uv: UvCoordinate): Vector3D;
+    TangentVAt(x: Self, uv: UvCoordinate): Vector3D;
     NormalAt(x: Self, uv: UvCoordinate): Direction3D;
 }
 

@@ -28,9 +28,9 @@ type Pose3D
 type Transform2D
     implements Value
 {
-    Translation: Vector2;
+    Translation: Vector2D;
     Rotation: Rotation2D;
-    Scale: Vector2;
+    Scale: Number2;
 }
 
 // A translate-rotate-scale transform in 3D, applied scale first, then rotation,
@@ -38,9 +38,9 @@ type Transform2D
 type Transform3D
     implements Value
 {
-    Translation: Vector3;
+    Translation: Vector3D;
     Rotation: Quaternion;
-    Scale: Vector3;
+    Scale: Number3;
 }
 
 // A general 2D affine map: any composition of linear maps and translations.
@@ -97,9 +97,9 @@ type Frame3D
 type Basis3D
     implements Value
 {
-    X: Vector3;
-    Y: Vector3;
-    Z: Vector3;
+    X: Vector3D;
+    Y: Vector3D;
+    Z: Vector3D;
 }
 
 // Can be carried through a transform of type TTransform, yielding a new Self.

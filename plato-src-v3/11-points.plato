@@ -12,7 +12,7 @@ concept Coordinate
 
 // A position in the 2D Cartesian plane.
 type Point2D
-    implements Coordinate, Difference<Vector2>, Hashable
+    implements Coordinate, Difference<Vector2D>, Hashable
 {
     X: Number;
     Y: Number;
@@ -20,7 +20,7 @@ type Point2D
 
 // A position in 3D Cartesian space.
 type Point3D
-    implements Coordinate, Difference<Vector3>, Hashable
+    implements Coordinate, Difference<Vector3D>, Hashable
 {
     X: Number;
     Y: Number;
@@ -29,7 +29,7 @@ type Point3D
 
 // A position in 4D Cartesian space.
 type Point4D
-    implements Coordinate, Difference<Vector4>, Hashable
+    implements Coordinate, Difference<Number4>, Hashable
 {
     X: Number;
     Y: Number;
@@ -101,7 +101,7 @@ type BarycentricCoordinate
 
 // A normalized 2D surface parameter: texture lookup, patch evaluation.
 type UvCoordinate
-    implements Coordinate, Difference<Vector2>
+    implements Coordinate, Difference<Vector2D>
 {
     U: Number;
     V: Number;
@@ -109,7 +109,7 @@ type UvCoordinate
 
 // A normalized 3D volume parameter: 3D textures, trivariate patches.
 type UvwCoordinate
-    implements Coordinate, Difference<Vector3>
+    implements Coordinate, Difference<Vector3D>
 {
     U: Number;
     V: Number;

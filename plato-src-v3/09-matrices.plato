@@ -18,27 +18,27 @@ concept MatrixLike
 type Matrix2x2
     implements MatrixLike, Multiplicative
 {
-    Row1: Vector2;
-    Row2: Vector2;
+    Row1: Number2;
+    Row2: Number2;
 }
 
 // A 3x3 matrix: 3D linear maps, 2D homogeneous transforms, orientation bases.
 type Matrix3x3
     implements MatrixLike, Multiplicative
 {
-    Row1: Vector3;
-    Row2: Vector3;
-    Row3: Vector3;
+    Row1: Number3;
+    Row2: Number3;
+    Row3: Number3;
 }
 
 // A 4x4 matrix: 3D homogeneous transforms and projections.
 type Matrix4x4
     implements MatrixLike, Multiplicative
 {
-    Row1: Vector4;
-    Row2: Vector4;
-    Row3: Vector4;
-    Row4: Vector4;
+    Row1: Number4;
+    Row2: Number4;
+    Row3: Number4;
+    Row4: Number4;
 }
 
 // A 3-row, 2-column matrix: a 2D affine map (2x2 linear part plus a translation
@@ -46,9 +46,9 @@ type Matrix4x4
 type Matrix3x2
     implements MatrixLike
 {
-    Row1: Vector2;
-    Row2: Vector2;
-    Row3: Vector2;
+    Row1: Number2;
+    Row2: Number2;
+    Row3: Number2;
 }
 
 // A 4-row, 3-column matrix: a 3D affine map (3x3 linear part plus a translation
@@ -56,10 +56,10 @@ type Matrix3x2
 type Matrix4x3
     implements MatrixLike
 {
-    Row1: Vector3;
-    Row2: Vector3;
-    Row3: Vector3;
-    Row4: Vector3;
+    Row1: Number3;
+    Row2: Number3;
+    Row3: Number3;
+    Row4: Number3;
 }
 
 // A symmetric 3x3 matrix stored as its six unique elements: inertia tensors,

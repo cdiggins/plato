@@ -43,7 +43,11 @@ primitives in `00-primitives.plato`).
 
 - `concept` = capability/trait (like a type class over `Self`). Bare PascalCase names, no
   `I` prefix: `Numerical`, `Curve3D`, `Transformable<T>`.
-- `type` = immutable data, fields only. Concrete nouns: `Vector3`, `TriangleMesh3D`.
+- `type` = immutable data, fields only. Concrete nouns: `Vector3D`, `TriangleMesh3D`.
+- **Vector naming rule:** a bare number counts components (`Number3`, `Tuple3`,
+  `IntegerVector3`); a `D` suffix means the type lives in that-dimensional space
+  (`Vector3D`, `Point3D`, `Ray3D`). `Number2/3/4/8` are the low-level intrinsic
+  numeric tuples; `Vector2D/3D` are geometric displacements. There is no `Vector2/3/4`.
 - A concept name must never equal a type name.
 - Every declaration has a `//` doc comment stating what it is and any invariants.
   Section banners use `//==`.
@@ -100,7 +104,7 @@ Foundation files:
 - `05-numbers.plato` — Complex, Rational, Proportion, Percent, Probability, ItemIndex, Cardinal.
 - `06-quantities.plato` — Quantity concept, Dimension/UnitOfMeasure/DynamicQuantity, ~35 physical quantity types.
 - `07-time.plato` — Instant, Duration, TimeInterval, FrameRate, FrameTime, Timecode, Tempo, BeatTime.
-- `08-vectors.plato` — Vector concept, Vector2/3/4, VectorN, IntegerVector2/3/4, Direction2D/3D.
+- `08-vectors.plato` — Vector concept, Number2/3/4/8, Vector2D/3D, VectorN, IntegerVector2/3/4, Direction2D/3D.
 - `09-matrices.plato` — Matrix concept, Matrix2x2..4x4, Matrix3x2, Matrix4x3, SymmetricMatrix3x3, MatrixN, Tensor.
 - `10-rotations.plato` — Quaternion, AxisAngle, EulerAngles, RotationOrder, Rotation2D, Rotor2D/3D, Bivector2D/3D.
 - `11-points.plato` — Coordinate concept, Point2D/3D/4D, PointN, homogeneous points, polar/cylindrical/spherical/barycentric, UvCoordinate, UvwCoordinate, GeoCoordinate.

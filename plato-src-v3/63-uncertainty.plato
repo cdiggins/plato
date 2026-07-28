@@ -106,18 +106,18 @@ type TrapezoidalFuzzyNumber
 // Geometric values with Gaussian uncertainty expressed as a covariance.
 
 // A 2D vector with a 2x2 covariance of its components.
-type UncertainVector2
+type UncertainVector2D
     implements Value
 {
-    Value: Vector2;
+    Value: Vector2D;
     Covariance: Covariance2D;
 }
 
 // A 3D vector with a 3x3 covariance of its components.
-type UncertainVector3
+type UncertainVector3D
     implements Value
 {
-    Value: Vector3;
+    Value: Vector3D;
     Covariance: Covariance3D;
 }
 

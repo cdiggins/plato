@@ -17,7 +17,7 @@ type Particle2D
     implements Value
 {
     Position: Point2D;
-    Velocity: Vector2;
+    Velocity: Vector2D;
     Age: Duration;
     Lifetime: Duration;
     Size: Number;
@@ -35,7 +35,7 @@ type Particle3D
     implements Value
 {
     Position: Point3D;
-    Velocity: Vector3;
+    Velocity: Vector3D;
     Age: Duration;
     Lifetime: Duration;
     Size: Number;
@@ -105,7 +105,7 @@ type ParticleEmitter3D
 type ParticleGravity
     implements Value
 {
-    Acceleration: Vector3;
+    Acceleration: Vector3D;
 }
 
 // Velocity-opposing deceleration of particles: acceleration =
@@ -302,7 +302,7 @@ type FluidParticle3D
     implements Value
 {
     Position: Point3D;
-    Velocity: Vector3;
+    Velocity: Vector3D;
     Density: Density;
     Pressure: Pressure;
     Mass: Mass;

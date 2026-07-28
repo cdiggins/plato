@@ -37,8 +37,8 @@ type Parallelogram2D
     implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D, Deformable2D
 {
     Origin: Point2D;
-    SideA: Vector2;
-    SideB: Vector2;
+    SideA: Vector2D;
+    SideB: Vector2D;
 }
 
 //==
@@ -101,7 +101,7 @@ type Ellipse
     implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
 {
     Center: Point2D;
-    SemiAxes: Vector2;
+    SemiAxes: Number2;
     Rotation: Angle;
 }
 
@@ -113,7 +113,7 @@ type SuperEllipse
     implements Geometry2D, ClosedShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
 {
     Center: Point2D;
-    SemiAxes: Vector2;
+    SemiAxes: Number2;
     Rotation: Angle;
     Exponent: Number;
 }

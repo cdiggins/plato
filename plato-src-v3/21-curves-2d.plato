@@ -27,7 +27,7 @@ type EllipticalArc2D
     implements Curve2D
 {
     Center: Point2D;
-    Radii: Vector2;
+    Radii: Number2;
     Rotation: Angle;
     Angles: AngleInterval;
 }

@@ -208,7 +208,7 @@ type SdfOnionModifier
 type SdfElongationModifier2D
     implements Value
 {
-    Amount: Vector2;
+    Amount: Vector2D;
 }
 
 // Stretches a spatial shape by splitting it at the origin and inserting a
@@ -216,7 +216,7 @@ type SdfElongationModifier2D
 type SdfElongationModifier3D
     implements Value
 {
-    Amount: Vector3;
+    Amount: Vector3D;
 }
 
 // Tiles a planar shape on a lattice with the given period per axis. Counts
@@ -225,7 +225,7 @@ type SdfElongationModifier3D
 type SdfRepetitionModifier2D
     implements Value
 {
-    Period: Vector2;
+    Period: Vector2D;
     Counts: IntegerVector2;
 }
 
@@ -235,7 +235,7 @@ type SdfRepetitionModifier2D
 type SdfRepetitionModifier3D
     implements Value
 {
-    Period: Vector3;
+    Period: Vector3D;
     Counts: IntegerVector3;
 }
 

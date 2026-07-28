@@ -118,7 +118,7 @@ type GlyphPlacement
 {
     GlyphId: Integer;
     Position: Point2D;
-    Advance: Vector2;
+    Advance: Vector2D;
 }
 
 // The output of shaping one run with one face at one size: a sequence of
@@ -138,7 +138,7 @@ type GlyphOutline
 {
     GlyphId: Integer;
     Path: Path2D;
-    Advance: Vector2;
+    Advance: Vector2D;
 }
 
 // Vertical metrics of a face, expressed at a font size of one (multiply by

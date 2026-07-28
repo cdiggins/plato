@@ -135,7 +135,7 @@ library GeometryTraits
 
     // The extent of the bounding rectangle as a vector (Max - Min); components are
     // non-negative for a well-formed box.
-    BoundsSize(self: Bounded2D): Vector2
+    BoundsSize(self: Bounded2D): Vector2D
         => self.Bounds.Min.Between(self.Bounds.Max);
 
     // The horizontal extent of the bounding rectangle.
@@ -179,7 +179,7 @@ library GeometryTraits
         => self.Bounds.Center;
 
     // The extent of the bounding box as a vector (Max - Min).
-    BoundsSize(self: Bounded3D): Vector3
+    BoundsSize(self: Bounded3D): Vector3D
         => self.Bounds.Min.Between(self.Bounds.Max);
 
     // The extent of the bounding box along X.
@@ -233,7 +233,7 @@ library GeometryTraits
         => self.Bounds.Center;
 
     // The extent of the 4D bounding region as a vector (Max - Min).
-    BoundsSize(self: Bounded4D): Vector4
+    BoundsSize(self: Bounded4D): Number4
         => self.Bounds.Min.Between(self.Bounds.Max);
 
     // The length of the 4D bounding region's diagonal.

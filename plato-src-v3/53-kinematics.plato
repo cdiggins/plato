@@ -13,7 +13,7 @@
 concept Kinematic2D
 {
     PositionAt(x: Self, time: Duration): Point2D;
-    VelocityAt(x: Self, time: Duration): Vector2;
+    VelocityAt(x: Self, time: Duration): Vector2D;
 }
 
 // A spatial motion that can be sampled at any time. PositionAt returns the
@@ -22,7 +22,7 @@ concept Kinematic2D
 concept Kinematic3D
 {
     PositionAt(x: Self, time: Duration): Point3D;
-    VelocityAt(x: Self, time: Duration): Vector3;
+    VelocityAt(x: Self, time: Duration): Vector3D;
 }
 
 //==
@@ -35,8 +35,8 @@ type KinematicState2D
     implements Value, Interpolatable
 {
     Position: Point2D;
-    Velocity: Vector2;
-    Acceleration: Vector2;
+    Velocity: Vector2D;
+    Acceleration: Vector2D;
 }
 
 // The instantaneous linear motion of a point in space. Position is in meters;
@@ -46,8 +46,8 @@ type KinematicState3D
     implements Value, Interpolatable
 {
     Position: Point3D;
-    Velocity: Vector3;
-    Acceleration: Vector3;
+    Velocity: Vector3D;
+    Acceleration: Vector3D;
 }
 
 // The instantaneous rotational motion of a planar body: orientation angle,
@@ -68,8 +68,8 @@ type AngularState3D
     implements Value
 {
     Orientation: Quaternion;
-    AngularVelocity: Vector3;
-    AngularAcceleration: Vector3;
+    AngularVelocity: Vector3D;
+    AngularAcceleration: Vector3D;
 }
 
 // The full kinematic state of a planar rigid body: pose plus linear and
@@ -80,9 +80,9 @@ type RigidKinematicState2D
     implements Value
 {
     Pose: Pose2D;
-    LinearVelocity: Vector2;
+    LinearVelocity: Vector2D;
     AngularVelocity: AngularVelocity;
-    LinearAcceleration: Vector2;
+    LinearAcceleration: Vector2D;
     AngularAcceleration: AngularAcceleration;
 }
 
@@ -95,10 +95,10 @@ type RigidKinematicState3D
     implements Value
 {
     Pose: Pose3D;
-    LinearVelocity: Vector3;
-    AngularVelocity: Vector3;
-    LinearAcceleration: Vector3;
-    AngularAcceleration: Vector3;
+    LinearVelocity: Vector3D;
+    AngularVelocity: Vector3D;
+    LinearAcceleration: Vector3D;
+    AngularAcceleration: Vector3D;
 }
 
 //==
@@ -110,7 +110,7 @@ type RigidKinematicState3D
 type Twist2D
     implements Value, Interpolatable
 {
-    Linear: Vector2;
+    Linear: Vector2D;
     Angular: AngularVelocity;
 }
 
@@ -119,8 +119,8 @@ type Twist2D
 type Twist3D
     implements Value, Interpolatable
 {
-    Linear: Vector3;
-    Angular: Vector3;
+    Linear: Vector3D;
+    Angular: Vector3D;
 }
 
 // A planar spatial force: a force in newtons acting at a reference point,
@@ -128,7 +128,7 @@ type Twist3D
 type Wrench2D
     implements Value, Interpolatable
 {
-    Force: Vector2;
+    Force: Vector2D;
     Torque: Torque;
 }
 
@@ -137,8 +137,8 @@ type Wrench2D
 type Wrench3D
     implements Value, Interpolatable
 {
-    Force: Vector3;
-    Torque: Vector3;
+    Force: Vector3D;
+    Torque: Vector3D;
 }
 
 //==
@@ -153,7 +153,7 @@ type Trajectory2D
 {
     Times: Array<Duration>;
     Positions: Array<Point2D>;
-    Velocities: Array<Vector2>;
+    Velocities: Array<Vector2D>;
 }
 
 // A time-sampled spatial motion stored as parallel arrays: Times[i] is the
@@ -165,7 +165,7 @@ type Trajectory3D
 {
     Times: Array<Duration>;
     Positions: Array<Point3D>;
-    Velocities: Array<Vector3>;
+    Velocities: Array<Vector3D>;
 }
 
 //==
@@ -178,8 +178,8 @@ type BallisticTrajectory
     implements Value
 {
     InitialPosition: Point3D;
-    InitialVelocity: Vector3;
-    Gravity: Vector3;
+    InitialVelocity: Vector3D;
+    Gravity: Vector3D;
 }
 
 // Motion at constant angular speed around a circle: the moving point orbits

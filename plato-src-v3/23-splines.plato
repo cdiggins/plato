@@ -110,9 +110,9 @@ type HermiteCurve2D
     implements Curve2D
 {
     Start: Point2D;
-    StartTangent: Vector2;
+    StartTangent: Vector2D;
     End: Point2D;
-    EndTangent: Vector2;
+    EndTangent: Vector2D;
 }
 
 // A single cubic Hermite segment in space: interpolates Start to End with the
@@ -121,9 +121,9 @@ type HermiteCurve3D
     implements Curve3D
 {
     Start: Point3D;
-    StartTangent: Vector3;
+    StartTangent: Vector3D;
     End: Point3D;
-    EndTangent: Vector3;
+    EndTangent: Vector3D;
 }
 
 // A piecewise cubic Hermite spline in the plane: interpolates every point with
@@ -133,7 +133,7 @@ type HermiteSpline2D
     implements Curve2D
 {
     Points: Array<Point2D>;
-    Tangents: Array<Vector2>;
+    Tangents: Array<Vector2D>;
     Closed: Boolean;
 }
 
@@ -143,7 +143,7 @@ type HermiteSpline3D
     implements Curve3D
 {
     Points: Array<Point3D>;
-    Tangents: Array<Vector3>;
+    Tangents: Array<Vector3D>;
     Closed: Boolean;
 }
 

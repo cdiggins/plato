@@ -122,7 +122,7 @@ type PathMarker
 {
     Path: Path2D;
     Size: Size2D;
-    ReferencePoint: Vector2;
+    ReferencePoint: Vector2D;
     OrientToPath: Boolean;
 }
 
@@ -132,7 +132,7 @@ type PathMarker
 type ShadowStyle2D
     implements Value
 {
-    Offset: Vector2;
+    Offset: Vector2D;
     BlurRadius: Number;
     Spread: Number;
     Color: Color;

@@ -18,7 +18,7 @@ type PathSegment2D
     | Line(EndPoint: Point2D)                                            // straight line to EndPoint
     | Quadratic(Control: Point2D, EndPoint: Point2D)                     // one control point
     | Cubic(Control1: Point2D, Control2: Point2D, EndPoint: Point2D)     // two control points
-    | Arc(Radii: Vector2, AxisRotation: Angle, LargeArc: Boolean, Sweep: Boolean, EndPoint: Point2D) // SVG elliptical arc
+    | Arc(Radii: Number2, AxisRotation: Angle, LargeArc: Boolean, Sweep: Boolean, EndPoint: Point2D) // SVG elliptical arc
     | Close;                                                             // line back to the sub-path start
 
 // A connected run of segments (a sub-path). When Closed is true the contour
@@ -85,10 +85,10 @@ concept PathLike
 type CornerRadii2D
     implements Value
 {
-    TopLeft: Vector2;
-    TopRight: Vector2;
-    BottomRight: Vector2;
-    BottomLeft: Vector2;
+    TopLeft: Number2;
+    TopRight: Number2;
+    BottomRight: Number2;
+    BottomLeft: Number2;
 }
 
 // The boolean (clipping) operation used when combining two paths.

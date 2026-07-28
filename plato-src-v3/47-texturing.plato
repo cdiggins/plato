@@ -101,9 +101,9 @@ type CubemapLayout
 type UvTransform
     implements Value
 {
-    Offset: Vector2;
+    Offset: Vector2D;
     Rotation: Angle;
-    Tiling: Vector2;
+    Tiling: Number2;
 }
 
 // How texture coordinates are generated for a surface; Uv means authored
@@ -146,7 +146,7 @@ type CheckerTexture
 {
     ColorA: Color;
     ColorB: Color;
-    Tiling: Vector2;
+    Tiling: Number2;
 }
 
 // A linear gradient across UV space: the gradient ramp swept along the given
@@ -178,5 +178,5 @@ type TriplanarProjection
     implements Value
 {
     BlendSharpness: Number;
-    Tiling: Vector2;
+    Tiling: Number2;
 }

@@ -37,8 +37,8 @@ type ClassicEasing
 type CubicBezierEasing
     implements Value, EasingFunction
 {
-    P1: Vector2;
-    P2: Vector2;
+    P1: Number2;
+    P2: Number2;
 }
 
 // Where the jump occurs within each interval of a stepped easing, following

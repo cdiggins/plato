@@ -184,10 +184,10 @@ library IntervalsTransforms
     //==
     // Deformable2D — a value reshaped by an arbitrary Point2D -> Point2D mapping.
     // The mapping type is concrete (Function1<Point2D, Point2D>), so these build
-    // real Point2D/Vector2 lambdas.
+    // real Point2D/Vector2D lambdas.
 
     // Translate every point by `offset`.
-    Translate(self: Deformable2D, offset: Vector2): Self
+    Translate(self: Deformable2D, offset: Vector2D): Self
         => self.Deform(p => p.Add(offset));
 
     // Uniformly scale about `center` by `factor` (1 leaves the shape unchanged).
@@ -197,7 +197,7 @@ library IntervalsTransforms
 
     // Non-uniformly scale about `center` by a per-axis `factors` vector.
     // Assumes Difference.Between(a, b) = b - a.
-    ScaleAbout(self: Deformable2D, center: Point2D, factors: Vector2): Self
+    ScaleAbout(self: Deformable2D, center: Point2D, factors: Number2): Self
         => self.Deform(p => center.Add(center.Between(p).Multiply(factors)));
 
     // TODO(concept-gap): the ScaleAbout helpers depend on the sign of
@@ -207,14 +207,14 @@ library IntervalsTransforms
     // the Difference doc comment.
 
     // TODO(concept-gap): RotateAbout is omitted — rotating a Point2D needs a point
-    // rotation operation (e.g. Rotation2D applied to a point, or Vector2 rotate-by-
+    // rotation operation (e.g. Rotation2D applied to a point, or Vector2D rotate-by-
     // Angle), which is not available from the concepts in scope for this package.
 
     //==
     // Deformable3D — a value reshaped by an arbitrary Point3D -> Point3D mapping.
 
     // Translate every point by `offset`.
-    Translate(self: Deformable3D, offset: Vector3): Self
+    Translate(self: Deformable3D, offset: Vector3D): Self
         => self.Deform(p => p.Add(offset));
 
     // Uniformly scale about `center` by `factor`. Assumes Between(a, b) = b - a.
@@ -223,7 +223,7 @@ library IntervalsTransforms
 
     // Non-uniformly scale about `center` by a per-axis `factors` vector.
     // Assumes Between(a, b) = b - a.
-    ScaleAbout(self: Deformable3D, center: Point3D, factors: Vector3): Self
+    ScaleAbout(self: Deformable3D, center: Point3D, factors: Number3): Self
         => self.Deform(p => center.Add(center.Between(p).Multiply(factors)));
 
     // TODO(concept-gap): RotateAbout is omitted for the same reason as Deformable2D

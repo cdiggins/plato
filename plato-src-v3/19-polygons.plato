@@ -112,7 +112,7 @@ type Prism3D
     implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
 {
     Base: Polygon3D;
-    Offset: Vector3;
+    Offset: Vector3D;
 }
 
 // The solid cone over a polygon: all segments from points of Base to Apex.

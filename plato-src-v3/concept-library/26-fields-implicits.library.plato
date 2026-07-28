@@ -33,7 +33,7 @@ library FieldsImplicits
     // are the natural derived surface over a bare scalar evaluation.
     // TODO(concept-gap): a numeric finite-difference gradient would need to sample
     // the field at points offset from `point`, but no sanctioned Point2D offset
-    // operation is in scope here (Difference.Add needs a Vector2 that Coordinate
+    // operation is in scope here (Difference.Add needs a Vector2D that Coordinate
     // cannot supply); use DifferentiableScalarField2D for gradients instead.
 
     // True where the field is strictly positive at the point. Note: values within
@@ -120,7 +120,7 @@ library FieldsImplicits
 
     // The unit flow direction of the sampled vector. Precondition: the field is
     // non-zero at the point.
-    FlowDirectionAt(self: VectorField2D, point: Point2D): Vector2
+    FlowDirectionAt(self: VectorField2D, point: Point2D): Vector2D
         => self.Eval(point).Normalize;
 
     //==
@@ -135,7 +135,7 @@ library FieldsImplicits
 
     // The unit flow direction of the sampled vector. Precondition: the field is
     // non-zero at the point.
-    FlowDirectionAt(self: VectorField3D, point: Point3D): Vector3
+    FlowDirectionAt(self: VectorField3D, point: Point3D): Vector3D
         => self.Eval(point).Normalize;
 
     //==
@@ -172,18 +172,18 @@ library FieldsImplicits
 
     // The gradient direction of steepest increase, unit length. Precondition: the
     // gradient is non-zero at the point.
-    SteepestAscentDirectionAt(self: DifferentiableScalarField2D, point: Point2D): Vector2
+    SteepestAscentDirectionAt(self: DifferentiableScalarField2D, point: Point2D): Vector2D
         => self.GradientAt(point).Normalize;
 
     // The direction of steepest decrease, unit length: the negated gradient.
     // Precondition: the gradient is non-zero at the point.
-    SteepestDescentDirectionAt(self: DifferentiableScalarField2D, point: Point2D): Vector2
+    SteepestDescentDirectionAt(self: DifferentiableScalarField2D, point: Point2D): Vector2D
         => self.GradientAt(point).Normalize.Negative;
 
     // The unit outward normal to the level curve through the point: the unit
     // gradient. For a signed distance field this is the boundary normal.
     // Precondition: the gradient is non-zero at the point.
-    BoundaryNormalAt(self: DifferentiableScalarField2D, point: Point2D): Vector2
+    BoundaryNormalAt(self: DifferentiableScalarField2D, point: Point2D): Vector2D
         => self.SteepestAscentDirectionAt(point);
 
     // The steepness of the field at the point: the gradient's length.
@@ -202,17 +202,17 @@ library FieldsImplicits
 
     // The gradient direction of steepest increase, unit length. Precondition: the
     // gradient is non-zero at the point.
-    SteepestAscentDirectionAt(self: DifferentiableScalarField3D, point: Point3D): Vector3
+    SteepestAscentDirectionAt(self: DifferentiableScalarField3D, point: Point3D): Vector3D
         => self.GradientAt(point).Normalize;
 
     // The direction of steepest decrease, unit length: the negated gradient.
     // Precondition: the gradient is non-zero at the point.
-    SteepestDescentDirectionAt(self: DifferentiableScalarField3D, point: Point3D): Vector3
+    SteepestDescentDirectionAt(self: DifferentiableScalarField3D, point: Point3D): Vector3D
         => self.GradientAt(point).Normalize.Negative;
 
     // The outward surface normal at the point: the unit gradient. Exact for a
     // signed distance field. Precondition: the gradient is non-zero at the point.
-    SurfaceNormalAt(self: DifferentiableScalarField3D, point: Point3D): Vector3
+    SurfaceNormalAt(self: DifferentiableScalarField3D, point: Point3D): Vector3D
         => self.SteepestAscentDirectionAt(point);
 
     // The steepness of the field at the point: the gradient's length.
@@ -341,7 +341,7 @@ library FieldsImplicits
 
     // The vector at the point at a given instant; a readable spelling of
     // EvalAtTime.
-    VectorAtTime(self: TimeVaryingVectorField2D, point: Point2D, time: Instant): Vector2
+    VectorAtTime(self: TimeVaryingVectorField2D, point: Point2D, time: Instant): Vector2D
         => self.EvalAtTime(point, time);
 
     // The flow speed at the point at a given instant: the sampled vector's length.
@@ -349,7 +349,7 @@ library FieldsImplicits
         => self.EvalAtTime(point, time).Magnitude;
 
     // The change in the vector at the point from the earlier instant to the later.
-    ChangeBetween(self: TimeVaryingVectorField2D, point: Point2D, earlier: Instant, later: Instant): Vector2
+    ChangeBetween(self: TimeVaryingVectorField2D, point: Point2D, earlier: Instant, later: Instant): Vector2D
         => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
 
     //==
@@ -360,7 +360,7 @@ library FieldsImplicits
 
     // The vector at the point at a given instant; a readable spelling of
     // EvalAtTime.
-    VectorAtTime(self: TimeVaryingVectorField3D, point: Point3D, time: Instant): Vector3
+    VectorAtTime(self: TimeVaryingVectorField3D, point: Point3D, time: Instant): Vector3D
         => self.EvalAtTime(point, time);
 
     // The flow speed at the point at a given instant: the sampled vector's length.
@@ -368,7 +368,7 @@ library FieldsImplicits
         => self.EvalAtTime(point, time).Magnitude;
 
     // The change in the vector at the point from the earlier instant to the later.
-    ChangeBetween(self: TimeVaryingVectorField3D, point: Point3D, earlier: Instant, later: Instant): Vector3
+    ChangeBetween(self: TimeVaryingVectorField3D, point: Point3D, earlier: Instant, later: Instant): Vector3D
         => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
 
     //==

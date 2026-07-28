@@ -55,7 +55,7 @@ type RigidBody2D
     implements Value
 {
     Pose: Pose2D;
-    LinearVelocity: Vector2;
+    LinearVelocity: Vector2D;
     AngularVelocity: AngularVelocity;
     MassProperties: MassProperties2D;
     Motion: BodyMotion;
@@ -73,8 +73,8 @@ type RigidBody3D
     implements Value
 {
     Pose: Pose3D;
-    LinearVelocity: Vector3;
-    AngularVelocity: Vector3;
+    LinearVelocity: Vector3D;
+    AngularVelocity: Vector3D;
     MassProperties: MassProperties3D;
     Motion: BodyMotion;
     LinearDamping: Number;
@@ -90,7 +90,7 @@ type RigidBody3D
 type AppliedForce2D
     implements Value
 {
-    Force: Vector2;
+    Force: Vector2D;
     ApplicationPoint: Point2D;
 }
 
@@ -99,7 +99,7 @@ type AppliedForce2D
 type AppliedForce3D
     implements Value
 {
-    Force: Vector3;
+    Force: Vector3D;
     ApplicationPoint: Point3D;
 }
 
@@ -108,7 +108,7 @@ type AppliedForce3D
 type AppliedImpulse2D
     implements Value
 {
-    Impulse: Vector2;
+    Impulse: Vector2D;
     ApplicationPoint: Point2D;
 }
 
@@ -117,7 +117,7 @@ type AppliedImpulse2D
 type AppliedImpulse3D
     implements Value
 {
-    Impulse: Vector3;
+    Impulse: Vector3D;
     ApplicationPoint: Point3D;
 }
 
@@ -140,7 +140,7 @@ type RadialImpulse3D
 // its current state.
 concept ForceModel2D
 {
-    ForceOn(x: Self, body: RigidBody2D): Vector2;
+    ForceOn(x: Self, body: RigidBody2D): Vector2D;
 }
 
 // A model of an environmental force acting on spatial bodies. ForceOn
@@ -148,7 +148,7 @@ concept ForceModel2D
 // its current state.
 concept ForceModel3D
 {
-    ForceOn(x: Self, body: RigidBody3D): Vector3;
+    ForceOn(x: Self, body: RigidBody3D): Vector3D;
 }
 
 // Uniform planar gravity: the same acceleration, in meters per second
@@ -156,7 +156,7 @@ concept ForceModel3D
 type UniformGravity2D
     implements Value
 {
-    Acceleration: Vector2;
+    Acceleration: Vector2D;
 }
 
 // Uniform spatial gravity: the same acceleration, in meters per second
@@ -165,7 +165,7 @@ type UniformGravity2D
 type UniformGravity3D
     implements Value
 {
-    Acceleration: Vector3;
+    Acceleration: Vector3D;
 }
 
 // Newtonian point gravity: bodies are attracted toward Center with
@@ -197,7 +197,7 @@ type BuoyancyModel
     FluidDensity: Density;
     SurfaceHeight: Length;
     UpAxis: Direction3D;
-    FluidVelocity: Vector3;
+    FluidVelocity: Vector3D;
 }
 
 //==

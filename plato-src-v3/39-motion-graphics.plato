@@ -20,7 +20,7 @@ type LayerTransform2D
     Anchor: Point2D;
     Position: Point2D;
     Rotation: Angle;
-    Scale: Vector2;
+    Scale: Number2;
     Opacity: Proportion;
 }
 

@@ -37,13 +37,13 @@ concept ScalarField4D
 // A field assigning a 2D vector to every point of the plane: gradients,
 // flows, displacement maps, and wind over a surface.
 concept VectorField2D
-    inherits Field<Point2D, Vector2>
+    inherits Field<Point2D, Vector2D>
 { }
 
 // A field assigning a 3D vector to every point of space: velocity fields,
 // force fields, and displacement fields.
 concept VectorField3D
-    inherits Field<Point3D, Vector3>
+    inherits Field<Point3D, Vector3D>
 { }
 
 // A field of unit-length 2D directions: orientation fields for strokes,
@@ -96,7 +96,7 @@ concept TensorField3D
 concept DifferentiableScalarField2D
     inherits ScalarField2D
 {
-    GradientAt(x: Self, point: Point2D): Vector2;
+    GradientAt(x: Self, point: Point2D): Vector2D;
 }
 
 // A spatial scalar field with an analytic or numeric first derivative. The
@@ -104,7 +104,7 @@ concept DifferentiableScalarField2D
 concept DifferentiableScalarField3D
     inherits ScalarField3D
 {
-    GradientAt(x: Self, point: Point3D): Vector3;
+    GradientAt(x: Self, point: Point3D): Vector3D;
 }
 
 // A planar vector field with first derivatives: the Jacobian, its trace
@@ -124,7 +124,7 @@ concept DifferentiableVectorField3D
 {
     JacobianAt(x: Self, point: Point3D): Matrix3x3;
     DivergenceAt(x: Self, point: Point3D): Number;
-    CurlAt(x: Self, point: Point3D): Vector3;
+    CurlAt(x: Self, point: Point3D): Vector3D;
 }
 
 //==
@@ -151,14 +151,14 @@ concept TimeVaryingScalarField3D
 // displacement maps.
 concept TimeVaryingVectorField2D
 {
-    EvalAtTime(x: Self, point: Point2D, time: Instant): Vector2;
+    EvalAtTime(x: Self, point: Point2D, time: Instant): Vector2D;
 }
 
 // A spatial vector field that changes over time: velocity fields of fluids,
 // wind, and turbulence used for advection.
 concept TimeVaryingVectorField3D
 {
-    EvalAtTime(x: Self, point: Point3D, time: Instant): Vector3;
+    EvalAtTime(x: Self, point: Point3D, time: Instant): Vector3D;
 }
 
 //==
@@ -185,14 +185,14 @@ type ConstantScalarField3D
 type ConstantVectorField2D
     implements Value, VectorField2D
 {
-    Value: Vector2;
+    Value: Vector2D;
 }
 
 // A spatial vector field with the same vector at every point.
 type ConstantVectorField3D
     implements Value, VectorField3D
 {
-    Value: Vector3;
+    Value: Vector3D;
 }
 
 //==

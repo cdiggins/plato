@@ -1,9 +1,14 @@
 //==
-// # Vectors
+// # Vectors and numeric tuples
 //
-// Displacements and directions. Vectors support full component-wise arithmetic,
-// scaling, dot products, and norms. Points (file 11) are positions; vectors are
-// the differences between them.
+// Two families share the Vector concept. The Number2/3/4/8 family is the
+// low-level intrinsic tier: fixed-arity tuples of Numbers with component-wise
+// arithmetic, mapped directly onto each backend's native vector type
+// (System.Numerics, vecN, floatN). The Vector2D/3D family is geometric:
+// displacements and directions in 2D/3D space. Points (file 11) are positions;
+// geometric vectors are the differences between them. Naming rule: a bare
+// number counts components (Number3, Tuple3, IntegerVector3); a D suffix means
+// the type lives in that-dimensional space (Vector3D, Point3D, Ray3D).
 
 // The family of fixed-arity numeric vectors: component-wise arithmetic, norms,
 // dot product, and component-wise extremes.
@@ -13,16 +18,16 @@ concept Vector
     Dot(a: Self, b: Self): Number;
 }
 
-// A 2D displacement or direction.
-type Vector2
+// A pair of Numbers: the low-level intrinsic 2-tuple.
+type Number2
     implements Vector
 {
     X: Number;
     Y: Number;
 }
 
-// A 3D displacement or direction.
-type Vector3
+// A triple of Numbers: the low-level intrinsic 3-tuple.
+type Number3
     implements Vector
 {
     X: Number;
@@ -30,14 +35,46 @@ type Vector3
     Z: Number;
 }
 
-// A 4D displacement; also used for homogeneous coordinates and RGBA math.
-type Vector4
+// A quadruple of Numbers: the low-level intrinsic 4-tuple; also used for
+// homogeneous coordinates and RGBA math.
+type Number4
     implements Vector
 {
     X: Number;
     Y: Number;
     Z: Number;
     W: Number;
+}
+
+// An octuple of Numbers: the low-level intrinsic 8-tuple (SIMD-width lane math).
+type Number8
+    implements Vector
+{
+    X0: Number;
+    X1: Number;
+    X2: Number;
+    X3: Number;
+    X4: Number;
+    X5: Number;
+    X6: Number;
+    X7: Number;
+}
+
+// A displacement or direction in 2D space.
+type Vector2D
+    implements Vector
+{
+    X: Number;
+    Y: Number;
+}
+
+// A displacement or direction in 3D space.
+type Vector3D
+    implements Vector
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
 }
 
 // An N-dimensional vector with runtime-determined arity.
@@ -74,16 +111,16 @@ type IntegerVector4
     W: Integer;
 }
 
-// A 2D direction: a Vector2 with the invariant that its magnitude is one.
+// A 2D direction: a Vector2D with the invariant that its magnitude is one.
 type Direction2D
     implements Value
 {
-    Vector: Vector2;
+    Vector: Vector2D;
 }
 
-// A 3D direction: a Vector3 with the invariant that its magnitude is one.
+// A 3D direction: a Vector3D with the invariant that its magnitude is one.
 type Direction3D
     implements Value
 {
-    Vector: Vector3;
+    Vector: Vector3D;
 }

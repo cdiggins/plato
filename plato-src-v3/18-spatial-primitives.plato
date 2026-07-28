@@ -45,7 +45,7 @@ type Ellipsoid
     implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D
 {
     Center: Point3D;
-    SemiAxes: Vector3;
+    SemiAxes: Number3;
     Orientation: Quaternion;
 }
 
@@ -190,7 +190,7 @@ type Wedge
     implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
 {
     Base: Triangle3D;
-    Offset: Vector3;
+    Offset: Vector3D;
 }
 
 // The intersection of the half-spaces behind each plane (normals point

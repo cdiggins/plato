@@ -78,7 +78,7 @@ type SampledVectorGrid2D
     implements Value, VectorField2D
 {
     Grid: RegularGrid2D;
-    Values: Array2D<Vector2>;
+    Values: Array2D<Vector2D>;
 }
 
 // A spatial vector field stored on grid nodes; evaluation interpolates each
@@ -87,7 +87,7 @@ type SampledVectorGrid3D
     implements Value, VectorField3D
 {
     Grid: RegularGrid3D;
-    Values: Array3D<Vector3>;
+    Values: Array3D<Vector3D>;
 }
 
 // A planar color field stored on grid nodes; evaluation interpolates each

@@ -225,7 +225,7 @@ library DomainTraits
         => self.VelocityAt(time).Magnitude;
 
     // The straight-line displacement from the earlier to the later time.
-    DisplacementBetween(self: Kinematic2D, earlier: Duration, later: Duration): Vector2
+    DisplacementBetween(self: Kinematic2D, earlier: Duration, later: Duration): Vector2D
         => self.PositionAt(earlier).Between(self.PositionAt(later));
 
     // The straight-line distance covered between the two times (chord length).
@@ -234,7 +234,7 @@ library DomainTraits
 
     // The average velocity over [earlier, later]: displacement over elapsed
     // seconds. Precondition: earlier and later differ.
-    AverageVelocityBetween(self: Kinematic2D, earlier: Duration, later: Duration): Vector2
+    AverageVelocityBetween(self: Kinematic2D, earlier: Duration, later: Duration): Vector2D
         => self.PositionAt(earlier).Between(self.PositionAt(later)) / (later.Seconds - earlier.Seconds);
 
     // The average speed over [earlier, later]: chord distance over elapsed
@@ -257,7 +257,7 @@ library DomainTraits
         => self.VelocityAt(time).Magnitude;
 
     // The straight-line displacement from the earlier to the later time.
-    DisplacementBetween(self: Kinematic3D, earlier: Duration, later: Duration): Vector3
+    DisplacementBetween(self: Kinematic3D, earlier: Duration, later: Duration): Vector3D
         => self.PositionAt(earlier).Between(self.PositionAt(later));
 
     // The straight-line distance covered between the two times (chord length).
@@ -266,7 +266,7 @@ library DomainTraits
 
     // The average velocity over [earlier, later]: displacement over elapsed
     // seconds. Precondition: earlier and later differ.
-    AverageVelocityBetween(self: Kinematic3D, earlier: Duration, later: Duration): Vector3
+    AverageVelocityBetween(self: Kinematic3D, earlier: Duration, later: Duration): Vector3D
         => self.PositionAt(earlier).Between(self.PositionAt(later)) / (later.Seconds - earlier.Seconds);
 
     // The average speed over [earlier, later]: chord distance over elapsed
@@ -291,7 +291,7 @@ library DomainTraits
 
     // The acceleration this force imparts to the body: force over mass (F = m a),
     // in meters per second squared. Precondition: the body's mass is positive.
-    AccelerationOn(self: ForceModel2D, body: RigidBody2D): Vector2
+    AccelerationOn(self: ForceModel2D, body: RigidBody2D): Vector2D
         => self.ForceOn(body) / body.MassProperties.Mass.Amount;
 
     // True when the force on the body is negligible, within the given
@@ -310,7 +310,7 @@ library DomainTraits
 
     // The acceleration this force imparts to the body: force over mass (F = m a),
     // in meters per second squared. Precondition: the body's mass is positive.
-    AccelerationOn(self: ForceModel3D, body: RigidBody3D): Vector3
+    AccelerationOn(self: ForceModel3D, body: RigidBody3D): Vector3D
         => self.ForceOn(body) / body.MassProperties.Mass.Amount;
 
     // True when the force on the body is negligible, within the given

@@ -78,8 +78,8 @@ type MorphTarget
     implements Value
 {
     Name: String;
-    PositionDeltas: Array<Vector3>;
-    NormalDeltas: Array<Vector3>;
+    PositionDeltas: Array<Vector3D>;
+    NormalDeltas: Array<Vector3D>;
 }
 
 // The activation weights of a mesh's morph targets, parallel to its target
@@ -132,8 +132,8 @@ type LookAtConstraint
 {
     Bone: BoneIndex;
     Target: Point3D;
-    Aim: Vector3;
-    Up: Vector3;
+    Aim: Vector3D;
+    Up: Vector3D;
     Weight: Proportion;
 }
 
@@ -145,7 +145,7 @@ type TwistConstraint
 {
     Bone: BoneIndex;
     SourceBone: BoneIndex;
-    Axis: Vector3;
+    Axis: Vector3D;
     Fraction: Proportion;
 }
 

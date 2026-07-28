@@ -77,7 +77,7 @@ type HyperSphere4D
 type Hyperplane4D
     implements Value
 {
-    Normal: Vector4;
+    Normal: Number4;
     Distance: Number;
 }
 
@@ -87,7 +87,7 @@ type Ray4D
     implements Value
 {
     Origin: Point4D;
-    Direction: Vector4;
+    Direction: Number4;
 }
 
 // A triangle embedded in 4D space.
@@ -126,10 +126,10 @@ type Frame4D
     implements Value
 {
     Origin: Point4D;
-    XAxis: Vector4;
-    YAxis: Vector4;
-    ZAxis: Vector4;
-    WAxis: Vector4;
+    XAxis: Number4;
+    YAxis: Number4;
+    ZAxis: Number4;
+    WAxis: Number4;
 }
 
 // An axis-aligned-when-unoriented 4D cube (8-cell) of uniform edge length
@@ -148,7 +148,7 @@ type OrientedBox4D
     implements Value
 {
     Center: Point4D;
-    HalfExtents: Vector4;
+    HalfExtents: Number4;
     Orientation: Rotor4D;
 }
 

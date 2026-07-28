@@ -79,8 +79,8 @@ type CurveJet2D
 {
     Parameter: Number;
     Position: Point2D;
-    FirstDerivative: Vector2;
-    SecondDerivative: Vector2;
+    FirstDerivative: Vector2D;
+    SecondDerivative: Vector2D;
 }
 
 // A third-order jet of a space curve: position plus first, second, and third
@@ -90,9 +90,9 @@ type CurveJet3D
 {
     Parameter: Number;
     Position: Point3D;
-    FirstDerivative: Vector3;
-    SecondDerivative: Vector3;
-    ThirdDerivative: Vector3;
+    FirstDerivative: Vector3D;
+    SecondDerivative: Vector3D;
+    ThirdDerivative: Vector3D;
 }
 
 // A second-order jet of a parametric surface at Uv: position, both first
@@ -102,11 +102,11 @@ type SurfaceJet3D
 {
     Uv: UvCoordinate;
     Position: Point3D;
-    DerivativeU: Vector3;
-    DerivativeV: Vector3;
-    DerivativeUU: Vector3;
-    DerivativeUV: Vector3;
-    DerivativeVV: Vector3;
+    DerivativeU: Vector3D;
+    DerivativeV: Vector3D;
+    DerivativeUU: Vector3D;
+    DerivativeUV: Vector3D;
+    DerivativeVV: Vector3D;
 }
 
 //==
@@ -119,8 +119,8 @@ type SurfacePoint3D
 {
     Position: Point3D;
     Normal: Direction3D;
-    TangentU: Vector3;
-    TangentV: Vector3;
+    TangentU: Vector3D;
+    TangentV: Vector3D;
     Uv: UvCoordinate;
 }
 
@@ -131,8 +131,8 @@ type TangentSpace3D
     implements Value
 {
     Origin: Point3D;
-    TangentU: Vector3;
-    TangentV: Vector3;
+    TangentU: Vector3D;
+    TangentV: Vector3D;
     Normal: Direction3D;
 }
 

@@ -95,7 +95,7 @@ library CurvesSurfaces
         => self.Eval(1.0);
 
     // The straight-line vector from the start to the end of the curve.
-    Chord(self: Curve2D): Vector2
+    Chord(self: Curve2D): Vector2D
         => self.Eval(0.0).Between(self.Eval(1.0));
 
     // The straight-line distance from the start to the end of the curve.
@@ -103,13 +103,13 @@ library CurvesSurfaces
         => self.Eval(0.0).Between(self.Eval(1.0)).Magnitude;
 
     // The secant vector between the positions at parameters t0 and t1.
-    SecantBetween(self: Curve2D, t0: Number, t1: Number): Vector2
+    SecantBetween(self: Curve2D, t0: Number, t1: Number): Vector2D
         => self.Eval(t0).Between(self.Eval(t1));
 
     // A finite-difference velocity estimate at t using step h: the secant over
     // [t - h, t + h] divided by its width. Precondition: h > 0 and h chosen so
     // t +/- h stays within the domain of interest.
-    VelocityAt(self: Curve2D, t: Number, h: Number): Vector2
+    VelocityAt(self: Curve2D, t: Number, h: Number): Vector2D
         => self.Eval(t - h).Between(self.Eval(t + h)) / (2.0 * h);
 
     //==
@@ -135,7 +135,7 @@ library CurvesSurfaces
         => self.Eval(1.0);
 
     // The straight-line vector from the start to the end of the curve.
-    Chord(self: Curve3D): Vector3
+    Chord(self: Curve3D): Vector3D
         => self.Eval(0.0).Between(self.Eval(1.0));
 
     // The straight-line distance from the start to the end of the curve.
@@ -143,12 +143,12 @@ library CurvesSurfaces
         => self.Eval(0.0).Between(self.Eval(1.0)).Magnitude;
 
     // The secant vector between the positions at parameters t0 and t1.
-    SecantBetween(self: Curve3D, t0: Number, t1: Number): Vector3
+    SecantBetween(self: Curve3D, t0: Number, t1: Number): Vector3D
         => self.Eval(t0).Between(self.Eval(t1));
 
     // A finite-difference velocity estimate at t using step h. Precondition:
     // h > 0 and h chosen so t +/- h stays within the domain of interest.
-    VelocityAt(self: Curve3D, t: Number, h: Number): Vector3
+    VelocityAt(self: Curve3D, t: Number, h: Number): Vector3D
         => self.Eval(t - h).Between(self.Eval(t + h)) / (2.0 * h);
 
     //==
@@ -175,21 +175,21 @@ library CurvesSurfaces
         => self.Eval(1.0);
 
     // The straight-line vector from the start to the end of the curve.
-    Chord(self: Curve4D): Vector4
+    Chord(self: Curve4D): Number4
         => self.Eval(0.0).Between(self.Eval(1.0));
 
     // The straight-line distance from the start to the end of the curve
-    // (Vector4 is Normed).
+    // (Number4 is Normed).
     ChordLength(self: Curve4D): Number
         => self.Eval(0.0).Between(self.Eval(1.0)).Magnitude;
 
     // The secant vector between the positions at parameters t0 and t1.
-    SecantBetween(self: Curve4D, t0: Number, t1: Number): Vector4
+    SecantBetween(self: Curve4D, t0: Number, t1: Number): Number4
         => self.Eval(t0).Between(self.Eval(t1));
 
     // A finite-difference velocity estimate at t using step h. Precondition:
     // h > 0 and h chosen so t +/- h stays within the domain of interest.
-    VelocityAt(self: Curve4D, t: Number, h: Number): Vector4
+    VelocityAt(self: Curve4D, t: Number, h: Number): Number4
         => self.Eval(t - h).Between(self.Eval(t + h)) / (2.0 * h);
 
     //==
@@ -266,7 +266,7 @@ library CurvesSurfaces
     // left). Unit tangents, plane normals, and the radius of curvature follow.
 
     // The unit-length tangent at t. Precondition: the tangent is non-zero.
-    UnitTangentAt(self: DifferentiableCurve2D, t: Number): Vector2
+    UnitTangentAt(self: DifferentiableCurve2D, t: Number): Vector2D
         => self.TangentAt(t).Normalize;
 
     // The instantaneous speed (tangent magnitude) at t.
@@ -275,17 +275,17 @@ library CurvesSurfaces
 
     // The left-hand normal at t: the tangent rotated a quarter turn
     // counter-clockwise, (-y, x). Not normalized.
-    LeftNormalAt(self: DifferentiableCurve2D, t: Number): Vector2
+    LeftNormalAt(self: DifferentiableCurve2D, t: Number): Vector2D
         => (-self.TangentAt(t).Y, self.TangentAt(t).X);
 
     // The unit left-hand normal at t. Precondition: the tangent is non-zero.
-    UnitNormalAt(self: DifferentiableCurve2D, t: Number): Vector2
+    UnitNormalAt(self: DifferentiableCurve2D, t: Number): Vector2D
         => self.LeftNormalAt(t).Normalize;
 
     // The curvature vector at t: the signed plane curvature scaled by the unit
     // left normal, pointing toward the centre of curvature. Precondition: the
     // tangent is non-zero.
-    CurvatureVectorAt(self: DifferentiableCurve2D, t: Number): Vector2
+    CurvatureVectorAt(self: DifferentiableCurve2D, t: Number): Vector2D
         => self.UnitNormalAt(t) * self.CurvatureAt(t);
 
     // The radius of curvature at t: the reciprocal of the unsigned curvature.
@@ -311,7 +311,7 @@ library CurvesSurfaces
     // plane).
 
     // The unit-length tangent at t. Precondition: the tangent is non-zero.
-    UnitTangentAt(self: DifferentiableCurve3D, t: Number): Vector3
+    UnitTangentAt(self: DifferentiableCurve3D, t: Number): Vector3D
         => self.TangentAt(t).Normalize;
 
     // The instantaneous speed (tangent magnitude) at t.
@@ -488,11 +488,11 @@ library CurvesSurfaces
         => self.NormalAt((0.5, 0.5));
 
     // The U-direction tangent at the centre of the UV domain.
-    TangentUAtCenter(self: DifferentiableSurface): Vector3
+    TangentUAtCenter(self: DifferentiableSurface): Vector3D
         => self.TangentUAt((0.5, 0.5));
 
     // The V-direction tangent at the centre of the UV domain.
-    TangentVAtCenter(self: DifferentiableSurface): Vector3
+    TangentVAtCenter(self: DifferentiableSurface): Vector3D
         => self.TangentVAt((0.5, 0.5));
 
     // The coefficient E = Tu . Tu of the first fundamental form at uv (the squared

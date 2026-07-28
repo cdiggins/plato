@@ -51,12 +51,12 @@ type IrregularTimeSeries
 // A uniformly sampled series of 3D vectors (positions, velocities, field
 // samples): sample i occurs at Start plus i times SamplePeriod. Components are
 // in Unit.
-type Vector3TimeSeries
+type Vector3DTimeSeries
     implements TimeSampled
 {
     Start: Instant;
     SamplePeriod: Duration;
-    Values: Array<Vector3>;
+    Values: Array<Vector3D>;
     Unit: UnitOfMeasure;
 }
 
