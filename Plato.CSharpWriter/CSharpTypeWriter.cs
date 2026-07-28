@@ -179,18 +179,47 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         throw new NotSupportedException();
     }
 
+    /// <summary>
+    /// The name of the one field that IS this type's element surface, or null when the fields
+    /// themselves are the elements.
+    ///
+    /// At/Count are synthesized here from a type's fields, which is right for a fixed-arity type
+    /// (Point3D: X/Y/Z) whose fields ARE its components, but wrong for a runtime-arity type
+    /// (VectorN: a single Array&lt;Number&gt; field) where the FIELD is the component surface —
+    /// enumerating fields there gives Count == 1 and At(0) == the whole collection.
+    ///
+    /// The test is the field type's CONCEPT, not the spelling of its name: the library declares
+    /// such fields both as Array&lt;T&gt; (stdlib, implements Indexable&lt;T&gt;) and as IArray&lt;T&gt;
+    /// (stdlib-legacy, declares At/Count directly), and both are the same shape. Requiring a linear
+    /// At AND Count also excludes Array2D/Array3D, which implement Indexable2D/3D and have no
+    /// meaningful single-index Count — those need an explicit library body.
+    /// </summary>
+    private static string SingleIndexableFieldName(ConcreteType t)
+    {
+        if (t.TypeDef.Fields.Count != 1)
+            return null;
+
+        var field = t.TypeDef.Fields[0];
+        var fieldDef = field.Type?.Def;
+        if (fieldDef == null || fieldDef == t.TypeDef)
+            return null;
+
+        var names = fieldDef.GetSelfAndAllInheritedTypes()
+            .Concat(fieldDef.GetAllImplementedConcepts().Select(c => c?.Def).Where(d => d != null))
+            .SelectMany(d => d.Methods)
+            .Select(m => m.Name)
+            .ToHashSet();
+
+        return names.Contains("At") && names.Contains("Count") ? field.Name : null;
+    }
+
     public CSharpTypeWriter GenerateFunc(CSharpFunctionInfo f, ConcreteType t)
     {
         var pns = f.ParameterNames;
         var fs = t.TypeDef.Fields.Select(tf => tf.Name).ToList();
         Write(f.MethodSignature);
 
-        // Single collection-typed field (e.g. VectorN.Components: Array<Number>):
-        // At/Count forward to the collection rather than treating the field as a component.
-        var singleArrayField = t.TypeDef.Fields.Count == 1
-            && t.TypeDef.Fields[0].Type?.Def?.Name is "Array" or "Array2D" or "Array3D"
-            ? t.TypeDef.Fields[0].Name
-            : null;
+        var singleArrayField = SingleIndexableFieldName(t);
 
         if (f.Name == "At" && singleArrayField != null)
         {

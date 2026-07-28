@@ -109,7 +109,12 @@ namespace Ara3D.Geometry.Compiler.Analysis
             "Equals", "NotEquals", "GetHashCode", "ToString", "GetType",
             "Components", "CreateFromComponents", "CreateFromComponent", "NumComponents",
             "Range", "MakeArray2D", "MapRange",
-            "At", "Count", // generated from the type's fields
+            // Synthesized by the writer (CSharpTypeWriter.GenerateFunc) from the type's shape:
+            // from the FIELDS for a fixed-arity type (Point3D: X/Y/Z), or by delegating to the
+            // single field that is itself indexable for a runtime-arity type (VectorN: Components).
+            // A type whose shape fits neither must declare an explicit At/Count library body — that
+            // lands in ImplementedFunctions and never reaches the synthesis (e.g. RegularPolygon).
+            "At", "Count",
         };
 
         public void CheckUnimplementedInterfaceObligations()
