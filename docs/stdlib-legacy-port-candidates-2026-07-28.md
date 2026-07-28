@@ -1,206 +1,267 @@
 # Port candidates: `stdlib-legacy` → `stdlib`
 
-Survey date 2026-07-28. Method: full read of `stdlib-legacy/*.plato` (4,465 lines, 28 files),
-name-by-name presence check against `stdlib/*.plato` (80 files, ~13K lines) plus the Plato
-navigation index over the legacy tree.
+Survey date 2026-07-28 (revised same day: claims re-verified against both trees; item 1
+redesigned around the `Vector` concept; constants promoted to Tier 0).
+Method: full read of `stdlib-legacy/*.plato` (4,465 lines, 28 files), name-by-name presence
+check against `stdlib/*.plato` (80 files, ~13K lines) plus the Plato navigation index.
 
 **Framing.** `stdlib` is much broader in *vocabulary* (150 concepts, 1111 types) but far thinner in
 *executable content*. `stdlib-legacy` is narrow but carries closed-form math, working combinators,
 and several load-bearing language idioms that the new tree simply does not have. Everything below
 is "legacy has a body / an idea, stdlib has at most a declaration".
 
-Ordered by value-per-effort.
+Ordered by tier, then value-per-effort within tier.
+
+---
+
+## Tier 0 — day-one content (no dependencies; everything below reads them)
+
+### 1. `library Constants`
+`stdlib-legacy/constants.plato`. `stdlib` has **no constants file**; `GoldenRatio`, `SqrtTwo`,
+`Ln2`, `Log10E`, `RadiansPerDegree`, `FeetPerMeter`, `PoundPerKilogram`, `GregorianYearDays`,
+`XAxis3D`, `UnitInterval`, `UnitCircle` are all absent. Skip `Pi`/`Tau`/`E`/`Epsilon` and the
+Number limits — already intrinsics (`stdlib/intrinsics.plato:80-88`).
+
+This is not a Tier-3 content sweep: nearly every math item below consumes it. The axis vectors
+feed item 12's `RotateX/Y/Z` and `TranslateX/Y/Z` conveniences (legacy `transforms.plato:421-429`
+builds `RotateX` from `XAxis3D`); the unit-conversion constants pair with
+`stdlib/quantities.plato`; `UnitInterval` is the natural default for `ParameterDomain.Domain`;
+`GoldenRatio` feeds the platonic solids. Retype for the new tree: axis constants as
+`Vector2D`/`Vector3D` (or `Direction2D/3D`), `UnitCircle(): Circle` (registry owner
+`planar-shapes.plato`).
+
+### 2. Angle unit constructors and accessors
+`stdlib-legacy/angles.plato` (whole file, 22 lines): `Turns`/`Degrees`/`Gradians`/
+`ArcMinutes`/`ArcSeconds` in both directions (Number→Angle constructors, Angle→Number
+accessors) plus `Sec`/`Csc`/`Cot`. `stdlib` declares the "angles are `Angle`, never raw
+`Number`" rule but has **no unit constructor at all** — the only way to make an `Angle` is the
+radians intrinsic `Angle(x: Number)` (`intrinsics.plato:144`). Every formula in the legacy curve
+zoo and solids library is written `t.Turns...`; items 8 and 10 cannot port until this exists.
+Companion helper: `UnitCircle(t: Angle): Point2D` (`stdlib-legacy/curves.plato:161`), the
+angle-to-point evaluator under `NGonPoint`, `CirclePoints`, and every polar curve.
 
 ---
 
 ## Tier 1 — structural ideas (change what stdlib can express)
 
-### 1. The `ArrayLike` component-wise derivation engine
-`stdlib-legacy/core.interfaces.plato:38` (`IArrayLike<T>`: `NumComponents` / `Components` /
-`CreateFromComponents` / `CreateFromComponent`) plus `array.plato:31` (`MapComponents`,
-`ZipComponents` 2- and 3-ary, `AllComponents`, `AnyComponent`, `AllZipComponents`,
-`AnyZipComponents`) plus `core.library.plato:45-94`.
+### 3. Component-wise lifting on the `Vector` concept
+The legacy engine is `IArrayLike<T>` (`stdlib-legacy/core.interfaces.plato:38`:
+`NumComponents`/`Components`/`CreateFromComponents`/`CreateFromComponent`) plus the combinators
+(`array.plato:42-61`: `MapComponents`, `ZipComponents` 2- and 3-ary, `AllComponents`,
+`AnyComponent`, `AllZipComponents`, `AnyZipComponents`) plus `core.library.plato:32-94`, where
+every `Number` intrinsic and helper (`Abs`, `Cbrt`, `Exp`, `Floor`, `Pow`, `Clamp`, `Lerp`,
+`Fract`, `AlmostEqual`, …) is lifted to every vector type by a one-line call. ~50 functions
+written once.
 
-That machinery is what lets ~50 vector functions be written **once**: every `Number` intrinsic
-(`Abs`, `Cbrt`, `Exp`, `Floor`, `Pow`, `Clamp`, `CopySign`, `FusedMultiplyAdd`, …) is lifted to
-every vector type by a one-line `MapComponents`/`ZipComponents` call, and so is every derived
-`Number` helper (`Lerp`, `Fract`, `Between01`, `AlmostEqual`, `Sqr`, …).
+**Do not port `IArrayLike<T>` verbatim.** The right vehicle already exists: `concept Vector`
+(`stdlib/vectors.plato:15`), which inherits `Indexable<Number>` and so already carries the whole
+read side (`Count` = legacy `NumComponents`, `At` = component access). What it lacks is exactly
+what `numeric-structures.library.plato:64-67` and `:139-144` already record as
+`TODO(concept-gap)`: no construction, so no map/zip/fold is derivable, and `SumComponents`,
+`MinComponent`, per-component `Abs`/`Floor`, and even generic `Zero`/`One` bodies are stuck
+per-type. The port is therefore two members on `Vector`:
 
-`stdlib` has **no equivalent concept at all** — `MapComponents`/`ZipComponents` appear zero times.
-Its `Indexable<T>` is a read-only accessor with no reconstruction operation, so nothing can be
-lifted generically. This is the single highest-leverage port: without it every vector function in
-the new tree has to be written per type, per arity.
+- `FromComponents(_: Self, xs: Array<Number>): Self` (legacy `CreateFromComponents`)
+- `Broadcast(_: Self, x: Number): Self` (legacy `CreateFromComponent`; gives `Zero`/`One`/
+  `MinValue`/`MaxValue` bodies for free, as `core.library.plato:32-35` shows)
 
-### 2. `unique type` affine builders (`List<T>` / `Buffer<T>`)
-`stdlib-legacy/unique.plato` — the whole file, including the effect table in its header comment
-(observe `Count`/`At`; mutate `Add`/`AddRange`/`Set`; consume `Freeze`).
+with `MapComponents`/`ZipComponents`/the predicates/the folds and the ~30 lifted `Number`
+functions landing in `numeric-structures.library.plato`, discharging its own TODOs.
 
-`unique` appears **nowhere** in `stdlib`. Every collection in the new tree is immutable-by-value
-with no construction story, so anything that builds a mesh, samples a curve into an array, or
-accumulates points has no expressible implementation. Port the two declarations and the doc-comment
-contract; the runtime already exists (`Plato.Intrinsics/PlatoList.cs`, `PlatoBuffer.cs`).
+Why this beats the verbatim port: the generic `T` in `IArrayLike<T>` is only ever instantiated
+at `Number` (`IVectorLike inherits IArrayLike<Number>`); the read half is already inherited;
+it adds zero new taxonomy (this survey already rejects the `IVectorLike`/`INumerical` stack
+below); and it matches the new tree's idiom (bare concept names, `Self` first, fields like
+`VectorN.Components` already named accordingly). All seven `Vector` implementors
+(`Number2/3/4/8`, `Vector2D/3D`, `VectorN`) light up at once. The same recipe later extends
+`MatrixLike` (its construction gap is the other half of `:139-144`), but that is a follow-on,
+not part of this item.
 
-### 3. Function-valued fields and the combinator pattern
+### 4. `unique type` affine builders (`List<T>` / `Buffer<T>`)
+`stdlib-legacy/unique.plato:29,34` — the whole file, including the effect table in its header
+comment (observe `Count`/`At`; mutate `Add`/`AddRange`/`Set`; consume `Freeze`).
+
+`unique type` appears **nowhere** in `stdlib`. Every collection in the new tree is
+immutable-by-value with no construction story, so anything that builds a mesh, samples a curve
+into an array, or accumulates points has no expressible implementation. Port the two
+declarations and the doc-comment contract; the runtime already exists
+(`Plato.Intrinsics/PlatoList.cs`, `PlatoBuffer.cs`). Note the bodiless intrinsic signatures
+currently live in `stdlib-legacy-tests` (`library UniqueIntrinsics`), per the header comment.
+
+### 5. Function-valued fields and the combinator pattern
 `stdlib-legacy/fields.plato` (`ScalarField3D { Function: Function1<Vector3, Number> }` +
-`Eval`/`Combine`/`MapValue`/`Union`/`Intersection`/`Difference`/`Offset`) and the design essay in
-`procedurals.plato:1-76`.
+`Eval`/`Combine`/`MapValue`/`Union`/`Intersection`/`Difference`/`Offset`, lines 9-42) and the
+design essay in `procedurals.plato:1-76`.
 
 `stdlib` has `concept Procedural<TDomain, TRange>` and a large `implicit-sdf.plato` node/tree
-vocabulary, but **no value that stores a function** and no combinators — `MapValue` is absent, the
-only `Combine` is a sum-type tag. Legacy proved this shape works end-to-end and monomorphizes.
-Port `ScalarField3D`-style function-carrying types plus the combinator set; they are the
-compositional layer that `implicit-sdf.plato`'s SDF trees currently only describe declaratively.
+vocabulary, but **no type stores a function value** (every `Function1` in the tree is a
+parameter) and no combinators — `MapValue` is absent, the only `Combine` is a sum-type tag.
+Legacy proved this shape works end-to-end and monomorphizes. Port `ScalarField3D`-style
+function-carrying types plus the combinator set; they are the compositional layer that
+`implicit-sdf.plato`'s SDF trees currently only describe declaratively.
 
-The `procedurals.plato` prose (domain/range dimension table, predicates as `→Boolean`, discrete vs
-continuous forms) is the best written rationale in either tree and belongs in
+The `procedurals.plato` prose (domain/range dimension table, predicates as `→Boolean`, discrete
+vs continuous forms) is the best written rationale in either tree and belongs in
 `functional.concepts.plato` as doc comments. Note its library body is fully commented out — the
 generic version blocked on in-function constraints; port the *monomorphic* form that works.
 
-### 4. Obligation-filling library pattern for concrete quantity types
+### 6. Obligation-filling library pattern for concrete quantity types
 `stdlib-legacy/measures.plato` — 15 lines, and the header comment is the point: concepts that
 inherit `Scalable`/`Comparable` have no generic component-wise implementation, so each concrete
-measure must supply `Multiply`/`Divide`/`Modulo`/`LessThanOrEquals` explicitly or the compiler emits
-throwing stubs.
+measure must supply `Multiply`/`Divide`/`Modulo`/`LessThanOrEquals` explicitly or the compiler
+emits throwing stubs.
 
-`stdlib/quantities.plato` declares ~35 physical quantity types against `concept Quantity`. Unless
-that pattern is followed, all ~35 will emit throwing stubs. Port the pattern and the warning.
+`stdlib/quantities.plato` declares ~35 physical quantity types against `concept Quantity`.
+Unless that pattern is followed, all ~35 will emit throwing stubs. Port the pattern and the
+warning.
 
 ---
 
 ## Tier 2 — concrete math the new tree declares but does not compute
 
-### 5. Closed-form polynomial / spline evaluation
-`stdlib-legacy/algebra.plato` — `Linear`, `Quadratic`, `Cubic`, `Quartic`, each with first and
-second derivatives; `CubicBezier`/`QuadraticBezier` with first and second derivatives; `Hermite` +
-derivative; `CatmullRom` + derivative; `Barycentric`; `SmoothStep`; `SmootherStep`. All generic over
-`INumerical`, so one definition serves `Number`, `Vector2`, `Vector3`.
+### 7. Closed-form polynomial / spline evaluation
+`stdlib-legacy/algebra.plato` (153 lines) — `Linear`, `Quadratic`, `Cubic`, `Quartic`, each
+with first and second derivatives; `CubicBezier`/`QuadraticBezier` with first and second
+derivatives; `Hermite` + derivative; `CatmullRom` + derivative; `Barycentric`; `SmoothStep`
+(`:148`); `SmootherStep`. All generic over `INumerical`, so one definition serves `Number`,
+`Vector2`, `Vector3` — after item 3, the same genericity lands on `Vector`.
 
-`stdlib` names `Hermite`/`CatmullRom` in `splines.plato`, `polynomials.plato`,
-`keyframes-tracks.plato` — as **types only**. `curves-surfaces.library.plato` (527 lines) is
-entirely derived traits (`SpeedAt`, `IsPlanarAt`, `TangentDirectionAt`, …) built on an assumed
-`Eval` that nothing implements. `SmoothStep` / `SmootherStep` are absent from all 80 files.
-Porting this file gives the whole curve/spline layer its missing base case.
+`stdlib` names `Hermite`/`CatmullRom` in `splines.plato` — as **types only**.
+`curves-surfaces.library.plato` (~520 lines) is entirely derived traits (`SpeedAt`,
+`TangentDirectionAt`, …) built on an assumed `Eval` that nothing implements. `SmoothStep` /
+`SmootherStep` are absent from all 80 files (the closest is the `SmoothLerp` TODO in
+`numeric-structures.library.plato:192-197`). Porting this file gives the whole curve/spline
+layer its missing base case.
 
-### 6. The named-curve zoo evaluators
-`stdlib-legacy/curves.plato` (606 lines). `stdlib/curves-2d.plato` and `curves-3d.plato` already
-declare `Spiral`, `Rose`, `Limacon`, `Cardioid`, `Lissajous`, `Epicycloid`, `Hypotrochoid`,
-`Lemniscate`, `TorusKnot`, `Trefoil` — legacy has the **formula for each**, with the Wikipedia
-citation attached.
+### 8. The named-curve zoo evaluators
+`stdlib-legacy/curves.plato` (606 lines). `stdlib/curves-2d.plato` and `curves-3d.plato`
+already declare `Spiral`, `Rose`, `Limacon`, `Cardioid`, `Lissajous`, `Epicycloid`,
+`Hypotrochoid`, `Lemniscate`, `TorusKnot`, `Trefoil`, `FigureEightKnot` — legacy has the
+**formula for each**, with the Wikipedia citation attached.
 
-Two structural ideas ride along and are worth more than the formulas:
-- **`IAngularCurve2D`/`IAngularCurve3D`**: curves whose natural parameter is an `Angle`, with a
-  single bridge `Eval(curve, t: Number) => curve.Eval(t.Turns)`. Matches stdlib's "angles are
-  `Angle`, never raw `Number`" rule and costs one function per family.
-- **`IPolarCurve`**: declare only `GetRadius(t: Angle): Number`; `EvalPolar` and Cartesian `Eval`
-  come free. Fourteen named curves in legacy are one line each because of it. `stdlib/points.plato`
-  has `PolarCoordinate` but no polar-curve concept.
+The polar half of the structural story is **already adopted**: `concept PolarCurve2D` with
+`RadiusAt(x: Self, angle: Angle)` exists (`stdlib/curves-surfaces.concepts.plato:90`), and
+`PolarPositionAt`/`CartesianPositionAt` are implemented generically
+(`curves-surfaces.library.plato:332-345`). So the polar port is just the one-line `RadiusAt`
+bodies — fourteen named curves in legacy (`curves.plato:299-381`).
+
+Still worth importing as an idea: **`IAngularCurve2D`/`IAngularCurve3D`**
+(`curves.plato:150`): curves whose natural parameter is an `Angle`, with a single bridge
+`Eval(curve, t: Number) => curve.Eval(t.Turns)`. `stdlib` has no angular-curve concept; it
+matches the `Angle`-not-`Number` rule and costs one function per family. Depends on item 2.
 
 Not yet in stdlib at all: `ButterflyCurve`, `CycloidOfCeva`, `TschirnhausenCubic`,
-`ConchoidOfDeSluze`, `SinusoidalSpiral`, `TrisectrixOfMaclaurin`, `FigureEightKnot`.
+`ConchoidOfDeSluze`, `SinusoidalSpiral`, `TrisectrixOfMaclaurin`.
 
-### 7. Signed-distance primitive formulas
-`stdlib-legacy/sdf3d.plato` — `SdSphere`, `SdBox`, `SdRoundBox`, `SdTorus`, `SdVerticalCapsule`,
-`SdCappedCylinder`, `SdPlane`, `OpUnion`/`OpIntersect`/`OpSubtract`, and the polynomial
-`OpSmoothUnion`. Iñigo Quílez formulas, deliberately array-free and lambda-free so they port to
-GLSL/CUDA unchanged.
+### 9. Signed-distance primitive formulas
+`stdlib-legacy/sdf3d.plato` (66 lines) — `SdSphere`, `SdBox`, `SdRoundBox`, `SdTorus`,
+`SdVerticalCapsule`, `SdCappedCylinder`, `SdPlane`, `OpUnion`/`OpIntersect`/`OpSubtract`, and
+the polynomial `OpSmoothUnion`. Iñigo Quílez formulas, deliberately array-free and lambda-free
+so they port to GLSL/CUDA unchanged.
 
-`stdlib/implicit-sdf.plato` declares the *modifiers* (`SdfRoundingModifier`, `SdfOnionModifier`,
-`SdfTwistModifier3D`, …) and `MetaBall2D/3D`, but not one distance function. Direct fit; the file
-was written with the GLSL backend in mind, which matches stdlib's priority-1..4 backend policy.
+`stdlib/implicit-sdf.plato` declares the *modifiers* (`SdfRoundingModifier`,
+`SdfOnionModifier`, `SdfTwistModifier3D`, …) and `MetaBall2D/3D`, but not one distance
+function. Direct fit; the file was written with the GLSL backend in mind, which matches
+stdlib's priority-1..4 backend policy.
 
-### 8. Parametric surfaces for solids
-`stdlib-legacy/solids.plato:99+` — `library Solids` with `NGonPoint` (walk a regular N-gon at
-constant rate, linear between vertices) and `SquarePoint`, plus the UV convention stated precisely:
-origin-centred, Z up, U wraps around Z (`ClosedX` always true), V runs up the shape, so a UV quad
-grid meshes any solid exactly.
+### 10. Parametric surfaces for solids
+`stdlib-legacy/solids.plato:99-246` — `library Solids` with `NGonPoint` (`:107`; walk a regular
+N-gon at constant rate, linear between vertices) and `SquarePoint`, plus the UV convention
+stated precisely (`:91-96`): origin-centred, Z up, U wraps around Z (`ClosedX` always true), V
+runs up the shape, so a UV quad grid meshes any solid exactly.
 
-`stdlib/solids.plato` + `surfaces.plato` declare the shapes; `NGonPoint` and the UV convention are
-absent. The convention text alone prevents a class of bugs. Also missing as types: `ConeSegment`,
-`NPrism`, `NPyramid`, `Tube`, `Pyramid`.
+`stdlib/solids.plato` + `surfaces.plato` declare the shapes; `NGonPoint` and the UV convention
+are absent. The convention text alone prevents a class of bugs. Type coverage is better than
+first surveyed: `ConeSegment` ≈ `ConicalFrustum` (`spatial-primitives.plato:104`) and
+`NPrism` ≈ `RegularPrism` (`solids.plato:99`) already exist; genuinely missing are `NPyramid`,
+`Pyramid` (square), and `Tube` (hollow cylinder). Depends on item 2 (`Turns`, `UnitCircle(Angle)`).
 
-### 9. Quad-grid face-index generation
-`stdlib-legacy/meshes.library.plato:107-133` — `QuadFaceIndices(col, row, nCols, nRows)` with the
-`a`/`b`/`c`/`d` corner diagram, and `AllQuadFaceIndices(nCols, nRows, closedX, closedY)` handling
-wrap-around in either direction via `%`. `QuadFaceIndices` appears nowhere in `stdlib`. This is the
-routine everything grid-shaped needs (surface tessellation, heightfields, revolutions) and it is
-easy to get wrong.
+### 11. Quad-grid face-index generation
+`stdlib-legacy/meshes.library.plato:116-133` — `QuadFaceIndices(col, row, nCols, nRows)` with
+the `a`/`b`/`c`/`d` corner diagram, and `AllQuadFaceIndices(nCols, nRows, closedX, closedY)`
+(`:125`) handling wrap-around in either direction via `%`. `QuadFaceIndices` appears nowhere in
+`stdlib`. This is the routine everything grid-shaped needs (surface tessellation, heightfields,
+revolutions) and it is easy to get wrong.
 
-### 10. `Deform` as the primitive, `Transform` as the derivative
-`stdlib-legacy/meshes.library.plato:47-100`: every geometric type implements
-`Deform(x, f: Function1<Point3D, Point3D>)`, then **one** line —
+### 12. `Deform` as the primitive, `Transform` as the derivative
+`stdlib-legacy/meshes.library.plato:49-100`: every geometric type implements
+`Deform(x, f: Function1<Point3D, Point3D>)` (`:49-75`), then **one** line (`:84`) —
 `Transform(self: IDeformable3D, t: Transform3D) => self.Deform(p => p.Vector3.Transform(t.Matrix))`
 — gives every deformable type a full transform surface, from which `Scale`/`ScaleX/Y/Z`,
-`Rotate`/`RotateX/Y/Z`, `Translate`/`TranslateX/Y/Z` follow as one-liners.
+`Rotate`/`RotateX/Y/Z`, `Translate`/`TranslateX/Y/Z` follow as one-liners (`:86-100`).
 
-`stdlib` has `Deformable`/`Transformable` concepts and mentions `Deform` in nine files, but the
-Deform-implies-Transform bridge and the convenience surface are not there. Cheap, high fan-out.
+`stdlib` is further along here than the rest of Tier 2: `Deformable2D/3D` already carry generic
+`Translate`/`ScaleAbout` (`intervals-transforms.library.plato:189-227`). Still missing: the
+concrete per-type `Deform` bodies, the Deform-implies-Transform bridge, and the rotation
+conveniences (`RotateAbout` is explicitly blocked, `:209-211` — the bridge plus item 1's axis
+constants unblock it). Cheap, high fan-out.
 
 ---
 
 ## Tier 3 — content and helpers
 
-### 11. `library Constants`
-`stdlib-legacy/constants.plato`. `stdlib` has **no constants file**; `GoldenRatio`, `SqrtTwo`,
-`Ln2`, `Log10E`, `RadiansPerDegree`, `FeetPerMeter`, `PoundPerKilogram`, `GregorianYearDays`,
-`XAxis3D`, `UnitInterval`, `UnitCircle` are all absent (only `Pi`/`Tau`/`E`/`Epsilon` exist, in
-`intrinsics.plato`). The unit-conversion constants pair naturally with
-`stdlib/quantities.plato`.
-
-### 12. Named colors
-`stdlib-legacy/colors.constants.plato` — the ~140 CSS/X11 named colors as `ByteRGB` literals.
-`stdlib/color.plato` (62 lines) has `Color`, `Color8`, `ColorHSV`, `ColorHSL`, `ColorStop`,
-`ColorGradient` and not one named color. Pure content, zero design risk, mechanical port to
-`Color8`.
-
-### 13. Number helpers still missing from `core-algebra.library.plato`
-Legacy `core.library.plato` vs stdlib's 51-function `core-algebra.library.plato`. Already covered
-under new names (`Fract`→`FractionalPart`, `FromOne`→`OneMinus`, `Sqr`→`Square`, `Pow3`→`Cube`,
-`ClampZeroOne`→`Saturate`). Genuinely absent: `Pow4`, `Pow5`, `InversePow`, `MultiplyEpsilon`
-(the relative-epsilon basis for `AlmostEqual`), `AlmostZeroOrOne`, `Eight`, `Sixteenth`, `Million`,
-`Billion`, `Millionth`, `Billionth`, and the left-scalar `Multiply(scalar, x)` overload.
-
-### 14. Array/collection intrinsics not carried over
-Present in `stdlib-legacy/intrinsics.plato`, absent from `stdlib/intrinsics.plato`:
-`Sum`, `ConditionalSelect`, `MinMagnitude`/`MaxMagnitude`, `Middle`, `PrependAndAppend`,
-`CreateFromVertices`, `Sqr`, `Distance`/`DistanceSquared` (declared as a concept in stdlib but not
-as an intrinsic), and the matrix row accessors `Rows`/`Columns`/`Row1..4`/`WithRow1..4`,
-`Lower`/`Upper`/`WithLower`/`WithUpper`.
-
-Deliberate exclusions — do **not** port, they violate the stated intrinsics policy in
-`stdlib/README.md`: `BitIncrement`/`BitDecrement`, `ReciprocalEstimate`,
-`ReciprocalSquareRootEstimate`, `RoundToZero`/`RoundAwayFromZero` (MidpointRounding variants),
-`IEEERemainder`, `ILogB`, `ScaleB`.
-
-### 15. Sampling helpers
-`LinearSpace` and `Fractions` (n evenly spaced parameters) drive
+### 13. Sampling helpers
+`Fractions` (`stdlib-legacy/integers.plato:18`) and `LinearSpace`
+(`stdlib-legacy/interval.plato:54`) — n evenly spaced parameters — drive
 `Sample(curve, numPoints)`, `ToPolyLine2D/3D`, `CirclePoints`, `Sample(a, b, n)` for any
 `Interpolatable`, and `RegularPolygon.At`. Neither name exists in `stdlib`, so
-`curves-surfaces.library.plato`'s `Sample`/`ToPolyLine` have no discretization primitive under them.
-Also missing: `Staircase{Floor,Ceiling,Round}`, `UnitQuad`/`UnitTriangle` constants.
+`curves-surfaces.library.plato`'s `Sample`/`ToPolyLine` have no discretization primitive under
+them. Also missing: `Staircase{Floor,Ceiling,Round}`, `UnitQuad`/`UnitTriangle` constants.
+
+### 14. Number helpers still missing from `core-algebra.library.plato`
+Legacy `core.library.plato` vs stdlib's `core-algebra.library.plato`. Already covered under new
+names (`Fract`→`FractionalPart`, `FromOne`→`OneMinus`, `Sqr`→`Square`, `Pow3`→`Cube`,
+`ClampZeroOne`→`Saturate`). Genuinely absent: `Pow4`, `Pow5`, `InversePow`, `AlmostZeroOrOne`,
+`Eight` (eighth), `Sixteenth`, `Million`, `Billion`, `Millionth`, `Billionth`, and the
+left-scalar `Multiply(scalar, x)` overload on `Scalable`. (`MultiplyEpsilon` is a deliberate
+drop, not a gap: folded into `AlmostEqual(x, y, tolerance)` —
+`core-algebra.library.plato:12-13,209` and LIBRARIES.md rule 4.)
+
+### 15. Named colors
+`stdlib-legacy/colors.constants.plato` — 141 CSS/X11 named colors as `ByteRGB` literals.
+`stdlib/color.plato` has `Color`, `Color8`, `ColorHSV`, `ColorHSL`, `ColorStop`,
+`ColorGradient` and not one named color. Pure content, zero design risk, mechanical port to
+`Color8`.
 
 ---
 
 ## Explicitly not worth porting
 
 - `stdlib-legacy/core.interfaces.plato` as a *taxonomy* — stdlib's concept split (`Additive`,
-  `Multiplicative`, `Scalable`, `Lattice`, `Clampable`, `Normed`, `MetricSpace`, `Difference<T>`) is
-  strictly better factored than legacy's `IVectorLike`/`INumerical`/`IRealNumber` stack. Take
-  `IArrayLike` (item 1) and leave the rest.
+  `Multiplicative`, `Scalable`, `Lattice`, `Clampable`, `Normed`, `MetricSpace`,
+  `Difference<T>`) is strictly better factored than legacy's `IVectorLike`/`INumerical`/
+  `IRealNumber` stack. Take the construction idea (item 3) and leave the rest.
 - Legacy `IValue`/`IAny` — superseded by stdlib `core.concepts.plato`.
-- Legacy `coordinates.types.plato`, `bounds.plato`, `interval.plato`, `angles.plato`,
-  `integers.plato` — stdlib's `points.plato` / `intervals-bounds.plato` / `quantities.plato` already
-  cover these and more.
-- The commented-out generic `library procedurals` body — port the idea (item 3), not the code; it
-  is blocked on constraints inside function bodies.
+- Legacy `transforms.plato` — the representation types and conversion library are superseded by
+  `stdlib/transforms.plato` + its inline `library Transforms`; `LookAt`/`Perspective`/
+  `Orthographic` live in `cameras.plato` and the `Matrix4x4` Create* intrinsics. Only `Skew2D`
+  and `PlaneProjection3D` (shadow projection) have no counterpart — add on demand.
+- Legacy `coordinates.types.plato`, `bounds.plato`, `interval.plato`, `integers.plato`,
+  `geometry.types.plato`, `colors.plato` — stdlib's `points.plato` / `intervals-bounds.plato` /
+  `planar-shapes.plato` / `color-spaces.plato` already cover these and more, *except* the
+  sampling helpers claimed by item 13 and the angle units claimed by item 2.
+- Legacy V1 intrinsics not carried into `stdlib/intrinsics.plato` — verified all deliberate or
+  already covered: the Vector8 SIMD surface (`Sum`, `ConditionalSelect`, `Lower`/`Upper`,
+  `MinMagnitude`/`MaxMagnitude`), the IEEE exotica (`BitIncrement`, `IEEERemainder`, `ILogB`,
+  `ScaleB`), the midpoint-rounding zoo, and the record-update/jagged-view helpers are all
+  listed with rationale in that file's porting notes (`intrinsics.plato:436-455`);
+  `CreateFromVertices` (`:386`) and `Square` (`:61`) already exist; `Distance`/
+  `DistanceSquared` are implemented generically (`numeric-structures.library.plato:74-80`).
+- The commented-out generic `library procedurals` body — port the idea (item 5), not the code;
+  it is blocked on constraints inside function bodies.
 
 ---
 
 ## Suggested sequencing
 
-1. Items 1, 2, 4 — the enabling idioms; nothing else lands cleanly first.
-2. Items 5, 9, 13, 15 — pure math and helpers, no new vocabulary needed.
-3. Items 3, 7, 6, 8, 10 — the domain bodies, each now resting on 1/5/15.
-4. Items 11, 12, 14 — content sweeps, parallelizable.
+1. Items 1, 2 — constants and angle units first. They have zero dependencies, are pure
+   content, and items 8, 10, and 12 cannot even be transcribed without them (`Turns`,
+   `UnitCircle`, axis vectors); items 6/13 read them too. Landing them first also lets every
+   later port compile as written instead of inlining magic numbers to be cleaned up later.
+2. Items 3, 4, 6 — the enabling idioms; nothing in Tier 2 lands cleanly before them.
+3. Items 7, 11, 13, 14 — pure math and helpers, no new vocabulary needed.
+4. Items 5, 9, 8, 10, 12 — the domain bodies, each now resting on 1/2/3/7/13.
+5. Item 15 — content sweep, parallelizable with step 4.
 
 Gate each step with `dotnet run --project Plato.CLI -c Release -- lint stdlib` (0 parse errors,
 0 resolution errors); LINT001 counts should **fall** as libraries implement declared members.
