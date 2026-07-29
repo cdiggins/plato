@@ -23,7 +23,7 @@ library PolygonsPolylines
     // delta type is VectorN, whose Magnitude comes from Normed.
     Length(p: PolylineN): Number
         => SumOf((p.Closed ? p.Points.Count : p.Points.Count - 1)
-            .MapRange(i => p.Points.At(i).Between(p.Points.AtModulo(i + 1)).Magnitude));
+            .MapRange(i => p.Points[i].Between(p.Points.AtModulo(i + 1)).Magnitude));
 
     // The polyline with every vertex carried through the mapping; Closed is kept.
     Deform(p: Polyline2D, mapping: Function1<Point2D, Point2D>): Polyline2D

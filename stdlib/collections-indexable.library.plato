@@ -88,7 +88,7 @@ library CollectionsIndexable
 
     // Element access via a typed Index wrapper. Precondition: the index is present.
     At(self: Indexable<$T>, index: Index): $T
-        => self.At(index.Value);
+        => self[index.Value];
 
     // True when a typed Index refers to a real position within [0, Count).
     IsValidIndex(self: Indexable<$T>, index: Index): Boolean
@@ -96,15 +96,15 @@ library CollectionsIndexable
 
     // The first element. Precondition: the collection is not empty.
     First(self: Indexable<$T>): $T
-        => self.At(0);
+        => self[0];
 
     // The last element. Precondition: the collection is not empty.
     Last(self: Indexable<$T>): $T
-        => self.At(self.Count - 1);
+        => self[self.Count - 1];
 
     // The middle element (rounding the index down). Precondition: not empty.
     Middle(self: Indexable<$T>): $T
-        => self.At(self.Count / 2);
+        => self[self.Count / 2];
 
     //==
     // # Indexable — fold / map family
@@ -120,18 +120,18 @@ library CollectionsIndexable
     // primitive behind sums, extents, and running aggregates on any indexable.
     // (https://en.wikipedia.org/wiki/Fold_(higher-order_function))
     Reduce(xs: Indexable<$T>, acc: $U, f: Function2<$U, $T, $U>): $U
-        => MapRange(xs.Count, i => xs.At(i)).Reduce(acc, f);
+        => MapRange(xs.Count, i => xs[i]).Reduce(acc, f);
 
     // A new Array holding f applied to each element in index order.
     // (https://en.wikipedia.org/wiki/Map_(higher-order_function))
     Map(xs: Indexable<$T>, f: Function1<$T, $U>): Array<$U>
-        => MapRange(xs.Count, i => xs.At(i)).Map(f);
+        => MapRange(xs.Count, i => xs[i]).Map(f);
 
     // True when every element satisfies the predicate (vacuously true when empty).
     All(xs: Indexable<$T>, predicate: Function1<$T, Boolean>): Boolean
-        => MapRange(xs.Count, i => xs.At(i)).All(predicate);
+        => MapRange(xs.Count, i => xs[i]).All(predicate);
 
     // True when at least one element satisfies the predicate (false when empty).
     Any(xs: Indexable<$T>, predicate: Function1<$T, Boolean>): Boolean
-        => MapRange(xs.Count, i => xs.At(i)).Any(predicate);
+        => MapRange(xs.Count, i => xs[i]).Any(predicate);
 }

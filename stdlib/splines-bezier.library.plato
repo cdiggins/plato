@@ -25,8 +25,8 @@ library SplinesBezier
     // Precondition: xs is non-empty.
     DeCasteljau(xs: Array<$T>, t: Number): $T
         => xs.Count <= 1
-           ? xs.At(0)
-           : (xs.Count - 1).MapRange(i => xs.At(i).Lerp(xs.At(i + 1), t)).DeCasteljau(t);
+           ? xs[0]
+           : (xs.Count - 1).MapRange(i => xs[i].Lerp(xs[i + 1], t)).DeCasteljau(t);
 
     // The point on a Bezier curve of arbitrary degree at t.
     Eval(self: BezierCurve2D, t: Number): Point2D
@@ -48,7 +48,7 @@ library SplinesBezier
     // at t is non-zero.
     Eval(self: RationalBezierCurve2D, t: Number): Point2D
         => (self.ControlPoints.Count
-                .MapRange(i => self.ControlPoints.At(i).PositionVector * self.Weights.At(i))
+                .MapRange(i => self.ControlPoints[i].PositionVector * self.Weights[i])
                 .DeCasteljau(t)
             / self.Weights.DeCasteljau(t))
            .ToPoint;
@@ -57,7 +57,7 @@ library SplinesBezier
     // at t is non-zero.
     Eval(self: RationalBezierCurve3D, t: Number): Point3D
         => (self.ControlPoints.Count
-                .MapRange(i => self.ControlPoints.At(i).PositionVector * self.Weights.At(i))
+                .MapRange(i => self.ControlPoints[i].PositionVector * self.Weights[i])
                 .DeCasteljau(t)
             / self.Weights.DeCasteljau(t))
            .ToPoint;
@@ -74,7 +74,7 @@ library SplinesBezier
     {
         var n = self.Segments.Count;
         var i = (t * n.ToNumber).Floor.ToInteger.Clamp(0, n - 1);
-        return self.Segments.At(i).Eval(t * n.ToNumber - i.ToNumber);
+        return self.Segments[i].Eval(t * n.ToNumber - i.ToNumber);
     }
 
     // The point on a chain of cubic Bezier segments at t.
@@ -82,6 +82,6 @@ library SplinesBezier
     {
         var n = self.Segments.Count;
         var i = (t * n.ToNumber).Floor.ToInteger.Clamp(0, n - 1);
-        return self.Segments.At(i).Eval(t * n.ToNumber - i.ToNumber);
+        return self.Segments[i].Eval(t * n.ToNumber - i.ToNumber);
     }
 }

@@ -178,14 +178,14 @@ library RandomDiscrete
     // The mean outcome index: the weight-weighted average of 0..Count-1.
     Mean(self: DiscreteDistribution): Number
         => self.Weights.Count.Range
-            .Map(i => i.ToNumber * self.Weights.At(i))
+            .Map(i => i.ToNumber * self.Weights[i])
             .Reduce(0.0, (total, term) => total + term)
          / self.TotalWeight;
 
     // The variance of the outcome index, as E[i^2] - E[i]^2.
     Variance(self: DiscreteDistribution): Number
         => self.Weights.Count.Range
-            .Map(i => i.ToNumber.Square * self.Weights.At(i))
+            .Map(i => i.ToNumber.Square * self.Weights[i])
             .Reduce(0.0, (total, term) => total + term)
          / self.TotalWeight
          - self.Mean.Square;
@@ -197,7 +197,7 @@ library RandomDiscrete
         var k = value.Floor.ToInteger;
         return k < 0 || k >= self.Weights.Count
             ? 0.0
-            : self.Weights.At(k) / self.TotalWeight;
+            : self.Weights[k] / self.TotalWeight;
     }
 
     // The cumulative mass at outcome k = floor(value): the weights of outcomes
@@ -210,7 +210,7 @@ library RandomDiscrete
             : k >= self.Weights.Count - 1
                 ? 1.0
                 : (k + 1).Range
-                    .Map(i => self.Weights.At(i))
+                    .Map(i => self.Weights[i])
                     .Reduce(0.0, (total, weight) => total + weight)
                     / self.TotalWeight;
     }

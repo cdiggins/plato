@@ -20,7 +20,7 @@ library PolygonsKernels
     // https://en.wikipedia.org/wiki/Polygon#Area
     VectorArea(points: Array<Point3D>): Vector3D
         => points.Count
-            .MapRange(i => points.At(i).PositionVector.Cross(points.AtModulo(i + 1).PositionVector))
+            .MapRange(i => points[i].PositionVector.Cross(points.AtModulo(i + 1).PositionVector))
             .Reduce(Vector3D(0.0, 0.0, 0.0), (acc, c) => acc + c)
             * 0.5;
 
@@ -60,15 +60,15 @@ library PolygonsKernels
         var normal = points.VectorArea.Normalize;
         var origin = points.First;
         var count = points.Count;
-        var areas = count.MapRange(i => 0.5 * origin.Between(points.At(i))
+        var areas = count.MapRange(i => 0.5 * origin.Between(points[i])
             .Cross(origin.Between(points.AtModulo(i + 1))).Dot(normal));
         var total = SumOf(areas);
-        var cx = SumOf(count.MapRange(i => areas.At(i)
-            * (origin.X + points.At(i).X + points.AtModulo(i + 1).X) / 3.0));
-        var cy = SumOf(count.MapRange(i => areas.At(i)
-            * (origin.Y + points.At(i).Y + points.AtModulo(i + 1).Y) / 3.0));
-        var cz = SumOf(count.MapRange(i => areas.At(i)
-            * (origin.Z + points.At(i).Z + points.AtModulo(i + 1).Z) / 3.0));
+        var cx = SumOf(count.MapRange(i => areas[i]
+            * (origin.X + points[i].X + points.AtModulo(i + 1).X) / 3.0));
+        var cy = SumOf(count.MapRange(i => areas[i]
+            * (origin.Y + points[i].Y + points.AtModulo(i + 1).Y) / 3.0));
+        var cz = SumOf(count.MapRange(i => areas[i]
+            * (origin.Z + points[i].Z + points.AtModulo(i + 1).Z) / 3.0));
         return (cx / total, cy / total, cz / total);
     }
 

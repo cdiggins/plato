@@ -62,7 +62,7 @@ library Statistics
     // The relative frequency of bin i: its count over the total count, in
     // [0, 1]. Precondition: the histogram tallied at least one value.
     Frequency(self: Histogram, bin: Integer): Number
-        => self.Counts.At(bin).ToNumber / self.TotalCount.ToNumber;
+        => self.Counts[bin].ToNumber / self.TotalCount.ToNumber;
 
     // The empirical probability density in bin i: the relative frequency
     // divided by the bin width, so that the bar areas sum to one. Precondition:

@@ -114,12 +114,12 @@ library GeometryKernels
     // Precondition: at least two points (at least one when closed).
     ChainLength(points: Array<Point2D>, closed: Boolean): Number
         => SumOf((closed ? points.Count : points.Count - 1)
-            .MapRange(i => points.At(i).Between(points.AtModulo(i + 1)).Magnitude));
+            .MapRange(i => points[i].Between(points.AtModulo(i + 1)).Magnitude));
 
     // The total length of the chain joining consecutive points in space.
     ChainLength(points: Array<Point3D>, closed: Boolean): Number
         => SumOf((closed ? points.Count : points.Count - 1)
-            .MapRange(i => points.At(i).Between(points.AtModulo(i + 1)).Magnitude));
+            .MapRange(i => points[i].Between(points.AtModulo(i + 1)).Magnitude));
 
     // The SIGNED area enclosed by the closed ring, by the shoelace (surveyor's)
     // formula: positive for counter-clockwise winding, negative for clockwise. For
@@ -128,8 +128,8 @@ library GeometryKernels
     // value. https://en.wikipedia.org/wiki/Shoelace_formula
     ShoelaceArea(points: Array<Point2D>): Number
         => 0.5 * SumOf(points.Count.MapRange(i =>
-            points.At(i).X * points.AtModulo(i + 1).Y
-            - points.AtModulo(i + 1).X * points.At(i).Y));
+            points[i].X * points.AtModulo(i + 1).Y
+            - points.AtModulo(i + 1).X * points[i].Y));
 
     // The centroid (center of mass under uniform density) of the region enclosed by
     // a closed ring: Cx = 1/(6A) * sum (x_i + x_i+1) * cross_i, and likewise for Cy,
@@ -140,11 +140,11 @@ library GeometryKernels
     {
         var n = points.Count;
         var cross = n.MapRange(i =>
-            points.At(i).X * points.AtModulo(i + 1).Y
-            - points.AtModulo(i + 1).X * points.At(i).Y);
+            points[i].X * points.AtModulo(i + 1).Y
+            - points.AtModulo(i + 1).X * points[i].Y);
         var twiceArea = SumOf(cross);
-        var cx = SumOf(n.MapRange(i => (points.At(i).X + points.AtModulo(i + 1).X) * cross.At(i)));
-        var cy = SumOf(n.MapRange(i => (points.At(i).Y + points.AtModulo(i + 1).Y) * cross.At(i)));
+        var cx = SumOf(n.MapRange(i => (points[i].X + points.AtModulo(i + 1).X) * cross[i]));
+        var cy = SumOf(n.MapRange(i => (points[i].Y + points.AtModulo(i + 1).Y) * cross[i]));
         return (cx / (3.0 * twiceArea), cy / (3.0 * twiceArea));
     }
 
@@ -166,7 +166,7 @@ library GeometryKernels
     // https://en.wikipedia.org/wiki/Point_in_polygon
     PolygonContainsPoint(points: Array<Point2D>, point: Point2D): Boolean
         => points.Count
-            .MapRange(i => EdgeCrossesRay(points.At(i), points.AtModulo(i + 1), point) ? 1 : 0)
+            .MapRange(i => EdgeCrossesRay(points[i], points.AtModulo(i + 1), point) ? 1 : 0)
             .Reduce(0, (acc, c) => acc + c)
             .IsOdd;
 
@@ -202,7 +202,7 @@ library GeometryKernels
     ClosestPointOnChain(points: Array<Point2D>, closed: Boolean, point: Point2D): Point2D
     {
         var candidates = (closed ? points.Count : points.Count - 1)
-            .MapRange(i => ClosestPointOnSegment(points.At(i), points.AtModulo(i + 1), point));
+            .MapRange(i => ClosestPointOnSegment(points[i], points.AtModulo(i + 1), point));
         return candidates.Reduce(candidates.First, (best, c) =>
             c.Between(point).MagnitudeSquared < best.Between(point).MagnitudeSquared ? c : best);
     }
@@ -211,7 +211,7 @@ library GeometryKernels
     ClosestPointOnChain(points: Array<Point3D>, closed: Boolean, point: Point3D): Point3D
     {
         var candidates = (closed ? points.Count : points.Count - 1)
-            .MapRange(i => ClosestPointOnSegment(points.At(i), points.AtModulo(i + 1), point));
+            .MapRange(i => ClosestPointOnSegment(points[i], points.AtModulo(i + 1), point));
         return candidates.Reduce(candidates.First, (best, c) =>
             c.Between(point).MagnitudeSquared < best.Between(point).MagnitudeSquared ? c : best);
     }

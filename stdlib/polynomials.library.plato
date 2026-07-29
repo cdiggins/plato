@@ -186,7 +186,7 @@ library Polynomials
     // formed, which is both faster and more stable.
     // An empty array is the zero polynomial and evaluates to 0.
     HornerEval(coefficients: Array<Number>, x: Number): Number
-        => MapRange(coefficients.Count, i => coefficients.At(coefficients.Count - 1 - i))
+        => MapRange(coefficients.Count, i => coefficients[coefficients.Count - 1 - i])
                .Reduce(0.0, (acc, c) => acc * x + c);
 
     // The value of the dense polynomial sum(Coefficients[k] * x^k) at x.
@@ -197,7 +197,7 @@ library Polynomials
     // x. Each term forms its own power because the exponents are not contiguous.
     Eval(p: SparsePolynomial, x: Number): Number
         => MapRange(p.Powers.Count,
-                    i => p.Coefficients.At(i) * x.Pow(p.Powers.At(i).ToNumber))
+                    i => p.Coefficients[i] * x.Pow(p.Powers[i].ToNumber))
                .Reduce(0.0, (acc, term) => acc + term);
 
     // The value of the truncated power series sum(Coefficients[k]*(x-Center)^k)

@@ -119,9 +119,9 @@ library Polygons
         var net = boundaryArea - SumOf(holeAreas);
         var centre = r.Boundary.Centroid;
         var cx = centre.X * boundaryArea
-            - SumOf(r.Holes.Count.MapRange(i => r.Holes.At(i).Centroid.X * holeAreas.At(i)));
+            - SumOf(r.Holes.Count.MapRange(i => r.Holes[i].Centroid.X * holeAreas[i]));
         var cy = centre.Y * boundaryArea
-            - SumOf(r.Holes.Count.MapRange(i => r.Holes.At(i).Centroid.Y * holeAreas.At(i)));
+            - SumOf(r.Holes.Count.MapRange(i => r.Holes[i].Centroid.Y * holeAreas[i]));
         return (cx / net, cy / net);
     }
 

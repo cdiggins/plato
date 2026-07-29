@@ -30,19 +30,19 @@ library FoundationLaws
 
     // At(0) recovers Start, At(1) recovers End (forward lerp endpoints).
     Law_AtStartIsStart(i: NumberInterval): Boolean
-        => i.At(0.0).LawEq(i.Start);
+        => i[0.0].LawEq(i.Start);
 
     Law_AtEndIsEnd(i: NumberInterval): Boolean
-        => i.At(1.0).LawEq(i.End);
+        => i[1.0].LawEq(i.End);
 
     // At(0.5) is the interval center.
     Law_AtHalfIsCenter(i: NumberInterval): Boolean
-        => i.At(0.5).LawEq(i.Center);
+        => i[0.5].LawEq(i.Center);
 
     // ParameterOf is the inverse of At: At(ParameterOf(x)) == x for a non-degenerate
     // interval. Degenerate (Start == End) intervals have no inverse and are skipped.
     Law_ParameterOfInvertsAt(i: NumberInterval, x: Number): Boolean
-        => i.Start.LawEq(i.End) || i.At(i.ParameterOf(x)).LawEq(x);
+        => i.Start.LawEq(i.End) || i[i.ParameterOf(x)].LawEq(x);
 
     // Remapping an interval onto itself is the identity on any value in range.
     Law_RemapToSelfIsIdentity(i: NumberInterval, x: Number): Boolean

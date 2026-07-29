@@ -29,7 +29,7 @@ library SplinesBspline
 
     // The knot at the given position.
     KnotAt(self: KnotVector, index: Integer): Number
-        => self.Knots.At(index);
+        => self.Knots[index];
 
     // The parameter domain a B-spline of the given degree covers: knots
     // [Degree, Count - Degree - 1]. Outside it the basis is not a partition of
@@ -56,9 +56,9 @@ library SplinesBspline
     // The de-homogenized control point of a NURBS curve: the control point
     // scaled by its weight, the form Cox-de Boor consumes.
     WeightedControlPoint(self: NurbsCurve2D, index: Integer): Vector2D
-        => self.ControlPoints.At(index).PositionVector * self.Weights.At(index);
+        => self.ControlPoints[index].PositionVector * self.Weights[index];
 
     // The de-homogenized control point of a NURBS curve.
     WeightedControlPoint(self: NurbsCurve3D, index: Integer): Vector3D
-        => self.ControlPoints.At(index).PositionVector * self.Weights.At(index);
+        => self.ControlPoints[index].PositionVector * self.Weights[index];
 }

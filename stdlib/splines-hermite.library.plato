@@ -43,8 +43,8 @@ library SplinesHermite
     // the truncated remainder, which is negative for i = -1. Lets one body
     // serve open and closed chains and both end conditions.
     AtWrapped(xs: Array<$T>, i: Integer, closed: Boolean): $T
-        => closed ? xs.At(((i % xs.Count) + xs.Count) % xs.Count)
-                  : xs.At(i.Clamp(0, xs.Count - 1));
+        => closed ? xs[((i % xs.Count) + xs.Count) % xs.Count]
+                  : xs[i.Clamp(0, xs.Count - 1)];
 
     //==
     // # Hermite curves

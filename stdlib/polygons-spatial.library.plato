@@ -67,7 +67,7 @@ library PolygonsSpatial
     // |edge x Offset|.
     SurfaceArea(p: Prism3D): Number
         => 2.0 * p.Base.Area
-        + SumOf(p.Base.Points.Count.MapRange(i => p.Base.Points.At(i)
+        + SumOf(p.Base.Points.Count.MapRange(i => p.Base.Points[i]
             .Between(p.Base.Points.AtModulo(i + 1)).Cross(p.Offset).Magnitude));
 
     // The base centroid displaced by half the sweep: the prism is uniform along
@@ -106,9 +106,9 @@ library PolygonsSpatial
     // Apex.
     SurfaceArea(y: Pyramid3D): Number
         => y.Base.Area
-        + SumOf(y.Base.Points.Count.MapRange(i => 0.5 * y.Base.Points.At(i)
+        + SumOf(y.Base.Points.Count.MapRange(i => 0.5 * y.Base.Points[i]
             .Between(y.Base.Points.AtModulo(i + 1))
-            .Cross(y.Base.Points.At(i).Between(y.Apex)).Magnitude));
+            .Cross(y.Base.Points[i].Between(y.Apex)).Magnitude));
 
     // One quarter of the way from the base centroid towards the Apex: the standard
     // centroid of any solid cone over a planar base.

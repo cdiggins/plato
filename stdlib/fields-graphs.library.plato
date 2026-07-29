@@ -17,7 +17,7 @@ library FieldsGraphs
     // external field list its Source nodes index into.
     EvalNode(node: ScalarFieldNode2D, graph: ScalarFieldGraph2D, sources: Array<ScalarFunctionField2D>, point: Point2D): Number =>
         match (node) {
-            Source(fieldIndex) => sources.At(fieldIndex.Value).Eval(point);
+            Source(fieldIndex) => sources[fieldIndex.Value].Eval(point);
             Constant(value) => value;
             Add(left, right) => graph.EvalNodeAt(left, sources, point) + graph.EvalNodeAt(right, sources, point);
             Subtract(left, right) => graph.EvalNodeAt(left, sources, point) - graph.EvalNodeAt(right, sources, point);
@@ -42,7 +42,7 @@ library FieldsGraphs
 
     // The value the node at the given index produces.
     EvalNodeAt(graph: ScalarFieldGraph2D, index: FieldNodeIndex, sources: Array<ScalarFunctionField2D>, point: Point2D): Number
-        => graph.Nodes.At(index.Value).EvalNode(graph, sources, point);
+        => graph.Nodes[index.Value].EvalNode(graph, sources, point);
 
     // The graph's value at a point: the value its root node produces.
     Eval(graph: ScalarFieldGraph2D, sources: Array<ScalarFunctionField2D>, point: Point2D): Number
@@ -51,7 +51,7 @@ library FieldsGraphs
     // The value one spatial node produces; mirrors the planar walk.
     EvalNode(node: ScalarFieldNode3D, graph: ScalarFieldGraph3D, sources: Array<ScalarFunctionField3D>, point: Point3D): Number =>
         match (node) {
-            Source(fieldIndex) => sources.At(fieldIndex.Value).Eval(point);
+            Source(fieldIndex) => sources[fieldIndex.Value].Eval(point);
             Constant(value) => value;
             Add(left, right) => graph.EvalNodeAt(left, sources, point) + graph.EvalNodeAt(right, sources, point);
             Subtract(left, right) => graph.EvalNodeAt(left, sources, point) - graph.EvalNodeAt(right, sources, point);
@@ -76,7 +76,7 @@ library FieldsGraphs
 
     // The value the node at the given index produces.
     EvalNodeAt(graph: ScalarFieldGraph3D, index: FieldNodeIndex, sources: Array<ScalarFunctionField3D>, point: Point3D): Number
-        => graph.Nodes.At(index.Value).EvalNode(graph, sources, point);
+        => graph.Nodes[index.Value].EvalNode(graph, sources, point);
 
     // The graph's value at a point: the value its root node produces.
     Eval(graph: ScalarFieldGraph3D, sources: Array<ScalarFunctionField3D>, point: Point3D): Number

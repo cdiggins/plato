@@ -25,7 +25,7 @@ library ImplicitSdfTrees
     // interior node combines its two children.
     EvalNode(node: SdfNode2D, tree: SdfTree2D, primitives: Array<FunctionSdf2D>, point: Point2D): Number =>
         match (node) {
-            Leaf(primitive) => primitives.At(primitive.Value).Eval(point);
+            Leaf(primitive) => primitives[primitive.Value].Eval(point);
             Interior(combine, left, right) =>
                 combine.Apply(
                     tree.EvalNodeAt(left, primitives, point),
@@ -34,7 +34,7 @@ library ImplicitSdfTrees
 
     // The distance the node at the given index produces.
     EvalNodeAt(tree: SdfTree2D, index: SdfNodeIndex, primitives: Array<FunctionSdf2D>, point: Point2D): Number
-        => tree.Nodes.At(index.Value).EvalNode(tree, primitives, point);
+        => tree.Nodes[index.Value].EvalNode(tree, primitives, point);
 
     // The tree's signed distance at a point: the distance its root node produces.
     Eval(tree: SdfTree2D, primitives: Array<FunctionSdf2D>, point: Point2D): Number
@@ -43,7 +43,7 @@ library ImplicitSdfTrees
     // The distance one spatial node produces.
     EvalNode(node: SdfNode3D, tree: SdfTree3D, primitives: Array<FunctionSdf3D>, point: Point3D): Number =>
         match (node) {
-            Leaf(primitive) => primitives.At(primitive.Value).Eval(point);
+            Leaf(primitive) => primitives[primitive.Value].Eval(point);
             Interior(combine, left, right) =>
                 combine.Apply(
                     tree.EvalNodeAt(left, primitives, point),
@@ -52,7 +52,7 @@ library ImplicitSdfTrees
 
     // The distance the node at the given index produces.
     EvalNodeAt(tree: SdfTree3D, index: SdfNodeIndex, primitives: Array<FunctionSdf3D>, point: Point3D): Number
-        => tree.Nodes.At(index.Value).EvalNode(tree, primitives, point);
+        => tree.Nodes[index.Value].EvalNode(tree, primitives, point);
 
     // The tree's signed distance at a point: the distance its root node produces.
     Eval(tree: SdfTree3D, primitives: Array<FunctionSdf3D>, point: Point3D): Number

@@ -168,7 +168,7 @@ library IntervalsTransformsInterval
     // normalized-coordinate remap is this one call. Precondition: from is not
     // zero-width. Unclamped — pass x within `from`, or Clamp first, to stay inside `to`.
     Remap(x: Number, from: NumberInterval, to: NumberInterval): Number
-        => to.At(from.ParameterOf(x));
+        => to[from.ParameterOf(x)];
 
     // The overlapping sub-interval common to `a` and `b` (interval intersection,
     // item 4), returned as a concrete NumberInterval so ray-box slab reductions can

@@ -72,7 +72,7 @@ library StatisticsCorrelation
     // https://en.wikipedia.org/wiki/Horner%27s_method
     Predict(self: PolynomialFit, x: Number): Number
         => self.Coefficients.Count.Range
-            .Map(k => self.Coefficients.At(k) * x.Pow(k.ToNumber))
+            .Map(k => self.Coefficients[k] * x.Pow(k.ToNumber))
             .Reduce(0.0, (total, term) => total + term);
 
     //==

@@ -227,11 +227,11 @@ library SplinesInterpolating
 
     // The parameter of the knot at the given position.
     KnotParameter(self: NaturalCubicSpline1D, index: Integer): Number
-        => self.Parameters.At(index);
+        => self.Parameters[index];
 
     // The value of the knot at the given position.
     KnotValue(self: NaturalCubicSpline1D, index: Integer): Number
-        => self.Values.At(index);
+        => self.Values[index];
 
     // The parameter range the spline interpolates over.
     ParameterDomain(self: NaturalCubicSpline1D): NumberInterval

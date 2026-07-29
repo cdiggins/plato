@@ -24,7 +24,7 @@ library NumericStructuresComponents
 
     // The components of self as an Array<Number>, in index order.
     ComponentArray(self: Vector): Array<Number>
-        => self.Count.Range.Map(i => self.At(i));
+        => self.Count.Range.Map(i => self[i]);
 
     // A vector of the same type with f applied to each component.
     MapComponents(self: Vector, f: Function1<Number, Number>): Vector
@@ -80,11 +80,11 @@ library NumericStructuresComponents
 
     // The smallest component. Precondition: the vector has at least one component.
     MinComponent(self: Vector): Number
-        => self.ReduceComponents(self.At(0), (acc, x) => acc.Min(x));
+        => self.ReduceComponents(self[0], (acc, x) => acc.Min(x));
 
     // The largest component. Precondition: the vector has at least one component.
     MaxComponent(self: Vector): Number
-        => self.ReduceComponents(self.At(0), (acc, x) => acc.Max(x));
+        => self.ReduceComponents(self[0], (acc, x) => acc.Max(x));
 
     // The arithmetic mean of the components. Precondition: non-empty.
     AvgComponent(self: Vector): Number
@@ -134,7 +134,7 @@ library NumericStructuresComponents
 
     // The 2-tuple built from the first two entries of xs.
     FromComponents(_: Number2, xs: Array<Number>): Number2
-        => Number2(xs.At(0), xs.At(1));
+        => Number2(xs[0], xs[1]);
 
     // The 2-tuple with both components set to x.
     Broadcast(self: Number2, x: Number): Number2
@@ -142,7 +142,7 @@ library NumericStructuresComponents
 
     // The 3-tuple built from the first three entries of xs.
     FromComponents(_: Number3, xs: Array<Number>): Number3
-        => Number3(xs.At(0), xs.At(1), xs.At(2));
+        => Number3(xs[0], xs[1], xs[2]);
 
     // The 3-tuple with every component set to x.
     Broadcast(self: Number3, x: Number): Number3
@@ -150,7 +150,7 @@ library NumericStructuresComponents
 
     // The 4-tuple built from the first four entries of xs.
     FromComponents(_: Number4, xs: Array<Number>): Number4
-        => Number4(xs.At(0), xs.At(1), xs.At(2), xs.At(3));
+        => Number4(xs[0], xs[1], xs[2], xs[3]);
 
     // The 4-tuple with every component set to x.
     Broadcast(self: Number4, x: Number): Number4
@@ -158,8 +158,8 @@ library NumericStructuresComponents
 
     // The 8-lane tuple built from the first eight entries of xs.
     FromComponents(_: Number8, xs: Array<Number>): Number8
-        => Number8(xs.At(0), xs.At(1), xs.At(2), xs.At(3),
-                   xs.At(4), xs.At(5), xs.At(6), xs.At(7));
+        => Number8(xs[0], xs[1], xs[2], xs[3],
+                   xs[4], xs[5], xs[6], xs[7]);
 
     // The 8-lane tuple with every lane set to x.
     Broadcast(self: Number8, x: Number): Number8
@@ -167,7 +167,7 @@ library NumericStructuresComponents
 
     // The 2D displacement built from the first two entries of xs.
     FromComponents(_: Vector2D, xs: Array<Number>): Vector2D
-        => Vector2D(xs.At(0), xs.At(1));
+        => Vector2D(xs[0], xs[1]);
 
     // The 2D displacement with both components set to x.
     Broadcast(self: Vector2D, x: Number): Vector2D
@@ -175,7 +175,7 @@ library NumericStructuresComponents
 
     // The 3D displacement built from the first three entries of xs.
     FromComponents(_: Vector3D, xs: Array<Number>): Vector3D
-        => Vector3D(xs.At(0), xs.At(1), xs.At(2));
+        => Vector3D(xs[0], xs[1], xs[2]);
 
     // The 3D displacement with every component set to x.
     Broadcast(self: Vector3D, x: Number): Vector3D

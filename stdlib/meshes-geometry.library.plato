@@ -139,7 +139,7 @@ library MeshesGeometry
 
     // The i-th point of the bare cloud. Precondition: i in [0, PointCount).
     PointAt(self: PointCloudable3D, i: Integer): Point3D
-        => self.ToPointCloud.Positions.At(i);
+        => self.ToPointCloud.Positions[i];
 
     // True when reducing to a bare cloud yields no points.
     IsEmpty(self: PointCloudable3D): Boolean
