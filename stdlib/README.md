@@ -18,7 +18,7 @@ numerical/mathematical/scientific computing, graphics and rendering, physics, mo
 graphics, image processing, and engineering.
 
 Current contents (2026-07-29): **347 source files (184 type-declaration files + 42
-`*.concepts.plato` files + 121 `*.library.plato` files), 152 concepts, 1144 types**.
+`*.concepts.plato` files + 121 `*.library.plato` files), 152 concepts, 1146 types**.
 
 The plato-293 re-partition took the folder from 85 files to 344. Every file now holds exactly
 one **kind** of declaration — `<stem>.concepts.plato` holds concepts, `<stem>.plato` holds

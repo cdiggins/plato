@@ -99,3 +99,21 @@ type Twist2D
     Origin: Point2D;
     AnglePerUnit: Angle;
 }
+
+//==
+// A planar deformation defined by an arbitrary point map. Carrier for Compose /
+// Multiply results (and any other combinator that builds a Function1).
+type MappingDeformation2D
+    implements Value, Deformation2D
+{
+    Mapping: Function1<Point2D, Point2D>;
+}
+
+//==
+// A spatial deformation defined by an arbitrary point map. Carrier for Compose /
+// Multiply results (and any other combinator that builds a Function1).
+type MappingDeformation3D
+    implements Value, Deformation3D
+{
+    Mapping: Function1<Point3D, Point3D>;
+}
