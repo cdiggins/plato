@@ -64,6 +64,8 @@ namespace Ara3D.Geometry.Compiler
                         catch (Exception e)
                         {
                             LogSymbolError($"Failed to store type definition {td.Name} for reason {e}.", td);
+                            SymbolFactory.LogResolutionError(
+                                $"Duplicate type or library definition: {td.Name}.", GetAstNode(td));
                         }
                     }
                 }

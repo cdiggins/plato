@@ -89,8 +89,8 @@ type RigidKinematicState3D
 
 // A planar spatial velocity: the linear velocity of a reference point in
 // meters per second, plus the body's signed angular velocity
-// (counterclockwise positive).
-type Twist2D
+// (counterclockwise positive). Known as a twist in screw theory.
+type SpatialVelocity2D
     implements Value, Interpolatable
 {
     Linear: Vector2D;
@@ -99,8 +99,9 @@ type Twist2D
 
 // A spatial velocity: the linear velocity of a reference point in meters per
 // second, plus the angular velocity in radians per second about each axis.
+// Known as a twist in screw theory.
 // (https://en.wikipedia.org/wiki/Screw_theory)
-type Twist3D
+type SpatialVelocity3D
     implements Value, Interpolatable
 {
     Linear: Vector3D;
@@ -109,7 +110,8 @@ type Twist3D
 
 // A planar spatial force: a force in newtons acting at a reference point,
 // plus the signed out-of-plane torque (counterclockwise positive).
-type Wrench2D
+// Known as a wrench in screw theory.
+type SpatialForce2D
     implements Value, Interpolatable
 {
     Force: Vector2D;
@@ -117,9 +119,9 @@ type Wrench2D
 }
 
 // A spatial force: a force in newtons acting at a reference point, plus a
-// torque in newton-meters about each axis.
+// torque in newton-meters about each axis. Known as a wrench in screw theory.
 // (https://en.wikipedia.org/wiki/Torque)
-type Wrench3D
+type SpatialForce3D
     implements Value, Interpolatable
 {
     Force: Vector3D;
