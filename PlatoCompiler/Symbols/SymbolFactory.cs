@@ -406,7 +406,14 @@ namespace Ara3D.Geometry.Compiler.Symbols
                         var outerScope = ValueBindingsScope;
                             ValueBindingsScope = ValueBindingsScope.Push();
                             var ps = astLambda.Parameters.Select(Resolve).ToArray();
-                            var body = ResolveExpr(astLambda.Body);
+                            // A lambda body is usually an expression (`i => expr`), but Plato also
+                            // allows a compound-statement body (`i => { var x = ..; return ..; }`).
+                            // ResolveExpr rejects a statement, so bind a block body with Resolve
+                            // (FunctionDef.Body is a Symbol, exactly as for a normal block-bodied
+                            // function). Expression bodies keep the ResolveExpr path unchanged.
+                            var body = astLambda.Body is AstBlock
+                                ? Resolve(astLambda.Body)
+                                : (Symbol)ResolveExpr(astLambda.Body);
                             var r = new Lambda(new FunctionDef(outerScope, $"_lambda_{NextLambdaId++}", null, 
                                 CreateLambdaType(ps.Length), body, ps));
                             ValueBindingsScope = ValueBindingsScope.Pop();

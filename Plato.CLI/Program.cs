@@ -170,6 +170,12 @@ namespace Ara3D.Geometry.CLI
                 logger.Log("Writing C# Files");
                 var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", optimizeArrays, inline, methods, loops, tirDumpDir, noProperties, inlineReport);
                 logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}");
+                if (output.DegradedBodies.Count > 0)
+                {
+                    logger.Log($"DEGRADED bodies (no ground TIR, emitted as throwing stubs): {output.DegradedBodies.Count}");
+                    foreach (var m in output.DegradedBodies)
+                        logger.Log($"  degraded: {m}");
+                }
                 foreach (var kv in output.Files)
                 {
                     var fp = outputFolder.RelativeFile(kv.Key);

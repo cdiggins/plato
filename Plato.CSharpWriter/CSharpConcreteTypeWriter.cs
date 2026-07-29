@@ -541,9 +541,19 @@ namespace Ara3D.Geometry.CSharpWriter
                     // monomorphized TIR — the sole body writer since C4.
                     var tir = Writer.TryGetGroundTir(f.Implementation, ConcreteType.TypeDef);
                     if (tir == null)
-                        throw new System.InvalidOperationException(
-                            $"No ground TIR for scalar-erased {SimpleName}.{fi.Name}; "
-                            + "the legacy body writer was removed (consolidation plan C4).");
+                    {
+                        // Degrade gracefully (see CSharpTypeWriter.WriteBody): a scalar-erased
+                        // extension body with no ground TIR emits a throwing stub + burn-down
+                        // count rather than aborting all output. Empty under stdlib-legacy.
+                        var member = $"{SimpleName}.{fi.Name}";
+                        Writer.DegradedBodies.Add(member);
+                        tw.WriteWithLineStateSync(
+                            $" => throw new System.NotImplementedException(" +
+                            $"\"plato: no ground TIR for scalar-erased {member} (not monomorphized)\");" +
+                            System.Environment.NewLine);
+                        AddBridge(fi);
+                        continue;
+                    }
                     Writer.TirBodiesEmitted++;
                     tir = Writer.RunOptimizerPasses(tir, fi, true, out var lowered);
                     tw.WriteWithLineStateSync(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi, lowered: lowered).ToString());

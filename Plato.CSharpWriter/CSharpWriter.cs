@@ -185,6 +185,15 @@ namespace Ara3D.Geometry.CSharpWriter
         // CSharpFunctionBodyWriter was retired (consolidation plan C4). Diagnostic only.
         public int TirBodiesEmitted;
 
+        // Bodied concrete members whose monomorphized TIR is not fully ground (residual
+        // diagnostics, never-instantiated generic types, or an unresolved body). The writer
+        // degrades gracefully — it emits a NotImplementedException-throwing stub WITH a comment
+        // naming the member, rather than aborting all output. The count is a burn-down number:
+        // it should shrink as the forward stdlib bodies mature and the monomorphizer coverage
+        // grows. Under the shipping (stdlib-legacy) recipes this list is EMPTY (asserted by the
+        // byte-identity gate); a non-empty list only ever appears for the forward stdlib.
+        public readonly List<string> DegradedBodies = new List<string>();
+
         // --dump-tir=<dir> (null = off): write the per-phase TIR of every emitted body to
         // <dir>, one file per owner type. Records the elaborated/monomorphized INPUT and then
         // each optimizer pass (inline -> component-unroll -> array-materialize -> loop-lower)

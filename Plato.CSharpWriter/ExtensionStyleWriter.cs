@@ -332,9 +332,19 @@ public static class ExtensionStyleWriter
                     ? writer.TryGetGroundTir(m.Function.Implementation, m.ConcreteType.TypeDef)
                     : null;
             if (tir == null)
-                throw new System.InvalidOperationException(
-                    $"No ground TIR for moved member {m.LibraryName}.{fi.Name}; "
-                    + "the legacy body writer was removed (consolidation plan C4).");
+            {
+                // Degrade gracefully (see CSharpTypeWriter.WriteBody): a moved extension body
+                // with no ground TIR emits a throwing stub + burn-down count rather than
+                // aborting all output. Empty under the shipping stdlib-legacy recipes.
+                var member = $"{m.LibraryName}.{fi.Name} [recv {m.ConcreteType.TypeDef.Name}]";
+                writer.DegradedBodies.Add(member);
+                tw.Write(
+                    $" => throw new System.NotImplementedException(" +
+                    $"\"plato: no ground TIR for moved member {member} (not monomorphized)\");" +
+                    System.Environment.NewLine);
+                writer.WriteWithLineStateSync(tw.ToString());
+                continue;
+            }
             writer.TirBodiesEmitted++;
             tir = writer.RunOptimizerPasses(tir, fi, true, out var lowered);
             tw.Write(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi, lowered: lowered).ToString());

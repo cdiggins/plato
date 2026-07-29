@@ -762,7 +762,11 @@ namespace Ara3D.Geometry.AST
                     return ToAst(cstInvariantClause.Expression);
 
                 case CstLambdaBody cstLambdaBody:
-                    return cstLambdaBody.Expression != null
+                    // `.Expression` / `.CompoundStatement` are CstNodeFilters (never null), so the
+                    // presence of a match must be tested with `.Present`; a bare `!= null` is always
+                    // true and would send a compound-statement lambda body (`i => { ... }`) down the
+                    // Expression branch, resolving its body to null (empty codegen).
+                    return cstLambdaBody.Expression.Present
                         ? ToAst(cstLambdaBody.Expression)
                         : ToAst(cstLambdaBody.CompoundStatement);
 

@@ -65,10 +65,21 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // legacy fallback — the emit-time scalar analysis was deleted at S3, and the shipping
         // recipes lower every member AND static body). A non-lowered scalar body would render
         // mis-typed, so fail loudly. (A future stdlib addition that cannot lower shows up here.)
+        // Under the shipping (stdlib-legacy) recipes every emitted body lowers (fallback = 0),
+        // so this branch is dead there and byte-identity is preserved. The forward stdlib has
+        // young bodies whose TIR grounds but is not scalar-lowerable (e.g. a compound-statement
+        // lambda whose inner nodes the elaborator left untyped, which IsGroundBody rejects). A
+        // non-lowered scalar body would render mis-typed, so degrade gracefully: emit a throwing
+        // stub, count it as a burn-down number, and keep writing every other body rather than
+        // aborting all output (consolidation plan C4 removed the legacy emit-time scalar path).
         if (tw.Writer.ScalarErase && !_lowered && tir?.Body != null)
-            throw new System.InvalidOperationException(
-                $"Scalar-erased body '{tw.TypeDef?.Name}.{fi?.Name}' was not scalar-lowered "
-                + "(TirScalarLowerer.IsGroundBody rejected it); the legacy emit-time scalar-analysis path was removed at S3.");
+        {
+            var member = $"{tw.TypeDef?.Name}.{fi?.Name}";
+            tw.Writer.DegradedBodies.Add($"{member} [scalar-lower rejected]");
+            WriteLine($" => throw new System.NotImplementedException("
+                + $"\"plato: scalar-erased body {member} not lowerable (grounds but untyped nodes)\");");
+            return;
+        }
         WriteFunctionBody();
     }
 

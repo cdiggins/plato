@@ -280,9 +280,21 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
             ? Writer.TryGetGroundTir(f.Function.Implementation, TypeDef)
             : Writer.TryGetStaticTir(f.Function.Implementation);
         if (tir == null)
-            throw new InvalidOperationException(
-                $"No ground TIR for bodied {(TypeDef != null ? TypeDef.Name + "." : "")}{f.Name}; "
-                + "the legacy body writer was removed (consolidation plan C4).");
+        {
+            // No fully-ground monomorphized TIR for this bodied member. Under the shipping
+            // (stdlib-legacy) recipes this never happens (fallback = 0, byte-identity gate).
+            // For the forward stdlib some bodies genuinely cannot ground yet (residual checker
+            // diagnostics, generic concrete types never instantiated at a ground type, bodies
+            // referencing concept members with no implementer). Degrade gracefully: emit a
+            // throwing stub that names the reason, count it as a burn-down number, and keep
+            // writing every other member/file rather than aborting all output.
+            var member = $"{(TypeDef != null ? TypeDef.Name + "." : "")}{f.Name}";
+            Writer.DegradedBodies.Add(member);
+            return WriteBodyText(
+                $" => throw new System.NotImplementedException(" +
+                $"\"plato: no ground TIR for bodied {member} (not monomorphized)\");" +
+                Environment.NewLine);
+        }
         Writer.TirBodiesEmitted++;
         // Attempt scalar lowering on STATIC bodies too (constants, IArray library functions), not
         // just members: IsGroundBody inside RunOptimizerPasses still gates it, so a generic/loose
