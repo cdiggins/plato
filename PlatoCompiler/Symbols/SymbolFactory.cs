@@ -331,10 +331,17 @@ namespace Ara3D.Geometry.Compiler.Symbols
                         return ResolveType(astTypeNode);
 
                     case AstAssign astAssign:
-                        return BindValue(astAssign.Var,
-                            new Assignment(
-                                GetValue(astAssign.Var, astAssign),
-                                ResolveExpr(astAssign.Value)));
+                        // An assignment must NOT rebind the name in the current scope (studio-096).
+                        // It resolves its target to the single existing declaration and leaves the
+                        // binding alone. Rebinding it to this Assignment (an Expression, not a
+                        // DefSymbol) meant a later GetValue from a more-deeply-nested loop body found
+                        // the Assignment instead of the VariableDef and failed with "Could not
+                        // properly resolve symbol" — which is exactly why a var written at two
+                        // loop-nesting depths broke. Shadowing (a nested `var d`) still goes through
+                        // the AstVarDef case, which binds a fresh VariableDef, so it is unaffected.
+                        return new Assignment(
+                            GetValue(astAssign.Var, astAssign),
+                            ResolveExpr(astAssign.Value));
 
                     case AstBlock astBlock:
                         {
