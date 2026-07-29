@@ -5,12 +5,18 @@
 // addition, multiplication, division, remainder, inversion, scalar scaling, and
 // linear blending. Numeric, vector, and quantity types assemble them as needed.
 
-// An additive group: addition, subtraction, and negation. (https://en.wikipedia.org/wiki/Additive_group)
+// An additive group: addition, subtraction, negation, and the identity element
+// (https://en.wikipedia.org/wiki/Additive_group). Zero lives here rather than on
+// NumericalLimits because it is an algebraic property of the group, not a fact
+// about representation: a Quantity or a MatrixLike is an additive group without
+// being a number, and a `where T: Additive` bound must be able to name the
+// identity for any fold or accumulation seeded from it.
 concept Additive
 {
     Add(a: Self, b: Self): Self;
     Subtract(a: Self, b: Self): Self;
     Negative(x: Self): Self;
+    Zero(x: Self): Self;
 }
 
 // A multiplicative operation between two values of the same type. (https://en.wikipedia.org/wiki/Multiplication)

@@ -5,10 +5,13 @@
 // whole numbers. Each level adds capability to the level below; Number and
 // Integer are the canonical instances of Real and Whole.
 
-// Has distinguished zero and one elements, and representable extremes.
+// Has a distinguished one element and representable extremes. The additive
+// identity is NOT here: Zero is a property of the additive group and lives on
+// `Additive` (algebra-operations.concepts.plato), which every Numerical also
+// inherits — so a Numerical still reaches Zero, while a Quantity or MatrixLike
+// gets it without having to claim representable extremes it has no meaning for.
 concept NumericalLimits
 {
-    Zero(x: Self): Self;
     One(x: Self): Self;
     MinValue(x: Self): Self;
     MaxValue(x: Self): Self;

@@ -65,6 +65,12 @@ library Quantities
     Negative(x: Quantity): Quantity
         => x.FromAmount(-x.Amount);
 
+    // The additive identity: none of this quantity's unit. The receiver only
+    // selects the type. (Additive.Zero — see plato-307 for why it lives on the
+    // group rather than on NumericalLimits, which quantities do not inherit.)
+    Zero(x: Quantity): Quantity
+        => x.FromAmount(0.0);
+
     // A digest of the underlying amount, consistent with equality.
     Hash(x: Quantity): Integer
         => x.Amount.Hash;

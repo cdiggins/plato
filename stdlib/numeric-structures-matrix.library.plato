@@ -77,4 +77,40 @@ library NumericStructuresMatrix
     // The element-wise average of two matrices. Precondition: a and b share a shape.
     Average(a: MatrixLike, b: MatrixLike): MatrixLike
         => (a + b) / 2.0;
+
+    //==
+    // # The zero matrix, per concrete type
+    //
+    // `Additive.Zero` cannot be derived generically here for the same reason
+    // Transpose cannot (see the TODO above): it must CONSTRUCT a matrix, and
+    // MatrixLike exposes no construction primitive. So each concrete type
+    // supplies its own, exactly as the note above prescribes. The fixed-size
+    // rows are Vector types, so each row's own Zero does the work; MatrixN
+    // carries its shape and rebuilds a zero-filled component array.
+    // (Zero moved from NumericalLimits to Additive — see plato-307.)
+
+    // The 2x2 matrix with every element zero (the additive identity).
+    Zero(x: Matrix2x2): Matrix2x2
+        => (x.Row1.Zero, x.Row2.Zero);
+
+    // The 3x3 matrix with every element zero.
+    Zero(x: Matrix3x3): Matrix3x3
+        => (x.Row1.Zero, x.Row2.Zero, x.Row3.Zero);
+
+    // The 4x4 matrix with every element zero.
+    Zero(x: Matrix4x4): Matrix4x4
+        => (x.Row1.Zero, x.Row2.Zero, x.Row3.Zero, x.Row4.Zero);
+
+    // The 3x2 matrix with every element zero.
+    Zero(x: Matrix3x2): Matrix3x2
+        => (x.Row1.Zero, x.Row2.Zero, x.Row3.Zero);
+
+    // The 4x3 matrix with every element zero.
+    Zero(x: Matrix4x3): Matrix4x3
+        => (x.Row1.Zero, x.Row2.Zero, x.Row3.Zero, x.Row4.Zero);
+
+    // The zero matrix of the receiver's shape; the runtime shape is copied from
+    // the receiver, so this is the additive identity for that shape only.
+    Zero(x: MatrixN): MatrixN
+        => (x.NumRows, x.NumColumns, x.ElementCount.MapRange(k => 0.0));
 }

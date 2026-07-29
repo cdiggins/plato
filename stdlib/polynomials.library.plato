@@ -6,8 +6,8 @@
 // derivatives. Successor to `stdlib-legacy/algebra.plato`.
 //
 // The coefficients / control values are typed `Numerical`, which inherits
-// Additive (a + b, a - b), Scalable (v * scalar, v / scalar) and NumericalLimits
-// (Zero) — exactly the operations a polynomial in a scalar variable needs. So a
+// Additive (a + b, a - b, Zero) and Scalable (v * scalar, v / scalar) — exactly
+// the operations a polynomial in a scalar variable needs. So a
 // single definition serves Number, Vector2D, Vector3D, Point deltas, Color, and
 // every quantity type, as v1's `INumerical` versions did. The variable itself is
 // always a plain `Number`; `Numerical` deliberately does NOT give
