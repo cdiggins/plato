@@ -1,0 +1,58 @@
+//==
+// # Hermite curves
+//
+// The control-point curves whose shape is given by explicit tangents rather than
+// by off-curve control points: the single cubic Hermite segment and the
+// piecewise spline built from a tangent per knot. Parallel arrays (points +
+// tangents) must have equal counts; that invariant is documented rather than
+// encoded. Evaluation lives in `splines-hermite.library.plato`.
+
+//==
+// # Hermite curves
+
+// A single cubic Hermite segment in the plane: interpolates Start to End with
+// the given outgoing and incoming tangents
+// (https://en.wikipedia.org/wiki/Cubic_Hermite_spline).
+type HermiteCurve2D
+    implements Curve2D
+{
+    Start: Point2D;
+    StartTangent: Vector2D;
+    End: Point2D;
+    EndTangent: Vector2D;
+}
+
+// A single cubic Hermite segment in space: interpolates Start to End with the
+// given outgoing and incoming tangents
+// (https://en.wikipedia.org/wiki/Cubic_Hermite_spline).
+type HermiteCurve3D
+    implements Curve3D
+{
+    Start: Point3D;
+    StartTangent: Vector3D;
+    End: Point3D;
+    EndTangent: Vector3D;
+}
+
+// A piecewise cubic Hermite spline in the plane: interpolates every point with
+// an explicit tangent per point (same count as Points). Closed joins the last
+// point back to the first
+// (https://en.wikipedia.org/wiki/Cubic_Hermite_spline).
+type HermiteSpline2D
+    implements Curve2D
+{
+    Points: Array<Point2D>;
+    Tangents: Array<Vector2D>;
+    Closed: Boolean;
+}
+
+// A piecewise cubic Hermite spline in space: interpolates every point with an
+// explicit tangent per point (same count as Points)
+// (https://en.wikipedia.org/wiki/Cubic_Hermite_spline).
+type HermiteSpline3D
+    implements Curve3D
+{
+    Points: Array<Point3D>;
+    Tangents: Array<Vector3D>;
+    Closed: Boolean;
+}

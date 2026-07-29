@@ -1,0 +1,83 @@
+//==
+// # Generated surfaces
+//
+// Surfaces defined by carrying a generator curve through space: revolve,
+// extrude, rule, loft, sweep, tube, and offset. Generator curves referenced as
+// concepts (Curve2D, Curve3D) are supplied by any concrete curve type, so these
+// types compose with everything in the curve files. Evaluation lives in
+// `surfaces.library.plato`.
+
+//==
+// # Generated surfaces
+
+// The surface swept by revolving a profile curve about an axis
+// (https://en.wikipedia.org/wiki/Surface_of_revolution). The profile's X
+// coordinate is the radial distance from the axis and its Y coordinate runs
+// along the axis; Angles is the sweep (a full turn closes the surface in U).
+type SurfaceOfRevolution
+    implements ParametricSurface
+{
+    Profile: Curve2D;
+    Axis: Line3D;
+    Angles: AngleInterval;
+}
+
+// The surface swept by translating a profile curve along a straight direction
+// for a distance: U follows the profile, V the extrusion.
+type ExtrudedSurface
+    implements ParametricSurface
+{
+    Profile: Curve3D;
+    Direction: Direction3D;
+    Distance: Number;
+}
+
+// The ruled surface between two curves: straight line segments join Start and
+// End at equal parameter values (https://en.wikipedia.org/wiki/Ruled_surface).
+// U along the curves, V across the rulings.
+type RuledSurface
+    implements ParametricSurface
+{
+    Start: Curve3D;
+    End: Curve3D;
+}
+
+// The surface interpolating an ordered stack of cross-section polylines:
+// U runs around each section, V across sections. Sections must share point
+// counts; Closed wraps the last section back to the first
+// (https://en.wikipedia.org/wiki/Loft_(3D)).
+type LoftedSurface
+    implements ParametricSurface
+{
+    Sections: Array<Polyline3D>;
+    Closed: Boolean;
+}
+
+// The surface swept by a 2D profile carried along a 3D path in the path's
+// rotation-minimizing frame: U follows the profile, V the path.
+type SweptSurface
+    implements ParametricSurface
+{
+    Profile: Curve2D;
+    Path: Curve3D;
+}
+
+// A circular-section pipe around a path: the sweep of a circle of radius
+// Radius held normal to the path (U around the circle, V along the path)
+// (https://en.wikipedia.org/wiki/Channel_surface).
+type TubeSurface
+    implements ParametricSurface
+{
+    Path: Curve3D;
+    Radius: Number;
+}
+
+// The surface displaced from a base surface by a constant Distance along its
+// normal (positive Distance follows the base orientation)
+// (https://en.wikipedia.org/wiki/Parallel_curve).
+type OffsetSurface
+    implements ParametricSurface
+{
+    Base: ParametricSurface;
+    Distance: Number;
+}

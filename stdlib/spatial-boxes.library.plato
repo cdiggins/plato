@@ -1,0 +1,168 @@
+//==
+// # SpatialBoxes — oriented-box and rounded-box bodies
+//
+// Volume, surface area, bounds, centroid, containment, nearest-point and support
+// bodies for the types declared in `spatial-boxes.plato`. The frame helpers, and the
+// conventions governing every body here, are in `spatial-primitives.library.plato`.
+
+library SpatialBoxes
+{
+    //==
+    // # Box3D
+    //
+    // https://en.wikipedia.org/wiki/Cuboid
+
+    // Width times height times depth.
+    Volume(b: Box3D): Number
+        => b.Size.Width * b.Size.Height * b.Size.Depth;
+
+    // 2 * (wh + wd + hd).
+    SurfaceArea(b: Box3D): Number
+        => 2.0 * (b.Size.Width * b.Size.Height
+            + b.Size.Width * b.Size.Depth
+            + b.Size.Height * b.Size.Depth);
+
+    // The stored centre.
+    Centroid(b: Box3D): Point3D
+        => b.Center;
+
+    // TIGHT: the half-extent along a world axis is the sum of the three local
+    // half-extents weighted by the absolute components of the rotated local axes —
+    // the box's support function evaluated on that axis.
+    Bounds(b: Box3D): Bounds3D
+    {
+        var f = b.Orientation.Basis3D;
+        var hx = b.Size.Width * 0.5;
+        var hy = b.Size.Height * 0.5;
+        var hz = b.Size.Depth * 0.5;
+        return CenteredBounds(b.Center,
+            hx * f.X.X.Abs + hy * f.Y.X.Abs + hz * f.Z.X.Abs,
+            hx * f.X.Y.Abs + hy * f.Y.Y.Abs + hz * f.Z.Y.Abs,
+            hx * f.X.Z.Abs + hy * f.Y.Z.Abs + hz * f.Z.Z.Abs);
+    }
+
+    // True when the query, in the box's own frame, is within the half-extents on
+    // all three axes. Boundary inclusive.
+    Contains(b: Box3D, point: Point3D): Boolean
+    {
+        var q = LocalOffset(b.Center, b.Orientation, point);
+        return q.X.Abs <= b.Size.Width * 0.5
+            && q.Y.Abs <= b.Size.Height * 0.5
+            && q.Z.Abs <= b.Size.Depth * 0.5;
+    }
+
+    // The query point when it is inside, otherwise the query clamped to the box in
+    // the box's own frame and mapped back to world.
+    ClosestPoint(b: Box3D, point: Point3D): Point3D
+    {
+        var hx = b.Size.Width * 0.5;
+        var hy = b.Size.Height * 0.5;
+        var hz = b.Size.Depth * 0.5;
+        var q = LocalOffset(b.Center, b.Orientation, point);
+        var clamped = Vector3D(q.X.Clamp(-hx, hx), q.Y.Clamp(-hy, hy), q.Z.Clamp(-hz, hz));
+        return b.Contains(point)
+            ? point
+            : b.Center.Add(WorldOffset(b.Orientation, clamped));
+    }
+
+    // The corner farthest along `direction`: each local axis independently takes
+    // the sign of the direction's component on it.
+    Support(b: Box3D, direction: Direction3D): Point3D
+    {
+        var f = b.Orientation.Basis3D;
+        var d = direction.Vector;
+        return b.Center
+            .Add(f.X.Multiply(d.Dot(f.X) >= 0.0 ? b.Size.Width * 0.5 : b.Size.Width * -0.5))
+            .Add(f.Y.Multiply(d.Dot(f.Y) >= 0.0 ? b.Size.Height * 0.5 : b.Size.Height * -0.5))
+            .Add(f.Z.Multiply(d.Dot(f.Z) >= 0.0 ? b.Size.Depth * 0.5 : b.Size.Depth * -0.5));
+    }
+
+    //==
+    // # RoundedBox3D
+    //
+    // The Minkowski sum of a shrunken box with a ball of radius r. Writing the
+    // shrunken (core) edge lengths p, q, s, Steiner's formula for a parallel body
+    // gives the volume and area below exactly:
+    //   V = pqs + r*2(pq+ps+qs) + pi*r^2*(p+q+s) + (4/3)pi*r^3
+    //   A = 2(pq+ps+qs) + 2*pi*r*(p+q+s) + 4*pi*r^2
+    // reading term by term as: the core box, the six face slabs, the twelve
+    // quarter-cylinder edges (four per direction = one whole cylinder), and the
+    // eight corner octants (= one whole ball).
+    // https://en.wikipedia.org/wiki/Steiner_formula
+
+    // CornerRadius clamped to the declaration's stated range: never negative, never
+    // more than half the smallest extent. Every body below reads this.
+    EffectiveCornerRadius(b: RoundedBox3D): Number
+        => b.CornerRadius.Clamp(0.0,
+            b.Box.Size.Width.Min(b.Box.Size.Height).Min(b.Box.Size.Depth) * 0.5);
+
+    // The core box's full edge lengths (the original extents less twice the radius).
+    CoreExtents(b: RoundedBox3D): Vector3D
+    {
+        var r = b.EffectiveCornerRadius;
+        return (b.Box.Size.Width - 2.0 * r,
+                b.Box.Size.Height - 2.0 * r,
+                b.Box.Size.Depth - 2.0 * r);
+    }
+
+    // Steiner's parallel-body volume (see the section note).
+    Volume(b: RoundedBox3D): Number
+    {
+        var r = b.EffectiveCornerRadius;
+        var e = b.CoreExtents;
+        var faces = e.X * e.Y + e.X * e.Z + e.Y * e.Z;
+        return e.X * e.Y * e.Z
+            + 2.0 * r * faces
+            + Number.Pi * r.Square * (e.X + e.Y + e.Z)
+            + 4.0 / 3.0 * Number.Pi * r.Cube;
+    }
+
+    // Steiner's parallel-body surface area (see the section note).
+    SurfaceArea(b: RoundedBox3D): Number
+    {
+        var r = b.EffectiveCornerRadius;
+        var e = b.CoreExtents;
+        return 2.0 * (e.X * e.Y + e.X * e.Z + e.Y * e.Z)
+            + 2.0 * Number.Pi * r * (e.X + e.Y + e.Z)
+            + 4.0 * Number.Pi * r.Square;
+    }
+
+    // The box's centre; rounding is symmetric on every axis.
+    Centroid(b: RoundedBox3D): Point3D
+        => b.Box.Center;
+
+    // The underlying box's bounds — the rounded solid touches all six faces, so
+    // this is tight.
+    Bounds(b: RoundedBox3D): Bounds3D
+        => b.Box.Bounds;
+
+    // The standard rounded-box inside test: fold the query into the first octant of
+    // the box's own frame, subtract the core half-extents, and compare the
+    // resulting distance to the corner radius. Boundary inclusive.
+    // https://iquilezles.org/articles/distfunctions/
+    Contains(b: RoundedBox3D, point: Point3D): Boolean
+    {
+        var r = b.EffectiveCornerRadius;
+        var e = b.CoreExtents;
+        var local = LocalOffset(b.Box.Center, b.Box.Orientation, point);
+        var qx = local.X.Abs - e.X * 0.5;
+        var qy = local.Y.Abs - e.Y * 0.5;
+        var qz = local.Z.Abs - e.Z * 0.5;
+        var outside = (qx.Max(0.0).Square + qy.Max(0.0).Square + qz.Max(0.0).Square).Sqrt;
+        return outside + qx.Max(qy).Max(qz).Min(0.0) <= r;
+    }
+
+    // The support of a Minkowski sum is the sum of the supports: the core box's
+    // extreme corner displaced by r along `direction`.
+    Support(b: RoundedBox3D, direction: Direction3D): Point3D
+    {
+        var f = b.Box.Orientation.Basis3D;
+        var e = b.CoreExtents;
+        var d = direction.Vector;
+        return b.Box.Center
+            .Add(f.X.Multiply(d.Dot(f.X) >= 0.0 ? e.X * 0.5 : e.X * -0.5))
+            .Add(f.Y.Multiply(d.Dot(f.Y) >= 0.0 ? e.Y * 0.5 : e.Y * -0.5))
+            .Add(f.Z.Multiply(d.Dot(f.Z) >= 0.0 ? e.Z * 0.5 : e.Z * -0.5))
+            .Add(d.Multiply(b.EffectiveCornerRadius));
+    }
+}

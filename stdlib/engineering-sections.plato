@@ -1,0 +1,104 @@
+//==
+// # Cross-section profiles
+//
+// Dimensioned shapes of prismatic members. All are described in the section
+// plane; derive analysis-ready values via SectionProperties. Dimensions are
+// Length; the derived moments and moduli are raw Numbers that document their
+// units.
+
+// A solid rectangular cross-section.
+type RectangularSection
+    implements Value
+{
+    Width: Length;
+    Height: Length;
+}
+
+// A solid circular cross-section (round bar).
+type CircularSection
+    implements Value
+{
+    Diameter: Length;
+}
+
+// A circular tube: outer diameter and wall thickness.
+type HollowCircularSection
+    implements Value
+{
+    OuterDiameter: Length;
+    WallThickness: Length;
+}
+
+// A rectangular tube (box section) of uniform wall thickness.
+// (https://en.wikipedia.org/wiki/Hollow_structural_section)
+type RectangularTubeSection
+    implements Value
+{
+    Width: Length;
+    Height: Length;
+    WallThickness: Length;
+}
+
+// A doubly symmetric I (wide-flange) section. Depth is the overall height
+// between flange outer faces.
+// (https://en.wikipedia.org/wiki/I-beam)
+type IBeamSection
+    implements Value
+{
+    Depth: Length;
+    FlangeWidth: Length;
+    FlangeThickness: Length;
+    WebThickness: Length;
+}
+
+// A C-shaped channel section. Depth is the overall height; flanges project to
+// one side of the web.
+// (https://en.wikipedia.org/wiki/Structural_channel)
+type ChannelSection
+    implements Value
+{
+    Depth: Length;
+    FlangeWidth: Length;
+    FlangeThickness: Length;
+    WebThickness: Length;
+}
+
+// A T-shaped section: one flange with a central stem. Depth is the overall
+// height including the flange.
+// (https://en.wikipedia.org/wiki/T-beam)
+type TSection
+    implements Value
+{
+    Depth: Length;
+    FlangeWidth: Length;
+    FlangeThickness: Length;
+    StemThickness: Length;
+}
+
+// An L-shaped (angle) section with two legs of uniform thickness.
+// (https://en.wikipedia.org/wiki/Structural_steel)
+type AngleSection
+    implements Value
+{
+    LegA: Length;
+    LegB: Length;
+    Thickness: Length;
+}
+
+// Analysis-ready properties of a cross-section about its centroidal axes.
+// Centroid is in meters in the section plane. Second moments and the torsion
+// constant are in meters to the fourth power; section moduli are in cubic
+// meters. Y and Z are the section's principal in-plane axes.
+// (https://en.wikipedia.org/wiki/Second_moment_of_area)
+type SectionProperties
+    implements Value
+{
+    Area: Area;
+    Centroid: Point2D;
+    SecondMomentY: Number;
+    SecondMomentZ: Number;
+    ProductMoment: Number;
+    TorsionConstant: Number;
+    SectionModulusY: Number;
+    SectionModulusZ: Number;
+}

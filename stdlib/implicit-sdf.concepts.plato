@@ -1,0 +1,35 @@
+//==
+// # Implicit shape concepts
+//
+// Shapes described by functions rather than boundaries. A signed distance
+// field (SDF; https://en.wikipedia.org/wiki/Signed_distance_function) reports
+// how far a point is from a surface, negative inside; an implicit region
+// reports only membership (see also https://en.wikipedia.org/wiki/Implicit_surface).
+// The concrete types implementing these concepts are declared in the
+// `implicit-sdf-*.plato` files.
+
+// A planar scalar field whose value is the signed distance to a boundary
+// curve: negative inside, zero on the boundary, positive outside. Values are
+// exact distances or conservative lower bounds of them.
+concept SignedDistanceField2D
+    inherits ScalarField2D
+{ }
+
+// A spatial scalar field whose value is the signed distance to a surface:
+// negative inside, zero on the surface, positive outside. Values are exact
+// distances or conservative lower bounds of them.
+concept SignedDistanceField3D
+    inherits ScalarField3D
+{ }
+
+// A planar region described by a membership predicate: true when the point
+// is inside. Carries no distance information.
+concept ImplicitRegion2D
+    inherits Procedural<Point2D, Boolean>
+{ }
+
+// A spatial volume described by a membership predicate: true when the point
+// is inside. Carries no distance information.
+concept ImplicitVolume3D
+    inherits Procedural<Point3D, Boolean>
+{ }

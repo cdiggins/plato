@@ -1,0 +1,79 @@
+//==
+// # Surface, solid, and volume concepts
+//
+// Continuous two- and three-dimensional geometry as pure functions: a surface
+// maps two parameters to a position, a volume maps three (the Procedural concept
+// from `functional.concepts.plato`). Unless a type documents otherwise, a UV
+// surface's canonical domain is the unit square and a volume's the unit cube.
+// See https://en.wikipedia.org/wiki/Surface_(mathematics).
+
+//==
+// # Surfaces
+
+// A two-dimensional manifold embedded in 3D space, with or without boundary.
+// Marker concept for all surface representations
+// (https://en.wikipedia.org/wiki/Surface_(mathematics)).
+concept Surface
+    inherits Geometry3D
+{ }
+
+// A surface that is watertight: compact, without boundary curves (sphere, torus).
+// Marker concept; a closed surface separates space into inside and outside
+// (https://en.wikipedia.org/wiki/Closed_manifold).
+concept ClosedSurface
+    inherits Surface
+{ }
+
+// A surface evaluated from a rectangular UV parameter domain (canonically the
+// unit square). ClosedU/ClosedV report whether the surface seams shut across
+// the U or V direction (a cylinder closes in one, a torus in both)
+// (https://en.wikipedia.org/wiki/Parametric_surface).
+concept ParametricSurface
+    inherits Surface, Procedural<UvCoordinate, Point3D>
+{
+    ClosedU(x: Self): Boolean;
+    ClosedV(x: Self): Boolean;
+}
+
+// A parametric surface with defined partial derivatives. TangentUAt/TangentVAt
+// span the tangent plane; NormalAt is their normalized cross product, oriented
+// by the right-hand rule
+// (https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces).
+concept DifferentiableSurface
+    inherits ParametricSurface
+{
+    TangentUAt(x: Self, uv: UvCoordinate): Vector3D;
+    TangentVAt(x: Self, uv: UvCoordinate): Vector3D;
+    NormalAt(x: Self, uv: UvCoordinate): Direction3D;
+}
+
+// A surface expressed as an elevation over a ground plane: the domain is a
+// position in the plane (Point2D, not a normalized UV coordinate, because
+// height fields are defined over world-plane positions), and the result is the
+// height above that position (https://en.wikipedia.org/wiki/Heightmap).
+concept HeightFieldSurface
+    inherits Surface, Procedural<Point2D, Number>
+{ }
+
+//==
+// # Solids and volumes
+
+// A closed, bounded region of 3D space: a volume together with its watertight
+// boundary surface. Marker concept for all solid representations
+// (https://en.wikipedia.org/wiki/Solid_geometry).
+concept Solid
+    inherits Geometry3D
+{ }
+
+// A solid that is convex: every segment between two of its points stays inside
+// (https://en.wikipedia.org/wiki/Convex_set).
+concept ConvexSolid
+    inherits Solid
+{ }
+
+// A deformable volume evaluated from a UVW parameter box (canonically the unit
+// cube): trivariate patches, free-form deformation cages, solid textures spaces
+// (https://en.wikipedia.org/wiki/Free-form_deformation).
+concept ParametricVolume
+    inherits Geometry3D, Procedural<UvwCoordinate, Point3D>
+{ }

@@ -1,0 +1,222 @@
+//==
+// # Lines — segment measures, projections, and parametric evaluation
+//
+// The measure, centroid and nearest-point bodies for the segment, line and ray
+// types declared in `lines.plato` (`LIBRARIES.md` ground rules 1 and 10: an inline
+// `library` block is the sanctioned home for bodies that belong beside their
+// declarations).
+//
+// Conventions:
+//   * `Bounds` for the two segment types comes from the generic
+//     `Bounds(PointSet2D/3D)` in `geometry-pointsets.library.plato`; nothing here
+//     respells it.
+//   * Every `Direction` field is a UNIT vector by its type invariant, so the
+//     projection formulas below divide by no length.
+
+library Lines
+{
+    //==
+    // # Line segments
+
+    // The two endpoints, in the segment's own direction (A first).
+    Points(s: LineSegment2D): Array<Point2D>
+        => 2.MapRange(i => i == 0 ? s.A : s.B);
+
+    // The two endpoints, A first.
+    Points(s: LineSegment3D): Array<Point3D>
+        => 2.MapRange(i => i == 0 ? s.A : s.B);
+
+    // The distance between the endpoints.
+    Length(s: LineSegment2D): Number
+        => s.A.Between(s.B).Magnitude;
+
+    // The distance between the endpoints.
+    Length(s: LineSegment3D): Number
+        => s.A.Between(s.B).Magnitude;
+
+    // The midpoint: the center of mass of a uniform-density segment.
+    Centroid(s: LineSegment2D): Point2D
+        => s.A.MidPoint(s.B);
+
+    // The midpoint of the segment.
+    Centroid(s: LineSegment3D): Point3D
+        => s.A.MidPoint(s.B);
+
+    // The point of the segment nearest to `point` (the projection clamped to the
+    // segment's span).
+    ClosestPoint(s: LineSegment2D, point: Point2D): Point2D
+        => ClosestPointOnSegment(s.A, s.B, point);
+
+    // The point of the segment nearest to `point`.
+    ClosestPoint(s: LineSegment3D, point: Point3D): Point3D
+        => ClosestPointOnSegment(s.A, s.B, point);
+
+    // The segment with both endpoints carried through the mapping.
+    Deform(s: LineSegment2D, mapping: Function1<Point2D, Point2D>): LineSegment2D
+        => (mapping(s.A), mapping(s.B));
+
+    // The segment with both endpoints carried through the mapping.
+    Deform(s: LineSegment3D, mapping: Function1<Point3D, Point3D>): LineSegment3D
+        => (mapping(s.A), mapping(s.B));
+
+    //==
+    // # Infinite lines and rays
+    //
+    // The foot of the perpendicular from `point`: Origin + Direction * t with
+    // t = Dot(point - Origin, Direction). The line takes t unrestricted; the ray
+    // clamps t to the non-negative half, so a query behind the ray's origin
+    // projects onto the origin itself.
+    // https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+
+    // The point of the line nearest to `point`.
+    ClosestPoint(l: Line2D, point: Point2D): Point2D
+        => l.Origin.Add(l.Direction.Vector.Multiply(l.Origin.Between(point).Dot(l.Direction.Vector)));
+
+    // The point of the line nearest to `point`.
+    ClosestPoint(l: Line3D, point: Point3D): Point3D
+        => l.Origin.Add(l.Direction.Vector.Multiply(l.Origin.Between(point).Dot(l.Direction.Vector)));
+
+    // The point of the ray nearest to `point`; the ray's origin when the query
+    // lies behind it.
+    ClosestPoint(r: Ray2D, point: Point2D): Point2D
+        => r.Origin.Add(r.Direction.Vector.Multiply(
+            r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0)));
+
+    // The point of the ray nearest to `point`; the ray's origin when the query
+    // lies behind it.
+    ClosestPoint(r: Ray3D, point: Point3D): Point3D
+        => r.Origin.Add(r.Direction.Vector.Multiply(
+            r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0)));
+
+    //==
+    // # Parametric evaluation and inverse
+    //
+    // `PointAt` maps a parameter to a point; `Parameter` is its inverse, the
+    // parameter of the point on the flat NEAREST to a query. Lines take t
+    // unrestricted; rays clamp t to the non-negative half; segments run t over
+    // [0, 1] between the endpoints (a query off the extent projects to the nearer
+    // end). For a line and a ray, `PointAt(x, x.Parameter(p))` equals
+    // `x.ClosestPoint(p)`.
+
+    // The point at parameter t: Origin + Direction * t.
+    PointAt(l: Line2D, t: Number): Point2D
+        => l.Origin.Add(l.Direction.Vector.Multiply(t));
+
+    // The point at parameter t: Origin + Direction * t.
+    PointAt(l: Line3D, t: Number): Point3D
+        => l.Origin.Add(l.Direction.Vector.Multiply(t));
+
+    // The point at parameter t (t >= 0 lies on the ray): Origin + Direction * t.
+    PointAt(r: Ray2D, t: Number): Point2D
+        => r.Origin.Add(r.Direction.Vector.Multiply(t));
+
+    // The point at parameter t (t >= 0 lies on the ray): Origin + Direction * t.
+    PointAt(r: Ray3D, t: Number): Point3D
+        => r.Origin.Add(r.Direction.Vector.Multiply(t));
+
+    // The point at parameter t in [0, 1]: A + (B - A) * t.
+    PointAt(s: LineSegment2D, t: Number): Point2D
+        => s.A.Lerp(s.B, t);
+
+    // The point at parameter t in [0, 1]: A + (B - A) * t.
+    PointAt(s: LineSegment3D, t: Number): Point3D
+        => s.A.Lerp(s.B, t);
+
+    // The unclamped parameter of the foot of the perpendicular from `point`, so
+    // PointAt of it is the line's nearest point. Exact because Direction is unit.
+    Parameter(l: Line2D, point: Point2D): Number
+        => l.Origin.Between(point).Dot(l.Direction.Vector);
+
+    // The unclamped parameter of the foot of the perpendicular from `point`.
+    Parameter(l: Line3D, point: Point3D): Number
+        => l.Origin.Between(point).Dot(l.Direction.Vector);
+
+    // The parameter of `point` clamped to the ray: never negative, so a query
+    // behind the origin returns 0.
+    Parameter(r: Ray2D, point: Point2D): Number
+        => r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0);
+
+    // The parameter of `point` clamped to the ray.
+    Parameter(r: Ray3D, point: Point3D): Number
+        => r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0);
+
+    // The parameter of `point` clamped to [0, 1]: the projection onto the spine
+    // A -> B, normalized by the squared span. Degenerate (0/0) only when A equals B.
+    Parameter(s: LineSegment2D, point: Point2D): Number
+        => (s.A.Between(point).Dot(s.A.Between(s.B)) / s.A.Between(s.B).MagnitudeSquared)
+            .Clamp(0.0, 1.0);
+
+    // The parameter of `point` clamped to [0, 1].
+    Parameter(s: LineSegment3D, point: Point3D): Number
+        => (s.A.Between(point).Dot(s.A.Between(s.B)) / s.A.Between(s.B).MagnitudeSquared)
+            .Clamp(0.0, 1.0);
+
+    //==
+    // # Segment -> line / ray conversions
+    //
+    // The infinite carriers of an edge: the supporting line through A and B, and the
+    // ray from A through B. Both need the unit direction A -> B, so both are
+    // undefined for a degenerate (A == B) segment.
+
+    // The infinite line through A and B, directed A -> B.
+    SupportingLine(s: LineSegment3D): Line3D
+        => (s.A, Direction3D(s.A.Between(s.B).Normalize));
+
+    // The ray from A through B, directed A -> B.
+    SupportingRay(s: LineSegment3D): Ray3D
+        => (s.A, Direction3D(s.A.Between(s.B).Normalize));
+
+    // The infinite line through A and B, directed A -> B.
+    SupportingLine(s: LineSegment2D): Line2D
+        => (s.A, Direction2D(s.A.Between(s.B).Normalize));
+
+    // The ray from A through B, directed A -> B.
+    SupportingRay(s: LineSegment2D): Ray2D
+        => (s.A, Direction2D(s.A.Between(s.B).Normalize));
+
+    //==
+    // # Closest points between two flats
+    //
+    // The shortest connecting segment, returned A-on-first, B-on-second; its length
+    // is the distance between the flats and its endpoints coincide when they cross.
+    // https://en.wikipedia.org/wiki/Skew_lines#Distance
+
+    // The mutually nearest points of two infinite lines. For PARALLEL lines the
+    // connector is anchored at the first line's origin (any common perpendicular has
+    // the same length). Directions are unit, so the 2x2 normal system reduces to
+    // denom = 1 - Dot(d1, d2)^2.
+    ClosestPoints(a: Line3D, b: Line3D): LineSegment3D
+    {
+        var d1 = a.Direction.Vector;
+        var d2 = b.Direction.Vector;
+        var r = b.Origin.Between(a.Origin);
+        var f = d1.Dot(d2);
+        var c = d1.Dot(r);
+        var e = d2.Dot(r);
+        var denom = 1.0 - f * f;
+        var s = denom == 0.0 ? 0.0 : (f * e - c) / denom;
+        var t = denom == 0.0 ? e : (e - f * c) / denom;
+        return (a.Origin.Add(d1.Multiply(s)), b.Origin.Add(d2.Multiply(t)));
+    }
+
+    // The mutually nearest points of two segments, each parameter clamped to its own
+    // [0, 1] extent (Ericson's segment-segment routine). Robust to a degenerate
+    // (A == B) segment on either side: its span drops out of the division.
+    // https://en.wikipedia.org/wiki/Distance_between_two_lines
+    ClosestPoints(sa: LineSegment3D, sb: LineSegment3D): LineSegment3D
+    {
+        var d1 = sa.A.Between(sa.B);
+        var d2 = sb.A.Between(sb.B);
+        var r = sb.A.Between(sa.A);
+        var a = d1.MagnitudeSquared;
+        var e = d2.MagnitudeSquared;
+        var f = d2.Dot(r);
+        var c = d1.Dot(r);
+        var b = d1.Dot(d2);
+        var denom = a * e - b * b;
+        var s0 = denom == 0.0 ? 0.0 : ((b * f - c * e) / denom).Clamp(0.0, 1.0);
+        var t = (e == 0.0 ? 0.0 : (b * s0 + f) / e).Clamp(0.0, 1.0);
+        var s = (a == 0.0 ? s0 : (t * b - c) / a).Clamp(0.0, 1.0);
+        return (sa.A.Add(d1.Multiply(s)), sb.A.Add(d2.Multiply(t)));
+    }
+}

@@ -1,0 +1,53 @@
+//==
+// # SpatialTori — torus bodies
+//
+// Volume, surface area, bounds, centroid and containment bodies for the type
+// declared in `spatial-tori.plato`. Volume and surface area come from Pappus's
+// centroid theorem and are valid only for the non-self-intersecting ring torus. The
+// disk-extent helper, and the conventions governing every body here, are in
+// `spatial-primitives.library.plato`.
+
+library SpatialTori
+{
+    //==
+    // # Torus
+    //
+    // https://en.wikipedia.org/wiki/Torus
+
+    // 2 * pi^2 * R * r^2 — Pappus's centroid theorem applied to the minor disk swept
+    // around the major circle. Valid only for the non-self-intersecting ring torus
+    // (r <= R), which the declaration flags.
+    // https://en.wikipedia.org/wiki/Pappus%27s_centroid_theorem
+    Volume(t: Torus): Number
+        => 2.0 * Number.Pi.Square * t.MajorRadius * t.MinorRadius.Square;
+
+    // 4 * pi^2 * R * r — Pappus's theorem applied to the minor circle. Ring torus
+    // only, as above.
+    SurfaceArea(t: Torus): Number
+        => 4.0 * Number.Pi.Square * t.MajorRadius * t.MinorRadius;
+
+    // The stored centre, by the torus's rotational and mirror symmetry.
+    Centroid(t: Torus): Point3D
+        => t.Center;
+
+    // TIGHT: the torus is the major circle Minkowski-summed with a ball of the minor
+    // radius, so its support along a world axis is the circle's support
+    // R*sqrt(1 - (axis.e)^2) plus r.
+    Bounds(t: Torus): Bounds3D
+    {
+        var e = DiskHalfExtents(t.Axis.Vector, t.MajorRadius);
+        return CenteredBounds(t.Center,
+            e.X + t.MinorRadius, e.Y + t.MinorRadius, e.Z + t.MinorRadius);
+    }
+
+    // True when the query is within MinorRadius of the major circle: writing the
+    // query in axial (t) and radial (d) cylindrical coordinates about the centre,
+    // (d - R)^2 + t^2 <= r^2. Boundary inclusive.
+    Contains(t: Torus, point: Point3D): Boolean
+    {
+        var v = t.Center.Between(point);
+        var axial = v.Dot(t.Axis.Vector);
+        var radial = PerpendicularComponent(v, t.Axis.Vector).Magnitude;
+        return (radial - t.MajorRadius).Square + axial.Square <= t.MinorRadius.Square;
+    }
+}

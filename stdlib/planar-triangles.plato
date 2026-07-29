@@ -1,0 +1,43 @@
+//==
+// # Planar triangles and quadrilaterals
+//
+// The straight-edged planar regions: the triangle, the general simple
+// quadrilateral, and the parallelogram spanned from a corner by two side vectors.
+// Each stores the minimal defining data; derived measures come from the concepts it
+// implements. Winding convention: counter-clockwise is positive.
+// Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+
+// Three vertices, counter-clockwise for positive area
+// (https://en.wikipedia.org/wiki/Triangle). Degenerate when the vertices are
+// collinear.
+type Triangle2D
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, PointSet2D, Centroid2D, ContainsPoint2D, NearestPoint2D, Deformable2D
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+}
+
+// Four vertices in counter-clockwise order. Assumed simple (edges do not cross);
+// not necessarily convex or a parallelogram.
+// (https://en.wikipedia.org/wiki/Quadrilateral)
+type Quad2D
+    implements Geometry2D, ClosedShape, Connected, PlanarMeasurable, Bounded2D, PointSet2D, Centroid2D, ContainsPoint2D, Deformable2D
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+    D: Point2D;
+}
+
+// The quadrilateral spanned from Origin by two side vectors: vertices at Origin,
+// Origin + SideA, Origin + SideA + SideB, and Origin + SideB
+// (https://en.wikipedia.org/wiki/Parallelogram). Degenerate when the sides are
+// parallel.
+type Parallelogram2D
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D, Deformable2D
+{
+    Origin: Point2D;
+    SideA: Vector2D;
+    SideB: Vector2D;
+}

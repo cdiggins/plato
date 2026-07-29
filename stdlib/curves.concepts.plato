@@ -1,0 +1,117 @@
+//==
+// # Curve concepts
+//
+// Continuous curves as pure functions: a curve maps one parameter to a position
+// (the Procedural concept from `functional.concepts.plato`). Unless a type
+// documents otherwise, the canonical parameter domain of a curve is the unit
+// interval [0,1], and closed curves satisfy Eval(0) = Eval(1). The capability
+// concepts add derivatives, moving frames, polar form, and arc-length
+// measurement on top. See https://en.wikipedia.org/wiki/Curve.
+
+//==
+// # Curves
+
+// A real-valued function of one real parameter, viewed as a curve: profiles,
+// envelopes, cross-section laws, and interpolated channels.
+concept Curve1D
+    inherits Procedural<Number, Number>
+{ }
+
+// A continuous map from a parameter to a position in the plane
+// (https://en.wikipedia.org/wiki/Parametric_equation).
+concept Curve2D
+    inherits Geometry2D, Procedural<Number, Point2D>
+{ }
+
+// A continuous map from a parameter to a position in space
+// (https://en.wikipedia.org/wiki/Differential_geometry_of_curves).
+concept Curve3D
+    inherits Geometry3D, Procedural<Number, Point3D>
+{ }
+
+// A 2D curve that returns to its start: Eval(0) = Eval(1) with continuous closure.
+// Marker concept; closure is a structural guarantee of the implementing type.
+concept ClosedCurve2D
+    inherits Curve2D
+{ }
+
+// A 3D curve that returns to its start: Eval(0) = Eval(1) with continuous closure.
+concept ClosedCurve3D
+    inherits Curve3D
+{ }
+
+//==
+// # Curve capabilities
+
+// A curve whose parameterization repeats: evaluating at t and t + Period yields
+// the same position. All closed curves may be traversed periodically; a periodic
+// curve makes the period explicit. TRange is the evaluated value type (Number,
+// Point2D, or Point3D); inheriting Procedural makes the wrapped evaluation
+// Eval(t mod Period) derivable (see EvalWrapped in curves-surfaces.library.plato)
+// (https://en.wikipedia.org/wiki/Periodic_function).
+concept PeriodicCurve<TRange>
+    inherits Periodic<Number>, Procedural<Number, TRange>
+{ }
+
+// A 2D curve with a defined first derivative. TangentAt is the (not necessarily
+// unit-length) velocity; CurvatureAt is the signed plane curvature (positive
+// turning left, negative turning right)
+// (https://en.wikipedia.org/wiki/Curvature).
+concept DifferentiableCurve2D
+    inherits Curve2D
+{
+    TangentAt(x: Self, t: Number): Vector2D;
+    CurvatureAt(x: Self, t: Number): Number;
+}
+
+// A 3D curve with a defined first derivative. TangentAt is the velocity,
+// CurvatureAt is the unsigned space curvature, and TorsionAt measures how
+// sharply the curve leaves its osculating plane
+// (https://en.wikipedia.org/wiki/Torsion_of_a_curve).
+concept DifferentiableCurve3D
+    inherits Curve3D
+{
+    TangentAt(x: Self, t: Number): Vector3D;
+    CurvatureAt(x: Self, t: Number): Number;
+    TorsionAt(x: Self, t: Number): Number;
+}
+
+// A 3D curve carrying a continuous moving frame (Frenet or rotation-minimizing):
+// the frame origin lies on the curve and its Z axis is tangent. The basis for
+// sweeps, lofts, and camera paths
+// (https://en.wikipedia.org/wiki/Frenet%E2%80%93Serret_formulas).
+concept FramedCurve3D
+    inherits DifferentiableCurve3D
+{
+    FrameAt(x: Self, t: Number): Frame3D;
+}
+
+// A 3D curve that lies entirely within a single plane
+// (https://en.wikipedia.org/wiki/Plane_curve).
+concept PlanarCurve3D
+    inherits Curve3D
+{
+    CurvePlane(x: Self): Plane;
+}
+
+// A plane curve expressed in polar form about the origin: the position at angle
+// theta is (RadiusAt(theta) * cos(theta), RadiusAt(theta) * sin(theta)).
+// The canonical [0,1] parameter maps to one full turn unless documented otherwise
+// (https://en.wikipedia.org/wiki/Polar_coordinate_system).
+concept PolarCurve2D
+    inherits Curve2D
+{
+    RadiusAt(x: Self, angle: Angle): Number;
+}
+
+// A curve measurable by arc length. ArcLength is the total length over the
+// canonical domain; PointAtLength walks a distance along the curve from its
+// start; ParameterAtLength converts a distance to the canonical parameter.
+// TPoint is the concrete point type of the curve (Point2D, Point3D, or Number)
+// (https://en.wikipedia.org/wiki/Arc_length).
+concept ArcLengthParameterized<TPoint>
+{
+    ArcLength(x: Self): Number;
+    PointAtLength(x: Self, length: Number): TPoint;
+    ParameterAtLength(x: Self, length: Number): Number;
+}

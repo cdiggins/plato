@@ -1,18 +1,9 @@
 //==
-// # Geospatial
+// # Geospatial shapes and poses
 //
-// Positions, shapes, and reference systems on a planet. Geodetic positions are
-// GeoCoordinate (file 11); this file adds regions, paths, projections, datums,
-// and the Cartesian coordinate systems used to compute with them. Angles are
-// Angle; distances are Length.
-
-// A region on the planet's surface that can test whether it contains a
-// geodetic coordinate (altitude is ignored).
-concept GeoRegion
-    inherits Value
-{
-    ContainsCoordinate(x: Self, coordinate: GeoCoordinate): Boolean;
-}
+// Regions, paths, and shapes drawn on a planet's surface, plus the headings and
+// vehicle poses expressed against it. Positions are geodetic coordinates
+// (GeoCoordinate); angles are Angle and distances are Length.
 
 //==
 // # Regions, paths, and shapes
@@ -49,6 +40,7 @@ type GeoPolygon
 
 // The shortest (great-circle, or geodesic on the ellipsoid) arc between two
 // geodetic coordinates.
+// (https://en.wikipedia.org/wiki/Great-circle_distance)
 type GeoSegment
     implements Value
 {
@@ -69,6 +61,7 @@ type GeoCircle
 // # Headings and poses
 
 // A navigation heading measured clockwise from true north.
+// (https://en.wikipedia.org/wiki/Bearing_(navigation))
 type CompassBearing
     implements Value
 {
@@ -78,6 +71,7 @@ type CompassBearing
 // The placement of a vehicle or sensor on the planet: geodetic position plus
 // heading (clockwise from true north), pitch (positive nose-up), and roll
 // (positive right-wing-down).
+// (https://en.wikipedia.org/wiki/Aircraft_principal_axes)
 type GeoPose
     implements Value
 {
@@ -85,131 +79,4 @@ type GeoPose
     Heading: CompassBearing;
     Pitch: Angle;
     Roll: Angle;
-}
-
-//==
-// # Datums and reference ellipsoids
-
-// An oblate spheroid model of the planet used as a geodetic reference:
-// equatorial semi-major axis plus the dimensionless inverse flattening
-// (a / (a - b); WGS84 uses 298.257223563).
-type ReferenceEllipsoid
-    implements Value
-{
-    SemiMajorAxis: Length;
-    InverseFlattening: Number;
-}
-
-// A named geodetic datum: the reference ellipsoid against which latitude,
-// longitude, and altitude are expressed (for example "WGS84").
-type GeodeticDatum
-{
-    Name: String;
-    Ellipsoid: ReferenceEllipsoid;
-}
-
-//==
-// # Map projections
-
-// The projection family used to flatten geodetic coordinates onto a plane.
-// The conic family carries its two standard parallels.
-type MapProjectionFamily
-    = Mercator
-    | WebMercator
-    | Utm
-    | LambertConformalConic(FirstStandardParallel: Angle, SecondStandardParallel: Angle)
-    | Stereographic
-    | Equirectangular
-    | AzimuthalEquidistant;
-
-// A configured map projection. The false easting and northing offset all
-// projected coordinates so they stay positive across the region of use.
-type MapProjection
-{
-    Family: MapProjectionFamily;
-    CentralMeridian: Angle;
-    FalseEasting: Length;
-    FalseNorthing: Length;
-}
-
-// One zone of the Universal Transverse Mercator grid: ZoneNumber is 1 to 60
-// (each spanning 6 degrees of longitude), split into a northern and a
-// southern hemisphere half.
-type UtmZone
-    implements Value
-{
-    ZoneNumber: Integer;
-    NorthernHemisphere: Boolean;
-}
-
-//==
-// # Cartesian geospatial coordinates
-
-// A position on a projected map plane: easting (X) and northing (Y) from the
-// projection origin. ZoneNumber identifies the UTM or grid zone, and is 0
-// when the projection is not zonal.
-type ProjectedCoordinate
-    implements Value
-{
-    Easting: Length;
-    Northing: Length;
-    ZoneNumber: Integer;
-}
-
-// An Earth-centered, Earth-fixed Cartesian position: origin at the planet's
-// center of mass, X toward the prime meridian on the equator, Z toward the
-// north pole, Y completing the right-handed frame.
-type EcefCoordinate
-    implements Value
-{
-    X: Length;
-    Y: Length;
-    Z: Length;
-}
-
-// A position in a local tangent frame anchored at Origin: East and North lie
-// in the local horizontal plane, Up is along the ellipsoid normal.
-type EnuCoordinate
-    implements Value
-{
-    East: Length;
-    North: Length;
-    Up: Length;
-    Origin: GeoCoordinate;
-}
-
-//==
-// # Terrain and rasters
-
-// A regular grid of terrain elevations over a geographic region. Elevations
-// are in meters above the datum's reference surface; the column index runs
-// west to east and the row index runs south to north across Bounds.
-type ElevationGrid
-{
-    Bounds: GeoBounds;
-    Elevations: Array2D<Number>;
-}
-
-// The mapping from raster pixel indices to projected map coordinates for a
-// north-up image: the easting/northing of the outer corner of the top-left
-// (northwest) pixel, plus the positive pixel footprint. Easting grows by
-// PixelWidth per column; northing shrinks by PixelHeight per row.
-type GeoTransform
-    implements Value
-{
-    OriginEasting: Length;
-    OriginNorthing: Length;
-    PixelWidth: Length;
-    PixelHeight: Length;
-}
-
-// The address of one tile in the XYZ (slippy map) pyramid: zoom level 0 is a
-// single world tile; each level doubles the tile count per axis. Row 0 is the
-// northernmost row.
-type MapTileIndex
-    implements Value, Hashable
-{
-    Zoom: Integer;
-    Column: Integer;
-    Row: Integer;
 }

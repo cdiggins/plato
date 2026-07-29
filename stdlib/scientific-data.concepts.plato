@@ -1,0 +1,15 @@
+//==
+// # Scientific data concepts
+//
+// The shared interface of time-indexed collections: how many samples they hold
+// and when each zero-based sample was taken.
+
+// The family of time-indexed collections: a sample count and a time for each
+// zero-based sample index.
+// (https://en.wikipedia.org/wiki/Time_series)
+concept TimeSampled
+    inherits Value
+{
+    SampleCount(x: Self): Integer;
+    TimeAt(x: Self, index: Integer): Instant;
+}

@@ -1,0 +1,29 @@
+//==
+// # Mesh topology concepts
+//
+// The two concepts a connectivity structure can implement: counted mesh
+// elements (MeshTopology) and constant-time half-edge navigation
+// (HalfEdgeNavigable). The derived functionality of both lives in
+// `meshes-topology.library.plato`.
+
+// Anything with counted mesh elements: vertices, undirected edges, and faces
+// (https://en.wikipedia.org/wiki/Polygon_mesh).
+concept MeshTopology
+{
+    VertexCount(x: Self): Integer;
+    EdgeCount(x: Self): Integer;
+    FaceCount(x: Self): Integer;
+}
+
+// Constant-time navigation over a half-edge structure
+// (https://en.wikipedia.org/wiki/Doubly_connected_edge_list). Callers must not
+// pass -1; boundary conditions surface as -1 results (e.g. TwinOf on a
+// boundary half-edge).
+concept HalfEdgeNavigable
+{
+    OriginOf(x: Self, halfEdge: HalfEdgeIndex): VertexIndex;
+    TwinOf(x: Self, halfEdge: HalfEdgeIndex): HalfEdgeIndex;
+    NextOf(x: Self, halfEdge: HalfEdgeIndex): HalfEdgeIndex;
+    PreviousOf(x: Self, halfEdge: HalfEdgeIndex): HalfEdgeIndex;
+    FaceOf(x: Self, halfEdge: HalfEdgeIndex): FaceIndex;
+}

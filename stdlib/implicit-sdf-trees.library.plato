@@ -1,0 +1,60 @@
+//==
+// # SDF combination tree evaluation
+//
+// Recursive evaluation of a flat CSG tree (`implicit-sdf-trees.plato`). Leaves
+// resolve against a caller-supplied primitive list; interior nodes combine two
+// lower-indexed nodes, so the recursion is well founded and terminates on any
+// tree obeying the "nodes only reference lower-indexed nodes" invariant.
+
+library ImplicitSdfTrees
+{
+    // The combination operator applied to two child distances.
+    Apply(combine: SdfCombine, a: Number, b: Number): Number =>
+        match (combine) {
+            Union => UnionDistance(a, b);
+            Intersection => IntersectionDistance(a, b);
+            Difference => SubtractDistance(a, b);
+            ExclusiveOr => ExclusiveOrDistance(a, b);
+            SmoothUnion(radius) => SmoothUnionDistance(a, b, radius);
+            SmoothIntersection(radius) => SmoothIntersectionDistance(a, b, radius);
+            SmoothDifference(radius) => SmoothDifferenceDistance(a, b, radius);
+            Blend(weight) => a.Lerp(b, weight.Value);
+        };
+
+    // The distance one planar node produces: a leaf samples its primitive, an
+    // interior node combines its two children.
+    EvalNode(node: SdfNode2D, tree: SdfTree2D, primitives: Array<FunctionSdf2D>, point: Point2D): Number =>
+        match (node) {
+            Leaf(primitive) => primitives.At(primitive.Value).Eval(point);
+            Interior(combine, left, right) =>
+                combine.Apply(
+                    tree.EvalNodeAt(left, primitives, point),
+                    tree.EvalNodeAt(right, primitives, point));
+        };
+
+    // The distance the node at the given index produces.
+    EvalNodeAt(tree: SdfTree2D, index: SdfNodeIndex, primitives: Array<FunctionSdf2D>, point: Point2D): Number
+        => tree.Nodes.At(index.Value).EvalNode(tree, primitives, point);
+
+    // The tree's signed distance at a point: the distance its root node produces.
+    Eval(tree: SdfTree2D, primitives: Array<FunctionSdf2D>, point: Point2D): Number
+        => tree.EvalNodeAt(tree.Root, primitives, point);
+
+    // The distance one spatial node produces.
+    EvalNode(node: SdfNode3D, tree: SdfTree3D, primitives: Array<FunctionSdf3D>, point: Point3D): Number =>
+        match (node) {
+            Leaf(primitive) => primitives.At(primitive.Value).Eval(point);
+            Interior(combine, left, right) =>
+                combine.Apply(
+                    tree.EvalNodeAt(left, primitives, point),
+                    tree.EvalNodeAt(right, primitives, point));
+        };
+
+    // The distance the node at the given index produces.
+    EvalNodeAt(tree: SdfTree3D, index: SdfNodeIndex, primitives: Array<FunctionSdf3D>, point: Point3D): Number
+        => tree.Nodes.At(index.Value).EvalNode(tree, primitives, point);
+
+    // The tree's signed distance at a point: the distance its root node produces.
+    Eval(tree: SdfTree3D, primitives: Array<FunctionSdf3D>, point: Point3D): Number
+        => tree.EvalNodeAt(tree.Root, primitives, point);
+}

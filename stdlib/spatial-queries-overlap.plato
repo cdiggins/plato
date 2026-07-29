@@ -1,0 +1,61 @@
+//==
+// # Overlap, intersection, and culling
+//
+// How one region relates to another, filtered requests for everything inside an
+// axis-aligned region, the discrete intersection points of two primitives, and
+// the outcome of culling an indexed set against a convex volume. FilterMask is a
+// category bitmask combined with a candidate's category bits by bitwise AND
+// (non-zero passes), and -1 (all bits set) accepts everything.
+
+// How one region A relates to another region B: no shared points, an overlap
+// without full containment, A fully containing B, or A lying fully inside B.
+type Containment = Disjoint | Intersects | Contains | Within;
+
+// A filtered request for everything overlapping a 2D axis-aligned region.
+type OverlapQuery2D
+    implements Value
+{
+    Bounds: Bounds2D;
+    FilterMask: Integer;
+}
+
+// A filtered request for everything overlapping a 3D axis-aligned region.
+type OverlapQuery3D
+    implements Value
+{
+    Bounds: Bounds3D;
+    FilterMask: Integer;
+}
+
+// The intersection of two 2D primitives
+// (https://en.wikipedia.org/wiki/Intersection_(geometry)): a flag plus the
+// discrete intersection points (empty when Intersects is false, or when the
+// overlap is a region rather than isolated points).
+type IntersectionResult2D
+    implements Value
+{
+    Intersects: Boolean;
+    Points: Array<Point2D>;
+}
+
+// The intersection of two 3D primitives: a flag plus the discrete
+// intersection points (empty when Intersects is false, or when the overlap
+// is a curve or region rather than isolated points).
+type IntersectionResult3D
+    implements Value
+{
+    Intersects: Boolean;
+    Points: Array<Point3D>;
+}
+
+// The outcome of culling an indexed set against a convex volume (typically a
+// camera frustum, https://en.wikipedia.org/wiki/Viewing_frustum): indices
+// fully inside, indices straddling the boundary, and the count of items
+// rejected outright.
+type FrustumCullResult
+    implements Value
+{
+    FullyVisible: Array<ItemIndex>;
+    PartiallyVisible: Array<ItemIndex>;
+    CulledCount: Integer;
+}

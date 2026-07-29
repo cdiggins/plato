@@ -1,0 +1,45 @@
+//==
+// # Distance operators
+//
+// Pointwise CSG on already-sampled distances: the scalar kernels the field
+// combinators in `fields-implicits-function.library.plato` are written in terms
+// of, usable directly inside a hand-written distance function without
+// allocating a field.
+
+library ImplicitSdfOperators
+{
+    // The union of two sampled distances: the minimum.
+    UnionDistance(a: Number, b: Number): Number
+        => a.Min(b);
+
+    // The intersection of two sampled distances: the maximum.
+    IntersectionDistance(a: Number, b: Number): Number
+        => a.Max(b);
+
+    // The first distance with the second subtracted from it: a against negated b.
+    SubtractDistance(a: Number, b: Number): Number
+        => a.Max(b.Negative);
+
+    // The symmetric difference of two sampled distances: inside exactly one of
+    // the two shapes. (IQ: opXor.)
+    ExclusiveOrDistance(a: Number, b: Number): Number
+        => a.Min(b).Max(a.Max(b).Negative);
+
+    // The polynomial smooth minimum of two distances, blended over blendRadius.
+    // Reduces to the plain minimum as blendRadius approaches zero.
+    // Precondition: blendRadius is positive. (IQ: opSmoothUnion.)
+    SmoothUnionDistance(a: Number, b: Number, blendRadius: Number): Number {
+        var h = (0.5 + 0.5 * (b - a) / blendRadius).Clamp(0.0, 1.0);
+        return b.Lerp(a, h) - blendRadius * h * (1.0 - h);
+    }
+
+    // The smooth intersection: the smooth union of the negated distances,
+    // negated. Precondition: blendRadius is positive. (IQ: opSmoothIntersection.)
+    SmoothIntersectionDistance(a: Number, b: Number, blendRadius: Number): Number
+        => SmoothUnionDistance(a.Negative, b.Negative, blendRadius).Negative;
+
+    // The smooth difference: a smoothly intersected with the complement of b.
+    // Precondition: blendRadius is positive. (IQ: opSmoothSubtraction.)
+    SmoothDifferenceDistance(a: Number, b: Number, blendRadius: Number): Number
+        => SmoothIntersectionDistance(a, b.Negative, blendRadius);
+}

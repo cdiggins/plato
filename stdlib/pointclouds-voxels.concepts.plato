@@ -1,0 +1,20 @@
+//==
+// # Point-cloud and voxel concepts
+//
+// Shedding structure down to a bare point cloud, and conservative rasterization
+// into a binary occupancy grid. The derived functionality of both lives in
+// `meshes-geometry.library.plato`.
+
+// Anything that can shed its structure and yield its points as a bare
+// position cloud: meshes, enriched clouds, scan slices.
+concept PointCloudable3D
+{
+    ToPointCloud(x: Self): PointCloud3D;
+}
+
+// Anything that can be conservatively rasterized into a binary voxel grid
+// (https://en.wikipedia.org/wiki/Voxel) at a caller-chosen cell size.
+concept Voxelizable3D
+{
+    ToOccupancyGrid(x: Self, cellSize: Number): OccupancyGrid3D;
+}

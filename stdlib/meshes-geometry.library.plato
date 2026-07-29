@@ -1,0 +1,161 @@
+//==
+// # MeshesGeometry — derived functionality for meshable and sampled geometry
+//
+// Pure, expression-bodied helpers for the concepts declared in
+// `meshes.concepts.plato` (Meshable3D, Meshable2D, TriangulatedGeometry3D) and
+// `pointclouds-voxels.concepts.plato` (PointCloudable3D, Voxelizable3D), plus the
+// shared quad-grid face-index routine behind every grid-shaped tessellation.
+// Part of P8 of the concept library.
+//
+// These concepts are new in v3 — the v1 `meshes.library.plato` carried only
+// embedded-primitive helpers (Triangle/Quad/Points/Deform) — so most of this
+// surface has no v1 counterpart. The one carried-over idea is building a concrete
+// Triangle3D from a face's typed indices: v1 `Triangle(self, index: Integer3)`
+// becomes `Triangle(self, face: FaceIndex)` using the typed FaceIndex/VertexIndex
+// structs instead of a bare Integer3.
+
+library MeshesGeometry
+{
+    //==
+    // Meshable3D — anything that can produce an indexed triangle mesh of itself.
+    // The forwards below expose the triangulation's topology without a manual
+    // ToTriangleMesh hop (TriangleMesh3D is itself MeshTopology).
+
+    // The vertex count of this object's triangle-mesh approximation.
+    MeshVertexCount(self: Meshable3D): Integer
+        => self.ToTriangleMesh.VertexCount;
+
+    // The face count of this object's triangle-mesh approximation.
+    MeshFaceCount(self: Meshable3D): Integer
+        => self.ToTriangleMesh.FaceCount;
+
+    // The Euler characteristic of this object's triangle-mesh approximation.
+    MeshEulerCharacteristic(self: Meshable3D): Integer
+        => self.ToTriangleMesh.EulerCharacteristic;
+
+    // True when the triangle-mesh approximation has no vertices.
+    MeshIsEmpty(self: Meshable3D): Boolean
+        => self.ToTriangleMesh.IsEmpty;
+
+    //==
+    // Meshable2D — anything in the plane that can triangulate itself. Same
+    // topology forwards over the produced TriangleMesh2D (also a MeshTopology).
+
+    // The vertex count of this shape's planar triangulation.
+    TriangulationVertexCount(self: Meshable2D): Integer
+        => self.Triangulate.VertexCount;
+
+    // The triangle (face) count of this shape's planar triangulation.
+    TriangulationFaceCount(self: Meshable2D): Integer
+        => self.Triangulate.FaceCount;
+
+    // True when the shape triangulates to nothing.
+    TriangulationIsEmpty(self: Meshable2D): Boolean
+        => self.Triangulate.IsEmpty;
+
+    //==
+    // TriangulatedGeometry3D — random access to an explicit indexed triangle set.
+    // Members: TriangleCount, FaceAt(FaceIndex), PositionAt(VertexIndex).
+
+    // The concrete 3D triangle at a face, resolving its three vertex indices to
+    // positions. Precondition: `face` is in [0, TriangleCount). Note: FaceAt is
+    // evaluated three times; a monomorphizer without CSE re-fetches the record.
+    Triangle(self: TriangulatedGeometry3D, face: FaceIndex): Triangle3D
+        => (self.PositionAt(self.FaceAt(face).A),
+            self.PositionAt(self.FaceAt(face).B),
+            self.PositionAt(self.FaceAt(face).C));
+
+    // True when the geometry exposes no triangles. Kept as HasNoTriangles rather
+    // than IsEmpty: TriangleMesh3D is both TriangulatedGeometry3D and MeshTopology,
+    // so an IsEmpty here would collide with MeshTopology.IsEmpty (vertex-based).
+    HasNoTriangles(self: TriangulatedGeometry3D): Boolean
+        => self.TriangleCount.IsZero;
+
+    // True when the geometry exposes at least one triangle.
+    HasTriangles(self: TriangulatedGeometry3D): Boolean
+        => self.TriangleCount.IsPositive;
+
+    //==
+    // Quad-grid face indices — the shared routine behind everything grid-shaped:
+    // parametric-surface tessellation, height fields, surfaces of revolution, and
+    // the UV grids of the solids (see `library Solids` in solids.plato).
+    //
+    // A grid of nCols x nRows vertices is stored row-major, so grid vertex
+    // (col, row) has linear index row * nCols + col. Each cell contributes one
+    // quad. Wrap-around is expressed by taking the NEIGHBOUR coordinate modulo
+    // the corresponding count, so a closed direction simply reuses column/row 0
+    // rather than needing a duplicated seam ring of vertices.
+    //
+    // Ported from v1 `meshes.library.plato` (QuadFaceIndices / AllQuadFaceIndices).
+    // v1 returned a bare `Integer4`; here the result is `QuadFace`, whose four
+    // fields are `VertexIndex` — these ARE cross-array references into a position
+    // array, exactly the case README.md reserves the typed index types for, and it
+    // makes the result feed `QuadMesh3D.Faces` directly with no conversion.
+
+    // The four vertex indices of the quad cell whose low corner is grid vertex
+    // (col, row), wound counter-clockwise:
+    //
+    //     d -- c
+    //     |    |
+    //     a -- b
+    //
+    // where a == (col, row), b == (col+1, row), c == (col+1, row+1) and
+    // d == (col, row+1). The +1 neighbours wrap via `%`, so this function alone
+    // always produces a closed cell; openness is expressed by the CALLER stopping
+    // one short (see AllQuadFaceIndices). Preconditions: nCols > 0, nRows > 0, and
+    // 0 <= col < nCols, 0 <= row < nRows.
+    QuadFaceIndices(col: Integer, row: Integer, nCols: Integer, nRows: Integer): QuadFace
+    {
+        var a = (row * nCols) + col;
+        var b = (row * nCols) + ((col + 1) % nCols);
+        var c = (((row + 1) % nRows) * nCols) + ((col + 1) % nCols);
+        var d = (((row + 1) % nRows) * nCols) + col;
+        return (VertexIndex(a), VertexIndex(b), VertexIndex(c), VertexIndex(d));
+    }
+
+    // Every quad face of an nCols x nRows vertex grid. A direction that is closed
+    // contributes a full count of cells (the last one wraps back to index 0); an
+    // open direction contributes one fewer. Result dimensions are therefore
+    // (nCols - (closedU ? 0 : 1)) x (nRows - (closedV ? 0 : 1)).
+    AllQuadFaceIndices(nCols: Integer, nRows: Integer, closedU: Boolean, closedV: Boolean): Array2D<QuadFace>
+    {
+        var nx = nCols - (closedU ? 0 : 1);
+        var ny = nRows - (closedV ? 0 : 1);
+        return MakeArray2D(nx, ny, (col, row) => QuadFaceIndices(col, row, nCols, nRows));
+    }
+
+    // Every quad face of an existing 2D grid of values (points, samples, heights),
+    // taking the grid's own column and row counts. The element type is irrelevant:
+    // only the shape is read.
+    AllQuadFaceIndices(self: Indexable2D<$T>, closedU: Boolean, closedV: Boolean): Array2D<QuadFace>
+        => AllQuadFaceIndices(self.ColumnCount, self.RowCount, closedU, closedV);
+
+    //==
+    // PointCloudable3D — anything that can shed its structure to a bare point cloud.
+
+    // The number of points once reduced to a bare cloud.
+    PointCount(self: PointCloudable3D): Integer
+        => self.ToPointCloud.Positions.Count;
+
+    // The i-th point of the bare cloud. Precondition: i in [0, PointCount).
+    PointAt(self: PointCloudable3D, i: Integer): Point3D
+        => self.ToPointCloud.Positions.At(i);
+
+    // True when reducing to a bare cloud yields no points.
+    IsEmpty(self: PointCloudable3D): Boolean
+        => self.PointCount.IsZero;
+
+    //==
+    // Voxelizable3D — conservative rasterization into a binary occupancy grid.
+
+    // The total number of grid cells at the given cell size. Count of the Occupied
+    // Array3D is the TOTAL cell count (occupied plus empty), not the occupied count.
+    VoxelCellCount(self: Voxelizable3D, cellSize: Number): Integer
+        => self.ToOccupancyGrid(cellSize).Occupied.Count;
+
+    // The number of OCCUPIED cells at the given cell size: a boolean fold over the
+    // occupancy raster. Array3D<Boolean> inherits the flat Indexable surface, so P2's
+    // Reduce reaches every cell by flat index; the accumulator counts the true cells.
+    VoxelOccupiedCount(self: Voxelizable3D, cellSize: Number): Integer
+        => self.ToOccupancyGrid(cellSize).Occupied.Reduce(0, (acc, b) => b ? acc + 1 : acc);
+}

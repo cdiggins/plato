@@ -1,0 +1,29 @@
+//==
+// # Implicit surfaces
+//
+// Unbounded surfaces defined by an equation rather than by stored extents: the
+// circular paraboloid and the general quadric that subsumes spheres, ellipsoids,
+// cones, cylinders, paraboloids and hyperboloids. They are surfaces, not solids, so
+// they carry no volume or containment obligation.
+
+// An infinite circular paraboloid surface opening along Axis from Vertex
+// (https://en.wikipedia.org/wiki/Paraboloid): points at height h above the
+// vertex plane lie at radius r with r * r = 4 * FocalLength * h. The reflector
+// shape: rays parallel to Axis converge at the focus.
+type Paraboloid
+    implements Geometry3D, Connected, Manifold, Orientable
+{
+    Vertex: Point3D;
+    Axis: Direction3D;
+    FocalLength: Number;
+}
+
+// A general quadric surface: the homogeneous points p with
+// Transpose(p) * Coefficients * p = 0 (https://en.wikipedia.org/wiki/Quadric).
+// Coefficients is symmetric. Spheres, ellipsoids, cones, cylinders,
+// paraboloids, and hyperboloids are all special cases.
+type Quadric
+    implements Geometry3D
+{
+    Coefficients: Matrix4x4;
+}

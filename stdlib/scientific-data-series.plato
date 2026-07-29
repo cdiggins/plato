@@ -1,0 +1,83 @@
+//==
+// # Data series
+//
+// Named sequences of measured values: plain series, regular and irregular time
+// series, vector series, event logs and labeled spans, plus the policies that
+// govern resampling and missing values. Values carry their units explicitly via
+// UnitOfMeasure rather than through the type system.
+
+//==
+// # Series
+
+// A named sequence of numeric values sharing one unit: a plot trace, a sensor
+// sweep, a spectrum row.
+type DataSeries
+{
+    Name: String;
+    Values: Array<Number>;
+    Unit: UnitOfMeasure;
+}
+
+// A uniformly sampled time series: sample i occurs at Start plus i times
+// SamplePeriod. Values are in Unit.
+type TimeSeries
+    implements TimeSampled
+{
+    Start: Instant;
+    SamplePeriod: Duration;
+    Values: Array<Number>;
+    Unit: UnitOfMeasure;
+}
+
+// A time series with explicit, strictly increasing sample times. Times and
+// Values are parallel arrays; values are in Unit.
+// (https://en.wikipedia.org/wiki/Unevenly_spaced_time_series)
+type IrregularTimeSeries
+    implements TimeSampled
+{
+    Times: Array<Instant>;
+    Values: Array<Number>;
+    Unit: UnitOfMeasure;
+}
+
+// A uniformly sampled series of 3D vectors (positions, velocities, field
+// samples): sample i occurs at Start plus i times SamplePeriod. Components are
+// in Unit.
+type Vector3DTimeSeries
+    implements TimeSampled
+{
+    Start: Instant;
+    SamplePeriod: Duration;
+    Values: Array<Vector3D>;
+    Unit: UnitOfMeasure;
+}
+
+// A log of discrete labeled occurrences. Times is nondecreasing and parallel
+// to Labels.
+type EventLog
+    implements TimeSampled
+{
+    Times: Array<Instant>;
+    Labels: Array<String>;
+}
+
+// A label attached to a span of time: an annotation, a phase, an experiment
+// stage.
+type LabeledTimeInterval
+{
+    Interval: TimeInterval;
+    Label: String;
+}
+
+//==
+// # Policies
+
+// How samples are interpolated when a series is resampled onto new times.
+// (https://en.wikipedia.org/wiki/Sample-rate_conversion)
+type ResamplingPolicy = Nearest | Linear | CubicSpline | HoldPrevious | HoldNext;
+
+// How missing values in a series or column are treated during computation:
+// drop the sample (Skip), substitute zero (Zero), fill from neighbors
+// (Interpolate), or repeat the previous value (Hold).
+// (https://en.wikipedia.org/wiki/Missing_data)
+type MissingValuePolicy = Skip | Zero | Interpolate | Hold;

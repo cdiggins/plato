@@ -1,0 +1,166 @@
+//==
+// # Curves — derived functions for the curve concepts
+//
+// Bodies for Curve1D / Curve2D / Curve3D and the two closed-curve markers
+// declared in `curves.concepts.plato`. Every function's first parameter is
+// concept-typed, so each helper becomes available on every implementing type.
+// Endpoints, chords, secants, and finite-difference estimates are all derivable
+// from `Eval` alone; nothing here needs a member the concept does not already
+// declare.
+//
+// The canonical parameter domain of a curve is the unit interval [0,1], and
+// evaluation goes through the `Eval` member inherited from `Procedural`.
+
+library Curves
+{
+    //==
+    // # Curve1D
+    //
+    // A real function of one real parameter (Procedural<Number, Number>).
+    // Evaluated over the canonical [0,1] domain; endpoints and central-difference
+    // estimates of the slope are the derivable conveniences.
+
+    // The value for a parameter; an intent-revealing alias for Eval.
+    ValueAt(self: Curve1D, t: Number): Number
+        => self.Eval(t);
+
+    // The value at the start of the canonical domain, Eval(0).
+    StartValue(self: Curve1D): Number
+        => self.Eval(0.0);
+
+    // The value at the midpoint of the canonical domain, Eval(0.5).
+    MidValue(self: Curve1D): Number
+        => self.Eval(0.5);
+
+    // The value at the end of the canonical domain, Eval(1).
+    EndValue(self: Curve1D): Number
+        => self.Eval(1.0);
+
+    // The signed change in value across the whole domain, Eval(1) - Eval(0).
+    TotalRise(self: Curve1D): Number
+        => self.Eval(1.0) - self.Eval(0.0);
+
+    // The mean of the two endpoint values.
+    AverageEndpointValue(self: Curve1D): Number
+        => self.Eval(0.0).MidPoint(self.Eval(1.0));
+
+    // A central-difference estimate of the first derivative at t using step h.
+    // Precondition: h > 0 and t +/- h stay in the domain of interest.
+    SlopeAt(self: Curve1D, t: Number, h: Number): Number
+        => (self.Eval(t + h) - self.Eval(t - h)) / (2.0 * h);
+
+    // A central-difference estimate of the second derivative at t using step h
+    // (divides by h squared). Precondition: h > 0 and h chosen so t +/- h stays
+    // within the domain of interest.
+    SecondDerivativeAt(self: Curve1D, t: Number, h: Number): Number
+        => (self.Eval(t + h) - 2.0 * self.Eval(t) + self.Eval(t - h)) / (h * h);
+
+    //==
+    // # Curve2D
+    //
+    // A continuous map from a parameter to a plane position
+    // (Procedural<Number, Point2D>). Endpoints, the chord, and secant sampling
+    // are derivable from Eval alone.
+
+    // The position for a parameter; an intent-revealing alias for Eval.
+    PointAt(self: Curve2D, t: Number): Point2D
+        => self.Eval(t);
+
+    // The curve's starting position, Eval(0).
+    StartPoint(self: Curve2D): Point2D
+        => self.Eval(0.0);
+
+    // The position at the middle of the domain, Eval(0.5).
+    MidPoint(self: Curve2D): Point2D
+        => self.Eval(0.5);
+
+    // The curve's ending position, Eval(1).
+    EndPoint(self: Curve2D): Point2D
+        => self.Eval(1.0);
+
+    // The straight-line vector from the start to the end of the curve.
+    Chord(self: Curve2D): Vector2D
+        => self.Eval(0.0).Between(self.Eval(1.0));
+
+    // The straight-line distance from the start to the end of the curve.
+    ChordLength(self: Curve2D): Number
+        => self.Eval(0.0).Between(self.Eval(1.0)).Magnitude;
+
+    // The secant vector between the positions at parameters t0 and t1.
+    SecantBetween(self: Curve2D, t0: Number, t1: Number): Vector2D
+        => self.Eval(t0).Between(self.Eval(t1));
+
+    // A finite-difference velocity estimate at t using step h: the secant over
+    // [t - h, t + h] divided by its width. Precondition: h > 0 and h chosen so
+    // t +/- h stays within the domain of interest.
+    VelocityAt(self: Curve2D, t: Number, h: Number): Vector2D
+        => self.Eval(t - h).Between(self.Eval(t + h)) / (2.0 * h);
+
+    //==
+    // # Curve3D
+    //
+    // A continuous map from a parameter to a space position
+    // (Procedural<Number, Point3D>).
+
+    // The position for a parameter; an intent-revealing alias for Eval.
+    PointAt(self: Curve3D, t: Number): Point3D
+        => self.Eval(t);
+
+    // The curve's starting position, Eval(0).
+    StartPoint(self: Curve3D): Point3D
+        => self.Eval(0.0);
+
+    // The position at the middle of the domain, Eval(0.5).
+    MidPoint(self: Curve3D): Point3D
+        => self.Eval(0.5);
+
+    // The curve's ending position, Eval(1).
+    EndPoint(self: Curve3D): Point3D
+        => self.Eval(1.0);
+
+    // The straight-line vector from the start to the end of the curve.
+    Chord(self: Curve3D): Vector3D
+        => self.Eval(0.0).Between(self.Eval(1.0));
+
+    // The straight-line distance from the start to the end of the curve.
+    ChordLength(self: Curve3D): Number
+        => self.Eval(0.0).Between(self.Eval(1.0)).Magnitude;
+
+    // The secant vector between the positions at parameters t0 and t1.
+    SecantBetween(self: Curve3D, t0: Number, t1: Number): Vector3D
+        => self.Eval(t0).Between(self.Eval(t1));
+
+    // A finite-difference velocity estimate at t using step h. Precondition:
+    // h > 0 and h chosen so t +/- h stays within the domain of interest.
+    VelocityAt(self: Curve3D, t: Number, h: Number): Vector3D
+        => self.Eval(t - h).Between(self.Eval(t + h)) / (2.0 * h);
+
+    //==
+    // # ClosedCurve2D
+    //
+    // A 2D curve satisfying Eval(0) = Eval(1). The residual gap between the two
+    // endpoints witnesses how well an implementation honours that guarantee.
+
+    // The distance between the first and last evaluated points; zero for an
+    // exactly closed curve.
+    ClosureGap(self: ClosedCurve2D): Number
+        => self.ChordLength;
+
+    // True when the endpoints coincide within the given (non-negative) tolerance.
+    IsProperlyClosed(self: ClosedCurve2D, tolerance: Number): Boolean
+        => self.ClosureGap <= tolerance;
+
+    //==
+    // # ClosedCurve3D
+    //
+    // A 3D curve satisfying Eval(0) = Eval(1).
+
+    // The distance between the first and last evaluated points; zero for an
+    // exactly closed curve.
+    ClosureGap(self: ClosedCurve3D): Number
+        => self.ChordLength;
+
+    // True when the endpoints coincide within the given (non-negative) tolerance.
+    IsProperlyClosed(self: ClosedCurve3D, tolerance: Number): Boolean
+        => self.ClosureGap <= tolerance;
+}

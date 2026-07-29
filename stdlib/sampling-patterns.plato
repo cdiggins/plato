@@ -1,0 +1,101 @@
+//==
+// # Sample patterns
+//
+// Parameter records describing how to scatter points over a planar region.
+// Generation is deterministic for a given record, including its Seed.
+
+// The scattering strategy of a planar sample pattern.
+type SamplePattern
+    = RegularGrid
+    | JitteredGrid
+    | Stratified
+    | PoissonDisk
+    | Halton
+    | Hammersley
+    | Sobol
+    | BlueNoise;
+
+// Poisson-disk scattering: random points where no two are closer than
+// MinimumDistance. MaxAttempts bounds the candidates tried per point
+// (typically 30). Produces even, organic distributions.
+type PoissonDiskPattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    MinimumDistance: Number;
+    MaxAttempts: Integer;
+    Seed: Integer;
+}
+
+// Jittered-grid scattering: one point per grid cell, displaced from the cell
+// center by JitterAmount in [0, 1] (0 = regular grid, 1 = anywhere in the
+// cell).
+type JitteredGridPattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    CellCounts: IntegerVector2;
+    JitterAmount: Number;
+    Seed: Integer;
+}
+
+// Stratified scattering: the region is divided into StrataCounts strata and
+// SamplesPerStratum points are placed uniformly at random within each,
+// bounding the variance of Monte Carlo estimates
+// (https://en.wikipedia.org/wiki/Stratified_sampling).
+type StratifiedPattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    StrataCounts: IntegerVector2;
+    SamplesPerStratum: Integer;
+    Seed: Integer;
+}
+
+// Halton low-discrepancy scattering: Count quasi-random points from radical
+// inverses in bases BaseX and BaseY, which must be coprime (typically 2
+// and 3). Deterministic and progressive: prefixes are well distributed
+// (https://en.wikipedia.org/wiki/Halton_sequence).
+type HaltonPattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    Count: Integer;
+    BaseX: Integer;
+    BaseY: Integer;
+}
+
+// Hammersley low-discrepancy scattering: point i has first coordinate i/Count
+// and second the radical inverse of i in Base (typically 2). Requires Count
+// to be fixed in advance; even better distributed than Halton
+// (https://en.wikipedia.org/wiki/Low-discrepancy_sequence).
+type HammersleyPattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    Count: Integer;
+    Base: Integer;
+}
+
+// Sobol low-discrepancy scattering: Count points of the 2D Sobol sequence,
+// skipping the first SkipCount elements (commonly to drop the origin)
+// (https://en.wikipedia.org/wiki/Sobol_sequence).
+type SobolPattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    Count: Integer;
+    SkipCount: Integer;
+}
+
+// Blue-noise scattering: Count points iteratively relaxed toward an even,
+// isotropic distribution with energy concentrated in high frequencies.
+// Ideal for stippling, dithering, and sample-position tables
+// (https://en.wikipedia.org/wiki/Colors_of_noise).
+type BlueNoisePattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    Count: Integer;
+    Seed: Integer;
+}

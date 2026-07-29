@@ -1,0 +1,32 @@
+//==
+// # Mesh concepts
+//
+// What it means to be meshable: producing an indexed triangle mesh (3D),
+// producing a planar triangulation (2D), or already exposing an explicit
+// indexed triangle set with random access. The derived functionality lives in
+// `meshes-geometry.library.plato`.
+
+// Anything that can produce an explicit indexed triangle mesh approximation
+// of itself: solids, parametric surfaces, implicit surfaces, other meshes.
+concept Meshable3D
+{
+    ToTriangleMesh(x: Self): TriangleMesh3D;
+}
+
+// Anything in the plane that can produce a triangulation of itself
+// (https://en.wikipedia.org/wiki/Polygon_triangulation): polygons, planar
+// regions, 2D meshes.
+concept Meshable2D
+{
+    Triangulate(x: Self): TriangleMesh2D;
+}
+
+// Geometry that already exposes an indexed triangle set: random access to
+// faces and vertex positions by typed index.
+concept TriangulatedGeometry3D
+    inherits Meshable3D
+{
+    TriangleCount(x: Self): Integer;
+    FaceAt(x: Self, face: FaceIndex): TriangleFace;
+    PositionAt(x: Self, vertex: VertexIndex): Point3D;
+}

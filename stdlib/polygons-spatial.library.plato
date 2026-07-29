@@ -1,0 +1,137 @@
+//==
+// # PolygonsSpatial — planar-polygon-in-space, prism, and pyramid bodies
+//
+// Area, perimeter, centroid, normal, nearest-point, volume, surface-area, bounds and
+// containment bodies for the types declared in `polygons-spatial.plato`. They are
+// written in terms of the space kernels in `polygons-kernels.library.plato`.
+//
+// Conventions fixed here:
+//
+//   * Polygon3D is assumed PLANAR (its declaration says so) and SIMPLE.
+//   * CONTAINMENT in the plane is the even-odd rule projected into the polygon's own
+//     plane, so a point exactly on a boundary edge is not classified reliably. The
+//     prism's and pyramid's height parameters ARE boundary inclusive.
+//   * `Area` and `Volume` are NON-NEGATIVE.
+
+library PolygonsSpatial
+{
+    //==
+    // # Polygon3D
+
+    // The magnitude of the vector area (Newell). Exact for a planar ring; for a
+    // non-planar ring it is the area of the ring's projection onto the best-fit
+    // plane, which the declaration's planarity invariant rules out.
+    Area(p: Polygon3D): Number
+        => p.Points.VectorArea.Magnitude;
+
+    // The total boundary length, including the closing edge.
+    Perimeter(p: Polygon3D): Number
+        => p.Points.ChainLength(true);
+
+    // The area centroid of the planar ring.
+    Centroid(p: Polygon3D): Point3D
+        => p.Points.PlanarPolygonCentroid;
+
+    // The unit normal, following the right-hand rule around the winding.
+    Normal(p: Polygon3D): Direction3D
+        => Direction3D(p.Points.VectorArea.Normalize);
+
+    // The query projected onto the polygon's plane when that projection lands
+    // inside the ring, otherwise the nearest point of the boundary. Exact for any
+    // simple planar polygon, convex or not.
+    ClosestPoint(p: Polygon3D, point: Point3D): Point3D
+    {
+        var normal = p.Points.VectorArea.Normalize;
+        var origin = p.Points.First;
+        var projected = point.Subtract(normal.Multiply(origin.Between(point).Dot(normal)));
+        return p.Points.PlanarPolygonContains(normal, projected)
+            ? projected
+            : p.Points.ClosestPointOnChain(true, point);
+    }
+
+    //==
+    // # Prism3D
+    //
+    // The base swept along Offset. Precondition throughout: Offset is not parallel
+    // to the base plane (the prism would have zero height and the containment test
+    // would divide by zero).
+
+    // |vectorArea . Offset| — the base area times the component of Offset
+    // perpendicular to the base, which is the prism's height. Correct for an
+    // oblique prism (Cavalieri's principle).
+    // https://en.wikipedia.org/wiki/Prism_(geometry)#Volume
+    Volume(p: Prism3D): Number
+        => p.Base.Points.VectorArea.Dot(p.Offset).Abs;
+
+    // The two parallel bases plus one parallelogram per base edge, each of area
+    // |edge x Offset|.
+    SurfaceArea(p: Prism3D): Number
+        => 2.0 * p.Base.Area
+        + SumOf(p.Base.Points.Count.MapRange(i => p.Base.Points.At(i)
+            .Between(p.Base.Points.AtModulo(i + 1)).Cross(p.Offset).Magnitude));
+
+    // The base centroid displaced by half the sweep: the prism is uniform along
+    // Offset.
+    Centroid(p: Prism3D): Point3D
+        => p.Base.Centroid.Add(p.Offset.Multiply(0.5));
+
+    // The union of the base's bounds and the swept copy's.
+    Bounds(p: Prism3D): Bounds3D
+        => UnionOfBounds(p.Base.Bounds, p.Base.Bounds.TranslateBounds(p.Offset));
+
+    // True when the query's sweep parameter lies in [0, 1] AND the query slid back
+    // along Offset onto the base plane lands inside the base ring.
+    Contains(p: Prism3D, point: Point3D): Boolean
+    {
+        var normal = p.Base.Points.VectorArea.Normalize;
+        var origin = p.Base.Points.First;
+        var s = origin.Between(point).Dot(normal) / p.Offset.Dot(normal);
+        return s >= 0.0 && s <= 1.0
+            && p.Base.Points.PlanarPolygonContains(normal, point.Subtract(p.Offset.Multiply(s)));
+    }
+
+    //==
+    // # Pyramid3D
+    //
+    // Precondition throughout: the Apex is not in the base plane (the declaration's
+    // stated degenerate case).
+
+    // (1/3) * baseArea * height, with the height the perpendicular distance from
+    // the Apex to the base plane — written as |vectorArea . (Apex - P0)| / 3.
+    // https://en.wikipedia.org/wiki/Pyramid_(geometry)#Volume
+    Volume(y: Pyramid3D): Number
+        => y.Base.Points.VectorArea.Dot(y.Base.Points.First.Between(y.Apex)).Abs / 3.0;
+
+    // The base plus one triangle per base edge, each spanned by that edge and the
+    // Apex.
+    SurfaceArea(y: Pyramid3D): Number
+        => y.Base.Area
+        + SumOf(y.Base.Points.Count.MapRange(i => 0.5 * y.Base.Points.At(i)
+            .Between(y.Base.Points.AtModulo(i + 1))
+            .Cross(y.Base.Points.At(i).Between(y.Apex)).Magnitude));
+
+    // One quarter of the way from the base centroid towards the Apex: the standard
+    // centroid of any solid cone over a planar base.
+    // https://en.wikipedia.org/wiki/Pyramid_(geometry)
+    Centroid(y: Pyramid3D): Point3D
+        => y.Base.Centroid.Add(y.Base.Centroid.Between(y.Apex).Multiply(0.25));
+
+    // The union of the base's bounds and the Apex.
+    Bounds(y: Pyramid3D): Bounds3D
+        => UnionOfBounds(y.Base.Bounds, Bounds3D(y.Apex, y.Apex));
+
+    // True when the query lies between the Apex plane-height and the base
+    // (parameter t in [0, 1], t = 0 at the Apex, t = 1 in the base plane) AND the
+    // ray from the Apex through the query meets the base plane inside the base
+    // ring. Boundary inclusive on t.
+    Contains(y: Pyramid3D, point: Point3D): Boolean
+    {
+        var normal = y.Base.Points.VectorArea.Normalize;
+        var origin = y.Base.Points.First;
+        var t = 1.0 - origin.Between(point).Dot(normal)
+            / origin.Between(y.Apex).Dot(normal);
+        return t >= 0.0 && t <= 1.0
+            && (t <= 0.0 || y.Base.Points.PlanarPolygonContains(normal,
+                y.Apex.Add(y.Apex.Between(point).Multiply(1.0 / t))));
+    }
+}

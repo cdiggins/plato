@@ -1,0 +1,117 @@
+//==
+// # SDF modifier application
+//
+// The parameter records declared in `implicit-sdf-modifiers.plato`, applied to
+// a source field. Value modifiers reshape an already-sampled distance; domain
+// modifiers reshape the position BEFORE the source is sampled, so they compose
+// with `MapDomain`. Domain modifiers other than repetition preserve exact
+// distances; repetition, twist, bend, and displacement return bounds.
+
+library ImplicitSdfModifiers
+{
+    // The rounded distance: subtracting the radius inflates the shape and rounds
+    // its edges. (IQ: opRound.)
+    ApplyToDistance(self: SdfRoundingModifier, distance: Number): Number
+        => distance - self.Radius;
+
+    // The shell distance: the region within half of Thickness on either side of
+    // the source surface. (IQ: opOnion, single layer.)
+    ApplyToDistance(self: SdfShellModifier, distance: Number): Number
+        => distance.Abs - self.Thickness * 0.5;
+
+    // The distance to the outermost of the concentric shells. Repeat this with the
+    // distance it returns to peel the next layer; Count layers reach TotalDepth.
+    ApplyToDistance(self: SdfOnionModifier, distance: Number): Number
+        => distance.Abs - self.Thickness;
+
+    // How far the full onion reaches inward from the source surface: one thickness
+    // per shell.
+    TotalDepth(self: SdfOnionModifier): Number
+        => self.Thickness * self.Count.ToNumber;
+
+    // The displaced distance: the source distance offset by the sampled scalar
+    // field value scaled by Amplitude. The result is a bound, not exact.
+    // (IQ: opDisplace.)
+    ApplyToDistance(self: SdfDisplacementModifier3D, distance: Number, sourceValue: Number): Number
+        => distance + self.Amplitude * sourceValue;
+
+    // The position of this modifier's displacement field in the caller-supplied
+    // list of spatial scalar fields.
+    SourceFieldIndex(self: SdfDisplacementModifier3D): Integer
+        => self.Source.Value;
+
+    // The folded position for an elongated planar shape: the source is sampled at
+    // the position pulled back toward the origin by up to Amount on each axis,
+    // which inserts a straight section of that extent. (IQ: opElongate.)
+    ApplyToDomain(self: SdfElongationModifier2D, point: Point2D): Point2D
+        => Point2D(
+            point.X - point.X.Clamp(self.Amount.X.Negative, self.Amount.X),
+            point.Y - point.Y.Clamp(self.Amount.Y.Negative, self.Amount.Y));
+
+    // The folded position for an elongated spatial shape. (IQ: opElongate.)
+    ApplyToDomain(self: SdfElongationModifier3D, point: Point3D): Point3D
+        => Point3D(
+            point.X - point.X.Clamp(self.Amount.X.Negative, self.Amount.X),
+            point.Y - point.Y.Clamp(self.Amount.Y.Negative, self.Amount.Y),
+            point.Z - point.Z.Clamp(self.Amount.Z.Negative, self.Amount.Z));
+
+    // One coordinate folded into its lattice cell, centred on the cell: the
+    // coordinate minus the nearest whole multiple of period. Repetition is limited
+    // to count cells on either side of the origin; a non-positive count repeats
+    // without limit. Precondition: period is positive. (IQ: opRepetition/opRepLim.)
+    RepeatedCoordinate(coordinate: Number, period: Number, count: Integer): Number {
+        var cell = (coordinate / period + 0.5).Floor;
+        var limit = count.ToNumber;
+        var bounded = count > 0 ? cell.Clamp(limit.Negative, limit) : cell;
+        return coordinate - period * bounded;
+    }
+
+    // The position within its lattice cell for a planar tiling: the source is
+    // sampled once per cell of the given period, bounded by Counts per axis.
+    ApplyToDomain(self: SdfRepetitionModifier2D, point: Point2D): Point2D
+        => Point2D(
+            RepeatedCoordinate(point.X, self.Period.X, self.Counts.X),
+            RepeatedCoordinate(point.Y, self.Period.Y, self.Counts.Y));
+
+    // The position within its lattice cell for a spatial tiling, bounded by Counts.
+    ApplyToDomain(self: SdfRepetitionModifier3D, point: Point3D): Point3D
+        => Point3D(
+            RepeatedCoordinate(point.X, self.Period.X, self.Counts.X),
+            RepeatedCoordinate(point.Y, self.Period.Y, self.Counts.Y),
+            RepeatedCoordinate(point.Z, self.Period.Z, self.Counts.Z));
+
+    // The half-extent of a bounded planar tiling: the distance from the origin to
+    // the outer face of the last repeated cell on each axis. Meaningless on an
+    // axis whose count is non-positive (that axis repeats without limit).
+    RepetitionExtent(self: SdfRepetitionModifier2D): Vector2D
+        => Vector2D(
+            self.Period.X * self.Counts.X.ToNumber,
+            self.Period.Y * self.Counts.Y.ToNumber);
+
+    // The half-extent of a bounded spatial tiling; see the planar form.
+    RepetitionExtent(self: SdfRepetitionModifier3D): Vector3D
+        => Vector3D(
+            self.Period.X * self.Counts.X.ToNumber,
+            self.Period.Y * self.Counts.Y.ToNumber,
+            self.Period.Z * self.Counts.Z.ToNumber);
+
+    // The point rotated about the Z axis by the given angle: the XY components
+    // turn, Z is unchanged. Shared by the twist and bend domain modifiers.
+    RotatedAboutZ(point: Point3D, angle: Angle): Point3D
+        => Point3D(
+            point.X * angle.Cos - point.Y * angle.Sin,
+            point.X * angle.Sin + point.Y * angle.Cos,
+            point.Z);
+
+    // The untwisted position for a shape twisted about the Z axis: each slice is
+    // rotated back by AnglePerUnit times its height before the source is sampled.
+    // The result is a bound, not an exact distance. (IQ: opTwist.)
+    ApplyToDomain(self: SdfTwistModifier3D, point: Point3D): Point3D
+        => RotatedAboutZ(point, self.AnglePerUnit * point.Z);
+
+    // The unbent position for a shape bent about the Y axis: the turn accumulates
+    // with distance along X at the given curvature. The result is a bound, not an
+    // exact distance. (IQ: opCheapBend.)
+    ApplyToDomain(self: SdfBendModifier3D, point: Point3D): Point3D
+        => RotatedAboutZ(point, (self.Curvature * point.X).Angle);
+}

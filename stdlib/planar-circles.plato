@@ -1,0 +1,59 @@
+//==
+// # Circles and circle-derived planar regions
+//
+// The disk and the regions cut from or swept around it: the annulus between two
+// concentric circles, the pie-slice sector, the chord-bounded segment, and the
+// stadium traced by sweeping a disk along a segment. Angles are measured from +X,
+// counter-clockwise; winding convention: counter-clockwise is positive.
+
+// The disk of all points within Radius of Center; its boundary is the circle
+// proper (https://en.wikipedia.org/wiki/Circle). Radius is non-negative.
+type Circle
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D, NearestPoint2D, SupportMappable2D
+{
+    Center: Point2D;
+    Radius: Number;
+}
+
+// The ring-shaped region between two concentric circles.
+// Invariant: 0 <= InnerRadius <= OuterRadius.
+// (https://en.wikipedia.org/wiki/Annulus_(mathematics))
+type Annulus
+    implements Geometry2D, ClosedShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
+{
+    Center: Point2D;
+    InnerRadius: Number;
+    OuterRadius: Number;
+}
+
+// A pie slice: the region swept from the circle's center over the angular
+// interval Sweep, bounded by two radii and the arc between them. Angles are
+// measured from +X, counter-clockwise.
+// (https://en.wikipedia.org/wiki/Circular_sector)
+type CircularSector
+    implements Geometry2D, ClosedShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
+{
+    Circle: Circle;
+    Sweep: AngleInterval;
+}
+
+// The region between a chord and the arc it subtends (a sector minus its inner
+// triangle); always convex. Sweep gives the arc's angular interval on the circle.
+// (https://en.wikipedia.org/wiki/Circular_segment)
+type CircularSegment
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
+{
+    Circle: Circle;
+    Sweep: AngleInterval;
+}
+
+// A stadium: all points within Radius of the segment from A to B. Equivalently
+// the convex hull of two equal circles at A and B.
+// (https://en.wikipedia.org/wiki/Stadium_(geometry))
+type Capsule2D
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D, NearestPoint2D, SupportMappable2D
+{
+    A: Point2D;
+    B: Point2D;
+    Radius: Number;
+}

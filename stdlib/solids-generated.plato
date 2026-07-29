@@ -1,0 +1,54 @@
+//==
+// # Profile-generated solids
+//
+// Closed, bounded volumes formed by carrying a planar profile through space:
+// extrude, revolve, loft, and sweep (https://en.wikipedia.org/wiki/Solid_geometry).
+// Each names the profile it starts from and the placement or path that carries
+// it; the resulting boundary is watertight because the generator caps both ends.
+
+//==
+// # Profile-generated solids
+
+// The solid formed by extruding a planar profile (with optional holes) along
+// the placement frame's Z axis for the given Height
+// (https://en.wikipedia.org/wiki/Extrusion). The profile lies in the frame's
+// XY plane.
+type ExtrudedSolid
+    implements Solid
+{
+    Profile: PolygonWithHoles2D;
+    Placement: Frame3D;
+    Height: Number;
+}
+
+// The solid swept by revolving a planar profile about an axis
+// (https://en.wikipedia.org/wiki/Solid_of_revolution). The profile's X
+// coordinate is the radial distance from the axis and its Y coordinate runs
+// along the axis; a partial sweep over Angles is capped by two flat faces.
+type RevolvedSolid
+    implements Solid
+{
+    Profile: PolygonWithHoles2D;
+    Axis: Line3D;
+    Angles: AngleInterval;
+}
+
+// The solid interpolating an ordered stack of planar closed cross-sections,
+// capped by the first and last sections (https://en.wikipedia.org/wiki/Loft_(3D)).
+// Sections must share point counts; Closed joins the last section back to the
+// first into a ring instead.
+type LoftedSolid
+    implements Solid
+{
+    Sections: Array<Polygon3D>;
+    Closed: Boolean;
+}
+
+// The solid swept by carrying a planar profile (with optional holes) along a
+// path in the path's rotation-minimizing frame, capped at both path ends.
+type SweptSolid
+    implements Solid
+{
+    Profile: PolygonWithHoles2D;
+    Path: Curve3D;
+}

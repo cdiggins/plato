@@ -1,0 +1,13 @@
+//==
+// # Geospatial concepts
+//
+// The shared interface of regions on a planet's surface: the containment test
+// every geospatial region shape answers.
+
+// A region on the planet's surface that can test whether it contains a
+// geodetic coordinate (altitude is ignored).
+concept GeoRegion
+    inherits Value
+{
+    ContainsCoordinate(x: Self, coordinate: GeoCoordinate): Boolean;
+}

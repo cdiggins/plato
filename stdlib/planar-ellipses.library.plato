@@ -1,0 +1,112 @@
+//==
+// # PlanarEllipses — ellipse and superellipse bodies
+//
+// Area, perimeter, bounds, centroid and containment bodies for the types declared in
+// `planar-ellipses.plato`. Both shapes reduce to an axis-aligned test in the frame
+// rotated by `Rotation` about `Center`, so every body goes through `LocalOffset`
+// (`planar-shapes.library.plato`).
+//
+// Conventions fixed here: shapes are PLACED, not origin-centred; `Area` is
+// non-negative; CONTAINMENT is boundary-INCLUSIVE (each test is a `<=` on the
+// defining inequality). Two measures have no elementary closed form and are called
+// out on the body: the ellipse perimeter is Ramanujan's second approximation, and
+// the superellipse area and perimeter are left unimplemented.
+
+library PlanarEllipses
+{
+    //==
+    // # Ellipse
+    //
+    // https://en.wikipedia.org/wiki/Ellipse
+
+    // pi * a * b. https://en.wikipedia.org/wiki/Ellipse#Area
+    Area(e: Ellipse): Number
+        => Number.Pi * e.SemiAxes.X * e.SemiAxes.Y;
+
+    // APPROXIMATE. The circumference of an ellipse is a complete elliptic integral
+    // of the second kind and has NO elementary closed form; this is RAMANUJAN'S
+    // SECOND APPROXIMATION,
+    //     P ~= pi (a + b) (1 + 3h / (10 + sqrt(4 - 3h))),  h = ((a-b)/(a+b))^2,
+    // which is exact for a circle (h = 0) and degrades monotonically with
+    // eccentricity: the worst case is the fully degenerate ellipse b = 0, where it
+    // returns (14/11)*pi*a = 3.99969*a against the true 4*a — a relative error of
+    // about 7.5e-5. For any ellipse with b/a >= 0.1 the relative error is below
+    // 1e-8. https://en.wikipedia.org/wiki/Ellipse#Circumference
+    Perimeter(e: Ellipse): Number
+    {
+        var a = e.SemiAxes.X;
+        var b = e.SemiAxes.Y;
+        var h = ((a - b) / (a + b)).Square;
+        return Number.Pi * (a + b) * (1.0 + 3.0 * h / (10.0 + (4.0 - 3.0 * h).Sqrt));
+    }
+
+    // The centre, by the ellipse's point symmetry.
+    Centroid(e: Ellipse): Point2D
+        => e.Center;
+
+    // TIGHT bounds for a rotated ellipse: the half-extents are
+    // sqrt(a^2 cos^2 phi + b^2 sin^2 phi) and sqrt(a^2 sin^2 phi + b^2 cos^2 phi),
+    // the support of the ellipse along each world axis.
+    // https://en.wikipedia.org/wiki/Ellipse#General_ellipse
+    Bounds(e: Ellipse): Bounds2D
+    {
+        var c = e.Rotation.Cos;
+        var s = e.Rotation.Sin;
+        var dx = ((e.SemiAxes.X * c).Square + (e.SemiAxes.Y * s).Square).Sqrt;
+        var dy = ((e.SemiAxes.X * s).Square + (e.SemiAxes.Y * c).Square).Sqrt;
+        return CenteredBounds(e.Center, dx, dy);
+    }
+
+    // True when (x/a)^2 + (y/b)^2 <= 1 in the ellipse's own frame. Boundary
+    // inclusive.
+    Contains(e: Ellipse, point: Point2D): Boolean
+    {
+        var q = LocalOffset(e.Center, e.Rotation, point);
+        return (q.X / e.SemiAxes.X).Square + (q.Y / e.SemiAxes.Y).Square <= 1.0;
+    }
+
+    //==
+    // # SuperEllipse
+    //
+    // https://en.wikipedia.org/wiki/Superellipse
+
+    // The centre, by the superellipse's point symmetry (it is symmetric in both
+    // local axes for every exponent).
+    Centroid(se: SuperEllipse): Point2D
+        => se.Center;
+
+    // CONSERVATIVE, not tight: the world-axis-aligned box of the ROTATED local
+    // bounding rectangle [-a, a] x [-b, b], which contains the superellipse for
+    // every exponent. Tight only at Exponent -> infinity (the rectangle itself);
+    // at Exponent = 2 the tight box is the ellipse formula above, which is smaller.
+    // TODO(content): the tight support function of a superellipse is
+    // a*|cos t|^(2/n) style and is not attempted here.
+    Bounds(se: SuperEllipse): Bounds2D
+    {
+        var c = se.Rotation.Cos.Abs;
+        var s = se.Rotation.Sin.Abs;
+        return CenteredBounds(se.Center,
+            se.SemiAxes.X * c + se.SemiAxes.Y * s,
+            se.SemiAxes.X * s + se.SemiAxes.Y * c);
+    }
+
+    // True when |x/a|^n + |y/b|^n <= 1 in the superellipse's own frame — the
+    // defining Lame inequality. Boundary inclusive.
+    Contains(se: SuperEllipse, point: Point2D): Boolean
+    {
+        var q = LocalOffset(se.Center, se.Rotation, point);
+        return (q.X / se.SemiAxes.X).Abs.Pow(se.Exponent)
+            + (q.Y / se.SemiAxes.Y).Abs.Pow(se.Exponent) <= 1.0;
+    }
+
+    // TODO(content): Area(SuperEllipse) is 4*a*b*Gamma(1 + 1/n)^2 / Gamma(1 + 2/n)
+    // (https://en.wikipedia.org/wiki/Superellipse#Mathematical_features). The gamma
+    // function does not exist anywhere in this tree — `intrinsics.plato` has no
+    // Gamma and no Lanczos/Stirling helper lives in any library — so the formula is
+    // not writable. Left unimplemented rather than guessed. Needs: `Gamma(Number)`.
+    //
+    // TODO(content): Perimeter(SuperEllipse) has no closed form at all for general
+    // n and no named approximation of the Ramanujan grade. It needs a numerical arc
+    // length integral over the parametrisation, which requires a quadrature helper
+    // this tree does not have. Left unimplemented.
+}

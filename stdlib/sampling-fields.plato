@@ -1,0 +1,52 @@
+//==
+// # Sampled fields on grids
+//
+// Field values stored one per grid node (lattice point), so each Values
+// extent equals the grid's cell count plus one along that axis. Evaluation
+// between nodes interpolates; outside the bounds, values clamp to the edge
+// unless a resampling descriptor says otherwise.
+
+// A planar scalar field stored on grid nodes; evaluation interpolates
+// bilinearly. Backs heightmaps, masks, and discretized potentials.
+type SampledScalarGrid2D
+    implements Value, ScalarField2D
+{
+    Grid: RegularGrid2D;
+    Values: Array2D<Number>;
+}
+
+// A spatial scalar field stored on grid nodes; evaluation interpolates
+// trilinearly. Backs voxel densities and simulation quantities.
+type SampledScalarGrid3D
+    implements Value, ScalarField3D
+{
+    Grid: RegularGrid3D;
+    Values: Array3D<Number>;
+}
+
+// A planar vector field stored on grid nodes; evaluation interpolates each
+// component bilinearly. Backs 2D flow fields and displacement maps.
+type SampledVectorGrid2D
+    implements Value, VectorField2D
+{
+    Grid: RegularGrid2D;
+    Values: Array2D<Vector2D>;
+}
+
+// A spatial vector field stored on grid nodes; evaluation interpolates each
+// component trilinearly. Backs velocity volumes and deformation lattices.
+type SampledVectorGrid3D
+    implements Value, VectorField3D
+{
+    Grid: RegularGrid3D;
+    Values: Array3D<Vector3D>;
+}
+
+// A planar color field stored on grid nodes; evaluation interpolates each
+// channel bilinearly. An image with explicit world-space placement.
+type SampledColorGrid2D
+    implements Value, ColorField2D
+{
+    Grid: RegularGrid2D;
+    Values: Array2D<Color>;
+}

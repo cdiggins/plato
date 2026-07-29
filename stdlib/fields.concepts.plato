@@ -1,0 +1,90 @@
+//==
+// # Field concepts
+//
+// The root Field capability and the point-domain field concepts built on it:
+// scalar, vector, direction, color, complex, and tensor fields over the plane
+// and over space. Every field is Procedural over a point domain, so curves,
+// easings, and fields share one evaluation vocabulary. Concrete field types
+// (noise, SDFs, sampled grids) implement the concepts declared here; the
+// derived bodies live in the `fields-implicits-*.library.plato` files.
+// See https://en.wikipedia.org/wiki/Scalar_field and
+// https://en.wikipedia.org/wiki/Vector_field.
+
+// A pure mapping from positions in a domain to values in a range. The root
+// capability for every spatial field; evaluation is side-effect free and
+// deterministic for a given field value.
+concept Field<TDomain, TValue>
+    inherits Procedural<TDomain, TValue>
+{ }
+
+// A real-valued field over the 2D plane: heightmaps, density maps, masks,
+// potentials, and signed distances
+// (https://en.wikipedia.org/wiki/Scalar_field).
+concept ScalarField2D
+    inherits Field<Point2D, Number>
+{ }
+
+// A real-valued field over 3D space: densities, potentials, temperatures,
+// implicit surfaces, and signed distances
+// (https://en.wikipedia.org/wiki/Implicit_surface).
+concept ScalarField3D
+    inherits Field<Point3D, Number>
+{ }
+
+// A field assigning a 2D vector to every point of the plane: gradients,
+// flows, displacement maps, and wind over a surface
+// (https://en.wikipedia.org/wiki/Vector_field).
+concept VectorField2D
+    inherits Field<Point2D, Vector2D>
+{ }
+
+// A field assigning a 3D vector to every point of space: velocity fields,
+// force fields, and displacement fields
+// (https://en.wikipedia.org/wiki/Vector_field).
+concept VectorField3D
+    inherits Field<Point3D, Vector3D>
+{ }
+
+// A field of unit-length 2D directions: orientation fields for strokes,
+// hatching, and anisotropy. Magnitude carries no information.
+concept DirectionField2D
+    inherits Field<Point2D, Direction2D>
+{ }
+
+// A field of unit-length 3D directions: normal fields, grain and fiber
+// orientation, and guide fields for grooming or flow alignment.
+concept DirectionField3D
+    inherits Field<Point3D, Direction3D>
+{ }
+
+// A field assigning a color to every point of the plane: procedural textures,
+// gradients, and image-like sources evaluated in continuous coordinates.
+concept ColorField2D
+    inherits Field<Point2D, Color>
+{ }
+
+// A field assigning a color to every point of space: solid procedural
+// textures such as wood, marble, and volumetric tints.
+concept ColorField3D
+    inherits Field<Point3D, Color>
+{ }
+
+// A complex-valued field over the plane: fractal iteration, conformal
+// mapping, and 2D wave phenomena.
+concept ComplexField2D
+    inherits Field<Point2D, Complex>
+{ }
+
+// A field of 2x2 matrices over the plane: 2D stress, strain, and metric
+// tensors, and local linearizations of planar maps
+// (https://en.wikipedia.org/wiki/Tensor_field).
+concept TensorField2D
+    inherits Field<Point2D, Matrix2x2>
+{ }
+
+// A field of 3x3 matrices over space: stress and strain tensors, diffusion
+// tensors, and velocity-gradient tensors
+// (https://en.wikipedia.org/wiki/Tensor_field).
+concept TensorField3D
+    inherits Field<Point3D, Matrix3x3>
+{ }

@@ -1,0 +1,230 @@
+//==
+// # CurvesCapabilities — derived functions for the curve capability concepts
+//
+// Bodies for the concepts that a curve may additionally satisfy, declared under
+// "Curve capabilities" in `curves.concepts.plato`: periodicity, first
+// derivatives in the plane and in space, a moving frame, planarity, polar form,
+// and arc-length parameterization.
+//
+// TODO(concept-gap): a true tangent or curvature by analytic differentiation is
+// still not derivable — it needs the parameter derivative of the evaluation, which
+// none of these concepts expose (trigonometry and the square root are now available
+// via Angle.Cos/Sin and Number.Sqrt, so the polar-to-Cartesian conversion below is
+// derived directly). Analytic differential helpers are left to the concrete types.
+
+library CurvesCapabilities
+{
+    //==
+    // # PeriodicCurve
+    //
+    // A curve whose parameterization repeats with an explicit Period (Number).
+    // PeriodicCurve<TRange> now inherits Procedural<Number, TRange> as well as
+    // Periodic<Number>, so both parameter arithmetic on the period AND wrapped
+    // evaluation are derivable. TRange is the evaluated value type.
+
+    // Folds a parameter into the half-open interval [0, Period). The extra
+    // "+ Period then modulo" corrects the truncated remainder, which is negative
+    // for negative t. Precondition: Period > 0.
+    WrapParameter(self: PeriodicCurve<$TRange>, t: Number): Number
+        => ((t % self.Period) + self.Period) % self.Period;
+
+    // The value at parameter t evaluated on the primary period: Eval(t mod Period).
+    // Any t (negative or beyond one period) maps to the equivalent value in
+    // [0, Period). Precondition: Period > 0.
+    EvalWrapped(self: PeriodicCurve<$TRange>, t: Number): $TRange
+        => self.Eval(self.WrapParameter(t));
+
+    // The fraction of one period that t represents, in [0, 1). Precondition:
+    // Period > 0.
+    NormalizedPhase(self: PeriodicCurve<$TRange>, t: Number): Number
+        => self.WrapParameter(t) / self.Period;
+
+    // Half of one period.
+    HalfPeriod(self: PeriodicCurve<$TRange>): Number
+        => self.Period.Half;
+
+    // Floor(t / Period): the index of the period containing t (-1 for t just
+    // below zero, not truncation). Precondition: Period > 0.
+    PeriodCount(self: PeriodicCurve<$TRange>, t: Number): Integer
+        => (t / self.Period).Floor.ToInteger;
+
+    // The number of repetitions per unit parameter (the reciprocal of the
+    // period). Precondition: Period > 0.
+    Frequency(self: PeriodicCurve<$TRange>): Number
+        => self.Period.Inverse;
+
+    //==
+    // # DifferentiableCurve2D
+    //
+    // A 2D curve with a first derivative: TangentAt is the (unnormalized)
+    // velocity, CurvatureAt is the signed plane curvature (positive turning
+    // left). Unit tangents, plane normals, and the radius of curvature follow.
+
+    // The unit-length tangent at t. Precondition: the tangent is non-zero.
+    UnitTangentAt(self: DifferentiableCurve2D, t: Number): Vector2D
+        => self.TangentAt(t).Normalize;
+
+    // The instantaneous speed (tangent magnitude) at t.
+    SpeedAt(self: DifferentiableCurve2D, t: Number): Number
+        => self.TangentAt(t).Magnitude;
+
+    // The left-hand normal at t: the tangent rotated a quarter turn
+    // counter-clockwise, (-y, x). Not normalized.
+    LeftNormalAt(self: DifferentiableCurve2D, t: Number): Vector2D
+        => (-self.TangentAt(t).Y, self.TangentAt(t).X);
+
+    // The unit left-hand normal at t. Precondition: the tangent is non-zero.
+    UnitNormalAt(self: DifferentiableCurve2D, t: Number): Vector2D
+        => self.LeftNormalAt(t).Normalize;
+
+    // The curvature vector at t: the signed plane curvature scaled by the unit
+    // left normal, pointing toward the centre of curvature. Precondition: the
+    // tangent is non-zero.
+    CurvatureVectorAt(self: DifferentiableCurve2D, t: Number): Vector2D
+        => self.UnitNormalAt(t) * self.CurvatureAt(t);
+
+    // The radius of curvature at t: the reciprocal of the unsigned curvature.
+    // Precondition: the curvature is non-zero (a straight point has infinite
+    // radius). See https://en.wikipedia.org/wiki/Radius_of_curvature.
+    RadiusOfCurvatureAt(self: DifferentiableCurve2D, t: Number): Number
+        => 1.0 / self.CurvatureAt(t).Abs;
+
+    // True when the curve turns to the left at t (positive signed curvature).
+    TurnsLeftAt(self: DifferentiableCurve2D, t: Number): Boolean
+        => self.CurvatureAt(t) > 0.0;
+
+    // True when the curve is (near) straight at t: unsigned curvature within the
+    // given non-negative tolerance of zero.
+    IsStraightAt(self: DifferentiableCurve2D, t: Number, tolerance: Number): Boolean
+        => self.CurvatureAt(t).Abs <= tolerance;
+
+    //==
+    // # DifferentiableCurve3D
+    //
+    // A 3D curve with a first derivative: TangentAt (velocity), CurvatureAt
+    // (unsigned space curvature), TorsionAt (departure from the osculating
+    // plane).
+
+    // The unit-length tangent at t. Precondition: the tangent is non-zero.
+    UnitTangentAt(self: DifferentiableCurve3D, t: Number): Vector3D
+        => self.TangentAt(t).Normalize;
+
+    // The instantaneous speed (tangent magnitude) at t.
+    SpeedAt(self: DifferentiableCurve3D, t: Number): Number
+        => self.TangentAt(t).Magnitude;
+
+    // The radius of curvature at t: the reciprocal of the (unsigned space)
+    // curvature. Precondition: the curvature is non-zero.
+    RadiusOfCurvatureAt(self: DifferentiableCurve3D, t: Number): Number
+        => 1.0 / self.CurvatureAt(t);
+
+    // True when the curve is (near) straight at t: the unsigned space curvature
+    // is within the given non-negative tolerance of zero.
+    IsStraightAt(self: DifferentiableCurve3D, t: Number, tolerance: Number): Boolean
+        => self.CurvatureAt(t) <= tolerance;
+
+    // True when the curve is (near) planar at t: torsion within the given
+    // non-negative tolerance of zero.
+    IsPlanarAt(self: DifferentiableCurve3D, t: Number, tolerance: Number): Boolean
+        => self.TorsionAt(t).Abs <= tolerance;
+
+    //==
+    // # FramedCurve3D
+    //
+    // A 3D curve carrying a continuous moving frame whose origin lies on the
+    // curve and whose Z axis is tangent. The frame's axes give ready-made
+    // tangent, normal, and binormal directions for sweeps and camera paths.
+
+    // The frame origin at t, which lies on the curve.
+    FrameOriginAt(self: FramedCurve3D, t: Number): Point3D
+        => self.FrameAt(t).Origin;
+
+    // The unit tangent direction at t (the frame's Z axis).
+    TangentDirectionAt(self: FramedCurve3D, t: Number): Direction3D
+        => self.FrameAt(t).ZAxis;
+
+    // The unit normal direction at t (the frame's X axis).
+    NormalDirectionAt(self: FramedCurve3D, t: Number): Direction3D
+        => self.FrameAt(t).XAxis;
+
+    // The unit binormal direction at t (the frame's Y axis).
+    BinormalDirectionAt(self: FramedCurve3D, t: Number): Direction3D
+        => self.FrameAt(t).YAxis;
+
+    //==
+    // # PlanarCurve3D
+    //
+    // A 3D curve lying entirely within a single plane, reported by CurvePlane.
+
+    // The unit normal of the plane the curve lies in.
+    PlaneNormal(self: PlanarCurve3D): Direction3D
+        => self.CurvePlane.Normal;
+
+    // The signed offset of the curve's plane from the origin along its normal.
+    PlaneOffset(self: PlanarCurve3D): Number
+        => self.CurvePlane.Distance;
+
+    //==
+    // # PolarCurve2D
+    //
+    // A plane curve in polar form: RadiusAt(theta) gives the distance from the
+    // origin at angle theta.
+
+    // The polar coordinate (radius, angle) of the curve at the given angle.
+    PolarPositionAt(self: PolarCurve2D, angle: Angle): PolarCoordinate
+        => (self.RadiusAt(angle), angle);
+
+    // The Cartesian position of the curve at the given angle:
+    // (RadiusAt(angle)*cos angle, RadiusAt(angle)*sin angle). Note: evaluates
+    // RadiusAt twice; concrete types with expensive radii should override.
+    CartesianPositionAt(self: PolarCurve2D, angle: Angle): Point2D
+        => (self.RadiusAt(angle) * angle.Cos, self.RadiusAt(angle) * angle.Sin);
+
+    // The diameter across the origin implied by the radius at the given angle.
+    DiameterAt(self: PolarCurve2D, angle: Angle): Number
+        => self.RadiusAt(angle).Double;
+
+    // True when the curve passes through the pole at the given angle: radius
+    // within the given non-negative tolerance of zero.
+    IsAtPole(self: PolarCurve2D, angle: Angle, tolerance: Number): Boolean
+        => self.RadiusAt(angle).Abs <= tolerance;
+
+    //==
+    // # ArcLengthParameterized<TPoint>
+    //
+    // A curve measurable by arc length: ArcLength is the total length,
+    // PointAtLength walks a distance from the start, ParameterAtLength converts a
+    // distance to the canonical parameter. TPoint is the concrete point type
+    // (https://en.wikipedia.org/wiki/Arc_length).
+
+    // The point at the start of the curve (zero distance travelled).
+    ArcStartPoint(self: ArcLengthParameterized<$T>): $T
+        => self.PointAtLength(0.0);
+
+    // The point at the far end of the curve (the full arc length travelled).
+    ArcEndPoint(self: ArcLengthParameterized<$T>): $T
+        => self.PointAtLength(self.ArcLength);
+
+    // The point halfway along the curve by arc length.
+    ArcMidPoint(self: ArcLengthParameterized<$T>): $T
+        => self.PointAtLength(self.ArcLength.Half);
+
+    // The point a given fraction of the total length along the curve. Fraction 0
+    // is the start, 1 the end. Precondition: fraction in [0, 1].
+    PointAtLengthFraction(self: ArcLengthParameterized<$T>, fraction: Number): $T
+        => self.PointAtLength(self.ArcLength * fraction);
+
+    // The canonical parameter a given fraction of the total length along the
+    // curve. Precondition: fraction in [0, 1].
+    ParameterAtLengthFraction(self: ArcLengthParameterized<$T>, fraction: Number): Number
+        => self.ParameterAtLength(self.ArcLength * fraction);
+
+    // The fraction of the total length that the given distance represents, in
+    // [0, 1] for distances within the curve. Precondition: ArcLength > 0.
+    LengthFraction(self: ArcLengthParameterized<$T>, length: Number): Number
+        => length / self.ArcLength;
+
+    // True when a distance lies within the curve, i.e. in [0, ArcLength].
+    IsValidLength(self: ArcLengthParameterized<$T>, length: Number): Boolean
+        => length >= 0.0 && length <= self.ArcLength;
+}

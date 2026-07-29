@@ -1,0 +1,90 @@
+//==
+// # CurvesSampling — discretizing curves and surfaces
+//
+// Evaluating a curve, a polar curve, or a parametric surface at evenly spaced
+// parameters, and turning the samples into polylines. Split out of the curve
+// concept bodies because discretization is a single concern with a single
+// convention (open curves include both endpoints, closed ones omit the duplicate
+// seam) and because it is the one part of the curve package that reaches into
+// the P2 collection primitives.
+//
+// Successor to plato-src/curves.plato's Sample / ToPolyLine2D / ToPolyLine3D
+// (v1's inner-capital `Line` spelling dropped).
+
+library CurvesSampling
+{
+    //==
+    // # Sampling and discretization
+    //
+    // Evaluating a curve or surface at evenly spaced parameters. The
+    // discretization primitives are `Fractions` (endpoints included, the right
+    // form for an OPEN curve) and `FractionsExclusive` (upper end omitted, the
+    // right form for a CLOSED one), both in
+    // `collections-functional.library.plato` (P2). P6 may call P2.
+    //
+    // A closed curve satisfies Eval(0) = Eval(1), so sampling it with
+    // `Fractions` would duplicate the seam point; the periodic samplers below
+    // use `FractionsExclusive` and hand `Closed = true` to the polyline, which
+    // re-joins the ends itself.
+
+    // `count` values evenly spaced over the canonical domain, endpoints
+    // included. Precondition: count >= 2.
+    Sample(self: Curve1D, count: Integer): Array<Number>
+        => count.Fractions.Map(t => self.Eval(t));
+
+    // `count` positions evenly spaced over the canonical domain, endpoints
+    // included. Precondition: count >= 2.
+    Sample(self: Curve2D, count: Integer): Array<Point2D>
+        => count.Fractions.Map(t => self.Eval(t));
+
+    // `count` positions evenly spaced over the canonical domain, endpoints
+    // included. Precondition: count >= 2.
+    Sample(self: Curve3D, count: Integer): Array<Point3D>
+        => count.Fractions.Map(t => self.Eval(t));
+
+    // `count` positions evenly spaced over one period, the duplicate seam
+    // point at parameter 1 omitted. Precondition: count >= 1.
+    SamplePeriodic(self: Curve2D, count: Integer): Array<Point2D>
+        => count.FractionsExclusive.Map(t => self.Eval(t));
+
+    // `count` positions evenly spaced over one period, the duplicate seam
+    // point at parameter 1 omitted. Precondition: count >= 1.
+    SamplePeriodic(self: Curve3D, count: Integer): Array<Point3D>
+        => count.FractionsExclusive.Map(t => self.Eval(t));
+
+    // The open polyline through `count` evenly spaced samples of the curve.
+    // Precondition: count >= 2.
+    ToPolyline2D(self: Curve2D, count: Integer): Polyline2D
+        => Polyline2D(self.Sample(count), false);
+
+    // The open polyline through `count` evenly spaced samples of the curve.
+    // Precondition: count >= 2.
+    ToPolyline3D(self: Curve3D, count: Integer): Polyline3D
+        => Polyline3D(self.Sample(count), false);
+
+    // The closed polyline through `count` evenly spaced samples of a closed
+    // curve; the seam is left to the polyline's own Closed flag rather than
+    // repeated as a point. Precondition: count >= 3.
+    ToClosedPolyline2D(self: ClosedCurve2D, count: Integer): Polyline2D
+        => Polyline2D(self.SamplePeriodic(count), true);
+
+    // The closed polyline through `count` evenly spaced samples of a closed
+    // curve. Precondition: count >= 3.
+    ToClosedPolyline3D(self: ClosedCurve3D, count: Integer): Polyline3D
+        => Polyline3D(self.SamplePeriodic(count), true);
+
+    // `count` polar coordinates of a polar curve, evenly spaced over one full
+    // turn with the duplicate seam omitted. Precondition: count >= 1.
+    SamplePolar(self: PolarCurve2D, count: Integer): Array<PolarCoordinate>
+        => count.FractionsExclusive.Map(t => self.PolarPositionAt(t.Turns));
+
+    // `count` positions on a parametric surface along one row of constant v,
+    // u running over [0, 1] inclusive. Precondition: count >= 2.
+    SampleRow(self: ParametricSurface, v: Number, count: Integer): Array<Point3D>
+        => count.Fractions.Map(u => self.Eval(UvCoordinate(u, v)));
+
+    // `count` positions on a parametric surface along one column of constant u,
+    // v running over [0, 1] inclusive. Precondition: count >= 2.
+    SampleColumn(self: ParametricSurface, u: Number, count: Integer): Array<Point3D>
+        => count.Fractions.Map(v => self.Eval(UvCoordinate(u, v)));
+}

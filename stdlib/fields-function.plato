@@ -1,0 +1,71 @@
+//==
+// # Function-valued fields
+//
+// A field that **stores a function value** rather than deriving its value from
+// stored data. This is the compositional layer beneath the declarative node
+// graphs of `fields-graphs.plato`: a function-valued field is built from a
+// lambda, evaluated by invoking the stored function, and combined with another
+// field into a new field holding the composed lambda. The combinators (Combine,
+// MapValue, MapDomain, Union, Intersection, Difference, Offset) live in
+// `fields-implicits-function.library.plato`; `ToFunctionField` lifts any field
+// concept implementor into this form so the combinators apply to all of them.
+//
+// These are deliberately monomorphic (one type per domain/range pair) rather
+// than one generic function-carrying type: the monomorphic shape is what
+// monomorphizes cleanly to every backend.
+//
+// **Domain and range dimensions.** A Procedural is classified by what it maps
+// from and to; the dimension of the domain is the dimension of the form's
+// parameter space, the dimension of the range is the space it lives in. The
+// field concepts of `fields.concepts.plato` are the point-domain rows of that
+// table:
+//
+//   Number  -> Number    a scalar function of one variable (an easing curve)
+//   Number  -> Point2D   a parametric curve in the plane
+//   Number  -> Point3D   a parametric curve in space
+//   Point2D -> Number    a planar scalar field (a 2D signed distance field)
+//   Point2D -> Vector2D  a planar vector field
+//   Point2D -> Point3D   a parametric surface in space
+//   Point3D -> Number    a spatial scalar field (a 3D signed distance field)
+//   Point3D -> Vector3D  a spatial vector field
+//
+// A Procedural whose range is Boolean is a **predicate**: a threshold over a
+// Number domain, a region over Point2D, a volume over Point3D — membership
+// with no distance information (see `implicit-sdf.concepts.plato`). A
+// Procedural over an integer domain is a discrete field: an unbounded array, a
+// texture sampler, or a voxel grid. Continuous forms are analytic and
+// resolution independent; discrete forms (meshes, polylines, point clouds,
+// sampled grids) instead enumerate a countable set of primitives.
+
+// A planar scalar field defined by a stored function from a plane position to a
+// number. The canonical function-valued field: heightmaps, masks, potentials,
+// and planar signed distances all take this form.
+type ScalarFunctionField2D
+    implements ScalarField2D
+{
+    Function: Function1<Point2D, Number>;
+}
+
+// A spatial scalar field defined by a stored function from a space position to
+// a number: densities, potentials, and implicit surfaces.
+type ScalarFunctionField3D
+    implements ScalarField3D
+{
+    Function: Function1<Point3D, Number>;
+}
+
+// A planar vector field defined by a stored function from a plane position to a
+// 2D vector: gradients, flows, and displacement maps.
+type VectorFunctionField2D
+    implements VectorField2D
+{
+    Function: Function1<Point2D, Vector2D>;
+}
+
+// A spatial vector field defined by a stored function from a space position to
+// a 3D vector: velocity fields, force fields, and displacement fields.
+type VectorFunctionField3D
+    implements VectorField3D
+{
+    Function: Function1<Point3D, Vector3D>;
+}

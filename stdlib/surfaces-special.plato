@@ -1,0 +1,64 @@
+//==
+// # Trimmed, sampled, topological, and subdivision surfaces
+//
+// The surfaces that are not rectangular UV patches: a parametric surface
+// restricted by trim loops, a sampled elevation field, the one-sided Mobius
+// band, and the limit surface of a control mesh under a subdivision scheme.
+// Evaluation of the Mobius band lives in `surfaces.library.plato`; the others
+// are declarations only.
+
+//==
+// # Bounded and sampled surfaces
+
+// A parametric surface restricted to a region of its UV domain: OuterLoop is
+// a closed counter-clockwise polyline in UV space, and Holes are closed
+// clockwise loops removed from it. Not a rectangular patch, so only Surface.
+type TrimmedSurface
+    implements Surface
+{
+    Base: ParametricSurface;
+    OuterLoop: Polyline2D;
+    Holes: Array<Polyline2D>;
+}
+
+// A sampled elevation surface: Heights holds regular samples over the ground
+// rectangle Domain in the XY plane (columns along X, rows along Y), with
+// bilinear interpolation between samples
+// (https://en.wikipedia.org/wiki/Heightmap). Terrain and displacement data.
+type HeightField
+    implements HeightFieldSurface
+{
+    Heights: Array2D<Number>;
+    Domain: Bounds2D;
+}
+
+//==
+// # Topological and subdivision surfaces
+
+// A Mobius band: a strip of the given Width whose centerline circle of radius
+// Radius lies in the frame's XY plane, twisted by HalfTwistCount half-turns
+// over one lap (https://en.wikipedia.org/wiki/M%C3%B6bius_strip). An odd count
+// yields the one-sided surface.
+type MobiusStrip
+    implements ParametricSurface
+{
+    Frame: Frame3D;
+    Radius: Number;
+    Width: Number;
+    HalfTwistCount: Integer;
+}
+
+// The subdivision scheme applied to a control mesh
+// (https://en.wikipedia.org/wiki/Subdivision_surface).
+type SubdivisionScheme = CatmullClark | Loop | DooSabin;
+
+// The limit surface of a control mesh under a subdivision scheme, evaluated
+// (or approximated) at the given refinement level
+// (https://en.wikipedia.org/wiki/Subdivision_surface).
+type SubdivisionSurface
+    implements Surface
+{
+    ControlMesh: PolygonMesh3D;
+    Scheme: SubdivisionScheme;
+    Levels: Integer;
+}

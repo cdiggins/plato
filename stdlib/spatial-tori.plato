@@ -1,0 +1,17 @@
+//==
+// # Tori
+//
+// The ring solid swept by a disk around a circle. A solid denotes the filled region
+// including its boundary surface; the axis is a unit direction.
+
+// A solid torus: all points within MinorRadius of the circle of MajorRadius
+// about Center in the plane perpendicular to Axis. Self-intersecting when
+// MinorRadius exceeds MajorRadius. (https://en.wikipedia.org/wiki/Torus)
+type Torus
+    implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, ParametricSurface
+{
+    Center: Point3D;
+    Axis: Direction3D;
+    MajorRadius: Number;
+    MinorRadius: Number;
+}

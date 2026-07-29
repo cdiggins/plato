@@ -1,28 +1,30 @@
 //==
-// # Geometry concepts
+// # Geometry classification and topological markers
 //
-// Classification and capability concepts for geometric entities. A geometric type
-// declares where it lives (embedding dimension), how it behaves topologically
-// (open, closed, convex, manifold), and what can be queried on it (bounds,
-// measures, centroids, containment, proximity, support). All measures are
-// unit-agnostic Numbers in coordinate units; physical units are assigned by the
-// application, not the geometry.
+// What a geometric entity IS: the root marker, the embedding-dimension family
+// (Geometry2D / Geometry3D / GeometryND), the intrinsic-dimension concept, and the
+// pure structural markers a shape promises (open, closed, convex, manifold,
+// orientable, connected). The capability concepts that say what can be QUERIED on
+// such an entity live in `geometry-measures.concepts.plato` and
+// `geometry-queries.concepts.plato`.
 
 //==
 // # Classification
 
 // The root marker for every geometric entity: an immutable value describing a
-// locus of points in some space.
+// locus of points in some space. (https://en.wikipedia.org/wiki/Locus_(mathematics))
 concept Geometry
     inherits Value
 { }
 
 // Geometry embedded in the 2D Cartesian plane.
+// (https://en.wikipedia.org/wiki/Euclidean_plane)
 concept Geometry2D
     inherits Geometry
 { }
 
 // Geometry embedded in 3D Cartesian space.
+// (https://en.wikipedia.org/wiki/Three-dimensional_space)
 concept Geometry3D
     inherits Geometry
 { }
@@ -36,6 +38,7 @@ concept GeometryND
 // Knows the intrinsic (topological) dimension of the entity: 0 for points,
 // 1 for curves, 2 for surfaces and planar regions, 3 for volumes. Independent
 // of the dimension of the embedding space.
+// (https://en.wikipedia.org/wiki/Lebesgue_covering_dimension)
 concept Dimensioned
 {
     TopologicalDimension(x: Self): Integer;
@@ -54,146 +57,28 @@ concept OpenShape
 
 // Marks a shape that closes on itself and separates inside from outside:
 // a circle, a polygon, a sphere, a solid.
+// (https://en.wikipedia.org/wiki/Jordan_curve_theorem)
 concept ClosedShape
 { }
 
 // Marks a shape that contains the entire straight segment between any two of
-// its points.
+// its points. (https://en.wikipedia.org/wiki/Convex_set)
 concept ConvexShape
 { }
 
 // Marks a shape that is locally flat everywhere: every point has a neighborhood
 // like a line (for 1D shapes) or a disk (for 2D shapes). Excludes T-junctions
-// and self-intersections.
+// and self-intersections. (https://en.wikipedia.org/wiki/Manifold)
 concept Manifold
 { }
 
 // Marks a shape that admits a consistent global orientation (a two-sided
 // surface; the Moebius strip is the standard counterexample).
+// (https://en.wikipedia.org/wiki/Orientability)
 concept Orientable
 { }
 
 // Marks a shape consisting of a single connected piece.
+// (https://en.wikipedia.org/wiki/Connected_space)
 concept Connected
 { }
-
-//==
-// # Bounds
-
-// Has a finite axis-aligned bounding rectangle enclosing every point of the shape.
-concept Bounded2D
-{
-    Bounds(x: Self): Bounds2D;
-}
-
-// Has a finite axis-aligned bounding box enclosing every point of the shape.
-concept Bounded3D
-{
-    Bounds(x: Self): Bounds3D;
-}
-
-//==
-// # Point sets
-
-// Exposes the finite ordered set of defining points of a 2D entity: the vertices
-// of a polygon, the endpoints of a segment, the samples of a scatter.
-concept PointSet2D
-    inherits Geometry2D
-{
-    Points(x: Self): Array<Point2D>;
-}
-
-// Exposes the finite ordered set of defining points of a 3D entity.
-concept PointSet3D
-    inherits Geometry3D
-{
-    Points(x: Self): Array<Point3D>;
-}
-
-//==
-// # Measures
-//
-// Unit-agnostic measures: lengths in coordinate units, areas in squared units,
-// volumes in cubed units.
-
-// Has a finite total length: segments, polylines, and bounded curve spans.
-concept LengthMeasurable
-{
-    Length(x: Self): Number;
-}
-
-// Has a finite area and a finite boundary length: closed 2D regions, and flat
-// or curved bounded patches in any embedding.
-concept PlanarMeasurable
-{
-    Area(x: Self): Number;
-    Perimeter(x: Self): Number;
-}
-
-// Has a finite enclosed volume and a finite boundary area: closed 3D solids.
-concept SpatialMeasurable
-{
-    Volume(x: Self): Number;
-    SurfaceArea(x: Self): Number;
-}
-
-//==
-// # Centroids
-
-// Can report its center of mass under uniform density in the plane.
-concept Centroid2D
-{
-    Centroid(x: Self): Point2D;
-}
-
-// Can report its center of mass under uniform density in space.
-concept Centroid3D
-{
-    Centroid(x: Self): Point3D;
-}
-
-//==
-// # Point queries
-
-// Supports a point-membership test in the plane. For closed shapes the boundary
-// counts as inside.
-concept ContainsPoint2D
-{
-    Contains(x: Self, point: Point2D): Boolean;
-}
-
-// Supports a point-membership test in space. For solids the boundary counts as
-// inside.
-concept ContainsPoint3D
-{
-    Contains(x: Self, point: Point3D): Boolean;
-}
-
-// Can find the point of itself nearest to a query point in the plane. The result
-// lies on the shape; for a region it may be an interior point (the query itself
-// when contained).
-concept NearestPoint2D
-{
-    ClosestPoint(x: Self, point: Point2D): Point2D;
-}
-
-// Can find the point of itself nearest to a query point in space.
-concept NearestPoint3D
-{
-    ClosestPoint(x: Self, point: Point3D): Point3D;
-}
-
-// Supplies the support mapping of a convex 2D shape: the farthest point of the
-// shape in a given direction. Ties may resolve to any extreme point. The basis
-// of GJK-style collision queries.
-concept SupportMappable2D
-{
-    Support(x: Self, direction: Direction2D): Point2D;
-}
-
-// Supplies the support mapping of a convex 3D shape: the farthest point of the
-// shape in a given direction.
-concept SupportMappable3D
-{
-    Support(x: Self, direction: Direction3D): Point3D;
-}

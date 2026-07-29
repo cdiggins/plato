@@ -1,0 +1,99 @@
+//==
+// # Time-varying field bodies
+//
+// Bodies for the time-varying field concepts declared in
+// `fields-time-varying.concepts.plato`: sampling at an instant, and the change
+// and monotonicity queries between two instants.
+
+library FieldsImplicitsTimeVarying
+{
+    //==
+    // # TimeVaryingScalarField2D
+    //
+    // A planar scalar field evolving over a timeline; sampled at (point, time).
+    // TODO(concept-gap): an average rate of change would divide the value change
+    // by the elapsed time, but Instant differences yield a Duration and no
+    // sanctioned Duration-to-Number division is in scope here; only the raw
+    // change and monotonicity tests are offered.
+
+    // The scalar value at the point at a given instant; a readable spelling of
+    // EvalAtTime.
+    ValueAtTime(self: TimeVaryingScalarField2D, point: Point2D, time: Instant): Number
+        => self.EvalAtTime(point, time);
+
+    // The change in value at the point from the earlier instant to the later one.
+    ChangeBetween(self: TimeVaryingScalarField2D, point: Point2D, earlier: Instant, later: Instant): Number
+        => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
+
+    // True where the value at the point is greater at the later instant than the
+    // earlier one.
+    HasIncreasedBetween(self: TimeVaryingScalarField2D, point: Point2D, earlier: Instant, later: Instant): Boolean
+        => self.EvalAtTime(point, later) > self.EvalAtTime(point, earlier);
+
+    // True where the value at the point is smaller at the later instant than the
+    // earlier one.
+    HasDecreasedBetween(self: TimeVaryingScalarField2D, point: Point2D, earlier: Instant, later: Instant): Boolean
+        => self.EvalAtTime(point, later) < self.EvalAtTime(point, earlier);
+
+    //==
+    // # TimeVaryingScalarField3D
+    //
+    // A spatial scalar field evolving over a timeline.
+
+    // The scalar value at the point at a given instant; a readable spelling of
+    // EvalAtTime.
+    ValueAtTime(self: TimeVaryingScalarField3D, point: Point3D, time: Instant): Number
+        => self.EvalAtTime(point, time);
+
+    // The change in value at the point from the earlier instant to the later one.
+    ChangeBetween(self: TimeVaryingScalarField3D, point: Point3D, earlier: Instant, later: Instant): Number
+        => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
+
+    // True where the value at the point is greater at the later instant than the
+    // earlier one.
+    HasIncreasedBetween(self: TimeVaryingScalarField3D, point: Point3D, earlier: Instant, later: Instant): Boolean
+        => self.EvalAtTime(point, later) > self.EvalAtTime(point, earlier);
+
+    // True where the value at the point is smaller at the later instant than the
+    // earlier one.
+    HasDecreasedBetween(self: TimeVaryingScalarField3D, point: Point3D, earlier: Instant, later: Instant): Boolean
+        => self.EvalAtTime(point, later) < self.EvalAtTime(point, earlier);
+
+    //==
+    // # TimeVaryingVectorField2D
+    //
+    // A planar vector field evolving over a timeline: 2D flows and animated
+    // displacement maps.
+
+    // The vector at the point at a given instant; a readable spelling of
+    // EvalAtTime.
+    VectorAtTime(self: TimeVaryingVectorField2D, point: Point2D, time: Instant): Vector2D
+        => self.EvalAtTime(point, time);
+
+    // The flow speed at the point at a given instant: the sampled vector's length.
+    MagnitudeAtTime(self: TimeVaryingVectorField2D, point: Point2D, time: Instant): Number
+        => self.EvalAtTime(point, time).Magnitude;
+
+    // The change in the vector at the point from the earlier instant to the later.
+    ChangeBetween(self: TimeVaryingVectorField2D, point: Point2D, earlier: Instant, later: Instant): Vector2D
+        => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
+
+    //==
+    // # TimeVaryingVectorField3D
+    //
+    // A spatial vector field evolving over a timeline: fluid velocity, wind, and
+    // turbulence used for advection.
+
+    // The vector at the point at a given instant; a readable spelling of
+    // EvalAtTime.
+    VectorAtTime(self: TimeVaryingVectorField3D, point: Point3D, time: Instant): Vector3D
+        => self.EvalAtTime(point, time);
+
+    // The flow speed at the point at a given instant: the sampled vector's length.
+    MagnitudeAtTime(self: TimeVaryingVectorField3D, point: Point3D, time: Instant): Number
+        => self.EvalAtTime(point, time).Magnitude;
+
+    // The change in the vector at the point from the earlier instant to the later.
+    ChangeBetween(self: TimeVaryingVectorField3D, point: Point3D, earlier: Instant, later: Instant): Vector3D
+        => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
+}

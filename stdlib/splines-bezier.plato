@@ -1,0 +1,70 @@
+//==
+// # Bezier splines
+//
+// Control-point curves of the Bezier family: arbitrary-degree Bezier curves,
+// their rational (weighted) form, and chains of cubic segments. Parallel arrays
+// (points + weights) must have equal counts; that invariant is documented rather
+// than encoded. Evaluation lives in `splines-bezier.library.plato`.
+
+//==
+// # Bezier curves of arbitrary degree
+
+// A Bezier curve of arbitrary degree in the plane: degree = control point
+// count - 1 (https://en.wikipedia.org/wiki/B%C3%A9zier_curve). Interpolates
+// the first and last control points.
+type BezierCurve2D
+    implements Curve2D
+{
+    ControlPoints: Array<Point2D>;
+}
+
+// A Bezier curve of arbitrary degree in space: degree = control point
+// count - 1. Interpolates the first and last control points
+// (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
+type BezierCurve3D
+    implements Curve3D
+{
+    ControlPoints: Array<Point3D>;
+}
+
+// A rational Bezier curve in the plane: per-point weights (same count as
+// ControlPoints) pull the curve toward heavier points. Represents conic
+// sections exactly (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
+type RationalBezierCurve2D
+    implements Curve2D
+{
+    ControlPoints: Array<Point2D>;
+    Weights: Array<Number>;
+}
+
+// A rational Bezier curve in space: per-point weights (same count as
+// ControlPoints) pull the curve toward heavier points
+// (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
+type RationalBezierCurve3D
+    implements Curve3D
+{
+    ControlPoints: Array<Point3D>;
+    Weights: Array<Number>;
+}
+
+//==
+// # Composite Bezier curves
+
+// A chain of cubic Bezier segments in the plane; consecutive segments must
+// share endpoints (P3 of one equals P0 of the next). Font glyphs and vector
+// paths in curve form
+// (https://en.wikipedia.org/wiki/Composite_B%C3%A9zier_curve).
+type CompositeBezier2D
+    implements Curve2D
+{
+    Segments: Array<CubicBezier2D>;
+}
+
+// A chain of cubic Bezier segments in space; consecutive segments must share
+// endpoints (P3 of one equals P0 of the next)
+// (https://en.wikipedia.org/wiki/Composite_B%C3%A9zier_curve).
+type CompositeBezier3D
+    implements Curve3D
+{
+    Segments: Array<CubicBezier3D>;
+}

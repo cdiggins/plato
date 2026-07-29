@@ -1,20 +1,12 @@
 //==
 // # Graphs
 //
-// Vertex-and-edge structures and the results of classic graph algorithms.
-// Vertices are zero-based Integer indices into an implicit [0, VertexCount)
-// range; edges reference vertices by index. Edge weights are unit-agnostic
-// numbers whose meaning (distance, cost, capacity) is set by the application.
-
-// The family of graph-shaped types: a vertex count, an edge count, and a
-// directedness flag. Vertices are the integers 0 through VertexCount - 1.
-concept GraphLike
-    inherits Value
-{
-    VertexCount(x: Self): Integer;
-    EdgeCount(x: Self): Integer;
-    IsDirected(x: Self): Boolean;
-}
+// Vertex-and-edge structures and the ways they are stored: edge lists, weighted
+// edge lists, dense adjacency matrices, compressed sparse row adjacency, and
+// hypergraphs. Vertices are zero-based indices into an implicit
+// [0, VertexCount) range; edges reference vertices by index. Edge weights are
+// unit-agnostic numbers whose meaning (distance, cost, capacity) is set by the
+// application.
 
 //==
 // # Core graph types
@@ -22,6 +14,7 @@ concept GraphLike
 // A zero-based index of a vertex within a graph's implicit
 // [0, VertexCount) vertex range. -1 means "none" (an unreachable vertex's
 // parent, an unmatched pairing).
+// (https://en.wikipedia.org/wiki/Vertex_(graph_theory))
 type GraphVertexIndex
     implements Value, Hashable, Comparable, Index
 {
@@ -39,6 +32,7 @@ type GraphEdge
 
 // A graph in edge-list form. When Directed is false each edge is an unordered
 // pair. Vertices without edges exist implicitly via VertexCount.
+// (https://en.wikipedia.org/wiki/Graph_(abstract_data_type))
 type Graph
     implements GraphLike
 {
@@ -74,6 +68,7 @@ type WeightedGraph
 // VertexCount * VertexCount entries: entry (r, c) at index r * VertexCount + c
 // is the weight of the edge from r to c, and zero means "no edge" (use weight 1
 // for unweighted graphs).
+// (https://en.wikipedia.org/wiki/Adjacency_matrix)
 type AdjacencyMatrix
     implements Value
 {
@@ -85,6 +80,7 @@ type AdjacencyMatrix
 // VertexCount + 1 entries; the neighbors of vertex v are
 // NeighborIndices[NeighborOffsets[v]] up to (excluding)
 // NeighborIndices[NeighborOffsets[v + 1]].
+// (https://en.wikipedia.org/wiki/Adjacency_list)
 type AdjacencyStructure
     implements Value
 {
@@ -97,133 +93,11 @@ type AdjacencyStructure
 // HyperedgeOffsets has HyperedgeCount + 1 entries; the vertices of hyperedge h
 // are HyperedgeVertices[HyperedgeOffsets[h]] up to (excluding)
 // HyperedgeVertices[HyperedgeOffsets[h + 1]].
+// (https://en.wikipedia.org/wiki/Hypergraph)
 type Hypergraph
     implements Value
 {
     VertexCount: Integer;
     HyperedgeOffsets: Array<Integer>;
     HyperedgeVertices: Array<GraphVertexIndex>;
-}
-
-//==
-// # Paths, trees, and traversal results
-
-// A walk through a graph as an ordered vertex sequence; consecutive vertices
-// are joined by edges. TotalWeight is the sum of traversed edge weights
-// (unit-agnostic; equals hop count when unweighted).
-type GraphPath
-    implements Value
-{
-    VertexIndices: Array<GraphVertexIndex>;
-    TotalWeight: Number;
-}
-
-// All shortest paths from one source vertex, in parent-pointer form.
-// ParentIndices[v] is the predecessor of v on its shortest path (-1 for the
-// source and for unreachable vertices). Distances[v] is the path weight from
-// the source (meaningful only when v is the source or has a parent).
-type ShortestPathTree
-    implements Value
-{
-    SourceIndex: GraphVertexIndex;
-    ParentIndices: Array<GraphVertexIndex>;
-    Distances: Array<Number>;
-}
-
-// A spanning tree in parent-pointer form: ParentIndices[v] is the parent of
-// vertex v, and the root's parent is -1. Vertices outside the tree (disconnected
-// graphs) also carry -1.
-type SpanningTree
-    implements Value
-{
-    ParentIndices: Array<GraphVertexIndex>;
-    RootIndex: GraphVertexIndex;
-}
-
-// A partition of vertices into connected components. ComponentLabels[v] is the
-// zero-based component of vertex v, in [0, ComponentCount).
-type ConnectedComponents
-    implements Value
-{
-    ComponentLabels: Array<Integer>;
-    ComponentCount: Integer;
-}
-
-// A topological ordering of a directed graph. IsValid is false when the graph
-// contains a cycle, in which case OrderedVertexIndices is partial or empty.
-type TopologicalOrder
-    implements Value
-{
-    OrderedVertexIndices: Array<GraphVertexIndex>;
-    IsValid: Boolean;
-}
-
-//==
-// # Coloring, partitioning, flow, and matching
-
-// An assignment of colors to vertices such that adjacent vertices differ.
-// Colors are zero-based integers in [0, ColorCount).
-type GraphColoring
-    implements Value
-{
-    VertexColors: Array<Integer>;
-    ColorCount: Integer;
-}
-
-// A partition of vertices into parts (for load balancing or clustering).
-// PartLabels[v] is the zero-based part of vertex v, in [0, PartCount);
-// CutEdgeCount is the number of edges whose endpoints lie in different parts.
-type GraphPartition
-    implements Value
-{
-    PartLabels: Array<Integer>;
-    PartCount: Integer;
-    CutEdgeCount: Integer;
-}
-
-// A directed flow network: edge weights are nonnegative capacities
-// (unit-agnostic), with distinguished source and sink vertices.
-type FlowNetwork
-    implements Value
-{
-    VertexCount: Integer;
-    Edges: Array<WeightedEdge>;
-    SourceIndex: GraphVertexIndex;
-    SinkIndex: GraphVertexIndex;
-}
-
-// The result of a maximum-flow computation. EdgeFlows is parallel to the
-// network's edge array (same units as the capacities); SourceSideVertices[v]
-// is true when v lies on the source side of a minimum cut.
-type MaxFlowResult
-    implements Value
-{
-    TotalFlow: Number;
-    EdgeFlows: Array<Number>;
-    SourceSideVertices: Array<Boolean>;
-}
-
-// A matching in a bipartite graph with LeftVertexCount left and
-// RightVertexCount right vertices. MatchedRightIndices[l] is the right vertex
-// matched to left vertex l, or -1 when unmatched.
-type BipartiteMatching
-    implements Value
-{
-    LeftVertexCount: Integer;
-    RightVertexCount: Integer;
-    MatchedRightIndices: Array<GraphVertexIndex>;
-}
-
-//==
-// # Layout
-
-// The algorithm family used to position a graph's vertices for display.
-type GraphLayout = ForceDirected | Circular | Layered | Grid | Radial | Spectral;
-
-// A graph paired with 2D positions for its vertices (unit-agnostic canvas
-// coordinates). Positions is parallel to the implicit vertex range.
-type LayoutedGraph
-{
-    Graph: Graph;
-    Positions: Array<Point2D>;
 }

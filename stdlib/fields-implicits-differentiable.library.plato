@@ -1,0 +1,130 @@
+//==
+// # Differentiable field bodies
+//
+// Bodies for the differentiable field concepts declared in
+// `fields-differentiable.concepts.plato`: gradient directions, slope, and
+// stationarity for scalar fields, and the divergence / curl classifiers that
+// name local flow behaviour for vector fields.
+
+library FieldsImplicitsDifferentiable
+{
+    //==
+    // # DifferentiableScalarField2D
+    //
+    // A planar scalar field with an analytic first derivative. The gradient points
+    // toward steepest increase; helpers name the directions and critical points.
+
+    // The gradient direction of steepest increase, unit length. Precondition: the
+    // gradient is non-zero at the point.
+    SteepestAscentDirectionAt(self: DifferentiableScalarField2D, point: Point2D): Vector2D
+        => self.GradientAt(point).Normalize;
+
+    // The direction of steepest decrease, unit length: the negated gradient.
+    // Precondition: the gradient is non-zero at the point.
+    SteepestDescentDirectionAt(self: DifferentiableScalarField2D, point: Point2D): Vector2D
+        => self.GradientAt(point).Normalize.Negative;
+
+    // The unit outward normal to the level curve through the point: the unit
+    // gradient. For a signed distance field this is the boundary normal.
+    // Precondition: the gradient is non-zero at the point.
+    BoundaryNormalAt(self: DifferentiableScalarField2D, point: Point2D): Vector2D
+        => self.SteepestAscentDirectionAt(point);
+
+    // The steepness of the field at the point: the gradient's length.
+    SlopeAt(self: DifferentiableScalarField2D, point: Point2D): Number
+        => self.GradientAt(point).Magnitude;
+
+    // True where the gradient nearly vanishes (a critical point) within tolerance.
+    IsStationaryAt(self: DifferentiableScalarField2D, point: Point2D, tolerance: Number): Boolean
+        => self.GradientAt(point).Magnitude <= tolerance;
+
+    //==
+    // # DifferentiableScalarField3D
+    //
+    // A spatial scalar field with an analytic first derivative. For a signed
+    // distance field the normalized gradient is the outward surface normal.
+
+    // The gradient direction of steepest increase, unit length. Precondition: the
+    // gradient is non-zero at the point.
+    SteepestAscentDirectionAt(self: DifferentiableScalarField3D, point: Point3D): Vector3D
+        => self.GradientAt(point).Normalize;
+
+    // The direction of steepest decrease, unit length: the negated gradient.
+    // Precondition: the gradient is non-zero at the point.
+    SteepestDescentDirectionAt(self: DifferentiableScalarField3D, point: Point3D): Vector3D
+        => self.GradientAt(point).Normalize.Negative;
+
+    // The outward surface normal at the point: the unit gradient. Exact for a
+    // signed distance field. Precondition: the gradient is non-zero at the point.
+    SurfaceNormalAt(self: DifferentiableScalarField3D, point: Point3D): Vector3D
+        => self.SteepestAscentDirectionAt(point);
+
+    // The steepness of the field at the point: the gradient's length.
+    SlopeAt(self: DifferentiableScalarField3D, point: Point3D): Number
+        => self.GradientAt(point).Magnitude;
+
+    // True where the gradient nearly vanishes (a critical point) within tolerance.
+    IsStationaryAt(self: DifferentiableScalarField3D, point: Point3D, tolerance: Number): Boolean
+        => self.GradientAt(point).Magnitude <= tolerance;
+
+    //==
+    // # DifferentiableVectorField2D
+    //
+    // A planar vector field with first derivatives: divergence (trace of the
+    // Jacobian) and scalar curl. The predicates classify local flow behaviour.
+
+    // True where the field neither expands nor compresses within tolerance
+    // (divergence-free / incompressible flow)
+    // (https://en.wikipedia.org/wiki/Incompressible_flow).
+    IsIncompressibleAt(self: DifferentiableVectorField2D, point: Point2D, tolerance: Number): Boolean
+        => self.DivergenceAt(point).Abs <= tolerance;
+
+    // True where the field spreads outward (positive divergence): a source. Note:
+    // near-zero divergence classifies by sign noise; use IsIncompressibleAt for a
+    // balanced test.
+    IsSourceAt(self: DifferentiableVectorField2D, point: Point2D): Boolean
+        => self.DivergenceAt(point) > 0.0;
+
+    // True where the field converges inward (negative divergence): a sink. Note:
+    // near-zero divergence classifies by sign noise; use IsIncompressibleAt for a
+    // balanced test.
+    IsSinkAt(self: DifferentiableVectorField2D, point: Point2D): Boolean
+        => self.DivergenceAt(point) < 0.0;
+
+    // True where the field has no local rotation within tolerance (irrotational)
+    // (https://en.wikipedia.org/wiki/Irrotational_flow).
+    IsIrrotationalAt(self: DifferentiableVectorField2D, point: Point2D, tolerance: Number): Boolean
+        => self.CurlAt(point).Abs <= tolerance;
+
+    //==
+    // # DifferentiableVectorField3D
+    //
+    // A spatial vector field with first derivatives: divergence and the curl
+    // vector (vorticity). Mirrors the planar classifiers with a vector curl.
+
+    // True where the field neither expands nor compresses within tolerance
+    // (divergence-free / incompressible flow).
+    IsIncompressibleAt(self: DifferentiableVectorField3D, point: Point3D, tolerance: Number): Boolean
+        => self.DivergenceAt(point).Abs <= tolerance;
+
+    // True where the field spreads outward (positive divergence): a source. Note:
+    // near-zero divergence classifies by sign noise; use IsIncompressibleAt for a
+    // balanced test.
+    IsSourceAt(self: DifferentiableVectorField3D, point: Point3D): Boolean
+        => self.DivergenceAt(point) > 0.0;
+
+    // True where the field converges inward (negative divergence): a sink. Note:
+    // near-zero divergence classifies by sign noise; use IsIncompressibleAt for a
+    // balanced test.
+    IsSinkAt(self: DifferentiableVectorField3D, point: Point3D): Boolean
+        => self.DivergenceAt(point) < 0.0;
+
+    // The strength of local rotation: the length of the curl (vorticity) vector
+    // (https://en.wikipedia.org/wiki/Vorticity).
+    VorticityMagnitudeAt(self: DifferentiableVectorField3D, point: Point3D): Number
+        => self.CurlAt(point).Magnitude;
+
+    // True where the field has no local rotation within tolerance (irrotational).
+    IsIrrotationalAt(self: DifferentiableVectorField3D, point: Point3D, tolerance: Number): Boolean
+        => self.CurlAt(point).Magnitude <= tolerance;
+}

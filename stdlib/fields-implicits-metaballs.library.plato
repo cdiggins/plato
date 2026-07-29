@@ -1,0 +1,35 @@
+//==
+// # Metaball influence and summation
+//
+// Summed radial falloff kernels over the metaball types declared in
+// `implicit-sdf-metaballs.plato`. The system's field value is the total
+// influence minus the threshold, so its zero level set is the blob boundary
+// (https://en.wikipedia.org/wiki/Metaballs).
+
+library FieldsImplicitsMetaballs
+{
+    // The influence of one planar ball at a point: Strength at the centre, falling
+    // smoothly to zero at Radius and staying zero beyond it.
+    InfluenceAt(self: MetaBall2D, point: Point2D): Number
+        => self.Strength * MetaBallFalloff(self.Center.Between(point).Magnitude / self.Radius);
+
+    // The influence of one spatial ball at a point; negative strengths carve.
+    InfluenceAt(self: MetaBall3D, point: Point3D): Number
+        => self.Strength * MetaBallFalloff(self.Center.Between(point).Magnitude / self.Radius);
+
+    // The radial falloff kernel as a function of distance measured in radii: one
+    // at the centre, zero at and beyond one radius, with vanishing first and
+    // second derivatives at both ends. The classic Wyvill cubic (1 - r^2)^3.
+    MetaBallFalloff(normalizedDistance: Number): Number
+        => (1.0 - normalizedDistance * normalizedDistance).Saturate.Cube;
+
+    // The blob field value: the summed influence of every ball, less Threshold.
+    // Negative outside the blob, zero on its outline, positive inside — note this
+    // is the OPPOSITE sign convention to a signed distance field.
+    Eval(self: MetaBallSystem2D, point: Point2D): Number
+        => self.Balls.Reduce(0.0, (total, ball) => total + ball.InfluenceAt(point)) - self.Threshold;
+
+    // The blob field value: the summed influence of every ball, less Threshold.
+    Eval(self: MetaBallSystem3D, point: Point3D): Number
+        => self.Balls.Reduce(0.0, (total, ball) => total + ball.InfluenceAt(point)) - self.Threshold;
+}

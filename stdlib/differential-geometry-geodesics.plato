@@ -1,0 +1,38 @@
+//==
+// # Geodesics and curvature visualization
+//
+// Traced shortest paths on surfaces, and the sampled constructions used to show
+// curvature to a reader: osculating circles and curvature combs. Lengths and
+// radii are in world units; curvature is in reciprocal world units.
+
+// A geodesic (locally shortest path) traced on a surface, approximated as a
+// polyline of surface points. TotalLength is the arc length in world units.
+// (https://en.wikipedia.org/wiki/Geodesic)
+type GeodesicPath3D
+{
+    Points: Array<Point3D>;
+    TotalLength: Number;
+}
+
+// The osculating circle of a planar curve at a point: the circle of best
+// second-order contact. Radius (world units) is the reciprocal of the unsigned
+// curvature at ContactPoint.
+// (https://en.wikipedia.org/wiki/Osculating_circle)
+type OsculatingCircle2D
+    implements Value
+{
+    Center: Point2D;
+    Radius: Number;
+    ContactPoint: Point2D;
+}
+
+// Samples for a curvature comb visualization of a planar curve. CombTips and
+// CurvePoints are parallel arrays: each tip lies at the curve point offset along
+// the normal by curvature times Scale (Scale is in squared world units, mapping
+// reciprocal-world-unit curvature to a world-unit comb height).
+type CurvatureComb2D
+{
+    CurvePoints: Array<Point2D>;
+    CombTips: Array<Point2D>;
+    Scale: Number;
+}

@@ -1,0 +1,249 @@
+//==
+// # PlanarCircles — disk, annulus, sector, segment, and stadium bodies
+//
+// Area, perimeter, bounds, centroid, containment, nearest-point and support bodies
+// for the types declared in `planar-circles.plato`.
+//
+// Conventions fixed here:
+//
+//   * PLACED, not origin-centred. Every shape carries its own Center / endpoints; no
+//     body assumes the origin.
+//   * `Area` is non-negative for EVERY type here.
+//   * CONTAINMENT is boundary-INCLUSIVE: every test is an inequality on a distance
+//     or a coordinate (concept doc: "for closed shapes the boundary counts as
+//     inside").
+//   * `ClosestPoint` on a filled REGION returns the query point itself when the
+//     query is contained, which `NearestPoint2D` explicitly permits ("for a region
+//     it may be an interior point").
+//   * ANGLES are `Angle` throughout; `Number` fractions of a turn are converted with
+//     `.Turns` (`angles.library.plato`) rather than by multiplying by pi.
+//
+// Shared kernels live in `geometry-kernels.library.plato` and the local-frame
+// helpers in `planar-shapes.library.plato`; neither is respelled here.
+
+library PlanarCircles
+{
+    //==
+    // # Circle
+    //
+    // The disk region. https://en.wikipedia.org/wiki/Circle
+
+    // pi * r^2.
+    Area(c: Circle): Number
+        => Number.Pi * c.Radius.Square;
+
+    // The circumference 2 * pi * r.
+    Perimeter(c: Circle): Number
+        => 2.0 * Number.Pi * c.Radius;
+
+    // The disk's centre of mass is its centre.
+    Centroid(c: Circle): Point2D
+        => c.Center;
+
+    // The square of side 2r about the centre.
+    Bounds(c: Circle): Bounds2D
+        => CenteredBounds(c.Center, c.Radius, c.Radius);
+
+    // True when the point is within Radius of the centre. Boundary inclusive;
+    // compares squared distances so no square root is taken.
+    Contains(c: Circle, point: Point2D): Boolean
+        => c.Center.Between(point).MagnitudeSquared <= c.Radius.Square;
+
+    // The query point when it lies in the disk, otherwise its radial projection
+    // onto the circle.
+    ClosestPoint(c: Circle, point: Point2D): Point2D
+        => c.Contains(point)
+        ? point
+        : c.Center.Add(c.Center.Between(point).Normalize.Multiply(c.Radius));
+
+    // The point of the circle farthest along `direction`.
+    Support(c: Circle, direction: Direction2D): Point2D
+        => c.Center.Add(direction.Vector.Multiply(c.Radius));
+
+    //==
+    // # Annulus
+    //
+    // https://en.wikipedia.org/wiki/Annulus_(mathematics)
+
+    // pi * (R^2 - r^2).
+    Area(a: Annulus): Number
+        => Number.Pi * (a.OuterRadius.Square - a.InnerRadius.Square);
+
+    // The TOTAL boundary length: both bounding circles, since the annulus has two
+    // boundary components. 2*pi*(R + r).
+    Perimeter(a: Annulus): Number
+        => 2.0 * Number.Pi * (a.OuterRadius + a.InnerRadius);
+
+    // The centre, by rotational symmetry.
+    Centroid(a: Annulus): Point2D
+        => a.Center;
+
+    // The bounds of the outer circle.
+    Bounds(a: Annulus): Bounds2D
+        => CenteredBounds(a.Center, a.OuterRadius, a.OuterRadius);
+
+    // True when the point's distance from the centre lies in [InnerRadius,
+    // OuterRadius]. Both boundaries inclusive.
+    Contains(a: Annulus, point: Point2D): Boolean
+    {
+        var distanceSquared = a.Center.Between(point).MagnitudeSquared;
+        return distanceSquared >= a.InnerRadius.Square
+            && distanceSquared <= a.OuterRadius.Square;
+    }
+
+    //==
+    // # CircularSector
+    //
+    // A pie slice. Precondition throughout: Sweep is stored forward and spans at
+    // most one full turn. https://en.wikipedia.org/wiki/Circular_sector
+
+    // Half the bisector direction of the sweep, as a unit displacement.
+    SweepBisector(sweep: AngleInterval): Vector2D
+    {
+        var mid = sweep.Start + sweep.Extent * 0.5;
+        return (mid.Cos, mid.Sin);
+    }
+
+    // (1/2) * r^2 * theta, with theta the swept angle in radians.
+    Area(s: CircularSector): Number
+        => 0.5 * s.Circle.Radius.Square * s.Sweep.Extent.Radians;
+
+    // The arc r*theta plus the two bounding radii.
+    Perimeter(s: CircularSector): Number
+        => s.Circle.Radius * s.Sweep.Extent.Radians + 2.0 * s.Circle.Radius;
+
+    // On the bisector, at 2/3 * r * sin(alpha)/alpha from the circle's centre,
+    // where alpha is the HALF angle — written here with theta = 2*alpha as
+    // 4*r*sin(theta/2) / (3*theta). Degenerates to the centre for a zero sweep.
+    // https://en.wikipedia.org/wiki/Circular_sector#Centroid
+    Centroid(s: CircularSector): Point2D
+    {
+        var theta = s.Sweep.Extent;
+        var distance = theta.Radians == 0.0
+            ? 0.0
+            : 4.0 * s.Circle.Radius * (theta * 0.5).Sin / (3.0 * theta.Radians);
+        return s.Circle.Center.Add(SweepBisector(s.Sweep).Multiply(distance));
+    }
+
+    // CONSERVATIVE, not tight: the bounds of the whole circle. A tight box needs to
+    // know which of the four axis extremes the arc actually reaches, which is a
+    // four-way angular-interval test this file does not attempt.
+    // TODO(content): tighten to the arc's own extremes.
+    Bounds(s: CircularSector): Bounds2D
+        => s.Circle.Bounds;
+
+    // True when the point is within the radius AND its bearing from the centre,
+    // measured forward from Sweep.Start, is within the swept angle. The bearing is
+    // wrapped into [0, 1) turns before the comparison, so the test is correct
+    // across the +X seam.
+    Contains(s: CircularSector, point: Point2D): Boolean
+    {
+        var v = s.Circle.Center.Between(point);
+        var offset = (v.Y.Atan2(v.X) - s.Sweep.Start).Turns;
+        var wrapped = offset - offset.Floor;
+        return v.MagnitudeSquared <= s.Circle.Radius.Square
+            && wrapped <= s.Sweep.Extent.Turns;
+    }
+
+    //==
+    // # CircularSegment
+    //
+    // The region between the chord and the arc it subtends.
+    // https://en.wikipedia.org/wiki/Circular_segment
+
+    // The chord endpoint at the start of the sweep.
+    ChordStart(s: CircularSegment): Point2D
+        => s.Circle.Center.Add(
+            Vector2D(s.Sweep.Start.Cos, s.Sweep.Start.Sin).Multiply(s.Circle.Radius));
+
+    // The chord endpoint at the end of the sweep.
+    ChordEnd(s: CircularSegment): Point2D
+        => s.Circle.Center.Add(
+            Vector2D(s.Sweep.End.Cos, s.Sweep.End.Sin).Multiply(s.Circle.Radius));
+
+    // (1/2) * r^2 * (theta - sin theta): the sector minus the triangle on the chord.
+    Area(s: CircularSegment): Number
+        => 0.5 * s.Circle.Radius.Square * (s.Sweep.Extent.Radians - s.Sweep.Extent.Sin);
+
+    // The arc r*theta plus the chord 2*r*sin(theta/2).
+    Perimeter(s: CircularSegment): Number
+        => s.Circle.Radius * s.Sweep.Extent.Radians
+        + 2.0 * s.Circle.Radius * (s.Sweep.Extent * 0.5).Sin;
+
+    // On the bisector, at 4*r*sin^3(theta/2) / (3*(theta - sin theta)) from the
+    // circle's centre. Checks out against the standard semicircle result 4r/(3pi)
+    // at theta = pi. Degenerate (division by zero) as theta approaches 0, where the
+    // segment itself vanishes. https://en.wikipedia.org/wiki/Circular_segment
+    Centroid(s: CircularSegment): Point2D
+    {
+        var theta = s.Sweep.Extent;
+        var halfSin = (theta * 0.5).Sin;
+        var denominator = 3.0 * (theta.Radians - theta.Sin);
+        var distance = denominator == 0.0
+            ? 0.0
+            : 4.0 * s.Circle.Radius * halfSin * halfSin * halfSin / denominator;
+        return s.Circle.Center.Add(SweepBisector(s.Sweep).Multiply(distance));
+    }
+
+    // CONSERVATIVE, not tight: the bounds of the whole circle (see CircularSector).
+    // TODO(content): tighten to the chord and the arc's own extremes.
+    Bounds(s: CircularSegment): Bounds2D
+        => s.Circle.Bounds;
+
+    // True when the point lies in the disk AND on the arc's side of the chord. For
+    // a forward (counter-clockwise) sweep the arc side is the CLOCKWISE side of the
+    // directed chord ChordStart -> ChordEnd, so the orientation test is <= 0; that
+    // holds for both minor (theta < pi) and major (theta > pi) segments.
+    Contains(s: CircularSegment, point: Point2D): Boolean
+        => s.Circle.Contains(point)
+        && TwiceSignedArea(s.ChordStart, s.ChordEnd, point) <= 0.0;
+
+    //==
+    // # Capsule2D
+    //
+    // The stadium: the Minkowski sum of the segment [A, B] with a disk of radius r.
+    // https://en.wikipedia.org/wiki/Stadium_(geometry)
+
+    // The length of the capsule's spine.
+    SpineLength(c: Capsule2D): Number
+        => c.A.Between(c.B).Magnitude;
+
+    // pi*r^2 (the two half-disks) + 2*r*L (the rectangular middle).
+    Area(c: Capsule2D): Number
+        => Number.Pi * c.Radius.Square + 2.0 * c.Radius * c.SpineLength;
+
+    // 2*pi*r (the two half-circle ends) + 2*L (the two straight sides).
+    Perimeter(c: Capsule2D): Number
+        => 2.0 * Number.Pi * c.Radius + 2.0 * c.SpineLength;
+
+    // The spine's midpoint, by the shape's two mirror symmetries.
+    Centroid(c: Capsule2D): Point2D
+        => c.A.MidPoint(c.B);
+
+    // The bounds of the two endpoints grown by the radius on every side.
+    Bounds(c: Capsule2D): Bounds2D
+        => (Point2D(c.A.X.Min(c.B.X) - c.Radius, c.A.Y.Min(c.B.Y) - c.Radius),
+            Point2D(c.A.X.Max(c.B.X) + c.Radius, c.A.Y.Max(c.B.Y) + c.Radius));
+
+    // True when the point is within Radius of the spine segment. Boundary
+    // inclusive.
+    Contains(c: Capsule2D, point: Point2D): Boolean
+        => DistanceToSegment(c.A, c.B, point) <= c.Radius;
+
+    // The query point when it lies in the capsule, otherwise the radial projection
+    // onto the capsule's boundary from the nearest spine point.
+    ClosestPoint(c: Capsule2D, point: Point2D): Point2D
+    {
+        var spine = ClosestPointOnSegment(c.A, c.B, point);
+        var outward = spine.Between(point);
+        return outward.MagnitudeSquared <= c.Radius.Square
+            ? point
+            : spine.Add(outward.Normalize.Multiply(c.Radius));
+    }
+
+    // The support of a Minkowski sum is the sum of the supports: the farther
+    // endpoint along `direction`, displaced by r along it.
+    Support(c: Capsule2D, direction: Direction2D): Point2D
+        => (direction.Vector.Dot(c.A.PositionVector) >= direction.Vector.Dot(c.B.PositionVector)
+            ? c.A : c.B).Add(direction.Vector.Multiply(c.Radius));
+}

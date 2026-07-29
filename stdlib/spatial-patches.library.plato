@@ -1,0 +1,150 @@
+//==
+// # SpatialPatches — disk, triangle, and quadrilateral bodies
+//
+// Area, perimeter, bounds, centroid and nearest-point bodies for the flat patches
+// declared in `spatial-patches.plato`, plus the triangle's vector area, face normal,
+// and supporting plane. These are patches, not solids: `Area` is the patch's own area
+// and `ClosestPoint` always lands ON the patch. The frame and disk-extent helpers are
+// in `spatial-primitives.library.plato`, and the point-list kernels in
+// `geometry-kernels.library.plato`.
+
+library SpatialPatches
+{
+    //==
+    // # Disk3D
+    //
+    // A flat patch, not a solid: `Area` is the patch's area and `Perimeter` its rim.
+
+    // pi * r^2.
+    Area(d: Disk3D): Number
+        => Number.Pi * d.Radius.Square;
+
+    // The rim's circumference 2 * pi * r.
+    Perimeter(d: Disk3D): Number
+        => 2.0 * Number.Pi * d.Radius;
+
+    // The stored centre.
+    Centroid(d: Disk3D): Point3D
+        => d.Center;
+
+    // TIGHT: the disk's own per-axis extents.
+    Bounds(d: Disk3D): Bounds3D
+        => DiskBounds(d.Center, d.Normal.Vector, d.Radius);
+
+    // The query projected onto the disk's plane, then pulled radially back to the
+    // rim if it landed outside. Always lands ON the patch.
+    ClosestPoint(d: Disk3D, point: Point3D): Point3D
+    {
+        var inPlane = PerpendicularComponent(d.Center.Between(point), d.Normal.Vector);
+        var distance = inPlane.Magnitude;
+        return d.Center.Add(distance <= d.Radius
+            ? inPlane
+            : inPlane.Multiply(d.Radius / distance));
+    }
+
+    //==
+    // # Triangle3D
+
+    // The three vertices in stored order.
+    Points(t: Triangle3D): Array<Point3D>
+        => 3.MapRange(i => i == 0 ? t.A : (i == 1 ? t.B : t.C));
+
+    // Twice the vector area: the cross product of two edge vectors, whose direction
+    // is the right-hand-rule normal and whose magnitude is twice the area.
+    TwiceVectorArea(t: Triangle3D): Vector3D
+        => t.A.Between(t.B).Cross(t.A.Between(t.C));
+
+    // Half the magnitude of the edge cross product.
+    // https://en.wikipedia.org/wiki/Triangle#Using_vectors
+    Area(t: Triangle3D): Number
+        => t.TwiceVectorArea.Magnitude * 0.5;
+
+    // The unit face normal, following the right-hand rule around A, B, C (this
+    // type's stated orientation). Undefined for a degenerate (collinear) triangle,
+    // whose vector area is zero.
+    Normal(t: Triangle3D): Direction3D
+        => Direction3D(t.TwiceVectorArea.Normalize);
+
+    // The plane the triangle lies in, in Hesse form: the face normal with Distance
+    // the signed distance from the world origin (Dot(Normal, A)). The declared
+    // conversion clipping and BSP authors reach for.
+    FromTriangle(t: Triangle3D): Plane
+        => (t.Normal, t.A.PositionVector.Dot(t.Normal.Vector));
+
+    // The sum of the three side lengths.
+    Perimeter(t: Triangle3D): Number
+        => t.A.Between(t.B).Magnitude
+        + t.B.Between(t.C).Magnitude
+        + t.C.Between(t.A).Magnitude;
+
+    // The arithmetic mean of the three vertices, which for a triangle is also its
+    // area centroid.
+    Centroid(t: Triangle3D): Point3D
+        => ((t.A.X + t.B.X + t.C.X) / 3.0,
+            (t.A.Y + t.B.Y + t.C.Y) / 3.0,
+            (t.A.Z + t.B.Z + t.C.Z) / 3.0);
+
+    // True when `point`, ASSUMED ALREADY IN THE TRIANGLE'S PLANE, lies inside it:
+    // all three edge cross products agree with the triangle's own normal.
+    ContainsCoplanar(t: Triangle3D, point: Point3D): Boolean
+    {
+        var n = t.TwiceVectorArea;
+        return t.A.Between(t.B).Cross(t.A.Between(point)).Dot(n) >= 0.0
+            && t.B.Between(t.C).Cross(t.B.Between(point)).Dot(n) >= 0.0
+            && t.C.Between(t.A).Cross(t.C.Between(point)).Dot(n) >= 0.0;
+    }
+
+    // The query projected onto the triangle's plane when that projection lands
+    // inside, otherwise the nearest point of the three edges. A degenerate
+    // (collinear) triangle has no plane, so the edge branch takes over — its
+    // projection test fails on the zero normal.
+    ClosestPoint(t: Triangle3D, point: Point3D): Point3D
+    {
+        var n = t.TwiceVectorArea.Normalize;
+        var projected = point.Subtract(n.Multiply(t.A.Between(point).Dot(n)));
+        return t.ContainsCoplanar(projected)
+            ? projected
+            : t.Points.ClosestPointOnChain(true, point);
+    }
+
+    // The triangle with all three vertices carried through the mapping.
+    Deform(t: Triangle3D, mapping: Function1<Point3D, Point3D>): Triangle3D
+        => (mapping(t.A), mapping(t.B), mapping(t.C));
+
+    //==
+    // # Quad3D
+    //
+    // Measured through the A-B-C / A-C-D TRIANGULATION. Exact for the planar case
+    // the declaration calls ideal; for a genuinely non-planar bilinear patch the
+    // triangulated area UNDERSTATES the curved surface area (the two flat triangles
+    // are the chordal approximation of it) and the centroid is that of the two
+    // triangles rather than of the patch. TODO(content): the bilinear patch's own
+    // area is an elliptic integral with no closed form; a quadrature helper would
+    // be needed to do better.
+
+    // The four vertices in stored order.
+    Points(q: Quad3D): Array<Point3D>
+        => 4.MapRange(i => i == 0 ? q.A : (i == 1 ? q.B : (i == 2 ? q.C : q.D)));
+
+    // The sum of the two triangles A-B-C and A-C-D.
+    Area(q: Quad3D): Number
+        => Triangle3D(q.A, q.B, q.C).Area + Triangle3D(q.A, q.C, q.D).Area;
+
+    // The sum of the four side lengths.
+    Perimeter(q: Quad3D): Number
+        => q.Points.ChainLength(true);
+
+    // The area-weighted mean of the two triangles' centroids, which is the exact
+    // area centroid for a planar quad.
+    Centroid(q: Quad3D): Point3D
+    {
+        var first = Triangle3D(q.A, q.B, q.C);
+        var second = Triangle3D(q.A, q.C, q.D);
+        var total = first.Area + second.Area;
+        return first.Centroid.Lerp(second.Centroid, second.Area / total);
+    }
+
+    // The quad with all four vertices carried through the mapping.
+    Deform(q: Quad3D, mapping: Function1<Point3D, Point3D>): Quad3D
+        => (mapping(q.A), mapping(q.B), mapping(q.C), mapping(q.D));
+}

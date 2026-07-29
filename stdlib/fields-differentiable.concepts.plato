@@ -1,0 +1,49 @@
+//==
+// # Differentiable field concepts
+//
+// Scalar and vector fields that carry a first derivative alongside their
+// value: the gradient of a scalar field, and the Jacobian, divergence, and
+// curl of a vector field. Derivatives may be analytic or numeric; either way
+// they are exposed as ordinary field operations
+// (https://en.wikipedia.org/wiki/Differentiable_function).
+
+// A planar scalar field with an analytic or numeric first derivative. The
+// gradient points in the direction of steepest increase
+// (https://en.wikipedia.org/wiki/Gradient).
+concept DifferentiableScalarField2D
+    inherits ScalarField2D
+{
+    GradientAt(x: Self, point: Point2D): Vector2D;
+}
+
+// A spatial scalar field with an analytic or numeric first derivative. The
+// gradient of a signed distance field is the outward surface normal direction
+// (https://en.wikipedia.org/wiki/Signed_distance_function).
+concept DifferentiableScalarField3D
+    inherits ScalarField3D
+{
+    GradientAt(x: Self, point: Point3D): Vector3D;
+}
+
+// A planar vector field with first derivatives: the Jacobian, its trace
+// (divergence), and the scalar 2D curl (rotation about the plane normal)
+// (https://en.wikipedia.org/wiki/Divergence,
+// https://en.wikipedia.org/wiki/Curl_(mathematics)).
+concept DifferentiableVectorField2D
+    inherits VectorField2D
+{
+    JacobianAt(x: Self, point: Point2D): Matrix2x2;
+    DivergenceAt(x: Self, point: Point2D): Number;
+    CurlAt(x: Self, point: Point2D): Number;
+}
+
+// A spatial vector field with first derivatives: the Jacobian, its trace
+// (divergence), and the curl vector
+// (https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant).
+concept DifferentiableVectorField3D
+    inherits VectorField3D
+{
+    JacobianAt(x: Self, point: Point3D): Matrix3x3;
+    DivergenceAt(x: Self, point: Point3D): Number;
+    CurlAt(x: Self, point: Point3D): Vector3D;
+}

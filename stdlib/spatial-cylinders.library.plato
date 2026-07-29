@@ -1,0 +1,212 @@
+//==
+// # SpatialCylinders — cylinder, pipe, cone, and frustum bodies
+//
+// Volume, surface area, bounds, centroid, containment and support bodies for the
+// axis-swept solids declared in `spatial-cylinders.plato`. The capsule's bodies are in
+// `spatial-capsules.library.plato`; the frame and disk-extent helpers, and the
+// conventions governing every body here, are in `spatial-primitives.library.plato`.
+
+library SpatialCylinders
+{
+    //==
+    // # Cylinder
+    //
+    // https://en.wikipedia.org/wiki/Cylinder
+
+    // pi * r^2 * h.
+    Volume(c: Cylinder): Number
+        => Number.Pi * c.Radius.Square * c.Height;
+
+    // The lateral surface 2*pi*r*h PLUS both flat caps 2*pi*r^2, since the solid's
+    // boundary includes them.
+    SurfaceArea(c: Cylinder): Number
+        => 2.0 * Number.Pi * c.Radius * c.Height + 2.0 * Number.Pi * c.Radius.Square;
+
+    // The stored centre, which is the midpoint of the axis segment.
+    Centroid(c: Cylinder): Point3D
+        => c.Center;
+
+    // TIGHT: the axial half-extent (h/2)|axis.e| plus the cap disk's own extent
+    // r*sqrt(1 - (axis.e)^2) on each world axis e.
+    Bounds(c: Cylinder): Bounds3D
+    {
+        var a = c.Axis.Vector;
+        var disk = DiskHalfExtents(a, c.Radius);
+        var half = c.Height * 0.5;
+        return CenteredBounds(c.Center,
+            half * a.X.Abs + disk.X,
+            half * a.Y.Abs + disk.Y,
+            half * a.Z.Abs + disk.Z);
+    }
+
+    // True when the query is within half the height along the axis AND within the
+    // radius of the axis. Boundary inclusive on both.
+    Contains(c: Cylinder, point: Point3D): Boolean
+    {
+        var v = c.Center.Between(point);
+        return v.Dot(c.Axis.Vector).Abs <= c.Height * 0.5
+            && PerpendicularComponent(v, c.Axis.Vector).MagnitudeSquared <= c.Radius.Square;
+    }
+
+    // The rim point of whichever cap faces `direction`: the axial extreme plus the
+    // radial extreme, chosen independently.
+    Support(c: Cylinder, direction: Direction3D): Point3D
+    {
+        var a = c.Axis.Vector;
+        var d = direction.Vector;
+        var axial = a.Multiply(d.Dot(a) >= 0.0 ? c.Height * 0.5 : c.Height * -0.5);
+        return c.Center.Add(axial).Add(RadialSupport(d, a, c.Radius));
+    }
+
+    //==
+    // # CylindricalShell
+
+    // pi * h * (R^2 - r^2).
+    Volume(s: CylindricalShell): Number
+        => Number.Pi * s.Height * (s.OuterRadius.Square - s.InnerRadius.Square);
+
+    // Both lateral surfaces 2*pi*h*(R + r) plus the two annular caps
+    // 2*pi*(R^2 - r^2). The inner wall is part of the solid's boundary.
+    SurfaceArea(s: CylindricalShell): Number
+        => 2.0 * Number.Pi * s.Height * (s.OuterRadius + s.InnerRadius)
+        + 2.0 * Number.Pi * (s.OuterRadius.Square - s.InnerRadius.Square);
+
+    // The stored centre.
+    Centroid(s: CylindricalShell): Point3D
+        => s.Center;
+
+    // The outer cylinder's bounds, which the shell touches everywhere.
+    Bounds(s: CylindricalShell): Bounds3D
+    {
+        var a = s.Axis.Vector;
+        var disk = DiskHalfExtents(a, s.OuterRadius);
+        var half = s.Height * 0.5;
+        return CenteredBounds(s.Center,
+            half * a.X.Abs + disk.X,
+            half * a.Y.Abs + disk.Y,
+            half * a.Z.Abs + disk.Z);
+    }
+
+    // True when the query is within half the height along the axis AND its distance
+    // from the axis lies in [InnerRadius, OuterRadius].
+    Contains(s: CylindricalShell, point: Point3D): Boolean
+    {
+        var v = s.Center.Between(point);
+        var radialSquared = PerpendicularComponent(v, s.Axis.Vector).MagnitudeSquared;
+        return v.Dot(s.Axis.Vector).Abs <= s.Height * 0.5
+            && radialSquared >= s.InnerRadius.Square
+            && radialSquared <= s.OuterRadius.Square;
+    }
+
+    //==
+    // # Cone
+    //
+    // https://en.wikipedia.org/wiki/Cone
+
+    // The centre of the base disk: Apex displaced by Height along Axis.
+    BaseCenter(c: Cone): Point3D
+        => c.Apex.Add(c.Axis.Vector.Multiply(c.Height));
+
+    // The slant height sqrt(r^2 + h^2).
+    SlantHeight(c: Cone): Number
+        => (c.Radius.Square + c.Height.Square).Sqrt;
+
+    // (1/3) * pi * r^2 * h.
+    Volume(c: Cone): Number
+        => Number.Pi * c.Radius.Square * c.Height / 3.0;
+
+    // The lateral surface pi*r*l PLUS the base disk pi*r^2, since the base closes
+    // the solid.
+    SurfaceArea(c: Cone): Number
+        => Number.Pi * c.Radius.Square + Number.Pi * c.Radius * c.SlantHeight;
+
+    // On the axis, three quarters of the way from the Apex to the base — i.e. one
+    // quarter of the height above the base, the standard solid-cone result.
+    Centroid(c: Cone): Point3D
+        => c.Apex.Add(c.Axis.Vector.Multiply(0.75 * c.Height));
+
+    // TIGHT: the union of the Apex and the base disk's own bounds.
+    Bounds(c: Cone): Bounds3D
+        => UnionOfBounds(Bounds3D(c.Apex, c.Apex),
+            DiskBounds(c.BaseCenter, c.Axis.Vector, c.Radius));
+
+    // True when the query lies between the Apex and the base plane AND within the
+    // cone's radius at that height, which grows linearly as r*t/h. Boundary
+    // inclusive.
+    Contains(c: Cone, point: Point3D): Boolean
+    {
+        var v = c.Apex.Between(point);
+        var t = v.Dot(c.Axis.Vector);
+        return t >= 0.0 && t <= c.Height
+            && PerpendicularComponent(v, c.Axis.Vector).Magnitude <= c.Radius * t / c.Height;
+    }
+
+    // Either the Apex or the extreme point of the base rim, whichever is farther
+    // along `direction`. Exact because the cone is the convex hull of those two
+    // features.
+    Support(c: Cone, direction: Direction3D): Point3D
+    {
+        var d = direction.Vector;
+        var rim = c.BaseCenter.Add(RadialSupport(d, c.Axis.Vector, c.Radius));
+        return d.Dot(c.Apex.PositionVector) >= d.Dot(rim.PositionVector) ? c.Apex : rim;
+    }
+
+    //==
+    // # ConicalFrustum
+    //
+    // https://en.wikipedia.org/wiki/Frustum
+
+    // The centre of the bottom disk, at -Height/2 along Axis.
+    BottomCenter(f: ConicalFrustum): Point3D
+        => f.Center.Subtract(f.Axis.Vector.Multiply(f.Height * 0.5));
+
+    // The centre of the top disk, at +Height/2 along Axis.
+    TopCenter(f: ConicalFrustum): Point3D
+        => f.Center.Add(f.Axis.Vector.Multiply(f.Height * 0.5));
+
+    // The slant height sqrt((r1 - r2)^2 + h^2).
+    SlantHeight(f: ConicalFrustum): Number
+        => ((f.BottomRadius - f.TopRadius).Square + f.Height.Square).Sqrt;
+
+    // (pi * h / 3) * (r1^2 + r1*r2 + r2^2).
+    // https://en.wikipedia.org/wiki/Frustum#Volume
+    Volume(f: ConicalFrustum): Number
+        => Number.Pi * f.Height
+        * (f.BottomRadius.Square + f.BottomRadius * f.TopRadius + f.TopRadius.Square) / 3.0;
+
+    // The lateral surface pi*(r1 + r2)*l PLUS both disks pi*(r1^2 + r2^2).
+    SurfaceArea(f: ConicalFrustum): Number
+        => Number.Pi * (f.BottomRadius.Square + f.TopRadius.Square)
+        + Number.Pi * (f.BottomRadius + f.TopRadius) * f.SlantHeight;
+
+    // On the axis, at (h/4) * (r1^2 + 2*r1*r2 + 3*r2^2) / (r1^2 + r1*r2 + r2^2)
+    // above the BOTTOM disk — restated here relative to Center, which sits at h/2.
+    // Checks out at both ends: r2 = 0 gives h/4 (the cone) and r1 = r2 gives h/2
+    // (the cylinder). https://en.wikipedia.org/wiki/Frustum
+    Centroid(f: ConicalFrustum): Point3D
+    {
+        var r1 = f.BottomRadius;
+        var r2 = f.TopRadius;
+        var fromBottom = f.Height * 0.25
+            * (r1.Square + 2.0 * r1 * r2 + 3.0 * r2.Square)
+            / (r1.Square + r1 * r2 + r2.Square);
+        return f.BottomCenter.Add(f.Axis.Vector.Multiply(fromBottom));
+    }
+
+    // TIGHT: the union of the two disks' own bounds.
+    Bounds(f: ConicalFrustum): Bounds3D
+        => UnionOfBounds(DiskBounds(f.BottomCenter, f.Axis.Vector, f.BottomRadius),
+            DiskBounds(f.TopCenter, f.Axis.Vector, f.TopRadius));
+
+    // True when the query lies between the two disks AND within the frustum's
+    // radius at that height, which interpolates linearly from r1 to r2.
+    Contains(f: ConicalFrustum, point: Point3D): Boolean
+    {
+        var v = f.Center.Between(point);
+        var t = v.Dot(f.Axis.Vector);
+        var fraction = (t + f.Height * 0.5) / f.Height;
+        return t.Abs <= f.Height * 0.5
+            && PerpendicularComponent(v, f.Axis.Vector).Magnitude
+                <= f.BottomRadius + (f.TopRadius - f.BottomRadius) * fraction;
+    }
+}

@@ -1,0 +1,64 @@
+//==
+// # SplinesBspline — knot vectors and B-spline / NURBS domains
+//
+// The readers for the knot-vector curves declared in `splines-bspline.plato`:
+// knot count and lookup, the parameter domain a given degree covers, and the
+// de-homogenized (weighted) control point that a Cox-de Boor evaluator would
+// consume. Cox-de Boor evaluation itself is not shipped — see the note below.
+
+library SplinesBspline
+{
+    //==
+    // # B-splines and NURBS
+    //
+    // TODO(concept-gap): Cox-de Boor evaluation needs a knot-span search plus a
+    // recurrence over degree levels indexed off that span. The span search is
+    // now expressible (a `Reduce` over Knots carrying the last index whose knot
+    // does not exceed the parameter), but the remaining blocker is the degree
+    // recurrence itself: a triangular DP where level p reads two entries of
+    // level p-1, with a zero-division guard at every repeated knot. That reads
+    // as nested `MapRange`/`Reduce` with carried per-level arrays, which does
+    // not render cleanly, so BSplineCurve2D/3D and NurbsCurve2D/3D keep no Eval
+    // here. KnotVector.Knots is read by the helper below so the declaration is
+    // not dead while that is outstanding.
+
+    // The number of knots in a knot vector. For a curve with N control points
+    // of degree D this must equal N + D + 1.
+    Count(self: KnotVector): Integer
+        => self.Knots.Count;
+
+    // The knot at the given position.
+    KnotAt(self: KnotVector, index: Integer): Number
+        => self.Knots.At(index);
+
+    // The parameter domain a B-spline of the given degree covers: knots
+    // [Degree, Count - Degree - 1]. Outside it the basis is not a partition of
+    // unity. Precondition: the knot count matches the degree and point count.
+    Domain(self: KnotVector, degree: Integer): NumberInterval
+        => NumberInterval(self.KnotAt(degree), self.KnotAt(self.Count - degree - 1));
+
+    // The domain of a plane B-spline: its knot vector restricted by its degree.
+    ParameterDomain(self: BSplineCurve2D): NumberInterval
+        => self.Knots.Domain(self.Degree);
+
+    // The domain of a space B-spline: its knot vector restricted by its degree.
+    ParameterDomain(self: BSplineCurve3D): NumberInterval
+        => self.Knots.Domain(self.Degree);
+
+    // The domain of a plane NURBS curve.
+    ParameterDomain(self: NurbsCurve2D): NumberInterval
+        => self.Knots.Domain(self.Degree);
+
+    // The domain of a space NURBS curve.
+    ParameterDomain(self: NurbsCurve3D): NumberInterval
+        => self.Knots.Domain(self.Degree);
+
+    // The de-homogenized control point of a NURBS curve: the control point
+    // scaled by its weight, the form Cox-de Boor consumes.
+    WeightedControlPoint(self: NurbsCurve2D, index: Integer): Vector2D
+        => self.ControlPoints.At(index).PositionVector * self.Weights.At(index);
+
+    // The de-homogenized control point of a NURBS curve.
+    WeightedControlPoint(self: NurbsCurve3D, index: Integer): Vector3D
+        => self.ControlPoints.At(index).PositionVector * self.Weights.At(index);
+}

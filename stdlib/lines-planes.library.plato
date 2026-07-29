@@ -1,0 +1,148 @@
+//==
+// # LinesPlanes — plane, half-space, and slab operations
+//
+// The signed-distance, side, intersection, containment and nearest-point bodies for
+// the types declared in `lines-planes.plato`.
+//
+// Conventions:
+//   * `Contains` on the half-plane, half-space and slab regions is CLOSED: a point
+//     exactly on the bounding line/plane is contained, matching the concept doc
+//     ("for closed shapes the boundary counts as inside") and the `<=` in each
+//     declaration's own doc comment.
+//   * `ClosestPoint` on a REGION (half-plane, half-space) returns the query point
+//     itself when the query is inside, as `NearestPoint2D`/`3D` permits.
+//   * The signed distance of a point p from the world origin along a unit normal n
+//     is Dot(n, p) — written `p.PositionVector.Dot(n.Vector)` here, since a point
+//     is not a vector in this vocabulary (`transforms.plato`).
+
+library LinesPlanes
+{
+    //==
+    // # Planes and half-spaces
+    //
+    // Hesse normal form: the plane is the set of p with Dot(Normal, p) = Distance,
+    // so SignedDistance(p) = Dot(Normal, p) - Distance is the signed distance from
+    // the plane, positive on the side the normal points to.
+    // https://en.wikipedia.org/wiki/Hesse_normal_form
+
+    // The signed distance from `point` to the plane, positive on the side the
+    // normal points to. Exact because Normal is a unit vector by its invariant.
+    SignedDistance(pl: Plane, point: Point3D): Number
+        => point.PositionVector.Dot(pl.Normal.Vector) - pl.Distance;
+
+    // The signed distance from `point` to the half-plane's boundary line, positive
+    // outside the half-plane.
+    SignedDistance(h: HalfPlane2D, point: Point2D): Number
+        => point.PositionVector.Dot(h.Normal.Vector) - h.Distance;
+
+    // The foot of the perpendicular from `point` onto the plane.
+    ClosestPoint(pl: Plane, point: Point3D): Point3D
+        => point.Subtract(pl.Normal.Vector.Multiply(pl.SignedDistance(point)));
+
+    // Which side of the plane `point` lies on: +1 on the side Normal points to,
+    // -1 behind, 0 on the plane. The sign of SignedDistance; the name every
+    // clipping / BSP lesson reaches for.
+    Side(pl: Plane, point: Point3D): Integer
+        => pl.SignedDistance(point).Sign;
+
+    // The plane through `point` with unit `normal`, in Hesse form: Distance is
+    // Dot(normal, point), the signed distance from the world origin. The usual way
+    // to build a plane from a point-and-normal (e.g. a triangle's vertex and face
+    // normal).
+    FromPointNormal(point: Point3D, normal: Direction3D): Plane
+        => (normal, point.PositionVector.Dot(normal.Vector));
+
+    // The same plane facing the other way: both Normal and Distance negated, so the
+    // point set Dot(Normal, p) = Distance is unchanged while its front side flips.
+    // The teachable one-liner that keeps the two fields in step.
+    Flip(pl: Plane): Plane
+        => (Direction3D(pl.Normal.Vector.Multiply(-1.0)), -pl.Distance);
+
+    // The complementary closed half-space: the region on the other side of the same
+    // boundary plane, obtained by flipping that plane.
+    Flip(h: HalfSpace): HalfSpace
+        => h.Boundary.Flip;
+
+    // Where the infinite line crosses the plane. Misses (Hit false) only when the
+    // line is parallel to the plane (Dot(Normal, Direction) = 0), including a line
+    // lying in the plane -- there is then no single crossing point.
+    Intersect(l: Line3D, pl: Plane): PlaneHit3D
+    {
+        var denom = l.Direction.Vector.Dot(pl.Normal.Vector);
+        var t = 0.0 - pl.SignedDistance(l.Origin) / denom;
+        return denom == 0.0
+            ? PlaneHit3D(false, l.Origin, 0.0)
+            : PlaneHit3D(true, l.PointAt(t), t);
+    }
+
+    // Where the ray crosses the plane. Misses when the ray is parallel to the plane
+    // OR crosses behind the origin (t < 0).
+    Intersect(r: Ray3D, pl: Plane): PlaneHit3D
+    {
+        var denom = r.Direction.Vector.Dot(pl.Normal.Vector);
+        var t = 0.0 - pl.SignedDistance(r.Origin) / denom;
+        return denom == 0.0 || t < 0.0
+            ? PlaneHit3D(false, r.Origin, 0.0)
+            : PlaneHit3D(true, r.PointAt(t), t);
+    }
+
+    // Where the segment crosses the plane, with Parameter in [0, 1] along A -> B.
+    // Misses when the segment is parallel to the plane OR both endpoints lie on the
+    // same side (the crossing parameter falls outside [0, 1]).
+    Intersect(s: LineSegment3D, pl: Plane): PlaneHit3D
+    {
+        var denom = s.A.Between(s.B).Dot(pl.Normal.Vector);
+        var t = 0.0 - pl.SignedDistance(s.A) / denom;
+        return denom == 0.0 || t < 0.0 || t > 1.0
+            ? PlaneHit3D(false, s.A, 0.0)
+            : PlaneHit3D(true, s.PointAt(t), t);
+    }
+
+    // True when `point` lies on or behind the boundary plane
+    // (Dot(Normal, point) <= Distance). Boundary inclusive.
+    Contains(h: HalfSpace, point: Point3D): Boolean
+        => h.Boundary.SignedDistance(point) <= 0.0;
+
+    // The query point itself when it is inside the half-space, otherwise its
+    // projection onto the boundary plane.
+    ClosestPoint(h: HalfSpace, point: Point3D): Point3D
+        => h.Contains(point) ? point : h.Boundary.ClosestPoint(point);
+
+    // True when `point` lies on or behind the boundary line. Boundary inclusive.
+    Contains(h: HalfPlane2D, point: Point2D): Boolean
+        => h.SignedDistance(point) <= 0.0;
+
+    // The query point itself when it is inside the half-plane, otherwise its
+    // projection onto the boundary line.
+    ClosestPoint(h: HalfPlane2D, point: Point2D): Point2D
+        => h.Contains(point)
+        ? point
+        : point.Subtract(h.Normal.Vector.Multiply(h.SignedDistance(point)));
+
+    //==
+    // # Slabs
+    //
+    // A slab is the preimage of a closed number interval under the linear map
+    // p -> Dot(Normal, p), so containment is exactly interval containment.
+    // `Contains(IntervalLike, value)` (P4) is endpoint-inclusive and assumes the
+    // interval is stored forward (Start <= End), which is the slab's own invariant.
+
+    // True when the point's signed distance along Normal lies within Interval.
+    Contains(s: Slab2D, point: Point2D): Boolean
+        => s.Interval.Contains(point.PositionVector.Dot(s.Normal.Vector));
+
+    // True when the point's signed distance along Normal lies within Interval.
+    Contains(s: Slab3D, point: Point3D): Boolean
+        => s.Interval.Contains(point.PositionVector.Dot(s.Normal.Vector));
+
+    // The three axis-aligned slabs of a box, one per world axis (X, Y, Z), each
+    // spanning that axis' Min..Max coordinate. A point lies in the box exactly when
+    // it lies in all three slabs, which is the standard slab reduction of a
+    // ray/box or box/box test.
+    // https://en.wikipedia.org/wiki/Slab_method
+    Slabs(b: Bounds3D): Array<Slab3D>
+        => 3.MapRange(i =>
+            i == 0 ? Slab3D(Direction3D(Vector3D.UnitX), NumberInterval(b.Min.X, b.Max.X))
+            : (i == 1 ? Slab3D(Direction3D(Vector3D.UnitY), NumberInterval(b.Min.Y, b.Max.Y))
+            : Slab3D(Direction3D(Vector3D.UnitZ), NumberInterval(b.Min.Z, b.Max.Z))));
+}

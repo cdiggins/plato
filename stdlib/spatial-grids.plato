@@ -1,0 +1,82 @@
+//==
+// # Uniform grids and space-filling curve codes
+//
+// Flat, non-hierarchical spatial indexes keyed by cell coordinate — sparse hash
+// grids and dense binning grids, both storing their buckets in CSR form — plus
+// the Morton (Z-order) codes that linearize a cell coordinate into a single
+// sortable integer.
+
+//==
+// ## Hash and binning grids
+
+// A sparse uniform grid over the plane, keyed by integer cell coordinate
+// (world position divided by CellSize, floored). Only occupied cells are
+// stored: cell i has coordinate CellCoordinates[i] and items
+// ItemIndices[BucketOffsets[i] .. BucketOffsets[i+1]) (half-open CSR;
+// BucketOffsets has one more entry than CellCoordinates).
+type SpatialHashGrid2D
+    implements Value, SpatialIndex2D
+{
+    CellSize: Number;
+    CellCoordinates: Array<IntegerVector2>;
+    BucketOffsets: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
+}
+
+// A sparse uniform grid over space, keyed by integer cell coordinate. Same
+// CSR encoding as SpatialHashGrid2D with 3D cell coordinates.
+type SpatialHashGrid3D
+    implements Value, SpatialIndex3D
+{
+    CellSize: Number;
+    CellCoordinates: Array<IntegerVector3>;
+    BucketOffsets: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
+}
+
+// A dense uniform binning grid over a bounded 2D region: every cell has a
+// bucket. Cells linearize row-major with X varying fastest: cell (i, j) is
+// bucket j * CellCounts.Width + i. Bucket b's items are
+// ItemIndices[BucketOffsets[b] .. BucketOffsets[b+1]) (half-open CSR).
+type BinningGrid2D
+    implements Value, SpatialIndex2D
+{
+    Bounds: Bounds2D;
+    CellCounts: IntegerSize2D;
+    BucketOffsets: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
+}
+
+// A dense uniform binning grid over a bounded 3D region. Cells linearize
+// with X varying fastest, then Y, then Z: cell (i, j, k) is bucket
+// (k * CellCounts.Height + j) * CellCounts.Width + i. Same CSR encoding as
+// BinningGrid2D.
+type BinningGrid3D
+    implements Value, SpatialIndex3D
+{
+    Bounds: Bounds3D;
+    CellCounts: IntegerSize3D;
+    BucketOffsets: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
+}
+
+//==
+// ## Space-filling curve codes
+
+// A 2D Morton (Z-order) code (https://en.wikipedia.org/wiki/Z-order_curve):
+// the bits of a cell's X and Y coordinates interleaved (X in even bit
+// positions). Sorting by code groups spatially nearby cells: the basis of
+// linear BVH builds and cache-friendly sweeps.
+type MortonCode2D
+    implements Value, Hashable, Comparable
+{
+    Value: Integer;
+}
+
+// A 3D Morton (Z-order) code: X, Y, and Z coordinate bits interleaved
+// (X in bit positions 0, 3, 6, ...).
+type MortonCode3D
+    implements Value, Hashable, Comparable
+{
+    Value: Integer;
+}

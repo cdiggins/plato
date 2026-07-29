@@ -1,0 +1,61 @@
+//==
+// # Half-edge and corner connectivity
+//
+// The two explicit connectivity encodings that support constant-time
+// neighbourhood navigation: the half-edge structure for general polygon meshes,
+// and the corner table for triangle meshes. Both name their neighbours by typed
+// index, with -1 standing for a boundary or a hole.
+
+//==
+// ## Half-edge structures
+
+// One directed side of an undirected mesh edge
+// (https://en.wikipedia.org/wiki/Doubly_connected_edge_list). Origin is the
+// vertex this half-edge leaves. Next and Previous walk the loop of the
+// bordered face in counter-clockwise order. Twin is the oppositely directed
+// half-edge, -1 when the edge is on a boundary. Face is the bordered face, -1
+// when this half-edge runs along a hole.
+type HalfEdge
+    implements Value
+{
+    Origin: VertexIndex;
+    Twin: HalfEdgeIndex;
+    Next: HalfEdgeIndex;
+    Previous: HalfEdgeIndex;
+    Face: FaceIndex;
+}
+
+// A 3D mesh in half-edge form, supporting constant-time neighborhood
+// navigation. FaceHalfEdges[f] is one half-edge on face f's loop;
+// VertexHalfEdges[v] is one half-edge leaving vertex v, -1 for an isolated
+// vertex. Requires a manifold (possibly bounded) surface.
+type HalfEdgeMesh
+    implements Value, MeshTopology, HalfEdgeNavigable
+{
+    Positions: Array<Point3D>;
+    HalfEdges: Array<HalfEdge>;
+    FaceHalfEdges: Array<HalfEdgeIndex>;
+    VertexHalfEdges: Array<HalfEdgeIndex>;
+}
+
+// One closed loop of boundary half-edges (half-edges whose Face is -1),
+// listed in walk order around the hole.
+type BoundaryLoop
+    implements Value
+{
+    HalfEdges: Array<HalfEdgeIndex>;
+}
+
+//==
+// ## Corner tables
+
+// Triangle-corner connectivity. Corner c belongs to triangle c / 3; its next
+// corner within the triangle is 3 * (c / 3) + ((c + 1) mod 3). Corners[c] is
+// the vertex sitting at corner c. Opposites[c] is the corner facing the same
+// edge from the adjacent triangle, or -1 when that edge is on the boundary.
+type CornerTable
+    implements Value
+{
+    Corners: Array<VertexIndex>;
+    Opposites: Array<CornerIndex>;
+}

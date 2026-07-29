@@ -1,0 +1,46 @@
+//==
+// # Beams, supports, and loads
+//
+// A straight prismatic member ready for 1D structural analysis, together with
+// the restraints and loads placed along its axis. Positions are Lengths
+// measured from the beam's start; load magnitudes carry the units named by
+// their case.
+
+// How a beam is restrained at a support point: translation and rotation
+// (Fixed), translation only (Pinned), transverse translation only (Roller),
+// or an unrestrained end (Free).
+// (https://en.wikipedia.org/wiki/Structural_support)
+type BeamRestraint = Fixed | Pinned | Roller | Free;
+
+// A support placed along a beam. Position is measured from the beam's start
+// along its axis.
+type BeamSupport
+    implements Value
+{
+    Restraint: BeamRestraint;
+    Position: Length;
+}
+
+// A load on a beam. Positions are measured from the beam's start; each case
+// carries the magnitude in its own units: newtons for PointForce, newtons
+// per meter for DistributedForce (uniform over StartPosition..EndPosition),
+// newton-meters for Moment. Transverse loads are positive downward by
+// convention.
+// (https://en.wikipedia.org/wiki/Structural_load)
+type BeamLoad
+    implements Value
+    = PointForce(Position: Length, Magnitude: Number)
+    | DistributedForce(StartPosition: Length, EndPosition: Length, Magnitude: Number)
+    | Moment(Position: Length, Magnitude: Number);
+
+// A straight prismatic beam ready for 1D structural analysis: overall length,
+// section properties, material, and the supports and loads along its axis.
+// (https://en.wikipedia.org/wiki/Beam_(structure))
+type Beam
+{
+    Length: Length;
+    Section: SectionProperties;
+    Material: EngineeringMaterial;
+    Supports: Array<BeamSupport>;
+    Loads: Array<BeamLoad>;
+}

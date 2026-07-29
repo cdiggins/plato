@@ -1,0 +1,200 @@
+//==
+// # SpatialQueries — derived functionality for spatial indexes and queries
+//
+// Pure, expression-bodied helpers for the concepts declared in
+// `spatial-structures.concepts.plato` (SpatialIndex2D, SpatialIndex3D) and
+// `spatial-queries.concepts.plato` (RayIntersectable2D/3D,
+// ClosestPointQueryable2D/3D, NearestNeighborQueryable2D/3D). Part of P8 of the
+// concept library.
+//
+// Result records expose their fields, so hit/distance predicates just read them,
+// and the convenience overloads assemble the query records so a caller can cast a
+// bare ray or ask for a bare k-nearest count. Emptiness follows one pattern —
+// `IsEmpty` wherever no overload clash forces a prefixed spelling (per-concept
+// `IsEmpty` collisions are disambiguated by concept type).
+
+library SpatialQueries
+{
+    //==
+    // SpatialIndex2D — broad-phase candidate queries over indexed 2D primitives.
+    // Candidates may include false positives; exact tests are the caller's phase two.
+
+    // True when the index holds no primitives.
+    IsEmpty(self: SpatialIndex2D): Boolean
+        => self.ItemCount.IsZero;
+
+    // The number of candidate primitives overlapping the bounds (with false positives).
+    CandidateCountInBounds(self: SpatialIndex2D, bounds: Bounds2D): Integer
+        => self.CandidatesInBounds(bounds).Count;
+
+    // True when any candidate primitive overlaps the bounds.
+    HasCandidatesInBounds(self: SpatialIndex2D, bounds: Bounds2D): Boolean
+        => self.CandidateCountInBounds(bounds).IsPositive;
+
+    //==
+    // SpatialIndex3D — broad-phase candidate queries over indexed 3D primitives.
+
+    // True when the index holds no primitives.
+    IsEmpty(self: SpatialIndex3D): Boolean
+        => self.ItemCount.IsZero;
+
+    // The number of candidate primitives overlapping the bounds (with false positives).
+    CandidateCountInBounds(self: SpatialIndex3D, bounds: Bounds3D): Integer
+        => self.CandidatesInBounds(bounds).Count;
+
+    // True when any candidate primitive overlaps the bounds.
+    HasCandidatesInBounds(self: SpatialIndex3D, bounds: Bounds3D): Boolean
+        => self.CandidateCountInBounds(bounds).IsPositive;
+
+    //==
+    // RayIntersectable2D — anything a 2D ray can be cast against. The convenience
+    // overloads build the RayQuery record so callers can cast a bare ray. A
+    // MaxDistance of 0 means unbounded; a FilterMask of -1 accepts every category.
+
+    // An unbounded, accept-all raycast request for a bare ray.
+    UnboundedRayQuery(self: RayIntersectable2D, ray: Ray2D): RayQuery2D
+        => (ray, 0.0, -1);
+
+    // Cast a bare ray with no distance bound and no filtering.
+    Raycast(self: RayIntersectable2D, ray: Ray2D): RayHit2D
+        => self.Raycast(self.UnboundedRayQuery(ray));
+
+    // True when the query strikes something.
+    DidHit(self: RayIntersectable2D, query: RayQuery2D): Boolean
+        => self.Raycast(query).Hit;
+
+    // True when a bare unbounded, accept-all ray strikes something.
+    DidHit(self: RayIntersectable2D, ray: Ray2D): Boolean
+        => self.Raycast(ray).Hit;
+
+    // True when the query strikes nothing.
+    Missed(self: RayIntersectable2D, query: RayQuery2D): Boolean
+        => self.DidHit(query).Not;
+
+    // The distance from the ray origin to the first hit. Precondition: the query hits.
+    HitDistance(self: RayIntersectable2D, query: RayQuery2D): Number
+        => self.Raycast(query).Distance;
+
+    // The world position of the first hit. Precondition: the query hits.
+    HitPosition(self: RayIntersectable2D, query: RayQuery2D): Point2D
+        => self.Raycast(query).Position;
+
+    // The surface normal at the first hit, pointing against the ray. Precondition: hits.
+    HitNormal(self: RayIntersectable2D, query: RayQuery2D): Direction2D
+        => self.Raycast(query).Normal;
+
+    // The struck primitive's index in the caller's list (-1 when inapplicable).
+    // Precondition: the query hits.
+    HitPrimitiveIndex(self: RayIntersectable2D, query: RayQuery2D): ItemIndex
+        => self.Raycast(query).PrimitiveIndex;
+
+    //==
+    // RayIntersectable3D — anything a 3D ray can be cast against.
+
+    // An unbounded, accept-all raycast request for a bare ray.
+    UnboundedRayQuery(self: RayIntersectable3D, ray: Ray3D): RayQuery3D
+        => (ray, 0.0, -1);
+
+    // Cast a bare ray with no distance bound and no filtering.
+    Raycast(self: RayIntersectable3D, ray: Ray3D): RayHit3D
+        => self.Raycast(self.UnboundedRayQuery(ray));
+
+    // True when the query strikes something.
+    DidHit(self: RayIntersectable3D, query: RayQuery3D): Boolean
+        => self.Raycast(query).Hit;
+
+    // True when a bare unbounded, accept-all ray strikes something.
+    DidHit(self: RayIntersectable3D, ray: Ray3D): Boolean
+        => self.Raycast(ray).Hit;
+
+    // True when the query strikes nothing.
+    Missed(self: RayIntersectable3D, query: RayQuery3D): Boolean
+        => self.DidHit(query).Not;
+
+    // The distance from the ray origin to the first hit. Precondition: the query hits.
+    HitDistance(self: RayIntersectable3D, query: RayQuery3D): Number
+        => self.Raycast(query).Distance;
+
+    // The world position of the first hit. Precondition: the query hits.
+    HitPosition(self: RayIntersectable3D, query: RayQuery3D): Point3D
+        => self.Raycast(query).Position;
+
+    // The surface normal at the first hit, pointing against the ray. Precondition: hits.
+    HitNormal(self: RayIntersectable3D, query: RayQuery3D): Direction3D
+        => self.Raycast(query).Normal;
+
+    // The struck triangle of the first hit (-1 when the target is not a mesh).
+    HitFace(self: RayIntersectable3D, query: RayQuery3D): FaceIndex
+        => self.Raycast(query).Face;
+
+    // The barycentric location of the first hit within its struck triangle.
+    // Precondition: the query hits a mesh.
+    HitBarycentric(self: RayIntersectable3D, query: RayQuery3D): BarycentricCoordinate
+        => self.Raycast(query).Barycentric;
+
+    // The interpolated surface UV at the first hit ((0, 0) when the target has no
+    // UVs). Precondition: the query hits.
+    HitUv(self: RayIntersectable3D, query: RayQuery3D): UvCoordinate
+        => self.Raycast(query).Uv;
+
+    //==
+    // ClosestPointQueryable2D — reports its closest point to a 2D query point.
+
+    // The distance from `point` to the nearest point on this geometry.
+    DistanceTo(self: ClosestPointQueryable2D, point: Point2D): Number
+        => self.ClosestPoint(point).Distance;
+
+    // The position on this geometry nearest to `point`.
+    ClosestPointPosition(self: ClosestPointQueryable2D, point: Point2D): Point2D
+        => self.ClosestPoint(point).Position;
+
+    // True when `point` lies within `tolerance` of this geometry.
+    IsNear(self: ClosestPointQueryable2D, point: Point2D, tolerance: Number): Boolean
+        => self.DistanceTo(point) <= tolerance;
+
+    //==
+    // ClosestPointQueryable3D — reports its closest point to a 3D query point.
+
+    // The distance from `point` to the nearest point on this surface.
+    DistanceTo(self: ClosestPointQueryable3D, point: Point3D): Number
+        => self.ClosestPoint(point).Distance;
+
+    // The position on this surface nearest to `point`.
+    ClosestPointPosition(self: ClosestPointQueryable3D, point: Point3D): Point3D
+        => self.ClosestPoint(point).Position;
+
+    // True when `point` lies within `tolerance` of this surface.
+    IsNear(self: ClosestPointQueryable3D, point: Point3D, tolerance: Number): Boolean
+        => self.DistanceTo(point) <= tolerance;
+
+    //==
+    // NearestNeighborQueryable2D — k-nearest-neighbor search over 2D points. The
+    // convenience overloads assemble the KNearestQuery record (unbounded distance).
+
+    // A k-nearest request around `center` for `count` neighbors, distance-unbounded.
+    NearestQuery(self: NearestNeighborQueryable2D, center: Point2D, count: Integer): KNearestQuery2D
+        => (center, count, 0.0);
+
+    // The `count` nearest points to `center`, sorted ascending by distance.
+    FindNearest(self: NearestNeighborQueryable2D, center: Point2D, count: Integer): NearestNeighbors
+        => self.FindNearest(self.NearestQuery(center, count));
+
+    // The single nearest point to `center`.
+    FindNearest(self: NearestNeighborQueryable2D, center: Point2D): NearestNeighbors
+        => self.FindNearest(center, 1);
+
+    //==
+    // NearestNeighborQueryable3D — k-nearest-neighbor search over 3D points.
+
+    // A k-nearest request around `center` for `count` neighbors, distance-unbounded.
+    NearestQuery(self: NearestNeighborQueryable3D, center: Point3D, count: Integer): KNearestQuery3D
+        => (center, count, 0.0);
+
+    // The `count` nearest points to `center`, sorted ascending by distance.
+    FindNearest(self: NearestNeighborQueryable3D, center: Point3D, count: Integer): NearestNeighbors
+        => self.FindNearest(self.NearestQuery(center, count));
+
+    // The single nearest point to `center`.
+    FindNearest(self: NearestNeighborQueryable3D, center: Point3D): NearestNeighbors
+        => self.FindNearest(center, 1);
+}

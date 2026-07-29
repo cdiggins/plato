@@ -1,0 +1,95 @@
+//==
+// # Interpolating splines
+//
+// The control-point curves that pass THROUGH every point they are given, with
+// tangents derived from the neighbours (Catmull-Rom), shaped per knot
+// (Kochanek-Bartels), absent (piecewise linear), or solved for globally (natural
+// cubic). Parallel arrays must have equal counts; that invariant is documented
+// rather than encoded. Evaluation lives in
+// `splines-interpolating.library.plato`.
+
+//==
+// # Interpolating splines
+
+// A Catmull-Rom spline in the plane: interpolates every point with tangents
+// derived from neighbors. Alpha selects the parameterization: 0 = uniform,
+// 0.5 = centripetal (cusp-free), 1 = chordal
+// (https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline).
+type CatmullRomCurve2D
+    implements Curve2D
+{
+    Points: Array<Point2D>;
+    Alpha: Number;
+    Closed: Boolean;
+}
+
+// A Catmull-Rom spline in space: interpolates every point with tangents
+// derived from neighbors. Alpha selects the parameterization: 0 = uniform,
+// 0.5 = centripetal (cusp-free), 1 = chordal
+// (https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline).
+type CatmullRomCurve3D
+    implements Curve3D
+{
+    Points: Array<Point3D>;
+    Alpha: Number;
+    Closed: Boolean;
+}
+
+// A Kochanek-Bartels (TCB) spline in the plane: per-point Tension, Continuity,
+// and Bias arrays (same count as Points) shape the tangents at each knot.
+// The classic keyframe-animation spline
+// (https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels_spline).
+type TcbSpline2D
+    implements Curve2D
+{
+    Points: Array<Point2D>;
+    Tensions: Array<Number>;
+    Continuities: Array<Number>;
+    Biases: Array<Number>;
+    Closed: Boolean;
+}
+
+// A Kochanek-Bartels (TCB) spline in space: per-point Tension, Continuity,
+// and Bias arrays (same count as Points) shape the tangents at each knot
+// (https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels_spline).
+type TcbSpline3D
+    implements Curve3D
+{
+    Points: Array<Point3D>;
+    Tensions: Array<Number>;
+    Continuities: Array<Number>;
+    Biases: Array<Number>;
+    Closed: Boolean;
+}
+
+// A piecewise-linear interpolating spline in the plane: the curve-as-function
+// view of a chain of points (the geometric chain itself is Polyline2D,
+// file 19). Closed joins the last point back to the first
+// (https://en.wikipedia.org/wiki/Polygonal_chain).
+type LinearSpline2D
+    implements Curve2D
+{
+    Points: Array<Point2D>;
+    Closed: Boolean;
+}
+
+// A piecewise-linear interpolating spline in space: the curve-as-function view
+// of a chain of points (the geometric chain itself is Polyline3D, file 19)
+// (https://en.wikipedia.org/wiki/Polygonal_chain).
+type LinearSpline3D
+    implements Curve3D
+{
+    Points: Array<Point3D>;
+    Closed: Boolean;
+}
+
+// A natural cubic spline through scalar samples: interpolates Values at the
+// strictly increasing Parameters (same counts), with zero second derivative
+// at the ends (https://en.wikipedia.org/wiki/Spline_interpolation). A smooth
+// Curve1D for profiles and channels.
+type NaturalCubicSpline1D
+    implements Curve1D
+{
+    Parameters: Array<Number>;
+    Values: Array<Number>;
+}

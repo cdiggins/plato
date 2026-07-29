@@ -1,0 +1,154 @@
+//==
+// # Curves3D — evaluating the named space curves
+//
+// Closed-form evaluation of the space curves declared in `curves-3d.plato`.
+// Successor to plato-src/curves.plato (`library Curves3D`,
+// `library AngularCurves3D`); every formula keeps its Wikipedia citation.
+//
+// Conventions:
+//   * The canonical curve parameter is `t` in [0, 1].
+//   * Types carrying an `Angles: AngleInterval` sweep map t through
+//     `Angles.Lerp(t)`; the knots and closed curves map t to `t.Turns`, one
+//     full revolution of their defining parameter.
+//   * Every formula is written in the curve's own frame and placed with
+//     `FramePoint` below, so the declaration comment "winds about the frame's
+//     Z axis" is what the body actually does.
+//
+// TODO(concept-gap): v1's `IAngularCurve3D` — a curve whose natural parameter
+// is an `Angle`, bridged by one `Eval(curve, t: Number) => curve.Eval(t.Turns)`
+// — has no counterpart concept here. This is NOT a fold gap; the P2
+// `Reduce`/`MapRange` primitives do not touch it. The clean fix is a
+// `concept AngularCurve3D` (obligation `Eval(self, theta: Angle): Point3D`)
+// plus one bridge, whose natural home is `curves-surfaces.concepts.plato`,
+// owned by the curves package and not editable from this library-body pass.
+// Until it lands the `t.Turns` conversion is repeated in each `Eval` below.
+// See the matching note in `curves-2d.plato`.
+
+library Curves3D
+{
+    //==
+    // # Shared helpers
+
+    // The point at the given local coordinates of an orthonormal frame:
+    // Origin + x*XAxis + y*YAxis + z*ZAxis. Places a curve written in its own
+    // canonical position into world space.
+    FramePoint(f: Frame3D, x: Number, y: Number, z: Number): Point3D
+        => f.Origin + f.XAxis.Vector * x + f.YAxis.Vector * y + f.ZAxis.Vector * z;
+
+    // The plane a frame's XY axes span: normal along Z, offset the projection
+    // of the origin onto that normal.
+    FramePlane(f: Frame3D): Plane
+        => Plane(f.ZAxis, f.ZAxis.Vector.Dot(f.Origin.PositionVector));
+
+    //==
+    // # Planar arcs in space
+
+    // Every point of a circular arc lies in its frame's XY plane.
+    CurvePlane(self: CircularArc3D): Plane
+        => self.Frame.FramePlane;
+
+    // The point at the swept angle on the circle of radius Radius in the
+    // frame's XY plane.
+    Eval(self: CircularArc3D, t: Number): Point3D
+        => self.Frame.FramePoint(self.Radius * self.Angles.Lerp(t).Cos,
+                                 self.Radius * self.Angles.Lerp(t).Sin,
+                                 0.0);
+
+    // Every point of an elliptical arc lies in its frame's XY plane.
+    CurvePlane(self: EllipticalArc3D): Plane
+        => self.Frame.FramePlane;
+
+    // The point at the swept parametric angle on the ellipse with semi-axes
+    // Radii along the frame's X and Y axes.
+    Eval(self: EllipticalArc3D, t: Number): Point3D
+        => self.Frame.FramePoint(self.Radii.X * self.Angles.Lerp(t).Cos,
+                                 self.Radii.Y * self.Angles.Lerp(t).Sin,
+                                 0.0);
+
+    //==
+    // # Polynomial arcs
+    //
+    // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+    // The Bernstein forms live in `library Polynomials` (polynomials.plato).
+
+    // The quadratic Bezier point at t.
+    Eval(self: QuadraticBezier3D, t: Number): Point3D
+        => self.P0.PositionVector
+               .QuadraticBezier(self.P1.PositionVector, self.P2.PositionVector, t)
+               .ToPoint;
+
+    // The cubic Bezier point at t.
+    Eval(self: CubicBezier3D, t: Number): Point3D
+        => self.P0.PositionVector
+               .CubicBezier(self.P1.PositionVector, self.P2.PositionVector,
+                            self.P3.PositionVector, t)
+               .ToPoint;
+
+    //==
+    // # Helices and spirals
+
+    // x = R cos theta, y = R sin theta, z = Pitch * (theta / one turn).
+    // https://en.wikipedia.org/wiki/Helix
+    Eval(self: Helix, t: Number): Point3D
+        => self.Frame.FramePoint(self.Radius * self.Angles.Lerp(t).Cos,
+                                 self.Radius * self.Angles.Lerp(t).Sin,
+                                 self.Pitch * self.Angles.Lerp(t).Turns);
+
+    // A conical spiral: the winding radius interpolates across Radii while the
+    // curve climbs Height over the full sweep.
+    // https://en.wikipedia.org/wiki/Conical_spiral
+    Eval(self: ConicalSpiral3D, t: Number): Point3D
+        => self.Frame.FramePoint(self.Radii.Lerp(t) * self.Angles.Lerp(t).Cos,
+                                 self.Radii.Lerp(t) * self.Angles.Lerp(t).Sin,
+                                 self.Height * t);
+
+    // A spherical spiral (loxodrome): the inclination sweeps a half turn from
+    // pole to pole while the azimuth completes TurnCount revolutions.
+    // https://en.wikipedia.org/wiki/Spherical_spiral
+    Eval(self: SphericalSpiral3D, t: Number): Point3D
+        => self.Frame.FramePoint(
+               self.Radius * (t * 0.5).Turns.Sin * (t * self.TurnCount).Turns.Cos,
+               self.Radius * (t * 0.5).Turns.Sin * (t * self.TurnCount).Turns.Sin,
+               self.Radius * (t * 0.5).Turns.Cos);
+
+    //==
+    // # Knots and classical space curves
+
+    // The (p,q) torus knot: r = MajorRadius + MinorRadius cos(q phi),
+    // x = r cos(p phi), y = r sin(p phi), z = -MinorRadius sin(q phi).
+    // https://en.wikipedia.org/wiki/Torus_knot
+    Eval(self: TorusKnot, t: Number): Point3D
+        => self.Frame.FramePoint(
+               (self.MajorRadius
+                + self.MinorRadius * (t.Turns * self.TubeWindings.ToNumber).Cos)
+               * (t.Turns * self.AxisWindings.ToNumber).Cos,
+               (self.MajorRadius
+                + self.MinorRadius * (t.Turns * self.TubeWindings.ToNumber).Cos)
+               * (t.Turns * self.AxisWindings.ToNumber).Sin,
+               -self.MinorRadius * (t.Turns * self.TubeWindings.ToNumber).Sin);
+
+    // The trefoil knot in symmetric canonical form:
+    // x = sin t + 2 sin 2t, y = cos t - 2 cos 2t, z = -sin 3t.
+    // https://en.wikipedia.org/wiki/Trefoil_knot
+    Eval(self: TrefoilKnot, t: Number): Point3D
+        => self.Frame.FramePoint(
+               self.Scale * (t.Turns.Sin + 2.0 * (t.Turns * 2.0).Sin),
+               self.Scale * (t.Turns.Cos - 2.0 * (t.Turns * 2.0).Cos),
+               self.Scale * -(t.Turns * 3.0).Sin);
+
+    // The figure-eight knot: x = (2 + cos 2t) cos 3t, y = (2 + cos 2t) sin 3t,
+    // z = sin 4t.
+    // https://en.wikipedia.org/wiki/Figure-eight_knot_(mathematics)
+    Eval(self: FigureEightKnot, t: Number): Point3D
+        => self.Frame.FramePoint(
+               self.Scale * (2.0 + (t.Turns * 2.0).Cos) * (t.Turns * 3.0).Cos,
+               self.Scale * (2.0 + (t.Turns * 2.0).Cos) * (t.Turns * 3.0).Sin,
+               self.Scale * (t.Turns * 4.0).Sin);
+
+    // Viviani's curve: x = R(1 + cos t), y = R sin t, z = 2R sin(t / 2).
+    // https://en.wikipedia.org/wiki/Viviani%27s_curve
+    Eval(self: VivianiCurve, t: Number): Point3D
+        => self.Frame.FramePoint(self.Radius * (1.0 + t.Turns.Cos),
+                                 self.Radius * t.Turns.Sin,
+                                 2.0 * self.Radius * (t.Turns / 2.0).Sin);
+}

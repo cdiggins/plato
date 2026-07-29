@@ -1,0 +1,27 @@
+//==
+// # Oriented boxes
+//
+// The rectangular solids: the oriented box and its Minkowski-rounded form. Size
+// gives the FULL extents along the box's local axes, so every body halves them; a
+// solid denotes the filled region including its boundary surface.
+
+// An oriented solid box: Size gives the full extents along the box's local
+// axes, oriented by Orientation about Center. Axis-aligned when Orientation is
+// identity (prefer Bounds3D for that case). (https://en.wikipedia.org/wiki/Cuboid)
+type Box3D
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, NearestPoint3D, SupportMappable3D, ParametricSurface
+{
+    Center: Point3D;
+    Size: Size3D;
+    Orientation: Quaternion;
+}
+
+// A box with edges and corners rounded by CornerRadius: the Minkowski sum of a
+// shrunken box and a ball. CornerRadius is clamped to half the smallest extent.
+// (https://en.wikipedia.org/wiki/Minkowski_addition)
+type RoundedBox3D
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D
+{
+    Box: Box3D;
+    CornerRadius: Number;
+}

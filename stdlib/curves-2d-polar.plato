@@ -1,0 +1,150 @@
+//==
+// # Polar and figure curves in 2D
+//
+// The named plane curves whose natural description is a radius as a function of
+// angle — roses, cardioids, limacons, lemniscates, and the classical trisecting
+// and conchoidal cubics — together with the two figure curves (Lissajous,
+// butterfly) that are drawn the same way. Most are `PolarCurve2D`, so a single
+// RadiusAt body is their whole implementation; those live in
+// `curves-2d-polar.library.plato`. Every type is in canonical position about
+// the origin and is placed elsewhere with a transform.
+
+//==
+// # Polar and figure curves
+
+// The rose r = Radius * cos(PetalFrequency * theta). A whole odd frequency k
+// yields k petals; a whole even k yields 2k petals; fractional frequencies
+// close only over multiple turns
+// (https://en.wikipedia.org/wiki/Rose_(mathematics)).
+type RoseCurve2D
+    implements PolarCurve2D
+{
+    Radius: Number;
+    PetalFrequency: Number;
+}
+
+// The cardioid r = 2 * Radius * (1 + cos theta): the heart-shaped path traced
+// by a circle of radius Radius rolling around an equal fixed circle. Always
+// closed; total width is 4 * Radius (https://en.wikipedia.org/wiki/Cardioid).
+type Cardioid2D
+    implements ClosedCurve2D
+{
+    Radius: Number;
+}
+
+// The limacon r = Offset + Amplitude * cos theta. Offset > Amplitude gives a
+// dimpled oval, equality gives the cardioid, Offset < Amplitude adds an inner
+// loop. Always closed (https://en.wikipedia.org/wiki/Lima%C3%A7on).
+type Limacon2D
+    implements ClosedCurve2D
+{
+    Offset: Number;
+    Amplitude: Number;
+}
+
+// The lemniscate of Bernoulli, r * r = Scale * Scale * cos(2 * theta): a
+// figure-eight crossing itself at the origin; Scale is the half-width
+// (https://en.wikipedia.org/wiki/Lemniscate_of_Bernoulli).
+type Lemniscate2D
+    implements ClosedCurve2D
+{
+    Scale: Number;
+}
+
+// A Lissajous figure: x = XAmplitude * sin(2 * pi * XFrequency * t + Phase),
+// y = YAmplitude * sin(2 * pi * YFrequency * t). Closes when the frequency
+// ratio is rational; the canonical parameter covers one combined period
+// (https://en.wikipedia.org/wiki/Lissajous_curve).
+type Lissajous2D
+    implements Curve2D
+{
+    XAmplitude: Number;
+    YAmplitude: Number;
+    XFrequency: Number;
+    YFrequency: Number;
+    Phase: Angle;
+}
+
+// The Gielis superformula, a polar shape family covering polygons, stars,
+// and organic outlines. Symmetry is the lobe count m; Exponent1..3 are the
+// n1, n2, n3 shape exponents; XRadius and YRadius are the a and b scale
+// divisors. Closed when Symmetry is a whole number
+// (https://en.wikipedia.org/wiki/Superformula).
+type Superformula2D
+    implements PolarCurve2D
+{
+    Symmetry: Number;
+    Exponent1: Number;
+    Exponent2: Number;
+    Exponent3: Number;
+    XRadius: Number;
+    YRadius: Number;
+}
+
+//==
+// # Further classical polar curves
+//
+// Ported from plato-src/curves.plato (`library PolarCurves`), which had the
+// closed form for each. Every one is a `PolarCurve2D`, so a single RadiusAt
+// body below is the whole implementation: PolarPositionAt / CartesianPositionAt
+// / Eval come from `curves-surfaces.library.plato`.
+
+// The cycloid of Ceva r = Scale * (1 + 2 * cos(2 * theta)): a trisecting
+// curve with a single loop inside a larger oval.
+// https://en.wikipedia.org/wiki/Tommaso_Ceva#The_Cycloid_of_Ceva
+type CycloidOfCeva2D
+    implements PolarCurve2D
+{
+    Scale: Number;
+}
+
+// Tschirnhausen's cubic in polar form, r = Scale * sec(theta / 3)^3: a cubic
+// with one loop and two branches running to infinity. Undefined where
+// theta / 3 reaches a quarter turn.
+// https://en.wikipedia.org/wiki/Tschirnhausen_cubic
+type TschirnhausenCubic2D
+    implements PolarCurve2D
+{
+    Scale: Number;
+}
+
+// The conchoid of de Sluze r = sec(theta) + Scale * cos(theta): a family whose
+// members include the cissoid, the right strophoid, and the trisectrix of
+// Maclaurin. Undefined at odd quarter turns.
+// https://en.wikipedia.org/wiki/Conchoid_of_de_Sluze
+type ConchoidOfDeSluze2D
+    implements PolarCurve2D
+{
+    Scale: Number;
+}
+
+// The sinusoidal spiral r^Exponent = Scale^Exponent * cos(Exponent * theta).
+// Exponent selects the member: -1 a line, 1 a circle, 2 the lemniscate,
+// -2 a hyperbola, 1/2 a cardioid. Precondition: Exponent is non-zero.
+// https://en.wikipedia.org/wiki/Sinusoidal_spiral
+type SinusoidalSpiral2D
+    implements PolarCurve2D
+{
+    Scale: Number;
+    Exponent: Number;
+}
+
+// The trisectrix of Maclaurin in polar form, r = 2 * Scale / cos(theta / 3):
+// the classical angle-trisecting cubic.
+// https://en.wikipedia.org/wiki/Trisectrix_of_Maclaurin
+type TrisectrixOfMaclaurin2D
+    implements PolarCurve2D
+{
+    Scale: Number;
+}
+
+// The transcendental butterfly curve, in canonical position and scaled by
+// Scale. Not a polar curve about the origin in the PolarCurve2D sense: the
+// radial factor is paired with the raw parameter angle, so it carries its own
+// Eval below. The canonical [0,1] parameter covers the full 12-pi period.
+// https://en.wikipedia.org/wiki/Butterfly_curve_(transcendental)
+type ButterflyCurve2D
+    implements ClosedCurve2D
+{
+    Scale: Number;
+}

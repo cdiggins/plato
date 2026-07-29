@@ -1,0 +1,82 @@
+//==
+// # SpatialPrimitives — frame, axis, and disk-extent helpers
+//
+// The shared kernels every `spatial-*.library.plato` file is written in terms of: the
+// rotated-frame conversions, the centred axis-aligned box, the perpendicular
+// component of a vector about an axis, and the disk half-extents that make every
+// tight cylinder / cone / disk / torus box a one-liner.
+//
+// Conventions fixed here, and GOVERNING EVERY `spatial-*.library.plato` FILE. They
+// are stated because nothing executes these bodies before they ship:
+//
+//   * PLACED, not origin-centred: every solid carries its own Center / Apex /
+//     endpoints and its own Axis or Orientation. No body assumes the world frame.
+//   * SIZES ARE FULL EXTENTS, so every box body halves them; RADII are radii, and
+//     HEIGHTS are full heights.
+//   * A SOLID DENOTES THE FILLED REGION INCLUDING ITS BOUNDARY. `SurfaceArea` is
+//     therefore the area of the WHOLE boundary of that region: a cylinder's two caps
+//     are included, a spherical cap's flat cutting disk is included, a shell's inner
+//     surface is included. Where that choice is not forced it is restated on the
+//     body.
+//   * `Volume` and `SurfaceArea` are NON-NEGATIVE. `Tetrahedron` additionally offers
+//     `SignedVolume`, matching its declaration's stated sign convention.
+//   * CONTAINMENT is boundary-INCLUSIVE everywhere (every test is a `<=` on a
+//     distance or a coordinate), matching `ContainsPoint3D`'s doc.
+//   * `ClosestPoint` on a filled solid returns the query point itself when the query
+//     is inside, which `NearestPoint3D` explicitly permits. `Disk3D` and `Triangle3D`
+//     are flat patches, not solids, so theirs always land ON the patch.
+//   * BOUNDS are TIGHT unless a body says CONSERVATIVE. Three do: the two
+//     spherical-cap-like shapes, where a tight box needs an angular-extreme analysis
+//     these files do not attempt.
+
+library SpatialPrimitives
+{
+    //==
+    // # Frame and axis helpers
+
+    // The displacement from `center` to `point`, expressed in the frame rotated by
+    // `orientation`.
+    LocalOffset(center: Point3D, orientation: Quaternion, point: Point3D): Vector3D
+        => center.Between(point).Transform(orientation.Inverse);
+
+    // A displacement given in a rotated frame, mapped back onto world axes.
+    WorldOffset(orientation: Quaternion, local: Vector3D): Vector3D
+        => local.Transform(orientation);
+
+    // The axis-aligned box centred on `center` with the given half-extents.
+    CenteredBounds(center: Point3D, halfX: Number, halfY: Number, halfZ: Number): Bounds3D
+        => (Point3D(center.X - halfX, center.Y - halfY, center.Z - halfZ),
+            Point3D(center.X + halfX, center.Y + halfY, center.Z + halfZ));
+
+    // The component of `v` perpendicular to the unit vector `axis`.
+    PerpendicularComponent(v: Vector3D, axis: Vector3D): Vector3D
+        => v.Subtract(axis.Multiply(v.Dot(axis)));
+
+    // The per-world-axis half-extents of a disk of `radius` whose unit normal is
+    // `axis`: the support of the disk along world axis e is r*sqrt(1 - (axis.e)^2).
+    // The building block of every tight cylinder / cone / disk / torus box.
+    // https://iquilezles.org/articles/diskbbox/
+    DiskHalfExtents(axis: Vector3D, radius: Number): Vector3D
+        => (radius * (1.0 - axis.X.Square).Max(0.0).Sqrt,
+            radius * (1.0 - axis.Y.Square).Max(0.0).Sqrt,
+            radius * (1.0 - axis.Z.Square).Max(0.0).Sqrt);
+
+    // The tight bounds of the disk of `radius` centred at `center` with unit normal
+    // `axis`.
+    DiskBounds(center: Point3D, axis: Vector3D, radius: Number): Bounds3D
+    {
+        var e = DiskHalfExtents(axis, radius);
+        return CenteredBounds(center, e.X, e.Y, e.Z);
+    }
+
+    // A unit displacement of length `radius` in the direction of `v` projected
+    // perpendicular to `axis`; the zero vector when `v` is parallel to `axis` (any
+    // rim point is then equally extreme, and the caller adds the axial part).
+    RadialSupport(v: Vector3D, axis: Vector3D, radius: Number): Vector3D
+    {
+        var perp = PerpendicularComponent(v, axis);
+        return perp.MagnitudeSquared <= 0.0
+            ? Vector3D(0.0, 0.0, 0.0)
+            : perp.Normalize.Multiply(radius);
+    }
+}

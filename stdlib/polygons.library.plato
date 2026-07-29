@@ -1,0 +1,210 @@
+//==
+// # Polygons — planar polygon, hole, set, and star bodies
+//
+// Area, perimeter, bounds, centroid, containment, nearest-point and support bodies
+// for the types declared in `polygons.plato` (`LIBRARIES.md` ground rules 1 and 10).
+// The 2D ring kernels — shoelace area, area centroid, even-odd containment, chain
+// length, chain projection — live in `geometry-kernels.library.plato` and are not
+// respelled here.
+//
+// Conventions fixed here:
+//
+//   * WINDING: counter-clockwise boundaries enclose positive area; holes wind
+//     opposite to the boundary that contains them. The hole-aware bodies below rely
+//     only on the DECLARED containment invariants, never on the stored hole winding —
+//     `Area(PolygonWithHoles2D)` subtracts absolute hole areas rather than adding
+//     signed ones, so a hole stored with the wrong winding still subtracts.
+//   * `Area` is NON-NEGATIVE everywhere. `SignedArea(Polygon2D)` is offered
+//     separately for callers that need the orientation; it is the raw shoelace value,
+//     which for a self-intersecting ring is the winding-weighted area, not the area
+//     of the covered point set.
+//   * CONTAINMENT is the even-odd rule, so a point exactly on a boundary edge is not
+//     classified reliably.
+//   * `Perimeter` of a region with holes counts EVERY boundary component: the outer
+//     ring plus every hole ring. Likewise `Perimeter(PolygonSet2D)` sums all
+//     components.
+
+library Polygons
+{
+    //==
+    // # Polygon2D and ConvexPolygon2D
+
+    // The SIGNED shoelace area: positive for counter-clockwise winding, negative
+    // for clockwise. https://en.wikipedia.org/wiki/Shoelace_formula
+    SignedArea(p: Polygon2D): Number
+        => p.Points.ShoelaceArea;
+
+    // The enclosed area, always non-negative.
+    Area(p: Polygon2D): Number
+        => p.Points.ShoelaceArea.Abs;
+
+    // The total boundary length, including the closing edge.
+    Perimeter(p: Polygon2D): Number
+        => p.Points.ChainLength(true);
+
+    // The area centroid (NOT the mean of the vertices).
+    Centroid(p: Polygon2D): Point2D
+        => p.Points.PolygonAreaCentroid;
+
+    // Even-odd containment.
+    Contains(p: Polygon2D, point: Point2D): Boolean
+        => p.Points.PolygonContainsPoint(point);
+
+    // The query point when it lies in the polygon, otherwise the nearest point of
+    // the boundary.
+    ClosestPoint(p: Polygon2D, point: Point2D): Point2D
+        => p.Contains(point) ? point : p.Points.ClosestPointOnChain(true, point);
+
+    // The polygon with every vertex carried through the mapping.
+    Deform(p: Polygon2D, mapping: Function1<Point2D, Point2D>): Polygon2D
+        => Polygon2D(p.Points.Map(mapping));
+
+    // The enclosed area. Non-negative; the convex invariant does not change the
+    // formula, only guarantees the ring is simple.
+    Area(p: ConvexPolygon2D): Number
+        => p.Points.ShoelaceArea.Abs;
+
+    // The total boundary length.
+    Perimeter(p: ConvexPolygon2D): Number
+        => p.Points.ChainLength(true);
+
+    // The area centroid.
+    Centroid(p: ConvexPolygon2D): Point2D
+        => p.Points.PolygonAreaCentroid;
+
+    // Even-odd containment. A half-plane sweep would exploit convexity, but the
+    // even-odd test is already exact for a simple ring and needs no winding
+    // assumption.
+    Contains(p: ConvexPolygon2D, point: Point2D): Boolean
+        => p.Points.PolygonContainsPoint(point);
+
+    // The query point when it lies in the polygon, otherwise the nearest boundary
+    // point.
+    ClosestPoint(p: ConvexPolygon2D, point: Point2D): Point2D
+        => p.Contains(point) ? point : p.Points.ClosestPointOnChain(true, point);
+
+    // The vertex farthest along `direction`. Exact because the polygon is convex,
+    // so a support point is always a vertex. Linear scan, not the binary search the
+    // declaration's "constant-cost support mapping" note anticipates.
+    // TODO(content): binary search over the convex vertex ring.
+    Support(p: ConvexPolygon2D, direction: Direction2D): Point2D
+        => p.Points.Reduce(p.Points.First, (best, v) =>
+            direction.Vector.Dot(v.PositionVector) > direction.Vector.Dot(best.PositionVector)
+                ? v : best);
+
+    // The polygon with every vertex carried through the mapping. Convexity is NOT
+    // re-checked; a non-affine mapping can break the type's invariant.
+    Deform(p: ConvexPolygon2D, mapping: Function1<Point2D, Point2D>): ConvexPolygon2D
+        => ConvexPolygon2D(p.Points.Map(mapping));
+
+    //==
+    // # PolygonWithHoles2D
+
+    // The boundary's area less every hole's area.
+    Area(r: PolygonWithHoles2D): Number
+        => r.Boundary.Area - SumOf(r.Holes.Map(h => h.Area));
+
+    // EVERY boundary component: the outer ring plus every hole ring.
+    Perimeter(r: PolygonWithHoles2D): Number
+        => r.Boundary.Perimeter + SumOf(r.Holes.Map(h => h.Perimeter));
+
+    // The area-weighted centroid of the boundary minus the holes: each hole
+    // contributes its centroid with a NEGATIVE weight.
+    // https://en.wikipedia.org/wiki/Centroid#By_geometric_decomposition
+    // Precondition: the net area is non-zero.
+    Centroid(r: PolygonWithHoles2D): Point2D
+    {
+        var boundaryArea = r.Boundary.Area;
+        var holeAreas = r.Holes.Map(h => h.Area);
+        var net = boundaryArea - SumOf(holeAreas);
+        var centre = r.Boundary.Centroid;
+        var cx = centre.X * boundaryArea
+            - SumOf(r.Holes.Count.MapRange(i => r.Holes.At(i).Centroid.X * holeAreas.At(i)));
+        var cy = centre.Y * boundaryArea
+            - SumOf(r.Holes.Count.MapRange(i => r.Holes.At(i).Centroid.Y * holeAreas.At(i)));
+        return (cx / net, cy / net);
+    }
+
+    // The bounds of the outer boundary; the holes lie strictly inside it.
+    Bounds(r: PolygonWithHoles2D): Bounds2D
+        => r.Boundary.Bounds;
+
+    // Inside the boundary and outside every hole.
+    Contains(r: PolygonWithHoles2D, point: Point2D): Boolean
+        => r.Boundary.Contains(point) && r.Holes.Any(h => h.Contains(point)).Not;
+
+    // The region with the boundary and every hole carried through the mapping.
+    Deform(r: PolygonWithHoles2D, mapping: Function1<Point2D, Point2D>): PolygonWithHoles2D
+        => (r.Boundary.Deform(mapping), r.Holes.Map(h => h.Deform(mapping)));
+
+    //==
+    // # PolygonSet2D
+    //
+    // The components are mutually disjoint, so every measure is a plain sum and
+    // containment is a disjunction.
+
+    // The summed area of the components.
+    Area(s: PolygonSet2D): Number
+        => SumOf(s.Polygons.Map(p => p.Area));
+
+    // The summed boundary length of the components (holes included).
+    Perimeter(s: PolygonSet2D): Number
+        => SumOf(s.Polygons.Map(p => p.Perimeter));
+
+    // The union of the component bounds. Precondition: at least one component (the
+    // declaration allows an empty set, for which there is no bounding rectangle).
+    Bounds(s: PolygonSet2D): Bounds2D
+        => s.Polygons.Map(p => p.Bounds)
+            .Reduce(s.Polygons.First.Bounds, (acc, b) => UnionOfBounds(acc, b));
+
+    // Inside any component.
+    Contains(s: PolygonSet2D, point: Point2D): Boolean
+        => s.Polygons.Any(p => p.Contains(point));
+
+    // The set with every component carried through the mapping.
+    Deform(s: PolygonSet2D, mapping: Function1<Point2D, Point2D>): PolygonSet2D
+        => PolygonSet2D(s.Polygons.Map(p => p.Deform(mapping)));
+
+    //==
+    // # RegularStar2D
+    //
+    // https://en.wikipedia.org/wiki/Star_polygon
+
+    // The 2 * PointCount vertices in ring order, alternating outer and inner,
+    // counter-clockwise from Rotation. Even indices are tips.
+    RegularStarVertices(s: RegularStar2D): Array<Point2D>
+        => (s.PointCount * 2).MapRange(i =>
+        {
+            var radius = i.IsEven ? s.OuterRadius : s.InnerRadius;
+            var a = s.Rotation + (i.ToNumber / (2.0 * s.PointCount.ToNumber)).Turns;
+            return s.Center.Add(Vector2D(a.Cos, a.Sin).Multiply(radius));
+        });
+
+    // n * R * r * sin(pi/n): the star is 2n triangles from the centre, each with
+    // sides R and r meeting at pi/n, so each has area (1/2)*R*r*sin(pi/n).
+    Area(s: RegularStar2D): Number
+        => s.PointCount.ToNumber * s.OuterRadius * s.InnerRadius
+        * (0.5 / s.PointCount.ToNumber).Turns.Sin;
+
+    // 2n equal edges, each the third side of a triangle with sides R and r meeting
+    // at pi/n: sqrt(R^2 + r^2 - 2*R*r*cos(pi/n)) by the law of cosines.
+    // https://en.wikipedia.org/wiki/Law_of_cosines
+    Perimeter(s: RegularStar2D): Number
+        => 2.0 * s.PointCount.ToNumber
+        * (s.OuterRadius.Square + s.InnerRadius.Square
+            - 2.0 * s.OuterRadius * s.InnerRadius
+                * (0.5 / s.PointCount.ToNumber).Turns.Cos).Sqrt;
+
+    // The stored centre, by the star's n-fold rotational symmetry.
+    Centroid(s: RegularStar2D): Point2D
+        => s.Center;
+
+    // TIGHT: the bounds of the computed vertices (only the tips can be extreme).
+    Bounds(s: RegularStar2D): Bounds2D
+        => s.RegularStarVertices.BoundsOfPoints;
+
+    // Even-odd containment over the computed vertex ring. The star is non-convex,
+    // which the even-odd rule handles correctly.
+    Contains(s: RegularStar2D, point: Point2D): Boolean
+        => s.RegularStarVertices.PolygonContainsPoint(point);
+}

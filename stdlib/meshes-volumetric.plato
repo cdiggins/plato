@@ -1,0 +1,53 @@
+//==
+// # Volumetric meshes
+//
+// Indexed volume elements over a shared vertex array: the tetrahedral and
+// hexahedral cell records and the meshes built from them, as used by
+// finite-element and structured simulation volumes.
+
+// The four vertex indices of one tetrahedron
+// (https://en.wikipedia.org/wiki/Tetrahedron), ordered so the signed volume is
+// positive (D on the counter-clockwise side of triangle A-B-C).
+type TetrahedronCell
+    implements Value, Hashable
+{
+    A: VertexIndex;
+    B: VertexIndex;
+    C: VertexIndex;
+    D: VertexIndex;
+}
+
+// An indexed tetrahedral mesh: finite-element volumes, volumetric
+// simulations. ToTriangleMesh yields the boundary surface.
+type TetrahedralMesh3D
+    implements Value, Meshable3D
+{
+    Positions: Array<Point3D>;
+    Cells: Array<TetrahedronCell>;
+}
+
+// The eight vertex indices of one hexahedron
+// (https://en.wikipedia.org/wiki/Hexahedron). A, B, C, D form the bottom quad
+// wound counter-clockwise when viewed from outside (below); E, F, G, H are the
+// corresponding vertices of the top quad (E above A, and so on).
+type HexahedronCell
+    implements Value, Hashable
+{
+    A: VertexIndex;
+    B: VertexIndex;
+    C: VertexIndex;
+    D: VertexIndex;
+    E: VertexIndex;
+    F: VertexIndex;
+    G: VertexIndex;
+    H: VertexIndex;
+}
+
+// An indexed hexahedral mesh: structured simulation volumes, voxel-like
+// finite elements with shared vertices.
+type HexahedralMesh3D
+    implements Value
+{
+    Positions: Array<Point3D>;
+    Cells: Array<HexahedronCell>;
+}

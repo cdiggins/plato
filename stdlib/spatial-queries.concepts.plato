@@ -1,0 +1,43 @@
+//==
+// # Spatial query concepts
+//
+// What a piece of geometry can be asked: cast a ray at it, ask it for its
+// closest point, or search its points for the k nearest. The derived
+// functionality — including the convenience overloads that assemble the query
+// records — lives in `spatial-queries.library.plato`.
+
+// Anything a 2D ray can be cast against.
+concept RayIntersectable2D
+{
+    Raycast(x: Self, query: RayQuery2D): RayHit2D;
+}
+
+// Anything a 3D ray can be cast against.
+concept RayIntersectable3D
+{
+    Raycast(x: Self, query: RayQuery3D): RayHit3D;
+}
+
+// Anything that can report its closest point to a 2D query point.
+concept ClosestPointQueryable2D
+{
+    ClosestPoint(x: Self, point: Point2D): ClosestPointResult2D;
+}
+
+// Anything that can report its closest point to a 3D query point.
+concept ClosestPointQueryable3D
+{
+    ClosestPoint(x: Self, point: Point3D): ClosestPointResult3D;
+}
+
+// Anything that can answer k-nearest-neighbor searches over 2D points.
+concept NearestNeighborQueryable2D
+{
+    FindNearest(x: Self, query: KNearestQuery2D): NearestNeighbors;
+}
+
+// Anything that can answer k-nearest-neighbor searches over 3D points.
+concept NearestNeighborQueryable3D
+{
+    FindNearest(x: Self, query: KNearestQuery3D): NearestNeighbors;
+}

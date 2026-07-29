@@ -1,0 +1,91 @@
+//==
+// # Tables, measurements, and dataset metadata
+//
+// Rectangular tables of typed columns, individual measurement records with
+// uncertainty, and the descriptive records that identify a dataset, its sensor
+// channels, and their calibration. Values carry their units explicitly via
+// UnitOfMeasure rather than through the type system.
+
+//==
+// # Tables
+
+// The typed values of a table column: exactly one element type, carried by
+// the matching case.
+type ColumnValues
+    = Numbers(Values: Array<Number>)
+    | Integers(Values: Array<Integer>)
+    | Strings(Values: Array<String>)
+    | Booleans(Values: Array<Boolean>)
+    | Instants(Values: Array<Instant>);
+
+// A named, typed table column. Numeric columns state their unit via the
+// owning dataset's metadata or the column name.
+type DataColumn
+{
+    Name: String;
+    Values: ColumnValues;
+}
+
+// A rectangular table of typed columns. Every column's populated array has
+// exactly RowCount entries.
+// (https://en.wikipedia.org/wiki/Table_(information))
+type DataTable
+{
+    Columns: Array<DataColumn>;
+    RowCount: Integer;
+}
+
+//==
+// # Measurements and metadata
+
+// A single timestamped measurement. Value and Uncertainty are both expressed
+// in Unit; Uncertainty is one standard deviation.
+// (https://en.wikipedia.org/wiki/Measurement_uncertainty)
+type MeasurementRecord
+    implements Value
+{
+    Time: Instant;
+    Value: Number;
+    Uncertainty: Number;
+    Unit: UnitOfMeasure;
+}
+
+// One key-value pair of dataset metadata (instrument id, operator, campaign).
+// (https://en.wikipedia.org/wiki/Metadata)
+type MetadataEntry
+    implements Value
+{
+    Key: String;
+    Value: String;
+}
+
+// Identifying information for a dataset: name, human-readable description,
+// and open-ended metadata entries.
+// (https://en.wikipedia.org/wiki/Data_set)
+type DatasetDescriptor
+{
+    Name: String;
+    Description: String;
+    Metadata: Array<MetadataEntry>;
+}
+
+// Description of one acquisition channel of an instrument: what it measures,
+// in which unit, and how often it samples.
+type SensorChannel
+{
+    Name: String;
+    Unit: UnitOfMeasure;
+    SamplePeriod: Duration;
+}
+
+// A calibration mapping from raw readings to physical values as a piecewise
+// linear function. InputValues is strictly increasing and parallel to
+// OutputValues; inputs are in InputUnit, outputs in OutputUnit.
+// (https://en.wikipedia.org/wiki/Calibration_curve)
+type CalibrationCurve
+{
+    InputValues: Array<Number>;
+    OutputValues: Array<Number>;
+    InputUnit: UnitOfMeasure;
+    OutputUnit: UnitOfMeasure;
+}

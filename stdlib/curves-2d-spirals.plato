@@ -1,0 +1,125 @@
+//==
+// # Plane spirals, transition curves, and roulettes
+//
+// The plane curves traced by a steadily growing radius or by a point carried on
+// a rolling circle: the classical spirals, the road-and-rail transition curve,
+// the gear-tooth involute, and the cycloid family. Each type stores the minimal
+// defining parameters; the canonical [0,1] curve parameter maps onto the
+// documented sweep or domain, and types without placement fields are defined in
+// canonical position. Evaluation lives in `curves-2d-spirals.library.plato`.
+
+//==
+// # Spirals and transition curves
+
+// The Archimedean spiral r = StartRadius + GrowthRate * theta (theta in
+// radians), swept over Angles: evenly spaced coils
+// (https://en.wikipedia.org/wiki/Archimedean_spiral).
+type ArchimedeanSpiral2D
+    implements PolarCurve2D
+{
+    StartRadius: Number;
+    GrowthRate: Number;
+    Angles: AngleInterval;
+}
+
+// The logarithmic (equiangular) spiral r = StartRadius * exp(GrowthRate *
+// theta), swept over Angles: self-similar coils, constant crossing angle
+// (https://en.wikipedia.org/wiki/Logarithmic_spiral).
+type LogarithmicSpiral2D
+    implements PolarCurve2D
+{
+    StartRadius: Number;
+    GrowthRate: Number;
+    Angles: AngleInterval;
+}
+
+// One branch of Fermat's spiral r = Scale * sqrt(theta), swept over Angles:
+// evenly filling coils, the basis of sunflower/phyllotaxis layouts
+// (https://en.wikipedia.org/wiki/Fermat%27s_spiral).
+type FermatSpiral2D
+    implements PolarCurve2D
+{
+    Scale: Number;
+    Angles: AngleInterval;
+}
+
+// A clothoid (Euler spiral) arc: curvature grows linearly with arc length,
+// kappa(s) = s / (Flatness * Flatness). The parameter is signed arc length s
+// over Domain. The standard road and rail transition curve
+// (https://en.wikipedia.org/wiki/Euler_spiral).
+type Clothoid2D
+    implements Curve2D, ArcLengthParameterized<Point2D>
+{
+    Flatness: Number;
+    Domain: NumberInterval;
+}
+
+// The involute of a circle of radius Radius: the path of a taut string
+// unwinding from the circle, over the unwinding-angle interval. The profile
+// of standard gear teeth (https://en.wikipedia.org/wiki/Involute).
+type CircleInvolute2D
+    implements Curve2D
+{
+    Radius: Number;
+    Angles: AngleInterval;
+}
+
+//==
+// # Roulettes (rolling-circle curves)
+//
+// See https://en.wikipedia.org/wiki/Roulette_(curve).
+
+// The path of a point on the rim of a circle of radius Radius rolling along
+// the X axis: x = Radius * (theta - sin theta), y = Radius * (1 - cos theta),
+// with the rolling angle theta swept over Angles
+// (https://en.wikipedia.org/wiki/Cycloid).
+type Cycloid2D
+    implements Curve2D
+{
+    Radius: Number;
+    Angles: AngleInterval;
+}
+
+// The path of a rim point on a circle of radius RollingRadius rolling outside
+// a fixed circle of radius FixedRadius. Closes after a whole number of laps
+// when the radius ratio is rational; the canonical parameter covers one lap
+// around the fixed circle (https://en.wikipedia.org/wiki/Epicycloid).
+type Epicycloid2D
+    implements Curve2D
+{
+    FixedRadius: Number;
+    RollingRadius: Number;
+}
+
+// The path of a rim point on a circle of radius RollingRadius rolling inside
+// a fixed circle of radius FixedRadius. Straight lines, ellipses, and the
+// astroid arise from particular radius ratios
+// (https://en.wikipedia.org/wiki/Hypocycloid).
+type Hypocycloid2D
+    implements Curve2D
+{
+    FixedRadius: Number;
+    RollingRadius: Number;
+}
+
+// A generalized epicycloid: the traced point sits PoleDistance from the center
+// of the rolling circle rather than on its rim (spirograph curves)
+// (https://en.wikipedia.org/wiki/Epitrochoid).
+type Epitrochoid2D
+    implements Curve2D
+{
+    FixedRadius: Number;
+    RollingRadius: Number;
+    PoleDistance: Number;
+}
+
+// A generalized hypocycloid: the traced point sits PoleDistance from the center
+// of the circle rolling inside the fixed circle (spirograph curves)
+// (https://en.wikipedia.org/wiki/Hypotrochoid).
+type Hypotrochoid2D
+    implements Curve2D
+{
+    FixedRadius: Number;
+    RollingRadius: Number;
+    PoleDistance: Number;
+}

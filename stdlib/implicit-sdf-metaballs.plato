@@ -1,0 +1,47 @@
+//==
+// # Metaballs
+//
+// Smooth organic shapes from summed radial falloff kernels
+// (https://en.wikipedia.org/wiki/Metaballs). The implicit surface is the level
+// set (https://en.wikipedia.org/wiki/Level_set) where the summed influence
+// equals the threshold. The falloff kernel and the summation live in
+// `fields-implicits-metaballs.library.plato`.
+
+// A planar metaball: a radial falloff kernel centered at a point. Influence
+// is Strength at the center and falls to zero at Radius.
+type MetaBall2D
+    implements Value
+{
+    Center: Point2D;
+    Radius: Number;
+    Strength: Number;
+}
+
+// A spatial metaball: a radial falloff kernel centered at a point. Influence
+// is Strength at the center and falls to zero at Radius. Negative strengths
+// carve away from the surface.
+type MetaBall3D
+    implements Value
+{
+    Center: Point3D;
+    Radius: Number;
+    Strength: Number;
+}
+
+// A planar blob system: the field value at a point is the summed influence
+// of all balls minus Threshold, so the zero level set is the blob outline.
+type MetaBallSystem2D
+    implements Value, ScalarField2D
+{
+    Balls: Array<MetaBall2D>;
+    Threshold: Number;
+}
+
+// A spatial blob system: the field value at a point is the summed influence
+// of all balls minus Threshold, so the zero level set is the blob surface.
+type MetaBallSystem3D
+    implements Value, ScalarField3D
+{
+    Balls: Array<MetaBall3D>;
+    Threshold: Number;
+}

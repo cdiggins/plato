@@ -1,0 +1,59 @@
+//==
+// # Sampled signed distance field evaluation
+//
+// Interpolating evaluation of a discretized SDF (`implicit-sdf-sampled.plato`).
+// The lattice spans Bounds with its endpoints on the boundary, so a node count
+// of n along an axis divides it into n - 1 cells. Positions outside Bounds
+// clamp to the edge cell and the interpolation extrapolates linearly from it.
+// Precondition: at least two nodes along every axis.
+
+library ImplicitSdfSampled
+{
+    // The continuous lattice coordinate of a position along one axis: 0 at the low
+    // bound, count - 1 at the high bound.
+    LatticeCoordinate(coordinate: Number, low: Number, high: Number, count: Integer): Number
+        => (coordinate - low) / (high - low) * (count - 1).ToNumber;
+
+    // The index of the cell containing a lattice coordinate, clamped so that both
+    // the cell and its successor are valid node indices.
+    LatticeCellIndex(latticeCoordinate: Number, count: Integer): Integer
+        => latticeCoordinate.Floor.ToInteger.Clamp(0, count - 2);
+
+    // The signed distance at a point, bilinearly interpolated between the four
+    // surrounding lattice nodes.
+    Eval(self: SampledSdf2D, point: Point2D): Number {
+        var u = LatticeCoordinate(point.X, self.Bounds.Min.X, self.Bounds.Max.X, self.Values.ColumnCount);
+        var v = LatticeCoordinate(point.Y, self.Bounds.Min.Y, self.Bounds.Max.Y, self.Values.RowCount);
+        var column = LatticeCellIndex(u, self.Values.ColumnCount);
+        var row = LatticeCellIndex(v, self.Values.RowCount);
+        var fu = u - column.ToNumber;
+        var fv = v - row.ToNumber;
+        var lower = self.Values.At(column, row).Lerp(self.Values.At(column + 1, row), fu);
+        var upper = self.Values.At(column, row + 1).Lerp(self.Values.At(column + 1, row + 1), fu);
+        return lower.Lerp(upper, fv);
+    }
+
+    // The bilinear interpolation within one layer of a spatial lattice: the shared
+    // inner step of the trilinear evaluation below, applied to two adjacent layers.
+    LayerBilinear(self: SampledSdf3D, column: Integer, row: Integer, layer: Integer, fu: Number, fv: Number): Number {
+        var lower = self.Values.At(column, row, layer).Lerp(self.Values.At(column + 1, row, layer), fu);
+        var upper = self.Values.At(column, row + 1, layer).Lerp(self.Values.At(column + 1, row + 1, layer), fu);
+        return lower.Lerp(upper, fv);
+    }
+
+    // The signed distance at a point, trilinearly interpolated between the eight
+    // surrounding lattice nodes.
+    Eval(self: SampledSdf3D, point: Point3D): Number {
+        var u = LatticeCoordinate(point.X, self.Bounds.Min.X, self.Bounds.Max.X, self.Values.ColumnCount);
+        var v = LatticeCoordinate(point.Y, self.Bounds.Min.Y, self.Bounds.Max.Y, self.Values.RowCount);
+        var w = LatticeCoordinate(point.Z, self.Bounds.Min.Z, self.Bounds.Max.Z, self.Values.LayerCount);
+        var column = LatticeCellIndex(u, self.Values.ColumnCount);
+        var row = LatticeCellIndex(v, self.Values.RowCount);
+        var layer = LatticeCellIndex(w, self.Values.LayerCount);
+        var fu = u - column.ToNumber;
+        var fv = v - row.ToNumber;
+        var near = self.LayerBilinear(column, row, layer, fu, fv);
+        var far = self.LayerBilinear(column, row, layer + 1, fu, fv);
+        return near.Lerp(far, w - layer.ToNumber);
+    }
+}

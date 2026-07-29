@@ -1,0 +1,27 @@
+//==
+// # Sampled signed distance fields
+//
+// Discretized SDFs: distance values on a regular lattice over a bounding
+// region, interpolated between samples on evaluation. The interpolating
+// evaluators live in `implicit-sdf-sampled.library.plato`; the lattice
+// geometry accessors in `fields-implicits-sampled.library.plato`.
+
+// A planar SDF discretized on a regular lattice spanning Bounds. Values holds
+// one signed distance per lattice node, in row-major column/row order;
+// evaluation between nodes interpolates bilinearly.
+type SampledSdf2D
+    implements Value, SignedDistanceField2D
+{
+    Values: Array2D<Number>;
+    Bounds: Bounds2D;
+}
+
+// A spatial SDF discretized on a regular lattice spanning Bounds. Values holds
+// one signed distance per lattice node, in column/row/layer order; evaluation
+// between nodes interpolates trilinearly.
+type SampledSdf3D
+    implements Value, SignedDistanceField3D
+{
+    Values: Array3D<Number>;
+    Bounds: Bounds3D;
+}

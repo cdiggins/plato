@@ -1,0 +1,176 @@
+//==
+// # Constant and function-valued field algebra
+//
+// Bodies for the constant fields of `fields-constant.plato` and the
+// function-valued fields of `fields-function.plato`, plus the combinator
+// algebra over them: lifting any field concept implementor into stored-function
+// form, pointwise composition, and constructive solid geometry on distance
+// fields. Every combinator returns a NEW field holding the composed lambda.
+
+library FieldsImplicitsFunction
+{
+    //==
+    // # Constant fields
+    //
+    // The trivial fields: the same value at every point. Their evaluation ignores
+    // the position entirely, which is what makes them the neutral leaves of a
+    // field expression.
+
+    // The constant value, at every point of the plane.
+    Eval(self: ConstantScalarField2D, point: Point2D): Number
+        => self.Value;
+
+    // The constant value, at every point of space.
+    Eval(self: ConstantScalarField3D, point: Point3D): Number
+        => self.Value;
+
+    // The constant vector, at every point of the plane.
+    Eval(self: ConstantVectorField2D, point: Point2D): Vector2D
+        => self.Value;
+
+    // The constant vector, at every point of space.
+    Eval(self: ConstantVectorField3D, point: Point3D): Vector3D
+        => self.Value;
+
+    //==
+    // # Function-valued fields
+    //
+    // Evaluation of a field that STORES a function: invoke the stored function.
+    // This is the base case that makes the combinators below possible — each one
+    // builds a new field whose stored function closes over the operand fields.
+
+    // The stored function applied to the position.
+    Eval(self: ScalarFunctionField2D, point: Point2D): Number
+        => self.Function(point);
+
+    // The stored function applied to the position.
+    Eval(self: ScalarFunctionField3D, point: Point3D): Number
+        => self.Function(point);
+
+    // The stored function applied to the position.
+    Eval(self: VectorFunctionField2D, point: Point2D): Vector2D
+        => self.Function(point);
+
+    // The stored function applied to the position.
+    Eval(self: VectorFunctionField3D, point: Point3D): Vector3D
+        => self.Function(point);
+
+    //==
+    // # Lifting any field into function-valued form
+    //
+    // One concept-typed function per family lifts EVERY implementor of that field
+    // concept — constant fields, metaball systems, sampled SDFs, noise, and the
+    // function-valued fields themselves — into the combinator algebra below.
+
+    // The field as a function-valued planar scalar field, holding a lambda that
+    // evaluates this field.
+    ToFunctionField(self: ScalarField2D): ScalarFunctionField2D
+        => ScalarFunctionField2D(p => self.Eval(p));
+
+    // The field as a function-valued spatial scalar field, holding a lambda that
+    // evaluates this field.
+    ToFunctionField(self: ScalarField3D): ScalarFunctionField3D
+        => ScalarFunctionField3D(p => self.Eval(p));
+
+    // The field as a function-valued planar vector field.
+    ToFunctionField(self: VectorField2D): VectorFunctionField2D
+        => VectorFunctionField2D(p => self.Eval(p));
+
+    // The field as a function-valued spatial vector field.
+    ToFunctionField(self: VectorField3D): VectorFunctionField3D
+        => VectorFunctionField3D(p => self.Eval(p));
+
+    //==
+    // # Scalar field combinators
+    //
+    // Pointwise composition. Every combinator returns a NEW field holding the
+    // composed lambda; nothing is evaluated until the result is sampled. Combine
+    // is the primitive — the rest are one-liners over it.
+
+    // Two fields merged pointwise by a binary operator.
+    Combine(a: ScalarFunctionField2D, b: ScalarFunctionField2D, op: Function2<Number, Number, Number>): ScalarFunctionField2D
+        => ScalarFunctionField2D(p => op(a.Eval(p), b.Eval(p)));
+
+    // Two fields merged pointwise by a binary operator.
+    Combine(a: ScalarFunctionField3D, b: ScalarFunctionField3D, op: Function2<Number, Number, Number>): ScalarFunctionField3D
+        => ScalarFunctionField3D(p => op(a.Eval(p), b.Eval(p)));
+
+    // The field with its output value transformed by f (a range warp).
+    MapValue(self: ScalarFunctionField2D, f: Function1<Number, Number>): ScalarFunctionField2D
+        => ScalarFunctionField2D(p => f(self.Eval(p)));
+
+    // The field with its output value transformed by f (a range warp).
+    MapValue(self: ScalarFunctionField3D, f: Function1<Number, Number>): ScalarFunctionField3D
+        => ScalarFunctionField3D(p => f(self.Eval(p)));
+
+    // The field with its input position transformed by f before evaluation (a
+    // domain warp): bending, twisting, tiling, and instancing are all domain warps.
+    MapDomain(self: ScalarFunctionField2D, f: Function1<Point2D, Point2D>): ScalarFunctionField2D
+        => ScalarFunctionField2D(p => self.Eval(f(p)));
+
+    // The field with its input position transformed by f before evaluation.
+    MapDomain(self: ScalarFunctionField3D, f: Function1<Point3D, Point3D>): ScalarFunctionField3D
+        => ScalarFunctionField3D(p => self.Eval(f(p)));
+
+    // The sum of two fields, pointwise.
+    Add(a: ScalarFunctionField2D, b: ScalarFunctionField2D): ScalarFunctionField2D
+        => a.Combine(b, (x, y) => x + y);
+
+    // The sum of two fields, pointwise.
+    Add(a: ScalarFunctionField3D, b: ScalarFunctionField3D): ScalarFunctionField3D
+        => a.Combine(b, (x, y) => x + y);
+
+    //==
+    // # Constructive solid geometry on distance fields
+    //
+    // SDF convention: union is the pointwise minimum, intersection the maximum,
+    // difference the left field against the negated right. Results are exact for
+    // union and bounds elsewhere, which is the standard SDF caveat
+    // (https://en.wikipedia.org/wiki/Constructive_solid_geometry).
+
+    // The union of two planar distance fields: the pointwise minimum.
+    Union(a: ScalarFunctionField2D, b: ScalarFunctionField2D): ScalarFunctionField2D
+        => a.Combine(b, (x, y) => x.Min(y));
+
+    // The union of two spatial distance fields: the pointwise minimum.
+    Union(a: ScalarFunctionField3D, b: ScalarFunctionField3D): ScalarFunctionField3D
+        => a.Combine(b, (x, y) => x.Min(y));
+
+    // The intersection of two planar distance fields: the pointwise maximum.
+    Intersection(a: ScalarFunctionField2D, b: ScalarFunctionField2D): ScalarFunctionField2D
+        => a.Combine(b, (x, y) => x.Max(y));
+
+    // The intersection of two spatial distance fields: the pointwise maximum.
+    Intersection(a: ScalarFunctionField3D, b: ScalarFunctionField3D): ScalarFunctionField3D
+        => a.Combine(b, (x, y) => x.Max(y));
+
+    // The first field with the second carved out of it: a against the negated b.
+    Difference(a: ScalarFunctionField2D, b: ScalarFunctionField2D): ScalarFunctionField2D
+        => a.Combine(b, (x, y) => x.Max(y.Negative));
+
+    // The first field with the second carved out of it: a against the negated b.
+    Difference(a: ScalarFunctionField3D, b: ScalarFunctionField3D): ScalarFunctionField3D
+        => a.Combine(b, (x, y) => x.Max(y.Negative));
+
+    // The union of two spatial distance fields blended over blendRadius: the
+    // polynomial smooth minimum. Precondition: blendRadius is positive.
+    SmoothUnion(a: ScalarFunctionField3D, b: ScalarFunctionField3D, blendRadius: Number): ScalarFunctionField3D
+        => a.Combine(b, (x, y) => SmoothUnionDistance(x, y, blendRadius));
+
+    // The field grown (positive amount) or shrunk (negative amount) by a constant
+    // distance: the offset surface of a distance field.
+    Offset(self: ScalarFunctionField2D, amount: Number): ScalarFunctionField2D
+        => self.MapValue(x => x - amount);
+
+    // The field grown (positive amount) or shrunk (negative amount) by a constant.
+    Offset(self: ScalarFunctionField3D, amount: Number): ScalarFunctionField3D
+        => self.MapValue(x => x - amount);
+
+    // The complement of a distance field: inside and outside swapped.
+    Complement(self: ScalarFunctionField2D): ScalarFunctionField2D
+        => self.MapValue(x => x.Negative);
+
+    // The complement of a distance field: inside and outside swapped.
+    Complement(self: ScalarFunctionField3D): ScalarFunctionField3D
+        => self.MapValue(x => x.Negative);
+}

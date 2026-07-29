@@ -1,0 +1,57 @@
+//==
+// # Warped and derived noises
+//
+// Noise fields built by feeding one noise through another: domain warping
+// displaces the sample position before evaluation, and curl noise takes the
+// rotational derivative of a smooth potential to obtain a divergence-free
+// vector field.
+
+// Planar domain-warped noise: the sample point is displaced by a warp noise
+// of WarpFrequency scaled by WarpStrength, applied Iterations times, before
+// evaluating the Basis noise. Produces marbled, fluid-like patterns.
+type DomainWarpNoise2D
+    implements Value, ScalarField2D
+{
+    Basis: NoiseBasis;
+    Seed: Integer;
+    Frequency: Number;
+    WarpStrength: Number;
+    WarpFrequency: Number;
+    Iterations: Integer;
+}
+
+// Spatial domain-warped noise: the sample point is displaced by a warp noise
+// of WarpFrequency scaled by WarpStrength, applied Iterations times, before
+// evaluating the Basis noise. Produces marbled, fluid-like patterns.
+type DomainWarpNoise3D
+    implements Value, ScalarField3D
+{
+    Basis: NoiseBasis;
+    Seed: Integer;
+    Frequency: Number;
+    WarpStrength: Number;
+    WarpFrequency: Number;
+    Iterations: Integer;
+}
+
+// Planar curl noise: the 90-degree rotation of the gradient of a smooth
+// scalar potential, yielding a divergence-free vector field. Ideal for
+// advecting particles without sources or sinks
+// (https://en.wikipedia.org/wiki/Curl_(mathematics)).
+type CurlNoise2D
+    implements Value, VectorField2D
+{
+    Seed: Integer;
+    Frequency: Number;
+}
+
+// Spatial curl noise: the curl of a smooth vector potential, yielding a
+// divergence-free vector field. Ideal for incompressible, swirling motion
+// of particles, smoke, and hair
+// (https://en.wikipedia.org/wiki/Curl_(mathematics)).
+type CurlNoise3D
+    implements Value, VectorField3D
+{
+    Seed: Integer;
+    Frequency: Number;
+}

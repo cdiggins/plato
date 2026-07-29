@@ -1,0 +1,141 @@
+//==
+// # Surfaces — parametric evaluation of the named surface types
+//
+// The ParametricSurface obligations (Eval / ClosedU / ClosedV) for the types
+// declared in `surfaces-patches.plato`, `surfaces-generated.plato`, and
+// `surfaces-special.plato`. Same UV convention as `library Solids` in
+// solids.plato: UV is the unit square, U is the first (profile / column)
+// direction and V the second (sweep / row) direction, and ClosedU/ClosedV say
+// whether the surface seams shut across that direction — which is exactly the
+// pair `AllQuadFaceIndices(nCols, nRows, ClosedU, ClosedV)` in
+// meshes-spatial.library.plato consumes.
+//
+// Only the closed-form surfaces get an `Eval` here. The control-net surfaces
+// (Bezier / B-spline / NURBS / Coons) and the frame-carrying sweeps
+// (SurfaceOfRevolution, SweptSurface, LoftedSurface, TubeSurface, OffsetSurface)
+// need de Casteljau/de Boor evaluation or a rotation-minimizing frame, neither of
+// which exists in this tree yet; they are left as TODO(content) below and keep
+// only their closure answers, which ARE derivable and are what tessellation reads.
+
+library Surfaces
+{
+    //==
+    // Patches and control nets
+
+    // Bilinear interpolation of the four corners: lerp along U on each V edge,
+    // then lerp between those two results along V.
+    Eval(s: BilinearPatch, uv: UvCoordinate): Point3D
+        => s.P00.Lerp(s.P10, uv.U).Lerp(s.P01.Lerp(s.P11, uv.U), uv.V);
+    ClosedU(s: BilinearPatch): Boolean => false;
+    ClosedV(s: BilinearPatch): Boolean => false;
+
+    // TODO(content): Eval needs de Casteljau over the control net.
+    ClosedU(s: BezierPatch): Boolean => false;
+    ClosedV(s: BezierPatch): Boolean => false;
+
+    // TODO(content): Eval needs de Boor over the knot vectors.
+    ClosedU(s: BSplineSurface): Boolean => false;
+    ClosedV(s: BSplineSurface): Boolean => false;
+
+    // TODO(content): Eval needs rational de Boor (weighted, then projected).
+    ClosedU(s: NurbsSurface): Boolean => false;
+    ClosedV(s: NurbsSurface): Boolean => false;
+
+    // The frame origin displaced by the Domain-mapped parameters along the
+    // frame's X and Y axes.
+    Eval(s: PlanarPatch, uv: UvCoordinate): Point3D
+        => s.Frame.PointInFrame(Point3D(s.Domain.Min.X.Lerp(s.Domain.Max.X, uv.U),
+                                        s.Domain.Min.Y.Lerp(s.Domain.Max.Y, uv.V),
+                                        0.0));
+    ClosedU(s: PlanarPatch): Boolean => false;
+    ClosedV(s: PlanarPatch): Boolean => false;
+
+    // TODO(content): Eval needs the Coons blend of the four boundary curves,
+    // which needs component-wise addition of Point3D (Point3D is Interpolatable,
+    // not Additive, so the blend is not expressible with the current concepts).
+    ClosedU(s: CoonsPatch): Boolean => false;
+    ClosedV(s: CoonsPatch): Boolean => false;
+
+    // A latitude/longitude window: U sweeps the azimuth interval, V the
+    // inclination interval (measured from the sphere's +Z pole).
+    Eval(s: SphericalPatch, uv: UvCoordinate): Point3D
+    {
+        var azimuth = s.Azimuths.Lerp(uv.U);
+        var inclination = s.Inclinations.Lerp(uv.V);
+        var r = s.Sphere.Radius;
+        return (s.Sphere.Center.X + inclination.Sin * azimuth.Cos * r,
+                s.Sphere.Center.Y + inclination.Sin * azimuth.Sin * r,
+                s.Sphere.Center.Z + inclination.Cos * r);
+    }
+    // A window, not a full lap: closed only if the caller supplied a whole turn,
+    // which the patch does not promise, so both answers are false.
+    ClosedU(s: SphericalPatch): Boolean => false;
+    ClosedV(s: SphericalPatch): Boolean => false;
+
+    //==
+    // Generated surfaces
+
+    // TODO(content): Eval needs the profile lifted into the axis frame.
+    // Closure in U is decidable, though: a sweep of a whole turn seams shut.
+    ClosedU(s: SurfaceOfRevolution): Boolean
+        => (s.Angles.End.Turns - s.Angles.Start.Turns).Abs >= 1.0;
+    ClosedV(s: SurfaceOfRevolution): Boolean => false;
+
+    // The profile translated along Direction by V * Distance.
+    Eval(s: ExtrudedSurface, uv: UvCoordinate): Point3D
+    {
+        var p = s.Profile.Eval(uv.U);
+        var d = s.Direction.Vector;
+        var k = s.Distance * uv.V;
+        return (p.X + d.X * k, p.Y + d.Y * k, p.Z + d.Z * k);
+    }
+    // The profile's own closure is a property of the supplied curve, not of the
+    // extrusion, and Curve3D does not report it; the extrusion direction is open.
+    ClosedU(s: ExtrudedSurface): Boolean => false;
+    ClosedV(s: ExtrudedSurface): Boolean => false;
+
+    // The straight ruling between the two curves at equal parameter.
+    Eval(s: RuledSurface, uv: UvCoordinate): Point3D
+        => s.Start.Eval(uv.U).Lerp(s.End.Eval(uv.U), uv.V);
+    ClosedU(s: RuledSurface): Boolean => false;
+    ClosedV(s: RuledSurface): Boolean => false;
+
+    // TODO(content): Eval needs per-section polyline sampling and cross-section
+    // interpolation. Closure across sections IS declared by the type.
+    ClosedU(s: LoftedSurface): Boolean => false;
+    ClosedV(s: LoftedSurface): Boolean => s.Closed;
+
+    // TODO(content): Eval needs the path's rotation-minimizing frame.
+    ClosedU(s: SweptSurface): Boolean => false;
+    ClosedV(s: SweptSurface): Boolean => false;
+
+    // TODO(content): Eval needs the path's rotation-minimizing frame. The
+    // circular cross-section always seams shut in U.
+    ClosedU(s: TubeSurface): Boolean => true;
+    ClosedV(s: TubeSurface): Boolean => false;
+
+    // TODO(content): Eval needs the base surface's normal, which ParametricSurface
+    // does not expose (only DifferentiableSurface does). Closure is inherited from
+    // the base: offsetting along the normal preserves seams.
+    ClosedU(s: OffsetSurface): Boolean => s.Base.ClosedU;
+    ClosedV(s: OffsetSurface): Boolean => s.Base.ClosedV;
+
+    //==
+    // Topological surfaces
+
+    // One lap of the centerline circle in U, across the strip in V. The strip's
+    // half-width direction rotates by HalfTwistCount half-turns over the lap, so
+    // an odd count returns the strip to its start flipped: the one-sided surface.
+    Eval(s: MobiusStrip, uv: UvCoordinate): Point3D
+    {
+        var lap = uv.U.Turns;
+        var twist = (uv.U * s.HalfTwistCount.ToNumber * 0.5).Turns;
+        var w = (uv.V - 0.5) * s.Width;
+        var ring = s.Radius + w * twist.Cos;
+        return s.Frame.PointInFrame(Point3D(ring * lap.Cos, ring * lap.Sin, w * twist.Sin));
+    }
+    // The lap closes in U (flipped when HalfTwistCount is odd); the strip has two
+    // free boundary edges in V.
+    ClosedU(s: MobiusStrip): Boolean => true;
+    ClosedV(s: MobiusStrip): Boolean => false;
+}

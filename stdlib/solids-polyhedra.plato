@@ -1,0 +1,107 @@
+//==
+// # Polyhedral solids
+//
+// The flat-faced convex solids named by their symmetry rather than by a
+// generator: right regular prisms, pyramids, and antiprisms, plus the five
+// Platonic and thirteen Archimedean solids
+// (https://en.wikipedia.org/wiki/Polyhedron). Each is centered at its frame
+// origin in the frame's orientation. The parametric boundary surfaces of the
+// prism and pyramid families live in `solids.library.plato`.
+
+//==
+// # Polyhedral solids
+
+// A right regular prism: two parallel regular SideCount-gons of circumscribed
+// radius Radius in planes perpendicular to the frame's Z axis, separated by
+// Height and joined by rectangles (https://en.wikipedia.org/wiki/Prism_(geometry)).
+// (The general polygon-swept prism is Prism3D, file 19.)
+type RegularPrism
+    implements ConvexSolid, ParametricSurface
+{
+    Frame: Frame3D;
+    SideCount: Integer;
+    Radius: Number;
+    Height: Number;
+}
+
+// A right regular pyramid: a regular SideCount-gon of circumscribed radius
+// Radius in the plane perpendicular to the frame's Z axis at -Height/2,
+// tapering to an apex on that axis at +Height/2
+// (https://en.wikipedia.org/wiki/Pyramid_(geometry)). (The general polygon-based
+// pyramid is Pyramid3D, polygons.plato.)
+type RegularPyramid
+    implements ConvexSolid, ParametricSurface
+{
+    Frame: Frame3D;
+    SideCount: Integer;
+    Radius: Number;
+    Height: Number;
+}
+
+// A right pyramid on an axis-aligned square base of side BaseLength, centered
+// on the frame's Z axis at -Height/2, tapering to an apex at +Height/2. The
+// square-base special case kept separate from RegularPyramid because its base
+// is axis-aligned rather than inscribed in the unit circle
+// (https://en.wikipedia.org/wiki/Square_pyramid).
+type SquarePyramid
+    implements ConvexSolid, ParametricSurface
+{
+    Frame: Frame3D;
+    BaseLength: Number;
+    Height: Number;
+}
+
+// A right antiprism: two parallel regular SideCount-gons rotated a half step
+// against each other and joined by a band of 2 * SideCount triangles
+// (https://en.wikipedia.org/wiki/Antiprism).
+type Antiprism
+    implements ConvexSolid
+{
+    Frame: Frame3D;
+    SideCount: Integer;
+    Radius: Number;
+    Height: Number;
+}
+
+// One of the five Platonic solids (https://en.wikipedia.org/wiki/Platonic_solid).
+type PlatonicSolidKind
+    = Tetrahedron | Cube | Octahedron | Dodecahedron | Icosahedron;
+
+// A regular polyhedron of the given kind, centered at the frame origin in the
+// frame's orientation, with vertices at circumscribed radius Radius
+// (https://en.wikipedia.org/wiki/Platonic_solid).
+type PlatonicSolid
+    implements ConvexSolid
+{
+    Kind: PlatonicSolidKind;
+    Frame: Frame3D;
+    Radius: Number;
+}
+
+// One of the thirteen Archimedean solids
+// (https://en.wikipedia.org/wiki/Archimedean_solid).
+type ArchimedeanSolidKind
+    = TruncatedTetrahedron
+    | Cuboctahedron
+    | TruncatedCube
+    | TruncatedOctahedron
+    | Rhombicuboctahedron
+    | TruncatedCuboctahedron
+    | SnubCube
+    | Icosidodecahedron
+    | TruncatedDodecahedron
+    | TruncatedIcosahedron
+    | Rhombicosidodecahedron
+    | TruncatedIcosidodecahedron
+    | SnubDodecahedron;
+
+// A semi-regular polyhedron of the given kind, centered at the frame origin
+// in the frame's orientation, with vertices at circumscribed radius Radius
+// (https://en.wikipedia.org/wiki/Archimedean_solid).
+type ArchimedeanSolid
+    implements ConvexSolid
+{
+    Kind: ArchimedeanSolidKind;
+    Frame: Frame3D;
+    Radius: Number;
+}

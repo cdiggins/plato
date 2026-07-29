@@ -1,0 +1,71 @@
+//==
+// # Ray and sweep queries
+//
+// Raycast and sphere-sweep requests and their hit records, kept as plain data so
+// they can be batched, serialized, and replayed. Distances are world-space and
+// non-negative; a MaxDistance that is zero or negative means "unbounded";
+// FilterMask is a category bitmask combined with a candidate's category bits by
+// bitwise AND (non-zero passes), and -1 (all bits set) accepts everything.
+
+// A bounded, filtered 2D raycast request
+// (https://en.wikipedia.org/wiki/Ray_casting).
+type RayQuery2D
+    implements Value
+{
+    Ray: Ray2D;
+    MaxDistance: Number;
+    FilterMask: Integer;
+}
+
+// A bounded, filtered 3D raycast request.
+type RayQuery3D
+    implements Value
+{
+    Ray: Ray3D;
+    MaxDistance: Number;
+    FilterMask: Integer;
+}
+
+// A sphere-sweep (thick ray) request: a sphere of the given radius travels
+// along the ray until it first touches something.
+type SweepQuery3D
+    implements Value
+{
+    Ray: Ray3D;
+    Radius: Number;
+    MaxDistance: Number;
+    FilterMask: Integer;
+}
+
+// The result of a 2D raycast. When Hit is false the remaining fields are
+// meaningless. Distance is measured from the ray origin along its
+// direction; Normal points against the ray (out of the struck primitive);
+// PrimitiveIndex identifies the struck primitive in the caller's list,
+// -1 when inapplicable.
+type RayHit2D
+    implements Value
+{
+    Hit: Boolean;
+    Distance: Number;
+    Position: Point2D;
+    Normal: Direction2D;
+    PrimitiveIndex: ItemIndex;
+}
+
+// The result of a 3D raycast against triangulated geometry. When Hit is false
+// the remaining fields are meaningless. Face is the struck triangle (-1 when
+// the target is not a mesh); Barycentric locates the hit within that triangle
+// (https://en.wikipedia.org/wiki/Barycentric_coordinate_system); Uv is the
+// interpolated surface parameter at the hit, (0, 0) when the target carries no
+// UVs.
+type RayHit3D
+    implements Value
+{
+    Hit: Boolean;
+    Distance: Number;
+    Position: Point3D;
+    Normal: Direction3D;
+    Face: FaceIndex;
+    Barycentric: BarycentricCoordinate;
+    Uv: UvCoordinate;
+}

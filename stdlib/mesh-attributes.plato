@@ -21,9 +21,10 @@ type MeshAttribute<T>
     Values: Array<T>;
 }
 
-// An orthonormal surface frame for normal mapping and anisotropic shading.
-// Handedness is +1 or -1: the sign relating Bitangent to the cross product
-// of Normal and Tangent (mirrored UV islands flip it).
+// An orthonormal surface frame for normal mapping
+// (https://en.wikipedia.org/wiki/Normal_mapping) and anisotropic shading.
+// Handedness is +1 or -1: the sign relating Bitangent to the cross product of
+// Normal and Tangent (mirrored UV islands flip it).
 type TangentBasis
     implements Value
 {
@@ -60,8 +61,9 @@ type UvSeam
     Edges: Array<VertexPair>;
 }
 
-// A connected set of faces that maps to one contiguous region of UV space.
-// UvBounds is that region, expressed in UV space via Bounds2D (X = U, Y = V).
+// A connected set of faces that maps to one contiguous region of UV space
+// (https://en.wikipedia.org/wiki/UV_mapping). UvBounds is that region,
+// expressed in UV space via Bounds2D (X = U, Y = V).
 type UvChart
     implements Value
 {
@@ -69,9 +71,10 @@ type UvChart
     UvBounds: Bounds2D;
 }
 
-// A complete UV layout: charts packed into the unit UV square at the texel
-// resolution AtlasSize, the seams the unwrap introduced, and the padding
-// (in texels) kept between charts to avoid bleeding.
+// A complete UV layout (https://en.wikipedia.org/wiki/Texture_atlas): charts
+// packed into the unit UV square at the texel resolution AtlasSize, the seams
+// the unwrap introduced, and the padding (in texels) kept between charts to
+// avoid bleeding.
 type UvAtlas
     implements Value
 {

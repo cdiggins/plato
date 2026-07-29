@@ -1,0 +1,207 @@
+//==
+// # GeometryKernels — the shared point-list formulas
+//
+// The formulas every point-list shape in the line, planar-shape, polygon and
+// spatial-primitive files is built from. They take a plain `Array<Point2D>` /
+// `Array<Point3D>` rather than a concept so that a shape whose points are NOT its
+// `PointSet` members (a regular polygon's computed vertices, a polygon's holes) can
+// call them too. Aggregate reductions (centroid-of-points, bounds-of-points, total
+// polyline length) are folded through the P2 Indexable Reduce/Map family: the
+// kernels below materialize their elements once and reduce. Difference.Between(a, b)
+// yields (b - a) — pinned in the algebra concepts — so the sign of BoundsSize and
+// every Between-based delta below rests on a documented convention, not observed
+// behavior.
+
+library GeometryKernels
+{
+    //==
+    // # Point-list kernels
+    //
+    // The formulas every point-list shape in `lines.plato`, `planar-shapes.plato`,
+    // `polygons.plato` and `spatial-primitives.plato` is built from. They take a
+    // plain `Array<Point2D>` / `Array<Point3D>` rather than a concept so that a
+    // shape whose points are NOT its `PointSet` members (a regular polygon's
+    // computed vertices, a polygon's holes) can call them too.
+    //
+    // Conventions fixed here and inherited by every caller:
+    //   * Winding: counter-clockwise is positive (README / planar-shapes.plato).
+    //     `ShoelaceArea` is SIGNED; the `Area` obligations take its absolute value.
+    //   * Vertex order: a closed ring lists each vertex once; the closing edge from
+    //     the last vertex back to the first is implicit (hence `AtModulo`).
+    //   * Containment is the even-odd (crossing) rule and is exact only for a
+    //     SIMPLE ring. On the boundary itself the answer is whatever the floating
+    //     point comparison happens to give — see `PolygonContainsPoint`.
+
+    // The sum of an array of numbers. The one reduction these kernels need; the
+    // v3 collection surface has no `Sum`, so it is spelled once here.
+    SumOf(values: Array<Number>): Number
+        => values.Reduce(0.0, (acc, x) => acc + x);
+
+    // Twice the signed area of triangle (a, b, c): the z component of
+    // (b - a) x (c - a). Positive when a -> b -> c turns counter-clockwise, zero
+    // when the three points are collinear. The primitive orientation predicate.
+    // https://en.wikipedia.org/wiki/Curve_orientation
+    TwiceSignedArea(a: Point2D, b: Point2D, c: Point2D): Number
+        => (b.X - a.X) * (c.Y - a.Y) - (b.Y - a.Y) * (c.X - a.X);
+
+    // The tightest axis-aligned rectangle containing every listed point.
+    // Precondition: at least one point.
+    BoundsOfPoints(points: Array<Point2D>): Bounds2D
+    {
+        var lo = points.Reduce(points.First, (acc, p) => Point2D(acc.X.Min(p.X), acc.Y.Min(p.Y)));
+        var hi = points.Reduce(points.First, (acc, p) => Point2D(acc.X.Max(p.X), acc.Y.Max(p.Y)));
+        return (lo, hi);
+    }
+
+    // The tightest axis-aligned box containing every listed point.
+    // Precondition: at least one point.
+    BoundsOfPoints(points: Array<Point3D>): Bounds3D
+    {
+        var lo = points.Reduce(points.First, (acc, p) => Point3D(acc.X.Min(p.X), acc.Y.Min(p.Y), acc.Z.Min(p.Z)));
+        var hi = points.Reduce(points.First, (acc, p) => Point3D(acc.X.Max(p.X), acc.Y.Max(p.Y), acc.Z.Max(p.Z)));
+        return (lo, hi);
+    }
+
+    // The vertex centroid of a non-empty point list: the componentwise arithmetic
+    // mean, treating every listed point as an equal point mass. Distinct from
+    // PolygonAreaCentroid, which weights by enclosed area; the two agree only for
+    // shapes whose vertices are uniformly distributed. Precondition: at least one point.
+    AverageOfPoints(points: Array<Point2D>): Point2D
+        => (SumOf(points.Map(p => p.X)) / points.Count.ToNumber,
+            SumOf(points.Map(p => p.Y)) / points.Count.ToNumber);
+
+    // The vertex centroid of a non-empty point list in space: the componentwise
+    // arithmetic mean. Precondition: at least one point.
+    AverageOfPoints(points: Array<Point3D>): Point3D
+        => (SumOf(points.Map(p => p.X)) / points.Count.ToNumber,
+            SumOf(points.Map(p => p.Y)) / points.Count.ToNumber,
+            SumOf(points.Map(p => p.Z)) / points.Count.ToNumber);
+
+    // The smallest rectangle containing both operands.
+    UnionOfBounds(a: Bounds2D, b: Bounds2D): Bounds2D
+        => (Point2D(a.Min.X.Min(b.Min.X), a.Min.Y.Min(b.Min.Y)),
+            Point2D(a.Max.X.Max(b.Max.X), a.Max.Y.Max(b.Max.Y)));
+
+    // The smallest box containing both operands.
+    UnionOfBounds(a: Bounds3D, b: Bounds3D): Bounds3D
+        => (Point3D(a.Min.X.Min(b.Min.X), a.Min.Y.Min(b.Min.Y), a.Min.Z.Min(b.Min.Z)),
+            Point3D(a.Max.X.Max(b.Max.X), a.Max.Y.Max(b.Max.Y), a.Max.Z.Max(b.Max.Z)));
+
+    // The rectangle grown by `amount` on every side (the Minkowski sum with a
+    // square of half-width `amount`; https://en.wikipedia.org/wiki/Minkowski_addition).
+    GrowBounds(b: Bounds2D, amount: Number): Bounds2D
+        => (Point2D(b.Min.X - amount, b.Min.Y - amount),
+            Point2D(b.Max.X + amount, b.Max.Y + amount));
+
+    // The box grown by `amount` on every side.
+    GrowBounds(b: Bounds3D, amount: Number): Bounds3D
+        => (Point3D(b.Min.X - amount, b.Min.Y - amount, b.Min.Z - amount),
+            Point3D(b.Max.X + amount, b.Max.Y + amount, b.Max.Z + amount));
+
+    // The total length of the chain joining consecutive points. When `closed`, the
+    // edge from the last point back to the first is counted too.
+    // Precondition: at least two points (at least one when closed).
+    ChainLength(points: Array<Point2D>, closed: Boolean): Number
+        => SumOf((closed ? points.Count : points.Count - 1)
+            .MapRange(i => points.At(i).Between(points.AtModulo(i + 1)).Magnitude));
+
+    // The total length of the chain joining consecutive points in space.
+    ChainLength(points: Array<Point3D>, closed: Boolean): Number
+        => SumOf((closed ? points.Count : points.Count - 1)
+            .MapRange(i => points.At(i).Between(points.AtModulo(i + 1)).Magnitude));
+
+    // The SIGNED area enclosed by the closed ring, by the shoelace (surveyor's)
+    // formula: positive for counter-clockwise winding, negative for clockwise. For
+    // a self-intersecting ring this is the winding-weighted area, not the area of
+    // the point set; callers wanting a non-negative measure take the absolute
+    // value. https://en.wikipedia.org/wiki/Shoelace_formula
+    ShoelaceArea(points: Array<Point2D>): Number
+        => 0.5 * SumOf(points.Count.MapRange(i =>
+            points.At(i).X * points.AtModulo(i + 1).Y
+            - points.AtModulo(i + 1).X * points.At(i).Y));
+
+    // The centroid (center of mass under uniform density) of the region enclosed by
+    // a closed ring: Cx = 1/(6A) * sum (x_i + x_i+1) * cross_i, and likewise for Cy,
+    // where cross_i is the shoelace term and A the signed area.
+    // Precondition: non-zero signed area (a degenerate ring has no centroid).
+    // https://en.wikipedia.org/wiki/Centroid#Of_a_polygon
+    PolygonAreaCentroid(points: Array<Point2D>): Point2D
+    {
+        var n = points.Count;
+        var cross = n.MapRange(i =>
+            points.At(i).X * points.AtModulo(i + 1).Y
+            - points.AtModulo(i + 1).X * points.At(i).Y);
+        var twiceArea = SumOf(cross);
+        var cx = SumOf(n.MapRange(i => (points.At(i).X + points.AtModulo(i + 1).X) * cross.At(i)));
+        var cy = SumOf(n.MapRange(i => (points.At(i).Y + points.AtModulo(i + 1).Y) * cross.At(i)));
+        return (cx / (3.0 * twiceArea), cy / (3.0 * twiceArea));
+    }
+
+    // True when the horizontal ray from `point` towards +X crosses the edge
+    // (a, b). The half-open rule on the y comparison (`a.Y > point.Y` exclusive-or
+    // `b.Y > point.Y`) counts each vertex exactly once, so a ray through a vertex
+    // does not double count.
+    EdgeCrossesRay(a: Point2D, b: Point2D, point: Point2D): Boolean
+        => (a.Y > point.Y).ExclusiveOr(b.Y > point.Y)
+        && point.X < (b.X - a.X) * (point.Y - a.Y) / (b.Y - a.Y) + a.X;
+
+    // True when `point` lies inside the closed ring, by the even-odd (crossing
+    // number) rule: inside when the ray towards +X crosses an odd number of edges.
+    // Exact for a simple (non-self-intersecting) ring; for a self-intersecting one
+    // it reports the even-odd region rather than the non-zero-winding region.
+    // Points exactly ON the boundary are not classified reliably — the strict `<`
+    // in EdgeCrossesRay makes the answer depend on floating point, so callers that
+    // need a boundary guarantee must test the boundary separately.
+    // https://en.wikipedia.org/wiki/Point_in_polygon
+    PolygonContainsPoint(points: Array<Point2D>, point: Point2D): Boolean
+        => points.Count
+            .MapRange(i => EdgeCrossesRay(points.At(i), points.AtModulo(i + 1), point) ? 1 : 0)
+            .Reduce(0, (acc, c) => acc + c)
+            .IsOdd;
+
+    // The point of the segment [a, b] nearest to `point`: the projection parameter
+    // clamped to [0, 1]. A degenerate segment (a equals b) returns a.
+    ClosestPointOnSegment(a: Point2D, b: Point2D, point: Point2D): Point2D
+    {
+        var ab = a.Between(b);
+        var lengthSquared = ab.MagnitudeSquared;
+        var t = lengthSquared <= 0.0 ? 0.0 : a.Between(point).Dot(ab) / lengthSquared;
+        return a.Add(ab.Multiply(t.Clamp(0.0, 1.0)));
+    }
+
+    // The point of the segment [a, b] in space nearest to `point`.
+    ClosestPointOnSegment(a: Point3D, b: Point3D, point: Point3D): Point3D
+    {
+        var ab = a.Between(b);
+        var lengthSquared = ab.MagnitudeSquared;
+        var t = lengthSquared <= 0.0 ? 0.0 : a.Between(point).Dot(ab) / lengthSquared;
+        return a.Add(ab.Multiply(t.Clamp(0.0, 1.0)));
+    }
+
+    // The distance from `point` to the segment [a, b].
+    DistanceToSegment(a: Point2D, b: Point2D, point: Point2D): Number
+        => ClosestPointOnSegment(a, b, point).Between(point).Magnitude;
+
+    // The distance from `point` to the segment [a, b] in space.
+    DistanceToSegment(a: Point3D, b: Point3D, point: Point3D): Number
+        => ClosestPointOnSegment(a, b, point).Between(point).Magnitude;
+
+    // The point of the polyline (or closed ring, when `closed`) nearest to `point`:
+    // the nearest of the per-edge nearest points.
+    ClosestPointOnChain(points: Array<Point2D>, closed: Boolean, point: Point2D): Point2D
+    {
+        var candidates = (closed ? points.Count : points.Count - 1)
+            .MapRange(i => ClosestPointOnSegment(points.At(i), points.AtModulo(i + 1), point));
+        return candidates.Reduce(candidates.First, (best, c) =>
+            c.Between(point).MagnitudeSquared < best.Between(point).MagnitudeSquared ? c : best);
+    }
+
+    // The point of the space polyline (or closed ring) nearest to `point`.
+    ClosestPointOnChain(points: Array<Point3D>, closed: Boolean, point: Point3D): Point3D
+    {
+        var candidates = (closed ? points.Count : points.Count - 1)
+            .MapRange(i => ClosestPointOnSegment(points.At(i), points.AtModulo(i + 1), point));
+        return candidates.Reduce(candidates.First, (best, c) =>
+            c.Between(point).MagnitudeSquared < best.Between(point).MagnitudeSquared ? c : best);
+    }
+}

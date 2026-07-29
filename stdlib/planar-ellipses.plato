@@ -1,0 +1,30 @@
+//==
+// # Ellipses and superellipses
+//
+// The rotated conic regions: the ellipse proper and the Lame superellipse that
+// interpolates between the diamond, the ellipse and the rectangle as its exponent
+// grows. Both store a centre, a semi-axis pair, and a rotation about that centre.
+
+// An ellipse region with semi-axis lengths SemiAxes (a along local X, b along
+// local Y), rotated by Rotation about Center. A circle when a equals b.
+// (https://en.wikipedia.org/wiki/Ellipse)
+type Ellipse
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
+{
+    Center: Point2D;
+    SemiAxes: Number2;
+    Rotation: Angle;
+}
+
+// A superellipse (Lame curve) region: |x/a|^Exponent + |y/b|^Exponent <= 1 in
+// the frame rotated by Rotation about Center, with SemiAxes (a, b). Exponent 2
+// is the ellipse, 1 the diamond, large values approach the rectangle; convex
+// when Exponent >= 1. (https://en.wikipedia.org/wiki/Superellipse)
+type SuperEllipse
+    implements Geometry2D, ClosedShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
+{
+    Center: Point2D;
+    SemiAxes: Number2;
+    Rotation: Angle;
+    Exponent: Number;
+}
