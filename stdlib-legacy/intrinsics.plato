@@ -471,7 +471,6 @@ library Intrinsics
     Middle(xs: IArray<$T>): $T;
     Prepend(self: IArray<$T>, value: $T): IArray<$T>;
     PrependAndAppend(self: IArray<$T>, before: $T, after: $T): IArray<$T>;
-    Range(n: Integer): IArray<Integer>;
     Reduce(xs: IArray<$T>, acc: $U, f: Function2<$U, $T, $U>): $U;
     Repeat(x: IAny, n: Integer): IArray<IAny>;
     Rest(xs: IArray<$T>): IArray<$T>;
