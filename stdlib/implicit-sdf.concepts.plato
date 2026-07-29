@@ -7,6 +7,15 @@
 // reports only membership (see also https://en.wikipedia.org/wiki/Implicit_surface).
 // The concrete types implementing these concepts are declared in the
 // `implicit-sdf-*.plato` files.
+//
+// Unbounded vs bounded: `SignedDistanceField2D/3D` are pure distance oracles
+// with no finite domain. `BoundedSignedDistanceField2D/3D` add a conservative
+// AABB (`Bounded2D/3D`) for culling and acceleration; `DistanceAt` /
+// `Eval` still evaluate the underlying field everywhere — bounds are hints,
+// not a change to distance semantics. Analytic wrappers live in
+// `implicit-sdf-bounded.plato`; sampled lattices (`SampledSdf*`) already
+// carry a `Bounds` spanning their finite support and implement the bounded
+// concepts.
 
 // A planar scalar field whose value is the signed distance to a boundary
 // curve: negative inside, zero on the boundary, positive outside. Values are
@@ -20,6 +29,21 @@ concept SignedDistanceField2D
 // distances or conservative lower bounds of them.
 concept SignedDistanceField3D
     inherits ScalarField3D
+{ }
+
+// A planar SDF plus a conservative axis-aligned domain for culling. Bounds
+// should enclose every point where distance ≤ 0 when used as a solid hint;
+// for sampled lattices they span the lattice. Outside Bounds, callers may
+// skip work; Eval / DistanceAt remain defined and unchanged.
+concept BoundedSignedDistanceField2D
+    inherits SignedDistanceField2D, Bounded2D
+{ }
+
+// A spatial SDF plus a conservative axis-aligned domain for culling. Same
+// semantics as the planar form: Bounds are acceleration hints, not a clamp
+// on distance evaluation.
+concept BoundedSignedDistanceField3D
+    inherits SignedDistanceField3D, Bounded3D
 { }
 
 // A planar region described by a membership predicate: true when the point

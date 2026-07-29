@@ -87,6 +87,17 @@ library GeometryKernels
         => (Point3D(a.Min.X.Min(b.Min.X), a.Min.Y.Min(b.Min.Y), a.Min.Z.Min(b.Min.Z)),
             Point3D(a.Max.X.Max(b.Max.X), a.Max.Y.Max(b.Max.Y), a.Max.Z.Max(b.Max.Z)));
 
+    // The overlap of two rectangles (component-wise Max of mins, Min of maxs).
+    // Disjoint operands yield the empty inverted encoding.
+    IntersectionOfBounds(a: Bounds2D, b: Bounds2D): Bounds2D
+        => (Point2D(a.Min.X.Max(b.Min.X), a.Min.Y.Max(b.Min.Y)),
+            Point2D(a.Max.X.Min(b.Max.X), a.Max.Y.Min(b.Max.Y)));
+
+    // The overlap of two boxes. Disjoint operands yield the empty encoding.
+    IntersectionOfBounds(a: Bounds3D, b: Bounds3D): Bounds3D
+        => (Point3D(a.Min.X.Max(b.Min.X), a.Min.Y.Max(b.Min.Y), a.Min.Z.Max(b.Min.Z)),
+            Point3D(a.Max.X.Min(b.Max.X), a.Max.Y.Min(b.Max.Y), a.Max.Z.Min(b.Max.Z)));
+
     // The rectangle grown by `amount` on every side (the Minkowski sum with a
     // square of half-width `amount`; https://en.wikipedia.org/wiki/Minkowski_addition).
     GrowBounds(b: Bounds2D, amount: Number): Bounds2D

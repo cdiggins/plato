@@ -8,9 +8,11 @@
 
 // A planar SDF discretized on a regular lattice spanning Bounds. Values holds
 // one signed distance per lattice node, in row-major column/row order;
-// evaluation between nodes interpolates bilinearly.
+// evaluation between nodes interpolates bilinearly. Implements the bounded
+// SDF concept: Bounds are the lattice domain (finite support), not merely
+// a culling hint.
 type SampledSdf2D
-    implements Value, SignedDistanceField2D
+    implements Value, BoundedSignedDistanceField2D
 {
     Values: Array2D<Number>;
     Bounds: Bounds2D;
@@ -18,9 +20,10 @@ type SampledSdf2D
 
 // A spatial SDF discretized on a regular lattice spanning Bounds. Values holds
 // one signed distance per lattice node, in column/row/layer order; evaluation
-// between nodes interpolates trilinearly.
+// between nodes interpolates trilinearly. Implements the bounded SDF concept:
+// Bounds are the lattice domain (finite support).
 type SampledSdf3D
-    implements Value, SignedDistanceField3D
+    implements Value, BoundedSignedDistanceField3D
 {
     Values: Array3D<Number>;
     Bounds: Bounds3D;
