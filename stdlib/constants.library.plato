@@ -147,6 +147,16 @@ library Constants
         => Vector3D(0.0, 0.0, 1.0);
 
     //==
+    // Physical constants
+
+    // Standard gravity: the conventional acceleration of free fall at the
+    // Earth's surface, fixed by definition at exactly 9.80665 m/s^2 (CGPM 1901)
+    // rather than measured -- local values vary with latitude and altitude.
+    // (https://en.wikipedia.org/wiki/Standard_gravity)
+    StandardGravity(_: Acceleration): Acceleration
+        => new Acceleration(9.80665);
+
+    //==
     // Canonical unit shapes
 
     // The interval [0, 1]: the default parameter domain for curves, surfaces,
