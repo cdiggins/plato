@@ -18,8 +18,8 @@ library MeshesPolygon
 {
     //==
     // MeshElementCounts obligations. VertexCount and FaceCount are direct reads;
-    // UndirectedEdgeCount assumes a CLOSED manifold, where every undirected edge
-    // is shared by exactly two faces and therefore carries exactly two corners.
+    // UndirectedEdgeCount dedupes through the canonical-corner rule, so it holds
+    // for open meshes as well as closed ones.
 
     // The number of positions the faces index into.
     VertexCount(self: PolygonMesh3D): Integer
@@ -29,10 +29,14 @@ library MeshesPolygon
     FaceCount(self: PolygonMesh3D): Integer
         => self.Faces.RowCount;
 
-    // The number of undirected edges. Precondition: the mesh is a closed
-    // manifold (each edge has exactly two corners); an open mesh over-counts.
+    // The number of undirected edges: one per canonical corner. An interior edge
+    // is named by the lower half of its twin pair, a boundary edge by its only
+    // corner, so no edge is double-counted and none is missed. The canonical rule
+    // itself is `IsCanonicalCorner` in `meshes-polygon-corners.library.plato`.
     UndirectedEdgeCount(self: PolygonMesh3D): Integer
-        => self.CornerCount / 2;
+        => self.CornerCount
+            .MapRange(c => self.IsCanonicalCorner(CornerIndex(c)) ? 1 : 0)
+            .Reduce(0, (acc, hit) => acc + hit);
 
     //==
     // Corners: the global vertex slots, and the face-relative way in.

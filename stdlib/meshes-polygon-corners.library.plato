@@ -122,17 +122,23 @@ library MeshesPolygonCorners
     // a dense edge numbering derived entirely from the packing — which is what
     // the ambo operator needs to place one new vertex per edge.
 
-    // True when this corner is the lower half of its twin pair, and so the one
-    // that names the undirected edge.
+    // True when this corner names its undirected edge: the lower half of a twin
+    // pair, or a boundary corner, which has no twin to share the naming with.
+    // Convention: see CONVENTIONS.md - Typed indices - -1 means none.
     IsCanonicalCorner(self: PolygonMesh3D, corner: CornerIndex): Boolean
-        => corner.Value < self.TwinCorner(corner).Value;
+    {
+        var twin = self.TwinCorner(corner);
+        return twin.IsNone.Or(corner.Value < twin.Value);
+    }
 
     // The dense index of a corner's undirected edge: how many canonical corners
     // precede this edge's own canonical corner. Both halves of a twin pair give
-    // the same answer, and the results cover [0, UndirectedEdgeCount).
+    // the same answer, a boundary corner names its own edge, and the results
+    // cover [0, UndirectedEdgeCount) on open and closed meshes alike.
     CornerUndirectedEdge(self: PolygonMesh3D, corner: CornerIndex): UndirectedEdgeIndex
     {
-        var canonical = corner.Value.Min(self.TwinCorner(corner).Value);
+        var twin = self.TwinCorner(corner);
+        var canonical = twin.IsNone ? corner.Value : corner.Value.Min(twin.Value);
         return UndirectedEdgeIndex(canonical
             .MapRange(c => self.IsCanonicalCorner(CornerIndex(c)) ? 1 : 0)
             .Reduce(0, (acc, hit) => acc + hit));
