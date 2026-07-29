@@ -28,28 +28,14 @@ library CurvesSampling
     // re-joins the ends itself.
 
     // `count` values evenly spaced over the canonical domain, endpoints
-    // included. Precondition: count >= 2.
-    Sample(self: Curve1D, count: Integer): Array<Number>
+    // included. One body for every embedding, via the generic `Curve<TRange>`
+    // root: sampling needs `Eval` and nothing else. Precondition: count >= 2.
+    Sample(self: Curve<$TRange>, count: Integer): Array<$TRange>
         => count.Fractions.Map(t => self.Eval(t));
 
-    // `count` positions evenly spaced over the canonical domain, endpoints
-    // included. Precondition: count >= 2.
-    Sample(self: Curve2D, count: Integer): Array<Point2D>
-        => count.Fractions.Map(t => self.Eval(t));
-
-    // `count` positions evenly spaced over the canonical domain, endpoints
-    // included. Precondition: count >= 2.
-    Sample(self: Curve3D, count: Integer): Array<Point3D>
-        => count.Fractions.Map(t => self.Eval(t));
-
-    // `count` positions evenly spaced over one period, the duplicate seam
-    // point at parameter 1 omitted. Precondition: count >= 1.
-    SamplePeriodic(self: Curve2D, count: Integer): Array<Point2D>
-        => count.FractionsExclusive.Map(t => self.Eval(t));
-
-    // `count` positions evenly spaced over one period, the duplicate seam
-    // point at parameter 1 omitted. Precondition: count >= 1.
-    SamplePeriodic(self: Curve3D, count: Integer): Array<Point3D>
+    // `count` values evenly spaced over one period, the duplicate seam value at
+    // parameter 1 omitted. Precondition: count >= 1.
+    SamplePeriodic(self: Curve<$TRange>, count: Integer): Array<$TRange>
         => count.FractionsExclusive.Map(t => self.Eval(t));
 
     // The open polyline through `count` evenly spaced samples of the curve.

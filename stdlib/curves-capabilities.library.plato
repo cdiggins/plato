@@ -1,8 +1,8 @@
 //==
 // # CurvesCapabilities — derived functions for the curve capability concepts
 //
-// Bodies for the concepts that a curve may additionally satisfy, declared under
-// "Curve capabilities" in `curves.concepts.plato`: periodicity, first
+// Bodies for the concepts that a curve may additionally satisfy, declared in
+// `curves-capabilities.concepts.plato`: periodicity, first
 // derivatives in the plane and in space, a moving frame, planarity, polar form,
 // and arc-length parameterization.
 //
@@ -18,9 +18,9 @@ library CurvesCapabilities
     // # PeriodicCurve
     //
     // A curve whose parameterization repeats with an explicit Period (Number).
-    // PeriodicCurve<TRange> now inherits Procedural<Number, TRange> as well as
-    // Periodic<Number>, so both parameter arithmetic on the period AND wrapped
-    // evaluation are derivable. TRange is the evaluated value type.
+    // PeriodicCurve<TRange> inherits Curve<TRange> as well as Periodic<Number>,
+    // so both parameter arithmetic on the period AND wrapped evaluation are
+    // derivable. TRange is the evaluated value type.
 
     // Folds a parameter into the half-open interval [0, Period). The extra
     // "+ Period then modulo" corrects the truncated remainder, which is negative
