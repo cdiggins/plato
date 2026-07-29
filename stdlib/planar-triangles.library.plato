@@ -35,7 +35,7 @@ library PlanarTriangles
 
     // The three vertices in stored order.
     Points(t: Triangle2D): Array<Point2D>
-        => 3.MapRange(i => i == 0 ? t.A : (i == 1 ? t.B : t.C));
+        => [t.A, t.B, t.C];
 
     // Half the magnitude of the cross product of two edge vectors — the shoelace
     // formula for three points, made non-negative.
@@ -171,7 +171,7 @@ library PlanarTriangles
 
     // The four vertices in stored order.
     Points(q: Quad2D): Array<Point2D>
-        => 4.MapRange(i => i == 0 ? q.A : (i == 1 ? q.B : (i == 2 ? q.C : q.D)));
+        => [q.A, q.B, q.C, q.D];
 
     // The absolute shoelace area of the four-vertex ring.
     // https://en.wikipedia.org/wiki/Shoelace_formula
@@ -201,10 +201,10 @@ library PlanarTriangles
 
     // The four corners in ring order: Origin, +SideA, +SideA+SideB, +SideB.
     Corners(g: Parallelogram2D): Array<Point2D>
-        => 4.MapRange(i => i == 0 ? g.Origin
-            : (i == 1 ? g.Origin.Add(g.SideA)
-            : (i == 2 ? g.Origin.Add(g.SideA).Add(g.SideB)
-            : g.Origin.Add(g.SideB))));
+        => [g.Origin,
+            g.Origin + g.SideA,
+            g.Origin + g.SideA + g.SideB,
+            g.Origin + g.SideB];
 
     // The magnitude of the cross product of the two side vectors.
     // https://en.wikipedia.org/wiki/Parallelogram#Area_formula
@@ -217,7 +217,7 @@ library PlanarTriangles
 
     // The intersection of the diagonals: Origin displaced by half of each side.
     Centroid(g: Parallelogram2D): Point2D
-        => g.Origin.Add(g.SideA.Add(g.SideB).Multiply(0.5));
+        => g.Origin + (g.SideA + g.SideB) * 0.5;
 
     // The bounds of the four corners.
     Bounds(g: Parallelogram2D): Bounds2D
@@ -243,8 +243,8 @@ library PlanarTriangles
     Deform(g: Parallelogram2D, mapping: Function1<Point2D, Point2D>): Parallelogram2D
     {
         var origin = mapping(g.Origin);
-        var a = mapping(g.Origin.Add(g.SideA));
-        var b = mapping(g.Origin.Add(g.SideB));
+        var a = mapping(g.Origin + g.SideA);
+        var b = mapping(g.Origin + g.SideB);
         return (origin, origin.Between(a), origin.Between(b));
     }
 }

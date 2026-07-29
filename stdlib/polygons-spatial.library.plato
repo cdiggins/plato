@@ -43,7 +43,7 @@ library PolygonsSpatial
     {
         var normal = p.Points.VectorArea.Normalize;
         var origin = p.Points.First;
-        var projected = point.Subtract(normal.Multiply(origin.Between(point).Dot(normal)));
+        var projected = point - normal * origin.Between(point).Dot(normal);
         return p.Points.PlanarPolygonContains(normal, projected)
             ? projected
             : p.Points.ClosestPointOnChain(true, point);
@@ -73,7 +73,7 @@ library PolygonsSpatial
     // The base centroid displaced by half the sweep: the prism is uniform along
     // Offset.
     Centroid(p: Prism3D): Point3D
-        => p.Base.Centroid.Add(p.Offset.Multiply(0.5));
+        => p.Base.Centroid + p.Offset * 0.5;
 
     // The union of the base's bounds and the swept copy's.
     Bounds(p: Prism3D): Bounds3D
@@ -87,7 +87,7 @@ library PolygonsSpatial
         var origin = p.Base.Points.First;
         var s = origin.Between(point).Dot(normal) / p.Offset.Dot(normal);
         return s >= 0.0 && s <= 1.0
-            && p.Base.Points.PlanarPolygonContains(normal, point.Subtract(p.Offset.Multiply(s)));
+            && p.Base.Points.PlanarPolygonContains(normal, point - p.Offset * s);
     }
 
     //==
@@ -114,7 +114,7 @@ library PolygonsSpatial
     // centroid of any solid cone over a planar base.
     // https://en.wikipedia.org/wiki/Pyramid_(geometry)
     Centroid(y: Pyramid3D): Point3D
-        => y.Base.Centroid.Add(y.Base.Centroid.Between(y.Apex).Multiply(0.25));
+        => y.Base.Centroid + y.Base.Centroid.Between(y.Apex) * 0.25;
 
     // The union of the base's bounds and the Apex.
     Bounds(y: Pyramid3D): Bounds3D
@@ -132,6 +132,6 @@ library PolygonsSpatial
             / origin.Between(y.Apex).Dot(normal);
         return t >= 0.0 && t <= 1.0
             && (t <= 0.0 || y.Base.Points.PlanarPolygonContains(normal,
-                y.Apex.Add(y.Apex.Between(point).Multiply(1.0 / t))));
+                y.Apex + y.Apex.Between(point) * (1.0 / t)));
     }
 }

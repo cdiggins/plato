@@ -54,11 +54,11 @@ library PlanarCircles
     ClosestPoint(c: Circle, point: Point2D): Point2D
         => c.Contains(point)
         ? point
-        : c.Center.Add(c.Center.Between(point).Normalize.Multiply(c.Radius));
+        : c.Center + c.Center.Between(point).Normalize * c.Radius;
 
     // The point of the circle farthest along `direction`.
     Support(c: Circle, direction: Direction2D): Point2D
-        => c.Center.Add(direction.Vector.Multiply(c.Radius));
+        => c.Center + direction.Vector * c.Radius;
 
     //==
     // # Annulus
@@ -122,7 +122,7 @@ library PlanarCircles
         var distance = theta.Radians == 0.0
             ? 0.0
             : 4.0 * s.Circle.Radius * (theta * 0.5).Sin / (3.0 * theta.Radians);
-        return s.Circle.Center.Add(SweepBisector(s.Sweep).Multiply(distance));
+        return s.Circle.Center + SweepBisector(s.Sweep) * distance;
     }
 
     // CONSERVATIVE, not tight: the bounds of the whole circle. A tight box needs to
@@ -153,13 +153,13 @@ library PlanarCircles
 
     // The chord endpoint at the start of the sweep.
     ChordStart(s: CircularSegment): Point2D
-        => s.Circle.Center.Add(
-            Vector2D(s.Sweep.Start.Cos, s.Sweep.Start.Sin).Multiply(s.Circle.Radius));
+        => s.Circle.Center
+            + Vector2D(s.Sweep.Start.Cos, s.Sweep.Start.Sin) * s.Circle.Radius;
 
     // The chord endpoint at the end of the sweep.
     ChordEnd(s: CircularSegment): Point2D
-        => s.Circle.Center.Add(
-            Vector2D(s.Sweep.End.Cos, s.Sweep.End.Sin).Multiply(s.Circle.Radius));
+        => s.Circle.Center
+            + Vector2D(s.Sweep.End.Cos, s.Sweep.End.Sin) * s.Circle.Radius;
 
     // (1/2) * r^2 * (theta - sin theta): the sector minus the triangle on the chord.
     Area(s: CircularSegment): Number
@@ -182,7 +182,7 @@ library PlanarCircles
         var distance = denominator == 0.0
             ? 0.0
             : 4.0 * s.Circle.Radius * halfSin * halfSin * halfSin / denominator;
-        return s.Circle.Center.Add(SweepBisector(s.Sweep).Multiply(distance));
+        return s.Circle.Center + SweepBisector(s.Sweep) * distance;
     }
 
     // CONSERVATIVE, not tight: the bounds of the whole circle (see CircularSector).
@@ -238,12 +238,12 @@ library PlanarCircles
         var outward = spine.Between(point);
         return outward.MagnitudeSquared <= c.Radius.Square
             ? point
-            : spine.Add(outward.Normalize.Multiply(c.Radius));
+            : spine + outward.Normalize * c.Radius;
     }
 
     // The support of a Minkowski sum is the sum of the supports: the farther
     // endpoint along `direction`, displaced by r along it.
     Support(c: Capsule2D, direction: Direction2D): Point2D
         => (direction.Vector.Dot(c.A.PositionVector) >= direction.Vector.Dot(c.B.PositionVector)
-            ? c.A : c.B).Add(direction.Vector.Multiply(c.Radius));
+            ? c.A : c.B) + direction.Vector * c.Radius;
 }

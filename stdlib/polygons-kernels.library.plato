@@ -21,8 +21,8 @@ library PolygonsKernels
     VectorArea(points: Array<Point3D>): Vector3D
         => points.Count
             .MapRange(i => points.At(i).PositionVector.Cross(points.AtModulo(i + 1).PositionVector))
-            .Reduce(Vector3D(0.0, 0.0, 0.0), (acc, c) => acc.Add(c))
-            .Multiply(0.5);
+            .Reduce(Vector3D(0.0, 0.0, 0.0), (acc, c) => acc + c)
+            * 0.5;
 
     // Any unit vector perpendicular to `normal`. Crossed against whichever world
     // axis `normal` is least aligned with, so the construction never degenerates;
@@ -74,5 +74,5 @@ library PolygonsKernels
 
     // The bounds translated bodily by `offset`.
     TranslateBounds(b: Bounds3D, offset: Vector3D): Bounds3D
-        => (b.Min.Add(offset), b.Max.Add(offset));
+        => (b.Min + offset, b.Max + offset);
 }

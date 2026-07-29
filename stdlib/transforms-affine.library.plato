@@ -25,7 +25,7 @@ library TransformsAffine
     // The affine transform that applies `first`, then `second` (row-vector
     // matrix product).
     Compose(first: AffineTransform2D, second: AffineTransform2D): AffineTransform2D
-        => AffineTransform2D(first.Matrix.Multiply(second.Matrix));
+        => AffineTransform2D(first.Matrix * second.Matrix);
 
     // Alias for Compose, enabling the * operator: a * b applies a first.
     Multiply(a: AffineTransform2D, b: AffineTransform2D): AffineTransform2D
@@ -73,21 +73,21 @@ library TransformsAffine
     // p' = x Row1 + y Row2 + z Row3 + Row4.
     Transform(p: Point3D, a: AffineTransform3D): Point3D {
         var m = a.Matrix;
-        var v = m.Row1.Multiply(p.X).Add(m.Row2.Multiply(p.Y)).Add(m.Row3.Multiply(p.Z)).Add(m.Row4);
+        var v = m.Row1 * p.X + m.Row2 * p.Y + m.Row3 * p.Z + m.Row4;
         return (v.X, v.Y, v.Z);
     }
 
     // Apply the linear part to a displacement (the translation row is skipped).
     Transform(v: Vector3D, a: AffineTransform3D): Vector3D {
         var m = a.Matrix;
-        var r = m.Row1.Multiply(v.X).Add(m.Row2.Multiply(v.Y)).Add(m.Row3.Multiply(v.Z));
+        var r = m.Row1 * v.X + m.Row2 * v.Y + m.Row3 * v.Z;
         return (r.X, r.Y, r.Z);
     }
 
     // The affine transform that applies `first`, then `second`, computed
     // through the homogeneous forms.
     Compose(first: AffineTransform3D, second: AffineTransform3D): AffineTransform3D
-        => first.Matrix4x4.Multiply(second.Matrix4x4).AffineTransform3D;
+        => (first.Matrix4x4 * second.Matrix4x4).AffineTransform3D;
 
     // Alias for Compose, enabling the * operator: a * b applies a first.
     Multiply(a: AffineTransform3D, b: AffineTransform3D): AffineTransform3D
@@ -143,13 +143,13 @@ library TransformsAffine
     // line at infinity (weight is non-zero).
     Transform(p: Point2D, t: ProjectiveTransform2D): Point2D {
         var m = t.Matrix;
-        var v = m.Row1.Multiply(p.X).Add(m.Row2.Multiply(p.Y)).Add(m.Row3);
+        var v = m.Row1 * p.X + m.Row2 * p.Y + m.Row3;
         return (v.X / v.Z, v.Y / v.Z);
     }
 
     // The homography that applies `first`, then `second` (row-vector product).
     Compose(first: ProjectiveTransform2D, second: ProjectiveTransform2D): ProjectiveTransform2D
-        => ProjectiveTransform2D(first.Matrix.Multiply(second.Matrix));
+        => ProjectiveTransform2D(first.Matrix * second.Matrix);
 
     // Alias for Compose, enabling the * operator: a * b applies a first.
     Multiply(a: ProjectiveTransform2D, b: ProjectiveTransform2D): ProjectiveTransform2D
@@ -169,7 +169,7 @@ library TransformsAffine
 
     // The homography that applies `first`, then `second` (row-vector product).
     Compose(first: ProjectiveTransform3D, second: ProjectiveTransform3D): ProjectiveTransform3D
-        => ProjectiveTransform3D(first.Matrix.Multiply(second.Matrix));
+        => ProjectiveTransform3D(first.Matrix * second.Matrix);
 
     // Alias for Compose, enabling the * operator: a * b applies a first.
     Multiply(a: ProjectiveTransform3D, b: ProjectiveTransform3D): ProjectiveTransform3D

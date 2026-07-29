@@ -65,14 +65,17 @@ primitives in `primitives.plato`). Because `Plato.CLI` enumerates `*.plato` non-
 declaration files and the `*.library.plato` implementation bodies (see [`LIBRARIES.md`](LIBRARIES.md));
 the informational LINT001/LINT003 finding counts shift as the libraries implement more members.
 
-## Conventions
+## Conventions and style
 
-The cross-cutting global conventions (row-vector matrices, CCW winding / right-handed
-space, `-1` index sentinel, radians-canonical `Angle`, inclusive bounds + empty encoding,
-linear-light straight-alpha `Color`, right-handed view space, top-left UV origin, the one
-floating-point-comparison epsilon policy, and the "no generic `Optional<T>`" ruling) are
-pinned once in [`CONVENTIONS.md`](CONVENTIONS.md). Owning declaration files cite it with a
-one-line `// Convention: see CONVENTIONS.md - <section>` comment rather than restating it.
+Two companion docs — read both before editing this folder:
+
+| Doc | Role |
+| --- | --- |
+| [`CONVENTIONS.md`](CONVENTIONS.md) | **Semantics:** world Z-up (Studio), CCW winding, System.Numerics-compatible matrices, `-1` index sentinel, radians-canonical `Angle`, inclusive bounds + empty encoding, linear-light straight-alpha `Color`, camera-local view space, top-left UV origin, epsilon policy, no generic `Optional<T>` |
+| [`STYLE_GUIDE.md`](STYLE_GUIDE.md) | **Authoring:** small pure functions, array literals vs `MapRange`, operators, comments, Wikipedia links, AGENTS-derived API style |
+
+Owning declaration files cite conventions with a one-line
+`// Convention: see CONVENTIONS.md - <section>` comment rather than restating them.
 
 - `concept` = capability/trait (like a type class over `Self`). Bare PascalCase names, no
   `I` prefix: `Numerical`, `Curve3D`, `Transformable<T>`.

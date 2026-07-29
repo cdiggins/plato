@@ -20,11 +20,11 @@ library Lines
 
     // The two endpoints, in the segment's own direction (A first).
     Points(s: LineSegment2D): Array<Point2D>
-        => 2.MapRange(i => i == 0 ? s.A : s.B);
+        => [s.A, s.B];
 
     // The two endpoints, A first.
     Points(s: LineSegment3D): Array<Point3D>
-        => 2.MapRange(i => i == 0 ? s.A : s.B);
+        => [s.A, s.B];
 
     // The distance between the endpoints.
     Length(s: LineSegment2D): Number
@@ -70,23 +70,23 @@ library Lines
 
     // The point of the line nearest to `point`.
     ClosestPoint(l: Line2D, point: Point2D): Point2D
-        => l.Origin.Add(l.Direction.Vector.Multiply(l.Origin.Between(point).Dot(l.Direction.Vector)));
+        => l.Origin + l.Direction.Vector * l.Origin.Between(point).Dot(l.Direction.Vector);
 
     // The point of the line nearest to `point`.
     ClosestPoint(l: Line3D, point: Point3D): Point3D
-        => l.Origin.Add(l.Direction.Vector.Multiply(l.Origin.Between(point).Dot(l.Direction.Vector)));
+        => l.Origin + l.Direction.Vector * l.Origin.Between(point).Dot(l.Direction.Vector);
 
     // The point of the ray nearest to `point`; the ray's origin when the query
     // lies behind it.
     ClosestPoint(r: Ray2D, point: Point2D): Point2D
-        => r.Origin.Add(r.Direction.Vector.Multiply(
-            r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0)));
+        => r.Origin + r.Direction.Vector
+            * r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0);
 
     // The point of the ray nearest to `point`; the ray's origin when the query
     // lies behind it.
     ClosestPoint(r: Ray3D, point: Point3D): Point3D
-        => r.Origin.Add(r.Direction.Vector.Multiply(
-            r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0)));
+        => r.Origin + r.Direction.Vector
+            * r.Origin.Between(point).Dot(r.Direction.Vector).Max(0.0);
 
     //==
     // # Parametric evaluation and inverse
@@ -100,19 +100,19 @@ library Lines
 
     // The point at parameter t: Origin + Direction * t.
     PointAt(l: Line2D, t: Number): Point2D
-        => l.Origin.Add(l.Direction.Vector.Multiply(t));
+        => l.Origin + l.Direction.Vector * t;
 
     // The point at parameter t: Origin + Direction * t.
     PointAt(l: Line3D, t: Number): Point3D
-        => l.Origin.Add(l.Direction.Vector.Multiply(t));
+        => l.Origin + l.Direction.Vector * t;
 
     // The point at parameter t (t >= 0 lies on the ray): Origin + Direction * t.
     PointAt(r: Ray2D, t: Number): Point2D
-        => r.Origin.Add(r.Direction.Vector.Multiply(t));
+        => r.Origin + r.Direction.Vector * t;
 
     // The point at parameter t (t >= 0 lies on the ray): Origin + Direction * t.
     PointAt(r: Ray3D, t: Number): Point3D
-        => r.Origin.Add(r.Direction.Vector.Multiply(t));
+        => r.Origin + r.Direction.Vector * t;
 
     // The point at parameter t in [0, 1]: A + (B - A) * t.
     PointAt(s: LineSegment2D, t: Number): Point2D
@@ -196,7 +196,7 @@ library Lines
         var denom = 1.0 - f * f;
         var s = denom == 0.0 ? 0.0 : (f * e - c) / denom;
         var t = denom == 0.0 ? e : (e - f * c) / denom;
-        return (a.Origin.Add(d1.Multiply(s)), b.Origin.Add(d2.Multiply(t)));
+        return (a.Origin + d1 * s, b.Origin + d2 * t);
     }
 
     // The mutually nearest points of two segments, each parameter clamped to its own
@@ -217,6 +217,6 @@ library Lines
         var s0 = denom == 0.0 ? 0.0 : ((b * f - c * e) / denom).Clamp(0.0, 1.0);
         var t = (e == 0.0 ? 0.0 : (b * s0 + f) / e).Clamp(0.0, 1.0);
         var s = (a == 0.0 ? s0 : (t * b - c) / a).Clamp(0.0, 1.0);
-        return (sa.A.Add(d1.Multiply(s)), sb.A.Add(d2.Multiply(t)));
+        return (sa.A + d1 * s, sb.A + d2 * t);
     }
 }

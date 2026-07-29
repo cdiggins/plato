@@ -166,7 +166,7 @@ library GeometryKernels
         var ab = a.Between(b);
         var lengthSquared = ab.MagnitudeSquared;
         var t = lengthSquared <= 0.0 ? 0.0 : a.Between(point).Dot(ab) / lengthSquared;
-        return a.Add(ab.Multiply(t.Clamp(0.0, 1.0)));
+        return a + ab * t.Clamp(0.0, 1.0);
     }
 
     // The point of the segment [a, b] in space nearest to `point`.
@@ -175,7 +175,7 @@ library GeometryKernels
         var ab = a.Between(b);
         var lengthSquared = ab.MagnitudeSquared;
         var t = lengthSquared <= 0.0 ? 0.0 : a.Between(point).Dot(ab) / lengthSquared;
-        return a.Add(ab.Multiply(t.Clamp(0.0, 1.0)));
+        return a + ab * t.Clamp(0.0, 1.0);
     }
 
     // The distance from `point` to the segment [a, b].

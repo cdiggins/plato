@@ -30,7 +30,7 @@ library IntervalsTransformsInterval
     // The signed span from Start to End (End - Start); negative for a reversed
     // interval. Replaces v1 `Size`, which read ambiguously against area/volume.
     Extent(self: IntervalLike<$T>): $T
-        => self.End.Subtract(self.Start);
+        => self.End - self.Start;
 
     // True when the interval is stored in forward orientation (Start <= End).
     IsForward(self: IntervalLike<$T>): Boolean
@@ -89,16 +89,16 @@ library IntervalsTransformsInterval
     // The interval shifted so it starts at `start`, keeping the same extent.
     // Renamed from v1 `MoveTo` for clarity about which endpoint anchors.
     StartAt(self: IntervalLike<$T>, start: $T): IntervalLike<$T>
-        => (start, start.Add(self.Extent));
+        => (start, start + self.Extent);
 
     // The interval translated by `delta`, moving both endpoints together.
     Translate(self: IntervalLike<$T>, delta: $T): IntervalLike<$T>
-        => (self.Start.Add(delta), self.End.Add(delta));
+        => (self.Start + delta, self.End + delta);
 
     // The interval grown symmetrically by `amount` at each end (negative shrinks).
     // Replaces the v1 `Recenter`/half-extent dance, which needed scalar division.
     Grow(self: IntervalLike<$T>, amount: $T): IntervalLike<$T>
-        => (self.Start.Subtract(amount), self.End.Add(amount));
+        => (self.Start - amount, self.End + amount);
 
     // The leading sub-span from Start up to fraction `t`. Renamed from v1 `Left`,
     // which was ambiguous for a directed span.
@@ -188,12 +188,12 @@ library IntervalsTransformsInterval
     // Extent (raw End - Start, which can be negative or exceed a turn), Span is the
     // seam-stable sweep magnitude: a full-turn arc (Start == End) reads as 0.
     Span(self: AngleInterval): Angle
-        => self.End.Subtract(self.Start).Wrap(1.0.Turns);
+        => (self.End - self.Start).Wrap(1.0.Turns);
 
     // True when `a` lies on the CCW arc from Start to End, endpoints inclusive and
     // seam-crossing handled: `a`'s CCW offset from Start (reduced to [0, one turn))
     // must not exceed the arc's Span. Correct across the +/-pi seam, where the linear
     // IntervalLike.Contains is not.
     Contains(self: AngleInterval, a: Angle): Boolean
-        => a.Subtract(self.Start).Wrap(1.0.Turns) <= self.End.Subtract(self.Start).Wrap(1.0.Turns);
+        => (a - self.Start).Wrap(1.0.Turns) <= (self.End - self.Start).Wrap(1.0.Turns);
 }

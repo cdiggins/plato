@@ -54,8 +54,8 @@ library SpatialCylinders
     {
         var a = c.Axis.Vector;
         var d = direction.Vector;
-        var axial = a.Multiply(d.Dot(a) >= 0.0 ? c.Height * 0.5 : c.Height * -0.5);
-        return c.Center.Add(axial).Add(RadialSupport(d, a, c.Radius));
+        var axial = a * (d.Dot(a) >= 0.0 ? c.Height * 0.5 : c.Height * -0.5);
+        return c.Center + axial + RadialSupport(d, a, c.Radius);
     }
 
     //==
@@ -105,7 +105,7 @@ library SpatialCylinders
 
     // The centre of the base disk: Apex displaced by Height along Axis.
     BaseCenter(c: Cone): Point3D
-        => c.Apex.Add(c.Axis.Vector.Multiply(c.Height));
+        => c.Apex + c.Axis.Vector * c.Height;
 
     // The slant height sqrt(r^2 + h^2).
     SlantHeight(c: Cone): Number
@@ -123,7 +123,7 @@ library SpatialCylinders
     // On the axis, three quarters of the way from the Apex to the base — i.e. one
     // quarter of the height above the base, the standard solid-cone result.
     Centroid(c: Cone): Point3D
-        => c.Apex.Add(c.Axis.Vector.Multiply(0.75 * c.Height));
+        => c.Apex + c.Axis.Vector * (0.75 * c.Height);
 
     // TIGHT: the union of the Apex and the base disk's own bounds.
     Bounds(c: Cone): Bounds3D
@@ -147,7 +147,7 @@ library SpatialCylinders
     Support(c: Cone, direction: Direction3D): Point3D
     {
         var d = direction.Vector;
-        var rim = c.BaseCenter.Add(RadialSupport(d, c.Axis.Vector, c.Radius));
+        var rim = c.BaseCenter + RadialSupport(d, c.Axis.Vector, c.Radius);
         return d.Dot(c.Apex.PositionVector) >= d.Dot(rim.PositionVector) ? c.Apex : rim;
     }
 
@@ -158,11 +158,11 @@ library SpatialCylinders
 
     // The centre of the bottom disk, at -Height/2 along Axis.
     BottomCenter(f: ConicalFrustum): Point3D
-        => f.Center.Subtract(f.Axis.Vector.Multiply(f.Height * 0.5));
+        => f.Center - f.Axis.Vector * (f.Height * 0.5);
 
     // The centre of the top disk, at +Height/2 along Axis.
     TopCenter(f: ConicalFrustum): Point3D
-        => f.Center.Add(f.Axis.Vector.Multiply(f.Height * 0.5));
+        => f.Center + f.Axis.Vector * (f.Height * 0.5);
 
     // The slant height sqrt((r1 - r2)^2 + h^2).
     SlantHeight(f: ConicalFrustum): Number
@@ -190,7 +190,7 @@ library SpatialCylinders
         var fromBottom = f.Height * 0.25
             * (r1.Square + 2.0 * r1 * r2 + 3.0 * r2.Square)
             / (r1.Square + r1 * r2 + r2.Square);
-        return f.BottomCenter.Add(f.Axis.Vector.Multiply(fromBottom));
+        return f.BottomCenter + f.Axis.Vector * fromBottom;
     }
 
     // TIGHT: the union of the two disks' own bounds.

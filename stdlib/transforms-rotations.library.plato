@@ -169,7 +169,7 @@ library TransformsRotations
     // The geometric product of two rotors: the image of the Hamilton product
     // under the quaternion isomorphism, so a.Multiply(b) applies b first.
     Multiply(a: Rotor3D, b: Rotor3D): Rotor3D
-        => a.Quaternion.Multiply(b.Quaternion).Rotor3D;
+        => (a.Quaternion * b.Quaternion).Rotor3D;
 
     // The reverse of the rotor: the opposite rotation (for a unit rotor the
     // reverse is the inverse).

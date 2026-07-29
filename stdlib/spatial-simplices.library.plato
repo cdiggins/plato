@@ -16,7 +16,7 @@ library SpatialSimplices
 
     // The four vertices in stored order.
     Points(t: Tetrahedron): Array<Point3D>
-        => 4.MapRange(i => i == 0 ? t.A : (i == 1 ? t.B : (i == 2 ? t.C : t.D)));
+        => [t.A, t.B, t.C, t.D];
 
     // Six times the signed volume of the simplex (a, b, c, d): the scalar triple
     // product (b - a) x (c - a) . (d - a). Positive when d lies on the side of
@@ -86,7 +86,7 @@ library SpatialSimplices
     // The base centroid displaced by half the sweep; the wedge is uniform along
     // Offset.
     Centroid(w: Wedge): Point3D
-        => w.Base.Centroid.Add(w.Offset.Multiply(0.5));
+        => w.Base.Centroid + w.Offset * 0.5;
 
     // The union of the base triangle's bounds and the swept copy's.
     Bounds(w: Wedge): Bounds3D

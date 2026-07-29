@@ -50,7 +50,7 @@ library SpatialPrimitives
 
     // The component of `v` perpendicular to the unit vector `axis`.
     PerpendicularComponent(v: Vector3D, axis: Vector3D): Vector3D
-        => v.Subtract(axis.Multiply(v.Dot(axis)));
+        => v - axis * v.Dot(axis);
 
     // The per-world-axis half-extents of a disk of `radius` whose unit normal is
     // `axis`: the support of the disk along world axis e is r*sqrt(1 - (axis.e)^2).
@@ -77,6 +77,6 @@ library SpatialPrimitives
         var perp = PerpendicularComponent(v, axis);
         return perp.MagnitudeSquared <= 0.0
             ? Vector3D(0.0, 0.0, 0.0)
-            : perp.Normalize.Multiply(radius);
+            : perp.Normalize * radius;
     }
 }

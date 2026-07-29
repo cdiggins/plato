@@ -52,12 +52,12 @@ library SpatialCapsules
         var outward = spine.Between(point);
         return outward.MagnitudeSquared <= c.Radius.Square
             ? point
-            : spine.Add(outward.Normalize.Multiply(c.Radius));
+            : spine + outward.Normalize * c.Radius;
     }
 
     // The support of a Minkowski sum: the farther spine endpoint along `direction`,
     // displaced by r along it.
     Support(c: Capsule3D, direction: Direction3D): Point3D
         => (direction.Vector.Dot(c.A.PositionVector) >= direction.Vector.Dot(c.B.PositionVector)
-            ? c.A : c.B).Add(direction.Vector.Multiply(c.Radius));
+            ? c.A : c.B) + direction.Vector * c.Radius;
 }

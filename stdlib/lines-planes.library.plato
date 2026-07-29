@@ -37,7 +37,7 @@ library LinesPlanes
 
     // The foot of the perpendicular from `point` onto the plane.
     ClosestPoint(pl: Plane, point: Point3D): Point3D
-        => point.Subtract(pl.Normal.Vector.Multiply(pl.SignedDistance(point)));
+        => point - pl.Normal.Vector * pl.SignedDistance(point);
 
     // Which side of the plane `point` lies on: +1 on the side Normal points to,
     // -1 behind, 0 on the plane. The sign of SignedDistance; the name every
@@ -56,7 +56,7 @@ library LinesPlanes
     // point set Dot(Normal, p) = Distance is unchanged while its front side flips.
     // The teachable one-liner that keeps the two fields in step.
     Flip(pl: Plane): Plane
-        => (Direction3D(pl.Normal.Vector.Multiply(-1.0)), -pl.Distance);
+        => (Direction3D(pl.Normal.Vector * -1.0), -pl.Distance);
 
     // The complementary closed half-space: the region on the other side of the same
     // boundary plane, obtained by flipping that plane.
@@ -117,7 +117,7 @@ library LinesPlanes
     ClosestPoint(h: HalfPlane2D, point: Point2D): Point2D
         => h.Contains(point)
         ? point
-        : point.Subtract(h.Normal.Vector.Multiply(h.SignedDistance(point)));
+        : point - h.Normal.Vector * h.SignedDistance(point);
 
     //==
     // # Slabs
@@ -141,8 +141,7 @@ library LinesPlanes
     // ray/box or box/box test.
     // https://en.wikipedia.org/wiki/Slab_method
     Slabs(b: Bounds3D): Array<Slab3D>
-        => 3.MapRange(i =>
-            i == 0 ? Slab3D(Direction3D(Vector3D.UnitX), NumberInterval(b.Min.X, b.Max.X))
-            : (i == 1 ? Slab3D(Direction3D(Vector3D.UnitY), NumberInterval(b.Min.Y, b.Max.Y))
-            : Slab3D(Direction3D(Vector3D.UnitZ), NumberInterval(b.Min.Z, b.Max.Z))));
+        => [Slab3D(Direction3D(Vector3D.UnitX), NumberInterval(b.Min.X, b.Max.X)),
+            Slab3D(Direction3D(Vector3D.UnitY), NumberInterval(b.Min.Y, b.Max.Y)),
+            Slab3D(Direction3D(Vector3D.UnitZ), NumberInterval(b.Min.Z, b.Max.Z))];
 }

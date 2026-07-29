@@ -74,12 +74,12 @@ library NumericStructuresCoordinate
     // The point at these weights on the triangle (a, b, c): the affine combination
     // U*a + V*b + W*c on the support plane. Vertex binding U->a, V->b, W->c.
     Evaluate(self: BarycentricCoordinate, a: Point2D, b: Point2D, c: Point2D): Point2D
-        => a.Add(a.Between(b) * self.V + a.Between(c) * self.W);
+        => a + a.Between(b) * self.V + a.Between(c) * self.W;
 
     // The point at these weights on the triangle (a, b, c): the affine combination
     // U*a + V*b + W*c on the support plane. Vertex binding U->a, V->b, W->c.
     Evaluate(self: BarycentricCoordinate, a: Point3D, b: Point3D, c: Point3D): Point3D
-        => a.Add(a.Between(b) * self.V + a.Between(c) * self.W);
+        => a + a.Between(b) * self.V + a.Between(c) * self.W;
 
     // True when the weights sum to one within tolerance (a valid affine
     // combination identifying a point on the triangle's support plane). Does not

@@ -165,6 +165,9 @@ submodules\Plato\tools\export-types-context.bat
 3. **Known bugs are being fixed**, tracked in `conformance/.../KnownFailures.json`; see [`docs/plato-library-review.md`](../../../docs/plato-library-review.md).
 4. **Do not touch** `parakeet/` (nested submodule).
 5. Conformance expected result: **142 pass / 36 ignored-known / 0 fail** (`.\tools\check-all.ps1` from studio root).
+6. Prefer `+`/`*`/`-`/`/` for ordinary arithmetic in library bodies; keep named
+   `Add`/`Multiply`/… at definition sites — see [`stdlib/STYLE_GUIDE.md`](../stdlib/STYLE_GUIDE.md)
+   (Arithmetic spelling).
 
 ---
 

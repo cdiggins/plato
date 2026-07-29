@@ -38,11 +38,11 @@ library SpatialSpheres
     ClosestPoint(s: Sphere, point: Point3D): Point3D
         => s.Contains(point)
         ? point
-        : s.Center.Add(s.Center.Between(point).Normalize.Multiply(s.Radius));
+        : s.Center + s.Center.Between(point).Normalize * s.Radius;
 
     // The point of the sphere farthest along `direction`.
     Support(s: Sphere, direction: Direction3D): Point3D
-        => s.Center.Add(direction.Vector.Multiply(s.Radius));
+        => s.Center + direction.Vector * s.Radius;
 
     //==
     // # SphericalShell
@@ -106,7 +106,7 @@ library SpatialSpheres
         var h = c.CapHeight;
         var r = c.Sphere.Radius;
         var distance = 3.0 * (2.0 * r - h).Square / (4.0 * (3.0 * r - h));
-        return c.Sphere.Center.Add(c.Axis.Vector.Multiply(distance));
+        return c.Sphere.Center + c.Axis.Vector * distance;
     }
 
     // CONSERVATIVE, not tight: the whole sphere's bounds. A tight box would have to
@@ -185,7 +185,7 @@ library SpatialSpheres
         var a = e.SemiAxes;
         var scaled = Vector3D(a.X * d.X, a.Y * d.Y, a.Z * d.Z);
         var local = Vector3D(a.X * scaled.X, a.Y * scaled.Y, a.Z * scaled.Z)
-            .Divide(scaled.Magnitude);
-        return e.Center.Add(WorldOffset(e.Orientation, local));
+            / scaled.Magnitude;
+        return e.Center + WorldOffset(e.Orientation, local);
     }
 }

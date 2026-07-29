@@ -16,19 +16,19 @@ library IntervalsTransformsDeformable
 
     // Translate every point by `offset`.
     Translate(self: Deformable2D, offset: Vector2D): Self
-        => self.Deform(p => p.Add(offset));
+        => self.Deform(p => p + offset);
 
     // Uniformly scale about `center` by `factor` (1 leaves the shape unchanged).
     ScaleAbout(self: Deformable2D, center: Point2D, factor: Number): Self
-        => self.Deform(p => center.Add(center.Between(p).Multiply(factor)));
+        => self.Deform(p => center + center.Between(p) * factor);
 
     // Non-uniformly scale about `center` by a per-axis `factors` vector.
     ScaleAbout(self: Deformable2D, center: Point2D, factors: Number2): Self
-        => self.Deform(p => center.Add(center.Between(p).Multiply(factors)));
+        => self.Deform(p => center + center.Between(p) * factors);
 
     // Rotate every point about `center` by `rotation`.
     RotateAbout(self: Deformable2D, center: Point2D, rotation: Rotation2D): Self
-        => self.Deform(p => center.Add(center.Between(p).Transform(rotation)));
+        => self.Deform(p => center + center.Between(p).Transform(rotation));
 
     // Rotate every point about `center` by `angle` (counter-clockwise).
     RotateAbout(self: Deformable2D, center: Point2D, angle: Angle): Self
@@ -56,11 +56,11 @@ library IntervalsTransformsDeformable
 
     // Translate along +X by `distance`.
     TranslateX(self: Deformable2D, distance: Number): Self
-        => self.Translate(Vector2D.UnitX.Multiply(distance));
+        => self.Translate(Vector2D.UnitX * distance);
 
     // Translate along +Y by `distance`.
     TranslateY(self: Deformable2D, distance: Number): Self
-        => self.Translate(Vector2D.UnitY.Multiply(distance));
+        => self.Translate(Vector2D.UnitY * distance);
 
     // The ScaleAbout/RotateAbout helpers use Difference.Between(a, b) = b - a,
     // the displacement from a to b. That direction is now the documented contract
@@ -79,19 +79,19 @@ library IntervalsTransformsDeformable
 
     // Translate every point by `offset`.
     Translate(self: Deformable3D, offset: Vector3D): Self
-        => self.Deform(p => p.Add(offset));
+        => self.Deform(p => p + offset);
 
     // Uniformly scale about `center` by `factor`.
     ScaleAbout(self: Deformable3D, center: Point3D, factor: Number): Self
-        => self.Deform(p => center.Add(center.Between(p).Multiply(factor)));
+        => self.Deform(p => center + center.Between(p) * factor);
 
     // Non-uniformly scale about `center` by a per-axis `factors` vector.
     ScaleAbout(self: Deformable3D, center: Point3D, factors: Number3): Self
-        => self.Deform(p => center.Add(center.Between(p).Multiply(factors)));
+        => self.Deform(p => center + center.Between(p) * factors);
 
     // Rotate every point about `center` by `rotation`.
     RotateAbout(self: Deformable3D, center: Point3D, rotation: Quaternion): Self
-        => self.Deform(p => center.Add(center.Between(p).Transform(rotation)));
+        => self.Deform(p => center + center.Between(p).Transform(rotation));
 
     // Rotate every point about the origin by `rotation`.
     Rotate(self: Deformable3D, rotation: Quaternion): Self
@@ -131,15 +131,15 @@ library IntervalsTransformsDeformable
 
     // Translate along +X by `distance`.
     TranslateX(self: Deformable3D, distance: Number): Self
-        => self.Translate(Vector3D.UnitX.Multiply(distance));
+        => self.Translate(Vector3D.UnitX * distance);
 
     // Translate along +Y by `distance`.
     TranslateY(self: Deformable3D, distance: Number): Self
-        => self.Translate(Vector3D.UnitY.Multiply(distance));
+        => self.Translate(Vector3D.UnitY * distance);
 
     // Translate along +Z by `distance`.
     TranslateZ(self: Deformable3D, distance: Number): Self
-        => self.Translate(Vector3D.UnitZ.Multiply(distance));
+        => self.Translate(Vector3D.UnitZ * distance);
 
     // RESOLVED (was TODO(concept-gap): RotateAbout is omitted for the same reason as
     // Deformable2D): the Transform(Vector3D, Quaternion) intrinsic rotates the pivot

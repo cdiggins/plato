@@ -62,7 +62,7 @@ library SpatialBoxes
         var clamped = Vector3D(q.X.Clamp(-hx, hx), q.Y.Clamp(-hy, hy), q.Z.Clamp(-hz, hz));
         return b.Contains(point)
             ? point
-            : b.Center.Add(WorldOffset(b.Orientation, clamped));
+            : b.Center + WorldOffset(b.Orientation, clamped);
     }
 
     // The corner farthest along `direction`: each local axis independently takes
@@ -72,9 +72,9 @@ library SpatialBoxes
         var f = b.Orientation.Basis3D;
         var d = direction.Vector;
         return b.Center
-            .Add(f.X.Multiply(d.Dot(f.X) >= 0.0 ? b.Size.Width * 0.5 : b.Size.Width * -0.5))
-            .Add(f.Y.Multiply(d.Dot(f.Y) >= 0.0 ? b.Size.Height * 0.5 : b.Size.Height * -0.5))
-            .Add(f.Z.Multiply(d.Dot(f.Z) >= 0.0 ? b.Size.Depth * 0.5 : b.Size.Depth * -0.5));
+            + f.X * (d.Dot(f.X) >= 0.0 ? b.Size.Width * 0.5 : b.Size.Width * -0.5)
+            + f.Y * (d.Dot(f.Y) >= 0.0 ? b.Size.Height * 0.5 : b.Size.Height * -0.5)
+            + f.Z * (d.Dot(f.Z) >= 0.0 ? b.Size.Depth * 0.5 : b.Size.Depth * -0.5);
     }
 
     //==
@@ -160,9 +160,9 @@ library SpatialBoxes
         var e = b.CoreExtents;
         var d = direction.Vector;
         return b.Box.Center
-            .Add(f.X.Multiply(d.Dot(f.X) >= 0.0 ? e.X * 0.5 : e.X * -0.5))
-            .Add(f.Y.Multiply(d.Dot(f.Y) >= 0.0 ? e.Y * 0.5 : e.Y * -0.5))
-            .Add(f.Z.Multiply(d.Dot(f.Z) >= 0.0 ? e.Z * 0.5 : e.Z * -0.5))
-            .Add(d.Multiply(b.EffectiveCornerRadius));
+            + f.X * (d.Dot(f.X) >= 0.0 ? e.X * 0.5 : e.X * -0.5)
+            + f.Y * (d.Dot(f.Y) >= 0.0 ? e.Y * 0.5 : e.Y * -0.5)
+            + f.Z * (d.Dot(f.Z) >= 0.0 ? e.Z * 0.5 : e.Z * -0.5)
+            + d * b.EffectiveCornerRadius;
     }
 }

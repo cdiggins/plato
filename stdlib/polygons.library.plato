@@ -177,7 +177,7 @@ library Polygons
         {
             var radius = i.IsEven ? s.OuterRadius : s.InnerRadius;
             var a = s.Rotation + (i.ToNumber / (2.0 * s.PointCount.ToNumber)).Turns;
-            return s.Center.Add(Vector2D(a.Cos, a.Sin).Multiply(radius));
+            return s.Center + Vector2D(a.Cos, a.Sin) * radius;
         });
 
     // n * R * r * sin(pi/n): the star is 2n triangles from the centre, each with

@@ -37,9 +37,9 @@ library SpatialPatches
     {
         var inPlane = PerpendicularComponent(d.Center.Between(point), d.Normal.Vector);
         var distance = inPlane.Magnitude;
-        return d.Center.Add(distance <= d.Radius
+        return d.Center + (distance <= d.Radius
             ? inPlane
-            : inPlane.Multiply(d.Radius / distance));
+            : inPlane * (d.Radius / distance));
     }
 
     //==
@@ -47,7 +47,7 @@ library SpatialPatches
 
     // The three vertices in stored order.
     Points(t: Triangle3D): Array<Point3D>
-        => 3.MapRange(i => i == 0 ? t.A : (i == 1 ? t.B : t.C));
+        => [t.A, t.B, t.C];
 
     // Twice the vector area: the cross product of two edge vectors, whose direction
     // is the right-hand-rule normal and whose magnitude is twice the area.
@@ -101,7 +101,7 @@ library SpatialPatches
     ClosestPoint(t: Triangle3D, point: Point3D): Point3D
     {
         var n = t.TwiceVectorArea.Normalize;
-        var projected = point.Subtract(n.Multiply(t.A.Between(point).Dot(n)));
+        var projected = point - n * t.A.Between(point).Dot(n);
         return t.ContainsCoplanar(projected)
             ? projected
             : t.Points.ClosestPointOnChain(true, point);
@@ -124,7 +124,7 @@ library SpatialPatches
 
     // The four vertices in stored order.
     Points(q: Quad3D): Array<Point3D>
-        => 4.MapRange(i => i == 0 ? q.A : (i == 1 ? q.B : (i == 2 ? q.C : q.D)));
+        => [q.A, q.B, q.C, q.D];
 
     // The sum of the two triangles A-B-C and A-C-D.
     Area(q: Quad3D): Number

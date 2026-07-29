@@ -35,5 +35,5 @@ library KeyframesTracks
     // The signed change in value over the [earlier, later] time span:
     // Sample(later) - Sample(earlier).
     Change(self: TimeVarying<$TValue>, earlier: Duration, later: Duration): $TValue
-        => self.Sample(later).Subtract(self.Sample(earlier));
+        => self.Sample(later) - self.Sample(earlier);
 }

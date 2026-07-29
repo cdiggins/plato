@@ -119,18 +119,18 @@ library PlanarBoxes
         var hy = b.Size.Height * 0.5;
         var q = LocalOffset(b.Center, b.Rotation, point);
         var clamped = Vector2D(q.X.Clamp(-hx, hx), q.Y.Clamp(-hy, hy));
-        return b.Contains(point) ? point : b.Center.Add(WorldOffset(b.Rotation, clamped));
+        return b.Contains(point) ? point : b.Center + WorldOffset(b.Rotation, clamped);
     }
 
     // The corner of the box farthest along `direction`: each local axis
     // independently takes the sign of the direction's component on it.
     Support(b: OrientedBox2D, direction: Direction2D): Point2D
     {
-        var d = LocalOffset(b.Center, b.Rotation, b.Center.Add(direction.Vector));
+        var d = LocalOffset(b.Center, b.Rotation, b.Center + direction.Vector);
         var hx = b.Size.Width * 0.5;
         var hy = b.Size.Height * 0.5;
-        return b.Center.Add(WorldOffset(b.Rotation,
-            Vector2D(d.X >= 0.0 ? hx : -hx, d.Y >= 0.0 ? hy : -hy)));
+        return b.Center + WorldOffset(b.Rotation,
+            Vector2D(d.X >= 0.0 ? hx : -hx, d.Y >= 0.0 ? hy : -hy));
     }
 
     //==
@@ -145,7 +145,7 @@ library PlanarBoxes
         => g.SideCount.MapRange(i =>
         {
             var a = g.Rotation + (i.ToNumber / g.SideCount.ToNumber).Turns;
-            return g.Center.Add(Vector2D(a.Cos, a.Sin).Multiply(g.CircumRadius));
+            return g.Center + Vector2D(a.Cos, a.Sin) * g.CircumRadius;
         });
 
     // (1/2) * n * R^2 * sin(2*pi/n): the n isosceles triangles from the centre.
