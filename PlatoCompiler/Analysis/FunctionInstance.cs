@@ -139,8 +139,12 @@ namespace Ara3D.Geometry.Compiler.Analysis
                 }
                 else if (first.Type.Def.IsConcrete() || first.Type.Def.IsPrimitive())
                 {
-                    // NOTE: just do nothing. I don't think there are type-variables to replace.
-                    Debug.Assert(CountTypeVars(first.Type) == 0);
+                    // Nothing to substitute: there is no Self and no interface implementation to
+                    // draw a replacement from. A generic concrete first parameter may still carry
+                    // type variables (Array<$T>, as the forward stdlib declares its array
+                    // intrinsics) — those stay free and are inferred from the argument by
+                    // FunctionTypeVariableAnalysis below, the same case the single-parameter
+                    // check further down explicitly allows.
                 }
                 else 
                 {

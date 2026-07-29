@@ -30,6 +30,7 @@ namespace Ara3D.Geometry.Compiler
 
             if (Trees.Count == 0)
             {
+                InternalErrors.Add("No syntax trees were provided to compile");
                 Log("No nodes provided");
                 return;
             }
@@ -74,6 +75,8 @@ namespace Ara3D.Geometry.Compiler
 
                 if (SymbolFactory.Errors.Count > 0)
                 {
+                    InternalErrors.Add($"Halted after {SymbolFactory.Errors.Count} symbol resolution error(s); "
+                        + "see SymbolFactory.Errors for the details");
                     Log("Halting further computation");
                     return;
                 }
@@ -142,12 +145,26 @@ namespace Ara3D.Geometry.Compiler
             }
             catch (AstException ae)
             {
-                Log($"Exception caught at {ae.Node}: " + ae.Message);
+                LogInternalError(ae, $"at {ae.Node}");
             }
             catch (Exception e)
             {
-                Log("Exception caught: " + e.Message);
+                LogInternalError(e);
             }
+        }
+
+        /// <summary>
+        /// Records a caught exception as an internal error. A failed compilation must never be
+        /// silent: <see cref="CompletedCompilation"/> being false always implies at least one
+        /// entry in <see cref="InternalErrors"/>, which is where callers and fixtures look.
+        /// Logging alone is not reporting.
+        /// </summary>
+        public void LogInternalError(Exception e, string context = null)
+        {
+            var where = string.IsNullOrEmpty(context) ? "" : $" {context}";
+            var message = $"{e.GetType().Name} caught{where}: {e.Message}{Environment.NewLine}{e.StackTrace}";
+            InternalErrors.Add(message);
+            Logger.LogError(message);
         }
 
         public readonly bool DisplayWarnings = false;

@@ -62,8 +62,8 @@ namespace PlatoTests
             foreach (var f in failures)
                 TestContext.WriteLine($"  PARSE FAIL {f}");
 
-            // Compilation swallows its own exceptions and only LOGS them, so compile once with a
-            // capturing logger: without this a false CompletedCompilation has no explanation.
+            // Compilation catches its own exceptions; it now records them in InternalErrors, but
+            // capture the log too so a failure here reads as a story rather than one line.
             var log = new StringBuilder();
             var asts = files.Select(CheckerTestSupport.ParseFile).ToList();
             var comp = new Compilation(Ara3D.Logging.Logger.Create(log), asts);
@@ -85,16 +85,27 @@ namespace PlatoTests
 
             Assert.IsEmpty(failures, "forward stdlib files failed to parse");
 
-            // HONEST CURRENT STATE (2026-07-28): all 84 files parse (0 resolution / 0 semantic /
-            // 0 internal errors, 1133 types, 6668 reified functions) and the checker still runs over
-            // 1957 functions — but under a DEBUG build Compilation never reaches CompletedCompilation.
-            // The log stops right after "Grouping Reified functions by name", i.e. in the
-            // Libraries/ConcreteType construction that drives FunctionInstance, whose Debug.Assert
-            // fires and is swallowed by the catch-all in Compilation's ctor. Skipped, not asserted
-            // away, so this flips to green the day that assert is fixed instead of staying yellow.
-            if (!comp.CompletedCompilation)
-                Assert.Ignore("forward stdlib does not complete compilation (see the LOG lines above); "
-                    + "the checker still runs, so the sibling fixtures remain meaningful");
+            // Green since plato-289: all 84 files parse and compile clean (1133 types, 6668 reified
+            // functions). This must hold in Debug AND Release — the bug it replaced was a Debug.Assert
+            // in FunctionInstance that fired only under Debug and was then swallowed.
+            Assert.IsEmpty(comp.SymbolFactory.Errors, "forward stdlib has symbol resolution errors");
+            Assert.IsEmpty(comp.SemanticErrors, "forward stdlib has semantic errors");
+            Assert.IsEmpty(comp.InternalErrors, "forward stdlib has internal errors");
+            Assert.IsTrue(comp.CompletedCompilation, "forward stdlib did not complete compilation");
+        }
+
+        /// <summary>
+        /// The compiler must never fail silently: a false <c>CompletedCompilation</c> always comes
+        /// with at least one internal error to act on. Uses the cheapest failing input there is.
+        /// </summary>
+        [Test]
+        public static void IncompleteCompilationAlwaysReportsAnInternalError()
+        {
+            var comp = new Compilation(Ara3D.Logging.Logger.Create(new StringBuilder()),
+                Enumerable.Empty<Ara3D.Geometry.AST.AstNode>());
+            Assert.IsFalse(comp.CompletedCompilation);
+            Assert.IsNotEmpty(comp.InternalErrors,
+                "CompletedCompilation == false must imply at least one InternalErrors entry");
         }
 
         [Test]
