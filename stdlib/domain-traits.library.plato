@@ -166,14 +166,15 @@ library DomainTraits
     // A pattern evaluated directly at a UV coordinate via ColorAt. The color's
     // alpha channel drives the opacity helpers.
 
-    // The alpha (opacity) sampled at the UV coordinate, on the color's 0-255
-    // per-channel scale (Color, file 14).
+    // The alpha (opacity) sampled at the UV coordinate, on Color's nominal
+    // [0, 1] per-channel scale (color.plato). Wide-gamut and HDR samples may
+    // exceed 1.
     OpacityAt(self: ProceduralTexture, uv: UvCoordinate): Number
         => self.ColorAt(uv).A;
 
-    // True where the sampled texel is fully opaque (alpha at or above 255).
+    // True where the sampled texel is fully opaque (alpha at or above 1).
     IsOpaqueAt(self: ProceduralTexture, uv: UvCoordinate): Boolean
-        => self.ColorAt(uv).A >= 255.0;
+        => self.ColorAt(uv).A >= 1.0;
 
     // True where the sampled texel is fully transparent (alpha at or below 0).
     IsTransparentAt(self: ProceduralTexture, uv: UvCoordinate): Boolean
