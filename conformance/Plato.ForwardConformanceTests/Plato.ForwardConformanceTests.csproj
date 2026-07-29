@@ -7,11 +7,12 @@
     (submodules\Plato\stdlib) merged with its law packet (submodules\Plato\stdlib-tests),
     against the Plato.Intrinsics.V2 runtime.
 
-    STATUS (2026-07-28): BLOCKED on codegen. Full C# generation of the forward stdlib aborts
-    in Plato.CSharpWriter ("No ground TIR for bodied ..."), so Generated\ is empty and the
-    law runner yields no cases. BlockerGuardTests turns that into an explicit RED (never a
-    vacuous green). Activate by fixing the writer blocker, then run
-    tools\regen-forward-conformance.ps1 -Test.
+    STATUS (2026-07-29): codegen SUCCEEDS (1232 .g.cs files) — the old "No ground TIR for
+    bodied ..." writer abort is fixed. The suite still does not build: the generated C# has
+    324 compile errors in 25 files, mostly the concept-as-generic-interface lowering cluster.
+    Tracked as plato-308; see README.md for the error map and why file-level quarantine was
+    measured and rejected. BlockerGuardTests keeps this an explicit RED, never a vacuous green.
+    Activate by fixing plato-308, then run tools\regen-forward-conformance.ps1 -Test.
 
     Run tools\regen-forward-conformance.ps1 (studio repo) before building: Generated\ is not
     committed. Deliberately not added to any .sln.
@@ -47,5 +48,16 @@
     <Using Include="NUnit.Framework" />
     <None Update="KnownFailures.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+
+  <!--
+    NO file-level quarantine here, and that was MEASURED, not assumed. Excluding the 16
+    generated files that fail to compile (the CS0315 surface/solid cluster and the CS0305
+    implicit-field libraries) does not isolate them: CurvesSampling.g.cs and
+    GeometryTraits.g.cs reference SurfaceOfRevolution / ExtrudedSurface / RuledSurface /
+    SweptSurface / TubeSurface / CoonsPatch / SweptSolid directly, so the exclusion cascades
+    into 148 CS0246 "type could not be found" errors. Quarantining those referrers in turn
+    pulls in more. The forward stdlib is too densely linked for build-level quarantine; the
+    codegen defects have to be fixed. See plato-308.
+  -->
 
 </Project>

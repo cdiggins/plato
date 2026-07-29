@@ -93,4 +93,61 @@ library FoundationLaws
 
     Law_Bounds3DUnionContainsSelf(b: Bounds3D, o: Bounds3D): Boolean
         => b.IsEmpty || b.Union(o).Contains(b);
+
+    //==
+    // Affine positions: the Difference / OriginBased contract (plato-306).
+    //
+    // These pin the ONE thing the plato-306 refactor could silently break. Add and
+    // Between used to be hand-written per type; they are now derived once over the
+    // concepts (algebra-metric.library.plato), so a single orientation slip would flip
+    // the sign for Point2D, Point3D, PointN, UvCoordinate, UvwCoordinate AND Instant at
+    // once. Written concretely rather than over `Difference<$D>` so the residual can be
+    // measured with a tolerance: an exact float compare on a round-tripped position is
+    // not a meaningful assertion.
+
+    // The orientation contract, stated exactly as the concept documents it:
+    // a.Add(a.Between(b)) == b. Between and Add are inverse.
+    Law_AddBetweenAreInverse2D(a: Point2D, b: Point2D): Boolean
+        => a.Add(a.Between(b)).Distance(b) <= 1e-4;
+
+    Law_AddBetweenAreInverse3D(a: Point3D, b: Point3D): Boolean
+        => a.Add(a.Between(b)).Distance(b) <= 1e-4;
+
+    // The same law on the time line, where the delta is a Duration rather than a vector.
+    Law_AddBetweenAreInverseInstant(a: Instant, b: Instant): Boolean
+        => a.Add(a.Between(b)).SecondsSinceEpoch.LawEq(b.SecondsSinceEpoch);
+
+    // The `-` spelling agrees with Between: a - b is the displacement from b to a.
+    // This is the derivation that replaced the per-type `Subtract(a, b) => Between(b, a)`.
+    Law_SubtractIsReversedBetween2D(a: Point2D, b: Point2D): Boolean
+        => (a - b).Distance(b.Between(a).ToPoint) <= 1e-4;
+
+    // Displacing by a delta and back is the identity: (p + d) - d == p. Exercises the
+    // derived Subtract(position, delta), which routes through Negative on the delta.
+    Law_AddThenSubtractDeltaIsIdentity2D(p: Point2D, d: Vector2D): Boolean
+        => p.Add(d).Subtract(d).Distance(p) <= 1e-4;
+
+    Law_AddThenSubtractDeltaIsIdentity3D(p: Point3D, d: Vector3D): Boolean
+        => p.Add(d).Subtract(d).Distance(p) <= 1e-4;
+
+    // A position is its origin displaced by its own offset. This is the OriginBased
+    // round trip, and it is what makes Offset/FromOffset a genuine isomorphism rather
+    // than two unrelated conversions.
+    Law_OriginPlusOffsetRecoversPosition2D(p: Point2D): Boolean
+        => p.Origin.Add(p.Offset).Distance(p) <= 1e-4;
+
+    Law_OriginPlusOffsetRecoversPosition3D(p: Point3D): Boolean
+        => p.Origin.Add(p.Offset).Distance(p) <= 1e-4;
+
+    // The epoch is the origin: an Instant's offset from the origin is its own
+    // seconds-since-epoch. Ties the derived Origin back to the field it came from.
+    Law_OriginIsEpoch(t: Instant): Boolean
+        => t.Origin.Add(t.Offset).SecondsSinceEpoch.LawEq(t.SecondsSinceEpoch);
+
+    // Lerp endpoints, now derived from Add + Between rather than written per type.
+    Law_LerpAtZeroIsStart2D(a: Point2D, b: Point2D): Boolean
+        => a.Lerp(b, 0.0).Distance(a) <= 1e-4;
+
+    Law_LerpAtOneIsEnd2D(a: Point2D, b: Point2D): Boolean
+        => a.Lerp(b, 1.0).Distance(b) <= 1e-4;
 }

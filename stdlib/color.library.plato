@@ -50,18 +50,18 @@ library Colors
         => (a.R.Modulo(scalar), a.G.Modulo(scalar), a.B.Modulo(scalar), a.A.Modulo(scalar));
 
     // The additive identity: transparent black.
-    Zero(_: Color): Color
+    Zero(x: Color): Color
         => (0.0, 0.0, 0.0, 0.0);
 
     // The multiplicative unit: opaque white.
-    One(_: Color): Color
+    One(x: Color): Color
         => (1.0, 1.0, 1.0, 1.0);
 
     // The component-wise least representable value.
-    MinValue(_: Color): Color
+    MinValue(x: Color): Color
         => (Number.MinValue, Number.MinValue, Number.MinValue, Number.MinValue);
 
     // The component-wise greatest representable value.
-    MaxValue(_: Color): Color
+    MaxValue(x: Color): Color
         => (Number.MaxValue, Number.MaxValue, Number.MaxValue, Number.MaxValue);
 }

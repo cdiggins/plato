@@ -2,14 +2,14 @@
 // # Extended-number arithmetic
 //
 // Operator and concept obligations for the types of `numbers.plato`: Complex
-// (full Numerical plus Complex×Complex product/quotient), Rational (Comparable
+// (full Numerical plus ComplexÃ—Complex product/quotient), Rational (Comparable
 // plus field arithmetic), and the unitless constrained scalars Proportion /
 // Percent / Probability (Numerical + Comparable on their carrier).
 
 library Numbers
 {
     //==
-    // Complex — Numerical obligations and complex field arithmetic.
+    // Complex â€” Numerical obligations and complex field arithmetic.
     // https://en.wikipedia.org/wiki/Complex_number
 
     // Component-wise sum.
@@ -54,23 +54,23 @@ library Numbers
             a.Imaginary + (b.Imaginary - a.Imaginary) * t);
 
     // The additive identity: 0 + 0i.
-    Zero(_: Complex): Complex
+    Zero(x: Complex): Complex
         => (0.0, 0.0);
 
     // The multiplicative unit: 1 + 0i.
-    One(_: Complex): Complex
+    One(x: Complex): Complex
         => (1.0, 0.0);
 
     // Component-wise least representable value.
-    MinValue(_: Complex): Complex
+    MinValue(x: Complex): Complex
         => (Number.MinValue, Number.MinValue);
 
     // Component-wise greatest representable value.
-    MaxValue(_: Complex): Complex
+    MaxValue(x: Complex): Complex
         => (Number.MaxValue, Number.MaxValue);
 
     //==
-    // Rational — exact ratio arithmetic and order.
+    // Rational â€” exact ratio arithmetic and order.
     // https://en.wikipedia.org/wiki/Rational_number
     // Results are not reduced; callers that need a canonical form should
     // divide out the GCD separately when that helper exists.
@@ -111,7 +111,7 @@ library Numbers
     }
 
     //==
-    // Proportion — unitless scalar in [0, 1]; Numerical + Comparable on Value.
+    // Proportion â€” unitless scalar in [0, 1]; Numerical + Comparable on Value.
 
     Add(a: Proportion, b: Proportion): Proportion
         => new Proportion(a.Value + b.Value);
@@ -134,23 +134,23 @@ library Numbers
     Lerp(a: Proportion, b: Proportion, t: Number): Proportion
         => new Proportion(a.Value + (b.Value - a.Value) * t);
 
-    Zero(_: Proportion): Proportion
+    Zero(x: Proportion): Proportion
         => new Proportion(0.0);
 
-    One(_: Proportion): Proportion
+    One(x: Proportion): Proportion
         => new Proportion(1.0);
 
-    MinValue(_: Proportion): Proportion
+    MinValue(x: Proportion): Proportion
         => new Proportion(Number.MinValue);
 
-    MaxValue(_: Proportion): Proportion
+    MaxValue(x: Proportion): Proportion
         => new Proportion(Number.MaxValue);
 
     LessThanOrEquals(a: Proportion, b: Proportion): Boolean
         => a.Value <= b.Value;
 
     //==
-    // Percent — proportion expressed per hundred; Numerical + Comparable.
+    // Percent â€” proportion expressed per hundred; Numerical + Comparable.
 
     Add(a: Percent, b: Percent): Percent
         => new Percent(a.Value + b.Value);
@@ -173,23 +173,23 @@ library Numbers
     Lerp(a: Percent, b: Percent, t: Number): Percent
         => new Percent(a.Value + (b.Value - a.Value) * t);
 
-    Zero(_: Percent): Percent
+    Zero(x: Percent): Percent
         => new Percent(0.0);
 
-    One(_: Percent): Percent
+    One(x: Percent): Percent
         => new Percent(100.0);
 
-    MinValue(_: Percent): Percent
+    MinValue(x: Percent): Percent
         => new Percent(Number.MinValue);
 
-    MaxValue(_: Percent): Percent
+    MaxValue(x: Percent): Percent
         => new Percent(Number.MaxValue);
 
     LessThanOrEquals(a: Percent, b: Percent): Boolean
         => a.Value <= b.Value;
 
     //==
-    // Probability — probability in [0, 1]; Numerical + Comparable.
+    // Probability â€” probability in [0, 1]; Numerical + Comparable.
 
     Add(a: Probability, b: Probability): Probability
         => new Probability(a.Value + b.Value);
@@ -212,16 +212,16 @@ library Numbers
     Lerp(a: Probability, b: Probability, t: Number): Probability
         => new Probability(a.Value + (b.Value - a.Value) * t);
 
-    Zero(_: Probability): Probability
+    Zero(x: Probability): Probability
         => new Probability(0.0);
 
-    One(_: Probability): Probability
+    One(x: Probability): Probability
         => new Probability(1.0);
 
-    MinValue(_: Probability): Probability
+    MinValue(x: Probability): Probability
         => new Probability(Number.MinValue);
 
-    MaxValue(_: Probability): Probability
+    MaxValue(x: Probability): Probability
         => new Probability(Number.MaxValue);
 
     LessThanOrEquals(a: Probability, b: Probability): Boolean
