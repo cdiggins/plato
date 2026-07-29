@@ -67,8 +67,8 @@
     "parse_errors": 0,
     "resolution_errors": 0,
     "strict_exit": 0,
-    "warnings": 2541,
-    "infos": 125,
+    "warnings": 262,
+    "infos": 2404,
     "errors": 0,
     "counts": {
       "LINT001": 260,

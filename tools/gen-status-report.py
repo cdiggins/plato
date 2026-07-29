@@ -114,7 +114,7 @@ LINT_DEFS: list[tuple[str, str, str, str]] = [
     ),
     (
         "LINT003",
-        "Warning",
+        "Info",
         "Declared-but-unused field",
         "Field on a concrete type is never read by any library function, concept impl, or generated member.",
     ),
@@ -243,8 +243,8 @@ DEFAULT_SNAPSHOT: dict = {
         "parse_errors": 0,
         "resolution_errors": 0,
         "strict_exit": 0,
-        "warnings": 2541,
-        "infos": 125,
+        "warnings": 262,
+        "infos": 2404,
         "errors": 0,
         "counts": {
             "LINT001": 260,
@@ -477,11 +477,14 @@ def main() -> int:
     lint_rows = []
     lint_total = 0
     lint_nonzero = 0
+    lint_ratchet = 0  # Error + Warning only; Info is vocabulary shape, not burn-down
     for code, sev, short, desc in LINT_DEFS:
         count = int(lint_counts.get(code, 0))
         lint_total += count
         if count:
             lint_nonzero += 1
+        if sev == "Warning" or sev.startswith("Error"):
+            lint_ratchet += count
         sev_class = "fail" if sev.startswith("Error") else ("warn" if sev == "Warning" else "idea")
         zero = " muted-row" if count == 0 else ""
         lint_rows.append(
@@ -726,8 +729,10 @@ tr.muted-row {{ opacity: .55; }}
   <div class="kv" style="margin-bottom:.85rem">
     <div class="k">Last --strict exit</div><div>{badge('pass' if lint.get('strict_exit', 1) == 0 else 'fail', str(lint.get('strict_exit', '?')))}</div>
     <div class="k">Parse / resolution</div><div>{lint.get('parse_errors', '?')} / {lint.get('resolution_errors', '?')}</div>
-    <div class="k">Findings</div><div>{lint_total:,} total · {lint_nonzero} codes firing · Warning {lint.get('warnings', '?')} · Info {lint.get('infos', '?')} · Error {lint.get('errors', '?')}</div>
-    <div class="k">What --strict gates</div><div>Error-severity only (LINT002/004/005E/006/007). Warnings/Infos report but do not fail.</div>
+    <div class="k">Ratchet</div><div>{lint_ratchet:,} (Error + Warning only) · Warning {lint.get('warnings', '?')} · Error {lint.get('errors', '?')}</div>
+    <div class="k">Info (excluded)</div><div>{lint.get('infos', '?')} · not part of the burn-down; vocabulary-shape findings (LINT003/008–011)</div>
+    <div class="k">All findings</div><div>{lint_total:,} total · {lint_nonzero} codes firing</div>
+    <div class="k">What --strict gates</div><div>Error-severity only (LINT002/004/005E/006/007). Warnings report incomplete work; Infos do not count toward the ratchet.</div>
   </div>
   <table>
     <thead><tr><th>Code</th><th>Severity</th><th>Count</th><th>Meaning</th></tr></thead>

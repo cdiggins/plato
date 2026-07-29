@@ -87,6 +87,19 @@ namespace Ara3D.Geometry.Compiler.Analysis
         public int ErrorCount
             => Findings.Count(f => f.Severity == LintSeverity.Error);
 
+        public int WarningCount
+            => Findings.Count(f => f.Severity == LintSeverity.Warning);
+
+        public int InfoCount
+            => Findings.Count(f => f.Severity == LintSeverity.Info);
+
+        /// <summary>
+        /// Findings that matter for burn-down / ratchet tracking: Errors and Warnings.
+        /// Info findings describe vocabulary shape and are excluded.
+        /// </summary>
+        public int RatchetCount
+            => ErrorCount + WarningCount;
+
         private readonly HashSet<string> _seen = new HashSet<string>();
 
         public void Add(ILocation location, string code, LintSeverity severity, string message)
@@ -339,7 +352,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
                         continue;
                     if (interfaceMemberNames.Contains(field.Name))
                         continue;
-                    Add(field, "LINT003", LintSeverity.Warning,
+                    Add(field, "LINT003", LintSeverity.Info,
                         $"field '{td.Name}.{field.Name}' is never read by any library function, " +
                         $"interface implementation, or generated member");
                 }

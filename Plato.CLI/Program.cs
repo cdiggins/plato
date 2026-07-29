@@ -243,6 +243,11 @@ namespace Ara3D.Geometry.CLI
                 Console.WriteLine("By severity: " +
                     string.Join(", ", bySeverity.Select(g => $"{g.Key} x{g.Count()}")));
 
+            // Ratchet = Error + Warning only; Info describes vocabulary shape and is not burned down.
+            Console.WriteLine(
+                $"Ratchet: {linter.RatchetCount} (Error {linter.ErrorCount} + Warning {linter.WarningCount}); " +
+                $"Info {linter.InfoCount} excluded");
+
             // --strict gates on Errors only: Warning/Info findings report incomplete or merely
             // shapeless declarations, which are expected on a declarations-first folder.
             return strict && linter.ErrorCount > 0 ? 1 : 0;
