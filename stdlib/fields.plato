@@ -5,6 +5,8 @@
 // or tensors. Every field is Procedural over a point domain, so curves, easings,
 // and fields share one evaluation vocabulary. Concrete field types (noise, SDFs,
 // sampled grids) live in files 27-29 and implement the concepts declared here.
+// See https://en.wikipedia.org/wiki/Scalar_field and
+// https://en.wikipedia.org/wiki/Vector_field.
 
 //==
 // ## Field concepts
@@ -17,25 +19,29 @@ concept Field<TDomain, TValue>
 { }
 
 // A real-valued field over the 2D plane: heightmaps, density maps, masks,
-// potentials, and signed distances.
+// potentials, and signed distances
+// (https://en.wikipedia.org/wiki/Scalar_field).
 concept ScalarField2D
     inherits Field<Point2D, Number>
 { }
 
 // A real-valued field over 3D space: densities, potentials, temperatures,
-// implicit surfaces, and signed distances.
+// implicit surfaces, and signed distances
+// (https://en.wikipedia.org/wiki/Implicit_surface).
 concept ScalarField3D
     inherits Field<Point3D, Number>
 { }
 
 // A field assigning a 2D vector to every point of the plane: gradients,
-// flows, displacement maps, and wind over a surface.
+// flows, displacement maps, and wind over a surface
+// (https://en.wikipedia.org/wiki/Vector_field).
 concept VectorField2D
     inherits Field<Point2D, Vector2D>
 { }
 
 // A field assigning a 3D vector to every point of space: velocity fields,
-// force fields, and displacement fields.
+// force fields, and displacement fields
+// (https://en.wikipedia.org/wiki/Vector_field).
 concept VectorField3D
     inherits Field<Point3D, Vector3D>
 { }
@@ -71,13 +77,15 @@ concept ComplexField2D
 { }
 
 // A field of 2x2 matrices over the plane: 2D stress, strain, and metric
-// tensors, and local linearizations of planar maps.
+// tensors, and local linearizations of planar maps
+// (https://en.wikipedia.org/wiki/Tensor_field).
 concept TensorField2D
     inherits Field<Point2D, Matrix2x2>
 { }
 
 // A field of 3x3 matrices over space: stress and strain tensors, diffusion
-// tensors, and velocity-gradient tensors.
+// tensors, and velocity-gradient tensors
+// (https://en.wikipedia.org/wiki/Tensor_field).
 concept TensorField3D
     inherits Field<Point3D, Matrix3x3>
 { }
@@ -86,7 +94,8 @@ concept TensorField3D
 // ## Differentiable field concepts
 
 // A planar scalar field with an analytic or numeric first derivative. The
-// gradient points in the direction of steepest increase.
+// gradient points in the direction of steepest increase
+// (https://en.wikipedia.org/wiki/Gradient).
 concept DifferentiableScalarField2D
     inherits ScalarField2D
 {
@@ -94,7 +103,8 @@ concept DifferentiableScalarField2D
 }
 
 // A spatial scalar field with an analytic or numeric first derivative. The
-// gradient of a signed distance field is the outward surface normal direction.
+// gradient of a signed distance field is the outward surface normal direction
+// (https://en.wikipedia.org/wiki/Signed_distance_function).
 concept DifferentiableScalarField3D
     inherits ScalarField3D
 {
@@ -102,7 +112,9 @@ concept DifferentiableScalarField3D
 }
 
 // A planar vector field with first derivatives: the Jacobian, its trace
-// (divergence), and the scalar 2D curl (rotation about the plane normal).
+// (divergence), and the scalar 2D curl (rotation about the plane normal)
+// (https://en.wikipedia.org/wiki/Divergence,
+// https://en.wikipedia.org/wiki/Curl_(mathematics)).
 concept DifferentiableVectorField2D
     inherits VectorField2D
 {
@@ -112,7 +124,8 @@ concept DifferentiableVectorField2D
 }
 
 // A spatial vector field with first derivatives: the Jacobian, its trace
-// (divergence), and the curl vector.
+// (divergence), and the curl vector
+// (https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant).
 concept DifferentiableVectorField3D
     inherits VectorField3D
 {

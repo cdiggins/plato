@@ -19,7 +19,8 @@
 library IntervalsTransforms
 {
     //==
-    // IntervalLike<T> — a directed one-dimensional span from Start to End.
+    // IntervalLike<T> — a directed one-dimensional span from Start to End
+    // (https://en.wikipedia.org/wiki/Interval_(mathematics)).
     // T is used only through Additive (Add/Subtract), Interpolatable (Lerp), and
     // Comparable (LessThanOrEquals / Lesser / Greater / Clamp), the capabilities
     // shared by every concrete interval element type (Number, Angle, Length,
@@ -42,7 +43,8 @@ library IntervalsTransforms
         => self.IsForward.Not;
 
     // The point a fraction `t` of the way from Start to End. t is unclamped:
-    // 0 yields Start, 1 yields End, values outside [0,1] extrapolate.
+    // 0 yields Start, 1 yields End, values outside [0,1] extrapolate
+    // (https://en.wikipedia.org/wiki/Linear_interpolation).
     Lerp(self: IntervalLike<$T>, t: Number): $T
         => self.Start.Lerp(self.End, t);
 
@@ -230,7 +232,9 @@ library IntervalsTransforms
     // point types Lattice/Clampable would let it collapse back to one generic body.
 
     //==
-    // Bounds2D / Bounds3D — concrete AABB operations (items 29, 185, 186, 188).
+    // Bounds2D / Bounds3D — concrete AABB operations
+    // (https://en.wikipedia.org/wiki/Axis-aligned_bounding_box; items 29, 185,
+    // 186, 188).
     // Convention: bounds are INCLUSIVE on Min and Max; an inverted box (Min greater
     // than Max on any axis) is EMPTY and is the identity for Union — this is what makes
     // "grow from Empty()" correct (Convention: see CONVENTIONS.md - Bounds). Endpoints
@@ -507,7 +511,8 @@ library IntervalsTransforms
     Transform(self: Deformable2D, transform: Transform2D): Self
         => self.Deform(p => p.Transform(transform));
 
-    // Apply a general 2D affine map.
+    // Apply a general 2D affine map
+    // (https://en.wikipedia.org/wiki/Affine_transformation).
     Transform(self: Deformable2D, transform: AffineTransform2D): Self
         => self.Deform(p => p.Transform(transform));
 

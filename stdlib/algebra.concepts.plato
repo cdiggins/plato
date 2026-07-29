@@ -4,7 +4,7 @@
 // Composable arithmetic capabilities. Each concept is one small algebraic
 // structure; numeric, vector, and quantity types assemble them as needed.
 
-// An additive group: addition, subtraction, and negation.
+// An additive group: addition, subtraction, and negation. (https://en.wikipedia.org/wiki/Additive_group)
 concept Additive
 {
     Add(a: Self, b: Self): Self;
@@ -24,25 +24,26 @@ concept Divisible
     Divide(a: Self, b: Self): Self;
 }
 
-// Remainder arithmetic between two values of the same type.
+// Remainder arithmetic between two values of the same type. (https://en.wikipedia.org/wiki/Modulo_operation)
 concept Modular
 {
     Modulo(a: Self, b: Self): Self;
 }
 
-// Has a multiplicative inverse (reciprocal).
+// Has a multiplicative inverse (reciprocal). (https://en.wikipedia.org/wiki/Multiplicative_inverse)
 concept Invertible
 {
     Inverse(x: Self): Self;
 }
 
-// The four basic operations plus remainder: a field with modulo.
+// The four basic operations plus remainder: a field with modulo. (https://en.wikipedia.org/wiki/Field_(mathematics))
 concept Arithmetic
     inherits Additive, Multiplicative, Divisible, Modular
 { }
 
-// Can be multiplied and divided by a unitless scalar. Vectors, quantities, and
-// colors are scalable even when they cannot multiply among themselves.
+// Can be multiplied and divided by a unitless scalar (https://en.wikipedia.org/wiki/Scalar_multiplication).
+// Vectors, quantities, and colors are scalable even when they cannot multiply
+// among themselves.
 concept Scalable
 {
     Multiply(x: Self, scalar: Number): Self;
@@ -50,8 +51,9 @@ concept Scalable
     Modulo(x: Self, scalar: Number): Self;
 }
 
-// Supports linear interpolation. The parameter t is unclamped: 0 yields a,
-// 1 yields b, values outside [0,1] extrapolate.
+// Supports linear interpolation (https://en.wikipedia.org/wiki/Linear_interpolation).
+// The parameter t is unclamped: 0 yields a, 1 yields b, values outside [0,1]
+// extrapolate.
 concept Interpolatable
 {
     Lerp(a: Self, b: Self, t: Number): Self;
@@ -73,14 +75,15 @@ concept Numerical
 { }
 
 // A continuous one-dimensional number with full arithmetic and total order.
-// Number is the canonical instance.
+// Number is the canonical instance. (https://en.wikipedia.org/wiki/Real_number)
 concept Real
     inherits Numerical, Comparable, Hashable, Arithmetic, Invertible
 {
     ToNumber(x: Self): Number;
 
-    // The non-negative square root. Precondition: x is not negative.
+    // The non-negative square root (https://en.wikipedia.org/wiki/Square_root). Precondition: x is not negative.
     Sqrt(x: Self): Self;
+    // Floor and ceiling (https://en.wikipedia.org/wiki/Floor_and_ceiling_functions):
     // The largest whole value less than or equal to x.
     Floor(x: Self): Self;
     // The smallest whole value greater than or equal to x.
@@ -88,35 +91,35 @@ concept Real
 }
 
 // Whole-number semantics: exact, ordered, arithmetic without a multiplicative
-// inverse (division truncates).
+// inverse (division truncates). (https://en.wikipedia.org/wiki/Integer)
 concept Whole
     inherits Value, Comparable, Hashable, Arithmetic, Interpolatable, NumericalLimits
 {
     ToInteger(x: Self): Integer;
 }
 
-// Has a notion of length or magnitude. MagnitudeSquared avoids the square root
-// when only relative comparisons are needed.
+// Has a notion of length or magnitude (https://en.wikipedia.org/wiki/Norm_(mathematics)).
+// MagnitudeSquared avoids the square root when only relative comparisons are needed.
 concept Normed
 {
     Magnitude(x: Self): Number;
     MagnitudeSquared(x: Self): Number;
 }
 
-// A space with a distance between any two of its values.
+// A space with a distance between any two of its values. (https://en.wikipedia.org/wiki/Metric_space)
 concept MetricSpace
 {
     Distance(a: Self, b: Self): Number;
 }
 
-// Supports component-wise minimum and maximum: a lattice.
+// Supports component-wise minimum and maximum: a lattice. (https://en.wikipedia.org/wiki/Lattice_(order))
 concept Lattice
 {
     Min(a: Self, b: Self): Self;
     Max(a: Self, b: Self): Self;
 }
 
-// Can be clamped to lie within inclusive bounds.
+// Can be clamped to lie within inclusive bounds. (https://en.wikipedia.org/wiki/Clamping_(graphics))
 concept Clampable
     inherits Lattice
 {
@@ -125,6 +128,7 @@ concept Clampable
 
 // A position-like type whose difference is a separate delta type: subtracting two
 // points yields a vector; adding a vector to a point yields a point.
+// See affine space (https://en.wikipedia.org/wiki/Affine_space).
 concept Difference<TDelta>
 {
     Add(x: Self, delta: TDelta): Self;

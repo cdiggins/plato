@@ -324,7 +324,7 @@ library CurvesSurfaces
 
     // The radius of curvature at t: the reciprocal of the unsigned curvature.
     // Precondition: the curvature is non-zero (a straight point has infinite
-    // radius).
+    // radius). See https://en.wikipedia.org/wiki/Radius_of_curvature.
     RadiusOfCurvatureAt(self: DifferentiableCurve2D, t: Number): Number
         => 1.0 / self.CurvatureAt(t).Abs;
 
@@ -433,7 +433,8 @@ library CurvesSurfaces
     //
     // A curve measurable by arc length: ArcLength is the total length,
     // PointAtLength walks a distance from the start, ParameterAtLength converts a
-    // distance to the canonical parameter. TPoint is the concrete point type.
+    // distance to the canonical parameter. TPoint is the concrete point type
+    // (https://en.wikipedia.org/wiki/Arc_length).
 
     // The point at the start of the curve (zero distance travelled).
     ArcStartPoint(self: ArcLengthParameterized<$T>): $T
@@ -515,7 +516,8 @@ library CurvesSurfaces
     //
     // A parametric surface with partial derivatives: TangentUAt and TangentVAt
     // span the tangent plane; NormalAt is their oriented unit normal. The
-    // coefficients of the first fundamental form follow from the tangents.
+    // coefficients of the first fundamental form follow from the tangents
+    // (https://en.wikipedia.org/wiki/First_fundamental_form).
 
     // The unit surface normal at the centre of the UV domain.
     NormalAtCenter(self: DifferentiableSurface): Direction3D

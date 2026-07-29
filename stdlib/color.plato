@@ -5,8 +5,9 @@
 // nominally in [0, 1]; wide-gamut and HDR values may exceed 1. Additional color
 // spaces and imaging types live in files 44-47.
 
-// A linear-light RGBA color. The canonical color type for computation;
-// interpolation and arithmetic are component-wise.
+// A linear-light RGBA color (https://en.wikipedia.org/wiki/RGBA_color_model).
+// The canonical color type for computation; interpolation and arithmetic are
+// component-wise.
 // Convention: see CONVENTIONS.md - Color (linear-light, straight alpha; A is
 // straight; do not lerp/construct from sRGB bytes without decoding).
 type Color
@@ -19,7 +20,7 @@ type Color
 }
 
 // An 8-bit-per-channel RGBA color with components in [0, 255]; storage and
-// interop form, typically sRGB-encoded.
+// interop form, typically sRGB-encoded (https://en.wikipedia.org/wiki/SRGB).
 type Color8
     implements Value, Hashable
 {
@@ -30,6 +31,7 @@ type Color8
 }
 
 // A color in hue-saturation-value form; Hue is an angle around the color wheel.
+// (https://en.wikipedia.org/wiki/HSL_and_HSV)
 type ColorHSV
     implements Value
 {
@@ -39,6 +41,7 @@ type ColorHSV
 }
 
 // A color in hue-saturation-lightness form; Hue is an angle around the color wheel.
+// Same model family as HSV: https://en.wikipedia.org/wiki/HSL_and_HSV
 type ColorHSL
     implements Value
 {
@@ -55,7 +58,8 @@ type ColorStop
     Color: Color;
 }
 
-// A sequence of color stops defining a color ramp. Stops are ordered by
+// A sequence of color stops defining a color ramp
+// (https://en.wikipedia.org/wiki/Color_gradient). Stops are ordered by
 // ascending Position.
 type ColorGradient
     implements Value

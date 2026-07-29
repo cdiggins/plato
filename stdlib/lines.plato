@@ -1,10 +1,13 @@
 //==
 // # Lines, rays, segments, and planes
 //
-// The flat (affine) primitives. Extent distinguishes them: a segment is bounded
-// by two endpoints, a ray extends one way from its origin, a line extends both
-// ways, and a plane extends in two dimensions. Half-planes, half-spaces, and
-// slabs are the regions these flats bound.
+// The flat (affine) primitives. Extent distinguishes them: a segment
+// (https://en.wikipedia.org/wiki/Line_segment) is bounded by two endpoints, a
+// ray (https://en.wikipedia.org/wiki/Ray_(geometry)) extends one way from its
+// origin, a line (https://en.wikipedia.org/wiki/Line_(geometry)) extends both
+// ways, and a plane (https://en.wikipedia.org/wiki/Plane_(geometry)) extends in
+// two dimensions. Half-planes, half-spaces, and slabs are the regions these
+// flats bound.
 
 //==
 // # Segments
@@ -100,7 +103,8 @@ type Plane
 }
 
 // The closed 3D region on and behind a boundary plane: the points p with
-// Dot(Normal, p) <= Distance. The boundary's normal points out of the half-space.
+// Dot(Normal, p) <= Distance (https://en.wikipedia.org/wiki/Half-space_(geometry)).
+// The boundary's normal points out of the half-space.
 type HalfSpace
     implements Geometry3D, ConvexShape, Connected, ContainsPoint3D, NearestPoint3D
 {
@@ -108,7 +112,8 @@ type HalfSpace
 }
 
 // The closed 2D region on and behind a boundary line in Hesse normal form: the
-// points p with Dot(Normal, p) <= Distance. Normal points out of the half-plane.
+// points p with Dot(Normal, p) <= Distance
+// (https://en.wikipedia.org/wiki/Half-plane). Normal points out of the half-plane.
 type HalfPlane2D
     implements Geometry2D, ConvexShape, Connected, ContainsPoint2D, NearestPoint2D
 {

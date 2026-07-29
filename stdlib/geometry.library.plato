@@ -74,6 +74,9 @@ library GeometryTraits
     //
     // Pure markers carry no members of their own; the only derivable operation is a
     // constant reflector that lets generic code query the promised structural fact.
+    // See https://en.wikipedia.org/wiki/Manifold and
+    // https://en.wikipedia.org/wiki/Convex_set for the geometric meanings of those
+    // markers.
     // Renamed from v1's bare `Closed(x): Boolean` to the intent-revealing `Is*` form.
     //
     // Open / Closed form a genuine duality (a type is one or the other), so both
@@ -119,9 +122,10 @@ library GeometryTraits
     // # Bounded2D
     //
     // Everything derived from the axis-aligned Bounds2D (Min / Max corners, each a
-    // Point2D). Named with a `Bounds` prefix so nothing collides with the members
-    // BoundsLike itself carries, and so BoundsCenter reads distinctly from a shape
-    // centroid.
+    // Point2D) — an AABB (https://en.wikipedia.org/wiki/Axis-aligned_bounding_box;
+    // see also https://en.wikipedia.org/wiki/Bounding_volume). Named with a
+    // `Bounds` prefix so nothing collides with the members BoundsLike itself
+    // carries, and so BoundsCenter reads distinctly from a shape centroid.
 
     // The center of the bounding rectangle. Delegates to P4's Center(BoundsLike).
     BoundsCenter(self: Bounded2D): Point2D
@@ -259,7 +263,8 @@ library GeometryTraits
         => self.Area > other.Area;
 
     // The isoperimetric quotient 4*Pi*Area / Perimeter^2: a scale-invariant
-    // compactness measure in (0, 1], equal to 1 only for a disc.
+    // compactness measure in (0, 1], equal to 1 only for a disc
+    // (https://en.wikipedia.org/wiki/Isoperimetric_inequality).
     // Precondition: non-zero perimeter.
     IsoperimetricQuotient(self: PlanarMeasurable): Number
         => 4.0 * self.Area.Pi * self.Area / (self.Perimeter * self.Perimeter);
@@ -285,7 +290,8 @@ library GeometryTraits
     //==
     // # Centroid2D / Centroid3D
     //
-    // Proximity of a query point to the center of mass.
+    // Proximity of a query point to the center of mass
+    // (https://en.wikipedia.org/wiki/Centroid).
 
     // The straight-line distance from the centroid to a query point.
     DistanceFromCentroid(self: Centroid2D, point: Point2D): Number
@@ -354,8 +360,9 @@ library GeometryTraits
     // # SupportMappable2D / SupportMappable3D
     //
     // The support mapping returns the farthest point of a convex shape in a given
-    // direction. SupportExtent projects that point onto the direction, giving the
-    // signed extent of the shape along it — the scalar GJK / SAT actually consume.
+    // direction (https://en.wikipedia.org/wiki/Support_function). SupportExtent
+    // projects that point onto the direction, giving the signed extent of the
+    // shape along it — the scalar GJK / SAT actually consume.
     // A `var` local fetches the support point once (LIBRARIES.md permits var locals
     // in statement bodies) instead of re-evaluating Support per component.
 
@@ -449,7 +456,7 @@ library GeometryTraits
             Point3D(a.Max.X.Max(b.Max.X), a.Max.Y.Max(b.Max.Y), a.Max.Z.Max(b.Max.Z)));
 
     // The rectangle grown by `amount` on every side (the Minkowski sum with a
-    // square of half-width `amount`).
+    // square of half-width `amount`; https://en.wikipedia.org/wiki/Minkowski_addition).
     GrowBounds(b: Bounds2D, amount: Number): Bounds2D
         => (Point2D(b.Min.X - amount, b.Min.Y - amount),
             Point2D(b.Max.X + amount, b.Max.Y + amount));

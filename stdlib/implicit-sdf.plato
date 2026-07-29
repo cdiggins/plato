@@ -2,9 +2,11 @@
 // # Implicit shapes and signed distance fields
 //
 // Shapes described by functions rather than boundaries. A signed distance
-// field (SDF) reports how far a point is from a surface, negative inside;
-// an implicit region reports only membership. Flat, index-based node trees
-// describe constructive solid geometry over externally supplied primitives.
+// field (SDF; https://en.wikipedia.org/wiki/Signed_distance_function) reports
+// how far a point is from a surface, negative inside; an implicit region
+// reports only membership (see also https://en.wikipedia.org/wiki/Implicit_surface).
+// Flat, index-based node trees describe constructive solid geometry over
+// externally supplied primitives.
 
 //==
 // ## Implicit concepts
@@ -84,9 +86,10 @@ type FunctionVolume3D
 //==
 // ## SDF combination trees
 //
-// Constructive solid geometry over signed distance fields, stored as flat
-// arrays of nodes. Leaves reference primitives by index into a caller-supplied
-// primitive list; interior nodes combine two children by node index.
+// Constructive solid geometry (https://en.wikipedia.org/wiki/Constructive_solid_geometry)
+// over signed distance fields, stored as flat arrays of nodes. Leaves reference
+// primitives by index into a caller-supplied primitive list; interior nodes
+// combine two children by node index.
 
 // The Boolean or blending operation an SDF combination node applies.
 // Union is the distance minimum, Intersection the maximum, Difference the
@@ -149,8 +152,10 @@ type SdfTree3D
 //==
 // ## Metaballs
 //
-// Smooth organic shapes from summed radial falloff kernels. The implicit
-// surface is the level set where the summed influence equals the threshold.
+// Smooth organic shapes from summed radial falloff kernels
+// (https://en.wikipedia.org/wiki/Metaballs). The implicit surface is the level
+// set (https://en.wikipedia.org/wiki/Level_set) where the summed influence
+// equals the threshold.
 
 // A planar metaball: a radial falloff kernel centered at a point. Influence
 // is Strength at the center and falls to zero at Radius.

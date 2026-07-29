@@ -31,6 +31,8 @@ type CameraProjection
 // A pinhole perspective camera defined by a vertical field of view.
 // AspectRatio is image width over height; the horizontal field of view follows
 // from VerticalFov and AspectRatio.
+// See https://en.wikipedia.org/wiki/Pinhole_camera_model and
+// https://en.wikipedia.org/wiki/Perspective_projection.
 type PerspectiveCamera
     implements Camera
 {
@@ -43,6 +45,7 @@ type PerspectiveCamera
 
 // A parallel-projection camera. OrthoHeight is the vertical extent of the view
 // volume in scene units; the width is OrthoHeight times AspectRatio.
+// (https://en.wikipedia.org/wiki/Orthographic_projection)
 type OrthographicCamera
     implements Camera
 {
@@ -56,9 +59,10 @@ type OrthographicCamera
 // A camera parameterized like a real photographic body and lens. FocalLength
 // and FocusDistance are physical lengths (a 50mm lens is 0.05 meters);
 // SensorSize is in millimeters by photographic convention; FStop is the
-// aperture number N in f/N; Iso is ISO 12232 sensitivity; ShutterTime is the
-// exposure duration. Field of view follows from FocalLength and SensorSize;
-// exposure follows from FStop, ShutterTime, and Iso.
+// aperture number N in f/N (https://en.wikipedia.org/wiki/F-number); Iso is
+// ISO 12232 sensitivity; ShutterTime is the exposure duration. Field of view
+// follows from FocalLength and SensorSize; exposure follows from FStop,
+// ShutterTime, and Iso.
 type PhysicalCamera
     implements Camera
 {
@@ -74,12 +78,13 @@ type PhysicalCamera
 }
 
 // The radial mapping of a fisheye lens: how the angle from the optical axis
-// maps to distance from the image center.
+// maps to distance from the image center. Stereographic is the same projection
+// used on the sphere (https://en.wikipedia.org/wiki/Stereographic_projection).
 type FisheyeMapping = Equidistant | EquisolidAngle | Orthographic | Stereographic;
 
-// A wide-angle camera with a fisheye radial mapping. FieldOfView is the full
-// cone angle covered by the image circle; some mappings support a full
-// hemisphere or more.
+// A wide-angle camera with a fisheye radial mapping (https://en.wikipedia.org/wiki/Fisheye_lens).
+// FieldOfView is the full cone angle covered by the image circle; some mappings
+// support a full hemisphere or more.
 type FisheyeCamera
     implements Camera
 {
@@ -91,8 +96,8 @@ type FisheyeCamera
 }
 
 // A spherical panorama camera mapping longitude to X and latitude to Y
-// (equirectangular, lat-long). Sweeps of 360 by 180 degrees capture the whole
-// sphere; smaller sweeps crop it.
+// (equirectangular / lat-long; https://en.wikipedia.org/wiki/Equirectangular_projection).
+// Sweeps of 360 by 180 degrees capture the whole sphere; smaller sweeps crop it.
 type EquirectangularCamera
     implements Camera
 {
@@ -103,9 +108,9 @@ type EquirectangularCamera
     Far: Number;
 }
 
-// A cylindrical panorama camera. HorizontalSweep is the arc covered around the
-// pose's vertical axis; VerticalFov is the perspective field of view across
-// the cylinder height.
+// A cylindrical panorama camera (https://en.wikipedia.org/wiki/Panorama).
+// HorizontalSweep is the arc covered around the pose's vertical axis;
+// VerticalFov is the perspective field of view across the cylinder height.
 type PanoramicCamera
     implements Camera
 {
@@ -153,11 +158,11 @@ type OffAxisCamera
     Far: Number;
 }
 
-// A stereo camera pair derived from a single template camera. The template's
-// pose is the rig center; each eye is offset by half of EyeSeparation along
-// the pose's right axis (typical human separation is 0.063 meters).
-// ConvergenceDistance is where the two view axes cross: the zero-parallax
-// plane.
+// A stereo camera pair derived from a single template camera
+// (https://en.wikipedia.org/wiki/Stereoscopy). The template's pose is the rig
+// center; each eye is offset by half of EyeSeparation along the pose's right
+// axis (typical human separation is 0.063 meters). ConvergenceDistance is where
+// the two view axes cross: the zero-parallax plane.
 type StereoCameraRig
     implements Value
 {
@@ -171,7 +176,7 @@ type StereoCameraRig
 
 // The rectangular pixel region a camera renders into, plus the interval that
 // normalized device depth is mapped onto. PixelBounds contains Min, excludes
-// Max.
+// Max. (https://en.wikipedia.org/wiki/Viewport)
 type Viewport
     implements Value
 {
@@ -181,6 +186,7 @@ type Viewport
 
 // Brown-Conrady lens distortion coefficients: K1, K2, and K3 are radial terms;
 // P1 and P2 are tangential (decentering) terms. All zero means an ideal lens.
+// See https://en.wikipedia.org/wiki/Distortion_(optics).
 type LensDistortion
     implements Value
 {
@@ -201,10 +207,11 @@ type LensShift
     Vertical: Number;
 }
 
-// Depth-of-field rendering controls. FocusDistance is the physical distance to
-// the focal plane; FStop widens or narrows the simulated aperture (smaller
-// numbers focus more shallowly); BladeCount shapes the bokeh polygon (0 means
-// a perfect circle); BladeRotation orients that polygon.
+// Depth-of-field rendering controls (https://en.wikipedia.org/wiki/Depth_of_field).
+// FocusDistance is the physical distance to the focal plane; FStop widens or
+// narrows the simulated aperture (smaller numbers focus more shallowly);
+// BladeCount shapes the bokeh polygon (0 means a perfect circle); BladeRotation
+// orients that polygon.
 type DepthOfFieldSettings
     implements Value
 {

@@ -9,8 +9,9 @@
 //==
 // # Triangles and quadrilaterals
 
-// Three vertices, counter-clockwise for positive area. Degenerate when the
-// vertices are collinear.
+// Three vertices, counter-clockwise for positive area
+// (https://en.wikipedia.org/wiki/Triangle). Degenerate when the vertices are
+// collinear.
 type Triangle2D
     implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, PointSet2D, Centroid2D, ContainsPoint2D, NearestPoint2D, Deformable2D
 {
@@ -31,8 +32,9 @@ type Quad2D
 }
 
 // The quadrilateral spanned from Origin by two side vectors: vertices at Origin,
-// Origin + SideA, Origin + SideA + SideB, and Origin + SideB. Degenerate when
-// the sides are parallel.
+// Origin + SideA, Origin + SideA + SideB, and Origin + SideB
+// (https://en.wikipedia.org/wiki/Parallelogram). Degenerate when the sides are
+// parallel.
 type Parallelogram2D
     implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D, Deformable2D
 {
@@ -45,7 +47,7 @@ type Parallelogram2D
 // # Circles and circle-derived regions
 
 // The disk of all points within Radius of Center; its boundary is the circle
-// proper. Radius is non-negative.
+// proper (https://en.wikipedia.org/wiki/Circle). Radius is non-negative.
 type Circle
     implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D, NearestPoint2D, SupportMappable2D
 {
@@ -132,7 +134,8 @@ type RoundedRect2D
 }
 
 // A rectangle with arbitrary rotation: Size gives the full width and height
-// along the box's local axes, rotated by Rotation about Center.
+// along the box's local axes, rotated by Rotation about Center
+// (https://en.wikipedia.org/wiki/Oriented_bounding_box).
 type OrientedBox2D
     implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D, NearestPoint2D, SupportMappable2D
 {

@@ -11,7 +11,8 @@
 // # Arcs and conic pieces
 
 // A portion of a circle: the points at distance Radius from Center, swept over
-// the angle interval measured from the +X axis.
+// the angle interval measured from the +X axis
+// (https://en.wikipedia.org/wiki/Circular_arc).
 type CircularArc2D
     implements Curve2D
 {
@@ -22,7 +23,7 @@ type CircularArc2D
 
 // A portion of an axis-rotated ellipse. Radii holds the semi-axis lengths along
 // the ellipse's local X and Y; Rotation tilts the major frame from the +X axis;
-// Angles sweeps the parametric angle.
+// Angles sweeps the parametric angle (https://en.wikipedia.org/wiki/Ellipse).
 type EllipticalArc2D
     implements Curve2D
 {
@@ -33,7 +34,8 @@ type EllipticalArc2D
 }
 
 // A parabola in canonical position: y = Coefficient * x * x, vertex at the
-// origin, opening along +Y. The parameter is x, ranging over Domain.
+// origin, opening along +Y. The parameter is x, ranging over Domain
+// (https://en.wikipedia.org/wiki/Parabola).
 type Parabola2D
     implements Curve2D
 {
@@ -45,7 +47,8 @@ type Parabola2D
 // # Function graphs
 
 // The graph of a hanging chain: y = Scale * cosh(x / Scale). Scale is the
-// classic catenary constant a; the parameter is x, ranging over Domain.
+// classic catenary constant a; the parameter is x, ranging over Domain
+// (https://en.wikipedia.org/wiki/Catenary).
 type Catenary2D
     implements Curve2D
 {
@@ -55,7 +58,7 @@ type Catenary2D
 
 // One or more cycles of a sine wave along the X axis:
 // y = Amplitude * sin(2 * pi * x / Wavelength + Phase). The parameter is x,
-// ranging over Domain.
+// ranging over Domain (https://en.wikipedia.org/wiki/Sine_wave).
 type SineCurve2D
     implements Curve2D
 {
@@ -69,7 +72,8 @@ type SineCurve2D
 // # Polynomial arcs
 
 // A quadratic Bezier arc: interpolates P0 to P2, shaped by the middle control
-// point P1. Tangents at the ends aim at P1.
+// point P1. Tangents at the ends aim at P1
+// (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type QuadraticBezier2D
     implements Curve2D
 {
@@ -79,7 +83,8 @@ type QuadraticBezier2D
 }
 
 // A cubic Bezier arc: interpolates P0 to P3, shaped by the interior control
-// points P1 and P2. The workhorse of vector graphics and font outlines.
+// points P1 and P2. The workhorse of vector graphics and font outlines
+// (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type CubicBezier2D
     implements Curve2D
 {
@@ -93,7 +98,8 @@ type CubicBezier2D
 // # Spirals and transition curves
 
 // The Archimedean spiral r = StartRadius + GrowthRate * theta (theta in
-// radians), swept over Angles: evenly spaced coils.
+// radians), swept over Angles: evenly spaced coils
+// (https://en.wikipedia.org/wiki/Archimedean_spiral).
 type ArchimedeanSpiral2D
     implements PolarCurve2D
 {
@@ -103,7 +109,8 @@ type ArchimedeanSpiral2D
 }
 
 // The logarithmic (equiangular) spiral r = StartRadius * exp(GrowthRate *
-// theta), swept over Angles: self-similar coils, constant crossing angle.
+// theta), swept over Angles: self-similar coils, constant crossing angle
+// (https://en.wikipedia.org/wiki/Logarithmic_spiral).
 type LogarithmicSpiral2D
     implements PolarCurve2D
 {
@@ -113,7 +120,8 @@ type LogarithmicSpiral2D
 }
 
 // One branch of Fermat's spiral r = Scale * sqrt(theta), swept over Angles:
-// evenly filling coils, the basis of sunflower/phyllotaxis layouts.
+// evenly filling coils, the basis of sunflower/phyllotaxis layouts
+// (https://en.wikipedia.org/wiki/Fermat%27s_spiral).
 type FermatSpiral2D
     implements PolarCurve2D
 {
@@ -123,7 +131,8 @@ type FermatSpiral2D
 
 // A clothoid (Euler spiral) arc: curvature grows linearly with arc length,
 // kappa(s) = s / (Flatness * Flatness). The parameter is signed arc length s
-// over Domain. The standard road and rail transition curve.
+// over Domain. The standard road and rail transition curve
+// (https://en.wikipedia.org/wiki/Euler_spiral).
 type Clothoid2D
     implements Curve2D, ArcLengthParameterized<Point2D>
 {
@@ -133,7 +142,7 @@ type Clothoid2D
 
 // The involute of a circle of radius Radius: the path of a taut string
 // unwinding from the circle, over the unwinding-angle interval. The profile
-// of standard gear teeth.
+// of standard gear teeth (https://en.wikipedia.org/wiki/Involute).
 type CircleInvolute2D
     implements Curve2D
 {
@@ -143,10 +152,13 @@ type CircleInvolute2D
 
 //==
 // # Roulettes (rolling-circle curves)
+//
+// See https://en.wikipedia.org/wiki/Roulette_(curve).
 
 // The path of a point on the rim of a circle of radius Radius rolling along
 // the X axis: x = Radius * (theta - sin theta), y = Radius * (1 - cos theta),
-// with the rolling angle theta swept over Angles.
+// with the rolling angle theta swept over Angles
+// (https://en.wikipedia.org/wiki/Cycloid).
 type Cycloid2D
     implements Curve2D
 {
@@ -157,7 +169,7 @@ type Cycloid2D
 // The path of a rim point on a circle of radius RollingRadius rolling outside
 // a fixed circle of radius FixedRadius. Closes after a whole number of laps
 // when the radius ratio is rational; the canonical parameter covers one lap
-// around the fixed circle.
+// around the fixed circle (https://en.wikipedia.org/wiki/Epicycloid).
 type Epicycloid2D
     implements Curve2D
 {
@@ -167,7 +179,8 @@ type Epicycloid2D
 
 // The path of a rim point on a circle of radius RollingRadius rolling inside
 // a fixed circle of radius FixedRadius. Straight lines, ellipses, and the
-// astroid arise from particular radius ratios.
+// astroid arise from particular radius ratios
+// (https://en.wikipedia.org/wiki/Hypocycloid).
 type Hypocycloid2D
     implements Curve2D
 {
@@ -176,7 +189,8 @@ type Hypocycloid2D
 }
 
 // A generalized epicycloid: the traced point sits PoleDistance from the center
-// of the rolling circle rather than on its rim (spirograph curves).
+// of the rolling circle rather than on its rim (spirograph curves)
+// (https://en.wikipedia.org/wiki/Epitrochoid).
 type Epitrochoid2D
     implements Curve2D
 {
@@ -186,7 +200,8 @@ type Epitrochoid2D
 }
 
 // A generalized hypocycloid: the traced point sits PoleDistance from the center
-// of the circle rolling inside the fixed circle (spirograph curves).
+// of the circle rolling inside the fixed circle (spirograph curves)
+// (https://en.wikipedia.org/wiki/Hypotrochoid).
 type Hypotrochoid2D
     implements Curve2D
 {
@@ -200,7 +215,8 @@ type Hypotrochoid2D
 
 // The rose r = Radius * cos(PetalFrequency * theta). A whole odd frequency k
 // yields k petals; a whole even k yields 2k petals; fractional frequencies
-// close only over multiple turns.
+// close only over multiple turns
+// (https://en.wikipedia.org/wiki/Rose_(mathematics)).
 type RoseCurve2D
     implements PolarCurve2D
 {
@@ -210,7 +226,7 @@ type RoseCurve2D
 
 // The cardioid r = 2 * Radius * (1 + cos theta): the heart-shaped path traced
 // by a circle of radius Radius rolling around an equal fixed circle. Always
-// closed; total width is 4 * Radius.
+// closed; total width is 4 * Radius (https://en.wikipedia.org/wiki/Cardioid).
 type Cardioid2D
     implements ClosedCurve2D
 {
@@ -219,7 +235,7 @@ type Cardioid2D
 
 // The limacon r = Offset + Amplitude * cos theta. Offset > Amplitude gives a
 // dimpled oval, equality gives the cardioid, Offset < Amplitude adds an inner
-// loop. Always closed.
+// loop. Always closed (https://en.wikipedia.org/wiki/Lima%C3%A7on).
 type Limacon2D
     implements ClosedCurve2D
 {
@@ -228,7 +244,8 @@ type Limacon2D
 }
 
 // The lemniscate of Bernoulli, r * r = Scale * Scale * cos(2 * theta): a
-// figure-eight crossing itself at the origin; Scale is the half-width.
+// figure-eight crossing itself at the origin; Scale is the half-width
+// (https://en.wikipedia.org/wiki/Lemniscate_of_Bernoulli).
 type Lemniscate2D
     implements ClosedCurve2D
 {
@@ -237,7 +254,8 @@ type Lemniscate2D
 
 // A Lissajous figure: x = XAmplitude * sin(2 * pi * XFrequency * t + Phase),
 // y = YAmplitude * sin(2 * pi * YFrequency * t). Closes when the frequency
-// ratio is rational; the canonical parameter covers one combined period.
+// ratio is rational; the canonical parameter covers one combined period
+// (https://en.wikipedia.org/wiki/Lissajous_curve).
 type Lissajous2D
     implements Curve2D
 {
@@ -251,7 +269,8 @@ type Lissajous2D
 // The Gielis superformula, a polar shape family covering polygons, stars,
 // and organic outlines. Symmetry is the lobe count m; Exponent1..3 are the
 // n1, n2, n3 shape exponents; XRadius and YRadius are the a and b scale
-// divisors. Closed when Symmetry is a whole number.
+// divisors. Closed when Symmetry is a whole number
+// (https://en.wikipedia.org/wiki/Superformula).
 type Superformula2D
     implements PolarCurve2D
 {

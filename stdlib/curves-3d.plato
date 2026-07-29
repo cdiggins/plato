@@ -10,7 +10,8 @@
 // # Planar arcs in space
 
 // A circular arc in space: radius Radius about the frame origin, in the
-// frame's XY plane, swept over Angles measured from the frame's X axis.
+// frame's XY plane, swept over Angles measured from the frame's X axis
+// (https://en.wikipedia.org/wiki/Circular_arc).
 type CircularArc3D
     implements PlanarCurve3D
 {
@@ -20,7 +21,8 @@ type CircularArc3D
 }
 
 // An elliptical arc in space: semi-axis lengths Radii along the frame's X and
-// Y axes, swept over the parametric angle interval.
+// Y axes, swept over the parametric angle interval
+// (https://en.wikipedia.org/wiki/Ellipse).
 type EllipticalArc3D
     implements PlanarCurve3D
 {
@@ -33,7 +35,7 @@ type EllipticalArc3D
 // # Polynomial arcs
 
 // A quadratic Bezier arc in space: interpolates P0 to P2, shaped by the middle
-// control point P1.
+// control point P1 (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type QuadraticBezier3D
     implements Curve3D
 {
@@ -43,7 +45,7 @@ type QuadraticBezier3D
 }
 
 // A cubic Bezier arc in space: interpolates P0 to P3, shaped by the interior
-// control points P1 and P2.
+// control points P1 and P2 (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type CubicBezier3D
     implements Curve3D
 {
@@ -58,7 +60,7 @@ type CubicBezier3D
 
 // A circular helix winding about the frame's Z axis at distance Radius,
 // rising Pitch per full turn (right-handed for positive Pitch), swept over
-// the angle interval.
+// the angle interval (https://en.wikipedia.org/wiki/Helix).
 type Helix
     implements Curve3D
 {
@@ -69,7 +71,8 @@ type Helix
 }
 
 // A spiral on a cone about the frame's Z axis: the winding radius interpolates
-// across Radii while the curve climbs Height over the full sweep of Angles.
+// across Radii while the curve climbs Height over the full sweep of Angles
+// (https://en.wikipedia.org/wiki/Conical_spiral).
 type ConicalSpiral3D
     implements Curve3D
 {
@@ -81,7 +84,8 @@ type ConicalSpiral3D
 
 // A loxodrome: a spiral on a sphere of radius Radius crossing every meridian
 // at a constant angle, running pole to pole along the frame's Z axis and
-// completing TurnCount revolutions.
+// completing TurnCount revolutions
+// (https://en.wikipedia.org/wiki/Rhumb_line).
 type SphericalSpiral3D
     implements Curve3D
 {
@@ -95,7 +99,8 @@ type SphericalSpiral3D
 
 // The (p,q) torus knot on the torus with the given major and minor radii about
 // the frame's Z axis. AxisWindings is p (laps around the main axis) and
-// TubeWindings is q (laps through the hole); coprime windings give a true knot.
+// TubeWindings is q (laps through the hole); coprime windings give a true knot
+// (https://en.wikipedia.org/wiki/Torus_knot).
 type TorusKnot
     implements ClosedCurve3D
 {
@@ -107,7 +112,8 @@ type TorusKnot
 }
 
 // The trefoil knot, the simplest nontrivial knot (the (2,3) torus knot), in
-// its symmetric canonical form scaled by Scale.
+// its symmetric canonical form scaled by Scale
+// (https://en.wikipedia.org/wiki/Trefoil_knot).
 type TrefoilKnot
     implements ClosedCurve3D
 {
@@ -116,7 +122,8 @@ type TrefoilKnot
 }
 
 // The figure-eight knot (the unique four-crossing knot) in its canonical
-// parametric form scaled by Scale.
+// parametric form scaled by Scale
+// (https://en.wikipedia.org/wiki/Figure-eight_knot_(mathematics)).
 type FigureEightKnot
     implements ClosedCurve3D
 {
@@ -126,7 +133,8 @@ type FigureEightKnot
 
 // Viviani's curve: the figure-eight intersection of the sphere of radius
 // Radius centered at the frame origin with the cylinder of radius Radius / 2
-// tangent to the frame's Z axis.
+// tangent to the frame's Z axis
+// (https://en.wikipedia.org/wiki/Viviani%27s_curve).
 type VivianiCurve
     implements ClosedCurve3D
 {

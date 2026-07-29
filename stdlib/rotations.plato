@@ -1,9 +1,10 @@
 //==
 // # Rotations and orientations
 //
-// Multiple interchangeable representations of rotation. Quaternion is canonical
-// for 3D composition and interpolation; the others serve authoring, interop, and
-// geometric-algebra styles.
+// Multiple interchangeable representations of rotation
+// (https://en.wikipedia.org/wiki/Rotation_(mathematics)). Quaternion is
+// canonical for 3D composition and interpolation; the others serve authoring,
+// interop, and geometric-algebra styles.
 // Discoverability banner (item 473): the concrete operations for Quaternion
 // (and the rotor/motor conversions) are declared on the intrinsic hub in
 // `intrinsics.plato` and in `transforms.plato`, not restated here. Bivector3D is
@@ -11,7 +12,8 @@
 // <-> X, Y, Z under the right-hand convention); construct one from a vector pair
 // with `Wedge` in `numeric-structures.library.plato`.
 
-// A unit quaternion encoding a 3D rotation. Invariant: X*X + Y*Y + Z*Z + W*W = 1.
+// A unit quaternion encoding a 3D rotation
+// (https://en.wikipedia.org/wiki/Quaternion). Invariant: X*X + Y*Y + Z*Z + W*W = 1.
 type Quaternion
     implements Value, Multiplicative, Interpolatable
 {
@@ -21,7 +23,8 @@ type Quaternion
     W: Number;
 }
 
-// A rotation of Angle about a unit Axis, following the right-hand rule.
+// A rotation of Angle about a unit Axis, following the right-hand rule
+// (https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation).
 type AxisAngle
     implements Value
 {
@@ -32,7 +35,8 @@ type AxisAngle
 // The order in which elemental axis rotations compose.
 type RotationOrder = XYZ | XZY | YXZ | YZX | ZXY | ZYX;
 
-// Three chained elemental rotations under an explicit composition order.
+// Three chained elemental rotations under an explicit composition order
+// (https://en.wikipedia.org/wiki/Euler_angles).
 type EulerAngles
     implements Value
 {
@@ -50,7 +54,7 @@ type Rotation2D
 }
 
 // An oriented plane element in 2D (the single XY component); the generator of
-// 2D rotations in geometric algebra.
+// 2D rotations in geometric algebra (https://en.wikipedia.org/wiki/Bivector).
 type Bivector2D
     implements Value
 {
@@ -58,7 +62,8 @@ type Bivector2D
 }
 
 // An oriented plane element in 3D, with components named by the planes they span;
-// the generator of 3D rotations in geometric algebra.
+// the generator of 3D rotations in geometric algebra
+// (https://en.wikipedia.org/wiki/Geometric_algebra).
 type Bivector3D
     implements Value
 {
@@ -77,7 +82,8 @@ type Rotor2D
 }
 
 // A 3D geometric-algebra rotor: scalar plus bivector part. Structurally a
-// quaternion, expressed in plane-based components.
+// quaternion, expressed in plane-based components
+// (https://en.wikipedia.org/wiki/Geometric_algebra).
 type Rotor3D
     implements Value, Multiplicative
 {

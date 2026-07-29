@@ -4,7 +4,8 @@
 // Number-like value types beyond the primitives: constrained scalars, exact
 // ratios, complex numbers, and typed indices.
 
-// A complex number with real and imaginary parts.
+// A complex number with real and imaginary parts
+// (https://en.wikipedia.org/wiki/Complex_number).
 type Complex
     implements Numerical
 {
@@ -12,7 +13,8 @@ type Complex
     Imaginary: Number;
 }
 
-// An exact ratio of two integers. Denominator is never zero.
+// An exact ratio of two integers
+// (https://en.wikipedia.org/wiki/Rational_number). Denominator is never zero.
 type Rational
     implements Value, Comparable
 {

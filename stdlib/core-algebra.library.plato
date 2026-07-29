@@ -87,15 +87,16 @@ library CoreAlgebra
     //==
     // Logical
 
-    // Negated conjunction: not (a and b).
+    // Negated conjunction: not (a and b). (https://en.wikipedia.org/wiki/NAND_gate)
     Nand(a: Logical, b: Logical): Logical
         => a.And(b).Not;
 
-    // Negated disjunction: not (a or b).
+    // Negated disjunction: not (a or b). (https://en.wikipedia.org/wiki/NOR_gate)
     Nor(a: Logical, b: Logical): Logical
         => a.Or(b).Not;
 
     // Material implication: a implies b, i.e. (not a) or b.
+    // (https://en.wikipedia.org/wiki/Material_conditional)
     Implies(a: Logical, b: Logical): Logical
         => a.Not.Or(b);
 
@@ -103,6 +104,7 @@ library CoreAlgebra
     // BooleanAlgebra
 
     // Logical equivalence (XNOR): true when a and b have the same truth value.
+    // (https://en.wikipedia.org/wiki/XNOR_gate)
     Equivalent(a: BooleanAlgebra, b: BooleanAlgebra): BooleanAlgebra
         => a.ExclusiveOr(b).Not;
 
@@ -235,11 +237,12 @@ library CoreAlgebra
         => x == x.One;
 
     // The weighted sum a*s + b*t of two values with scalar weights.
+    // (https://en.wikipedia.org/wiki/Linear_combination)
     LinearCombination(a: Numerical, b: Numerical, s: Number, t: Number): Numerical
         => a * s + b * t;
 
     // Barycentric blend of three values: at (u,v)=(0,0) yields a, (1,0) yields b,
-    // (0,1) yields c.
+    // (0,1) yields c. (https://en.wikipedia.org/wiki/Barycentric_coordinate_system)
     Barycentric(a: Numerical, b: Numerical, c: Numerical, u: Number, v: Number): Numerical
         => a + (b - a) * u + (c - a) * v;
 
@@ -333,11 +336,13 @@ library CoreAlgebra
     // The classic smoothstep shaping function 3x^2 - 2x^3, with zero slope at
     // both ends of the unit interval. Assumes x is in [0, 1]; saturate first if not.
     // (For interpolation between two values use SmoothLerp above.)
+    // (https://en.wikipedia.org/wiki/Smoothstep)
     SmoothStep(x: Number): Number
         => x * x * (3.0 - 2.0 * x);
 
     // Ken Perlin's quintic shaping function 6x^5 - 15x^4 + 10x^3, with zero first
     // AND second derivative at both ends. Assumes x is in [0, 1].
+    // Same article family: https://en.wikipedia.org/wiki/Smoothstep
     SmootherStep(x: Number): Number
         => x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
 

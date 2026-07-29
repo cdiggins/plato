@@ -30,13 +30,16 @@ library MeshesSpatial
     // MeshTopology — counted mesh elements: vertices, undirected edges, faces.
     // All derived facts follow from the three counts and the Euler relation.
 
-    // The Euler characteristic V - E + F. A closed connected manifold of genus g
-    // has Euler characteristic 2 - 2g; a disk has 1, a sphere 2, a torus 0.
+    // The Euler characteristic V - E + F
+    // (https://en.wikipedia.org/wiki/Euler_characteristic). A closed connected
+    // manifold of genus g has Euler characteristic 2 - 2g; a disk has 1, a sphere
+    // 2, a torus 0.
     EulerCharacteristic(self: MeshTopology): Integer
         => self.VertexCount - self.EdgeCount + self.FaceCount;
 
     // The genus implied by the Euler characteristic, valid ONLY for a closed,
-    // connected, 2-manifold surface: genus = (2 - EulerCharacteristic) / 2.
+    // connected, 2-manifold surface: genus = (2 - EulerCharacteristic) / 2
+    // (https://en.wikipedia.org/wiki/Genus_(mathematics)).
     // Integer division truncates; the precondition guarantees an even numerator.
     GenusIfClosed(self: MeshTopology): Integer
         => (2 - self.EulerCharacteristic) / 2;
@@ -59,7 +62,8 @@ library MeshesSpatial
         => self.IsEmpty.Not.And(self.HasFaces.Not);
 
     //==
-    // HalfEdgeNavigable — constant-time walks over a half-edge structure. Callers
+    // HalfEdgeNavigable — constant-time walks over a half-edge structure
+    // (https://en.wikipedia.org/wiki/Doubly_connected_edge_list). Callers
     // must never pass -1; absence surfaces as a -1 Value in the returned index.
     // (Twin is -1 on a boundary edge; Face is -1 for a half-edge along a hole.)
 

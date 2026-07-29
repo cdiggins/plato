@@ -1,10 +1,12 @@
 //==
 // # Quantities and units
 //
-// A quantity is a number with an intrinsic unit of measure implied by its type.
-// Quantities add, subtract, scale, order, and interpolate — but multiplying two
-// quantities yields a different type, so they are deliberately not Arithmetic.
-// Each type's field name states its canonical (SI or conventional) unit.
+// A quantity is a number with an intrinsic unit of measure implied by its type
+// (https://en.wikipedia.org/wiki/Physical_quantity). Quantities add, subtract,
+// scale, order, and interpolate — but multiplying two quantities yields a
+// different type, so they are deliberately not Arithmetic. Each type's field
+// name states its canonical (SI or conventional) unit
+// (https://en.wikipedia.org/wiki/International_System_of_Units).
 
 // A one-dimensional measured amount with an implicit unit.
 concept Quantity
@@ -19,7 +21,9 @@ concept Quantity
 //
 // For unit systems resolved at runtime (file import, UI, scientific data).
 
-// Exponents of the seven SI base dimensions. A dimensionless value has all zeros.
+// Exponents of the seven SI base dimensions
+// (https://en.wikipedia.org/wiki/Dimensional_analysis). A dimensionless value
+// has all zeros.
 type Dimension
 {
     LengthPower: Integer;
@@ -31,7 +35,8 @@ type Dimension
     LuminosityPower: Integer;
 }
 
-// A named unit of measure with a conversion to SI: si = value * ScaleToSI + OffsetToSI.
+// A named unit of measure with a conversion to SI: si = value * ScaleToSI + OffsetToSI
+// (https://en.wikipedia.org/wiki/Unit_of_measurement).
 type UnitOfMeasure
 {
     Name: String;
@@ -51,10 +56,10 @@ type DynamicQuantity
 //==
 // # Geometric and kinematic quantities
 
-// A planar angle, stored in radians.
+// A planar angle, stored in radians (https://en.wikipedia.org/wiki/Angle).
 type Angle implements Quantity { Radians: Number; }
 
-// A solid angle, stored in steradians.
+// A solid angle, stored in steradians (https://en.wikipedia.org/wiki/Solid_angle).
 type SolidAngle implements Quantity { Steradians: Number; }
 
 // A spatial distance, stored in meters.
@@ -102,10 +107,10 @@ type ArealDensity implements Quantity { KilogramsPerSquareMeter: Number; }
 // Mass per length, stored in kilograms per meter.
 type LinearDensity implements Quantity { KilogramsPerMeter: Number; }
 
-// Force, stored in newtons.
+// Force, stored in newtons (https://en.wikipedia.org/wiki/Force).
 type Force implements Quantity { Newtons: Number; }
 
-// Rotational force, stored in newton-meters.
+// Rotational force, stored in newton-meters (https://en.wikipedia.org/wiki/Torque).
 type Torque implements Quantity { NewtonMeters: Number; }
 
 // Impulse (force integrated over time), stored in newton-seconds.
@@ -114,13 +119,15 @@ type Impulse implements Quantity { NewtonSeconds: Number; }
 // Linear momentum, stored in kilogram-meters per second.
 type Momentum implements Quantity { KilogramMetersPerSecond: Number; }
 
-// Angular momentum, stored in kilogram-square-meters per second.
+// Angular momentum, stored in kilogram-square-meters per second
+// (https://en.wikipedia.org/wiki/Angular_momentum).
 type AngularMomentum implements Quantity { KilogramSquareMetersPerSecond: Number; }
 
-// Rotational inertia about an axis, stored in kilogram-square-meters.
+// Rotational inertia about an axis, stored in kilogram-square-meters
+// (https://en.wikipedia.org/wiki/Moment_of_inertia).
 type MomentOfInertia implements Quantity { KilogramSquareMeters: Number; }
 
-// Energy or work, stored in joules.
+// Energy or work, stored in joules (https://en.wikipedia.org/wiki/Energy).
 type Energy implements Quantity { Joules: Number; }
 
 // Rate of energy transfer, stored in watts.

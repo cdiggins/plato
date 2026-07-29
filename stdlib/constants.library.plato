@@ -20,6 +20,7 @@ library Constants
     // Irrational and derived numeric constants
 
     // The golden ratio (1 + sqrt 5) / 2, approximately 1.618034.
+    // (https://en.wikipedia.org/wiki/Golden_ratio)
     GoldenRatio(_: Number): Number
         => (1.0 + 5.0.Sqrt) / 2.0;
 
@@ -145,11 +146,12 @@ library Constants
     // Canonical unit shapes
 
     // The interval [0, 1]: the default parameter domain for curves, surfaces,
-    // easing functions, and interpolation.
+    // easing functions, and interpolation. (https://en.wikipedia.org/wiki/Unit_interval)
     UnitInterval(_: NumberInterval): NumberInterval
         => NumberInterval(0.0, 1.0);
 
     // The circle of radius one centred at the origin.
+    // (https://en.wikipedia.org/wiki/Unit_circle)
     UnitCircle(_: Circle): Circle
         => Circle(Point2D(0.0, 0.0), 1.0);
 }

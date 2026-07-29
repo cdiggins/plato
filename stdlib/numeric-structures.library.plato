@@ -55,8 +55,10 @@ library NumericStructures
     //==
     // # Vector
     //
-    // Fixed-arity numeric vectors (Numerical, Arithmetic, Indexable<Number>,
-    // Normed, Lattice, Hashable) with a Dot product. Magnitude and
+    // Fixed-arity numeric vectors
+    // (https://en.wikipedia.org/wiki/Vector_(mathematics_and_physics); Numerical,
+    // Arithmetic, Indexable<Number>, Normed, Lattice, Hashable) with a Dot product
+    // (https://en.wikipedia.org/wiki/Dot_product). Magnitude and
     // MagnitudeSquared come from Normed; Min/Max are the component-wise lattice
     // operations. MidPoint and LerpClamped come from CoreAlgebra (Interpolatable).
     // Vector is Lattice but not Clampable, so the box clamps below stay here.
@@ -91,7 +93,9 @@ library NumericStructures
     ScalarProjection(self: Vector, onto: Vector): Number
         => self.Dot(onto) / onto.Magnitude;
 
-    // The component of self parallel to onto. Precondition: onto is non-zero.
+    // The component of self parallel to onto
+    // (https://en.wikipedia.org/wiki/Vector_projection). Precondition: onto is
+    // non-zero.
     ProjectOnto(self: Vector, onto: Vector): Vector
         => onto * (self.Dot(onto) / onto.Dot(onto));
 
@@ -146,12 +150,14 @@ library NumericStructures
     //==
     // # Vector3D — cross-product neighbourhood (cross-product lesson)
     //
-    // Cross(Vector3D, Vector3D) itself is an intrinsic (intrinsics.plato); these
-    // are the helpers that sit immediately around it. Concrete Vector3D receivers
-    // so Cross and the component accessors resolve to the 3D type.
+    // Cross(Vector3D, Vector3D) itself is an intrinsic (intrinsics.plato;
+    // https://en.wikipedia.org/wiki/Cross_product); these are the helpers that
+    // sit immediately around it. Concrete Vector3D receivers so Cross and the
+    // component accessors resolve to the 3D type.
 
     // The scalar triple product a . (b x c): the signed volume of the
-    // parallelepiped spanned by the three vectors; zero iff they are coplanar.
+    // parallelepiped spanned by the three vectors; zero iff they are coplanar
+    // (https://en.wikipedia.org/wiki/Scalar_triple_product).
     ScalarTriple(a: Vector3D, b: Vector3D, c: Vector3D): Number
         => a.Dot(b.Cross(c));
 
@@ -614,13 +620,16 @@ library NumericStructures
         => self.ElementAt(i, i);
 
     // The trace: the sum of the main-diagonal elements, folded over the diagonal
-    // indices via MapRange + Array.Reduce. Precondition: the matrix is square.
+    // indices via MapRange + Array.Reduce
+    // (https://en.wikipedia.org/wiki/Trace_(linear_algebra)). Precondition: the
+    // matrix is square.
     Trace(self: MatrixLike): Number
         => self.RowCount.MapRange(i => self.ElementAt(i, i)).Reduce(0.0, (acc, x) => acc + x);
 
     // The Frobenius norm: the square root of the sum of the squares of every
-    // element. The row-major flat index k maps to element (k / ColumnCount,
-    // k % ColumnCount), so the whole matrix is folded in one pass.
+    // element (https://en.wikipedia.org/wiki/Matrix_norm). The row-major flat
+    // index k maps to element (k / ColumnCount, k % ColumnCount), so the whole
+    // matrix is folded in one pass.
     // Precondition: at least one element.
     FrobeniusNorm(self: MatrixLike): Number
         => self.ElementCount

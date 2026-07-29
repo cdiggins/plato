@@ -2,15 +2,16 @@
 // # Splines
 //
 // Control-point curves: Bezier, B-spline, NURBS, Hermite, Catmull-Rom, and
-// piecewise composites. Parallel arrays (points + weights, points + tangents)
-// must have equal counts; that invariant is documented rather than encoded.
+// piecewise composites (https://en.wikipedia.org/wiki/Spline_(mathematics)).
+// Parallel arrays (points + weights, points + tangents) must have equal
+// counts; that invariant is documented rather than encoded.
 
 //==
 // # Knots
 
 // A non-decreasing sequence of parameter values partitioning a B-spline or
-// NURBS domain. For a curve with N control points of degree D the knot count
-// must be N + D + 1.
+// NURBS domain (https://en.wikipedia.org/wiki/B-spline#Definition). For a
+// curve with N control points of degree D the knot count must be N + D + 1.
 type KnotVector
     implements Value
 {
@@ -21,7 +22,8 @@ type KnotVector
 // # Bezier curves of arbitrary degree
 
 // A Bezier curve of arbitrary degree in the plane: degree = control point
-// count - 1. Interpolates the first and last control points.
+// count - 1 (https://en.wikipedia.org/wiki/B%C3%A9zier_curve). Interpolates
+// the first and last control points.
 type BezierCurve2D
     implements Curve2D
 {
@@ -58,8 +60,9 @@ type RationalBezierCurve3D
 //==
 // # B-splines and NURBS
 
-// A piecewise-polynomial B-spline curve in the plane. Knots must hold
-// ControlPoints count + Degree + 1 values.
+// A piecewise-polynomial B-spline curve in the plane
+// (https://en.wikipedia.org/wiki/B-spline). Knots must hold ControlPoints
+// count + Degree + 1 values.
 type BSplineCurve2D
     implements Curve2D
 {
@@ -79,8 +82,9 @@ type BSplineCurve3D
 }
 
 // A non-uniform rational B-spline curve in the plane: a B-spline with
-// per-point weights (same count as ControlPoints). The CAD interchange
-// standard; represents conics exactly.
+// per-point weights (same count as ControlPoints)
+// (https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline). The CAD
+// interchange standard; represents conics exactly.
 type NurbsCurve2D
     implements Curve2D
 {
@@ -218,7 +222,8 @@ type LinearSpline3D
 
 // A natural cubic spline through scalar samples: interpolates Values at the
 // strictly increasing Parameters (same counts), with zero second derivative
-// at the ends. A smooth Curve1D for profiles and channels.
+// at the ends (https://en.wikipedia.org/wiki/Spline_interpolation). A smooth
+// Curve1D for profiles and channels.
 type NaturalCubicSpline1D
     implements Curve1D
 {

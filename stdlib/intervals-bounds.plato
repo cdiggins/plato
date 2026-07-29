@@ -1,9 +1,10 @@
 //==
 // # Intervals, bounds, and sizes
 //
-// One-dimensional intervals, axis-aligned bounding regions, and extent types.
-// Bounds are inclusive on Min, inclusive on Max unless a doc comment says
-// otherwise.
+// One-dimensional intervals (https://en.wikipedia.org/wiki/Interval_(mathematics)),
+// axis-aligned bounding regions (https://en.wikipedia.org/wiki/Bounding_volume),
+// and extent types. Bounds are inclusive on Min, inclusive on Max unless a doc
+// comment says otherwise.
 // Convention: see CONVENTIONS.md - Bounds (inclusive Min/Max; inverted
 // Start>End / Min>Max is the empty encoding and the Union identity).
 
@@ -66,11 +67,12 @@ type IntegerInterval
     End: Integer;
 }
 
-// An axis-aligned bounding rectangle in 2D. Inclusive on Min and Max. An inverted
-// box (Min greater than Max on either axis) is the EMPTY encoding: it contains no
-// point and is the identity for Union, so accumulation can start from Empty().
-// Prefer Bounds2D for culling/containment; prefer Rect2D (center+size) for layout.
-// Convention: see CONVENTIONS.md - Bounds.
+// An axis-aligned bounding rectangle in 2D
+// (https://en.wikipedia.org/wiki/Axis-aligned_bounding_box). Inclusive on Min and
+// Max. An inverted box (Min greater than Max on either axis) is the EMPTY
+// encoding: it contains no point and is the identity for Union, so accumulation
+// can start from Empty(). Prefer Bounds2D for culling/containment; prefer Rect2D
+// (center+size) for layout. Convention: see CONVENTIONS.md - Bounds.
 type Bounds2D
     implements BoundsLike<Point2D, Vector2D>
 {
@@ -78,10 +80,11 @@ type Bounds2D
     Max: Point2D;
 }
 
-// An axis-aligned bounding box in 3D. Inclusive on Min and Max. An inverted box
-// (Min greater than Max on any axis) is the EMPTY encoding: it contains no point
-// and is the identity for Union, so accumulation can start from Empty().
-// Convention: see CONVENTIONS.md - Bounds.
+// An axis-aligned bounding box in 3D
+// (https://en.wikipedia.org/wiki/Axis-aligned_bounding_box). Inclusive on Min and
+// Max. An inverted box (Min greater than Max on any axis) is the EMPTY encoding:
+// it contains no point and is the identity for Union, so accumulation can start
+// from Empty(). Convention: see CONVENTIONS.md - Bounds.
 type Bounds3D
     implements BoundsLike<Point3D, Vector3D>
 {

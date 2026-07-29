@@ -1,10 +1,11 @@
 //==
 // # Spatial primitives
 //
-// Bounded 3D solids, flat patches embedded in space, and implicit volumes.
-// Solid types denote the filled region including its boundary surface; flat
-// types (disk, triangle, quad) denote two-dimensional patches. Axes are unit
-// directions; sizes are full extents unless a comment says otherwise.
+// Bounded 3D solids, flat patches embedded in space, and implicit volumes
+// (https://en.wikipedia.org/wiki/Solid_geometry). Solid types denote the
+// filled region including its boundary surface; flat types (disk, triangle,
+// quad) denote two-dimensional patches. Axes are unit directions; sizes are
+// full extents unless a comment says otherwise.
 
 //==
 // # Spheres and ellipsoids
@@ -220,10 +221,10 @@ type ConvexVolume
 //==
 // # Implicit surfaces
 
-// An infinite circular paraboloid surface opening along Axis from Vertex:
-// points at height h above the vertex plane lie at radius r with
-// r * r = 4 * FocalLength * h. The reflector shape: rays parallel to Axis
-// converge at the focus.
+// An infinite circular paraboloid surface opening along Axis from Vertex
+// (https://en.wikipedia.org/wiki/Paraboloid): points at height h above the
+// vertex plane lie at radius r with r * r = 4 * FocalLength * h. The reflector
+// shape: rays parallel to Axis converge at the focus.
 type Paraboloid
     implements Geometry3D, Connected, Manifold, Orientable
 {
@@ -233,9 +234,9 @@ type Paraboloid
 }
 
 // A general quadric surface: the homogeneous points p with
-// Transpose(p) * Coefficients * p = 0. Coefficients is symmetric. Spheres,
-// ellipsoids, cones, cylinders, paraboloids, and hyperboloids are all special
-// cases.
+// Transpose(p) * Coefficients * p = 0 (https://en.wikipedia.org/wiki/Quadric).
+// Coefficients is symmetric. Spheres, ellipsoids, cones, cylinders,
+// paraboloids, and hyperboloids are all special cases.
 type Quadric
     implements Geometry3D
 {

@@ -1,11 +1,12 @@
 //==
 // # Polynomials and series
 //
-// Dense and sparse polynomials, fixed-degree forms, rational functions, and
-// truncated series in classical bases. Convention: dense coefficient arrays
-// are in ASCENDING powers (Coefficients[k] multiplies x^k); the fixed-degree
-// convenience types instead use the conventional school form with A on the
-// highest power, as documented per type.
+// Dense and sparse polynomials (https://en.wikipedia.org/wiki/Polynomial),
+// fixed-degree forms, rational functions, and truncated series in classical
+// bases. Convention: dense coefficient arrays are in ASCENDING powers
+// (Coefficients[k] multiplies x^k); the fixed-degree convenience types instead
+// use the conventional school form with A on the highest power, as documented
+// per type.
 
 // A dense univariate polynomial. Coefficients[k] multiplies x^k (ascending
 // powers); an empty array is the zero polynomial, and the degree is the
@@ -16,7 +17,8 @@ type Polynomial
     Coefficients: Array<Number>;
 }
 
-// A single term: Coefficient times x raised to a non-negative Power.
+// A single term: Coefficient times x raised to a non-negative Power
+// (https://en.wikipedia.org/wiki/Monomial).
 type Monomial
     implements Value
 {
@@ -73,8 +75,9 @@ type PolynomialRoots
     ComplexRoots: Array<Complex>;
 }
 
-// A ratio of two polynomials. The Denominator is not the zero polynomial;
-// the function is undefined at its roots (poles).
+// A ratio of two polynomials
+// (https://en.wikipedia.org/wiki/Rational_function). The Denominator is not the
+// zero polynomial; the function is undefined at its roots (poles).
 type RationalFunction
     implements Value
 {
@@ -89,7 +92,7 @@ type RationalFunction
 // terms, ascending by term index.
 
 // A truncated power series about Center: the sum of Coefficients[k] times
-// (x - Center)^k.
+// (x - Center)^k (https://en.wikipedia.org/wiki/Power_series).
 type PowerSeries
     implements Value
 {
@@ -97,9 +100,9 @@ type PowerSeries
     Coefficients: Array<Number>;
 }
 
-// A truncated series over Chebyshev polynomials of the first kind:
-// Coefficients[k] weights T_k evaluated after Interval is mapped linearly
-// onto [-1, 1].
+// A truncated series over Chebyshev polynomials of the first kind
+// (https://en.wikipedia.org/wiki/Chebyshev_polynomials): Coefficients[k]
+// weights T_k evaluated after Interval is mapped linearly onto [-1, 1].
 type ChebyshevSeries
     implements Value
 {
@@ -107,7 +110,8 @@ type ChebyshevSeries
     Coefficients: Array<Number>;
 }
 
-// A truncated series over Legendre polynomials on [-1, 1]: Coefficients[k]
+// A truncated series over Legendre polynomials on [-1, 1]
+// (https://en.wikipedia.org/wiki/Legendre_polynomials): Coefficients[k]
 // weights P_k.
 type LegendreSeries
     implements Value
@@ -115,7 +119,8 @@ type LegendreSeries
     Coefficients: Array<Number>;
 }
 
-// A truncated series over physicists' Hermite polynomials: Coefficients[k]
+// A truncated series over physicists' Hermite polynomials
+// (https://en.wikipedia.org/wiki/Hermite_polynomials): Coefficients[k]
 // weights H_k.
 type HermiteSeries
     implements Value
@@ -123,9 +128,10 @@ type HermiteSeries
     Coefficients: Array<Number>;
 }
 
-// A polynomial over the Bernstein basis of degree count - 1 on [0, 1]:
-// Coefficients[k] weights the k-th Bernstein basis polynomial. The
-// coefficients act as control values, as in a Bezier curve.
+// A polynomial over the Bernstein basis of degree count - 1 on [0, 1]
+// (https://en.wikipedia.org/wiki/Bernstein_polynomial): Coefficients[k]
+// weights the k-th Bernstein basis polynomial. The coefficients act as control
+// values, as in a Bezier curve.
 type BernsteinPolynomial
     implements Value
 {
@@ -141,8 +147,9 @@ type BivariatePolynomial
     Coefficients: Array2D<Number>;
 }
 
-// A truncated real Fourier series. Term k oscillates at k times the
-// Fundamental frequency; CosineCoefficients[0] is the constant (DC) term and
+// A truncated real Fourier series
+// (https://en.wikipedia.org/wiki/Fourier_series). Term k oscillates at k times
+// the Fundamental frequency; CosineCoefficients[0] is the constant (DC) term and
 // SineCoefficients[0] is ignored. The two arrays have equal length.
 type FourierSeries
     implements Value
@@ -155,10 +162,10 @@ type FourierSeries
 //==
 // # Composite and derived forms
 
-// A piecewise polynomial (spline in polynomial form). Breakpoints ascend and
-// number one more than Pieces; piece i applies on the half-open span from
-// Breakpoints[i] to Breakpoints[i+1] and is evaluated in the local variable
-// x - Breakpoints[i].
+// A piecewise polynomial (spline in polynomial form;
+// https://en.wikipedia.org/wiki/Piecewise). Breakpoints ascend and number one
+// more than Pieces; piece i applies on the half-open span from Breakpoints[i]
+// to Breakpoints[i+1] and is evaluated in the local variable x - Breakpoints[i].
 type PiecewisePolynomial
     implements Value
 {
@@ -166,9 +173,10 @@ type PiecewisePolynomial
     Pieces: Array<Polynomial>;
 }
 
-// A Pade approximant about Center: the rational function Numerator over
-// Denominator that matches a power series to the highest order the two
-// degrees allow. The Denominator's constant term is normalized to 1.
+// A Pade approximant about Center
+// (https://en.wikipedia.org/wiki/Pad%C3%A9_approximant): the rational function
+// Numerator over Denominator that matches a power series to the highest order
+// the two degrees allow. The Denominator's constant term is normalized to 1.
 type PadeApproximant
     implements Value
 {
@@ -177,9 +185,10 @@ type PadeApproximant
     Denominator: Polynomial;
 }
 
-// A Sturm sequence for counting real roots in an interval by sign changes.
-// Polynomials[0] is the original polynomial, Polynomials[1] its derivative,
-// and each later entry is the negated remainder of the two before it.
+// A Sturm sequence for counting real roots in an interval by sign changes
+// (https://en.wikipedia.org/wiki/Sturm%27s_theorem). Polynomials[0] is the
+// original polynomial, Polynomials[1] its derivative, and each later entry is
+// the negated remainder of the two before it.
 type SturmChain
     implements Value
 {
@@ -368,8 +377,9 @@ library Polynomials
     // foldable but out of scope for this pass.
 
     // Evaluates a dense coefficient array given in ASCENDING powers at x by
-    // Horner's rule: folding the highest-power coefficient first means no
-    // explicit power of x is ever formed, which is both faster and more stable.
+    // Horner's rule (https://en.wikipedia.org/wiki/Horner%27s_method): folding
+    // the highest-power coefficient first means no explicit power of x is ever
+    // formed, which is both faster and more stable.
     // An empty array is the zero polynomial and evaluates to 0.
     HornerEval(coefficients: Array<Number>, x: Number): Number
         => MapRange(coefficients.Count, i => coefficients.At(coefficients.Count - 1 - i))

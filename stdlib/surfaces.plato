@@ -2,9 +2,10 @@
 // # Surfaces
 //
 // Patches, control nets, and generated surfaces (revolve, extrude, rule, loft,
-// sweep). Control nets use Array2D with the U direction along columns and the
-// V direction along rows. Generator curves referenced as concepts (Curve2D,
-// Curve3D) are supplied by any concrete curve type.
+// sweep) (https://en.wikipedia.org/wiki/Parametric_surface). Control nets use
+// Array2D with the U direction along columns and the V direction along rows.
+// Generator curves referenced as concepts (Curve2D, Curve3D) are supplied by
+// any concrete curve type.
 
 //==
 // # Patches and control nets
@@ -21,7 +22,8 @@ type BilinearPatch
 }
 
 // A tensor-product Bezier patch: U degree = column count - 1, V degree =
-// row count - 1. Interpolates the four corner control points.
+// row count - 1 (https://en.wikipedia.org/wiki/B%C3%A9zier_surface).
+// Interpolates the four corner control points.
 type BezierPatch
     implements ParametricSurface
 {
@@ -41,8 +43,9 @@ type BSplineSurface
 }
 
 // A non-uniform rational B-spline surface: a B-spline surface with per-point
-// Weights (same dimensions as ControlPoints). The CAD interchange standard;
-// represents quadrics exactly.
+// Weights (same dimensions as ControlPoints)
+// (https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline). The CAD
+// interchange standard; represents quadrics exactly.
 type NurbsSurface
     implements ParametricSurface
 {
@@ -63,8 +66,9 @@ type PlanarPatch
     Domain: Bounds2D;
 }
 
-// A Coons patch: the surface blended from four boundary curves. The curves
-// must meet at the patch corners (Bottom/Top run in U, Left/Right run in V).
+// A Coons patch: the surface blended from four boundary curves
+// (https://en.wikipedia.org/wiki/Coons_patch). The curves must meet at the
+// patch corners (Bottom/Top run in U, Left/Right run in V).
 type CoonsPatch
     implements ParametricSurface
 {
@@ -87,8 +91,9 @@ type SphericalPatch
 //==
 // # Generated surfaces
 
-// The surface swept by revolving a profile curve about an axis. The profile's
-// X coordinate is the radial distance from the axis and its Y coordinate runs
+// The surface swept by revolving a profile curve about an axis
+// (https://en.wikipedia.org/wiki/Surface_of_revolution). The profile's X
+// coordinate is the radial distance from the axis and its Y coordinate runs
 // along the axis; Angles is the sweep (a full turn closes the surface in U).
 type SurfaceOfRevolution
     implements ParametricSurface
@@ -109,7 +114,8 @@ type ExtrudedSurface
 }
 
 // The ruled surface between two curves: straight line segments join Start and
-// End at equal parameter values (U along the curves, V across the rulings).
+// End at equal parameter values (https://en.wikipedia.org/wiki/Ruled_surface).
+// U along the curves, V across the rulings.
 type RuledSurface
     implements ParametricSurface
 {
@@ -170,7 +176,8 @@ type TrimmedSurface
 
 // A sampled elevation surface: Heights holds regular samples over the ground
 // rectangle Domain in the XY plane (columns along X, rows along Y), with
-// bilinear interpolation between samples. Terrain and displacement data.
+// bilinear interpolation between samples
+// (https://en.wikipedia.org/wiki/Heightmap). Terrain and displacement data.
 type HeightField
     implements HeightFieldSurface
 {
@@ -183,7 +190,8 @@ type HeightField
 
 // A Mobius band: a strip of the given Width whose centerline circle of radius
 // Radius lies in the frame's XY plane, twisted by HalfTwistCount half-turns
-// over one lap. An odd count yields the one-sided surface.
+// over one lap (https://en.wikipedia.org/wiki/M%C3%B6bius_strip). An odd count
+// yields the one-sided surface.
 type MobiusStrip
     implements ParametricSurface
 {
@@ -193,7 +201,8 @@ type MobiusStrip
     HalfTwistCount: Integer;
 }
 
-// The subdivision scheme applied to a control mesh.
+// The subdivision scheme applied to a control mesh
+// (https://en.wikipedia.org/wiki/Subdivision_surface).
 type SubdivisionScheme = CatmullClark | Loop | DooSabin;
 
 // The limit surface of a control mesh under a subdivision scheme, evaluated

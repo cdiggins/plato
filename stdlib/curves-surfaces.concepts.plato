@@ -5,7 +5,8 @@
 // a surface maps two, a volume maps three (the Procedural concept from file 04).
 // Unless a type documents otherwise, the canonical parameter domain of a curve is
 // the unit interval [0,1], and a UV surface's domain is the unit square. Closed
-// curves satisfy Eval(0) = Eval(1).
+// curves satisfy Eval(0) = Eval(1). See https://en.wikipedia.org/wiki/Curve and
+// https://en.wikipedia.org/wiki/Surface_(mathematics).
 
 //==
 // # Curves
@@ -16,12 +17,14 @@ concept Curve1D
     inherits Procedural<Number, Number>
 { }
 
-// A continuous map from a parameter to a position in the plane.
+// A continuous map from a parameter to a position in the plane
+// (https://en.wikipedia.org/wiki/Parametric_equation).
 concept Curve2D
     inherits Geometry2D, Procedural<Number, Point2D>
 { }
 
-// A continuous map from a parameter to a position in space.
+// A continuous map from a parameter to a position in space
+// (https://en.wikipedia.org/wiki/Differential_geometry_of_curves).
 concept Curve3D
     inherits Geometry3D, Procedural<Number, Point3D>
 { }
@@ -51,7 +54,8 @@ concept PeriodicCurve<TRange>
 
 // A 2D curve with a defined first derivative. TangentAt is the (not necessarily
 // unit-length) velocity; CurvatureAt is the signed plane curvature (positive
-// turning left, negative turning right).
+// turning left, negative turning right)
+// (https://en.wikipedia.org/wiki/Curvature).
 concept DifferentiableCurve2D
     inherits Curve2D
 {
@@ -61,7 +65,8 @@ concept DifferentiableCurve2D
 
 // A 3D curve with a defined first derivative. TangentAt is the velocity,
 // CurvatureAt is the unsigned space curvature, and TorsionAt measures how
-// sharply the curve leaves its osculating plane.
+// sharply the curve leaves its osculating plane
+// (https://en.wikipedia.org/wiki/Torsion_of_a_curve).
 concept DifferentiableCurve3D
     inherits Curve3D
 {
@@ -72,7 +77,8 @@ concept DifferentiableCurve3D
 
 // A 3D curve carrying a continuous moving frame (Frenet or rotation-minimizing):
 // the frame origin lies on the curve and its Z axis is tangent. The basis for
-// sweeps, lofts, and camera paths.
+// sweeps, lofts, and camera paths
+// (https://en.wikipedia.org/wiki/Frenet%E2%80%93Serret_formulas).
 concept FramedCurve3D
     inherits DifferentiableCurve3D
 {
@@ -88,7 +94,8 @@ concept PlanarCurve3D
 
 // A plane curve expressed in polar form about the origin: the position at angle
 // theta is (RadiusAt(theta) * cos(theta), RadiusAt(theta) * sin(theta)).
-// The canonical [0,1] parameter maps to one full turn unless documented otherwise.
+// The canonical [0,1] parameter maps to one full turn unless documented otherwise
+// (https://en.wikipedia.org/wiki/Polar_coordinate_system).
 concept PolarCurve2D
     inherits Curve2D
 {
@@ -98,7 +105,8 @@ concept PolarCurve2D
 // A curve measurable by arc length. ArcLength is the total length over the
 // canonical domain; PointAtLength walks a distance along the curve from its
 // start; ParameterAtLength converts a distance to the canonical parameter.
-// TPoint is the concrete point type of the curve (Point2D, Point3D, or Number).
+// TPoint is the concrete point type of the curve (Point2D, Point3D, or Number)
+// (https://en.wikipedia.org/wiki/Arc_length).
 concept ArcLengthParameterized<TPoint>
 {
     ArcLength(x: Self): Number;
@@ -123,7 +131,8 @@ concept ClosedSurface
 
 // A surface evaluated from a rectangular UV parameter domain (canonically the
 // unit square). ClosedU/ClosedV report whether the surface seams shut across
-// the U or V direction (a cylinder closes in one, a torus in both).
+// the U or V direction (a cylinder closes in one, a torus in both)
+// (https://en.wikipedia.org/wiki/Parametric_surface).
 concept ParametricSurface
     inherits Surface, Procedural<UvCoordinate, Point3D>
 {
@@ -133,7 +142,8 @@ concept ParametricSurface
 
 // A parametric surface with defined partial derivatives. TangentUAt/TangentVAt
 // span the tangent plane; NormalAt is their normalized cross product, oriented
-// by the right-hand rule.
+// by the right-hand rule
+// (https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces).
 concept DifferentiableSurface
     inherits ParametricSurface
 {
@@ -145,7 +155,7 @@ concept DifferentiableSurface
 // A surface expressed as an elevation over a ground plane: the domain is a
 // position in the plane (Point2D, not a normalized UV coordinate, because
 // height fields are defined over world-plane positions), and the result is the
-// height above that position.
+// height above that position (https://en.wikipedia.org/wiki/Heightmap).
 concept HeightFieldSurface
     inherits Surface, Procedural<Point2D, Number>
 { }
@@ -159,13 +169,15 @@ concept Solid
     inherits Geometry3D
 { }
 
-// A solid that is convex: every segment between two of its points stays inside.
+// A solid that is convex: every segment between two of its points stays inside
+// (https://en.wikipedia.org/wiki/Convex_set).
 concept ConvexSolid
     inherits Solid
 { }
 
 // A deformable volume evaluated from a UVW parameter box (canonically the unit
-// cube): trivariate patches, free-form deformation cages, solid textures spaces.
+// cube): trivariate patches, free-form deformation cages, solid textures spaces
+// (https://en.wikipedia.org/wiki/Free-form_deformation).
 concept ParametricVolume
     inherits Geometry3D, Procedural<UvwCoordinate, Point3D>
 { }

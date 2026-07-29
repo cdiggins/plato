@@ -1,10 +1,11 @@
 //==
 // # Statistics
 //
-// Descriptive statistics, histograms, correlation, and fitting summaries.
-// Conventions: sample statistics use Bessel's correction (divide by n - 1);
-// kurtosis is excess kurtosis (a normal distribution scores 0); paired arrays
-// are index-aligned and equal in length.
+// Descriptive statistics, histograms, correlation, and fitting summaries
+// (https://en.wikipedia.org/wiki/Descriptive_statistics). Conventions: sample
+// statistics use Bessel's correction (divide by n - 1); kurtosis is excess
+// kurtosis (a normal distribution scores 0); paired arrays are index-aligned
+// and equal in length.
 
 // Descriptive statistics of a univariate sample. Variance and StandardDeviation
 // use the sample (n - 1) convention; Skewness and Kurtosis are standardized
@@ -64,7 +65,8 @@ type Histogram2D
 }
 
 // Sample quantiles as parallel arrays: Values[i] is the data value at
-// cumulative probability Levels[i]. Levels ascend and lie in [0, 1].
+// cumulative probability Levels[i] (https://en.wikipedia.org/wiki/Quantile).
+// Levels ascend and lie in [0, 1].
 type Quantiles
     implements Value
 {
@@ -144,19 +146,21 @@ type PolynomialFit
     RSquared: Number;
 }
 
-// A moving-average smoother, each kind carrying exactly its own controls:
-// a flat window of WindowSize samples (Simple), an exponential smoother
-// with alpha in (0, 1] (Exponential), or a Gaussian-weighted window with
-// its standard deviation in samples (Gaussian).
+// A moving-average smoother, each kind carrying exactly its own controls
+// (https://en.wikipedia.org/wiki/Moving_average): a flat window of WindowSize
+// samples (Simple), an exponential smoother with alpha in (0, 1]
+// (Exponential), or a Gaussian-weighted window with its standard deviation in
+// samples (Gaussian).
 type MovingAverage
     = Simple(WindowSize: Integer)
     | Exponential(Alpha: Proportion)
     | Gaussian(WindowSize: Integer, StandardDeviation: Number);
 
 // An outlier test. Each statistic carries its threshold in its own native
-// scale: standard deviations for ZScore, interquartile-range multiples
-// beyond the quartiles for Iqr, and median-absolute-deviation multiples for
-// Mad.
+// scale: standard deviations for ZScore
+// (https://en.wikipedia.org/wiki/Standard_score), interquartile-range
+// multiples beyond the quartiles for Iqr, and median-absolute-deviation
+// multiples for Mad (https://en.wikipedia.org/wiki/Median_absolute_deviation).
 type OutlierDetection
     = ZScore(Threshold: Number)
     | Iqr(Threshold: Number)

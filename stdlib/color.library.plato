@@ -31,8 +31,9 @@ library Colors
     //
     // Alpha participates in the arithmetic like any other component. That is the
     // right behaviour for a linear-light value type (it makes Lerp a straight
-    // 4-vector interpolation), but it is NOT alpha compositing: premultiplication
-    // and Porter-Duff operators belong with the imaging package.
+    // 4-vector interpolation), but it is NOT alpha compositing
+    // (https://en.wikipedia.org/wiki/Alpha_compositing): premultiplication and
+    // Porter-Duff operators belong with the imaging package.
 
     // Component-wise sum, alpha included.
     Add(a: Color, b: Color): Color
@@ -82,7 +83,8 @@ library Colors
         => (Number.MaxValue, Number.MaxValue, Number.MaxValue, Number.MaxValue);
 
     //==
-    // Named colors - the 141 CSS Color Module Level 4 / X11 names.
+    // Named colors - the 141 CSS Color Module Level 4 / X11 names
+    // (https://en.wikipedia.org/wiki/Web_colors).
     //
     // Values are 8-bit sRGB, fully opaque. Read as `Color8.CornflowerBlue`.
     // Exact duplicates in the standard are preserved as separate names

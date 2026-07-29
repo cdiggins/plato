@@ -1,9 +1,10 @@
 //==
 // # Matrices and tensors
 //
-// Dense numeric matrices stored as row vectors: RowN holds row N, so element
-// (r, c) is component c of row r. Fixed sizes cover graphics and geometry;
-// MatrixN and Tensor cover scientific computing.
+// Dense numeric matrices (https://en.wikipedia.org/wiki/Matrix_(mathematics))
+// stored as row vectors: RowN holds row N, so element (r, c) is component c of
+// row r. Fixed sizes cover graphics and geometry; MatrixN and Tensor cover
+// scientific computing.
 // Convention: see CONVENTIONS.md - Matrices (row-vector multiplication, v' = v M).
 // Discoverability banner (item 473): the concrete operations for the fixed-size
 // matrices (Determinant, Invert, Multiply, Transform, Lerp, ...) are declared on
@@ -87,8 +88,9 @@ type MatrixN
     Components: Array<Number>;
 }
 
-// A dense multi-dimensional numeric array with arbitrary rank. Extents lists the
-// size of each dimension; storage is row-major.
+// A dense multi-dimensional numeric array with arbitrary rank
+// (https://en.wikipedia.org/wiki/Tensor). Extents lists the size of each
+// dimension; storage is row-major.
 type Tensor
     implements Value
 {

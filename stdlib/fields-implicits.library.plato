@@ -30,7 +30,8 @@ library FieldsImplicits
     // # ScalarField2D
     //
     // A real-valued field over the plane. Level-set membership and sign queries
-    // are the natural derived surface over a bare scalar evaluation.
+    // are the natural derived surface over a bare scalar evaluation
+    // (https://en.wikipedia.org/wiki/Level_set).
     // TODO(concept-gap): a numeric finite-difference gradient would need to sample
     // the field at points offset from `point`, but no sanctioned Point2D offset
     // operation is in scope here (Difference.Add needs a Vector2D that Coordinate
@@ -205,7 +206,8 @@ library FieldsImplicits
     // Jacobian) and scalar curl. The predicates classify local flow behaviour.
 
     // True where the field neither expands nor compresses within tolerance
-    // (divergence-free / incompressible flow).
+    // (divergence-free / incompressible flow)
+    // (https://en.wikipedia.org/wiki/Incompressible_flow).
     IsIncompressibleAt(self: DifferentiableVectorField2D, point: Point2D, tolerance: Number): Boolean
         => self.DivergenceAt(point).Abs <= tolerance;
 
@@ -221,7 +223,8 @@ library FieldsImplicits
     IsSinkAt(self: DifferentiableVectorField2D, point: Point2D): Boolean
         => self.DivergenceAt(point) < 0.0;
 
-    // True where the field has no local rotation within tolerance (irrotational).
+    // True where the field has no local rotation within tolerance (irrotational)
+    // (https://en.wikipedia.org/wiki/Irrotational_flow).
     IsIrrotationalAt(self: DifferentiableVectorField2D, point: Point2D, tolerance: Number): Boolean
         => self.CurlAt(point).Abs <= tolerance;
 
@@ -248,7 +251,8 @@ library FieldsImplicits
     IsSinkAt(self: DifferentiableVectorField3D, point: Point3D): Boolean
         => self.DivergenceAt(point) < 0.0;
 
-    // The strength of local rotation: the length of the curl (vorticity) vector.
+    // The strength of local rotation: the length of the curl (vorticity) vector
+    // (https://en.wikipedia.org/wiki/Vorticity).
     VorticityMagnitudeAt(self: DifferentiableVectorField3D, point: Point3D): Number
         => self.CurlAt(point).Magnitude;
 
@@ -350,7 +354,8 @@ library FieldsImplicits
     // # SignedDistanceField2D
     //
     // A planar SDF: value is the signed distance to a boundary curve, negative
-    // inside. The rich inside/outside/boundary surface builds on that one scalar.
+    // inside. The rich inside/outside/boundary surface builds on that one scalar
+    // (https://en.wikipedia.org/wiki/Signed_distance_function).
 
     // The signed distance from the point to the boundary; a readable spelling of
     // Eval. Negative inside, zero on the boundary, positive outside.
@@ -578,7 +583,8 @@ library FieldsImplicits
     //
     // SDF convention: union is the pointwise minimum, intersection the maximum,
     // difference the left field against the negated right. Results are exact for
-    // union and bounds elsewhere, which is the standard SDF caveat.
+    // union and bounds elsewhere, which is the standard SDF caveat
+    // (https://en.wikipedia.org/wiki/Constructive_solid_geometry).
 
     // The union of two planar distance fields: the pointwise minimum.
     Union(a: ScalarFunctionField2D, b: ScalarFunctionField2D): ScalarFunctionField2D
@@ -754,7 +760,8 @@ library FieldsImplicits
     // # Metaballs
     //
     // Summed radial falloff kernels. The system's field value is the total
-    // influence minus the threshold, so its zero level set is the blob boundary.
+    // influence minus the threshold, so its zero level set is the blob boundary
+    // (https://en.wikipedia.org/wiki/Metaballs).
 
     // The influence of one planar ball at a point: Strength at the centre, falling
     // smoothly to zero at Radius and staying zero beyond it.

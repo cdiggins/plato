@@ -1,15 +1,17 @@
 //==
 // # Mesh topology
 //
-// Connectivity, separated from embedded geometry. Typed index structs make the
+// Connectivity, separated from embedded geometry
+// (https://en.wikipedia.org/wiki/Polygon_mesh). Typed index structs make the
 // role of every integer explicit: a VertexIndex can never be silently confused
 // with a FaceIndex. All index types share one convention: Value is zero-based,
 // and -1 means "none" / "not present".
 //
-// Adjacency tables use CSR (compressed sparse row) encoding: an Offsets array
-// with (element count + 1) entries, where the items belonging to element i
-// occupy the half-open range [Offsets[i], Offsets[i+1]) of the packed payload
-// array, and the final offset equals the payload array's length.
+// Adjacency tables use CSR (compressed sparse row) encoding
+// (https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_row_(CSR,_CRS_or_Yale_format)):
+// an Offsets array with (element count + 1) entries, where the items belonging
+// to element i occupy the half-open range [Offsets[i], Offsets[i+1]) of the
+// packed payload array, and the final offset equals the payload array's length.
 
 //==
 // ## Typed element indices
@@ -97,11 +99,12 @@ type EdgeAdjacency
 //==
 // ## Half-edge structures
 
-// One directed side of an undirected mesh edge. Origin is the vertex this
-// half-edge leaves. Next and Previous walk the loop of the bordered face in
-// counter-clockwise order. Twin is the oppositely directed half-edge, -1 when
-// the edge is on a boundary. Face is the bordered face, -1 when this
-// half-edge runs along a hole.
+// One directed side of an undirected mesh edge
+// (https://en.wikipedia.org/wiki/Doubly_connected_edge_list). Origin is the
+// vertex this half-edge leaves. Next and Previous walk the loop of the
+// bordered face in counter-clockwise order. Twin is the oppositely directed
+// half-edge, -1 when the edge is on a boundary. Face is the bordered face, -1
+// when this half-edge runs along a hole.
 type HalfEdge
     implements Value
 {
@@ -189,14 +192,16 @@ type VertexFaceAdjacency
 // CCW-front; mirroring inverts winding).
 type WindingOrder = CounterClockwise | Clockwise;
 
-// How close a surface is to being a 2-manifold: Manifold means every edge
-// borders exactly two faces and vertex stars are disks;
-// ManifoldWithBoundary allows edges bordering one or two faces.
+// How close a surface is to being a 2-manifold
+// (https://en.wikipedia.org/wiki/Manifold): Manifold means every edge borders
+// exactly two faces and vertex stars are disks; ManifoldWithBoundary allows
+// edges bordering one or two faces.
 type Manifoldness = Unknown | Manifold | ManifoldWithBoundary | NonManifold;
 
 // Aggregate topological measurements of a mesh. EulerCharacteristic equals
-// VertexCount - EdgeCount + FaceCount; a closed connected manifold of genus g
-// has Euler characteristic 2 - 2g.
+// VertexCount - EdgeCount + FaceCount
+// (https://en.wikipedia.org/wiki/Euler_characteristic); a closed connected
+// manifold of genus g has Euler characteristic 2 - 2g.
 type TopologySummary
     implements Value
 {

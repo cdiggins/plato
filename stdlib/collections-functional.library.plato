@@ -108,10 +108,12 @@ library CollectionsFunctional
     // Folds the elements left to right from an initial accumulator: applies
     // f(acc, element) across the collection in index order. The general reduction
     // primitive behind sums, extents, and running aggregates on any indexable.
+    // (https://en.wikipedia.org/wiki/Fold_(higher-order_function))
     Reduce(xs: Indexable<$T>, acc: $U, f: Function2<$U, $T, $U>): $U
         => MapRange(xs.Count, i => xs.At(i)).Reduce(acc, f);
 
     // A new Array holding f applied to each element in index order.
+    // (https://en.wikipedia.org/wiki/Map_(higher-order_function))
     Map(xs: Indexable<$T>, f: Function1<$T, $U>): Array<$U>
         => MapRange(xs.Count, i => xs.At(i)).Map(f);
 
@@ -307,7 +309,8 @@ library CollectionsFunctional
     //==
     // # Bijective
     //
-    // Round-trip identities for an invertible mapping.
+    // Round-trip identities for an invertible mapping
+    // (https://en.wikipedia.org/wiki/Bijection).
 
     // Map forward then back; equals the original input for a true bijection.
     RoundTripDomain(self: Bijective<$TDomain, $TRange>, input: $TDomain): $TDomain

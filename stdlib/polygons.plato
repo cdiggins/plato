@@ -1,10 +1,12 @@
 //==
 // # Polygons and polylines
 //
-// Point-list geometry: open and closed vertex chains, simple polygons, polygons
-// with holes, and the solids obtained by extruding or coning a polygon.
-// Winding convention: counter-clockwise boundaries enclose positive area;
-// holes wind opposite to the boundary that contains them.
+// Point-list geometry: open and closed vertex chains
+// (https://en.wikipedia.org/wiki/Polygonal_chain), simple polygons
+// (https://en.wikipedia.org/wiki/Polygon), polygons with holes, and the solids
+// obtained by extruding or coning a polygon. Winding convention: counter-clockwise
+// boundaries enclose positive area; holes wind opposite to the boundary that
+// contains them.
 
 //==
 // # Polylines
@@ -78,8 +80,8 @@ type PolygonSet2D
 
 // A star polygon with PointCount tips alternating between OuterRadius and
 // InnerRadius vertices about Center (2 * PointCount vertices in all); Rotation
-// turns the first tip away from +X. Invariants: PointCount >= 3,
-// 0 < InnerRadius <= OuterRadius.
+// turns the first tip away from +X (https://en.wikipedia.org/wiki/Star_polygon).
+// Invariants: PointCount >= 3, 0 < InnerRadius <= OuterRadius.
 type RegularStar2D
     implements Geometry2D, ClosedShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
 {
@@ -105,9 +107,9 @@ type Polygon3D
 //==
 // # Polygon-derived solids
 
-// The solid swept by translating Base along Offset: a general prism. Oblique
-// when Offset is not perpendicular to the base plane; convex when the base is
-// convex.
+// The solid swept by translating Base along Offset: a general prism
+// (https://en.wikipedia.org/wiki/Prism_(geometry)). Oblique when Offset is not
+// perpendicular to the base plane; convex when the base is convex.
 type Prism3D
     implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
 {
@@ -115,8 +117,9 @@ type Prism3D
     Offset: Vector3D;
 }
 
-// The solid cone over a polygon: all segments from points of Base to Apex.
-// Degenerate when Apex lies in the base plane.
+// The solid cone over a polygon: all segments from points of Base to Apex
+// (https://en.wikipedia.org/wiki/Pyramid_(geometry)). Degenerate when Apex lies
+// in the base plane.
 type Pyramid3D
     implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
 {

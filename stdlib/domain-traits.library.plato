@@ -24,7 +24,8 @@ library DomainTraits
     // A pure map from normalized time to normalized progress, inheriting
     // Procedural<Number, Number> (its sole operation is Eval). Eval(0) is 0 and
     // Eval(1) is 1; intermediate values may leave [0, 1] (overshoot,
-    // anticipation). Helpers rename and recombine that single evaluation.
+    // anticipation). Helpers rename and recombine that single evaluation
+    // (https://en.wikipedia.org/wiki/Inbetweening).
 
     // The eased progress at normalized time t; a readable spelling of Eval.
     Progress(self: EasingFunction, t: Number): Number
@@ -216,12 +217,14 @@ library DomainTraits
         => self.SensorSize.Width / self.SensorSize.Height;
 
     // A fisheye lens draws into a square-bounded image circle, so its aspect ratio
-    // is 1 (the FieldOfView is a cone angle, not a width-to-height ratio).
+    // is 1 (the FieldOfView is a cone angle, not a width-to-height ratio)
+    // (https://en.wikipedia.org/wiki/Fisheye_lens).
     AspectRatio(self: FisheyeCamera): Number
         => 1.0;
 
     // The aspect ratio of an equirectangular panorama: the longitude sweep over
-    // the latitude sweep. Precondition: the latitude sweep is non-degenerate.
+    // the latitude sweep. Precondition: the latitude sweep is non-degenerate
+    // (https://en.wikipedia.org/wiki/Equirectangular_projection).
     AspectRatio(self: EquirectangularCamera): Number
         => self.LongitudeSweep.Extent.Radians / self.LatitudeSweep.Extent.Radians;
 
@@ -327,7 +330,8 @@ library DomainTraits
         => self.ForceOn(body).Magnitude;
 
     // The acceleration this force imparts to the body: force over mass (F = m a),
-    // in meters per second squared. Precondition: the body's mass is positive.
+    // in meters per second squared. Precondition: the body's mass is positive
+    // (https://en.wikipedia.org/wiki/Newton%27s_laws_of_motion).
     AccelerationOn(self: ForceModel2D, body: RigidBody2D): Vector2D
         => self.ForceOn(body) / body.MassProperties.Mass.Amount;
 
@@ -360,20 +364,23 @@ library DomainTraits
     //
     // A univariate distribution exposing Mean, Variance, Pdf, and Cdf. The
     // derived surface is the tail and interval probabilities that read from Cdf,
-    // plus density comparisons.
+    // plus density comparisons
+    // (https://en.wikipedia.org/wiki/Probability_distribution).
 
     // The standard deviation: the square root of the variance, in the same units
-    // as the values. Precondition: the variance is non-negative.
+    // as the values. Precondition: the variance is non-negative
+    // (https://en.wikipedia.org/wiki/Standard_deviation).
     StandardDeviation(self: ProbabilityDistribution): Number
         => self.Variance.Sqrt;
 
     // The cumulative probability of drawing at most value; a readable spelling
-    // of Cdf.
+    // of Cdf (https://en.wikipedia.org/wiki/Cumulative_distribution_function).
     ProbabilityAtMost(self: ProbabilityDistribution, value: Number): Number
         => self.Cdf(value);
 
     // The survival function at value: the probability of drawing more than
-    // value, 1 - Cdf(value).
+    // value, 1 - Cdf(value)
+    // (https://en.wikipedia.org/wiki/Survival_function).
     SurvivalAt(self: ProbabilityDistribution, value: Number): Number
         => 1.0 - self.Cdf(value);
 
@@ -417,7 +424,7 @@ library DomainTraits
 
     // The sum of all vertex degrees. By the handshake lemma this is twice the
     // edge count, whether the graph is directed (in-degree plus out-degree) or
-    // undirected.
+    // undirected (https://en.wikipedia.org/wiki/Handshaking_lemma).
     DegreeSum(self: GraphLike): Integer
         => self.EdgeCount * 2;
 
@@ -429,7 +436,8 @@ library DomainTraits
             : self.VertexCount * (self.VertexCount - 1) / 2;
 
     // True when the graph holds every possible simple edge. Precondition: the
-    // graph is simple (no self-loops or parallel edges).
+    // graph is simple (no self-loops or parallel edges)
+    // (https://en.wikipedia.org/wiki/Complete_graph).
     IsComplete(self: GraphLike): Boolean
         => self.EdgeCount == self.MaxPossibleEdges;
 

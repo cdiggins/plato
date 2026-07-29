@@ -1,16 +1,18 @@
 //==
 // # Points and coordinates
 //
-// Points are positions in a space; they are not vectors. Subtracting two points
-// yields a vector, and adding a vector to a point yields a point (the Difference
-// concept). Alternative coordinate systems are distinct types, not conventions.
+// Points are positions in a space (https://en.wikipedia.org/wiki/Point_(geometry));
+// they are not vectors. Subtracting two points yields a vector, and adding a
+// vector to a point yields a point (the Difference concept). Alternative
+// coordinate systems are distinct types, not conventions.
 
 // A position in some coordinate space. Marker concept for all point-like types.
 concept Coordinate
     inherits Value, Equatable, Interpolatable
 { }
 
-// A position in the 2D Cartesian plane.
+// A position in the 2D Cartesian plane
+// (https://en.wikipedia.org/wiki/Cartesian_coordinate_system).
 type Point2D
     implements Coordinate, Difference<Vector2D>, Hashable
 {
@@ -34,7 +36,8 @@ type PointN
     Components: Array<Number>;
 }
 
-// A 2D point in homogeneous form; the Cartesian point is (X/W, Y/W).
+// A 2D point in homogeneous form; the Cartesian point is (X/W, Y/W)
+// (https://en.wikipedia.org/wiki/Homogeneous_coordinates).
 type HomogeneousPoint2D
     implements Value
 {
@@ -43,7 +46,8 @@ type HomogeneousPoint2D
     W: Number;
 }
 
-// A 3D point in homogeneous form; the Cartesian point is (X/W, Y/W, Z/W).
+// A 3D point in homogeneous form; the Cartesian point is (X/W, Y/W, Z/W)
+// (https://en.wikipedia.org/wiki/Homogeneous_coordinates).
 type HomogeneousPoint3D
     implements Value
 {
@@ -53,7 +57,8 @@ type HomogeneousPoint3D
     W: Number;
 }
 
-// A planar position as distance from origin and angle from the positive X axis.
+// A planar position as distance from origin and angle from the positive X axis
+// (https://en.wikipedia.org/wiki/Polar_coordinate_system).
 type PolarCoordinate
     implements Value
 {
@@ -61,7 +66,8 @@ type PolarCoordinate
     Angle: Angle;
 }
 
-// A 3D position as planar polar coordinates plus height along Z.
+// A 3D position as planar polar coordinates plus height along Z
+// (https://en.wikipedia.org/wiki/Cylindrical_coordinate_system).
 type CylindricalCoordinate
     implements Value
 {
@@ -71,7 +77,7 @@ type CylindricalCoordinate
 }
 
 // A 3D position as radius, azimuth (about Z from +X), and inclination from the
-// +Z pole.
+// +Z pole (https://en.wikipedia.org/wiki/Spherical_coordinate_system).
 type SphericalCoordinate
     implements Value
 {
@@ -84,6 +90,7 @@ type SphericalCoordinate
 // vertex (A), V -> the second (B), W -> the third (C), so the point recovered on
 // the triangle's support plane is U*A + V*B + W*C (see `Evaluate` in
 // numeric-structures.library.plato).
+// See https://en.wikipedia.org/wiki/Barycentric_coordinate_system.
 //
 // Invariant: U + V + W = 1 identifies a point on the support plane (an affine
 // combination). Off-plane or non-normalized triples (U + V + W != 1) are
@@ -122,7 +129,8 @@ type UvwCoordinate
 }
 
 // A position on a planet's surface: geodetic latitude, longitude, and altitude
-// above the reference ellipsoid.
+// above the reference ellipsoid
+// (https://en.wikipedia.org/wiki/Geographic_coordinate_system).
 type GeoCoordinate
     implements Value
 {

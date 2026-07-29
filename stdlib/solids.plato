@@ -2,16 +2,18 @@
 // # Solids
 //
 // Closed, bounded volumes: constructive solid geometry trees, profile-generated
-// solids (extrude, revolve, loft, sweep), and classical polyhedra. Primitive
-// closed shapes (Sphere, Box3D, Cylinder, Cone, Torus...) live in file 18 and
-// serve directly as CSG leaves.
+// solids (extrude, revolve, loft, sweep), and classical polyhedra
+// (https://en.wikipedia.org/wiki/Solid_geometry). Primitive closed shapes
+// (Sphere, Box3D, Cylinder, Cone, Torus...) live in file 18 and serve directly
+// as CSG leaves.
 
 //==
 // # Constructive solid geometry
 
-// The Boolean operation applied at an interior CSG node. Difference subtracts
-// the right child from the left; smooth variants blend over their own Radius
-// (in model units).
+// The Boolean operation applied at an interior CSG node
+// (https://en.wikipedia.org/wiki/Constructive_solid_geometry). Difference
+// subtracts the right child from the left; smooth variants blend over their
+// own Radius (in model units).
 type CsgOperation
     = Union
     | Intersection
@@ -49,8 +51,9 @@ type CsgTree3D
 // # Profile-generated solids
 
 // The solid formed by extruding a planar profile (with optional holes) along
-// the placement frame's Z axis for the given Height. The profile lies in the
-// frame's XY plane.
+// the placement frame's Z axis for the given Height
+// (https://en.wikipedia.org/wiki/Extrusion). The profile lies in the frame's
+// XY plane.
 type ExtrudedSolid
     implements Solid
 {
@@ -59,8 +62,9 @@ type ExtrudedSolid
     Height: Number;
 }
 
-// The solid swept by revolving a planar profile about an axis. The profile's
-// X coordinate is the radial distance from the axis and its Y coordinate runs
+// The solid swept by revolving a planar profile about an axis
+// (https://en.wikipedia.org/wiki/Solid_of_revolution). The profile's X
+// coordinate is the radial distance from the axis and its Y coordinate runs
 // along the axis; a partial sweep over Angles is capped by two flat faces.
 type RevolvedSolid
     implements Solid
@@ -71,8 +75,9 @@ type RevolvedSolid
 }
 
 // The solid interpolating an ordered stack of planar closed cross-sections,
-// capped by the first and last sections. Sections must share point counts;
-// Closed joins the last section back to the first into a ring instead.
+// capped by the first and last sections (https://en.wikipedia.org/wiki/Loft_(3D)).
+// Sections must share point counts; Closed joins the last section back to the
+// first into a ring instead.
 type LoftedSolid
     implements Solid
 {
@@ -94,8 +99,8 @@ type SweptSolid
 
 // A right regular prism: two parallel regular SideCount-gons of circumscribed
 // radius Radius in planes perpendicular to the frame's Z axis, separated by
-// Height and joined by rectangles. (The general polygon-swept prism is
-// Prism3D, file 19.)
+// Height and joined by rectangles (https://en.wikipedia.org/wiki/Prism_(geometry)).
+// (The general polygon-swept prism is Prism3D, file 19.)
 type RegularPrism
     implements ConvexSolid, ParametricSurface
 {
@@ -107,7 +112,8 @@ type RegularPrism
 
 // A right regular pyramid: a regular SideCount-gon of circumscribed radius
 // Radius in the plane perpendicular to the frame's Z axis at -Height/2,
-// tapering to an apex on that axis at +Height/2. (The general polygon-based
+// tapering to an apex on that axis at +Height/2
+// (https://en.wikipedia.org/wiki/Pyramid_(geometry)). (The general polygon-based
 // pyramid is Pyramid3D, polygons.plato.)
 type RegularPyramid
     implements ConvexSolid, ParametricSurface
@@ -131,7 +137,8 @@ type SquarePyramid
 }
 
 // A right antiprism: two parallel regular SideCount-gons rotated a half step
-// against each other and joined by a band of 2 * SideCount triangles.
+// against each other and joined by a band of 2 * SideCount triangles
+// (https://en.wikipedia.org/wiki/Antiprism).
 type Antiprism
     implements ConvexSolid
 {
@@ -141,7 +148,7 @@ type Antiprism
     Height: Number;
 }
 
-// One of the five Platonic solids.
+// One of the five Platonic solids (https://en.wikipedia.org/wiki/Platonic_solid).
 type PlatonicSolidKind
     = Tetrahedron | Cube | Octahedron | Dodecahedron | Icosahedron;
 
@@ -155,7 +162,8 @@ type PlatonicSolid
     Radius: Number;
 }
 
-// One of the thirteen Archimedean solids.
+// One of the thirteen Archimedean solids
+// (https://en.wikipedia.org/wiki/Archimedean_solid).
 type ArchimedeanSolidKind
     = TruncatedTetrahedron
     | Cuboctahedron
@@ -184,8 +192,9 @@ type ArchimedeanSolid
 //==
 // # Derived and implicit-form solids
 
-// A convex polytope given as the intersection of half-spaces. The intersection
-// is assumed bounded; redundant half-spaces are permitted.
+// A convex polytope given as the intersection of half-spaces
+// (https://en.wikipedia.org/wiki/Convex_polytope). The intersection is assumed
+// bounded; redundant half-spaces are permitted.
 type ConvexPolytope3D
     implements ConvexSolid
 {

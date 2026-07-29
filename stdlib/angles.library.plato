@@ -2,7 +2,7 @@
 // # Angles
 //
 // Unit constructors and accessors for `Angle` (`quantities.plato`), plus the
-// reciprocal trigonometric functions.
+// reciprocal trigonometric functions (https://en.wikipedia.org/wiki/Trigonometric_functions).
 //
 // `Angle` stores radians and the only intrinsic way to build one is the
 // radians cast `Angle(x: Number)` (`intrinsics.plato`). This library supplies
@@ -19,19 +19,22 @@ library Angles
     // Number -> Angle constructors
 
     // The angle spanning the given fraction of a full revolution.
-    // 1.0.Turns is a full circle.
+    // 1.0.Turns is a full circle. (https://en.wikipedia.org/wiki/Turn_(angle))
     Turns(x: Number): Angle
         => Angle(x * Number.Tau);
 
     // The angle of the given number of degrees; 360 degrees is one turn.
+    // (https://en.wikipedia.org/wiki/Degree_(angle))
     Degrees(x: Number): Angle
         => (x / 360.0).Turns;
 
     // The angle of the given number of gradians; 400 gradians is one turn.
+    // (https://en.wikipedia.org/wiki/Gradian)
     Gradians(x: Number): Angle
         => (x / 400.0).Turns;
 
     // The angle of the given number of arc minutes; 60 arc minutes is one degree.
+    // Arc minutes and arc seconds: https://en.wikipedia.org/wiki/Minute_and_second_of_arc
     ArcMinutes(x: Number): Angle
         => (x / 60.0).Degrees;
 

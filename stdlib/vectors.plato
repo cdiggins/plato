@@ -1,14 +1,16 @@
 //==
 // # Vectors and numeric tuples
 //
-// Two families share the Vector concept. The Number2/3/4/8 family is the
-// low-level intrinsic tier: fixed-arity tuples of Numbers with component-wise
-// arithmetic, mapped directly onto each backend's native vector type
-// (System.Numerics, vecN, floatN). The Vector2D/3D family is geometric:
-// displacements and directions in 2D/3D space. Points (file 11) are positions;
-// geometric vectors are the differences between them. Naming rule: a bare
-// number counts components (Number3, Tuple3, IntegerVector3); a D suffix means
-// the type lives in that-dimensional space (Vector3D, Point3D, Ray3D).
+// Two families share the Vector concept
+// (https://en.wikipedia.org/wiki/Euclidean_vector). The Number2/3/4/8 family
+// is the low-level intrinsic tier: fixed-arity tuples of Numbers with
+// component-wise arithmetic, mapped directly onto each backend's native
+// vector type (System.Numerics, vecN, floatN). The Vector2D/3D family is
+// geometric: displacements and directions in 2D/3D space. Points (file 11)
+// are positions; geometric vectors are the differences between them. Naming
+// rule: a bare number counts components (Number3, Tuple3, IntegerVector3); a
+// D suffix means the type lives in that-dimensional space (Vector3D, Point3D,
+// Ray3D).
 //
 // Discoverability banner (item 473): the concrete per-component and geometric
 // operations for Number2/3/4/8, Vector2D and Vector3D — Normalize, Dot, Cross,
@@ -19,7 +21,8 @@
 // factories below-in-spirit) live in `numeric-structures.library.plato`.
 
 // The family of fixed-arity numeric vectors: component-wise arithmetic, norms,
-// dot product, and component-wise extremes.
+// dot product, and component-wise extremes
+// (https://en.wikipedia.org/wiki/Vector_space).
 //
 // Indexable<Number> supplies the read half of the component surface (Count is
 // the arity, At(i) the i-th component). FromComponents and Broadcast supply the
@@ -62,7 +65,8 @@ type Number3
 }
 
 // A quadruple of Numbers: the low-level intrinsic 4-tuple; also used for
-// homogeneous coordinates and RGBA math.
+// homogeneous coordinates (https://en.wikipedia.org/wiki/Homogeneous_coordinates)
+// and RGBA math.
 type Number4
     implements Vector
 {
@@ -155,14 +159,14 @@ type IntegerVector4
     W: Integer;
 }
 
-// A 2D direction: a Vector2D with the invariant that its magnitude is one.
-// The invariant is a promise of intent, not a runtime proof: an arbitrary
-// Vector2D may violate unit length after a non-rigid transform or manual
-// construction. Construct one via normalization of a non-zero displacement —
-// the validated factories `FromVector` / `TryFromVector` (and the explicitly
-// unsafe `FromVectorUnchecked`) in `numeric-structures.library.plato`; zero
-// input is undefined. Check unit length with `IsUnit` (core-algebra) for
-// diagnostics.
+// A 2D direction: a Vector2D with the invariant that its magnitude is one
+// (https://en.wikipedia.org/wiki/Unit_vector). The invariant is a promise of
+// intent, not a runtime proof: an arbitrary Vector2D may violate unit length
+// after a non-rigid transform or manual construction. Construct one via
+// normalization of a non-zero displacement — the validated factories
+// `FromVector` / `TryFromVector` (and the explicitly unsafe
+// `FromVectorUnchecked`) in `numeric-structures.library.plato`; zero input is
+// undefined. Check unit length with `IsUnit` (core-algebra) for diagnostics.
 type Direction2D
     implements Value
 {
