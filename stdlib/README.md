@@ -17,8 +17,8 @@ Target applications: geometry (primary), 2D/3D and N-dimensional computation, an
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
 graphics, image processing, and engineering.
 
-Current contents (2026-07-29): **347 source files (184 type-declaration files + 42
-`*.concepts.plato` files + 121 `*.library.plato` files), 153 concepts, 1146 types**.
+Current contents (2026-07-29): **367 source files (187 type-declaration files + 44
+`*.concepts.plato` files + 136 `*.library.plato` files), 157 concepts, 1152 types**.
 
 The plato-293 re-partition took the folder from 85 files to 344. Every file now holds exactly
 one **kind** of declaration — `<stem>.concepts.plato` holds concepts, `<stem>.plato` holds
@@ -143,9 +143,9 @@ plato-257 build-out; it described a work assignment, not the tree, and is gone.)
 | 6 | Foundation — color | `color`, `color-named.library`, `color.library` |
 | 7 | Intrinsics (host-provided) | `intrinsics-arrays.library`, `intrinsics-numeric-tuples.library`, `intrinsics-scalars.library`, `intrinsics-transforms.library`, `intrinsics-vectors.library` |
 | 8 | Geometry concepts & primitive shapes | `geometry-kernels.library`, `geometry-measures.concepts`, `geometry-measures.library`, `geometry-pointsets.library`, `geometry-queries.concepts`, `geometry-queries.library`, `geometry.concepts`, `geometry.library`, `lines`, `lines-planes`, `lines-planes.library`, `lines.library`, `planar-boxes`, `planar-boxes.library`, `planar-circles`, `planar-circles.library`, `planar-ellipses`, `planar-ellipses.library`, `planar-shapes.library`, `planar-triangles`, `planar-triangles.library`, `polygons`, `polygons-kernels.library`, `polygons-polylines`, `polygons-polylines.library`, `polygons-spatial`, `polygons-spatial.library`, `polygons.library`, `spatial-boxes`, `spatial-boxes.library`, `spatial-capsules.library`, `spatial-cylinders`, `spatial-cylinders.library`, `spatial-patches`, `spatial-patches.library`, `spatial-primitives.library`, `spatial-simplices`, `spatial-simplices.library`, `spatial-spheres`, `spatial-spheres.library`, `spatial-tori`, `spatial-tori.library` |
-| 9 | Curves, splines, surfaces, solids | `curves-2d-arcs`, `curves-2d-arcs.library`, `curves-2d-polar`, `curves-2d-polar.library`, `curves-2d-spirals`, `curves-2d-spirals.library`, `curves-3d`, `curves-3d.library`, `curves-capabilities.library`, `curves-sampling.library`, `curves.concepts`, `curves.library`, `solids-csg`, `solids-generated`, `solids-polyhedra`, `solids.library`, `splines-bezier`, `splines-bezier.library`, `splines-bspline`, `splines-bspline.library`, `splines-hermite`, `splines-hermite.library`, `splines-interpolating`, `splines-interpolating.library`, `surfaces-generated`, `surfaces-patches`, `surfaces-solids.concepts`, `surfaces-solids.library`, `surfaces-special`, `surfaces.library` |
+| 9 | Curves, splines, surfaces, solids | `curves-2d-arcs`, `curves-2d-arcs.library`, `curves-2d-polar`, `curves-2d-polar.library`, `curves-2d-spirals`, `curves-2d-spirals.library`, `curves-3d`, `curves-3d.library`, `curves-capabilities.concepts`, `curves-capabilities.library`, `curves-sampling.library`, `curves.concepts`, `curves.library`, `solids-csg`, `solids-generated`, `solids-polyhedra`, `solids.library`, `splines-bezier`, `splines-bezier.library`, `splines-bspline`, `splines-bspline.library`, `splines-hermite`, `splines-hermite.library`, `splines-interpolating`, `splines-interpolating.library`, `surfaces-generated`, `surfaces-patches`, `surfaces-solids.concepts`, `surfaces-solids.library`, `surfaces-special`, `surfaces.library` |
 | 10 | Fields, implicits/SDF, noise, sampling | `fields-constant`, `fields-differentiable.concepts`, `fields-function`, `fields-graphs`, `fields-graphs.library`, `fields-implicits-core.library`, `fields-implicits-differentiable.library`, `fields-implicits-distance.library`, `fields-implicits-function.library`, `fields-implicits-metaballs.library`, `fields-implicits-nodes.library`, `fields-implicits-sampled.library`, `fields-implicits-shapes.library`, `fields-implicits-time-varying.library`, `fields-time-varying.concepts`, `fields.concepts`, `implicit-sdf-function`, `implicit-sdf-metaballs`, `implicit-sdf-modifiers`, `implicit-sdf-modifiers.library`, `implicit-sdf-operators.library`, `implicit-sdf-primitives.library`, `implicit-sdf-sampled`, `implicit-sdf-sampled.library`, `implicit-sdf-trees`, `implicit-sdf-trees.library`, `implicit-sdf.concepts`, `noise`, `noise-basis`, `noise-fractal`, `noise-warped`, `sampling-curves`, `sampling-fields`, `sampling-grids`, `sampling-patterns`, `sampling-resampling` |
-| 11 | Topology, meshes, point clouds, spatial structures & queries | `mesh-attributes`, `meshes`, `meshes-geometry.library`, `meshes-lines-points`, `meshes-sections`, `meshes-topology.library`, `meshes-volumetric`, `meshes.concepts`, `pointclouds`, `pointclouds-voxels.concepts`, `spatial-grids`, `spatial-implicits`, `spatial-kdtrees`, `spatial-queries-overlap`, `spatial-queries-proximity`, `spatial-queries-rays`, `spatial-queries.concepts`, `spatial-queries.library`, `spatial-structures.concepts`, `spatial-trees`, `topology-adjacency`, `topology-adjacency.library`, `topology-classification`, `topology-half-edges`, `topology-indices`, `topology.concepts`, `voxels` |
+| 11 | Topology, meshes, point clouds, spatial structures & queries | `mesh-attributes`, `meshes`, `meshes-face-arrays`, `meshes-face-arrays.library`, `meshes-geometry.library`, `meshes-lines-points`, `meshes-sections`, `meshes-topology.library`, `meshes-volumetric`, `meshes.concepts`, `pointclouds`, `pointclouds-voxels.concepts`, `spatial-grids`, `spatial-implicits`, `spatial-kdtrees`, `spatial-queries-overlap`, `spatial-queries-proximity`, `spatial-queries-rays`, `spatial-queries.concepts`, `spatial-queries.library`, `spatial-structures.concepts`, `spatial-trees`, `topology-adjacency`, `topology-adjacency.library`, `topology-classification`, `topology-half-edges`, `topology-indices`, `topology.concepts`, `voxels` |
 | 12 | Animation & motion | `easing`, `easing.concepts`, `easing.library`, `keyframes-blending`, `keyframes-clips`, `keyframes-tracks`, `keyframes-tracks.concepts`, `keyframes-tracks.library`, `motion-graphics`, `motion-graphics-procedural`, `motion-graphics-timing`, `skeletal-animation`, `skeletal-animation-constraints` |
 | 13 | Vector graphics, text, 2D scenes | `paths`, `paths.concepts`, `paths.library`, `scene2d`, `text-fonts`, `text-glyphs`, `text-layout`, `vector-styling-paint`, `vector-styling-stroke` |
 | 14 | Color science & imaging | `color-spaces`, `color-spaces-models`, `color-spaces-palettes`, `color-spaces-video`, `image-processing-adjustments`, `image-processing-compositing`, `image-processing-filters`, `image-processing-resampling`, `images`, `images-containers`, `images.concepts`, `images.library`, `texturing`, `texturing-sampling`, `texturing.concepts`, `texturing.library` |
@@ -236,7 +236,7 @@ the authority, not this table.
 | `Bounds2D/3D`, `IntegerBounds2D/3D`, `Rect2D` | `intervals-bounds.plato` |
 | `Size2D/3D`, `IntegerSize2D/3D` | `intervals-sizes.plato` |
 | `Color`, `Color8`, `ColorHSV`, `ColorHSL`, `ColorStop`, `ColorGradient` | `color.plato` |
-| `Geometry`, `Geometry2D/3D/ND`, `Dimensioned`, shape-trait concepts | `geometry.concepts.plato` |
+| `Geometry`, `Geometry2D/3D/ND`, shape-trait concepts | `geometry.concepts.plato` |
 | `Bounded2D/3D`, `PointSet2D/3D`, `Centroid2D/3D`, the measurable concepts | `geometry-measures.concepts.plato` |
 | `ContainsPoint2D/3D`, `NearestPoint2D/3D`, `SupportMappable2D/3D` | `geometry-queries.concepts.plato` |
 | `Line2D/3D`, `Ray2D/3D`, `LineSegment2D/3D` | `lines.plato` |
@@ -254,7 +254,8 @@ the authority, not this table.
 | `Polygon2D`, `PolygonWithHoles2D` | `polygons.plato` |
 | `Polyline2D`, `Polyline3D` | `polygons-polylines.plato` |
 | `Polygon3D`, `Prism3D`, `Pyramid3D` | `polygons-spatial.plato` |
-| `Curve1D/2D/3D`, `ClosedCurve2D/3D`, `PolarCurve2D` concepts | `curves.concepts.plato` |
+| `Curve<TRange>`, `Curve1D/2D/3D`, `ClosedCurve2D/3D` concepts | `curves.concepts.plato` |
+| `PeriodicCurve`, `DifferentiableCurve2D/3D`, `FramedCurve3D`, `PolarCurve2D`, `ArcLengthParameterized` | `curves-capabilities.concepts.plato` |
 | `Surface`, `ParametricSurface`, `Solid`, `ConvexSolid`, `ParametricVolume` concepts | `surfaces-solids.concepts.plato` |
 | `CircularArc2D`, `QuadraticBezier2D`, `CubicBezier2D` | `curves-2d-arcs.plato` |
 | `CycloidOfCeva2D`, `TschirnhausenCubic2D`, `ConchoidOfDeSluze2D`, `SinusoidalSpiral2D`, `TrisectrixOfMaclaurin2D`, `ButterflyCurve2D` | `curves-2d-polar.plato` |
@@ -275,6 +276,7 @@ the authority, not this table.
 | `WindingOrder` | `topology-classification.plato` |
 | `TriangleMesh3D`, `QuadMesh3D`, `PolygonMesh3D`, `TriangleFace` | `meshes.plato` |
 | `LineSet3D`, `PointCloud3D` | `meshes-lines-points.plato` |
+| `TriangleArray3D`, `QuadArray3D` (unwelded) | `meshes-face-arrays.plato` |
 | `RayHit2D`, `RayHit3D` | `spatial-queries-rays.plato` |
 | `ClassicEasing`, `SpringParameters` | `easing.plato` |
 | `Keyframe<T>`, `AnimationTrack<T>` | `keyframes-tracks.plato` |

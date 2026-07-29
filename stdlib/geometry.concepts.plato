@@ -2,9 +2,12 @@
 // # Geometry classification and topological markers
 //
 // What a geometric entity IS: the root marker, the embedding-dimension family
-// (Geometry2D / Geometry3D / GeometryND), the intrinsic-dimension concept, and the
-// pure structural markers a shape promises (open, closed, convex, manifold,
-// orientable, connected). The capability concepts that say what can be QUERIED on
+// (Geometry2D / Geometry3D / GeometryND), and the pure structural markers a shape
+// promises (open, closed, convex, manifold, orientable, connected). Intrinsic
+// (topological) dimension is NOT a member here: it is already implied by which
+// family a type belongs to (Curve*, Surface, Solid), and the `Dimensioned`
+// concept that once stated it was retired unimplemented — see plato-315. The
+// capability concepts that say what can be QUERIED on
 // such an entity live in `geometry-measures.concepts.plato` and
 // `geometry-queries.concepts.plato`.
 
@@ -34,15 +37,6 @@ concept Geometry3D
 concept GeometryND
     inherits Geometry
 { }
-
-// Knows the intrinsic (topological) dimension of the entity: 0 for points,
-// 1 for curves, 2 for surfaces and planar regions, 3 for volumes. Independent
-// of the dimension of the embedding space.
-// (https://en.wikipedia.org/wiki/Lebesgue_covering_dimension)
-concept Dimensioned
-{
-    TopologicalDimension(x: Self): Integer;
-}
 
 //==
 // # Topological markers

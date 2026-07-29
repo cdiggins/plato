@@ -28,28 +28,6 @@ library GeometryTraits
         => 3;
 
     //==
-    // # Dimensioned
-    //
-    // Classifies an entity by its intrinsic (topological) dimension, independent of
-    // the embedding: 0 points, 1 curves, 2 surfaces / planar regions, 3 volumes.
-
-    // True when the entity is zero-dimensional (a single point).
-    IsPoint(self: Dimensioned): Boolean
-        => self.TopologicalDimension == 0;
-
-    // True when the entity is one-dimensional (a curve, segment, or polyline).
-    IsCurve(self: Dimensioned): Boolean
-        => self.TopologicalDimension == 1;
-
-    // True when the entity is two-dimensional (a surface or planar region).
-    IsSurface(self: Dimensioned): Boolean
-        => self.TopologicalDimension == 2;
-
-    // True when the entity is three-dimensional (a solid volume).
-    IsVolume(self: Dimensioned): Boolean
-        => self.TopologicalDimension == 3;
-
-    //==
     // # Topological markers
     //
     // Pure markers carry no members of their own; the only derivable operation is a
