@@ -1,12 +1,11 @@
 //==
 // # MeshesPolygon — face and corner access for PolygonMesh3D
 //
-// PolygonMesh3D is `Jagged<VertexIndex>` with one row per face
-// (`meshes.library.plato` carries the projection), so row arithmetic —
-// RowCount / RowLength / Row / RowElement — comes from
-// `collections-jagged.library.plato` and is NOT restated here. What this file
-// adds is the mesh reading of those rows, and the one thing the packing seam
-// does not name: the CORNER.
+// PolygonMesh3D HAS a `JaggedArray<VertexIndex>` face table with one row per
+// face, so row arithmetic — RowCount / RowLength / Row / RowElement — comes from
+// `collections-jagged.library.plato` through `self.Faces` and is NOT restated
+// here. What this file adds is the mesh reading of those rows, and the one thing
+// the packing seam does not name: the CORNER.
 //
 // A corner is one vertex slot of one face, numbered globally by its position in
 // the packed values. That global corner number doubles as a half-edge
@@ -26,9 +25,9 @@ library MeshesPolygon
     VertexCount(self: PolygonMesh3D): Integer
         => self.Positions.Count;
 
-    // The number of faces: one Jagged row each.
+    // The number of faces: one face-table row each.
     FaceCount(self: PolygonMesh3D): Integer
-        => self.RowCount;
+        => self.Faces.RowCount;
 
     // The number of undirected edges. Precondition: the mesh is a closed
     // manifold (each edge has exactly two corners); an open mesh over-counts.
@@ -40,33 +39,33 @@ library MeshesPolygon
 
     // The total number of face corners across the whole mesh.
     CornerCount(self: PolygonMesh3D): Integer
-        => self.FaceVertices.Count;
+        => self.Faces.Values.Count;
 
     // The number of vertices of a face. Precondition: 0 <= face < FaceCount.
     FaceArity(self: PolygonMesh3D, face: Integer): Integer
-        => self.RowLength(face);
+        => self.Faces.RowLength(face);
 
     // The corner at face f's slot-th vertex, wrapping around the face so
     // slot + 1 is always the next corner counter-clockwise.
     // Precondition: 0 <= face < FaceCount, slot >= 0.
     FaceCorner(self: PolygonMesh3D, face: Integer, slot: Integer): CornerIndex
-        => CornerIndex(self.FaceOffsets.At(face) + (slot % self.FaceArity(face)));
+        => CornerIndex(self.Faces.Offsets[face] + (slot % self.FaceArity(face)));
 
     // The vertex a corner refers to. Precondition: the corner is present.
     CornerVertex(self: PolygonMesh3D, corner: CornerIndex): VertexIndex
-        => self.FaceVertices.At(corner);
+        => self.Faces.Values[corner];
 
     // The position a corner refers to. Precondition: the corner is present.
     CornerPosition(self: PolygonMesh3D, corner: CornerIndex): Point3D
-        => self.Positions.At(self.CornerVertex(corner));
+        => self.Positions[self.CornerVertex(corner)];
 
     //==
-    // Whole-face views. The vertex loop itself is `Row(face)`.
+    // Whole-face views. The vertex loop itself is `Faces.Row(face)`.
 
     // The positions of one face in counter-clockwise order.
     // Precondition: 0 <= face < FaceCount.
     FacePositions(self: PolygonMesh3D, face: Integer): Array<Point3D>
-        => self.Row(face).Map(v => self.Positions.At(v.Value));
+        => self.Faces.Row(face).Map(v => self.Positions[v.Value]);
 
     // The average of a face's vertex positions. Coincides with the area centroid
     // only for a regular face, which is exactly the polyhedral case the Conway

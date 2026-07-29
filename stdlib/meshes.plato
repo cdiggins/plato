@@ -65,18 +65,22 @@ type QuadMesh3D
 }
 
 // A mesh of arbitrary-arity faces (https://en.wikipedia.org/wiki/Polygon_mesh):
-// one Jagged row per face, holding that face's corner loop wound
-// counter-clockwise (packing invariant: see the `Jagged` concept in
-// `collections-jagged.concepts.plato`; projection in `meshes.library.plato`).
-// Mixed face sizes are representable (Archimedean); uniform n-gons
-// (Platonic/Catalan) use the same type — no separate fixed-arity polygon-mesh
-// storage. TriangleMesh3D / QuadMesh3D remain the specialized interchange
-// forms. Initial Conway catalog: C# `Ara3D.Geometry.Polyhedra` /
+// Faces is a table with one row per face, holding that face's corner loop wound
+// counter-clockwise. Mixed face sizes are representable (Archimedean); uniform
+// n-gons (Platonic/Catalan) use the same type — no separate fixed-arity
+// polygon-mesh storage. TriangleMesh3D / QuadMesh3D remain the specialized
+// interchange forms. Initial Conway catalog: C# `Ara3D.Geometry.Polyhedra` /
 // `PolygonMesh3D` / `ConwayOperators`.
+//
+// The mesh HAS a jagged face table rather than IS one: `JaggedArray<VertexIndex>`
+// (`collections-jagged.plato`) already implements `Jagged<T>` and carries the CSR
+// packing invariant, so every row query is reused through `m.Faces` — without the
+// generic names `Offsets` / `Values` landing on the mesh itself. Further jagged
+// members (vertex-to-face adjacency, for one) are then additional fields rather
+// than a second concept the type cannot implement twice.
 type PolygonMesh3D
-    implements Value, Meshable3D, MeshTopology, Jagged<VertexIndex>
+    implements Value, Meshable3D, MeshTopology
 {
     Positions: Array<Point3D>;
-    FaceOffsets: Array<Integer>;
-    FaceVertices: Array<VertexIndex>;
+    Faces: JaggedArray<VertexIndex>;
 }

@@ -7,9 +7,10 @@
 // `collections-containers.library.plato`.
 //
 // `JaggedArray<T>` needs no projection here: its `Offsets` and `Values` fields
-// satisfy the concept surface directly. The projections for the domain types
-// that implement Jagged over differently-named storage live beside those types
-// (`meshes.library.plato`, `topology-adjacency.library.plato`).
+// satisfy the concept surface directly, so a type that HOLDS one reaches the row
+// vocabulary through that field (`mesh.Faces.Row(f)`). The projections for the
+// domain types that implement Jagged over differently-named storage live beside
+// those types (`topology-adjacency.library.plato`).
 
 library CollectionsJagged
 {
@@ -26,17 +27,17 @@ library CollectionsJagged
     // The number of items in row i: Offsets[i+1] - Offsets[i].
     // Precondition: 0 <= i < RowCount.
     RowLength(self: Jagged<$T>, i: Integer): Integer
-        => self.Offsets.At(i + 1) - self.Offsets.At(i);
+        => self.Offsets[i + 1] - self.Offsets[i];
 
     // The items of row i, copied out of the packed Values array.
     // Precondition: 0 <= i < RowCount.
     Row(self: Jagged<$T>, i: Integer): Array<$T>
-        => self.Values.SubArray(self.Offsets.At(i), self.RowLength(i));
+        => self.Values.SubArray(self.Offsets[i], self.RowLength(i));
 
     // The k-th item of row `row`, addressed without materializing the row.
     // Precondition: 0 <= row < RowCount and 0 <= k < RowLength(row).
     RowElement(self: Jagged<$T>, row: Integer, k: Integer): $T
-        => self.Values.At(self.Offsets.At(row) + k);
+        => self.Values[self.Offsets[row] + k];
 
     // True when there are no rows at all (the empty encoding: Offsets = [0]).
     HasNoRows(self: Jagged<$T>): Boolean
@@ -58,7 +59,7 @@ library CollectionsJagged
     // unique List builder), which the checker rejects.
     FromRows(rows: Array<Array<$T>>): JaggedArray<$T>
     {
-        var offsets = (rows.Count + 1).MapRange(i => i.MapRange(j => rows.At(j).Count).Reduce(0, (acc, n) => acc + n));
+        var offsets = (rows.Count + 1).MapRange(i => i.MapRange(j => rows[j].Count).Reduce(0, (acc, n) => acc + n));
         return (offsets, rows.FlatMap(r => r));
     }
 }

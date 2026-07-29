@@ -17,10 +17,7 @@ library MeshesPolygonBuilding
     // counter-clockwise seen from outside.
     // Convention: see CONVENTIONS.md - Winding, handedness, and normals.
     PolygonMeshOfFaces(positions: Array<Point3D>, faces: Array<Array<VertexIndex>>): PolygonMesh3D
-    {
-        var packed = FromRows(faces);
-        return (positions, packed.Offsets, packed.Values);
-    }
+        => (positions, FromRows(faces));
 
     // The same, from plain vertex numbers: the readable form for the literal
     // face tables of the polyhedra seeds.
@@ -35,16 +32,12 @@ library MeshesPolygonBuilding
     // a symmetric vertex table this is what makes the circumscribed radius
     // exactly one, and it is the canonical form the Conway operators return.
     ProjectedToUnitSphere(self: PolygonMesh3D): PolygonMesh3D
-        => (self.Positions.Map(p => p.PositionVector.Normalize.ToPoint),
-            self.FaceOffsets,
-            self.FaceVertices);
+        => (self.Positions.Map(p => p.PositionVector.Normalize.ToPoint), self.Faces);
 
     // Every vertex scaled about the origin. Applied to a unit-sphere mesh this
     // sets the circumscribed radius.
     ScaledAboutOrigin(self: PolygonMesh3D, factor: Number): PolygonMesh3D
-        => (self.Positions.Map(p => (p.PositionVector * factor).ToPoint),
-            self.FaceOffsets,
-            self.FaceVertices);
+        => (self.Positions.Map(p => (p.PositionVector * factor).ToPoint), self.Faces);
 
     //==
     // Export.
