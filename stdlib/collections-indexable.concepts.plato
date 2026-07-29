@@ -46,14 +46,3 @@ concept Indexable3D<T>
     LayerCount(x: Self): Integer;
     At(x: Self, column: Integer, row: Integer, layer: Integer): T;
 }
-
-// A collection addressed by column, row, layer, and block.
-concept Indexable4D<T>
-    inherits Indexable<T>
-{
-    ColumnCount(x: Self): Integer;
-    RowCount(x: Self): Integer;
-    LayerCount(x: Self): Integer;
-    BlockCount(x: Self): Integer;
-    At(x: Self, column: Integer, row: Integer, layer: Integer, block: Integer): T;
-}

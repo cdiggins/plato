@@ -27,7 +27,10 @@ declarations. The move was mechanical: the sorted type-and-concept inventory is 
 to the pre-refactor baseline, so nothing was added, removed, or renamed — only relocated.
 Fixed 4D geometry (Point4D, Bounds4D, Geometry4D, Curve4D, polytopes, 4D rotors) was removed
 2026-07-28 — the practical 4D uses are numeric and live on `Number4`/`Quaternion`; N-dimensional
-work uses `PointN`/`VectorN`. 4D **arrays** (`Array4D`/`Indexable4D`) are collections and remain.
+work uses `PointN`/`VectorN`. 4D arrays (`Array4D`/`Indexable4D`) initially survived that purge
+as "collections", then were removed 2026-07-29: nothing declared, constructed, or backed them
+(no storage field), and the real 4D-array use case (time-varying volumes) models better as
+`Array<Array3D<T>>` or a dedicated named-axis type when the need actually arrives.
 The folder parses and resolves cleanly (`lint`: 0 parse errors, 0 symbol-resolution errors);
 LINT001 (unimplemented members) / LINT003 (unread fields) findings are expected until the
 concept libraries implement the full declared surface. Lint now enumerates the `*.library.plato`
@@ -162,7 +165,7 @@ Foundation reading order, file by file:
 - `primitives.plato` — Number, Integer, Boolean, String, Character, Dynamic, Object.
 - `primitives-tuples.plato` — Tuple2..Tuple10 (the compiler's synthesized constructor arity).
 - `primitives-functions.plato` — Function0..Function4.
-- `primitives-arrays.plato` — Array, Array2D, Array3D, Array4D.
+- `primitives-arrays.plato` — Array, Array2D, Array3D.
 - `primitives-builders.plato` (+ `.library`) — the `unique` affine builders `List<T>` / `Buffer<T>`.
 - `core-comparison.concepts.plato` — Equatable, Value, Hashable, Orderable, Comparable.
 - `core-logic.concepts.plato` — Logical, BooleanAlgebra, Bitwise.
@@ -217,7 +220,7 @@ the authority, not this table.
 |------|-----------|
 | `Number`, `Integer`, `Boolean`, `String`, `Character`, `Dynamic`, `Object` | `primitives.plato` |
 | `List<T>`, `Buffer<T>` (unique affine builders) | `primitives-builders.plato` |
-| `Array`, `Array2D`, `Array3D`, `Array4D` | `primitives-arrays.plato` |
+| `Array`, `Array2D`, `Array3D` | `primitives-arrays.plato` |
 | `ComparisonTolerance`, `ItemIndex`, `Complex`, `Rational`, `Proportion`, `Percent`, `Probability`, `Cardinal` | `numbers.plato` |
 | `Quantity` concept | `quantities.concepts.plato` |
 | `Angle`, `Length` (and the other ~50 quantity types, by branch) | `quantities-geometric.plato` and the other `quantities-*.plato` files |

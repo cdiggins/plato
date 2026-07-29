@@ -66,35 +66,4 @@ library CollectionsGrids
     // The last cell. Precondition: not empty.
     LastCell(self: Indexable3D<$T>): $T
         => self.At(self.ColumnCount - 1, self.RowCount - 1, self.LayerCount - 1);
-
-    //==
-    // # Indexable4D
-    //
-    // Cell access and bounds checks for a column x row x layer x block hypervolume.
-
-    // True when (column, row, layer, block) lies within the hypervolume.
-    IsValidCell(self: Indexable4D<$T>, column: Integer, row: Integer, layer: Integer, block: Integer): Boolean
-        => column >= 0 && column < self.ColumnCount
-        && row >= 0 && row < self.RowCount
-        && layer >= 0 && layer < self.LayerCount
-        && block >= 0 && block < self.BlockCount;
-
-    // The row-major flat index of cell (column, row, layer, block).
-    FlattenIndex(self: Indexable4D<$T>, column: Integer, row: Integer, layer: Integer, block: Integer): Integer
-        => ((block * self.LayerCount + layer) * self.RowCount + row) * self.ColumnCount + column;
-
-    // The (column, row, layer, block) tuple for a row-major flat index. Inverse of FlattenIndex.
-    UnflattenIndex(self: Indexable4D<$T>, index: Integer): Tuple4<Integer, Integer, Integer, Integer>
-        => (index % self.ColumnCount,
-            (index / self.ColumnCount) % self.RowCount,
-            (index / (self.ColumnCount * self.RowCount)) % self.LayerCount,
-            index / (self.ColumnCount * self.RowCount * self.LayerCount));
-
-    // The first cell (0, 0, 0, 0). Precondition: not empty.
-    FirstCell(self: Indexable4D<$T>): $T
-        => self.At(0, 0, 0, 0);
-
-    // The last cell. Precondition: not empty.
-    LastCell(self: Indexable4D<$T>): $T
-        => self.At(self.ColumnCount - 1, self.RowCount - 1, self.LayerCount - 1, self.BlockCount - 1);
 }

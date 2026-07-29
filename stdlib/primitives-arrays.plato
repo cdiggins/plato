@@ -19,8 +19,3 @@ type Array2D<T>
 type Array3D<T>
     implements Indexable3D<T>
 { }
-
-// An immutable collection addressed by column, row, layer, and block.
-type Array4D<T>
-    implements Indexable4D<T>
-{ }
