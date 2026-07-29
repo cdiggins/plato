@@ -246,12 +246,49 @@ namespace Ara3D.Geometry.Compiler.Symbols
 
         public bool IsSelfConstrained()
         {
-            if (Functions.Any(f => f.ParametersAndReturnType.Skip(1).Any(te => te.UsesSelfType()))) 
+            if (Functions.Any(f => f.ParametersAndReturnType.Skip(1).Any(te => te.UsesSelfType())))
                 return true;
             if (Inherits.Any(te => te.UsesSelfType()))
                 return true;
             return Inherits.Any(i => i.Def.IsSelfConstrained());
         }
+
+        // plato-311 (Option A, dual-interface lowering): a concept method is "object safe" when
+        // Self appears ONLY as the receiver (Parameters[0]) — never in a later parameter or in the
+        // return type. Object-safe methods form the non-generic existential view interface
+        // (`interface C`, "any C"); everything else stays reachable only through the F-bounded
+        // generic form (`interface C<Self> : C where Self : C<Self>`, "some C"). A Self-RETURNING
+        // method is excluded rather than rewritten to return the view — simplest choice that keeps
+        // the emitted code straightforward (see tracker/decisions ADR for plato-311).
+        //
+        // A `_`-receiver (type-level/static) member isn't part of the instance view at all, so it
+        // is never object-safe by this test (Plato.CSharpWriter already omits static members from
+        // ordinary interface emission unless --static-abstract; this test agrees independently).
+        public static bool IsObjectSafeMethod(MethodDef m)
+        {
+            var f = m.Function;
+            if (f.Parameters.Count == 0 || f.Parameters[0].Name == "_")
+                return false;
+            return !f.ParametersAndReturnType.Skip(1).Any(te => te.UsesSelfType());
+        }
+
+        /// <summary>The object-safe surface DIRECTLY DECLARED on this concept (not inherited):
+        /// instance methods where Self appears only as the receiver. This is what
+        /// Plato.CSharpWriter lists in the concept's own non-generic view interface body — an
+        /// inherited object-safe member reaches the view through interface inheritance from the
+        /// base concept's OWN view instead of being redeclared here.</summary>
+        public IEnumerable<MethodDef> ObjectSafeMethods()
+            => Methods.Where(IsObjectSafeMethod);
+
+        /// <summary>True when this concept — or any concept it inherits, transitively — has at
+        /// least one object-safe member, i.e. it has a non-generic existential view (`interface
+        /// C`) at all. Many concepts (marker/classification concepts like `Geometry3D`, and
+        /// composite concepts like `Curve3D` that declare no methods of their own) carry their
+        /// entire member surface through inheritance, so this must walk the full ancestry, not
+        /// just <see cref="Methods"/>. A concept with no object-safe surface anywhere in its
+        /// ancestry has NO view — using it in type position is a CHK308 diagnostic, not emission.</summary>
+        public bool HasObjectSafeSurface()
+            => GetSelfAndAllInheritedTypes().Any(t => t.Methods.Any(IsObjectSafeMethod));
 
         public int DepthTo(TypeDef other)
         {

@@ -153,6 +153,8 @@ namespace Ara3D.Geometry.CSharpWriter
             => $"static abstract {ReturnType} {Name}{GenericsString}({MethodParameters.JoinStringsWithComma()});";
 
         // TODO: should we not be taking into account the function type replacements?  
+        public TypeDef GroundingOwner => TypeToCSharp.GroundingOwner;
+
         public string ToCSharpTypeName(TypeInstance ti)
         {
             return TypeToCSharp.ToCSharpTypeName(ti);

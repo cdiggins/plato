@@ -42,6 +42,10 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     public bool ExtensionReceiverIsScalar;
     public PlatoAnalyzer Analyzer => Writer.Analyzer;
 
+    // plato-311: this writer's grounding owner for Self — the concrete/interface type it is
+    // currently writing. See ITypeToCSharp.GroundingOwner / ConceptGrounding.GroundsSelf.
+    public TypeDef GroundingOwner => TypeDef;
+
     public static string Annotation => $"[MethodImpl(AggressiveInlining)]";
 
     public CSharpTypeWriter(CSharpWriter writer, TypeDef type)
@@ -148,14 +152,69 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
             return this;
 
         var inherits = type.Inherits.Select(this.ToCSharpType).ToList();
+
+        // plato-311 (Option A, dual-interface lowering): a self-constrained concept with at least
+        // one object-safe member also gets a non-generic existential view `interface C` — what a
+        // bare (type-position) reference to the concept renders as. The F-bounded `interface
+        // C<Self>` inherits it (`: C, ...`) alongside its existing base interfaces, so nothing
+        // reachable through `C<Self>` today is lost; the view is purely additive.
+        if (type.IsSelfConstrained() && type.HasObjectSafeSurface())
+        {
+            WriteConceptView(type);
+            inherits.Insert(0, ViewTypeName(type));
+        }
+
         var inherited = inherits.Count > 0 ? ": " + inherits.JoinStringsWithComma() : "";
         var selfConstraint = type.IsSelfConstrained() ? " where Self : " + FullName : "";
 
         Write("public interface ").Write(FullName).Write(inherited).WriteLine(selfConstraint);
 
-        // TODO: maybe make the "Self" actually constrained on the interface. 
+        // TODO: maybe make the "Self" actually constrained on the interface.
 
         return WriteInterfaceFunctions(type);
+    }
+
+    // plato-311: the non-generic existential view's own name — the concept's name plus its OWN
+    // (non-Self) type parameters, e.g. "Curve3D" or "Procedural<T, U>". Self never appears: every
+    // member on the view is object-safe, so Self occurs only as the (implicit, unwritten) receiver.
+    private static string ViewTypeName(TypeDef type)
+    {
+        var ownParams = type.TypeParameters.Select(tp => tp.Name).ToList();
+        return ownParams.Count > 0 ? $"{type.Name}<{ownParams.JoinStringsWithComma()}>" : type.Name;
+    }
+
+    // The view name for an INHERITED concept reference (as written in an `inherits`/`implements`
+    // clause), e.g. rendering `Procedural<Number, Point3D>` for Curve3D's base — the explicit
+    // (non-Self) type arguments as written, resolved through the ordinary type converter.
+    private string InheritedViewTypeName(TypeExpression te)
+    {
+        var args = te.TypeArgs.Select(this.ToCSharpType).ToList();
+        return args.Count > 0 ? $"{te.Def.Name}<{args.JoinStringsWithComma()}>" : te.Def.Name;
+    }
+
+    // plato-311: emit the non-generic existential view interface for a self-constrained concept
+    // that has an object-safe surface — the object-safe subset of its members (Self appears only
+    // as the receiver), inheriting the views of any base concepts that have their own view.
+    private CSharpTypeWriter WriteConceptView(TypeDef type)
+    {
+        var viewInherits = type.Inherits
+            .Select(ie => ie.Def.IsSelfConstrained()
+                ? (ie.Def.HasObjectSafeSurface() ? InheritedViewTypeName(ie) : null)
+                : this.ToCSharpType(ie))
+            .Where(s => s != null)
+            .ToList();
+        var inherited = viewInherits.Count > 0 ? ": " + viewInherits.JoinStringsWithComma() : "";
+
+        Write("public interface ").Write(ViewTypeName(type)).WriteLine(inherited);
+        WriteStartBlock();
+        foreach (var m in type.ObjectSafeMethods())
+        {
+            var fi = ToFunctionInfo(m.Function, null, FunctionInstanceKind.InterfaceDeclared);
+            WriteLine(fi.MethodInterface);
+            if (fi.IsIndexer && !Writer.NoProperties)
+                WriteLine(fi.IndexerInterface);
+        }
+        return WriteEndBlock();
     }
 
     public CSharpTypeWriter Write(DefSymbol value)
@@ -451,7 +510,16 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         if (type.Name == "Self" && SelfType != null)
             return SelfType;
 
-        if (type.Name.StartsWith("Function"))
+        // Function0..Function9 map to System.Func; a type whose NAME merely starts with the
+        // substring "Function" (FunctionVolume3D, FunctionRegion2D, FunctionSdf2D/3D,
+        // FunctionalProcedural, ...) is a distinct concrete/concept type and must render as
+        // itself. The digit-after-prefix check is the same test Plato.RustWriter and
+        // Plato.TypeScriptWriter already use (plato-310: this writer was missing it, so every
+        // FunctionN-prefixed non-FunctionN type silently rendered as bare `System.Func`, losing
+        // its own name and — since such types are rarely themselves generic — its type arguments
+        // along with it).
+        if (type.Name.Length > "Function".Length && type.Name.StartsWith("Function")
+            && char.IsDigit(type.Name["Function".Length]))
             return "System.Func";
 
         // Scalar erasure (--scalar=float): the five wrapper types become native primitives in

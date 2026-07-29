@@ -667,6 +667,25 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             return;
         }
 
+        // Constructor call (`FunctionVolume3D(p => self.Eval(p).Not)`): every argument is a
+        // constructor parameter, not a receiver + rest. A TirCall reaches here (rather than the
+        // TirConstructorCall node above) whenever it was never rewritten by the inliner/component
+        // unroller — e.g. it is already the top-level body of the function being written. Without
+        // this check it falls into the generic receiver-style call below, which reads args[0] as
+        // THE RECEIVER and mangles the call postfix onto it (plato-310:
+        // `((p) => ...).FunctionVolume3D()` instead of `new FunctionVolume3D(p => ...)`). Mirrors
+        // Plato.CppWriter.TirCppBodyWriter's identical EmissionKind.Constructor case, and reuses
+        // the same rendering as the TirConstructorCall node above.
+        if (call.EmissionKind == EmissionKind.Constructor && name != null)
+        {
+            Write("new ");
+            Write(_tw.ExtensionReceiverName != null ? $"{_tw.Writer.Namespace}.{name}" : name);
+            Write("(");
+            WriteArgs(args);
+            Write(")");
+            return;
+        }
+
         // A lowered-loop result temp is a C# ARRAY: Count reads become Length.
         if (name == "Count" && args.Count == 1 && TirRewrite.StripCoerce(args[0]) is TirTempRef)
         {
