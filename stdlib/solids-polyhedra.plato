@@ -105,3 +105,33 @@ type ArchimedeanSolid
     Frame: Frame3D;
     Radius: Number;
 }
+
+// One of the thirteen Catalan solids (duals of the Archimedean solids)
+// (https://en.wikipedia.org/wiki/Catalan_solid). All faces of a given solid
+// are congruent (face-transitive); they do not mix polygon sizes. Initial
+// hybrid construction lives in C# `Ara3D.Geometry.Polyhedra` /
+// `ConwayOperators` (Platonic seeds + dual/ambo/truncate aliases).
+type CatalanSolidKind
+    = TriakisTetrahedron
+    | RhombicDodecahedron
+    | TriakisOctahedron
+    | TetrakisHexahedron
+    | DeltoidalIcositetrahedron
+    | DisdyakisDodecahedron
+    | PentagonalIcositetrahedron
+    | RhombicTriacontahedron
+    | TriakisIcosahedron
+    | PentakisDodecahedron
+    | DeltoidalHexecontahedron
+    | DisdyakisTriacontahedron
+    | PentagonalHexecontahedron;
+
+// A Catalan solid of the given kind, centered at the frame origin in the
+// frame's orientation, with vertices at circumscribed radius Radius.
+type CatalanSolid
+    implements ConvexSolid
+{
+    Kind: CatalanSolidKind;
+    Frame: Frame3D;
+    Radius: Number;
+}
