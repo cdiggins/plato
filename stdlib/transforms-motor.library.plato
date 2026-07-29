@@ -65,10 +65,18 @@ library TransformsMotor
     Transform(p: Point3D, m: Motor3D): Point3D
         => p.Transform(m.Pose3D);
 
+    // Alias for Transform with transform-on-left (* operator): m * p.
+    Multiply(m: Motor3D, p: Point3D): Point3D
+        => Transform(p, m);
+
     // Rotate a displacement by the motor's rotation (translation does not act
     // on vectors).
     Transform(v: Vector3D, m: Motor3D): Vector3D
         => v.Transform(m.Real);
+
+    // Alias for Transform with transform-on-left (* operator): m * v.
+    Multiply(m: Motor3D, v: Vector3D): Vector3D
+        => Transform(v, m);
 
     // The homogeneous matrix of the motor's rigid motion.
     Matrix4x4(m: Motor3D): Matrix4x4

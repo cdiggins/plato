@@ -17,10 +17,18 @@ library TransformsAffine
     Transform(p: Point2D, a: AffineTransform2D): Point2D
         => p.PositionVector.Transform(a.Matrix).ToPoint;
 
+    // Alias for Transform with transform-on-left (* operator): a * p.
+    Multiply(a: AffineTransform2D, p: Point2D): Point2D
+        => Transform(p, a);
+
     // Apply the linear part to a displacement (translation does not act on
     // vectors).
     Transform(v: Vector2D, a: AffineTransform2D): Vector2D
         => v.TransformNormal(a.Matrix);
+
+    // Alias for Transform with transform-on-left (* operator): a * v.
+    Multiply(a: AffineTransform2D, v: Vector2D): Vector2D
+        => Transform(v, a);
 
     // The affine transform that applies `first`, then `second` (row-vector
     // matrix product).
@@ -77,12 +85,20 @@ library TransformsAffine
         return (v.X, v.Y, v.Z);
     }
 
+    // Alias for Transform with transform-on-left (* operator): a * p.
+    Multiply(a: AffineTransform3D, p: Point3D): Point3D
+        => Transform(p, a);
+
     // Apply the linear part to a displacement (the translation row is skipped).
     Transform(v: Vector3D, a: AffineTransform3D): Vector3D {
         var m = a.Matrix;
         var r = m.Row1 * v.X + m.Row2 * v.Y + m.Row3 * v.Z;
         return (r.X, r.Y, r.Z);
     }
+
+    // Alias for Transform with transform-on-left (* operator): a * v.
+    Multiply(a: AffineTransform3D, v: Vector3D): Vector3D
+        => Transform(v, a);
 
     // The affine transform that applies `first`, then `second`, computed
     // through the homogeneous forms.
@@ -147,6 +163,10 @@ library TransformsAffine
         return (v.X / v.Z, v.Y / v.Z);
     }
 
+    // Alias for Transform with transform-on-left (* operator): t * p.
+    Multiply(t: ProjectiveTransform2D, p: Point2D): Point2D
+        => Transform(p, t);
+
     // The homography that applies `first`, then `second` (row-vector product).
     Compose(first: ProjectiveTransform2D, second: ProjectiveTransform2D): ProjectiveTransform2D
         => ProjectiveTransform2D(first.Matrix * second.Matrix);
@@ -166,6 +186,10 @@ library TransformsAffine
         var v = Number4(p.X, p.Y, p.Z, 1.0).Transform(t.Matrix);
         return (v.X / v.W, v.Y / v.W, v.Z / v.W);
     }
+
+    // Alias for Transform with transform-on-left (* operator): t * p.
+    Multiply(t: ProjectiveTransform3D, p: Point3D): Point3D
+        => Transform(p, t);
 
     // The homography that applies `first`, then `second` (row-vector product).
     Compose(first: ProjectiveTransform3D, second: ProjectiveTransform3D): ProjectiveTransform3D

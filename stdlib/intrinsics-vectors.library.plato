@@ -27,8 +27,12 @@ library IntrinsicsVectors
     Dot(self: Vector2D, right: Vector2D): Number;
     Reflect(self: Vector2D, normal: Vector2D): Vector2D;
     Transform(self: Vector2D, matrix: Matrix3x2): Vector2D;
+    // Alias for Transform with transform-on-left (* operator): matrix * self.
+    Multiply(matrix: Matrix3x2, self: Vector2D): Vector2D;
     Transform(self: Vector2D, matrix: Matrix4x4): Vector2D;
+    Multiply(matrix: Matrix4x4, self: Vector2D): Vector2D;
     Transform(self: Vector2D, rotation: Quaternion): Vector2D;
+    Multiply(rotation: Quaternion, self: Vector2D): Vector2D;
     TransformNormal(self: Vector2D, matrix: Matrix3x2): Vector2D;
     TransformNormal(self: Vector2D, matrix: Matrix4x4): Vector2D;
     Hash(self: Vector2D): Integer;
@@ -52,7 +56,10 @@ library IntrinsicsVectors
     Cross(self: Vector3D, right: Vector3D): Vector3D;
     Reflect(self: Vector3D, normal: Vector3D): Vector3D;
     Transform(self: Vector3D, matrix: Matrix4x4): Vector3D;
+    // Alias for Transform with transform-on-left (* operator): matrix * self.
+    Multiply(matrix: Matrix4x4, self: Vector3D): Vector3D;
     Transform(self: Vector3D, rotation: Quaternion): Vector3D;
+    Multiply(rotation: Quaternion, self: Vector3D): Vector3D;
     TransformNormal(self: Vector3D, matrix: Matrix4x4): Vector3D;
     Hash(self: Vector3D): Integer;
 }

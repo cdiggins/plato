@@ -71,7 +71,10 @@ library IntrinsicsNumericTuples
     Dot(self: Number4, right: Number4): Number;
     Clamp(self: Number4, min: Number4, max: Number4): Number4;
     Transform(self: Number4, matrix: Matrix4x4): Number4;
+    // Alias for Transform with transform-on-left (* operator): matrix * self.
+    Multiply(matrix: Matrix4x4, self: Number4): Number4;
     Transform(self: Number4, rotation: Quaternion): Number4;
+    Multiply(rotation: Quaternion, self: Number4): Number4;
     Max(self: Number4, value2: Number4): Number4;
     Min(self: Number4, value2: Number4): Number4;
     Hash(self: Number4): Integer;

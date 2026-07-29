@@ -28,6 +28,11 @@ library TransformsPoints
     Between(a: Point2D, b: Point2D): Vector2D
         => (b.X - a.X, b.Y - a.Y);
 
+    // The displacement from b to a (a - b). Same vector as Between(b, a);
+    // the `-` operator spelling of point difference.
+    Subtract(a: Point2D, b: Point2D): Vector2D
+        => Between(b, a);
+
     // Linear interpolation between two points; t is unclamped.
     Lerp(a: Point2D, b: Point2D, t: Number): Point2D
         => (a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t);
@@ -43,6 +48,11 @@ library TransformsPoints
     // The displacement from a to b (b - a).
     Between(a: Point3D, b: Point3D): Vector3D
         => (b.X - a.X, b.Y - a.Y, b.Z - a.Z);
+
+    // The displacement from b to a (a - b). Same vector as Between(b, a);
+    // the `-` operator spelling of point difference.
+    Subtract(a: Point3D, b: Point3D): Vector3D
+        => Between(b, a);
 
     // Linear interpolation between two points; t is unclamped.
     Lerp(a: Point3D, b: Point3D, t: Number): Point3D

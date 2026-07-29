@@ -36,13 +36,25 @@ library TransformsRotations
         return (v.X * c - v.Y * s, v.X * s + v.Y * c);
     }
 
+    // Alias for Transform with transform-on-left (* operator): r * v.
+    Multiply(r: Rotation2D, v: Vector2D): Vector2D
+        => Transform(v, r);
+
     // Rotate a point about the origin.
     Transform(p: Point2D, r: Rotation2D): Point2D
         => p.PositionVector.Transform(r).ToPoint;
 
+    // Alias for Transform with transform-on-left (* operator): r * p.
+    Multiply(r: Rotation2D, p: Point2D): Point2D
+        => Transform(p, r);
+
     // Rotate a unit direction.
     Transform(d: Direction2D, r: Rotation2D): Direction2D
         => Direction2D(d.Vector.Transform(r));
+
+    // Alias for Transform with transform-on-left (* operator): r * d.
+    Multiply(r: Rotation2D, d: Direction2D): Direction2D
+        => Transform(d, r);
 
     // The rotor of a plane rotation: R = cos(a/2) + sin(a/2) e12.
     // https://en.wikipedia.org/wiki/Rotor_(mathematics)
@@ -80,9 +92,17 @@ library TransformsRotations
         return (v.X * c - v.Y * s, v.X * s + v.Y * c);
     }
 
+    // Alias for Transform with transform-on-left (* operator): r * v.
+    Multiply(r: Rotor2D, v: Vector2D): Vector2D
+        => Transform(v, r);
+
     // Rotate a point about the origin with a rotor.
     Transform(p: Point2D, r: Rotor2D): Point2D
         => p.PositionVector.Transform(r).ToPoint;
+
+    // Alias for Transform with transform-on-left (* operator): r * p.
+    Multiply(r: Rotor2D, p: Point2D): Point2D
+        => Transform(p, r);
 
     //==
     // 3D rotation conversions — Quaternion is the hub: every other rotation
@@ -185,17 +205,33 @@ library TransformsRotations
     Transform(v: Vector3D, r: Rotor3D): Vector3D
         => v.Transform(r.Quaternion);
 
+    // Alias for Transform with transform-on-left (* operator): r * v.
+    Multiply(r: Rotor3D, v: Vector3D): Vector3D
+        => Transform(v, r);
+
     // Rotate a point about the origin with a rotor.
     Transform(p: Point3D, r: Rotor3D): Point3D
         => p.PositionVector.Transform(r.Quaternion).ToPoint;
+
+    // Alias for Transform with transform-on-left (* operator): r * p.
+    Multiply(r: Rotor3D, p: Point3D): Point3D
+        => Transform(p, r);
 
     // Rotate a point about the origin with a quaternion.
     Transform(p: Point3D, q: Quaternion): Point3D
         => p.PositionVector.Transform(q).ToPoint;
 
+    // Alias for Transform with transform-on-left (* operator): q * p.
+    Multiply(q: Quaternion, p: Point3D): Point3D
+        => Transform(p, q);
+
     // Rotate a unit direction.
     Transform(d: Direction3D, q: Quaternion): Direction3D
         => Direction3D(d.Vector.Transform(q));
+
+    // Alias for Transform with transform-on-left (* operator): q * d.
+    Multiply(q: Quaternion, d: Direction3D): Direction3D
+        => Transform(d, q);
 
     //==
     // Rotation matrices — 2D rotations embed in Matrix3x2, 3D rotations in

@@ -14,14 +14,26 @@ library TransformsPose
     Transform(p: Point2D, pose: Pose2D): Point2D
         => pose.Position + p.PositionVector.Transform(pose.Rotation);
 
+    // Alias for Transform with transform-on-left (* operator): pose * p.
+    Multiply(pose: Pose2D, p: Point2D): Point2D
+        => Transform(p, pose);
+
     // Rotate a displacement by the pose's rotation (translation does not act
     // on vectors).
     Transform(v: Vector2D, pose: Pose2D): Vector2D
         => v.Transform(pose.Rotation);
 
+    // Alias for Transform with transform-on-left (* operator): pose * v.
+    Multiply(pose: Pose2D, v: Vector2D): Vector2D
+        => Transform(v, pose);
+
     // The pose that applies `first`, then `second`.
     Compose(first: Pose2D, second: Pose2D): Pose2D
         => (first.Position.Transform(second), first.Rotation * second.Rotation);
+
+    // Alias for Compose, enabling the * operator: a * b applies a first.
+    Multiply(a: Pose2D, b: Pose2D): Pose2D
+        => a.Compose(b);
 
     // The pose that undoes this one: p' = R^-1 (p - t).
     Inverse(pose: Pose2D): Pose2D {
@@ -46,13 +58,25 @@ library TransformsPose
     Transform(p: Point3D, pose: Pose3D): Point3D
         => pose.Position + p.PositionVector.Transform(pose.Orientation);
 
+    // Alias for Transform with transform-on-left (* operator): pose * p.
+    Multiply(pose: Pose3D, p: Point3D): Point3D
+        => Transform(p, pose);
+
     // Rotate a displacement by the pose's orientation.
     Transform(v: Vector3D, pose: Pose3D): Vector3D
         => v.Transform(pose.Orientation);
 
+    // Alias for Transform with transform-on-left (* operator): pose * v.
+    Multiply(pose: Pose3D, v: Vector3D): Vector3D
+        => Transform(v, pose);
+
     // The pose that applies `first`, then `second`.
     Compose(first: Pose3D, second: Pose3D): Pose3D
         => (first.Position.Transform(second), first.Orientation.Concatenate(second.Orientation));
+
+    // Alias for Compose, enabling the * operator: a * b applies a first.
+    Multiply(a: Pose3D, b: Pose3D): Pose3D
+        => a.Compose(b);
 
     // The pose that undoes this one: p' = R^-1 (p - t).
     Inverse(pose: Pose3D): Pose3D {
