@@ -1,5 +1,5 @@
 //==
-// # NumericStructuresComponents — the Vector component surface
+// # NumericStructuresComponents â€” the Vector component surface
 //
 // The map/zip/fold combinators over a vector's components, the reductions built
 // on them (SumComponents, Magnitude, Dot), the distinguished elements derived
@@ -10,7 +10,7 @@
 library NumericStructuresComponents
 {
     //==
-    // # Vector — component-wise lifting
+    // # Vector â€” component-wise lifting
     //
     // Vector declares FromComponents and Broadcast and inherits Count/At from
     // Indexable<Number>, so a vector can be both read as and rebuilt from an
@@ -68,7 +68,7 @@ library NumericStructuresComponents
         => a.ComponentArray.Zip(b.ComponentArray, c.ComponentArray, f).Any(x => x);
 
     //==
-    // # Vector — component reductions
+    // # Vector â€” component reductions
 
     // The sum of all components.
     SumComponents(self: Vector): Number
@@ -104,7 +104,7 @@ library NumericStructuresComponents
         => a.ZipComponents(b, (x, y) => x * y).SumComponents;
 
     //==
-    // # Vector — distinguished elements
+    // # Vector â€” distinguished elements
     //
     // The NumericalLimits surface follows from Broadcast alone: each element is
     // the corresponding Number constant in every component.
@@ -137,7 +137,7 @@ library NumericStructuresComponents
         => Number2(xs.At(0), xs.At(1));
 
     // The 2-tuple with both components set to x.
-    Broadcast(_: Number2, x: Number): Number2
+    Broadcast(self: Number2, x: Number): Number2
         => Number2(x, x);
 
     // The 3-tuple built from the first three entries of xs.
@@ -145,7 +145,7 @@ library NumericStructuresComponents
         => Number3(xs.At(0), xs.At(1), xs.At(2));
 
     // The 3-tuple with every component set to x.
-    Broadcast(_: Number3, x: Number): Number3
+    Broadcast(self: Number3, x: Number): Number3
         => Number3(x, x, x);
 
     // The 4-tuple built from the first four entries of xs.
@@ -153,7 +153,7 @@ library NumericStructuresComponents
         => Number4(xs.At(0), xs.At(1), xs.At(2), xs.At(3));
 
     // The 4-tuple with every component set to x.
-    Broadcast(_: Number4, x: Number): Number4
+    Broadcast(self: Number4, x: Number): Number4
         => Number4(x, x, x, x);
 
     // The 8-lane tuple built from the first eight entries of xs.
@@ -162,7 +162,7 @@ library NumericStructuresComponents
                    xs.At(4), xs.At(5), xs.At(6), xs.At(7));
 
     // The 8-lane tuple with every lane set to x.
-    Broadcast(_: Number8, x: Number): Number8
+    Broadcast(self: Number8, x: Number): Number8
         => Number8(x, x, x, x, x, x, x, x);
 
     // The 2D displacement built from the first two entries of xs.
@@ -170,7 +170,7 @@ library NumericStructuresComponents
         => Vector2D(xs.At(0), xs.At(1));
 
     // The 2D displacement with both components set to x.
-    Broadcast(_: Vector2D, x: Number): Vector2D
+    Broadcast(self: Vector2D, x: Number): Vector2D
         => Vector2D(x, x);
 
     // The 3D displacement built from the first three entries of xs.
@@ -178,7 +178,7 @@ library NumericStructuresComponents
         => Vector3D(xs.At(0), xs.At(1), xs.At(2));
 
     // The 3D displacement with every component set to x.
-    Broadcast(_: Vector3D, x: Number): Vector3D
+    Broadcast(self: Vector3D, x: Number): Vector3D
         => Vector3D(x, x, x);
 
     // The N-dimensional vector holding exactly the given components; the arity

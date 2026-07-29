@@ -337,6 +337,22 @@ namespace Ara3D.Geometry.CSharpWriter
         // with the default style at C4, leaving this one flag.)
         public bool NoProperties;
 
+        // When true (--static-abstract), a concept member whose receiver is `_` — Plato's
+        // constructor-shaped idiom for a TYPE-level operation (`Zero(_: Self): Self`,
+        // `FromAmount(_: Self, x: Number): Self`) — emits as a C# `static abstract` interface
+        // member instead of being omitted from the interface entirely. The implementing type
+        // already emits a plain `static` method for it (CSharpFunctionInfo.IsStatic), so the two
+        // halves finally agree; previously the interface either skipped the member (losing the
+        // contract) or declared it as an instance member that a static method cannot satisfy
+        // (CS0736). See the 2026-07-29 static-concept-members ADR and plato-312.
+        //
+        // OPT-IN because it is not free for stdlib-legacy: `IArrayLike<T>` there declares
+        // NumComponents / CreateFromComponents / CreateFromComponent with `_` receivers, so
+        // enabling this would add three static abstract obligations to every IArrayLike
+        // implementor and move the diff-gated goldens. Default (false) output is byte-identical,
+        // which is what keeps hard rule 2 intact; the forward recipe opts in.
+        public bool StaticAbstract;
+
         // The UNIFORM RENDERING RULE, realized as a global name set: names that keep PROPERTY/field
         // access syntax at call sites — struct fields, the primitive pseudo-fields (X/Y/Z, M11...),
         // and the BCL Count/NumRows/NumColumns obligations. Every other no-arg member gets "()".

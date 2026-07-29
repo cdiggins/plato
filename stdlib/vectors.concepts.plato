@@ -31,7 +31,10 @@ concept Vector
     FromComponents(_: Self, xs: Array<Number>): Self;
 
     // Builds a value of this vector type with every component set to x (the
-    // component-wise constant). The receiver only selects the type and, for
-    // runtime-arity vectors, the arity.
-    Broadcast(_: Self, x: Number): Self;
+    // component-wise constant). The receiver supplies the arity, so unlike
+    // FromComponents this is genuinely an INSTANCE member: VectorN.Broadcast reads
+    // self's component count (numeric-structures-components.library.plato), and a
+    // runtime-arity vector has no other source for it. Declaring it `_: Self` said
+    // the opposite and disagreed with that implementation (plato-312).
+    Broadcast(self: Self, x: Number): Self;
 }

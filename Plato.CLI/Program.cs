@@ -56,6 +56,12 @@ namespace Ara3D.Geometry.CLI
             // (Plato.Intrinsics.V2). Implies --methods.
             var noProperties = args.Contains("--no-properties");
 
+            // Emit `_`-receiver concept members (Plato's constructor-shaped idiom for a type-level
+            // operation) as C# `static abstract` interface members rather than omitting them.
+            // Opt-in: stdlib-legacy's IArrayLike declares three such members, so enabling this by
+            // default would move the diff-gated goldens. See plato-312.
+            var staticAbstract = args.Contains("--static-abstract");
+
             // Array-combinator loop lowering: Map/Zip/Reduce/All/Any/Reverse/... call sites on
             // one-dimensional list receivers become for-loop statements filling materialized
             // arrays (see TirLoopLowerer).
@@ -168,7 +174,7 @@ namespace Ara3D.Geometry.CLI
             else
             {
                 logger.Log("Writing C# Files");
-                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", optimizeArrays, inline, methods, loops, tirDumpDir, noProperties, inlineReport);
+                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", optimizeArrays, inline, methods, loops, tirDumpDir, noProperties, inlineReport, staticAbstract);
                 logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}");
                 if (output.DegradedBodies.Count > 0)
                 {

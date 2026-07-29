@@ -144,6 +144,14 @@ namespace Ara3D.Geometry.CSharpWriter
 
         public string MethodInterface => $"{ReturnType} {Name}{MethodParametersString}" + (NumParameters > 1 || EmitAsMethod ? ";" : " { get; }");
 
+        // --static-abstract: the interface declaration for a `_`-receiver (type-level) concept
+        // member. The ignored receiver disappears exactly as `this` does for an instance member,
+        // so the parameters are the tail. Always METHOD form, never a property: implementors emit
+        // `public static T Name(...)`, and a `static abstract` property would demand `{ get; }`
+        // on both sides. Mirrors System.Numerics.INumberBase<TSelf>.
+        public string StaticAbstractInterface
+            => $"static abstract {ReturnType} {Name}{GenericsString}({MethodParameters.JoinStringsWithComma()});";
+
         // TODO: should we not be taking into account the function type replacements?  
         public string ToCSharpTypeName(TypeInstance ti)
         {

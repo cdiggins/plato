@@ -401,7 +401,15 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         {
             var fi = ToFunctionInfo(m.Function, null, FunctionInstanceKind.InterfaceDeclared);
             if (fi.IsStatic)
+            {
+                // A `_`-receiver member is a TYPE-level operation. Under --static-abstract it
+                // becomes a `static abstract` obligation the implementing type satisfies with its
+                // plain `static` method; otherwise it is omitted from the interface as before
+                // (which is why the contract used to be invisible in C#). See plato-312.
+                if (Writer.StaticAbstract)
+                    WriteLine(fi.StaticAbstractInterface);
                 continue;
+            }
             WriteLine(fi.MethodInterface);
             if (fi.IsIndexer && !Writer.NoProperties)
                 WriteLine(fi.IndexerInterface);
