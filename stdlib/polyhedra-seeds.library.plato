@@ -1,0 +1,107 @@
+//==
+// # PolyhedraSeeds — the five Platonic solids as polygon meshes
+//
+// The regular convex polyhedra (https://en.wikipedia.org/wiki/Platonic_solid),
+// each as an explicit vertex table and face table, centred on the origin and
+// projected onto the unit sphere so the circumscribed radius is one. Read as
+// `PolygonMesh3D.Cube`, `PolygonMesh3D.Icosahedron`, … (the constant idiom:
+// dispatch on an ignored receiver of the result type).
+//
+// These five are the SEEDS: every other catalog solid in this tree is a Conway
+// program over one of them (`polyhedra-conway.library.plato`) rather than
+// another table. Faces wind counter-clockwise seen from outside
+// (Convention: see CONVENTIONS.md - Winding, handedness, and normals).
+//
+// The tables are literal because the vertex coordinates ARE the definition —
+// golden-ratio rectangles for the icosahedron, a cube plus golden rectangles
+// for the dodecahedron. Generating them from symmetry groups instead would
+// hide, not explain. C# oracle: `Ara3D.Geometry.Polyhedra`.
+
+library PolyhedraSeeds
+{
+    // Four triangles, four vertices: alternate corners of a cube
+    // (https://en.wikipedia.org/wiki/Tetrahedron).
+    Tetrahedron(_: PolygonMesh3D): PolygonMesh3D
+    {
+        var h = 1.0 / Number.SqrtTwo;
+        var points = [Point3D(1.0, 0.0, -h),
+                      Point3D(-1.0, 0.0, -h),
+                      Point3D(0.0, 1.0, h),
+                      Point3D(0.0, -1.0, h)];
+        var faces = [[0, 1, 2], [1, 0, 3], [0, 2, 3], [1, 3, 2]];
+        return PolygonMeshOfVertexNumbers(points, faces).ProjectedToUnitSphere;
+    }
+
+    // Six squares, eight vertices (https://en.wikipedia.org/wiki/Cube).
+    Cube(_: PolygonMesh3D): PolygonMesh3D
+    {
+        var points = [Point3D(-1.0, -1.0, -1.0),
+                      Point3D(-1.0, 1.0, -1.0),
+                      Point3D(1.0, 1.0, -1.0),
+                      Point3D(1.0, -1.0, -1.0),
+                      Point3D(-1.0, -1.0, 1.0),
+                      Point3D(-1.0, 1.0, 1.0),
+                      Point3D(1.0, 1.0, 1.0),
+                      Point3D(1.0, -1.0, 1.0)];
+        var faces = [[0, 1, 2, 3], [1, 5, 6, 2], [7, 6, 5, 4],
+                     [4, 0, 3, 7], [4, 5, 1, 0], [3, 2, 6, 7]];
+        return PolygonMeshOfVertexNumbers(points, faces).ProjectedToUnitSphere;
+    }
+
+    // Eight triangles on the six axis points: the dual of the cube
+    // (https://en.wikipedia.org/wiki/Octahedron).
+    Octahedron(_: PolygonMesh3D): PolygonMesh3D
+    {
+        var points = [Point3D(1.0, 0.0, 0.0),
+                      Point3D(-1.0, 0.0, 0.0),
+                      Point3D(0.0, 1.0, 0.0),
+                      Point3D(0.0, -1.0, 0.0),
+                      Point3D(0.0, 0.0, 1.0),
+                      Point3D(0.0, 0.0, -1.0)];
+        var faces = [[0, 2, 4], [0, 4, 3], [0, 3, 5], [0, 5, 2],
+                     [1, 2, 5], [1, 5, 3], [1, 3, 4], [1, 4, 2]];
+        return PolygonMeshOfVertexNumbers(points, faces).ProjectedToUnitSphere;
+    }
+
+    // Twelve pentagons on twenty vertices: a cube's eight corners plus three
+    // mutually perpendicular golden rectangles
+    // (https://en.wikipedia.org/wiki/Regular_dodecahedron).
+    Dodecahedron(_: PolygonMesh3D): PolygonMesh3D
+    {
+        var p = Number.Phi;
+        var q = Number.RPhi;
+        var points = [Point3D(-1.0, -1.0, -1.0), Point3D(-1.0, -1.0, 1.0),
+                      Point3D(-1.0, 1.0, -1.0), Point3D(-1.0, 1.0, 1.0),
+                      Point3D(1.0, -1.0, -1.0), Point3D(1.0, -1.0, 1.0),
+                      Point3D(1.0, 1.0, -1.0), Point3D(1.0, 1.0, 1.0),
+                      Point3D(0.0, -q, -p), Point3D(0.0, -q, p),
+                      Point3D(0.0, q, -p), Point3D(0.0, q, p),
+                      Point3D(-q, -p, 0.0), Point3D(-q, p, 0.0),
+                      Point3D(q, -p, 0.0), Point3D(q, p, 0.0),
+                      Point3D(-p, 0.0, -q), Point3D(p, 0.0, -q),
+                      Point3D(-p, 0.0, q), Point3D(p, 0.0, q)];
+        var faces = [[11, 7, 15, 13, 3], [19, 17, 6, 15, 7], [4, 8, 10, 6, 17],
+                     [0, 16, 2, 10, 8], [12, 1, 18, 16, 0], [10, 2, 13, 15, 6],
+                     [16, 18, 3, 13, 2], [1, 9, 11, 3, 18], [14, 12, 0, 8, 4],
+                     [9, 5, 19, 7, 11], [5, 14, 4, 17, 19], [12, 14, 5, 9, 1]];
+        return PolygonMeshOfVertexNumbers(points, faces).ProjectedToUnitSphere;
+    }
+
+    // Twenty triangles on twelve vertices: three mutually perpendicular golden
+    // rectangles (https://en.wikipedia.org/wiki/Regular_icosahedron).
+    Icosahedron(_: PolygonMesh3D): PolygonMesh3D
+    {
+        var p = Number.Phi;
+        var points = [Point3D(-1.0, p, 0.0), Point3D(1.0, p, 0.0),
+                      Point3D(-1.0, -p, 0.0), Point3D(1.0, -p, 0.0),
+                      Point3D(0.0, -1.0, p), Point3D(0.0, 1.0, p),
+                      Point3D(0.0, -1.0, -p), Point3D(0.0, 1.0, -p),
+                      Point3D(p, 0.0, -1.0), Point3D(p, 0.0, 1.0),
+                      Point3D(-p, 0.0, -1.0), Point3D(-p, 0.0, 1.0)];
+        var faces = [[0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
+                     [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
+                     [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
+                     [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]];
+        return PolygonMeshOfVertexNumbers(points, faces).ProjectedToUnitSphere;
+    }
+}

@@ -1,0 +1,140 @@
+//==
+// # MeshesPolygonCorners — half-edge navigation over PolygonMesh3D corners
+//
+// A corner (`meshes-polygon.library.plato`) is a directed edge: corner c runs
+// from its own vertex to the vertex of the next corner in the same face. That
+// makes the packed corner array a complete half-edge structure with no side
+// table — the twin of a corner is simply the corner running the other way,
+// found by search rather than stored
+// (https://en.wikipedia.org/wiki/Doubly_connected_edge_list).
+//
+// The searches are linear, so the walks below are quadratic in corner count.
+// That is the right trade for the catalog solids (a truncated icosahedron has
+// 180 corners) and deliberately keeps the mesh free of a built adjacency
+// structure; a stored half-edge builder is separate work (plato-298).
+//
+// Preconditions throughout: the mesh is a CLOSED manifold — every corner has a
+// twin, and the corners around a vertex form one closed cycle. On an open mesh
+// TwinCorner returns the "none" index and the ring walk does not terminate
+// correctly.
+
+library MeshesPolygonCorners
+{
+    //==
+    // Walking within one face.
+
+    // The face a corner belongs to: the number of face starts at or before it.
+    // Precondition: the corner is present.
+    CornerFace(self: PolygonMesh3D, corner: CornerIndex): FaceIndex
+        => FaceIndex(self.FaceCount
+            .MapRange(f => self.FaceOffsets.At(f) <= corner.Value ? 1 : 0)
+            .Reduce(0, (acc, hit) => acc + hit) - 1);
+
+    // The next corner counter-clockwise around the same face, wrapping from the
+    // last corner back to the first. Precondition: the corner is present.
+    NextCorner(self: PolygonMesh3D, corner: CornerIndex): CornerIndex
+    {
+        var face = self.CornerFace(corner).Value;
+        return self.FaceCorner(face, corner.Value - self.FaceOffsets.At(face) + 1);
+    }
+
+    // The vertex a corner points AT, reading the corner as a directed edge: the
+    // vertex of the next corner of the same face.
+    CornerDestination(self: PolygonMesh3D, corner: CornerIndex): VertexIndex
+        => self.CornerVertex(self.NextCorner(corner));
+
+    // The point a fraction t along the edge a corner runs: t = 0 is the corner's
+    // own vertex, t = 1 the vertex it points at. The twin runs the other way, so
+    // CornerLerp(twin, t) is the point at 1 - t along the same edge.
+    CornerLerp(self: PolygonMesh3D, corner: CornerIndex, t: Number): Point3D
+        => self.CornerPosition(corner).Lerp(self.CornerPosition(self.NextCorner(corner)), t);
+
+    //==
+    // Crossing an edge, and turning around a vertex.
+
+    // The corner running the opposite way along the same undirected edge: the
+    // one whose vertex is this corner's destination and whose destination is
+    // this corner's vertex. Returns the "none" index when there is none (a
+    // boundary edge).
+    TwinCorner(self: PolygonMesh3D, corner: CornerIndex): CornerIndex
+    {
+        var from = self.CornerVertex(corner);
+        var to = self.CornerDestination(corner);
+        return CornerIndex(self.CornerCount
+            .MapRange(c => CornerIndex(c))
+            .Reduce(-1, (found, other) =>
+                self.CornerVertex(other).Equals(to) && self.CornerDestination(other).Equals(from)
+                    ? other.Value
+                    : found));
+    }
+
+    // The next corner outgoing from the SAME vertex, turning one face along:
+    // cross the edge to the neighbouring face, then step to that face's corner
+    // at this vertex.
+    RotateAroundVertex(self: PolygonMesh3D, corner: CornerIndex): CornerIndex
+        => self.NextCorner(self.TwinCorner(corner));
+
+    //==
+    // The corners of one vertex.
+
+    // The number of faces meeting at a vertex, which for a closed manifold is
+    // also its edge count: one outgoing corner per incident face.
+    VertexDegree(self: PolygonMesh3D, vertex: VertexIndex): Integer
+        => self.CornerCount
+            .MapRange(c => self.FaceVertices.At(c).Equals(vertex) ? 1 : 0)
+            .Reduce(0, (acc, hit) => acc + hit);
+
+    // The lowest-numbered corner at a vertex: the ring walk's starting point.
+    // Scans downwards so the last match kept is the smallest. Returns the "none"
+    // index for a vertex no face uses.
+    FirstCornerOfVertex(self: PolygonMesh3D, vertex: VertexIndex): CornerIndex
+        => CornerIndex(self.CornerCount
+            .MapRange(i => self.CornerCount - 1 - i)
+            .Reduce(-1, (found, c) => self.FaceVertices.At(c).Equals(vertex) ? c : found));
+
+    // Every corner outgoing from a vertex, in rotation order around it: start at
+    // the lowest-numbered one and turn one face at a time. The walk closes back
+    // on its start after exactly VertexDegree steps, so the degree — not a
+    // termination test — bounds it.
+    VertexCornerRing(self: PolygonMesh3D, vertex: VertexIndex): Array<CornerIndex>
+    {
+        var first = self.FirstCornerOfVertex(vertex);
+        var turns = self.VertexDegree(vertex) - 1;
+        return turns.MapRange(i => i)
+            .Reduce([first], (ring, turn) => ring.Append(self.RotateAroundVertex(ring.Last)));
+    }
+
+    // The same ring walked the other way round. A face built around a vertex
+    // winds opposite to the rotation that generated it, so the operators that
+    // emit one vertex-face per vertex take this order to keep every face of the
+    // result wound counter-clockwise from outside.
+    ReversedVertexCornerRing(self: PolygonMesh3D, vertex: VertexIndex): Array<CornerIndex>
+    {
+        var ring = self.VertexCornerRing(vertex);
+        return ring.Count.MapRange(i => ring.At(ring.Count - 1 - i));
+    }
+
+    //==
+    // Numbering the undirected edges.
+    //
+    // An undirected edge is a twin pair, named by its lower corner. Numbering
+    // edges by the rank of that corner among all such "canonical" corners gives
+    // a dense edge numbering derived entirely from the packing — which is what
+    // the ambo operator needs to place one new vertex per edge.
+
+    // True when this corner is the lower half of its twin pair, and so the one
+    // that names the undirected edge.
+    IsCanonicalCorner(self: PolygonMesh3D, corner: CornerIndex): Boolean
+        => corner.Value < self.TwinCorner(corner).Value;
+
+    // The dense index of a corner's undirected edge: how many canonical corners
+    // precede this edge's own canonical corner. Both halves of a twin pair give
+    // the same answer, and the results cover [0, EdgeCount).
+    CornerEdge(self: PolygonMesh3D, corner: CornerIndex): EdgeIndex
+    {
+        var canonical = corner.Value.Min(self.TwinCorner(corner).Value);
+        return EdgeIndex(canonical
+            .MapRange(c => self.IsCanonicalCorner(CornerIndex(c)) ? 1 : 0)
+            .Reduce(0, (acc, hit) => acc + hit));
+    }
+}
