@@ -152,28 +152,19 @@ unique type Buffer<T>
 // symbol ids under a byte-identity codegen gate, which this vocabulary is not
 // subject to.
 //
-// TODO(compiler-gap): the single-parameter members — `Count`, `Freeze`, and
-// `EmptyList` — cannot be declared here yet. `FunctionInstance.cs:162-165`
-// rejects any function of one or fewer parameters that carries a type variable
-// ("We expect there to be no type variables in functions with only one or less
-// parameters"), which aborts the whole compilation, not just the declaration.
-// The three signatures are written out below as comments so the intended
-// surface stays reviewable; uncomment them when that restriction is relaxed.
-// Until then a builder can be constructed and mutated but not observed by
-// `Count`, and — critically — not consumed: `Freeze` is the whole point of the
-// affine story, so no algorithm can be *written* against these types in stdlib
-// yet. The runtime (`PlatoList`/`PlatoBuffer`) already implements all of them.
-//
-//     Count(xs: List<$T>): Integer;
-//     Freeze(xs: List<$T>): Array<$T>;
-//     EmptyList(xs: Array<$T>): List<$T>;
-//     Count(xs: Buffer<$T>): Integer;
-//     Freeze(xs: Buffer<$T>): Array<$T>;
+// The single-parameter observers and consumers — `Count`, `Freeze` and
+// `EmptyList` — are declared alongside the mutators below. Each carries a type
+// variable that is fully determined by its one parameter (`Count(xs: List<$T>)`
+// fixes `$T` from its argument), so a call site can infer it. The runtime
+// (`PlatoList`/`PlatoBuffer`) implements all of them.
 
 library UniqueBuilders
 {
     //==
     // Growable builder: unique type List<T>.
+
+    // The number of elements accumulated so far. Observes; does not consume.
+    Count(xs: List<$T>): Integer;
 
     // The element at the given index. Observes; does not consume.
     At(xs: List<$T>, n: Integer): $T;
@@ -189,8 +180,20 @@ library UniqueBuilders
     // Precondition: 0 <= i < Count.
     Set(xs: List<$T>, i: Integer, x: $T): List<$T>;
 
+    // Zero-copy handoff of the accumulated elements to an immutable Array<$T>.
+    // Consumes: the builder is invalidated and any later use throws.
+    Freeze(xs: List<$T>): Array<$T>;
+
+    // A fresh empty List whose element type matches the given array. Lets a
+    // generic body obtain a builder where the element type is a type variable,
+    // without naming a concrete type in `new List<...>()`.
+    EmptyList(xs: Array<$T>): List<$T>;
+
     //==
     // Fixed-size builder: unique type Buffer<T>.
+
+    // The number of slots. Observes; does not consume.
+    Count(xs: Buffer<$T>): Integer;
 
     // The value written to the given slot. Observes; does not consume.
     At(xs: Buffer<$T>, n: Integer): $T;
@@ -198,4 +201,8 @@ library UniqueBuilders
     // Writes one slot and returns the same builder. Rebind or chain.
     // Precondition: 0 <= i < Count.
     Set(xs: Buffer<$T>, i: Integer, x: $T): Buffer<$T>;
+
+    // Zero-copy handoff of the written slots to an immutable Array<$T>.
+    // Consumes: the builder is invalidated and any later use throws.
+    Freeze(xs: Buffer<$T>): Array<$T>;
 }

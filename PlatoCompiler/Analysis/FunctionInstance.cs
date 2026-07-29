@@ -159,10 +159,23 @@ namespace Ara3D.Geometry.Compiler.Analysis
             // Generate and gather the type variables 
             TypeVariableAnalysis = new FunctionTypeVariableAnalysis(ParameterTypes, ReturnType, !IsInterfaceDeclaration && !IsInterfaceExtension);
 
-            if (ParameterTypes.Count <= 1)
+            if (ParameterTypes.Count <= 1 && Kind != FunctionInstanceKind.InterfaceExtension)
             {
-                if (TypeVariableAnalysis.TypeVariables.Count > 0 && Kind != FunctionInstanceKind.InterfaceExtension)
-                    throw new Exception("We expect there to be no type variables in functions with only one or less parameters");
+                // A generic function with a single parameter is fine as long as every type
+                // variable is determined by that parameter, so a call site can infer all type
+                // arguments (e.g. Count(xs: List<$T>) fixes $T from its argument). Type variables
+                // reachable only through the return type are not inferable from the arguments and
+                // stay rejected. Every entry in TypeVariableAnalysis.TypeVariables is generated
+                // from a parameter, so name-matching against the parameter types is exact.
+                var determined = ParameterTypeVariableNames();
+                var undetermined = TypeVariableAnalysis.TypeVariables
+                    .Where(tv => !determined.Contains(tv.Name))
+                    .Select(tv => tv.Name)
+                    .ToList();
+                if (undetermined.Count > 0)
+                    throw new Exception(
+                        $"Function '{Name}' has type variable(s) {undetermined.JoinStringsWithComma()} that are not " +
+                        "determined by any parameter; such a function cannot be dispatched from a call site");
             }
 
             // Create the final version of the return type, and parameter types
@@ -206,7 +219,17 @@ namespace Ara3D.Geometry.Compiler.Analysis
             }
         }
 
-        public static int CountTypeVars(TypeExpression te) 
+        public static int CountTypeVars(TypeExpression te)
             => te.IsTypeVariable ? 1 : te.TypeArgs.Sum(CountTypeVars);
+
+        // The names of every type variable occurring anywhere in the analyzed (post-substitution,
+        // _TN-named) parameter types. A type variable in this set is inferable from the arguments
+        // at a call site.
+        public HashSet<string> ParameterTypeVariableNames()
+            => TypeVariableAnalysis.ParameterTypes
+                .SelectMany(p => p.SelfAndDescendants())
+                .Where(t => t.Def.IsTypeVariable())
+                .Select(t => t.Name)
+                .ToHashSet();
     }
 }

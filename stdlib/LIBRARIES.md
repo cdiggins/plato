@@ -48,11 +48,12 @@ below now genuinely covers these library bodies — which it did **not** while t
    read. That is a linter defect, not a signal about your code: do not contort a body to chase
    the number, and do not read LINT003 deltas as a measure of coverage.
 
-   Status note: the affine builders are declared but not yet usable end-to-end — `Freeze`,
-   `Count` and `EmptyList` cannot currently be declared at all, because a generic function with
-   one or fewer parameters aborts compilation (`PlatoCompiler/Analysis/FunctionInstance.cs:162-165`).
-   A builder can be constructed and mutated but not consumed. See the `TODO(compiler-gap)` in
-   `primitives.plato`.
+   Status note: the affine builders' single-parameter members — `Count`, `Freeze` and
+   `EmptyList` — are now declared in `primitives.plato`. `FunctionInstance.cs` used to abort the
+   whole compilation on any generic function of one or fewer parameters; the guard now permits
+   such a function when every type variable is determined by its parameter(s) (as these are),
+   and only rejects a type variable reachable solely through the return type. A builder can now
+   be constructed, mutated, observed with `Count`, and consumed with `Freeze`.
 3. **Only call what exists**: functions declared on the concept itself, its inherited
    concepts, or functions you define in your own library file. Verify every member name
    with the plato-navigation MCP tools (`plato_search_symbols` → `plato_definition` /
