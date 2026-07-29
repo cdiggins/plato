@@ -29,13 +29,13 @@ library IntervalsTransformsTransformable
     // TTransform. Constraining Transformable that way is not sound, because the
     // transform family is not uniformly invertible or composable — the TRS types
     // (Transform2D/Transform3D) are not closed under composition (see
-    // transforms.plato) and the projective types expose no inverse. The pivot and
+    // transforms-trs.plato) and the projective types expose no inverse. The pivot and
     // identity helpers therefore live per-representation, not on the concept.
 
     //==
     // Deform implies Transform - the legacy insight
     // (stdlib-legacy/meshes.library.plato:84) generalized to every transform
-    // representation. `library Transforms` in transforms.plato already applies each
+    // representation. The `transforms-*.library.plato` files already apply each
     // representation to a bare Point2D/Point3D; lifting that point map through
     // Deform gives EVERY deformable type a complete transform surface from its
     // single Deform primitive. Implementing Deform for a new shape therefore also

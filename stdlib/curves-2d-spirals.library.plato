@@ -15,7 +15,7 @@
 // the P2 `Reduce`/`MapRange` primitives do not touch it: the block is purely a
 // missing concept surface. The clean fix is `concept AngularCurve2D` (with the
 // obligation `Eval(self, theta: Angle): Point2D`) plus one bridge, whose
-// natural home is `curves-surfaces.concepts.plato` alongside the other curve
+// natural home is `curves.concepts.plato` alongside the other curve
 // concepts — a file owned by the curves package, not editable from this
 // library-body pass. Until that concept lands, the roulettes and figure curves
 // below each spell out the `t.Turns` conversion in their own `Eval`.

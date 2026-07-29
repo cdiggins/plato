@@ -12,7 +12,7 @@
 //     inherited through `Curve2D`).
 //   * Types carrying an `Angles: AngleInterval` sweep map t through
 //     `Angles.Lerp(t)`; types without one map t to `t.Turns`, one full
-//     revolution, as `curves-surfaces.concepts.plato` documents for
+//     revolution, as `curves.concepts.plato` documents for
 //     `PolarCurve2D`.
 
 library Curves2DArcs

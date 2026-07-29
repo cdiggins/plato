@@ -3,7 +3,8 @@
 //
 // The shared color vocabulary. Color is linear-light RGBA with components
 // nominally in [0, 1]; wide-gamut and HDR values may exceed 1. Additional color
-// spaces and imaging types live in files 44-47.
+// spaces and imaging types live in the `color-spaces-*`, `images*`,
+// `image-processing-*` and `texturing*` files.
 
 // A linear-light RGBA color (https://en.wikipedia.org/wiki/RGBA_color_model).
 // The canonical color type for computation; interpolation and arithmetic are

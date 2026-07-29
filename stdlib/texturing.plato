@@ -8,6 +8,7 @@
 // VolumeImage, CubemapImage); the concept the procedural types implement
 // lives in `texturing.concepts.plato`; the sampling state and bindings used
 // to read a texture live in `texturing-sampling.plato`.
+// Convention: see CONVENTIONS.md - UV origin (origin top-left, U right, V down).
 
 //==
 // ## Texture descriptors

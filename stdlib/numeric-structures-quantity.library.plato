@@ -1,8 +1,9 @@
 //==
 // # NumericStructuresQuantity — derived functions for the Quantity concept
 //
-// Bodies for the Quantity concept declared in `quantities.plato`. Ordering,
-// interpolation, Double and Half all come from `core-algebra.library.plato` via
+// Bodies for the Quantity concept declared in `quantities.concepts.plato`.
+// Ordering, interpolation, Double and Half all come from the `core-*` /
+// `algebra-*` libraries via
 // the inherited concepts; only what is specific to the Amount projection is
 // added here. Pure expressions only; all values are immutable.
 

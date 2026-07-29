@@ -82,7 +82,7 @@ type SceneCameraSet
 
 // A tagged reference to one camera: the case picks the typed array of
 // SceneCameraSet and Index is the position within that array. Distinct from
-// CameraProjection (file 48): a Physical camera projects perspectively but
+// CameraProjection (`cameras.plato`): a Physical camera projects perspectively but
 // is stored in its own array.
 type SceneCameraBinding
     implements Value
@@ -94,7 +94,7 @@ type SceneCameraBinding
     | Panoramic(Index: ItemIndex);
 
 // The shared resource pools of a scene; node and instance indices resolve
-// here. Meshes come from file 31, materials from file 50.
+// here. Meshes come from `meshes.plato`, materials from `materials.plato`.
 type SceneResources
     implements Value
 {

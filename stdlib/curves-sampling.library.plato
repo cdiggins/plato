@@ -20,7 +20,7 @@ library CurvesSampling
     // discretization primitives are `Fractions` (endpoints included, the right
     // form for an OPEN curve) and `FractionsExclusive` (upper end omitted, the
     // right form for a CLOSED one), both in
-    // `collections-functional.library.plato` (P2). P6 may call P2.
+    // `collections-sampling.library.plato` (P2). P6 may call P2.
     //
     // A closed curve satisfies Eval(0) = Eval(1), so sampling it with
     // `Fractions` would duplicate the seam point; the periodic samplers below

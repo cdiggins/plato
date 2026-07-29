@@ -4,7 +4,8 @@
 // Retained scene description for 2D vector graphics: a flat node array forms
 // a tree via parent indices, and node content (styled paths, text layouts,
 // image references) lives in parallel pools addressed by index. Viewport and
-// export settings close the file. BlendMode is owned by file 46.
+// export settings close the file. BlendMode is owned by
+// `image-processing-compositing.plato`.
 
 // The content a scene node carries. None is a pure transform node; Group has
 // children only and is composited as an isolation group. The indexed cases

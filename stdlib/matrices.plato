@@ -9,9 +9,9 @@
 // Convention: see CONVENTIONS.md - Matrices (row-vector multiplication, v' = v M).
 // Discoverability banner (item 473): the concrete operations for the fixed-size
 // matrices (Determinant, Invert, Multiply, Transform, Lerp, ...) are declared on
-// the intrinsic hub in `intrinsics.plato`, not restated here; concept-generic
-// helpers (Trace, FrobeniusNorm, IsSquare, ...) live in
-// `numeric-structures.library.plato`.
+// the intrinsic hub in `intrinsics-transforms.library.plato`, not restated here;
+// concept-generic helpers (Trace, FrobeniusNorm, IsSquare, ...) live in
+// `numeric-structures-matrix.library.plato`.
 
 // A 2x2 matrix: 2D linear maps (rotation, scale, shear).
 type Matrix2x2

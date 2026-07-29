@@ -14,7 +14,7 @@
 // A right regular prism: two parallel regular SideCount-gons of circumscribed
 // radius Radius in planes perpendicular to the frame's Z axis, separated by
 // Height and joined by rectangles (https://en.wikipedia.org/wiki/Prism_(geometry)).
-// (The general polygon-swept prism is Prism3D, file 19.)
+// (The general polygon-swept prism is Prism3D, `polygons-spatial.plato`.)
 type RegularPrism
     implements ConvexSolid, ParametricSurface
 {

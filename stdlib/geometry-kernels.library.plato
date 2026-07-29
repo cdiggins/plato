@@ -17,14 +17,14 @@ library GeometryKernels
     //==
     // # Point-list kernels
     //
-    // The formulas every point-list shape in `lines.plato`, `planar-shapes.plato`,
-    // `polygons.plato` and `spatial-primitives.plato` is built from. They take a
+    // The formulas every point-list shape in `lines.plato`, the `planar-*.plato`
+    // files, `polygons.plato` and the `spatial-*.plato` files is built from. They take a
     // plain `Array<Point2D>` / `Array<Point3D>` rather than a concept so that a
     // shape whose points are NOT its `PointSet` members (a regular polygon's
     // computed vertices, a polygon's holes) can call them too.
     //
     // Conventions fixed here and inherited by every caller:
-    //   * Winding: counter-clockwise is positive (README / planar-shapes.plato).
+    //   * Winding: counter-clockwise is positive (README / CONVENTIONS.md - Winding).
     //     `ShoelaceArea` is SIGNED; the `Area` obligations take its absolute value.
     //   * Vertex order: a closed ring lists each vertex once; the closing edge from
     //     the last vertex back to the first is implicit (hence `AtModulo`).

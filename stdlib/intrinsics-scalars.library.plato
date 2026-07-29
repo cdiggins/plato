@@ -4,10 +4,10 @@
 // Host-provided functions on the scalar types: Number, Integer, Boolean and
 // Angle (https://en.wikipedia.org/wiki/IEEE_754). This file also carries the
 // shared preamble and porting notes for the whole `intrinsics-*` family, which
-// was split out of the single `intrinsics.plato` library.
+// was split out of a single combined intrinsics library.
 //
 // Host-provided functions: declarations without bodies, implemented by each target
-// backend's runtime rather than in Plato. Ported from `plato-src/intrinsics.plato`
+// backend's runtime rather than in Plato. Ported from the v1 `plato-src` intrinsics file
 // (the V1 wrapper around System.Numerics / MathF) and adapted to the v3 vocabulary.
 //
 // Target backends, in priority order: C#, C++, CUDA, TypeScript, then GLSL, Rust,
@@ -175,7 +175,7 @@ library IntrinsicsScalars
 // - RoundAwayFromZero/RoundToZero: only Round(digits) and Truncate survive; the
 //   midpoint-rounding zoo is C#-specific.
 // - Linear/Quadratic/Cubic polynomial evaluation: not intrinsic; belongs in the
-//   61-polynomials library once implemented.
+//   `polynomials.library.plato` once implemented.
 // - Columns/Rows (Array2D -> Array<Array<T>>): jagged views; derive in a library.
 // - WithRow1..4 / WithX..W / WithElement: record-update helpers, not host intrinsics;
 //   the compiler's with-syntax or library functions cover them.
@@ -183,6 +183,6 @@ library IntrinsicsScalars
 //   forms; the surviving core (Map/Reduce/Zip/Slice/...) covers them.
 // - First/Last/Middle/IsEmpty/Rest/Reverse/Indices: the compiler rejects bodiless
 //   generic functions with fewer than two parameters, and the first four already
-//   exist generically on Indexable/Countable in collections-functional.library.plato (P2). Rest/Reverse/
+//   exist generically on Indexable/Countable in collections-indexable.library.plato (P2). Rest/Reverse/
 //   Indices should be added to a collections implementation library as derived
 //   functions (Skip(1) / MapRange over Count) rather than intrinsics.

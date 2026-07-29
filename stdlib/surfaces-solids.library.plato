@@ -141,7 +141,7 @@ library SurfacesSolids
     //==
     // # Surface, ClosedSurface, Solid, ConvexSolid
     //
-    // These marker concepts already exist (curves-surfaces.concepts.plato):
+    // These marker concepts already exist (surfaces-solids.concepts.plato):
     // Surface and Solid inherit only Geometry3D, ClosedSurface and ConvexSolid only
     // another marker. They add no members over their bases, and Geometry3D's own
     // derived helpers live in the geometry package (P5). No curve/surface-specific

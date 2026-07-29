@@ -61,6 +61,8 @@ type SignificanceLevel
 // range is [Nominal - Minus, Nominal + Plus]; Plus and Minus are
 // non-negative magnitudes.
 // (https://en.wikipedia.org/wiki/Engineering_tolerance)
+// Convention: see CONVENTIONS.md - Floating-point comparison (this is an
+// acceptance allowance, explicitly NOT the ComparisonTolerance epsilon record).
 type Tolerance
     implements Value
 {

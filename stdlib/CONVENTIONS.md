@@ -31,8 +31,10 @@ so element `(r, c)` is component *c* of row *r*, and each row is the image of a
 basis vector. Composition reads left to right: in `v (M1 * M2)`, `M1` applies
 first. Textbook column-vector `M v` is **not** the convention here; determinant
 and "column images" discussions must be read against this row-major layout.
-*Owners:* `matrices.plato` (Matrix2x2..4x4, Matrix3x2, Matrix4x3, MatrixN),
-`transforms.plato`.
+*Owners:* `matrices.plato` (Matrix2x2..4x4, Matrix3x2, Matrix4x3, MatrixN);
+the transform representations in `transforms-trs.plato` /
+`transforms-affine.plato` / `transforms-frames.plato` and their bodies in the
+`transforms-*.library.plato` files.
 
 ## Winding, handedness, and normals
 
@@ -42,9 +44,9 @@ normal follows the right-hand rule over the CCW vertex order. `CounterClockwise`
 is the `WindingOrder` default. A mirroring transform (negative determinant)
 inverts winding — the usual source of "suddenly inverted" meshes after a mirror;
 re-orient on import rather than carrying a per-mesh flag.
-*Owners:* `topology.plato` (WindingOrder), `meshes.plato` (face normals),
-`planar-shapes.plato` (Triangle2D: CCW positive area) /
-`spatial-primitives.plato` (Triangle3D: right-hand normal).
+*Owners:* `topology-classification.plato` (WindingOrder), `meshes.plato` (face
+normals), `planar-triangles.plato` (Triangle2D: CCW positive area) /
+`spatial-patches.plato` (Triangle3D: right-hand normal).
 
 ## Typed indices — `-1` means "none"
 
@@ -58,20 +60,21 @@ cardinal-axis choice is the typed `Axis3D` / `Axis2D` / `SignedAxis3D` sum
 (`axes.plato`), whose `Ordinal` recovers the `Integer` component index when one
 is genuinely needed — kd-tree split axes, `UpAxis` / `ForwardAxis` fields, and
 longest-extent queries take an axis type, not a bare `0`/`1`/`2`.
-*Owners:* `Index` concept (`collections.concepts.plato`); every typed index type
-(`topology.plato` VertexIndex/EdgeIndex/..., domain files); `ItemIndex`
-(`numbers.plato`); axis selectors (`axes.plato` Axis3D/Axis2D/SignedAxis3D).
+*Owners:* `Index` concept (`collections-indexable.concepts.plato`); every typed
+index type (`topology-indices.plato` VertexIndex/EdgeIndex/..., domain files);
+`ItemIndex` (`numbers.plato`); axis selectors (`axes.plato`
+Axis3D/Axis2D/SignedAxis3D).
 
 ## Angles — `Angle`-typed, radians-canonical
 
 An angle is always the `Angle` type, **never a raw `Number`**. `Angle` stores
-**radians** (`quantities.plato`); radians is the storage unit, not the
+**radians** (`quantities-geometric.plato`); radians is the storage unit, not the
 interchange type. Build angles through the unit constructors
 `n.Degrees` / `n.Turns` / `n.Gradians` / `n.ArcMinutes` / `n.ArcSeconds`
 (`angles.library.plato`); the sole intrinsic path is the radians cast `Angle(x)`
-(`intrinsics.plato`). Read them back with the matching accessors (`a.Degrees`,
-`a.Turns`, ...).
-*Owners:* `Angle` (`quantities.plato`), `angles.library.plato`.
+(`intrinsics-scalars.library.plato`). Read them back with the matching accessors
+(`a.Degrees`, `a.Turns`, ...).
+*Owners:* `Angle` (`quantities-geometric.plato`), `angles.library.plato`.
 
 ### Canonical angle interval
 
@@ -89,8 +92,9 @@ Axis-aligned bounds and intervals are **inclusive on both `Min` and `Max`**
 encoded by inversion: `Start > End` for a `NumberInterval`, or `Min` component-
 wise greater than `Max` for `Bounds`. An empty region contains no points and is
 the identity for `Union` — this is what makes "grow from empty" correct.
-*Owners:* `intervals-bounds.plato` (NumberInterval, AngleInterval, Bounds2D/3D,
-IntegerBounds2D/3D).
+*Owners:* `intervals.plato` (NumberInterval, AngleInterval, LengthInterval,
+IntegerInterval), `intervals-bounds.plato` (Bounds2D/3D, IntegerBounds2D/3D,
+Rect2D); concept in `intervals-bounds.concepts.plato` (IntervalLike, BoundsLike).
 
 ## Color — linear-light, straight alpha
 
@@ -113,7 +117,8 @@ pose's forward axis; in view space the camera looks down local **`-Z`**, with
 and per-backend look-at lowerings must honour this so handedness bugs are not
 rediscovered per backend. *(Decision: the reviewer pass left the forward axis
 unspecified; `-Z` is chosen here to match the right-handed world.)*
-*Owner:* `cameras.plato` (Camera, LookAtCamera).
+*Owner:* `cameras.concepts.plato` (the `Camera` concept), `cameras.plato`
+(LookAtCamera and the concrete camera types).
 
 ## UV origin — top-left, V increases downward
 
@@ -126,19 +131,20 @@ OpenGL-style bottom-left origin is opt-in via `ImageOrigin.BottomLeft`.
 *(Decision: the reviewer pass (item 464) left the origin unstated; top-left is
 chosen because the existing images / mesh-attributes / texturing files already
 imply it.)*
-*Owners:* `points.plato` (UvCoordinate); cited from `mesh-attributes.plato`,
-`images.plato`, `texturing.plato`.
+*Owners:* `points-parametric.plato` (UvCoordinate, UvwCoordinate); cited from
+`mesh-attributes.plato`, `images.plato`, `texturing.plato`.
 
 ## Floating-point comparison — one epsilon policy
 
 Numerical near-equality uses a single record, **`ComparisonTolerance`**
 (`numbers.plato`) with `{ Absolute: Number, Relative: Number }`. The test is
 `|x - y| <= Absolute + Relative * max(|x|, |y|)`. `AlmostEqual` overloads accept
-it (`core-algebra.library.plato`, beside the scalar-tolerance `AlmostEqual`).
+it (`algebra-numeric.library.plato`, beside the scalar-tolerance `AlmostEqual`;
+the component-wise vector lift is in `numeric-structures-algebra.library.plato`).
 
 Engineering `Tolerance` (`uncertainty.plato`) is **explicitly NOT** this type:
 its `Plus` / `Minus` are asymmetric **acceptance allowances** about a `Nominal`
 manufacturing value, not comparison epsilons — do not stuff floating-point
 epsilons into it (and use `UncertainNumber` for 1-sigma uncertainties).
 *Owners:* `ComparisonTolerance` (`numbers.plato`), `AlmostEqual`
-(`core-algebra.library.plato`).
+(`algebra-numeric.library.plato`), `Tolerance` (`uncertainty.plato`).

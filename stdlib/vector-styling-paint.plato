@@ -49,7 +49,7 @@ type SweepGradient2D
     Spread: GradientSpread;
 }
 
-// A paint sourced from a texture (file 47), positioned by an affine transform
+// A paint sourced from a texture (`texturing.plato`), positioned by an affine transform
 // from texture space into the space of the geometry being filled.
 // (https://en.wikipedia.org/wiki/Texture_mapping)
 type TexturePaint2D
@@ -92,7 +92,7 @@ type ShadowStyle2D
 }
 
 // A path paired with its appearance: fill first, then stroke on top. The
-// canonical drawable unit of 2D vector graphics (see Scene2D in file 43).
+// canonical drawable unit of 2D vector graphics (see Scene2D in `scene2d.plato`).
 type StyledPath2D
     implements Value
 {

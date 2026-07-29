@@ -64,7 +64,7 @@ type TcbSpline3D
 
 // A piecewise-linear interpolating spline in the plane: the curve-as-function
 // view of a chain of points (the geometric chain itself is Polyline2D,
-// file 19). Closed joins the last point back to the first
+// `polygons-polylines.plato`). Closed joins the last point back to the first
 // (https://en.wikipedia.org/wiki/Polygonal_chain).
 type LinearSpline2D
     implements Curve2D
@@ -74,7 +74,8 @@ type LinearSpline2D
 }
 
 // A piecewise-linear interpolating spline in space: the curve-as-function view
-// of a chain of points (the geometric chain itself is Polyline3D, file 19)
+// of a chain of points (the geometric chain itself is Polyline3D,
+// `polygons-polylines.plato`)
 // (https://en.wikipedia.org/wiki/Polygonal_chain).
 type LinearSpline3D
     implements Curve3D

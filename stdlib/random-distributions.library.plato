@@ -1,12 +1,13 @@
 //==
 // # RandomDistributions — derived functions for ProbabilityDistribution
 //
-// Bodies for the `ProbabilityDistribution` concept declared in `random.plato`,
+// Bodies for the `ProbabilityDistribution` concept declared in
+// `random.concepts.plato`,
 // which exposes Mean, Variance, Pdf and Cdf. The derived surface is the tail
 // and interval probabilities that read from Cdf, plus the spread and density
 // comparisons. The concrete per-distribution obligation fills (and the named
-// numerical approximations they need) stay in `random.plato`'s inline
-// `library Random`; only the concept-generic helpers live here. Pure
+// numerical approximations they need) stay in the `random*.library.plato`
+// family; only the concept-generic helpers live here. Pure
 // expressions only; all inputs are immutable and evaluation is side-effect
 // free.
 

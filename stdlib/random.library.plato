@@ -9,7 +9,7 @@
 // `random-continuous-tails.library.plato` and `random-discrete.library.plato`.
 // The derived surface built *on top* of the concept (StandardDeviation,
 // SurvivalAt, ProbabilityBetween, ...) lives with the other concept traits in
-// `domain-traits.library.plato` and is not repeated here.
+// `random-distributions.library.plato` and is not repeated here.
 //
 // ## Missing special functions
 //

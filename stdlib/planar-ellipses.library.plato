@@ -101,7 +101,7 @@ library PlanarEllipses
 
     // TODO(content): Area(SuperEllipse) is 4*a*b*Gamma(1 + 1/n)^2 / Gamma(1 + 2/n)
     // (https://en.wikipedia.org/wiki/Superellipse#Mathematical_features). The gamma
-    // function does not exist anywhere in this tree — `intrinsics.plato` has no
+    // function does not exist anywhere in this tree — `intrinsics-scalars.library.plato` has no
     // Gamma and no Lanczos/Stirling helper lives in any library — so the formula is
     // not writable. Left unimplemented rather than guessed. Needs: `Gamma(Number)`.
     //

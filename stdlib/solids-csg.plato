@@ -4,7 +4,8 @@
 // Solids defined by set operations rather than by a generator or a vertex list:
 // the flattened constructive-solid-geometry tree and the half-space intersection
 // (https://en.wikipedia.org/wiki/Constructive_solid_geometry). Primitive closed
-// shapes (Sphere, Box3D, Cylinder, Cone, Torus...) live in file 18 and serve
+// shapes (Sphere, Box3D, Cylinder, Cone, Torus...) live in the `spatial-*` files
+// and serve
 // directly as CSG leaves.
 
 //==

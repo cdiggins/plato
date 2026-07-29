@@ -2,7 +2,7 @@
 // # Kinematics — derived functions for Kinematic2D and Kinematic3D
 //
 // Bodies for the `Kinematic2D` and `Kinematic3D` concepts declared in
-// `kinematics.plato`. A motion is sampled by `PositionAt` (meters) and
+// `kinematics.concepts.plato`. A motion is sampled by `PositionAt` (meters) and
 // `VelocityAt` (meters per second) at a `Duration` since the motion's start;
 // the helpers derive speed, displacement, chord distance, the averages over a
 // time span, and a rest test. Pure expressions only; all inputs are immutable

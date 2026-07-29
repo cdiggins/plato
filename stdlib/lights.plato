@@ -127,7 +127,7 @@ type TubeLight
 //==
 // # Environment and ambient lighting
 
-// Image-based lighting from a cube map (file 47). Rotation spins the
+// Image-based lighting from a cube map (`texturing.plato`). Rotation spins the
 // environment about the world up axis. Intensity is a dimensionless scale on
 // stored texel radiance; Tint multiplies it per channel (white = unchanged).
 // (https://en.wikipedia.org/wiki/Image-based_lighting)

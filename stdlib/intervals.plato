@@ -22,7 +22,7 @@ type NumberInterval
 // which may CROSS the +/-pi seam: an arc from 170 deg to -170 deg is the short
 // 20 deg sweep across the seam, not the long way round. Arc consumers
 // (CircularArc2D, CircularSector) read it this way. Wrap-aware Span/Contains live
-// in intervals-transforms.library.plato; the generic linear IntervalLike helpers
+// in intervals-transforms-interval.library.plato; the generic linear IntervalLike helpers
 // are correct only for non-wrapping ranges. Convention: see CONVENTIONS.md - Angles.
 type AngleInterval
     implements IntervalLike<Angle>

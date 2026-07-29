@@ -13,7 +13,7 @@
 //     itself when the query is inside, as `NearestPoint2D`/`3D` permits.
 //   * The signed distance of a point p from the world origin along a unit normal n
 //     is Dot(n, p) — written `p.PositionVector.Dot(n.Vector)` here, since a point
-//     is not a vector in this vocabulary (`transforms.plato`).
+//     is not a vector in this vocabulary (`transforms-points.library.plato`).
 
 library LinesPlanes
 {

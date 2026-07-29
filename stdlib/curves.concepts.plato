@@ -47,7 +47,7 @@ concept ClosedCurve3D
 // the same position. All closed curves may be traversed periodically; a periodic
 // curve makes the period explicit. TRange is the evaluated value type (Number,
 // Point2D, or Point3D); inheriting Procedural makes the wrapped evaluation
-// Eval(t mod Period) derivable (see EvalWrapped in curves-surfaces.library.plato)
+// Eval(t mod Period) derivable (see EvalWrapped in curves-capabilities.library.plato)
 // (https://en.wikipedia.org/wiki/Periodic_function).
 concept PeriodicCurve<TRange>
     inherits Periodic<Number>, Procedural<Number, TRange>

@@ -6,7 +6,7 @@
 // material extensions. Colors are linear-light. Each layer record documents
 // its own disabling convention (zero strength or black color); an absent layer
 // is simply a disabled one. Texture references use the TextureBinding type of
-// file 47.
+// `texturing-sampling.plato`.
 
 // How a material's alpha is interpreted when compositing: alpha ignored
 // (Opaque), a binary cutout discarding fragments below the carried Cutoff
@@ -53,7 +53,7 @@ type Material
 
 // The standard texture slots of a metallic-roughness material. Following
 // glTF, the MetallicRoughness texture packs roughness in G and metallic in B,
-// and Occlusion reads from R. An unbound TextureBinding (file 47) means the
+// and Occlusion reads from R. An unbound TextureBinding (`texturing-sampling.plato`) means the
 // slot is unused and the scalar factors stand alone.
 // (https://en.wikipedia.org/wiki/Texture_mapping)
 type MaterialTextureSet

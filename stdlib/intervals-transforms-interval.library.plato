@@ -23,7 +23,7 @@ library IntervalsTransformsInterval
     // Comparable (LessThanOrEquals / Lesser / Greater / Clamp), the capabilities
     // shared by every concrete interval element type (Number, Angle, Length,
     // Integer). The comparison helpers (Lesser/Greater/Clamp) come from P1
-    // (01-core-algebra), which derives them for any Orderable. The concept now
+    // (core-comparison.library.plato), which derives them for any Orderable. The concept now
     // states the bound explicitly: IntervalLike<T> where T: Additive,
     // Interpolatable, Comparable.
 

@@ -78,7 +78,7 @@ library MeshesGeometry
     //==
     // Quad-grid face indices — the shared routine behind everything grid-shaped:
     // parametric-surface tessellation, height fields, surfaces of revolution, and
-    // the UV grids of the solids (see `library Solids` in solids.plato).
+    // the UV grids of the solids (see `library Solids` in solids.library.plato).
     //
     // A grid of nCols x nRows vertices is stored row-major, so grid vertex
     // (col, row) has linear index row * nCols + col. Each cell contributes one

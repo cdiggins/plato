@@ -8,6 +8,8 @@
 // starting at the top-left pixel, and a pixel array's Count equals Width times
 // Height. Encoded, tiled, animated, and volumetric containers live in
 // `images-containers.plato`.
+// Convention: see CONVENTIONS.md - UV origin (origin top-left, V increases
+// downward; ImageOrigin.BottomLeft is the opt-in OpenGL order).
 
 // Where pixel row zero sits in an image's coordinate convention: scanline
 // order as in most codecs (TopLeft), or OpenGL texture order (BottomLeft).

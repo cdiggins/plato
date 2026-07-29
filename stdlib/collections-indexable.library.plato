@@ -7,11 +7,12 @@
 // (https://en.wikipedia.org/wiki/Fold_(higher-order_function)).
 //
 // This file also carries the shared provenance note for the whole
-// `collections-*` / `functional-*` library family, which was split out of the
-// single `collections-functional.library.plato`.
+// `collections-*` / `functional-*` library family, which was split out of a
+// single combined collections-and-functional library.
 //
-// Bodies for the concepts declared in `03-concepts-collections.plato` and
-// `04-concepts-functional.plato`. Every function's first parameter is
+// Bodies for the concepts declared in `collections-indexable.concepts.plato`,
+// `collections-containers.concepts.plato` and
+// `functional.concepts.plato`. Every function's first parameter is
 // concept-typed, so it becomes available on every implementing type. Pure
 // expressions only; collections are immutable, so "modifying" helpers return
 // new values. See `../README.md` for conventions.

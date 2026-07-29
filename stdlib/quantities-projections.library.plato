@@ -15,7 +15,7 @@ library QuantityProjections
     // Two lines per concrete type: read the canonical-unit field, and rebuild
     // from a raw amount in that same unit. The unit named here is the one in
     // the type's field name, so no conversion happens anywhere in this file.
-    // Adding a quantity type to `quantities.plato` means adding a pair here.
+    // Adding a quantity type to a `quantities-*.plato` file means adding a pair here.
 
     //==
     // # Geometric and kinematic quantities
@@ -223,7 +223,7 @@ library QuantityProjections
     FromAmount(_: Irradiance, x: Number): Irradiance => new Irradiance(x);
 
     //==
-    // # Quantity types declared outside quantities.plato
+    // # Quantity types declared outside the `quantities-*.plato` files
     //
     // `Duration` (`time.plato`) is the fiftieth `Quantity` implementor and the
     // direct descendant of `stdlib-legacy/measures.plato`'s `Time` — the single

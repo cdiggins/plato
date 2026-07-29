@@ -10,7 +10,7 @@
 // Discoverability banner (item 473): the concrete per-component operations for
 // Number2/3/4/8 — Normalize, Dot, Length/LengthSquared,
 // Add/Subtract/Multiply/Divide, Transform — are declared on the intrinsic hub in
-// `intrinsics.plato`, not restated here.
+// `intrinsics-numeric-tuples.library.plato`, not restated here.
 
 // A pair of Numbers: the low-level intrinsic 2-tuple.
 type Number2

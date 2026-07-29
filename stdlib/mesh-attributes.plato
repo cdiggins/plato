@@ -64,6 +64,7 @@ type UvSeam
 // A connected set of faces that maps to one contiguous region of UV space
 // (https://en.wikipedia.org/wiki/UV_mapping). UvBounds is that region,
 // expressed in UV space via Bounds2D (X = U, Y = V).
+// Convention: see CONVENTIONS.md - UV origin (origin top-left, U right, V down).
 type UvChart
     implements Value
 {
@@ -88,7 +89,7 @@ type UvAtlas
 // ## Deformation-support channels
 //
 // Blend shapes (morph targets) live with skeletal animation as MorphTarget
-// (file 38); this section holds the mesh-side selection channels.
+// (`skeletal-animation.plato`); this section holds the mesh-side selection channels.
 
 // A named weighted subset of vertices: soft selections, deformer influence
 // regions, pinning masks. Vertices and Weights are parallel arrays; weights

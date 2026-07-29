@@ -14,13 +14,14 @@ library NumericStructuresCoordinate
     // marker concept whose only operation is Lerp, and CoreAlgebra already ships
     // MidPoint, LerpClamped and SmoothLerp on Interpolatable — which Coordinate
     // inherits — so every interpolation convenience it can support already exists
-    // upstream (SmoothLerp landed at core-algebra.library.plato) and no
+    // upstream (SmoothLerp landed at algebra-operations.library.plato) and no
     // Coordinate-specific body is added here.
     //
     // TODO(concept-gap): a generic Distance / Between-two-points delta over
     // Coordinate is out of reach, and NOT via a cheap concept extension. All five
-    // implementors (Point2D, Point3D, PointN, UvCoordinate, UvwCoordinate in
-    // points.plato) DO implement Difference<TDelta> — but each with a DIFFERENT
+    // implementors (Point2D, Point3D, PointN in points.plato; UvCoordinate,
+    // UvwCoordinate in points-parametric.plato) DO implement Difference<TDelta>
+    // — but each with a DIFFERENT
     // delta type (Vector2D / Vector3D / VectorN). So Coordinate cannot inherit
     // Difference<TDelta> without gaining a type parameter, which would cascade to
     // every bare `Coordinate` mention tree-wide (a generic-arity change, not merely

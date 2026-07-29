@@ -8,7 +8,8 @@
 //   1. v1 used zero-argument functions (`Pi(): Number`). This tree dispatches
 //      constants on an ignored receiver of the result type (`Pi(_: Number)`),
 //      matching the intrinsic constants in `intrinsics-scalars.library.plato`
-//      and the `Identity(_: Quaternion)` family in `transforms.plato`. Read them
+//      and the `Identity(_: Quaternion)` family in
+//      `transforms-identities.library.plato`. Read them
 //      as `Number.GoldenRatio`, `Vector3D.UnitZ`, `Circle.UnitCircle`.
 //   2. `Pi`, `Tau`, `E`, `Epsilon`, `MinValue`, `MaxValue`, `Zero`, `One` and
 //      `MinusOne` are NOT redeclared here — they are intrinsics

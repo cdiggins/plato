@@ -4,8 +4,8 @@
 // Resolution-independent 2D outlines in the SVG/Skia/Canvas tradition: a path
 // is a list of contours, a contour is a connected run of segments, and a
 // segment is one drawing verb (move, line, quadratic, cubic, arc, close).
-// Styling lives in file 41, text and glyph outlines in file 42, and scene
-// composition in file 43.
+// Styling lives in the `vector-styling-*` files, text and glyph outlines in the
+// `text-*` files, and scene composition in `scene2d.plato`.
 
 // One drawing verb of a contour, following SVG path semantics. Every segment
 // starts at the previous segment's endpoint; each verb carries exactly the

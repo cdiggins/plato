@@ -7,7 +7,7 @@
 // photographic stops (EV).
 
 // Describes an on-screen or off-screen render target. ColorFormat uses the
-// pixel formats of file 45; SampleCount is the MSAA sample count (1 = no
+// pixel formats of `images.plato`; SampleCount is the MSAA sample count (1 = no
 // multisampling); HasDepth requests a depth attachment.
 // (https://en.wikipedia.org/wiki/Framebuffer)
 type RenderTargetDescriptor
@@ -52,7 +52,7 @@ type QualityPreset = Draft | Preview | Production;
 type FaceCulling = None | Back | Front;
 
 // The color encoding of the final displayed image. Distinct from working
-// color spaces (files 44-47): this names the presentation encoding only.
+// color spaces (the `color-spaces-*` files): this names the presentation encoding only.
 // Rec2020Pq is HDR10.
 type DisplayColorSpace
     = SrgbNonlinear | LinearRec709 | DisplayP3 | Rec2020Pq | Rec2020Hlg;

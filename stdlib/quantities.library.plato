@@ -1,7 +1,7 @@
 //==
 // # Quantities — obligation fills for the concrete quantity types
 //
-// `concept Quantity` (`quantities.plato`) inherits `Comparable`, `Hashable`,
+// `concept Quantity` (`quantities.concepts.plato`) inherits `Comparable`, `Hashable`,
 // `Additive`, `Scalable`, and `Interpolatable`. None of those has a generic
 // implementation that a concrete quantity type can inherit for free, so every
 // one of the ~49 physical quantity types owes ten members. Left unfilled, the
@@ -25,7 +25,7 @@
 // intrinsic vector operators". That reasoning was about `IVectorLike`, not
 // measures: `Quantity` is one-dimensional and has no intrinsic operator surface
 // to collide with. `Angle` is the one quantity with intrinsic operators
-// (`intrinsics.plato`: Add/Subtract/Multiply/Divide/Negative/Compare/Hash); the
+// (`intrinsics-scalars.library.plato`: Add/Subtract/Multiply/Divide/Negative/Compare/Hash); the
 // intrinsic declarations win for those, and the generics fill only what is left
 // (Lerp, LessThanOrEquals, Modulo, Amount, FromAmount).
 //
@@ -33,14 +33,15 @@
 // is the tree's idiom for a constructor-shaped function (compare `Number.Pi` in
 // `constants.library.plato`); zero-argument functions are not idiomatic here.
 //
-// This lives in its own file rather than in `numeric-structures.library.plato`
+// This lives in its own file rather than in `numeric-structures-quantity.library.plato`
 // (the P3 package that owns the `Quantity` *concept*) on purpose. P3 holds
 // derived helpers that are generic over concepts; what follows is 98 bodies
 // naming 49 concrete types one at a time, which would swamp that file and has a
-// different reason to change — it grows whenever `quantities.plato` adds a type,
-// not when a concept gains a member. `LIBRARIES.md` ground rule 1 names files
-// `<domain>.library.plato` after the domain they serve; `quantities.library.plato`
-// serving `quantities.plato` follows that rule directly.
+// different reason to change — it grows whenever a `quantities-*.plato` file adds
+// a type, not when a concept gains a member. `LIBRARIES.md` ground rule 1 names
+// files `<domain>.library.plato` after the domain they serve;
+// `quantities.library.plato` serving the `quantities-*` domain follows that rule
+// directly.
 
 library Quantities
 {

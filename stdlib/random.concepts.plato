@@ -5,7 +5,7 @@
 // implement. Its four obligations are discharged per type across the
 // `random*.library.plato` files; the derived surface built on top of it
 // (StandardDeviation, SurvivalAt, ProbabilityBetween, ...) lives with the other
-// concept traits in `domain-traits.library.plato`.
+// concept traits in `random-distributions.library.plato`.
 
 // A univariate probability distribution over the real line
 // (https://en.wikipedia.org/wiki/Probability_distribution). Pdf is the

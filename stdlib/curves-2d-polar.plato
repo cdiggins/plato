@@ -87,7 +87,7 @@ type Superformula2D
 // Ported from plato-src/curves.plato (`library PolarCurves`), which had the
 // closed form for each. Every one is a `PolarCurve2D`, so a single RadiusAt
 // body below is the whole implementation: PolarPositionAt / CartesianPositionAt
-// / Eval come from `curves-surfaces.library.plato`.
+// / Eval come from `curves-capabilities.library.plato`.
 
 // The cycloid of Ceva r = Scale * (1 + 2 * cos(2 * theta)): a trisecting
 // curve with a single loop inside a larger oval.

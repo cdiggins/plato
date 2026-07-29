@@ -24,7 +24,7 @@ type ShadowSettings
 }
 
 // A bitmask selecting which render layers a light illuminates: bit i set means
-// the light affects the RenderLayer with Index i (file 51). All bits set means
+// the light affects the RenderLayer with Index i (`scene3d.plato`). All bits set means
 // all layers.
 type LightLayerMask
 {

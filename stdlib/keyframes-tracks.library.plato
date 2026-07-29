@@ -2,7 +2,7 @@
 // # KeyframesTracks — derived functions for TimeVarying<TValue>
 //
 // Bodies for the `TimeVarying<TValue>` concept declared in
-// `keyframes-tracks.plato`. A time-varying value is sampled at a `Duration`
+// `keyframes-tracks.concepts.plato`. A time-varying value is sampled at a `Duration`
 // offset from its owner's start via `Sample`; the helpers rename that sampling
 // and work over a span given by two boundary Durations. Pure expressions only;
 // all inputs are immutable and evaluation is side-effect free. See `README.md`

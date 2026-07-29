@@ -9,7 +9,7 @@
 // Weights relative to a triangle's vertices. Vertex binding: U -> the first
 // vertex (A), V -> the second (B), W -> the third (C), so the point recovered on
 // the triangle's support plane is U*A + V*B + W*C (see `Evaluate` in
-// numeric-structures.library.plato).
+// numeric-structures-coordinate.library.plato).
 // See https://en.wikipedia.org/wiki/Barycentric_coordinate_system.
 //
 // Invariant: U + V + W = 1 identifies a point on the support plane (an affine

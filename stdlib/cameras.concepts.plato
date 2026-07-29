@@ -17,6 +17,6 @@ concept Camera
     Far(x: Self): Number;
     // The image aspect ratio (width over height). PerspectiveCamera and
     // OrthographicCamera carry it as a field; the other camera types derive it
-    // from their optics (see the AspectRatio bodies in domain-traits.library.plato).
+    // from their optics (see the AspectRatio bodies in cameras.library.plato).
     AspectRatio(x: Self): Number;
 }

@@ -1,7 +1,8 @@
 //==
 // # Covariance, correlation, and fit bodies
 //
-// The bivariate half of `statistics.plato`: the trace, determinant and implied
+// The bivariate half of the statistics domain (`statistics-correlation.plato`):
+// the trace, determinant and implied
 // Pearson correlation of a Covariance2D, the closed-form evaluation of a fitted
 // line or polynomial, and the derived readings of a CorrelationCoefficient. As
 // in `statistics.library.plato`, only relations that follow from the field

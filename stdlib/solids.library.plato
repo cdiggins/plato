@@ -2,7 +2,8 @@
 // # Solids — parametric surfaces for the solids
 //
 // The boundary surface of a solid, as the ParametricSurface obligations. Ported
-// from v1 `solids.plato:91-246`; the v1 convention is restated verbatim below and
+// from the v1 `plato-src` solids file (lines 91-246); the v1 convention is
+// restated verbatim below and
 // then adapted to this tree's placed (Center/Axis/Frame-bearing) solid types.
 //
 //   > All solids are centered at the origin with Z as the up axis. UV is in
@@ -24,7 +25,7 @@
 //
 // Because U always wraps and V (except the torus) does not, the matching face
 // grid is `AllQuadFaceIndices(nCols, nRows, true, false)` from
-// `meshes-spatial.library.plato` — the "flat sides, constant rate" clause is what
+// `meshes-geometry.library.plato` — the "flat sides, constant rate" clause is what
 // makes that grid mesh the polygonal solids EXACTLY rather than approximately.
 
 library Solids
@@ -40,7 +41,7 @@ library Solids
     // NOTE(dedupe): this is v1's `UnitCircle(t: Angle): Point2D`
     // (`stdlib-legacy/curves.plato:161`), which has no stdlib counterpart yet. It
     // is defined here under a non-colliding name so this library is self-contained;
-    // if `curves-2d.plato` later grows the canonical evaluator, delete this and the
+    // if `curves-2d-arcs.plato` later grows the canonical evaluator, delete this and the
     // three call sites below and call that instead.
     PointOnUnitCircle(a: Angle): Point2D
         => PointOnCircle(a, 1.0);

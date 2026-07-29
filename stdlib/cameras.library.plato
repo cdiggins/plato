@@ -1,7 +1,7 @@
 //==
 // # Cameras — derived functions for Camera
 //
-// Bodies for the `Camera` concept declared in `cameras.plato`: eye position,
+// Bodies for the `Camera` concept declared in `cameras.concepts.plato`: eye position,
 // clip-range arithmetic and the orientation tests, plus the `AspectRatio`
 // obligation fills for the camera types that derive their aspect ratio from
 // their optics rather than storing it as a field. Pure expressions only; all

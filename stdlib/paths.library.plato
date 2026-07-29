@@ -1,7 +1,7 @@
 //==
 // # Paths — derived functions for PathLike
 //
-// Bodies for the `PathLike` concept declared in `paths.plato`: anything
+// Bodies for the `PathLike` concept declared in `paths.concepts.plato`: anything
 // presentable as a vector `Path2D` via `ToPath`. The helpers are structural
 // summaries that read the resulting path's contour list (an Array, hence
 // Countable). Pure expressions only; all inputs are immutable and evaluation is
