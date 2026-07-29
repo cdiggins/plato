@@ -13,28 +13,29 @@
 library Time
 {
     //==
-    // Instant — the two primitive Difference<Duration> members, plus Comparable.
-    // Convention: Between(a, b) is the Duration from a to b (b - a), matching
-    // Point2D/Point3D in transforms-points.library.plato.
+    // Instant — the two OriginBased<Duration> conversions, plus Comparable.
+    // The epoch IS the origin, so the conversions are the same field under its
+    // two names: seconds since the epoch, and a span of seconds.
     //
-    // Subtract (both spellings) and Lerp are derived over the concept in
-    // algebra-metric.library.plato (plato-306) — Instant gains interpolation it
-    // never had from the same bodies that serve the point types. The commuted
+    // Add, Between, Subtract (both spellings) and Lerp are all derived over the
+    // concepts in algebra-metric.library.plato (plato-306). Between keeps the
+    // b - a orientation, matching the point types. Instant gains interpolation
+    // and an Origin (the epoch, now nameable) it never had. The commuted
     // Add(Duration, Instant) stays concrete: library dispatch is on the first
     // parameter, which must be a concrete type or concept, so a generic
     // reversed-operand form cannot be written.
 
-    // The instant advanced by the given span.
-    Add(t: Instant, d: Duration): Instant
-        => new Instant(t.SecondsSinceEpoch + d.Seconds);
+    // The instant's displacement from the epoch.
+    Offset(t: Instant): Duration
+        => new Duration(t.SecondsSinceEpoch);
+
+    // The instant at the given span after the epoch.
+    FromOffset(_: Instant, d: Duration): Instant
+        => new Instant(d.Seconds);
 
     // Commutative form of Add(Instant, Duration).
     Add(d: Duration, t: Instant): Instant
-        => Add(t, d);
-
-    // The Duration from a to b (b - a).
-    Between(a: Instant, b: Instant): Duration
-        => new Duration(b.SecondsSinceEpoch - a.SecondsSinceEpoch);
+        => t.Add(d);
 
     // Total order by seconds since the epoch.
     LessThanOrEquals(a: Instant, b: Instant): Boolean

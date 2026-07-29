@@ -17,18 +17,24 @@ library NumericStructuresCoordinate
     // upstream (SmoothLerp landed at algebra-operations.library.plato) and no
     // Coordinate-specific body is added here.
     //
-    // TODO(concept-gap): a generic Distance / Between-two-points delta over
-    // Coordinate is out of reach, and NOT via a cheap concept extension. All five
-    // implementors (Point2D, Point3D, PointN in points.plato; UvCoordinate,
-    // UvwCoordinate in points-parametric.plato) DO implement Difference<TDelta>
-    // — but each with a DIFFERENT
-    // delta type (Vector2D / Vector3D / VectorN). So Coordinate cannot inherit
-    // Difference<TDelta> without gaining a type parameter, which would cascade to
+    // TODO(concept-gap): a generic Distance over Coordinate is out of reach, and
+    // NOT via a cheap concept extension. All five implementors (Point2D, Point3D,
+    // PointN in points.plato; UvCoordinate, UvwCoordinate in
+    // points-parametric.plato) implement OriginBased<TDelta> (hence
+    // Difference<TDelta>) — but each with a DIFFERENT delta type (Vector2D /
+    // Vector3D / VectorN). So Coordinate cannot inherit Difference<TDelta>
+    // without gaining a type parameter, which would cascade to
     // every bare `Coordinate` mention tree-wide (a generic-arity change, not merely
     // an added obligation). MetricSpace is likewise not inherited, and adding it
     // would impose a concrete Distance obligation on all five types. Both are too
-    // invasive to justify here; the delta and distance stay on the concrete point
-    // types via their individual Difference<TDelta>.
+    // invasive to justify here; the distance stays on the concrete point types.
+    //
+    // The Between-two-points delta is no longer part of this gap: plato-306 made
+    // it derivable for every implementor at once. Distance is not, because it
+    // additionally needs TDelta: Normed, and Difference cannot bind that —
+    // Instant's delta is a Duration, which is not Normed. A library function
+    // cannot add the bound either (no `where` on library functions), so the six
+    // Distance / DistanceSquared bodies below stay concrete.
     //
     // So the Euclidean distance is provided per concrete point type below, each as
     // `Between(a, b).Magnitude` over that type's own Difference delta. This is the
@@ -62,6 +68,34 @@ library NumericStructuresCoordinate
     // Precondition: a and b have the same arity.
     DistanceSquared(a: PointN, b: PointN): Number
         => a.Between(b).MagnitudeSquared;
+
+    //==
+    // # UvCoordinate / UvwCoordinate — the OriginBased conversions
+    //
+    // Two lines each, and the whole affine surface (Add, Between, Subtract in
+    // both spellings, Lerp, Origin) follows from them via
+    // algebra-metric.library.plato. Before plato-306 these two types declared
+    // `implements Difference<...>` and supplied no bodies at all, so every one of
+    // those members was a throwing stub.
+    //
+    // The origin is the parameter-space origin: (0, 0) is the UV origin defined
+    // in CONVENTIONS.md (top-left, U right, V down), not a world-space point.
+
+    // The parameter's displacement from the UV origin.
+    Offset(uv: UvCoordinate): Vector2D
+        => (uv.U, uv.V);
+
+    // The parameter at the given displacement from the UV origin.
+    FromOffset(_: UvCoordinate, v: Vector2D): UvCoordinate
+        => (v.X, v.Y);
+
+    // The parameter's displacement from the UVW origin.
+    Offset(uvw: UvwCoordinate): Vector3D
+        => (uvw.U, uvw.V, uvw.W);
+
+    // The parameter at the given displacement from the UVW origin.
+    FromOffset(_: UvwCoordinate, v: Vector3D): UvwCoordinate
+        => (v.X, v.Y, v.Z);
 
     //==
     // # BarycentricCoordinate (barycentric / affine-combination lessons)

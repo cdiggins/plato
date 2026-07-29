@@ -15,7 +15,7 @@ type Duration
 // epoch (https://en.wikipedia.org/wiki/Epoch_(computing)).
 // Subtracting two instants yields a Duration.
 type Instant
-    implements Value, Comparable, Difference<Duration>
+    implements Value, Comparable, OriginBased<Duration>
 {
     SecondsSinceEpoch: Number;
 }

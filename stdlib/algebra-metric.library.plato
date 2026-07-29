@@ -90,4 +90,35 @@ library AlgebraMetric
     // Interpolatable) reach the position types.
     Lerp(a: Difference<$D>, b: Difference<$D>, t: Number): Difference<$D>
         => a.Add(a.Between(b) * t);
+
+    //==
+    // OriginBased<TDelta> — the last two primitives, derived
+    //
+    // With an origin fixed, the position space and the delta space are the same
+    // space under two names, so the torsor action and its inverse are just delta
+    // arithmetic with a round trip through the conversions. An OriginBased type
+    // therefore owes Offset and FromOffset and nothing else: Add and Between come
+    // from here, and Subtract / Lerp from the Difference section above.
+    //
+    // This is the same shape as Quantity's Amount/FromAmount seam
+    // (quantities.library.plato), one level up: there the carrier is a Number and
+    // the full additive structure is transported onto Self; here the carrier is
+    // the delta group and only the affine action is transported, because a
+    // position deliberately does NOT gain Self + Self or a scalar multiple.
+
+    // The position displaced by delta.
+    Add(x: OriginBased<$D>, delta: $D): OriginBased<$D>
+        => x.FromOffset(x.Offset + delta);
+
+    // The displacement from a to b (b - a), matching the Difference orientation.
+    Between(a: OriginBased<$D>, b: OriginBased<$D>): $D
+        => b.Offset - a.Offset;
+
+    // The origin itself: the position at zero displacement. The receiver only
+    // selects the type, and for runtime-arity positions supplies the arity.
+    // Reaches TDelta's Zero through the concept's `where TDelta: Additive` bound
+    // (see plato-307, which moved Zero onto Additive so this would resolve for
+    // Duration as well as for the vector deltas).
+    Origin(x: OriginBased<$D>): OriginBased<$D>
+        => x.FromOffset(x.Offset.Zero);
 }

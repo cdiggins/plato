@@ -34,7 +34,7 @@ type BarycentricCoordinate
 // (https://en.wikipedia.org/wiki/UV_mapping).
 // Convention: see CONVENTIONS.md - UV origin (origin top-left, U right, V down).
 type UvCoordinate
-    implements Coordinate, Difference<Vector2D>
+    implements Coordinate, OriginBased<Vector2D>
 {
     U: Number;
     V: Number;
@@ -42,7 +42,7 @@ type UvCoordinate
 
 // A normalized 3D volume parameter: 3D textures, trivariate patches.
 type UvwCoordinate
-    implements Coordinate, Difference<Vector3D>
+    implements Coordinate, OriginBased<Vector3D>
 {
     U: Number;
     V: Number;

@@ -56,3 +56,29 @@ concept Difference<TDelta>
     // intervals-transforms-deformable.library.plato assume it).
     Between(a: Self, b: Self): TDelta;
 }
+
+// An affine position measured as a displacement from a distinguished origin.
+// Fixing an origin makes the position space and its delta space interchangeable
+// (in the language of https://en.wikipedia.org/wiki/Torsor, a trivialized
+// torsor), which is what lets Add and Between themselves be derived rather than
+// declared: an implementing type owes only the two conversions below.
+//
+// A Point's origin is (0, 0[, 0]); an Instant's is its epoch. Both were already
+// spelling these conversions by hand under other names — PositionVector/ToPoint
+// on the point types, SecondsSinceEpoch on Instant.
+//
+// This is deliberately OPTIONAL and deliberately a SUBTYPE. Optional, because a
+// position type whose delta conversion is not a cheap relabeling — a homogeneous
+// point, where recovering the Cartesian delta needs a divide by W — implements
+// `Difference` directly and writes Add/Between itself. A subtype, so that a type
+// declares one concept rather than two and cannot claim the conversions while
+// forgetting the affine API they serve.
+concept OriginBased<TDelta>
+    inherits Difference<TDelta>
+{
+    // The displacement of this position from the origin.
+    Offset(x: Self): TDelta;
+    // The position at the given displacement from the origin. The receiver only
+    // selects the type (and, for runtime-arity positions, the arity).
+    FromOffset(_: Self, d: TDelta): Self;
+}

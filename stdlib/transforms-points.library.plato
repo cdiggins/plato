@@ -9,42 +9,56 @@
 library TransformsPoints
 {
     //==
-    // Point support — the two primitive Difference members of Point2D/Point3D
-    // (Between follows the b - a convention assumed by IntervalsTransforms) and
-    // the explicit point <-> vector converters. These converters are deliberately
-    // named (ToPoint / PositionVector) rather than implicit conversions: silently
-    // coercing between positions and displacements would defeat the point of
-    // keeping them distinct types.
+    // Point support — the OriginBased conversions of Point2D/Point3D/PointN, and
+    // the explicit point <-> vector converters spelled in the direction callers
+    // read them.
     //
-    // Subtract (both spellings) and Lerp are NOT written here. They are derived
-    // once over the concept in algebra-metric.library.plato from Add + Between
-    // and the `where TDelta: Additive, TDelta: Scalable` bound (plato-306), which
-    // is also what gives PointN / UvCoordinate / UvwCoordinate the same surface
-    // without a line of their own.
+    // NOTHING else is written here. Add, Between, Subtract (both spellings) and
+    // Lerp are all derived over the concepts in algebra-metric.library.plato from
+    // these two conversions (plato-306). The converters remain deliberately named
+    // rather than implicit conversions: silently coercing between positions and
+    // displacements would defeat the point of keeping them distinct types.
 
-    // The point displaced by delta.
-    Add(p: Point2D, delta: Vector2D): Point2D
-        => (p.X + delta.X, p.Y + delta.Y);
+    // The point's displacement from the origin.
+    Offset(p: Point2D): Vector2D
+        => (p.X, p.Y);
 
-    // The displacement from a to b (b - a).
-    Between(a: Point2D, b: Point2D): Vector2D
-        => (b.X - a.X, b.Y - a.Y);
+    // The point at the given displacement from the origin.
+    FromOffset(_: Point2D, v: Vector2D): Point2D
+        => (v.X, v.Y);
 
-    // The point displaced by delta.
-    Add(p: Point3D, delta: Vector3D): Point3D
-        => (p.X + delta.X, p.Y + delta.Y, p.Z + delta.Z);
+    // The point's displacement from the origin.
+    Offset(p: Point3D): Vector3D
+        => (p.X, p.Y, p.Z);
 
-    // The displacement from a to b (b - a).
-    Between(a: Point3D, b: Point3D): Vector3D
-        => (b.X - a.X, b.Y - a.Y, b.Z - a.Z);
+    // The point at the given displacement from the origin.
+    FromOffset(_: Point3D, v: Vector3D): Point3D
+        => (v.X, v.Y, v.Z);
+
+    // The point's displacement from the origin. Arity is carried by the
+    // component array, so no separate arity argument is needed.
+    Offset(p: PointN): VectorN
+        => (p.Components);
+
+    // The point at the given displacement from the origin, of the delta's arity.
+    FromOffset(_: PointN, v: VectorN): PointN
+        => (v.Components);
+
+    //==
+    // The named point <-> vector converters. These are the long-standing spelling
+    // (curves-3d.library.plato and the transform libraries call PositionVector);
+    // they now delegate to the OriginBased conversions rather than restating the
+    // field copy, so there is one place where a point becomes a vector.
+    // ToPoint reads in the opposite direction from FromOffset — it dispatches on
+    // the VECTOR, which is what callers holding a vector want.
 
     // The point's displacement from the origin.
     PositionVector(p: Point2D): Vector2D
-        => (p.X, p.Y);
+        => p.Offset;
 
     // The point's displacement from the origin.
     PositionVector(p: Point3D): Vector3D
-        => (p.X, p.Y, p.Z);
+        => p.Offset;
 
     // The point at the tip of the vector, placed from the origin.
     ToPoint(v: Vector2D): Point2D
