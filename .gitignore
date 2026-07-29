@@ -10,5 +10,7 @@
 .temp/*
 !.temp/README.md
 
-# Agent-local state: live git worktrees, machine-local symlinks, personal settings
-.claude/
+# Agent-local state: live git worktrees, machine-local symlinks, personal settings.
+# Committed agent config (e.g. .claude/skills/) is intentionally NOT ignored.
+.claude/settings.local.json
+.claude/worktrees/

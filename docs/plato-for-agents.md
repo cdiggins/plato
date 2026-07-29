@@ -34,12 +34,17 @@ library AngularCurves2D {
 
 Paths below are relative to this submodule (`submodules/Plato/`).
 
-**Stdlib mapping:** `stdlib` = forward vocabulary (declarations); `stdlib-legacy` = shipping generation
-(drives `Plato.Generated` / Studio).
+**Stdlib mapping:** `stdlib` = forward vocabulary (the next-generation library); `stdlib-legacy` =
+shipping generation (drives `Plato.Generated` / Studio).
+
+In `stdlib/`, one file holds exactly one **kind** of declaration and at most twelve top-level
+declarations: `<stem>.plato` = types, `<stem>.concepts.plato` = concepts, `<stem>.library.plato` =
+exactly one `library` block. The folder is flat — no subfolders.
 
 | Path | Purpose |
 |------|---------|
-| `stdlib/` | Forward stdlib vocabulary (declarations only). New *vocabulary* goes here. |
+| `stdlib/` | Forward stdlib vocabulary — types, concepts, **and** library bodies. New *vocabulary* goes here. Read its [`README`](../stdlib/README.md), [`CONVENTIONS`](../stdlib/CONVENTIONS.md), [`STYLE_GUIDE`](../stdlib/STYLE_GUIDE.md), and [`LIBRARIES`](../stdlib/LIBRARIES.md) before editing. |
+| `stdlib-tests/` | Forward law packet (`Law_*`) for `stdlib/` — **never merge into `stdlib`**. |
 | `stdlib-legacy/*.plato` | Shipping standard library (~3,500 lines → 11,000+ lines of C#). |
 | `stdlib-legacy-tests/` | Law/witness tests only — **never merge into `stdlib-legacy`**. |
 | `stdlib-snapshot-2026-07-09/` | Frozen pre-refactor snapshot — reference only. |
