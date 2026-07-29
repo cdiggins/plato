@@ -3,6 +3,9 @@
 [Oo]bj/
 .vs/
 
+# Test run artifacts (dotnet/VS TestResults)
+[Tt]est[Rr]esult*/
+
 # Scratch command output (see tools/export-types-context.ps1)
 .temp/*
 !.temp/README.md
