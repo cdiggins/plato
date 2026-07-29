@@ -2,7 +2,7 @@
 """Generate docs/status-report.html for the Plato repo.
 
 Live sections (always refreshed): git status, commits, dirty files, worktrees,
-submodules, studio pointer drift, tracker issues, running Plato-related processes.
+submodules, studio pointer drift, tracker issues.
 
 Cached sections (docs/status-report-snapshot.json): gate/lint/nav probe results.
 Update the snapshot after a gate run with:
@@ -21,7 +21,6 @@ import json
 import pathlib
 import re
 import subprocess
-import sys
 from datetime import datetime, timedelta
 
 PLATO = pathlib.Path(__file__).resolve().parents[1]
@@ -311,51 +310,12 @@ def parse_issues() -> list[dict]:
     return issues
 
 
-def discover_agents() -> list[tuple[str, str, str, str]]:
-    rows: list[tuple[str, str, str, str]] = []
-    if sys.platform == "win32":
-        ps = (
-            "Get-CimInstance Win32_Process | Where-Object { "
-            "$_.Name -match 'Plato|claude|Cursor' -or "
-            "($_.Name -eq 'dotnet.exe' -and $_.CommandLine -match 'Plato') "
-            "} | Select-Object ProcessId, Name, CommandLine | "
-            "ConvertTo-Json -Compress"
-        )
-        out, code = run(
-            ["powershell", "-NoProfile", "-Command", ps],
-            cwd=PLATO,
-        )
-        if code == 0 and out:
-            try:
-                data = json.loads(out)
-                if isinstance(data, dict):
-                    data = [data]
-                for proc in data or []:
-                    name = proc.get("Name") or "?"
-                    pid = str(proc.get("ProcessId") or "?")
-                    cmd = (proc.get("CommandLine") or "")[:120]
-                    rows.append((name, pid, cmd or "(no cmdline)", "live process"))
-            except json.JSONDecodeError:
-                pass
-    worktrees = git(["worktree", "list"]).splitlines()
-    for wt in worktrees[1:]:  # skip main
-        rows.append(("git worktree", "—", wt, "extra worktree"))
-    if not rows:
-        rows.append(("(none detected)", "—", "—", "no Plato/Claude/Cursor processes matched"))
-    return rows[:40]
-
-
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument(
         "--write-snapshot-from-defaults",
         action="store_true",
         help="Write docs/status-report-snapshot.json from built-in defaults (bootstrap).",
-    )
-    ap.add_argument(
-        "--skip-processes",
-        action="store_true",
-        help="Skip live process discovery (faster / non-Windows).",
     )
     args = ap.parse_args()
 
@@ -435,8 +395,6 @@ def main() -> int:
     nav = snapshot.get("nav") or DEFAULT_SNAPSHOT["nav"]
     lint_counts = lint.get("counts") or {}
 
-    agents = [] if args.skip_processes else discover_agents()
-
     pointer_ok = studio_ptr == head
     pointer_badge = badge("pass", "in sync") if pointer_ok else badge("blocked", "DRIFT")
 
@@ -503,11 +461,6 @@ def main() -> int:
             f"<tr><td>{e(g.get('name'))}</td><td>{badge(result.lower().replace(' ', '.'), result)}</td>"
             f"<td>{e(g.get('seconds', '—'))}</td><td>{e(g.get('detail', ''))}</td></tr>"
         )
-
-    agent_rows = [
-        f"<tr><td>{e(n)}</td><td><code>{e(pid)}</code></td><td>{e(cmd)}</td><td>{e(note)}</td></tr>"
-        for n, pid, cmd, note in agents
-    ]
 
     dirty_html = (
         "<br>".join(e(l) for l in dirty_display) if dirty_display else '<span class="muted">clean</span>'
@@ -697,14 +650,6 @@ tr.muted-row {{ opacity: .55; }}
   <div><code>{worktree_html}</code></div>
   <h3>Studio-level submodules</h3>
   <pre>{e(studio_submods)}</pre>
-</section>
-
-<section>
-  <h2>Agents &amp; live processes</h2>
-  <table>
-    <thead><tr><th>Process</th><th>Pid</th><th>Command / detail</th><th>Notes</th></tr></thead>
-    <tbody>{''.join(agent_rows)}</tbody>
-  </table>
 </section>
 
 <section>

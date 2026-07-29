@@ -15,7 +15,7 @@ else
   exit 0
 fi
 
-"$PY" tools/gen-status-report.py --skip-processes || {
+"$PY" tools/gen-status-report.py || {
   echo "pre-commit: gen-status-report.py failed" >&2
   exit 1
 }
