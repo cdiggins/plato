@@ -9,54 +9,34 @@
 library TransformsPoints
 {
     //==
-    // Point support — the Difference obligations of Point2D/Point3D (Between
-    // follows the b - a convention assumed by IntervalsTransforms), linear
-    // interpolation, and explicit point <-> vector converters. These are
-    // deliberately named (ToPoint / PositionVector) rather than implicit
-    // conversions: silently coercing between positions and displacements would
-    // defeat the point of keeping them distinct types.
+    // Point support — the two primitive Difference members of Point2D/Point3D
+    // (Between follows the b - a convention assumed by IntervalsTransforms) and
+    // the explicit point <-> vector converters. These converters are deliberately
+    // named (ToPoint / PositionVector) rather than implicit conversions: silently
+    // coercing between positions and displacements would defeat the point of
+    // keeping them distinct types.
+    //
+    // Subtract (both spellings) and Lerp are NOT written here. They are derived
+    // once over the concept in algebra-metric.library.plato from Add + Between
+    // and the `where TDelta: Additive, TDelta: Scalable` bound (plato-306), which
+    // is also what gives PointN / UvCoordinate / UvwCoordinate the same surface
+    // without a line of their own.
 
     // The point displaced by delta.
     Add(p: Point2D, delta: Vector2D): Point2D
         => (p.X + delta.X, p.Y + delta.Y);
 
-    // The point displaced by the negation of delta.
-    Subtract(p: Point2D, delta: Vector2D): Point2D
-        => (p.X - delta.X, p.Y - delta.Y);
-
     // The displacement from a to b (b - a).
     Between(a: Point2D, b: Point2D): Vector2D
         => (b.X - a.X, b.Y - a.Y);
-
-    // The displacement from b to a (a - b). Same vector as Between(b, a);
-    // the `-` operator spelling of point difference.
-    Subtract(a: Point2D, b: Point2D): Vector2D
-        => Between(b, a);
-
-    // Linear interpolation between two points; t is unclamped.
-    Lerp(a: Point2D, b: Point2D, t: Number): Point2D
-        => (a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t);
 
     // The point displaced by delta.
     Add(p: Point3D, delta: Vector3D): Point3D
         => (p.X + delta.X, p.Y + delta.Y, p.Z + delta.Z);
 
-    // The point displaced by the negation of delta.
-    Subtract(p: Point3D, delta: Vector3D): Point3D
-        => (p.X - delta.X, p.Y - delta.Y, p.Z - delta.Z);
-
     // The displacement from a to b (b - a).
     Between(a: Point3D, b: Point3D): Vector3D
         => (b.X - a.X, b.Y - a.Y, b.Z - a.Z);
-
-    // The displacement from b to a (a - b). Same vector as Between(b, a);
-    // the `-` operator spelling of point difference.
-    Subtract(a: Point3D, b: Point3D): Vector3D
-        => Between(b, a);
-
-    // Linear interpolation between two points; t is unclamped.
-    Lerp(a: Point3D, b: Point3D, t: Number): Point3D
-        => (a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t, a.Z + (b.Z - a.Z) * t);
 
     // The point's displacement from the origin.
     PositionVector(p: Point2D): Vector2D

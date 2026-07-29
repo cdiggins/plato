@@ -13,9 +13,16 @@
 library Time
 {
     //==
-    // Instant — Difference<Duration> and Comparable.
+    // Instant — the two primitive Difference<Duration> members, plus Comparable.
     // Convention: Between(a, b) is the Duration from a to b (b - a), matching
     // Point2D/Point3D in transforms-points.library.plato.
+    //
+    // Subtract (both spellings) and Lerp are derived over the concept in
+    // algebra-metric.library.plato (plato-306) — Instant gains interpolation it
+    // never had from the same bodies that serve the point types. The commuted
+    // Add(Duration, Instant) stays concrete: library dispatch is on the first
+    // parameter, which must be a concrete type or concept, so a generic
+    // reversed-operand form cannot be written.
 
     // The instant advanced by the given span.
     Add(t: Instant, d: Duration): Instant
@@ -25,18 +32,9 @@ library Time
     Add(d: Duration, t: Instant): Instant
         => Add(t, d);
 
-    // The instant retreated by the given span.
-    Subtract(t: Instant, d: Duration): Instant
-        => new Instant(t.SecondsSinceEpoch - d.Seconds);
-
     // The Duration from a to b (b - a).
     Between(a: Instant, b: Instant): Duration
         => new Duration(b.SecondsSinceEpoch - a.SecondsSinceEpoch);
-
-    // The Duration from b to a (a - b). Same as Between(b, a); the `-`
-    // operator spelling of instant difference.
-    Subtract(a: Instant, b: Instant): Duration
-        => Between(b, a);
 
     // Total order by seconds since the epoch.
     LessThanOrEquals(a: Instant, b: Instant): Boolean

@@ -35,10 +35,20 @@ concept Clampable
 // A position-like type whose difference is a separate delta type: subtracting two
 // points yields a vector; adding a vector to a point yields a point.
 // See affine space (https://en.wikipedia.org/wiki/Affine_space).
+//
+// TDelta is bound to Additive and Scalable: the deltas are the group acting on
+// the positions, so they must at least add, negate, and scale. Every delta in
+// this vocabulary already satisfies both (Vector2D/3D/N via Numerical, Duration
+// via Quantity), and the bound is what lets the rest of the affine surface —
+// Subtract in both spellings, Lerp, and the reversed Add — be derived once in
+// algebra-metric.library.plato instead of hand-written per implementor.
+//
+// Only two members are primitive. Add and Between are exactly the torsor action
+// and its inverse; everything else in the affine API follows from them.
 concept Difference<TDelta>
+    where TDelta: Additive, TDelta: Scalable
 {
     Add(x: Self, delta: TDelta): Self;
-    Subtract(x: Self, delta: TDelta): Self;
     // The displacement FROM a TO b, i.e. b - a. Direction convention: Between and
     // Add are inverse, so a.Add(a.Between(b)) == b. Every implementor and every
     // caller relies on this orientation (Point2D/Point3D honor it in
