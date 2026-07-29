@@ -1,0 +1,120 @@
+//==
+// # Deformations — Eval bodies and apply lifts
+//
+// Bodies for Deformation2D/Deformation3D (`deformations.concepts.plato`) on the
+// catalog types in `deformations.plato`, plus lifts onto Deformable2D/3D and
+// point sugar. Weighted apply takes a ScalarField as a separate modulator —
+// falloff is never a field of the warp itself.
+//
+// Normals contract: Eval moves points only. After deforming meshes, recompute
+// normals from the new positions (no analytic Jacobian in this library yet).
+
+library Deformations
+{
+    //==
+    // # Helpers
+
+    // Rotate the displacement from origin to point about axis by angle, then
+    // re-seat at origin. Shared by Twist3D and Bend3D.
+    RotateAboutAxis(origin: Point3D, axis: Direction3D, angle: Angle, point: Point3D): Point3D
+        => origin.Add(origin.Between(point).Transform(Quaternion(AxisAngle(axis, angle))));
+
+    //==
+    // # Deformation3D catalog
+
+    // Twist about Axis: angle accumulates with signed height along the axis.
+    Eval(self: Twist3D, p: Point3D): Point3D
+        => RotateAboutAxis(
+            self.Origin,
+            self.Axis,
+            self.AnglePerUnit * self.Origin.Between(p).Dot(self.Axis.Vector),
+            p);
+
+    // Cheap bend: rotate about Axis by Curvature times progress along Direction.
+    Eval(self: Bend3D, p: Point3D): Point3D
+        => RotateAboutAxis(
+            self.Origin,
+            self.Axis,
+            (self.Curvature * self.Origin.Between(p).Dot(self.Direction.Vector)).Angle,
+            p);
+
+    // Taper: scale the perpendicular offset by (1 + Rate * t).
+    Eval(self: Taper3D, p: Point3D): Point3D
+    {
+        var o = self.Origin.Between(p);
+        var t = o.Dot(self.Axis.Vector);
+        var scale = 1.0 + self.Rate * t;
+        return self.Origin.Add(
+            self.Axis.Vector.Multiply(t).Add(
+                PerpendicularComponent(o, self.Axis.Vector).Multiply(scale)));
+    }
+
+    // Shear: translate by Rate scaled by signed progress along Axis.
+    Eval(self: Shear3D, p: Point3D): Point3D
+        => p.Add(self.Rate.Multiply(self.Origin.Between(p).Dot(self.Axis.Vector)));
+
+    // Spherify: lerp toward the radial projection onto the sphere.
+    Eval(self: Spherify3D, p: Point3D): Point3D
+    {
+        var o = self.Center.Between(p);
+        var lenSq = o.Dot(o);
+        var dir = lenSq > 0.0000001 ? o.Normalize : Vector3D(0.0, 0.0, 1.0);
+        return p.Lerp(self.Center.Add(dir.Multiply(self.Radius)), self.Strength);
+    }
+
+    //==
+    // # Deformation2D catalog
+
+    // Planar shear: translate by Rate scaled by signed progress along Axis.
+    Eval(self: Shear2D, p: Point2D): Point2D
+        => p.Add(self.Rate.Multiply(self.Origin.Between(p).Dot(self.Axis.Vector)));
+
+    // Planar taper: scale the perpendicular offset by (1 + Rate * t).
+    Eval(self: Taper2D, p: Point2D): Point2D
+    {
+        var o = self.Origin.Between(p);
+        var axis = self.Axis.Vector;
+        var t = o.Dot(axis);
+        var scale = 1.0 + self.Rate * t;
+        var perp = o.Subtract(axis.Multiply(t));
+        return self.Origin.Add(axis.Multiply(t).Add(perp.Multiply(scale)));
+    }
+
+    // Polar swirl: rotate about Origin by AnglePerUnit times radius.
+    Eval(self: Twist2D, p: Point2D): Point2D
+    {
+        var o = self.Origin.Between(p);
+        var r = o.Magnitude;
+        return self.Origin.Add(o.Transform(Rotation2D(self.AnglePerUnit * r)));
+    }
+
+    //==
+    // # Apply lifts
+    //
+    // Bridge Deformation* into the existing Deformable* seam and point sugar.
+    // Weighted forms take a scalar field; weight 0 is identity, 1 is full warp.
+
+    // Apply a planar deformation to deformable geometry.
+    Deform(self: Deformable2D, d: Deformation2D): Self
+        => self.Deform(p => d.Eval(p));
+
+    // Apply a spatial deformation to deformable geometry.
+    Deform(self: Deformable3D, d: Deformation3D): Self
+        => self.Deform(p => d.Eval(p));
+
+    // Point sugar: p.Deform(d), parallel to p.Transform(m).
+    Deform(p: Point2D, d: Deformation2D): Point2D
+        => d.Eval(p);
+
+    // Point sugar: p.Deform(d), parallel to p.Transform(m).
+    Deform(p: Point3D, d: Deformation3D): Point3D
+        => d.Eval(p);
+
+    // Weighted planar deform: lerp between p and d.Eval(p) by weight.Eval(p).
+    Deform(self: Deformable2D, d: Deformation2D, weight: ScalarField2D): Self
+        => self.Deform(p => p.Lerp(d.Eval(p), weight.Eval(p)));
+
+    // Weighted spatial deform: lerp between p and d.Eval(p) by weight.Eval(p).
+    Deform(self: Deformable3D, d: Deformation3D, weight: ScalarField3D): Self
+        => self.Deform(p => p.Lerp(d.Eval(p), weight.Eval(p)));
+}

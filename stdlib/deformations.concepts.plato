@@ -1,0 +1,24 @@
+//==
+// # Deformation concepts
+//
+// Named space warps as first-class values: a deformation is a pure point-to-point
+// map. Thin aliases of Procedural over Point2D/Point3D so catalogs (Twist, Bend,
+// Taper, ...) are discoverable and library helpers can constrain on them. Apply
+// to geometry through Deformable2D/Deformable3D (transforms.concepts.plato);
+// modulate with ScalarField2D/3D weights (fields.concepts.plato) — do not bake
+// falloff into each warp. Evaluation verb is Eval (inherited); argument order is
+// deformation first, point second.
+
+// A pure planar space warp: maps every Point2D to a Point2D. Implements are
+// parametric structs (Shear2D, Taper2D, ...); apply with
+// `geom.Deform(d)` / `d.Eval(p)`.
+concept Deformation2D
+    inherits Procedural<Point2D, Point2D>
+{ }
+
+// A pure spatial space warp: maps every Point3D to a Point3D. Implements are
+// parametric structs (Twist3D, Bend3D, Taper3D, ...); apply with
+// `geom.Deform(d)` / `d.Eval(p)`.
+concept Deformation3D
+    inherits Procedural<Point3D, Point3D>
+{ }

@@ -19,7 +19,7 @@ below now genuinely covers these library bodies — which it did **not** while t
    (`collections-indexable.library.plato` holds `library CollectionsIndexable`).
 
    Since the plato-293 re-partition this is exact and has no exceptions:
-   `grep -l "^library " *.plato` returns **exactly the 120 `*.library.plato` files** and
+   `grep -l "^library " *.plato` returns **exactly the 121 `*.library.plato` files** and
    nothing else. **No declaration file carries an inline `library` block.** The former inline
    blocks in `transforms`, `polynomials`, `solids`, `surfaces`, `implicit-sdf`, `primitives`,
    `intrinsics`, `curves-2d`, `curves-3d`, `splines` and `fields` were all moved into their own
@@ -27,8 +27,8 @@ below now genuinely covers these library bodies — which it did **not** while t
    now a sibling `.library.plato` file with the same stem, not the declaration file itself.
 
    A work *package* may therefore span several library files - P1 is five files, P7 is nine -
-   because the twelve-declaration-per-file cap applies to libraries too. Fifty-four of the 120
-   files belong to the P1–P9 packages below; the other sixty-six serve foundation domains or
+   because the twelve-declaration-per-file cap applies to libraries too. Fifty-four of the 121
+   files belong to the P1–P9 packages below; the other sixty-seven serve foundation domains or
    carry concrete per-type bodies and are listed in "Libraries outside the package table".
 2. **Function form**: `Name(self: ConceptName, ...): ReturnType => expression;` — first
    parameter is the concept. Prefer a single expression where one reads well.
@@ -116,7 +116,7 @@ below now genuinely covers these library bodies — which it did **not** while t
 
 File names in the two middle columns omit the `.plato` extension: `core-logic` means
 `core-logic.library.plato`, `core-logic.concepts` means `core-logic.concepts.plato`. The nine
-package rows account for 54 of the 120 library files and for all 41 `*.concepts.plato` files.
+package rows account for 54 of the 121 library files and for all 42 `*.concepts.plato` files.
 
 **P9 was a single file until plato-293.** One 499-line `library DomainTraits` served thirteen
 unrelated concepts - easing curves, animation tracks, vector paths, rasters, procedural
@@ -168,6 +168,7 @@ P1–P9 concept package (ground rule 1). All follow the same one-block-per-file 
 | `transforms-motor.library.plato` | `TransformsMotor` | Motor3D (dual quaternion) |
 | `transforms-rotations.library.plato` | `TransformsRotations` | quaternion / rotor / Rotation2D application and conversion |
 | `transforms-identities.library.plato` | `TransformsIdentities` | the `Identity(_: T)` family across every transform representation |
+| `deformations.library.plato` | `Deformations` | `Deformation2D/3D` catalog Eval bodies and Deformable lifts |
 
 **Concrete geometry bodies (19):** `lines`, `lines-planes`, `planar-triangles`,
 `planar-circles`, `planar-ellipses`, `planar-boxes`, `planar-shapes`, `polygons`,

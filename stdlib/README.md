@@ -17,8 +17,8 @@ Target applications: geometry (primary), 2D/3D and N-dimensional computation, an
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
 graphics, image processing, and engineering.
 
-Current contents (2026-07-29): **344 source files (183 type-declaration files + 41
-`*.concepts.plato` files + 120 `*.library.plato` files), 150 concepts, 1134 types**.
+Current contents (2026-07-29): **347 source files (184 type-declaration files + 42
+`*.concepts.plato` files + 121 `*.library.plato` files), 152 concepts, 1144 types**.
 
 The plato-293 re-partition took the folder from 85 files to 344. Every file now holds exactly
 one **kind** of declaration — `<stem>.concepts.plato` holds concepts, `<stem>.plato` holds
@@ -120,7 +120,7 @@ one-line `// Convention: see CONVENTIONS.md - <section>` comment rather than res
 
 ## Layers and file map
 
-This ordered index is the canonical reading order. Every one of the 344 `*.plato` files in the
+This ordered index is the canonical reading order. Every one of the 347 `*.plato` files in the
 folder appears in exactly one row; file names are given without the `.plato` extension, so
 `core-logic.concepts` means `core-logic.concepts.plato`. Layer numbers are the reading order and
 also the rough dependency order — a layer may use anything from a lower-numbered layer and should
@@ -133,7 +133,7 @@ plato-257 build-out; it described a work assignment, not the tree, and is gone.)
 | 2 | Foundation — algebra, collections, functional | `algebra-metric.concepts`, `algebra-metric.library`, `algebra-numeric.concepts`, `algebra-numeric.library`, `algebra-operations.concepts`, `algebra-operations.library`, `collections-containers.concepts`, `collections-containers.library`, `collections-grids.library`, `collections-indexable.concepts`, `collections-indexable.library`, `collections-sampling.library`, `functional-procedural.library`, `functional.concepts` |
 | 3 | Foundation — numbers, quantities, angles, constants, time | `angles.library`, `constants.library`, `numbers`, `quantities-dynamic`, `quantities-electromagnetic`, `quantities-geometric`, `quantities-kinematic`, `quantities-material`, `quantities-mechanical`, `quantities-photometric`, `quantities-projections.library`, `quantities-thermal`, `quantities.concepts`, `quantities.library`, `time` |
 | 4 | Foundation — vectors, matrices, rotations, points, axes | `axes`, `axes-2d.library`, `axes-signed.library`, `axes.library`, `matrices`, `matrices.concepts`, `numeric-structures-algebra.library`, `numeric-structures-components.library`, `numeric-structures-coordinate.library`, `numeric-structures-matrix.library`, `numeric-structures-quantity.library`, `numeric-structures-vector.library`, `points`, `points-curvilinear`, `points-parametric`, `points.concepts`, `rotations`, `vectors-geometric`, `vectors-integer`, `vectors-tuples`, `vectors.concepts` |
-| 5 | Foundation — intervals, bounds, sizes, transforms | `intervals`, `intervals-bounds`, `intervals-bounds.concepts`, `intervals-sizes`, `intervals-transforms-bounds.library`, `intervals-transforms-deformable.library`, `intervals-transforms-interval.library`, `intervals-transforms-transformable.library`, `transforms-affine`, `transforms-affine.library`, `transforms-frames`, `transforms-frames.library`, `transforms-identities.library`, `transforms-motor`, `transforms-motor.library`, `transforms-points.library`, `transforms-pose`, `transforms-pose.library`, `transforms-rotations.library`, `transforms-trs`, `transforms-trs.library`, `transforms.concepts` |
+| 5 | Foundation — intervals, bounds, sizes, transforms | `deformations`, `deformations.concepts`, `deformations.library`, `intervals`, `intervals-bounds`, `intervals-bounds.concepts`, `intervals-sizes`, `intervals-transforms-bounds.library`, `intervals-transforms-deformable.library`, `intervals-transforms-interval.library`, `intervals-transforms-transformable.library`, `transforms-affine`, `transforms-affine.library`, `transforms-frames`, `transforms-frames.library`, `transforms-identities.library`, `transforms-motor`, `transforms-motor.library`, `transforms-points.library`, `transforms-pose`, `transforms-pose.library`, `transforms-rotations.library`, `transforms-trs`, `transforms-trs.library`, `transforms.concepts` |
 | 6 | Foundation — color | `color`, `color-named.library`, `color.library` |
 | 7 | Intrinsics (host-provided) | `intrinsics-arrays.library`, `intrinsics-numeric-tuples.library`, `intrinsics-scalars.library`, `intrinsics-transforms.library`, `intrinsics-vectors.library` |
 | 8 | Geometry concepts & primitive shapes | `geometry-kernels.library`, `geometry-measures.concepts`, `geometry-measures.library`, `geometry-pointsets.library`, `geometry-queries.concepts`, `geometry-queries.library`, `geometry.concepts`, `geometry.library`, `lines`, `lines-planes`, `lines-planes.library`, `lines.library`, `planar-boxes`, `planar-boxes.library`, `planar-circles`, `planar-circles.library`, `planar-ellipses`, `planar-ellipses.library`, `planar-shapes.library`, `planar-triangles`, `planar-triangles.library`, `polygons`, `polygons-kernels.library`, `polygons-polylines`, `polygons-polylines.library`, `polygons-spatial`, `polygons-spatial.library`, `polygons.library`, `spatial-boxes`, `spatial-boxes.library`, `spatial-capsules.library`, `spatial-cylinders`, `spatial-cylinders.library`, `spatial-patches`, `spatial-patches.library`, `spatial-primitives.library`, `spatial-simplices`, `spatial-simplices.library`, `spatial-spheres`, `spatial-spheres.library`, `spatial-tori`, `spatial-tori.library` |
