@@ -93,6 +93,11 @@ Iterate on the one gate relevant to your workstream; run `check-all.ps1` **once*
 Every gate is PowerShell and Windows-pathed. An agent on Linux/CI is limited to `dotnet build`
 and `dotnet test`.
 
+**Status report (committed HTML):** from the Plato repo root,
+`python tools/gen-status-report.py` refreshes `docs/status-report.html` (live git/tracker;
+gate/lint rows from `docs/status-report-snapshot.json`). Install the commit hook with
+`powershell tools/install-githooks.ps1` so every commit regenerates and stages the HTML.
+
 ## Hard rules
 
 1. **Commits.** Commit your own work at clear milestones, on the current branch — never create a
@@ -102,6 +107,12 @@ and `dotnet test`.
    your commit. Never stage `parakeet/` or pre-existing dirty files you did not touch. Committing
    here does not update the parent: bump the submodule pointer in studio as its own commit
    (`git commit -- submodules/Plato`), and push both remotes.
+   **Status report:** every Plato commit must refresh `docs/status-report.html`. Install the
+   hook once with `powershell tools/install-githooks.ps1` (sets `core.hooksPath` to
+   `tools/githooks`); the `pre-commit` hook runs `python tools/gen-status-report.py` and stages
+   the HTML. If hooks are not installed, run the generator yourself and include
+   `docs/status-report.html` (and `docs/status-report-snapshot.json` when you change gate/lint
+   snapshot data) in the commit pathspec.
 2. The FROZEN V1 artifacts (ara3d-sdk Plato.Generated/Plato.Intrinsics + Plato-repo Plato.Intrinsics) must not change — `tools\check-frozen-v1.ps1` is the gate. The live V2 goldens (`Generated/`) are diff-gated by `regen-generated.ps1`; refresh them in the same change as any intended emitter-behavior change.
 3. Generated code must compile with DEFAULT LangVersion on net8.0. No C# 14 features.
 4. Known bugs are now BEING fixed (content-leads, from 2026-07-09). The `KnownFailures.json`

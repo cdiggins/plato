@@ -1,0 +1,31 @@
+#!/bin/sh
+# Regenerates docs/status-report.html and stages it with the commit.
+# Install once: powershell tools/install-githooks.ps1
+# (sets core.hooksPath to tools/githooks)
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT" || exit 1
+
+if command -v python >/dev/null 2>&1; then
+  PY=python
+elif command -v python3 >/dev/null 2>&1; then
+  PY=python3
+else
+  echo "pre-commit: python not found; skipping status report refresh" >&2
+  exit 0
+fi
+
+"$PY" tools/gen-status-report.py --skip-processes || {
+  echo "pre-commit: gen-status-report.py failed" >&2
+  exit 1
+}
+
+git add -- docs/status-report.html
+# Stage snapshot only if it already existed and changed (bootstrap / explicit updates).
+if git ls-files --error-unmatch docs/status-report-snapshot.json >/dev/null 2>&1; then
+  git add -- docs/status-report-snapshot.json
+elif [ -f docs/status-report-snapshot.json ]; then
+  git add -- docs/status-report-snapshot.json
+fi
+
+exit 0

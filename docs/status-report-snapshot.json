@@ -1,0 +1,96 @@
+{
+  "updated_at": "2026-07-29T18:33:25-04:00",
+  "note": "Captured during initial status-report landing; refresh after gate runs.",
+  "gates": [
+    {
+      "name": "stdlib fast gate (lint + checker ratchet)",
+      "result": "PASS",
+      "seconds": "538s",
+      "detail": "2026-07-29 17:54 ET"
+    },
+    {
+      "name": "lint --strict forward stdlib",
+      "result": "PASS",
+      "seconds": "14s",
+      "detail": "0 parse / 0 resolution errors; warning/info findings present"
+    },
+    {
+      "name": "frozen-v1 tripwire",
+      "result": "PASS",
+      "seconds": "<1s",
+      "detail": "210 files unchanged"
+    },
+    {
+      "name": "Plato.CLI + Compiler build (Release)",
+      "result": "PASS",
+      "seconds": "~17s",
+      "detail": "file-lock noise possible when Navigation MCP is live"
+    },
+    {
+      "name": "Plato.sln full build",
+      "result": "BLOCKED",
+      "seconds": "101s",
+      "detail": "MSB3027 when Plato.Navigation.CLI holds DLL locks"
+    },
+    {
+      "name": "PlatoTests",
+      "result": "PASS",
+      "seconds": "77s",
+      "detail": "161 passed / 0 failed"
+    },
+    {
+      "name": "Plato.Navigation.Tests",
+      "result": "PASS",
+      "seconds": "42s",
+      "detail": "30 passed / 0 failed"
+    },
+    {
+      "name": "conformance suite",
+      "result": "NOT RUN",
+      "seconds": "\u2014",
+      "detail": "expected 0 fail when run; refresh snapshot after regen-conformance.ps1 -Test"
+    },
+    {
+      "name": "regen-generated diff gate",
+      "result": "NOT RUN",
+      "seconds": "\u2014",
+      "detail": "refresh after regen-generated.ps1"
+    },
+    {
+      "name": "check-all.ps1 full battery",
+      "result": "NOT RUN",
+      "seconds": "\u2014",
+      "detail": "run before merge / mission end"
+    }
+  ],
+  "lint": {
+    "parse_errors": 0,
+    "resolution_errors": 0,
+    "strict_exit": 0,
+    "warnings": 2541,
+    "infos": 125,
+    "errors": 0,
+    "counts": {
+      "LINT001": 260,
+      "LINT002": 0,
+      "LINT003": 2279,
+      "LINT004": 0,
+      "LINT005": 0,
+      "LINT006": 0,
+      "LINT007": 0,
+      "LINT008": 37,
+      "LINT009": 8,
+      "LINT010": 59,
+      "LINT011": 21,
+      "LINT012": 2
+    }
+  },
+  "nav": {
+    "files": 363,
+    "definitions": 13512,
+    "references": 33693,
+    "diagnostics": 0,
+    "builtUtc": "2026-07-29T21:46:46Z",
+    "roots": "stdlib + stdlib-tests"
+  }
+}
