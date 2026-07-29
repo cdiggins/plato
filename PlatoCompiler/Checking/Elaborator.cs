@@ -237,6 +237,16 @@ namespace Ara3D.Geometry.Compiler.Checking
             if (fc.Function is KeywordRefSymbol)
                 return new TirDefault(type, fc);
 
+            // `Axis3D.Y` — a nullary sum case. The writer emits every case as a static FACTORY
+            // METHOD on the tagged struct, so this must render `Axis3D.Y()`. The syntactic path
+            // would read the `a.b` shape as a property and emit `Axis3D.Y`, which does not compile.
+            if (fc.Function is FunctionGroupRefSymbol sg && SumCaseAccess.Resolve(fc, sg.Name) is TypeDef sum)
+            {
+                var sumType = type ?? sum.ToTypeExpression();
+                return new TirCall(null, EmissionKind.StaticMethod, null, sumType,
+                    new List<TirNode> { ElaborateExpr(fc.Args[0]) }, sumType, fc, sg.Name);
+            }
+
             // Applying a function VALUE (function-typed parameter/variable, a lambda, or another
             // call's result) — not a named overload, so there is no callee/EmissionKind.
             if (!(fc.Function is FunctionGroupRefSymbol))

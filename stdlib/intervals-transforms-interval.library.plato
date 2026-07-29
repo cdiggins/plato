@@ -13,6 +13,14 @@
 //     those are the only capabilities used on T here.
 //   * Directed intervals: Contains/Overlaps/Union/Intersection/Clamp assume the
 //     forward orientation Start <= End. Use IsForward to test, Reverse to fix.
+//   * Interval-returning transforms return `Self`, not `IntervalLike<T>`: they are
+//     shape-preserving, so a NumberInterval in yields a NumberInterval out. The
+//     tuple bodies below build the receiver's own concrete type, which `Self` names
+//     and `IntervalLike<T>` does not — the concept cannot say WHICH implementer a
+//     tuple becomes, so declaring it there is both wrong for callers (they lose the
+//     concrete type) and unresolvable for the checker (CHK101 Tuple2<T,T> vs
+//     IntervalLike<T>). Same convention as ThenTransform in
+//     intervals-transforms-transformable.library.plato and the Deformable surface.
 
 library IntervalsTransformsInterval
 {
@@ -73,60 +81,60 @@ library IntervalsTransformsInterval
 
     // The smallest interval containing both operands (the convex hull of the two).
     // Forward orientation: start at the lesser start, end at the greater end.
-    Union(self: IntervalLike<$T>, other: IntervalLike<$T>): IntervalLike<$T>
+    Union(self: IntervalLike<$T>, other: IntervalLike<$T>): Self
         => (self.Start.Lesser(other.Start), self.End.Greater(other.End));
 
     // The overlapping interval common to both. Forward orientation: start at the
     // greater start, end at the lesser end. Empty (Start > End) when they are
     // disjoint — test with IsForward.
-    Intersection(self: IntervalLike<$T>, other: IntervalLike<$T>): IntervalLike<$T>
+    Intersection(self: IntervalLike<$T>, other: IntervalLike<$T>): Self
         => (self.Start.Greater(other.Start), self.End.Lesser(other.End));
 
     // The same span traversed in the opposite direction (End becomes Start).
-    Reverse(self: IntervalLike<$T>): IntervalLike<$T>
+    Reverse(self: IntervalLike<$T>): Self
         => (self.End, self.Start);
 
     // The interval shifted so it starts at `start`, keeping the same extent.
     // Renamed from v1 `MoveTo` for clarity about which endpoint anchors.
-    StartAt(self: IntervalLike<$T>, start: $T): IntervalLike<$T>
+    StartAt(self: IntervalLike<$T>, start: $T): Self
         => (start, start + self.Extent);
 
     // The interval translated by `delta`, moving both endpoints together.
-    Translate(self: IntervalLike<$T>, delta: $T): IntervalLike<$T>
+    Translate(self: IntervalLike<$T>, delta: $T): Self
         => (self.Start + delta, self.End + delta);
 
     // The interval grown symmetrically by `amount` at each end (negative shrinks).
     // Replaces the v1 `Recenter`/half-extent dance, which needed scalar division.
-    Grow(self: IntervalLike<$T>, amount: $T): IntervalLike<$T>
+    Grow(self: IntervalLike<$T>, amount: $T): Self
         => (self.Start - amount, self.End + amount);
 
     // The leading sub-span from Start up to fraction `t`. Renamed from v1 `Left`,
     // which was ambiguous for a directed span.
-    Prefix(self: IntervalLike<$T>, t: Number): IntervalLike<$T>
+    Prefix(self: IntervalLike<$T>, t: Number): Self
         => (self.Start, self.Lerp(t));
 
     // The trailing sub-span from fraction `t` to End. Renamed from v1 `Right`.
-    Suffix(self: IntervalLike<$T>, t: Number): IntervalLike<$T>
+    Suffix(self: IntervalLike<$T>, t: Number): Self
         => (self.Lerp(t), self.End);
 
     // The first half of the interval.
-    FirstHalf(self: IntervalLike<$T>): IntervalLike<$T>
+    FirstHalf(self: IntervalLike<$T>): Self
         => self.Prefix(0.5);
 
     // The second half of the interval.
-    SecondHalf(self: IntervalLike<$T>): IntervalLike<$T>
+    SecondHalf(self: IntervalLike<$T>): Self
         => self.Suffix(0.5);
 
     // The sub-interval covering fractions `startFraction`..`endFraction` of this one.
-    Subinterval(self: IntervalLike<$T>, startFraction: Number, endFraction: Number): IntervalLike<$T>
+    Subinterval(self: IntervalLike<$T>, startFraction: Number, endFraction: Number): Self
         => (self.Lerp(startFraction), self.Lerp(endFraction));
 
     // Split at fraction `t` into the leading and trailing sub-spans.
-    SplitAt(self: IntervalLike<$T>, t: Number): Tuple2<IntervalLike<$T>, IntervalLike<$T>>
+    SplitAt(self: IntervalLike<$T>, t: Number): Tuple2<Self, Self>
         => (self.Prefix(t), self.Suffix(t));
 
     // Split into two equal halves.
-    Split(self: IntervalLike<$T>): Tuple2<IntervalLike<$T>, IntervalLike<$T>>
+    Split(self: IntervalLike<$T>): Tuple2<Self, Self>
         => self.SplitAt(0.5);
 
     // TODO(concept-gap): Normalize (inverse Lerp: value -> fraction) is not
@@ -166,8 +174,8 @@ library IntervalsTransformsInterval
     // item 4), returned as a concrete NumberInterval so ray-box slab reductions can
     // chain Overlap and read Start/End directly. When the two are disjoint the result
     // is inverted (Start > End) — the empty encoding (Convention: see CONVENTIONS.md -
-    // Bounds); test it with IsForward. Specializes the generic IntervalLike.Intersection
-    // to the concrete return type.
+    // Bounds); test it with IsForward. The remap-kit spelling of the generic
+    // IntervalLike.Intersection, which returns the same NumberInterval via `Self`.
     Overlap(a: NumberInterval, b: NumberInterval): NumberInterval
         => (a.Start.Greater(b.Start), a.End.Lesser(b.End));
 

@@ -285,6 +285,13 @@ namespace Ara3D.Geometry.Compiler.Checking
             {
                 case FunctionGroupRefSymbol g:
                 {
+                    // `Axis3D.Y` — a qualified nullary sum-case reference. Tried BEFORE ordinary
+                    // member resolution because a case name may collide with a real member of the
+                    // same name; see SumCaseAccess for why the type-reference gating makes that safe.
+                    var sumCase = SumCaseAccess.Resolve(fc, g.Name);
+                    if (sumCase != null)
+                        return sumCase.ToTypeExpression();
+
                     var candidates = g.Def?.Functions?.ToList() ?? new List<FunctionDef>();
                     var result = Vars.Fresh("Ret");
                     System.Add(new OverloadConstraint(fc, g.Name, result, argTypes, candidates, fc));

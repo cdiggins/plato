@@ -211,5 +211,33 @@ namespace Ara3D.Geometry
             var pen = lib.GetMethod("Pen").Invoke(null, new[] { Point(1, 1) });
             Assert.AreEqual(0, seg.GetField("Kind").GetValue(pen)); // Kind_Move
         }
+
+        /// <summary>
+        /// A qualified NULLARY case used as a VALUE (<c>FillRule.EvenOdd</c>, the `Axis3D.Y` shape).
+        /// The writer emits every case as a static FACTORY METHOD, so the reference must render
+        /// <c>FillRule.EvenOdd()</c> — elaboration gives it StaticMethod emission for exactly that
+        /// reason. The syntactic path would read the `a.b` shape as a property and emit
+        /// <c>FillRule.EvenOdd</c>, which does not compile; the Roslyn build below is what pins it.
+        /// </summary>
+        [Test]
+        public static void QualifiedNullaryCase_CompilesAndRuns()
+        {
+            var w = Emit("qualified-nullary-case.plato");
+            var lib = w.Files["FillRules.g.cs"].ToString();
+            Assert.That(lib, Does.Contain("FillRule.EvenOdd()"));
+            Assert.That(lib, Does.Contain("FillRule.NonZero()"));
+
+            var asm = CompileAndLoad(Prelude,
+                w.Files["_FillRule.g.cs"].ToString(), lib);
+            var fillRule = asm.GetType("Ara3D.Geometry.FillRule", true);
+            var fillRules = asm.GetType("Ara3D.Geometry.FillRules", true);
+
+            var nonZero = fillRule.GetMethod("NonZero").Invoke(null, null);
+            var evenOdd = fillRule.GetMethod("EvenOdd").Invoke(null, null);
+            var flip = fillRules.GetMethod("Flip");
+
+            Assert.AreEqual("EvenOdd", flip.Invoke(null, new[] { nonZero }).ToString());
+            Assert.AreEqual("NonZero", flip.Invoke(null, new[] { evenOdd }).ToString());
+        }
     }
 }

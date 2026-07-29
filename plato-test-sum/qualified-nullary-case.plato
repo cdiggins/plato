@@ -1,0 +1,25 @@
+// Positive fixture: a QUALIFIED reference to a NULLARY sum case used as a VALUE
+// (`FillRule.EvenOdd`), rather than as a match subject or a case constructor call.
+//
+// The shape is the one `Axis3D.Y` / `SignedAxis3D.NegX` take in the forward stdlib.
+// It desugars receiver-first to the argument-list-less call `EvenOdd(FillRule)`, so
+// ordinary member resolution either binds an unrelated member of the same name or
+// binds nothing; Checking/SumCaseAccess.cs recognizes it first. The name-COLLISION
+// face (a real member shares the case's name) needs a richer library than a fixture
+// this size — the forward-stdlib ratchet covers it via Axes.Tangent.
+
+type Boolean { }
+
+type FillRule = NonZero | EvenOdd;
+
+library FillRules {
+    // Qualified nullary case in each arm of a match.
+    Flip(r: FillRule): FillRule =>
+        match (r) {
+            NonZero => FillRule.EvenOdd;
+            EvenOdd => FillRule.NonZero;
+        };
+
+    // Qualified nullary case outside a match, in plain return position.
+    Zero(b: Boolean): FillRule => FillRule.NonZero;
+}

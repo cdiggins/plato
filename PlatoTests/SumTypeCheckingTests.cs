@@ -52,6 +52,7 @@ namespace PlatoTests
         [TestCase("fillrule.plato")]
         [TestCase("match-expression.plato")]
         [TestCase("nested-match.plato")]
+        [TestCase("qualified-nullary-case.plato")]
         public static void Positive_CompilesWithoutDiagnostics(string file)
         {
             var (comp, diags) = CheckFixture(file);
@@ -109,6 +110,22 @@ namespace PlatoTests
 
             var dupName = Msg("negatives/duplicate-case-names.plato", "CHK305");
             Assert.That(dupName, Does.Contain("Bad").And.Contain("Move"));
+        }
+
+        /// <summary>A qualified NULLARY case reference (<c>FillRule.EvenOdd</c>) must type as the sum
+        /// itself. It desugars receiver-first to the argument-list-less call <c>EvenOdd(FillRule)</c>,
+        /// which ordinary member resolution cannot bind — the receiver NAMES a type rather than being
+        /// a value of one. Recognized by <see cref="SumCaseAccess"/> ahead of member resolution; this
+        /// pins the TYPE-checker half (the emission half is SumTypeCodegenTests).</summary>
+        [Test]
+        public static void QualifiedNullaryCaseReference_TypeChecksClean()
+        {
+            var (comp, _) = CheckFixture("qualified-nullary-case.plato");
+            var failing = new TypeChecker(comp).CheckAll().Where(r => !r.Succeeded).ToList();
+            Assert.IsEmpty(failing.SelectMany(r => r.Diagnostics)
+                    .Where(d => d.Severity == DiagnosticSeverity.Error)
+                    .Select(d => $"{d.Code} {d.Message}"),
+                "qualified nullary sum-case references must type-check clean");
         }
 
         // --- generics stance: option.plato is restricted (CHK306) ----------------

@@ -2,8 +2,8 @@
 // # SplinesBezier — evaluating the Bezier splines
 //
 // Evaluation of the control-point curves declared in `splines-bezier.plato`.
-// De Casteljau's algorithm is the whole story: it is generic over
-// `Interpolatable`, so one reduction serves points, vectors, and weights, and
+// De Casteljau's algorithm is the whole story: it is generic in `$T`, using it
+// only through Lerp, so one reduction serves points, vectors, and weights, and
 // the rational form is that same reduction run twice. Nothing from
 // `library Polynomials` is reimplemented here.
 
@@ -16,11 +16,14 @@ library SplinesBezier
     // De Casteljau's algorithm is the one Bezier evaluator that does not need a
     // closed form per degree: repeatedly replace the control values by the
     // lerps of adjacent pairs until one remains. It only needs Lerp, so it is
-    // generic over `Interpolatable` and serves points, vectors, and weights.
+    // generic in the type variable `$T` and serves points, vectors, and
+    // weights. The `Interpolatable` requirement on `$T` is implicit: library
+    // functions have no where-clause grammar (bounds are spelled only on
+    // concept declarations), so the Lerp call in the body carries it.
 
     // The de Casteljau reduction of a control polygon at t.
     // Precondition: xs is non-empty.
-    DeCasteljau(xs: Array<Interpolatable>, t: Number): Interpolatable
+    DeCasteljau(xs: Array<$T>, t: Number): $T
         => xs.Count <= 1
            ? xs.At(0)
            : (xs.Count - 1).MapRange(i => xs.At(i).Lerp(xs.At(i + 1), t)).DeCasteljau(t);

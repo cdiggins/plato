@@ -19,29 +19,29 @@ namespace PlatoTests
     [TestFixture]
     public static class ForwardStdLibCheckerTests
     {
-        // Measured 2026-07-29 after the function-typed-FIELD-invocation checker fix (Solver.cs,
-        // TryResolveFieldInvocation): a UFCS call whose "callee" names a field of function type
-        // (`self.Function(point)` -> the normalized call `Function(self, point)`) now types by INVOKING
-        // the accessor's `Function{N}` result value against the trailing arguments, instead of failing
-        // CHK201 for want of a two-arg `Function` overload. It is a strict fallback — attempted only
-        // when no ordinary overload matched, so no real member/library function is shadowed and no
-        // winner changed. That cleared the 8 *FunctionField/*FunctionSdf `Eval` bodies, taking the
-        // forward count 27 -> 19 (and the stdlib-legacy ratchet 26 -> 25). Emission is unaffected: the
-        // fix records nothing in ResolvedCalls, so elaboration stays on the syntactic path that already
-        // renders `self.Function(point)` as the delegate invocation the generated C# performs.
-        // 19 / 1978 remain — CHK101 cannot-unify (13) + CHK201 no-match (13). Two residual clusters,
-        // each needing a fix out of scope here:
-        //   * tuple -> GENERIC-INTERFACE returns (Tuple2<$T,$T> vs IntervalLike<$T> — IntervalsTransforms
-        //     x9): the checker cannot soundly pick the concrete implementer a tuple becomes; a library
-        //     redesign (return a concrete type / Self) is the right fix. Mirrors the legacy IInterval/
-        //     IBounds residue.
-        //   * sum-type CASE references (plato-288, in progress): `Axis3D.Y` types as Number and
-        //     `SignedAxis3D.NegX` resolves as a call — nullary sum-case member access is unimplemented
-        //     (Axes/Axes2D/SignedAxes.Opposite/Transforms.EulerAngles' ZXY), plus element covariance
-        //     (`Array<Point2D>` for `Array<Interpolatable>` in DeCasteljau).
-        // The count drifts with library growth: this is a ceiling to LOWER, never to raise.
+        // Measured 2026-07-29: 0 / 2106. The forward vocabulary now type-checks CLEAN.
+        //
+        // The last cluster was 9 IntervalsTransformsInterval functions that build an interval from a
+        // TUPLE LITERAL but declared the CONCEPT as their return type (`Union(...): IntervalLike<$T>
+        // => (a, b)`), each yielding CHK101 'Tuple2<$T,$T>' vs 'IntervalLike<$T>'. The checker was
+        // right to reject it: a concept does not say WHICH implementer the tuple becomes, so there is
+        // no sound choice to make. The author's intent was `Self` — these transforms are
+        // shape-preserving — so the fix was a LIBRARY fix, not a compiler fix: the 9 declarations (plus
+        // the delegating FirstHalf/SecondHalf and the Tuple2<Self,Self> of SplitAt/Split) now return
+        // `Self`, matching the convention ThenTransform and the Deformable surface already use.
+        //
+        // No checker change was needed. `Self` already unifies permissively by design (Solver.Unify:
+        // "Self is compatible with anything ... monomorphization grounds it"), which is exactly the
+        // deferral this shape wants — the concrete implementer is decided when Self is bound. Note the
+        // corollary: `Self` in RETURN position is not arity-checked against the receiver's fields at
+        // check time, so a wrong-shape tuple body would be accepted here and only caught downstream.
+        // That permissiveness is pre-existing and shared with every other `Self`-returning function;
+        // tightening it belongs in the monomorphizer, not here.
+        //
+        // The count drifts with library growth: this is a ceiling to LOWER, never to raise. At 0 it is
+        // also a floor in practice — any new diagnostic is a regression.
         // Worklist: SummarizeForwardStdLibDiagnostics.
-        private const int MaxFunctionsWithDiagnostics = 19;
+        private const int MaxFunctionsWithDiagnostics = 0;
 
         /// <summary>Empty when the file parses; otherwise the failure, so one bad file cannot mask the rest.</summary>
         private static string ParseFailure(string path)
@@ -98,8 +98,8 @@ namespace PlatoTests
 
             Assert.IsEmpty(failures, "forward stdlib files failed to parse");
 
-            // Green since plato-289: all 84 files parse and compile clean (1133 types, 6668 reified
-            // functions). This must hold in Debug AND Release — the bug it replaced was a Debug.Assert
+            // Green since plato-289 and held across the plato-293 re-partition: all 349 files parse
+            // and compile clean. This must hold in Debug AND Release — the bug it replaced was a Debug.Assert
             // in FunctionInstance that fired only under Debug and was then swallowed.
             Assert.IsEmpty(comp.SymbolFactory.Errors, "forward stdlib has symbol resolution errors");
             Assert.IsEmpty(comp.SemanticErrors, "forward stdlib has semantic errors");
