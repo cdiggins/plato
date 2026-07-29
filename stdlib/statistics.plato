@@ -312,14 +312,21 @@ library Statistics
     InterquartileRange(self: FiveNumberSummary): Number
         => self.UpperQuartile - self.LowerQuartile;
 
+    // The interquartile-range multiple defining Tukey's inner fences. 1.5 is a
+    // convention, not a derived quantity: Tukey's outer ("far out") fences use
+    // 3 instead, so the choice of multiplier is what these fences encode.
+    // (https://en.wikipedia.org/wiki/Interquartile_range#Outliers)
+    TukeyFenceMultiplier(_: Number): Number
+        => 1.5;
+
     // The lower Tukey fence: LowerQuartile - 1.5 * IQR. Values below it are
     // candidate outliers under the standard 1.5-IQR rule.
     LowerFence(self: FiveNumberSummary): Number
-        => self.LowerQuartile - 1.5 * self.InterquartileRange;
+        => self.LowerQuartile - Number.TukeyFenceMultiplier * self.InterquartileRange;
 
     // The upper Tukey fence: UpperQuartile + 1.5 * IQR.
     UpperFence(self: FiveNumberSummary): Number
-        => self.UpperQuartile + 1.5 * self.InterquartileRange;
+        => self.UpperQuartile + Number.TukeyFenceMultiplier * self.InterquartileRange;
 
     // The span covered by the whiskers: UpperWhisker - LowerWhisker.
     WhiskerRange(self: BoxPlotStatistics): Number
