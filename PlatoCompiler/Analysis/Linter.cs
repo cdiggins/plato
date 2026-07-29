@@ -59,6 +59,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
     ///   LINT009 - concept that nothing in the compilation mentions at all
     ///   LINT010 - concrete type that implements no concept and that no function or field mentions
     ///   LINT011 - redundant 'implements' clause (already implied by another implemented concept)
+    ///   LINT012 - obligation and implementation disagree on the '_' receiver marker (static vs instance)
     /// The pass is read-only: it never mutates the compilation and has no effect on code generation.
     /// </summary>
     public class Linter
@@ -77,6 +78,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
             CheckUniqueTypeStructuralBans();
             CheckVocabularyReachability();
             CheckRedundantImplements();
+            CheckReceiverMarkerAgreement();
         }
 
         public IEnumerable<LintFinding> SortedFindings
@@ -164,6 +166,75 @@ namespace Ara3D.Geometry.Compiler.Analysis
                     Add(GetLocation(ct.TypeDef) ?? GetLocation(fi.Implementation), "LINT001", LintSeverity.Warning,
                         $"type '{ct.Name}' implements '{declaringInterface}' but no implementation was found for " +
                         $"'{fi.SignatureId}'; the generated member will throw NotImplementedException");
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // LINT012: an obligation and the implementation that discharges it disagree
+        // on the '_' receiver marker.
+        //
+        // Naming a function's first parameter '_' is how Plato says "I need the
+        // receiver's TYPE to dispatch, but not its value" — the constructor-shaped
+        // idiom (Zero(_: Color), Pi(_: Number), FromAmount(_: Self, x)). It is not
+        // decoration: the C# writer keys off it directly
+        // (CSharpFunctionInfo.IsStatic => ParameterNames[0] == "_") and emits a
+        // static member for '_' and an instance member otherwise.
+        //
+        // So when a concept declares Zero(x: Self) and the implementation writes
+        // Zero(_: Color), the interface gets an instance member and the type gets a
+        // static one — which cannot satisfy it (C# CS0736). The reverse disagreement
+        // is just as real: concept Vector declared Broadcast(_: Self, x) while
+        // VectorN.Broadcast uses its receiver for arity.
+        //
+        // Nothing else in the language looks at a parameter NAME, so neither
+        // direction was caught until C# compilation, more than a thousand generated
+        // files downstream. This rule is the gate: it puts the disagreement at the
+        // implementation, at lint time, in any backend. See plato-312 and the
+        // 2026-07-29 static-concept-members ADR.
+        // -------------------------------------------------------------------
+
+        /// <summary>Plato's marker for "receiver type matters, receiver value does not".</summary>
+        public static bool HasIgnoredReceiver(FunctionInstance f)
+            => f.ParameterNames.Count > 0 && f.ParameterNames[0] == "_";
+
+        public void CheckReceiverMarkerAgreement()
+        {
+            foreach (var ct in Compilation.ConcreteTypes)
+            {
+                // Same pairing the writer and LINT001 use: an obligation is discharged by
+                // the implementation sharing its (substituted) signature.
+                var implBySignature = new Dictionary<string, FunctionInstance>();
+                foreach (var impl in ct.ImplementedFunctions)
+                    if (!implBySignature.ContainsKey(impl.SignatureId))
+                        implBySignature.Add(impl.SignatureId, impl);
+
+                foreach (var declared in ct.DeclaredFunctions)
+                {
+                    if (MembersImplementedByWriter.Contains(declared.Name))
+                        continue; // synthesized by the writer; no authored receiver to compare
+                    if (!implBySignature.TryGetValue(declared.SignatureId, out var impl))
+                        continue; // unimplemented is LINT001's business, not this rule's
+                    if (declared.ParameterNames.Count == 0 || impl.ParameterNames.Count == 0)
+                        continue;
+
+                    var obligationIsTypeLevel = HasIgnoredReceiver(declared);
+                    if (obligationIsTypeLevel == HasIgnoredReceiver(impl))
+                        continue;
+
+                    var owner = declared.Implementation.OwnerType?.Name ?? declared.InterfaceName;
+                    var advice = obligationIsTypeLevel
+                        ? $"the '{owner}' obligation marks the receiver '_' (type-level, emitted static) but this " +
+                          $"implementation names it '{impl.ParameterNames[0]}' (emitted as an instance member)"
+                        : $"this implementation marks the receiver '_' (type-level, emitted static) but the " +
+                          $"'{owner}' obligation names it '{declared.ParameterNames[0]}' (an instance member)";
+
+                    // Anchored at the IMPLEMENTATION: that is the edit site, and it collapses one
+                    // finding per concrete type down to one per offending body.
+                    Add(GetLocation(impl.Implementation) ?? GetLocation(ct.TypeDef), "LINT012", LintSeverity.Warning,
+                        $"'{impl.SignatureId}': {advice}. A static member cannot implement an instance " +
+                        $"obligation (C# CS0736) and vice versa; use '_' on both when the operation is " +
+                        $"type-level, or a name on both when any implementor needs the receiver");
                 }
             }
         }
