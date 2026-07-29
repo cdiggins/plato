@@ -1,0 +1,229 @@
+//==
+// # Extended-number arithmetic
+//
+// Operator and concept obligations for the types of `numbers.plato`: Complex
+// (full Numerical plus Complex×Complex product/quotient), Rational (Comparable
+// plus field arithmetic), and the unitless constrained scalars Proportion /
+// Percent / Probability (Numerical + Comparable on their carrier).
+
+library Numbers
+{
+    //==
+    // Complex — Numerical obligations and complex field arithmetic.
+    // https://en.wikipedia.org/wiki/Complex_number
+
+    // Component-wise sum.
+    Add(a: Complex, b: Complex): Complex
+        => (a.Real + b.Real, a.Imaginary + b.Imaginary);
+
+    // Component-wise difference.
+    Subtract(a: Complex, b: Complex): Complex
+        => (a.Real - b.Real, a.Imaginary - b.Imaginary);
+
+    // Additive inverse.
+    Negative(z: Complex): Complex
+        => (-z.Real, -z.Imaginary);
+
+    // Complex product: (a+bi)(c+di) = (ac-bd) + (ad+bc)i.
+    Multiply(a: Complex, b: Complex): Complex
+        => (a.Real * b.Real - a.Imaginary * b.Imaginary,
+            a.Real * b.Imaginary + a.Imaginary * b.Real);
+
+    // Scale both parts by a real factor.
+    Multiply(z: Complex, scalar: Number): Complex
+        => (z.Real * scalar, z.Imaginary * scalar);
+
+    // Complex quotient. Precondition: b is non-zero.
+    Divide(a: Complex, b: Complex): Complex {
+        var denom = b.Real * b.Real + b.Imaginary * b.Imaginary;
+        return ((a.Real * b.Real + a.Imaginary * b.Imaginary) / denom,
+                (a.Imaginary * b.Real - a.Real * b.Imaginary) / denom);
+    }
+
+    // Divide both parts by a real factor. Precondition: scalar is non-zero.
+    Divide(z: Complex, scalar: Number): Complex
+        => (z.Real / scalar, z.Imaginary / scalar);
+
+    // Component-wise remainder against a real factor.
+    Modulo(z: Complex, scalar: Number): Complex
+        => (z.Real.Modulo(scalar), z.Imaginary.Modulo(scalar));
+
+    // Linear interpolation of both parts; t is unclamped.
+    Lerp(a: Complex, b: Complex, t: Number): Complex
+        => (a.Real + (b.Real - a.Real) * t,
+            a.Imaginary + (b.Imaginary - a.Imaginary) * t);
+
+    // The additive identity: 0 + 0i.
+    Zero(_: Complex): Complex
+        => (0.0, 0.0);
+
+    // The multiplicative unit: 1 + 0i.
+    One(_: Complex): Complex
+        => (1.0, 0.0);
+
+    // Component-wise least representable value.
+    MinValue(_: Complex): Complex
+        => (Number.MinValue, Number.MinValue);
+
+    // Component-wise greatest representable value.
+    MaxValue(_: Complex): Complex
+        => (Number.MaxValue, Number.MaxValue);
+
+    //==
+    // Rational — exact ratio arithmetic and order.
+    // https://en.wikipedia.org/wiki/Rational_number
+    // Results are not reduced; callers that need a canonical form should
+    // divide out the GCD separately when that helper exists.
+
+    // a/b + c/d = (ad + bc) / (bd). Precondition: neither denominator is zero.
+    Add(a: Rational, b: Rational): Rational
+        => new Rational(
+            a.Numerator * b.Denominator + b.Numerator * a.Denominator,
+            a.Denominator * b.Denominator);
+
+    // a/b - c/d = (ad - bc) / (bd). Precondition: neither denominator is zero.
+    Subtract(a: Rational, b: Rational): Rational
+        => new Rational(
+            a.Numerator * b.Denominator - b.Numerator * a.Denominator,
+            a.Denominator * b.Denominator);
+
+    // Additive inverse: -a/b.
+    Negative(r: Rational): Rational
+        => new Rational(-r.Numerator, r.Denominator);
+
+    // (a/b)(c/d) = (ac)/(bd). Precondition: neither denominator is zero.
+    Multiply(a: Rational, b: Rational): Rational
+        => new Rational(a.Numerator * b.Numerator, a.Denominator * b.Denominator);
+
+    // (a/b) / (c/d) = (ad)/(bc). Precondition: neither denominator is zero,
+    // and b's numerator is non-zero.
+    Divide(a: Rational, b: Rational): Rational
+        => new Rational(a.Numerator * b.Denominator, a.Denominator * b.Numerator);
+
+    // Cross-multiply order, accounting for the sign of the product of
+    // denominators so negative denominators do not reverse the relation.
+    LessThanOrEquals(a: Rational, b: Rational): Boolean {
+        var left = a.Numerator * b.Denominator;
+        var right = b.Numerator * a.Denominator;
+        return a.Denominator * b.Denominator >= 0
+            ? left <= right
+            : left >= right;
+    }
+
+    //==
+    // Proportion — unitless scalar in [0, 1]; Numerical + Comparable on Value.
+
+    Add(a: Proportion, b: Proportion): Proportion
+        => new Proportion(a.Value + b.Value);
+
+    Subtract(a: Proportion, b: Proportion): Proportion
+        => new Proportion(a.Value - b.Value);
+
+    Negative(x: Proportion): Proportion
+        => new Proportion(-x.Value);
+
+    Multiply(x: Proportion, scalar: Number): Proportion
+        => new Proportion(x.Value * scalar);
+
+    Divide(x: Proportion, scalar: Number): Proportion
+        => new Proportion(x.Value / scalar);
+
+    Modulo(x: Proportion, scalar: Number): Proportion
+        => new Proportion(x.Value.Modulo(scalar));
+
+    Lerp(a: Proportion, b: Proportion, t: Number): Proportion
+        => new Proportion(a.Value + (b.Value - a.Value) * t);
+
+    Zero(_: Proportion): Proportion
+        => new Proportion(0.0);
+
+    One(_: Proportion): Proportion
+        => new Proportion(1.0);
+
+    MinValue(_: Proportion): Proportion
+        => new Proportion(Number.MinValue);
+
+    MaxValue(_: Proportion): Proportion
+        => new Proportion(Number.MaxValue);
+
+    LessThanOrEquals(a: Proportion, b: Proportion): Boolean
+        => a.Value <= b.Value;
+
+    //==
+    // Percent — proportion expressed per hundred; Numerical + Comparable.
+
+    Add(a: Percent, b: Percent): Percent
+        => new Percent(a.Value + b.Value);
+
+    Subtract(a: Percent, b: Percent): Percent
+        => new Percent(a.Value - b.Value);
+
+    Negative(x: Percent): Percent
+        => new Percent(-x.Value);
+
+    Multiply(x: Percent, scalar: Number): Percent
+        => new Percent(x.Value * scalar);
+
+    Divide(x: Percent, scalar: Number): Percent
+        => new Percent(x.Value / scalar);
+
+    Modulo(x: Percent, scalar: Number): Percent
+        => new Percent(x.Value.Modulo(scalar));
+
+    Lerp(a: Percent, b: Percent, t: Number): Percent
+        => new Percent(a.Value + (b.Value - a.Value) * t);
+
+    Zero(_: Percent): Percent
+        => new Percent(0.0);
+
+    One(_: Percent): Percent
+        => new Percent(100.0);
+
+    MinValue(_: Percent): Percent
+        => new Percent(Number.MinValue);
+
+    MaxValue(_: Percent): Percent
+        => new Percent(Number.MaxValue);
+
+    LessThanOrEquals(a: Percent, b: Percent): Boolean
+        => a.Value <= b.Value;
+
+    //==
+    // Probability — probability in [0, 1]; Numerical + Comparable.
+
+    Add(a: Probability, b: Probability): Probability
+        => new Probability(a.Value + b.Value);
+
+    Subtract(a: Probability, b: Probability): Probability
+        => new Probability(a.Value - b.Value);
+
+    Negative(x: Probability): Probability
+        => new Probability(-x.Value);
+
+    Multiply(x: Probability, scalar: Number): Probability
+        => new Probability(x.Value * scalar);
+
+    Divide(x: Probability, scalar: Number): Probability
+        => new Probability(x.Value / scalar);
+
+    Modulo(x: Probability, scalar: Number): Probability
+        => new Probability(x.Value.Modulo(scalar));
+
+    Lerp(a: Probability, b: Probability, t: Number): Probability
+        => new Probability(a.Value + (b.Value - a.Value) * t);
+
+    Zero(_: Probability): Probability
+        => new Probability(0.0);
+
+    One(_: Probability): Probability
+        => new Probability(1.0);
+
+    MinValue(_: Probability): Probability
+        => new Probability(Number.MinValue);
+
+    MaxValue(_: Probability): Probability
+        => new Probability(Number.MaxValue);
+
+    LessThanOrEquals(a: Probability, b: Probability): Boolean
+        => a.Value <= b.Value;
+}

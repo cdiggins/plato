@@ -1,0 +1,57 @@
+//==
+// # Time arithmetic
+//
+// Affine Instant / Duration operations for the types of `time.plato`.
+// Instants are positions on a time line; Durations are differences between
+// them — deliberately distinct from Number (same discipline as Size2D vs
+// Vector2D in `intervals-sizes.plato`). Duration already discharges its
+// Quantity obligations via `quantities.library.plato` / Amount-FromAmount in
+// `quantities-projections.library.plato`; this file adds Instant Difference
+// and Comparable fills, plus the Duration↔Number and Duration/Duration
+// operators that Quantity alone does not cover.
+
+library Time
+{
+    //==
+    // Instant — Difference<Duration> and Comparable.
+    // Convention: Between(a, b) is the Duration from a to b (b - a), matching
+    // Point2D/Point3D in transforms-points.library.plato.
+
+    // The instant advanced by the given span.
+    Add(t: Instant, d: Duration): Instant
+        => new Instant(t.SecondsSinceEpoch + d.Seconds);
+
+    // Commutative form of Add(Instant, Duration).
+    Add(d: Duration, t: Instant): Instant
+        => Add(t, d);
+
+    // The instant retreated by the given span.
+    Subtract(t: Instant, d: Duration): Instant
+        => new Instant(t.SecondsSinceEpoch - d.Seconds);
+
+    // The Duration from a to b (b - a).
+    Between(a: Instant, b: Instant): Duration
+        => new Duration(b.SecondsSinceEpoch - a.SecondsSinceEpoch);
+
+    // The Duration from b to a (a - b). Same as Between(b, a); the `-`
+    // operator spelling of instant difference.
+    Subtract(a: Instant, b: Instant): Duration
+        => Between(b, a);
+
+    // Total order by seconds since the epoch.
+    LessThanOrEquals(a: Instant, b: Instant): Boolean
+        => a.SecondsSinceEpoch <= b.SecondsSinceEpoch;
+
+    //==
+    // Duration — extra scalar and ratio forms beyond Quantity.
+    // Add/Subtract/Negative/Multiply(Duration, Number)/Divide(Duration, Number)
+    // already come from quantities.library.plato via Amount/FromAmount.
+
+    // Scale a span from the left: n * d.
+    Multiply(scalar: Number, d: Duration): Duration
+        => new Duration(scalar * d.Seconds);
+
+    // The dimensionless ratio of two spans. Precondition: b is non-zero.
+    Divide(a: Duration, b: Duration): Number
+        => a.Seconds / b.Seconds;
+}
