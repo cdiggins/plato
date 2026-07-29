@@ -49,7 +49,7 @@ library Csg
     // inside a FlatMap without a filter primitive (as earcut used MapRange).
 
     Single(f: Facet): IArray<Facet>
-        => 1.MapRange(i => f);
+        => [f];
 
     KeepIf(cond: Boolean, p: Point3D): IArray<Point3D>
         => (cond ? 1 : 0).MapRange(i => p);

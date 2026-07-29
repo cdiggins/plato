@@ -6,7 +6,8 @@
 // row r. Fixed sizes cover graphics and geometry; MatrixN and Tensor cover
 // scientific computing. The MatrixLike concept they implement is declared in
 // `matrices.concepts.plato`.
-// Convention: see CONVENTIONS.md - Matrices (row-vector multiplication, v' = v M).
+// Convention: see CONVENTIONS.md - Matrices (System.Numerics-compatible row-vector
+// multiplication, v' = v M).
 // Discoverability banner (item 473): the concrete operations for the fixed-size
 // matrices (Determinant, Invert, Multiply, Transform, Lerp, ...) are declared on
 // the intrinsic hub in `intrinsics-transforms.library.plato`, not restated here;

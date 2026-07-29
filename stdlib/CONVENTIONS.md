@@ -1,13 +1,22 @@
 # stdlib global conventions
 
-The single source of truth for the cross-cutting conventions this vocabulary
-assumes everywhere. Each convention is stated **once** here; the owning
-declaration files carry a one-line citation (`// Convention: see CONVENTIONS.md
-- <section>`) instead of restating it. When two files appear to disagree, this
-document wins — fix the file, not this page.
+The single source of truth for **domain / world / API semantics** this vocabulary
+assumes everywhere (coordinate frames, matrices, winding, units, sentinels, …).
+Each convention is stated **once** here; the owning declaration files carry a
+one-line citation (`// Convention: see CONVENTIONS.md - <section>`) instead of
+restating it. When two files appear to disagree, this document wins — fix the
+file, not this page.
+
+**Authoring style** (how to write library bodies, comments, literals, formulas)
+lives in [`STYLE_GUIDE.md`](STYLE_GUIDE.md) — not here. Read both before editing
+stdlib sources.
+
+Product authority for world frame and winding: **Ara 3D Studio**. Matrix
+multiply / layout understanding matches **`System.Numerics.Matrix4x4`**.
 
 Resolves the "coordination gates" of the plato-257 reviewer pass
 (`../docs/plato-257-lessons-v1-recommendations-numbered.md`, section A + item 464).
+Z-up / Studio alignment and the style split: tracker [plato-299](../../../tracker/issues/plato-299.md).
 
 ---
 
@@ -24,26 +33,40 @@ concrete styles — any fourth style is rejected in review:
 3. **Concrete (non-generic) sum where the classification IS the payload**:
    `SphereSphereIntersection = Separate | ExternalTouch | OverlapCircle(...) | ...`.
 
-## Matrices — row-vector multiplication
+## Matrices — row-vector multiplication (`System.Numerics`)
 
 Plato multiplies a **row vector on the left**: `v' = v M`. `RowN` holds row *N*,
 so element `(r, c)` is component *c* of row *r*, and each row is the image of a
 basis vector. Composition reads left to right: in `v (M1 * M2)`, `M1` applies
 first. Textbook column-vector `M v` is **not** the convention here; determinant
 and "column images" discussions must be read against this row-major layout.
+
+This is the **same layout and multiplication model as `System.Numerics.Matrix4x4`**
+(and the other System.Numerics matrix types): C# interop and mental models should
+treat Plato `Matrix4x4` as Numerics-compatible, not as a column-major/OpenGL
+`M v` textbook matrix.
 *Owners:* `matrices.plato` (Matrix2x2..4x4, Matrix3x2, Matrix4x3, MatrixN);
 the transform representations in `transforms-trs.plato` /
 `transforms-affine.plato` / `transforms-frames.plato` and their bodies in the
 `transforms-*.library.plato` files.
 
+## World space — Z-up, right-handed
+
+**World space is right-handed with `+Z` up** (`Up = (0, 0, 1)`), `+X` right,
+`+Y` forward/depth as used by the product. Ara 3D Studio is the authority
+(`CameraState.Up`, axis gnomon, viewport labels). Plato geometry, cameras, and
+importers must match Studio — do not invent a Y-up world convention here.
+*Owners:* spatial / camera / transform libraries; Studio viewport and gizmo code.
+
 ## Winding, handedness, and normals
 
-Right-handed coordinate system throughout. A face/polygon loop is
-**counter-clockwise (CCW) as seen from its front / outside**, so the outward
-normal follows the right-hand rule over the CCW vertex order. `CounterClockwise`
-is the `WindingOrder` default. A mirroring transform (negative determinant)
-inverts winding — the usual source of "suddenly inverted" meshes after a mirror;
-re-orient on import rather than carrying a per-mesh flag.
+Right-handed coordinate system throughout (world Z-up, above). A face/polygon
+loop is **counter-clockwise (CCW) as seen from its front / outside**, so the
+outward normal follows the right-hand rule over the CCW vertex order.
+`CounterClockwise` is the `WindingOrder` default. Ara 3D Studio is the product
+authority for this winding choice; Plato matches Studio. A mirroring transform
+(negative determinant) inverts winding — the usual source of "suddenly inverted"
+meshes after a mirror; re-orient on import rather than carrying a per-mesh flag.
 *Owners:* `topology-classification.plato` (WindingOrder), `meshes.plato` (face
 normals), `planar-triangles.plato` (Triangle2D: CCW positive area) /
 `spatial-patches.plato` (Triangle3D: right-hand normal).
@@ -108,15 +131,15 @@ common and silent errors. `Color8` is the 8-bit, typically sRGB-encoded interop
 form.
 *Owners:* `color.plato` (Color, Color8).
 
-## View space — right-handed, forward is `-Z`
+## View space — camera-local, forward is `-Z`
 
-World and view space are **right-handed**. A camera's view direction is its
-pose's forward axis; in view space the camera looks down local **`-Z`**, with
-`+Y` up and `+X` right (OpenGL-style RH convention). A look-at basis takes
-`right = normalize(forward x up)` in that right-handed order. Projection matrices
-and per-backend look-at lowerings must honour this so handedness bugs are not
-rediscovered per backend. *(Decision: the reviewer pass left the forward axis
-unspecified; `-Z` is chosen here to match the right-handed world.)*
+**View space is not world space.** World remains Z-up (above). After a look-at /
+view transform, **camera-local** coordinates are right-handed with the camera
+looking down local **`-Z`**, local **`+Y` up**, and local **`+X` right**
+(OpenGL-style view frame). A look-at basis takes
+`right = normalize(forward × up)` in that right-handed order, where `up` is the
+world up axis (`+Z`). Projection matrices and per-backend look-at lowerings must
+honour this so handedness bugs are not rediscovered per backend.
 *Owner:* `cameras.concepts.plato` (the `Camera` concept), `cameras.plato`
 (LookAtCamera and the concrete camera types).
 

@@ -45,7 +45,8 @@ library Earcut
         => xs.Take(i).Concatenate(xs.Skip(i + 1));
 
     NoTriangles(p: PolygonWithHoles): IArray<Integer3>
-        => 0.MapRange(i => new Integer3(i, i, i));
+        => [];
+
 
     //==
     // Planar predicates
