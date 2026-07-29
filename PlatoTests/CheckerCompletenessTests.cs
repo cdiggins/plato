@@ -13,14 +13,17 @@ namespace PlatoTests
     [TestFixture]
     public static class CheckerCompletenessTests
     {
-        // Measured 2026-07-12 after the ambiguity work: F2 coercion + the F1 tie fixes
-        // (all-variable-return ties commit; bounded-polymorphic ties on unbound constrained type
-        // variables defer to monomorphization; C#-style specificity tie-break picks the most-derived
-        // overload, IArray2D over IArray). **CHK203 ambiguity errors are now ZERO** (was 25). 32 / 859
-        // remain — all CHK101 (cannot-unify, 19) + CHK201 (no-match, 13): F2a tuple→generic-interface
-        // returns and library repairs, not ambiguities. The count drifts with library growth, so the
-        // baseline is a ceiling to lower, not a fixed target.
-        private const int MaxFunctionsWithDiagnostics = 32;
+        // Measured 2026-07-29 after the tuple-coercion checker fixes (Solver.cs): the return-position
+        // coercion no longer prematurely binds an unresolved tuple result var to the declared struct,
+        // and MatchArg now accepts a same-shape tuple literal for a struct PARAMETER (the Scale((x,y,z))
+        // family). Both mirror generated-C# tuple-constructor implicit operators, so no checker rule was
+        // weakened and no overload winner changed. 32 -> 26 / 859 remain — CHK101 (cannot-unify, 18) +
+        // CHK201 (no-match, 8): the tuple->GENERIC-INTERFACE returns the checker cannot soundly ground
+        // to a concrete implementer (Tuple2<$T,$T> vs IInterval<$T> / IBounds<$T,$D> — a library
+        // redesign, not a checker rule), plus library repairs (Meshes.Lines/Transform, Transforms.
+        // Quaternion, Vectors.Column/Dot, Curves2D/3D Bezier, Barycentric, ScalarFields3D Function-field
+        // invocation). The count drifts with library growth, so the baseline is a ceiling to lower.
+        private const int MaxFunctionsWithDiagnostics = 26;
 
         [Test]
         public static void StdLibDiagnosticCountDoesNotRegress()

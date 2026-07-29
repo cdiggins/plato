@@ -19,16 +19,26 @@ namespace PlatoTests
     [TestFixture]
     public static class ForwardStdLibCheckerTests
     {
-        // Measured 2026-07-28, the FIRST run of the checker over the forward vocabulary:
-        // 40 / 1957 functions carry error diagnostics — CHK201 no-match (27) + CHK101 cannot-unify (16);
-        // zero CHK102/103/203, and zero sum-type diagnostics (CHK300-306) across 118 sum declarations.
-        // Two clusters, both the shapes the stdlib-legacy ratchet still carries: a tuple literal not
-        // coercing to a nominal/generic-interface parameter (Tuple2<..> vs Point2D / IntervalLike<$T> —
-        // GeometryTraits, IntervalsTransforms, Polygons), and a member the solver cannot see on a
-        // concept-typed receiver (Eval/NormalAt/TangentUAt/TangentVAt on ParametricSurface and friends,
-        // Function on the *FunctionField types, DeCasteljau on Array<T>). The count drifts with library
-        // growth: this is a ceiling to LOWER, never to raise. Worklist: SummarizeForwardStdLibDiagnostics.
-        private const int MaxFunctionsWithDiagnostics = 40;
+        // Measured 2026-07-29 after the tuple-coercion checker fixes (Solver.cs): the return-position
+        // coercion no longer hard-binds a not-yet-resolved tuple result var to the declared struct
+        // (fixed Tuple{N} -> concrete-struct returns), and MatchArg now accepts a same-shape tuple
+        // literal for a struct PARAMETER (fixed Eval/NormalAt/TangentU/VAt((u,v)) and the Scale((x,y,z))
+        // family). Both are real generated-C# tuple-constructor implicit operators, so no checker was
+        // weakened. That took the forward count 45 -> 27 (and the stdlib-legacy ratchet 32 -> 26).
+        // 27 / 1978 remain — CHK201 no-match (21) + CHK101 cannot-unify (13). Three residual clusters,
+        // each needing a fix out of scope of the tuple work:
+        //   * tuple -> GENERIC-INTERFACE returns (Tuple2<$T,$T> vs IntervalLike<$T> — IntervalsTransforms
+        //     x9): the checker cannot soundly pick the concrete implementer a tuple becomes; a library
+        //     redesign (return a concrete type / Self) is the right fix. Mirrors the legacy IInterval/
+        //     IBounds residue.
+        //   * sum-type CASE references (plato-288, in progress): `Axis3D.Y` types as Number and
+        //     `SignedAxis3D.NegX` resolves as a call — nullary sum-case member access is unimplemented
+        //     (Axes/Axes2D/SignedAxes.Opposite/Transforms.EulerAngles' ZXY).
+        //   * function-typed FIELD invocation (`self.Function(point)` on *FunctionField x8) and element
+        //     covariance (`Array<Point2D>` for `Array<Interpolatable>` in DeCasteljau x6).
+        // The count drifts with library growth: this is a ceiling to LOWER, never to raise.
+        // Worklist: SummarizeForwardStdLibDiagnostics.
+        private const int MaxFunctionsWithDiagnostics = 27;
 
         /// <summary>Empty when the file parses; otherwise the failure, so one bad file cannot mask the rest.</summary>
         private static string ParseFailure(string path)

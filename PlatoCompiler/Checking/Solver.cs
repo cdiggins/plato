@@ -363,6 +363,15 @@ namespace Ara3D.Geometry.Compiler.Checking
             if (HasConversion(argType, param))
                 return (true, ConversionCost, ArgMatchKind.Conversion);
 
+            // A tuple-literal argument coerces to a same-shape struct parameter exactly as it does in
+            // return position (`self.Eval((u, v))` with `Eval(_, UvCoordinate)`; `t.Scale((x, y, z))`
+            // with `Scale(_, Vector3)`): the generated tuple-constructor implicit operator applies a
+            // per-element conversion, so this is a real C# implicit conversion, not a checker liberty.
+            // Costed as a conversion, so it only makes a previously-unmatched call viable — it can
+            // never displace an overload that already matched by unify/cast.
+            if (TupleConvertsToStruct(Zonk(argType, sub), Zonk(param, sub), sub, 0))
+                return (true, ConversionCost, ArgMatchKind.Conversion);
+
             return (false, 0, ArgMatchKind.Exact);
         }
 
@@ -427,10 +436,23 @@ namespace Ara3D.Geometry.Compiler.Checking
             var from = Zonk(cc.From, Substitution);
             var to = Zonk(cc.To, Substitution);
 
-            // A variable on either side: unifying is both the cheapest and the most informative
-            // outcome (it grounds the body type from the declared return, or vice versa).
-            if (from == null || to == null || IsVar(from) || IsVar(to))
+            // Grounding the DECLARED side (`to`) from the body is always safe and informative, so do
+            // it eagerly. But grounding the BODY side (`from`) — when it is still a bare result var of
+            // a not-yet-resolved call — must wait: a coercion is not an equality, and hard-binding the
+            // body var to the declared type defeats the very conversion this constraint exists for.
+            // The classic victim is a tuple return `(a, b): Point2D`, lowered to a `Tuple2(a, b)` call
+            // whose result var is unbound while its element overloads (`SumOf(..)/count`) are pending:
+            // binding that var to `Point2D` here makes the later `Tuple2` commit fail CHK101. Defer
+            // (non-forced) so the overload grounds `from` to `Tuple2<..>` first, then TryCoerce runs.
+            if (from == null || to == null || IsVar(to))
             {
+                Unify(cc.From, cc.To, Substitution, cc.Origin, record: true);
+                return true;
+            }
+            if (IsVar(from))
+            {
+                if (!force)
+                    return false; // let a pending overload define the body type before we bind it
                 Unify(cc.From, cc.To, Substitution, cc.Origin, record: true);
                 return true;
             }
