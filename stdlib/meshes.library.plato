@@ -1,0 +1,23 @@
+//==
+// # Meshes — concrete bodies for the types declared in `meshes.plato`
+//
+// Today this is the `Jagged<VertexIndex>` projection for PolygonMesh3D: the
+// mesh keeps its domain field names and gains the shared row vocabulary
+// (RowCount / RowLength / Row / RowElement in
+// `collections-jagged.library.plato`) with no change to its storage.
+
+library Meshes
+{
+    //==
+    // # PolygonMesh3D as Jagged<VertexIndex>
+    //
+    // Rows are faces; row f is the corner loop of face f, wound CCW.
+
+    // The face boundaries: PolygonMesh3D packs face corners in CSR form.
+    Offsets(self: PolygonMesh3D): Array<Integer>
+        => self.FaceOffsets;
+
+    // The packed face corners, row by row.
+    Values(self: PolygonMesh3D): Array<VertexIndex>
+        => self.FaceVertices;
+}

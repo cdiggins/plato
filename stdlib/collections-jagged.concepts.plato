@@ -1,0 +1,21 @@
+//==
+// # Jagged (ragged row) collection concept
+//
+// The one packing seam for variable-length rows: a flat value array plus a
+// boundary array. Meshes (face corners), adjacency tables, and any other list
+// of lists share this shape instead of re-deriving offset arithmetic.
+
+// A collection of variable-length rows packed in Compressed Sparse Row (CSR)
+// form
+// (https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_row_(CSR,_CRS_or_Yale_format)).
+// Offsets has (row count + 1) entries and is non-decreasing; the items of row i
+// occupy the half-open range [Offsets[i], Offsets[i+1]) of Values; the last
+// offset equals Values.Count. The empty jagged collection is Offsets = [0] with
+// Values = []. Offsets hold one-past-end boundaries, not element references, so
+// they stay plain Integer
+// (Convention: see CONVENTIONS.md - Typed indices).
+concept Jagged<T>
+{
+    Offsets(x: Self): Array<Integer>;
+    Values(x: Self): Array<T>;
+}

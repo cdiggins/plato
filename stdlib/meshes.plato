@@ -64,17 +64,17 @@ type QuadMesh3D
     Faces: Array<QuadFace>;
 }
 
-// A mesh of arbitrary-arity faces in CSR form
-// (https://en.wikipedia.org/wiki/Polygon_mesh): face f's vertices are
-// FaceVertices[FaceOffsets[f] .. FaceOffsets[f+1]) (half-open), wound
-// counter-clockwise. FaceOffsets has (face count + 1) entries and its last
-// entry equals the length of FaceVertices. Mixed face sizes are representable
-// (Archimedean); uniform n-gons (Platonic/Catalan) use the same type — no
-// separate fixed-arity polygon-mesh storage. TriangleMesh3D / QuadMesh3D remain
-// the specialized interchange forms. Initial Conway catalog: C#
-// `Ara3D.Geometry.Polyhedra` / `PolygonMesh3D` / `ConwayOperators`.
+// A mesh of arbitrary-arity faces (https://en.wikipedia.org/wiki/Polygon_mesh):
+// one Jagged row per face, holding that face's corner loop wound
+// counter-clockwise (packing invariant: see the `Jagged` concept in
+// `collections-jagged.concepts.plato`; projection in `meshes.library.plato`).
+// Mixed face sizes are representable (Archimedean); uniform n-gons
+// (Platonic/Catalan) use the same type — no separate fixed-arity polygon-mesh
+// storage. TriangleMesh3D / QuadMesh3D remain the specialized interchange
+// forms. Initial Conway catalog: C# `Ara3D.Geometry.Polyhedra` /
+// `PolygonMesh3D` / `ConwayOperators`.
 type PolygonMesh3D
-    implements Value, Meshable3D, MeshTopology
+    implements Value, Meshable3D, MeshTopology, Jagged<VertexIndex>
 {
     Positions: Array<Point3D>;
     FaceOffsets: Array<Integer>;

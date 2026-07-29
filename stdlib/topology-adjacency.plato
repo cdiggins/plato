@@ -4,11 +4,9 @@
 // The derived connectivity tables of a mesh: undirected edges named by their
 // endpoint vertices, and the vertex/face neighbourhood tables built over them.
 //
-// Adjacency tables use CSR (compressed sparse row) encoding
-// (https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_row_(CSR,_CRS_or_Yale_format)):
-// an Offsets array with (element count + 1) entries, where the items belonging
-// to element i occupy the half-open range [Offsets[i], Offsets[i+1]) of the
-// packed payload array, and the final offset equals the payload array's length.
+// The adjacency tables are Jagged (CSR) row collections — packing invariant on
+// the `Jagged` concept in `collections-jagged.concepts.plato`; the payload
+// projections are in `topology-adjacency.library.plato`.
 
 //==
 // ## Edges as vertex pairs
@@ -47,31 +45,28 @@ type EdgeAdjacency
 //==
 // ## Adjacency tables (CSR)
 
-// Vertex-to-vertex adjacency in CSR form. Offsets has (vertex count + 1)
-// entries; the neighbors of vertex v are Neighbors[Offsets[v] .. Offsets[v+1])
-// (half-open), sorted ascending within each run.
+// Vertex-to-vertex adjacency: one row per vertex, so Offsets has
+// (vertex count + 1) entries. Each vertex's neighbour run is sorted ascending.
 type VertexAdjacency
-    implements Value
+    implements Value, Jagged<VertexIndex>
 {
     Offsets: Array<Integer>;
     Neighbors: Array<VertexIndex>;
 }
 
-// Face-to-face adjacency across shared edges, in CSR form. Offsets has
-// (face count + 1) entries; the faces sharing an edge with face f are
-// Neighbors[Offsets[f] .. Offsets[f+1]) (half-open).
+// Face-to-face adjacency across shared edges: one row per face, so Offsets has
+// (face count + 1) entries. Row f holds the faces sharing an edge with face f.
 type FaceAdjacency
-    implements Value
+    implements Value, Jagged<FaceIndex>
 {
     Offsets: Array<Integer>;
     Neighbors: Array<FaceIndex>;
 }
 
-// The faces incident to each vertex, in CSR form. Offsets has
-// (vertex count + 1) entries; the faces touching vertex v are
-// Faces[Offsets[v] .. Offsets[v+1]) (half-open).
+// The faces incident to each vertex: one row per vertex, so Offsets has
+// (vertex count + 1) entries. Row v holds the faces touching vertex v.
 type VertexFaceAdjacency
-    implements Value
+    implements Value, Jagged<FaceIndex>
 {
     Offsets: Array<Integer>;
     Faces: Array<FaceIndex>;

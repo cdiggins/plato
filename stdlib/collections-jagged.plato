@@ -1,0 +1,17 @@
+//==
+// # Jagged arrays
+//
+// The standalone noun for ragged row data, for callers that have no domain type
+// of their own to project onto the Jagged concept.
+
+// A standalone list of variable-length rows in CSR form: the concrete carrier
+// of the Jagged packing (invariant stated once on the `Jagged` concept in
+// `collections-jagged.concepts.plato`). Builders such as FromRows return this
+// type; domain types with their own storage (PolygonMesh3D, the adjacency
+// tables) implement Jagged directly instead of wrapping one of these.
+type JaggedArray<T>
+    implements Value, Jagged<T>
+{
+    Offsets: Array<Integer>;
+    Values: Array<T>;
+}

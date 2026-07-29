@@ -1,0 +1,64 @@
+//==
+// # CollectionsJagged — derived row access over the Jagged concept
+//
+// Row arithmetic written once against `Jagged<T>`
+// (`collections-jagged.concepts.plato`) so no mesh or adjacency file re-derives
+// offset slicing. Concept-receiver form throughout, as in
+// `collections-containers.library.plato`.
+//
+// `JaggedArray<T>` needs no projection here: its `Offsets` and `Values` fields
+// satisfy the concept surface directly. The projections for the domain types
+// that implement Jagged over differently-named storage live beside those types
+// (`meshes.library.plato`, `topology-adjacency.library.plato`).
+
+library CollectionsJagged
+{
+    //==
+    // # Jagged<T>
+    //
+    // Accessors derived from the two obligations. Every row query is bounds-free
+    // by construction: the caller supplies a row in [0, RowCount).
+
+    // The number of rows: one fewer than the number of offset boundaries.
+    RowCount(self: Jagged<$T>): Integer
+        => self.Offsets.Count - 1;
+
+    // The number of items in row i: Offsets[i+1] - Offsets[i].
+    // Precondition: 0 <= i < RowCount.
+    RowLength(self: Jagged<$T>, i: Integer): Integer
+        => self.Offsets.At(i + 1) - self.Offsets.At(i);
+
+    // The items of row i, copied out of the packed Values array.
+    // Precondition: 0 <= i < RowCount.
+    Row(self: Jagged<$T>, i: Integer): Array<$T>
+        => self.Values.SubArray(self.Offsets.At(i), self.RowLength(i));
+
+    // The k-th item of row `row`, addressed without materializing the row.
+    // Precondition: 0 <= row < RowCount and 0 <= k < RowLength(row).
+    RowElement(self: Jagged<$T>, row: Integer, k: Integer): $T
+        => self.Values.At(self.Offsets.At(row) + k);
+
+    // True when there are no rows at all (the empty encoding: Offsets = [0]).
+    HasNoRows(self: Jagged<$T>): Boolean
+        => self.RowCount.IsZero;
+
+    //==
+    // # Builders
+    //
+    // A plain library function rather than a concept member: static-abstract
+    // concept members are not available in this language yet
+    // (tracker plato-312).
+
+    // Pack an array of rows into a JaggedArray: Offsets is the exclusive prefix
+    // sum of the row lengths (hence Count + 1 entries, last equal to the total),
+    // Values is the rows flattened in order.
+    // C# oracle: `Ara3D.Geometry.Primitives.PolygonMesh3D`.
+    // The fold runs over integer row LENGTHS rather than over the rows: a lambda
+    // parameter that is itself a collection binds Count ambiguously (Array vs the
+    // unique List builder), which the checker rejects.
+    FromRows(rows: Array<Array<$T>>): JaggedArray<$T>
+    {
+        var offsets = (rows.Count + 1).MapRange(i => i.MapRange(j => rows.At(j).Count).Reduce(0, (acc, n) => acc + n));
+        return (offsets, rows.FlatMap(r => r));
+    }
+}

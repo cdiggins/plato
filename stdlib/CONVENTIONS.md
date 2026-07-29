@@ -78,7 +78,8 @@ A cross-array reference is a typed index (implements `Index`, single
 **"none" / absent** sentinel; a non-negative `Value` is a valid zero-based
 position. For multi-references, an **empty array** is the corresponding "none".
 CSR/offset arrays, counts, and bitmasks are plain `Integer` and are *not*
-governed by this rule. **Axis selectors are no longer plain `Integer`**: a
+governed by this rule. (The CSR packing itself is the `Jagged` concept in
+`collections-jagged.concepts.plato`, which states that invariant once.) **Axis selectors are no longer plain `Integer`**: a
 cardinal-axis choice is the typed `Axis3D` / `Axis2D` / `SignedAxis3D` sum
 (`axes.plato`), whose `Ordinal` recovers the `Integer` component index when one
 is genuinely needed — kd-tree split axes, `UpAxis` / `ForwardAxis` fields, and
