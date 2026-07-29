@@ -1,0 +1,19 @@
+//==
+// # Quantities - the measured-amount concept
+//
+// A quantity is a number with an intrinsic unit of measure implied by its type
+// (https://en.wikipedia.org/wiki/Physical_quantity). Quantities add, subtract,
+// scale, order, and interpolate - but multiplying two quantities yields a
+// different type, so they are deliberately not Arithmetic. Each implementing
+// type's field name states its canonical (SI or conventional) unit
+// (https://en.wikipedia.org/wiki/International_System_of_Units). The concrete
+// types live in the `quantities-*.plato` files; the obligation fills that make
+// them usable live in `quantities.library.plato`.
+
+// A one-dimensional measured amount with an implicit unit.
+concept Quantity
+    inherits Value, Comparable, Hashable, Additive, Scalable, Interpolatable
+{
+    Amount(x: Self): Number;
+    FromAmount(_: Self, x: Number): Self;
+}

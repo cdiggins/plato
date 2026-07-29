@@ -1,0 +1,78 @@
+//==
+// # FunctionalProcedural
+//
+// Derived functionality for the function-like concepts
+// (`functional.concepts.plato`): batch evaluation, bijection round trips, and
+// the accessors over a preferred parameter domain
+// (https://en.wikipedia.org/wiki/Domain_of_a_function). Shared provenance note:
+// `collections-indexable.library.plato`.
+
+library FunctionalProcedural
+{
+    //==
+    // # Procedural
+    //
+    // Evaluation over a batch of inputs. The result collection is constructed by
+    // the Array.Map intrinsic, so this no longer needs a concept that can build
+    // one.
+
+    // Evaluate the mapping at every input, preserving order. Result element i is
+    // Eval(inputs[i]).
+    EvalAll(self: Procedural<$TDomain, $TRange>, inputs: Array<$TDomain>): Array<$TRange>
+        => inputs.Map(input => self.Eval(input));
+
+    //==
+    // # Bijective
+    //
+    // Round-trip identities for an invertible mapping
+    // (https://en.wikipedia.org/wiki/Bijection).
+
+    // Map forward then back; equals the original input for a true bijection.
+    RoundTripDomain(self: Bijective<$TDomain, $TRange>, input: $TDomain): $TDomain
+        => self.EvalInverse(self.Eval(input));
+
+    // Map back then forward; equals the original output for a true bijection.
+    RoundTripRange(self: Bijective<$TDomain, $TRange>, output: $TRange): $TRange
+        => self.Eval(self.EvalInverse(output));
+
+    //==
+    // # Periodic
+    //
+    // TODO(concept-gap): a wrapping helper (WrapPhase, mapping a domain value into
+    // [0, Period)) needs Modulo on the period type. This is NOT fixable by a
+    // deliberate concept extension the way Sliceable-inherits-Countable was,
+    // because the requirement is a *bound on the type parameter* TPeriod
+    // (TPeriod : Modular), and Plato has no type-parameter constraint syntax:
+    // there is no `where` clause and no `<T : Concept>` form anywhere in the tree
+    // (verified by grep). Nor can it be a bound on a generic function parameter —
+    // the same syntax is missing. Periodic also carries no Eval (it does not
+    // inherit Procedural), so there is no domain value on the surface to wrap.
+    // Left for the owning package once a period-typed value with modulo arithmetic
+    // is available concretely.
+
+    //==
+    // # ParameterDomain
+    //
+    // Convenience accessors over the preferred evaluation interval. The Domain is
+    // a NumberInterval with Start and End fields.
+
+    // The lower bound of the preferred parameter range.
+    DomainStart(self: ParameterDomain): Number
+        => self.Domain.Start;
+
+    // The upper bound of the preferred parameter range.
+    DomainEnd(self: ParameterDomain): Number
+        => self.Domain.End;
+
+    // The width of the preferred parameter range (End - Start).
+    DomainWidth(self: ParameterDomain): Number
+        => self.Domain.End - self.Domain.Start;
+
+    // The midpoint of the preferred parameter range.
+    DomainCenter(self: ParameterDomain): Number
+        => (self.Domain.Start + self.Domain.End) / 2.0;
+
+    // True when t lies within the preferred parameter range (inclusive).
+    DomainContains(self: ParameterDomain, t: Number): Boolean
+        => t >= self.Domain.Start && t <= self.Domain.End;
+}

@@ -1,0 +1,65 @@
+//==
+// # Frame and basis operations
+//
+// Matrix interchange between the coordinate frames of `transforms-frames.plato`
+// and the rigid poses they are equivalent to, plus the basis of a rotation.
+
+library TransformsFrames
+{
+    //==
+    // Frames and bases — orthonormal frames are rigid poses in matrix-friendly
+    // clothing: the axes are the rotation, the origin is the translation.
+
+    // The affine matrix mapping frame-local coordinates to world coordinates
+    // (axes become the linear rows, the origin the translation row).
+    Matrix3x2(f: Frame2D): Matrix3x2
+        => (Number2(f.XAxis.Vector.X, f.XAxis.Vector.Y),
+            Number2(f.YAxis.Vector.X, f.YAxis.Vector.Y),
+            Number2(f.Origin.X, f.Origin.Y));
+
+    // The frame of a rigid pose: the pose's rotated unit axes at its position.
+    Frame2D(pose: Pose2D): Frame2D {
+        var x = Vector2D(1.0, 0.0).Transform(pose.Rotation);
+        var y = Vector2D(0.0, 1.0).Transform(pose.Rotation);
+        return (pose.Position, Direction2D(x), Direction2D(y));
+    }
+
+    // The rigid pose of a frame. Precondition: the axes are orthonormal and
+    // right-handed.
+    Pose2D(f: Frame2D): Pose2D
+        => f.Matrix3x2.Pose2D;
+
+    // The homogeneous matrix mapping frame-local coordinates to world
+    // coordinates.
+    Matrix4x4(f: Frame3D): Matrix4x4 {
+        var x = f.XAxis.Vector;
+        var y = f.YAxis.Vector;
+        var z = f.ZAxis.Vector;
+        var o = f.Origin;
+        return (Number4(x.X, x.Y, x.Z, 0.0),
+                Number4(y.X, y.Y, y.Z, 0.0),
+                Number4(z.X, z.Y, z.Z, 0.0),
+                Number4(o.X, o.Y, o.Z, 1.0));
+    }
+
+    // The frame of a rigid pose: the pose's rotated unit axes at its position.
+    Frame3D(pose: Pose3D): Frame3D {
+        var q = pose.Orientation;
+        var x = Vector3D(1.0, 0.0, 0.0).Transform(q);
+        var y = Vector3D(0.0, 1.0, 0.0).Transform(q);
+        var z = Vector3D(0.0, 0.0, 1.0).Transform(q);
+        return (pose.Position, Direction3D(x), Direction3D(y), Direction3D(z));
+    }
+
+    // The rigid pose of a frame. Precondition: the axes are orthonormal and
+    // right-handed.
+    Pose3D(f: Frame3D): Pose3D
+        => f.Matrix4x4.Pose3D;
+
+    // The world-axis images under a rotation: the columns of its rotation
+    // matrix as a (generally orthonormal) basis.
+    Basis3D(q: Quaternion): Basis3D
+        => (Vector3D(1.0, 0.0, 0.0).Transform(q),
+            Vector3D(0.0, 1.0, 0.0).Transform(q),
+            Vector3D(0.0, 0.0, 1.0).Transform(q));
+}

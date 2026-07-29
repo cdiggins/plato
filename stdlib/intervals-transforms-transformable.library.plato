@@ -1,0 +1,105 @@
+//==
+// # IntervalsTransformsTransformable — derived functionality for Transformable
+//
+// Bodies for the `Transformable<TTransform>` concept declared in
+// `transforms.concepts.plato`: the ordered multi-transform convenience
+// overloads, and the lifting of every transform representation through Deform so
+// that a single Deform primitive yields a complete transform surface.
+
+library IntervalsTransformsTransformable
+{
+    //==
+    // Transformable<TTransform> — a value that can be carried through a transform.
+    // The convenience overloads below are named ThenTransform rather than reusing
+    // the concept's `Transform` name: overloading a concept-declared member on arity
+    // alone is easy to misread, and ThenTransform states the sequencing intent.
+
+    // Apply two transforms in order: `first` then `second`. A convenience over
+    // chaining Transform calls; the concept exposes no transform composition of its
+    // own to fold these into a single map.
+    ThenTransform(self: Transformable<$TTransform>, first: $TTransform, second: $TTransform): Self
+        => self.Transform(first).Transform(second);
+
+    // Apply three transforms in order.
+    ThenTransform(self: Transformable<$TTransform>, first: $TTransform, second: $TTransform, third: $TTransform): Self
+        => self.Transform(first).Transform(second).Transform(third);
+
+    // Deliberately NOT extended: richer helpers (inverse-transform,
+    // transform-about-a-pivot, identity) need Invertible/Composable/Identity on
+    // TTransform. Constraining Transformable that way is not sound, because the
+    // transform family is not uniformly invertible or composable — the TRS types
+    // (Transform2D/Transform3D) are not closed under composition (see
+    // transforms.plato) and the projective types expose no inverse. The pivot and
+    // identity helpers therefore live per-representation, not on the concept.
+
+    //==
+    // Deform implies Transform - the legacy insight
+    // (stdlib-legacy/meshes.library.plato:84) generalized to every transform
+    // representation. `library Transforms` in transforms.plato already applies each
+    // representation to a bare Point2D/Point3D; lifting that point map through
+    // Deform gives EVERY deformable type a complete transform surface from its
+    // single Deform primitive. Implementing Deform for a new shape therefore also
+    // satisfies Transformable<T> for all thirteen T below.
+
+    // Rotate a 2D shape about the origin.
+    Transform(self: Deformable2D, transform: Rotation2D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Rotate a 2D shape about the origin with a rotor.
+    Transform(self: Deformable2D, transform: Rotor2D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a rigid 2D placement (rotate, then translate).
+    Transform(self: Deformable2D, transform: Pose2D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a 2D TRS transform (scale, rotate, then translate).
+    Transform(self: Deformable2D, transform: Transform2D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a general 2D affine map
+    // (https://en.wikipedia.org/wiki/Affine_transformation).
+    Transform(self: Deformable2D, transform: AffineTransform2D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a 2D homography. Precondition: no point of the shape maps onto the
+    // line at infinity.
+    Transform(self: Deformable2D, transform: ProjectiveTransform2D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Rotate a 3D shape about the origin.
+    Transform(self: Deformable3D, transform: Quaternion): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Rotate a 3D shape about the origin with a rotor.
+    Transform(self: Deformable3D, transform: Rotor3D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a rigid 3D placement (rotate, then translate).
+    Transform(self: Deformable3D, transform: Pose3D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a rigid motion in motor (dual-quaternion) form.
+    Transform(self: Deformable3D, transform: Motor3D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a 3D TRS transform (scale, rotate, then translate).
+    Transform(self: Deformable3D, transform: Transform3D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a general 3D affine map.
+    Transform(self: Deformable3D, transform: AffineTransform3D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // Apply a 3D homography. Precondition: no point of the shape maps onto the
+    // plane at infinity.
+    Transform(self: Deformable3D, transform: ProjectiveTransform3D): Self
+        => self.Deform(p => p.Transform(transform));
+
+    // TODO(follow-up): the concrete per-type `Deform` bodies (Line2D/3D, Ray2D/3D,
+    // Triangle2D/3D, Quad2D/3D, Circle, Ellipse, Polygon2D/3D, Polyline2D/3D,
+    // RegularPolygon, PolygonWithHoles2D, Tetrahedron, and the mesh types) are the
+    // remaining half of this item. They are one-liners over each type's fields
+    // (see stdlib-legacy/meshes.library.plato:49-75) but belong to the packages that
+    // own those declarations, so they are not written here.
+}

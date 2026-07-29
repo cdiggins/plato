@@ -7,7 +7,8 @@
 // interop, and geometric-algebra styles.
 // Discoverability banner (item 473): the concrete operations for Quaternion
 // (and the rotor/motor conversions) are declared on the intrinsic hub in
-// `intrinsics.plato` and in `transforms.plato`, not restated here. Bivector3D is
+// `intrinsics.plato` and in the `transforms-*.library.plato` files, not restated
+// here. Bivector3D is
 // the geometric-algebra dual of a Vector3D cross product (components YZ, ZX, XY
 // <-> X, Y, Z under the right-hand convention); construct one from a vector pair
 // with `Wedge` in `numeric-structures.library.plato`.
@@ -73,7 +74,7 @@ type Bivector3D
 }
 
 // A 2D geometric-algebra rotor: scalar plus bivector part. Equivalent to a unit
-// complex number.
+// complex number (https://en.wikipedia.org/wiki/Rotor_(mathematics)).
 type Rotor2D
     implements Value, Multiplicative
 {

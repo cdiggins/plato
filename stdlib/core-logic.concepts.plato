@@ -1,0 +1,34 @@
+//==
+// # Core logic concepts
+//
+// Truth-valued and bit-level algebra: the Boolean operations shared by truth
+// values, set-like types, and whole-number representations.
+
+// Supports the Boolean algebra of conjunction, disjunction, and negation.
+// Also models set-like union/intersection/complement.
+// (https://en.wikipedia.org/wiki/Boolean_algebra)
+concept Logical
+{
+    And(a: Self, b: Self): Self;
+    Or(a: Self, b: Self): Self;
+    Not(x: Self): Self;
+}
+
+// Logical extended with exclusive-or. (https://en.wikipedia.org/wiki/Exclusive_or)
+concept BooleanAlgebra
+    inherits Logical
+{
+    ExclusiveOr(a: Self, b: Self): Self;
+}
+
+// Supports bit-level operations. Applies to whole-number representations.
+// (https://en.wikipedia.org/wiki/Bitwise_operation)
+concept Bitwise
+{
+    BitwiseAnd(a: Self, b: Self): Self;
+    BitwiseOr(a: Self, b: Self): Self;
+    BitwiseXor(a: Self, b: Self): Self;
+    BitwiseNot(x: Self): Self;
+    ShiftLeft(x: Self, bits: Integer): Self;
+    ShiftRight(x: Self, bits: Integer): Self;
+}

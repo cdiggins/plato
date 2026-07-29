@@ -1,0 +1,199 @@
+//==
+// # IntervalsTransformsInterval — derived functionality for intervals
+//
+// Bodies for the `IntervalLike<T>` concept declared in
+// `intervals-bounds.concepts.plato`, plus the two concrete specializations that
+// the generic surface cannot reach: the NumberInterval remap kit (which needs
+// T/T division) and the wrap-aware AngleInterval helpers (which must survive the
+// +/-pi seam).
+//
+// Design notes on the concept surface:
+//   * IntervalLike<T> now bounds T to (Additive + Interpolatable + Comparable) —
+//     every concrete instance (Number, Angle, Length, Integer) satisfies it, and
+//     those are the only capabilities used on T here.
+//   * Directed intervals: Contains/Overlaps/Union/Intersection/Clamp assume the
+//     forward orientation Start <= End. Use IsForward to test, Reverse to fix.
+
+library IntervalsTransformsInterval
+{
+    //==
+    // IntervalLike<T> — a directed one-dimensional span from Start to End
+    // (https://en.wikipedia.org/wiki/Interval_(mathematics)).
+    // T is used only through Additive (Add/Subtract), Interpolatable (Lerp), and
+    // Comparable (LessThanOrEquals / Lesser / Greater / Clamp), the capabilities
+    // shared by every concrete interval element type (Number, Angle, Length,
+    // Integer). The comparison helpers (Lesser/Greater/Clamp) come from P1
+    // (01-core-algebra), which derives them for any Orderable. The concept now
+    // states the bound explicitly: IntervalLike<T> where T: Additive,
+    // Interpolatable, Comparable.
+
+    // The signed span from Start to End (End - Start); negative for a reversed
+    // interval. Replaces v1 `Size`, which read ambiguously against area/volume.
+    Extent(self: IntervalLike<$T>): $T
+        => self.End.Subtract(self.Start);
+
+    // True when the interval is stored in forward orientation (Start <= End).
+    IsForward(self: IntervalLike<$T>): Boolean
+        => self.Start.LessThanOrEquals(self.End);
+
+    // True when the interval is stored reversed (Start > End).
+    IsReversed(self: IntervalLike<$T>): Boolean
+        => self.IsForward.Not;
+
+    // The point a fraction `t` of the way from Start to End. t is unclamped:
+    // 0 yields Start, 1 yields End, values outside [0,1] extrapolate
+    // (https://en.wikipedia.org/wiki/Linear_interpolation).
+    Lerp(self: IntervalLike<$T>, t: Number): $T
+        => self.Start.Lerp(self.End, t);
+
+    // The midpoint of the interval.
+    Center(self: IntervalLike<$T>): $T
+        => self.Lerp(0.5);
+
+    // True when `value` lies within the closed interval [Start, End] (both
+    // endpoints inclusive). Assumes forward orientation; Reverse a reversed span.
+    Contains(self: IntervalLike<$T>, value: $T): Boolean
+        => self.Start <= value && value <= self.End;
+
+    // True when `other` lies entirely within this closed interval (endpoints
+    // inclusive). Forward orientation on both.
+    ContainsInterval(self: IntervalLike<$T>, other: IntervalLike<$T>): Boolean
+        => self.Contains(other.Start) && self.Contains(other.End);
+
+    // True when the two closed intervals share any point, endpoints inclusive
+    // (touching at a single endpoint counts). Closed-form; assumes forward
+    // orientation on both.
+    Overlaps(self: IntervalLike<$T>, other: IntervalLike<$T>): Boolean
+        => self.Start <= other.End && other.Start <= self.End;
+
+    // Restrict `value` to the closed interval [Start, End]. Assumes forward
+    // orientation. Uses P1's Clamp(Orderable, lower, upper).
+    Clamp(self: IntervalLike<$T>, value: $T): $T
+        => value.Clamp(self.Start, self.End);
+
+    // The smallest interval containing both operands (the convex hull of the two).
+    // Forward orientation: start at the lesser start, end at the greater end.
+    Union(self: IntervalLike<$T>, other: IntervalLike<$T>): IntervalLike<$T>
+        => (self.Start.Lesser(other.Start), self.End.Greater(other.End));
+
+    // The overlapping interval common to both. Forward orientation: start at the
+    // greater start, end at the lesser end. Empty (Start > End) when they are
+    // disjoint — test with IsForward.
+    Intersection(self: IntervalLike<$T>, other: IntervalLike<$T>): IntervalLike<$T>
+        => (self.Start.Greater(other.Start), self.End.Lesser(other.End));
+
+    // The same span traversed in the opposite direction (End becomes Start).
+    Reverse(self: IntervalLike<$T>): IntervalLike<$T>
+        => (self.End, self.Start);
+
+    // The interval shifted so it starts at `start`, keeping the same extent.
+    // Renamed from v1 `MoveTo` for clarity about which endpoint anchors.
+    StartAt(self: IntervalLike<$T>, start: $T): IntervalLike<$T>
+        => (start, start.Add(self.Extent));
+
+    // The interval translated by `delta`, moving both endpoints together.
+    Translate(self: IntervalLike<$T>, delta: $T): IntervalLike<$T>
+        => (self.Start.Add(delta), self.End.Add(delta));
+
+    // The interval grown symmetrically by `amount` at each end (negative shrinks).
+    // Replaces the v1 `Recenter`/half-extent dance, which needed scalar division.
+    Grow(self: IntervalLike<$T>, amount: $T): IntervalLike<$T>
+        => (self.Start.Subtract(amount), self.End.Add(amount));
+
+    // The leading sub-span from Start up to fraction `t`. Renamed from v1 `Left`,
+    // which was ambiguous for a directed span.
+    Prefix(self: IntervalLike<$T>, t: Number): IntervalLike<$T>
+        => (self.Start, self.Lerp(t));
+
+    // The trailing sub-span from fraction `t` to End. Renamed from v1 `Right`.
+    Suffix(self: IntervalLike<$T>, t: Number): IntervalLike<$T>
+        => (self.Lerp(t), self.End);
+
+    // The first half of the interval.
+    FirstHalf(self: IntervalLike<$T>): IntervalLike<$T>
+        => self.Prefix(0.5);
+
+    // The second half of the interval.
+    SecondHalf(self: IntervalLike<$T>): IntervalLike<$T>
+        => self.Suffix(0.5);
+
+    // The sub-interval covering fractions `startFraction`..`endFraction` of this one.
+    Subinterval(self: IntervalLike<$T>, startFraction: Number, endFraction: Number): IntervalLike<$T>
+        => (self.Lerp(startFraction), self.Lerp(endFraction));
+
+    // Split at fraction `t` into the leading and trailing sub-spans.
+    SplitAt(self: IntervalLike<$T>, t: Number): Tuple2<IntervalLike<$T>, IntervalLike<$T>>
+        => (self.Prefix(t), self.Suffix(t));
+
+    // Split into two equal halves.
+    Split(self: IntervalLike<$T>): Tuple2<IntervalLike<$T>, IntervalLike<$T>>
+        => self.SplitAt(0.5);
+
+    // TODO(concept-gap): Normalize (inverse Lerp: value -> fraction) is not
+    // derivable here — it needs T/T division, which only Number supports among the
+    // interval element types (Angle/Length/Integer are not Divisible by Self).
+    // The NumberInterval-specialized ParameterOf below fills exactly this gap.
+
+    //==
+    // NumberInterval — the remap primitive (item 466).
+    // The generic IntervalLike surface above gives every interval Lerp/Clamp/Extent,
+    // but the inverse map (value -> parameter) needs T/T division, which only Number
+    // supports. NumberInterval therefore carries the three-function remap kit
+    // At / ParameterOf / Clamp; item 210's Remap composes the first two across a
+    // pair of intervals. Clamp(interval, value) is already inherited generically from
+    // IntervalLike (see above), so it is not re-declared here (LIBRARIES.md rule 11).
+
+    // The value a fraction `t` of the way from Start to End (forward lerp). The
+    // remap-primitive spelling of the inherited IntervalLike.Lerp; 0 yields Start,
+    // 1 yields End, and t outside [0,1] extrapolates.
+    At(self: NumberInterval, t: Number): Number
+        => self.Lerp(t);
+
+    // The parameter `t` for which At(self, t) equals `x` (inverse lerp): maps `x`
+    // from [Start, End] back onto the unitless fraction line, so Start -> 0 and
+    // End -> 1. Precondition: Start != End (a zero-width interval has no inverse).
+    ParameterOf(self: NumberInterval, x: Number): Number
+        => self.Start.InverseLerp(self.End, x);
+
+    // Remap `x` from the `from` interval onto the `to` interval: the two-inverse-lerp
+    // composition At(to, ParameterOf(from, x)) (item 210). Every shader/UI/animation
+    // normalized-coordinate remap is this one call. Precondition: from is not
+    // zero-width. Unclamped — pass x within `from`, or Clamp first, to stay inside `to`.
+    Remap(x: Number, from: NumberInterval, to: NumberInterval): Number
+        => to.At(from.ParameterOf(x));
+
+    // The overlapping sub-interval common to `a` and `b` (interval intersection,
+    // item 4), returned as a concrete NumberInterval so ray-box slab reductions can
+    // chain Overlap and read Start/End directly. When the two are disjoint the result
+    // is inverted (Start > End) — the empty encoding (Convention: see CONVENTIONS.md -
+    // Bounds); test it with IsForward. Specializes the generic IntervalLike.Intersection
+    // to the concrete return type.
+    Overlap(a: NumberInterval, b: NumberInterval): NumberInterval
+        => (a.Start.Greater(b.Start), a.End.Lesser(b.End));
+
+    //==
+    // AngleInterval — a directed angular range / arc sweep (items 11, 14).
+    // Convention: endpoints are INCLUSIVE and the sweep is the CCW (increasing-angle)
+    // arc from Start to End, which MAY cross the +/-pi seam — an arc from 170 deg to
+    // -170 deg is the short 20 deg sweep across the seam, not the long way round. The
+    // wrap-aware helpers below reduce every offset into [0, one turn) via Angle.Wrap
+    // (angles.library.plato) before comparing, so they are stable across the seam,
+    // unlike the generic linear IntervalLike.Contains/Extent (which read Start<=End
+    // literally and are only correct for non-wrapping ranges). Union/Intersection are
+    // deliberately NOT specialized for angular ranges: the union of two circular arcs
+    // is not always an arc, so no sound closed form exists on this type; consumers
+    // that need a set operation must work in the reduced [0, tau) parameter space.
+
+    // The CCW angular width of the arc, reduced to [0, one turn). Unlike the generic
+    // Extent (raw End - Start, which can be negative or exceed a turn), Span is the
+    // seam-stable sweep magnitude: a full-turn arc (Start == End) reads as 0.
+    Span(self: AngleInterval): Angle
+        => self.End.Subtract(self.Start).Wrap(1.0.Turns);
+
+    // True when `a` lies on the CCW arc from Start to End, endpoints inclusive and
+    // seam-crossing handled: `a`'s CCW offset from Start (reduced to [0, one turn))
+    // must not exceed the arc's Span. Correct across the +/-pi seam, where the linear
+    // IntervalLike.Contains is not.
+    Contains(self: AngleInterval, a: Angle): Boolean
+        => a.Subtract(self.Start).Wrap(1.0.Turns) <= self.End.Subtract(self.Start).Wrap(1.0.Turns);
+}

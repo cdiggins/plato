@@ -1,0 +1,45 @@
+//==
+// # Numeric tower concepts
+//
+// The number-like family, from representable limits up through the reals and the
+// whole numbers. Each level adds capability to the level below; Number and
+// Integer are the canonical instances of Real and Whole.
+
+// Has distinguished zero and one elements, and representable extremes.
+concept NumericalLimits
+{
+    Zero(x: Self): Self;
+    One(x: Self): Self;
+    MinValue(x: Self): Self;
+    MaxValue(x: Self): Self;
+}
+
+// The family of number-like value types: additive, scalable, interpolatable,
+// with known limits. Includes reals, complex numbers, vectors, and quantities.
+concept Numerical
+    inherits Value, Additive, Scalable, Interpolatable, NumericalLimits
+{ }
+
+// A continuous one-dimensional number with full arithmetic and total order.
+// Number is the canonical instance. (https://en.wikipedia.org/wiki/Real_number)
+concept Real
+    inherits Numerical, Comparable, Hashable, Arithmetic, Invertible
+{
+    ToNumber(x: Self): Number;
+
+    // The non-negative square root (https://en.wikipedia.org/wiki/Square_root). Precondition: x is not negative.
+    Sqrt(x: Self): Self;
+    // Floor and ceiling (https://en.wikipedia.org/wiki/Floor_and_ceiling_functions):
+    // The largest whole value less than or equal to x.
+    Floor(x: Self): Self;
+    // The smallest whole value greater than or equal to x.
+    Ceiling(x: Self): Self;
+}
+
+// Whole-number semantics: exact, ordered, arithmetic without a multiplicative
+// inverse (division truncates). (https://en.wikipedia.org/wiki/Integer)
+concept Whole
+    inherits Value, Comparable, Hashable, Arithmetic, Interpolatable, NumericalLimits
+{
+    ToInteger(x: Self): Integer;
+}

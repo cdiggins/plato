@@ -1,0 +1,65 @@
+//==
+// # Affine builder intrinsics
+//
+// Bodiless host signatures for the builder types declared in
+// `primitives-builders.plato`. Without them no builder
+// call site resolves. They live here rather than in the `intrinsics-*` files
+// because they are inseparable from the `unique` declarations they operate on
+// (`primitives-builders.plato`); the v1 tree exiled the same signatures to its
+// test sources only to avoid shifting symbol ids under a byte-identity codegen
+// gate, which this vocabulary is not subject to.
+//
+// The single-parameter observers and consumers — `Count`, `Freeze` and
+// `EmptyList` — are declared alongside the mutators below. Each carries a type
+// variable that is fully determined by its one parameter (`Count(xs: List<$T>)`
+// fixes `$T` from its argument), so a call site can infer it. The runtime
+// (`PlatoList`/`PlatoBuffer`) implements all of them.
+
+library UniqueBuilders
+{
+    //==
+    // Growable builder: unique type List<T>.
+
+    // The number of elements accumulated so far. Observes; does not consume.
+    Count(xs: List<$T>): Integer;
+
+    // The element at the given index. Observes; does not consume.
+    At(xs: List<$T>, n: Integer): $T;
+
+    // Appends one element and returns the same builder. Rebind or chain.
+    Add(xs: List<$T>, x: $T): List<$T>;
+
+    // Appends every element of the array, in order, and returns the same
+    // builder. Rebind or chain.
+    AddRange(xs: List<$T>, values: Array<$T>): List<$T>;
+
+    // Overwrites the element at the given index and returns the same builder.
+    // Precondition: 0 <= i < Count.
+    Set(xs: List<$T>, i: Integer, x: $T): List<$T>;
+
+    // Zero-copy handoff of the accumulated elements to an immutable Array<$T>.
+    // Consumes: the builder is invalidated and any later use throws.
+    Freeze(xs: List<$T>): Array<$T>;
+
+    // A fresh empty List whose element type matches the given array. Lets a
+    // generic body obtain a builder where the element type is a type variable,
+    // without naming a concrete type in `new List<...>()`.
+    EmptyList(xs: Array<$T>): List<$T>;
+
+    //==
+    // Fixed-size builder: unique type Buffer<T>.
+
+    // The number of slots. Observes; does not consume.
+    Count(xs: Buffer<$T>): Integer;
+
+    // The value written to the given slot. Observes; does not consume.
+    At(xs: Buffer<$T>, n: Integer): $T;
+
+    // Writes one slot and returns the same builder. Rebind or chain.
+    // Precondition: 0 <= i < Count.
+    Set(xs: Buffer<$T>, i: Integer, x: $T): Buffer<$T>;
+
+    // Zero-copy handoff of the written slots to an immutable Array<$T>.
+    // Consumes: the builder is invalidated and any later use throws.
+    Freeze(xs: Buffer<$T>): Array<$T>;
+}

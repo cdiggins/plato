@@ -1,0 +1,96 @@
+//==
+// # CoreComparison
+//
+// Derived functionality for the comparison concepts
+// (`core-comparison.concepts.plato`): the strict/relaxed relational operators,
+// extrema, range tests, and three-way comparison, all built on the single
+// `LessThanOrEquals` primitive of `Orderable`
+// (https://en.wikipedia.org/wiki/Total_order).
+//
+// This file also carries the shared provenance note for the whole
+// `core-*` / `algebra-*` library family, which was split out of the single
+// `core-algebra.library.plato`.
+//
+// Derived functionality for the core (file 01) and algebra (file 02) concepts.
+// Every function's first parameter is concept-typed, so the function becomes
+// available on every type implementing that concept. Bodies are pure
+// expressions built only from members declared on the concept, its inherited
+// concepts, or other functions in this library.
+//
+// Successor to plato-src/core.library.plato + algebra.plato. Renames from v1:
+//   Sqr -> Square, Pow3 -> Cube, Twice -> Double, CompareTo -> Compare,
+//   ClampZeroOne -> Saturate, FromOne -> dropped, MultiplyEpsilon -> folded
+//   into AlmostEqual(x, y, tolerance) with an explicit tolerance.
+
+library CoreComparison
+{
+    //==
+    // Orderable
+    //
+    // LessThanOrEquals itself cannot be derived here: it IS the primitive of
+    // Orderable, so there is nothing on the concept surface to build it from.
+    // The only mechanical lever for the outstanding LessThanOrEquals obligations
+    // is a *narrower* concept whose implementors share a carrier with a known
+    // order — that is `Index` (single `Value: Integer`), and its generic body
+    // lives in `collections-indexable.library.plato` because P2 owns `Index`
+    // (LIBRARIES.md rule 10). It discharges every typed-index implementor.
+    //
+    // The remaining implementors have no shared derivable order and each needs a
+    // concrete body in its owning package, not a generic one here:
+    //   - Rational (numbers) — ordering is a/b <= c/d via cross-multiplication,
+    //     and its sign handling depends on the denominator's sign. Not mechanical.
+    //   - Proportion / Percent / Probability / Cardinal / SafetyFactor — trivially
+    //     order on their single numeric field, but they are not Index implementors
+    //     and their bodies belong to numbers.plato / engineering.plato territory.
+    //   - Instant / BeatTime (time) — single-field, order on SecondsSinceEpoch
+    //     and Beats respectively; concrete bodies for the time domain.
+    //   - FrameTime (time) — carries Frame AND Rate. Comparing on Frame alone is
+    //     WRONG whenever two FrameTimes carry different rates; a correct body
+    //     must convert both to seconds. Explicitly not mechanical.
+    //   - Boolean / String / Character (primitives) — host-intrinsic orders
+    //     (false < true, lexicographic, code-point). Not expressible on a concept.
+    // TODO(cross-package): fill the above in their owning packages.
+
+    // True when a is strictly less than b.
+    LessThan(a: Orderable, b: Orderable): Boolean
+        => a <= b && a != b;
+
+    // True when a is strictly greater than b.
+    GreaterThan(a: Orderable, b: Orderable): Boolean
+        => b.LessThan(a);
+
+    // True when a is greater than or equal to b.
+    GreaterThanOrEquals(a: Orderable, b: Orderable): Boolean
+        => b <= a;
+
+    // The lesser of the two values, using the total order.
+    Lesser(a: Orderable, b: Orderable): Orderable
+        => a <= b ? a : b;
+
+    // The greater of the two values, using the total order.
+    Greater(a: Orderable, b: Orderable): Orderable
+        => a <= b ? b : a;
+
+    // True when x lies within the inclusive range [lower, upper].
+    Between(x: Orderable, lower: Orderable, upper: Orderable): Boolean
+        => lower <= x && x <= upper;
+
+    // Restricts x to the inclusive range [lower, upper] using the total order.
+    // Assumes lower <= upper.
+    Clamp(x: Orderable, lower: Orderable, upper: Orderable): Orderable
+        => x.Greater(lower).Lesser(upper);
+
+    // The least of three values, using the total order.
+    Min3(a: Orderable, b: Orderable, c: Orderable): Orderable
+        => a.Lesser(b).Lesser(c);
+
+    // The greatest of three values, using the total order.
+    Max3(a: Orderable, b: Orderable, c: Orderable): Orderable
+        => a.Greater(b).Greater(c);
+
+    // Three-way comparison derived from the total order: negative when a < b,
+    // zero when equal, positive when a > b. Declared as a member on Comparable,
+    // but derivable from Orderable alone, so it lives here on the base concept.
+    Compare(a: Orderable, b: Orderable): Integer
+        => a == b ? 0 : (a <= b ? -1 : 1);
+}

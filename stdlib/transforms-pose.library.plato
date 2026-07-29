@@ -1,0 +1,75 @@
+//==
+// # Rigid pose operations
+//
+// Application, composition, inversion, interpolation, and matrix interchange for
+// the rigid poses of `transforms-pose.plato`.
+
+library TransformsPose
+{
+    //==
+    // Rigid poses — position plus rotation; the natural "where is this object"
+    // transform. https://en.wikipedia.org/wiki/Rigid_transformation
+
+    // Apply the pose: rotate about the origin, then translate to Position.
+    Transform(p: Point2D, pose: Pose2D): Point2D
+        => pose.Position.Add(p.PositionVector.Transform(pose.Rotation));
+
+    // Rotate a displacement by the pose's rotation (translation does not act
+    // on vectors).
+    Transform(v: Vector2D, pose: Pose2D): Vector2D
+        => v.Transform(pose.Rotation);
+
+    // The pose that applies `first`, then `second`.
+    Compose(first: Pose2D, second: Pose2D): Pose2D
+        => (first.Position.Transform(second), first.Rotation.Multiply(second.Rotation));
+
+    // The pose that undoes this one: p' = R^-1 (p - t).
+    Inverse(pose: Pose2D): Pose2D {
+        var invRot = pose.Rotation.Inverse;
+        return (pose.Position.PositionVector.Negative.Transform(invRot).ToPoint, invRot);
+    }
+
+    // Interpolate position and rotation independently; t is unclamped.
+    Lerp(a: Pose2D, b: Pose2D, t: Number): Pose2D
+        => (a.Position.Lerp(b.Position, t), a.Rotation.Lerp(b.Rotation, t));
+
+    // The affine matrix of the pose (rotation, then translation).
+    Matrix3x2(pose: Pose2D): Matrix3x2
+        => pose.Rotation.Matrix3x2.Multiply(Matrix3x2.CreateTranslation(pose.Position.PositionVector));
+
+    // The pose stored in a rigid affine matrix. Precondition: the matrix is a
+    // rotation followed by a translation (no scale, shear, or reflection).
+    Pose2D(m: Matrix3x2): Pose2D
+        => (Point2D(m.Row3.X, m.Row3.Y), Rotation2D(m.Row1.Y.Atan2(m.Row1.X)));
+
+    // Apply the pose: rotate about the origin, then translate to Position.
+    Transform(p: Point3D, pose: Pose3D): Point3D
+        => pose.Position.Add(p.PositionVector.Transform(pose.Orientation));
+
+    // Rotate a displacement by the pose's orientation.
+    Transform(v: Vector3D, pose: Pose3D): Vector3D
+        => v.Transform(pose.Orientation);
+
+    // The pose that applies `first`, then `second`.
+    Compose(first: Pose3D, second: Pose3D): Pose3D
+        => (first.Position.Transform(second), first.Orientation.Concatenate(second.Orientation));
+
+    // The pose that undoes this one: p' = R^-1 (p - t).
+    Inverse(pose: Pose3D): Pose3D {
+        var invQ = pose.Orientation.Inverse;
+        return (pose.Position.PositionVector.Negative.Transform(invQ).ToPoint, invQ);
+    }
+
+    // Interpolate position linearly and orientation spherically; t is unclamped.
+    Lerp(a: Pose3D, b: Pose3D, t: Number): Pose3D
+        => (a.Position.Lerp(b.Position, t), a.Orientation.Slerp(b.Orientation, t));
+
+    // The homogeneous matrix of the pose (rotation, then translation).
+    Matrix4x4(pose: Pose3D): Matrix4x4
+        => pose.Orientation.Matrix4x4.Multiply(Matrix4x4.CreateTranslation(pose.Position.PositionVector));
+
+    // The pose stored in a rigid homogeneous matrix. Precondition: the matrix
+    // is a rotation followed by a translation (no scale, shear, or projection).
+    Pose3D(m: Matrix4x4): Pose3D
+        => (m.Translation.ToPoint, m.Rotation);
+}

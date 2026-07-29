@@ -1,0 +1,66 @@
+//==
+// # Point support
+//
+// The Difference obligations of Point2D/Point3D, point interpolation, and the
+// explicit point <-> vector converters that every other transform library builds
+// on. Kept separate from the representations because nothing here depends on a
+// transform type.
+
+library TransformsPoints
+{
+    //==
+    // Point support — the Difference obligations of Point2D/Point3D (Between
+    // follows the b - a convention assumed by IntervalsTransforms), linear
+    // interpolation, and explicit point <-> vector converters. These are
+    // deliberately named (ToPoint / PositionVector) rather than implicit
+    // conversions: silently coercing between positions and displacements would
+    // defeat the point of keeping them distinct types.
+
+    // The point displaced by delta.
+    Add(p: Point2D, delta: Vector2D): Point2D
+        => (p.X + delta.X, p.Y + delta.Y);
+
+    // The point displaced by the negation of delta.
+    Subtract(p: Point2D, delta: Vector2D): Point2D
+        => (p.X - delta.X, p.Y - delta.Y);
+
+    // The displacement from a to b (b - a).
+    Between(a: Point2D, b: Point2D): Vector2D
+        => (b.X - a.X, b.Y - a.Y);
+
+    // Linear interpolation between two points; t is unclamped.
+    Lerp(a: Point2D, b: Point2D, t: Number): Point2D
+        => (a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t);
+
+    // The point displaced by delta.
+    Add(p: Point3D, delta: Vector3D): Point3D
+        => (p.X + delta.X, p.Y + delta.Y, p.Z + delta.Z);
+
+    // The point displaced by the negation of delta.
+    Subtract(p: Point3D, delta: Vector3D): Point3D
+        => (p.X - delta.X, p.Y - delta.Y, p.Z - delta.Z);
+
+    // The displacement from a to b (b - a).
+    Between(a: Point3D, b: Point3D): Vector3D
+        => (b.X - a.X, b.Y - a.Y, b.Z - a.Z);
+
+    // Linear interpolation between two points; t is unclamped.
+    Lerp(a: Point3D, b: Point3D, t: Number): Point3D
+        => (a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t, a.Z + (b.Z - a.Z) * t);
+
+    // The point's displacement from the origin.
+    PositionVector(p: Point2D): Vector2D
+        => (p.X, p.Y);
+
+    // The point's displacement from the origin.
+    PositionVector(p: Point3D): Vector3D
+        => (p.X, p.Y, p.Z);
+
+    // The point at the tip of the vector, placed from the origin.
+    ToPoint(v: Vector2D): Point2D
+        => (v.X, v.Y);
+
+    // The point at the tip of the vector, placed from the origin.
+    ToPoint(v: Vector3D): Point3D
+        => (v.X, v.Y, v.Z);
+}

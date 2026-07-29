@@ -1,0 +1,31 @@
+//==
+// # Kinematic quantities
+//
+// Rates of change with respect to time, linear and angular, plus repetition
+// rate (https://en.wikipedia.org/wiki/Kinematics). Motion is described without
+// reference to the forces producing it; those are the mechanical quantities in
+// `quantities-mechanical.plato`.
+
+// Rate of change of position, stored in meters per second
+// (https://en.wikipedia.org/wiki/Speed).
+type Speed implements Quantity { MetersPerSecond: Number; }
+
+// Rate of change of speed, stored in meters per second squared
+// (https://en.wikipedia.org/wiki/Acceleration).
+type Acceleration implements Quantity { MetersPerSecondSquared: Number; }
+
+// Rate of change of acceleration, stored in meters per second cubed
+// (https://en.wikipedia.org/wiki/Jerk_(physics)).
+type Jerk implements Quantity { MetersPerSecondCubed: Number; }
+
+// Rate of rotation, stored in radians per second
+// (https://en.wikipedia.org/wiki/Angular_velocity).
+type AngularVelocity implements Quantity { RadiansPerSecond: Number; }
+
+// Rate of change of angular velocity, stored in radians per second squared
+// (https://en.wikipedia.org/wiki/Angular_acceleration).
+type AngularAcceleration implements Quantity { RadiansPerSecondSquared: Number; }
+
+// Repetition rate, stored in hertz (cycles per second)
+// (https://en.wikipedia.org/wiki/Frequency).
+type Frequency implements Quantity { Hertz: Number; }

@@ -1,0 +1,169 @@
+//==
+// # NumericStructuresAlgebra — component-wise algebra for the Vector concept
+//
+// The Additive / Arithmetic / Scalable / Lattice / Interpolatable surface and
+// the per-component lifts of the Number intrinsics, all written once against the
+// component combinators in `numeric-structures-components.library.plato`. v1
+// wrote this list once per vector type; here it is written once, full stop.
+
+library NumericStructuresAlgebra
+{
+    //==
+    // # Vector — component-wise algebra
+    //
+    // The Additive / Arithmetic / Scalable / Lattice / Interpolatable surface,
+    // all component-wise. Concrete types whose backend has a native vector
+    // instruction (Number2/3/4/8 in `intrinsics.plato`) override these.
+
+    // Component-wise sum.
+    Add(a: Vector, b: Vector): Vector
+        => a.ZipComponents(b, (x, y) => x + y);
+
+    // Component-wise difference.
+    Subtract(a: Vector, b: Vector): Vector
+        => a.ZipComponents(b, (x, y) => x - y);
+
+    // Component-wise (Hadamard) product.
+    Multiply(a: Vector, b: Vector): Vector
+        => a.ZipComponents(b, (x, y) => x * y);
+
+    // Component-wise quotient. Precondition: no component of b is zero.
+    Divide(a: Vector, b: Vector): Vector
+        => a.ZipComponents(b, (x, y) => x / y);
+
+    // Component-wise remainder. Precondition: no component of b is zero.
+    Modulo(a: Vector, b: Vector): Vector
+        => a.ZipComponents(b, (x, y) => x % y);
+
+    // The vector with every component negated.
+    Negative(self: Vector): Vector
+        => self.MapComponents(x => x.Negative);
+
+    // Every component scaled by a unitless scalar.
+    Multiply(self: Vector, scalar: Number): Vector
+        => self.MapComponents(x => x * scalar);
+
+    // Every component divided by a unitless scalar. Precondition: scalar is non-zero.
+    Divide(self: Vector, scalar: Number): Vector
+        => self.MapComponents(x => x / scalar);
+
+    // Every component reduced modulo a unitless scalar. Precondition: non-zero.
+    Modulo(self: Vector, scalar: Number): Vector
+        => self.MapComponents(x => x % scalar);
+
+    // The component-wise minimum (the Lattice meet).
+    Min(a: Vector, b: Vector): Vector
+        => a.ZipComponents(b, (x, y) => x.Min(y));
+
+    // The component-wise maximum (the Lattice join).
+    Max(a: Vector, b: Vector): Vector
+        => a.ZipComponents(b, (x, y) => x.Max(y));
+
+    // Component-wise linear interpolation; t is unclamped.
+    Lerp(a: Vector, b: Vector, t: Number): Vector
+        => a.ZipComponents(b, (x, y) => x + (y - x) * t);
+
+    //==
+    // # Vector — lifted Number functions
+    //
+    // Each of these is the corresponding function from `intrinsics.plato` or
+    // `core-algebra.library.plato` applied to every component. v1 wrote this list
+    // once per vector type; here it is written once, full stop.
+
+    // Component-wise absolute value.
+    Abs(self: Vector): Vector
+        => self.MapComponents(x => x.Abs);
+
+    // Component-wise floor (largest whole value at or below each component).
+    Floor(self: Vector): Vector
+        => self.MapComponents(x => x.Floor);
+
+    // Component-wise ceiling (smallest whole value at or above each component).
+    Ceiling(self: Vector): Vector
+        => self.MapComponents(x => x.Ceiling);
+
+    // Component-wise truncation toward zero.
+    Truncate(self: Vector): Vector
+        => self.MapComponents(x => x.Truncate);
+
+    // Component-wise square root. Precondition: no component is negative.
+    Sqrt(self: Vector): Vector
+        => self.MapComponents(x => x.Sqrt);
+
+    // Component-wise cube root.
+    Cbrt(self: Vector): Vector
+        => self.MapComponents(x => x.Cbrt);
+
+    // Component-wise exponential (e raised to each component).
+    Exp(self: Vector): Vector
+        => self.MapComponents(x => x.Exp);
+
+    // Component-wise natural logarithm. Precondition: every component is positive.
+    NaturalLog(self: Vector): Vector
+        => self.MapComponents(x => x.NaturalLog);
+
+    // Component-wise base-2 logarithm. Precondition: every component is positive.
+    Log2(self: Vector): Vector
+        => self.MapComponents(x => x.Log2);
+
+    // Component-wise base-10 logarithm. Precondition: every component is positive.
+    Log10(self: Vector): Vector
+        => self.MapComponents(x => x.Log10);
+
+    // Component-wise reciprocal. Precondition: no component is zero.
+    Reciprocal(self: Vector): Vector
+        => self.MapComponents(x => x.Reciprocal);
+
+    // Each component raised to the corresponding component of power.
+    Pow(self: Vector, power: Vector): Vector
+        => self.ZipComponents(power, (x, y) => x.Pow(y));
+
+    // Each component raised to the same scalar power.
+    Pow(self: Vector, power: Number): Vector
+        => self.MapComponents(x => x.Pow(power));
+
+    // Each component given the sign of the corresponding component of sign.
+    CopySign(self: Vector, sign: Vector): Vector
+        => self.ZipComponents(sign, (x, y) => x.CopySign(y));
+
+    // Component-wise fused multiply-add: self * y + z with a single rounding.
+    FusedMultiplyAdd(self: Vector, y: Vector, z: Vector): Vector
+        => self.ZipComponents(y, z, (a, b, c) => a.FusedMultiplyAdd(b, c));
+
+    // Restricts every component to the scalar range [lo, hi]. Precondition: lo <= hi.
+    Clamp(self: Vector, lo: Number, hi: Number): Vector
+        => self.MapComponents(x => x.Clamp(lo, hi));
+
+    // Component-wise fractional part: each component minus its floor, in [0, 1).
+    FractionalPart(self: Vector): Vector
+        => self.MapComponents(x => x.FractionalPart);
+
+    // The component-wise complement within the unit interval: one minus each component.
+    OneMinus(self: Vector): Vector
+        => self.MapComponents(x => x.OneMinus);
+
+    // Each component rounded to the nearest whole value, halves rounding up.
+    RoundedToNearest(self: Vector): Vector
+        => self.MapComponents(x => x.RoundedToNearest);
+
+    // True when every pair of corresponding components differs by no more than
+    // the given (non-negative) tolerance.
+    AlmostEqual(a: Vector, b: Vector, tolerance: Number): Boolean
+        => a.AllZipComponents(b, (x, y) => x.AlmostEqual(y, tolerance));
+
+    // True when every component is within the given tolerance of zero.
+    AlmostZero(self: Vector, tolerance: Number): Boolean
+        => self.AllComponents(x => x.AlmostZero(tolerance));
+
+    // True when every component lies in the inclusive box [lower, upper].
+    Between(self: Vector, lower: Vector, upper: Vector): Boolean
+        => self.AllZipComponents(lower, upper, (x, a, b) => x.Between(a, b));
+
+    // True when every component is finite (no infinity, no NaN).
+    IsFinite(self: Vector): Boolean
+        => self.AllComponents(x => x.IsFinite);
+
+    // True when at least one component is NaN.
+    HasNaN(self: Vector): Boolean
+        => self.AnyComponent(x => x.IsNaN);
+}

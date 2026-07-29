@@ -1,0 +1,38 @@
+//==
+// # Coordinate frames and bases
+//
+// An origin with a set of axes: the matrix-friendly clothing of a rigid pose,
+// where the axes are the rotation and the origin is the translation. Frames carry
+// an orthonormality invariant; a bare Basis3D does not. The operations live in
+// `transforms-frames.library.plato`.
+
+// An orthonormal coordinate frame in the plane: an origin and two perpendicular
+// unit axes.
+type Frame2D
+    implements Value
+{
+    Origin: Point2D;
+    XAxis: Direction2D;
+    YAxis: Direction2D;
+}
+
+// An orthonormal coordinate frame in space: an origin and three mutually
+// perpendicular unit axes.
+type Frame3D
+    implements Value
+{
+    Origin: Point3D;
+    XAxis: Direction3D;
+    YAxis: Direction3D;
+    ZAxis: Direction3D;
+}
+
+// Three basis vectors in 3D; not necessarily orthonormal
+// (https://en.wikipedia.org/wiki/Basis_(linear_algebra)).
+type Basis3D
+    implements Value
+{
+    X: Vector3D;
+    Y: Vector3D;
+    Z: Vector3D;
+}

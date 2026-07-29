@@ -1,0 +1,61 @@
+//==
+// # Algebraic operation concepts
+//
+// The elementary arithmetic capabilities, each one small algebraic structure:
+// addition, multiplication, division, remainder, inversion, scalar scaling, and
+// linear blending. Numeric, vector, and quantity types assemble them as needed.
+
+// An additive group: addition, subtraction, and negation. (https://en.wikipedia.org/wiki/Additive_group)
+concept Additive
+{
+    Add(a: Self, b: Self): Self;
+    Subtract(a: Self, b: Self): Self;
+    Negative(x: Self): Self;
+}
+
+// A multiplicative operation between two values of the same type. (https://en.wikipedia.org/wiki/Multiplication)
+concept Multiplicative
+{
+    Multiply(a: Self, b: Self): Self;
+}
+
+// Division between two values of the same type. (https://en.wikipedia.org/wiki/Division_(mathematics))
+concept Divisible
+{
+    Divide(a: Self, b: Self): Self;
+}
+
+// Remainder arithmetic between two values of the same type. (https://en.wikipedia.org/wiki/Modulo_operation)
+concept Modular
+{
+    Modulo(a: Self, b: Self): Self;
+}
+
+// Has a multiplicative inverse (reciprocal). (https://en.wikipedia.org/wiki/Multiplicative_inverse)
+concept Invertible
+{
+    Inverse(x: Self): Self;
+}
+
+// The four basic operations plus remainder: a field with modulo. (https://en.wikipedia.org/wiki/Field_(mathematics))
+concept Arithmetic
+    inherits Additive, Multiplicative, Divisible, Modular
+{ }
+
+// Can be multiplied and divided by a unitless scalar (https://en.wikipedia.org/wiki/Scalar_multiplication).
+// Vectors, quantities, and colors are scalable even when they cannot multiply
+// among themselves.
+concept Scalable
+{
+    Multiply(x: Self, scalar: Number): Self;
+    Divide(x: Self, scalar: Number): Self;
+    Modulo(x: Self, scalar: Number): Self;
+}
+
+// Supports linear interpolation (https://en.wikipedia.org/wiki/Linear_interpolation).
+// The parameter t is unclamped: 0 yields a, 1 yields b, values outside [0,1]
+// extrapolate.
+concept Interpolatable
+{
+    Lerp(a: Self, b: Self, t: Number): Self;
+}

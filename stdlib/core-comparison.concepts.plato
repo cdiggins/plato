@@ -1,0 +1,45 @@
+//==
+// # Core comparison concepts
+//
+// Equality, hashing, and total order: the smallest, most widely shared
+// capabilities. Nearly every other concept in the library inherits from
+// something in this file.
+
+// Supports equality comparison. Equality is structural: two values are equal when
+// all their components are equal. (https://en.wikipedia.org/wiki/Equality_(mathematics))
+concept Equatable
+{
+    Equals(a: Self, b: Self): Boolean;
+    NotEquals(a: Self, b: Self): Boolean;
+}
+
+// An immutable value type: identity is determined entirely by content.
+// Values can be freely copied, shared, and compared.
+// (https://en.wikipedia.org/wiki/Value_type_and_reference_type)
+concept Value
+    inherits Equatable
+{ }
+
+// Can produce a stable integer digest of itself, consistent with equality.
+// (https://en.wikipedia.org/wiki/Hash_function)
+concept Hashable
+    inherits Equatable
+{
+    Hash(x: Self): Integer;
+}
+
+// Has a total order. LessThanOrEquals is reflexive, antisymmetric, and transitive.
+// (https://en.wikipedia.org/wiki/Total_order)
+concept Orderable
+    inherits Equatable
+{
+    LessThanOrEquals(a: Self, b: Self): Boolean;
+}
+
+// Orderable with a three-way comparison: negative when a < b, zero when equal,
+// positive when a > b. (https://en.wikipedia.org/wiki/Three-way_comparison)
+concept Comparable
+    inherits Orderable
+{
+    Compare(a: Self, b: Self): Integer;
+}

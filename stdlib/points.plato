@@ -1,15 +1,12 @@
 //==
-// # Points and coordinates
+// # Cartesian and homogeneous points
 //
 // Points are positions in a space (https://en.wikipedia.org/wiki/Point_(geometry));
 // they are not vectors. Subtracting two points yields a vector, and adding a
-// vector to a point yields a point (the Difference concept). Alternative
-// coordinate systems are distinct types, not conventions.
-
-// A position in some coordinate space. Marker concept for all point-like types.
-concept Coordinate
-    inherits Value, Equatable, Interpolatable
-{ }
+// vector to a point yields a point (the Difference concept). This file holds the
+// Cartesian positions and their homogeneous (projective) form; the curvilinear
+// systems live in `points-curvilinear.plato` and the parametric weightings in
+// `points-parametric.plato`.
 
 // A position in the 2D Cartesian plane
 // (https://en.wikipedia.org/wiki/Cartesian_coordinate_system).
@@ -55,86 +52,4 @@ type HomogeneousPoint3D
     Y: Number;
     Z: Number;
     W: Number;
-}
-
-// A planar position as distance from origin and angle from the positive X axis
-// (https://en.wikipedia.org/wiki/Polar_coordinate_system).
-type PolarCoordinate
-    implements Value
-{
-    Radius: Number;
-    Angle: Angle;
-}
-
-// A 3D position as planar polar coordinates plus height along Z
-// (https://en.wikipedia.org/wiki/Cylindrical_coordinate_system).
-type CylindricalCoordinate
-    implements Value
-{
-    Radius: Number;
-    Azimuth: Angle;
-    Height: Number;
-}
-
-// A 3D position as radius, azimuth (about Z from +X), and inclination from the
-// +Z pole (https://en.wikipedia.org/wiki/Spherical_coordinate_system).
-type SphericalCoordinate
-    implements Value
-{
-    Radius: Number;
-    Azimuth: Angle;
-    Inclination: Angle;
-}
-
-// Weights relative to a triangle's vertices. Vertex binding: U -> the first
-// vertex (A), V -> the second (B), W -> the third (C), so the point recovered on
-// the triangle's support plane is U*A + V*B + W*C (see `Evaluate` in
-// numeric-structures.library.plato).
-// See https://en.wikipedia.org/wiki/Barycentric_coordinate_system.
-//
-// Invariant: U + V + W = 1 identifies a point on the support plane (an affine
-// combination). Off-plane or non-normalized triples (U + V + W != 1) are
-// degenerate for triangle evaluation; `IsNormalized` tests the sum against a
-// tolerance. The three fields are kept deliberately (a two-component (V, W) form
-// with U = 1 - V - W was rejected): the redundant U reads directly, and the
-// invariant is documented rather than enforced by shape.
-//
-// Affine vs convex (item 8): U + V + W = 1 alone is an *affine* combination and
-// may place the point anywhere on the plane; the point lies *inside* the
-// triangle (a *convex* combination) exactly when additionally U, V, W >= 0.
-type BarycentricCoordinate
-    implements Value
-{
-    U: Number;
-    V: Number;
-    W: Number;
-}
-
-// A normalized 2D surface parameter: texture lookup, patch evaluation.
-// Convention: see CONVENTIONS.md - UV origin (origin top-left, U right, V down).
-type UvCoordinate
-    implements Coordinate, Difference<Vector2D>
-{
-    U: Number;
-    V: Number;
-}
-
-// A normalized 3D volume parameter: 3D textures, trivariate patches.
-type UvwCoordinate
-    implements Coordinate, Difference<Vector3D>
-{
-    U: Number;
-    V: Number;
-    W: Number;
-}
-
-// A position on a planet's surface: geodetic latitude, longitude, and altitude
-// above the reference ellipsoid
-// (https://en.wikipedia.org/wiki/Geographic_coordinate_system).
-type GeoCoordinate
-    implements Value
-{
-    Latitude: Angle;
-    Longitude: Angle;
-    Altitude: Length;
 }

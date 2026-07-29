@@ -11,7 +11,8 @@ type Duration
     Seconds: Number;
 }
 
-// A position on a continuous time line, in seconds relative to an arbitrary epoch.
+// A position on a continuous time line, in seconds relative to an arbitrary
+// epoch (https://en.wikipedia.org/wiki/Epoch_(computing)).
 // Subtracting two instants yields a Duration.
 type Instant
     implements Value, Comparable, Difference<Duration>
@@ -19,7 +20,8 @@ type Instant
     SecondsSinceEpoch: Number;
 }
 
-// A half-open span of time: contains Start, excludes End.
+// A half-open span of time: contains Start, excludes End
+// (https://en.wikipedia.org/wiki/Interval_(mathematics)).
 type TimeInterval
     implements Value
 {
@@ -27,7 +29,8 @@ type TimeInterval
     End: Instant;
 }
 
-// Playback or capture rate, in frames per second.
+// Playback or capture rate, in frames per second
+// (https://en.wikipedia.org/wiki/Frame_rate).
 type FrameRate
 {
     FramesPerSecond: Number;
@@ -41,7 +44,8 @@ type FrameTime
     Rate: FrameRate;
 }
 
-// An SMPTE-style timecode under a given frame rate.
+// An SMPTE-style timecode under a given frame rate
+// (https://en.wikipedia.org/wiki/SMPTE_timecode).
 type Timecode
 {
     Hours: Integer;
@@ -51,13 +55,15 @@ type Timecode
     Rate: FrameRate;
 }
 
-// Musical tempo, in beats per minute.
+// Musical tempo, in beats per minute (https://en.wikipedia.org/wiki/Tempo).
 type Tempo
 {
     BeatsPerMinute: Number;
 }
 
-// A position measured in musical beats; combine with Tempo to reach seconds.
+// A position measured in musical beats
+// (https://en.wikipedia.org/wiki/Beat_(music)); combine with Tempo to reach
+// seconds.
 type BeatTime
     implements Value, Comparable
 {

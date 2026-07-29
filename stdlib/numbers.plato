@@ -31,13 +31,14 @@ type Proportion
 }
 
 // A proportion expressed per hundred: 45.0 means 45%.
+// (https://en.wikipedia.org/wiki/Percentage)
 type Percent
     implements Numerical, Comparable
 {
     Value: Number;
 }
 
-// A probability in [0, 1].
+// A probability in [0, 1]. (https://en.wikipedia.org/wiki/Probability)
 type Probability
     implements Numerical, Comparable
 {
@@ -55,7 +56,7 @@ type ItemIndex
     Value: Integer;
 }
 
-// A count of items; never negative.
+// A count of items; never negative. (https://en.wikipedia.org/wiki/Cardinal_number)
 type Cardinal
     implements Value, Comparable
 {
@@ -67,7 +68,7 @@ type Cardinal
 // are close when |x - y| <= Absolute + Relative * max(|x|, |y|). Both fields are
 // non-negative. This is the ONE numerical-comparison epsilon record for the
 // whole library (see CONVENTIONS.md - Floating-point comparison); the AlmostEqual
-// overloads in core-algebra.library.plato accept it. Engineering Tolerance
+// overloads in algebra-numeric.library.plato accept it. Engineering Tolerance
 // (uncertainty.plato) is a manufacturing acceptance allowance, NOT this type.
 type ComparisonTolerance
     implements Value

@@ -6,26 +6,27 @@
 // on scalar primitives: their representations are intrinsic.
 
 // A 64-bit floating-point approximation of a real number.
+// (https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
 type Number
     implements Real
 { }
 
-// A signed whole number.
+// A signed whole number. (https://en.wikipedia.org/wiki/Integer_(computer_science))
 type Integer
     implements Whole, Bitwise
 { }
 
-// A truth value: true or false.
+// A truth value: true or false. (https://en.wikipedia.org/wiki/Boolean_data_type)
 type Boolean
     implements Value, Orderable, Logical
 { }
 
-// Immutable text.
+// Immutable text. (https://en.wikipedia.org/wiki/String_(computer_science))
 type String
     implements Value, Orderable, Countable
 { }
 
-// A single character of text.
+// A single character of text. (https://en.wikipedia.org/wiki/Character_(computing))
 type Character
     implements Value, Orderable
 { }
@@ -37,172 +38,3 @@ type Dynamic
 // The root reference type for interop with host platforms.
 type Object
 { }
-
-//==
-// # Tuples
-//
-// Anonymous product types. Tuple literals construct them: (a, b) is a Tuple2.
-// The compiler synthesizes a TupleN constructor for every type with N fields,
-// and supports at most 10-field tuples — so no type may exceed 10 fields.
-
-type Tuple2<T0, T1> { X0: T0; X1: T1; }
-type Tuple3<T0, T1, T2> { X0: T0; X1: T1; X2: T2; }
-type Tuple4<T0, T1, T2, T3> { X0: T0; X1: T1; X2: T2; X3: T3; }
-type Tuple5<T0, T1, T2, T3, T4> { X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; }
-type Tuple6<T0, T1, T2, T3, T4, T5> { X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; }
-type Tuple7<T0, T1, T2, T3, T4, T5, T6> { X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; X6: T6; }
-type Tuple8<T0, T1, T2, T3, T4, T5, T6, T7> { X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; X6: T6; X7: T7; }
-type Tuple9<T0, T1, T2, T3, T4, T5, T6, T7, T8> { X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; X6: T6; X7: T7; X8: T8; }
-type Tuple10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> { X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; X6: T6; X7: T7; X8: T8; X9: T9; }
-
-//==
-// # Function types
-//
-// Pure function values. TR is the result type.
-
-type Function0<TR> { }
-type Function1<T0, TR> { }
-type Function2<T0, T1, TR> { }
-type Function3<T0, T1, T2, TR> { }
-type Function4<T0, T1, T2, T3, TR> { }
-
-//==
-// # Arrays
-//
-// Immutable, eagerly-or-lazily backed ordered collections. The compiler maps
-// indexing syntax to At.
-
-// An immutable one-dimensional ordered collection.
-type Array<T>
-    implements Indexable<T>
-{ }
-
-// An immutable collection addressed by column and row.
-type Array2D<T>
-    implements Indexable2D<T>
-{ }
-
-// An immutable collection addressed by column, row, and layer.
-type Array3D<T>
-    implements Indexable3D<T>
-{ }
-
-// An immutable collection addressed by column, row, layer, and block.
-type Array4D<T>
-    implements Indexable4D<T>
-{ }
-
-//==
-// # Affine builders
-//
-// The mutable half of the collection story. Every other collection in this
-// vocabulary is immutable-by-value, which leaves no way to *build* one: nothing
-// can accumulate points, sample a curve into an array, or assemble a mesh. The
-// two builder types below fill that gap without giving up value semantics
-// anywhere else, because uniqueness is confined to these two types.
-//
-// `unique` is a declaration-site modifier only. A *use* of `List<T>` or
-// `Buffer<T>` is never annotated: the type itself carries the affine
-// convention, so every pass of a builder value is a move. Only the intrinsic
-// builder names `List` and `Buffer` may be declared unique; the compiler
-// hard-rejects the modifier on any other type.
-//
-// Method effects (the compiler's `UniqueTypes` intrinsic table):
-//
-// | Effect  | Members            | Meaning                                          |
-// |---------|--------------------|--------------------------------------------------|
-// | observe | `Count`, `At`      | free use; does not invalidate the builder        |
-// | mutate  | `Add`, `AddRange`, `Set` | returns the builder — rebind or chain      |
-// | consume | `Freeze`           | zero-copy handoff to an immutable `Array<T>`; the builder is invalidated |
-//
-// Conventions, runtime-checked today (the static affine pass rides the future
-// type-checker workstream — see `../docs/affine-types.md`):
-//
-// - never store a builder in a field (LINT006) or inside another generic
-//   container (LINT007);
-// - never capture a builder in a lambda;
-// - write `Freeze` with parentheses: `xs.Freeze()`;
-// - construct with `new List<T>()` / `new Buffer<T>(n)` at concrete element
-//   types, or `xs.EmptyList()` where the element type is a type variable;
-// - rebind or chain every mutator (`xs = xs.Add(p)`, or
-//   `new List<Integer>().Add(1).Add(2).Freeze()`). Use after `Freeze()` throws
-//   at runtime.
-//
-// The backing runtimes are handwritten (`Plato.Intrinsics/PlatoList.cs`,
-// `PlatoBuffer.cs`); the compiler maps `List`/`Buffer` to `PlatoList`/
-// `PlatoBuffer` and never generates a struct for a unique type.
-
-// A growable affine builder: append elements, then promote the backing store to
-// an immutable Array<T> with Freeze().
-unique type List<T>
-{ }
-
-// A fixed-size affine builder: allocate n slots, write them by index in any
-// order, then promote the backing store to an immutable Array<T> with Freeze().
-unique type Buffer<T>
-{ }
-
-//==
-// # Affine builder intrinsics
-//
-// Bodiless host signatures for the builder types above. Without them no builder
-// call site resolves. They live here rather than in `intrinsics.plato` because
-// they are inseparable from the `unique` declarations they operate on; the v1
-// tree exiled the same signatures to its test sources only to avoid shifting
-// symbol ids under a byte-identity codegen gate, which this vocabulary is not
-// subject to.
-//
-// The single-parameter observers and consumers — `Count`, `Freeze` and
-// `EmptyList` — are declared alongside the mutators below. Each carries a type
-// variable that is fully determined by its one parameter (`Count(xs: List<$T>)`
-// fixes `$T` from its argument), so a call site can infer it. The runtime
-// (`PlatoList`/`PlatoBuffer`) implements all of them.
-
-library UniqueBuilders
-{
-    //==
-    // Growable builder: unique type List<T>.
-
-    // The number of elements accumulated so far. Observes; does not consume.
-    Count(xs: List<$T>): Integer;
-
-    // The element at the given index. Observes; does not consume.
-    At(xs: List<$T>, n: Integer): $T;
-
-    // Appends one element and returns the same builder. Rebind or chain.
-    Add(xs: List<$T>, x: $T): List<$T>;
-
-    // Appends every element of the array, in order, and returns the same
-    // builder. Rebind or chain.
-    AddRange(xs: List<$T>, values: Array<$T>): List<$T>;
-
-    // Overwrites the element at the given index and returns the same builder.
-    // Precondition: 0 <= i < Count.
-    Set(xs: List<$T>, i: Integer, x: $T): List<$T>;
-
-    // Zero-copy handoff of the accumulated elements to an immutable Array<$T>.
-    // Consumes: the builder is invalidated and any later use throws.
-    Freeze(xs: List<$T>): Array<$T>;
-
-    // A fresh empty List whose element type matches the given array. Lets a
-    // generic body obtain a builder where the element type is a type variable,
-    // without naming a concrete type in `new List<...>()`.
-    EmptyList(xs: Array<$T>): List<$T>;
-
-    //==
-    // Fixed-size builder: unique type Buffer<T>.
-
-    // The number of slots. Observes; does not consume.
-    Count(xs: Buffer<$T>): Integer;
-
-    // The value written to the given slot. Observes; does not consume.
-    At(xs: Buffer<$T>, n: Integer): $T;
-
-    // Writes one slot and returns the same builder. Rebind or chain.
-    // Precondition: 0 <= i < Count.
-    Set(xs: Buffer<$T>, i: Integer, x: $T): Buffer<$T>;
-
-    // Zero-copy handoff of the written slots to an immutable Array<$T>.
-    // Consumes: the builder is invalidated and any later use throws.
-    Freeze(xs: Buffer<$T>): Array<$T>;
-}

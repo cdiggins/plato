@@ -1,0 +1,10 @@
+//==
+// # Function types
+//
+// Pure function values. TR is the result type.
+
+type Function0<TR> { }
+type Function1<T0, TR> { }
+type Function2<T0, T1, TR> { }
+type Function3<T0, T1, T2, TR> { }
+type Function4<T0, T1, T2, T3, TR> { }

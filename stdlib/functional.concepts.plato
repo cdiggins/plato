@@ -7,12 +7,14 @@
 // A pure mapping from a domain value to a range value. The unifying concept for
 // curves (Number to point), surfaces (UV to point), fields (point to value),
 // easings (Number to Number), and beyond.
+// (https://en.wikipedia.org/wiki/Function_(mathematics))
 concept Procedural<TDomain, TRange>
 {
     Eval(x: Self, input: TDomain): TRange;
 }
 
 // A procedural mapping that can be evaluated in reverse.
+// (https://en.wikipedia.org/wiki/Bijection)
 concept Bijective<TDomain, TRange>
     inherits Procedural<TDomain, TRange>
 {
@@ -20,12 +22,14 @@ concept Bijective<TDomain, TRange>
 }
 
 // Repeats with a fixed period in its domain: Eval(t) equals Eval(t + Period).
+// (https://en.wikipedia.org/wiki/Periodic_function)
 concept Periodic<TPeriod>
 {
     Period(x: Self): TPeriod;
 }
 
 // Has a preferred parameter domain over which evaluation is meaningful.
+// (https://en.wikipedia.org/wiki/Domain_of_a_function)
 concept ParameterDomain
 {
     Domain(x: Self): NumberInterval;

@@ -1,13 +1,15 @@
 //==
 // # Cardinal axes
 //
-// Enum-like sum types naming the cardinal axes of 2D and 3D space, plus total
+// Enum-like sum types naming the cardinal axes of 2D and 3D space. Their total
 // conversions out to the geometric vocabulary (Vector, Direction, Number tuple,
-// Point) and a little axis algebra (Ordinal, Component, the tangent/perpendicular
-// cycles, Sign, Opposite). They are the typed replacement for the `Integer` axis
-// selector that CONVENTIONS.md used to sanction — kd-tree split axes, `UpAxis` /
-// `ForwardAxis` fields, and longest-extent queries become non-mixable typed
-// values instead of a bare `0`/`1`/`2`.
+// Point) and the little axis algebra around them (Ordinal, Component, the
+// tangent/perpendicular cycles, Sign, Opposite) live in `axes.library.plato`,
+// `axes-2d.library.plato`, and `axes-signed.library.plato`. They are the typed
+// replacement for the `Integer` axis selector that CONVENTIONS.md used to
+// sanction — kd-tree split axes, `UpAxis` / `ForwardAxis` fields, and
+// longest-extent queries become non-mixable typed values instead of a bare
+// `0`/`1`/`2`.
 //
 // Case naming uses the short qualified-constructor form: the cases are `X`/`Y`/`Z`
 // (so a value is written `Axis3D.X`), scoped to their sum type, so `Axis3D.X` and
@@ -25,8 +27,9 @@
 // not `Integer`).
 
 // One of the three unsigned cardinal axes of 3D space: the X, Y, or Z direction
-// line. Unsigned — it names a direction line, not an orientation; the six
-// oriented cube-face normals are `SignedAxis3D`.
+// line (https://en.wikipedia.org/wiki/Cartesian_coordinate_system). Unsigned —
+// it names a direction line, not an orientation; the six oriented cube-face
+// normals are `SignedAxis3D`.
 type Axis3D = X | Y | Z;
 
 // One of the two unsigned cardinal axes of 2D space: the X or Y direction line.
@@ -35,177 +38,3 @@ type Axis2D = X | Y;
 // One of the six oriented cardinal axes of 3D space: the outward normals of a
 // unit cube's faces (the positive and negative sense of each `Axis3D`).
 type SignedAxis3D = PosX | NegX | PosY | NegY | PosZ | NegZ;
-
-//==
-// # Axis3D conversions and algebra
-
-library Axes
-{
-    // The unit basis vector along this axis: X => (1,0,0), Y => (0,1,0), Z => (0,0,1).
-    Vector3D(self: Axis3D): Vector3D
-        => match (self) {
-            X => Vector3D(1.0, 0.0, 0.0);
-            Y => Vector3D(0.0, 1.0, 0.0);
-            Z => Vector3D(0.0, 0.0, 1.0);
-        };
-
-    // The unit direction along this axis (the basis vector, already unit length).
-    Direction3D(self: Axis3D): Direction3D
-        => Direction3D(self.Vector3D);
-
-    // The basis vector as a raw Number3 tuple.
-    Number3(self: Axis3D): Number3
-        => match (self) {
-            X => Number3(1.0, 0.0, 0.0);
-            Y => Number3(0.0, 1.0, 0.0);
-            Z => Number3(0.0, 0.0, 1.0);
-        };
-
-    // The point one unit along this axis from the origin.
-    Point3D(self: Axis3D): Point3D
-        => match (self) {
-            X => Point3D(1.0, 0.0, 0.0);
-            Y => Point3D(0.0, 1.0, 0.0);
-            Z => Point3D(0.0, 0.0, 1.0);
-        };
-
-    // The zero-based component index this axis selects: X => 0, Y => 1, Z => 2.
-    Ordinal(self: Axis3D): Integer
-        => match (self) {
-            X => 0;
-            Y => 1;
-            Z => 2;
-        };
-
-    // The component of v that this axis selects (`Component(v, X)` is `v.X`).
-    Component(v: Vector3D, axis: Axis3D): Number
-        => match (axis) {
-            X => v.X;
-            Y => v.Y;
-            Z => v.Z;
-        };
-
-    // The next axis in the right-handed cycle X => Y => Z => X. Together with
-    // Bitangent this gives an oriented frame around the axis.
-    Tangent(self: Axis3D): Axis3D
-        => match (self) {
-            X => Axis3D.Y;
-            Y => Axis3D.Z;
-            Z => Axis3D.X;
-        };
-
-    // The axis after Tangent in the right-handed cycle (Tangent of Tangent):
-    // X => Z, Y => X, Z => Y.
-    Bitangent(self: Axis3D): Axis3D
-        => match (self) {
-            X => Axis3D.Z;
-            Y => Axis3D.X;
-            Z => Axis3D.Y;
-        };
-}
-
-//==
-// # Axis2D conversions and algebra
-
-library Axes2D
-{
-    // The unit basis vector along this axis: X => (1,0), Y => (0,1).
-    Vector2D(self: Axis2D): Vector2D
-        => match (self) {
-            X => Vector2D(1.0, 0.0);
-            Y => Vector2D(0.0, 1.0);
-        };
-
-    // The unit direction along this axis (the basis vector, already unit length).
-    Direction2D(self: Axis2D): Direction2D
-        => Direction2D(self.Vector2D);
-
-    // The basis vector as a raw Number2 tuple.
-    Number2(self: Axis2D): Number2
-        => match (self) {
-            X => Number2(1.0, 0.0);
-            Y => Number2(0.0, 1.0);
-        };
-
-    // The point one unit along this axis from the origin.
-    Point2D(self: Axis2D): Point2D
-        => match (self) {
-            X => Point2D(1.0, 0.0);
-            Y => Point2D(0.0, 1.0);
-        };
-
-    // The zero-based component index this axis selects: X => 0, Y => 1.
-    Ordinal(self: Axis2D): Integer
-        => match (self) {
-            X => 0;
-            Y => 1;
-        };
-
-    // The component of v that this axis selects (`Component(v, X)` is `v.X`).
-    Component(v: Vector2D, axis: Axis2D): Number
-        => match (axis) {
-            X => v.X;
-            Y => v.Y;
-        };
-
-    // The other 2D axis: X => Y, Y => X (the quarter-turn partner).
-    Perpendicular(self: Axis2D): Axis2D
-        => match (self) {
-            X => Axis2D.Y;
-            Y => Axis2D.X;
-        };
-}
-
-//==
-// # SignedAxis3D conversions and algebra
-
-library SignedAxes
-{
-    // The unsigned axis this oriented axis lies along (drops the sign).
-    Axis3D(self: SignedAxis3D): Axis3D
-        => match (self) {
-            PosX => Axis3D.X;
-            NegX => Axis3D.X;
-            PosY => Axis3D.Y;
-            NegY => Axis3D.Y;
-            PosZ => Axis3D.Z;
-            NegZ => Axis3D.Z;
-        };
-
-    // The sense of this axis: +1 for the positive faces, -1 for the negative faces.
-    Sign(self: SignedAxis3D): Integer
-        => match (self) {
-            PosX => 1;
-            NegX => -1;
-            PosY => 1;
-            NegY => -1;
-            PosZ => 1;
-            NegZ => -1;
-        };
-
-    // The unit vector of this oriented axis (the unsigned basis vector times Sign).
-    Vector3D(self: SignedAxis3D): Vector3D
-        => match (self) {
-            PosX => Vector3D(1.0, 0.0, 0.0);
-            NegX => Vector3D(-1.0, 0.0, 0.0);
-            PosY => Vector3D(0.0, 1.0, 0.0);
-            NegY => Vector3D(0.0, -1.0, 0.0);
-            PosZ => Vector3D(0.0, 0.0, 1.0);
-            NegZ => Vector3D(0.0, 0.0, -1.0);
-        };
-
-    // The unit direction of this oriented axis (its vector, already unit length).
-    Direction3D(self: SignedAxis3D): Direction3D
-        => Direction3D(self.Vector3D);
-
-    // The oppositely oriented axis along the same line: PosX <=> NegX, etc.
-    Opposite(self: SignedAxis3D): SignedAxis3D
-        => match (self) {
-            PosX => SignedAxis3D.NegX;
-            NegX => SignedAxis3D.PosX;
-            PosY => SignedAxis3D.NegY;
-            NegY => SignedAxis3D.PosY;
-            PosZ => SignedAxis3D.NegZ;
-            NegZ => SignedAxis3D.PosZ;
-        };
-}

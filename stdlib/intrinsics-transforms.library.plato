@@ -1,0 +1,110 @@
+//==
+// # Transform intrinsics
+//
+// Host-provided matrix, quaternion, and plane operations: the System.Numerics
+// transform surface (https://en.wikipedia.org/wiki/Transformation_matrix),
+// including the Create* factory family dispatched on an ignored receiver of the
+// result type. Shared preamble and porting notes:
+// `intrinsics-scalars.library.plato`.
+
+library IntrinsicsTransforms
+{
+    //==
+    // Matrix3x2
+
+    Determinant(self: Matrix3x2): Number;
+    Invert(self: Matrix3x2): Tuple2<Matrix3x2, Boolean>;
+    Add(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2;
+    Subtract(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2;
+    Multiply(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2;
+    Multiply(value1: Matrix3x2, scalar: Number): Matrix3x2;
+    Multiply(scalar: Number, value1: Matrix3x2): Matrix3x2;
+    Divide(value1: Matrix3x2, scalar: Number): Matrix3x2;
+    Equals(a: Matrix3x2, b: Matrix3x2): Boolean;
+    Lerp(self: Matrix3x2, matrix2: Matrix3x2, amount: Number): Matrix3x2;
+    Hash(self: Matrix3x2): Integer;
+
+    CreateTranslation(_: Matrix3x2, position: Vector2D): Matrix3x2;
+    CreateScale(_: Matrix3x2, scale: Number): Matrix3x2;
+    CreateScale(_: Matrix3x2, scales: Number2): Matrix3x2;
+    CreateScale(_: Matrix3x2, scales: Number2, centerPoint: Point2D): Matrix3x2;
+    CreateRotation(_: Matrix3x2, angle: Angle): Matrix3x2;
+    CreateRotation(_: Matrix3x2, angle: Angle, centerPoint: Point2D): Matrix3x2;
+
+    //==
+    // Matrix4x4
+
+    Determinant(self: Matrix4x4): Number;
+    Transpose(self: Matrix4x4): Matrix4x4;
+    Add(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4;
+    Subtract(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4;
+    Multiply(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4;
+    Multiply(value1: Matrix4x4, f: Number): Matrix4x4;
+    Multiply(f: Number, value1: Matrix4x4): Matrix4x4;
+    Divide(value1: Matrix4x4, f: Number): Matrix4x4;
+    Decompose(self: Matrix4x4): Tuple4<Number3, Quaternion, Vector3D, Boolean>;
+    Lerp(self: Matrix4x4, matrix2: Matrix4x4, amount: Number): Matrix4x4;
+    Invert(self: Matrix4x4): Matrix4x4;
+    CanInvert(self: Matrix4x4): Boolean;
+    Hash(self: Matrix4x4): Integer;
+    Rotation(self: Matrix4x4): Quaternion;
+    Translation(self: Matrix4x4): Vector3D;
+    WithTranslation(self: Matrix4x4, translation: Vector3D): Matrix4x4;
+
+    CreateTranslation(_: Matrix4x4, position: Vector3D): Matrix4x4;
+    CreateScale(_: Matrix4x4, scale: Number): Matrix4x4;
+    CreateScale(_: Matrix4x4, scales: Number3): Matrix4x4;
+    CreateRotationX(_: Matrix4x4, angle: Angle): Matrix4x4;
+    CreateRotationY(_: Matrix4x4, angle: Angle): Matrix4x4;
+    CreateRotationZ(_: Matrix4x4, angle: Angle): Matrix4x4;
+    CreateFromAxisAngle(_: Matrix4x4, axis: Vector3D, angle: Angle): Matrix4x4;
+    CreateFromQuaternion(_: Matrix4x4, quaternion: Quaternion): Matrix4x4;
+    CreateFromYawPitchRoll(_: Matrix4x4, yaw: Angle, pitch: Angle, roll: Angle): Matrix4x4;
+    CreateLookAt(_: Matrix4x4, cameraPosition: Point3D, cameraTarget: Point3D, cameraUpVector: Vector3D): Matrix4x4;
+    CreateWorld(_: Matrix4x4, position: Point3D, forward: Vector3D, up: Vector3D): Matrix4x4;
+    CreatePerspectiveFieldOfView(_: Matrix4x4, fieldOfView: Angle, aspectRatio: Number, nearPlane: Number, farPlane: Number): Matrix4x4;
+    CreatePerspective(_: Matrix4x4, width: Number, height: Number, nearPlaneDistance: Number, farPlaneDistance: Number): Matrix4x4;
+    CreatePerspectiveOffCenter(_: Matrix4x4, left: Number, right: Number, bottom: Number, top: Number, nearPlaneDistance: Number, farPlaneDistance: Number): Matrix4x4;
+    CreateOrthographic(_: Matrix4x4, width: Number, height: Number, zNearPlane: Number, zFarPlane: Number): Matrix4x4;
+    CreateOrthographicOffCenter(_: Matrix4x4, left: Number, right: Number, bottom: Number, top: Number, zNearPlane: Number, zFarPlane: Number): Matrix4x4;
+    CreateReflection(_: Matrix4x4, value: Plane): Matrix4x4;
+    CreateShadow(_: Matrix4x4, lightDirection: Vector3D, plane: Plane): Matrix4x4;
+    CreateBillboard(_: Matrix4x4, objectPosition: Point3D, cameraPosition: Point3D, cameraUpVector: Vector3D, cameraForwardVector: Vector3D): Matrix4x4;
+    CreateConstrainedBillboard(_: Matrix4x4, objectPosition: Point3D, cameraPosition: Point3D, rotateAxis: Vector3D, cameraForwardVector: Vector3D, objectForwardVector: Vector3D): Matrix4x4;
+
+    //==
+    // Quaternion
+
+    Length(self: Quaternion): Number;
+    LengthSquared(self: Quaternion): Number;
+    Normalize(self: Quaternion): Quaternion;
+    Conjugate(self: Quaternion): Quaternion;
+    Inverse(self: Quaternion): Quaternion;
+    Add(a: Quaternion, b: Quaternion): Quaternion;
+    Subtract(a: Quaternion, b: Quaternion): Quaternion;
+    Negative(a: Quaternion): Quaternion;
+    Multiply(a: Quaternion, b: Quaternion): Quaternion;
+    Multiply(a: Quaternion, scalar: Number): Quaternion;
+    Divide(a: Quaternion, b: Quaternion): Quaternion;
+    Concatenate(self: Quaternion, value2: Quaternion): Quaternion;
+    Dot(self: Quaternion, quaternion2: Quaternion): Number;
+    Lerp(self: Quaternion, quaternion2: Quaternion, amount: Number): Quaternion;
+    Slerp(self: Quaternion, quaternion2: Quaternion, amount: Number): Quaternion;
+    Hash(self: Quaternion): Integer;
+
+    CreateFromAxisAngle(_: Quaternion, axis: Vector3D, angle: Angle): Quaternion;
+    CreateFromYawPitchRoll(_: Quaternion, yaw: Angle, pitch: Angle, roll: Angle): Quaternion;
+    CreateFromRotationMatrix(_: Quaternion, matrix: Matrix4x4): Quaternion;
+
+    //==
+    // Plane
+
+    Normalize(self: Plane): Plane;
+    CreateFromVertices(_: Plane, point1: Point3D, point2: Point3D, point3: Point3D): Plane;
+    Dot(self: Plane, value: Number4): Number;
+    DotCoordinate(self: Plane, value: Point3D): Number;
+    DotNormal(self: Plane, value: Vector3D): Number;
+    Transform(self: Plane, rotation: Quaternion): Plane;
+    Transform(self: Plane, matrix: Matrix4x4): Plane;
+    Hash(self: Plane): Integer;
+}

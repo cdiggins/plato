@@ -1,0 +1,64 @@
+//==
+// # TRS transform operations
+//
+// Application, matrix interchange, and the lossy widening/narrowing between a
+// rigid pose and the TRS transforms of `transforms-trs.plato`.
+
+library TransformsTrs
+{
+    //==
+    // TRS transforms — scale, then rotate, then translate. Not closed under
+    // composition (rotating a non-uniform scale leaves the TRS family), so
+    // compose them through their matrix or affine forms.
+
+    // Apply the transform: scale, rotate, then translate.
+    Transform(p: Point2D, t: Transform2D): Point2D
+        => p.PositionVector.Multiply(t.Scale).Transform(t.Rotation).Add(t.Translation).ToPoint;
+
+    // Apply the scale and rotation to a displacement (translation does not act
+    // on vectors).
+    Transform(v: Vector2D, t: Transform2D): Vector2D
+        => v.Multiply(t.Scale).Transform(t.Rotation);
+
+    // The affine matrix of the transform: S * R * T in row-vector order.
+    Matrix3x2(t: Transform2D): Matrix3x2
+        => Matrix3x2.CreateScale(t.Scale).Multiply(t.Rotation.Matrix3x2).Multiply(Matrix3x2.CreateTranslation(t.Translation));
+
+    // A rigid pose widened to a TRS transform with unit scale.
+    Transform2D(pose: Pose2D): Transform2D
+        => (pose.Position.PositionVector, pose.Rotation, Number2(1.0, 1.0));
+
+    // The rigid part of the transform, discarding scale. Named Pose rather
+    // than Pose2D because the conversion is lossy and must stay explicit.
+    Pose(t: Transform2D): Pose2D
+        => (t.Translation.ToPoint, t.Rotation);
+
+    // Apply the transform: scale, rotate, then translate.
+    Transform(p: Point3D, t: Transform3D): Point3D
+        => p.PositionVector.Multiply(t.Scale).Transform(t.Rotation).Add(t.Translation).ToPoint;
+
+    // Apply the scale and rotation to a displacement.
+    Transform(v: Vector3D, t: Transform3D): Vector3D
+        => v.Multiply(t.Scale).Transform(t.Rotation);
+
+    // The homogeneous matrix of the transform: S * R * T in row-vector order.
+    Matrix4x4(t: Transform3D): Matrix4x4
+        => Matrix4x4.CreateScale(t.Scale).Multiply(t.Rotation.Matrix4x4).Multiply(Matrix4x4.CreateTranslation(t.Translation));
+
+    // The TRS decomposition of a matrix. Precondition: the matrix is a
+    // scale-rotate-translate composition (Decompose succeeds); shear and
+    // projection are not representable.
+    Transform3D(m: Matrix4x4): Transform3D {
+        var d = m.Decompose;
+        return (d.X2, d.X1, d.X0);
+    }
+
+    // A rigid pose widened to a TRS transform with unit scale.
+    Transform3D(pose: Pose3D): Transform3D
+        => (pose.Position.PositionVector, pose.Orientation, Number3(1.0, 1.0, 1.0));
+
+    // The rigid part of the transform, discarding scale. Named Pose rather
+    // than Pose3D because the conversion is lossy and must stay explicit.
+    Pose(t: Transform3D): Pose3D
+        => (t.Translation.ToPoint, t.Rotation);
+}

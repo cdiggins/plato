@@ -1,0 +1,147 @@
+//==
+// # IntervalsTransformsBounds — derived functionality for bounding regions
+//
+// Bodies for the `BoundsLike<TPoint, TDelta>` concept declared in
+// `intervals-bounds.concepts.plato`, plus the concrete Bounds2D/Bounds3D
+// operations that the generic surface cannot express.
+//
+// Design note on the concept surface: BoundsLike<TPoint, TDelta> carries a delta
+// type (TDelta = the vector of TPoint, via TPoint: Difference<TDelta>), so
+// Extent/Diagonal are expressible. Contains/Union/Intersection/Clamp still are
+// not: they need component-wise Min/Max (a Lattice) on TPoint, which the point
+// types do not implement.
+
+library IntervalsTransformsBounds
+{
+    //==
+    // BoundsLike<TPoint, TDelta> — an axis-aligned region between corner points
+    // Min and Max, with TDelta the displacement type (TPoint: Difference<TDelta>).
+    // TPoint's instances (Point2D/3D/4D) are Coordinate (=> Interpolatable) and
+    // Difference, but NOT Orderable/Lattice.
+
+    // The center point of the region. Uses P1's MidPoint(Interpolatable).
+    Center(self: BoundsLike<$TPoint, $TDelta>): $TPoint
+        => self.Min.MidPoint(self.Max);
+
+    // The point a fraction `t` of the way along the Min -> Max diagonal. t is
+    // unclamped. For per-axis interpolation use a point-typed parameter once the
+    // concept exposes component access (see the note below).
+    Lerp(self: BoundsLike<$TPoint, $TDelta>, t: Number): $TPoint
+        => self.Min.Lerp(self.Max, t);
+
+    // The displacement spanning the region: Max - Min (the Min -> Max diagonal
+    // vector). Now expressible via TPoint: Difference<TDelta>.
+    Extent(self: BoundsLike<$TPoint, $TDelta>): $TDelta
+        => self.Min.Between(self.Max);
+
+    // The Min -> Max diagonal displacement; a named alias for Extent.
+    Diagonal(self: BoundsLike<$TPoint, $TDelta>): $TDelta
+        => self.Extent;
+
+    // Not derivable GENERICALLY here: Contains(point|bounds), Union, Intersection,
+    // Expand, and corner enumeration need component-wise Min/Max (a Lattice) on
+    // TPoint, which Point2D/Point3D do not implement. They ARE expressible on the
+    // CONCRETE Bounds2D/Bounds3D via per-axis (X/Y/Z) field access, so the mirror of
+    // the IntervalLike surface is written concretely below (items 29, 185). Making the
+    // point types Lattice/Clampable would let it collapse back to one generic body.
+
+    //==
+    // Bounds2D / Bounds3D — concrete AABB operations
+    // (https://en.wikipedia.org/wiki/Axis-aligned_bounding_box; items 29, 185,
+    // 186, 188).
+    // Convention: bounds are INCLUSIVE on Min and Max; an inverted box (Min greater
+    // than Max on any axis) is EMPTY and is the identity for Union — this is what makes
+    // "grow from Empty()" correct (Convention: see CONVENTIONS.md - Bounds). Endpoints
+    // reached via the Number Min/Max lattice ops, exactly as BoundsOfPoints does.
+
+    // The canonical empty box: Min at +infinity, Max at -infinity, so it contains no
+    // point and is absorbed by Union with any real box (item 186, the empty sentinel).
+    Empty(_: Bounds2D): Bounds2D
+        => (Point2D(Number.MaxValue, Number.MaxValue), Point2D(Number.MinValue, Number.MinValue));
+
+    // True when the box is empty (inverted on either axis): no point lies inside.
+    IsEmpty(self: Bounds2D): Boolean
+        => self.Min.X > self.Max.X || self.Min.Y > self.Max.Y;
+
+    // True when `p` lies within the closed box [Min, Max] on every axis (inclusive).
+    Contains(self: Bounds2D, p: Point2D): Boolean
+        => self.Min.X <= p.X && p.X <= self.Max.X
+        && self.Min.Y <= p.Y && p.Y <= self.Max.Y;
+
+    // True when `other` lies entirely within this box (both its corners inside).
+    Contains(self: Bounds2D, other: Bounds2D): Boolean
+        => self.Contains(other.Min) && self.Contains(other.Max);
+
+    // True when the two boxes share any point (closed overlap on every axis).
+    Overlaps(self: Bounds2D, other: Bounds2D): Boolean
+        => self.Min.X <= other.Max.X && other.Min.X <= self.Max.X
+        && self.Min.Y <= other.Max.Y && other.Min.Y <= self.Max.Y;
+
+    // The smallest box containing both operands (component-wise Min of mins, Max of
+    // maxs). Union with Empty() returns the other operand unchanged.
+    Union(self: Bounds2D, other: Bounds2D): Bounds2D
+        => (Point2D(self.Min.X.Min(other.Min.X), self.Min.Y.Min(other.Min.Y)),
+            Point2D(self.Max.X.Max(other.Max.X), self.Max.Y.Max(other.Max.Y)));
+
+    // The box grown to also contain `p` (the grow-from-Empty accumulation step).
+    Union(self: Bounds2D, p: Point2D): Bounds2D
+        => (Point2D(self.Min.X.Min(p.X), self.Min.Y.Min(p.Y)),
+            Point2D(self.Max.X.Max(p.X), self.Max.Y.Max(p.Y)));
+
+    // The box grown outward by `amount` on every side (negative shrinks / can empty it).
+    Expand(self: Bounds2D, amount: Number): Bounds2D
+        => (Point2D(self.Min.X - amount, self.Min.Y - amount),
+            Point2D(self.Max.X + amount, self.Max.Y + amount));
+
+    // The canonical empty box in 3D: Min at +infinity, Max at -infinity (item 186).
+    Empty(_: Bounds3D): Bounds3D
+        => (Point3D(Number.MaxValue, Number.MaxValue, Number.MaxValue),
+            Point3D(Number.MinValue, Number.MinValue, Number.MinValue));
+
+    // True when the box is empty (inverted on any axis).
+    IsEmpty(self: Bounds3D): Boolean
+        => self.Min.X > self.Max.X || self.Min.Y > self.Max.Y || self.Min.Z > self.Max.Z;
+
+    // True when `p` lies within the closed box [Min, Max] on every axis (inclusive).
+    Contains(self: Bounds3D, p: Point3D): Boolean
+        => self.Min.X <= p.X && p.X <= self.Max.X
+        && self.Min.Y <= p.Y && p.Y <= self.Max.Y
+        && self.Min.Z <= p.Z && p.Z <= self.Max.Z;
+
+    // True when `other` lies entirely within this box (both its corners inside).
+    Contains(self: Bounds3D, other: Bounds3D): Boolean
+        => self.Contains(other.Min) && self.Contains(other.Max);
+
+    // True when the two boxes share any point (closed overlap on every axis).
+    Overlaps(self: Bounds3D, other: Bounds3D): Boolean
+        => self.Min.X <= other.Max.X && other.Min.X <= self.Max.X
+        && self.Min.Y <= other.Max.Y && other.Min.Y <= self.Max.Y
+        && self.Min.Z <= other.Max.Z && other.Min.Z <= self.Max.Z;
+
+    // The smallest box containing both operands. Union with Empty() is the identity.
+    Union(self: Bounds3D, other: Bounds3D): Bounds3D
+        => (Point3D(self.Min.X.Min(other.Min.X), self.Min.Y.Min(other.Min.Y), self.Min.Z.Min(other.Min.Z)),
+            Point3D(self.Max.X.Max(other.Max.X), self.Max.Y.Max(other.Max.Y), self.Max.Z.Max(other.Max.Z)));
+
+    // The box grown to also contain `p` (the grow-from-Empty accumulation step).
+    Union(self: Bounds3D, p: Point3D): Bounds3D
+        => (Point3D(self.Min.X.Min(p.X), self.Min.Y.Min(p.Y), self.Min.Z.Min(p.Z)),
+            Point3D(self.Max.X.Max(p.X), self.Max.Y.Max(p.Y), self.Max.Z.Max(p.Z)));
+
+    // The box grown outward by `amount` on every side (negative shrinks / can empty it).
+    Expand(self: Bounds3D, amount: Number): Bounds3D
+        => (Point3D(self.Min.X - amount, self.Min.Y - amount, self.Min.Z - amount),
+            Point3D(self.Max.X + amount, self.Max.Y + amount, self.Max.Z + amount));
+
+    // The circumscribed sphere of the box: centered at the box center with radius
+    // half the Min -> Max diagonal length (item 28, the universal AABB-diagonal
+    // construction). Reuses the BoundsLike Center/Diagonal declared above; Sphere is
+    // declared in spatial-primitives.plato and only constructed here.
+    BoundingSphere(self: Bounds3D): Sphere
+        => Sphere(self.Center, self.Diagonal.Magnitude.Half);
+
+    // Corner enumeration (item 185) is left out: it needs an 8- (or 4-) element array
+    // literal of Point3D/Point2D, and this vocabulary has no array-literal constructor
+    // (arrays arrive as function inputs; see geometry.library.plato BoundsOfPoints).
+    // Add it once a literal exists, or expose corners lazily via an Indexable.
+}

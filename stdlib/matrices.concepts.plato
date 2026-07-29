@@ -1,0 +1,17 @@
+//==
+// # Matrix concept
+//
+// The concept shared by every dense numeric matrix: element access by zero-based
+// row and column, over the Additive and Scalable surface every matrix supports.
+// The implementing types are declared in `matrices.plato`; the concept-generic
+// helpers derived from this concept (Trace, FrobeniusNorm, IsSquare, ...) live in
+// `numeric-structures.library.plato`.
+
+// The family of matrix types: element access by zero-based row and column.
+concept MatrixLike
+    inherits Value, Additive, Scalable
+{
+    RowCount(x: Self): Integer;
+    ColumnCount(x: Self): Integer;
+    ElementAt(x: Self, row: Integer, column: Integer): Number;
+}

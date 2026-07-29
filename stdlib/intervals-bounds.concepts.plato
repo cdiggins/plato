@@ -1,0 +1,31 @@
+//==
+// # Interval and bounds concepts
+//
+// The two concepts behind the one-dimensional spans of `intervals.plato` and the
+// axis-aligned regions of `intervals-bounds.plato`. Their derived bodies live in
+// `intervals-transforms-interval.library.plato` and
+// `intervals-transforms-bounds.library.plato`.
+// Convention: see CONVENTIONS.md - Bounds (inclusive Min/Max; inverted
+// Start>End / Min>Max is the empty encoding and the Union identity).
+
+// A one-dimensional directed span from Start to End. Start may exceed End,
+// which encodes a reversed interval.
+concept IntervalLike<T>
+    where T: Additive, T: Interpolatable, T: Comparable
+    inherits Value
+{
+    Start(x: Self): T;
+    End(x: Self): T;
+}
+
+// An axis-aligned bounding region between component-wise Min and Max corners
+// (https://en.wikipedia.org/wiki/Minimum_bounding_box).
+// TDelta is the displacement type between two corner points (the vector type of
+// TPoint), so Extent/Diagonal can name the Max - Min delta.
+concept BoundsLike<TPoint, TDelta>
+    where TPoint: Difference<TDelta>
+    inherits Value
+{
+    Min(x: Self): TPoint;
+    Max(x: Self): TPoint;
+}

@@ -1,0 +1,40 @@
+//==
+// # Dynamic units
+//
+// Unit systems resolved at runtime rather than by type (file import, UI,
+// scientific data). A `Dimension` is the exponent vector over the seven SI base
+// dimensions (https://en.wikipedia.org/wiki/SI_base_unit), a `UnitOfMeasure`
+// pairs a dimension with an affine conversion to SI, and a `DynamicQuantity` is
+// an amount tagged with such a unit.
+
+// Exponents of the seven SI base dimensions
+// (https://en.wikipedia.org/wiki/Dimensional_analysis). A dimensionless value
+// has all zeros.
+type Dimension
+{
+    LengthPower: Integer;
+    MassPower: Integer;
+    TimePower: Integer;
+    CurrentPower: Integer;
+    TemperaturePower: Integer;
+    AmountPower: Integer;
+    LuminosityPower: Integer;
+}
+
+// A named unit of measure with a conversion to SI: si = value * ScaleToSI + OffsetToSI
+// (https://en.wikipedia.org/wiki/Unit_of_measurement).
+type UnitOfMeasure
+{
+    Name: String;
+    Symbol: String;
+    Dimension: Dimension;
+    ScaleToSI: Number;
+    OffsetToSI: Number;
+}
+
+// A runtime-typed quantity: an amount tagged with a unit value.
+type DynamicQuantity
+{
+    Amount: Number;
+    Unit: UnitOfMeasure;
+}

@@ -4,22 +4,14 @@
 // Dense numeric matrices (https://en.wikipedia.org/wiki/Matrix_(mathematics))
 // stored as row vectors: RowN holds row N, so element (r, c) is component c of
 // row r. Fixed sizes cover graphics and geometry; MatrixN and Tensor cover
-// scientific computing.
+// scientific computing. The MatrixLike concept they implement is declared in
+// `matrices.concepts.plato`.
 // Convention: see CONVENTIONS.md - Matrices (row-vector multiplication, v' = v M).
 // Discoverability banner (item 473): the concrete operations for the fixed-size
 // matrices (Determinant, Invert, Multiply, Transform, Lerp, ...) are declared on
 // the intrinsic hub in `intrinsics.plato`, not restated here; concept-generic
 // helpers (Trace, FrobeniusNorm, IsSquare, ...) live in
 // `numeric-structures.library.plato`.
-
-// The family of matrix types: element access by zero-based row and column.
-concept MatrixLike
-    inherits Value, Additive, Scalable
-{
-    RowCount(x: Self): Integer;
-    ColumnCount(x: Self): Integer;
-    ElementAt(x: Self, row: Integer, column: Integer): Number;
-}
 
 // A 2x2 matrix: 2D linear maps (rotation, scale, shear).
 type Matrix2x2
@@ -38,7 +30,8 @@ type Matrix3x3
     Row3: Number3;
 }
 
-// A 4x4 matrix: 3D homogeneous transforms and projections.
+// A 4x4 matrix: 3D homogeneous transforms and projections
+// (https://en.wikipedia.org/wiki/Transformation_matrix).
 type Matrix4x4
     implements MatrixLike, Multiplicative
 {
@@ -69,7 +62,8 @@ type Matrix4x3
     Row4: Number3;
 }
 
-// A symmetric 3x3 matrix stored as its six unique elements: inertia tensors,
+// A symmetric 3x3 matrix stored as its six unique elements
+// (https://en.wikipedia.org/wiki/Symmetric_matrix): inertia tensors,
 // covariance, stress and strain states.
 type SymmetricMatrix3x3
     implements Value

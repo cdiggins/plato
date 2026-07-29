@@ -1,0 +1,193 @@
+//==
+// # NumericStructuresComponents — the Vector component surface
+//
+// The map/zip/fold combinators over a vector's components, the reductions built
+// on them (SumComponents, Magnitude, Dot), the distinguished elements derived
+// from Broadcast, and the per-concrete-type FromComponents/Broadcast primitives
+// that close the loop. Everything here is written once and applies to every
+// Vector implementor.
+
+library NumericStructuresComponents
+{
+    //==
+    // # Vector — component-wise lifting
+    //
+    // Vector declares FromComponents and Broadcast and inherits Count/At from
+    // Indexable<Number>, so a vector can be both read as and rebuilt from an
+    // Array<Number>. That closes the loop: the Array intrinsics (Map, Zip,
+    // Reduce, All, Any) lift straight onto vectors, and every derived body below
+    // is written once instead of once per concrete type. Successor to v1's
+    // IArrayLike<T> combinators, without the extra taxonomy.
+    //
+    // As elsewhere in these libraries, the helpers return the bare concept type
+    // Vector rather than the concrete implementing type.
+
+    // The components of self as an Array<Number>, in index order.
+    ComponentArray(self: Vector): Array<Number>
+        => self.Count.Range.Map(i => self.At(i));
+
+    // A vector of the same type with f applied to each component.
+    MapComponents(self: Vector, f: Function1<Number, Number>): Vector
+        => self.FromComponents(self.ComponentArray.Map(f));
+
+    // A vector whose i-th component is f applied to the i-th components of a and
+    // b. Precondition: a and b have the same arity.
+    ZipComponents(a: Vector, b: Vector, f: Function2<Number, Number, Number>): Vector
+        => a.FromComponents(a.ComponentArray.Zip(b.ComponentArray, f));
+
+    // The three-way component-wise zip. Precondition: equal arities.
+    ZipComponents(a: Vector, b: Vector, c: Vector, f: Function3<Number, Number, Number, Number>): Vector
+        => a.FromComponents(a.ComponentArray.Zip(b.ComponentArray, c.ComponentArray, f));
+
+    // Folds the components left to right, starting from initial.
+    ReduceComponents(self: Vector, initial: Number, f: Function2<Number, Number, Number>): Number
+        => self.ComponentArray.Reduce(initial, f);
+
+    // True when every component satisfies the predicate.
+    AllComponents(self: Vector, predicate: Function1<Number, Boolean>): Boolean
+        => self.ComponentArray.All(predicate);
+
+    // True when at least one component satisfies the predicate.
+    AnyComponent(self: Vector, predicate: Function1<Number, Boolean>): Boolean
+        => self.ComponentArray.Any(predicate);
+
+    // True when the paired components of a and b all satisfy the predicate.
+    AllZipComponents(a: Vector, b: Vector, f: Function2<Number, Number, Boolean>): Boolean
+        => a.ComponentArray.Zip(b.ComponentArray, f).All(x => x);
+
+    // True when the tripled components of a, b and c all satisfy the predicate.
+    AllZipComponents(a: Vector, b: Vector, c: Vector, f: Function3<Number, Number, Number, Boolean>): Boolean
+        => a.ComponentArray.Zip(b.ComponentArray, c.ComponentArray, f).All(x => x);
+
+    // True when at least one paired component of a and b satisfies the predicate.
+    AnyZipComponents(a: Vector, b: Vector, f: Function2<Number, Number, Boolean>): Boolean
+        => a.ComponentArray.Zip(b.ComponentArray, f).Any(x => x);
+
+    // True when at least one tripled component of a, b and c satisfies the predicate.
+    AnyZipComponents(a: Vector, b: Vector, c: Vector, f: Function3<Number, Number, Number, Boolean>): Boolean
+        => a.ComponentArray.Zip(b.ComponentArray, c.ComponentArray, f).Any(x => x);
+
+    //==
+    // # Vector — component reductions
+
+    // The sum of all components.
+    SumComponents(self: Vector): Number
+        => self.ReduceComponents(0.0, (acc, x) => acc + x);
+
+    // The sum of the squares of all components; the squared Euclidean norm.
+    SumSqrComponents(self: Vector): Number
+        => self.ReduceComponents(0.0, (acc, x) => acc + x * x);
+
+    // The smallest component. Precondition: the vector has at least one component.
+    MinComponent(self: Vector): Number
+        => self.ReduceComponents(self.At(0), (acc, x) => acc.Min(x));
+
+    // The largest component. Precondition: the vector has at least one component.
+    MaxComponent(self: Vector): Number
+        => self.ReduceComponents(self.At(0), (acc, x) => acc.Max(x));
+
+    // The arithmetic mean of the components. Precondition: non-empty.
+    AvgComponent(self: Vector): Number
+        => self.SumComponents / self.Count.ToNumber;
+
+    // The Euclidean length (the Normed member, derived from the components).
+    Magnitude(self: Vector): Number
+        => self.MagnitudeSquared.Sqrt;
+
+    // The squared Euclidean length; avoids the square root.
+    MagnitudeSquared(self: Vector): Number
+        => self.SumSqrComponents;
+
+    // The dot product: the sum of the products of corresponding components.
+    // Precondition: a and b have the same arity.
+    Dot(a: Vector, b: Vector): Number
+        => a.ZipComponents(b, (x, y) => x * y).SumComponents;
+
+    //==
+    // # Vector — distinguished elements
+    //
+    // The NumericalLimits surface follows from Broadcast alone: each element is
+    // the corresponding Number constant in every component.
+
+    // The vector with every component zero (the additive identity).
+    Zero(self: Vector): Vector
+        => self.Broadcast(0.0);
+
+    // The vector with every component one.
+    One(self: Vector): Vector
+        => self.Broadcast(1.0);
+
+    // The vector with every component at the smallest representable Number.
+    MinValue(self: Vector): Vector
+        => self.Broadcast(Number.MinValue);
+
+    // The vector with every component at the largest representable Number.
+    MaxValue(self: Vector): Vector
+        => self.Broadcast(Number.MaxValue);
+
+    //==
+    // # Vector construction, per concrete type
+    //
+    // FromComponents and Broadcast are the only primitives the generic bodies
+    // above need; each implementing type supplies them once here through its
+    // synthesized constructor. Everything else in this section is derived.
+
+    // The 2-tuple built from the first two entries of xs.
+    FromComponents(_: Number2, xs: Array<Number>): Number2
+        => Number2(xs.At(0), xs.At(1));
+
+    // The 2-tuple with both components set to x.
+    Broadcast(_: Number2, x: Number): Number2
+        => Number2(x, x);
+
+    // The 3-tuple built from the first three entries of xs.
+    FromComponents(_: Number3, xs: Array<Number>): Number3
+        => Number3(xs.At(0), xs.At(1), xs.At(2));
+
+    // The 3-tuple with every component set to x.
+    Broadcast(_: Number3, x: Number): Number3
+        => Number3(x, x, x);
+
+    // The 4-tuple built from the first four entries of xs.
+    FromComponents(_: Number4, xs: Array<Number>): Number4
+        => Number4(xs.At(0), xs.At(1), xs.At(2), xs.At(3));
+
+    // The 4-tuple with every component set to x.
+    Broadcast(_: Number4, x: Number): Number4
+        => Number4(x, x, x, x);
+
+    // The 8-lane tuple built from the first eight entries of xs.
+    FromComponents(_: Number8, xs: Array<Number>): Number8
+        => Number8(xs.At(0), xs.At(1), xs.At(2), xs.At(3),
+                   xs.At(4), xs.At(5), xs.At(6), xs.At(7));
+
+    // The 8-lane tuple with every lane set to x.
+    Broadcast(_: Number8, x: Number): Number8
+        => Number8(x, x, x, x, x, x, x, x);
+
+    // The 2D displacement built from the first two entries of xs.
+    FromComponents(_: Vector2D, xs: Array<Number>): Vector2D
+        => Vector2D(xs.At(0), xs.At(1));
+
+    // The 2D displacement with both components set to x.
+    Broadcast(_: Vector2D, x: Number): Vector2D
+        => Vector2D(x, x);
+
+    // The 3D displacement built from the first three entries of xs.
+    FromComponents(_: Vector3D, xs: Array<Number>): Vector3D
+        => Vector3D(xs.At(0), xs.At(1), xs.At(2));
+
+    // The 3D displacement with every component set to x.
+    Broadcast(_: Vector3D, x: Number): Vector3D
+        => Vector3D(x, x, x);
+
+    // The N-dimensional vector holding exactly the given components; the arity
+    // is the length of xs.
+    FromComponents(_: VectorN, xs: Array<Number>): VectorN
+        => VectorN(xs);
+
+    // The N-dimensional vector of the same arity as self with every component
+    // set to x.
+    Broadcast(self: VectorN, x: Number): VectorN
+        => VectorN(self.Components.Count.Repeat(x));
+}

@@ -1,0 +1,81 @@
+//==
+// # Transform identity statics
+//
+// The do-nothing transform of every representation in the transform family,
+// gathered in one place so the identity of a rotation, a pose, a TRS transform,
+// a matrix, an affine map, or a projective map is found by the same lookup.
+
+library TransformsIdentities
+{
+    //==
+    // Identity statics — the do-nothing transform of each representation,
+    // reachable as `Type.Identity` via the `_: Type` static convention.
+
+    // The zero rotation.
+    Identity(_: Rotation2D): Rotation2D
+        => Rotation2D(0.0.Angle);
+
+    // The identity rotor (scalar 1, no bivector part).
+    Identity(_: Rotor2D): Rotor2D
+        => (1.0, 0.0);
+
+    // The identity quaternion (0, 0, 0, 1).
+    Identity(_: Quaternion): Quaternion
+        => (0.0, 0.0, 0.0, 1.0);
+
+    // The identity rotor (scalar 1, no bivector part).
+    Identity(_: Rotor3D): Rotor3D
+        => (1.0, Bivector3D(0.0, 0.0, 0.0));
+
+    // The identity motor (identity rotation, zero translation).
+    Identity(_: Motor3D): Motor3D
+        => (Quaternion.Identity, Quaternion(0.0, 0.0, 0.0, 0.0));
+
+    // The pose at the origin with no rotation.
+    Identity(_: Pose2D): Pose2D
+        => (Point2D(0.0, 0.0), Rotation2D.Identity);
+
+    // The pose at the origin with no rotation.
+    Identity(_: Pose3D): Pose3D
+        => (Point3D(0.0, 0.0, 0.0), Quaternion.Identity);
+
+    // The TRS transform that leaves everything unchanged.
+    Identity(_: Transform2D): Transform2D
+        => (Vector2D(0.0, 0.0), Rotation2D.Identity, Number2(1.0, 1.0));
+
+    // The TRS transform that leaves everything unchanged.
+    Identity(_: Transform3D): Transform3D
+        => (Vector3D(0.0, 0.0, 0.0), Quaternion.Identity, Number3(1.0, 1.0, 1.0));
+
+    // The identity 2D affine map.
+    Identity(_: Matrix3x2): Matrix3x2
+        => (Number2(1.0, 0.0), Number2(0.0, 1.0), Number2(0.0, 0.0));
+
+    // The identity 3x3 matrix.
+    Identity(_: Matrix3x3): Matrix3x3
+        => (Number3(1.0, 0.0, 0.0), Number3(0.0, 1.0, 0.0), Number3(0.0, 0.0, 1.0));
+
+    // The identity 3D affine map.
+    Identity(_: Matrix4x3): Matrix4x3
+        => (Number3(1.0, 0.0, 0.0), Number3(0.0, 1.0, 0.0), Number3(0.0, 0.0, 1.0), Number3(0.0, 0.0, 0.0));
+
+    // The identity 4x4 matrix.
+    Identity(_: Matrix4x4): Matrix4x4
+        => (Number4(1.0, 0.0, 0.0, 0.0), Number4(0.0, 1.0, 0.0, 0.0), Number4(0.0, 0.0, 1.0, 0.0), Number4(0.0, 0.0, 0.0, 1.0));
+
+    // The identity 2D affine transform.
+    Identity(_: AffineTransform2D): AffineTransform2D
+        => AffineTransform2D(Matrix3x2.Identity);
+
+    // The identity 3D affine transform.
+    Identity(_: AffineTransform3D): AffineTransform3D
+        => AffineTransform3D(Matrix4x3.Identity);
+
+    // The identity 2D projective transform.
+    Identity(_: ProjectiveTransform2D): ProjectiveTransform2D
+        => ProjectiveTransform2D(Matrix3x3.Identity);
+
+    // The identity 3D projective transform.
+    Identity(_: ProjectiveTransform3D): ProjectiveTransform3D
+        => ProjectiveTransform3D(Matrix4x4.Identity);
+}

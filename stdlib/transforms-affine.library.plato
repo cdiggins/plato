@@ -1,0 +1,177 @@
+//==
+// # Affine and projective transform operations
+//
+// Application, composition, inversion, and the widening conversions into the
+// affine and projective transforms of `transforms-affine.plato` — the common
+// ground where transforms of different kinds are composed.
+
+library TransformsAffine
+{
+    //==
+    // Affine transforms — the general linear-plus-translation maps; the common
+    // ground every 2D/3D transform above converts into, and the right place to
+    // compose mixed transform kinds.
+    // https://en.wikipedia.org/wiki/Affine_transformation
+
+    // Apply the affine map to a point (includes the translation row).
+    Transform(p: Point2D, a: AffineTransform2D): Point2D
+        => p.PositionVector.Transform(a.Matrix).ToPoint;
+
+    // Apply the linear part to a displacement (translation does not act on
+    // vectors).
+    Transform(v: Vector2D, a: AffineTransform2D): Vector2D
+        => v.TransformNormal(a.Matrix);
+
+    // The affine transform that applies `first`, then `second` (row-vector
+    // matrix product).
+    Compose(first: AffineTransform2D, second: AffineTransform2D): AffineTransform2D
+        => AffineTransform2D(first.Matrix.Multiply(second.Matrix));
+
+    // Alias for Compose, enabling the * operator: a * b applies a first.
+    Multiply(a: AffineTransform2D, b: AffineTransform2D): AffineTransform2D
+        => a.Compose(b);
+
+    // The inverse map. Precondition: CanInvert (a non-zero determinant).
+    Inverse(a: AffineTransform2D): AffineTransform2D
+        => AffineTransform2D(a.Matrix.Invert.X0);
+
+    // True when the affine map is invertible (non-zero determinant).
+    CanInvert(a: AffineTransform2D): Boolean
+        => a.Matrix.Invert.X1;
+
+    // Any TRS transform is affine.
+    AffineTransform2D(t: Transform2D): AffineTransform2D
+        => AffineTransform2D(t.Matrix3x2);
+
+    // Any rigid pose is affine.
+    AffineTransform2D(pose: Pose2D): AffineTransform2D
+        => AffineTransform2D(pose.Matrix3x2);
+
+    // Any plane rotation is affine.
+    AffineTransform2D(r: Rotation2D): AffineTransform2D
+        => AffineTransform2D(r.Matrix3x2);
+
+    // The 3D affine matrix widened to homogeneous form (fourth column 0,0,0,1).
+    Matrix4x4(a: AffineTransform3D): Matrix4x4 {
+        var m = a.Matrix;
+        return (Number4(m.Row1.X, m.Row1.Y, m.Row1.Z, 0.0),
+                Number4(m.Row2.X, m.Row2.Y, m.Row2.Z, 0.0),
+                Number4(m.Row3.X, m.Row3.Y, m.Row3.Z, 0.0),
+                Number4(m.Row4.X, m.Row4.Y, m.Row4.Z, 1.0));
+    }
+
+    // The affine part of a homogeneous matrix. Precondition: the matrix has no
+    // projective component (its fourth column is 0, 0, 0, 1).
+    AffineTransform3D(m: Matrix4x4): AffineTransform3D
+        => AffineTransform3D(Matrix4x3(
+            Number3(m.Row1.X, m.Row1.Y, m.Row1.Z),
+            Number3(m.Row2.X, m.Row2.Y, m.Row2.Z),
+            Number3(m.Row3.X, m.Row3.Y, m.Row3.Z),
+            Number3(m.Row4.X, m.Row4.Y, m.Row4.Z)));
+
+    // Apply the affine map to a point: row-vector product
+    // p' = x Row1 + y Row2 + z Row3 + Row4.
+    Transform(p: Point3D, a: AffineTransform3D): Point3D {
+        var m = a.Matrix;
+        var v = m.Row1.Multiply(p.X).Add(m.Row2.Multiply(p.Y)).Add(m.Row3.Multiply(p.Z)).Add(m.Row4);
+        return (v.X, v.Y, v.Z);
+    }
+
+    // Apply the linear part to a displacement (the translation row is skipped).
+    Transform(v: Vector3D, a: AffineTransform3D): Vector3D {
+        var m = a.Matrix;
+        var r = m.Row1.Multiply(v.X).Add(m.Row2.Multiply(v.Y)).Add(m.Row3.Multiply(v.Z));
+        return (r.X, r.Y, r.Z);
+    }
+
+    // The affine transform that applies `first`, then `second`, computed
+    // through the homogeneous forms.
+    Compose(first: AffineTransform3D, second: AffineTransform3D): AffineTransform3D
+        => first.Matrix4x4.Multiply(second.Matrix4x4).AffineTransform3D;
+
+    // Alias for Compose, enabling the * operator: a * b applies a first.
+    Multiply(a: AffineTransform3D, b: AffineTransform3D): AffineTransform3D
+        => a.Compose(b);
+
+    // The inverse map. Precondition: CanInvert (a non-zero determinant).
+    Inverse(a: AffineTransform3D): AffineTransform3D
+        => a.Matrix4x4.Invert.AffineTransform3D;
+
+    // True when the affine map is invertible (non-zero determinant).
+    CanInvert(a: AffineTransform3D): Boolean
+        => a.Matrix4x4.CanInvert;
+
+    // Any TRS transform is affine.
+    AffineTransform3D(t: Transform3D): AffineTransform3D
+        => t.Matrix4x4.AffineTransform3D;
+
+    // Any rigid pose is affine.
+    AffineTransform3D(pose: Pose3D): AffineTransform3D
+        => pose.Matrix4x4.AffineTransform3D;
+
+    // Any quaternion rotation is affine.
+    AffineTransform3D(q: Quaternion): AffineTransform3D
+        => q.Matrix4x4.AffineTransform3D;
+
+    //==
+    // Projective transforms — full homographies on homogeneous coordinates;
+    // the widest transform family here, closed under composition.
+    // https://en.wikipedia.org/wiki/Homography
+
+    // The product of two 3x3 matrices (row times column). Also discharges the
+    // Multiplicative obligation on Matrix3x3.
+    Multiply(a: Matrix3x3, b: Matrix3x3): Matrix3x3 {
+        var c1 = Number3(b.Row1.X, b.Row2.X, b.Row3.X);
+        var c2 = Number3(b.Row1.Y, b.Row2.Y, b.Row3.Y);
+        var c3 = Number3(b.Row1.Z, b.Row2.Z, b.Row3.Z);
+        return (Number3(a.Row1.Dot(c1), a.Row1.Dot(c2), a.Row1.Dot(c3)),
+                Number3(a.Row2.Dot(c1), a.Row2.Dot(c2), a.Row2.Dot(c3)),
+                Number3(a.Row3.Dot(c1), a.Row3.Dot(c2), a.Row3.Dot(c3)));
+    }
+
+    // Any 2D affine map is projective (third column becomes 0, 0, 1).
+    ProjectiveTransform2D(a: AffineTransform2D): ProjectiveTransform2D {
+        var m = a.Matrix;
+        return ProjectiveTransform2D(Matrix3x3(
+            Number3(m.Row1.X, m.Row1.Y, 0.0),
+            Number3(m.Row2.X, m.Row2.Y, 0.0),
+            Number3(m.Row3.X, m.Row3.Y, 1.0)));
+    }
+
+    // Apply the homography: lift to homogeneous coordinates, map, and divide
+    // by the resulting weight. Precondition: the point is not mapped onto the
+    // line at infinity (weight is non-zero).
+    Transform(p: Point2D, t: ProjectiveTransform2D): Point2D {
+        var m = t.Matrix;
+        var v = m.Row1.Multiply(p.X).Add(m.Row2.Multiply(p.Y)).Add(m.Row3);
+        return (v.X / v.Z, v.Y / v.Z);
+    }
+
+    // The homography that applies `first`, then `second` (row-vector product).
+    Compose(first: ProjectiveTransform2D, second: ProjectiveTransform2D): ProjectiveTransform2D
+        => ProjectiveTransform2D(first.Matrix.Multiply(second.Matrix));
+
+    // Alias for Compose, enabling the * operator: a * b applies a first.
+    Multiply(a: ProjectiveTransform2D, b: ProjectiveTransform2D): ProjectiveTransform2D
+        => a.Compose(b);
+
+    // Any 3D affine map is projective.
+    ProjectiveTransform3D(a: AffineTransform3D): ProjectiveTransform3D
+        => ProjectiveTransform3D(a.Matrix4x4);
+
+    // Apply the homography: lift to homogeneous coordinates, map, and divide
+    // by the resulting weight. Precondition: the point is not mapped onto the
+    // plane at infinity (weight is non-zero).
+    Transform(p: Point3D, t: ProjectiveTransform3D): Point3D {
+        var v = Number4(p.X, p.Y, p.Z, 1.0).Transform(t.Matrix);
+        return (v.X / v.W, v.Y / v.W, v.Z / v.W);
+    }
+
+    // The homography that applies `first`, then `second` (row-vector product).
+    Compose(first: ProjectiveTransform3D, second: ProjectiveTransform3D): ProjectiveTransform3D
+        => ProjectiveTransform3D(first.Matrix.Multiply(second.Matrix));
+
+    // Alias for Compose, enabling the * operator: a * b applies a first.
+    Multiply(a: ProjectiveTransform3D, b: ProjectiveTransform3D): ProjectiveTransform3D
+        => a.Compose(b);
+}

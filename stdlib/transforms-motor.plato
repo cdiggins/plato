@@ -1,0 +1,19 @@
+//==
+// # Motors
+//
+// A rigid motion in geometric-algebra form, stored as a dual quaternion. The
+// motor is the representation that interpolates a rotation and a translation
+// together rather than independently, and composes by a single product. The
+// operations live in `transforms-motor.library.plato`.
+
+// A rigid motion (rotation plus translation) as a geometric-algebra motor,
+// stored in dual-quaternion form: Real is the rotation, Dual encodes the
+// translation as Dual = 0.5 * t * Real, where t is the translation as a pure
+// quaternion. Unit dual quaternions are isomorphic to the motors of 3D PGA.
+// https://en.wikipedia.org/wiki/Dual_quaternion
+type Motor3D
+    implements Value, Multiplicative
+{
+    Real: Quaternion;
+    Dual: Quaternion;
+}

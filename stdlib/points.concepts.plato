@@ -1,0 +1,15 @@
+//==
+// # Coordinate concept
+//
+// The marker concept for every point-like type: a position in some space, as
+// opposed to the displacements of `vectors-geometric.plato`. The implementing
+// types are declared in `points.plato`, `points-curvilinear.plato`, and
+// `points-parametric.plato`; the derived bodies live in
+// `numeric-structures.library.plato`.
+
+// A position in some coordinate space
+// (https://en.wikipedia.org/wiki/Coordinate_system). Marker concept for all
+// point-like types.
+concept Coordinate
+    inherits Value, Equatable, Interpolatable
+{ }

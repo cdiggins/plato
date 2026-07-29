@@ -1,0 +1,88 @@
+//==
+// # NumericStructuresCoordinate — derived functions for point-like types
+//
+// The per-concrete-type Euclidean distances that stand in for a generic metric
+// on the Coordinate concept (`points.concepts.plato`), plus the barycentric
+// evaluation and normalization test for `points-parametric.plato`.
+
+library NumericStructuresCoordinate
+{
+    //==
+    // # Coordinate
+    //
+    // A position in some space (Value, Equatable, Interpolatable). Coordinate is a
+    // marker concept whose only operation is Lerp, and CoreAlgebra already ships
+    // MidPoint, LerpClamped and SmoothLerp on Interpolatable — which Coordinate
+    // inherits — so every interpolation convenience it can support already exists
+    // upstream (SmoothLerp landed at core-algebra.library.plato) and no
+    // Coordinate-specific body is added here.
+    //
+    // TODO(concept-gap): a generic Distance / Between-two-points delta over
+    // Coordinate is out of reach, and NOT via a cheap concept extension. All five
+    // implementors (Point2D, Point3D, PointN, UvCoordinate, UvwCoordinate in
+    // points.plato) DO implement Difference<TDelta> — but each with a DIFFERENT
+    // delta type (Vector2D / Vector3D / VectorN). So Coordinate cannot inherit
+    // Difference<TDelta> without gaining a type parameter, which would cascade to
+    // every bare `Coordinate` mention tree-wide (a generic-arity change, not merely
+    // an added obligation). MetricSpace is likewise not inherited, and adding it
+    // would impose a concrete Distance obligation on all five types. Both are too
+    // invasive to justify here; the delta and distance stay on the concrete point
+    // types via their individual Difference<TDelta>.
+    //
+    // So the Euclidean distance is provided per concrete point type below, each as
+    // `Between(a, b).Magnitude` over that type's own Difference delta. This is the
+    // sanctioned resolution of the "points lack MetricSpace" lessons (items 257,
+    // 295): concrete functions rather than a concept obligation that would force a
+    // generic-arity change on Coordinate. DistanceSquared mirrors Distance without
+    // the square root, for radius and nearest-neighbour comparisons.
+
+    // The Euclidean distance between two 2D positions.
+    Distance(a: Point2D, b: Point2D): Number
+        => a.Between(b).Magnitude;
+
+    // The squared Euclidean distance between two 2D positions; avoids the square root.
+    DistanceSquared(a: Point2D, b: Point2D): Number
+        => a.Between(b).MagnitudeSquared;
+
+    // The Euclidean distance between two 3D positions.
+    Distance(a: Point3D, b: Point3D): Number
+        => a.Between(b).Magnitude;
+
+    // The squared Euclidean distance between two 3D positions; avoids the square root.
+    DistanceSquared(a: Point3D, b: Point3D): Number
+        => a.Between(b).MagnitudeSquared;
+
+    // The Euclidean distance between two N-dimensional positions.
+    // Precondition: a and b have the same arity.
+    Distance(a: PointN, b: PointN): Number
+        => a.Between(b).Magnitude;
+
+    // The squared Euclidean distance between two N-dimensional positions.
+    // Precondition: a and b have the same arity.
+    DistanceSquared(a: PointN, b: PointN): Number
+        => a.Between(b).MagnitudeSquared;
+
+    //==
+    // # BarycentricCoordinate (barycentric / affine-combination lessons)
+    //
+    // Vertex binding U -> A, V -> B, W -> C (points.plato). Evaluate takes the
+    // three triangle vertices explicitly, so it lives in points territory rather
+    // than needing a Triangle type. Computed as A + V*(B - A) + W*(C - A), which
+    // equals U*A + V*B + W*C when U + V + W = 1 and stays well-defined regardless.
+
+    // The point at these weights on the triangle (a, b, c): the affine combination
+    // U*a + V*b + W*c on the support plane. Vertex binding U->a, V->b, W->c.
+    Evaluate(self: BarycentricCoordinate, a: Point2D, b: Point2D, c: Point2D): Point2D
+        => a.Add(a.Between(b) * self.V + a.Between(c) * self.W);
+
+    // The point at these weights on the triangle (a, b, c): the affine combination
+    // U*a + V*b + W*c on the support plane. Vertex binding U->a, V->b, W->c.
+    Evaluate(self: BarycentricCoordinate, a: Point3D, b: Point3D, c: Point3D): Point3D
+        => a.Add(a.Between(b) * self.V + a.Between(c) * self.W);
+
+    // True when the weights sum to one within tolerance (a valid affine
+    // combination identifying a point on the triangle's support plane). Does not
+    // test the convexity condition U, V, W >= 0 (see the type doc comment).
+    IsNormalized(self: BarycentricCoordinate, tolerance: Number): Boolean
+        => (self.U + self.V + self.W).AlmostEqual(1.0, tolerance);
+}

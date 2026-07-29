@@ -1,0 +1,232 @@
+//==
+// # Rotation operations and conversions
+//
+// Application, composition, inversion, and interchange for every rotation
+// representation declared in `rotations.plato` — Rotation2D, Rotor2D,
+// Quaternion, AxisAngle, EulerAngles, Rotor3D — together with their embeddings
+// into the affine and homogeneous matrices. Quaternion is the hub: every 3D
+// representation converts to and from it, so all pairs compose through it.
+
+library TransformsRotations
+{
+    //==
+    // 2D rotations — Rotation2D is the angle form, Rotor2D the geometric-algebra
+    // form (a unit complex number built from the half angle).
+    // https://en.wikipedia.org/wiki/Rotation_matrix
+
+    // Composition of two plane rotations: angles add (2D rotations commute).
+    Multiply(a: Rotation2D, b: Rotation2D): Rotation2D
+        => Rotation2D(a.Angle + b.Angle);
+
+    // The opposite rotation.
+    Inverse(a: Rotation2D): Rotation2D
+        => Rotation2D(-a.Angle);
+
+    // Linear interpolation of the stored angles; t is unclamped. Takes the
+    // stored-angle path, not the shortest arc: interpolate raw angles when the
+    // operands differ by more than a half turn.
+    Lerp(a: Rotation2D, b: Rotation2D, t: Number): Rotation2D
+        => Rotation2D(a.Angle + (b.Angle - a.Angle) * t);
+
+    // Rotate a displacement counter-clockwise by the rotation's angle:
+    // (x cos - y sin, x sin + y cos).
+    Transform(v: Vector2D, r: Rotation2D): Vector2D {
+        var c = r.Angle.Cos;
+        var s = r.Angle.Sin;
+        return (v.X * c - v.Y * s, v.X * s + v.Y * c);
+    }
+
+    // Rotate a point about the origin.
+    Transform(p: Point2D, r: Rotation2D): Point2D
+        => p.PositionVector.Transform(r).ToPoint;
+
+    // Rotate a unit direction.
+    Transform(d: Direction2D, r: Rotation2D): Direction2D
+        => Direction2D(d.Vector.Transform(r));
+
+    // The rotor of a plane rotation: R = cos(a/2) + sin(a/2) e12.
+    // https://en.wikipedia.org/wiki/Rotor_(mathematics)
+    Rotor2D(r: Rotation2D): Rotor2D {
+        var h = r.Angle * 0.5;
+        return (h.Cos, h.Sin);
+    }
+
+    // The angle form of a rotor (twice the half angle stored in the rotor).
+    Rotation2D(r: Rotor2D): Rotation2D
+        => Rotation2D(r.XY.Atan2(r.Scalar) * 2.0);
+
+    // The geometric product of two rotors (complex multiplication); the result
+    // rotates by the sum of the operands' angles.
+    Multiply(a: Rotor2D, b: Rotor2D): Rotor2D
+        => (a.Scalar * b.Scalar - a.XY * b.XY, a.Scalar * b.XY + a.XY * b.Scalar);
+
+    // The reverse of the rotor: the opposite rotation (for a unit rotor the
+    // reverse is the inverse).
+    Inverse(r: Rotor2D): Rotor2D
+        => (r.Scalar, -r.XY);
+
+    // Rescale to unit magnitude, restoring the rotor invariant after repeated
+    // products. Precondition: the rotor is not the zero element.
+    Normalize(r: Rotor2D): Rotor2D {
+        var m = (r.Scalar.Square + r.XY.Square).Sqrt;
+        return (r.Scalar / m, r.XY / m);
+    }
+
+    // Apply the rotor's sandwich product R v ~R: a rotation by the full angle,
+    // via the double-angle identities cos a = s^2 - b^2, sin a = 2 s b.
+    Transform(v: Vector2D, r: Rotor2D): Vector2D {
+        var c = r.Scalar.Square - r.XY.Square;
+        var s = 2.0 * r.Scalar * r.XY;
+        return (v.X * c - v.Y * s, v.X * s + v.Y * c);
+    }
+
+    // Rotate a point about the origin with a rotor.
+    Transform(p: Point2D, r: Rotor2D): Point2D
+        => p.PositionVector.Transform(r).ToPoint;
+
+    //==
+    // 3D rotation conversions — Quaternion is the hub: every other rotation
+    // representation converts to and from it, so all pairs compose through it.
+    // https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+
+    // The elemental rotation about the world X axis.
+    CreateRotationX(_: Quaternion, angle: Angle): Quaternion
+        => Quaternion.CreateFromAxisAngle(Vector3D(1.0, 0.0, 0.0), angle);
+
+    // The elemental rotation about the world Y axis.
+    CreateRotationY(_: Quaternion, angle: Angle): Quaternion
+        => Quaternion.CreateFromAxisAngle(Vector3D(0.0, 1.0, 0.0), angle);
+
+    // The elemental rotation about the world Z axis.
+    CreateRotationZ(_: Quaternion, angle: Angle): Quaternion
+        => Quaternion.CreateFromAxisAngle(Vector3D(0.0, 0.0, 1.0), angle);
+
+    // The quaternion of an axis-angle rotation.
+    // https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation
+    Quaternion(aa: AxisAngle): Quaternion
+        => Quaternion.CreateFromAxisAngle(aa.Axis.Vector, aa.Angle);
+
+    // The axis-angle form of a quaternion: angle = 2 acos(w), axis = the
+    // normalized vector part. Near the identity the axis is arbitrary and the
+    // world X axis is returned.
+    AxisAngle(q: Quaternion): AxisAngle {
+        var n = q.Normalize;
+        var s = (1.0 - n.W.Square).Max(0.0).Sqrt;
+        var axis = s < 0.000001
+            ? Vector3D(1.0, 0.0, 0.0)
+            : Vector3D(n.X / s, n.Y / s, n.Z / s);
+        return (Direction3D(axis), n.W.Clamp(-1.0, 1.0).Acos * 2.0);
+    }
+
+    // Chain three elemental rotations in the given application order (the
+    // first-listed axis applies first, about fixed world axes). The receiver
+    // is the order because the TIR body writer currently grounds a match only
+    // when its subject is a bare parameter.
+    ChainRotations(order: RotationOrder, aboutX: Quaternion, aboutY: Quaternion, aboutZ: Quaternion): Quaternion =>
+        match (order) {
+            XYZ => aboutX.Concatenate(aboutY).Concatenate(aboutZ);
+            XZY => aboutX.Concatenate(aboutZ).Concatenate(aboutY);
+            YXZ => aboutY.Concatenate(aboutX).Concatenate(aboutZ);
+            YZX => aboutY.Concatenate(aboutZ).Concatenate(aboutX);
+            ZXY => aboutZ.Concatenate(aboutX).Concatenate(aboutY);
+            ZYX => aboutZ.Concatenate(aboutY).Concatenate(aboutX);
+        };
+
+    // The quaternion of chained elemental rotations, honoring the explicit
+    // application order. X carries Pitch, Y carries Yaw, Z carries Roll.
+    Quaternion(e: EulerAngles): Quaternion =>
+        e.Order.ChainRotations(
+            Quaternion.CreateRotationX(e.Pitch),
+            Quaternion.CreateRotationY(e.Yaw),
+            Quaternion.CreateRotationZ(e.Roll));
+
+    // The yaw-pitch-roll decomposition of a quaternion, in ZXY order (roll,
+    // then pitch, then yaw — the order CreateFromYawPitchRoll applies). At the
+    // gimbal-lock poles (pitch = +-90 degrees) yaw and roll are not unique.
+    // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+    EulerAngles(q: Quaternion): EulerAngles {
+        var n = q.Normalize;
+        var pitch = (2.0 * (n.W * n.X - n.Y * n.Z)).Clamp(-1.0, 1.0).Asin;
+        var yaw = (2.0 * (n.X * n.Z + n.W * n.Y)).Atan2(1.0 - 2.0 * (n.X.Square + n.Y.Square));
+        var roll = (2.0 * (n.X * n.Y + n.W * n.Z)).Atan2(1.0 - 2.0 * (n.X.Square + n.Z.Square));
+        return (yaw, pitch, roll, RotationOrder.ZXY);
+    }
+
+    // The quaternion of a rotor, under the isomorphism (w, x, y, z) =
+    // (Scalar, YZ, ZX, XY): each bivector plane maps to the quaternion unit
+    // whose axis is perpendicular to it.
+    Quaternion(r: Rotor3D): Quaternion
+        => (r.Bivector.YZ, r.Bivector.ZX, r.Bivector.XY, r.Scalar);
+
+    // The rotor of a quaternion (the inverse of the isomorphism above).
+    Rotor3D(q: Quaternion): Rotor3D
+        => (q.W, Bivector3D(q.X, q.Y, q.Z));
+
+    // The rotor of an axis-angle rotation.
+    Rotor3D(aa: AxisAngle): Rotor3D
+        => aa.Quaternion.Rotor3D;
+
+    // The geometric product of two rotors: the image of the Hamilton product
+    // under the quaternion isomorphism, so a.Multiply(b) applies b first.
+    Multiply(a: Rotor3D, b: Rotor3D): Rotor3D
+        => a.Quaternion.Multiply(b.Quaternion).Rotor3D;
+
+    // The reverse of the rotor: the opposite rotation (for a unit rotor the
+    // reverse is the inverse).
+    Inverse(r: Rotor3D): Rotor3D
+        => (r.Scalar, Bivector3D(-r.Bivector.YZ, -r.Bivector.ZX, -r.Bivector.XY));
+
+    // Rescale to unit magnitude, restoring the rotor invariant after repeated
+    // products.
+    Normalize(r: Rotor3D): Rotor3D
+        => r.Quaternion.Normalize.Rotor3D;
+
+    // Apply the rotor's sandwich product R v ~R.
+    Transform(v: Vector3D, r: Rotor3D): Vector3D
+        => v.Transform(r.Quaternion);
+
+    // Rotate a point about the origin with a rotor.
+    Transform(p: Point3D, r: Rotor3D): Point3D
+        => p.PositionVector.Transform(r.Quaternion).ToPoint;
+
+    // Rotate a point about the origin with a quaternion.
+    Transform(p: Point3D, q: Quaternion): Point3D
+        => p.PositionVector.Transform(q).ToPoint;
+
+    // Rotate a unit direction.
+    Transform(d: Direction3D, q: Quaternion): Direction3D
+        => Direction3D(d.Vector.Transform(q));
+
+    //==
+    // Rotation matrices — 2D rotations embed in Matrix3x2, 3D rotations in
+    // Matrix4x4. https://en.wikipedia.org/wiki/Rotation_matrix
+
+    // The affine matrix of a plane rotation about the origin.
+    Matrix3x2(r: Rotation2D): Matrix3x2
+        => Matrix3x2.CreateRotation(r.Angle);
+
+    // The affine matrix of a rotor's rotation.
+    Matrix3x2(r: Rotor2D): Matrix3x2
+        => r.Rotation2D.Matrix3x2;
+
+    // The homogeneous matrix of a quaternion's rotation.
+    Matrix4x4(q: Quaternion): Matrix4x4
+        => Matrix4x4.CreateFromQuaternion(q);
+
+    // The quaternion of a rotation matrix. Precondition: the upper 3x3 block
+    // is orthonormal (a pure rotation, no scale or shear).
+    Quaternion(m: Matrix4x4): Quaternion
+        => Quaternion.CreateFromRotationMatrix(m);
+
+    // The homogeneous matrix of an axis-angle rotation.
+    Matrix4x4(aa: AxisAngle): Matrix4x4
+        => Matrix4x4.CreateFromAxisAngle(aa.Axis.Vector, aa.Angle);
+
+    // The homogeneous matrix of chained elemental rotations.
+    Matrix4x4(e: EulerAngles): Matrix4x4
+        => e.Quaternion.Matrix4x4;
+
+    // The homogeneous matrix of a rotor's rotation.
+    Matrix4x4(r: Rotor3D): Matrix4x4
+        => r.Quaternion.Matrix4x4;
+}

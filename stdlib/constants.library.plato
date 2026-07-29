@@ -7,12 +7,13 @@
 // Successor to plato-src/constants.plato. Two changes from v1:
 //   1. v1 used zero-argument functions (`Pi(): Number`). This tree dispatches
 //      constants on an ignored receiver of the result type (`Pi(_: Number)`),
-//      matching the intrinsic constants in `intrinsics.plato` and the
-//      `Identity(_: Quaternion)` family in `transforms.plato`. Read them as
-//      `Number.GoldenRatio`, `Vector3D.UnitZ`, `Circle.UnitCircle`.
+//      matching the intrinsic constants in `intrinsics-scalars.library.plato`
+//      and the `Identity(_: Quaternion)` family in `transforms.plato`. Read them
+//      as `Number.GoldenRatio`, `Vector3D.UnitZ`, `Circle.UnitCircle`.
 //   2. `Pi`, `Tau`, `E`, `Epsilon`, `MinValue`, `MaxValue`, `Zero`, `One` and
 //      `MinusOne` are NOT redeclared here — they are intrinsics
-//      (`intrinsics.plato`) or derived in `core-algebra.library.plato`.
+//      (`intrinsics-scalars.library.plato`) or derived in the `core-*` /
+//      `algebra-*` libraries.
 
 library Constants
 {
@@ -34,14 +35,17 @@ library Constants
         => 1.0 / Number.Phi;
 
     // The square root of two, approximately 1.414214.
+    // (https://en.wikipedia.org/wiki/Square_root_of_2)
     SqrtTwo(_: Number): Number
         => 1.4142135623730951;
 
     // The square root of three, approximately 1.732051.
+    // (https://en.wikipedia.org/wiki/Square_root_of_3)
     SqrtThree(_: Number): Number
         => 1.7320508075688772;
 
     // The square root of five, approximately 2.236068.
+    // (https://en.wikipedia.org/wiki/Square_root_of_5)
     SqrtFive(_: Number): Number
         => 2.23606797749979;
 

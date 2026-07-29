@@ -1,0 +1,80 @@
+//==
+// # NumericStructuresMatrix — derived functions for the MatrixLike concept
+//
+// Shape predicates, diagonal access, and the scalar folds over ElementAt (Trace,
+// FrobeniusNorm) for the MatrixLike concept declared in
+// `matrices.concepts.plato`, plus the Additive/Scalable-derived interpolation.
+
+library NumericStructuresMatrix
+{
+    //==
+    // # MatrixLike
+    //
+    // Dense numeric matrices (Value, Additive, Scalable) with RowCount,
+    // ColumnCount, and ElementAt(row, column). Double and Half come from
+    // CoreAlgebra (Additive / Scalable). Trace and FrobeniusNorm are now derivable
+    // as scalar folds over ElementAt (via MapRange + Array.Reduce); see below.
+    //
+    // TODO(concept-gap): Transpose remains blocked — it must CONSTRUCT a matrix, and
+    // MatrixLike exposes no construction primitive. The MakeArray2D intrinsic builds
+    // an Array2D<Number>, not a concrete MatrixLike, so a generic
+    // Transpose(MatrixLike): MatrixLike cannot be spelled here; each concrete matrix
+    // type (matrices.plato) supplies its own, returning its own type (e.g. the
+    // Matrix4x4.Transpose intrinsic).
+
+    // True when the matrix has equal row and column counts.
+    IsSquare(self: MatrixLike): Boolean
+        => self.RowCount == self.ColumnCount;
+
+    // The total number of elements (rows times columns).
+    ElementCount(self: MatrixLike): Integer
+        => self.RowCount * self.ColumnCount;
+
+    // True when the matrix has no elements (no rows or no columns).
+    IsEmpty(self: MatrixLike): Boolean
+        => self.RowCount == 0 || self.ColumnCount == 0;
+
+    // True when the matrix is a single row.
+    IsRowVector(self: MatrixLike): Boolean
+        => self.RowCount == 1;
+
+    // True when the matrix is a single column.
+    IsColumnVector(self: MatrixLike): Boolean
+        => self.ColumnCount == 1;
+
+    // True when two matrices have the same row and column counts.
+    SameShape(a: MatrixLike, b: MatrixLike): Boolean
+        => a.RowCount == b.RowCount && a.ColumnCount == b.ColumnCount;
+
+    // The element on the main diagonal at position i (i.e. element (i, i)).
+    // Precondition: i is a valid row and column index.
+    DiagonalElement(self: MatrixLike, i: Integer): Number
+        => self.ElementAt(i, i);
+
+    // The trace: the sum of the main-diagonal elements, folded over the diagonal
+    // indices via MapRange + Array.Reduce
+    // (https://en.wikipedia.org/wiki/Trace_(linear_algebra)). Precondition: the
+    // matrix is square.
+    Trace(self: MatrixLike): Number
+        => self.RowCount.MapRange(i => self.ElementAt(i, i)).Reduce(0.0, (acc, x) => acc + x);
+
+    // The Frobenius norm: the square root of the sum of the squares of every
+    // element (https://en.wikipedia.org/wiki/Matrix_norm). The row-major flat
+    // index k maps to element (k / ColumnCount, k % ColumnCount), so the whole
+    // matrix is folded in one pass.
+    // Precondition: at least one element.
+    FrobeniusNorm(self: MatrixLike): Number
+        => self.ElementCount
+            .MapRange(k => self.ElementAt(k / self.ColumnCount, k % self.ColumnCount).Square)
+            .Reduce(0.0, (acc, x) => acc + x)
+            .Sqrt;
+
+    // Linear interpolation of two matrices, derived from Additive and Scalable.
+    // t is unclamped: 0 yields a, 1 yields b. Precondition: a and b share a shape.
+    Lerp(a: MatrixLike, b: MatrixLike, t: Number): MatrixLike
+        => a + (b - a) * t;
+
+    // The element-wise average of two matrices. Precondition: a and b share a shape.
+    Average(a: MatrixLike, b: MatrixLike): MatrixLike
+        => (a + b) / 2.0;
+}

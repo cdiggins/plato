@@ -1,0 +1,42 @@
+//==
+// # Affine and projective transforms
+//
+// The two widest transform families: affine maps (any composition of linear maps
+// and translations) and projective maps (full homographies on homogeneous
+// coordinates). Affine is the common ground every other representation converts
+// into, and projective is closed under composition, so mixed-kind composition
+// belongs here. Each is a thin wrapper over the matrix that carries it
+// (`matrices.plato`); the operations live in
+// `transforms-affine.library.plato`.
+
+// A general 2D affine map: any composition of linear maps and translations
+// (https://en.wikipedia.org/wiki/Affine_transformation).
+type AffineTransform2D
+    implements Value
+{
+    Matrix: Matrix3x2;
+}
+
+// A general 3D affine map: any composition of linear maps and translations
+// (https://en.wikipedia.org/wiki/Affine_transformation).
+type AffineTransform3D
+    implements Value
+{
+    Matrix: Matrix4x3;
+}
+
+// A full 2D projective map (homography), operating on homogeneous coordinates
+// (https://en.wikipedia.org/wiki/Homography).
+type ProjectiveTransform2D
+    implements Value
+{
+    Matrix: Matrix3x3;
+}
+
+// A full 3D projective map, operating on homogeneous coordinates; includes
+// perspective projections (https://en.wikipedia.org/wiki/Homography).
+type ProjectiveTransform3D
+    implements Value
+{
+    Matrix: Matrix4x4;
+}

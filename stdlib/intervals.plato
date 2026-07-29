@@ -1,0 +1,48 @@
+//==
+// # Intervals
+//
+// One-dimensional directed spans
+// (https://en.wikipedia.org/wiki/Interval_(mathematics)), one concrete type per
+// element type. Every one implements `IntervalLike<T>`
+// (`intervals-bounds.concepts.plato`) and so inherits the generic
+// Lerp/Clamp/Union/Extent surface.
+// Convention: see CONVENTIONS.md - Bounds (inclusive endpoints; an inverted
+// Start > End is the empty encoding and the Union identity).
+
+// A directed interval of unitless numbers.
+type NumberInterval
+    implements IntervalLike<Number>
+{
+    Start: Number;
+    End: Number;
+}
+
+// A directed interval of angles: arc sweeps, angular ranges. Endpoints are
+// INCLUSIVE and the sweep is the CCW (increasing-angle) arc from Start to End,
+// which may CROSS the +/-pi seam: an arc from 170 deg to -170 deg is the short
+// 20 deg sweep across the seam, not the long way round. Arc consumers
+// (CircularArc2D, CircularSector) read it this way. Wrap-aware Span/Contains live
+// in intervals-transforms.library.plato; the generic linear IntervalLike helpers
+// are correct only for non-wrapping ranges. Convention: see CONVENTIONS.md - Angles.
+type AngleInterval
+    implements IntervalLike<Angle>
+{
+    Start: Angle;
+    End: Angle;
+}
+
+// A directed interval of lengths.
+type LengthInterval
+    implements IntervalLike<Length>
+{
+    Start: Length;
+    End: Length;
+}
+
+// A directed interval of whole numbers: index ranges. Contains Start, excludes End.
+type IntegerInterval
+    implements IntervalLike<Integer>
+{
+    Start: Integer;
+    End: Integer;
+}

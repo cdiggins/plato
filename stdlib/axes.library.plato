@@ -1,0 +1,71 @@
+//==
+// # Axis3D conversions and algebra
+//
+// Total, one-way conversions from the unsigned 3D cardinal axis (`axes.plato`)
+// out to the geometric vocabulary — basis vector, unit direction, Number tuple,
+// point — plus the component selector and the right-handed tangent cycle.
+
+library Axes
+{
+    // The unit basis vector along this axis: X => (1,0,0), Y => (0,1,0), Z => (0,0,1).
+    Vector3D(self: Axis3D): Vector3D
+        => match (self) {
+            X => Vector3D(1.0, 0.0, 0.0);
+            Y => Vector3D(0.0, 1.0, 0.0);
+            Z => Vector3D(0.0, 0.0, 1.0);
+        };
+
+    // The unit direction along this axis (the basis vector, already unit length).
+    Direction3D(self: Axis3D): Direction3D
+        => Direction3D(self.Vector3D);
+
+    // The basis vector as a raw Number3 tuple.
+    Number3(self: Axis3D): Number3
+        => match (self) {
+            X => Number3(1.0, 0.0, 0.0);
+            Y => Number3(0.0, 1.0, 0.0);
+            Z => Number3(0.0, 0.0, 1.0);
+        };
+
+    // The point one unit along this axis from the origin.
+    Point3D(self: Axis3D): Point3D
+        => match (self) {
+            X => Point3D(1.0, 0.0, 0.0);
+            Y => Point3D(0.0, 1.0, 0.0);
+            Z => Point3D(0.0, 0.0, 1.0);
+        };
+
+    // The zero-based component index this axis selects: X => 0, Y => 1, Z => 2.
+    Ordinal(self: Axis3D): Integer
+        => match (self) {
+            X => 0;
+            Y => 1;
+            Z => 2;
+        };
+
+    // The component of v that this axis selects (`Component(v, X)` is `v.X`).
+    Component(v: Vector3D, axis: Axis3D): Number
+        => match (axis) {
+            X => v.X;
+            Y => v.Y;
+            Z => v.Z;
+        };
+
+    // The next axis in the right-handed cycle X => Y => Z => X. Together with
+    // Bitangent this gives an oriented frame around the axis.
+    Tangent(self: Axis3D): Axis3D
+        => match (self) {
+            X => Axis3D.Y;
+            Y => Axis3D.Z;
+            Z => Axis3D.X;
+        };
+
+    // The axis after Tangent in the right-handed cycle (Tangent of Tangent):
+    // X => Z, Y => X, Z => Y.
+    Bitangent(self: Axis3D): Axis3D
+        => match (self) {
+            X => Axis3D.Z;
+            Y => Axis3D.X;
+            Z => Axis3D.Y;
+        };
+}

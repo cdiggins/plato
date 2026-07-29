@@ -1,71 +1,13 @@
 //==
-// # Intervals, bounds, and sizes
+// # Bounding regions
 //
-// One-dimensional intervals (https://en.wikipedia.org/wiki/Interval_(mathematics)),
-// axis-aligned bounding regions (https://en.wikipedia.org/wiki/Bounding_volume),
-// and extent types. Bounds are inclusive on Min, inclusive on Max unless a doc
-// comment says otherwise.
+// Axis-aligned bounding regions (https://en.wikipedia.org/wiki/Bounding_volume)
+// in 2D and 3D, over continuous and whole-number coordinates, plus the
+// center-and-size rectangle. Bounds are inclusive on Min, inclusive on Max unless
+// a doc comment says otherwise; the extent types they are measured in live in
+// `intervals-sizes.plato`.
 // Convention: see CONVENTIONS.md - Bounds (inclusive Min/Max; inverted
-// Start>End / Min>Max is the empty encoding and the Union identity).
-
-// A one-dimensional directed span from Start to End. Start may exceed End,
-// which encodes a reversed interval.
-concept IntervalLike<T>
-    where T: Additive, T: Interpolatable, T: Comparable
-    inherits Value
-{
-    Start(x: Self): T;
-    End(x: Self): T;
-}
-
-// An axis-aligned bounding region between component-wise Min and Max corners.
-// TDelta is the displacement type between two corner points (the vector type of
-// TPoint), so Extent/Diagonal can name the Max - Min delta.
-concept BoundsLike<TPoint, TDelta>
-    where TPoint: Difference<TDelta>
-    inherits Value
-{
-    Min(x: Self): TPoint;
-    Max(x: Self): TPoint;
-}
-
-// A directed interval of unitless numbers.
-type NumberInterval
-    implements IntervalLike<Number>
-{
-    Start: Number;
-    End: Number;
-}
-
-// A directed interval of angles: arc sweeps, angular ranges. Endpoints are
-// INCLUSIVE and the sweep is the CCW (increasing-angle) arc from Start to End,
-// which may CROSS the +/-pi seam: an arc from 170 deg to -170 deg is the short
-// 20 deg sweep across the seam, not the long way round. Arc consumers
-// (CircularArc2D, CircularSector) read it this way. Wrap-aware Span/Contains live
-// in intervals-transforms.library.plato; the generic linear IntervalLike helpers
-// are correct only for non-wrapping ranges. Convention: see CONVENTIONS.md - Angles.
-type AngleInterval
-    implements IntervalLike<Angle>
-{
-    Start: Angle;
-    End: Angle;
-}
-
-// A directed interval of lengths.
-type LengthInterval
-    implements IntervalLike<Length>
-{
-    Start: Length;
-    End: Length;
-}
-
-// A directed interval of whole numbers: index ranges. Contains Start, excludes End.
-type IntegerInterval
-    implements IntervalLike<Integer>
-{
-    Start: Integer;
-    End: Integer;
-}
+// Min>Max is the empty encoding and the Union identity).
 
 // An axis-aligned bounding rectangle in 2D
 // (https://en.wikipedia.org/wiki/Axis-aligned_bounding_box). Inclusive on Min and
@@ -106,40 +48,6 @@ type IntegerBounds3D
 {
     Min: IntegerVector3;
     Max: IntegerVector3;
-}
-
-// A continuous 2D extent: width and height.
-type Size2D
-    implements Value
-{
-    Width: Number;
-    Height: Number;
-}
-
-// A continuous 3D extent: width, height, and depth.
-type Size3D
-    implements Value
-{
-    Width: Number;
-    Height: Number;
-    Depth: Number;
-}
-
-// A discrete 2D extent: image and grid dimensions.
-type IntegerSize2D
-    implements Value, Hashable
-{
-    Width: Integer;
-    Height: Integer;
-}
-
-// A discrete 3D extent: voxel-grid dimensions.
-type IntegerSize3D
-    implements Value, Hashable
-{
-    Width: Integer;
-    Height: Integer;
-    Depth: Integer;
 }
 
 // A rectangle given by its center and size; axis-aligned.

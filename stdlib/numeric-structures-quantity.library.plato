@@ -1,0 +1,46 @@
+//==
+// # NumericStructuresQuantity — derived functions for the Quantity concept
+//
+// Bodies for the Quantity concept declared in `quantities.plato`. Ordering,
+// interpolation, Double and Half all come from `core-algebra.library.plato` via
+// the inherited concepts; only what is specific to the Amount projection is
+// added here. Pure expressions only; all values are immutable.
+
+library NumericStructuresQuantity
+{
+    //==
+    // # Quantity
+    //
+    // A one-dimensional measured amount (Value, Comparable, Hashable, Additive,
+    // Scalable, Interpolatable) with an Amount projected to a raw Number.
+    // Ordering (Lesser/Greater/Clamp/Between), MidPoint, LerpClamped, Double and
+    // Half all come from CoreAlgebra via the inherited concepts; only the
+    // Amount-based sign/zero predicates and the same-type absolute value are
+    // added here. Quantity is deliberately not Arithmetic (multiplying two
+    // quantities yields a different type), so no product helper is offered.
+
+    // True when the underlying amount is exactly zero. (Quantity is not Numerical,
+    // so CoreAlgebra's IsZero does not apply.)
+    IsZero(self: Quantity): Boolean
+        => self.Amount == 0.0;
+
+    // True when the underlying amount is strictly greater than zero.
+    IsPositive(self: Quantity): Boolean
+        => self.Amount > 0.0;
+
+    // True when the underlying amount is strictly less than zero.
+    IsNegative(self: Quantity): Boolean
+        => self.Amount < 0.0;
+
+    // The sign of the quantity: 1 when positive, -1 when negative, 0 when zero.
+    Sign(self: Quantity): Integer
+        => self.Amount.Sign;
+
+    // The absolute value: the quantity with a non-negative amount.
+    Abs(self: Quantity): Quantity
+        => self.IsNegative ? self.Negative : self;
+
+    // The magnitude of the gap between two quantities; always non-negative.
+    AbsoluteDifference(a: Quantity, b: Quantity): Quantity
+        => (a - b).Abs;
+}
