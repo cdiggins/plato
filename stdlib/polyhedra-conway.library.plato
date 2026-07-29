@@ -73,9 +73,9 @@ library PolyhedraConway
     // The midpoint of every undirected edge, in edge-index order: the vertices
     // of the ambo. Folded over the corners in ascending order keeping only the
     // canonical half of each twin pair — whose rank IS its edge index, so the
-    // result lands in CornerEdge order by construction. `Repeat(0, …)` is the
+    // result lands in CornerUndirectedEdge order by construction. `Repeat(0, …)` is the
     // empty seed.
-    EdgeMidpoints(self: PolygonMesh3D): Array<Point3D>
+    UndirectedEdgeMidpoints(self: PolygonMesh3D): Array<Point3D>
         => self.CornerCount
             .MapRange(c => CornerIndex(c))
             .Reduce(Repeat(0, Point3D(0.0, 0.0, 0.0)),
@@ -84,18 +84,18 @@ library PolyhedraConway
     // The shrunken copy of an original face: its own edges' midpoints, in order.
     AmboFaceOfFace(self: PolygonMesh3D, face: Integer): Array<VertexIndex>
         => self.FaceArity(face).MapRange(slot =>
-            VertexIndex(self.CornerEdge(self.FaceCorner(face, slot)).Value));
+            VertexIndex(self.CornerUndirectedEdge(self.FaceCorner(face, slot)).Value));
 
     // The face left where a vertex was: the midpoints of the edges meeting at
     // it. Taken in reversed rotation order so it winds counter-clockwise seen
     // from outside, like the faces it neighbours.
     AmboFaceOfVertex(self: PolygonMesh3D, vertex: VertexIndex): Array<VertexIndex>
-        => self.ReversedVertexCornerRing(vertex).Map(c => VertexIndex(self.CornerEdge(c).Value));
+        => self.ReversedVertexCornerRing(vertex).Map(c => VertexIndex(self.CornerUndirectedEdge(c).Value));
 
     // One vertex per edge; one face per original face plus one per original vertex.
     Ambo(self: PolygonMesh3D): PolygonMesh3D
         => PolygonMeshOfFaces(
-                self.EdgeMidpoints,
+                self.UndirectedEdgeMidpoints,
                 Concatenate(
                     self.FaceCount.MapRange(f => self.AmboFaceOfFace(f)),
                     self.VertexCount.MapRange(v => self.AmboFaceOfVertex(VertexIndex(v)))));

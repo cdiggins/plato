@@ -9,7 +9,7 @@
 // projections are in `topology-adjacency.library.plato`.
 
 //==
-// ## Edges as vertex pairs
+// ## Undirected edges as vertex pairs
 
 // An undirected edge named by its two endpoint vertices. The canonical form
 // orders the pair so that A.Value <= B.Value; producers emit canonical pairs
@@ -23,21 +23,21 @@ type VertexPair
 
 // The undirected edges of a mesh, extracted once and stored canonically:
 // each pair ordered A.Value <= B.Value, pairs sorted lexicographically.
-// An edge's position in this array is its EdgeIndex.
-type EdgeList
+// An edge's position in this array is its UndirectedEdgeIndex.
+type UndirectedEdgeList
     implements Value
 {
-    Edges: Array<VertexPair>;
+    UndirectedEdges: Array<VertexPair>;
 }
 
-// Per-edge incident faces, parallel to an EdgeList: LeftFaces[i] is the face
-// on the side of Edges[i] where the traversal A to B runs counter-clockwise
-// along the face loop; RightFaces[i] is the opposite side. A boundary edge
-// stores -1 in RightFaces; a wire edge stores -1 in both.
-type EdgeAdjacency
+// Per-edge incident faces, parallel to an UndirectedEdgeList: LeftFaces[i] is
+// the face on the side of UndirectedEdges[i] where the traversal A to B runs
+// counter-clockwise along the face loop; RightFaces[i] is the opposite side. A
+// boundary edge stores -1 in RightFaces; a wire edge stores -1 in both.
+type UndirectedEdgeAdjacency
     implements Value
 {
-    Edges: Array<VertexPair>;
+    UndirectedEdges: Array<VertexPair>;
     LeftFaces: Array<FaceIndex>;
     RightFaces: Array<FaceIndex>;
 }

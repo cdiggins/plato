@@ -1,24 +1,67 @@
 //==
 // # Mesh topology concepts
 //
-// The two concepts a connectivity structure can implement: counted mesh
-// elements (MeshTopology) and constant-time half-edge navigation
-// (HalfEdgeNavigable). The derived functionality of both lives in
+// Three rungs of a ladder, each strictly stronger than the one below:
+// counted mesh elements (MeshElementCounts), which elements touch which
+// (MeshIncidence), and constant-time half-edge navigation (HalfEdgeNavigable).
+// The derived functionality of all three lives in
 // `meshes-topology.library.plato`.
+//
+// The rungs exist because real representations sit on different ones. An
+// indexed triangle soup can count vertices and faces; a face-vertex list can
+// answer incidence queries but only by search; a built half-edge structure
+// answers neighbourhood walks in constant time. Naming the middle rung is what
+// lets connectedness — components, boundary loops, valence, manifoldness — be
+// written once against the weakest representation that can support it.
 
 // Anything with counted mesh elements: vertices, undirected edges, and faces
-// (https://en.wikipedia.org/wiki/Polygon_mesh).
-concept MeshTopology
+// (https://en.wikipedia.org/wiki/Polygon_mesh). This is a census, not
+// connectivity: it says how many of each element there are and nothing about
+// which touches which. That is still enough for the Euler characteristic and,
+// on a closed connected manifold, the genus.
+//
+// UndirectedEdgeCount counts DEDUPLICATED undirected edges — one per pair of
+// half-edges, not one per directed side and not one per face corner. A
+// representation that cannot dedupe without building incidence should implement
+// MeshIncidence and derive the count from it rather than guess: an over-count
+// silently corrupts every Euler-characteristic result.
+concept MeshElementCounts
 {
     VertexCount(x: Self): Integer;
-    EdgeCount(x: Self): Integer;
+    UndirectedEdgeCount(x: Self): Integer;
     FaceCount(x: Self): Integer;
+}
+
+// Which mesh elements touch which: the six incidence queries between vertices,
+// undirected edges, and faces (https://en.wikipedia.org/wiki/Incidence_matrix).
+// This is the rung where connectedness lives — a mesh that can answer these can
+// be walked, split into components, and classified for manifoldness, with no
+// commitment to any stored adjacency structure.
+//
+// Nothing here promises constant time; a face-vertex list may answer
+// FacesOfVertex by scanning. Results are in no guaranteed order unless the
+// implementing type documents one, and an empty array is the "none" answer
+// (an isolated vertex, a wire edge bordering no face).
+concept MeshIncidence
+    inherits MeshElementCounts
+{
+    VerticesOfFace(x: Self, face: FaceIndex): Array<VertexIndex>;
+    UndirectedEdgesOfFace(x: Self, face: FaceIndex): Array<UndirectedEdgeIndex>;
+    FacesOfVertex(x: Self, vertex: VertexIndex): Array<FaceIndex>;
+    UndirectedEdgesOfVertex(x: Self, vertex: VertexIndex): Array<UndirectedEdgeIndex>;
+    VerticesOfUndirectedEdge(x: Self, edge: UndirectedEdgeIndex): VertexPair;
+    FacesOfUndirectedEdge(x: Self, edge: UndirectedEdgeIndex): Array<FaceIndex>;
 }
 
 // Constant-time navigation over a half-edge structure
 // (https://en.wikipedia.org/wiki/Doubly_connected_edge_list). Callers must not
 // pass -1; boundary conditions surface as -1 results (e.g. TwinOf on a
 // boundary half-edge).
+//
+// Deliberately does NOT inherit MeshIncidence: answering an incidence query
+// from half-edges means walking a face loop or a vertex fan and materializing
+// an array, which is a build step rather than a constant-time read. A
+// half-edge type is free to implement both.
 concept HalfEdgeNavigable
 {
     OriginOf(x: Self, halfEdge: HalfEdgeIndex): VertexIndex;

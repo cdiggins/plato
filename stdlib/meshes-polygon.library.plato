@@ -17,9 +17,9 @@
 library MeshesPolygon
 {
     //==
-    // MeshTopology obligations. VertexCount and FaceCount are direct reads;
-    // EdgeCount assumes a CLOSED manifold, where every undirected edge is shared
-    // by exactly two faces and therefore carries exactly two corners.
+    // MeshElementCounts obligations. VertexCount and FaceCount are direct reads;
+    // UndirectedEdgeCount assumes a CLOSED manifold, where every undirected edge
+    // is shared by exactly two faces and therefore carries exactly two corners.
 
     // The number of positions the faces index into.
     VertexCount(self: PolygonMesh3D): Integer
@@ -31,7 +31,7 @@ library MeshesPolygon
 
     // The number of undirected edges. Precondition: the mesh is a closed
     // manifold (each edge has exactly two corners); an open mesh over-counts.
-    EdgeCount(self: PolygonMesh3D): Integer
+    UndirectedEdgeCount(self: PolygonMesh3D): Integer
         => self.CornerCount / 2;
 
     //==

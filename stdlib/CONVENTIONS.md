@@ -85,7 +85,7 @@ cardinal-axis choice is the typed `Axis3D` / `Axis2D` / `SignedAxis3D` sum
 is genuinely needed — kd-tree split axes, `UpAxis` / `ForwardAxis` fields, and
 longest-extent queries take an axis type, not a bare `0`/`1`/`2`.
 *Owners:* `Index` concept (`collections-indexable.concepts.plato`); every typed
-index type (`topology-indices.plato` VertexIndex/EdgeIndex/..., domain files);
+index type (`topology-indices.plato` VertexIndex/UndirectedEdgeIndex/..., domain files);
 `ItemIndex` (`numbers.plato`); axis selectors (`axes.plato`
 Axis3D/Axis2D/SignedAxis3D).
 

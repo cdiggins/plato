@@ -129,11 +129,11 @@ library MeshesPolygonCorners
 
     // The dense index of a corner's undirected edge: how many canonical corners
     // precede this edge's own canonical corner. Both halves of a twin pair give
-    // the same answer, and the results cover [0, EdgeCount).
-    CornerEdge(self: PolygonMesh3D, corner: CornerIndex): EdgeIndex
+    // the same answer, and the results cover [0, UndirectedEdgeCount).
+    CornerUndirectedEdge(self: PolygonMesh3D, corner: CornerIndex): UndirectedEdgeIndex
     {
         var canonical = corner.Value.Min(self.TwinCorner(corner).Value);
-        return EdgeIndex(canonical
+        return UndirectedEdgeIndex(canonical
             .MapRange(c => self.IsCanonicalCorner(CornerIndex(c)) ? 1 : 0)
             .Reduce(0, (acc, hit) => acc + hit));
     }

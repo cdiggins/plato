@@ -18,7 +18,7 @@ numerical/mathematical/scientific computing, graphics and rendering, physics, mo
 graphics, image processing, and engineering.
 
 Current contents (2026-07-29): **347 source files (184 type-declaration files + 42
-`*.concepts.plato` files + 121 `*.library.plato` files), 152 concepts, 1146 types**.
+`*.concepts.plato` files + 121 `*.library.plato` files), 153 concepts, 1146 types**.
 
 The plato-293 re-partition took the folder from 85 files to 344. Every file now holds exactly
 one **kind** of declaration — `<stem>.concepts.plato` holds concepts, `<stem>.plato` holds
@@ -269,8 +269,9 @@ the authority, not this table.
 | `ScalarFunctionField2D/3D`, `VectorFunctionField2D/3D` | `fields-function.plato` |
 | `SignedDistanceField2D/3D`, `ImplicitRegion2D`, `ImplicitVolume3D` concepts | `implicit-sdf.concepts.plato` |
 | `FunctionSdf2D/3D`, `FunctionRegion2D`, `FunctionVolume3D` | `implicit-sdf-function.plato` |
-| `VertexIndex`, `EdgeIndex`, `FaceIndex`, `CornerIndex`, `HalfEdgeIndex` | `topology-indices.plato` |
-| `VertexPair` | `topology-adjacency.plato` |
+| `VertexIndex`, `UndirectedEdgeIndex`, `FaceIndex`, `CornerIndex`, `HalfEdgeIndex` | `topology-indices.plato` |
+| `MeshElementCounts`, `MeshIncidence`, `HalfEdgeNavigable` concepts | `topology.concepts.plato` |
+| `VertexPair`, `UndirectedEdgeList`, `UndirectedEdgeAdjacency` | `topology-adjacency.plato` |
 | `WindingOrder` | `topology-classification.plato` |
 | `TriangleMesh3D`, `QuadMesh3D`, `PolygonMesh3D`, `TriangleFace` | `meshes.plato` |
 | `LineSet3D`, `PointCloud3D` | `meshes-lines-points.plato` |
@@ -304,6 +305,15 @@ Generic nouns that MUST be domain-qualified wherever declared: Node, Layer, Trac
 Sample, Grid, Cell, Filter, Kernel, Key, Frame, Edge, Vertex, Face, Segment, Weight, Style,
 Event, Marker, Anchor, Handle, Buffer, Attribute, Region, Mask, Map, Range, Wave, State.
 (Exception: registry entries above that already claim a bare name.)
+
+`Edge` is the sharpest case, because the two mesh readings differ by a factor of two: a mesh
+edge is either an **`UndirectedEdge`** (a deduplicated vertex pair — `UndirectedEdgeIndex`,
+`UndirectedEdgeCount`, `UndirectedEdgeList`) or a **`HalfEdge`** (one directed side —
+`HalfEdgeIndex`). Nothing in the mesh domain is named a bare `Edge`; a name that does not say
+which reading it means is a bug report waiting to happen (an Euler characteristic computed from
+half-edges is silently wrong). Other domains keep their own sense of the word — graph theory's
+`GraphEdge` / `EdgeCount` (directedness is a property of the `Graph`, not the name), image
+processing's `EdgeDetection` / `ClampToEdge` (a border, not an incidence relation).
 
 `List` and `Buffer` are a standing exception to that rule: they are **compiler-intrinsic names**
 — the compiler maps Plato `List`/`Buffer` onto the handwritten `PlatoList`/`PlatoBuffer` runtime

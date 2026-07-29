@@ -40,7 +40,7 @@ type QuadFace
 // (https://en.wikipedia.org/wiki/Triangle_mesh): the workhorse interchange
 // representation for surface geometry. Faces index into Positions.
 type TriangleMesh3D
-    implements Value, TriangulatedGeometry3D, MeshTopology
+    implements Value, TriangulatedGeometry3D, MeshElementCounts
 {
     Positions: Array<Point3D>;
     Faces: Array<TriangleFace>;
@@ -49,7 +49,7 @@ type TriangleMesh3D
 // An indexed triangle mesh in the plane: triangulations of polygons, Delaunay
 // triangulations, finite-element meshes. Faces wind counter-clockwise.
 type TriangleMesh2D
-    implements Value, Meshable2D, MeshTopology
+    implements Value, Meshable2D, MeshElementCounts
 {
     Positions: Array<Point2D>;
     Faces: Array<TriangleFace>;
@@ -58,7 +58,7 @@ type TriangleMesh2D
 // An indexed quadrilateral mesh in 3D: subdivision cages, quad-dominant
 // retopology, structured patches.
 type QuadMesh3D
-    implements Value, Meshable3D, MeshTopology
+    implements Value, Meshable3D, MeshElementCounts
 {
     Positions: Array<Point3D>;
     Faces: Array<QuadFace>;
@@ -79,7 +79,7 @@ type QuadMesh3D
 // members (vertex-to-face adjacency, for one) are then additional fields rather
 // than a second concept the type cannot implement twice.
 type PolygonMesh3D
-    implements Value, Meshable3D, MeshTopology
+    implements Value, Meshable3D, MeshElementCounts
 {
     Positions: Array<Point3D>;
     Faces: JaggedArray<VertexIndex>;

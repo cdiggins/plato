@@ -3,13 +3,13 @@
 //
 // Named data channels layered over a base mesh: normals, UVs, colors,
 // weights, tangents. A channel's storage length is dictated by its domain
-// (per-vertex, per-face, per-corner, per-edge, or uniform). Channels are
-// parallel arrays; they never alter the base mesh's connectivity.
+// (per-vertex, per-face, per-corner, per-undirected-edge, or uniform). Channels
+// are parallel arrays; they never alter the base mesh's connectivity.
 
 // Which mesh element an attribute's values attach to: one value per vertex,
 // per face, per face-vertex slot (allowing seams and hard edges), per
 // undirected edge, or a single value for the whole mesh.
-type AttributeDomain = PerVertex | PerFace | PerCorner | PerEdge | Uniform;
+type AttributeDomain = PerVertex | PerFace | PerCorner | PerUndirectedEdge | Uniform;
 
 // A named channel of per-element values. The length of Values must equal
 // the element count implied by Domain (exactly 1 when Uniform). Names are
@@ -53,12 +53,12 @@ type RichMesh3D
 //==
 // ## UV layout bookkeeping
 
-// Mesh edges across which UV coordinates are discontinuous: texture seams.
-// Pairs are canonical (A.Value <= B.Value).
+// The undirected mesh edges across which UV coordinates are discontinuous:
+// texture seams. Pairs are canonical (A.Value <= B.Value).
 type UvSeam
     implements Value
 {
-    Edges: Array<VertexPair>;
+    UndirectedEdges: Array<VertexPair>;
 }
 
 // A connected set of faces that maps to one contiguous region of UV space

@@ -19,7 +19,7 @@ library MeshesGeometry
     //==
     // Meshable3D — anything that can produce an indexed triangle mesh of itself.
     // The forwards below expose the triangulation's topology without a manual
-    // ToTriangleMesh hop (TriangleMesh3D is itself MeshTopology).
+    // ToTriangleMesh hop (TriangleMesh3D is itself MeshElementCounts).
 
     // The vertex count of this object's triangle-mesh approximation.
     MeshVertexCount(self: Meshable3D): Integer
@@ -39,7 +39,8 @@ library MeshesGeometry
 
     //==
     // Meshable2D — anything in the plane that can triangulate itself. Same
-    // topology forwards over the produced TriangleMesh2D (also a MeshTopology).
+    // topology forwards over the produced TriangleMesh2D (also a
+    // MeshElementCounts).
 
     // The vertex count of this shape's planar triangulation.
     TriangulationVertexCount(self: Meshable2D): Integer
@@ -66,8 +67,9 @@ library MeshesGeometry
             self.PositionAt(self.FaceAt(face).C));
 
     // True when the geometry exposes no triangles. Kept as HasNoTriangles rather
-    // than IsEmpty: TriangleMesh3D is both TriangulatedGeometry3D and MeshTopology,
-    // so an IsEmpty here would collide with MeshTopology.IsEmpty (vertex-based).
+    // than IsEmpty: TriangleMesh3D is both TriangulatedGeometry3D and
+    // MeshElementCounts, so an IsEmpty here would collide with
+    // MeshElementCounts.IsEmpty (vertex-based).
     HasNoTriangles(self: TriangulatedGeometry3D): Boolean
         => self.TriangleCount.IsZero;
 

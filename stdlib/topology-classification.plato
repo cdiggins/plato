@@ -13,20 +13,22 @@
 type WindingOrder = CounterClockwise | Clockwise;
 
 // How close a surface is to being a 2-manifold
-// (https://en.wikipedia.org/wiki/Manifold): Manifold means every edge borders
-// exactly two faces and vertex stars are disks; ManifoldWithBoundary allows
-// edges bordering one or two faces.
+// (https://en.wikipedia.org/wiki/Manifold): Manifold means every undirected
+// edge borders exactly two faces and vertex stars are disks;
+// ManifoldWithBoundary allows undirected edges bordering one or two faces.
 type Manifoldness = Unknown | Manifold | ManifoldWithBoundary | NonManifold;
 
 // Aggregate topological measurements of a mesh. EulerCharacteristic equals
-// VertexCount - EdgeCount + FaceCount
+// VertexCount - UndirectedEdgeCount + FaceCount
 // (https://en.wikipedia.org/wiki/Euler_characteristic); a closed connected
-// manifold of genus g has Euler characteristic 2 - 2g.
+// manifold of genus g has Euler characteristic 2 - 2g. The edge count is of
+// DEDUPLICATED undirected edges — half the half-edge count on a closed
+// manifold — or the characteristic is wrong.
 type TopologySummary
     implements Value
 {
     VertexCount: Integer;
-    EdgeCount: Integer;
+    UndirectedEdgeCount: Integer;
     FaceCount: Integer;
     BoundaryLoopCount: Integer;
     ConnectedComponentCount: Integer;
