@@ -1,0 +1,29 @@
+//==
+// # Paths — derived functions for PathLike
+//
+// Bodies for the `PathLike` concept declared in `paths.plato`: anything
+// presentable as a vector `Path2D` via `ToPath`. The helpers are structural
+// summaries that read the resulting path's contour list (an Array, hence
+// Countable). Pure expressions only; all inputs are immutable and evaluation is
+// side-effect free. See `README.md` for naming and unit conventions.
+
+library Paths
+{
+    //==
+    // # PathLike
+    //
+    // Anything presentable as a vector Path2D via ToPath. Structural summaries
+    // read the resulting path's contour list (an Array, hence Countable).
+
+    // The number of contours in the presented path.
+    ContourCount(self: PathLike): Integer
+        => self.ToPath.Contours.Count;
+
+    // True when the presented path has no contours (draws nothing).
+    IsEmpty(self: PathLike): Boolean
+        => self.ToPath.Contours.Count == 0;
+
+    // True when the presented path has at least one contour.
+    IsNotEmpty(self: PathLike): Boolean
+        => self.ToPath.Contours.Count > 0;
+}

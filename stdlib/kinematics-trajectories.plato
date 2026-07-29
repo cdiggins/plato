@@ -1,0 +1,99 @@
+//==
+// # Trajectories and elementary motions
+//
+// Motion described over time: time-sampled trajectories, and the closed-form
+// elementary motions (ballistic flight, uniform circular motion, harmonic
+// oscillation, and the pendulum). Unless a doc comment says otherwise, linear
+// quantities are in meters and seconds and angular quantities are in radians
+// and seconds.
+
+//==
+// # Sampled trajectories
+
+// A time-sampled planar motion stored as parallel arrays: Times[i] is the
+// time since trajectory start, Positions[i] the position in meters, and
+// Velocities[i] the velocity in meters per second. Velocities may be empty
+// when unknown.
+type Trajectory2D
+    implements Value
+{
+    Times: Array<Duration>;
+    Positions: Array<Point2D>;
+    Velocities: Array<Vector2D>;
+}
+
+// A time-sampled spatial motion stored as parallel arrays: Times[i] is the
+// time since trajectory start, Positions[i] the position in meters, and
+// Velocities[i] the velocity in meters per second. Velocities may be empty
+// when unknown.
+// (https://en.wikipedia.org/wiki/Trajectory)
+type Trajectory3D
+    implements Value
+{
+    Times: Array<Duration>;
+    Positions: Array<Point3D>;
+    Velocities: Array<Vector3D>;
+}
+
+//==
+// # Closed-form motions
+
+// Projectile motion under constant gravity: position(t) = InitialPosition +
+// InitialVelocity * t + Gravity * t^2 / 2. InitialVelocity is in meters per
+// second; Gravity is a constant acceleration in meters per second squared.
+// (https://en.wikipedia.org/wiki/Projectile_motion)
+type BallisticTrajectory
+    implements Value
+{
+    InitialPosition: Point3D;
+    InitialVelocity: Vector3D;
+    Gravity: Vector3D;
+}
+
+// Motion at constant angular speed around a circle: the moving point orbits
+// Center in the plane perpendicular to Axis at distance Radius, starting at
+// phase InitialPhase.
+// (https://en.wikipedia.org/wiki/Circular_motion)
+type UniformCircularMotion
+    implements Value
+{
+    Center: Point3D;
+    Axis: Direction3D;
+    Radius: Length;
+    AngularSpeed: AngularVelocity;
+    InitialPhase: Angle;
+}
+
+// Sinusoidal oscillation of a scalar: value(t) = Offset + Amplitude *
+// sin(AngularFrequency * t + Phase). Offset and Amplitude are in the units of
+// the oscillating quantity (unit-agnostic).
+// (https://en.wikipedia.org/wiki/Simple_harmonic_motion)
+type SimpleHarmonicMotion
+    implements Value
+{
+    Offset: Number;
+    Amplitude: Number;
+    AngularFrequency: AngularVelocity;
+    Phase: Angle;
+}
+
+// The physical parameters of an ideal damped pendulum. Gravity is the local
+// gravitational acceleration; Damping is the angular velocity decay rate in
+// units of one per second (0 = undamped).
+// (https://en.wikipedia.org/wiki/Pendulum)
+type Pendulum
+    implements Value
+{
+    ArmLength: Length;
+    Gravity: Acceleration;
+    Damping: Number;
+}
+
+// The instantaneous state of a pendulum: signed deflection from the rest
+// (hanging) direction and its rate of change.
+type PendulumState
+    implements Value
+{
+    Deflection: Angle;
+    AngularVelocity: AngularVelocity;
+}

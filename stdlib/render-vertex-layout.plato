@@ -1,0 +1,32 @@
+//==
+// # Vertex data layout
+//
+// How the per-vertex data handed to a renderer is packed: the semantic role of
+// each attribute stream, its component count and normalization, and the
+// interleaved byte layout of a whole vertex. Offsets and strides are in
+// bytes.
+
+// The semantic role of one vertex attribute stream.
+type VertexAttributeRole
+    = Position | Normal | Tangent | Uv0 | Uv1 | Color | BoneWeights | BoneIndices;
+
+// One attribute within a vertex: its role, the number of scalar components
+// (3 for a position, 2 for a UV), whether integer data is normalized to
+// [0, 1] when read, and its byte offset from the start of the vertex.
+type VertexAttributeDescriptor
+    implements Value
+{
+    Role: VertexAttributeRole;
+    ComponentCount: Integer;
+    Normalized: Boolean;
+    ByteOffset: Integer;
+}
+
+// The complete interleaved layout of one vertex: its attributes plus the
+// stride in bytes between consecutive vertices.
+type VertexLayout
+    implements Value
+{
+    Attributes: Array<VertexAttributeDescriptor>;
+    ByteStride: Integer;
+}

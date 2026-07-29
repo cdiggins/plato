@@ -1,0 +1,80 @@
+//==
+// # Uncertain geometry and estimation
+//
+// Geometric values carrying Gaussian uncertainty as a covariance, the state
+// and model records of a linear Kalman filter, and the choice of how
+// uncertainty is carried through a computation. Covariance orders match the
+// value they describe; the scalar uncertainty types live in
+// `uncertainty.plato`.
+
+//==
+// # Uncertain geometry
+
+// A 2D vector with a 2x2 covariance of its components.
+type UncertainVector2D
+    implements Value
+{
+    Value: Vector2D;
+    Covariance: Covariance2D;
+}
+
+// A 3D vector with a 3x3 covariance of its components.
+type UncertainVector3D
+    implements Value
+{
+    Value: Vector3D;
+    Covariance: Covariance3D;
+}
+
+// A 2D position with a 2x2 covariance of its coordinates.
+type UncertainPoint2D
+    implements Value
+{
+    Value: Point2D;
+    Covariance: Covariance2D;
+}
+
+// A 3D position with a 3x3 covariance of its coordinates.
+type UncertainPoint3D
+    implements Value
+{
+    Value: Point3D;
+    Covariance: Covariance3D;
+}
+
+//==
+// # State estimation
+
+// A Kalman estimate: the state mean vector and its covariance matrix, whose
+// order matches the state length.
+// (https://en.wikipedia.org/wiki/Kalman_filter)
+type KalmanState
+    implements Value
+{
+    State: Array<Number>;
+    Covariance: MatrixN;
+}
+
+// The model matrices of a linear Kalman filter: state Transition (F),
+// Observation (H), ProcessNoise covariance (Q), and ObservationNoise
+// covariance (R).
+type KalmanFilterParameters
+    implements Value
+{
+    Transition: MatrixN;
+    Observation: MatrixN;
+    ProcessNoise: MatrixN;
+    ObservationNoise: MatrixN;
+}
+
+//==
+// # Error propagation
+
+// How uncertainty is propagated through a computation: first-order Taylor
+// (Linear), sampled with the given count and deterministic seed
+// (MonteCarlo), or sigma points (Unscented).
+// (https://en.wikipedia.org/wiki/Propagation_of_uncertainty)
+type ErrorPropagation
+    = Linear
+    | MonteCarlo(SampleCount: Integer, Seed: Integer)
+    | Unscented;

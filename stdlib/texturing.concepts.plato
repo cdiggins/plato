@@ -1,0 +1,15 @@
+//==
+// # Texturing concepts
+//
+// The abstraction behind procedural texturing: a pattern that answers with a
+// color at any UV coordinate, instead of storing texels. The concrete
+// procedural textures that implement it live in `texturing.plato`.
+
+// A pattern evaluated directly at a UV coordinate instead of stored texels.
+// Implementations are resolution-independent and infinitely tileable unless
+// documented otherwise. (https://en.wikipedia.org/wiki/Procedural_texture)
+concept ProceduralTexture
+    inherits Value
+{
+    ColorAt(x: Self, uv: UvCoordinate): Color;
+}

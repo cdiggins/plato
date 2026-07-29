@@ -1,0 +1,25 @@
+//==
+// # Kinematics concepts
+//
+// The sampling interface shared by closed-form and recorded motions: a motion
+// that can be asked for its position and velocity at any time since its
+// start. Linear quantities are in meters and seconds.
+
+// A planar motion that can be sampled at any time. PositionAt returns the
+// position in meters at the given time since the motion's start; VelocityAt
+// returns the velocity in meters per second.
+concept Kinematic2D
+{
+    PositionAt(x: Self, time: Duration): Point2D;
+    VelocityAt(x: Self, time: Duration): Vector2D;
+}
+
+// A spatial motion that can be sampled at any time. PositionAt returns the
+// position in meters at the given time since the motion's start; VelocityAt
+// returns the velocity in meters per second.
+// (https://en.wikipedia.org/wiki/Kinematics)
+concept Kinematic3D
+{
+    PositionAt(x: Self, time: Duration): Point3D;
+    VelocityAt(x: Self, time: Duration): Vector3D;
+}

@@ -1,0 +1,49 @@
+//==
+// # 2D joints
+//
+// The planar joint zoo: revolute, prismatic, and distance joints. BodyA and
+// BodyB are zero-based indices into the simulation's body array; -1 attaches
+// that side to the static world. Anchors and axes are expressed in the owning
+// body's local frame, in meters.
+
+// A planar one-degree-of-freedom rotational joint: the bodies rotate about
+// the out-of-plane axis through the coinciding anchors.
+// (https://en.wikipedia.org/wiki/Revolute_joint)
+type RevoluteJoint2D
+    implements Value
+{
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
+    AnchorA: Point2D;
+    AnchorB: Point2D;
+    Limit: AngularLimit;
+    Motor: JointMotor;
+}
+
+// A planar one-degree-of-freedom translational joint: the bodies slide along
+// AxisA (in body A's frame) with relative rotation locked.
+// (https://en.wikipedia.org/wiki/Prismatic_joint)
+type PrismaticJoint2D
+    implements Value
+{
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
+    AnchorA: Point2D;
+    AnchorB: Point2D;
+    AxisA: Direction2D;
+    Limit: LinearLimit;
+    Motor: JointMotor;
+}
+
+// A planar joint that keeps the distance between two anchor points within
+// [MinLength, MaxLength].
+type DistanceJoint2D
+    implements Value
+{
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
+    AnchorA: Point2D;
+    AnchorB: Point2D;
+    MinLength: Length;
+    MaxLength: Length;
+}

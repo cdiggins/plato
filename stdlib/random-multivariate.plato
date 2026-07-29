@@ -1,0 +1,22 @@
+//==
+// # Multivariate distributions
+//
+// Jointly normal distributions over the plane and space
+// (https://en.wikipedia.org/wiki/Multivariate_normal_distribution). These are
+// not univariate, so they do not implement ProbabilityDistribution.
+
+// A bivariate normal distribution with the given mean point and covariance.
+type NormalDistribution2D
+    implements Value
+{
+    Mean: Vector2D;
+    Covariance: Covariance2D;
+}
+
+// A trivariate normal distribution with the given mean point and covariance.
+type NormalDistribution3D
+    implements Value
+{
+    Mean: Vector3D;
+    Covariance: Covariance3D;
+}

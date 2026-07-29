@@ -1,10 +1,9 @@
 //==
-// # Collision
+// # Colliders
 //
-// Collider shapes attached to bodies, broad-phase filtering, contact points
-// and manifolds, collision events, and shape-query results. Body and layer
-// references are zero-based indices into an external body or layer array;
-// -1 means "none". Positions are in meters.
+// Collider shapes attached to bodies, and the broad-phase filtering that says
+// which of them may interact. Layer references are zero-based indices into an
+// external layer array. Positions are in meters.
 
 //==
 // # Filtering
@@ -14,6 +13,7 @@
 // one's category intersects the other's mask). GroupIndex overrides the bits:
 // a shared positive group always collides, a shared negative group never
 // collides, 0 defers to the bits.
+// (https://en.wikipedia.org/wiki/Collision_detection)
 type CollisionFilter
     implements Value
 {
@@ -64,6 +64,7 @@ type CapsuleCollider
 // A triangle-mesh collider placed by a pose in the owning body's local frame.
 // When Convex is true the mesh is treated as (or decomposed to) a convex
 // hull, allowing dynamic-versus-dynamic collision.
+// (https://en.wikipedia.org/wiki/Convex_hull)
 type MeshCollider
     implements Value
 {
@@ -131,131 +132,4 @@ type TriggerVolume3D
     Colliders: CompoundCollider3D;
     Pose: Pose3D;
     Filter: CollisionFilter;
-}
-
-//==
-// # Contacts
-
-// An unordered pair of colliding bodies, stored as zero-based indices into
-// the simulation's body array (-1 = none).
-type CollisionPair
-    implements Value
-{
-    BodyA: BodyIndex;
-    BodyB: BodyIndex;
-}
-
-// A single planar contact. Position is the world contact point in meters;
-// Normal points from body A toward body B; Penetration is the overlap depth;
-// NormalImpulse and TangentImpulse are the solver impulses in newton-seconds
-// along the normal and tangent (0 before solving).
-type ContactPoint2D
-    implements Value
-{
-    Position: Point2D;
-    Normal: Direction2D;
-    Penetration: Length;
-    NormalImpulse: Impulse;
-    TangentImpulse: Impulse;
-}
-
-// A single spatial contact. Position is the world contact point in meters;
-// Normal points from body A toward body B; Penetration is the overlap depth;
-// NormalImpulse is the solver impulse along the normal in newton-seconds;
-// FrictionImpulse is the tangential impulse in newton-seconds (0 before
-// solving).
-type ContactPoint3D
-    implements Value
-{
-    Position: Point3D;
-    Normal: Direction3D;
-    Penetration: Length;
-    NormalImpulse: Impulse;
-    FrictionImpulse: Vector3D;
-}
-
-// The set of planar contacts between one body pair in one step. BodyA and
-// BodyB are zero-based body indices (-1 = none); Normal is the shared contact
-// normal from A toward B; Friction is the combined dimensionless friction
-// coefficient; Restitution is the combined bounciness in [0, 1].
-type ContactManifold2D
-    implements Value
-{
-    BodyA: BodyIndex;
-    BodyB: BodyIndex;
-    Points: Array<ContactPoint2D>;
-    Normal: Direction2D;
-    Friction: Number;
-    Restitution: Proportion;
-}
-
-// The set of spatial contacts between one body pair in one step. BodyA and
-// BodyB are zero-based body indices (-1 = none); Normal is the shared contact
-// normal from A toward B; Friction is the combined dimensionless friction
-// coefficient; Restitution is the combined bounciness in [0, 1].
-type ContactManifold3D
-    implements Value
-{
-    BodyA: BodyIndex;
-    BodyB: BodyIndex;
-    Points: Array<ContactPoint3D>;
-    Normal: Direction3D;
-    Friction: Number;
-    Restitution: Proportion;
-}
-
-//==
-// # Events
-
-// The phase of a collision between two bodies: first touch (Begin), still
-// touching (Stay), or separated (End).
-type CollisionPhase = Begin | Stay | End;
-
-// A collision notification: which pair, which phase, and the simulation time
-// at which it was raised.
-type CollisionEvent
-    implements Value
-{
-    Phase: CollisionPhase;
-    Pair: CollisionPair;
-    Time: Instant;
-}
-
-//==
-// # Query results
-
-// The result of sweeping a shape through the plane. Hit says whether anything
-// was struck; Fraction is the normalized sweep parameter in [0, 1] at first
-// contact; Position and Normal describe the world hit point in meters and the
-// surface normal there; BodyIndex is the struck body (-1 = none).
-type ShapeCastResult2D
-    implements Value
-{
-    Hit: Boolean;
-    Fraction: Proportion;
-    Position: Point2D;
-    Normal: Direction2D;
-    Body: BodyIndex;
-}
-
-// The result of sweeping a shape through space. Hit says whether anything was
-// struck; Fraction is the normalized sweep parameter in [0, 1] at first
-// contact; Position and Normal describe the world hit point in meters and the
-// surface normal there; BodyIndex is the struck body (-1 = none).
-type ShapeCastResult3D
-    implements Value
-{
-    Hit: Boolean;
-    Fraction: Proportion;
-    Position: Point3D;
-    Normal: Direction3D;
-    Body: BodyIndex;
-}
-
-// The result of an overlap query: the zero-based indices of every body whose
-// colliders intersect the query shape.
-type OverlapResult
-    implements Value
-{
-    BodyIndices: Array<BodyIndex>;
 }

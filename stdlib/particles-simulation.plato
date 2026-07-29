@@ -1,11 +1,9 @@
 //==
-// # Particles and soft-body simulation
+// # Particle systems
 //
-// Particle systems with emitters and force fields, position-based cloth and
-// rope, smoothed-particle fluids, and environmental wind. Positions are in
-// meters, velocities in meters per second, masses in kilograms. Force-field
-// types are expressed in 3D; planar systems interpret them in the XY plane
-// and ignore Z components.
+// Particles, the emitters that spawn them, and the complete planar and
+// spatial systems owning both together with their force fields. Positions are
+// in meters, velocities in meters per second, masses in kilograms.
 
 //==
 // # Particles
@@ -98,74 +96,6 @@ type ParticleEmitter3D
 }
 
 //==
-// # Particle force fields
-
-// Constant acceleration applied to every particle, in meters per second
-// squared (e.g. (0, -9.81, 0)).
-type ParticleGravity
-    implements Value
-{
-    Acceleration: Vector3D;
-}
-
-// Velocity-opposing deceleration of particles: acceleration =
-// -(LinearCoefficient * v + QuadraticCoefficient * |v| * v).
-// LinearCoefficient is in units of one per second; QuadraticCoefficient is in
-// units of one per meter.
-type ParticleDrag
-    implements Value
-{
-    LinearCoefficient: Number;
-    QuadraticCoefficient: Number;
-}
-
-// A swirling force field: particles are accelerated tangentially around the
-// line through Center along Axis. Strength is the tangential acceleration in
-// meters per second squared at one meter from the axis, diminishing with
-// distance.
-type ParticleVortex
-    implements Value
-{
-    Center: Point3D;
-    Axis: Direction3D;
-    Strength: Number;
-}
-
-// A point force field: particles inside FalloffRadius accelerate toward
-// Center. Strength is the peak acceleration in meters per second squared at
-// the center, fading to zero at FalloffRadius; negative values repel.
-type ParticleAttractor
-    implements Value
-{
-    Center: Point3D;
-    Strength: Number;
-    FalloffRadius: Length;
-}
-
-// Curl-noise turbulence applied to particles. SpatialFrequency is the noise
-// frequency in cycles per meter; Strength is the peak acceleration in meters
-// per second squared; Seed selects the noise realization.
-type ParticleTurbulence
-    implements Value
-{
-    SpatialFrequency: Number;
-    Strength: Number;
-    Seed: Integer;
-}
-
-// A steady wind with gusts. Speed is the mean wind speed along Direction;
-// Turbulence is the dimensionless gust strength as a proportion of Speed in
-// [0, 1]; GustFrequency is how often gust cycles occur.
-type WindModel
-    implements Value
-{
-    Direction: Direction3D;
-    Speed: Speed;
-    Turbulence: Number;
-    GustFrequency: Frequency;
-}
-
-//==
 // # Particle systems
 
 // A complete planar particle simulation: live particles, their sources, and
@@ -187,6 +117,7 @@ type ParticleSystem2D
 
 // A complete spatial particle simulation: live particles, their sources, and
 // the force fields acting on them. Time is the simulation clock.
+// (https://en.wikipedia.org/wiki/Particle_system)
 type ParticleSystem3D
     implements Value
 {
@@ -199,111 +130,4 @@ type ParticleSystem3D
     Turbulences: Array<ParticleTurbulence>;
     Winds: Array<WindModel>;
     Time: Instant;
-}
-
-//==
-// # Cloth and rope
-
-// One vertex of a position-based cloth or rope. PreviousPosition is the
-// position at the last step (Verlet state); InverseMass is in units of one
-// per kilogram, with 0 meaning infinite mass; Pinned freezes the vertex
-// regardless of mass.
-type ClothVertex
-    implements Value
-{
-    Position: Point3D;
-    PreviousPosition: Point3D;
-    InverseMass: Number;
-    Pinned: Boolean;
-}
-
-// A stretch constraint keeping two cloth vertices (zero-based indices) at
-// RestLength. Compliance is the inverse stiffness in meters per newton;
-// 0 makes the constraint rigid.
-type ClothDistanceConstraint
-    implements Value
-{
-    VertexA: VertexIndex;
-    VertexB: VertexIndex;
-    RestLength: Length;
-    Compliance: Number;
-}
-
-// A bending constraint over two triangles sharing the edge (VertexA,
-// VertexB), with wing vertices VertexC and VertexD: it drives the dihedral
-// angle between them toward RestAngle. Compliance is the inverse stiffness in
-// radians per newton-meter; 0 makes the fold rigid.
-type ClothBendConstraint
-    implements Value
-{
-    VertexA: VertexIndex;
-    VertexB: VertexIndex;
-    VertexC: VertexIndex;
-    VertexD: VertexIndex;
-    RestAngle: Angle;
-    Compliance: Number;
-}
-
-// A position-based cloth: vertices, the constraints binding them, and the
-// triangles used for rendering and collision. Thickness is the collision
-// shell radius.
-type Cloth3D
-    implements Value
-{
-    Vertices: Array<ClothVertex>;
-    DistanceConstraints: Array<ClothDistanceConstraint>;
-    BendConstraints: Array<ClothBendConstraint>;
-    Faces: Array<TriangleFace>;
-    Thickness: Length;
-}
-
-// A position-based rope: vertices ordered from one end to the other, chained
-// by distance constraints. Thickness is the collision radius.
-type Rope3D
-    implements Value
-{
-    Vertices: Array<ClothVertex>;
-    DistanceConstraints: Array<ClothDistanceConstraint>;
-    Thickness: Length;
-}
-
-// Solver parameters for a deformable (soft) body. VolumeCompliance and
-// DeformationCompliance are inverse stiffnesses in meters per newton
-// (0 = rigid response); Damping is the velocity decay rate in units of one
-// per second; SolverIterations is the constraint iteration count per step.
-type SoftBodySettings
-    implements Value
-{
-    VolumeCompliance: Number;
-    DeformationCompliance: Number;
-    Damping: Number;
-    SolverIterations: Integer;
-}
-
-//==
-// # Fluids
-
-// Smoothed-particle-hydrodynamics tuning. GasStiffness scales pressure
-// response to compression, in pascal-cubic-meters per kilogram;
-// SurfaceTension is in newtons per meter.
-type SphParameters
-    implements Value
-{
-    RestDensity: Density;
-    KernelRadius: Length;
-    Viscosity: DynamicViscosity;
-    GasStiffness: Number;
-    SurfaceTension: Number;
-}
-
-// One fluid particle in a smoothed-particle-hydrodynamics simulation, with
-// its current interpolated density and pressure.
-type FluidParticle3D
-    implements Value
-{
-    Position: Point3D;
-    Velocity: Vector3D;
-    Density: Density;
-    Pressure: Pressure;
-    Mass: Mass;
 }

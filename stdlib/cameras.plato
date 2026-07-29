@@ -9,22 +9,8 @@
 // (seconds), with photographic conventions (millimeter sensors, f-stops, ISO)
 // noted per field.
 
-// A placed camera: a rigid pose plus near and far clip distances bounding the
-// rendered depth range. Invariant: 0 < Near < Far.
-// Convention: see CONVENTIONS.md - View space (right-handed; forward is -Z, +Y up).
-concept Camera
-    inherits Value
-{
-    Pose(x: Self): Pose3D;
-    Near(x: Self): Number;
-    Far(x: Self): Number;
-    // The image aspect ratio (width over height). PerspectiveCamera and
-    // OrthographicCamera carry it as a field; the other camera types derive it
-    // from their optics (see the AspectRatio bodies in domain-traits.library.plato).
-    AspectRatio(x: Self): Number;
-}
-
 // The projection family a camera uses; Panoramic is cylindrical.
+// (https://en.wikipedia.org/wiki/3D_projection)
 type CameraProjection
     = Perspective | Orthographic | Fisheye | Equirectangular | Panoramic;
 
@@ -169,55 +155,4 @@ type StereoCameraRig
     Template: PerspectiveCamera;
     EyeSeparation: Length;
     ConvergenceDistance: Length;
-}
-
-//==
-// # Camera optics and output regions
-
-// The rectangular pixel region a camera renders into, plus the interval that
-// normalized device depth is mapped onto. PixelBounds contains Min, excludes
-// Max. (https://en.wikipedia.org/wiki/Viewport)
-type Viewport
-    implements Value
-{
-    PixelBounds: IntegerBounds2D;
-    DepthRange: NumberInterval;
-}
-
-// Brown-Conrady lens distortion coefficients: K1, K2, and K3 are radial terms;
-// P1 and P2 are tangential (decentering) terms. All zero means an ideal lens.
-// See https://en.wikipedia.org/wiki/Distortion_(optics).
-type LensDistortion
-    implements Value
-{
-    K1: Number;
-    K2: Number;
-    K3: Number;
-    P1: Number;
-    P2: Number;
-}
-
-// A tilt-shift style image shift, as signed fractions of sensor width and
-// height. Zero means the optical axis meets the sensor center; positive
-// Vertical shifts the image up (the architectural facade correction).
-type LensShift
-    implements Value
-{
-    Horizontal: Number;
-    Vertical: Number;
-}
-
-// Depth-of-field rendering controls (https://en.wikipedia.org/wiki/Depth_of_field).
-// FocusDistance is the physical distance to the focal plane; FStop widens or
-// narrows the simulated aperture (smaller numbers focus more shallowly);
-// BladeCount shapes the bokeh polygon (0 means a perfect circle); BladeRotation
-// orients that polygon.
-type DepthOfFieldSettings
-    implements Value
-{
-    Enabled: Boolean;
-    FocusDistance: Length;
-    FStop: Number;
-    BladeCount: Integer;
-    BladeRotation: Angle;
 }

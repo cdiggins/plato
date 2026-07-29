@@ -12,6 +12,7 @@
 // control data it needs and nothing more (the on-curve endpoint is always
 // EndPoint). The arc form is the SVG elliptical arc: x/y radii, rotation of
 // the ellipse axes, and the large-arc and sweep flags.
+// (https://en.wikipedia.org/wiki/SVG)
 type PathSegment2D
     implements Value
     = Move(EndPoint: Point2D)                                            // start a new sub-path
@@ -33,11 +34,12 @@ type Contour2D
 
 // How the interior of a self-intersecting or multi-contour path is decided.
 // NonZero: inside where the winding count is nonzero. EvenOdd: inside where
-// the crossing count is odd.
+// the crossing count is odd. (https://en.wikipedia.org/wiki/Nonzero-rule)
 type FillRule = NonZero | EvenOdd;
 
 // A complete vector path: zero or more contours plus the fill rule that
 // decides its interior. The canonical exchange type for 2D outlines.
+// (https://en.wikipedia.org/wiki/Vector_graphics)
 type Path2D
     implements Value
 {
@@ -72,13 +74,6 @@ type PathLocation
     Parameter: Proportion;
 }
 
-// Anything that can present itself as a vector path: primitive shapes, glyph
-// outlines, dashed or offset results.
-concept PathLike
-{
-    ToPath(x: Self): Path2D;
-}
-
 // Per-corner elliptical rounding radii for converting rectangles to paths, in
 // the order top-left, top-right, bottom-right, bottom-left. Each radius is an
 // (x, y) half-extent pair; a zero pair means a sharp corner.
@@ -93,11 +88,13 @@ type CornerRadii2D
 
 // The boolean (clipping) operation used when combining two paths.
 // Difference is the first path minus the second.
+// (https://en.wikipedia.org/wiki/Boolean_operations_on_polygons)
 type PathBooleanOperation = Union | Intersection | Difference | ExclusiveOr;
 
 // Controls for reducing a path's segment count while staying within a
 // geometric error budget of Tolerance (in path units). When PreserveCorners
 // is true, points where the tangent is discontinuous are never removed.
+// (https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm)
 type PathSimplifyParameters
     implements Value
 {

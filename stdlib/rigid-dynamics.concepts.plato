@@ -1,0 +1,21 @@
+//==
+// # Rigid-body dynamics concepts
+//
+// The interface an environmental force model implements: given a body in its
+// current state, evaluate the world-space force in newtons acting on it.
+
+// A model of an environmental force acting on planar bodies. ForceOn
+// evaluates the world-space force, in newtons, exerted on the given body in
+// its current state.
+concept ForceModel2D
+{
+    ForceOn(x: Self, body: RigidBody2D): Vector2D;
+}
+
+// A model of an environmental force acting on spatial bodies. ForceOn
+// evaluates the world-space force, in newtons, exerted on the given body in
+// its current state.
+concept ForceModel3D
+{
+    ForceOn(x: Self, body: RigidBody3D): Vector3D;
+}

@@ -14,16 +14,9 @@
 // Positions, radii, and ranges are unit-agnostic scene Numbers; a Range of
 // zero means unlimited reach.
 
-// A scene light that can be toggled to cast shadows.
-concept LightSource
-    inherits Value
-{
-    CastsShadows(x: Self): Boolean;
-}
-
 // How light strength decays with distance from the source. InverseSquare is
 // physically correct; Smooth is inverse-square with a windowed fade to zero
-// at Range.
+// at Range. (https://en.wikipedia.org/wiki/Inverse-square_law)
 type Attenuation = None | Linear | Quadratic | InverseSquare | Smooth;
 
 //==
@@ -34,6 +27,7 @@ type Attenuation = None | Linear | Quadratic | InverseSquare | Smooth;
 // is measured on a surface perpendicular to Direction (sunlight is roughly
 // 100000 lux). AngularDiameter is the apparent disk size driving soft-shadow
 // penumbras; the sun subtends about 0.53 degrees.
+// (https://en.wikipedia.org/wiki/Illuminance)
 type DirectionalLight
     implements LightSource
 {
@@ -46,7 +40,7 @@ type DirectionalLight
 
 // An omnidirectional point emitter. Flux is the total emitted luminous power;
 // intensity follows as Flux over 4 pi steradians. Range of zero means
-// unlimited.
+// unlimited. (https://en.wikipedia.org/wiki/Luminous_flux)
 type PointLight
     implements LightSource
 {
@@ -136,6 +130,7 @@ type TubeLight
 // Image-based lighting from a cube map (file 47). Rotation spins the
 // environment about the world up axis. Intensity is a dimensionless scale on
 // stored texel radiance; Tint multiplies it per channel (white = unchanged).
+// (https://en.wikipedia.org/wiki/Image-based_lighting)
 type EnvironmentLight
     implements Value
 {
@@ -176,54 +171,4 @@ type LightProbe
     Position: Point3D;
     InfluenceRadius: Number;
     Intensity: Number;
-}
-
-//==
-// # Shadows, masking, and auxiliary light settings
-
-// Shadow-map rendering controls for one light. Resolution is the shadow map
-// edge length in pixels. Bias and NormalBias offset depth comparisons along
-// the view ray and surface normal to prevent acne. PenumbraSize scales
-// soft-shadow width. CascadeCount splits a directional shadow into successive
-// depth ranges (1 = no cascades). MaxDistance is the farthest shadowed
-// distance in scene units.
-type ShadowSettings
-    implements Value
-{
-    Resolution: Integer;
-    Bias: Number;
-    NormalBias: Number;
-    PenumbraSize: Number;
-    CascadeCount: Integer;
-    MaxDistance: Number;
-}
-
-// A bitmask selecting which render layers a light illuminates: bit i set means
-// the light affects the RenderLayer with Index i (file 51). All bits set means
-// all layers.
-type LightLayerMask
-{
-    Value: Integer;
-}
-
-// A reference to a measured IES photometric distribution profile, resolved by
-// Name in the surrounding asset environment. Multiplier scales the profile's
-// intensities (1 = as measured).
-type IesProfileReference
-    implements Value
-{
-    Name: String;
-    Multiplier: Number;
-}
-
-// Participating-media scattering along a light's volume ("god rays").
-// Anisotropy is the Henyey-Greenstein g in [-1, 1]: 0 is isotropic, positive
-// scatters forward. MaxDistance bounds the ray march in scene units.
-type VolumetricLightSettings
-    implements Value
-{
-    Enabled: Boolean;
-    Intensity: Number;
-    Anisotropy: Number;
-    MaxDistance: Number;
 }

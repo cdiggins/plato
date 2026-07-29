@@ -1,0 +1,77 @@
+//==
+// # Texture sampling and bindings
+//
+// How a texture is read rather than what it holds: wrap and filter state, the
+// affine transform and projection applied to UV coordinates, the channel mask
+// a consumer reads, and the binding that ties them to a descriptor. The
+// texture descriptors and procedural textures themselves live in
+// `texturing.plato`.
+
+//==
+// ## Sampling state
+
+// How texture coordinates outside [0, 1] are handled along one axis.
+type WrapMode
+    = Repeat | ClampToEdge | MirroredRepeat | ClampToBorder | MirrorClampToEdge;
+
+// How texels are filtered during sampling, including across mip levels;
+// LinearMipLinear is trilinear.
+// (https://en.wikipedia.org/wiki/Texture_filtering)
+type FilterMode
+    = Nearest
+    | Linear
+    | NearestMipNearest
+    | LinearMipNearest
+    | NearestMipLinear
+    | LinearMipLinear
+    | Anisotropic;
+
+// Complete sampling state for reading a texture: per-axis wrap modes, the
+// filter, the maximum anisotropy ratio (1 disables), a mip level-of-detail
+// bias, and the border color used by ClampToBorder.
+// (https://en.wikipedia.org/wiki/Anisotropic_filtering)
+type TextureSampler
+    implements Value
+{
+    WrapU: WrapMode;
+    WrapV: WrapMode;
+    WrapW: WrapMode;
+    Filter: FilterMode;
+    Anisotropy: Number;
+    MipBias: Number;
+    BorderColor: Color;
+}
+
+//==
+// ## UV addressing and bindings
+
+// An affine transform applied to UV coordinates before sampling, composed as
+// Tiling (scale) first, then Rotation, then Offset.
+type UvTransform
+    implements Value
+{
+    Offset: Vector2D;
+    Rotation: Angle;
+    Tiling: Number2;
+}
+
+// How texture coordinates are generated for a surface; Uv means authored
+// coordinates. (https://en.wikipedia.org/wiki/UV_mapping)
+type TextureProjection
+    = Uv | Planar | Triplanar | Spherical | Cylindrical | Box | ScreenSpace;
+
+// Which channels of a sampled texel a consumer reads.
+type TextureChannelMask = R | G | B | A | RG | RGB | RGBA;
+
+// A texture wired for use: the descriptor, its sampling state, a UV
+// transform, which UV set of the mesh to use (zero-based), and which channels
+// to read. The unit of texturing that materials and shaders reference.
+type TextureBinding
+    implements Value
+{
+    Texture: Texture2D;
+    Sampler: TextureSampler;
+    Transform: UvTransform;
+    UvSet: Integer;
+    Channels: TextureChannelMask;
+}

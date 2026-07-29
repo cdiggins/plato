@@ -1,13 +1,15 @@
 //==
 // # Signals
 //
-// Uniformly sampled signals, frequency-domain representations, analysis
-// windows, digital filters, envelopes, and waveform generator descriptions.
-// Conventions: sample i of a signal occurs at time i / SampleRate; spectrum
-// bin k is centered at k * BinWidth with bin 0 at DC; filter gains are in
-// decibels; generator types are pure parameter records.
+// Uniformly sampled signals, frequency-domain representations, and the
+// analysis windows that produce them. Conventions: sample i of a signal
+// occurs at time i / SampleRate; spectrum bin k is centered at k * BinWidth
+// with bin 0 at DC. Filters and rate conversion live in
+// `signals-filters.plato`; envelopes and generators in
+// `signals-generators.plato`.
 
 // A uniformly sampled scalar signal. Sample i occurs at time i / SampleRate.
+// (https://en.wikipedia.org/wiki/Sampling_(signal_processing))
 type SampledSignal
     implements Value
 {
@@ -29,6 +31,7 @@ type MultichannelSignal
 // A single-sided magnitude/phase spectrum with uniform bins. Parallel arrays:
 // bin k is centered at k * BinWidth (bin 0 is DC), with magnitude
 // Magnitudes[k] and phase Phases[k].
+// (https://en.wikipedia.org/wiki/Frequency_domain)
 type Spectrum
     implements Value
 {
@@ -39,6 +42,7 @@ type Spectrum
 
 // A complex-valued spectrum with uniform bins: Bins[k] holds the amplitude
 // and phase of the component at k * BinWidth as one complex number.
+// (https://en.wikipedia.org/wiki/Discrete_Fourier_transform)
 type ComplexSpectrum
     implements Value
 {
@@ -49,6 +53,7 @@ type ComplexSpectrum
 // A time-frequency magnitude map from a short-time transform. The column
 // index of Magnitudes selects the time frame (frame j starts at j * TimeStep)
 // and the row index selects the frequency bin (bin k at k * BinWidth).
+// (https://en.wikipedia.org/wiki/Spectrogram)
 type Spectrogram
     implements Value
 {
@@ -63,6 +68,7 @@ type Spectrogram
 // The taper shape applied to a block of samples before spectral analysis.
 // The parameter-carrying kinds hold their own shape parameter; the parameter-
 // free kinds carry none.
+// (https://en.wikipedia.org/wiki/Window_function)
 type WindowFunction
     implements Value
     = Rectangular
@@ -76,6 +82,7 @@ type WindowFunction
 
 // A short-time analysis configuration. Size is the window length in samples;
 // HopSize is the advance between consecutive windows.
+// (https://en.wikipedia.org/wiki/Short-time_Fourier_transform)
 type AnalysisWindow
     implements Value
 {
@@ -85,131 +92,12 @@ type AnalysisWindow
 }
 
 //==
-// # Filters
-
-// The response shape of a second-order (biquad) filter section. The peaking
-// and shelf shapes carry their gain in decibels; the others have none.
-type BiquadResponse
-    = LowPass
-    | HighPass
-    | BandPass
-    | Notch
-    | AllPass
-    | PeakingEq(GainDecibels: Number)
-    | LowShelf(GainDecibels: Number)
-    | HighShelf(GainDecibels: Number);
-
-// A second-order filter section in design terms: the response shape, the
-// corner or center Frequency, and the quality factor Q (bandwidth).
-type BiquadFilter
-    implements Value
-{
-    Response: BiquadResponse;
-    Frequency: Frequency;
-    Q: Number;
-}
-
-// A finite-impulse-response filter: the output is the convolution of the
-// input with Taps, where Taps[0] weights the current sample.
-type FirFilter
-    implements Value
-{
-    Taps: Array<Number>;
-}
-
-// An infinite-impulse-response filter in direct form. Feedforward
-// coefficients (b) weight current and past inputs; feedback coefficients (a)
-// weight past outputs, with FeedbackCoefficients[0] normalized to 1.
-type IirFilter
-    implements Value
-{
-    FeedforwardCoefficients: Array<Number>;
-    FeedbackCoefficients: Array<Number>;
-}
-
-//==
-// # Envelopes and generators
-
-// An attack-decay-sustain-release amplitude envelope. Sustain is the level
-// held after decay as a proportion of peak; the other stages are durations.
-type AdsrEnvelope
-    implements Value
-{
-    Attack: Duration;
-    Decay: Duration;
-    Sustain: Proportion;
-    Release: Duration;
-}
-
-// The spectral color of a noise generator: White is flat, Pink -3 dB/octave,
-// Brown -6 dB/octave, Blue +3 dB/octave.
-type NoiseColor = White | Pink | Brown | Blue;
-
-// A pure description of a noise generator: spectral color, peak amplitude,
-// and the seed of its deterministic random sequence.
-type NoiseSignal
-    implements Value
-{
-    Color: NoiseColor;
-    Amplitude: Number;
-    Seed: Integer;
-}
-
-// The shape of a periodic test or synthesis waveform. Pulse carries its
-// duty cycle: the high fraction of each period.
-type Waveform
-    = Sine
-    | Square
-    | Triangle
-    | Sawtooth
-    | Pulse(DutyCycle: Proportion);
-
-// A pure description of a periodic waveform generator. Phase offsets the
-// start of the cycle.
-type WaveformGenerator
-    implements Value
-{
-    Waveform: Waveform;
-    Frequency: Frequency;
-    Amplitude: Number;
-    Phase: Angle;
-}
-
-//==
-// # Rate conversion and mixing
-
-// The interpolation used when resampling a signal to a new rate.
-type SignalResampling = ZeroOrderHold | Linear | CubicHermite | WindowedSinc;
-
-// A sample-rate conversion request: the source and target rates and the
-// interpolation used between them.
-type SampleRateConversion
-    implements Value
-{
-    SourceRate: Frequency;
-    TargetRate: Frequency;
-    Interpolation: SignalResampling;
-}
-
-// The gain law of a crossfade between two signals: gains sum to 1 (Linear),
-// squared gains sum to 1 (EqualPower), or smooth-stepped linear (SCurve).
-type CrossfadeLaw = Linear | EqualPower | SCurve;
-
-// A crossfade description: the gain law and the time taken to move fully
-// from one signal to the other.
-type CrossfadeParameters
-    implements Value
-{
-    Law: CrossfadeLaw;
-    Duration: Duration;
-}
-
-//==
 // # Derived representations
 
 // An analytic (Hilbert) representation of a real signal: parallel in-phase
 // and quadrature sample arrays, from which instantaneous amplitude and
 // phase follow.
+// (https://en.wikipedia.org/wiki/Analytic_signal)
 type AnalyticSignal
     implements Value
 {
@@ -220,6 +108,7 @@ type AnalyticSignal
 
 // An inclusive band of frequencies from Low to High: equalizer bands,
 // octave analysis, band-limited processing.
+// (https://en.wikipedia.org/wiki/Frequency_band)
 type FrequencyBand
     implements Value
 {

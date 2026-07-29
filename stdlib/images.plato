@@ -1,28 +1,20 @@
 //==
 // # Images
 //
-// Raster data: rectangular grids of pixels. The `Image` concept exposes only
-// dimensions; pixel access lives on the concrete types because pixel
-// representations differ (bytes, floats, indices, bits). Unless a type says
-// otherwise, pixel storage is row-major starting at the top-left pixel, and
-// a pixel array's Count equals Width times Height.
-
-// A raster image: a rectangular pixel grid with known dimensions. Pixel access
-// is deliberately not part of the concept; each concrete image type exposes its
-// own pixel representation.
-concept Image
-    inherits Value
-{
-    Size(x: Self): IntegerSize2D;
-    Width(x: Self): Integer;
-    Height(x: Self): Integer;
-}
+// Raster data: rectangular grids of pixels. The `Image` concept
+// (`images.concepts.plato`) exposes only dimensions; pixel access lives on the
+// concrete types below because pixel representations differ (bytes, floats,
+// indices, bits). Unless a type says otherwise, pixel storage is row-major
+// starting at the top-left pixel, and a pixel array's Count equals Width times
+// Height. Encoded, tiled, animated, and volumetric containers live in
+// `images-containers.plato`.
 
 // Where pixel row zero sits in an image's coordinate convention: scanline
 // order as in most codecs (TopLeft), or OpenGL texture order (BottomLeft).
 type ImageOrigin = TopLeft | BottomLeft;
 
 // The in-memory layout of one pixel: channel set, bit depth, and encoding.
+// (https://en.wikipedia.org/wiki/Color_depth)
 type PixelFormat
     = R8 | RG8 | RGB8 | RGBA8 | BGRA8 | SRGB8 | SRGBA8
     | R16 | RG16 | RGBA16
@@ -46,6 +38,7 @@ type Bitmap
 
 // A linear-light RGBA image with unbounded (HDR) range: the working form for
 // compositing, filtering, and rendering output.
+// (https://en.wikipedia.org/wiki/High_dynamic_range)
 type FloatImage
     implements Image
 {
@@ -54,7 +47,7 @@ type FloatImage
 }
 
 // A single-channel image of unbounded scalars: luminance, heights, weights,
-// or soft (fractional) masks.
+// or soft (fractional) masks. (https://en.wikipedia.org/wiki/Grayscale)
 type GrayscaleImage
     implements Image
 {
@@ -64,6 +57,7 @@ type GrayscaleImage
 
 // A one-bit-per-pixel image: hard masks, stencils, and region selections.
 // True marks a set (selected) pixel.
+// (https://en.wikipedia.org/wiki/Binary_image)
 type BinaryImage
     implements Image
 {
@@ -81,6 +75,7 @@ type PaletteIndex
 
 // A palette-indexed image: each pixel stores a zero-based index into Palette.
 // An index of -1 marks a transparent (unmapped) pixel.
+// (https://en.wikipedia.org/wiki/Indexed_color)
 type IndexedImage
     implements Image
 {
@@ -91,6 +86,7 @@ type IndexedImage
 
 // A per-pixel scene-depth image. Depths are normalized to [0, 1] between the
 // Near and Far distances that produced them.
+// (https://en.wikipedia.org/wiki/Depth_map)
 type DepthImage
     implements Image
 {
@@ -102,83 +98,10 @@ type DepthImage
 
 // An image of unit direction vectors (a tangent-space or world-space normal
 // map), stored unencoded: components in [-1, 1], not remapped to color range.
+// (https://en.wikipedia.org/wiki/Normal_mapping)
 type NormalImage
     implements Image
 {
     Size: IntegerSize2D;
     Normals: Array<Vector3D>;
-}
-
-//==
-// ## Encoded, tiled, and multi-resolution images
-
-// A compressed image file format; Hdr is Radiance HDR.
-type ImageCodec
-    = Png | Jpeg | WebP | Gif | Bmp | Tga | Tiff | Exr | Hdr | Ktx2 | Dds | Avif | Heic;
-
-// An image in compressed (file) form: an opaque byte payload plus the codec
-// that produced it. Each element of Bytes is one octet in [0, 255].
-type EncodedImage
-    implements Value
-{
-    Codec: ImageCodec;
-    Bytes: Array<Integer>;
-}
-
-// A full mipmap pyramid. Levels[0] is the base image; each subsequent level
-// halves both dimensions (rounding down, minimum 1) until 1x1.
-type MipChain
-    implements Value
-{
-    Levels: Array<FloatImage>;
-}
-
-// A large image split into a row-major grid of tiles for streaming and
-// caching. Interior tiles are exactly TileSize; right/bottom edge tiles may
-// be smaller.
-type TiledImage
-    implements Value
-{
-    Size: IntegerSize2D;
-    TileSize: IntegerSize2D;
-    Tiles: Array<FloatImage>;
-}
-
-// A frame-sequence image (animated GIF/WebP style). FrameDurations pairs
-// one-to-one with Frames; LoopCount is the replay count, 0 meaning forever.
-type AnimatedImage
-    implements Value
-{
-    Frames: Array<Bitmap>;
-    FrameDurations: Array<Duration>;
-    LoopCount: Integer;
-}
-
-// A rectangular region of interest within an image, in pixel coordinates.
-// Contains Min, excludes Max (half-open, like IntegerBounds2D).
-type ImageRegion
-    implements Value
-{
-    Bounds: IntegerBounds2D;
-}
-
-//==
-// ## Volume and cubemap pixel data
-
-// A dense 3D scalar grid (a voxel image): medical stacks, density fields
-// baked to texels, 3D noise caches. Values are layer-major: layer, then row,
-// then column; Count equals Width times Height times Depth.
-type VolumeImage
-    implements Value
-{
-    Size: IntegerSize3D;
-    Values: Array<Number>;
-}
-
-// The six square faces of a cubemap as linear-light images, in the order
-// +X, -X, +Y, -Y, +Z, -Z. All faces share the same square size.
-type CubemapImage
-    implements Value
-{
-    Faces: Array<FloatImage>;
 }

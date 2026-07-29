@@ -1,0 +1,74 @@
+//==
+// # Particle force fields
+//
+// The accelerations applied to particles each step: gravity, drag, vortices,
+// attractors, curl-noise turbulence, and wind. These types are expressed in
+// 3D; planar systems interpret them in the XY plane and ignore Z components.
+// Accelerations are in meters per second squared.
+
+// Constant acceleration applied to every particle, in meters per second
+// squared (e.g. (0, -9.81, 0)).
+type ParticleGravity
+    implements Value
+{
+    Acceleration: Vector3D;
+}
+
+// Velocity-opposing deceleration of particles: acceleration =
+// -(LinearCoefficient * v + QuadraticCoefficient * |v| * v).
+// LinearCoefficient is in units of one per second; QuadraticCoefficient is in
+// units of one per meter.
+// (https://en.wikipedia.org/wiki/Drag_(physics))
+type ParticleDrag
+    implements Value
+{
+    LinearCoefficient: Number;
+    QuadraticCoefficient: Number;
+}
+
+// A swirling force field: particles are accelerated tangentially around the
+// line through Center along Axis. Strength is the tangential acceleration in
+// meters per second squared at one meter from the axis, diminishing with
+// distance.
+// (https://en.wikipedia.org/wiki/Vortex)
+type ParticleVortex
+    implements Value
+{
+    Center: Point3D;
+    Axis: Direction3D;
+    Strength: Number;
+}
+
+// A point force field: particles inside FalloffRadius accelerate toward
+// Center. Strength is the peak acceleration in meters per second squared at
+// the center, fading to zero at FalloffRadius; negative values repel.
+type ParticleAttractor
+    implements Value
+{
+    Center: Point3D;
+    Strength: Number;
+    FalloffRadius: Length;
+}
+
+// Curl-noise turbulence applied to particles. SpatialFrequency is the noise
+// frequency in cycles per meter; Strength is the peak acceleration in meters
+// per second squared; Seed selects the noise realization.
+type ParticleTurbulence
+    implements Value
+{
+    SpatialFrequency: Number;
+    Strength: Number;
+    Seed: Integer;
+}
+
+// A steady wind with gusts. Speed is the mean wind speed along Direction;
+// Turbulence is the dimensionless gust strength as a proportion of Speed in
+// [0, 1]; GustFrequency is how often gust cycles occur.
+type WindModel
+    implements Value
+{
+    Direction: Direction3D;
+    Speed: Speed;
+    Turbulence: Number;
+    GustFrequency: Frequency;
+}

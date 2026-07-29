@@ -7,13 +7,6 @@
 // tweens, and transitions select easings by ClassicEasing or carry one of the
 // parameterized easing records declared here.
 
-// A pure easing curve: maps normalized time to normalized progress. Eval(0)
-// yields 0 and Eval(1) yields 1; intermediate values may leave [0, 1]
-// (overshoot and anticipation).
-concept EasingFunction
-    inherits Procedural<Number, Number>
-{ }
-
 // The family (base shape) of a non-linear classic easing curve.
 type EasingFamily
     = Quad | Cubic | Quart | Quint | Sine | Expo | Circ | Back | Elastic | Bounce;
@@ -33,7 +26,7 @@ type ClassicEasing
 // A CSS-style cubic Bezier easing. The curve's endpoints are pinned at (0, 0)
 // and (1, 1); P1 and P2 are the two free control points. P1.X and P2.X lie in
 // [0, 1] so the curve remains a function of time; Y components may leave [0, 1]
-// to overshoot.
+// to overshoot. (https://en.wikipedia.org/wiki/B%C3%A9zier_curve)
 type CubicBezierEasing
     implements Value, EasingFunction
 {
@@ -48,6 +41,7 @@ type StepPosition = JumpStart | JumpEnd | JumpNone | JumpBoth;
 
 // A staircase easing that advances in a fixed number of equal jumps rather than
 // continuously. Steps is at least 1.
+// (https://en.wikipedia.org/wiki/Step_function)
 type StepEasing
     implements Value, EasingFunction
 {
@@ -58,7 +52,7 @@ type StepEasing
 // A polynomial smoothstep easing with zero derivatives at both endpoints.
 // Order selects the polynomial: 0=linear, 1=cubic smoothstep (3t^2 - 2t^3),
 // 2=quintic smootherstep; order N yields a polynomial of degree 2N + 1 with N
-// vanishing derivatives at each end.
+// vanishing derivatives at each end. (https://en.wikipedia.org/wiki/Smoothstep)
 type SmoothstepEasing
     implements Value, EasingFunction
 {
@@ -69,6 +63,7 @@ type SmoothstepEasing
 // unitless tuning values for animation feel, not physical quantities. The
 // spring is critically damped (no oscillation, fastest settle) when Damping
 // equals twice the square root of Stiffness times Mass.
+// (https://en.wikipedia.org/wiki/Damping)
 type SpringParameters
     implements Value
 {
@@ -80,6 +75,7 @@ type SpringParameters
 // Shape parameters for the Elastic easing family. Amplitude scales the
 // overshoot (1 or greater; 1 is the classic curve); Period is the oscillation
 // period as a fraction of the total duration (classic value 0.3).
+// (https://en.wikipedia.org/wiki/Harmonic_oscillator)
 type ElasticParameters
     implements Value
 {
@@ -90,6 +86,7 @@ type ElasticParameters
 // Shape parameter for the Back easing family. Overshoot controls how far the
 // curve pulls back before advancing (or overshoots past 1); the classic value
 // is 1.70158, which overshoots by about 10 percent.
+// (https://en.wikipedia.org/wiki/Overshoot_(signal))
 type BackParameters
     implements Value
 {
@@ -99,6 +96,7 @@ type BackParameters
 // Shape parameters for the Bounce easing family. Bounces counts the rebounds
 // after the initial fall; Restitution is the fraction of height retained by
 // each successive bounce.
+// (https://en.wikipedia.org/wiki/Coefficient_of_restitution)
 type BounceParameters
     implements Value
 {

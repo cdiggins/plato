@@ -1,0 +1,21 @@
+//==
+// # Distribution concept
+//
+// The single concept the univariate distributions of the `random-*` files
+// implement. Its four obligations are discharged per type across the
+// `random*.library.plato` files; the derived surface built on top of it
+// (StandardDeviation, SurvivalAt, ProbabilityBetween, ...) lives with the other
+// concept traits in `domain-traits.library.plato`.
+
+// A univariate probability distribution over the real line
+// (https://en.wikipedia.org/wiki/Probability_distribution). Pdf is the
+// probability density (or mass, for discrete distributions) at a value;
+// Cdf is the cumulative probability of drawing at most that value.
+concept ProbabilityDistribution
+    inherits Value
+{
+    Mean(x: Self): Number;
+    Variance(x: Self): Number;
+    Pdf(x: Self, value: Number): Number;
+    Cdf(x: Self, value: Number): Number;
+}

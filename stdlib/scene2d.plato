@@ -54,6 +54,7 @@ type MaskSource2D
 
 // A clipping or masking region applied to a scene node and its subtree.
 // Inverted swaps inside and outside.
+// (https://en.wikipedia.org/wiki/Clipping_path)
 type ClipMask2D
     implements Value
 {
@@ -65,6 +66,7 @@ type ClipMask2D
 // nodes address by index. ImageReferences holds opaque integer handles into
 // an external image/texture table owned by the host asset system; a node
 // with Image content stores an index into this array.
+// (https://en.wikipedia.org/wiki/Scene_graph)
 type Scene2D
     implements Value
 {
@@ -77,7 +79,7 @@ type Scene2D
 
 // A mapping from scene coordinates to device pixels: the rectangular region
 // of the scene that is visible, and the pixel dimensions of the target it
-// maps onto.
+// maps onto. (https://en.wikipedia.org/wiki/Viewport)
 type Viewport2D
     implements Value
 {
@@ -88,6 +90,7 @@ type Viewport2D
 // Settings for exporting a scene to a raster or document format.
 // DotsPerInch scales document units to physical output; Background is
 // composited beneath the scene (zero alpha for transparent output).
+// (https://en.wikipedia.org/wiki/Dots_per_inch)
 type ExportSettings2D
     implements Value
 {
@@ -97,7 +100,7 @@ type ExportSettings2D
 
 // The result of hit-testing a point against a scene: the index of the
 // topmost node hit (-1 for a miss) and the hit position in that node's local
-// space.
+// space. (https://en.wikipedia.org/wiki/Hit-testing)
 type SceneHitResult2D
     implements Value
 {

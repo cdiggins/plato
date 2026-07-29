@@ -1,0 +1,85 @@
+//==
+// # Animation clips and playback
+//
+// Self-contained bundles of named tracks, the trigger events on their time
+// lines, the playhead that runs them, and the finite state machine that
+// sequences one clip into the next. Event times are Duration offsets from the
+// start of the owning clip.
+
+// A named trigger on a clip's time line, with an opaque payload for the
+// consumer. Time is the offset from the start of the clip.
+type AnimationEvent
+{
+    Time: Duration;
+    Name: String;
+    Payload: String;
+}
+
+// A named, self-contained bundle of animation: typed named tracks, trigger
+// events, and a total Duration. Track names address targets in the consumer;
+// tracks whose keys extend past Duration are clipped by the player.
+type AnimationClip
+{
+    Name: String;
+    Duration: Duration;
+    Events: Array<AnimationEvent>;
+    NumberTracks: Array<NamedTrack<Number>>;
+    Vector2DTracks: Array<NamedTrack<Vector2D>>;
+    Vector3DTracks: Array<NamedTrack<Vector3D>>;
+    QuaternionTracks: Array<NamedTrack<Quaternion>>;
+    ColorTracks: Array<NamedTrack<Color>>;
+    TransformTracks: Array<NamedTrack<Transform3D>>;
+}
+
+// The direction time advances during playback.
+type PlaybackDirection = Forward | Reverse;
+
+// The playback position and rate of a running animation. Time is the offset
+// into the clip; Speed is a rate multiplier (1 is natural speed).
+type AnimationPlayhead
+{
+    Time: Duration;
+    Speed: Number;
+    Direction: PlaybackDirection;
+    Playing: Boolean;
+}
+
+// A zero-based index of a state within an animation state machine's States
+// array. -1 means "any state" where a transition allows it.
+type AnimationStateIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A named node in an animation state machine: the clip it plays, its rate
+// multiplier, and whether it loops while active.
+type AnimationState
+{
+    Name: String;
+    Clip: AnimationClip;
+    Speed: Number;
+    Looping: Boolean;
+}
+
+// A directed edge between states. FromState and ToState index the owning
+// machine's States; FromState -1 means "from any state". ExitTime is the
+// normalized time in the source state at which the transition may fire (0
+// means immediately); Duration is the cross-fade length shaped by Easing.
+type AnimationTransition
+{
+    FromState: AnimationStateIndex;
+    ToState: AnimationStateIndex;
+    Duration: Duration;
+    Easing: ClassicEasing;
+    ExitTime: Proportion;
+}
+
+// A finite state machine over animation states. InitialState indexes States.
+// (https://en.wikipedia.org/wiki/Finite-state_machine)
+type AnimationStateMachine
+{
+    States: Array<AnimationState>;
+    Transitions: Array<AnimationTransition>;
+    InitialState: AnimationStateIndex;
+}

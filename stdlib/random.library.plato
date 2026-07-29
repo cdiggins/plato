@@ -1,0 +1,103 @@
+//==
+// # Shared random-number helpers
+//
+// The numerical building blocks every distribution body is written against —
+// factorial, the binomial coefficient, the standard normal density and its
+// rational CDF approximation — plus the `RandomState` hash. The
+// `ProbabilityDistribution` obligations themselves are split by family across
+// `random-continuous.library.plato`, `random-continuous-gamma.library.plato`,
+// `random-continuous-tails.library.plato` and `random-discrete.library.plato`.
+// The derived surface built *on top* of the concept (StandardDeviation,
+// SurvivalAt, ProbabilityBetween, ...) lives with the other concept traits in
+// `domain-traits.library.plato` and is not repeated here.
+//
+// ## Missing special functions
+//
+// This tree declares no gamma function, no log-gamma, no beta function, no
+// regularized incomplete gamma/beta, no error function and no modified Bessel
+// function. Consequently the following obligations are left unimplemented
+// rather than approximated by guesswork; each carries a `TODO(content):` at its
+// site:
+//
+// - Gamma / Beta / ChiSquared / StudentT: Pdf (needs Gamma or Beta) and Cdf
+//   (needs the regularized incomplete Gamma or Beta).
+// - Weibull: Mean and Variance (both need Gamma).
+// - VonMises: Variance, Pdf and Cdf (all need the modified Bessel I0/I1).
+// - Poisson: Cdf is implemented by direct summation, which is exact-in-form but
+//   O(k); it is not the incomplete-gamma closed form.
+//
+// The normal CDF likewise has no elementary closed form. Rather than leave the
+// whole normal family unimplemented it is computed here with the *named*
+// Zelen & Severo rational approximation (Abramowitz & Stegun 26.2.17), whose
+// stated absolute error bound is 7.5e-8. It is an approximation, not an
+// identity, and is labelled as such at its definition.
+
+library Random
+{
+    //==
+    // # Numerical helpers
+    //
+    // Small building blocks used by the discrete masses and the normal family.
+    // TODO(cross-package): summing an `Array<Number>` is spelled inline as
+    // `Reduce(0.0, (total, x) => total + x)` throughout this block; a generic
+    // `Sum(Indexable<Number>)` belongs to the P2 collections package, not here.
+
+    // n factorial (n! = 1*2*...*n) as a Number, with 0! = 1! = 1. Exact for
+    // n <= 22 in IEEE double; larger n loses precision and eventually overflows.
+    // Precondition: n >= 0.
+    // https://en.wikipedia.org/wiki/Factorial
+    Factorial(n: Integer): Number
+        => n <= 1
+            ? 1.0
+            : n.ToNumber * Factorial(n - 1);
+
+    // The binomial coefficient C(n, k), "n choose k", by the multiplicative
+    // recurrence C(n, k) = C(n - 1, k - 1) * n / k, which avoids forming the
+    // factorials. Precondition: 0 <= k <= n (outside that range the result is
+    // meaningless; callers guard the support first).
+    // https://en.wikipedia.org/wiki/Binomial_coefficient
+    BinomialCoefficient(n: Integer, k: Integer): Number
+        => k <= 0 || k >= n
+            ? 1.0
+            : BinomialCoefficient(n - 1, k - 1) * n.ToNumber / k.ToNumber;
+
+    // The density of the standard normal distribution (mean 0, standard
+    // deviation 1) at z: exp(-z^2/2) / sqrt(2*pi). Exact.
+    // https://en.wikipedia.org/wiki/Normal_distribution
+    StandardNormalPdf(z: Number): Number
+        => (-0.5 * z.Square).Exp / Number.Tau.Sqrt;
+
+    // The cumulative distribution function of the standard normal distribution.
+    //
+    // APPROXIMATION, NOT AN IDENTITY. There is no elementary closed form and
+    // this tree declares no error function, so this is the Zelen & Severo
+    // rational approximation, Abramowitz & Stegun "Handbook of Mathematical
+    // Functions" formula 26.2.17: with t = 1 / (1 + 0.2316419*|z|),
+    //   Phi(|z|) = 1 - phi(|z|) * (b1 t + b2 t^2 + b3 t^3 + b4 t^4 + b5 t^5)
+    // and Phi(z) = 1 - Phi(-z) for z < 0. The published absolute error bound is
+    // |eps| < 7.5e-8, uniformly in z. Do not rely on it beyond ~7 digits, and
+    // note that far tail probabilities are accurate in absolute, not relative,
+    // terms.
+    // https://en.wikipedia.org/wiki/Normal_distribution#Numerical_approximations_for_the_normal_CDF_and_normal_quantile_function
+    StandardNormalCdf(z: Number): Number
+    {
+        var x = z.Abs;
+        var t = 1.0 / (1.0 + 0.2316419 * x);
+        var poly = t * (0.319381530
+                 + t * (-0.356563782
+                 + t * (1.781477937
+                 + t * (-1.821255978
+                 + t * 1.330274429))));
+        var upperTail = StandardNormalPdf(x) * poly;
+        return z < 0.0 ? upperTail : 1.0 - upperTail;
+    }
+
+    //==
+    // # RandomState
+
+    // A digest of the generator state. Both fields are part of the value, so
+    // they are combined with the classic 31-multiplier mix; Integer arithmetic
+    // wraps, which is the intended behaviour for a hash.
+    Hash(self: RandomState): Integer
+        => self.State.Hash * 31 + self.Stream.Hash;
+}

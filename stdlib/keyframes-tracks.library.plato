@@ -1,0 +1,39 @@
+//==
+// # KeyframesTracks — derived functions for TimeVarying<TValue>
+//
+// Bodies for the `TimeVarying<TValue>` concept declared in
+// `keyframes-tracks.plato`. A time-varying value is sampled at a `Duration`
+// offset from its owner's start via `Sample`; the helpers rename that sampling
+// and work over a span given by two boundary Durations. Pure expressions only;
+// all inputs are immutable and evaluation is side-effect free. See `README.md`
+// for naming and unit conventions.
+
+library KeyframesTracks
+{
+    //==
+    // # TimeVarying<TValue>
+    //
+    // A value sampled at a moment in time via Sample(time: Duration). Key times
+    // are Duration offsets from the owner's start, so helpers take explicit
+    // boundary Durations rather than assuming a clip length.
+    //
+    // The change/delta helpers subtract two samples, which the type variable
+    // $TValue supports by the same duck-typing the interval helpers rely on
+    // (IntervalLike.Extent subtracts two $T). A formal `where TValue: Additive`
+    // bound on TimeVarying is deferred: its implementors span keyframes-tracks.plato
+    // (AnimationTrack/TangentTrack) and motion-graphics.plato, which are outside
+    // this package's edit scope, so the bound cannot be filled tree-wide here.
+
+    // The sampled value at a time offset; a readable spelling of Sample.
+    ValueAt(self: TimeVarying<$TValue>, time: Duration): $TValue
+        => self.Sample(time);
+
+    // The value sampled at the midpoint of the [earlier, later] time span.
+    SampleAtMidpoint(self: TimeVarying<$TValue>, earlier: Duration, later: Duration): $TValue
+        => self.Sample(earlier.MidPoint(later));
+
+    // The signed change in value over the [earlier, later] time span:
+    // Sample(later) - Sample(earlier).
+    Change(self: TimeVarying<$TValue>, earlier: Duration, later: Duration): $TValue
+        => self.Sample(later).Subtract(self.Sample(earlier));
+}

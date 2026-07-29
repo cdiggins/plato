@@ -1,13 +1,15 @@
 //==
 // # Uncertainty
 //
-// Values that carry uncertainty without losing their nominal reading:
-// measurement uncertainty, confidence intervals, engineering tolerances,
-// fuzzy numbers, and state estimation. Standard uncertainties are one
-// standard deviation (1-sigma) unless a coverage factor says otherwise.
+// Scalar values that carry uncertainty without losing their nominal reading:
+// measurement uncertainty, confidence intervals, engineering tolerances, and
+// fuzzy numbers. Standard uncertainties are one standard deviation (1-sigma)
+// unless a coverage factor says otherwise. Uncertain geometry, state
+// estimation, and error propagation live in `uncertainty-estimation.plato`.
 
 // A measured or estimated number with its standard (1-sigma) uncertainty,
 // in the same implicit unit as the value.
+// (https://en.wikipedia.org/wiki/Measurement_uncertainty)
 type UncertainNumber
     implements Value
 {
@@ -37,6 +39,7 @@ type ExpandedUncertainty
 
 // An interval asserted to contain the true value with the stated confidence
 // Level (e.g. 0.95). Lower does not exceed Upper.
+// (https://en.wikipedia.org/wiki/Confidence_interval)
 type ConfidenceInterval
     implements Value
 {
@@ -47,6 +50,7 @@ type ConfidenceInterval
 
 // The alpha of a hypothesis test: the accepted probability of rejecting a
 // true null hypothesis (e.g. 0.05).
+// (https://en.wikipedia.org/wiki/Statistical_significance)
 type SignificanceLevel
     implements Value
 {
@@ -56,6 +60,7 @@ type SignificanceLevel
 // An asymmetric engineering tolerance about a nominal value. The acceptable
 // range is [Nominal - Minus, Nominal + Plus]; Plus and Minus are
 // non-negative magnitudes.
+// (https://en.wikipedia.org/wiki/Engineering_tolerance)
 type Tolerance
     implements Value
 {
@@ -66,6 +71,7 @@ type Tolerance
 
 // One endpoint of a one-dimensional range: the endpoint value and whether
 // the endpoint itself is included.
+// (https://en.wikipedia.org/wiki/Interval_(mathematics))
 type IntervalBound
     implements Value
 {
@@ -81,6 +87,7 @@ type IntervalBound
 
 // A triangular fuzzy number: support [A, C] with full membership only at
 // the peak B, where A <= B <= C.
+// (https://en.wikipedia.org/wiki/Fuzzy_number)
 type TriangularFuzzyNumber
     implements Value
 {
@@ -91,6 +98,7 @@ type TriangularFuzzyNumber
 
 // A trapezoidal fuzzy number: support [A, D] with full membership on the
 // core [B, C], where A <= B <= C <= D.
+// (https://en.wikipedia.org/wiki/Membership_function_(mathematics))
 type TrapezoidalFuzzyNumber
     implements Value
 {
@@ -99,75 +107,3 @@ type TrapezoidalFuzzyNumber
     C: Number;
     D: Number;
 }
-
-//==
-// # Uncertain geometry
-//
-// Geometric values with Gaussian uncertainty expressed as a covariance.
-
-// A 2D vector with a 2x2 covariance of its components.
-type UncertainVector2D
-    implements Value
-{
-    Value: Vector2D;
-    Covariance: Covariance2D;
-}
-
-// A 3D vector with a 3x3 covariance of its components.
-type UncertainVector3D
-    implements Value
-{
-    Value: Vector3D;
-    Covariance: Covariance3D;
-}
-
-// A 2D position with a 2x2 covariance of its coordinates.
-type UncertainPoint2D
-    implements Value
-{
-    Value: Point2D;
-    Covariance: Covariance2D;
-}
-
-// A 3D position with a 3x3 covariance of its coordinates.
-type UncertainPoint3D
-    implements Value
-{
-    Value: Point3D;
-    Covariance: Covariance3D;
-}
-
-//==
-// # State estimation
-
-// A Kalman estimate: the state mean vector and its covariance matrix, whose
-// order matches the state length.
-type KalmanState
-    implements Value
-{
-    State: Array<Number>;
-    Covariance: MatrixN;
-}
-
-// The model matrices of a linear Kalman filter: state Transition (F),
-// Observation (H), ProcessNoise covariance (Q), and ObservationNoise
-// covariance (R).
-type KalmanFilterParameters
-    implements Value
-{
-    Transition: MatrixN;
-    Observation: MatrixN;
-    ProcessNoise: MatrixN;
-    ObservationNoise: MatrixN;
-}
-
-//==
-// # Error propagation
-
-// How uncertainty is propagated through a computation: first-order Taylor
-// (Linear), sampled with the given count and deterministic seed
-// (MonteCarlo), or sigma points (Unscented).
-type ErrorPropagation
-    = Linear
-    | MonteCarlo(SampleCount: Integer, Seed: Integer)
-    | Unscented;

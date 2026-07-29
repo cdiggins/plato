@@ -1,29 +1,10 @@
 //==
 // # Kinematics
 //
-// Motion state described without reference to forces or mass: linear and
-// angular states, spatial velocities (twists), spatial forces (wrenches),
-// sampled trajectories, and closed-form elementary motions. Unless a doc
-// comment says otherwise, linear quantities are in meters and seconds and
-// angular quantities are in radians and seconds.
-
-// A planar motion that can be sampled at any time. PositionAt returns the
-// position in meters at the given time since the motion's start; VelocityAt
-// returns the velocity in meters per second.
-concept Kinematic2D
-{
-    PositionAt(x: Self, time: Duration): Point2D;
-    VelocityAt(x: Self, time: Duration): Vector2D;
-}
-
-// A spatial motion that can be sampled at any time. PositionAt returns the
-// position in meters at the given time since the motion's start; VelocityAt
-// returns the velocity in meters per second.
-concept Kinematic3D
-{
-    PositionAt(x: Self, time: Duration): Point3D;
-    VelocityAt(x: Self, time: Duration): Vector3D;
-}
+// Motion state described without reference to forces or mass: instantaneous
+// linear and angular states, spatial velocities (twists), and spatial forces
+// (wrenches). Unless a doc comment says otherwise, linear quantities are in
+// meters and seconds and angular quantities are in radians and seconds.
 
 //==
 // # Instantaneous motion state
@@ -64,6 +45,7 @@ type AngularState2D
 // The instantaneous rotational motion of a spatial body. AngularVelocity is
 // in radians per second about each world axis (axis-scaled rotation rate);
 // AngularAcceleration is in radians per second squared about each world axis.
+// (https://en.wikipedia.org/wiki/Angular_velocity)
 type AngularState3D
     implements Value
 {
@@ -91,6 +73,7 @@ type RigidKinematicState2D
 // is in meters per second squared; AngularVelocity is in radians per second
 // and AngularAcceleration in radians per second squared, each about the
 // world axes.
+// (https://en.wikipedia.org/wiki/Rigid_body)
 type RigidKinematicState3D
     implements Value
 {
@@ -116,6 +99,7 @@ type Twist2D
 
 // A spatial velocity: the linear velocity of a reference point in meters per
 // second, plus the angular velocity in radians per second about each axis.
+// (https://en.wikipedia.org/wiki/Screw_theory)
 type Twist3D
     implements Value, Interpolatable
 {
@@ -134,95 +118,10 @@ type Wrench2D
 
 // A spatial force: a force in newtons acting at a reference point, plus a
 // torque in newton-meters about each axis.
+// (https://en.wikipedia.org/wiki/Torque)
 type Wrench3D
     implements Value, Interpolatable
 {
     Force: Vector3D;
     Torque: Vector3D;
-}
-
-//==
-// # Sampled trajectories
-
-// A time-sampled planar motion stored as parallel arrays: Times[i] is the
-// time since trajectory start, Positions[i] the position in meters, and
-// Velocities[i] the velocity in meters per second. Velocities may be empty
-// when unknown.
-type Trajectory2D
-    implements Value
-{
-    Times: Array<Duration>;
-    Positions: Array<Point2D>;
-    Velocities: Array<Vector2D>;
-}
-
-// A time-sampled spatial motion stored as parallel arrays: Times[i] is the
-// time since trajectory start, Positions[i] the position in meters, and
-// Velocities[i] the velocity in meters per second. Velocities may be empty
-// when unknown.
-type Trajectory3D
-    implements Value
-{
-    Times: Array<Duration>;
-    Positions: Array<Point3D>;
-    Velocities: Array<Vector3D>;
-}
-
-//==
-// # Closed-form motions
-
-// Projectile motion under constant gravity: position(t) = InitialPosition +
-// InitialVelocity * t + Gravity * t^2 / 2. InitialVelocity is in meters per
-// second; Gravity is a constant acceleration in meters per second squared.
-type BallisticTrajectory
-    implements Value
-{
-    InitialPosition: Point3D;
-    InitialVelocity: Vector3D;
-    Gravity: Vector3D;
-}
-
-// Motion at constant angular speed around a circle: the moving point orbits
-// Center in the plane perpendicular to Axis at distance Radius, starting at
-// phase InitialPhase.
-type UniformCircularMotion
-    implements Value
-{
-    Center: Point3D;
-    Axis: Direction3D;
-    Radius: Length;
-    AngularSpeed: AngularVelocity;
-    InitialPhase: Angle;
-}
-
-// Sinusoidal oscillation of a scalar: value(t) = Offset + Amplitude *
-// sin(AngularFrequency * t + Phase). Offset and Amplitude are in the units of
-// the oscillating quantity (unit-agnostic).
-type SimpleHarmonicMotion
-    implements Value
-{
-    Offset: Number;
-    Amplitude: Number;
-    AngularFrequency: AngularVelocity;
-    Phase: Angle;
-}
-
-// The physical parameters of an ideal damped pendulum. Gravity is the local
-// gravitational acceleration; Damping is the angular velocity decay rate in
-// units of one per second (0 = undamped).
-type Pendulum
-    implements Value
-{
-    ArmLength: Length;
-    Gravity: Acceleration;
-    Damping: Number;
-}
-
-// The instantaneous state of a pendulum: signed deflection from the rest
-// (hanging) direction and its rate of change.
-type PendulumState
-    implements Value
-{
-    Deflection: Angle;
-    AngularVelocity: AngularVelocity;
 }

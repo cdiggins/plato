@@ -1,0 +1,15 @@
+//==
+// # Light source concept
+//
+// The marker concept for every scene light. The implementing types are
+// declared in `lights.plato` and its derived bodies in `lights.library.plato`;
+// the shadow-map, masking, and volumetric controls that accompany a light live
+// in `lights-settings.plato`.
+
+// A scene light that can be toggled to cast shadows.
+// (https://en.wikipedia.org/wiki/Computer_graphics_lighting)
+concept LightSource
+    inherits Value
+{
+    CastsShadows(x: Self): Boolean;
+}

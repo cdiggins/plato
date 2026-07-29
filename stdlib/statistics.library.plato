@@ -1,0 +1,188 @@
+//==
+// # Statistics bodies
+//
+// Derived quantities on the univariate summary records of `statistics.plato`.
+// The bivariate surface — covariance, correlation and the fitted models —
+// lives in `statistics-correlation.library.plato`.
+//
+// Scope: only relations that follow from the field definitions by identity —
+// bin geometry, the algebraic identities among the moment fields, and the
+// closed-form evaluation of a fitted model. The *estimators* (computing a
+// SummaryStatistics or a Histogram FROM a sample, quantile interpolation,
+// Spearman/Kendall correlation, the moving-average and outlier rules) are
+// deliberately absent: each depends on a sorting or accumulation surface this
+// vocabulary does not yet declare, and each has several defensible
+// conventions. See the TODO(content) notes at the end of the block.
+
+library Statistics
+{
+    //==
+    // # Histogram
+    //
+    // Convention, restated from the type: Counts[i] tallies the half-open bin
+    // [Start + i*w, Start + (i+1)*w) where w is the Range extent over the bin
+    // count, and the FINAL bin additionally includes the Range End.
+    // https://en.wikipedia.org/wiki/Histogram
+
+    // The number of bins.
+    BinCount(self: Histogram): Integer
+        => self.Counts.Count;
+
+    // The width of one bin: the Range extent divided by the bin count.
+    // Precondition: at least one bin.
+    BinWidth(self: Histogram): Number
+        => self.Range.Extent / self.Counts.Count.ToNumber;
+
+    // The total number of values tallied, across all bins. Values that fell
+    // outside Range were never counted and are not represented here.
+    TotalCount(self: Histogram): Integer
+        => self.Counts.Reduce(0, (total, count) => total + count);
+
+    // The lower edge of bin i: Start + i * BinWidth.
+    BinStart(self: Histogram, bin: Integer): Number
+        => self.Range.Start + bin.ToNumber * self.BinWidth;
+
+    // The midpoint of bin i.
+    BinCenter(self: Histogram, bin: Integer): Number
+        => self.Range.Start + (bin.ToNumber + 0.5) * self.BinWidth;
+
+    // The half-open span [BinStart(i), BinStart(i+1)) of bin i, as an interval.
+    BinInterval(self: Histogram, bin: Integer): NumberInterval
+        => NumberInterval(self.BinStart(bin), self.BinStart(bin + 1));
+
+    // The index of the bin containing value, or -1 when value lies outside
+    // Range. The Range End belongs to the final bin, per the type's convention.
+    BinIndexOf(self: Histogram, value: Number): Integer
+        => value < self.Range.Start || value > self.Range.End
+            ? -1
+            : value == self.Range.End
+                ? self.Counts.Count - 1
+                : ((value - self.Range.Start) / self.BinWidth).Floor.ToInteger;
+
+    // The relative frequency of bin i: its count over the total count, in
+    // [0, 1]. Precondition: the histogram tallied at least one value.
+    Frequency(self: Histogram, bin: Integer): Number
+        => self.Counts.At(bin).ToNumber / self.TotalCount.ToNumber;
+
+    // The empirical probability density in bin i: the relative frequency
+    // divided by the bin width, so that the bar areas sum to one. Precondition:
+    // the histogram tallied at least one value and the bin width is positive.
+    Density(self: Histogram, bin: Integer): Number
+        => self.Frequency(bin) / self.BinWidth;
+
+    //==
+    // # SummaryStatistics
+    //
+    // Convention, restated from the type: Variance and StandardDeviation use
+    // the SAMPLE (n - 1, Bessel-corrected) definition, and Kurtosis is EXCESS
+    // kurtosis (a normal sample scores 0, not 3).
+    // https://en.wikipedia.org/wiki/Descriptive_statistics
+
+    // The spread of the sample: Maximum - Minimum.
+    ValueRange(self: SummaryStatistics): Number
+        => self.Maximum - self.Minimum;
+
+    // The midpoint of the extremes: (Minimum + Maximum) / 2.
+    Midrange(self: SummaryStatistics): Number
+        => (self.Minimum + self.Maximum) / 2.0;
+
+    // The relative standard deviation: StandardDeviation / Mean. Meaningful
+    // only for ratio-scale data with a positive mean.
+    // https://en.wikipedia.org/wiki/Coefficient_of_variation
+    CoefficientOfVariation(self: SummaryStatistics): Number
+        => self.StandardDeviation / self.Mean;
+
+    // The standard error of the mean: StandardDeviation / sqrt(n).
+    // Precondition: Count > 0.
+    // https://en.wikipedia.org/wiki/Standard_error
+    StandardErrorOfMean(self: SummaryStatistics): Number
+        => self.StandardDeviation / self.Count.ToNumber.Sqrt;
+
+    // The kurtosis on the raw (non-excess) scale, where a normal sample scores
+    // 3. The stored Kurtosis field is the excess form.
+    RawKurtosis(self: SummaryStatistics): Number
+        => self.Kurtosis + 3.0;
+
+    // The population variance implied by the stored sample variance:
+    // s^2 * (n - 1) / n. Precondition: Count > 0.
+    // https://en.wikipedia.org/wiki/Bessel%27s_correction
+    PopulationVariance(self: SummaryStatistics): Number
+        => self.Variance * (self.Count - 1).ToNumber / self.Count.ToNumber;
+
+    //==
+    // # RunningStatistics
+    //
+    // Convention, restated from the type: M2 is the running sum of squared
+    // deviations from the current mean (Welford).
+    // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm
+
+    // The Bessel-corrected sample variance: M2 / (n - 1). Precondition:
+    // Count >= 2.
+    SampleVariance(self: RunningStatistics): Number
+        => self.M2 / (self.Count - 1).ToNumber;
+
+    // The population variance: M2 / n. Precondition: Count >= 1.
+    PopulationVariance(self: RunningStatistics): Number
+        => self.M2 / self.Count.ToNumber;
+
+    // The sample standard deviation: the square root of the sample variance.
+    SampleStandardDeviation(self: RunningStatistics): Number
+        => self.SampleVariance.Sqrt;
+
+    //==
+    // # FiveNumberSummary and BoxPlotStatistics
+    //
+    // https://en.wikipedia.org/wiki/Five-number_summary
+    // https://en.wikipedia.org/wiki/Box_plot
+
+    // The spread of the summary: Maximum - Minimum.
+    ValueRange(self: FiveNumberSummary): Number
+        => self.Maximum - self.Minimum;
+
+    // The interquartile range: UpperQuartile - LowerQuartile.
+    // https://en.wikipedia.org/wiki/Interquartile_range
+    InterquartileRange(self: FiveNumberSummary): Number
+        => self.UpperQuartile - self.LowerQuartile;
+
+    // The interquartile-range multiple defining Tukey's inner fences. 1.5 is a
+    // convention, not a derived quantity: Tukey's outer ("far out") fences use
+    // 3 instead, so the choice of multiplier is what these fences encode.
+    // (https://en.wikipedia.org/wiki/Interquartile_range#Outliers)
+    TukeyFenceMultiplier(_: Number): Number
+        => 1.5;
+
+    // The lower Tukey fence: LowerQuartile - 1.5 * IQR. Values below it are
+    // candidate outliers under the standard 1.5-IQR rule.
+    LowerFence(self: FiveNumberSummary): Number
+        => self.LowerQuartile - Number.TukeyFenceMultiplier * self.InterquartileRange;
+
+    // The upper Tukey fence: UpperQuartile + 1.5 * IQR.
+    UpperFence(self: FiveNumberSummary): Number
+        => self.UpperQuartile + Number.TukeyFenceMultiplier * self.InterquartileRange;
+
+    // The span covered by the whiskers: UpperWhisker - LowerWhisker.
+    WhiskerRange(self: BoxPlotStatistics): Number
+        => self.UpperWhisker - self.LowerWhisker;
+
+    // The number of data values lying beyond the whiskers.
+    OutlierCount(self: BoxPlotStatistics): Integer
+        => self.Outliers.Count;
+
+    // True when no value lies beyond the whiskers.
+    HasNoOutliers(self: BoxPlotStatistics): Boolean
+        => self.Outliers.Count == 0;
+
+    //==
+    // # Deliberate gaps
+    //
+    // TODO(content): the ESTIMATORS are not implemented here. Computing a
+    // SummaryStatistics, FiveNumberSummary, Quantiles or BoxPlotStatistics from
+    // an Array<Number> needs a sort (this vocabulary declares none) and a choice
+    // among the nine standard quantile-interpolation conventions; building a
+    // Histogram from a sample needs the accumulation surface the affine builders
+    // now supply (`List.Freeze` in primitives.plato) plus a binning convention.
+    // Spearman and Kendall correlation need ranking, i.e. a
+    // sort. MovingAverage and OutlierDetection are sum types describing a rule,
+    // and applying a rule to a series again needs the accumulation surface.
+    // These are gaps of missing infrastructure, not of missing formulas.
+}

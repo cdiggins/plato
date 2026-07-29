@@ -1,0 +1,22 @@
+//==
+// # Camera concept
+//
+// The marker concept for a placed camera: a rigid pose plus the near and far
+// clip distances that bound the rendered depth range. The implementing types
+// are declared in `cameras.plato`; the derived bodies (including the
+// AspectRatio obligation fills) live in `cameras.library.plato`.
+
+// A placed camera: a rigid pose plus near and far clip distances bounding the
+// rendered depth range. Invariant: 0 < Near < Far.
+// Convention: see CONVENTIONS.md - View space (right-handed; forward is -Z, +Y up).
+concept Camera
+    inherits Value
+{
+    Pose(x: Self): Pose3D;
+    Near(x: Self): Number;
+    Far(x: Self): Number;
+    // The image aspect ratio (width over height). PerspectiveCamera and
+    // OrthographicCamera carry it as a field; the other camera types derive it
+    // from their optics (see the AspectRatio bodies in domain-traits.library.plato).
+    AspectRatio(x: Self): Number;
+}

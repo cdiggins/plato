@@ -1,0 +1,21 @@
+//==
+// # GeoSpatial — derived functions for GeoRegion
+//
+// Bodies for the `GeoRegion` concept declared in `geo-spatial.concepts.plato`:
+// a surface region that tests whether it contains a geodetic coordinate
+// (altitude ignored). Pure expressions only; all inputs are immutable and
+// evaluation is side-effect free. See `README.md` for naming and unit
+// conventions.
+
+library GeoSpatial
+{
+    //==
+    // # GeoRegion
+    //
+    // A surface region that tests whether it contains a geodetic coordinate
+    // (altitude ignored).
+
+    // True when the coordinate lies outside the region.
+    ExcludesCoordinate(self: GeoRegion, coordinate: GeoCoordinate): Boolean
+        => self.ContainsCoordinate(coordinate).Not;
+}

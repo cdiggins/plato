@@ -1,23 +1,17 @@
 //==
-// # Keyframes, tracks, and clips
+// # Keyframes and tracks
 //
-// General keyframe animation: typed keys on a time line, tracks that interpolate
-// between them, clips that bundle named tracks, and the layering, state-machine,
-// and blend-space structures that combine clips. Key times are Duration offsets
-// from the start of the owning track or clip.
-
-// A value that can be sampled at a moment in time. Tracks, tweens, and
-// oscillators are all time-varying.
-concept TimeVarying<TValue>
-{
-    Sample(x: Self, time: Duration): TValue;
-}
+// Typed keys on a time line and the tracks that interpolate between them: the
+// interpolation and extrapolation policies, plain and tangent-handled keys,
+// single-value and named tracks, and the per-channel transform tracks. Key
+// times are Duration offsets from the start of the owning track.
 
 // How a track interpolates between a key and its successor: hold the key's
 // value until the next key (Constant), interpolate linearly, follow a smooth
 // spline with automatic tangents (CubicSpline), use explicit weighted tangent
 // handles (Bezier) or explicit tangent slopes (Hermite), or approach the next
 // value like a damped spring (Spring).
+// (https://en.wikipedia.org/wiki/Interpolation)
 type KeyInterpolation = Constant | Linear | CubicSpline | Bezier | Hermite | Spring;
 
 // How a track behaves when sampled outside its keyed range: clamp to the
@@ -25,11 +19,13 @@ type KeyInterpolation = Constant | Linear | CubicSpline | Bezier | Hermite | Spr
 // forward and reversed repeats (PingPong), extrapolate along the boundary
 // slope (LinearContinue), or repeat while offsetting each cycle by the
 // range's net value change (LoopWithOffset).
+// (https://en.wikipedia.org/wiki/Extrapolation)
 type Extrapolation = Hold | Loop | PingPong | LinearContinue | LoopWithOffset;
 
 // A single typed key on a time line. Time is the offset from the start of the
 // owning track. Easing shapes the parameter on the segment from this key to the
 // next; it applies when Interpolation is not tangent-based.
+// (https://en.wikipedia.org/wiki/Key_frame)
 type Keyframe<T>
 {
     Time: Duration;
@@ -41,6 +37,7 @@ type Keyframe<T>
 // A key with explicit incoming and outgoing tangents for Bezier and Hermite
 // interpolation. Tangents are value slopes per second; the weights give each
 // handle's reach as a fraction of the segment span (classic default one third).
+// (https://en.wikipedia.org/wiki/Cubic_Hermite_spline)
 type TangentKeyframe<T>
 {
     Time: Duration;
@@ -79,15 +76,6 @@ type NamedTrack<T>
     Track: AnimationTrack<T>;
 }
 
-// A named trigger on a clip's time line, with an opaque payload for the
-// consumer. Time is the offset from the start of the clip.
-type AnimationEvent
-{
-    Time: Duration;
-    Name: String;
-    Payload: String;
-}
-
 // Per-channel animation of a 2D transform: translation, rotation, and scale
 // each keyed independently.
 type TransformTrack2D
@@ -99,117 +87,10 @@ type TransformTrack2D
 
 // Per-channel animation of a 3D transform: translation, rotation, and scale
 // each keyed independently. Rotation keys interpolate by spherical
-// interpolation.
+// interpolation (https://en.wikipedia.org/wiki/Spherical_linear_interpolation).
 type TransformTrack3D
 {
     Translation: AnimationTrack<Vector3D>;
     Rotation: AnimationTrack<Quaternion>;
     Scale: AnimationTrack<Number3>;
-}
-
-// A named, self-contained bundle of animation: typed named tracks, trigger
-// events, and a total Duration. Track names address targets in the consumer;
-// tracks whose keys extend past Duration are clipped by the player.
-type AnimationClip
-{
-    Name: String;
-    Duration: Duration;
-    Events: Array<AnimationEvent>;
-    NumberTracks: Array<NamedTrack<Number>>;
-    Vector2DTracks: Array<NamedTrack<Vector2D>>;
-    Vector3DTracks: Array<NamedTrack<Vector3D>>;
-    QuaternionTracks: Array<NamedTrack<Quaternion>>;
-    ColorTracks: Array<NamedTrack<Color>>;
-    TransformTracks: Array<NamedTrack<Transform3D>>;
-}
-
-// One clip's contribution in a blend stack. Weight scales the clip's influence;
-// when Additive is true the clip's values are added on top of the layers below
-// instead of interpolated with them.
-type AnimationLayer
-{
-    Clip: AnimationClip;
-    Weight: Proportion;
-    Additive: Boolean;
-}
-
-// The direction time advances during playback.
-type PlaybackDirection = Forward | Reverse;
-
-// The playback position and rate of a running animation. Time is the offset
-// into the clip; Speed is a rate multiplier (1 is natural speed).
-type AnimationPlayhead
-{
-    Time: Duration;
-    Speed: Number;
-    Direction: PlaybackDirection;
-    Playing: Boolean;
-}
-
-// A zero-based index of a state within an animation state machine's States
-// array. -1 means "any state" where a transition allows it.
-type AnimationStateIndex
-    implements Value, Hashable, Comparable, Index
-{
-    Value: Integer;
-}
-
-// A named node in an animation state machine: the clip it plays, its rate
-// multiplier, and whether it loops while active.
-type AnimationState
-{
-    Name: String;
-    Clip: AnimationClip;
-    Speed: Number;
-    Looping: Boolean;
-}
-
-// A directed edge between states. FromState and ToState index the owning
-// machine's States; FromState -1 means "from any state". ExitTime is the
-// normalized time in the source state at which the transition may fire (0
-// means immediately); Duration is the cross-fade length shaped by Easing.
-type AnimationTransition
-{
-    FromState: AnimationStateIndex;
-    ToState: AnimationStateIndex;
-    Duration: Duration;
-    Easing: ClassicEasing;
-    ExitTime: Proportion;
-}
-
-// A finite state machine over animation states. InitialState indexes States.
-type AnimationStateMachine
-{
-    States: Array<AnimationState>;
-    Transitions: Array<AnimationTransition>;
-    InitialState: AnimationStateIndex;
-}
-
-// A clip placed at a position along a one-dimensional blend axis.
-type BlendSpaceSample1D
-{
-    Position: Number;
-    Clip: AnimationClip;
-}
-
-// Blends clips by a single parameter (walk speed, aim angle): sampling at a
-// parameter value interpolates the clips nearest it. Samples are ordered by
-// ascending Position.
-type BlendSpace1D
-{
-    Samples: Array<BlendSpaceSample1D>;
-}
-
-// A clip placed at a position on a two-dimensional blend plane.
-type BlendSpaceSample2D
-{
-    Position: Number2;
-    Clip: AnimationClip;
-}
-
-// Blends clips by two parameters (strafe and forward speed): sampling at a
-// point interpolates the surrounding clips.
-type BlendSpace2D
-{
-    Samples: Array<BlendSpaceSample2D>;
 }

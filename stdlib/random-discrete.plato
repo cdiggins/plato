@@ -1,0 +1,48 @@
+//==
+// # Discrete distributions
+//
+// The distributions supported on the whole numbers: success counts, waiting
+// counts, arrival counts, and an explicit weight table over outcome indices.
+// Pdf is the probability mass at the value rounded down to a whole number.
+// Bodies live in `random-discrete.library.plato`.
+
+// A single trial that succeeds with the given probability: mass at 1 for
+// success, 0 for failure.
+type BernoulliDistribution
+    implements ProbabilityDistribution
+{
+    SuccessProbability: Probability;
+}
+
+// The number of successes in TrialCount independent Bernoulli trials.
+type BinomialDistribution
+    implements ProbabilityDistribution
+{
+    TrialCount: Integer;
+    SuccessProbability: Probability;
+}
+
+// The number of failures before the first success in repeated Bernoulli
+// trials.
+type GeometricDistribution
+    implements ProbabilityDistribution
+{
+    SuccessProbability: Probability;
+}
+
+// The count of events in a fixed window when events arrive independently at
+// the given mean Rate.
+type PoissonDistribution
+    implements ProbabilityDistribution
+{
+    Rate: Number;
+}
+
+// A finite distribution over outcome indices 0..count-1: outcome i has
+// probability Weights[i] divided by the sum of Weights. Weights are
+// non-negative and need not be normalized.
+type DiscreteDistribution
+    implements ProbabilityDistribution
+{
+    Weights: Array<Number>;
+}

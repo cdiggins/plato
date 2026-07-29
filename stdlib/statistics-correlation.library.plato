@@ -1,0 +1,95 @@
+//==
+// # Covariance, correlation, and fit bodies
+//
+// The bivariate half of `statistics.plato`: the trace, determinant and implied
+// Pearson correlation of a Covariance2D, the closed-form evaluation of a fitted
+// line or polynomial, and the derived readings of a CorrelationCoefficient. As
+// in `statistics.library.plato`, only relations that follow from the field
+// definitions by identity appear here — the estimators that would *produce*
+// these records need a sorting surface this vocabulary does not declare.
+
+library StatisticsCorrelation
+{
+    //==
+    // # Covariance
+    //
+    // https://en.wikipedia.org/wiki/Covariance_matrix
+
+    // The trace of the 2x2 covariance: the total variance Xx + Yy.
+    TotalVariance(self: Covariance2D): Number
+        => self.Xx + self.Yy;
+
+    // The determinant of the 2x2 covariance: Xx*Yy - Xy^2. Non-negative for any
+    // genuine covariance; zero when the sample is perfectly collinear.
+    Determinant(self: Covariance2D): Number
+        => self.Xx * self.Yy - self.Xy.Square;
+
+    // The Pearson correlation implied by the covariance:
+    // Xy / sqrt(Xx * Yy), in [-1, 1]. Precondition: both variances positive.
+    // https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
+    PearsonCorrelation(self: Covariance2D): Number
+        => self.Xy / (self.Xx * self.Yy).Sqrt;
+
+    // The standard deviation of x: the square root of its variance.
+    StandardDeviationX(self: Covariance2D): Number
+        => self.Xx.Sqrt;
+
+    // The standard deviation of y: the square root of its variance.
+    StandardDeviationY(self: Covariance2D): Number
+        => self.Yy.Sqrt;
+
+    //==
+    // # Fits
+    //
+    // https://en.wikipedia.org/wiki/Simple_linear_regression
+    // https://en.wikipedia.org/wiki/Coefficient_of_determination
+
+    // The fitted value at x: Slope * x + Intercept.
+    Predict(self: LinearFit, x: Number): Number
+        => self.Slope * x + self.Intercept;
+
+    // The x at which the fitted line crosses zero: -Intercept / Slope.
+    // Precondition: Slope is non-zero.
+    RootOfFit(self: LinearFit): Number
+        => -self.Intercept / self.Slope;
+
+    // The residual of an observation: the observed y minus the fitted value.
+    Residual(self: LinearFit, x: Number, y: Number): Number
+        => y - self.Predict(x);
+
+    // The magnitude of the correlation implied by the fit: sqrt(R^2). The sign
+    // of the correlation is the sign of the Slope, which this does not apply.
+    CorrelationMagnitude(self: LinearFit): Number
+        => self.RSquared.Sqrt;
+
+    // The degree of the fitted polynomial: the coefficient count minus one.
+    Degree(self: PolynomialFit): Integer
+        => self.Coefficients.Count - 1;
+
+    // The fitted value at x, by Horner evaluation of the ASCENDING-power
+    // coefficient array (Coefficients[k] multiplies x^k).
+    // https://en.wikipedia.org/wiki/Horner%27s_method
+    Predict(self: PolynomialFit, x: Number): Number
+        => self.Coefficients.Count.Range
+            .Map(k => self.Coefficients.At(k) * x.Pow(k.ToNumber))
+            .Reduce(0.0, (total, term) => total + term);
+
+    //==
+    // # CorrelationCoefficient
+    //
+    // https://en.wikipedia.org/wiki/Correlation
+
+    // The coefficient of determination for a correlation: the square of the
+    // coefficient, in [0, 1].
+    RSquared(self: CorrelationCoefficient): Number
+        => self.Value.Square;
+
+    // The strength of association, ignoring direction: the absolute value of
+    // the coefficient, in [0, 1].
+    Strength(self: CorrelationCoefficient): Number
+        => self.Value.Abs;
+
+    // True when the two variables move in opposite directions.
+    IsNegative(self: CorrelationCoefficient): Boolean
+        => self.Value < 0.0;
+}

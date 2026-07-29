@@ -1,10 +1,11 @@
 //==
 // # Skeletal animation
 //
-// Bones, skeletons, poses, skinning, morph targets, and procedural constraints.
-// Bones form a forest addressed by index into the owning skeleton's bone array;
-// -1 is the "no bone" sentinel throughout. Poses are local: each bone's pose is
-// expressed relative to its parent (roots relative to the model).
+// The rig and the data bound to it: bones, skeletons, poses, skin weights,
+// morph targets, sockets, and skeletal clips. Bones form a forest addressed by
+// index into the owning skeleton's bone array; -1 is the "no bone" sentinel
+// throughout. Poses are local: each bone's pose is expressed relative to its
+// parent (roots relative to the model).
 
 // A zero-based index of a bone within the owning skeleton's bone array.
 // -1 means "no bone".
@@ -28,6 +29,7 @@ type Bone
 // An ordered array of bones forming a forest. Bones are topologically ordered:
 // every bone's Parent index is less than its own index, so a single forward
 // pass composes local poses into model space.
+// (https://en.wikipedia.org/wiki/Skeletal_animation)
 type Skeleton
     implements Value
 {
@@ -36,7 +38,7 @@ type Skeleton
 
 // A full articulation of a skeleton: one local pose per bone, parallel to the
 // owning skeleton's bone array. Composing along parent chains yields
-// model-space poses.
+// model-space poses (https://en.wikipedia.org/wiki/Forward_kinematics).
 type SkeletonPose
     implements Value
 {
@@ -74,6 +76,7 @@ type SkinBinding
 // A named blend-shape: per-vertex position and normal deltas added to the base
 // mesh, scaled by the target's weight. Both delta arrays are parallel to the
 // mesh's vertices; an empty NormalDeltas array means "positions only".
+// (https://en.wikipedia.org/wiki/Morph_target_animation)
 type MorphTarget
     implements Value
 {
@@ -89,82 +92,6 @@ type MorphWeights
     implements Value
 {
     Values: Array<Proportion>;
-}
-
-// The algorithm an inverse-kinematics chain is solved with: an analytic
-// two-segment solve, cyclic coordinate descent, or forward-and-backward
-// reaching.
-type IkSolver = TwoBone | Ccd | Fabrik;
-
-// The goal of an inverse-kinematics solve: where the chain's end effector
-// should be and how it should be oriented. The two weights blend the solved
-// result over the input pose per goal component.
-type IkTarget
-    implements Value
-{
-    Position: Point3D;
-    Orientation: Quaternion;
-    PositionWeight: Proportion;
-    OrientationWeight: Proportion;
-}
-
-// An inverse-kinematics chain: a run of bones solved so the last reaches the
-// target. BoneIndices runs root-to-tip along a parent chain; PoleTarget pulls
-// the chain's bend plane (elbow or knee direction); Iterations bounds the
-// solver loop and Tolerance is the end-effector distance below which it stops
-// early.
-type IkChain
-    implements Value
-{
-    BoneIndices: Array<BoneIndex>;
-    Target: IkTarget;
-    PoleTarget: Point3D;
-    Solver: IkSolver;
-    Iterations: Integer;
-    Tolerance: Number;
-}
-
-// Aims one bone at a world-space target. Aim is the bone-local axis to point at
-// the target; Up is the bone-local axis kept aligned to the world up to control
-// roll. Weight blends the constrained result over the input pose.
-type LookAtConstraint
-    implements Value
-{
-    Bone: BoneIndex;
-    Target: Point3D;
-    Aim: Vector3D;
-    Up: Vector3D;
-    Weight: Proportion;
-}
-
-// Propagates a fraction of a source bone's twist about an axis onto another
-// bone; used for forearm and neck twist distribution. Axis is expressed in the
-// source bone's local space.
-type TwistConstraint
-    implements Value
-{
-    Bone: BoneIndex;
-    SourceBone: BoneIndex;
-    Axis: Vector3D;
-    Fraction: Proportion;
-}
-
-// Per-bone blend weights, parallel to the owning skeleton's bone array. Scales
-// an animation layer's influence bone by bone (upper-body-only layers, fade-out
-// at chain roots).
-type BoneMask
-    implements Value
-{
-    Weights: Array<Proportion>;
-}
-
-// Maps the bones of a source skeleton onto a target skeleton for animation
-// retargeting. TargetBoneIndices is parallel to the source skeleton's bones;
-// each entry is the corresponding target bone's index, or -1 when unmapped.
-type RetargetMap
-    implements Value
-{
-    TargetBoneIndices: Array<BoneIndex>;
 }
 
 // A named socket on a bone for attaching props and accessories. Offset places

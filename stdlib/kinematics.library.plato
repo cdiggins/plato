@@ -1,0 +1,78 @@
+//==
+// # Kinematics — derived functions for Kinematic2D and Kinematic3D
+//
+// Bodies for the `Kinematic2D` and `Kinematic3D` concepts declared in
+// `kinematics.plato`. A motion is sampled by `PositionAt` (meters) and
+// `VelocityAt` (meters per second) at a `Duration` since the motion's start;
+// the helpers derive speed, displacement, chord distance, the averages over a
+// time span, and a rest test. Pure expressions only; all inputs are immutable
+// and evaluation is side-effect free. See `README.md` for naming and unit
+// conventions.
+
+library Kinematics
+{
+    //==
+    // # Kinematic2D
+    //
+    // A planar motion sampled by PositionAt (meters) and VelocityAt (meters per
+    // second). Times are Durations since the motion's start.
+
+    // The scalar speed at a time: the velocity's magnitude, in meters per second.
+    SpeedAt(self: Kinematic2D, time: Duration): Number
+        => self.VelocityAt(time).Magnitude;
+
+    // The straight-line displacement from the earlier to the later time.
+    DisplacementBetween(self: Kinematic2D, earlier: Duration, later: Duration): Vector2D
+        => self.PositionAt(earlier).Between(self.PositionAt(later));
+
+    // The straight-line distance covered between the two times (chord length).
+    DistanceBetween(self: Kinematic2D, earlier: Duration, later: Duration): Number
+        => self.PositionAt(earlier).Between(self.PositionAt(later)).Magnitude;
+
+    // The average velocity over [earlier, later]: displacement over elapsed
+    // seconds. Precondition: earlier and later differ.
+    AverageVelocityBetween(self: Kinematic2D, earlier: Duration, later: Duration): Vector2D
+        => self.PositionAt(earlier).Between(self.PositionAt(later)) / (later.Seconds - earlier.Seconds);
+
+    // The average speed over [earlier, later]: chord distance over elapsed
+    // seconds. Precondition: earlier and later differ.
+    AverageSpeedBetween(self: Kinematic2D, earlier: Duration, later: Duration): Number
+        => self.DistanceBetween(earlier, later) / (later.Seconds - earlier.Seconds);
+
+    // True when the body is (nearly) at rest at a time, within the given
+    // non-negative speed tolerance.
+    IsStationaryAt(self: Kinematic2D, time: Duration, tolerance: Number): Boolean
+        => self.VelocityAt(time).Magnitude <= tolerance;
+
+    //==
+    // # Kinematic3D
+    //
+    // A spatial motion; mirrors the planar speed, displacement, and rest helpers.
+
+    // The scalar speed at a time: the velocity's magnitude, in meters per second.
+    SpeedAt(self: Kinematic3D, time: Duration): Number
+        => self.VelocityAt(time).Magnitude;
+
+    // The straight-line displacement from the earlier to the later time.
+    DisplacementBetween(self: Kinematic3D, earlier: Duration, later: Duration): Vector3D
+        => self.PositionAt(earlier).Between(self.PositionAt(later));
+
+    // The straight-line distance covered between the two times (chord length).
+    DistanceBetween(self: Kinematic3D, earlier: Duration, later: Duration): Number
+        => self.PositionAt(earlier).Between(self.PositionAt(later)).Magnitude;
+
+    // The average velocity over [earlier, later]: displacement over elapsed
+    // seconds. Precondition: earlier and later differ.
+    AverageVelocityBetween(self: Kinematic3D, earlier: Duration, later: Duration): Vector3D
+        => self.PositionAt(earlier).Between(self.PositionAt(later)) / (later.Seconds - earlier.Seconds);
+
+    // The average speed over [earlier, later]: chord distance over elapsed
+    // seconds. Precondition: earlier and later differ.
+    AverageSpeedBetween(self: Kinematic3D, earlier: Duration, later: Duration): Number
+        => self.DistanceBetween(earlier, later) / (later.Seconds - earlier.Seconds);
+
+    // True when the body is (nearly) at rest at a time, within the given
+    // non-negative speed tolerance.
+    IsStationaryAt(self: Kinematic3D, time: Duration, tolerance: Number): Boolean
+        => self.VelocityAt(time).Magnitude <= tolerance;
+}

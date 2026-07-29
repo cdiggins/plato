@@ -1,16 +1,20 @@
 //==
 // # Color spaces and color science
 //
-// Device-independent and device-referred color representations beyond the core
-// linear RGBA `Color` (file 14), plus the chromaticity, primary, transfer, and
-// adaptation vocabulary needed to convert between them. Conversions themselves
-// are functions in a later pass; these types name the endpoints and the knobs.
+// The vocabulary that *defines* a color space: chromaticity coordinates, white
+// points and standard illuminants, primaries, transfer characteristics, and the
+// chromatic adaptation and rendering intent a conversion between two spaces
+// needs. The color representations themselves live in `color-spaces-models`
+// (device-independent) and `color-spaces-video` (device-referred and video).
+// Conversions are functions in a later pass; these types name the endpoints
+// and the knobs.
 
 //==
 // ## Chromaticity and white points
 
 // A CIE 1931 xy chromaticity coordinate: a color's hue-and-purity position on
 // the chromaticity diagram, independent of luminance.
+// (https://en.wikipedia.org/wiki/Chromaticity)
 type Chromaticity
     implements Value, Hashable
 {
@@ -20,6 +24,7 @@ type Chromaticity
 
 // A reference white: the chromaticity the color space treats as achromatic,
 // with its luminance in candelas per square meter (0 when unspecified).
+// (https://en.wikipedia.org/wiki/White_point)
 type WhitePoint
     implements Value
 {
@@ -28,7 +33,7 @@ type WhitePoint
 }
 
 // A standard CIE illuminant used as a reference white. A is incandescent;
-// E is equal energy.
+// E is equal energy. (https://en.wikipedia.org/wiki/Standard_illuminant)
 type StandardIlluminant
     = A | B | C | D50 | D55 | D60 | D65 | D75 | E | F2 | F7 | F11;
 
@@ -39,11 +44,13 @@ type StandardIlluminant
 // (and decoded from) stored component values. SRGB is the piecewise sRGB
 // curve; Rec709 is the BT.1886 pair; PQ (SMPTE ST 2084) and HLG (hybrid
 // log-gamma) are the HDR encodings.
+// (https://en.wikipedia.org/wiki/Transfer_functions_in_imaging)
 type TransferFunction
     = Linear | SRGB | Gamma18 | Gamma22 | Gamma24 | Gamma26 | Rec709 | PQ | HLG;
 
 // The chromaticities of an RGB color space's three primaries and its white
 // point; together they fix the space's gamut and its matrix to CIE XYZ.
+// (https://en.wikipedia.org/wiki/Primary_color)
 type RgbPrimaries
     implements Value
 {
@@ -55,6 +62,7 @@ type RgbPrimaries
 
 // A fully specified RGB color space: named primaries plus a transfer
 // characteristic. Sufficient to convert between the space and CIE XYZ.
+// (https://en.wikipedia.org/wiki/RGB_color_spaces)
 type RgbColorSpace
     implements Value
 {
@@ -77,11 +85,12 @@ type NamedColorSpace
     | ACES2065;
 
 // The strategy for mapping colors between the gamuts of two color spaces
-// (the ICC rendering intents).
+// (the ICC rendering intents). (https://en.wikipedia.org/wiki/Color_management)
 type RenderingIntent
     = Perceptual | RelativeColorimetric | Saturation | AbsoluteColorimetric;
 
 // A method for adapting tristimulus values from one white point to another.
+// (https://en.wikipedia.org/wiki/Chromatic_adaptation)
 type ChromaticAdaptation = XyzScaling | Bradford | VonKries | CAT02 | CAT16;
 
 // A conversion recipe between two named color spaces, including the chromatic
@@ -94,161 +103,3 @@ type ColorSpaceConversion
     Adaptation: ChromaticAdaptation;
     Intent: RenderingIntent;
 }
-
-//==
-// ## Device-independent color types
-
-// A color as CIE 1931 XYZ tristimulus values; the device-independent hub
-// through which color space conversions pass. Y is luminance.
-type ColorXYZ
-    implements Numerical
-{
-    X: Number;
-    Y: Number;
-    Z: Number;
-}
-
-// A color as an xy chromaticity plus luminance Y (the CIE xyY form);
-// separates "which color" from "how bright".
-type ColorXyY
-    implements Value
-{
-    Chromaticity: Chromaticity;
-    Luminance: Number;
-}
-
-// A color in CIELAB: perceptual lightness L in [0, 100] with opponent axes
-// A (green-red) and B (blue-yellow), relative to a reference white.
-type ColorLab
-    implements Value
-{
-    L: Number;
-    A: Number;
-    B: Number;
-}
-
-// CIELAB in cylindrical form: lightness, chroma (colorfulness), and hue angle.
-type ColorLCh
-    implements Value
-{
-    L: Number;
-    Chroma: Number;
-    Hue: Angle;
-}
-
-// A color in CIELUV: an alternative perceptual space favored for additive
-// (emissive) displays.
-type ColorLuv
-    implements Value
-{
-    L: Number;
-    U: Number;
-    V: Number;
-}
-
-// A color in OkLab: a modern perceptual space with better hue linearity than
-// CIELAB; the preferred space for perceptual blending and gradients.
-type ColorOkLab
-    implements Value
-{
-    L: Number;
-    A: Number;
-    B: Number;
-}
-
-// OkLab in cylindrical form: lightness, chroma, and hue angle.
-type ColorOkLCh
-    implements Value
-{
-    L: Number;
-    Chroma: Number;
-    Hue: Angle;
-}
-
-//==
-// ## Device-referred and video color types
-
-// A gamma-encoded sRGB color with alpha, components nominally in [0, 1]: the
-// interchange form of most 2D content. Decode to linear `Color` before
-// arithmetic.
-type ColorSRGB
-    implements Value
-{
-    R: Number;
-    G: Number;
-    B: Number;
-    A: Number;
-}
-
-// A color as luma Y plus U/V chroma differences (analog video convention).
-type ColorYUV
-    implements Value
-{
-    Y: Number;
-    U: Number;
-    V: Number;
-}
-
-// A color as luma Y plus Cb/Cr chroma offsets (digital video and JPEG
-// convention).
-type ColorYCbCr
-    implements Value
-{
-    Y: Number;
-    Cb: Number;
-    Cr: Number;
-}
-
-// A subtractive process color: cyan, magenta, yellow, and key (black) ink
-// coverages, each in [0, 1].
-type ColorCMYK
-    implements Value
-{
-    Cyan: Number;
-    Magenta: Number;
-    Yellow: Number;
-    Key: Number;
-}
-
-// A color as a hue angle plus whiteness and blackness mixed in (the CSS HWB
-// model); an intuitive tint/shade parameterization.
-type ColorHWB
-    implements Value
-{
-    Hue: Angle;
-    Whiteness: Number;
-    Blackness: Number;
-}
-
-// A color as a sampled spectral power distribution. Wavelengths ascend and
-// pair one-to-one with Amplitudes (relative power per sample).
-type SpectralColor
-    implements Value
-{
-    Wavelengths: Array<Length>;
-    Amplitudes: Array<Number>;
-}
-
-//==
-// ## Palettes, harmony, and difference
-
-// An ordered set of colors used together: a swatch list, an indexed-image
-// color table, or a categorical scale.
-type Palette
-    implements Value
-{
-    Colors: Array<Color>;
-}
-
-// A classical hue-wheel relationship used to derive palettes from a base color.
-type ColorHarmony
-    = Complementary
-    | Analogous
-    | Triadic
-    | SplitComplementary
-    | Tetradic
-    | Square
-    | Monochromatic;
-
-// A perceptual color-difference (delta E) formula.
-type ColorDifference = CIE76 | CIE94 | CIEDE2000 | CMC | EuclideanOkLab;

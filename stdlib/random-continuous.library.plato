@@ -1,0 +1,122 @@
+//==
+// # Uniform, normal, and exponential bodies
+//
+// The `ProbabilityDistribution` obligations for the four elementary continuous
+// families of `random-continuous.plato`: UniformDistribution,
+// NormalDistribution, LogNormalDistribution and ExponentialDistribution. Every
+// Pdf and Mean here is exact; the Cdf of the two normal forms inherits the
+// 7.5e-8 error bound of `StandardNormalCdf` in `random.library.plato`, which
+// also holds the shared helpers these bodies call.
+
+library RandomContinuous
+{
+    //==
+    // # UniformDistribution
+    //
+    // Parameterization: continuous uniform on the CLOSED interval [Min, Max].
+    // Precondition: Min < Max (the degenerate Min == Max case divides by zero).
+    // https://en.wikipedia.org/wiki/Continuous_uniform_distribution
+
+    // The midpoint of the interval: (Min + Max) / 2.
+    Mean(self: UniformDistribution): Number
+        => (self.Min + self.Max) / 2.0;
+
+    // The variance of a uniform variable: (Max - Min)^2 / 12.
+    Variance(self: UniformDistribution): Number
+        => (self.Max - self.Min).Square / 12.0;
+
+    // The density: the constant 1 / (Max - Min) inside [Min, Max], zero outside.
+    Pdf(self: UniformDistribution, value: Number): Number
+        => value < self.Min || value > self.Max
+            ? 0.0
+            : 1.0 / (self.Max - self.Min);
+
+    // The cumulative probability: the position of value within the interval,
+    // clamped to [0, 1].
+    Cdf(self: UniformDistribution, value: Number): Number
+        => ((value - self.Min) / (self.Max - self.Min)).Clamp(0.0, 1.0);
+
+    //==
+    // # NormalDistribution
+    //
+    // Parameterization: (mean, STANDARD DEVIATION) — the second field is sigma,
+    // NOT sigma squared. Precondition: StandardDeviation > 0. `Mean` is already
+    // discharged by the field of the same name.
+    // https://en.wikipedia.org/wiki/Normal_distribution
+
+    // The variance: the square of the standard deviation.
+    Variance(self: NormalDistribution): Number
+        => self.StandardDeviation.Square;
+
+    // The Gaussian density at value: phi(z) / sigma where z is the standardized
+    // score (value - mean) / sigma. Exact.
+    Pdf(self: NormalDistribution, value: Number): Number
+        => StandardNormalPdf((value - self.Mean) / self.StandardDeviation)
+         / self.StandardDeviation;
+
+    // The cumulative probability at value, as the standard normal CDF of the
+    // standardized score. Inherits the 7.5e-8 error bound of StandardNormalCdf.
+    Cdf(self: NormalDistribution, value: Number): Number
+        => StandardNormalCdf((value - self.Mean) / self.StandardDeviation);
+
+    //==
+    // # LogNormalDistribution
+    //
+    // Parameterization: LogMean (mu) and LogStandardDeviation (sigma) are the
+    // mean and STANDARD DEVIATION OF THE UNDERLYING NORMAL, i.e. of ln(X), not
+    // of X. Support is x > 0. Precondition: LogStandardDeviation > 0.
+    // https://en.wikipedia.org/wiki/Log-normal_distribution
+
+    // The mean of the variable itself: exp(mu + sigma^2 / 2).
+    Mean(self: LogNormalDistribution): Number
+        => (self.LogMean + self.LogStandardDeviation.Square / 2.0).Exp;
+
+    // The variance of the variable itself:
+    // (exp(sigma^2) - 1) * exp(2*mu + sigma^2).
+    Variance(self: LogNormalDistribution): Number
+        => (self.LogStandardDeviation.Square.Exp - 1.0)
+         * (2.0 * self.LogMean + self.LogStandardDeviation.Square).Exp;
+
+    // The density at value: phi((ln v - mu) / sigma) / (v * sigma) for v > 0,
+    // and zero on the non-positive half line. Exact.
+    Pdf(self: LogNormalDistribution, value: Number): Number
+        => value <= 0.0
+            ? 0.0
+            : StandardNormalPdf((value.NaturalLog - self.LogMean) / self.LogStandardDeviation)
+                / (value * self.LogStandardDeviation);
+
+    // The cumulative probability at value: Phi((ln v - mu) / sigma) for v > 0,
+    // zero otherwise. Inherits the StandardNormalCdf error bound.
+    Cdf(self: LogNormalDistribution, value: Number): Number
+        => value <= 0.0
+            ? 0.0
+            : StandardNormalCdf((value.NaturalLog - self.LogMean) / self.LogStandardDeviation);
+
+    //==
+    // # ExponentialDistribution
+    //
+    // Parameterization: RATE (lambda), not scale — the mean is 1 / Rate.
+    // Support is x >= 0. Precondition: Rate > 0.
+    // https://en.wikipedia.org/wiki/Exponential_distribution
+
+    // The mean waiting time: the reciprocal of the rate.
+    Mean(self: ExponentialDistribution): Number
+        => 1.0 / self.Rate;
+
+    // The variance: 1 / Rate^2.
+    Variance(self: ExponentialDistribution): Number
+        => 1.0 / self.Rate.Square;
+
+    // The density: Rate * exp(-Rate * v) for v >= 0, zero for negative v.
+    Pdf(self: ExponentialDistribution, value: Number): Number
+        => value < 0.0
+            ? 0.0
+            : self.Rate * (-self.Rate * value).Exp;
+
+    // The cumulative probability: 1 - exp(-Rate * v) for v >= 0, zero for
+    // negative v.
+    Cdf(self: ExponentialDistribution, value: Number): Number
+        => value < 0.0
+            ? 0.0
+            : 1.0 - (-self.Rate * value).Exp;
+}

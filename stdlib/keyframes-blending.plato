@@ -1,0 +1,45 @@
+//==
+// # Animation blending
+//
+// The structures that combine several clips into one result: weighted, possibly
+// additive layers in a blend stack, and the one- and two-dimensional blend
+// spaces that mix clips by a continuous parameter.
+
+// One clip's contribution in a blend stack. Weight scales the clip's influence;
+// when Additive is true the clip's values are added on top of the layers below
+// instead of interpolated with them.
+type AnimationLayer
+{
+    Clip: AnimationClip;
+    Weight: Proportion;
+    Additive: Boolean;
+}
+
+// A clip placed at a position along a one-dimensional blend axis.
+type BlendSpaceSample1D
+{
+    Position: Number;
+    Clip: AnimationClip;
+}
+
+// Blends clips by a single parameter (walk speed, aim angle): sampling at a
+// parameter value interpolates the clips nearest it. Samples are ordered by
+// ascending Position.
+type BlendSpace1D
+{
+    Samples: Array<BlendSpaceSample1D>;
+}
+
+// A clip placed at a position on a two-dimensional blend plane.
+type BlendSpaceSample2D
+{
+    Position: Number2;
+    Clip: AnimationClip;
+}
+
+// Blends clips by two parameters (strafe and forward speed): sampling at a
+// point interpolates the surrounding clips.
+type BlendSpace2D
+{
+    Samples: Array<BlendSpaceSample2D>;
+}

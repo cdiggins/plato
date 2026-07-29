@@ -1,0 +1,55 @@
+//==
+// # RandomDistributions — derived functions for ProbabilityDistribution
+//
+// Bodies for the `ProbabilityDistribution` concept declared in `random.plato`,
+// which exposes Mean, Variance, Pdf and Cdf. The derived surface is the tail
+// and interval probabilities that read from Cdf, plus the spread and density
+// comparisons. The concrete per-distribution obligation fills (and the named
+// numerical approximations they need) stay in `random.plato`'s inline
+// `library Random`; only the concept-generic helpers live here. Pure
+// expressions only; all inputs are immutable and evaluation is side-effect
+// free.
+
+library RandomDistributions
+{
+    //==
+    // # ProbabilityDistribution
+    //
+    // A univariate distribution exposing Mean, Variance, Pdf, and Cdf. The
+    // derived surface is the tail and interval probabilities that read from Cdf,
+    // plus density comparisons
+    // (https://en.wikipedia.org/wiki/Probability_distribution).
+
+    // The standard deviation: the square root of the variance, in the same units
+    // as the values. Precondition: the variance is non-negative
+    // (https://en.wikipedia.org/wiki/Standard_deviation).
+    StandardDeviation(self: ProbabilityDistribution): Number
+        => self.Variance.Sqrt;
+
+    // The cumulative probability of drawing at most value; a readable spelling
+    // of Cdf (https://en.wikipedia.org/wiki/Cumulative_distribution_function).
+    ProbabilityAtMost(self: ProbabilityDistribution, value: Number): Number
+        => self.Cdf(value);
+
+    // The survival function at value: the probability of drawing more than
+    // value, 1 - Cdf(value)
+    // (https://en.wikipedia.org/wiki/Survival_function).
+    SurvivalAt(self: ProbabilityDistribution, value: Number): Number
+        => 1.0 - self.Cdf(value);
+
+    // The probability mass in the half-open interval (low, high]: Cdf(high) -
+    // Cdf(low). Precondition: low <= high.
+    ProbabilityBetween(self: ProbabilityDistribution, low: Number, high: Number): Number
+        => self.Cdf(high) - self.Cdf(low);
+
+    // The precision: the reciprocal of the variance. Precondition: the variance
+    // is positive (undefined for the degenerate and heavy-tailed cases)
+    // (https://en.wikipedia.org/wiki/Precision_%28statistics%29).
+    Precision(self: ProbabilityDistribution): Number
+        => 1.0 / self.Variance;
+
+    // True when value a is at least as likely (dense) as value b under this
+    // distribution.
+    IsAtLeastAsLikelyAs(self: ProbabilityDistribution, a: Number, b: Number): Boolean
+        => self.Pdf(a) >= self.Pdf(b);
+}

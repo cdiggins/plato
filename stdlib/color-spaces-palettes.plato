@@ -1,0 +1,34 @@
+//==
+// # Palettes, harmony, and color difference
+//
+// Colors considered as a set rather than one at a time: an ordered palette (a
+// swatch list, an indexed-image color table, a categorical scale), the
+// hue-wheel relationships used to derive one from a base color, and the delta
+// E formulas that measure how far apart two colors look.
+
+//==
+// ## Palettes, harmony, and difference
+
+// An ordered set of colors used together: a swatch list, an indexed-image
+// color table, or a categorical scale.
+// (https://en.wikipedia.org/wiki/Palette_(computing))
+type Palette
+    implements Value
+{
+    Colors: Array<Color>;
+}
+
+// A classical hue-wheel relationship used to derive palettes from a base color.
+// (https://en.wikipedia.org/wiki/Harmony_(color))
+type ColorHarmony
+    = Complementary
+    | Analogous
+    | Triadic
+    | SplitComplementary
+    | Tetradic
+    | Square
+    | Monochromatic;
+
+// A perceptual color-difference (delta E) formula.
+// (https://en.wikipedia.org/wiki/Color_difference)
+type ColorDifference = CIE76 | CIE94 | CIEDE2000 | CMC | EuclideanOkLab;

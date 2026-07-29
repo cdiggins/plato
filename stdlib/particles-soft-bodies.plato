@@ -1,0 +1,118 @@
+//==
+// # Cloth, rope, and fluids
+//
+// Position-based deformables and particle fluids: cloth and rope vertices
+// with the distance and bend constraints binding them, soft-body solver
+// settings, and smoothed-particle hydrodynamics. Positions are in meters,
+// velocities in meters per second, masses in kilograms.
+
+//==
+// # Cloth and rope
+
+// One vertex of a position-based cloth or rope. PreviousPosition is the
+// position at the last step (Verlet state); InverseMass is in units of one
+// per kilogram, with 0 meaning infinite mass; Pinned freezes the vertex
+// regardless of mass.
+// (https://en.wikipedia.org/wiki/Verlet_integration)
+type ClothVertex
+    implements Value
+{
+    Position: Point3D;
+    PreviousPosition: Point3D;
+    InverseMass: Number;
+    Pinned: Boolean;
+}
+
+// A stretch constraint keeping two cloth vertices (zero-based indices) at
+// RestLength. Compliance is the inverse stiffness in meters per newton;
+// 0 makes the constraint rigid.
+type ClothDistanceConstraint
+    implements Value
+{
+    VertexA: VertexIndex;
+    VertexB: VertexIndex;
+    RestLength: Length;
+    Compliance: Number;
+}
+
+// A bending constraint over two triangles sharing the edge (VertexA,
+// VertexB), with wing vertices VertexC and VertexD: it drives the dihedral
+// angle between them toward RestAngle. Compliance is the inverse stiffness in
+// radians per newton-meter; 0 makes the fold rigid.
+type ClothBendConstraint
+    implements Value
+{
+    VertexA: VertexIndex;
+    VertexB: VertexIndex;
+    VertexC: VertexIndex;
+    VertexD: VertexIndex;
+    RestAngle: Angle;
+    Compliance: Number;
+}
+
+// A position-based cloth: vertices, the constraints binding them, and the
+// triangles used for rendering and collision. Thickness is the collision
+// shell radius.
+// (https://en.wikipedia.org/wiki/Cloth_modeling)
+type Cloth3D
+    implements Value
+{
+    Vertices: Array<ClothVertex>;
+    DistanceConstraints: Array<ClothDistanceConstraint>;
+    BendConstraints: Array<ClothBendConstraint>;
+    Faces: Array<TriangleFace>;
+    Thickness: Length;
+}
+
+// A position-based rope: vertices ordered from one end to the other, chained
+// by distance constraints. Thickness is the collision radius.
+type Rope3D
+    implements Value
+{
+    Vertices: Array<ClothVertex>;
+    DistanceConstraints: Array<ClothDistanceConstraint>;
+    Thickness: Length;
+}
+
+// Solver parameters for a deformable (soft) body. VolumeCompliance and
+// DeformationCompliance are inverse stiffnesses in meters per newton
+// (0 = rigid response); Damping is the velocity decay rate in units of one
+// per second; SolverIterations is the constraint iteration count per step.
+// (https://en.wikipedia.org/wiki/Soft-body_dynamics)
+type SoftBodySettings
+    implements Value
+{
+    VolumeCompliance: Number;
+    DeformationCompliance: Number;
+    Damping: Number;
+    SolverIterations: Integer;
+}
+
+//==
+// # Fluids
+
+// Smoothed-particle-hydrodynamics tuning. GasStiffness scales pressure
+// response to compression, in pascal-cubic-meters per kilogram;
+// SurfaceTension is in newtons per meter.
+// (https://en.wikipedia.org/wiki/Smoothed-particle_hydrodynamics)
+type SphParameters
+    implements Value
+{
+    RestDensity: Density;
+    KernelRadius: Length;
+    Viscosity: DynamicViscosity;
+    GasStiffness: Number;
+    SurfaceTension: Number;
+}
+
+// One fluid particle in a smoothed-particle-hydrodynamics simulation, with
+// its current interpolated density and pressure.
+type FluidParticle3D
+    implements Value
+{
+    Position: Point3D;
+    Velocity: Vector3D;
+    Density: Density;
+    Pressure: Pressure;
+    Mass: Mass;
+}

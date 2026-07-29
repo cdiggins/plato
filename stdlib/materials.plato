@@ -11,6 +11,7 @@
 // How a material's alpha is interpreted when compositing: alpha ignored
 // (Opaque), a binary cutout discarding fragments below the carried Cutoff
 // threshold (Mask, conventionally 0.5), or alpha compositing (Blend).
+// (https://en.wikipedia.org/wiki/Alpha_compositing)
 type AlphaMode
     = Opaque
     | Mask(Cutoff: Proportion)
@@ -26,6 +27,7 @@ type AlphaSettings
 }
 
 // The reflectance model a renderer should evaluate.
+// (https://en.wikipedia.org/wiki/Bidirectional_reflectance_distribution_function)
 type Brdf = Lambert | OrenNayar | GgxMetallicRoughness | Disney | Phong | BlinnPhong;
 
 // The core physically-based material (glTF 2.0 metallic-roughness). BaseColor
@@ -34,7 +36,7 @@ type Brdf = Lambert | OrenNayar | GgxMetallicRoughness | Disney | Phong | BlinnP
 // EmissiveStrength is a dimensionless multiplier on EmissiveColor; physical
 // pipelines may read the product as nits. NormalScale scales a bound normal
 // map; OcclusionStrength scales a bound occlusion map (both bind via
-// MaterialTextureSet).
+// MaterialTextureSet). (https://en.wikipedia.org/wiki/Physically_based_rendering)
 type Material
     implements Value
 {
@@ -53,6 +55,7 @@ type Material
 // glTF, the MetallicRoughness texture packs roughness in G and metallic in B,
 // and Occlusion reads from R. An unbound TextureBinding (file 47) means the
 // slot is unused and the scalar factors stand alone.
+// (https://en.wikipedia.org/wiki/Texture_mapping)
 type MaterialTextureSet
     implements Value
 {
@@ -69,102 +72,6 @@ type TexturedMaterial
 {
     Base: Material;
     Textures: MaterialTextureSet;
-}
-
-//==
-// # Material layers (glTF-extension shaped)
-
-// A thin lacquer layer over the base surface (car paint, varnish). Intensity 0
-// disables the layer. IndexOfRefraction is 1.5 in the glTF extension.
-type ClearCoatLayer
-    implements Value
-{
-    Intensity: Proportion;
-    Roughness: Proportion;
-    NormalScale: Number;
-    IndexOfRefraction: Number;
-}
-
-// Micro-fiber retroreflection for cloth (velvet, satin). A black Color
-// disables the layer.
-type SheenLayer
-    implements Value
-{
-    Color: Color;
-    Roughness: Proportion;
-}
-
-// Adjustable dielectric specular reflectance (glTF KHR_materials_specular).
-// Strength scales the reflectance amount and Color tints it; Strength 1 with
-// a white Color is the physical default.
-type SpecularLayer
-    implements Value
-{
-    Strength: Proportion;
-    Color: Color;
-}
-
-// Light transmission through the surface with volume attenuation (glass,
-// liquids, gemstones). Transmission 0 disables the layer. Thickness and
-// AttenuationDistance are in scene units: light traveling AttenuationDistance
-// through the medium is tinted to AttenuationColor.
-type TransmissionLayer
-    implements Value
-{
-    Transmission: Proportion;
-    IndexOfRefraction: Number;
-    Thickness: Number;
-    AttenuationColor: Color;
-    AttenuationDistance: Number;
-}
-
-// Thin-film interference (soap bubbles, oil slicks, beetle shells). Intensity
-// 0 disables the layer. Film thickness varies between ThicknessMinimum and
-// ThicknessMaximum, measured in nanometers per the glTF extension.
-type IridescenceLayer
-    implements Value
-{
-    Intensity: Proportion;
-    IndexOfRefraction: Number;
-    ThicknessMinimum: Number;
-    ThicknessMaximum: Number;
-}
-
-// Direction-dependent roughness (brushed metal, hair, vinyl). Strength 0
-// disables the layer; Rotation turns the tangent-space anisotropy direction.
-type AnisotropyLayer
-    implements Value
-{
-    Strength: Proportion;
-    Rotation: Angle;
-}
-
-// Sub-surface light diffusion (skin, wax, marble). Radius is the per-channel
-// mean free path in scene units, uniformly scaled by Scale (0 disables);
-// Anisotropy is the Henyey-Greenstein g in [-1, 1].
-type SubsurfaceParameters
-    implements Value
-{
-    Color: Color;
-    Radius: Number3;
-    Scale: Number;
-    Anisotropy: Number;
-}
-
-// A fully layered surface: a textured metallic-roughness base plus every
-// optional layer. Each layer's zero/black convention (see the layer docs)
-// marks it disabled, so a plain surface is representable without waste.
-type LayeredMaterial
-    implements Value
-{
-    Base: TexturedMaterial;
-    ClearCoat: ClearCoatLayer;
-    Sheen: SheenLayer;
-    Specular: SpecularLayer;
-    Transmission: TransmissionLayer;
-    Iridescence: IridescenceLayer;
-    Anisotropy: AnisotropyLayer;
-    Subsurface: SubsurfaceParameters;
 }
 
 //==
@@ -195,7 +102,7 @@ type UnlitMaterial
 // Banded cel shading. StepCount is the number of discrete shading bands (2 =
 // classic two-tone); ShadeColor is the darkened band color; RimColor is added
 // at grazing angles with a RimPower falloff exponent; OutlineWidth is in
-// pixels (0 = no outline).
+// pixels (0 = no outline). (https://en.wikipedia.org/wiki/Cel_shading)
 type ToonMaterial
     implements Value
 {
@@ -220,7 +127,7 @@ type MatcapMaterial
 
 // Renders triangle edges as lines of WireThickness pixels in WireColor, over
 // faces filled with FaceColor; use a fully transparent FaceColor for edges
-// only.
+// only. (https://en.wikipedia.org/wiki/Wire-frame_model)
 type WireframeMaterial
     implements Value
 {

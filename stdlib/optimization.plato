@@ -1,12 +1,15 @@
 //==
 // # Optimization
 //
-// Vocabulary for numerical optimization and root finding: goals, stopping
-// rules, results, and the tuning parameters of standard algorithms.
-// Parameter vectors are Array<Number> indexed by variable; solver types are
-// pure parameter records. Optional limits use -1 for "no limit".
+// The problem-independent vocabulary of numerical optimization: goals,
+// stopping rules, results, and the brackets and outcomes of one-dimensional
+// search. Parameter vectors are Array<Number> indexed by variable; optional
+// limits use -1 for "no limit". Algorithm tuning lives in
+// `optimization-solvers.plato`, constrained programs in
+// `optimization-programs.plato`.
 
 // Whether the objective is to be minimized or maximized.
+// (https://en.wikipedia.org/wiki/Mathematical_optimization)
 type OptimizationGoal = Minimize | Maximize;
 
 // Stopping rules for an iterative solver. Iteration stops when the step or
@@ -42,6 +45,7 @@ type OptimizationResult
 
 // An interval known to contain a root: the function changes sign between
 // Lower and Upper.
+// (https://en.wikipedia.org/wiki/Bisection_method)
 type RootBracket
     implements Value
 {
@@ -51,6 +55,7 @@ type RootBracket
 
 // A triple bracketing a minimum: Lower < Middle < Upper with the function
 // value at Middle below the value at both ends.
+// (https://en.wikipedia.org/wiki/Golden-section_search)
 type BracketedMinimum
     implements Value
 {
@@ -61,6 +66,7 @@ type BracketedMinimum
 
 // The outcome of a root-finding run. Residual is the function value at the
 // reported Root.
+// (https://en.wikipedia.org/wiki/Root-finding_algorithm)
 type RootFindResult
     implements Value
 {
@@ -72,6 +78,7 @@ type RootFindResult
 
 // The outcome of a least-squares fit: the fitted coefficients and the
 // Euclidean norm of the residual vector at the solution.
+// (https://en.wikipedia.org/wiki/Least_squares)
 type LeastSquaresResult
     implements Value
 {
@@ -82,126 +89,5 @@ type LeastSquaresResult
 }
 
 // The strategy for choosing a step length along a descent direction.
+// (https://en.wikipedia.org/wiki/Line_search)
 type LineSearch = FixedStep | Backtracking | WolfeConditions | GoldenSection | Exact;
-
-//==
-// # Gradient-based solver parameters
-
-// Tuning of gradient descent. LearningRate scales each step, Momentum in
-// [0, 1) blends in the previous step, and Decay multiplies the learning rate
-// after every iteration (1 keeps it constant).
-type GradientDescentParameters
-    implements Value
-{
-    LearningRate: Number;
-    Momentum: Number;
-    Decay: Number;
-}
-
-// Tuning of the limited-memory BFGS quasi-Newton method. MemorySize is the
-// number of past step/gradient pairs retained.
-type LbfgsParameters
-    implements Value
-{
-    MemorySize: Integer;
-    LineSearch: LineSearch;
-}
-
-//==
-// # Derivative-free solver parameters
-
-// The reflection, expansion, contraction, and shrink coefficients of the
-// Nelder-Mead simplex method (standard values 1, 2, 0.5, 0.5).
-type NelderMeadParameters
-    implements Value
-{
-    Reflection: Number;
-    Expansion: Number;
-    Contraction: Number;
-    Shrink: Number;
-}
-
-// Tuning of simulated annealing. Temperature starts at InitialTemperature
-// and is multiplied by CoolingRate (in (0, 1)) each iteration; Seed fixes
-// the random sequence.
-type SimulatedAnnealingParameters
-    implements Value
-{
-    InitialTemperature: Number;
-    CoolingRate: Number;
-    Seed: Integer;
-}
-
-// Tuning of a genetic algorithm: population size, per-gene mutation and
-// per-pair crossover probabilities, the count of elite individuals copied
-// unchanged each generation, and the random seed.
-type GeneticAlgorithmParameters
-    implements Value
-{
-    PopulationSize: Integer;
-    MutationProbability: Probability;
-    CrossoverProbability: Probability;
-    EliteCount: Integer;
-    Seed: Integer;
-}
-
-// Tuning of differential evolution: population size, the differential
-// weight F scaling donor differences, the crossover probability, and the
-// random seed.
-type DifferentialEvolutionParameters
-    implements Value
-{
-    PopulationSize: Integer;
-    DifferentialWeight: Number;
-    CrossoverProbability: Probability;
-    Seed: Integer;
-}
-
-// Tuning of particle-swarm optimization: swarm size, the inertia retained
-// from each particle's velocity, the pulls toward the particle's own best
-// (cognitive) and the swarm's best (social), and the random seed.
-type ParticleSwarmParameters
-    implements Value
-{
-    SwarmSize: Integer;
-    Inertia: Number;
-    CognitiveWeight: Number;
-    SocialWeight: Number;
-    Seed: Integer;
-}
-
-//==
-// # Constrained problems
-
-// How a constraint row relates its left side to its right side.
-type ConstraintRelation = Equality | LessOrEqual | GreaterOrEqual;
-
-// A linear program. Row i of ConstraintMatrix dotted with the variable
-// vector relates to RightHandSide[i] by ConstraintRelations[i]; the objective is
-// the dot product with ObjectiveCoefficients; LowerBounds and UpperBounds
-// run per variable.
-type LinearProgram
-    implements Value
-{
-    ObjectiveCoefficients: Array<Number>;
-    ConstraintMatrix: MatrixN;
-    ConstraintRelations: Array<ConstraintRelation>;
-    RightHandSide: Array<Number>;
-    LowerBounds: Array<Number>;
-    UpperBounds: Array<Number>;
-}
-
-// A quadratic program: minimize half of x' * Quadratic * x plus
-// Linear . x, under the same constraint and bound conventions as
-// LinearProgram. Quadratic is symmetric.
-type QuadraticProgram
-    implements Value
-{
-    Quadratic: MatrixN;
-    Linear: Array<Number>;
-    ConstraintMatrix: MatrixN;
-    ConstraintRelations: Array<ConstraintRelation>;
-    RightHandSide: Array<Number>;
-    LowerBounds: Array<Number>;
-    UpperBounds: Array<Number>;
-}

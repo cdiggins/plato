@@ -1,0 +1,14 @@
+//==
+// # Vector path concepts
+//
+// The capability shared by everything that can hand back a vector outline.
+// Implemented by the primitive 2D shapes, by glyph outlines, and by the
+// results of dashing, offsetting, and boolean operations; the path types it
+// produces live in `paths.plato`.
+
+// Anything that can present itself as a vector path: primitive shapes, glyph
+// outlines, dashed or offset results.
+concept PathLike
+{
+    ToPath(x: Self): Path2D;
+}

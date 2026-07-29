@@ -1,0 +1,110 @@
+//==
+// # Gamma- and beta-family bodies
+//
+// The `ProbabilityDistribution` obligations for GammaDistribution,
+// BetaDistribution, ChiSquaredDistribution and StudentTDistribution. These four
+// share one gap: their Mean and Variance are closed-form and implemented here,
+// while every Pdf and Cdf needs the gamma or beta function (or a regularized
+// incomplete form of one), none of which this tree declares. Each missing
+// obligation carries a `TODO(content):` at its site rather than an
+// approximation; `random.library.plato` states the gap in full.
+
+library RandomContinuousGamma
+{
+    //==
+    // # GammaDistribution
+    //
+    // Parameterization: SHAPE (k) and SCALE (theta) — theta is a scale, NOT a
+    // rate; the rate form uses beta = 1 / theta. Support is x > 0.
+    // Precondition: Shape > 0 and Scale > 0.
+    // https://en.wikipedia.org/wiki/Gamma_distribution
+
+    // The mean: Shape * Scale.
+    Mean(self: GammaDistribution): Number
+        => self.Shape * self.Scale;
+
+    // The variance: Shape * Scale^2.
+    Variance(self: GammaDistribution): Number
+        => self.Shape * self.Scale.Square;
+
+    // TODO(content): Pdf(GammaDistribution, Number) is
+    //   x^(k-1) * exp(-x/theta) / (Gamma(k) * theta^k)
+    // which needs the gamma function. This tree declares no Gamma/LogGamma, so
+    // the body is deliberately omitted rather than approximated. Implement once
+    // a vetted LogGamma (e.g. Lanczos) lands in the numeric vocabulary.
+
+    // TODO(content): Cdf(GammaDistribution, Number) is the regularized lower
+    // incomplete gamma P(k, x/theta); no incomplete-gamma function exists in
+    // this tree.
+
+    //==
+    // # BetaDistribution
+    //
+    // Parameterization: shape parameters Alpha and Beta, support the closed
+    // interval [0, 1]. Precondition: Alpha > 0 and Beta > 0.
+    // https://en.wikipedia.org/wiki/Beta_distribution
+
+    // The mean: Alpha / (Alpha + Beta).
+    Mean(self: BetaDistribution): Number
+        => self.Alpha / (self.Alpha + self.Beta);
+
+    // The variance: Alpha*Beta / ((Alpha+Beta)^2 * (Alpha+Beta+1)).
+    Variance(self: BetaDistribution): Number
+        => self.Alpha * self.Beta
+         / ((self.Alpha + self.Beta).Square * (self.Alpha + self.Beta + 1.0));
+
+    // TODO(content): Pdf(BetaDistribution, Number) is
+    //   x^(a-1) * (1-x)^(b-1) / B(a, b)
+    // which needs the beta function B(a,b) = Gamma(a)Gamma(b)/Gamma(a+b); no
+    // gamma or beta function exists in this tree.
+
+    // TODO(content): Cdf(BetaDistribution, Number) is the regularized
+    // incomplete beta I_x(a, b); not available here.
+
+    //==
+    // # ChiSquaredDistribution
+    //
+    // Parameterization: DegreesOfFreedom (k), the number of squared standard
+    // normals summed. Support is x > 0. Precondition: DegreesOfFreedom > 0.
+    // https://en.wikipedia.org/wiki/Chi-squared_distribution
+
+    // The mean: the degrees of freedom.
+    Mean(self: ChiSquaredDistribution): Number
+        => self.DegreesOfFreedom;
+
+    // The variance: twice the degrees of freedom.
+    Variance(self: ChiSquaredDistribution): Number
+        => 2.0 * self.DegreesOfFreedom;
+
+    // TODO(content): Pdf(ChiSquaredDistribution, Number) is
+    //   x^(k/2-1) * exp(-x/2) / (2^(k/2) * Gamma(k/2))
+    // which needs the gamma function; omitted for the same reason as Gamma.
+
+    // TODO(content): Cdf(ChiSquaredDistribution, Number) is the regularized
+    // lower incomplete gamma P(k/2, x/2); not available here.
+
+    //==
+    // # StudentTDistribution
+    //
+    // Parameterization: DegreesOfFreedom (nu), location 0 and scale 1 (this is
+    // the standard, non-shifted t). Support is the whole real line.
+    // Precondition: DegreesOfFreedom > 0.
+    // https://en.wikipedia.org/wiki/Student%27s_t-distribution
+
+    // The mean: 0 by symmetry. Precondition: DegreesOfFreedom > 1 — the mean is
+    // undefined at or below one degree of freedom, where this reports 0 anyway.
+    Mean(self: StudentTDistribution): Number
+        => 0.0;
+
+    // The variance: nu / (nu - 2). Precondition: DegreesOfFreedom > 2; the
+    // variance is infinite on (1, 2] and undefined at or below 1.
+    Variance(self: StudentTDistribution): Number
+        => self.DegreesOfFreedom / (self.DegreesOfFreedom - 2.0);
+
+    // TODO(content): Pdf(StudentTDistribution, Number) is
+    //   (1 + t^2/nu)^(-(nu+1)/2) / (sqrt(nu) * B(1/2, nu/2))
+    // which needs the beta function; omitted for the same reason as Beta.
+
+    // TODO(content): Cdf(StudentTDistribution, Number) is expressed through the
+    // regularized incomplete beta; not available here.
+}

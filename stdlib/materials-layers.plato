@@ -1,0 +1,106 @@
+//==
+// # Material layers (glTF-extension shaped)
+//
+// The optional appearance layers stacked over the metallic-roughness base of
+// `materials.plato`, one record per glTF material extension, plus the fully
+// layered surface that gathers them. Each record documents its own disabling
+// convention (zero strength or black color), so an absent layer is simply a
+// disabled one.
+
+// A thin lacquer layer over the base surface (car paint, varnish). Intensity 0
+// disables the layer. IndexOfRefraction is 1.5 in the glTF extension.
+type ClearCoatLayer
+    implements Value
+{
+    Intensity: Proportion;
+    Roughness: Proportion;
+    NormalScale: Number;
+    IndexOfRefraction: Number;
+}
+
+// Micro-fiber retroreflection for cloth (velvet, satin). A black Color
+// disables the layer. (https://en.wikipedia.org/wiki/Retroreflector)
+type SheenLayer
+    implements Value
+{
+    Color: Color;
+    Roughness: Proportion;
+}
+
+// Adjustable dielectric specular reflectance (glTF KHR_materials_specular).
+// Strength scales the reflectance amount and Color tints it; Strength 1 with
+// a white Color is the physical default.
+// (https://en.wikipedia.org/wiki/Specular_reflection)
+type SpecularLayer
+    implements Value
+{
+    Strength: Proportion;
+    Color: Color;
+}
+
+// Light transmission through the surface with volume attenuation (glass,
+// liquids, gemstones). Transmission 0 disables the layer. Thickness and
+// AttenuationDistance are in scene units: light traveling AttenuationDistance
+// through the medium is tinted to AttenuationColor.
+// (https://en.wikipedia.org/wiki/Refractive_index)
+type TransmissionLayer
+    implements Value
+{
+    Transmission: Proportion;
+    IndexOfRefraction: Number;
+    Thickness: Number;
+    AttenuationColor: Color;
+    AttenuationDistance: Number;
+}
+
+// Thin-film interference (soap bubbles, oil slicks, beetle shells). Intensity
+// 0 disables the layer. Film thickness varies between ThicknessMinimum and
+// ThicknessMaximum, measured in nanometers per the glTF extension.
+// (https://en.wikipedia.org/wiki/Thin-film_interference)
+type IridescenceLayer
+    implements Value
+{
+    Intensity: Proportion;
+    IndexOfRefraction: Number;
+    ThicknessMinimum: Number;
+    ThicknessMaximum: Number;
+}
+
+// Direction-dependent roughness (brushed metal, hair, vinyl). Strength 0
+// disables the layer; Rotation turns the tangent-space anisotropy direction.
+// (https://en.wikipedia.org/wiki/Anisotropy)
+type AnisotropyLayer
+    implements Value
+{
+    Strength: Proportion;
+    Rotation: Angle;
+}
+
+// Sub-surface light diffusion (skin, wax, marble). Radius is the per-channel
+// mean free path in scene units, uniformly scaled by Scale (0 disables);
+// Anisotropy is the Henyey-Greenstein g in [-1, 1].
+// (https://en.wikipedia.org/wiki/Subsurface_scattering)
+type SubsurfaceParameters
+    implements Value
+{
+    Color: Color;
+    Radius: Number3;
+    Scale: Number;
+    Anisotropy: Number;
+}
+
+// A fully layered surface: a textured metallic-roughness base plus every
+// optional layer. Each layer's zero/black convention (see the layer docs)
+// marks it disabled, so a plain surface is representable without waste.
+type LayeredMaterial
+    implements Value
+{
+    Base: TexturedMaterial;
+    ClearCoat: ClearCoatLayer;
+    Sheen: SheenLayer;
+    Specular: SpecularLayer;
+    Transmission: TransmissionLayer;
+    Iridescence: IridescenceLayer;
+    Anisotropy: AnisotropyLayer;
+    Subsurface: SubsurfaceParameters;
+}

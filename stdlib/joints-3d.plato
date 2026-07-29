@@ -1,65 +1,18 @@
 //==
-// # Joints and constraints
-//
-// Connections that remove degrees of freedom between pairs of rigid bodies:
-// limits, motors, the standard joint zoo, and constraint groupings. BodyA and
-// BodyB are zero-based indices into the simulation's body array; -1 attaches
-// that side to the static world. Anchors, axes, and frames are expressed in
-// the owning body's local frame, in meters. (Skeletal animation owns the bare
-// name Bone; every type here is *Joint- or *Constraint-suffixed.)
-
-//==
-// # Limits and motors
-
-// An inclusive allowed range of relative rotation. When Enabled is false the
-// rotation is unbounded.
-type AngularLimit
-    implements Value
-{
-    Min: Angle;
-    Max: Angle;
-    Enabled: Boolean;
-}
-
-// An inclusive allowed range of relative translation along a joint's axis,
-// in meters. When Enabled is false the translation is unbounded.
-type LinearLimit
-    implements Value
-{
-    Min: Number;
-    Max: Number;
-    Enabled: Boolean;
-}
-
-// A drive that pushes a joint toward a target relative velocity.
-// TargetVelocity is in meters per second for linear axes and radians per
-// second for angular axes; MaxForce and MaxTorque cap what the drive may
-// exert.
-type JointMotor
-    implements Value
-{
-    TargetVelocity: Number;
-    MaxForce: Force;
-    MaxTorque: Torque;
-    Enabled: Boolean;
-}
-
-// The load at which a joint breaks and is removed from the simulation: it
-// breaks when the constraint force exceeds MaxForce or the constraint torque
-// exceeds MaxTorque.
-type JointBreakThreshold
-    implements Value
-{
-    MaxForce: Force;
-    MaxTorque: Torque;
-}
-
-//==
 // # 3D joints
+//
+// The spatial joint zoo (hinges, ball-sockets, sliders, welds, ropes,
+// springs, pulleys, the configurable six-degree-of-freedom joint, and gear
+// coupling) plus the ragdoll wiring that groups them. BodyA and BodyB are
+// zero-based indices into the simulation's body array; -1 attaches that side
+// to the static world. Anchors, axes, and frames are expressed in the owning
+// body's local frame, in meters. (Skeletal animation owns the bare name Bone;
+// every type here is *Joint- or *Constraint-suffixed.)
 
 // A one-degree-of-freedom rotational joint (door hinge, wheel axle). The
 // bodies rotate relative to each other only about the axis through the
 // anchors; AxisA and AxisB are the hinge axis in each body's local frame.
+// (https://en.wikipedia.org/wiki/Revolute_joint)
 type HingeJoint
     implements Value
 {
@@ -77,6 +30,7 @@ type HingeJoint
 // coincide while orientation is free. TwistAxisA is the twist reference axis
 // in body A's frame; SwingLimit bounds the cone deviation from that axis and
 // TwistLimit bounds rotation about it.
+// (https://en.wikipedia.org/wiki/Ball_joint)
 type BallSocketJoint
     implements Value
 {
@@ -91,6 +45,7 @@ type BallSocketJoint
 
 // A one-degree-of-freedom translational joint (piston): the bodies slide
 // along AxisA with relative rotation locked.
+// (https://en.wikipedia.org/wiki/Prismatic_joint)
 type SliderJoint
     implements Value
 {
@@ -130,6 +85,7 @@ type DistanceJoint
 // A damped spring between two anchor points: it exerts force
 // -Stiffness * (length - RestLength) - Damping * lengthRate along the line
 // between the anchors.
+// (https://en.wikipedia.org/wiki/Hooke%27s_law)
 type SpringJoint
     implements Value
 {
@@ -145,6 +101,7 @@ type SpringJoint
 // An idealized rope over two pulleys: lengthA + Ratio * lengthB stays
 // constant, where lengthA runs from GroundAnchorA (world space) to AnchorA
 // and lengthB from GroundAnchorB to AnchorB. Ratio is dimensionless.
+// (https://en.wikipedia.org/wiki/Pulley)
 type PulleyJoint
     implements Value
 {
@@ -161,6 +118,7 @@ type PulleyJoint
 // joint frames carries a linear limit (meters) and each rotational axis an
 // angular limit. FrameA and FrameB are the joint frames in each body's local
 // frame.
+// (https://en.wikipedia.org/wiki/Degrees_of_freedom_(mechanics))
 type GenericJoint
     implements Value
 {
@@ -179,6 +137,7 @@ type GenericJoint
 // A velocity coupling between two rotational axes (gear train): body B's
 // angular velocity about AxisB is -Ratio times body A's about AxisA. Ratio is
 // the dimensionless gear ratio; the axes are in each body's local frame.
+// (https://en.wikipedia.org/wiki/Gear_train)
 type GearConstraint
     implements Value
 {
@@ -190,55 +149,13 @@ type GearConstraint
 }
 
 //==
-// # 2D joints
-
-// A planar one-degree-of-freedom rotational joint: the bodies rotate about
-// the out-of-plane axis through the coinciding anchors.
-type RevoluteJoint2D
-    implements Value
-{
-    BodyA: BodyIndex;
-    BodyB: BodyIndex;
-    AnchorA: Point2D;
-    AnchorB: Point2D;
-    Limit: AngularLimit;
-    Motor: JointMotor;
-}
-
-// A planar one-degree-of-freedom translational joint: the bodies slide along
-// AxisA (in body A's frame) with relative rotation locked.
-type PrismaticJoint2D
-    implements Value
-{
-    BodyA: BodyIndex;
-    BodyB: BodyIndex;
-    AnchorA: Point2D;
-    AnchorB: Point2D;
-    AxisA: Direction2D;
-    Limit: LinearLimit;
-    Motor: JointMotor;
-}
-
-// A planar joint that keeps the distance between two anchor points within
-// [MinLength, MaxLength].
-type DistanceJoint2D
-    implements Value
-{
-    BodyA: BodyIndex;
-    BodyB: BodyIndex;
-    AnchorA: Point2D;
-    AnchorB: Point2D;
-    MinLength: Length;
-    MaxLength: Length;
-}
-
-//==
 // # Joint groupings
 
 // A reusable articulated-figure wiring: the joints connecting a ragdoll's
 // limbs. Body indices inside the joints refer to the ragdoll's own body
 // array; BreakThresholds, when non-empty, applies one threshold per joint in
 // declaration order (hinges first, then ball-sockets, then fixed).
+// (https://en.wikipedia.org/wiki/Ragdoll_physics)
 type RagdollProfile
     implements Value
 {
