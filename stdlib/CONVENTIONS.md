@@ -52,11 +52,15 @@ A cross-array reference is a typed index (implements `Index`, single
 `Value: Integer`), never a raw `Integer`. A `Value` of `-1` (any negative) is the
 **"none" / absent** sentinel; a non-negative `Value` is a valid zero-based
 position. For multi-references, an **empty array** is the corresponding "none".
-CSR/offset arrays, counts, bitmasks, and axis selectors are plain `Integer` and
-are *not* governed by this rule.
+CSR/offset arrays, counts, and bitmasks are plain `Integer` and are *not*
+governed by this rule. **Axis selectors are no longer plain `Integer`**: a
+cardinal-axis choice is the typed `Axis3D` / `Axis2D` / `SignedAxis3D` sum
+(`axes.plato`), whose `Ordinal` recovers the `Integer` component index when one
+is genuinely needed — kd-tree split axes, `UpAxis` / `ForwardAxis` fields, and
+longest-extent queries take an axis type, not a bare `0`/`1`/`2`.
 *Owners:* `Index` concept (`collections.concepts.plato`); every typed index type
 (`topology.plato` VertexIndex/EdgeIndex/..., domain files); `ItemIndex`
-(`numbers.plato`).
+(`numbers.plato`); axis selectors (`axes.plato` Axis3D/Axis2D/SignedAxis3D).
 
 ## Angles — `Angle`-typed, radians-canonical
 
