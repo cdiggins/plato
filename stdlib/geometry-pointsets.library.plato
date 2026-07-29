@@ -48,4 +48,14 @@ library GeometryPointSets
     // The vertex centroid of the shape in space: the arithmetic mean of its points.
     VertexCentroid(self: PointSet3D): Point3D
         => self.Points.AverageOfPoints;
+
+    //==
+    // # PrimitiveCollection
+    //
+    // The primitive-level sibling of the point surface above: whole faces rather
+    // than the points inside them.
+
+    // The number of whole primitives the geometry stores.
+    PrimitiveCount(self: PrimitiveCollection3D<$TPrimitive>): Integer
+        => self.Primitives.Count;
 }
