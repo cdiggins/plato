@@ -165,6 +165,9 @@ namespace Ara3D.Geometry.Compiler.Checking
 
             if (viable.Count == 0)
             {
+                // Last resort: the "callee" may name a FIELD whose value is itself a function.
+                if (TryResolveFieldInvocation(oc, args))
+                    return true;
                 Report(DiagnosticSeverity.Error, "CHK201",
                     $"No overload of '{oc.Name}' matches argument types ({string.Join(", ", args)})", oc.Origin);
                 return true;
@@ -233,6 +236,75 @@ namespace Ara3D.Geometry.Compiler.Checking
                 Report(DiagnosticSeverity.Error, "CHK203",
                     $"Ambiguous call to '{oc.Name}': {winners.Count} equally-specific overloads with return types {string.Join(" | ", rets)}", oc.Origin);
             }
+            return true;
+        }
+
+        /// <summary>
+        /// Fallback for a UFCS call whose "callee" names a FIELD (or any single-receiver accessor)
+        /// whose stored value is itself a function. Member access is desugared receiver-first, so
+        /// <c>self.Function(point)</c> normalizes to the call <c>Function(self, point)</c>. No overload
+        /// of <c>Function</c> takes <c>(receiver, point)</c> — but the field accessor <c>Function(self)</c>
+        /// returns a <c>Function{N}</c> value that IS applied to the trailing arguments. This types the
+        /// call by INVOKING that function value: the accessor consumes the leading argument(s), its
+        /// <c>Function{N}</c> result's parameters unify with the trailing argument(s), and the call's
+        /// result is that function's return type.
+        ///
+        /// PRECEDENCE: attempted only when <em>no</em> ordinary overload matched, so a real
+        /// member/library function of the same name always wins — existing resolution is never
+        /// shadowed. Records nothing in <see cref="ResolvedCalls"/>: elaboration stays on the
+        /// syntactic path, which already renders <c>self.Function(point)</c> as the delegate
+        /// invocation the generated C# performs, so this only clears the spurious CHK201.
+        /// </summary>
+        private bool TryResolveFieldInvocation(OverloadConstraint oc, IReadOnlyList<TypeExpression> args)
+        {
+            var winners = new List<(TypeExpression ret, int cost, Dictionary<string, TypeExpression> sub)>();
+            foreach (var f in oc.Candidates)
+            {
+                var recvCount = f.Parameters.Count;
+                var applied = args.Count - recvCount;
+                if (applied < 1)
+                    continue; // needs at least one trailing argument to invoke the field value
+
+                var cand = InstantiateCandidate(f);
+                var scratch = new Dictionary<string, TypeExpression>(Substitution);
+                var cost = 0;
+                var ok = true;
+
+                // Match the leading argument(s) against the accessor's own parameter(s).
+                for (var i = 0; i < recvCount && ok; i++)
+                {
+                    var m = MatchArg(args[i], cand.Ps[i], cand, scratch);
+                    if (!m.ok) ok = false;
+                    else cost += m.cost;
+                }
+                if (!ok)
+                    continue;
+
+                // The accessor's return must be a function of exactly the trailing arity.
+                var fnType = Zonk(cand.Ret, scratch);
+                if (fnType?.Def?.Name != $"Function{applied}" || fnType.TypeArgs.Count != applied + 1)
+                    continue;
+
+                // The trailing argument(s) must match the stored function's parameter positions.
+                for (var i = 0; i < applied && ok; i++)
+                {
+                    var m = MatchArg(args[recvCount + i], Zonk(fnType.TypeArgs[i], scratch), cand, scratch);
+                    if (!m.ok) ok = false;
+                    else cost += m.cost;
+                }
+                if (!ok)
+                    continue;
+
+                winners.Add((fnType.TypeArgs[applied], cost, scratch));
+            }
+
+            if (winners.Count == 0)
+                return false;
+
+            var best = winners.OrderBy(w => w.cost).First();
+            foreach (var kv in best.sub)
+                Substitution[kv.Key] = kv.Value;
+            Unify(oc.Result, best.ret, Substitution, oc.Origin, record: true);
             return true;
         }
 

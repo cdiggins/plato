@@ -13,17 +13,19 @@ namespace PlatoTests
     [TestFixture]
     public static class CheckerCompletenessTests
     {
-        // Measured 2026-07-29 after the tuple-coercion checker fixes (Solver.cs): the return-position
-        // coercion no longer prematurely binds an unresolved tuple result var to the declared struct,
-        // and MatchArg now accepts a same-shape tuple literal for a struct PARAMETER (the Scale((x,y,z))
-        // family). Both mirror generated-C# tuple-constructor implicit operators, so no checker rule was
-        // weakened and no overload winner changed. 32 -> 26 / 859 remain — CHK101 (cannot-unify, 18) +
-        // CHK201 (no-match, 8): the tuple->GENERIC-INTERFACE returns the checker cannot soundly ground
-        // to a concrete implementer (Tuple2<$T,$T> vs IInterval<$T> / IBounds<$T,$D> — a library
-        // redesign, not a checker rule), plus library repairs (Meshes.Lines/Transform, Transforms.
-        // Quaternion, Vectors.Column/Dot, Curves2D/3D Bezier, Barycentric, ScalarFields3D Function-field
-        // invocation). The count drifts with library growth, so the baseline is a ceiling to lower.
-        private const int MaxFunctionsWithDiagnostics = 26;
+        // Measured 2026-07-29 after the function-typed-FIELD-invocation checker fix (Solver.cs,
+        // TryResolveFieldInvocation): a UFCS call whose "callee" names a field of function type
+        // (`self.Function(point)` -> the normalized call `Function(self, point)`) now types by INVOKING
+        // the accessor's `Function{N}` result against the trailing arguments, rather than failing CHK201.
+        // Strict fallback (only when no ordinary overload matched), so no winner changed; records nothing
+        // in ResolvedCalls, so the emitted `self.Function(point)` delegate invocation is byte-identical.
+        // Cleared the ScalarFields3D Function-field `Eval`, taking 26 -> 25 / 859. Remaining — CHK101
+        // (cannot-unify, 18) + CHK201 (no-match, 7): the tuple->GENERIC-INTERFACE returns the checker
+        // cannot soundly ground to a concrete implementer (Tuple2<$T,$T> vs IInterval<$T> / IBounds<$T,$D>
+        // — a library redesign, not a checker rule), plus library repairs (Meshes.Lines/Transform,
+        // Transforms.Quaternion, Vectors.Column/Dot, Curves2D/3D Bezier, Barycentric). The count drifts
+        // with library growth, so the baseline is a ceiling to lower.
+        private const int MaxFunctionsWithDiagnostics = 25;
 
         [Test]
         public static void StdLibDiagnosticCountDoesNotRegress()
