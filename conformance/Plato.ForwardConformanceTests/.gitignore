@@ -1,0 +1,5 @@
+# Script-produced: tools/regen-forward-conformance.ps1 generates C# here from the merged
+# forward stdlib + stdlib-tests. Never committed (mirrors Ara3D.SDK.ConformanceTests/Generated).
+Generated/
+bin/
+obj/

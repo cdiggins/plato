@@ -1,0 +1,13 @@
+{
+  "_comment": [
+    "Known-failures manifest for the FORWARD-stdlib conformance suite.",
+    "Each entry quarantines one (law, type) pair that fails against the forward library.",
+    "This file is the burn-down queue: when a fix lands, REMOVE its entry in the same change,",
+    "else the runner fails the still-listed entry with 'remove from manifest'.",
+    "Schema: test = Law_* member name; type = generated type carrying the law.",
+    "EMPTY today because the suite does not yet EXECUTE (forward codegen is blocked upstream;",
+    "see README.md). Populate it once codegen lands and real law failures surface."
+  ],
+  "knownFailures": [
+  ]
+}

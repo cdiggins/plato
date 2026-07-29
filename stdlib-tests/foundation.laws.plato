@@ -1,0 +1,96 @@
+// Law library for the FORWARD stdlib (stdlib/) conformance harness.
+//
+// This is the v3 sibling of stdlib-legacy-tests/laws.plato. It is NOT part of the
+// production vocabulary: it lives in stdlib-tests/ and is merged with stdlib/ only by
+// tools/regen-forward-conformance.ps1.
+//
+// Convention (identical to the legacy harness): every function prefixed with Law_
+// returns Boolean and is a property that must hold for ALL values of its parameter
+// types. The compiler monomorphizes each law onto every concrete type implementing the
+// receiver concept; the C# reflection runner (Plato.ForwardConformanceTests) invokes
+// each (type, law) pair with seeded pseudorandom instances. Helper functions (no Law_
+// prefix) are ignored by the runner.
+//
+// Every member referenced below was verified against stdlib/intervals-transforms.library.plato
+// and stdlib/core-algebra.library.plato (LIBRARIES.md rule 3). This packet targets the
+// interval remap kit (At/ParameterOf/Remap), the generic IntervalLike surface, and the
+// concrete Bounds2D/Bounds3D AABB operations.
+library FoundationLaws
+{
+    //==
+    // Tolerance helper.
+    // The forward stdlib's AlmostEqual(Real, Real, Real) is a strict absolute compare.
+    // Laws compose several float operations, so (as in the legacy harness) we use a
+    // mixed absolute + relative tolerance keyed on the larger magnitude.
+    LawEq(a: Number, b: Number): Boolean
+        => (a - b).Abs <= (a.Abs.Greater(b.Abs) * 1e-4 + 1e-4);
+
+    //==
+    // NumberInterval remap kit (intervals-transforms.library.plato: At/ParameterOf/Remap).
+
+    // At(0) recovers Start, At(1) recovers End (forward lerp endpoints).
+    Law_AtStartIsStart(i: NumberInterval): Boolean
+        => i.At(0.0).LawEq(i.Start);
+
+    Law_AtEndIsEnd(i: NumberInterval): Boolean
+        => i.At(1.0).LawEq(i.End);
+
+    // At(0.5) is the interval center.
+    Law_AtHalfIsCenter(i: NumberInterval): Boolean
+        => i.At(0.5).LawEq(i.Center);
+
+    // ParameterOf is the inverse of At: At(ParameterOf(x)) == x for a non-degenerate
+    // interval. Degenerate (Start == End) intervals have no inverse and are skipped.
+    Law_ParameterOfInvertsAt(i: NumberInterval, x: Number): Boolean
+        => i.Start.LawEq(i.End) || i.At(i.ParameterOf(x)).LawEq(x);
+
+    // Remapping an interval onto itself is the identity on any value in range.
+    Law_RemapToSelfIsIdentity(i: NumberInterval, x: Number): Boolean
+        => i.Start.LawEq(i.End) || x.Remap(i, i).LawEq(x);
+
+    //==
+    // Generic IntervalLike<T> surface (Contains / Center, guarded to forward orientation).
+
+    // A forward interval contains its own Start endpoint (closed interval, inclusive).
+    Law_ContainsStart(self: IntervalLike<$T>): Boolean
+        => self.IsReversed || self.Contains(self.Start);
+
+    // A forward interval contains its own End endpoint.
+    Law_ContainsEnd(self: IntervalLike<$T>): Boolean
+        => self.IsReversed || self.Contains(self.End);
+
+    // A forward interval contains its own center.
+    Law_ContainsCenter(self: IntervalLike<$T>): Boolean
+        => self.IsReversed || self.Contains(self.Center);
+
+    //==
+    // Bounds2D AABB operations (intervals-transforms.library.plato: Contains/Union/Expand).
+
+    // A non-empty box contains its own center point.
+    Law_Bounds2DContainsCenter(b: Bounds2D): Boolean
+        => b.IsEmpty || b.Contains(b.Center);
+
+    // Expanding outward by a non-negative amount still contains the original box.
+    Law_Bounds2DExpandContainsSelf(b: Bounds2D): Boolean
+        => b.IsEmpty || b.Expand(1.0).Contains(b);
+
+    // A box is contained in its union with any other box.
+    Law_Bounds2DUnionContainsSelf(b: Bounds2D, o: Bounds2D): Boolean
+        => b.IsEmpty || b.Union(o).Contains(b);
+
+    // The other operand is contained in the union too.
+    Law_Bounds2DUnionContainsOther(b: Bounds2D, o: Bounds2D): Boolean
+        => o.IsEmpty || b.Union(o).Contains(o);
+
+    //==
+    // Bounds3D AABB operations.
+
+    Law_Bounds3DContainsCenter(b: Bounds3D): Boolean
+        => b.IsEmpty || b.Contains(b.Center);
+
+    Law_Bounds3DExpandContainsSelf(b: Bounds3D): Boolean
+        => b.IsEmpty || b.Expand(1.0).Contains(b);
+
+    Law_Bounds3DUnionContainsSelf(b: Bounds3D, o: Bounds3D): Boolean
+        => b.IsEmpty || b.Union(o).Contains(b);
+}
