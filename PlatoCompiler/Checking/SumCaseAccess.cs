@@ -24,8 +24,8 @@ namespace Ara3D.Geometry.Compiler.Checking
     public static class SumCaseAccess
     {
         /// <summary>The sum type a call of the form <c>Sum.Case</c> denotes; null if the call is not
-        /// that shape. A case WITH fields is excluded: it is constructed by calling it
-        /// (<c>PathSegment2D.Line(p)</c>), which is an ordinary call and resolves the usual way.</summary>
+        /// that shape. A case WITH fields is excluded here — its qualified constructor call
+        /// (<c>PathSegment2D.Line(p)</c>) is recognized by <see cref="ResolvePayload"/>.</summary>
         public static TypeDef Resolve(FunctionCall fc, string memberName)
         {
             if (fc == null || fc.HasArgList || fc.Args.Count != 1)
@@ -35,6 +35,25 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return null;
             var c = td.Cases.FirstOrDefault(x => x.Name == memberName);
             return c != null && c.Fields.Count == 0 ? td : null;
+        }
+
+        /// <summary>The sum type a call of the form <c>Sum.Case(args)</c> denotes for a case WITH
+        /// fields — <c>BrepCurve.Line(seg)</c>, <c>PathSegment2D.Move(p)</c> (plato-332); null if the
+        /// call is not that shape. Member access desugars receiver-first, so the call arrives as
+        /// <c>Line(BrepCurve, seg)</c>; ordinary resolution then seeks a 2-argument overload of
+        /// <c>Line</c>, finds none (the synthesized factory takes only the payload), and raises
+        /// CHK201. Same gating as <see cref="Resolve"/>: the receiver must NAME the sum type, the
+        /// member must name one of its payload cases, and the trailing argument count must equal the
+        /// case's field count — so no member or library function reachable on a VALUE is shadowed.</summary>
+        public static TypeDef ResolvePayload(FunctionCall fc, string memberName)
+        {
+            if (fc == null || !fc.HasArgList || fc.Args.Count < 2)
+                return null;
+            var td = ReceiverTypeName(fc.Args[0]);
+            if (td == null || !td.IsSum)
+                return null;
+            var c = td.Cases.FirstOrDefault(x => x.Name == memberName);
+            return c != null && c.Fields.Count > 0 && c.Fields.Count == fc.Args.Count - 1 ? td : null;
         }
 
         /// <summary>The type a receiver expression NAMES (as opposed to the type it HAS): a bare type

@@ -247,6 +247,18 @@ namespace Ara3D.Geometry.Compiler.Checking
                     new List<TirNode> { ElaborateExpr(fc.Args[0]) }, sumType, fc, sg.Name);
             }
 
+            // `BrepCurve.Line(seg)` — a qualified PAYLOAD case constructor (plato-332). Same static
+            // factory as above, now with the payload as trailing arguments: renders
+            // `BrepCurve.Line(seg)`. Handled ahead of the resolved-call branch because the solver
+            // resolved it against the TRAILING arguments only (see ConstraintGenerator), so the
+            // recorded signature's arity does not match fc.Args.
+            if (fc.Function is FunctionGroupRefSymbol pg && SumCaseAccess.ResolvePayload(fc, pg.Name) is TypeDef psum)
+            {
+                var sumType = type ?? psum.ToTypeExpression();
+                return new TirCall(null, EmissionKind.StaticMethod, null, sumType,
+                    fc.Args.Select(ElaborateExpr).ToList(), sumType, fc, pg.Name);
+            }
+
             // Applying a function VALUE (function-typed parameter/variable, a lambda, or another
             // call's result) — not a named overload, so there is no callee/EmissionKind.
             if (!(fc.Function is FunctionGroupRefSymbol))

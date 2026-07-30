@@ -292,6 +292,22 @@ namespace Ara3D.Geometry.Compiler.Checking
                     if (sumCase != null)
                         return sumCase.ToTypeExpression();
 
+                    // `BrepCurve.Line(seg)` — a qualified PAYLOAD case constructor (plato-332).
+                    // Desugared receiver-first to `Line(BrepCurve, seg)`, the ordinary path would
+                    // seek a receiver-taking overload and raise CHK201. Resolve the TRAILING
+                    // arguments against the sum's own synthesized factory only, so the qualified
+                    // form means exactly the named case even when the bare name collides.
+                    var payloadSum = SumCaseAccess.ResolvePayload(fc, g.Name);
+                    if (payloadSum != null)
+                    {
+                        var factories = (g.Def?.Functions ?? Enumerable.Empty<FunctionDef>())
+                            .Where(f => f.FunctionType == FunctionType.SumFactory && f.OwnerType == payloadSum)
+                            .ToList();
+                        var payloadResult = Vars.Fresh("Ret");
+                        System.Add(new OverloadConstraint(fc, g.Name, payloadResult, argTypes.Skip(1).ToList(), factories, fc));
+                        return payloadResult;
+                    }
+
                     var candidates = g.Def?.Functions?.ToList() ?? new List<FunctionDef>();
                     var result = Vars.Fresh("Ret");
                     System.Add(new OverloadConstraint(fc, g.Name, result, argTypes, candidates, fc));

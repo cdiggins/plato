@@ -1,0 +1,34 @@
+// Positive fixture: a QUALIFIED constructor call of a PAYLOAD sum case
+// (`BrepCurve.Line(seg)`) alongside the bare synthesized-factory form (`Line(seg)`)
+// — plato-332. It desugars receiver-first to `Line(BrepCurve, seg)`, which ordinary
+// overload resolution rejects with CHK201 (no overload takes the type-name receiver);
+// Checking/SumCaseAccess.ResolvePayload recognizes it first and resolves the trailing
+// arguments against the sum's own factory.
+//
+// `Lines.Line` deliberately COLLIDES with the case name: the qualified form must still
+// mean the case (typing as BrepCurve), and the unrelated library function must remain
+// callable in bare form.
+
+type Number { }
+type Point3D { X: Number; Y: Number; Z: Number; }
+type LineSegment3D { A: Point3D; B: Point3D; }
+
+type BrepCurve
+    = Line(Segment: LineSegment3D)
+    | Free;
+
+library Lines {
+    // Unrelated function sharing the case's bare name.
+    Line(a: Point3D, b: Point3D): LineSegment3D => LineSegment3D(a, b);
+}
+
+library BrepCurves {
+    // Qualified payload-case constructor (the plato-332 trip site shape).
+    FromSegment(seg: LineSegment3D): BrepCurve => BrepCurve.Line(seg);
+
+    // Bare synthesized factory: must keep working.
+    FromSegmentBare(seg: LineSegment3D): BrepCurve => Line(seg);
+
+    // Qualified constructor whose payload comes from the COLLIDING library function.
+    FromPoints(a: Point3D, b: Point3D): BrepCurve => BrepCurve.Line(Line(a, b));
+}

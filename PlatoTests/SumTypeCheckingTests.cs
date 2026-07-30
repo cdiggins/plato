@@ -53,6 +53,7 @@ namespace PlatoTests
         [TestCase("match-expression.plato")]
         [TestCase("nested-match.plato")]
         [TestCase("qualified-nullary-case.plato")]
+        [TestCase("qualified-payload-case.plato")]
         public static void Positive_CompilesWithoutDiagnostics(string file)
         {
             var (comp, diags) = CheckFixture(file);
@@ -126,6 +127,23 @@ namespace PlatoTests
                     .Where(d => d.Severity == DiagnosticSeverity.Error)
                     .Select(d => $"{d.Code} {d.Message}"),
                 "qualified nullary sum-case references must type-check clean");
+        }
+
+        /// <summary>A qualified PAYLOAD case constructor (<c>BrepCurve.Line(seg)</c>) must type as
+        /// the sum (plato-332). It desugars receiver-first to <c>Line(BrepCurve, seg)</c>, which
+        /// ordinary overload resolution rejected with CHK201; <see cref="SumCaseAccess"/>.ResolvePayload
+        /// now resolves the trailing args against the sum's own factory. The fixture also pins that
+        /// the BARE factory form still works and that a colliding library function of the same name
+        /// is neither shadowed nor wrongly selected.</summary>
+        [Test]
+        public static void QualifiedPayloadCaseConstructor_TypeChecksClean()
+        {
+            var (comp, _) = CheckFixture("qualified-payload-case.plato");
+            var failing = new TypeChecker(comp).CheckAll().Where(r => !r.Succeeded).ToList();
+            Assert.IsEmpty(failing.SelectMany(r => r.Diagnostics)
+                    .Where(d => d.Severity == DiagnosticSeverity.Error)
+                    .Select(d => $"{d.Code} {d.Message}"),
+                "qualified payload sum-case constructor calls must type-check clean");
         }
 
         // --- generics stance: option.plato is restricted (CHK306) ----------------

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Plato Status Report — 2026-07-30 02:20 Eastern Daylight Time</title>
+<title>Plato Status Report — 2026-07-30 02:24 Eastern Daylight Time</title>
 <style>
 :root {
   --bg: #0f1419; --panel: #1a222c; --panel2: #232d3a; --text: #e7ecf2;
@@ -82,10 +82,10 @@ tr.muted-row { opacity: .55; }
 <body>
 <header>
   <h1>Plato status report</h1>
-  <div class="meta">Generated 2026-07-30 02:20:34 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>f6167ca</code></div>
+  <div class="meta">Generated 2026-07-30 02:24:59 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>bab5742</code></div>
   <div class="overall">
     <span><span class="badge attention">ATTENTION</span></span>
-    <span>17 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-30T02:19:09-04:00; live git/tracker refreshed this generation.</span>
+    <span>12 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-30T02:19:09-04:00; live git/tracker refreshed this generation.</span>
   </div>
 </header>
 <main>
@@ -93,11 +93,11 @@ tr.muted-row { opacity: .55; }
 <section>
   <h2>Snapshot</h2>
   <div class="grid">
-    <div class="card"><div class="n">main</div><div class="l">Branch · <span class="badge warn">ahead 1</span></div></div>
-    <div class="card"><div class="n">f6167ca</div><div class="l">HEAD</div></div>
-    <div class="card"><div class="n">17</div><div class="l">Dirty paths</div></div>
-    <div class="card"><div class="n">18</div><div class="l">Commits today</div></div>
-    <div class="card"><div class="n">176</div><div class="l">Commits last 7 days</div></div>
+    <div class="card"><div class="n">main</div><div class="l">Branch · <span class="badge warn">ahead 2</span></div></div>
+    <div class="card"><div class="n">bab5742</div><div class="l">HEAD</div></div>
+    <div class="card"><div class="n">12</div><div class="l">Dirty paths</div></div>
+    <div class="card"><div class="n">19</div><div class="l">Commits today</div></div>
+    <div class="card"><div class="n">177</div><div class="l">Commits last 7 days</div></div>
     <div class="card"><div class="n">7</div><div class="l">Issues in progress</div></div>
     <div class="card"><div class="n">0</div><div class="l">Latest C# errors (plato-cli)</div></div>
   </div>
@@ -106,67 +106,53 @@ tr.muted-row { opacity: .55; }
 <section>
   <h2>Git — Plato</h2>
   <div class="kv">
-    <div class="k">Status</div><div><code>## main...origin/main [ahead 1]
- M PlatoCompiler/Checking/ConstraintGenerator.cs
- M PlatoCompiler/Checking/Elaborator.cs
- M PlatoCompiler/Checking/SumCaseAccess.cs
- M PlatoTests/SumTypeCheckingTests.cs
-M  docs/status-report-snapshot.json
-M  docs/status-report.html
-A  stdlib-tests/special-numerics.laws.plato
-M  stdlib/planar-ellipses.library.plato
+    <div class="k">Status</div><div><code>## main...origin/main [ahead 2]
+M  PlatoCompiler/Checking/ConstraintGenerator.cs
+M  PlatoCompiler/Checking/Elaborator.cs
+M  PlatoCompiler/Checking/SumCaseAccess.cs
+M  PlatoTests/SumTypeCheckingTests.cs
+A  plato-test-sum/qualified-payload-case.plato
  M stdlib/polyhedra-catalog.library.plato
  M stdlib/polyhedra-conway.library.plato
-M  stdlib/random-continuous-tails.library.plato
  M stdlib/solids-polyhedra.library.plato
 ?? .claude/
 ?? PlatoTests/IntrinsicObligationTests.cs
-?? plato-test-sum/qualified-payload-case.plato
 ?? stdlib/polyhedra-catalog-catalans.library.plato
 ?? stdlib/polyhedra-catalog-expanded.library.plato
 ?? stdlib/polyhedra-conway-expansion.library.plato</code></div>
-    <div class="k">HEAD</div><div><code>f6167caa3cb89029539e66f6ad4a90df89cce03a</code></div>
+    <div class="k">HEAD</div><div><code>bab574284049a82dddf2d4a5bc85f9fe0c1987e8</code></div>
     <div class="k">origin/main</div><div><code>61b37eb1c4a6226fa46b64ae0870bbc738dec2f3</code></div>
-    <div class="k">Unpushed</div><div>f6167ca tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</div>
-    <div class="k">Dirty (excl. .claude/)</div><div><code>M PlatoCompiler/Checking/ConstraintGenerator.cs<br> M PlatoCompiler/Checking/Elaborator.cs<br> M PlatoCompiler/Checking/SumCaseAccess.cs<br> M PlatoTests/SumTypeCheckingTests.cs<br>M  docs/status-report-snapshot.json<br>M  docs/status-report.html<br>A  stdlib-tests/special-numerics.laws.plato<br>M  stdlib/planar-ellipses.library.plato<br> M stdlib/polyhedra-catalog.library.plato<br> M stdlib/polyhedra-conway.library.plato<br>M  stdlib/random-continuous-tails.library.plato<br> M stdlib/solids-polyhedra.library.plato<br>?? PlatoTests/IntrinsicObligationTests.cs<br>?? plato-test-sum/qualified-payload-case.plato<br>?? stdlib/polyhedra-catalog-catalans.library.plato<br>?? stdlib/polyhedra-catalog-expanded.library.plato<br>?? stdlib/polyhedra-conway-expansion.library.plato</code></div>
+    <div class="k">Unpushed</div><div>bab5742 feat(stdlib): von Mises Cdf (Bessel series) + superellipse Perimeter (Simpson)<br>f6167ca tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</div>
+    <div class="k">Dirty (excl. .claude/)</div><div><code>M  PlatoCompiler/Checking/ConstraintGenerator.cs<br>M  PlatoCompiler/Checking/Elaborator.cs<br>M  PlatoCompiler/Checking/SumCaseAccess.cs<br>M  PlatoTests/SumTypeCheckingTests.cs<br>A  plato-test-sum/qualified-payload-case.plato<br> M stdlib/polyhedra-catalog.library.plato<br> M stdlib/polyhedra-conway.library.plato<br> M stdlib/solids-polyhedra.library.plato<br>?? PlatoTests/IntrinsicObligationTests.cs<br>?? stdlib/polyhedra-catalog-catalans.library.plato<br>?? stdlib/polyhedra-catalog-expanded.library.plato<br>?? stdlib/polyhedra-conway-expansion.library.plato</code></div>
   </div>
   <h3>Diffstat (unstaged, excl. this report)</h3>
-  <pre>PlatoCompiler/Checking/ConstraintGenerator.cs | 16 ++++++++
- PlatoCompiler/Checking/Elaborator.cs          | 12 ++++++
- PlatoCompiler/Checking/SumCaseAccess.cs       | 23 ++++++++++-
- PlatoTests/SumTypeCheckingTests.cs            | 18 +++++++++
- stdlib/polyhedra-catalog.library.plato        | 12 +++---
- stdlib/polyhedra-conway.library.plato         | 28 +++++++++----
- stdlib/solids-polyhedra.library.plato         | 58 +++++++++++++--------------
- 7 files changed, 122 insertions(+), 45 deletions(-)</pre>
-  <div class="note">17 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
+  <pre>stdlib/polyhedra-catalog.library.plato | 12 +++----
+ stdlib/polyhedra-conway.library.plato  | 28 +++++++++++-----
+ stdlib/solids-polyhedra.library.plato  | 58 +++++++++++++++++-----------------
+ 3 files changed, 55 insertions(+), 43 deletions(-)</pre>
+  <div class="note">12 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
 </section>
 
 <section>
   <h2>Git — studio parent</h2>
   <div class="kv">
-    <div class="k">Status</div><div><code>## main...origin/main [ahead 1]
- M PlatoCompiler/Checking/ConstraintGenerator.cs
- M PlatoCompiler/Checking/Elaborator.cs
- M PlatoCompiler/Checking/SumCaseAccess.cs
- M PlatoTests/SumTypeCheckingTests.cs
-M  docs/status-report-snapshot.json
-M  docs/status-report.html
-A  stdlib-tests/special-numerics.laws.plato
-M  stdlib/planar-ellipses.library.plato
+    <div class="k">Status</div><div><code>## main...origin/main [ahead 2]
+M  PlatoCompiler/Checking/ConstraintGenerator.cs
+M  PlatoCompiler/Checking/Elaborator.cs
+M  PlatoCompiler/Checking/SumCaseAccess.cs
+M  PlatoTests/SumTypeCheckingTests.cs
+A  plato-test-sum/qualified-payload-case.plato
  M stdlib/polyhedra-catalog.library.plato
  M stdlib/polyhedra-conway.library.plato
-M  stdlib/random-continuous-tails.library.plato
  M stdlib/solids-polyhedra.library.plato
 ?? .claude/
 ?? PlatoTests/IntrinsicObligationTests.cs
-?? plato-test-sum/qualified-payload-case.plato
 ?? stdlib/polyhedra-catalog-catalans.library.plato
 ?? stdlib/polyhedra-catalog-expanded.library.plato
 ?? stdlib/polyhedra-conway-expansion.library.plato</code></div>
     <div class="k">Committed Plato pointer</div><div><code>?</code> <span class="badge blocked">DRIFT</span></div>
-    <div class="k">Plato HEAD</div><div><code>f6167caa3cb89029539e66f6ad4a90df89cce03a</code></div>
-    <div class="k">Plato-related dirty</div><div><code>M PlatoCompiler/Checking/ConstraintGenerator.cs<br> M PlatoCompiler/Checking/Elaborator.cs<br> M PlatoCompiler/Checking/SumCaseAccess.cs<br> M PlatoTests/SumTypeCheckingTests.cs<br>A  stdlib-tests/special-numerics.laws.plato<br>M  stdlib/planar-ellipses.library.plato<br> M stdlib/polyhedra-catalog.library.plato<br> M stdlib/polyhedra-conway.library.plato<br>M  stdlib/random-continuous-tails.library.plato<br> M stdlib/solids-polyhedra.library.plato<br>?? PlatoTests/IntrinsicObligationTests.cs<br>?? plato-test-sum/qualified-payload-case.plato<br>?? stdlib/polyhedra-catalog-catalans.library.plato<br>?? stdlib/polyhedra-catalog-expanded.library.plato<br>?? stdlib/polyhedra-conway-expansion.library.plato</code></div>
+    <div class="k">Plato HEAD</div><div><code>bab574284049a82dddf2d4a5bc85f9fe0c1987e8</code></div>
+    <div class="k">Plato-related dirty</div><div><code>M  PlatoCompiler/Checking/ConstraintGenerator.cs<br>M  PlatoCompiler/Checking/Elaborator.cs<br>M  PlatoCompiler/Checking/SumCaseAccess.cs<br>M  PlatoTests/SumTypeCheckingTests.cs<br>A  plato-test-sum/qualified-payload-case.plato<br> M stdlib/polyhedra-catalog.library.plato<br> M stdlib/polyhedra-conway.library.plato<br> M stdlib/solids-polyhedra.library.plato<br>?? PlatoTests/IntrinsicObligationTests.cs<br>?? stdlib/polyhedra-catalog-catalans.library.plato<br>?? stdlib/polyhedra-catalog-expanded.library.plato<br>?? stdlib/polyhedra-conway-expansion.library.plato</code></div>
   </div>
   <div class="note">If drifted, bump with an explicit <code>git commit -- submodules/Plato</code> in studio after Plato pushes.</div>
 </section>
@@ -177,7 +163,7 @@ M  stdlib/random-continuous-tails.library.plato
   <div><code>12aad781501e6714789fb87629f1fbee001e2ab0 parakeet (v1.4.3-78-g12aad78)</code></div>
   <p class="muted">parakeet: do not stage casually (known pre-existing dirty grammar submodule).</p>
   <h3>Worktrees</h3>
-  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              f6167ca [main]<br>C:/Users/cdigg/git/plato-wt-1                                                        d0dc6c8 [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
+  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              bab5742 [main]<br>C:/Users/cdigg/git/plato-wt-1                                                        d0dc6c8 [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
   <h3>Studio-level submodules</h3>
   <pre></pre>
 </section>
@@ -242,9 +228,9 @@ M  stdlib/random-continuous-tails.library.plato
 
 <section>
   <h2>Tracker — Plato issues</h2>
-  <div class="grid" style="margin-bottom:1rem"><div class="card"><div class="n">7</div><div class="l">In progress</div></div><div class="card"><div class="n">7</div><div class="l">Ready</div></div><div class="card"><div class="n">59</div><div class="l">Ideas</div></div><div class="card"><div class="n">35</div><div class="l">Done</div></div>
-    <div class="card"><div class="n">113</div><div class="l">Total plato-*</div></div>
-    <div class="card"><div class="n">8</div><div class="l">Open bugs</div></div>
+  <div class="grid" style="margin-bottom:1rem"><div class="card"><div class="n">7</div><div class="l">In progress</div></div><div class="card"><div class="n">6</div><div class="l">Ready</div></div><div class="card"><div class="n">61</div><div class="l">Ideas</div></div><div class="card"><div class="n">35</div><div class="l">Done</div></div>
+    <div class="card"><div class="n">115</div><div class="l">Total plato-*</div></div>
+    <div class="card"><div class="n">9</div><div class="l">Open bugs</div></div>
   </div>
   <h3>In progress (7)</h3>
   <table>
@@ -257,7 +243,7 @@ M  stdlib/random-continuous-tails.library.plato
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-306.md"><code>plato-306</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-306.md">Generic Difference defaults via optional delta conversion concept</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">in-progress</span></td><td>M / low</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-320.md"><code>plato-320</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-320.md">PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">in-progress</span></td><td>S / low</td></tr></tbody>
   </table>
-  <h3>Ready (7)</h3>
+  <h3>Ready (6)</h3>
   <table>
     <thead><tr><th>Id</th><th>Title</th><th>Type</th><th>Pri</th><th>Status</th><th>Effort/Risk</th></tr></thead>
     <tbody><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md">stdlib concept-gap burn-down: the 17 markers that need a language or concept decision</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>M / low</td></tr>
@@ -265,8 +251,7 @@ M  stdlib/random-continuous-tails.library.plato
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md">Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>L / med</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md"><code>plato-326</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md">Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-328.md"><code>plato-328</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-328.md">Inferred concept constraints are lost on generic library-function type variables</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr>
-<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-329.md"><code>plato-329</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-329.md">Writer emission-completeness assertion: every reachable library function must be emitted somewhere</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>M / low</td></tr>
-<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md">Lint intrinsic obligations against the intrinsics API snapshot</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>M / low</td></tr></tbody>
+<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-329.md"><code>plato-329</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-329.md">Writer emission-completeness assertion: every reachable library function must be emitted somewhere</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>M / low</td></tr></tbody>
   </table>
   <h3>Open bugs</h3>
   <table>
@@ -278,7 +263,8 @@ M  stdlib/random-continuous-tails.library.plato
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md">Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>L / med</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md"><code>plato-326</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md">Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-328.md"><code>plato-328</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-328.md">Inferred concept constraints are lost on generic library-function type variables</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr>
-<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md"><code>plato-332</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md">Checker gap: qualified sum-type payload constructors (Sum.Case(x)) fail CHK201</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">fixed</span></td><td>? / ?</td></tr></tbody>
+<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md"><code>plato-332</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md">Checker gap: qualified sum-type payload constructors (Sum.Case(x)) fail CHK201</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">fixed</span></td><td>? / ?</td></tr>
+<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-333.md"><code>plato-333</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-333.md">IntegerInterval is half-open but inherits closed IntervalLike bodies</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">idea</span></td><td>S / med</td></tr></tbody>
   </table>
   <h3>Open design problems</h3>
   <table>
@@ -294,14 +280,14 @@ M  stdlib/random-continuous-tails.library.plato
       <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-302.md"><code>plato-302</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-302.md">Plato BREP: edge-use shell with geometry sum types</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-30</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md">Convert solids-polyhedra types to PolygonMesh3D / TriangleMesh3D</a></td><td><span class="badge type">feature</span></td><td><span class="badge prio">p1</span></td><td><span class="badge done">done</span></td><td>2026-07-30</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-287.md"><code>plato-287</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-287.md">Add BoundedSdf (SDF with finite domain bounds)</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-291.md"><code>plato-291</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-291.md">CSharpWriter: no ground TIR for bodied concrete members blocks forward-stdlib codegen</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-293.md"><code>plato-293</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-293.md">stdlib: re-partition forward vocabulary by kind + domain, add Wikipedia links</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-295.md"><code>plato-295</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-295.md">Prefer array literals over MapRange for fixed corners/points</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p3</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-299.md"><code>plato-299</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-299.md">Align Plato stdlib CONVENTIONS with SDK and Studio style guides</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p1</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-300.md"><code>plato-300</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-300.md">Prefer arithmetic operators over Add/Multiply method calls in Plato</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-301.md"><code>plato-301</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-301.md">Implement Plato polyhedra library (seeds + Conway) in small-function style</a></td><td><span class="badge type">feature</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-303.md"><code>plato-303</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-303.md">CompressedSparseRow type/concept and library</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-307.md"><code>plato-307</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-307.md">Additive declares no identity element (Zero)</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p1</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-309.md"><code>plato-309</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-309.md">Plato agent guidance drift: add AGENTS.md, fix stale stdlib claims, move house knowledge into repo</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-310.md"><code>plato-310</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-310.md">CSharpWriter mangles Function1-typed values: System.Func loses type args, constructor calls emit as extension calls</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-311.md"><code>plato-311</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-311.md">Concept in type position (existential) has no defined C# lowering</a></td><td><span class="badge type">problem</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-312.md"><code>plato-312</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-312.md">Emit _-receiver concept members as C# static abstract</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr>
     </tbody>
   </table>
-  <p class="muted">59 ideas remain open (not listed).</p>
+  <p class="muted">61 ideas remain open (not listed).</p>
 </section>
 
 <section>
-  <h2>Committed work today (18 commits)</h2>
+  <h2>Committed work today (19 commits)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr><td><code>f6167ca</code></td><td>2026-07-30 02:08:45 -0400</td><td>tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</td></tr><tr><td><code>61b37eb</code></td><td>2026-07-30 01:55:17 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>10c22f0</code></td><td>2026-07-30 01:54:42 -0400</td><td>feat(v2): Matrix3x2/Matrix4x4 RowCount() — forward CS0535 curtain lifted</td></tr><tr><td><code>d0dc6c8</code></td><td>2026-07-30 01:48:02 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into plato-stdlib-improvements</td></tr><tr><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr><td><code>0e15882</code></td><td>2026-07-30 01:47:03 -0400</td><td>docs: record forward-conformance C# errors 1460 -&gt; 4</td></tr><tr><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr><td><code>d34a680</code></td><td>2026-07-30 01:25:31 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>7f80b42</code></td><td>2026-07-30 01:19:37 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): police V2 surface against writer tables</td></tr><tr><td><code>fbf5154</code></td><td>2026-07-30 00:56:11 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr><td><code>4be7444</code></td><td>2026-07-30 00:53:58 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>1f55a6c</code></td><td>2026-07-30 00:53:17 -0400</td><td>merge: stdlib increment - CSG, BREP, AngularCurve2D/3D, special functions</td></tr><tr><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr><tr><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr></tbody>
+    <tbody><tr><td><code>bab5742</code></td><td>2026-07-30 02:20:28 -0400</td><td>feat(stdlib): von Mises Cdf (Bessel series) + superellipse Perimeter (Simpson)</td></tr><tr><td><code>f6167ca</code></td><td>2026-07-30 02:08:45 -0400</td><td>tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</td></tr><tr><td><code>61b37eb</code></td><td>2026-07-30 01:55:17 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>10c22f0</code></td><td>2026-07-30 01:54:42 -0400</td><td>feat(v2): Matrix3x2/Matrix4x4 RowCount() — forward CS0535 curtain lifted</td></tr><tr><td><code>d0dc6c8</code></td><td>2026-07-30 01:48:02 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into plato-stdlib-improvements</td></tr><tr><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr><td><code>0e15882</code></td><td>2026-07-30 01:47:03 -0400</td><td>docs: record forward-conformance C# errors 1460 -&gt; 4</td></tr><tr><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr><td><code>d34a680</code></td><td>2026-07-30 01:25:31 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>7f80b42</code></td><td>2026-07-30 01:19:37 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): police V2 surface against writer tables</td></tr><tr><td><code>fbf5154</code></td><td>2026-07-30 00:56:11 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr><td><code>4be7444</code></td><td>2026-07-30 00:53:58 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>1f55a6c</code></td><td>2026-07-30 00:53:17 -0400</td><td>merge: stdlib increment - CSG, BREP, AngularCurve2D/3D, special functions</td></tr><tr><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr><tr><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr></tbody>
   </table>
 </section>
 
@@ -309,7 +295,7 @@ M  stdlib/random-continuous-tails.library.plato
   <h2>Recent history (20)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr class="today"><td><code>f6167ca</code></td><td>2026-07-30 02:08:45 -0400</td><td>tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</td></tr><tr class="today"><td><code>61b37eb</code></td><td>2026-07-30 01:55:17 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr class="today"><td><code>10c22f0</code></td><td>2026-07-30 01:54:42 -0400</td><td>feat(v2): Matrix3x2/Matrix4x4 RowCount() — forward CS0535 curtain lifted</td></tr><tr class="today"><td><code>d0dc6c8</code></td><td>2026-07-30 01:48:02 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into plato-stdlib-improvements</td></tr><tr class="today"><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr class="today"><td><code>0e15882</code></td><td>2026-07-30 01:47:03 -0400</td><td>docs: record forward-conformance C# errors 1460 -&gt; 4</td></tr><tr class="today"><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr class="today"><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr class="today"><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr class="today"><td><code>d34a680</code></td><td>2026-07-30 01:25:31 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr class="today"><td><code>7f80b42</code></td><td>2026-07-30 01:19:37 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): police V2 surface against writer tables</td></tr><tr class="today"><td><code>fbf5154</code></td><td>2026-07-30 00:56:11 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr class="today"><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr class="today"><td><code>4be7444</code></td><td>2026-07-30 00:53:58 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr class="today"><td><code>1f55a6c</code></td><td>2026-07-30 00:53:17 -0400</td><td>merge: stdlib increment - CSG, BREP, AngularCurve2D/3D, special functions</td></tr><tr class="today"><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr><tr class="today"><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr class="today"><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr><tr class=""><td><code>d1b1051</code></td><td>2026-07-29 23:53:09 -0400</td><td>feat: record C# build errors by category in status report</td></tr><tr class=""><td><code>4356c81</code></td><td>2026-07-29 23:41:54 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-302.md"><code>plato-302</code></a>): faceted BREP v1 — edge-use shell, Line/Planar/Bilinear sums</td></tr></tbody>
+    <tbody><tr class="today"><td><code>bab5742</code></td><td>2026-07-30 02:20:28 -0400</td><td>feat(stdlib): von Mises Cdf (Bessel series) + superellipse Perimeter (Simpson)</td></tr><tr class="today"><td><code>f6167ca</code></td><td>2026-07-30 02:08:45 -0400</td><td>tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</td></tr><tr class="today"><td><code>61b37eb</code></td><td>2026-07-30 01:55:17 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr class="today"><td><code>10c22f0</code></td><td>2026-07-30 01:54:42 -0400</td><td>feat(v2): Matrix3x2/Matrix4x4 RowCount() — forward CS0535 curtain lifted</td></tr><tr class="today"><td><code>d0dc6c8</code></td><td>2026-07-30 01:48:02 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into plato-stdlib-improvements</td></tr><tr class="today"><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr class="today"><td><code>0e15882</code></td><td>2026-07-30 01:47:03 -0400</td><td>docs: record forward-conformance C# errors 1460 -&gt; 4</td></tr><tr class="today"><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr class="today"><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr class="today"><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr class="today"><td><code>d34a680</code></td><td>2026-07-30 01:25:31 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr class="today"><td><code>7f80b42</code></td><td>2026-07-30 01:19:37 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): police V2 surface against writer tables</td></tr><tr class="today"><td><code>fbf5154</code></td><td>2026-07-30 00:56:11 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr class="today"><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr class="today"><td><code>4be7444</code></td><td>2026-07-30 00:53:58 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr class="today"><td><code>1f55a6c</code></td><td>2026-07-30 00:53:17 -0400</td><td>merge: stdlib increment - CSG, BREP, AngularCurve2D/3D, special functions</td></tr><tr class="today"><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr><tr class="today"><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr class="today"><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr><tr class=""><td><code>d1b1051</code></td><td>2026-07-29 23:53:09 -0400</td><td>feat: record C# build errors by category in status report</td></tr></tbody>
   </table>
 </section>
 
