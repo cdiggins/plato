@@ -19,18 +19,12 @@ namespace Ara3D.Geometry.Compiler.Symbols
 
             body = ExpressionBodyToStatementBody(body);
 
-            // plato-308: plan every substitution, then apply them in ONE rewrite. Replacing one
-            // capture at a time rebuilt the tree, so every later capture symbol lost reference
-            // identity with it and its `_varN` was declared but never used — the lambda kept the
-            // original reference. Invisible for an ordinary parameter (still in scope inside the
-            // closure), fatal for the receiver of a struct member, which cannot be named `this`
-            // inside a lambda: TriangleFace.Edges emitted `self.At(i)` and failed with CS0103.
-            // The captured reference objects come from FunctionDef.CapturedSymbols, computed when
-            // the lambda's FunctionDef was built — every later pass that rebuilds the body leaves
-            // them pointing at nodes the tree no longer contains, so ReferenceEquals never matched.
-            // Substitute on the parameter DEFINITION instead, which survives every rebuild.
+            // plato-308: plan every substitution, then apply them in ONE rewrite. Keyed on the
+            // captured reference's IDENTITY, which is what confines the substitution to the
+            // occurrences inside the lambda — keying it on the parameter DEFINITION also rewrote
+            // the receiver outside the lambda, where `this` is the only legal spelling.
             var hoists = new List<VariableDef>();
-            var byDef = new Dictionary<DefSymbol, Symbol>();
+            var subs = new List<(Symbol, Symbol)>();
 
             foreach (var capture in capturedVars)
             {
@@ -39,13 +33,10 @@ namespace Ara3D.Geometry.Compiler.Symbols
 
                 var newVarDef = new VariableDef(null, $"_var{NextId++}", param.Type, param);
                 hoists.Add(newVarDef);
-                if (param.Def != null && !byDef.ContainsKey(param.Def))
-                    byDef[param.Def] = newVarDef.ToReference();
+                subs.Add((param, newVarDef.ToReference()));
             }
 
-            body = body.Rewrite(sym => sym is ParameterRefSymbol p && p.Def != null && byDef.TryGetValue(p.Def, out var r)
-                ? (r, false)
-                : (sym, true));
+            body = body.Replace(subs);
 
             // Innermost block = the first capture in pre-order.
             foreach (var hoist in hoists)

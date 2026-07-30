@@ -37,6 +37,14 @@ public class TirLoweredLoop : TirNode
     public override IEnumerable<TirNode> Children
         => Sources.Concat(new[] { Fn, Seed, IncludeFirst }.Where(n => n != null));
 
+    public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+    {
+        var i = Sources.Count;
+        TirNode Next(TirNode original) => original == null ? null : children[i++];
+        return new TirLoweredLoop(Kind, children.Take(Sources.Count).ToList(),
+            Next(Fn), Next(Seed), Next(IncludeFirst), TempName, Id, Type, Origin) { ElemType = ElemType };
+    }
+
     public override string ToString() => $"loop:{Kind} -> {TempName}";
 }
 

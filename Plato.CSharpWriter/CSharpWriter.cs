@@ -561,6 +561,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 { "Matrix4x4.Translation", true },
                 { "Matrix4x4.Rotation", true },
                 { "Number.Angle", true },
+                { "Plane.Distance", true },
             };
 
         /// <summary>Whether V2 spells {typeName}.{name} as a property, or null when the declaration

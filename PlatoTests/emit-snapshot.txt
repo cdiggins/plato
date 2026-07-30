@@ -15,7 +15,7 @@
 @ _Number.g.cs :: _T0 Multiply<_T0>(this float scalar
   [MethodImpl(AggressiveInlining)] public static _T0 Multiply<_T0>(this float scalar, _T0 x) where _T0 : IScalarArithmetic<_T0> => x.Multiply(scalar);
 @ _Number.g.cs :: Vector3 Multiply(this float scalar, Vector3 right)
-  [MethodImpl(AggressiveInlining)] public static Vector3 Multiply(this float scalar, Vector3 right) => ((Number)scalar) * right;
+  [MethodImpl(AggressiveInlining)] public static Vector3 Multiply(this float scalar, Vector3 right) => right * scalar;
 @ _Number.g.cs :: Vector8 Divide(this float scalar, Vector8 right)
   [MethodImpl(AggressiveInlining)] public static Vector8 Divide(this float scalar, Vector8 right) => ((Number)scalar) / right;
 @ _Number.g.cs :: bool NotEquals(this Number a, float b)

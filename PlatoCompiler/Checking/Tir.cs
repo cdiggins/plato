@@ -31,6 +31,13 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <summary>The immediate TIR children, for tree walks. Default: none.</summary>
         public virtual IEnumerable<TirNode> Children => Enumerable.Empty<TirNode>();
 
+        /// <summary>This node rebuilt with <paramref name="children"/> substituted positionally for
+        /// <see cref="Children"/> (same order, same count, nulls preserved). Childless nodes — and
+        /// nodes whose children are not rewritable — return themselves. Overriding this alongside
+        /// <see cref="Children"/> is what lets a generic rewrite reach every node kind, including
+        /// the emission-only markers a writer defines outside this assembly.</summary>
+        public virtual TirNode WithChildren(IReadOnlyList<TirNode> children) => this;
+
         /// <summary>This node and every transitive child, pre-order.</summary>
         public IEnumerable<TirNode> Descendants()
         {
@@ -106,6 +113,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         public TirLet(VariableDef def, TirNode value, TypeExpression type, Symbol origin)
             : base(type, origin) => (Def, Value) = (def, value);
         public override IEnumerable<TirNode> Children => new[] { Value };
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirLet(Def, children[0], Type, Origin);
         public override string ToString() => $"var {Def?.Name} = {Value};";
     }
 
@@ -159,6 +168,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         }
 
         public override IEnumerable<TirNode> Children => Args;
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirCall(Callee, EmissionKind, ParameterTypes, ReturnType, children, Type, Origin, Name);
         public override string ToString() => $"{Name}[{EmissionKind}]({string.Join(", ", Args)})";
     }
 
@@ -183,6 +194,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         }
 
         public override IEnumerable<TirNode> Children => new[] { Inner };
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirCoerce(children[0], FromType, ToType, ConversionFn, Origin);
         public override string ToString() => $"coerce<{FromType}→{ToType}>({Inner})";
     }
 
@@ -202,6 +215,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         }
 
         public override IEnumerable<TirNode> Children => new[] { Target }.Concat(Args);
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirInvoke(children[0], children.Skip(1).ToList(), Type, Origin);
         public override string ToString() => $"{Target}.invoke({string.Join(", ", Args)})";
     }
 
@@ -217,6 +232,8 @@ namespace Ara3D.Geometry.Compiler.Checking
             : base(type, origin) => (Condition, IfTrue, IfFalse) = (condition, ifTrue, ifFalse);
 
         public override IEnumerable<TirNode> Children => new[] { Condition, IfTrue, IfFalse };
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirConditional(children[0], children[1], children[2], Type, Origin);
         public override string ToString() => $"({Condition} ? {IfTrue} : {IfFalse})";
     }
 
@@ -233,6 +250,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         }
 
         public override IEnumerable<TirNode> Children => Args;
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirNew(NewType, children, Type, Origin);
         public override string ToString() => $"new {NewType}({string.Join(", ", Args)})";
     }
 
@@ -244,6 +263,8 @@ namespace Ara3D.Geometry.Compiler.Checking
             : base(type, origin) => Elements = elements ?? new List<TirNode>();
 
         public override IEnumerable<TirNode> Children => Elements;
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirArray(children, Type, Origin);
         public override string ToString() => $"[{string.Join(", ", Elements)}]";
     }
 
@@ -256,6 +277,8 @@ namespace Ara3D.Geometry.Compiler.Checking
             : base(type, origin) => (LValue, RValue) = (lvalue, rvalue);
 
         public override IEnumerable<TirNode> Children => new[] { LValue, RValue };
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirAssign(children[0], children[1], Type, Origin);
         public override string ToString() => $"({LValue} = {RValue})";
     }
 
@@ -272,6 +295,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         }
 
         public override IEnumerable<TirNode> Children => new[] { Body };
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirLambda(Parameters, children[0], Type, Origin);
         public override string ToString()
             => $"({string.Join(", ", Parameters.Select(p => p.Name))}) => {Body}";
     }
@@ -293,6 +318,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         }
 
         public override IEnumerable<TirNode> Children => ChildNodes;
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirUnresolved(Original, Reason, children);
         public override string ToString() => $"<unresolved {Original?.Name}: {Reason}>";
     }
 
@@ -304,6 +331,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         public TirBlock(IReadOnlyList<TirNode> statements, Symbol origin)
             : base(null, origin) => Statements = statements ?? new List<TirNode>();
         public override IEnumerable<TirNode> Children => Statements;
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirBlock(children, Origin);
         public override string ToString() => $"{{ {string.Join("; ", Statements)} }}";
     }
 
@@ -312,6 +341,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         public TirNode Value { get; }
         public TirReturn(TirNode value, Symbol origin) : base(value?.Type, origin) => Value = value;
         public override IEnumerable<TirNode> Children => new[] { Value };
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirReturn(children[0], Origin);
         public override string ToString() => $"return {Value};";
     }
 
@@ -323,6 +354,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         public TirIf(TirNode condition, TirNode ifTrue, TirNode ifFalse, Symbol origin)
             : base(null, origin) => (Condition, IfTrue, IfFalse) = (condition, ifTrue, ifFalse);
         public override IEnumerable<TirNode> Children => new[] { Condition, IfTrue, IfFalse };
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirIf(children[0], children[1], children[2], Origin);
         public override string ToString() => $"if ({Condition}) {IfTrue} else {IfFalse}";
     }
 
@@ -333,6 +366,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         public TirLoop(TirNode condition, TirNode body, Symbol origin)
             : base(null, origin) => (Condition, Body) = (condition, body);
         public override IEnumerable<TirNode> Children => new[] { Condition, Body };
+        public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+            => new TirLoop(children[0], children[1], Origin);
         public override string ToString() => $"while ({Condition}) {Body}";
     }
 

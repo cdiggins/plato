@@ -49,6 +49,8 @@ public class TirComponentAccess : TirNode
     }
 
     public override IEnumerable<TirNode> Children => new[] { Receiver };
+    public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+        => new TirComponentAccess(children[0], FieldName, CastTo, ScalarComponentPrim, Type);
     public override string ToString() => $"{Receiver}.{FieldName}";
 }
 
@@ -67,6 +69,8 @@ public class TirConstructorCall : TirNode
     }
 
     public override IEnumerable<TirNode> Children => Args;
+    public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+        => new TirConstructorCall(TypeName, children, Type);
     public override string ToString() => $"new {TypeName}({string.Join(", ", Args)})";
 }
 
@@ -85,6 +89,8 @@ public class TirBooleanChain : TirNode
     }
 
     public override IEnumerable<TirNode> Children => Terms;
+    public override TirNode WithChildren(IReadOnlyList<TirNode> children)
+        => new TirBooleanChain(Op, children, Type);
     public override string ToString() => string.Join($" {Op} ", Terms);
 }
 

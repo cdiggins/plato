@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-30T10:57:45-04:00",
+  "updated_at": "2026-07-30T11:35:35-04:00",
   "note": "Captured during initial status-report landing; refresh after gate runs.",
   "gates": [
     {
@@ -94,22 +94,21 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-07-30T10:57:45-04:00",
+    "updated_at": "2026-07-30T11:35:35-04:00",
     "targets": {
       "forward-conformance": {
-        "built_at": "2026-07-30T10:57:45-04:00",
+        "built_at": "2026-07-30T11:35:35-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\conformance\\Plato.ForwardConformanceTests\\Plato.ForwardConformanceTests.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\forward-conformance.log",
         "configuration": "Release",
         "exit_code": 1,
-        "total_errors": 108,
+        "total_errors": 91,
         "total_warnings": 0,
-        "summary_errors": 108,
+        "summary_errors": 91,
         "summary_warnings": 0,
         "by_code": {
-          "CS1061": 66,
+          "CS1061": 62,
           "CS1929": 16,
-          "CS0103": 13,
           "CS0029": 5,
           "CS0019": 2,
           "CS0023": 2,
@@ -119,7 +118,7 @@
         },
         "by_category": {
           "missing_member": {
-            "count": 66,
+            "count": 62,
             "label": "Missing member on receiver (CS1061)",
             "codes": [
               "CS1061"
@@ -130,13 +129,6 @@
             "label": "Extension method receiver type",
             "codes": [
               "CS1929"
-            ]
-          },
-          "name_not_in_context": {
-            "count": 13,
-            "label": "Name does not exist in current context",
-            "codes": [
-              "CS0103"
             ]
           },
           "other": {
@@ -167,19 +159,20 @@
         "warning_by_code": {}
       },
       "plato-cli": {
-        "built_at": "2026-07-30T10:55:25-04:00",
+        "built_at": "2026-07-30T11:34:20-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\Plato.CLI\\Plato.CLI.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\plato-cli.log",
         "configuration": "Release",
         "exit_code": 0,
         "total_errors": 0,
-        "total_warnings": 1,
+        "total_warnings": 6,
         "summary_errors": 0,
-        "summary_warnings": 1,
+        "summary_warnings": 6,
         "by_code": {},
         "by_category": {},
         "warning_by_code": {
-          "CS0162": 1
+          "CS8618": 5,
+          "CS8601": 1
         }
       },
       "plato-generated-unoptimized": {
@@ -214,22 +207,20 @@
     "latest_target": "forward-conformance",
     "latest": {
       "target": "forward-conformance",
-      "total_errors": 108,
+      "total_errors": 91,
       "total_warnings": 0,
-      "built_at": "2026-07-30T10:57:45-04:00",
+      "built_at": "2026-07-30T11:35:35-04:00",
       "exit_code": 1,
       "by_category": {
-        "missing_member": 66,
+        "missing_member": 62,
         "extension_receiver": 16,
-        "name_not_in_context": 13,
         "other": 6,
         "cannot_implicitly_convert": 5,
         "operator_type_mismatch": 2
       },
       "by_code_top": {
-        "CS1061": 66,
+        "CS1061": 62,
         "CS1929": 16,
-        "CS0103": 13,
         "CS0029": 5,
         "CS0019": 2,
         "CS0023": 2,
