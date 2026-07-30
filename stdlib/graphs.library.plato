@@ -62,4 +62,27 @@ library Graphs
     // (https://en.wikipedia.org/wiki/Dense_graph).
     EdgeDensity(self: GraphLike): Number
         => self.EdgeCount.ToNumber / self.MaxPossibleEdges.ToNumber;
+
+    // The number of stored edges.
+    EdgeCount(self: Graph): Integer
+        => self.Edges.Count;
+
+    // True when edges carry a direction.
+    IsDirected(self: Graph): Boolean
+        => self.Directed;
+
+    // The number of stored weighted edges.
+    EdgeCount(self: WeightedGraph): Integer
+        => self.Edges.Count;
+
+    // True when edges carry a direction.
+    IsDirected(self: WeightedGraph): Boolean
+        => self.Directed;
+
+    //==
+    // # GraphEdge
+
+    // Both endpoints participate in the digest.
+    Hash(self: GraphEdge): Integer
+        => self.Source.Hash * 31 + self.Target.Hash;
 }

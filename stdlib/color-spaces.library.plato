@@ -1,0 +1,15 @@
+//==
+// # Color spaces — concrete bodies
+//
+// Hashable obligations for the color-science types declared in
+// `color-spaces.plato`. Conversion functions live in a later pass.
+
+library ColorSpaces
+{
+    //==
+    // # Chromaticity
+
+    // Both xy coordinates participate in the digest.
+    Hash(self: Chromaticity): Integer
+        => self.X.Hash * 31 + self.Y.Hash;
+}

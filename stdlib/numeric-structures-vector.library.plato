@@ -191,4 +191,11 @@ library NumericStructuresVector
     // invariant. Prefer FromVector unless the unit length is already established.
     FromVectorUnchecked(v: Vector3D): Direction3D
         => Direction3D(v);
+
+    //==
+    // # VectorN
+
+    // Folds component hashes in index order.
+    Hash(self: VectorN): Integer
+        => self.Components.Reduce(0, (acc, x) => acc * 31 + x.Hash);
 }

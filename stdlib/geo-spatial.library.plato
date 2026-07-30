@@ -18,4 +18,10 @@ library GeoSpatial
     // True when the coordinate lies outside the region.
     ExcludesCoordinate(self: GeoRegion, coordinate: GeoCoordinate): Boolean
         => self.ContainsCoordinate(coordinate).Not;
+
+    //==
+    // # MapTileIndex
+
+    Hash(self: MapTileIndex): Integer
+        => ((self.Zoom.Hash * 31 + self.Column.Hash) * 31 + self.Row.Hash);
 }

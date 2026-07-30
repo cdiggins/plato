@@ -64,4 +64,11 @@ library Colors
     // The component-wise greatest representable value.
     MaxValue(x: Color): Color
         => (Number.MaxValue, Number.MaxValue, Number.MaxValue, Number.MaxValue);
+
+    //==
+    // # Color8
+
+    // All four channels participate in the digest.
+    Hash(self: Color8): Integer
+        => ((self.R.Hash * 31 + self.G.Hash) * 31 + self.B.Hash) * 31 + self.A.Hash;
 }

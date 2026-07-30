@@ -66,4 +66,52 @@ library Images
     // (https://en.wikipedia.org/wiki/Row-_and_column-major_order).
     PixelIndex(self: Image, x: Integer, y: Integer): Integer
         => y * self.Width + x;
+
+    //==
+    // # Concrete image types — Image dimension accessors
+    //
+    // Each raster stores its dimensions in Size; Width and Height project the
+    // IntegerSize2D components for the Image concept surface.
+
+    Width(self: Bitmap): Integer
+        => self.Size.Width;
+
+    Height(self: Bitmap): Integer
+        => self.Size.Height;
+
+    Width(self: FloatImage): Integer
+        => self.Size.Width;
+
+    Height(self: FloatImage): Integer
+        => self.Size.Height;
+
+    Width(self: GrayscaleImage): Integer
+        => self.Size.Width;
+
+    Height(self: GrayscaleImage): Integer
+        => self.Size.Height;
+
+    Width(self: BinaryImage): Integer
+        => self.Size.Width;
+
+    Height(self: BinaryImage): Integer
+        => self.Size.Height;
+
+    Width(self: IndexedImage): Integer
+        => self.Size.Width;
+
+    Height(self: IndexedImage): Integer
+        => self.Size.Height;
+
+    Width(self: DepthImage): Integer
+        => self.Size.Width;
+
+    Height(self: DepthImage): Integer
+        => self.Size.Height;
+
+    Width(self: NormalImage): Integer
+        => self.Size.Width;
+
+    Height(self: NormalImage): Integer
+        => self.Size.Height;
 }

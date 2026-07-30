@@ -25,4 +25,11 @@ library TopologyAdjacency
     // The incident faces of each vertex, packed vertex by vertex.
     Values(self: VertexFaceAdjacency): Array<FaceIndex>
         => self.Faces;
+
+    //==
+    // # VertexPair
+
+    // Both endpoints participate in the digest.
+    Hash(self: VertexPair): Integer
+        => self.A.Hash * 31 + self.B.Hash;
 }

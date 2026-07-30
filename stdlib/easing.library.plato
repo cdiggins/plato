@@ -53,4 +53,38 @@ library Easing
     // advancing, as the Back family does near the start).
     AnticipatesAt(self: EasingFunction, t: Number): Boolean
         => self.Eval(t) < 0.0;
+
+    //==
+    // # Parameterized easing curves — Procedural<Number, Number> Eval bodies
+
+    // The Y coordinate of the cubic Bezier with endpoints (0, 0) and (1, 1) and
+    // control points (P1.X, P1.Y), (P2.X, P2.Y), evaluated at parameter t.
+    Eval(self: CubicBezierEasing, t: Number): Number
+        => 0.0.CubicBezier(self.P1.Y, self.P2.Y, 1.0, t);
+
+    // A CSS-style stepped easing: the StepPosition selects where each jump lands
+    // within its interval (https://en.wikipedia.org/wiki/Step_function).
+    Eval(self: StepEasing, t: Number): Number
+        => match (self.Position) {
+            JumpStart =>
+                (((t * self.Steps.ToNumber).Floor + 1.0) / self.Steps.ToNumber).Min(1.0);
+            JumpEnd =>
+                t.StaircaseFloor(self.Steps);
+            JumpNone =>
+                self.Steps <= 1
+                    ? t
+                    : (t * self.Steps.ToNumber + 0.5).Floor / self.Steps.ToNumber;
+            JumpBoth =>
+                self.Steps <= 1
+                    ? t
+                    : ((t * (self.Steps - 1).ToNumber).Floor + 1.0) / self.Steps.ToNumber;
+        };
+
+    // Order 0 is linear; 1 is cubic smoothstep; 2 is quintic smootherstep; higher
+    // orders fall back to linear until a closed form is added.
+    Eval(self: SmoothstepEasing, t: Number): Number
+        => self.Order == 0 ? t
+         : self.Order == 1 ? t.SmoothStep
+         : self.Order == 2 ? t.SmootherStep
+         : t;
 }

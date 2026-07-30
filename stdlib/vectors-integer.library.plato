@@ -1,0 +1,17 @@
+//==
+// # Integer vectors — concrete bodies
+//
+// Hashable obligations for the fixed-arity integer tuples declared in
+// `vectors-integer.plato`.
+
+library IntegerVectors
+{
+    Hash(self: IntegerVector2): Integer
+        => self.X.Hash * 31 + self.Y.Hash;
+
+    Hash(self: IntegerVector3): Integer
+        => ((self.X.Hash * 31 + self.Y.Hash) * 31 + self.Z.Hash);
+
+    Hash(self: IntegerVector4): Integer
+        => (((self.X.Hash * 31 + self.Y.Hash) * 31 + self.Z.Hash) * 31 + self.W.Hash);
+}
