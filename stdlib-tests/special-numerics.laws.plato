@@ -1,0 +1,85 @@
+// Law library for the series/numeric special-function bodies: the von Mises
+// CDF (Bessel series, `random-continuous-tails.library.plato`) and the
+// superellipse perimeter (Simpson arc-length integral,
+// `planar-ellipses.library.plato`).
+//
+// Same conventions as `foundation.laws.plato`: `Law_*` Boolean functions are
+// universally quantified over their parameters; helpers without the prefix are
+// ignored by the runner. Laws guard their parameters into the documented
+// accuracy regime (Concentration in [0, 15], positive semi-axes, Exponent >= 1)
+// and hold vacuously outside it.
+library SpecialNumericsLaws
+{
+    //==
+    // Tolerance helpers (LawEq lives in FoundationLaws; these are the local
+    // absolute and relative comparisons sized for the numeric bodies).
+
+    // Absolute-plus-relative compare with a 1e-6 floor.
+    SpecialEq(a: Number, b: Number): Boolean
+        => (a - b).Abs <= (a.Abs.Greater(b.Abs) * 1e-6 + 1e-6);
+
+    // The wrap of a radian offset into [-pi, pi), matching the von Mises CDF cut.
+    WrapToPi(x: Number): Number
+        => x - Number.Tau * ((x + Number.Pi) / Number.Tau).Floor;
+
+    // True when the distribution is outside the documented full-accuracy
+    // regime (Concentration in [0, 15]) and its CDF laws hold vacuously.
+    VonMisesOutOfRegime(d: VonMisesDistribution): Boolean
+        => d.Concentration < 0.0 || d.Concentration > 15.0;
+
+    //==
+    // Von Mises CDF (series; no closed form).
+
+    // The CDF at the mean direction is exactly one half, for every concentration.
+    Law_VonMisesCdfAtMeanIsHalf(d: VonMisesDistribution): Boolean
+        => d.VonMisesOutOfRegime || d.Cdf(d.MeanDirection.Radians).SpecialEq(0.5);
+
+    // At Concentration 0 the distribution is uniform on the circle and the CDF
+    // of the wrapped angle is 1/2 + wrap(x)/(2 pi).
+    Law_VonMisesCdfZeroKappaIsUniform(x: Number): Boolean
+        => VonMisesDistribution(Angle(0.0), 0.0).Cdf(x)
+            .SpecialEq(0.5 + x.WrapToPi / Number.Tau);
+
+    // The CDF starts at 0 at the cut (the antipode of the mean direction).
+    Law_VonMisesCdfStartsAtZero(d: VonMisesDistribution): Boolean
+        => d.VonMisesOutOfRegime
+        || d.Cdf(d.MeanDirection.Radians - Number.Pi).SpecialEq(0.0);
+
+    // Reflection symmetry about the mean: F(mu + t) + F(mu - t) = 1 for t
+    // strictly inside (-pi, pi) (at the cut itself both sides wrap to 0).
+    Law_VonMisesCdfSymmetry(d: VonMisesDistribution, x: Number): Boolean
+        => d.VonMisesOutOfRegime
+        || x.WrapToPi.Abs > 3.1
+        || (d.Cdf(d.MeanDirection.Radians + x.WrapToPi)
+            + d.Cdf(d.MeanDirection.Radians - x.WrapToPi)).SpecialEq(1.0);
+
+    //==
+    // Superellipse perimeter (Simpson arc-length integral; no closed form).
+
+    // True when the shape is outside the perimeter's documented regime
+    // (positive, non-degenerate semi-axes) and the laws hold vacuously.
+    SuperEllipseOutOfRegime(se: SuperEllipse): Boolean
+        => se.SemiAxes.X < 0.1 || se.SemiAxes.Y < 0.1
+        || se.SemiAxes.X > 100.0 || se.SemiAxes.Y > 100.0;
+
+    // At Exponent 2 the superellipse IS the ellipse: its numerically integrated
+    // perimeter matches the ellipse's Ramanujan approximation (whose own error
+    // is below 1e-4 relative on this axis range).
+    Law_SuperEllipseExponentTwoPerimeterIsEllipse(se: SuperEllipse): Boolean
+        => se.SuperEllipseOutOfRegime
+        || SuperEllipse(se.Center, se.SemiAxes, se.Rotation, 2.0).Perimeter
+            .SpecialEq(Ellipse(se.Center, se.SemiAxes, se.Rotation).Perimeter);
+
+    // At Exponent 1 the superellipse is the diamond with vertices on the axes,
+    // whose perimeter is exactly 4 sqrt(a^2 + b^2).
+    Law_SuperEllipseExponentOnePerimeterIsDiamond(se: SuperEllipse): Boolean
+        => se.SuperEllipseOutOfRegime
+        || SuperEllipse(se.Center, se.SemiAxes, se.Rotation, 1.0).Perimeter
+            .SpecialEq(4.0 * (se.SemiAxes.X.Square + se.SemiAxes.Y.Square).Sqrt);
+
+    // The unit circle as a superellipse (a = b = 1, Exponent 2) has perimeter
+    // 2 pi.
+    Law_SuperEllipseUnitCirclePerimeter(t: Number): Boolean
+        => SuperEllipse(Point2D(0.0, 0.0), Number2(1.0, 1.0), Angle(0.0), 2.0)
+            .Perimeter.SpecialEq(Number.Tau);
+}

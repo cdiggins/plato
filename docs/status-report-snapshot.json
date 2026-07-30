@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-30T01:53:17-04:00",
+  "updated_at": "2026-07-30T02:19:09-04:00",
   "note": "Captured during initial status-report landing; refresh after gate runs.",
   "gates": [
     {
@@ -94,7 +94,7 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-07-30T01:53:17-04:00",
+    "updated_at": "2026-07-30T02:19:09-04:00",
     "targets": {
       "forward-conformance": {
         "built_at": "2026-07-30T01:51:44-04:00",
@@ -175,7 +175,7 @@
         "warning_by_code": {}
       },
       "plato-cli": {
-        "built_at": "2026-07-30T01:52:12-04:00",
+        "built_at": "2026-07-30T02:19:09-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\Plato.CLI\\Plato.CLI.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\plato-cli.log",
         "configuration": "Release",
@@ -217,12 +217,12 @@
         "warning_by_code": {}
       }
     },
-    "latest_target": "plato-generated-optimized",
+    "latest_target": "plato-cli",
     "latest": {
-      "target": "plato-generated-optimized",
+      "target": "plato-cli",
       "total_errors": 0,
       "total_warnings": 0,
-      "built_at": "2026-07-30T01:53:17-04:00",
+      "built_at": "2026-07-30T02:19:09-04:00",
       "exit_code": 0,
       "by_category": {},
       "by_code_top": {}

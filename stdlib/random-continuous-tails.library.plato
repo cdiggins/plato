@@ -6,11 +6,11 @@
 // and the peaked LaplaceDistribution, the lifetime and power-law
 // WeibullDistribution and ParetoDistribution, the bounded
 // TriangularDistribution, and the circular VonMisesDistribution. All bodies
-// here are exact closed forms; the Weibull moments and the von Mises bodies
-// go through `Gamma` and the modified Bessel functions `BesselI0`/`BesselI1`
-// of the `numbers-special-*` libraries, so their accuracy is bounded by the
-// accuracy stated on those functions. The von Mises CDF alone remains
-// unimplemented (it has no closed form; see its site).
+// here are exact closed forms except the von Mises CDF (which has no closed
+// form and is a truncated Bessel series; see its site); the Weibull moments
+// and the von Mises bodies go through `Gamma` and the modified Bessel
+// functions `BesselI0`/`BesselI1` of the `numbers-special-*` libraries, so
+// their accuracy is bounded by the accuracy stated on those functions.
 
 library RandomContinuousTails
 {
@@ -214,8 +214,42 @@ library RandomContinuousTails
             * Angle(value - self.MeanDirection.Radians).Cos).Exp
          / (Number.Tau * BesselI0(self.Concentration));
 
-    // TODO(content): Cdf(VonMisesDistribution, Number) has no closed form at
-    // all — it is an infinite Bessel series (a sum over I_j(kappa)/j terms),
-    // not expressible through I0/I1 alone — and is omitted rather than
-    // truncated by guesswork.
+    // The order-j modified Bessel function I_j(x) via the ascending series:
+    // (x/2)^j / j! * sum_k (x^2/4)^k / (k! (k+j)!), reusing the fixed-60-term
+    // `BesselISeriesSum` kernel with the order-j prefactor spelled through
+    // `Gamma(j + 1)`. LOCAL to the von Mises CDF below: full double accuracy
+    // only for |x| <= 15 (the series regime of `numbers-special-bessel`); the
+    // stable general-purpose route for higher orders is downward recurrence,
+    // which this deliberately does not attempt.
+    VonMisesBesselI(j: Integer, x: Number): Number
+        => (x / 2.0).Pow(j.ToNumber) / Gamma(j.ToNumber + 1.0)
+         * BesselISeriesSum(j.ToNumber, x.Square / 4.0, 0, 1.0);
+
+    // The von Mises CDF of the WRAPPED angle, with the cut at the antipode:
+    // F(mu - pi) = 0 and F -> 1 as value -> mu + pi, and any real input is
+    // first wrapped into [mu - pi, mu + pi). There is NO closed form; this is
+    // the standard Fourier/Bessel series (Abramowitz & Stegun 9.6.34 applied
+    // to the density),
+    //     F(x) = 1/2 + (x-mu)/(2 pi)
+    //          + (1/(pi I0(kappa))) * sum_j I_j(kappa) sin(j (x-mu)) / j,
+    // truncated at 32 terms. The terms decay like exp(-j^2/(2 kappa)), so for
+    // Concentration <= 15 (the full-accuracy regime of the Bessel kernel) the
+    // truncation error is below ~1e-10 absolute; accuracy degrades gradually
+    // beyond that. At kappa = 0 the series vanishes exactly (I_j(0) = 0),
+    // leaving the circular uniform CDF 1/2 + (x-mu)/(2 pi).
+    // https://en.wikipedia.org/wiki/Von_Mises_distribution
+    Cdf(self: VonMisesDistribution, value: Number): Number
+    {
+        var x = value - self.MeanDirection.Radians;
+        var wrapped = x - Number.Tau * ((x + Number.Pi) / Number.Tau).Floor;
+        var uniformPart = 0.5 + wrapped / Number.Tau;
+        return self.Concentration <= 0.0
+            ? uniformPart
+            : uniformPart
+              + SumOf(32.MapRange(j =>
+                    VonMisesBesselI(j + 1, self.Concentration)
+                    * Angle((j.ToNumber + 1.0) * wrapped).Sin
+                    / (j.ToNumber + 1.0)))
+                / (Number.Pi * BesselI0(self.Concentration));
+    }
 }
