@@ -630,26 +630,28 @@ namespace Ara3D.Geometry.Compiler.Analysis
         // LINT014: a name that is simultaneously a FIELD of some concrete type and a
         // NO-ARG LIBRARY FUNCTION on an unrelated receiver.
         //
-        // The C# writer decides no-arg call-site syntax by the UNIFORM RENDERING RULE:
-        // a no-arg member renders with property/field syntax iff its name is on the
-        // "struct surface" (CSharpWriter.StructSurfacePropertyNames, built from the
-        // per-type field and pseudo-field names). That set is GLOBAL and keyed by NAME
-        // only, so a field on one struct decides how a same-named member renders on
-        // EVERY receiver — including receivers that have no such field and whose member
-        // is a classic extension METHOD needing "()".
+        // The C# writer decides no-arg call-site syntax by the struct surface: a no-arg
+        // member renders with property/field syntax iff its name is on the surface of the
+        // RECEIVER'S OWN type (CSharpWriter.IsStructSurfaceProperty). That rendering rule
+        // used to be global and keyed by NAME only, so a field on one struct decided how a
+        // same-named member rendered on EVERY receiver — including receivers with no such
+        // field, whose member is a classic extension METHOD needing "()". Two measured
+        // instances in the forward stdlib: the field `Histogram.Range` stole the parentheses
+        // from `ArrayExtensions.Range(this int)` (915 x CS0119), and a field named `Amount`
+        // stole them from `Amount(x: Angle)` and its 60 sibling quantity projections
+        // (110 x CS0030). Both are fixed: plato-323 cluster 1 made the rule receiver-aware
+        // for erased scalar receivers, and item 2 generalized it to every receiver.
         //
-        // This is not hypothetical: the field `Histogram.Range` stole the parentheses
-        // from `ArrayExtensions.Range(this int)` at every scalar call site in the forward
-        // stdlib — 915 x CS0119 "is a method, which is not valid in the given context"
-        // (plato-323 cluster 1). That instance was fixed receiver-aware in the writer
-        // (CSharpWriter.IsStructSurfaceProperty), but only for ERASED SCALAR receivers;
-        // the general per-receiver form of the rule remains unlanded (plato-323 remaining
-        // item 2, ~100 x CS0030), because it moves 88 of the 184 diff-gated goldens. So
-        // the collision is still live for every non-scalar receiver, and it is invisible
-        // until a C# build a thousand generated files downstream.
+        // So the RENDERING hazard is gone. What the collision still costs is MEMBER
+        // PLACEMENT, which cannot be decided per receiver: a C# instance member silently
+        // hides a same-name extension method, so a name that is a field anywhere is demoted
+        // out of the library extension class and back into the struct on EVERY type
+        // (ExtensionStylePlan.DemoteMovedNames). That is a real, if quieter, consequence —
+        // it inflates every generated struct and couples unrelated types through a name —
+        // and it is still invisible in the Plato source, which is why the lint stays.
         //
-        // Hence a lint, and hence its second job: the finding count over a folder
-        // PRE-MEASURES the blast radius of that withheld writer fix.
+        // The finding count therefore no longer pre-measures a withheld writer fix (that
+        // fix landed); it measures how much of the vocabulary is coupled by name collision.
         //
         // The predicate deliberately excludes the two shapes that are DESIGN, not defect:
         //   * same-type (or concept-satisfying) field forwarding. A field named N on T is
@@ -662,7 +664,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
         //     STATIC member for it (CSharpFunctionInfo.IsStatic, LINT012), which is never
         //     rendered with instance property syntax.
         //
-        // Info: the rule reports a rendering hazard in the shape of the vocabulary, both
+        // Info: the rule reports a naming collision in the shape of the vocabulary, both
         // sides of which are legal Plato, and it fires on the existing corpus — so it must
         // not gate `lint --strict` or enter the ratchet (the LINT003 precedent).
         // -------------------------------------------------------------------

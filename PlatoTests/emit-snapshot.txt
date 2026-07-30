@@ -56,7 +56,7 @@
   [MethodImpl(AggressiveInlining)] public static Angle Turns(this int x) => ((float)x.Number()).Turns();
 @ Transforms.g.cs :: Vector3 TransformNormal(this Transform3D x, Vector3 v)
   [MethodImpl(AggressiveInlining)] public static Vector3 TransformNormal(this Transform3D x, Vector3 v) => v.TransformNormal(x.Matrix);
-@ _IdentityTransform3D.g.cs :: Quaternion Quaternion =>
-  public Quaternion Quaternion => throw new NotImplementedException();
-@ _Identity2D.g.cs :: Matrix3x2 Matrix =>
-  public Matrix3x2 Matrix => throw new NotImplementedException();
+@ _IdentityTransform3D.g.cs :: public Quaternion Quaternion() =>
+  [MethodImpl(AggressiveInlining)] public Quaternion Quaternion() => throw new NotImplementedException();
+@ _Identity2D.g.cs :: public Matrix3x2 Matrix() =>
+  [MethodImpl(AggressiveInlining)] public Matrix3x2 Matrix() => throw new NotImplementedException();

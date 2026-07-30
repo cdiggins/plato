@@ -287,7 +287,7 @@ namespace Ara3D.Geometry.CSharpWriter
                     // become a method on the struct; an explicit interface implementation
                     // forwards the method obligation to the property.
                     else if (Writer.NoProperties && f.ParameterTypes.Count == 1
-                        && Writer.StructSurfacePropertyNames.Contains(f.Name))
+                        && Writer.IsStructSurfaceProperty(SimpleName, f.Name))
                     {
                         var retType = TypeWriter.ToCSharpType(f.ReturnType);
                         // Pinned-name struct members are uniformly PROPERTIES (handwritten on
@@ -945,7 +945,7 @@ namespace Ara3D.Geometry.CSharpWriter
             // no-arg intrinsic, which is a PROPERTY on the wrapper by convention.
             if (args == "" && !forcePropertySyntax && Writer.ExtensionStyle
                 && (Writer.MovedNoArgNames.Contains(fi.Name)
-                    || (Writer.NoProperties && !Writer.StructSurfacePropertyNames.Contains(fi.Name))))
+                    || (Writer.NoProperties && !Writer.IsStructSurfaceProperty(platoType, fi.Name))))
                 args = "()";
             var firstParamName = fi.ParameterNames[0];
             return $"{sig} => (({platoType}){firstParamName}).{fi.Name}{args};";
