@@ -1,0 +1,95 @@
+//==
+// # Boundary representation (BREP) shell types
+//
+// The immutable faceted BREP v1: `Brep3D` is vertices + undirected edges +
+// faces, faces bound themselves with oriented edge-uses, and edge/face
+// geometry lives in the `BrepCurve` / `BrepSurface` sum types (Line only, and
+// Planar | Bilinear, in v1 — curved cases are added as new sum cases). See
+// brep.concepts.plato for the edge-use-vs-half-edge convention and the
+// closedness-is-a-proof rule (no `ClosedShell` marker here). Loops traverse a
+// face boundary counter-clockwise as seen from outside the solid, and the
+// surface normal (du x dv) points out of the solid.
+// Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+
+// The direction a face cites an undirected edge with: Forward walks the edge
+// from its Start vertex to its End vertex, Reversed walks it back.
+type EdgeOrientation = Forward | Reversed;
+
+// One oriented citation of an undirected edge inside a face boundary loop.
+// A watertight shell cites every edge exactly twice, once in each orientation.
+type BrepEdgeUse
+    implements Value
+{
+    Edge: UndirectedEdgeIndex;
+    Orientation: EdgeOrientation;
+}
+
+// The exact geometry an undirected BREP edge carries. v1 is faceted: the only
+// case is the straight segment from the edge's Start vertex to its End vertex.
+// Arc / Polyline cases are future sum cases, not new fields.
+type BrepCurve
+    = Line(Segment: LineSegment3D);
+
+// One undirected shell edge: the two vertices it connects and the one curve
+// it owns. The curve runs from Start (parameter 0) to End (parameter 1);
+// `Validate` checks that agreement.
+type BrepEdge
+    implements Value
+{
+    Start: VertexIndex;
+    End: VertexIndex;
+    Curve: BrepCurve;
+}
+
+// One closed boundary loop of a face: consecutive edge-uses chain end-to-start
+// around the loop (the end vertex of each use is the start vertex of the
+// next, wrapping around). Not the half-edge BoundaryLoop.
+type BrepLoop
+    implements Value
+{
+    Uses: Array<BrepEdgeUse>;
+}
+
+// The exact geometry a BREP face carries, over the unit UV square. v1 is
+// faceted: a planar rectangle patch or a bilinear four-corner patch (both from
+// surfaces-patches.plato). QuadGrid / cylindrical cases are future sum cases.
+type BrepSurface
+    = Planar(Patch: PlanarPatch)
+    | Bilinear(Patch: BilinearPatch);
+
+// One shell face: a surface plus the loops bounding it. The first loop is the
+// outer boundary; additional loops are holes (v1 shells typically carry one).
+// Loops wind counter-clockwise seen from outside; the surface du x dv normal
+// points out of the solid.
+type BrepFace
+    implements Value
+{
+    Surface: BrepSurface;
+    Loops: Array<BrepLoop>;
+}
+
+// An immutable boundary-representation shell: vertices, curve-carrying
+// undirected edges, and surface-carrying faces citing those edges through
+// oriented edge-uses. Carries NO closedness marker — watertightness is a
+// checked property (`IsWatertight` / `Validate` in brep.library.plato), and a
+// proof-carrying closed subtype is future work.
+type Brep3D
+    implements BoundaryRepresentation, Deformable3D
+{
+    Vertices: Array<Point3D>;
+    Edges: Array<BrepEdge>;
+    Faces: Array<BrepFace>;
+}
+
+// The structural checks of one shell, each answered independently by
+// `Validate` (brep.library.plato). The connectivity and watertight answers are
+// only meaningful when both range flags are true.
+type BrepValidation
+    implements Value
+{
+    EdgesInRange: Boolean;
+    LoopUsesInRange: Boolean;
+    LoopsConnected: Boolean;
+    CurveEndpointsMatch: Boolean;
+    Watertight: Boolean;
+}

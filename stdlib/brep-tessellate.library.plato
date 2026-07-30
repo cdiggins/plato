@@ -1,0 +1,51 @@
+//==
+// # BREP tessellation
+//
+// The exact-to-discrete seam for BREP shells: sampling each face's surface
+// over the full unit UV square into an indexed triangle mesh. Like the C#
+// sketch it ports, v1 tessellates the FULL UV grid and ignores loop clipping
+// — exact for the faceted Planar / Bilinear cases whose loops span the whole
+// patch (Box does), approximate once trimming loops arrive. Triangles wind
+// counter-clockwise seen from outside when the surface follows the outward
+// du x dv convention (brep.plato).
+
+library BrepTessellate
+{
+    // One triangle of a full-grid tessellation over a cols x cols vertex
+    // lattice (cols = resolution + 1): triangles 2*cell and 2*cell + 1 split
+    // grid cell `k / 2` along its low-UV-to-high-UV diagonal.
+    GridTriangleFace(k: Integer, cols: Integer): TriangleFace
+    {
+        var cell = k / 2;
+        var col = cell % (cols - 1);
+        var row = cell / (cols - 1);
+        var a = row * cols + col;
+        var b = a + 1;
+        var c = a + cols + 1;
+        var d = a + cols;
+        return k % 2 == 0
+            ? TriangleFace(VertexIndex(a), VertexIndex(b), VertexIndex(c))
+            : TriangleFace(VertexIndex(a), VertexIndex(c), VertexIndex(d));
+    }
+
+    // The face's surface sampled on a (resolution + 1)^2 UV grid, two
+    // triangles per cell. Precondition: resolution >= 1. Vertices are not
+    // welded across faces; per-shell welding is future work.
+    Tessellate(f: BrepFace, resolution: Integer): TriangleMesh3D
+    {
+        var cols = resolution + 1;
+        var positions = MapRange(cols * cols, i =>
+            f.Surface.Eval(UvCoordinate(
+                (i % cols).ToNumber / resolution.ToNumber,
+                (i / cols).ToNumber / resolution.ToNumber)));
+        var faces = MapRange(2 * resolution * resolution, k =>
+            GridTriangleFace(k, cols));
+        return TriangleMesh3D(positions, faces);
+    }
+
+    // Every face tessellated at the same resolution, in face order — one mesh
+    // per face, matching the per-face material/selection granularity Studio
+    // consumers want.
+    Tessellate(b: Brep3D, resolution: Integer): Array<TriangleMesh3D>
+        => b.Faces.Map(f => f.Tessellate(resolution));
+}

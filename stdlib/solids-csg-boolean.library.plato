@@ -1,0 +1,43 @@
+//==
+// # SolidsCsgBoolean — union, intersection, and difference of polygon soups
+//
+// Boolean operations on closed `PolygonSoup3D` solids, the plane-clip
+// re-expression of csg.js: every boolean output is assembled from fragments of
+// A's faces cut by B's planes (so no fragment straddles B's boundary —
+// `solids-csg-interior.library.plato`) and kept by whether the fragment's
+// centroid lies inside or outside B, plus the symmetric fragments of B against
+// A. Correct-over-fast: a boolean costs O(|A|^2 |B| + |B|^2 |A|); a BSP-tree
+// variant is a later, separate pass.
+// (https://en.wikipedia.org/wiki/Constructive_solid_geometry)
+//
+// Precondition throughout: both solids are closed, with convex CCW-outward
+// faces. Exactly coplanar shared faces of the two solids are the known
+// unreliable case (their fragment centroids sit ON the other boundary).
+
+library SolidsCsgBoolean
+{
+    // The fragments of a's faces, cut by b's planes, whose centroid's
+    // insideness of b equals `keepInside`. The centroid of a convex fragment is
+    // interior to it, so it classifies the whole fragment.
+    KeptFragments(a: PolygonSoup3D, b: PolygonSoup3D, keepInside: Boolean): Array<Polygon3D>
+        => a.Fragments(b.Planes, Number.CsgPlaneTolerance)
+            .FlatMap(f => KeepPolygon(b.Contains(f.Centroid).ExclusiveOr(keepInside).Not, f));
+
+    // The polygon turned inside out: reversed winding flips its outward normal.
+    ReversedWinding(p: Polygon3D): Polygon3D
+        => Polygon3D(p.Points.Count.MapRange(i => p.Points[p.Points.Count - 1 - i]));
+
+    // A | B: the surface of A outside B, plus the surface of B outside A.
+    Union(a: PolygonSoup3D, b: PolygonSoup3D): PolygonSoup3D
+        => PolygonSoup3D(a.KeptFragments(b, false).Concatenate(b.KeptFragments(a, false)));
+
+    // A & B: the surface of A inside B, plus the surface of B inside A.
+    Intersection(a: PolygonSoup3D, b: PolygonSoup3D): PolygonSoup3D
+        => PolygonSoup3D(a.KeptFragments(b, true).Concatenate(b.KeptFragments(a, true)));
+
+    // A - B: the surface of A outside B, plus the surface of B inside A turned
+    // inside out, so it faces into the carved cavity.
+    Difference(a: PolygonSoup3D, b: PolygonSoup3D): PolygonSoup3D
+        => PolygonSoup3D(a.KeptFragments(b, false)
+            .Concatenate(b.KeptFragments(a, true).Map(f => f.ReversedWinding)));
+}
