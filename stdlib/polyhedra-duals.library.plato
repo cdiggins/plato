@@ -1,0 +1,65 @@
+//==
+// # Polyhedral dual pairings on the solid kinds
+//
+// The known dual-polyhedron partner of each named solid kind, as total maps on
+// the kind sums in `solids-polyhedra.plato`
+// (https://en.wikipedia.org/wiki/Dual_polyhedron). This is the identity-level
+// counterpart of the geometric Conway `Dual` on `PolygonMesh3D`
+// (`polyhedra-conway.library.plato`): that operation constructs the dual mesh of
+// any mesh; these maps record which named form the dual of a named form is, so
+// the Archimedean/Catalan pairing is vocabulary rather than a catalog comment.
+// Dual is an involution: `kind.Dual.Dual == kind` for every kind below.
+// Decision record: `tracker/decisions/2026-07-29-polyhedra-dual-kind-map.md`.
+
+library PolyhedraDuals
+{
+    // The dual Platonic solid: cube and octahedron swap, dodecahedron and
+    // icosahedron swap, and the tetrahedron is self-dual
+    // (https://en.wikipedia.org/wiki/Platonic_solid).
+    Dual(self: PlatonicSolidKind): PlatonicSolidKind
+        => match (self) {
+            Tetrahedron => PlatonicSolidKind.Tetrahedron;
+            Cube => PlatonicSolidKind.Octahedron;
+            Octahedron => PlatonicSolidKind.Cube;
+            Dodecahedron => PlatonicSolidKind.Icosahedron;
+            Icosahedron => PlatonicSolidKind.Dodecahedron;
+        };
+
+    // The Catalan dual of each Archimedean solid
+    // (https://en.wikipedia.org/wiki/Catalan_solid).
+    Dual(self: ArchimedeanSolidKind): CatalanSolidKind
+        => match (self) {
+            TruncatedTetrahedron => CatalanSolidKind.TriakisTetrahedron;
+            Cuboctahedron => CatalanSolidKind.RhombicDodecahedron;
+            TruncatedCube => CatalanSolidKind.TriakisOctahedron;
+            TruncatedOctahedron => CatalanSolidKind.TetrakisHexahedron;
+            Rhombicuboctahedron => CatalanSolidKind.DeltoidalIcositetrahedron;
+            TruncatedCuboctahedron => CatalanSolidKind.DisdyakisDodecahedron;
+            SnubCube => CatalanSolidKind.PentagonalIcositetrahedron;
+            Icosidodecahedron => CatalanSolidKind.RhombicTriacontahedron;
+            TruncatedDodecahedron => CatalanSolidKind.TriakisIcosahedron;
+            TruncatedIcosahedron => CatalanSolidKind.PentakisDodecahedron;
+            Rhombicosidodecahedron => CatalanSolidKind.DeltoidalHexecontahedron;
+            TruncatedIcosidodecahedron => CatalanSolidKind.DisdyakisTriacontahedron;
+            SnubDodecahedron => CatalanSolidKind.PentagonalHexecontahedron;
+        };
+
+    // The Archimedean dual of each Catalan solid: the inverse of the map above
+    // (https://en.wikipedia.org/wiki/Archimedean_solid).
+    Dual(self: CatalanSolidKind): ArchimedeanSolidKind
+        => match (self) {
+            TriakisTetrahedron => ArchimedeanSolidKind.TruncatedTetrahedron;
+            RhombicDodecahedron => ArchimedeanSolidKind.Cuboctahedron;
+            TriakisOctahedron => ArchimedeanSolidKind.TruncatedCube;
+            TetrakisHexahedron => ArchimedeanSolidKind.TruncatedOctahedron;
+            DeltoidalIcositetrahedron => ArchimedeanSolidKind.Rhombicuboctahedron;
+            DisdyakisDodecahedron => ArchimedeanSolidKind.TruncatedCuboctahedron;
+            PentagonalIcositetrahedron => ArchimedeanSolidKind.SnubCube;
+            RhombicTriacontahedron => ArchimedeanSolidKind.Icosidodecahedron;
+            TriakisIcosahedron => ArchimedeanSolidKind.TruncatedDodecahedron;
+            PentakisDodecahedron => ArchimedeanSolidKind.TruncatedIcosahedron;
+            DeltoidalHexecontahedron => ArchimedeanSolidKind.Rhombicosidodecahedron;
+            DisdyakisTriacontahedron => ArchimedeanSolidKind.TruncatedIcosidodecahedron;
+            PentagonalHexecontahedron => ArchimedeanSolidKind.SnubDodecahedron;
+        };
+}

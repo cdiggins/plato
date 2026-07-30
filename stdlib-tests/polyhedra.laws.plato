@@ -1,0 +1,22 @@
+// Law library for the polyhedral dual kind maps (stdlib/polyhedra-duals.library.plato).
+//
+// Same harness and conventions as foundation.laws.plato: Law_-prefixed Boolean
+// functions, merged with stdlib/ only by tools/regen-forward-conformance.ps1.
+// Every member referenced was verified against stdlib/polyhedra-duals.library.plato
+// (LIBRARIES.md rule 3).
+library PolyhedraLaws
+{
+    //==
+    // Dual is an involution on every solid-kind sum: taking the dual twice
+    // returns the original kind. Exact structural equality is correct here —
+    // the kinds are payload-free sums, no floats involved.
+
+    Law_PlatonicDualIsInvolution(k: PlatonicSolidKind): Boolean
+        => k.Dual.Dual == k;
+
+    Law_ArchimedeanDualIsInvolution(k: ArchimedeanSolidKind): Boolean
+        => k.Dual.Dual == k;
+
+    Law_CatalanDualIsInvolution(k: CatalanSolidKind): Boolean
+        => k.Dual.Dual == k;
+}
