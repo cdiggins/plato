@@ -1,13 +1,15 @@
 # Generated/ — buildable generated Plato projects
 
 This folder holds **buildable C# projects** produced by compiling the Plato standard library
-(`stdlib-legacy`) with `Plato.CLI`. Unlike `golden/` (which holds loose `.g.cs` diffed by a script),
-each project here is a real SDK-style `.csproj`, references the intrinsics runtime, compiles
-standalone on `net8.0`, and is a member of the root `Ara3D.Studio.sln`.
+(`stdlib-legacy`) with `Plato.CLI`. Each project is a real SDK-style `.csproj`, references the
+intrinsics runtime, and compiles standalone on `net8.0`.
 
-Each project is a **golden** in the golden-master sense: the `.g.cs` files are committed and are
-the reviewed reference output. Any change to them must come from a deliberate regeneration
-(`tools\regen-generated.ps1`), never a hand edit — hence the `// DO NOT EDIT` headers.
+**These are no longer goldens** (retired 2026-07-30, see
+`tracker/decisions/2026-07-30-retire-legacy-conformance-and-goldens.md`): the byte-identity
+diff-gate and its `regen-generated.ps1` script are gone. The committed `.g.cs` files are ordinary
+cached output — regenerate them when useful, and accept staleness otherwise. They are still not
+for hand editing (`// DO NOT EDIT`): any change comes from rerunning `Plato.CLI` over
+`stdlib-legacy` with the flags below.
 
 ## Variants
 

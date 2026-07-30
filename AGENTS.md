@@ -45,8 +45,8 @@ Plato-language `.plato` source, nor the C# the writers emit (that shape is set b
 - `stdlib-tests/` — forward law packet (`Law_*` functions) for `stdlib/`. Merged with `stdlib` by
   `tools\regen-forward-conformance.ps1`. Keep separate from `stdlib`, same as the legacy pair.
 - `stdlib-legacy/` — **Shipping stdlib** (ex-`plato-src`). **WRITABLE as of 2026-07-09** (content-leads
-  refactor; the old Phase-4 freeze is retired). Edit freely for runtime/body fixes; each change =
-  `regen-generated.ps1 -Apply` + `check-all.ps1` green + commit. Plan: `../../docs/plato-execution-plan-2026-07-09.md`.
+  refactor; the old Phase-4 freeze is retired). Edit freely for runtime/body fixes; gate =
+  `lint --strict` + `check-all.ps1` green (the golden-refresh step retired 2026-07-30). Plan: `../../docs/plato-execution-plan-2026-07-09.md`.
 - `stdlib-snapshot-2026-07-09/` — **FROZEN 2026-07-09 snapshot** of the pre-refactor library (ex-`plato-src-legacy`).
   Reference only; never edit, never compile. Diff `stdlib-legacy` against it to see how far the library has moved.
 - `stdlib-legacy-tests/` — law/witness libraries (`Law_*`, `Witness_*` Boolean functions). Never merge into stdlib-legacy.
@@ -56,13 +56,16 @@ Plato-language `.plato` source, nor the C# the writers emit (that shape is set b
 - `Plato.CSharpWriter/` — `CSharpWriter.cs` (flags: `ExtensionStyle`, `Optimize`, `ScalarErase`, `NoProperties`), `TirCSharpBodyWriter.cs` (the SOLE C# body writer — every function body renders from the monomorphized Typed IR; the legacy `CSharpFunctionBodyWriter` was deleted at C4), `ExtensionStyleWriter.cs` (classic extension methods, one static class per Plato library; moved no-arg fns are METHODS `v.Magnitude()`), `TirScalarLowerer.cs` (`--scalar=float` erasure as a TIR lowering pass — it replaced the emit-time `ScalarEraseAnalysis`, deleted at S3), `ComponentUnroller.cs` (`--optimize` field-wise unrolling table).
 - `Plato.GlslWriter/` / `Plato.CppWriter/` — TIR-only POC backends (GLSL ES 3.00; C++17 / CUDA with shared bodies + dialect preamble). Compile-gated by their `*.Tests` projects; not in `Ara3D.Studio.sln`. See each project's `README.md`.
 - `Plato.Intrinsics/` — **FROZEN V1 runtime** (consolidation plan C0). The live runtime is `Plato.Intrinsics.V2/` (System.Numerics-backed, method-form). Both `Plato.Intrinsics` and the ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` copies are frozen — protected by `tools\check-frozen-v1.ps1` (manifest `tools\frozen-v1.sha256`), never edit/regenerate.
-- `conformance/Ara3D.SDK.ConformanceTests/` — **THE** Plato conformance suite (consolidation plan C2 retired the V1/V2/Opt/Scalar recipe suites; their shared sources moved here so it is self-contained). Runs the shipping V2 recipe against `Plato.Intrinsics.V2`. `Generated/` is script-produced, gitignored. Expected: **0 fail** — the pass count grows as laws are added, so compare against your previous run rather than a fixed number (205 as of 2026-07-27). Manifest: `KnownFailures.json`; known+passing = must fail with "remove from manifest". Regen: `tools\regen-conformance.ps1 -Test`.
+- ~~`conformance/Ara3D.SDK.ConformanceTests/`~~ — **RETIRED 2026-07-30** together with the golden
+  diff-gate (`tracker/decisions/2026-07-30-retire-legacy-conformance-and-goldens.md`). The forward
+  suite below is the sole conformance target; making it run is `plato-308`. Until then, executable
+  coverage = PlatoTests + GeometryTests + the frozen-V1 tripwire.
 - `conformance/Plato.ForwardConformanceTests/` — forward-stdlib harness driven by
   `tools\regen-forward-conformance.ps1`. Stage 1 (type-check merged `stdlib` + `stdlib-tests`) is
   the gating stage and passes; Stage 2 (codegen + law runner) generates but does not compile —
   tracked as `plato-308`, detail in that folder's `README.md`. A red Stage 2 is not your fault
   unless your error count exceeds the number in the issue.
-- `Generated/` — buildable generated projects (extension-style, scalar-erased), each a real csproj in `Ara3D.Studio.sln`: `Plato.Generated.Unoptimized` (optimizers off, readable reference) and `Plato.Generated.Optimized` (full optimizer pipeline, adoption shape). Diff-gated by `tools\regen-generated.ps1`; docs in `Generated/README.md`. Supersedes the retired `golden/Plato.Generated.V2`.
+- `Generated/` — buildable generated projects (extension-style, scalar-erased): `Plato.Generated.Unoptimized` (optimizers off, readable reference) and `Plato.Generated.Optimized` (full optimizer pipeline, adoption shape). **No longer goldens** (2026-07-30 retirement): the byte-identity diff-gate and its `regen-generated.ps1` script are gone; these are ordinary cached output anyone may regenerate, and staleness is acceptable. Docs in `Generated/README.md`.
 - `Plato.Navigation/` (+ `.CLI`, `.Tests`) — navigation index over a source snapshot: go-to-def,
   find-refs, outline, name search, JSON export, and an `IncrementalIndexer` with a per-file parse
   cache. Reuses the parser and binder; adds no second resolver. Its README lists the known
@@ -82,10 +85,6 @@ Iterate on the one gate relevant to your workstream; run `check-all.ps1` **once*
   the same commit.
 - `.\tools\regen-forward-conformance.ps1` — forward-stdlib milestone gate. Stage 1 gating (see
   `conformance/Plato.ForwardConformanceTests/` above); `-Codegen` / `-Test` run the diagnostic stages.
-- `.\tools\regen-generated.ps1 [-Apply]` — diff-gate (or refresh) the two golden generated
-  projects under `Generated/`. Any intended emitter or `stdlib-legacy` change refreshes these in
-  the SAME commit.
-- `.\tools\regen-conformance.ps1 -Test` — regenerate merged (stdlib-legacy + stdlib-legacy-tests) output into the one conformance suite and run it (0 fail; 205 passing as of 2026-07-27).
 - `.\tools\check-frozen-v1.ps1` — freeze tripwire: SHA-256 of the frozen V1 artifacts (ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` + Plato-repo `Plato.Intrinsics`). Exit 1 on any drift. `-Update` re-baselines (deliberate only). Replaced regen-plato in check-all (C0); `regen-plato.ps1` + the legacy default-style emitter were deleted at C4.
 - `.\tools\check-all.ps1` — full gate battery, PASS/FAIL table. **Run once at the end of a mission**; iterate on a single relevant gate during development.
 - `.\tools\gate-timings.ps1` — how long the gates take. Every gate script records its duration
