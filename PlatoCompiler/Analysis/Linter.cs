@@ -63,6 +63,8 @@ namespace Ara3D.Geometry.Compiler.Analysis
     ///   LINT013 - concept with no implementer that library bodies nonetheless dispatch on (unreachable derived surface)
     ///   LINT014 - a name that is BOTH a struct field and a no-arg library function on an unrelated receiver
     ///             (the C# writer's uniform rendering rule decides property-vs-method call syntax by NAME)
+    ///   LINT015 - a type declaration with fields whose NAME is a writer primitive; the writer emits the
+    ///             runtime type for that name and silently discards the declared shape
     /// The pass is read-only: it never mutates the compilation and has no effect on code generation.
     /// </summary>
     public class Linter
@@ -83,6 +85,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
             CheckRedundantImplements();
             CheckReceiverMarkerAgreement();
             CheckFieldVersusNoArgFunctionNames();
+            CheckPrimitiveNameShadowing();
         }
 
         public IEnumerable<LintFinding> SortedFindings
@@ -735,6 +738,64 @@ namespace Ara3D.Geometry.Compiler.Analysis
                         $"onto this function's call sites even though '{receiver.Name}' has no such field " +
                         $"(plato-323: rename one side, or land the per-receiver rendering rule)");
                 }
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // LINT015: a type declaration whose NAME is a writer primitive, and which
+        // declares fields.
+        //
+        // Primitiveness is decided by a NAME LIST in the backend
+        // (WriterPrimitiveNames.All, mirrored as CSharpWriter.PrimitiveTypes),
+        // invisible in the language. When a name is on that list the writer emits the
+        // runtime type it maps to and never emits the declared fields
+        // (CSharpConcreteTypeWriter guards its "// Fields" block on `!IsPrimitive`).
+        // So `type Plane { Normal: Direction3D; Distance: Number }` reads as an
+        // ordinary declaration but compiles to System.Numerics.Plane, whose real shape
+        // is (Normal: Vector3, D: float). Nothing anywhere reported the mismatch: the
+        // declaration is the checker's authority and the runtime is the writer's, and
+        // the two were never compared. One un-checked refactor of a declaration is
+        // silent wrong bits at runtime (plato-365).
+        //
+        // FIELDLESS declarations of a primitive name are NOT flagged: that is the
+        // sanctioned idiom by which the stdlib states which concepts an intrinsic
+        // satisfies (`type Number implements Real { }`, stdlib/foundation/
+        // primitives.types.plato). Nothing is discarded, because nothing was declared.
+        // The rule is about a declared SHAPE that the writer throws away.
+        //
+        // Home: the linter rather than the type checker. It is a whole-program scan of
+        // declarations against a backend fact, with no expression- or inference-level
+        // reasoning — the exact shape of LINT002/LINT006/LINT014 — and it must run for
+        // every backend, not only the ones with a type-checked path.
+        //
+        // Severity: Error, except for the names already shadowing when the rule landed
+        // (WriterPrimitiveNames.KnownShadowedByStdlib), which report as Warnings while
+        // plato-365 retires them. The point of the rule is prevention: any name added
+        // to either side from now on is an immediate `lint --strict` failure.
+        // -------------------------------------------------------------------
+        public void CheckPrimitiveNameShadowing()
+        {
+            foreach (var td in Compilation.TypeDefinitions)
+            {
+                if (td.Kind != TypeKind.ConcreteType && td.Kind != TypeKind.Primitive)
+                    continue;
+                if (td.Fields.Count == 0)
+                    continue; // declaring an intrinsic's concept surface; nothing is discarded
+                if (!WriterPrimitiveNames.All.Contains(td.Name))
+                    continue;
+
+                var known = WriterPrimitiveNames.KnownShadowedByStdlib.Contains(td.Name);
+                var fields = string.Join(", ", td.Fields.Select(f => $"{f.Name}: {f.Type}"));
+                Add(td, "LINT015", known ? LintSeverity.Warning : LintSeverity.Error,
+                    $"type '{td.Name}' declares fields ({fields}) but '{td.Name}' is a writer primitive " +
+                    $"(WriterPrimitiveNames.All): the backend emits the runtime type for that name and " +
+                    $"discards this shape, so the declaration is not the authority it appears to be. " +
+                    $"Rename the type, or remove '{td.Name}' from the primitive name list so the " +
+                    $"declaration generates an ordinary struct (plato-365)" +
+                    (known
+                        ? " — reported as a Warning only because this shadowing predates the rule; " +
+                          "it is scheduled for removal in plato-365"
+                        : ""));
             }
         }
 
