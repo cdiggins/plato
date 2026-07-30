@@ -4,6 +4,14 @@ using static System.Runtime.CompilerServices.MethodImplOptions;
 
 namespace Ara3D.Geometry;
 
+// INDEX POSITIONS ARE `int`, NOT `Integer` (plato-323). The shipping recipe erases the scalar
+// wrappers (--scalar=float), so every generated element-wise extension is declared on the
+// primitive: `IntegerExtensions.ToNumber(this int)`. C# does NOT apply a user-defined implicit
+// conversion to an extension method's RECEIVER, so exposing `Integer` in an index or element
+// position here made every generated chain over it unbindable — `count.Range().Map(i => i.ToNumber())`
+// failed with CS1929 "requires a receiver of type 'int'" 425 times in the forward stdlib, and csc
+// blamed an unrelated candidate overload. The `Integer` RECEIVER overloads stay (a wrapper-typed
+// receiver has no other way in); only what flows OUT to a caller's lambda is erased.
 public static class ArrayExtensions
 {
     [MethodImpl(AggressiveInlining)]
@@ -11,23 +19,23 @@ public static class ArrayExtensions
         self;
     
     [MethodImpl(AggressiveInlining)]
-    public static ReadOnlyList<T0> MapRange<T0>(this int count, Func<Integer, T0> f) =>
+    public static ReadOnlyList<T0> MapRange<T0>(this int count, Func<int, T0> f) =>
         new(count, i => f(i));
 
     [MethodImpl(AggressiveInlining)]
-    public static ReadOnlyList<T0> MapRange<T0>(this Integer count, Func<Integer, T0> f) =>
+    public static ReadOnlyList<T0> MapRange<T0>(this Integer count, Func<int, T0> f) =>
         new(count, i => f(i));
 
     [MethodImpl(AggressiveInlining)]
-    public static ReadOnlyList<Integer> Range(this int count) =>
+    public static ReadOnlyList<int> Range(this int count) =>
         new(count, i => i);
 
     [MethodImpl(AggressiveInlining)]
-    public static ReadOnlyList<Integer> Indices<T0>(this IReadOnlyList<T0> xs) =>
+    public static ReadOnlyList<int> Indices<T0>(this IReadOnlyList<T0> xs) =>
         xs.Count.Range();
 
     [MethodImpl(AggressiveInlining)]
-    public static ReadOnlyList<T1> MapIndices<T0, T1>(this IReadOnlyList<T0> xs, Func<Integer, T1> f) =>
+    public static ReadOnlyList<T1> MapIndices<T0, T1>(this IReadOnlyList<T0> xs, Func<int, T1> f) =>
         xs.Count.MapRange(f);
 
     [MethodImpl(AggressiveInlining)]
@@ -35,7 +43,7 @@ public static class ArrayExtensions
         xs.Select(f);
 
     [MethodImpl(AggressiveInlining)]
-    public static ReadOnlyList<T1> Map<T0, T1>(this IReadOnlyList<T0> xs, Func<T0, Integer, T1> f) =>
+    public static ReadOnlyList<T1> Map<T0, T1>(this IReadOnlyList<T0> xs, Func<T0, int, T1> f) =>
         xs.MapIndices(i => f(xs[i], i));
 
     [MethodImpl(AggressiveInlining)]
@@ -65,7 +73,7 @@ public static class ArrayExtensions
         return r;
     }
 
-    public static IReadOnlyList<T1> MapEager<T0, T1>(this IReadOnlyList<T0> xs, Func<T0, Integer, T1> f)
+    public static IReadOnlyList<T1> MapEager<T0, T1>(this IReadOnlyList<T0> xs, Func<T0, int, T1> f)
     {
         var n = xs.Count;
         var r = new T1[n];
@@ -92,7 +100,7 @@ public static class ArrayExtensions
         return new ReadOnlyList3D<T1>(r, xs.NumColumns, xs.NumRows, xs.NumLayers);
     }
 
-    public static IReadOnlyList<T0> MapRangeEager<T0>(this int count, Func<Integer, T0> f)
+    public static IReadOnlyList<T0> MapRangeEager<T0>(this int count, Func<int, T0> f)
     {
         var r = new T0[count];
         for (var i = 0; i < count; i++)
@@ -101,7 +109,7 @@ public static class ArrayExtensions
     }
 
     [MethodImpl(AggressiveInlining)]
-    public static IReadOnlyList<T0> MapRangeEager<T0>(this Integer count, Func<Integer, T0> f) =>
+    public static IReadOnlyList<T0> MapRangeEager<T0>(this Integer count, Func<int, T0> f) =>
         ((int)count).MapRangeEager(f);
 
     [MethodImpl(AggressiveInlining)]

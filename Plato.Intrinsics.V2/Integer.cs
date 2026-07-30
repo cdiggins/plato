@@ -128,9 +128,10 @@ namespace Ara3D.Geometry
         }
 
         /// <summary>
-        /// Creates a range of integers from 0 to this integer.
+        /// Creates a range of integers from 0 to this integer. The ELEMENT type is the erased
+        /// primitive, matching ArrayExtensions.Range — see the note on that class (plato-323).
         /// </summary>
         [MethodImpl(AggressiveInlining)]
-        public static IReadOnlyList<Integer> Range(this Integer self) => ArrayExtensions.Range(self);
+        public static IReadOnlyList<int> Range(this Integer self) => ArrayExtensions.Range(self);
     }
 }
