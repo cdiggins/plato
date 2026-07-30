@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-30T00:39:38-04:00",
+  "updated_at": "2026-07-30T01:17:25-04:00",
   "note": "Captured during initial status-report landing; refresh after gate runs.",
   "gates": [
     {
@@ -94,7 +94,7 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-07-30T00:39:38-04:00",
+    "updated_at": "2026-07-30T01:17:25-04:00",
     "targets": {
       "forward-conformance": {
         "built_at": "2026-07-29T23:52:45-04:00",
@@ -196,21 +196,26 @@
         }
       },
       "plato-cli": {
-        "built_at": "2026-07-30T00:38:28-04:00",
+        "built_at": "2026-07-30T01:16:08-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\Plato.CLI\\Plato.CLI.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\plato-cli.log",
         "configuration": "Release",
         "exit_code": 0,
         "total_errors": 0,
-        "total_warnings": 0,
+        "total_warnings": 17,
         "summary_errors": 0,
-        "summary_warnings": 0,
+        "summary_warnings": 17,
         "by_code": {},
         "by_category": {},
-        "warning_by_code": {}
+        "warning_by_code": {
+          "CS0108": 10,
+          "CS8618": 5,
+          "CS0162": 1,
+          "CS8601": 1
+        }
       },
       "plato-generated-unoptimized": {
-        "built_at": "2026-07-30T00:39:30-04:00",
+        "built_at": "2026-07-30T01:17:16-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\Generated\\Plato.Generated.Unoptimized\\Plato.Generated.Unoptimized.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\plato-generated-unoptimized.log",
         "configuration": "Release",
@@ -224,7 +229,7 @@
         "warning_by_code": {}
       },
       "plato-generated-optimized": {
-        "built_at": "2026-07-30T00:39:38-04:00",
+        "built_at": "2026-07-30T01:17:25-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\Generated\\Plato.Generated.Optimized\\Plato.Generated.Optimized.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\plato-generated-optimized.log",
         "configuration": "Release",
@@ -243,7 +248,7 @@
       "target": "plato-generated-optimized",
       "total_errors": 0,
       "total_warnings": 0,
-      "built_at": "2026-07-30T00:39:38-04:00",
+      "built_at": "2026-07-30T01:17:25-04:00",
       "exit_code": 0,
       "by_category": {},
       "by_code_top": {}

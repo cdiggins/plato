@@ -552,8 +552,9 @@ namespace Ara3D.Geometry.CSharpWriter
         //     field on some unrelated struct.
         //
         // The V2-side inconsistency itself (a method-form runtime with ten property leftovers) is
-        // tracked as plato-331; when it is resolved this table shrinks to nothing.
-        private static readonly Dictionary<string, bool> PrimitiveSurfaceOverrides
+        // tracked as plato-331; when it is resolved this table shrinks to nothing. Public so
+        // PlatoTests\IntrinsicsV2SurfaceTests.cs can police it against the actual V2 surface.
+        public static readonly IReadOnlyDictionary<string, bool> PrimitiveSurfaceOverrides
             = new Dictionary<string, bool>
             {
                 { "Angle.Radians", false },
