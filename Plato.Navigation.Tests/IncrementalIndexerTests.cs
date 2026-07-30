@@ -62,8 +62,8 @@ public class IncrementalIndexerTests
     public void SameContentAtADifferentPathIsNotReused()
     {
         var indexer = new IncrementalIndexer();
-        var first = new FilePath(Path.Combine(Corpus.RepoRoot.Value, "stdlib-legacy", "cache_a.plato"));
-        var second = new FilePath(Path.Combine(Corpus.RepoRoot.Value, "stdlib-legacy", "cache_b.plato"));
+        var first = new FilePath(Path.Combine(Corpus.RepoRoot.Value, "scratch", "cache_a.plato"));
+        var second = new FilePath(Path.Combine(Corpus.RepoRoot.Value, "scratch", "cache_b.plato"));
 
         indexer.Update(Snapshot(new Dictionary<FilePath, string> { [first] = NewFileText }));
         Assert.That(indexer.LastUpdate.FilesParsed, Is.EqualTo(1));
@@ -82,8 +82,8 @@ public class IncrementalIndexerTests
     public void BothPathsCoexistWithTheirOwnSpans()
     {
         var indexer = new IncrementalIndexer();
-        var a = new FilePath(Path.Combine(Corpus.RepoRoot.Value, "stdlib-legacy", "cache_a.plato"));
-        var b = new FilePath(Path.Combine(Corpus.RepoRoot.Value, "stdlib-legacy", "cache_b.plato"));
+        var a = new FilePath(Path.Combine(Corpus.RepoRoot.Value, "scratch", "cache_a.plato"));
+        var b = new FilePath(Path.Combine(Corpus.RepoRoot.Value, "scratch", "cache_b.plato"));
 
         var snapshot = Snapshot(new Dictionary<FilePath, string>
         {
@@ -103,7 +103,7 @@ public class IncrementalIndexerTests
     public void RetainDropsSupersededVersions()
     {
         var indexer = new IncrementalIndexer();
-        var file = new FilePath(Path.Combine(Corpus.RepoRoot.Value, "stdlib-legacy", "cache_a.plato"));
+        var file = new FilePath(Path.Combine(Corpus.RepoRoot.Value, "scratch", "cache_a.plato"));
 
         for (var i = 0; i < 5; i++)
             indexer.Update(Snapshot(new Dictionary<FilePath, string>
@@ -125,8 +125,11 @@ public class IncrementalIndexerTests
     private static Dictionary<FilePath, string> CorpusTexts()
         => Corpus.Index.Snapshot.Files.ToDictionary(f => f.Path, f => f.Text);
 
+    /// <summary>Paths that exist only inside a snapshot — nothing in this fixture touches the disk
+    /// (<see cref="SourceSnapshot.FromTexts"/> takes the text directly), so they name a folder that
+    /// need not exist rather than borrowing a real library folder's name.</summary>
     private static FilePath NewFile { get; } =
-        new(Path.Combine(Corpus.RepoRoot.Value, "stdlib-legacy", "cache_probe.plato"));
+        new(Path.Combine(Corpus.RepoRoot.Value, "scratch", "cache_probe.plato"));
 
     private const string NewFileText = """
         library CacheProbeA

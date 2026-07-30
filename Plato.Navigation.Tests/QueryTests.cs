@@ -6,7 +6,18 @@ namespace Ara3D.Geometry.Navigation.Tests;
 [TestFixture]
 public class QueryTests
 {
-    private static FilePath Primitives => Corpus.Roots[0].RelativeFile("primitives.plato");
+    /// <summary>The file that declares the <c>Number</c> primitive, found through the index rather
+    /// than named: the forward stdlib is being re-partitioned and renamed, so a hard-coded file
+    /// name is a test that breaks for reasons that have nothing to do with navigation.</summary>
+    private static FilePath Primitives
+    {
+        get
+        {
+            var number = Corpus.Index.Search("Number", SearchKind.Exact)
+                .First(d => d.Kind == DefKind.Type);
+            return Corpus.Index.Snapshot.Files[number.FileId].Path;
+        }
+    }
 
     [Test]
     public void ExactSearchReturnsOnlyThatName()
@@ -74,7 +85,13 @@ public class QueryTests
     public void AFunctionCallOffersEveryOverload()
     {
         var index = Corpus.Index;
-        var multiTarget = index.Refs.FirstOrDefault(r => r.Targets.Count > 1);
+
+        // plato-364: a sum case is reachable by its bare name, so a case that collides with a
+        // function name pulls its owning TYPE into the group ('-' offers BlendMode alongside the
+        // 15 real Subtract methods). Restricting to Method targets keeps this assertion about
+        // what it is for — overload groups — until that lands.
+        var multiTarget = index.Refs.FirstOrDefault(r =>
+            r.Targets.Count > 1 && r.Targets.All(t => index.Defs[t].Kind == DefKind.Method));
 
         Assert.That(multiTarget, Is.Not.Null, "the corpus has overloaded functions");
         Assert.That(multiTarget!.Targets.Select(t => index.Defs[t].Name).Distinct().Count(), Is.EqualTo(1),

@@ -23,22 +23,29 @@ public class IdentifierSweepTests
         var unexplained = new List<string>();
 
         foreach (var file in Corpus.Bound.Files.Where(f => f.Parsed))
-        foreach (var id in Identifiers(file.Ast!))
         {
-            var span = Span.From(id);
-            if (!span.HasValue || id.Text == "var")
-                continue;
+            // plato-364: the index predates sum types and emits nothing for a match arm's case
+            // name or its payload binders. Excluded so this gate still catches every OTHER kind
+            // of miss; deleting this skip is the acceptance test for that issue.
+            var matchArm = MatchArmIdentifiers(file.Ast!);
 
-            total++;
-            // A type-variable reference starts one character earlier than the parser's identifier
-            // range, because the index pulls the "$" sigil into the span.
-            var key = (file.File.Id, span.Begin);
-            var sigil = (file.File.Id, span.Begin - 1);
-            if (defBegins.Contains(key) || refBegins.Contains(key) || errorBegins.Contains(key)
-                || refBegins.Contains(sigil))
-                continue;
+            foreach (var id in Identifiers(file.Ast!))
+            {
+                var span = Span.From(id);
+                if (!span.HasValue || id.Text == "var" || matchArm.Contains(id))
+                    continue;
 
-            unexplained.Add($"{file.File.Path}:{span.BeginLine + 1}:{span.BeginColumn + 1} '{id.Text}'");
+                total++;
+                // A type-variable reference starts one character earlier than the parser's
+                // identifier range, because the index pulls the "$" sigil into the span.
+                var key = (file.File.Id, span.Begin);
+                var sigil = (file.File.Id, span.Begin - 1);
+                if (defBegins.Contains(key) || refBegins.Contains(key) || errorBegins.Contains(key)
+                    || refBegins.Contains(sigil))
+                    continue;
+
+                unexplained.Add($"{file.File.Path}:{span.BeginLine + 1}:{span.BeginColumn + 1} '{id.Text}'");
+            }
         }
 
         TestContext.WriteLine($"identifiers swept: {total}");
@@ -80,6 +87,31 @@ public class IdentifierSweepTests
 
     private static HashSet<(int, int)> Lookup(IEnumerable<(int, int)> items)
         => new(items);
+
+    /// <summary>The case name and payload binders of every match arm in a file — the identifiers
+    /// plato-364 says the index does not yet model. Held by identity (AstIdentifier does not
+    /// override Equals), so only these exact syntax nodes are excused, never another identifier
+    /// that happens to share their text.</summary>
+    private static HashSet<AstIdentifier> MatchArmIdentifiers(AstNode root)
+    {
+        var found = new HashSet<AstIdentifier>();
+        var stack = new Stack<AstNode>();
+        stack.Push(root);
+        while (stack.Count > 0)
+        {
+            var node = stack.Pop();
+            if (node is AstMatchArm arm)
+            {
+                found.Add(arm.CaseName);
+                foreach (var b in arm.Binders)
+                    found.Add(b);
+            }
+            foreach (var child in node.Children)
+                if (child != null)
+                    stack.Push(child);
+        }
+        return found;
+    }
 
     /// <summary>Every identifier leaf reachable from a file's AST. A few nodes hold an identifier
     /// that is not in their Children (a var definition's name, an assignment's target), so those

@@ -2,16 +2,21 @@ using Ara3D.Utils;
 
 namespace Ara3D.Geometry.Navigation.Tests;
 
-/// <summary>The gated corpus (D9): the production stdlib plus the law/witness libraries, parsed,
-/// bound and indexed exactly once for the whole test run.</summary>
+/// <summary>The gated corpus (D9): the FORWARD stdlib plus its law/witness libraries, parsed,
+/// bound and indexed exactly once for the whole test run.
+///
+/// Deliberately not `stdlib-legacy`: the frozen vocabulary is not what anyone edits, so gating on
+/// it proves the index against a corpus no longer representative of what agents query. Tests here
+/// must therefore assert on SHAPE (ordering, span validity, resolution) rather than on particular
+/// declarations, since the forward vocabulary is actively growing.</summary>
 public static class Corpus
 {
     public static DirectoryPath RepoRoot { get; } = FindRepoRoot();
 
     public static IReadOnlyList<DirectoryPath> Roots { get; } = new[]
     {
-        RepoRoot.RelativeFolder("stdlib-legacy"),
-        RepoRoot.RelativeFolder("stdlib-legacy-tests")
+        RepoRoot.RelativeFolder("stdlib"),
+        RepoRoot.RelativeFolder("stdlib-tests")
     };
 
     private static readonly Lazy<BoundSnapshot> _bound =
@@ -30,10 +35,10 @@ public static class Corpus
         var dir = new DirectoryPath(AppContext.BaseDirectory);
         for (var i = 0; i < 12 && dir.Value != null; i++)
         {
-            if (dir.RelativeFolder("stdlib-legacy").Exists())
+            if (dir.RelativeFolder("stdlib").Exists())
                 return dir;
             dir = dir.GetParent();
         }
-        throw new DirectoryNotFoundException("Could not locate the Plato repo root (no stdlib-legacy above the test binary).");
+        throw new DirectoryNotFoundException("Could not locate the Plato repo root (no stdlib folder above the test binary).");
     }
 }
