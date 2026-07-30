@@ -5,14 +5,14 @@
 // unit-conversion factors, axis vectors, and canonical unit shapes.
 //
 // Constants dispatch on an ignored receiver of the result type (`Pi(_: Number)`),
-// matching the intrinsic constants in `intrinsics-scalars.library.plato`
+// matching the intrinsic constants in `intrinsics.library.plato`
 // and the `Identity(_: Quaternion)` family in
 // `transforms-identities.library.plato`. Read them
 // as `Number.GoldenRatio`, `Vector3D.UnitZ`, `Circle.UnitCircle`.
 //
 // `Pi`, `Tau`, `E`, `Epsilon`, `MinValue`, `MaxValue`, `Zero`, `One` and
 // `MinusOne` are NOT redeclared here — they are intrinsics
-//      (`intrinsics-scalars.library.plato`) or derived in the `core-*` /
+//      (`intrinsics.library.plato`) or derived in the `core-*` /
 //      `algebra-*` libraries.
 
 library Constants

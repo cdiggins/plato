@@ -46,8 +46,10 @@ Code generated from this vocabulary targets, **in priority order**:
 4. **TypeScript**
 5. Others as capacity allows: **GLSL**, **Rust**, **Python**
 
-This ordering governs intrinsics policy (the `intrinsics-*.library.plato` files, whose shared
-preamble and porting notes live in `intrinsics-scalars.library.plato`): a function may be
+This ordering governs intrinsics policy (`foundation/intrinsics.library.plato`, the single
+file that carries the whole host contract, plus its preamble and porting notes; the `Plane`
+intrinsics sit apart in `geometry/intrinsics-planes.library.plato` because `Plane` is a
+geometry type and foundation may not reference it): a function may be
 declared intrinsic only if every priority-1..4 backend can supply it natively or with a
 trivial shim. Anything host-specific (C# SIMD types, IEEE nextafter-grade functions,
 midpoint-rounding variants) is excluded and noted in those porting notes; lower-
@@ -151,13 +153,13 @@ initial build-out; it described a work assignment, not the tree, and is gone.)
 
 | # | Layer | Files |
 |---|-------|-------|
-| 1 | Foundation — primitives, core comparison & logic | `core-comparison.concepts`, `core-comparison.library`, `core-logic.concepts`, `core-logic.library`, `primitives`, `primitives-arrays`, `primitives-builders`, `primitives-builders.library`, `primitives-functions`, `primitives-tuples` |
+| 1 | Foundation — primitives, core comparison & logic | `core-comparison.concepts`, `core-comparison.library`, `core-logic.concepts`, `core-logic.library`, `primitives`, `primitives-arrays`, `primitives-builders`, `primitives-functions`, `primitives-tuples` |
 | 2 | Foundation — algebra, collections, functional | `algebra-metric.concepts`, `algebra-metric.library`, `algebra-numeric.concepts`, `algebra-numeric.library`, `algebra-operations.concepts`, `algebra-operations.library`, `collections-containers.concepts`, `collections-containers.library`, `collections-grids.library`, `collections-indexable.concepts`, `collections-indexable.library`, `collections-jagged`, `collections-jagged.concepts`, `collections-jagged.library`, `collections-sampling.library`, `functional-procedural.library`, `functional.concepts` |
 | 3 | Foundation — numbers, quantities, angles, constants, time | `angles.library`, `constants.library`, `numbers`, `quantities-dynamic`, `quantities-electromagnetic`, `quantities-geometric`, `quantities-kinematic`, `quantities-material`, `quantities-mechanical`, `quantities-photometric`, `quantities-projections.library`, `quantities-thermal`, `quantities.concepts`, `quantities.library`, `time` |
 | 4 | Foundation — vectors, matrices, rotations, points, axes | `axes`, `axes-2d.library`, `axes-signed.library`, `axes.library`, `matrices`, `matrices.concepts`, `numeric-structures-algebra.library`, `numeric-structures-components.library`, `numeric-structures-coordinate.library`, `numeric-structures-matrix.library`, `numeric-structures-quantity.library`, `numeric-structures-vector.library`, `points`, `points-curvilinear`, `points-parametric`, `points.concepts`, `rotations`, `vectors-geometric`, `vectors-integer`, `vectors-tuples`, `vectors.concepts` |
 | 5 | Foundation — intervals, bounds, sizes, transforms | `deformations`, `deformations.concepts`, `deformations.library`, `intervals`, `intervals-bounds`, `intervals-bounds.concepts`, `intervals-sizes`, `intervals-transforms-bounds.library`, `intervals-transforms-deformable.library`, `intervals-transforms-interval.library`, `intervals-transforms-transformable.library`, `transforms-affine`, `transforms-affine.library`, `transforms-frames`, `transforms-frames.library`, `transforms-identities.library`, `transforms-motor`, `transforms-motor.library`, `transforms-points.library`, `transforms-pose`, `transforms-pose.library`, `transforms-rotations.library`, `transforms-trs`, `transforms-trs.library`, `transforms.concepts` |
 | 6 | Foundation — color | `color`, `color-named.library`, `color.library` |
-| 7 | Intrinsics (host-provided) | `intrinsics-arrays.library`, `intrinsics-numeric-tuples.library`, `intrinsics-scalars.library`, `intrinsics-transforms.library`, `intrinsics-vectors.library` |
+| 7 | Intrinsics (host-provided) | `intrinsics.library` |
 | 8 | Geometry concepts & primitive shapes | `geometry-kernels.library`, `geometry-measures.concepts`, `geometry-measures.library`, `geometry-pointsets.library`, `geometry-queries.concepts`, `geometry-queries.library`, `geometry.concepts`, `geometry.library`, `lines`, `lines-planes`, `lines-planes.library`, `lines.library`, `planar-boxes`, `planar-boxes.library`, `planar-circles`, `planar-circles.library`, `planar-ellipses`, `planar-ellipses.library`, `planar-shapes.library`, `planar-triangles`, `planar-triangles.library`, `polygons`, `polygons-kernels.library`, `polygons-polylines`, `polygons-polylines.library`, `polygons-spatial`, `polygons-spatial.library`, `polygons.library`, `spatial-boxes`, `spatial-boxes.library`, `spatial-capsules.library`, `spatial-cylinders`, `spatial-cylinders.library`, `spatial-patches`, `spatial-patches.library`, `spatial-primitives.library`, `spatial-simplices`, `spatial-simplices.library`, `spatial-spheres`, `spatial-spheres.library`, `spatial-tori`, `spatial-tori.library` |
 | 9 | Curves, splines, surfaces, solids | `curves-2d-arcs`, `curves-2d-arcs.library`, `curves-2d-polar`, `curves-2d-polar.library`, `curves-2d-spirals`, `curves-2d-spirals.library`, `curves-3d`, `curves-3d.library`, `curves-capabilities.concepts`, `curves-capabilities.library`, `curves-sampling.library`, `curves.concepts`, `curves.library`, `solids-csg`, `solids-generated`, `solids-polyhedra`, `solids.library`, `splines-bezier`, `splines-bezier.library`, `splines-bspline`, `splines-bspline.library`, `splines-hermite`, `splines-hermite.library`, `splines-interpolating`, `splines-interpolating.library`, `surfaces-generated`, `surfaces-patches`, `surfaces-solids.concepts`, `surfaces-solids.library`, `surfaces-special`, `surfaces.library` |
 | 10 | Fields, implicits/SDF, noise, sampling | `fields-constant`, `fields-differentiable.concepts`, `fields-function`, `fields-graphs`, `fields-graphs.library`, `fields-implicits-core.library`, `fields-implicits-differentiable.library`, `fields-implicits-distance.library`, `fields-implicits-function.library`, `fields-implicits-metaballs.library`, `fields-implicits-nodes.library`, `fields-implicits-sampled.library`, `fields-implicits-shapes.library`, `fields-implicits-time-varying.library`, `fields-time-varying.concepts`, `fields.concepts`, `implicit-sdf-function`, `implicit-sdf-metaballs`, `implicit-sdf-modifiers`, `implicit-sdf-modifiers.library`, `implicit-sdf-operators.library`, `implicit-sdf-primitives.library`, `implicit-sdf-sampled`, `implicit-sdf-sampled.library`, `implicit-sdf-trees`, `implicit-sdf-trees.library`, `implicit-sdf.concepts`, `noise`, `noise-basis`, `noise-fractal`, `noise-warped`, `sampling-curves`, `sampling-fields`, `sampling-grids`, `sampling-patterns`, `sampling-resampling` |
@@ -182,7 +184,8 @@ Foundation reading order, file by file:
 - `primitives-tuples.types.plato` — Tuple2..Tuple10 (the compiler's synthesized constructor arity).
 - `primitives-functions.types.plato` — Function0..Function4.
 - `primitives-arrays.types.plato` — Array, Array2D, Array3D.
-- `primitives-builders.types.plato` (+ `.library`) — the `unique` affine builders `List<T>` / `Buffer<T>`.
+- `primitives-builders.types.plato` — the `unique` affine builders `List<T>` / `Buffer<T>`; their
+  bodiless host signatures live in `intrinsics.library.plato`.
 - `core-comparison.concepts.plato` — Equatable, Value, Hashable, Orderable, Comparable.
 - `core-logic.concepts.plato` — Logical, BooleanAlgebra, Bitwise.
 - `algebra-operations.concepts.plato` — Additive, Multiplicative, Divisible, Modular, Invertible, Arithmetic, Scalable, Interpolatable.
@@ -348,7 +351,7 @@ GoldenRatio(_: Number): Number => (1.0 + 5.0.Sqrt) / 2.0;
 
 read at the call site as `Number.GoldenRatio`, `Vector3D.UnitX`, `Circle.UnitCircle`,
 `Color8.AliceBlue`. This matches the intrinsic constants in
-`intrinsics-scalars.library.plato` and the `Identity(_: Quaternion)` family in
+`intrinsics.library.plato` and the `Identity(_: Quaternion)` family in
 `transforms-identities.library.plato`.
 
 `Angle` values are constructed through the unit constructors in `angles.library.plato` —

@@ -56,8 +56,8 @@ below now genuinely covers these library bodies — which it did **not** while t
    the number, and do not read LINT003 deltas as a measure of coverage.
 
    Status note: the affine builders' single-parameter members — `Count`, `Freeze` and
-   `EmptyList` — are now declared in `primitives-builders.types.plato` (bodies in
-   `primitives-builders.library.plato`). `FunctionInstance.cs` used to abort the
+   `EmptyList` — are now declared in `primitives-builders.types.plato` (host signatures in
+   `intrinsics.library.plato`). `FunctionInstance.cs` used to abort the
    whole compilation on any generic function of one or fewer parameters; the guard now permits
    such a function when every type variable is determined by its parameter(s) (as these are),
    and only rejects a type variable reachable solely through the return type. A builder can now
@@ -154,12 +154,7 @@ P1–P9 concept package (ground rule 1). All follow the same one-block-per-file 
 | `axes.library.plato` | `Axes` | `Axis3D` operations |
 | `axes-2d.library.plato` | `Axes2D` | `Axis2D` operations |
 | `axes-signed.library.plato` | `SignedAxes` | `SignedAxis3D` operations |
-| `primitives-builders.library.plato` | `UniqueBuilders` | the `unique` `List<T>` / `Buffer<T>` surface |
-| `intrinsics-scalars.library.plato` | `IntrinsicsScalars` | host scalar intrinsics; carries the shared `intrinsics-*` preamble and porting notes |
-| `intrinsics-numeric-tuples.library.plato` | `IntrinsicsNumericTuples` | host intrinsics on Number2/3/4/8 |
-| `intrinsics-vectors.library.plato` | `IntrinsicsVectors` | host intrinsics on Vector2D/3D |
-| `intrinsics-transforms.library.plato` | `IntrinsicsTransforms` | host intrinsics on matrices, quaternions and transforms |
-| `intrinsics-arrays.library.plato` | `IntrinsicsArrays` | host array intrinsics |
+| `intrinsics.library.plato` | `Intrinsics` | the whole host contract: scalars, Number2/3/4/8, Vector2D/3D, matrices and quaternions, arrays, and the `unique` `List<T>` / `Buffer<T>` surface; carries the intrinsics preamble and porting notes |
 | `transforms-points.library.plato` | `TransformsPoints` | Point2D/3D Difference, Lerp, point-vector converters |
 | `transforms-pose.library.plato` | `TransformsPose` | Pose2D/3D application and composition |
 | `transforms-trs.library.plato` | `TransformsTrs` | Transform2D/3D (TRS) application and conversion |

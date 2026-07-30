@@ -10,7 +10,7 @@
 // multiplication, v' = v M).
 // Discoverability: the concrete operations for the fixed-size
 // matrices (Determinant, Invert, Multiply, Transform, Lerp, ...) are declared on
-// the intrinsic hub in `intrinsics-transforms.library.plato`, not restated here;
+// the intrinsic hub in `intrinsics.library.plato`, not restated here;
 // concept-generic helpers (Trace, FrobeniusNorm, IsSquare, ...) live in
 // `numeric-structures-matrix.library.plato`.
 

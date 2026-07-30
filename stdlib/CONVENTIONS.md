@@ -92,7 +92,7 @@ An angle is always the `Angle` type, **never a raw `Number`**. `Angle` stores
 interchange type. Build angles through the unit constructors
 `n.Degrees` / `n.Turns` / `n.Gradians` / `n.ArcMinutes` / `n.ArcSeconds`
 (`angles.library.plato`); the sole intrinsic path is the radians cast `Angle(x)`
-(`intrinsics-scalars.library.plato`). Read them back with the matching accessors
+(`intrinsics.library.plato`). Read them back with the matching accessors
 (`a.Degrees`, `a.Turns`, ...).
 *Owners:* `Angle` (`quantities-geometric.types.plato`), `angles.library.plato`.
 

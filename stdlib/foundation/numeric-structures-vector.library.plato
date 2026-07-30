@@ -108,7 +108,7 @@ library NumericStructuresVector
     //==
     // # Vector3D — cross-product neighbourhood (cross-product lesson)
     //
-    // Cross(Vector3D, Vector3D) itself is an intrinsic (intrinsics-vectors.library.plato;
+    // Cross(Vector3D, Vector3D) itself is an intrinsic (intrinsics.library.plato;
     // https://en.wikipedia.org/wiki/Cross_product); these are the helpers that
     // sit immediately around it. Concrete Vector3D receivers so Cross and the
     // component accessors resolve to the 3D type.

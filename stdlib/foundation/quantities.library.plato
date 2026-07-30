@@ -23,7 +23,7 @@
 //
 // `Quantity` is one-dimensional and has no intrinsic operator surface
 // to collide with generic fills. `Angle` is the one quantity with intrinsic operators
-// (`intrinsics-scalars.library.plato`: Add/Subtract/Multiply/Divide/Negative/Compare/Hash); the
+// (`intrinsics.library.plato`: Add/Subtract/Multiply/Divide/Negative/Compare/Hash); the
 // intrinsic declarations win for those, and the generics fill only what is left
 // (Lerp, LessThanOrEquals, Modulo, Amount, FromAmount).
 //

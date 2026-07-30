@@ -6,13 +6,16 @@ implementation. This file is the complete contract a backend must satisfy — fo
 handwritten `Plato.Intrinsics.V2`; for a new backend (C++, GLSL, Rust) it is the porting
 checklist.
 
-**338 intrinsics across 7 files** (stdlib as of 2026-07-30).
+**338 intrinsics across 2 files** (stdlib as of 2026-07-30). All but the ten `Plane` intrinsics
+live in the single consolidated `foundation/intrinsics.library.plato`; `Plane` is a geometry
+type, so its intrinsics stay in the geometry tier — foundation may not reference a geometry
+type and still compile standalone.
 
 Bodiless declarations inside a `concept` are NOT intrinsics — those are obligations on whoever
 implements the concept, and the stdlib satisfies them in Plato. Only `library` blocks declare
 host intrinsics.
 
-Policy (from `intrinsics-scalars.library.plato`): a function may be declared intrinsic only if
+Policy (from `intrinsics.library.plato`): a function may be declared intrinsic only if
 every priority-1..4 backend — C#, C++, CUDA, TypeScript — can supply it natively or with a
 trivial shim. Host-specific things (C# SIMD types, IEEE `nextafter`-grade functions,
 midpoint-rounding variants) are deliberately excluded.
@@ -23,8 +26,7 @@ This list is GENERATED. Regenerate rather than hand-edit, so it cannot drift:
 grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.library.plato | grep -v ":0$"
 ```
 
-## `foundation/intrinsics-scalars.library.plato` (107)
-
+## `foundation/intrinsics.library.plato` (328)
 
 **Number**
 
@@ -145,9 +147,6 @@ grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.librar
 - `Compare(a: Angle, b: Angle): Integer`
 - `Hash(self: Angle): Integer`
 
-## `foundation/intrinsics-numeric-tuples.library.plato` (69)
-
-
 **Number2 — low-level numeric 2-tuple (component-wise; backend-native vector)**
 
 - `Length(self: Number2): Number`
@@ -229,9 +228,6 @@ grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.librar
 - `Min(self: Number8, value2: Number8): Number8`
 - `Hash(self: Number8): Integer`
 
-## `foundation/intrinsics-vectors.library.plato` (40)
-
-
 **Vector2D — geometric displacement in 2D. Displacement algebra only:**
 
 - `Normalize(self: Vector2D): Vector2D`
@@ -277,9 +273,6 @@ grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.librar
 - `Multiply(rotation: Quaternion, self: Vector3D): Vector3D`
 - `TransformNormal(self: Vector3D, matrix: Matrix4x4): Vector3D`
 - `Hash(self: Vector3D): Integer`
-
-## `foundation/intrinsics-transforms.library.plato` (70)
-
 
 **Matrix3x2**
 
@@ -360,28 +353,6 @@ grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.librar
 - `CreateFromYawPitchRoll(_: Quaternion, yaw: Angle, pitch: Angle, roll: Angle): Quaternion`
 - `CreateFromRotationMatrix(_: Quaternion, matrix: Matrix4x4): Quaternion`
 
-## `geometry/intrinsics-planes.library.plato` (10)
-
-
-**Matrix4x4 factories taking a plane**
-
-- `CreateReflection(_: Matrix4x4, value: Plane): Matrix4x4`
-- `CreateShadow(_: Matrix4x4, lightDirection: Vector3D, plane: Plane): Matrix4x4`
-
-**Plane**
-
-- `Normalize(self: Plane): Plane`
-- `CreateFromVertices(_: Plane, point1: Point3D, point2: Point3D, point3: Point3D): Plane`
-- `Dot(self: Plane, value: Number4): Number`
-- `DotCoordinate(self: Plane, value: Point3D): Number`
-- `DotNormal(self: Plane, value: Vector3D): Number`
-- `Transform(self: Plane, rotation: Quaternion): Plane`
-- `Transform(self: Plane, matrix: Matrix4x4): Plane`
-- `Hash(self: Plane): Integer`
-
-## `foundation/intrinsics-arrays.library.plato` (31)
-
-
 **Array**
 
 - `All(xs: Array<$T>, f: Function1<$T, Boolean>): Boolean`
@@ -419,9 +390,6 @@ grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.librar
 - `Row(self: Array2D<$T>, row: Integer): Array<$T>`
 - `Map(xs: Array2D<$T1>, f: Function1<$T1, $T2>): Array2D<$T2>`
 
-## `foundation/primitives-builders.library.plato` (11)
-
-
 **Growable builder: unique type List<T>.**
 
 - `Count(xs: List<$T>): Integer`
@@ -438,4 +406,22 @@ grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.librar
 - `At(xs: Buffer<$T>, n: Integer): $T`
 - `Set(xs: Buffer<$T>, i: Integer, x: $T): Buffer<$T>`
 - `Freeze(xs: Buffer<$T>): Array<$T>`
+
+## `geometry/intrinsics-planes.library.plato` (10)
+
+**Matrix4x4 factories taking a plane**
+
+- `CreateReflection(_: Matrix4x4, value: Plane): Matrix4x4`
+- `CreateShadow(_: Matrix4x4, lightDirection: Vector3D, plane: Plane): Matrix4x4`
+
+**Plane**
+
+- `Normalize(self: Plane): Plane`
+- `CreateFromVertices(_: Plane, point1: Point3D, point2: Point3D, point3: Point3D): Plane`
+- `Dot(self: Plane, value: Number4): Number`
+- `DotCoordinate(self: Plane, value: Point3D): Number`
+- `DotNormal(self: Plane, value: Vector3D): Number`
+- `Transform(self: Plane, rotation: Quaternion): Plane`
+- `Transform(self: Plane, matrix: Matrix4x4): Plane`
+- `Hash(self: Plane): Integer`
 

@@ -13,7 +13,7 @@ library NumericStructuresAlgebra
     //
     // The Additive / Arithmetic / Scalable / Lattice / Interpolatable surface,
     // all component-wise. Concrete types whose backend has a native vector
-    // instruction (Number2/3/4/8 in `intrinsics-numeric-tuples.library.plato`) override these.
+    // instruction (Number2/3/4/8 in `intrinsics.library.plato`) override these.
 
     // Component-wise sum.
     Add(a: Vector, b: Vector): Vector
@@ -67,7 +67,7 @@ library NumericStructuresAlgebra
     // # Vector — lifted Number functions
     //
     // Each of these is the corresponding function from
-    // `intrinsics-scalars.library.plato` or the `core-*` / `algebra-*` libraries
+    // `intrinsics.library.plato` or the `core-*` / `algebra-*` libraries
     // applied to every component — written once against the Vector concept.
 
     // Component-wise absolute value.

@@ -5,7 +5,7 @@
 // reciprocal trigonometric functions (https://en.wikipedia.org/wiki/Trigonometric_functions).
 //
 // `Angle` stores radians and the only intrinsic way to build one is the
-// radians cast `Angle(x: Number)` (`intrinsics-scalars.library.plato`). This library supplies
+// radians cast `Angle(x: Number)` (`intrinsics.library.plato`). This library supplies
 // the other units, in both directions, so that the README rule "angles are
 // `Angle`, never raw `Number`" is actually usable: write `0.25.Turns` or
 // `90.Degrees`, never a bare number of degrees.

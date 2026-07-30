@@ -7,7 +7,7 @@
 // interop, and geometric-algebra styles.
 // Discoverability: the concrete operations for Quaternion
 // (and the rotor/motor conversions) are declared on the intrinsic hub in
-// `intrinsics-transforms.library.plato` and in the `transforms-*.library.plato`
+// `intrinsics.library.plato` and in the `transforms-*.library.plato`
 // files, not restated here. Bivector3D is
 // the geometric-algebra dual of a Vector3D cross product (components YZ, ZX, XY
 // <-> X, Y, Z under the right-hand convention); construct one from a vector pair

@@ -41,7 +41,7 @@
 // `PlatoBuffer` and never generates a struct for a unique type.
 //
 // The bodiless host signatures for these two types live in
-// `primitives-builders.library.plato`.
+// `intrinsics.library.plato`.
 
 // A growable affine builder: append elements, then promote the backing store to
 // an immutable Array<T> with Freeze(). (https://en.wikipedia.org/wiki/Dynamic_array)
