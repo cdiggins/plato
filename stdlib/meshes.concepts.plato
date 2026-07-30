@@ -2,9 +2,19 @@
 // # Mesh concepts
 //
 // What it means to be meshable: producing an indexed triangle mesh (3D),
-// producing a planar triangulation (2D), or already exposing an explicit
-// indexed triangle set with random access. The derived functionality lives in
-// `meshes-geometry.library.plato`.
+// producing a planar triangulation (2D), already exposing an explicit
+// indexed triangle set with random access, or being a face record — the
+// corner loop of one mesh face. The derived functionality lives in
+// `meshes-geometry.library.plato` and `meshes-faces.library.plato`.
+
+// A face record: the corner loop of one mesh face as vertex indices, wound
+// counter-clockwise when viewed from the front (outside). Count is the face's
+// arity; At(i) is the i-th corner's vertex index, i in [0, Count) — corners do
+// not wrap, use the wrapping helpers in `meshes-faces.library.plato` to walk
+// the loop. Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+concept Face
+    inherits Value, Hashable, Indexable<VertexIndex>
+{ }
 
 // Anything that can produce an explicit indexed triangle mesh approximation
 // of itself: solids, parametric surfaces, implicit surfaces, other meshes.

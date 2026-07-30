@@ -12,9 +12,11 @@
 // ## Face records
 
 // The three vertex indices of one triangle, wound counter-clockwise when
-// viewed from the front side.
+// viewed from the front side. Face supplies Value, Hashable, and the
+// Indexable<VertexIndex> corner surface (Count/At bodies in
+// `meshes-faces.library.plato`).
 type TriangleFace
-    implements Value, Hashable
+    implements Face
 {
     A: VertexIndex;
     B: VertexIndex;
@@ -22,10 +24,11 @@ type TriangleFace
 }
 
 // The four vertex indices of one quadrilateral face, wound counter-clockwise
-// when viewed from the front side. Coplanarity is not guaranteed; consumers
-// split along the A-C diagonal when a planar approximation is needed.
+// when viewed from the front side. Coplanarity is not guaranteed; when a
+// planar approximation is needed, split along the A-C diagonal — FanTriangles
+// in `meshes-faces.library.plato` is that split.
 type QuadFace
-    implements Value, Hashable
+    implements Face
 {
     A: VertexIndex;
     B: VertexIndex;
