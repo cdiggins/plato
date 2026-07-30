@@ -362,6 +362,23 @@ namespace Ara3D.Geometry.CSharpWriter
         // BuildExtensionPlans; consulted by the body writer and CSharpFunctionInfo.EmitAsMethod.
         public HashSet<string> StructSurfacePropertyNames { get; private set; }
 
+        // The uniform rendering rule with the ONE receiver-type exception it needs (plato-323).
+        // An ERASED scalar receiver (--scalar=float replaces Number/Integer/Boolean/Character/String
+        // with float/int/bool/char/string) has NO generated struct, so every no-arg member of it —
+        // generated or handwritten in Plato.Intrinsics — is a classic extension method on the
+        // primitive and always takes "()". The global name set must not reach those call sites or
+        // declarations: a genuine field on an unrelated struct (`Histogram.Range`) would otherwise
+        // steal the parens from `ArrayExtensions.Range(this int)` everywhere it is called.
+        public bool IsStructSurfaceProperty(string ownerTypeName, string name)
+            => !IsScalarTypeName(ownerTypeName)
+               && (StructSurfacePropertyNames?.Contains(name) ?? false);
+
+        // A Plato scalar WRAPPER name (Number/Integer/...) or the primitive it erases to
+        // (float/int/...): under --scalar=float a TIR node's type may already carry either.
+        public static bool IsScalarTypeName(string name)
+            => name != null
+               && (ScalarPrimitives.ContainsKey(name) || ScalarPrimitives.ContainsValue(name));
+
         // When true (--loops), recognized array-combinator call sites (Map/Zip/Reduce/All/Any/
         // Reverse/WithNext/MapPairs/... on one-dimensional list receivers) are lowered to
         // for-loop statements filling materialized arrays (see TirLoopLowerer). Runs after the

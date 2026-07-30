@@ -67,7 +67,8 @@ namespace Ara3D.Geometry.CSharpWriter
         // explicit interface implementations forwarding to the property/field).
         public bool EmitAsMethod => NoProperties && !IsIndexer
             && ((Function.Kind == FunctionInstanceKind.InterfaceDeclared && OwnerType == null)
-                || !((TypeToCSharp as CSharpTypeWriter)?.Writer?.StructSurfacePropertyNames?.Contains(Name) ?? false));
+                || !((TypeToCSharp as CSharpTypeWriter) is CSharpTypeWriter tw
+                     && (tw.Writer?.IsStructSurfaceProperty(tw.TypeDef?.Name, Name) ?? false)));
 
         public string StaticKeyword => IsStatic ? "static " : "";
         public bool IsProperty => ParameterNames.Count <= 1 && !EmitAsMethod;

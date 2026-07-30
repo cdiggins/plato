@@ -86,6 +86,11 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     private bool IsTypeName(string name)
         => name != null && _tw.Writer.AllTypeNames.Contains(name);
 
+    // See CSharpWriter.IsStructSurfaceProperty (plato-323): the uniform rendering rule, applied
+    // with knowledge of the RECEIVER type so an erased scalar receiver always takes "()".
+    private bool IsSurfacePropertyOn(string recvTypeName, string name)
+        => _tw.Writer.IsStructSurfaceProperty(recvTypeName, name);
+
     // Extension style, MOVED bodies only (ExtensionReceiverName != null): a bare name that bound
     // implicitly inside the partial struct must be re-qualified inside the static library class —
     // receiver parameter for instance members (plus "()" for moved no-arg methods), the
@@ -117,7 +122,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             // property syntax is a method (this also covers the scalar types' members, whose
             // erased receiver is a primitive on which they are all extension methods).
             if (_tw.Writer.MovedNoArgNames.Contains(name)
-                || (_tw.Writer.NoProperties && !_tw.Writer.StructSurfacePropertyNames.Contains(name)))
+                || (_tw.Writer.NoProperties && !IsSurfacePropertyOn(_tw.TypeDef?.Name, name)))
                 Write("()");
             return;
         }
@@ -763,7 +768,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                     if (recvPlan != null && recvPlan.GeneratedNoArgStaticNames.Contains(name))
                         Write("()");
                 }
-                else if (!_tw.Writer.StructSurfacePropertyNames.Contains(name))
+                else if (!IsSurfacePropertyOn(TirRewrite.StripCoerce(args[0])?.Type?.Name, name))
                     Write("()");
             }
             return;
