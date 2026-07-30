@@ -369,6 +369,14 @@ namespace Ara3D.Geometry.CSharpWriter
         // primitive and always takes "()". The global name set must not reach those call sites or
         // declarations: a genuine field on an unrelated struct (`Histogram.Range`) would otherwise
         // steal the parens from `ArrayExtensions.Range(this int)` everywhere it is called.
+        // NOTE (plato-323, next step): resolving `name` against the RECEIVER's own plan
+        // (`GetExtensionPlanByTypeName(ownerTypeName).KeptNoArgPropertyNames`, with
+        // Count/NumRows/NumColumns and the sum-type flattened fields kept global because no single
+        // plan owns them) is the general form of this rule, and it fixes the remaining ~100 CS0030
+        // "cannot convert type 'method'" in the forward stdlib — a field named `Amount` on an image
+        // filter currently forces property syntax onto the handwritten `Angle.Radians()` METHOD.
+        // It was measured and NOT landed here: it moves 88 of the 184 diff-gated golden files, which
+        // needs its own review pass. The scalar short-circuit below is the safe subset.
         public bool IsStructSurfaceProperty(string ownerTypeName, string name)
             => !IsScalarTypeName(ownerTypeName)
                && (StructSurfacePropertyNames?.Contains(name) ?? false);
