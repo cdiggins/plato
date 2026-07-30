@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-30T11:35:35-04:00",
+  "updated_at": "2026-07-30T11:59:20-04:00",
   "note": "Captured during initial status-report landing; refresh after gate runs.",
   "gates": [
     {
@@ -94,21 +94,21 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-07-30T11:35:35-04:00",
+    "updated_at": "2026-07-30T11:59:20-04:00",
     "targets": {
       "forward-conformance": {
-        "built_at": "2026-07-30T11:35:35-04:00",
+        "built_at": "2026-07-30T11:59:20-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\conformance\\Plato.ForwardConformanceTests\\Plato.ForwardConformanceTests.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\forward-conformance.log",
         "configuration": "Release",
         "exit_code": 1,
-        "total_errors": 91,
+        "total_errors": 46,
         "total_warnings": 0,
-        "summary_errors": 91,
+        "summary_errors": 46,
         "summary_warnings": 0,
         "by_code": {
-          "CS1061": 62,
-          "CS1929": 16,
+          "CS1929": 17,
+          "CS1061": 16,
           "CS0029": 5,
           "CS0019": 2,
           "CS0023": 2,
@@ -117,18 +117,18 @@
           "CS1501": 1
         },
         "by_category": {
-          "missing_member": {
-            "count": 62,
-            "label": "Missing member on receiver (CS1061)",
-            "codes": [
-              "CS1061"
-            ]
-          },
           "extension_receiver": {
-            "count": 16,
+            "count": 17,
             "label": "Extension method receiver type",
             "codes": [
               "CS1929"
+            ]
+          },
+          "missing_member": {
+            "count": 16,
+            "label": "Missing member on receiver (CS1061)",
+            "codes": [
+              "CS1061"
             ]
           },
           "other": {
@@ -207,20 +207,20 @@
     "latest_target": "forward-conformance",
     "latest": {
       "target": "forward-conformance",
-      "total_errors": 91,
+      "total_errors": 46,
       "total_warnings": 0,
-      "built_at": "2026-07-30T11:35:35-04:00",
+      "built_at": "2026-07-30T11:59:20-04:00",
       "exit_code": 1,
       "by_category": {
-        "missing_member": 62,
-        "extension_receiver": 16,
+        "extension_receiver": 17,
+        "missing_member": 16,
         "other": 6,
         "cannot_implicitly_convert": 5,
         "operator_type_mismatch": 2
       },
       "by_code_top": {
-        "CS1061": 62,
-        "CS1929": 16,
+        "CS1929": 17,
+        "CS1061": 16,
         "CS0029": 5,
         "CS0019": 2,
         "CS0023": 2,
