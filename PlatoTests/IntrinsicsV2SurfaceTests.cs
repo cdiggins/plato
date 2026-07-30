@@ -35,8 +35,6 @@ namespace PlatoTests
         /// an override entry (or change the primitive rule) in the same commit.</summary>
         private static readonly HashSet<string> DeclarationProxyProperties = new HashSet<string>
         {
-            "Plane.Normal",
-            "Plane.D",
             "Matrix3x2.Row1",
             "Matrix3x2.Row2",
             "Matrix3x2.Row3",
@@ -46,12 +44,26 @@ namespace PlatoTests
             "Matrix4x4.Row4",
         };
 
-        private static IReadOnlyList<Type> V2PrimitiveStructs()
+        /// <summary>
+        /// The handwritten V2 runtime structs. Deliberately NOT scoped by
+        /// <see cref="CSharpWriter.PrimitiveTypes"/>: plato-365 is emptying that dictionary down to
+        /// the scalars, and scoping this fixture by it would have silently shrunk the surface being
+        /// policed exactly as each type stopped being a primitive — the opposite of what these
+        /// tests are for. The names are pinned, so a type appearing or vanishing is a failure.
+        /// </summary>
+        internal static readonly IReadOnlyList<string> V2StructNames = new[]
+        {
+            "Angle", "Boolean", "Character", "Integer", "Matrix3x2", "Matrix4x4",
+            "Number", "Plane", "Quaternion", "String",
+            "Vector2", "Vector3", "Vector4", "Vector8",
+        };
+
+        internal static IReadOnlyList<Type> V2PrimitiveStructs()
             => typeof(Ara3D.Geometry.Plane).Assembly
                 .GetTypes()
                 .Where(t => t.Namespace == "Ara3D.Geometry"
                             && t.IsValueType
-                            && CSharpWriter.PrimitiveTypes.ContainsKey(t.Name))
+                            && V2StructNames.Contains(t.Name))
                 .OrderBy(t => t.Name)
                 .ToList();
 
@@ -62,12 +74,7 @@ namespace PlatoTests
         [Test]
         public static void SharedProjectImportIsIntact()
             => Assert.AreEqual(
-                new[]
-                {
-                    "Angle", "Boolean", "Character", "Integer", "Matrix3x2", "Matrix4x4",
-                    "Number", "Plane", "Quaternion", "String",
-                    "Vector2", "Vector3", "Vector4", "Vector8",
-                },
+                V2StructNames.OrderBy(n => n).ToArray(),
                 V2PrimitiveStructs().Select(t => t.Name).ToArray(),
                 "The V2 primitive struct set changed. If a type was added or removed on purpose, " +
                 "update this list; if not, the Plato.Intrinsics.V2.projitems import in " +

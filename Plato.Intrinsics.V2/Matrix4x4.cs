@@ -287,14 +287,14 @@ namespace Ara3D.Geometry
         /// </summary>
         [MethodImpl(AggressiveInlining)]
         public static Matrix4x4 CreateReflection(Plane value)
-            => SNMatrix4x4.CreateReflection(value);
+            => SNMatrix4x4.CreateReflection(value.Sys);
 
         /// <summary>
         /// Creates a matrix that flattens geometry into a specified plane as if casting a shadow from a light source.
         /// </summary>
         [MethodImpl(AggressiveInlining)]
         public static Matrix4x4 CreateShadow(Vector3 lightDirection, Plane plane)
-            => SNMatrix4x4.CreateShadow(lightDirection, plane);
+            => SNMatrix4x4.CreateShadow(lightDirection, plane.Sys);
 
         /// <summary>
         /// Creates a world matrix with the specified parameters.

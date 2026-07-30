@@ -30,12 +30,13 @@ namespace PlatoTests
     {
         private static readonly Assembly V2Assembly = typeof(Ara3D.Geometry.Plane).Assembly;
 
+        // Scoped by the pinned V2 struct NAMES, not by CSharpWriter.PrimitiveTypes: plato-365 is
+        // emptying that dictionary down to the scalars, and a PrimitiveTypes-scoped filter would
+        // have quietly dropped Angle, Plane, and the matrices out of this gate as each one stopped
+        // being a primitive. The runtime still supplies their members, so the obligations still
+        // need checking.
         private static readonly IReadOnlyDictionary<string, Type> V2Structs
-            = V2Assembly.GetTypes()
-                .Where(t => t.Namespace == "Ara3D.Geometry"
-                            && t.IsValueType
-                            && CSharpWriter.PrimitiveTypes.ContainsKey(t.Name))
-                .ToDictionary(t => t.Name);
+            = IntrinsicsV2SurfaceTests.V2PrimitiveStructs().ToDictionary(t => t.Name);
 
         private static readonly IReadOnlyList<Type> V2StaticClasses
             = V2Assembly.GetTypes()
@@ -50,7 +51,6 @@ namespace PlatoTests
             = new Dictionary<string, Type>
             {
                 { "Number", typeof(float) },
-                { "Angle", typeof(float) },
                 { "Integer", typeof(int) },
                 { "Boolean", typeof(bool) },
                 { "Character", typeof(char) },
@@ -58,7 +58,6 @@ namespace PlatoTests
                 { "Matrix3x2", typeof(System.Numerics.Matrix3x2) },
                 { "Matrix4x4", typeof(System.Numerics.Matrix4x4) },
                 { "Quaternion", typeof(System.Numerics.Quaternion) },
-                { "Plane", typeof(System.Numerics.Plane) },
                 { "Vector2", typeof(System.Numerics.Vector2) },
                 { "Vector3", typeof(System.Numerics.Vector3) },
                 { "Vector4", typeof(System.Numerics.Vector4) },
@@ -149,11 +148,33 @@ namespace PlatoTests
                 "worklist only shrinks: " + string.Join(", ", fixedGaps));
         }
 
+        /// <summary>stdlib-legacy obligations the V2 runtime deliberately stopped serving. Like
+        /// <see cref="ForwardKnownMissing"/> this list only shrinks — but unlike it, an entry here
+        /// is not automatically a defect: legacy generation is retired (goldens and the
+        /// byte-identity diff-gate went on 2026-07-30), and where the two corpora disagree about a
+        /// SHAPE the forward declaration wins by design.</summary>
+        private static readonly IReadOnlyList<string> LegacyKnownMissing = new[]
+        {
+            // plato-365: Plane's shape is now the forward declaration (Normal: Direction3D,
+            // Distance: Number, Hesse form). stdlib-legacy asks for the System.Numerics parity
+            // surface — `D` (which is -Distance) plus the two With* over it. Re-adding `D` would
+            // re-import exactly the sign ambiguity this increment removed.
+            "Plane.D",
+            "Plane.WithD",
+            "Plane.WithNormal",
+        };
+
         [Test]
         public static void LegacyStdLibIntrinsicObligationsAreDischarged()
-            => Assert.IsEmpty(AssertScopeSane(CheckerTestSupport.CompileStdLib(), "stdlib-legacy"),
+        {
+            var missing = AssertScopeSane(CheckerTestSupport.CompileStdLib(), "stdlib-legacy");
+            Assert.IsEmpty(missing.Except(LegacyKnownMissing),
                 "stdlib-legacy declares intrinsic obligations with no Plato.Intrinsics.V2 counterpart " +
-                "(V2 was built against legacy; this set was empty on 2026-07-30).");
+                "(V2 was built against legacy; this set was empty on 2026-07-30). New: " +
+                string.Join(", ", missing.Except(LegacyKnownMissing)));
+            Assert.IsEmpty(LegacyKnownMissing.Except(missing),
+                "These legacy obligations are discharged again — delete them from LegacyKnownMissing.");
+        }
 
         // The plato-308 Root 2 shape in miniature: one obligation V2 discharges, one it never will.
         private const string SyntheticSource = @"

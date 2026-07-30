@@ -1,57 +1,36 @@
-﻿using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 using static System.Runtime.CompilerServices.MethodImplOptions;
 
 namespace Ara3D.Geometry
 {
     /// <summary>
-    /// A value type that represents angles internally as radians.
-    /// Separating angles from numbers, makes working with them easier, and
-    /// less prone to unit-based errors.
+    /// Behaviour-only partial for the GENERATED <c>Angle</c> struct (plato-365).
+    ///
+    /// Angle used to be a handwritten wrapper around a <c>float Value</c> AND a
+    /// <c>CSharpWriter.PrimitiveTypes</c> entry mapping the name to bare <c>float</c> AND a stdlib
+    /// declaration (<c>type Angle implements Quantity { Radians: Number; }</c>) — three stories
+    /// about one name, none of them checked against the others. The declaration is now the only
+    /// shape authority: the writer generates the <c>Radians</c> field, the constructor, the
+    /// conversions and the equality scaffolding, and this file supplies only what a generated
+    /// struct cannot express — operators and the trigonometric kernel.
+    ///
+    /// Nothing here may declare a field, a constructor, a conversion or an <c>Equals</c>/
+    /// <c>GetHashCode</c>/<c>ToString</c> override: the generated partial already has them, and a
+    /// second copy is a duplicate-member error rather than a silent override.
     /// </summary>
-    [DataContract]
-    public partial struct Angle 
+    public partial struct Angle
     {
         // -------------------------------------------------------------------------------
-        // Field (the wrapped float)
-        // -------------------------------------------------------------------------------
-
-        [DataMember] public readonly float Value;
-
-        // -------------------------------------------------------------------------------
-        // Constructors
-        // -------------------------------------------------------------------------------
-
-        [MethodImpl(AggressiveInlining)]
-        public Angle(float value) 
-            => Value = value;
-
-        // -------------------------------------------------------------------------------
-        // Convert to/from float
-        // -------------------------------------------------------------------------------
-
-        [MethodImpl(AggressiveInlining)]
-        public static implicit operator Angle(float f) => new(f);
-
-        [MethodImpl(AggressiveInlining)]
-        public static implicit operator float(Angle n) => n.Value;
-
-        [MethodImpl(AggressiveInlining)]
-        public static implicit operator Angle(Number x) => new(x);
-        
-        [MethodImpl(AggressiveInlining)]
-        public Number Radians() => Value;
-        // -------------------------------------------------------------------------------
-        // Operators (forward to float)
+        // Operators (forward to the radians payload)
         // -------------------------------------------------------------------------------
 
         [MethodImpl(AggressiveInlining)]
         public static Angle operator +(Angle a, Angle b)
-            => new(a.Value + b.Value);
+            => new(a.Radians + b.Radians);
 
         [MethodImpl(AggressiveInlining)]
         public static Angle operator -(Angle a, Angle b)
-            => new(a.Value - b.Value);
+            => new(a.Radians - b.Radians);
 
         [Obsolete("This method is illegal and should not be used.", true)]
         public static Angle operator *(Angle a, Angle b)
@@ -62,87 +41,89 @@ namespace Ara3D.Geometry
             => throw new Exception("Dividing two angles is not well-defined");
 
         [MethodImpl(AggressiveInlining)]
-        public static Angle operator *(Angle a, Number x)
-            => new(a.Value * x);
+        public static Angle operator *(Angle a, float x)
+            => new(a.Radians * x);
 
         [MethodImpl(AggressiveInlining)]
-        public static Angle operator *(Number x, Angle a)
-            => x * a.Value;
+        public static Angle operator *(float x, Angle a)
+            => new(x * a.Radians);
 
         [MethodImpl(AggressiveInlining)]
-        public static Angle operator /(Angle a, Number x)
-            => a.Value / x;
+        public static Angle operator /(Angle a, float x)
+            => new(a.Radians / x);
+
+        [MethodImpl(AggressiveInlining)]
+        public static Angle operator %(Angle a, float x)
+            => new(a.Radians % x);
 
         [MethodImpl(AggressiveInlining)]
         public static Angle operator -(Angle n)
-            => -n.Value;
+            => new(-n.Radians);
 
         [MethodImpl(AggressiveInlining)]
-        public static Boolean operator <(Angle a, Angle b)
-            => a.Value < b.Value;
+        public static bool operator <(Angle a, Angle b)
+            => a.Radians < b.Radians;
 
         [MethodImpl(AggressiveInlining)]
-        public static Boolean operator <=(Angle a, Angle b)
-            => a.Value <= b.Value;
+        public static bool operator <=(Angle a, Angle b)
+            => a.Radians <= b.Radians;
 
         [MethodImpl(AggressiveInlining)]
-        public static Boolean operator >(Angle a, Angle b)
-            => a.Value > b.Value;
+        public static bool operator >(Angle a, Angle b)
+            => a.Radians > b.Radians;
 
         [MethodImpl(AggressiveInlining)]
-        public static Boolean operator >=(Angle a, Angle b)
-            => a.Value >= b.Value;
+        public static bool operator >=(Angle a, Angle b)
+            => a.Radians >= b.Radians;
 
         // -------------------------------------------------------------------------------
-        // IComparable / IComparable<Angle> Implementation
+        // Comparison / hashing obligations
         // -------------------------------------------------------------------------------
-
-        [MethodImpl(AggressiveInlining)]
-        public Integer CompareTo(Angle other)
-            => Value.CompareTo(other.Value);
-
+        //
         // Exact `int` signatures: these discharge the (scalar-erased) Comparable / Hashable
         // obligations the forward-stdlib generation declares on the Angle partial, and interface
         // implementation demands the exact erased types.
 
         [MethodImpl(AggressiveInlining)]
+        public int CompareTo(Angle other)
+            => Radians.CompareTo(other.Radians);
+
+        [MethodImpl(AggressiveInlining)]
         public int Compare(Angle other)
-            => Value.CompareTo(other.Value);
+            => Radians.CompareTo(other.Radians);
 
         [MethodImpl(AggressiveInlining)]
         public int Hash()
-            => Value.GetHashCode();
-
+            => Radians.GetHashCode();
     }
 
     /// <summary>
     /// Behavioural intrinsics for <see cref="Angle"/> as extension methods — the all-extension-methods
-    /// runtime (M5 / consolidation plan C3). Fields, constructors, operators, conversions,
-    /// <see cref="Angle.Radians"/> and <see cref="Angle.CompareTo"/> stay on the struct; see
-    /// docs/plato-struct-surface.md. The trigonometric functions
-    /// (https://en.wikipedia.org/wiki/Trigonometric_functions) move here.
+    /// runtime (M5 / consolidation plan C3). The trigonometric functions
+    /// (https://en.wikipedia.org/wiki/Trigonometric_functions) live here; the radians payload is a
+    /// generated field, so nothing in this class reaches for a wrapper.
     /// </summary>
     public static class AngleIntrinsics
     {
         /// <summary>Cosine.</summary>
-        [MethodImpl(AggressiveInlining)] public static Number Cos(this Angle self) => MathF.Cos(self.Value);
+        [MethodImpl(AggressiveInlining)] public static float Cos(this Angle self) => MathF.Cos(self.Radians);
 
         /// <summary>Hyperbolic cosine.</summary>
-        [MethodImpl(AggressiveInlining)] public static Number Cosh(this Angle self) => MathF.Cosh(self.Value);
+        [MethodImpl(AggressiveInlining)] public static float Cosh(this Angle self) => MathF.Cosh(self.Radians);
 
         /// <summary>Sine.</summary>
-        [MethodImpl(AggressiveInlining)] public static Number Sin(this Angle self) => MathF.Sin(self.Value);
+        [MethodImpl(AggressiveInlining)] public static float Sin(this Angle self) => MathF.Sin(self.Radians);
 
         /// <summary>Sine and cosine.</summary>
-        [MethodImpl(AggressiveInlining)] public static (Number Sin, Number Cos) SinCos(this Angle self) => MathF.SinCos(self.Value);
+        [MethodImpl(AggressiveInlining)] public static (float Sin, float Cos) SinCos(this Angle self) => MathF.SinCos(self.Radians);
 
         /// <summary>Hyperbolic sine.</summary>
-        [MethodImpl(AggressiveInlining)] public static Number Sinh(this Angle self) => MathF.Sinh(self.Value);
+        [MethodImpl(AggressiveInlining)] public static float Sinh(this Angle self) => MathF.Sinh(self.Radians);
 
         /// <summary>The tangent.</summary>
-        [MethodImpl(AggressiveInlining)] public static Number Tan(this Angle self) => MathF.Tan(self.Value);
+        [MethodImpl(AggressiveInlining)] public static float Tan(this Angle self) => MathF.Tan(self.Radians);
 
         /// <summary>The hyperbolic tangent.</summary>
-        [MethodImpl(AggressiveInlining)] public static Number Tanh(this Angle self) => MathF.Tanh(self.Value);
+        [MethodImpl(AggressiveInlining)] public static float Tanh(this Angle self) => MathF.Tanh(self.Radians);
     }
 }

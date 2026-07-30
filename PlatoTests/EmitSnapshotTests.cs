@@ -48,11 +48,15 @@ namespace PlatoTests
             // Scalar-erased Boolean: native-operator forwarders.
             ("_Boolean.g.cs", "bool Not(this bool b)"),
             ("_Boolean.g.cs", "bool And(this bool a, bool b)"),
-            // Non-erased primitive Vector3: pseudo-field property access + method-form forwarders.
-            ("_Vector3.g.cs", "float X(this System.Numerics.Vector3 self)"),
-            ("_Vector3.g.cs", "Vector3 Normalize(this System.Numerics.Vector3 self)"),
-            ("_Vector3.g.cs", "float Length(this System.Numerics.Vector3 self)"),
-            ("_Vector3.g.cs", "float Dot(this System.Numerics.Vector3 self, Vector3 right)"),
+            // Vector3 forwarders. These used to read `this System.Numerics.Vector3 self`: Vector3
+            // was a CSharpWriter.PrimitiveTypes entry, so the writer emitted no struct for it and
+            // hung the extensions off the mapped BCL type. plato-365 removed that entry (the
+            // forward stdlib never declared Vector2/3/4/8 at all), so in this legacy corpus the
+            // name now generates an ordinary struct and the forwarders take the generated receiver.
+            ("_Vector3.g.cs", "float X(this Vector3 self)"),
+            ("_Vector3.g.cs", "Vector3 Normalize(this Vector3 self)"),
+            ("_Vector3.g.cs", "float Length(this Vector3 self)"),
+            ("_Vector3.g.cs", "float Dot(this Vector3 self, Vector3 right)"),
             // Constants emitted as methods, referencing each other.
             ("Constants.g.cs", "float Pi()"),
             ("Constants.g.cs", "float TwoPi()"),

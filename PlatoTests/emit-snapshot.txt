@@ -26,14 +26,14 @@
   [MethodImpl(AggressiveInlining)] public static bool Not(this bool b) => !((Boolean)b);
 @ _Boolean.g.cs :: bool And(this bool a, bool b)
   [MethodImpl(AggressiveInlining)] public static bool And(this bool a, bool b) => ((Boolean)a) & ((Boolean)b);
-@ _Vector3.g.cs :: float X(this System.Numerics.Vector3 self)
-  [MethodImpl(AggressiveInlining)] public static float X(this System.Numerics.Vector3 self) => ((Vector3)self).X;
-@ _Vector3.g.cs :: Vector3 Normalize(this System.Numerics.Vector3 self)
-  [MethodImpl(AggressiveInlining)] public static Vector3 Normalize(this System.Numerics.Vector3 self) => ((Vector3)self).Normalize();
-@ _Vector3.g.cs :: float Length(this System.Numerics.Vector3 self)
-  [MethodImpl(AggressiveInlining)] public static float Length(this System.Numerics.Vector3 self) => ((Vector3)self).Length();
-@ _Vector3.g.cs :: float Dot(this System.Numerics.Vector3 self, Vector3 right)
-  [MethodImpl(AggressiveInlining)] public static float Dot(this System.Numerics.Vector3 self, Vector3 right) => ((Vector3)self).Dot(right);
+@ _Vector3.g.cs :: float X(this Vector3 self)
+  [MethodImpl(AggressiveInlining)] public static float X(this Vector3 self) => self.X;
+@ _Vector3.g.cs :: Vector3 Normalize(this Vector3 self)
+  [MethodImpl(AggressiveInlining)] public static Vector3 Normalize(this Vector3 self) => self.Normalize();
+@ _Vector3.g.cs :: float Length(this Vector3 self)
+  [MethodImpl(AggressiveInlining)] public static float Length(this Vector3 self) => self.Length();
+@ _Vector3.g.cs :: float Dot(this Vector3 self, Vector3 right)
+  [MethodImpl(AggressiveInlining)] public static float Dot(this Vector3 self, Vector3 right) => self.Dot(right);
 @ Constants.g.cs :: float Pi()
   [MethodImpl(AggressiveInlining)] public static float Pi() => 3.141592653589793f;
 @ Constants.g.cs :: float TwoPi()

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Plato Status Report — 2026-07-30 14:34 Eastern Daylight Time</title>
+<title>Plato Status Report — 2026-07-30 14:52 Eastern Daylight Time</title>
 <style>
 :root {
   --bg: #0f1419; --panel: #1a222c; --panel2: #232d3a; --text: #e7ecf2;
@@ -82,10 +82,10 @@ tr.muted-row { opacity: .55; }
 <body>
 <header>
   <h1>Plato status report</h1>
-  <div class="meta">Generated 2026-07-30 14:34:21 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>fdceb22</code></div>
+  <div class="meta">Generated 2026-07-30 14:52:18 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>9693ace</code></div>
   <div class="overall">
     <span><span class="badge attention">ATTENTION</span></span>
-    <span>2 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-30T12:20:31-04:00; live git/tracker refreshed this generation.</span>
+    <span>14 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-30T14:51:54-04:00; live git/tracker refreshed this generation.</span>
   </div>
 </header>
 <main>
@@ -94,12 +94,12 @@ tr.muted-row { opacity: .55; }
   <h2>Snapshot</h2>
   <div class="grid">
     <div class="card"><div class="n">main</div><div class="l">Branch · <span class="badge pass">synced</span></div></div>
-    <div class="card"><div class="n">fdceb22</div><div class="l">HEAD</div></div>
-    <div class="card"><div class="n">2</div><div class="l">Dirty paths</div></div>
-    <div class="card"><div class="n">40</div><div class="l">Commits today</div></div>
-    <div class="card"><div class="n">198</div><div class="l">Commits last 7 days</div></div>
+    <div class="card"><div class="n">9693ace</div><div class="l">HEAD</div></div>
+    <div class="card"><div class="n">14</div><div class="l">Dirty paths</div></div>
+    <div class="card"><div class="n">41</div><div class="l">Commits today</div></div>
+    <div class="card"><div class="n">199</div><div class="l">Commits last 7 days</div></div>
     <div class="card"><div class="n">7</div><div class="l">Issues in progress</div></div>
-    <div class="card"><div class="n">0</div><div class="l">Latest C# errors (plato-generated-optimized)</div></div>
+    <div class="card"><div class="n">41</div><div class="l">Latest C# errors (forward-conformance)</div></div>
   </div>
 </section>
 
@@ -107,29 +107,53 @@ tr.muted-row { opacity: .55; }
   <h2>Git — Plato</h2>
   <div class="kv">
     <div class="k">Status</div><div><code>## main...origin/main
-M  PlatoTests/LinterPrimitiveShadowingTests.cs
+M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs
+M  Plato.CSharpWriter/CSharpWriter.cs
+M  Plato.Intrinsics.V2/Angle.cs
+M  Plato.Intrinsics.V2/Matrix4x4.cs
+M  Plato.Intrinsics.V2/Plane.cs
+M  PlatoCompiler/Types/WriterPrimitiveNames.cs
+M  PlatoTests/EmitSnapshotTests.cs
+M  PlatoTests/IntrinsicObligationTests.cs
+M  PlatoTests/IntrinsicsV2SurfaceTests.cs
+M  PlatoTests/IntrinsicsV2TestShims.cs
+M  PlatoTests/emit-snapshot.txt
+M  docs/status-report-snapshot.json
+ M docs/status-report.html
 ?? .claude/
 ?? conformance/Ara3D.SDK.ConformanceTests/</code></div>
-    <div class="k">HEAD</div><div><code>fdceb22a157e04bd79ac2ed9a5f7c0fc6e56d979</code></div>
-    <div class="k">origin/main</div><div><code>fdceb22a157e04bd79ac2ed9a5f7c0fc6e56d979</code></div>
+    <div class="k">HEAD</div><div><code>9693ace1c4c80a2ec06ad6df1538ad4b16782148</code></div>
+    <div class="k">origin/main</div><div><code>9693ace1c4c80a2ec06ad6df1538ad4b16782148</code></div>
     <div class="k">Unpushed</div><div><span class="muted">in sync with origin/main</span></div>
-    <div class="k">Dirty (excl. .claude/)</div><div><code>M  PlatoTests/LinterPrimitiveShadowingTests.cs<br>?? conformance/Ara3D.SDK.ConformanceTests/</code></div>
+    <div class="k">Dirty (excl. .claude/)</div><div><code>M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs<br>M  Plato.CSharpWriter/CSharpWriter.cs<br>M  Plato.Intrinsics.V2/Angle.cs<br>M  Plato.Intrinsics.V2/Matrix4x4.cs<br>M  Plato.Intrinsics.V2/Plane.cs<br>M  PlatoCompiler/Types/WriterPrimitiveNames.cs<br>M  PlatoTests/EmitSnapshotTests.cs<br>M  PlatoTests/IntrinsicObligationTests.cs<br>M  PlatoTests/IntrinsicsV2SurfaceTests.cs<br>M  PlatoTests/IntrinsicsV2TestShims.cs<br>M  PlatoTests/emit-snapshot.txt<br>M  docs/status-report-snapshot.json<br> M docs/status-report.html<br>?? conformance/Ara3D.SDK.ConformanceTests/</code></div>
   </div>
   <h3>Diffstat (unstaged, excl. this report)</h3>
   <span class="muted">no unstaged diff</span>
-  <div class="note">2 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
+  <div class="note">14 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
 </section>
 
 <section>
   <h2>Git — studio parent</h2>
   <div class="kv">
     <div class="k">Status</div><div><code>## main...origin/main
-M  PlatoTests/LinterPrimitiveShadowingTests.cs
+M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs
+M  Plato.CSharpWriter/CSharpWriter.cs
+M  Plato.Intrinsics.V2/Angle.cs
+M  Plato.Intrinsics.V2/Matrix4x4.cs
+M  Plato.Intrinsics.V2/Plane.cs
+M  PlatoCompiler/Types/WriterPrimitiveNames.cs
+M  PlatoTests/EmitSnapshotTests.cs
+M  PlatoTests/IntrinsicObligationTests.cs
+M  PlatoTests/IntrinsicsV2SurfaceTests.cs
+M  PlatoTests/IntrinsicsV2TestShims.cs
+M  PlatoTests/emit-snapshot.txt
+M  docs/status-report-snapshot.json
+ M docs/status-report.html
 ?? .claude/
 ?? conformance/Ara3D.SDK.ConformanceTests/</code></div>
     <div class="k">Committed Plato pointer</div><div><code>?</code> <span class="badge blocked">DRIFT</span></div>
-    <div class="k">Plato HEAD</div><div><code>fdceb22a157e04bd79ac2ed9a5f7c0fc6e56d979</code></div>
-    <div class="k">Plato-related dirty</div><div><code>M  PlatoTests/LinterPrimitiveShadowingTests.cs</code></div>
+    <div class="k">Plato HEAD</div><div><code>9693ace1c4c80a2ec06ad6df1538ad4b16782148</code></div>
+    <div class="k">Plato-related dirty</div><div><code>M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs<br>M  Plato.CSharpWriter/CSharpWriter.cs<br>M  Plato.Intrinsics.V2/Angle.cs<br>M  Plato.Intrinsics.V2/Matrix4x4.cs<br>M  Plato.Intrinsics.V2/Plane.cs<br>M  PlatoCompiler/Types/WriterPrimitiveNames.cs<br>M  PlatoTests/EmitSnapshotTests.cs<br>M  PlatoTests/IntrinsicObligationTests.cs<br>M  PlatoTests/IntrinsicsV2SurfaceTests.cs<br>M  PlatoTests/IntrinsicsV2TestShims.cs<br>M  PlatoTests/emit-snapshot.txt</code></div>
   </div>
   <div class="note">If drifted, bump with an explicit <code>git commit -- submodules/Plato</code> in studio after Plato pushes.</div>
 </section>
@@ -140,7 +164,7 @@ M  PlatoTests/LinterPrimitiveShadowingTests.cs
   <div><code>12aad781501e6714789fb87629f1fbee001e2ab0 parakeet (v1.4.3-78-g12aad78)</code></div>
   <p class="muted">parakeet: do not stage casually (known pre-existing dirty grammar submodule).</p>
   <h3>Worktrees</h3>
-  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              fdceb22 [main]<br>C:/Users/cdigg/git/plato-wt-1                                                        d0dc6c8 [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
+  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              9693ace [main]<br>C:/Users/cdigg/git/plato-wt-1                                                        d0dc6c8 [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
   <h3>Studio-level submodules</h3>
   <pre></pre>
 </section>
@@ -153,7 +177,7 @@ M  PlatoTests/LinterPrimitiveShadowingTests.cs
     <div class="card"><div class="n">33,693</div><div class="l">References</div></div>
     <div class="card"><div class="n">0</div><div class="l">Diagnostics</div></div>
   </div>
-  <p class="muted" style="margin:.75rem 0 0">Roots: stdlib + stdlib-tests · built 2026-07-29T21:46:46Z · snapshot 2026-07-30T12:20:31-04:00</p>
+  <p class="muted" style="margin:.75rem 0 0">Roots: stdlib + stdlib-tests · built 2026-07-29T21:46:46Z · snapshot 2026-07-30T14:51:54-04:00</p>
 </section>
 
 <section>
@@ -166,25 +190,25 @@ M  PlatoTests/LinterPrimitiveShadowingTests.cs
 
   <h3>C# build errors (latest recorded)</h3>
   <div class="kv" style="margin-bottom:.85rem">
-    <div class="k">Latest target</div><div><code>plato-generated-optimized</code> · <span class="badge pass">0 errors</span></div>
-    <div class="k">Errors / warnings</div><div>0 / 0</div>
-    <div class="k">Recorded at</div><div>2026-07-30T12:20:31-04:00</div>
+    <div class="k">Latest target</div><div><code>forward-conformance</code> · <span class="badge fail">41 errors</span></div>
+    <div class="k">Errors / warnings</div><div>41 / 0</div>
+    <div class="k">Recorded at</div><div>2026-07-30T14:51:54-04:00</div>
     <div class="k">How updated</div><div>Every Plato C# build via <code>tools/dotnet-build-record.ps1</code> (wired into <code>regen-forward-conformance.ps1</code>, <code>regen-generated.ps1</code>). Writes <code>docs/status-report-snapshot.json</code> → this page.</div>
   </div>
   <h3>Recorded build targets</h3>
   <table>
     <thead><tr><th>Target</th><th>Errors</th><th>Warnings</th><th>Result</th><th>When</th></tr></thead>
-    <tbody><tr><td><code>plato-generated-optimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T12:20:31-04:00</td></tr><tr><td><code>plato-generated-unoptimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T12:20:17-04:00</td></tr><tr><td><code>plato-cli</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T12:19:39-04:00</td></tr><tr><td><code>forward-conformance</code></td><td class="num">85</td><td class="num">0</td><td><span class="badge fail">ERRORS</span></td><td>2026-07-30T12:19:12-04:00</td></tr></tbody>
+    <tbody><tr><td><code>forward-conformance</code></td><td class="num">41</td><td class="num">0</td><td><span class="badge fail">ERRORS</span></td><td>2026-07-30T14:51:54-04:00</td></tr><tr><td><code>plato-cli</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T14:51:03-04:00</td></tr><tr><td><code>plato-generated-optimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T12:20:31-04:00</td></tr><tr><td><code>plato-generated-unoptimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T12:20:17-04:00</td></tr></tbody>
   </table>
   <h3>Latest errors by category</h3>
   <table>
     <thead><tr><th>Category</th><th>Key</th><th>Count</th><th>CS codes</th></tr></thead>
-    <tbody><tr><td colspan="4" class="muted">No error categories for latest build.</td></tr></tbody>
+    <tbody><tr><td>Missing member on receiver (CS1061)</td><td><code>missing_member</code></td><td class="num">18</td><td><code>CS1061</code></td></tr><tr><td>Extension method receiver type</td><td><code>extension_receiver</code></td><td class="num">10</td><td><code>CS1929</code></td></tr><tr><td>Other / uncategorized</td><td><code>other</code></td><td class="num">6</td><td><code>CS1662, CS0023, CS1501, CS0266</code></td></tr><tr><td>Cannot implicitly convert</td><td><code>cannot_implicitly_convert</code></td><td class="num">5</td><td><code>CS0029</code></td></tr><tr><td>Operator type mismatch</td><td><code>operator_type_mismatch</code></td><td class="num">2</td><td><code>CS0019</code></td></tr></tbody>
   </table>
   <h3>Latest errors by CS code (top 20)</h3>
   <table>
     <thead><tr><th>Code</th><th>Count</th></tr></thead>
-    <tbody><tr><td colspan="2" class="muted">No CS codes for latest build.</td></tr></tbody>
+    <tbody><tr><td><code>CS1061</code></td><td class="num">18</td></tr><tr><td><code>CS1929</code></td><td class="num">10</td></tr><tr><td><code>CS0029</code></td><td class="num">5</td></tr><tr><td><code>CS0019</code></td><td class="num">2</td></tr><tr><td><code>CS0023</code></td><td class="num">2</td></tr><tr><td><code>CS1662</code></td><td class="num">2</td></tr><tr><td><code>CS0266</code></td><td class="num">1</td></tr><tr><td><code>CS1501</code></td><td class="num">1</td></tr></tbody>
   </table>
 
   <h3>Forward-stdlib linter catalog</h3>
@@ -264,10 +288,10 @@ M  PlatoTests/LinterPrimitiveShadowingTests.cs
 </section>
 
 <section>
-  <h2>Committed work today (40 commits)</h2>
+  <h2>Committed work today (41 commits)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr><td><code>fdceb22</code></td><td>2026-07-30 14:32:27 -0400</td><td>feat(lint): LINT015 - stdlib type shadowing a writer primitive</td></tr><tr><td><code>290cafb</code></td><td>2026-07-30 14:31:54 -0400</td><td>refactor(writer): drop Vector2/3/4/8 from PrimitiveTypes (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-365.md"><code>plato-365</code></a>a)</td></tr><tr><td><code>36089e4</code></td><td>2026-07-30 13:28:52 -0400</td><td>refactor(stdlib): split into foundation/geometry/graphics/future tiers (phase 3)</td></tr><tr><td><code>96f6f64</code></td><td>2026-07-30 13:00:07 -0400</td><td>feat(cli): multi-root folder args, one program per lint</td></tr><tr><td><code>942e1b4</code></td><td>2026-07-30 12:52:10 -0400</td><td>docs: correct MCP plan - ensure-server.ps1 roots were never stdlib-legacy</td></tr><tr><td><code>32e4545</code></td><td>2026-07-30 12:47:26 -0400</td><td>chore: retire legacy conformance suite; Generated/ demoted from golden to cached output</td></tr><tr><td><code>471b6f6</code></td><td>2026-07-30 12:45:18 -0400</td><td>test(navigation): gate on the forward stdlib, not stdlib-legacy</td></tr><tr><td><code>8d4ff0d</code></td><td>2026-07-30 12:41:30 -0400</td><td>feat(tools): record gate/test durations to a shared timing log</td></tr><tr><td><code>04010a0</code></td><td>2026-07-30 12:29:08 -0400</td><td>feat(navigation): warm-check seam + stdlib style rules</td></tr><tr><td><code>2859e02</code></td><td>2026-07-30 12:26:18 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-362.md"><code>plato-362</code></a>): type-token members — static fills satisfy instance obligations</td></tr><tr><td><code>374b214</code></td><td>2026-07-30 12:07:26 -0400</td><td>refactor(stdlib): rename bare type files to .types.plato (phase 1 of reorg plan)</td></tr><tr><td><code>9aea28e</code></td><td>2026-07-30 12:00:29 -0400</td><td>feat(tools): stage-stdlib.ps1 - pinned-CLI staging gate for stdlib work</td></tr><tr><td><code>cd6b8b5</code></td><td>2026-07-30 11:51:51 -0400</td><td>docs: Plato MCP improvements plan (warm plato_check, vocab card, usages)</td></tr><tr><td><code>863a9af</code></td><td>2026-07-30 11:40:43 -0400</td><td>docs: stdlib reorg plan (.types.plato suffix + domain-tier folders)</td></tr><tr><td><code>043a9cf</code></td><td>2026-07-30 11:36:21 -0400</td><td>fix(compiler): reach every node kind in capture hoist</td></tr><tr><td><code>a72011e</code></td><td>2026-07-30 11:15:36 -0400</td><td>wip(plato): V2 obligation fills + grid adapters + lambda-capture rewrite</td></tr><tr><td><code>b92d4c2</code></td><td>2026-07-30 02:25:54 -0400</td><td>feat(stdlib): all 26 Archimedean/Catalan kinds dispatch to real meshes</td></tr><tr><td><code>5133e3d</code></td><td>2026-07-30 02:25:35 -0400</td><td>feat(stdlib): Conway expand, snub and bevel + full Archimedean/Catalan catalog</td></tr><tr><td><code>e212b66</code></td><td>2026-07-30 02:25:15 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a>): lint intrinsic obligations against the V2 runtime</td></tr><tr><td><code>f20ddf0</code></td><td>2026-07-30 02:25:09 -0400</td><td>fix(stdlib): Conway Dual reciprocates about the true face plane foot</td></tr><tr><td><code>3642aa2</code></td><td>2026-07-30 02:24:59 -0400</td><td>fix(checker): resolve qualified payload sum-case ctors (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md"><code>plato-332</code></a>)</td></tr><tr><td><code>bab5742</code></td><td>2026-07-30 02:20:28 -0400</td><td>feat(stdlib): von Mises Cdf (Bessel series) + superellipse Perimeter (Simpson)</td></tr><tr><td><code>f6167ca</code></td><td>2026-07-30 02:08:45 -0400</td><td>tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</td></tr><tr><td><code>61b37eb</code></td><td>2026-07-30 01:55:17 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>10c22f0</code></td><td>2026-07-30 01:54:42 -0400</td><td>feat(v2): Matrix3x2/Matrix4x4 RowCount() — forward CS0535 curtain lifted</td></tr><tr><td><code>d0dc6c8</code></td><td>2026-07-30 01:48:02 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into plato-stdlib-improvements</td></tr><tr><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr><td><code>0e15882</code></td><td>2026-07-30 01:47:03 -0400</td><td>docs: record forward-conformance C# errors 1460 -&gt; 4</td></tr><tr><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr><td><code>d34a680</code></td><td>2026-07-30 01:25:31 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>7f80b42</code></td><td>2026-07-30 01:19:37 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): police V2 surface against writer tables</td></tr><tr><td><code>fbf5154</code></td><td>2026-07-30 00:56:11 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr><td><code>4be7444</code></td><td>2026-07-30 00:53:58 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>1f55a6c</code></td><td>2026-07-30 00:53:17 -0400</td><td>merge: stdlib increment - CSG, BREP, AngularCurve2D/3D, special functions</td></tr><tr><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr><tr><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr></tbody>
+    <tbody><tr><td><code>9693ace</code></td><td>2026-07-30 14:34:21 -0400</td><td>test(lint): pin LINT015&#x27;s ERROR severity on the prevention case</td></tr><tr><td><code>fdceb22</code></td><td>2026-07-30 14:32:27 -0400</td><td>feat(lint): LINT015 - stdlib type shadowing a writer primitive</td></tr><tr><td><code>290cafb</code></td><td>2026-07-30 14:31:54 -0400</td><td>refactor(writer): drop Vector2/3/4/8 from PrimitiveTypes (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-365.md"><code>plato-365</code></a>a)</td></tr><tr><td><code>36089e4</code></td><td>2026-07-30 13:28:52 -0400</td><td>refactor(stdlib): split into foundation/geometry/graphics/future tiers (phase 3)</td></tr><tr><td><code>96f6f64</code></td><td>2026-07-30 13:00:07 -0400</td><td>feat(cli): multi-root folder args, one program per lint</td></tr><tr><td><code>942e1b4</code></td><td>2026-07-30 12:52:10 -0400</td><td>docs: correct MCP plan - ensure-server.ps1 roots were never stdlib-legacy</td></tr><tr><td><code>32e4545</code></td><td>2026-07-30 12:47:26 -0400</td><td>chore: retire legacy conformance suite; Generated/ demoted from golden to cached output</td></tr><tr><td><code>471b6f6</code></td><td>2026-07-30 12:45:18 -0400</td><td>test(navigation): gate on the forward stdlib, not stdlib-legacy</td></tr><tr><td><code>8d4ff0d</code></td><td>2026-07-30 12:41:30 -0400</td><td>feat(tools): record gate/test durations to a shared timing log</td></tr><tr><td><code>04010a0</code></td><td>2026-07-30 12:29:08 -0400</td><td>feat(navigation): warm-check seam + stdlib style rules</td></tr><tr><td><code>2859e02</code></td><td>2026-07-30 12:26:18 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-362.md"><code>plato-362</code></a>): type-token members — static fills satisfy instance obligations</td></tr><tr><td><code>374b214</code></td><td>2026-07-30 12:07:26 -0400</td><td>refactor(stdlib): rename bare type files to .types.plato (phase 1 of reorg plan)</td></tr><tr><td><code>9aea28e</code></td><td>2026-07-30 12:00:29 -0400</td><td>feat(tools): stage-stdlib.ps1 - pinned-CLI staging gate for stdlib work</td></tr><tr><td><code>cd6b8b5</code></td><td>2026-07-30 11:51:51 -0400</td><td>docs: Plato MCP improvements plan (warm plato_check, vocab card, usages)</td></tr><tr><td><code>863a9af</code></td><td>2026-07-30 11:40:43 -0400</td><td>docs: stdlib reorg plan (.types.plato suffix + domain-tier folders)</td></tr><tr><td><code>043a9cf</code></td><td>2026-07-30 11:36:21 -0400</td><td>fix(compiler): reach every node kind in capture hoist</td></tr><tr><td><code>a72011e</code></td><td>2026-07-30 11:15:36 -0400</td><td>wip(plato): V2 obligation fills + grid adapters + lambda-capture rewrite</td></tr><tr><td><code>b92d4c2</code></td><td>2026-07-30 02:25:54 -0400</td><td>feat(stdlib): all 26 Archimedean/Catalan kinds dispatch to real meshes</td></tr><tr><td><code>5133e3d</code></td><td>2026-07-30 02:25:35 -0400</td><td>feat(stdlib): Conway expand, snub and bevel + full Archimedean/Catalan catalog</td></tr><tr><td><code>e212b66</code></td><td>2026-07-30 02:25:15 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a>): lint intrinsic obligations against the V2 runtime</td></tr><tr><td><code>f20ddf0</code></td><td>2026-07-30 02:25:09 -0400</td><td>fix(stdlib): Conway Dual reciprocates about the true face plane foot</td></tr><tr><td><code>3642aa2</code></td><td>2026-07-30 02:24:59 -0400</td><td>fix(checker): resolve qualified payload sum-case ctors (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md"><code>plato-332</code></a>)</td></tr><tr><td><code>bab5742</code></td><td>2026-07-30 02:20:28 -0400</td><td>feat(stdlib): von Mises Cdf (Bessel series) + superellipse Perimeter (Simpson)</td></tr><tr><td><code>f6167ca</code></td><td>2026-07-30 02:08:45 -0400</td><td>tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</td></tr><tr><td><code>61b37eb</code></td><td>2026-07-30 01:55:17 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>10c22f0</code></td><td>2026-07-30 01:54:42 -0400</td><td>feat(v2): Matrix3x2/Matrix4x4 RowCount() — forward CS0535 curtain lifted</td></tr><tr><td><code>d0dc6c8</code></td><td>2026-07-30 01:48:02 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into plato-stdlib-improvements</td></tr><tr><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr><td><code>0e15882</code></td><td>2026-07-30 01:47:03 -0400</td><td>docs: record forward-conformance C# errors 1460 -&gt; 4</td></tr><tr><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr><td><code>d34a680</code></td><td>2026-07-30 01:25:31 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>7f80b42</code></td><td>2026-07-30 01:19:37 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): police V2 surface against writer tables</td></tr><tr><td><code>fbf5154</code></td><td>2026-07-30 00:56:11 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr><td><code>4be7444</code></td><td>2026-07-30 00:53:58 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>1f55a6c</code></td><td>2026-07-30 00:53:17 -0400</td><td>merge: stdlib increment - CSG, BREP, AngularCurve2D/3D, special functions</td></tr><tr><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr><tr><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr></tbody>
   </table>
 </section>
 
@@ -275,7 +299,7 @@ M  PlatoTests/LinterPrimitiveShadowingTests.cs
   <h2>Recent history (20)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr class="today"><td><code>fdceb22</code></td><td>2026-07-30 14:32:27 -0400</td><td>feat(lint): LINT015 - stdlib type shadowing a writer primitive</td></tr><tr class="today"><td><code>290cafb</code></td><td>2026-07-30 14:31:54 -0400</td><td>refactor(writer): drop Vector2/3/4/8 from PrimitiveTypes (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-365.md"><code>plato-365</code></a>a)</td></tr><tr class="today"><td><code>36089e4</code></td><td>2026-07-30 13:28:52 -0400</td><td>refactor(stdlib): split into foundation/geometry/graphics/future tiers (phase 3)</td></tr><tr class="today"><td><code>96f6f64</code></td><td>2026-07-30 13:00:07 -0400</td><td>feat(cli): multi-root folder args, one program per lint</td></tr><tr class="today"><td><code>942e1b4</code></td><td>2026-07-30 12:52:10 -0400</td><td>docs: correct MCP plan - ensure-server.ps1 roots were never stdlib-legacy</td></tr><tr class="today"><td><code>32e4545</code></td><td>2026-07-30 12:47:26 -0400</td><td>chore: retire legacy conformance suite; Generated/ demoted from golden to cached output</td></tr><tr class="today"><td><code>471b6f6</code></td><td>2026-07-30 12:45:18 -0400</td><td>test(navigation): gate on the forward stdlib, not stdlib-legacy</td></tr><tr class="today"><td><code>8d4ff0d</code></td><td>2026-07-30 12:41:30 -0400</td><td>feat(tools): record gate/test durations to a shared timing log</td></tr><tr class="today"><td><code>04010a0</code></td><td>2026-07-30 12:29:08 -0400</td><td>feat(navigation): warm-check seam + stdlib style rules</td></tr><tr class="today"><td><code>2859e02</code></td><td>2026-07-30 12:26:18 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-362.md"><code>plato-362</code></a>): type-token members — static fills satisfy instance obligations</td></tr><tr class="today"><td><code>374b214</code></td><td>2026-07-30 12:07:26 -0400</td><td>refactor(stdlib): rename bare type files to .types.plato (phase 1 of reorg plan)</td></tr><tr class="today"><td><code>9aea28e</code></td><td>2026-07-30 12:00:29 -0400</td><td>feat(tools): stage-stdlib.ps1 - pinned-CLI staging gate for stdlib work</td></tr><tr class="today"><td><code>cd6b8b5</code></td><td>2026-07-30 11:51:51 -0400</td><td>docs: Plato MCP improvements plan (warm plato_check, vocab card, usages)</td></tr><tr class="today"><td><code>863a9af</code></td><td>2026-07-30 11:40:43 -0400</td><td>docs: stdlib reorg plan (.types.plato suffix + domain-tier folders)</td></tr><tr class="today"><td><code>043a9cf</code></td><td>2026-07-30 11:36:21 -0400</td><td>fix(compiler): reach every node kind in capture hoist</td></tr><tr class="today"><td><code>a72011e</code></td><td>2026-07-30 11:15:36 -0400</td><td>wip(plato): V2 obligation fills + grid adapters + lambda-capture rewrite</td></tr><tr class="today"><td><code>b92d4c2</code></td><td>2026-07-30 02:25:54 -0400</td><td>feat(stdlib): all 26 Archimedean/Catalan kinds dispatch to real meshes</td></tr><tr class="today"><td><code>5133e3d</code></td><td>2026-07-30 02:25:35 -0400</td><td>feat(stdlib): Conway expand, snub and bevel + full Archimedean/Catalan catalog</td></tr><tr class="today"><td><code>e212b66</code></td><td>2026-07-30 02:25:15 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a>): lint intrinsic obligations against the V2 runtime</td></tr><tr class="today"><td><code>f20ddf0</code></td><td>2026-07-30 02:25:09 -0400</td><td>fix(stdlib): Conway Dual reciprocates about the true face plane foot</td></tr></tbody>
+    <tbody><tr class="today"><td><code>9693ace</code></td><td>2026-07-30 14:34:21 -0400</td><td>test(lint): pin LINT015&#x27;s ERROR severity on the prevention case</td></tr><tr class="today"><td><code>fdceb22</code></td><td>2026-07-30 14:32:27 -0400</td><td>feat(lint): LINT015 - stdlib type shadowing a writer primitive</td></tr><tr class="today"><td><code>290cafb</code></td><td>2026-07-30 14:31:54 -0400</td><td>refactor(writer): drop Vector2/3/4/8 from PrimitiveTypes (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-365.md"><code>plato-365</code></a>a)</td></tr><tr class="today"><td><code>36089e4</code></td><td>2026-07-30 13:28:52 -0400</td><td>refactor(stdlib): split into foundation/geometry/graphics/future tiers (phase 3)</td></tr><tr class="today"><td><code>96f6f64</code></td><td>2026-07-30 13:00:07 -0400</td><td>feat(cli): multi-root folder args, one program per lint</td></tr><tr class="today"><td><code>942e1b4</code></td><td>2026-07-30 12:52:10 -0400</td><td>docs: correct MCP plan - ensure-server.ps1 roots were never stdlib-legacy</td></tr><tr class="today"><td><code>32e4545</code></td><td>2026-07-30 12:47:26 -0400</td><td>chore: retire legacy conformance suite; Generated/ demoted from golden to cached output</td></tr><tr class="today"><td><code>471b6f6</code></td><td>2026-07-30 12:45:18 -0400</td><td>test(navigation): gate on the forward stdlib, not stdlib-legacy</td></tr><tr class="today"><td><code>8d4ff0d</code></td><td>2026-07-30 12:41:30 -0400</td><td>feat(tools): record gate/test durations to a shared timing log</td></tr><tr class="today"><td><code>04010a0</code></td><td>2026-07-30 12:29:08 -0400</td><td>feat(navigation): warm-check seam + stdlib style rules</td></tr><tr class="today"><td><code>2859e02</code></td><td>2026-07-30 12:26:18 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-362.md"><code>plato-362</code></a>): type-token members — static fills satisfy instance obligations</td></tr><tr class="today"><td><code>374b214</code></td><td>2026-07-30 12:07:26 -0400</td><td>refactor(stdlib): rename bare type files to .types.plato (phase 1 of reorg plan)</td></tr><tr class="today"><td><code>9aea28e</code></td><td>2026-07-30 12:00:29 -0400</td><td>feat(tools): stage-stdlib.ps1 - pinned-CLI staging gate for stdlib work</td></tr><tr class="today"><td><code>cd6b8b5</code></td><td>2026-07-30 11:51:51 -0400</td><td>docs: Plato MCP improvements plan (warm plato_check, vocab card, usages)</td></tr><tr class="today"><td><code>863a9af</code></td><td>2026-07-30 11:40:43 -0400</td><td>docs: stdlib reorg plan (.types.plato suffix + domain-tier folders)</td></tr><tr class="today"><td><code>043a9cf</code></td><td>2026-07-30 11:36:21 -0400</td><td>fix(compiler): reach every node kind in capture hoist</td></tr><tr class="today"><td><code>a72011e</code></td><td>2026-07-30 11:15:36 -0400</td><td>wip(plato): V2 obligation fills + grid adapters + lambda-capture rewrite</td></tr><tr class="today"><td><code>b92d4c2</code></td><td>2026-07-30 02:25:54 -0400</td><td>feat(stdlib): all 26 Archimedean/Catalan kinds dispatch to real meshes</td></tr><tr class="today"><td><code>5133e3d</code></td><td>2026-07-30 02:25:35 -0400</td><td>feat(stdlib): Conway expand, snub and bevel + full Archimedean/Catalan catalog</td></tr><tr class="today"><td><code>e212b66</code></td><td>2026-07-30 02:25:15 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a>): lint intrinsic obligations against the V2 runtime</td></tr></tbody>
   </table>
 </section>
 

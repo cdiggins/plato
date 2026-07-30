@@ -536,16 +536,10 @@ namespace Ara3D.Geometry.CSharpWriter
         // NO struct for a PrimitiveTypes entry (CSharpConcreteTypeWriter's "// Fields" block is
         // `!IsPrimitive`), so it cannot see the runtime's real shape and reads the declaration as a
         // proxy: a declared field is a property/field, everything else is a method. That proxy is
-        // right for the whole V2 surface except these four members, hence a short exception list
+        // right for the whole V2 surface except these members, hence a short exception list
         // rather than a second full surface record. Keyed "{Type}.{Member}"; the value is whether
         // V2 spells the member as a PROPERTY. Consulted only under NoProperties.
         //
-        //   Angle.Radians — the forward stdlib declares
-        //     `type Angle implements Quantity { Radians: Number; }`, and V2 satisfies it with
-        //     `public Number Radians() => Value;` (Plato.Intrinsics.V2\Angle.cs). Reading the
-        //     declaration pinned property syntax onto that METHOD at ~80 forward call sites
-        //     (plato-323 item 2, CS0030 "cannot convert type 'method'"). stdlib-legacy's
-        //     `type Angle implements IMeasure { }` declares no fields, so no golden depends on it.
         //   Matrix4x4.Translation / .Rotation / Number.Angle — NOT declared as fields (they are
         //     library functions in Plato), yet V2 keeps them as properties. Before the
         //     receiver-aware rule they rode on the global name union by accident, each name being a
@@ -557,11 +551,12 @@ namespace Ara3D.Geometry.CSharpWriter
         public static readonly IReadOnlyDictionary<string, bool> PrimitiveSurfaceOverrides
             = new Dictionary<string, bool>
             {
-                { "Angle.Radians", false },
+                // Angle.Radians and Plane.Distance left this table with plato-365 increment (a):
+                // both are now GENERATED fields, so the declaration proxy is simply right and
+                // there is nothing to pin.
                 { "Matrix4x4.Translation", true },
                 { "Matrix4x4.Rotation", true },
                 { "Number.Angle", true },
-                { "Plane.Distance", true },
             };
 
         /// <summary>Whether V2 spells {typeName}.{name} as a property, or null when the declaration
@@ -617,8 +612,13 @@ namespace Ara3D.Geometry.CSharpWriter
         // Removed 2026-07-30, increment (a): Vector2/3/4/8 - never declared in the forward stdlib
         // at all (Number2/3/4/8 and Vector2D/3D carry that vocabulary), and generated structs
         // already reach the handwritten intrinsic twins through IntrinsicVectorBridges, which is
-        // where the Vector* names survive.
-        // Still here, pending increments (a: Plane/Angle) and (c: Matrix3x2/Matrix4x4/Quaternion).
+        // where the Vector* names survive. Then Plane and Angle: ordinary generated structs whose
+        // BEHAVIOUR is still handwritten, see IntrinsicBackedTypes.
+        // Still here, pending increment (c): Matrix3x2, Matrix4x4, Quaternion.
+        //
+        // The NAMES are the compiler-side WriterPrimitiveNames.All (the linter's LINT015 authority);
+        // this dictionary only attaches the runtime mapping. Removing a name is a two-file edit
+        // until the derive-from-the-list cleanup lands.
         public static Dictionary<string, string> PrimitiveTypes = new Dictionary<string, string>()
         {
             { "Number", "float" },
@@ -638,12 +638,38 @@ namespace Ara3D.Geometry.CSharpWriter
             { "Function7", "System.Func" },
             { "Function8", "System.Func" },
             { "Function9", "System.Func" },
-            { "Angle", "float" },
             { "Matrix3x2", "System.Numerics.Matrix3x2" },
             { "Matrix4x4", "System.Numerics.Matrix4x4" },
             { "Quaternion", "System.Numerics.Quaternion" },
-            { "Plane", "System.Numerics.Plane" },
         };
+
+        /// <summary>
+        /// Types whose SHAPE comes from the stdlib declaration (an ordinary generated struct, fields
+        /// and all) but whose BEHAVIOUR is still handwritten: their bodiless intrinsic members and
+        /// operator overloads are supplied by the Plato.Intrinsics partial struct, exactly as they
+        /// were while the name was a <see cref="PrimitiveTypes"/> entry, so the writer must not emit
+        /// a NotImplementedException stub over the top of them.
+        ///
+        /// This is the half of "primitive" plato-365 KEEPS. The half it deletes is the shape
+        /// override: the declaration is now the authority on the fields, and the handwritten side
+        /// reaches System.Numerics from those fields rather than being System.Numerics. Every entry
+        /// here is (or was) a PrimitiveTypes entry; a name graduates from that dictionary to this set.
+        /// </summary>
+        public static readonly HashSet<string> IntrinsicBackedTypes = new HashSet<string>
+        {
+            "Angle",
+            "Plane",
+            // Still PrimitiveTypes entries as well, until increment (c) lands.
+            "Matrix3x2",
+            "Matrix4x4",
+            "Quaternion",
+        };
+
+        /// <summary>Whether the handwritten runtime — not the writer — supplies this type's
+        /// bodiless members and operators. True for every primitive and for
+        /// <see cref="IntrinsicBackedTypes"/>.</summary>
+        public static bool IsIntrinsicBacked(string name)
+            => name != null && (PrimitiveTypes.ContainsKey(name) || IntrinsicBackedTypes.Contains(name));
 
         public CSharpWriter WriteFile(FilePath fileName, Func<CSharpWriter> f)
         {

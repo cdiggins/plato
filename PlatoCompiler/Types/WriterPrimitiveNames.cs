@@ -38,8 +38,10 @@ namespace Ara3D.Geometry.Compiler.Types
             // Non-scalar entries, being retired by plato-365. Each one is a name whose stdlib
             // declaration is currently overridden by a System.Numerics (or Vector256) type.
             // (Vector2/3/4/8 left the list on 2026-07-30 with plato-365 increment (a); they were
-            // never declared in the forward stdlib, so their departure changed no finding.)
-            "Angle", "Matrix3x2", "Matrix4x4", "Quaternion", "Plane",
+            // never declared in the forward stdlib, so their departure changed no finding. Angle
+            // and Plane left the same day: both now generate as ordinary structs from their
+            // declarations, with the handwritten runtime supplying only their behaviour.)
+            "Matrix3x2", "Matrix4x4", "Quaternion",
         };
 
         /// <summary>
@@ -56,8 +58,6 @@ namespace Ara3D.Geometry.Compiler.Types
         /// </summary>
         public static readonly IReadOnlyCollection<string> KnownShadowedByStdlib = new HashSet<string>
         {
-            "Angle",        // plato-365 increment (a)
-            "Plane",        // plato-365 increment (a)
             "Matrix3x2",    // plato-365 increment (c)
             "Matrix4x4",    // plato-365 increment (c)
             "Quaternion",   // plato-365 increment (c)

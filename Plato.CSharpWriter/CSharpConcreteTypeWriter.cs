@@ -22,6 +22,11 @@ namespace Ara3D.Geometry.CSharpWriter
         public string SimpleName => ConcreteType.Name;
         public string Name => SimpleName + TypeParamsStr;
         public bool IsPrimitive => CSharpWriter.PrimitiveTypes.ContainsKey(Name);
+
+        /// <summary>The handwritten runtime supplies this type's bodiless members and operators —
+        /// true for primitives and for the shape-generated-but-behaviour-handwritten types
+        /// (<see cref="CSharpWriter.IntrinsicBackedTypes"/>, plato-365).</summary>
+        public bool IsIntrinsicBacked => CSharpWriter.IsIntrinsicBacked(Name);
         public string Attr => CSharpTypeWriter.Annotation;
         public bool IsArrayLike => ConcreteType.AllInterfaces.Any(te => te.Name == "IArrayLike");
         public Compilation Compilation => TypeWriter.Writer.Compilation;
@@ -913,7 +918,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 // linter — generated code is not the reporting channel.
 
                 var fi = TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef);
-                TypeWriter.WriteMemberFunction(fi, IsPrimitive, HasFunctionNamed);
+                TypeWriter.WriteMemberFunction(fi, IsIntrinsicBacked, HasFunctionNamed);
             }
             TypeWriter.WriteLine();
         }
@@ -955,7 +960,7 @@ namespace Ara3D.Geometry.CSharpWriter
                     else
                     {
                         // TODO: shouldn't this be a special function? 
-                        TypeWriter.WriteMemberFunction(TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef), IsPrimitive, HasFunctionNamed);
+                        TypeWriter.WriteMemberFunction(TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef), IsIntrinsicBacked, HasFunctionNamed);
                     }
                 }
             }
@@ -1010,7 +1015,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 // extension (or, until a type is ported, its instance method) provides x.Foo().
                 // (M5 / consolidation plan C3. Scalar-erased primitives keep the forwarder: it lands
                 // on the erased receiver float/int/bool, distinct from the wrapper, so no collision.)
-                var nonErasedPrimitive = CSharpWriter.PrimitiveTypes.ContainsKey(Name)
+                var nonErasedPrimitive = CSharpWriter.IsIntrinsicBacked(Name)
                     && !CSharpWriter.ScalarPrimitives.ContainsKey(Name);
                 if (!(Writer.NoProperties && nonErasedPrimitive))
                     tw.WriteLine(GetExtensionMethod(fi));

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-30T12:20:31-04:00",
+  "updated_at": "2026-07-30T14:51:54-04:00",
   "note": "Captured during initial status-report landing; refresh after gate runs.",
   "gates": [
     {
@@ -94,20 +94,20 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-07-30T12:20:31-04:00",
+    "updated_at": "2026-07-30T14:51:54-04:00",
     "targets": {
       "forward-conformance": {
-        "built_at": "2026-07-30T12:19:12-04:00",
+        "built_at": "2026-07-30T14:51:54-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\conformance\\Plato.ForwardConformanceTests\\Plato.ForwardConformanceTests.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\forward-conformance.log",
         "configuration": "Release",
         "exit_code": 1,
-        "total_errors": 85,
+        "total_errors": 41,
         "total_warnings": 0,
-        "summary_errors": 85,
+        "summary_errors": 41,
         "summary_warnings": 0,
         "by_code": {
-          "CS1061": 62,
+          "CS1061": 18,
           "CS1929": 10,
           "CS0029": 5,
           "CS0019": 2,
@@ -118,7 +118,7 @@
         },
         "by_category": {
           "missing_member": {
-            "count": 62,
+            "count": 18,
             "label": "Missing member on receiver (CS1061)",
             "codes": [
               "CS1061"
@@ -159,7 +159,7 @@
         "warning_by_code": {}
       },
       "plato-cli": {
-        "built_at": "2026-07-30T12:19:39-04:00",
+        "built_at": "2026-07-30T14:51:03-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\Plato.CLI\\Plato.CLI.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\plato-cli.log",
         "configuration": "Release",
@@ -201,15 +201,30 @@
         "warning_by_code": {}
       }
     },
-    "latest_target": "plato-generated-optimized",
+    "latest_target": "forward-conformance",
     "latest": {
-      "target": "plato-generated-optimized",
-      "total_errors": 0,
+      "target": "forward-conformance",
+      "total_errors": 41,
       "total_warnings": 0,
-      "built_at": "2026-07-30T12:20:31-04:00",
-      "exit_code": 0,
-      "by_category": {},
-      "by_code_top": {}
+      "built_at": "2026-07-30T14:51:54-04:00",
+      "exit_code": 1,
+      "by_category": {
+        "missing_member": 18,
+        "extension_receiver": 10,
+        "other": 6,
+        "cannot_implicitly_convert": 5,
+        "operator_type_mismatch": 2
+      },
+      "by_code_top": {
+        "CS1061": 18,
+        "CS1929": 10,
+        "CS0029": 5,
+        "CS0019": 2,
+        "CS0023": 2,
+        "CS1662": 2,
+        "CS0266": 1,
+        "CS1501": 1
+      }
     }
   }
 }
