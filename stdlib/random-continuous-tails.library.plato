@@ -6,8 +6,11 @@
 // and the peaked LaplaceDistribution, the lifetime and power-law
 // WeibullDistribution and ParetoDistribution, the bounded
 // TriangularDistribution, and the circular VonMisesDistribution. All bodies
-// here are exact except the von Mises ones, which need the modified Bessel
-// functions and carry a `TODO(content):` instead.
+// here are exact closed forms; the Weibull moments and the von Mises bodies
+// go through `Gamma` and the modified Bessel functions `BesselI0`/`BesselI1`
+// of the `numbers-special-*` libraries, so their accuracy is bounded by the
+// accuracy stated on those functions. The von Mises CDF alone remains
+// unimplemented (it has no closed form; see its site).
 
 library RandomContinuousTails
 {
@@ -81,11 +84,14 @@ library RandomContinuousTails
     // Scale > 0.
     // https://en.wikipedia.org/wiki/Weibull_distribution
 
-    // TODO(content): Mean(WeibullDistribution) is lambda * Gamma(1 + 1/k),
-    // which needs the gamma function; omitted rather than approximated.
+    // The mean: lambda * Gamma(1 + 1/k).
+    Mean(self: WeibullDistribution): Number
+        => self.Scale * Gamma(1.0 + 1.0 / self.Shape);
 
-    // TODO(content): Variance(WeibullDistribution) is
-    // lambda^2 * (Gamma(1 + 2/k) - Gamma(1 + 1/k)^2); same gap.
+    // The variance: lambda^2 * (Gamma(1 + 2/k) - Gamma(1 + 1/k)^2).
+    Variance(self: WeibullDistribution): Number
+        => self.Scale.Square
+         * (Gamma(1.0 + 2.0 / self.Shape) - Gamma(1.0 + 1.0 / self.Shape).Square);
 
     // The Weibull density: (k/lambda) * (v/lambda)^(k-1) * exp(-(v/lambda)^k)
     // for v >= 0, zero for negative v. Exact — no special functions needed.
@@ -194,14 +200,22 @@ library RandomContinuousTails
     Mean(self: VonMisesDistribution): Number
         => self.MeanDirection.Radians;
 
-    // TODO(content): Variance(VonMisesDistribution) is the circular variance
-    // 1 - I1(kappa)/I0(kappa), which needs the modified Bessel functions of the
-    // first kind. This tree declares none, so it is omitted rather than
-    // approximated.
+    // The circular variance 1 - I1(kappa)/I0(kappa): 0 as kappa -> infinity
+    // (all mass at the mean direction), 1 at kappa = 0 (uniform on the circle,
+    // since I1(0) = 0 and I0(0) = 1).
+    Variance(self: VonMisesDistribution): Number
+        => 1.0 - BesselI1(self.Concentration) / BesselI0(self.Concentration);
 
-    // TODO(content): Pdf(VonMisesDistribution, Number) is
-    // exp(kappa * cos(v - mu)) / (2*pi*I0(kappa)); same Bessel gap.
+    // The von Mises density: exp(kappa * cos(v - mu)) / (2*pi * I0(kappa)),
+    // with v the angle in radians. Periodic with period 2*pi, so no support
+    // guard is needed; at kappa = 0 it is the circular uniform 1/(2*pi).
+    Pdf(self: VonMisesDistribution, value: Number): Number
+        => (self.Concentration
+            * Angle(value - self.MeanDirection.Radians).Cos).Exp
+         / (Number.Tau * BesselI0(self.Concentration));
 
     // TODO(content): Cdf(VonMisesDistribution, Number) has no closed form at
-    // all — it is a Bessel series — and is omitted.
+    // all — it is an infinite Bessel series (a sum over I_j(kappa)/j terms),
+    // not expressible through I0/I1 alone — and is omitted rather than
+    // truncated by guesswork.
 }
