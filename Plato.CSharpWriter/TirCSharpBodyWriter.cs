@@ -640,6 +640,53 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     private static string WrapperOfPrim(string prim)
         => CSharpWriter.ScalarPrimitives.FirstOrDefault(kv => kv.Value == prim).Key;
 
+    // Emits a call whose callee declares a `_` (ignored, type-level) receiver as the C# STATIC it
+    // is: `{ns}.{ReceiverType}.{Name}(rest)`. Returns false when the call is not type-level or the
+    // receiver type cannot be named, leaving the generic member form to handle it.
+    private bool TryWriteTypeLevelCall(TirCall call)
+    {
+        var callee = call.Callee;
+        var args = call.Args;
+        if (callee == null || args.Count == 0 || callee.NumParameters != args.Count)
+            return false;
+        if (callee.GetParameterName(0) != "_")
+            return false;
+        // The IArrayLike scaffolding (NumComponents / CreateFromComponents / CreateFromComponent /
+        // Components) declares a `_` receiver but the emitter generates NO static for it — the
+        // handwritten runtime provides it in receiver form (`v.NumComponents()`). Same for every
+        // other name on the "implemented elsewhere" list.
+        if (CSharpWriter.IgnoredFunctions.Contains(call.Name))
+            return false;
+        // A receiver written as the type itself is already static-shaped.
+        if (TirRewrite.StripCoerce(args[0]) is TirTypeRef)
+            return false;
+
+        var recvTypeName = TirRewrite.StripCoerce(args[0])?.Type?.Name
+                           ?? (call.ParameterTypes.Count > 0 ? call.ParameterTypes[0]?.Name : null);
+        // Under --scalar=float the receiver's type may already read as the primitive; the STATIC
+        // lives on the wrapper struct (Ara3D.Geometry.Number.Pi), which is where the handwritten
+        // Plato.Intrinsics surface declares it.
+        if (recvTypeName != null && CSharpWriter.ScalarPrimitives.ContainsValue(recvTypeName))
+            recvTypeName = WrapperOfPrim(recvTypeName);
+        if (recvTypeName == null || !_tw.Writer.IsConcreteTypeName(recvTypeName))
+            return false;
+
+        Write($"{_tw.Writer.Namespace}.{recvTypeName}.{call.Name}");
+        if (args.Count > 1)
+        {
+            Write("(");
+            WriteArgs(args.Skip(1));
+            Write(")");
+            return true;
+        }
+        // No further arguments: a GENERATED nullary static emits as a method under --no-properties;
+        // a handwritten one (Number.Pi, Number.MinValue) is a static field and keeps member syntax.
+        var plan = _tw.Writer.GetExtensionPlanByTypeName(recvTypeName);
+        if (plan != null && plan.GeneratedNoArgStaticNames.Contains(call.Name))
+            Write("()");
+        return true;
+    }
+
     private void WriteCall(TirCall call)
     {
         // Under scalar lowering every scalar-returning-wrapper call site already carries an explicit
@@ -690,6 +737,15 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             Write(")");
             return;
         }
+
+        // A `_` receiver is Plato's TYPE-LEVEL idiom (`FromOffset(_: Point2D, v: Vector2D): Point2D`,
+        // `Pi(_: Number): Number`): the member emits as a C# STATIC (CSharpFunctionInfo.IsStatic),
+        // so a VALUE receiver at the call site must be replaced by the receiver's type name — C#
+        // rejects `p.FromOffset(v)` for a static with CS0176 (472 in the forward stdlib). The
+        // ignored receiver argument is dropped. A type-ref receiver already reads as the type and
+        // falls through to the generic member form below.
+        if (TryWriteTypeLevelCall(call))
+            return;
 
         // A lowered-loop result temp is a C# ARRAY: Count reads become Length.
         if (name == "Count" && args.Count == 1 && TirRewrite.StripCoerce(args[0]) is TirTempRef)

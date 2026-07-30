@@ -95,6 +95,16 @@ namespace Ara3D.Geometry
         public static Number MaxValue = float.MaxValue;
         public static Number Zero = 0;
         public static Number One = 1;
+
+        // The mathematical constants the forward stdlib declares as `_`-receiver intrinsics
+        // (`Pi(_: Number): Number`, stdlib/intrinsics-scalars.library.plato). A `_` receiver is
+        // Plato's type-level idiom, so a moved extension body re-qualifies the bare name to a
+        // STATIC read on the wrapper (`Ara3D.Geometry.Number.Tau`) — the same shape as the
+        // limits above. See NumberIntrinsics for the value-receiver shape (`0.0.Pi`).
+        public static Number Pi = MathF.PI;
+        public static Number Tau = MathF.Tau;
+        public static Number E = MathF.E;
+        public static Number Epsilon = float.Epsilon;
     }
 
     /// <summary>
@@ -321,6 +331,21 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Number ReciprocalSquareRootEstimate(this Number self) => MathF.ReciprocalSqrtEstimate(self.Value);
 
         // TODO: Figure out why these aren't being provided by Plato
+
+        // The value-receiver shape of the `_`-receiver constants (stdlib documents `0.0.Pi` as
+        // reading the constant with the receiver's value ignored). Under --scalar=float the
+        // receiver is the erased primitive, and an extension method does not apply the
+        // float -> Number implicit conversion to its receiver, so both receiver types are
+        // declared. Statics only (no generated forwarder competes: the emitter never generates
+        // primitive forwarders for `_`-receiver members).
+        [MethodImpl(AggressiveInlining)] public static Number Pi(this Number _) => Number.Pi;
+        [MethodImpl(AggressiveInlining)] public static Number Tau(this Number _) => Number.Tau;
+        [MethodImpl(AggressiveInlining)] public static Number E(this Number _) => Number.E;
+        [MethodImpl(AggressiveInlining)] public static Number Epsilon(this Number _) => Number.Epsilon;
+        [MethodImpl(AggressiveInlining)] public static float Pi(this float _) => MathF.PI;
+        [MethodImpl(AggressiveInlining)] public static float Tau(this float _) => MathF.Tau;
+        [MethodImpl(AggressiveInlining)] public static float E(this float _) => MathF.E;
+        [MethodImpl(AggressiveInlining)] public static float Epsilon(this float _) => float.Epsilon;
 
         public static Number Cubic(this Number self, Number a, Number b, Number c, Number d) => a.Pow3() * self + b.Pow2() * self + c * self + d;
         public static Number Linear(this Number self, Number a, Number b) => a * self + b;

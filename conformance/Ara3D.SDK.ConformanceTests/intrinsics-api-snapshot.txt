@@ -285,9 +285,13 @@ TYPE Matrix4x4 (struct)
   static Matrix4x4 Identity()
 TYPE Number (struct)
   ctor (Single)
+  field Number E
+  field Number Epsilon
   field Number MaxValue
   field Number MinValue
   field Number One
+  field Number Pi
+  field Number Tau
   field Number Zero
   field Single Value
   method Boolean AlmostZero()
@@ -325,6 +329,8 @@ TYPE NumberIntrinsics (static class)
   ext Number Clamp(Number, Number, Number)
   ext Number CopySign(Number, Number)
   ext Number Cubic(Number, Number, Number, Number, Number)
+  ext Number E(Number)
+  ext Number Epsilon(Number)
   ext Number Exp(Number)
   ext Number Floor(Number)
   ext Number FusedMultiplyAdd(Number, Number, Number)
@@ -339,6 +345,7 @@ TYPE NumberIntrinsics (static class)
   ext Number Min(Number, Number)
   ext Number MinMagnitude(Number, Number)
   ext Number NaturalLog(Number)
+  ext Number Pi(Number)
   ext Number Pow(Number, Number)
   ext Number Quadratic(Number, Number, Number, Number)
   ext Number Reciprocal(Number)
@@ -351,7 +358,12 @@ TYPE NumberIntrinsics (static class)
   ext Number ScaleB(Number, Integer)
   ext Number Sqrt(Number)
   ext Number Square(Number)
+  ext Number Tau(Number)
   ext Number Truncate(Number)
+  ext Single E(Single)
+  ext Single Epsilon(Single)
+  ext Single Pi(Single)
+  ext Single Tau(Single)
 TYPE Plane (struct)
   ctor (Plane)
   ctor (Vector3, Number)
