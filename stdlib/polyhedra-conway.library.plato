@@ -1,11 +1,12 @@
 //==
 // # PolyhedraConway — dual, ambo and truncate on polygon meshes
 //
-// The three Conway polyhedron operators
+// The three core Conway polyhedron operators
 // (https://en.wikipedia.org/wiki/Conway_polyhedron_notation) that generate the
 // catalog: applied to the Platonic seeds of `polyhedra-seeds.library.plato`
 // they produce the Archimedean and Catalan solids
-// (`polyhedra-catalog.library.plato` names the results).
+// (`polyhedra-catalog.library.plato` names the results). The expand, snub and
+// bevel operators live in `polyhedra-conway-expansion.library.plato`.
 //
 // Each operator is the same three lines — new positions, new faces around the
 // old faces, new faces around the old vertices — because the corner numbering
@@ -40,16 +41,27 @@ library PolyhedraConway
     // while E is unchanged (https://en.wikipedia.org/wiki/Dual_polyhedron).
     // Cube <-> octahedron, dodecahedron <-> icosahedron, tetrahedron is self-dual.
 
+    // The outward unit normal of a face: its Newell vector area
+    // (`polygons-kernels.library.plato`), normalized. Exact for a planar face,
+    // and the least-squares plane normal of a nearly planar one.
+    // Precondition: the face is non-degenerate.
+    FaceUnitNormal(self: PolygonMesh3D, face: Integer): Vector3D
+        => self.FacePositions(face).VectorArea.Normalize;
+
     // One dual vertex per face, placed by polar reciprocation about the unit
-    // sphere: the face through centroid c lies in the plane { x : x.p = 1 } for
-    // p = c / |c|^2, and p is that face's dual vertex
+    // sphere: a face lying in the plane { x : x.n = d } (unit normal n, support
+    // distance d = n.centroid) reciprocates to the point n / d
     // (https://en.wikipedia.org/wiki/Dual_polyhedron#Polar_reciprocation). Every
-    // dual face then lies in a plane by construction, which is what keeps the
-    // Catalan solids planar — the face centroids alone do not.
+    // dual face then lies in a plane by construction — all reciprocals of planes
+    // through a point v lie in { x : x.v = 1 } — which is what keeps the Catalan
+    // solids planar; the face centroids alone do not, and centroid / |centroid|^2
+    // is only right when the centroid ray is perpendicular to the face (true for
+    // a face with a symmetry axis, false for e.g. the edge-triangles of a snub).
     // Precondition: no face plane passes through the origin.
     PolarVertices(self: PolygonMesh3D): Array<Point3D>
-        => self.FaceCentroids.Map(c =>
-            (c.PositionVector / c.PositionVector.MagnitudeSquared).ToPoint);
+        => self.FaceCount.MapRange(f =>
+            (self.FaceUnitNormal(f)
+                / self.FaceUnitNormal(f).Dot(self.FaceCentroid(f).PositionVector)).ToPoint);
 
     // The dual face of a vertex: the faces meeting at it, named by the dual
     // vertices they became. Taken in REVERSED rotation order — a face built
