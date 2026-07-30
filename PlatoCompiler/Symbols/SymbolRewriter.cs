@@ -19,16 +19,37 @@ namespace Ara3D.Geometry.Compiler.Symbols
 
             body = ExpressionBodyToStatementBody(body);
 
+            // plato-308: plan every substitution, then apply them in ONE rewrite. Replacing one
+            // capture at a time rebuilt the tree, so every later capture symbol lost reference
+            // identity with it and its `_varN` was declared but never used — the lambda kept the
+            // original reference. Invisible for an ordinary parameter (still in scope inside the
+            // closure), fatal for the receiver of a struct member, which cannot be named `this`
+            // inside a lambda: TriangleFace.Edges emitted `self.At(i)` and failed with CS0103.
+            // The captured reference objects come from FunctionDef.CapturedSymbols, computed when
+            // the lambda's FunctionDef was built — every later pass that rebuilds the body leaves
+            // them pointing at nodes the tree no longer contains, so ReferenceEquals never matched.
+            // Substitute on the parameter DEFINITION instead, which survives every rebuild.
+            var hoists = new List<VariableDef>();
+            var byDef = new Dictionary<DefSymbol, Symbol>();
+
             foreach (var capture in capturedVars)
             {
                 if (!(capture is ParameterRefSymbol param))
                     throw new Exception("Only parameter captures supported right now");
 
                 var newVarDef = new VariableDef(null, $"_var{NextId++}", param.Type, param);
-                body = new BlockStatement(
-                    newVarDef,
-                    body.Replace(param, newVarDef.ToReference()));
+                hoists.Add(newVarDef);
+                if (param.Def != null && !byDef.ContainsKey(param.Def))
+                    byDef[param.Def] = newVarDef.ToReference();
             }
+
+            body = body.Rewrite(sym => sym is ParameterRefSymbol p && p.Def != null && byDef.TryGetValue(p.Def, out var r)
+                ? (r, false)
+                : (sym, true));
+
+            // Innermost block = the first capture in pre-order.
+            foreach (var hoist in hoists)
+                body = new BlockStatement(hoist, body);
 
             return body;
         }
@@ -57,9 +78,20 @@ namespace Ara3D.Geometry.Compiler.Symbols
         }
 
         public static Symbol Replace(this Symbol self, Symbol target, Symbol replace)
-            => self.Rewrite(sym => ReferenceEquals(sym, target) 
-                ? (replace, false) 
+            => self.Rewrite(sym => ReferenceEquals(sym, target)
+                ? (replace, false)
                 : (sym, true));
+
+        /// <summary>Replace every symbol identity in <paramref name="subs"/> with its partner in a
+        /// single rewrite, so no substitution is lost to the rebuild an earlier one caused.</summary>
+        public static Symbol Replace(this Symbol self, IReadOnlyList<(Symbol Target, Symbol Replacement)> subs)
+            => self.Rewrite(sym =>
+            {
+                for (var i = 0; i < subs.Count; ++i)
+                    if (ReferenceEquals(sym, subs[i].Target))
+                        return (subs[i].Replacement, false);
+                return (sym, true);
+            });
 
         public static T[] RewriteList<T>(this IEnumerable<T> self, Func<Symbol, (Symbol, bool)> f) where T: Symbol
             => self.Select(s => s.TypedRewrite(f)).WhereNotNull().ToArray();

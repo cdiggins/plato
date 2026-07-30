@@ -32,6 +32,17 @@ namespace Ara3D.Geometry
             get => Value.D;
         }
 
+        /// <summary>
+        /// The Hesse-form signed distance from the world origin, measured along
+        /// <see cref="Normal"/>. The forward stdlib spells this member `Distance`; `D` is the
+        /// System.Numerics parity name and stays for the V1/V2 generated libraries.
+        /// </summary>
+        public Number Distance
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Value.D;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Plane WithNormal(Vector3 normal)
             => new(normal, D);
@@ -39,6 +50,11 @@ namespace Ara3D.Geometry
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Plane WithD(Number d)
             => new(Normal, d);
+
+        // Forward-stdlib Hashable obligation; exact `int` return (see Angle.Hash).
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int Hash()
+            => Value.GetHashCode();
 
         // --------------------------------------------------------------------
         // Constructors

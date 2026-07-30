@@ -112,5 +112,15 @@ using System.Runtime.Serialization;
             [MethodImpl(AggressiveInlining)]
             public static Boolean ExclusiveOr(this Boolean self, Boolean other)
                 => self.Value ^ other;
+
+            // Forward-stdlib scalar obligations; exact `int` returns for the scalar-erased
+            // Comparable/Hashable obligations (see the same note on Angle.Compare/Hash).
+            [MethodImpl(AggressiveInlining)]
+            public static int Compare(this Boolean a, Boolean b)
+                => a.Value.CompareTo(b.Value);
+
+            [MethodImpl(AggressiveInlining)]
+            public static int Hash(this Boolean self)
+                => self.Value.GetHashCode();
         }
     }

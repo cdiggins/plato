@@ -9,8 +9,6 @@ namespace Ara3D.Geometry
     /// </summary>
     internal static class IntrinsicsV2TestShims
     {
-        public static Number Pow2(this Number x) => new(x.Value * x.Value);
-        public static Number Pow3(this Number x) => new(x.Value * x.Value * x.Value);
         public static bool AlmostZero(this Vector3 v) => v.Value.LengthSquared() < 1e-12f;
     }
 }

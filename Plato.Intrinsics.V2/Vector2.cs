@@ -186,8 +186,14 @@ namespace Ara3D.Geometry
         /// Returns the minimum of two <see cref="Vector2"/> instances.
         /// </summary>
         [MethodImpl(AggressiveInlining)]
-        public static float Dot(Vector2 value1, Vector2 value2) 
+        public static float Dot(Vector2 value1, Vector2 value2)
             => SNVector2.Dot(value1, value2);
 
+        /// <summary>
+        /// A vector with every component set to <paramref name="x"/>. The forward stdlib's
+        /// component vocabulary derives Zero/One/MinValue/MaxValue from this primitive.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public Vector2 Broadcast(Number x) => new(x, x);
     }
 }

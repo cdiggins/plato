@@ -105,6 +105,21 @@ namespace Ara3D.Geometry
         public static Matrix4x4 operator /(Matrix4x4 value1, Number f)
             => value1.Value * f.ReciprocalEstimate();
 
+        // Transform-on-the-left. The stdlib declares `Multiply(matrix, self)` as an explicit
+        // alias for `Transform(self, matrix)` (stdlib/intrinsics-vectors.library.plato).
+
+        [MethodImpl(AggressiveInlining)]
+        public static Vector2 operator *(Matrix4x4 matrix, Vector2 self)
+            => self.Transform(matrix);
+
+        [MethodImpl(AggressiveInlining)]
+        public static Vector3 operator *(Matrix4x4 matrix, Vector3 self)
+            => self.Transform(matrix);
+
+        [MethodImpl(AggressiveInlining)]
+        public static Vector4 operator *(Matrix4x4 matrix, Vector4 self)
+            => self.Transform(matrix);
+
         // --------------------------------------------------------------------------------
         // Example "Create*" static methods (forwarded)
         // --------------------------------------------------------------------------------
@@ -120,6 +135,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)]
         public static Matrix4x4 CreateScale(Number xScale, Number yScale, Number zScale)
             => SNMatrix4x4.CreateScale(xScale, yScale, zScale);
+
+        /// <summary>Per-axis scale. Declared by the forward stdlib as
+        /// <c>CreateScale(_: Matrix4x4, scales: Number3)</c>; Matrix3x2 already had the
+        /// vector-valued twin, Matrix4x4 did not.</summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Matrix4x4 CreateScale(Vector3 scales)
+            => SNMatrix4x4.CreateScale(scales);
 
         [MethodImpl(AggressiveInlining)]
         public static Matrix4x4 CreateRotationX(Angle angle)
@@ -290,6 +312,8 @@ namespace Ara3D.Geometry
         // Exact `int`/`float` signatures: these discharge the (scalar-erased) MatrixLike
         // obligations the forward-stdlib generation declares on the Matrix4x4 partial, and
         // interface implementation demands the exact erased types.
+
+        [MethodImpl(AggressiveInlining)] public int Hash() => Value.GetHashCode();
 
         [MethodImpl(AggressiveInlining)] public int RowCount() => 4;
 

@@ -43,6 +43,16 @@ public static class TirLambdaCaptureRewriter
         if (!IsStatement(body))
             body = new TirReturn(body, body.Origin);
 
+        // plato-308: the substitution is planned for ALL captures first and applied in ONE
+        // rebuild. Replacing them one at a time rebuilt the tree after the first hoist, so every
+        // later capture node lost reference identity with the tree and its `_varN` local was
+        // declared but never used — leaving the original reference in the lambda. Harmless for a
+        // captured parameter (still in scope inside the closure), fatal for `self` in a struct
+        // method, which cannot legally appear inside a lambda at all: TriangleFace.Edges and
+        // friends emitted `self.At(i)` and failed with CS0103.
+        var lets = new List<TirLet>();
+        var byDef = new Dictionary<object, TirNode>();
+
         foreach (var capture in captures)
         {
             // Only a captured PARAMETER may be hoisted: it is in scope at the body's top, so
@@ -55,10 +65,17 @@ public static class TirLambdaCaptureRewriter
             if (!(capture is TirParameter))
                 continue;
             var def = new VariableDef(null, $"_var{SymbolRewriter.NextId++}", capture.Type, null);
-            var let = new TirLet(def, capture, capture.Type, capture.Origin);
-            var replaced = ReplaceNode(body, capture, new TirVariable(def, capture.Type, capture.Origin));
-            body = new TirBlock(new List<TirNode> { let, replaced }, body.Origin);
+            lets.Add(new TirLet(def, capture, capture.Type, capture.Origin));
+            var key = ((TirParameter)capture).Def;
+            if (key != null && !byDef.ContainsKey(key))
+                byDef[key] = new TirVariable(def, capture.Type, capture.Origin);
         }
+
+        body = ReplaceNodes(body, byDef);
+
+        // Innermost block = the first capture in pre-order, as the reference rewriter produced.
+        foreach (var let in lets)
+            body = new TirBlock(new List<TirNode> { let, body }, body.Origin);
 
         return body;
     }
@@ -94,17 +111,19 @@ public static class TirLambdaCaptureRewriter
     private static bool IsStatement(TirNode n)
         => n is TirBlock || n is TirReturn || n is TirIf || n is TirLoop;
 
-    /// <summary>Rebuild the tree with the single node identity <paramref name="target"/> replaced
-    /// by <paramref name="replacement"/> (reference equality, one occurrence).</summary>
-    private static TirNode ReplaceNode(TirNode n, TirNode target, TirNode replacement)
+    /// <summary>Rebuild the tree, replacing every parameter reference whose DEFINITION is a key of
+    /// <paramref name="subs"/> with the hoisted local. Definition-keyed rather than node-identity
+    /// keyed: the capture nodes are collected before this rebuild, and matching on them alone
+    /// silently dropped every substitution after the first.</summary>
+    private static TirNode ReplaceNodes(TirNode n, Dictionary<object, TirNode> subs)
     {
         if (n == null)
             return null;
-        if (ReferenceEquals(n, target))
-            return replacement;
+        if (n is TirParameter p && p.Def != null && subs.TryGetValue(p.Def, out var repl))
+            return repl;
 
         List<TirNode> Rw(IReadOnlyList<TirNode> ns)
-            => ns?.Select(x => ReplaceNode(x, target, replacement)).ToList();
+            => ns?.Select(x => ReplaceNodes(x, subs)).ToList();
 
         switch (n)
         {
@@ -112,36 +131,36 @@ public static class TirLambdaCaptureRewriter
                 return new TirCall(c.Callee, c.EmissionKind, c.ParameterTypes, c.ReturnType,
                     Rw(c.Args), c.Type, c.Origin, c.Name);
             case TirCoerce co:
-                return new TirCoerce(ReplaceNode(co.Inner, target, replacement), co.FromType, co.ToType,
+                return new TirCoerce(ReplaceNodes(co.Inner, subs), co.FromType, co.ToType,
                     co.ConversionFn, co.Origin);
             case TirInvoke inv:
-                return new TirInvoke(ReplaceNode(inv.Target, target, replacement), Rw(inv.Args), inv.Type, inv.Origin);
+                return new TirInvoke(ReplaceNodes(inv.Target, subs), Rw(inv.Args), inv.Type, inv.Origin);
             case TirConditional cond:
-                return new TirConditional(ReplaceNode(cond.Condition, target, replacement),
-                    ReplaceNode(cond.IfTrue, target, replacement),
-                    ReplaceNode(cond.IfFalse, target, replacement), cond.Type, cond.Origin);
+                return new TirConditional(ReplaceNodes(cond.Condition, subs),
+                    ReplaceNodes(cond.IfTrue, subs),
+                    ReplaceNodes(cond.IfFalse, subs), cond.Type, cond.Origin);
             case TirNew nw:
                 return new TirNew(nw.NewType, Rw(nw.Args), nw.Type, nw.Origin);
             case TirArray arr:
                 return new TirArray(Rw(arr.Elements), arr.Type, arr.Origin);
             case TirAssign asg:
-                return new TirAssign(ReplaceNode(asg.LValue, target, replacement),
-                    ReplaceNode(asg.RValue, target, replacement), asg.Type, asg.Origin);
+                return new TirAssign(ReplaceNodes(asg.LValue, subs),
+                    ReplaceNodes(asg.RValue, subs), asg.Type, asg.Origin);
             case TirLambda lam:
-                return new TirLambda(lam.Parameters, ReplaceNode(lam.Body, target, replacement), lam.Type, lam.Origin);
+                return new TirLambda(lam.Parameters, ReplaceNodes(lam.Body, subs), lam.Type, lam.Origin);
             case TirLet let:
-                return new TirLet(let.Def, ReplaceNode(let.Value, target, replacement), let.Type, let.Origin);
+                return new TirLet(let.Def, ReplaceNodes(let.Value, subs), let.Type, let.Origin);
             case TirBlock b:
                 return new TirBlock(Rw(b.Statements), b.Origin);
             case TirReturn r:
-                return new TirReturn(ReplaceNode(r.Value, target, replacement), r.Origin);
+                return new TirReturn(ReplaceNodes(r.Value, subs), r.Origin);
             case TirIf iff:
-                return new TirIf(ReplaceNode(iff.Condition, target, replacement),
-                    ReplaceNode(iff.IfTrue, target, replacement),
-                    ReplaceNode(iff.IfFalse, target, replacement), iff.Origin);
+                return new TirIf(ReplaceNodes(iff.Condition, subs),
+                    ReplaceNodes(iff.IfTrue, subs),
+                    ReplaceNodes(iff.IfFalse, subs), iff.Origin);
             case TirLoop l:
-                return new TirLoop(ReplaceNode(l.Condition, target, replacement),
-                    ReplaceNode(l.Body, target, replacement), l.Origin);
+                return new TirLoop(ReplaceNodes(l.Condition, subs),
+                    ReplaceNodes(l.Body, subs), l.Origin);
             case TirUnresolved u:
                 return new TirUnresolved(u.Original, u.Reason, Rw(u.ChildNodes));
             default:

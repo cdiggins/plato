@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ArrayExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Boolean.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Character.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GridExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Integer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Intrinsics.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Matrix3x2.cs" />

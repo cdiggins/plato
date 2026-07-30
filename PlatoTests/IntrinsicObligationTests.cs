@@ -113,37 +113,10 @@ namespace PlatoTests
                 .OrderBy(s => s)
                 .ToList();
 
-        /// <summary>The forward stdlib's KNOWN undischarged obligations (measured 2026-07-30; a
-        /// worklist to SHRINK, never grow). Nine already fail the forward-conformance C# build as
-        /// CS1061 (Number.IsNaN/IsInfinite/IsFinite/ToInteger/ToNumber, Plane.Hash, Quaternion.Hash,
-        /// Matrix Hash x2); the rest are latent — declared but not yet CALLED by any generated body,
-        /// so the C# build cannot see them. Fix by adding the V2 member (method form) and deleting
-        /// the entry here.</summary>
-        private static readonly IReadOnlyList<string> ForwardKnownMissing = new[]
-        {
-            "Boolean.Compare",
-            "Boolean.Hash",
-            "Integer.BitwiseNot",
-            "Integer.BitwiseXor",
-            "Integer.Compare",
-            "Integer.Hash",
-            "Integer.Max",
-            "Integer.Min",
-            "Integer.Repeat",
-            "Integer.ShiftLeft",
-            "Integer.ShiftRight",
-            "Integer.ToNumber",
-            "Matrix3x2.Hash",
-            "Matrix4x4.Hash",
-            "Number.Compare",
-            "Number.Hash",
-            "Number.IsFinite",
-            "Number.IsInfinite",
-            "Number.IsNaN",
-            "Number.ToInteger",
-            "Plane.Hash",
-            "Quaternion.Hash",
-        };
+        /// <summary>The forward stdlib's KNOWN undischarged obligations — a worklist to SHRINK,
+        /// never grow. The original 22 entries (measured when the gate landed 2026-07-30) were
+        /// discharged as a V2 content increment the same day; new entries need a reason.</summary>
+        private static readonly IReadOnlyList<string> ForwardKnownMissing = Array.Empty<string>();
 
         private static IReadOnlyList<string> AssertScopeSane(Compilation comp, string corpusName)
         {

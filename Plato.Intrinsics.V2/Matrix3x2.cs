@@ -99,6 +99,12 @@ namespace Ara3D.Geometry
         public static Matrix3x2 operator *(Matrix3x2 value1, Number scalar)
             => FromSystem(value1.Value * scalar);
 
+        // Transform-on-the-left. The stdlib declares `Multiply(matrix, self)` as an explicit
+        // alias for `Transform(self, matrix)` (stdlib/intrinsics-vectors.library.plato).
+        [MethodImpl(AggressiveInlining)]
+        public static Vector2 operator *(Matrix3x2 matrix, Vector2 self)
+            => self.Transform(matrix);
+
         [MethodImpl(AggressiveInlining)]
         public static Matrix3x2 operator *(Number scalar, Matrix3x2 value1)
             => value1 * scalar;
@@ -143,6 +149,17 @@ namespace Ara3D.Geometry
         public static Matrix3x2 CreateRotation(Number radians, Vector2 centerPoint)
             => SNMatrix3x2.CreateRotation(radians, centerPoint);
 
+        // The forward stdlib declares these as `CreateRotation(_: Matrix3x2, angle: Angle)`,
+        // the legacy stdlib as `radians: Number`. Angle and Number both need a user-defined
+        // conversion from the other, so one signature cannot serve both — overload instead.
+        [MethodImpl(AggressiveInlining)]
+        public static Matrix3x2 CreateRotation(Angle angle)
+            => SNMatrix3x2.CreateRotation(angle);
+
+        [MethodImpl(AggressiveInlining)]
+        public static Matrix3x2 CreateRotation(Angle angle, Vector2 centerPoint)
+            => SNMatrix3x2.CreateRotation(angle, centerPoint);
+
         // -------------------------------------------------------------------------------
         // Other useful static methods: Invert, Lerp, etc.
         // -------------------------------------------------------------------------------
@@ -170,6 +187,8 @@ namespace Ara3D.Geometry
         // Exact `int`/`float` signatures: these discharge the (scalar-erased) MatrixLike
         // obligations the forward-stdlib generation declares on the Matrix3x2 partial, and
         // interface implementation demands the exact erased types.
+
+        [MethodImpl(AggressiveInlining)] public int Hash() => Value.GetHashCode();
 
         [MethodImpl(AggressiveInlining)] public int RowCount() => 3;
 

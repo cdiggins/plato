@@ -347,8 +347,24 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static float E(this float _) => MathF.E;
         [MethodImpl(AggressiveInlining)] public static float Epsilon(this float _) => float.Epsilon;
 
+        // The V1 stdlib generated Pow2/Pow3 as instance members of Number; the forward stdlib
+        // declares neither, so Cubic/Quadratic below lose their receiver. Declared as extensions
+        // so the V1 instance members still win where they exist.
+        [MethodImpl(AggressiveInlining)] public static Number Pow2(this Number self) => self.Value * self.Value;
+        [MethodImpl(AggressiveInlining)] public static Number Pow3(this Number self) => self.Value * self.Value * self.Value;
+
         public static Number Cubic(this Number self, Number a, Number b, Number c, Number d) => a.Pow3() * self + b.Pow2() * self + c * self + d;
         public static Number Linear(this Number self, Number a, Number b) => a * self + b;
         public static Number Quadratic(this Number self, Number a, Number b, Number c) => a.Pow2() * self + b * self + c;
+
+        // Forward-stdlib scalar obligations (intrinsics-scalars.library.plato). Exact `int`
+        // returns for Compare/Hash: the scalar-erased Comparable/Hashable obligations demand the
+        // erased type (see the same note on Angle.Compare/Hash).
+        [MethodImpl(AggressiveInlining)] public static int Compare(this Number a, Number b) => a.Value.CompareTo(b.Value);
+        [MethodImpl(AggressiveInlining)] public static int Hash(this Number self) => self.Value.GetHashCode();
+        [MethodImpl(AggressiveInlining)] public static Boolean IsNaN(this Number self) => float.IsNaN(self.Value);
+        [MethodImpl(AggressiveInlining)] public static Boolean IsInfinite(this Number self) => float.IsInfinity(self.Value);
+        [MethodImpl(AggressiveInlining)] public static Boolean IsFinite(this Number self) => float.IsFinite(self.Value);
+        [MethodImpl(AggressiveInlining)] public static Integer ToInteger(this Number self) => (int)self.Value;
     }
 }

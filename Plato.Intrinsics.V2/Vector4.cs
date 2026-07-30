@@ -232,5 +232,12 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Vector4 WYXZ() => new(W, Y, X, Z);
         [MethodImpl(AggressiveInlining)] public Vector4 WZXY() => new(W, Z, X, Y);
         [MethodImpl(AggressiveInlining)] public Vector4 WZYX() => new(W, Z, Y, X);
+
+        /// <summary>
+        /// A vector with every component set to <paramref name="x"/>. The forward stdlib's
+        /// component vocabulary derives Zero/One/MinValue/MaxValue from this primitive.
+        /// </summary>
+        [MethodImpl(AggressiveInlining)]
+        public Vector4 Broadcast(Number x) => new(x, x, x, x);
     }
 }

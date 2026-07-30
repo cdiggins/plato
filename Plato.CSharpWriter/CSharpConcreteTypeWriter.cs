@@ -202,6 +202,8 @@ namespace Ara3D.Geometry.CSharpWriter
                 TypeWriter.WriteLine();
             }
 
+            WriteIntrinsicVectorBridge();
+
             TypeWriter.WriteLine("// Object virtual function overrides: Equals, GetHashCode, ToString");
             // MethodsOnly: Boolean-returning scaffolding erases to bool (and Equals(other) is
             // already a bool, so no .Value unwrap).
@@ -603,9 +605,24 @@ namespace Ara3D.Geometry.CSharpWriter
                             ? $"(({platoType}){ps[i]})"
                             : ps[i];
                     }
+                    bool IsScalar(int i)
+                    {
+                        var platoType = f.ParameterTypes[i]?.Name;
+                        return platoType != null && CSharpWriter.ScalarPrimitives.ContainsKey(platoType);
+                    }
+
+                    // plato-308: scalar-on-the-LEFT times a compound (Multiply(Number, Number4)).
+                    // The compound declares only `operator *(T, {prim})`, so the wrapper-cast form
+                    // `((Number)scalar) * right` has no candidate operator at all. Scalar
+                    // multiplication commutes for every type in this vocabulary, so emit the
+                    // operand order the compound actually declares.
+                    var commuteScalar = ps.Count == 2 && fi.OperatorName == "*" && IsScalar(0) && !IsScalar(1);
+
                     var impl = ps.Count == 1
                         ? $"{fi.OperatorName}{Operand(0)}"
-                        : $"{Operand(0)} {fi.OperatorName} {Operand(1)}";
+                        : commuteScalar
+                            ? $"{ps[1]} {fi.OperatorName} {ps[0]}"
+                            : $"{Operand(0)} {fi.OperatorName} {Operand(1)}";
                     tw.WriteLine($"{fi.ExtensionSignature} => {impl};");
                     AddBridge(fi);
                 }
@@ -1013,6 +1030,63 @@ namespace Ara3D.Geometry.CSharpWriter
             
             
             tw.WriteEndBlock();
+        }
+
+        /// <summary>
+        /// plato-308: the forward stdlib names its numeric tuples Number2/3/4/8 and its geometric
+        /// vectors Vector2D/3D, but the handwritten Plato.Intrinsics.V2 surface those declarations
+        /// bind to (Matrix4x4 rows, Vector4.Transform, Quaternion.Multiply, ...) traffics in
+        /// Vector2/3/4/8. The two are the same bits with different names, so the generated struct
+        /// declares the conversion pair. It cannot live on the intrinsic side: Plato.Intrinsics.V2
+        /// is a SHARED project and the legacy consumers do not generate Number4/Vector3D at all.
+        /// </summary>
+        public static Dictionary<string, string> IntrinsicVectorBridges = new Dictionary<string, string>
+        {
+            { "Number2", "Vector2" },
+            { "Number3", "Vector3" },
+            { "Number4", "Vector4" },
+            { "Number8", "Vector8" },
+            { "Vector2D", "Vector2" },
+            { "Vector3D", "Vector3" },
+            { "Point2D", "Vector2" },
+            { "Point3D", "Vector3" },
+            { "Direction2D", "Vector2" },
+            { "Direction3D", "Vector3" },
+        };
+
+        /// <summary>
+        /// Emits the implicit conversion pair between this type and its intrinsic twin (see
+        /// <see cref="IntrinsicVectorBridges"/>). Component-wise when the fields are the erased
+        /// scalars themselves; forwarded through the single field when the type merely wraps an
+        /// already-bridged type (Direction3D wraps Vector3D).
+        /// </summary>
+        public void WriteIntrinsicVectorBridge()
+        {
+            if (IsPrimitive || !Writer.ScalarErase)
+                return;
+            if (!IntrinsicVectorBridges.TryGetValue(SimpleName, out var intrinsic))
+                return;
+            if (!PrimitiveFieldNames.TryGetValue(intrinsic, out var comps))
+                return;
+
+            var tw = TypeWriter;
+            var floatType = Writer.FloatType;
+            tw.WriteLine($"// Intrinsic bridge: {SimpleName} and {intrinsic} are the same components under different names.");
+
+            if (FieldTypes.Count == comps.Length && FieldTypes.All(t => t == floatType))
+            {
+                var toIntrinsic = FieldNames.Select(f => $"self.{f}").JoinStringsWithComma();
+                var fromIntrinsic = comps.Select(c => $"value.{c}").JoinStringsWithComma();
+                tw.WriteLine($"{Attr} public static implicit operator {intrinsic}({Name} self) => new {intrinsic}({toIntrinsic});");
+                tw.WriteLine($"{Attr} public static implicit operator {Name}({intrinsic} value) => new {Name}({fromIntrinsic});");
+            }
+            else if (FieldTypes.Count == 1 && IntrinsicVectorBridges.TryGetValue(FieldTypes[0], out var inner) && inner == intrinsic)
+            {
+                tw.WriteLine($"{Attr} public static implicit operator {intrinsic}({Name} self) => ({intrinsic})self.{FieldNames[0]};");
+                tw.WriteLine($"{Attr} public static implicit operator {Name}({intrinsic} value) => new {Name}(({FieldTypes[0]})value);");
+            }
+
+            tw.WriteLine();
         }
 
         public static Dictionary<string, string[]> PrimitiveFieldNames = new Dictionary<string, string[]>

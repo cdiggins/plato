@@ -30,6 +30,9 @@ namespace Ara3D.Geometry
 
         public Number W { [MethodImpl(AggressiveInlining)] get => Value.W; }
 
+        // Forward-stdlib Hashable obligation; exact `int` return (see Angle.Hash).
+        [MethodImpl(AggressiveInlining)] public int Hash() => Value.GetHashCode();
+
         // Immutable "setters"
 
         [MethodImpl(AggressiveInlining)]
@@ -83,6 +86,21 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)]
         public static Quaternion operator /(Quaternion a, Quaternion b)
             => a.Value / b.Value;
+
+        // Rotation-on-the-left. The stdlib declares `Multiply(rotation, self)` as an explicit
+        // alias for `Transform(self, rotation)` (stdlib/intrinsics-vectors.library.plato).
+
+        [MethodImpl(AggressiveInlining)]
+        public static Vector2 operator *(Quaternion rotation, Vector2 self)
+            => self.Transform(rotation);
+
+        [MethodImpl(AggressiveInlining)]
+        public static Vector3 operator *(Quaternion rotation, Vector3 self)
+            => self.Transform(rotation);
+
+        [MethodImpl(AggressiveInlining)]
+        public static Vector4 operator *(Quaternion rotation, Vector4 self)
+            => self.Transform(rotation);
 
         // Forwarded static methods
 

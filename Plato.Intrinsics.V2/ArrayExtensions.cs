@@ -202,4 +202,12 @@ public static class ArrayExtensions
     public static ReadOnlyList<U> MapQuartets<T, U>(this IReadOnlyList<T> xs, Func<T, T, T, T, U> f)
         => xs.SelectQuartets(f);
 
+    /// <summary>
+    /// The array intrinsic <c>Concatenate(xs: Array&lt;$T&gt;, ys: Array&lt;$T&gt;)</c>. Ara3D.Collections
+    /// spells it <c>Concat</c>, so without this alias every call bound to the only Concatenate in
+    /// scope — QuaternionExtensions.Concatenate — and reported a Quaternion receiver mismatch.
+    /// </summary>
+    [MethodImpl(AggressiveInlining)]
+    public static ReadOnlyList<T> Concatenate<T>(this IReadOnlyList<T> xs, IReadOnlyList<T> ys)
+        => xs.Concat(ys);
 }

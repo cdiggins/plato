@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using Ara3D.Collections;
 using static System.Runtime.CompilerServices.MethodImplOptions;
 
 namespace Ara3D.Geometry
@@ -133,5 +134,21 @@ namespace Ara3D.Geometry
         /// </summary>
         [MethodImpl(AggressiveInlining)]
         public static IReadOnlyList<int> Range(this Integer self) => ArrayExtensions.Range(self);
+
+        // Forward-stdlib scalar obligations (intrinsics-scalars.library.plato). Exact `int`
+        // returns for Compare/Hash: the scalar-erased Comparable/Hashable obligations demand the
+        // erased type (see the same note on Angle.Compare/Hash). ShiftLeft/ShiftRight and the
+        // Bitwise pair have no operator-name mapping in Operators, so the writer cannot
+        // synthesize them from the struct's operator overloads.
+        [MethodImpl(AggressiveInlining)] public static int Compare(this Integer a, Integer b) => a.Value.CompareTo(b.Value);
+        [MethodImpl(AggressiveInlining)] public static int Hash(this Integer self) => self.Value.GetHashCode();
+        [MethodImpl(AggressiveInlining)] public static Integer Min(this Integer a, Integer b) => Math.Min(a.Value, b.Value);
+        [MethodImpl(AggressiveInlining)] public static Integer Max(this Integer a, Integer b) => Math.Max(a.Value, b.Value);
+        [MethodImpl(AggressiveInlining)] public static Integer BitwiseNot(this Integer x) => ~x.Value;
+        [MethodImpl(AggressiveInlining)] public static Integer BitwiseXor(this Integer a, Integer b) => a.Value ^ b.Value;
+        [MethodImpl(AggressiveInlining)] public static Integer ShiftLeft(this Integer x, Integer bits) => x.Value << bits.Value;
+        [MethodImpl(AggressiveInlining)] public static Integer ShiftRight(this Integer x, Integer bits) => x.Value >> bits.Value;
+        [MethodImpl(AggressiveInlining)] public static Number ToNumber(this Integer self) => self.Value;
+        [MethodImpl(AggressiveInlining)] public static ReadOnlyList<T> Repeat<T>(this Integer n, T x) => n.MapRange(_ => x);
     }
 }
