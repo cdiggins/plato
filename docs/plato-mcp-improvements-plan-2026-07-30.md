@@ -83,10 +83,11 @@ MSBuild faster; it *can* make the error list cheaper to consume (see P6).
 - `submodules/Plato/tools/record-csharp-build-errors.py` — parses `dotnet build` logs into
   code/category counters in `docs/status-report-snapshot.json`. Counts only; **no**
   .plato source mapping today.
-- `~/.claude/skills/plato-mcp/` — SKILL.md + ensure-server.ps1. Note: the script's default
-  roots are still `stdlib-legacy` + `stdlib-legacy-tests`; current practice overrides via
-  `PLATO_MCP_ROOTS` to index `stdlib`. This mismatch is itself a footgun (§P2 fixes the
-  staleness half; the skill rewrite in §6 fixes the roots half).
+- `~/.claude/skills/plato-mcp/` — SKILL.md + ensure-server.ps1. (An earlier draft of this plan
+  claimed the script still defaults its roots to `stdlib-legacy`; that was **wrong** — verified
+  2026-07-30, `ensure-server.ps1:95-100` defaults to `stdlib` + `stdlib-tests`, with
+  `stdlib-legacy` reachable only via explicit `-Root` / `PLATO_MCP_ROOTS`. There is no roots
+  footgun; only the staleness one, which §P2 fixes.)
 
 Key architectural fact: Navigation binds with `SymbolFactory` directly and deliberately
 skips the type checker. `TypeChecker`, `Linter`, `SumTypeChecker` all want a `Compilation`.
@@ -357,9 +358,8 @@ wrong mapping is visible, not silent.
 
 - **Rewrite `~/.claude/skills/plato-mcp/SKILL.md`**: the loop becomes
   *edit → `plato_check` → fix → `plato_check`*, with navigation tools for discovery;
-  delete the reload rules once P2 ships; fix the default-roots story (ensure-server.ps1
-  still defaults to `stdlib-legacy` — make `stdlib` + `stdlib-tests` the default roots, or
-  at minimum make the skill state current practice). Half the token win of P1/P2 is only
+  delete the reload rules once P2 ships. (The roots are already correct — see §2; no fix
+  needed there.) Half the token win of P1/P2 is only
   realized when the skill stops teaching the old workflow.
 - **`check-stdlib-fast.ps1` stays** as the cold-start / CI / no-server fallback and the
   final-gate battery; add a header comment pointing agents at `plato_check` for the inner
