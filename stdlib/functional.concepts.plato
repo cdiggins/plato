@@ -36,7 +36,12 @@ concept Bijective<TDomain, TRange>
 
 // Repeats with a fixed period in its domain: Eval(t) equals Eval(t + Period).
 // (https://en.wikipedia.org/wiki/Periodic_function)
+// TPeriod is bounded so that phase arithmetic on the period is derivable:
+// Modular supplies the remainder and Additive the correction that makes it
+// land in [0, Period) for negative inputs (see WrapPhase in
+// functional-procedural.library.plato).
 concept Periodic<TPeriod>
+    where TPeriod: Additive, TPeriod: Modular
 {
     Period(x: Self): TPeriod;
 }

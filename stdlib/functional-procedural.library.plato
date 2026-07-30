@@ -38,29 +38,33 @@ library FunctionalProcedural
     //==
     // # Periodic
     //
-    // TODO(concept-gap): a wrapping helper (WrapPhase, mapping a domain value into
-    // [0, Period)) needs Modulo on the period type.
-    //
-    // An earlier note here claimed Plato has no type-parameter constraint syntax.
-    // That was wrong. Concept `where` clauses are live and used — see
-    // IntervalLike / BoundsLike in intervals-bounds.concepts.plato and
-    // MetricSpace in algebra-metric.concepts.plato — so the bound is expressible
-    // as `concept Periodic<TPeriod> where TPeriod: Modular` on the declaration in
-    // functional.concepts.plato. `concept Modular` is declared in
-    // algebra-operations.concepts.plato, and the one implementor path
+    // RESOLVED (was TODO(concept-gap): a wrapping helper needs Modulo on the
+    // period type, and Plato was said to have no type-parameter constraint
+    // syntax). The premise was false — concept `where` clauses are live and used
+    // (IntervalLike / BoundsLike in intervals-bounds.concepts.plato, MetricSpace
+    // in algebra-metric.concepts.plato). Periodic<TPeriod> now carries
+    // `where TPeriod: Additive, TPeriod: Modular`, and WrapPhase below is derived
+    // from that bound. The one implementor path
     // (PeriodicCurve<TRange> inherits Periodic<Number>) satisfies it: Number
-    // implements Real, which inherits Arithmetic, which inherits Modular.
+    // implements Real, which inherits Arithmetic, which inherits both.
     //
-    // The bound is therefore a one-line edit to a file this library-body pass does
-    // not own. It is not sufficient on its own, though: Periodic carries no Eval
-    // (it does not inherit Procedural), so there is no domain value on the surface
-    // to wrap and the bound alone ships no helper. Both halves are owned by the
-    // functional package.
+    // The old note also claimed the missing Eval was a second blocker. It is not
+    // one for WrapPhase, which takes the domain value as a parameter rather than
+    // reading it off the surface. It IS what keeps wrapped *evaluation* from being
+    // derived here: a generic EvalWrapped needs a receiver that is both Periodic
+    // and Procedural, and a library function cannot state a two-concept bound —
+    // MethodDeclaration takes no type parameters at all, so a constraint can only
+    // sit on a concept declaration. PeriodicCurve is the concept that has both, and
+    // EvalWrapped lives there (curves-capabilities.library.plato).
     //
-    // What genuinely has no syntax is a bound on a *library function's* type
-    // variables — MethodDeclaration takes no type parameters at all (see
-    // PlatoGrammar.MethodDeclaration), so a constraint can only ever sit on a
-    // concept declaration. That limit does not block this item.
+    // NormalizedPhase is likewise not derivable generically: dividing a TPeriod by
+    // a TPeriod to get a Number needs a division Modular does not supply.
+
+    // Folds a domain value into the half-open interval [0, Period). The extra
+    // "+ Period then modulo" corrects the truncated remainder, which is negative
+    // for negative t. Precondition: Period > 0.
+    WrapPhase(self: Periodic<$TPeriod>, t: $TPeriod): $TPeriod
+        => ((t % self.Period) + self.Period) % self.Period;
 
     //==
     // # ParameterDomain
