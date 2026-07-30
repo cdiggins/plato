@@ -1,0 +1,17 @@
+//==
+// # TopologyHalfEdges — deformation body for the half-edge mesh
+//
+// The Deformable3D obligation of HalfEdgeMesh (`topology-half-edges.plato`):
+// deformation is a pure change of positions, so the half-edge records and both
+// index tables — the entire connectivity — pass through unchanged.
+
+library TopologyHalfEdges
+{
+    // The Deformable3D obligation: every vertex position carried through the
+    // mapping, connectivity unchanged.
+    Deform(self: HalfEdgeMesh, mapping: Function1<Point3D, Point3D>): HalfEdgeMesh
+        => (self.Positions.Map(mapping),
+            self.HalfEdges,
+            self.FaceHalfEdges,
+            self.VertexHalfEdges);
+}

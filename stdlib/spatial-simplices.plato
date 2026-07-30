@@ -19,6 +19,8 @@ type Tetrahedron
 
 // A triangular prism: the Base triangle swept by Offset. Offset need not be
 // perpendicular to the base (an oblique wedge).
+// NOT Deformable3D: the sweep VECTOR has no principled image under a point
+// mapping (see Prism3D in `polygons-spatial.plato`).
 // (https://en.wikipedia.org/wiki/Wedge_(geometry))
 type Wedge
     implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
@@ -30,6 +32,8 @@ type Wedge
 // The intersection of the half-spaces behind each plane (normals point
 // outward): a convex region. Bounded only when the planes enclose a finite
 // volume; a camera frustum is the canonical instance.
+// NOT Deformable3D: the region is carved by PLANES, not spanned by points; the
+// image of a plane under an arbitrary mapping is not a plane.
 // (https://en.wikipedia.org/wiki/Convex_polytope)
 type ConvexVolume
     implements Geometry3D, ConvexShape, Connected, ContainsPoint3D

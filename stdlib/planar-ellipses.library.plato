@@ -10,7 +10,8 @@
 // non-negative; CONTAINMENT is boundary-INCLUSIVE (each test is a `<=` on the
 // defining inequality). Two measures have no elementary closed form and are called
 // out on the body: the ellipse perimeter is Ramanujan's second approximation, and
-// the superellipse area and perimeter are left unimplemented.
+// the superellipse perimeter is left unimplemented (the superellipse area is
+// exact via `Gamma`).
 
 library PlanarEllipses
 {
@@ -99,11 +100,15 @@ library PlanarEllipses
             + (q.Y / se.SemiAxes.Y).Abs.Pow(se.Exponent) <= 1.0;
     }
 
-    // TODO(content): Area(SuperEllipse) is 4*a*b*Gamma(1 + 1/n)^2 / Gamma(1 + 2/n)
-    // (https://en.wikipedia.org/wiki/Superellipse#Mathematical_features). The gamma
-    // function does not exist anywhere in this tree — `intrinsics-scalars.library.plato` has no
-    // Gamma and no Lanczos/Stirling helper lives in any library — so the formula is
-    // not writable. Left unimplemented rather than guessed. Needs: `Gamma(Number)`.
+    // The superellipse area: 4*a*b*Gamma(1 + 1/n)^2 / Gamma(1 + 2/n), via the
+    // `Gamma` of `numbers-special-gamma.library.plato` (~1e-12 relative). Exact
+    // in form: n = 2 gives pi*a*b (the ellipse), n -> infinity tends to 4*a*b
+    // (the rectangle). https://en.wikipedia.org/wiki/Superellipse#Mathematical_features
+    Area(se: SuperEllipse): Number
+        => 4.0 * se.SemiAxes.X * se.SemiAxes.Y
+         * Gamma(1.0 + 1.0 / se.Exponent).Square
+         / Gamma(1.0 + 2.0 / se.Exponent);
+
     //
     // TODO(content): Perimeter(SuperEllipse) has no closed form at all for general
     // n and no named approximation of the Ramanujan grade. It needs a numerical arc

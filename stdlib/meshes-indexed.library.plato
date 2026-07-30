@@ -46,6 +46,11 @@ library MeshesIndexed
     ToTriangleMesh(self: TriangleMesh3D): TriangleMesh3D
         => self;
 
+    // The Deformable3D obligation: every vertex position carried through the
+    // mapping, faces unchanged.
+    Deform(self: TriangleMesh3D, mapping: Function1<Point3D, Point3D>): TriangleMesh3D
+        => (self.Positions.Map(mapping), self.Faces);
+
     //==
     // # TriangleMesh2D
 
@@ -67,6 +72,11 @@ library MeshesIndexed
     Triangulate(self: TriangleMesh2D): TriangleMesh2D
         => self;
 
+    // The Deformable2D obligation: every vertex position carried through the
+    // mapping, faces unchanged.
+    Deform(self: TriangleMesh2D, mapping: Function1<Point2D, Point2D>): TriangleMesh2D
+        => (self.Positions.Map(mapping), self.Faces);
+
     //==
     // # QuadMesh3D
 
@@ -87,4 +97,9 @@ library MeshesIndexed
     // positions, split on the A-C diagonal (the fan from corner 0).
     ToTriangleMesh(self: QuadMesh3D): TriangleMesh3D
         => (self.Positions, self.Faces.FlatMap(q => q.FanTriangles));
+
+    // The Deformable3D obligation: every vertex position carried through the
+    // mapping, faces unchanged.
+    Deform(self: QuadMesh3D, mapping: Function1<Point3D, Point3D>): QuadMesh3D
+        => (self.Positions.Map(mapping), self.Faces);
 }

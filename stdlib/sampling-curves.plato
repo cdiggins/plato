@@ -9,7 +9,7 @@
 // equal length and Parameters ascend. Evaluation between samples
 // interpolates linearly.
 type SampledCurve2D
-    implements Value
+    implements Value, Deformable2D
 {
     Parameters: Array<Number>;
     Points: Array<Point2D>;
@@ -19,7 +19,7 @@ type SampledCurve2D
 // equal length and Parameters ascend. Evaluation between samples
 // interpolates linearly.
 type SampledCurve3D
-    implements Value
+    implements Value, Deformable3D
 {
     Parameters: Array<Number>;
     Points: Array<Point3D>;
@@ -29,7 +29,7 @@ type SampledCurve3D
 // per (column, row) sample of the UV domain, with columns spanning U and
 // rows spanning V uniformly across UvDomain.
 type SampledSurfaceGrid
-    implements Value
+    implements Value, Deformable3D
 {
     UvDomain: Bounds2D;
     Points: Array2D<Point3D>;

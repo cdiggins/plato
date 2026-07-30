@@ -1,0 +1,22 @@
+//==
+// # MeshAttributes — deformation body for the attributed mesh
+//
+// The Deformable3D obligation of RichMesh3D (`mesh-attributes.plato`): the
+// underlying triangle mesh is deformed and every attribute channel is carried
+// unchanged. Positions are the only point-typed data the type holds;
+// direction-valued channels (vector, tangent) are NOT re-derived — after a
+// non-rigid mapping the caller decides whether to recompute them, the same
+// stale-normal contract every DCC deformer follows.
+
+library MeshAttributes
+{
+    // The Deformable3D obligation: the mesh deformed, every channel unchanged.
+    Deform(self: RichMesh3D, mapping: Function1<Point3D, Point3D>): RichMesh3D
+        => (self.Mesh.Deform(mapping),
+            self.NumberChannels,
+            self.IntegerChannels,
+            self.VectorChannels,
+            self.UvChannels,
+            self.ColorChannels,
+            self.TangentChannels);
+}

@@ -1,0 +1,21 @@
+//==
+// # MeshesVolumetric — deformation bodies for the volumetric meshes
+//
+// The Deformable3D obligations of the tetrahedral and hexahedral meshes in
+// `meshes-volumetric.plato`: every shared vertex position is carried through
+// the mapping; the cell records are pure connectivity and pass through
+// unchanged. A strong enough mapping can invert cells (negative signed
+// volume), exactly as it can flip the winding of a surface face.
+
+library MeshesVolumetric
+{
+    // The Deformable3D obligation: every vertex position carried through the
+    // mapping, cells unchanged.
+    Deform(self: TetrahedralMesh3D, mapping: Function1<Point3D, Point3D>): TetrahedralMesh3D
+        => (self.Positions.Map(mapping), self.Cells);
+
+    // The Deformable3D obligation: every vertex position carried through the
+    // mapping, cells unchanged.
+    Deform(self: HexahedralMesh3D, mapping: Function1<Point3D, Point3D>): HexahedralMesh3D
+        => (self.Positions.Map(mapping), self.Cells);
+}

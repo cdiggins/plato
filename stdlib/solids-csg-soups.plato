@@ -27,7 +27,7 @@ type PlaneRelation3D
 // the Sutherland-Hodgman clipping bodies rely on.
 // (https://en.wikipedia.org/wiki/Boundary_representation)
 type PolygonSoup3D
-    implements Solid
+    implements Solid, Deformable3D
 {
     Polygons: Array<Polygon3D>;
 }

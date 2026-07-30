@@ -56,8 +56,8 @@ concept ClosedCurve3D
 // A plane curve whose natural parameter is an angle: its defining equation
 // sweeps a bearing about a center or pole (circles, ellipses, roulettes,
 // figure curves). Implementors supply the angular evaluation; the bridge in
-// `AngularCurves` below derives the canonical evaluation, mapping t in [0,1]
-// to one full turn.
+// `curves-angular.library.plato` derives the canonical evaluation, mapping
+// t in [0,1] to one full turn.
 concept AngularCurve2D
     inherits Curve2D
 {
@@ -66,28 +66,10 @@ concept AngularCurve2D
 
 // A space curve whose natural parameter is an angle: helices, torus knots,
 // and the other named space curves that wind about an axis. Implementors
-// supply the angular evaluation; the bridge in `AngularCurves` below derives
-// the canonical evaluation, mapping t in [0,1] to one full turn.
+// supply the angular evaluation; the bridge in `curves-angular.library.plato`
+// derives the canonical evaluation, mapping t in [0,1] to one full turn.
 concept AngularCurve3D
     inherits Curve3D
 {
     Eval(x: Self, angle: Angle): Point3D;
-}
-
-// The angular bridges: the canonical-parameter evaluation of an angular curve
-// is derivable once for every implementor, so each angular curve costs only
-// its Eval(Angle). Curves whose sweep is not a single full turn override
-// Eval(Number) directly, exactly as the `Angles`-carrying spirals do over the
-// generic polar mapping in `curves-2d-polar.library.plato`.
-library AngularCurves
-{
-    // The position at the canonical parameter t: the angular evaluation taken
-    // at t full turns.
-    Eval(curve: AngularCurve2D, t: Number): Point2D
-        => curve.Eval(t.Turns);
-
-    // The position at the canonical parameter t: the angular evaluation taken
-    // at t full turns.
-    Eval(curve: AngularCurve3D, t: Number): Point3D
-        => curve.Eval(t.Turns);
 }

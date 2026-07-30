@@ -1,0 +1,218 @@
+//==
+// # SolidsPolyhedra — the typed polyhedral solids as polygon meshes
+//
+// The Kind dispatch and Frame/Radius placement that turn the value types of
+// `solids-polyhedra.plato` into geometry: each named solid looks up its
+// unit-circumradius mesh (the catalog factories of
+// `polyhedra-catalog.library.plato` / `polyhedra-seeds.library.plato` stay the
+// sole vertex source), rescales it to the requested circumscribed radius, and
+// maps it into the solid's frame. The parametric prism / pyramid / antiprism
+// families build their closed meshes directly from their profile parameters —
+// the parametric surface `Eval` in `solids.library.plato` walks the same
+// boundary but is not a closed polyhedral mesh. Triangulation is the standard
+// second hop through `ToTriangleMesh` (`meshes-polygon-building.library.plato`).
+//
+// Catalog coverage is deliberately partial (the snub, expand and bevel Conway
+// operators do not exist yet — see `polyhedra-catalog.library.plato`): a kind
+// without a catalog factory returns the EMPTY polygon mesh rather than a wrong
+// one, and each gap arm below names the operator it is waiting for. Catalans
+// are rescaled by their measured circumscribed radius and never through
+// `ProjectedToUnitSphere` — they are face-transitive, so projecting would bend
+// their faces out of plane; a uniform scale cannot.
+
+library SolidsPolyhedra
+{
+    //==
+    // Placement helpers.
+
+    // The mesh with every vertex mapped from frame-local to world coordinates
+    // (`PointInFrame`, `solids.library.plato`); connectivity is untouched.
+    TransformedByFrame(self: PolygonMesh3D, f: Frame3D): PolygonMesh3D
+        => (self.Positions.Map(p => f.PointInFrame(p)), self.Faces);
+
+    // The largest distance from the origin to a vertex: the circumscribed
+    // radius of an origin-centred polyhedron.
+    CircumscribedRadius(self: PolygonMesh3D): Number
+        => self.Positions.Map(p => p.PositionVector.Magnitude).Reduce(0.0, (acc, m) => acc.Max(m));
+
+    // The mesh rescaled about the origin so its circumscribed radius is one.
+    // A uniform scale, NOT ProjectedToUnitSphere: uniform scaling is
+    // meaning-preserving for the face-transitive Catalans too, whose vertices
+    // genuinely sit at several radii. The empty mesh passes through unchanged.
+    ScaledToUnitCircumradius(self: PolygonMesh3D): PolygonMesh3D
+        => self.VertexCount == 0 ? self : self.ScaledAboutOrigin(1.0 / self.CircumscribedRadius);
+
+    // The empty polygon mesh: the explicit "no catalog factory yet" result of
+    // the gap arms below. Detect it with `MeshIsEmpty` or `VertexCount == 0`.
+    EmptyPolygonMesh(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMeshOfFaces(Repeat(0, Point3D(0.0, 0.0, 0.0)),
+                              Repeat(0, Repeat(0, VertexIndex(0))));
+
+    //==
+    // Unit meshes by kind: the dispatch from the kind sums into the seed and
+    // catalog factories, each result at circumscribed radius one.
+
+    // The five Platonic seeds are already projected onto the unit sphere, so
+    // they pass through directly.
+    UnitPolygonMesh(kind: PlatonicSolidKind): PolygonMesh3D
+        => match (kind) {
+            Tetrahedron => PolygonMesh3D.Tetrahedron;
+            Cube => PolygonMesh3D.Cube;
+            Octahedron => PolygonMesh3D.Octahedron;
+            Dodecahedron => PolygonMesh3D.Dodecahedron;
+            Icosahedron => PolygonMesh3D.Icosahedron;
+        };
+
+    // The seven catalog Archimedeans (ambo and truncate families) dispatch;
+    // the six gap arms are the kinds still waiting on the snub, expand and
+    // bevel operators (`polyhedra-catalog.library.plato` header) and return
+    // the empty mesh, never a wrong one.
+    UnitPolygonMesh(kind: ArchimedeanSolidKind): PolygonMesh3D
+        => match (kind) {
+            TruncatedTetrahedron => PolygonMesh3D.TruncatedTetrahedron.ScaledToUnitCircumradius;
+            Cuboctahedron => PolygonMesh3D.Cuboctahedron.ScaledToUnitCircumradius;
+            TruncatedCube => PolygonMesh3D.TruncatedCube.ScaledToUnitCircumradius;
+            TruncatedOctahedron => PolygonMesh3D.TruncatedOctahedron.ScaledToUnitCircumradius;
+            Rhombicuboctahedron => PolygonMesh3D.EmptyPolygonMesh;
+            TruncatedCuboctahedron => PolygonMesh3D.EmptyPolygonMesh;
+            SnubCube => PolygonMesh3D.EmptyPolygonMesh;
+            Icosidodecahedron => PolygonMesh3D.Icosidodecahedron.ScaledToUnitCircumradius;
+            TruncatedDodecahedron => PolygonMesh3D.TruncatedDodecahedron.ScaledToUnitCircumradius;
+            TruncatedIcosahedron => PolygonMesh3D.TruncatedIcosahedron.ScaledToUnitCircumradius;
+            Rhombicosidodecahedron => PolygonMesh3D.EmptyPolygonMesh;
+            TruncatedIcosidodecahedron => PolygonMesh3D.EmptyPolygonMesh;
+            SnubDodecahedron => PolygonMesh3D.EmptyPolygonMesh;
+        };
+
+    // The four catalog Catalans dispatch (rescaled, never projected — see the
+    // header); the nine gap arms await their Archimedean sources or catalog
+    // aliases (`kind.Dual` already names the source, see `polyhedra-duals`).
+    UnitPolygonMesh(kind: CatalanSolidKind): PolygonMesh3D
+        => match (kind) {
+            TriakisTetrahedron => PolygonMesh3D.TriakisTetrahedron.ScaledToUnitCircumradius;
+            RhombicDodecahedron => PolygonMesh3D.RhombicDodecahedron.ScaledToUnitCircumradius;
+            TriakisOctahedron => PolygonMesh3D.TriakisOctahedron.ScaledToUnitCircumradius;
+            TetrakisHexahedron => PolygonMesh3D.EmptyPolygonMesh;
+            DeltoidalIcositetrahedron => PolygonMesh3D.EmptyPolygonMesh;
+            DisdyakisDodecahedron => PolygonMesh3D.EmptyPolygonMesh;
+            PentagonalIcositetrahedron => PolygonMesh3D.EmptyPolygonMesh;
+            RhombicTriacontahedron => PolygonMesh3D.RhombicTriacontahedron.ScaledToUnitCircumradius;
+            TriakisIcosahedron => PolygonMesh3D.EmptyPolygonMesh;
+            PentakisDodecahedron => PolygonMesh3D.EmptyPolygonMesh;
+            DeltoidalHexecontahedron => PolygonMesh3D.EmptyPolygonMesh;
+            DisdyakisTriacontahedron => PolygonMesh3D.EmptyPolygonMesh;
+            PentagonalHexecontahedron => PolygonMesh3D.EmptyPolygonMesh;
+        };
+
+    //==
+    // Placed instances: unit mesh, scaled to the circumscribed radius, mapped
+    // into the frame. A gap kind places the empty mesh (still empty).
+
+    ToPolygonMesh(s: PlatonicSolid): PolygonMesh3D
+        => s.Kind.UnitPolygonMesh.ScaledAboutOrigin(s.Radius).TransformedByFrame(s.Frame);
+
+    ToPolygonMesh(s: ArchimedeanSolid): PolygonMesh3D
+        => s.Kind.UnitPolygonMesh.ScaledAboutOrigin(s.Radius).TransformedByFrame(s.Frame);
+
+    ToPolygonMesh(s: CatalanSolid): PolygonMesh3D
+        => s.Kind.UnitPolygonMesh.ScaledAboutOrigin(s.Radius).TransformedByFrame(s.Frame);
+
+    //==
+    // Parametric builders: closed meshes for the prism, pyramid and antiprism
+    // families. Rings walk counter-clockwise seen from +Z, caps and walls wind
+    // counter-clockwise seen from outside
+    // (Convention: see CONVENTIONS.md - Winding, handedness, and normals).
+
+    // The frame-local point at parameter t (in turns) around the Z axis at
+    // radius `radius` and height `z`.
+    RimPoint(t: Number, radius: Number, z: Number): Point3D
+    {
+        var p = PointOnCircle(t.Turns, radius);
+        return (p.X, p.Y, z);
+    }
+
+    // Two SideCount-gon caps joined by SideCount rectangles: vertices 0..n-1
+    // are the bottom ring at -Height/2, n..2n-1 the top ring at +Height/2.
+    ToPolygonMesh(s: RegularPrism): PolygonMesh3D
+    {
+        var n = s.SideCount;
+        var sides = n.ToNumber;
+        var bottom = n.MapRange(i => RimPoint(i.ToNumber / sides, s.Radius, s.Height * -0.5));
+        var top = n.MapRange(i => RimPoint(i.ToNumber / sides, s.Radius, s.Height * 0.5));
+        var caps = Concatenate(Repeat(1, n.MapRange(i => n - 1 - i)),
+                               Repeat(1, n.MapRange(i => n + i)));
+        var walls = n.MapRange(i => [i, (i + 1) % n, n + ((i + 1) % n), n + i]);
+        return PolygonMeshOfVertexNumbers(Concatenate(bottom, top), Concatenate(caps, walls))
+            .TransformedByFrame(s.Frame);
+    }
+
+    // A SideCount-gon base at -Height/2 (vertices 0..n-1) tapering to the apex
+    // (vertex n) at +Height/2 through SideCount triangles.
+    ToPolygonMesh(s: RegularPyramid): PolygonMesh3D
+    {
+        var n = s.SideCount;
+        var sides = n.ToNumber;
+        var ring = n.MapRange(i => RimPoint(i.ToNumber / sides, s.Radius, s.Height * -0.5));
+        var apex = Repeat(1, Point3D(0.0, 0.0, s.Height * 0.5));
+        var cap = Repeat(1, n.MapRange(i => n - 1 - i));
+        var walls = n.MapRange(i => [i, (i + 1) % n, n]);
+        return PolygonMeshOfVertexNumbers(Concatenate(ring, apex), Concatenate(cap, walls))
+            .TransformedByFrame(s.Frame);
+    }
+
+    // The axis-aligned square base at -Height/2 (vertices 0..3, counter-
+    // clockwise from (-, -)) tapering to the apex (vertex 4) at +Height/2.
+    ToPolygonMesh(s: SquarePyramid): PolygonMesh3D
+    {
+        var b = s.BaseLength * 0.5;
+        var h = s.Height * 0.5;
+        var points = [Point3D(-b, -b, -h), Point3D(b, -b, -h),
+                      Point3D(b, b, -h), Point3D(-b, b, -h),
+                      Point3D(0.0, 0.0, h)];
+        var faces = [[3, 2, 1, 0], [0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4]];
+        return PolygonMeshOfVertexNumbers(points, faces).TransformedByFrame(s.Frame);
+    }
+
+    // Two SideCount-gon caps a half step out of phase (top ring rotated by half
+    // a side) joined by a band of 2 * SideCount triangles: vertices 0..n-1 are
+    // the bottom ring, n..2n-1 the top ring.
+    ToPolygonMesh(s: Antiprism): PolygonMesh3D
+    {
+        var n = s.SideCount;
+        var sides = n.ToNumber;
+        var bottom = n.MapRange(i => RimPoint(i.ToNumber / sides, s.Radius, s.Height * -0.5));
+        var top = n.MapRange(i => RimPoint((i.ToNumber + 0.5) / sides, s.Radius, s.Height * 0.5));
+        var caps = Concatenate(Repeat(1, n.MapRange(i => n - 1 - i)),
+                               Repeat(1, n.MapRange(i => n + i)));
+        var lower = n.MapRange(i => [i, (i + 1) % n, n + i]);
+        var upper = n.MapRange(i => [(i + 1) % n, n + ((i + 1) % n), n + i]);
+        return PolygonMeshOfVertexNumbers(Concatenate(bottom, top),
+                                          Concatenate(caps, Concatenate(lower, upper)))
+            .TransformedByFrame(s.Frame);
+    }
+
+    //==
+    // Meshable3D obligations: every typed solid triangulates through its
+    // polygon mesh (fan triangulation, `meshes-polygon-building.library.plato`).
+
+    ToTriangleMesh(s: PlatonicSolid): TriangleMesh3D
+        => s.ToPolygonMesh.ToTriangleMesh;
+
+    ToTriangleMesh(s: ArchimedeanSolid): TriangleMesh3D
+        => s.ToPolygonMesh.ToTriangleMesh;
+
+    ToTriangleMesh(s: CatalanSolid): TriangleMesh3D
+        => s.ToPolygonMesh.ToTriangleMesh;
+
+    ToTriangleMesh(s: RegularPrism): TriangleMesh3D
+        => s.ToPolygonMesh.ToTriangleMesh;
+
+    ToTriangleMesh(s: RegularPyramid): TriangleMesh3D
+        => s.ToPolygonMesh.ToTriangleMesh;
+
+    ToTriangleMesh(s: SquarePyramid): TriangleMesh3D
+        => s.ToPolygonMesh.ToTriangleMesh;
+
+    ToTriangleMesh(s: Antiprism): TriangleMesh3D
+        => s.ToPolygonMesh.ToTriangleMesh;
+}

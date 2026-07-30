@@ -11,26 +11,28 @@
 // SurvivalAt, ProbabilityBetween, ...) lives with the other concept traits in
 // `random-distributions.library.plato` and is not repeated here.
 //
-// ## Missing special functions
+// ## Special functions
 //
-// This tree declares no gamma function, no log-gamma, no beta function, no
-// regularized incomplete gamma/beta, no error function and no modified Bessel
-// function. Consequently the following obligations are left unimplemented
-// rather than approximated by guesswork; each carries a `TODO(content):` at its
-// site:
+// The special-function vocabulary lives in the `numbers-special-*` libraries:
+// `Gamma`/`LogGamma`, `Beta`/`LogBeta`, the regularized incomplete forms
+// `RegularizedGammaP`/`RegularizedGammaQ`/`RegularizedBeta`, the error
+// functions `Erf`/`Erfc`, and the modified Bessel functions
+// `BesselI0`/`BesselI1`. The gamma-, beta- and Bessel-dependent distribution
+// bodies (Gamma/Beta/ChiSquared/StudentT Pdf+Cdf, the Weibull moments, the
+// von Mises Variance and Pdf) are implemented against them at their sites.
+// Two deliberate exceptions remain:
 //
-// - Gamma / Beta / ChiSquared / StudentT: Pdf (needs Gamma or Beta) and Cdf
-//   (needs the regularized incomplete Gamma or Beta).
-// - Weibull: Mean and Variance (both need Gamma).
-// - VonMises: Variance, Pdf and Cdf (all need the modified Bessel I0/I1).
+// - VonMises: Cdf has no closed form (an infinite Bessel series) and is
+//   omitted; see its site.
 // - Poisson: Cdf is implemented by direct summation, which is exact-in-form but
 //   O(k); it is not the incomplete-gamma closed form.
 //
-// The normal CDF likewise has no elementary closed form. Rather than leave the
-// whole normal family unimplemented it is computed here with the *named*
-// Zelen & Severo rational approximation (Abramowitz & Stegun 26.2.17), whose
-// stated absolute error bound is 7.5e-8. It is an approximation, not an
-// identity, and is labelled as such at its definition.
+// The normal CDF has no elementary closed form. It predates `Erf` and is
+// computed here with the *named* Zelen & Severo rational approximation
+// (Abramowitz & Stegun 26.2.17), whose stated absolute error bound is 7.5e-8.
+// It is an approximation, not an identity, and is labelled as such at its
+// definition; rewriting it as (1 + Erf(z/sqrt 2))/2 is a separate content
+// change.
 
 library Random
 {

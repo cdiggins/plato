@@ -25,7 +25,7 @@ type MeshSection
 // A triangle mesh partitioned into sections. Sections are non-overlapping,
 // sorted ascending by FaceRange.Start, and together cover every face.
 type SegmentedMesh3D
-    implements Value, Meshable3D
+    implements Value, Meshable3D, Deformable3D
 {
     Mesh: TriangleMesh3D;
     Sections: Array<MeshSection>;
