@@ -167,9 +167,14 @@ No content edits to `.plato` sources. Update filename mentions in the four docs.
 Gate: full lint before and after must report identical counts (0 parse / 0 resolve;
 LINT001/LINT003 unchanged).
 
-**Phase 2 — CLI multi-root + gate updates.** Small C# change + script updates, landed
-and green while the tree is still flat (multi-root with one root = today's behavior,
-so this is riskless to land early).
+**Phase 2 — CLI multi-root + gate updates. LANDED 2026-07-30.** `lint <folder>...` takes any
+number of roots (each top-only, union compiled as one program); codegen takes multiple roots
+when `--out=<folder>` names the output, since that frees every positional to be an input.
+One root reproduces the previous behavior exactly — verified: all 2806 findings byte-identical
+to the pre-change (pinned) CLI, and the full stdlib split across two scratch roots lints to the
+same findings as the single folder, while either half alone fails to compile. `check-stdlib-fast.ps1`
+gained `-Folders`; `stage-stdlib.ps1 -Folders` already forwarded its array. Tier folders do not
+exist yet, so nothing calls multi-root in anger until Phase 3.
 
 **Phase 3 — folder moves.** Script emits `git mv` per the assignment table. Then the
 cumulative tier lints run bottom-up; every upward reference found is resolved by the

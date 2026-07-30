@@ -14,6 +14,12 @@
 #   tools/stage-stdlib.ps1 -Snapshot        # rebuild Plato.CLI (Release) and re-pin the binary
 #   tools/stage-stdlib.ps1 -Folders a,b     # lint multiple roots (post-reorg tier subsets)
 #
+# -Folders bypasses the staging sync and lints the named folders IN PLACE (each enumerated
+# top-directory-only, all compiled as one program), so tier subsets read as they will in the
+# gate: -Folders stdlib\foundation,stdlib\geometry. Without it the whole stdlib is staged.
+# NOTE: more than one root needs a pinned CLI built after multi-root support landed (2026-07-30).
+# An older snapshot silently lints only the FIRST folder — re-pin with -Snapshot while trunk is green.
+#
 # Exit code = Plato.CLI exit code. Last lines of output carry the finding-count summary;
 # compare against the recorded baseline in baseline.txt (written on every full run).
 

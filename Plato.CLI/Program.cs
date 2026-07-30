@@ -14,7 +14,8 @@ namespace Ara3D.Geometry.CLI
     public static class Program
     {
         // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--scalar=wrapper|float]
-        //        Plato.CLI lint <inputFolder> [--strict]
+        //        Plato.CLI <inputFolder>... --out=<outputFolder> [same flags]
+        //        Plato.CLI lint <inputFolder>... [--strict]
         // With no arguments, the folders come from Config and C# is generated (original behavior).
         // In lint mode the sources are compiled (parse + resolve, no output) and warnings are
         // reported as "file(line): LINT###: message". Exit code is 0 unless --strict is passed,
@@ -100,12 +101,34 @@ namespace Ara3D.Geometry.CLI
                 return 1;
             }
 
+            // --out=<folder>: names the output folder explicitly, which frees EVERY positional
+            // argument to be an input root (see GetPlatoFiles). Without it the positional shape is
+            // the historical one — <inputFolder> [outputFolder] — so existing call sites are
+            // unaffected.
+            var outFlag = args.Where(a => a.StartsWith("--out="))
+                .Select(a => a.Substring("--out=".Length)).LastOrDefault();
+
             var folders = args.Where(a => !a.StartsWith("--")).ToList();
-            var inputFolder = new DirectoryPath(folders.Count > 0 ? folders[0] : Config.InputFolder);
-            var outputFolder = new DirectoryPath(folders.Count > 1 ? folders[1] : Config.OutputFolder);
+            if (outFlag == null && folders.Count > 2)
+            {
+                Console.Error.WriteLine(
+                    "Ambiguous arguments: without --out=<outputFolder> at most two positional folders " +
+                    "are accepted (<inputFolder> [outputFolder]). Pass --out= to use multiple input roots.");
+                return 1;
+            }
+
+            var inputFolders = outFlag != null
+                ? (folders.Count > 0 ? folders : new List<string> { Config.InputFolder })
+                : new List<string> { folders.Count > 0 ? folders[0] : Config.InputFolder };
+            var outputFolder = new DirectoryPath(outFlag ?? (folders.Count > 1 ? folders[1] : Config.OutputFolder));
 
             logger.Log("Opening files");
-            var files = inputFolder.GetFiles("*.plato");
+            var files = GetPlatoFiles(inputFolders, out var inputError);
+            if (inputError != null)
+            {
+                Console.Error.WriteLine(inputError);
+                return 1;
+            }
             var docs = files.Select(f => new Document(f, logger)).ToList();
             var parsingSuccessful = docs.All(e => e.Parser.Succeeded);
             if (!parsingSuccessful)
@@ -194,26 +217,62 @@ namespace Ara3D.Geometry.CLI
             return 0;
         }
 
-        // Plato.CLI lint <inputFolder> [--strict]
-        // Compiles (parse + resolve) with no output and reports lint warnings.
+        // Every command that reads Plato source shares this enumeration. Each root is searched
+        // TOP-DIRECTORY-ONLY — subfolders are never picked up implicitly, so a subset is always
+        // expressed by naming folders rather than by relying on recursion — and the union of the
+        // roots is compiled as ONE program. Roots are visited in argument order and each root's
+        // files keep their raw enumeration order, so a single-root call yields exactly the file
+        // sequence the pre-multi-root code produced. A file reachable through two roots (nested or
+        // repeated roots) is compiled once.
+        private static IReadOnlyList<FilePath> GetPlatoFiles(IReadOnlyList<string> roots, out string? error)
+        {
+            error = null;
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var result = new List<FilePath>();
+            foreach (var root in roots)
+            {
+                if (!Directory.Exists(root))
+                {
+                    error = $"Input folder not found: {root}";
+                    return result;
+                }
+                var found = 0;
+                foreach (var f in new DirectoryPath(root).GetFiles("*.plato"))
+                {
+                    found++;
+                    if (seen.Add(Path.GetFullPath(f)))
+                        result.Add(f);
+                }
+                if (found == 0)
+                {
+                    error = $"No .plato files found in {root}";
+                    return result;
+                }
+            }
+            return result;
+        }
+
+        // Plato.CLI lint <inputFolder>... [--strict]
+        // Compiles (parse + resolve) with no output and reports lint warnings. Multiple folders are
+        // compiled together as one program (each enumerated top-only): this is how a cumulative tier
+        // subset is linted, e.g. `lint stdlib/foundation stdlib/geometry`.
         public static int Lint(string[] args, ILogger logger)
         {
             var strict = args.Contains("--strict");
             var folders = args.Where(a => !a.StartsWith("--")).ToList();
             if (folders.Count < 1)
             {
-                Console.Error.WriteLine("Usage: Plato.CLI lint <inputFolder> [--strict]");
+                Console.Error.WriteLine("Usage: Plato.CLI lint <inputFolder>... [--strict]");
                 return 1;
             }
 
-            var inputFolder = new DirectoryPath(folders[0]);
-            var files = inputFolder.GetFiles("*.plato");
-            var docs = files.Select(f => new Document(f, logger)).ToList();
-            if (docs.Count == 0)
+            var files = GetPlatoFiles(folders, out var inputError);
+            if (inputError != null)
             {
-                Console.Error.WriteLine($"No .plato files found in {inputFolder}");
+                Console.Error.WriteLine(inputError);
                 return 1;
             }
+            var docs = files.Select(f => new Document(f, logger)).ToList();
             if (!docs.All(d => d.Parser.Succeeded))
             {
                 Console.Error.WriteLine("Parsing failed for one of the input files, halting");

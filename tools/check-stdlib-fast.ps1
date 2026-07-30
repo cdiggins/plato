@@ -7,11 +7,15 @@
 #                          PlatoTests/ForwardStdLibCheckerTests.cs
 #                          (worklist test: SummarizeForwardStdLibDiagnostics)
 # All paths derive from $PSScriptRoot, so this works from any Plato checkout or git worktree.
-# Usage: .\tools\check-stdlib-fast.ps1 [-SkipLint] [-SkipRatchet]
+# Usage: .\tools\check-stdlib-fast.ps1 [-SkipLint] [-SkipRatchet] [-Folders a,b]
+#   -Folders lints an explicit set of roots instead of all of stdlib/, each enumerated
+#   top-directory-only and compiled as ONE program — the cumulative-tier subset form, e.g.
+#   -Folders stdlib\foundation,stdlib\geometry. Relative paths resolve against the repo root.
 # Exit code: 0 if all executed gates pass, 1 otherwise.
 param(
     [switch]$SkipLint,
-    [switch]$SkipRatchet
+    [switch]$SkipRatchet,
+    [string[]]$Folders
 )
 
 $ErrorActionPreference = 'Continue'
@@ -37,9 +41,14 @@ function Run-Gate([string]$name, [string]$file, [string[]]$argList) {
 }
 
 if (-not $SkipLint) {
-    Run-Gate 'lint --strict (stdlib forward)' 'dotnet' @(
+    $roots = if ($Folders) {
+        @($Folders | ForEach-Object {
+            if ([System.IO.Path]::IsPathRooted($_)) { $_ } else { Join-Path $root $_ } })
+    } else { @(Join-Path $root 'stdlib') }
+    $name = if ($Folders) { "lint --strict ($($Folders -join ' + '))" } else { 'lint --strict (stdlib forward)' }
+    Run-Gate $name 'dotnet' (@(
         'run','--project',(Join-Path $root 'Plato.CLI\Plato.CLI.csproj'),
-        '-c','Release','--','lint',(Join-Path $root 'stdlib'),'--strict')
+        '-c','Release','--','lint') + $roots + @('--strict'))
 }
 
 if (-not $SkipRatchet) {
