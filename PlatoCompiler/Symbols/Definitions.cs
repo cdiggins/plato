@@ -265,8 +265,10 @@ namespace Ara3D.Geometry.Compiler.Symbols
         // is never object-safe by this test (Plato.CSharpWriter already omits static members from
         // ordinary interface emission unless --static-abstract; this test agrees independently).
         public static bool IsObjectSafeMethod(MethodDef m)
+            => IsObjectSafeFunction(m.Function);
+
+        public static bool IsObjectSafeFunction(FunctionDef f)
         {
-            var f = m.Function;
             if (f.Parameters.Count == 0 || f.Parameters[0].Name == "_")
                 return false;
             return !f.ParametersAndReturnType.Skip(1).Any(te => te.UsesSelfType());

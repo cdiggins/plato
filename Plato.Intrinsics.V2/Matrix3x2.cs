@@ -166,5 +166,20 @@ namespace Ara3D.Geometry
         /// Gets the determinant of this 3x2 matrix.
         /// </summary>
         [MethodImpl(AggressiveInlining)] public Number Determinant() => Value.GetDeterminant();
+
+        // Exact `int`/`float` signatures: these discharge the (scalar-erased) MatrixLike
+        // obligations the forward-stdlib generation declares on the Matrix3x2 partial, and
+        // interface implementation demands the exact erased types.
+
+        [MethodImpl(AggressiveInlining)] public int ColumnCount() => 2;
+
+        [MethodImpl(AggressiveInlining)]
+        public float ElementAt(int row, int column) => (row, column) switch
+        {
+            (0, 0) => Value.M11, (0, 1) => Value.M12,
+            (1, 0) => Value.M21, (1, 1) => Value.M22,
+            (2, 0) => Value.M31, (2, 1) => Value.M32,
+            _ => throw new ArgumentOutOfRangeException($"({row}, {column}) is outside a 3x2 matrix"),
+        };
     }
 }

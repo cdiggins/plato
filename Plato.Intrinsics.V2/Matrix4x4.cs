@@ -287,5 +287,20 @@ namespace Ara3D.Geometry
         public Matrix4x4 WithPivot(Vector3 pivot)
             => CreateTranslation(pivot) * this * CreateTranslation(-pivot);
 
+        // Exact `int`/`float` signatures: these discharge the (scalar-erased) MatrixLike
+        // obligations the forward-stdlib generation declares on the Matrix4x4 partial, and
+        // interface implementation demands the exact erased types.
+
+        [MethodImpl(AggressiveInlining)] public int ColumnCount() => 4;
+
+        [MethodImpl(AggressiveInlining)]
+        public float ElementAt(int row, int column) => (row, column) switch
+        {
+            (0, 0) => Value.M11, (0, 1) => Value.M12, (0, 2) => Value.M13, (0, 3) => Value.M14,
+            (1, 0) => Value.M21, (1, 1) => Value.M22, (1, 2) => Value.M23, (1, 3) => Value.M24,
+            (2, 0) => Value.M31, (2, 1) => Value.M32, (2, 2) => Value.M33, (2, 3) => Value.M34,
+            (3, 0) => Value.M41, (3, 1) => Value.M42, (3, 2) => Value.M43, (3, 3) => Value.M44,
+            _ => throw new ArgumentOutOfRangeException($"({row}, {column}) is outside a 4x4 matrix"),
+        };
     }
 }

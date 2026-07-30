@@ -113,6 +113,13 @@ namespace Ara3D.Geometry
         public Quaternion Lerp(Quaternion quaternion2, Number amount)
             => SNQuaternion.Lerp(Value, quaternion2.Value, amount);
 
+        // Exact `float` signature: discharges the (scalar-erased) Interpolatable obligation the
+        // forward-stdlib generation declares on the Quaternion partial; interface implementation
+        // demands the exact erased type, which the Number overload above cannot satisfy.
+        [MethodImpl(AggressiveInlining)]
+        public Quaternion Lerp(Quaternion quaternion2, float amount)
+            => SNQuaternion.Lerp(Value, quaternion2.Value, amount);
+
         [MethodImpl(AggressiveInlining)]
         public Quaternion Slerp(Quaternion quaternion2, Number amount)
             => SNQuaternion.Slerp(Value, quaternion2.Value, amount);

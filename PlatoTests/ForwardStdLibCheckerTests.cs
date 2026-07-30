@@ -173,6 +173,23 @@ namespace PlatoTests
                 TestContext.WriteLine($"  {d.Code} [{d.Severity}] {d.Message}");
         }
 
+        // plato-311: every concept the forward stdlib stores in type position (an existential
+        // "any C" — e.g. `Path: Curve3D` on SweptSurface) must have an object-safe surface, or it
+        // has no non-generic view and no defined C# lowering. Zero is a hard gate, not a ratchet:
+        // a new CHK308 means a new concept was stored existentially without any object-safe
+        // member, which the writer cannot emit (see ExistentialConceptChecker / the plato-311 ADR).
+        [Test]
+        public static void ForwardStdLibHasNoViewlessExistentialReferences()
+        {
+            var comp = CheckerTestSupport.CompileForwardStdLib();
+            var errors = new ExistentialConceptChecker(comp).Check()
+                .Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
+            foreach (var d in errors)
+                TestContext.WriteLine($"  {d.Code} {d.Message}");
+            Assert.IsEmpty(errors,
+                "Forward stdlib has existential references to view-less concepts (CHK308).");
+        }
+
         [Test]
         public static void ForwardStdLibDiagnosticCountDoesNotRegress()
         {

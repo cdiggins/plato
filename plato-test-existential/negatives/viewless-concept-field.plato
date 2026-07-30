@@ -1,0 +1,13 @@
+// EXPECT: CHK308
+// Negative: every member of Doubling uses Self somewhere other than the receiver (it returns
+// Self), so the concept has no object-safe surface, no non-generic view, and an existential
+// (type-position) reference to it has no defined C# lowering.
+concept Doubling
+{
+    Double(x: Self): Self;
+}
+
+type StoredDoubling
+{
+    Source: Doubling;
+}

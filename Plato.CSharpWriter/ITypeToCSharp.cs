@@ -73,8 +73,7 @@ public static class TypeToCSharpExtensions
                     $"'any {ti.Def.Name}') but has no object-safe member, so it has no non-generic " +
                     "view (see plato-311 / CHK308).");
 
-            var viewArgs = ti.Args.Select(typeToCSharp.ToCSharpType).ToList();
-            return ti.Def.Name + (viewArgs.Count == 0 ? "" : $"<{viewArgs.JoinStringsWithComma()}>");
+            return typeToCSharp.ToCSharpViewType(ti);
         }
 
         var args = ti.ArgsWithSelf.ToList();
@@ -97,4 +96,17 @@ public static class TypeToCSharpExtensions
 
     public static string ToCSharpType(this ITypeToCSharp typeToCSharp, InterfaceImplementation ii)
         => typeToCSharp.ToCSharpType(ii.TypeExpression);
+
+    // plato-311: the non-generic existential-view spelling of a self-constrained concept
+    // reference — the concept's own name plus its explicit (non-Self) type arguments. This is both
+    // what a type-position ("any C") reference renders as, and the interface name a concrete type
+    // uses when explicitly implementing a view member (`float Quantity.Amount() => ...`).
+    public static string ToCSharpViewType(this ITypeToCSharp typeToCSharp, TypeInstance ti)
+    {
+        var viewArgs = ti.Args.Select(typeToCSharp.ToCSharpType).ToList();
+        return ti.Def.Name + (viewArgs.Count == 0 ? "" : $"<{viewArgs.JoinStringsWithComma()}>");
+    }
+
+    public static string ToCSharpViewType(this ITypeToCSharp typeToCSharp, InterfaceImplementation ii)
+        => typeToCSharp.ToCSharpViewType(TypeInstance.Create(ii.TypeExpression));
 }

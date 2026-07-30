@@ -164,7 +164,14 @@ namespace Ara3D.Geometry.CSharpWriter
                 // (user-defined conversions to/from an interface are illegal, CS0552). The
                 // IsInterface check covers concept-typed fields; the IReadOnlyList check covers
                 // the concrete Array/Array2D/Array3D types, which render as list interfaces.
-                if ((IsPrimitive || !ConcreteType.TypeDef.Fields[0].Type.Def.IsInterface())
+                //
+                // plato-308: a PRIMITIVE-backed type (a handwritten Plato.Intrinsics struct, e.g.
+                // Angle) declares its own field-type and Number conversions, so generating those
+                // here duplicates them (CS0557). Skip exactly that pair for primitives — the
+                // Integer/int bridges below are NOT handwritten and stay generated. Legacy stdlib
+                // declares its primitives with zero fields, so this branch never runs there.
+                if (!IsPrimitive
+                    && !ConcreteType.TypeDef.Fields[0].Type.Def.IsInterface()
                     && !fieldType.StartsWith("IReadOnlyList"))
                 {
                     TypeWriter.WriteLine($"{Attr} public static implicit operator {fieldType}({Name} self) => self.{fieldName};");
@@ -183,11 +190,14 @@ namespace Ara3D.Geometry.CSharpWriter
                 // Scalar erasure: the field erased to "float", so the primary pair above already
                 // covers float<->{Name}; add the wrapper/int bridges the V1 block provided (the
                 // handwritten intrinsics and mixed bodies still traffic in Number/Integer).
+                // plato-308: for a primitive-backed type the Number bridge is handwritten
+                // (Angle declares implicit Angle(Number)); only the Integer/int bridges are ours.
                 else if (Writer.ScalarErase && unerasedFieldTypes[0] == "Number")
                 {
                     TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}(Integer value) => new {Name}(value);");
                     TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}(int value) => new {Name}(value);");
-                    TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}(Number value) => new {Name}(value);");
+                    if (!IsPrimitive)
+                        TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}(Number value) => new {Name}(value);");
                 }
                 TypeWriter.WriteLine();
             }
@@ -244,8 +254,20 @@ namespace Ara3D.Geometry.CSharpWriter
             foreach (var i in t.AllInterfaces)
             {
                 var its = TypeWriter.ToCSharpType(i);
+                // plato-311: a property-form (or pinned-name) member satisfies the generic
+                // interface only through its explicit implementation, so the concept's non-generic
+                // existential view — reached transitively via `C<Self> : C` — needs its own
+                // explicit implementation for the same member; the view spelling of the interface
+                // name is the only difference. Members satisfied by ordinary public methods
+                // satisfy both interfaces implicitly and never reach this loop.
+                var viewIts = i.Interface.IsSelfConstrained() && i.Interface.HasObjectSafeSurface()
+                    ? TypeWriter.ToCSharpViewType(i)
+                    : null;
                 foreach (var f in i.DeclaredFunctions)
                 {
+                    var viewTarget = viewIts != null && Compiler.Symbols.TypeDef.IsObjectSafeFunction(f.Implementation)
+                        ? viewIts
+                        : null;
                     var fieldIndex = FieldNames.IndexOf(f.Name);
                     if (f.ParameterTypes.Count == 1 && fieldIndex >= 0)
                     {
@@ -255,19 +277,25 @@ namespace Ara3D.Geometry.CSharpWriter
                             TypeWriter.WriteLine(Writer.NoProperties
                                 ? $"{Attr} {fieldType} {its}.{f.Name}() => {f.Name};"
                                 : $"{fieldType} {its}.{f.Name} {{ {Attr} get => {f.Name}; }}");
+                        if (viewTarget != null && emittedExplicitImpls.Add($"{viewTarget}.{f.Name}"))
+                            TypeWriter.WriteLine(Writer.NoProperties
+                                ? $"{Attr} {fieldType} {viewTarget}.{f.Name}() => {f.Name};"
+                                : $"{fieldType} {viewTarget}.{f.Name} {{ {Attr} get => {f.Name}; }}");
                     }
                     // MethodsOnly: an obligation whose name is PINNED to property syntax (a
                     // handwritten Plato.Intrinsics property like Quaternion.Inverse) cannot
                     // become a method on the struct; an explicit interface implementation
                     // forwards the method obligation to the property.
                     else if (Writer.NoProperties && f.ParameterTypes.Count == 1
-                        && Writer.StructSurfacePropertyNames.Contains(f.Name)
-                        && emittedExplicitImpls.Add($"{its}.{f.Name}"))
+                        && Writer.StructSurfacePropertyNames.Contains(f.Name))
                     {
                         var retType = TypeWriter.ToCSharpType(f.ReturnType);
                         // Pinned-name struct members are uniformly PROPERTIES (handwritten on
                         // primitive types, generated elsewhere) — plain member access.
-                        TypeWriter.WriteLine($"{Attr} {retType} {its}.{f.Name}() => {f.Name};");
+                        if (emittedExplicitImpls.Add($"{its}.{f.Name}"))
+                            TypeWriter.WriteLine($"{Attr} {retType} {its}.{f.Name}() => {f.Name};");
+                        if (viewTarget != null && emittedExplicitImpls.Add($"{viewTarget}.{f.Name}"))
+                            TypeWriter.WriteLine($"{Attr} {retType} {viewTarget}.{f.Name}() => {f.Name};");
                     }
                 }
             }

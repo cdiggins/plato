@@ -101,6 +101,18 @@ namespace Ara3D.Geometry
         public Integer CompareTo(Angle other)
             => Value.CompareTo(other.Value);
 
+        // Exact `int` signatures: these discharge the (scalar-erased) Comparable / Hashable
+        // obligations the forward-stdlib generation declares on the Angle partial, and interface
+        // implementation demands the exact erased types.
+
+        [MethodImpl(AggressiveInlining)]
+        public int Compare(Angle other)
+            => Value.CompareTo(other.Value);
+
+        [MethodImpl(AggressiveInlining)]
+        public int Hash()
+            => Value.GetHashCode();
+
     }
 
     /// <summary>

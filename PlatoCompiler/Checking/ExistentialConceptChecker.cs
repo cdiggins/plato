@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Types;
 
 namespace Ara3D.Geometry.Compiler.Checking
 {
@@ -29,29 +30,23 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         public IReadOnlyList<CheckDiagnostic> Check()
         {
-            // FunctionDefinitions already covers every method AND every field (a field is a
-            // one-parameter FunctionDef under the hood — see FieldDef), plus library/free
-            // functions, so this single pass is exhaustive; no separate field/method walk needed.
-            foreach (var f in Compilation.FunctionDefinitions ?? Enumerable.Empty<FunctionDef>())
-                CheckFunction(f.OwnerType, f);
+            // FIELDS ONLY, deliberately. A bare concept in a library-function parameter or return
+            // is CONSTRAINT-position by Plato convention — the checker unifies all of them to one
+            // implementing type and the monomorphizer grounds it (e.g. AlgebraMetric's
+            // `IsNear(a: MetricSpace, b: MetricSpace, ...)`), so the writer never sees it as an
+            // existential. Only a concept-typed FIELD on a concrete type is genuine storage of
+            // "any C" (e.g. `Path: Curve3D` on SweptSurface) — that is the one position whose
+            // lowering is the non-generic view, and therefore the one position where a view-less
+            // concept is an error.
+            foreach (var t in Compilation.AllTypeAndLibraryDefinitions ?? Enumerable.Empty<TypeDef>())
+            {
+                if (t == null || t.IsInterface())
+                    continue;
+                foreach (var field in t.Fields ?? Enumerable.Empty<FieldDef>())
+                    CheckReference(t, field.Type, field);
+            }
 
             return Diagnostics;
-        }
-
-        private void CheckFunction(TypeDef owner, FunctionDef f)
-        {
-            if (f == null)
-                return;
-
-            // Parameters[0] is the receiver for member/library-extension functions; it legitimately
-            // carries the literal Self type and is excluded from the existential test the same way
-            // TypeDef.IsObjectSafeMethod excludes it.
-            var toCheck = f.Parameters.Count > 0
-                ? f.Parameters.Skip(1).Select(p => p.Type).Append(f.ReturnType)
-                : new[] { f.ReturnType };
-
-            foreach (var te in toCheck)
-                CheckReference(owner, te, f);
         }
 
         private void CheckReference(TypeDef owner, TypeExpression te, Symbol origin)
