@@ -28,6 +28,13 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+# C# builds are a large share of gate wall-clock, so each one is timed into the shared log
+# (tools\gate-timing.ps1) alongside its error counts.
+. (Join-Path $PSScriptRoot 'gate-timing.ps1')
+$gateRun = Start-GateRun "build: $TargetName"
+trap { Complete-GateRun $gateRun 'FAIL' $_.Exception.Message; break }
+
 $PlatoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $ProjectPath = if ([System.IO.Path]::IsPathRooted($Project)) { $Project } else { Join-Path $PlatoRoot $Project }
 if (-not (Test-Path $ProjectPath)) { throw "Project not found: $ProjectPath" }
@@ -66,6 +73,7 @@ if ($LASTEXITCODE -ne 0) { throw "record-csharp-build-errors.py failed (exit $LA
 
 if ($RecordOnly) {
     Write-Host ("Recorded build errors for '{0}' (build exit {1}; -RecordOnly so script exit 0)." -f $TargetName, $buildExit)
+    Complete-GateRun $gateRun $(if ($buildExit -eq 0) { 'PASS' } else { 'FAIL' }) "record-only, build exit $buildExit"
     exit 0
 }
-exit $buildExit
+Exit-GateRun $gateRun $buildExit

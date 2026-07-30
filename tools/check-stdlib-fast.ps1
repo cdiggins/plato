@@ -17,6 +17,7 @@ param(
 $ErrorActionPreference = 'Continue'
 $root = Split-Path -Parent $PSScriptRoot   # Plato repo root (parent of tools/)
 $results = [System.Collections.Generic.List[object]]::new()
+. (Join-Path $PSScriptRoot 'gate-timing.ps1')
 
 # Unlike check-all's Run-Quiet, failures replay their captured output: this script is an
 # agent inner loop, and a bare FAIL row would just force an immediate re-run for the details.
@@ -26,9 +27,11 @@ function Run-Gate([string]$name, [string]$file, [string[]]$argList) {
     $ok = ($LASTEXITCODE -eq 0)
     $sw.Stop()
     if (-not $ok) { $output | Out-String | Write-Host }
+    $result = $(if ($ok) { 'PASS' } else { 'FAIL' })
+    Add-GateTiming -Gate $name -Result $result -Seconds $sw.Elapsed.TotalSeconds -Script 'check-stdlib-fast.ps1'
     $script:results.Add([pscustomobject]@{
         Gate = $name
-        Result = $(if ($ok) { 'PASS' } else { 'FAIL' })
+        Result = $result
         Seconds = [math]::Round($sw.Elapsed.TotalSeconds, 1)
     })
 }
@@ -47,6 +50,7 @@ if (-not $SkipRatchet) {
 }
 
 $results | Format-Table -AutoSize | Out-String | Write-Host
+Write-Host ("Total: {0:n1}s (history: .\tools\gate-timings.ps1)" -f ($results | Measure-Object Seconds -Sum).Sum)
 $failed = @($results | Where-Object Result -eq 'FAIL')
 if ($failed.Count -gt 0) { Write-Host "FAILED: $($failed.Gate -join ', ')"; exit 1 }
 Write-Host 'STDLIB FAST GATE PASS'

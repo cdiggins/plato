@@ -88,6 +88,10 @@ Iterate on the one gate relevant to your workstream; run `check-all.ps1` **once*
 - `.\tools\regen-conformance.ps1 -Test` — regenerate merged (stdlib-legacy + stdlib-legacy-tests) output into the one conformance suite and run it (0 fail; 205 passing as of 2026-07-27).
 - `.\tools\check-frozen-v1.ps1` — freeze tripwire: SHA-256 of the frozen V1 artifacts (ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` + Plato-repo `Plato.Intrinsics`). Exit 1 on any drift. `-Update` re-baselines (deliberate only). Replaced regen-plato in check-all (C0); `regen-plato.ps1` + the legacy default-style emitter were deleted at C4.
 - `.\tools\check-all.ps1` — full gate battery, PASS/FAIL table. **Run once at the end of a mission**; iterate on a single relevant gate during development.
+- `.\tools\gate-timings.ps1` — how long the gates take. Every gate script records its duration
+  (and failures) via `tools\gate-timing.ps1` into `%LOCALAPPDATA%\ara3d\gate-timings.csv`; this
+  reports runs / median / P90 / max / total per gate, sorted by total time. `-Days`, `-Gate`,
+  `-Tail`, `-Failures`. Include the seconds in your gate table when you report results.
 - `dotnet run --project submodules\Plato\Plato.CLI -c Release -- lint submodules\Plato\stdlib-legacy` — exit 0 unless `--strict`; the finding count drifts with library content, so compare against the previous run, not a hardcoded baseline.
 
 Every gate is PowerShell and Windows-pathed. An agent on Linux/CI is limited to `dotnet build`

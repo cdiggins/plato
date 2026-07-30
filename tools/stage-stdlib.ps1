@@ -24,6 +24,12 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+# Wall-clock of the staged lint lands in the shared timing log (tools\gate-timing.ps1).
+. (Join-Path $PSScriptRoot 'gate-timing.ps1')
+$gateRun = Start-GateRun $(if ($Snapshot) { 'stage-stdlib -Snapshot' } else { 'stage-stdlib (lint)' })
+trap { Complete-GateRun $gateRun 'FAIL' $_.Exception.Message; break }
+
 $repo    = Split-Path $PSScriptRoot -Parent          # submodules/Plato
 $staging = 'C:\Users\cdigg\git\plato-staging'
 $bin     = Join-Path $staging 'bin'
@@ -59,4 +65,4 @@ $baselineFile = Join-Path $staging 'baseline.txt'   # first green run pins the c
 if (-not (Test-Path $baselineFile)) { $summary | Set-Content $baselineFile -Encoding utf8 }
 Write-Host ($summary -join "`n")
 Write-Host "Full output: $staging\last-lint.txt"
-exit $code
+Exit-GateRun $gateRun $code
