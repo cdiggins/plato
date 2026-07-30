@@ -630,35 +630,73 @@ namespace Ara3D.Geometry.CSharpWriter
             return this;
         }
 
+        // The CONCRETE array types. A library function whose receiver is one of these renders
+        // exactly like a legacy `IArray*`-concept receiver — ToCSharpTypeName maps both to the
+        // runtime list interfaces (Array<T> -> IReadOnlyList<T>, Array2D -> IReadOnlyList2D, ...)
+        // — so it belongs on the same classic-extension-method path (see
+        // IsListExtensionReceiver / WriteInterfaceLibraryMethods).
+        public static readonly HashSet<string> ConcreteArrayTypeNames = new HashSet<string>()
+        {
+            "Array",
+            "Array2D",
+            "Array3D",
+        };
+
+        // Is this the receiver of a library function that emits as a classic extension method on a
+        // runtime list interface in Extensions.g.cs? Two spellings of the same shape:
+        //   - an `IArray*` CONCEPT (but not IArrayLike, the fixed-arity component scaffolding) —
+        //     stdlib-legacy's spelling;
+        //   - the CONCRETE Array/Array2D/Array3D types — the forward stdlib's spelling
+        //     (`BoundsOfPoints(points: Array<Point2D>)`).
+        // The concrete arm is plato-323: `Array` is in IgnoredTypes, so those types get no
+        // ExtensionStylePlan, and moved members are only discovered while writing a concrete type's
+        // own file — so before this a library function with an array receiver was emitted by NO
+        // writer at all and every call site of it was a CS1061.
+        private static bool IsListExtensionReceiver(TypeExpression pt)
+            => pt?.Def != null
+               && (pt.Def.IsInterface()
+                   ? pt.Def.Name.StartsWith("IArray") && !pt.Def.Name.StartsWith("IArrayLike")
+                   : ConcreteArrayTypeNames.Contains(pt.Def.Name));
+
         public CSharpWriter WriteInterfaceLibraryMethods()
         {
             WriteLine($"public static partial class Extensions");
             WriteStartBlock();
+
+            // One emission per distinct C# signature. The forward stdlib overloads array-receiver
+            // functions on the ELEMENT type (BoundsOfPoints on Array<Point2D> and Array<Point3D>),
+            // which are distinct C# signatures — but two Plato libraries may also declare the same
+            // one, and a duplicate would be CS0111 rather than a fixed error.
+            var emittedSignatures = new HashSet<string>();
+
             foreach (var f in Compilation.Libraries.AllFunctions())
             {
-                if (f.NumParameters > 0)
-                {
-                    var pt = f.Parameters[0].Type;
-                    if (!pt.Def.IsInterface())
-                        continue;
+                if (f.NumParameters == 0)
+                    continue;
 
-                    // We are going to skip functions that do not have a body
-                    if (f.Body == null)
-                        continue;
+                if (!IsListExtensionReceiver(f.Parameters[0].Type))
+                    continue;
 
-                    if (!pt.Def.Name.StartsWith("IArray") || pt.Def.Name.StartsWith("IArrayLike"))
-                        continue;
+                // Declared-only functions (the array INTRINSICS: Map/Reduce/Zip/...) are provided
+                // by the handwritten Ara3D.Collections runtime; emitting a stub would shadow it.
+                if (f.Body == null)
+                    continue;
 
-                    // We need to fix this, we should be creating functions instances.
-                    var interfaceWriter = NewDefaultTypeWriter();
-                    var fi = new FunctionInstance(f, null, null, FunctionInstanceKind.InterfaceExtension);
-                    var cfi = new CSharpFunctionInfo(fi, null, interfaceWriter);
-                    interfaceWriter.WriteExtensionFunction(cfi);
-                    if (ExtensionStyle)
-                        this.WriteWithLineStateSync(interfaceWriter.ToString());
-                    else
-                        Write(interfaceWriter.ToString());
-                }
+                if (IgnoredFunctions.Contains(f.Name))
+                    continue;
+
+                // We need to fix this, we should be creating functions instances.
+                var interfaceWriter = NewDefaultTypeWriter();
+                var fi = new FunctionInstance(f, null, null, FunctionInstanceKind.InterfaceExtension);
+                var cfi = new CSharpFunctionInfo(fi, null, interfaceWriter);
+                if (!emittedSignatures.Add(
+                        $"{cfi.Name}{cfi.ExtensionGenericsString}({cfi.ParameterTypes.JoinStringsWithComma()})"))
+                    continue;
+                interfaceWriter.WriteExtensionFunction(cfi);
+                if (ExtensionStyle)
+                    this.WriteWithLineStateSync(interfaceWriter.ToString());
+                else
+                    Write(interfaceWriter.ToString());
             }
             WriteEndBlock();
             return this;
