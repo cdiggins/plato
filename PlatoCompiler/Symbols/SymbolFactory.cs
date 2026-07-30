@@ -474,6 +474,10 @@ namespace Ara3D.Geometry.Compiler.Symbols
                     // types may be declared unique. Hard-reject anything else: the error
                     // halts compilation (SymbolFactory.Errors is checked by Compilation).
                     typeDef.IsUnique = astTypeDeclaration.IsUnique;
+
+                    // Primitive-type keyword (plato-367): recorded, nothing else changes.
+                    typeDef.IsPrimitiveDeclaration = astTypeDeclaration.IsPrimitiveDeclaration;
+
                     if (typeDef.IsUnique && !UniqueTypes.IsUniqueTypeName(typeDef.Name))
                         LogResolutionError(
                             $"The 'unique' modifier is not allowed on type '{typeDef.Name}': only the intrinsic " +

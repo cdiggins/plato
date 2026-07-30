@@ -1,0 +1,137 @@
+//==
+// # Primitives
+//
+// The types the Plato compiler assumes to exist BY NAME. Their representation comes
+// from the runtime, not from these declarations, so none of them can be defined in
+// Plato itself - which is exactly what the `primitive` keyword records (plato-367).
+// Everything else in this vocabulary is an ordinary `type` whose shape is its
+// declaration.
+//
+// Fields are intentionally absent throughout: a primitive has no declarable shape.
+// What each declaration DOES carry is its concept surface - the `implements` list
+// states which foundational concepts the intrinsic satisfies, and that is the only
+// authority the checker has over these names.
+//
+// The set below is the whole set. Adding a declaration here is a claim that the
+// compiler and every backend must know the name; see
+// `PlatoCompiler/Types/WriterPrimitiveNames.cs` for the writer-side mirror and
+// plato-365 for the standing effort to keep the set as small as possible.
+
+// ## Scalars
+
+// A 64-bit floating-point approximation of a real number.
+// (https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
+primitive Number
+    implements Real
+{ }
+
+// A signed whole number. (https://en.wikipedia.org/wiki/Integer_(computer_science))
+primitive Integer
+    implements Whole, Bitwise
+{ }
+
+// A truth value: true or false. (https://en.wikipedia.org/wiki/Boolean_data_type)
+primitive Boolean
+    implements Value, Orderable, Logical
+{ }
+
+// A single character of text. (https://en.wikipedia.org/wiki/Character_(computing))
+primitive Character
+    implements Value, Orderable
+{ }
+
+// Immutable text. (https://en.wikipedia.org/wiki/String_(computer_science))
+primitive String
+    implements Value, Orderable, Countable
+{ }
+
+// ## Escape hatches
+
+// A dynamically typed value; an escape hatch for interop.
+primitive Dynamic
+{ }
+
+// A type reified as a value. Carries no members of its own; it exists so a static
+// member can be reached through a type token (the `_: Type` receiver convention).
+primitive Type
+{ }
+
+// ## Collections
+
+// An immutable one-dimensional ordered collection.
+// (https://en.wikipedia.org/wiki/Array_(data_structure))
+primitive Array<T>
+    implements Indexable<T>
+{ }
+
+// ### Affine builders
+//
+// The mutable half of the collection story. Every other collection in this
+// vocabulary is immutable-by-value, which leaves no way to *build* one: nothing
+// can accumulate points, sample a curve into an array, or assemble a mesh. The
+// two builder types below fill that gap without giving up value semantics
+// anywhere else, because uniqueness is confined to these two types.
+// The `unique` modifier is an affine type discipline
+// (https://en.wikipedia.org/wiki/Substructural_type_system).
+//
+// `unique` is a declaration-site modifier only. A *use* of `List<T>` or
+// `Buffer<T>` is never annotated: the type itself carries the affine
+// convention, so every pass of a builder value is a move. Only the intrinsic
+// builder names `List` and `Buffer` may be declared unique; the compiler
+// hard-rejects the modifier on any other type.
+//
+// Method effects (the compiler's `UniqueTypes` intrinsic table):
+//
+// | Effect  | Members            | Meaning                                          |
+// |---------|--------------------|--------------------------------------------------|
+// | observe | `Count`, `At`      | free use; does not invalidate the builder        |
+// | mutate  | `Add`, `AddRange`, `Set` | returns the builder - rebind or chain      |
+// | consume | `Freeze`           | zero-copy handoff to an immutable `Array<T>`; the builder is invalidated |
+//
+// Conventions, runtime-checked today (the static affine pass rides the future
+// type-checker workstream - see `../docs/affine-types.md`):
+//
+// - never store a builder in a field (LINT006) or inside another generic
+//   container (LINT007);
+// - never capture a builder in a lambda;
+// - write `Freeze` with parentheses: `xs.Freeze()`;
+// - construct with `new List<T>()` / `new Buffer<T>(n)` at concrete element
+//   types, or `xs.EmptyList()` where the element type is a type variable;
+// - rebind or chain every mutator (`xs = xs.Add(p)`, or
+//   `new List<Integer>().Add(1).Add(2).Freeze()`). Use after `Freeze()` throws
+//   at runtime.
+//
+// The backing runtimes are handwritten (`Plato.Intrinsics/PlatoList.cs`,
+// `PlatoBuffer.cs`); the compiler maps `List`/`Buffer` to `PlatoList`/
+// `PlatoBuffer` and never generates a struct for a unique type.
+//
+// The bodiless host signatures for these two types live in
+// `intrinsics.library.plato`.
+
+// A growable affine builder: append elements, then promote the backing store to
+// an immutable Array<T> with Freeze(). (https://en.wikipedia.org/wiki/Dynamic_array)
+unique primitive List<T>
+{ }
+
+// A fixed-size affine builder: allocate n slots, write them by index in any
+// order, then promote the backing store to an immutable Array<T> with Freeze().
+// (https://en.wikipedia.org/wiki/Data_buffer)
+unique primitive Buffer<T>
+{ }
+
+// ## Function types
+//
+// Pure function values, one per arity 0-9. TR is the result type; T0..T8 are the
+// parameter types in order. The compiler resolves a lambda of N parameters to
+// FunctionN, so the arity ceiling here is the language's ceiling.
+
+primitive Function0<TR> { }
+primitive Function1<T0, TR> { }
+primitive Function2<T0, T1, TR> { }
+primitive Function3<T0, T1, T2, TR> { }
+primitive Function4<T0, T1, T2, T3, TR> { }
+primitive Function5<T0, T1, T2, T3, T4, TR> { }
+primitive Function6<T0, T1, T2, T3, T4, T5, TR> { }
+primitive Function7<T0, T1, T2, T3, T4, T5, T6, TR> { }
+primitive Function8<T0, T1, T2, T3, T4, T5, T6, T7, TR> { }
+primitive Function9<T0, T1, T2, T3, T4, T5, T6, T7, T8, TR> { }

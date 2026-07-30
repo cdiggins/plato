@@ -1,14 +1,12 @@
 //==
-// # Arrays
+// # Multi-dimensional arrays
 //
 // Immutable, eagerly-or-lazily backed ordered collections. The compiler maps
 // indexing syntax to At.
-
-// An immutable one-dimensional ordered collection.
-// (https://en.wikipedia.org/wiki/Array_(data_structure))
-type Array<T>
-    implements Indexable<T>
-{ }
+//
+// The one-dimensional `Array<T>` moved to `primitives.plato` (plato-367): it is a
+// name the compiler assumes. The rank-2 and rank-3 forms below are NOT - they are
+// ordinary types whose shape is their declaration, so they stay `type`.
 
 // An immutable collection addressed by column and row.
 type Array2D<T>

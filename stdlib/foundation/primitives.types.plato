@@ -1,39 +1,11 @@
 //==
-// # Primitives
+// # Host interop root
 //
-// Types the Plato compiler assumes to exist by name. This file declares them and
-// states which foundational concepts they satisfy. Fields are intentionally absent
-// on scalar primitives: their representations are intrinsic.
-
-// A 64-bit floating-point approximation of a real number.
-// (https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
-type Number
-    implements Real
-{ }
-
-// A signed whole number. (https://en.wikipedia.org/wiki/Integer_(computer_science))
-type Integer
-    implements Whole, Bitwise
-{ }
-
-// A truth value: true or false. (https://en.wikipedia.org/wiki/Boolean_data_type)
-type Boolean
-    implements Value, Orderable, Logical
-{ }
-
-// Immutable text. (https://en.wikipedia.org/wiki/String_(computer_science))
-type String
-    implements Value, Orderable, Countable
-{ }
-
-// A single character of text. (https://en.wikipedia.org/wiki/Character_(computing))
-type Character
-    implements Value, Orderable
-{ }
-
-// A dynamically typed value; an escape hatch for interop.
-type Dynamic
-{ }
+// The compiler-assumed primitives that used to live here (Number, Integer, Boolean,
+// String, Character, Dynamic) moved to `primitives.plato` and are now declared with
+// the `primitive` keyword (plato-367). What remains is the one type in this family
+// that is NOT a primitive: the compiler does not assume `Object` by name, and it is
+// not on the writer primitive list, so its declaration is its own authority.
 
 // The root reference type for interop with host platforms.
 type Object

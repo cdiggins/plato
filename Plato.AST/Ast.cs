@@ -362,6 +362,12 @@ namespace Ara3D.Geometry.AST
         // hard-rejects it anywhere else.
         public bool IsUnique { get; set; }
 
+        // Primitive-type keyword (plato-367): true when declared "primitive X ..." rather than
+        // "type X ...". A primitive is a type the compiler assumes to exist by name — its
+        // representation comes from the runtime, not from the declaration. Purely a record of the
+        // surface syntax: the declaration is otherwise treated exactly like a `type`.
+        public bool IsPrimitiveDeclaration { get; set; }
+
         // Sum-type (tagged-union) cases when declared with the "= Case | Case | ...;" body. Empty for
         // ordinary types (Kind stays ConcreteType); non-empty exactly when this is a sum type. Carried
         // as a settable property (like IsUnique) so the constructor signature and all existing callers

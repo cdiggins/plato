@@ -473,6 +473,8 @@ namespace Ara3D.Geometry.AST
                 {
                     // Affine-type modifier (roadmap Phase 6): "unique type ..."
                     IsUnique = type.UniqueKeyword.Present,
+                    // Primitive-type keyword (plato-367): "primitive Number implements Real { }"
+                    IsPrimitiveDeclaration = type.PrimitiveKeyword.Present,
                     // Sum-type cases (empty unless declared with the "=" body).
                     Cases = cases,
                 };

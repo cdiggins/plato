@@ -168,6 +168,13 @@ namespace Ara3D.Geometry.Compiler.Symbols
         // are never emitted as generated structs.
         public bool IsUnique { get; set; }
 
+        // Primitive-type keyword (plato-367): declared "primitive X ..." rather than "type X ...".
+        // Records that the compiler assumes this type by name and that its representation comes
+        // from the runtime. NOT the same as the writer-side <see cref="TypeExtensions.IsPrimitive"/>,
+        // which tests Kind == TypeKind.Primitive; a `primitive` declaration keeps Kind ==
+        // ConcreteType so every downstream stage behaves exactly as it did before plato-367.
+        public bool IsPrimitiveDeclaration { get; set; }
+
         public IEnumerable<FunctionDef> Functions => Enumerable.Empty<FunctionDef>()
             .Concat(Methods.Select(m => m.Function))
             .Concat(Fields.Select(f => f.Function))
