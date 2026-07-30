@@ -16,13 +16,13 @@
 // obligations on whoever implements the concept, and the stdlib satisfies them in
 // Plato. Only `library` blocks declare host intrinsics.
 //
-// One exception to "everything in one file": the `Plane` intrinsics live in
-// `geometry/intrinsics-planes.library.plato`. `Plane` is declared in the geometry
-// tier (`geometry/lines-planes.types.plato`), and a folder may reference only
-// itself and the tiers before it. This file must live in `foundation/` because
-// foundation itself needs the scalar, array and matrix intrinsics; folding the
-// `Plane` intrinsics in would make foundation reference a geometry type and stop
-// it compiling standalone.
+// This is the ONLY file in the library with bodiless declarations, and it stays
+// that way. A tier folder may reference only itself and the folders before it
+// (`foundation` -> `geometry` -> `graphics` -> `future`), so a host function on a
+// non-foundation type cannot be declared here without breaking foundation's
+// standalone compilation — which means it must not be a host function at all.
+// `Plane` was the last such case: its ten operations were intrinsic until they
+// were rewritten as ordinary Plato in `geometry/lines-planes.library.plato`.
 
 library Intrinsics
 {

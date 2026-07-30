@@ -6,10 +6,12 @@ implementation. This file is the complete contract a backend must satisfy — fo
 handwritten `Plato.Intrinsics.V2`; for a new backend (C++, GLSL, Rust) it is the porting
 checklist.
 
-**338 intrinsics across 2 files** (stdlib as of 2026-07-30). All but the ten `Plane` intrinsics
-live in the single consolidated `foundation/intrinsics.library.plato`; `Plane` is a geometry
-type, so its intrinsics stay in the geometry tier — foundation may not reference a geometry
-type and still compile standalone.
+**328 intrinsics in one file** (stdlib as of 2026-07-30): `foundation/intrinsics.library.plato`
+is the only file in the library that contains bodiless declarations, and it stays that way.
+Because a tier folder may reference only itself and the folders before it, a host function on a
+non-foundation type cannot be declared there at all — so it must not be a host function. `Plane`
+was the last such case; its ten operations are now ordinary Plato in
+`geometry/lines-planes.library.plato`.
 
 Bodiless declarations inside a `concept` are NOT intrinsics — those are obligations on whoever
 implements the concept, and the stdlib satisfies them in Plato. Only `library` blocks declare
@@ -406,22 +408,4 @@ grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.librar
 - `At(xs: Buffer<$T>, n: Integer): $T`
 - `Set(xs: Buffer<$T>, i: Integer, x: $T): Buffer<$T>`
 - `Freeze(xs: Buffer<$T>): Array<$T>`
-
-## `geometry/intrinsics-planes.library.plato` (10)
-
-**Matrix4x4 factories taking a plane**
-
-- `CreateReflection(_: Matrix4x4, value: Plane): Matrix4x4`
-- `CreateShadow(_: Matrix4x4, lightDirection: Vector3D, plane: Plane): Matrix4x4`
-
-**Plane**
-
-- `Normalize(self: Plane): Plane`
-- `CreateFromVertices(_: Plane, point1: Point3D, point2: Point3D, point3: Point3D): Plane`
-- `Dot(self: Plane, value: Number4): Number`
-- `DotCoordinate(self: Plane, value: Point3D): Number`
-- `DotNormal(self: Plane, value: Vector3D): Number`
-- `Transform(self: Plane, rotation: Quaternion): Plane`
-- `Transform(self: Plane, matrix: Matrix4x4): Plane`
-- `Hash(self: Plane): Integer`
 

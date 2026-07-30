@@ -47,9 +47,8 @@ Code generated from this vocabulary targets, **in priority order**:
 5. Others as capacity allows: **GLSL**, **Rust**, **Python**
 
 This ordering governs intrinsics policy (`foundation/intrinsics.library.plato`, the single
-file that carries the whole host contract, plus its preamble and porting notes; the `Plane`
-intrinsics sit apart in `geometry/intrinsics-planes.library.plato` because `Plane` is a
-geometry type and foundation may not reference it): a function may be
+file that carries the whole host contract, plus its preamble and porting notes; it is the
+only file in the library with bodiless declarations): a function may be
 declared intrinsic only if every priority-1..4 backend can supply it natively or with a
 trivial shim. Anything host-specific (C# SIMD types, IEEE nextafter-grade functions,
 midpoint-rounding variants) is excluded and noted in those porting notes; lower-
@@ -184,8 +183,8 @@ Foundation reading order, file by file:
 - `primitives-tuples.types.plato` — Tuple2..Tuple10 (the compiler's synthesized constructor arity).
 - `primitives-functions.types.plato` — Function0..Function4.
 - `primitives-arrays.types.plato` — Array, Array2D, Array3D.
-- `primitives-builders.types.plato` — the `unique` affine builders `List<T>` / `Buffer<T>`; their
-  bodiless host signatures live in `intrinsics.library.plato`.
+- `primitives.plato` — the `unique` affine builders `List<T>` / `Buffer<T>` (with the rest of the
+  primitive set); their bodiless host signatures live in `intrinsics.library.plato`.
 - `core-comparison.concepts.plato` — Equatable, Value, Hashable, Orderable, Comparable.
 - `core-logic.concepts.plato` — Logical, BooleanAlgebra, Bitwise.
 - `algebra-operations.concepts.plato` — Additive, Multiplicative, Divisible, Modular, Invertible, Arithmetic, Scalable, Interpolatable.
