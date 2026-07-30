@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Plato Status Report — 2026-07-30 00:51 Eastern Daylight Time</title>
+<title>Plato Status Report — 2026-07-30 00:55 Eastern Daylight Time</title>
 <style>
 :root {
   --bg: #0f1419; --panel: #1a222c; --panel2: #232d3a; --text: #e7ecf2;
@@ -82,10 +82,10 @@ tr.muted-row { opacity: .55; }
 <body>
 <header>
   <h1>Plato status report</h1>
-  <div class="meta">Generated 2026-07-30 00:51:34 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>d1b1051</code></div>
+  <div class="meta">Generated 2026-07-30 00:55:27 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>ac8d3e5</code></div>
   <div class="overall">
     <span><span class="badge attention">ATTENTION</span></span>
-    <span>212 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-30T00:39:38-04:00; live git/tracker refreshed this generation.</span>
+    <span>1 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-30T00:39:38-04:00; live git/tracker refreshed this generation.</span>
   </div>
 </header>
 <main>
@@ -94,10 +94,10 @@ tr.muted-row { opacity: .55; }
   <h2>Snapshot</h2>
   <div class="grid">
     <div class="card"><div class="n">main</div><div class="l">Branch · <span class="badge pass">synced</span></div></div>
-    <div class="card"><div class="n">d1b1051</div><div class="l">HEAD</div></div>
-    <div class="card"><div class="n">212</div><div class="l">Dirty paths</div></div>
-    <div class="card"><div class="n">0</div><div class="l">Commits today</div></div>
-    <div class="card"><div class="n">156</div><div class="l">Commits last 7 days</div></div>
+    <div class="card"><div class="n">ac8d3e5</div><div class="l">HEAD</div></div>
+    <div class="card"><div class="n">1</div><div class="l">Dirty paths</div></div>
+    <div class="card"><div class="n">1</div><div class="l">Commits today</div></div>
+    <div class="card"><div class="n">157</div><div class="l">Commits last 7 days</div></div>
     <div class="card"><div class="n">7</div><div class="l">Issues in progress</div></div>
     <div class="card"><div class="n">0</div><div class="l">Latest C# errors (plato-generated-optimized)</div></div>
   </div>
@@ -107,449 +107,27 @@ tr.muted-row { opacity: .55; }
   <h2>Git — Plato</h2>
   <div class="kv">
     <div class="k">Status</div><div><code>## main...origin/main
-M  Generated/Plato.Generated.Optimized/Curves.g.cs
-M  Generated/Plato.Generated.Optimized/IBoundsLibrary.g.cs
-M  Generated/Plato.Generated.Optimized/IIntervalLibrary.g.cs
-M  Generated/Plato.Generated.Optimized/Meshes.g.cs
-M  Generated/Plato.Generated.Optimized/Transforms.g.cs
-M  Generated/Plato.Generated.Optimized/_AnglePair.g.cs
-M  Generated/Plato.Generated.Optimized/_Arc.g.cs
-M  Generated/Plato.Generated.Optimized/_ArchimedeanSpiral.g.cs
-M  Generated/Plato.Generated.Optimized/_AxisAngle.g.cs
-M  Generated/Plato.Generated.Optimized/_Bounds2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Bounds3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Box.g.cs
-M  Generated/Plato.Generated.Optimized/_ButterflyCurve.g.cs
-M  Generated/Plato.Generated.Optimized/_Capsule.g.cs
-M  Generated/Plato.Generated.Optimized/_Cardoid.g.cs
-M  Generated/Plato.Generated.Optimized/_Chord.g.cs
-M  Generated/Plato.Generated.Optimized/_Circle.g.cs
-M  Generated/Plato.Generated.Optimized/_ConchoidOfDeSluze.g.cs
-M  Generated/Plato.Generated.Optimized/_Cone.g.cs
-M  Generated/Plato.Generated.Optimized/_ConeSegment.g.cs
-M  Generated/Plato.Generated.Optimized/_ConicSection.g.cs
-M  Generated/Plato.Generated.Optimized/_CubicBezier2D.g.cs
-M  Generated/Plato.Generated.Optimized/_CubicBezier3D.g.cs
-M  Generated/Plato.Generated.Optimized/_CycloidOfCeva.g.cs
-M  Generated/Plato.Generated.Optimized/_Ellipse.g.cs
-M  Generated/Plato.Generated.Optimized/_Ellipsoid.g.cs
-M  Generated/Plato.Generated.Optimized/_Epicycloid.g.cs
-M  Generated/Plato.Generated.Optimized/_Epitrochoid.g.cs
-M  Generated/Plato.Generated.Optimized/_FermatsSpiral.g.cs
-M  Generated/Plato.Generated.Optimized/_FigureEightKnot.g.cs
-M  Generated/Plato.Generated.Optimized/_Helix.g.cs
-M  Generated/Plato.Generated.Optimized/_Hypocycloid.g.cs
-M  Generated/Plato.Generated.Optimized/_Hypotrochoid.g.cs
-M  Generated/Plato.Generated.Optimized/_Identity2D.g.cs
-M  Generated/Plato.Generated.Optimized/_IdentityTransform3D.g.cs
-M  Generated/Plato.Generated.Optimized/_LemniscateOfBernoulli.g.cs
-M  Generated/Plato.Generated.Optimized/_Lens.g.cs
-M  Generated/Plato.Generated.Optimized/_Limacon.g.cs
-M  Generated/Plato.Generated.Optimized/_Line2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Line3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Lines3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Lissajous.g.cs
-M  Generated/Plato.Generated.Optimized/_LogarithmicSpiral.g.cs
-M  Generated/Plato.Generated.Optimized/_LookAt3D.g.cs
-M  Generated/Plato.Generated.Optimized/_LookDirection3D.g.cs
-M  Generated/Plato.Generated.Optimized/_NPrism.g.cs
-M  Generated/Plato.Generated.Optimized/_NPyramid.g.cs
-M  Generated/Plato.Generated.Optimized/_NumberInterval.g.cs
-M  Generated/Plato.Generated.Optimized/_OffsetRotation2D.g.cs
-M  Generated/Plato.Generated.Optimized/_OffsetScale2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Orthographic3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Parabola.g.cs
-M  Generated/Plato.Generated.Optimized/_Perspective3D.g.cs
-M  Generated/Plato.Generated.Optimized/_PlaneProjection3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Point2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Point3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Points3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Polygon.g.cs
-M  Generated/Plato.Generated.Optimized/_Pose2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Pose3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Pyramid.g.cs
-M  Generated/Plato.Generated.Optimized/_Quad2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Quad3D.g.cs
-M  Generated/Plato.Generated.Optimized/_QuadGrid3D.g.cs
-M  Generated/Plato.Generated.Optimized/_QuadraticBezier2D.g.cs
-M  Generated/Plato.Generated.Optimized/_QuadraticBezier3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Quads3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Quaternion.g.cs
-M  Generated/Plato.Generated.Optimized/_Rect2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Reflection2D.g.cs
-M  Generated/Plato.Generated.Optimized/_RegularPolygon.g.cs
-M  Generated/Plato.Generated.Optimized/_Ring.g.cs
-M  Generated/Plato.Generated.Optimized/_Rose.g.cs
-M  Generated/Plato.Generated.Optimized/_Rotation2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Rotation3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Scale2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Scaling3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Sector.g.cs
-M  Generated/Plato.Generated.Optimized/_Segment.g.cs
-M  Generated/Plato.Generated.Optimized/_SineWave.g.cs
-M  Generated/Plato.Generated.Optimized/_SinusoidalSpiral.g.cs
-M  Generated/Plato.Generated.Optimized/_Skew2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Sphere.g.cs
-M  Generated/Plato.Generated.Optimized/_Spiral.g.cs
-M  Generated/Plato.Generated.Optimized/_TRSTransform2D.g.cs
-M  Generated/Plato.Generated.Optimized/_TRSTransform3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Torus.g.cs
-M  Generated/Plato.Generated.Optimized/_TorusKnot.g.cs
-M  Generated/Plato.Generated.Optimized/_Translation2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Translation3D.g.cs
-M  Generated/Plato.Generated.Optimized/_TrefoilKnot.g.cs
-M  Generated/Plato.Generated.Optimized/_Triangle2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Triangle3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Triangles3D.g.cs
-M  Generated/Plato.Generated.Optimized/_TrisectrixOfMaclaurin.g.cs
-M  Generated/Plato.Generated.Optimized/_TschirnhausenCubic.g.cs
-M  Generated/Plato.Generated.Optimized/_Tube.g.cs
-M  Generated/Plato.Generated.Optimized/_UniformScale2D.g.cs
-M  Generated/Plato.Generated.Optimized/_YawPitch.g.cs
-M  Generated/Plato.Generated.Optimized/_YawPitchRoll.g.cs
-M  Generated/Plato.Generated.Unoptimized/Curves.g.cs
-M  Generated/Plato.Generated.Unoptimized/Geometry.g.cs
-M  Generated/Plato.Generated.Unoptimized/IBoundsLibrary.g.cs
-M  Generated/Plato.Generated.Unoptimized/IIntervalLibrary.g.cs
-M  Generated/Plato.Generated.Unoptimized/Meshes.g.cs
-M  Generated/Plato.Generated.Unoptimized/Transforms.g.cs
-M  Generated/Plato.Generated.Unoptimized/_AnglePair.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Arc.g.cs
-M  Generated/Plato.Generated.Unoptimized/_ArchimedeanSpiral.g.cs
-M  Generated/Plato.Generated.Unoptimized/_AxisAngle.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Bounds2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Bounds3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Box.g.cs
-M  Generated/Plato.Generated.Unoptimized/_ButterflyCurve.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Capsule.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Cardoid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Chord.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Circle.g.cs
-M  Generated/Plato.Generated.Unoptimized/_ConchoidOfDeSluze.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Cone.g.cs
-M  Generated/Plato.Generated.Unoptimized/_ConeSegment.g.cs
-M  Generated/Plato.Generated.Unoptimized/_ConicSection.g.cs
-M  Generated/Plato.Generated.Unoptimized/_CubicBezier2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_CubicBezier3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_CycloidOfCeva.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Ellipse.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Ellipsoid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Epicycloid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Epitrochoid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_FermatsSpiral.g.cs
-M  Generated/Plato.Generated.Unoptimized/_FigureEightKnot.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Helix.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Hypocycloid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Hypotrochoid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Identity2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_IdentityTransform3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_LemniscateOfBernoulli.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Lens.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Limacon.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Line2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Line3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Lines3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Lissajous.g.cs
-M  Generated/Plato.Generated.Unoptimized/_LogarithmicSpiral.g.cs
-M  Generated/Plato.Generated.Unoptimized/_LookAt3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_LookDirection3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_NPrism.g.cs
-M  Generated/Plato.Generated.Unoptimized/_NPyramid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_NumberInterval.g.cs
-M  Generated/Plato.Generated.Unoptimized/_OffsetRotation2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_OffsetScale2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Orthographic3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Parabola.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Perspective3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_PlaneProjection3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Point2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Point3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Points3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Polygon.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Pose2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Pose3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Pyramid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Quad2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Quad3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_QuadGrid3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_QuadraticBezier2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_QuadraticBezier3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Quads3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Quaternion.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Rect2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Reflection2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_RegularPolygon.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Ring.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Rose.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Rotation2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Rotation3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Scale2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Scaling3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Sector.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Segment.g.cs
-M  Generated/Plato.Generated.Unoptimized/_SineWave.g.cs
-M  Generated/Plato.Generated.Unoptimized/_SinusoidalSpiral.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Skew2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Sphere.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Spiral.g.cs
-M  Generated/Plato.Generated.Unoptimized/_TRSTransform2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_TRSTransform3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Torus.g.cs
-M  Generated/Plato.Generated.Unoptimized/_TorusKnot.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Translation2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Translation3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_TrefoilKnot.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Triangle2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Triangle3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Triangles3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_TrisectrixOfMaclaurin.g.cs
-M  Generated/Plato.Generated.Unoptimized/_TschirnhausenCubic.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Tube.g.cs
-M  Generated/Plato.Generated.Unoptimized/_UniformScale2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_YawPitch.g.cs
-M  Generated/Plato.Generated.Unoptimized/_YawPitchRoll.g.cs
-M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs
 M  Plato.CSharpWriter/CSharpWriter.cs
-M  Plato.CSharpWriter/ExtensionStyleWriter.cs
-M  Plato.CSharpWriter/TirCSharpBodyWriter.cs
-M  PlatoCompiler/Analysis/Linter.cs
-M  PlatoTests/EmitSnapshotTests.cs
-M  PlatoTests/LinterFieldFunctionCollisionTests.cs
-A  PlatoTests/ReceiverAwareRenderingTests.cs
-M  PlatoTests/emit-snapshot.txt
-M  docs/status-report-snapshot.json
-M  docs/status-report.html
 ?? .claude/</code></div>
-    <div class="k">HEAD</div><div><code>d1b1051fa2fb8f5f32383f74b3606ec616d511ec</code></div>
-    <div class="k">origin/main</div><div><code>d1b1051fa2fb8f5f32383f74b3606ec616d511ec</code></div>
+    <div class="k">HEAD</div><div><code>ac8d3e56b1df6d682598da5f7346b491d72d61e9</code></div>
+    <div class="k">origin/main</div><div><code>ac8d3e56b1df6d682598da5f7346b491d72d61e9</code></div>
     <div class="k">Unpushed</div><div><span class="muted">in sync with origin/main</span></div>
-    <div class="k">Dirty (excl. .claude/)</div><div><code>M  Generated/Plato.Generated.Optimized/Curves.g.cs<br>M  Generated/Plato.Generated.Optimized/IBoundsLibrary.g.cs<br>M  Generated/Plato.Generated.Optimized/IIntervalLibrary.g.cs<br>M  Generated/Plato.Generated.Optimized/Meshes.g.cs<br>M  Generated/Plato.Generated.Optimized/Transforms.g.cs<br>M  Generated/Plato.Generated.Optimized/_AnglePair.g.cs<br>M  Generated/Plato.Generated.Optimized/_Arc.g.cs<br>M  Generated/Plato.Generated.Optimized/_ArchimedeanSpiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_AxisAngle.g.cs<br>M  Generated/Plato.Generated.Optimized/_Bounds2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Bounds3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Box.g.cs<br>M  Generated/Plato.Generated.Optimized/_ButterflyCurve.g.cs<br>M  Generated/Plato.Generated.Optimized/_Capsule.g.cs<br>M  Generated/Plato.Generated.Optimized/_Cardoid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Chord.g.cs<br>M  Generated/Plato.Generated.Optimized/_Circle.g.cs<br>M  Generated/Plato.Generated.Optimized/_ConchoidOfDeSluze.g.cs<br>M  Generated/Plato.Generated.Optimized/_Cone.g.cs<br>M  Generated/Plato.Generated.Optimized/_ConeSegment.g.cs<br>M  Generated/Plato.Generated.Optimized/_ConicSection.g.cs<br>M  Generated/Plato.Generated.Optimized/_CubicBezier2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_CubicBezier3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_CycloidOfCeva.g.cs<br>M  Generated/Plato.Generated.Optimized/_Ellipse.g.cs<br>M  Generated/Plato.Generated.Optimized/_Ellipsoid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Epicycloid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Epitrochoid.g.cs<br>M  Generated/Plato.Generated.Optimized/_FermatsSpiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_FigureEightKnot.g.cs<br>M  Generated/Plato.Generated.Optimized/_Helix.g.cs<br>M  Generated/Plato.Generated.Optimized/_Hypocycloid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Hypotrochoid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Identity2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_IdentityTransform3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_LemniscateOfBernoulli.g.cs<br>M  Generated/Plato.Generated.Optimized/_Lens.g.cs<br>M  Generated/Plato.Generated.Optimized/_Limacon.g.cs<br>M  Generated/Plato.Generated.Optimized/_Line2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Line3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Lines3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Lissajous.g.cs<br>M  Generated/Plato.Generated.Optimized/_LogarithmicSpiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_LookAt3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_LookDirection3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_NPrism.g.cs<br>M  Generated/Plato.Generated.Optimized/_NPyramid.g.cs<br>M  Generated/Plato.Generated.Optimized/_NumberInterval.g.cs<br>M  Generated/Plato.Generated.Optimized/_OffsetRotation2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_OffsetScale2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Orthographic3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Parabola.g.cs<br>M  Generated/Plato.Generated.Optimized/_Perspective3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_PlaneProjection3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Point2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Point3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Points3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Polygon.g.cs<br>M  Generated/Plato.Generated.Optimized/_Pose2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Pose3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Pyramid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Quad2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Quad3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_QuadGrid3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_QuadraticBezier2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_QuadraticBezier3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Quads3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Quaternion.g.cs<br>M  Generated/Plato.Generated.Optimized/_Rect2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Reflection2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_RegularPolygon.g.cs<br>M  Generated/Plato.Generated.Optimized/_Ring.g.cs<br>M  Generated/Plato.Generated.Optimized/_Rose.g.cs<br>M  Generated/Plato.Generated.Optimized/_Rotation2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Rotation3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Scale2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Scaling3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Sector.g.cs<br>M  Generated/Plato.Generated.Optimized/_Segment.g.cs<br>M  Generated/Plato.Generated.Optimized/_SineWave.g.cs<br>M  Generated/Plato.Generated.Optimized/_SinusoidalSpiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_Skew2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Sphere.g.cs<br>M  Generated/Plato.Generated.Optimized/_Spiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_TRSTransform2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_TRSTransform3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Torus.g.cs<br>M  Generated/Plato.Generated.Optimized/_TorusKnot.g.cs<br>M  Generated/Plato.Generated.Optimized/_Translation2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Translation3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_TrefoilKnot.g.cs<br>M  Generated/Plato.Generated.Optimized/_Triangle2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Triangle3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Triangles3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_TrisectrixOfMaclaurin.g.cs<br>M  Generated/Plato.Generated.Optimized/_TschirnhausenCubic.g.cs<br>M  Generated/Plato.Generated.Optimized/_Tube.g.cs<br>M  Generated/Plato.Generated.Optimized/_UniformScale2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_YawPitch.g.cs<br>M  Generated/Plato.Generated.Optimized/_YawPitchRoll.g.cs<br>M  Generated/Plato.Generated.Unoptimized/Curves.g.cs<br>M  Generated/Plato.Generated.Unoptimized/Geometry.g.cs<br>M  Generated/Plato.Generated.Unoptimized/IBoundsLibrary.g.cs<br>M  Generated/Plato.Generated.Unoptimized/IIntervalLibrary.g.cs<br>M  Generated/Plato.Generated.Unoptimized/Meshes.g.cs<br>M  Generated/Plato.Generated.Unoptimized/Transforms.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_AnglePair.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Arc.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ArchimedeanSpiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_AxisAngle.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Bounds2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Bounds3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Box.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ButterflyCurve.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Capsule.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Cardoid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Chord.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Circle.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ConchoidOfDeSluze.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Cone.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ConeSegment.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ConicSection.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_CubicBezier2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_CubicBezier3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_CycloidOfCeva.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Ellipse.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Ellipsoid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Epicycloid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Epitrochoid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_FermatsSpiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_FigureEightKnot.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Helix.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Hypocycloid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Hypotrochoid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Identity2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_IdentityTransform3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_LemniscateOfBernoulli.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Lens.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Limacon.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Line2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Line3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Lines3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Lissajous.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_LogarithmicSpiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_LookAt3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_LookDirection3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_NPrism.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_NPyramid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_NumberInterval.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_OffsetRotation2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_OffsetScale2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Orthographic3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Parabola.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Perspective3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_PlaneProjection3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Point2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Point3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Points3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Polygon.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Pose2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Pose3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Pyramid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Quad2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Quad3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_QuadGrid3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_QuadraticBezier2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_QuadraticBezier3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Quads3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Quaternion.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Rect2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Reflection2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_RegularPolygon.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Ring.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Rose.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Rotation2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Rotation3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Scale2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Scaling3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Sector.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Segment.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_SineWave.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_SinusoidalSpiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Skew2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Sphere.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Spiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TRSTransform2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TRSTransform3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Torus.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TorusKnot.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Translation2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Translation3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TrefoilKnot.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Triangle2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Triangle3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Triangles3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TrisectrixOfMaclaurin.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TschirnhausenCubic.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Tube.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_UniformScale2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_YawPitch.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_YawPitchRoll.g.cs<br>M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs<br>M  Plato.CSharpWriter/CSharpWriter.cs<br>M  Plato.CSharpWriter/ExtensionStyleWriter.cs<br>M  Plato.CSharpWriter/TirCSharpBodyWriter.cs<br>M  PlatoCompiler/Analysis/Linter.cs<br>M  PlatoTests/EmitSnapshotTests.cs<br>M  PlatoTests/LinterFieldFunctionCollisionTests.cs<br>A  PlatoTests/ReceiverAwareRenderingTests.cs<br>M  PlatoTests/emit-snapshot.txt<br>M  docs/status-report-snapshot.json<br>M  docs/status-report.html</code></div>
+    <div class="k">Dirty (excl. .claude/)</div><div><code>M  Plato.CSharpWriter/CSharpWriter.cs</code></div>
   </div>
   <h3>Diffstat (unstaged, excl. this report)</h3>
   <span class="muted">no unstaged diff</span>
-  <div class="note">212 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
+  <div class="note">1 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
 </section>
 
 <section>
   <h2>Git — studio parent</h2>
   <div class="kv">
     <div class="k">Status</div><div><code>## main...origin/main
-M  Generated/Plato.Generated.Optimized/Curves.g.cs
-M  Generated/Plato.Generated.Optimized/IBoundsLibrary.g.cs
-M  Generated/Plato.Generated.Optimized/IIntervalLibrary.g.cs
-M  Generated/Plato.Generated.Optimized/Meshes.g.cs
-M  Generated/Plato.Generated.Optimized/Transforms.g.cs
-M  Generated/Plato.Generated.Optimized/_AnglePair.g.cs
-M  Generated/Plato.Generated.Optimized/_Arc.g.cs
-M  Generated/Plato.Generated.Optimized/_ArchimedeanSpiral.g.cs
-M  Generated/Plato.Generated.Optimized/_AxisAngle.g.cs
-M  Generated/Plato.Generated.Optimized/_Bounds2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Bounds3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Box.g.cs
-M  Generated/Plato.Generated.Optimized/_ButterflyCurve.g.cs
-M  Generated/Plato.Generated.Optimized/_Capsule.g.cs
-M  Generated/Plato.Generated.Optimized/_Cardoid.g.cs
-M  Generated/Plato.Generated.Optimized/_Chord.g.cs
-M  Generated/Plato.Generated.Optimized/_Circle.g.cs
-M  Generated/Plato.Generated.Optimized/_ConchoidOfDeSluze.g.cs
-M  Generated/Plato.Generated.Optimized/_Cone.g.cs
-M  Generated/Plato.Generated.Optimized/_ConeSegment.g.cs
-M  Generated/Plato.Generated.Optimized/_ConicSection.g.cs
-M  Generated/Plato.Generated.Optimized/_CubicBezier2D.g.cs
-M  Generated/Plato.Generated.Optimized/_CubicBezier3D.g.cs
-M  Generated/Plato.Generated.Optimized/_CycloidOfCeva.g.cs
-M  Generated/Plato.Generated.Optimized/_Ellipse.g.cs
-M  Generated/Plato.Generated.Optimized/_Ellipsoid.g.cs
-M  Generated/Plato.Generated.Optimized/_Epicycloid.g.cs
-M  Generated/Plato.Generated.Optimized/_Epitrochoid.g.cs
-M  Generated/Plato.Generated.Optimized/_FermatsSpiral.g.cs
-M  Generated/Plato.Generated.Optimized/_FigureEightKnot.g.cs
-M  Generated/Plato.Generated.Optimized/_Helix.g.cs
-M  Generated/Plato.Generated.Optimized/_Hypocycloid.g.cs
-M  Generated/Plato.Generated.Optimized/_Hypotrochoid.g.cs
-M  Generated/Plato.Generated.Optimized/_Identity2D.g.cs
-M  Generated/Plato.Generated.Optimized/_IdentityTransform3D.g.cs
-M  Generated/Plato.Generated.Optimized/_LemniscateOfBernoulli.g.cs
-M  Generated/Plato.Generated.Optimized/_Lens.g.cs
-M  Generated/Plato.Generated.Optimized/_Limacon.g.cs
-M  Generated/Plato.Generated.Optimized/_Line2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Line3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Lines3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Lissajous.g.cs
-M  Generated/Plato.Generated.Optimized/_LogarithmicSpiral.g.cs
-M  Generated/Plato.Generated.Optimized/_LookAt3D.g.cs
-M  Generated/Plato.Generated.Optimized/_LookDirection3D.g.cs
-M  Generated/Plato.Generated.Optimized/_NPrism.g.cs
-M  Generated/Plato.Generated.Optimized/_NPyramid.g.cs
-M  Generated/Plato.Generated.Optimized/_NumberInterval.g.cs
-M  Generated/Plato.Generated.Optimized/_OffsetRotation2D.g.cs
-M  Generated/Plato.Generated.Optimized/_OffsetScale2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Orthographic3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Parabola.g.cs
-M  Generated/Plato.Generated.Optimized/_Perspective3D.g.cs
-M  Generated/Plato.Generated.Optimized/_PlaneProjection3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Point2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Point3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Points3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Polygon.g.cs
-M  Generated/Plato.Generated.Optimized/_Pose2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Pose3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Pyramid.g.cs
-M  Generated/Plato.Generated.Optimized/_Quad2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Quad3D.g.cs
-M  Generated/Plato.Generated.Optimized/_QuadGrid3D.g.cs
-M  Generated/Plato.Generated.Optimized/_QuadraticBezier2D.g.cs
-M  Generated/Plato.Generated.Optimized/_QuadraticBezier3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Quads3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Quaternion.g.cs
-M  Generated/Plato.Generated.Optimized/_Rect2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Reflection2D.g.cs
-M  Generated/Plato.Generated.Optimized/_RegularPolygon.g.cs
-M  Generated/Plato.Generated.Optimized/_Ring.g.cs
-M  Generated/Plato.Generated.Optimized/_Rose.g.cs
-M  Generated/Plato.Generated.Optimized/_Rotation2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Rotation3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Scale2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Scaling3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Sector.g.cs
-M  Generated/Plato.Generated.Optimized/_Segment.g.cs
-M  Generated/Plato.Generated.Optimized/_SineWave.g.cs
-M  Generated/Plato.Generated.Optimized/_SinusoidalSpiral.g.cs
-M  Generated/Plato.Generated.Optimized/_Skew2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Sphere.g.cs
-M  Generated/Plato.Generated.Optimized/_Spiral.g.cs
-M  Generated/Plato.Generated.Optimized/_TRSTransform2D.g.cs
-M  Generated/Plato.Generated.Optimized/_TRSTransform3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Torus.g.cs
-M  Generated/Plato.Generated.Optimized/_TorusKnot.g.cs
-M  Generated/Plato.Generated.Optimized/_Translation2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Translation3D.g.cs
-M  Generated/Plato.Generated.Optimized/_TrefoilKnot.g.cs
-M  Generated/Plato.Generated.Optimized/_Triangle2D.g.cs
-M  Generated/Plato.Generated.Optimized/_Triangle3D.g.cs
-M  Generated/Plato.Generated.Optimized/_Triangles3D.g.cs
-M  Generated/Plato.Generated.Optimized/_TrisectrixOfMaclaurin.g.cs
-M  Generated/Plato.Generated.Optimized/_TschirnhausenCubic.g.cs
-M  Generated/Plato.Generated.Optimized/_Tube.g.cs
-M  Generated/Plato.Generated.Optimized/_UniformScale2D.g.cs
-M  Generated/Plato.Generated.Optimized/_YawPitch.g.cs
-M  Generated/Plato.Generated.Optimized/_YawPitchRoll.g.cs
-M  Generated/Plato.Generated.Unoptimized/Curves.g.cs
-M  Generated/Plato.Generated.Unoptimized/Geometry.g.cs
-M  Generated/Plato.Generated.Unoptimized/IBoundsLibrary.g.cs
-M  Generated/Plato.Generated.Unoptimized/IIntervalLibrary.g.cs
-M  Generated/Plato.Generated.Unoptimized/Meshes.g.cs
-M  Generated/Plato.Generated.Unoptimized/Transforms.g.cs
-M  Generated/Plato.Generated.Unoptimized/_AnglePair.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Arc.g.cs
-M  Generated/Plato.Generated.Unoptimized/_ArchimedeanSpiral.g.cs
-M  Generated/Plato.Generated.Unoptimized/_AxisAngle.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Bounds2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Bounds3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Box.g.cs
-M  Generated/Plato.Generated.Unoptimized/_ButterflyCurve.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Capsule.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Cardoid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Chord.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Circle.g.cs
-M  Generated/Plato.Generated.Unoptimized/_ConchoidOfDeSluze.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Cone.g.cs
-M  Generated/Plato.Generated.Unoptimized/_ConeSegment.g.cs
-M  Generated/Plato.Generated.Unoptimized/_ConicSection.g.cs
-M  Generated/Plato.Generated.Unoptimized/_CubicBezier2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_CubicBezier3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_CycloidOfCeva.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Ellipse.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Ellipsoid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Epicycloid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Epitrochoid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_FermatsSpiral.g.cs
-M  Generated/Plato.Generated.Unoptimized/_FigureEightKnot.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Helix.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Hypocycloid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Hypotrochoid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Identity2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_IdentityTransform3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_LemniscateOfBernoulli.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Lens.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Limacon.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Line2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Line3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Lines3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Lissajous.g.cs
-M  Generated/Plato.Generated.Unoptimized/_LogarithmicSpiral.g.cs
-M  Generated/Plato.Generated.Unoptimized/_LookAt3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_LookDirection3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_NPrism.g.cs
-M  Generated/Plato.Generated.Unoptimized/_NPyramid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_NumberInterval.g.cs
-M  Generated/Plato.Generated.Unoptimized/_OffsetRotation2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_OffsetScale2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Orthographic3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Parabola.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Perspective3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_PlaneProjection3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Point2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Point3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Points3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Polygon.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Pose2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Pose3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Pyramid.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Quad2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Quad3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_QuadGrid3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_QuadraticBezier2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_QuadraticBezier3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Quads3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Quaternion.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Rect2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Reflection2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_RegularPolygon.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Ring.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Rose.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Rotation2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Rotation3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Scale2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Scaling3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Sector.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Segment.g.cs
-M  Generated/Plato.Generated.Unoptimized/_SineWave.g.cs
-M  Generated/Plato.Generated.Unoptimized/_SinusoidalSpiral.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Skew2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Sphere.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Spiral.g.cs
-M  Generated/Plato.Generated.Unoptimized/_TRSTransform2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_TRSTransform3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Torus.g.cs
-M  Generated/Plato.Generated.Unoptimized/_TorusKnot.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Translation2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Translation3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_TrefoilKnot.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Triangle2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Triangle3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Triangles3D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_TrisectrixOfMaclaurin.g.cs
-M  Generated/Plato.Generated.Unoptimized/_TschirnhausenCubic.g.cs
-M  Generated/Plato.Generated.Unoptimized/_Tube.g.cs
-M  Generated/Plato.Generated.Unoptimized/_UniformScale2D.g.cs
-M  Generated/Plato.Generated.Unoptimized/_YawPitch.g.cs
-M  Generated/Plato.Generated.Unoptimized/_YawPitchRoll.g.cs
-M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs
 M  Plato.CSharpWriter/CSharpWriter.cs
-M  Plato.CSharpWriter/ExtensionStyleWriter.cs
-M  Plato.CSharpWriter/TirCSharpBodyWriter.cs
-M  PlatoCompiler/Analysis/Linter.cs
-M  PlatoTests/EmitSnapshotTests.cs
-M  PlatoTests/LinterFieldFunctionCollisionTests.cs
-A  PlatoTests/ReceiverAwareRenderingTests.cs
-M  PlatoTests/emit-snapshot.txt
-M  docs/status-report-snapshot.json
-M  docs/status-report.html
 ?? .claude/</code></div>
     <div class="k">Committed Plato pointer</div><div><code>?</code> <span class="badge blocked">DRIFT</span></div>
-    <div class="k">Plato HEAD</div><div><code>d1b1051fa2fb8f5f32383f74b3606ec616d511ec</code></div>
-    <div class="k">Plato-related dirty</div><div><code>M  Generated/Plato.Generated.Optimized/Curves.g.cs<br>M  Generated/Plato.Generated.Optimized/IBoundsLibrary.g.cs<br>M  Generated/Plato.Generated.Optimized/IIntervalLibrary.g.cs<br>M  Generated/Plato.Generated.Optimized/Meshes.g.cs<br>M  Generated/Plato.Generated.Optimized/Transforms.g.cs<br>M  Generated/Plato.Generated.Optimized/_AnglePair.g.cs<br>M  Generated/Plato.Generated.Optimized/_Arc.g.cs<br>M  Generated/Plato.Generated.Optimized/_ArchimedeanSpiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_AxisAngle.g.cs<br>M  Generated/Plato.Generated.Optimized/_Bounds2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Bounds3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Box.g.cs<br>M  Generated/Plato.Generated.Optimized/_ButterflyCurve.g.cs<br>M  Generated/Plato.Generated.Optimized/_Capsule.g.cs<br>M  Generated/Plato.Generated.Optimized/_Cardoid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Chord.g.cs<br>M  Generated/Plato.Generated.Optimized/_Circle.g.cs<br>M  Generated/Plato.Generated.Optimized/_ConchoidOfDeSluze.g.cs<br>M  Generated/Plato.Generated.Optimized/_Cone.g.cs<br>M  Generated/Plato.Generated.Optimized/_ConeSegment.g.cs<br>M  Generated/Plato.Generated.Optimized/_ConicSection.g.cs<br>M  Generated/Plato.Generated.Optimized/_CubicBezier2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_CubicBezier3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_CycloidOfCeva.g.cs<br>M  Generated/Plato.Generated.Optimized/_Ellipse.g.cs<br>M  Generated/Plato.Generated.Optimized/_Ellipsoid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Epicycloid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Epitrochoid.g.cs<br>M  Generated/Plato.Generated.Optimized/_FermatsSpiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_FigureEightKnot.g.cs<br>M  Generated/Plato.Generated.Optimized/_Helix.g.cs<br>M  Generated/Plato.Generated.Optimized/_Hypocycloid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Hypotrochoid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Identity2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_IdentityTransform3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_LemniscateOfBernoulli.g.cs<br>M  Generated/Plato.Generated.Optimized/_Lens.g.cs<br>M  Generated/Plato.Generated.Optimized/_Limacon.g.cs<br>M  Generated/Plato.Generated.Optimized/_Line2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Line3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Lines3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Lissajous.g.cs<br>M  Generated/Plato.Generated.Optimized/_LogarithmicSpiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_LookAt3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_LookDirection3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_NPrism.g.cs<br>M  Generated/Plato.Generated.Optimized/_NPyramid.g.cs<br>M  Generated/Plato.Generated.Optimized/_NumberInterval.g.cs<br>M  Generated/Plato.Generated.Optimized/_OffsetRotation2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_OffsetScale2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Orthographic3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Parabola.g.cs<br>M  Generated/Plato.Generated.Optimized/_Perspective3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_PlaneProjection3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Point2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Point3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Points3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Polygon.g.cs<br>M  Generated/Plato.Generated.Optimized/_Pose2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Pose3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Pyramid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Quad2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Quad3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_QuadGrid3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_QuadraticBezier2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_QuadraticBezier3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Quads3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Quaternion.g.cs<br>M  Generated/Plato.Generated.Optimized/_Rect2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Reflection2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_RegularPolygon.g.cs<br>M  Generated/Plato.Generated.Optimized/_Ring.g.cs<br>M  Generated/Plato.Generated.Optimized/_Rose.g.cs<br>M  Generated/Plato.Generated.Optimized/_Rotation2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Rotation3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Scale2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Scaling3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Sector.g.cs<br>M  Generated/Plato.Generated.Optimized/_Segment.g.cs<br>M  Generated/Plato.Generated.Optimized/_SineWave.g.cs<br>M  Generated/Plato.Generated.Optimized/_SinusoidalSpiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_Skew2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Sphere.g.cs<br>M  Generated/Plato.Generated.Optimized/_Spiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_TRSTransform2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_TRSTransform3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Torus.g.cs<br>M  Generated/Plato.Generated.Optimized/_TorusKnot.g.cs<br>M  Generated/Plato.Generated.Optimized/_Translation2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Translation3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_TrefoilKnot.g.cs<br>M  Generated/Plato.Generated.Optimized/_Triangle2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Triangle3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Triangles3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_TrisectrixOfMaclaurin.g.cs<br>M  Generated/Plato.Generated.Optimized/_TschirnhausenCubic.g.cs<br>M  Generated/Plato.Generated.Optimized/_Tube.g.cs<br>M  Generated/Plato.Generated.Optimized/_UniformScale2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_YawPitch.g.cs<br>M  Generated/Plato.Generated.Optimized/_YawPitchRoll.g.cs<br>M  Generated/Plato.Generated.Unoptimized/Curves.g.cs<br>M  Generated/Plato.Generated.Unoptimized/Geometry.g.cs<br>M  Generated/Plato.Generated.Unoptimized/IBoundsLibrary.g.cs<br>M  Generated/Plato.Generated.Unoptimized/IIntervalLibrary.g.cs<br>M  Generated/Plato.Generated.Unoptimized/Meshes.g.cs<br>M  Generated/Plato.Generated.Unoptimized/Transforms.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_AnglePair.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Arc.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ArchimedeanSpiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_AxisAngle.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Bounds2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Bounds3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Box.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ButterflyCurve.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Capsule.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Cardoid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Chord.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Circle.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ConchoidOfDeSluze.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Cone.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ConeSegment.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ConicSection.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_CubicBezier2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_CubicBezier3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_CycloidOfCeva.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Ellipse.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Ellipsoid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Epicycloid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Epitrochoid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_FermatsSpiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_FigureEightKnot.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Helix.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Hypocycloid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Hypotrochoid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Identity2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_IdentityTransform3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_LemniscateOfBernoulli.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Lens.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Limacon.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Line2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Line3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Lines3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Lissajous.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_LogarithmicSpiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_LookAt3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_LookDirection3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_NPrism.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_NPyramid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_NumberInterval.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_OffsetRotation2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_OffsetScale2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Orthographic3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Parabola.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Perspective3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_PlaneProjection3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Point2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Point3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Points3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Polygon.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Pose2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Pose3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Pyramid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Quad2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Quad3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_QuadGrid3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_QuadraticBezier2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_QuadraticBezier3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Quads3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Quaternion.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Rect2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Reflection2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_RegularPolygon.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Ring.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Rose.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Rotation2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Rotation3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Scale2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Scaling3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Sector.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Segment.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_SineWave.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_SinusoidalSpiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Skew2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Sphere.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Spiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TRSTransform2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TRSTransform3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Torus.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TorusKnot.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Translation2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Translation3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TrefoilKnot.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Triangle2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Triangle3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Triangles3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TrisectrixOfMaclaurin.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TschirnhausenCubic.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Tube.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_UniformScale2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_YawPitch.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_YawPitchRoll.g.cs<br>M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs<br>M  Plato.CSharpWriter/CSharpWriter.cs<br>M  Plato.CSharpWriter/ExtensionStyleWriter.cs<br>M  Plato.CSharpWriter/TirCSharpBodyWriter.cs<br>M  PlatoCompiler/Analysis/Linter.cs<br>M  PlatoTests/EmitSnapshotTests.cs<br>M  PlatoTests/LinterFieldFunctionCollisionTests.cs<br>A  PlatoTests/ReceiverAwareRenderingTests.cs<br>M  PlatoTests/emit-snapshot.txt</code></div>
+    <div class="k">Plato HEAD</div><div><code>ac8d3e56b1df6d682598da5f7346b491d72d61e9</code></div>
+    <div class="k">Plato-related dirty</div><div><code>M  Plato.CSharpWriter/CSharpWriter.cs</code></div>
   </div>
   <div class="note">If drifted, bump with an explicit <code>git commit -- submodules/Plato</code> in studio after Plato pushes.</div>
 </section>
@@ -560,7 +138,7 @@ M  docs/status-report.html
   <div><code>12aad781501e6714789fb87629f1fbee001e2ab0 parakeet (v1.4.3-78-g12aad78)</code></div>
   <p class="muted">parakeet: do not stage casually (known pre-existing dirty grammar submodule).</p>
   <h3>Worktrees</h3>
-  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              d1b1051 [main]<br>C:/Users/cdigg/AppData/Local/Temp/pw323b/plato-work                                  d1b1051 (detached HEAD)<br>C:/Users/cdigg/git/plato-merge-check                                                 d1b1051 (detached HEAD)<br>C:/Users/cdigg/git/plato-wt-1                                                        a5f59eb [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
+  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              ac8d3e5 [main]<br>C:/Users/cdigg/AppData/Local/Temp/pw323b/plato-work                                  d1b1051 (detached HEAD)<br>C:/Users/cdigg/git/plato-merge-check                                                 4be7444 (detached HEAD)<br>C:/Users/cdigg/git/plato-wt-1                                                        a5f59eb [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
   <h3>Studio-level submodules</h3>
   <pre></pre>
 </section>
@@ -625,8 +203,8 @@ M  docs/status-report.html
 
 <section>
   <h2>Tracker — Plato issues</h2>
-  <div class="grid" style="margin-bottom:1rem"><div class="card"><div class="n">7</div><div class="l">In progress</div></div><div class="card"><div class="n">7</div><div class="l">Ready</div></div><div class="card"><div class="n">61</div><div class="l">Ideas</div></div><div class="card"><div class="n">33</div><div class="l">Done</div></div>
-    <div class="card"><div class="n">111</div><div class="l">Total plato-*</div></div>
+  <div class="grid" style="margin-bottom:1rem"><div class="card"><div class="n">7</div><div class="l">In progress</div></div><div class="card"><div class="n">8</div><div class="l">Ready</div></div><div class="card"><div class="n">61</div><div class="l">Ideas</div></div><div class="card"><div class="n">33</div><div class="l">Done</div></div>
+    <div class="card"><div class="n">112</div><div class="l">Total plato-*</div></div>
     <div class="card"><div class="n">7</div><div class="l">Open bugs</div></div>
   </div>
   <h3>In progress (7)</h3>
@@ -640,16 +218,17 @@ M  docs/status-report.html
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-306.md"><code>plato-306</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-306.md">Generic Difference defaults via optional delta conversion concept</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">in-progress</span></td><td>M / low</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-320.md"><code>plato-320</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-320.md">PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">in-progress</span></td><td>S / low</td></tr></tbody>
   </table>
-  <h3>Ready (7)</h3>
+  <h3>Ready (8)</h3>
   <table>
     <thead><tr><th>Id</th><th>Title</th><th>Type</th><th>Pri</th><th>Status</th><th>Effort/Risk</th></tr></thead>
     <tbody><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md">stdlib concept-gap burn-down: the 17 markers that need a language or concept decision</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>M / low</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-308.md"><code>plato-308</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-308.md">Generated forward-stdlib C# does not compile (324 errors)</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>L / med</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md">Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>L / med</td></tr>
-<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md"><code>plato-326</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md">Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr>
+<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md"><code>plato-326</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md">Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-328.md"><code>plato-328</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-328.md">Inferred concept constraints are lost on generic library-function type variables</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-329.md"><code>plato-329</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-329.md">Writer emission-completeness assertion: every reachable library function must be emitted somewhere</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>M / low</td></tr>
-<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md">Lint intrinsic obligations against the intrinsics API snapshot</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>M / low</td></tr></tbody>
+<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md">Lint intrinsic obligations against the intrinsics API snapshot</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>M / low</td></tr>
+<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md">Plato.Intrinsics.V2 is a method-form runtime with ten property leftovers; the writer hard-codes four of them</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr></tbody>
   </table>
   <h3>Open bugs</h3>
   <table>
@@ -659,7 +238,7 @@ M  docs/status-report.html
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-308.md"><code>plato-308</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-308.md">Generated forward-stdlib C# does not compile (324 errors)</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>L / med</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-320.md"><code>plato-320</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-320.md">PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">in-progress</span></td><td>S / low</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md">Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>L / med</td></tr>
-<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md"><code>plato-326</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md">Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr>
+<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md"><code>plato-326</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md">Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-328.md"><code>plato-328</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-328.md">Inferred concept constraints are lost on generic library-function type variables</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr></tbody>
   </table>
   <h3>Open design problems</h3>
@@ -680,10 +259,10 @@ M  docs/status-report.html
 </section>
 
 <section>
-  <h2>Committed work today (0 commits)</h2>
+  <h2>Committed work today (1 commits)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr><td colspan="3" class="muted">None</td></tr></tbody>
+    <tbody><tr><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr></tbody>
   </table>
 </section>
 
@@ -691,7 +270,7 @@ M  docs/status-report.html
   <h2>Recent history (20)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr class=""><td><code>d1b1051</code></td><td>2026-07-29 23:53:09 -0400</td><td>feat: record C# build errors by category in status report</td></tr><tr class=""><td><code>e69a69d</code></td><td>2026-07-29 23:15:59 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): emit Array&lt;T&gt;-receiver library functions as IReadOnlyList&lt;T&gt; extensions</td></tr><tr class=""><td><code>dba7429</code></td><td>2026-07-29 23:08:37 -0400</td><td>feat(lint): LINT014 field-vs-no-arg-function name collision</td></tr><tr class=""><td><code>c303db2</code></td><td>2026-07-29 22:40:48 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): unbounded CombineHashCodes; record the receiver-aware rendering next step</td></tr><tr class=""><td><code>e57c034</code></td><td>2026-07-29 22:29:03 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): erase Integer from the array combinators&#x27; index positions</td></tr><tr class=""><td><code>54e3d5a</code></td><td>2026-07-29 22:14:10 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): emit `_`-receiver members as the statics they are; add missing scalar constants</td></tr><tr class=""><td><code>d1eb8df</code></td><td>2026-07-29 22:12:13 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-315.md"><code>plato-315</code></a>): add LINT013 for unreachable derived concept surface</td></tr><tr class=""><td><code>c68907e</code></td><td>2026-07-29 22:10:56 -0400</td><td>feat(stdlib): bound Periodic&lt;TPeriod&gt; and derive WrapPhase</td></tr><tr class=""><td><code>9dd7cea</code></td><td>2026-07-29 22:00:46 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): decide no-arg call-site syntax per receiver for erased scalars</td></tr><tr class=""><td><code>2e1e31b</code></td><td>2026-07-29 21:17:07 -0400</td><td>feat(stdlib): Face concept + indexed-mesh obligations</td></tr><tr class=""><td><code>e2d8b83</code></td><td>2026-07-29 21:02:31 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-311.md"><code>plato-311</code></a>, <a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-310.md"><code>plato-310</code></a>, <a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-308.md"><code>plato-308</code></a>): land forward-stdlib declaration-level C# — views satisfied, intrinsic gaps filled, CHK308 gated</td></tr><tr class=""><td><code>f95e680</code></td><td>2026-07-29 20:48:58 -0400</td><td>docs(stdlib): retract false &#x27;no constraint syntax&#x27; claim on Periodic</td></tr><tr class=""><td><code>358d593</code></td><td>2026-07-29 20:43:14 -0400</td><td>docs(stdlib): strip tracker and legacy process notes</td></tr><tr class=""><td><code>859ad90</code></td><td>2026-07-29 20:12:39 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-313.md"><code>plato-313</code></a>): drop cross-repo tracker path from duals header</td></tr><tr class=""><td><code>0de0410</code></td><td>2026-07-29 20:11:28 -0400</td><td>feat(stdlib): implement 32 LINT001 obligations</td></tr><tr class=""><td><code>b62e278</code></td><td>2026-07-29 20:09:56 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-313.md"><code>plato-313</code></a>): kind-level polyhedral Dual maps + involution laws</td></tr><tr class=""><td><code>1c72a5d</code></td><td>2026-07-29 20:03:56 -0400</td><td>docs: note match lowering and C#-only sum emission (CHK320)</td></tr><tr class=""><td><code>0aa7331</code></td><td>2026-07-29 20:00:12 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-315.md"><code>plato-315</code></a>): implement MeshIncidence on PolygonMesh3D</td></tr><tr class=""><td><code>fe6b67a</code></td><td>2026-07-29 19:52:35 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-315.md"><code>plato-315</code></a>): retire the unimplemented Dimensioned concept</td></tr><tr class=""><td><code>815883e</code></td><td>2026-07-29 19:49:49 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-315.md"><code>plato-315</code></a>): add unwelded TriangleArray3D / QuadArray3D + PrimitiveCollection3D</td></tr></tbody>
+    <tbody><tr class="today"><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr><tr class=""><td><code>d1b1051</code></td><td>2026-07-29 23:53:09 -0400</td><td>feat: record C# build errors by category in status report</td></tr><tr class=""><td><code>e69a69d</code></td><td>2026-07-29 23:15:59 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): emit Array&lt;T&gt;-receiver library functions as IReadOnlyList&lt;T&gt; extensions</td></tr><tr class=""><td><code>dba7429</code></td><td>2026-07-29 23:08:37 -0400</td><td>feat(lint): LINT014 field-vs-no-arg-function name collision</td></tr><tr class=""><td><code>c303db2</code></td><td>2026-07-29 22:40:48 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): unbounded CombineHashCodes; record the receiver-aware rendering next step</td></tr><tr class=""><td><code>e57c034</code></td><td>2026-07-29 22:29:03 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): erase Integer from the array combinators&#x27; index positions</td></tr><tr class=""><td><code>54e3d5a</code></td><td>2026-07-29 22:14:10 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): emit `_`-receiver members as the statics they are; add missing scalar constants</td></tr><tr class=""><td><code>d1eb8df</code></td><td>2026-07-29 22:12:13 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-315.md"><code>plato-315</code></a>): add LINT013 for unreachable derived concept surface</td></tr><tr class=""><td><code>c68907e</code></td><td>2026-07-29 22:10:56 -0400</td><td>feat(stdlib): bound Periodic&lt;TPeriod&gt; and derive WrapPhase</td></tr><tr class=""><td><code>9dd7cea</code></td><td>2026-07-29 22:00:46 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): decide no-arg call-site syntax per receiver for erased scalars</td></tr><tr class=""><td><code>2e1e31b</code></td><td>2026-07-29 21:17:07 -0400</td><td>feat(stdlib): Face concept + indexed-mesh obligations</td></tr><tr class=""><td><code>e2d8b83</code></td><td>2026-07-29 21:02:31 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-311.md"><code>plato-311</code></a>, <a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-310.md"><code>plato-310</code></a>, <a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-308.md"><code>plato-308</code></a>): land forward-stdlib declaration-level C# — views satisfied, intrinsic gaps filled, CHK308 gated</td></tr><tr class=""><td><code>f95e680</code></td><td>2026-07-29 20:48:58 -0400</td><td>docs(stdlib): retract false &#x27;no constraint syntax&#x27; claim on Periodic</td></tr><tr class=""><td><code>358d593</code></td><td>2026-07-29 20:43:14 -0400</td><td>docs(stdlib): strip tracker and legacy process notes</td></tr><tr class=""><td><code>859ad90</code></td><td>2026-07-29 20:12:39 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-313.md"><code>plato-313</code></a>): drop cross-repo tracker path from duals header</td></tr><tr class=""><td><code>0de0410</code></td><td>2026-07-29 20:11:28 -0400</td><td>feat(stdlib): implement 32 LINT001 obligations</td></tr><tr class=""><td><code>b62e278</code></td><td>2026-07-29 20:09:56 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-313.md"><code>plato-313</code></a>): kind-level polyhedral Dual maps + involution laws</td></tr><tr class=""><td><code>1c72a5d</code></td><td>2026-07-29 20:03:56 -0400</td><td>docs: note match lowering and C#-only sum emission (CHK320)</td></tr><tr class=""><td><code>0aa7331</code></td><td>2026-07-29 20:00:12 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-315.md"><code>plato-315</code></a>): implement MeshIncidence on PolygonMesh3D</td></tr><tr class=""><td><code>fe6b67a</code></td><td>2026-07-29 19:52:35 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-315.md"><code>plato-315</code></a>): retire the unimplemented Dimensioned concept</td></tr></tbody>
   </table>
 </section>
 

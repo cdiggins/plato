@@ -551,8 +551,8 @@ namespace Ara3D.Geometry.CSharpWriter
         //     receiver-aware rule they rode on the global name union by accident, each name being a
         //     field on some unrelated struct.
         //
-        // The V2-side inconsistency itself (a method-form runtime with four property leftovers) is
-        // tracked as plato-329; when it is resolved this table shrinks to nothing.
+        // The V2-side inconsistency itself (a method-form runtime with ten property leftovers) is
+        // tracked as plato-331; when it is resolved this table shrinks to nothing.
         private static readonly Dictionary<string, bool> PrimitiveSurfaceOverrides
             = new Dictionary<string, bool>
             {
