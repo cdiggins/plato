@@ -86,8 +86,9 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     private bool IsTypeName(string name)
         => name != null && _tw.Writer.AllTypeNames.Contains(name);
 
-    // See CSharpWriter.IsStructSurfaceProperty (plato-323): the uniform rendering rule, applied
-    // with knowledge of the RECEIVER type so an erased scalar receiver always takes "()".
+    // See CSharpWriter.IsStructSurfaceProperty (plato-323): the rendering rule resolved against the
+    // RECEIVER's own struct surface, so an erased scalar receiver (and any receiver that does not
+    // itself carry the name) takes "()".
     private bool IsSurfacePropertyOn(string recvTypeName, string name)
         => _tw.Writer.IsStructSurfaceProperty(recvTypeName, name);
 
@@ -510,12 +511,25 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 var lamBody = TirLambdaCaptureRewriter.Rewrite(lam.Body);
                 if (TirRewrite.IsStatementNode(lamBody))
                 {
-                    // A C# lambda with a statement body still needs the arrow. No such lambda
-                    // occurs in any non-inline output (the flag differentials pin that), but the
-                    // inliner can create capture-hoisted block bodies inside lambdas.
+                    // A C# lambda with a statement body still needs the arrow AND a brace-delimited
+                    // block. The inliner / capture hoist can leave EITHER shape inside a lambda: a
+                    // TirBlock (which WriteStatement brace-wraps itself) or a bare statement — most
+                    // often a lone TirReturn, produced when the hoist lifts the lambda's captured
+                    // reference into an ENCLOSING block and leaves the tail behind. That bare form
+                    // used to render as `(i) return e;`, which does not parse (plato-323: the first
+                    // Array-receiver library function to reach this writer, JaggedArray.FromRows,
+                    // was one syntax error that masked the whole conformance build).
+                    Write("=> ");
                     if (lamBody is TirBlock)
-                        Write("=> ");
-                    WriteStatement(lamBody);
+                    {
+                        WriteStatement(lamBody);
+                    }
+                    else
+                    {
+                        WriteStartBlock();
+                        WriteStatement(lamBody);
+                        WriteEndBlock();
+                    }
                 }
                 else
                 {

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-29T18:33:25-04:00",
+  "updated_at": "2026-07-30T01:46:29-04:00",
   "note": "Captured during initial status-report landing; refresh after gate runs.",
   "gates": [
     {
@@ -92,5 +92,97 @@
     "diagnostics": 0,
     "builtUtc": "2026-07-29T21:46:46Z",
     "roots": "stdlib + stdlib-tests"
+  },
+  "csharp_builds": {
+    "updated_at": "2026-07-30T01:46:29-04:00",
+    "targets": {
+      "forward-conformance": {
+        "built_at": "2026-07-30T01:46:29-04:00",
+        "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\conformance\\Plato.ForwardConformanceTests\\Plato.ForwardConformanceTests.csproj",
+        "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\forward-conformance.log",
+        "configuration": "Release",
+        "exit_code": 1,
+        "total_errors": 4,
+        "total_warnings": 12,
+        "summary_errors": 4,
+        "summary_warnings": 12,
+        "by_code": {
+          "CS0535": 4
+        },
+        "by_category": {
+          "missing_interface_member": {
+            "count": 4,
+            "label": "Missing interface member on runtime/type",
+            "codes": [
+              "CS0535"
+            ]
+          }
+        },
+        "warning_by_code": {
+          "CS8632": 6,
+          "CA1416": 2,
+          "SYSLIB0006": 1,
+          "SYSLIB0018": 1,
+          "SYSLIB0037": 1,
+          "SYSLIB0044": 1
+        }
+      },
+      "plato-cli": {
+        "built_at": "2026-07-30T01:44:59-04:00",
+        "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\Plato.CLI\\Plato.CLI.csproj",
+        "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\plato-cli.log",
+        "configuration": "Release",
+        "exit_code": 0,
+        "total_errors": 0,
+        "total_warnings": 0,
+        "summary_errors": 0,
+        "summary_warnings": 0,
+        "by_code": {},
+        "by_category": {},
+        "warning_by_code": {}
+      },
+      "plato-generated-unoptimized": {
+        "built_at": "2026-07-30T01:17:16-04:00",
+        "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\Generated\\Plato.Generated.Unoptimized\\Plato.Generated.Unoptimized.csproj",
+        "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\plato-generated-unoptimized.log",
+        "configuration": "Release",
+        "exit_code": 0,
+        "total_errors": 0,
+        "total_warnings": 0,
+        "summary_errors": 0,
+        "summary_warnings": 0,
+        "by_code": {},
+        "by_category": {},
+        "warning_by_code": {}
+      },
+      "plato-generated-optimized": {
+        "built_at": "2026-07-30T01:17:25-04:00",
+        "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\Generated\\Plato.Generated.Optimized\\Plato.Generated.Optimized.csproj",
+        "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\plato-generated-optimized.log",
+        "configuration": "Release",
+        "exit_code": 0,
+        "total_errors": 0,
+        "total_warnings": 0,
+        "summary_errors": 0,
+        "summary_warnings": 0,
+        "by_code": {},
+        "by_category": {},
+        "warning_by_code": {}
+      }
+    },
+    "latest_target": "forward-conformance",
+    "latest": {
+      "target": "forward-conformance",
+      "total_errors": 4,
+      "total_warnings": 12,
+      "built_at": "2026-07-30T01:46:29-04:00",
+      "exit_code": 1,
+      "by_category": {
+        "missing_interface_member": 4
+      },
+      "by_code_top": {
+        "CS0535": 4
+      }
+    }
   }
 }

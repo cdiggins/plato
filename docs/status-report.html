@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Plato Status Report — 2026-07-30 01:47 Eastern Daylight Time</title>
+<title>Plato Status Report — 2026-07-30 01:48 Eastern Daylight Time</title>
 <style>
 :root {
   --bg: #0f1419; --panel: #1a222c; --panel2: #232d3a; --text: #e7ecf2;
@@ -82,10 +82,10 @@ tr.muted-row { opacity: .55; }
 <body>
 <header>
   <h1>Plato status report</h1>
-  <div class="meta">Generated 2026-07-30 01:47:26 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>558a945</code></div>
+  <div class="meta">Generated 2026-07-30 01:48:02 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>0dd6360</code></div>
   <div class="overall">
     <span><span class="badge attention">ATTENTION</span></span>
-    <span>23 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-29T18:33:25-04:00; live git/tracker refreshed this generation.</span>
+    <span>220 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-30T01:46:29-04:00; live git/tracker refreshed this generation.</span>
   </div>
 </header>
 <main>
@@ -93,12 +93,13 @@ tr.muted-row { opacity: .55; }
 <section>
   <h2>Snapshot</h2>
   <div class="grid">
-    <div class="card"><div class="n">plato-stdlib-improvements</div><div class="l">Branch · <span class="badge warn">ahead 3</span></div></div>
-    <div class="card"><div class="n">558a945</div><div class="l">HEAD</div></div>
-    <div class="card"><div class="n">23</div><div class="l">Dirty paths</div></div>
-    <div class="card"><div class="n">5</div><div class="l">Commits today</div></div>
-    <div class="card"><div class="n">160</div><div class="l">Commits last 7 days</div></div>
+    <div class="card"><div class="n">plato-stdlib-improvements</div><div class="l">Branch · <span class="badge warn">ahead 4</span></div></div>
+    <div class="card"><div class="n">0dd6360</div><div class="l">HEAD</div></div>
+    <div class="card"><div class="n">220</div><div class="l">Dirty paths</div></div>
+    <div class="card"><div class="n">6</div><div class="l">Commits today</div></div>
+    <div class="card"><div class="n">161</div><div class="l">Commits last 7 days</div></div>
     <div class="card"><div class="n">0</div><div class="l">Issues in progress</div></div>
+    <div class="card"><div class="n">4</div><div class="l">Latest C# errors (forward-conformance)</div></div>
   </div>
 </section>
 
@@ -106,37 +107,234 @@ tr.muted-row { opacity: .55; }
   <h2>Git — Plato</h2>
   <div class="kv">
     <div class="k">Status</div><div><code>## plato-stdlib-improvements
-MM docs/status-report.html
-A  stdlib/mesh-attributes.library.plato
-M  stdlib/mesh-attributes.plato
-M  stdlib/meshes-indexed.library.plato
-A  stdlib/meshes-lines-points.library.plato
-M  stdlib/meshes-lines-points.plato
-M  stdlib/meshes-polygon.library.plato
-A  stdlib/meshes-sections.library.plato
-M  stdlib/meshes-sections.plato
-A  stdlib/meshes-volumetric.library.plato
-M  stdlib/meshes-volumetric.plato
-M  stdlib/meshes.plato
-A  stdlib/pointclouds.library.plato
-M  stdlib/pointclouds.plato
-M  stdlib/polygons-spatial.library.plato
-M  stdlib/polygons-spatial.plato
-A  stdlib/sampling-curves.library.plato
-M  stdlib/sampling-curves.plato
-A  stdlib/solids-csg-soups.library.plato
-M  stdlib/solids-csg-soups.plato
-M  stdlib/spatial-simplices.plato
-A  stdlib/topology-half-edges.library.plato
-M  stdlib/topology-half-edges.plato</code></div>
-    <div class="k">HEAD</div><div><code>558a9459b6cec4e2e5ee668be7fe8ede33e4422c</code></div>
+M  AGENTS.md
+M  Generated/Plato.Generated.Optimized/Curves.g.cs
+M  Generated/Plato.Generated.Optimized/IBoundsLibrary.g.cs
+M  Generated/Plato.Generated.Optimized/IIntervalLibrary.g.cs
+M  Generated/Plato.Generated.Optimized/Meshes.g.cs
+M  Generated/Plato.Generated.Optimized/Transforms.g.cs
+M  Generated/Plato.Generated.Optimized/_AnglePair.g.cs
+M  Generated/Plato.Generated.Optimized/_Arc.g.cs
+M  Generated/Plato.Generated.Optimized/_ArchimedeanSpiral.g.cs
+M  Generated/Plato.Generated.Optimized/_AxisAngle.g.cs
+M  Generated/Plato.Generated.Optimized/_Bounds2D.g.cs
+M  Generated/Plato.Generated.Optimized/_Bounds3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Box.g.cs
+M  Generated/Plato.Generated.Optimized/_ButterflyCurve.g.cs
+M  Generated/Plato.Generated.Optimized/_Capsule.g.cs
+M  Generated/Plato.Generated.Optimized/_Cardoid.g.cs
+M  Generated/Plato.Generated.Optimized/_Chord.g.cs
+M  Generated/Plato.Generated.Optimized/_Circle.g.cs
+M  Generated/Plato.Generated.Optimized/_ConchoidOfDeSluze.g.cs
+M  Generated/Plato.Generated.Optimized/_Cone.g.cs
+M  Generated/Plato.Generated.Optimized/_ConeSegment.g.cs
+M  Generated/Plato.Generated.Optimized/_ConicSection.g.cs
+M  Generated/Plato.Generated.Optimized/_CubicBezier2D.g.cs
+M  Generated/Plato.Generated.Optimized/_CubicBezier3D.g.cs
+M  Generated/Plato.Generated.Optimized/_CycloidOfCeva.g.cs
+M  Generated/Plato.Generated.Optimized/_Ellipse.g.cs
+M  Generated/Plato.Generated.Optimized/_Ellipsoid.g.cs
+M  Generated/Plato.Generated.Optimized/_Epicycloid.g.cs
+M  Generated/Plato.Generated.Optimized/_Epitrochoid.g.cs
+M  Generated/Plato.Generated.Optimized/_FermatsSpiral.g.cs
+M  Generated/Plato.Generated.Optimized/_FigureEightKnot.g.cs
+M  Generated/Plato.Generated.Optimized/_Helix.g.cs
+M  Generated/Plato.Generated.Optimized/_Hypocycloid.g.cs
+M  Generated/Plato.Generated.Optimized/_Hypotrochoid.g.cs
+M  Generated/Plato.Generated.Optimized/_Identity2D.g.cs
+M  Generated/Plato.Generated.Optimized/_IdentityTransform3D.g.cs
+M  Generated/Plato.Generated.Optimized/_LemniscateOfBernoulli.g.cs
+M  Generated/Plato.Generated.Optimized/_Lens.g.cs
+M  Generated/Plato.Generated.Optimized/_Limacon.g.cs
+M  Generated/Plato.Generated.Optimized/_Line2D.g.cs
+M  Generated/Plato.Generated.Optimized/_Line3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Lines3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Lissajous.g.cs
+M  Generated/Plato.Generated.Optimized/_LogarithmicSpiral.g.cs
+M  Generated/Plato.Generated.Optimized/_LookAt3D.g.cs
+M  Generated/Plato.Generated.Optimized/_LookDirection3D.g.cs
+M  Generated/Plato.Generated.Optimized/_NPrism.g.cs
+M  Generated/Plato.Generated.Optimized/_NPyramid.g.cs
+M  Generated/Plato.Generated.Optimized/_NumberInterval.g.cs
+M  Generated/Plato.Generated.Optimized/_OffsetRotation2D.g.cs
+M  Generated/Plato.Generated.Optimized/_OffsetScale2D.g.cs
+M  Generated/Plato.Generated.Optimized/_Orthographic3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Parabola.g.cs
+M  Generated/Plato.Generated.Optimized/_Perspective3D.g.cs
+M  Generated/Plato.Generated.Optimized/_PlaneProjection3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Point2D.g.cs
+M  Generated/Plato.Generated.Optimized/_Point3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Points3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Polygon.g.cs
+M  Generated/Plato.Generated.Optimized/_Pose2D.g.cs
+M  Generated/Plato.Generated.Optimized/_Pose3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Pyramid.g.cs
+M  Generated/Plato.Generated.Optimized/_Quad2D.g.cs
+M  Generated/Plato.Generated.Optimized/_Quad3D.g.cs
+M  Generated/Plato.Generated.Optimized/_QuadGrid3D.g.cs
+M  Generated/Plato.Generated.Optimized/_QuadraticBezier2D.g.cs
+M  Generated/Plato.Generated.Optimized/_QuadraticBezier3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Quads3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Quaternion.g.cs
+M  Generated/Plato.Generated.Optimized/_Rect2D.g.cs
+M  Generated/Plato.Generated.Optimized/_Reflection2D.g.cs
+M  Generated/Plato.Generated.Optimized/_RegularPolygon.g.cs
+M  Generated/Plato.Generated.Optimized/_Ring.g.cs
+M  Generated/Plato.Generated.Optimized/_Rose.g.cs
+M  Generated/Plato.Generated.Optimized/_Rotation2D.g.cs
+M  Generated/Plato.Generated.Optimized/_Rotation3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Scale2D.g.cs
+M  Generated/Plato.Generated.Optimized/_Scaling3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Sector.g.cs
+M  Generated/Plato.Generated.Optimized/_Segment.g.cs
+M  Generated/Plato.Generated.Optimized/_SineWave.g.cs
+M  Generated/Plato.Generated.Optimized/_SinusoidalSpiral.g.cs
+M  Generated/Plato.Generated.Optimized/_Skew2D.g.cs
+M  Generated/Plato.Generated.Optimized/_Sphere.g.cs
+M  Generated/Plato.Generated.Optimized/_Spiral.g.cs
+M  Generated/Plato.Generated.Optimized/_TRSTransform2D.g.cs
+M  Generated/Plato.Generated.Optimized/_TRSTransform3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Torus.g.cs
+M  Generated/Plato.Generated.Optimized/_TorusKnot.g.cs
+M  Generated/Plato.Generated.Optimized/_Translation2D.g.cs
+M  Generated/Plato.Generated.Optimized/_Translation3D.g.cs
+M  Generated/Plato.Generated.Optimized/_TrefoilKnot.g.cs
+M  Generated/Plato.Generated.Optimized/_Triangle2D.g.cs
+M  Generated/Plato.Generated.Optimized/_Triangle3D.g.cs
+M  Generated/Plato.Generated.Optimized/_Triangles3D.g.cs
+M  Generated/Plato.Generated.Optimized/_TrisectrixOfMaclaurin.g.cs
+M  Generated/Plato.Generated.Optimized/_TschirnhausenCubic.g.cs
+M  Generated/Plato.Generated.Optimized/_Tube.g.cs
+M  Generated/Plato.Generated.Optimized/_UniformScale2D.g.cs
+M  Generated/Plato.Generated.Optimized/_YawPitch.g.cs
+M  Generated/Plato.Generated.Optimized/_YawPitchRoll.g.cs
+M  Generated/Plato.Generated.Unoptimized/Curves.g.cs
+M  Generated/Plato.Generated.Unoptimized/Geometry.g.cs
+M  Generated/Plato.Generated.Unoptimized/IBoundsLibrary.g.cs
+M  Generated/Plato.Generated.Unoptimized/IIntervalLibrary.g.cs
+M  Generated/Plato.Generated.Unoptimized/Meshes.g.cs
+M  Generated/Plato.Generated.Unoptimized/Transforms.g.cs
+M  Generated/Plato.Generated.Unoptimized/_AnglePair.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Arc.g.cs
+M  Generated/Plato.Generated.Unoptimized/_ArchimedeanSpiral.g.cs
+M  Generated/Plato.Generated.Unoptimized/_AxisAngle.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Bounds2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Bounds3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Box.g.cs
+M  Generated/Plato.Generated.Unoptimized/_ButterflyCurve.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Capsule.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Cardoid.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Chord.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Circle.g.cs
+M  Generated/Plato.Generated.Unoptimized/_ConchoidOfDeSluze.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Cone.g.cs
+M  Generated/Plato.Generated.Unoptimized/_ConeSegment.g.cs
+M  Generated/Plato.Generated.Unoptimized/_ConicSection.g.cs
+M  Generated/Plato.Generated.Unoptimized/_CubicBezier2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_CubicBezier3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_CycloidOfCeva.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Ellipse.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Ellipsoid.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Epicycloid.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Epitrochoid.g.cs
+M  Generated/Plato.Generated.Unoptimized/_FermatsSpiral.g.cs
+M  Generated/Plato.Generated.Unoptimized/_FigureEightKnot.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Helix.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Hypocycloid.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Hypotrochoid.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Identity2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_IdentityTransform3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_LemniscateOfBernoulli.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Lens.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Limacon.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Line2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Line3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Lines3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Lissajous.g.cs
+M  Generated/Plato.Generated.Unoptimized/_LogarithmicSpiral.g.cs
+M  Generated/Plato.Generated.Unoptimized/_LookAt3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_LookDirection3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_NPrism.g.cs
+M  Generated/Plato.Generated.Unoptimized/_NPyramid.g.cs
+M  Generated/Plato.Generated.Unoptimized/_NumberInterval.g.cs
+M  Generated/Plato.Generated.Unoptimized/_OffsetRotation2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_OffsetScale2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Orthographic3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Parabola.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Perspective3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_PlaneProjection3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Point2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Point3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Points3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Polygon.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Pose2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Pose3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Pyramid.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Quad2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Quad3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_QuadGrid3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_QuadraticBezier2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_QuadraticBezier3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Quads3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Quaternion.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Rect2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Reflection2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_RegularPolygon.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Ring.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Rose.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Rotation2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Rotation3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Scale2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Scaling3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Sector.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Segment.g.cs
+M  Generated/Plato.Generated.Unoptimized/_SineWave.g.cs
+M  Generated/Plato.Generated.Unoptimized/_SinusoidalSpiral.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Skew2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Sphere.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Spiral.g.cs
+M  Generated/Plato.Generated.Unoptimized/_TRSTransform2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_TRSTransform3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Torus.g.cs
+M  Generated/Plato.Generated.Unoptimized/_TorusKnot.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Translation2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Translation3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_TrefoilKnot.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Triangle2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Triangle3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Triangles3D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_TrisectrixOfMaclaurin.g.cs
+M  Generated/Plato.Generated.Unoptimized/_TschirnhausenCubic.g.cs
+M  Generated/Plato.Generated.Unoptimized/_Tube.g.cs
+M  Generated/Plato.Generated.Unoptimized/_UniformScale2D.g.cs
+M  Generated/Plato.Generated.Unoptimized/_YawPitch.g.cs
+M  Generated/Plato.Generated.Unoptimized/_YawPitchRoll.g.cs
+M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs
+M  Plato.CSharpWriter/CSharpWriter.cs
+M  Plato.CSharpWriter/ExtensionStyleWriter.cs
+M  Plato.CSharpWriter/TirCSharpBodyWriter.cs
+M  PlatoCompiler/Analysis/Linter.cs
+A  PlatoTests/ArrayReceiverLibraryEmissionTests.cs
+M  PlatoTests/EmitSnapshotTests.cs
+A  PlatoTests/IntrinsicsV2SurfaceTests.cs
+A  PlatoTests/IntrinsicsV2TestShims.cs
+A  PlatoTests/LinterFieldFunctionCollisionTests.cs
+M  PlatoTests/PlatoTests.csproj
+A  PlatoTests/ReceiverAwareRenderingTests.cs
+M  PlatoTests/emit-snapshot.txt
+M  docs/status-report-snapshot.json
+M  docs/status-report.html
+A  tools/dotnet-build-record.ps1
+M  tools/gen-status-report.py
+A  tools/record-csharp-build-errors.py</code></div>
+    <div class="k">HEAD</div><div><code>0dd63608f25359778bfc733bd741a114e1951c6a</code></div>
     <div class="k">origin/main</div><div><code>0e15882b97c0655365ebec9c5e4ea34dd372b013</code></div>
-    <div class="k">Unpushed</div><div>558a945 refactor(plato-277): relocate AngularCurves bridges to curves-angular.library.plato<br>eb49141 feat(stdlib): fill special-function content markers — distributions + superellipse area<br>faf0fbe feat(plato-322): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</div>
-    <div class="k">Dirty (excl. .claude/)</div><div><code>MM docs/status-report.html<br>A  stdlib/mesh-attributes.library.plato<br>M  stdlib/mesh-attributes.plato<br>M  stdlib/meshes-indexed.library.plato<br>A  stdlib/meshes-lines-points.library.plato<br>M  stdlib/meshes-lines-points.plato<br>M  stdlib/meshes-polygon.library.plato<br>A  stdlib/meshes-sections.library.plato<br>M  stdlib/meshes-sections.plato<br>A  stdlib/meshes-volumetric.library.plato<br>M  stdlib/meshes-volumetric.plato<br>M  stdlib/meshes.plato<br>A  stdlib/pointclouds.library.plato<br>M  stdlib/pointclouds.plato<br>M  stdlib/polygons-spatial.library.plato<br>M  stdlib/polygons-spatial.plato<br>A  stdlib/sampling-curves.library.plato<br>M  stdlib/sampling-curves.plato<br>A  stdlib/solids-csg-soups.library.plato<br>M  stdlib/solids-csg-soups.plato<br>M  stdlib/spatial-simplices.plato<br>A  stdlib/topology-half-edges.library.plato<br>M  stdlib/topology-half-edges.plato</code></div>
+    <div class="k">Unpushed</div><div>0dd6360 feat(stdlib): complete Transformable/Deformable implementations<br>558a945 refactor(plato-277): relocate AngularCurves bridges to curves-angular.library.plato<br>eb49141 feat(stdlib): fill special-function content markers — distributions + superellipse area<br>faf0fbe feat(plato-322): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</div>
+    <div class="k">Dirty (excl. .claude/)</div><div><code>M  AGENTS.md<br>M  Generated/Plato.Generated.Optimized/Curves.g.cs<br>M  Generated/Plato.Generated.Optimized/IBoundsLibrary.g.cs<br>M  Generated/Plato.Generated.Optimized/IIntervalLibrary.g.cs<br>M  Generated/Plato.Generated.Optimized/Meshes.g.cs<br>M  Generated/Plato.Generated.Optimized/Transforms.g.cs<br>M  Generated/Plato.Generated.Optimized/_AnglePair.g.cs<br>M  Generated/Plato.Generated.Optimized/_Arc.g.cs<br>M  Generated/Plato.Generated.Optimized/_ArchimedeanSpiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_AxisAngle.g.cs<br>M  Generated/Plato.Generated.Optimized/_Bounds2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Bounds3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Box.g.cs<br>M  Generated/Plato.Generated.Optimized/_ButterflyCurve.g.cs<br>M  Generated/Plato.Generated.Optimized/_Capsule.g.cs<br>M  Generated/Plato.Generated.Optimized/_Cardoid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Chord.g.cs<br>M  Generated/Plato.Generated.Optimized/_Circle.g.cs<br>M  Generated/Plato.Generated.Optimized/_ConchoidOfDeSluze.g.cs<br>M  Generated/Plato.Generated.Optimized/_Cone.g.cs<br>M  Generated/Plato.Generated.Optimized/_ConeSegment.g.cs<br>M  Generated/Plato.Generated.Optimized/_ConicSection.g.cs<br>M  Generated/Plato.Generated.Optimized/_CubicBezier2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_CubicBezier3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_CycloidOfCeva.g.cs<br>M  Generated/Plato.Generated.Optimized/_Ellipse.g.cs<br>M  Generated/Plato.Generated.Optimized/_Ellipsoid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Epicycloid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Epitrochoid.g.cs<br>M  Generated/Plato.Generated.Optimized/_FermatsSpiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_FigureEightKnot.g.cs<br>M  Generated/Plato.Generated.Optimized/_Helix.g.cs<br>M  Generated/Plato.Generated.Optimized/_Hypocycloid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Hypotrochoid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Identity2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_IdentityTransform3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_LemniscateOfBernoulli.g.cs<br>M  Generated/Plato.Generated.Optimized/_Lens.g.cs<br>M  Generated/Plato.Generated.Optimized/_Limacon.g.cs<br>M  Generated/Plato.Generated.Optimized/_Line2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Line3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Lines3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Lissajous.g.cs<br>M  Generated/Plato.Generated.Optimized/_LogarithmicSpiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_LookAt3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_LookDirection3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_NPrism.g.cs<br>M  Generated/Plato.Generated.Optimized/_NPyramid.g.cs<br>M  Generated/Plato.Generated.Optimized/_NumberInterval.g.cs<br>M  Generated/Plato.Generated.Optimized/_OffsetRotation2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_OffsetScale2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Orthographic3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Parabola.g.cs<br>M  Generated/Plato.Generated.Optimized/_Perspective3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_PlaneProjection3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Point2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Point3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Points3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Polygon.g.cs<br>M  Generated/Plato.Generated.Optimized/_Pose2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Pose3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Pyramid.g.cs<br>M  Generated/Plato.Generated.Optimized/_Quad2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Quad3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_QuadGrid3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_QuadraticBezier2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_QuadraticBezier3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Quads3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Quaternion.g.cs<br>M  Generated/Plato.Generated.Optimized/_Rect2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Reflection2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_RegularPolygon.g.cs<br>M  Generated/Plato.Generated.Optimized/_Ring.g.cs<br>M  Generated/Plato.Generated.Optimized/_Rose.g.cs<br>M  Generated/Plato.Generated.Optimized/_Rotation2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Rotation3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Scale2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Scaling3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Sector.g.cs<br>M  Generated/Plato.Generated.Optimized/_Segment.g.cs<br>M  Generated/Plato.Generated.Optimized/_SineWave.g.cs<br>M  Generated/Plato.Generated.Optimized/_SinusoidalSpiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_Skew2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Sphere.g.cs<br>M  Generated/Plato.Generated.Optimized/_Spiral.g.cs<br>M  Generated/Plato.Generated.Optimized/_TRSTransform2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_TRSTransform3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Torus.g.cs<br>M  Generated/Plato.Generated.Optimized/_TorusKnot.g.cs<br>M  Generated/Plato.Generated.Optimized/_Translation2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Translation3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_TrefoilKnot.g.cs<br>M  Generated/Plato.Generated.Optimized/_Triangle2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Triangle3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_Triangles3D.g.cs<br>M  Generated/Plato.Generated.Optimized/_TrisectrixOfMaclaurin.g.cs<br>M  Generated/Plato.Generated.Optimized/_TschirnhausenCubic.g.cs<br>M  Generated/Plato.Generated.Optimized/_Tube.g.cs<br>M  Generated/Plato.Generated.Optimized/_UniformScale2D.g.cs<br>M  Generated/Plato.Generated.Optimized/_YawPitch.g.cs<br>M  Generated/Plato.Generated.Optimized/_YawPitchRoll.g.cs<br>M  Generated/Plato.Generated.Unoptimized/Curves.g.cs<br>M  Generated/Plato.Generated.Unoptimized/Geometry.g.cs<br>M  Generated/Plato.Generated.Unoptimized/IBoundsLibrary.g.cs<br>M  Generated/Plato.Generated.Unoptimized/IIntervalLibrary.g.cs<br>M  Generated/Plato.Generated.Unoptimized/Meshes.g.cs<br>M  Generated/Plato.Generated.Unoptimized/Transforms.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_AnglePair.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Arc.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ArchimedeanSpiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_AxisAngle.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Bounds2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Bounds3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Box.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ButterflyCurve.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Capsule.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Cardoid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Chord.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Circle.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ConchoidOfDeSluze.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Cone.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ConeSegment.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_ConicSection.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_CubicBezier2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_CubicBezier3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_CycloidOfCeva.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Ellipse.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Ellipsoid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Epicycloid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Epitrochoid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_FermatsSpiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_FigureEightKnot.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Helix.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Hypocycloid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Hypotrochoid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Identity2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_IdentityTransform3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_LemniscateOfBernoulli.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Lens.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Limacon.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Line2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Line3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Lines3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Lissajous.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_LogarithmicSpiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_LookAt3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_LookDirection3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_NPrism.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_NPyramid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_NumberInterval.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_OffsetRotation2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_OffsetScale2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Orthographic3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Parabola.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Perspective3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_PlaneProjection3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Point2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Point3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Points3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Polygon.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Pose2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Pose3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Pyramid.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Quad2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Quad3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_QuadGrid3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_QuadraticBezier2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_QuadraticBezier3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Quads3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Quaternion.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Rect2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Reflection2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_RegularPolygon.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Ring.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Rose.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Rotation2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Rotation3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Scale2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Scaling3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Sector.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Segment.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_SineWave.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_SinusoidalSpiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Skew2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Sphere.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Spiral.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TRSTransform2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TRSTransform3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Torus.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TorusKnot.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Translation2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Translation3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TrefoilKnot.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Triangle2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Triangle3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Triangles3D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TrisectrixOfMaclaurin.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_TschirnhausenCubic.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_Tube.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_UniformScale2D.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_YawPitch.g.cs<br>M  Generated/Plato.Generated.Unoptimized/_YawPitchRoll.g.cs<br>M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs<br>M  Plato.CSharpWriter/CSharpWriter.cs<br>M  Plato.CSharpWriter/ExtensionStyleWriter.cs<br>M  Plato.CSharpWriter/TirCSharpBodyWriter.cs<br>M  PlatoCompiler/Analysis/Linter.cs<br>A  PlatoTests/ArrayReceiverLibraryEmissionTests.cs<br>M  PlatoTests/EmitSnapshotTests.cs<br>A  PlatoTests/IntrinsicsV2SurfaceTests.cs<br>A  PlatoTests/IntrinsicsV2TestShims.cs<br>A  PlatoTests/LinterFieldFunctionCollisionTests.cs<br>M  PlatoTests/PlatoTests.csproj<br>A  PlatoTests/ReceiverAwareRenderingTests.cs<br>M  PlatoTests/emit-snapshot.txt<br>M  docs/status-report-snapshot.json<br>M  docs/status-report.html<br>A  tools/dotnet-build-record.ps1<br>M  tools/gen-status-report.py<br>A  tools/record-csharp-build-errors.py</code></div>
   </div>
   <h3>Diffstat (unstaged, excl. this report)</h3>
   <span class="muted">no unstaged diff</span>
-  <div class="note">23 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
+  <div class="note">220 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
 </section>
 
 <section>
@@ -144,7 +342,7 @@ M  stdlib/topology-half-edges.plato</code></div>
   <div class="kv">
     <div class="k">Status</div><div><code>(studio not found)</code></div>
     <div class="k">Committed Plato pointer</div><div><code>?</code> <span class="badge blocked">DRIFT</span></div>
-    <div class="k">Plato HEAD</div><div><code>558a9459b6cec4e2e5ee668be7fe8ede33e4422c</code></div>
+    <div class="k">Plato HEAD</div><div><code>0dd63608f25359778bfc733bd741a114e1951c6a</code></div>
     <div class="k">Plato-related dirty</div><div><code><span class="muted">none</span></code></div>
   </div>
   <div class="note">If drifted, bump with an explicit <code>git commit -- submodules/Plato</code> in studio after Plato pushes.</div>
@@ -156,7 +354,7 @@ M  stdlib/topology-half-edges.plato</code></div>
   <div><code>-12aad781501e6714789fb87629f1fbee001e2ab0 parakeet</code></div>
   <p class="muted">parakeet: do not stage casually (known pre-existing dirty grammar submodule).</p>
   <h3>Worktrees</h3>
-  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              0e15882 [main]<br>C:/Users/cdigg/git/plato-wt-1                                                        558a945 [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
+  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              0e15882 [main]<br>C:/Users/cdigg/git/plato-wt-1                                                        0dd6360 [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
   <h3>Studio-level submodules</h3>
   <pre>(studio not found)</pre>
 </section>
@@ -169,7 +367,7 @@ M  stdlib/topology-half-edges.plato</code></div>
     <div class="card"><div class="n">33,693</div><div class="l">References</div></div>
     <div class="card"><div class="n">0</div><div class="l">Diagnostics</div></div>
   </div>
-  <p class="muted" style="margin:.75rem 0 0">Roots: stdlib + stdlib-tests · built 2026-07-29T21:46:46Z · snapshot 2026-07-29T18:33:25-04:00</p>
+  <p class="muted" style="margin:.75rem 0 0">Roots: stdlib + stdlib-tests · built 2026-07-29T21:46:46Z · snapshot 2026-07-30T01:46:29-04:00</p>
 </section>
 
 <section>
@@ -179,6 +377,30 @@ M  stdlib/topology-half-edges.plato</code></div>
     <thead><tr><th>Gate</th><th>Result</th><th>Time</th><th>Detail</th></tr></thead>
     <tbody><tr><td>stdlib fast gate (lint + checker ratchet)</td><td><span class="badge pass">PASS</span></td><td>538s</td><td>2026-07-29 17:54 ET</td></tr><tr><td>lint --strict forward stdlib</td><td><span class="badge pass">PASS</span></td><td>14s</td><td>0 parse / 0 resolution errors; warning/info findings present</td></tr><tr><td>frozen-v1 tripwire</td><td><span class="badge pass">PASS</span></td><td>&lt;1s</td><td>210 files unchanged</td></tr><tr><td>Plato.CLI + Compiler build (Release)</td><td><span class="badge pass">PASS</span></td><td>~17s</td><td>file-lock noise possible when Navigation MCP is live</td></tr><tr><td>Plato.sln full build</td><td><span class="badge blocked">BLOCKED</span></td><td>101s</td><td>MSB3027 when Plato.Navigation.CLI holds DLL locks</td></tr><tr><td>PlatoTests</td><td><span class="badge pass">PASS</span></td><td>77s</td><td>161 passed / 0 failed</td></tr><tr><td>Plato.Navigation.Tests</td><td><span class="badge pass">PASS</span></td><td>42s</td><td>30 passed / 0 failed</td></tr><tr><td>conformance suite</td><td><span class="badge not.run">NOT RUN</span></td><td>—</td><td>expected 0 fail when run; refresh snapshot after regen-conformance.ps1 -Test</td></tr><tr><td>regen-generated diff gate</td><td><span class="badge not.run">NOT RUN</span></td><td>—</td><td>refresh after regen-generated.ps1</td></tr><tr><td>check-all.ps1 full battery</td><td><span class="badge not.run">NOT RUN</span></td><td>—</td><td>run before merge / mission end</td></tr></tbody>
   </table>
+
+  <h3>C# build errors (latest recorded)</h3>
+  <div class="kv" style="margin-bottom:.85rem">
+    <div class="k">Latest target</div><div><code>forward-conformance</code> · <span class="badge fail">4 errors</span></div>
+    <div class="k">Errors / warnings</div><div>4 / 12</div>
+    <div class="k">Recorded at</div><div>2026-07-30T01:46:29-04:00</div>
+    <div class="k">How updated</div><div>Every Plato C# build via <code>tools/dotnet-build-record.ps1</code> (wired into <code>regen-forward-conformance.ps1</code>, <code>regen-generated.ps1</code>). Writes <code>docs/status-report-snapshot.json</code> → this page.</div>
+  </div>
+  <h3>Recorded build targets</h3>
+  <table>
+    <thead><tr><th>Target</th><th>Errors</th><th>Warnings</th><th>Result</th><th>When</th></tr></thead>
+    <tbody><tr><td><code>forward-conformance</code></td><td class="num">4</td><td class="num">12</td><td><span class="badge fail">ERRORS</span></td><td>2026-07-30T01:46:29-04:00</td></tr><tr><td><code>plato-cli</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T01:44:59-04:00</td></tr><tr><td><code>plato-generated-optimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T01:17:25-04:00</td></tr><tr><td><code>plato-generated-unoptimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T01:17:16-04:00</td></tr></tbody>
+  </table>
+  <h3>Latest errors by category</h3>
+  <table>
+    <thead><tr><th>Category</th><th>Key</th><th>Count</th><th>CS codes</th></tr></thead>
+    <tbody><tr><td>Missing interface member on runtime/type</td><td><code>missing_interface_member</code></td><td class="num">4</td><td><code>CS0535</code></td></tr></tbody>
+  </table>
+  <h3>Latest errors by CS code (top 20)</h3>
+  <table>
+    <thead><tr><th>Code</th><th>Count</th></tr></thead>
+    <tbody><tr><td><code>CS0535</code></td><td class="num">4</td></tr></tbody>
+  </table>
+
   <h3>Forward-stdlib linter catalog</h3>
   <div class="kv" style="margin-bottom:.85rem">
     <div class="k">Last --strict exit</div><div><span class="badge pass">0</span></div>
@@ -192,7 +414,7 @@ M  stdlib/topology-half-edges.plato</code></div>
     <thead><tr><th>Code</th><th>Severity</th><th>Count</th><th>Meaning</th></tr></thead>
     <tbody><tr class=""><td><code>LINT001</code></td><td><span class="badge warn">Warning</span></td><td class="num">260</td><td><strong>Unimplemented interface obligation</strong><div class="lint-desc">Concrete type claims a concept member but has no body; generated C# throws NotImplementedException.</div></td></tr><tr class=" muted-row"><td><code>LINT002</code></td><td><span class="badge fail">Error</span></td><td class="num">0</td><td><strong>Where-clause on undeclared type var</strong><div class="lint-desc">&#x27;where&#x27; constrains a type variable that is not declared on the generic.</div></td></tr><tr class=""><td><code>LINT003</code></td><td><span class="badge idea">Info</span></td><td class="num">2,279</td><td><strong>Declared-but-unused field</strong><div class="lint-desc">Field on a concrete type is never read by any library function, concept impl, or generated member.</div></td></tr><tr class=" muted-row"><td><code>LINT004</code></td><td><span class="badge fail">Error</span></td><td class="num">0</td><td><strong>Duplicate library signature</strong><div class="lint-desc">Two functions in the same library share name + parameter types.</div></td></tr><tr class=" muted-row"><td><code>LINT005</code></td><td><span class="badge fail">Error/Warn</span></td><td class="num">0</td><td><strong>Generic type-var misuse</strong><div class="lint-desc">Type variable used only once, or appears in the return type but is not inferable from parameters.</div></td></tr><tr class=" muted-row"><td><code>LINT006</code></td><td><span class="badge fail">Error</span></td><td class="num">0</td><td><strong>Affine builder stored in a field</strong><div class="lint-desc">Unique/builder type used as a field type (builders must not be stored).</div></td></tr><tr class=" muted-row"><td><code>LINT007</code></td><td><span class="badge fail">Error</span></td><td class="num">0</td><td><strong>Affine builder as type argument</strong><div class="lint-desc">Unique/builder type used as a generic argument (no containers of builders).</div></td></tr><tr class=""><td><code>LINT008</code></td><td><span class="badge idea">Info</span></td><td class="num">37</td><td><strong>Concept with no implementer</strong><div class="lint-desc">Concept exists but no concrete type implements it — possibly unfinished vocabulary.</div></td></tr><tr class=""><td><code>LINT009</code></td><td><span class="badge idea">Info</span></td><td class="num">8</td><td><strong>Unmentioned concept</strong><div class="lint-desc">Concept is never implemented, referenced, or used as a where-bound — stronger than LINT008.</div></td></tr><tr class=""><td><code>LINT010</code></td><td><span class="badge idea">Info</span></td><td class="num">59</td><td><strong>Orphan concrete type</strong><div class="lint-desc">Concrete type implements no concept and is mentioned by no function signature or field.</div></td></tr><tr class=""><td><code>LINT011</code></td><td><span class="badge idea">Info</span></td><td class="num">21</td><td><strong>Redundant implements clause</strong><div class="lint-desc">&#x27;implements&#x27; already implied by another implemented concept on the same type.</div></td></tr><tr class=""><td><code>LINT012</code></td><td><span class="badge warn">Warning</span></td><td class="num">2</td><td><strong>Receiver-marker mismatch</strong><div class="lint-desc">Obligation and implementation disagree on the &#x27;_&#x27; receiver marker (static vs instance).</div></td></tr></tbody>
   </table>
-  <div class="note"><a href="#plato-308"><code>plato-308</code></a> (ready): forward-stdlib generated C# still does not compile (~324 errors) until burned down. Catalog: <code>PlatoCompiler/Analysis/Linter.cs</code>.</div>
+  <div class="note"><a href="#plato-308"><code>plato-308</code></a>: forward-stdlib generated C# compile errors are tracked above under target <code>forward-conformance</code>. Compare per-category / per-code counts across runs, not only the total. Lint catalog: <code>PlatoCompiler/Analysis/Linter.cs</code>.</div>
 </section>
 
 <section>
@@ -232,10 +454,10 @@ M  stdlib/topology-half-edges.plato</code></div>
 </section>
 
 <section>
-  <h2>Committed work today (5 commits)</h2>
+  <h2>Committed work today (6 commits)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="#plato-277"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="#plato-322"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="#plato-277"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr></tbody>
+    <tbody><tr><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="#plato-277"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="#plato-322"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="#plato-277"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr></tbody>
   </table>
 </section>
 
@@ -243,7 +465,7 @@ M  stdlib/topology-half-edges.plato</code></div>
   <h2>Recent history (20)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr class="today"><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="#plato-277"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr class="today"><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr class="today"><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="#plato-322"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr class="today"><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr class="today"><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="#plato-277"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr><tr class=""><td><code>4356c81</code></td><td>2026-07-29 23:41:54 -0400</td><td>feat(<a href="#plato-302"><code>plato-302</code></a>): faceted BREP v1 — edge-use shell, Line/Planar/Bilinear sums</td></tr><tr class=""><td><code>5800f7c</code></td><td>2026-07-29 23:35:22 -0400</td><td>feat(stdlib): first CSG increment - polygon-soup booleans via plane clipping</td></tr><tr class=""><td><code>c303db2</code></td><td>2026-07-29 22:40:48 -0400</td><td>fix(<a href="#plato-323"><code>plato-323</code></a>): unbounded CombineHashCodes; record the receiver-aware rendering next step</td></tr><tr class=""><td><code>e57c034</code></td><td>2026-07-29 22:29:03 -0400</td><td>fix(<a href="#plato-323"><code>plato-323</code></a>): erase Integer from the array combinators&#x27; index positions</td></tr><tr class=""><td><code>54e3d5a</code></td><td>2026-07-29 22:14:10 -0400</td><td>fix(<a href="#plato-323"><code>plato-323</code></a>): emit `_`-receiver members as the statics they are; add missing scalar constants</td></tr><tr class=""><td><code>d1eb8df</code></td><td>2026-07-29 22:12:13 -0400</td><td>feat(<a href="#plato-315"><code>plato-315</code></a>): add LINT013 for unreachable derived concept surface</td></tr><tr class=""><td><code>c68907e</code></td><td>2026-07-29 22:10:56 -0400</td><td>feat(stdlib): bound Periodic&lt;TPeriod&gt; and derive WrapPhase</td></tr><tr class=""><td><code>9dd7cea</code></td><td>2026-07-29 22:00:46 -0400</td><td>fix(<a href="#plato-323"><code>plato-323</code></a>): decide no-arg call-site syntax per receiver for erased scalars</td></tr><tr class=""><td><code>2e1e31b</code></td><td>2026-07-29 21:17:07 -0400</td><td>feat(stdlib): Face concept + indexed-mesh obligations</td></tr><tr class=""><td><code>e2d8b83</code></td><td>2026-07-29 21:02:31 -0400</td><td>feat(<a href="#plato-311"><code>plato-311</code></a>, <a href="#plato-310"><code>plato-310</code></a>, <a href="#plato-308"><code>plato-308</code></a>): land forward-stdlib declaration-level C# — views satisfied, intrinsic gaps filled, CHK308 gated</td></tr><tr class=""><td><code>f95e680</code></td><td>2026-07-29 20:48:58 -0400</td><td>docs(stdlib): retract false &#x27;no constraint syntax&#x27; claim on Periodic</td></tr><tr class=""><td><code>358d593</code></td><td>2026-07-29 20:43:14 -0400</td><td>docs(stdlib): strip tracker and legacy process notes</td></tr><tr class=""><td><code>859ad90</code></td><td>2026-07-29 20:12:39 -0400</td><td>docs(<a href="#plato-313"><code>plato-313</code></a>): drop cross-repo tracker path from duals header</td></tr><tr class=""><td><code>0de0410</code></td><td>2026-07-29 20:11:28 -0400</td><td>feat(stdlib): implement 32 LINT001 obligations</td></tr><tr class=""><td><code>b62e278</code></td><td>2026-07-29 20:09:56 -0400</td><td>feat(<a href="#plato-313"><code>plato-313</code></a>): kind-level polyhedral Dual maps + involution laws</td></tr></tbody>
+    <tbody><tr class="today"><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr class="today"><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="#plato-277"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr class="today"><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr class="today"><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="#plato-322"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr class="today"><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr class="today"><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="#plato-277"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr><tr class=""><td><code>4356c81</code></td><td>2026-07-29 23:41:54 -0400</td><td>feat(<a href="#plato-302"><code>plato-302</code></a>): faceted BREP v1 — edge-use shell, Line/Planar/Bilinear sums</td></tr><tr class=""><td><code>5800f7c</code></td><td>2026-07-29 23:35:22 -0400</td><td>feat(stdlib): first CSG increment - polygon-soup booleans via plane clipping</td></tr><tr class=""><td><code>c303db2</code></td><td>2026-07-29 22:40:48 -0400</td><td>fix(<a href="#plato-323"><code>plato-323</code></a>): unbounded CombineHashCodes; record the receiver-aware rendering next step</td></tr><tr class=""><td><code>e57c034</code></td><td>2026-07-29 22:29:03 -0400</td><td>fix(<a href="#plato-323"><code>plato-323</code></a>): erase Integer from the array combinators&#x27; index positions</td></tr><tr class=""><td><code>54e3d5a</code></td><td>2026-07-29 22:14:10 -0400</td><td>fix(<a href="#plato-323"><code>plato-323</code></a>): emit `_`-receiver members as the statics they are; add missing scalar constants</td></tr><tr class=""><td><code>d1eb8df</code></td><td>2026-07-29 22:12:13 -0400</td><td>feat(<a href="#plato-315"><code>plato-315</code></a>): add LINT013 for unreachable derived concept surface</td></tr><tr class=""><td><code>c68907e</code></td><td>2026-07-29 22:10:56 -0400</td><td>feat(stdlib): bound Periodic&lt;TPeriod&gt; and derive WrapPhase</td></tr><tr class=""><td><code>9dd7cea</code></td><td>2026-07-29 22:00:46 -0400</td><td>fix(<a href="#plato-323"><code>plato-323</code></a>): decide no-arg call-site syntax per receiver for erased scalars</td></tr><tr class=""><td><code>2e1e31b</code></td><td>2026-07-29 21:17:07 -0400</td><td>feat(stdlib): Face concept + indexed-mesh obligations</td></tr><tr class=""><td><code>e2d8b83</code></td><td>2026-07-29 21:02:31 -0400</td><td>feat(<a href="#plato-311"><code>plato-311</code></a>, <a href="#plato-310"><code>plato-310</code></a>, <a href="#plato-308"><code>plato-308</code></a>): land forward-stdlib declaration-level C# — views satisfied, intrinsic gaps filled, CHK308 gated</td></tr><tr class=""><td><code>f95e680</code></td><td>2026-07-29 20:48:58 -0400</td><td>docs(stdlib): retract false &#x27;no constraint syntax&#x27; claim on Periodic</td></tr><tr class=""><td><code>358d593</code></td><td>2026-07-29 20:43:14 -0400</td><td>docs(stdlib): strip tracker and legacy process notes</td></tr><tr class=""><td><code>859ad90</code></td><td>2026-07-29 20:12:39 -0400</td><td>docs(<a href="#plato-313"><code>plato-313</code></a>): drop cross-repo tracker path from duals header</td></tr><tr class=""><td><code>0de0410</code></td><td>2026-07-29 20:11:28 -0400</td><td>feat(stdlib): implement 32 LINT001 obligations</td></tr></tbody>
   </table>
 </section>
 

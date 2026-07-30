@@ -91,6 +91,10 @@ namespace Ara3D.Geometry.CSharpWriter
             foreach (var p in ExtensionPlans.Values)
                 keptNoArg.UnionWith(p.KeptNoArgPropertyNames);
 
+            // The subset that is NOT owned by any per-type plan and therefore stays keyed by NAME
+            // even under the receiver-aware rule (see IsStructSurfaceProperty).
+            var globalNames = new HashSet<string>();
+
             // Property-ful (non-NoProperties) extension style only: interface-declared no-arg
             // members are C# interface properties, so their names keep property syntax everywhere.
             // Under --no-properties interfaces declare METHODS, so nothing is seeded here.
@@ -106,24 +110,31 @@ namespace Ara3D.Geometry.CSharpWriter
                 // (the handwritten Ara3D.Collections IReadOnlyList2D) are PROPERTIES on
                 // receivers the emitter does not generate; generated code calls them on both
                 // handwritten and generated receivers, and call-site syntax is decided by name.
-                keptNoArg.Add("Count");
-                keptNoArg.Add("NumColumns");
-                keptNoArg.Add("NumRows");
+                // GLOBAL: no ExtensionStylePlan owns them, so the per-receiver rule below cannot
+                // find them on any plan and they must stay name-keyed.
+                globalNames.Add("Count");
+                globalNames.Add("NumColumns");
+                globalNames.Add("NumRows");
 
                 // Sum-type flattened fields (wave-2, plato-232) are genuine struct fields, so the
                 // match lowering's projections (seg.Move_EndPoint) must read with field/property
                 // syntax, never a "()" method call. The Kind tag field likewise. (Per-case Is<Case>
                 // predicates are deliberately NOT added — they are methods and keep their "()".)
+                // GLOBAL for the same reason: the flattened fields live on the sum's generated
+                // struct, whose per-case projections are read through receivers the plans do not
+                // describe.
                 foreach (var t in Compilation.AllTypeAndLibraryDefinitions)
                     if (t != null && t.IsSum)
                     {
-                        keptNoArg.Add("Kind");
+                        globalNames.Add("Kind");
                         foreach (var c in t.Cases)
                             foreach (var f in c.Fields)
-                                keptNoArg.Add(f.FlatName);
+                                globalNames.Add(f.FlatName);
                     }
 
+                keptNoArg.UnionWith(globalNames);
                 StructSurfacePropertyNames = keptNoArg;
+                GlobalStructSurfacePropertyNames = globalNames;
             }
 
             var movedNoArg = new HashSet<string>();
@@ -353,33 +364,76 @@ namespace Ara3D.Geometry.CSharpWriter
         // which is what keeps hard rule 2 intact; the forward recipe opts in.
         public bool StaticAbstract;
 
-        // The UNIFORM RENDERING RULE, realized as a global name set: names that keep PROPERTY/field
-        // access syntax at call sites — struct fields, the primitive pseudo-fields (X/Y/Z, M11...),
-        // and the BCL Count/NumRows/NumColumns obligations. Every other no-arg member gets "()".
-        // Decided globally by name (never per-receiver): the moved/kept partition demotes any name
-        // that is a property on ANY generated type back into the struct on ALL types, so a name is
-        // uniformly a property or uniformly a method across the whole output. Built in
-        // BuildExtensionPlans; consulted by the body writer and CSharpFunctionInfo.EmitAsMethod.
+        // The UNION over all types of the names that keep PROPERTY/field access syntax — struct
+        // fields, the primitive pseudo-fields (X/Y/Z, M11...), the BCL Count/NumRows/NumColumns
+        // obligations, and the sum-type flattened fields. Built in BuildExtensionPlans.
+        //
+        // This set drives the MOVED/KEPT partition (a name that is a property on ANY generated type
+        // is demoted back into the struct on ALL types, because a C# instance member silently hides
+        // a same-name extension method) and is the FALLBACK for receivers no plan describes. It is
+        // NOT the call-site rendering rule any more: rendering is decided per receiver by
+        // IsStructSurfaceProperty (plato-323), which every consumer routes through.
         public HashSet<string> StructSurfacePropertyNames { get; private set; }
 
-        // The uniform rendering rule with the ONE receiver-type exception it needs (plato-323).
-        // An ERASED scalar receiver (--scalar=float replaces Number/Integer/Boolean/Character/String
-        // with float/int/bool/char/string) has NO generated struct, so every no-arg member of it —
-        // generated or handwritten in Plato.Intrinsics — is a classic extension method on the
-        // primitive and always takes "()". The global name set must not reach those call sites or
-        // declarations: a genuine field on an unrelated struct (`Histogram.Range`) would otherwise
-        // steal the parens from `ArrayExtensions.Range(this int)` everywhere it is called.
-        // NOTE (plato-323, next step): resolving `name` against the RECEIVER's own plan
-        // (`GetExtensionPlanByTypeName(ownerTypeName).KeptNoArgPropertyNames`, with
-        // Count/NumRows/NumColumns and the sum-type flattened fields kept global because no single
-        // plan owns them) is the general form of this rule, and it fixes the remaining ~100 CS0030
-        // "cannot convert type 'method'" in the forward stdlib — a field named `Amount` on an image
-        // filter currently forces property syntax onto the handwritten `Angle.Radians()` METHOD.
-        // It was measured and NOT landed here: it moves 88 of the 184 diff-gated golden files, which
-        // needs its own review pass. The scalar short-circuit below is the safe subset.
+        // The struct-surface names that no ExtensionStylePlan owns, so they must be decided by NAME
+        // on every receiver: the BCL/collection obligations (Count/NumColumns/NumRows, properties on
+        // handwritten receivers the emitter never generates) and the sum-type flattened fields +
+        // Kind tag (read through match-lowering projections on receivers the plans do not describe).
+        // A subset of StructSurfacePropertyNames; null unless NoProperties.
+        public HashSet<string> GlobalStructSurfacePropertyNames { get; private set; }
+
+        // The RECEIVER-AWARE rendering rule (plato-323): does `name` render with property/field
+        // syntax when read off a receiver of type `ownerTypeName`?
+        //
+        // The global name set alone is wrong in two ways, both measured:
+        //   - an ERASED scalar receiver (--scalar=float replaces Number/Integer/... with
+        //     float/int/...) has NO generated struct, so every no-arg member of it — generated or
+        //     handwritten in Plato.Intrinsics — is a classic extension method on the primitive and
+        //     always takes "()". `Histogram.Range` (a genuine field on an unrelated struct)
+        //     otherwise stole the parens from `ArrayExtensions.Range(this int)`: 915 x CS0119.
+        //   - a NON-scalar receiver whose own struct surface does not carry `name` reads a MOVED
+        //     library function, i.e. an extension METHOD. `Amount` (a field on an image filter, a
+        //     dynamic quantity and an uncertainty value) otherwise forced property syntax onto
+        //     `Angle.Radians()` / `Amount(x: Angle)` at every call site: 110 x CS0030.
+        //
+        // So: resolve `name` against the receiver's OWN plan when the receiver has one, and fall
+        // back to the global union only for receivers no plan describes (handwritten runtime types,
+        // IgnoredTypes, concept interfaces, generic parameters). GlobalStructSurfacePropertyNames
+        // short-circuits first because those names are properties on every receiver by construction.
+        //
+        // Both halves of the rule stay consistent with the DECLARATIONS because every consumer —
+        // CSharpFunctionInfo.EmitAsMethod (which decides property-vs-method when EMITTING the
+        // member), the two forwarding-shim writers in CSharpConcreteTypeWriter, and the body
+        // writer's call sites — routes through this one predicate with the owner type in hand.
         public bool IsStructSurfaceProperty(string ownerTypeName, string name)
-            => !IsScalarTypeName(ownerTypeName)
-               && (StructSurfacePropertyNames?.Contains(name) ?? false);
+        {
+            if (name == null)
+                return false;
+            // The four handwritten V2 members the declaration mis-describes. Checked before the
+            // scalar short-circuit because one of them (Number.Angle) is read off the WRAPPER, in
+            // the `((Number)x).Angle` forwarder the erased per-type file emits.
+            if (NoProperties)
+            {
+                var ov = PrimitiveSurfaceOverride(ownerTypeName, name);
+                if (ov.HasValue)
+                    return ov.Value;
+            }
+            if (IsScalarTypeName(ownerTypeName))
+                return false;
+            if (GlobalStructSurfacePropertyNames?.Contains(name) ?? false)
+                return true;
+            var plan = GetExtensionPlanByTypeName(ownerTypeName);
+            if (plan != null)
+                return plan.KeptNoArgPropertyNames.Contains(name);
+            // No plan describes this receiver: a concept INTERFACE, a generic type variable bound to
+            // one, an IgnoredTypes collection/delegate, or an unknown handwritten type. Under
+            // --no-properties an interface declares every no-arg obligation as a METHOD, and the
+            // IgnoredTypes receivers are handwritten BCL collections whose only property-shaped
+            // members are already in the global set. So there is NO struct surface here — falling
+            // back to the union let a field on some unrelated struct pin property syntax onto
+            // `mesh.VertexCount()` / `edges.UndirectedEdgeCount()` (CS0428 method-group reads).
+            return false;
+        }
 
         // A Plato scalar WRAPPER name (Number/Integer/...) or the primitive it erases to
         // (float/int/...): under --scalar=float a TIR node's type may already carry either.
@@ -476,6 +530,49 @@ namespace Ara3D.Geometry.CSharpWriter
             { "List", "PlatoList" },
             { "Buffer", "PlatoBuffer" },
         };
+
+        // The handwritten struct surface of a PRIMITIVE type, where the Plato.Intrinsics.V2 runtime
+        // (--no-properties) disagrees with what the Plato declaration implies. The writer generates
+        // NO struct for a PrimitiveTypes entry (CSharpConcreteTypeWriter's "// Fields" block is
+        // `!IsPrimitive`), so it cannot see the runtime's real shape and reads the declaration as a
+        // proxy: a declared field is a property/field, everything else is a method. That proxy is
+        // right for the whole V2 surface except these four members, hence a short exception list
+        // rather than a second full surface record. Keyed "{Type}.{Member}"; the value is whether
+        // V2 spells the member as a PROPERTY. Consulted only under NoProperties.
+        //
+        //   Angle.Radians — the forward stdlib declares
+        //     `type Angle implements Quantity { Radians: Number; }`, and V2 satisfies it with
+        //     `public Number Radians() => Value;` (Plato.Intrinsics.V2\Angle.cs). Reading the
+        //     declaration pinned property syntax onto that METHOD at ~80 forward call sites
+        //     (plato-323 item 2, CS0030 "cannot convert type 'method'"). stdlib-legacy's
+        //     `type Angle implements IMeasure { }` declares no fields, so no golden depends on it.
+        //   Matrix4x4.Translation / .Rotation / Number.Angle — NOT declared as fields (they are
+        //     library functions in Plato), yet V2 keeps them as properties. Before the
+        //     receiver-aware rule they rode on the global name union by accident, each name being a
+        //     field on some unrelated struct.
+        //
+        // The V2-side inconsistency itself (a method-form runtime with ten property leftovers) is
+        // tracked as plato-331; when it is resolved this table shrinks to nothing. Public so
+        // PlatoTests\IntrinsicsV2SurfaceTests.cs can police it against the actual V2 surface.
+        public static readonly IReadOnlyDictionary<string, bool> PrimitiveSurfaceOverrides
+            = new Dictionary<string, bool>
+            {
+                { "Angle.Radians", false },
+                { "Matrix4x4.Translation", true },
+                { "Matrix4x4.Rotation", true },
+                { "Number.Angle", true },
+            };
+
+        /// <summary>Whether V2 spells {typeName}.{name} as a property, or null when the declaration
+        /// is a reliable proxy (the usual case). See <see cref="PrimitiveSurfaceOverrides"/>.</summary>
+        public static bool? PrimitiveSurfaceOverride(string typeName, string name)
+        {
+            if (typeName == null || name == null)
+                return null;
+            return PrimitiveSurfaceOverrides.TryGetValue($"{typeName}.{name}", out var b)
+                ? b
+                : (bool?)null;
+        }
 
         public static HashSet<string> IgnoredTypes = new HashSet<string>()
         {
@@ -630,35 +727,73 @@ namespace Ara3D.Geometry.CSharpWriter
             return this;
         }
 
+        // The CONCRETE array types. A library function whose receiver is one of these renders
+        // exactly like a legacy `IArray*`-concept receiver — ToCSharpTypeName maps both to the
+        // runtime list interfaces (Array<T> -> IReadOnlyList<T>, Array2D -> IReadOnlyList2D, ...)
+        // — so it belongs on the same classic-extension-method path (see
+        // IsListExtensionReceiver / WriteInterfaceLibraryMethods).
+        public static readonly HashSet<string> ConcreteArrayTypeNames = new HashSet<string>()
+        {
+            "Array",
+            "Array2D",
+            "Array3D",
+        };
+
+        // Is this the receiver of a library function that emits as a classic extension method on a
+        // runtime list interface in Extensions.g.cs? Two spellings of the same shape:
+        //   - an `IArray*` CONCEPT (but not IArrayLike, the fixed-arity component scaffolding) —
+        //     stdlib-legacy's spelling;
+        //   - the CONCRETE Array/Array2D/Array3D types — the forward stdlib's spelling
+        //     (`BoundsOfPoints(points: Array<Point2D>)`).
+        // The concrete arm is plato-323: `Array` is in IgnoredTypes, so those types get no
+        // ExtensionStylePlan, and moved members are only discovered while writing a concrete type's
+        // own file — so before this a library function with an array receiver was emitted by NO
+        // writer at all and every call site of it was a CS1061.
+        private static bool IsListExtensionReceiver(TypeExpression pt)
+            => pt?.Def != null
+               && (pt.Def.IsInterface()
+                   ? pt.Def.Name.StartsWith("IArray") && !pt.Def.Name.StartsWith("IArrayLike")
+                   : ConcreteArrayTypeNames.Contains(pt.Def.Name));
+
         public CSharpWriter WriteInterfaceLibraryMethods()
         {
             WriteLine($"public static partial class Extensions");
             WriteStartBlock();
+
+            // One emission per distinct C# signature. The forward stdlib overloads array-receiver
+            // functions on the ELEMENT type (BoundsOfPoints on Array<Point2D> and Array<Point3D>),
+            // which are distinct C# signatures — but two Plato libraries may also declare the same
+            // one, and a duplicate would be CS0111 rather than a fixed error.
+            var emittedSignatures = new HashSet<string>();
+
             foreach (var f in Compilation.Libraries.AllFunctions())
             {
-                if (f.NumParameters > 0)
-                {
-                    var pt = f.Parameters[0].Type;
-                    if (!pt.Def.IsInterface())
-                        continue;
+                if (f.NumParameters == 0)
+                    continue;
 
-                    // We are going to skip functions that do not have a body
-                    if (f.Body == null)
-                        continue;
+                if (!IsListExtensionReceiver(f.Parameters[0].Type))
+                    continue;
 
-                    if (!pt.Def.Name.StartsWith("IArray") || pt.Def.Name.StartsWith("IArrayLike"))
-                        continue;
+                // Declared-only functions (the array INTRINSICS: Map/Reduce/Zip/...) are provided
+                // by the handwritten Ara3D.Collections runtime; emitting a stub would shadow it.
+                if (f.Body == null)
+                    continue;
 
-                    // We need to fix this, we should be creating functions instances.
-                    var interfaceWriter = NewDefaultTypeWriter();
-                    var fi = new FunctionInstance(f, null, null, FunctionInstanceKind.InterfaceExtension);
-                    var cfi = new CSharpFunctionInfo(fi, null, interfaceWriter);
-                    interfaceWriter.WriteExtensionFunction(cfi);
-                    if (ExtensionStyle)
-                        this.WriteWithLineStateSync(interfaceWriter.ToString());
-                    else
-                        Write(interfaceWriter.ToString());
-                }
+                if (IgnoredFunctions.Contains(f.Name))
+                    continue;
+
+                // We need to fix this, we should be creating functions instances.
+                var interfaceWriter = NewDefaultTypeWriter();
+                var fi = new FunctionInstance(f, null, null, FunctionInstanceKind.InterfaceExtension);
+                var cfi = new CSharpFunctionInfo(fi, null, interfaceWriter);
+                if (!emittedSignatures.Add(
+                        $"{cfi.Name}{cfi.ExtensionGenericsString}({cfi.ParameterTypes.JoinStringsWithComma()})"))
+                    continue;
+                interfaceWriter.WriteExtensionFunction(cfi);
+                if (ExtensionStyle)
+                    this.WriteWithLineStateSync(interfaceWriter.ToString());
+                else
+                    Write(interfaceWriter.ToString());
             }
             WriteEndBlock();
             return this;

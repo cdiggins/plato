@@ -393,6 +393,7 @@ def main() -> int:
     gates = snapshot.get("gates") or DEFAULT_SNAPSHOT["gates"]
     lint = snapshot.get("lint") or DEFAULT_SNAPSHOT["lint"]
     nav = snapshot.get("nav") or DEFAULT_SNAPSHOT["nav"]
+    csharp_builds = snapshot.get("csharp_builds") or {}
     lint_counts = lint.get("counts") or {}
 
     pointer_ok = studio_ptr == head
@@ -461,6 +462,72 @@ def main() -> int:
             f"<tr><td>{e(g.get('name'))}</td><td>{badge(result.lower().replace(' ', '.'), result)}</td>"
             f"<td>{e(g.get('seconds', '—'))}</td><td>{e(g.get('detail', ''))}</td></tr>"
         )
+
+    latest_cs = csharp_builds.get("latest") or {}
+    cs_targets = csharp_builds.get("targets") or {}
+    cs_category_rows = []
+    cs_code_rows = []
+    cs_target_rows = []
+    for tname, trec in sorted(
+        cs_targets.items(),
+        key=lambda kv: kv[1].get("built_at") or "",
+        reverse=True,
+    ):
+        te = trec.get("total_errors", 0)
+        tw = trec.get("total_warnings", 0)
+        cs_target_rows.append(
+            f"<tr><td><code>{e(tname)}</code></td>"
+            f"<td class=\"num\">{int(te):,}</td>"
+            f"<td class=\"num\">{int(tw):,}</td>"
+            f"<td>{badge('pass' if te == 0 else 'fail', 'OK' if te == 0 else 'ERRORS')}</td>"
+            f"<td>{e(trec.get('built_at', '?'))}</td></tr>"
+        )
+    by_cat = (cs_targets.get(latest_cs.get("target") or "", {}) or {}).get("by_category") or {}
+    if not by_cat and latest_cs.get("by_category"):
+        # flattened latest view
+        by_cat = {
+            k: {"count": v, "label": k, "codes": []}
+            for k, v in (latest_cs.get("by_category") or {}).items()
+        }
+    for cat, info in sorted(
+        by_cat.items(),
+        key=lambda kv: -(kv[1].get("count") if isinstance(kv[1], dict) else int(kv[1] or 0)),
+    ):
+        if isinstance(info, dict):
+            count = int(info.get("count") or 0)
+            label = info.get("label") or cat
+            codes = ", ".join(info.get("codes") or [])
+        else:
+            count = int(info or 0)
+            label = cat
+            codes = ""
+        cs_category_rows.append(
+            f"<tr><td>{e(label)}</td><td><code>{e(cat)}</code></td>"
+            f"<td class=\"num\">{count:,}</td><td><code>{e(codes)}</code></td></tr>"
+        )
+    by_code = (cs_targets.get(latest_cs.get("target") or "", {}) or {}).get("by_code") or latest_cs.get(
+        "by_code_top"
+    ) or {}
+    for code, n in list(by_code.items())[:20]:
+        cs_code_rows.append(
+            f"<tr><td><code>{e(code)}</code></td><td class=\"num\">{int(n):,}</td></tr>"
+        )
+    if not cs_target_rows:
+        cs_target_rows.append(
+            '<tr><td colspan="5" class="muted">No C# builds recorded yet. '
+            "Use <code>tools/dotnet-build-record.ps1</code> or "
+            "<code>regen-forward-conformance.ps1 -Codegen</code>.</td></tr>"
+        )
+    if not cs_category_rows:
+        cs_category_rows.append('<tr><td colspan="4" class="muted">No error categories for latest build.</td></tr>')
+    if not cs_code_rows:
+        cs_code_rows.append('<tr><td colspan="2" class="muted">No CS codes for latest build.</td></tr>')
+
+    latest_err = int(latest_cs.get("total_errors") or 0)
+    latest_warn = int(latest_cs.get("total_warnings") or 0)
+    latest_target = latest_cs.get("target") or "—"
+    latest_built = latest_cs.get("built_at") or csharp_builds.get("updated_at") or "—"
+    cs_latest_badge = badge("pass", "0 errors") if latest_err == 0 else badge("fail", f"{latest_err:,} errors")
 
     dirty_html = (
         "<br>".join(e(l) for l in dirty_display) if dirty_display else '<span class="muted">clean</span>'
@@ -613,6 +680,7 @@ tr.muted-row {{ opacity: .55; }}
     <div class="card"><div class="n">{e(len(today))}</div><div class="l">Commits today</div></div>
     <div class="card"><div class="n">{e(commits_7d)}</div><div class="l">Commits last 7 days</div></div>
     <div class="card"><div class="n">{e(by_status.get('in-progress', 0))}</div><div class="l">Issues in progress</div></div>
+    <div class="card"><div class="n">{latest_err:,}</div><div class="l">Latest C# errors ({e(latest_target)})</div></div>
   </div>
 </section>
 
@@ -670,6 +738,30 @@ tr.muted-row {{ opacity: .55; }}
     <thead><tr><th>Gate</th><th>Result</th><th>Time</th><th>Detail</th></tr></thead>
     <tbody>{''.join(gate_rows)}</tbody>
   </table>
+
+  <h3>C# build errors (latest recorded)</h3>
+  <div class="kv" style="margin-bottom:.85rem">
+    <div class="k">Latest target</div><div><code>{e(latest_target)}</code> · {cs_latest_badge}</div>
+    <div class="k">Errors / warnings</div><div>{latest_err:,} / {latest_warn:,}</div>
+    <div class="k">Recorded at</div><div>{e(latest_built)}</div>
+    <div class="k">How updated</div><div>Every Plato C# build via <code>tools/dotnet-build-record.ps1</code> (wired into <code>regen-forward-conformance.ps1</code>, <code>regen-generated.ps1</code>). Writes <code>docs/status-report-snapshot.json</code> → this page.</div>
+  </div>
+  <h3>Recorded build targets</h3>
+  <table>
+    <thead><tr><th>Target</th><th>Errors</th><th>Warnings</th><th>Result</th><th>When</th></tr></thead>
+    <tbody>{''.join(cs_target_rows)}</tbody>
+  </table>
+  <h3>Latest errors by category</h3>
+  <table>
+    <thead><tr><th>Category</th><th>Key</th><th>Count</th><th>CS codes</th></tr></thead>
+    <tbody>{''.join(cs_category_rows)}</tbody>
+  </table>
+  <h3>Latest errors by CS code (top 20)</h3>
+  <table>
+    <thead><tr><th>Code</th><th>Count</th></tr></thead>
+    <tbody>{''.join(cs_code_rows)}</tbody>
+  </table>
+
   <h3>Forward-stdlib linter catalog</h3>
   <div class="kv" style="margin-bottom:.85rem">
     <div class="k">Last --strict exit</div><div>{badge('pass' if lint.get('strict_exit', 1) == 0 else 'fail', str(lint.get('strict_exit', '?')))}</div>
@@ -683,7 +775,7 @@ tr.muted-row {{ opacity: .55; }}
     <thead><tr><th>Code</th><th>Severity</th><th>Count</th><th>Meaning</th></tr></thead>
     <tbody>{''.join(lint_rows)}</tbody>
   </table>
-  <div class="note">{issue_a('plato-308')} (ready): forward-stdlib generated C# still does not compile (~324 errors) until burned down. Catalog: <code>PlatoCompiler/Analysis/Linter.cs</code>.</div>
+  <div class="note">{issue_a('plato-308')}: forward-stdlib generated C# compile errors are tracked above under target <code>forward-conformance</code>. Compare per-category / per-code counts across runs, not only the total. Lint catalog: <code>PlatoCompiler/Analysis/Linter.cs</code>.</div>
 </section>
 
 <section>

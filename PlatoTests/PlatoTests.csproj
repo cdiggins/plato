@@ -6,7 +6,13 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <Platforms>AnyCPU;x64</Platforms>
+    <!-- The imported Plato.Intrinsics.V2 shared sources use unsafe blocks (Vector4). -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <!-- plato-331: IntrinsicsV2SurfaceTests reflects over the handwritten V2 runtime to police the
+       writer's PrimitiveSurfaceOverrides table. V2 is a shared project (no assembly of its own),
+       so its sources compile into this test assembly, same as the conformance suites do. -->
+  <Import Project="..\Plato.Intrinsics.V2\Plato.Intrinsics.V2.projitems" Label="Shared" />
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
     <!-- Wave-2 (plato-232) codegen gate: compile the emitted sum-type C# in-proc and run it. -->
@@ -27,6 +33,8 @@
     <!-- Parser + utils, so checker tests can build a Compilation from real .plato source. -->
     <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
     <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
+    <!-- Required by the Plato.Intrinsics.V2 shared sources (PlatoBuffer/PlatoList). -->
+    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Collections\Ara3D.Collections.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="output\" />
