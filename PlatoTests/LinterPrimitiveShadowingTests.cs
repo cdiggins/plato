@@ -55,13 +55,27 @@ type Rotor
 }
 ";
 
-        private static LintFinding[] Lint()
+        // The prevention case: a primitive name that is NOT grandfathered. 'Integer' is on the
+        // writer's list and is NOT on KnownShadowedByStdlib, so giving it a shape is exactly the
+        // mistake a future contributor would make, and it must red `lint --strict`.
+        private const string ShadowingANonGrandfatheredPrimitive = @"
+type Number { }
+type Boolean { }
+type Object { }
+
+type Integer
+{
+    Value: Number;
+}
+";
+
+        private static LintFinding[] Lint(string source = Source)
         {
             var dir = Path.Combine(Path.GetTempPath(), "plato-lint015-" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(dir);
             try
             {
-                File.WriteAllText(Path.Combine(dir, "corpus.plato"), Source);
+                File.WriteAllText(Path.Combine(dir, "corpus.plato"), source);
                 var findings = new Linter(CheckerTestSupport.CompileFolder(dir)).Findings;
                 foreach (var f in findings)
                     TestContext.WriteLine(f.ToString());
@@ -111,8 +125,16 @@ type Rotor
             // for a name that is NOT grandfathered — the prevention case, which is the whole point:
             // any type that starts shadowing from now on reds `lint --strict`.
             var grandfathered = WriterPrimitiveNames.KnownShadowedByStdlib;
-            var fresh = WriterPrimitiveNames.All.Where(n => !grandfathered.Contains(n)).ToArray();
-            Assert.That(fresh, Is.Not.Empty, "the primitive list cannot be entirely grandfathered");
+            Assert.That(grandfathered, Does.Not.Contain("Integer"),
+                "the corpus below relies on 'Integer' being a non-grandfathered primitive");
+
+            var fresh = Lint(ShadowingANonGrandfatheredPrimitive)
+                .Where(f => f.Code == "LINT015")
+                .ToArray();
+            Assert.That(fresh.Length, Is.EqualTo(1));
+            Assert.That(fresh[0].Severity, Is.EqualTo(LintSeverity.Error),
+                "a type that starts shadowing a primitive from now on must be an ERROR: only Errors " +
+                "gate `lint --strict` (Plato.CLI Program.Lint returns 1 iff ErrorCount > 0)");
 
             Assert.That(Shadowings().Single().Severity, Is.EqualTo(LintSeverity.Warning),
                 "'Quaternion' is grandfathered (plato-365 increment c) and must not red the gate yet");
