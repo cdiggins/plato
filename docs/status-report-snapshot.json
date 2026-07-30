@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-29T18:33:25-04:00",
+  "updated_at": "2026-07-29T23:52:45-04:00",
   "note": "Captured during initial status-report landing; refresh after gate runs.",
   "gates": [
     {
@@ -92,5 +92,141 @@
     "diagnostics": 0,
     "builtUtc": "2026-07-29T21:46:46Z",
     "roots": "stdlib + stdlib-tests"
+  },
+  "csharp_builds": {
+    "updated_at": "2026-07-29T23:52:45-04:00",
+    "targets": {
+      "forward-conformance": {
+        "built_at": "2026-07-29T23:52:45-04:00",
+        "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\conformance\\Plato.ForwardConformanceTests\\Plato.ForwardConformanceTests.csproj",
+        "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\forward-conformance.log",
+        "configuration": "Release",
+        "exit_code": 1,
+        "total_errors": 1460,
+        "total_warnings": 12,
+        "summary_errors": 1460,
+        "summary_warnings": 12,
+        "by_code": {
+          "CS1061": 1153,
+          "CS0030": 145,
+          "CS1503": 54,
+          "CS1929": 48,
+          "CS0029": 24,
+          "CS0019": 15,
+          "CS0103": 13,
+          "CS0428": 4,
+          "CS0023": 2,
+          "CS1501": 1,
+          "CS1662": 1
+        },
+        "by_category": {
+          "missing_member": {
+            "count": 1153,
+            "label": "Missing member on receiver (CS1061)",
+            "codes": [
+              "CS1061"
+            ]
+          },
+          "cannot_convert": {
+            "count": 145,
+            "label": "Cannot convert type",
+            "codes": [
+              "CS0030"
+            ]
+          },
+          "argument_type": {
+            "count": 54,
+            "label": "Argument type mismatch",
+            "codes": [
+              "CS1503"
+            ]
+          },
+          "extension_receiver": {
+            "count": 48,
+            "label": "Extension method receiver type",
+            "codes": [
+              "CS1929"
+            ]
+          },
+          "cannot_implicitly_convert": {
+            "count": 24,
+            "label": "Cannot implicitly convert",
+            "codes": [
+              "CS0029"
+            ]
+          },
+          "operator_type_mismatch": {
+            "count": 15,
+            "label": "Operator type mismatch",
+            "codes": [
+              "CS0019"
+            ]
+          },
+          "name_not_in_context": {
+            "count": 13,
+            "label": "Name does not exist in current context",
+            "codes": [
+              "CS0103"
+            ]
+          },
+          "method_group_conversion": {
+            "count": 4,
+            "label": "Method group must be invoked / cannot convert",
+            "codes": [
+              "CS0428"
+            ]
+          },
+          "other": {
+            "count": 4,
+            "label": "Other / uncategorized",
+            "codes": [
+              "CS0023",
+              "CS1501",
+              "CS1662"
+            ]
+          }
+        },
+        "warning_by_code": {
+          "CS8632": 6,
+          "CA1416": 2,
+          "SYSLIB0006": 1,
+          "SYSLIB0018": 1,
+          "SYSLIB0037": 1,
+          "SYSLIB0044": 1
+        }
+      }
+    },
+    "latest_target": "forward-conformance",
+    "latest": {
+      "target": "forward-conformance",
+      "total_errors": 1460,
+      "total_warnings": 12,
+      "built_at": "2026-07-29T23:52:45-04:00",
+      "exit_code": 1,
+      "by_category": {
+        "missing_member": 1153,
+        "cannot_convert": 145,
+        "argument_type": 54,
+        "extension_receiver": 48,
+        "cannot_implicitly_convert": 24,
+        "operator_type_mismatch": 15,
+        "name_not_in_context": 13,
+        "method_group_conversion": 4,
+        "other": 4
+      },
+      "by_code_top": {
+        "CS1061": 1153,
+        "CS0030": 145,
+        "CS1503": 54,
+        "CS1929": 48,
+        "CS0029": 24,
+        "CS0019": 15,
+        "CS0103": 13,
+        "CS0428": 4,
+        "CS0023": 2,
+        "CS1501": 1,
+        "CS1662": 1
+      }
+    }
   }
 }

@@ -95,8 +95,11 @@ and `dotnet test`.
 
 **Status report (committed HTML):** from the Plato repo root,
 `python tools/gen-status-report.py` refreshes `docs/status-report.html` (live git/tracker;
-gate/lint rows from `docs/status-report-snapshot.json`). Install the commit hook with
+gate/lint/C# build rows from `docs/status-report-snapshot.json`). Install the commit hook with
 `powershell tools/install-githooks.ps1` so every commit regenerates and stages the HTML.
+**C# builds:** use `powershell tools/dotnet-build-record.ps1 -Project <csproj> -TargetName <name>`
+(or the studio gates that already call it) so error totals by category land in the snapshot
+after every build — do not bare-`dotnet build` Plato projects when you care about the report.
 
 ## Hard rules
 
