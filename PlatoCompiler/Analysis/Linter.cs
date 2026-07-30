@@ -61,6 +61,8 @@ namespace Ara3D.Geometry.Compiler.Analysis
     ///   LINT011 - redundant 'implements' clause (already implied by another implemented concept)
     ///   LINT012 - obligation and implementation disagree on the '_' receiver marker (static vs instance)
     ///   LINT013 - concept with no implementer that library bodies nonetheless dispatch on (unreachable derived surface)
+    ///   LINT014 - a name that is BOTH a struct field and a no-arg library function on an unrelated receiver
+    ///             (the C# writer's uniform rendering rule decides property-vs-method call syntax by NAME)
     /// The pass is read-only: it never mutates the compilation and has no effect on code generation.
     /// </summary>
     public class Linter
@@ -80,6 +82,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
             CheckVocabularyReachability();
             CheckRedundantImplements();
             CheckReceiverMarkerAgreement();
+            CheckFieldVersusNoArgFunctionNames();
         }
 
         public IEnumerable<LintFinding> SortedFindings
@@ -619,6 +622,107 @@ namespace Ara3D.Geometry.Compiler.Analysis
                     Add(GetLocation(te) ?? GetLocation(td), "LINT011", LintSeverity.Info,
                         $"type '{td.Name}' implements '{te.Def.Name}' redundantly; " +
                         $"'{implier.Def.Name}' already implies it");
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // LINT014: a name that is simultaneously a FIELD of some concrete type and a
+        // NO-ARG LIBRARY FUNCTION on an unrelated receiver.
+        //
+        // The C# writer decides no-arg call-site syntax by the UNIFORM RENDERING RULE:
+        // a no-arg member renders with property/field syntax iff its name is on the
+        // "struct surface" (CSharpWriter.StructSurfacePropertyNames, built from the
+        // per-type field and pseudo-field names). That set is GLOBAL and keyed by NAME
+        // only, so a field on one struct decides how a same-named member renders on
+        // EVERY receiver — including receivers that have no such field and whose member
+        // is a classic extension METHOD needing "()".
+        //
+        // This is not hypothetical: the field `Histogram.Range` stole the parentheses
+        // from `ArrayExtensions.Range(this int)` at every scalar call site in the forward
+        // stdlib — 915 x CS0119 "is a method, which is not valid in the given context"
+        // (plato-323 cluster 1). That instance was fixed receiver-aware in the writer
+        // (CSharpWriter.IsStructSurfaceProperty), but only for ERASED SCALAR receivers;
+        // the general per-receiver form of the rule remains unlanded (plato-323 remaining
+        // item 2, ~100 x CS0030), because it moves 88 of the 184 diff-gated goldens. So
+        // the collision is still live for every non-scalar receiver, and it is invisible
+        // until a C# build a thousand generated files downstream.
+        //
+        // Hence a lint, and hence its second job: the finding count over a folder
+        // PRE-MEASURES the blast radius of that withheld writer fix.
+        //
+        // The predicate deliberately excludes the two shapes that are DESIGN, not defect:
+        //   * same-type (or concept-satisfying) field forwarding. A field named N on T is
+        //     exactly how T discharges an obligation N declared by a concept T implements,
+        //     and a library function N over that concept is the derived surface reading it.
+        //     Property syntax there is correct on both sides. Only a receiver that is
+        //     NEITHER a field owner NOR a concept a field owner satisfies is ambiguous
+        //     (ConceptGrounding.GroundsSelf is the same test the writer/checker use).
+        //   * a '_' receiver. That is Plato's type-level idiom and the writer emits a
+        //     STATIC member for it (CSharpFunctionInfo.IsStatic, LINT012), which is never
+        //     rendered with instance property syntax.
+        //
+        // Info: the rule reports a rendering hazard in the shape of the vocabulary, both
+        // sides of which are legal Plato, and it fires on the existing corpus — so it must
+        // not gate `lint --strict` or enter the ratchet (the LINT003 precedent).
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// A library function in the no-arg MEMBER form: exactly one parameter (the receiver),
+        /// which is a real named type rather than a type variable, and which is not the '_'
+        /// type-level marker (that emits as a static, so it has no property-syntax hazard).
+        /// </summary>
+        public static bool IsNoArgMemberForm(FunctionDef f)
+            => f != null
+               && f.Parameters.Count == 1
+               && f.Parameters[0].Name != "_"
+               && f.Parameters[0].Type?.Def != null
+               && !f.Parameters[0].Type.IsTypeVariable
+               && f.Parameters[0].Type.Def.Kind != TypeKind.SelfType;
+
+        public void CheckFieldVersusNoArgFunctionNames()
+        {
+            // name -> the concrete types declaring a field of that name.
+            var fieldOwners = new Dictionary<string, List<TypeDef>>();
+            foreach (var td in Compilation.TypeDefinitions)
+            {
+                if (td.Kind != TypeKind.ConcreteType || td.IsUnique)
+                    continue; // only a generated struct contributes to the struct surface
+                foreach (var field in td.Fields)
+                {
+                    if (!fieldOwners.TryGetValue(field.Name, out var owners))
+                        fieldOwners.Add(field.Name, owners = new List<TypeDef>());
+                    if (!owners.Contains(td))
+                        owners.Add(td);
+                }
+            }
+
+            foreach (var lib in Compilation.LibraryDefinitionsByName.Values)
+            {
+                foreach (var f in lib.Functions)
+                {
+                    if (!IsNoArgMemberForm(f))
+                        continue;
+                    if (!fieldOwners.TryGetValue(f.Name, out var owners))
+                        continue;
+
+                    var receiver = f.Parameters[0].Type.Def;
+                    // Field forwarding (the receiver owns the field, or the field owner
+                    // satisfies the receiver concept) is the intended design, not a collision.
+                    var unrelated = owners
+                        .Where(o => o != receiver && !ConceptGrounding.GroundsSelf(o, receiver))
+                        .ToList();
+                    if (unrelated.Count == 0)
+                        continue;
+
+                    var shown = string.Join(", ", unrelated.Take(3).Select(o => $"'{o.Name}.{f.Name}'"));
+                    var more = unrelated.Count > 3 ? $" (+{unrelated.Count - 3} more)" : "";
+                    Add(f, "LINT014", LintSeverity.Info,
+                        $"'{f.Name}' is both a struct field ({shown}{more}) and the no-arg function " +
+                        $"'{f.Name}({receiver.Name})' in library '{lib.Name}'; the C# writer decides " +
+                        $"property-vs-method call syntax by NAME, so the field forces property syntax " +
+                        $"onto this function's call sites even though '{receiver.Name}' has no such field " +
+                        $"(plato-323: rename one side, or land the per-receiver rendering rule)");
                 }
             }
         }
