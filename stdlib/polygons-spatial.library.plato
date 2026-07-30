@@ -36,6 +36,14 @@ library PolygonsSpatial
     Normal(p: Polygon3D): Direction3D
         => Direction3D(p.Points.VectorArea.Normalize);
 
+    // The Deformable3D obligation: every boundary vertex carried through the
+    // mapping. The declaration's planarity invariant survives affine mappings
+    // only; a nonlinear mapping leaves a ring the planar bodies above treat as
+    // its best-fit-plane projection (the same control-point decay as
+    // `brep.library.plato`).
+    Deform(p: Polygon3D, mapping: Function1<Point3D, Point3D>): Polygon3D
+        => Polygon3D(p.Points.Map(mapping));
+
     // The query projected onto the polygon's plane when that projection lands
     // inside the ring, otherwise the nearest point of the boundary. Exact for any
     // simple planar polygon, convex or not.
@@ -119,6 +127,11 @@ library PolygonsSpatial
     // The union of the base's bounds and the Apex.
     Bounds(y: Pyramid3D): Bounds3D
         => UnionOfBounds(y.Base.Bounds, Bounds3D(y.Apex, y.Apex));
+
+    // The Deformable3D obligation: the base ring and the Apex carried through
+    // the same mapping — the cone over the deformed base from the deformed apex.
+    Deform(y: Pyramid3D, mapping: Function1<Point3D, Point3D>): Pyramid3D
+        => (y.Base.Deform(mapping), mapping(y.Apex));
 
     // True when the query lies between the Apex plane-height and the base
     // (parameter t in [0, 1], t = 0 at the Apex, t = 1 in the base plane) AND the

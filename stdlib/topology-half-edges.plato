@@ -30,7 +30,7 @@ type HalfEdge
 // VertexHalfEdges[v] is one half-edge leaving vertex v, -1 for an isolated
 // vertex. Requires a manifold (possibly bounded) surface.
 type HalfEdgeMesh
-    implements Value, MeshElementCounts, HalfEdgeNavigable
+    implements Value, MeshElementCounts, HalfEdgeNavigable, Deformable3D
 {
     Positions: Array<Point3D>;
     HalfEdges: Array<HalfEdge>;

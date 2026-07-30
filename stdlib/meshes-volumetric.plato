@@ -20,7 +20,7 @@ type TetrahedronCell
 // An indexed tetrahedral mesh: finite-element volumes, volumetric
 // simulations. ToTriangleMesh yields the boundary surface.
 type TetrahedralMesh3D
-    implements Value, Meshable3D
+    implements Value, Meshable3D, Deformable3D
 {
     Positions: Array<Point3D>;
     Cells: Array<TetrahedronCell>;
@@ -46,7 +46,7 @@ type HexahedronCell
 // An indexed hexahedral mesh: structured simulation volumes, voxel-like
 // finite elements with shared vertices.
 type HexahedralMesh3D
-    implements Value
+    implements Value, Deformable3D
 {
     Positions: Array<Point3D>;
     Cells: Array<HexahedronCell>;

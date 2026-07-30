@@ -12,7 +12,7 @@
 // order, the last implicitly joined to the first. The normal follows the
 // right-hand rule around the winding.
 type Polygon3D
-    implements Geometry3D, ClosedShape, Connected, Manifold, Orientable, PlanarMeasurable, Bounded3D, PointSet3D, Centroid3D, NearestPoint3D
+    implements Geometry3D, ClosedShape, Connected, Manifold, Orientable, PlanarMeasurable, Bounded3D, PointSet3D, Centroid3D, NearestPoint3D, Deformable3D
 {
     Points: Array<Point3D>;
 }
@@ -23,6 +23,9 @@ type Polygon3D
 // The solid swept by translating Base along Offset: a general prism
 // (https://en.wikipedia.org/wiki/Prism_(geometry)). Oblique when Offset is not
 // perpendicular to the base plane; convex when the base is convex.
+// NOT Deformable3D: the type stores a sweep VECTOR, and a point mapping has no
+// principled action on a vector — the image of a translational sweep under a
+// nonlinear mapping is not a translational sweep.
 type Prism3D
     implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
 {
@@ -34,7 +37,7 @@ type Prism3D
 // (https://en.wikipedia.org/wiki/Pyramid_(geometry)). Degenerate when Apex lies
 // in the base plane.
 type Pyramid3D
-    implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
+    implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, Deformable3D
 {
     Base: Polygon3D;
     Apex: Point3D;

@@ -39,7 +39,7 @@ type TangentBasis
 // "normal" (PerVertex or PerCorner Vector3D), "uv0" (PerCorner UvCoordinate),
 // and "color" (PerVertex Color).
 type RichMesh3D
-    implements Value, Meshable3D
+    implements Value, Meshable3D, Deformable3D
 {
     Mesh: TriangleMesh3D;
     NumberChannels: Array<MeshAttribute<Number>>;

@@ -80,4 +80,9 @@ library MeshesPolygon
     // Every face centroid, in face order: the vertex positions of the dual.
     FaceCentroids(self: PolygonMesh3D): Array<Point3D>
         => self.FaceCount.MapRange(f => self.FaceCentroid(f));
+
+    // The Deformable3D obligation: every vertex position carried through the
+    // mapping, the face table unchanged.
+    Deform(self: PolygonMesh3D, mapping: Function1<Point3D, Point3D>): PolygonMesh3D
+        => (self.Positions.Map(mapping), self.Faces);
 }
