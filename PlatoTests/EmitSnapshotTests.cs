@@ -67,9 +67,13 @@ namespace PlatoTests
             ("Angles.g.cs", "Angle Turns(this float x)"),
             ("Angles.g.cs", "Angle Turns(this int x)"),
             ("Transforms.g.cs", "Vector3 TransformNormal(this Transform3D x, Vector3 v)"),
-            // Body-less interface stubs (C4 step 1: emitted off the legacy writer).
-            ("_IdentityTransform3D.g.cs", "Quaternion Quaternion =>"),
-            ("_Identity2D.g.cs", "Matrix3x2 Matrix =>"),
+            // Body-less interface stubs (C4 step 1: emitted off the legacy writer). Method form
+            // since the receiver-aware rendering rule (plato-323 item 2): neither IdentityTransform3D
+            // nor Identity2D carries `Quaternion` / `Matrix` on its own struct surface, so the stub
+            // is a method and satisfies the interface obligation directly — no property plus explicit
+            // forwarder. These two pins are the regression guard for that rule.
+            ("_IdentityTransform3D.g.cs", "public Quaternion Quaternion() =>"),
+            ("_Identity2D.g.cs", "public Matrix3x2 Matrix() =>"),
         };
 
         private static CSharpWriter BuildV2Library()

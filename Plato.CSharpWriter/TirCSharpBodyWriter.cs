@@ -86,8 +86,9 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     private bool IsTypeName(string name)
         => name != null && _tw.Writer.AllTypeNames.Contains(name);
 
-    // See CSharpWriter.IsStructSurfaceProperty (plato-323): the uniform rendering rule, applied
-    // with knowledge of the RECEIVER type so an erased scalar receiver always takes "()".
+    // See CSharpWriter.IsStructSurfaceProperty (plato-323): the rendering rule resolved against the
+    // RECEIVER's own struct surface, so an erased scalar receiver (and any receiver that does not
+    // itself carry the name) takes "()".
     private bool IsSurfacePropertyOn(string recvTypeName, string name)
         => _tw.Writer.IsStructSurfaceProperty(recvTypeName, name);
 

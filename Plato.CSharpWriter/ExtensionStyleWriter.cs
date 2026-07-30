@@ -120,6 +120,9 @@ public class ExtensionStylePlan
     // struct to keep them in - everything becomes an extension method on the primitive).
     public bool IsErasedScalar { get; }
 
+    // CSharpWriter.NoProperties, captured because DemoteMovedNames runs after construction.
+    private readonly bool _noProperties;
+
     // --no-properties only: no-arg STATIC members of this type with generated bodies — emitted as
     // static METHODS, so bare-name call sites need "()". Consulted per-receiver-type by the body
     // writer (TirCSharpBodyWriter.IsGeneratedStaticMethodName / WriteCallCore).
@@ -138,6 +141,7 @@ public class ExtensionStylePlan
         var name = ct.Name + typeParamsStr;
         var isPrimitive = CSharpWriter.PrimitiveTypes.ContainsKey(name);
         IsErasedScalar = writer.ScalarErase && CSharpWriter.ScalarPrimitives.ContainsKey(name);
+        _noProperties = writer.NoProperties;
 
         // Generic concrete types keep all their members (mirrors the V1 decision to not
         // generate per-type extension classes for generic types).
@@ -175,7 +179,15 @@ public class ExtensionStylePlan
         // included) become methods; the property-ful extension style also keeps the no-arg stubs.
         if (!IsErasedScalar)
         {
-            KeptNoArgPropertyNames.UnionWith(fieldNames);
+            // A PRIMITIVE type's struct is HANDWRITTEN — the writer emits no fields for it at all
+            // (CSharpConcreteTypeWriter's "// Fields" block is `!IsPrimitive`) — so a Plato-declared
+            // field of such a type is on the C# struct surface only if the runtime actually spells it
+            // that way. It almost always does; CSharpWriter.PrimitiveSurfaceOverrides records where
+            // the V2 runtime does not (`Angle.Radians` is a method there).
+            foreach (var fn in fieldNames)
+                if (!(writer.NoProperties && isPrimitive
+                      && CSharpWriter.PrimitiveSurfaceOverride(ct.Name, fn) == false))
+                    KeptNoArgPropertyNames.Add(fn);
             if (pseudoFields != null)
                 KeptNoArgPropertyNames.UnionWith(pseudoFields);
             if (!writer.NoProperties)
@@ -259,7 +271,8 @@ public class ExtensionStylePlan
     /// Global conflict resolution (CSharpWriter.BuildExtensionPlans): a name that is a no-arg
     /// property anywhere may not be a moved method anywhere, so ALL functions with a conflicted
     /// name return to the struct (all arities: a kept property would hide same-name extension
-    /// methods of any arity).
+    /// methods of any arity). This is a MOVE/KEEP decision only — where the member is emitted —
+    /// and stays global, because C# member hiding is a fact about the struct's surface.
     /// </summary>
     public void DemoteMovedNames(ICollection<string> names)
     {
@@ -267,10 +280,15 @@ public class ExtensionStylePlan
         foreach (var f in demoted)
         {
             _moved.Remove(f);
-            // Scalar erasure: a "demoted" member of an erased scalar type is not a property
-            // (there is no struct); it is emitted as an extension method by the per-type
-            // writer instead of the library file, so it contributes no kept property name.
-            if (!IsErasedScalar && f.ParameterNames.Count == 1)
+            // Coming back into the struct does not make the member a PROPERTY. It is one only in
+            // the property-ful extension style; under --no-properties a kept generated member emits
+            // as a METHOD (CSharpFunctionInfo.EmitAsMethod), exactly like every other non-field
+            // member of this type. Recording it here was what re-injected the global name collision
+            // into every plan and defeated the receiver-aware rendering rule (plato-323 item 2): a
+            // field named `Amount` on an image filter demoted `Amount(x: Angle)` on 60 unrelated
+            // quantity types and then pinned property syntax onto all of them.
+            // Scalar erasure: an erased scalar type has no struct at all, so it never contributes.
+            if (!IsErasedScalar && !_noProperties && f.ParameterNames.Count == 1)
                 KeptNoArgPropertyNames.Add(f.Name);
         }
     }

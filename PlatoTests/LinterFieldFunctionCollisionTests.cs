@@ -8,10 +8,13 @@ namespace PlatoTests
 {
     /// <summary>
     /// LINT014: a name that is BOTH a struct field and a no-arg library function on an unrelated
-    /// receiver. The C# writer decides no-arg call-site syntax by NAME (the uniform rendering rule,
-    /// <c>CSharpWriter.StructSurfacePropertyNames</c>), so such a name makes a field on one struct
-    /// dictate how a same-named member renders on every OTHER receiver — the defect that produced
-    /// 915 x CS0119 from the single field <c>Histogram.Range</c> (plato-323 cluster 1).
+    /// receiver. Such a name couples the two types in the generated C#: the writer must demote the
+    /// library function out of its extension class and back into every struct, because a C# instance
+    /// member silently hides a same-name extension method
+    /// (<c>ExtensionStylePlan.DemoteMovedNames</c>). It used to be worse — call-site syntax was
+    /// decided globally by name too, which produced 915 x CS0119 from the single field
+    /// <c>Histogram.Range</c> and 110 x CS0030 from a field named <c>Amount</c>; that half is fixed
+    /// receiver-aware (plato-323 clusters 1 and item 2, <c>CSharpWriter.IsStructSurfaceProperty</c>).
     ///
     /// These tests pin the predicate's two halves: the collision IS reported, and the two shapes
     /// that are design rather than defect (a field on the receiver itself, and a field discharging
@@ -111,7 +114,7 @@ library Surface
         public static void FieldForwardingToAnImplementedConceptIsNotReported()
             => Assert.That(string.Join(" | ", Collisions()), Does.Not.Contain("Width"),
                 "a field discharging an obligation of the receiver concept is the intended design, " +
-                "not a rendering collision");
+                "not a collision");
 
         [Test]
         public static void FunctionOnTheFieldOwnerItselfIsNotReported()
