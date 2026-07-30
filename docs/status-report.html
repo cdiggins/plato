@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Plato Status Report — 2026-07-30 13:28 Eastern Daylight Time</title>
+<title>Plato Status Report — 2026-07-30 14:31 Eastern Daylight Time</title>
 <style>
 :root {
   --bg: #0f1419; --panel: #1a222c; --panel2: #232d3a; --text: #e7ecf2;
@@ -82,10 +82,10 @@ tr.muted-row { opacity: .55; }
 <body>
 <header>
   <h1>Plato status report</h1>
-  <div class="meta">Generated 2026-07-30 13:28:53 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>96f6f64</code></div>
+  <div class="meta">Generated 2026-07-30 14:31:57 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>36089e4</code></div>
   <div class="overall">
     <span><span class="badge attention">ATTENTION</span></span>
-    <span>407 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-30T12:20:31-04:00; live git/tracker refreshed this generation.</span>
+    <span>5 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-30T12:20:31-04:00; live git/tracker refreshed this generation.</span>
   </div>
 </header>
 <main>
@@ -94,10 +94,10 @@ tr.muted-row { opacity: .55; }
   <h2>Snapshot</h2>
   <div class="grid">
     <div class="card"><div class="n">main</div><div class="l">Branch · <span class="badge pass">synced</span></div></div>
-    <div class="card"><div class="n">96f6f64</div><div class="l">HEAD</div></div>
-    <div class="card"><div class="n">407</div><div class="l">Dirty paths</div></div>
-    <div class="card"><div class="n">37</div><div class="l">Commits today</div></div>
-    <div class="card"><div class="n">195</div><div class="l">Commits last 7 days</div></div>
+    <div class="card"><div class="n">36089e4</div><div class="l">HEAD</div></div>
+    <div class="card"><div class="n">5</div><div class="l">Dirty paths</div></div>
+    <div class="card"><div class="n">38</div><div class="l">Commits today</div></div>
+    <div class="card"><div class="n">196</div><div class="l">Commits last 7 days</div></div>
     <div class="card"><div class="n">7</div><div class="l">Issues in progress</div></div>
     <div class="card"><div class="n">0</div><div class="l">Latest C# errors (plato-generated-optimized)</div></div>
   </div>
@@ -107,840 +107,36 @@ tr.muted-row { opacity: .55; }
   <h2>Git — Plato</h2>
   <div class="kv">
     <div class="k">Status</div><div><code>## main...origin/main
-M  PlatoTests/CheckerTestSupport.cs
-M  PlatoTests/ForwardStdLibCheckerTests.cs
-MM docs/status-report-snapshot.json
-MM docs/status-report.html
-M  stdlib/README.md
-R  stdlib/algebra-metric.concepts.plato -&gt; stdlib/foundation/algebra-metric.concepts.plato
-R  stdlib/algebra-metric.library.plato -&gt; stdlib/foundation/algebra-metric.library.plato
-R  stdlib/algebra-numeric.concepts.plato -&gt; stdlib/foundation/algebra-numeric.concepts.plato
-R  stdlib/algebra-numeric.library.plato -&gt; stdlib/foundation/algebra-numeric.library.plato
-R  stdlib/algebra-operations.concepts.plato -&gt; stdlib/foundation/algebra-operations.concepts.plato
-R  stdlib/algebra-operations.library.plato -&gt; stdlib/foundation/algebra-operations.library.plato
-R  stdlib/angles.library.plato -&gt; stdlib/foundation/angles.library.plato
-R  stdlib/axes-2d.library.plato -&gt; stdlib/foundation/axes-2d.library.plato
-R  stdlib/axes-signed.library.plato -&gt; stdlib/foundation/axes-signed.library.plato
-R  stdlib/axes.library.plato -&gt; stdlib/foundation/axes.library.plato
-R  stdlib/axes.types.plato -&gt; stdlib/foundation/axes.types.plato
-R  stdlib/collections-containers.concepts.plato -&gt; stdlib/foundation/collections-containers.concepts.plato
-R  stdlib/collections-containers.library.plato -&gt; stdlib/foundation/collections-containers.library.plato
-R  stdlib/collections-grids.library.plato -&gt; stdlib/foundation/collections-grids.library.plato
-R  stdlib/collections-indexable.concepts.plato -&gt; stdlib/foundation/collections-indexable.concepts.plato
-R  stdlib/collections-indexable.library.plato -&gt; stdlib/foundation/collections-indexable.library.plato
-R  stdlib/collections-jagged.concepts.plato -&gt; stdlib/foundation/collections-jagged.concepts.plato
-R  stdlib/collections-jagged.library.plato -&gt; stdlib/foundation/collections-jagged.library.plato
-R  stdlib/collections-jagged.types.plato -&gt; stdlib/foundation/collections-jagged.types.plato
-R  stdlib/collections-sampling.library.plato -&gt; stdlib/foundation/collections-sampling.library.plato
-R  stdlib/color-named.library.plato -&gt; stdlib/foundation/color-named.library.plato
-R  stdlib/color.library.plato -&gt; stdlib/foundation/color.library.plato
-R  stdlib/color.types.plato -&gt; stdlib/foundation/color.types.plato
-R  stdlib/constants.library.plato -&gt; stdlib/foundation/constants.library.plato
-R  stdlib/core-comparison.concepts.plato -&gt; stdlib/foundation/core-comparison.concepts.plato
-R  stdlib/core-comparison.library.plato -&gt; stdlib/foundation/core-comparison.library.plato
-R  stdlib/core-logic.concepts.plato -&gt; stdlib/foundation/core-logic.concepts.plato
-R  stdlib/core-logic.library.plato -&gt; stdlib/foundation/core-logic.library.plato
-R  stdlib/functional-procedural.library.plato -&gt; stdlib/foundation/functional-procedural.library.plato
-R  stdlib/functional.concepts.plato -&gt; stdlib/foundation/functional.concepts.plato
-R  stdlib/graphs-algorithms.types.plato -&gt; stdlib/foundation/graphs-algorithms.types.plato
-R  stdlib/graphs.concepts.plato -&gt; stdlib/foundation/graphs.concepts.plato
-R  stdlib/graphs.library.plato -&gt; stdlib/foundation/graphs.library.plato
-R  stdlib/graphs.types.plato -&gt; stdlib/foundation/graphs.types.plato
-R  stdlib/intervals-bounds.concepts.plato -&gt; stdlib/foundation/intervals-bounds.concepts.plato
-R  stdlib/intervals-bounds.types.plato -&gt; stdlib/foundation/intervals-bounds.types.plato
-R  stdlib/intervals-sizes.library.plato -&gt; stdlib/foundation/intervals-sizes.library.plato
-R  stdlib/intervals-sizes.types.plato -&gt; stdlib/foundation/intervals-sizes.types.plato
-R  stdlib/intervals-transforms-bounds.library.plato -&gt; stdlib/foundation/intervals-transforms-bounds.library.plato
-R  stdlib/intervals-transforms-interval.library.plato -&gt; stdlib/foundation/intervals-transforms-interval.library.plato
-R  stdlib/intervals-transforms-transformable.library.plato -&gt; stdlib/foundation/intervals-transforms-transformable.library.plato
-R  stdlib/intervals.types.plato -&gt; stdlib/foundation/intervals.types.plato
-R  stdlib/intrinsics-arrays.library.plato -&gt; stdlib/foundation/intrinsics-arrays.library.plato
-R  stdlib/intrinsics-numeric-tuples.library.plato -&gt; stdlib/foundation/intrinsics-numeric-tuples.library.plato
-R  stdlib/intrinsics-scalars.library.plato -&gt; stdlib/foundation/intrinsics-scalars.library.plato
-R  stdlib/intrinsics-transforms.library.plato -&gt; stdlib/foundation/intrinsics-transforms.library.plato
-R  stdlib/intrinsics-vectors.library.plato -&gt; stdlib/foundation/intrinsics-vectors.library.plato
-R  stdlib/matrices.concepts.plato -&gt; stdlib/foundation/matrices.concepts.plato
-R  stdlib/matrices.types.plato -&gt; stdlib/foundation/matrices.types.plato
-R  stdlib/numbers-special-bessel.library.plato -&gt; stdlib/foundation/numbers-special-bessel.library.plato
-R  stdlib/numbers-special-beta.library.plato -&gt; stdlib/foundation/numbers-special-beta.library.plato
-R  stdlib/numbers-special-erf.library.plato -&gt; stdlib/foundation/numbers-special-erf.library.plato
-R  stdlib/numbers-special-gamma-incomplete.library.plato -&gt; stdlib/foundation/numbers-special-gamma-incomplete.library.plato
-R  stdlib/numbers-special-gamma.library.plato -&gt; stdlib/foundation/numbers-special-gamma.library.plato
-R  stdlib/numbers.library.plato -&gt; stdlib/foundation/numbers.library.plato
-R  stdlib/numbers.types.plato -&gt; stdlib/foundation/numbers.types.plato
-R  stdlib/numeric-structures-algebra.library.plato -&gt; stdlib/foundation/numeric-structures-algebra.library.plato
-R  stdlib/numeric-structures-components.library.plato -&gt; stdlib/foundation/numeric-structures-components.library.plato
-R  stdlib/numeric-structures-coordinate.library.plato -&gt; stdlib/foundation/numeric-structures-coordinate.library.plato
-R  stdlib/numeric-structures-matrix.library.plato -&gt; stdlib/foundation/numeric-structures-matrix.library.plato
-R  stdlib/numeric-structures-quantity.library.plato -&gt; stdlib/foundation/numeric-structures-quantity.library.plato
-R  stdlib/numeric-structures-vector.library.plato -&gt; stdlib/foundation/numeric-structures-vector.library.plato
-R  stdlib/points-curvilinear.types.plato -&gt; stdlib/foundation/points-curvilinear.types.plato
-R  stdlib/points-parametric.types.plato -&gt; stdlib/foundation/points-parametric.types.plato
-R  stdlib/points.concepts.plato -&gt; stdlib/foundation/points.concepts.plato
-R  stdlib/points.types.plato -&gt; stdlib/foundation/points.types.plato
-R  stdlib/polynomials-composite.types.plato -&gt; stdlib/foundation/polynomials-composite.types.plato
-R  stdlib/polynomials-series.types.plato -&gt; stdlib/foundation/polynomials-series.types.plato
-R  stdlib/polynomials.library.plato -&gt; stdlib/foundation/polynomials.library.plato
-R  stdlib/polynomials.types.plato -&gt; stdlib/foundation/polynomials.types.plato
-R  stdlib/primitives-arrays.types.plato -&gt; stdlib/foundation/primitives-arrays.types.plato
-R  stdlib/primitives-builders.library.plato -&gt; stdlib/foundation/primitives-builders.library.plato
-R  stdlib/primitives-builders.types.plato -&gt; stdlib/foundation/primitives-builders.types.plato
-R  stdlib/primitives-functions.types.plato -&gt; stdlib/foundation/primitives-functions.types.plato
-R  stdlib/primitives-tuples.types.plato -&gt; stdlib/foundation/primitives-tuples.types.plato
-R  stdlib/primitives.types.plato -&gt; stdlib/foundation/primitives.types.plato
-R  stdlib/quantities-dynamic.types.plato -&gt; stdlib/foundation/quantities-dynamic.types.plato
-R  stdlib/quantities-electromagnetic.types.plato -&gt; stdlib/foundation/quantities-electromagnetic.types.plato
-R  stdlib/quantities-geometric.types.plato -&gt; stdlib/foundation/quantities-geometric.types.plato
-R  stdlib/quantities-kinematic.types.plato -&gt; stdlib/foundation/quantities-kinematic.types.plato
-R  stdlib/quantities-material.types.plato -&gt; stdlib/foundation/quantities-material.types.plato
-R  stdlib/quantities-mechanical.types.plato -&gt; stdlib/foundation/quantities-mechanical.types.plato
-R  stdlib/quantities-photometric.types.plato -&gt; stdlib/foundation/quantities-photometric.types.plato
-R  stdlib/quantities-projections.library.plato -&gt; stdlib/foundation/quantities-projections.library.plato
-R  stdlib/quantities-thermal.types.plato -&gt; stdlib/foundation/quantities-thermal.types.plato
-R  stdlib/quantities.concepts.plato -&gt; stdlib/foundation/quantities.concepts.plato
-R  stdlib/quantities.library.plato -&gt; stdlib/foundation/quantities.library.plato
-R  stdlib/random-continuous-gamma.library.plato -&gt; stdlib/foundation/random-continuous-gamma.library.plato
-R  stdlib/random-continuous-gamma.types.plato -&gt; stdlib/foundation/random-continuous-gamma.types.plato
-R  stdlib/random-continuous-tails.library.plato -&gt; stdlib/foundation/random-continuous-tails.library.plato
-R  stdlib/random-continuous.library.plato -&gt; stdlib/foundation/random-continuous.library.plato
-R  stdlib/random-continuous.types.plato -&gt; stdlib/foundation/random-continuous.types.plato
-R  stdlib/random-discrete.library.plato -&gt; stdlib/foundation/random-discrete.library.plato
-R  stdlib/random-discrete.types.plato -&gt; stdlib/foundation/random-discrete.types.plato
-R  stdlib/random-distributions.library.plato -&gt; stdlib/foundation/random-distributions.library.plato
-R  stdlib/random-multivariate.types.plato -&gt; stdlib/foundation/random-multivariate.types.plato
-R  stdlib/random.concepts.plato -&gt; stdlib/foundation/random.concepts.plato
-R  stdlib/random.library.plato -&gt; stdlib/foundation/random.library.plato
-R  stdlib/random.types.plato -&gt; stdlib/foundation/random.types.plato
-R  stdlib/rotations.types.plato -&gt; stdlib/foundation/rotations.types.plato
-R  stdlib/statistics-correlation.library.plato -&gt; stdlib/foundation/statistics-correlation.library.plato
-R  stdlib/statistics-correlation.types.plato -&gt; stdlib/foundation/statistics-correlation.types.plato
-R  stdlib/statistics.library.plato -&gt; stdlib/foundation/statistics.library.plato
-R  stdlib/statistics.types.plato -&gt; stdlib/foundation/statistics.types.plato
-R  stdlib/time.library.plato -&gt; stdlib/foundation/time.library.plato
-R  stdlib/time.types.plato -&gt; stdlib/foundation/time.types.plato
-R  stdlib/transforms-affine.library.plato -&gt; stdlib/foundation/transforms-affine.library.plato
-R  stdlib/transforms-affine.types.plato -&gt; stdlib/foundation/transforms-affine.types.plato
-R  stdlib/transforms-frames.library.plato -&gt; stdlib/foundation/transforms-frames.library.plato
-R  stdlib/transforms-frames.types.plato -&gt; stdlib/foundation/transforms-frames.types.plato
-R  stdlib/transforms-identities.library.plato -&gt; stdlib/foundation/transforms-identities.library.plato
-R  stdlib/transforms-motor.library.plato -&gt; stdlib/foundation/transforms-motor.library.plato
-R  stdlib/transforms-motor.types.plato -&gt; stdlib/foundation/transforms-motor.types.plato
-R  stdlib/transforms-points.library.plato -&gt; stdlib/foundation/transforms-points.library.plato
-R  stdlib/transforms-pose.library.plato -&gt; stdlib/foundation/transforms-pose.library.plato
-R  stdlib/transforms-pose.types.plato -&gt; stdlib/foundation/transforms-pose.types.plato
-R  stdlib/transforms-rotations.library.plato -&gt; stdlib/foundation/transforms-rotations.library.plato
-R  stdlib/transforms-trs.library.plato -&gt; stdlib/foundation/transforms-trs.library.plato
-R  stdlib/transforms-trs.types.plato -&gt; stdlib/foundation/transforms-trs.types.plato
-R  stdlib/transforms.concepts.plato -&gt; stdlib/foundation/transforms.concepts.plato
-R  stdlib/vectors-geometric.types.plato -&gt; stdlib/foundation/vectors-geometric.types.plato
-R  stdlib/vectors-integer.library.plato -&gt; stdlib/foundation/vectors-integer.library.plato
-R  stdlib/vectors-integer.types.plato -&gt; stdlib/foundation/vectors-integer.types.plato
-R  stdlib/vectors-tuples.types.plato -&gt; stdlib/foundation/vectors-tuples.types.plato
-R  stdlib/vectors.concepts.plato -&gt; stdlib/foundation/vectors.concepts.plato
-R  stdlib/collision-contacts.types.plato -&gt; stdlib/future/collision-contacts.types.plato
-R  stdlib/collision.types.plato -&gt; stdlib/future/collision.types.plato
-R  stdlib/engineering-beams.types.plato -&gt; stdlib/future/engineering-beams.types.plato
-R  stdlib/engineering-machine-elements.types.plato -&gt; stdlib/future/engineering-machine-elements.types.plato
-R  stdlib/engineering-materials.types.plato -&gt; stdlib/future/engineering-materials.types.plato
-R  stdlib/engineering-sections.types.plato -&gt; stdlib/future/engineering-sections.types.plato
-R  stdlib/geo-spatial-rasters.types.plato -&gt; stdlib/future/geo-spatial-rasters.types.plato
-R  stdlib/geo-spatial-reference-systems.types.plato -&gt; stdlib/future/geo-spatial-reference-systems.types.plato
-R  stdlib/geo-spatial.concepts.plato -&gt; stdlib/future/geo-spatial.concepts.plato
-R  stdlib/geo-spatial.library.plato -&gt; stdlib/future/geo-spatial.library.plato
-R  stdlib/geo-spatial.types.plato -&gt; stdlib/future/geo-spatial.types.plato
-R  stdlib/higher-dimensions-fractals.types.plato -&gt; stdlib/future/higher-dimensions-fractals.types.plato
-R  stdlib/higher-dimensions.types.plato -&gt; stdlib/future/higher-dimensions.types.plato
-R  stdlib/joints-2d.types.plato -&gt; stdlib/future/joints-2d.types.plato
-R  stdlib/joints-3d.types.plato -&gt; stdlib/future/joints-3d.types.plato
-R  stdlib/joints-limits.types.plato -&gt; stdlib/future/joints-limits.types.plato
-R  stdlib/kinematics-trajectories.types.plato -&gt; stdlib/future/kinematics-trajectories.types.plato
-R  stdlib/kinematics.concepts.plato -&gt; stdlib/future/kinematics.concepts.plato
-R  stdlib/kinematics.library.plato -&gt; stdlib/future/kinematics.library.plato
-R  stdlib/kinematics.types.plato -&gt; stdlib/future/kinematics.types.plato
-R  stdlib/optimization-programs.types.plato -&gt; stdlib/future/optimization-programs.types.plato
-R  stdlib/optimization-solvers.types.plato -&gt; stdlib/future/optimization-solvers.types.plato
-R  stdlib/optimization.types.plato -&gt; stdlib/future/optimization.types.plato
-R  stdlib/particles-force-fields.types.plato -&gt; stdlib/future/particles-force-fields.types.plato
-R  stdlib/particles-simulation.types.plato -&gt; stdlib/future/particles-simulation.types.plato
-R  stdlib/particles-soft-bodies.types.plato -&gt; stdlib/future/particles-soft-bodies.types.plato
-R  stdlib/rigid-dynamics-forces.types.plato -&gt; stdlib/future/rigid-dynamics-forces.types.plato
-R  stdlib/rigid-dynamics.concepts.plato -&gt; stdlib/future/rigid-dynamics.concepts.plato
-R  stdlib/rigid-dynamics.library.plato -&gt; stdlib/future/rigid-dynamics.library.plato
-R  stdlib/rigid-dynamics.types.plato -&gt; stdlib/future/rigid-dynamics.types.plato
-R  stdlib/scientific-data-records.types.plato -&gt; stdlib/future/scientific-data-records.types.plato
-R  stdlib/scientific-data-series.types.plato -&gt; stdlib/future/scientific-data-series.types.plato
-R  stdlib/scientific-data.concepts.plato -&gt; stdlib/future/scientific-data.concepts.plato
-R  stdlib/scientific-data.library.plato -&gt; stdlib/future/scientific-data.library.plato
-R  stdlib/signals-filters.types.plato -&gt; stdlib/future/signals-filters.types.plato
-R  stdlib/signals-generators.types.plato -&gt; stdlib/future/signals-generators.types.plato
-R  stdlib/signals.types.plato -&gt; stdlib/future/signals.types.plato
-R  stdlib/uncertainty-estimation.types.plato -&gt; stdlib/future/uncertainty-estimation.types.plato
-R  stdlib/uncertainty.types.plato -&gt; stdlib/future/uncertainty.types.plato
-R  stdlib/brep-primitives.library.plato -&gt; stdlib/geometry/brep-primitives.library.plato
-R  stdlib/brep-tessellate.library.plato -&gt; stdlib/geometry/brep-tessellate.library.plato
-R  stdlib/brep.concepts.plato -&gt; stdlib/geometry/brep.concepts.plato
-R  stdlib/brep.library.plato -&gt; stdlib/geometry/brep.library.plato
-R  stdlib/brep.types.plato -&gt; stdlib/geometry/brep.types.plato
-R  stdlib/curves-2d-arcs.library.plato -&gt; stdlib/geometry/curves-2d-arcs.library.plato
-R  stdlib/curves-2d-arcs.types.plato -&gt; stdlib/geometry/curves-2d-arcs.types.plato
-R  stdlib/curves-2d-polar.library.plato -&gt; stdlib/geometry/curves-2d-polar.library.plato
-R  stdlib/curves-2d-polar.types.plato -&gt; stdlib/geometry/curves-2d-polar.types.plato
-R  stdlib/curves-2d-spirals.library.plato -&gt; stdlib/geometry/curves-2d-spirals.library.plato
-R  stdlib/curves-2d-spirals.types.plato -&gt; stdlib/geometry/curves-2d-spirals.types.plato
-R  stdlib/curves-3d.library.plato -&gt; stdlib/geometry/curves-3d.library.plato
-R  stdlib/curves-3d.types.plato -&gt; stdlib/geometry/curves-3d.types.plato
-R  stdlib/curves-angular.library.plato -&gt; stdlib/geometry/curves-angular.library.plato
-R  stdlib/curves-capabilities.concepts.plato -&gt; stdlib/geometry/curves-capabilities.concepts.plato
-R  stdlib/curves-capabilities.library.plato -&gt; stdlib/geometry/curves-capabilities.library.plato
-R  stdlib/curves-sampling.library.plato -&gt; stdlib/geometry/curves-sampling.library.plato
-R  stdlib/curves.concepts.plato -&gt; stdlib/geometry/curves.concepts.plato
-R  stdlib/curves.library.plato -&gt; stdlib/geometry/curves.library.plato
-R  stdlib/deformations.concepts.plato -&gt; stdlib/geometry/deformations.concepts.plato
-R  stdlib/deformations.library.plato -&gt; stdlib/geometry/deformations.library.plato
-R  stdlib/deformations.types.plato -&gt; stdlib/geometry/deformations.types.plato
-R  stdlib/differential-geometry-frames.types.plato -&gt; stdlib/geometry/differential-geometry-frames.types.plato
-R  stdlib/differential-geometry-geodesics.types.plato -&gt; stdlib/geometry/differential-geometry-geodesics.types.plato
-R  stdlib/differential-geometry-surfaces.types.plato -&gt; stdlib/geometry/differential-geometry-surfaces.types.plato
-R  stdlib/fields-constant.types.plato -&gt; stdlib/geometry/fields-constant.types.plato
-R  stdlib/fields-differentiable.concepts.plato -&gt; stdlib/geometry/fields-differentiable.concepts.plato
-R  stdlib/fields-function.types.plato -&gt; stdlib/geometry/fields-function.types.plato
-R  stdlib/fields-graphs.library.plato -&gt; stdlib/geometry/fields-graphs.library.plato
-R  stdlib/fields-graphs.types.plato -&gt; stdlib/geometry/fields-graphs.types.plato
-R  stdlib/fields-implicits-core.library.plato -&gt; stdlib/geometry/fields-implicits-core.library.plato
-R  stdlib/fields-implicits-differentiable.library.plato -&gt; stdlib/geometry/fields-implicits-differentiable.library.plato
-R  stdlib/fields-implicits-distance.library.plato -&gt; stdlib/geometry/fields-implicits-distance.library.plato
-R  stdlib/fields-implicits-function.library.plato -&gt; stdlib/geometry/fields-implicits-function.library.plato
-R  stdlib/fields-implicits-metaballs.library.plato -&gt; stdlib/geometry/fields-implicits-metaballs.library.plato
-R  stdlib/fields-implicits-nodes.library.plato -&gt; stdlib/geometry/fields-implicits-nodes.library.plato
-R  stdlib/fields-implicits-sampled.library.plato -&gt; stdlib/geometry/fields-implicits-sampled.library.plato
-R  stdlib/fields-implicits-shapes.library.plato -&gt; stdlib/geometry/fields-implicits-shapes.library.plato
-R  stdlib/fields-implicits-time-varying.library.plato -&gt; stdlib/geometry/fields-implicits-time-varying.library.plato
-R  stdlib/fields-time-varying.concepts.plato -&gt; stdlib/geometry/fields-time-varying.concepts.plato
-R  stdlib/fields.concepts.plato -&gt; stdlib/geometry/fields.concepts.plato
-R  stdlib/geometry-kernels.library.plato -&gt; stdlib/geometry/geometry-kernels.library.plato
-R  stdlib/geometry-measures.concepts.plato -&gt; stdlib/geometry/geometry-measures.concepts.plato
-R  stdlib/geometry-measures.library.plato -&gt; stdlib/geometry/geometry-measures.library.plato
-R  stdlib/geometry-pointsets.library.plato -&gt; stdlib/geometry/geometry-pointsets.library.plato
-R  stdlib/geometry-queries.concepts.plato -&gt; stdlib/geometry/geometry-queries.concepts.plato
-R  stdlib/geometry-queries.library.plato -&gt; stdlib/geometry/geometry-queries.library.plato
-R  stdlib/geometry.concepts.plato -&gt; stdlib/geometry/geometry.concepts.plato
-R  stdlib/geometry.library.plato -&gt; stdlib/geometry/geometry.library.plato
-R  stdlib/implicit-sdf-bounded.library.plato -&gt; stdlib/geometry/implicit-sdf-bounded.library.plato
-R  stdlib/implicit-sdf-bounded.types.plato -&gt; stdlib/geometry/implicit-sdf-bounded.types.plato
-R  stdlib/implicit-sdf-function.types.plato -&gt; stdlib/geometry/implicit-sdf-function.types.plato
-R  stdlib/implicit-sdf-metaballs.types.plato -&gt; stdlib/geometry/implicit-sdf-metaballs.types.plato
-R  stdlib/implicit-sdf-modifiers.library.plato -&gt; stdlib/geometry/implicit-sdf-modifiers.library.plato
-R  stdlib/implicit-sdf-modifiers.types.plato -&gt; stdlib/geometry/implicit-sdf-modifiers.types.plato
-R  stdlib/implicit-sdf-operators.library.plato -&gt; stdlib/geometry/implicit-sdf-operators.library.plato
-R  stdlib/implicit-sdf-primitives.library.plato -&gt; stdlib/geometry/implicit-sdf-primitives.library.plato
-R  stdlib/implicit-sdf-sampled.library.plato -&gt; stdlib/geometry/implicit-sdf-sampled.library.plato
-R  stdlib/implicit-sdf-sampled.types.plato -&gt; stdlib/geometry/implicit-sdf-sampled.types.plato
-R  stdlib/implicit-sdf-trees.library.plato -&gt; stdlib/geometry/implicit-sdf-trees.library.plato
-R  stdlib/implicit-sdf-trees.types.plato -&gt; stdlib/geometry/implicit-sdf-trees.types.plato
-R  stdlib/implicit-sdf.concepts.plato -&gt; stdlib/geometry/implicit-sdf.concepts.plato
-R  stdlib/intervals-transforms-deformable.library.plato -&gt; stdlib/geometry/intervals-transforms-deformable.library.plato
-A  stdlib/geometry/intrinsics-planes.library.plato
-R  stdlib/lines-planes.library.plato -&gt; stdlib/geometry/lines-planes.library.plato
-R  stdlib/lines-planes.types.plato -&gt; stdlib/geometry/lines-planes.types.plato
-R  stdlib/lines.library.plato -&gt; stdlib/geometry/lines.library.plato
-R  stdlib/lines.types.plato -&gt; stdlib/geometry/lines.types.plato
-R  stdlib/mesh-attributes.library.plato -&gt; stdlib/geometry/mesh-attributes.library.plato
-R  stdlib/mesh-attributes.types.plato -&gt; stdlib/geometry/mesh-attributes.types.plato
-R  stdlib/meshes-face-arrays.library.plato -&gt; stdlib/geometry/meshes-face-arrays.library.plato
-R  stdlib/meshes-face-arrays.types.plato -&gt; stdlib/geometry/meshes-face-arrays.types.plato
-R  stdlib/meshes-faces.library.plato -&gt; stdlib/geometry/meshes-faces.library.plato
-R  stdlib/meshes-geometry.library.plato -&gt; stdlib/geometry/meshes-geometry.library.plato
-R  stdlib/meshes-indexed.library.plato -&gt; stdlib/geometry/meshes-indexed.library.plato
-R  stdlib/meshes-lines-points.library.plato -&gt; stdlib/geometry/meshes-lines-points.library.plato
-R  stdlib/meshes-lines-points.types.plato -&gt; stdlib/geometry/meshes-lines-points.types.plato
-R  stdlib/meshes-polygon-building.library.plato -&gt; stdlib/geometry/meshes-polygon-building.library.plato
-R  stdlib/meshes-polygon-corners.library.plato -&gt; stdlib/geometry/meshes-polygon-corners.library.plato
-R  stdlib/meshes-polygon-incidence.library.plato -&gt; stdlib/geometry/meshes-polygon-incidence.library.plato
-R  stdlib/meshes-polygon.library.plato -&gt; stdlib/geometry/meshes-polygon.library.plato
-R  stdlib/meshes-sections.library.plato -&gt; stdlib/geometry/meshes-sections.library.plato
-R  stdlib/meshes-sections.types.plato -&gt; stdlib/geometry/meshes-sections.types.plato
-R  stdlib/meshes-topology.library.plato -&gt; stdlib/geometry/meshes-topology.library.plato
-R  stdlib/meshes-volumetric.library.plato -&gt; stdlib/geometry/meshes-volumetric.library.plato
-R  stdlib/meshes-volumetric.types.plato -&gt; stdlib/geometry/meshes-volumetric.types.plato
-R  stdlib/meshes.concepts.plato -&gt; stdlib/geometry/meshes.concepts.plato
-R  stdlib/meshes.types.plato -&gt; stdlib/geometry/meshes.types.plato
-R  stdlib/noise-basis.types.plato -&gt; stdlib/geometry/noise-basis.types.plato
-R  stdlib/noise-fractal.types.plato -&gt; stdlib/geometry/noise-fractal.types.plato
-R  stdlib/noise-warped.types.plato -&gt; stdlib/geometry/noise-warped.types.plato
-R  stdlib/noise.types.plato -&gt; stdlib/geometry/noise.types.plato
-R  stdlib/planar-boxes.library.plato -&gt; stdlib/geometry/planar-boxes.library.plato
-R  stdlib/planar-boxes.types.plato -&gt; stdlib/geometry/planar-boxes.types.plato
-R  stdlib/planar-circles.library.plato -&gt; stdlib/geometry/planar-circles.library.plato
-R  stdlib/planar-circles.types.plato -&gt; stdlib/geometry/planar-circles.types.plato
-R  stdlib/planar-ellipses.library.plato -&gt; stdlib/geometry/planar-ellipses.library.plato
-R  stdlib/planar-ellipses.types.plato -&gt; stdlib/geometry/planar-ellipses.types.plato
-R  stdlib/planar-shapes.library.plato -&gt; stdlib/geometry/planar-shapes.library.plato
-R  stdlib/planar-triangles.library.plato -&gt; stdlib/geometry/planar-triangles.library.plato
-R  stdlib/planar-triangles.types.plato -&gt; stdlib/geometry/planar-triangles.types.plato
-R  stdlib/pointclouds-voxels.concepts.plato -&gt; stdlib/geometry/pointclouds-voxels.concepts.plato
-R  stdlib/pointclouds.library.plato -&gt; stdlib/geometry/pointclouds.library.plato
-R  stdlib/pointclouds.types.plato -&gt; stdlib/geometry/pointclouds.types.plato
-R  stdlib/polygons-kernels.library.plato -&gt; stdlib/geometry/polygons-kernels.library.plato
-R  stdlib/polygons-polylines.library.plato -&gt; stdlib/geometry/polygons-polylines.library.plato
-R  stdlib/polygons-polylines.types.plato -&gt; stdlib/geometry/polygons-polylines.types.plato
-R  stdlib/polygons-spatial.library.plato -&gt; stdlib/geometry/polygons-spatial.library.plato
-R  stdlib/polygons-spatial.types.plato -&gt; stdlib/geometry/polygons-spatial.types.plato
-R  stdlib/polygons.library.plato -&gt; stdlib/geometry/polygons.library.plato
-R  stdlib/polygons.types.plato -&gt; stdlib/geometry/polygons.types.plato
-R  stdlib/polyhedra-catalog-catalans.library.plato -&gt; stdlib/geometry/polyhedra-catalog-catalans.library.plato
-R  stdlib/polyhedra-catalog-expanded.library.plato -&gt; stdlib/geometry/polyhedra-catalog-expanded.library.plato
-R  stdlib/polyhedra-catalog.library.plato -&gt; stdlib/geometry/polyhedra-catalog.library.plato
-R  stdlib/polyhedra-conway-expansion.library.plato -&gt; stdlib/geometry/polyhedra-conway-expansion.library.plato
-R  stdlib/polyhedra-conway.library.plato -&gt; stdlib/geometry/polyhedra-conway.library.plato
-R  stdlib/polyhedra-duals.library.plato -&gt; stdlib/geometry/polyhedra-duals.library.plato
-R  stdlib/polyhedra-seeds.library.plato -&gt; stdlib/geometry/polyhedra-seeds.library.plato
-R  stdlib/sampling-curves.library.plato -&gt; stdlib/geometry/sampling-curves.library.plato
-R  stdlib/sampling-curves.types.plato -&gt; stdlib/geometry/sampling-curves.types.plato
-R  stdlib/sampling-fields.types.plato -&gt; stdlib/geometry/sampling-fields.types.plato
-R  stdlib/sampling-grids.types.plato -&gt; stdlib/geometry/sampling-grids.types.plato
-R  stdlib/sampling-patterns.types.plato -&gt; stdlib/geometry/sampling-patterns.types.plato
-R  stdlib/sampling-resampling.types.plato -&gt; stdlib/geometry/sampling-resampling.types.plato
-R  stdlib/solids-csg-boolean.library.plato -&gt; stdlib/geometry/solids-csg-boolean.library.plato
-R  stdlib/solids-csg-clipping.library.plato -&gt; stdlib/geometry/solids-csg-clipping.library.plato
-R  stdlib/solids-csg-interior.library.plato -&gt; stdlib/geometry/solids-csg-interior.library.plato
-R  stdlib/solids-csg-soups.library.plato -&gt; stdlib/geometry/solids-csg-soups.library.plato
-R  stdlib/solids-csg-soups.types.plato -&gt; stdlib/geometry/solids-csg-soups.types.plato
-R  stdlib/solids-csg.types.plato -&gt; stdlib/geometry/solids-csg.types.plato
-R  stdlib/solids-generated.types.plato -&gt; stdlib/geometry/solids-generated.types.plato
-R  stdlib/solids-polyhedra.library.plato -&gt; stdlib/geometry/solids-polyhedra.library.plato
-R  stdlib/solids-polyhedra.types.plato -&gt; stdlib/geometry/solids-polyhedra.types.plato
-R  stdlib/solids.library.plato -&gt; stdlib/geometry/solids.library.plato
-R  stdlib/spatial-boxes.library.plato -&gt; stdlib/geometry/spatial-boxes.library.plato
-R  stdlib/spatial-boxes.types.plato -&gt; stdlib/geometry/spatial-boxes.types.plato
-R  stdlib/spatial-capsules.library.plato -&gt; stdlib/geometry/spatial-capsules.library.plato
-R  stdlib/spatial-cylinders.library.plato -&gt; stdlib/geometry/spatial-cylinders.library.plato
-R  stdlib/spatial-cylinders.types.plato -&gt; stdlib/geometry/spatial-cylinders.types.plato
-R  stdlib/spatial-grids.types.plato -&gt; stdlib/geometry/spatial-grids.types.plato
-R  stdlib/spatial-implicits.types.plato -&gt; stdlib/geometry/spatial-implicits.types.plato
-R  stdlib/spatial-kdtrees.types.plato -&gt; stdlib/geometry/spatial-kdtrees.types.plato
-R  stdlib/spatial-patches.library.plato -&gt; stdlib/geometry/spatial-patches.library.plato
-R  stdlib/spatial-patches.types.plato -&gt; stdlib/geometry/spatial-patches.types.plato
-R  stdlib/spatial-primitives.library.plato -&gt; stdlib/geometry/spatial-primitives.library.plato
-R  stdlib/spatial-queries-overlap.types.plato -&gt; stdlib/geometry/spatial-queries-overlap.types.plato
-R  stdlib/spatial-queries-proximity.types.plato -&gt; stdlib/geometry/spatial-queries-proximity.types.plato
-R  stdlib/spatial-queries-rays.types.plato -&gt; stdlib/geometry/spatial-queries-rays.types.plato
-R  stdlib/spatial-queries.concepts.plato -&gt; stdlib/geometry/spatial-queries.concepts.plato
-R  stdlib/spatial-queries.library.plato -&gt; stdlib/geometry/spatial-queries.library.plato
-R  stdlib/spatial-simplices.library.plato -&gt; stdlib/geometry/spatial-simplices.library.plato
-R  stdlib/spatial-simplices.types.plato -&gt; stdlib/geometry/spatial-simplices.types.plato
-R  stdlib/spatial-spheres.library.plato -&gt; stdlib/geometry/spatial-spheres.library.plato
-R  stdlib/spatial-spheres.types.plato -&gt; stdlib/geometry/spatial-spheres.types.plato
-R  stdlib/spatial-structures.concepts.plato -&gt; stdlib/geometry/spatial-structures.concepts.plato
-R  stdlib/spatial-tori.library.plato -&gt; stdlib/geometry/spatial-tori.library.plato
-R  stdlib/spatial-tori.types.plato -&gt; stdlib/geometry/spatial-tori.types.plato
-R  stdlib/spatial-trees.types.plato -&gt; stdlib/geometry/spatial-trees.types.plato
-R  stdlib/splines-bezier.library.plato -&gt; stdlib/geometry/splines-bezier.library.plato
-R  stdlib/splines-bezier.types.plato -&gt; stdlib/geometry/splines-bezier.types.plato
-R  stdlib/splines-bspline.library.plato -&gt; stdlib/geometry/splines-bspline.library.plato
-R  stdlib/splines-bspline.types.plato -&gt; stdlib/geometry/splines-bspline.types.plato
-R  stdlib/splines-hermite.library.plato -&gt; stdlib/geometry/splines-hermite.library.plato
-R  stdlib/splines-hermite.types.plato -&gt; stdlib/geometry/splines-hermite.types.plato
-R  stdlib/splines-interpolating.library.plato -&gt; stdlib/geometry/splines-interpolating.library.plato
-R  stdlib/splines-interpolating.types.plato -&gt; stdlib/geometry/splines-interpolating.types.plato
-R  stdlib/surfaces-generated.types.plato -&gt; stdlib/geometry/surfaces-generated.types.plato
-R  stdlib/surfaces-patches.types.plato -&gt; stdlib/geometry/surfaces-patches.types.plato
-R  stdlib/surfaces-solids.concepts.plato -&gt; stdlib/geometry/surfaces-solids.concepts.plato
-R  stdlib/surfaces-solids.library.plato -&gt; stdlib/geometry/surfaces-solids.library.plato
-R  stdlib/surfaces-special.types.plato -&gt; stdlib/geometry/surfaces-special.types.plato
-R  stdlib/surfaces.library.plato -&gt; stdlib/geometry/surfaces.library.plato
-R  stdlib/topology-adjacency.library.plato -&gt; stdlib/geometry/topology-adjacency.library.plato
-R  stdlib/topology-adjacency.types.plato -&gt; stdlib/geometry/topology-adjacency.types.plato
-R  stdlib/topology-classification.types.plato -&gt; stdlib/geometry/topology-classification.types.plato
-R  stdlib/topology-half-edges.library.plato -&gt; stdlib/geometry/topology-half-edges.library.plato
-R  stdlib/topology-half-edges.types.plato -&gt; stdlib/geometry/topology-half-edges.types.plato
-R  stdlib/topology-indices.types.plato -&gt; stdlib/geometry/topology-indices.types.plato
-R  stdlib/topology.concepts.plato -&gt; stdlib/geometry/topology.concepts.plato
-R  stdlib/voxels.types.plato -&gt; stdlib/geometry/voxels.types.plato
-R  stdlib/cameras-optics.types.plato -&gt; stdlib/graphics/cameras-optics.types.plato
-R  stdlib/cameras.concepts.plato -&gt; stdlib/graphics/cameras.concepts.plato
-R  stdlib/cameras.library.plato -&gt; stdlib/graphics/cameras.library.plato
-R  stdlib/cameras.types.plato -&gt; stdlib/graphics/cameras.types.plato
-R  stdlib/color-spaces-models.types.plato -&gt; stdlib/graphics/color-spaces-models.types.plato
-R  stdlib/color-spaces-palettes.types.plato -&gt; stdlib/graphics/color-spaces-palettes.types.plato
-R  stdlib/color-spaces-video.types.plato -&gt; stdlib/graphics/color-spaces-video.types.plato
-R  stdlib/color-spaces.library.plato -&gt; stdlib/graphics/color-spaces.library.plato
-R  stdlib/color-spaces.types.plato -&gt; stdlib/graphics/color-spaces.types.plato
-R  stdlib/easing.concepts.plato -&gt; stdlib/graphics/easing.concepts.plato
-R  stdlib/easing.library.plato -&gt; stdlib/graphics/easing.library.plato
-R  stdlib/easing.types.plato -&gt; stdlib/graphics/easing.types.plato
-R  stdlib/image-processing-adjustments.types.plato -&gt; stdlib/graphics/image-processing-adjustments.types.plato
-R  stdlib/image-processing-compositing.types.plato -&gt; stdlib/graphics/image-processing-compositing.types.plato
-R  stdlib/image-processing-filters.types.plato -&gt; stdlib/graphics/image-processing-filters.types.plato
-R  stdlib/image-processing-resampling.types.plato -&gt; stdlib/graphics/image-processing-resampling.types.plato
-R  stdlib/images-containers.types.plato -&gt; stdlib/graphics/images-containers.types.plato
-R  stdlib/images.concepts.plato -&gt; stdlib/graphics/images.concepts.plato
-R  stdlib/images.library.plato -&gt; stdlib/graphics/images.library.plato
-R  stdlib/images.types.plato -&gt; stdlib/graphics/images.types.plato
-R  stdlib/keyframes-blending.types.plato -&gt; stdlib/graphics/keyframes-blending.types.plato
-R  stdlib/keyframes-clips.types.plato -&gt; stdlib/graphics/keyframes-clips.types.plato
-R  stdlib/keyframes-tracks.concepts.plato -&gt; stdlib/graphics/keyframes-tracks.concepts.plato
-R  stdlib/keyframes-tracks.library.plato -&gt; stdlib/graphics/keyframes-tracks.library.plato
-R  stdlib/keyframes-tracks.types.plato -&gt; stdlib/graphics/keyframes-tracks.types.plato
-R  stdlib/lights-settings.types.plato -&gt; stdlib/graphics/lights-settings.types.plato
-R  stdlib/lights.concepts.plato -&gt; stdlib/graphics/lights.concepts.plato
-R  stdlib/lights.library.plato -&gt; stdlib/graphics/lights.library.plato
-R  stdlib/lights.types.plato -&gt; stdlib/graphics/lights.types.plato
-R  stdlib/materials-layers.types.plato -&gt; stdlib/graphics/materials-layers.types.plato
-R  stdlib/materials.types.plato -&gt; stdlib/graphics/materials.types.plato
-R  stdlib/motion-graphics-procedural.types.plato -&gt; stdlib/graphics/motion-graphics-procedural.types.plato
-R  stdlib/motion-graphics-timing.types.plato -&gt; stdlib/graphics/motion-graphics-timing.types.plato
-R  stdlib/motion-graphics.types.plato -&gt; stdlib/graphics/motion-graphics.types.plato
-R  stdlib/paths.concepts.plato -&gt; stdlib/graphics/paths.concepts.plato
-R  stdlib/paths.library.plato -&gt; stdlib/graphics/paths.library.plato
-R  stdlib/paths.types.plato -&gt; stdlib/graphics/paths.types.plato
-R  stdlib/render-post-processing.types.plato -&gt; stdlib/graphics/render-post-processing.types.plato
-R  stdlib/render-settings.types.plato -&gt; stdlib/graphics/render-settings.types.plato
-R  stdlib/render-vertex-layout.types.plato -&gt; stdlib/graphics/render-vertex-layout.types.plato
-R  stdlib/scene2d.types.plato -&gt; stdlib/graphics/scene2d.types.plato
-R  stdlib/scene3d-indices.types.plato -&gt; stdlib/graphics/scene3d-indices.types.plato
-R  stdlib/scene3d-instancing.types.plato -&gt; stdlib/graphics/scene3d-instancing.types.plato
-R  stdlib/scene3d.types.plato -&gt; stdlib/graphics/scene3d.types.plato
-R  stdlib/skeletal-animation-constraints.types.plato -&gt; stdlib/graphics/skeletal-animation-constraints.types.plato
-R  stdlib/skeletal-animation.types.plato -&gt; stdlib/graphics/skeletal-animation.types.plato
-R  stdlib/text-fonts.types.plato -&gt; stdlib/graphics/text-fonts.types.plato
-R  stdlib/text-glyphs.types.plato -&gt; stdlib/graphics/text-glyphs.types.plato
-R  stdlib/text-layout.types.plato -&gt; stdlib/graphics/text-layout.types.plato
-R  stdlib/texturing-sampling.types.plato -&gt; stdlib/graphics/texturing-sampling.types.plato
-R  stdlib/texturing.concepts.plato -&gt; stdlib/graphics/texturing.concepts.plato
-R  stdlib/texturing.library.plato -&gt; stdlib/graphics/texturing.library.plato
-R  stdlib/texturing.types.plato -&gt; stdlib/graphics/texturing.types.plato
-R  stdlib/vector-styling-paint.types.plato -&gt; stdlib/graphics/vector-styling-paint.types.plato
-R  stdlib/vector-styling-stroke.types.plato -&gt; stdlib/graphics/vector-styling-stroke.types.plato
-M  tools/check-stdlib-fast.ps1
-M  tools/stage-stdlib.ps1
+M  Plato.CSharpWriter/CSharpWriter.cs
+ M PlatoCompiler/Analysis/Linter.cs
 ?? .claude/
+?? PlatoCompiler/Types/WriterPrimitiveNames.cs
+?? PlatoTests/LinterPrimitiveShadowingTests.cs
 ?? conformance/Ara3D.SDK.ConformanceTests/</code></div>
-    <div class="k">HEAD</div><div><code>96f6f64bfae789c2f2980d2f531cff3995dd15f7</code></div>
-    <div class="k">origin/main</div><div><code>96f6f64bfae789c2f2980d2f531cff3995dd15f7</code></div>
+    <div class="k">HEAD</div><div><code>36089e45060738961cd0ddc888a3688e56b91b53</code></div>
+    <div class="k">origin/main</div><div><code>36089e45060738961cd0ddc888a3688e56b91b53</code></div>
     <div class="k">Unpushed</div><div><span class="muted">in sync with origin/main</span></div>
-    <div class="k">Dirty (excl. .claude/)</div><div><code>M  PlatoTests/CheckerTestSupport.cs<br>M  PlatoTests/ForwardStdLibCheckerTests.cs<br>MM docs/status-report-snapshot.json<br>MM docs/status-report.html<br>M  stdlib/README.md<br>R  stdlib/algebra-metric.concepts.plato -&gt; stdlib/foundation/algebra-metric.concepts.plato<br>R  stdlib/algebra-metric.library.plato -&gt; stdlib/foundation/algebra-metric.library.plato<br>R  stdlib/algebra-numeric.concepts.plato -&gt; stdlib/foundation/algebra-numeric.concepts.plato<br>R  stdlib/algebra-numeric.library.plato -&gt; stdlib/foundation/algebra-numeric.library.plato<br>R  stdlib/algebra-operations.concepts.plato -&gt; stdlib/foundation/algebra-operations.concepts.plato<br>R  stdlib/algebra-operations.library.plato -&gt; stdlib/foundation/algebra-operations.library.plato<br>R  stdlib/angles.library.plato -&gt; stdlib/foundation/angles.library.plato<br>R  stdlib/axes-2d.library.plato -&gt; stdlib/foundation/axes-2d.library.plato<br>R  stdlib/axes-signed.library.plato -&gt; stdlib/foundation/axes-signed.library.plato<br>R  stdlib/axes.library.plato -&gt; stdlib/foundation/axes.library.plato<br>R  stdlib/axes.types.plato -&gt; stdlib/foundation/axes.types.plato<br>R  stdlib/collections-containers.concepts.plato -&gt; stdlib/foundation/collections-containers.concepts.plato<br>R  stdlib/collections-containers.library.plato -&gt; stdlib/foundation/collections-containers.library.plato<br>R  stdlib/collections-grids.library.plato -&gt; stdlib/foundation/collections-grids.library.plato<br>R  stdlib/collections-indexable.concepts.plato -&gt; stdlib/foundation/collections-indexable.concepts.plato<br>R  stdlib/collections-indexable.library.plato -&gt; stdlib/foundation/collections-indexable.library.plato<br>R  stdlib/collections-jagged.concepts.plato -&gt; stdlib/foundation/collections-jagged.concepts.plato<br>R  stdlib/collections-jagged.library.plato -&gt; stdlib/foundation/collections-jagged.library.plato<br>R  stdlib/collections-jagged.types.plato -&gt; stdlib/foundation/collections-jagged.types.plato<br>R  stdlib/collections-sampling.library.plato -&gt; stdlib/foundation/collections-sampling.library.plato<br>R  stdlib/color-named.library.plato -&gt; stdlib/foundation/color-named.library.plato<br>R  stdlib/color.library.plato -&gt; stdlib/foundation/color.library.plato<br>R  stdlib/color.types.plato -&gt; stdlib/foundation/color.types.plato<br>R  stdlib/constants.library.plato -&gt; stdlib/foundation/constants.library.plato<br>R  stdlib/core-comparison.concepts.plato -&gt; stdlib/foundation/core-comparison.concepts.plato<br>R  stdlib/core-comparison.library.plato -&gt; stdlib/foundation/core-comparison.library.plato<br>R  stdlib/core-logic.concepts.plato -&gt; stdlib/foundation/core-logic.concepts.plato<br>R  stdlib/core-logic.library.plato -&gt; stdlib/foundation/core-logic.library.plato<br>R  stdlib/functional-procedural.library.plato -&gt; stdlib/foundation/functional-procedural.library.plato<br>R  stdlib/functional.concepts.plato -&gt; stdlib/foundation/functional.concepts.plato<br>R  stdlib/graphs-algorithms.types.plato -&gt; stdlib/foundation/graphs-algorithms.types.plato<br>R  stdlib/graphs.concepts.plato -&gt; stdlib/foundation/graphs.concepts.plato<br>R  stdlib/graphs.library.plato -&gt; stdlib/foundation/graphs.library.plato<br>R  stdlib/graphs.types.plato -&gt; stdlib/foundation/graphs.types.plato<br>R  stdlib/intervals-bounds.concepts.plato -&gt; stdlib/foundation/intervals-bounds.concepts.plato<br>R  stdlib/intervals-bounds.types.plato -&gt; stdlib/foundation/intervals-bounds.types.plato<br>R  stdlib/intervals-sizes.library.plato -&gt; stdlib/foundation/intervals-sizes.library.plato<br>R  stdlib/intervals-sizes.types.plato -&gt; stdlib/foundation/intervals-sizes.types.plato<br>R  stdlib/intervals-transforms-bounds.library.plato -&gt; stdlib/foundation/intervals-transforms-bounds.library.plato<br>R  stdlib/intervals-transforms-interval.library.plato -&gt; stdlib/foundation/intervals-transforms-interval.library.plato<br>R  stdlib/intervals-transforms-transformable.library.plato -&gt; stdlib/foundation/intervals-transforms-transformable.library.plato<br>R  stdlib/intervals.types.plato -&gt; stdlib/foundation/intervals.types.plato<br>R  stdlib/intrinsics-arrays.library.plato -&gt; stdlib/foundation/intrinsics-arrays.library.plato<br>R  stdlib/intrinsics-numeric-tuples.library.plato -&gt; stdlib/foundation/intrinsics-numeric-tuples.library.plato<br>R  stdlib/intrinsics-scalars.library.plato -&gt; stdlib/foundation/intrinsics-scalars.library.plato<br>R  stdlib/intrinsics-transforms.library.plato -&gt; stdlib/foundation/intrinsics-transforms.library.plato<br>R  stdlib/intrinsics-vectors.library.plato -&gt; stdlib/foundation/intrinsics-vectors.library.plato<br>R  stdlib/matrices.concepts.plato -&gt; stdlib/foundation/matrices.concepts.plato<br>R  stdlib/matrices.types.plato -&gt; stdlib/foundation/matrices.types.plato<br>R  stdlib/numbers-special-bessel.library.plato -&gt; stdlib/foundation/numbers-special-bessel.library.plato<br>R  stdlib/numbers-special-beta.library.plato -&gt; stdlib/foundation/numbers-special-beta.library.plato<br>R  stdlib/numbers-special-erf.library.plato -&gt; stdlib/foundation/numbers-special-erf.library.plato<br>R  stdlib/numbers-special-gamma-incomplete.library.plato -&gt; stdlib/foundation/numbers-special-gamma-incomplete.library.plato<br>R  stdlib/numbers-special-gamma.library.plato -&gt; stdlib/foundation/numbers-special-gamma.library.plato<br>R  stdlib/numbers.library.plato -&gt; stdlib/foundation/numbers.library.plato<br>R  stdlib/numbers.types.plato -&gt; stdlib/foundation/numbers.types.plato<br>R  stdlib/numeric-structures-algebra.library.plato -&gt; stdlib/foundation/numeric-structures-algebra.library.plato<br>R  stdlib/numeric-structures-components.library.plato -&gt; stdlib/foundation/numeric-structures-components.library.plato<br>R  stdlib/numeric-structures-coordinate.library.plato -&gt; stdlib/foundation/numeric-structures-coordinate.library.plato<br>R  stdlib/numeric-structures-matrix.library.plato -&gt; stdlib/foundation/numeric-structures-matrix.library.plato<br>R  stdlib/numeric-structures-quantity.library.plato -&gt; stdlib/foundation/numeric-structures-quantity.library.plato<br>R  stdlib/numeric-structures-vector.library.plato -&gt; stdlib/foundation/numeric-structures-vector.library.plato<br>R  stdlib/points-curvilinear.types.plato -&gt; stdlib/foundation/points-curvilinear.types.plato<br>R  stdlib/points-parametric.types.plato -&gt; stdlib/foundation/points-parametric.types.plato<br>R  stdlib/points.concepts.plato -&gt; stdlib/foundation/points.concepts.plato<br>R  stdlib/points.types.plato -&gt; stdlib/foundation/points.types.plato<br>R  stdlib/polynomials-composite.types.plato -&gt; stdlib/foundation/polynomials-composite.types.plato<br>R  stdlib/polynomials-series.types.plato -&gt; stdlib/foundation/polynomials-series.types.plato<br>R  stdlib/polynomials.library.plato -&gt; stdlib/foundation/polynomials.library.plato<br>R  stdlib/polynomials.types.plato -&gt; stdlib/foundation/polynomials.types.plato<br>R  stdlib/primitives-arrays.types.plato -&gt; stdlib/foundation/primitives-arrays.types.plato<br>R  stdlib/primitives-builders.library.plato -&gt; stdlib/foundation/primitives-builders.library.plato<br>R  stdlib/primitives-builders.types.plato -&gt; stdlib/foundation/primitives-builders.types.plato<br>R  stdlib/primitives-functions.types.plato -&gt; stdlib/foundation/primitives-functions.types.plato<br>R  stdlib/primitives-tuples.types.plato -&gt; stdlib/foundation/primitives-tuples.types.plato<br>R  stdlib/primitives.types.plato -&gt; stdlib/foundation/primitives.types.plato<br>R  stdlib/quantities-dynamic.types.plato -&gt; stdlib/foundation/quantities-dynamic.types.plato<br>R  stdlib/quantities-electromagnetic.types.plato -&gt; stdlib/foundation/quantities-electromagnetic.types.plato<br>R  stdlib/quantities-geometric.types.plato -&gt; stdlib/foundation/quantities-geometric.types.plato<br>R  stdlib/quantities-kinematic.types.plato -&gt; stdlib/foundation/quantities-kinematic.types.plato<br>R  stdlib/quantities-material.types.plato -&gt; stdlib/foundation/quantities-material.types.plato<br>R  stdlib/quantities-mechanical.types.plato -&gt; stdlib/foundation/quantities-mechanical.types.plato<br>R  stdlib/quantities-photometric.types.plato -&gt; stdlib/foundation/quantities-photometric.types.plato<br>R  stdlib/quantities-projections.library.plato -&gt; stdlib/foundation/quantities-projections.library.plato<br>R  stdlib/quantities-thermal.types.plato -&gt; stdlib/foundation/quantities-thermal.types.plato<br>R  stdlib/quantities.concepts.plato -&gt; stdlib/foundation/quantities.concepts.plato<br>R  stdlib/quantities.library.plato -&gt; stdlib/foundation/quantities.library.plato<br>R  stdlib/random-continuous-gamma.library.plato -&gt; stdlib/foundation/random-continuous-gamma.library.plato<br>R  stdlib/random-continuous-gamma.types.plato -&gt; stdlib/foundation/random-continuous-gamma.types.plato<br>R  stdlib/random-continuous-tails.library.plato -&gt; stdlib/foundation/random-continuous-tails.library.plato<br>R  stdlib/random-continuous.library.plato -&gt; stdlib/foundation/random-continuous.library.plato<br>R  stdlib/random-continuous.types.plato -&gt; stdlib/foundation/random-continuous.types.plato<br>R  stdlib/random-discrete.library.plato -&gt; stdlib/foundation/random-discrete.library.plato<br>R  stdlib/random-discrete.types.plato -&gt; stdlib/foundation/random-discrete.types.plato<br>R  stdlib/random-distributions.library.plato -&gt; stdlib/foundation/random-distributions.library.plato<br>R  stdlib/random-multivariate.types.plato -&gt; stdlib/foundation/random-multivariate.types.plato<br>R  stdlib/random.concepts.plato -&gt; stdlib/foundation/random.concepts.plato<br>R  stdlib/random.library.plato -&gt; stdlib/foundation/random.library.plato<br>R  stdlib/random.types.plato -&gt; stdlib/foundation/random.types.plato<br>R  stdlib/rotations.types.plato -&gt; stdlib/foundation/rotations.types.plato<br>R  stdlib/statistics-correlation.library.plato -&gt; stdlib/foundation/statistics-correlation.library.plato<br>R  stdlib/statistics-correlation.types.plato -&gt; stdlib/foundation/statistics-correlation.types.plato<br>R  stdlib/statistics.library.plato -&gt; stdlib/foundation/statistics.library.plato<br>R  stdlib/statistics.types.plato -&gt; stdlib/foundation/statistics.types.plato<br>R  stdlib/time.library.plato -&gt; stdlib/foundation/time.library.plato<br>R  stdlib/time.types.plato -&gt; stdlib/foundation/time.types.plato<br>R  stdlib/transforms-affine.library.plato -&gt; stdlib/foundation/transforms-affine.library.plato<br>R  stdlib/transforms-affine.types.plato -&gt; stdlib/foundation/transforms-affine.types.plato<br>R  stdlib/transforms-frames.library.plato -&gt; stdlib/foundation/transforms-frames.library.plato<br>R  stdlib/transforms-frames.types.plato -&gt; stdlib/foundation/transforms-frames.types.plato<br>R  stdlib/transforms-identities.library.plato -&gt; stdlib/foundation/transforms-identities.library.plato<br>R  stdlib/transforms-motor.library.plato -&gt; stdlib/foundation/transforms-motor.library.plato<br>R  stdlib/transforms-motor.types.plato -&gt; stdlib/foundation/transforms-motor.types.plato<br>R  stdlib/transforms-points.library.plato -&gt; stdlib/foundation/transforms-points.library.plato<br>R  stdlib/transforms-pose.library.plato -&gt; stdlib/foundation/transforms-pose.library.plato<br>R  stdlib/transforms-pose.types.plato -&gt; stdlib/foundation/transforms-pose.types.plato<br>R  stdlib/transforms-rotations.library.plato -&gt; stdlib/foundation/transforms-rotations.library.plato<br>R  stdlib/transforms-trs.library.plato -&gt; stdlib/foundation/transforms-trs.library.plato<br>R  stdlib/transforms-trs.types.plato -&gt; stdlib/foundation/transforms-trs.types.plato<br>R  stdlib/transforms.concepts.plato -&gt; stdlib/foundation/transforms.concepts.plato<br>R  stdlib/vectors-geometric.types.plato -&gt; stdlib/foundation/vectors-geometric.types.plato<br>R  stdlib/vectors-integer.library.plato -&gt; stdlib/foundation/vectors-integer.library.plato<br>R  stdlib/vectors-integer.types.plato -&gt; stdlib/foundation/vectors-integer.types.plato<br>R  stdlib/vectors-tuples.types.plato -&gt; stdlib/foundation/vectors-tuples.types.plato<br>R  stdlib/vectors.concepts.plato -&gt; stdlib/foundation/vectors.concepts.plato<br>R  stdlib/collision-contacts.types.plato -&gt; stdlib/future/collision-contacts.types.plato<br>R  stdlib/collision.types.plato -&gt; stdlib/future/collision.types.plato<br>R  stdlib/engineering-beams.types.plato -&gt; stdlib/future/engineering-beams.types.plato<br>R  stdlib/engineering-machine-elements.types.plato -&gt; stdlib/future/engineering-machine-elements.types.plato<br>R  stdlib/engineering-materials.types.plato -&gt; stdlib/future/engineering-materials.types.plato<br>R  stdlib/engineering-sections.types.plato -&gt; stdlib/future/engineering-sections.types.plato<br>R  stdlib/geo-spatial-rasters.types.plato -&gt; stdlib/future/geo-spatial-rasters.types.plato<br>R  stdlib/geo-spatial-reference-systems.types.plato -&gt; stdlib/future/geo-spatial-reference-systems.types.plato<br>R  stdlib/geo-spatial.concepts.plato -&gt; stdlib/future/geo-spatial.concepts.plato<br>R  stdlib/geo-spatial.library.plato -&gt; stdlib/future/geo-spatial.library.plato<br>R  stdlib/geo-spatial.types.plato -&gt; stdlib/future/geo-spatial.types.plato<br>R  stdlib/higher-dimensions-fractals.types.plato -&gt; stdlib/future/higher-dimensions-fractals.types.plato<br>R  stdlib/higher-dimensions.types.plato -&gt; stdlib/future/higher-dimensions.types.plato<br>R  stdlib/joints-2d.types.plato -&gt; stdlib/future/joints-2d.types.plato<br>R  stdlib/joints-3d.types.plato -&gt; stdlib/future/joints-3d.types.plato<br>R  stdlib/joints-limits.types.plato -&gt; stdlib/future/joints-limits.types.plato<br>R  stdlib/kinematics-trajectories.types.plato -&gt; stdlib/future/kinematics-trajectories.types.plato<br>R  stdlib/kinematics.concepts.plato -&gt; stdlib/future/kinematics.concepts.plato<br>R  stdlib/kinematics.library.plato -&gt; stdlib/future/kinematics.library.plato<br>R  stdlib/kinematics.types.plato -&gt; stdlib/future/kinematics.types.plato<br>R  stdlib/optimization-programs.types.plato -&gt; stdlib/future/optimization-programs.types.plato<br>R  stdlib/optimization-solvers.types.plato -&gt; stdlib/future/optimization-solvers.types.plato<br>R  stdlib/optimization.types.plato -&gt; stdlib/future/optimization.types.plato<br>R  stdlib/particles-force-fields.types.plato -&gt; stdlib/future/particles-force-fields.types.plato<br>R  stdlib/particles-simulation.types.plato -&gt; stdlib/future/particles-simulation.types.plato<br>R  stdlib/particles-soft-bodies.types.plato -&gt; stdlib/future/particles-soft-bodies.types.plato<br>R  stdlib/rigid-dynamics-forces.types.plato -&gt; stdlib/future/rigid-dynamics-forces.types.plato<br>R  stdlib/rigid-dynamics.concepts.plato -&gt; stdlib/future/rigid-dynamics.concepts.plato<br>R  stdlib/rigid-dynamics.library.plato -&gt; stdlib/future/rigid-dynamics.library.plato<br>R  stdlib/rigid-dynamics.types.plato -&gt; stdlib/future/rigid-dynamics.types.plato<br>R  stdlib/scientific-data-records.types.plato -&gt; stdlib/future/scientific-data-records.types.plato<br>R  stdlib/scientific-data-series.types.plato -&gt; stdlib/future/scientific-data-series.types.plato<br>R  stdlib/scientific-data.concepts.plato -&gt; stdlib/future/scientific-data.concepts.plato<br>R  stdlib/scientific-data.library.plato -&gt; stdlib/future/scientific-data.library.plato<br>R  stdlib/signals-filters.types.plato -&gt; stdlib/future/signals-filters.types.plato<br>R  stdlib/signals-generators.types.plato -&gt; stdlib/future/signals-generators.types.plato<br>R  stdlib/signals.types.plato -&gt; stdlib/future/signals.types.plato<br>R  stdlib/uncertainty-estimation.types.plato -&gt; stdlib/future/uncertainty-estimation.types.plato<br>R  stdlib/uncertainty.types.plato -&gt; stdlib/future/uncertainty.types.plato<br>R  stdlib/brep-primitives.library.plato -&gt; stdlib/geometry/brep-primitives.library.plato<br>R  stdlib/brep-tessellate.library.plato -&gt; stdlib/geometry/brep-tessellate.library.plato<br>R  stdlib/brep.concepts.plato -&gt; stdlib/geometry/brep.concepts.plato<br>R  stdlib/brep.library.plato -&gt; stdlib/geometry/brep.library.plato<br>R  stdlib/brep.types.plato -&gt; stdlib/geometry/brep.types.plato<br>R  stdlib/curves-2d-arcs.library.plato -&gt; stdlib/geometry/curves-2d-arcs.library.plato<br>R  stdlib/curves-2d-arcs.types.plato -&gt; stdlib/geometry/curves-2d-arcs.types.plato<br>R  stdlib/curves-2d-polar.library.plato -&gt; stdlib/geometry/curves-2d-polar.library.plato<br>R  stdlib/curves-2d-polar.types.plato -&gt; stdlib/geometry/curves-2d-polar.types.plato<br>R  stdlib/curves-2d-spirals.library.plato -&gt; stdlib/geometry/curves-2d-spirals.library.plato<br>R  stdlib/curves-2d-spirals.types.plato -&gt; stdlib/geometry/curves-2d-spirals.types.plato<br>R  stdlib/curves-3d.library.plato -&gt; stdlib/geometry/curves-3d.library.plato<br>R  stdlib/curves-3d.types.plato -&gt; stdlib/geometry/curves-3d.types.plato<br>R  stdlib/curves-angular.library.plato -&gt; stdlib/geometry/curves-angular.library.plato<br>R  stdlib/curves-capabilities.concepts.plato -&gt; stdlib/geometry/curves-capabilities.concepts.plato<br>R  stdlib/curves-capabilities.library.plato -&gt; stdlib/geometry/curves-capabilities.library.plato<br>R  stdlib/curves-sampling.library.plato -&gt; stdlib/geometry/curves-sampling.library.plato<br>R  stdlib/curves.concepts.plato -&gt; stdlib/geometry/curves.concepts.plato<br>R  stdlib/curves.library.plato -&gt; stdlib/geometry/curves.library.plato<br>R  stdlib/deformations.concepts.plato -&gt; stdlib/geometry/deformations.concepts.plato<br>R  stdlib/deformations.library.plato -&gt; stdlib/geometry/deformations.library.plato<br>R  stdlib/deformations.types.plato -&gt; stdlib/geometry/deformations.types.plato<br>R  stdlib/differential-geometry-frames.types.plato -&gt; stdlib/geometry/differential-geometry-frames.types.plato<br>R  stdlib/differential-geometry-geodesics.types.plato -&gt; stdlib/geometry/differential-geometry-geodesics.types.plato<br>R  stdlib/differential-geometry-surfaces.types.plato -&gt; stdlib/geometry/differential-geometry-surfaces.types.plato<br>R  stdlib/fields-constant.types.plato -&gt; stdlib/geometry/fields-constant.types.plato<br>R  stdlib/fields-differentiable.concepts.plato -&gt; stdlib/geometry/fields-differentiable.concepts.plato<br>R  stdlib/fields-function.types.plato -&gt; stdlib/geometry/fields-function.types.plato<br>R  stdlib/fields-graphs.library.plato -&gt; stdlib/geometry/fields-graphs.library.plato<br>R  stdlib/fields-graphs.types.plato -&gt; stdlib/geometry/fields-graphs.types.plato<br>R  stdlib/fields-implicits-core.library.plato -&gt; stdlib/geometry/fields-implicits-core.library.plato<br>R  stdlib/fields-implicits-differentiable.library.plato -&gt; stdlib/geometry/fields-implicits-differentiable.library.plato<br>R  stdlib/fields-implicits-distance.library.plato -&gt; stdlib/geometry/fields-implicits-distance.library.plato<br>R  stdlib/fields-implicits-function.library.plato -&gt; stdlib/geometry/fields-implicits-function.library.plato<br>R  stdlib/fields-implicits-metaballs.library.plato -&gt; stdlib/geometry/fields-implicits-metaballs.library.plato<br>R  stdlib/fields-implicits-nodes.library.plato -&gt; stdlib/geometry/fields-implicits-nodes.library.plato<br>R  stdlib/fields-implicits-sampled.library.plato -&gt; stdlib/geometry/fields-implicits-sampled.library.plato<br>R  stdlib/fields-implicits-shapes.library.plato -&gt; stdlib/geometry/fields-implicits-shapes.library.plato<br>R  stdlib/fields-implicits-time-varying.library.plato -&gt; stdlib/geometry/fields-implicits-time-varying.library.plato<br>R  stdlib/fields-time-varying.concepts.plato -&gt; stdlib/geometry/fields-time-varying.concepts.plato<br>R  stdlib/fields.concepts.plato -&gt; stdlib/geometry/fields.concepts.plato<br>R  stdlib/geometry-kernels.library.plato -&gt; stdlib/geometry/geometry-kernels.library.plato<br>R  stdlib/geometry-measures.concepts.plato -&gt; stdlib/geometry/geometry-measures.concepts.plato<br>R  stdlib/geometry-measures.library.plato -&gt; stdlib/geometry/geometry-measures.library.plato<br>R  stdlib/geometry-pointsets.library.plato -&gt; stdlib/geometry/geometry-pointsets.library.plato<br>R  stdlib/geometry-queries.concepts.plato -&gt; stdlib/geometry/geometry-queries.concepts.plato<br>R  stdlib/geometry-queries.library.plato -&gt; stdlib/geometry/geometry-queries.library.plato<br>R  stdlib/geometry.concepts.plato -&gt; stdlib/geometry/geometry.concepts.plato<br>R  stdlib/geometry.library.plato -&gt; stdlib/geometry/geometry.library.plato<br>R  stdlib/implicit-sdf-bounded.library.plato -&gt; stdlib/geometry/implicit-sdf-bounded.library.plato<br>R  stdlib/implicit-sdf-bounded.types.plato -&gt; stdlib/geometry/implicit-sdf-bounded.types.plato<br>R  stdlib/implicit-sdf-function.types.plato -&gt; stdlib/geometry/implicit-sdf-function.types.plato<br>R  stdlib/implicit-sdf-metaballs.types.plato -&gt; stdlib/geometry/implicit-sdf-metaballs.types.plato<br>R  stdlib/implicit-sdf-modifiers.library.plato -&gt; stdlib/geometry/implicit-sdf-modifiers.library.plato<br>R  stdlib/implicit-sdf-modifiers.types.plato -&gt; stdlib/geometry/implicit-sdf-modifiers.types.plato<br>R  stdlib/implicit-sdf-operators.library.plato -&gt; stdlib/geometry/implicit-sdf-operators.library.plato<br>R  stdlib/implicit-sdf-primitives.library.plato -&gt; stdlib/geometry/implicit-sdf-primitives.library.plato<br>R  stdlib/implicit-sdf-sampled.library.plato -&gt; stdlib/geometry/implicit-sdf-sampled.library.plato<br>R  stdlib/implicit-sdf-sampled.types.plato -&gt; stdlib/geometry/implicit-sdf-sampled.types.plato<br>R  stdlib/implicit-sdf-trees.library.plato -&gt; stdlib/geometry/implicit-sdf-trees.library.plato<br>R  stdlib/implicit-sdf-trees.types.plato -&gt; stdlib/geometry/implicit-sdf-trees.types.plato<br>R  stdlib/implicit-sdf.concepts.plato -&gt; stdlib/geometry/implicit-sdf.concepts.plato<br>R  stdlib/intervals-transforms-deformable.library.plato -&gt; stdlib/geometry/intervals-transforms-deformable.library.plato<br>A  stdlib/geometry/intrinsics-planes.library.plato<br>R  stdlib/lines-planes.library.plato -&gt; stdlib/geometry/lines-planes.library.plato<br>R  stdlib/lines-planes.types.plato -&gt; stdlib/geometry/lines-planes.types.plato<br>R  stdlib/lines.library.plato -&gt; stdlib/geometry/lines.library.plato<br>R  stdlib/lines.types.plato -&gt; stdlib/geometry/lines.types.plato<br>R  stdlib/mesh-attributes.library.plato -&gt; stdlib/geometry/mesh-attributes.library.plato<br>R  stdlib/mesh-attributes.types.plato -&gt; stdlib/geometry/mesh-attributes.types.plato<br>R  stdlib/meshes-face-arrays.library.plato -&gt; stdlib/geometry/meshes-face-arrays.library.plato<br>R  stdlib/meshes-face-arrays.types.plato -&gt; stdlib/geometry/meshes-face-arrays.types.plato<br>R  stdlib/meshes-faces.library.plato -&gt; stdlib/geometry/meshes-faces.library.plato<br>R  stdlib/meshes-geometry.library.plato -&gt; stdlib/geometry/meshes-geometry.library.plato<br>R  stdlib/meshes-indexed.library.plato -&gt; stdlib/geometry/meshes-indexed.library.plato<br>R  stdlib/meshes-lines-points.library.plato -&gt; stdlib/geometry/meshes-lines-points.library.plato<br>R  stdlib/meshes-lines-points.types.plato -&gt; stdlib/geometry/meshes-lines-points.types.plato<br>R  stdlib/meshes-polygon-building.library.plato -&gt; stdlib/geometry/meshes-polygon-building.library.plato<br>R  stdlib/meshes-polygon-corners.library.plato -&gt; stdlib/geometry/meshes-polygon-corners.library.plato<br>R  stdlib/meshes-polygon-incidence.library.plato -&gt; stdlib/geometry/meshes-polygon-incidence.library.plato<br>R  stdlib/meshes-polygon.library.plato -&gt; stdlib/geometry/meshes-polygon.library.plato<br>R  stdlib/meshes-sections.library.plato -&gt; stdlib/geometry/meshes-sections.library.plato<br>R  stdlib/meshes-sections.types.plato -&gt; stdlib/geometry/meshes-sections.types.plato<br>R  stdlib/meshes-topology.library.plato -&gt; stdlib/geometry/meshes-topology.library.plato<br>R  stdlib/meshes-volumetric.library.plato -&gt; stdlib/geometry/meshes-volumetric.library.plato<br>R  stdlib/meshes-volumetric.types.plato -&gt; stdlib/geometry/meshes-volumetric.types.plato<br>R  stdlib/meshes.concepts.plato -&gt; stdlib/geometry/meshes.concepts.plato<br>R  stdlib/meshes.types.plato -&gt; stdlib/geometry/meshes.types.plato<br>R  stdlib/noise-basis.types.plato -&gt; stdlib/geometry/noise-basis.types.plato<br>R  stdlib/noise-fractal.types.plato -&gt; stdlib/geometry/noise-fractal.types.plato<br>R  stdlib/noise-warped.types.plato -&gt; stdlib/geometry/noise-warped.types.plato<br>R  stdlib/noise.types.plato -&gt; stdlib/geometry/noise.types.plato<br>R  stdlib/planar-boxes.library.plato -&gt; stdlib/geometry/planar-boxes.library.plato<br>R  stdlib/planar-boxes.types.plato -&gt; stdlib/geometry/planar-boxes.types.plato<br>R  stdlib/planar-circles.library.plato -&gt; stdlib/geometry/planar-circles.library.plato<br>R  stdlib/planar-circles.types.plato -&gt; stdlib/geometry/planar-circles.types.plato<br>R  stdlib/planar-ellipses.library.plato -&gt; stdlib/geometry/planar-ellipses.library.plato<br>R  stdlib/planar-ellipses.types.plato -&gt; stdlib/geometry/planar-ellipses.types.plato<br>R  stdlib/planar-shapes.library.plato -&gt; stdlib/geometry/planar-shapes.library.plato<br>R  stdlib/planar-triangles.library.plato -&gt; stdlib/geometry/planar-triangles.library.plato<br>R  stdlib/planar-triangles.types.plato -&gt; stdlib/geometry/planar-triangles.types.plato<br>R  stdlib/pointclouds-voxels.concepts.plato -&gt; stdlib/geometry/pointclouds-voxels.concepts.plato<br>R  stdlib/pointclouds.library.plato -&gt; stdlib/geometry/pointclouds.library.plato<br>R  stdlib/pointclouds.types.plato -&gt; stdlib/geometry/pointclouds.types.plato<br>R  stdlib/polygons-kernels.library.plato -&gt; stdlib/geometry/polygons-kernels.library.plato<br>R  stdlib/polygons-polylines.library.plato -&gt; stdlib/geometry/polygons-polylines.library.plato<br>R  stdlib/polygons-polylines.types.plato -&gt; stdlib/geometry/polygons-polylines.types.plato<br>R  stdlib/polygons-spatial.library.plato -&gt; stdlib/geometry/polygons-spatial.library.plato<br>R  stdlib/polygons-spatial.types.plato -&gt; stdlib/geometry/polygons-spatial.types.plato<br>R  stdlib/polygons.library.plato -&gt; stdlib/geometry/polygons.library.plato<br>R  stdlib/polygons.types.plato -&gt; stdlib/geometry/polygons.types.plato<br>R  stdlib/polyhedra-catalog-catalans.library.plato -&gt; stdlib/geometry/polyhedra-catalog-catalans.library.plato<br>R  stdlib/polyhedra-catalog-expanded.library.plato -&gt; stdlib/geometry/polyhedra-catalog-expanded.library.plato<br>R  stdlib/polyhedra-catalog.library.plato -&gt; stdlib/geometry/polyhedra-catalog.library.plato<br>R  stdlib/polyhedra-conway-expansion.library.plato -&gt; stdlib/geometry/polyhedra-conway-expansion.library.plato<br>R  stdlib/polyhedra-conway.library.plato -&gt; stdlib/geometry/polyhedra-conway.library.plato<br>R  stdlib/polyhedra-duals.library.plato -&gt; stdlib/geometry/polyhedra-duals.library.plato<br>R  stdlib/polyhedra-seeds.library.plato -&gt; stdlib/geometry/polyhedra-seeds.library.plato<br>R  stdlib/sampling-curves.library.plato -&gt; stdlib/geometry/sampling-curves.library.plato<br>R  stdlib/sampling-curves.types.plato -&gt; stdlib/geometry/sampling-curves.types.plato<br>R  stdlib/sampling-fields.types.plato -&gt; stdlib/geometry/sampling-fields.types.plato<br>R  stdlib/sampling-grids.types.plato -&gt; stdlib/geometry/sampling-grids.types.plato<br>R  stdlib/sampling-patterns.types.plato -&gt; stdlib/geometry/sampling-patterns.types.plato<br>R  stdlib/sampling-resampling.types.plato -&gt; stdlib/geometry/sampling-resampling.types.plato<br>R  stdlib/solids-csg-boolean.library.plato -&gt; stdlib/geometry/solids-csg-boolean.library.plato<br>R  stdlib/solids-csg-clipping.library.plato -&gt; stdlib/geometry/solids-csg-clipping.library.plato<br>R  stdlib/solids-csg-interior.library.plato -&gt; stdlib/geometry/solids-csg-interior.library.plato<br>R  stdlib/solids-csg-soups.library.plato -&gt; stdlib/geometry/solids-csg-soups.library.plato<br>R  stdlib/solids-csg-soups.types.plato -&gt; stdlib/geometry/solids-csg-soups.types.plato<br>R  stdlib/solids-csg.types.plato -&gt; stdlib/geometry/solids-csg.types.plato<br>R  stdlib/solids-generated.types.plato -&gt; stdlib/geometry/solids-generated.types.plato<br>R  stdlib/solids-polyhedra.library.plato -&gt; stdlib/geometry/solids-polyhedra.library.plato<br>R  stdlib/solids-polyhedra.types.plato -&gt; stdlib/geometry/solids-polyhedra.types.plato<br>R  stdlib/solids.library.plato -&gt; stdlib/geometry/solids.library.plato<br>R  stdlib/spatial-boxes.library.plato -&gt; stdlib/geometry/spatial-boxes.library.plato<br>R  stdlib/spatial-boxes.types.plato -&gt; stdlib/geometry/spatial-boxes.types.plato<br>R  stdlib/spatial-capsules.library.plato -&gt; stdlib/geometry/spatial-capsules.library.plato<br>R  stdlib/spatial-cylinders.library.plato -&gt; stdlib/geometry/spatial-cylinders.library.plato<br>R  stdlib/spatial-cylinders.types.plato -&gt; stdlib/geometry/spatial-cylinders.types.plato<br>R  stdlib/spatial-grids.types.plato -&gt; stdlib/geometry/spatial-grids.types.plato<br>R  stdlib/spatial-implicits.types.plato -&gt; stdlib/geometry/spatial-implicits.types.plato<br>R  stdlib/spatial-kdtrees.types.plato -&gt; stdlib/geometry/spatial-kdtrees.types.plato<br>R  stdlib/spatial-patches.library.plato -&gt; stdlib/geometry/spatial-patches.library.plato<br>R  stdlib/spatial-patches.types.plato -&gt; stdlib/geometry/spatial-patches.types.plato<br>R  stdlib/spatial-primitives.library.plato -&gt; stdlib/geometry/spatial-primitives.library.plato<br>R  stdlib/spatial-queries-overlap.types.plato -&gt; stdlib/geometry/spatial-queries-overlap.types.plato<br>R  stdlib/spatial-queries-proximity.types.plato -&gt; stdlib/geometry/spatial-queries-proximity.types.plato<br>R  stdlib/spatial-queries-rays.types.plato -&gt; stdlib/geometry/spatial-queries-rays.types.plato<br>R  stdlib/spatial-queries.concepts.plato -&gt; stdlib/geometry/spatial-queries.concepts.plato<br>R  stdlib/spatial-queries.library.plato -&gt; stdlib/geometry/spatial-queries.library.plato<br>R  stdlib/spatial-simplices.library.plato -&gt; stdlib/geometry/spatial-simplices.library.plato<br>R  stdlib/spatial-simplices.types.plato -&gt; stdlib/geometry/spatial-simplices.types.plato<br>R  stdlib/spatial-spheres.library.plato -&gt; stdlib/geometry/spatial-spheres.library.plato<br>R  stdlib/spatial-spheres.types.plato -&gt; stdlib/geometry/spatial-spheres.types.plato<br>R  stdlib/spatial-structures.concepts.plato -&gt; stdlib/geometry/spatial-structures.concepts.plato<br>R  stdlib/spatial-tori.library.plato -&gt; stdlib/geometry/spatial-tori.library.plato<br>R  stdlib/spatial-tori.types.plato -&gt; stdlib/geometry/spatial-tori.types.plato<br>R  stdlib/spatial-trees.types.plato -&gt; stdlib/geometry/spatial-trees.types.plato<br>R  stdlib/splines-bezier.library.plato -&gt; stdlib/geometry/splines-bezier.library.plato<br>R  stdlib/splines-bezier.types.plato -&gt; stdlib/geometry/splines-bezier.types.plato<br>R  stdlib/splines-bspline.library.plato -&gt; stdlib/geometry/splines-bspline.library.plato<br>R  stdlib/splines-bspline.types.plato -&gt; stdlib/geometry/splines-bspline.types.plato<br>R  stdlib/splines-hermite.library.plato -&gt; stdlib/geometry/splines-hermite.library.plato<br>R  stdlib/splines-hermite.types.plato -&gt; stdlib/geometry/splines-hermite.types.plato<br>R  stdlib/splines-interpolating.library.plato -&gt; stdlib/geometry/splines-interpolating.library.plato<br>R  stdlib/splines-interpolating.types.plato -&gt; stdlib/geometry/splines-interpolating.types.plato<br>R  stdlib/surfaces-generated.types.plato -&gt; stdlib/geometry/surfaces-generated.types.plato<br>R  stdlib/surfaces-patches.types.plato -&gt; stdlib/geometry/surfaces-patches.types.plato<br>R  stdlib/surfaces-solids.concepts.plato -&gt; stdlib/geometry/surfaces-solids.concepts.plato<br>R  stdlib/surfaces-solids.library.plato -&gt; stdlib/geometry/surfaces-solids.library.plato<br>R  stdlib/surfaces-special.types.plato -&gt; stdlib/geometry/surfaces-special.types.plato<br>R  stdlib/surfaces.library.plato -&gt; stdlib/geometry/surfaces.library.plato<br>R  stdlib/topology-adjacency.library.plato -&gt; stdlib/geometry/topology-adjacency.library.plato<br>R  stdlib/topology-adjacency.types.plato -&gt; stdlib/geometry/topology-adjacency.types.plato<br>R  stdlib/topology-classification.types.plato -&gt; stdlib/geometry/topology-classification.types.plato<br>R  stdlib/topology-half-edges.library.plato -&gt; stdlib/geometry/topology-half-edges.library.plato<br>R  stdlib/topology-half-edges.types.plato -&gt; stdlib/geometry/topology-half-edges.types.plato<br>R  stdlib/topology-indices.types.plato -&gt; stdlib/geometry/topology-indices.types.plato<br>R  stdlib/topology.concepts.plato -&gt; stdlib/geometry/topology.concepts.plato<br>R  stdlib/voxels.types.plato -&gt; stdlib/geometry/voxels.types.plato<br>R  stdlib/cameras-optics.types.plato -&gt; stdlib/graphics/cameras-optics.types.plato<br>R  stdlib/cameras.concepts.plato -&gt; stdlib/graphics/cameras.concepts.plato<br>R  stdlib/cameras.library.plato -&gt; stdlib/graphics/cameras.library.plato<br>R  stdlib/cameras.types.plato -&gt; stdlib/graphics/cameras.types.plato<br>R  stdlib/color-spaces-models.types.plato -&gt; stdlib/graphics/color-spaces-models.types.plato<br>R  stdlib/color-spaces-palettes.types.plato -&gt; stdlib/graphics/color-spaces-palettes.types.plato<br>R  stdlib/color-spaces-video.types.plato -&gt; stdlib/graphics/color-spaces-video.types.plato<br>R  stdlib/color-spaces.library.plato -&gt; stdlib/graphics/color-spaces.library.plato<br>R  stdlib/color-spaces.types.plato -&gt; stdlib/graphics/color-spaces.types.plato<br>R  stdlib/easing.concepts.plato -&gt; stdlib/graphics/easing.concepts.plato<br>R  stdlib/easing.library.plato -&gt; stdlib/graphics/easing.library.plato<br>R  stdlib/easing.types.plato -&gt; stdlib/graphics/easing.types.plato<br>R  stdlib/image-processing-adjustments.types.plato -&gt; stdlib/graphics/image-processing-adjustments.types.plato<br>R  stdlib/image-processing-compositing.types.plato -&gt; stdlib/graphics/image-processing-compositing.types.plato<br>R  stdlib/image-processing-filters.types.plato -&gt; stdlib/graphics/image-processing-filters.types.plato<br>R  stdlib/image-processing-resampling.types.plato -&gt; stdlib/graphics/image-processing-resampling.types.plato<br>R  stdlib/images-containers.types.plato -&gt; stdlib/graphics/images-containers.types.plato<br>R  stdlib/images.concepts.plato -&gt; stdlib/graphics/images.concepts.plato<br>R  stdlib/images.library.plato -&gt; stdlib/graphics/images.library.plato<br>R  stdlib/images.types.plato -&gt; stdlib/graphics/images.types.plato<br>R  stdlib/keyframes-blending.types.plato -&gt; stdlib/graphics/keyframes-blending.types.plato<br>R  stdlib/keyframes-clips.types.plato -&gt; stdlib/graphics/keyframes-clips.types.plato<br>R  stdlib/keyframes-tracks.concepts.plato -&gt; stdlib/graphics/keyframes-tracks.concepts.plato<br>R  stdlib/keyframes-tracks.library.plato -&gt; stdlib/graphics/keyframes-tracks.library.plato<br>R  stdlib/keyframes-tracks.types.plato -&gt; stdlib/graphics/keyframes-tracks.types.plato<br>R  stdlib/lights-settings.types.plato -&gt; stdlib/graphics/lights-settings.types.plato<br>R  stdlib/lights.concepts.plato -&gt; stdlib/graphics/lights.concepts.plato<br>R  stdlib/lights.library.plato -&gt; stdlib/graphics/lights.library.plato<br>R  stdlib/lights.types.plato -&gt; stdlib/graphics/lights.types.plato<br>R  stdlib/materials-layers.types.plato -&gt; stdlib/graphics/materials-layers.types.plato<br>R  stdlib/materials.types.plato -&gt; stdlib/graphics/materials.types.plato<br>R  stdlib/motion-graphics-procedural.types.plato -&gt; stdlib/graphics/motion-graphics-procedural.types.plato<br>R  stdlib/motion-graphics-timing.types.plato -&gt; stdlib/graphics/motion-graphics-timing.types.plato<br>R  stdlib/motion-graphics.types.plato -&gt; stdlib/graphics/motion-graphics.types.plato<br>R  stdlib/paths.concepts.plato -&gt; stdlib/graphics/paths.concepts.plato<br>R  stdlib/paths.library.plato -&gt; stdlib/graphics/paths.library.plato<br>R  stdlib/paths.types.plato -&gt; stdlib/graphics/paths.types.plato<br>R  stdlib/render-post-processing.types.plato -&gt; stdlib/graphics/render-post-processing.types.plato<br>R  stdlib/render-settings.types.plato -&gt; stdlib/graphics/render-settings.types.plato<br>R  stdlib/render-vertex-layout.types.plato -&gt; stdlib/graphics/render-vertex-layout.types.plato<br>R  stdlib/scene2d.types.plato -&gt; stdlib/graphics/scene2d.types.plato<br>R  stdlib/scene3d-indices.types.plato -&gt; stdlib/graphics/scene3d-indices.types.plato<br>R  stdlib/scene3d-instancing.types.plato -&gt; stdlib/graphics/scene3d-instancing.types.plato<br>R  stdlib/scene3d.types.plato -&gt; stdlib/graphics/scene3d.types.plato<br>R  stdlib/skeletal-animation-constraints.types.plato -&gt; stdlib/graphics/skeletal-animation-constraints.types.plato<br>R  stdlib/skeletal-animation.types.plato -&gt; stdlib/graphics/skeletal-animation.types.plato<br>R  stdlib/text-fonts.types.plato -&gt; stdlib/graphics/text-fonts.types.plato<br>R  stdlib/text-glyphs.types.plato -&gt; stdlib/graphics/text-glyphs.types.plato<br>R  stdlib/text-layout.types.plato -&gt; stdlib/graphics/text-layout.types.plato<br>R  stdlib/texturing-sampling.types.plato -&gt; stdlib/graphics/texturing-sampling.types.plato<br>R  stdlib/texturing.concepts.plato -&gt; stdlib/graphics/texturing.concepts.plato<br>R  stdlib/texturing.library.plato -&gt; stdlib/graphics/texturing.library.plato<br>R  stdlib/texturing.types.plato -&gt; stdlib/graphics/texturing.types.plato<br>R  stdlib/vector-styling-paint.types.plato -&gt; stdlib/graphics/vector-styling-paint.types.plato<br>R  stdlib/vector-styling-stroke.types.plato -&gt; stdlib/graphics/vector-styling-stroke.types.plato<br>M  tools/check-stdlib-fast.ps1<br>M  tools/stage-stdlib.ps1<br>?? conformance/Ara3D.SDK.ConformanceTests/</code></div>
+    <div class="k">Dirty (excl. .claude/)</div><div><code>M  Plato.CSharpWriter/CSharpWriter.cs<br> M PlatoCompiler/Analysis/Linter.cs<br>?? PlatoCompiler/Types/WriterPrimitiveNames.cs<br>?? PlatoTests/LinterPrimitiveShadowingTests.cs<br>?? conformance/Ara3D.SDK.ConformanceTests/</code></div>
   </div>
   <h3>Diffstat (unstaged, excl. this report)</h3>
-  <pre>docs/status-report-snapshot.json | 74 +++++++++++++++-------------------------
- 1 file changed, 28 insertions(+), 46 deletions(-)</pre>
-  <div class="note">407 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
+  <pre>PlatoCompiler/Analysis/Linter.cs | 61 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)</pre>
+  <div class="note">5 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
 </section>
 
 <section>
   <h2>Git — studio parent</h2>
   <div class="kv">
     <div class="k">Status</div><div><code>## main...origin/main
-M  PlatoTests/CheckerTestSupport.cs
-M  PlatoTests/ForwardStdLibCheckerTests.cs
-MM docs/status-report-snapshot.json
-MM docs/status-report.html
-M  stdlib/README.md
-R  stdlib/algebra-metric.concepts.plato -&gt; stdlib/foundation/algebra-metric.concepts.plato
-R  stdlib/algebra-metric.library.plato -&gt; stdlib/foundation/algebra-metric.library.plato
-R  stdlib/algebra-numeric.concepts.plato -&gt; stdlib/foundation/algebra-numeric.concepts.plato
-R  stdlib/algebra-numeric.library.plato -&gt; stdlib/foundation/algebra-numeric.library.plato
-R  stdlib/algebra-operations.concepts.plato -&gt; stdlib/foundation/algebra-operations.concepts.plato
-R  stdlib/algebra-operations.library.plato -&gt; stdlib/foundation/algebra-operations.library.plato
-R  stdlib/angles.library.plato -&gt; stdlib/foundation/angles.library.plato
-R  stdlib/axes-2d.library.plato -&gt; stdlib/foundation/axes-2d.library.plato
-R  stdlib/axes-signed.library.plato -&gt; stdlib/foundation/axes-signed.library.plato
-R  stdlib/axes.library.plato -&gt; stdlib/foundation/axes.library.plato
-R  stdlib/axes.types.plato -&gt; stdlib/foundation/axes.types.plato
-R  stdlib/collections-containers.concepts.plato -&gt; stdlib/foundation/collections-containers.concepts.plato
-R  stdlib/collections-containers.library.plato -&gt; stdlib/foundation/collections-containers.library.plato
-R  stdlib/collections-grids.library.plato -&gt; stdlib/foundation/collections-grids.library.plato
-R  stdlib/collections-indexable.concepts.plato -&gt; stdlib/foundation/collections-indexable.concepts.plato
-R  stdlib/collections-indexable.library.plato -&gt; stdlib/foundation/collections-indexable.library.plato
-R  stdlib/collections-jagged.concepts.plato -&gt; stdlib/foundation/collections-jagged.concepts.plato
-R  stdlib/collections-jagged.library.plato -&gt; stdlib/foundation/collections-jagged.library.plato
-R  stdlib/collections-jagged.types.plato -&gt; stdlib/foundation/collections-jagged.types.plato
-R  stdlib/collections-sampling.library.plato -&gt; stdlib/foundation/collections-sampling.library.plato
-R  stdlib/color-named.library.plato -&gt; stdlib/foundation/color-named.library.plato
-R  stdlib/color.library.plato -&gt; stdlib/foundation/color.library.plato
-R  stdlib/color.types.plato -&gt; stdlib/foundation/color.types.plato
-R  stdlib/constants.library.plato -&gt; stdlib/foundation/constants.library.plato
-R  stdlib/core-comparison.concepts.plato -&gt; stdlib/foundation/core-comparison.concepts.plato
-R  stdlib/core-comparison.library.plato -&gt; stdlib/foundation/core-comparison.library.plato
-R  stdlib/core-logic.concepts.plato -&gt; stdlib/foundation/core-logic.concepts.plato
-R  stdlib/core-logic.library.plato -&gt; stdlib/foundation/core-logic.library.plato
-R  stdlib/functional-procedural.library.plato -&gt; stdlib/foundation/functional-procedural.library.plato
-R  stdlib/functional.concepts.plato -&gt; stdlib/foundation/functional.concepts.plato
-R  stdlib/graphs-algorithms.types.plato -&gt; stdlib/foundation/graphs-algorithms.types.plato
-R  stdlib/graphs.concepts.plato -&gt; stdlib/foundation/graphs.concepts.plato
-R  stdlib/graphs.library.plato -&gt; stdlib/foundation/graphs.library.plato
-R  stdlib/graphs.types.plato -&gt; stdlib/foundation/graphs.types.plato
-R  stdlib/intervals-bounds.concepts.plato -&gt; stdlib/foundation/intervals-bounds.concepts.plato
-R  stdlib/intervals-bounds.types.plato -&gt; stdlib/foundation/intervals-bounds.types.plato
-R  stdlib/intervals-sizes.library.plato -&gt; stdlib/foundation/intervals-sizes.library.plato
-R  stdlib/intervals-sizes.types.plato -&gt; stdlib/foundation/intervals-sizes.types.plato
-R  stdlib/intervals-transforms-bounds.library.plato -&gt; stdlib/foundation/intervals-transforms-bounds.library.plato
-R  stdlib/intervals-transforms-interval.library.plato -&gt; stdlib/foundation/intervals-transforms-interval.library.plato
-R  stdlib/intervals-transforms-transformable.library.plato -&gt; stdlib/foundation/intervals-transforms-transformable.library.plato
-R  stdlib/intervals.types.plato -&gt; stdlib/foundation/intervals.types.plato
-R  stdlib/intrinsics-arrays.library.plato -&gt; stdlib/foundation/intrinsics-arrays.library.plato
-R  stdlib/intrinsics-numeric-tuples.library.plato -&gt; stdlib/foundation/intrinsics-numeric-tuples.library.plato
-R  stdlib/intrinsics-scalars.library.plato -&gt; stdlib/foundation/intrinsics-scalars.library.plato
-R  stdlib/intrinsics-transforms.library.plato -&gt; stdlib/foundation/intrinsics-transforms.library.plato
-R  stdlib/intrinsics-vectors.library.plato -&gt; stdlib/foundation/intrinsics-vectors.library.plato
-R  stdlib/matrices.concepts.plato -&gt; stdlib/foundation/matrices.concepts.plato
-R  stdlib/matrices.types.plato -&gt; stdlib/foundation/matrices.types.plato
-R  stdlib/numbers-special-bessel.library.plato -&gt; stdlib/foundation/numbers-special-bessel.library.plato
-R  stdlib/numbers-special-beta.library.plato -&gt; stdlib/foundation/numbers-special-beta.library.plato
-R  stdlib/numbers-special-erf.library.plato -&gt; stdlib/foundation/numbers-special-erf.library.plato
-R  stdlib/numbers-special-gamma-incomplete.library.plato -&gt; stdlib/foundation/numbers-special-gamma-incomplete.library.plato
-R  stdlib/numbers-special-gamma.library.plato -&gt; stdlib/foundation/numbers-special-gamma.library.plato
-R  stdlib/numbers.library.plato -&gt; stdlib/foundation/numbers.library.plato
-R  stdlib/numbers.types.plato -&gt; stdlib/foundation/numbers.types.plato
-R  stdlib/numeric-structures-algebra.library.plato -&gt; stdlib/foundation/numeric-structures-algebra.library.plato
-R  stdlib/numeric-structures-components.library.plato -&gt; stdlib/foundation/numeric-structures-components.library.plato
-R  stdlib/numeric-structures-coordinate.library.plato -&gt; stdlib/foundation/numeric-structures-coordinate.library.plato
-R  stdlib/numeric-structures-matrix.library.plato -&gt; stdlib/foundation/numeric-structures-matrix.library.plato
-R  stdlib/numeric-structures-quantity.library.plato -&gt; stdlib/foundation/numeric-structures-quantity.library.plato
-R  stdlib/numeric-structures-vector.library.plato -&gt; stdlib/foundation/numeric-structures-vector.library.plato
-R  stdlib/points-curvilinear.types.plato -&gt; stdlib/foundation/points-curvilinear.types.plato
-R  stdlib/points-parametric.types.plato -&gt; stdlib/foundation/points-parametric.types.plato
-R  stdlib/points.concepts.plato -&gt; stdlib/foundation/points.concepts.plato
-R  stdlib/points.types.plato -&gt; stdlib/foundation/points.types.plato
-R  stdlib/polynomials-composite.types.plato -&gt; stdlib/foundation/polynomials-composite.types.plato
-R  stdlib/polynomials-series.types.plato -&gt; stdlib/foundation/polynomials-series.types.plato
-R  stdlib/polynomials.library.plato -&gt; stdlib/foundation/polynomials.library.plato
-R  stdlib/polynomials.types.plato -&gt; stdlib/foundation/polynomials.types.plato
-R  stdlib/primitives-arrays.types.plato -&gt; stdlib/foundation/primitives-arrays.types.plato
-R  stdlib/primitives-builders.library.plato -&gt; stdlib/foundation/primitives-builders.library.plato
-R  stdlib/primitives-builders.types.plato -&gt; stdlib/foundation/primitives-builders.types.plato
-R  stdlib/primitives-functions.types.plato -&gt; stdlib/foundation/primitives-functions.types.plato
-R  stdlib/primitives-tuples.types.plato -&gt; stdlib/foundation/primitives-tuples.types.plato
-R  stdlib/primitives.types.plato -&gt; stdlib/foundation/primitives.types.plato
-R  stdlib/quantities-dynamic.types.plato -&gt; stdlib/foundation/quantities-dynamic.types.plato
-R  stdlib/quantities-electromagnetic.types.plato -&gt; stdlib/foundation/quantities-electromagnetic.types.plato
-R  stdlib/quantities-geometric.types.plato -&gt; stdlib/foundation/quantities-geometric.types.plato
-R  stdlib/quantities-kinematic.types.plato -&gt; stdlib/foundation/quantities-kinematic.types.plato
-R  stdlib/quantities-material.types.plato -&gt; stdlib/foundation/quantities-material.types.plato
-R  stdlib/quantities-mechanical.types.plato -&gt; stdlib/foundation/quantities-mechanical.types.plato
-R  stdlib/quantities-photometric.types.plato -&gt; stdlib/foundation/quantities-photometric.types.plato
-R  stdlib/quantities-projections.library.plato -&gt; stdlib/foundation/quantities-projections.library.plato
-R  stdlib/quantities-thermal.types.plato -&gt; stdlib/foundation/quantities-thermal.types.plato
-R  stdlib/quantities.concepts.plato -&gt; stdlib/foundation/quantities.concepts.plato
-R  stdlib/quantities.library.plato -&gt; stdlib/foundation/quantities.library.plato
-R  stdlib/random-continuous-gamma.library.plato -&gt; stdlib/foundation/random-continuous-gamma.library.plato
-R  stdlib/random-continuous-gamma.types.plato -&gt; stdlib/foundation/random-continuous-gamma.types.plato
-R  stdlib/random-continuous-tails.library.plato -&gt; stdlib/foundation/random-continuous-tails.library.plato
-R  stdlib/random-continuous.library.plato -&gt; stdlib/foundation/random-continuous.library.plato
-R  stdlib/random-continuous.types.plato -&gt; stdlib/foundation/random-continuous.types.plato
-R  stdlib/random-discrete.library.plato -&gt; stdlib/foundation/random-discrete.library.plato
-R  stdlib/random-discrete.types.plato -&gt; stdlib/foundation/random-discrete.types.plato
-R  stdlib/random-distributions.library.plato -&gt; stdlib/foundation/random-distributions.library.plato
-R  stdlib/random-multivariate.types.plato -&gt; stdlib/foundation/random-multivariate.types.plato
-R  stdlib/random.concepts.plato -&gt; stdlib/foundation/random.concepts.plato
-R  stdlib/random.library.plato -&gt; stdlib/foundation/random.library.plato
-R  stdlib/random.types.plato -&gt; stdlib/foundation/random.types.plato
-R  stdlib/rotations.types.plato -&gt; stdlib/foundation/rotations.types.plato
-R  stdlib/statistics-correlation.library.plato -&gt; stdlib/foundation/statistics-correlation.library.plato
-R  stdlib/statistics-correlation.types.plato -&gt; stdlib/foundation/statistics-correlation.types.plato
-R  stdlib/statistics.library.plato -&gt; stdlib/foundation/statistics.library.plato
-R  stdlib/statistics.types.plato -&gt; stdlib/foundation/statistics.types.plato
-R  stdlib/time.library.plato -&gt; stdlib/foundation/time.library.plato
-R  stdlib/time.types.plato -&gt; stdlib/foundation/time.types.plato
-R  stdlib/transforms-affine.library.plato -&gt; stdlib/foundation/transforms-affine.library.plato
-R  stdlib/transforms-affine.types.plato -&gt; stdlib/foundation/transforms-affine.types.plato
-R  stdlib/transforms-frames.library.plato -&gt; stdlib/foundation/transforms-frames.library.plato
-R  stdlib/transforms-frames.types.plato -&gt; stdlib/foundation/transforms-frames.types.plato
-R  stdlib/transforms-identities.library.plato -&gt; stdlib/foundation/transforms-identities.library.plato
-R  stdlib/transforms-motor.library.plato -&gt; stdlib/foundation/transforms-motor.library.plato
-R  stdlib/transforms-motor.types.plato -&gt; stdlib/foundation/transforms-motor.types.plato
-R  stdlib/transforms-points.library.plato -&gt; stdlib/foundation/transforms-points.library.plato
-R  stdlib/transforms-pose.library.plato -&gt; stdlib/foundation/transforms-pose.library.plato
-R  stdlib/transforms-pose.types.plato -&gt; stdlib/foundation/transforms-pose.types.plato
-R  stdlib/transforms-rotations.library.plato -&gt; stdlib/foundation/transforms-rotations.library.plato
-R  stdlib/transforms-trs.library.plato -&gt; stdlib/foundation/transforms-trs.library.plato
-R  stdlib/transforms-trs.types.plato -&gt; stdlib/foundation/transforms-trs.types.plato
-R  stdlib/transforms.concepts.plato -&gt; stdlib/foundation/transforms.concepts.plato
-R  stdlib/vectors-geometric.types.plato -&gt; stdlib/foundation/vectors-geometric.types.plato
-R  stdlib/vectors-integer.library.plato -&gt; stdlib/foundation/vectors-integer.library.plato
-R  stdlib/vectors-integer.types.plato -&gt; stdlib/foundation/vectors-integer.types.plato
-R  stdlib/vectors-tuples.types.plato -&gt; stdlib/foundation/vectors-tuples.types.plato
-R  stdlib/vectors.concepts.plato -&gt; stdlib/foundation/vectors.concepts.plato
-R  stdlib/collision-contacts.types.plato -&gt; stdlib/future/collision-contacts.types.plato
-R  stdlib/collision.types.plato -&gt; stdlib/future/collision.types.plato
-R  stdlib/engineering-beams.types.plato -&gt; stdlib/future/engineering-beams.types.plato
-R  stdlib/engineering-machine-elements.types.plato -&gt; stdlib/future/engineering-machine-elements.types.plato
-R  stdlib/engineering-materials.types.plato -&gt; stdlib/future/engineering-materials.types.plato
-R  stdlib/engineering-sections.types.plato -&gt; stdlib/future/engineering-sections.types.plato
-R  stdlib/geo-spatial-rasters.types.plato -&gt; stdlib/future/geo-spatial-rasters.types.plato
-R  stdlib/geo-spatial-reference-systems.types.plato -&gt; stdlib/future/geo-spatial-reference-systems.types.plato
-R  stdlib/geo-spatial.concepts.plato -&gt; stdlib/future/geo-spatial.concepts.plato
-R  stdlib/geo-spatial.library.plato -&gt; stdlib/future/geo-spatial.library.plato
-R  stdlib/geo-spatial.types.plato -&gt; stdlib/future/geo-spatial.types.plato
-R  stdlib/higher-dimensions-fractals.types.plato -&gt; stdlib/future/higher-dimensions-fractals.types.plato
-R  stdlib/higher-dimensions.types.plato -&gt; stdlib/future/higher-dimensions.types.plato
-R  stdlib/joints-2d.types.plato -&gt; stdlib/future/joints-2d.types.plato
-R  stdlib/joints-3d.types.plato -&gt; stdlib/future/joints-3d.types.plato
-R  stdlib/joints-limits.types.plato -&gt; stdlib/future/joints-limits.types.plato
-R  stdlib/kinematics-trajectories.types.plato -&gt; stdlib/future/kinematics-trajectories.types.plato
-R  stdlib/kinematics.concepts.plato -&gt; stdlib/future/kinematics.concepts.plato
-R  stdlib/kinematics.library.plato -&gt; stdlib/future/kinematics.library.plato
-R  stdlib/kinematics.types.plato -&gt; stdlib/future/kinematics.types.plato
-R  stdlib/optimization-programs.types.plato -&gt; stdlib/future/optimization-programs.types.plato
-R  stdlib/optimization-solvers.types.plato -&gt; stdlib/future/optimization-solvers.types.plato
-R  stdlib/optimization.types.plato -&gt; stdlib/future/optimization.types.plato
-R  stdlib/particles-force-fields.types.plato -&gt; stdlib/future/particles-force-fields.types.plato
-R  stdlib/particles-simulation.types.plato -&gt; stdlib/future/particles-simulation.types.plato
-R  stdlib/particles-soft-bodies.types.plato -&gt; stdlib/future/particles-soft-bodies.types.plato
-R  stdlib/rigid-dynamics-forces.types.plato -&gt; stdlib/future/rigid-dynamics-forces.types.plato
-R  stdlib/rigid-dynamics.concepts.plato -&gt; stdlib/future/rigid-dynamics.concepts.plato
-R  stdlib/rigid-dynamics.library.plato -&gt; stdlib/future/rigid-dynamics.library.plato
-R  stdlib/rigid-dynamics.types.plato -&gt; stdlib/future/rigid-dynamics.types.plato
-R  stdlib/scientific-data-records.types.plato -&gt; stdlib/future/scientific-data-records.types.plato
-R  stdlib/scientific-data-series.types.plato -&gt; stdlib/future/scientific-data-series.types.plato
-R  stdlib/scientific-data.concepts.plato -&gt; stdlib/future/scientific-data.concepts.plato
-R  stdlib/scientific-data.library.plato -&gt; stdlib/future/scientific-data.library.plato
-R  stdlib/signals-filters.types.plato -&gt; stdlib/future/signals-filters.types.plato
-R  stdlib/signals-generators.types.plato -&gt; stdlib/future/signals-generators.types.plato
-R  stdlib/signals.types.plato -&gt; stdlib/future/signals.types.plato
-R  stdlib/uncertainty-estimation.types.plato -&gt; stdlib/future/uncertainty-estimation.types.plato
-R  stdlib/uncertainty.types.plato -&gt; stdlib/future/uncertainty.types.plato
-R  stdlib/brep-primitives.library.plato -&gt; stdlib/geometry/brep-primitives.library.plato
-R  stdlib/brep-tessellate.library.plato -&gt; stdlib/geometry/brep-tessellate.library.plato
-R  stdlib/brep.concepts.plato -&gt; stdlib/geometry/brep.concepts.plato
-R  stdlib/brep.library.plato -&gt; stdlib/geometry/brep.library.plato
-R  stdlib/brep.types.plato -&gt; stdlib/geometry/brep.types.plato
-R  stdlib/curves-2d-arcs.library.plato -&gt; stdlib/geometry/curves-2d-arcs.library.plato
-R  stdlib/curves-2d-arcs.types.plato -&gt; stdlib/geometry/curves-2d-arcs.types.plato
-R  stdlib/curves-2d-polar.library.plato -&gt; stdlib/geometry/curves-2d-polar.library.plato
-R  stdlib/curves-2d-polar.types.plato -&gt; stdlib/geometry/curves-2d-polar.types.plato
-R  stdlib/curves-2d-spirals.library.plato -&gt; stdlib/geometry/curves-2d-spirals.library.plato
-R  stdlib/curves-2d-spirals.types.plato -&gt; stdlib/geometry/curves-2d-spirals.types.plato
-R  stdlib/curves-3d.library.plato -&gt; stdlib/geometry/curves-3d.library.plato
-R  stdlib/curves-3d.types.plato -&gt; stdlib/geometry/curves-3d.types.plato
-R  stdlib/curves-angular.library.plato -&gt; stdlib/geometry/curves-angular.library.plato
-R  stdlib/curves-capabilities.concepts.plato -&gt; stdlib/geometry/curves-capabilities.concepts.plato
-R  stdlib/curves-capabilities.library.plato -&gt; stdlib/geometry/curves-capabilities.library.plato
-R  stdlib/curves-sampling.library.plato -&gt; stdlib/geometry/curves-sampling.library.plato
-R  stdlib/curves.concepts.plato -&gt; stdlib/geometry/curves.concepts.plato
-R  stdlib/curves.library.plato -&gt; stdlib/geometry/curves.library.plato
-R  stdlib/deformations.concepts.plato -&gt; stdlib/geometry/deformations.concepts.plato
-R  stdlib/deformations.library.plato -&gt; stdlib/geometry/deformations.library.plato
-R  stdlib/deformations.types.plato -&gt; stdlib/geometry/deformations.types.plato
-R  stdlib/differential-geometry-frames.types.plato -&gt; stdlib/geometry/differential-geometry-frames.types.plato
-R  stdlib/differential-geometry-geodesics.types.plato -&gt; stdlib/geometry/differential-geometry-geodesics.types.plato
-R  stdlib/differential-geometry-surfaces.types.plato -&gt; stdlib/geometry/differential-geometry-surfaces.types.plato
-R  stdlib/fields-constant.types.plato -&gt; stdlib/geometry/fields-constant.types.plato
-R  stdlib/fields-differentiable.concepts.plato -&gt; stdlib/geometry/fields-differentiable.concepts.plato
-R  stdlib/fields-function.types.plato -&gt; stdlib/geometry/fields-function.types.plato
-R  stdlib/fields-graphs.library.plato -&gt; stdlib/geometry/fields-graphs.library.plato
-R  stdlib/fields-graphs.types.plato -&gt; stdlib/geometry/fields-graphs.types.plato
-R  stdlib/fields-implicits-core.library.plato -&gt; stdlib/geometry/fields-implicits-core.library.plato
-R  stdlib/fields-implicits-differentiable.library.plato -&gt; stdlib/geometry/fields-implicits-differentiable.library.plato
-R  stdlib/fields-implicits-distance.library.plato -&gt; stdlib/geometry/fields-implicits-distance.library.plato
-R  stdlib/fields-implicits-function.library.plato -&gt; stdlib/geometry/fields-implicits-function.library.plato
-R  stdlib/fields-implicits-metaballs.library.plato -&gt; stdlib/geometry/fields-implicits-metaballs.library.plato
-R  stdlib/fields-implicits-nodes.library.plato -&gt; stdlib/geometry/fields-implicits-nodes.library.plato
-R  stdlib/fields-implicits-sampled.library.plato -&gt; stdlib/geometry/fields-implicits-sampled.library.plato
-R  stdlib/fields-implicits-shapes.library.plato -&gt; stdlib/geometry/fields-implicits-shapes.library.plato
-R  stdlib/fields-implicits-time-varying.library.plato -&gt; stdlib/geometry/fields-implicits-time-varying.library.plato
-R  stdlib/fields-time-varying.concepts.plato -&gt; stdlib/geometry/fields-time-varying.concepts.plato
-R  stdlib/fields.concepts.plato -&gt; stdlib/geometry/fields.concepts.plato
-R  stdlib/geometry-kernels.library.plato -&gt; stdlib/geometry/geometry-kernels.library.plato
-R  stdlib/geometry-measures.concepts.plato -&gt; stdlib/geometry/geometry-measures.concepts.plato
-R  stdlib/geometry-measures.library.plato -&gt; stdlib/geometry/geometry-measures.library.plato
-R  stdlib/geometry-pointsets.library.plato -&gt; stdlib/geometry/geometry-pointsets.library.plato
-R  stdlib/geometry-queries.concepts.plato -&gt; stdlib/geometry/geometry-queries.concepts.plato
-R  stdlib/geometry-queries.library.plato -&gt; stdlib/geometry/geometry-queries.library.plato
-R  stdlib/geometry.concepts.plato -&gt; stdlib/geometry/geometry.concepts.plato
-R  stdlib/geometry.library.plato -&gt; stdlib/geometry/geometry.library.plato
-R  stdlib/implicit-sdf-bounded.library.plato -&gt; stdlib/geometry/implicit-sdf-bounded.library.plato
-R  stdlib/implicit-sdf-bounded.types.plato -&gt; stdlib/geometry/implicit-sdf-bounded.types.plato
-R  stdlib/implicit-sdf-function.types.plato -&gt; stdlib/geometry/implicit-sdf-function.types.plato
-R  stdlib/implicit-sdf-metaballs.types.plato -&gt; stdlib/geometry/implicit-sdf-metaballs.types.plato
-R  stdlib/implicit-sdf-modifiers.library.plato -&gt; stdlib/geometry/implicit-sdf-modifiers.library.plato
-R  stdlib/implicit-sdf-modifiers.types.plato -&gt; stdlib/geometry/implicit-sdf-modifiers.types.plato
-R  stdlib/implicit-sdf-operators.library.plato -&gt; stdlib/geometry/implicit-sdf-operators.library.plato
-R  stdlib/implicit-sdf-primitives.library.plato -&gt; stdlib/geometry/implicit-sdf-primitives.library.plato
-R  stdlib/implicit-sdf-sampled.library.plato -&gt; stdlib/geometry/implicit-sdf-sampled.library.plato
-R  stdlib/implicit-sdf-sampled.types.plato -&gt; stdlib/geometry/implicit-sdf-sampled.types.plato
-R  stdlib/implicit-sdf-trees.library.plato -&gt; stdlib/geometry/implicit-sdf-trees.library.plato
-R  stdlib/implicit-sdf-trees.types.plato -&gt; stdlib/geometry/implicit-sdf-trees.types.plato
-R  stdlib/implicit-sdf.concepts.plato -&gt; stdlib/geometry/implicit-sdf.concepts.plato
-R  stdlib/intervals-transforms-deformable.library.plato -&gt; stdlib/geometry/intervals-transforms-deformable.library.plato
-A  stdlib/geometry/intrinsics-planes.library.plato
-R  stdlib/lines-planes.library.plato -&gt; stdlib/geometry/lines-planes.library.plato
-R  stdlib/lines-planes.types.plato -&gt; stdlib/geometry/lines-planes.types.plato
-R  stdlib/lines.library.plato -&gt; stdlib/geometry/lines.library.plato
-R  stdlib/lines.types.plato -&gt; stdlib/geometry/lines.types.plato
-R  stdlib/mesh-attributes.library.plato -&gt; stdlib/geometry/mesh-attributes.library.plato
-R  stdlib/mesh-attributes.types.plato -&gt; stdlib/geometry/mesh-attributes.types.plato
-R  stdlib/meshes-face-arrays.library.plato -&gt; stdlib/geometry/meshes-face-arrays.library.plato
-R  stdlib/meshes-face-arrays.types.plato -&gt; stdlib/geometry/meshes-face-arrays.types.plato
-R  stdlib/meshes-faces.library.plato -&gt; stdlib/geometry/meshes-faces.library.plato
-R  stdlib/meshes-geometry.library.plato -&gt; stdlib/geometry/meshes-geometry.library.plato
-R  stdlib/meshes-indexed.library.plato -&gt; stdlib/geometry/meshes-indexed.library.plato
-R  stdlib/meshes-lines-points.library.plato -&gt; stdlib/geometry/meshes-lines-points.library.plato
-R  stdlib/meshes-lines-points.types.plato -&gt; stdlib/geometry/meshes-lines-points.types.plato
-R  stdlib/meshes-polygon-building.library.plato -&gt; stdlib/geometry/meshes-polygon-building.library.plato
-R  stdlib/meshes-polygon-corners.library.plato -&gt; stdlib/geometry/meshes-polygon-corners.library.plato
-R  stdlib/meshes-polygon-incidence.library.plato -&gt; stdlib/geometry/meshes-polygon-incidence.library.plato
-R  stdlib/meshes-polygon.library.plato -&gt; stdlib/geometry/meshes-polygon.library.plato
-R  stdlib/meshes-sections.library.plato -&gt; stdlib/geometry/meshes-sections.library.plato
-R  stdlib/meshes-sections.types.plato -&gt; stdlib/geometry/meshes-sections.types.plato
-R  stdlib/meshes-topology.library.plato -&gt; stdlib/geometry/meshes-topology.library.plato
-R  stdlib/meshes-volumetric.library.plato -&gt; stdlib/geometry/meshes-volumetric.library.plato
-R  stdlib/meshes-volumetric.types.plato -&gt; stdlib/geometry/meshes-volumetric.types.plato
-R  stdlib/meshes.concepts.plato -&gt; stdlib/geometry/meshes.concepts.plato
-R  stdlib/meshes.types.plato -&gt; stdlib/geometry/meshes.types.plato
-R  stdlib/noise-basis.types.plato -&gt; stdlib/geometry/noise-basis.types.plato
-R  stdlib/noise-fractal.types.plato -&gt; stdlib/geometry/noise-fractal.types.plato
-R  stdlib/noise-warped.types.plato -&gt; stdlib/geometry/noise-warped.types.plato
-R  stdlib/noise.types.plato -&gt; stdlib/geometry/noise.types.plato
-R  stdlib/planar-boxes.library.plato -&gt; stdlib/geometry/planar-boxes.library.plato
-R  stdlib/planar-boxes.types.plato -&gt; stdlib/geometry/planar-boxes.types.plato
-R  stdlib/planar-circles.library.plato -&gt; stdlib/geometry/planar-circles.library.plato
-R  stdlib/planar-circles.types.plato -&gt; stdlib/geometry/planar-circles.types.plato
-R  stdlib/planar-ellipses.library.plato -&gt; stdlib/geometry/planar-ellipses.library.plato
-R  stdlib/planar-ellipses.types.plato -&gt; stdlib/geometry/planar-ellipses.types.plato
-R  stdlib/planar-shapes.library.plato -&gt; stdlib/geometry/planar-shapes.library.plato
-R  stdlib/planar-triangles.library.plato -&gt; stdlib/geometry/planar-triangles.library.plato
-R  stdlib/planar-triangles.types.plato -&gt; stdlib/geometry/planar-triangles.types.plato
-R  stdlib/pointclouds-voxels.concepts.plato -&gt; stdlib/geometry/pointclouds-voxels.concepts.plato
-R  stdlib/pointclouds.library.plato -&gt; stdlib/geometry/pointclouds.library.plato
-R  stdlib/pointclouds.types.plato -&gt; stdlib/geometry/pointclouds.types.plato
-R  stdlib/polygons-kernels.library.plato -&gt; stdlib/geometry/polygons-kernels.library.plato
-R  stdlib/polygons-polylines.library.plato -&gt; stdlib/geometry/polygons-polylines.library.plato
-R  stdlib/polygons-polylines.types.plato -&gt; stdlib/geometry/polygons-polylines.types.plato
-R  stdlib/polygons-spatial.library.plato -&gt; stdlib/geometry/polygons-spatial.library.plato
-R  stdlib/polygons-spatial.types.plato -&gt; stdlib/geometry/polygons-spatial.types.plato
-R  stdlib/polygons.library.plato -&gt; stdlib/geometry/polygons.library.plato
-R  stdlib/polygons.types.plato -&gt; stdlib/geometry/polygons.types.plato
-R  stdlib/polyhedra-catalog-catalans.library.plato -&gt; stdlib/geometry/polyhedra-catalog-catalans.library.plato
-R  stdlib/polyhedra-catalog-expanded.library.plato -&gt; stdlib/geometry/polyhedra-catalog-expanded.library.plato
-R  stdlib/polyhedra-catalog.library.plato -&gt; stdlib/geometry/polyhedra-catalog.library.plato
-R  stdlib/polyhedra-conway-expansion.library.plato -&gt; stdlib/geometry/polyhedra-conway-expansion.library.plato
-R  stdlib/polyhedra-conway.library.plato -&gt; stdlib/geometry/polyhedra-conway.library.plato
-R  stdlib/polyhedra-duals.library.plato -&gt; stdlib/geometry/polyhedra-duals.library.plato
-R  stdlib/polyhedra-seeds.library.plato -&gt; stdlib/geometry/polyhedra-seeds.library.plato
-R  stdlib/sampling-curves.library.plato -&gt; stdlib/geometry/sampling-curves.library.plato
-R  stdlib/sampling-curves.types.plato -&gt; stdlib/geometry/sampling-curves.types.plato
-R  stdlib/sampling-fields.types.plato -&gt; stdlib/geometry/sampling-fields.types.plato
-R  stdlib/sampling-grids.types.plato -&gt; stdlib/geometry/sampling-grids.types.plato
-R  stdlib/sampling-patterns.types.plato -&gt; stdlib/geometry/sampling-patterns.types.plato
-R  stdlib/sampling-resampling.types.plato -&gt; stdlib/geometry/sampling-resampling.types.plato
-R  stdlib/solids-csg-boolean.library.plato -&gt; stdlib/geometry/solids-csg-boolean.library.plato
-R  stdlib/solids-csg-clipping.library.plato -&gt; stdlib/geometry/solids-csg-clipping.library.plato
-R  stdlib/solids-csg-interior.library.plato -&gt; stdlib/geometry/solids-csg-interior.library.plato
-R  stdlib/solids-csg-soups.library.plato -&gt; stdlib/geometry/solids-csg-soups.library.plato
-R  stdlib/solids-csg-soups.types.plato -&gt; stdlib/geometry/solids-csg-soups.types.plato
-R  stdlib/solids-csg.types.plato -&gt; stdlib/geometry/solids-csg.types.plato
-R  stdlib/solids-generated.types.plato -&gt; stdlib/geometry/solids-generated.types.plato
-R  stdlib/solids-polyhedra.library.plato -&gt; stdlib/geometry/solids-polyhedra.library.plato
-R  stdlib/solids-polyhedra.types.plato -&gt; stdlib/geometry/solids-polyhedra.types.plato
-R  stdlib/solids.library.plato -&gt; stdlib/geometry/solids.library.plato
-R  stdlib/spatial-boxes.library.plato -&gt; stdlib/geometry/spatial-boxes.library.plato
-R  stdlib/spatial-boxes.types.plato -&gt; stdlib/geometry/spatial-boxes.types.plato
-R  stdlib/spatial-capsules.library.plato -&gt; stdlib/geometry/spatial-capsules.library.plato
-R  stdlib/spatial-cylinders.library.plato -&gt; stdlib/geometry/spatial-cylinders.library.plato
-R  stdlib/spatial-cylinders.types.plato -&gt; stdlib/geometry/spatial-cylinders.types.plato
-R  stdlib/spatial-grids.types.plato -&gt; stdlib/geometry/spatial-grids.types.plato
-R  stdlib/spatial-implicits.types.plato -&gt; stdlib/geometry/spatial-implicits.types.plato
-R  stdlib/spatial-kdtrees.types.plato -&gt; stdlib/geometry/spatial-kdtrees.types.plato
-R  stdlib/spatial-patches.library.plato -&gt; stdlib/geometry/spatial-patches.library.plato
-R  stdlib/spatial-patches.types.plato -&gt; stdlib/geometry/spatial-patches.types.plato
-R  stdlib/spatial-primitives.library.plato -&gt; stdlib/geometry/spatial-primitives.library.plato
-R  stdlib/spatial-queries-overlap.types.plato -&gt; stdlib/geometry/spatial-queries-overlap.types.plato
-R  stdlib/spatial-queries-proximity.types.plato -&gt; stdlib/geometry/spatial-queries-proximity.types.plato
-R  stdlib/spatial-queries-rays.types.plato -&gt; stdlib/geometry/spatial-queries-rays.types.plato
-R  stdlib/spatial-queries.concepts.plato -&gt; stdlib/geometry/spatial-queries.concepts.plato
-R  stdlib/spatial-queries.library.plato -&gt; stdlib/geometry/spatial-queries.library.plato
-R  stdlib/spatial-simplices.library.plato -&gt; stdlib/geometry/spatial-simplices.library.plato
-R  stdlib/spatial-simplices.types.plato -&gt; stdlib/geometry/spatial-simplices.types.plato
-R  stdlib/spatial-spheres.library.plato -&gt; stdlib/geometry/spatial-spheres.library.plato
-R  stdlib/spatial-spheres.types.plato -&gt; stdlib/geometry/spatial-spheres.types.plato
-R  stdlib/spatial-structures.concepts.plato -&gt; stdlib/geometry/spatial-structures.concepts.plato
-R  stdlib/spatial-tori.library.plato -&gt; stdlib/geometry/spatial-tori.library.plato
-R  stdlib/spatial-tori.types.plato -&gt; stdlib/geometry/spatial-tori.types.plato
-R  stdlib/spatial-trees.types.plato -&gt; stdlib/geometry/spatial-trees.types.plato
-R  stdlib/splines-bezier.library.plato -&gt; stdlib/geometry/splines-bezier.library.plato
-R  stdlib/splines-bezier.types.plato -&gt; stdlib/geometry/splines-bezier.types.plato
-R  stdlib/splines-bspline.library.plato -&gt; stdlib/geometry/splines-bspline.library.plato
-R  stdlib/splines-bspline.types.plato -&gt; stdlib/geometry/splines-bspline.types.plato
-R  stdlib/splines-hermite.library.plato -&gt; stdlib/geometry/splines-hermite.library.plato
-R  stdlib/splines-hermite.types.plato -&gt; stdlib/geometry/splines-hermite.types.plato
-R  stdlib/splines-interpolating.library.plato -&gt; stdlib/geometry/splines-interpolating.library.plato
-R  stdlib/splines-interpolating.types.plato -&gt; stdlib/geometry/splines-interpolating.types.plato
-R  stdlib/surfaces-generated.types.plato -&gt; stdlib/geometry/surfaces-generated.types.plato
-R  stdlib/surfaces-patches.types.plato -&gt; stdlib/geometry/surfaces-patches.types.plato
-R  stdlib/surfaces-solids.concepts.plato -&gt; stdlib/geometry/surfaces-solids.concepts.plato
-R  stdlib/surfaces-solids.library.plato -&gt; stdlib/geometry/surfaces-solids.library.plato
-R  stdlib/surfaces-special.types.plato -&gt; stdlib/geometry/surfaces-special.types.plato
-R  stdlib/surfaces.library.plato -&gt; stdlib/geometry/surfaces.library.plato
-R  stdlib/topology-adjacency.library.plato -&gt; stdlib/geometry/topology-adjacency.library.plato
-R  stdlib/topology-adjacency.types.plato -&gt; stdlib/geometry/topology-adjacency.types.plato
-R  stdlib/topology-classification.types.plato -&gt; stdlib/geometry/topology-classification.types.plato
-R  stdlib/topology-half-edges.library.plato -&gt; stdlib/geometry/topology-half-edges.library.plato
-R  stdlib/topology-half-edges.types.plato -&gt; stdlib/geometry/topology-half-edges.types.plato
-R  stdlib/topology-indices.types.plato -&gt; stdlib/geometry/topology-indices.types.plato
-R  stdlib/topology.concepts.plato -&gt; stdlib/geometry/topology.concepts.plato
-R  stdlib/voxels.types.plato -&gt; stdlib/geometry/voxels.types.plato
-R  stdlib/cameras-optics.types.plato -&gt; stdlib/graphics/cameras-optics.types.plato
-R  stdlib/cameras.concepts.plato -&gt; stdlib/graphics/cameras.concepts.plato
-R  stdlib/cameras.library.plato -&gt; stdlib/graphics/cameras.library.plato
-R  stdlib/cameras.types.plato -&gt; stdlib/graphics/cameras.types.plato
-R  stdlib/color-spaces-models.types.plato -&gt; stdlib/graphics/color-spaces-models.types.plato
-R  stdlib/color-spaces-palettes.types.plato -&gt; stdlib/graphics/color-spaces-palettes.types.plato
-R  stdlib/color-spaces-video.types.plato -&gt; stdlib/graphics/color-spaces-video.types.plato
-R  stdlib/color-spaces.library.plato -&gt; stdlib/graphics/color-spaces.library.plato
-R  stdlib/color-spaces.types.plato -&gt; stdlib/graphics/color-spaces.types.plato
-R  stdlib/easing.concepts.plato -&gt; stdlib/graphics/easing.concepts.plato
-R  stdlib/easing.library.plato -&gt; stdlib/graphics/easing.library.plato
-R  stdlib/easing.types.plato -&gt; stdlib/graphics/easing.types.plato
-R  stdlib/image-processing-adjustments.types.plato -&gt; stdlib/graphics/image-processing-adjustments.types.plato
-R  stdlib/image-processing-compositing.types.plato -&gt; stdlib/graphics/image-processing-compositing.types.plato
-R  stdlib/image-processing-filters.types.plato -&gt; stdlib/graphics/image-processing-filters.types.plato
-R  stdlib/image-processing-resampling.types.plato -&gt; stdlib/graphics/image-processing-resampling.types.plato
-R  stdlib/images-containers.types.plato -&gt; stdlib/graphics/images-containers.types.plato
-R  stdlib/images.concepts.plato -&gt; stdlib/graphics/images.concepts.plato
-R  stdlib/images.library.plato -&gt; stdlib/graphics/images.library.plato
-R  stdlib/images.types.plato -&gt; stdlib/graphics/images.types.plato
-R  stdlib/keyframes-blending.types.plato -&gt; stdlib/graphics/keyframes-blending.types.plato
-R  stdlib/keyframes-clips.types.plato -&gt; stdlib/graphics/keyframes-clips.types.plato
-R  stdlib/keyframes-tracks.concepts.plato -&gt; stdlib/graphics/keyframes-tracks.concepts.plato
-R  stdlib/keyframes-tracks.library.plato -&gt; stdlib/graphics/keyframes-tracks.library.plato
-R  stdlib/keyframes-tracks.types.plato -&gt; stdlib/graphics/keyframes-tracks.types.plato
-R  stdlib/lights-settings.types.plato -&gt; stdlib/graphics/lights-settings.types.plato
-R  stdlib/lights.concepts.plato -&gt; stdlib/graphics/lights.concepts.plato
-R  stdlib/lights.library.plato -&gt; stdlib/graphics/lights.library.plato
-R  stdlib/lights.types.plato -&gt; stdlib/graphics/lights.types.plato
-R  stdlib/materials-layers.types.plato -&gt; stdlib/graphics/materials-layers.types.plato
-R  stdlib/materials.types.plato -&gt; stdlib/graphics/materials.types.plato
-R  stdlib/motion-graphics-procedural.types.plato -&gt; stdlib/graphics/motion-graphics-procedural.types.plato
-R  stdlib/motion-graphics-timing.types.plato -&gt; stdlib/graphics/motion-graphics-timing.types.plato
-R  stdlib/motion-graphics.types.plato -&gt; stdlib/graphics/motion-graphics.types.plato
-R  stdlib/paths.concepts.plato -&gt; stdlib/graphics/paths.concepts.plato
-R  stdlib/paths.library.plato -&gt; stdlib/graphics/paths.library.plato
-R  stdlib/paths.types.plato -&gt; stdlib/graphics/paths.types.plato
-R  stdlib/render-post-processing.types.plato -&gt; stdlib/graphics/render-post-processing.types.plato
-R  stdlib/render-settings.types.plato -&gt; stdlib/graphics/render-settings.types.plato
-R  stdlib/render-vertex-layout.types.plato -&gt; stdlib/graphics/render-vertex-layout.types.plato
-R  stdlib/scene2d.types.plato -&gt; stdlib/graphics/scene2d.types.plato
-R  stdlib/scene3d-indices.types.plato -&gt; stdlib/graphics/scene3d-indices.types.plato
-R  stdlib/scene3d-instancing.types.plato -&gt; stdlib/graphics/scene3d-instancing.types.plato
-R  stdlib/scene3d.types.plato -&gt; stdlib/graphics/scene3d.types.plato
-R  stdlib/skeletal-animation-constraints.types.plato -&gt; stdlib/graphics/skeletal-animation-constraints.types.plato
-R  stdlib/skeletal-animation.types.plato -&gt; stdlib/graphics/skeletal-animation.types.plato
-R  stdlib/text-fonts.types.plato -&gt; stdlib/graphics/text-fonts.types.plato
-R  stdlib/text-glyphs.types.plato -&gt; stdlib/graphics/text-glyphs.types.plato
-R  stdlib/text-layout.types.plato -&gt; stdlib/graphics/text-layout.types.plato
-R  stdlib/texturing-sampling.types.plato -&gt; stdlib/graphics/texturing-sampling.types.plato
-R  stdlib/texturing.concepts.plato -&gt; stdlib/graphics/texturing.concepts.plato
-R  stdlib/texturing.library.plato -&gt; stdlib/graphics/texturing.library.plato
-R  stdlib/texturing.types.plato -&gt; stdlib/graphics/texturing.types.plato
-R  stdlib/vector-styling-paint.types.plato -&gt; stdlib/graphics/vector-styling-paint.types.plato
-R  stdlib/vector-styling-stroke.types.plato -&gt; stdlib/graphics/vector-styling-stroke.types.plato
-M  tools/check-stdlib-fast.ps1
-M  tools/stage-stdlib.ps1
+M  Plato.CSharpWriter/CSharpWriter.cs
+ M PlatoCompiler/Analysis/Linter.cs
 ?? .claude/
+?? PlatoCompiler/Types/WriterPrimitiveNames.cs
+?? PlatoTests/LinterPrimitiveShadowingTests.cs
 ?? conformance/Ara3D.SDK.ConformanceTests/</code></div>
     <div class="k">Committed Plato pointer</div><div><code>?</code> <span class="badge blocked">DRIFT</span></div>
-    <div class="k">Plato HEAD</div><div><code>96f6f64bfae789c2f2980d2f531cff3995dd15f7</code></div>
-    <div class="k">Plato-related dirty</div><div><code>M  PlatoTests/CheckerTestSupport.cs<br>M  PlatoTests/ForwardStdLibCheckerTests.cs<br>R  stdlib/algebra-metric.concepts.plato -&gt; stdlib/foundation/algebra-metric.concepts.plato<br>R  stdlib/algebra-metric.library.plato -&gt; stdlib/foundation/algebra-metric.library.plato<br>R  stdlib/algebra-numeric.concepts.plato -&gt; stdlib/foundation/algebra-numeric.concepts.plato<br>R  stdlib/algebra-numeric.library.plato -&gt; stdlib/foundation/algebra-numeric.library.plato<br>R  stdlib/algebra-operations.concepts.plato -&gt; stdlib/foundation/algebra-operations.concepts.plato<br>R  stdlib/algebra-operations.library.plato -&gt; stdlib/foundation/algebra-operations.library.plato<br>R  stdlib/angles.library.plato -&gt; stdlib/foundation/angles.library.plato<br>R  stdlib/axes-2d.library.plato -&gt; stdlib/foundation/axes-2d.library.plato<br>R  stdlib/axes-signed.library.plato -&gt; stdlib/foundation/axes-signed.library.plato<br>R  stdlib/axes.library.plato -&gt; stdlib/foundation/axes.library.plato<br>R  stdlib/axes.types.plato -&gt; stdlib/foundation/axes.types.plato<br>R  stdlib/collections-containers.concepts.plato -&gt; stdlib/foundation/collections-containers.concepts.plato<br>R  stdlib/collections-containers.library.plato -&gt; stdlib/foundation/collections-containers.library.plato<br>R  stdlib/collections-grids.library.plato -&gt; stdlib/foundation/collections-grids.library.plato<br>R  stdlib/collections-indexable.concepts.plato -&gt; stdlib/foundation/collections-indexable.concepts.plato<br>R  stdlib/collections-indexable.library.plato -&gt; stdlib/foundation/collections-indexable.library.plato<br>R  stdlib/collections-jagged.concepts.plato -&gt; stdlib/foundation/collections-jagged.concepts.plato<br>R  stdlib/collections-jagged.library.plato -&gt; stdlib/foundation/collections-jagged.library.plato<br>R  stdlib/collections-jagged.types.plato -&gt; stdlib/foundation/collections-jagged.types.plato<br>R  stdlib/collections-sampling.library.plato -&gt; stdlib/foundation/collections-sampling.library.plato<br>R  stdlib/color-named.library.plato -&gt; stdlib/foundation/color-named.library.plato<br>R  stdlib/color.library.plato -&gt; stdlib/foundation/color.library.plato<br>R  stdlib/color.types.plato -&gt; stdlib/foundation/color.types.plato<br>R  stdlib/constants.library.plato -&gt; stdlib/foundation/constants.library.plato<br>R  stdlib/core-comparison.concepts.plato -&gt; stdlib/foundation/core-comparison.concepts.plato<br>R  stdlib/core-comparison.library.plato -&gt; stdlib/foundation/core-comparison.library.plato<br>R  stdlib/core-logic.concepts.plato -&gt; stdlib/foundation/core-logic.concepts.plato<br>R  stdlib/core-logic.library.plato -&gt; stdlib/foundation/core-logic.library.plato<br>R  stdlib/functional-procedural.library.plato -&gt; stdlib/foundation/functional-procedural.library.plato<br>R  stdlib/functional.concepts.plato -&gt; stdlib/foundation/functional.concepts.plato<br>R  stdlib/graphs-algorithms.types.plato -&gt; stdlib/foundation/graphs-algorithms.types.plato<br>R  stdlib/graphs.concepts.plato -&gt; stdlib/foundation/graphs.concepts.plato<br>R  stdlib/graphs.library.plato -&gt; stdlib/foundation/graphs.library.plato<br>R  stdlib/graphs.types.plato -&gt; stdlib/foundation/graphs.types.plato<br>R  stdlib/intervals-bounds.concepts.plato -&gt; stdlib/foundation/intervals-bounds.concepts.plato<br>R  stdlib/intervals-bounds.types.plato -&gt; stdlib/foundation/intervals-bounds.types.plato<br>R  stdlib/intervals-sizes.library.plato -&gt; stdlib/foundation/intervals-sizes.library.plato<br>R  stdlib/intervals-sizes.types.plato -&gt; stdlib/foundation/intervals-sizes.types.plato<br>R  stdlib/intervals-transforms-bounds.library.plato -&gt; stdlib/foundation/intervals-transforms-bounds.library.plato<br>R  stdlib/intervals-transforms-interval.library.plato -&gt; stdlib/foundation/intervals-transforms-interval.library.plato<br>R  stdlib/intervals-transforms-transformable.library.plato -&gt; stdlib/foundation/intervals-transforms-transformable.library.plato<br>R  stdlib/intervals.types.plato -&gt; stdlib/foundation/intervals.types.plato<br>R  stdlib/intrinsics-arrays.library.plato -&gt; stdlib/foundation/intrinsics-arrays.library.plato<br>R  stdlib/intrinsics-numeric-tuples.library.plato -&gt; stdlib/foundation/intrinsics-numeric-tuples.library.plato<br>R  stdlib/intrinsics-scalars.library.plato -&gt; stdlib/foundation/intrinsics-scalars.library.plato<br>R  stdlib/intrinsics-transforms.library.plato -&gt; stdlib/foundation/intrinsics-transforms.library.plato<br>R  stdlib/intrinsics-vectors.library.plato -&gt; stdlib/foundation/intrinsics-vectors.library.plato<br>R  stdlib/matrices.concepts.plato -&gt; stdlib/foundation/matrices.concepts.plato<br>R  stdlib/matrices.types.plato -&gt; stdlib/foundation/matrices.types.plato<br>R  stdlib/numbers-special-bessel.library.plato -&gt; stdlib/foundation/numbers-special-bessel.library.plato<br>R  stdlib/numbers-special-beta.library.plato -&gt; stdlib/foundation/numbers-special-beta.library.plato<br>R  stdlib/numbers-special-erf.library.plato -&gt; stdlib/foundation/numbers-special-erf.library.plato<br>R  stdlib/numbers-special-gamma-incomplete.library.plato -&gt; stdlib/foundation/numbers-special-gamma-incomplete.library.plato<br>R  stdlib/numbers-special-gamma.library.plato -&gt; stdlib/foundation/numbers-special-gamma.library.plato<br>R  stdlib/numbers.library.plato -&gt; stdlib/foundation/numbers.library.plato<br>R  stdlib/numbers.types.plato -&gt; stdlib/foundation/numbers.types.plato<br>R  stdlib/numeric-structures-algebra.library.plato -&gt; stdlib/foundation/numeric-structures-algebra.library.plato<br>R  stdlib/numeric-structures-components.library.plato -&gt; stdlib/foundation/numeric-structures-components.library.plato<br>R  stdlib/numeric-structures-coordinate.library.plato -&gt; stdlib/foundation/numeric-structures-coordinate.library.plato<br>R  stdlib/numeric-structures-matrix.library.plato -&gt; stdlib/foundation/numeric-structures-matrix.library.plato<br>R  stdlib/numeric-structures-quantity.library.plato -&gt; stdlib/foundation/numeric-structures-quantity.library.plato<br>R  stdlib/numeric-structures-vector.library.plato -&gt; stdlib/foundation/numeric-structures-vector.library.plato<br>R  stdlib/points-curvilinear.types.plato -&gt; stdlib/foundation/points-curvilinear.types.plato<br>R  stdlib/points-parametric.types.plato -&gt; stdlib/foundation/points-parametric.types.plato<br>R  stdlib/points.concepts.plato -&gt; stdlib/foundation/points.concepts.plato<br>R  stdlib/points.types.plato -&gt; stdlib/foundation/points.types.plato<br>R  stdlib/polynomials-composite.types.plato -&gt; stdlib/foundation/polynomials-composite.types.plato<br>R  stdlib/polynomials-series.types.plato -&gt; stdlib/foundation/polynomials-series.types.plato<br>R  stdlib/polynomials.library.plato -&gt; stdlib/foundation/polynomials.library.plato<br>R  stdlib/polynomials.types.plato -&gt; stdlib/foundation/polynomials.types.plato<br>R  stdlib/primitives-arrays.types.plato -&gt; stdlib/foundation/primitives-arrays.types.plato<br>R  stdlib/primitives-builders.library.plato -&gt; stdlib/foundation/primitives-builders.library.plato<br>R  stdlib/primitives-builders.types.plato -&gt; stdlib/foundation/primitives-builders.types.plato<br>R  stdlib/primitives-functions.types.plato -&gt; stdlib/foundation/primitives-functions.types.plato<br>R  stdlib/primitives-tuples.types.plato -&gt; stdlib/foundation/primitives-tuples.types.plato<br>R  stdlib/primitives.types.plato -&gt; stdlib/foundation/primitives.types.plato<br>R  stdlib/quantities-dynamic.types.plato -&gt; stdlib/foundation/quantities-dynamic.types.plato<br>R  stdlib/quantities-electromagnetic.types.plato -&gt; stdlib/foundation/quantities-electromagnetic.types.plato<br>R  stdlib/quantities-geometric.types.plato -&gt; stdlib/foundation/quantities-geometric.types.plato<br>R  stdlib/quantities-kinematic.types.plato -&gt; stdlib/foundation/quantities-kinematic.types.plato<br>R  stdlib/quantities-material.types.plato -&gt; stdlib/foundation/quantities-material.types.plato<br>R  stdlib/quantities-mechanical.types.plato -&gt; stdlib/foundation/quantities-mechanical.types.plato<br>R  stdlib/quantities-photometric.types.plato -&gt; stdlib/foundation/quantities-photometric.types.plato<br>R  stdlib/quantities-projections.library.plato -&gt; stdlib/foundation/quantities-projections.library.plato<br>R  stdlib/quantities-thermal.types.plato -&gt; stdlib/foundation/quantities-thermal.types.plato<br>R  stdlib/quantities.concepts.plato -&gt; stdlib/foundation/quantities.concepts.plato<br>R  stdlib/quantities.library.plato -&gt; stdlib/foundation/quantities.library.plato<br>R  stdlib/random-continuous-gamma.library.plato -&gt; stdlib/foundation/random-continuous-gamma.library.plato<br>R  stdlib/random-continuous-gamma.types.plato -&gt; stdlib/foundation/random-continuous-gamma.types.plato<br>R  stdlib/random-continuous-tails.library.plato -&gt; stdlib/foundation/random-continuous-tails.library.plato<br>R  stdlib/random-continuous.library.plato -&gt; stdlib/foundation/random-continuous.library.plato<br>R  stdlib/random-continuous.types.plato -&gt; stdlib/foundation/random-continuous.types.plato<br>R  stdlib/random-discrete.library.plato -&gt; stdlib/foundation/random-discrete.library.plato<br>R  stdlib/random-discrete.types.plato -&gt; stdlib/foundation/random-discrete.types.plato<br>R  stdlib/random-distributions.library.plato -&gt; stdlib/foundation/random-distributions.library.plato<br>R  stdlib/random-multivariate.types.plato -&gt; stdlib/foundation/random-multivariate.types.plato<br>R  stdlib/random.concepts.plato -&gt; stdlib/foundation/random.concepts.plato<br>R  stdlib/random.library.plato -&gt; stdlib/foundation/random.library.plato<br>R  stdlib/random.types.plato -&gt; stdlib/foundation/random.types.plato<br>R  stdlib/rotations.types.plato -&gt; stdlib/foundation/rotations.types.plato<br>R  stdlib/statistics-correlation.library.plato -&gt; stdlib/foundation/statistics-correlation.library.plato<br>R  stdlib/statistics-correlation.types.plato -&gt; stdlib/foundation/statistics-correlation.types.plato<br>R  stdlib/statistics.library.plato -&gt; stdlib/foundation/statistics.library.plato<br>R  stdlib/statistics.types.plato -&gt; stdlib/foundation/statistics.types.plato<br>R  stdlib/time.library.plato -&gt; stdlib/foundation/time.library.plato<br>R  stdlib/time.types.plato -&gt; stdlib/foundation/time.types.plato<br>R  stdlib/transforms-affine.library.plato -&gt; stdlib/foundation/transforms-affine.library.plato<br>R  stdlib/transforms-affine.types.plato -&gt; stdlib/foundation/transforms-affine.types.plato<br>R  stdlib/transforms-frames.library.plato -&gt; stdlib/foundation/transforms-frames.library.plato<br>R  stdlib/transforms-frames.types.plato -&gt; stdlib/foundation/transforms-frames.types.plato<br>R  stdlib/transforms-identities.library.plato -&gt; stdlib/foundation/transforms-identities.library.plato<br>R  stdlib/transforms-motor.library.plato -&gt; stdlib/foundation/transforms-motor.library.plato<br>R  stdlib/transforms-motor.types.plato -&gt; stdlib/foundation/transforms-motor.types.plato<br>R  stdlib/transforms-points.library.plato -&gt; stdlib/foundation/transforms-points.library.plato<br>R  stdlib/transforms-pose.library.plato -&gt; stdlib/foundation/transforms-pose.library.plato<br>R  stdlib/transforms-pose.types.plato -&gt; stdlib/foundation/transforms-pose.types.plato<br>R  stdlib/transforms-rotations.library.plato -&gt; stdlib/foundation/transforms-rotations.library.plato<br>R  stdlib/transforms-trs.library.plato -&gt; stdlib/foundation/transforms-trs.library.plato<br>R  stdlib/transforms-trs.types.plato -&gt; stdlib/foundation/transforms-trs.types.plato<br>R  stdlib/transforms.concepts.plato -&gt; stdlib/foundation/transforms.concepts.plato<br>R  stdlib/vectors-geometric.types.plato -&gt; stdlib/foundation/vectors-geometric.types.plato<br>R  stdlib/vectors-integer.library.plato -&gt; stdlib/foundation/vectors-integer.library.plato<br>R  stdlib/vectors-integer.types.plato -&gt; stdlib/foundation/vectors-integer.types.plato<br>R  stdlib/vectors-tuples.types.plato -&gt; stdlib/foundation/vectors-tuples.types.plato<br>R  stdlib/vectors.concepts.plato -&gt; stdlib/foundation/vectors.concepts.plato<br>R  stdlib/collision-contacts.types.plato -&gt; stdlib/future/collision-contacts.types.plato<br>R  stdlib/collision.types.plato -&gt; stdlib/future/collision.types.plato<br>R  stdlib/engineering-beams.types.plato -&gt; stdlib/future/engineering-beams.types.plato<br>R  stdlib/engineering-machine-elements.types.plato -&gt; stdlib/future/engineering-machine-elements.types.plato<br>R  stdlib/engineering-materials.types.plato -&gt; stdlib/future/engineering-materials.types.plato<br>R  stdlib/engineering-sections.types.plato -&gt; stdlib/future/engineering-sections.types.plato<br>R  stdlib/geo-spatial-rasters.types.plato -&gt; stdlib/future/geo-spatial-rasters.types.plato<br>R  stdlib/geo-spatial-reference-systems.types.plato -&gt; stdlib/future/geo-spatial-reference-systems.types.plato<br>R  stdlib/geo-spatial.concepts.plato -&gt; stdlib/future/geo-spatial.concepts.plato<br>R  stdlib/geo-spatial.library.plato -&gt; stdlib/future/geo-spatial.library.plato<br>R  stdlib/geo-spatial.types.plato -&gt; stdlib/future/geo-spatial.types.plato<br>R  stdlib/higher-dimensions-fractals.types.plato -&gt; stdlib/future/higher-dimensions-fractals.types.plato<br>R  stdlib/higher-dimensions.types.plato -&gt; stdlib/future/higher-dimensions.types.plato<br>R  stdlib/joints-2d.types.plato -&gt; stdlib/future/joints-2d.types.plato<br>R  stdlib/joints-3d.types.plato -&gt; stdlib/future/joints-3d.types.plato<br>R  stdlib/joints-limits.types.plato -&gt; stdlib/future/joints-limits.types.plato<br>R  stdlib/kinematics-trajectories.types.plato -&gt; stdlib/future/kinematics-trajectories.types.plato<br>R  stdlib/kinematics.concepts.plato -&gt; stdlib/future/kinematics.concepts.plato<br>R  stdlib/kinematics.library.plato -&gt; stdlib/future/kinematics.library.plato<br>R  stdlib/kinematics.types.plato -&gt; stdlib/future/kinematics.types.plato<br>R  stdlib/optimization-programs.types.plato -&gt; stdlib/future/optimization-programs.types.plato<br>R  stdlib/optimization-solvers.types.plato -&gt; stdlib/future/optimization-solvers.types.plato<br>R  stdlib/optimization.types.plato -&gt; stdlib/future/optimization.types.plato<br>R  stdlib/particles-force-fields.types.plato -&gt; stdlib/future/particles-force-fields.types.plato<br>R  stdlib/particles-simulation.types.plato -&gt; stdlib/future/particles-simulation.types.plato<br>R  stdlib/particles-soft-bodies.types.plato -&gt; stdlib/future/particles-soft-bodies.types.plato<br>R  stdlib/rigid-dynamics-forces.types.plato -&gt; stdlib/future/rigid-dynamics-forces.types.plato<br>R  stdlib/rigid-dynamics.concepts.plato -&gt; stdlib/future/rigid-dynamics.concepts.plato<br>R  stdlib/rigid-dynamics.library.plato -&gt; stdlib/future/rigid-dynamics.library.plato<br>R  stdlib/rigid-dynamics.types.plato -&gt; stdlib/future/rigid-dynamics.types.plato<br>R  stdlib/scientific-data-records.types.plato -&gt; stdlib/future/scientific-data-records.types.plato<br>R  stdlib/scientific-data-series.types.plato -&gt; stdlib/future/scientific-data-series.types.plato<br>R  stdlib/scientific-data.concepts.plato -&gt; stdlib/future/scientific-data.concepts.plato<br>R  stdlib/scientific-data.library.plato -&gt; stdlib/future/scientific-data.library.plato<br>R  stdlib/signals-filters.types.plato -&gt; stdlib/future/signals-filters.types.plato<br>R  stdlib/signals-generators.types.plato -&gt; stdlib/future/signals-generators.types.plato<br>R  stdlib/signals.types.plato -&gt; stdlib/future/signals.types.plato<br>R  stdlib/uncertainty-estimation.types.plato -&gt; stdlib/future/uncertainty-estimation.types.plato<br>R  stdlib/uncertainty.types.plato -&gt; stdlib/future/uncertainty.types.plato<br>R  stdlib/brep-primitives.library.plato -&gt; stdlib/geometry/brep-primitives.library.plato<br>R  stdlib/brep-tessellate.library.plato -&gt; stdlib/geometry/brep-tessellate.library.plato<br>R  stdlib/brep.concepts.plato -&gt; stdlib/geometry/brep.concepts.plato<br>R  stdlib/brep.library.plato -&gt; stdlib/geometry/brep.library.plato<br>R  stdlib/brep.types.plato -&gt; stdlib/geometry/brep.types.plato<br>R  stdlib/curves-2d-arcs.library.plato -&gt; stdlib/geometry/curves-2d-arcs.library.plato<br>R  stdlib/curves-2d-arcs.types.plato -&gt; stdlib/geometry/curves-2d-arcs.types.plato<br>R  stdlib/curves-2d-polar.library.plato -&gt; stdlib/geometry/curves-2d-polar.library.plato<br>R  stdlib/curves-2d-polar.types.plato -&gt; stdlib/geometry/curves-2d-polar.types.plato<br>R  stdlib/curves-2d-spirals.library.plato -&gt; stdlib/geometry/curves-2d-spirals.library.plato<br>R  stdlib/curves-2d-spirals.types.plato -&gt; stdlib/geometry/curves-2d-spirals.types.plato<br>R  stdlib/curves-3d.library.plato -&gt; stdlib/geometry/curves-3d.library.plato<br>R  stdlib/curves-3d.types.plato -&gt; stdlib/geometry/curves-3d.types.plato<br>R  stdlib/curves-angular.library.plato -&gt; stdlib/geometry/curves-angular.library.plato<br>R  stdlib/curves-capabilities.concepts.plato -&gt; stdlib/geometry/curves-capabilities.concepts.plato<br>R  stdlib/curves-capabilities.library.plato -&gt; stdlib/geometry/curves-capabilities.library.plato<br>R  stdlib/curves-sampling.library.plato -&gt; stdlib/geometry/curves-sampling.library.plato<br>R  stdlib/curves.concepts.plato -&gt; stdlib/geometry/curves.concepts.plato<br>R  stdlib/curves.library.plato -&gt; stdlib/geometry/curves.library.plato<br>R  stdlib/deformations.concepts.plato -&gt; stdlib/geometry/deformations.concepts.plato<br>R  stdlib/deformations.library.plato -&gt; stdlib/geometry/deformations.library.plato<br>R  stdlib/deformations.types.plato -&gt; stdlib/geometry/deformations.types.plato<br>R  stdlib/differential-geometry-frames.types.plato -&gt; stdlib/geometry/differential-geometry-frames.types.plato<br>R  stdlib/differential-geometry-geodesics.types.plato -&gt; stdlib/geometry/differential-geometry-geodesics.types.plato<br>R  stdlib/differential-geometry-surfaces.types.plato -&gt; stdlib/geometry/differential-geometry-surfaces.types.plato<br>R  stdlib/fields-constant.types.plato -&gt; stdlib/geometry/fields-constant.types.plato<br>R  stdlib/fields-differentiable.concepts.plato -&gt; stdlib/geometry/fields-differentiable.concepts.plato<br>R  stdlib/fields-function.types.plato -&gt; stdlib/geometry/fields-function.types.plato<br>R  stdlib/fields-graphs.library.plato -&gt; stdlib/geometry/fields-graphs.library.plato<br>R  stdlib/fields-graphs.types.plato -&gt; stdlib/geometry/fields-graphs.types.plato<br>R  stdlib/fields-implicits-core.library.plato -&gt; stdlib/geometry/fields-implicits-core.library.plato<br>R  stdlib/fields-implicits-differentiable.library.plato -&gt; stdlib/geometry/fields-implicits-differentiable.library.plato<br>R  stdlib/fields-implicits-distance.library.plato -&gt; stdlib/geometry/fields-implicits-distance.library.plato<br>R  stdlib/fields-implicits-function.library.plato -&gt; stdlib/geometry/fields-implicits-function.library.plato<br>R  stdlib/fields-implicits-metaballs.library.plato -&gt; stdlib/geometry/fields-implicits-metaballs.library.plato<br>R  stdlib/fields-implicits-nodes.library.plato -&gt; stdlib/geometry/fields-implicits-nodes.library.plato<br>R  stdlib/fields-implicits-sampled.library.plato -&gt; stdlib/geometry/fields-implicits-sampled.library.plato<br>R  stdlib/fields-implicits-shapes.library.plato -&gt; stdlib/geometry/fields-implicits-shapes.library.plato<br>R  stdlib/fields-implicits-time-varying.library.plato -&gt; stdlib/geometry/fields-implicits-time-varying.library.plato<br>R  stdlib/fields-time-varying.concepts.plato -&gt; stdlib/geometry/fields-time-varying.concepts.plato<br>R  stdlib/fields.concepts.plato -&gt; stdlib/geometry/fields.concepts.plato<br>R  stdlib/geometry-kernels.library.plato -&gt; stdlib/geometry/geometry-kernels.library.plato<br>R  stdlib/geometry-measures.concepts.plato -&gt; stdlib/geometry/geometry-measures.concepts.plato<br>R  stdlib/geometry-measures.library.plato -&gt; stdlib/geometry/geometry-measures.library.plato<br>R  stdlib/geometry-pointsets.library.plato -&gt; stdlib/geometry/geometry-pointsets.library.plato<br>R  stdlib/geometry-queries.concepts.plato -&gt; stdlib/geometry/geometry-queries.concepts.plato<br>R  stdlib/geometry-queries.library.plato -&gt; stdlib/geometry/geometry-queries.library.plato<br>R  stdlib/geometry.concepts.plato -&gt; stdlib/geometry/geometry.concepts.plato<br>R  stdlib/geometry.library.plato -&gt; stdlib/geometry/geometry.library.plato<br>R  stdlib/implicit-sdf-bounded.library.plato -&gt; stdlib/geometry/implicit-sdf-bounded.library.plato<br>R  stdlib/implicit-sdf-bounded.types.plato -&gt; stdlib/geometry/implicit-sdf-bounded.types.plato<br>R  stdlib/implicit-sdf-function.types.plato -&gt; stdlib/geometry/implicit-sdf-function.types.plato<br>R  stdlib/implicit-sdf-metaballs.types.plato -&gt; stdlib/geometry/implicit-sdf-metaballs.types.plato<br>R  stdlib/implicit-sdf-modifiers.library.plato -&gt; stdlib/geometry/implicit-sdf-modifiers.library.plato<br>R  stdlib/implicit-sdf-modifiers.types.plato -&gt; stdlib/geometry/implicit-sdf-modifiers.types.plato<br>R  stdlib/implicit-sdf-operators.library.plato -&gt; stdlib/geometry/implicit-sdf-operators.library.plato<br>R  stdlib/implicit-sdf-primitives.library.plato -&gt; stdlib/geometry/implicit-sdf-primitives.library.plato<br>R  stdlib/implicit-sdf-sampled.library.plato -&gt; stdlib/geometry/implicit-sdf-sampled.library.plato<br>R  stdlib/implicit-sdf-sampled.types.plato -&gt; stdlib/geometry/implicit-sdf-sampled.types.plato<br>R  stdlib/implicit-sdf-trees.library.plato -&gt; stdlib/geometry/implicit-sdf-trees.library.plato<br>R  stdlib/implicit-sdf-trees.types.plato -&gt; stdlib/geometry/implicit-sdf-trees.types.plato<br>R  stdlib/implicit-sdf.concepts.plato -&gt; stdlib/geometry/implicit-sdf.concepts.plato<br>R  stdlib/intervals-transforms-deformable.library.plato -&gt; stdlib/geometry/intervals-transforms-deformable.library.plato<br>A  stdlib/geometry/intrinsics-planes.library.plato<br>R  stdlib/lines-planes.library.plato -&gt; stdlib/geometry/lines-planes.library.plato<br>R  stdlib/lines-planes.types.plato -&gt; stdlib/geometry/lines-planes.types.plato<br>R  stdlib/lines.library.plato -&gt; stdlib/geometry/lines.library.plato<br>R  stdlib/lines.types.plato -&gt; stdlib/geometry/lines.types.plato<br>R  stdlib/mesh-attributes.library.plato -&gt; stdlib/geometry/mesh-attributes.library.plato<br>R  stdlib/mesh-attributes.types.plato -&gt; stdlib/geometry/mesh-attributes.types.plato<br>R  stdlib/meshes-face-arrays.library.plato -&gt; stdlib/geometry/meshes-face-arrays.library.plato<br>R  stdlib/meshes-face-arrays.types.plato -&gt; stdlib/geometry/meshes-face-arrays.types.plato<br>R  stdlib/meshes-faces.library.plato -&gt; stdlib/geometry/meshes-faces.library.plato<br>R  stdlib/meshes-geometry.library.plato -&gt; stdlib/geometry/meshes-geometry.library.plato<br>R  stdlib/meshes-indexed.library.plato -&gt; stdlib/geometry/meshes-indexed.library.plato<br>R  stdlib/meshes-lines-points.library.plato -&gt; stdlib/geometry/meshes-lines-points.library.plato<br>R  stdlib/meshes-lines-points.types.plato -&gt; stdlib/geometry/meshes-lines-points.types.plato<br>R  stdlib/meshes-polygon-building.library.plato -&gt; stdlib/geometry/meshes-polygon-building.library.plato<br>R  stdlib/meshes-polygon-corners.library.plato -&gt; stdlib/geometry/meshes-polygon-corners.library.plato<br>R  stdlib/meshes-polygon-incidence.library.plato -&gt; stdlib/geometry/meshes-polygon-incidence.library.plato<br>R  stdlib/meshes-polygon.library.plato -&gt; stdlib/geometry/meshes-polygon.library.plato<br>R  stdlib/meshes-sections.library.plato -&gt; stdlib/geometry/meshes-sections.library.plato<br>R  stdlib/meshes-sections.types.plato -&gt; stdlib/geometry/meshes-sections.types.plato<br>R  stdlib/meshes-topology.library.plato -&gt; stdlib/geometry/meshes-topology.library.plato<br>R  stdlib/meshes-volumetric.library.plato -&gt; stdlib/geometry/meshes-volumetric.library.plato<br>R  stdlib/meshes-volumetric.types.plato -&gt; stdlib/geometry/meshes-volumetric.types.plato<br>R  stdlib/meshes.concepts.plato -&gt; stdlib/geometry/meshes.concepts.plato<br>R  stdlib/meshes.types.plato -&gt; stdlib/geometry/meshes.types.plato<br>R  stdlib/noise-basis.types.plato -&gt; stdlib/geometry/noise-basis.types.plato<br>R  stdlib/noise-fractal.types.plato -&gt; stdlib/geometry/noise-fractal.types.plato<br>R  stdlib/noise-warped.types.plato -&gt; stdlib/geometry/noise-warped.types.plato<br>R  stdlib/noise.types.plato -&gt; stdlib/geometry/noise.types.plato<br>R  stdlib/planar-boxes.library.plato -&gt; stdlib/geometry/planar-boxes.library.plato<br>R  stdlib/planar-boxes.types.plato -&gt; stdlib/geometry/planar-boxes.types.plato<br>R  stdlib/planar-circles.library.plato -&gt; stdlib/geometry/planar-circles.library.plato<br>R  stdlib/planar-circles.types.plato -&gt; stdlib/geometry/planar-circles.types.plato<br>R  stdlib/planar-ellipses.library.plato -&gt; stdlib/geometry/planar-ellipses.library.plato<br>R  stdlib/planar-ellipses.types.plato -&gt; stdlib/geometry/planar-ellipses.types.plato<br>R  stdlib/planar-shapes.library.plato -&gt; stdlib/geometry/planar-shapes.library.plato<br>R  stdlib/planar-triangles.library.plato -&gt; stdlib/geometry/planar-triangles.library.plato<br>R  stdlib/planar-triangles.types.plato -&gt; stdlib/geometry/planar-triangles.types.plato<br>R  stdlib/pointclouds-voxels.concepts.plato -&gt; stdlib/geometry/pointclouds-voxels.concepts.plato<br>R  stdlib/pointclouds.library.plato -&gt; stdlib/geometry/pointclouds.library.plato<br>R  stdlib/pointclouds.types.plato -&gt; stdlib/geometry/pointclouds.types.plato<br>R  stdlib/polygons-kernels.library.plato -&gt; stdlib/geometry/polygons-kernels.library.plato<br>R  stdlib/polygons-polylines.library.plato -&gt; stdlib/geometry/polygons-polylines.library.plato<br>R  stdlib/polygons-polylines.types.plato -&gt; stdlib/geometry/polygons-polylines.types.plato<br>R  stdlib/polygons-spatial.library.plato -&gt; stdlib/geometry/polygons-spatial.library.plato<br>R  stdlib/polygons-spatial.types.plato -&gt; stdlib/geometry/polygons-spatial.types.plato<br>R  stdlib/polygons.library.plato -&gt; stdlib/geometry/polygons.library.plato<br>R  stdlib/polygons.types.plato -&gt; stdlib/geometry/polygons.types.plato<br>R  stdlib/polyhedra-catalog-catalans.library.plato -&gt; stdlib/geometry/polyhedra-catalog-catalans.library.plato<br>R  stdlib/polyhedra-catalog-expanded.library.plato -&gt; stdlib/geometry/polyhedra-catalog-expanded.library.plato<br>R  stdlib/polyhedra-catalog.library.plato -&gt; stdlib/geometry/polyhedra-catalog.library.plato<br>R  stdlib/polyhedra-conway-expansion.library.plato -&gt; stdlib/geometry/polyhedra-conway-expansion.library.plato<br>R  stdlib/polyhedra-conway.library.plato -&gt; stdlib/geometry/polyhedra-conway.library.plato<br>R  stdlib/polyhedra-duals.library.plato -&gt; stdlib/geometry/polyhedra-duals.library.plato<br>R  stdlib/polyhedra-seeds.library.plato -&gt; stdlib/geometry/polyhedra-seeds.library.plato<br>R  stdlib/sampling-curves.library.plato -&gt; stdlib/geometry/sampling-curves.library.plato<br>R  stdlib/sampling-curves.types.plato -&gt; stdlib/geometry/sampling-curves.types.plato<br>R  stdlib/sampling-fields.types.plato -&gt; stdlib/geometry/sampling-fields.types.plato<br>R  stdlib/sampling-grids.types.plato -&gt; stdlib/geometry/sampling-grids.types.plato<br>R  stdlib/sampling-patterns.types.plato -&gt; stdlib/geometry/sampling-patterns.types.plato<br>R  stdlib/sampling-resampling.types.plato -&gt; stdlib/geometry/sampling-resampling.types.plato<br>R  stdlib/solids-csg-boolean.library.plato -&gt; stdlib/geometry/solids-csg-boolean.library.plato<br>R  stdlib/solids-csg-clipping.library.plato -&gt; stdlib/geometry/solids-csg-clipping.library.plato<br>R  stdlib/solids-csg-interior.library.plato -&gt; stdlib/geometry/solids-csg-interior.library.plato<br>R  stdlib/solids-csg-soups.library.plato -&gt; stdlib/geometry/solids-csg-soups.library.plato<br>R  stdlib/solids-csg-soups.types.plato -&gt; stdlib/geometry/solids-csg-soups.types.plato<br>R  stdlib/solids-csg.types.plato -&gt; stdlib/geometry/solids-csg.types.plato<br>R  stdlib/solids-generated.types.plato -&gt; stdlib/geometry/solids-generated.types.plato<br>R  stdlib/solids-polyhedra.library.plato -&gt; stdlib/geometry/solids-polyhedra.library.plato<br>R  stdlib/solids-polyhedra.types.plato -&gt; stdlib/geometry/solids-polyhedra.types.plato<br>R  stdlib/solids.library.plato -&gt; stdlib/geometry/solids.library.plato<br>R  stdlib/spatial-boxes.library.plato -&gt; stdlib/geometry/spatial-boxes.library.plato<br>R  stdlib/spatial-boxes.types.plato -&gt; stdlib/geometry/spatial-boxes.types.plato<br>R  stdlib/spatial-capsules.library.plato -&gt; stdlib/geometry/spatial-capsules.library.plato<br>R  stdlib/spatial-cylinders.library.plato -&gt; stdlib/geometry/spatial-cylinders.library.plato<br>R  stdlib/spatial-cylinders.types.plato -&gt; stdlib/geometry/spatial-cylinders.types.plato<br>R  stdlib/spatial-grids.types.plato -&gt; stdlib/geometry/spatial-grids.types.plato<br>R  stdlib/spatial-implicits.types.plato -&gt; stdlib/geometry/spatial-implicits.types.plato<br>R  stdlib/spatial-kdtrees.types.plato -&gt; stdlib/geometry/spatial-kdtrees.types.plato<br>R  stdlib/spatial-patches.library.plato -&gt; stdlib/geometry/spatial-patches.library.plato<br>R  stdlib/spatial-patches.types.plato -&gt; stdlib/geometry/spatial-patches.types.plato<br>R  stdlib/spatial-primitives.library.plato -&gt; stdlib/geometry/spatial-primitives.library.plato<br>R  stdlib/spatial-queries-overlap.types.plato -&gt; stdlib/geometry/spatial-queries-overlap.types.plato<br>R  stdlib/spatial-queries-proximity.types.plato -&gt; stdlib/geometry/spatial-queries-proximity.types.plato<br>R  stdlib/spatial-queries-rays.types.plato -&gt; stdlib/geometry/spatial-queries-rays.types.plato<br>R  stdlib/spatial-queries.concepts.plato -&gt; stdlib/geometry/spatial-queries.concepts.plato<br>R  stdlib/spatial-queries.library.plato -&gt; stdlib/geometry/spatial-queries.library.plato<br>R  stdlib/spatial-simplices.library.plato -&gt; stdlib/geometry/spatial-simplices.library.plato<br>R  stdlib/spatial-simplices.types.plato -&gt; stdlib/geometry/spatial-simplices.types.plato<br>R  stdlib/spatial-spheres.library.plato -&gt; stdlib/geometry/spatial-spheres.library.plato<br>R  stdlib/spatial-spheres.types.plato -&gt; stdlib/geometry/spatial-spheres.types.plato<br>R  stdlib/spatial-structures.concepts.plato -&gt; stdlib/geometry/spatial-structures.concepts.plato<br>R  stdlib/spatial-tori.library.plato -&gt; stdlib/geometry/spatial-tori.library.plato<br>R  stdlib/spatial-tori.types.plato -&gt; stdlib/geometry/spatial-tori.types.plato<br>R  stdlib/spatial-trees.types.plato -&gt; stdlib/geometry/spatial-trees.types.plato<br>R  stdlib/splines-bezier.library.plato -&gt; stdlib/geometry/splines-bezier.library.plato<br>R  stdlib/splines-bezier.types.plato -&gt; stdlib/geometry/splines-bezier.types.plato<br>R  stdlib/splines-bspline.library.plato -&gt; stdlib/geometry/splines-bspline.library.plato<br>R  stdlib/splines-bspline.types.plato -&gt; stdlib/geometry/splines-bspline.types.plato<br>R  stdlib/splines-hermite.library.plato -&gt; stdlib/geometry/splines-hermite.library.plato<br>R  stdlib/splines-hermite.types.plato -&gt; stdlib/geometry/splines-hermite.types.plato<br>R  stdlib/splines-interpolating.library.plato -&gt; stdlib/geometry/splines-interpolating.library.plato<br>R  stdlib/splines-interpolating.types.plato -&gt; stdlib/geometry/splines-interpolating.types.plato<br>R  stdlib/surfaces-generated.types.plato -&gt; stdlib/geometry/surfaces-generated.types.plato<br>R  stdlib/surfaces-patches.types.plato -&gt; stdlib/geometry/surfaces-patches.types.plato<br>R  stdlib/surfaces-solids.concepts.plato -&gt; stdlib/geometry/surfaces-solids.concepts.plato<br>R  stdlib/surfaces-solids.library.plato -&gt; stdlib/geometry/surfaces-solids.library.plato<br>R  stdlib/surfaces-special.types.plato -&gt; stdlib/geometry/surfaces-special.types.plato<br>R  stdlib/surfaces.library.plato -&gt; stdlib/geometry/surfaces.library.plato<br>R  stdlib/topology-adjacency.library.plato -&gt; stdlib/geometry/topology-adjacency.library.plato<br>R  stdlib/topology-adjacency.types.plato -&gt; stdlib/geometry/topology-adjacency.types.plato<br>R  stdlib/topology-classification.types.plato -&gt; stdlib/geometry/topology-classification.types.plato<br>R  stdlib/topology-half-edges.library.plato -&gt; stdlib/geometry/topology-half-edges.library.plato<br>R  stdlib/topology-half-edges.types.plato -&gt; stdlib/geometry/topology-half-edges.types.plato<br>R  stdlib/topology-indices.types.plato -&gt; stdlib/geometry/topology-indices.types.plato<br>R  stdlib/topology.concepts.plato -&gt; stdlib/geometry/topology.concepts.plato<br>R  stdlib/voxels.types.plato -&gt; stdlib/geometry/voxels.types.plato<br>R  stdlib/cameras-optics.types.plato -&gt; stdlib/graphics/cameras-optics.types.plato<br>R  stdlib/cameras.concepts.plato -&gt; stdlib/graphics/cameras.concepts.plato<br>R  stdlib/cameras.library.plato -&gt; stdlib/graphics/cameras.library.plato<br>R  stdlib/cameras.types.plato -&gt; stdlib/graphics/cameras.types.plato<br>R  stdlib/color-spaces-models.types.plato -&gt; stdlib/graphics/color-spaces-models.types.plato<br>R  stdlib/color-spaces-palettes.types.plato -&gt; stdlib/graphics/color-spaces-palettes.types.plato<br>R  stdlib/color-spaces-video.types.plato -&gt; stdlib/graphics/color-spaces-video.types.plato<br>R  stdlib/color-spaces.library.plato -&gt; stdlib/graphics/color-spaces.library.plato<br>R  stdlib/color-spaces.types.plato -&gt; stdlib/graphics/color-spaces.types.plato<br>R  stdlib/easing.concepts.plato -&gt; stdlib/graphics/easing.concepts.plato<br>R  stdlib/easing.library.plato -&gt; stdlib/graphics/easing.library.plato<br>R  stdlib/easing.types.plato -&gt; stdlib/graphics/easing.types.plato<br>R  stdlib/image-processing-adjustments.types.plato -&gt; stdlib/graphics/image-processing-adjustments.types.plato<br>R  stdlib/image-processing-compositing.types.plato -&gt; stdlib/graphics/image-processing-compositing.types.plato<br>R  stdlib/image-processing-filters.types.plato -&gt; stdlib/graphics/image-processing-filters.types.plato<br>R  stdlib/image-processing-resampling.types.plato -&gt; stdlib/graphics/image-processing-resampling.types.plato<br>R  stdlib/images-containers.types.plato -&gt; stdlib/graphics/images-containers.types.plato<br>R  stdlib/images.concepts.plato -&gt; stdlib/graphics/images.concepts.plato<br>R  stdlib/images.library.plato -&gt; stdlib/graphics/images.library.plato<br>R  stdlib/images.types.plato -&gt; stdlib/graphics/images.types.plato<br>R  stdlib/keyframes-blending.types.plato -&gt; stdlib/graphics/keyframes-blending.types.plato<br>R  stdlib/keyframes-clips.types.plato -&gt; stdlib/graphics/keyframes-clips.types.plato<br>R  stdlib/keyframes-tracks.concepts.plato -&gt; stdlib/graphics/keyframes-tracks.concepts.plato<br>R  stdlib/keyframes-tracks.library.plato -&gt; stdlib/graphics/keyframes-tracks.library.plato<br>R  stdlib/keyframes-tracks.types.plato -&gt; stdlib/graphics/keyframes-tracks.types.plato<br>R  stdlib/lights-settings.types.plato -&gt; stdlib/graphics/lights-settings.types.plato<br>R  stdlib/lights.concepts.plato -&gt; stdlib/graphics/lights.concepts.plato<br>R  stdlib/lights.library.plato -&gt; stdlib/graphics/lights.library.plato<br>R  stdlib/lights.types.plato -&gt; stdlib/graphics/lights.types.plato<br>R  stdlib/materials-layers.types.plato -&gt; stdlib/graphics/materials-layers.types.plato<br>R  stdlib/materials.types.plato -&gt; stdlib/graphics/materials.types.plato<br>R  stdlib/motion-graphics-procedural.types.plato -&gt; stdlib/graphics/motion-graphics-procedural.types.plato<br>R  stdlib/motion-graphics-timing.types.plato -&gt; stdlib/graphics/motion-graphics-timing.types.plato<br>R  stdlib/motion-graphics.types.plato -&gt; stdlib/graphics/motion-graphics.types.plato<br>R  stdlib/paths.concepts.plato -&gt; stdlib/graphics/paths.concepts.plato<br>R  stdlib/paths.library.plato -&gt; stdlib/graphics/paths.library.plato<br>R  stdlib/paths.types.plato -&gt; stdlib/graphics/paths.types.plato<br>R  stdlib/render-post-processing.types.plato -&gt; stdlib/graphics/render-post-processing.types.plato<br>R  stdlib/render-settings.types.plato -&gt; stdlib/graphics/render-settings.types.plato<br>R  stdlib/render-vertex-layout.types.plato -&gt; stdlib/graphics/render-vertex-layout.types.plato<br>R  stdlib/scene2d.types.plato -&gt; stdlib/graphics/scene2d.types.plato<br>R  stdlib/scene3d-indices.types.plato -&gt; stdlib/graphics/scene3d-indices.types.plato<br>R  stdlib/scene3d-instancing.types.plato -&gt; stdlib/graphics/scene3d-instancing.types.plato<br>R  stdlib/scene3d.types.plato -&gt; stdlib/graphics/scene3d.types.plato<br>R  stdlib/skeletal-animation-constraints.types.plato -&gt; stdlib/graphics/skeletal-animation-constraints.types.plato<br>R  stdlib/skeletal-animation.types.plato -&gt; stdlib/graphics/skeletal-animation.types.plato<br>R  stdlib/text-fonts.types.plato -&gt; stdlib/graphics/text-fonts.types.plato<br>R  stdlib/text-glyphs.types.plato -&gt; stdlib/graphics/text-glyphs.types.plato<br>R  stdlib/text-layout.types.plato -&gt; stdlib/graphics/text-layout.types.plato<br>R  stdlib/texturing-sampling.types.plato -&gt; stdlib/graphics/texturing-sampling.types.plato<br>R  stdlib/texturing.concepts.plato -&gt; stdlib/graphics/texturing.concepts.plato<br>R  stdlib/texturing.library.plato -&gt; stdlib/graphics/texturing.library.plato<br>R  stdlib/texturing.types.plato -&gt; stdlib/graphics/texturing.types.plato<br>R  stdlib/vector-styling-paint.types.plato -&gt; stdlib/graphics/vector-styling-paint.types.plato<br>R  stdlib/vector-styling-stroke.types.plato -&gt; stdlib/graphics/vector-styling-stroke.types.plato</code></div>
+    <div class="k">Plato HEAD</div><div><code>36089e45060738961cd0ddc888a3688e56b91b53</code></div>
+    <div class="k">Plato-related dirty</div><div><code>M  Plato.CSharpWriter/CSharpWriter.cs<br> M PlatoCompiler/Analysis/Linter.cs<br>?? PlatoCompiler/Types/WriterPrimitiveNames.cs<br>?? PlatoTests/LinterPrimitiveShadowingTests.cs</code></div>
   </div>
   <div class="note">If drifted, bump with an explicit <code>git commit -- submodules/Plato</code> in studio after Plato pushes.</div>
 </section>
@@ -951,7 +147,7 @@ M  tools/stage-stdlib.ps1
   <div><code>12aad781501e6714789fb87629f1fbee001e2ab0 parakeet (v1.4.3-78-g12aad78)</code></div>
   <p class="muted">parakeet: do not stage casually (known pre-existing dirty grammar submodule).</p>
   <h3>Worktrees</h3>
-  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              96f6f64 [main]<br>C:/Users/cdigg/git/plato-wt-1                                                        d0dc6c8 [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
+  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              36089e4 [main]<br>C:/Users/cdigg/git/plato-wt-1                                                        d0dc6c8 [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
   <h3>Studio-level submodules</h3>
   <pre></pre>
 </section>
@@ -1075,10 +271,10 @@ M  tools/stage-stdlib.ps1
 </section>
 
 <section>
-  <h2>Committed work today (37 commits)</h2>
+  <h2>Committed work today (38 commits)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr><td><code>96f6f64</code></td><td>2026-07-30 13:00:07 -0400</td><td>feat(cli): multi-root folder args, one program per lint</td></tr><tr><td><code>942e1b4</code></td><td>2026-07-30 12:52:10 -0400</td><td>docs: correct MCP plan - ensure-server.ps1 roots were never stdlib-legacy</td></tr><tr><td><code>32e4545</code></td><td>2026-07-30 12:47:26 -0400</td><td>chore: retire legacy conformance suite; Generated/ demoted from golden to cached output</td></tr><tr><td><code>471b6f6</code></td><td>2026-07-30 12:45:18 -0400</td><td>test(navigation): gate on the forward stdlib, not stdlib-legacy</td></tr><tr><td><code>8d4ff0d</code></td><td>2026-07-30 12:41:30 -0400</td><td>feat(tools): record gate/test durations to a shared timing log</td></tr><tr><td><code>04010a0</code></td><td>2026-07-30 12:29:08 -0400</td><td>feat(navigation): warm-check seam + stdlib style rules</td></tr><tr><td><code>2859e02</code></td><td>2026-07-30 12:26:18 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-362.md"><code>plato-362</code></a>): type-token members — static fills satisfy instance obligations</td></tr><tr><td><code>374b214</code></td><td>2026-07-30 12:07:26 -0400</td><td>refactor(stdlib): rename bare type files to .types.plato (phase 1 of reorg plan)</td></tr><tr><td><code>9aea28e</code></td><td>2026-07-30 12:00:29 -0400</td><td>feat(tools): stage-stdlib.ps1 - pinned-CLI staging gate for stdlib work</td></tr><tr><td><code>cd6b8b5</code></td><td>2026-07-30 11:51:51 -0400</td><td>docs: Plato MCP improvements plan (warm plato_check, vocab card, usages)</td></tr><tr><td><code>863a9af</code></td><td>2026-07-30 11:40:43 -0400</td><td>docs: stdlib reorg plan (.types.plato suffix + domain-tier folders)</td></tr><tr><td><code>043a9cf</code></td><td>2026-07-30 11:36:21 -0400</td><td>fix(compiler): reach every node kind in capture hoist</td></tr><tr><td><code>a72011e</code></td><td>2026-07-30 11:15:36 -0400</td><td>wip(plato): V2 obligation fills + grid adapters + lambda-capture rewrite</td></tr><tr><td><code>b92d4c2</code></td><td>2026-07-30 02:25:54 -0400</td><td>feat(stdlib): all 26 Archimedean/Catalan kinds dispatch to real meshes</td></tr><tr><td><code>5133e3d</code></td><td>2026-07-30 02:25:35 -0400</td><td>feat(stdlib): Conway expand, snub and bevel + full Archimedean/Catalan catalog</td></tr><tr><td><code>e212b66</code></td><td>2026-07-30 02:25:15 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a>): lint intrinsic obligations against the V2 runtime</td></tr><tr><td><code>f20ddf0</code></td><td>2026-07-30 02:25:09 -0400</td><td>fix(stdlib): Conway Dual reciprocates about the true face plane foot</td></tr><tr><td><code>3642aa2</code></td><td>2026-07-30 02:24:59 -0400</td><td>fix(checker): resolve qualified payload sum-case ctors (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md"><code>plato-332</code></a>)</td></tr><tr><td><code>bab5742</code></td><td>2026-07-30 02:20:28 -0400</td><td>feat(stdlib): von Mises Cdf (Bessel series) + superellipse Perimeter (Simpson)</td></tr><tr><td><code>f6167ca</code></td><td>2026-07-30 02:08:45 -0400</td><td>tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</td></tr><tr><td><code>61b37eb</code></td><td>2026-07-30 01:55:17 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>10c22f0</code></td><td>2026-07-30 01:54:42 -0400</td><td>feat(v2): Matrix3x2/Matrix4x4 RowCount() — forward CS0535 curtain lifted</td></tr><tr><td><code>d0dc6c8</code></td><td>2026-07-30 01:48:02 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into plato-stdlib-improvements</td></tr><tr><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr><td><code>0e15882</code></td><td>2026-07-30 01:47:03 -0400</td><td>docs: record forward-conformance C# errors 1460 -&gt; 4</td></tr><tr><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr><td><code>d34a680</code></td><td>2026-07-30 01:25:31 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>7f80b42</code></td><td>2026-07-30 01:19:37 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): police V2 surface against writer tables</td></tr><tr><td><code>fbf5154</code></td><td>2026-07-30 00:56:11 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr><td><code>4be7444</code></td><td>2026-07-30 00:53:58 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>1f55a6c</code></td><td>2026-07-30 00:53:17 -0400</td><td>merge: stdlib increment - CSG, BREP, AngularCurve2D/3D, special functions</td></tr><tr><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr><tr><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr></tbody>
+    <tbody><tr><td><code>36089e4</code></td><td>2026-07-30 13:28:52 -0400</td><td>refactor(stdlib): split into foundation/geometry/graphics/future tiers (phase 3)</td></tr><tr><td><code>96f6f64</code></td><td>2026-07-30 13:00:07 -0400</td><td>feat(cli): multi-root folder args, one program per lint</td></tr><tr><td><code>942e1b4</code></td><td>2026-07-30 12:52:10 -0400</td><td>docs: correct MCP plan - ensure-server.ps1 roots were never stdlib-legacy</td></tr><tr><td><code>32e4545</code></td><td>2026-07-30 12:47:26 -0400</td><td>chore: retire legacy conformance suite; Generated/ demoted from golden to cached output</td></tr><tr><td><code>471b6f6</code></td><td>2026-07-30 12:45:18 -0400</td><td>test(navigation): gate on the forward stdlib, not stdlib-legacy</td></tr><tr><td><code>8d4ff0d</code></td><td>2026-07-30 12:41:30 -0400</td><td>feat(tools): record gate/test durations to a shared timing log</td></tr><tr><td><code>04010a0</code></td><td>2026-07-30 12:29:08 -0400</td><td>feat(navigation): warm-check seam + stdlib style rules</td></tr><tr><td><code>2859e02</code></td><td>2026-07-30 12:26:18 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-362.md"><code>plato-362</code></a>): type-token members — static fills satisfy instance obligations</td></tr><tr><td><code>374b214</code></td><td>2026-07-30 12:07:26 -0400</td><td>refactor(stdlib): rename bare type files to .types.plato (phase 1 of reorg plan)</td></tr><tr><td><code>9aea28e</code></td><td>2026-07-30 12:00:29 -0400</td><td>feat(tools): stage-stdlib.ps1 - pinned-CLI staging gate for stdlib work</td></tr><tr><td><code>cd6b8b5</code></td><td>2026-07-30 11:51:51 -0400</td><td>docs: Plato MCP improvements plan (warm plato_check, vocab card, usages)</td></tr><tr><td><code>863a9af</code></td><td>2026-07-30 11:40:43 -0400</td><td>docs: stdlib reorg plan (.types.plato suffix + domain-tier folders)</td></tr><tr><td><code>043a9cf</code></td><td>2026-07-30 11:36:21 -0400</td><td>fix(compiler): reach every node kind in capture hoist</td></tr><tr><td><code>a72011e</code></td><td>2026-07-30 11:15:36 -0400</td><td>wip(plato): V2 obligation fills + grid adapters + lambda-capture rewrite</td></tr><tr><td><code>b92d4c2</code></td><td>2026-07-30 02:25:54 -0400</td><td>feat(stdlib): all 26 Archimedean/Catalan kinds dispatch to real meshes</td></tr><tr><td><code>5133e3d</code></td><td>2026-07-30 02:25:35 -0400</td><td>feat(stdlib): Conway expand, snub and bevel + full Archimedean/Catalan catalog</td></tr><tr><td><code>e212b66</code></td><td>2026-07-30 02:25:15 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a>): lint intrinsic obligations against the V2 runtime</td></tr><tr><td><code>f20ddf0</code></td><td>2026-07-30 02:25:09 -0400</td><td>fix(stdlib): Conway Dual reciprocates about the true face plane foot</td></tr><tr><td><code>3642aa2</code></td><td>2026-07-30 02:24:59 -0400</td><td>fix(checker): resolve qualified payload sum-case ctors (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md"><code>plato-332</code></a>)</td></tr><tr><td><code>bab5742</code></td><td>2026-07-30 02:20:28 -0400</td><td>feat(stdlib): von Mises Cdf (Bessel series) + superellipse Perimeter (Simpson)</td></tr><tr><td><code>f6167ca</code></td><td>2026-07-30 02:08:45 -0400</td><td>tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</td></tr><tr><td><code>61b37eb</code></td><td>2026-07-30 01:55:17 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>10c22f0</code></td><td>2026-07-30 01:54:42 -0400</td><td>feat(v2): Matrix3x2/Matrix4x4 RowCount() — forward CS0535 curtain lifted</td></tr><tr><td><code>d0dc6c8</code></td><td>2026-07-30 01:48:02 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into plato-stdlib-improvements</td></tr><tr><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr><td><code>0e15882</code></td><td>2026-07-30 01:47:03 -0400</td><td>docs: record forward-conformance C# errors 1460 -&gt; 4</td></tr><tr><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr><td><code>d34a680</code></td><td>2026-07-30 01:25:31 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>7f80b42</code></td><td>2026-07-30 01:19:37 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): police V2 surface against writer tables</td></tr><tr><td><code>fbf5154</code></td><td>2026-07-30 00:56:11 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr><td><code>4be7444</code></td><td>2026-07-30 00:53:58 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>1f55a6c</code></td><td>2026-07-30 00:53:17 -0400</td><td>merge: stdlib increment - CSG, BREP, AngularCurve2D/3D, special functions</td></tr><tr><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr><tr><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr></tbody>
   </table>
 </section>
 
@@ -1086,7 +282,7 @@ M  tools/stage-stdlib.ps1
   <h2>Recent history (20)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr class="today"><td><code>96f6f64</code></td><td>2026-07-30 13:00:07 -0400</td><td>feat(cli): multi-root folder args, one program per lint</td></tr><tr class="today"><td><code>942e1b4</code></td><td>2026-07-30 12:52:10 -0400</td><td>docs: correct MCP plan - ensure-server.ps1 roots were never stdlib-legacy</td></tr><tr class="today"><td><code>32e4545</code></td><td>2026-07-30 12:47:26 -0400</td><td>chore: retire legacy conformance suite; Generated/ demoted from golden to cached output</td></tr><tr class="today"><td><code>471b6f6</code></td><td>2026-07-30 12:45:18 -0400</td><td>test(navigation): gate on the forward stdlib, not stdlib-legacy</td></tr><tr class="today"><td><code>8d4ff0d</code></td><td>2026-07-30 12:41:30 -0400</td><td>feat(tools): record gate/test durations to a shared timing log</td></tr><tr class="today"><td><code>04010a0</code></td><td>2026-07-30 12:29:08 -0400</td><td>feat(navigation): warm-check seam + stdlib style rules</td></tr><tr class="today"><td><code>2859e02</code></td><td>2026-07-30 12:26:18 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-362.md"><code>plato-362</code></a>): type-token members — static fills satisfy instance obligations</td></tr><tr class="today"><td><code>374b214</code></td><td>2026-07-30 12:07:26 -0400</td><td>refactor(stdlib): rename bare type files to .types.plato (phase 1 of reorg plan)</td></tr><tr class="today"><td><code>9aea28e</code></td><td>2026-07-30 12:00:29 -0400</td><td>feat(tools): stage-stdlib.ps1 - pinned-CLI staging gate for stdlib work</td></tr><tr class="today"><td><code>cd6b8b5</code></td><td>2026-07-30 11:51:51 -0400</td><td>docs: Plato MCP improvements plan (warm plato_check, vocab card, usages)</td></tr><tr class="today"><td><code>863a9af</code></td><td>2026-07-30 11:40:43 -0400</td><td>docs: stdlib reorg plan (.types.plato suffix + domain-tier folders)</td></tr><tr class="today"><td><code>043a9cf</code></td><td>2026-07-30 11:36:21 -0400</td><td>fix(compiler): reach every node kind in capture hoist</td></tr><tr class="today"><td><code>a72011e</code></td><td>2026-07-30 11:15:36 -0400</td><td>wip(plato): V2 obligation fills + grid adapters + lambda-capture rewrite</td></tr><tr class="today"><td><code>b92d4c2</code></td><td>2026-07-30 02:25:54 -0400</td><td>feat(stdlib): all 26 Archimedean/Catalan kinds dispatch to real meshes</td></tr><tr class="today"><td><code>5133e3d</code></td><td>2026-07-30 02:25:35 -0400</td><td>feat(stdlib): Conway expand, snub and bevel + full Archimedean/Catalan catalog</td></tr><tr class="today"><td><code>e212b66</code></td><td>2026-07-30 02:25:15 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a>): lint intrinsic obligations against the V2 runtime</td></tr><tr class="today"><td><code>f20ddf0</code></td><td>2026-07-30 02:25:09 -0400</td><td>fix(stdlib): Conway Dual reciprocates about the true face plane foot</td></tr><tr class="today"><td><code>3642aa2</code></td><td>2026-07-30 02:24:59 -0400</td><td>fix(checker): resolve qualified payload sum-case ctors (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md"><code>plato-332</code></a>)</td></tr><tr class="today"><td><code>bab5742</code></td><td>2026-07-30 02:20:28 -0400</td><td>feat(stdlib): von Mises Cdf (Bessel series) + superellipse Perimeter (Simpson)</td></tr><tr class="today"><td><code>f6167ca</code></td><td>2026-07-30 02:08:45 -0400</td><td>tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</td></tr></tbody>
+    <tbody><tr class="today"><td><code>36089e4</code></td><td>2026-07-30 13:28:52 -0400</td><td>refactor(stdlib): split into foundation/geometry/graphics/future tiers (phase 3)</td></tr><tr class="today"><td><code>96f6f64</code></td><td>2026-07-30 13:00:07 -0400</td><td>feat(cli): multi-root folder args, one program per lint</td></tr><tr class="today"><td><code>942e1b4</code></td><td>2026-07-30 12:52:10 -0400</td><td>docs: correct MCP plan - ensure-server.ps1 roots were never stdlib-legacy</td></tr><tr class="today"><td><code>32e4545</code></td><td>2026-07-30 12:47:26 -0400</td><td>chore: retire legacy conformance suite; Generated/ demoted from golden to cached output</td></tr><tr class="today"><td><code>471b6f6</code></td><td>2026-07-30 12:45:18 -0400</td><td>test(navigation): gate on the forward stdlib, not stdlib-legacy</td></tr><tr class="today"><td><code>8d4ff0d</code></td><td>2026-07-30 12:41:30 -0400</td><td>feat(tools): record gate/test durations to a shared timing log</td></tr><tr class="today"><td><code>04010a0</code></td><td>2026-07-30 12:29:08 -0400</td><td>feat(navigation): warm-check seam + stdlib style rules</td></tr><tr class="today"><td><code>2859e02</code></td><td>2026-07-30 12:26:18 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-362.md"><code>plato-362</code></a>): type-token members — static fills satisfy instance obligations</td></tr><tr class="today"><td><code>374b214</code></td><td>2026-07-30 12:07:26 -0400</td><td>refactor(stdlib): rename bare type files to .types.plato (phase 1 of reorg plan)</td></tr><tr class="today"><td><code>9aea28e</code></td><td>2026-07-30 12:00:29 -0400</td><td>feat(tools): stage-stdlib.ps1 - pinned-CLI staging gate for stdlib work</td></tr><tr class="today"><td><code>cd6b8b5</code></td><td>2026-07-30 11:51:51 -0400</td><td>docs: Plato MCP improvements plan (warm plato_check, vocab card, usages)</td></tr><tr class="today"><td><code>863a9af</code></td><td>2026-07-30 11:40:43 -0400</td><td>docs: stdlib reorg plan (.types.plato suffix + domain-tier folders)</td></tr><tr class="today"><td><code>043a9cf</code></td><td>2026-07-30 11:36:21 -0400</td><td>fix(compiler): reach every node kind in capture hoist</td></tr><tr class="today"><td><code>a72011e</code></td><td>2026-07-30 11:15:36 -0400</td><td>wip(plato): V2 obligation fills + grid adapters + lambda-capture rewrite</td></tr><tr class="today"><td><code>b92d4c2</code></td><td>2026-07-30 02:25:54 -0400</td><td>feat(stdlib): all 26 Archimedean/Catalan kinds dispatch to real meshes</td></tr><tr class="today"><td><code>5133e3d</code></td><td>2026-07-30 02:25:35 -0400</td><td>feat(stdlib): Conway expand, snub and bevel + full Archimedean/Catalan catalog</td></tr><tr class="today"><td><code>e212b66</code></td><td>2026-07-30 02:25:15 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a>): lint intrinsic obligations against the V2 runtime</td></tr><tr class="today"><td><code>f20ddf0</code></td><td>2026-07-30 02:25:09 -0400</td><td>fix(stdlib): Conway Dual reciprocates about the true face plane foot</td></tr><tr class="today"><td><code>3642aa2</code></td><td>2026-07-30 02:24:59 -0400</td><td>fix(checker): resolve qualified payload sum-case ctors (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md"><code>plato-332</code></a>)</td></tr><tr class="today"><td><code>bab5742</code></td><td>2026-07-30 02:20:28 -0400</td><td>feat(stdlib): von Mises Cdf (Bessel series) + superellipse Perimeter (Simpson)</td></tr></tbody>
   </table>
 </section>
 

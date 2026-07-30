@@ -609,6 +609,16 @@ namespace Ara3D.Geometry.CSharpWriter
             "MapRange",
         };
 
+        // Types the writer does NOT generate a shape for: the declaration is a name only, and the
+        // C# type on the right is the real one (a handwritten Plato.Intrinsics struct or a BCL
+        // type). Every entry is a fourth, unchecked source of truth for one name, so the list is
+        // being retired down to the scalars (plato-365).
+        //
+        // Removed 2026-07-30, increment (a): Vector2/3/4/8 - never declared in the forward stdlib
+        // at all (Number2/3/4/8 and Vector2D/3D carry that vocabulary), and generated structs
+        // already reach the handwritten intrinsic twins through IntrinsicVectorBridges, which is
+        // where the Vector* names survive.
+        // Still here, pending increments (a: Plane/Angle) and (c: Matrix3x2/Matrix4x4/Quaternion).
         public static Dictionary<string, string> PrimitiveTypes = new Dictionary<string, string>()
         {
             { "Number", "float" },
@@ -633,10 +643,6 @@ namespace Ara3D.Geometry.CSharpWriter
             { "Matrix4x4", "System.Numerics.Matrix4x4" },
             { "Quaternion", "System.Numerics.Quaternion" },
             { "Plane", "System.Numerics.Plane" },
-            { "Vector2", "System.Numerics.Vector2" },
-            { "Vector3", "System.Numerics.Vector3" },
-            { "Vector4", "System.Numerics.Vector4" },
-            { "Vector8", "System.Runtime.Intrinsics.Vector256<float>" }
         };
 
         public CSharpWriter WriteFile(FilePath fileName, Func<CSharpWriter> f)
