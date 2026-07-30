@@ -1,0 +1,13 @@
+//==
+// # Hashing — combining component hashes
+//
+// The one shared helper the per-type Hash reference bodies are written against.
+// Matches the conventional multiply-xor fold (31 * acc ^ next) so equal values
+// hash equal within a run; the exact constant is not part of the contract.
+
+library Hashing
+{
+    // Folds a component hash into an accumulated hash.
+    CombineHash(acc: Integer, next: Integer): Integer
+        => acc.Multiply(31).BitwiseXor(next);
+}

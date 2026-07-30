@@ -1,0 +1,671 @@
+//==
+// # Matrix operations
+//
+// The portable reference bodies for `Matrix3x2` (2D affine) and `Matrix4x4`
+// (3D homogeneous), covering determinant, inversion, arithmetic, decomposition,
+// and the whole `Create*` construction family. These used to be bodiless
+// intrinsics; the semantics here match System.Numerics `Matrix3x2` / `Matrix4x4`
+// element for element, so a backend may substitute the native call.
+// Convention: see CONVENTIONS.md - Matrices (row-vector multiplication, v' = v M).
+//
+// Element naming follows the row-vector layout of `matrices.types.plato`: for
+// Matrix3x2, M11 = Row1.X ... M32 = Row3.Y and Row3 is the translation; for
+// Matrix4x4, M11 = Row1.X ... M44 = Row4.W and Row4 is the translation.
+//
+// Two deliberate deviations from the System.Numerics reference implementation:
+//
+//   * `Matrix3x2.CreateRotation` does NOT snap angles within a thousandth of a
+//     degree of a multiple of a quarter turn to exact 0 / +-1 cosines. Plain
+//     Cos / Sin are used instead: the snap is a C#-era numerical courtesy, not
+//     part of the mathematical definition, and it costs a per-call
+//     IEEERemainder plus four range tests on every backend.
+//   * The projection and view constructors (`CreatePerspective*`,
+//     `CreateOrthographic*`, `CreateLookAt`, `CreateWorld`) throw
+//     ArgumentOutOfRangeException in C# for degenerate inputs. Plato has no
+//     exceptions, so the preconditions stated in each doc comment are UNCHECKED:
+//     violating one yields infinities or NaN rather than a diagnostic.
+
+library MatricesOps
+{
+    //==
+    // # Matrix3x2 — the 2D affine map
+    //
+    // Three Number2 rows: a 2x2 linear block (Row1, Row2) plus a translation row
+    // (Row3). https://en.wikipedia.org/wiki/Affine_transformation
+
+    // The determinant of the 2x2 linear block: M11 M22 - M21 M12. The
+    // translation row does not affect it.
+    Determinant(self: Matrix3x2): Number
+        => self.Row1.X * self.Row2.Y - self.Row2.X * self.Row1.Y;
+
+    // The 3x2 matrix with every element NaN: what a failed inversion returns,
+    // matching System.Numerics.
+    NotANumber(_: Matrix3x2): Matrix3x2 {
+        var n = 0.0 / 0.0;
+        return (Number2(n, n), Number2(n, n), Number2(n, n));
+    }
+
+    // The inverse affine map, paired with whether one exists. The linear block is
+    // inverted by the 2x2 adjugate and the translation row carried back through
+    // it. When the determinant is smaller than Number.Epsilon the matrix is
+    // singular: the all-NaN matrix and `false` are returned.
+    // https://en.wikipedia.org/wiki/Invertible_matrix
+    Invert(self: Matrix3x2): Tuple2<Matrix3x2, Boolean> {
+        var m11 = self.Row1.X;
+        var m12 = self.Row1.Y;
+        var m21 = self.Row2.X;
+        var m22 = self.Row2.Y;
+        var m31 = self.Row3.X;
+        var m32 = self.Row3.Y;
+        var det = m11 * m22 - m21 * m12;
+        var invDet = 1.0 / det;
+        var inverse = Matrix3x2(
+            Number2(m22 * invDet, -m12 * invDet),
+            Number2(-m21 * invDet, m11 * invDet),
+            Number2((m21 * m32 - m31 * m22) * invDet, (m31 * m12 - m11 * m32) * invDet));
+        var ok = det.Abs >= Number.Epsilon;
+        return (ok ? inverse : Matrix3x2.NotANumber, ok);
+    }
+
+    // Element-wise sum.
+    Add(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2
+        => (value1.Row1 + value2.Row1,
+            value1.Row2 + value2.Row2,
+            value1.Row3 + value2.Row3);
+
+    // Element-wise difference.
+    Subtract(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2
+        => (value1.Row1 - value2.Row1,
+            value1.Row2 - value2.Row2,
+            value1.Row3 - value2.Row3);
+
+    // Composition of two affine maps: applying the result is applying value1
+    // then value2. The translation row of value1 is carried through value2's
+    // linear block and then offset by value2's own translation.
+    Multiply(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2
+        => (Number2(value1.Row1.X * value2.Row1.X + value1.Row1.Y * value2.Row2.X,
+                    value1.Row1.X * value2.Row1.Y + value1.Row1.Y * value2.Row2.Y),
+            Number2(value1.Row2.X * value2.Row1.X + value1.Row2.Y * value2.Row2.X,
+                    value1.Row2.X * value2.Row1.Y + value1.Row2.Y * value2.Row2.Y),
+            Number2(value1.Row3.X * value2.Row1.X + value1.Row3.Y * value2.Row2.X + value2.Row3.X,
+                    value1.Row3.X * value2.Row1.Y + value1.Row3.Y * value2.Row2.Y + value2.Row3.Y));
+
+    // Every element scaled, translation row included.
+    Multiply(value1: Matrix3x2, scalar: Number): Matrix3x2
+        => (value1.Row1 * scalar, value1.Row2 * scalar, value1.Row3 * scalar);
+
+    // Every element scaled, with the scalar on the left.
+    Multiply(scalar: Number, value1: Matrix3x2): Matrix3x2
+        => value1 * scalar;
+
+    // Every element divided. Matches System.Numerics: the reciprocal is formed
+    // once and multiplied through.
+    Divide(value1: Matrix3x2, scalar: Number): Matrix3x2
+        => value1 * (1.0 / scalar);
+
+    // Exact element-wise equality. Two matrices differing only by floating-point
+    // drift compare unequal.
+    Equals(a: Matrix3x2, b: Matrix3x2): Boolean
+        => a.Row1.X == b.Row1.X && a.Row1.Y == b.Row1.Y
+        && a.Row2.X == b.Row2.X && a.Row2.Y == b.Row2.Y
+        && a.Row3.X == b.Row3.X && a.Row3.Y == b.Row3.Y;
+
+    // Element-wise linear interpolation; `amount` is unclamped. Interpolating
+    // rotations this way shrinks them toward the chord — decompose first if the
+    // intermediate matrices must stay rigid.
+    Lerp(self: Matrix3x2, matrix2: Matrix3x2, amount: Number): Matrix3x2
+        => (self.Row1 + (matrix2.Row1 - self.Row1) * amount,
+            self.Row2 + (matrix2.Row2 - self.Row2) * amount,
+            self.Row3 + (matrix2.Row3 - self.Row3) * amount);
+
+    // The combined hash of the three rows.
+    Hash(self: Matrix3x2): Integer
+        => self.Row1.Hash.CombineHash(self.Row2.Hash).CombineHash(self.Row3.Hash);
+
+    //==
+    // # Matrix3x2 construction
+
+    // The affine map that shifts by `position` and does nothing else.
+    CreateTranslation(_: Matrix3x2, position: Vector2D): Matrix3x2
+        => (Number2(1.0, 0.0), Number2(0.0, 1.0), Number2(position.X, position.Y));
+
+    // The uniform scale about the origin.
+    CreateScale(_: Matrix3x2, scale: Number): Matrix3x2
+        => (Number2(scale, 0.0), Number2(0.0, scale), Number2(0.0, 0.0));
+
+    // The per-axis scale about the origin.
+    CreateScale(_: Matrix3x2, scales: Number2): Matrix3x2
+        => (Number2(scales.X, 0.0), Number2(0.0, scales.Y), Number2(0.0, 0.0));
+
+    // The per-axis scale about `centerPoint`, which stays fixed. The translation
+    // row is the offset that returns the scaled center to where it started.
+    CreateScale(_: Matrix3x2, scales: Number2, centerPoint: Point2D): Matrix3x2
+        => (Number2(scales.X, 0.0),
+            Number2(0.0, scales.Y),
+            Number2(centerPoint.X * (1.0 - scales.X), centerPoint.Y * (1.0 - scales.Y)));
+
+    // The counter-clockwise rotation about the origin.
+    // https://en.wikipedia.org/wiki/Rotation_matrix
+    // Deviation: no quarter-turn snapping (see the file header).
+    CreateRotation(_: Matrix3x2, angle: Angle): Matrix3x2 {
+        var c = angle.Cos;
+        var s = angle.Sin;
+        return (Number2(c, s), Number2(-s, c), Number2(0.0, 0.0));
+    }
+
+    // The counter-clockwise rotation about `centerPoint`, which stays fixed.
+    // Deviation: no quarter-turn snapping (see the file header).
+    CreateRotation(_: Matrix3x2, angle: Angle, centerPoint: Point2D): Matrix3x2 {
+        var c = angle.Cos;
+        var s = angle.Sin;
+        return (Number2(c, s),
+                Number2(-s, c),
+                Number2(centerPoint.X * (1.0 - c) + centerPoint.Y * s,
+                        centerPoint.Y * (1.0 - c) - centerPoint.X * s));
+    }
+
+    //==
+    // # Matrix4x4 — the 3D homogeneous map
+    //
+    // Four Number4 rows: a 3x3 linear block plus a translation row (Row4) and a
+    // projective column. https://en.wikipedia.org/wiki/Transformation_matrix
+
+    // The determinant, by the Laplace expansion along the first row with the six
+    // 2x2 minors of the bottom two rows shared between the four cofactors.
+    // https://en.wikipedia.org/wiki/Determinant
+    Determinant(self: Matrix4x4): Number {
+        var m11 = self.Row1.X; var m12 = self.Row1.Y; var m13 = self.Row1.Z; var m14 = self.Row1.W;
+        var m21 = self.Row2.X; var m22 = self.Row2.Y; var m23 = self.Row2.Z; var m24 = self.Row2.W;
+        var m31 = self.Row3.X; var m32 = self.Row3.Y; var m33 = self.Row3.Z; var m34 = self.Row3.W;
+        var m41 = self.Row4.X; var m42 = self.Row4.Y; var m43 = self.Row4.Z; var m44 = self.Row4.W;
+        var kpLo = m33 * m44 - m34 * m43;
+        var jpLn = m32 * m44 - m34 * m42;
+        var joKn = m32 * m43 - m33 * m42;
+        var ipLm = m31 * m44 - m34 * m41;
+        var ioKm = m31 * m43 - m33 * m41;
+        var inJm = m31 * m42 - m32 * m41;
+        return m11 * (m22 * kpLo - m23 * jpLn + m24 * joKn)
+             - m12 * (m21 * kpLo - m23 * ipLm + m24 * ioKm)
+             + m13 * (m21 * jpLn - m22 * ipLm + m24 * inJm)
+             - m14 * (m21 * joKn - m22 * ioKm + m23 * inJm);
+    }
+
+    // The matrix with rows and columns exchanged.
+    // https://en.wikipedia.org/wiki/Transpose
+    Transpose(self: Matrix4x4): Matrix4x4
+        => (Number4(self.Row1.X, self.Row2.X, self.Row3.X, self.Row4.X),
+            Number4(self.Row1.Y, self.Row2.Y, self.Row3.Y, self.Row4.Y),
+            Number4(self.Row1.Z, self.Row2.Z, self.Row3.Z, self.Row4.Z),
+            Number4(self.Row1.W, self.Row2.W, self.Row3.W, self.Row4.W));
+
+    // Element-wise sum.
+    Add(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4
+        => (value1.Row1 + value2.Row1,
+            value1.Row2 + value2.Row2,
+            value1.Row3 + value2.Row3,
+            value1.Row4 + value2.Row4);
+
+    // Element-wise difference.
+    Subtract(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4
+        => (value1.Row1 - value2.Row1,
+            value1.Row2 - value2.Row2,
+            value1.Row3 - value2.Row3,
+            value1.Row4 - value2.Row4);
+
+    // Composition of two homogeneous maps: applying the result is applying
+    // value1 then value2. Under the row-vector convention that is exactly each
+    // row of value1 carried through value2.
+    Multiply(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4
+        => (value1.Row1.Transform(value2),
+            value1.Row2.Transform(value2),
+            value1.Row3.Transform(value2),
+            value1.Row4.Transform(value2));
+
+    // Every element scaled.
+    Multiply(value1: Matrix4x4, f: Number): Matrix4x4
+        => (value1.Row1 * f, value1.Row2 * f, value1.Row3 * f, value1.Row4 * f);
+
+    // Every element scaled, with the scalar on the left.
+    Multiply(f: Number, value1: Matrix4x4): Matrix4x4
+        => value1 * f;
+
+    // Every element divided. Matches System.Numerics: the reciprocal is formed
+    // once and multiplied through.
+    Divide(value1: Matrix4x4, f: Number): Matrix4x4
+        => value1 * (1.0 / f);
+
+    // Element-wise linear interpolation; `amount` is unclamped. Interpolating
+    // rigid transforms this way is not rigid — decompose and interpolate the
+    // parts if that matters.
+    Lerp(self: Matrix4x4, matrix2: Matrix4x4, amount: Number): Matrix4x4
+        => (self.Row1 + (matrix2.Row1 - self.Row1) * amount,
+            self.Row2 + (matrix2.Row2 - self.Row2) * amount,
+            self.Row3 + (matrix2.Row3 - self.Row3) * amount,
+            self.Row4 + (matrix2.Row4 - self.Row4) * amount);
+
+    // The combined hash of the four rows.
+    Hash(self: Matrix4x4): Integer
+        => self.Row1.Hash.CombineHash(self.Row2.Hash)
+            .CombineHash(self.Row3.Hash).CombineHash(self.Row4.Hash);
+
+    //==
+    // # Matrix4x4 inversion
+
+    // The 4x4 matrix with every element NaN: what a failed inversion returns,
+    // matching System.Numerics.
+    NotANumber(_: Matrix4x4): Matrix4x4 {
+        var n = 0.0 / 0.0;
+        return (Number4(n, n, n, n), Number4(n, n, n, n), Number4(n, n, n, n), Number4(n, n, n, n));
+    }
+
+    // The adjugate: the transpose of the cofactor matrix, so that
+    // Adjugate * (1 / Determinant) is the inverse. Defined for every matrix,
+    // singular or not. https://en.wikipedia.org/wiki/Adjugate_matrix
+    Adjugate(self: Matrix4x4): Matrix4x4 {
+        var m11 = self.Row1.X; var m12 = self.Row1.Y; var m13 = self.Row1.Z; var m14 = self.Row1.W;
+        var m21 = self.Row2.X; var m22 = self.Row2.Y; var m23 = self.Row2.Z; var m24 = self.Row2.W;
+        var m31 = self.Row3.X; var m32 = self.Row3.Y; var m33 = self.Row3.Z; var m34 = self.Row3.W;
+        var m41 = self.Row4.X; var m42 = self.Row4.Y; var m43 = self.Row4.Z; var m44 = self.Row4.W;
+        // The 2x2 minors of rows 3 and 4 ...
+        var kpLo = m33 * m44 - m34 * m43;
+        var jpLn = m32 * m44 - m34 * m42;
+        var joKn = m32 * m43 - m33 * m42;
+        var ipLm = m31 * m44 - m34 * m41;
+        var ioKm = m31 * m43 - m33 * m41;
+        var inJm = m31 * m42 - m32 * m41;
+        // ... of rows 2 and 4 ...
+        var gpHo = m23 * m44 - m24 * m43;
+        var fpHn = m22 * m44 - m24 * m42;
+        var foGn = m22 * m43 - m23 * m42;
+        var epHm = m21 * m44 - m24 * m41;
+        var eoGm = m21 * m43 - m23 * m41;
+        var enFm = m21 * m42 - m22 * m41;
+        // ... and of rows 2 and 3.
+        var glHk = m23 * m34 - m24 * m33;
+        var flHj = m22 * m34 - m24 * m32;
+        var fkGj = m22 * m33 - m23 * m32;
+        var elHi = m21 * m34 - m24 * m31;
+        var ekGi = m21 * m33 - m23 * m31;
+        var ejFi = m21 * m32 - m22 * m31;
+        return (Number4(m22 * kpLo - m23 * jpLn + m24 * joKn,
+                        -(m12 * kpLo - m13 * jpLn + m14 * joKn),
+                        m12 * gpHo - m13 * fpHn + m14 * foGn,
+                        -(m12 * glHk - m13 * flHj + m14 * fkGj)),
+                Number4(-(m21 * kpLo - m23 * ipLm + m24 * ioKm),
+                        m11 * kpLo - m13 * ipLm + m14 * ioKm,
+                        -(m11 * gpHo - m13 * epHm + m14 * eoGm),
+                        m11 * glHk - m13 * elHi + m14 * ekGi),
+                Number4(m21 * jpLn - m22 * ipLm + m24 * inJm,
+                        -(m11 * jpLn - m12 * ipLm + m14 * inJm),
+                        m11 * fpHn - m12 * epHm + m14 * enFm,
+                        -(m11 * flHj - m12 * elHi + m14 * ejFi)),
+                Number4(-(m21 * joKn - m22 * ioKm + m23 * inJm),
+                        m11 * joKn - m12 * ioKm + m13 * inJm,
+                        -(m11 * foGn - m12 * eoGm + m13 * enFm),
+                        m11 * fkGj - m12 * ekGi + m13 * ejFi));
+    }
+
+    // True when the matrix has an inverse: the determinant is a real number and
+    // no smaller in magnitude than Number.Epsilon, the same threshold Invert uses.
+    CanInvert(self: Matrix4x4): Boolean {
+        var det = self.Determinant;
+        return !det.IsNaN && det.Abs >= Number.Epsilon;
+    }
+
+    // The inverse map, by the adjugate over the determinant. A singular matrix
+    // (see CanInvert) yields the all-NaN matrix, as System.Numerics does rather
+    // than signalling.
+    Invert(self: Matrix4x4): Matrix4x4
+        => self.CanInvert
+            ? self.Adjugate * (1.0 / self.Determinant)
+            : Matrix4x4.NotANumber;
+
+    //==
+    // # Matrix4x4 decomposition
+
+    // The homogeneous matrix whose three linear rows are the given axes and
+    // whose translation row is the origin. The helper the decomposition rebuilds
+    // its orthonormalized basis with.
+    AxisMatrix(xAxis: Vector3D, yAxis: Vector3D, zAxis: Vector3D): Matrix4x4
+        => (Number4(xAxis.X, xAxis.Y, xAxis.Z, 0.0),
+            Number4(yAxis.X, yAxis.Y, yAxis.Z, 0.0),
+            Number4(zAxis.X, zAxis.Y, zAxis.Z, 0.0),
+            Number4(0.0, 0.0, 0.0, 1.0));
+
+    // The index (0, 1 or 2) of the largest of three numbers, ties going to the
+    // earliest.
+    IndexOfLargest(x: Number, y: Number, z: Number): Integer
+        => x < y ? (y < z ? 2 : 1) : (x < z ? 2 : 0);
+
+    // The index (0, 1 or 2) of the smallest of three numbers, ties going to the
+    // earliest.
+    IndexOfSmallest(x: Number, y: Number, z: Number): Integer
+        => x < y ? (x < z ? 0 : 2) : (y < z ? 1 : 2);
+
+    // The standard basis vector for an axis index: 0 -> X, 1 -> Y, 2 -> Z.
+    CanonicalAxis(index: Integer): Vector3D
+        => index == 0
+            ? Vector3D(1.0, 0.0, 0.0)
+            : (index == 1 ? Vector3D(0.0, 1.0, 0.0) : Vector3D(0.0, 0.0, 1.0));
+
+    // A three-axis basis with one axis replaced.
+    ReplaceAxis(basis: Array<Vector3D>, index: Integer, axis: Vector3D): Array<Vector3D>
+        => [index == 0 ? axis : basis[0],
+            index == 1 ? axis : basis[1],
+            index == 2 ? axis : basis[2]];
+
+    // A three-number triple with one element replaced.
+    ReplaceElement(values: Array<Number>, index: Integer, value: Number): Array<Number>
+        => [index == 0 ? value : values[0],
+            index == 1 ? value : values[1],
+            index == 2 ? value : values[2]];
+
+    // The scale, rotation and translation the matrix is the product of, paired
+    // with whether the extraction succeeded. Ported from System.Numerics: the
+    // three linear rows give the scales; the rows are then visited longest-first,
+    // each degenerate one (scale below 1e-4) rebuilt from a canonical axis or a
+    // cross product so the basis stays complete; a negative determinant means a
+    // mirrored basis, so the dominant axis and its scale are flipped. Extraction
+    // fails — returning the identity rotation and `false` — when the repaired
+    // basis is still not orthonormal (its determinant is not 1), which is what a
+    // sheared matrix produces.
+    // https://en.wikipedia.org/wiki/Polar_decomposition
+    Decompose(self: Matrix4x4): Tuple4<Number3, Quaternion, Vector3D, Boolean> {
+        var eps = 0.0001;
+        var translation = Vector3D(self.Row4.X, self.Row4.Y, self.Row4.Z);
+        var row1 = Vector3D(self.Row1.X, self.Row1.Y, self.Row1.Z);
+        var row2 = Vector3D(self.Row2.X, self.Row2.Y, self.Row2.Z);
+        var row3 = Vector3D(self.Row3.X, self.Row3.Y, self.Row3.Z);
+        var scales = [row1.Length, row2.Length, row3.Length];
+        var a = IndexOfLargest(scales[0], scales[1], scales[2]);
+        var c = IndexOfSmallest(scales[0], scales[1], scales[2]);
+        var b = 3 - a - c;
+        var basis0 = [row1, row2, row3];
+        // The dominant axis: a canonical axis stands in when the row has no length.
+        var axisA = (scales[a] < eps ? CanonicalAxis(a) : basis0[a]).Normalize;
+        var basis1 = basis0.ReplaceAxis(a, axisA);
+        // The middle axis: crossed against whichever canonical axis is least
+        // aligned with the dominant one, so the product cannot be degenerate.
+        var axisB = (scales[b] < eps
+            ? axisA.Cross(CanonicalAxis(IndexOfSmallest(axisA.X.Abs, axisA.Y.Abs, axisA.Z.Abs)))
+            : basis1[b]).Normalize;
+        var basis2 = basis1.ReplaceAxis(b, axisB);
+        // The last axis is determined by the other two.
+        var axisC = (scales[c] < eps ? axisA.Cross(axisB) : basis2[c]).Normalize;
+        var basis3 = basis2.ReplaceAxis(c, axisC);
+        var det = AxisMatrix(basis3[0], basis3[1], basis3[2]).Determinant;
+        var mirrored = det < 0.0;
+        var basis = mirrored ? basis3.ReplaceAxis(a, -basis3[a]) : basis3;
+        var scale = mirrored ? scales.ReplaceElement(a, -scales[a]) : scales;
+        var absDet = mirrored ? -det : det;
+        var ok = (absDet - 1.0) * (absDet - 1.0) <= eps;
+        var rotationMatrix = AxisMatrix(basis[0], basis[1], basis[2]);
+        return (Number3(scale[0], scale[1], scale[2]),
+                ok ? Quaternion.CreateFromRotationMatrix(rotationMatrix) : Quaternion.Identity,
+                translation,
+                ok);
+    }
+
+    // The rotation part of the matrix, via the full decomposition so that a
+    // scaled matrix still yields a unit quaternion. Falls back to the identity
+    // when the matrix does not decompose.
+    Rotation(self: Matrix4x4): Quaternion
+        => self.Decompose.X1;
+
+    // The translation part: the first three components of the translation row.
+    Translation(self: Matrix4x4): Vector3D
+        => (self.Row4.X, self.Row4.Y, self.Row4.Z);
+
+    // The same matrix with a different translation; the linear block and the
+    // projective element Row4.W are untouched.
+    WithTranslation(self: Matrix4x4, translation: Vector3D): Matrix4x4
+        => (self.Row1,
+            self.Row2,
+            self.Row3,
+            Number4(translation.X, translation.Y, translation.Z, self.Row4.W));
+
+    //==
+    // # Matrix4x4 construction — translation, scale, rotation
+
+    // The homogeneous map that shifts by `position` and does nothing else.
+    CreateTranslation(_: Matrix4x4, position: Vector3D): Matrix4x4
+        => (Number4(1.0, 0.0, 0.0, 0.0),
+            Number4(0.0, 1.0, 0.0, 0.0),
+            Number4(0.0, 0.0, 1.0, 0.0),
+            Number4(position.X, position.Y, position.Z, 1.0));
+
+    // The uniform scale about the origin.
+    CreateScale(_: Matrix4x4, scale: Number): Matrix4x4
+        => (Number4(scale, 0.0, 0.0, 0.0),
+            Number4(0.0, scale, 0.0, 0.0),
+            Number4(0.0, 0.0, scale, 0.0),
+            Number4(0.0, 0.0, 0.0, 1.0));
+
+    // The per-axis scale about the origin.
+    CreateScale(_: Matrix4x4, scales: Number3): Matrix4x4
+        => (Number4(scales.X, 0.0, 0.0, 0.0),
+            Number4(0.0, scales.Y, 0.0, 0.0),
+            Number4(0.0, 0.0, scales.Z, 0.0),
+            Number4(0.0, 0.0, 0.0, 1.0));
+
+    // The rotation about the world X axis, right-handed.
+    // https://en.wikipedia.org/wiki/Rotation_matrix
+    CreateRotationX(_: Matrix4x4, angle: Angle): Matrix4x4 {
+        var c = angle.Cos;
+        var s = angle.Sin;
+        return (Number4(1.0, 0.0, 0.0, 0.0),
+                Number4(0.0, c, s, 0.0),
+                Number4(0.0, -s, c, 0.0),
+                Number4(0.0, 0.0, 0.0, 1.0));
+    }
+
+    // The rotation about the world Y axis, right-handed.
+    CreateRotationY(_: Matrix4x4, angle: Angle): Matrix4x4 {
+        var c = angle.Cos;
+        var s = angle.Sin;
+        return (Number4(c, 0.0, -s, 0.0),
+                Number4(0.0, 1.0, 0.0, 0.0),
+                Number4(s, 0.0, c, 0.0),
+                Number4(0.0, 0.0, 0.0, 1.0));
+    }
+
+    // The rotation about the world Z axis, right-handed.
+    CreateRotationZ(_: Matrix4x4, angle: Angle): Matrix4x4 {
+        var c = angle.Cos;
+        var s = angle.Sin;
+        return (Number4(c, s, 0.0, 0.0),
+                Number4(-s, c, 0.0, 0.0),
+                Number4(0.0, 0.0, 1.0, 0.0),
+                Number4(0.0, 0.0, 0.0, 1.0));
+    }
+
+    // The rotation of `angle` about `axis` (Rodrigues' formula in matrix form).
+    // Precondition: `axis` is a unit vector.
+    // https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
+    CreateFromAxisAngle(_: Matrix4x4, axis: Vector3D, angle: Angle): Matrix4x4 {
+        var x = axis.X;
+        var y = axis.Y;
+        var z = axis.Z;
+        var sa = angle.Sin;
+        var ca = angle.Cos;
+        var xx = x * x; var yy = y * y; var zz = z * z;
+        var xy = x * y; var xz = x * z; var yz = y * z;
+        return (Number4(xx + ca * (1.0 - xx), xy - ca * xy + sa * z, xz - ca * xz - sa * y, 0.0),
+                Number4(xy - ca * xy - sa * z, yy + ca * (1.0 - yy), yz - ca * yz + sa * x, 0.0),
+                Number4(xz - ca * xz + sa * y, yz - ca * yz - sa * x, zz + ca * (1.0 - zz), 0.0),
+                Number4(0.0, 0.0, 0.0, 1.0));
+    }
+
+    // The rotation matrix of a quaternion, by the doubled-component expansion.
+    // Precondition: the quaternion is unit length.
+    // https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+    CreateFromQuaternion(_: Matrix4x4, quaternion: Quaternion): Matrix4x4 {
+        var xx = quaternion.X * quaternion.X;
+        var yy = quaternion.Y * quaternion.Y;
+        var zz = quaternion.Z * quaternion.Z;
+        var xy = quaternion.X * quaternion.Y;
+        var wz = quaternion.Z * quaternion.W;
+        var xz = quaternion.Z * quaternion.X;
+        var wy = quaternion.Y * quaternion.W;
+        var yz = quaternion.Y * quaternion.Z;
+        var wx = quaternion.X * quaternion.W;
+        return (Number4(1.0 - 2.0 * (yy + zz), 2.0 * (xy + wz), 2.0 * (xz - wy), 0.0),
+                Number4(2.0 * (xy - wz), 1.0 - 2.0 * (zz + xx), 2.0 * (yz + wx), 0.0),
+                Number4(2.0 * (xz + wy), 2.0 * (yz - wx), 1.0 - 2.0 * (yy + xx), 0.0),
+                Number4(0.0, 0.0, 0.0, 1.0));
+    }
+
+    // The rotation of the three Tait-Bryan angles, applied roll then pitch then
+    // yaw. Built through the quaternion, as System.Numerics does, so the two
+    // spellings agree bit for bit.
+    CreateFromYawPitchRoll(_: Matrix4x4, yaw: Angle, pitch: Angle, roll: Angle): Matrix4x4
+        => Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(yaw, pitch, roll));
+
+    //==
+    // # Matrix4x4 construction — view and world
+    //
+    // Right-handed, looking down -Z in view space, matching System.Numerics.
+
+    // The view matrix of a camera at `cameraPosition` looking at `cameraTarget`.
+    // The basis is built back-to-front (+Z points from the target to the camera)
+    // and stored transposed, because a view matrix is the inverse of a camera
+    // placement. Preconditions (unchecked): the camera is not at the target, and
+    // `cameraUpVector` is not parallel to the view direction.
+    CreateLookAt(_: Matrix4x4, cameraPosition: Point3D, cameraTarget: Point3D, cameraUpVector: Vector3D): Matrix4x4 {
+        var zaxis = cameraTarget.Between(cameraPosition).Normalize;
+        var xaxis = cameraUpVector.Cross(zaxis).Normalize;
+        var yaxis = zaxis.Cross(xaxis);
+        var eye = cameraPosition.PositionVector;
+        return (Number4(xaxis.X, yaxis.X, zaxis.X, 0.0),
+                Number4(xaxis.Y, yaxis.Y, zaxis.Y, 0.0),
+                Number4(xaxis.Z, yaxis.Z, zaxis.Z, 0.0),
+                Number4(-xaxis.Dot(eye), -yaxis.Dot(eye), -zaxis.Dot(eye), 1.0));
+    }
+
+    // The world matrix that places an object at `position` facing `forward` with
+    // `up` as its up direction — the inverse construction to CreateLookAt.
+    // Preconditions (unchecked): `forward` is non-zero and not parallel to `up`.
+    CreateWorld(_: Matrix4x4, position: Point3D, forward: Vector3D, up: Vector3D): Matrix4x4 {
+        var zaxis = (-forward).Normalize;
+        var xaxis = up.Cross(zaxis).Normalize;
+        var yaxis = zaxis.Cross(xaxis);
+        return (Number4(xaxis.X, xaxis.Y, xaxis.Z, 0.0),
+                Number4(yaxis.X, yaxis.Y, yaxis.Z, 0.0),
+                Number4(zaxis.X, zaxis.Y, zaxis.Z, 0.0),
+                Number4(position.X, position.Y, position.Z, 1.0));
+    }
+
+    //==
+    // # Matrix4x4 construction — projections
+    //
+    // All of these map the view volume onto the [-1, 1] x [-1, 1] x [0, -1]
+    // clip box of the System.Numerics / DirectX convention. The C# originals
+    // throw for degenerate arguments; here the preconditions are UNCHECKED (see
+    // the file header). https://en.wikipedia.org/wiki/3D_projection
+
+    // The perspective projection of a symmetric frustum described by its
+    // vertical field of view. Preconditions (unchecked):
+    // 0 < fieldOfView < half a turn, 0 < nearPlane < farPlane.
+    CreatePerspectiveFieldOfView(_: Matrix4x4, fieldOfView: Angle, aspectRatio: Number, nearPlane: Number, farPlane: Number): Matrix4x4 {
+        var yScale = 1.0 / (fieldOfView * 0.5).Tan;
+        var xScale = yScale / aspectRatio;
+        var range = farPlane / (nearPlane - farPlane);
+        return (Number4(xScale, 0.0, 0.0, 0.0),
+                Number4(0.0, yScale, 0.0, 0.0),
+                Number4(0.0, 0.0, range, -1.0),
+                Number4(0.0, 0.0, nearPlane * range, 0.0));
+    }
+
+    // The perspective projection of a symmetric frustum described by the size of
+    // its near plane. Preconditions (unchecked):
+    // 0 < nearPlaneDistance < farPlaneDistance, and non-zero width and height.
+    CreatePerspective(_: Matrix4x4, width: Number, height: Number, nearPlaneDistance: Number, farPlaneDistance: Number): Matrix4x4 {
+        var range = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+        return (Number4(2.0 * nearPlaneDistance / width, 0.0, 0.0, 0.0),
+                Number4(0.0, 2.0 * nearPlaneDistance / height, 0.0, 0.0),
+                Number4(0.0, 0.0, range, -1.0),
+                Number4(0.0, 0.0, nearPlaneDistance * range, 0.0));
+    }
+
+    // The perspective projection of an arbitrary, possibly asymmetric frustum
+    // given by its near-plane edges. Preconditions (unchecked):
+    // 0 < nearPlaneDistance < farPlaneDistance, left != right, bottom != top.
+    CreatePerspectiveOffCenter(_: Matrix4x4, left: Number, right: Number, bottom: Number, top: Number, nearPlaneDistance: Number, farPlaneDistance: Number): Matrix4x4 {
+        var range = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+        return (Number4(2.0 * nearPlaneDistance / (right - left), 0.0, 0.0, 0.0),
+                Number4(0.0, 2.0 * nearPlaneDistance / (top - bottom), 0.0, 0.0),
+                Number4((left + right) / (right - left), (top + bottom) / (top - bottom), range, -1.0),
+                Number4(0.0, 0.0, nearPlaneDistance * range, 0.0));
+    }
+
+    // The orthographic projection of a centred box.
+    // Preconditions (unchecked): non-zero width, height and zFarPlane - zNearPlane.
+    CreateOrthographic(_: Matrix4x4, width: Number, height: Number, zNearPlane: Number, zFarPlane: Number): Matrix4x4 {
+        var range = 1.0 / (zNearPlane - zFarPlane);
+        return (Number4(2.0 / width, 0.0, 0.0, 0.0),
+                Number4(0.0, 2.0 / height, 0.0, 0.0),
+                Number4(0.0, 0.0, range, 0.0),
+                Number4(0.0, 0.0, zNearPlane * range, 1.0));
+    }
+
+    // The orthographic projection of an arbitrary box given by its edges.
+    // Preconditions (unchecked): left != right, bottom != top, zNearPlane != zFarPlane.
+    CreateOrthographicOffCenter(_: Matrix4x4, left: Number, right: Number, bottom: Number, top: Number, zNearPlane: Number, zFarPlane: Number): Matrix4x4 {
+        var range = 1.0 / (zNearPlane - zFarPlane);
+        return (Number4(2.0 / (right - left), 0.0, 0.0, 0.0),
+                Number4(0.0, 2.0 / (top - bottom), 0.0, 0.0),
+                Number4(0.0, 0.0, range, 0.0),
+                Number4((left + right) / (left - right),
+                        (top + bottom) / (bottom - top),
+                        zNearPlane * range,
+                        1.0));
+    }
+
+    //==
+    // # Matrix4x4 construction — billboards
+    //
+    // Placements that keep a flat object turned toward the camera.
+
+    // The spherical billboard at `objectPosition`: the object's +Z is turned to
+    // face the camera outright. When the camera sits on the object (within 1e-4
+    // squared units) the camera's own forward direction is used instead.
+    CreateBillboard(_: Matrix4x4, objectPosition: Point3D, cameraPosition: Point3D, cameraUpVector: Vector3D, cameraForwardVector: Vector3D): Matrix4x4 {
+        var eps = 0.0001;
+        var toObject = cameraPosition.Between(objectPosition);
+        var zaxis = toObject.LengthSquared < eps ? -cameraForwardVector : toObject.Normalize;
+        var xaxis = cameraUpVector.Cross(zaxis).Normalize;
+        var yaxis = zaxis.Cross(xaxis);
+        return (Number4(xaxis.X, xaxis.Y, xaxis.Z, 0.0),
+                Number4(yaxis.X, yaxis.Y, yaxis.Z, 0.0),
+                Number4(zaxis.X, zaxis.Y, zaxis.Z, 0.0),
+                Number4(objectPosition.X, objectPosition.Y, objectPosition.Z, 1.0));
+    }
+
+    // The cylindrical billboard at `objectPosition`: the object turns toward the
+    // camera about `rotateAxis` only, so the axis is preserved exactly. When the
+    // facing direction is within a tenth of a degree of the axis the turn is
+    // undefined, and the object's own forward — or, failing that, a fixed world
+    // axis — is substituted.
+    CreateConstrainedBillboard(_: Matrix4x4, objectPosition: Point3D, cameraPosition: Point3D, rotateAxis: Vector3D, cameraForwardVector: Vector3D, objectForwardVector: Vector3D): Matrix4x4 {
+        var eps = 0.0001;
+        // The cosine beyond which two unit vectors count as parallel.
+        var minAngle = 1.0 - 0.1 * Number.RadiansPerDegree;
+        var toObject = cameraPosition.Between(objectPosition);
+        var faceDir = toObject.LengthSquared < eps ? -cameraForwardVector : toObject.Normalize;
+        var yaxis = rotateAxis;
+        var degenerate = rotateAxis.Dot(faceDir).Abs > minAngle;
+        var fallback = rotateAxis.Dot(objectForwardVector).Abs > minAngle
+            ? (rotateAxis.Z.Abs > minAngle ? Vector3D(1.0, 0.0, 0.0) : Vector3D(0.0, 0.0, -1.0))
+            : objectForwardVector;
+        var xaxis = degenerate
+            ? rotateAxis.Cross(fallback).Normalize
+            : rotateAxis.Cross(faceDir).Normalize;
+        // Both branches of the original close the basis the same way, since
+        // yaxis is rotateAxis.
+        var zaxis = xaxis.Cross(rotateAxis).Normalize;
+        return (Number4(xaxis.X, xaxis.Y, xaxis.Z, 0.0),
+                Number4(yaxis.X, yaxis.Y, yaxis.Z, 0.0),
+                Number4(zaxis.X, zaxis.Y, zaxis.Z, 0.0),
+                Number4(objectPosition.X, objectPosition.Y, objectPosition.Z, 1.0));
+    }
+}

@@ -1,0 +1,239 @@
+//==
+// # Quaternion arithmetic and construction
+//
+// Portable reference bodies for the quaternion operations that used to be host
+// intrinsics. Every formula is a faithful port of System.Numerics.Quaternion
+// (https://github.com/microsoft/referencesource — System.Numerics/Quaternion.cs),
+// including operand order and branch structure, so host and portable evaluation
+// agree bit-for-bit.
+//
+// The rotation *conversions* (axis-angle, Euler, rotor, matrix embeddings) live in
+// `transforms-rotations.library.plato`; this file holds only the algebra and the
+// three `Create*` constructors.
+//
+// https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+
+library RotationsOps
+{
+    //==
+    // Magnitude and normalization
+
+    // The dot product of the two quaternions, taken over all four components.
+    Dot(self: Quaternion, quaternion2: Quaternion): Number
+        => self.X * quaternion2.X + self.Y * quaternion2.Y
+         + self.Z * quaternion2.Z + self.W * quaternion2.W;
+
+    // The squared magnitude: the dot product with itself. Cheaper than Length,
+    // and the form comparisons should prefer.
+    LengthSquared(self: Quaternion): Number
+        => self.Dot(self);
+
+    // The magnitude of the quaternion. A rotation quaternion has length 1.
+    Length(self: Quaternion): Number
+        => self.LengthSquared.Sqrt;
+
+    // Rescale to unit magnitude, restoring the rotation invariant after repeated
+    // products. Precondition: the quaternion is not zero.
+    Normalize(self: Quaternion): Quaternion
+        => self * (1.0 / self.Length);
+
+    //==
+    // Conjugation and inversion
+
+    // The conjugate: the vector part negated. For a unit quaternion this is the
+    // inverse (the opposite rotation).
+    Conjugate(self: Quaternion): Quaternion
+        => (-self.X, -self.Y, -self.Z, self.W);
+
+    // The multiplicative inverse: the conjugate divided by the squared magnitude.
+    // Precondition: the quaternion is not zero.
+    Inverse(self: Quaternion): Quaternion {
+        var invNorm = 1.0 / self.LengthSquared;
+        return (-self.X * invNorm, -self.Y * invNorm, -self.Z * invNorm, self.W * invNorm);
+    }
+
+    //==
+    // Component-wise algebra
+
+    // Component-wise sum. Not a rotation composition; the result is generally not
+    // a unit quaternion.
+    Add(a: Quaternion, b: Quaternion): Quaternion
+        => (a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
+
+    // Component-wise difference.
+    Subtract(a: Quaternion, b: Quaternion): Quaternion
+        => (a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
+
+    // All four components negated. Encodes the same rotation as the original
+    // (q and -q are the double cover of the same orientation).
+    Negative(a: Quaternion): Quaternion
+        => (-a.X, -a.Y, -a.Z, -a.W);
+
+    // Uniform scaling of all four components.
+    Multiply(a: Quaternion, scalar: Number): Quaternion
+        => (a.X * scalar, a.Y * scalar, a.Z * scalar, a.W * scalar);
+
+    //==
+    // Rotation composition
+
+    // The Hamilton product, in System.Numerics operand order: the vector parts
+    // give a cross term plus the scalar-weighted vectors, and the scalar part
+    // loses the vector dot product.
+    // https://en.wikipedia.org/wiki/Quaternion#Hamilton_product
+    Multiply(a: Quaternion, b: Quaternion): Quaternion {
+        var cx = a.Y * b.Z - a.Z * b.Y;
+        var cy = a.Z * b.X - a.X * b.Z;
+        var cz = a.X * b.Y - a.Y * b.X;
+        var dot = a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        return (a.X * b.W + b.X * a.W + cx,
+                a.Y * b.W + b.Y * a.W + cy,
+                a.Z * b.W + b.Z * a.W + cz,
+                a.W * b.W - dot);
+    }
+
+    // Multiplication by the inverse of `b` — component-for-component the
+    // referencesource body, which inlines Inverse into the Hamilton product.
+    // Precondition: `b` is not zero.
+    Divide(a: Quaternion, b: Quaternion): Quaternion
+        => a * b.Inverse;
+
+    // The rotation that applies `self` first and then `value2`. Note the reversed
+    // operand order against Multiply: Concatenate(v1, v2) = v2 * v1.
+    Concatenate(self: Quaternion, value2: Quaternion): Quaternion
+        => value2 * self;
+
+    //==
+    // Interpolation
+
+    // Normalized linear interpolation along the shorter arc: the operands are
+    // taken with opposite signs when their dot product is negative, and the
+    // component-wise blend is renormalized. `amount` is unclamped.
+    // https://en.wikipedia.org/wiki/Slerp#Quaternion_slerp
+    Lerp(self: Quaternion, quaternion2: Quaternion, amount: Number): Quaternion {
+        var t1 = 1.0 - amount;
+        var blend = self.Dot(quaternion2) >= 0.0
+            ? self * t1 + quaternion2 * amount
+            : self * t1 - quaternion2 * amount;
+        return blend.Normalize;
+    }
+
+    // Spherical linear interpolation along the shorter arc: constant angular
+    // velocity, falling back to the plain (unnormalized) linear blend when the
+    // operands are within 1e-6 of parallel and the sine of the angle is unusable.
+    // `amount` is unclamped.
+    // https://en.wikipedia.org/wiki/Slerp
+    Slerp(self: Quaternion, quaternion2: Quaternion, amount: Number): Quaternion {
+        var d = self.Dot(quaternion2);
+        var flip = d < 0.0;
+        var cosOmega = flip ? -d : d;
+        var omega = cosOmega.AcosRadians;
+        var invSinOmega = 1.0 / omega.Sin;
+        var nearlyParallel = cosOmega > 0.999999;
+        var s1 = nearlyParallel
+            ? 1.0 - amount
+            : ((1.0 - amount) * omega).Sin * invSinOmega;
+        var s2 = nearlyParallel
+            ? amount
+            : (amount * omega).Sin * invSinOmega;
+        return self * s1 + quaternion2 * (flip ? -s2 : s2);
+    }
+
+    //==
+    // Hashing
+
+    // The component hashes folded together.
+    Hash(self: Quaternion): Integer
+        => self.X.Hash
+            .CombineHash(self.Y.Hash)
+            .CombineHash(self.Z.Hash)
+            .CombineHash(self.W.Hash);
+
+    //==
+    // Construction
+
+    // The rotation of `angle` about `axis`, following the right-hand rule:
+    // (axis sin(angle/2), cos(angle/2)). Precondition: `axis` is a unit vector.
+    // https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation
+    CreateFromAxisAngle(_: Quaternion, axis: Vector3D, angle: Angle): Quaternion {
+        var h = angle * 0.5;
+        var s = h.Sin;
+        return (axis.X * s, axis.Y * s, axis.Z * s, h.Cos);
+    }
+
+    // The rotation of the three Tait-Bryan angles, applied roll then pitch then
+    // yaw (yaw about Y, pitch about X, roll about Z).
+    // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+    CreateFromYawPitchRoll(_: Quaternion, yaw: Angle, pitch: Angle, roll: Angle): Quaternion {
+        var hr = roll * 0.5;
+        var hp = pitch * 0.5;
+        var hy = yaw * 0.5;
+        var sr = hr.Sin;
+        var cr = hr.Cos;
+        var sp = hp.Sin;
+        var cp = hp.Cos;
+        var sy = hy.Sin;
+        var cy = hy.Cos;
+        return (cy * sp * cr + sy * cp * sr,
+                sy * cp * cr - cy * sp * sr,
+                cy * cp * sr - sy * sp * cr,
+                cy * cp * cr + sy * sp * sr);
+    }
+
+    // The quaternion of a rotation matrix, taking whichever of the four branches
+    // has the numerically largest component so the shared divisor is never small.
+    // Precondition: the upper 3x3 block is orthonormal (no scale or shear).
+    // https://en.wikipedia.org/wiki/Rotation_matrix#Quaternion
+    CreateFromRotationMatrix(_: Quaternion, matrix: Matrix4x4): Quaternion {
+        var m11 = matrix.Row1.X;
+        var m22 = matrix.Row2.Y;
+        var m33 = matrix.Row3.Z;
+        return m11 + m22 + m33 > 0.0
+            ? matrix.QuaternionFromTrace
+            : (m11 >= m22 && m11 >= m33
+                ? matrix.QuaternionFromLargestX
+                : (m22 > m33
+                    ? matrix.QuaternionFromLargestY
+                    : matrix.QuaternionFromLargestZ));
+    }
+
+    // The positive-trace branch of CreateFromRotationMatrix: W is the largest
+    // component. Precondition: M11 + M22 + M33 > 0.
+    QuaternionFromTrace(m: Matrix4x4): Quaternion {
+        var s = (m.Row1.X + m.Row2.Y + m.Row3.Z + 1.0).Sqrt;
+        var invS = 0.5 / s;
+        return ((m.Row2.Z - m.Row3.Y) * invS,
+                (m.Row3.X - m.Row1.Z) * invS,
+                (m.Row1.Y - m.Row2.X) * invS,
+                s * 0.5);
+    }
+
+    // The branch of CreateFromRotationMatrix taken when X is the largest component.
+    QuaternionFromLargestX(m: Matrix4x4): Quaternion {
+        var s = (1.0 + m.Row1.X - m.Row2.Y - m.Row3.Z).Sqrt;
+        var invS = 0.5 / s;
+        return (0.5 * s,
+                (m.Row1.Y + m.Row2.X) * invS,
+                (m.Row1.Z + m.Row3.X) * invS,
+                (m.Row2.Z - m.Row3.Y) * invS);
+    }
+
+    // The branch of CreateFromRotationMatrix taken when Y is the largest component.
+    QuaternionFromLargestY(m: Matrix4x4): Quaternion {
+        var s = (1.0 + m.Row2.Y - m.Row1.X - m.Row3.Z).Sqrt;
+        var invS = 0.5 / s;
+        return ((m.Row2.X + m.Row1.Y) * invS,
+                0.5 * s,
+                (m.Row3.Y + m.Row2.Z) * invS,
+                (m.Row3.X - m.Row1.Z) * invS);
+    }
+
+    // The branch of CreateFromRotationMatrix taken when Z is the largest component.
+    QuaternionFromLargestZ(m: Matrix4x4): Quaternion {
+        var s = (1.0 + m.Row3.Z - m.Row1.X - m.Row2.Y).Sqrt;
+        var invS = 0.5 / s;
+        return ((m.Row3.X + m.Row1.Z) * invS,
+                (m.Row3.Y + m.Row2.Z) * invS,
+                0.5 * s,
+                (m.Row1.Y - m.Row2.X) * invS);
+    }
+}
