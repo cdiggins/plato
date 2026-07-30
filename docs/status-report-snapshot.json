@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-30T14:51:54-04:00",
+  "updated_at": "2026-07-30T15:04:16-04:00",
   "note": "Captured during initial status-report landing; refresh after gate runs.",
   "gates": [
     {
@@ -94,10 +94,10 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-07-30T14:51:54-04:00",
+    "updated_at": "2026-07-30T15:04:16-04:00",
     "targets": {
       "forward-conformance": {
-        "built_at": "2026-07-30T14:51:54-04:00",
+        "built_at": "2026-07-30T15:04:16-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\conformance\\Plato.ForwardConformanceTests\\Plato.ForwardConformanceTests.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\forward-conformance.log",
         "configuration": "Release",
@@ -108,8 +108,9 @@
         "summary_warnings": 0,
         "by_code": {
           "CS1061": 18,
-          "CS1929": 10,
+          "CS1929": 7,
           "CS0029": 5,
+          "CS0411": 3,
           "CS0019": 2,
           "CS0023": 2,
           "CS1662": 2,
@@ -125,7 +126,7 @@
             ]
           },
           "extension_receiver": {
-            "count": 10,
+            "count": 7,
             "label": "Extension method receiver type",
             "codes": [
               "CS1929"
@@ -148,6 +149,13 @@
               "CS0029"
             ]
           },
+          "type_inference_failed": {
+            "count": 3,
+            "label": "Type inference failed",
+            "codes": [
+              "CS0411"
+            ]
+          },
           "operator_type_mismatch": {
             "count": 2,
             "label": "Operator type mismatch",
@@ -159,7 +167,7 @@
         "warning_by_code": {}
       },
       "plato-cli": {
-        "built_at": "2026-07-30T14:51:03-04:00",
+        "built_at": "2026-07-30T15:03:19-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\Plato.CLI\\Plato.CLI.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\plato-cli.log",
         "configuration": "Release",
@@ -206,19 +214,21 @@
       "target": "forward-conformance",
       "total_errors": 41,
       "total_warnings": 0,
-      "built_at": "2026-07-30T14:51:54-04:00",
+      "built_at": "2026-07-30T15:04:16-04:00",
       "exit_code": 1,
       "by_category": {
         "missing_member": 18,
-        "extension_receiver": 10,
+        "extension_receiver": 7,
         "other": 6,
         "cannot_implicitly_convert": 5,
+        "type_inference_failed": 3,
         "operator_type_mismatch": 2
       },
       "by_code_top": {
         "CS1061": 18,
-        "CS1929": 10,
+        "CS1929": 7,
         "CS0029": 5,
+        "CS0411": 3,
         "CS0019": 2,
         "CS0023": 2,
         "CS1662": 2,
