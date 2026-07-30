@@ -9,7 +9,6 @@
 // any mesh; these maps record which named form the dual of a named form is, so
 // the Archimedean/Catalan pairing is vocabulary rather than a catalog comment.
 // Dual is an involution: `kind.Dual.Dual == kind` for every kind below.
-// Decision record: `tracker/decisions/2026-07-29-polyhedra-dual-kind-map.md`.
 
 library PolyhedraDuals
 {
