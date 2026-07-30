@@ -1,0 +1,175 @@
+//==
+// # BREP shell operations
+//
+// Evaluation, topology queries, validation, and deformation for the edge-use
+// shell declared in `brep.plato`. Geometry dispatch is an exhaustive `match`
+// over the `BrepCurve` / `BrepSurface` sums, so adding a curved case is a new
+// arm in each function here, not a new field anywhere.
+//
+// Deform is the faceted decay: it moves the CONTROL points (vertices, segment
+// endpoints, patch corners) through the mapping and rebuilds each sum case
+// from them, so straight edges stay straight and a warped Planar face decays
+// to the Bilinear case through its four UV corners. The exact
+// function-composition deform of the C# sketch needs function-valued payloads
+// that these sums intentionally do not carry.
+
+library Brep
+{
+    //==
+    // Geometry evaluation
+
+    // The point at parameter t (0 at Start, 1 at End) along an edge curve.
+    Eval(c: BrepCurve, t: Number): Point3D =>
+        match (c) {
+            Line(segment) => segment.PointAt(t);
+        };
+
+    // The point at a unit-square UV parameter on a face surface.
+    Eval(s: BrepSurface, uv: UvCoordinate): Point3D =>
+        match (s) {
+            Planar(patch) => patch.Eval(uv);
+            Bilinear(patch) => patch.Eval(uv);
+        };
+
+    // The curve's point at parameter 0; coincides with the owning edge's
+    // Start vertex on a valid shell.
+    StartPoint(c: BrepCurve): Point3D =>
+        match (c) {
+            Line(segment) => segment.A;
+        };
+
+    // The curve's point at parameter 1; coincides with the owning edge's
+    // End vertex on a valid shell.
+    EndPoint(c: BrepCurve): Point3D =>
+        match (c) {
+            Line(segment) => segment.B;
+        };
+
+    //==
+    // Topology queries
+
+    // Whether the use walks its edge from Start to End.
+    IsForward(u: BrepEdgeUse): Boolean =>
+        match (u.Orientation) {
+            Forward => true;
+            Reversed => false;
+        };
+
+    // The vertex an edge-use departs from, honouring its orientation.
+    StartVertex(b: Brep3D, u: BrepEdgeUse): VertexIndex
+        => u.IsForward ? b.Edges[u.Edge.Value].Start : b.Edges[u.Edge.Value].End;
+
+    // The vertex an edge-use arrives at, honouring its orientation.
+    EndVertex(b: Brep3D, u: BrepEdgeUse): VertexIndex
+        => u.IsForward ? b.Edges[u.Edge.Value].End : b.Edges[u.Edge.Value].Start;
+
+    // Every edge-use of every loop of every face, in face-then-loop order.
+    AllEdgeUses(b: Brep3D): Array<BrepEdgeUse>
+        => b.Faces.FlatMap(f => f.Loops.FlatMap(l => l.Uses));
+
+    // How many times the shell cites an edge in its forward direction.
+    ForwardUseCount(b: Brep3D, e: UndirectedEdgeIndex): Integer
+        => b.AllEdgeUses.Reduce(0, (acc, u) =>
+            acc + ((u.Edge.Value == e.Value && u.IsForward) ? 1 : 0));
+
+    // How many times the shell cites an edge in its reversed direction.
+    ReversedUseCount(b: Brep3D, e: UndirectedEdgeIndex): Integer
+        => b.AllEdgeUses.Reduce(0, (acc, u) =>
+            acc + ((u.Edge.Value == e.Value && u.IsForward.Not) ? 1 : 0));
+
+    // A shell is watertight when every edge is cited exactly twice, once in
+    // each direction — the edge-use form of "closed 2-manifold".
+    IsWatertight(b: Brep3D): Boolean
+        => MapRange(b.Edges.Count, i => UndirectedEdgeIndex(i))
+            .All(e => b.ForwardUseCount(e) == 1 && b.ReversedUseCount(e) == 1);
+
+    // V - E + F over the shell's own element counts; 2 for a sphere-like
+    // shell (https://en.wikipedia.org/wiki/Euler_characteristic).
+    EulerCharacteristic(b: Brep3D): Integer
+        => b.Vertices.Count - b.Edges.Count + b.Faces.Count;
+
+    //==
+    // Validation
+
+    // Whether every edge's Start and End name an existing vertex.
+    EdgesInRange(b: Brep3D): Boolean
+        => b.Edges.All(e =>
+            e.Start.Value >= 0 && e.Start.Value < b.Vertices.Count
+            && e.End.Value >= 0 && e.End.Value < b.Vertices.Count);
+
+    // Whether every loop's edge-uses name an existing edge.
+    LoopUsesInRange(b: Brep3D): Boolean
+        => b.AllEdgeUses.All(u => u.Edge.Value >= 0 && u.Edge.Value < b.Edges.Count);
+
+    // Whether every loop chains end-to-start into a closed cycle.
+    // Precondition: LoopUsesInRange and EdgesInRange hold.
+    LoopsConnected(b: Brep3D): Boolean
+        => b.Faces.All(f => f.Loops.All(l =>
+            MapRange(l.Uses.Count, i =>
+                b.EndVertex(l.Uses[i]).Value
+                    == b.StartVertex(l.Uses[(i + 1) % l.Uses.Count]).Value)
+                .All(ok => ok)));
+
+    // Whether every edge curve starts and ends at its named vertices, within
+    // an absolute distance tolerance. Precondition: EdgesInRange holds.
+    CurveEndpointsMatch(b: Brep3D, tolerance: Number): Boolean
+        => b.Edges.All(e =>
+            e.Curve.StartPoint.Distance(b.Vertices[e.Start.Value]) <= tolerance
+            && e.Curve.EndPoint.Distance(b.Vertices[e.End.Value]) <= tolerance);
+
+    // Every structural check at once. All five fields are computed, so call
+    // the individual range checks first on shells of unknown provenance.
+    Validate(b: Brep3D, tolerance: Number): BrepValidation
+        => BrepValidation(
+            b.EdgesInRange,
+            b.LoopUsesInRange,
+            b.LoopsConnected,
+            b.CurveEndpointsMatch(tolerance),
+            b.IsWatertight);
+
+    // Whether every structural check passed.
+    IsValid(v: BrepValidation): Boolean
+        => v.EdgesInRange && v.LoopUsesInRange && v.LoopsConnected
+            && v.CurveEndpointsMatch && v.Watertight;
+
+    //==
+    // Deformation (control-point decay)
+
+    // The curve with its control points moved through the mapping: a line
+    // stays the line through its mapped endpoints.
+    Deform(c: BrepCurve, mapping: Function1<Point3D, Point3D>): BrepCurve =>
+        match (c) {
+            Line(segment) => Line(segment.Deform(mapping));
+        };
+
+    // The surface rebuilt from its mapped UV-corner points. A Planar face
+    // decays to Bilinear (a warped plane is no longer a plane); a Bilinear
+    // face maps its four corners.
+    Deform(s: BrepSurface, mapping: Function1<Point3D, Point3D>): BrepSurface =>
+        match (s) {
+            Planar(patch) => Bilinear(BilinearPatch(
+                mapping(patch.Eval(UvCoordinate(0.0, 0.0))),
+                mapping(patch.Eval(UvCoordinate(1.0, 0.0))),
+                mapping(patch.Eval(UvCoordinate(0.0, 1.0))),
+                mapping(patch.Eval(UvCoordinate(1.0, 1.0)))));
+            Bilinear(patch) => Bilinear(BilinearPatch(
+                mapping(patch.P00), mapping(patch.P10),
+                mapping(patch.P01), mapping(patch.P11)));
+        };
+
+    // The edge with its curve deformed; the vertex indices are unchanged.
+    Deform(e: BrepEdge, mapping: Function1<Point3D, Point3D>): BrepEdge
+        => BrepEdge(e.Start, e.End, e.Curve.Deform(mapping));
+
+    // The face with its surface deformed; the loop topology is unchanged.
+    Deform(f: BrepFace, mapping: Function1<Point3D, Point3D>): BrepFace
+        => BrepFace(f.Surface.Deform(mapping), f.Loops);
+
+    // The Deformable3D obligation: the whole shell with vertices, edge curves,
+    // and face surfaces moved through the same mapping — topology unchanged.
+    Deform(b: Brep3D, mapping: Function1<Point3D, Point3D>): Brep3D
+        => Brep3D(
+            b.Vertices.Map(mapping),
+            b.Edges.Map(e => e.Deform(mapping)),
+            b.Faces.Map(f => f.Deform(mapping)));
+}
