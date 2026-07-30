@@ -44,7 +44,12 @@ if (-not $SkipLint) {
     $roots = if ($Folders) {
         @($Folders | ForEach-Object {
             if ([System.IO.Path]::IsPathRooted($_)) { $_ } else { Join-Path $root $_ } })
-    } else { @(Join-Path $root 'stdlib') }
+    } else {
+        # stdlib is split into dependency-ordered tier folders and Plato.CLI enumerates each
+        # root top-directory-only, so the default gate names all four explicitly. Linting the
+        # bare `stdlib` folder would find ZERO files.
+        @('foundation','geometry','graphics','future') | ForEach-Object { Join-Path $root "stdlib\$_" }
+    }
     $name = if ($Folders) { "lint --strict ($($Folders -join ' + '))" } else { 'lint --strict (stdlib forward)' }
     Run-Gate $name 'dotnet' (@(
         'run','--project',(Join-Path $root 'Plato.CLI\Plato.CLI.csproj'),

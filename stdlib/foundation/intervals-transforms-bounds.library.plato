@@ -132,12 +132,6 @@ library IntervalsTransformsBounds
         => (Point3D(self.Min.X - amount, self.Min.Y - amount, self.Min.Z - amount),
             Point3D(self.Max.X + amount, self.Max.Y + amount, self.Max.Z + amount));
 
-    // The circumscribed sphere of the box: centered at the box center with radius
-    // half the Min -> Max diagonal length. Reuses the BoundsLike Center/Diagonal declared above; Sphere is
-    // declared in spatial-spheres.types.plato and only constructed here.
-    BoundingSphere(self: Bounds3D): Sphere
-        => Sphere(self.Center, self.Diagonal.Magnitude.Half);
-
     // Corner enumeration is left out: it needs an 8- (or 4-) element array
     // literal of Point3D/Point2D, and this vocabulary has no array-literal constructor
     // (arrays arrive as function inputs; see geometry.library.plato BoundsOfPoints).

@@ -7,16 +7,16 @@ Comprehensive Plato vocabulary: broad domain coverage, `concept` keyword with ba
 (no `I` prefix), and files grouped by domain in dependency-layer order. The declaration
 files carry vocabulary only (concepts and types, semantics in doc comments); the
 `*.library.plato` files carry the `library` blocks that implement derived functionality
-on those concepts (see [`LIBRARIES.md`](LIBRARIES.md)). Declarations and bodies are
-flattened together in this folder; **every** `library` block lives in its own
+on those concepts (see [`LIBRARIES.md`](LIBRARIES.md)). Declarations and bodies sit
+side by side in each tier folder; **every** `library` block lives in its own
 `*.library.plato` file — no declaration file carries an inline one.
 
 Target applications: geometry (primary), 2D/3D and N-dimensional computation, animation,
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
 graphics, image processing, and engineering.
 
-Current contents (2026-07-30): **398 source files (189 `*.types.plato` files + 45
-`*.concepts.plato` files + 164 `*.library.plato` files), 157 concepts, 1152 types**.
+Current contents (2026-07-30): **399 source files (189 `*.types.plato` files + 45
+`*.concepts.plato` files + 165 `*.library.plato` files), 157 concepts, 1152 types**.
 
 Every file holds exactly
 one **kind** of declaration — `<stem>.concepts.plato` holds concepts, `<stem>.types.plato` holds
@@ -57,14 +57,27 @@ priority backends may polyfill (e.g. GLSL lacks double precision — `Number` ma
 ## Validation
 
 ```
-dotnet <path-to>/Plato.CLI.dll lint stdlib
+dotnet <path-to>/Plato.CLI.dll lint stdlib/foundation stdlib/geometry stdlib/graphics stdlib/future
 ```
 
-The folder must parse and resolve with zero errors. It is self-contained (declares its own
-primitives in `primitives.types.plato`). Because `Plato.CLI` enumerates `*.plato` non-recursively
-(`Program.cs:101` / `:197`, `TopDirectoryOnly`), this single command now covers both the
-declaration files and the `*.library.plato` implementation bodies (see [`LIBRARIES.md`](LIBRARIES.md));
-the informational LINT001/LINT003 finding counts shift as the libraries implement more members.
+Each root is enumerated **top-directory-only**, so the tier folders are named explicitly —
+`lint stdlib` on its own would find zero files. The tiers are dependency-ordered and
+cumulative, so any prefix of that list is a valid, faster subset gate:
+
+```
+lint stdlib/foundation                                    # ~130 files
+lint stdlib/foundation stdlib/geometry                    # + geometry
+lint stdlib/foundation stdlib/geometry stdlib/graphics    # + graphics
+```
+
+A folder may reference only itself and the folders before it; `future` may reach anything,
+nothing reaches into `future`.
+
+The tree must parse and resolve with zero errors. It is self-contained (declares its own
+primitives in `foundation/primitives.types.plato`). Declaration files and the
+`*.library.plato` implementation bodies sit together in each tier folder, so one command
+covers both (see [`LIBRARIES.md`](LIBRARIES.md)); the informational LINT001/LINT003 finding
+counts shift as the libraries implement more members.
 
 ## Conventions and style
 
@@ -115,7 +128,11 @@ Owning declaration files cite conventions with a one-line
   still use `Number` when the domain is unit-agnostic (pure math), `Length` when physical.
 - **Naming:** domain type-declaration files are `domain.types.plato`; pure concept files are
   `domain.concepts.plato`; library files are `domain.library.plato`. There are no numeric
-  prefixes; reading order lives in this README's layer table below. **This grammar is now
+  prefixes; reading order lives in this README's layer table below. Files live in one of four
+  dependency-ordered **tier folders** — `foundation/`, `geometry/`, `graphics/`, `future/` —
+  which double as compile subsets (see Validation above). `future/` holds the aspirational
+  domains (physics, engineering, scientific computing, geo-spatial): real vocabulary, kept
+  off the priority path so its debt never blocks 2D/3D geometry and graphics work. **This grammar is now
   exact, not aspirational:** every file in the folder holds
   exactly one kind of declaration, so a file's suffix tells you what is inside it without
   opening it — a `.concepts.plato` file contains only `concept` blocks, a `.types.plato` file

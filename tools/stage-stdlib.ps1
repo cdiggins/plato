@@ -55,11 +55,14 @@ if (-not (Test-Path $cli)) { throw "No pinned CLI at $cli - run with -Snapshot f
 if (-not $Folders) {
     $target = Join-Path $staging 'stdlib'
     if (-not $NoSync) {
-        # /MIR so deletes/renames in the repo propagate; staging copy is disposable.
+        # /MIR so deletes/renames in the repo propagate (and /E-style recursion carries the
+        # tier subfolders); staging copy is disposable.
         robocopy (Join-Path $repo 'stdlib') $target /MIR /NJH /NJS /NDL /NFL | Out-Null
         if ($LASTEXITCODE -ge 8) { throw "robocopy failed ($LASTEXITCODE)" }
     }
-    $Folders = @($target)
+    # Each root is enumerated top-directory-only, so name the tier folders rather than the
+    # staging root — linting the root itself would find ZERO files.
+    $Folders = @('foundation','geometry','graphics','future') | ForEach-Object { Join-Path $target $_ }
 }
 
 $out = & dotnet $cli lint @Folders 2>&1

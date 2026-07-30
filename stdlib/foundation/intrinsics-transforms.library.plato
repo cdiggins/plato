@@ -1,11 +1,12 @@
 //==
 // # Transform intrinsics
 //
-// Host-provided matrix, quaternion, and plane operations: the System.Numerics
+// Host-provided matrix and quaternion operations: the System.Numerics
 // transform surface (https://en.wikipedia.org/wiki/Transformation_matrix),
 // including the Create* factory family dispatched on an ignored receiver of the
 // result type. Shared preamble and porting notes:
-// `intrinsics-scalars.library.plato`.
+// `intrinsics-scalars.library.plato`. The `Plane` intrinsics live in
+// `intrinsics-planes.library.plato` (geometry tier) — `Plane` is a geometry type.
 
 library IntrinsicsTransforms
 {
@@ -67,8 +68,6 @@ library IntrinsicsTransforms
     CreatePerspectiveOffCenter(_: Matrix4x4, left: Number, right: Number, bottom: Number, top: Number, nearPlaneDistance: Number, farPlaneDistance: Number): Matrix4x4;
     CreateOrthographic(_: Matrix4x4, width: Number, height: Number, zNearPlane: Number, zFarPlane: Number): Matrix4x4;
     CreateOrthographicOffCenter(_: Matrix4x4, left: Number, right: Number, bottom: Number, top: Number, zNearPlane: Number, zFarPlane: Number): Matrix4x4;
-    CreateReflection(_: Matrix4x4, value: Plane): Matrix4x4;
-    CreateShadow(_: Matrix4x4, lightDirection: Vector3D, plane: Plane): Matrix4x4;
     CreateBillboard(_: Matrix4x4, objectPosition: Point3D, cameraPosition: Point3D, cameraUpVector: Vector3D, cameraForwardVector: Vector3D): Matrix4x4;
     CreateConstrainedBillboard(_: Matrix4x4, objectPosition: Point3D, cameraPosition: Point3D, rotateAxis: Vector3D, cameraForwardVector: Vector3D, objectForwardVector: Vector3D): Matrix4x4;
 
@@ -95,16 +94,4 @@ library IntrinsicsTransforms
     CreateFromAxisAngle(_: Quaternion, axis: Vector3D, angle: Angle): Quaternion;
     CreateFromYawPitchRoll(_: Quaternion, yaw: Angle, pitch: Angle, roll: Angle): Quaternion;
     CreateFromRotationMatrix(_: Quaternion, matrix: Matrix4x4): Quaternion;
-
-    //==
-    // Plane
-
-    Normalize(self: Plane): Plane;
-    CreateFromVertices(_: Plane, point1: Point3D, point2: Point3D, point3: Point3D): Plane;
-    Dot(self: Plane, value: Number4): Number;
-    DotCoordinate(self: Plane, value: Point3D): Number;
-    DotNormal(self: Plane, value: Vector3D): Number;
-    Transform(self: Plane, rotation: Quaternion): Plane;
-    Transform(self: Plane, matrix: Matrix4x4): Plane;
-    Hash(self: Plane): Integer;
 }

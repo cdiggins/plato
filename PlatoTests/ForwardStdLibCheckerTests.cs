@@ -58,7 +58,7 @@ namespace PlatoTests
         }
 
         private static IReadOnlyList<string> ParseFailures(string folder)
-            => Directory.GetFiles(folder, "*.plato")
+            => CheckerTestSupport.PlatoFiles(folder)
                 .Select(ParseFailure)
                 .Where(s => s.Length > 0)
                 .ToList();
@@ -67,9 +67,18 @@ namespace PlatoTests
         public static void ForwardStdLibParsesAndCompiles()
         {
             var folder = CheckerTestSupport.FindForwardStdLib();
-            var files = Directory.GetFiles(folder, "*.plato");
+            var files = CheckerTestSupport.PlatoFiles(folder);
             TestContext.WriteLine($"forward stdlib: {folder}");
-            TestContext.WriteLine($"files (*.plato, top-directory-only): {files.Length}");
+            TestContext.WriteLine($"files (*.plato, recursive): {files.Count}");
+
+            // Corpus floor. Every assertion below is an IsEmpty over results derived from `files`,
+            // so an empty corpus would make this whole gate pass while proving nothing — exactly
+            // what a top-only enumeration did once the tier subfolders landed. Deliberately far
+            // below the real count (398 at the 2026-07-30 reorg) so ordinary growth or pruning
+            // never trips it; it only catches "the enumeration stopped finding the library".
+            Assert.Greater(files.Count, 300,
+                $"forward stdlib corpus collapsed to {files.Count} files under {folder} — "
+                + "the enumeration is broken, not the library");
 
             var failures = ParseFailures(folder);
             foreach (var f in failures)

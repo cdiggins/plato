@@ -163,8 +163,4 @@ library Constants
     UnitInterval(_: NumberInterval): NumberInterval
         => NumberInterval(0.0, 1.0);
 
-    // The circle of radius one centred at the origin.
-    // (https://en.wikipedia.org/wiki/Unit_circle)
-    UnitCircle(_: Circle): Circle
-        => Circle(Point2D(0.0, 0.0), 1.0);
 }

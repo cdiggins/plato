@@ -1,0 +1,36 @@
+//==
+// # Plane intrinsics
+//
+// Host-provided `Plane` operations: the System.Numerics plane surface
+// (https://en.wikipedia.org/wiki/Plane_(geometry)), including the
+// `CreateFromVertices` factory dispatched on an ignored receiver of the result
+// type. Shared preamble and porting notes:
+// `intrinsics-scalars.library.plato`.
+//
+// Split out of `intrinsics-transforms.library.plato` (foundation) because
+// `Plane` is declared in `lines-planes.types.plato` here in the geometry tier:
+// foundation may not reference a geometry type, and the matrix/quaternion
+// intrinsics in that file are needed by foundation itself. The two
+// `Matrix4x4` factories that take a `Plane` — `CreateReflection` and
+// `CreateShadow` — live here for the same reason.
+
+library IntrinsicsPlanes
+{
+    //==
+    // Matrix4x4 factories taking a plane
+
+    CreateReflection(_: Matrix4x4, value: Plane): Matrix4x4;
+    CreateShadow(_: Matrix4x4, lightDirection: Vector3D, plane: Plane): Matrix4x4;
+
+    //==
+    // Plane
+
+    Normalize(self: Plane): Plane;
+    CreateFromVertices(_: Plane, point1: Point3D, point2: Point3D, point3: Point3D): Plane;
+    Dot(self: Plane, value: Number4): Number;
+    DotCoordinate(self: Plane, value: Point3D): Number;
+    DotNormal(self: Plane, value: Vector3D): Number;
+    Transform(self: Plane, rotation: Quaternion): Plane;
+    Transform(self: Plane, matrix: Matrix4x4): Plane;
+    Hash(self: Plane): Integer;
+}

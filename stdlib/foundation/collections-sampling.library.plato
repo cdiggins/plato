@@ -55,4 +55,9 @@ library CollectionsSampling
     // periodic form. Precondition: count >= 1.
     LinearSpaceExclusive(a: Interpolatable, b: Interpolatable, count: Integer): Array<Interpolatable>
         => count.FractionsExclusive.Map(t => a.Lerp(b, t));
+
+    // The sum of an array of numbers. The one numeric reduction the vocabulary
+    // spells by name; the collection surface has no `Sum`.
+    SumOf(values: Array<Number>): Number
+        => values.Reduce(0.0, (acc, x) => acc + x);
 }

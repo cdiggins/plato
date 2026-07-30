@@ -32,11 +32,6 @@ library GeometryKernels
     //     SIMPLE ring. On the boundary itself the answer is whatever the floating
     //     point comparison happens to give — see `PolygonContainsPoint`.
 
-    // The sum of an array of numbers. The one reduction these kernels need; the
-    // v3 collection surface has no `Sum`, so it is spelled once here.
-    SumOf(values: Array<Number>): Number
-        => values.Reduce(0.0, (acc, x) => acc + x);
-
     // Twice the signed area of triangle (a, b, c): the z component of
     // (b - a) x (c - a). Positive when a -> b -> c turns counter-clockwise, zero
     // when the three points are collinear. The primitive orientation predicate.

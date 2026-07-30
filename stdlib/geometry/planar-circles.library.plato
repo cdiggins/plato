@@ -246,4 +246,10 @@ library PlanarCircles
     Support(c: Capsule2D, direction: Direction2D): Point2D
         => (direction.Vector.Dot(c.A.PositionVector) >= direction.Vector.Dot(c.B.PositionVector)
             ? c.A : c.B) + direction.Vector * c.Radius;
+
+    // The circle of radius one centred at the origin. Constants dispatch on an
+    // ignored receiver of the result type, read as `Circle.UnitCircle`.
+    // (https://en.wikipedia.org/wiki/Unit_circle)
+    UnitCircle(_: Circle): Circle
+        => Circle(Point2D(0.0, 0.0), 1.0);
 }

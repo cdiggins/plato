@@ -33,7 +33,8 @@ namespace PlatoTests
         public static string FindPlatoSrc()
             => FindFolder("stdlib-legacy");
 
-        /// <summary>The forward vocabulary (stdlib): declarations plus *.library.plato bodies, flat.</summary>
+        /// <summary>The forward vocabulary (stdlib): declarations plus *.library.plato bodies,
+        /// in the foundation/geometry/graphics/future tier subfolders.</summary>
         public static string FindForwardStdLib()
             => FindFolder("stdlib");
 
@@ -48,9 +49,16 @@ namespace PlatoTests
             return parser.Cst!.ToAst();
         }
 
+        /// <summary>Every *.plato under <paramref name="folder"/>, RECURSIVELY. The forward stdlib
+        /// is split into tier subfolders (foundation/geometry/graphics/future); a top-only
+        /// enumeration would find zero files there and every assertion downstream would pass
+        /// vacuously. stdlib-legacy is flat, so recursion is a no-op for it.</summary>
+        public static IReadOnlyList<string> PlatoFiles(string folder)
+            => Directory.GetFiles(folder, "*.plato", SearchOption.AllDirectories);
+
         public static Compilation CompileFolder(string folder)
         {
-            var asts = Directory.GetFiles(folder, "*.plato").Select(ParseFile).ToList();
+            var asts = PlatoFiles(folder).Select(ParseFile).ToList();
             return new Compilation(Ara3D.Logging.Logger.Null, asts);
         }
 
