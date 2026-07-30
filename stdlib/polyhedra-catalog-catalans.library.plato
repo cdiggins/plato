@@ -1,0 +1,60 @@
+//==
+// # PolyhedraCatalogCatalans — the remaining nine Catalan duals
+//
+// The Catalan solids the base catalog (`polyhedra-catalog.library.plato`) could
+// not name, each simply the Conway `Dual` (`polyhedra-conway.library.plato`) of
+// its Archimedean partner — the same pairing `polyhedra-duals.library.plato`
+// records on the kind sums. Together with the base catalog's four this names
+// all thirteen Catalans (https://en.wikipedia.org/wiki/Catalan_solid).
+//
+// All are face-transitive, so their vertices sit at more than one radius: never
+// pass them through ProjectedToUnitSphere. The duals of the two snubs inherit
+// their source's chirality.
+
+library PolyhedraCatalogCatalans
+{
+    // 24 isosceles triangles on 14 vertices: the dual of the truncated
+    // octahedron (https://en.wikipedia.org/wiki/Tetrakis_hexahedron).
+    TetrakisHexahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.TruncatedOctahedron.Dual;
+
+    // 60 isosceles triangles on 32 vertices: the dual of the truncated
+    // dodecahedron (https://en.wikipedia.org/wiki/Triakis_icosahedron).
+    TriakisIcosahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.TruncatedDodecahedron.Dual;
+
+    // 60 isosceles triangles on 32 vertices: the dual of the truncated
+    // icosahedron (https://en.wikipedia.org/wiki/Pentakis_dodecahedron).
+    PentakisDodecahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.TruncatedIcosahedron.Dual;
+
+    // 24 kites on 26 vertices: the dual of the rhombicuboctahedron
+    // (https://en.wikipedia.org/wiki/Deltoidal_icositetrahedron).
+    DeltoidalIcositetrahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Rhombicuboctahedron.Dual;
+
+    // 60 kites on 62 vertices: the dual of the rhombicosidodecahedron
+    // (https://en.wikipedia.org/wiki/Deltoidal_hexecontahedron).
+    DeltoidalHexecontahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Rhombicosidodecahedron.Dual;
+
+    // 48 scalene triangles on 26 vertices: the dual of the truncated
+    // cuboctahedron (https://en.wikipedia.org/wiki/Disdyakis_dodecahedron).
+    DisdyakisDodecahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.TruncatedCuboctahedron.Dual;
+
+    // 120 scalene triangles on 62 vertices: the dual of the truncated
+    // icosidodecahedron (https://en.wikipedia.org/wiki/Disdyakis_triacontahedron).
+    DisdyakisTriacontahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.TruncatedIcosidodecahedron.Dual;
+
+    // 24 irregular pentagons on 38 vertices: the chiral dual of the snub cube
+    // (https://en.wikipedia.org/wiki/Pentagonal_icositetrahedron).
+    PentagonalIcositetrahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.SnubCube.Dual;
+
+    // 60 irregular pentagons on 92 vertices: the chiral dual of the snub
+    // dodecahedron (https://en.wikipedia.org/wiki/Pentagonal_hexecontahedron).
+    PentagonalHexecontahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.SnubDodecahedron.Dual;
+}

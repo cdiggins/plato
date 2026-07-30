@@ -1,0 +1,60 @@
+//==
+// # PolyhedraCatalogExpanded — the expand, bevel and snub Archimedeans
+//
+// The six Archimedean solids the base catalog
+// (`polyhedra-catalog.library.plato`) could not name: the expand, bevel and
+// snub families, each a one-line Conway program
+// (`polyhedra-conway-expansion.library.plato`) over a Platonic seed. Together
+// with the base catalog this names all thirteen Archimedeans.
+//
+// The `shrink` / `twist` constants below are the values that make each result
+// UNIFORM — every edge the same length (verified numerically to 1e-15 relative
+// spread). The expand shrinks have closed forms; the snub constants are the
+// roots of the usual snub polynomials (tribonacci-flavoured for the cube) and
+// are recorded as solved decimals. Twists are positive, picking the
+// counter-clockwise enantiomer of each chiral snub; negate them for the mirror.
+//
+// Bevel's vertex faces are rectangles rather than squares (see
+// `polyhedra-conway-expansion.library.plato`): topology and planarity exact,
+// edge lengths not all equal.
+
+library PolyhedraCatalogExpanded
+{
+    //==
+    // Expand family (https://en.wikipedia.org/wiki/Rhombicuboctahedron).
+
+    // 8 triangles + 18 squares on 24 vertices; uniform at shrink = sqrt(2) - 1.
+    Rhombicuboctahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Cube.Expand(Number.SqrtTwo - 1.0);
+
+    // 20 triangles + 30 squares + 12 pentagons on 60 vertices; uniform at
+    // shrink = phi / 3
+    // (https://en.wikipedia.org/wiki/Rhombicosidodecahedron).
+    Rhombicosidodecahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Dodecahedron.Expand(Number.Phi / 3.0);
+
+    //==
+    // Bevel family (https://en.wikipedia.org/wiki/Truncated_cuboctahedron).
+
+    // 12 squares + 8 hexagons + 6 octagons on 48 vertices.
+    TruncatedCuboctahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Cube.Bevel;
+
+    // 30 squares + 20 hexagons + 12 decagons on 120 vertices
+    // (https://en.wikipedia.org/wiki/Truncated_icosidodecahedron).
+    TruncatedIcosidodecahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Dodecahedron.Bevel;
+
+    //==
+    // Snub family — chiral; these are the counter-clockwise enantiomers.
+
+    // 32 triangles + 6 squares on 24 vertices; the twist is the classical
+    // 16.4675 degrees (https://en.wikipedia.org/wiki/Snub_cube).
+    SnubCube(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Cube.Snub(0.437593286000961, Angle(0.287413148757778));
+
+    // 80 triangles + 12 pentagons on 60 vertices; the twist is the classical
+    // 13.1064 degrees (https://en.wikipedia.org/wiki/Snub_dodecahedron).
+    SnubDodecahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Dodecahedron.Snub(0.562121964811048, Angle(0.228749892022033));
+}

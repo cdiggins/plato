@@ -6,12 +6,12 @@
 // (`polyhedra-seeds.library.plato`) rather than another coordinate table. Read
 // as `PolygonMesh3D.Cuboctahedron`, `PolygonMesh3D.RhombicDodecahedron`, …
 //
-// This covers the ambo and truncate families and their duals. The remaining
-// Archimedeans need operators this library does not have yet — snub, expand and
-// bevel — and the Catalans below are exactly the duals of what is here; the
-// `ArchimedeanSolidKind` / `CatalanSolidKind` sums in `solids-polyhedra.plato`
-// enumerate the full thirteen each, so those enums are ahead of this file on
-// purpose.
+// This covers the ambo and truncate families and their duals. The expand,
+// bevel and snub families live in `polyhedra-catalog-expanded.library.plato`,
+// and the remaining nine Catalan duals in
+// `polyhedra-catalog-catalans.library.plato`; together the three catalog files
+// name all thirteen of each of the `ArchimedeanSolidKind` / `CatalanSolidKind`
+// sums in `solids-polyhedra.plato`.
 //
 // Vertices are NOT normalized to a common radius (see the note in
 // `polyhedra-conway.library.plato`): the Archimedeans below are
