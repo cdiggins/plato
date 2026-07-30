@@ -60,6 +60,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
     ///   LINT010 - concrete type that implements no concept and that no function or field mentions
     ///   LINT011 - redundant 'implements' clause (already implied by another implemented concept)
     ///   LINT012 - obligation and implementation disagree on the '_' receiver marker (static vs instance)
+    ///   LINT013 - concept with no implementer that library bodies nonetheless dispatch on (unreachable derived surface)
     /// The pass is read-only: it never mutates the compilation and has no effect on code generation.
     /// </summary>
     public class Linter
@@ -506,6 +507,15 @@ namespace Ara3D.Geometry.Compiler.Analysis
         // All three are Info: on a declarations-first folder they describe the
         // shape of the vocabulary rather than a defect.
         // -------------------------------------------------------------------
+        // The number of library functions that dispatch on a concept: functions whose
+        // FIRST parameter is the concept, which is the shape every derived body takes
+        // (LIBRARIES.md rule 2). Counting only that position keeps the rule about
+        // unreachable derived surface rather than about incidental mentions.
+        private int DispatchedLibraryBodyCount(TypeDef concept)
+            => Compilation.LibraryDefinitionsByName.Values
+                .SelectMany(lib => lib.Functions)
+                .Count(f => f.Parameters.Count > 0 && f.Parameters[0].Type?.Def == concept);
+
         public void CheckVocabularyReachability()
         {
             var mentioned = new HashSet<TypeDef>();     // any use outside the owning declaration
@@ -553,10 +563,22 @@ namespace Ara3D.Geometry.Compiler.Analysis
                         $"concept '{c.Name}' is unreachable: no concrete type implements it, no concept " +
                         $"inherits it, and it appears in no parameter type, return type or 'where' bound");
                 else
-                    Add(c, "LINT008", LintSeverity.Info,
-                        $"concept '{c.Name}' has no concrete implementer" +
-                        (inherited.Contains(c) ? " (directly or through a descendant concept)" : "") +
-                        "; it is either dead vocabulary or a missing 'implements' clause");
+                {
+                    // LINT013 takes precedence over LINT008: an implementer-less concept that
+                    // library bodies dispatch on is not "vocabulary declared ahead of use", it
+                    // is derived API no caller can ever reach.
+                    var bodies = DispatchedLibraryBodyCount(c);
+                    if (bodies > 0)
+                        Add(c, "LINT013", LintSeverity.Warning,
+                            $"concept '{c.Name}' has no concrete implementer, yet {bodies} library " +
+                            $"function(s) dispatch on it; that derived surface is unreachable. " +
+                            $"Implement the concept, or delete it together with those bodies");
+                    else
+                        Add(c, "LINT008", LintSeverity.Info,
+                            $"concept '{c.Name}' has no concrete implementer" +
+                            (inherited.Contains(c) ? " (directly or through a descendant concept)" : "") +
+                            "; it is either dead vocabulary or a missing 'implements' clause");
+                }
             }
 
             foreach (var td in Compilation.GetConcreteTypes())
