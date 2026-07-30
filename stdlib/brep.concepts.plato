@@ -1,0 +1,27 @@
+//==
+// # Boundary representation (BREP) concepts
+//
+// The exact, resolution-independent solid encoding: a shell of vertices,
+// undirected edges, and faces, where each face bounds itself with loops of
+// oriented EDGE-USES (https://en.wikipedia.org/wiki/Boundary_representation).
+// One undirected edge owns one curve; the two adjacent faces cite that edge
+// with opposite orientations. This is deliberately NOT the half-edge encoding:
+// `HalfEdgeMesh` (topology-half-edges.plato) duplicates every edge into two
+// directed sides and is the DISCRETE tessellation IR — BREP shells tessellate
+// INTO it (or into TriangleMesh3D), never the other way. Half-edge
+// `BoundaryLoop` is a hole walk in a mesh and is not reused here; the BREP
+// face loop is `BrepLoop` (brep.plato).
+//
+// Closedness is a proof, not a flag: no `ClosedShell` marker is stamped on
+// `Brep3D`, because an unvalidated marker is a stale claim waiting to happen.
+// A shell is shown closed by `IsWatertight` / `Validate` (brep.library.plato);
+// a validated subtype (`ClosedBrep3D` produced only by a proving constructor)
+// is the planned future encoding of that proof.
+
+// The capability marker for boundary-representation solids: an exact shell of
+// vertices, curve-carrying undirected edges, and surface-carrying faces bounded
+// by oriented edge-uses. Implementations stay resolution-independent until
+// explicitly tessellated.
+concept BoundaryRepresentation
+    inherits Solid
+{ }

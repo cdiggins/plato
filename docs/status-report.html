@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Plato Status Report — 2026-07-30 01:19 Eastern Daylight Time</title>
+<title>Plato Status Report — 2026-07-30 01:25 Eastern Daylight Time</title>
 <style>
 :root {
   --bg: #0f1419; --panel: #1a222c; --panel2: #232d3a; --text: #e7ecf2;
@@ -82,10 +82,10 @@ tr.muted-row { opacity: .55; }
 <body>
 <header>
   <h1>Plato status report</h1>
-  <div class="meta">Generated 2026-07-30 01:19:38 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>a17f194</code></div>
+  <div class="meta">Generated 2026-07-30 01:25:31 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>7f80b42</code></div>
   <div class="overall">
     <span><span class="badge attention">ATTENTION</span></span>
-    <span>6 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-30T01:17:25-04:00; live git/tracker refreshed this generation.</span>
+    <span>16 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-30T01:17:25-04:00; live git/tracker refreshed this generation.</span>
   </div>
 </header>
 <main>
@@ -93,11 +93,11 @@ tr.muted-row { opacity: .55; }
 <section>
   <h2>Snapshot</h2>
   <div class="grid">
-    <div class="card"><div class="n">main</div><div class="l">Branch · <span class="badge pass">synced</span></div></div>
-    <div class="card"><div class="n">a17f194</div><div class="l">HEAD</div></div>
-    <div class="card"><div class="n">6</div><div class="l">Dirty paths</div></div>
-    <div class="card"><div class="n">2</div><div class="l">Commits today</div></div>
-    <div class="card"><div class="n">158</div><div class="l">Commits last 7 days</div></div>
+    <div class="card"><div class="n">main</div><div class="l">Branch · <span class="badge warn">ahead 1</span></div></div>
+    <div class="card"><div class="n">7f80b42</div><div class="l">HEAD</div></div>
+    <div class="card"><div class="n">16</div><div class="l">Dirty paths</div></div>
+    <div class="card"><div class="n">3</div><div class="l">Commits today</div></div>
+    <div class="card"><div class="n">159</div><div class="l">Commits last 7 days</div></div>
     <div class="card"><div class="n">7</div><div class="l">Issues in progress</div></div>
     <div class="card"><div class="n">0</div><div class="l">Latest C# errors (plato-generated-optimized)</div></div>
   </div>
@@ -106,38 +106,58 @@ tr.muted-row { opacity: .55; }
 <section>
   <h2>Git — Plato</h2>
   <div class="kv">
-    <div class="k">Status</div><div><code>## main...origin/main [behind 7]
-M  Plato.CSharpWriter/CSharpWriter.cs
-A  PlatoTests/IntrinsicsV2SurfaceTests.cs
-A  PlatoTests/IntrinsicsV2TestShims.cs
-M  PlatoTests/PlatoTests.csproj
-M  docs/status-report-snapshot.json
- M docs/status-report.html
+    <div class="k">Status</div><div><code>## main...origin/main [ahead 1, behind 7]
+M  docs/status-report.html
+A  stdlib/brep-primitives.library.plato
+A  stdlib/brep-tessellate.library.plato
+A  stdlib/brep.concepts.plato
+A  stdlib/brep.library.plato
+A  stdlib/brep.plato
+M  stdlib/curves.concepts.plato
+A  stdlib/numbers-special-bessel.library.plato
+A  stdlib/numbers-special-beta.library.plato
+A  stdlib/numbers-special-erf.library.plato
+A  stdlib/numbers-special-gamma-incomplete.library.plato
+A  stdlib/numbers-special-gamma.library.plato
+A  stdlib/solids-csg-boolean.library.plato
+A  stdlib/solids-csg-clipping.library.plato
+A  stdlib/solids-csg-interior.library.plato
+A  stdlib/solids-csg-soups.plato
 ?? .claude/</code></div>
-    <div class="k">HEAD</div><div><code>a17f194ce3c30fc669fedc6b8a3e412f510703f5</code></div>
+    <div class="k">HEAD</div><div><code>7f80b42ac9d18fea685a2ea5801019b5f98f9c3c</code></div>
     <div class="k">origin/main</div><div><code>fbf51546749e161d8ec0daa81ea0212f978aedd4</code></div>
-    <div class="k">Unpushed</div><div><span class="muted">in sync with origin/main</span></div>
-    <div class="k">Dirty (excl. .claude/)</div><div><code>M  Plato.CSharpWriter/CSharpWriter.cs<br>A  PlatoTests/IntrinsicsV2SurfaceTests.cs<br>A  PlatoTests/IntrinsicsV2TestShims.cs<br>M  PlatoTests/PlatoTests.csproj<br>M  docs/status-report-snapshot.json<br> M docs/status-report.html</code></div>
+    <div class="k">Unpushed</div><div>7f80b42 test(plato-331): police V2 surface against writer tables</div>
+    <div class="k">Dirty (excl. .claude/)</div><div><code>M  docs/status-report.html<br>A  stdlib/brep-primitives.library.plato<br>A  stdlib/brep-tessellate.library.plato<br>A  stdlib/brep.concepts.plato<br>A  stdlib/brep.library.plato<br>A  stdlib/brep.plato<br>M  stdlib/curves.concepts.plato<br>A  stdlib/numbers-special-bessel.library.plato<br>A  stdlib/numbers-special-beta.library.plato<br>A  stdlib/numbers-special-erf.library.plato<br>A  stdlib/numbers-special-gamma-incomplete.library.plato<br>A  stdlib/numbers-special-gamma.library.plato<br>A  stdlib/solids-csg-boolean.library.plato<br>A  stdlib/solids-csg-clipping.library.plato<br>A  stdlib/solids-csg-interior.library.plato<br>A  stdlib/solids-csg-soups.plato</code></div>
   </div>
   <h3>Diffstat (unstaged, excl. this report)</h3>
   <span class="muted">no unstaged diff</span>
-  <div class="note">6 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
+  <div class="note">16 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
 </section>
 
 <section>
   <h2>Git — studio parent</h2>
   <div class="kv">
-    <div class="k">Status</div><div><code>## main...origin/main [behind 7]
-M  Plato.CSharpWriter/CSharpWriter.cs
-A  PlatoTests/IntrinsicsV2SurfaceTests.cs
-A  PlatoTests/IntrinsicsV2TestShims.cs
-M  PlatoTests/PlatoTests.csproj
-M  docs/status-report-snapshot.json
- M docs/status-report.html
+    <div class="k">Status</div><div><code>## main...origin/main [ahead 1, behind 7]
+M  docs/status-report.html
+A  stdlib/brep-primitives.library.plato
+A  stdlib/brep-tessellate.library.plato
+A  stdlib/brep.concepts.plato
+A  stdlib/brep.library.plato
+A  stdlib/brep.plato
+M  stdlib/curves.concepts.plato
+A  stdlib/numbers-special-bessel.library.plato
+A  stdlib/numbers-special-beta.library.plato
+A  stdlib/numbers-special-erf.library.plato
+A  stdlib/numbers-special-gamma-incomplete.library.plato
+A  stdlib/numbers-special-gamma.library.plato
+A  stdlib/solids-csg-boolean.library.plato
+A  stdlib/solids-csg-clipping.library.plato
+A  stdlib/solids-csg-interior.library.plato
+A  stdlib/solids-csg-soups.plato
 ?? .claude/</code></div>
     <div class="k">Committed Plato pointer</div><div><code>?</code> <span class="badge blocked">DRIFT</span></div>
-    <div class="k">Plato HEAD</div><div><code>a17f194ce3c30fc669fedc6b8a3e412f510703f5</code></div>
-    <div class="k">Plato-related dirty</div><div><code>M  Plato.CSharpWriter/CSharpWriter.cs<br>A  PlatoTests/IntrinsicsV2SurfaceTests.cs<br>A  PlatoTests/IntrinsicsV2TestShims.cs<br>M  PlatoTests/PlatoTests.csproj</code></div>
+    <div class="k">Plato HEAD</div><div><code>7f80b42ac9d18fea685a2ea5801019b5f98f9c3c</code></div>
+    <div class="k">Plato-related dirty</div><div><code>A  stdlib/brep-primitives.library.plato<br>A  stdlib/brep-tessellate.library.plato<br>A  stdlib/brep.concepts.plato<br>A  stdlib/brep.library.plato<br>A  stdlib/brep.plato<br>M  stdlib/curves.concepts.plato<br>A  stdlib/numbers-special-bessel.library.plato<br>A  stdlib/numbers-special-beta.library.plato<br>A  stdlib/numbers-special-erf.library.plato<br>A  stdlib/numbers-special-gamma-incomplete.library.plato<br>A  stdlib/numbers-special-gamma.library.plato<br>A  stdlib/solids-csg-boolean.library.plato<br>A  stdlib/solids-csg-clipping.library.plato<br>A  stdlib/solids-csg-interior.library.plato<br>A  stdlib/solids-csg-soups.plato</code></div>
   </div>
   <div class="note">If drifted, bump with an explicit <code>git commit -- submodules/Plato</code> in studio after Plato pushes.</div>
 </section>
@@ -148,7 +168,7 @@ M  docs/status-report-snapshot.json
   <div><code>12aad781501e6714789fb87629f1fbee001e2ab0 parakeet (v1.4.3-78-g12aad78)</code></div>
   <p class="muted">parakeet: do not stage casually (known pre-existing dirty grammar submodule).</p>
   <h3>Worktrees</h3>
-  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              a17f194 [main]<br>C:/Users/cdigg/git/plato-merge-check                                                 fbf5154 (detached HEAD)<br>C:/Users/cdigg/git/plato-wt-1                                                        a5f59eb [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
+  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              7f80b42 [main]<br>C:/Users/cdigg/git/plato-merge-check                                                 fbf5154 (detached HEAD)<br>C:/Users/cdigg/git/plato-wt-1                                                        a5f59eb [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
   <h3>Studio-level submodules</h3>
   <pre></pre>
 </section>
@@ -268,10 +288,10 @@ M  docs/status-report-snapshot.json
 </section>
 
 <section>
-  <h2>Committed work today (2 commits)</h2>
+  <h2>Committed work today (3 commits)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr></tbody>
+    <tbody><tr><td><code>7f80b42</code></td><td>2026-07-30 01:19:37 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): police V2 surface against writer tables</td></tr><tr><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr></tbody>
   </table>
 </section>
 
@@ -279,7 +299,7 @@ M  docs/status-report-snapshot.json
   <h2>Recent history (20)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr class="today"><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr class="today"><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr><tr class=""><td><code>d1b1051</code></td><td>2026-07-29 23:53:09 -0400</td><td>feat: record C# build errors by category in status report</td></tr><tr class=""><td><code>e69a69d</code></td><td>2026-07-29 23:15:59 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): emit Array&lt;T&gt;-receiver library functions as IReadOnlyList&lt;T&gt; extensions</td></tr><tr class=""><td><code>dba7429</code></td><td>2026-07-29 23:08:37 -0400</td><td>feat(lint): LINT014 field-vs-no-arg-function name collision</td></tr><tr class=""><td><code>c303db2</code></td><td>2026-07-29 22:40:48 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): unbounded CombineHashCodes; record the receiver-aware rendering next step</td></tr><tr class=""><td><code>e57c034</code></td><td>2026-07-29 22:29:03 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): erase Integer from the array combinators&#x27; index positions</td></tr><tr class=""><td><code>54e3d5a</code></td><td>2026-07-29 22:14:10 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): emit `_`-receiver members as the statics they are; add missing scalar constants</td></tr><tr class=""><td><code>d1eb8df</code></td><td>2026-07-29 22:12:13 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-315.md"><code>plato-315</code></a>): add LINT013 for unreachable derived concept surface</td></tr><tr class=""><td><code>c68907e</code></td><td>2026-07-29 22:10:56 -0400</td><td>feat(stdlib): bound Periodic&lt;TPeriod&gt; and derive WrapPhase</td></tr><tr class=""><td><code>9dd7cea</code></td><td>2026-07-29 22:00:46 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): decide no-arg call-site syntax per receiver for erased scalars</td></tr><tr class=""><td><code>2e1e31b</code></td><td>2026-07-29 21:17:07 -0400</td><td>feat(stdlib): Face concept + indexed-mesh obligations</td></tr><tr class=""><td><code>e2d8b83</code></td><td>2026-07-29 21:02:31 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-311.md"><code>plato-311</code></a>, <a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-310.md"><code>plato-310</code></a>, <a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-308.md"><code>plato-308</code></a>): land forward-stdlib declaration-level C# — views satisfied, intrinsic gaps filled, CHK308 gated</td></tr><tr class=""><td><code>f95e680</code></td><td>2026-07-29 20:48:58 -0400</td><td>docs(stdlib): retract false &#x27;no constraint syntax&#x27; claim on Periodic</td></tr><tr class=""><td><code>358d593</code></td><td>2026-07-29 20:43:14 -0400</td><td>docs(stdlib): strip tracker and legacy process notes</td></tr><tr class=""><td><code>859ad90</code></td><td>2026-07-29 20:12:39 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-313.md"><code>plato-313</code></a>): drop cross-repo tracker path from duals header</td></tr><tr class=""><td><code>0de0410</code></td><td>2026-07-29 20:11:28 -0400</td><td>feat(stdlib): implement 32 LINT001 obligations</td></tr><tr class=""><td><code>b62e278</code></td><td>2026-07-29 20:09:56 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-313.md"><code>plato-313</code></a>): kind-level polyhedral Dual maps + involution laws</td></tr><tr class=""><td><code>1c72a5d</code></td><td>2026-07-29 20:03:56 -0400</td><td>docs: note match lowering and C#-only sum emission (CHK320)</td></tr><tr class=""><td><code>0aa7331</code></td><td>2026-07-29 20:00:12 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-315.md"><code>plato-315</code></a>): implement MeshIncidence on PolygonMesh3D</td></tr></tbody>
+    <tbody><tr class="today"><td><code>7f80b42</code></td><td>2026-07-30 01:19:37 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): police V2 surface against writer tables</td></tr><tr class="today"><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr class="today"><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr><tr class=""><td><code>d1b1051</code></td><td>2026-07-29 23:53:09 -0400</td><td>feat: record C# build errors by category in status report</td></tr><tr class=""><td><code>e69a69d</code></td><td>2026-07-29 23:15:59 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): emit Array&lt;T&gt;-receiver library functions as IReadOnlyList&lt;T&gt; extensions</td></tr><tr class=""><td><code>dba7429</code></td><td>2026-07-29 23:08:37 -0400</td><td>feat(lint): LINT014 field-vs-no-arg-function name collision</td></tr><tr class=""><td><code>c303db2</code></td><td>2026-07-29 22:40:48 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): unbounded CombineHashCodes; record the receiver-aware rendering next step</td></tr><tr class=""><td><code>e57c034</code></td><td>2026-07-29 22:29:03 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): erase Integer from the array combinators&#x27; index positions</td></tr><tr class=""><td><code>54e3d5a</code></td><td>2026-07-29 22:14:10 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): emit `_`-receiver members as the statics they are; add missing scalar constants</td></tr><tr class=""><td><code>d1eb8df</code></td><td>2026-07-29 22:12:13 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-315.md"><code>plato-315</code></a>): add LINT013 for unreachable derived concept surface</td></tr><tr class=""><td><code>c68907e</code></td><td>2026-07-29 22:10:56 -0400</td><td>feat(stdlib): bound Periodic&lt;TPeriod&gt; and derive WrapPhase</td></tr><tr class=""><td><code>9dd7cea</code></td><td>2026-07-29 22:00:46 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): decide no-arg call-site syntax per receiver for erased scalars</td></tr><tr class=""><td><code>2e1e31b</code></td><td>2026-07-29 21:17:07 -0400</td><td>feat(stdlib): Face concept + indexed-mesh obligations</td></tr><tr class=""><td><code>e2d8b83</code></td><td>2026-07-29 21:02:31 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-311.md"><code>plato-311</code></a>, <a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-310.md"><code>plato-310</code></a>, <a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-308.md"><code>plato-308</code></a>): land forward-stdlib declaration-level C# — views satisfied, intrinsic gaps filled, CHK308 gated</td></tr><tr class=""><td><code>f95e680</code></td><td>2026-07-29 20:48:58 -0400</td><td>docs(stdlib): retract false &#x27;no constraint syntax&#x27; claim on Periodic</td></tr><tr class=""><td><code>358d593</code></td><td>2026-07-29 20:43:14 -0400</td><td>docs(stdlib): strip tracker and legacy process notes</td></tr><tr class=""><td><code>859ad90</code></td><td>2026-07-29 20:12:39 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-313.md"><code>plato-313</code></a>): drop cross-repo tracker path from duals header</td></tr><tr class=""><td><code>0de0410</code></td><td>2026-07-29 20:11:28 -0400</td><td>feat(stdlib): implement 32 LINT001 obligations</td></tr><tr class=""><td><code>b62e278</code></td><td>2026-07-29 20:09:56 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-313.md"><code>plato-313</code></a>): kind-level polyhedral Dual maps + involution laws</td></tr><tr class=""><td><code>1c72a5d</code></td><td>2026-07-29 20:03:56 -0400</td><td>docs: note match lowering and C#-only sum emission (CHK320)</td></tr></tbody>
   </table>
 </section>
 

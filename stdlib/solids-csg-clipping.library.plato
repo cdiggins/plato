@@ -1,0 +1,94 @@
+//==
+// # SolidsCsgClipping — polygon-versus-plane classification and splitting
+//
+// The foundational CSG primitives on the types in `solids-csg-soups.plato`:
+// the supporting plane of a convex polygon, the four-way polygon/plane
+// classification, and Sutherland-Hodgman clipping of a convex polygon to a
+// half-space and splitting by a plane.
+// (https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm)
+//
+// Conventions:
+//   * Every polygon is CONVEX and planar with CCW-outward winding
+//     (`PolygonSoup3D`'s invariant); clipping a non-convex ring is not defined
+//     here.
+//   * The plane's FRONT is its positive half-space (`lines-planes.plato`);
+//     clipping keeps the front, boundary inclusive.
+
+library SolidsCsgClipping
+{
+    // The on-plane thickness for polygon/plane classification: a vertex within
+    // this absolute distance of a plane counts as lying ON it. One shared knob
+    // rather than a magic number in each body.
+    CsgPlaneTolerance(_: Number): Number
+        => 0.00000001;
+
+    // The plane a planar polygon lies in, facing the polygon's outward normal.
+    SupportingPlane(p: Polygon3D): Plane
+        => FromPointNormal(p.Points.First, p.Normal);
+
+    // How the polygon sits relative to the plane, with vertices within
+    // `tolerance` of the plane counting as on it: Spanning when vertices lie
+    // strictly on both sides, otherwise the side any strict vertex lies on,
+    // otherwise Coplanar.
+    RelationTo(p: Polygon3D, pl: Plane, tolerance: Number): PlaneRelation3D
+    {
+        var anyFront = p.Points.Any(q => pl.SignedDistance(q) > tolerance);
+        var anyBack = p.Points.Any(q => pl.SignedDistance(q) < -tolerance);
+        return anyFront && anyBack
+            ? PlaneRelation3D.Spanning
+            : (anyFront
+                ? PlaneRelation3D.Front
+                : (anyBack ? PlaneRelation3D.Back : PlaneRelation3D.Coplanar));
+    }
+
+    // A 0- or 1-element list: the point when `condition` holds, else empty.
+    // The keep-or-drop building block inside a FlatMap (A1: no Optional<T>).
+    KeepPoint(condition: Boolean, p: Point3D): Array<Point3D>
+        => (condition ? 1 : 0).MapRange(i => p);
+
+    // A 0- or 1-element list: the polygon when `condition` holds, else empty.
+    KeepPolygon(condition: Boolean, p: Polygon3D): Array<Polygon3D>
+        => (condition ? 1 : 0).MapRange(i => p);
+
+    // Where the segment (a, b) meets the plane. Meaningful only when the
+    // endpoints lie strictly on opposite sides (the interpolant is then in
+    // (0, 1)); a same-side or coplanar segment yields an unusable point the
+    // caller must drop.
+    CrossingPoint(pl: Plane, a: Point3D, b: Point3D): Point3D
+        => a.Lerp(b, pl.SignedDistance(a) / (pl.SignedDistance(a) - pl.SignedDistance(b)));
+
+    // The vertices edge (a -> b) contributes to the ring clipped to the plane's
+    // front half-space: a itself when a is on or in front of the plane, then
+    // the crossing point when the edge changes sides.
+    ClipEdge(pl: Plane, a: Point3D, b: Point3D): Array<Point3D>
+        => KeepPoint(pl.SignedDistance(a) >= 0.0, a)
+            .Concatenate(KeepPoint(
+                (pl.SignedDistance(a) >= 0.0).ExclusiveOr(pl.SignedDistance(b) >= 0.0),
+                pl.CrossingPoint(a, b)));
+
+    // The convex polygon restricted to the plane's front half-space
+    // (Sutherland-Hodgman against a single plane): each edge contributes its
+    // kept endpoint and its crossing point, in ring order. May yield a ring of
+    // fewer than three vertices when the polygon lies behind the plane.
+    ClipToHalfSpace(p: Polygon3D, pl: Plane): Polygon3D
+        => Polygon3D(p.Points.Count.MapRange(i => i)
+            .FlatMap(i => pl.ClipEdge(p.Points[i], p.Points.AtModulo(i + 1))));
+
+    // The polygon as a 0- or 1-element list: dropped when its ring has fewer
+    // than three vertices and so bounds no area.
+    NonDegenerate(p: Polygon3D): Array<Polygon3D>
+        => KeepPolygon(p.Points.Count >= 3, p);
+
+    // The polygon split by the plane into its non-degenerate pieces: itself,
+    // uncut, when it does not span the plane (a coplanar polygon is kept once,
+    // not clipped into both half-spaces), otherwise its front piece followed by
+    // its back piece.
+    SplitByPlane(p: Polygon3D, pl: Plane, tolerance: Number): Array<Polygon3D> =>
+        match (p.RelationTo(pl, tolerance)) {
+            Front => [p];
+            Back => [p];
+            Coplanar => [p];
+            Spanning => p.ClipToHalfSpace(pl).NonDegenerate
+                .Concatenate(p.ClipToHalfSpace(pl.Flip).NonDegenerate);
+        };
+}
