@@ -3,13 +3,13 @@
 //
 // Closed-form evaluation of the low-degree power-basis polynomials and of the
 // cubic spline bases (Bezier, Hermite, Catmull-Rom), plus their first and second
-// derivatives. Successor to `stdlib-legacy/algebra.plato`.
+// derivatives.
 //
 // The coefficients / control values are typed `Numerical`, which inherits
 // Additive (a + b, a - b, Zero) and Scalable (v * scalar, v / scalar) — exactly
 // the operations a polynomial in a scalar variable needs. So a
 // single definition serves Number, Vector2D, Vector3D, Point deltas, Color, and
-// every quantity type, as v1's `INumerical` versions did. The variable itself is
+// every quantity type. The variable itself is
 // always a plain `Number`; `Numerical` deliberately does NOT give
 // Multiplicative, so `value * value` is unavailable here and every product with
 // the parameter is written as a scalar multiply.

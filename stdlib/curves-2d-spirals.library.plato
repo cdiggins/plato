@@ -5,11 +5,10 @@
 // The spirals are `PolarCurve2D` implementors that carry an explicit `Angles`
 // sweep, so each supplies a `RadiusAt` plus an `Eval` overriding the generic
 // full-turn mapping in `curves-2d-polar.library.plato`; the roulettes are
-// written directly in Cartesian form. Successor to plato-src/curves.plato
-// (`library Curves2D`); every formula keeps its Wikipedia citation. The shared
-// `CirclePoint` helper lives in `curves-2d-arcs.library.plato`.
+// written directly in Cartesian form. The shared `CirclePoint` helper lives in
+// `curves-2d-arcs.library.plato`.
 //
-// TODO(concept-gap): v1 had an `IAngularCurve2D` concept — a curve whose
+// TODO(concept-gap): an angular curve concept — a curve whose
 // natural parameter is an `Angle`, with a single bridge
 // `Eval(curve, t: Number) => curve.Eval(t.Turns)`. This is NOT a fold gap and
 // the P2 `Reduce`/`MapRange` primitives do not touch it: the block is purely a

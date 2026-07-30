@@ -9,9 +9,6 @@
 // the other units, in both directions, so that the README rule "angles are
 // `Angle`, never raw `Number`" is actually usable: write `0.25.Turns` or
 // `90.Degrees`, never a bare number of degrees.
-//
-// Successor to plato-src/angles.plato. Unchanged in spirit; the Angle->Number
-// direction gains `ArcMinutes`/`ArcSeconds`, which v1 omitted.
 
 library Angles
 {

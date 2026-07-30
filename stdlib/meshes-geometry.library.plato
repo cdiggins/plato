@@ -7,12 +7,13 @@
 // shared quad-grid face-index routine behind every grid-shaped tessellation.
 // Part of P8 of the concept library.
 //
-// These concepts are new in v3 — the v1 `meshes.library.plato` carried only
-// embedded-primitive helpers (Triangle/Quad/Points/Deform) — so most of this
-// surface has no v1 counterpart. The one carried-over idea is building a concrete
-// Triangle3D from a face's typed indices: v1 `Triangle(self, index: Integer3)`
-// becomes `Triangle(self, face: FaceIndex)` using the typed FaceIndex/VertexIndex
-// structs instead of a bare Integer3.
+// Meshable3D, Meshable2D, TriangulatedGeometry3D, PointCloudable3D, and
+// Voxelizable3D helpers, plus the shared quad-grid face-index routine behind
+// every grid-shaped tessellation.
+//
+// Meshable3D exposes mesh vertex/face counts and topology without a manual
+// ToTriangleMesh hop. Triangle3D is built from a typed FaceIndex rather than a
+// bare index tuple.
 
 library MeshesGeometry
 {
@@ -88,9 +89,8 @@ library MeshesGeometry
     // the corresponding count, so a closed direction simply reuses column/row 0
     // rather than needing a duplicated seam ring of vertices.
     //
-    // Ported from v1 `meshes.library.plato` (QuadFaceIndices / AllQuadFaceIndices).
-    // v1 returned a bare `Integer4`; here the result is `QuadFace`, whose four
-    // fields are `VertexIndex` — these ARE cross-array references into a position
+    // The four corner indices of one quad face in a regular grid, as a `QuadFace`
+    // whose four fields are `VertexIndex` — these ARE cross-array references into a position
     // array, exactly the case README.md reserves the typed index types for, and it
     // makes the result feed `QuadMesh3D.Faces` directly with no conversion.
 

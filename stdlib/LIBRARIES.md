@@ -3,9 +3,9 @@
 The `*.library.plato` files in `stdlib/` hold `library` blocks that implement **derived
 functionality for the concepts** declared in the domain declaration files. In Plato, a function
 whose first parameter is concept-typed is like a C# extension method on an interface: it becomes
-available on every type that implements the concept. These libraries are the v3 successor to
-`stdlib-legacy/core.library.plato` / `geometry.library.plato` — build on their good ideas,
-replace bad names, drop dead weight.
+available on every type that implements the concept. These libraries implement
+derived functionality on the concepts declared in the domain files — build on
+good ideas from earlier vocabulary, replace bad names, drop dead weight.
 
 The library files live side-by-side with the declaration files they implement (they were flattened
 out of the old `concept-library/` subfolder). Because `lint` enumerates `*.plato` non-recursively
@@ -18,7 +18,7 @@ below now genuinely covers these library bodies — which it did **not** while t
    the concept or declaration file it serves, with a PascalCase block name matching the stem
    (`collections-indexable.library.plato` holds `library CollectionsIndexable`).
 
-   Since the plato-293 re-partition this is exact and has no exceptions:
+   This is exact and has no exceptions:
    `grep -l "^library " *.plato` returns **exactly the 121 `*.library.plato` files** and
    nothing else. **No declaration file carries an inline `library` block.** The former inline
    blocks in `transforms`, `polynomials`, `solids`, `surfaces`, `implicit-sdf`, `primitives`,
@@ -118,7 +118,7 @@ File names in the two middle columns omit the `.plato` extension: `core-logic` m
 `core-logic.library.plato`, `core-logic.concepts` means `core-logic.concepts.plato`. The nine
 package rows account for 54 of the 121 library files and for all 42 `*.concepts.plato` files.
 
-**P9 was a single file until plato-293.** One 499-line `library DomainTraits` served thirteen
+**P9 was formerly a single monolithic file.** One 499-line `library DomainTraits` served thirteen
 unrelated concepts - easing curves, animation tracks, vector paths, rasters, procedural
 textures, cameras, lights, kinematics, force models, probability distributions, graphs, time
 series and geodetic regions. It is now thirteen files, one per concept, each named after the

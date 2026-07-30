@@ -84,8 +84,8 @@ type Superformula2D
 //==
 // # Further classical polar curves
 //
-// Ported from plato-src/curves.plato (`library PolarCurves`), which had the
-// closed form for each. Every one is a `PolarCurve2D`, so a single RadiusAt
+// Further classical polar curves.
+// Every one is a `PolarCurve2D`, so a single RadiusAt
 // body below is the whole implementation: PolarPositionAt / CartesianPositionAt
 // / Eval come from `curves-capabilities.library.plato`.
 

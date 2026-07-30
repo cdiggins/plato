@@ -2,8 +2,6 @@
 // # Curves3D — evaluating the named space curves
 //
 // Closed-form evaluation of the space curves declared in `curves-3d.plato`.
-// Successor to plato-src/curves.plato (`library Curves3D`,
-// `library AngularCurves3D`); every formula keeps its Wikipedia citation.
 //
 // Conventions:
 //   * The canonical curve parameter is `t` in [0, 1].
@@ -14,9 +12,9 @@
 //     `FramePoint` below, so the declaration comment "winds about the frame's
 //     Z axis" is what the body actually does.
 //
-// TODO(concept-gap): v1's `IAngularCurve3D` — a curve whose natural parameter
-// is an `Angle`, bridged by one `Eval(curve, t: Number) => curve.Eval(t.Turns)`
-// — has no counterpart concept here. This is NOT a fold gap; the P2
+// TODO(concept-gap): an angular curve whose natural parameter is an `Angle`,
+// bridged by one `Eval(curve, t: Number) => curve.Eval(t.Turns)`, has no
+// counterpart concept here. This is NOT a fold gap; the P2
 // `Reduce`/`MapRange` primitives do not touch it. The clean fix is a
 // `concept AngularCurve3D` (obligation `Eval(self, theta: Angle): Point3D`)
 // plus one bridge, whose natural home is `curves.concepts.plato`,

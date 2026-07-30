@@ -5,7 +5,7 @@
 // answered from the packed corner table with no stored adjacency structure. This
 // is the middle rung of the topology ladder: enough to walk the mesh, split it
 // into components, and classify manifoldness, without committing to a built
-// half-edge structure (that is plato-298).
+// stored half-edge structure.
 //
 // Unlike the ring walks in `meshes-polygon-corners.library.plato`, nothing here
 // requires a closed manifold: every body is a corner scan, and a boundary edge —

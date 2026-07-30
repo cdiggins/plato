@@ -47,15 +47,14 @@ library IntervalsTransformsBounds
 
     //==
     // Bounds2D / Bounds3D — concrete AABB operations
-    // (https://en.wikipedia.org/wiki/Axis-aligned_bounding_box; items 29, 185,
-    // 186, 188).
+    // (https://en.wikipedia.org/wiki/Axis-aligned_bounding_box).
     // Convention: bounds are INCLUSIVE on Min and Max; an inverted box (Min greater
     // than Max on any axis) is EMPTY and is the identity for Union — this is what makes
     // "grow from Empty()" correct (Convention: see CONVENTIONS.md - Bounds). Endpoints
     // reached via the Number Min/Max lattice ops, exactly as BoundsOfPoints does.
 
     // The canonical empty box: Min at +infinity, Max at -infinity, so it contains no
-    // point and is absorbed by Union with any real box (item 186, the empty sentinel).
+    // point and is absorbed by Union with any real box (the empty sentinel).
     Empty(_: Bounds2D): Bounds2D
         => (Point2D(Number.MaxValue, Number.MaxValue), Point2D(Number.MinValue, Number.MinValue));
 
@@ -93,7 +92,7 @@ library IntervalsTransformsBounds
         => (Point2D(self.Min.X - amount, self.Min.Y - amount),
             Point2D(self.Max.X + amount, self.Max.Y + amount));
 
-    // The canonical empty box in 3D: Min at +infinity, Max at -infinity (item 186).
+    // The canonical empty box in 3D: Min at +infinity, Max at -infinity.
     Empty(_: Bounds3D): Bounds3D
         => (Point3D(Number.MaxValue, Number.MaxValue, Number.MaxValue),
             Point3D(Number.MinValue, Number.MinValue, Number.MinValue));
@@ -134,13 +133,12 @@ library IntervalsTransformsBounds
             Point3D(self.Max.X + amount, self.Max.Y + amount, self.Max.Z + amount));
 
     // The circumscribed sphere of the box: centered at the box center with radius
-    // half the Min -> Max diagonal length (item 28, the universal AABB-diagonal
-    // construction). Reuses the BoundsLike Center/Diagonal declared above; Sphere is
+    // half the Min -> Max diagonal length. Reuses the BoundsLike Center/Diagonal declared above; Sphere is
     // declared in spatial-spheres.plato and only constructed here.
     BoundingSphere(self: Bounds3D): Sphere
         => Sphere(self.Center, self.Diagonal.Magnitude.Half);
 
-    // Corner enumeration (item 185) is left out: it needs an 8- (or 4-) element array
+    // Corner enumeration is left out: it needs an 8- (or 4-) element array
     // literal of Point3D/Point2D, and this vocabulary has no array-literal constructor
     // (arrays arrive as function inputs; see geometry.library.plato BoundsOfPoints).
     // Add it once a literal exists, or expose corners lazily via an Indexable.

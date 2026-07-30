@@ -5,9 +5,7 @@
 // `primitives-builders.plato`. Without them no builder
 // call site resolves. They live here rather than in the `intrinsics-*` files
 // because they are inseparable from the `unique` declarations they operate on
-// (`primitives-builders.plato`); the v1 tree exiled the same signatures to its
-// test sources only to avoid shifting symbol ids under a byte-identity codegen
-// gate, which this vocabulary is not subject to.
+// (`primitives-builders.plato`).
 //
 // The single-parameter observers and consumers — `Count`, `Freeze` and
 // `EmptyList` — are declared alongside the mutators below. Each carries a type

@@ -8,7 +8,7 @@
 // `matrices.concepts.plato`.
 // Convention: see CONVENTIONS.md - Matrices (System.Numerics-compatible row-vector
 // multiplication, v' = v M).
-// Discoverability banner (item 473): the concrete operations for the fixed-size
+// Discoverability: the concrete operations for the fixed-size
 // matrices (Determinant, Invert, Multiply, Transform, Lerp, ...) are declared on
 // the intrinsic hub in `intrinsics-transforms.library.plato`, not restated here;
 // concept-generic helpers (Trace, FrobeniusNorm, IsSquare, ...) live in

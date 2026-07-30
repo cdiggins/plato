@@ -11,8 +11,7 @@
 // `Array` in the name is the invariant: immutable direct storage of whole faces.
 // These types deliberately do NOT implement `MeshElementCounts` — an unwelded
 // array cannot dedupe undirected edges without building incidence, and
-// `topology.concepts.plato` forbids guessing that count (see plato-320 for the
-// cost of guessing it).
+// `topology.concepts.plato` forbids guessing that count without building incidence.
 // Convention: see CONVENTIONS.md - Winding, handedness, and normals.
 
 // Independent triangles in space, each carrying its own three corner positions.

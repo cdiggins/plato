@@ -14,8 +14,8 @@ library TransformsPoints
     // read them.
     //
     // NOTHING else is written here. Add, Between, Subtract (both spellings) and
-    // Lerp are all derived over the concepts in algebra-metric.library.plato from
-    // these two conversions (plato-306). The converters remain deliberately named
+    // Lerp are all derived from Offset and FromOffset via algebra-metric.library.plato.
+    // The converters remain deliberately named
     // rather than implicit conversions: silently coercing between positions and
     // displacements would defeat the point of keeping them distinct types.
 

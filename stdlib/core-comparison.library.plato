@@ -17,11 +17,6 @@
 // available on every type implementing that concept. Bodies are pure
 // expressions built only from members declared on the concept, its inherited
 // concepts, or other functions in this library.
-//
-// Successor to plato-src/core.library.plato + algebra.plato. Renames from v1:
-//   Sqr -> Square, Pow3 -> Cube, Twice -> Double, CompareTo -> Compare,
-//   ClampZeroOne -> Saturate, FromOne -> dropped, MultiplyEpsilon -> folded
-//   into AlmostEqual(x, y, tolerance) with an explicit tolerance.
 
 library CoreComparison
 {

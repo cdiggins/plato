@@ -1,27 +1,21 @@
 //==
 // # Solids — parametric surfaces for the solids
 //
-// The boundary surface of a solid, as the ParametricSurface obligations. Ported
-// from the v1 `plato-src` solids file (lines 91-246); the v1 convention is
-// restated verbatim below and
-// then adapted to this tree's placed (Center/Axis/Frame-bearing) solid types.
+// The parametric boundary surface of each solid, as the ParametricSurface
+// obligations. Solids are centered at the origin with Z as the up axis in their
+// local frame; UV is in [0,1]x[0,1]: U wraps around the Z axis (ClosedU is true
+// for every solid), V runs up the shape (or around it, for the torus). Polygonal
+// solids walk their profile at constant rate with flat sides (linear between
+// vertices), so a UV quad grid meshes them exactly.
 //
-//   > All solids are centered at the origin with Z as the up axis. UV is in
-//   > [0,1]x[0,1]: U wraps AROUND the Z axis (so ClosedX is true for every
-//   > solid), V runs up the shape (or around it, for the torus). The polygonal
-//   > solids walk their profile at constant rate with flat sides (linear between
-//   > vertices), so a UV quad grid meshes them exactly.
-//
-// Two adaptations, and no others. (1) `ClosedX`/`ClosedY` are spelled
-// `ClosedU`/`ClosedV` here, matching `concept ParametricSurface`. (2) v1's solids
-// were unplaced, so "centered at the origin with Z up" WAS the world frame; here
-// every solid carries its own placement, so that sentence describes the solid's
-// LOCAL frame and the local point is mapped to world at the end of each body —
-// through the type's own `Frame` where it has one, through its `Orientation`
-// quaternion where it has one, and otherwise through `AxisFrame`, which
-// manufactures a stable (but arbitrary) frame around a `Center`/`Axis` pair.
-// The UV seam therefore lands at an arbitrary azimuth for the Center/Axis solids,
-// which is all a seam needs; nothing downstream may assume where it is.
+// Every solid carries its own placement, so the local-frame convention above
+// describes the solid's LOCAL frame and the local point is mapped to world at
+// the end of each body — through the type's own `Frame` where it has one,
+// through its `Orientation` quaternion where it has one, and otherwise through
+// `AxisFrame`, which manufactures a stable (but arbitrary) frame around a
+// `Center`/`Axis` pair. The UV seam therefore lands at an arbitrary azimuth for
+// the Center/Axis solids, which is all a seam needs; nothing downstream may
+// assume where it is.
 //
 // Because U always wraps and V (except the torus) does not, the matching face
 // grid is `AllQuadFaceIndices(nCols, nRows, true, false)` from
@@ -38,11 +32,9 @@ library Solids
         => (a.Cos * radius, a.Sin * radius);
 
     // The point at angle `a` on the unit circle centered at the origin.
-    // NOTE(dedupe): this is v1's `UnitCircle(t: Angle): Point2D`
-    // (`stdlib-legacy/curves.plato:161`), which has no stdlib counterpart yet. It
-    // is defined here under a non-colliding name so this library is self-contained;
-    // if `curves-2d-arcs.plato` later grows the canonical evaluator, delete this and the
-    // three call sites below and call that instead.
+    // Local helper: the point at angle `a` on the unit circle centered at the origin.
+    // Defined here so this library is self-contained; if `curves-2d-arcs.plato`
+    // later grows a canonical unit-circle evaluator, prefer that and delete this.
     PointOnUnitCircle(a: Angle): Point2D
         => PointOnCircle(a, 1.0);
 
@@ -195,7 +187,7 @@ library Solids
     ClosedU(s: Capsule3D): Boolean => true;
     ClosedV(s: Capsule3D): Boolean => false;
 
-    // v1's `Tube`: the outer wall up over V in [0, 0.5], then the inner wall back
+    // CylindricalShell UV: the outer wall up over V in [0, 0.5], then the inner wall back
     // down over [0.5, 1], so one UV rectangle covers both walls and the seam at
     // V = 0.5 is the top rim.
     Eval(s: CylindricalShell, uv: UvCoordinate): Point3D

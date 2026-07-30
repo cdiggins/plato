@@ -1,10 +1,9 @@
 //==
 // # Named colors - the 141 CSS Color Module Level 4 / X11 names
 //
-// The named-color table (https://en.wikipedia.org/wiki/Web_colors), ported from
-// `stdlib-legacy/colors.constants.plato` (where the entries were `ByteRGB`
-// triples). The `Color` arithmetic that used to share this file is now in
-// `color.library.plato`.
+// The named-color table (https://en.wikipedia.org/wiki/Web_colors): 141 CSS
+// Color Module Level 4 / X11 names as `Color8` constants. The `Color` arithmetic
+// that used to share this file is now in `color.library.plato`.
 //
 // COLOR SPACE - read before using the named colors. The CSS/X11 names are defined
 // as **8-bit sRGB** (gamma-encoded) values, so they are declared here on `Color8`,
@@ -16,7 +15,7 @@
 // conversion. Treating a Color8 constant as if it were linear light will visibly
 // wash out any blending, filtering, or lighting done with it.
 //
-// Alpha: the legacy table stored RGB only; every constant here is fully opaque
+// Alpha: the CSS/X11 table defines RGB only; every constant here is fully opaque
 // (A = 255).
 //
 // Constants follow the tree-wide idiom of dispatching on an ignored receiver of the

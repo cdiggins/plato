@@ -1,17 +1,15 @@
 # stdlib — comprehensive type & concept vocabulary
 
 **Forward stdlib vocabulary** — domain declarations plus the concept-library implementation
-bodies that build on them, co-located in this folder. Codegen and Studio still ship from
-`stdlib-legacy`.
+bodies that build on them, co-located in this folder.
 
-Third-generation Plato vocabulary. Successor to the `plato-src-v2` prototype (plato-228):
-much broader coverage, `concept` keyword with bare names (no `I` prefix), and files grouped
-by domain in dependency-layer order. The declaration files carry vocabulary only (concepts and
-types, semantics in doc comments); the `*.library.plato` files carry the `library` blocks that
-implement derived functionality on those concepts (see [`LIBRARIES.md`](LIBRARIES.md)). These
-were formerly split — declarations here, bodies in a `concept-library/` subfolder — and are now
-flattened together. Since the plato-293 re-partition **every** `library` block lives in its own
-`*.library.plato` file; no declaration file carries an inline one.
+Comprehensive Plato vocabulary: broad domain coverage, `concept` keyword with bare names
+(no `I` prefix), and files grouped by domain in dependency-layer order. The declaration
+files carry vocabulary only (concepts and types, semantics in doc comments); the
+`*.library.plato` files carry the `library` blocks that implement derived functionality
+on those concepts (see [`LIBRARIES.md`](LIBRARIES.md)). Declarations and bodies are
+flattened together in this folder; **every** `library` block lives in its own
+`*.library.plato` file — no declaration file carries an inline one.
 
 Target applications: geometry (primary), 2D/3D and N-dimensional computation, animation,
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
@@ -20,7 +18,7 @@ graphics, image processing, and engineering.
 Current contents (2026-07-29): **368 source files (187 type-declaration files + 44
 `*.concepts.plato` files + 137 `*.library.plato` files), 157 concepts, 1152 types**.
 
-The plato-293 re-partition took the folder from 85 files to 344. Every file now holds exactly
+Every file holds exactly
 one **kind** of declaration — `<stem>.concepts.plato` holds concepts, `<stem>.plato` holds
 types, `<stem>.library.plato` holds exactly one `library` block — and at most twelve top-level
 declarations. The move was mechanical: the sorted type-and-concept inventory is byte-identical
@@ -92,7 +90,7 @@ Owning declaration files cite conventions with a one-line
   Section banners use `//==`.
 - Every concept function takes `Self` as its first parameter.
 - Tagged/variant choices use **sum types** (`type X = Case(...fields) | Case | ...;` with
-  exhaustive `match`), the preferred encoding since plato-232. Payload-free variants are
+  exhaustive `match`), the preferred encoding for discriminated unions. Payload-free variants are
   enums (`type FillRule = NonZero | EvenOdd;`); variants with conditional per-case data are
   true sums (`PathSegment2D`, `Paint`, `MaskSource2D`, `ScalarFieldNode2D/3D`, `WindowFunction`
   — the wave-3 flagship migrations). Spec: [`../docs/plato-sum-types-design-2026-07-27.md`](../docs/plato-sum-types-design-2026-07-27.md).
@@ -118,7 +116,7 @@ Owning declaration files cite conventions with a one-line
 - **Naming:** domain declaration files are `domain.plato`; pure concept files are
   `domain.concepts.plato`; library files are `domain.library.plato`. There are no numeric
   prefixes; reading order lives in this README's layer table below. **This grammar is now
-  exact, not aspirational:** since the plato-293 re-partition every file in the folder holds
+  exact, not aspirational:** every file in the folder holds
   exactly one kind of declaration, so a file's suffix tells you what is inside it without
   opening it — a `.concepts.plato` file contains only `concept` blocks, a bare `.plato` file
   only `type` declarations, and a `.library.plato` file exactly one `library` block whose
@@ -130,8 +128,8 @@ This ordered index is the canonical reading order. Every one of the 347 `*.plato
 folder appears in exactly one row; file names are given without the `.plato` extension, so
 `core-logic.concepts` means `core-logic.concepts.plato`. Layer numbers are the reading order and
 also the rough dependency order — a layer may use anything from a lower-numbered layer and should
-not reach upward. (The old "Owner" column named the agent that wrote each group during the
-plato-257 build-out; it described a work assignment, not the tree, and is gone.)
+not reach upward. (An old "Owner" column named the agent that wrote each group during
+initial build-out; it described a work assignment, not the tree, and is gone.)
 
 | # | Layer | Files |
 |---|-------|-------|
@@ -213,7 +211,7 @@ Compose/Inverse/Identity, and the Point2D/3D Difference + Lerp implementations �
 Types/concepts referenced across domains. The **owner declares**; everyone else references.
 Never re-declare a registry name. If you need something similar, qualify the name with your
 domain (`ImageHistogram`, not a second `Histogram`). Owner files below were re-derived from the
-tree after the plato-293 re-partition; when in doubt, `grep -n "^type X\|^concept X" *.plato` is
+tree; when in doubt, `grep -n "^type X\|^concept X" *.plato` is
 the authority, not this table.
 
 | Name | Owner file |

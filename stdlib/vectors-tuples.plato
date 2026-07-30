@@ -7,7 +7,7 @@
 // counts components (Number3, Tuple3, IntegerVector3); a D suffix means the type
 // lives in that-dimensional space (Vector3D, Point3D, Ray3D).
 //
-// Discoverability banner (item 473): the concrete per-component operations for
+// Discoverability: the concrete per-component operations for
 // Number2/3/4/8 — Normalize, Dot, Length/LengthSquared,
 // Add/Subtract/Multiply/Divide, Transform — are declared on the intrinsic hub in
 // `intrinsics-numeric-tuples.library.plato`, not restated here.

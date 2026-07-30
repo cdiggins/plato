@@ -3,9 +3,7 @@
 //
 // Closed-form evaluation of the types declared in `curves-2d-polar.plato`, plus
 // the generic `PolarCurve2D` bridge that turns a `RadiusAt` into a position for
-// every polar implementor in the tree. Successor to plato-src/curves.plato
-// (`library Curves2D`, `library AngularCurves2D`, `library PolarCurves`); every
-// formula keeps its Wikipedia citation. The shared `CirclePoint` helper lives in
+// every polar implementor in the tree. The shared `CirclePoint` helper lives in
 // `curves-2d-arcs.library.plato`.
 //
 // Conventions:

@@ -11,7 +11,7 @@
 // The searches are linear, so the walks below are quadratic in corner count.
 // That is the right trade for the catalog solids (a truncated icosahedron has
 // 180 corners) and deliberately keeps the mesh free of a built adjacency
-// structure; a stored half-edge builder is separate work (plato-298).
+// structure; building and storing half-edge adjacency is separate work.
 //
 // Preconditions throughout: the mesh is a CLOSED manifold — every corner has a
 // twin, and the corners around a vertex form one closed cycle. On an open mesh

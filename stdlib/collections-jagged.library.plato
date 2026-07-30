@@ -47,8 +47,7 @@ library CollectionsJagged
     // # Builders
     //
     // A plain library function rather than a concept member: static-abstract
-    // concept members are not available in this language yet
-    // (tracker plato-312).
+    // concept members are not available in this language yet.
 
     // Pack an array of rows into a JaggedArray: Offsets is the exclusive prefix
     // sum of the row lengths (hence Count + 1 entries, last equal to the total),

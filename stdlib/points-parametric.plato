@@ -19,7 +19,7 @@
 // with U = 1 - V - W was rejected): the redundant U reads directly, and the
 // invariant is documented rather than enforced by shape.
 //
-// Affine vs convex (item 8): U + V + W = 1 alone is an *affine* combination and
+// Affine vs convex: U + V + W = 1 alone is an *affine* combination and
 // may place the point anywhere on the plane; the point lies *inside* the
 // triangle (a *convex* combination) exactly when additionally U, V, W >= 0.
 type BarycentricCoordinate

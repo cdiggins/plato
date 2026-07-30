@@ -62,7 +62,7 @@ library AlgebraMetric
     // that MidPoint was therefore unreachable. That was already out of date:
     // `where` clauses on concepts are live (IntervalLike / BoundsLike in
     // intervals-bounds.concepts.plato), and MidPoint now falls out of the Lerp
-    // below via Interpolatable. See plato-306.
+    // below via Interpolatable.
 
     // The position displaced by the negation of delta. The `-` spelling of
     // Add(x, -delta).
@@ -81,7 +81,7 @@ library AlgebraMetric
     // cannot be spelled generically at all, and any position type wanting
     // `delta + position` writes it concretely (Instant does, in
     // time.library.plato). Same reason the delta-centric `Apply(delta, position)`
-    // API shape was set aside in plato-306.
+    // API shape was set aside: library dispatch is on the first parameter.
 
     // The position a fraction `t` of the way from a to b, walked along the
     // displacement between them. t is unclamped, so it extrapolates. This is the
@@ -117,8 +117,7 @@ library AlgebraMetric
     // The origin itself: the position at zero displacement. The receiver only
     // selects the type, and for runtime-arity positions supplies the arity.
     // Reaches TDelta's Zero through the concept's `where TDelta: Additive` bound
-    // (see plato-307, which moved Zero onto Additive so this would resolve for
-    // Duration as well as for the vector deltas).
+    // (Zero lives on Additive, not NumericalLimits, so Duration resolves too).
     Origin(x: OriginBased<$D>): OriginBased<$D>
         => x.FromOffset(x.Offset.Zero);
 }

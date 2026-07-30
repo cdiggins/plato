@@ -3,8 +3,8 @@
 //
 // The Additive / Arithmetic / Scalable / Lattice / Interpolatable surface and
 // the per-component lifts of the Number intrinsics, all written once against the
-// component combinators in `numeric-structures-components.library.plato`. v1
-// wrote this list once per vector type; here it is written once, full stop.
+// component combinators in `numeric-structures-components.library.plato` — written
+// once against the Vector concept rather than once per concrete type.
 
 library NumericStructuresAlgebra
 {
@@ -68,8 +68,7 @@ library NumericStructuresAlgebra
     //
     // Each of these is the corresponding function from
     // `intrinsics-scalars.library.plato` or the `core-*` / `algebra-*` libraries
-    // applied to every component. v1 wrote this list
-    // once per vector type; here it is written once, full stop.
+    // applied to every component — written once against the Vector concept.
 
     // Component-wise absolute value.
     Abs(self: Vector): Vector

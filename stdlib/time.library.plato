@@ -18,7 +18,7 @@ library Time
     // two names: seconds since the epoch, and a span of seconds.
     //
     // Add, Between, Subtract (both spellings) and Lerp are all derived over the
-    // concepts in algebra-metric.library.plato (plato-306). Between keeps the
+    // Difference and OriginBased concepts in algebra-metric.library.plato. Between keeps the
     // b - a orientation, matching the point types. Instant gains interpolation
     // and an Origin (the epoch, now nameable) it never had. The commuted
     // Add(Duration, Instant) stays concrete: library dispatch is on the first

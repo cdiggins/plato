@@ -3,34 +3,16 @@
 //
 // Host-provided functions on the scalar types: Number, Integer, Boolean and
 // Angle (https://en.wikipedia.org/wiki/IEEE_754). This file also carries the
-// shared preamble and porting notes for the whole `intrinsics-*` family, which
-// was split out of a single combined intrinsics library.
+// shared preamble for the whole `intrinsics-*` family, which was split out of a
+// single combined intrinsics library.
 //
 // Host-provided functions: declarations without bodies, implemented by each target
-// backend's runtime rather than in Plato. Ported from the v1 `plato-src` intrinsics file
-// (the V1 wrapper around System.Numerics / MathF) and adapted to the v3 vocabulary.
+// backend's runtime rather than in Plato.
 //
 // Target backends, in priority order: C#, C++, CUDA, TypeScript, then GLSL, Rust,
 // Python (see README.md "Target backends"). An intrinsic belongs here only if every
 // priority-1..4 target can supply it natively or with a trivial shim; anything
-// C#-specific stays out (see the porting notes at the bottom of this file).
-//
-// Adaptations from V1, recorded so the diff is auditable:
-// - Field accessors (X/Y/Z/W, Row1..Row4, Normal/D) dropped: v3 types declare real
-//   fields, so the accessors are field reads, not intrinsics.
-// - `IArray`/`IArray2D`/`IArray3D` renamed to the v3 `Array`/`Array2D`/`Array3D`.
-// - `GetHashCode` renamed `Hash` (matches the v3 `Hashable` concept member).
-// - `CompareTo` renamed `Compare` (matches the v3 `Comparable` concept member).
-// - Raw-Number angles now take `Angle` (`CreateFromAxisAngle`, field-of-view, etc.).
-// - V1 Vector2/3/4 split into two tiers (2026-07-28): Number2/3/4/8 own the
-//   low-level component-wise surface; Vector2D/3D own the geometric displacement
-//   algebra (Normalize/Reflect/Cross/Transform). Matrix, Quaternion, and Plane
-//   signatures now use the semantic type per argument (Point3D for positions,
-//   Vector3D for directions, Number3 for scale factors).
-// - V1 Vector8 (C# SIMD) returns as Number8: a plain 8-lane numeric tuple every
-//   priority-1..4 backend can supply natively or with a trivial shim.
-// - The `IOrderable` equality scaffolding dropped: v3's `Equatable` concept owns it.
-// - `Repeat(x: IAny, ...)` re-typed generically as `Repeat(x: $T, ...)`.
+// C#-specific stays out (see the notes at the bottom of this file).
 
 library IntrinsicsScalars
 {
@@ -166,7 +148,7 @@ library IntrinsicsScalars
     Hash(self: Angle): Integer;
 }
 
-// Porting notes — V1 intrinsics deliberately NOT carried over:
+// Notes — intrinsics deliberately omitted from this file:
 // - Vector8 (entire section): C# System.Runtime.Intrinsics SIMD surface.
 // - BitDecrement/BitIncrement, ILogB, ScaleB, IEEERemainder: IEEE-nextafter-grade
 //   exotica; C++/CUDA have them, TypeScript and GLSL do not. Add back on demand.

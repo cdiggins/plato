@@ -16,8 +16,7 @@ library NumericStructuresComponents
     // Indexable<Number>, so a vector can be both read as and rebuilt from an
     // Array<Number>. That closes the loop: the Array intrinsics (Map, Zip,
     // Reduce, All, Any) lift straight onto vectors, and every derived body below
-    // is written once instead of once per concrete type. Successor to v1's
-    // IArrayLike<T> combinators, without the extra taxonomy.
+    // is written once instead of once per concrete type.
     //
     // As elsewhere in these libraries, the helpers return the bare concept type
     // Vector rather than the concrete implementing type.

@@ -6,7 +6,7 @@
 // positions; these geometric vectors are the differences between them, and a
 // Direction is a vector carrying a unit-length invariant.
 //
-// Discoverability banner (item 473): the concrete operations for Vector2D and
+// Discoverability: the concrete operations for Vector2D and
 // Vector3D — Normalize, Dot, Cross, Length/LengthSquared,
 // Add/Subtract/Multiply/Divide, Reflect, Transform — are declared on the
 // intrinsic hub in `intrinsics-vectors.library.plato`, not restated here. The
@@ -39,17 +39,14 @@ type Vector3D
 // numeric-structures-components.library.plato that read Count/At as the component surface are
 // correct here.
 //
-// This worked only because the field is spelled Array<Number>. Until 099c447 the
-// delegation was gated on a type-NAME test ("Array"/"Array2D"/"Array3D"), so an
-// IArray<T>-typed field -- the stdlib-legacy spelling -- fell through and emitted
-// Count => 1, and Array2D/Array3D matched despite having no linear Count. The fix
-// keys off the field type's concept. Keep the field's type Indexable-providing if
-// this declaration is ever reshaped.
+// This works because the field is spelled Array<Number>: the writer delegates
+// Count/At to any Indexable-providing field type, not only to fields named
+// "Array". Keep the field's type Indexable-providing if this declaration is
+// ever reshaped.
 //
-// The real runtime gap is elsewhere and much larger: the emitted vector types
-// currently throw NotImplementedException for Add/Subtract/Multiply/Magnitude/Zero,
-// so the concept-generic bodies compute only at the Number instantiation today.
-// See docs/stdlib-legacy-port-candidates-2026-07-28.md, follow-ups section.
+// VectorN's intrinsic vector operators (Add, Subtract, Magnitude, Zero, ...) are
+// not yet filled; the concept-generic bodies below therefore compute only at the
+// Number instantiation today.
 type VectorN
     implements Vector
 {

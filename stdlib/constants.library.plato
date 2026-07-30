@@ -4,15 +4,14 @@
 // Named constant values: irrational and derived numbers, angle-related scalars,
 // unit-conversion factors, axis vectors, and canonical unit shapes.
 //
-// Successor to plato-src/constants.plato. Two changes from v1:
-//   1. v1 used zero-argument functions (`Pi(): Number`). This tree dispatches
-//      constants on an ignored receiver of the result type (`Pi(_: Number)`),
-//      matching the intrinsic constants in `intrinsics-scalars.library.plato`
-//      and the `Identity(_: Quaternion)` family in
-//      `transforms-identities.library.plato`. Read them
-//      as `Number.GoldenRatio`, `Vector3D.UnitZ`, `Circle.UnitCircle`.
-//   2. `Pi`, `Tau`, `E`, `Epsilon`, `MinValue`, `MaxValue`, `Zero`, `One` and
-//      `MinusOne` are NOT redeclared here — they are intrinsics
+// Constants dispatch on an ignored receiver of the result type (`Pi(_: Number)`),
+// matching the intrinsic constants in `intrinsics-scalars.library.plato`
+// and the `Identity(_: Quaternion)` family in
+// `transforms-identities.library.plato`. Read them
+// as `Number.GoldenRatio`, `Vector3D.UnitZ`, `Circle.UnitCircle`.
+//
+// `Pi`, `Tau`, `E`, `Epsilon`, `MinValue`, `MaxValue`, `Zero`, `One` and
+// `MinusOne` are NOT redeclared here — they are intrinsics
 //      (`intrinsics-scalars.library.plato`) or derived in the `core-*` /
 //      `algebra-*` libraries.
 
@@ -123,9 +122,8 @@ library Constants
     //==
     // Axis vectors
     //
-    // The standard basis. v1 named these XAxis2D/YAxis2D/XAxis3D/YAxis3D/
-    // ZAxis3D; here the dimension is carried by the receiver type, so the
-    // v1 `Vector3.UnitX` spelling is used directly.
+    // The standard basis. The dimension is carried by the receiver type, so these
+    // read as `Vector3D.UnitX`, `Vector2D.UnitY`, and so on.
 
     // The 2D unit vector along +X: (1, 0).
     UnitX(_: Vector2D): Vector2D

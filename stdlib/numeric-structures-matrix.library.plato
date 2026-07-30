@@ -87,7 +87,7 @@ library NumericStructuresMatrix
     // supplies its own, exactly as the note above prescribes. The fixed-size
     // rows are Vector types, so each row's own Zero does the work; MatrixN
     // carries its shape and rebuilds a zero-filled component array.
-    // (Zero moved from NumericalLimits to Additive — see plato-307.)
+    // (Zero lives on Additive, not NumericalLimits.)
 
     // The 2x2 matrix with every element zero (the additive identity).
     Zero(x: Matrix2x2): Matrix2x2

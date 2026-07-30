@@ -35,7 +35,8 @@ library GeometryTraits
     // See https://en.wikipedia.org/wiki/Manifold and
     // https://en.wikipedia.org/wiki/Convex_set for the geometric meanings of those
     // markers.
-    // Renamed from v1's bare `Closed(x): Boolean` to the intent-revealing `Is*` form.
+    // True when the curve or surface is closed (start meets end).
+    // Named IsClosed rather than bare Closed for clarity at call sites.
     //
     // Open / Closed form a genuine duality (a type is one or the other), so both
     // sides get the true *and* false overloads. The remaining markers have no

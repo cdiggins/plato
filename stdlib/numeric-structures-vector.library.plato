@@ -137,7 +137,7 @@ library NumericStructuresVector
             a.X * b.Y - a.Y * b.X);
 
     //==
-    // # Vector2D — planar perp and signed area (cross-product lesson, item 90)
+    // # Vector2D — planar perp and signed area (2D cross-product analog)
     //
     // 2D has no cross product; the honest planar primitives are the perpendicular
     // and the scalar (z-component) cross. Naming them here keeps 2D code from

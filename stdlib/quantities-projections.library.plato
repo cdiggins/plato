@@ -225,12 +225,10 @@ library QuantityProjections
     //==
     // # Quantity types declared outside the `quantities-*.plato` files
     //
-    // `Duration` (`time.plato`) is the fiftieth `Quantity` implementor and the
-    // direct descendant of `stdlib-legacy/measures.plato`'s `Time` — the single
-    // concrete measure that motivated this whole pattern in v1. Its pair lives
-    // here rather than in a time library because the pattern is one thing and
-    // should be read in one place; a `time.library.plato`, when one exists, is
-    // the natural home to move it to.
+    // `Duration` (`time.plato`) is the fiftieth `Quantity` implementor. Its pair
+    // lives here rather than in a time library because the pattern is one thing and
+    // should be read in one place; `time.library.plato` is the natural home to move
+    // it to if the projection set grows.
 
     // Duration <-> a raw amount in seconds.
     Amount(x: Duration): Number => x.Seconds;

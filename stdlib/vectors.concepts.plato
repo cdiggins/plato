@@ -34,7 +34,7 @@ concept Vector
     // component-wise constant). The receiver supplies the arity, so unlike
     // FromComponents this is genuinely an INSTANCE member: VectorN.Broadcast reads
     // self's component count (numeric-structures-components.library.plato), and a
-    // runtime-arity vector has no other source for it. Declaring it `_: Self` said
-    // the opposite and disagreed with that implementation (plato-312).
+    // runtime-arity vector has no other source for it, so the receiver must be
+    // `self: Self`, not the ignored-receiver form used by FromComponents.
     Broadcast(self: Self, x: Number): Self;
 }

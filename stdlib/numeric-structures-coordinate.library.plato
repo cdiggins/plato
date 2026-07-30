@@ -29,8 +29,8 @@ library NumericStructuresCoordinate
     // would impose a concrete Distance obligation on all five types. Both are too
     // invasive to justify here; the distance stays on the concrete point types.
     //
-    // The Between-two-points delta is no longer part of this gap: plato-306 made
-    // it derivable for every implementor at once. Distance is not, because it
+    // The Between-two-points delta is derivable for every Difference implementor;
+    // Distance is not, because it
     // additionally needs TDelta: Normed, and Difference cannot bind that —
     // Instant's delta is a Duration, which is not Normed. A library function
     // cannot add the bound either (no `where` on library functions), so the six
@@ -38,9 +38,8 @@ library NumericStructuresCoordinate
     //
     // So the Euclidean distance is provided per concrete point type below, each as
     // `Between(a, b).Magnitude` over that type's own Difference delta. This is the
-    // sanctioned resolution of the "points lack MetricSpace" lessons (items 257,
-    // 295): concrete functions rather than a concept obligation that would force a
-    // generic-arity change on Coordinate. DistanceSquared mirrors Distance without
+    // sanctioned resolution: concrete functions rather than a concept obligation that
+    // would force a generic-arity change on Coordinate. DistanceSquared mirrors Distance without
     // the square root, for radius and nearest-neighbour comparisons.
 
     // The Euclidean distance between two 2D positions.
@@ -74,9 +73,9 @@ library NumericStructuresCoordinate
     //
     // Two lines each, and the whole affine surface (Add, Between, Subtract in
     // both spellings, Lerp, Origin) follows from them via
-    // algebra-metric.library.plato. Before plato-306 these two types declared
-    // `implements Difference<...>` and supplied no bodies at all, so every one of
-    // those members was a throwing stub.
+    // algebra-metric.library.plato. These types previously declared
+    // `implements Difference<...>` without supplying bodies, so every derived
+    // member was a throwing stub until Offset/FromOffset landed here.
     //
     // The origin is the parameter-space origin: (0, 0) is the UV origin defined
     // in CONVENTIONS.md (top-left, U right, V down), not a world-space point.

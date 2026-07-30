@@ -33,13 +33,12 @@ library IntervalsTransformsTransformable
     // identity helpers therefore live per-representation, not on the concept.
 
     //==
-    // Deform implies Transform - the legacy insight
-    // (stdlib-legacy/meshes.library.plato:84) generalized to every transform
-    // representation. The `transforms-*.library.plato` files already apply each
-    // representation to a bare Point2D/Point3D; lifting that point map through
-    // Deform gives EVERY deformable type a complete transform surface from its
-    // single Deform primitive. Implementing Deform for a new shape therefore also
-    // satisfies Transformable<T> for all thirteen T below.
+    // Deform implies Transform — lifting a point map through Deform gives every
+    // deformable type a complete transform surface from its single Deform primitive.
+    // The `transforms-*.library.plato` files already apply each representation to a
+    // bare Point2D/Point3D; lifting that point map through Deform generalizes the
+    // pattern to all Deformable types. Implementing Deform for a new shape therefore
+    // also satisfies Transformable<T> for all thirteen T below.
 
     // Rotate a 2D shape about the origin.
     Transform(self: Deformable2D, transform: Rotation2D): Self
@@ -100,6 +99,6 @@ library IntervalsTransformsTransformable
     // Triangle2D/3D, Quad2D/3D, Circle, Ellipse, Polygon2D/3D, Polyline2D/3D,
     // RegularPolygon, PolygonWithHoles2D, Tetrahedron, and the mesh types) are the
     // remaining half of this item. They are one-liners over each type's fields
-    // (see stdlib-legacy/meshes.library.plato:49-75) but belong to the packages that
-    // own those declarations, so they are not written here.
+    // but belong to the packages that own those declarations, so they are not
+    // written here.
 }

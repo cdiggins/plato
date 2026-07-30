@@ -73,8 +73,6 @@ Points(t: Triangle2D): Array<Point2D>
 **Runtime / data-dependent length** → `MapRange` / `Map` / `Zip` is correct
 (`points.Count.MapRange(…)`, polygon kernels, etc.).
 
-(Tracked cleanup: [plato-295](../../../tracker/issues/plato-295.md).)
-
 ## Named constants
 
 Prefer named constants and vocabulary constructors over magic numbers in
@@ -97,8 +95,7 @@ origin + direction * t
 origin.Add(direction.Multiply(t))
 ```
 
-Comparison operators vs `Equals` / `LessThan` method form are a separate
-decision (deferred; see [plato-300](../../../tracker/issues/plato-300.md)).
+Comparison operators vs `Equals` / `LessThan` method form remain an open style choice.
 
 ## Comments and documentation
 

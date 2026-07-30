@@ -14,10 +14,6 @@ stdlib sources.
 Product authority for world frame and winding: **Ara 3D Studio**. Matrix
 multiply / layout understanding matches **`System.Numerics.Matrix4x4`**.
 
-Resolves the "coordination gates" of the plato-257 reviewer pass
-(`../docs/plato-257-lessons-v1-recommendations-numbered.md`, section A + item 464).
-Z-up / Studio alignment and the style split: tracker [plato-299](../../../tracker/issues/plato-299.md).
-
 ---
 
 ## Partial operations — no generic `Optional<T>` (A1)
@@ -152,9 +148,8 @@ increases to the right and `V` increases **downward**, over the unit square
 row-major from the top-left pixel, `ImageOrigin.TopLeft`) and the `UvChart`
 mapping (`mesh-attributes.plato`: `Bounds2D` with `X = U, Y = V`). The
 OpenGL-style bottom-left origin is opt-in via `ImageOrigin.BottomLeft`.
-*(Decision: the reviewer pass (item 464) left the origin unstated; top-left is
-chosen because the existing images / mesh-attributes / texturing files already
-imply it.)*
+Top-left is chosen because the existing images / mesh-attributes / texturing
+files already imply it.
 *Owners:* `points-parametric.plato` (UvCoordinate, UvwCoordinate); cited from
 `mesh-attributes.plato`, `images.plato`, `texturing.plato`.
 

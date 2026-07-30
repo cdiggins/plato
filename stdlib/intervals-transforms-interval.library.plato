@@ -36,7 +36,7 @@ library IntervalsTransformsInterval
     // Interpolatable, Comparable.
 
     // The signed span from Start to End (End - Start); negative for a reversed
-    // interval. Replaces v1 `Size`, which read ambiguously against area/volume.
+    // interval. Named Extent to avoid confusion with area/volume Size.
     Extent(self: IntervalLike<$T>): $T
         => self.End - self.Start;
 
@@ -95,7 +95,6 @@ library IntervalsTransformsInterval
         => (self.End, self.Start);
 
     // The interval shifted so it starts at `start`, keeping the same extent.
-    // Renamed from v1 `MoveTo` for clarity about which endpoint anchors.
     StartAt(self: IntervalLike<$T>, start: $T): Self
         => (start, start + self.Extent);
 
@@ -104,16 +103,14 @@ library IntervalsTransformsInterval
         => (self.Start + delta, self.End + delta);
 
     // The interval grown symmetrically by `amount` at each end (negative shrinks).
-    // Replaces the v1 `Recenter`/half-extent dance, which needed scalar division.
     Grow(self: IntervalLike<$T>, amount: $T): Self
         => (self.Start - amount, self.End + amount);
 
-    // The leading sub-span from Start up to fraction `t`. Renamed from v1 `Left`,
-    // which was ambiguous for a directed span.
+    // The leading sub-span from Start up to fraction `t`.
     Prefix(self: IntervalLike<$T>, t: Number): Self
         => (self.Start, self.Lerp(t));
 
-    // The trailing sub-span from fraction `t` to End. Renamed from v1 `Right`.
+    // The trailing sub-span from fraction `t` to End.
     Suffix(self: IntervalLike<$T>, t: Number): Self
         => (self.Lerp(t), self.End);
 
@@ -143,11 +140,11 @@ library IntervalsTransformsInterval
     // The NumberInterval-specialized ParameterOf below fills exactly this gap.
 
     //==
-    // NumberInterval — the remap primitive (item 466).
+    // NumberInterval — the remap primitive.
     // The generic IntervalLike surface above gives every interval Lerp/Clamp/Extent,
     // but the inverse map (value -> parameter) needs T/T division, which only Number
     // supports. NumberInterval therefore carries the three-function remap kit
-    // At / ParameterOf / Clamp; item 210's Remap composes the first two across a
+    // At / ParameterOf / Clamp; Remap composes the first two across a
     // pair of intervals. Clamp(interval, value) is already inherited generically from
     // IntervalLike (see above), so it is not re-declared here (LIBRARIES.md rule 11).
 
@@ -164,14 +161,14 @@ library IntervalsTransformsInterval
         => self.Start.InverseLerp(self.End, x);
 
     // Remap `x` from the `from` interval onto the `to` interval: the two-inverse-lerp
-    // composition At(to, ParameterOf(from, x)) (item 210). Every shader/UI/animation
+    // composition At(to, ParameterOf(from, x)). Every shader/UI/animation
     // normalized-coordinate remap is this one call. Precondition: from is not
     // zero-width. Unclamped — pass x within `from`, or Clamp first, to stay inside `to`.
     Remap(x: Number, from: NumberInterval, to: NumberInterval): Number
         => to[from.ParameterOf(x)];
 
-    // The overlapping sub-interval common to `a` and `b` (interval intersection,
-    // item 4), returned as a concrete NumberInterval so ray-box slab reductions can
+    // The overlapping sub-interval common to `a` and `b` (interval intersection),
+    // returned as a concrete NumberInterval so ray-box slab reductions can
     // chain Overlap and read Start/End directly. When the two are disjoint the result
     // is inverted (Start > End) — the empty encoding (Convention: see CONVENTIONS.md -
     // Bounds); test it with IsForward. The remap-kit spelling of the generic

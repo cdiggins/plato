@@ -4,8 +4,6 @@
 // Closed-form evaluation of the types declared in `curves-2d-arcs.plato`, plus
 // the two angle-to-point helpers (CirclePoint, RotateBy) that every circular,
 // polar, and roulette formula in the curves-2d family is written against.
-// Successor to plato-src/curves.plato (`library Curves2D`); every formula keeps
-// its Wikipedia citation.
 //
 // Conventions:
 //   * The canonical curve parameter is `t` in [0, 1] (the `Procedural` domain

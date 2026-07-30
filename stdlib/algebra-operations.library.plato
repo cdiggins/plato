@@ -58,8 +58,7 @@ library AlgebraOperations
     Quarter(x: Scalable): Scalable
         => x / 4.0;
 
-    // One eighth of x. (v1 spelled this `Eight`, which named the wrong number;
-    // renamed per LIBRARIES.md rule 4.)
+    // One eighth of x.
     Eighth(x: Scalable): Scalable
         => x / 8.0;
 

@@ -7,9 +7,6 @@
 // convention (open curves include both endpoints, closed ones omit the duplicate
 // seam) and because it is the one part of the curve package that reaches into
 // the P2 collection primitives.
-//
-// Successor to plato-src/curves.plato's Sample / ToPolyLine2D / ToPolyLine3D
-// (v1's inner-capital `Line` spelling dropped).
 
 library CurvesSampling
 {
