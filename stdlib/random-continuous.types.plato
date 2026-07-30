@@ -1,0 +1,98 @@
+//==
+// # Continuous distributions
+//
+// The elementary continuous families and the heavy-tailed, lifetime, and
+// shaped laws built beside them: the uniform and normal forms, the
+// waiting-time and power-law distributions, and the circular von Mises
+// distribution. Each type is a pure parameter record; its Mean/Variance/Pdf/
+// Cdf bodies live in `random-continuous.library.plato` and
+// `random-continuous-tails.library.plato`, which also state the
+// parameterization and the preconditions of each family. The gamma and beta
+// families live in `random-continuous-gamma.types.plato`.
+
+// Uniform density on [Min, Max].
+type UniformDistribution
+    implements ProbabilityDistribution
+{
+    Min: Number;
+    Max: Number;
+}
+
+// The Gaussian distribution with the given mean and standard deviation.
+type NormalDistribution
+    implements ProbabilityDistribution
+{
+    Mean: Number;
+    StandardDeviation: Number;
+}
+
+// A positive variable whose logarithm is normally distributed; LogMean and
+// LogStandardDeviation parameterize that underlying normal.
+type LogNormalDistribution
+    implements ProbabilityDistribution
+{
+    LogMean: Number;
+    LogStandardDeviation: Number;
+}
+
+// Waiting time between Poisson events. Rate is per unit; the mean is 1 / Rate.
+type ExponentialDistribution
+    implements ProbabilityDistribution
+{
+    Rate: Number;
+}
+
+// A heavy-tailed distribution with undefined moments: Mean and Variance
+// conventionally report Location and positive infinity.
+type CauchyDistribution
+    implements ProbabilityDistribution
+{
+    Location: Number;
+    Scale: Number;
+}
+
+// A double-sided exponential peaked at Location with diversity Scale.
+type LaplaceDistribution
+    implements ProbabilityDistribution
+{
+    Location: Number;
+    Scale: Number;
+}
+
+// A lifetime distribution: Shape below 1 models infant mortality, 1 is
+// exponential, above 1 models wear-out failures.
+type WeibullDistribution
+    implements ProbabilityDistribution
+{
+    Shape: Number;
+    Scale: Number;
+}
+
+// A power-law tail on values at or above MinimumValue, decaying with the
+// given Shape exponent.
+type ParetoDistribution
+    implements ProbabilityDistribution
+{
+    MinimumValue: Number;
+    Shape: Number;
+}
+
+// A triangular density rising from Min to a peak at Mode and falling to Max.
+type TriangularDistribution
+    implements ProbabilityDistribution
+{
+    Min: Number;
+    Mode: Number;
+    Max: Number;
+}
+
+// A circular distribution of angles concentrated around MeanDirection; the
+// circular analog of the normal distribution. Concentration 0 is uniform on
+// the circle. Pdf and Cdf take the angle in radians, and Mean reports the
+// mean direction in radians.
+type VonMisesDistribution
+    implements ProbabilityDistribution
+{
+    MeanDirection: Angle;
+    Concentration: Number;
+}

@@ -1,8 +1,8 @@
 //==
 // # Interval and bounds concepts
 //
-// The two concepts behind the one-dimensional spans of `intervals.plato` and the
-// axis-aligned regions of `intervals-bounds.plato`. Their derived bodies live in
+// The two concepts behind the one-dimensional spans of `intervals.types.plato` and the
+// axis-aligned regions of `intervals-bounds.types.plato`. Their derived bodies live in
 // `intervals-transforms-interval.library.plato` and
 // `intervals-transforms-bounds.library.plato`.
 // Convention: see CONVENTIONS.md - Bounds (inclusive Min/Max; inverted

@@ -2,7 +2,7 @@
 // # SpatialSpheres — sphere, shell, cap, and ellipsoid bodies
 //
 // Volume, surface area, bounds, centroid, containment, nearest-point and support
-// bodies for the types declared in `spatial-spheres.plato`. The frame and disk-extent
+// bodies for the types declared in `spatial-spheres.types.plato`. The frame and disk-extent
 // helpers, and the conventions governing every body here, are in
 // `spatial-primitives.library.plato`.
 

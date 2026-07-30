@@ -2,7 +2,7 @@
 // # Discrete distribution bodies
 //
 // The `ProbabilityDistribution` obligations for the types of
-// `random-discrete.plato`. Pdf reads the probability mass at the value rounded
+// `random-discrete.types.plato`. Pdf reads the probability mass at the value rounded
 // down to a whole number, per that file's convention. The Binomial and Poisson
 // CDFs sum the masses directly — exact in form and O(k) — because their closed
 // forms are regularized incomplete beta and gamma functions, which this tree

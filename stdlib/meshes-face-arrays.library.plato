@@ -2,7 +2,7 @@
 // # MeshesFaceArrays — bodies for the unwelded face arrays
 //
 // The concept obligations of `TriangleArray3D` / `QuadArray3D`
-// (`meshes-face-arrays.plato`). `Points` flattens the faces in authored order,
+// (`meshes-face-arrays.types.plato`). `Points` flattens the faces in authored order,
 // which is what makes the index table of `ToTriangleMesh` the identity: corner k
 // of face i is position (arity * i + k). `Bounds` comes free from `PointSet3D`
 // (`geometry-pointsets.library.plato`) and is tight, since every stored point

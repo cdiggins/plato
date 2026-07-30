@@ -2,7 +2,7 @@
 // # BREP shell operations
 //
 // Evaluation, topology queries, validation, and deformation for the edge-use
-// shell declared in `brep.plato`. Geometry dispatch is an exhaustive `match`
+// shell declared in `brep.types.plato`. Geometry dispatch is an exhaustive `match`
 // over the `BrepCurve` / `BrepSurface` sums, so adding a curved case is a new
 // arm in each function here, not a new field anywhere.
 //

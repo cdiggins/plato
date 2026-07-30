@@ -1,0 +1,42 @@
+//==
+// # Simplices and polyhedral solids
+//
+// The flat-faced solids: the tetrahedron (the 3D simplex), the triangular prism
+// swept by a vector, and the convex region carved out by a set of bounding planes. A
+// solid denotes the filled region including its boundary surface.
+
+// The solid simplex spanned by four vertices. Signed volume is positive when
+// D lies on the positive side of triangle A, B, C.
+// (https://en.wikipedia.org/wiki/Tetrahedron)
+type Tetrahedron
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, PointSet3D, Centroid3D, ContainsPoint3D, Deformable3D
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    D: Point3D;
+}
+
+// A triangular prism: the Base triangle swept by Offset. Offset need not be
+// perpendicular to the base (an oblique wedge).
+// NOT Deformable3D: the sweep VECTOR has no principled image under a point
+// mapping (see Prism3D in `polygons-spatial.types.plato`).
+// (https://en.wikipedia.org/wiki/Wedge_(geometry))
+type Wedge
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
+{
+    Base: Triangle3D;
+    Offset: Vector3D;
+}
+
+// The intersection of the half-spaces behind each plane (normals point
+// outward): a convex region. Bounded only when the planes enclose a finite
+// volume; a camera frustum is the canonical instance.
+// NOT Deformable3D: the region is carved by PLANES, not spanned by points; the
+// image of a plane under an arbitrary mapping is not a plane.
+// (https://en.wikipedia.org/wiki/Convex_polytope)
+type ConvexVolume
+    implements Geometry3D, ConvexShape, Connected, ContainsPoint3D
+{
+    Planes: Array<Plane>;
+}

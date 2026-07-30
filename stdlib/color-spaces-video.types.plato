@@ -1,0 +1,75 @@
+//==
+// # Device-referred and video color models
+//
+// Colors expressed the way a device, codec, or press expects them: gamma-
+// encoded sRGB, the luma-plus-chroma video forms, subtractive CMYK ink
+// coverage, the CSS hue/whiteness/blackness model, and sampled spectra. These
+// are interchange forms — decode to the linear-light `Color` (`color.types.plato`)
+// before doing arithmetic on them.
+
+//==
+// ## Device-referred and video color types
+
+// A gamma-encoded sRGB color with alpha, components nominally in [0, 1]: the
+// interchange form of most 2D content. Decode to linear `Color` before
+// arithmetic. (https://en.wikipedia.org/wiki/SRGB)
+type ColorSRGB
+    implements Value
+{
+    R: Number;
+    G: Number;
+    B: Number;
+    A: Number;
+}
+
+// A color as luma Y plus U/V chroma differences (analog video convention).
+// (https://en.wikipedia.org/wiki/Y%E2%80%B2UV)
+type ColorYUV
+    implements Value
+{
+    Y: Number;
+    U: Number;
+    V: Number;
+}
+
+// A color as luma Y plus Cb/Cr chroma offsets (digital video and JPEG
+// convention). (https://en.wikipedia.org/wiki/YCbCr)
+type ColorYCbCr
+    implements Value
+{
+    Y: Number;
+    Cb: Number;
+    Cr: Number;
+}
+
+// A subtractive process color: cyan, magenta, yellow, and key (black) ink
+// coverages, each in [0, 1]. (https://en.wikipedia.org/wiki/CMYK_color_model)
+type ColorCMYK
+    implements Value
+{
+    Cyan: Number;
+    Magenta: Number;
+    Yellow: Number;
+    Key: Number;
+}
+
+// A color as a hue angle plus whiteness and blackness mixed in (the CSS HWB
+// model); an intuitive tint/shade parameterization.
+// (https://en.wikipedia.org/wiki/HWB_color_model)
+type ColorHWB
+    implements Value
+{
+    Hue: Angle;
+    Whiteness: Number;
+    Blackness: Number;
+}
+
+// A color as a sampled spectral power distribution. Wavelengths ascend and
+// pair one-to-one with Amplitudes (relative power per sample).
+// (https://en.wikipedia.org/wiki/Spectral_power_distribution)
+type SpectralColor
+    implements Value
+{
+    Wavelengths: Array<Length>;
+    Amplitudes: Array<Number>;
+}

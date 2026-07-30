@@ -1,0 +1,110 @@
+//==
+// # 2D scenes
+//
+// Retained scene description for 2D vector graphics: a flat node array forms
+// a tree via parent indices, and node content (styled paths, text layouts,
+// image references) lives in parallel pools addressed by index. Viewport and
+// export settings close the file. BlendMode is owned by
+// `image-processing-compositing.types.plato`.
+
+// The content a scene node carries. None is a pure transform node; Group has
+// children only and is composited as an isolation group. The indexed cases
+// address the owning scene's parallel pools (Shapes, Texts, ImageReferences).
+type NodeContent2D
+    = None
+    | Shape(Index: ItemIndex)
+    | Text(Index: ItemIndex)
+    | Image(Index: ItemIndex)
+    | Group;
+
+// A zero-based index of a node within Scene2D's flat node array. -1 means
+// "none" (a root's parent, a hit-test miss).
+type SceneNodeIndex2D
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// One node of a 2D scene, stored in Scene2D's flat node array. Parent is the
+// index of the parent node, -1 for a root. Transform places the node
+// relative to its parent; Opacity and Blend composite the node's rendered
+// output over what lies beneath. Content selects and addresses the node's
+// payload in the owning scene's pools. ClipIndex selects a clip mask from
+// the scene's clip pool, -1 for none.
+type SceneNode2D
+    implements Value
+{
+    Name: String;
+    Parent: SceneNodeIndex2D;
+    Transform: Transform2D;
+    Opacity: Proportion;
+    Blend: BlendMode;
+    Visible: Boolean;
+    Content: NodeContent2D;
+    ClipIndex: ItemIndex;
+}
+
+// Where a clip/mask draws its coverage from. Path coverage is the geometric
+// interior of a path under the path's own fill rule. Alpha and Luminance take
+// coverage from the rendered output of the scene node at the given index.
+type MaskSource2D
+    implements Value
+    = Path(Path: Path2D)                    // interior of a path under its own fill rule
+    | Alpha(SourceNode: SceneNodeIndex2D)       // alpha channel of the rendered node at this index
+    | Luminance(SourceNode: SceneNodeIndex2D);  // luminance of the rendered node at this index
+
+// A clipping or masking region applied to a scene node and its subtree.
+// Inverted swaps inside and outside.
+// (https://en.wikipedia.org/wiki/Clipping_path)
+type ClipMask2D
+    implements Value
+{
+    Source: MaskSource2D;
+    Inverted: Boolean;
+}
+
+// A complete 2D scene: the parent-indexed node array plus the content pools
+// nodes address by index. ImageReferences holds opaque integer handles into
+// an external image/texture table owned by the host asset system; a node
+// with Image content stores an index into this array.
+// (https://en.wikipedia.org/wiki/Scene_graph)
+type Scene2D
+    implements Value
+{
+    Nodes: Array<SceneNode2D>;
+    Shapes: Array<StyledPath2D>;
+    Texts: Array<TextLayout>;
+    ImageReferences: Array<Integer>;
+    Clips: Array<ClipMask2D>;
+}
+
+// A mapping from scene coordinates to device pixels: the rectangular region
+// of the scene that is visible, and the pixel dimensions of the target it
+// maps onto. (https://en.wikipedia.org/wiki/Viewport)
+type Viewport2D
+    implements Value
+{
+    View: Bounds2D;
+    PixelSize: IntegerSize2D;
+}
+
+// Settings for exporting a scene to a raster or document format.
+// DotsPerInch scales document units to physical output; Background is
+// composited beneath the scene (zero alpha for transparent output).
+// (https://en.wikipedia.org/wiki/Dots_per_inch)
+type ExportSettings2D
+    implements Value
+{
+    DotsPerInch: Number;
+    Background: Color;
+}
+
+// The result of hit-testing a point against a scene: the index of the
+// topmost node hit (-1 for a miss) and the hit position in that node's local
+// space. (https://en.wikipedia.org/wiki/Hit-testing)
+type SceneHitResult2D
+    implements Value
+{
+    Node: SceneNodeIndex2D;
+    LocalPosition: Point2D;
+}

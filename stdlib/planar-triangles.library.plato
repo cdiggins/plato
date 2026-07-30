@@ -2,7 +2,7 @@
 // # PlanarTriangles — triangle, quadrilateral, and parallelogram bodies
 //
 // Area, perimeter, bounds, centroid, containment and nearest-point bodies for the
-// types declared in `planar-triangles.plato`, plus the classical barycentric and
+// types declared in `planar-triangles.types.plato`, plus the classical barycentric and
 // triangle-centre toolkit (`LIBRARIES.md` ground rules 1 and 10 sanction an inline
 // `library` block in a declaration file).
 //

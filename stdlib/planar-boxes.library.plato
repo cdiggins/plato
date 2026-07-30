@@ -2,7 +2,7 @@
 // # PlanarBoxes — rounded-rectangle, oriented-box, and regular-polygon bodies
 //
 // Area, perimeter, bounds, centroid, containment, nearest-point and support bodies
-// for the types declared in `planar-boxes.plato`.
+// for the types declared in `planar-boxes.types.plato`.
 //
 // Conventions fixed here:
 //

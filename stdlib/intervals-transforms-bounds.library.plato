@@ -134,7 +134,7 @@ library IntervalsTransformsBounds
 
     // The circumscribed sphere of the box: centered at the box center with radius
     // half the Min -> Max diagonal length. Reuses the BoundsLike Center/Diagonal declared above; Sphere is
-    // declared in spatial-spheres.plato and only constructed here.
+    // declared in spatial-spheres.types.plato and only constructed here.
     BoundingSphere(self: Bounds3D): Sphere
         => Sphere(self.Center, self.Diagonal.Magnitude.Half);
 

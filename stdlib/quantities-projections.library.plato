@@ -225,7 +225,7 @@ library QuantityProjections
     //==
     // # Quantity types declared outside the `quantities-*.plato` files
     //
-    // `Duration` (`time.plato`) is the fiftieth `Quantity` implementor. Its pair
+    // `Duration` (`time.types.plato`) is the fiftieth `Quantity` implementor. Its pair
     // lives here rather than in a time library because the pattern is one thing and
     // should be read in one place; `time.library.plato` is the natural home to move
     // it to if the projection set grows.

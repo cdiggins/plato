@@ -3,7 +3,7 @@
 //
 // The concept shared by every dense numeric matrix: element access by zero-based
 // row and column, over the Additive and Scalable surface every matrix supports.
-// The implementing types are declared in `matrices.plato`; the concept-generic
+// The implementing types are declared in `matrices.types.plato`; the concept-generic
 // helpers derived from this concept (Trace, FrobeniusNorm, IsSquare, ...) live in
 // `numeric-structures-matrix.library.plato`.
 

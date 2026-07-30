@@ -61,7 +61,7 @@ library AlgebraNumeric
     // True when x and y are close under the combined absolute+relative policy:
     // |x - y| <= tol.Absolute + tol.Relative * max(|x|, |y|). This is the library's
     // one numerical-comparison epsilon (see CONVENTIONS.md - Floating-point
-    // comparison). Note: engineering Tolerance (uncertainty.plato) is an acceptance
+    // comparison). Note: engineering Tolerance (uncertainty.types.plato) is an acceptance
     // allowance, NOT ComparisonTolerance, and does not belong here.
     AlmostEqual(x: Number, y: Number, tol: ComparisonTolerance): Boolean
         => (x - y).Abs <= tol.Absolute + tol.Relative * x.Abs.Greater(y.Abs);

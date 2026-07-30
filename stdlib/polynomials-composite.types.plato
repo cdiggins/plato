@@ -1,0 +1,40 @@
+//==
+// # Composite and derived forms
+//
+// Polynomial constructions assembled out of the forms declared in
+// `polynomials.types.plato`: a piecewise polynomial over ascending breakpoints, a
+// Pade approximant pairing a numerator with a normalized denominator, and a
+// Sturm chain for counting real roots by sign changes.
+
+// A piecewise polynomial (spline in polynomial form;
+// https://en.wikipedia.org/wiki/Piecewise). Breakpoints ascend and number one
+// more than Pieces; piece i applies on the half-open span from Breakpoints[i]
+// to Breakpoints[i+1] and is evaluated in the local variable x - Breakpoints[i].
+type PiecewisePolynomial
+    implements Value
+{
+    Breakpoints: Array<Number>;
+    Pieces: Array<Polynomial>;
+}
+
+// A Pade approximant about Center
+// (https://en.wikipedia.org/wiki/Pad%C3%A9_approximant): the rational function
+// Numerator over Denominator that matches a power series to the highest order
+// the two degrees allow. The Denominator's constant term is normalized to 1.
+type PadeApproximant
+    implements Value
+{
+    Center: Number;
+    Numerator: Polynomial;
+    Denominator: Polynomial;
+}
+
+// A Sturm sequence for counting real roots in an interval by sign changes
+// (https://en.wikipedia.org/wiki/Sturm%27s_theorem). Polynomials[0] is the
+// original polynomial, Polynomials[1] its derivative, and each later entry is
+// the negated remainder of the two before it.
+type SturmChain
+    implements Value
+{
+    Polynomials: Array<Polynomial>;
+}

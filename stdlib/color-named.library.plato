@@ -11,7 +11,7 @@
 // `Color` values: `Color` is LINEAR-light RGBA, and NO transfer-function conversion
 // happens anywhere in this file. To obtain a linear `Color` from one of these
 // constants you must decode explicitly through the sRGB transfer function - the
-// `TransferFunction`/`ColorSRGB` vocabulary in `color-spaces.plato` owns that
+// `TransferFunction`/`ColorSRGB` vocabulary in `color-spaces.types.plato` owns that
 // conversion. Treating a Color8 constant as if it were linear light will visibly
 // wash out any blending, filtering, or lighting done with it.
 //

@@ -2,7 +2,7 @@
 // # PlanarCircles — disk, annulus, sector, segment, and stadium bodies
 //
 // Area, perimeter, bounds, centroid, containment, nearest-point and support bodies
-// for the types declared in `planar-circles.plato`.
+// for the types declared in `planar-circles.types.plato`.
 //
 // Conventions fixed here:
 //

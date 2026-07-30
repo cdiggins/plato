@@ -2,7 +2,7 @@
 // # SamplingCurves — deformation bodies for sampled curves and surfaces
 //
 // The Deformable2D/Deformable3D obligations of the discretized parametrics in
-// `sampling-curves.plato`. The samples ARE the geometry — between them the
+// `sampling-curves.types.plato`. The samples ARE the geometry — between them the
 // types interpolate linearly — so carrying every sample point through the
 // mapping is the discretization of the pointwise deform, and the sample
 // parameters survive unchanged.

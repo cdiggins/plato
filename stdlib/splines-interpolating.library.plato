@@ -1,10 +1,10 @@
 //==
 // # SplinesInterpolating — evaluating the interpolating splines
 //
-// Evaluation of the curves declared in `splines-interpolating.plato`:
+// Evaluation of the curves declared in `splines-interpolating.types.plato`:
 // Catmull-Rom, Kochanek-Bartels (TCB), piecewise-linear, and the accessors of
 // the natural cubic spline. The cubic bases themselves live in
-// `library Polynomials` (`polynomials.plato`), generic over `Numerical`, and the
+// `library Polynomials` (`polynomials.types.plato`), generic over `Numerical`, and the
 // piecewise indexing helpers (SpanCount / SpanIndex / SpanFraction / AtWrapped)
 // in `splines-hermite.library.plato`; nothing is reimplemented here.
 //
@@ -27,7 +27,7 @@ library SplinesInterpolating
     // Centripetal / chordal Catmull-Rom (Alpha = 0.5 / 1) needs knot spacings
     // proportional to the chord lengths raised to Alpha, i.e. a non-uniform
     // Hermite whose tangents are rescaled per span; that belongs next to the
-    // basis in `polynomials.plato`, not here. Until it lands, `Alpha` is
+    // basis in `polynomials.types.plato`, not here. Until it lands, `Alpha` is
     // documentation rather than behaviour.
 
     // The point on a Catmull-Rom spline at t, uniform parameterization.

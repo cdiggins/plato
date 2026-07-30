@@ -1,0 +1,84 @@
+//==
+// # Stroke styling
+//
+// The geometry side of painting a path: caps, joins, alignment, dash
+// patterns, the complete stroke description, the markers stamped along a
+// stroked path, and the parameter records for turning a stroke or a dash into
+// concrete path geometry. Consumes Path2D from `paths.types.plato`; the paint side
+// lives in `vector-styling-paint.types.plato`.
+
+// The shape a stroke takes at the open end of a contour: flat at the
+// endpoint (Butt), a semicircular cap (Round), or flat but extended past the
+// endpoint by half the stroke width (Square).
+type LineCap = Butt | Round | Square;
+
+// The shape a stroke takes where two segments meet at a corner. Miter is
+// sharp, subject to the miter limit.
+type LineJoin = Miter | Round | Bevel;
+
+// Where the stroke width sits relative to the path centerline: half each
+// side (Center), toward the fill (Inside), or away from it (Outside).
+type StrokeAlign = Center | Inside | Outside;
+
+// An on/off dash sequence applied along a stroked contour's arc length.
+// Intervals alternate drawn and skipped lengths, starting with drawn, and
+// repeat; an empty array means a solid stroke. Phase shifts the pattern's
+// starting point along the contour, in the same units.
+type DashPattern
+    implements Value
+{
+    Intervals: Array<Number>;
+    Phase: Number;
+}
+
+// The complete geometric description of how a path is stroked. Width is the
+// total stroke width. MiterLimit caps a miter join's reach as a multiple of
+// half the stroke width, as in SVG; joins beyond it fall back to bevel.
+type StrokeStyle
+    implements Value
+{
+    Width: Number;
+    Cap: LineCap;
+    Join: LineJoin;
+    MiterLimit: Number;
+    Dash: DashPattern;
+    Align: StrokeAlign;
+}
+
+// A small path stamped at positions along a host path: arrowheads, dots, SVG
+// markers. The marker's own geometry is scaled to Size; ReferencePoint is the
+// point in the marker's space that lands on the host path. When OrientToPath
+// is true the marker rotates to follow the host path's tangent.
+type PathMarker
+    implements Value
+{
+    Path: Path2D;
+    Size: Size2D;
+    ReferencePoint: Vector2D;
+    OrientToPath: Boolean;
+}
+
+// Controls for offsetting (insetting or outsetting) a path by a signed
+// distance. Positive distances offset to the left of each contour's direction
+// of travel, which expands counter-clockwise-wound closed contours. Join and
+// MiterLimit shape the corners of the offset result; Cap shapes the ends of
+// open contours. (https://en.wikipedia.org/wiki/Parallel_curve)
+type PathOffsetParameters
+    implements Value
+{
+    Distance: Number;
+    Join: LineJoin;
+    MiterLimit: Number;
+    Cap: LineCap;
+}
+
+// Controls for converting a dashed traversal of a path into concrete sub-path
+// pieces (dash-to-path), one open contour per drawn interval of the pattern.
+// Cap describes how the resulting pieces are intended to be terminated when
+// stroked.
+type PathDashParameters
+    implements Value
+{
+    Pattern: DashPattern;
+    Cap: LineCap;
+}

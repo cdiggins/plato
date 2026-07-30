@@ -2,7 +2,7 @@
 // # Motor operations
 //
 // Construction, the dual-quaternion product, inversion, normalization, and
-// application for the rigid-motion motors of `transforms-motor.plato`.
+// application for the rigid-motion motors of `transforms-motor.types.plato`.
 
 library TransformsMotor
 {

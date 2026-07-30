@@ -1,7 +1,7 @@
 //==
 // # SplinesBspline — knot vectors and B-spline / NURBS domains
 //
-// The readers for the knot-vector curves declared in `splines-bspline.plato`:
+// The readers for the knot-vector curves declared in `splines-bspline.types.plato`:
 // knot count and lookup, the parameter domain a given degree covers, and the
 // de-homogenized (weighted) control point that a Cox-de Boor evaluator would
 // consume. Cox-de Boor evaluation itself is not shipped — see the note below.

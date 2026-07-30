@@ -2,7 +2,7 @@
 // # Extents and sizes — concrete bodies
 //
 // Hashable obligations for the discrete extent types declared in
-// `intervals-sizes.plato`.
+// `intervals-sizes.types.plato`.
 
 library IntervalsSizes
 {

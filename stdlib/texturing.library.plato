@@ -17,7 +17,7 @@ library Texturing
     // alpha channel drives the opacity helpers.
 
     // The alpha (opacity) sampled at the UV coordinate, on Color's nominal
-    // [0, 1] per-channel scale (color.plato). Wide-gamut and HDR samples may
+    // [0, 1] per-channel scale (color.types.plato). Wide-gamut and HDR samples may
     // exceed 1.
     OpacityAt(self: ProceduralTexture, uv: UvCoordinate): Number
         => self.ColorAt(uv).A;

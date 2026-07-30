@@ -2,7 +2,7 @@
 // # SpatialCapsules — capsule bodies
 //
 // Volume, surface area, bounds, centroid, containment, nearest-point and support
-// bodies for `Capsule3D` (declared in `spatial-cylinders.plato`). The conventions
+// bodies for `Capsule3D` (declared in `spatial-cylinders.types.plato`). The conventions
 // governing every body here are in `spatial-primitives.library.plato`.
 
 library SpatialCapsules

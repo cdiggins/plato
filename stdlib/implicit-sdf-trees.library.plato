@@ -1,7 +1,7 @@
 //==
 // # SDF combination tree evaluation
 //
-// Recursive evaluation of a flat CSG tree (`implicit-sdf-trees.plato`). Leaves
+// Recursive evaluation of a flat CSG tree (`implicit-sdf-trees.types.plato`). Leaves
 // resolve against a caller-supplied primitive list; interior nodes combine two
 // lower-indexed nodes, so the recursion is well founded and terminates on any
 // tree obeying the "nodes only reference lower-indexed nodes" invariant.

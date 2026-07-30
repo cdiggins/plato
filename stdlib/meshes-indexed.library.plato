@@ -2,7 +2,7 @@
 // # MeshesIndexed — concept obligations of the indexed surface meshes
 //
 // The concrete bodies that make TriangleMesh3D, TriangleMesh2D and QuadMesh3D
-// (`meshes.plato`) honor their declared concepts: the MeshElementCounts census
+// (`meshes.types.plato`) honor their declared concepts: the MeshElementCounts census
 // for all three, TriangulatedGeometry3D random access for TriangleMesh3D,
 // Meshable2D for TriangleMesh2D, and Meshable3D for QuadMesh3D. Undirected
 // edge counts dedupe through the first-occurrence rule of

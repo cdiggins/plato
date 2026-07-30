@@ -1,0 +1,33 @@
+//==
+// # Polygon-soup solids for boundary CSG
+//
+// The boundary-representation side of constructive solid geometry: a solid as a
+// soup of outward-facing convex planar polygons, and the polygon-versus-plane
+// classification the clipping and boolean bodies dispatch on. The implicit /
+// tree side of CSG lives in `solids-csg.types.plato`; the algorithm bodies live in
+// `solids-csg-clipping.library.plato`, `solids-csg-interior.library.plato` and
+// `solids-csg-boolean.library.plato`.
+// (https://en.wikipedia.org/wiki/Constructive_solid_geometry)
+
+// How a planar polygon sits relative to a plane: entirely in the plane's front
+// (positive) half-space, entirely behind, lying in the plane itself (within the
+// classification tolerance), or crossing it (vertices strictly on both sides).
+// The four-way answer every plane-clipping and BSP construction dispatches on.
+// (https://en.wikipedia.org/wiki/Binary_space_partitioning)
+type PlaneRelation3D
+    = Front
+    | Back
+    | Coplanar
+    | Spanning;
+
+// A closed solid bounded by a soup of CONVEX planar polygons whose outward
+// normals (CCW winding, CONVENTIONS.md - winding) bound a watertight volume:
+// csg.js's polygon-list model of a solid. Unordered, unindexed, and permitted
+// to hold T-junctions from clipping; convexity of every face is the invariant
+// the Sutherland-Hodgman clipping bodies rely on.
+// (https://en.wikipedia.org/wiki/Boundary_representation)
+type PolygonSoup3D
+    implements Solid, Deformable3D
+{
+    Polygons: Array<Polygon3D>;
+}

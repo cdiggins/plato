@@ -29,7 +29,7 @@ library IntervalsTransformsTransformable
     // TTransform. Constraining Transformable that way is not sound, because the
     // transform family is not uniformly invertible or composable — the TRS types
     // (Transform2D/Transform3D) are not closed under composition (see
-    // transforms-trs.plato) and the projective types expose no inverse. The pivot and
+    // transforms-trs.types.plato) and the projective types expose no inverse. The pivot and
     // identity helpers therefore live per-representation, not on the concept.
 
     //==

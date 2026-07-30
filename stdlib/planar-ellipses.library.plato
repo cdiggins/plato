@@ -2,7 +2,7 @@
 // # PlanarEllipses — ellipse and superellipse bodies
 //
 // Area, perimeter, bounds, centroid and containment bodies for the types declared in
-// `planar-ellipses.plato`. Both shapes reduce to an axis-aligned test in the frame
+// `planar-ellipses.types.plato`. Both shapes reduce to an axis-aligned test in the frame
 // rotated by `Rotation` about `Center`, so every body goes through `LocalOffset`
 // (`planar-shapes.library.plato`).
 //

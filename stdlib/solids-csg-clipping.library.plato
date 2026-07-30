@@ -1,7 +1,7 @@
 //==
 // # SolidsCsgClipping — polygon-versus-plane classification and splitting
 //
-// The foundational CSG primitives on the types in `solids-csg-soups.plato`:
+// The foundational CSG primitives on the types in `solids-csg-soups.types.plato`:
 // the supporting plane of a convex polygon, the four-way polygon/plane
 // classification, and Sutherland-Hodgman clipping of a convex polygon to a
 // half-space and splitting by a plane.
@@ -11,7 +11,7 @@
 //   * Every polygon is CONVEX and planar with CCW-outward winding
 //     (`PolygonSoup3D`'s invariant); clipping a non-convex ring is not defined
 //     here.
-//   * The plane's FRONT is its positive half-space (`lines-planes.plato`);
+//   * The plane's FRONT is its positive half-space (`lines-planes.types.plato`);
 //     clipping keeps the front, boundary inclusive.
 
 library SolidsCsgClipping

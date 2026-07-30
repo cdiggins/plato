@@ -1,10 +1,10 @@
 //==
 // # Time arithmetic
 //
-// Affine Instant / Duration operations for the types of `time.plato`.
+// Affine Instant / Duration operations for the types of `time.types.plato`.
 // Instants are positions on a time line; Durations are differences between
 // them — deliberately distinct from Number (same discipline as Size2D vs
-// Vector2D in `intervals-sizes.plato`). Duration already discharges its
+// Vector2D in `intervals-sizes.types.plato`). Duration already discharges its
 // Quantity obligations via `quantities.library.plato` / Amount-FromAmount in
 // `quantities-projections.library.plato`; this file adds Instant Difference
 // and Comparable fills, plus the Duration↔Number and Duration/Duration

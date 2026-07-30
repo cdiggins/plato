@@ -2,7 +2,7 @@
 // # PolygonsSpatial — planar-polygon-in-space, prism, and pyramid bodies
 //
 // Area, perimeter, centroid, normal, nearest-point, volume, surface-area, bounds and
-// containment bodies for the types declared in `polygons-spatial.plato`. They are
+// containment bodies for the types declared in `polygons-spatial.types.plato`. They are
 // written in terms of the space kernels in `polygons-kernels.library.plato`.
 //
 // Conventions fixed here:

@@ -1,7 +1,7 @@
 //==
 // # SDF modifier application
 //
-// The parameter records declared in `implicit-sdf-modifiers.plato`, applied to
+// The parameter records declared in `implicit-sdf-modifiers.types.plato`, applied to
 // a source field. Value modifiers reshape an already-sampled distance; domain
 // modifiers reshape the position BEFORE the source is sampled, so they compose
 // with `MapDomain`. Domain modifiers other than repetition preserve exact

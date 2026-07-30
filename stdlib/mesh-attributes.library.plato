@@ -1,7 +1,7 @@
 //==
 // # MeshAttributes — deformation body for the attributed mesh
 //
-// The Deformable3D obligation of RichMesh3D (`mesh-attributes.plato`): the
+// The Deformable3D obligation of RichMesh3D (`mesh-attributes.types.plato`): the
 // underlying triangle mesh is deformed and every attribute channel is carried
 // unchanged. Positions are the only point-typed data the type holds;
 // direction-valued channels (vector, tangent) are NOT re-derived — after a

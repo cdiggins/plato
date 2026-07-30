@@ -2,7 +2,7 @@
 // # MeshesFaces — the Face corner surface and its derived loop walks
 //
 // Bodies for the `Face` concept (`meshes.concepts.plato`): the Count/At
-// obligations of the two fixed-arity face records (`meshes.plato`), and the
+// obligations of the two fixed-arity face records (`meshes.types.plato`), and the
 // loop vocabulary derived from them — edges, membership, and the fan
 // triangulation that fixes the A-C diagonal split of a quad in code rather
 // than prose. The undirected-edge census helpers at the bottom serve the

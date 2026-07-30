@@ -1,0 +1,56 @@
+//==
+// # Camera optics and output regions
+//
+// The lens-side and image-side companions of the camera types in
+// `cameras.types.plato`: the pixel region a camera renders into, lens distortion and
+// shift coefficients, and depth-of-field controls. Distortion and shift are
+// dimensionless; the depth-of-field focus distance is a physical Length.
+
+// The rectangular pixel region a camera renders into, plus the interval that
+// normalized device depth is mapped onto. PixelBounds contains Min, excludes
+// Max. (https://en.wikipedia.org/wiki/Viewport)
+type Viewport
+    implements Value
+{
+    PixelBounds: IntegerBounds2D;
+    DepthRange: NumberInterval;
+}
+
+// Brown-Conrady lens distortion coefficients: K1, K2, and K3 are radial terms;
+// P1 and P2 are tangential (decentering) terms. All zero means an ideal lens.
+// See https://en.wikipedia.org/wiki/Distortion_(optics).
+type LensDistortion
+    implements Value
+{
+    K1: Number;
+    K2: Number;
+    K3: Number;
+    P1: Number;
+    P2: Number;
+}
+
+// A tilt-shift style image shift, as signed fractions of sensor width and
+// height. Zero means the optical axis meets the sensor center; positive
+// Vertical shifts the image up (the architectural facade correction).
+// (https://en.wikipedia.org/wiki/Tilt%E2%80%93shift_photography)
+type LensShift
+    implements Value
+{
+    Horizontal: Number;
+    Vertical: Number;
+}
+
+// Depth-of-field rendering controls (https://en.wikipedia.org/wiki/Depth_of_field).
+// FocusDistance is the physical distance to the focal plane; FStop widens or
+// narrows the simulated aperture (smaller numbers focus more shallowly);
+// BladeCount shapes the bokeh polygon (0 means a perfect circle); BladeRotation
+// orients that polygon.
+type DepthOfFieldSettings
+    implements Value
+{
+    Enabled: Boolean;
+    FocusDistance: Length;
+    FStop: Number;
+    BladeCount: Integer;
+    BladeRotation: Angle;
+}

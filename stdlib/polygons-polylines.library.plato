@@ -2,7 +2,7 @@
 // # PolygonsPolylines — polyline length and deformation
 //
 // The length and deformation bodies for the chains declared in
-// `polygons-polylines.plato`. The `Closed` flag decides whether the wrap-around edge
+// `polygons-polylines.types.plato`. The `Closed` flag decides whether the wrap-around edge
 // counts; the underlying `ChainLength` kernel is in `geometry-kernels.library.plato`.
 
 library PolygonsPolylines

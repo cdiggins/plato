@@ -2,10 +2,10 @@
 // # Affine builder intrinsics
 //
 // Bodiless host signatures for the builder types declared in
-// `primitives-builders.plato`. Without them no builder
+// `primitives-builders.types.plato`. Without them no builder
 // call site resolves. They live here rather than in the `intrinsics-*` files
 // because they are inseparable from the `unique` declarations they operate on
-// (`primitives-builders.plato`).
+// (`primitives-builders.types.plato`).
 //
 // The single-parameter observers and consumers — `Count`, `Freeze` and
 // `EmptyList` — are declared alongside the mutators below. Each carries a type

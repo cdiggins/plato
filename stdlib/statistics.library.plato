@@ -1,7 +1,7 @@
 //==
 // # Statistics bodies
 //
-// Derived quantities on the univariate summary records of `statistics.plato`.
+// Derived quantities on the univariate summary records of `statistics.types.plato`.
 // The bivariate surface — covariance, correlation and the fitted models —
 // lives in `statistics-correlation.library.plato`.
 //
@@ -180,7 +180,7 @@ library Statistics
     // an Array<Number> needs a sort (this vocabulary declares none) and a choice
     // among the nine standard quantile-interpolation conventions; building a
     // Histogram from a sample needs the accumulation surface the affine builders
-    // now supply (`List.Freeze` in primitives.plato) plus a binning convention.
+    // now supply (`List.Freeze` in primitives.types.plato) plus a binning convention.
     // Spearman and Kendall correlation need ranking, i.e. a
     // sort. MovingAverage and OutlierDetection are sum types describing a rule,
     // and applying a rule to a series again needs the accumulation surface.

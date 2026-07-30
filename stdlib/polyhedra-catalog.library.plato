@@ -11,7 +11,7 @@
 // and the remaining nine Catalan duals in
 // `polyhedra-catalog-catalans.library.plato`; together the three catalog files
 // name all thirteen of each of the `ArchimedeanSolidKind` / `CatalanSolidKind`
-// sums in `solids-polyhedra.plato`.
+// sums in `solids-polyhedra.types.plato`.
 //
 // Vertices are NOT normalized to a common radius (see the note in
 // `polyhedra-conway.library.plato`): the Archimedeans below are

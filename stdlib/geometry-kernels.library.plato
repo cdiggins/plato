@@ -17,8 +17,8 @@ library GeometryKernels
     //==
     // # Point-list kernels
     //
-    // The formulas every point-list shape in `lines.plato`, the `planar-*.plato`
-    // files, `polygons.plato` and the `spatial-*.plato` files is built from. They take a
+    // The formulas every point-list shape in `lines.types.plato`, the `planar-*.plato`
+    // files, `polygons.types.plato` and the `spatial-*.plato` files is built from. They take a
     // plain `Array<Point2D>` / `Array<Point3D>` rather than a concept so that a
     // shape whose points are NOT its `PointSet` members (a regular polygon's
     // computed vertices, a polygon's holes) can call them too.

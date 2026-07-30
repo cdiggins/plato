@@ -84,7 +84,7 @@ library MeshesPolygonIncidence
 
     // The two endpoints of an undirected edge, ordered A.Value <= B.Value to
     // match the canonical ordering of `UndirectedEdgeList`
-    // (`topology-adjacency.plato`). Direction is not recoverable from an
+    // (`topology-adjacency.types.plato`). Direction is not recoverable from an
     // undirected edge; read the naming corner for that.
     VerticesOfUndirectedEdge(self: PolygonMesh3D, edge: UndirectedEdgeIndex): VertexPair
     {

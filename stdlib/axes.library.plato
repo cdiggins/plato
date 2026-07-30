@@ -1,7 +1,7 @@
 //==
 // # Axis3D conversions and algebra
 //
-// Total, one-way conversions from the unsigned 3D cardinal axis (`axes.plato`)
+// Total, one-way conversions from the unsigned 3D cardinal axis (`axes.types.plato`)
 // out to the geometric vocabulary — basis vector, unit direction, Number tuple,
 // point — plus the component selector and the right-handed tangent cycle.
 

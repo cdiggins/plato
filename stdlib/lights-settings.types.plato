@@ -1,0 +1,56 @@
+//==
+// # Shadows, masking, and auxiliary light settings
+//
+// The per-light controls that accompany the emitters of `lights.types.plato` without
+// being emitters themselves: shadow-map rendering, layer masking, measured
+// photometric profiles, and participating-media scattering. Distances and radii
+// are unit-agnostic scene Numbers.
+
+// Shadow-map rendering controls for one light. Resolution is the shadow map
+// edge length in pixels. Bias and NormalBias offset depth comparisons along
+// the view ray and surface normal to prevent acne. PenumbraSize scales
+// soft-shadow width. CascadeCount splits a directional shadow into successive
+// depth ranges (1 = no cascades). MaxDistance is the farthest shadowed
+// distance in scene units. (https://en.wikipedia.org/wiki/Shadow_mapping)
+type ShadowSettings
+    implements Value
+{
+    Resolution: Integer;
+    Bias: Number;
+    NormalBias: Number;
+    PenumbraSize: Number;
+    CascadeCount: Integer;
+    MaxDistance: Number;
+}
+
+// A bitmask selecting which render layers a light illuminates: bit i set means
+// the light affects the RenderLayer with Index i (`scene3d.types.plato`). All bits set means
+// all layers.
+type LightLayerMask
+{
+    Value: Integer;
+}
+
+// A reference to a measured IES photometric distribution profile, resolved by
+// Name in the surrounding asset environment. Multiplier scales the profile's
+// intensities (1 = as measured).
+// See https://en.wikipedia.org/wiki/Photometry_(optics).
+type IesProfileReference
+    implements Value
+{
+    Name: String;
+    Multiplier: Number;
+}
+
+// Participating-media scattering along a light's volume ("god rays").
+// Anisotropy is the Henyey-Greenstein g in [-1, 1]: 0 is isotropic, positive
+// scatters forward. MaxDistance bounds the ray march in scene units.
+// (https://en.wikipedia.org/wiki/Volumetric_lighting)
+type VolumetricLightSettings
+    implements Value
+{
+    Enabled: Boolean;
+    Intensity: Number;
+    Anisotropy: Number;
+    MaxDistance: Number;
+}

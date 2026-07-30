@@ -2,7 +2,7 @@
 // # Polyhedral dual pairings on the solid kinds
 //
 // The known dual-polyhedron partner of each named solid kind, as total maps on
-// the kind sums in `solids-polyhedra.plato`
+// the kind sums in `solids-polyhedra.types.plato`
 // (https://en.wikipedia.org/wiki/Dual_polyhedron). This is the identity-level
 // counterpart of the geometric Conway `Dual` on `PolygonMesh3D`
 // (`polyhedra-conway.library.plato`): that operation constructs the dual mesh of

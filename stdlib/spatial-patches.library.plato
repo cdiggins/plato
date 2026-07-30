@@ -2,7 +2,7 @@
 // # SpatialPatches — disk, triangle, and quadrilateral bodies
 //
 // Area, perimeter, bounds, centroid and nearest-point bodies for the flat patches
-// declared in `spatial-patches.plato`, plus the triangle's vector area, face normal,
+// declared in `spatial-patches.types.plato`, plus the triangle's vector area, face normal,
 // and supporting plane. These are patches, not solids: `Area` is the patch's own area
 // and `ClosestPoint` always lands ON the patch. The frame and disk-extent helpers are
 // in `spatial-primitives.library.plato`, and the point-list kernels in

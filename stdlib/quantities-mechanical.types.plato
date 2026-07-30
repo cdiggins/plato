@@ -1,0 +1,51 @@
+//==
+// # Mechanical quantities
+//
+// Mass and its distributions, the force / torque / impulse family, linear and
+// angular momentum with rotational inertia, and energy and power
+// (https://en.wikipedia.org/wiki/Classical_mechanics). Material response
+// (stress, stiffness, viscosity, flow) lives in `quantities-material.types.plato`.
+
+// Mass, stored in kilograms (https://en.wikipedia.org/wiki/Mass).
+type Mass implements Quantity { Kilograms: Number; }
+
+// Mass per volume, stored in kilograms per cubic meter
+// (https://en.wikipedia.org/wiki/Density).
+type Density implements Quantity { KilogramsPerCubicMeter: Number; }
+
+// Mass per area, stored in kilograms per square meter
+// (https://en.wikipedia.org/wiki/Area_density).
+type ArealDensity implements Quantity { KilogramsPerSquareMeter: Number; }
+
+// Mass per length, stored in kilograms per meter
+// (https://en.wikipedia.org/wiki/Linear_density).
+type LinearDensity implements Quantity { KilogramsPerMeter: Number; }
+
+// Force, stored in newtons (https://en.wikipedia.org/wiki/Force).
+type Force implements Quantity { Newtons: Number; }
+
+// Rotational force, stored in newton-meters (https://en.wikipedia.org/wiki/Torque).
+type Torque implements Quantity { NewtonMeters: Number; }
+
+// Impulse (force integrated over time), stored in newton-seconds
+// (https://en.wikipedia.org/wiki/Impulse_(physics)).
+type Impulse implements Quantity { NewtonSeconds: Number; }
+
+// Linear momentum, stored in kilogram-meters per second
+// (https://en.wikipedia.org/wiki/Momentum).
+type Momentum implements Quantity { KilogramMetersPerSecond: Number; }
+
+// Angular momentum, stored in kilogram-square-meters per second
+// (https://en.wikipedia.org/wiki/Angular_momentum).
+type AngularMomentum implements Quantity { KilogramSquareMetersPerSecond: Number; }
+
+// Rotational inertia about an axis, stored in kilogram-square-meters
+// (https://en.wikipedia.org/wiki/Moment_of_inertia).
+type MomentOfInertia implements Quantity { KilogramSquareMeters: Number; }
+
+// Energy or work, stored in joules (https://en.wikipedia.org/wiki/Energy).
+type Energy implements Quantity { Joules: Number; }
+
+// Rate of energy transfer, stored in watts
+// (https://en.wikipedia.org/wiki/Power_(physics)).
+type Power implements Quantity { Watts: Number; }

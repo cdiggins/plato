@@ -3,7 +3,7 @@
 //
 // The per-concrete-type Euclidean distances that stand in for a generic metric
 // on the Coordinate concept (`points.concepts.plato`), plus the barycentric
-// evaluation and normalization test for `points-parametric.plato`.
+// evaluation and normalization test for `points-parametric.types.plato`.
 
 library NumericStructuresCoordinate
 {
@@ -19,8 +19,8 @@ library NumericStructuresCoordinate
     //
     // TODO(concept-gap): a generic Distance over Coordinate is out of reach, and
     // NOT via a cheap concept extension. All five implementors (Point2D, Point3D,
-    // PointN in points.plato; UvCoordinate, UvwCoordinate in
-    // points-parametric.plato) implement OriginBased<TDelta> (hence
+    // PointN in points.types.plato; UvCoordinate, UvwCoordinate in
+    // points-parametric.types.plato) implement OriginBased<TDelta> (hence
     // Difference<TDelta>) — but each with a DIFFERENT delta type (Vector2D /
     // Vector3D / VectorN). So Coordinate cannot inherit Difference<TDelta>
     // without gaining a type parameter, which would cascade to
@@ -99,7 +99,7 @@ library NumericStructuresCoordinate
     //==
     // # BarycentricCoordinate (barycentric / affine-combination lessons)
     //
-    // Vertex binding U -> A, V -> B, W -> C (points.plato). Evaluate takes the
+    // Vertex binding U -> A, V -> B, W -> C (points.types.plato). Evaluate takes the
     // three triangle vertices explicitly, so it lives in points territory rather
     // than needing a Triangle type. Computed as A + V*(B - A) + W*(C - A), which
     // equals U*A + V*B + W*C when U + V + W = 1 and stays well-defined regardless.

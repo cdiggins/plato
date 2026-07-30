@@ -1,7 +1,7 @@
 //==
 // # MeshesSections — deformation body for the partitioned mesh
 //
-// The Deformable3D obligation of SegmentedMesh3D (`meshes-sections.plato`):
+// The Deformable3D obligation of SegmentedMesh3D (`meshes-sections.types.plato`):
 // deformation moves positions and never reorders faces, so the section table —
 // face ranges and slots — passes through unchanged.
 

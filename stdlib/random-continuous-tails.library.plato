@@ -2,7 +2,7 @@
 // # Heavy-tailed, lifetime, and shaped distribution bodies
 //
 // The `ProbabilityDistribution` obligations for the remaining continuous
-// families of `random-continuous.plato`: the heavy-tailed CauchyDistribution
+// families of `random-continuous.types.plato`: the heavy-tailed CauchyDistribution
 // and the peaked LaplaceDistribution, the lifetime and power-law
 // WeibullDistribution and ParetoDistribution, the bounded
 // TriangularDistribution, and the circular VonMisesDistribution. All bodies

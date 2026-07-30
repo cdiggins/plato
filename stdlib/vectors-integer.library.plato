@@ -2,7 +2,7 @@
 // # Integer vectors — concrete bodies
 //
 // Hashable obligations for the fixed-arity integer tuples declared in
-// `vectors-integer.plato`.
+// `vectors-integer.types.plato`.
 
 library IntegerVectors
 {

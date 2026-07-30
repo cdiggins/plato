@@ -37,7 +37,7 @@ library CoreComparison
     //     and its sign handling depends on the denominator's sign. Not mechanical.
     //   - Proportion / Percent / Probability / Cardinal / SafetyFactor — trivially
     //     order on their single numeric field, but they are not Index implementors
-    //     and their bodies belong to numbers.plato / engineering-*.plato territory.
+    //     and their bodies belong to numbers.types.plato / engineering-*.plato territory.
     //   - Instant / BeatTime (time) — single-field, order on SecondsSinceEpoch
     //     and Beats respectively; concrete bodies for the time domain.
     //   - FrameTime (time) — carries Frame AND Rate. Comparing on Frame alone is

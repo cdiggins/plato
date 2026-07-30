@@ -1,7 +1,7 @@
 //==
 // # Sampled signed distance field evaluation
 //
-// Interpolating evaluation of a discretized SDF (`implicit-sdf-sampled.plato`).
+// Interpolating evaluation of a discretized SDF (`implicit-sdf-sampled.types.plato`).
 // The lattice spans Bounds with its endpoints on the boundary, so a node count
 // of n along an axis divides it into n - 1 cells. Positions outside Bounds
 // clamp to the edge cell and the interpolation extrapolates linearly from it.

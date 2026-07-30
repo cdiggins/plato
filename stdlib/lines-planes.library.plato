@@ -2,7 +2,7 @@
 // # LinesPlanes — plane, half-space, and slab operations
 //
 // The signed-distance, side, intersection, containment and nearest-point bodies for
-// the types declared in `lines-planes.plato`.
+// the types declared in `lines-planes.types.plato`.
 //
 // Conventions:
 //   * `Contains` on the half-plane, half-space and slab regions is CLOSED: a point

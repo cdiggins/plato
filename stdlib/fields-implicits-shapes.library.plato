@@ -2,7 +2,7 @@
 // # Function-valued implicit shape algebra
 //
 // Bodies for the stored-function implicit shapes of
-// `implicit-sdf-function.plato`: evaluation, the lifts from any SDF concept
+// `implicit-sdf-function.types.plato`: evaluation, the lifts from any SDF concept
 // implementor, and the CSG algebra closed over each form — SDF booleans are
 // min/max on the stored distance, region booleans are the Boolean connectives
 // on the stored predicate.

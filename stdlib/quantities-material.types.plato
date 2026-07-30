@@ -1,0 +1,39 @@
+//==
+// # Material-response and flow quantities
+//
+// How a body or a fluid answers an applied load: pressure and strain, the
+// spring / damper pair, the two viscosities, and mass and volume flow rates
+// (https://en.wikipedia.org/wiki/Continuum_mechanics). These are the constants
+// simulation code reaches for once the mechanical quantities in
+// `quantities-mechanical.types.plato` describe the load itself.
+
+// Force per area, stored in pascals. Also used for stress
+// (https://en.wikipedia.org/wiki/Pressure).
+type Pressure implements Quantity { Pascals: Number; }
+
+// Elastic stiffness of a spring, stored in newtons per meter
+// (https://en.wikipedia.org/wiki/Stiffness).
+type Stiffness implements Quantity { NewtonsPerMeter: Number; }
+
+// Viscous damping coefficient, stored in newton-seconds per meter
+// (https://en.wikipedia.org/wiki/Damping).
+type DampingCoefficient implements Quantity { NewtonSecondsPerMeter: Number; }
+
+// Dynamic viscosity, stored in pascal-seconds
+// (https://en.wikipedia.org/wiki/Viscosity).
+type DynamicViscosity implements Quantity { PascalSeconds: Number; }
+
+// Kinematic viscosity, stored in square meters per second.
+type KinematicViscosity implements Quantity { SquareMetersPerSecond: Number; }
+
+// Mass flow, stored in kilograms per second
+// (https://en.wikipedia.org/wiki/Mass_flow_rate).
+type MassFlowRate implements Quantity { KilogramsPerSecond: Number; }
+
+// Volume flow, stored in cubic meters per second
+// (https://en.wikipedia.org/wiki/Volumetric_flow_rate).
+type VolumetricFlowRate implements Quantity { CubicMetersPerSecond: Number; }
+
+// Dimensionless deformation ratio (change in length over length)
+// (https://en.wikipedia.org/wiki/Strain_(mechanics)).
+type Strain implements Quantity { Ratio: Number; }

@@ -33,7 +33,7 @@ library Solids
 
     // The point at angle `a` on the unit circle centered at the origin.
     // Local helper: the point at angle `a` on the unit circle centered at the origin.
-    // Defined here so this library is self-contained; if `curves-2d-arcs.plato`
+    // Defined here so this library is self-contained; if `curves-2d-arcs.types.plato`
     // later grows a canonical unit-circle evaluator, prefer that and delete this.
     PointOnUnitCircle(a: Angle): Point2D
         => PointOnCircle(a, 1.0);

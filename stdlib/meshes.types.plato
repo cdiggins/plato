@@ -1,0 +1,89 @@
+//==
+// # Surface meshes
+//
+// Indexed surface geometry: shared vertex position arrays referenced by typed
+// face records. All faces wind counter-clockwise when viewed from the front
+// (outside), matching WindingOrder.CounterClockwise. Face records index into the
+// owning mesh's Positions array; every index must be valid (no -1 inside faces).
+// Convention: see CONVENTIONS.md - Winding, handedness, and normals (the outward
+// face normal follows the right-hand rule over the CCW vertex order).
+
+//==
+// ## Face records
+
+// The three vertex indices of one triangle, wound counter-clockwise when
+// viewed from the front side. Face supplies Value, Hashable, and the
+// Indexable<VertexIndex> corner surface (Count/At bodies in
+// `meshes-faces.library.plato`).
+type TriangleFace
+    implements Face
+{
+    A: VertexIndex;
+    B: VertexIndex;
+    C: VertexIndex;
+}
+
+// The four vertex indices of one quadrilateral face, wound counter-clockwise
+// when viewed from the front side. Coplanarity is not guaranteed; when a
+// planar approximation is needed, split along the A-C diagonal — FanTriangles
+// in `meshes-faces.library.plato` is that split.
+type QuadFace
+    implements Face
+{
+    A: VertexIndex;
+    B: VertexIndex;
+    C: VertexIndex;
+    D: VertexIndex;
+}
+
+//==
+// ## Surface meshes
+
+// An indexed triangle mesh in 3D
+// (https://en.wikipedia.org/wiki/Triangle_mesh): the workhorse interchange
+// representation for surface geometry. Faces index into Positions.
+type TriangleMesh3D
+    implements Value, TriangulatedGeometry3D, MeshElementCounts, Deformable3D
+{
+    Positions: Array<Point3D>;
+    Faces: Array<TriangleFace>;
+}
+
+// An indexed triangle mesh in the plane: triangulations of polygons, Delaunay
+// triangulations, finite-element meshes. Faces wind counter-clockwise.
+type TriangleMesh2D
+    implements Value, Meshable2D, MeshElementCounts, Deformable2D
+{
+    Positions: Array<Point2D>;
+    Faces: Array<TriangleFace>;
+}
+
+// An indexed quadrilateral mesh in 3D: subdivision cages, quad-dominant
+// retopology, structured patches.
+type QuadMesh3D
+    implements Value, Meshable3D, MeshElementCounts, Deformable3D
+{
+    Positions: Array<Point3D>;
+    Faces: Array<QuadFace>;
+}
+
+// A mesh of arbitrary-arity faces (https://en.wikipedia.org/wiki/Polygon_mesh):
+// Faces is a table with one row per face, holding that face's corner loop wound
+// counter-clockwise. Mixed face sizes are representable (Archimedean); uniform
+// n-gons (Platonic/Catalan) use the same type — no separate fixed-arity
+// polygon-mesh storage. TriangleMesh3D / QuadMesh3D remain the specialized
+// interchange forms. Initial Conway catalog: C# `Ara3D.Geometry.Polyhedra` /
+// `PolygonMesh3D` / `ConwayOperators`.
+//
+// The mesh HAS a jagged face table rather than IS one: `JaggedArray<VertexIndex>`
+// (`collections-jagged.types.plato`) already implements `Jagged<T>` and carries the CSR
+// packing invariant, so every row query is reused through `m.Faces` — without the
+// generic names `Offsets` / `Values` landing on the mesh itself. Further jagged
+// members (vertex-to-face adjacency, for one) are then additional fields rather
+// than a second concept the type cannot implement twice.
+type PolygonMesh3D
+    implements Value, Meshable3D, MeshElementCounts, MeshIncidence, Deformable3D
+{
+    Positions: Array<Point3D>;
+    Faces: JaggedArray<VertexIndex>;
+}

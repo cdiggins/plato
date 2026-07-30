@@ -2,7 +2,7 @@
 // # Affine and projective transform operations
 //
 // Application, composition, inversion, and the widening conversions into the
-// affine and projective transforms of `transforms-affine.plato` — the common
+// affine and projective transforms of `transforms-affine.types.plato` — the common
 // ground where transforms of different kinds are composed.
 
 library TransformsAffine

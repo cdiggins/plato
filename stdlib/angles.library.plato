@@ -1,7 +1,7 @@
 //==
 // # Angles
 //
-// Unit constructors and accessors for `Angle` (`quantities-geometric.plato`), plus the
+// Unit constructors and accessors for `Angle` (`quantities-geometric.types.plato`), plus the
 // reciprocal trigonometric functions (https://en.wikipedia.org/wiki/Trigonometric_functions).
 //
 // `Angle` stores radians and the only intrinsic way to build one is the

@@ -2,7 +2,7 @@
 // # Metaball influence and summation
 //
 // Summed radial falloff kernels over the metaball types declared in
-// `implicit-sdf-metaballs.plato`. The system's field value is the total
+// `implicit-sdf-metaballs.types.plato`. The system's field value is the total
 // influence minus the threshold, so its zero level set is the blob boundary
 // (https://en.wikipedia.org/wiki/Metaballs).
 

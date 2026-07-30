@@ -38,7 +38,7 @@ below now genuinely covers these library bodies — which it did **not** while t
    formula needs a shared subterm. Mutation of a `unique` (affine) builder is likewise pure *by
    uniqueness*: a builder has exactly one reference, so `xs = xs.Add(p)` is a linear update, not
    observable mutation of shared state — this is the entire point of `List`/`Buffer`
-   (`primitives-builders.plato`), and an earlier "no mutation" reading forbade it outright.
+   (`primitives-builders.types.plato`), and an earlier "no mutation" reading forbade it outright.
 
    What stays banned: side effects, and mutation of anything aliased. Outside `unique` types the
    language does not offer either.
@@ -56,7 +56,7 @@ below now genuinely covers these library bodies — which it did **not** while t
    the number, and do not read LINT003 deltas as a measure of coverage.
 
    Status note: the affine builders' single-parameter members — `Count`, `Freeze` and
-   `EmptyList` — are now declared in `primitives-builders.plato` (bodies in
+   `EmptyList` — are now declared in `primitives-builders.types.plato` (bodies in
    `primitives-builders.library.plato`). `FunctionInstance.cs` used to abort the
    whole compilation on any generic function of one or fewer parameters; the guard now permits
    such a function when every type variable is determined by its parameter(s) (as these are),

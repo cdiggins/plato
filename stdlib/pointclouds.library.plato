@@ -1,7 +1,7 @@
 //==
 // # PointClouds — deformation bodies for the enriched point clouds
 //
-// The Deformable3D obligations of the attributed clouds in `pointclouds.plato`:
+// The Deformable3D obligations of the attributed clouds in `pointclouds.types.plato`:
 // positions are carried through the mapping and every parallel channel passes
 // through unchanged. Normals are NOT re-derived — they stay exact under rigid
 // mappings and go stale under bending ones, and only a surface (which a cloud

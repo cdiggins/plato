@@ -1,0 +1,35 @@
+//==
+// # Integer vectors
+//
+// Fixed-arity tuples of whole-number components: pixel offsets, grid steps, and
+// voxel offsets. They implement Value and Hashable rather than the Vector
+// concept, so no norm, normalization, or component-wise division surface is
+// implied — lift them into a Number tuple (`vectors-tuples.types.plato`) when real
+// arithmetic is wanted.
+
+// A pair of whole-number components: pixel offsets, grid steps.
+type IntegerVector2
+    implements Value, Hashable
+{
+    X: Integer;
+    Y: Integer;
+}
+
+// A triple of whole-number components: voxel offsets, 3D grid steps.
+type IntegerVector3
+    implements Value, Hashable
+{
+    X: Integer;
+    Y: Integer;
+    Z: Integer;
+}
+
+// A quadruple of whole-number components.
+type IntegerVector4
+    implements Value, Hashable
+{
+    X: Integer;
+    Y: Integer;
+    Z: Integer;
+    W: Integer;
+}

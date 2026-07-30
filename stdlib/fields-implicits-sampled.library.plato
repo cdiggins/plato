@@ -2,7 +2,7 @@
 // # Sampled signed distance field lattice geometry
 //
 // Node counts and node spacing for the discretized SDFs of
-// `implicit-sdf-sampled.plato`. The interpolating evaluators live in
+// `implicit-sdf-sampled.types.plato`. The interpolating evaluators live in
 // `implicit-sdf-sampled.library.plato` (they need local bindings for the
 // per-axis fractional weights); the lattice geometry below is what they and any
 // resampler are written against.

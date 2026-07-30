@@ -1,0 +1,54 @@
+//==
+// # Kd-trees
+//
+// Axis-aligned binary space partitions over a copied point set: the workhorse
+// index for nearest-neighbor and range queries. Node indexing and the
+// leaf-order permutation array follow the conventions of `spatial-trees.types.plato`.
+
+// One node of a 2D kd-tree. SplitAxis is 0 for X, 1 for Y; internal nodes
+// split space at SplitValue on that axis with children LeftChild (below)
+// and RightChild (above), both node indices. Leaves have children of -1 and
+// a non-empty half-open Items range into the owning tree's PointIndices.
+type KdTreeNode2D
+    implements Value
+{
+    SplitAxis: Integer;
+    SplitValue: Number;
+    LeftChild: SpatialNodeIndex;
+    RightChild: SpatialNodeIndex;
+    Items: IntegerInterval;
+}
+
+// A kd-tree (https://en.wikipedia.org/wiki/K-d_tree) over a copy of its 2D
+// point set: nearest-neighbor and range queries. Node 0 is the root;
+// PointIndices is the leaf-order permutation of Points.
+type KdTree2D
+    implements Value, SpatialIndex2D, NearestNeighborQueryable2D
+{
+    Points: Array<Point2D>;
+    Nodes: Array<KdTreeNode2D>;
+    PointIndices: Array<ItemIndex>;
+}
+
+// One node of a 3D kd-tree. SplitAxis is 0 for X, 1 for Y, 2 for Z;
+// otherwise encoded exactly like KdTreeNode2D.
+type KdTreeNode3D
+    implements Value
+{
+    SplitAxis: Integer;
+    SplitValue: Number;
+    LeftChild: SpatialNodeIndex;
+    RightChild: SpatialNodeIndex;
+    Items: IntegerInterval;
+}
+
+// A kd-tree over a copy of its 3D point set: nearest-neighbor and range
+// queries. Node 0 is the root; PointIndices is the leaf-order permutation
+// of Points.
+type KdTree3D
+    implements Value, SpatialIndex3D, NearestNeighborQueryable3D
+{
+    Points: Array<Point3D>;
+    Nodes: Array<KdTreeNode3D>;
+    PointIndices: Array<ItemIndex>;
+}

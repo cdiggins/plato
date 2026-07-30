@@ -1,0 +1,29 @@
+//==
+// # TRS transforms
+//
+// Translate-rotate-scale transforms in 2D and 3D: the authoring-friendly
+// representation whose three parts are edited independently. They are NOT closed
+// under composition — rotating a non-uniform scale leaves the TRS family — so
+// compose them through their matrix or affine forms
+// (`transforms-affine.types.plato`). The operations live in
+// `transforms-trs.library.plato`.
+
+// A translate-rotate-scale transform in 2D, applied scale first, then rotation,
+// then translation.
+type Transform2D
+    implements Value
+{
+    Translation: Vector2D;
+    Rotation: Rotation2D;
+    Scale: Number2;
+}
+
+// A translate-rotate-scale transform in 3D, applied scale first, then rotation,
+// then translation.
+type Transform3D
+    implements Value
+{
+    Translation: Vector3D;
+    Rotation: Quaternion;
+    Scale: Number3;
+}

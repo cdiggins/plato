@@ -6,7 +6,7 @@
 // `geometry-measures.concepts.plato`.
 //
 // Conventions used throughout:
-//   * Points are positions (`points.plato`); subtracting two points gives a vector
+//   * Points are positions (`points.types.plato`); subtracting two points gives a vector
 //     via Difference.Between(a, b), which yields (b - a). Vectors carry Magnitude /
 //     MagnitudeSquared (Normed) and Dot (Vector).
 //   * Distances are computed as the magnitude of a Between delta, so the argument

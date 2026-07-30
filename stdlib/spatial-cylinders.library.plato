@@ -2,7 +2,7 @@
 // # SpatialCylinders — cylinder, pipe, cone, and frustum bodies
 //
 // Volume, surface area, bounds, centroid, containment and support bodies for the
-// axis-swept solids declared in `spatial-cylinders.plato`. The capsule's bodies are in
+// axis-swept solids declared in `spatial-cylinders.types.plato`. The capsule's bodies are in
 // `spatial-capsules.library.plato`; the frame and disk-extent helpers, and the
 // conventions governing every body here, are in `spatial-primitives.library.plato`.
 

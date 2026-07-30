@@ -2,7 +2,7 @@
 // # Uniform, normal, and exponential bodies
 //
 // The `ProbabilityDistribution` obligations for the four elementary continuous
-// families of `random-continuous.plato`: UniformDistribution,
+// families of `random-continuous.types.plato`: UniformDistribution,
 // NormalDistribution, LogNormalDistribution and ExponentialDistribution. Every
 // Pdf and Mean here is exact; the Cdf of the two normal forms inherits the
 // 7.5e-8 error bound of `StandardNormalCdf` in `random.library.plato`, which

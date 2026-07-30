@@ -1,7 +1,7 @@
 //==
 // # Curves2DPolar — evaluating the polar and figure curves
 //
-// Closed-form evaluation of the types declared in `curves-2d-polar.plato`, plus
+// Closed-form evaluation of the types declared in `curves-2d-polar.types.plato`, plus
 // the generic `PolarCurve2D` bridge that turns a `RadiusAt` into a position for
 // every polar implementor in the tree. The shared `CirclePoint` helper lives in
 // `curves-2d-arcs.library.plato`.

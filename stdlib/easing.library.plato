@@ -2,7 +2,7 @@
 // # Easing — derived functions for EasingFunction
 //
 // Bodies for the `EasingFunction` concept declared in `easing.concepts.plato`
-// (the concrete easing types live in `easing.plato`). An easing
+// (the concrete easing types live in `easing.types.plato`). An easing
 // function inherits `Procedural<Number, Number>`, so its sole operation is
 // `Eval`; the helpers below rename and recombine that single evaluation
 // (progress, remaining, mirrored and reversed playback, overshoot and

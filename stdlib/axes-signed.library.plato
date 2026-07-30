@@ -1,7 +1,7 @@
 //==
 // # SignedAxis3D conversions and algebra
 //
-// Total, one-way conversions from the oriented 3D cardinal axis (`axes.plato`)
+// Total, one-way conversions from the oriented 3D cardinal axis (`axes.types.plato`)
 // out to the geometric vocabulary — unsigned axis, sense, unit vector, unit
 // direction — plus the opposite-orientation flip.
 

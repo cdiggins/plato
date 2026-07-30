@@ -7,7 +7,7 @@
 // — exact for the faceted Planar / Bilinear cases whose loops span the whole
 // patch (Box does), approximate once trimming loops arrive. Triangles wind
 // counter-clockwise seen from outside when the surface follows the outward
-// du x dv convention (brep.plato).
+// du x dv convention (brep.types.plato).
 
 library BrepTessellate
 {

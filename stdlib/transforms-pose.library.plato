@@ -2,7 +2,7 @@
 // # Rigid pose operations
 //
 // Application, composition, inversion, interpolation, and matrix interchange for
-// the rigid poses of `transforms-pose.plato`.
+// the rigid poses of `transforms-pose.types.plato`.
 
 library TransformsPose
 {

@@ -2,7 +2,7 @@
 // # TRS transform operations
 //
 // Application, matrix interchange, and the lossy widening/narrowing between a
-// rigid pose and the TRS transforms of `transforms-trs.plato`.
+// rigid pose and the TRS transforms of `transforms-trs.types.plato`.
 
 library TransformsTrs
 {

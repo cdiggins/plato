@@ -2,7 +2,7 @@
 // # Rotation operations and conversions
 //
 // Application, composition, inversion, and interchange for every rotation
-// representation declared in `rotations.plato` — Rotation2D, Rotor2D,
+// representation declared in `rotations.types.plato` — Rotation2D, Rotor2D,
 // Quaternion, AxisAngle, EulerAngles, Rotor3D — together with their embeddings
 // into the affine and homogeneous matrices. Quaternion is the hub: every 3D
 // representation converts to and from it, so all pairs compose through it.

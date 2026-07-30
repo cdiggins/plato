@@ -1,7 +1,7 @@
 //==
 // # BREP primitive shells
 //
-// Literal watertight shells built directly from the brep.plato vocabulary.
+// Literal watertight shells built directly from the brep.types.plato vocabulary.
 // v1 ships the axis-aligned box; the cylinder-with-seam and prism of the C#
 // sketch wait on the Arc / QuadGrid sum cases. Conversion FROM the generative
 // solids (`ExtrudedSolid.ToBrep`, ...) is explicitly out of scope here and

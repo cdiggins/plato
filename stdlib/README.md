@@ -15,11 +15,11 @@ Target applications: geometry (primary), 2D/3D and N-dimensional computation, an
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
 graphics, image processing, and engineering.
 
-Current contents (2026-07-29): **368 source files (187 type-declaration files + 44
-`*.concepts.plato` files + 137 `*.library.plato` files), 157 concepts, 1152 types**.
+Current contents (2026-07-30): **398 source files (189 `*.types.plato` files + 45
+`*.concepts.plato` files + 164 `*.library.plato` files), 157 concepts, 1152 types**.
 
 Every file holds exactly
-one **kind** of declaration — `<stem>.concepts.plato` holds concepts, `<stem>.plato` holds
+one **kind** of declaration — `<stem>.concepts.plato` holds concepts, `<stem>.types.plato` holds
 types, `<stem>.library.plato` holds exactly one `library` block — and at most twelve top-level
 declarations. The move was mechanical: the sorted type-and-concept inventory is byte-identical
 to the pre-refactor baseline, so nothing was added, removed, or renamed — only relocated.
@@ -61,7 +61,7 @@ dotnet <path-to>/Plato.CLI.dll lint stdlib
 ```
 
 The folder must parse and resolve with zero errors. It is self-contained (declares its own
-primitives in `primitives.plato`). Because `Plato.CLI` enumerates `*.plato` non-recursively
+primitives in `primitives.types.plato`). Because `Plato.CLI` enumerates `*.plato` non-recursively
 (`Program.cs:101` / `:197`, `TopDirectoryOnly`), this single command now covers both the
 declaration files and the `*.library.plato` implementation bodies (see [`LIBRARIES.md`](LIBRARIES.md));
 the informational LINT001/LINT003 finding counts shift as the libraries implement more members.
@@ -102,7 +102,7 @@ Owning declaration files cite conventions with a one-line
 - Collection fields use `Array<T>` (or `Array2D<T>`, `Array3D<T>`).
 - Cross-array references use typed index types implementing the `Index` concept
   (`VertexIndex`, `BoneIndex`, `GraphVertexIndex`, ...), never raw `Integer`; `-1` means
-  "none". `ItemIndex` (numbers.plato) is the general-purpose form for caller-supplied or pool
+  "none". `ItemIndex` (numbers.types.plato) is the general-purpose form for caller-supplied or pool
   lists. CSR/offset arrays stay `Array<Integer>` (they hold one-past-end boundaries, not
   element references), as do bitmasks, counts, labels, axis selectors, and opaque host
   handles.
@@ -113,20 +113,21 @@ Owning declaration files cite conventions with a one-line
   into nested component types (e.g. matrices store row vectors).
 - Angles are `Angle`, never raw `Number`. Distances/positions in unit-bearing contexts may
   still use `Number` when the domain is unit-agnostic (pure math), `Length` when physical.
-- **Naming:** domain declaration files are `domain.plato`; pure concept files are
+- **Naming:** domain type-declaration files are `domain.types.plato`; pure concept files are
   `domain.concepts.plato`; library files are `domain.library.plato`. There are no numeric
   prefixes; reading order lives in this README's layer table below. **This grammar is now
   exact, not aspirational:** every file in the folder holds
   exactly one kind of declaration, so a file's suffix tells you what is inside it without
-  opening it — a `.concepts.plato` file contains only `concept` blocks, a bare `.plato` file
-  only `type` declarations, and a `.library.plato` file exactly one `library` block whose
+  opening it — a `.concepts.plato` file contains only `concept` blocks, a `.types.plato` file
+  only `type` declarations (there are no bare `<stem>.plato` files), and a `.library.plato` file exactly one `library` block whose
   PascalCase name matches the stem.
 
 ## Layers and file map
 
-This ordered index is the canonical reading order. Every one of the 347 `*.plato` files in the
+This ordered index is the canonical reading order. Every one of the 398 `*.plato` files in the
 folder appears in exactly one row; file names are given without the `.plato` extension, so
-`core-logic.concepts` means `core-logic.concepts.plato`. Layer numbers are the reading order and
+`core-logic.concepts` means `core-logic.concepts.plato` and a bare stem like `primitives`
+means `primitives.types.plato`. Layer numbers are the reading order and
 also the rough dependency order — a layer may use anything from a lower-numbered layer and should
 not reach upward. (An old "Owner" column named the agent that wrote each group during
 initial build-out; it described a work assignment, not the tree, and is gone.)
@@ -160,11 +161,11 @@ sit inline in a declaration file. Ground rules and the package-to-file table liv
 
 Foundation reading order, file by file:
 
-- `primitives.plato` — Number, Integer, Boolean, String, Character, Dynamic, Object.
-- `primitives-tuples.plato` — Tuple2..Tuple10 (the compiler's synthesized constructor arity).
-- `primitives-functions.plato` — Function0..Function4.
-- `primitives-arrays.plato` — Array, Array2D, Array3D.
-- `primitives-builders.plato` (+ `.library`) — the `unique` affine builders `List<T>` / `Buffer<T>`.
+- `primitives.types.plato` — Number, Integer, Boolean, String, Character, Dynamic, Object.
+- `primitives-tuples.types.plato` — Tuple2..Tuple10 (the compiler's synthesized constructor arity).
+- `primitives-functions.types.plato` — Function0..Function4.
+- `primitives-arrays.types.plato` — Array, Array2D, Array3D.
+- `primitives-builders.types.plato` (+ `.library`) — the `unique` affine builders `List<T>` / `Buffer<T>`.
 - `core-comparison.concepts.plato` — Equatable, Value, Hashable, Orderable, Comparable.
 - `core-logic.concepts.plato` — Logical, BooleanAlgebra, Bitwise.
 - `algebra-operations.concepts.plato` — Additive, Multiplicative, Divisible, Modular, Invertible, Arithmetic, Scalable, Interpolatable.
@@ -173,33 +174,33 @@ Foundation reading order, file by file:
 - `collections-indexable.concepts.plato` — Countable, Index, Indexable, Indexable2D/3D/4D.
 - `collections-containers.concepts.plato` — Sliceable, Concatenable, SetLike, MapLike, StackLike, QueueLike.
 - `functional.concepts.plato` — Procedural, Bijective, Periodic, ParameterDomain.
-- `numbers.plato` — Complex, Rational, Proportion, Percent, Probability, ItemIndex, Cardinal, ComparisonTolerance.
+- `numbers.types.plato` — Complex, Rational, Proportion, Percent, Probability, ItemIndex, Cardinal, ComparisonTolerance.
 - `quantities.concepts.plato` — the `Quantity` concept.
-- `quantities-geometric.plato` / `-kinematic` / `-mechanical` / `-thermal` / `-electromagnetic` / `-photometric` / `-material` / `-dynamic` — the ~50 physical quantity types (`Angle` and `Length` live in `quantities-geometric.plato`), plus Dimension / UnitOfMeasure / DynamicQuantity.
-- `time.plato` — Duration, Instant, TimeInterval, FrameRate, FrameTime, Timecode, Tempo, BeatTime.
+- `quantities-geometric.types.plato` / `-kinematic` / `-mechanical` / `-thermal` / `-electromagnetic` / `-photometric` / `-material` / `-dynamic` — the ~50 physical quantity types (`Angle` and `Length` live in `quantities-geometric.types.plato`), plus Dimension / UnitOfMeasure / DynamicQuantity.
+- `time.types.plato` — Duration, Instant, TimeInterval, FrameRate, FrameTime, Timecode, Tempo, BeatTime.
 - `vectors.concepts.plato` — the `Vector` concept.
-- `vectors-tuples.plato` — Number2, Number3, Number4, Number8 (the low-level intrinsic tier).
-- `vectors-geometric.plato` — Vector2D, Vector3D, VectorN, Direction2D/3D.
-- `vectors-integer.plato` — IntegerVector2/3/4.
+- `vectors-tuples.types.plato` — Number2, Number3, Number4, Number8 (the low-level intrinsic tier).
+- `vectors-geometric.types.plato` — Vector2D, Vector3D, VectorN, Direction2D/3D.
+- `vectors-integer.types.plato` — IntegerVector2/3/4.
 - `matrices.concepts.plato` — the `MatrixLike` concept.
-- `matrices.plato` — Matrix2x2, Matrix3x3, Matrix4x4, Matrix3x2, Matrix4x3, SymmetricMatrix3x3, MatrixN, Tensor.
-- `rotations.plato` — Quaternion, AxisAngle, RotationOrder, EulerAngles, Rotation2D, Bivector2D/3D, Rotor2D/3D.
+- `matrices.types.plato` — Matrix2x2, Matrix3x3, Matrix4x4, Matrix3x2, Matrix4x3, SymmetricMatrix3x3, MatrixN, Tensor.
+- `rotations.types.plato` — Quaternion, AxisAngle, RotationOrder, EulerAngles, Rotation2D, Bivector2D/3D, Rotor2D/3D.
 - `points.concepts.plato` — the `Coordinate` concept.
-- `points.plato` — Point2D, Point3D, PointN, HomogeneousPoint2D/3D.
-- `points-parametric.plato` — BarycentricCoordinate, UvCoordinate, UvwCoordinate.
-- `points-curvilinear.plato` — PolarCoordinate, CylindricalCoordinate, SphericalCoordinate, GeoCoordinate.
-- `axes.plato` — Axis3D, Axis2D, SignedAxis3D (the typed cardinal-axis sums).
+- `points.types.plato` — Point2D, Point3D, PointN, HomogeneousPoint2D/3D.
+- `points-parametric.types.plato` — BarycentricCoordinate, UvCoordinate, UvwCoordinate.
+- `points-curvilinear.types.plato` — PolarCoordinate, CylindricalCoordinate, SphericalCoordinate, GeoCoordinate.
+- `axes.types.plato` — Axis3D, Axis2D, SignedAxis3D (the typed cardinal-axis sums).
 - `intervals-bounds.concepts.plato` — IntervalLike, BoundsLike.
-- `intervals.plato` — NumberInterval, AngleInterval, LengthInterval, IntegerInterval.
-- `intervals-bounds.plato` — Bounds2D/3D, IntegerBounds2D/3D, Rect2D.
-- `intervals-sizes.plato` — Size2D/3D, IntegerSize2D/3D.
+- `intervals.types.plato` — NumberInterval, AngleInterval, LengthInterval, IntegerInterval.
+- `intervals-bounds.types.plato` — Bounds2D/3D, IntegerBounds2D/3D, Rect2D.
+- `intervals-sizes.types.plato` — Size2D/3D, IntegerSize2D/3D.
 - `transforms.concepts.plato` — Transformable, Deformable2D, Deformable3D.
-- `transforms-pose.plato` — Pose2D, Pose3D.
-- `transforms-trs.plato` — Transform2D, Transform3D (TRS).
-- `transforms-affine.plato` — AffineTransform2D/3D, ProjectiveTransform2D/3D.
-- `transforms-frames.plato` — Frame2D, Frame3D, Basis3D.
-- `transforms-motor.plato` — Motor3D (dual quaternion).
-- `color.plato` — Color (linear RGBA), Color8, ColorHSV, ColorHSL, ColorStop, ColorGradient.
+- `transforms-pose.types.plato` — Pose2D, Pose3D.
+- `transforms-trs.types.plato` — Transform2D, Transform3D (TRS).
+- `transforms-affine.types.plato` — AffineTransform2D/3D, ProjectiveTransform2D/3D.
+- `transforms-frames.types.plato` — Frame2D, Frame3D, Basis3D.
+- `transforms-motor.types.plato` — Motor3D (dual quaternion).
+- `color.types.plato` — Color (linear RGBA), Color8, ColorHSV, ColorHSL, ColorStop, ColorGradient.
 
 The transform *bodies* — conversions between all representations, `p.Transform(t)` application,
 Compose/Inverse/Identity, and the Point2D/3D Difference + Lerp implementations — live in the eight
@@ -216,90 +217,90 @@ the authority, not this table.
 
 | Name | Owner file |
 |------|-----------|
-| `Number`, `Integer`, `Boolean`, `String`, `Character`, `Dynamic`, `Object` | `primitives.plato` |
-| `List<T>`, `Buffer<T>` (unique affine builders) | `primitives-builders.plato` |
-| `Array`, `Array2D`, `Array3D` | `primitives-arrays.plato` |
+| `Number`, `Integer`, `Boolean`, `String`, `Character`, `Dynamic`, `Object` | `primitives.types.plato` |
+| `List<T>`, `Buffer<T>` (unique affine builders) | `primitives-builders.types.plato` |
+| `Array`, `Array2D`, `Array3D` | `primitives-arrays.types.plato` |
 | `Jagged` concept (CSR row packing) | `collections-jagged.concepts.plato` |
-| `JaggedArray<T>` | `collections-jagged.plato` |
-| `ComparisonTolerance`, `ItemIndex`, `Complex`, `Rational`, `Proportion`, `Percent`, `Probability`, `Cardinal` | `numbers.plato` |
+| `JaggedArray<T>` | `collections-jagged.types.plato` |
+| `ComparisonTolerance`, `ItemIndex`, `Complex`, `Rational`, `Proportion`, `Percent`, `Probability`, `Cardinal` | `numbers.types.plato` |
 | `Quantity` concept | `quantities.concepts.plato` |
-| `Angle`, `Length` (and the other ~50 quantity types, by branch) | `quantities-geometric.plato` and the other `quantities-*.plato` files |
-| `Number2/3/4/8` | `vectors-tuples.plato` |
-| `Vector2D/3D`, `VectorN`, `Direction2D/3D` | `vectors-geometric.plato` |
-| `Point2D/3D`, `PointN`, homogeneous points | `points.plato` |
-| `UvCoordinate`, `UvwCoordinate`, `BarycentricCoordinate` | `points-parametric.plato` |
-| `PolarCoordinate`, `CylindricalCoordinate`, `SphericalCoordinate`, `GeoCoordinate` | `points-curvilinear.plato` |
-| `Axis3D`, `Axis2D`, `SignedAxis3D` | `axes.plato` |
-| `NumberInterval`, `AngleInterval`, `LengthInterval`, `IntegerInterval` | `intervals.plato` |
-| `Bounds2D/3D`, `IntegerBounds2D/3D`, `Rect2D` | `intervals-bounds.plato` |
-| `Size2D/3D`, `IntegerSize2D/3D` | `intervals-sizes.plato` |
-| `Color`, `Color8`, `ColorHSV`, `ColorHSL`, `ColorStop`, `ColorGradient` | `color.plato` |
+| `Angle`, `Length` (and the other ~50 quantity types, by branch) | `quantities-geometric.types.plato` and the other `quantities-*.plato` files |
+| `Number2/3/4/8` | `vectors-tuples.types.plato` |
+| `Vector2D/3D`, `VectorN`, `Direction2D/3D` | `vectors-geometric.types.plato` |
+| `Point2D/3D`, `PointN`, homogeneous points | `points.types.plato` |
+| `UvCoordinate`, `UvwCoordinate`, `BarycentricCoordinate` | `points-parametric.types.plato` |
+| `PolarCoordinate`, `CylindricalCoordinate`, `SphericalCoordinate`, `GeoCoordinate` | `points-curvilinear.types.plato` |
+| `Axis3D`, `Axis2D`, `SignedAxis3D` | `axes.types.plato` |
+| `NumberInterval`, `AngleInterval`, `LengthInterval`, `IntegerInterval` | `intervals.types.plato` |
+| `Bounds2D/3D`, `IntegerBounds2D/3D`, `Rect2D` | `intervals-bounds.types.plato` |
+| `Size2D/3D`, `IntegerSize2D/3D` | `intervals-sizes.types.plato` |
+| `Color`, `Color8`, `ColorHSV`, `ColorHSL`, `ColorStop`, `ColorGradient` | `color.types.plato` |
 | `Geometry`, `Geometry2D/3D/ND`, shape-trait concepts | `geometry.concepts.plato` |
 | `Bounded2D/3D`, `PointSet2D/3D`, `Centroid2D/3D`, the measurable concepts | `geometry-measures.concepts.plato` |
 | `ContainsPoint2D/3D`, `NearestPoint2D/3D`, `SupportMappable2D/3D` | `geometry-queries.concepts.plato` |
-| `Line2D/3D`, `Ray2D/3D`, `LineSegment2D/3D` | `lines.plato` |
-| `Plane`, `HalfSpace` | `lines-planes.plato` |
-| `Triangle2D`, `Quad2D` | `planar-triangles.plato` |
-| `Circle`, `Capsule2D` | `planar-circles.plato` |
-| `Ellipse` | `planar-ellipses.plato` |
-| `RegularPolygon` | `planar-boxes.plato` |
-| `Sphere`, `Ellipsoid` | `spatial-spheres.plato` |
-| `Box3D` | `spatial-boxes.plato` |
-| `Cylinder`, `Cone`, `Capsule3D`, `CylindricalShell` | `spatial-cylinders.plato` |
-| `Torus` | `spatial-tori.plato` |
-| `Triangle3D`, `Quad3D` | `spatial-patches.plato` |
-| `Tetrahedron` | `spatial-simplices.plato` |
-| `Polygon2D`, `PolygonWithHoles2D` | `polygons.plato` |
-| `Polyline2D`, `Polyline3D` | `polygons-polylines.plato` |
-| `Polygon3D`, `Prism3D`, `Pyramid3D` | `polygons-spatial.plato` |
+| `Line2D/3D`, `Ray2D/3D`, `LineSegment2D/3D` | `lines.types.plato` |
+| `Plane`, `HalfSpace` | `lines-planes.types.plato` |
+| `Triangle2D`, `Quad2D` | `planar-triangles.types.plato` |
+| `Circle`, `Capsule2D` | `planar-circles.types.plato` |
+| `Ellipse` | `planar-ellipses.types.plato` |
+| `RegularPolygon` | `planar-boxes.types.plato` |
+| `Sphere`, `Ellipsoid` | `spatial-spheres.types.plato` |
+| `Box3D` | `spatial-boxes.types.plato` |
+| `Cylinder`, `Cone`, `Capsule3D`, `CylindricalShell` | `spatial-cylinders.types.plato` |
+| `Torus` | `spatial-tori.types.plato` |
+| `Triangle3D`, `Quad3D` | `spatial-patches.types.plato` |
+| `Tetrahedron` | `spatial-simplices.types.plato` |
+| `Polygon2D`, `PolygonWithHoles2D` | `polygons.types.plato` |
+| `Polyline2D`, `Polyline3D` | `polygons-polylines.types.plato` |
+| `Polygon3D`, `Prism3D`, `Pyramid3D` | `polygons-spatial.types.plato` |
 | `Curve<TRange>`, `Curve1D/2D/3D`, `ClosedCurve2D/3D` concepts | `curves.concepts.plato` |
 | `PeriodicCurve`, `DifferentiableCurve2D/3D`, `FramedCurve3D`, `PolarCurve2D`, `ArcLengthParameterized` | `curves-capabilities.concepts.plato` |
 | `Surface`, `ParametricSurface`, `Solid`, `ConvexSolid`, `ParametricVolume` concepts | `surfaces-solids.concepts.plato` |
-| `CircularArc2D`, `QuadraticBezier2D`, `CubicBezier2D` | `curves-2d-arcs.plato` |
-| `CycloidOfCeva2D`, `TschirnhausenCubic2D`, `ConchoidOfDeSluze2D`, `SinusoidalSpiral2D`, `TrisectrixOfMaclaurin2D`, `ButterflyCurve2D` | `curves-2d-polar.plato` |
-| `CubicBezier3D`, `Helix` | `curves-3d.plato` |
-| `BSplineCurve2D/3D`, `NurbsCurve2D/3D` | `splines-bspline.plato` |
-| `HermiteCurve2D/3D` | `splines-hermite.plato` |
-| `CatmullRomCurve2D/3D` | `splines-interpolating.plato` |
-| `NurbsSurface`, `BezierPatch` | `surfaces-patches.plato` |
-| `SurfaceOfRevolution`, `ExtrudedSurface` | `surfaces-generated.plato` |
-| `RegularPyramid`, `SquarePyramid` | `solids-polyhedra.plato` |
+| `CircularArc2D`, `QuadraticBezier2D`, `CubicBezier2D` | `curves-2d-arcs.types.plato` |
+| `CycloidOfCeva2D`, `TschirnhausenCubic2D`, `ConchoidOfDeSluze2D`, `SinusoidalSpiral2D`, `TrisectrixOfMaclaurin2D`, `ButterflyCurve2D` | `curves-2d-polar.types.plato` |
+| `CubicBezier3D`, `Helix` | `curves-3d.types.plato` |
+| `BSplineCurve2D/3D`, `NurbsCurve2D/3D` | `splines-bspline.types.plato` |
+| `HermiteCurve2D/3D` | `splines-hermite.types.plato` |
+| `CatmullRomCurve2D/3D` | `splines-interpolating.types.plato` |
+| `NurbsSurface`, `BezierPatch` | `surfaces-patches.types.plato` |
+| `SurfaceOfRevolution`, `ExtrudedSurface` | `surfaces-generated.types.plato` |
+| `RegularPyramid`, `SquarePyramid` | `solids-polyhedra.types.plato` |
 | `ScalarField2D/3D`, `VectorField2D/3D` concepts | `fields.concepts.plato` |
-| `ScalarFunctionField2D/3D`, `VectorFunctionField2D/3D` | `fields-function.plato` |
+| `ScalarFunctionField2D/3D`, `VectorFunctionField2D/3D` | `fields-function.types.plato` |
 | `SignedDistanceField2D/3D`, `ImplicitRegion2D`, `ImplicitVolume3D` concepts | `implicit-sdf.concepts.plato` |
-| `FunctionSdf2D/3D`, `FunctionRegion2D`, `FunctionVolume3D` | `implicit-sdf-function.plato` |
-| `VertexIndex`, `UndirectedEdgeIndex`, `FaceIndex`, `CornerIndex`, `HalfEdgeIndex` | `topology-indices.plato` |
+| `FunctionSdf2D/3D`, `FunctionRegion2D`, `FunctionVolume3D` | `implicit-sdf-function.types.plato` |
+| `VertexIndex`, `UndirectedEdgeIndex`, `FaceIndex`, `CornerIndex`, `HalfEdgeIndex` | `topology-indices.types.plato` |
 | `MeshElementCounts`, `MeshIncidence`, `HalfEdgeNavigable` concepts | `topology.concepts.plato` |
-| `VertexPair`, `UndirectedEdgeList`, `UndirectedEdgeAdjacency` | `topology-adjacency.plato` |
-| `WindingOrder` | `topology-classification.plato` |
-| `TriangleMesh3D`, `QuadMesh3D`, `PolygonMesh3D`, `TriangleFace` | `meshes.plato` |
-| `LineSet3D`, `PointCloud3D` | `meshes-lines-points.plato` |
-| `TriangleArray3D`, `QuadArray3D` (unwelded) | `meshes-face-arrays.plato` |
-| `RayHit2D`, `RayHit3D` | `spatial-queries-rays.plato` |
-| `ClassicEasing`, `SpringParameters` | `easing.plato` |
-| `Keyframe<T>`, `AnimationTrack<T>` | `keyframes-tracks.plato` |
-| `AnimationClip` | `keyframes-clips.plato` |
-| `Bone`, `Skeleton`, `SkeletonPose`, `MorphTarget` (physics never uses bare `Joint`) | `skeletal-animation.plato` |
-| `Path2D`, `PathSegment2D` | `paths.plato` |
-| `StrokeStyle` | `vector-styling-stroke.plato` |
-| `FillStyle`, `Paint` | `vector-styling-paint.plato` |
+| `VertexPair`, `UndirectedEdgeList`, `UndirectedEdgeAdjacency` | `topology-adjacency.types.plato` |
+| `WindingOrder` | `topology-classification.types.plato` |
+| `TriangleMesh3D`, `QuadMesh3D`, `PolygonMesh3D`, `TriangleFace` | `meshes.types.plato` |
+| `LineSet3D`, `PointCloud3D` | `meshes-lines-points.types.plato` |
+| `TriangleArray3D`, `QuadArray3D` (unwelded) | `meshes-face-arrays.types.plato` |
+| `RayHit2D`, `RayHit3D` | `spatial-queries-rays.types.plato` |
+| `ClassicEasing`, `SpringParameters` | `easing.types.plato` |
+| `Keyframe<T>`, `AnimationTrack<T>` | `keyframes-tracks.types.plato` |
+| `AnimationClip` | `keyframes-clips.types.plato` |
+| `Bone`, `Skeleton`, `SkeletonPose`, `MorphTarget` (physics never uses bare `Joint`) | `skeletal-animation.types.plato` |
+| `Path2D`, `PathSegment2D` | `paths.types.plato` |
+| `StrokeStyle` | `vector-styling-stroke.types.plato` |
+| `FillStyle`, `Paint` | `vector-styling-paint.types.plato` |
 | `Image` concept | `images.concepts.plato` |
-| `Bitmap`, `PixelFormat`, `ImageOrigin` | `images.plato` |
-| `BlendMode` | `image-processing-compositing.plato` |
-| `Texture2D`, `Texture3D`, `TextureCube` | `texturing.plato` |
-| `TextureSampler`, `TextureBinding` | `texturing-sampling.plato` |
+| `Bitmap`, `PixelFormat`, `ImageOrigin` | `images.types.plato` |
+| `BlendMode` | `image-processing-compositing.types.plato` |
+| `Texture2D`, `Texture3D`, `TextureCube` | `texturing.types.plato` |
+| `TextureSampler`, `TextureBinding` | `texturing-sampling.types.plato` |
 | `Camera` concept | `cameras.concepts.plato` |
-| `PerspectiveCamera`, `OrthographicCamera`, `CameraProjection` | `cameras.plato` |
-| `Material` (rendering PBR material) | `materials.plato` |
-| `RenderLayer` | `scene3d.plato` |
-| `RigidBody2D/3D`, `MassProperties2D/3D`, `BodyIndex` | `rigid-dynamics.plato` |
-| `Histogram`, `SummaryStatistics` | `statistics.plato` |
-| `RandomState` | `random.plato` |
-| `NormalDistribution`, `UniformDistribution` | `random-continuous.plato` |
-| `Spectrum`, `SampledSignal` | `signals.plato` |
-| `Polynomial` | `polynomials.plato` |
-| `Tolerance` | `uncertainty.plato` |
-| `Graph`, `GraphEdge` | `graphs.plato` |
+| `PerspectiveCamera`, `OrthographicCamera`, `CameraProjection` | `cameras.types.plato` |
+| `Material` (rendering PBR material) | `materials.types.plato` |
+| `RenderLayer` | `scene3d.types.plato` |
+| `RigidBody2D/3D`, `MassProperties2D/3D`, `BodyIndex` | `rigid-dynamics.types.plato` |
+| `Histogram`, `SummaryStatistics` | `statistics.types.plato` |
+| `RandomState` | `random.types.plato` |
+| `NormalDistribution`, `UniformDistribution` | `random-continuous.types.plato` |
+| `Spectrum`, `SampledSignal` | `signals.types.plato` |
+| `Polynomial` | `polynomials.types.plato` |
+| `Tolerance` | `uncertainty.types.plato` |
+| `Graph`, `GraphEdge` | `graphs.types.plato` |
 
 Generic nouns that MUST be domain-qualified wherever declared: Node, Layer, Track, Channel,
 Sample, Grid, Cell, Filter, Kernel, Key, Frame, Edge, Vertex, Face, Segment, Weight, Style,

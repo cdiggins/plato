@@ -1,0 +1,78 @@
+//==
+// # Extended numbers
+//
+// Number-like value types beyond the primitives: constrained scalars, exact
+// ratios, complex numbers, and typed indices.
+
+// A complex number with real and imaginary parts
+// (https://en.wikipedia.org/wiki/Complex_number).
+type Complex
+    implements Numerical
+{
+    Real: Number;
+    Imaginary: Number;
+}
+
+// An exact ratio of two integers
+// (https://en.wikipedia.org/wiki/Rational_number). Denominator is never zero.
+type Rational
+    implements Value, Comparable
+{
+    Numerator: Integer;
+    Denominator: Integer;
+}
+
+// A unitless scalar expected to lie in [0, 1]: blend weights, normalized
+// parameters, opacity.
+type Proportion
+    implements Numerical, Comparable
+{
+    Value: Number;
+}
+
+// A proportion expressed per hundred: 45.0 means 45%.
+// (https://en.wikipedia.org/wiki/Percentage)
+type Percent
+    implements Numerical, Comparable
+{
+    Value: Number;
+}
+
+// A probability in [0, 1]. (https://en.wikipedia.org/wiki/Probability)
+type Probability
+    implements Numerical, Comparable
+{
+    Value: Number;
+}
+
+// A zero-based position within a caller-supplied or owning item list:
+// primitives handed to a spatial structure, fields referenced by a graph,
+// entries of a scene pool. -1 means "none". The general-purpose index type;
+// domains with richer element vocabularies declare their own (VertexIndex,
+// BoneIndex, ...).
+type ItemIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A count of items; never negative. (https://en.wikipedia.org/wiki/Cardinal_number)
+type Cardinal
+    implements Value, Comparable
+{
+    Value: Integer;
+}
+
+// The tolerance for a floating-point near-equality test, combining an absolute
+// floor with a relative (proportional to magnitude) term: two numbers x and y
+// are close when |x - y| <= Absolute + Relative * max(|x|, |y|). Both fields are
+// non-negative. This is the ONE numerical-comparison epsilon record for the
+// whole library (see CONVENTIONS.md - Floating-point comparison); the AlmostEqual
+// overloads in algebra-numeric.library.plato accept it. Engineering Tolerance
+// (uncertainty.types.plato) is a manufacturing acceptance allowance, NOT this type.
+type ComparisonTolerance
+    implements Value
+{
+    Absolute: Number;
+    Relative: Number;
+}

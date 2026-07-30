@@ -1,0 +1,84 @@
+//==
+// # Geometric vectors and directions
+//
+// Displacements and directions in 2D, 3D, and N-dimensional space
+// (https://en.wikipedia.org/wiki/Euclidean_vector). Points (`points.types.plato`) are
+// positions; these geometric vectors are the differences between them, and a
+// Direction is a vector carrying a unit-length invariant.
+//
+// Discoverability: the concrete operations for Vector2D and
+// Vector3D — Normalize, Dot, Cross, Length/LengthSquared,
+// Add/Subtract/Multiply/Divide, Reflect, Transform — are declared on the
+// intrinsic hub in `intrinsics-vectors.library.plato`, not restated here. The
+// concept-generic helpers (Distance, DistanceSquared, projection/rejection,
+// AngleBetween, and the safe `NormalizeOr` / Direction factories) live in
+// `numeric-structures-vector.library.plato`.
+
+// A displacement or direction in 2D space.
+type Vector2D
+    implements Vector
+{
+    X: Number;
+    Y: Number;
+}
+
+// A displacement or direction in 3D space.
+type Vector3D
+    implements Vector
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+}
+
+// An N-dimensional vector with runtime-determined arity.
+// VectorN is the one Vector implementor whose components are not its fields, so
+// the writer's At/Count synthesis has to delegate to the field rather than count
+// fields. It does: verified by emitting and running the code, a 5-component
+// VectorN reports Count == 5 and At(2) == 3. The generic bodies in
+// numeric-structures-components.library.plato that read Count/At as the component surface are
+// correct here.
+//
+// This works because the field is spelled Array<Number>: the writer delegates
+// Count/At to any Indexable-providing field type, not only to fields named
+// "Array". Keep the field's type Indexable-providing if this declaration is
+// ever reshaped.
+//
+// VectorN's intrinsic vector operators (Add, Subtract, Magnitude, Zero, ...) are
+// not yet filled; the concept-generic bodies below therefore compute only at the
+// Number instantiation today.
+type VectorN
+    implements Vector
+{
+    Components: Array<Number>;
+}
+
+// A 2D direction: a Vector2D with the invariant that its magnitude is one
+// (https://en.wikipedia.org/wiki/Unit_vector). The invariant is a promise of
+// intent, not a runtime proof: an arbitrary Vector2D may violate unit length
+// after a non-rigid transform or manual construction. Construct one via
+// normalization of a non-zero displacement — the validated factories
+// `FromVector` / `TryFromVector` (and the explicitly unsafe
+// `FromVectorUnchecked`) in `numeric-structures-vector.library.plato`; zero input
+// is undefined. Check unit length with `IsUnit` (algebra-metric.library.plato) for
+// diagnostics.
+type Direction2D
+    implements Value
+{
+    Vector: Vector2D;
+}
+
+// A 3D direction: a Vector3D with the invariant that its magnitude is one
+// (https://en.wikipedia.org/wiki/Unit_vector).
+// The invariant is a promise of intent, not a runtime proof: an arbitrary
+// Vector3D may violate unit length after a non-rigid transform or manual
+// construction. Construct one via normalization of a non-zero displacement —
+// the validated factories `FromVector` / `TryFromVector` (and the explicitly
+// unsafe `FromVectorUnchecked`) in `numeric-structures-vector.library.plato`; zero
+// input is undefined. Check unit length with `IsUnit`
+// (algebra-metric.library.plato) for diagnostics.
+type Direction3D
+    implements Value
+{
+    Vector: Vector3D;
+}

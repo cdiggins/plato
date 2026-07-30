@@ -1,0 +1,55 @@
+//==
+// # Cartesian and homogeneous points
+//
+// Points are positions in a space (https://en.wikipedia.org/wiki/Point_(geometry));
+// they are not vectors. Subtracting two points yields a vector, and adding a
+// vector to a point yields a point (the Difference concept). This file holds the
+// Cartesian positions and their homogeneous (projective) form; the curvilinear
+// systems live in `points-curvilinear.types.plato` and the parametric weightings in
+// `points-parametric.types.plato`.
+
+// A position in the 2D Cartesian plane
+// (https://en.wikipedia.org/wiki/Cartesian_coordinate_system).
+type Point2D
+    implements Coordinate, OriginBased<Vector2D>, Hashable
+{
+    X: Number;
+    Y: Number;
+}
+
+// A position in 3D Cartesian space.
+type Point3D
+    implements Coordinate, OriginBased<Vector3D>, Hashable
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+}
+
+// A position in N-dimensional Cartesian space.
+type PointN
+    implements Coordinate, OriginBased<VectorN>
+{
+    Components: Array<Number>;
+}
+
+// A 2D point in homogeneous form; the Cartesian point is (X/W, Y/W)
+// (https://en.wikipedia.org/wiki/Homogeneous_coordinates).
+type HomogeneousPoint2D
+    implements Value
+{
+    X: Number;
+    Y: Number;
+    W: Number;
+}
+
+// A 3D point in homogeneous form; the Cartesian point is (X/W, Y/W, Z/W)
+// (https://en.wikipedia.org/wiki/Homogeneous_coordinates).
+type HomogeneousPoint3D
+    implements Value
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+    W: Number;
+}

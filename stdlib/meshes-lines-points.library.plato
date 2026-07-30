@@ -2,7 +2,7 @@
 // # MeshesLinesPoints — deformation bodies for line sets and bare point clouds
 //
 // The Deformable2D/Deformable3D obligations of the face-free geometry in
-// `meshes-lines-points.plato`: every stored position is carried through the
+// `meshes-lines-points.types.plato`: every stored position is carried through the
 // mapping; the segment index pairs are pure connectivity and pass through
 // unchanged.
 

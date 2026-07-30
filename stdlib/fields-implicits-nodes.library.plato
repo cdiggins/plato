@@ -2,8 +2,8 @@
 // # Flat node tree and graph accessors
 //
 // Root-node lookup and index ordering for the flat, index-based structures:
-// the SDF combination trees of `implicit-sdf-trees.plato` and the scalar field
-// expression graphs of `fields-graphs.plato`. The recursive evaluators live in
+// the SDF combination trees of `implicit-sdf-trees.types.plato` and the scalar field
+// expression graphs of `fields-graphs.types.plato`. The recursive evaluators live in
 // `implicit-sdf-trees.library.plato` and `fields-graphs.library.plato`; these
 // name the entry point and the index ordering a walker relies on.
 

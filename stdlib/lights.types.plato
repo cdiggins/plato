@@ -1,0 +1,174 @@
+//==
+// # Lights
+//
+// Light sources for rendering. Photometric units are chosen to match how each
+// family is naturally specified:
+// - DirectionalLight and AmbientLight carry Illuminance (lux): the light
+//   arriving on a surface facing the light.
+// - PointLight and SpotLight carry total emitted LuminousFlux (lumens);
+//   renderers derive intensity in candela from the emission solid angle.
+// - Shaped emitters (Area/Disk/Sphere/Tube) carry surface Luminance (nits,
+//   cd/m^2), which is independent of emitter size.
+// - EnvironmentLight and ProceduralSky use dimensionless Intensity multipliers
+//   over stored or computed radiance.
+// Positions, radii, and ranges are unit-agnostic scene Numbers; a Range of
+// zero means unlimited reach.
+
+// How light strength decays with distance from the source. InverseSquare is
+// physically correct; Smooth is inverse-square with a windowed fade to zero
+// at Range. (https://en.wikipedia.org/wiki/Inverse-square_law)
+type Attenuation = None | Linear | Quadratic | InverseSquare | Smooth;
+
+//==
+// # Analytic light sources
+
+// An infinitely distant light of uniform direction (sun, moon). Direction is
+// the direction the light travels, from source toward the scene. Illuminance
+// is measured on a surface perpendicular to Direction (sunlight is roughly
+// 100000 lux). AngularDiameter is the apparent disk size driving soft-shadow
+// penumbras; the sun subtends about 0.53 degrees.
+// (https://en.wikipedia.org/wiki/Illuminance)
+type DirectionalLight
+    implements LightSource
+{
+    Direction: Direction3D;
+    Color: Color;
+    Illuminance: Illuminance;
+    AngularDiameter: Angle;
+    CastsShadows: Boolean;
+}
+
+// An omnidirectional point emitter. Flux is the total emitted luminous power;
+// intensity follows as Flux over 4 pi steradians. Range of zero means
+// unlimited. (https://en.wikipedia.org/wiki/Luminous_flux)
+type PointLight
+    implements LightSource
+{
+    Position: Point3D;
+    Color: Color;
+    Flux: LuminousFlux;
+    Range: Number;
+    Falloff: Attenuation;
+    CastsShadows: Boolean;
+}
+
+// A cone-restricted point emitter. InnerAngle and OuterAngle are half-angles
+// measured from the cone axis: full intensity inside InnerAngle, falling to
+// zero at OuterAngle. Invariant: InnerAngle <= OuterAngle. Flux is the total
+// power emitted within the cone.
+type SpotLight
+    implements LightSource
+{
+    Position: Point3D;
+    Direction: Direction3D;
+    Color: Color;
+    Flux: LuminousFlux;
+    InnerAngle: Angle;
+    OuterAngle: Angle;
+    Range: Number;
+    Falloff: Attenuation;
+    CastsShadows: Boolean;
+}
+
+// A rectangular area emitter centered at Center. Orientation carries the
+// rectangle's local axes (it emits along its local forward axis) and Size its
+// extent. TwoSided emitters radiate from both faces.
+type AreaLight
+    implements LightSource
+{
+    Center: Point3D;
+    Orientation: Quaternion;
+    Size: Size2D;
+    Color: Color;
+    Luminance: Luminance;
+    TwoSided: Boolean;
+    CastsShadows: Boolean;
+}
+
+// A flat circular emitter of the given Radius, facing along Normal.
+type DiskLight
+    implements LightSource
+{
+    Center: Point3D;
+    Normal: Direction3D;
+    Radius: Number;
+    Color: Color;
+    Luminance: Luminance;
+    TwoSided: Boolean;
+    CastsShadows: Boolean;
+}
+
+// A spherical emitter radiating uniformly in all directions: a physically
+// sized alternative to PointLight that yields soft shadows and visible
+// highlights.
+type SphereLight
+    implements LightSource
+{
+    Center: Point3D;
+    Radius: Number;
+    Color: Color;
+    Luminance: Luminance;
+    CastsShadows: Boolean;
+}
+
+// A capsule-shaped emitter along the segment from Start to End with the given
+// Radius; models fluorescent tubes and light strips.
+type TubeLight
+    implements LightSource
+{
+    Start: Point3D;
+    End: Point3D;
+    Radius: Number;
+    Color: Color;
+    Luminance: Luminance;
+    CastsShadows: Boolean;
+}
+
+//==
+// # Environment and ambient lighting
+
+// Image-based lighting from a cube map (`texturing.types.plato`). Rotation spins the
+// environment about the world up axis. Intensity is a dimensionless scale on
+// stored texel radiance; Tint multiplies it per channel (white = unchanged).
+// (https://en.wikipedia.org/wiki/Image-based_lighting)
+type EnvironmentLight
+    implements Value
+{
+    Cube: TextureCube;
+    Rotation: Angle;
+    Intensity: Number;
+    Tint: Color;
+}
+
+// An analytic clear-sky model (Preetham / Hosek-Wilkie family). SunDirection
+// is the direction sunlight travels; Turbidity is atmospheric haze, roughly in
+// [1, 10]; GroundAlbedo is the average ground reflectance feeding bounce
+// light; Intensity is a dimensionless multiplier on the computed radiance.
+type ProceduralSky
+    implements Value
+{
+    SunDirection: Direction3D;
+    Turbidity: Number;
+    GroundAlbedo: Color;
+    Intensity: Number;
+}
+
+// A uniform, directionless fill light applied everywhere; the crudest ambient
+// term.
+type AmbientLight
+    implements Value
+{
+    Color: Color;
+    Illuminance: Illuminance;
+}
+
+// A point probe capturing local incident light for re-lighting nearby objects.
+// InfluenceRadius bounds the affected region in scene units; Intensity scales
+// the captured radiance.
+type LightProbe
+    implements Value
+{
+    Position: Point3D;
+    InfluenceRadius: Number;
+    Intensity: Number;
+}

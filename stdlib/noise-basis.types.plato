@@ -1,0 +1,145 @@
+//==
+// # Basis noises
+//
+// The single-octave noise fields: uncorrelated white noise, lattice value and
+// gradient noises, cellular (Worley) noise, and band-limited Gabor noise. Each
+// is a deterministic function of its parameters and Seed, and each is the
+// building block the fractal sums in `noise-fractal.types.plato` layer.
+
+// Uncorrelated planar random values: a distinct pseudo-random number per
+// point, with no spatial coherence. Ranges over [0, 1]
+// (https://en.wikipedia.org/wiki/White_noise).
+type WhiteNoise2D
+    implements Value, ScalarField2D
+{
+    Seed: Integer;
+}
+
+// Uncorrelated spatial random values: a distinct pseudo-random number per
+// point, with no spatial coherence. Ranges over [0, 1]
+// (https://en.wikipedia.org/wiki/White_noise).
+type WhiteNoise3D
+    implements Value, ScalarField3D
+{
+    Seed: Integer;
+}
+
+// Planar value noise: random values on an integer lattice, smoothly
+// interpolated between lattice points. Cheap, but shows lattice artifacts
+// (https://en.wikipedia.org/wiki/Value_noise).
+type ValueNoise2D
+    implements Value, ScalarField2D
+{
+    Seed: Integer;
+    Frequency: Number;
+}
+
+// Spatial value noise: random values on an integer lattice, smoothly
+// interpolated between lattice points. Cheap, but shows lattice artifacts
+// (https://en.wikipedia.org/wiki/Value_noise).
+type ValueNoise3D
+    implements Value, ScalarField3D
+{
+    Seed: Integer;
+    Frequency: Number;
+}
+
+// Planar Perlin gradient noise: random gradients on an integer lattice with
+// smooth interpolation. Zero at lattice points; band-limited and visually
+// smooth (https://en.wikipedia.org/wiki/Perlin_noise).
+type PerlinNoise2D
+    implements Value, ScalarField2D
+{
+    Seed: Integer;
+    Frequency: Number;
+}
+
+// Spatial Perlin gradient noise: random gradients on an integer lattice with
+// smooth interpolation. Zero at lattice points; band-limited and visually
+// smooth (https://en.wikipedia.org/wiki/Perlin_noise).
+type PerlinNoise3D
+    implements Value, ScalarField3D
+{
+    Seed: Integer;
+    Frequency: Number;
+}
+
+// Planar simplex noise: gradient noise on a triangular lattice. Fewer
+// directional artifacts and cheaper in higher dimensions than Perlin noise
+// (https://en.wikipedia.org/wiki/Simplex_noise).
+type SimplexNoise2D
+    implements Value, ScalarField2D
+{
+    Seed: Integer;
+    Frequency: Number;
+}
+
+// Spatial simplex noise: gradient noise on a tetrahedral lattice. Fewer
+// directional artifacts and cheaper in higher dimensions than Perlin noise
+// (https://en.wikipedia.org/wiki/Simplex_noise).
+type SimplexNoise3D
+    implements Value, ScalarField3D
+{
+    Seed: Integer;
+    Frequency: Number;
+}
+
+// Planar Worley (cellular) noise: distances to randomly scattered feature
+// points, one per lattice cell. Jitter in [0, 1] moves feature points from
+// cell centers (0) to fully random positions (1). Produces cellular,
+// crystalline, and cracked patterns; output is non-negative
+// (https://en.wikipedia.org/wiki/Worley_noise).
+type WorleyNoise2D
+    implements Value, ScalarField2D
+{
+    Seed: Integer;
+    Frequency: Number;
+    Jitter: Number;
+    Distance: WorleyDistance;
+    Feature: WorleyFeature;
+}
+
+// Spatial Worley (cellular) noise: distances to randomly scattered feature
+// points, one per lattice cell. Jitter in [0, 1] moves feature points from
+// cell centers (0) to fully random positions (1). Produces cellular,
+// crystalline, and cracked patterns; output is non-negative
+// (https://en.wikipedia.org/wiki/Worley_noise).
+type WorleyNoise3D
+    implements Value, ScalarField3D
+{
+    Seed: Integer;
+    Frequency: Number;
+    Jitter: Number;
+    Distance: WorleyDistance;
+    Feature: WorleyFeature;
+}
+
+// Planar Gabor noise: sparse convolution of oriented Gabor kernels, giving
+// direct spectral control. Orientation sets the dominant stripe direction;
+// Bandwidth sets kernel falloff; Anisotropy in [0, 1] blends from isotropic
+// (0) to fully oriented (1)
+// (https://en.wikipedia.org/wiki/Gabor_filter).
+type GaborNoise2D
+    implements Value, ScalarField2D
+{
+    Seed: Integer;
+    Frequency: Number;
+    Orientation: Angle;
+    Bandwidth: Number;
+    Anisotropy: Number;
+}
+
+// Spatial Gabor noise: sparse convolution of oriented Gabor kernels, giving
+// direct spectral control. Direction sets the dominant oscillation axis;
+// Bandwidth sets kernel falloff; Anisotropy in [0, 1] blends from isotropic
+// (0) to fully oriented (1)
+// (https://en.wikipedia.org/wiki/Gabor_filter).
+type GaborNoise3D
+    implements Value, ScalarField3D
+{
+    Seed: Integer;
+    Frequency: Number;
+    Direction: Direction3D;
+    Bandwidth: Number;
+    Anisotropy: Number;
+}

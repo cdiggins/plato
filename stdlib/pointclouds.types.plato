@@ -1,0 +1,38 @@
+//==
+// # Enriched point clouds
+//
+// Unstructured 3D sample sets carrying per-point channels — normals, colors,
+// and sensor attributes — as produced by scanning, LiDAR, and photogrammetry.
+// Every channel array is parallel to Positions. The bare, position-only clouds
+// are in `meshes-lines-points.types.plato`.
+
+// A point cloud carrying a unit normal per point: the input to surface
+// reconstruction (https://en.wikipedia.org/wiki/Surface_reconstruction) and
+// oriented splatting. Positions and Normals are parallel.
+type OrientedPointCloud3D
+    implements Value, PointCloudable3D, Deformable3D
+{
+    Positions: Array<Point3D>;
+    Normals: Array<Direction3D>;
+}
+
+// A point cloud carrying a color per point. Positions and Colors are parallel.
+type ColoredPointCloud3D
+    implements Value, PointCloudable3D, Deformable3D
+{
+    Positions: Array<Point3D>;
+    Colors: Array<Color>;
+}
+
+// A fully attributed point cloud, as produced by LiDAR
+// (https://en.wikipedia.org/wiki/Lidar) and photogrammetry. All channels are
+// parallel to Positions; an empty channel array means the channel is absent.
+// Intensities are unitless sensor return strengths.
+type AttributedPointCloud3D
+    implements Value, PointCloudable3D, Deformable3D
+{
+    Positions: Array<Point3D>;
+    Normals: Array<Direction3D>;
+    Colors: Array<Color>;
+    Intensities: Array<Number>;
+}

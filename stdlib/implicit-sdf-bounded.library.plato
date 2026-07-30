@@ -1,7 +1,7 @@
 //=
 // # Bounded SDF evaluation, packaging, culling, and CSG
 //
-// Bodies for `BoundedSdf2D/3D` (`implicit-sdf-bounded.plato`) and culling
+// Bodies for `BoundedSdf2D/3D` (`implicit-sdf-bounded.types.plato`) and culling
 // helpers over every `BoundedSignedDistanceField*`. Bounds are conservative
 // hints: Eval always delegates to the inner field; MayIntersect /
 // IsCulledBy / MayContainPoint use Bounds only.

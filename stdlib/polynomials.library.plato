@@ -24,7 +24,7 @@
 //
 // Conventions: coefficients come first in descending-power (school) order,
 // matching the QuadraticPolynomial/CubicPolynomial/QuarticPolynomial types of
-// `polynomials.plato`; the variable is last. Bezier/Hermite/Catmull-Rom
+// `polynomials.types.plato`; the variable is last. Bezier/Hermite/Catmull-Rom
 // parameters t are in [0, 1].
 
 library Polynomials

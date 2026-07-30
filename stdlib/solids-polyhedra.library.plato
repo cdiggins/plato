@@ -2,7 +2,7 @@
 // # SolidsPolyhedra — the typed polyhedral solids as polygon meshes
 //
 // The Kind dispatch and Frame/Radius placement that turn the value types of
-// `solids-polyhedra.plato` into geometry: each named solid looks up its
+// `solids-polyhedra.types.plato` into geometry: each named solid looks up its
 // unit-circumradius mesh (the catalog factories of
 // `polyhedra-catalog.library.plato` / `polyhedra-seeds.library.plato` stay the
 // sole vertex source), rescales it to the requested circumscribed radius, and

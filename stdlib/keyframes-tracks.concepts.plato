@@ -4,7 +4,7 @@
 // The single abstraction shared by every animated value in this layer: something
 // that can be sampled at a moment in time. Tracks, tweens, and oscillators all
 // implement it; the concrete keyframe and track types live in
-// `keyframes-tracks.plato`.
+// `keyframes-tracks.types.plato`.
 
 // A value that can be sampled at a moment in time. Tracks, tweens, and
 // oscillators are all time-varying.

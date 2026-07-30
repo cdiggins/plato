@@ -2,8 +2,8 @@
 // # Surfaces — parametric evaluation of the named surface types
 //
 // The ParametricSurface obligations (Eval / ClosedU / ClosedV) for the types
-// declared in `surfaces-patches.plato`, `surfaces-generated.plato`, and
-// `surfaces-special.plato`. Same UV convention as `library Solids` in
+// declared in `surfaces-patches.types.plato`, `surfaces-generated.types.plato`, and
+// `surfaces-special.types.plato`. Same UV convention as `library Solids` in
 // solids.library.plato: UV is the unit square, U is the first (profile / column)
 // direction and V the second (sweep / row) direction, and ClosedU/ClosedV say
 // whether the surface seams shut across that direction — which is exactly the

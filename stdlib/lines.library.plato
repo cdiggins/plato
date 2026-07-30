@@ -2,7 +2,7 @@
 // # Lines — segment measures, projections, and parametric evaluation
 //
 // The measure, centroid and nearest-point bodies for the segment, line and ray
-// types declared in `lines.plato` (`LIBRARIES.md` ground rules 1 and 10: an inline
+// types declared in `lines.types.plato` (`LIBRARIES.md` ground rules 1 and 10: an inline
 // `library` block is the sanctioned home for bodies that belong beside their
 // declarations).
 //

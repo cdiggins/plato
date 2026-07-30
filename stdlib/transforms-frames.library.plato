@@ -1,7 +1,7 @@
 //==
 // # Frame and basis operations
 //
-// Matrix interchange between the coordinate frames of `transforms-frames.plato`
+// Matrix interchange between the coordinate frames of `transforms-frames.types.plato`
 // and the rigid poses they are equivalent to, plus the basis of a rotation.
 
 library TransformsFrames

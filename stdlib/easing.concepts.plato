@@ -3,7 +3,7 @@
 //
 // The single abstraction the easing catalog is built on: a pure map from
 // normalized time to normalized progress. The classic selectors and the
-// parameterized easing records that implement it live in `easing.plato`.
+// parameterized easing records that implement it live in `easing.types.plato`.
 
 // A pure easing curve: maps normalized time to normalized progress. Eval(0)
 // yields 0 and Eval(1) yields 1; intermediate values may leave [0, 1]

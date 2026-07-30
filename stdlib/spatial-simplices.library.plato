@@ -2,7 +2,7 @@
 // # SpatialSimplices — tetrahedron, wedge, and convex-volume bodies
 //
 // Volume, surface area, bounds, centroid and containment bodies for the flat-faced
-// solids declared in `spatial-simplices.plato`. `SignedVolume` and the scalar triple
+// solids declared in `spatial-simplices.types.plato`. `SignedVolume` and the scalar triple
 // product it is built from carry the sign convention the tetrahedron's declaration
 // states. The conventions governing every body here are in
 // `spatial-primitives.library.plato`.

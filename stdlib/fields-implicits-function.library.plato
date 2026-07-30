@@ -1,8 +1,8 @@
 //==
 // # Constant and function-valued field algebra
 //
-// Bodies for the constant fields of `fields-constant.plato` and the
-// function-valued fields of `fields-function.plato`, plus the combinator
+// Bodies for the constant fields of `fields-constant.types.plato` and the
+// function-valued fields of `fields-function.types.plato`, plus the combinator
 // algebra over them: lifting any field concept implementor into stored-function
 // form, pointwise composition, and constructive solid geometry on distance
 // fields. Every combinator returns a NEW field holding the composed lambda.

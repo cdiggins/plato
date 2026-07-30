@@ -1,0 +1,119 @@
+//==
+// # Deformations
+//
+// Core catalog of analytic space warps. Each type implements Deformation2D or
+// Deformation3D and is evaluated by `Eval` in `deformations.library.plato`.
+// Parameters are world-space (origin + axis/rate); bounds-normalized variants
+// can wrap these later. Zero rate / zero strength is the identity. Related SDF
+// domain ops live in `implicit-sdf-modifiers.types.plato` (often the inverse map).
+// Classic Barr trio: Twist / Bend / Taper
+// (https://doi.org/10.1145/800031.808573).
+
+//==
+// Twists space about Axis through Origin: each slice perpendicular to the axis
+// rotates by AnglePerUnit times signed distance along the axis.
+type Twist3D
+    implements Value, Deformation3D
+{
+    Origin: Point3D;
+    Axis: Direction3D;
+    AnglePerUnit: Angle;
+}
+
+//==
+// Cheap circular bend (IQ opCheapBend generalized): points rotate about Axis
+// through Origin by Curvature times signed distance along Direction.
+// Precondition: Axis and Direction are unit and not parallel.
+type Bend3D
+    implements Value, Deformation3D
+{
+    Origin: Point3D;
+    Axis: Direction3D;
+    Direction: Direction3D;
+    Curvature: Number;
+}
+
+//==
+// Linear taper about Axis through Origin: the component perpendicular to the
+// axis is scaled by (1 + Rate * t), where t is signed distance along the axis.
+// Rate of 0 is the identity; negative Rate pinches.
+type Taper3D
+    implements Value, Deformation3D
+{
+    Origin: Point3D;
+    Axis: Direction3D;
+    Rate: Number;
+}
+
+//==
+// Shears space: translates each point by Rate * t, where t is signed distance
+// from Origin along Axis. Rate of zero is the identity.
+type Shear3D
+    implements Value, Deformation3D
+{
+    Origin: Point3D;
+    Axis: Direction3D;
+    Rate: Vector3D;
+}
+
+//==
+// Blends each point toward the sphere of Radius about Center. Strength in
+// [0, 1]: 0 leaves the point unchanged, 1 places it on (or toward) the sphere
+// along the radial ray from Center.
+type Spherify3D
+    implements Value, Deformation3D
+{
+    Center: Point3D;
+    Radius: Number;
+    Strength: Number;
+}
+
+//==
+// Planar shear: translates each point by Rate * t, where t is signed distance
+// from Origin along Axis.
+type Shear2D
+    implements Value, Deformation2D
+{
+    Origin: Point2D;
+    Axis: Direction2D;
+    Rate: Vector2D;
+}
+
+//==
+// Linear planar taper about Axis through Origin: the perpendicular component is
+// scaled by (1 + Rate * t).
+type Taper2D
+    implements Value, Deformation2D
+{
+    Origin: Point2D;
+    Axis: Direction2D;
+    Rate: Number;
+}
+
+//==
+// Swirl about Origin: rotates each point by AnglePerUnit times its distance
+// from Origin (polar twist).
+type Twist2D
+    implements Value, Deformation2D
+{
+    Origin: Point2D;
+    AnglePerUnit: Angle;
+}
+
+//==
+// A planar deformation defined by an arbitrary point map. Carrier for Compose /
+// Multiply results (and any other combinator that builds a Function1).
+type MappingDeformation2D
+    implements Value, Deformation2D
+{
+    Mapping: Function1<Point2D, Point2D>;
+}
+
+//==
+// A spatial deformation defined by an arbitrary point map. Carrier for Compose /
+// Multiply results (and any other combinator that builds a Function1).
+type MappingDeformation3D
+    implements Value, Deformation3D
+{
+    Mapping: Function1<Point3D, Point3D>;
+}

@@ -1,0 +1,25 @@
+//==
+// # Procedural noise
+//
+// Pseudo-random fields for texturing, terrain, motion, and scattering. Every
+// noise value type is a deterministic function of its parameters and Seed:
+// the same inputs always reproduce the same field. Scalar noises nominally
+// range over [-1, 1] unless a doc comment says otherwise. Frequency scales
+// the input domain: higher frequency means smaller features.
+//
+// This file holds the shared noise vocabulary — the basis-function family and
+// the Worley selectors — that the noise field types in `noise-basis.types.plato`,
+// `noise-fractal.types.plato`, and `noise-warped.types.plato` are parameterized by.
+
+// The basis function family of a noise field.
+type NoiseBasis = White | Value | Perlin | Simplex | Worley | Gabor;
+
+// The distance metric Worley (cellular) noise uses between a query point and
+// feature points
+// (https://en.wikipedia.org/wiki/Minkowski_distance).
+type WorleyDistance = Euclidean | Manhattan | Chebyshev | Minkowski;
+
+// Which feature-point distances Worley noise combines into its output:
+// F1 is the distance to the nearest feature point, F2 to the second nearest;
+// F2MinusF1 highlights cell borders.
+type WorleyFeature = F1 | F2 | F2MinusF1 | F1PlusF2;

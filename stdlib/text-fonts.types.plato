@@ -1,0 +1,71 @@
+//==
+// # Fonts and font selection
+//
+// The axes a concrete font face is chosen on — weight, slant, and width — the
+// face request that names them, the vertical metrics a face reports, and the
+// OpenType feature settings applied on top. Run and paragraph styling lives in
+// `text-layout.types.plato`, shaped glyph results in `text-glyphs.types.plato`.
+
+// A font weight on the CSS 100-900 scale: 100=Thin, 300=Light, 400=Normal,
+// 500=Medium, 700=Bold, 900=Black. Intermediate values are valid for
+// variable fonts. (https://en.wikipedia.org/wiki/Font)
+type FontWeight
+    implements Value, Comparable
+{
+    Value: Integer;
+}
+
+// The slant style of a font face: upright, a designed italic face, or a
+// slanted version of the normal face.
+// (https://en.wikipedia.org/wiki/Italic_type)
+type FontStyle = Normal | Italic | Oblique;
+
+// The width class of a font face, on the CSS nine-step scale.
+type FontStretch
+    = UltraCondensed
+    | ExtraCondensed
+    | Condensed
+    | SemiCondensed
+    | Normal
+    | SemiExpanded
+    | Expanded
+    | ExtraExpanded
+    | UltraExpanded;
+
+// A request for a concrete font: a family name plus the weight, slant, and
+// width axes used to select (or synthesize) a face.
+// (https://en.wikipedia.org/wiki/Typeface)
+type FontFace
+    implements Value
+{
+    Family: String;
+    Weight: FontWeight;
+    Style: FontStyle;
+    Stretch: FontStretch;
+}
+
+// Vertical metrics of a face, expressed at a font size of one (multiply by
+// the em size in use). Descent and UnderlinePosition are positive downward
+// from the baseline.
+type FontMetrics
+    implements Value
+{
+    Ascent: Number;
+    Descent: Number;
+    LineGap: Number;
+    CapHeight: Number;
+    XHeight: Number;
+    UnderlinePosition: Number;
+    UnderlineThickness: Number;
+}
+
+// One OpenType feature setting, such as ("liga", 1) to enable ligatures or
+// ("ss01", 1) to select a stylistic set. Tag is the four-character feature
+// tag; Value is 0=off, 1=on, or an alternate index for selector features.
+// (https://en.wikipedia.org/wiki/OpenType)
+type OpenTypeFeature
+    implements Value
+{
+    Tag: String;
+    Value: Integer;
+}

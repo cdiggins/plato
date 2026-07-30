@@ -2,7 +2,7 @@
 // # Polygons — planar polygon, hole, set, and star bodies
 //
 // Area, perimeter, bounds, centroid, containment, nearest-point and support bodies
-// for the types declared in `polygons.plato` (`LIBRARIES.md` ground rules 1 and 10).
+// for the types declared in `polygons.types.plato` (`LIBRARIES.md` ground rules 1 and 10).
 // The 2D ring kernels — shoelace area, area centroid, even-odd containment, chain
 // length, chain projection — live in `geometry-kernels.library.plato` and are not
 // respelled here.

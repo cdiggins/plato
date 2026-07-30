@@ -1,7 +1,7 @@
 //==
 // # Curves2DSpirals — evaluating the plane spirals and roulettes
 //
-// Closed-form evaluation of the types declared in `curves-2d-spirals.plato`.
+// Closed-form evaluation of the types declared in `curves-2d-spirals.types.plato`.
 // The spirals are `PolarCurve2D` implementors that carry an explicit `Angles`
 // sweep, so each supplies a `RadiusAt` plus an `Eval` overriding the generic
 // full-turn mapping in `curves-2d-polar.library.plato`; the roulettes are

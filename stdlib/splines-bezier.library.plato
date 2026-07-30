@@ -1,7 +1,7 @@
 //==
 // # SplinesBezier — evaluating the Bezier splines
 //
-// Evaluation of the control-point curves declared in `splines-bezier.plato`.
+// Evaluation of the control-point curves declared in `splines-bezier.types.plato`.
 // De Casteljau's algorithm is the whole story: it is generic in `$T`, using it
 // only through Lerp, so one reduction serves points, vectors, and weights, and
 // the rational form is that same reduction run twice. Nothing from

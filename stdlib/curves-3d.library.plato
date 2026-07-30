@@ -1,7 +1,7 @@
 //==
 // # Curves3D — evaluating the named space curves
 //
-// Closed-form evaluation of the space curves declared in `curves-3d.plato`.
+// Closed-form evaluation of the space curves declared in `curves-3d.types.plato`.
 //
 // Conventions:
 //   * The canonical curve parameter is `t` in [0, 1].
@@ -67,7 +67,7 @@ library Curves3D
     // # Polynomial arcs
     //
     // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
-    // The Bernstein forms live in `library Polynomials` (polynomials.plato).
+    // The Bernstein forms live in `library Polynomials` (polynomials.types.plato).
 
     // The quadratic Bezier point at t.
     Eval(self: QuadraticBezier3D, t: Number): Point3D

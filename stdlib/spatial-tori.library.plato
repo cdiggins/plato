@@ -2,7 +2,7 @@
 // # SpatialTori — torus bodies
 //
 // Volume, surface area, bounds, centroid and containment bodies for the type
-// declared in `spatial-tori.plato`. Volume and surface area come from Pappus's
+// declared in `spatial-tori.types.plato`. Volume and surface area come from Pappus's
 // centroid theorem and are valid only for the non-self-intersecting ring torus. The
 // disk-extent helper, and the conventions governing every body here, are in
 // `spatial-primitives.library.plato`.

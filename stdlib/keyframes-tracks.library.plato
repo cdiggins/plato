@@ -20,8 +20,8 @@ library KeyframesTracks
     // The change/delta helpers subtract two samples, which the type variable
     // $TValue supports by the same duck-typing the interval helpers rely on
     // (IntervalLike.Extent subtracts two $T). A formal `where TValue: Additive`
-    // bound on TimeVarying is deferred: its implementors span keyframes-tracks.plato
-    // (AnimationTrack/TangentTrack) and motion-graphics.plato, which are outside
+    // bound on TimeVarying is deferred: its implementors span keyframes-tracks.types.plato
+    // (AnimationTrack/TangentTrack) and motion-graphics.types.plato, which are outside
     // this package's edit scope, so the bound cannot be filled tree-wide here.
 
     // The sampled value at a time offset; a readable spelling of Sample.

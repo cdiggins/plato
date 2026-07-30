@@ -3,7 +3,7 @@
 //
 // The marker concept for a placed camera: a rigid pose plus the near and far
 // clip distances that bound the rendered depth range. The implementing types
-// are declared in `cameras.plato`; the derived bodies (including the
+// are declared in `cameras.types.plato`; the derived bodies (including the
 // AspectRatio obligation fills) live in `cameras.library.plato`.
 
 // A placed camera: a rigid pose plus near and far clip distances bounding the

@@ -4,7 +4,7 @@
 // The single abstraction shared by every raster type: a rectangular grid with
 // known dimensions. Pixel access is deliberately absent, because pixel
 // representations differ (bytes, floats, indices, bits); the concrete image
-// types in `images.plato` each expose their own. Unless a type says otherwise,
+// types in `images.types.plato` each expose their own. Unless a type says otherwise,
 // pixel storage is row-major starting at the top-left pixel, and a pixel
 // array's Count equals Width times Height.
 

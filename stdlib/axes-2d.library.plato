@@ -1,7 +1,7 @@
 //==
 // # Axis2D conversions and algebra
 //
-// Total, one-way conversions from the unsigned 2D cardinal axis (`axes.plato`)
+// Total, one-way conversions from the unsigned 2D cardinal axis (`axes.types.plato`)
 // out to the geometric vocabulary — basis vector, unit direction, Number tuple,
 // point — plus the component selector and the quarter-turn partner.
 

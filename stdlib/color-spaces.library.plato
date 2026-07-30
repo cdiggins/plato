@@ -2,7 +2,7 @@
 // # Color spaces — concrete bodies
 //
 // Hashable obligations for the color-science types declared in
-// `color-spaces.plato`. Conversion functions live in a later pass.
+// `color-spaces.types.plato`. Conversion functions live in a later pass.
 
 library ColorSpaces
 {

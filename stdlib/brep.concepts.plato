@@ -6,11 +6,11 @@
 // oriented EDGE-USES (https://en.wikipedia.org/wiki/Boundary_representation).
 // One undirected edge owns one curve; the two adjacent faces cite that edge
 // with opposite orientations. This is deliberately NOT the half-edge encoding:
-// `HalfEdgeMesh` (topology-half-edges.plato) duplicates every edge into two
+// `HalfEdgeMesh` (topology-half-edges.types.plato) duplicates every edge into two
 // directed sides and is the DISCRETE tessellation IR — BREP shells tessellate
 // INTO it (or into TriangleMesh3D), never the other way. Half-edge
 // `BoundaryLoop` is a hole walk in a mesh and is not reused here; the BREP
-// face loop is `BrepLoop` (brep.plato).
+// face loop is `BrepLoop` (brep.types.plato).
 //
 // Closedness is a proof, not a flag: no `ClosedShell` marker is stamped on
 // `Brep3D`, because an unvalidated marker is a stale claim waiting to happen.

@@ -2,7 +2,7 @@
 // # Deformations — Eval bodies and apply lifts
 //
 // Bodies for Deformation2D/Deformation3D (`deformations.concepts.plato`) on the
-// catalog types in `deformations.plato`, plus lifts onto Deformable2D/3D and
+// catalog types in `deformations.types.plato`, plus lifts onto Deformable2D/3D and
 // point sugar. Weighted apply takes a ScalarField as a separate modulator —
 // falloff is never a field of the warp itself.
 //
