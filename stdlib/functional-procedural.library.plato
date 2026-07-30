@@ -39,16 +39,28 @@ library FunctionalProcedural
     // # Periodic
     //
     // TODO(concept-gap): a wrapping helper (WrapPhase, mapping a domain value into
-    // [0, Period)) needs Modulo on the period type. This is NOT fixable by a
-    // deliberate concept extension the way Sliceable-inherits-Countable was,
-    // because the requirement is a *bound on the type parameter* TPeriod
-    // (TPeriod : Modular), and Plato has no type-parameter constraint syntax:
-    // there is no `where` clause and no `<T : Concept>` form anywhere in the tree
-    // (verified by grep). Nor can it be a bound on a generic function parameter —
-    // the same syntax is missing. Periodic also carries no Eval (it does not
-    // inherit Procedural), so there is no domain value on the surface to wrap.
-    // Left for the owning package once a period-typed value with modulo arithmetic
-    // is available concretely.
+    // [0, Period)) needs Modulo on the period type.
+    //
+    // An earlier note here claimed Plato has no type-parameter constraint syntax.
+    // That was wrong. Concept `where` clauses are live and used — see
+    // IntervalLike / BoundsLike in intervals-bounds.concepts.plato and
+    // MetricSpace in algebra-metric.concepts.plato — so the bound is expressible
+    // as `concept Periodic<TPeriod> where TPeriod: Modular` on the declaration in
+    // functional.concepts.plato. `concept Modular` is declared in
+    // algebra-operations.concepts.plato, and the one implementor path
+    // (PeriodicCurve<TRange> inherits Periodic<Number>) satisfies it: Number
+    // implements Real, which inherits Arithmetic, which inherits Modular.
+    //
+    // The bound is therefore a one-line edit to a file this library-body pass does
+    // not own. It is not sufficient on its own, though: Periodic carries no Eval
+    // (it does not inherit Procedural), so there is no domain value on the surface
+    // to wrap and the bound alone ships no helper. Both halves are owned by the
+    // functional package.
+    //
+    // What genuinely has no syntax is a bound on a *library function's* type
+    // variables — MethodDeclaration takes no type parameters at all (see
+    // PlatoGrammar.MethodDeclaration), so a constraint can only ever sit on a
+    // concept declaration. That limit does not block this item.
 
     //==
     // # ParameterDomain
