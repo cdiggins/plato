@@ -135,7 +135,7 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
 
 - **Output:** `plato.hpp` (C++17) or `plato.cu` (nvcc). **Bodies are identical; only the preamble differs** (`Dialects_Differ_Only_In_The_Preamble`). Free functions; `Number`→`float`; vectors→`float2/3/4`. Same representability gaps as GLSL for lambdas / dynamic arrays / strings in V1. Details: [`Plato.CppWriter/README.md`](../Plato.CppWriter/README.md). Not in `Ara3D.Studio.sln` yet.
 
-TS and Rust backends compile a curated demo library and pass a shared conformance suite; they have not yet consumed the full `stdlib-legacy` stdlib. Live demos: [cdiggins.github.io/plato](https://cdiggins.github.io/plato/). GLSL has eight live WebGL2 demos under `demos/glsl/`. C++/CUDA is compile-verified only (no runtime demos yet).
+TS and Rust backends compile a curated demo library and pass a shared conformance suite; they have not yet consumed the full `stdlib-legacy` stdlib. Sum types are C#-only in v1 — the TS and Rust writers reject a sum declaration with a `CHK320` comment. Live demos: [cdiggins.github.io/plato](https://cdiggins.github.io/plato/). GLSL has eight live WebGL2 demos under `demos/glsl/`. C++/CUDA is compile-verified only (no runtime demos yet).
 
 ---
 

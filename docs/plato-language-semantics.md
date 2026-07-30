@@ -253,6 +253,12 @@ default/wildcard arm** (CHK307): exhaustiveness is by enumeration only. Binders 
 bound to the case's fields in declaration order, and the binder count must equal the field count
 (CHK303) even if some binders go unused. All arm results unify to the type of the whole `match`.
 
+Lowering: `match` is rewritten during elaboration into a chain of conditionals over the sum's
+tag — no dedicated TIR node — and a sum type emits to C# as a tagged `readonly partial struct`
+(an `int Kind` in declaration order, flattened `Case_Field` fields, one static factory per case).
+Emission is **C#-only** in v1: the TypeScript and Rust writers reject a sum declaration with a
+CHK320 comment instead of emitting garbage.
+
 ## 8. Not in the language
 
 Explicitly absent, so nobody infers them from the C#-flavored syntax:
