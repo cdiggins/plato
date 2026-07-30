@@ -38,7 +38,15 @@ namespace Ara3D.Geometry
 
         [MethodImpl(AggressiveInlining)]
         public static implicit operator int(Integer n) => n.ToSystem();
-        
+
+        // -------------------------------------------------------------------------------
+        // Type-token constants (the `_`-receiver members in intrinsics-scalars)
+        // -------------------------------------------------------------------------------
+        public static Integer MinValue = int.MinValue;
+        public static Integer MaxValue = int.MaxValue;
+        public static Integer Zero = 0;
+        public static Integer One = 1;
+
         // -------------------------------------------------------------------------------
         // Operators (forward to int)
         // -------------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-30T11:59:20-04:00",
+  "updated_at": "2026-07-30T12:20:31-04:00",
   "note": "Captured during initial status-report landing; refresh after gate runs.",
   "gates": [
     {
@@ -94,21 +94,21 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-07-30T11:59:20-04:00",
+    "updated_at": "2026-07-30T12:20:31-04:00",
     "targets": {
       "forward-conformance": {
-        "built_at": "2026-07-30T11:59:20-04:00",
+        "built_at": "2026-07-30T12:19:12-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\conformance\\Plato.ForwardConformanceTests\\Plato.ForwardConformanceTests.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\forward-conformance.log",
         "configuration": "Release",
         "exit_code": 1,
-        "total_errors": 46,
+        "total_errors": 85,
         "total_warnings": 0,
-        "summary_errors": 46,
+        "summary_errors": 85,
         "summary_warnings": 0,
         "by_code": {
-          "CS1929": 17,
-          "CS1061": 16,
+          "CS1061": 62,
+          "CS1929": 10,
           "CS0029": 5,
           "CS0019": 2,
           "CS0023": 2,
@@ -117,18 +117,18 @@
           "CS1501": 1
         },
         "by_category": {
-          "extension_receiver": {
-            "count": 17,
-            "label": "Extension method receiver type",
-            "codes": [
-              "CS1929"
-            ]
-          },
           "missing_member": {
-            "count": 16,
+            "count": 62,
             "label": "Missing member on receiver (CS1061)",
             "codes": [
               "CS1061"
+            ]
+          },
+          "extension_receiver": {
+            "count": 10,
+            "label": "Extension method receiver type",
+            "codes": [
+              "CS1929"
             ]
           },
           "other": {
@@ -159,24 +159,21 @@
         "warning_by_code": {}
       },
       "plato-cli": {
-        "built_at": "2026-07-30T11:34:20-04:00",
+        "built_at": "2026-07-30T12:19:39-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\Plato.CLI\\Plato.CLI.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\plato-cli.log",
         "configuration": "Release",
         "exit_code": 0,
         "total_errors": 0,
-        "total_warnings": 6,
+        "total_warnings": 0,
         "summary_errors": 0,
-        "summary_warnings": 6,
+        "summary_warnings": 0,
         "by_code": {},
         "by_category": {},
-        "warning_by_code": {
-          "CS8618": 5,
-          "CS8601": 1
-        }
+        "warning_by_code": {}
       },
       "plato-generated-unoptimized": {
-        "built_at": "2026-07-30T01:53:02-04:00",
+        "built_at": "2026-07-30T12:20:17-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\Generated\\Plato.Generated.Unoptimized\\Plato.Generated.Unoptimized.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\plato-generated-unoptimized.log",
         "configuration": "Release",
@@ -190,7 +187,7 @@
         "warning_by_code": {}
       },
       "plato-generated-optimized": {
-        "built_at": "2026-07-30T01:53:17-04:00",
+        "built_at": "2026-07-30T12:20:31-04:00",
         "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\Generated\\Plato.Generated.Optimized\\Plato.Generated.Optimized.csproj",
         "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\plato-generated-optimized.log",
         "configuration": "Release",
@@ -204,30 +201,15 @@
         "warning_by_code": {}
       }
     },
-    "latest_target": "forward-conformance",
+    "latest_target": "plato-generated-optimized",
     "latest": {
-      "target": "forward-conformance",
-      "total_errors": 46,
+      "target": "plato-generated-optimized",
+      "total_errors": 0,
       "total_warnings": 0,
-      "built_at": "2026-07-30T11:59:20-04:00",
-      "exit_code": 1,
-      "by_category": {
-        "extension_receiver": 17,
-        "missing_member": 16,
-        "other": 6,
-        "cannot_implicitly_convert": 5,
-        "operator_type_mismatch": 2
-      },
-      "by_code_top": {
-        "CS1929": 17,
-        "CS1061": 16,
-        "CS0029": 5,
-        "CS0019": 2,
-        "CS0023": 2,
-        "CS1662": 2,
-        "CS0266": 1,
-        "CS1501": 1
-      }
+      "built_at": "2026-07-30T12:20:31-04:00",
+      "exit_code": 0,
+      "by_category": {},
+      "by_code_top": {}
     }
   }
 }

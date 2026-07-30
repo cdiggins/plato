@@ -299,6 +299,29 @@ namespace Ara3D.Geometry.CSharpWriter
                         if (viewTarget != null && emittedExplicitImpls.Add($"{viewTarget}.{f.Name}"))
                             TypeWriter.WriteLine($"{Attr} {retType} {viewTarget}.{f.Name}() => {f.Name};");
                     }
+                    // A `_`-receiver FILL discharging an INSTANCE obligation: the fill emits as a
+                    // type-level `public static` member (its receiver value is ignored), which C#
+                    // cannot use to satisfy an instance interface member (CS0736). The pair
+                    // static + explicit implementation gives both surfaces: `T.Zero()` on the
+                    // type, and the interface/instance view forwarding to it. The static is never
+                    // object-safe, so the non-generic view interface (viewTarget) is untouched.
+                    else if (f.ParameterNames.Count >= 1 && f.ParameterNames[0] != "_")
+                    {
+                        var fill = ConcreteType.ImplementedFunctions.FirstOrDefault(m =>
+                            m.Name == f.Name
+                            && m.ParameterNames.Count == f.ParameterNames.Count
+                            && m.ParameterNames[0] == "_"
+                            && m.Implementation?.Body != null);
+                        if (fill != null && emittedExplicitImpls.Add($"{its}.{f.Name}"))
+                        {
+                            var ifi = TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef);
+                            var tailParams = ifi.MethodParameters.JoinStringsWithComma();
+                            var tailArgs = ifi.ParameterNames.Skip(1).JoinStringsWithComma();
+                            TypeWriter.WriteLine(Writer.NoProperties || f.ParameterNames.Count > 1
+                                ? $"{Attr} {ifi.ReturnType} {its}.{f.Name}({tailParams}) => {f.Name}({tailArgs});"
+                                : $"{ifi.ReturnType} {its}.{f.Name} {{ {Attr} get => {f.Name}; }}");
+                        }
+                    }
                 }
             }
             TypeWriter.EraseScalars = saveErase;

@@ -67,6 +67,8 @@ library IntrinsicsScalars
     MinValue(_: Number): Number;
     MaxValue(_: Number): Number;
     Epsilon(_: Number): Number;
+    Zero(_: Number): Number;
+    One(_: Number): Number;
 
     // Mathematical constants, dispatched like the limits above: 0.0.Pi reads the
     // constant; the receiver's value is ignored.
@@ -107,6 +109,13 @@ library IntrinsicsScalars
     BitwiseNot(x: Integer): Integer;
     ShiftLeft(x: Integer, bits: Integer): Integer;
     ShiftRight(x: Integer, bits: Integer): Integer;
+
+    // Type-token constants, dispatched like the Number limits above: the
+    // receiver's value is ignored, the handwritten wrapper defines the member.
+    MinValue(_: Integer): Integer;
+    MaxValue(_: Integer): Integer;
+    Zero(_: Integer): Integer;
+    One(_: Integer): Integer;
 
     ToNumber(self: Integer): Number;
     Range(self: Integer): Array<Integer>;

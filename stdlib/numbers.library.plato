@@ -1,7 +1,7 @@
 //==
 // # Extended-number arithmetic
 //
-// Operator and concept obligations for the types of `numbers.plato`: Complex
+// Operator and concept obligations for the types of `numbers.types.plato`: Complex
 // (full Numerical plus ComplexÃ—Complex product/quotient), Rational (Comparable
 // plus field arithmetic), and the unitless constrained scalars Proportion /
 // Percent / Probability (Numerical + Comparable on their carrier).
@@ -54,19 +54,19 @@ library Numbers
             a.Imaginary + (b.Imaginary - a.Imaginary) * t);
 
     // The additive identity: 0 + 0i.
-    Zero(x: Complex): Complex
+    Zero(_: Complex): Complex
         => (0.0, 0.0);
 
     // The multiplicative unit: 1 + 0i.
-    One(x: Complex): Complex
+    One(_: Complex): Complex
         => (1.0, 0.0);
 
     // Component-wise least representable value.
-    MinValue(x: Complex): Complex
+    MinValue(_: Complex): Complex
         => (Number.MinValue, Number.MinValue);
 
     // Component-wise greatest representable value.
-    MaxValue(x: Complex): Complex
+    MaxValue(_: Complex): Complex
         => (Number.MaxValue, Number.MaxValue);
 
     //==
@@ -134,16 +134,16 @@ library Numbers
     Lerp(a: Proportion, b: Proportion, t: Number): Proportion
         => new Proportion(a.Value + (b.Value - a.Value) * t);
 
-    Zero(x: Proportion): Proportion
+    Zero(_: Proportion): Proportion
         => new Proportion(0.0);
 
-    One(x: Proportion): Proportion
+    One(_: Proportion): Proportion
         => new Proportion(1.0);
 
-    MinValue(x: Proportion): Proportion
+    MinValue(_: Proportion): Proportion
         => new Proportion(Number.MinValue);
 
-    MaxValue(x: Proportion): Proportion
+    MaxValue(_: Proportion): Proportion
         => new Proportion(Number.MaxValue);
 
     LessThanOrEquals(a: Proportion, b: Proportion): Boolean
@@ -173,16 +173,16 @@ library Numbers
     Lerp(a: Percent, b: Percent, t: Number): Percent
         => new Percent(a.Value + (b.Value - a.Value) * t);
 
-    Zero(x: Percent): Percent
+    Zero(_: Percent): Percent
         => new Percent(0.0);
 
-    One(x: Percent): Percent
+    One(_: Percent): Percent
         => new Percent(100.0);
 
-    MinValue(x: Percent): Percent
+    MinValue(_: Percent): Percent
         => new Percent(Number.MinValue);
 
-    MaxValue(x: Percent): Percent
+    MaxValue(_: Percent): Percent
         => new Percent(Number.MaxValue);
 
     LessThanOrEquals(a: Percent, b: Percent): Boolean
@@ -212,16 +212,16 @@ library Numbers
     Lerp(a: Probability, b: Probability, t: Number): Probability
         => new Probability(a.Value + (b.Value - a.Value) * t);
 
-    Zero(x: Probability): Probability
+    Zero(_: Probability): Probability
         => new Probability(0.0);
 
-    One(x: Probability): Probability
+    One(_: Probability): Probability
         => new Probability(1.0);
 
-    MinValue(x: Probability): Probability
+    MinValue(_: Probability): Probability
         => new Probability(Number.MinValue);
 
-    MaxValue(x: Probability): Probability
+    MaxValue(_: Probability): Probability
         => new Probability(Number.MaxValue);
 
     LessThanOrEquals(a: Probability, b: Probability): Boolean

@@ -1,7 +1,7 @@
 //==
 // # Colors - color arithmetic
 //
-// Implementation bodies for `Color` (`color.plato`): the `Numerical`
+// Implementation bodies for `Color` (`color.types.plato`): the `Numerical`
 // obligations (Additive, Scalable, Interpolatable, NumericalLimits), computed
 // component-wise over R/G/B/A including alpha. The 141 CSS/X11 named colors,
 // which were the second half of this file, now live in
@@ -50,19 +50,19 @@ library Colors
         => (a.R.Modulo(scalar), a.G.Modulo(scalar), a.B.Modulo(scalar), a.A.Modulo(scalar));
 
     // The additive identity: transparent black.
-    Zero(x: Color): Color
+    Zero(_: Color): Color
         => (0.0, 0.0, 0.0, 0.0);
 
     // The multiplicative unit: opaque white.
-    One(x: Color): Color
+    One(_: Color): Color
         => (1.0, 1.0, 1.0, 1.0);
 
     // The component-wise least representable value.
-    MinValue(x: Color): Color
+    MinValue(_: Color): Color
         => (Number.MinValue, Number.MinValue, Number.MinValue, Number.MinValue);
 
     // The component-wise greatest representable value.
-    MaxValue(x: Color): Color
+    MaxValue(_: Color): Color
         => (Number.MaxValue, Number.MaxValue, Number.MaxValue, Number.MaxValue);
 
     //==

@@ -198,15 +198,22 @@ namespace Ara3D.Geometry.Compiler.Analysis
         // (CSharpFunctionInfo.IsStatic => ParameterNames[0] == "_") and emits a
         // static member for '_' and an instance member otherwise.
         //
-        // So when a concept declares Zero(x: Self) and the implementation writes
-        // Zero(_: Color), the interface gets an instance member and the type gets a
-        // static one — which cannot satisfy it (C# CS0736). The reverse disagreement
-        // is just as real: concept Vector declared Broadcast(_: Self, x) while
-        // VectorN.Broadcast uses its receiver for arity.
+        // A concept declaring Zero(x: Self) with an implementation written
+        // Zero(_: Color) is LEGAL since the type-token-members increment: the C#
+        // writer emits the pair `public static Color Zero()` + explicit interface
+        // implementation `Color Additive<Color>.Zero() => Zero();`, so the static
+        // fill satisfies the instance obligation and the member is reachable both
+        // as Color.Zero() and off a value. That direction is no longer flagged.
         //
-        // Nothing else in the language looks at a parameter NAME, so neither
-        // direction was caught until C# compilation, more than a thousand generated
-        // files downstream. This rule is the gate: it puts the disagreement at the
+        // The REVERSE disagreement is still always a bug: when the obligation
+        // marks the receiver '_' (type-level; `static abstract` in C# under
+        // --static-abstract) an instance implementation cannot satisfy it, and
+        // some implementors genuinely need the receiver (VectorN-style types read
+        // their arity from it), which means the obligation itself is wrong.
+        //
+        // Nothing else in the language looks at a parameter NAME, so this was not
+        // caught until C# compilation, more than a thousand generated files
+        // downstream. This rule is the gate: it puts the disagreement at the
         // implementation, at lint time, in any backend. See plato-312 and the
         // 2026-07-29 static-concept-members ADR.
         // -------------------------------------------------------------------
@@ -239,19 +246,21 @@ namespace Ara3D.Geometry.Compiler.Analysis
                     if (obligationIsTypeLevel == HasIgnoredReceiver(impl))
                         continue;
 
+                    // Instance obligation discharged by a '_' fill: legal — the writer emits the
+                    // static + an explicit interface implementation forwarding to it (both the
+                    // Type.Member and value.Member surfaces work). Only the reverse is a defect.
+                    if (!obligationIsTypeLevel)
+                        continue;
+
                     var owner = declared.Implementation.OwnerType?.Name ?? declared.InterfaceName;
-                    var advice = obligationIsTypeLevel
-                        ? $"the '{owner}' obligation marks the receiver '_' (type-level, emitted static) but this " +
-                          $"implementation names it '{impl.ParameterNames[0]}' (emitted as an instance member)"
-                        : $"this implementation marks the receiver '_' (type-level, emitted static) but the " +
-                          $"'{owner}' obligation names it '{declared.ParameterNames[0]}' (an instance member)";
 
                     // Anchored at the IMPLEMENTATION: that is the edit site, and it collapses one
                     // finding per concrete type down to one per offending body.
                     Add(GetLocation(impl.Implementation) ?? GetLocation(ct.TypeDef), "LINT012", LintSeverity.Warning,
-                        $"'{impl.SignatureId}': {advice}. A static member cannot implement an instance " +
-                        $"obligation (C# CS0736) and vice versa; use '_' on both when the operation is " +
-                        $"type-level, or a name on both when any implementor needs the receiver");
+                        $"'{impl.SignatureId}': the '{owner}' obligation marks the receiver '_' (type-level, " +
+                        $"emitted static) but this implementation names it '{impl.ParameterNames[0]}' (emitted " +
+                        $"as an instance member, which cannot satisfy it). Name the receiver in the obligation " +
+                        $"if any implementor needs the value, or mark this implementation's receiver '_'");
                 }
             }
         }

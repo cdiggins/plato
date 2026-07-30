@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Plato Status Report — 2026-07-30 12:07 Eastern Daylight Time</title>
+<title>Plato Status Report — 2026-07-30 12:26 Eastern Daylight Time</title>
 <style>
 :root {
   --bg: #0f1419; --panel: #1a222c; --panel2: #232d3a; --text: #e7ecf2;
@@ -82,10 +82,10 @@ tr.muted-row { opacity: .55; }
 <body>
 <header>
   <h1>Plato status report</h1>
-  <div class="meta">Generated 2026-07-30 12:07:26 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>9aea28e</code></div>
+  <div class="meta">Generated 2026-07-30 12:26:18 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>374b214</code></div>
   <div class="overall">
     <span><span class="badge attention">ATTENTION</span></span>
-    <span>304 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-30T11:59:20-04:00; live git/tracker refreshed this generation.</span>
+    <span>15 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-07-30T12:20:31-04:00; live git/tracker refreshed this generation.</span>
   </div>
 </header>
 <main>
@@ -94,12 +94,12 @@ tr.muted-row { opacity: .55; }
   <h2>Snapshot</h2>
   <div class="grid">
     <div class="card"><div class="n">main</div><div class="l">Branch · <span class="badge pass">synced</span></div></div>
-    <div class="card"><div class="n">9aea28e</div><div class="l">HEAD</div></div>
-    <div class="card"><div class="n">304</div><div class="l">Dirty paths</div></div>
-    <div class="card"><div class="n">29</div><div class="l">Commits today</div></div>
-    <div class="card"><div class="n">187</div><div class="l">Commits last 7 days</div></div>
+    <div class="card"><div class="n">374b214</div><div class="l">HEAD</div></div>
+    <div class="card"><div class="n">15</div><div class="l">Dirty paths</div></div>
+    <div class="card"><div class="n">30</div><div class="l">Commits today</div></div>
+    <div class="card"><div class="n">188</div><div class="l">Commits last 7 days</div></div>
     <div class="card"><div class="n">7</div><div class="l">Issues in progress</div></div>
-    <div class="card"><div class="n">46</div><div class="l">Latest C# errors (forward-conformance)</div></div>
+    <div class="card"><div class="n">0</div><div class="l">Latest C# errors (plato-generated-optimized)</div></div>
   </div>
 </section>
 
@@ -107,641 +107,56 @@ tr.muted-row { opacity: .55; }
   <h2>Git — Plato</h2>
   <div class="kv">
     <div class="k">Status</div><div><code>## main...origin/main
- M Plato.CSharpWriter/CSharpConcreteTypeWriter.cs
- M Plato.Intrinsics.V2/Integer.cs
- M Plato.Intrinsics.V3/Integer.cs
-MM docs/status-report-snapshot.json
-M  stdlib/CONVENTIONS.md
-M  stdlib/LIBRARIES.md
-M  stdlib/README.md
-M  stdlib/algebra-numeric.library.plato
-M  stdlib/angles.library.plato
-M  stdlib/axes-2d.library.plato
-M  stdlib/axes-signed.library.plato
-M  stdlib/axes.library.plato
-R  stdlib/axes.plato -&gt; stdlib/axes.types.plato
-M  stdlib/brep-primitives.library.plato
-M  stdlib/brep-tessellate.library.plato
-M  stdlib/brep.concepts.plato
-M  stdlib/brep.library.plato
-R  stdlib/brep.plato -&gt; stdlib/brep.types.plato
-R  stdlib/cameras-optics.plato -&gt; stdlib/cameras-optics.types.plato
-M  stdlib/cameras.concepts.plato
-R  stdlib/cameras.plato -&gt; stdlib/cameras.types.plato
-R  stdlib/collections-jagged.plato -&gt; stdlib/collections-jagged.types.plato
-R  stdlib/collision-contacts.plato -&gt; stdlib/collision-contacts.types.plato
-R  stdlib/collision.plato -&gt; stdlib/collision.types.plato
-M  stdlib/color-named.library.plato
-R  stdlib/color-spaces-models.plato -&gt; stdlib/color-spaces-models.types.plato
-R  stdlib/color-spaces-palettes.plato -&gt; stdlib/color-spaces-palettes.types.plato
-R  stdlib/color-spaces-video.plato -&gt; stdlib/color-spaces-video.types.plato
-M  stdlib/color-spaces.library.plato
-R  stdlib/color-spaces.plato -&gt; stdlib/color-spaces.types.plato
- M stdlib/color.library.plato
-R  stdlib/color.plato -&gt; stdlib/color.types.plato
-M  stdlib/core-comparison.library.plato
-M  stdlib/curves-2d-arcs.library.plato
-R  stdlib/curves-2d-arcs.plato -&gt; stdlib/curves-2d-arcs.types.plato
-M  stdlib/curves-2d-polar.library.plato
-R  stdlib/curves-2d-polar.plato -&gt; stdlib/curves-2d-polar.types.plato
-M  stdlib/curves-2d-spirals.library.plato
-R  stdlib/curves-2d-spirals.plato -&gt; stdlib/curves-2d-spirals.types.plato
-M  stdlib/curves-3d.library.plato
-R  stdlib/curves-3d.plato -&gt; stdlib/curves-3d.types.plato
-M  stdlib/deformations.library.plato
-R  stdlib/deformations.plato -&gt; stdlib/deformations.types.plato
-R  stdlib/differential-geometry-frames.plato -&gt; stdlib/differential-geometry-frames.types.plato
-R  stdlib/differential-geometry-geodesics.plato -&gt; stdlib/differential-geometry-geodesics.types.plato
-R  stdlib/differential-geometry-surfaces.plato -&gt; stdlib/differential-geometry-surfaces.types.plato
-M  stdlib/easing.concepts.plato
-M  stdlib/easing.library.plato
-R  stdlib/easing.plato -&gt; stdlib/easing.types.plato
-R  stdlib/engineering-beams.plato -&gt; stdlib/engineering-beams.types.plato
-R  stdlib/engineering-machine-elements.plato -&gt; stdlib/engineering-machine-elements.types.plato
-R  stdlib/engineering-materials.plato -&gt; stdlib/engineering-materials.types.plato
-R  stdlib/engineering-sections.plato -&gt; stdlib/engineering-sections.types.plato
-R  stdlib/fields-constant.plato -&gt; stdlib/fields-constant.types.plato
-R  stdlib/fields-function.plato -&gt; stdlib/fields-function.types.plato
-M  stdlib/fields-graphs.library.plato
-R  stdlib/fields-graphs.plato -&gt; stdlib/fields-graphs.types.plato
-M  stdlib/fields-implicits-function.library.plato
-M  stdlib/fields-implicits-metaballs.library.plato
-M  stdlib/fields-implicits-nodes.library.plato
-M  stdlib/fields-implicits-sampled.library.plato
-M  stdlib/fields-implicits-shapes.library.plato
-R  stdlib/geo-spatial-rasters.plato -&gt; stdlib/geo-spatial-rasters.types.plato
-R  stdlib/geo-spatial-reference-systems.plato -&gt; stdlib/geo-spatial-reference-systems.types.plato
-R  stdlib/geo-spatial.plato -&gt; stdlib/geo-spatial.types.plato
-M  stdlib/geometry-kernels.library.plato
-M  stdlib/geometry-measures.library.plato
-R  stdlib/graphs-algorithms.plato -&gt; stdlib/graphs-algorithms.types.plato
-R  stdlib/graphs.plato -&gt; stdlib/graphs.types.plato
-R  stdlib/higher-dimensions-fractals.plato -&gt; stdlib/higher-dimensions-fractals.types.plato
-R  stdlib/higher-dimensions.plato -&gt; stdlib/higher-dimensions.types.plato
-R  stdlib/image-processing-adjustments.plato -&gt; stdlib/image-processing-adjustments.types.plato
-R  stdlib/image-processing-compositing.plato -&gt; stdlib/image-processing-compositing.types.plato
-R  stdlib/image-processing-filters.plato -&gt; stdlib/image-processing-filters.types.plato
-R  stdlib/image-processing-resampling.plato -&gt; stdlib/image-processing-resampling.types.plato
-R  stdlib/images-containers.plato -&gt; stdlib/images-containers.types.plato
-M  stdlib/images.concepts.plato
-R  stdlib/images.plato -&gt; stdlib/images.types.plato
-M  stdlib/implicit-sdf-bounded.library.plato
-R  stdlib/implicit-sdf-bounded.plato -&gt; stdlib/implicit-sdf-bounded.types.plato
-R  stdlib/implicit-sdf-function.plato -&gt; stdlib/implicit-sdf-function.types.plato
-R  stdlib/implicit-sdf-metaballs.plato -&gt; stdlib/implicit-sdf-metaballs.types.plato
-M  stdlib/implicit-sdf-modifiers.library.plato
-R  stdlib/implicit-sdf-modifiers.plato -&gt; stdlib/implicit-sdf-modifiers.types.plato
-M  stdlib/implicit-sdf-sampled.library.plato
-R  stdlib/implicit-sdf-sampled.plato -&gt; stdlib/implicit-sdf-sampled.types.plato
-M  stdlib/implicit-sdf-trees.library.plato
-R  stdlib/implicit-sdf-trees.plato -&gt; stdlib/implicit-sdf-trees.types.plato
-M  stdlib/implicit-sdf.concepts.plato
-M  stdlib/intervals-bounds.concepts.plato
-R  stdlib/intervals-bounds.plato -&gt; stdlib/intervals-bounds.types.plato
-M  stdlib/intervals-sizes.library.plato
-R  stdlib/intervals-sizes.plato -&gt; stdlib/intervals-sizes.types.plato
-M  stdlib/intervals-transforms-bounds.library.plato
-M  stdlib/intervals-transforms-transformable.library.plato
-R  stdlib/intervals.plato -&gt; stdlib/intervals.types.plato
- M stdlib/intrinsics-scalars.library.plato
-R  stdlib/joints-2d.plato -&gt; stdlib/joints-2d.types.plato
-R  stdlib/joints-3d.plato -&gt; stdlib/joints-3d.types.plato
-R  stdlib/joints-limits.plato -&gt; stdlib/joints-limits.types.plato
-R  stdlib/keyframes-blending.plato -&gt; stdlib/keyframes-blending.types.plato
-R  stdlib/keyframes-clips.plato -&gt; stdlib/keyframes-clips.types.plato
-M  stdlib/keyframes-tracks.concepts.plato
-M  stdlib/keyframes-tracks.library.plato
-R  stdlib/keyframes-tracks.plato -&gt; stdlib/keyframes-tracks.types.plato
-R  stdlib/kinematics-trajectories.plato -&gt; stdlib/kinematics-trajectories.types.plato
-R  stdlib/kinematics.plato -&gt; stdlib/kinematics.types.plato
-R  stdlib/lights-settings.plato -&gt; stdlib/lights-settings.types.plato
-M  stdlib/lights.concepts.plato
-R  stdlib/lights.plato -&gt; stdlib/lights.types.plato
-M  stdlib/lines-planes.library.plato
-R  stdlib/lines-planes.plato -&gt; stdlib/lines-planes.types.plato
-M  stdlib/lines.library.plato
-R  stdlib/lines.plato -&gt; stdlib/lines.types.plato
-R  stdlib/materials-layers.plato -&gt; stdlib/materials-layers.types.plato
-R  stdlib/materials.plato -&gt; stdlib/materials.types.plato
-M  stdlib/matrices.concepts.plato
-R  stdlib/matrices.plato -&gt; stdlib/matrices.types.plato
-M  stdlib/mesh-attributes.library.plato
-R  stdlib/mesh-attributes.plato -&gt; stdlib/mesh-attributes.types.plato
-M  stdlib/meshes-face-arrays.library.plato
-R  stdlib/meshes-face-arrays.plato -&gt; stdlib/meshes-face-arrays.types.plato
-M  stdlib/meshes-faces.library.plato
-M  stdlib/meshes-indexed.library.plato
-M  stdlib/meshes-lines-points.library.plato
-R  stdlib/meshes-lines-points.plato -&gt; stdlib/meshes-lines-points.types.plato
-M  stdlib/meshes-polygon-incidence.library.plato
-M  stdlib/meshes-sections.library.plato
-R  stdlib/meshes-sections.plato -&gt; stdlib/meshes-sections.types.plato
-M  stdlib/meshes-volumetric.library.plato
-R  stdlib/meshes-volumetric.plato -&gt; stdlib/meshes-volumetric.types.plato
-R  stdlib/meshes.plato -&gt; stdlib/meshes.types.plato
-R  stdlib/motion-graphics-procedural.plato -&gt; stdlib/motion-graphics-procedural.types.plato
-R  stdlib/motion-graphics-timing.plato -&gt; stdlib/motion-graphics-timing.types.plato
-R  stdlib/motion-graphics.plato -&gt; stdlib/motion-graphics.types.plato
-R  stdlib/noise-basis.plato -&gt; stdlib/noise-basis.types.plato
-R  stdlib/noise-fractal.plato -&gt; stdlib/noise-fractal.types.plato
-R  stdlib/noise-warped.plato -&gt; stdlib/noise-warped.types.plato
-R  stdlib/noise.plato -&gt; stdlib/noise.types.plato
- M stdlib/numbers.library.plato
-R  stdlib/numbers.plato -&gt; stdlib/numbers.types.plato
-M  stdlib/numeric-structures-coordinate.library.plato
- M stdlib/numeric-structures-matrix.library.plato
-R  stdlib/optimization-programs.plato -&gt; stdlib/optimization-programs.types.plato
-R  stdlib/optimization-solvers.plato -&gt; stdlib/optimization-solvers.types.plato
-R  stdlib/optimization.plato -&gt; stdlib/optimization.types.plato
-R  stdlib/particles-force-fields.plato -&gt; stdlib/particles-force-fields.types.plato
-R  stdlib/particles-simulation.plato -&gt; stdlib/particles-simulation.types.plato
-R  stdlib/particles-soft-bodies.plato -&gt; stdlib/particles-soft-bodies.types.plato
-M  stdlib/paths.concepts.plato
-R  stdlib/paths.plato -&gt; stdlib/paths.types.plato
-M  stdlib/planar-boxes.library.plato
-R  stdlib/planar-boxes.plato -&gt; stdlib/planar-boxes.types.plato
-M  stdlib/planar-circles.library.plato
-R  stdlib/planar-circles.plato -&gt; stdlib/planar-circles.types.plato
-M  stdlib/planar-ellipses.library.plato
-R  stdlib/planar-ellipses.plato -&gt; stdlib/planar-ellipses.types.plato
-M  stdlib/planar-triangles.library.plato
-R  stdlib/planar-triangles.plato -&gt; stdlib/planar-triangles.types.plato
-M  stdlib/pointclouds.library.plato
-R  stdlib/pointclouds.plato -&gt; stdlib/pointclouds.types.plato
-R  stdlib/points-curvilinear.plato -&gt; stdlib/points-curvilinear.types.plato
-R  stdlib/points-parametric.plato -&gt; stdlib/points-parametric.types.plato
-M  stdlib/points.concepts.plato
-R  stdlib/points.plato -&gt; stdlib/points.types.plato
-M  stdlib/polygons-polylines.library.plato
-R  stdlib/polygons-polylines.plato -&gt; stdlib/polygons-polylines.types.plato
-M  stdlib/polygons-spatial.library.plato
-R  stdlib/polygons-spatial.plato -&gt; stdlib/polygons-spatial.types.plato
-M  stdlib/polygons.library.plato
-R  stdlib/polygons.plato -&gt; stdlib/polygons.types.plato
-M  stdlib/polyhedra-catalog.library.plato
-M  stdlib/polyhedra-duals.library.plato
-R  stdlib/polynomials-composite.plato -&gt; stdlib/polynomials-composite.types.plato
-R  stdlib/polynomials-series.plato -&gt; stdlib/polynomials-series.types.plato
-M  stdlib/polynomials.library.plato
-R  stdlib/polynomials.plato -&gt; stdlib/polynomials.types.plato
-R  stdlib/primitives-arrays.plato -&gt; stdlib/primitives-arrays.types.plato
-M  stdlib/primitives-builders.library.plato
-R  stdlib/primitives-builders.plato -&gt; stdlib/primitives-builders.types.plato
-R  stdlib/primitives-functions.plato -&gt; stdlib/primitives-functions.types.plato
-R  stdlib/primitives-tuples.plato -&gt; stdlib/primitives-tuples.types.plato
-R  stdlib/primitives.plato -&gt; stdlib/primitives.types.plato
-R  stdlib/quantities-dynamic.plato -&gt; stdlib/quantities-dynamic.types.plato
-R  stdlib/quantities-electromagnetic.plato -&gt; stdlib/quantities-electromagnetic.types.plato
-R  stdlib/quantities-geometric.plato -&gt; stdlib/quantities-geometric.types.plato
-R  stdlib/quantities-kinematic.plato -&gt; stdlib/quantities-kinematic.types.plato
-R  stdlib/quantities-material.plato -&gt; stdlib/quantities-material.types.plato
-R  stdlib/quantities-mechanical.plato -&gt; stdlib/quantities-mechanical.types.plato
-R  stdlib/quantities-photometric.plato -&gt; stdlib/quantities-photometric.types.plato
-M  stdlib/quantities-projections.library.plato
-R  stdlib/quantities-thermal.plato -&gt; stdlib/quantities-thermal.types.plato
-R  stdlib/random-continuous-gamma.plato -&gt; stdlib/random-continuous-gamma.types.plato
-M  stdlib/random-continuous-tails.library.plato
-M  stdlib/random-continuous.library.plato
-R  stdlib/random-continuous.plato -&gt; stdlib/random-continuous.types.plato
-M  stdlib/random-discrete.library.plato
-R  stdlib/random-discrete.plato -&gt; stdlib/random-discrete.types.plato
-R  stdlib/random-multivariate.plato -&gt; stdlib/random-multivariate.types.plato
-R  stdlib/random.plato -&gt; stdlib/random.types.plato
-R  stdlib/render-post-processing.plato -&gt; stdlib/render-post-processing.types.plato
-R  stdlib/render-settings.plato -&gt; stdlib/render-settings.types.plato
-R  stdlib/render-vertex-layout.plato -&gt; stdlib/render-vertex-layout.types.plato
-R  stdlib/rigid-dynamics-forces.plato -&gt; stdlib/rigid-dynamics-forces.types.plato
-R  stdlib/rigid-dynamics.plato -&gt; stdlib/rigid-dynamics.types.plato
-R  stdlib/rotations.plato -&gt; stdlib/rotations.types.plato
-M  stdlib/sampling-curves.library.plato
-R  stdlib/sampling-curves.plato -&gt; stdlib/sampling-curves.types.plato
-R  stdlib/sampling-fields.plato -&gt; stdlib/sampling-fields.types.plato
-R  stdlib/sampling-grids.plato -&gt; stdlib/sampling-grids.types.plato
-R  stdlib/sampling-patterns.plato -&gt; stdlib/sampling-patterns.types.plato
-R  stdlib/sampling-resampling.plato -&gt; stdlib/sampling-resampling.types.plato
-R  stdlib/scene2d.plato -&gt; stdlib/scene2d.types.plato
-R  stdlib/scene3d-indices.plato -&gt; stdlib/scene3d-indices.types.plato
-R  stdlib/scene3d-instancing.plato -&gt; stdlib/scene3d-instancing.types.plato
-R  stdlib/scene3d.plato -&gt; stdlib/scene3d.types.plato
-R  stdlib/scientific-data-records.plato -&gt; stdlib/scientific-data-records.types.plato
-R  stdlib/scientific-data-series.plato -&gt; stdlib/scientific-data-series.types.plato
-R  stdlib/signals-filters.plato -&gt; stdlib/signals-filters.types.plato
-R  stdlib/signals-generators.plato -&gt; stdlib/signals-generators.types.plato
-R  stdlib/signals.plato -&gt; stdlib/signals.types.plato
-R  stdlib/skeletal-animation-constraints.plato -&gt; stdlib/skeletal-animation-constraints.types.plato
-R  stdlib/skeletal-animation.plato -&gt; stdlib/skeletal-animation.types.plato
-M  stdlib/solids-csg-clipping.library.plato
-M  stdlib/solids-csg-soups.library.plato
-R  stdlib/solids-csg-soups.plato -&gt; stdlib/solids-csg-soups.types.plato
-R  stdlib/solids-csg.plato -&gt; stdlib/solids-csg.types.plato
-R  stdlib/solids-generated.plato -&gt; stdlib/solids-generated.types.plato
-M  stdlib/solids-polyhedra.library.plato
-R  stdlib/solids-polyhedra.plato -&gt; stdlib/solids-polyhedra.types.plato
-M  stdlib/solids.library.plato
-M  stdlib/spatial-boxes.library.plato
-R  stdlib/spatial-boxes.plato -&gt; stdlib/spatial-boxes.types.plato
-M  stdlib/spatial-capsules.library.plato
-M  stdlib/spatial-cylinders.library.plato
-R  stdlib/spatial-cylinders.plato -&gt; stdlib/spatial-cylinders.types.plato
-R  stdlib/spatial-grids.plato -&gt; stdlib/spatial-grids.types.plato
-R  stdlib/spatial-implicits.plato -&gt; stdlib/spatial-implicits.types.plato
-R  stdlib/spatial-kdtrees.plato -&gt; stdlib/spatial-kdtrees.types.plato
-M  stdlib/spatial-patches.library.plato
-R  stdlib/spatial-patches.plato -&gt; stdlib/spatial-patches.types.plato
-R  stdlib/spatial-queries-overlap.plato -&gt; stdlib/spatial-queries-overlap.types.plato
-R  stdlib/spatial-queries-proximity.plato -&gt; stdlib/spatial-queries-proximity.types.plato
-R  stdlib/spatial-queries-rays.plato -&gt; stdlib/spatial-queries-rays.types.plato
-M  stdlib/spatial-simplices.library.plato
-R  stdlib/spatial-simplices.plato -&gt; stdlib/spatial-simplices.types.plato
-M  stdlib/spatial-spheres.library.plato
-R  stdlib/spatial-spheres.plato -&gt; stdlib/spatial-spheres.types.plato
-M  stdlib/spatial-tori.library.plato
-R  stdlib/spatial-tori.plato -&gt; stdlib/spatial-tori.types.plato
-R  stdlib/spatial-trees.plato -&gt; stdlib/spatial-trees.types.plato
-M  stdlib/splines-bezier.library.plato
-R  stdlib/splines-bezier.plato -&gt; stdlib/splines-bezier.types.plato
-M  stdlib/splines-bspline.library.plato
-R  stdlib/splines-bspline.plato -&gt; stdlib/splines-bspline.types.plato
-M  stdlib/splines-hermite.library.plato
-R  stdlib/splines-hermite.plato -&gt; stdlib/splines-hermite.types.plato
-M  stdlib/splines-interpolating.library.plato
-R  stdlib/splines-interpolating.plato -&gt; stdlib/splines-interpolating.types.plato
-M  stdlib/statistics-correlation.library.plato
-R  stdlib/statistics-correlation.plato -&gt; stdlib/statistics-correlation.types.plato
-M  stdlib/statistics.library.plato
-R  stdlib/statistics.plato -&gt; stdlib/statistics.types.plato
-R  stdlib/surfaces-generated.plato -&gt; stdlib/surfaces-generated.types.plato
-R  stdlib/surfaces-patches.plato -&gt; stdlib/surfaces-patches.types.plato
-R  stdlib/surfaces-special.plato -&gt; stdlib/surfaces-special.types.plato
-M  stdlib/surfaces.library.plato
-R  stdlib/text-fonts.plato -&gt; stdlib/text-fonts.types.plato
-R  stdlib/text-glyphs.plato -&gt; stdlib/text-glyphs.types.plato
-R  stdlib/text-layout.plato -&gt; stdlib/text-layout.types.plato
-R  stdlib/texturing-sampling.plato -&gt; stdlib/texturing-sampling.types.plato
-M  stdlib/texturing.concepts.plato
-M  stdlib/texturing.library.plato
-R  stdlib/texturing.plato -&gt; stdlib/texturing.types.plato
-M  stdlib/time.library.plato
-R  stdlib/time.plato -&gt; stdlib/time.types.plato
-M  stdlib/topology-adjacency.library.plato
-R  stdlib/topology-adjacency.plato -&gt; stdlib/topology-adjacency.types.plato
-R  stdlib/topology-classification.plato -&gt; stdlib/topology-classification.types.plato
-M  stdlib/topology-half-edges.library.plato
-R  stdlib/topology-half-edges.plato -&gt; stdlib/topology-half-edges.types.plato
-R  stdlib/topology-indices.plato -&gt; stdlib/topology-indices.types.plato
-M  stdlib/transforms-affine.library.plato
-R  stdlib/transforms-affine.plato -&gt; stdlib/transforms-affine.types.plato
-M  stdlib/transforms-frames.library.plato
-R  stdlib/transforms-frames.plato -&gt; stdlib/transforms-frames.types.plato
-M  stdlib/transforms-motor.library.plato
-R  stdlib/transforms-motor.plato -&gt; stdlib/transforms-motor.types.plato
-M  stdlib/transforms-pose.library.plato
-R  stdlib/transforms-pose.plato -&gt; stdlib/transforms-pose.types.plato
-M  stdlib/transforms-rotations.library.plato
-M  stdlib/transforms-trs.library.plato
-R  stdlib/transforms-trs.plato -&gt; stdlib/transforms-trs.types.plato
-R  stdlib/uncertainty-estimation.plato -&gt; stdlib/uncertainty-estimation.types.plato
-R  stdlib/uncertainty.plato -&gt; stdlib/uncertainty.types.plato
-R  stdlib/vector-styling-paint.plato -&gt; stdlib/vector-styling-paint.types.plato
-R  stdlib/vector-styling-stroke.plato -&gt; stdlib/vector-styling-stroke.types.plato
-R  stdlib/vectors-geometric.plato -&gt; stdlib/vectors-geometric.types.plato
-M  stdlib/vectors-integer.library.plato
-R  stdlib/vectors-integer.plato -&gt; stdlib/vectors-integer.types.plato
-R  stdlib/vectors-tuples.plato -&gt; stdlib/vectors-tuples.types.plato
-M  stdlib/vectors.concepts.plato
-R  stdlib/voxels.plato -&gt; stdlib/voxels.types.plato
+M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs
+M  Plato.Intrinsics.V2/Integer.cs
+M  Plato.Intrinsics.V3/Integer.cs
+M  PlatoCompiler/Analysis/Linter.cs
+ M docs/status-report-snapshot.json
+ M docs/status-report.html
+M  stdlib/color.library.plato
+M  stdlib/intrinsics-scalars.library.plato
+M  stdlib/numbers.library.plato
+M  stdlib/numeric-structures-matrix.library.plato
 ?? .claude/
-?? tools/regen-forward-conformance.ps1</code></div>
-    <div class="k">HEAD</div><div><code>9aea28e0d84335f2c3cfeda44eb21284f04fc232</code></div>
-    <div class="k">origin/main</div><div><code>9aea28e0d84335f2c3cfeda44eb21284f04fc232</code></div>
+?? Plato.Navigation.Tests/CheckSupportTests.cs
+?? Plato.Navigation.Tests/CheckTimingTests.cs
+?? Plato.Navigation.Tests/StyleCheckerTests.cs
+?? Plato.Navigation/CheckSupport.cs
+?? Plato.Navigation/StyleChecker.cs</code></div>
+    <div class="k">HEAD</div><div><code>374b2145be6a5ffa2e8d2bc8af1462184993bd07</code></div>
+    <div class="k">origin/main</div><div><code>374b2145be6a5ffa2e8d2bc8af1462184993bd07</code></div>
     <div class="k">Unpushed</div><div><span class="muted">in sync with origin/main</span></div>
-    <div class="k">Dirty (excl. .claude/)</div><div><code>M Plato.CSharpWriter/CSharpConcreteTypeWriter.cs<br> M Plato.Intrinsics.V2/Integer.cs<br> M Plato.Intrinsics.V3/Integer.cs<br>MM docs/status-report-snapshot.json<br>M  stdlib/CONVENTIONS.md<br>M  stdlib/LIBRARIES.md<br>M  stdlib/README.md<br>M  stdlib/algebra-numeric.library.plato<br>M  stdlib/angles.library.plato<br>M  stdlib/axes-2d.library.plato<br>M  stdlib/axes-signed.library.plato<br>M  stdlib/axes.library.plato<br>R  stdlib/axes.plato -&gt; stdlib/axes.types.plato<br>M  stdlib/brep-primitives.library.plato<br>M  stdlib/brep-tessellate.library.plato<br>M  stdlib/brep.concepts.plato<br>M  stdlib/brep.library.plato<br>R  stdlib/brep.plato -&gt; stdlib/brep.types.plato<br>R  stdlib/cameras-optics.plato -&gt; stdlib/cameras-optics.types.plato<br>M  stdlib/cameras.concepts.plato<br>R  stdlib/cameras.plato -&gt; stdlib/cameras.types.plato<br>R  stdlib/collections-jagged.plato -&gt; stdlib/collections-jagged.types.plato<br>R  stdlib/collision-contacts.plato -&gt; stdlib/collision-contacts.types.plato<br>R  stdlib/collision.plato -&gt; stdlib/collision.types.plato<br>M  stdlib/color-named.library.plato<br>R  stdlib/color-spaces-models.plato -&gt; stdlib/color-spaces-models.types.plato<br>R  stdlib/color-spaces-palettes.plato -&gt; stdlib/color-spaces-palettes.types.plato<br>R  stdlib/color-spaces-video.plato -&gt; stdlib/color-spaces-video.types.plato<br>M  stdlib/color-spaces.library.plato<br>R  stdlib/color-spaces.plato -&gt; stdlib/color-spaces.types.plato<br> M stdlib/color.library.plato<br>R  stdlib/color.plato -&gt; stdlib/color.types.plato<br>M  stdlib/core-comparison.library.plato<br>M  stdlib/curves-2d-arcs.library.plato<br>R  stdlib/curves-2d-arcs.plato -&gt; stdlib/curves-2d-arcs.types.plato<br>M  stdlib/curves-2d-polar.library.plato<br>R  stdlib/curves-2d-polar.plato -&gt; stdlib/curves-2d-polar.types.plato<br>M  stdlib/curves-2d-spirals.library.plato<br>R  stdlib/curves-2d-spirals.plato -&gt; stdlib/curves-2d-spirals.types.plato<br>M  stdlib/curves-3d.library.plato<br>R  stdlib/curves-3d.plato -&gt; stdlib/curves-3d.types.plato<br>M  stdlib/deformations.library.plato<br>R  stdlib/deformations.plato -&gt; stdlib/deformations.types.plato<br>R  stdlib/differential-geometry-frames.plato -&gt; stdlib/differential-geometry-frames.types.plato<br>R  stdlib/differential-geometry-geodesics.plato -&gt; stdlib/differential-geometry-geodesics.types.plato<br>R  stdlib/differential-geometry-surfaces.plato -&gt; stdlib/differential-geometry-surfaces.types.plato<br>M  stdlib/easing.concepts.plato<br>M  stdlib/easing.library.plato<br>R  stdlib/easing.plato -&gt; stdlib/easing.types.plato<br>R  stdlib/engineering-beams.plato -&gt; stdlib/engineering-beams.types.plato<br>R  stdlib/engineering-machine-elements.plato -&gt; stdlib/engineering-machine-elements.types.plato<br>R  stdlib/engineering-materials.plato -&gt; stdlib/engineering-materials.types.plato<br>R  stdlib/engineering-sections.plato -&gt; stdlib/engineering-sections.types.plato<br>R  stdlib/fields-constant.plato -&gt; stdlib/fields-constant.types.plato<br>R  stdlib/fields-function.plato -&gt; stdlib/fields-function.types.plato<br>M  stdlib/fields-graphs.library.plato<br>R  stdlib/fields-graphs.plato -&gt; stdlib/fields-graphs.types.plato<br>M  stdlib/fields-implicits-function.library.plato<br>M  stdlib/fields-implicits-metaballs.library.plato<br>M  stdlib/fields-implicits-nodes.library.plato<br>M  stdlib/fields-implicits-sampled.library.plato<br>M  stdlib/fields-implicits-shapes.library.plato<br>R  stdlib/geo-spatial-rasters.plato -&gt; stdlib/geo-spatial-rasters.types.plato<br>R  stdlib/geo-spatial-reference-systems.plato -&gt; stdlib/geo-spatial-reference-systems.types.plato<br>R  stdlib/geo-spatial.plato -&gt; stdlib/geo-spatial.types.plato<br>M  stdlib/geometry-kernels.library.plato<br>M  stdlib/geometry-measures.library.plato<br>R  stdlib/graphs-algorithms.plato -&gt; stdlib/graphs-algorithms.types.plato<br>R  stdlib/graphs.plato -&gt; stdlib/graphs.types.plato<br>R  stdlib/higher-dimensions-fractals.plato -&gt; stdlib/higher-dimensions-fractals.types.plato<br>R  stdlib/higher-dimensions.plato -&gt; stdlib/higher-dimensions.types.plato<br>R  stdlib/image-processing-adjustments.plato -&gt; stdlib/image-processing-adjustments.types.plato<br>R  stdlib/image-processing-compositing.plato -&gt; stdlib/image-processing-compositing.types.plato<br>R  stdlib/image-processing-filters.plato -&gt; stdlib/image-processing-filters.types.plato<br>R  stdlib/image-processing-resampling.plato -&gt; stdlib/image-processing-resampling.types.plato<br>R  stdlib/images-containers.plato -&gt; stdlib/images-containers.types.plato<br>M  stdlib/images.concepts.plato<br>R  stdlib/images.plato -&gt; stdlib/images.types.plato<br>M  stdlib/implicit-sdf-bounded.library.plato<br>R  stdlib/implicit-sdf-bounded.plato -&gt; stdlib/implicit-sdf-bounded.types.plato<br>R  stdlib/implicit-sdf-function.plato -&gt; stdlib/implicit-sdf-function.types.plato<br>R  stdlib/implicit-sdf-metaballs.plato -&gt; stdlib/implicit-sdf-metaballs.types.plato<br>M  stdlib/implicit-sdf-modifiers.library.plato<br>R  stdlib/implicit-sdf-modifiers.plato -&gt; stdlib/implicit-sdf-modifiers.types.plato<br>M  stdlib/implicit-sdf-sampled.library.plato<br>R  stdlib/implicit-sdf-sampled.plato -&gt; stdlib/implicit-sdf-sampled.types.plato<br>M  stdlib/implicit-sdf-trees.library.plato<br>R  stdlib/implicit-sdf-trees.plato -&gt; stdlib/implicit-sdf-trees.types.plato<br>M  stdlib/implicit-sdf.concepts.plato<br>M  stdlib/intervals-bounds.concepts.plato<br>R  stdlib/intervals-bounds.plato -&gt; stdlib/intervals-bounds.types.plato<br>M  stdlib/intervals-sizes.library.plato<br>R  stdlib/intervals-sizes.plato -&gt; stdlib/intervals-sizes.types.plato<br>M  stdlib/intervals-transforms-bounds.library.plato<br>M  stdlib/intervals-transforms-transformable.library.plato<br>R  stdlib/intervals.plato -&gt; stdlib/intervals.types.plato<br> M stdlib/intrinsics-scalars.library.plato<br>R  stdlib/joints-2d.plato -&gt; stdlib/joints-2d.types.plato<br>R  stdlib/joints-3d.plato -&gt; stdlib/joints-3d.types.plato<br>R  stdlib/joints-limits.plato -&gt; stdlib/joints-limits.types.plato<br>R  stdlib/keyframes-blending.plato -&gt; stdlib/keyframes-blending.types.plato<br>R  stdlib/keyframes-clips.plato -&gt; stdlib/keyframes-clips.types.plato<br>M  stdlib/keyframes-tracks.concepts.plato<br>M  stdlib/keyframes-tracks.library.plato<br>R  stdlib/keyframes-tracks.plato -&gt; stdlib/keyframes-tracks.types.plato<br>R  stdlib/kinematics-trajectories.plato -&gt; stdlib/kinematics-trajectories.types.plato<br>R  stdlib/kinematics.plato -&gt; stdlib/kinematics.types.plato<br>R  stdlib/lights-settings.plato -&gt; stdlib/lights-settings.types.plato<br>M  stdlib/lights.concepts.plato<br>R  stdlib/lights.plato -&gt; stdlib/lights.types.plato<br>M  stdlib/lines-planes.library.plato<br>R  stdlib/lines-planes.plato -&gt; stdlib/lines-planes.types.plato<br>M  stdlib/lines.library.plato<br>R  stdlib/lines.plato -&gt; stdlib/lines.types.plato<br>R  stdlib/materials-layers.plato -&gt; stdlib/materials-layers.types.plato<br>R  stdlib/materials.plato -&gt; stdlib/materials.types.plato<br>M  stdlib/matrices.concepts.plato<br>R  stdlib/matrices.plato -&gt; stdlib/matrices.types.plato<br>M  stdlib/mesh-attributes.library.plato<br>R  stdlib/mesh-attributes.plato -&gt; stdlib/mesh-attributes.types.plato<br>M  stdlib/meshes-face-arrays.library.plato<br>R  stdlib/meshes-face-arrays.plato -&gt; stdlib/meshes-face-arrays.types.plato<br>M  stdlib/meshes-faces.library.plato<br>M  stdlib/meshes-indexed.library.plato<br>M  stdlib/meshes-lines-points.library.plato<br>R  stdlib/meshes-lines-points.plato -&gt; stdlib/meshes-lines-points.types.plato<br>M  stdlib/meshes-polygon-incidence.library.plato<br>M  stdlib/meshes-sections.library.plato<br>R  stdlib/meshes-sections.plato -&gt; stdlib/meshes-sections.types.plato<br>M  stdlib/meshes-volumetric.library.plato<br>R  stdlib/meshes-volumetric.plato -&gt; stdlib/meshes-volumetric.types.plato<br>R  stdlib/meshes.plato -&gt; stdlib/meshes.types.plato<br>R  stdlib/motion-graphics-procedural.plato -&gt; stdlib/motion-graphics-procedural.types.plato<br>R  stdlib/motion-graphics-timing.plato -&gt; stdlib/motion-graphics-timing.types.plato<br>R  stdlib/motion-graphics.plato -&gt; stdlib/motion-graphics.types.plato<br>R  stdlib/noise-basis.plato -&gt; stdlib/noise-basis.types.plato<br>R  stdlib/noise-fractal.plato -&gt; stdlib/noise-fractal.types.plato<br>R  stdlib/noise-warped.plato -&gt; stdlib/noise-warped.types.plato<br>R  stdlib/noise.plato -&gt; stdlib/noise.types.plato<br> M stdlib/numbers.library.plato<br>R  stdlib/numbers.plato -&gt; stdlib/numbers.types.plato<br>M  stdlib/numeric-structures-coordinate.library.plato<br> M stdlib/numeric-structures-matrix.library.plato<br>R  stdlib/optimization-programs.plato -&gt; stdlib/optimization-programs.types.plato<br>R  stdlib/optimization-solvers.plato -&gt; stdlib/optimization-solvers.types.plato<br>R  stdlib/optimization.plato -&gt; stdlib/optimization.types.plato<br>R  stdlib/particles-force-fields.plato -&gt; stdlib/particles-force-fields.types.plato<br>R  stdlib/particles-simulation.plato -&gt; stdlib/particles-simulation.types.plato<br>R  stdlib/particles-soft-bodies.plato -&gt; stdlib/particles-soft-bodies.types.plato<br>M  stdlib/paths.concepts.plato<br>R  stdlib/paths.plato -&gt; stdlib/paths.types.plato<br>M  stdlib/planar-boxes.library.plato<br>R  stdlib/planar-boxes.plato -&gt; stdlib/planar-boxes.types.plato<br>M  stdlib/planar-circles.library.plato<br>R  stdlib/planar-circles.plato -&gt; stdlib/planar-circles.types.plato<br>M  stdlib/planar-ellipses.library.plato<br>R  stdlib/planar-ellipses.plato -&gt; stdlib/planar-ellipses.types.plato<br>M  stdlib/planar-triangles.library.plato<br>R  stdlib/planar-triangles.plato -&gt; stdlib/planar-triangles.types.plato<br>M  stdlib/pointclouds.library.plato<br>R  stdlib/pointclouds.plato -&gt; stdlib/pointclouds.types.plato<br>R  stdlib/points-curvilinear.plato -&gt; stdlib/points-curvilinear.types.plato<br>R  stdlib/points-parametric.plato -&gt; stdlib/points-parametric.types.plato<br>M  stdlib/points.concepts.plato<br>R  stdlib/points.plato -&gt; stdlib/points.types.plato<br>M  stdlib/polygons-polylines.library.plato<br>R  stdlib/polygons-polylines.plato -&gt; stdlib/polygons-polylines.types.plato<br>M  stdlib/polygons-spatial.library.plato<br>R  stdlib/polygons-spatial.plato -&gt; stdlib/polygons-spatial.types.plato<br>M  stdlib/polygons.library.plato<br>R  stdlib/polygons.plato -&gt; stdlib/polygons.types.plato<br>M  stdlib/polyhedra-catalog.library.plato<br>M  stdlib/polyhedra-duals.library.plato<br>R  stdlib/polynomials-composite.plato -&gt; stdlib/polynomials-composite.types.plato<br>R  stdlib/polynomials-series.plato -&gt; stdlib/polynomials-series.types.plato<br>M  stdlib/polynomials.library.plato<br>R  stdlib/polynomials.plato -&gt; stdlib/polynomials.types.plato<br>R  stdlib/primitives-arrays.plato -&gt; stdlib/primitives-arrays.types.plato<br>M  stdlib/primitives-builders.library.plato<br>R  stdlib/primitives-builders.plato -&gt; stdlib/primitives-builders.types.plato<br>R  stdlib/primitives-functions.plato -&gt; stdlib/primitives-functions.types.plato<br>R  stdlib/primitives-tuples.plato -&gt; stdlib/primitives-tuples.types.plato<br>R  stdlib/primitives.plato -&gt; stdlib/primitives.types.plato<br>R  stdlib/quantities-dynamic.plato -&gt; stdlib/quantities-dynamic.types.plato<br>R  stdlib/quantities-electromagnetic.plato -&gt; stdlib/quantities-electromagnetic.types.plato<br>R  stdlib/quantities-geometric.plato -&gt; stdlib/quantities-geometric.types.plato<br>R  stdlib/quantities-kinematic.plato -&gt; stdlib/quantities-kinematic.types.plato<br>R  stdlib/quantities-material.plato -&gt; stdlib/quantities-material.types.plato<br>R  stdlib/quantities-mechanical.plato -&gt; stdlib/quantities-mechanical.types.plato<br>R  stdlib/quantities-photometric.plato -&gt; stdlib/quantities-photometric.types.plato<br>M  stdlib/quantities-projections.library.plato<br>R  stdlib/quantities-thermal.plato -&gt; stdlib/quantities-thermal.types.plato<br>R  stdlib/random-continuous-gamma.plato -&gt; stdlib/random-continuous-gamma.types.plato<br>M  stdlib/random-continuous-tails.library.plato<br>M  stdlib/random-continuous.library.plato<br>R  stdlib/random-continuous.plato -&gt; stdlib/random-continuous.types.plato<br>M  stdlib/random-discrete.library.plato<br>R  stdlib/random-discrete.plato -&gt; stdlib/random-discrete.types.plato<br>R  stdlib/random-multivariate.plato -&gt; stdlib/random-multivariate.types.plato<br>R  stdlib/random.plato -&gt; stdlib/random.types.plato<br>R  stdlib/render-post-processing.plato -&gt; stdlib/render-post-processing.types.plato<br>R  stdlib/render-settings.plato -&gt; stdlib/render-settings.types.plato<br>R  stdlib/render-vertex-layout.plato -&gt; stdlib/render-vertex-layout.types.plato<br>R  stdlib/rigid-dynamics-forces.plato -&gt; stdlib/rigid-dynamics-forces.types.plato<br>R  stdlib/rigid-dynamics.plato -&gt; stdlib/rigid-dynamics.types.plato<br>R  stdlib/rotations.plato -&gt; stdlib/rotations.types.plato<br>M  stdlib/sampling-curves.library.plato<br>R  stdlib/sampling-curves.plato -&gt; stdlib/sampling-curves.types.plato<br>R  stdlib/sampling-fields.plato -&gt; stdlib/sampling-fields.types.plato<br>R  stdlib/sampling-grids.plato -&gt; stdlib/sampling-grids.types.plato<br>R  stdlib/sampling-patterns.plato -&gt; stdlib/sampling-patterns.types.plato<br>R  stdlib/sampling-resampling.plato -&gt; stdlib/sampling-resampling.types.plato<br>R  stdlib/scene2d.plato -&gt; stdlib/scene2d.types.plato<br>R  stdlib/scene3d-indices.plato -&gt; stdlib/scene3d-indices.types.plato<br>R  stdlib/scene3d-instancing.plato -&gt; stdlib/scene3d-instancing.types.plato<br>R  stdlib/scene3d.plato -&gt; stdlib/scene3d.types.plato<br>R  stdlib/scientific-data-records.plato -&gt; stdlib/scientific-data-records.types.plato<br>R  stdlib/scientific-data-series.plato -&gt; stdlib/scientific-data-series.types.plato<br>R  stdlib/signals-filters.plato -&gt; stdlib/signals-filters.types.plato<br>R  stdlib/signals-generators.plato -&gt; stdlib/signals-generators.types.plato<br>R  stdlib/signals.plato -&gt; stdlib/signals.types.plato<br>R  stdlib/skeletal-animation-constraints.plato -&gt; stdlib/skeletal-animation-constraints.types.plato<br>R  stdlib/skeletal-animation.plato -&gt; stdlib/skeletal-animation.types.plato<br>M  stdlib/solids-csg-clipping.library.plato<br>M  stdlib/solids-csg-soups.library.plato<br>R  stdlib/solids-csg-soups.plato -&gt; stdlib/solids-csg-soups.types.plato<br>R  stdlib/solids-csg.plato -&gt; stdlib/solids-csg.types.plato<br>R  stdlib/solids-generated.plato -&gt; stdlib/solids-generated.types.plato<br>M  stdlib/solids-polyhedra.library.plato<br>R  stdlib/solids-polyhedra.plato -&gt; stdlib/solids-polyhedra.types.plato<br>M  stdlib/solids.library.plato<br>M  stdlib/spatial-boxes.library.plato<br>R  stdlib/spatial-boxes.plato -&gt; stdlib/spatial-boxes.types.plato<br>M  stdlib/spatial-capsules.library.plato<br>M  stdlib/spatial-cylinders.library.plato<br>R  stdlib/spatial-cylinders.plato -&gt; stdlib/spatial-cylinders.types.plato<br>R  stdlib/spatial-grids.plato -&gt; stdlib/spatial-grids.types.plato<br>R  stdlib/spatial-implicits.plato -&gt; stdlib/spatial-implicits.types.plato<br>R  stdlib/spatial-kdtrees.plato -&gt; stdlib/spatial-kdtrees.types.plato<br>M  stdlib/spatial-patches.library.plato<br>R  stdlib/spatial-patches.plato -&gt; stdlib/spatial-patches.types.plato<br>R  stdlib/spatial-queries-overlap.plato -&gt; stdlib/spatial-queries-overlap.types.plato<br>R  stdlib/spatial-queries-proximity.plato -&gt; stdlib/spatial-queries-proximity.types.plato<br>R  stdlib/spatial-queries-rays.plato -&gt; stdlib/spatial-queries-rays.types.plato<br>M  stdlib/spatial-simplices.library.plato<br>R  stdlib/spatial-simplices.plato -&gt; stdlib/spatial-simplices.types.plato<br>M  stdlib/spatial-spheres.library.plato<br>R  stdlib/spatial-spheres.plato -&gt; stdlib/spatial-spheres.types.plato<br>M  stdlib/spatial-tori.library.plato<br>R  stdlib/spatial-tori.plato -&gt; stdlib/spatial-tori.types.plato<br>R  stdlib/spatial-trees.plato -&gt; stdlib/spatial-trees.types.plato<br>M  stdlib/splines-bezier.library.plato<br>R  stdlib/splines-bezier.plato -&gt; stdlib/splines-bezier.types.plato<br>M  stdlib/splines-bspline.library.plato<br>R  stdlib/splines-bspline.plato -&gt; stdlib/splines-bspline.types.plato<br>M  stdlib/splines-hermite.library.plato<br>R  stdlib/splines-hermite.plato -&gt; stdlib/splines-hermite.types.plato<br>M  stdlib/splines-interpolating.library.plato<br>R  stdlib/splines-interpolating.plato -&gt; stdlib/splines-interpolating.types.plato<br>M  stdlib/statistics-correlation.library.plato<br>R  stdlib/statistics-correlation.plato -&gt; stdlib/statistics-correlation.types.plato<br>M  stdlib/statistics.library.plato<br>R  stdlib/statistics.plato -&gt; stdlib/statistics.types.plato<br>R  stdlib/surfaces-generated.plato -&gt; stdlib/surfaces-generated.types.plato<br>R  stdlib/surfaces-patches.plato -&gt; stdlib/surfaces-patches.types.plato<br>R  stdlib/surfaces-special.plato -&gt; stdlib/surfaces-special.types.plato<br>M  stdlib/surfaces.library.plato<br>R  stdlib/text-fonts.plato -&gt; stdlib/text-fonts.types.plato<br>R  stdlib/text-glyphs.plato -&gt; stdlib/text-glyphs.types.plato<br>R  stdlib/text-layout.plato -&gt; stdlib/text-layout.types.plato<br>R  stdlib/texturing-sampling.plato -&gt; stdlib/texturing-sampling.types.plato<br>M  stdlib/texturing.concepts.plato<br>M  stdlib/texturing.library.plato<br>R  stdlib/texturing.plato -&gt; stdlib/texturing.types.plato<br>M  stdlib/time.library.plato<br>R  stdlib/time.plato -&gt; stdlib/time.types.plato<br>M  stdlib/topology-adjacency.library.plato<br>R  stdlib/topology-adjacency.plato -&gt; stdlib/topology-adjacency.types.plato<br>R  stdlib/topology-classification.plato -&gt; stdlib/topology-classification.types.plato<br>M  stdlib/topology-half-edges.library.plato<br>R  stdlib/topology-half-edges.plato -&gt; stdlib/topology-half-edges.types.plato<br>R  stdlib/topology-indices.plato -&gt; stdlib/topology-indices.types.plato<br>M  stdlib/transforms-affine.library.plato<br>R  stdlib/transforms-affine.plato -&gt; stdlib/transforms-affine.types.plato<br>M  stdlib/transforms-frames.library.plato<br>R  stdlib/transforms-frames.plato -&gt; stdlib/transforms-frames.types.plato<br>M  stdlib/transforms-motor.library.plato<br>R  stdlib/transforms-motor.plato -&gt; stdlib/transforms-motor.types.plato<br>M  stdlib/transforms-pose.library.plato<br>R  stdlib/transforms-pose.plato -&gt; stdlib/transforms-pose.types.plato<br>M  stdlib/transforms-rotations.library.plato<br>M  stdlib/transforms-trs.library.plato<br>R  stdlib/transforms-trs.plato -&gt; stdlib/transforms-trs.types.plato<br>R  stdlib/uncertainty-estimation.plato -&gt; stdlib/uncertainty-estimation.types.plato<br>R  stdlib/uncertainty.plato -&gt; stdlib/uncertainty.types.plato<br>R  stdlib/vector-styling-paint.plato -&gt; stdlib/vector-styling-paint.types.plato<br>R  stdlib/vector-styling-stroke.plato -&gt; stdlib/vector-styling-stroke.types.plato<br>R  stdlib/vectors-geometric.plato -&gt; stdlib/vectors-geometric.types.plato<br>M  stdlib/vectors-integer.library.plato<br>R  stdlib/vectors-integer.plato -&gt; stdlib/vectors-integer.types.plato<br>R  stdlib/vectors-tuples.plato -&gt; stdlib/vectors-tuples.types.plato<br>M  stdlib/vectors.concepts.plato<br>R  stdlib/voxels.plato -&gt; stdlib/voxels.types.plato<br>?? tools/regen-forward-conformance.ps1</code></div>
+    <div class="k">Dirty (excl. .claude/)</div><div><code>M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs<br>M  Plato.Intrinsics.V2/Integer.cs<br>M  Plato.Intrinsics.V3/Integer.cs<br>M  PlatoCompiler/Analysis/Linter.cs<br> M docs/status-report-snapshot.json<br> M docs/status-report.html<br>M  stdlib/color.library.plato<br>M  stdlib/intrinsics-scalars.library.plato<br>M  stdlib/numbers.library.plato<br>M  stdlib/numeric-structures-matrix.library.plato<br>?? Plato.Navigation.Tests/CheckSupportTests.cs<br>?? Plato.Navigation.Tests/CheckTimingTests.cs<br>?? Plato.Navigation.Tests/StyleCheckerTests.cs<br>?? Plato.Navigation/CheckSupport.cs<br>?? Plato.Navigation/StyleChecker.cs</code></div>
   </div>
   <h3>Diffstat (unstaged, excl. this report)</h3>
-  <pre>Plato.CSharpWriter/CSharpConcreteTypeWriter.cs | 23 +++++++++++++++
- Plato.Intrinsics.V2/Integer.cs                 | 10 ++++++-
- Plato.Intrinsics.V3/Integer.cs                 | 10 ++++++-
- docs/status-report-snapshot.json               | 40 +++++++++++++-------------
- stdlib/color.library.plato                     | 10 +++----
- stdlib/intrinsics-scalars.library.plato        |  9 ++++++
- stdlib/numbers.library.plato                   | 34 +++++++++++-----------
- stdlib/numeric-structures-matrix.library.plato | 28 +++++++++---------
- 8 files changed, 107 insertions(+), 57 deletions(-)</pre>
-  <div class="note">304 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
+  <pre>docs/status-report-snapshot.json | 74 +++++++++++++++-------------------------
+ 1 file changed, 28 insertions(+), 46 deletions(-)</pre>
+  <div class="note">15 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
 </section>
 
 <section>
   <h2>Git — studio parent</h2>
   <div class="kv">
     <div class="k">Status</div><div><code>## main...origin/main
- M Plato.CSharpWriter/CSharpConcreteTypeWriter.cs
- M Plato.Intrinsics.V2/Integer.cs
- M Plato.Intrinsics.V3/Integer.cs
-MM docs/status-report-snapshot.json
-M  stdlib/CONVENTIONS.md
-M  stdlib/LIBRARIES.md
-M  stdlib/README.md
-M  stdlib/algebra-numeric.library.plato
-M  stdlib/angles.library.plato
-M  stdlib/axes-2d.library.plato
-M  stdlib/axes-signed.library.plato
-M  stdlib/axes.library.plato
-R  stdlib/axes.plato -&gt; stdlib/axes.types.plato
-M  stdlib/brep-primitives.library.plato
-M  stdlib/brep-tessellate.library.plato
-M  stdlib/brep.concepts.plato
-M  stdlib/brep.library.plato
-R  stdlib/brep.plato -&gt; stdlib/brep.types.plato
-R  stdlib/cameras-optics.plato -&gt; stdlib/cameras-optics.types.plato
-M  stdlib/cameras.concepts.plato
-R  stdlib/cameras.plato -&gt; stdlib/cameras.types.plato
-R  stdlib/collections-jagged.plato -&gt; stdlib/collections-jagged.types.plato
-R  stdlib/collision-contacts.plato -&gt; stdlib/collision-contacts.types.plato
-R  stdlib/collision.plato -&gt; stdlib/collision.types.plato
-M  stdlib/color-named.library.plato
-R  stdlib/color-spaces-models.plato -&gt; stdlib/color-spaces-models.types.plato
-R  stdlib/color-spaces-palettes.plato -&gt; stdlib/color-spaces-palettes.types.plato
-R  stdlib/color-spaces-video.plato -&gt; stdlib/color-spaces-video.types.plato
-M  stdlib/color-spaces.library.plato
-R  stdlib/color-spaces.plato -&gt; stdlib/color-spaces.types.plato
- M stdlib/color.library.plato
-R  stdlib/color.plato -&gt; stdlib/color.types.plato
-M  stdlib/core-comparison.library.plato
-M  stdlib/curves-2d-arcs.library.plato
-R  stdlib/curves-2d-arcs.plato -&gt; stdlib/curves-2d-arcs.types.plato
-M  stdlib/curves-2d-polar.library.plato
-R  stdlib/curves-2d-polar.plato -&gt; stdlib/curves-2d-polar.types.plato
-M  stdlib/curves-2d-spirals.library.plato
-R  stdlib/curves-2d-spirals.plato -&gt; stdlib/curves-2d-spirals.types.plato
-M  stdlib/curves-3d.library.plato
-R  stdlib/curves-3d.plato -&gt; stdlib/curves-3d.types.plato
-M  stdlib/deformations.library.plato
-R  stdlib/deformations.plato -&gt; stdlib/deformations.types.plato
-R  stdlib/differential-geometry-frames.plato -&gt; stdlib/differential-geometry-frames.types.plato
-R  stdlib/differential-geometry-geodesics.plato -&gt; stdlib/differential-geometry-geodesics.types.plato
-R  stdlib/differential-geometry-surfaces.plato -&gt; stdlib/differential-geometry-surfaces.types.plato
-M  stdlib/easing.concepts.plato
-M  stdlib/easing.library.plato
-R  stdlib/easing.plato -&gt; stdlib/easing.types.plato
-R  stdlib/engineering-beams.plato -&gt; stdlib/engineering-beams.types.plato
-R  stdlib/engineering-machine-elements.plato -&gt; stdlib/engineering-machine-elements.types.plato
-R  stdlib/engineering-materials.plato -&gt; stdlib/engineering-materials.types.plato
-R  stdlib/engineering-sections.plato -&gt; stdlib/engineering-sections.types.plato
-R  stdlib/fields-constant.plato -&gt; stdlib/fields-constant.types.plato
-R  stdlib/fields-function.plato -&gt; stdlib/fields-function.types.plato
-M  stdlib/fields-graphs.library.plato
-R  stdlib/fields-graphs.plato -&gt; stdlib/fields-graphs.types.plato
-M  stdlib/fields-implicits-function.library.plato
-M  stdlib/fields-implicits-metaballs.library.plato
-M  stdlib/fields-implicits-nodes.library.plato
-M  stdlib/fields-implicits-sampled.library.plato
-M  stdlib/fields-implicits-shapes.library.plato
-R  stdlib/geo-spatial-rasters.plato -&gt; stdlib/geo-spatial-rasters.types.plato
-R  stdlib/geo-spatial-reference-systems.plato -&gt; stdlib/geo-spatial-reference-systems.types.plato
-R  stdlib/geo-spatial.plato -&gt; stdlib/geo-spatial.types.plato
-M  stdlib/geometry-kernels.library.plato
-M  stdlib/geometry-measures.library.plato
-R  stdlib/graphs-algorithms.plato -&gt; stdlib/graphs-algorithms.types.plato
-R  stdlib/graphs.plato -&gt; stdlib/graphs.types.plato
-R  stdlib/higher-dimensions-fractals.plato -&gt; stdlib/higher-dimensions-fractals.types.plato
-R  stdlib/higher-dimensions.plato -&gt; stdlib/higher-dimensions.types.plato
-R  stdlib/image-processing-adjustments.plato -&gt; stdlib/image-processing-adjustments.types.plato
-R  stdlib/image-processing-compositing.plato -&gt; stdlib/image-processing-compositing.types.plato
-R  stdlib/image-processing-filters.plato -&gt; stdlib/image-processing-filters.types.plato
-R  stdlib/image-processing-resampling.plato -&gt; stdlib/image-processing-resampling.types.plato
-R  stdlib/images-containers.plato -&gt; stdlib/images-containers.types.plato
-M  stdlib/images.concepts.plato
-R  stdlib/images.plato -&gt; stdlib/images.types.plato
-M  stdlib/implicit-sdf-bounded.library.plato
-R  stdlib/implicit-sdf-bounded.plato -&gt; stdlib/implicit-sdf-bounded.types.plato
-R  stdlib/implicit-sdf-function.plato -&gt; stdlib/implicit-sdf-function.types.plato
-R  stdlib/implicit-sdf-metaballs.plato -&gt; stdlib/implicit-sdf-metaballs.types.plato
-M  stdlib/implicit-sdf-modifiers.library.plato
-R  stdlib/implicit-sdf-modifiers.plato -&gt; stdlib/implicit-sdf-modifiers.types.plato
-M  stdlib/implicit-sdf-sampled.library.plato
-R  stdlib/implicit-sdf-sampled.plato -&gt; stdlib/implicit-sdf-sampled.types.plato
-M  stdlib/implicit-sdf-trees.library.plato
-R  stdlib/implicit-sdf-trees.plato -&gt; stdlib/implicit-sdf-trees.types.plato
-M  stdlib/implicit-sdf.concepts.plato
-M  stdlib/intervals-bounds.concepts.plato
-R  stdlib/intervals-bounds.plato -&gt; stdlib/intervals-bounds.types.plato
-M  stdlib/intervals-sizes.library.plato
-R  stdlib/intervals-sizes.plato -&gt; stdlib/intervals-sizes.types.plato
-M  stdlib/intervals-transforms-bounds.library.plato
-M  stdlib/intervals-transforms-transformable.library.plato
-R  stdlib/intervals.plato -&gt; stdlib/intervals.types.plato
- M stdlib/intrinsics-scalars.library.plato
-R  stdlib/joints-2d.plato -&gt; stdlib/joints-2d.types.plato
-R  stdlib/joints-3d.plato -&gt; stdlib/joints-3d.types.plato
-R  stdlib/joints-limits.plato -&gt; stdlib/joints-limits.types.plato
-R  stdlib/keyframes-blending.plato -&gt; stdlib/keyframes-blending.types.plato
-R  stdlib/keyframes-clips.plato -&gt; stdlib/keyframes-clips.types.plato
-M  stdlib/keyframes-tracks.concepts.plato
-M  stdlib/keyframes-tracks.library.plato
-R  stdlib/keyframes-tracks.plato -&gt; stdlib/keyframes-tracks.types.plato
-R  stdlib/kinematics-trajectories.plato -&gt; stdlib/kinematics-trajectories.types.plato
-R  stdlib/kinematics.plato -&gt; stdlib/kinematics.types.plato
-R  stdlib/lights-settings.plato -&gt; stdlib/lights-settings.types.plato
-M  stdlib/lights.concepts.plato
-R  stdlib/lights.plato -&gt; stdlib/lights.types.plato
-M  stdlib/lines-planes.library.plato
-R  stdlib/lines-planes.plato -&gt; stdlib/lines-planes.types.plato
-M  stdlib/lines.library.plato
-R  stdlib/lines.plato -&gt; stdlib/lines.types.plato
-R  stdlib/materials-layers.plato -&gt; stdlib/materials-layers.types.plato
-R  stdlib/materials.plato -&gt; stdlib/materials.types.plato
-M  stdlib/matrices.concepts.plato
-R  stdlib/matrices.plato -&gt; stdlib/matrices.types.plato
-M  stdlib/mesh-attributes.library.plato
-R  stdlib/mesh-attributes.plato -&gt; stdlib/mesh-attributes.types.plato
-M  stdlib/meshes-face-arrays.library.plato
-R  stdlib/meshes-face-arrays.plato -&gt; stdlib/meshes-face-arrays.types.plato
-M  stdlib/meshes-faces.library.plato
-M  stdlib/meshes-indexed.library.plato
-M  stdlib/meshes-lines-points.library.plato
-R  stdlib/meshes-lines-points.plato -&gt; stdlib/meshes-lines-points.types.plato
-M  stdlib/meshes-polygon-incidence.library.plato
-M  stdlib/meshes-sections.library.plato
-R  stdlib/meshes-sections.plato -&gt; stdlib/meshes-sections.types.plato
-M  stdlib/meshes-volumetric.library.plato
-R  stdlib/meshes-volumetric.plato -&gt; stdlib/meshes-volumetric.types.plato
-R  stdlib/meshes.plato -&gt; stdlib/meshes.types.plato
-R  stdlib/motion-graphics-procedural.plato -&gt; stdlib/motion-graphics-procedural.types.plato
-R  stdlib/motion-graphics-timing.plato -&gt; stdlib/motion-graphics-timing.types.plato
-R  stdlib/motion-graphics.plato -&gt; stdlib/motion-graphics.types.plato
-R  stdlib/noise-basis.plato -&gt; stdlib/noise-basis.types.plato
-R  stdlib/noise-fractal.plato -&gt; stdlib/noise-fractal.types.plato
-R  stdlib/noise-warped.plato -&gt; stdlib/noise-warped.types.plato
-R  stdlib/noise.plato -&gt; stdlib/noise.types.plato
- M stdlib/numbers.library.plato
-R  stdlib/numbers.plato -&gt; stdlib/numbers.types.plato
-M  stdlib/numeric-structures-coordinate.library.plato
- M stdlib/numeric-structures-matrix.library.plato
-R  stdlib/optimization-programs.plato -&gt; stdlib/optimization-programs.types.plato
-R  stdlib/optimization-solvers.plato -&gt; stdlib/optimization-solvers.types.plato
-R  stdlib/optimization.plato -&gt; stdlib/optimization.types.plato
-R  stdlib/particles-force-fields.plato -&gt; stdlib/particles-force-fields.types.plato
-R  stdlib/particles-simulation.plato -&gt; stdlib/particles-simulation.types.plato
-R  stdlib/particles-soft-bodies.plato -&gt; stdlib/particles-soft-bodies.types.plato
-M  stdlib/paths.concepts.plato
-R  stdlib/paths.plato -&gt; stdlib/paths.types.plato
-M  stdlib/planar-boxes.library.plato
-R  stdlib/planar-boxes.plato -&gt; stdlib/planar-boxes.types.plato
-M  stdlib/planar-circles.library.plato
-R  stdlib/planar-circles.plato -&gt; stdlib/planar-circles.types.plato
-M  stdlib/planar-ellipses.library.plato
-R  stdlib/planar-ellipses.plato -&gt; stdlib/planar-ellipses.types.plato
-M  stdlib/planar-triangles.library.plato
-R  stdlib/planar-triangles.plato -&gt; stdlib/planar-triangles.types.plato
-M  stdlib/pointclouds.library.plato
-R  stdlib/pointclouds.plato -&gt; stdlib/pointclouds.types.plato
-R  stdlib/points-curvilinear.plato -&gt; stdlib/points-curvilinear.types.plato
-R  stdlib/points-parametric.plato -&gt; stdlib/points-parametric.types.plato
-M  stdlib/points.concepts.plato
-R  stdlib/points.plato -&gt; stdlib/points.types.plato
-M  stdlib/polygons-polylines.library.plato
-R  stdlib/polygons-polylines.plato -&gt; stdlib/polygons-polylines.types.plato
-M  stdlib/polygons-spatial.library.plato
-R  stdlib/polygons-spatial.plato -&gt; stdlib/polygons-spatial.types.plato
-M  stdlib/polygons.library.plato
-R  stdlib/polygons.plato -&gt; stdlib/polygons.types.plato
-M  stdlib/polyhedra-catalog.library.plato
-M  stdlib/polyhedra-duals.library.plato
-R  stdlib/polynomials-composite.plato -&gt; stdlib/polynomials-composite.types.plato
-R  stdlib/polynomials-series.plato -&gt; stdlib/polynomials-series.types.plato
-M  stdlib/polynomials.library.plato
-R  stdlib/polynomials.plato -&gt; stdlib/polynomials.types.plato
-R  stdlib/primitives-arrays.plato -&gt; stdlib/primitives-arrays.types.plato
-M  stdlib/primitives-builders.library.plato
-R  stdlib/primitives-builders.plato -&gt; stdlib/primitives-builders.types.plato
-R  stdlib/primitives-functions.plato -&gt; stdlib/primitives-functions.types.plato
-R  stdlib/primitives-tuples.plato -&gt; stdlib/primitives-tuples.types.plato
-R  stdlib/primitives.plato -&gt; stdlib/primitives.types.plato
-R  stdlib/quantities-dynamic.plato -&gt; stdlib/quantities-dynamic.types.plato
-R  stdlib/quantities-electromagnetic.plato -&gt; stdlib/quantities-electromagnetic.types.plato
-R  stdlib/quantities-geometric.plato -&gt; stdlib/quantities-geometric.types.plato
-R  stdlib/quantities-kinematic.plato -&gt; stdlib/quantities-kinematic.types.plato
-R  stdlib/quantities-material.plato -&gt; stdlib/quantities-material.types.plato
-R  stdlib/quantities-mechanical.plato -&gt; stdlib/quantities-mechanical.types.plato
-R  stdlib/quantities-photometric.plato -&gt; stdlib/quantities-photometric.types.plato
-M  stdlib/quantities-projections.library.plato
-R  stdlib/quantities-thermal.plato -&gt; stdlib/quantities-thermal.types.plato
-R  stdlib/random-continuous-gamma.plato -&gt; stdlib/random-continuous-gamma.types.plato
-M  stdlib/random-continuous-tails.library.plato
-M  stdlib/random-continuous.library.plato
-R  stdlib/random-continuous.plato -&gt; stdlib/random-continuous.types.plato
-M  stdlib/random-discrete.library.plato
-R  stdlib/random-discrete.plato -&gt; stdlib/random-discrete.types.plato
-R  stdlib/random-multivariate.plato -&gt; stdlib/random-multivariate.types.plato
-R  stdlib/random.plato -&gt; stdlib/random.types.plato
-R  stdlib/render-post-processing.plato -&gt; stdlib/render-post-processing.types.plato
-R  stdlib/render-settings.plato -&gt; stdlib/render-settings.types.plato
-R  stdlib/render-vertex-layout.plato -&gt; stdlib/render-vertex-layout.types.plato
-R  stdlib/rigid-dynamics-forces.plato -&gt; stdlib/rigid-dynamics-forces.types.plato
-R  stdlib/rigid-dynamics.plato -&gt; stdlib/rigid-dynamics.types.plato
-R  stdlib/rotations.plato -&gt; stdlib/rotations.types.plato
-M  stdlib/sampling-curves.library.plato
-R  stdlib/sampling-curves.plato -&gt; stdlib/sampling-curves.types.plato
-R  stdlib/sampling-fields.plato -&gt; stdlib/sampling-fields.types.plato
-R  stdlib/sampling-grids.plato -&gt; stdlib/sampling-grids.types.plato
-R  stdlib/sampling-patterns.plato -&gt; stdlib/sampling-patterns.types.plato
-R  stdlib/sampling-resampling.plato -&gt; stdlib/sampling-resampling.types.plato
-R  stdlib/scene2d.plato -&gt; stdlib/scene2d.types.plato
-R  stdlib/scene3d-indices.plato -&gt; stdlib/scene3d-indices.types.plato
-R  stdlib/scene3d-instancing.plato -&gt; stdlib/scene3d-instancing.types.plato
-R  stdlib/scene3d.plato -&gt; stdlib/scene3d.types.plato
-R  stdlib/scientific-data-records.plato -&gt; stdlib/scientific-data-records.types.plato
-R  stdlib/scientific-data-series.plato -&gt; stdlib/scientific-data-series.types.plato
-R  stdlib/signals-filters.plato -&gt; stdlib/signals-filters.types.plato
-R  stdlib/signals-generators.plato -&gt; stdlib/signals-generators.types.plato
-R  stdlib/signals.plato -&gt; stdlib/signals.types.plato
-R  stdlib/skeletal-animation-constraints.plato -&gt; stdlib/skeletal-animation-constraints.types.plato
-R  stdlib/skeletal-animation.plato -&gt; stdlib/skeletal-animation.types.plato
-M  stdlib/solids-csg-clipping.library.plato
-M  stdlib/solids-csg-soups.library.plato
-R  stdlib/solids-csg-soups.plato -&gt; stdlib/solids-csg-soups.types.plato
-R  stdlib/solids-csg.plato -&gt; stdlib/solids-csg.types.plato
-R  stdlib/solids-generated.plato -&gt; stdlib/solids-generated.types.plato
-M  stdlib/solids-polyhedra.library.plato
-R  stdlib/solids-polyhedra.plato -&gt; stdlib/solids-polyhedra.types.plato
-M  stdlib/solids.library.plato
-M  stdlib/spatial-boxes.library.plato
-R  stdlib/spatial-boxes.plato -&gt; stdlib/spatial-boxes.types.plato
-M  stdlib/spatial-capsules.library.plato
-M  stdlib/spatial-cylinders.library.plato
-R  stdlib/spatial-cylinders.plato -&gt; stdlib/spatial-cylinders.types.plato
-R  stdlib/spatial-grids.plato -&gt; stdlib/spatial-grids.types.plato
-R  stdlib/spatial-implicits.plato -&gt; stdlib/spatial-implicits.types.plato
-R  stdlib/spatial-kdtrees.plato -&gt; stdlib/spatial-kdtrees.types.plato
-M  stdlib/spatial-patches.library.plato
-R  stdlib/spatial-patches.plato -&gt; stdlib/spatial-patches.types.plato
-R  stdlib/spatial-queries-overlap.plato -&gt; stdlib/spatial-queries-overlap.types.plato
-R  stdlib/spatial-queries-proximity.plato -&gt; stdlib/spatial-queries-proximity.types.plato
-R  stdlib/spatial-queries-rays.plato -&gt; stdlib/spatial-queries-rays.types.plato
-M  stdlib/spatial-simplices.library.plato
-R  stdlib/spatial-simplices.plato -&gt; stdlib/spatial-simplices.types.plato
-M  stdlib/spatial-spheres.library.plato
-R  stdlib/spatial-spheres.plato -&gt; stdlib/spatial-spheres.types.plato
-M  stdlib/spatial-tori.library.plato
-R  stdlib/spatial-tori.plato -&gt; stdlib/spatial-tori.types.plato
-R  stdlib/spatial-trees.plato -&gt; stdlib/spatial-trees.types.plato
-M  stdlib/splines-bezier.library.plato
-R  stdlib/splines-bezier.plato -&gt; stdlib/splines-bezier.types.plato
-M  stdlib/splines-bspline.library.plato
-R  stdlib/splines-bspline.plato -&gt; stdlib/splines-bspline.types.plato
-M  stdlib/splines-hermite.library.plato
-R  stdlib/splines-hermite.plato -&gt; stdlib/splines-hermite.types.plato
-M  stdlib/splines-interpolating.library.plato
-R  stdlib/splines-interpolating.plato -&gt; stdlib/splines-interpolating.types.plato
-M  stdlib/statistics-correlation.library.plato
-R  stdlib/statistics-correlation.plato -&gt; stdlib/statistics-correlation.types.plato
-M  stdlib/statistics.library.plato
-R  stdlib/statistics.plato -&gt; stdlib/statistics.types.plato
-R  stdlib/surfaces-generated.plato -&gt; stdlib/surfaces-generated.types.plato
-R  stdlib/surfaces-patches.plato -&gt; stdlib/surfaces-patches.types.plato
-R  stdlib/surfaces-special.plato -&gt; stdlib/surfaces-special.types.plato
-M  stdlib/surfaces.library.plato
-R  stdlib/text-fonts.plato -&gt; stdlib/text-fonts.types.plato
-R  stdlib/text-glyphs.plato -&gt; stdlib/text-glyphs.types.plato
-R  stdlib/text-layout.plato -&gt; stdlib/text-layout.types.plato
-R  stdlib/texturing-sampling.plato -&gt; stdlib/texturing-sampling.types.plato
-M  stdlib/texturing.concepts.plato
-M  stdlib/texturing.library.plato
-R  stdlib/texturing.plato -&gt; stdlib/texturing.types.plato
-M  stdlib/time.library.plato
-R  stdlib/time.plato -&gt; stdlib/time.types.plato
-M  stdlib/topology-adjacency.library.plato
-R  stdlib/topology-adjacency.plato -&gt; stdlib/topology-adjacency.types.plato
-R  stdlib/topology-classification.plato -&gt; stdlib/topology-classification.types.plato
-M  stdlib/topology-half-edges.library.plato
-R  stdlib/topology-half-edges.plato -&gt; stdlib/topology-half-edges.types.plato
-R  stdlib/topology-indices.plato -&gt; stdlib/topology-indices.types.plato
-M  stdlib/transforms-affine.library.plato
-R  stdlib/transforms-affine.plato -&gt; stdlib/transforms-affine.types.plato
-M  stdlib/transforms-frames.library.plato
-R  stdlib/transforms-frames.plato -&gt; stdlib/transforms-frames.types.plato
-M  stdlib/transforms-motor.library.plato
-R  stdlib/transforms-motor.plato -&gt; stdlib/transforms-motor.types.plato
-M  stdlib/transforms-pose.library.plato
-R  stdlib/transforms-pose.plato -&gt; stdlib/transforms-pose.types.plato
-M  stdlib/transforms-rotations.library.plato
-M  stdlib/transforms-trs.library.plato
-R  stdlib/transforms-trs.plato -&gt; stdlib/transforms-trs.types.plato
-R  stdlib/uncertainty-estimation.plato -&gt; stdlib/uncertainty-estimation.types.plato
-R  stdlib/uncertainty.plato -&gt; stdlib/uncertainty.types.plato
-R  stdlib/vector-styling-paint.plato -&gt; stdlib/vector-styling-paint.types.plato
-R  stdlib/vector-styling-stroke.plato -&gt; stdlib/vector-styling-stroke.types.plato
-R  stdlib/vectors-geometric.plato -&gt; stdlib/vectors-geometric.types.plato
-M  stdlib/vectors-integer.library.plato
-R  stdlib/vectors-integer.plato -&gt; stdlib/vectors-integer.types.plato
-R  stdlib/vectors-tuples.plato -&gt; stdlib/vectors-tuples.types.plato
-M  stdlib/vectors.concepts.plato
-R  stdlib/voxels.plato -&gt; stdlib/voxels.types.plato
+M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs
+M  Plato.Intrinsics.V2/Integer.cs
+M  Plato.Intrinsics.V3/Integer.cs
+M  PlatoCompiler/Analysis/Linter.cs
+ M docs/status-report-snapshot.json
+ M docs/status-report.html
+M  stdlib/color.library.plato
+M  stdlib/intrinsics-scalars.library.plato
+M  stdlib/numbers.library.plato
+M  stdlib/numeric-structures-matrix.library.plato
 ?? .claude/
-?? tools/regen-forward-conformance.ps1</code></div>
+?? Plato.Navigation.Tests/CheckSupportTests.cs
+?? Plato.Navigation.Tests/CheckTimingTests.cs
+?? Plato.Navigation.Tests/StyleCheckerTests.cs
+?? Plato.Navigation/CheckSupport.cs
+?? Plato.Navigation/StyleChecker.cs</code></div>
     <div class="k">Committed Plato pointer</div><div><code>?</code> <span class="badge blocked">DRIFT</span></div>
-    <div class="k">Plato HEAD</div><div><code>9aea28e0d84335f2c3cfeda44eb21284f04fc232</code></div>
-    <div class="k">Plato-related dirty</div><div><code>M Plato.CSharpWriter/CSharpConcreteTypeWriter.cs<br> M Plato.Intrinsics.V2/Integer.cs<br> M Plato.Intrinsics.V3/Integer.cs<br>M  stdlib/algebra-numeric.library.plato<br>M  stdlib/angles.library.plato<br>M  stdlib/axes-2d.library.plato<br>M  stdlib/axes-signed.library.plato<br>M  stdlib/axes.library.plato<br>R  stdlib/axes.plato -&gt; stdlib/axes.types.plato<br>M  stdlib/brep-primitives.library.plato<br>M  stdlib/brep-tessellate.library.plato<br>M  stdlib/brep.concepts.plato<br>M  stdlib/brep.library.plato<br>R  stdlib/brep.plato -&gt; stdlib/brep.types.plato<br>R  stdlib/cameras-optics.plato -&gt; stdlib/cameras-optics.types.plato<br>M  stdlib/cameras.concepts.plato<br>R  stdlib/cameras.plato -&gt; stdlib/cameras.types.plato<br>R  stdlib/collections-jagged.plato -&gt; stdlib/collections-jagged.types.plato<br>R  stdlib/collision-contacts.plato -&gt; stdlib/collision-contacts.types.plato<br>R  stdlib/collision.plato -&gt; stdlib/collision.types.plato<br>M  stdlib/color-named.library.plato<br>R  stdlib/color-spaces-models.plato -&gt; stdlib/color-spaces-models.types.plato<br>R  stdlib/color-spaces-palettes.plato -&gt; stdlib/color-spaces-palettes.types.plato<br>R  stdlib/color-spaces-video.plato -&gt; stdlib/color-spaces-video.types.plato<br>M  stdlib/color-spaces.library.plato<br>R  stdlib/color-spaces.plato -&gt; stdlib/color-spaces.types.plato<br> M stdlib/color.library.plato<br>R  stdlib/color.plato -&gt; stdlib/color.types.plato<br>M  stdlib/core-comparison.library.plato<br>M  stdlib/curves-2d-arcs.library.plato<br>R  stdlib/curves-2d-arcs.plato -&gt; stdlib/curves-2d-arcs.types.plato<br>M  stdlib/curves-2d-polar.library.plato<br>R  stdlib/curves-2d-polar.plato -&gt; stdlib/curves-2d-polar.types.plato<br>M  stdlib/curves-2d-spirals.library.plato<br>R  stdlib/curves-2d-spirals.plato -&gt; stdlib/curves-2d-spirals.types.plato<br>M  stdlib/curves-3d.library.plato<br>R  stdlib/curves-3d.plato -&gt; stdlib/curves-3d.types.plato<br>M  stdlib/deformations.library.plato<br>R  stdlib/deformations.plato -&gt; stdlib/deformations.types.plato<br>R  stdlib/differential-geometry-frames.plato -&gt; stdlib/differential-geometry-frames.types.plato<br>R  stdlib/differential-geometry-geodesics.plato -&gt; stdlib/differential-geometry-geodesics.types.plato<br>R  stdlib/differential-geometry-surfaces.plato -&gt; stdlib/differential-geometry-surfaces.types.plato<br>M  stdlib/easing.concepts.plato<br>M  stdlib/easing.library.plato<br>R  stdlib/easing.plato -&gt; stdlib/easing.types.plato<br>R  stdlib/engineering-beams.plato -&gt; stdlib/engineering-beams.types.plato<br>R  stdlib/engineering-machine-elements.plato -&gt; stdlib/engineering-machine-elements.types.plato<br>R  stdlib/engineering-materials.plato -&gt; stdlib/engineering-materials.types.plato<br>R  stdlib/engineering-sections.plato -&gt; stdlib/engineering-sections.types.plato<br>R  stdlib/fields-constant.plato -&gt; stdlib/fields-constant.types.plato<br>R  stdlib/fields-function.plato -&gt; stdlib/fields-function.types.plato<br>M  stdlib/fields-graphs.library.plato<br>R  stdlib/fields-graphs.plato -&gt; stdlib/fields-graphs.types.plato<br>M  stdlib/fields-implicits-function.library.plato<br>M  stdlib/fields-implicits-metaballs.library.plato<br>M  stdlib/fields-implicits-nodes.library.plato<br>M  stdlib/fields-implicits-sampled.library.plato<br>M  stdlib/fields-implicits-shapes.library.plato<br>R  stdlib/geo-spatial-rasters.plato -&gt; stdlib/geo-spatial-rasters.types.plato<br>R  stdlib/geo-spatial-reference-systems.plato -&gt; stdlib/geo-spatial-reference-systems.types.plato<br>R  stdlib/geo-spatial.plato -&gt; stdlib/geo-spatial.types.plato<br>M  stdlib/geometry-kernels.library.plato<br>M  stdlib/geometry-measures.library.plato<br>R  stdlib/graphs-algorithms.plato -&gt; stdlib/graphs-algorithms.types.plato<br>R  stdlib/graphs.plato -&gt; stdlib/graphs.types.plato<br>R  stdlib/higher-dimensions-fractals.plato -&gt; stdlib/higher-dimensions-fractals.types.plato<br>R  stdlib/higher-dimensions.plato -&gt; stdlib/higher-dimensions.types.plato<br>R  stdlib/image-processing-adjustments.plato -&gt; stdlib/image-processing-adjustments.types.plato<br>R  stdlib/image-processing-compositing.plato -&gt; stdlib/image-processing-compositing.types.plato<br>R  stdlib/image-processing-filters.plato -&gt; stdlib/image-processing-filters.types.plato<br>R  stdlib/image-processing-resampling.plato -&gt; stdlib/image-processing-resampling.types.plato<br>R  stdlib/images-containers.plato -&gt; stdlib/images-containers.types.plato<br>M  stdlib/images.concepts.plato<br>R  stdlib/images.plato -&gt; stdlib/images.types.plato<br>M  stdlib/implicit-sdf-bounded.library.plato<br>R  stdlib/implicit-sdf-bounded.plato -&gt; stdlib/implicit-sdf-bounded.types.plato<br>R  stdlib/implicit-sdf-function.plato -&gt; stdlib/implicit-sdf-function.types.plato<br>R  stdlib/implicit-sdf-metaballs.plato -&gt; stdlib/implicit-sdf-metaballs.types.plato<br>M  stdlib/implicit-sdf-modifiers.library.plato<br>R  stdlib/implicit-sdf-modifiers.plato -&gt; stdlib/implicit-sdf-modifiers.types.plato<br>M  stdlib/implicit-sdf-sampled.library.plato<br>R  stdlib/implicit-sdf-sampled.plato -&gt; stdlib/implicit-sdf-sampled.types.plato<br>M  stdlib/implicit-sdf-trees.library.plato<br>R  stdlib/implicit-sdf-trees.plato -&gt; stdlib/implicit-sdf-trees.types.plato<br>M  stdlib/implicit-sdf.concepts.plato<br>M  stdlib/intervals-bounds.concepts.plato<br>R  stdlib/intervals-bounds.plato -&gt; stdlib/intervals-bounds.types.plato<br>M  stdlib/intervals-sizes.library.plato<br>R  stdlib/intervals-sizes.plato -&gt; stdlib/intervals-sizes.types.plato<br>M  stdlib/intervals-transforms-bounds.library.plato<br>M  stdlib/intervals-transforms-transformable.library.plato<br>R  stdlib/intervals.plato -&gt; stdlib/intervals.types.plato<br> M stdlib/intrinsics-scalars.library.plato<br>R  stdlib/joints-2d.plato -&gt; stdlib/joints-2d.types.plato<br>R  stdlib/joints-3d.plato -&gt; stdlib/joints-3d.types.plato<br>R  stdlib/joints-limits.plato -&gt; stdlib/joints-limits.types.plato<br>R  stdlib/keyframes-blending.plato -&gt; stdlib/keyframes-blending.types.plato<br>R  stdlib/keyframes-clips.plato -&gt; stdlib/keyframes-clips.types.plato<br>M  stdlib/keyframes-tracks.concepts.plato<br>M  stdlib/keyframes-tracks.library.plato<br>R  stdlib/keyframes-tracks.plato -&gt; stdlib/keyframes-tracks.types.plato<br>R  stdlib/kinematics-trajectories.plato -&gt; stdlib/kinematics-trajectories.types.plato<br>R  stdlib/kinematics.plato -&gt; stdlib/kinematics.types.plato<br>R  stdlib/lights-settings.plato -&gt; stdlib/lights-settings.types.plato<br>M  stdlib/lights.concepts.plato<br>R  stdlib/lights.plato -&gt; stdlib/lights.types.plato<br>M  stdlib/lines-planes.library.plato<br>R  stdlib/lines-planes.plato -&gt; stdlib/lines-planes.types.plato<br>M  stdlib/lines.library.plato<br>R  stdlib/lines.plato -&gt; stdlib/lines.types.plato<br>R  stdlib/materials-layers.plato -&gt; stdlib/materials-layers.types.plato<br>R  stdlib/materials.plato -&gt; stdlib/materials.types.plato<br>M  stdlib/matrices.concepts.plato<br>R  stdlib/matrices.plato -&gt; stdlib/matrices.types.plato<br>M  stdlib/mesh-attributes.library.plato<br>R  stdlib/mesh-attributes.plato -&gt; stdlib/mesh-attributes.types.plato<br>M  stdlib/meshes-face-arrays.library.plato<br>R  stdlib/meshes-face-arrays.plato -&gt; stdlib/meshes-face-arrays.types.plato<br>M  stdlib/meshes-faces.library.plato<br>M  stdlib/meshes-indexed.library.plato<br>M  stdlib/meshes-lines-points.library.plato<br>R  stdlib/meshes-lines-points.plato -&gt; stdlib/meshes-lines-points.types.plato<br>M  stdlib/meshes-polygon-incidence.library.plato<br>M  stdlib/meshes-sections.library.plato<br>R  stdlib/meshes-sections.plato -&gt; stdlib/meshes-sections.types.plato<br>M  stdlib/meshes-volumetric.library.plato<br>R  stdlib/meshes-volumetric.plato -&gt; stdlib/meshes-volumetric.types.plato<br>R  stdlib/meshes.plato -&gt; stdlib/meshes.types.plato<br>R  stdlib/motion-graphics-procedural.plato -&gt; stdlib/motion-graphics-procedural.types.plato<br>R  stdlib/motion-graphics-timing.plato -&gt; stdlib/motion-graphics-timing.types.plato<br>R  stdlib/motion-graphics.plato -&gt; stdlib/motion-graphics.types.plato<br>R  stdlib/noise-basis.plato -&gt; stdlib/noise-basis.types.plato<br>R  stdlib/noise-fractal.plato -&gt; stdlib/noise-fractal.types.plato<br>R  stdlib/noise-warped.plato -&gt; stdlib/noise-warped.types.plato<br>R  stdlib/noise.plato -&gt; stdlib/noise.types.plato<br> M stdlib/numbers.library.plato<br>R  stdlib/numbers.plato -&gt; stdlib/numbers.types.plato<br>M  stdlib/numeric-structures-coordinate.library.plato<br> M stdlib/numeric-structures-matrix.library.plato<br>R  stdlib/optimization-programs.plato -&gt; stdlib/optimization-programs.types.plato<br>R  stdlib/optimization-solvers.plato -&gt; stdlib/optimization-solvers.types.plato<br>R  stdlib/optimization.plato -&gt; stdlib/optimization.types.plato<br>R  stdlib/particles-force-fields.plato -&gt; stdlib/particles-force-fields.types.plato<br>R  stdlib/particles-simulation.plato -&gt; stdlib/particles-simulation.types.plato<br>R  stdlib/particles-soft-bodies.plato -&gt; stdlib/particles-soft-bodies.types.plato<br>M  stdlib/paths.concepts.plato<br>R  stdlib/paths.plato -&gt; stdlib/paths.types.plato<br>M  stdlib/planar-boxes.library.plato<br>R  stdlib/planar-boxes.plato -&gt; stdlib/planar-boxes.types.plato<br>M  stdlib/planar-circles.library.plato<br>R  stdlib/planar-circles.plato -&gt; stdlib/planar-circles.types.plato<br>M  stdlib/planar-ellipses.library.plato<br>R  stdlib/planar-ellipses.plato -&gt; stdlib/planar-ellipses.types.plato<br>M  stdlib/planar-triangles.library.plato<br>R  stdlib/planar-triangles.plato -&gt; stdlib/planar-triangles.types.plato<br>M  stdlib/pointclouds.library.plato<br>R  stdlib/pointclouds.plato -&gt; stdlib/pointclouds.types.plato<br>R  stdlib/points-curvilinear.plato -&gt; stdlib/points-curvilinear.types.plato<br>R  stdlib/points-parametric.plato -&gt; stdlib/points-parametric.types.plato<br>M  stdlib/points.concepts.plato<br>R  stdlib/points.plato -&gt; stdlib/points.types.plato<br>M  stdlib/polygons-polylines.library.plato<br>R  stdlib/polygons-polylines.plato -&gt; stdlib/polygons-polylines.types.plato<br>M  stdlib/polygons-spatial.library.plato<br>R  stdlib/polygons-spatial.plato -&gt; stdlib/polygons-spatial.types.plato<br>M  stdlib/polygons.library.plato<br>R  stdlib/polygons.plato -&gt; stdlib/polygons.types.plato<br>M  stdlib/polyhedra-catalog.library.plato<br>M  stdlib/polyhedra-duals.library.plato<br>R  stdlib/polynomials-composite.plato -&gt; stdlib/polynomials-composite.types.plato<br>R  stdlib/polynomials-series.plato -&gt; stdlib/polynomials-series.types.plato<br>M  stdlib/polynomials.library.plato<br>R  stdlib/polynomials.plato -&gt; stdlib/polynomials.types.plato<br>R  stdlib/primitives-arrays.plato -&gt; stdlib/primitives-arrays.types.plato<br>M  stdlib/primitives-builders.library.plato<br>R  stdlib/primitives-builders.plato -&gt; stdlib/primitives-builders.types.plato<br>R  stdlib/primitives-functions.plato -&gt; stdlib/primitives-functions.types.plato<br>R  stdlib/primitives-tuples.plato -&gt; stdlib/primitives-tuples.types.plato<br>R  stdlib/primitives.plato -&gt; stdlib/primitives.types.plato<br>R  stdlib/quantities-dynamic.plato -&gt; stdlib/quantities-dynamic.types.plato<br>R  stdlib/quantities-electromagnetic.plato -&gt; stdlib/quantities-electromagnetic.types.plato<br>R  stdlib/quantities-geometric.plato -&gt; stdlib/quantities-geometric.types.plato<br>R  stdlib/quantities-kinematic.plato -&gt; stdlib/quantities-kinematic.types.plato<br>R  stdlib/quantities-material.plato -&gt; stdlib/quantities-material.types.plato<br>R  stdlib/quantities-mechanical.plato -&gt; stdlib/quantities-mechanical.types.plato<br>R  stdlib/quantities-photometric.plato -&gt; stdlib/quantities-photometric.types.plato<br>M  stdlib/quantities-projections.library.plato<br>R  stdlib/quantities-thermal.plato -&gt; stdlib/quantities-thermal.types.plato<br>R  stdlib/random-continuous-gamma.plato -&gt; stdlib/random-continuous-gamma.types.plato<br>M  stdlib/random-continuous-tails.library.plato<br>M  stdlib/random-continuous.library.plato<br>R  stdlib/random-continuous.plato -&gt; stdlib/random-continuous.types.plato<br>M  stdlib/random-discrete.library.plato<br>R  stdlib/random-discrete.plato -&gt; stdlib/random-discrete.types.plato<br>R  stdlib/random-multivariate.plato -&gt; stdlib/random-multivariate.types.plato<br>R  stdlib/random.plato -&gt; stdlib/random.types.plato<br>R  stdlib/render-post-processing.plato -&gt; stdlib/render-post-processing.types.plato<br>R  stdlib/render-settings.plato -&gt; stdlib/render-settings.types.plato<br>R  stdlib/render-vertex-layout.plato -&gt; stdlib/render-vertex-layout.types.plato<br>R  stdlib/rigid-dynamics-forces.plato -&gt; stdlib/rigid-dynamics-forces.types.plato<br>R  stdlib/rigid-dynamics.plato -&gt; stdlib/rigid-dynamics.types.plato<br>R  stdlib/rotations.plato -&gt; stdlib/rotations.types.plato<br>M  stdlib/sampling-curves.library.plato<br>R  stdlib/sampling-curves.plato -&gt; stdlib/sampling-curves.types.plato<br>R  stdlib/sampling-fields.plato -&gt; stdlib/sampling-fields.types.plato<br>R  stdlib/sampling-grids.plato -&gt; stdlib/sampling-grids.types.plato<br>R  stdlib/sampling-patterns.plato -&gt; stdlib/sampling-patterns.types.plato<br>R  stdlib/sampling-resampling.plato -&gt; stdlib/sampling-resampling.types.plato<br>R  stdlib/scene2d.plato -&gt; stdlib/scene2d.types.plato<br>R  stdlib/scene3d-indices.plato -&gt; stdlib/scene3d-indices.types.plato<br>R  stdlib/scene3d-instancing.plato -&gt; stdlib/scene3d-instancing.types.plato<br>R  stdlib/scene3d.plato -&gt; stdlib/scene3d.types.plato<br>R  stdlib/scientific-data-records.plato -&gt; stdlib/scientific-data-records.types.plato<br>R  stdlib/scientific-data-series.plato -&gt; stdlib/scientific-data-series.types.plato<br>R  stdlib/signals-filters.plato -&gt; stdlib/signals-filters.types.plato<br>R  stdlib/signals-generators.plato -&gt; stdlib/signals-generators.types.plato<br>R  stdlib/signals.plato -&gt; stdlib/signals.types.plato<br>R  stdlib/skeletal-animation-constraints.plato -&gt; stdlib/skeletal-animation-constraints.types.plato<br>R  stdlib/skeletal-animation.plato -&gt; stdlib/skeletal-animation.types.plato<br>M  stdlib/solids-csg-clipping.library.plato<br>M  stdlib/solids-csg-soups.library.plato<br>R  stdlib/solids-csg-soups.plato -&gt; stdlib/solids-csg-soups.types.plato<br>R  stdlib/solids-csg.plato -&gt; stdlib/solids-csg.types.plato<br>R  stdlib/solids-generated.plato -&gt; stdlib/solids-generated.types.plato<br>M  stdlib/solids-polyhedra.library.plato<br>R  stdlib/solids-polyhedra.plato -&gt; stdlib/solids-polyhedra.types.plato<br>M  stdlib/solids.library.plato<br>M  stdlib/spatial-boxes.library.plato<br>R  stdlib/spatial-boxes.plato -&gt; stdlib/spatial-boxes.types.plato<br>M  stdlib/spatial-capsules.library.plato<br>M  stdlib/spatial-cylinders.library.plato<br>R  stdlib/spatial-cylinders.plato -&gt; stdlib/spatial-cylinders.types.plato<br>R  stdlib/spatial-grids.plato -&gt; stdlib/spatial-grids.types.plato<br>R  stdlib/spatial-implicits.plato -&gt; stdlib/spatial-implicits.types.plato<br>R  stdlib/spatial-kdtrees.plato -&gt; stdlib/spatial-kdtrees.types.plato<br>M  stdlib/spatial-patches.library.plato<br>R  stdlib/spatial-patches.plato -&gt; stdlib/spatial-patches.types.plato<br>R  stdlib/spatial-queries-overlap.plato -&gt; stdlib/spatial-queries-overlap.types.plato<br>R  stdlib/spatial-queries-proximity.plato -&gt; stdlib/spatial-queries-proximity.types.plato<br>R  stdlib/spatial-queries-rays.plato -&gt; stdlib/spatial-queries-rays.types.plato<br>M  stdlib/spatial-simplices.library.plato<br>R  stdlib/spatial-simplices.plato -&gt; stdlib/spatial-simplices.types.plato<br>M  stdlib/spatial-spheres.library.plato<br>R  stdlib/spatial-spheres.plato -&gt; stdlib/spatial-spheres.types.plato<br>M  stdlib/spatial-tori.library.plato<br>R  stdlib/spatial-tori.plato -&gt; stdlib/spatial-tori.types.plato<br>R  stdlib/spatial-trees.plato -&gt; stdlib/spatial-trees.types.plato<br>M  stdlib/splines-bezier.library.plato<br>R  stdlib/splines-bezier.plato -&gt; stdlib/splines-bezier.types.plato<br>M  stdlib/splines-bspline.library.plato<br>R  stdlib/splines-bspline.plato -&gt; stdlib/splines-bspline.types.plato<br>M  stdlib/splines-hermite.library.plato<br>R  stdlib/splines-hermite.plato -&gt; stdlib/splines-hermite.types.plato<br>M  stdlib/splines-interpolating.library.plato<br>R  stdlib/splines-interpolating.plato -&gt; stdlib/splines-interpolating.types.plato<br>M  stdlib/statistics-correlation.library.plato<br>R  stdlib/statistics-correlation.plato -&gt; stdlib/statistics-correlation.types.plato<br>M  stdlib/statistics.library.plato<br>R  stdlib/statistics.plato -&gt; stdlib/statistics.types.plato<br>R  stdlib/surfaces-generated.plato -&gt; stdlib/surfaces-generated.types.plato<br>R  stdlib/surfaces-patches.plato -&gt; stdlib/surfaces-patches.types.plato<br>R  stdlib/surfaces-special.plato -&gt; stdlib/surfaces-special.types.plato<br>M  stdlib/surfaces.library.plato<br>R  stdlib/text-fonts.plato -&gt; stdlib/text-fonts.types.plato<br>R  stdlib/text-glyphs.plato -&gt; stdlib/text-glyphs.types.plato<br>R  stdlib/text-layout.plato -&gt; stdlib/text-layout.types.plato<br>R  stdlib/texturing-sampling.plato -&gt; stdlib/texturing-sampling.types.plato<br>M  stdlib/texturing.concepts.plato<br>M  stdlib/texturing.library.plato<br>R  stdlib/texturing.plato -&gt; stdlib/texturing.types.plato<br>M  stdlib/time.library.plato<br>R  stdlib/time.plato -&gt; stdlib/time.types.plato<br>M  stdlib/topology-adjacency.library.plato<br>R  stdlib/topology-adjacency.plato -&gt; stdlib/topology-adjacency.types.plato<br>R  stdlib/topology-classification.plato -&gt; stdlib/topology-classification.types.plato<br>M  stdlib/topology-half-edges.library.plato<br>R  stdlib/topology-half-edges.plato -&gt; stdlib/topology-half-edges.types.plato<br>R  stdlib/topology-indices.plato -&gt; stdlib/topology-indices.types.plato<br>M  stdlib/transforms-affine.library.plato<br>R  stdlib/transforms-affine.plato -&gt; stdlib/transforms-affine.types.plato<br>M  stdlib/transforms-frames.library.plato<br>R  stdlib/transforms-frames.plato -&gt; stdlib/transforms-frames.types.plato<br>M  stdlib/transforms-motor.library.plato<br>R  stdlib/transforms-motor.plato -&gt; stdlib/transforms-motor.types.plato<br>M  stdlib/transforms-pose.library.plato<br>R  stdlib/transforms-pose.plato -&gt; stdlib/transforms-pose.types.plato<br>M  stdlib/transforms-rotations.library.plato<br>M  stdlib/transforms-trs.library.plato<br>R  stdlib/transforms-trs.plato -&gt; stdlib/transforms-trs.types.plato<br>R  stdlib/uncertainty-estimation.plato -&gt; stdlib/uncertainty-estimation.types.plato<br>R  stdlib/uncertainty.plato -&gt; stdlib/uncertainty.types.plato<br>R  stdlib/vector-styling-paint.plato -&gt; stdlib/vector-styling-paint.types.plato<br>R  stdlib/vector-styling-stroke.plato -&gt; stdlib/vector-styling-stroke.types.plato<br>R  stdlib/vectors-geometric.plato -&gt; stdlib/vectors-geometric.types.plato<br>M  stdlib/vectors-integer.library.plato<br>R  stdlib/vectors-integer.plato -&gt; stdlib/vectors-integer.types.plato<br>R  stdlib/vectors-tuples.plato -&gt; stdlib/vectors-tuples.types.plato<br>M  stdlib/vectors.concepts.plato<br>R  stdlib/voxels.plato -&gt; stdlib/voxels.types.plato</code></div>
+    <div class="k">Plato HEAD</div><div><code>374b2145be6a5ffa2e8d2bc8af1462184993bd07</code></div>
+    <div class="k">Plato-related dirty</div><div><code>M  Plato.CSharpWriter/CSharpConcreteTypeWriter.cs<br>M  Plato.Intrinsics.V2/Integer.cs<br>M  Plato.Intrinsics.V3/Integer.cs<br>M  PlatoCompiler/Analysis/Linter.cs<br>M  stdlib/color.library.plato<br>M  stdlib/intrinsics-scalars.library.plato<br>M  stdlib/numbers.library.plato<br>M  stdlib/numeric-structures-matrix.library.plato<br>?? Plato.Navigation.Tests/CheckSupportTests.cs<br>?? Plato.Navigation.Tests/CheckTimingTests.cs<br>?? Plato.Navigation.Tests/StyleCheckerTests.cs<br>?? Plato.Navigation/CheckSupport.cs<br>?? Plato.Navigation/StyleChecker.cs</code></div>
   </div>
   <div class="note">If drifted, bump with an explicit <code>git commit -- submodules/Plato</code> in studio after Plato pushes.</div>
 </section>
@@ -752,7 +167,7 @@ R  stdlib/voxels.plato -&gt; stdlib/voxels.types.plato
   <div><code>12aad781501e6714789fb87629f1fbee001e2ab0 parakeet (v1.4.3-78-g12aad78)</code></div>
   <p class="muted">parakeet: do not stage casually (known pre-existing dirty grammar submodule).</p>
   <h3>Worktrees</h3>
-  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              9aea28e [main]<br>C:/Users/cdigg/git/plato-wt-1                                                        d0dc6c8 [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
+  <div><code>C:/Users/cdigg/git/studio/.git/modules/submodules/Plato                              374b214 [main]<br>C:/Users/cdigg/git/plato-wt-1                                                        d0dc6c8 [plato-stdlib-improvements]<br>C:/Users/cdigg/git/studio/submodules/Plato/.claude/worktrees/folder-approval-5f13ae  4ab855e [claude/folder-approval-5f13ae]</code></div>
   <h3>Studio-level submodules</h3>
   <pre></pre>
 </section>
@@ -765,7 +180,7 @@ R  stdlib/voxels.plato -&gt; stdlib/voxels.types.plato
     <div class="card"><div class="n">33,693</div><div class="l">References</div></div>
     <div class="card"><div class="n">0</div><div class="l">Diagnostics</div></div>
   </div>
-  <p class="muted" style="margin:.75rem 0 0">Roots: stdlib + stdlib-tests · built 2026-07-29T21:46:46Z · snapshot 2026-07-30T11:59:20-04:00</p>
+  <p class="muted" style="margin:.75rem 0 0">Roots: stdlib + stdlib-tests · built 2026-07-29T21:46:46Z · snapshot 2026-07-30T12:20:31-04:00</p>
 </section>
 
 <section>
@@ -778,25 +193,25 @@ R  stdlib/voxels.plato -&gt; stdlib/voxels.types.plato
 
   <h3>C# build errors (latest recorded)</h3>
   <div class="kv" style="margin-bottom:.85rem">
-    <div class="k">Latest target</div><div><code>forward-conformance</code> · <span class="badge fail">46 errors</span></div>
-    <div class="k">Errors / warnings</div><div>46 / 0</div>
-    <div class="k">Recorded at</div><div>2026-07-30T11:59:20-04:00</div>
+    <div class="k">Latest target</div><div><code>plato-generated-optimized</code> · <span class="badge pass">0 errors</span></div>
+    <div class="k">Errors / warnings</div><div>0 / 0</div>
+    <div class="k">Recorded at</div><div>2026-07-30T12:20:31-04:00</div>
     <div class="k">How updated</div><div>Every Plato C# build via <code>tools/dotnet-build-record.ps1</code> (wired into <code>regen-forward-conformance.ps1</code>, <code>regen-generated.ps1</code>). Writes <code>docs/status-report-snapshot.json</code> → this page.</div>
   </div>
   <h3>Recorded build targets</h3>
   <table>
     <thead><tr><th>Target</th><th>Errors</th><th>Warnings</th><th>Result</th><th>When</th></tr></thead>
-    <tbody><tr><td><code>forward-conformance</code></td><td class="num">46</td><td class="num">0</td><td><span class="badge fail">ERRORS</span></td><td>2026-07-30T11:59:20-04:00</td></tr><tr><td><code>plato-cli</code></td><td class="num">0</td><td class="num">6</td><td><span class="badge pass">OK</span></td><td>2026-07-30T11:34:20-04:00</td></tr><tr><td><code>plato-generated-optimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T01:53:17-04:00</td></tr><tr><td><code>plato-generated-unoptimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T01:53:02-04:00</td></tr></tbody>
+    <tbody><tr><td><code>plato-generated-optimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T12:20:31-04:00</td></tr><tr><td><code>plato-generated-unoptimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T12:20:17-04:00</td></tr><tr><td><code>plato-cli</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T12:19:39-04:00</td></tr><tr><td><code>forward-conformance</code></td><td class="num">85</td><td class="num">0</td><td><span class="badge fail">ERRORS</span></td><td>2026-07-30T12:19:12-04:00</td></tr></tbody>
   </table>
   <h3>Latest errors by category</h3>
   <table>
     <thead><tr><th>Category</th><th>Key</th><th>Count</th><th>CS codes</th></tr></thead>
-    <tbody><tr><td>Extension method receiver type</td><td><code>extension_receiver</code></td><td class="num">17</td><td><code>CS1929</code></td></tr><tr><td>Missing member on receiver (CS1061)</td><td><code>missing_member</code></td><td class="num">16</td><td><code>CS1061</code></td></tr><tr><td>Other / uncategorized</td><td><code>other</code></td><td class="num">6</td><td><code>CS1662, CS0023, CS1501, CS0266</code></td></tr><tr><td>Cannot implicitly convert</td><td><code>cannot_implicitly_convert</code></td><td class="num">5</td><td><code>CS0029</code></td></tr><tr><td>Operator type mismatch</td><td><code>operator_type_mismatch</code></td><td class="num">2</td><td><code>CS0019</code></td></tr></tbody>
+    <tbody><tr><td colspan="4" class="muted">No error categories for latest build.</td></tr></tbody>
   </table>
   <h3>Latest errors by CS code (top 20)</h3>
   <table>
     <thead><tr><th>Code</th><th>Count</th></tr></thead>
-    <tbody><tr><td><code>CS1929</code></td><td class="num">17</td></tr><tr><td><code>CS1061</code></td><td class="num">16</td></tr><tr><td><code>CS0029</code></td><td class="num">5</td></tr><tr><td><code>CS0019</code></td><td class="num">2</td></tr><tr><td><code>CS0023</code></td><td class="num">2</td></tr><tr><td><code>CS1662</code></td><td class="num">2</td></tr><tr><td><code>CS0266</code></td><td class="num">1</td></tr><tr><td><code>CS1501</code></td><td class="num">1</td></tr></tbody>
+    <tbody><tr><td colspan="2" class="muted">No CS codes for latest build.</td></tr></tbody>
   </table>
 
   <h3>Forward-stdlib linter catalog</h3>
@@ -817,9 +232,9 @@ R  stdlib/voxels.plato -&gt; stdlib/voxels.types.plato
 
 <section>
   <h2>Tracker — Plato issues</h2>
-  <div class="grid" style="margin-bottom:1rem"><div class="card"><div class="n">7</div><div class="l">In progress</div></div><div class="card"><div class="n">6</div><div class="l">Ready</div></div><div class="card"><div class="n">88</div><div class="l">Ideas</div></div><div class="card"><div class="n">35</div><div class="l">Done</div></div>
-    <div class="card"><div class="n">142</div><div class="l">Total plato-*</div></div>
-    <div class="card"><div class="n">9</div><div class="l">Open bugs</div></div>
+  <div class="grid" style="margin-bottom:1rem"><div class="card"><div class="n">7</div><div class="l">In progress</div></div><div class="card"><div class="n">7</div><div class="l">Ready</div></div><div class="card"><div class="n">88</div><div class="l">Ideas</div></div><div class="card"><div class="n">36</div><div class="l">Done</div></div>
+    <div class="card"><div class="n">144</div><div class="l">Total plato-*</div></div>
+    <div class="card"><div class="n">10</div><div class="l">Open bugs</div></div>
   </div>
   <h3>In progress (7)</h3>
   <table>
@@ -832,7 +247,7 @@ R  stdlib/voxels.plato -&gt; stdlib/voxels.types.plato
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-306.md"><code>plato-306</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-306.md">Generic Difference defaults via optional delta conversion concept</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">in-progress</span></td><td>M / low</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-320.md"><code>plato-320</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-320.md">PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">in-progress</span></td><td>S / low</td></tr></tbody>
   </table>
-  <h3>Ready (6)</h3>
+  <h3>Ready (7)</h3>
   <table>
     <thead><tr><th>Id</th><th>Title</th><th>Type</th><th>Pri</th><th>Status</th><th>Effort/Risk</th></tr></thead>
     <tbody><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md">stdlib concept-gap burn-down: the 17 markers that need a language or concept decision</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>M / low</td></tr>
@@ -840,7 +255,8 @@ R  stdlib/voxels.plato -&gt; stdlib/voxels.types.plato
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md">Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>L / med</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md"><code>plato-326</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md">Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-328.md"><code>plato-328</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-328.md">Inferred concept constraints are lost on generic library-function type variables</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr>
-<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-329.md"><code>plato-329</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-329.md">Writer emission-completeness assertion: every reachable library function must be emitted somewhere</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>M / low</td></tr></tbody>
+<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-329.md"><code>plato-329</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-329.md">Writer emission-completeness assertion: every reachable library function must be emitted somewhere</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>M / low</td></tr>
+<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-363.md"><code>plato-363</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-363.md">Legacy golden drift + CS0557 conformance breakage from a72011e writer changes</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p1</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr></tbody>
   </table>
   <h3>Open bugs</h3>
   <table>
@@ -853,7 +269,8 @@ R  stdlib/voxels.plato -&gt; stdlib/voxels.types.plato
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md"><code>plato-326</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-326.md">Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-328.md"><code>plato-328</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-328.md">Inferred concept constraints are lost on generic library-function type variables</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p3</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr>
 <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md"><code>plato-332</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md">Checker gap: qualified sum-type payload constructors (Sum.Case(x)) fail CHK201</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">fixed</span></td><td>? / ?</td></tr>
-<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-333.md"><code>plato-333</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-333.md">IntegerInterval is half-open but inherits closed IntervalLike bodies</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">idea</span></td><td>S / med</td></tr></tbody>
+<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-333.md"><code>plato-333</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-333.md">IntegerInterval is half-open but inherits closed IntervalLike bodies</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge status">idea</span></td><td>S / med</td></tr>
+<tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-363.md"><code>plato-363</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-363.md">Legacy golden drift + CS0557 conformance breakage from a72011e writer changes</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p1</span></td><td><span class="badge status">ready</span></td><td>S / low</td></tr></tbody>
   </table>
   <h3>Open design problems</h3>
   <table>
@@ -867,17 +284,17 @@ R  stdlib/voxels.plato -&gt; stdlib/voxels.types.plato
   <table>
     <thead><tr><th>Id</th><th>Title</th><th>Type</th><th>Pri</th><th>Status</th><th>Closed</th></tr></thead>
     <tbody>
-      <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-302.md"><code>plato-302</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-302.md">Plato BREP: edge-use shell with geometry sum types</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-30</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md">Convert solids-polyhedra types to PolygonMesh3D / TriangleMesh3D</a></td><td><span class="badge type">feature</span></td><td><span class="badge prio">p1</span></td><td><span class="badge done">done</span></td><td>2026-07-30</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-287.md"><code>plato-287</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-287.md">Add BoundedSdf (SDF with finite domain bounds)</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-291.md"><code>plato-291</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-291.md">CSharpWriter: no ground TIR for bodied concrete members blocks forward-stdlib codegen</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-293.md"><code>plato-293</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-293.md">stdlib: re-partition forward vocabulary by kind + domain, add Wikipedia links</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-295.md"><code>plato-295</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-295.md">Prefer array literals over MapRange for fixed corners/points</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p3</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-299.md"><code>plato-299</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-299.md">Align Plato stdlib CONVENTIONS with SDK and Studio style guides</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p1</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-300.md"><code>plato-300</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-300.md">Prefer arithmetic operators over Add/Multiply method calls in Plato</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-301.md"><code>plato-301</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-301.md">Implement Plato polyhedra library (seeds + Conway) in small-function style</a></td><td><span class="badge type">feature</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-303.md"><code>plato-303</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-303.md">CompressedSparseRow type/concept and library</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-307.md"><code>plato-307</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-307.md">Additive declares no identity element (Zero)</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p1</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-309.md"><code>plato-309</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-309.md">Plato agent guidance drift: add AGENTS.md, fix stale stdlib claims, move house knowledge into repo</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-310.md"><code>plato-310</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-310.md">CSharpWriter mangles Function1-typed values: System.Func loses type args, constructor calls emit as extension calls</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-311.md"><code>plato-311</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-311.md">Concept in type position (existential) has no defined C# lowering</a></td><td><span class="badge type">problem</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-312.md"><code>plato-312</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-312.md">Emit _-receiver concept members as C# static abstract</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr>
+      <tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-302.md"><code>plato-302</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-302.md">Plato BREP: edge-use shell with geometry sum types</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-30</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md">Convert solids-polyhedra types to PolygonMesh3D / TriangleMesh3D</a></td><td><span class="badge type">feature</span></td><td><span class="badge prio">p1</span></td><td><span class="badge done">done</span></td><td>2026-07-30</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-362.md"><code>plato-362</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-362.md">Type-token members - static fills satisfy instance obligations, both access surfaces</a></td><td><span class="badge type">feature</span></td><td><span class="badge prio">p1</span></td><td><span class="badge done">done</span></td><td>2026-07-30</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-287.md"><code>plato-287</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-287.md">Add BoundedSdf (SDF with finite domain bounds)</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-291.md"><code>plato-291</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-291.md">CSharpWriter: no ground TIR for bodied concrete members blocks forward-stdlib codegen</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-293.md"><code>plato-293</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-293.md">stdlib: re-partition forward vocabulary by kind + domain, add Wikipedia links</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-295.md"><code>plato-295</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-295.md">Prefer array literals over MapRange for fixed corners/points</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p3</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-299.md"><code>plato-299</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-299.md">Align Plato stdlib CONVENTIONS with SDK and Studio style guides</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p1</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-300.md"><code>plato-300</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-300.md">Prefer arithmetic operators over Add/Multiply method calls in Plato</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-301.md"><code>plato-301</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-301.md">Implement Plato polyhedra library (seeds + Conway) in small-function style</a></td><td><span class="badge type">feature</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-303.md"><code>plato-303</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-303.md">CompressedSparseRow type/concept and library</a></td><td><span class="badge type">idea</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-307.md"><code>plato-307</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-307.md">Additive declares no identity element (Zero)</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">p1</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-309.md"><code>plato-309</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-309.md">Plato agent guidance drift: add AGENTS.md, fix stale stdlib claims, move house knowledge into repo</a></td><td><span class="badge type">debt</span></td><td><span class="badge prio">?</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-310.md"><code>plato-310</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-310.md">CSharpWriter mangles Function1-typed values: System.Func loses type args, constructor calls emit as extension calls</a></td><td><span class="badge type">bug</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr><tr><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-311.md"><code>plato-311</code></a></td><td><a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-311.md">Concept in type position (existential) has no defined C# lowering</a></td><td><span class="badge type">problem</span></td><td><span class="badge prio">p2</span></td><td><span class="badge done">done</span></td><td>2026-07-29</td></tr>
     </tbody>
   </table>
   <p class="muted">88 ideas remain open (not listed).</p>
 </section>
 
 <section>
-  <h2>Committed work today (29 commits)</h2>
+  <h2>Committed work today (30 commits)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr><td><code>9aea28e</code></td><td>2026-07-30 12:00:29 -0400</td><td>feat(tools): stage-stdlib.ps1 - pinned-CLI staging gate for stdlib work</td></tr><tr><td><code>cd6b8b5</code></td><td>2026-07-30 11:51:51 -0400</td><td>docs: Plato MCP improvements plan (warm plato_check, vocab card, usages)</td></tr><tr><td><code>863a9af</code></td><td>2026-07-30 11:40:43 -0400</td><td>docs: stdlib reorg plan (.types.plato suffix + domain-tier folders)</td></tr><tr><td><code>043a9cf</code></td><td>2026-07-30 11:36:21 -0400</td><td>fix(compiler): reach every node kind in capture hoist</td></tr><tr><td><code>a72011e</code></td><td>2026-07-30 11:15:36 -0400</td><td>wip(plato): V2 obligation fills + grid adapters + lambda-capture rewrite</td></tr><tr><td><code>b92d4c2</code></td><td>2026-07-30 02:25:54 -0400</td><td>feat(stdlib): all 26 Archimedean/Catalan kinds dispatch to real meshes</td></tr><tr><td><code>5133e3d</code></td><td>2026-07-30 02:25:35 -0400</td><td>feat(stdlib): Conway expand, snub and bevel + full Archimedean/Catalan catalog</td></tr><tr><td><code>e212b66</code></td><td>2026-07-30 02:25:15 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a>): lint intrinsic obligations against the V2 runtime</td></tr><tr><td><code>f20ddf0</code></td><td>2026-07-30 02:25:09 -0400</td><td>fix(stdlib): Conway Dual reciprocates about the true face plane foot</td></tr><tr><td><code>3642aa2</code></td><td>2026-07-30 02:24:59 -0400</td><td>fix(checker): resolve qualified payload sum-case ctors (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md"><code>plato-332</code></a>)</td></tr><tr><td><code>bab5742</code></td><td>2026-07-30 02:20:28 -0400</td><td>feat(stdlib): von Mises Cdf (Bessel series) + superellipse Perimeter (Simpson)</td></tr><tr><td><code>f6167ca</code></td><td>2026-07-30 02:08:45 -0400</td><td>tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</td></tr><tr><td><code>61b37eb</code></td><td>2026-07-30 01:55:17 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>10c22f0</code></td><td>2026-07-30 01:54:42 -0400</td><td>feat(v2): Matrix3x2/Matrix4x4 RowCount() — forward CS0535 curtain lifted</td></tr><tr><td><code>d0dc6c8</code></td><td>2026-07-30 01:48:02 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into plato-stdlib-improvements</td></tr><tr><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr><td><code>0e15882</code></td><td>2026-07-30 01:47:03 -0400</td><td>docs: record forward-conformance C# errors 1460 -&gt; 4</td></tr><tr><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr><td><code>d34a680</code></td><td>2026-07-30 01:25:31 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>7f80b42</code></td><td>2026-07-30 01:19:37 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): police V2 surface against writer tables</td></tr><tr><td><code>fbf5154</code></td><td>2026-07-30 00:56:11 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr><td><code>4be7444</code></td><td>2026-07-30 00:53:58 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>1f55a6c</code></td><td>2026-07-30 00:53:17 -0400</td><td>merge: stdlib increment - CSG, BREP, AngularCurve2D/3D, special functions</td></tr><tr><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr><tr><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr></tbody>
+    <tbody><tr><td><code>374b214</code></td><td>2026-07-30 12:07:26 -0400</td><td>refactor(stdlib): rename bare type files to .types.plato (phase 1 of reorg plan)</td></tr><tr><td><code>9aea28e</code></td><td>2026-07-30 12:00:29 -0400</td><td>feat(tools): stage-stdlib.ps1 - pinned-CLI staging gate for stdlib work</td></tr><tr><td><code>cd6b8b5</code></td><td>2026-07-30 11:51:51 -0400</td><td>docs: Plato MCP improvements plan (warm plato_check, vocab card, usages)</td></tr><tr><td><code>863a9af</code></td><td>2026-07-30 11:40:43 -0400</td><td>docs: stdlib reorg plan (.types.plato suffix + domain-tier folders)</td></tr><tr><td><code>043a9cf</code></td><td>2026-07-30 11:36:21 -0400</td><td>fix(compiler): reach every node kind in capture hoist</td></tr><tr><td><code>a72011e</code></td><td>2026-07-30 11:15:36 -0400</td><td>wip(plato): V2 obligation fills + grid adapters + lambda-capture rewrite</td></tr><tr><td><code>b92d4c2</code></td><td>2026-07-30 02:25:54 -0400</td><td>feat(stdlib): all 26 Archimedean/Catalan kinds dispatch to real meshes</td></tr><tr><td><code>5133e3d</code></td><td>2026-07-30 02:25:35 -0400</td><td>feat(stdlib): Conway expand, snub and bevel + full Archimedean/Catalan catalog</td></tr><tr><td><code>e212b66</code></td><td>2026-07-30 02:25:15 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a>): lint intrinsic obligations against the V2 runtime</td></tr><tr><td><code>f20ddf0</code></td><td>2026-07-30 02:25:09 -0400</td><td>fix(stdlib): Conway Dual reciprocates about the true face plane foot</td></tr><tr><td><code>3642aa2</code></td><td>2026-07-30 02:24:59 -0400</td><td>fix(checker): resolve qualified payload sum-case ctors (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md"><code>plato-332</code></a>)</td></tr><tr><td><code>bab5742</code></td><td>2026-07-30 02:20:28 -0400</td><td>feat(stdlib): von Mises Cdf (Bessel series) + superellipse Perimeter (Simpson)</td></tr><tr><td><code>f6167ca</code></td><td>2026-07-30 02:08:45 -0400</td><td>tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</td></tr><tr><td><code>61b37eb</code></td><td>2026-07-30 01:55:17 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>10c22f0</code></td><td>2026-07-30 01:54:42 -0400</td><td>feat(v2): Matrix3x2/Matrix4x4 RowCount() — forward CS0535 curtain lifted</td></tr><tr><td><code>d0dc6c8</code></td><td>2026-07-30 01:48:02 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into plato-stdlib-improvements</td></tr><tr><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr><td><code>0e15882</code></td><td>2026-07-30 01:47:03 -0400</td><td>docs: record forward-conformance C# errors 1460 -&gt; 4</td></tr><tr><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr><tr><td><code>d34a680</code></td><td>2026-07-30 01:25:31 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr><td><code>7f80b42</code></td><td>2026-07-30 01:19:37 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): police V2 surface against writer tables</td></tr><tr><td><code>fbf5154</code></td><td>2026-07-30 00:56:11 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>a17f194</code></td><td>2026-07-30 00:55:26 -0400</td><td>docs(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-331.md"><code>plato-331</code></a>): correct the tracker reference in PrimitiveSurfaceOverrides</td></tr><tr><td><code>4be7444</code></td><td>2026-07-30 00:53:58 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into HEAD</td></tr><tr><td><code>1f55a6c</code></td><td>2026-07-30 00:53:17 -0400</td><td>merge: stdlib increment - CSG, BREP, AngularCurve2D/3D, special functions</td></tr><tr><td><code>ac8d3e5</code></td><td>2026-07-30 00:51:34 -0400</td><td>fix(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-323.md"><code>plato-323</code></a>): receiver-aware property rendering; refresh 201 goldens (authorized)</td></tr><tr><td><code>a5f59eb</code></td><td>2026-07-30 00:22:21 -0400</td><td>feat(stdlib): special functions - gamma/beta/erf/bessel</td></tr><tr><td><code>de223d6</code></td><td>2026-07-30 00:18:42 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): AngularCurve2D/3D concepts + bridges</td></tr></tbody>
   </table>
 </section>
 
@@ -885,7 +302,7 @@ R  stdlib/voxels.plato -&gt; stdlib/voxels.types.plato
   <h2>Recent history (20)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr class="today"><td><code>9aea28e</code></td><td>2026-07-30 12:00:29 -0400</td><td>feat(tools): stage-stdlib.ps1 - pinned-CLI staging gate for stdlib work</td></tr><tr class="today"><td><code>cd6b8b5</code></td><td>2026-07-30 11:51:51 -0400</td><td>docs: Plato MCP improvements plan (warm plato_check, vocab card, usages)</td></tr><tr class="today"><td><code>863a9af</code></td><td>2026-07-30 11:40:43 -0400</td><td>docs: stdlib reorg plan (.types.plato suffix + domain-tier folders)</td></tr><tr class="today"><td><code>043a9cf</code></td><td>2026-07-30 11:36:21 -0400</td><td>fix(compiler): reach every node kind in capture hoist</td></tr><tr class="today"><td><code>a72011e</code></td><td>2026-07-30 11:15:36 -0400</td><td>wip(plato): V2 obligation fills + grid adapters + lambda-capture rewrite</td></tr><tr class="today"><td><code>b92d4c2</code></td><td>2026-07-30 02:25:54 -0400</td><td>feat(stdlib): all 26 Archimedean/Catalan kinds dispatch to real meshes</td></tr><tr class="today"><td><code>5133e3d</code></td><td>2026-07-30 02:25:35 -0400</td><td>feat(stdlib): Conway expand, snub and bevel + full Archimedean/Catalan catalog</td></tr><tr class="today"><td><code>e212b66</code></td><td>2026-07-30 02:25:15 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a>): lint intrinsic obligations against the V2 runtime</td></tr><tr class="today"><td><code>f20ddf0</code></td><td>2026-07-30 02:25:09 -0400</td><td>fix(stdlib): Conway Dual reciprocates about the true face plane foot</td></tr><tr class="today"><td><code>3642aa2</code></td><td>2026-07-30 02:24:59 -0400</td><td>fix(checker): resolve qualified payload sum-case ctors (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md"><code>plato-332</code></a>)</td></tr><tr class="today"><td><code>bab5742</code></td><td>2026-07-30 02:20:28 -0400</td><td>feat(stdlib): von Mises Cdf (Bessel series) + superellipse Perimeter (Simpson)</td></tr><tr class="today"><td><code>f6167ca</code></td><td>2026-07-30 02:08:45 -0400</td><td>tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</td></tr><tr class="today"><td><code>61b37eb</code></td><td>2026-07-30 01:55:17 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr class="today"><td><code>10c22f0</code></td><td>2026-07-30 01:54:42 -0400</td><td>feat(v2): Matrix3x2/Matrix4x4 RowCount() — forward CS0535 curtain lifted</td></tr><tr class="today"><td><code>d0dc6c8</code></td><td>2026-07-30 01:48:02 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into plato-stdlib-improvements</td></tr><tr class="today"><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr class="today"><td><code>0e15882</code></td><td>2026-07-30 01:47:03 -0400</td><td>docs: record forward-conformance C# errors 1460 -&gt; 4</td></tr><tr class="today"><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr class="today"><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr><tr class="today"><td><code>faf0fbe</code></td><td>2026-07-30 01:31:21 -0400</td><td>feat(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-322.md"><code>plato-322</code></a>): typed polyhedral solids convert to PolygonMesh3D / TriangleMesh3D</td></tr></tbody>
+    <tbody><tr class="today"><td><code>374b214</code></td><td>2026-07-30 12:07:26 -0400</td><td>refactor(stdlib): rename bare type files to .types.plato (phase 1 of reorg plan)</td></tr><tr class="today"><td><code>9aea28e</code></td><td>2026-07-30 12:00:29 -0400</td><td>feat(tools): stage-stdlib.ps1 - pinned-CLI staging gate for stdlib work</td></tr><tr class="today"><td><code>cd6b8b5</code></td><td>2026-07-30 11:51:51 -0400</td><td>docs: Plato MCP improvements plan (warm plato_check, vocab card, usages)</td></tr><tr class="today"><td><code>863a9af</code></td><td>2026-07-30 11:40:43 -0400</td><td>docs: stdlib reorg plan (.types.plato suffix + domain-tier folders)</td></tr><tr class="today"><td><code>043a9cf</code></td><td>2026-07-30 11:36:21 -0400</td><td>fix(compiler): reach every node kind in capture hoist</td></tr><tr class="today"><td><code>a72011e</code></td><td>2026-07-30 11:15:36 -0400</td><td>wip(plato): V2 obligation fills + grid adapters + lambda-capture rewrite</td></tr><tr class="today"><td><code>b92d4c2</code></td><td>2026-07-30 02:25:54 -0400</td><td>feat(stdlib): all 26 Archimedean/Catalan kinds dispatch to real meshes</td></tr><tr class="today"><td><code>5133e3d</code></td><td>2026-07-30 02:25:35 -0400</td><td>feat(stdlib): Conway expand, snub and bevel + full Archimedean/Catalan catalog</td></tr><tr class="today"><td><code>e212b66</code></td><td>2026-07-30 02:25:15 -0400</td><td>test(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-330.md"><code>plato-330</code></a>): lint intrinsic obligations against the V2 runtime</td></tr><tr class="today"><td><code>f20ddf0</code></td><td>2026-07-30 02:25:09 -0400</td><td>fix(stdlib): Conway Dual reciprocates about the true face plane foot</td></tr><tr class="today"><td><code>3642aa2</code></td><td>2026-07-30 02:24:59 -0400</td><td>fix(checker): resolve qualified payload sum-case ctors (<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-332.md"><code>plato-332</code></a>)</td></tr><tr class="today"><td><code>bab5742</code></td><td>2026-07-30 02:20:28 -0400</td><td>feat(stdlib): von Mises Cdf (Bessel series) + superellipse Perimeter (Simpson)</td></tr><tr class="today"><td><code>f6167ca</code></td><td>2026-07-30 02:08:45 -0400</td><td>tools: add worktree-safe check-stdlib-fast.ps1 (Plato-local, $PSScriptRoot-relative)</td></tr><tr class="today"><td><code>61b37eb</code></td><td>2026-07-30 01:55:17 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27;</td></tr><tr class="today"><td><code>10c22f0</code></td><td>2026-07-30 01:54:42 -0400</td><td>feat(v2): Matrix3x2/Matrix4x4 RowCount() — forward CS0535 curtain lifted</td></tr><tr class="today"><td><code>d0dc6c8</code></td><td>2026-07-30 01:48:02 -0400</td><td>Merge remote-tracking branch &#x27;origin/main&#x27; into plato-stdlib-improvements</td></tr><tr class="today"><td><code>0dd6360</code></td><td>2026-07-30 01:47:25 -0400</td><td>feat(stdlib): complete Transformable/Deformable implementations</td></tr><tr class="today"><td><code>0e15882</code></td><td>2026-07-30 01:47:03 -0400</td><td>docs: record forward-conformance C# errors 1460 -&gt; 4</td></tr><tr class="today"><td><code>558a945</code></td><td>2026-07-30 01:38:01 -0400</td><td>refactor(<a href="file:///C:/Users/cdigg/git/studio/tracker/issues/plato-277.md"><code>plato-277</code></a>): relocate AngularCurves bridges to curves-angular.library.plato</td></tr><tr class="today"><td><code>eb49141</code></td><td>2026-07-30 01:35:47 -0400</td><td>feat(stdlib): fill special-function content markers — distributions + superellipse area</td></tr></tbody>
   </table>
 </section>
 

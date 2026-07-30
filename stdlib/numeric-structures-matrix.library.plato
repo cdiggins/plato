@@ -19,7 +19,7 @@ library NumericStructuresMatrix
     // MatrixLike exposes no construction primitive. The MakeArray2D intrinsic builds
     // an Array2D<Number>, not a concrete MatrixLike, so a generic
     // Transpose(MatrixLike): MatrixLike cannot be spelled here; each concrete matrix
-    // type (matrices.plato) supplies its own, returning its own type (e.g. the
+    // type (matrices.types.plato) supplies its own, returning its own type (e.g. the
     // Matrix4x4.Transpose intrinsic).
 
     // True when the matrix has equal row and column counts.
@@ -85,29 +85,31 @@ library NumericStructuresMatrix
     // Transpose cannot (see the TODO above): it must CONSTRUCT a matrix, and
     // MatrixLike exposes no construction primitive. So each concrete type
     // supplies its own, exactly as the note above prescribes. The fixed-size
-    // rows are Vector types, so each row's own Zero does the work; MatrixN
-    // carries its shape and rebuilds a zero-filled component array.
+    // types are TYPE-TOKEN members (`_` receiver: reachable as Matrix2x2.Zero
+    // or off any value); their shape is static, so the rows are written out
+    // literally. MatrixN carries its shape at runtime and so must keep a real
+    // receiver, rebuilding a zero-filled component array from it.
     // (Zero lives on Additive, not NumericalLimits.)
 
     // The 2x2 matrix with every element zero (the additive identity).
-    Zero(x: Matrix2x2): Matrix2x2
-        => (x.Row1.Zero, x.Row2.Zero);
+    Zero(_: Matrix2x2): Matrix2x2
+        => ((0.0, 0.0), (0.0, 0.0));
 
     // The 3x3 matrix with every element zero.
-    Zero(x: Matrix3x3): Matrix3x3
-        => (x.Row1.Zero, x.Row2.Zero, x.Row3.Zero);
+    Zero(_: Matrix3x3): Matrix3x3
+        => ((0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0));
 
     // The 4x4 matrix with every element zero.
-    Zero(x: Matrix4x4): Matrix4x4
-        => (x.Row1.Zero, x.Row2.Zero, x.Row3.Zero, x.Row4.Zero);
+    Zero(_: Matrix4x4): Matrix4x4
+        => ((0.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.0, 0.0));
 
     // The 3x2 matrix with every element zero.
-    Zero(x: Matrix3x2): Matrix3x2
-        => (x.Row1.Zero, x.Row2.Zero, x.Row3.Zero);
+    Zero(_: Matrix3x2): Matrix3x2
+        => ((0.0, 0.0), (0.0, 0.0), (0.0, 0.0));
 
     // The 4x3 matrix with every element zero.
-    Zero(x: Matrix4x3): Matrix4x3
-        => (x.Row1.Zero, x.Row2.Zero, x.Row3.Zero, x.Row4.Zero);
+    Zero(_: Matrix4x3): Matrix4x3
+        => ((0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0));
 
     // The zero matrix of the receiver's shape; the runtime shape is copied from
     // the receiver, so this is the additive identity for that shape only.
