@@ -79,7 +79,7 @@ type QuadMesh3D
 // members (vertex-to-face adjacency, for one) are then additional fields rather
 // than a second concept the type cannot implement twice.
 type PolygonMesh3D
-    implements Value, Meshable3D, MeshElementCounts
+    implements Value, Meshable3D, MeshElementCounts, MeshIncidence
 {
     Positions: Array<Point3D>;
     Faces: JaggedArray<VertexIndex>;
