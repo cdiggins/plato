@@ -12,10 +12,10 @@
 // boundary but is not a closed polyhedral mesh. Triangulation is the standard
 // second hop through `ToTriangleMesh` (`meshes-polygon-building.library.plato`).
 //
-// Catalog coverage is deliberately partial (the snub, expand and bevel Conway
-// operators do not exist yet — see `polyhedra-catalog.library.plato`): a kind
-// without a catalog factory returns the EMPTY polygon mesh rather than a wrong
-// one, and each gap arm below names the operator it is waiting for. Catalans
+// Catalog coverage is total: all thirteen Archimedeans and all thirteen
+// Catalans dispatch into a catalog factory (`polyhedra-catalog.library.plato`,
+// `polyhedra-catalog-expanded.library.plato`,
+// `polyhedra-catalog-catalans.library.plato`). Catalans
 // are rescaled by their measured circumscribed radius and never through
 // `ProjectedToUnitSphere` — they are face-transitive, so projecting would bend
 // their faces out of plane; a uniform scale cannot.
@@ -42,8 +42,9 @@ library SolidsPolyhedra
     ScaledToUnitCircumradius(self: PolygonMesh3D): PolygonMesh3D
         => self.VertexCount == 0 ? self : self.ScaledAboutOrigin(1.0 / self.CircumscribedRadius);
 
-    // The empty polygon mesh: the explicit "no catalog factory yet" result of
-    // the gap arms below. Detect it with `MeshIsEmpty` or `VertexCount == 0`.
+    // The empty polygon mesh: the explicit "nothing" mesh (no dispatch arm
+    // returns it any more, but callers may still want the zero element).
+    // Detect it with `MeshIsEmpty` or `VertexCount == 0`.
     EmptyPolygonMesh(_: PolygonMesh3D): PolygonMesh3D
         => PolygonMeshOfFaces(Repeat(0, Point3D(0.0, 0.0, 0.0)),
                               Repeat(0, Repeat(0, VertexIndex(0))));
@@ -63,50 +64,49 @@ library SolidsPolyhedra
             Icosahedron => PolygonMesh3D.Icosahedron;
         };
 
-    // The seven catalog Archimedeans (ambo and truncate families) dispatch;
-    // the six gap arms are the kinds still waiting on the snub, expand and
-    // bevel operators (`polyhedra-catalog.library.plato` header) and return
-    // the empty mesh, never a wrong one.
+    // All thirteen Archimedeans dispatch into the catalog (the base ambo and
+    // truncate families in `polyhedra-catalog.library.plato`, the expand,
+    // bevel and snub families in `polyhedra-catalog-expanded.library.plato`).
     UnitPolygonMesh(kind: ArchimedeanSolidKind): PolygonMesh3D
         => match (kind) {
             TruncatedTetrahedron => PolygonMesh3D.TruncatedTetrahedron.ScaledToUnitCircumradius;
             Cuboctahedron => PolygonMesh3D.Cuboctahedron.ScaledToUnitCircumradius;
             TruncatedCube => PolygonMesh3D.TruncatedCube.ScaledToUnitCircumradius;
             TruncatedOctahedron => PolygonMesh3D.TruncatedOctahedron.ScaledToUnitCircumradius;
-            Rhombicuboctahedron => PolygonMesh3D.EmptyPolygonMesh;
-            TruncatedCuboctahedron => PolygonMesh3D.EmptyPolygonMesh;
-            SnubCube => PolygonMesh3D.EmptyPolygonMesh;
+            Rhombicuboctahedron => PolygonMesh3D.Rhombicuboctahedron.ScaledToUnitCircumradius;
+            TruncatedCuboctahedron => PolygonMesh3D.TruncatedCuboctahedron.ScaledToUnitCircumradius;
+            SnubCube => PolygonMesh3D.SnubCube.ScaledToUnitCircumradius;
             Icosidodecahedron => PolygonMesh3D.Icosidodecahedron.ScaledToUnitCircumradius;
             TruncatedDodecahedron => PolygonMesh3D.TruncatedDodecahedron.ScaledToUnitCircumradius;
             TruncatedIcosahedron => PolygonMesh3D.TruncatedIcosahedron.ScaledToUnitCircumradius;
-            Rhombicosidodecahedron => PolygonMesh3D.EmptyPolygonMesh;
-            TruncatedIcosidodecahedron => PolygonMesh3D.EmptyPolygonMesh;
-            SnubDodecahedron => PolygonMesh3D.EmptyPolygonMesh;
+            Rhombicosidodecahedron => PolygonMesh3D.Rhombicosidodecahedron.ScaledToUnitCircumradius;
+            TruncatedIcosidodecahedron => PolygonMesh3D.TruncatedIcosidodecahedron.ScaledToUnitCircumradius;
+            SnubDodecahedron => PolygonMesh3D.SnubDodecahedron.ScaledToUnitCircumradius;
         };
 
-    // The four catalog Catalans dispatch (rescaled, never projected — see the
-    // header); the nine gap arms await their Archimedean sources or catalog
-    // aliases (`kind.Dual` already names the source, see `polyhedra-duals`).
+    // All thirteen Catalans dispatch into the catalog (rescaled, never
+    // projected — see the header; the nine newer duals live in
+    // `polyhedra-catalog-catalans.library.plato`).
     UnitPolygonMesh(kind: CatalanSolidKind): PolygonMesh3D
         => match (kind) {
             TriakisTetrahedron => PolygonMesh3D.TriakisTetrahedron.ScaledToUnitCircumradius;
             RhombicDodecahedron => PolygonMesh3D.RhombicDodecahedron.ScaledToUnitCircumradius;
             TriakisOctahedron => PolygonMesh3D.TriakisOctahedron.ScaledToUnitCircumradius;
-            TetrakisHexahedron => PolygonMesh3D.EmptyPolygonMesh;
-            DeltoidalIcositetrahedron => PolygonMesh3D.EmptyPolygonMesh;
-            DisdyakisDodecahedron => PolygonMesh3D.EmptyPolygonMesh;
-            PentagonalIcositetrahedron => PolygonMesh3D.EmptyPolygonMesh;
+            TetrakisHexahedron => PolygonMesh3D.TetrakisHexahedron.ScaledToUnitCircumradius;
+            DeltoidalIcositetrahedron => PolygonMesh3D.DeltoidalIcositetrahedron.ScaledToUnitCircumradius;
+            DisdyakisDodecahedron => PolygonMesh3D.DisdyakisDodecahedron.ScaledToUnitCircumradius;
+            PentagonalIcositetrahedron => PolygonMesh3D.PentagonalIcositetrahedron.ScaledToUnitCircumradius;
             RhombicTriacontahedron => PolygonMesh3D.RhombicTriacontahedron.ScaledToUnitCircumradius;
-            TriakisIcosahedron => PolygonMesh3D.EmptyPolygonMesh;
-            PentakisDodecahedron => PolygonMesh3D.EmptyPolygonMesh;
-            DeltoidalHexecontahedron => PolygonMesh3D.EmptyPolygonMesh;
-            DisdyakisTriacontahedron => PolygonMesh3D.EmptyPolygonMesh;
-            PentagonalHexecontahedron => PolygonMesh3D.EmptyPolygonMesh;
+            TriakisIcosahedron => PolygonMesh3D.TriakisIcosahedron.ScaledToUnitCircumradius;
+            PentakisDodecahedron => PolygonMesh3D.PentakisDodecahedron.ScaledToUnitCircumradius;
+            DeltoidalHexecontahedron => PolygonMesh3D.DeltoidalHexecontahedron.ScaledToUnitCircumradius;
+            DisdyakisTriacontahedron => PolygonMesh3D.DisdyakisTriacontahedron.ScaledToUnitCircumradius;
+            PentagonalHexecontahedron => PolygonMesh3D.PentagonalHexecontahedron.ScaledToUnitCircumradius;
         };
 
     //==
     // Placed instances: unit mesh, scaled to the circumscribed radius, mapped
-    // into the frame. A gap kind places the empty mesh (still empty).
+    // into the frame.
 
     ToPolygonMesh(s: PlatonicSolid): PolygonMesh3D
         => s.Kind.UnitPolygonMesh.ScaledAboutOrigin(s.Radius).TransformedByFrame(s.Frame);
