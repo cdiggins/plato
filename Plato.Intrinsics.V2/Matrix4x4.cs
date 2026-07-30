@@ -291,6 +291,8 @@ namespace Ara3D.Geometry
         // obligations the forward-stdlib generation declares on the Matrix4x4 partial, and
         // interface implementation demands the exact erased types.
 
+        [MethodImpl(AggressiveInlining)] public int RowCount() => 4;
+
         [MethodImpl(AggressiveInlining)] public int ColumnCount() => 4;
 
         [MethodImpl(AggressiveInlining)]
