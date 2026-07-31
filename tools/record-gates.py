@@ -27,6 +27,7 @@ import argparse
 import json
 import pathlib
 import re
+import shutil
 import subprocess
 import time
 from datetime import datetime
@@ -123,6 +124,14 @@ def measure(full: bool, include_future: bool = False) -> tuple[list[dict], dict,
     if not full:
         return gates, lint, extras
 
+    # The writer only ever ADDS files, so the output folder must be emptied first: a .g.cs left
+    # over from a wider generation (a tier that is no longer converted, a library that was
+    # renamed) still compiles into the suite and fails it with CS0246 on types nobody generates
+    # any more. The folder is script-produced and gitignored.
+    # (Re-created empty: the writer writes into an existing folder, it does not make one.)
+    if (PLATO / GENERATED).is_dir():
+        shutil.rmtree(PLATO / GENERATED)
+    (PLATO / GENERATED).mkdir(parents=True, exist_ok=True)
     out, code, secs = run(["dotnet", "run", "--project", CLI, "-c", "Release", "--no-build", "--",
                            *tiers, "tests/stdlib-tests", f"--out={GENERATED}", *RECIPE])
     files = len(list((PLATO / GENERATED).glob("*.g.cs"))) if (PLATO / GENERATED).is_dir() else 0

@@ -9,17 +9,16 @@
 //
 // **Rule: a bodiless intrinsic may mention only `primitive` types** (Number,
 // Integer, Boolean, Character, String, Array, Buffer, List, Function0-9,
-// Type — see `primitives.plato`). Everything that used to be declared
-// here on Angle, Number2/3/4/8, Vector2D/3D, Matrix3x2/4x4 and Quaternion now
-// has a portable Plato reference body in the corresponding `*-ops.library.plato`
-// file. Those bodies define the semantics; a backend may substitute a verified
-// native implementation (e.g. System.Numerics) as an optimization via its
-// representation map and override table.
+// Type — see `primitives.plato`).
 //
-// Documented exception, this increment only: Array2D / Array3D appear below.
-// They are declared as opaque field-less types, so their construction and
-// traversal cannot yet be expressed in Plato. When they gain an honest layout
-// (or a repr contract), those signatures move out too.
+// **Admission rule (plato-378): an intrinsic must not be expressible in Plato
+// from the other intrinsics.** If a portable reference body exists, the function
+// belongs in a `*.library.plato` file and the backend recovers native speed
+// through its override table (plato-368), not by growing this list. Everything
+// on Angle, Number2/3/4/8, Vector2D/3D, Matrix3x2/4x4 and Quaternion left under
+// that rule; the array reshaping family and the derivable scalar surface
+// followed it. `IntrinsicsSurfaceTests` pins the count so the list cannot drift
+// back up.
 //
 // Target backends, in priority order: C#, C++, CUDA, TypeScript, then GLSL, Rust,
 // Python (see README.md "Target backends"). An intrinsic belongs here only if every
@@ -36,48 +35,14 @@
 library Intrinsics
 {
     //==
-    // Number
-
-    Abs(self: Number): Number;
-    Cbrt(self: Number): Number;
-    Ceiling(self: Number): Number;
-    Clamp(self: Number, min: Number, max: Number): Number;
-    CopySign(self: Number, y: Number): Number;
-    Exp(self: Number): Number;
-    Floor(self: Number): Number;
-    FusedMultiplyAdd(self: Number, y: Number, z: Number): Number;
-    Log(self: Number, newBase: Number): Number;
-    Log10(self: Number): Number;
-    Log2(self: Number): Number;
-    Min(self: Number, other: Number): Number;
-    Max(self: Number, other: Number): Number;
-    NaturalLog(self: Number): Number;
-    Pow(self: Number, power: Number): Number;
-    Reciprocal(self: Number): Number;
-    Round(self: Number, digits: Integer): Number;
-    Sign(self: Number): Integer;
-    Sqrt(self: Number): Number;
-    Square(self: Number): Number;
-    Truncate(self: Number): Number;
-
-    // Trigonometric kernel over radians-as-Number. The public trig surface lives
-    // on Angle (angle-trig.library.plato) with plain Plato bodies delegating
-    // here. The inverse family carries a `Radians` suffix because the public
-    // Angle-returning `Acos(self: Number): Angle` overload shares the receiver
-    // type and differs only in return type.
-    Cos(self: Number): Number;
-    Sin(self: Number): Number;
-    Tan(self: Number): Number;
-    Cosh(self: Number): Number;
-    Sinh(self: Number): Number;
-    Tanh(self: Number): Number;
-    AcosRadians(self: Number): Number;
-    AcoshRadians(self: Number): Number;
-    AsinRadians(self: Number): Number;
-    AsinhRadians(self: Number): Number;
-    AtanRadians(self: Number): Number;
-    Atan2Radians(self: Number, x: Number): Number;
-    AtanhRadians(self: Number): Number;
+    // Number — the irreducible scalar kernel.
+    //
+    // Everything derivable from these has a reference body in
+    // `primitives-number.library.plato`: Abs, Sign, Square, Reciprocal, Min,
+    // Max, Ceiling, Truncate, Cbrt, Log/Log2/Log10, the Tan/Cosh/Sinh/Tanh
+    // family, the whole inverse-trig family (over Atan2Radians and NaturalLog),
+    // Zero/One/Tau/E, IsFinite, and the five relational operators the Orderable
+    // generics already cover.
 
     Add(a: Number, b: Number): Number;
     Subtract(a: Number, b: Number): Number;
@@ -86,52 +51,68 @@ library Intrinsics
     Modulo(a: Number, b: Number): Number;
     Negative(n: Number): Number;
 
-    Equals(a: Number, b: Number): Boolean;
-    NotEquals(a: Number, b: Number): Boolean;
-    LessThan(a: Number, b: Number): Boolean;
+    // The total order and structural equality. LessThanOrEquals is the single
+    // Orderable primitive; LessThan / GreaterThan / GreaterThanOrEquals /
+    // Compare / Clamp / Lesser / Greater all derive from it in
+    // `core-comparison.library.plato`, and NotEquals from Equals.
     LessThanOrEquals(a: Number, b: Number): Boolean;
-    GreaterThan(a: Number, b: Number): Boolean;
-    GreaterThanOrEquals(a: Number, b: Number): Boolean;
-    Compare(a: Number, b: Number): Integer;
+    Equals(a: Number, b: Number): Boolean;
+
+    // Bit-level digest: not expressible over arithmetic.
     Hash(self: Number): Integer;
 
+    // Rounding: Floor is the primitive, Ceiling and Truncate derive from it.
+    // Round carries a digit count because decimal scaling loses precision when
+    // synthesized from Floor.
+    Floor(self: Number): Number;
+    Round(self: Number, digits: Integer): Number;
+
+    // Transcendental kernel. Pow stays a primitive because Exp(y * Log x) is
+    // wrong for a negative base; FusedMultiplyAdd stays because its single
+    // rounding is a SEMANTIC difference from a * b + c, not an optimization.
+    Sqrt(self: Number): Number;
+    Exp(self: Number): Number;
+    NaturalLog(self: Number): Number;
+    Pow(self: Number, power: Number): Number;
+    FusedMultiplyAdd(self: Number, y: Number, z: Number): Number;
+
+    // Trigonometric kernel over radians-as-Number. The public trig surface lives
+    // on Angle (angle-trig.library.plato) with plain Plato bodies delegating
+    // here. Sin, Cos and the two-argument arctangent are the whole kernel:
+    // Tan/Cosh/Sinh/Tanh and the six inverse forms derive from these plus Exp
+    // and NaturalLog.
+    Sin(self: Number): Number;
+    Cos(self: Number): Number;
+    Atan2Radians(self: Number, x: Number): Number;
+
+    // Representation limits and the one constant that is not a formula over
+    // another. Tau = 2 Pi and E = Exp(1) are derived.
     MinValue(_: Number): Number;
     MaxValue(_: Number): Number;
     Epsilon(_: Number): Number;
-    Zero(_: Number): Number;
-    One(_: Number): Number;
-
-    // Mathematical constants, dispatched like the limits above: 0.0.Pi reads the
-    // constant; the receiver's value is ignored.
     Pi(_: Number): Number;
-    Tau(_: Number): Number;
-    E(_: Number): Number;
+
+    // Non-finite classification: IsFinite is derived from these two.
     IsNaN(self: Number): Boolean;
     IsInfinite(self: Number): Boolean;
-    IsFinite(self: Number): Boolean;
+
     ToInteger(self: Number): Integer;
 
     //==
     // Integer
+    //
+    // Derived in `primitives-integer.library.plato`: Abs, Sign, Min, Max,
+    // Zero, One, Range, and the relational family.
 
-    Abs(self: Integer): Integer;
     Add(a: Integer, b: Integer): Integer;
     Subtract(a: Integer, b: Integer): Integer;
     Multiply(a: Integer, b: Integer): Integer;
     Divide(a: Integer, b: Integer): Integer;
     Modulo(a: Integer, b: Integer): Integer;
     Negative(n: Integer): Integer;
-    Sign(self: Integer): Integer;
-    Min(a: Integer, b: Integer): Integer;
-    Max(a: Integer, b: Integer): Integer;
 
-    Equals(a: Integer, b: Integer): Boolean;
-    NotEquals(a: Integer, b: Integer): Boolean;
-    LessThan(a: Integer, b: Integer): Boolean;
     LessThanOrEquals(a: Integer, b: Integer): Boolean;
-    GreaterThan(a: Integer, b: Integer): Boolean;
-    GreaterThanOrEquals(a: Integer, b: Integer): Boolean;
-    Compare(a: Integer, b: Integer): Integer;
+    Equals(a: Integer, b: Integer): Boolean;
     Hash(self: Integer): Integer;
 
     BitwiseAnd(a: Integer, b: Integer): Integer;
@@ -141,26 +122,21 @@ library Intrinsics
     ShiftLeft(x: Integer, bits: Integer): Integer;
     ShiftRight(x: Integer, bits: Integer): Integer;
 
-    // Type-token constants, dispatched like the Number limits above: the
-    // receiver's value is ignored, the handwritten wrapper defines the member.
     MinValue(_: Integer): Integer;
     MaxValue(_: Integer): Integer;
-    Zero(_: Integer): Integer;
-    One(_: Integer): Integer;
 
     ToNumber(self: Integer): Number;
-    Range(self: Integer): Array<Integer>;
 
     //==
     // Boolean
+    //
+    // The three connectives. Equals, ExclusiveOr, Compare and Hash are derived
+    // in `primitives.library.plato`; LessThanOrEquals (false orders before
+    // true) is derived there too.
 
     And(a: Boolean, b: Boolean): Boolean;
     Or(a: Boolean, b: Boolean): Boolean;
     Not(b: Boolean): Boolean;
-    ExclusiveOr(a: Boolean, b: Boolean): Boolean;
-    Equals(a: Boolean, b: Boolean): Boolean;
-    Compare(a: Boolean, b: Boolean): Integer;
-    Hash(self: Boolean): Integer;
 
     //==
     // Character and String
@@ -174,66 +150,31 @@ library Intrinsics
     LessThanOrEquals(a: String, b: String): Boolean;
 
     //==
-    // Array
+    // Array — the four-function kernel.
     //
-    // Host-provided array construction and traversal: the map / reduce / zip /
-    // slice family over Array, Array2D and Array3D
-    // (https://en.wikipedia.org/wiki/Higher-order_function). No concept in this
-    // vocabulary can build a collection, so these are the primitives every derived
-    // collection helper is written against.
+    // `Count` and `At` observe; `MapRange` is the ONLY constructor; `Reduce` is
+    // the only sequential fold; `FlatMap` is the only length-varying producer.
+    // Every other array function in the previous contract — Map, Take, Skip,
+    // Drop, TakeLast, Slice, SubArray, EveryNth, AtModulo, Append, Prepend,
+    // Concatenate, Repeat, Zip, MapPairs/Triplets/Quartets, All, Any, Slices,
+    // CartesianProduct — is a reindexing of MapRange and now has a reference
+    // body in `primitives-arrays.library.plato`.
+    //
+    // Reduce and FlatMap cannot follow: a Plato body is a pure expression with
+    // no loop and no recursion contract (GLSL forbids recursion outright), so
+    // the fold and the length-varying producer stay host-supplied.
 
-    All(xs: Array<$T>, f: Function1<$T, Boolean>): Boolean;
-    Any(xs: Array<$T>, f: Function1<$T, Boolean>): Boolean;
-    Append(self: Array<$T>, value: $T): Array<$T>;
-    AtModulo(xs: Array<$T>, n: Integer): $T;
-    CartesianProduct(columns: Array<$TColumn>, rows: Array<$TRow>, func: Function2<$TColumn, $TRow, $TResult>): Array2D<$TResult>;
-    Concatenate(xs: Array<$T>, ys: Array<$T>): Array<$T>;
-    Drop(xs: Array<$T>, n: Integer): Array<$T>;
-    EveryNth(self: Array<$T>, n: Integer): Array<$T>;
-    FlatMap(xs: Array<$T1>, f: Function1<$T1, Array<$T2>>): Array<$T2>;
-    MakeArray2D(columns: Integer, rows: Integer, f: Function2<Integer, Integer, $T>): Array2D<$T>;
-    Map(xs: Array<$T1>, f: Function1<$T1, $T2>): Array<$T2>;
-    MapPairs(xs: Array<$T>, f: Function2<$T, $T, $TR>): Array<$TR>;
-    MapTriplets(xs: Array<$T>, f: Function3<$T, $T, $T, $TR>): Array<$TR>;
-    MapQuartets(xs: Array<$T>, f: Function4<$T, $T, $T, $T, $TR>): Array<$TR>;
+    Count(xs: Array<$T>): Integer;
+    At(xs: Array<$T>, n: Integer): $T;
     MapRange(n: Integer, f: Function1<Integer, $T>): Array<$T>;
-    Prepend(self: Array<$T>, value: $T): Array<$T>;
     Reduce(xs: Array<$T>, acc: $U, f: Function2<$U, $T, $U>): $U;
-    // First parameter is the count: the compiler requires a concrete first parameter,
-    // so the V1 form Repeat(x, n) becomes Repeat(n, x).
-    Repeat(n: Integer, x: $T): Array<$T>;
-    Skip(xs: Array<$T>, n: Integer): Array<$T>;
-    Slice(xs: Array<$T>, from: Integer, to: Integer): Array<$T>;
-    Slices(xs: Array<$T>, size: Integer): Array2D<$T>;
-    SubArray(xs: Array<$T>, from: Integer, count: Integer): Array<$T>;
-    Take(xs: Array<$T>, n: Integer): Array<$T>;
-    TakeLast(xs: Array<$T>, n: Integer): Array<$T>;
-    Zip(xs: Array<$T1>, ys: Array<$T2>, f: Function2<$T1, $T2, $T3>): Array<$T3>;
-    Zip(xs: Array<$T1>, ys: Array<$T2>, zs: Array<$T3>, f: Function3<$T1, $T2, $T3, $T4>): Array<$T4>;
-
-    //==
-    // Array2D and Array3D — documented exception to the primitive-only rule; see
-    // the header note.
-
-    At(xs: Array2D<$T>, i: Integer): $T;
-    At(xs: Array3D<$T>, i: Integer): $T;
-    // TODO(plato-375): the Indexable2D / Indexable3D shape obligations
-    // (ColumnCount / RowCount / LayerCount) cannot be discharged from here. An
-    // obligation on `Array2D<T>` is keyed by the TYPE's own parameter, and a
-    // library intrinsic can only be written over a type VARIABLE
-    // (`ColumnCount(xs: Array2D<$T>)`), whose signature id never matches — so the
-    // declaration would be inert and the member would still be emitted as a
-    // throw. The C# runtime already supplies all three (`GridExtensions`); what is
-    // missing is the compiler's ability to pair them.
-    Column(self: Array2D<$T>, col: Integer): Array<$T>;
-    Row(self: Array2D<$T>, row: Integer): Array<$T>;
-    Map(xs: Array2D<$T1>, f: Function1<$T1, $T2>): Array2D<$T2>;
+    FlatMap(xs: Array<$T1>, f: Function1<$T1, Array<$T2>>): Array<$T2>;
 
     //==
     // Growable builder: unique type List<T>.
     //
     // Bodiless host signatures for the builder types declared in
-    // `primitives-builders.types.plato`. Without them no builder call site
+    // `primitives.plato`. Without them no builder call site
     // resolves. The single-parameter observers and consumers — `Count`, `Freeze`
     // and `EmptyList` — are declared alongside the mutators. Each carries a type
     // variable that is fully determined by its one parameter
@@ -285,6 +226,11 @@ library Intrinsics
 }
 
 // Notes — intrinsics deliberately omitted from this file:
+// - Array2D / Array3D (the whole former section, plus MakeArray2D): they now carry
+//   an honest layout in `primitives-arrays.types.plato` (Elements + ColumnCount +
+//   RowCount [+ LayerCount]), so construction and traversal are ordinary Plato
+//   bodies in `primitives-arrays.library.plato`. This retires the documented
+//   exception to the primitive-only rule.
 // - Everything on Angle, Number2/3/4/8, Vector2D/3D, Matrix3x2/4x4 and Quaternion:
 //   migrated to Plato reference bodies (angle-trig, vectors-tuples-ops,
 //   vectors-geometric-ops, matrices-ops, rotations-ops .library.plato). Backends
@@ -296,15 +242,10 @@ library Intrinsics
 //   ops are hardware-specific; the exact forms (Reciprocal, 1/Sqrt) suffice.
 // - RoundAwayFromZero/RoundToZero: only Round(digits) and Truncate survive; the
 //   midpoint-rounding zoo is C#-specific.
-// - Linear/Quadratic/Cubic polynomial evaluation: not intrinsic; belongs in the
-//   `polynomials.library.plato` once implemented.
 // - Columns/Rows (Array2D -> Array<Array<T>>): jagged views; derive in a library.
 // - WithRow1..4 / WithX..W / WithElement: record-update helpers, not host intrinsics;
 //   the compiler's with-syntax or library functions cover them.
-// - Shift/Stride/WithNext/MapIndices/PrependAndAppend/Count overloads: niche array
-//   forms; the surviving core (Map/Reduce/Zip/Slice/...) covers them.
-// - First/Last/Middle/IsEmpty/Rest/Reverse/Indices: the compiler rejects bodiless
-//   generic functions with fewer than two parameters, and the first four already
-//   exist generically on Indexable/Countable in collections-indexable.library.plato (P2). Rest/Reverse/
-//   Indices should be added to a collections implementation library as derived
-//   functions (Skip(1) / MapRange over Count) rather than intrinsics.
+// - Shift/Stride/WithNext/MapIndices/PrependAndAppend: niche array forms; the
+//   surviving kernel plus the derived family in primitives-arrays covers them.
+// - Rest/Reverse/Indices: derived functions over MapRange and Count, not
+//   intrinsics; they live in `primitives-arrays.library.plato`.

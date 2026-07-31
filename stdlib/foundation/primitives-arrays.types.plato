@@ -7,13 +7,38 @@
 // The one-dimensional `Array<T>` moved to `primitives.plato` (plato-367): it is a
 // name the compiler assumes. The rank-2 and rank-3 forms below are NOT - they are
 // ordinary types whose shape is their declaration, so they stay `type`.
+//
+// Both carry an HONEST LAYOUT as of plato-378: a flat row-major `Elements` store
+// plus the extents. They used to be opaque and field-less, which is why their
+// construction and traversal had to be host intrinsics — the one documented
+// exception to the primitive-only rule in `intrinsics.library.plato`. With a
+// declared shape the exception is gone: `MakeArray2D`, `At`, `Column`, `Row`,
+// `Map`, `Slices` and `CartesianProduct` are ordinary Plato bodies in
+// `primitives-arrays.library.plato`.
+//
+// The extent fields are named for the concept obligations they discharge
+// (`ColumnCount` / `RowCount` / `LayerCount` on Indexable2D / Indexable3D), so a
+// field satisfies each one directly rather than needing a library function keyed
+// on the type's own parameter — the shape plato-376 says can never bind.
+//
+// Row-major throughout, matching `CollectionsGrids.FlattenIndex`:
+// index = (layer * RowCount + row) * ColumnCount + column.
 
 // An immutable collection addressed by column and row.
 type Array2D<T>
     implements Indexable2D<T>
-{ }
+{
+    Elements: Array<T>;
+    ColumnCount: Integer;
+    RowCount: Integer;
+}
 
 // An immutable collection addressed by column, row, and layer.
 type Array3D<T>
     implements Indexable3D<T>
-{ }
+{
+    Elements: Array<T>;
+    ColumnCount: Integer;
+    RowCount: Integer;
+    LayerCount: Integer;
+}
