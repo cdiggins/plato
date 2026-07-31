@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace PlatoTests
 {
     /// <summary>
-    /// Polices the writer's picture of the handwritten Plato.Intrinsics.V2 surface (plato-331).
+    /// Polices the writer's picture of the handwritten Plato.Intrinsics surface (plato-331).
     ///
     /// The writer generates no struct for a <see cref="CSharpWriter.PrimitiveTypes"/> entry, so under
     /// <c>--no-properties</c> it cannot see the runtime's shape and decides property-vs-method
@@ -27,7 +27,7 @@ namespace PlatoTests
     ///    <see cref="DeclarationProxyProperties"/>).
     /// </summary>
     [TestFixture]
-    public static class IntrinsicsV2SurfaceTests
+    public static class IntrinsicsSurfaceTests
     {
         /// <summary>Properties needing no override only because stdlib-legacy declares the member as
         /// a field. If the V2 port (plato-331 option 1) converts one of these to a method, the
@@ -70,7 +70,7 @@ namespace PlatoTests
                 V2StructNames.OrderBy(n => n).ToArray(),
                 V2PrimitiveStructs().Select(t => t.Name).ToArray(),
                 "The V2 primitive struct set changed. If a type was added or removed on purpose, " +
-                "update this list; if not, the Plato.Intrinsics.V2.projitems import in " +
+                "update this list; if not, the Plato.Intrinsics.projitems import in " +
                 "PlatoTests.csproj is broken.");
 
         [Test]

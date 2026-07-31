@@ -22,7 +22,7 @@
     <NoWarn>$(NoWarn);CS0108;CS0114;CS0660;CS0661;CS1591</NoWarn>
   </PropertyGroup>
 
-  <Import Project="..\..\Plato.Intrinsics.Legacy\Plato.Intrinsics.Legacy.projitems" Label="Shared" />
+  <Import Project="..\..\..\src\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />

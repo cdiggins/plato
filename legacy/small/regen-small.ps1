@@ -5,7 +5,7 @@
 
 .DESCRIPTION
     Two variants, both extension-style + scalar-erased, linking the tiny Plato.Small.Runtime
-    (NOT Plato.Intrinsics.V2):
+    (NOT Plato.Intrinsics):
 
         Unoptimized : --csharp-style=extensions --scalar=float --no-properties
         Optimized   : + --optimize --optimize-arrays --inline --methods --loops

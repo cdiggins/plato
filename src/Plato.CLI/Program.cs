@@ -54,7 +54,7 @@ namespace Ara3D.Geometry.CLI
             // No properties AT ALL in the generated output (strict superset of --methods): the
             // primitive-struct no-arg members that --methods still keeps as properties also emit
             // as methods. For a runtime whose primitive structs expose them as methods
-            // (Plato.Intrinsics.V2). Implies --methods.
+            // (Plato.Intrinsics). Implies --methods.
             var noProperties = args.Contains("--no-properties");
 
             // Emit `_`-receiver concept members (Plato's constructor-shaped idiom for a type-level

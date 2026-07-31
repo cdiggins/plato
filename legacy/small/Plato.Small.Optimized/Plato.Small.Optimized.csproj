@@ -4,7 +4,7 @@
     Plato.Small.Optimized - buildable generated output of the SELF-CONTAINED small corpus
     (plato-src-small) with the FULL OPTIMIZER PIPELINE ON. The fast optimizer-spike target:
     reproduces the geometry component/loop shapes (Deform/Eval/ZipComponents) of the full
-    Plato.Generated.Optimized without linking Plato.Intrinsics.V2. A dev aid, NOT part of
+    Plato.Generated.Optimized without linking Plato.Intrinsics. A dev aid, NOT part of
     check-all. Regenerate with Small\regen-small.ps1.
 
     Recipe: csharp-style=extensions scalar=float optimize optimize-arrays inline methods loops no-properties

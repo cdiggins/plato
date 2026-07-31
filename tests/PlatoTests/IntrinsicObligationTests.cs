@@ -36,13 +36,13 @@ namespace PlatoTests
         // being a primitive. The runtime still supplies their members, so the obligations still
         // need checking.
         private static readonly IReadOnlyDictionary<string, Type> V2Structs
-            = IntrinsicsV2SurfaceTests.V2PrimitiveStructs().ToDictionary(t => t.Name);
+            = IntrinsicsSurfaceTests.V2PrimitiveStructs().ToDictionary(t => t.Name);
 
         private static readonly IReadOnlyList<Type> V2StaticClasses
             = V2Assembly.GetTypes()
                 .Where(t => t.Namespace == "Ara3D.Geometry"
                             && t.IsClass && t.IsAbstract && t.IsSealed
-                            && t.Name != "IntrinsicsV2TestShims")
+                            && t.Name != "IntrinsicsTestShims")
                 .ToList();
 
         /// <summary>The erased C# type a primitive can appear as in extension-method receiver
@@ -138,8 +138,8 @@ namespace PlatoTests
             var newGaps = missing.Except(ForwardKnownMissing).ToList();
             var fixedGaps = ForwardKnownMissing.Except(missing).ToList();
             Assert.IsEmpty(newGaps,
-                "NEW intrinsic obligations with no Plato.Intrinsics.V2 counterpart. Add the member " +
-                "to V2 (method form — see IntrinsicsV2SurfaceTests) or fix the declaration; do NOT " +
+                "NEW intrinsic obligations with no Plato.Intrinsics counterpart. Add the member " +
+                "to V2 (method form — see IntrinsicsSurfaceTests) or fix the declaration; do NOT " +
                 "add to ForwardKnownMissing without a reason. Without the member the generated C# " +
                 "fails with CS1061 a thousand files downstream — or worse, silently at first use. " +
                 "New: " + string.Join(", ", newGaps));
@@ -168,7 +168,7 @@ namespace PlatoTests
         {
             var missing = AssertScopeSane(CheckerTestSupport.CompileStdLib(), "stdlib-legacy");
             Assert.IsEmpty(missing.Except(LegacyKnownMissing),
-                "stdlib-legacy declares intrinsic obligations with no Plato.Intrinsics.V2 counterpart " +
+                "stdlib-legacy declares intrinsic obligations with no Plato.Intrinsics counterpart " +
                 "(V2 was built against legacy; this set was empty on 2026-07-30). New: " +
                 string.Join(", ", missing.Except(LegacyKnownMissing)));
             Assert.IsEmpty(LegacyKnownMissing.Except(missing),

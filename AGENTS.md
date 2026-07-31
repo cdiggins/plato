@@ -4,7 +4,7 @@ This is the canonical guide for agents and developers working in `submodules/Pla
 `CLAUDE.md` points here; there is one copy of these rules.
 
 **Start here for the language and multi-target codegen:** [`docs/plato-for-agents.md`](docs/plato-for-agents.md).
-**Confused by V1/V2/Plato.Generated/Intrinsics?** [`docs/plato-library-map.md`](docs/plato-library-map.md) maps every artifact, which is frozen, and who consumes it.
+**Confused by the Plato.Generated / Intrinsics artifacts?** [`docs/plato-library-map.md`](docs/plato-library-map.md) maps every artifact and who consumes it.
 **Process / monorepo coupling:** studio's [`docs/working-on-plato.md`](https://github.com/ara3d/studio/blob/main/docs/working-on-plato.md)
 (gate scripts still run from the studio checkout). **Docs and work tracking live in this repo.**
 
@@ -63,11 +63,11 @@ the writer code).
 - `src/Plato.AST/` — the old associativity bug was FIXED in `392dfa8` (2026-07-09); [`docs/archive/plato-assoc-bug-diagnosis.md`](docs/archive/plato-assoc-bug-diagnosis.md) is historical.
 - `writers/Plato.CSharpWriter/` — `CSharpWriter.cs` (flags: `ExtensionStyle`, `Optimize`, `ScalarErase`, `NoProperties`), `TirCSharpBodyWriter.cs` (the SOLE C# body writer — every function body renders from the monomorphized Typed IR; the legacy `CSharpFunctionBodyWriter` was deleted at C4), `ExtensionStyleWriter.cs` (classic extension methods, one static class per Plato library; moved no-arg fns are METHODS `v.Magnitude()`), `TirScalarLowerer.cs` (`--scalar=float` erasure as a TIR lowering pass — it replaced the emit-time `ScalarEraseAnalysis`, deleted at S3), `ComponentUnroller.cs` (`--optimize` field-wise unrolling table).
 - `writers/Plato.GlslWriter/` / `writers/Plato.CppWriter/` — TIR-only POC backends (GLSL ES 3.00; C++17 / CUDA with shared bodies + dialect preamble). Compile-gated by their `*.Tests` projects; not in `Ara3D.Studio.sln`. See each project's `README.md`.
-- `legacy/Plato.Intrinsics.Legacy/` — **FROZEN V1 runtime** (consolidation plan C0). The live runtime is `src/Plato.Intrinsics.V2/` (System.Numerics-backed, method-form). Both `Plato.Intrinsics.Legacy` and the ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` copies are frozen — protected by `tools\check-frozen-v1.ps1` (manifest `tools\frozen-v1.sha256`), never edit/regenerate.
+- `src/Plato.Intrinsics/` — **the** handwritten C# runtime (System.Numerics-backed, method-form), shared-project form, imported by `generated/` and the smoke/experiment projects. The old V1 runtime (`Plato.Intrinsics.Legacy`) and its freeze were deleted 2026-07-31; the copies still living in `ara3d-sdk` belong to that repo and are not this repo's concern.
 - ~~`tests/conformance/Ara3D.SDK.ConformanceTests/`~~ — **RETIRED 2026-07-30** together with the golden
   diff-gate (`tracker/decisions/2026-07-30-retire-legacy-conformance-and-goldens.md`). The forward
   suite below is the sole conformance target; making it run is `plato-308`. Until then, executable
-  coverage = PlatoTests + GeometryTests + the frozen-V1 tripwire.
+  coverage = PlatoTests + GeometryTests.
 - `tests/conformance/Plato.ForwardConformanceTests/` — forward-stdlib harness driven by
   `tools\regen-forward-conformance.ps1`. Stage 1 (type-check merged `stdlib` + `stdlib-tests`) is
   the gating stage and passes; Stage 2 (codegen + law runner) generates but does not compile —
@@ -96,7 +96,6 @@ Iterate on the one gate relevant to your workstream; run `check-all.ps1` **once*
   the same commit.
 - `.\tools\regen-forward-conformance.ps1` — forward-stdlib milestone gate. Stage 1 gating (see
   `tests/conformance/Plato.ForwardConformanceTests/` above); `-Codegen` / `-Test` run the diagnostic stages.
-- `.\tools\check-frozen-v1.ps1` — freeze tripwire: SHA-256 of the frozen V1 artifacts (ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` + Plato-repo `Plato.Intrinsics.Legacy`). Exit 1 on any drift. `-Update` re-baselines (deliberate only). Replaced regen-plato in check-all (C0); `regen-plato.ps1` + the legacy default-style emitter were deleted at C4.
 - `.\tools\check-all.ps1` — full gate battery, PASS/FAIL table. **Run once at the end of a mission**; iterate on a single relevant gate during development.
 - `.\tools\gate-timings.ps1` — how long the gates take. Every gate script records its duration
   (and failures) via `tools\gate-timing.ps1` into `%LOCALAPPDATA%\ara3d\gate-timings.csv`; this
@@ -130,12 +129,11 @@ after every build — do not bare-`dotnet build` Plato projects when you care ab
    the HTML. If hooks are not installed, run the generator yourself and include
    `docs/status-report.html` (and `docs/status-report-snapshot.json` when you change gate/lint
    snapshot data) in the commit pathspec.
-2. The FROZEN V1 artifacts (ara3d-sdk Plato.Generated/Plato.Intrinsics + Plato-repo Plato.Intrinsics.Legacy) must not change — `tools\check-frozen-v1.ps1` is the gate. The live V2 goldens (`generated/`) are diff-gated by `regen-generated.ps1`; refresh them in the same change as any intended emitter-behavior change.
+2. Nothing in this repo is frozen any more. The V1 runtime, its SHA-256 tripwire and the golden diff-gate are all retired (2026-07-31 / 2026-07-30); `generated/` is ordinary cached output that anyone may regenerate.
 3. Generated code must compile with DEFAULT LangVersion on net8.0. No C# 14 features.
 4. Known bugs are now BEING fixed (content-leads, from 2026-07-09). The `KnownFailures.json`
    manifest is the burn-down queue: when you fix a bug, REMOVE its manifest entry in the same change
-   (a passing still-listed entry fails the runner with "remove from manifest"). Off-flag byte-identity
-   (rule 2) still holds for source you did NOT change — it protects against unintended emitter drift.
+   (a passing still-listed entry fails the runner with "remove from manifest").
 5. The conformance law runner reflects instance members; `Law_*` functions stay in structs.
 
 ## Language facts that are easy to get wrong
@@ -157,7 +155,7 @@ The ones agents most often rediscover the hard way:
   the `primitive` keyword in `stdlib/foundation/primitives.plato`. Operations on `Angle`,
   `Number2/3/4/8`, `Vector2D/3D`, the matrices and `Quaternion` are **reference bodies** in
   `*-ops.library.plato` — write ordinary Plato there, do not add a bodiless declaration. Every
-  intrinsic you do add must have a `src/Plato.Intrinsics.V2` counterpart or `IntrinsicObligationTests`
+  intrinsic you do add must have a `src/Plato.Intrinsics` counterpart or `IntrinsicObligationTests`
   fails. Full contract: `docs/plato-intrinsics-surface.md`.
 
 ## Mission protocol

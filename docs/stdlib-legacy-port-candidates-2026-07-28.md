@@ -389,7 +389,7 @@ quantity instantiations of even those.
   (`keyframes-tracks.plato`), and again for every generic body monomorphized against `Array4D`
   (`collections-functional.library.plato` vs `primitives.plato`). It does not reach output.
 - `Angle` is declared here with a `Radians` field but is fieldless/intrinsic in `stdlib-legacy`,
-  so the emitted `_Angle.g.cs` duplicates conversions the handwritten `Plato.Intrinsics.V2/Angle.cs`
+  so the emitted `_Angle.g.cs` duplicates conversions the handwritten `Plato.Intrinsics/Angle.cs`
   already has (CS0557) and emits `Amount()` against a symbol that does not exist.
 - Function-typed parameters lower to bare `System.Func` with no type arguments (CS0305) —
   affects every function-valued field type added for item 5.
@@ -397,7 +397,7 @@ quantity instantiations of even those.
 - `Tuple9`/`Tuple10` call a `CombineHashCodes` overload that does not exist.
 - `MatrixLike` obligations (`RowCount`/`ColumnCount`/`ElementAt`), `Quaternion.Lerp` and
   `Plane.ClosestPoint` are unsatisfied (CS0535).
-- Reverse direction: `Plato.Intrinsics.V2` depends on members `stdlib` never declares —
+- Reverse direction: `Plato.Intrinsics` depends on members `stdlib` never declares —
   `Number.Pow2`/`Pow3`, a no-arg `Vector3.AlmostZero()`, `Integer.ToNumber`.
 
 **The cheapest fix for all of it**: a gate in `tools/check-all.ps1` that merely emits `stdlib`

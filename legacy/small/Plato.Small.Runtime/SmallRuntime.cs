@@ -1,7 +1,7 @@
 // Minimal hand-written runtime for the self-contained Plato.Small.* generated projects.
 // It provides ONLY the surface the small corpus emits: Intrinsics.MakeArray /
 // CombineHashCodes and eager Map/Zip/Reduce/All/Any/Reverse over BCL IReadOnlyList<T>.
-// The full library links Plato.Intrinsics.V2 instead; this stays deliberately tiny so the
+// The full library links Plato.Intrinsics instead; this stays deliberately tiny so the
 // small optimizer-spike projects build with no external Plato/Ara3D dependencies.
 
 using System;

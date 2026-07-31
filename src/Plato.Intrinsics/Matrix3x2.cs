@@ -13,7 +13,7 @@ namespace Ara3D.Geometry
     /// implementation detail of the bodies below, reached through <see cref="Sys"/>.
     ///
     /// ROW-WISE conversion, written out longhand for the same reason as Matrix4x4: the M-names
-    /// (M11..M32) appear ONLY inside Plato.Intrinsics.V2, never in the writer.
+    /// (M11..M32) appear ONLY inside Plato.Intrinsics, never in the writer.
     ///
     /// Nothing here may declare a field, a constructor, a `Row*`, a `WithRow*`, or an equality
     /// override: the generated partial has them, and a second copy is a duplicate-member error.

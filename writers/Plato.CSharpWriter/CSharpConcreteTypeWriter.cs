@@ -1062,10 +1062,10 @@ namespace Ara3D.Geometry.CSharpWriter
 
         /// <summary>
         /// plato-308: the forward stdlib names its numeric tuples Number2/3/4/8 and its geometric
-        /// vectors Vector2D/3D, but the handwritten Plato.Intrinsics.V2 surface those declarations
+        /// vectors Vector2D/3D, but the handwritten Plato.Intrinsics surface those declarations
         /// bind to (Matrix4x4 rows, Vector4.Transform, Quaternion.Multiply, ...) traffics in
         /// Vector2/3/4/8. The two are the same bits with different names, so the generated struct
-        /// declares the conversion pair. It cannot live on the intrinsic side: Plato.Intrinsics.V2
+        /// declares the conversion pair. It cannot live on the intrinsic side: Plato.Intrinsics
         /// is a SHARED project and the legacy consumers do not generate Number4/Vector3D at all.
         /// </summary>
         public static Dictionary<string, string> IntrinsicVectorBridges = new Dictionary<string, string>
@@ -1125,7 +1125,7 @@ namespace Ara3D.Geometry.CSharpWriter
         /// The matrix entries used to live here too — sixteen M11..M44 names, the writer's private
         /// picture of System.Numerics' element naming. plato-365 deleted them: a matrix now
         /// generates from `stdlib/foundation/matrices.types.plato` (Row1..Row4 of Number4) and the
-        /// M-names exist only inside Plato.Intrinsics.V2, where the System.Numerics round-trip is
+        /// M-names exist only inside Plato.Intrinsics, where the System.Numerics round-trip is
         /// written out row by row. Do not re-add them — that is the invisible-primitiveness
         /// mechanism the issue exists to delete.
         /// </summary>

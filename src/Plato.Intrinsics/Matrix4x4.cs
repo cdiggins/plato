@@ -15,7 +15,7 @@ namespace Ara3D.Geometry
     /// ROW-WISE conversion, and why it is written out longhand: System.Numerics.Matrix4x4 names its
     /// elements M11..M44 and its constructor takes them in row-major order, so `Row1.X .. Row4.W`
     /// maps position-for-position onto that constructor with no index arithmetic to get wrong. The
-    /// M-names appear ONLY here, inside Plato.Intrinsics.V2 — the writer must never learn them
+    /// M-names appear ONLY here, inside Plato.Intrinsics — the writer must never learn them
     /// (plato-365: that would re-create the invisible-primitiveness this issue deletes).
     ///
     /// Nothing here may declare a field, a constructor, a `Row*`, a `WithRow*`, or an equality

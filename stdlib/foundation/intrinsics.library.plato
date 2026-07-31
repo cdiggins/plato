@@ -4,7 +4,7 @@
 // An **intrinsic** is a function the language declares but does not define: a
 // signature terminated by `;` with no `=>` body, inside a `library` block. The
 // host runtime supplies the implementation. This file is the complete contract a
-// backend must satisfy — for C# that is the handwritten `Plato.Intrinsics.V2`;
+// backend must satisfy — for C# that is the handwritten `Plato.Intrinsics`;
 // for a new backend (C++, GLSL, Rust) it is the porting checklist.
 //
 // **Rule: a bodiless intrinsic may mention only `primitive` types** (Number,

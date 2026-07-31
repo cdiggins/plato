@@ -3,7 +3,7 @@
   <!--
     Minimal hand-written runtime for the Plato.Small.* optimizer-spike projects (see
     Small\README.md). Deliberately tiny and dependency-free; the full library links
-    Plato.Intrinsics.V2 instead.
+    Plato.Intrinsics instead.
   -->
 
   <PropertyGroup>

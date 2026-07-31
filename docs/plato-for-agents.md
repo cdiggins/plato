@@ -48,7 +48,7 @@ exactly one `library` block. The folder is flat — no subfolders.
 | `tests/stdlib-tests/` | Forward law packet (`Law_*`) for `stdlib/` — **never merge into `stdlib`**. |
 | `legacy/stdlib-legacy/*.plato` | Shipping standard library (~3,500 lines → 11,000+ lines of C#). |
 | `stdlib-legacy-tests/` | Law/witness tests only — **never merge into `stdlib-legacy`**. |
-| `stdlib-snapshot-2026-07-09/` | Frozen pre-refactor snapshot — reference only. |
+| `legacy/stdlib-snapshot-2026-07-09/` | Frozen pre-refactor snapshot — reference only. |
 | `demos/plato-src/geometry.plato` | Curated demo subset for TS/Rust browsers (not the full stdlib). |
 | `src/Plato.CLI/` | Compiler entry point. |
 | `Plato.ContextExport/` | Compact export of types + concepts for agent context (`tools/export-types-context.bat`). |
@@ -57,8 +57,7 @@ exactly one `library` block. The folder is flat — no subfolders.
 | `writers/Plato.RustWriter/` | Rust backend (POC). |
 | `writers/Plato.GlslWriter/` | GLSL ES 3.00 / WebGL2 backend (POC). |
 | `writers/Plato.CppWriter/` | C++17 / CUDA backend (POC; one emitter, two dialects). |
-| `Plato.Intrinsics.Legacy/` | **FROZEN V1** handwritten runtime — do not edit ([`plato-library-map.md`](plato-library-map.md)). |
-| `src/Plato.Intrinsics.V2/` | The **live** handwritten C# runtime that discharges the intrinsic contract. |
+| `src/Plato.Intrinsics/` | The **live** handwritten C# runtime that discharges the intrinsic contract. |
 
 ---
 
@@ -85,7 +84,7 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
 ```
 
 - **Output:** one `.g.cs` per type, packed structs, aggressive inlining, `partial` for hand extensions. Flags: `--csharp-style=default|extensions`, `--optimize`, `--scalar=wrapper|float`.
-- **Intrinsics:** the live runtime is `src/Plato.Intrinsics.V2/`; it must supply every bodiless signature in `stdlib/foundation/intrinsics.library.plato` (gate: `IntrinsicObligationTests`). `legacy/Plato.Intrinsics.Legacy/` and the SDK copy are frozen V1 — never edit either.
+- **Intrinsics:** the runtime is `src/Plato.Intrinsics/`; it must supply every bodiless signature in `stdlib/foundation/intrinsics.library.plato` (gate: `IntrinsicObligationTests`). The old V1 runtime was deleted 2026-07-31; the copy in `ara3d-sdk` belongs to that repo.
 
 ### TypeScript (proof of concept)
 
@@ -166,7 +165,7 @@ submodules\Plato\tools\export-types-context.bat
 ## Rules when editing Plato
 
 1. **`legacy/stdlib-legacy/` is WRITABLE** as of 2026-07-09 (content-leads refactor; the Phase-4 freeze is retired).
-   Edit freely; the frozen pre-refactor snapshot lives in `stdlib-snapshot-2026-07-09/` (reference only). Plan:
+   Edit freely; the frozen pre-refactor snapshot lives in `legacy/stdlib-snapshot-2026-07-09/` (reference only). Plan:
    [`docs/plato-execution-plan-2026-07-09.md`](plato-execution-plan-2026-07-09.md).
 2. **Do not hand-edit** `ara3d-sdk/src/Plato.Generated/` — regenerate via `regen-plato.ps1`.
 3. **Known bugs are being fixed**, tracked in `tests/conformance/.../KnownFailures.json`; see [`docs/plato-library-review.md`](plato-library-review.md).

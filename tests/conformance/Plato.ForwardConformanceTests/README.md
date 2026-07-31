@@ -5,7 +5,7 @@ the sibling of `Ara3D.SDK.ConformanceTests` (which covers `stdlib-legacy`).
 
 It runs the same reflection law runner (`LawTests`) and manifest machinery
 (`ConformanceSupport`) over C# generated from the forward stdlib merged with the forward law
-packet (`submodules/Plato/stdlib-tests/foundation.laws.plato`), against `Plato.Intrinsics.V2`.
+packet (`submodules/Plato/stdlib-tests/foundation.laws.plato`), against `Plato.Intrinsics`.
 
 ## Status (2026-07-29): codegen SUCCEEDS; blocked on generated-C# compile errors
 
@@ -23,12 +23,12 @@ four clusters.
 |---|---|---|---|
 | 166 | CS0315 | 8 concrete surface/solid types (`CoonsPatch`, `SweptSurface`, `RuledSurface`, `SweptSolid`, `ExtrudedSurface`, `TrimmedSurface`, `SurfaceOfRevolution`, `TubeSurface`) | a concrete type passed where the concept's F-bounded `Self` is required (`Curve3D<Self>`) |
 | 134 | CS0305 | implicit-field / SDF libraries (`FieldsImplicits*`, `ImplicitSdfTrees`, `FunctionalProcedural`) and `FunctionVolume3D` / `FunctionRegion2D` | wrong generic arity, same concept-as-generic-interface root |
-| 14 | CS0535 | `Angle`, `Matrix3x2`, `Matrix4x4`, `Quaternion` | generated partial declares the interface; the handwritten `Plato.Intrinsics.V2` type lacks the member (`Angle.Compare`/`Hash`, `MatrixLike.ColumnCount`/`ElementAt`, `Quaternion.Lerp`) |
-| 6 | CS0557 | `Plato.Intrinsics.V2/Angle.cs:34,37,40` | generated conversions duplicate handwritten ones |
+| 14 | CS0535 | `Angle`, `Matrix3x2`, `Matrix4x4`, `Quaternion` | generated partial declares the interface; the handwritten `Plato.Intrinsics` type lacks the member (`Angle.Compare`/`Hash`, `MatrixLike.ColumnCount`/`ElementAt`, `Quaternion.Lerp`) |
+| 6 | CS0557 | `Plato.Intrinsics/Angle.cs:34,37,40` | generated conversions duplicate handwritten ones |
 
 CS0315 + CS0305 are one cluster with one root — the concept-as-generic-interface lowering that
 `ForwardStdLibCheckerTests` already names as needing a library redesign. CS0535 + CS0557 are
-runtime gaps in `Plato.Intrinsics.V2`, independent and much smaller.
+runtime gaps in `Plato.Intrinsics`, independent and much smaller.
 
 **Build-level quarantine does not work, and this was measured rather than assumed.** Excluding
 the 16 failing files cascades: `CurvesSampling.g.cs` and `GeometryTraits.g.cs` reference the

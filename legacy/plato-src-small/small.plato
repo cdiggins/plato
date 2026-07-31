@@ -2,7 +2,7 @@
 // It reproduces the optimizer-relevant shapes of the real geometry library
 // (Point3D/Bounds3D/Line3D component ops, Deform, Eval, ZipComponents) WITHOUT
 // pulling in System.Numerics-backed primitives, so the emitted code builds against
-// a tiny hand-written runtime (Plato.Small.Runtime) instead of Plato.Intrinsics.V2.
+// a tiny hand-written runtime (Plato.Small.Runtime) instead of Plato.Intrinsics.
 //
 // Rules to keep it self-contained:
 //   * only Number/Integer/Boolean are erasable primitives (native float/int/bool);

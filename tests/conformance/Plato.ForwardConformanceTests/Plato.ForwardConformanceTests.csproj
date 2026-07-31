@@ -5,7 +5,7 @@
 
     Runs the reflection law runner over C# generated from the v3 forward stdlib
     (submodules\Plato\stdlib) merged with its law packet (submodules\Plato\stdlib-tests),
-    against the Plato.Intrinsics.V2 runtime.
+    against the Plato.Intrinsics runtime.
 
     STATUS (2026-07-29): codegen SUCCEEDS (1232 .g.cs files) — the old "No ground TIR for
     bodied ..." writer abort is fixed. The suite still does not build: the generated C# has
@@ -30,7 +30,7 @@
     <NoWarn>$(NoWarn);CS0108;CS0114;CS0660;CS0661;CS1591</NoWarn>
   </PropertyGroup>
 
-  <Import Project="..\..\Plato.Intrinsics.V2\Plato.Intrinsics.V2.projitems" Label="Shared" />
+  <Import Project="..\..\src\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />

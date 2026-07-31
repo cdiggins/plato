@@ -1,6 +1,6 @@
 // Minimal scalar wrapper structs. Under --scalar=float the generated code erases
 // Number/Integer/Boolean to float/int/bool but still emits wrapper-cast bridges
-// (`((Number)a) + ((Number)b)`) that the full library satisfies via Plato.Intrinsics.V2.
+// (`((Number)a) + ((Number)b)`) that the full library satisfies via Plato.Intrinsics.
 // These tiny stand-ins provide exactly the conversions and operators those bridges use.
 
 using System.Runtime.CompilerServices;

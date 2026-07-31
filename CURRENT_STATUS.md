@@ -34,14 +34,14 @@ Error mix is dominated by `CS1061` (1,046) — a member the forward stdlib decla
 handwritten runtime does not implement — followed by `CS0103` (328) and `CS1729` (250).
 This is the forward-conformance gap, not a structural problem: the two Generated projects
 are checked-in output of the forward stdlib, and they compile only once the stdlib and the
-`Plato.Intrinsics.V2` runtime agree on the full member surface.
+`Plato.Intrinsics` runtime agree on the full member surface.
 
 ## Tests
 
 `PlatoTests`: **189 passing, 1 failing.**
 
 The failure is `IntrinsicObligationTests.ForwardStdLibIntrinsicObligationsAreDischargedOrPinned`.
-The forward stdlib declares 13 members on `Number` with no counterpart in the V2 runtime:
+The forward stdlib declares 13 members on `Number` with no counterpart in the runtime:
 
 ```
 Sin  Cos  Tan  Sinh  Cosh  Tanh
@@ -50,7 +50,7 @@ AsinRadians  AcosRadians  AtanRadians  Atan2Radians  AsinhRadians  AcoshRadians 
 
 That test exists precisely to catch this before it becomes a thousand `CS1061`s downstream,
 so it is the small, readable version of the Generated-project failure above. Adding those 13
-members to `Plato.Intrinsics.V2` is the single highest-value next change: it turns the suite
+members to `Plato.Intrinsics` is the single highest-value next change: it turns the suite
 green and removes the ambiguity from every gate run that follows.
 
 ## Standalone blocker: references that leave the repo — RESOLVED for the SDK
@@ -84,12 +84,13 @@ the package boundary.
 
 Smaller than the above, but they must be resolved for a clean split:
 
-- **The frozen-V1 tripwire lives in the parent.** `studio/tools/check-frozen-v1.ps1` and
-  `studio/tools/frozen-v1.sha256` pin file hashes under `submodules/Plato/Plato.Intrinsics.Legacy`.
-  Either that machinery moves here, or the freeze retires.
+- **The frozen-V1 tripwire is retired** (2026-07-31). The V1 runtime is deleted from this
+  repo. `studio/tools/check-frozen-v1.ps1` and its manifest still exist in the studio repo
+  and will fail on the missing files until they are removed there too.
 - **Docs link upward.** `CLAUDE.md` and `AGENTS.md` point at `../../docs/working-on-plato.md`.
-- **A second copy of the frozen runtime** lives at `ara3d-sdk/src/Plato.Intrinsics`, kept in
-  sync by a script in the parent.
+- **A copy of the old V1 runtime** still lives at `ara3d-sdk/src/Plato.Intrinsics`, alongside
+  `ara3d-sdk/src/Plato.Generated`. Ara3D.Studio ships those; retiring them is that repo's
+  call, not this one's.
 
 ### A latent bug found while renaming (2026-07-31)
 
@@ -119,11 +120,11 @@ comment in that file records how to put it back if interop ever needs the escape
 
 ## Suggested order of work
 
-1. **Add the 13 `Number` trig members to V2.** Turns the test suite green; small and
+1. **Add the 13 `Number` trig members to `Plato.Intrinsics`.** Turns the test suite green; small and
    mechanical; every later gate becomes unambiguous.
 2. **Decide and execute the `ara3d-sdk` split** (the three options above). This is the real
    standalone work, and it decides what "standalone" means for parakeet too.
-3. **Move or retire the frozen-V1 tripwire**, and check the `ara3d-sdk` copy for the same
-   LF/CRLF split.
+3. **Remove the frozen-V1 tripwire from the studio repo** — the files it hashes are gone,
+   so `check-all.ps1` fails there until it is deleted.
 4. **Close the forward-conformance gap** so the two Generated projects compile. Existing
    workstream; does not block a standalone split.

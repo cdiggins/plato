@@ -27,7 +27,7 @@
   </PropertyGroup>
 
   <!-- The handwritten Plato runtime (Number/Vector/Matrix wrappers, MakeArray, ...). -->
-  <Import Project="$(MSBuildThisFileDirectory)..\Plato.Intrinsics.Legacy\Plato.Intrinsics.Legacy.projitems" Label="Shared" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\src\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
 
   <!-- Collection adapters (ReadOnlyList / IReadOnlyList2D / ...) the generated code targets. -->
   <ItemGroup>

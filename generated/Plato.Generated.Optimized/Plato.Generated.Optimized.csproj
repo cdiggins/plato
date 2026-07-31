@@ -32,7 +32,7 @@
 
   <!-- Link the handwritten intrinsics runtime (shared project). V2 exposes the primitive
        no-arg members as METHODS (not properties), matching the no-properties recipe. -->
-  <Import Project="..\..\Plato.Intrinsics.V2\Plato.Intrinsics.V2.projitems" Label="Shared" />
+  <Import Project="..\..\src\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
 
   <ItemGroup>
     <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />

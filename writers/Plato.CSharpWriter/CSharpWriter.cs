@@ -531,7 +531,7 @@ namespace Ara3D.Geometry.CSharpWriter
             { "Buffer", "PlatoBuffer" },
         };
 
-        // The handwritten struct surface of a PRIMITIVE type, where the Plato.Intrinsics.V2 runtime
+        // The handwritten struct surface of a PRIMITIVE type, where the Plato.Intrinsics runtime
         // (--no-properties) disagrees with what the Plato declaration implies. The writer generates
         // NO struct for a PrimitiveTypes entry (CSharpConcreteTypeWriter's "// Fields" block is
         // `!IsPrimitive`), so it cannot see the runtime's real shape and reads the declaration as a
@@ -547,7 +547,7 @@ namespace Ara3D.Geometry.CSharpWriter
         //
         // The V2-side inconsistency itself (a method-form runtime with ten property leftovers) is
         // tracked as plato-331; when it is resolved this table shrinks to nothing. Public so
-        // PlatoTests\IntrinsicsV2SurfaceTests.cs can police it against the actual V2 surface.
+        // PlatoTests\IntrinsicsSurfaceTests.cs can police it against the actual V2 surface.
         public static readonly IReadOnlyDictionary<string, bool> PrimitiveSurfaceOverrides
             = new Dictionary<string, bool>
             {
