@@ -10,15 +10,58 @@
 // pair `AllQuadFaceIndices(nCols, nRows, ClosedU, ClosedV)` in
 // meshes-geometry.library.plato consumes.
 //
-// Only the closed-form surfaces get an `Eval` here. The control-net surfaces
-// (Bezier / B-spline / NURBS / Coons) and the frame-carrying sweeps
-// (SurfaceOfRevolution, SweptSurface, LoftedSurface, TubeSurface, OffsetSurface)
-// need de Casteljau/de Boor evaluation or a rotation-minimizing frame, neither of
-// which exists in this tree yet; they are left as TODO(content) below and keep
-// only their closure answers, which ARE derivable and are what tessellation reads.
+// Every surface now evaluates. Two of them carry a documented approximation:
+//
+//   * The sweeps (SweptSurface, TubeSurface) use a FIXED-UP frame — the tangent
+//     plus a deterministically chosen perpendicular — not the rotation-minimizing
+//     frame the type doc names. A rotation-minimizing frame is defined by
+//     integrating along the path, which is sequential state this vocabulary has no
+//     way to carry; the fixed-up frame agrees with it wherever the path does not
+//     turn about its own tangent, and twists relative to it where it does.
+//   * OffsetSurface reads its base normal from central differences of
+//     `Base.Eval`, because `ParametricSurface` exposes no derivative (only
+//     `DifferentiableSurface` does). Exact for a surface whose base IS
+//     differentiable; noisy near a seam or a degenerate parameterization.
+//
+// Both are noted at their bodies. The worklist entry is plato-321.
 
 library Surfaces
 {
+    //==
+    // Shared helpers
+
+    // A unit vector orthogonal to v, chosen deterministically: crossing against
+    // whichever canonical axis v is least aligned with, so the product is never
+    // degenerate. Precondition: v is non-zero.
+    AnyPerpendicular(v: Vector3D): Vector3D {
+        var axis = v.X.Abs <= v.Y.Abs && v.X.Abs <= v.Z.Abs
+            ? Vector3D(1.0, 0.0, 0.0)
+            : (v.Y.Abs <= v.Z.Abs ? Vector3D(0.0, 1.0, 0.0) : Vector3D(0.0, 0.0, 1.0));
+        return v.Cross(axis).Normalize;
+    }
+
+    // The finite-difference step used wherever a derivative is read off an
+    // evaluation, in unit parameter.
+    ParameterStep(): Number => 0.001;
+
+    // The unit tangent of a path at a unit parameter, by central difference. The
+    // sample points are clamped into the domain, so the ends see a one-sided
+    // difference rather than an extrapolated point.
+    PathTangent(path: Curve3D, t: Number): Vector3D {
+        var h = ParameterStep();
+        var lo = path.Eval((t - h).Clamp(0.0, 1.0));
+        var hi = path.Eval((t + h).Clamp(0.0, 1.0));
+        return lo.Between(hi).Normalize;
+    }
+
+    // The number of columns of a control net (the U direction).
+    NetColumns(net: Array2D<Point3D>): Integer
+        => net.Row(0).Count;
+
+    // The number of rows of a control net (the V direction).
+    NetRows(net: Array2D<Point3D>): Integer
+        => net.Count / net.Row(0).Count;
+
     //==
     // Patches and control nets
 
@@ -29,15 +72,55 @@ library Surfaces
     ClosedU(s: BilinearPatch): Boolean => false;
     ClosedV(s: BilinearPatch): Boolean => false;
 
-    // TODO(content): Eval needs de Casteljau over the control net.
+    // The tensor-product de Casteljau: reduce each row of the control net along
+    // U, then reduce the resulting column of points along V.
+    Eval(s: BezierPatch, uv: UvCoordinate): Point3D
+        => NetRows(s.ControlPoints)
+            .MapRange(r => s.ControlPoints.Row(r).DeCasteljau(uv.U))
+            .DeCasteljau(uv.V);
     ClosedU(s: BezierPatch): Boolean => false;
     ClosedV(s: BezierPatch): Boolean => false;
 
-    // TODO(content): Eval needs de Boor over the knot vectors.
+    // The tensor-product B-spline sum: each control point weighted by the
+    // product of its U and V basis functions (splines-bspline.library.plato).
+    // The unit UV parameters are mapped onto the two knot domains first.
+    Eval(s: BSplineSurface, uv: UvCoordinate): Point3D {
+        var uDomain = s.UKnots.Domain(s.UDegree);
+        var vDomain = s.VKnots.Domain(s.VDegree);
+        var u = KnotParameter(uDomain, uv.U);
+        var v = KnotParameter(vDomain, uv.V);
+        var columns = NetColumns(s.ControlPoints);
+        var sum = s.ControlPoints.Count.Range.Reduce(Vector3D(0.0, 0.0, 0.0), (acc, k) =>
+            acc + s.ControlPoints.Row(k / columns)[k % columns].PositionVector
+                * (BasisFunction(s.UKnots, uDomain.End, k % columns, s.UDegree, u)
+                   * BasisFunction(s.VKnots, vDomain.End, k / columns, s.VDegree, v)));
+        return (sum.X, sum.Y, sum.Z);
+    }
     ClosedU(s: BSplineSurface): Boolean => false;
     ClosedV(s: BSplineSurface): Boolean => false;
 
-    // TODO(content): Eval needs rational de Boor (weighted, then projected).
+    // The rational form: the same tensor-product sum over weight-scaled control
+    // points, divided by the summed weighted basis — the projection out of
+    // homogeneous space that lets a NURBS surface hold a quadric exactly.
+    Eval(s: NurbsSurface, uv: UvCoordinate): Point3D {
+        var uDomain = s.UKnots.Domain(s.UDegree);
+        var vDomain = s.VKnots.Domain(s.VDegree);
+        var u = KnotParameter(uDomain, uv.U);
+        var v = KnotParameter(vDomain, uv.V);
+        var columns = NetColumns(s.ControlPoints);
+        var count = s.ControlPoints.Count;
+        var numerator = count.Range.Reduce(Vector3D(0.0, 0.0, 0.0), (acc, k) =>
+            acc + s.ControlPoints.Row(k / columns)[k % columns].PositionVector
+                * (s.Weights.Row(k / columns)[k % columns]
+                   * BasisFunction(s.UKnots, uDomain.End, k % columns, s.UDegree, u)
+                   * BasisFunction(s.VKnots, vDomain.End, k / columns, s.VDegree, v)));
+        var denominator = count.Range.Reduce(0.0, (acc, k) =>
+            acc + s.Weights.Row(k / columns)[k % columns]
+                * BasisFunction(s.UKnots, uDomain.End, k % columns, s.UDegree, u)
+                * BasisFunction(s.VKnots, vDomain.End, k / columns, s.VDegree, v));
+        var p = denominator == 0.0 ? numerator : numerator / denominator;
+        return (p.X, p.Y, p.Z);
+    }
     ClosedU(s: NurbsSurface): Boolean => false;
     ClosedV(s: NurbsSurface): Boolean => false;
 
@@ -50,9 +133,19 @@ library Surfaces
     ClosedU(s: PlanarPatch): Boolean => false;
     ClosedV(s: PlanarPatch): Boolean => false;
 
-    // TODO(content): Eval needs the Coons blend of the four boundary curves,
-    // which needs component-wise addition of Point3D (Point3D is Interpolatable,
-    // not Additive, so the blend is not expressible with the current concepts).
+    // The Coons blend: the two ruled surfaces between opposite boundary pairs,
+    // minus the bilinear patch on the four corners that both of them contain.
+    // Point3D is Interpolatable but not Additive, so the subtraction is spelled
+    // through the point difference — `bilinear + (ruledV - bilinear)` — which is
+    // exactly what `Between` gives and needs no new concept.
+    // https://en.wikipedia.org/wiki/Coons_patch
+    Eval(s: CoonsPatch, uv: UvCoordinate): Point3D {
+        var ruledV = s.Bottom.Eval(uv.U).Lerp(s.Top.Eval(uv.U), uv.V);
+        var ruledU = s.Left.Eval(uv.V).Lerp(s.Right.Eval(uv.V), uv.U);
+        var corners = s.Bottom.Eval(0.0).Lerp(s.Bottom.Eval(1.0), uv.U)
+            .Lerp(s.Top.Eval(0.0).Lerp(s.Top.Eval(1.0), uv.U), uv.V);
+        return ruledV + corners.Between(ruledU);
+    }
     ClosedU(s: CoonsPatch): Boolean => false;
     ClosedV(s: CoonsPatch): Boolean => false;
 
@@ -75,8 +168,24 @@ library Surfaces
     //==
     // Generated surfaces
 
-    // TODO(content): Eval needs the profile lifted into the axis frame.
-    // Closure in U is decidable, though: a sweep of a whole turn seams shut.
+    // The profile lifted into the axis frame and turned: U sweeps the angle
+    // interval, V follows the profile. The profile's X is the radial distance
+    // from the axis and its Y the distance along it, so the point is the axis
+    // origin plus a radial offset in the plane orthogonal to the axis plus an
+    // axial offset. Which perpendicular starts the sweep is arbitrary — the
+    // surface is the same set either way — so it is chosen deterministically.
+    Eval(s: SurfaceOfRevolution, uv: UvCoordinate): Point3D {
+        var angle = s.Angles.Lerp(uv.U);
+        var profile = s.Profile.Eval(uv.V);
+        var axis = s.Axis.Direction.Vector;
+        var e1 = AnyPerpendicular(axis);
+        var e2 = axis.Cross(e1);
+        return s.Axis.Origin
+             + e1 * (profile.X * angle.Cos)
+             + e2 * (profile.X * angle.Sin)
+             + axis * profile.Y;
+    }
+    // A sweep of a whole turn seams shut.
     ClosedU(s: SurfaceOfRevolution): Boolean
         => (s.Angles.End.Turns - s.Angles.Start.Turns).Abs >= 1.0;
     ClosedV(s: SurfaceOfRevolution): Boolean => false;
@@ -100,25 +209,111 @@ library Surfaces
     ClosedU(s: RuledSurface): Boolean => false;
     ClosedV(s: RuledSurface): Boolean => false;
 
-    // TODO(content): Eval needs per-section polyline sampling and cross-section
-    // interpolation. Closure across sections IS declared by the type.
+    // A point on one cross-section at the unit parameter u, walked by INDEX
+    // rather than by arc length: sections of a loft share point counts precisely
+    // so that equal u names corresponding points, and arc-length walking would
+    // break that correspondence wherever two sections have different shapes.
+    SectionPoint(section: Polyline3D, u: Number): Point3D {
+        var count = section.Points.Count;
+        var spans = (section.Closed ? count : count - 1).Max(1);
+        var t = u.Clamp(0.0, 1.0) * spans.ToNumber;
+        var i = t.Floor.ToInteger.Max(0).Min(spans - 1);
+        return section.Points[i % count].Lerp(section.Points[(i + 1) % count], t - i.ToNumber);
+    }
+
+    // U runs around each section, V across the stack: the two bracketing
+    // sections sampled at u and blended. A closed loft wraps the last section
+    // back to the first, which is the extra span its Closed flag buys.
+    Eval(s: LoftedSurface, uv: UvCoordinate): Point3D {
+        var count = s.Sections.Count;
+        var spans = (s.Closed ? count : count - 1).Max(1);
+        var t = uv.V.Clamp(0.0, 1.0) * spans.ToNumber;
+        var j = t.Floor.ToInteger.Max(0).Min(spans - 1);
+        return SectionPoint(s.Sections[j % count], uv.U)
+            .Lerp(SectionPoint(s.Sections[(j + 1) % count], uv.U), t - j.ToNumber);
+    }
     ClosedU(s: LoftedSurface): Boolean => false;
     ClosedV(s: LoftedSurface): Boolean => s.Closed;
 
-    // TODO(content): Eval needs the path's rotation-minimizing frame.
+    // The 2D profile carried along the path: U follows the profile, V the path.
+    // Approximation (see the file header): the cross-section frame is the path
+    // tangent plus a deterministic perpendicular, not the rotation-minimizing
+    // frame, so the section can twist relative to a true sweep where the path
+    // turns about its own tangent.
+    Eval(s: SweptSurface, uv: UvCoordinate): Point3D {
+        var origin = s.Path.Eval(uv.V);
+        var tangent = PathTangent(s.Path, uv.V);
+        var e1 = AnyPerpendicular(tangent);
+        var e2 = tangent.Cross(e1);
+        var profile = s.Profile.Eval(uv.U);
+        return origin + e1 * profile.X + e2 * profile.Y;
+    }
     ClosedU(s: SweptSurface): Boolean => false;
     ClosedV(s: SweptSurface): Boolean => false;
 
-    // TODO(content): Eval needs the path's rotation-minimizing frame. The
-    // circular cross-section always seams shut in U.
+    // A circle of radius Radius held normal to the path: U goes once around the
+    // circle, V along the path. Same frame approximation as SweptSurface, and it
+    // matters less here — a circular section is invariant under the twist the
+    // fixed-up frame introduces.
+    Eval(s: TubeSurface, uv: UvCoordinate): Point3D {
+        var origin = s.Path.Eval(uv.V);
+        var tangent = PathTangent(s.Path, uv.V);
+        var e1 = AnyPerpendicular(tangent);
+        var e2 = tangent.Cross(e1);
+        var around = uv.U.Turns;
+        return origin + e1 * (s.Radius * around.Cos) + e2 * (s.Radius * around.Sin);
+    }
+    // The circular cross-section always seams shut in U.
     ClosedU(s: TubeSurface): Boolean => true;
     ClosedV(s: TubeSurface): Boolean => false;
 
-    // TODO(content): Eval needs the base surface's normal, which ParametricSurface
-    // does not expose (only DifferentiableSurface does). Closure is inherited from
-    // the base: offsetting along the normal preserves seams.
+    // The base surface's unit normal at a UV coordinate, from central
+    // differences of its evaluation. `ParametricSurface` exposes no derivative
+    // (only `DifferentiableSurface` does), so this is what an offset can read;
+    // the sample parameters are clamped, so the boundary gets a one-sided
+    // difference rather than an off-surface point.
+    ApproximateNormal(surface: ParametricSurface, uv: UvCoordinate): Vector3D {
+        var h = ParameterStep();
+        var alongU = surface.Eval(UvCoordinate((uv.U - h).Clamp(0.0, 1.0), uv.V))
+            .Between(surface.Eval(UvCoordinate((uv.U + h).Clamp(0.0, 1.0), uv.V)));
+        var alongV = surface.Eval(UvCoordinate(uv.U, (uv.V - h).Clamp(0.0, 1.0)))
+            .Between(surface.Eval(UvCoordinate(uv.U, (uv.V + h).Clamp(0.0, 1.0))));
+        return alongU.Cross(alongV).Normalize;
+    }
+
+    // The base point displaced along the base normal by Distance.
+    Eval(s: OffsetSurface, uv: UvCoordinate): Point3D
+        => s.Base.Eval(uv) + ApproximateNormal(s.Base, uv) * s.Distance;
+    // Closure is inherited: offsetting along the normal preserves seams.
     ClosedU(s: OffsetSurface): Boolean => s.Base.ClosedU;
     ClosedV(s: OffsetSurface): Boolean => s.Base.ClosedV;
+
+    //==
+    // Height fields
+
+    // The elevation at a ground position: the bilinear blend of the four
+    // surrounding samples, clamped to the edge outside Domain. Columns run along
+    // X and rows along Y, and the samples sit at the corners of the sample grid,
+    // so a Heights array of c columns spans c - 1 intervals across Domain.
+    Eval(s: HeightField, position: Point2D): Number {
+        var columns = s.Heights.Row(0).Count;
+        var rows = s.Heights.Count / columns;
+        var min = s.Domain.Min;
+        var max = s.Domain.Max;
+        var x = max.X == min.X ? 0.0 : (position.X - min.X) / (max.X - min.X) * (columns - 1).ToNumber;
+        var y = max.Y == min.Y ? 0.0 : (position.Y - min.Y) / (max.Y - min.Y) * (rows - 1).ToNumber;
+        var i = x.Floor.ToInteger;
+        var j = y.Floor.ToInteger;
+        return s.SampleAt(i, j).Lerp(s.SampleAt(i + 1, j), x - x.Floor)
+            .Lerp(s.SampleAt(i, j + 1).Lerp(s.SampleAt(i + 1, j + 1), x - x.Floor), y - y.Floor);
+    }
+
+    // The sample at column i, row j, with both indices clamped into the array.
+    SampleAt(s: HeightField, i: Integer, j: Integer): Number {
+        var columns = s.Heights.Row(0).Count;
+        var rows = s.Heights.Count / columns;
+        return s.Heights.Row(j.Max(0).Min(rows - 1))[i.Max(0).Min(columns - 1)];
+    }
 
     //==
     // Topological surfaces

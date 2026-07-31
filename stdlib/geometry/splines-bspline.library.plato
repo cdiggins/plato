@@ -11,16 +11,14 @@ library SplinesBspline
     //==
     // # B-splines and NURBS
     //
-    // TODO(concept-gap): Cox-de Boor evaluation needs a knot-span search plus a
-    // recurrence over degree levels indexed off that span. The span search is
-    // now expressible (a `Reduce` over Knots carrying the last index whose knot
-    // does not exceed the parameter), but the remaining blocker is the degree
-    // recurrence itself: a triangular DP where level p reads two entries of
-    // level p-1, with a zero-division guard at every repeated knot. That reads
-    // as nested `MapRange`/`Reduce` with carried per-level arrays, which does
-    // not render cleanly, so BSplineCurve2D/3D and NurbsCurve2D/3D keep no Eval
-    // here. KnotVector.Knots is read by the helper below so the declaration is
-    // not dead while that is outstanding.
+    // Evaluation is the Cox-de Boor RECURRENCE on the basis functions, not the
+    // de Boor triangular algorithm. Both compute the same curve; the recurrence
+    // is an ordinary recursive function over (index, degree), which this
+    // vocabulary expresses directly, where the triangular form wants a carried
+    // per-level array it cannot spell. The recurrence recomputes shared
+    // subterms, so the cost is exponential in the DEGREE — fine at cubic, and
+    // the reason a tessellation loop should substitute de Boor.
+    // https://en.wikipedia.org/wiki/De_Boor%27s_algorithm
 
     // The number of knots in a knot vector. For a curve with N control points
     // of degree D this must equal N + D + 1.
@@ -61,4 +59,100 @@ library SplinesBspline
     // The de-homogenized control point of a NURBS curve.
     WeightedControlPoint(self: NurbsCurve3D, index: Integer): Vector3D
         => self.ControlPoints[index].PositionVector * self.Weights[index];
+
+    //==
+    // # Cox-de Boor basis functions
+
+    // A ratio that reads as zero when its denominator vanishes. Every repeated
+    // knot produces a 0/0 in the recurrence, and the convention that those terms
+    // are zero is what makes repeated knots mean "reduced continuity" rather than
+    // "undefined".
+    KnotRatio(numerator: Number, denominator: Number): Number
+        => denominator == 0.0 ? 0.0 : numerator / denominator;
+
+    // The zero-degree basis: one on the half-open span [k_i, k_i+1), zero
+    // elsewhere. The final span is closed on the right instead, so that the
+    // curve is defined AT the end of its domain rather than collapsing to the
+    // origin there — the usual special case, expressed by passing the domain end
+    // down rather than by clamping the parameter short of it.
+    ZeroDegreeBasis(knots: KnotVector, domainEnd: Number, i: Integer, t: Number): Number
+        => knots.KnotAt(i) <= t
+           && (t < knots.KnotAt(i + 1)
+               || t >= domainEnd && knots.KnotAt(i) < domainEnd && knots.KnotAt(i + 1) >= domainEnd)
+            ? 1.0
+            : 0.0;
+
+    // The i-th B-spline basis function of the given degree at parameter t.
+    // https://en.wikipedia.org/wiki/B-spline#Definition
+    BasisFunction(knots: KnotVector, domainEnd: Number, i: Integer, degree: Integer, t: Number): Number
+        => degree <= 0
+            ? ZeroDegreeBasis(knots, domainEnd, i, t)
+            : KnotRatio(t - knots.KnotAt(i), knots.KnotAt(i + degree) - knots.KnotAt(i))
+                  * BasisFunction(knots, domainEnd, i, degree - 1, t)
+            + KnotRatio(knots.KnotAt(i + degree + 1) - t,
+                        knots.KnotAt(i + degree + 1) - knots.KnotAt(i + 1))
+                  * BasisFunction(knots, domainEnd, i + 1, degree - 1, t);
+
+    //==
+    // # Curve evaluation
+    //
+    // `Eval` takes the unit parameter every Curve2D / Curve3D takes, so it is
+    // mapped onto the curve's own knot domain first. Values outside [0, 1] clamp
+    // to the ends rather than extrapolating: outside the domain the basis is not
+    // a partition of unity and the "extrapolated" point is meaningless.
+
+    // The knot parameter a unit curve parameter names.
+    KnotParameter(domain: NumberInterval, t: Number): Number
+        => domain.Lerp(t.Clamp(0.0, 1.0));
+
+    // The point at the given unit parameter: the basis-weighted sum of the
+    // control points.
+    Eval(self: BSplineCurve2D, t: Number): Point2D {
+        var domain = self.ParameterDomain;
+        var u = KnotParameter(domain, t);
+        var sum = self.ControlPoints.Count.Range.Reduce(Vector2D(0.0, 0.0), (acc, i) =>
+            acc + self.ControlPoints[i].PositionVector
+                * BasisFunction(self.Knots, domain.End, i, self.Degree, u));
+        return (sum.X, sum.Y);
+    }
+
+    // The point at the given unit parameter.
+    Eval(self: BSplineCurve3D, t: Number): Point3D {
+        var domain = self.ParameterDomain;
+        var u = KnotParameter(domain, t);
+        var sum = self.ControlPoints.Count.Range.Reduce(Vector3D(0.0, 0.0, 0.0), (acc, i) =>
+            acc + self.ControlPoints[i].PositionVector
+                * BasisFunction(self.Knots, domain.End, i, self.Degree, u));
+        return (sum.X, sum.Y, sum.Z);
+    }
+
+    // The point at the given unit parameter: the weighted basis sum divided by
+    // the summed weights, which is the projection back out of homogeneous space
+    // that makes a NURBS curve rational — and lets it represent conics exactly.
+    Eval(self: NurbsCurve2D, t: Number): Point2D {
+        var domain = self.ParameterDomain;
+        var u = KnotParameter(domain, t);
+        var count = self.ControlPoints.Count;
+        var numerator = count.Range.Reduce(Vector2D(0.0, 0.0), (acc, i) =>
+            acc + self.WeightedControlPoint(i)
+                * BasisFunction(self.Knots, domain.End, i, self.Degree, u));
+        var denominator = count.Range.Reduce(0.0, (acc, i) =>
+            acc + self.Weights[i] * BasisFunction(self.Knots, domain.End, i, self.Degree, u));
+        var p = denominator == 0.0 ? numerator : numerator / denominator;
+        return (p.X, p.Y);
+    }
+
+    // The point at the given unit parameter.
+    Eval(self: NurbsCurve3D, t: Number): Point3D {
+        var domain = self.ParameterDomain;
+        var u = KnotParameter(domain, t);
+        var count = self.ControlPoints.Count;
+        var numerator = count.Range.Reduce(Vector3D(0.0, 0.0, 0.0), (acc, i) =>
+            acc + self.WeightedControlPoint(i)
+                * BasisFunction(self.Knots, domain.End, i, self.Degree, u));
+        var denominator = count.Range.Reduce(0.0, (acc, i) =>
+            acc + self.Weights[i] * BasisFunction(self.Knots, domain.End, i, self.Degree, u));
+        var p = denominator == 0.0 ? numerator : numerator / denominator;
+        return (p.X, p.Y, p.Z);
+    }
 }
