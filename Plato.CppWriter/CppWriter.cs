@@ -184,7 +184,7 @@ namespace Ara3D.Geometry.CppWriter
 
         public static HashSet<string> IgnoredTypes = new HashSet<string>()
         {
-            "Dynamic", "Type", "Error",
+            "Type", "Error",
             // Multi-dimensional arrays still need a separate POD story.
             "Array2D", "Array3D",
         };

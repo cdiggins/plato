@@ -96,7 +96,6 @@ namespace Ara3D.Geometry.TypeScriptWriter
 
         public static HashSet<string> IgnoredTypes = new HashSet<string>()
         {
-            "Dynamic",
             "Type",
             "Array",
             "Array2D",
@@ -171,7 +170,6 @@ namespace Ara3D.Geometry.TypeScriptWriter
         /// </summary>
         public static Dictionary<string, string> TypeNameReplacements = new Dictionary<string, string>()
         {
-            { "Dynamic", "unknown" },
             { "Type", "unknown" },
         };
 

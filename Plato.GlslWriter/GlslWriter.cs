@@ -118,7 +118,7 @@ namespace Ara3D.Geometry.GlslWriter
 
         public static HashSet<string> IgnoredTypes = new HashSet<string>()
         {
-            "Dynamic", "Type", "Error", "String", "Character",
+            "Type", "Error", "String", "Character",
             "Array", "Array2D", "Array3D",
         };
 

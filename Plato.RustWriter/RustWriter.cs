@@ -96,7 +96,6 @@ namespace Ara3D.Geometry.RustWriter
 
         public static HashSet<string> IgnoredTypes = new HashSet<string>()
         {
-            "Dynamic",
             "Type",
             "Array",
             "Array2D",
@@ -176,7 +175,6 @@ namespace Ara3D.Geometry.RustWriter
         /// </summary>
         public static Dictionary<string, string> TypeNameReplacements = new Dictionary<string, string>()
         {
-            { "Dynamic", "()" },
             { "Type", "()" },
         };
 
