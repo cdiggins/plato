@@ -236,6 +236,42 @@ Remaining on this issue: the three law failures (`AngleInterval.Law_ContainsCent
 `KnownFailures.json` or a content fix; the `-Test` gating flip; and the degraded-body box (48 now
 vs the 44 recorded when plato-294 was filed — the drift predates this work).
 
+## Evaluation 2026-07-31 (later) — the three law failures are gone, no quarantine needed
+
+All three were triaged to content fixes; `KnownFailures.json` stays EMPTY. Measured at HEAD with
+the direct commands (the studio gate scripts are stale — plato-372):
+
+| Gate | Result |
+|---|---|
+| Forward conformance | **47 total: 44 pass, 0 fail, 3 skip** (was 41/3/3) |
+| `lint --strict` over the four tiers | exit 0; 2793 findings, **229 Warning** (ratchet flat), 2564 Info, 0 Error |
+| `PlatoTests` | **194/194** |
+
+Root causes, one per law:
+
+- `AngleInterval.Law_ContainsCenter` — `AngleInterval` specialized `Contains` as ARC containment
+  but inherited the generic LINEAR `Center` (`Lerp(0.5)`), so the two disagreed for every interval
+  whose stored `End - Start` exceeds a turn. Added the seam-aware `Center` (`Start + Span/2`) beside
+  `Contains`. That alone did not turn the law green: the monomorphized generic law inlines the
+  CONCEPT's `Center` while its `Contains` call is re-bound by C# to the type's override — a codegen
+  inconsistency now filed as [plato-374](plato-374.md); the law packet states the property on the
+  concrete `AngleInterval` surface instead.
+- `SuperEllipse.Law_SuperEllipseExponentTwoPerimeterIsEllipse` — nothing wrong with either body.
+  The law compared the superellipse's Simpson integral (accurate to float32, ~4e-7 relative)
+  against `Ellipse.Perimeter`, whose Ramanujan-II relative error reaches -4.0e-4 at extreme axis
+  ratios, at a 1e-6 tolerance. Tolerance restated at 1e-3 with the measured justification; the
+  library's own false accuracy claim ("below 1e-8 for b/a >= 0.1") corrected; the approximation
+  itself filed as [plato-373](plato-373.md).
+- `VonMisesDistribution.Law_VonMisesCdfStartsAtZero` — the law evaluated the CDF exactly at the
+  cut, which is a JUMP (0 above, 1 below). The argument it can build, `mu - pi`, is a rounded
+  float that lands one ulp on either side, so the answer is a coin flip and 1 is CORRECT when it
+  rounds low. Restated as the right-hand limit a 1e-4 margin inside the arc.
+
+Still outstanding on this issue: the `-Test` gating flip (blocked on plato-372, the stale scripts),
+the 11 affine laws box, the degraded-body box, and the README/csproj status blocks. The box naming
+`regen-forward-conformance.ps1 -Test` is deliberately left UNTICKED: the law runner is green, but
+that script could not be run from this checkout.
+
 Collateral, deliberately not fixed here: `generated/Plato.Generated.*` (legacy generation) went
 from 498 to 710 error lines, because stdlib-legacy still declares as intrinsics the members the
 runtime no longer carries. Those 19 names are recorded in `LegacyKnownMissing`, whose own doc
