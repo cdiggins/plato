@@ -19,7 +19,7 @@
 
 | Path | Which | Status |
 |---|---|---|
-| `submodules/Plato/Plato.Intrinsics` | V1 (wrapper scalars, properties) | **FROZEN** |
+| `submodules/Plato/Plato.Intrinsics.Legacy` | V1 (wrapper scalars, properties) | **FROZEN** |
 | `ara3d-sdk/src/Plato.Intrinsics` | synced copy of V1 (so the SDK builds standalone) | **FROZEN** |
 | `submodules/Plato/Plato.Intrinsics.V2` | V2 (native scalars, extensions, System.Numerics) | **LIVE** |
 
@@ -40,7 +40,8 @@ Both V2 goldens are diff-gated by `tools/regen-generated.ps1` (`-Apply` to refre
 ## Who consumes what
 
 - **`ara3d-sdk/src/Ara3D.Geometry`** — the handwritten C# geometry library Studio actually uses. It
-  references the **frozen V1** `Plato.Generated` + `Plato.Intrinsics`. Do not break this.
+  references the **frozen V1** `Plato.Generated` + `Plato.Intrinsics` (the SDK copy; the Plato-repo
+  copy is `Plato.Intrinsics.Legacy`). Do not break this.
 - **Nothing production yet consumes the V2 output.** Migrating `Ara3D.Geometry` onto V2 and then
   deleting V1 is the endgame (an adoption project, not yet started).
 - **`submodules/Plato.Geometry`** — a separate, dormant legacy monorepo (Assimp/GLTF/Ifc/Revit/

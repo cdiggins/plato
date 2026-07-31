@@ -199,8 +199,9 @@ decision webs. With C0–C2 done, only one recipe remains, so:
 
 ### C5 — Naming pass (½ day, optional, last)
 
-Once nothing references the legacy folders: `Plato.Intrinsics` → `Plato.Intrinsics.Legacy` (or
-archive branch), `Plato.Intrinsics.V2` → `Plato.Intrinsics`, drop "V2" from suite/doc names.
+Once nothing references the legacy folders: `Plato.Intrinsics` → `Plato.Intrinsics.Legacy`
+(**DONE** 2026-07-31) (or archive branch), `Plato.Intrinsics.V2` → `Plato.Intrinsics`, drop "V2"
+from suite/doc names.
 Purely cosmetic; do it only after C4 so it's a rename, not a merge.
 
 ## 3. Order and dependencies

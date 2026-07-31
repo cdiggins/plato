@@ -55,7 +55,7 @@ Plato-language `.plato` source, nor the C# the writers emit (that shape is set b
 - `Plato.AST/` — the old associativity bug was FIXED in `392dfa8` (2026-07-09); `../../docs/plato-assoc-bug-diagnosis.md` is historical.
 - `Plato.CSharpWriter/` — `CSharpWriter.cs` (flags: `ExtensionStyle`, `Optimize`, `ScalarErase`, `NoProperties`), `TirCSharpBodyWriter.cs` (the SOLE C# body writer — every function body renders from the monomorphized Typed IR; the legacy `CSharpFunctionBodyWriter` was deleted at C4), `ExtensionStyleWriter.cs` (classic extension methods, one static class per Plato library; moved no-arg fns are METHODS `v.Magnitude()`), `TirScalarLowerer.cs` (`--scalar=float` erasure as a TIR lowering pass — it replaced the emit-time `ScalarEraseAnalysis`, deleted at S3), `ComponentUnroller.cs` (`--optimize` field-wise unrolling table).
 - `Plato.GlslWriter/` / `Plato.CppWriter/` — TIR-only POC backends (GLSL ES 3.00; C++17 / CUDA with shared bodies + dialect preamble). Compile-gated by their `*.Tests` projects; not in `Ara3D.Studio.sln`. See each project's `README.md`.
-- `Plato.Intrinsics/` — **FROZEN V1 runtime** (consolidation plan C0). The live runtime is `Plato.Intrinsics.V2/` (System.Numerics-backed, method-form). Both `Plato.Intrinsics` and the ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` copies are frozen — protected by `tools\check-frozen-v1.ps1` (manifest `tools\frozen-v1.sha256`), never edit/regenerate.
+- `Plato.Intrinsics.Legacy/` — **FROZEN V1 runtime** (consolidation plan C0). The live runtime is `Plato.Intrinsics.V2/` (System.Numerics-backed, method-form). Both `Plato.Intrinsics.Legacy` and the ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` copies are frozen — protected by `tools\check-frozen-v1.ps1` (manifest `tools\frozen-v1.sha256`), never edit/regenerate.
 - ~~`conformance/Ara3D.SDK.ConformanceTests/`~~ — **RETIRED 2026-07-30** together with the golden
   diff-gate (`tracker/decisions/2026-07-30-retire-legacy-conformance-and-goldens.md`). The forward
   suite below is the sole conformance target; making it run is `plato-308`. Until then, executable
@@ -85,7 +85,7 @@ Iterate on the one gate relevant to your workstream; run `check-all.ps1` **once*
   the same commit.
 - `.\tools\regen-forward-conformance.ps1` — forward-stdlib milestone gate. Stage 1 gating (see
   `conformance/Plato.ForwardConformanceTests/` above); `-Codegen` / `-Test` run the diagnostic stages.
-- `.\tools\check-frozen-v1.ps1` — freeze tripwire: SHA-256 of the frozen V1 artifacts (ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` + Plato-repo `Plato.Intrinsics`). Exit 1 on any drift. `-Update` re-baselines (deliberate only). Replaced regen-plato in check-all (C0); `regen-plato.ps1` + the legacy default-style emitter were deleted at C4.
+- `.\tools\check-frozen-v1.ps1` — freeze tripwire: SHA-256 of the frozen V1 artifacts (ara3d-sdk `Plato.Generated`/`Plato.Intrinsics` + Plato-repo `Plato.Intrinsics.Legacy`). Exit 1 on any drift. `-Update` re-baselines (deliberate only). Replaced regen-plato in check-all (C0); `regen-plato.ps1` + the legacy default-style emitter were deleted at C4.
 - `.\tools\check-all.ps1` — full gate battery, PASS/FAIL table. **Run once at the end of a mission**; iterate on a single relevant gate during development.
 - `.\tools\gate-timings.ps1` — how long the gates take. Every gate script records its duration
   (and failures) via `tools\gate-timing.ps1` into `%LOCALAPPDATA%\ara3d\gate-timings.csv`; this
@@ -119,7 +119,7 @@ after every build — do not bare-`dotnet build` Plato projects when you care ab
    the HTML. If hooks are not installed, run the generator yourself and include
    `docs/status-report.html` (and `docs/status-report-snapshot.json` when you change gate/lint
    snapshot data) in the commit pathspec.
-2. The FROZEN V1 artifacts (ara3d-sdk Plato.Generated/Plato.Intrinsics + Plato-repo Plato.Intrinsics) must not change — `tools\check-frozen-v1.ps1` is the gate. The live V2 goldens (`Generated/`) are diff-gated by `regen-generated.ps1`; refresh them in the same change as any intended emitter-behavior change.
+2. The FROZEN V1 artifacts (ara3d-sdk Plato.Generated/Plato.Intrinsics + Plato-repo Plato.Intrinsics.Legacy) must not change — `tools\check-frozen-v1.ps1` is the gate. The live V2 goldens (`Generated/`) are diff-gated by `regen-generated.ps1`; refresh them in the same change as any intended emitter-behavior change.
 3. Generated code must compile with DEFAULT LangVersion on net8.0. No C# 14 features.
 4. Known bugs are now BEING fixed (content-leads, from 2026-07-09). The `KnownFailures.json`
    manifest is the burn-down queue: when you fix a bug, REMOVE its manifest entry in the same change

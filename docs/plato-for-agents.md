@@ -57,7 +57,7 @@ exactly one `library` block. The folder is flat — no subfolders.
 | `Plato.RustWriter/` | Rust backend (POC). |
 | `Plato.GlslWriter/` | GLSL ES 3.00 / WebGL2 backend (POC). |
 | `Plato.CppWriter/` | C++17 / CUDA backend (POC; one emitter, two dialects). |
-| `Plato.Intrinsics/` | **FROZEN V1** handwritten runtime — do not edit ([`plato-library-map.md`](plato-library-map.md)). |
+| `Plato.Intrinsics.Legacy/` | **FROZEN V1** handwritten runtime — do not edit ([`plato-library-map.md`](plato-library-map.md)). |
 | `Plato.Intrinsics.V2/` | The **live** handwritten C# runtime that discharges the intrinsic contract. |
 
 ---
@@ -85,7 +85,7 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
 ```
 
 - **Output:** one `.g.cs` per type, packed structs, aggressive inlining, `partial` for hand extensions. Flags: `--csharp-style=default|extensions`, `--optimize`, `--scalar=wrapper|float`.
-- **Intrinsics:** the live runtime is `Plato.Intrinsics.V2/`; it must supply every bodiless signature in `stdlib/foundation/intrinsics.library.plato` (gate: `IntrinsicObligationTests`). `Plato.Intrinsics/` and the SDK copy are frozen V1 — never edit either.
+- **Intrinsics:** the live runtime is `Plato.Intrinsics.V2/`; it must supply every bodiless signature in `stdlib/foundation/intrinsics.library.plato` (gate: `IntrinsicObligationTests`). `Plato.Intrinsics.Legacy/` and the SDK copy are frozen V1 — never edit either.
 
 ### TypeScript (proof of concept)
 

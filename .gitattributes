@@ -1,4 +1,4 @@
 # Frozen V1 runtime: byte-exact artifacts guarded by tools/check-frozen-v1.ps1 in the
 # studio repo. Disable line-ending conversion so autocrlf checkouts cannot rewrite the
 # bytes (which trips the SHA-256 manifest) or show phantom "modified" status.
-Plato.Intrinsics/** -text
+Plato.Intrinsics.Legacy/** -text
