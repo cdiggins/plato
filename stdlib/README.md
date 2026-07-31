@@ -56,6 +56,15 @@ midpoint-rounding variants) is excluded and noted in those porting notes; lower-
 priority backends may polyfill (e.g. GLSL lacks double precision — `Number` maps to
 `float` there).
 
+A second, harder rule bounds that file (2026-07-30): **an intrinsic may mention only
+`primitive` types** — the set declared in `foundation/primitives.plato`. Operations on
+`Angle`, `Number2/3/4/8`, `Vector2D/3D`, the matrices and `Quaternion` are ordinary Plato
+**reference bodies** in `angle-trig`, `vectors-tuples-ops`, `vectors-geometric-ops`,
+`matrices-ops` and `rotations-ops` `.library.plato`. Those bodies ARE the semantics; a
+backend may substitute a verified native implementation (C# uses `System.Numerics`) as an
+optimization, which means a new backend can start with zero intrinsics beyond the scalar
+and array core and still be correct. Full contract: `../docs/plato-intrinsics-surface.md`.
+
 ## Validation
 
 ```
@@ -98,8 +107,9 @@ Owning declaration files cite conventions with a one-line
 - `type` = immutable data, fields only. Concrete nouns: `Vector3D`, `TriangleMesh3D`.
 - **Vector naming rule:** a bare number counts components (`Number3`, `Tuple3`,
   `IntegerVector3`); a `D` suffix means the type lives in that-dimensional space
-  (`Vector3D`, `Point3D`, `Ray3D`). `Number2/3/4/8` are the low-level intrinsic
-  numeric tuples; `Vector2D/3D` are geometric displacements. There is no `Vector2/3/4`.
+  (`Vector3D`, `Point3D`, `Ray3D`). `Number2/3/4/8` are the low-level numeric tuples — the tier
+  a backend maps onto its native short-vector registers; `Vector2D/3D` are geometric
+  displacements. There is no `Vector2/3/4`.
 - A concept name must never equal a type name.
 - Every declaration has a `//` doc comment stating what it is and any invariants.
   Section banners use `//==`.
@@ -153,13 +163,13 @@ initial build-out; it described a work assignment, not the tree, and is gone.)
 
 | # | Layer | Files |
 |---|-------|-------|
-| 1 | Foundation — primitives, core comparison & logic | `core-comparison.concepts`, `core-comparison.library`, `core-logic.concepts`, `core-logic.library`, `primitives`, `primitives-arrays`, `primitives-builders`, `primitives-functions`, `primitives-tuples` |
+| 1 | Foundation — primitives, core comparison & logic | `core-comparison.concepts`, `core-comparison.library`, `core-logic.concepts`, `core-logic.library`, `primitives`, `primitives.types`, `primitives-arrays`, `primitives-tuples` |
 | 2 | Foundation — algebra, collections, functional | `algebra-metric.concepts`, `algebra-metric.library`, `algebra-numeric.concepts`, `algebra-numeric.library`, `algebra-operations.concepts`, `algebra-operations.library`, `collections-containers.concepts`, `collections-containers.library`, `collections-grids.library`, `collections-indexable.concepts`, `collections-indexable.library`, `collections-jagged`, `collections-jagged.concepts`, `collections-jagged.library`, `collections-sampling.library`, `functional-procedural.library`, `functional.concepts` |
 | 3 | Foundation — numbers, quantities, angles, constants, time | `angles.library`, `constants.library`, `numbers`, `quantities-dynamic`, `quantities-electromagnetic`, `quantities-geometric`, `quantities-kinematic`, `quantities-material`, `quantities-mechanical`, `quantities-photometric`, `quantities-projections.library`, `quantities-thermal`, `quantities.concepts`, `quantities.library`, `numbers-dual`, `numbers-dual.library`, `time` |
 | 4 | Foundation — vectors, matrices, rotations, points, axes | `axes`, `axes-2d.library`, `axes-signed.library`, `axes.library`, `matrices`, `matrices.concepts`, `matrices-sparse`, `matrices-sparse.library`, `numeric-structures-algebra.library`, `numeric-structures-components.library`, `numeric-structures-coordinate.library`, `numeric-structures-matrix.library`, `numeric-structures-quantity.library`, `numeric-structures-vector.library`, `points`, `points-curvilinear`, `points-parametric`, `points.concepts`, `rotations`, `vectors-geometric`, `vectors-integer`, `vectors-tuples`, `vectors.concepts` |
 | 5 | Foundation — intervals, bounds, sizes, transforms | `deformations`, `deformations.concepts`, `deformations.library`, `intervals`, `intervals-bounds`, `intervals-bounds.concepts`, `intervals-sizes`, `intervals-transforms-bounds.library`, `intervals-transforms-deformable.library`, `intervals-transforms-interval.library`, `intervals-transforms-transformable.library`, `transforms-affine`, `transforms-affine.library`, `transforms-frames`, `transforms-frames.library`, `transforms-identities.library`, `transforms-motor`, `transforms-motor.library`, `transforms-points.library`, `transforms-pose`, `transforms-pose.library`, `transforms-rotations.library`, `transforms-trs`, `transforms-trs.library`, `transforms.concepts` |
 | 6 | Foundation — color | `color`, `color-named.library`, `color.library` |
-| 7 | Intrinsics (host-provided) | `intrinsics.library` |
+| 7 | Host contract — intrinsics and their reference bodies | `intrinsics.library`, `angle-trig.library`, `vectors-tuples-ops.library`, `vectors-geometric-ops.library`, `matrices-ops.library`, `rotations-ops.library`, `hashing.library` |
 | 8 | Geometry concepts & primitive shapes | `geometry-fitting.concepts`, `geometry-fitting`, `geometry-fitting.library`, `geometry-hulls`, `geometry-hulls.library`, `geometry-kernels.library`, `geometry-measures.concepts`, `geometry-measures.library`, `geometry-pointsets.library`, `geometry-queries.concepts`, `geometry-queries.library`, `geometry.concepts`, `geometry.library`, `lines`, `lines-planes`, `lines-planes.library`, `lines.library`, `planar-boxes`, `planar-boxes.library`, `planar-circles`, `planar-circles.library`, `planar-ellipses`, `planar-ellipses.library`, `planar-shapes.library`, `planar-triangles`, `planar-triangles.library`, `polygons`, `polygons-kernels.library`, `polygons-polylines`, `polygons-polylines.library`, `polygons-spatial`, `polygons-spatial.library`, `polygons.library`, `spatial-boxes`, `spatial-boxes.library`, `spatial-capsules.library`, `spatial-cylinders`, `spatial-cylinders.library`, `spatial-patches`, `spatial-patches.library`, `spatial-primitives.library`, `spatial-simplices`, `spatial-simplices.library`, `spatial-spheres`, `spatial-spheres.library`, `spatial-tori`, `spatial-tori.library` |
 | 9 | Curves, splines, surfaces, solids | `curves-2d-arcs`, `curves-2d-arcs.library`, `curves-2d-polar`, `curves-2d-polar.library`, `curves-2d-spirals`, `curves-2d-spirals.library`, `curves-3d`, `curves-3d.library`, `curves-capabilities.concepts`, `curves-capabilities.library`, `curves-sampling.library`, `curves.concepts`, `curves.library`, `solids-csg`, `solids-generated`, `solids-polyhedra`, `solids.library`, `splines-bezier`, `splines-bezier.library`, `splines-bspline`, `splines-bspline.library`, `splines-hermite`, `splines-hermite.library`, `splines-interpolating`, `splines-interpolating.library`, `surfaces-generated`, `surfaces-patches`, `surfaces-solids.concepts`, `surfaces-solids.library`, `surfaces-special`, `surfaces.library` |
 | 10 | Fields, implicits/SDF, noise, sampling | `fields-constant`, `fields-differentiable.concepts`, `fields-function`, `fields-graphs`, `fields-graphs.library`, `fields-implicits-core.library`, `fields-implicits-differentiable.library`, `fields-implicits-distance.library`, `fields-implicits-function.library`, `fields-implicits-metaballs.library`, `fields-implicits-nodes.library`, `fields-implicits-sampled.library`, `fields-implicits-shapes.library`, `fields-implicits-time-varying.library`, `fields-time-varying.concepts`, `fields.concepts`, `implicit-sdf-function`, `implicit-sdf-metaballs`, `implicit-sdf-modifiers`, `implicit-sdf-modifiers.library`, `implicit-sdf-operators.library`, `implicit-sdf-primitives.library`, `implicit-sdf-sampled`, `implicit-sdf-sampled.library`, `implicit-sdf-trees`, `implicit-sdf-trees.library`, `implicit-sdf.concepts`, `noise`, `noise-basis`, `noise-fractal`, `noise-warped`, `sampling-curves`, `sampling-fields`, `sampling-grids`, `sampling-patterns`, `sampling-resampling` |
@@ -180,12 +190,15 @@ sit inline in a declaration file. Ground rules and the package-to-file table liv
 
 Foundation reading order, file by file:
 
-- `primitives.types.plato` — Number, Integer, Boolean, String, Character, Dynamic, Object.
+- `primitives.plato` — the whole `primitive` set, and the only file that uses that keyword:
+  Number, Integer, Boolean, Character, String, Dynamic, Type, `Array<T>`, the `unique` affine
+  builders `List<T>` / `Buffer<T>`, and Function0..Function9. These are the names the compiler
+  assumes exist; their bodiless host signatures live in `intrinsics.library.plato`, and nothing
+  outside this set may appear in an intrinsic signature.
+- `primitives.types.plato` — `Object` alone: the one member of this family that is NOT a
+  primitive, so its declaration is its own authority.
 - `primitives-tuples.types.plato` — Tuple2..Tuple10 (the compiler's synthesized constructor arity).
-- `primitives-functions.types.plato` — Function0..Function4.
-- `primitives-arrays.types.plato` — Array, Array2D, Array3D.
-- `primitives.plato` — the `unique` affine builders `List<T>` / `Buffer<T>` (with the rest of the
-  primitive set); their bodiless host signatures live in `intrinsics.library.plato`.
+- `primitives-arrays.types.plato` — Array2D, Array3D (rank-1 `Array<T>` is a primitive, above).
 - `core-comparison.concepts.plato` — Equatable, Value, Hashable, Orderable, Comparable.
 - `core-logic.concepts.plato` — Logical, BooleanAlgebra, Bitwise.
 - `algebra-operations.concepts.plato` — Additive, Multiplicative, Divisible, Modular, Invertible, Arithmetic, Scalable, Interpolatable.
@@ -200,7 +213,8 @@ Foundation reading order, file by file:
 - `quantities-geometric.types.plato` / `-kinematic` / `-mechanical` / `-thermal` / `-electromagnetic` / `-photometric` / `-material` / `-dynamic` — the ~50 physical quantity types (`Angle` and `Length` live in `quantities-geometric.types.plato`), plus Dimension / UnitOfMeasure / DynamicQuantity.
 - `time.types.plato` — Duration, Instant, TimeInterval, FrameRate, FrameTime, Timecode, Tempo, BeatTime.
 - `vectors.concepts.plato` — the `Vector` concept.
-- `vectors-tuples.types.plato` — Number2, Number3, Number4, Number8 (the low-level intrinsic tier).
+- `vectors-tuples.types.plato` — Number2, Number3, Number4, Number8 (the low-level numeric tier;
+  their operations are reference bodies in `vectors-tuples-ops.library.plato`).
 - `vectors-geometric.types.plato` — Vector2D, Vector3D, VectorN, Direction2D/3D.
 - `vectors-integer.types.plato` — IntegerVector2/3/4.
 - `matrices.concepts.plato` — the `MatrixLike` concept.
@@ -239,9 +253,11 @@ the authority, not this table.
 
 | Name | Owner file |
 |------|-----------|
-| `Number`, `Integer`, `Boolean`, `String`, `Character`, `Dynamic`, `Object` | `primitives.types.plato` |
-| `List<T>`, `Buffer<T>` (unique affine builders) | `primitives-builders.types.plato` |
-| `Array`, `Array2D`, `Array3D` | `primitives-arrays.types.plato` |
+| `Number`, `Integer`, `Boolean`, `String`, `Character`, `Dynamic`, `Type` | `primitives.plato` |
+| `Array<T>`, `Function0`..`Function9` | `primitives.plato` |
+| `List<T>`, `Buffer<T>` (unique affine builders) | `primitives.plato` |
+| `Object` (the one non-primitive of this family) | `primitives.types.plato` |
+| `Array2D`, `Array3D` | `primitives-arrays.types.plato` |
 | `Jagged` concept (CSR row packing) | `collections-jagged.concepts.plato` |
 | `JaggedArray<T>` | `collections-jagged.types.plato` |
 | `ComparisonTolerance`, `ItemIndex`, `Complex`, `Rational`, `Proportion`, `Percent`, `Probability`, `Cardinal` | `numbers.types.plato` |
@@ -342,9 +358,9 @@ half-edges is silently wrong). Other domains keep their own sense of the word �
 `GraphEdge` / `EdgeCount` (directedness is a property of the `Graph`, not the name), image
 processing's `EdgeDetection` / `ClampToEdge` (a border, not an incidence relation).
 
-`List` and `Buffer` are a standing exception to that rule: they are **compiler-intrinsic names**
-— the compiler maps Plato `List`/`Buffer` onto the handwritten `PlatoList`/`PlatoBuffer` runtime
-types — so they cannot be domain-qualified.
+`List` and `Buffer` are a standing exception to that rule: they are declared `primitive`, which
+means the compiler knows them **by name** and maps them onto the handwritten
+`PlatoList`/`PlatoBuffer` runtime types — so they cannot be domain-qualified.
 
 ## Constants
 

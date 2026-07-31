@@ -1,24 +1,51 @@
-# Plato intrinsic surface — every function a backend must supply
+﻿# Plato intrinsic surface â€” every function a backend must supply
 
 An **intrinsic** is a function the language declares but does not define: a signature
 terminated by `;` with no `=>` body, inside a `library` block. The host runtime supplies the
-implementation. This file is the complete contract a backend must satisfy — for C# that is the
+implementation. This file is the complete contract a backend must satisfy â€” for C# that is the
 handwritten `Plato.Intrinsics.V2`; for a new backend (C++, GLSL, Rust) it is the porting
 checklist.
 
-**328 intrinsics in one file** (stdlib as of 2026-07-30): `foundation/intrinsics.library.plato`
-is the only file in the library that contains bodiless declarations, and it stays that way.
-Because a tier folder may reference only itself and the folders before it, a host function on a
-non-foundation type cannot be declared there at all — so it must not be a host function. `Plane`
-was the last such case; its ten operations are now ordinary Plato in
-`geometry/lines-planes.library.plato`.
+**The rule: an intrinsic may mention only `primitive` types.** Number, Integer, Boolean,
+Character, String, Array, Buffer, List, Function0-9, Dynamic, Type â€” the set declared in
+`foundation/primitives.plato`. Anything else has a portable Plato body instead.
 
-Bodiless declarations inside a `concept` are NOT intrinsics — those are obligations on whoever
-implements the concept, and the stdlib satisfies them in Plato. Only `library` blocks declare
-host intrinsics.
+**139 intrinsics in one file** (stdlib as of 2026-07-30): `foundation/intrinsics.library.plato`
+is the only file in the library that contains bodiless declarations, and it stays that way.
+Every other bodiless signature in the stdlib sits inside a `concept`, where it is an obligation
+on the implementer rather than a host contract.
+
+The one documented exception is `Array2D` / `Array3D`, which appear below. They are declared as
+opaque field-less types, so their construction and traversal cannot yet be expressed in Plato.
+When they gain an honest layout (or a representation contract), those signatures move out too.
+
+## What is NOT here any more
+
+Until 2026-07-30 this file also listed 189 signatures on `Angle`, `Number2/3/4/8`,
+`Vector2D/3D`, `Matrix3x2/4x4` and `Quaternion` â€” types that are ordinary `type` declarations,
+not primitives. Those now have portable Plato **reference bodies**, which are the definition of
+their semantics:
+
+| Types | Reference bodies |
+|---|---|
+| `Angle` (trig, arithmetic) and the `Angle`-returning inverse trig on `Number` | `foundation/angle-trig.library.plato` |
+| `Number2`, `Number3`, `Number4`, `Number8` | `foundation/vectors-tuples-ops.library.plato` |
+| `Vector2D`, `Vector3D` | `foundation/vectors-geometric-ops.library.plato` |
+| `Matrix3x2`, `Matrix4x4` | `foundation/matrices-ops.library.plato` |
+| `Quaternion` | `foundation/rotations-ops.library.plato` |
+| `CombineHash`, used by the per-type `Hash` bodies | `foundation/hashing.library.plato` |
+
+A backend is free to substitute a verified native implementation (C# uses `System.Numerics`)
+through its representation map and override table â€” that is an optimization, and the reference
+body remains the semantics it must agree with. Backend-side reconciliation is `plato-368`.
+
+Note the split this created in the trig surface. The scalar kernel is intrinsic and works in
+radians (`Cos(self: Number): Number`); the inverse family carries a `Radians` suffix
+(`AcosRadians`) because the public `Acos(self: Number): Angle` shares the receiver type and
+differs only in return type. The `Angle`-typed surface is Plato, in `angle-trig.library.plato`.
 
 Policy (from `intrinsics.library.plato`): a function may be declared intrinsic only if
-every priority-1..4 backend — C#, C++, CUDA, TypeScript — can supply it natively or with a
+every priority-1..4 backend â€” C#, C++, CUDA, TypeScript â€” can supply it natively or with a
 trivial shim. Host-specific things (C# SIMD types, IEEE `nextafter`-grade functions,
 midpoint-rounding variants) are deliberately excluded.
 
@@ -28,18 +55,11 @@ This list is GENERATED. Regenerate rather than hand-edit, so it cannot drift:
 grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.library.plato | grep -v ":0$"
 ```
 
-## `foundation/intrinsics.library.plato` (328)
+## `foundation/intrinsics.library.plato` (139)
 
 **Number**
 
 - `Abs(self: Number): Number`
-- `Acos(self: Number): Angle`
-- `Acosh(self: Number): Angle`
-- `Asin(self: Number): Angle`
-- `Asinh(self: Number): Angle`
-- `Atan(self: Number): Angle`
-- `Atan2(self: Number, x: Number): Angle`
-- `Atanh(self: Number): Angle`
 - `Cbrt(self: Number): Number`
 - `Ceiling(self: Number): Number`
 - `Clamp(self: Number, min: Number, max: Number): Number`
@@ -60,6 +80,19 @@ grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.librar
 - `Sqrt(self: Number): Number`
 - `Square(self: Number): Number`
 - `Truncate(self: Number): Number`
+- `Cos(self: Number): Number`
+- `Sin(self: Number): Number`
+- `Tan(self: Number): Number`
+- `Cosh(self: Number): Number`
+- `Sinh(self: Number): Number`
+- `Tanh(self: Number): Number`
+- `AcosRadians(self: Number): Number`
+- `AcoshRadians(self: Number): Number`
+- `AsinRadians(self: Number): Number`
+- `AsinhRadians(self: Number): Number`
+- `AtanRadians(self: Number): Number`
+- `Atan2Radians(self: Number, x: Number): Number`
+- `AtanhRadians(self: Number): Number`
 - `Add(a: Number, b: Number): Number`
 - `Subtract(a: Number, b: Number): Number`
 - `Multiply(a: Number, b: Number): Number`
@@ -130,231 +163,6 @@ grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.librar
 - `Compare(a: Boolean, b: Boolean): Integer`
 - `Hash(self: Boolean): Integer`
 
-**Angle**
-
-- `Angle(x: Number): Angle`
-- `Cos(self: Angle): Number`
-- `Sin(self: Angle): Number`
-- `Tan(self: Angle): Number`
-- `SinCos(self: Angle): Tuple2<Number, Number>`
-- `Cosh(self: Angle): Number`
-- `Sinh(self: Angle): Number`
-- `Tanh(self: Angle): Number`
-- `Add(a: Angle, b: Angle): Angle`
-- `Subtract(a: Angle, b: Angle): Angle`
-- `Multiply(a: Angle, x: Number): Angle`
-- `Multiply(x: Number, a: Angle): Angle`
-- `Divide(a: Angle, x: Number): Angle`
-- `Negative(n: Angle): Angle`
-- `Compare(a: Angle, b: Angle): Integer`
-- `Hash(self: Angle): Integer`
-
-**Number2 — low-level numeric 2-tuple (component-wise; backend-native vector)**
-
-- `Length(self: Number2): Number`
-- `LengthSquared(self: Number2): Number`
-- `Abs(self: Number2): Number2`
-- `Sqrt(self: Number2): Number2`
-- `Add(left: Number2, right: Number2): Number2`
-- `Subtract(left: Number2, right: Number2): Number2`
-- `Multiply(left: Number2, right: Number2): Number2`
-- `Multiply(left: Number2, scalar: Number): Number2`
-- `Multiply(scalar: Number, right: Number2): Number2`
-- `Divide(left: Number2, right: Number2): Number2`
-- `Divide(left: Number2, scalar: Number): Number2`
-- `Negative(value: Number2): Number2`
-- `Dot(self: Number2, right: Number2): Number`
-- `Clamp(self: Number2, min: Number2, max: Number2): Number2`
-- `Max(self: Number2, value2: Number2): Number2`
-- `Min(self: Number2, value2: Number2): Number2`
-- `Hash(self: Number2): Integer`
-
-**Number3 — low-level numeric 3-tuple**
-
-- `Length(self: Number3): Number`
-- `LengthSquared(self: Number3): Number`
-- `Abs(self: Number3): Number3`
-- `Sqrt(self: Number3): Number3`
-- `Add(left: Number3, right: Number3): Number3`
-- `Subtract(left: Number3, right: Number3): Number3`
-- `Multiply(left: Number3, right: Number3): Number3`
-- `Multiply(left: Number3, scalar: Number): Number3`
-- `Multiply(scalar: Number, right: Number3): Number3`
-- `Divide(left: Number3, right: Number3): Number3`
-- `Divide(left: Number3, scalar: Number): Number3`
-- `Negative(value: Number3): Number3`
-- `Dot(self: Number3, right: Number3): Number`
-- `Clamp(self: Number3, min: Number3, max: Number3): Number3`
-- `Max(self: Number3, value2: Number3): Number3`
-- `Min(self: Number3, value2: Number3): Number3`
-- `Hash(self: Number3): Integer`
-
-**Number4 — low-level numeric 4-tuple; homogeneous coordinates and RGBA math**
-
-- `Length(self: Number4): Number`
-- `LengthSquared(self: Number4): Number`
-- `Abs(self: Number4): Number4`
-- `Sqrt(self: Number4): Number4`
-- `Add(left: Number4, right: Number4): Number4`
-- `Subtract(left: Number4, right: Number4): Number4`
-- `Multiply(left: Number4, right: Number4): Number4`
-- `Multiply(left: Number4, scalar: Number): Number4`
-- `Multiply(scalar: Number, right: Number4): Number4`
-- `Divide(left: Number4, right: Number4): Number4`
-- `Divide(left: Number4, scalar: Number): Number4`
-- `Negative(value: Number4): Number4`
-- `Dot(self: Number4, right: Number4): Number`
-- `Clamp(self: Number4, min: Number4, max: Number4): Number4`
-- `Transform(self: Number4, matrix: Matrix4x4): Number4`
-- `Multiply(matrix: Matrix4x4, self: Number4): Number4`
-- `Transform(self: Number4, rotation: Quaternion): Number4`
-- `Multiply(rotation: Quaternion, self: Number4): Number4`
-- `Max(self: Number4, value2: Number4): Number4`
-- `Min(self: Number4, value2: Number4): Number4`
-- `Hash(self: Number4): Integer`
-
-**Number8 — low-level numeric 8-tuple (SIMD-width lane math). Priority-1..4**
-
-- `Add(left: Number8, right: Number8): Number8`
-- `Subtract(left: Number8, right: Number8): Number8`
-- `Multiply(left: Number8, right: Number8): Number8`
-- `Multiply(left: Number8, scalar: Number): Number8`
-- `Multiply(scalar: Number, right: Number8): Number8`
-- `Divide(left: Number8, right: Number8): Number8`
-- `Divide(left: Number8, scalar: Number): Number8`
-- `Negative(value: Number8): Number8`
-- `Abs(self: Number8): Number8`
-- `Sqrt(self: Number8): Number8`
-- `Dot(self: Number8, right: Number8): Number`
-- `Max(self: Number8, value2: Number8): Number8`
-- `Min(self: Number8, value2: Number8): Number8`
-- `Hash(self: Number8): Integer`
-
-**Vector2D — geometric displacement in 2D. Displacement algebra only:**
-
-- `Normalize(self: Vector2D): Vector2D`
-- `Length(self: Vector2D): Number`
-- `LengthSquared(self: Vector2D): Number`
-- `Add(left: Vector2D, right: Vector2D): Vector2D`
-- `Subtract(left: Vector2D, right: Vector2D): Vector2D`
-- `Multiply(left: Vector2D, scalar: Number): Vector2D`
-- `Multiply(scalar: Number, right: Vector2D): Vector2D`
-- `Multiply(left: Vector2D, factors: Number2): Vector2D`
-- `Divide(left: Vector2D, scalar: Number): Vector2D`
-- `Negative(value: Vector2D): Vector2D`
-- `Dot(self: Vector2D, right: Vector2D): Number`
-- `Reflect(self: Vector2D, normal: Vector2D): Vector2D`
-- `Transform(self: Vector2D, matrix: Matrix3x2): Vector2D`
-- `Multiply(matrix: Matrix3x2, self: Vector2D): Vector2D`
-- `Transform(self: Vector2D, matrix: Matrix4x4): Vector2D`
-- `Multiply(matrix: Matrix4x4, self: Vector2D): Vector2D`
-- `Transform(self: Vector2D, rotation: Quaternion): Vector2D`
-- `Multiply(rotation: Quaternion, self: Vector2D): Vector2D`
-- `TransformNormal(self: Vector2D, matrix: Matrix3x2): Vector2D`
-- `TransformNormal(self: Vector2D, matrix: Matrix4x4): Vector2D`
-- `Hash(self: Vector2D): Integer`
-
-**Vector3D — geometric displacement in 3D. Displacement algebra only:**
-
-- `Normalize(self: Vector3D): Vector3D`
-- `Length(self: Vector3D): Number`
-- `LengthSquared(self: Vector3D): Number`
-- `Add(left: Vector3D, right: Vector3D): Vector3D`
-- `Subtract(left: Vector3D, right: Vector3D): Vector3D`
-- `Multiply(left: Vector3D, scalar: Number): Vector3D`
-- `Multiply(scalar: Number, right: Vector3D): Vector3D`
-- `Multiply(left: Vector3D, factors: Number3): Vector3D`
-- `Divide(left: Vector3D, scalar: Number): Vector3D`
-- `Negative(value: Vector3D): Vector3D`
-- `Dot(self: Vector3D, right: Vector3D): Number`
-- `Cross(self: Vector3D, right: Vector3D): Vector3D`
-- `Reflect(self: Vector3D, normal: Vector3D): Vector3D`
-- `Transform(self: Vector3D, matrix: Matrix4x4): Vector3D`
-- `Multiply(matrix: Matrix4x4, self: Vector3D): Vector3D`
-- `Transform(self: Vector3D, rotation: Quaternion): Vector3D`
-- `Multiply(rotation: Quaternion, self: Vector3D): Vector3D`
-- `TransformNormal(self: Vector3D, matrix: Matrix4x4): Vector3D`
-- `Hash(self: Vector3D): Integer`
-
-**Matrix3x2**
-
-- `Determinant(self: Matrix3x2): Number`
-- `Invert(self: Matrix3x2): Tuple2<Matrix3x2, Boolean>`
-- `Add(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2`
-- `Subtract(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2`
-- `Multiply(value1: Matrix3x2, value2: Matrix3x2): Matrix3x2`
-- `Multiply(value1: Matrix3x2, scalar: Number): Matrix3x2`
-- `Multiply(scalar: Number, value1: Matrix3x2): Matrix3x2`
-- `Divide(value1: Matrix3x2, scalar: Number): Matrix3x2`
-- `Equals(a: Matrix3x2, b: Matrix3x2): Boolean`
-- `Lerp(self: Matrix3x2, matrix2: Matrix3x2, amount: Number): Matrix3x2`
-- `Hash(self: Matrix3x2): Integer`
-- `CreateTranslation(_: Matrix3x2, position: Vector2D): Matrix3x2`
-- `CreateScale(_: Matrix3x2, scale: Number): Matrix3x2`
-- `CreateScale(_: Matrix3x2, scales: Number2): Matrix3x2`
-- `CreateScale(_: Matrix3x2, scales: Number2, centerPoint: Point2D): Matrix3x2`
-- `CreateRotation(_: Matrix3x2, angle: Angle): Matrix3x2`
-- `CreateRotation(_: Matrix3x2, angle: Angle, centerPoint: Point2D): Matrix3x2`
-
-**Matrix4x4**
-
-- `Determinant(self: Matrix4x4): Number`
-- `Transpose(self: Matrix4x4): Matrix4x4`
-- `Add(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4`
-- `Subtract(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4`
-- `Multiply(value1: Matrix4x4, value2: Matrix4x4): Matrix4x4`
-- `Multiply(value1: Matrix4x4, f: Number): Matrix4x4`
-- `Multiply(f: Number, value1: Matrix4x4): Matrix4x4`
-- `Divide(value1: Matrix4x4, f: Number): Matrix4x4`
-- `Decompose(self: Matrix4x4): Tuple4<Number3, Quaternion, Vector3D, Boolean>`
-- `Lerp(self: Matrix4x4, matrix2: Matrix4x4, amount: Number): Matrix4x4`
-- `Invert(self: Matrix4x4): Matrix4x4`
-- `CanInvert(self: Matrix4x4): Boolean`
-- `Hash(self: Matrix4x4): Integer`
-- `Rotation(self: Matrix4x4): Quaternion`
-- `Translation(self: Matrix4x4): Vector3D`
-- `WithTranslation(self: Matrix4x4, translation: Vector3D): Matrix4x4`
-- `CreateTranslation(_: Matrix4x4, position: Vector3D): Matrix4x4`
-- `CreateScale(_: Matrix4x4, scale: Number): Matrix4x4`
-- `CreateScale(_: Matrix4x4, scales: Number3): Matrix4x4`
-- `CreateRotationX(_: Matrix4x4, angle: Angle): Matrix4x4`
-- `CreateRotationY(_: Matrix4x4, angle: Angle): Matrix4x4`
-- `CreateRotationZ(_: Matrix4x4, angle: Angle): Matrix4x4`
-- `CreateFromAxisAngle(_: Matrix4x4, axis: Vector3D, angle: Angle): Matrix4x4`
-- `CreateFromQuaternion(_: Matrix4x4, quaternion: Quaternion): Matrix4x4`
-- `CreateFromYawPitchRoll(_: Matrix4x4, yaw: Angle, pitch: Angle, roll: Angle): Matrix4x4`
-- `CreateLookAt(_: Matrix4x4, cameraPosition: Point3D, cameraTarget: Point3D, cameraUpVector: Vector3D): Matrix4x4`
-- `CreateWorld(_: Matrix4x4, position: Point3D, forward: Vector3D, up: Vector3D): Matrix4x4`
-- `CreatePerspectiveFieldOfView(_: Matrix4x4, fieldOfView: Angle, aspectRatio: Number, nearPlane: Number, farPlane: Number): Matrix4x4`
-- `CreatePerspective(_: Matrix4x4, width: Number, height: Number, nearPlaneDistance: Number, farPlaneDistance: Number): Matrix4x4`
-- `CreatePerspectiveOffCenter(_: Matrix4x4, left: Number, right: Number, bottom: Number, top: Number, nearPlaneDistance: Number, farPlaneDistance: Number): Matrix4x4`
-- `CreateOrthographic(_: Matrix4x4, width: Number, height: Number, zNearPlane: Number, zFarPlane: Number): Matrix4x4`
-- `CreateOrthographicOffCenter(_: Matrix4x4, left: Number, right: Number, bottom: Number, top: Number, zNearPlane: Number, zFarPlane: Number): Matrix4x4`
-- `CreateBillboard(_: Matrix4x4, objectPosition: Point3D, cameraPosition: Point3D, cameraUpVector: Vector3D, cameraForwardVector: Vector3D): Matrix4x4`
-- `CreateConstrainedBillboard(_: Matrix4x4, objectPosition: Point3D, cameraPosition: Point3D, rotateAxis: Vector3D, cameraForwardVector: Vector3D, objectForwardVector: Vector3D): Matrix4x4`
-
-**Quaternion**
-
-- `Length(self: Quaternion): Number`
-- `LengthSquared(self: Quaternion): Number`
-- `Normalize(self: Quaternion): Quaternion`
-- `Conjugate(self: Quaternion): Quaternion`
-- `Inverse(self: Quaternion): Quaternion`
-- `Add(a: Quaternion, b: Quaternion): Quaternion`
-- `Subtract(a: Quaternion, b: Quaternion): Quaternion`
-- `Negative(a: Quaternion): Quaternion`
-- `Multiply(a: Quaternion, b: Quaternion): Quaternion`
-- `Multiply(a: Quaternion, scalar: Number): Quaternion`
-- `Divide(a: Quaternion, b: Quaternion): Quaternion`
-- `Concatenate(self: Quaternion, value2: Quaternion): Quaternion`
-- `Dot(self: Quaternion, quaternion2: Quaternion): Number`
-- `Lerp(self: Quaternion, quaternion2: Quaternion, amount: Number): Quaternion`
-- `Slerp(self: Quaternion, quaternion2: Quaternion, amount: Number): Quaternion`
-- `Hash(self: Quaternion): Integer`
-- `CreateFromAxisAngle(_: Quaternion, axis: Vector3D, angle: Angle): Quaternion`
-- `CreateFromYawPitchRoll(_: Quaternion, yaw: Angle, pitch: Angle, roll: Angle): Quaternion`
-- `CreateFromRotationMatrix(_: Quaternion, matrix: Matrix4x4): Quaternion`
-
 **Array**
 
 - `All(xs: Array<$T>, f: Function1<$T, Boolean>): Boolean`
@@ -384,7 +192,7 @@ grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.librar
 - `Zip(xs: Array<$T1>, ys: Array<$T2>, f: Function2<$T1, $T2, $T3>): Array<$T3>`
 - `Zip(xs: Array<$T1>, ys: Array<$T2>, zs: Array<$T3>, f: Function3<$T1, $T2, $T3, $T4>): Array<$T4>`
 
-**Array2D and Array3D**
+**Array2D and Array3D — the documented exception to the primitive-only rule**
 
 - `At(xs: Array2D<$T>, i: Integer): $T`
 - `At(xs: Array3D<$T>, i: Integer): $T`
@@ -408,4 +216,5 @@ grep -rEc "^\s+[A-Za-z_][A-Za-z0-9_]*\(.*\)\s*:\s*[^;=]+;\s*$" stdlib/*/*.librar
 - `At(xs: Buffer<$T>, n: Integer): $T`
 - `Set(xs: Buffer<$T>, i: Integer, x: $T): Buffer<$T>`
 - `Freeze(xs: Buffer<$T>): Array<$T>`
+
 

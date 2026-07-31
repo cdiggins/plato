@@ -12,8 +12,9 @@ Plato is a small, pure, statically typed language for geometry and numeric libra
 construct means, resolution/coercion rules, and the explicit non-features. The 5-line version:
 
 - **`type`** — immutable data: fields only, or a sum type (`type X = A(f: T) | B;`) consumed by exhaustive `match`.
+- **`primitive`** — a type the compiler assumes **by name**, with no declarable shape; the whole set is `stdlib/foundation/primitives.plato`. Only these may appear in an intrinsic signature.
 - **`concept`** (alias `interface`) — type classes with a `Self` type; constrained generics, not OO dispatch; monomorphized.
-- **`library`** — pure free functions; first argument is the receiver (`v.Length`, `a.Lerp(b, t)`); nullary calls need no parens.
+- **`library`** — pure free functions; first argument is the receiver (`v.Length`, `a.Lerp(b, t)`); nullary calls need no parens. A bodiless signature here is an **intrinsic**: the host runtime supplies it ([`plato-intrinsics-surface.md`](plato-intrinsics-surface.md)).
 - Conveniences: tuples construct types (`(x, y)` → `Point2D`), type-named functions are implicit conversions, operators come from well-known names (`Add` → `+`), `_: Type` first params are statics.
 - Restrictions are intentional: no mutation, no `this`, no I/O, no exceptions, no null.
 
@@ -56,7 +57,8 @@ exactly one `library` block. The folder is flat — no subfolders.
 | `Plato.RustWriter/` | Rust backend (POC). |
 | `Plato.GlslWriter/` | GLSL ES 3.00 / WebGL2 backend (POC). |
 | `Plato.CppWriter/` | C++17 / CUDA backend (POC; one emitter, two dialects). |
-| `Plato.Intrinsics/` | Handwritten C# runtime wrappers (source of truth; synced to SDK). |
+| `Plato.Intrinsics/` | **FROZEN V1** handwritten runtime — do not edit ([`plato-library-map.md`](plato-library-map.md)). |
+| `Plato.Intrinsics.V2/` | The **live** handwritten C# runtime that discharges the intrinsic contract. |
 
 ---
 
@@ -83,7 +85,7 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
 ```
 
 - **Output:** one `.g.cs` per type, packed structs, aggressive inlining, `partial` for hand extensions. Flags: `--csharp-style=default|extensions`, `--optimize`, `--scalar=wrapper|float`.
-- **Intrinsics:** `Plato.Intrinsics/` (Number, Vector, Matrix, Angle wrappers) is edited here, synced to `ara3d-sdk/src/Plato.Intrinsics/` via `regen-plato.ps1 -Apply`. Never edit the SDK copy.
+- **Intrinsics:** the live runtime is `Plato.Intrinsics.V2/`; it must supply every bodiless signature in `stdlib/foundation/intrinsics.library.plato` (gate: `IntrinsicObligationTests`). `Plato.Intrinsics/` and the SDK copy are frozen V1 — never edit either.
 
 ### TypeScript (proof of concept)
 

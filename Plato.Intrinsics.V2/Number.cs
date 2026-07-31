@@ -159,6 +159,58 @@ namespace Ara3D.Geometry
         /// </summary>
         [MethodImpl(AggressiveInlining)] public static Angle Atanh(this Number self) => MathF.Atanh(self.Value);
 
+        //-------------------------------------------------------------------------------
+        // Radians trigonometric kernel
+        //
+        // The scalar half of the trig surface: radians in, radians out, no Angle in any
+        // signature. Since the intrinsics-are-primitive-only rule (Plato 709be97) these are
+        // what `foundation/intrinsics.library.plato` declares, and the public Angle-typed
+        // surface is ordinary Plato in `foundation/angle-trig.library.plato` delegating here.
+        // The inverse family carries the `Radians` suffix because the Angle-returning
+        // overloads above share the receiver type and differ only in return type, which C#
+        // cannot overload on.
+        //-------------------------------------------------------------------------------
+
+        /// <summary>The cosine of an angle given in radians.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number Cos(this Number self) => MathF.Cos(self.Value);
+
+        /// <summary>The sine of an angle given in radians.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number Sin(this Number self) => MathF.Sin(self.Value);
+
+        /// <summary>The tangent of an angle given in radians.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number Tan(this Number self) => MathF.Tan(self.Value);
+
+        /// <summary>The hyperbolic cosine of the value.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number Cosh(this Number self) => MathF.Cosh(self.Value);
+
+        /// <summary>The hyperbolic sine of the value.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number Sinh(this Number self) => MathF.Sinh(self.Value);
+
+        /// <summary>The hyperbolic tangent of the value.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number Tanh(this Number self) => MathF.Tanh(self.Value);
+
+        /// <summary>The angle in radians whose cosine is the value.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number AcosRadians(this Number self) => MathF.Acos(self.Value);
+
+        /// <summary>The angle in radians whose hyperbolic cosine is the value.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number AcoshRadians(this Number self) => MathF.Acosh(self.Value);
+
+        /// <summary>The angle in radians whose sine is the value.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number AsinRadians(this Number self) => MathF.Asin(self.Value);
+
+        /// <summary>The angle in radians whose hyperbolic sine is the value.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number AsinhRadians(this Number self) => MathF.Asinh(self.Value);
+
+        /// <summary>The angle in radians whose tangent is the value.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number AtanRadians(this Number self) => MathF.Atan(self.Value);
+
+        /// <summary>The angle in radians whose tangent is the quotient of this value with another.</summary>
+        [MethodImpl(AggressiveInlining)]
+        public static Number Atan2Radians(this Number self, Number x) => MathF.Atan2(self.Value, x);
+
+        /// <summary>The angle in radians whose hyperbolic tangent is the value.</summary>
+        [MethodImpl(AggressiveInlining)] public static Number AtanhRadians(this Number self) => MathF.Atanh(self.Value);
+
         /// <summary>
         /// The largest value that compares less than the value.
         /// </summary>

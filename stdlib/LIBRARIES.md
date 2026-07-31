@@ -38,7 +38,7 @@ below now genuinely covers these library bodies — which it did **not** while t
    formula needs a shared subterm. Mutation of a `unique` (affine) builder is likewise pure *by
    uniqueness*: a builder has exactly one reference, so `xs = xs.Add(p)` is a linear update, not
    observable mutation of shared state — this is the entire point of `List`/`Buffer`
-   (`primitives-builders.types.plato`), and an earlier "no mutation" reading forbade it outright.
+   (`primitives.plato`), and an earlier "no mutation" reading forbade it outright.
 
    What stays banned: side effects, and mutation of anything aliased. Outside `unique` types the
    language does not offer either.
@@ -56,7 +56,7 @@ below now genuinely covers these library bodies — which it did **not** while t
    the number, and do not read LINT003 deltas as a measure of coverage.
 
    Status note: the affine builders' single-parameter members — `Count`, `Freeze` and
-   `EmptyList` — are now declared in `primitives-builders.types.plato` (host signatures in
+   `EmptyList` — are now declared in `primitives.plato` (host signatures in
    `intrinsics.library.plato`). `FunctionInstance.cs` used to abort the
    whole compilation on any generic function of one or fewer parameters; the guard now permits
    such a function when every type variable is determined by its parameter(s) (as these are),
@@ -154,7 +154,13 @@ P1–P9 concept package (ground rule 1). All follow the same one-block-per-file 
 | `axes.library.plato` | `Axes` | `Axis3D` operations |
 | `axes-2d.library.plato` | `Axes2D` | `Axis2D` operations |
 | `axes-signed.library.plato` | `SignedAxes` | `SignedAxis3D` operations |
-| `intrinsics.library.plato` | `Intrinsics` | the whole host contract: scalars, Number2/3/4/8, Vector2D/3D, matrices and quaternions, arrays, and the `unique` `List<T>` / `Buffer<T>` surface; carries the intrinsics preamble and porting notes |
+| `intrinsics.library.plato` | `Intrinsics` | the whole host contract, and only over `primitive` types: scalars (including the radians trig kernel), arrays, and the `unique` `List<T>` / `Buffer<T>` surface; carries the intrinsics preamble and porting notes |
+| `angle-trig.library.plato` | `AngleTrig` | `Angle` arithmetic and trig, and the `Angle`-returning inverse trig on `Number`, over the radians kernel |
+| `vectors-tuples-ops.library.plato` | `VectorsTuplesOps` | reference bodies for `Number2/3/4/8` component-wise math and `Number4` transforms |
+| `vectors-geometric-ops.library.plato` | `VectorsGeometricOps` | reference bodies for `Vector2D`/`Vector3D` displacement algebra, reflection and transforms |
+| `matrices-ops.library.plato` | `MatricesOps` | reference bodies for `Matrix3x2`/`Matrix4x4`, including invert, decompose and the `Create*` factories |
+| `rotations-ops.library.plato` | `RotationsOps` | reference bodies for `Quaternion`, including `Slerp` and `CreateFromRotationMatrix` |
+| `hashing.library.plato` | `Hashing` | `CombineHash`, the fold the per-type `Hash` reference bodies are written against |
 | `transforms-points.library.plato` | `TransformsPoints` | Point2D/3D Difference, Lerp, point-vector converters |
 | `transforms-pose.library.plato` | `TransformsPose` | Pose2D/3D application and composition |
 | `transforms-trs.library.plato` | `TransformsTrs` | Transform2D/3D (TRS) application and conversion |

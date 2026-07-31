@@ -141,6 +141,13 @@ The ones agents most often rediscover the hard way:
   for the three sanctioned partial-operation styles.
 - **The shipping recipe is property-free.** `--no-properties` plus the V2 runtime makes the
   `Generated` libraries method-form; see `docs/plato-library-map.md` for the recipe per artifact.
+- **Intrinsics may mention only `primitive` types** (2026-07-30). A bodiless signature is legal
+  only inside `stdlib/foundation/intrinsics.library.plato` and only over the set declared with
+  the `primitive` keyword in `stdlib/foundation/primitives.plato`. Operations on `Angle`,
+  `Number2/3/4/8`, `Vector2D/3D`, the matrices and `Quaternion` are **reference bodies** in
+  `*-ops.library.plato` — write ordinary Plato there, do not add a bodiless declaration. Every
+  intrinsic you do add must have a `Plato.Intrinsics.V2` counterpart or `IntrinsicObligationTests`
+  fails. Full contract: `docs/plato-intrinsics-surface.md`.
 
 ## Mission protocol
 
