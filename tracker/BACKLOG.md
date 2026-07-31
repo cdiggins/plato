@@ -8,7 +8,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 
 | id | title | type | pri | effort | risk | area | status | sprint |
 |----|-------|------|-----|--------|------|------|--------|--------|
-| [plato-023](issues/plato-023.md) | TIR scalar lowering pass + type-checker completion | feature | p1 | M | med | plato | in-progress |  |
 | [plato-229](issues/plato-229.md) | Complete the Plato v2 concept lattice | feature | p1 | L | high | plato | in-progress |  |
 | [plato-240](issues/plato-240.md) | vscode-plato: compiler-backed Go to Definition + Find All References | feature | p2 | M | low | plato | in-progress |  |
 | [plato-306](issues/plato-306.md) | Generic Difference defaults via optional delta conversion concept | idea | p2 | M | low | plato | in-progress |  |
@@ -17,6 +16,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-308](issues/plato-308.md) | Generated forward-stdlib C# does not compile (85 errors as of 2026-07-30) | bug | p1 | L | med | plato | ready |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
+| [plato-369](issues/plato-369.md) | Burn down stdlib type-checker diagnostics to zero | debt | p1 | M | med | plato | ready |  |
 | [plato-277](issues/plato-277.md) | stdlib concept-gap burn-down: the 17 markers that need a language or concept decision | debt | p2 | M | low | plato | ready |  |
 | [plato-323](issues/plato-323.md) | Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile | bug | p2 | L | med | plato | ready |  |
 | [plato-326](issues/plato-326.md) | Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns | bug | p2 | S | low | plato | ready |  |
@@ -30,6 +30,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-292](issues/plato-292.md) | Decide assert-vs-validation policy: Debug and Release disagree about what compiles | problem | p2 | M | low | plato | idea |  |
 | [plato-333](issues/plato-333.md) | IntegerInterval is half-open but inherits closed IntervalLike bodies | bug | p2 | S | med | plato | idea |  |
 | [plato-365](issues/plato-365.md) | Retire non-scalar primitives: PrimitiveTypes = scalars only, System.Numerics behind intrinsic bridge | debt | p2 | M | med | plato | idea |  |
+| [plato-370](issues/plato-370.md) | Implement --scalar=double via TirScalarLowerer map + double intrinsics | feature | p2 | M | med | plato | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
 | [plato-235](issues/plato-235.md) | GLSL overload erasure picks the winner by emission order, not by intent | problem | p3 | M | med | plato | idea |  |
 | [plato-334](issues/plato-334.md) | Query/solve result types share no concept: success flag spelled four ways | debt | p3 | M | low | plato | idea |  |
