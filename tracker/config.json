@@ -1,0 +1,9 @@
+{
+  "_comment": "Issue-id prefixes (area-NNN). Numbering is globally unique across areas.",
+  "areas": ["plato", "compiler", "stdlib", "docs", "repo"],
+  "paths": {
+    "issues": "tracker/issues",
+    "backlog": "tracker/BACKLOG.md",
+    "done": "tracker/DONE.md"
+  }
+}
