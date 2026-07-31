@@ -2,7 +2,7 @@
 id: plato-308
 title: Generated forward-stdlib C# does not compile (85 errors as of 2026-07-30)
 type: bug
-status: ready
+status: in-progress
 priority: p1
 effort: L
 risk: med
@@ -176,7 +176,7 @@ file-level quarantine (measured above: it cascades) and must NOT be relaxing
 
 ## Done means
 
-- [ ] `dotnet build` of `Plato.ForwardConformanceTests` succeeds with 0 errors and no `<Compile Remove>` quarantine.
+- [x] `dotnet build` of `Plato.ForwardConformanceTests` succeeds with 0 errors and no `<Compile Remove>` quarantine. (2026-07-31: 1307 `.g.cs`, 0 errors; the suite runs 41 pass / 3 fail / 3 skip.)
 - [ ] `.\tools\regen-forward-conformance.ps1 -Test` runs the law runner; real failures quarantined in `KnownFailures.json` with an entry each, not by exclusion.
 - [ ] Stage 2 of `regen-forward-conformance.ps1` flips from diagnostic (exit-code report) to **`-Test` gating** — merged from plato-294.
 - [ ] The 11 affine laws in `stdlib-tests/foundation.laws.plato` execute and pass (this is plato-306's outstanding box).
@@ -194,3 +194,49 @@ file-level quarantine (measured above: it cascades) and must NOT be relaxing
 ## Update 2026-07-30
 
 Error count now 85 (was 324): plato-311 view lowering + plato-362 type-token members burned down the declaration and Zero-family classes. Biggest remaining class: CS1061 'Vector' on Direction3D/Vector3 receivers (62). PROMOTED TO P1 by the 2026-07-30 retirement decision (decisions/2026-07-30-retire-legacy-conformance-and-goldens.md): the legacy conformance suite is deleted, so this suite going green is the only path back to executable law coverage.
+
+## Evaluation 2026-07-31 — compile blocker cleared
+
+Measured at HEAD in this repo (not the stale studio submodule checkout, whose gate scripts still
+point at pre-restructure paths and lint `stdlib` top-only, so `check-stdlib-fast.ps1` there fails
+with "No .plato files found").
+
+The 324-error CS0315/CS0305 concept-as-generic-interface cluster this issue was filed against is
+GONE — the intervening concept/lowering work retired it. What remained was 16 duplicate-member
+errors between the generated partials and `src/Plato.Intrinsics`, and behind them (masked, because
+Roslyn skips body binding when declaration binding fails) ~108 body-level errors.
+
+Root cause of the visible half: the primitive set shrank (plato-365) and the forward stdlib grew
+reference bodies for the graduated types, but the handwritten runtime was never updated — so
+`Angle.Compare/Hash`, the `Matrix4x4` Create*/Translation/Rotation/Determinant/Decompose surface,
+`Matrix3x2.CreateRotation/Invert`, `Quaternion.CreateFrom*/Lerp/Length` and the whole
+`AngleIntrinsics` trig class existed twice.
+
+Fixes, by layer:
+
+- **Runtime** — deleted every member the stdlib now bodies; added the ones it declares and the
+  runtime lacked (`Number.Lerp/Inverse/ToNumber`, `Integer.ToInteger`, unary `-` and `%` on both
+  matrices); `Intrinsics.MakeArray` returns `IReadOnlyList<T>` so array-literal fold seeds unify
+  with `ReadOnlyList`/`IReadOnlyList` step results.
+- **Writer** — sum-case constructors get receiver-style extension twins (`seg.Line()`); the
+  inliner refuses a (callee, receiver-type) pair it already inlined on an earlier pass, which is
+  the self-delegation signature that produced `self.Base.Base.Base…`; a non-wrapper primitive
+  (`Type`, the `Function` arities) no longer gets `Value`-based equality scaffolding; the scalar
+  re-home no longer duplicates a conversion the target's own single-field block emits.
+- **stdlib** — explicit construction where a single Array-typed field cannot carry an implicit
+  conversion (`PointN`/`VectorN` offsets, `TriangleArray3D`/`QuadArray3D` Deform); `DeCasteljau`
+  spelled per control-value type, since an implicit `Interpolatable` bound on a library type
+  variable does not survive concept-interface erasure.
+- **Law packet** — `Law_SubtractIsReversedBetween2D` compared two displacements with `Distance`,
+  which is declared between points.
+
+Remaining on this issue: the three law failures (`AngleInterval.Law_ContainsCenter`,
+`SuperEllipse.Law_SuperEllipseExponentTwoPerimeterIsEllipse`,
+`VonMisesDistribution.Law_VonMisesCdfStartsAtZero`) need triage — quarantine in
+`KnownFailures.json` or a content fix; the `-Test` gating flip; and the degraded-body box (48 now
+vs the 44 recorded when plato-294 was filed — the drift predates this work).
+
+Collateral, deliberately not fixed here: `generated/Plato.Generated.*` (legacy generation) went
+from 498 to 710 error lines, because stdlib-legacy still declares as intrinsics the members the
+runtime no longer carries. Those 19 names are recorded in `LegacyKnownMissing`, whose own doc
+comment says the forward declaration wins where the corpora disagree.
