@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Analysis;
@@ -35,14 +35,11 @@ type Function0<TR> { }
 type Function1<T0, TR> { }
 type Function2<T0, T1, TR> { }
 
-// SHADOWING: 'Quaternion' is on the writer's primitive list, so these fields are discarded
-// and the generated type is System.Numerics.Quaternion instead.
-type Quaternion
+// SHADOWING: 'Character' is on the writer's primitive list, so this field is discarded
+// and the generated type is bare `char` instead.
+type Character
 {
-    X: Number;
-    Y: Number;
-    Z: Number;
-    W: Number;
+    Code: Integer;
 }
 
 // NOT shadowing: same shape, a name the writer knows nothing about.
@@ -97,9 +94,9 @@ type Integer
             Assert.That(findings.Length, Is.EqualTo(1),
                 "exactly the one field-bearing primitive-named type collides; got: " +
                 string.Join(" | ", findings.Select(f => f.Message)));
-            Assert.That(findings[0].Message, Does.Contain("'Quaternion'"),
+            Assert.That(findings[0].Message, Does.Contain("'Character'"),
                 "the finding must name the shadowing type");
-            Assert.That(findings[0].Message, Does.Contain("X: Number"),
+            Assert.That(findings[0].Message, Does.Contain("Code: Integer"),
                 "the finding must show the shape that gets discarded");
         }
 
@@ -120,40 +117,38 @@ type Integer
         [Test]
         public static void ShadowingIsAnErrorSoItFailsLintStrict()
         {
-            // 'Quaternion' IS on KnownShadowedByStdlib (the forward stdlib declares it today), so
-            // this synthetic corpus would report a Warning. Assert the severity function directly
-            // for a name that is NOT grandfathered — the prevention case, which is the whole point:
-            // any type that starts shadowing from now on reds `lint --strict`.
+            // The grandfather list is EMPTY since plato-365 landed: every name it held left the
+            // primitive list, so LINT015 is now unconditional. Both corpora must report Errors.
             var grandfathered = WriterPrimitiveNames.KnownShadowedByStdlib;
-            Assert.That(grandfathered, Does.Not.Contain("Integer"),
-                "the corpus below relies on 'Integer' being a non-grandfathered primitive");
+            Assert.That(grandfathered, Is.Empty,
+                "WriterPrimitiveNames.KnownShadowedByStdlib should stay empty: plato-365 removed "
+                + "every non-scalar primitive, so no declaration needs an exemption. A new entry "
+                + "means a non-scalar primitive came back.");
 
             var fresh = Lint(ShadowingANonGrandfatheredPrimitive)
                 .Where(f => f.Code == "LINT015")
                 .ToArray();
             Assert.That(fresh.Length, Is.EqualTo(1));
             Assert.That(fresh[0].Severity, Is.EqualTo(LintSeverity.Error),
-                "a type that starts shadowing a primitive from now on must be an ERROR: only Errors " +
-                "gate `lint --strict` (Plato.CLI Program.Lint returns 1 iff ErrorCount > 0)");
+                "a type that shadows a primitive must be an ERROR: only Errors gate `lint --strict` "
+                + "(Plato.CLI Program.Lint returns 1 iff ErrorCount > 0)");
 
-            Assert.That(Shadowings().Single().Severity, Is.EqualTo(LintSeverity.Warning),
-                "'Quaternion' is grandfathered (plato-365 increment c) and must not red the gate yet");
+            Assert.That(Shadowings().Single().Severity, Is.EqualTo(LintSeverity.Error),
+                "with the grandfather list empty every shadowing declaration reds the gate");
 
-            // The grandfather list only ever shrinks, and only names that are actually primitive
-            // can be on it — a stale entry would silently un-gate a name the writer no longer owns.
+            // Only names that are actually primitive can be grandfathered — a stale entry would
+            // silently un-gate a name the writer no longer owns.
             Assert.That(grandfathered.All(n => WriterPrimitiveNames.All.Contains(n)), Is.True,
-                "WriterPrimitiveNames.KnownShadowedByStdlib has a stale entry: it names a type that " +
-                "is no longer a writer primitive. Delete that entry — the declaration is now " +
-                "authoritative and needs no exemption.");
+                "WriterPrimitiveNames.KnownShadowedByStdlib has a stale entry: it names a type that "
+                + "is no longer a writer primitive. Delete that entry — the declaration is now "
+                + "authoritative and needs no exemption.");
         }
 
         /// <summary>
-        /// The enforcing half of the duplication. WriterPrimitiveNames.All lives in the compiler so
-        /// the linter can run without depending on any backend; CSharpWriter.PrimitiveTypes holds
-        /// the same names with their runtime mappings. Divergence in either direction is a defect:
-        /// a name only in the writer escapes LINT015 entirely (the silent shadowing this rule
-        /// exists to kill), and a name only in the compiler makes LINT015 fire on a declaration
-        /// that is in fact authoritative.
+        /// WriterPrimitiveNames.All lives in the compiler so the linter can run without depending
+        /// on any backend; CSharpWriter.PrimitiveTypes now BUILDS its keys from it (plato-365), so
+        /// this can no longer fail by divergence — it fails if that derivation is ever unpicked
+        /// back into a hand-maintained second list, which is the regression worth catching.
         /// </summary>
         [Test]
         public static void WriterPrimitiveTableMatchesTheCompilerCopy()

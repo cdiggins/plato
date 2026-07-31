@@ -572,7 +572,6 @@ namespace Ara3D.Geometry.CSharpWriter
 
         public static HashSet<string> IgnoredTypes = new HashSet<string>()
         {
-            "Dynamic",
             "Array",
             "Array2D",
             "Array3D",
@@ -605,43 +604,44 @@ namespace Ara3D.Geometry.CSharpWriter
         };
 
         // Types the writer does NOT generate a shape for: the declaration is a name only, and the
-        // C# type on the right is the real one (a handwritten Plato.Intrinsics struct or a BCL
-        // type). Every entry is a fourth, unchecked source of truth for one name, so the list is
-        // being retired down to the scalars (plato-365).
+        // C# type on the right is the real one. As of plato-365 that is the SCALAR MAP and nothing
+        // else — every type with fields now generates an ordinary struct from its declaration.
         //
-        // Removed 2026-07-30, increment (a): Vector2/3/4/8 - never declared in the forward stdlib
-        // at all (Number2/3/4/8 and Vector2D/3D carry that vocabulary), and generated structs
-        // already reach the handwritten intrinsic twins through IntrinsicVectorBridges, which is
-        // where the Vector* names survive. Then Plane and Angle: ordinary generated structs whose
-        // BEHAVIOUR is still handwritten, see IntrinsicBackedTypes.
-        // Still here, pending increment (c): Matrix3x2, Matrix4x4, Quaternion.
+        // What used to be here, and where it went (all 2026-07-30):
+        //   Vector2/3/4/8 — never declared in the forward stdlib at all (Number2/3/4/8 and
+        //     Vector2D/3D carry that vocabulary); the names survive only as the far side of
+        //     CSharpConcreteTypeWriter.IntrinsicVectorBridges.
+        //   Angle, Plane, Matrix3x2, Matrix4x4, Quaternion — moved to IntrinsicBackedTypes: the
+        //     declaration owns the shape, the handwritten runtime still owns the behaviour.
         //
-        // The NAMES are the compiler-side WriterPrimitiveNames.All (the linter's LINT015 authority);
-        // this dictionary only attaches the runtime mapping. Removing a name is a two-file edit
-        // until the derive-from-the-list cleanup lands.
-        public static Dictionary<string, string> PrimitiveTypes = new Dictionary<string, string>()
+        // The NAMES come from the compiler-side WriterPrimitiveNames.All, which is also the
+        // linter's LINT015 authority; this dictionary only attaches the runtime mapping, so there
+        // is exactly one place to edit when the set changes. A name with no mapping here is a
+        // startup failure rather than a silently-unmapped primitive.
+        //
+        // NOTE FOR A NEW BACKEND (C++, GLSL, Rust): this is the whole primitive story. A backend
+        // needs a scalar map — number / integer / boolean / character / string / type / function —
+        // and nothing else. No System.Numerics analogue, no per-type name list.
+        public static Dictionary<string, string> PrimitiveTypes
+            = System.Linq.Enumerable.ToDictionary(WriterPrimitiveNames.All, n => n, PrimitiveRuntimeType);
+
+        private static string PrimitiveRuntimeType(string name)
         {
-            { "Number", "float" },
-            { "Boolean", "bool" },
-            { "Integer", "int" },
-            { "Character", "char" },
-            { "String", "string" },
-            { "Dynamic", "object" },
-            { "Type", "System.Type" },
-            { "Function0", "System.Func" },
-            { "Function1", "System.Func" },
-            { "Function2", "System.Func" },
-            { "Function3", "System.Func" },
-            { "Function4", "System.Func" },
-            { "Function5", "System.Func" },
-            { "Function6", "System.Func" },
-            { "Function7", "System.Func" },
-            { "Function8", "System.Func" },
-            { "Function9", "System.Func" },
-            { "Matrix3x2", "System.Numerics.Matrix3x2" },
-            { "Matrix4x4", "System.Numerics.Matrix4x4" },
-            { "Quaternion", "System.Numerics.Quaternion" },
-        };
+            switch (name)
+            {
+                case "Number": return "float";
+                case "Boolean": return "bool";
+                case "Integer": return "int";
+                case "Character": return "char";
+                case "String": return "string";
+                case "Type": return "System.Type";
+            }
+            if (Compiler.Analysis.Linter.IsFunctionTypeName(name))
+                return "System.Func";
+            throw new Exception(
+                $"WriterPrimitiveNames.All contains '{name}' with no C# runtime mapping. Add one "
+                + "here, or (plato-365) remove the name so the declaration generates a struct.");
+        }
 
         /// <summary>
         /// Types whose SHAPE comes from the stdlib declaration (an ordinary generated struct, fields
@@ -653,13 +653,16 @@ namespace Ara3D.Geometry.CSharpWriter
         /// This is the half of "primitive" plato-365 KEEPS. The half it deletes is the shape
         /// override: the declaration is now the authority on the fields, and the handwritten side
         /// reaches System.Numerics from those fields rather than being System.Numerics. Every entry
-        /// here is (or was) a PrimitiveTypes entry; a name graduates from that dictionary to this set.
+        /// here graduated out of <see cref="PrimitiveTypes"/>.
+        ///
+        /// Unlike the primitive list this one is NOT a language-level fact: it changes which C#
+        /// members the writer emits, never what a declaration means. A name here is still an
+        /// ordinary Plato type.
         /// </summary>
         public static readonly HashSet<string> IntrinsicBackedTypes = new HashSet<string>
         {
             "Angle",
             "Plane",
-            // Still PrimitiveTypes entries as well, until increment (c) lands.
             "Matrix3x2",
             "Matrix4x4",
             "Quaternion",

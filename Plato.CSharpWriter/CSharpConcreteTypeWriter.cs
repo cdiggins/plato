@@ -1117,26 +1117,27 @@ namespace Ara3D.Geometry.CSharpWriter
             tw.WriteLine();
         }
 
+        /// <summary>
+        /// The component names of a HANDWRITTEN struct the writer never generates: the far side of
+        /// <see cref="IntrinsicVectorBridges"/> (plus Number's payload). Read by the bridge writer
+        /// and, for the remaining primitives, as pseudo-fields in the extension-style plan.
+        ///
+        /// The matrix entries used to live here too — sixteen M11..M44 names, the writer's private
+        /// picture of System.Numerics' element naming. plato-365 deleted them: a matrix now
+        /// generates from `stdlib/foundation/matrices.types.plato` (Row1..Row4 of Number4) and the
+        /// M-names exist only inside Plato.Intrinsics.V2, where the System.Numerics round-trip is
+        /// written out row by row. Do not re-add them — that is the invisible-primitiveness
+        /// mechanism the issue exists to delete.
+        /// </summary>
         public static Dictionary<string, string[]> PrimitiveFieldNames = new Dictionary<string, string[]>
         {
-            { "Angle", ["Value"] },
             { "Number", ["Value"] },
             { "Vector2", ["X", "Y"] },
             { "Vector3", ["X", "Y", "Z"] },
             { "Vector4", ["X", "Y", "Z", "W"] },
             { "Vector8", [
-                "X0", "X1", "X2", "X3", 
+                "X0", "X1", "X2", "X3",
                 "X4", "X5", "X6", "X7"] },
-            { "Quaternion", ["X", "Y", "Z", "W"] },
-            { "Matrix3x2", [
-                "M11", "M12", 
-                "M21", "M22", 
-                "M31", "M32"] },
-            { "Matrix4x4", [
-                "M11", "M12", "M13", "M14", 
-                "M21", "M22", "M23", "M24", 
-                "M31", "M32", "M33", "M34", 
-                "M41", "M42", "M43", "M44", ] },
         };
     }
 }

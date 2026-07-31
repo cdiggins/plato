@@ -5,77 +5,53 @@ using static System.Runtime.CompilerServices.MethodImplOptions;
 
 namespace Ara3D.Geometry
 {
-    [DataContract]
+    /// <summary>
+    /// Behaviour-only partial for the GENERATED <c>Matrix4x4</c> struct (plato-365).
+    ///
+    /// The shape is the stdlib declaration (`stdlib/foundation/matrices.types.plato`): four
+    /// <c>Number4</c> ROWS, so element (r, c) is component c of row r. System.Numerics is an
+    /// implementation detail of the bodies below, reached through <see cref="Sys"/>.
+    ///
+    /// ROW-WISE conversion, and why it is written out longhand: System.Numerics.Matrix4x4 names its
+    /// elements M11..M44 and its constructor takes them in row-major order, so `Row1.X .. Row4.W`
+    /// maps position-for-position onto that constructor with no index arithmetic to get wrong. The
+    /// M-names appear ONLY here, inside Plato.Intrinsics.V2 — the writer must never learn them
+    /// (plato-365: that would re-create the invisible-primitiveness this issue deletes).
+    ///
+    /// Nothing here may declare a field, a constructor, a `Row*`, a `WithRow*`, or an equality
+    /// override: the generated partial has them, and a second copy is a duplicate-member error.
+    /// </summary>
     public partial struct Matrix4x4
     {
-        [DataMember] public readonly SNMatrix4x4 Value;
+        /// <summary>This matrix as a System.Numerics matrix: the same sixteen floats, row by row.</summary>
+        internal SNMatrix4x4 Sys
+        {
+            [MethodImpl(AggressiveInlining)]
+            get => new SNMatrix4x4(
+                Row1.X, Row1.Y, Row1.Z, Row1.W,
+                Row2.X, Row2.Y, Row2.Z, Row2.W,
+                Row3.X, Row3.Y, Row3.Z, Row3.W,
+                Row4.X, Row4.Y, Row4.Z, Row4.W);
+        }
 
-        // --------------------------------------------------------------------------------
-        // Constructor
-        // --------------------------------------------------------------------------------
+        /// <summary>The inverse of <see cref="Sys"/>.</summary>
+        [MethodImpl(AggressiveInlining)]
+        internal static Matrix4x4 FromSys(SNMatrix4x4 m)
+            => new Matrix4x4(
+                new Number4(m.M11, m.M12, m.M13, m.M14),
+                new Number4(m.M21, m.M22, m.M23, m.M24),
+                new Number4(m.M31, m.M32, m.M33, m.M34),
+                new Number4(m.M41, m.M42, m.M43, m.M44));
+
+        // The intrinsic bridge. Public because every handwritten body in this project converts
+        // across it; generated code never names SNMatrix4x4.
 
         [MethodImpl(AggressiveInlining)]
-        public Matrix4x4(SNMatrix4x4 matrix) => Value = matrix;
+        public static implicit operator SNMatrix4x4(Matrix4x4 m) => m.Sys;
 
         [MethodImpl(AggressiveInlining)]
-        public Matrix4x4(Vector4 row1, Vector4 row2, Vector4 row3, Vector4 row4)
-            : this(row1.X, row1.Y, row1.Z, row1.W,
-                row2.X, row2.Y, row2.Z, row2.W,
-                row3.X, row3.Y, row3.Z, row3.W,
-                row4.X, row4.Y, row4.Z, row4.W)
-        { }
+        public static implicit operator Matrix4x4(SNMatrix4x4 m) => FromSys(m);
 
-        [MethodImpl(AggressiveInlining)]
-        public Matrix4x4(
-            Number m11, Number m12, Number m13, Number m14,
-            Number m21, Number m22, Number m23, Number m24,
-            Number m31, Number m32, Number m33, Number m34,
-            Number m41, Number m42, Number m43, Number m44)
-            => Value = new SNMatrix4x4(m11, m12, m13, m14,
-                m21, m22, m23, m24,
-                m31, m32, m33, m34,
-                m41, m42, m43, m44);
-
-        // --------------------------------------------------------------------------------
-        // Convert to/from System.Numerics.Matrix4x4
-        // --------------------------------------------------------------------------------
-
-        [MethodImpl(AggressiveInlining)]
-        public static Matrix4x4 FromSystem(SNMatrix4x4 sysMat)
-            => Unsafe.As<SNMatrix4x4, Matrix4x4>(ref sysMat);
-
-        [MethodImpl(AggressiveInlining)]
-        public static implicit operator Matrix4x4(SNMatrix4x4 m) 
-            => FromSystem(m);
-
-        [MethodImpl(AggressiveInlining)]
-        public static implicit operator SNMatrix4x4(Matrix4x4 m) 
-            => m.Value;
-
-        //-------------------------------------------------------------------------------------
-        // Properties
-        //-------------------------------------------------------------------------------------
-
-        public Vector4 Row1 { [MethodImpl(AggressiveInlining)] get => new(Value.M11, Value.M12, Value.M13, Value.M14); }
-        public Vector4 Row2 { [MethodImpl(AggressiveInlining)] get => new(Value.M21, Value.M22, Value.M23, Value.M24); }
-        public Vector4 Row3 { [MethodImpl(AggressiveInlining)] get => new(Value.M31, Value.M32, Value.M33, Value.M34); }
-        public Vector4 Row4 { [MethodImpl(AggressiveInlining)] get => new(Value.M41, Value.M42, Value.M43, Value.M44); }
-
-        //-------------------------------------------------------------------------------------
-        // Immutable "setters"
-        //-------------------------------------------------------------------------------------
-
-        [MethodImpl(AggressiveInlining)]
-        public Matrix4x4 WithRow1(Vector4 v) => new(v, Row2, Row3, Row4);
-
-        [MethodImpl(AggressiveInlining)]
-        public Matrix4x4 WithRow2(Vector4 v) => new(Row1, v, Row3, Row4);
-
-        [MethodImpl(AggressiveInlining)]
-        public Matrix4x4 WithRow3(Vector4 v) => new(Row1, Row2, v, Row4);
-
-        [MethodImpl(AggressiveInlining)]
-        public Matrix4x4 WithRow4(Vector4 v) => new(Row1, Row2, Row3, v);
 
         // --------------------------------------------------------------------------------
         // Operators (forward to System.Numerics)
@@ -83,27 +59,27 @@ namespace Ara3D.Geometry
 
         [MethodImpl(AggressiveInlining)]
         public static Matrix4x4 operator +(Matrix4x4 value1, Matrix4x4 value2)
-            => value1.Value + value2.Value;
+            => value1.Sys + value2.Sys;
 
         [MethodImpl(AggressiveInlining)]
         public static Matrix4x4 operator -(Matrix4x4 value1, Matrix4x4 value2)
-            => value1.Value - value2.Value;
+            => value1.Sys - value2.Sys;
 
         [MethodImpl(AggressiveInlining)]
         public static Matrix4x4 operator *(Matrix4x4 value1, Matrix4x4 value2)
-            => value1.Value * value2.Value;
+            => value1.Sys * value2.Sys;
 
         [MethodImpl(AggressiveInlining)]
         public static Matrix4x4 operator *(Matrix4x4 value1, Number f)
-            => value1.Value * f;
+            => value1.Sys * f;
 
         [MethodImpl(AggressiveInlining)]
         public static Matrix4x4 operator *(Number f, Matrix4x4 value1)
-            => value1.Value * f;
+            => value1.Sys * f;
 
         [MethodImpl(AggressiveInlining)]
         public static Matrix4x4 operator /(Matrix4x4 value1, Number f)
-            => value1.Value * f.ReciprocalEstimate();
+            => value1.Sys * f.ReciprocalEstimate();
 
         // Transform-on-the-left. The stdlib declares `Multiply(matrix, self)` as an explicit
         // alias for `Transform(self, matrix)` (stdlib/intrinsics-vectors.library.plato).
@@ -159,46 +135,46 @@ namespace Ara3D.Geometry
         // Decompose, Determinant, Transpose, etc. (common instance methods)
         // --------------------------------------------------------------------------------
 
-        public Vector3 Translation { [MethodImpl(AggressiveInlining)] get => Value.Translation; }
+        public Vector3 Translation { [MethodImpl(AggressiveInlining)] get => Sys.Translation; }
 
         [MethodImpl(AggressiveInlining)]
         public Matrix4x4 WithTranslation(Vector3 translation)
         {
-            var matrix = Value;
+            var matrix = Sys;
             matrix.Translation = translation;
             return matrix;
         }
 
         /// <summary>
         /// Attempts to extract scale, rotation (as a <see cref="Quaternion"/>),
-        /// and translation from Value matrix.
+        /// and translation from this matrix.
         /// </summary>
         [MethodImpl(AggressiveInlining)]
         public (Vector3, Quaternion, Vector3, Boolean) Decompose()
         {
-            var success = SNMatrix4x4.Decompose(Value, out var scl, out var rot, out var trans);
+            var success = SNMatrix4x4.Decompose(Sys, out var scl, out var rot, out var trans);
             return (trans, rot, scl, success);
         }
 
         public Quaternion Rotation { [MethodImpl(AggressiveInlining)] get => Decompose().Item2; }
 
-        [MethodImpl(AggressiveInlining)] public Number Determinant() => Value.GetDeterminant();
+        [MethodImpl(AggressiveInlining)] public Number Determinant() => Sys.GetDeterminant();
 
-        [MethodImpl(AggressiveInlining)] public Matrix4x4 Transpose() => SNMatrix4x4.Transpose(Value);
+        [MethodImpl(AggressiveInlining)] public Matrix4x4 Transpose() => SNMatrix4x4.Transpose(Sys);
 
         [MethodImpl(AggressiveInlining)]
         public Matrix4x4 Lerp(Matrix4x4 matrix2, Number amount)
-            => SNMatrix4x4.Lerp(this.Value, matrix2.Value, amount);
+            => SNMatrix4x4.Lerp(Sys, matrix2.Sys, amount);
 
         [MethodImpl(AggressiveInlining)]
         public Matrix4x4 Invert()
         {
-            var success = SNMatrix4x4.Invert(Value, out var result);
+            var success = SNMatrix4x4.Invert(Sys, out var result);
             if (!success) throw new InvalidOperationException("Non-invertible matrix    ");
             return result;
         }
 
-        [MethodImpl(AggressiveInlining)] public bool CanInvert() => SNMatrix4x4.Invert(Value, out var _);
+        [MethodImpl(AggressiveInlining)] public bool CanInvert() => SNMatrix4x4.Invert(Sys, out var _);
 
         [MethodImpl(AggressiveInlining)]
         public static Matrix4x4 CreatePerspectiveFieldOfView(Number fieldOfView, Number aspectRatio, Number nearPlane, Number farPlane)
@@ -313,20 +289,27 @@ namespace Ara3D.Geometry
         // obligations the forward-stdlib generation declares on the Matrix4x4 partial, and
         // interface implementation demands the exact erased types.
 
-        [MethodImpl(AggressiveInlining)] public int Hash() => Value.GetHashCode();
+        [MethodImpl(AggressiveInlining)] public int Hash() => Sys.GetHashCode();
 
         [MethodImpl(AggressiveInlining)] public int RowCount() => 4;
 
         [MethodImpl(AggressiveInlining)] public int ColumnCount() => 4;
 
         [MethodImpl(AggressiveInlining)]
-        public float ElementAt(int row, int column) => (row, column) switch
+        public float ElementAt(int row, int column)
         {
-            (0, 0) => Value.M11, (0, 1) => Value.M12, (0, 2) => Value.M13, (0, 3) => Value.M14,
-            (1, 0) => Value.M21, (1, 1) => Value.M22, (1, 2) => Value.M23, (1, 3) => Value.M24,
-            (2, 0) => Value.M31, (2, 1) => Value.M32, (2, 2) => Value.M33, (2, 3) => Value.M34,
-            (3, 0) => Value.M41, (3, 1) => Value.M42, (3, 2) => Value.M43, (3, 3) => Value.M44,
-            _ => throw new ArgumentOutOfRangeException($"({row}, {column}) is outside a 4x4 matrix"),
-        };
+            // Straight off the declared rows: no System.Numerics round-trip, and the row/column
+            // order is the declaration's own (RowN holds row N; component c is column c).
+            var r = row switch
+            {
+                0 => Row1, 1 => Row2, 2 => Row3, 3 => Row4,
+                _ => throw new ArgumentOutOfRangeException($"row {row} is outside a 4x4 matrix"),
+            };
+            return column switch
+            {
+                0 => r.X, 1 => r.Y, 2 => r.Z, 3 => r.W,
+                _ => throw new ArgumentOutOfRangeException($"column {column} is outside a 4x4 matrix"),
+            };
+        }
     }
 }

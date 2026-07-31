@@ -161,7 +161,6 @@ namespace PlatoTests
             // re-import exactly the sign ambiguity this increment removed.
             "Plane.D",
             "Plane.WithD",
-            "Plane.WithNormal",
         };
 
         [Test]

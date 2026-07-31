@@ -33,16 +33,9 @@ namespace PlatoTests
         /// a field. If the V2 port (plato-331 option 1) converts one of these to a method, the
         /// legacy declaration proxy is then wrong in the OTHER direction: remove it here AND give it
         /// an override entry (or change the primitive rule) in the same commit.</summary>
-        private static readonly HashSet<string> DeclarationProxyProperties = new HashSet<string>
-        {
-            "Matrix3x2.Row1",
-            "Matrix3x2.Row2",
-            "Matrix3x2.Row3",
-            "Matrix4x4.Row1",
-            "Matrix4x4.Row2",
-            "Matrix4x4.Row3",
-            "Matrix4x4.Row4",
-        };
+        /// (Emptied by plato-365: the Row* properties it listed are GENERATED fields now, so there
+        /// is no handwritten property left for the declaration proxy to accidentally describe.)
+        private static readonly HashSet<string> DeclarationProxyProperties = new HashSet<string>();
 
         /// <summary>
         /// The handwritten V2 runtime structs. Deliberately NOT scoped by

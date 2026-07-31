@@ -5,87 +5,67 @@ using SNQuaternion = System.Numerics.Quaternion;
 
 namespace Ara3D.Geometry
 {
-    [DataContract]
+    /// <summary>
+    /// Behaviour-only partial for the GENERATED <c>Quaternion</c> struct (plato-365).
+    ///
+    /// The shape is the stdlib declaration (`stdlib/foundation/rotations.types.plato`): the four
+    /// Numbers X, Y, Z, W, component-for-component with System.Numerics.Quaternion. The rotation
+    /// algebra below still runs on System.Numerics, reached through <see cref="Sys"/>.
+    ///
+    /// Nothing here may declare a field, a constructor, an X/Y/Z/W, a `With*`, or an equality
+    /// override: the generated partial has them, and a second copy is a duplicate-member error.
+    /// </summary>
     public partial struct Quaternion
     {
-        // Fields 
+        /// <summary>This rotation as a System.Numerics quaternion: the same four floats.</summary>
+        internal SNQuaternion Sys
+        {
+            [MethodImpl(AggressiveInlining)]
+            get => new SNQuaternion(X, Y, Z, W);
+        }
 
-        [DataMember] public readonly SNQuaternion Value;
-
-        // Constructor
-
+        /// <summary>The inverse of <see cref="Sys"/>.</summary>
         [MethodImpl(AggressiveInlining)]
-        public Quaternion(SNQuaternion v) => Value = v;
-
-        [MethodImpl(AggressiveInlining)]
-        public Quaternion(Number x, Number y, Number z, Number w) => Value = new(x, y, z, w);
-
-        // Properties
-
-        public Number X { [MethodImpl(AggressiveInlining)] get => Value.X; }
-
-        public Number Y { [MethodImpl(AggressiveInlining)] get => Value.Y; }
-
-        public Number Z { [MethodImpl(AggressiveInlining)] get => Value.Z; }
-
-        public Number W { [MethodImpl(AggressiveInlining)] get => Value.W; }
+        internal static Quaternion FromSys(SNQuaternion q)
+            => new Quaternion(q.X, q.Y, q.Z, q.W);
 
         // Forward-stdlib Hashable obligation; exact `int` return (see Angle.Hash).
-        [MethodImpl(AggressiveInlining)] public int Hash() => Value.GetHashCode();
+        [MethodImpl(AggressiveInlining)] public int Hash() => Sys.GetHashCode();
 
-        // Immutable "setters"
-
-        [MethodImpl(AggressiveInlining)]
-        public Quaternion WithX(Number x)
-            => new(x, Y, Z, W);
+        // The intrinsic bridge. Public because every handwritten body in this project converts
+        // across it; generated code never names SNQuaternion.
 
         [MethodImpl(AggressiveInlining)]
-        public Quaternion WithY(Number y)
-            => new(X, y, Z, W);
+        public static implicit operator SNQuaternion(Quaternion v) => v.Sys;
 
         [MethodImpl(AggressiveInlining)]
-        public Quaternion WithZ(Number z)
-            => new(X, Y, z, W);
-
-        [MethodImpl(AggressiveInlining)]
-        public Quaternion WithW(Number w)
-            => new(X, Y, Z, w);
-
-        // Implicit casts 
-
-        [MethodImpl(AggressiveInlining)]
-        public static implicit operator SNQuaternion(Quaternion v)
-            => v.Value;
-
-        [MethodImpl(AggressiveInlining)]
-        public static implicit operator Quaternion(SNQuaternion v)
-            => Unsafe.As<SNQuaternion, Quaternion>(ref v);
+        public static implicit operator Quaternion(SNQuaternion v) => FromSys(v);
 
         // Operators
 
         [MethodImpl(AggressiveInlining)]
         public static Quaternion operator +(Quaternion a, Quaternion b)
-            => a.Value + b.Value;
+            => a.Sys + b.Sys;
 
         [MethodImpl(AggressiveInlining)]
         public static Quaternion operator -(Quaternion a, Quaternion b)
-            => a.Value - b.Value;
+            => a.Sys - b.Sys;
 
         [MethodImpl(AggressiveInlining)]
         public static Quaternion operator -(Quaternion a)
-            => -a.Value;
+            => -a.Sys;
 
         [MethodImpl(AggressiveInlining)]
         public static Quaternion operator *(Quaternion a, Quaternion b)
-            => a.Value * b.Value;
+            => a.Sys * b.Sys;
 
         [MethodImpl(AggressiveInlining)]
         public static Quaternion operator *(Quaternion a, Number scalar)
-            => a.Value * scalar;
+            => a.Sys * scalar;
 
         [MethodImpl(AggressiveInlining)]
         public static Quaternion operator /(Quaternion a, Quaternion b)
-            => a.Value / b.Value;
+            => a.Sys / b.Sys;
 
         // Rotation-on-the-left. The stdlib declares `Multiply(rotation, self)` as an explicit
         // alias for `Transform(self, rotation)` (stdlib/intrinsics-vectors.library.plato).
@@ -121,38 +101,38 @@ namespace Ara3D.Geometry
 
         [MethodImpl(AggressiveInlining)]
         public Quaternion Concatenate(Quaternion value2)
-            => SNQuaternion.Concatenate(Value, value2.Value);
+            => SNQuaternion.Concatenate(Sys, value2.Sys);
 
         [MethodImpl(AggressiveInlining)]
         public Number Dot(Quaternion quaternion2)
-            => SNQuaternion.Dot(Value, quaternion2.Value);
+            => SNQuaternion.Dot(Sys, quaternion2.Sys);
 
         [MethodImpl(AggressiveInlining)]
         public Quaternion Lerp(Quaternion quaternion2, Number amount)
-            => SNQuaternion.Lerp(Value, quaternion2.Value, amount);
+            => SNQuaternion.Lerp(Sys, quaternion2.Sys, amount);
 
         // Exact `float` signature: discharges the (scalar-erased) Interpolatable obligation the
         // forward-stdlib generation declares on the Quaternion partial; interface implementation
         // demands the exact erased type, which the Number overload above cannot satisfy.
         [MethodImpl(AggressiveInlining)]
         public Quaternion Lerp(Quaternion quaternion2, float amount)
-            => SNQuaternion.Lerp(Value, quaternion2.Value, amount);
+            => SNQuaternion.Lerp(Sys, quaternion2.Sys, amount);
 
         [MethodImpl(AggressiveInlining)]
         public Quaternion Slerp(Quaternion quaternion2, Number amount)
-            => SNQuaternion.Slerp(Value, quaternion2.Value, amount);
+            => SNQuaternion.Slerp(Sys, quaternion2.Sys, amount);
 
         // Properties
 
-        [MethodImpl(AggressiveInlining)] public Number Length() => Value.Length();
+        [MethodImpl(AggressiveInlining)] public Number Length() => Sys.Length();
 
-        [MethodImpl(AggressiveInlining)] public Number LengthSquared() => Value.LengthSquared();
+        [MethodImpl(AggressiveInlining)] public Number LengthSquared() => Sys.LengthSquared();
 
-        [MethodImpl(AggressiveInlining)] public Quaternion Normalize() => SNQuaternion.Normalize(Value);
+        [MethodImpl(AggressiveInlining)] public Quaternion Normalize() => SNQuaternion.Normalize(Sys);
 
-        [MethodImpl(AggressiveInlining)] public Quaternion Conjugate() => SNQuaternion.Conjugate(Value);
+        [MethodImpl(AggressiveInlining)] public Quaternion Conjugate() => SNQuaternion.Conjugate(Sys);
 
-        [MethodImpl(AggressiveInlining)] public Quaternion Inverse() => SNQuaternion.Inverse(Value);
+        [MethodImpl(AggressiveInlining)] public Quaternion Inverse() => SNQuaternion.Inverse(Sys);
     }
 
     public static partial class QuaternionExtensions2

@@ -5,79 +5,47 @@ using static System.Runtime.CompilerServices.MethodImplOptions;
 
 namespace Ara3D.Geometry
 {
-    [DataContract]
-    public partial struct Matrix3x2 
+    /// <summary>
+    /// Behaviour-only partial for the GENERATED <c>Matrix3x2</c> struct (plato-365).
+    ///
+    /// The shape is the stdlib declaration (`stdlib/foundation/matrices.types.plato`): three
+    /// <c>Number2</c> ROWS — a 2x2 linear part plus a translation row. System.Numerics is an
+    /// implementation detail of the bodies below, reached through <see cref="Sys"/>.
+    ///
+    /// ROW-WISE conversion, written out longhand for the same reason as Matrix4x4: the M-names
+    /// (M11..M32) appear ONLY inside Plato.Intrinsics.V2, never in the writer.
+    ///
+    /// Nothing here may declare a field, a constructor, a `Row*`, a `WithRow*`, or an equality
+    /// override: the generated partial has them, and a second copy is a duplicate-member error.
+    /// </summary>
+    public partial struct Matrix3x2
     {
-        // -------------------------------------------------------------------------------
-        // Fields (layout must match System.Numerics.Matrix3x2)
-        // -------------------------------------------------------------------------------
+        /// <summary>This matrix as a System.Numerics matrix: the same six floats, row by row.</summary>
+        internal SNMatrix3x2 Sys
+        {
+            [MethodImpl(AggressiveInlining)]
+            get => new SNMatrix3x2(
+                Row1.X, Row1.Y,
+                Row2.X, Row2.Y,
+                Row3.X, Row3.Y);
+        }
 
-        [DataMember] public readonly SNMatrix3x2 Value;
-
-        // -------------------------------------------------------------------------------
-        // Constructors
-        // -------------------------------------------------------------------------------
-        
+        /// <summary>The inverse of <see cref="Sys"/>.</summary>
         [MethodImpl(AggressiveInlining)]
-        public Matrix3x2(SNMatrix3x2 v) 
-            => Value = v;
+        internal static Matrix3x2 FromSystem(SNMatrix3x2 m)
+            => new Matrix3x2(
+                new Number2(m.M11, m.M12),
+                new Number2(m.M21, m.M22),
+                new Number2(m.M31, m.M32));
 
-        [MethodImpl(AggressiveInlining)]
-        public Matrix3x2(
-            Number m11, Number m12,
-            Number m21, Number m22,
-            Number m31, Number m32)
-            => Value = new(m11, m12, m21, m22, m31, m32);
-        
-        [MethodImpl(AggressiveInlining)]
-        public Matrix3x2(
-            Vector2 row1,
-            Vector2 row2,
-            Vector2 row3)
-            => Value = new(row1.X, row1.Y, row2.X,row2.Y, row3.X, row3.Y);
-
-        //-------------------------------------------------------------------------------------
-        // Properties
-        //-------------------------------------------------------------------------------------
-
-        public Vector2 Row1 { [MethodImpl(AggressiveInlining)] get => new(Value.M11, Value.M12); }
-        public Vector2 Row2 { [MethodImpl(AggressiveInlining)] get => new(Value.M21, Value.M22); }
-        public Vector2 Row3 { [MethodImpl(AggressiveInlining)] get => new(Value.M31, Value.M32); }
-
-        public Number M11 => Value.M11;
-        public Number M12 => Value.M12;
-        public Number M21 => Value.M21;
-        public Number M22 => Value.M22;
-        public Number M31 => Value.M31;
-        public Number M32 => Value.M32;
-        //-------------------------------------------------------------------------------------
-        // Immutable "setters"
-        //-------------------------------------------------------------------------------------
+        // The intrinsic bridge. Public because every handwritten body in this project converts
+        // across it; generated code never names SNMatrix3x2.
 
         [MethodImpl(AggressiveInlining)]
-        public Matrix3x2 WithRow1(Vector2 v) => new(v, Row2, Row3);
+        public static implicit operator SNMatrix3x2(Matrix3x2 mat) => mat.Sys;
 
         [MethodImpl(AggressiveInlining)]
-        public Matrix3x2 WithRow2(Vector2 v) => new(Row1, v, Row3);
-
-        [MethodImpl(AggressiveInlining)]
-        public Matrix3x2 WithRow3(Vector2 v) => new(Row1, Row2, v);
-
-        // -------------------------------------------------------------------------------
-        // Convert to/from System.Numerics.Matrix3x2 
-        // -------------------------------------------------------------------------------
-
-        [MethodImpl(AggressiveInlining)]
-        public static Matrix3x2 FromSystem(SNMatrix3x2 sysMat)
-            => Unsafe.As<SNMatrix3x2, Matrix3x2>(ref sysMat);
-
-        [MethodImpl(AggressiveInlining)]
-        public static implicit operator SNMatrix3x2(Matrix3x2 mat)
-            => mat.Value;
-
-        [MethodImpl(AggressiveInlining)]
-        public static implicit operator Matrix3x2(SNMatrix3x2 sysMat)
-            => FromSystem(sysMat);
+        public static implicit operator Matrix3x2(SNMatrix3x2 sysMat) => FromSystem(sysMat);
 
         // -------------------------------------------------------------------------------
         // Operators
@@ -85,19 +53,19 @@ namespace Ara3D.Geometry
 
         [MethodImpl(AggressiveInlining)]
         public static Matrix3x2 operator +(Matrix3x2 value1, Matrix3x2 value2)
-            => FromSystem(value1.Value + value2.Value);
+            => FromSystem(value1.Sys + value2.Sys);
 
         [MethodImpl(AggressiveInlining)]
         public static Matrix3x2 operator -(Matrix3x2 value1, Matrix3x2 value2)
-            => FromSystem(value1.Value - value2.Value);
+            => FromSystem(value1.Sys - value2.Sys);
 
         [MethodImpl(AggressiveInlining)]
         public static Matrix3x2 operator *(Matrix3x2 value1, Matrix3x2 value2)
-            => FromSystem(value1.Value * value2.Value);
+            => FromSystem(value1.Sys * value2.Sys);
 
         [MethodImpl(AggressiveInlining)]
         public static Matrix3x2 operator *(Matrix3x2 value1, Number scalar)
-            => FromSystem(value1.Value * scalar);
+            => FromSystem(value1.Sys * scalar);
 
         // Transform-on-the-left. The stdlib declares `Multiply(matrix, self)` as an explicit
         // alias for `Transform(self, matrix)` (stdlib/intrinsics-vectors.library.plato).
@@ -167,13 +135,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)]
         public (Matrix3x2, Boolean) Invert()
         {
-            var success = SNMatrix3x2.Invert(Value, out var result);
+            var success = SNMatrix3x2.Invert(Sys, out var result);
             return (result, success);
         }
 
         [MethodImpl(AggressiveInlining)]
         public Matrix3x2 Lerp(Matrix3x2 matrix2, Number amount)
-            => FromSystem(SNMatrix3x2.Lerp(Value, matrix2.Value, amount));
+            => FromSystem(SNMatrix3x2.Lerp(Sys, matrix2.Sys, amount));
 
         // -------------------------------------------------------------------------------
         // Instance methods
@@ -182,25 +150,32 @@ namespace Ara3D.Geometry
         /// <summary>
         /// Gets the determinant of this 3x2 matrix.
         /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Determinant() => Value.GetDeterminant();
+        [MethodImpl(AggressiveInlining)] public float Determinant() => Sys.GetDeterminant();
 
         // Exact `int`/`float` signatures: these discharge the (scalar-erased) MatrixLike
         // obligations the forward-stdlib generation declares on the Matrix3x2 partial, and
         // interface implementation demands the exact erased types.
 
-        [MethodImpl(AggressiveInlining)] public int Hash() => Value.GetHashCode();
+        [MethodImpl(AggressiveInlining)] public int Hash() => Sys.GetHashCode();
 
         [MethodImpl(AggressiveInlining)] public int RowCount() => 3;
 
         [MethodImpl(AggressiveInlining)] public int ColumnCount() => 2;
 
         [MethodImpl(AggressiveInlining)]
-        public float ElementAt(int row, int column) => (row, column) switch
+        public float ElementAt(int row, int column)
         {
-            (0, 0) => Value.M11, (0, 1) => Value.M12,
-            (1, 0) => Value.M21, (1, 1) => Value.M22,
-            (2, 0) => Value.M31, (2, 1) => Value.M32,
-            _ => throw new ArgumentOutOfRangeException($"({row}, {column}) is outside a 3x2 matrix"),
-        };
+            // Straight off the declared rows: no System.Numerics round-trip.
+            var r = row switch
+            {
+                0 => Row1, 1 => Row2, 2 => Row3,
+                _ => throw new ArgumentOutOfRangeException($"row {row} is outside a 3x2 matrix"),
+            };
+            return column switch
+            {
+                0 => r.X, 1 => r.Y,
+                _ => throw new ArgumentOutOfRangeException($"column {column} is outside a 3x2 matrix"),
+            };
+        }
     }
 }

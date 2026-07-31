@@ -5,62 +5,53 @@ namespace Ara3D.Geometry.Compiler.Types
     /// <summary>
     /// The type names a backend writer treats as PRIMITIVE: names whose representation comes from
     /// the runtime rather than from the Plato declaration. When a name is on this list the C# writer
-    /// emits its mapped runtime type (<c>Number -&gt; float</c>, <c>Quaternion -&gt;
-    /// System.Numerics.Quaternion</c>) and NEVER emits the declared fields — a `type X { A: Number }`
-    /// whose name is here has its shape silently discarded.
+    /// emits its mapped runtime type (<c>Number -&gt; float</c>) and NEVER emits the declared fields
+    /// — a `type X { A: Number }` whose name is here has its shape silently discarded.
     ///
-    /// This list is the canonical copy, held in the compiler assembly so the language-level rule
-    /// (<c>Linter.CheckPrimitiveNameShadowing</c>, LINT015) can be enforced without the compiler
-    /// depending on any writer. The C# writer's <c>CSharpWriter.PrimitiveTypes</c> dictionary is the
-    /// SAME set with the runtime mappings attached; the two are held together by
-    /// <c>PlatoTests/LinterPrimitiveShadowingTests.WriterPrimitiveTableMatchesTheCompilerCopy</c>,
-    /// which fails if either side gains or loses a name. Editing one without the other is a test
-    /// failure, not a silent divergence — that duplication-with-an-enforcing-test is the deliberate
-    /// shape here, and the eventual cleanup (plato-365) is for the writer's dictionary to build its
-    /// keys from this list.
+    /// This list is the SOLE copy of the name set. It is held in the compiler assembly so the
+    /// language-level rule (<c>Linter.CheckPrimitiveNameShadowing</c>, LINT015) can be enforced
+    /// without the compiler depending on any writer; <c>CSharpWriter.PrimitiveTypes</c> builds its
+    /// keys from it and only attaches the per-name runtime mapping (a name with no mapping is a
+    /// startup failure there). <c>PlatoTests/LinterPrimitiveShadowingTests</c> pins the two
+    /// together.
     ///
-    /// plato-365 shrinks this set to scalars only. Removing a name here (and from the writer's
-    /// dictionary) is exactly what makes the corresponding stdlib declaration authoritative.
+    /// plato-365 shrank this set to the SCALAR MAP and nothing else, which is also the answer for
+    /// any new backend: C++, GLSL and Rust need `number/integer/boolean/character/string/type/
+    /// function` and no per-type name list. Nine names left in 2026-07-30 — Vector2/3/4/8
+    /// (never declared in the forward stdlib at all), then Angle, Plane, Matrix3x2, Matrix4x4 and
+    /// Quaternion, each of which now generates an ordinary struct from its declaration with the
+    /// handwritten Plato.Intrinsics runtime supplying only its behaviour
+    /// (<c>CSharpWriter.IntrinsicBackedTypes</c>).
+    ///
+    /// ADDING a name here is how a type stops being real. Do not, unless the type genuinely has no
+    /// declarable shape.
     /// </summary>
     public static class WriterPrimitiveNames
     {
         /// <summary>
-        /// Every name the C# writer currently treats as primitive. Must equal
-        /// <c>CSharpWriter.PrimitiveTypes.Keys</c>.
+        /// Every name a writer treats as primitive: scalars, the type token, and the function
+        /// types. Equals <c>CSharpWriter.PrimitiveTypes.Keys</c> by construction.
+        ///
+        /// <c>Dynamic</c> left in 2026-07-31: nothing in the stdlib ever used it, and its presence
+        /// obliged every new backend to answer "what is my dynamic?" for a name no declaration
+        /// mentions. Re-add it here and in the writers' maps if interop ever needs the escape hatch.
         /// </summary>
         public static readonly IReadOnlyCollection<string> All = new HashSet<string>
         {
-            // Scalars and function types — the intended end state (plato-365).
-            "Number", "Boolean", "Integer", "Character", "String", "Dynamic", "Type",
+            "Number", "Boolean", "Integer", "Character", "String", "Type",
             "Function0", "Function1", "Function2", "Function3", "Function4",
             "Function5", "Function6", "Function7", "Function8", "Function9",
-
-            // Non-scalar entries, being retired by plato-365. Each one is a name whose stdlib
-            // declaration is currently overridden by a System.Numerics (or Vector256) type.
-            // (Vector2/3/4/8 left the list on 2026-07-30 with plato-365 increment (a); they were
-            // never declared in the forward stdlib, so their departure changed no finding. Angle
-            // and Plane left the same day: both now generate as ordinary structs from their
-            // declarations, with the handwritten runtime supplying only their behaviour.)
-            "Matrix3x2", "Matrix4x4", "Quaternion",
         };
 
         /// <summary>
-        /// The shadowing declarations that already exist in the forward stdlib when LINT015 landed.
-        /// They are the defect the rule exists to describe, so they are reported — but as Warnings,
-        /// because their removal is scheduled work (plato-365 increments a and c) rather than
-        /// something the author of the declaration can fix, and an Error would red the `lint
-        /// --strict` gate for unrelated missions.
+        /// Shadowing declarations grandfathered when LINT015 landed: reported as Warnings rather
+        /// than Errors while plato-365 retired them. EMPTY since 2026-07-30 — plato-365 removed
+        /// every name it covered, so LINT015 is now an unconditional Error and no future type can
+        /// shadow a primitive silently.
         ///
-        /// This list only ever shrinks. Delete a name from it when the matching entry leaves
-        /// <see cref="All"/>, at which point the declaration stops shadowing anything and the
-        /// finding disappears on its own. A name that is NOT here shadowing a primitive is an
-        /// Error — which is the whole point: no FUTURE type can do this silently.
+        /// This list only ever shrinks. It should stay empty: a new entry means someone re-added a
+        /// non-scalar primitive rather than fixing the declaration.
         /// </summary>
-        public static readonly IReadOnlyCollection<string> KnownShadowedByStdlib = new HashSet<string>
-        {
-            "Matrix3x2",    // plato-365 increment (c)
-            "Matrix4x4",    // plato-365 increment (c)
-            "Quaternion",   // plato-365 increment (c)
-        };
+        public static readonly IReadOnlyCollection<string> KnownShadowedByStdlib = new HashSet<string>();
     }
 }
