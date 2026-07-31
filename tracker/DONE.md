@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-07-31 — [plato-371](issues/plato-371.md) — Concept hierarchy export and redundant inherits lint — done (ff7b087)
 - 2026-07-31 — [plato-023](issues/plato-023.md) — TIR scalar lowering pass + type-checker completion — done: Mission 2 (TirScalarLowerer S0-S3, ScalarEraseAnalysis deleted) shipped; split leftovers to plato-369 (checker→0) and plato-370 (--scalar=double)
 - 2026-07-30 â€” [plato-367](issues/plato-367.md) â€” `primitive` keyword: declare compiler-assumed types with `primitive` instead of `type` â€” primitive keyword shipped: parakeet 817e636 (grammar+CST), Plato 571f077 (IsPrimitiveDeclaration flag + stdlib/foundation/primitives.plato, 20 decls). lint --strict over the 4 stdlib tiers: exit 0, 786 files, 0 parse / 0 resolution / 0 lint errors, ratchet 229 unchanged. Object + Array2D/3D stay 'type'.
 - 2026-07-30 â€” [plato-363](issues/plato-363.md) â€” Legacy golden drift + CS0557 conformance breakage â€” closed WITHOUT fixing: legacy conformance suite (Ara3D.SDK.ConformanceTests + regen-conformance.ps1) and golden diff-gate (regen-generated.ps1) RETIRED per decisions/2026-07-30-retire-legacy-conformance-and-goldens.md; Generated/ projects demoted to ordinary cached output; check-frozen-v1 tripwire kept; plato-308 (forward suite green) promoted to p1 as the replacement coverage.

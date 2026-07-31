@@ -2,14 +2,14 @@
 id: plato-371
 title: Concept hierarchy export and redundant inherits lint
 type: feature
-status: in-progress
+status: done
 priority: p2
 effort: M
 risk: low
 area: plato
 sprint: 
 created: 2026-07-31
-closed:
+closed: 2026-07-31
 links: [src/Plato.Compiler/Analysis/Linter.cs, src/Plato.ContextExport/Program.cs, tools/export-types-context.ps1, docs/types-and-concepts-context.txt]
 ---
 
