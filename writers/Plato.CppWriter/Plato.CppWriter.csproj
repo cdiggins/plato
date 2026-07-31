@@ -5,7 +5,7 @@
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
+    <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
     <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
     <ProjectReference Include="..\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
   </ItemGroup>

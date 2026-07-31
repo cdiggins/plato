@@ -32,9 +32,8 @@
     <ProjectReference Include="..\Plato.RustWriter\Plato.RustWriter.csproj" />
     <!-- Parser + utils, so checker tests can build a Compilation from real .plato source. -->
     <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
-    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
+    <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
     <!-- Required by the Plato.Intrinsics.V2 shared sources (PlatoBuffer/PlatoList). -->
-    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Collections\Ara3D.Collections.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="output\" />

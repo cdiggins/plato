@@ -18,6 +18,6 @@
     <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
     <!-- Parser + utils, so the tests can build a Compilation from real .plato source. -->
     <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
-    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
+    <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
   </ItemGroup>
 </Project>

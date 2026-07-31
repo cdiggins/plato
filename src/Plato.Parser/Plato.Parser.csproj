@@ -7,6 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="..\parakeet\Parakeet.Cst\Ara3D.Parakeet.Cst.csproj" />
     <ProjectReference Include="..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
-    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Logging\Ara3D.Logging.csproj" />
+    <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
   </ItemGroup>
 </Project>

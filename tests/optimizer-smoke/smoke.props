@@ -31,9 +31,7 @@
 
   <!-- Collection adapters (ReadOnlyList / IReadOnlyList2D / ...) the generated code targets. -->
   <ItemGroup>
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\ara3d-sdk\src\Ara3D.Collections\Ara3D.Collections.csproj" />
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\ara3d-sdk\src\Ara3D.Memory\Ara3D.Memory.csproj" />
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
+    <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
   </ItemGroup>
 
 </Project>

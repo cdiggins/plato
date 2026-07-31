@@ -1,0 +1,21 @@
+﻿<Project>
+
+  <!--
+    Repo-wide properties. Kept deliberately small: the only thing here is the
+    version of the Ara3D SDK packages, so a bump is a one-line change.
+
+    Plato consumes the SDK as NuGet packages (Ara3D.SDK.Core), not as project
+    references into a sibling checkout. Every project that needs Ara3D.Utils,
+    Ara3D.Logging, Ara3D.Collections or Ara3D.Memory gets them transitively:
+
+        <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
+
+    Ara3D.SDK.Core is net8.0. Do not switch to the Ara3D.SDK meta-package - it
+    is net8.0-windows and pulls WPF, IFC and Studio.API into the compiler.
+  -->
+
+  <PropertyGroup Label="Ara3D SDK package versions">
+    <Ara3DVersion Condition="'$(Ara3DVersion)' == ''">1.6.1</Ara3DVersion>
+  </PropertyGroup>
+
+</Project>

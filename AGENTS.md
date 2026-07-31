@@ -10,10 +10,15 @@ This is the canonical guide for agents and developers working in `submodules/Pla
 Plato: pure language for geometry libraries, compiled to C# (TS/Rust/GLSL/C++/CUDA writers exist as POCs).
 Part of the studio monorepo at `C:\Users\cdigg\git\studio` (this repo = `submodules/Plato`).
 
-**Work from the studio root, not from this folder.** `Plato.sln` project-references
-`..\..\ara3d-sdk\src\{Ara3D.Collections,Ara3D.Logging,Ara3D.Memory,Ara3D.Utils}`, the conformance
-suite references the same, and every gate script plus the work tracker lives in the parent repo.
-A standalone clone of this repo does not build.
+**Ara3D SDK is consumed as a NuGet package.** Every project that needs
+`Ara3D.Collections` / `Ara3D.Logging` / `Ara3D.Memory` / `Ara3D.Utils` carries a single
+`<PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />`; the version lives in
+`Directory.Build.props` at the repo root. Do not add project references into a sibling
+`ara3d-sdk` checkout, and do not switch to the `Ara3D.SDK` meta-package — that one is
+`net8.0-windows` and pulls WPF, IFC and `Studio.API` into the compiler.
+
+**Gate scripts and the work tracker still live in the studio repo** at
+`C:\Users\cdigg\git\studio`, so the commands below are run from there.
 
 Plan + status: `../../docs/plato-execution-plan-2026-07-09.md`; live work is tracked in
 `../../tracker/` (`python tools/track.py list --open --area plato`). Bug catalog:

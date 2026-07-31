@@ -8,8 +8,9 @@ recalled; the commands are given so the numbers can be re-checked as they move.
 
 The compiler and all five backend writers build and their tests pass. The two checked-in
 *generated* libraries do not compile, and one runtime obligation test fails — both are the
-same underlying gap, at different scales. The blocker for standalone use is not any of
-that: it is 18 project references that reach out of this repo into a sibling checkout.
+same underlying gap, at different scales. The Ara3D SDK coupling that used to block
+standalone use is resolved — the SDK is now a `Ara3D.SDK.Core` NuGet reference rather than
+38 references into a sibling checkout.
 
 ## Build
 
@@ -52,44 +53,32 @@ so it is the small, readable version of the Generated-project failure above. Add
 members to `Plato.Intrinsics.V2` is the single highest-value next change: it turns the suite
 green and removes the ambiguity from every gate run that follows.
 
-## Standalone blocker: references that leave the repo
+## Standalone blocker: references that leave the repo — RESOLVED for the SDK
 
-Seven projects reference four projects in a *sibling* repository, by relative path:
+Twenty projects used to reference four projects in a *sibling* repository by relative path
+(`..\..\..\..\ara3d-sdk\src\{Ara3D.Collections,Ara3D.Memory,Ara3D.Utils,Ara3D.Logging}`) —
+34 `ProjectReference` entries, plus four entries in `Plato.sln` listing the SDK projects as
+though they belonged to it. That path only resolved when the repo sat at
+`studio/submodules/Plato` with `studio/ara3d-sdk` beside it, which is why a standalone clone
+failed to load with missing `CstNode` / `ILocation` types.
 
+All 38 are now gone. Each project instead carries:
+
+```xml
+<PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
 ```
-..\..\..\..\ara3d-sdk\src\Ara3D.Collections
-..\..\..\..\ara3d-sdk\src\Ara3D.Memory
-..\..\..\..\ara3d-sdk\src\Ara3D.Utils
-..\..\..\..\ara3d-sdk\src\Ara3D.Logging
-```
 
-18 `ProjectReference` entries in total, from:
+`Ara3D.SDK.Core` (published on nuget.org, 1.6.1) is `net8.0` and brings all four libraries in
+transitively. `Ara3DVersion` is defined once in `Directory.Build.props` at the repo root.
 
-- `generated/Plato.Generated.Optimized`
-- `generated/Plato.Generated.Unoptimized`
-- `conformance/Plato.ForwardConformanceTests`
-- `csg/Ara3D.Csg.Tests`
-- `earcut/Ara3D.Earcut.Tests`
-- `parakeet/Parakeet` and `parakeet/Parakeet.Parsers` — note that **parakeet is itself a
-  submodule of this repo**, so the coupling is two levels deep
+The `Ara3D.SDK` meta-package was rejected deliberately: it is `net8.0-windows` and pulls
+`Ara3D.Utils.Wpf`, `Ara3D.SDK.IO` (IFC, SharpGLTF, VIM) and `Ara3D.Studio.API` in with it,
+which would force every Plato project to a Windows-only target framework.
 
-`Plato.sln` also lists those four SDK projects as though they belonged to it.
-
-The path `..\..\..\..\ara3d-sdk` resolves only when this repo sits at
-`studio/submodules/Plato` with `studio/ara3d-sdk` checked out beside it. Cloned on its own,
-seven projects fail to load. This is why building from a detached worktree fails with
-missing `CstNode` / `ILocation` types.
-
-Three ways out, each with a different cost:
-
-1. **Consume the four as NuGet packages.** Cleanest boundary, but requires publishing and
-   versioning them, and makes local SDK edits a package round-trip.
-2. **Vendor the sources** into this repo (as parakeet already is). No publishing step, but
-   two copies to keep in sync.
-3. **Make `ara3d-sdk` a submodule of Plato.** Smallest diff, keeps one source of truth, but
-   deepens the submodule nesting that already makes parakeet awkward.
-
-Whichever is chosen also has to cover parakeet, which has the same dependency.
+Still open: **parakeet**, a submodule of this repo, is a separate coupling to check — the
+working tree here has it uninitialized, so its dependencies were not verified. Local SDK
+edits are now a package round-trip rather than an in-solution change; that is the cost of
+the package boundary.
 
 ## Other couplings to `studio`
 

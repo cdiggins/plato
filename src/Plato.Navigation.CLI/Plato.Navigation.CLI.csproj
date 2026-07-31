@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Plato.Navigation\Plato.Navigation.csproj" />
-    <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
+    <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
   </ItemGroup>
 
 </Project>
