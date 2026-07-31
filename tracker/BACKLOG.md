@@ -20,6 +20,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-277](issues/plato-277.md) | stdlib concept-gap burn-down: the 17 markers that need a language or concept decision | debt | p2 | M | low | plato | ready |  |
 | [plato-323](issues/plato-323.md) | Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile | bug | p2 | L | med | plato | ready |  |
 | [plato-326](issues/plato-326.md) | Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns | bug | p2 | S | low | plato | ready |  |
+| [plato-372](issues/plato-372.md) | Studio gate scripts are stale: check-stdlib-fast lints stdlib top-only and finds no files | bug | p2 | S | low | plato | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred concept constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
