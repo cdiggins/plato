@@ -11,7 +11,7 @@
 
 .EXAMPLE
     .\tools\dotnet-build-record.ps1 -Project .\conformance\Plato.ForwardConformanceTests\Plato.ForwardConformanceTests.csproj -TargetName forward-conformance
-    .\tools\dotnet-build-record.ps1 -Project .\Generated\Plato.Generated.Unoptimized\Plato.Generated.Unoptimized.csproj -TargetName generated-unoptimized
+    .\tools\dotnet-build-record.ps1 -Project .\generated\Plato.Generated.Unoptimized\Plato.Generated.Unoptimized.csproj -TargetName generated-unoptimized
 #>
 [CmdletBinding()]
 param(

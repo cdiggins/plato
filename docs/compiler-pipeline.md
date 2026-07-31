@@ -16,7 +16,7 @@ It is aimed at people working *on the compiler*. For the language itself see
  AST                      Ara3D.Geometry.AST.*            (syntax, spans)
       │  bind             SymbolFactory
       ▼
- Symbol graph            PlatoCompiler/Symbols/*          (names resolved, types unresolved)
+ Symbol graph            Plato.Compiler/Symbols/*          (names resolved, types unresolved)
       │  normalize        Checking/Normalizer             ← NEW
       ▼
  Normalized symbol graph  (canonical, checker-ready)
@@ -37,7 +37,7 @@ It is aimed at people working *on the compiler*. For the language itself see
                           styles, TS/Rust): the legacy writers, consuming the symbol graph.
 ```
 
-The passes live in [`PlatoCompiler/Checking/`](../PlatoCompiler/Checking). They matured in
+The passes live in [`Plato.Compiler/Checking/`](../Plato.Compiler/Checking). They matured in
 **shadow mode** against the real standard library (the "stdlib as oracle" strategy); since
 increment 3 the TIR is the **production emit path for default-style member bodies**, proven
 byte-identical to the legacy writer (the byte-identity gate `tools/regen-plato.ps1` now exercises
@@ -48,7 +48,7 @@ it). The checker also reports located diagnostics for every function.
 | IR | Where | What it carries | Mutable? |
 |---|---|---|---|
 | **AST** | `Plato.AST` | Pure syntax + source locations. Operators, member access, indexers are already present as syntax. | no |
-| **Symbol graph** | `PlatoCompiler/Symbols` | Names resolved to `DefSymbol`s; scopes; `TypeExpression`s (nominal, `Def` + `TypeArgs`). Calls point at whole overload groups (`FunctionGroupRefSymbol`). Types of expressions are **not** yet resolved. | no (rewrites build new trees) |
+| **Symbol graph** | `Plato.Compiler/Symbols` | Names resolved to `DefSymbol`s; scopes; `TypeExpression`s (nominal, `Def` + `TypeArgs`). Calls point at whole overload groups (`FunctionGroupRefSymbol`). Types of expressions are **not** yet resolved. | no (rewrites build new trees) |
 | **Normalized symbol graph** | same types, produced by `Normalizer` | The symbol graph after canonicalization (below). Same node kinds, guaranteed invariants. | no |
 | **Constraint system** | `Checking/ConstraintSystem` | A `TypeExpression` (usually a fresh `$`-variable) for every expression, plus equality and overload constraints, plus generation-time diagnostics. | accumulated |
 | **Substitution** | `Checking/Solver` | A binding for each unification variable; the solved type of any expression is `Zonk(ExprTypes[e])`. | union-find map |

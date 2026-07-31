@@ -161,7 +161,7 @@ type Integer
 
             Assert.That(onlyInWriter, Is.Empty,
                 "CSharpWriter.PrimitiveTypes has name(s) missing from " +
-                "PlatoCompiler/Types/WriterPrimitiveNames.All: [" + string.Join(", ", onlyInWriter) +
+                "Plato.Compiler/Types/WriterPrimitiveNames.All: [" + string.Join(", ", onlyInWriter) +
                 "]. Add them there, or LINT015 cannot see that a stdlib declaration of that name " +
                 "is silently overridden.");
             Assert.That(onlyInCompiler, Is.Empty,

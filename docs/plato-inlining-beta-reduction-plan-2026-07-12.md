@@ -236,5 +236,5 @@ generalize to the next HOF-inlining opportunity.
   <full recipe> --dump-tir=<dir>`, read `<dir>/Bounds3D.tir.txt` etc.
 - To reproduce the V1 break: `tools/regen-conformance-scalar.ps1 -Test` (property-ful, pins).
 - To reproduce the V2 clean compile: `tools/regen-generated.ps1 -Apply` then build
-  `Generated/Plato.Generated.Optimized` (`--no-properties`); restore golden with
-  `git checkout -- Generated/`.
+  `generated/Plato.Generated.Optimized` (`--no-properties`); restore golden with
+  `git checkout -- generated/`.

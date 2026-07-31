@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Parser", "Plato.Parse
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ara3D.Logging", "..\..\ara3d-sdk\src\Ara3D.Logging\Ara3D.Logging.csproj", "{AE55A1AD-2A4A-4BC0-B497-DAC887B8BBE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Compiler", "PlatoCompiler\Plato.Compiler.csproj", "{A3A2B9DE-6178-4A41-B871-F3422818F24E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Compiler", "Plato.Compiler\Plato.Compiler.csproj", "{A3A2B9DE-6178-4A41-B871-F3422818F24E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoTypeInference", "PlatoTypeInference\PlatoTypeInference.csproj", "{0CF54E6B-35B6-4411-8081-FB0A849CF9DD}"
 EndProject
@@ -53,17 +53,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ara3D.Collections", "..\..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ara3D.Memory", "..\..\ara3d-sdk\src\Ara3D.Memory\Ara3D.Memory.csproj", "{BA1586DE-154B-45A5-9036-3DF1985CBC16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Generated.Optimized", "Generated\Plato.Generated.Optimized\Plato.Generated.Optimized.csproj", "{1B38B9F1-82B0-45BF-BA06-43E68D06937E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Generated.Optimized", "generated\Plato.Generated.Optimized\Plato.Generated.Optimized.csproj", "{1B38B9F1-82B0-45BF-BA06-43E68D06937E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Generated.Unoptimized", "Generated\Plato.Generated.Unoptimized\Plato.Generated.Unoptimized.csproj", "{3643290D-25FF-4099-BF67-CC019A5D208E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Generated.Unoptimized", "generated\Plato.Generated.Unoptimized\Plato.Generated.Unoptimized.csproj", "{3643290D-25FF-4099-BF67-CC019A5D208E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Small.Runtime", "Small\Plato.Small.Runtime\Plato.Small.Runtime.csproj", "{D26CECCE-0117-4857-8351-1245BF63F6B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Small.Runtime", "small\Plato.Small.Runtime\Plato.Small.Runtime.csproj", "{D26CECCE-0117-4857-8351-1245BF63F6B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Small.Generated.Unoptimized", "Small\Plato.Small.Generated.Unoptimized\Plato.Small.Generated.Unoptimized.csproj", "{17E35264-812B-41FD-A143-558826363FC0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Small.Generated.Unoptimized", "small\Plato.Small.Generated.Unoptimized\Plato.Small.Generated.Unoptimized.csproj", "{17E35264-812B-41FD-A143-558826363FC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Small.Optimized", "Small\Plato.Small.Optimized\Plato.Small.Optimized.csproj", "{11C65162-A5A8-4F77-956A-CFBAA1338148}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Small.Optimized", "small\Plato.Small.Optimized\Plato.Small.Optimized.csproj", "{11C65162-A5A8-4F77-956A-CFBAA1338148}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "plato-src", "stdlib-legacy\plato-src.csproj", "{C4811E5F-FAC0-4D85-9167-57C3F4917228}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "plato-src", "stdlib-legacy\stdlib-legacy.csproj", "{C4811E5F-FAC0-4D85-9167-57C3F4917228}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject

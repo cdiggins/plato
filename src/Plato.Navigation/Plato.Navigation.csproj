@@ -21,7 +21,7 @@
     <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Logging\Ara3D.Logging.csproj" />
     <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
     <ProjectReference Include="..\Plato.AST\Plato.AST.csproj" />
-    <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
+    <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
   </ItemGroup>
 
 </Project>

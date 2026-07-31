@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// because this namespace also hosts handwritten geometry code for which a type literally
     /// named <c>List&lt;T&gt;</c> would shadow <c>System.Collections.Generic.List&lt;T&gt;</c>.
     ///
-    /// Effect classification (the compiler's intrinsic table, PlatoCompiler UniqueTypes):
+    /// Effect classification (the compiler's intrinsic table, Plato.Compiler UniqueTypes):
     /// observe = Count, At; mutate = Add, AddRange, Set; consume = Freeze.
     /// </summary>
     public sealed class PlatoList<T>

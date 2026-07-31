@@ -11,7 +11,7 @@
 | Axis | V1 (frozen-to-be) | V2 (the one codebase) |
 |---|---|---|
 | Runtime | `Plato.Intrinsics/` (+ byte-synced copy in `ara3d-sdk/src/Plato.Intrinsics`) | `Plato.Intrinsics.V2/` (System.Numerics-backed, method-form) |
-| Generated output | `ara3d-sdk/src/Plato.Generated` (default style, wrapper scalars, properties) | `Generated/Plato.Generated.{Unoptimized,Optimized}` (extensions, scalar-erased, `--no-properties`) |
+| Generated output | `ara3d-sdk/src/Plato.Generated` (default style, wrapper scalars, properties) | `generated/Plato.Generated.{Unoptimized,Optimized}` (extensions, scalar-erased, `--no-properties`) |
 | Recipe | *(no flags)* | `--csharp-style=extensions --scalar=float [--optimize --optimize-arrays --inline --methods --loops] --no-properties` |
 | Conformance | `Ara3D.SDK.ConformanceTests{,.V2,.Opt,.Scalar}` (4 suites) | `Ara3D.SDK.ConformanceTests.V2Runtime` |
 | Emitter path | `CSharpFunctionBodyWriter` (legacy) + property/method decision web | `TirCSharpBodyWriter` + uniform method-form |
@@ -27,7 +27,7 @@ NoProperties gating forks in TirInliner, the pins, ScalarEraseAnalysis special c
    `ara3d-sdk/src/Plato.Generated` + `Plato.Intrinsics`. Those files stop changing, full stop.
    Protection becomes a **checksum tripwire**, not a regeneration proof — so the Plato repo no
    longer needs the legacy emit path to stay runnable forever just to re-derive frozen bytes.
-2. **One recipe.** The V2 recipe is *the* output. `Generated/Plato.Generated.Optimized` is the
+2. **One recipe.** The V2 recipe is *the* output. `generated/Plato.Generated.Optimized` is the
    adoption shape; `Unoptimized` is the readable reference. Everything else is deletable.
 3. **Delete tests by deleting what they test.** The 4 legacy conformance suites exist to gate
    recipes we are retiring. They go when the recipes go — semantic coverage of the one codebase is
@@ -134,7 +134,7 @@ NoProperties gating forks in TirInliner, the pins, ScalarEraseAnalysis special c
   `TirInliner` / `TirComponentUnroller` / `TirCSharpBodyWriter` — the body-writer superset incl.
   `TirLoweredLoop` is the one home) and `StripCoerce` call sites (`TirLoopLowerer` /
   `TirCSharpBodyWriter` now use `TirRewrite.StripCoerce`). Deleted `Plato.CSharpWriter/unused.txt`.
-  (`TirLambdaCaptureRewriter.ReplaceNode` stays — it is in `PlatoCompiler`, which cannot reference
+  (`TirLambdaCaptureRewriter.ReplaceNode` stays — it is in `Plato.Compiler`, which cannot reference
   `TirRewrite` in `Plato.CSharpWriter`.)
 - **Gate:** both V2 goldens byte-identical (184/184); PlatoTests 103/103.
 

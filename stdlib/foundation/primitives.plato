@@ -14,7 +14,7 @@
 //
 // The set below is the whole set. Adding a declaration here is a claim that the
 // compiler and every backend must know the name; see
-// `PlatoCompiler/Types/WriterPrimitiveNames.cs` for the writer-side mirror and
+// `Plato.Compiler/Types/WriterPrimitiveNames.cs` for the writer-side mirror and
 // plato-365 for the standing effort to keep the set as small as possible.
 
 // ## Scalars

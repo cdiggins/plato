@@ -32,8 +32,8 @@ constructors, conversions, field-properties, static factories, BCL obligations) 
 | Path | Recipe | Status |
 |---|---|---|
 | `ara3d-sdk/src/Plato.Generated` | V1 default style, wrapper scalars, properties | **FROZEN — Studio ships this** |
-| `submodules/Plato/Generated/Plato.Generated.Unoptimized` | V2 (`--csharp-style=extensions --scalar=float --no-properties`) | LIVE (readable reference) |
-| `submodules/Plato/Generated/Plato.Generated.Optimized` | V2 + full optimizer (`--optimize --optimize-arrays --inline --methods --loops`) | LIVE (the adoption target) |
+| `submodules/Plato/generated/Plato.Generated.Unoptimized` | V2 (`--csharp-style=extensions --scalar=float --no-properties`) | LIVE (readable reference) |
+| `submodules/Plato/generated/Plato.Generated.Optimized` | V2 + full optimizer (`--optimize --optimize-arrays --inline --methods --loops`) | LIVE (the adoption target) |
 
 Both V2 goldens are diff-gated by `tools/regen-generated.ps1` (`-Apply` to refresh).
 

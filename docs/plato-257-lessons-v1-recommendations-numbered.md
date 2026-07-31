@@ -99,7 +99,7 @@ Everything not in a cluster can be assigned by file in document order.
   convention is target-type-named constructors; breaking it once creates a second convention.
   Add a "lossy: drops scale" doc line instead.
 - **448** (forbidden-name list in file banner): demoted to tooling — this is a linter rule
-  (LINT00x), not documentation. File a tracker item against `PlatoCompiler/Analysis/Linter.cs`.
+  (LINT00x), not documentation. File a tracker item against `Plato.Compiler/Analysis/Linter.cs`.
 - **461** (split `InterpolationScheme` into 2D/3D sums): demoted to doc-comment. The misuse is
   caught at the use site; two parallel sums add surface for marginal safety.
 - **60** (broad-phase types) and **341** (`RigidBodyWorld` container): deferred, not dropped.

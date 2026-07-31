@@ -1,4 +1,4 @@
-# Small/ — self-contained optimizer-spike projects
+# small/ — self-contained optimizer-spike projects
 
 A fast, decoupled loop for iterating on the Plato C# optimizer. The corpus
 [`plato-src-small`](../plato-src-small) is a small, **self-contained** Plato library that
@@ -8,7 +8,7 @@ reproduces the optimizer-relevant shapes of the real geometry library — `Point
 ([`Plato.Small.Runtime`](Plato.Small.Runtime)) instead.
 
 This is a **development aid, not a release gate**: the `.g.cs` here are overwritten in place by
-`regen-small.ps1` (not diff-gated like `Generated/`), and the projects are intentionally left out
+`regen-small.ps1` (not diff-gated like `generated/`), and the projects are intentionally left out
 of `check-all.ps1`.
 
 ## Layout
@@ -24,9 +24,9 @@ of `check-all.ps1`.
 ## Use
 
 ```powershell
-.\Small\regen-small.ps1            # regenerate + build both variants
-.\Small\regen-small.ps1 -DumpTir   # also write per-phase TIR next to the optimized output
-.\Small\regen-small.ps1 -NoBuild   # regenerate only
+.\small\regen-small.ps1            # regenerate + build both variants
+.\small\regen-small.ps1 -DumpTir   # also write per-phase TIR next to the optimized output
+.\small\regen-small.ps1 -NoBuild   # regenerate only
 ```
 
 Then eyeball `Plato.Small.Optimized/Geometry.g.cs` (`Deform`/`Eval`) and `ArrayLibrary.g.cs`

@@ -144,10 +144,10 @@ source → AST → Symbol graph → Normalize → Constrain → Solve → ⟨ela
 - **AST** (`Plato.AST`) — syntax with source spans. Operators, member access (`a.b`), UFCS
   (`a.b(c)`), and indexers are already lowered here: `a + b` is `Add(a, b)`, `a.Magnitude` is a
   receiver-first call.
-- **Symbol graph** (`PlatoCompiler/Symbols`) — names resolved to definitions, scopes established,
+- **Symbol graph** (`Plato.Compiler/Symbols`) — names resolved to definitions, scopes established,
   nominal `TypeExpression`s in place. Calls still point at whole overload *groups*; expression types
   are not yet resolved.
-- **Normalize** (`PlatoCompiler/Checking/Normalizer`) — canonicalizes the symbol graph for the
+- **Normalize** (`Plato.Compiler/Checking/Normalizer`) — canonicalizes the symbol graph for the
   checker (strips residual parentheses, eta-expands first-class function references into lambdas) and
   guarantees a small set of invariants. Behavior-preserving and idempotent.
 - **Constrain** (`…/ConstraintGenerator`) — bidirectional walk that assigns a type variable to every

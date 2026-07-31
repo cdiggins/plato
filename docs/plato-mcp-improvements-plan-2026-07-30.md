@@ -72,10 +72,10 @@ MSBuild faster; it *can* make the error list cheaper to consume (see P6).
   (parse + `SymbolFactory.CreateTypeDefs`, *not* a full `Compilation`), `Records.cs`
   (`DefRecord` with `NameSpan`/`DeclSpan`/`Signature`/`Owner`, `RefRecord` with
   `RefKind.Value|Type|Operator` and `Targets`).
-- `submodules/Plato/PlatoCompiler/Compilation.cs` — full pipeline from ASTs: SymbolFactory,
+- `submodules/Plato/Plato.Compiler/Compilation.cs` — full pipeline from ASTs: SymbolFactory,
   semantic checks, reified types, function analyses. Takes `IEnumerable<AstNode>`, never
   touches disk — so it can be fed cached ASTs.
-- `submodules/Plato/PlatoCompiler/Analysis/Linter.cs` — LINT001–014 structural checks over
+- `submodules/Plato/Plato.Compiler/Analysis/Linter.cs` — LINT001–014 structural checks over
   a completed `Compilation`; `LintFinding {File, Line, Code, Severity, Message}`.
 - `submodules/Plato/PlatoTests/ForwardStdLibCheckerTests.cs` — the ratchet:
   `new TypeChecker(CheckerTestSupport.CompileForwardStdLib()).CheckAll()`, per-function

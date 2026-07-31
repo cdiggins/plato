@@ -1,4 +1,4 @@
-# Generated/ — buildable generated Plato projects
+# generated/ — buildable generated Plato projects
 
 This folder holds **buildable C# projects** produced by compiling the Plato standard library
 (`stdlib-legacy`) with `Plato.CLI`. Each project is a real SDK-style `.csproj`, references the
@@ -67,7 +67,7 @@ touches `.g.cs`. `docs.html` / `interfaces.txt` are generator side-products and 
 ## Relationship to `golden/` and `ara3d-sdk/src/Plato.Generated`
 
 - `golden/Plato.Generated.V2/` — the older loose-`.g.cs` golden, diff-gated by `regen-golden-v2.ps1`
-  (a `.shproj`, not standalone-buildable). These `Generated/` projects supersede it as the
+  (a `.shproj`, not standalone-buildable). These `generated/` projects supersede it as the
   buildable, solution-wired form.
 - `ara3d-sdk/src/Plato.Generated` — the default C# style, wrapper-typed output, byte-identity gated
   by `regen-plato.ps1`. That is effectively the "original, unerased" golden.

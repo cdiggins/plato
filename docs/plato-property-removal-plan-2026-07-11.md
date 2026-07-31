@@ -12,7 +12,7 @@ Rather than the full-tree big-bang below, the change was contained inside the Pl
   properties, because those names are Plato *fields* elsewhere and keep field-access syntax).
 - **Emitter `--no-properties` flag** (superset of `--methods`): empties the handwritten-property
   pins and drops the primitive property carve-out, so generated call sites use `x.Cos()` etc.
-- **Both `Generated/` projects** import V2 and regenerate with `--no-properties` → zero `{ get`
+- **Both `generated/` projects** import V2 and regenerate with `--no-properties` → zero `{ get`
   in the output; both build clean.
 - **V1 `Plato.Intrinsics` untouched** → default-mode byte-identity and the ara3d-sdk sync gate
   stay green. Nothing outside `submodules/Plato` changed. All `check-all.ps1` gates pass.

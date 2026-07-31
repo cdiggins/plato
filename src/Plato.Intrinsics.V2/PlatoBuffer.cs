@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// The C# name is <c>PlatoBuffer</c> (the compiler maps the Plato name <c>Buffer</c> to it),
     /// mirroring PlatoList and avoiding any confusion with <c>System.Buffer</c>.
     ///
-    /// Effect classification (the compiler's intrinsic table, PlatoCompiler UniqueTypes):
+    /// Effect classification (the compiler's intrinsic table, Plato.Compiler UniqueTypes):
     /// observe = Count, At; mutate = Set; consume = Freeze.
     /// </summary>
     public sealed class PlatoBuffer<T>

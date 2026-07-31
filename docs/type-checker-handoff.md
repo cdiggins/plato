@@ -17,7 +17,7 @@ source → AST → bound Symbol graph → Normalize → Constrain → Solve → 
                                                                      (default-style member bodies: TIR; everything else: legacy writer)
 ```
 
-Everything from **Normalize** onward lives in `PlatoCompiler/Checking/` (the checker + IR) and
+Everything from **Normalize** onward lives in `Plato.Compiler/Checking/` (the checker + IR) and
 `Plato.CSharpWriter/TirCSharpBodyWriter.cs` + `TirLambdaCaptureRewriter.cs` (the TIR→C# writer).
 
 ## Read these first (the durable context)
@@ -26,7 +26,7 @@ Everything from **Normalize** onward lives in `PlatoCompiler/Checking/` (the che
 - `docs/elaborate-emit-plan.md` — the elaborate → monomorphize → emit phase scope + the TIR node shape.
 - `docs/monomorphize-plan.md` — monomorphization off the `ReifiedFunction` oracle + residual grounding.
 - `docs/emit-retarget-plan.md` — the TIR→C# emit, the differential method, the flip.
-- Code: `PlatoCompiler/Checking/{Normalizer, NormalizationInvariants, CheckerModel, ConstraintGenerator,
+- Code: `Plato.Compiler/Checking/{Normalizer, NormalizationInvariants, CheckerModel, ConstraintGenerator,
   Solver, TypeChecker, Tir, Elaborator, TypeSubstitution, Monomorphizer}.cs`;
   `Plato.CSharpWriter/{TirCSharpBodyWriter, TirLambdaCaptureRewriter}.cs`; the `UseTir` flag in
   `Plato.CSharpWriter/{CSharpWriter, CSharpTypeWriter}.cs`.
@@ -54,7 +54,7 @@ Everything from **Normalize** onward lives in `PlatoCompiler/Checking/` (the che
 
 ## Build / test / gate (from `C:\Users\cdigg\git\studio\submodules\Plato`; use absolute paths)
 
-- Build compiler: `dotnet build PlatoCompiler/Plato.Compiler.csproj -c Debug`
+- Build compiler: `dotnet build Plato.Compiler/Plato.Compiler.csproj -c Debug`
 - Build codegen path: `dotnet build Plato.CLI/Plato.CLI.csproj -c Release`
 - Full test suite (currently **80/80**): `dotnet test PlatoTests/PlatoTests.csproj -c Debug`
 - Flip-invariant gates: `--filter "FullyQualifiedName~EmitDifferential|FullyQualifiedName~EmitFlagOn|FullyQualifiedName~FallbackDiagnostics"`
@@ -89,7 +89,7 @@ block emission at all (emission is name+shape; re-dispatch is only an identity r
    `TirTypeScriptBodyWriter`/`TirRustBodyWriter` — each proven byte-identical by a full-library
    flag-on/off differential (`{Extension,TypeScript,Rust,Optimize,Scalar}EmitFlagOnTests`, fallback
    0 everywhere). Shared plumbing: `TirEmitSource` + `TirLambdaCaptureRewriter` now live in
-   `PlatoCompiler/Checking`. The ONE legacy-only path left: scalar+optimize combined (the legacy
+   `Plato.Compiler/Checking`. The ONE legacy-only path left: scalar+optimize combined (the legacy
    scalar analysis reads the component-unrolled symbol tree). Deleting the legacy heuristics is now
    unblocked (they remain as the `--no-tir` fallback and the differentials' reference).
 3. **Checker completeness**: 68/823 stdlib functions still carry located diagnostics (was 78;

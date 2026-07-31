@@ -6,6 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\ara3d-sdk\src\Ara3D.Utils\Ara3D.Utils.csproj" />
-    <ProjectReference Include="..\PlatoCompiler\Plato.Compiler.csproj" />
+    <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
   </ItemGroup>
 </Project>

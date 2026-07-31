@@ -21,7 +21,7 @@ Plan + status: `../../docs/plato-execution-plan-2026-07-09.md`; live work is tra
 (`docs/plato-roadmap.md` was superseded and archived 2026-07-16 — it is now `docs/archive/plato-roadmap.md`,
 historical only.)
 
-**C# style:** for handwritten compiler C# (`PlatoCompiler/`, `Plato.CSharpWriter/`, etc.) follow the
+**C# style:** for handwritten compiler C# (`Plato.Compiler/`, `Plato.CSharpWriter/`, etc.) follow the
 `csharp-style` skill — full reference `../../docs/csharp-style-guide-for-agents.md`. Does NOT govern
 Plato-language `.plato` source, nor the C# the writers emit (that shape is set by the writer code).
 
@@ -51,7 +51,7 @@ Plato-language `.plato` source, nor the C# the writers emit (that shape is set b
   Reference only; never edit, never compile. Diff `stdlib-legacy` against it to see how far the library has moved.
 - `stdlib-legacy-tests/` — law/witness libraries (`Law_*`, `Witness_*` Boolean functions). Never merge into stdlib-legacy.
 - `Plato.CLI/` — entry point. `Program.cs` args: `[input] [output] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--scalar=...] [--methods] [--no-properties] [--loops]` and `lint <folder> [--strict]`. Exits 1 on parse/compile failure (fixed 2026-07-10). The legacy default C# style and `--no-tir` were retired at C4 (the TIR is the sole body writer). `--inline` is wired for the C# writer today; GLSL/C++/CUDA skip lambdas until that lowering is shared.
-- `PlatoCompiler/` — compilation + `Analysis/Linter.cs` (LINT001–005) + `Checking/` (the type checker + Typed IR: Normalize → Constrain → Solve → Elaborate → Monomorphize; handoff doc `docs/type-checker-handoff.md`).
+- `Plato.Compiler/` — compilation + `Analysis/Linter.cs` (LINT001–005) + `Checking/` (the type checker + Typed IR: Normalize → Constrain → Solve → Elaborate → Monomorphize; handoff doc `docs/type-checker-handoff.md`).
 - `Plato.AST/` — the old associativity bug was FIXED in `392dfa8` (2026-07-09); `../../docs/plato-assoc-bug-diagnosis.md` is historical.
 - `Plato.CSharpWriter/` — `CSharpWriter.cs` (flags: `ExtensionStyle`, `Optimize`, `ScalarErase`, `NoProperties`), `TirCSharpBodyWriter.cs` (the SOLE C# body writer — every function body renders from the monomorphized Typed IR; the legacy `CSharpFunctionBodyWriter` was deleted at C4), `ExtensionStyleWriter.cs` (classic extension methods, one static class per Plato library; moved no-arg fns are METHODS `v.Magnitude()`), `TirScalarLowerer.cs` (`--scalar=float` erasure as a TIR lowering pass — it replaced the emit-time `ScalarEraseAnalysis`, deleted at S3), `ComponentUnroller.cs` (`--optimize` field-wise unrolling table).
 - `Plato.GlslWriter/` / `Plato.CppWriter/` — TIR-only POC backends (GLSL ES 3.00; C++17 / CUDA with shared bodies + dialect preamble). Compile-gated by their `*.Tests` projects; not in `Ara3D.Studio.sln`. See each project's `README.md`.
@@ -65,7 +65,7 @@ Plato-language `.plato` source, nor the C# the writers emit (that shape is set b
   the gating stage and passes; Stage 2 (codegen + law runner) generates but does not compile —
   tracked as `plato-308`, detail in that folder's `README.md`. A red Stage 2 is not your fault
   unless your error count exceeds the number in the issue.
-- `Generated/` — buildable generated projects (extension-style, scalar-erased): `Plato.Generated.Unoptimized` (optimizers off, readable reference) and `Plato.Generated.Optimized` (full optimizer pipeline, adoption shape). **No longer goldens** (2026-07-30 retirement): the byte-identity diff-gate and its `regen-generated.ps1` script are gone; these are ordinary cached output anyone may regenerate, and staleness is acceptable. Docs in `Generated/README.md`.
+- `generated/` — buildable generated projects (extension-style, scalar-erased): `Plato.Generated.Unoptimized` (optimizers off, readable reference) and `Plato.Generated.Optimized` (full optimizer pipeline, adoption shape). **No longer goldens** (2026-07-30 retirement): the byte-identity diff-gate and its `regen-generated.ps1` script are gone; these are ordinary cached output anyone may regenerate, and staleness is acceptable. Docs in `generated/README.md`.
 - `Plato.Navigation/` (+ `.CLI`, `.Tests`) — navigation index over a source snapshot: go-to-def,
   find-refs, outline, name search, JSON export, and an `IncrementalIndexer` with a per-file parse
   cache. Reuses the parser and binder; adds no second resolver. Its README lists the known
@@ -119,7 +119,7 @@ after every build — do not bare-`dotnet build` Plato projects when you care ab
    the HTML. If hooks are not installed, run the generator yourself and include
    `docs/status-report.html` (and `docs/status-report-snapshot.json` when you change gate/lint
    snapshot data) in the commit pathspec.
-2. The FROZEN V1 artifacts (ara3d-sdk Plato.Generated/Plato.Intrinsics + Plato-repo Plato.Intrinsics.Legacy) must not change — `tools\check-frozen-v1.ps1` is the gate. The live V2 goldens (`Generated/`) are diff-gated by `regen-generated.ps1`; refresh them in the same change as any intended emitter-behavior change.
+2. The FROZEN V1 artifacts (ara3d-sdk Plato.Generated/Plato.Intrinsics + Plato-repo Plato.Intrinsics.Legacy) must not change — `tools\check-frozen-v1.ps1` is the gate. The live V2 goldens (`generated/`) are diff-gated by `regen-generated.ps1`; refresh them in the same change as any intended emitter-behavior change.
 3. Generated code must compile with DEFAULT LangVersion on net8.0. No C# 14 features.
 4. Known bugs are now BEING fixed (content-leads, from 2026-07-09). The `KnownFailures.json`
    manifest is the burn-down queue: when you fix a bug, REMOVE its manifest entry in the same change

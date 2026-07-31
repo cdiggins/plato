@@ -279,7 +279,7 @@ an open point — start qualified-only; add bare resolution if it drops out chea
 ## 5. C# representation
 
 A sum type is emitted as **one `readonly` `partial struct`** in the house style of
-`Plato.CSharpWriter/CSharpConcreteTypeWriter.cs` (see `Generated/.../_Ring.g.cs` for a
+`Plato.CSharpWriter/CSharpConcreteTypeWriter.cs` (see `generated/.../_Ring.g.cs` for a
 product-type reference). Shape:
 
 1. an `int Kind` discriminant (0-based, declaration order);

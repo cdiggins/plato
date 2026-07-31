@@ -6,7 +6,7 @@
 // The implementations are handwritten in Plato.Intrinsics (PlatoList.cs / PlatoBuffer.cs);
 // the compiler maps the Plato names List/Buffer to the C# names PlatoList/PlatoBuffer and
 // never generates structs for unique types. Method effects live in the compiler's
-// intrinsic table (PlatoCompiler UniqueTypes):
+// intrinsic table (Plato.Compiler UniqueTypes):
 //   observe:  Count, At            — free use, does not invalidate the builder
 //   mutate:   Add, AddRange, Set   — return the builder; rebind ("xs = xs.Add(p)") or chain
 //   consume:  Freeze               — zero-copy handoff to IArray<T>; the builder is

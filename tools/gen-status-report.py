@@ -97,7 +97,7 @@ def rows_issues(items: list[dict]) -> str:
     return "\n".join(out)
 
 
-# Descriptions from PlatoCompiler/Analysis/Linter.cs; counts come from the snapshot.
+# Descriptions from Plato.Compiler/Analysis/Linter.cs; counts come from the snapshot.
 LINT_DEFS: list[tuple[str, str, str, str]] = [
     (
         "LINT001",
@@ -775,7 +775,7 @@ tr.muted-row {{ opacity: .55; }}
     <thead><tr><th>Code</th><th>Severity</th><th>Count</th><th>Meaning</th></tr></thead>
     <tbody>{''.join(lint_rows)}</tbody>
   </table>
-  <div class="note">{issue_a('plato-308')}: forward-stdlib generated C# compile errors are tracked above under target <code>forward-conformance</code>. Compare per-category / per-code counts across runs, not only the total. Lint catalog: <code>PlatoCompiler/Analysis/Linter.cs</code>.</div>
+  <div class="note">{issue_a('plato-308')}: forward-stdlib generated C# compile errors are tracked above under target <code>forward-conformance</code>. Compare per-category / per-code counts across runs, not only the total. Lint catalog: <code>Plato.Compiler/Analysis/Linter.cs</code>.</div>
 </section>
 
 <section>

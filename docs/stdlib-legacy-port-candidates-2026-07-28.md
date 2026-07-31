@@ -303,7 +303,7 @@ Ordered by how much they block.
 
 1. **`unique` builders are unusable** (item 4). `Freeze`, `Count`, `EmptyList` cannot be declared:
    a generic function with one or fewer parameters throws at
-   `PlatoCompiler/Analysis/FunctionInstance.cs:162-165` and aborts the whole compilation.
+   `Plato.Compiler/Analysis/FunctionInstance.cs:162-165` and aborts the whole compilation.
    `stdlib-legacy-tests` (`library UniqueIntrinsics`) declares the same signatures and *does*
    compile, so the two trees reach different paths — that is the thread to pull. Until it is
    fixed no affine algorithm is writable in stdlib.

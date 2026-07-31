@@ -50,7 +50,7 @@ below now genuinely covers these library bodies — which it did **not** while t
 
    Caveat when choosing a body form: **LINT003 cannot see field reads inside statement blocks or
    `var` initializers** — only reads in the returned/final expression register
-   (`PlatoCompiler/Analysis/Linter.cs`, `CheckUnusedFields`). Converting an expression body to a
+   (`Plato.Compiler/Analysis/Linter.cs`, `CheckUnusedFields`). Converting an expression body to a
    statement body can therefore make unread-field findings *rise* for fields that are genuinely
    read. That is a linter defect, not a signal about your code: do not contort a body to chase
    the number, and do not read LINT003 deltas as a measure of coverage.

@@ -65,8 +65,8 @@ Seven projects reference four projects in a *sibling* repository, by relative pa
 
 18 `ProjectReference` entries in total, from:
 
-- `Generated/Plato.Generated.Optimized`
-- `Generated/Plato.Generated.Unoptimized`
+- `generated/Plato.Generated.Optimized`
+- `generated/Plato.Generated.Unoptimized`
 - `conformance/Plato.ForwardConformanceTests`
 - `csg/Ara3D.Csg.Tests`
 - `earcut/Ara3D.Earcut.Tests`
