@@ -1,0 +1,166 @@
+//==
+// # Dual-number arithmetic (forward-mode automatic differentiation)
+//
+// The Numerical obligations of `DualNumber` plus the elementary functions,
+// each carrying its own differentiation rule. Every body is the textbook rule
+// applied to the pair: the Value component is the ordinary computation, the
+// Derivative component is that rule times the incoming derivative (the chain
+// rule). https://en.wikipedia.org/wiki/Automatic_differentiation
+//
+// Usage: seed the variable of interest with `DualVariable`, every other input
+// with `DualConstant`, then evaluate the expression with these operators. The
+// result's Derivative is the exact partial derivative with respect to the seed.
+//
+// Preconditions match the underlying real functions (no division by a zero
+// Value, no Sqrt or NaturalLog of a non-positive Value); a derivative rule
+// that divides by the Value inherits that restriction and is noted where the
+// rule is more restrictive than the function itself.
+
+library NumbersDual
+{
+    //==
+    // # Seeding
+
+    // The dual for a constant: the value with a zero derivative.
+    DualConstant(self: Number): DualNumber
+        => (self, 0.0);
+
+    // The dual for the variable being differentiated: the value seeded with a
+    // unit derivative, so d(self)/d(self) = 1 propagates through the chain.
+    DualVariable(self: Number): DualNumber
+        => (self, 1.0);
+
+    //==
+    // # Additive obligations
+    //
+    // Differentiation is linear, so sums and differences are component-wise.
+
+    // (a + b)' = a' + b'.
+    Add(a: DualNumber, b: DualNumber): DualNumber
+        => (a.Value + b.Value, a.Derivative + b.Derivative);
+
+    // (a - b)' = a' - b'.
+    Subtract(a: DualNumber, b: DualNumber): DualNumber
+        => (a.Value - b.Value, a.Derivative - b.Derivative);
+
+    // (-x)' = -x'.
+    Negative(x: DualNumber): DualNumber
+        => (-x.Value, -x.Derivative);
+
+    // The additive identity: a zero value whose derivative is also zero.
+    Zero(_: DualNumber): DualNumber
+        => (0.0, 0.0);
+
+    //==
+    // # Multiplicative obligations
+    //
+    // https://en.wikipedia.org/wiki/Product_rule
+    // https://en.wikipedia.org/wiki/Quotient_rule
+
+    // The product rule: (a*b)' = a'*b + a*b'.
+    Multiply(a: DualNumber, b: DualNumber): DualNumber
+        => (a.Value * b.Value,
+            a.Derivative * b.Value + a.Value * b.Derivative);
+
+    // Scaling by a constant factor scales the derivative with it.
+    Multiply(x: DualNumber, scalar: Number): DualNumber
+        => (x.Value * scalar, x.Derivative * scalar);
+
+    // The quotient rule: (a/b)' = (a'*b - a*b') / b^2.
+    // Precondition: b.Value is non-zero.
+    Divide(a: DualNumber, b: DualNumber): DualNumber
+        => (a.Value / b.Value,
+            (a.Derivative * b.Value - a.Value * b.Derivative) / b.Value.Square);
+
+    // Dividing by a constant factor divides the derivative by it.
+    // Precondition: scalar is non-zero.
+    Divide(x: DualNumber, scalar: Number): DualNumber
+        => (x.Value / scalar, x.Derivative / scalar);
+
+    // The remainder against a constant factor. The derivative is unchanged:
+    // away from the wrap points the remainder differs from the value by a
+    // locally constant multiple of the divisor.
+    Modulo(x: DualNumber, scalar: Number): DualNumber
+        => (x.Value.Modulo(scalar), x.Derivative);
+
+    // The multiplicative unit: the constant one.
+    One(_: DualNumber): DualNumber
+        => (1.0, 0.0);
+
+    //==
+    // # Interpolation and limits
+
+    // Linear interpolation of value and derivative alike; t is unclamped and
+    // treated as a constant (its own derivative does not participate).
+    Lerp(a: DualNumber, b: DualNumber, t: Number): DualNumber
+        => (a.Value + (b.Value - a.Value) * t,
+            a.Derivative + (b.Derivative - a.Derivative) * t);
+
+    // The least representable value, as a constant.
+    MinValue(_: DualNumber): DualNumber
+        => (Number.MinValue, 0.0);
+
+    // The greatest representable value, as a constant.
+    MaxValue(_: DualNumber): DualNumber
+        => (Number.MaxValue, 0.0);
+
+    //==
+    // # Powers and roots
+
+    // (x^2)' = 2*x*x'.
+    Square(x: DualNumber): DualNumber
+        => (x.Value.Square, 2.0 * x.Value * x.Derivative);
+
+    // (1/x)' = -x' / x^2. Precondition: Value is non-zero.
+    Reciprocal(x: DualNumber): DualNumber
+        => (x.Value.Reciprocal, -x.Derivative / x.Value.Square);
+
+    // (sqrt x)' = x' / (2 * sqrt x). Precondition: Value is strictly positive
+    // (the rule divides by the root, so zero is excluded even though the
+    // square root itself is defined there).
+    Sqrt(x: DualNumber): DualNumber
+        => (x.Value.Sqrt, x.Derivative / (2.0 * x.Value.Sqrt));
+
+    // A constant real power: (x^p)' = p * x^(p-1) * x'.
+    // https://en.wikipedia.org/wiki/Power_rule
+    Pow(x: DualNumber, power: Number): DualNumber
+        => (x.Value.Pow(power),
+            power * x.Value.Pow(power - 1.0) * x.Derivative);
+
+    //==
+    // # Exponential and logarithm
+
+    // (e^x)' = e^x * x'.
+    Exp(x: DualNumber): DualNumber
+        => (x.Value.Exp, x.Value.Exp * x.Derivative);
+
+    // (ln x)' = x' / x. Precondition: Value is strictly positive.
+    NaturalLog(x: DualNumber): DualNumber
+        => (x.Value.NaturalLog, x.Derivative / x.Value);
+
+    //==
+    // # Trigonometry
+    //
+    // https://en.wikipedia.org/wiki/Differentiation_of_trigonometric_functions
+
+    // (sin x)' = cos x * x'.
+    Sin(x: DualNumber): DualNumber
+        => (x.Value.Sin, x.Value.Cos * x.Derivative);
+
+    // (cos x)' = -sin x * x'.
+    Cos(x: DualNumber): DualNumber
+        => (x.Value.Cos, -x.Value.Sin * x.Derivative);
+
+    // (tan x)' = x' / cos^2 x. Precondition: Value is not an odd multiple of
+    // a quarter turn, where the tangent and this rule both diverge.
+    Tan(x: DualNumber): DualNumber
+        => (x.Value.Tan, x.Derivative / x.Value.Cos.Square);
+
+    //==
+    // # Magnitude
+
+    // (|x|)' = sign(x) * x'. Precondition: Value is non-zero, where the
+    // absolute value has no derivative.
+    Abs(x: DualNumber): DualNumber
+        => (x.Value.Abs, x.Value.Sign.ToNumber * x.Derivative);
+}

@@ -1,0 +1,137 @@
+//==
+// # Sparse and banded matrix readings
+//
+// Element access and the shape statistics of the storage forms declared in
+// `matrices-sparse.types.plato`. Element access on a sparse matrix is a sum over
+// the entries naming that position — the coordinate-list invariant — so a
+// position with no entry reads as zero and duplicate entries accumulate, and
+// concatenating two entry lists is exactly matrix addition.
+//
+// Only relations that follow from the field definitions appear here: factorizing
+// or solving these systems needs a numerical kernel this vocabulary does not
+// declare.
+
+library MatricesSparse
+{
+    //==
+    // # Sparse element access
+    //
+    // https://en.wikipedia.org/wiki/Sparse_matrix#Coordinate_list_(COO)
+
+    // The value at a zero-based position: the sum of the entries naming it,
+    // and zero when no entry does.
+    ElementAt(self: SparseMatrix, row: Integer, column: Integer): Number
+        => self.Entries.Reduce(0.0, (total, e) =>
+            total + (e.Row == row && e.Column == column ? e.Value : 0.0));
+
+    // True when the position carries at least one stored entry. A stored entry
+    // whose value is zero still counts as stored.
+    IsStored(self: SparseMatrix, row: Integer, column: Integer): Boolean
+        => self.Entries.Any(e => e.Row == row && e.Column == column);
+
+    // True when the entry lies on the main diagonal.
+    IsDiagonal(self: SparseMatrixEntry): Boolean
+        => self.Row == self.Column;
+
+    // True when the entry stores a zero: a position the coordinate list names
+    // but does not actually populate, which counts as stored but not as a
+    // non-zero.
+    IsExplicitZero(self: SparseMatrixEntry): Boolean
+        => self.Value == 0.0;
+
+    // The signed diagonal offset of the entry: zero on the main diagonal,
+    // positive above it, negative below.
+    DiagonalOffset(self: SparseMatrixEntry): Integer
+        => self.Column - self.Row;
+
+    //==
+    // # Sparse shape statistics
+
+    // The number of stored entries, which is not the number of non-zeros when
+    // entries repeat a position or store an explicit zero.
+    StoredCount(self: SparseMatrix): Integer
+        => self.Entries.Count;
+
+    // The number of positions the dense form would occupy.
+    DenseCount(self: SparseMatrix): Integer
+        => self.NumRows * self.NumColumns;
+
+    // The stored fraction of the dense shape, in [0, 1] for a matrix with no
+    // repeated positions. Precondition: the matrix has a non-empty shape.
+    // (https://en.wikipedia.org/wiki/Sparse_matrix)
+    FillFraction(self: SparseMatrix): Number
+        => self.StoredCount.ToNumber / self.DenseCount.ToNumber;
+
+    // The complement of FillFraction: the fraction of the dense shape left
+    // implicit. This is the number usually quoted as "sparsity".
+    Sparsity(self: SparseMatrix): Number
+        => 1.0 - self.FillFraction;
+
+    // True when the matrix has as many rows as columns.
+    IsSquareShape(self: SparseMatrix): Boolean
+        => self.NumRows == self.NumColumns;
+
+    // True when no entry lies off the main diagonal.
+    IsDiagonalMatrix(self: SparseMatrix): Boolean
+        => self.Entries.All(e => e.IsDiagonal);
+
+    // The trace: the sum of the diagonal entries.
+    // (https://en.wikipedia.org/wiki/Trace_(linear_algebra))
+    DiagonalSum(self: SparseMatrix): Number
+        => self.Entries.Reduce(0.0, (total, e) =>
+            total + (e.IsDiagonal ? e.Value : 0.0));
+
+    //==
+    // # Banded shape
+    //
+    // https://en.wikipedia.org/wiki/Band_matrix
+
+    // The width of the stored band: the lower and upper half-bandwidths plus
+    // the diagonal itself. This is the per-row stride of Values.
+    BandWidth(self: BandedMatrix): Integer
+        => self.LowerBandwidth + self.UpperBandwidth + 1;
+
+    // True when the position falls inside the band, and so may be non-zero.
+    IsInBand(self: BandedMatrix, row: Integer, column: Integer): Boolean
+        => column - row >= -self.LowerBandwidth
+        && column - row <= self.UpperBandwidth;
+
+    // The index into Values of a position inside the band. Precondition:
+    // IsInBand holds for the position.
+    BandOffset(self: BandedMatrix, row: Integer, column: Integer): Integer
+        => row * self.BandWidth + (column - row + self.LowerBandwidth);
+
+    // The value at a zero-based position: the banded slot when the position is
+    // inside the band, and zero outside it.
+    ElementAt(self: BandedMatrix, row: Integer, column: Integer): Number
+        => self.IsInBand(row, column)
+            ? self.Values[self.BandOffset(row, column)]
+            : 0.0;
+
+    // The number of slots the band occupies, including the off-matrix corners
+    // the layout stores and ignores. This is the expected length of Values.
+    BandSlotCount(self: BandedMatrix): Integer
+        => self.NumRows * self.BandWidth;
+
+    // True when the matrix has as many rows as columns.
+    IsSquareShape(self: BandedMatrix): Boolean
+        => self.NumRows == self.NumColumns;
+
+    // True when the band is the main diagonal alone.
+    IsDiagonalMatrix(self: BandedMatrix): Boolean
+        => self.LowerBandwidth == 0 && self.UpperBandwidth == 0;
+
+    // True when the band is one off-diagonal wide on each side.
+    // (https://en.wikipedia.org/wiki/Tridiagonal_matrix)
+    IsTridiagonal(self: BandedMatrix): Boolean
+        => self.LowerBandwidth == 1 && self.UpperBandwidth == 1;
+
+    // True when nothing is stored above the diagonal.
+    // (https://en.wikipedia.org/wiki/Triangular_matrix)
+    IsLowerTriangular(self: BandedMatrix): Boolean
+        => self.UpperBandwidth == 0;
+
+    // True when nothing is stored below the diagonal.
+    IsUpperTriangular(self: BandedMatrix): Boolean
+        => self.LowerBandwidth == 0;
+}

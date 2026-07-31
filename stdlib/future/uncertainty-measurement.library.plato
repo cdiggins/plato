@@ -1,0 +1,138 @@
+//==
+// # Measurement, calibration, and ensemble readings
+//
+// The derived readings of the provenance records in
+// `uncertainty-measurement.types.plato`: when a reading was taken relative to
+// another, whether a calibration is still the one in force, and the sampled
+// statistics of an ensemble.
+//
+// Ensemble statistics are weighted: the mean is the weight-normalized average
+// of the draws, so an unweighted ensemble (every Weight 1) reduces to the
+// plain arithmetic mean. The draws themselves are `Numerical`, which supplies
+// the additive and scaling surface a weighted mean needs and nothing more.
+
+library UncertaintyMeasurement
+{
+    //==
+    // # Measurements
+
+    // How long after a reference instant the reading was taken. Negative when
+    // the reading precedes the reference.
+    AgeSince(self: Measurement<$T>, reference: Instant): Duration
+        => reference.Between(self.Timestamp);
+
+    // True when the reading came from the named source.
+    IsFrom(self: Measurement<$T>, source: String): Boolean
+        => self.Source == source;
+
+    // True when the reading's own trustworthiness reaches the threshold.
+    // Distinct from the value's uncertainty: a high-quality reading of a
+    // noisy quantity is still uncertain.
+    IsTrusted(self: Measurement<$T>, threshold: Probability): Boolean
+        => self.Quality.Value >= threshold.Value;
+
+    // The measured value stripped of its provenance.
+    Reading(self: Measurement<$T>): $T
+        => self.Value;
+
+    //==
+    // # Measurement series
+
+    // How many readings the run holds.
+    ReadingCount(self: MeasurementSeries<$T>): Integer
+        => self.Measurements.Count;
+
+    // The values of the run in time order, provenance dropped.
+    Readings(self: MeasurementSeries<$T>): Array<$T>
+        => self.Measurements.Map(m => m.Value);
+
+    // The span from the first reading to the last. Precondition: the run is
+    // not empty.
+    Span(self: MeasurementSeries<$T>): Duration
+        => self.Measurements[0].Timestamp
+            .Between(self.Measurements[self.ReadingCount - 1].Timestamp);
+
+    //==
+    // # Calibration
+
+    // How many fitted parameters the model carries.
+    ParameterCount(self: CalibrationModel): Integer
+        => self.Parameters.Count;
+
+    // True when the model carries a parameter of the given name.
+    HasParameter(self: CalibrationModel, name: String): Boolean
+        => self.Parameters.Any(p => p.Name == name);
+
+    // True when the model is the one in force for a reading taken at the
+    // given instant: the calibration was performed no later than the reading.
+    AppliesAt(self: CalibrationModel, moment: Instant): Boolean
+        => self.PerformedAt <= moment;
+
+    // True when the model is named as expected, the identity check a caller
+    // makes before trusting a conversion.
+    IsNamed(self: CalibrationModel, name: String): Boolean
+        => self.Name == name;
+
+    // The nominal value of a parameter, its fitted uncertainty dropped.
+    NominalValue(self: CalibrationParameter): Number
+        => self.Value.Value;
+
+    // The relative standard uncertainty of a parameter: its standard
+    // uncertainty as a fraction of its nominal value. Precondition: the
+    // nominal value is non-zero.
+    RelativeUncertainty(self: CalibrationParameter): Number
+        => self.Value.StandardUncertainty / self.Value.Value.Abs;
+
+    // True when the parameter is expressed in the given unit.
+    IsInUnit(self: CalibrationParameter, unit: UnitOfMeasure): Boolean
+        => self.Unit.Name == unit.Name;
+
+    //==
+    // # Ensembles
+    //
+    // https://en.wikipedia.org/wiki/Monte_Carlo_method
+
+    // How many draws the ensemble holds.
+    DrawCount(self: Ensemble<$T>): Integer
+        => self.Samples.Count;
+
+    // The total importance weight of the draws, the normalizer of the
+    // weighted mean.
+    WeightSum(self: Ensemble<$T>): Number
+        => self.Samples.Reduce(0.0, (total, s) => total + s.Weight);
+
+    // The weighted mean of the draws: the sampled estimate of the uncertain
+    // value's nominal reading. Precondition: the total weight is non-zero.
+    WeightedMean(self: Ensemble<Numerical>): Numerical
+        => self.Samples
+            .Reduce(self.Samples[0].Value.Zero, (total, s) => total + s.Contribution)
+            / self.WeightSum;
+
+    // The share of the total weight one draw carries, in [0, 1].
+    // Precondition: the total weight is non-zero.
+    WeightShare(self: Ensemble<$T>, draw: Integer): Number
+        => self.Samples[draw].Weight / self.WeightSum;
+
+    // What one draw contributes to the ensemble's weighted sum: its value
+    // scaled by its weight.
+    Contribution(self: MonteCarloSample<Numerical>): Numerical
+        => self.Value * self.Weight;
+
+    // True when the draw carries no weight and so does not affect any
+    // ensemble statistic.
+    IsNegligible(self: MonteCarloSample<$T>): Boolean
+        => self.Weight == 0.0;
+
+    //==
+    // # Uncertain pose
+
+    // The pose's nominal placement, its covariance dropped.
+    NominalPose(self: UncertainPose3D): Pose3D
+        => self.Value;
+
+    // The total variance of the pose error: the trace of its covariance. The
+    // single number that says how uncertain the placement is overall.
+    // (https://en.wikipedia.org/wiki/Trace_(linear_algebra))
+    TotalVariance(self: UncertainPose3D): Number
+        => self.Covariance.Trace;
+}

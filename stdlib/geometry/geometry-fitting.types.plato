@@ -1,0 +1,72 @@
+//==
+// # Fitted primitives
+//
+// The results of fitting a primitive shape to a set of sample points: the
+// recovered shape paired with a record of how well it matches. Fitting is a
+// numerical estimation this vocabulary does not perform — these are the shapes
+// such an estimator returns, so that a caller reading a fit always finds the
+// residual statistics beside the shape rather than losing them at the API seam.
+//
+// Every fit reports its quality through the same FitQuality record, so a
+// tolerance check reads the same way whatever was fitted.
+
+// How closely a fitted shape matches the samples it was fitted to: the
+// root-mean-square of the point-to-shape distances, the largest single such
+// distance, and how many samples stand behind both. All distances are
+// non-negative and in coordinate units; MaximumError is never less than
+// RootMeanSquareError.
+// (https://en.wikipedia.org/wiki/Root-mean-square_deviation)
+type FitQuality
+    implements Value
+{
+    RootMeanSquareError: Number;
+    MaximumError: Number;
+    SampleCount: Integer;
+}
+
+// A line fitted to points in the plane, with its residual statistics.
+// (https://en.wikipedia.org/wiki/Total_least_squares)
+type LineFit2D
+    implements Value, Fitted
+{
+    Line: Line2D;
+    Quality: FitQuality;
+}
+
+// A line fitted to points in space, with its residual statistics. The
+// principal-axis fit of a point set.
+type LineFit3D
+    implements Value, Fitted
+{
+    Line: Line3D;
+    Quality: FitQuality;
+}
+
+// A plane fitted to points in space, with its residual statistics. The
+// least-squares plane of a point set; its normal is the direction of least
+// variance. (https://en.wikipedia.org/wiki/Principal_component_analysis)
+type PlaneFit3D
+    implements Value, Fitted
+{
+    Plane: Plane;
+    Quality: FitQuality;
+}
+
+// A circle fitted to points in the plane, with its residual statistics.
+// Residuals are radial: the distance from each sample to the circle itself,
+// not to its centre. (https://en.wikipedia.org/wiki/Circle_fitting)
+type CircleFit2D
+    implements Value, Fitted
+{
+    Circle: Circle;
+    Quality: FitQuality;
+}
+
+// A sphere fitted to points in space, with its residual statistics. Residuals
+// are radial, as for CircleFit2D.
+type SphereFit3D
+    implements Value, Fitted
+{
+    Sphere: Sphere;
+    Quality: FitQuality;
+}

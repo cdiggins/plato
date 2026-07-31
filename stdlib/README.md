@@ -15,8 +15,9 @@ Target applications: geometry (primary), 2D/3D and N-dimensional computation, an
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
 graphics, image processing, and engineering.
 
-Current contents (2026-07-30): **399 source files (189 `*.types.plato` files + 45
-`*.concepts.plato` files + 165 `*.library.plato` files), 157 concepts, 1152 types**.
+Current contents (2026-07-30): **409 source files (192 `*.types.plato` files + 46
+`*.concepts.plato` files + 170 `*.library.plato` files, plus `foundation/primitives.plato`),
+162 concepts, 1168 types and 18 primitives**.
 
 Every file holds exactly
 one **kind** of declaration — `<stem>.concepts.plato` holds concepts, `<stem>.types.plato` holds
@@ -142,7 +143,7 @@ Owning declaration files cite conventions with a one-line
 
 ## Layers and file map
 
-This ordered index is the canonical reading order. Every one of the 398 `*.plato` files in the
+This ordered index is the canonical reading order. Every one of the 409 `*.plato` files in the
 folder appears in exactly one row; file names are given without the `.plato` extension, so
 `core-logic.concepts` means `core-logic.concepts.plato` and a bare stem like `primitives`
 means `primitives.types.plato`. Layer numbers are the reading order and
@@ -154,12 +155,12 @@ initial build-out; it described a work assignment, not the tree, and is gone.)
 |---|-------|-------|
 | 1 | Foundation — primitives, core comparison & logic | `core-comparison.concepts`, `core-comparison.library`, `core-logic.concepts`, `core-logic.library`, `primitives`, `primitives-arrays`, `primitives-builders`, `primitives-functions`, `primitives-tuples` |
 | 2 | Foundation — algebra, collections, functional | `algebra-metric.concepts`, `algebra-metric.library`, `algebra-numeric.concepts`, `algebra-numeric.library`, `algebra-operations.concepts`, `algebra-operations.library`, `collections-containers.concepts`, `collections-containers.library`, `collections-grids.library`, `collections-indexable.concepts`, `collections-indexable.library`, `collections-jagged`, `collections-jagged.concepts`, `collections-jagged.library`, `collections-sampling.library`, `functional-procedural.library`, `functional.concepts` |
-| 3 | Foundation — numbers, quantities, angles, constants, time | `angles.library`, `constants.library`, `numbers`, `quantities-dynamic`, `quantities-electromagnetic`, `quantities-geometric`, `quantities-kinematic`, `quantities-material`, `quantities-mechanical`, `quantities-photometric`, `quantities-projections.library`, `quantities-thermal`, `quantities.concepts`, `quantities.library`, `time` |
-| 4 | Foundation — vectors, matrices, rotations, points, axes | `axes`, `axes-2d.library`, `axes-signed.library`, `axes.library`, `matrices`, `matrices.concepts`, `numeric-structures-algebra.library`, `numeric-structures-components.library`, `numeric-structures-coordinate.library`, `numeric-structures-matrix.library`, `numeric-structures-quantity.library`, `numeric-structures-vector.library`, `points`, `points-curvilinear`, `points-parametric`, `points.concepts`, `rotations`, `vectors-geometric`, `vectors-integer`, `vectors-tuples`, `vectors.concepts` |
+| 3 | Foundation — numbers, quantities, angles, constants, time | `angles.library`, `constants.library`, `numbers`, `quantities-dynamic`, `quantities-electromagnetic`, `quantities-geometric`, `quantities-kinematic`, `quantities-material`, `quantities-mechanical`, `quantities-photometric`, `quantities-projections.library`, `quantities-thermal`, `quantities.concepts`, `quantities.library`, `numbers-dual`, `numbers-dual.library`, `time` |
+| 4 | Foundation — vectors, matrices, rotations, points, axes | `axes`, `axes-2d.library`, `axes-signed.library`, `axes.library`, `matrices`, `matrices.concepts`, `matrices-sparse`, `matrices-sparse.library`, `numeric-structures-algebra.library`, `numeric-structures-components.library`, `numeric-structures-coordinate.library`, `numeric-structures-matrix.library`, `numeric-structures-quantity.library`, `numeric-structures-vector.library`, `points`, `points-curvilinear`, `points-parametric`, `points.concepts`, `rotations`, `vectors-geometric`, `vectors-integer`, `vectors-tuples`, `vectors.concepts` |
 | 5 | Foundation — intervals, bounds, sizes, transforms | `deformations`, `deformations.concepts`, `deformations.library`, `intervals`, `intervals-bounds`, `intervals-bounds.concepts`, `intervals-sizes`, `intervals-transforms-bounds.library`, `intervals-transforms-deformable.library`, `intervals-transforms-interval.library`, `intervals-transforms-transformable.library`, `transforms-affine`, `transforms-affine.library`, `transforms-frames`, `transforms-frames.library`, `transforms-identities.library`, `transforms-motor`, `transforms-motor.library`, `transforms-points.library`, `transforms-pose`, `transforms-pose.library`, `transforms-rotations.library`, `transforms-trs`, `transforms-trs.library`, `transforms.concepts` |
 | 6 | Foundation — color | `color`, `color-named.library`, `color.library` |
 | 7 | Intrinsics (host-provided) | `intrinsics.library` |
-| 8 | Geometry concepts & primitive shapes | `geometry-kernels.library`, `geometry-measures.concepts`, `geometry-measures.library`, `geometry-pointsets.library`, `geometry-queries.concepts`, `geometry-queries.library`, `geometry.concepts`, `geometry.library`, `lines`, `lines-planes`, `lines-planes.library`, `lines.library`, `planar-boxes`, `planar-boxes.library`, `planar-circles`, `planar-circles.library`, `planar-ellipses`, `planar-ellipses.library`, `planar-shapes.library`, `planar-triangles`, `planar-triangles.library`, `polygons`, `polygons-kernels.library`, `polygons-polylines`, `polygons-polylines.library`, `polygons-spatial`, `polygons-spatial.library`, `polygons.library`, `spatial-boxes`, `spatial-boxes.library`, `spatial-capsules.library`, `spatial-cylinders`, `spatial-cylinders.library`, `spatial-patches`, `spatial-patches.library`, `spatial-primitives.library`, `spatial-simplices`, `spatial-simplices.library`, `spatial-spheres`, `spatial-spheres.library`, `spatial-tori`, `spatial-tori.library` |
+| 8 | Geometry concepts & primitive shapes | `geometry-fitting.concepts`, `geometry-fitting`, `geometry-fitting.library`, `geometry-hulls`, `geometry-hulls.library`, `geometry-kernels.library`, `geometry-measures.concepts`, `geometry-measures.library`, `geometry-pointsets.library`, `geometry-queries.concepts`, `geometry-queries.library`, `geometry.concepts`, `geometry.library`, `lines`, `lines-planes`, `lines-planes.library`, `lines.library`, `planar-boxes`, `planar-boxes.library`, `planar-circles`, `planar-circles.library`, `planar-ellipses`, `planar-ellipses.library`, `planar-shapes.library`, `planar-triangles`, `planar-triangles.library`, `polygons`, `polygons-kernels.library`, `polygons-polylines`, `polygons-polylines.library`, `polygons-spatial`, `polygons-spatial.library`, `polygons.library`, `spatial-boxes`, `spatial-boxes.library`, `spatial-capsules.library`, `spatial-cylinders`, `spatial-cylinders.library`, `spatial-patches`, `spatial-patches.library`, `spatial-primitives.library`, `spatial-simplices`, `spatial-simplices.library`, `spatial-spheres`, `spatial-spheres.library`, `spatial-tori`, `spatial-tori.library` |
 | 9 | Curves, splines, surfaces, solids | `curves-2d-arcs`, `curves-2d-arcs.library`, `curves-2d-polar`, `curves-2d-polar.library`, `curves-2d-spirals`, `curves-2d-spirals.library`, `curves-3d`, `curves-3d.library`, `curves-capabilities.concepts`, `curves-capabilities.library`, `curves-sampling.library`, `curves.concepts`, `curves.library`, `solids-csg`, `solids-generated`, `solids-polyhedra`, `solids.library`, `splines-bezier`, `splines-bezier.library`, `splines-bspline`, `splines-bspline.library`, `splines-hermite`, `splines-hermite.library`, `splines-interpolating`, `splines-interpolating.library`, `surfaces-generated`, `surfaces-patches`, `surfaces-solids.concepts`, `surfaces-solids.library`, `surfaces-special`, `surfaces.library` |
 | 10 | Fields, implicits/SDF, noise, sampling | `fields-constant`, `fields-differentiable.concepts`, `fields-function`, `fields-graphs`, `fields-graphs.library`, `fields-implicits-core.library`, `fields-implicits-differentiable.library`, `fields-implicits-distance.library`, `fields-implicits-function.library`, `fields-implicits-metaballs.library`, `fields-implicits-nodes.library`, `fields-implicits-sampled.library`, `fields-implicits-shapes.library`, `fields-implicits-time-varying.library`, `fields-time-varying.concepts`, `fields.concepts`, `implicit-sdf-function`, `implicit-sdf-metaballs`, `implicit-sdf-modifiers`, `implicit-sdf-modifiers.library`, `implicit-sdf-operators.library`, `implicit-sdf-primitives.library`, `implicit-sdf-sampled`, `implicit-sdf-sampled.library`, `implicit-sdf-trees`, `implicit-sdf-trees.library`, `implicit-sdf.concepts`, `noise`, `noise-basis`, `noise-fractal`, `noise-warped`, `sampling-curves`, `sampling-fields`, `sampling-grids`, `sampling-patterns`, `sampling-resampling` |
 | 11 | Topology, meshes, point clouds, spatial structures & queries | `mesh-attributes`, `meshes`, `meshes-face-arrays`, `meshes-face-arrays.library`, `meshes-faces.library`, `meshes-geometry.library`, `meshes-indexed.library`, `meshes-lines-points`, `meshes-polygon-incidence.library`, `meshes-sections`, `meshes-topology.library`, `meshes-volumetric`, `meshes.concepts`, `pointclouds`, `pointclouds-voxels.concepts`, `spatial-grids`, `spatial-implicits`, `spatial-kdtrees`, `spatial-queries-overlap`, `spatial-queries-proximity`, `spatial-queries-rays`, `spatial-queries.concepts`, `spatial-queries.library`, `spatial-structures.concepts`, `spatial-trees`, `topology-adjacency`, `topology-adjacency.library`, `topology-classification`, `topology-half-edges`, `topology-indices`, `topology.concepts`, `voxels` |
@@ -168,10 +169,10 @@ initial build-out; it described a work assignment, not the tree, and is gone.)
 | 14 | Color science & imaging | `color-spaces`, `color-spaces-models`, `color-spaces-palettes`, `color-spaces-video`, `image-processing-adjustments`, `image-processing-compositing`, `image-processing-filters`, `image-processing-resampling`, `images`, `images-containers`, `images.concepts`, `images.library`, `texturing`, `texturing-sampling`, `texturing.concepts`, `texturing.library` |
 | 15 | Rendering | `cameras`, `cameras-optics`, `cameras.concepts`, `cameras.library`, `lights`, `lights-settings`, `lights.concepts`, `lights.library`, `materials`, `materials-layers`, `render-post-processing`, `render-settings`, `render-vertex-layout`, `scene3d`, `scene3d-indices`, `scene3d-instancing` |
 | 16 | Physics & simulation | `collision`, `collision-contacts`, `joints-2d`, `joints-3d`, `joints-limits`, `kinematics`, `kinematics-trajectories`, `kinematics.concepts`, `kinematics.library`, `particles-force-fields`, `particles-simulation`, `particles-soft-bodies`, `rigid-dynamics`, `rigid-dynamics-forces`, `rigid-dynamics.concepts`, `rigid-dynamics.library` |
-| 17 | Math, statistics, signals, optimization | `optimization`, `optimization-programs`, `optimization-solvers`, `polynomials`, `polynomials-composite`, `polynomials-series`, `polynomials.library`, `random`, `random-continuous`, `random-continuous-gamma`, `random-continuous-gamma.library`, `random-continuous-tails.library`, `random-continuous.library`, `random-discrete`, `random-discrete.library`, `random-distributions.library`, `random-multivariate`, `random.concepts`, `random.library`, `signals`, `signals-filters`, `signals-generators`, `statistics`, `statistics-correlation`, `statistics-correlation.library`, `statistics.library`, `uncertainty`, `uncertainty-estimation` |
+| 17 | Math, statistics, signals, optimization | `optimization`, `optimization-programs`, `optimization-solvers`, `polynomials`, `polynomials-composite`, `polynomials-series`, `polynomials.library`, `random`, `random-continuous`, `random-continuous-gamma`, `random-continuous-gamma.library`, `random-continuous-tails.library`, `random-continuous.library`, `random-discrete`, `random-discrete.library`, `random-distributions.library`, `random-multivariate`, `random.concepts`, `random.library`, `signals`, `signals-filters`, `signals-generators`, `statistics`, `statistics-correlation`, `statistics-correlation.library`, `statistics.library`, `uncertainty`, `uncertainty-estimation`, `uncertainty-measurement`, `uncertainty-measurement.library` |
 | 18 | Advanced & applied | `differential-geometry-frames`, `differential-geometry-geodesics`, `differential-geometry-surfaces`, `engineering-beams`, `engineering-machine-elements`, `engineering-materials`, `engineering-sections`, `geo-spatial`, `geo-spatial-rasters`, `geo-spatial-reference-systems`, `geo-spatial.concepts`, `geo-spatial.library`, `graphs`, `graphs-algorithms`, `graphs.concepts`, `graphs.library`, `higher-dimensions`, `higher-dimensions-fractals`, `scientific-data-records`, `scientific-data-series`, `scientific-data.concepts`, `scientific-data.library` |
 
-The 120 `*.library.plato` files hold the `library` blocks that implement derived functionality on
+The 170 `*.library.plato` files hold the `library` blocks that implement derived functionality on
 the concepts and types declared beside them. Fifty-four of them belong to the P1–P9 concept work
 packages; the other sixty-six serve foundation domains or supply the concrete bodies that used to
 sit inline in a declaration file. Ground rules and the package-to-file table live in
@@ -194,6 +195,7 @@ Foundation reading order, file by file:
 - `collections-containers.concepts.plato` — Sliceable, Concatenable, SetLike, MapLike, StackLike, QueueLike.
 - `functional.concepts.plato` — Procedural, Bijective, Periodic, ParameterDomain.
 - `numbers.types.plato` — Complex, Rational, Proportion, Percent, Probability, ItemIndex, Cardinal, ComparisonTolerance.
+- `numbers-dual.types.plato` — DualNumber (the forward-mode automatic-differentiation carrier).
 - `quantities.concepts.plato` — the `Quantity` concept.
 - `quantities-geometric.types.plato` / `-kinematic` / `-mechanical` / `-thermal` / `-electromagnetic` / `-photometric` / `-material` / `-dynamic` — the ~50 physical quantity types (`Angle` and `Length` live in `quantities-geometric.types.plato`), plus Dimension / UnitOfMeasure / DynamicQuantity.
 - `time.types.plato` — Duration, Instant, TimeInterval, FrameRate, FrameTime, Timecode, Tempo, BeatTime.
@@ -203,6 +205,7 @@ Foundation reading order, file by file:
 - `vectors-integer.types.plato` — IntegerVector2/3/4.
 - `matrices.concepts.plato` — the `MatrixLike` concept.
 - `matrices.types.plato` — Matrix2x2, Matrix3x3, Matrix4x4, Matrix3x2, Matrix4x3, SymmetricMatrix3x3, MatrixN, Tensor.
+- `matrices-sparse.types.plato` — SparseMatrixEntry, SparseMatrix, BandedMatrix (storage proportional to content, deliberately not MatrixLike).
 - `rotations.types.plato` — Quaternion, AxisAngle, RotationOrder, EulerAngles, Rotation2D, Bivector2D/3D, Rotor2D/3D.
 - `points.concepts.plato` — the `Coordinate` concept.
 - `points.types.plato` — Point2D, Point3D, PointN, HomogeneousPoint2D/3D.
@@ -242,6 +245,8 @@ the authority, not this table.
 | `Jagged` concept (CSR row packing) | `collections-jagged.concepts.plato` |
 | `JaggedArray<T>` | `collections-jagged.types.plato` |
 | `ComparisonTolerance`, `ItemIndex`, `Complex`, `Rational`, `Proportion`, `Percent`, `Probability`, `Cardinal` | `numbers.types.plato` |
+| `DualNumber` | `numbers-dual.types.plato` |
+| `SparseMatrixEntry`, `SparseMatrix`, `BandedMatrix` | `matrices-sparse.types.plato` |
 | `Quantity` concept | `quantities.concepts.plato` |
 | `Angle`, `Length` (and the other ~50 quantity types, by branch) | `quantities-geometric.types.plato` and the other `quantities-*.plato` files |
 | `Number2/3/4/8` | `vectors-tuples.types.plato` |
@@ -258,6 +263,8 @@ the authority, not this table.
 | `Bounded2D/3D`, `PointSet2D/3D`, `Centroid2D/3D`, the measurable concepts | `geometry-measures.concepts.plato` |
 | `ContainsPoint2D/3D`, `NearestPoint2D/3D`, `SupportMappable2D/3D` | `geometry-queries.concepts.plato` |
 | `Line2D/3D`, `Ray2D/3D`, `LineSegment2D/3D` | `lines.types.plato` |
+| `FitQuality`, the `Fit` records | `geometry-fitting.types.plato`; `Fitted` concept in `geometry-fitting.concepts.plato` |
+| `ConvexHull2D/3D` | `geometry-hulls.types.plato` |
 | `Plane`, `HalfSpace` | `lines-planes.types.plato` |
 | `Triangle2D`, `Quad2D` | `planar-triangles.types.plato` |
 | `Circle`, `Capsule2D` | `planar-circles.types.plato` |
