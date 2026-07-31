@@ -119,8 +119,10 @@ library FoundationLaws
 
     // The `-` spelling agrees with Between: a - b is the displacement from b to a.
     // This is the derivation that replaced the per-type `Subtract(a, b) => Between(b, a)`.
+    // Compared as deltas: `a - b` and `Between` both yield a Vector2D, and Distance is declared
+    // between Points, not between displacements.
     Law_SubtractIsReversedBetween2D(a: Point2D, b: Point2D): Boolean
-        => (a - b).Distance(b.Between(a).ToPoint) <= 1e-4;
+        => ((a - b) - b.Between(a)).Magnitude <= 1e-4;
 
     // Displacing by a delta and back is the identity: (p + d) - d == p. Exercises the
     // derived Subtract(position, delta), which routes through Negative on the delta.

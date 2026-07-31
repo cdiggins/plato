@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Ara3D.Geometry.Compiler;
 using Ara3D.Geometry.Compiler.Analysis;
+using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
 using Ara3D.Geometry.Compiler.Types;
 
@@ -236,6 +237,22 @@ namespace Ara3D.Geometry.CSharpWriter
 
                 var toStr = "$\"{{ " + FieldNames.Select(fn => $"\\\"{fn}\\\" = {{{fn}}}").JoinStringsWithComma() + " }}\"";
                 TypeWriter.WriteLine($"{Attr} public override string ToString() => {toStr};");
+            }
+            // A primitive whose handwritten counterpart is a WRAPPER (the five scalars) carries a
+            // `Value` payload the scaffolding reads. `Type` and the Function arities do not: they
+            // map straight onto System.Type / System.Func and no Plato.Intrinsics partial declares
+            // a Value, so the same scaffolding would name a member that does not exist (measured:
+            // `Value` binding to the concept of that name instead, CS0305 + CS1061). They get the
+            // field-less shape — every value of such a type is interchangeable here.
+            else if (!CSharpWriter.ScalarPrimitives.ContainsKey(SimpleName))
+            {
+                TypeWriter.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name};");
+                TypeWriter.WriteLine($"{Attr} public {boolT} Equals({Name} other) => true;");
+                TypeWriter.WriteLine($"{Attr} public {boolT} NotEquals({Name} other) => false;");
+                TypeWriter.WriteLine($"{Attr} public static {boolT} operator==({Name} a, {Name} b) => true;");
+                TypeWriter.WriteLine($"{Attr} public static {boolT} operator!=({Name} a, {Name} b) => false;");
+                TypeWriter.WriteLine($"{Attr} public override int GetHashCode() => 0;");
+                TypeWriter.WriteLine($"{Attr} public override string ToString() => \"{SimpleName}\";");
             }
             else
             {
@@ -480,6 +497,18 @@ namespace Ara3D.Geometry.CSharpWriter
         //      e.g. Number.Cubic uses a.Pow3), plus any static functions (nothing else can
         //      host a static under erasure).
         // ============================================================================
+        /// <summary>Whether <paramref name="target"/>'s own single-field converter block already
+        /// emits "implicit operator {target}({SimpleName})" — the Number bridge written for a
+        /// non-primitive struct whose one field is a Number. Mirrors the condition in the
+        /// constructor; a second copy from the scalar re-home is CS0557 (plato-365: Angle stopped
+        /// being a primitive, so its bridge started being generated).</summary>
+        private bool SingleFieldConverterCovers(TypeDef target)
+            => SimpleName == "Number"
+               && target != null
+               && !CSharpWriter.PrimitiveTypes.ContainsKey(target.Name)
+               && target.Fields.Count == 1
+               && target.Fields[0].Type?.Def?.Name == "Number";
+
         public void WriteScalarErasedType()
         {
             var prim = CSharpWriter.ScalarPrimitives[SimpleName];
@@ -504,7 +533,7 @@ namespace Ara3D.Geometry.CSharpWriter
             // Implicit conversions FROM the primitive (e.g. float -> Vector2 broadcast): the
             // wrapper's generated implicit operators are dropped with the struct, so the
             // TARGET types gain "implicit operator {T}({prim})" partials instead.
-            var implicitOps = new List<(string RetType, string MethodName)>();
+            var implicitOps = new List<(string RetType, string MethodName, TypeDef Target)>();
 
             string WrapperBridge(CSharpFunctionInfo bfi)
             {
@@ -591,7 +620,7 @@ namespace Ara3D.Geometry.CSharpWriter
                     {
                         // The generated implicit conversion operator moves to the TARGET
                         // type's partial struct (float -> Vector2 broadcast etc.).
-                        implicitOps.Add((fi.ReturnType, fi.Name));
+                        implicitOps.Add((fi.ReturnType, fi.Name, f.ReturnType?.Def));
                         dropped.Add($"implicit operator {fi.ReturnType}({prim}) => re-homed as a partial-struct operator on {fi.ReturnType} + method {fi.Name}()");
                     }
                     tw.Write(fi.ExtensionSignature);
@@ -694,6 +723,13 @@ namespace Ara3D.Geometry.CSharpWriter
 
             foreach (var op in implicitOps.Distinct())
             {
+                // Skip the re-home when the TARGET type's own writer already emits this exact
+                // conversion: a single-{prim}-field non-primitive struct gets
+                // "implicit operator T({SimpleName})" from its single-field converter block, and a
+                // second copy here is CS0557 (measured on Angle, whose one field is a Number).
+                if (SingleFieldConverterCovers(op.Target))
+                    continue;
+
                 // Deliberately WRAPPER-sourced (not float-sourced): a float-sourced operator
                 // would make member calls like v.Multiply(floatExpr) ambiguous between
                 // Multiply(Number) and Multiply(Vector2) (two one-step user conversions from
@@ -1046,6 +1082,8 @@ namespace Ara3D.Geometry.CSharpWriter
             tw.WriteLine($"public static class {SimpleName}Extensions");
             tw.WriteStartBlock();
 
+            WriteSumCaseConstructorExtensions();
+
             foreach (var f in ConcreteType.UnimplementedFunctions)
                 WriteExtensionMethod(f);
 
@@ -1058,6 +1096,35 @@ namespace Ara3D.Geometry.CSharpWriter
             
             
             tw.WriteEndBlock();
+        }
+
+        /// <summary>
+        /// Receiver-style twins of the per-case factories on a sum type: `Line(seg)` in Plato
+        /// lowers the same way every other one-argument call does — as `seg.Line()` — but the
+        /// factory is a STATIC on the sum struct, so that call site has nothing to bind to
+        /// (measured: `BrepCurve.Line`, `BrepSurface.Bilinear`). Emitting the twin here keeps the
+        /// lowering uniform instead of teaching the body writer about case constructors.
+        ///
+        /// A field-less case gets no twin: there is no receiver to hang it on, and its call sites
+        /// name the factory directly.
+        /// </summary>
+        private void WriteSumCaseConstructorExtensions()
+        {
+            if (!ConcreteType.TypeDef.IsSum)
+                return;
+
+            foreach (var c in ConcreteType.TypeDef.Cases)
+            {
+                if (c.Fields.Count == 0)
+                    continue;
+                var names = c.Fields.Select(f => CSharpTypeWriter.FieldNameToParameterName(f.Name)).ToList();
+                var types = c.Fields.Select(f => TypeWriter.ToCSharpType(f.Type)).ToList();
+                var ps = types.Zip(names, (t, n) => $"{t} {n}").ToList();
+                ps[0] = "this " + ps[0];
+                TypeWriter.WriteLine(
+                    $"{Attr} public static {SimpleName} {c.Name}({ps.JoinStringsWithComma()})" +
+                    $" => {SimpleName}.{c.Name}({names.JoinStringsWithComma()});");
+            }
         }
 
         /// <summary>

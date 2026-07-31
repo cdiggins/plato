@@ -418,5 +418,12 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Boolean IsInfinite(this Number self) => float.IsInfinity(self.Value);
         [MethodImpl(AggressiveInlining)] public static Boolean IsFinite(this Number self) => float.IsFinite(self.Value);
         [MethodImpl(AggressiveInlining)] public static Integer ToInteger(this Number self) => (int)self.Value;
+
+        // Number's own Real/Interpolatable/Invertible obligations. Every other type discharges
+        // these with a Plato body, but the primitive has no declaration to carry one, so the
+        // generated scalar forwarder (`((Number)x).Inverse()`) lands here.
+        [MethodImpl(AggressiveInlining)] public static Number ToNumber(this Number self) => self;
+        [MethodImpl(AggressiveInlining)] public static Number Inverse(this Number self) => 1f / self.Value;
+        [MethodImpl(AggressiveInlining)] public static Number Lerp(this Number a, Number b, Number t) => a.Value + (b.Value - a.Value) * t.Value;
     }
 }

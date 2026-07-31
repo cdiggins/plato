@@ -554,8 +554,9 @@ namespace Ara3D.Geometry.CSharpWriter
                 // Angle.Radians and Plane.Distance left this table with plato-365 increment (a):
                 // both are now GENERATED fields, so the declaration proxy is simply right and
                 // there is nothing to pin.
-                { "Matrix4x4.Translation", true },
-                { "Matrix4x4.Rotation", true },
+                // Matrix4x4.Translation / .Rotation left this table with plato-308: the forward
+                // stdlib has reference bodies for both, so they are GENERATED members now and the
+                // handwritten properties are gone — nothing left to pin.
                 { "Number.Angle", true },
             };
 

@@ -81,6 +81,22 @@ namespace Ara3D.Geometry
         public static Matrix4x4 operator /(Matrix4x4 value1, Number f)
             => value1.Sys * f.ReciprocalEstimate();
 
+        // Unary negation and scalar modulo: the generated struct fills its unimplemented
+        // Negative()/Modulo(scalar) obligations by forwarding to these operators, so the
+        // handwritten runtime has to declare them. Both are component-wise.
+
+        [MethodImpl(AggressiveInlining)]
+        public static Matrix4x4 operator -(Matrix4x4 value)
+            => -value.Sys;
+
+        [MethodImpl(AggressiveInlining)]
+        public static Matrix4x4 operator %(Matrix4x4 value, Number scalar)
+            => new Matrix4x4(
+                new Number4(value.Row1.X % scalar, value.Row1.Y % scalar, value.Row1.Z % scalar, value.Row1.W % scalar),
+                new Number4(value.Row2.X % scalar, value.Row2.Y % scalar, value.Row2.Z % scalar, value.Row2.W % scalar),
+                new Number4(value.Row3.X % scalar, value.Row3.Y % scalar, value.Row3.Z % scalar, value.Row3.W % scalar),
+                new Number4(value.Row4.X % scalar, value.Row4.Y % scalar, value.Row4.Z % scalar, value.Row4.W % scalar));
+
         // Transform-on-the-left. The stdlib declares `Multiply(matrix, self)` as an explicit
         // alias for `Transform(self, matrix)` (stdlib/intrinsics-vectors.library.plato).
 
@@ -119,23 +135,15 @@ namespace Ara3D.Geometry
         public static Matrix4x4 CreateScale(Vector3 scales)
             => SNMatrix4x4.CreateScale(scales);
 
-        [MethodImpl(AggressiveInlining)]
-        public static Matrix4x4 CreateRotationX(Angle angle)
-            => SNMatrix4x4.CreateRotationX(angle);
-
-        [MethodImpl(AggressiveInlining)]
-        public static Matrix4x4 CreateRotationY(Angle angle)
-            => SNMatrix4x4.CreateRotationY(angle);
-
-        [MethodImpl(AggressiveInlining)]
-        public static Matrix4x4 CreateRotationZ(Angle angle)
-            => SNMatrix4x4.CreateRotationZ(angle);
+        // CreateRotationX/Y/Z are NOT here: the forward stdlib has reference bodies for them
+        // (matrices-ops.library.plato), so the generated partial declares them.
 
         // --------------------------------------------------------------------------------
         // Decompose, Determinant, Transpose, etc. (common instance methods)
         // --------------------------------------------------------------------------------
 
-        public Vector3 Translation { [MethodImpl(AggressiveInlining)] get => Sys.Translation; }
+        // `Translation` and `Rotation` are NOT here either — same reason, and the generated
+        // pair reads the declared rows rather than round-tripping through System.Numerics.
 
         [MethodImpl(AggressiveInlining)]
         public Matrix4x4 WithTranslation(Vector3 translation)
@@ -146,19 +154,22 @@ namespace Ara3D.Geometry
         }
 
         /// <summary>
-        /// Attempts to extract scale, rotation (as a <see cref="Quaternion"/>),
-        /// and translation from this matrix.
+        /// Attempts to extract scale, rotation (as a <see cref="Quaternion"/>), and translation
+        /// from this matrix. The forward stdlib declares `Decompose` returning a Plato
+        /// `Tuple4`, and the generated `Rotation` reads `.X1` off it, so an instance method
+        /// returning a C# ValueTuple would shadow the generated extension with an
+        /// incompatible shape. Named `DecomposeSys` to stay out of that overload set.
         /// </summary>
         [MethodImpl(AggressiveInlining)]
-        public (Vector3, Quaternion, Vector3, Boolean) Decompose()
+        public (Vector3, Quaternion, Vector3, Boolean) DecomposeSys()
         {
             var success = SNMatrix4x4.Decompose(Sys, out var scl, out var rot, out var trans);
             return (trans, rot, scl, success);
         }
 
-        public Quaternion Rotation { [MethodImpl(AggressiveInlining)] get => Decompose().Item2; }
-
-        [MethodImpl(AggressiveInlining)] public Number Determinant() => Sys.GetDeterminant();
+        // `Determinant()` is NOT here: the forward stdlib has a reference body for it. An instance
+        // method shadows that extension and returns the WRAPPER (Number) where the generated one
+        // returns float, which makes call sites that mix the two ambiguous (CS0172).
 
         [MethodImpl(AggressiveInlining)] public Matrix4x4 Transpose() => SNMatrix4x4.Transpose(Sys);
 
@@ -209,19 +220,8 @@ namespace Ara3D.Geometry
         public static Matrix4x4 CreateFromAxisAngleWithPivot(Vector3 axis, Angle angle, Vector3 pivot)
             => CreateFromAxisAngle(axis, angle).WithPivot(pivot);
 
-        /// <summary>
-        /// Creates a rotation matrix from a quaternion.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public static Matrix4x4 CreateFromQuaternion(Quaternion quaternion)
-            => SNMatrix4x4.CreateFromQuaternion(quaternion);
-
-        /// <summary>
-        /// Creates a rotation matrix from yaw, pitch, and roll values (in radians).
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public static Matrix4x4 CreateFromYawPitchRoll(Angle yaw, Angle pitch, Angle roll)
-            => SNMatrix4x4.CreateFromYawPitchRoll(yaw, pitch, roll);
+        // CreateFromQuaternion / CreateFromYawPitchRoll are NOT here: the forward stdlib has
+        // reference bodies for both, so the generated partial declares them.
 
         /// <summary>
         /// Creates a view matrix for a camera looking at a target.
@@ -258,12 +258,7 @@ namespace Ara3D.Geometry
         public static Matrix4x4 CreatePerspectiveOffCenter(Number left, Number right, Number bottom, Number top, Number nearPlaneDistance, Number farPlaneDistance)
             => SNMatrix4x4.CreatePerspectiveOffCenter(left, right, bottom, top, nearPlaneDistance, farPlaneDistance);
 
-        /// <summary>
-        /// Creates a matrix that reflects coordinates about a specified plane.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public static Matrix4x4 CreateReflection(Plane value)
-            => SNMatrix4x4.CreateReflection(value.Sys);
+        // CreateReflection is NOT here: same reason (reference body in the forward stdlib).
 
         /// <summary>
         /// Creates a matrix that flattens geometry into a specified plane as if casting a shadow from a light source.

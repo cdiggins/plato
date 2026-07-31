@@ -37,12 +37,15 @@ library TransformsPoints
 
     // The point's displacement from the origin. Arity is carried by the
     // component array, so no separate arity argument is needed.
+    // Written as an explicit construction, not a parenthesized value: the single field is an
+    // Array, and a C# backend cannot declare the implicit conversion for an interface-typed
+    // field (CS0552), so the structural form has nothing to convert through.
     Offset(p: PointN): VectorN
-        => (p.Components);
+        => VectorN(p.Components);
 
     // The point at the given displacement from the origin, of the delta's arity.
     FromOffset(_: PointN, v: VectorN): PointN
-        => (v.Components);
+        => PointN(v.Components);
 
     //==
     // The named point <-> vector converters. These are the long-standing spelling

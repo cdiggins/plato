@@ -51,11 +51,20 @@ public static class TirInliner
             return tir;
 
         var body = tir.Body;
+        // (callee, receiver type) pairs inlined in an EARLIER pass. A pair may be inlined by any
+        // number of call sites within one pass — that is ordinary repeated use — but a pair that
+        // comes back on the NEXT pass is the signature of a body that calls itself: inlining it
+        // reproduces the same call one level deeper, and MaxPasses is the only thing that stops
+        // it (measured on `ClosedU(s: OffsetSurface) => s.Base.ClosedU`, which delegates through a
+        // concept-typed field whose Self monomorphizes back to OffsetSurface — the emitted
+        // receiver came out as `self.Base.Base.Base...`, naming a member the interface lacks).
+        var inlinedPairs = new HashSet<(object Callee, string ReceiverType)>();
         for (var pass = 0; pass < MaxPasses; pass++)
         {
             // Names bound anywhere in the CALLER: an inlined lambda parameter that shadows one
             // of these is a CS0136 at emission, so such parameters are alpha-renamed on inline.
             var callerNames = CollectBoundNames(tir, body);
+            var passPairs = new List<(object, string)>();
 
             var count = new int[1];
             var lambdaDepth = 0;
@@ -67,12 +76,15 @@ public static class TirInliner
             // shape the emitter recovers as a bare member name.
             body = TirRewrite.Rewrite(body, n =>
                 etaDepth == 0 && n is TirCall call
-                && TryInlineCall(call, tir, host, ownerTypeName, lambdaDepth > 0, callerNames, out var inlined)
+                && TryInlineCall(call, tir, host, ownerTypeName, lambdaDepth > 0, callerNames,
+                    inlinedPairs, passPairs, out var inlined)
                     ? Bump(count, inlined)
                     : n,
                 enter: n => { if (n is TirLambda l) { lambdaDepth++; if (IsEtaShaped(l)) etaDepth++; } },
                 exit: n => { if (n is TirLambda l) { lambdaDepth--; if (IsEtaShaped(l)) etaDepth--; } });
 
+            foreach (var p in passPairs)
+                inlinedPairs.Add(p);
             if (count[0] == 0)
                 break;
             inlinedCalls += count[0];
@@ -94,7 +106,9 @@ public static class TirInliner
     }
 
     private static bool TryInlineCall(TirCall call, TirFunction callerTir, ITirInlineHost host,
-        string ownerTypeName, bool insideLambda, HashSet<string> callerNames, out TirNode inlined)
+        string ownerTypeName, bool insideLambda, HashSet<string> callerNames,
+        HashSet<(object Callee, string ReceiverType)> inlinedPairs, List<(object, string)> passPairs,
+        out TirNode inlined)
     {
         inlined = null;
 
@@ -126,6 +140,15 @@ public static class TirInliner
         var calleeBody = calleeTir?.Body;
         if (calleeBody == null)
             return Refuse(InlineRefusal.NoGroundTir);
+
+        // RECURSION, two shapes. Directly: the callee IS the function being inlined into.
+        // Indirectly: this (callee, receiver type) pair already inlined on an earlier pass, so the
+        // body it produced contained the same call again (see the `inlinedPairs` note in Inline).
+        // Neither ever settles; both are refused rather than bounded by MaxPasses.
+        var pair = ((object)(calleeTir.Original ?? (object)call.Callee), receiverTypeName);
+        if ((callerTir?.Original != null && ReferenceEquals(calleeTir.Original, callerTir.Original))
+            || inlinedPairs.Contains(pair))
+            return Refuse(InlineRefusal.SelfRecursive);
 
         // Expression bodies only, within budget, and self-contained under a foreign type.
         if (TirRewrite.IsStatementNode(calleeBody))
@@ -297,6 +320,7 @@ public static class TirInliner
         // β-reduces cleanly and collapses.)
         if (HasResidualLambdaInvoke(inlined))
             return Refuse(InlineRefusal.LambdaArgRefused);
+        passPairs.Add(pair);
         return true;
     }
 

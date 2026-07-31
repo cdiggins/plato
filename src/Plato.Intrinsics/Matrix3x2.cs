@@ -81,6 +81,21 @@ namespace Ara3D.Geometry
         public static Matrix3x2 operator /(Matrix3x2 value1, Number scalar)
             => value1 * (1f / scalar);
 
+        // Unary negation and scalar modulo: the generated struct fills its unimplemented
+        // Negative()/Modulo(scalar) obligations by forwarding to these operators, so the
+        // handwritten runtime has to declare them. Both are component-wise.
+
+        [MethodImpl(AggressiveInlining)]
+        public static Matrix3x2 operator -(Matrix3x2 value)
+            => FromSystem(-value.Sys);
+
+        [MethodImpl(AggressiveInlining)]
+        public static Matrix3x2 operator %(Matrix3x2 value, Number scalar)
+            => new Matrix3x2(
+                new Number2(value.Row1.X % scalar, value.Row1.Y % scalar),
+                new Number2(value.Row2.X % scalar, value.Row2.Y % scalar),
+                new Number2(value.Row3.X % scalar, value.Row3.Y % scalar));
+
         // -------------------------------------------------------------------------------
         // Common 2D transform creation methods (forwarded)
         // -------------------------------------------------------------------------------
@@ -117,13 +132,10 @@ namespace Ara3D.Geometry
         public static Matrix3x2 CreateRotation(Number radians, Vector2 centerPoint)
             => SNMatrix3x2.CreateRotation(radians, centerPoint);
 
-        // The forward stdlib declares these as `CreateRotation(_: Matrix3x2, angle: Angle)`,
-        // the legacy stdlib as `radians: Number`. Angle and Number both need a user-defined
-        // conversion from the other, so one signature cannot serve both — overload instead.
-        [MethodImpl(AggressiveInlining)]
-        public static Matrix3x2 CreateRotation(Angle angle)
-            => SNMatrix3x2.CreateRotation(angle);
-
+        // The Angle-taking `CreateRotation(angle)` is NOT here: the forward stdlib has a
+        // reference body for it (`CreateRotation(_: Matrix3x2, angle: Angle)`), so the generated
+        // partial declares it. The Number overloads above serve the legacy generation, which
+        // spells the parameter `radians: Number`.
         [MethodImpl(AggressiveInlining)]
         public static Matrix3x2 CreateRotation(Angle angle, Vector2 centerPoint)
             => SNMatrix3x2.CreateRotation(angle, centerPoint);
@@ -132,12 +144,9 @@ namespace Ara3D.Geometry
         // Other useful static methods: Invert, Lerp, etc.
         // -------------------------------------------------------------------------------
         
-        [MethodImpl(AggressiveInlining)]
-        public (Matrix3x2, Boolean) Invert()
-        {
-            var success = SNMatrix3x2.Invert(Sys, out var result);
-            return (result, success);
-        }
+        // `Invert()` is NOT here: the forward stdlib declares it returning Tuple2<Matrix3x2,
+        // Boolean> and has a reference body for it. An instance method returning a C# ValueTuple
+        // shadows that generated extension and gives call sites a tuple with no .X0/.X1.
 
         [MethodImpl(AggressiveInlining)]
         public Matrix3x2 Lerp(Matrix3x2 matrix2, Number amount)

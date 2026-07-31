@@ -161,6 +161,32 @@ namespace PlatoTests
             // re-import exactly the sign ambiguity this increment removed.
             "Plane.D",
             "Plane.WithD",
+
+            // plato-308: the forward stdlib grew REFERENCE BODIES for these (angles-ops /
+            // matrices-ops / rotations-ops), so the generated partial declares each one and the
+            // handwritten twin became a duplicate-member error in the forward build — the whole
+            // reason the forward conformance suite could not compile. stdlib-legacy still spells
+            // them as intrinsics because it has no such bodies; where the two corpora disagree
+            // about who OWNS a member, the forward declaration wins (see the summary above).
+            "Angle.Cos",
+            "Angle.Cosh",
+            "Angle.Sin",
+            "Angle.SinCos",
+            "Angle.Sinh",
+            "Angle.Tan",
+            "Angle.Tanh",
+            "Matrix3x2.Invert",
+            "Matrix4x4.CreateFromQuaternion",
+            "Matrix4x4.CreateFromYawPitchRoll",
+            "Matrix4x4.CreateReflection",
+            "Matrix4x4.CreateRotationX",
+            "Matrix4x4.CreateRotationY",
+            "Matrix4x4.CreateRotationZ",
+            "Matrix4x4.Decompose",
+            "Matrix4x4.Determinant",
+            "Matrix4x4.Rotation",
+            "Matrix4x4.Translation",
+            "Quaternion.Length",
         };
 
         [Test]

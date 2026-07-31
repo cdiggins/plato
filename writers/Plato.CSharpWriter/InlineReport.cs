@@ -21,6 +21,7 @@ public enum InlineRefusal
     MultiUseCompound,    // a compound arg bound to a parameter used >1 time or under a lambda
     ArityMismatch,       // parameter count != argument count
     NullaryRefused,      // a nullary (Constants.X) call that failed the static-body rules
+    SelfRecursive,       // callee resolves to the function being inlined into (would never settle)
 }
 
 /// <summary>Per-generation aggregation of inliner activity: every refusal keyed by

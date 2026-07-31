@@ -88,13 +88,10 @@ namespace Ara3D.Geometry
         public static Quaternion CreateFromAxisAngle(Vector3 axis, Angle angle)
             => SNQuaternion.CreateFromAxisAngle(axis, angle);
 
-        [MethodImpl(AggressiveInlining)]
-        public static Quaternion CreateFromYawPitchRoll(Angle yaw, Angle pitch, Angle roll)
-            => SNQuaternion.CreateFromYawPitchRoll(yaw, pitch, roll);
-
-        [MethodImpl(AggressiveInlining)]
-        public static Quaternion CreateFromRotationMatrix(Matrix4x4 matrix)
-            => SNQuaternion.CreateFromRotationMatrix(matrix);
+        // CreateFromYawPitchRoll / CreateFromRotationMatrix are NOT here: the forward stdlib has
+        // reference bodies for both, so the generated partial declares them. The extension-method
+        // twins below (receiver-taking, legacy-generation shape) are a different overload set and
+        // do not collide.
 
         //==
         // Static methods converted into instance methods 
@@ -111,12 +108,8 @@ namespace Ara3D.Geometry
         public Quaternion Lerp(Quaternion quaternion2, Number amount)
             => SNQuaternion.Lerp(Sys, quaternion2.Sys, amount);
 
-        // Exact `float` signature: discharges the (scalar-erased) Interpolatable obligation the
-        // forward-stdlib generation declares on the Quaternion partial; interface implementation
-        // demands the exact erased type, which the Number overload above cannot satisfy.
-        [MethodImpl(AggressiveInlining)]
-        public Quaternion Lerp(Quaternion quaternion2, float amount)
-            => SNQuaternion.Lerp(Sys, quaternion2.Sys, amount);
+        // The `float`-amount Lerp is NOT here: the forward stdlib has a reference body for it, so
+        // the generated partial declares it with the scalar-erased signature.
 
         [MethodImpl(AggressiveInlining)]
         public Quaternion Slerp(Quaternion quaternion2, Number amount)
@@ -124,7 +117,8 @@ namespace Ara3D.Geometry
 
         // Properties
 
-        [MethodImpl(AggressiveInlining)] public Number Length() => Sys.Length();
+        // `Length()` is NOT here: the forward stdlib has a reference body for it (sqrt of the
+        // component sum of squares), so the generated partial declares it.
 
         [MethodImpl(AggressiveInlining)] public Number LengthSquared() => Sys.LengthSquared();
 

@@ -6,7 +6,12 @@ namespace Ara3D.Geometry
 {
     public static partial class Intrinsics
     {
-        [MethodImpl(AggressiveInlining)] public static T[] MakeArray<T>(params T[] args) => args;
+        // Returns the INTERFACE, not T[]. An array literal is the seed of folds whose step
+        // function returns some other Array implementation (`ring.Append(...)` is a
+        // ReadOnlyList<T>, `CutByPlane` an IReadOnlyList<T>), and a T[]-typed accumulator makes
+        // every one of those a conversion error. It is also what lets a nested literal unify with
+        // a nested ReadOnlyList in generic inference (`caps.Concatenate(walls)`).
+        [MethodImpl(AggressiveInlining)] public static IReadOnlyList<T> MakeArray<T>(params T[] args) => args;
 
         [MethodImpl(AggressiveInlining)] public static ReadOnlyList2D<T> MakeArray2D<T>(this Integer columns, Integer rows, Func<Integer, Integer, T> f) 
             => new ReadOnlyList2D<T>((columns * rows).MapRange(i => f(i % columns, i / columns)), columns, rows);

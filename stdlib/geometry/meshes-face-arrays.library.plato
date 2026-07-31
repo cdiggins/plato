@@ -26,8 +26,11 @@ library MeshesFaceArrays
                 TriangleFace(VertexIndex(3 * i), VertexIndex(3 * i + 1), VertexIndex(3 * i + 2))));
 
     // Applies the mapping to every corner of every triangle.
+    // Constructed explicitly: the single field is an Array, and a C# backend cannot declare the
+    // implicit conversion for an interface-typed field (CS0552), so a bare array body has
+    // nothing to convert through.
     Deform(a: TriangleArray3D, mapping: Function1<Point3D, Point3D>): TriangleArray3D
-        => a.Triangles.Map(t => t.Deform(mapping));
+        => TriangleArray3D(a.Triangles.Map(t => t.Deform(mapping)));
 
     // The PrimitiveCollection3D obligation: the stored faces themselves.
     Primitives(a: TriangleArray3D): Array<Triangle3D>
@@ -56,8 +59,9 @@ library MeshesFaceArrays
             a.Quads.Count.MapRange(i => i).FlatMap(i => a.QuadTriangleFaces(i)));
 
     // Applies the mapping to every corner of every quad.
+    // Explicit construction, same reason as the TriangleArray3D twin above.
     Deform(a: QuadArray3D, mapping: Function1<Point3D, Point3D>): QuadArray3D
-        => a.Quads.Map(q => q.Deform(mapping));
+        => QuadArray3D(a.Quads.Map(q => q.Deform(mapping)));
 
     // The PrimitiveCollection3D obligation: the stored faces themselves.
     Primitives(a: QuadArray3D): Array<Quad3D>

@@ -77,53 +77,23 @@ namespace Ara3D.Geometry
             => a.Radians >= b.Radians;
 
         // -------------------------------------------------------------------------------
-        // Comparison / hashing obligations
+        // Comparison obligation
         // -------------------------------------------------------------------------------
         //
-        // Exact `int` signatures: these discharge the (scalar-erased) Comparable / Hashable
-        // obligations the forward-stdlib generation declares on the Angle partial, and interface
-        // implementation demands the exact erased types.
+        // `Compare` and `Hash` are NOT here: the forward stdlib gives Angle reference bodies for
+        // both (Comparable / Hashable over the Radians field), so the generated partial declares
+        // them and a handwritten twin is a duplicate-member error. Only CompareTo — which no
+        // Plato declaration spells — stays.
 
         [MethodImpl(AggressiveInlining)]
         public int CompareTo(Angle other)
             => Radians.CompareTo(other.Radians);
-
-        [MethodImpl(AggressiveInlining)]
-        public int Compare(Angle other)
-            => Radians.CompareTo(other.Radians);
-
-        [MethodImpl(AggressiveInlining)]
-        public int Hash()
-            => Radians.GetHashCode();
     }
 
-    /// <summary>
-    /// Behavioural intrinsics for <see cref="Angle"/> as extension methods — the all-extension-methods
-    /// runtime (M5 / consolidation plan C3). The trigonometric functions
-    /// (https://en.wikipedia.org/wiki/Trigonometric_functions) live here; the radians payload is a
-    /// generated field, so nothing in this class reaches for a wrapper.
-    /// </summary>
-    public static class AngleIntrinsics
-    {
-        /// <summary>Cosine.</summary>
-        [MethodImpl(AggressiveInlining)] public static float Cos(this Angle self) => MathF.Cos(self.Radians);
-
-        /// <summary>Hyperbolic cosine.</summary>
-        [MethodImpl(AggressiveInlining)] public static float Cosh(this Angle self) => MathF.Cosh(self.Radians);
-
-        /// <summary>Sine.</summary>
-        [MethodImpl(AggressiveInlining)] public static float Sin(this Angle self) => MathF.Sin(self.Radians);
-
-        /// <summary>Sine and cosine.</summary>
-        [MethodImpl(AggressiveInlining)] public static (float Sin, float Cos) SinCos(this Angle self) => MathF.SinCos(self.Radians);
-
-        /// <summary>Hyperbolic sine.</summary>
-        [MethodImpl(AggressiveInlining)] public static float Sinh(this Angle self) => MathF.Sinh(self.Radians);
-
-        /// <summary>The tangent.</summary>
-        [MethodImpl(AggressiveInlining)] public static float Tan(this Angle self) => MathF.Tan(self.Radians);
-
-        /// <summary>The hyperbolic tangent.</summary>
-        [MethodImpl(AggressiveInlining)] public static float Tanh(this Angle self) => MathF.Tanh(self.Radians);
-    }
+    // The trigonometric extension class that used to live here (AngleIntrinsics: Cos, Cosh, Sin,
+    // SinCos, Sinh, Tan, Tanh over an Angle receiver) is gone. The forward stdlib declares that
+    // whole surface with bodies over the Radians field, so the generation emits it as AngleTrig —
+    // and two extension classes offering `angle.Cos()` are not a duplicate the compiler can pick
+    // between, they are CS0121 at every call site. The scalar kernel it forwarded to
+    // (MathF.Cos etc.) is still an intrinsic, reached as `float.CosRadians()`.
 }

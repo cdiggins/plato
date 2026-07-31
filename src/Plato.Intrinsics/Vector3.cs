@@ -207,7 +207,10 @@ namespace Ara3D.Geometry
             // Constructed directly (not Vector3.UnitZ): the generated UnitZ member's shape
             // varies by emitter style (--methods makes it a static method), and this handwritten
             // file must compile against every style.
-            if (v.AlmostZero())
+            // Tolerance spelled out rather than calling AlmostZero(): the forward stdlib declares
+            // that member as AlmostZero(self, tolerance) with no default, so a no-argument call
+            // does not bind. Squared length, so the constant is the squared tolerance.
+            if (v.LengthSquared() <= 1e-12f)
                 return new Vector3(0, 0, 1);
 
             // Choose the smallest component to avoid degeneracy

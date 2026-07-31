@@ -23,7 +23,33 @@ library SplinesBezier
 
     // The de Casteljau reduction of a control polygon at t.
     // Precondition: xs is non-empty.
-    DeCasteljau(xs: Array<$T>, t: Number): $T
+    //
+    // Spelled once per control-value type rather than once over `$T`. The body needs Lerp, and
+    // an implicit bound on a library type variable does not survive to a backend: the shipping
+    // C# recipe erases the concept interfaces, so the emitted generic parameter carries no
+    // constraint and the Lerp call in it has nothing to bind to. These are the instantiations
+    // the Eval overloads below actually use.
+    DeCasteljau(xs: Array<Point2D>, t: Number): Point2D
+        => xs.Count <= 1
+           ? xs[0]
+           : (xs.Count - 1).MapRange(i => xs[i].Lerp(xs[i + 1], t)).DeCasteljau(t);
+
+    DeCasteljau(xs: Array<Point3D>, t: Number): Point3D
+        => xs.Count <= 1
+           ? xs[0]
+           : (xs.Count - 1).MapRange(i => xs[i].Lerp(xs[i + 1], t)).DeCasteljau(t);
+
+    DeCasteljau(xs: Array<Vector2D>, t: Number): Vector2D
+        => xs.Count <= 1
+           ? xs[0]
+           : (xs.Count - 1).MapRange(i => xs[i].Lerp(xs[i + 1], t)).DeCasteljau(t);
+
+    DeCasteljau(xs: Array<Vector3D>, t: Number): Vector3D
+        => xs.Count <= 1
+           ? xs[0]
+           : (xs.Count - 1).MapRange(i => xs[i].Lerp(xs[i + 1], t)).DeCasteljau(t);
+
+    DeCasteljau(xs: Array<Number>, t: Number): Number
         => xs.Count <= 1
            ? xs[0]
            : (xs.Count - 1).MapRange(i => xs[i].Lerp(xs[i + 1], t)).DeCasteljau(t);

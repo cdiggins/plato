@@ -157,6 +157,9 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Integer ShiftLeft(this Integer x, Integer bits) => x.Value << bits.Value;
         [MethodImpl(AggressiveInlining)] public static Integer ShiftRight(this Integer x, Integer bits) => x.Value >> bits.Value;
         [MethodImpl(AggressiveInlining)] public static Number ToNumber(this Integer self) => self.Value;
+        // Integer's own Whole obligation: the identity conversion, which no Plato declaration can
+        // carry for a primitive (see Number.ToNumber).
+        [MethodImpl(AggressiveInlining)] public static Integer ToInteger(this Integer self) => self;
         [MethodImpl(AggressiveInlining)] public static ReadOnlyList<T> Repeat<T>(this Integer n, T x) => n.MapRange(_ => x);
     }
 }
