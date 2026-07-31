@@ -5,8 +5,6 @@ It is the single copy; this file exists only so tools that look for `CLAUDE.md` 
 
 Quick orientation while you open it:
 
-- **Work from the studio root** (`C:\Users\cdigg\git\studio`), not from this folder — this repo
-  does not build standalone.
 - Language + codegen overview: [`docs/plato-for-agents.md`](docs/plato-for-agents.md).
 - Which artifact is which, and what is frozen: [`docs/plato-library-map.md`](docs/plato-library-map.md).
 - Process, gates, and multi-agent guidance: [`../../docs/working-on-plato.md`](../../docs/working-on-plato.md).

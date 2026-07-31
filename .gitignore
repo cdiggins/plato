@@ -14,3 +14,9 @@
 # Committed agent config (e.g. .claude/skills/) is intentionally NOT ignored.
 .claude/settings.local.json
 .claude/worktrees/
+.claude/ara3d-sdk
+
+# Regenerated conformance output for the SDK-facing surface. No project file and no
+# handwritten source lives here — the whole folder is script output.
+# NOTE: conformance/Plato.ForwardConformanceTests/Generated/ IS tracked; only this one is not.
+conformance/Ara3D.SDK.ConformanceTests/Generated/
