@@ -226,4 +226,11 @@ library Numbers
 
     LessThanOrEquals(a: Probability, b: Probability): Boolean
         => a.Value <= b.Value;
+
+    //==
+    // Cardinal - a non-negative count; Comparable on its carrier.
+
+    // Counts order exactly as their carrier integers do.
+    LessThanOrEquals(a: Cardinal, b: Cardinal): Boolean
+        => a.Value <= b.Value;
 }

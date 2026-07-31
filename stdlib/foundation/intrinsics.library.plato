@@ -163,6 +163,17 @@ library Intrinsics
     Hash(self: Boolean): Integer;
 
     //==
+    // Character and String
+    //
+    // Both primitives declare `Orderable` (primitives.plato), which the host must
+    // discharge: text ordering is the platform's collation, not something Plato
+    // can define. Operator-named, so the C# writer synthesizes the wrapper from
+    // the runtime's comparison operators.
+
+    LessThanOrEquals(a: Character, b: Character): Boolean;
+    LessThanOrEquals(a: String, b: String): Boolean;
+
+    //==
     // Array
     //
     // Host-provided array construction and traversal: the map / reduce / zip /
@@ -206,6 +217,14 @@ library Intrinsics
 
     At(xs: Array2D<$T>, i: Integer): $T;
     At(xs: Array3D<$T>, i: Integer): $T;
+    // TODO(plato-375): the Indexable2D / Indexable3D shape obligations
+    // (ColumnCount / RowCount / LayerCount) cannot be discharged from here. An
+    // obligation on `Array2D<T>` is keyed by the TYPE's own parameter, and a
+    // library intrinsic can only be written over a type VARIABLE
+    // (`ColumnCount(xs: Array2D<$T>)`), whose signature id never matches — so the
+    // declaration would be inert and the member would still be emitted as a
+    // throw. The C# runtime already supplies all three (`GridExtensions`); what is
+    // missing is the compiler's ability to pair them.
     Column(self: Array2D<$T>, col: Integer): Array<$T>;
     Row(self: Array2D<$T>, row: Integer): Array<$T>;
     Map(xs: Array2D<$T1>, f: Function1<$T1, $T2>): Array2D<$T2>;

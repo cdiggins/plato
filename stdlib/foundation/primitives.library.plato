@@ -1,0 +1,60 @@
+//==
+// # Primitive concept obligations
+//
+// The handful of members the `primitive` declarations in `primitives.plato` owe
+// their concept lists but that the host contract does NOT supply. Everything a
+// backend must implement natively is in `intrinsics.library.plato`; what is left
+// is derivable in Plato from those intrinsics, so it belongs here rather than
+// growing the porting checklist:
+//
+//   * the two identity conversions (`Number.ToNumber`, `Integer.ToInteger`),
+//     which exist so a body generic over `Real` or `Whole` can name the carrier;
+//   * `Number.Inverse` and the two `Lerp`s, one-line formulas over arithmetic
+//     the host already provides;
+//   * `Boolean.LessThanOrEquals`, read off the `Compare` intrinsic (false orders
+//     before true).
+//
+// Without these the generated members throw, so every derived body that reaches
+// them — and `Real`/`Whole`-generic code reaches ToNumber/ToInteger constantly —
+// throws with it.
+
+library Primitives
+{
+    //==
+    // # Number
+
+    // The number itself: `Real.ToNumber` on the carrier type is the identity.
+    // It exists so a body generic over Real can drop to a plain Number.
+    ToNumber(self: Number): Number
+        => self;
+
+    // The multiplicative inverse, one over x. Division by zero yields an
+    // infinity rather than signalling, as everywhere else in this vocabulary.
+    Inverse(self: Number): Number
+        => 1.0 / self;
+
+    // Linear interpolation; t is unclamped, so 0 yields a, 1 yields b, and values
+    // outside [0, 1] extrapolate.
+    Lerp(a: Number, b: Number, t: Number): Number
+        => a + (b - a) * t;
+
+    //==
+    // # Integer
+
+    // The integer itself: `Whole.ToInteger` on the carrier type is the identity.
+    ToInteger(self: Integer): Integer
+        => self;
+
+    // Linear interpolation carried out in Number and truncated back to Integer,
+    // so the result steps rather than rounding to nearest. t is unclamped.
+    Lerp(a: Integer, b: Integer, t: Number): Integer
+        => (a.ToNumber + (b.ToNumber - a.ToNumber) * t).ToInteger;
+
+    //==
+    // # Boolean
+
+    // The truth ordering: false orders before true. Read off the Compare
+    // intrinsic so the two agree by construction.
+    LessThanOrEquals(a: Boolean, b: Boolean): Boolean
+        => a.Compare(b) <= 0;
+}

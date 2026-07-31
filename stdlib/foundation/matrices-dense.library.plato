@@ -1,0 +1,240 @@
+//==
+// # Dense matrix members — the MatrixLike, Additive and Scalable surface
+//
+// The per-type bodies that make the concrete matrices of `matrices.types.plato`
+// genuine `MatrixLike` implementations: the shape pair (RowCount, ColumnCount),
+// zero-based element access, and the element-wise Additive / Scalable
+// arithmetic. Without these the generated members throw, so the whole derived
+// surface in `numeric-structures-matrix.library.plato` (Trace, FrobeniusNorm,
+// Lerp, ...) is unreachable.
+//
+// Convention: see CONVENTIONS.md - Matrices. Rows are stored as vectors, so
+// element (r, c) is component c of row r, and `Row1` is row index 0. The rows
+// are themselves `Vector`s, so element-wise arithmetic is just the same
+// operation applied per row, and `ElementAt` bottoms out in `Vector.At`.
+//
+// `Add`, `Subtract`, `Multiply(scalar)` and `Divide(scalar)` for `Matrix3x2` and
+// `Matrix4x4` are NOT restated here — those two types carry their full
+// System.Numerics-compatible surface in `matrices-ops.library.plato`, and only
+// the members that file omits appear below.
+
+library MatricesDense
+{
+    //==
+    // # Matrix2x2
+
+    // Two rows.
+    RowCount(_: Matrix2x2): Integer => 2;
+
+    // Two columns.
+    ColumnCount(_: Matrix2x2): Integer => 2;
+
+    // Element (row, column), zero-based; column indexes into the row vector.
+    // Precondition: 0 <= row < 2 and 0 <= column < 2.
+    ElementAt(self: Matrix2x2, row: Integer, column: Integer): Number
+        => (row == 0 ? self.Row1 : self.Row2)[column];
+
+    // Element-wise sum.
+    Add(a: Matrix2x2, b: Matrix2x2): Matrix2x2
+        => (a.Row1 + b.Row1, a.Row2 + b.Row2);
+
+    // Element-wise difference.
+    Subtract(a: Matrix2x2, b: Matrix2x2): Matrix2x2
+        => (a.Row1 - b.Row1, a.Row2 - b.Row2);
+
+    // Every element negated (the additive inverse).
+    Negative(self: Matrix2x2): Matrix2x2
+        => (-self.Row1, -self.Row2);
+
+    // Composition of two linear maps: applying the result is applying a then b,
+    // which under the row-vector convention is each row of a carried through b.
+    Multiply(a: Matrix2x2, b: Matrix2x2): Matrix2x2
+        => (Number2(a.Row1.X * b.Row1.X + a.Row1.Y * b.Row2.X,
+                    a.Row1.X * b.Row1.Y + a.Row1.Y * b.Row2.Y),
+            Number2(a.Row2.X * b.Row1.X + a.Row2.Y * b.Row2.X,
+                    a.Row2.X * b.Row1.Y + a.Row2.Y * b.Row2.Y));
+
+    // Every element scaled.
+    Multiply(self: Matrix2x2, scalar: Number): Matrix2x2
+        => (self.Row1 * scalar, self.Row2 * scalar);
+
+    // Every element divided.
+    Divide(self: Matrix2x2, scalar: Number): Matrix2x2
+        => (self.Row1 / scalar, self.Row2 / scalar);
+
+    // Every element reduced modulo the scalar.
+    Modulo(self: Matrix2x2, scalar: Number): Matrix2x2
+        => (self.Row1 % scalar, self.Row2 % scalar);
+
+    //==
+    // # Matrix3x3
+
+    // Three rows.
+    RowCount(_: Matrix3x3): Integer => 3;
+
+    // Three columns.
+    ColumnCount(_: Matrix3x3): Integer => 3;
+
+    // Element (row, column), zero-based.
+    // Precondition: 0 <= row < 3 and 0 <= column < 3.
+    ElementAt(self: Matrix3x3, row: Integer, column: Integer): Number
+        => (row == 0 ? self.Row1 : (row == 1 ? self.Row2 : self.Row3))[column];
+
+    // Element-wise sum.
+    Add(a: Matrix3x3, b: Matrix3x3): Matrix3x3
+        => (a.Row1 + b.Row1, a.Row2 + b.Row2, a.Row3 + b.Row3);
+
+    // Element-wise difference.
+    Subtract(a: Matrix3x3, b: Matrix3x3): Matrix3x3
+        => (a.Row1 - b.Row1, a.Row2 - b.Row2, a.Row3 - b.Row3);
+
+    // Every element negated.
+    Negative(self: Matrix3x3): Matrix3x3
+        => (-self.Row1, -self.Row2, -self.Row3);
+
+    // Every element scaled.
+    Multiply(self: Matrix3x3, scalar: Number): Matrix3x3
+        => (self.Row1 * scalar, self.Row2 * scalar, self.Row3 * scalar);
+
+    // Every element divided.
+    Divide(self: Matrix3x3, scalar: Number): Matrix3x3
+        => (self.Row1 / scalar, self.Row2 / scalar, self.Row3 / scalar);
+
+    // Every element reduced modulo the scalar.
+    Modulo(self: Matrix3x3, scalar: Number): Matrix3x3
+        => (self.Row1 % scalar, self.Row2 % scalar, self.Row3 % scalar);
+
+    //==
+    // # Matrix4x4
+    //
+    // Add, Subtract, Multiply(scalar) and Divide(scalar) live in
+    // `matrices-ops.library.plato`; only the members that file leaves out are here.
+
+    // Four rows.
+    RowCount(_: Matrix4x4): Integer => 4;
+
+    // Four columns.
+    ColumnCount(_: Matrix4x4): Integer => 4;
+
+    // Element (row, column), zero-based.
+    // Precondition: 0 <= row < 4 and 0 <= column < 4.
+    ElementAt(self: Matrix4x4, row: Integer, column: Integer): Number
+        => (row == 0 ? self.Row1
+            : (row == 1 ? self.Row2
+            : (row == 2 ? self.Row3 : self.Row4)))[column];
+
+    // Every element negated.
+    Negative(self: Matrix4x4): Matrix4x4
+        => (-self.Row1, -self.Row2, -self.Row3, -self.Row4);
+
+    // Every element reduced modulo the scalar.
+    Modulo(self: Matrix4x4, scalar: Number): Matrix4x4
+        => (self.Row1 % scalar, self.Row2 % scalar, self.Row3 % scalar, self.Row4 % scalar);
+
+    //==
+    // # Matrix3x2 — the 2D affine map
+    //
+    // Add, Subtract, Multiply(scalar) and Divide(scalar) live in
+    // `matrices-ops.library.plato`.
+
+    // Three rows: the 2x2 linear block plus the translation row.
+    RowCount(_: Matrix3x2): Integer => 3;
+
+    // Two columns.
+    ColumnCount(_: Matrix3x2): Integer => 2;
+
+    // Element (row, column), zero-based.
+    // Precondition: 0 <= row < 3 and 0 <= column < 2.
+    ElementAt(self: Matrix3x2, row: Integer, column: Integer): Number
+        => (row == 0 ? self.Row1 : (row == 1 ? self.Row2 : self.Row3))[column];
+
+    // Every element negated, translation row included.
+    Negative(self: Matrix3x2): Matrix3x2
+        => (-self.Row1, -self.Row2, -self.Row3);
+
+    // Every element reduced modulo the scalar.
+    Modulo(self: Matrix3x2, scalar: Number): Matrix3x2
+        => (self.Row1 % scalar, self.Row2 % scalar, self.Row3 % scalar);
+
+    //==
+    // # Matrix4x3 — the 3D affine map
+
+    // Four rows: the 3x3 linear block plus the translation row.
+    RowCount(_: Matrix4x3): Integer => 4;
+
+    // Three columns.
+    ColumnCount(_: Matrix4x3): Integer => 3;
+
+    // Element (row, column), zero-based.
+    // Precondition: 0 <= row < 4 and 0 <= column < 3.
+    ElementAt(self: Matrix4x3, row: Integer, column: Integer): Number
+        => (row == 0 ? self.Row1
+            : (row == 1 ? self.Row2
+            : (row == 2 ? self.Row3 : self.Row4)))[column];
+
+    // Element-wise sum.
+    Add(a: Matrix4x3, b: Matrix4x3): Matrix4x3
+        => (a.Row1 + b.Row1, a.Row2 + b.Row2, a.Row3 + b.Row3, a.Row4 + b.Row4);
+
+    // Element-wise difference.
+    Subtract(a: Matrix4x3, b: Matrix4x3): Matrix4x3
+        => (a.Row1 - b.Row1, a.Row2 - b.Row2, a.Row3 - b.Row3, a.Row4 - b.Row4);
+
+    // Every element negated, translation row included.
+    Negative(self: Matrix4x3): Matrix4x3
+        => (-self.Row1, -self.Row2, -self.Row3, -self.Row4);
+
+    // Every element scaled.
+    Multiply(self: Matrix4x3, scalar: Number): Matrix4x3
+        => (self.Row1 * scalar, self.Row2 * scalar, self.Row3 * scalar, self.Row4 * scalar);
+
+    // Every element divided.
+    Divide(self: Matrix4x3, scalar: Number): Matrix4x3
+        => (self.Row1 / scalar, self.Row2 / scalar, self.Row3 / scalar, self.Row4 / scalar);
+
+    // Every element reduced modulo the scalar.
+    Modulo(self: Matrix4x3, scalar: Number): Matrix4x3
+        => (self.Row1 % scalar, self.Row2 % scalar, self.Row3 % scalar, self.Row4 % scalar);
+
+    //==
+    // # MatrixN — runtime shape, row-major storage
+    //
+    // The shape travels with the value, so the binary operations take their
+    // result shape from the left operand. Precondition on Add and Subtract: both
+    // operands have the same shape.
+
+    // The row count carried by the value.
+    RowCount(self: MatrixN): Integer => self.NumRows;
+
+    // The column count carried by the value.
+    ColumnCount(self: MatrixN): Integer => self.NumColumns;
+
+    // Element (row, column), zero-based, from the row-major component array.
+    // Precondition: 0 <= row < NumRows and 0 <= column < NumColumns.
+    ElementAt(self: MatrixN, row: Integer, column: Integer): Number
+        => self.Components[row * self.NumColumns + column];
+
+    // Element-wise sum, in the shape of `a`.
+    Add(a: MatrixN, b: MatrixN): MatrixN
+        => (a.NumRows, a.NumColumns, a.Components.Zip(b.Components, (x, y) => x + y));
+
+    // Element-wise difference, in the shape of `a`.
+    Subtract(a: MatrixN, b: MatrixN): MatrixN
+        => (a.NumRows, a.NumColumns, a.Components.Zip(b.Components, (x, y) => x - y));
+
+    // Every element negated.
+    Negative(self: MatrixN): MatrixN
+        => (self.NumRows, self.NumColumns, self.Components.Map(x => -x));
+
+    // Every element scaled.
+    Multiply(self: MatrixN, scalar: Number): MatrixN
+        => (self.NumRows, self.NumColumns, self.Components.Map(x => x * scalar));
+
+    // Every element divided.
+    Divide(self: MatrixN, scalar: Number): MatrixN
+        => (self.NumRows, self.NumColumns, self.Components.Map(x => x / scalar));
+
+    // Every element reduced modulo the scalar.
+    Modulo(self: MatrixN, scalar: Number): MatrixN
+        => (self.NumRows, self.NumColumns, self.Components.Map(x => x % scalar));
+}

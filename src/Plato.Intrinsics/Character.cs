@@ -44,5 +44,26 @@ namespace Ara3D.Geometry
 
         [MethodImpl(AggressiveInlining)]
         public static implicit operator Integer(Character c) => c.ToSystem();
+
+        // -------------------------------------------------------------------------------
+        // Ordering
+        // -------------------------------------------------------------------------------
+        //
+        // Character declares Orderable in the forward stdlib (primitives.plato), whose
+        // LessThanOrEquals is an intrinsic: the writer discharges an operator-named
+        // intrinsic by emitting a wrapper over the operator, so the operators have to
+        // exist. Ordinal (code-unit) order, matching String's comparison operators.
+
+        [MethodImpl(AggressiveInlining)]
+        public static bool operator <=(Character a, Character b) => a.Value <= b.Value;
+
+        [MethodImpl(AggressiveInlining)]
+        public static bool operator >=(Character a, Character b) => a.Value >= b.Value;
+
+        [MethodImpl(AggressiveInlining)]
+        public static bool operator <(Character a, Character b) => a.Value < b.Value;
+
+        [MethodImpl(AggressiveInlining)]
+        public static bool operator >(Character a, Character b) => a.Value > b.Value;
     }
 }

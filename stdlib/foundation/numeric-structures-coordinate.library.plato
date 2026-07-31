@@ -119,4 +119,20 @@ library NumericStructuresCoordinate
     // test the convexity condition U, V, W >= 0 (see the type doc comment).
     IsNormalized(self: BarycentricCoordinate, tolerance: Number): Boolean
         => (self.U + self.V + self.W).AlmostEqual(1.0, tolerance);
+
+    //==
+    // # Hashable — the Cartesian points
+    //
+    // Point2D and Point3D declare Hashable (points.types.plato) and so owe a Hash.
+    // Folded component-wise with the shared CombineHash (hashing.library.plato),
+    // exactly as the vector twins in `vectors-geometric-ops.library.plato` are: two
+    // points that compare equal therefore hash equal within a run.
+
+    // The combined hash of the two coordinates.
+    Hash(self: Point2D): Integer
+        => self.X.Hash.CombineHash(self.Y.Hash);
+
+    // The combined hash of the three coordinates.
+    Hash(self: Point3D): Integer
+        => self.X.Hash.CombineHash(self.Y.Hash).CombineHash(self.Z.Hash);
 }
