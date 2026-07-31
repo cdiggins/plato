@@ -30,9 +30,12 @@ library PlanarEllipses
     //     P ~= pi (a + b) (1 + 3h / (10 + sqrt(4 - 3h))),  h = ((a-b)/(a+b))^2,
     // which is exact for a circle (h = 0) and degrades monotonically with
     // eccentricity: the worst case is the fully degenerate ellipse b = 0, where it
-    // returns (14/11)*pi*a = 3.99969*a against the true 4*a — a relative error of
-    // about 7.5e-5. For any ellipse with b/a >= 0.1 the relative error is below
-    // 1e-8. https://en.wikipedia.org/wiki/Ellipse#Circumference
+    // returns (14/11)*pi*a = 3.99838*a against the true 4*a — a relative error of
+    // -4.0e-4. MEASURED against a converged arc-length integral, the relative error
+    // is -4.6e-10 at b/a = 0.5, -6.3e-9 at b/a = 0.4, -7.4e-8 at b/a = 0.3,
+    // -1.2e-5 at b/a = 0.1 and -3.8e-4 at b/a = 0.001. So "below 1e-8" holds only
+    // for b/a >= 0.4; do not assume this body is accurate for flattened ellipses.
+    // https://en.wikipedia.org/wiki/Ellipse#Circumference
     Perimeter(e: Ellipse): Number
     {
         var a = e.SemiAxes.X;

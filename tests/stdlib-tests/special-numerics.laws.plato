@@ -14,9 +14,16 @@ library SpecialNumericsLaws
     // Tolerance helpers (LawEq lives in FoundationLaws; these are the local
     // absolute and relative comparisons sized for the numeric bodies).
 
+    // Absolute-plus-relative compare at an explicit tolerance, used as both the
+    // relative factor and the absolute floor. A law whose two sides are different
+    // approximations of the same quantity must state the tolerance the WEAKER side
+    // supports, so it names it here instead of borrowing SpecialEq's floor.
+    SpecialEqWithin(a: Number, b: Number, tolerance: Number): Boolean
+        => (a - b).Abs <= (a.Abs.Greater(b.Abs) * tolerance + tolerance);
+
     // Absolute-plus-relative compare with a 1e-6 floor.
     SpecialEq(a: Number, b: Number): Boolean
-        => (a - b).Abs <= (a.Abs.Greater(b.Abs) * 1e-6 + 1e-6);
+        => a.SpecialEqWithin(b, 1e-6);
 
     // The wrap of a radian offset into [-pi, pi), matching the von Mises CDF cut.
     WrapToPi(x: Number): Number
@@ -41,9 +48,23 @@ library SpecialNumericsLaws
             .SpecialEq(0.5 + x.WrapToPi / Number.Tau);
 
     // The CDF starts at 0 at the cut (the antipode of the mean direction).
+    //
+    // DOMAIN: the law states the RIGHT-hand limit, a fixed margin inside the arc,
+    // because the cut itself is a JUMP and is therefore not a testable point in
+    // floating point. F is 0 at mu - pi and 1 immediately below it, while the
+    // argument the law can actually build, `mu - pi`, is a rounded float: for
+    // mu = 9.965367 it lands exactly one ulp BELOW the cut, where F = 1 is the
+    // correct answer, not a defect in the series. (Measured: the rounding goes the
+    // wrong way for roughly a quarter of random mean directions.)
+    //
+    // At `margin` inside the arc F is bounded by margin times the antipodal
+    // density, which is at most 1/(2 pi) for every kappa -- so F < margin / 6, and
+    // asserting F < margin has better than a 6x margin over the true value while
+    // still separating 0 from the 1 that the seam bug would produce. margin = 1e-4
+    // is three decades above the ~1e-7 rounding noise of the argument itself.
     Law_VonMisesCdfStartsAtZero(d: VonMisesDistribution): Boolean
         => d.VonMisesOutOfRegime
-        || d.Cdf(d.MeanDirection.Radians - Number.Pi).SpecialEq(0.0);
+        || d.Cdf(d.MeanDirection.Radians - Number.Pi + 1e-4) < 1e-4;
 
     // Reflection symmetry about the mean: F(mu + t) + F(mu - t) = 1 for t
     // strictly inside (-pi, pi) (at the cut itself both sides wrap to 0).
@@ -62,13 +83,24 @@ library SpecialNumericsLaws
         => se.SemiAxes.X < 0.1 || se.SemiAxes.Y < 0.1
         || se.SemiAxes.X > 100.0 || se.SemiAxes.Y > 100.0;
 
-    // At Exponent 2 the superellipse IS the ellipse: its numerically integrated
-    // perimeter matches the ellipse's Ramanujan approximation (whose own error
-    // is below 1e-4 relative on this axis range).
+    // At Exponent 2 the superellipse IS the ellipse, so its numerically integrated
+    // perimeter must match the ellipse's.
+    //
+    // TOLERANCE: set by the WEAKER of the two sides, which is the ellipse. Its
+    // Perimeter is Ramanujan's second approximation, whose relative error is not
+    // symmetric in the axis ratio: it is below 1e-9 for b/a >= 0.4 but grows to
+    // -1.2e-5 at b/a = 0.1 and to -4.0e-4 in the degenerate limit b/a -> 0
+    // (measured against a converged arc-length integral). The Simpson integral on
+    // the superellipse side tracks the true perimeter to float32 precision
+    // (~4e-7 relative), so 1e-3 is the tightest tolerance this identity supports
+    // over the whole semi-axis regime, where b/a reaches 0.001. Do not read it as
+    // the accuracy of either body; the guard is the ellipse approximation, and
+    // tightening it means improving Ellipse.Perimeter (tracked, see plato-373).
     Law_SuperEllipseExponentTwoPerimeterIsEllipse(se: SuperEllipse): Boolean
         => se.SuperEllipseOutOfRegime
         || SuperEllipse(se.Center, se.SemiAxes, se.Rotation, 2.0).Perimeter
-            .SpecialEq(Ellipse(se.Center, se.SemiAxes, se.Rotation).Perimeter);
+            .SpecialEqWithin(Ellipse(se.Center, se.SemiAxes, se.Rotation).Perimeter,
+                             1e-3);
 
     // At Exponent 1 the superellipse is the diamond with vertices on the axes,
     // whose perimeter is exactly 4 sqrt(a^2 + b^2).

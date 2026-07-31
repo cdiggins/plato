@@ -63,6 +63,22 @@ library FoundationLaws
     Law_ContainsCenter(self: IntervalLike<$T>): Boolean
         => self.IsReversed || self.Contains(self.Center);
 
+    // Same property, stated over AngleInterval's OWN surface.
+    //
+    // DOMAIN: AngleInterval reinterprets both Contains and Center as ARC operations
+    // (intervals-transforms-interval.library.plato), so the generic law above does
+    // not describe this type. Worse, monomorphizing it produces a CHIMERA: the
+    // concept's linear Center is inlined into the law body (resolution happens
+    // against IntervalLike, where the specialization is invisible), while the
+    // Contains call survives as a call and is re-bound by C# extension-method
+    // overload resolution to the type's wrap-aware one (tracked as plato-374). Arc
+    // Contains of a linear midpoint holds for neither reading, and it fails for
+    // every interval whose stored End - Start exceeds a turn. Restated here on the
+    // arc surface, where
+    // the midpoint is Start + Span/2 and containment always holds.
+    Law_ContainsCenter(self: AngleInterval): Boolean
+        => self.Contains(self.Center);
+
     //==
     // Bounds2D AABB operations (intervals-transforms.library.plato: Contains/Union/Expand).
 

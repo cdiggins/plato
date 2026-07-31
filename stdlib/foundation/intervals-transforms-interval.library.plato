@@ -201,4 +201,16 @@ library IntervalsTransformsInterval
     // IntervalLike.Contains is not.
     Contains(self: AngleInterval, a: Angle): Boolean
         => (a - self.Start).Wrap(1.0.Turns) <= (self.End - self.Start).Wrap(1.0.Turns);
+
+    // The angle half way ALONG the arc: Start advanced by half the Span. This is the
+    // seam-aware partner of Contains above, and it is deliberately not the generic
+    // IntervalLike.Center (Lerp(0.5), the arithmetic mean of the stored endpoints).
+    // The two agree exactly whenever the raw End - Start lies in [0, one turn), which
+    // is the regime every arc consumer works in; they diverge only once the stored
+    // extent wraps, and there the arithmetic mean is not on the arc at all. For
+    // Start = -6.988 rad, End = 2 rad the sweep is Span = 2.705 rad, whose midpoint
+    // is -5.636 rad, while the arithmetic mean -2.494 rad sits 4.494 rad along a
+    // 2.705 rad arc -- outside the very arc that Span and Contains measure.
+    Center(self: AngleInterval): Angle
+        => self.Start + self.Span * 0.5;
 }
