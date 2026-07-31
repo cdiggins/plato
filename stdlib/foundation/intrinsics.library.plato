@@ -9,7 +9,7 @@
 //
 // **Rule: a bodiless intrinsic may mention only `primitive` types** (Number,
 // Integer, Boolean, Character, String, Array, Buffer, List, Function0-9,
-// Dynamic, Type — see `primitives.plato`). Everything that used to be declared
+// Type — see `primitives.plato`). Everything that used to be declared
 // here on Angle, Number2/3/4/8, Vector2D/3D, Matrix3x2/4x4 and Quaternion now
 // has a portable Plato reference body in the corresponding `*-ops.library.plato`
 // file. Those bodies define the semantics; a backend may substitute a verified

@@ -15,9 +15,9 @@ Target applications: geometry (primary), 2D/3D and N-dimensional computation, an
 numerical/mathematical/scientific computing, graphics and rendering, physics, motion
 graphics, image processing, and engineering.
 
-Current contents (2026-07-30): **409 source files (192 `*.types.plato` files + 46
+Current contents (2026-07-31): **408 source files (191 `*.types.plato` files + 46
 `*.concepts.plato` files + 170 `*.library.plato` files, plus `foundation/primitives.plato`),
-162 concepts, 1168 types and 18 primitives**.
+162 concepts, 1167 types and 17 primitives**.
 
 Every file holds exactly
 one **kind** of declaration — `<stem>.concepts.plato` holds concepts, `<stem>.types.plato` holds
@@ -85,7 +85,7 @@ A folder may reference only itself and the folders before it; `future` may reach
 nothing reaches into `future`.
 
 The tree must parse and resolve with zero errors. It is self-contained (declares its own
-primitives in `foundation/primitives.types.plato`). Declaration files and the
+primitives in `foundation/primitives.plato`). Declaration files and the
 `*.library.plato` implementation bodies sit together in each tier folder, so one command
 covers both (see [`LIBRARIES.md`](LIBRARIES.md)); the informational LINT001/LINT003 finding
 counts shift as the libraries implement more members.
@@ -153,17 +153,16 @@ Owning declaration files cite conventions with a one-line
 
 ## Layers and file map
 
-This ordered index is the canonical reading order. Every one of the 409 `*.plato` files in the
+This ordered index is the canonical reading order. Every one of the 408 `*.plato` files in the
 folder appears in exactly one row; file names are given without the `.plato` extension, so
-`core-logic.concepts` means `core-logic.concepts.plato` and a bare stem like `primitives`
-means `primitives.types.plato`. Layer numbers are the reading order and
+`core-logic.concepts` means `core-logic.concepts.plato`. Layer numbers are the reading order and
 also the rough dependency order — a layer may use anything from a lower-numbered layer and should
 not reach upward. (An old "Owner" column named the agent that wrote each group during
 initial build-out; it described a work assignment, not the tree, and is gone.)
 
 | # | Layer | Files |
 |---|-------|-------|
-| 1 | Foundation — primitives, core comparison & logic | `core-comparison.concepts`, `core-comparison.library`, `core-logic.concepts`, `core-logic.library`, `primitives`, `primitives.types`, `primitives-arrays`, `primitives-tuples` |
+| 1 | Foundation — primitives, core comparison & logic | `core-comparison.concepts`, `core-comparison.library`, `core-logic.concepts`, `core-logic.library`, `primitives`, `primitives-arrays`, `primitives-tuples` |
 | 2 | Foundation — algebra, collections, functional | `algebra-metric.concepts`, `algebra-metric.library`, `algebra-numeric.concepts`, `algebra-numeric.library`, `algebra-operations.concepts`, `algebra-operations.library`, `collections-containers.concepts`, `collections-containers.library`, `collections-grids.library`, `collections-indexable.concepts`, `collections-indexable.library`, `collections-jagged`, `collections-jagged.concepts`, `collections-jagged.library`, `collections-sampling.library`, `functional-procedural.library`, `functional.concepts` |
 | 3 | Foundation — numbers, quantities, angles, constants, time | `angles.library`, `constants.library`, `numbers`, `quantities-dynamic`, `quantities-electromagnetic`, `quantities-geometric`, `quantities-kinematic`, `quantities-material`, `quantities-mechanical`, `quantities-photometric`, `quantities-projections.library`, `quantities-thermal`, `quantities.concepts`, `quantities.library`, `numbers-dual`, `numbers-dual.library`, `time` |
 | 4 | Foundation — vectors, matrices, rotations, points, axes | `axes`, `axes-2d.library`, `axes-signed.library`, `axes.library`, `matrices`, `matrices.concepts`, `matrices-sparse`, `matrices-sparse.library`, `numeric-structures-algebra.library`, `numeric-structures-components.library`, `numeric-structures-coordinate.library`, `numeric-structures-matrix.library`, `numeric-structures-quantity.library`, `numeric-structures-vector.library`, `points`, `points-curvilinear`, `points-parametric`, `points.concepts`, `rotations`, `vectors-geometric`, `vectors-integer`, `vectors-tuples`, `vectors.concepts` |
@@ -191,12 +190,10 @@ sit inline in a declaration file. Ground rules and the package-to-file table liv
 Foundation reading order, file by file:
 
 - `primitives.plato` — the whole `primitive` set, and the only file that uses that keyword:
-  Number, Integer, Boolean, Character, String, Dynamic, Type, `Array<T>`, the `unique` affine
+  Number, Integer, Boolean, Character, String, Type, `Array<T>`, the `unique` affine
   builders `List<T>` / `Buffer<T>`, and Function0..Function9. These are the names the compiler
   assumes exist; their bodiless host signatures live in `intrinsics.library.plato`, and nothing
   outside this set may appear in an intrinsic signature.
-- `primitives.types.plato` — `Object` alone: the one member of this family that is NOT a
-  primitive, so its declaration is its own authority.
 - `primitives-tuples.types.plato` — Tuple2..Tuple10 (the compiler's synthesized constructor arity).
 - `primitives-arrays.types.plato` — Array2D, Array3D (rank-1 `Array<T>` is a primitive, above).
 - `core-comparison.concepts.plato` — Equatable, Value, Hashable, Orderable, Comparable.
@@ -253,10 +250,9 @@ the authority, not this table.
 
 | Name | Owner file |
 |------|-----------|
-| `Number`, `Integer`, `Boolean`, `String`, `Character`, `Dynamic`, `Type` | `primitives.plato` |
+| `Number`, `Integer`, `Boolean`, `String`, `Character`, `Type` | `primitives.plato` |
 | `Array<T>`, `Function0`..`Function9` | `primitives.plato` |
 | `List<T>`, `Buffer<T>` (unique affine builders) | `primitives.plato` |
-| `Object` (the one non-primitive of this family) | `primitives.types.plato` |
 | `Array2D`, `Array3D` | `primitives-arrays.types.plato` |
 | `Jagged` concept (CSR row packing) | `collections-jagged.concepts.plato` |
 | `JaggedArray<T>` | `collections-jagged.types.plato` |

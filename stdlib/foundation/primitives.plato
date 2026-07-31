@@ -45,11 +45,7 @@ primitive String
     implements Value, Orderable, Countable
 { }
 
-// ## Escape hatches
-
-// A dynamically typed value; an escape hatch for interop.
-primitive Dynamic
-{ }
+// ## Type tokens
 
 // A type reified as a value. Carries no members of its own; it exists so a static
 // member can be reached through a type token (the `_: Type` receiver convention).
