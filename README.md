@@ -163,6 +163,30 @@ byte-for-byte output is unchanged. The solver already does exact/generic unifica
 element inference; the elaboration that lets the backends consume a fully-typed IR is the next
 increment.
 
+## Building
+
+The parser generator this compiler is built on, [Parakeet](https://github.com/ara3d/parakeet),
+is a **git submodule** at `parakeet/`, so a plain `git clone` leaves that directory empty and
+the build fails with missing `CstNode` / `ILocation` types. Clone recursively:
+
+```bash
+git clone --recurse-submodules https://github.com/cdiggins/plato.git
+```
+
+If you have already cloned without it:
+
+```bash
+git submodule update --init --recursive
+```
+
+Everything else comes from NuGet — the Ara 3D SDK is consumed as a package reference
+(`Ara3D.SDK.Core`, version pinned in `Directory.Build.props`), not as a path into a sibling
+checkout, so no other repository needs to be present.
+
+Note that `parakeet/` is a checkout of a *separate* repository. Changes to the grammar are
+committed and pushed there, not here; a commit in this repo only records which Parakeet
+commit to use.
+
 ## Status
 
 The language design is stabilizing after a few years of iteration. The Plato-to-C# compiler is in daily production use: it generates the geometry library consumed by the [Ara 3D SDK](https://github.com/ara3d/ara3d-sdk) (`ara3d-sdk/src/Plato.Generated` when built inside the [Ara 3D studio](https://github.com/ara3d/studio) monorepo). Honest caveats:

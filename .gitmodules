@@ -1,3 +1,6 @@
 [submodule "parakeet"]
 	path = parakeet
 	url = https://github.com/ara3d/parakeet
+[submodule "submodules/workquarry"]
+	path = submodules/workquarry
+	url = https://github.com/ara3d/workquarry
