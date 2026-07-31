@@ -1,0 +1,364 @@
+//==
+// # Basis noise evaluation
+//
+// The `Eval` bodies for the single-octave noise fields of
+// `noise-basis.types.plato`, written against the shared lattice vocabulary in
+// `noise.library.plato` (hashing, gradients, feature points, metrics). The
+// fractal sums in `noise-fractal.library.plato` layer these.
+//
+// Every body multiplies the query point by Frequency first, so a lattice cell is
+// one unit wide in the working coordinates and `Floor` gives the cell index.
+// Scalar output ranges over [-1, 1] except white noise, which is [0, 1) as its
+// declaration says.
+//
+// The gradient noises interpolate with `SmootherStep` (Perlin's quintic fade),
+// not `SmoothStep`: the cubic leaves a second-derivative discontinuity at the
+// lattice planes that shows up as banding once the field is differentiated, which
+// the fractal and warped noises do constantly.
+
+library NoiseBasis
+{
+    //==
+    // # White noise
+    //
+    // No lattice and no interpolation: the coordinates themselves are hashed, so
+    // two points however close have unrelated values.
+
+    // The uncorrelated value at this point, in [0, 1).
+    Eval(self: WhiteNoise2D, p: Point2D): Number
+        => HashToUnit(LatticeHash(self.Seed, p.X.Hash, p.Y.Hash));
+
+    // The uncorrelated value at this point, in [0, 1).
+    Eval(self: WhiteNoise3D, p: Point3D): Number
+        => HashToUnit(LatticeHash(self.Seed, p.X.Hash, p.Y.Hash, p.Z.Hash));
+
+    //==
+    // # Value noise
+    //
+    // One random value per lattice corner, faded between them. Cheap, and the
+    // extrema sit ON the lattice, which is the lattice artifact the type's doc
+    // comment warns about.
+
+    // The faded bilinear blend of the four surrounding corner values.
+    Eval(self: ValueNoise2D, p: Point2D): Number {
+        var x = p.X * self.Frequency;
+        var y = p.Y * self.Frequency;
+        var i = x.Floor.ToInteger;
+        var j = y.Floor.ToInteger;
+        var u = (x - x.Floor).SmootherStep;
+        var v = (y - y.Floor).SmootherStep;
+        var c00 = HashToSigned(LatticeHash(self.Seed, i, j));
+        var c10 = HashToSigned(LatticeHash(self.Seed, i + 1, j));
+        var c01 = HashToSigned(LatticeHash(self.Seed, i, j + 1));
+        var c11 = HashToSigned(LatticeHash(self.Seed, i + 1, j + 1));
+        return c00.Lerp(c10, u).Lerp(c01.Lerp(c11, u), v);
+    }
+
+    // The faded trilinear blend of the eight surrounding corner values.
+    Eval(self: ValueNoise3D, p: Point3D): Number {
+        var x = p.X * self.Frequency;
+        var y = p.Y * self.Frequency;
+        var z = p.Z * self.Frequency;
+        var i = x.Floor.ToInteger;
+        var j = y.Floor.ToInteger;
+        var k = z.Floor.ToInteger;
+        var u = (x - x.Floor).SmootherStep;
+        var v = (y - y.Floor).SmootherStep;
+        var w = (z - z.Floor).SmootherStep;
+        var c000 = HashToSigned(LatticeHash(self.Seed, i, j, k));
+        var c100 = HashToSigned(LatticeHash(self.Seed, i + 1, j, k));
+        var c010 = HashToSigned(LatticeHash(self.Seed, i, j + 1, k));
+        var c110 = HashToSigned(LatticeHash(self.Seed, i + 1, j + 1, k));
+        var c001 = HashToSigned(LatticeHash(self.Seed, i, j, k + 1));
+        var c101 = HashToSigned(LatticeHash(self.Seed, i + 1, j, k + 1));
+        var c011 = HashToSigned(LatticeHash(self.Seed, i, j + 1, k + 1));
+        var c111 = HashToSigned(LatticeHash(self.Seed, i + 1, j + 1, k + 1));
+        var lo = c000.Lerp(c100, u).Lerp(c010.Lerp(c110, u), v);
+        var hi = c001.Lerp(c101, u).Lerp(c011.Lerp(c111, u), v);
+        return lo.Lerp(hi, w);
+    }
+
+    //==
+    // # Perlin gradient noise
+    //
+    // One random unit GRADIENT per lattice corner; each corner contributes the
+    // dot product of its gradient with the offset to the query point, so the
+    // field is zero at every corner. The trailing constants normalize the
+    // theoretical extremum (sqrt(N)/2 for unit gradients in N dimensions) back to
+    // one. https://en.wikipedia.org/wiki/Perlin_noise
+
+    // The faded blend of the four corner gradient contributions.
+    Eval(self: PerlinNoise2D, p: Point2D): Number {
+        var x = p.X * self.Frequency;
+        var y = p.Y * self.Frequency;
+        var i = x.Floor.ToInteger;
+        var j = y.Floor.ToInteger;
+        var dx = x - x.Floor;
+        var dy = y - y.Floor;
+        var u = dx.SmootherStep;
+        var v = dy.SmootherStep;
+        var n00 = LatticeGradient2D(self.Seed, i, j).Dot((dx, dy));
+        var n10 = LatticeGradient2D(self.Seed, i + 1, j).Dot((dx - 1.0, dy));
+        var n01 = LatticeGradient2D(self.Seed, i, j + 1).Dot((dx, dy - 1.0));
+        var n11 = LatticeGradient2D(self.Seed, i + 1, j + 1).Dot((dx - 1.0, dy - 1.0));
+        return n00.Lerp(n10, u).Lerp(n01.Lerp(n11, u), v) * 1.4142135623730951;
+    }
+
+    // The faded blend of the eight corner gradient contributions.
+    Eval(self: PerlinNoise3D, p: Point3D): Number {
+        var x = p.X * self.Frequency;
+        var y = p.Y * self.Frequency;
+        var z = p.Z * self.Frequency;
+        var i = x.Floor.ToInteger;
+        var j = y.Floor.ToInteger;
+        var k = z.Floor.ToInteger;
+        var dx = x - x.Floor;
+        var dy = y - y.Floor;
+        var dz = z - z.Floor;
+        var u = dx.SmootherStep;
+        var v = dy.SmootherStep;
+        var w = dz.SmootherStep;
+        var n000 = LatticeGradient3D(self.Seed, i, j, k).Dot((dx, dy, dz));
+        var n100 = LatticeGradient3D(self.Seed, i + 1, j, k).Dot((dx - 1.0, dy, dz));
+        var n010 = LatticeGradient3D(self.Seed, i, j + 1, k).Dot((dx, dy - 1.0, dz));
+        var n110 = LatticeGradient3D(self.Seed, i + 1, j + 1, k).Dot((dx - 1.0, dy - 1.0, dz));
+        var n001 = LatticeGradient3D(self.Seed, i, j, k + 1).Dot((dx, dy, dz - 1.0));
+        var n101 = LatticeGradient3D(self.Seed, i + 1, j, k + 1).Dot((dx - 1.0, dy, dz - 1.0));
+        var n011 = LatticeGradient3D(self.Seed, i, j + 1, k + 1).Dot((dx, dy - 1.0, dz - 1.0));
+        var n111 = LatticeGradient3D(self.Seed, i + 1, j + 1, k + 1).Dot((dx - 1.0, dy - 1.0, dz - 1.0));
+        var lo = n000.Lerp(n100, u).Lerp(n010.Lerp(n110, u), v);
+        var hi = n001.Lerp(n101, u).Lerp(n011.Lerp(n111, u), v);
+        return lo.Lerp(hi, w) * 1.1547005383792515;
+    }
+
+    //==
+    // # Simplex noise
+    //
+    // Gustavson's construction: skew the query point onto a simplex lattice, take
+    // the N+1 corners of the containing simplex, and sum a radially symmetric
+    // falloff (t^4, t = r0 - |d|^2) times each corner's gradient contribution.
+    // Three corners instead of four in 2D and four instead of eight in 3D, with
+    // no directional bias from the axis-aligned cube.
+    // The falloff radius (0.5 in 2D, 0.6 in 3D) and the output scale are
+    // Gustavson's, the scale multiplied by sqrt(2) because the gradients here are
+    // unit vectors where his table holds vectors of length sqrt(2).
+    // https://en.wikipedia.org/wiki/Simplex_noise
+
+    // One corner's contribution: the quartic falloff times the gradient dot the
+    // offset, or zero once the query point leaves the corner's radius of
+    // influence.
+    SimplexCorner2D(seed: Integer, i: Integer, j: Integer, dx: Number, dy: Number): Number {
+        var t = 0.5 - dx * dx - dy * dy;
+        var falloff = t * t * t * t;
+        return t < 0.0 ? 0.0 : falloff * LatticeGradient2D(seed, i, j).Dot((dx, dy));
+    }
+
+    // The sum of the three simplex corner contributions.
+    Eval(self: SimplexNoise2D, p: Point2D): Number {
+        // The skew and unskew factors of the 2D simplex lattice:
+        // (sqrt(3) - 1) / 2 and (3 - sqrt(3)) / 6.
+        var skew = 0.3660254037844386;
+        var unskew = 0.21132486540518713;
+        var x = p.X * self.Frequency;
+        var y = p.Y * self.Frequency;
+        var s = (x + y) * skew;
+        var i = (x + s).Floor;
+        var j = (y + s).Floor;
+        var t = (i + j) * unskew;
+        var x0 = x - (i - t);
+        var y0 = y - (j - t);
+        // Which of the two triangles of the skewed cell the point fell in.
+        var i1 = x0 > y0 ? 1.0 : 0.0;
+        var j1 = x0 > y0 ? 0.0 : 1.0;
+        var ii = i.ToInteger;
+        var jj = j.ToInteger;
+        return (SimplexCorner2D(self.Seed, ii, jj, x0, y0)
+              + SimplexCorner2D(self.Seed, ii + i1.ToInteger, jj + j1.ToInteger,
+                                x0 - i1 + unskew, y0 - j1 + unskew)
+              + SimplexCorner2D(self.Seed, ii + 1, jj + 1,
+                                x0 - 1.0 + 2.0 * unskew, y0 - 1.0 + 2.0 * unskew))
+             * 98.99494936611666;
+    }
+
+    // One corner's contribution in three dimensions; zero outside its radius.
+    SimplexCorner3D(seed: Integer, i: Integer, j: Integer, k: Integer, dx: Number, dy: Number, dz: Number): Number {
+        var t = 0.6 - dx * dx - dy * dy - dz * dz;
+        var falloff = t * t * t * t;
+        return t < 0.0 ? 0.0 : falloff * LatticeGradient3D(seed, i, j, k).Dot((dx, dy, dz));
+    }
+
+    // The sum of the four simplex corner contributions.
+    Eval(self: SimplexNoise3D, p: Point3D): Number {
+        // The skew and unskew factors of the 3D simplex lattice: 1/3 and 1/6.
+        var skew = 1.0 / 3.0;
+        var unskew = 1.0 / 6.0;
+        var x = p.X * self.Frequency;
+        var y = p.Y * self.Frequency;
+        var z = p.Z * self.Frequency;
+        var s = (x + y + z) * skew;
+        var i = (x + s).Floor;
+        var j = (y + s).Floor;
+        var k = (z + s).Floor;
+        var t = (i + j + k) * unskew;
+        var x0 = x - (i - t);
+        var y0 = y - (j - t);
+        var z0 = z - (k - t);
+        // The traversal order of the containing tetrahedron, written as the rank
+        // of each coordinate rather than the usual six-way branch: the second
+        // corner steps along the largest coordinate, the third along the two
+        // largest.
+        var i1 = x0 >= y0 && x0 >= z0 ? 1.0 : 0.0;
+        var j1 = y0 > x0 && y0 >= z0 ? 1.0 : 0.0;
+        var k1 = z0 > x0 && z0 > y0 ? 1.0 : 0.0;
+        var i2 = x0 >= y0 || x0 >= z0 ? 1.0 : 0.0;
+        var j2 = y0 > x0 || y0 >= z0 ? 1.0 : 0.0;
+        var k2 = z0 > x0 || z0 > y0 ? 1.0 : 0.0;
+        var ii = i.ToInteger;
+        var jj = j.ToInteger;
+        var kk = k.ToInteger;
+        return (SimplexCorner3D(self.Seed, ii, jj, kk, x0, y0, z0)
+              + SimplexCorner3D(self.Seed, ii + i1.ToInteger, jj + j1.ToInteger, kk + k1.ToInteger,
+                                x0 - i1 + unskew, y0 - j1 + unskew, z0 - k1 + unskew)
+              + SimplexCorner3D(self.Seed, ii + i2.ToInteger, jj + j2.ToInteger, kk + k2.ToInteger,
+                                x0 - i2 + 2.0 * unskew, y0 - j2 + 2.0 * unskew, z0 - k2 + 2.0 * unskew)
+              + SimplexCorner3D(self.Seed, ii + 1, jj + 1, kk + 1,
+                                x0 - 1.0 + 3.0 * unskew, y0 - 1.0 + 3.0 * unskew, z0 - 1.0 + 3.0 * unskew))
+             * 45.254833995939045;
+    }
+
+    //==
+    // # Worley (cellular) noise
+    //
+    // One feature point per lattice cell; the value combines the distances to the
+    // nearest feature points. The 3x3 (3x3x3) neighbourhood is enough because a
+    // jittered feature point never leaves its own cell, so nothing outside the
+    // ring can be nearer than something inside it.
+    // https://en.wikipedia.org/wiki/Worley_noise
+
+    // The distance from the query offset to the feature point of the k-th cell of
+    // the 3x3 neighbourhood, k counted row-major from the lower-left cell.
+    WorleyNeighbour2D(self: WorleyNoise2D, i: Integer, j: Integer, fx: Number, fy: Number, k: Integer): Number {
+        var dx = k % 3 - 1;
+        var dy = k / 3 - 1;
+        var feature = FeatureOffset2D(self.Seed, i + dx, j + dy, self.Jitter);
+        var offset = Vector2D(dx.ToNumber + feature.X - fx, dy.ToNumber + feature.Y - fy);
+        return WorleyLength(offset, self.Distance);
+    }
+
+    // The chosen combination of the two nearest feature distances. Non-negative.
+    Eval(self: WorleyNoise2D, p: Point2D): Number {
+        var x = p.X * self.Frequency;
+        var y = p.Y * self.Frequency;
+        var i = x.Floor.ToInteger;
+        var j = y.Floor.ToInteger;
+        var fx = x - x.Floor;
+        var fy = y - y.Floor;
+        var distances = 9.MapRange(k => self.WorleyNeighbour2D(i, j, fx, fy, k));
+        var f1 = NearestDistance(distances);
+        return WorleyCombine(f1, SecondNearestDistance(distances, f1), self.Feature);
+    }
+
+    // The distance from the query offset to the feature point of the k-th cell of
+    // the 3x3x3 neighbourhood, k counted x fastest then y then z.
+    WorleyNeighbour3D(self: WorleyNoise3D, i: Integer, j: Integer, k: Integer, fx: Number, fy: Number, fz: Number, n: Integer): Number {
+        var dx = n % 3 - 1;
+        var dy = n / 3 % 3 - 1;
+        var dz = n / 9 - 1;
+        var feature = FeatureOffset3D(self.Seed, i + dx, j + dy, k + dz, self.Jitter);
+        var offset = Vector3D(dx.ToNumber + feature.X - fx,
+                              dy.ToNumber + feature.Y - fy,
+                              dz.ToNumber + feature.Z - fz);
+        return WorleyLength(offset, self.Distance);
+    }
+
+    // The chosen combination of the two nearest feature distances. Non-negative.
+    Eval(self: WorleyNoise3D, p: Point3D): Number {
+        var x = p.X * self.Frequency;
+        var y = p.Y * self.Frequency;
+        var z = p.Z * self.Frequency;
+        var i = x.Floor.ToInteger;
+        var j = y.Floor.ToInteger;
+        var k = z.Floor.ToInteger;
+        var fx = x - x.Floor;
+        var fy = y - y.Floor;
+        var fz = z - z.Floor;
+        var distances = 27.MapRange(n => self.WorleyNeighbour3D(i, j, k, fx, fy, fz, n));
+        var f1 = NearestDistance(distances);
+        return WorleyCombine(f1, SecondNearestDistance(distances, f1), self.Feature);
+    }
+
+    //==
+    // # Gabor noise
+    //
+    // Sparse convolution: one Gabor kernel — a Gaussian envelope times a plane
+    // wave — per lattice cell, summed over the neighbourhood. Bandwidth is the
+    // envelope's decay rate, so a large bandwidth localizes each kernel and
+    // widens the spectrum; Anisotropy blends each kernel's own random orientation
+    // (0) toward the field's stated one (1).
+    // https://en.wikipedia.org/wiki/Gabor_filter
+
+    // One cell's kernel, evaluated at the query offset.
+    GaborKernel2D(self: GaborNoise2D, i: Integer, j: Integer, fx: Number, fy: Number, k: Integer): Number {
+        var dx = k % 3 - 1;
+        var dy = k / 3 - 1;
+        var ci = i + dx;
+        var cj = j + dy;
+        var h = LatticeHash(self.Seed, ci, cj);
+        var impulse = FeatureOffset2D(self.Seed, ci, cj, 1.0);
+        var vx = dx.ToNumber + impulse.X - fx;
+        var vy = dy.ToNumber + impulse.Y - fy;
+        var envelope = (-Number.Pi * self.Bandwidth * (vx * vx + vy * vy)).Exp;
+        // The kernel's wave direction: its own random orientation dragged toward
+        // the field's by Anisotropy.
+        var own = HashToUnit(NoiseMix(h)).Turns;
+        var direction = Vector2D(own.Cos.Lerp(self.Orientation.Cos, self.Anisotropy),
+                                 own.Sin.Lerp(self.Orientation.Sin, self.Anisotropy)).Normalize;
+        var phase = Angle((vx * direction.X + vy * direction.Y) * Number.Tau);
+        return HashToSigned(h) * envelope * phase.Cos;
+    }
+
+    // The summed kernel response over the 3x3 neighbourhood.
+    Eval(self: GaborNoise2D, p: Point2D): Number {
+        var x = p.X * self.Frequency;
+        var y = p.Y * self.Frequency;
+        var i = x.Floor.ToInteger;
+        var j = y.Floor.ToInteger;
+        var fx = x - x.Floor;
+        var fy = y - y.Floor;
+        return 9.MapRange(k => self.GaborKernel2D(i, j, fx, fy, k)).Reduce(0.0, (acc, v) => acc + v);
+    }
+
+    // One cell's kernel in three dimensions.
+    GaborKernel3D(self: GaborNoise3D, i: Integer, j: Integer, k: Integer, fx: Number, fy: Number, fz: Number, n: Integer): Number {
+        var dx = n % 3 - 1;
+        var dy = n / 3 % 3 - 1;
+        var dz = n / 9 - 1;
+        var ci = i + dx;
+        var cj = j + dy;
+        var ck = k + dz;
+        var h = LatticeHash(self.Seed, ci, cj, ck);
+        var impulse = FeatureOffset3D(self.Seed, ci, cj, ck, 1.0);
+        var v = Vector3D(dx.ToNumber + impulse.X - fx,
+                         dy.ToNumber + impulse.Y - fy,
+                         dz.ToNumber + impulse.Z - fz);
+        var envelope = (-Number.Pi * self.Bandwidth * v.LengthSquared).Exp;
+        var own = LatticeGradient3D(self.Seed, ck, ci, cj);
+        var direction = own.Lerp(self.Direction.Vector, self.Anisotropy).Normalize;
+        var phase = Angle(v.Dot(direction) * Number.Tau);
+        return HashToSigned(h) * envelope * phase.Cos;
+    }
+
+    // The summed kernel response over the 3x3x3 neighbourhood.
+    Eval(self: GaborNoise3D, p: Point3D): Number {
+        var x = p.X * self.Frequency;
+        var y = p.Y * self.Frequency;
+        var z = p.Z * self.Frequency;
+        var i = x.Floor.ToInteger;
+        var j = y.Floor.ToInteger;
+        var k = z.Floor.ToInteger;
+        var fx = x - x.Floor;
+        var fy = y - y.Floor;
+        var fz = z - z.Floor;
+        return 27.MapRange(n => self.GaborKernel3D(i, j, k, fx, fy, fz, n)).Reduce(0.0, (acc, v) => acc + v);
+    }
+}

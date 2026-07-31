@@ -1,0 +1,197 @@
+//==
+// # Noise — the shared lattice vocabulary
+//
+// The hashing and lattice-gradient primitives every noise field in
+// `noise-basis`, `noise-fractal` and `noise-warped` is written against. Nothing
+// here is a field itself: these are the deterministic pseudo-random building
+// blocks, kept in one place so that two noises given the same Seed and the same
+// lattice cell agree.
+//
+// The pseudo-randomness is integer hashing, not a random number generator: there
+// is no state, and `LatticeHash(seed, i, j)` is a pure function of its three
+// arguments. The exact constants are NOT part of the contract — values will
+// differ between library versions — but within one version every backend must
+// agree, which is why the mixing is written in whole-number arithmetic that
+// wraps rather than in floating point.
+//
+// Convention: Frequency scales the input domain, so a lattice cell is
+// 1 / Frequency wide, and higher frequency means smaller features. Scalar noises
+// range over [-1, 1] unless a doc comment says otherwise.
+
+library Noise
+{
+    //==
+    // # Integer hashing
+
+    // A whole-number avalanche mix: one bit of input changes about half the
+    // output bits. The xor-shift-multiply shape of the Murmur3 finalizer. The
+    // multiplications are expected to wrap.
+    NoiseMix(x: Integer): Integer {
+        var h1 = x.BitwiseXor(x.ShiftRight(15)) * 668265261;
+        var h2 = h1.BitwiseXor(h1.ShiftRight(13)) * 374761393;
+        return h2.BitwiseXor(h2.ShiftRight(16));
+    }
+
+    // The pseudo-random integer belonging to planar lattice cell (ix, iy) of the
+    // field with this seed. Each coordinate is mixed before folding so that
+    // neighbouring cells do not share low bits.
+    LatticeHash(seed: Integer, ix: Integer, iy: Integer): Integer
+        => NoiseMix(seed.CombineHash(NoiseMix(ix)).CombineHash(NoiseMix(iy)));
+
+    // The pseudo-random integer belonging to spatial lattice cell (ix, iy, iz).
+    LatticeHash(seed: Integer, ix: Integer, iy: Integer, iz: Integer): Integer
+        => NoiseMix(seed.CombineHash(NoiseMix(ix)).CombineHash(NoiseMix(iy)).CombineHash(NoiseMix(iz)));
+
+    //==
+    // # Hash to number
+    //
+    // The low 24 bits are taken so the value is non-negative whatever the sign
+    // convention of the host's shift, and 24 bits is exactly the mantissa a
+    // single-precision backend can carry without rounding two hashes together.
+
+    // The hash as a number in [0, 1).
+    HashToUnit(h: Integer): Number
+        => h.BitwiseAnd(16777215).ToNumber / 16777216.0;
+
+    // The hash as a number in [-1, 1).
+    HashToSigned(h: Integer): Number
+        => HashToUnit(h) * 2.0 - 1.0;
+
+    //==
+    // # Lattice gradients
+    //
+    // Gradient (Perlin-family) noise needs a unit vector per lattice cell rather
+    // than a scalar. Both are drawn from the hash by inverse transform sampling,
+    // which is uniform over the circle and over the sphere respectively — the
+    // classic 8- and 12-entry gradient tables are an optimization, not the
+    // definition, and a table costs a branch chain in a language without arrays
+    // of constants.
+
+    // The unit gradient of planar lattice cell (ix, iy): the hash read as an
+    // angle.
+    LatticeGradient2D(seed: Integer, ix: Integer, iy: Integer): Vector2D {
+        var a = HashToUnit(LatticeHash(seed, ix, iy)).Turns;
+        return (a.Cos, a.Sin);
+    }
+
+    // The unit gradient of spatial lattice cell (ix, iy, iz): a uniform point on
+    // the sphere, height sampled first (Archimedes' theorem) and the azimuth
+    // taken from a second mix of the same hash.
+    LatticeGradient3D(seed: Integer, ix: Integer, iy: Integer, iz: Integer): Vector3D {
+        var h = LatticeHash(seed, ix, iy, iz);
+        var z = HashToSigned(h);
+        var r = (1.0 - z * z).Sqrt;
+        var a = HashToUnit(NoiseMix(h)).Turns;
+        return (r * a.Cos, r * a.Sin, z);
+    }
+
+    //==
+    // # Feature points
+    //
+    // Cellular (Worley) noise scatters one feature point per lattice cell.
+    // Jitter in [0, 1] moves it from the cell centre (0) to anywhere in the cell
+    // (1); the two (three) coordinates come from independent mixes of the cell
+    // hash.
+
+    // The feature point of planar cell (ix, iy), in cell-local coordinates
+    // (the returned offsets are relative to the cell's lower corner).
+    FeatureOffset2D(seed: Integer, ix: Integer, iy: Integer, jitter: Number): Vector2D {
+        var h = LatticeHash(seed, ix, iy);
+        var hx = HashToUnit(h);
+        var hy = HashToUnit(NoiseMix(h));
+        return (0.5 + (hx - 0.5) * jitter, 0.5 + (hy - 0.5) * jitter);
+    }
+
+    // The feature point of spatial cell (ix, iy, iz), in cell-local coordinates.
+    FeatureOffset3D(seed: Integer, ix: Integer, iy: Integer, iz: Integer, jitter: Number): Vector3D {
+        var h = LatticeHash(seed, ix, iy, iz);
+        var hx = HashToUnit(h);
+        var hy = HashToUnit(NoiseMix(h));
+        var hz = HashToUnit(NoiseMix(NoiseMix(h)));
+        return (0.5 + (hx - 0.5) * jitter,
+                0.5 + (hy - 0.5) * jitter,
+                0.5 + (hz - 0.5) * jitter);
+    }
+
+    //==
+    // # Distance metrics
+
+    // The distance between two planar offsets under the chosen Worley metric.
+    // Minkowski is the p = 3 member of the family, the usual stand-in for the
+    // "rounded Manhattan" look.
+    // https://en.wikipedia.org/wiki/Minkowski_distance
+    WorleyLength(d: Vector2D, metric: WorleyDistance): Number
+        => match (metric) {
+            Euclidean => d.Length;
+            Manhattan => d.X.Abs + d.Y.Abs;
+            Chebyshev => d.X.Abs.Max(d.Y.Abs);
+            Minkowski => (d.X.Abs.Pow(3.0) + d.Y.Abs.Pow(3.0)).Pow(1.0 / 3.0);
+        };
+
+    // The distance between two spatial offsets under the chosen Worley metric.
+    WorleyLength(d: Vector3D, metric: WorleyDistance): Number
+        => match (metric) {
+            Euclidean => d.Length;
+            Manhattan => d.X.Abs + d.Y.Abs + d.Z.Abs;
+            Chebyshev => d.X.Abs.Max(d.Y.Abs).Max(d.Z.Abs);
+            Minkowski => (d.X.Abs.Pow(3.0) + d.Y.Abs.Pow(3.0) + d.Z.Abs.Pow(3.0)).Pow(1.0 / 3.0);
+        };
+
+    //==
+    // # Feature combination
+
+    // The two nearest feature distances combined as the chosen feature asks.
+    // Precondition: f1 <= f2.
+    WorleyCombine(f1: Number, f2: Number, feature: WorleyFeature): Number
+        => match (feature) {
+            F1 => f1;
+            F2 => f2;
+            F2MinusF1 => f2 - f1;
+            F1PlusF2 => f1 + f2;
+        };
+
+    // The smallest of an array of distances.
+    NearestDistance(distances: Array<Number>): Number
+        => distances.Reduce(Number.MaxValue, (acc, d) => acc.Min(d));
+
+    // The smallest distance strictly greater than `nearest` — the second feature
+    // distance, given the first. Ties with `nearest` are skipped, so a point
+    // equidistant from two features reports the next distinct feature.
+    SecondNearestDistance(distances: Array<Number>, nearest: Number): Number
+        => distances.Reduce(Number.MaxValue, (acc, d) => d <= nearest ? acc : acc.Min(d));
+
+    //==
+    // # Basis dispatch
+    //
+    // The fractal and warped noises are parameterized by a `NoiseBasis` case, not
+    // by a basis field value, so they need one entry point turning a case plus
+    // (seed, frequency) into a sample. Worley and Gabor carry parameters the
+    // enumeration cannot express; neutral choices stand in, and a field wanting
+    // others uses that basis type directly rather than through a fractal.
+    // Every case is remapped to the same nominal [-1, 1] so octaves of different
+    // bases sum sensibly; the White and Worley shifts are not exact at the ends.
+
+    // A sample of the named basis noise at the given seed and frequency.
+    BasisValue2D(basis: NoiseBasis, seed: Integer, frequency: Number, p: Point2D): Number
+        => match (basis) {
+            White => WhiteNoise2D(seed).Eval(p) * 2.0 - 1.0;
+            Value => ValueNoise2D(seed, frequency).Eval(p);
+            Perlin => PerlinNoise2D(seed, frequency).Eval(p);
+            Simplex => SimplexNoise2D(seed, frequency).Eval(p);
+            Worley => 1.0 - 2.0 * WorleyNoise2D(seed, frequency, 1.0,
+                                                WorleyDistance.Euclidean, WorleyFeature.F1).Eval(p);
+            Gabor => GaborNoise2D(seed, frequency, 0.0.Turns, 1.0, 0.0).Eval(p);
+        };
+
+    // A sample of the named basis noise at the given seed and frequency.
+    BasisValue3D(basis: NoiseBasis, seed: Integer, frequency: Number, p: Point3D): Number
+        => match (basis) {
+            White => WhiteNoise3D(seed).Eval(p) * 2.0 - 1.0;
+            Value => ValueNoise3D(seed, frequency).Eval(p);
+            Perlin => PerlinNoise3D(seed, frequency).Eval(p);
+            Simplex => SimplexNoise3D(seed, frequency).Eval(p);
+            Worley => 1.0 - 2.0 * WorleyNoise3D(seed, frequency, 1.0,
+                                                WorleyDistance.Euclidean, WorleyFeature.F1).Eval(p);
+            Gabor => GaborNoise3D(seed, frequency, Direction3D(Vector3D(0.0, 0.0, 1.0)), 1.0, 0.0).Eval(p);
+        };
+}
