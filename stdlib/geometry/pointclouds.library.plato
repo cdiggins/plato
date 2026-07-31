@@ -22,4 +22,25 @@ library PointClouds
     // intensities carried unchanged (normals stale after a non-rigid mapping).
     Deform(self: AttributedPointCloud3D, mapping: Function1<Point3D, Point3D>): AttributedPointCloud3D
         => (self.Positions.Map(mapping), self.Normals, self.Colors, self.Intensities);
+
+    //==
+    // # The PointCloudable3D obligations
+    //
+    // Every enriched cloud keeps its samples in Positions and its channels in
+    // arrays parallel to it, so dropping to a bare cloud is dropping the
+    // channels. Written as an explicit construction rather than a bare array
+    // body: PointCloud3D's single field is an Array, and a C# backend cannot
+    // declare the implicit conversion for it (CS0552).
+
+    // The positions, without the per-point normals.
+    ToPointCloud(self: OrientedPointCloud3D): PointCloud3D
+        => PointCloud3D(self.Positions);
+
+    // The positions, without the per-point colors.
+    ToPointCloud(self: ColoredPointCloud3D): PointCloud3D
+        => PointCloud3D(self.Positions);
+
+    // The positions, without any of the sensor channels.
+    ToPointCloud(self: AttributedPointCloud3D): PointCloud3D
+        => PointCloud3D(self.Positions);
 }

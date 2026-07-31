@@ -19,4 +19,8 @@ library MeshAttributes
             self.UvChannels,
             self.ColorChannels,
             self.TangentChannels);
+
+    // The Meshable3D obligation: the geometry without its attribute channels.
+    ToTriangleMesh(self: RichMesh3D): TriangleMesh3D
+        => self.Mesh;
 }

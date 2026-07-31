@@ -105,4 +105,22 @@ library MeshesFaces
         => edges.Count
             .MapRange(i => edges.IsFirstUndirectedOccurrence(i) ? 1 : 0)
             .Reduce(0, (acc, hit) => acc + hit);
+
+    //==
+    // # The Hashable obligations
+    //
+    // A face's identity is its corner indices IN ORDER: two faces with the same
+    // corners in different rotations are the same face geometrically but hash
+    // differently here, because they are different values and Hashable must
+    // agree with Equals. Canonical face identity, where it is wanted, is the
+    // sorted-corner key the topology code builds explicitly.
+
+    // The corners folded in declaration order.
+    Hash(self: TriangleFace): Integer
+        => self.A.Value.Hash.CombineHash(self.B.Value.Hash).CombineHash(self.C.Value.Hash);
+
+    // The corners folded in declaration order.
+    Hash(self: QuadFace): Integer
+        => self.A.Value.Hash.CombineHash(self.B.Value.Hash)
+            .CombineHash(self.C.Value.Hash).CombineHash(self.D.Value.Hash);
 }

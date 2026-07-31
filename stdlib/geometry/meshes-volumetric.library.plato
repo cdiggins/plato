@@ -18,4 +18,80 @@ library MeshesVolumetric
     // mapping, cells unchanged.
     Deform(self: HexahedralMesh3D, mapping: Function1<Point3D, Point3D>): HexahedralMesh3D
         => (self.Positions.Map(mapping), self.Cells);
+
+    //==
+    // # The Hashable obligations
+    //
+    // A cell's identity is its corner indices in declaration order, matching the
+    // face records in `meshes-faces.library.plato`: Hashable must agree with
+    // Equals, and two cells listing the same corners in a different order are
+    // different values even where they enclose the same region.
+
+    // The four corners folded in declaration order.
+    Hash(self: TetrahedronCell): Integer
+        => self.A.Value.Hash.CombineHash(self.B.Value.Hash)
+            .CombineHash(self.C.Value.Hash).CombineHash(self.D.Value.Hash);
+
+    // The eight corners folded in declaration order: the bottom quad, then the
+    // top.
+    Hash(self: HexahedronCell): Integer
+        => self.A.Value.Hash.CombineHash(self.B.Value.Hash)
+            .CombineHash(self.C.Value.Hash).CombineHash(self.D.Value.Hash)
+            .CombineHash(self.E.Value.Hash).CombineHash(self.F.Value.Hash)
+            .CombineHash(self.G.Value.Hash).CombineHash(self.H.Value.Hash);
+
+    //==
+    // # TetrahedralMesh3D — the boundary surface
+    //
+    // The Meshable3D obligation: the surface of a volume mesh is the set of
+    // faces belonging to exactly ONE cell. An interior face is shared by two
+    // tetrahedra and appears twice; a boundary face appears once.
+    //
+    // The multiplicity test is a scan of every candidate face against every
+    // other, so extraction is quadratic in the cell count. A hash-grouped pass
+    // would be linear, but grouping needs a keyed container this vocabulary does
+    // not have (see LINT013 on MapLike). Correct and slow beats fast and absent;
+    // the worklist entry is plato-321.
+
+    // The k-th face of a tetrahedron (k in 0..3), wound so its normal points OUT
+    // of a positively oriented cell.
+    TetrahedronFace(cell: TetrahedronCell, k: Integer): TriangleFace
+        => k == 0 ? TriangleFace(cell.A, cell.C, cell.B)
+         : (k == 1 ? TriangleFace(cell.A, cell.B, cell.D)
+         : (k == 2 ? TriangleFace(cell.B, cell.C, cell.D)
+                   : TriangleFace(cell.C, cell.A, cell.D)));
+
+    // A face's orientation-free identity: its three corner indices in ascending
+    // order, so the two windings of a shared interior face match.
+    SortedFaceKey(face: TriangleFace): IntegerVector3 {
+        var a = face.A.Value;
+        var b = face.B.Value;
+        var c = face.C.Value;
+        var lowest = a.Min(b).Min(c);
+        var highest = a.Max(b).Max(c);
+        return (lowest, a + b + c - lowest - highest, highest);
+    }
+
+    // True when two faces have the same corner set.
+    SameFaceKey(a: TriangleFace, b: TriangleFace): Boolean {
+        var x = SortedFaceKey(a);
+        var y = SortedFaceKey(b);
+        return x.X == y.X && x.Y == y.Y && x.Z == y.Z;
+    }
+
+    // Every face of every cell, four per tetrahedron, in cell order.
+    CandidateFaces(self: TetrahedralMesh3D): Array<TriangleFace>
+        => (self.Cells.Count * 4).MapRange(i => TetrahedronFace(self.Cells[i / 4], i % 4));
+
+    // The boundary surface: the positions unchanged, and the faces that no
+    // second cell shares.
+    ToTriangleMesh(self: TetrahedralMesh3D): TriangleMesh3D {
+        var candidates = self.CandidateFaces;
+        var empty = candidates.Take(0);
+        var boundary = candidates.FlatMap(face =>
+            candidates.Reduce(0, (acc, other) => SameFaceKey(face, other) ? acc + 1 : acc) == 1
+                ? empty.Append(face)
+                : empty);
+        return (self.Positions, boundary);
+    }
 }

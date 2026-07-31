@@ -11,4 +11,10 @@ library MeshesSections
     // partition unchanged.
     Deform(self: SegmentedMesh3D, mapping: Function1<Point3D, Point3D>): SegmentedMesh3D
         => (self.Mesh.Deform(mapping), self.Sections);
+
+    // The Meshable3D obligation: the geometry without its section partition.
+    // The face order is the partition's order, so a caller that wants to keep
+    // the grouping reads Sections alongside this.
+    ToTriangleMesh(self: SegmentedMesh3D): TriangleMesh3D
+        => self.Mesh;
 }

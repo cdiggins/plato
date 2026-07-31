@@ -137,4 +137,44 @@ library Curves2DSpirals
                    - self.PoleDistance
                      * ((self.FixedRadius - self.RollingRadius) / self.RollingRadius
                         * t.Turns).Sin);
+
+    //==
+    // # Clothoid2D — the Euler spiral
+    //
+    // Curvature grows linearly with arc length, kappa(s) = s / Flatness^2, so
+    // the tangent angle is theta(s) = s^2 / (2 Flatness^2) and the position is
+    // the pair of Fresnel integrals of that angle. Those integrals have no
+    // elementary closed form, so this is composite Simpson quadrature from the
+    // origin to the requested arc length — the same thing a table lookup
+    // interpolates, computed instead.
+    // https://en.wikipedia.org/wiki/Euler_spiral
+
+    // The number of quadrature panels. Even, as Simpson requires; 64 holds the
+    // error near machine precision over the arc lengths a transition curve uses
+    // (the integrand oscillates faster as |s| grows, so a very long arc wants
+    // more).
+    QuadraturePanels(_: Clothoid2D): Integer => 64;
+
+    // The tangent angle at signed arc length s.
+    TangentAngleAt(self: Clothoid2D, s: Number): Angle
+        => Angle(s * s / (2.0 * self.Flatness * self.Flatness));
+
+    // Simpson's weight for sample i of n panels: 1 at the ends, 4 at odd
+    // interior samples, 2 at even ones.
+    SimpsonWeight(i: Integer, panels: Integer): Number
+        => i == 0 || i == panels ? 1.0 : (i % 2 == 1 ? 4.0 : 2.0);
+
+    // The point at the given unit parameter: the Fresnel integrals evaluated to
+    // the arc length that parameter names within Domain.
+    Eval(self: Clothoid2D, t: Number): Point2D {
+        var panels = self.QuadraturePanels;
+        var s = self.Domain.Lerp(t.Clamp(0.0, 1.0));
+        var step = s / panels.ToNumber;
+        var samples = (panels + 1).Range;
+        var x = samples.Reduce(0.0, (acc, i) =>
+            acc + SimpsonWeight(i, panels) * self.TangentAngleAt(step * i.ToNumber).Cos);
+        var y = samples.Reduce(0.0, (acc, i) =>
+            acc + SimpsonWeight(i, panels) * self.TangentAngleAt(step * i.ToNumber).Sin);
+        return (x * step / 3.0, y * step / 3.0);
+    }
 }

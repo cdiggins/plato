@@ -236,4 +236,99 @@ library SplinesInterpolating
     // The parameter range the spline interpolates over.
     ParameterDomain(self: NaturalCubicSpline1D): NumberInterval
         => NumberInterval(self.KnotParameter(0), self.KnotParameter(self.KnotCount - 1));
+
+    //==
+    // # NaturalCubicSpline1D — evaluation
+    //
+    // The C2 interpolant: on each span the cubic determined by the two endpoint
+    // values and the two endpoint SECOND derivatives, the latter fixed by
+    // requiring a continuous first derivative across every interior knot — a
+    // tridiagonal system closed by the natural condition (zero curvature at the
+    // ends). Solved by the Thomas algorithm, written as recursions because a
+    // sweep carrying an array across iterations has no spelling here; each
+    // recursion recomputes its predecessors, so evaluation is polynomial rather
+    // than linear in the sample count. Correct, not fast (plato-321).
+    // https://en.wikipedia.org/wiki/Spline_interpolation
+
+    // The width of span i, from knot i to knot i + 1.
+    SpanWidth(self: NaturalCubicSpline1D, i: Integer): Number
+        => self.KnotParameter(i + 1) - self.KnotParameter(i);
+
+    // The slope of the chord across span i.
+    SpanSlope(self: NaturalCubicSpline1D, i: Integer): Number
+        => (self.KnotValue(i + 1) - self.KnotValue(i)) / self.SpanWidth(i);
+
+    // The sub-diagonal coefficient of interior equation j.
+    SweepBelow(self: NaturalCubicSpline1D, j: Integer): Number
+        => self.SpanWidth(j - 1);
+
+    // The diagonal coefficient of interior equation j.
+    SweepDiagonal(self: NaturalCubicSpline1D, j: Integer): Number
+        => 2.0 * (self.SpanWidth(j - 1) + self.SpanWidth(j));
+
+    // The super-diagonal coefficient of interior equation j.
+    SweepAbove(self: NaturalCubicSpline1D, j: Integer): Number
+        => self.SpanWidth(j);
+
+    // The right-hand side of interior equation j: six times the change in chord
+    // slope across knot j, which is what the second derivative must absorb.
+    SweepRight(self: NaturalCubicSpline1D, j: Integer): Number
+        => 6.0 * (self.SpanSlope(j) - self.SpanSlope(j - 1));
+
+    // The pivot of equation j after elimination against equation j - 1.
+    SweepPivot(self: NaturalCubicSpline1D, j: Integer): Number
+        => j <= 1
+            ? self.SweepDiagonal(1)
+            : self.SweepDiagonal(j) - self.SweepBelow(j) * self.SweepRatio(j - 1);
+
+    // The eliminated super-diagonal coefficient of equation j.
+    SweepRatio(self: NaturalCubicSpline1D, j: Integer): Number
+        => self.SweepAbove(j) / self.SweepPivot(j);
+
+    // The eliminated right-hand side of equation j.
+    SweepValue(self: NaturalCubicSpline1D, j: Integer): Number
+        => j <= 1
+            ? self.SweepRight(1) / self.SweepDiagonal(1)
+            : (self.SweepRight(j) - self.SweepBelow(j) * self.SweepValue(j - 1)) / self.SweepPivot(j);
+
+    // The second derivative at knot j: zero at both ends (the natural condition),
+    // and the back substitution in between.
+    SecondDerivativeAt(self: NaturalCubicSpline1D, j: Integer): Number
+        => j <= 0 || j >= self.KnotCount - 1
+            ? 0.0
+            : (j >= self.KnotCount - 2
+                ? self.SweepValue(j)
+                : self.SweepValue(j) - self.SweepRatio(j) * self.SecondDerivativeAt(j + 1));
+
+    // The index of the span containing parameter u, clamped to a real span.
+    SpanContaining(self: NaturalCubicSpline1D, u: Number): Integer
+        => (self.KnotCount - 1).Range
+            .Reduce(0, (acc, i) => self.KnotParameter(i) <= u ? i : acc)
+            .Min(self.KnotCount - 2)
+            .Max(0);
+
+    // The cubic on the span containing u, written in the standard second-
+    // derivative form so that both endpoint values and both endpoint curvatures
+    // appear directly.
+    SpanValueAt(self: NaturalCubicSpline1D, u: Number): Number {
+        var i = self.SpanContaining(u);
+        var width = self.SpanWidth(i);
+        var lower = self.SecondDerivativeAt(i);
+        var upper = self.SecondDerivativeAt(i + 1);
+        var toEnd = self.KnotParameter(i + 1) - u;
+        var fromStart = u - self.KnotParameter(i);
+        return (lower * toEnd * toEnd * toEnd + upper * fromStart * fromStart * fromStart)
+                   / (6.0 * width)
+             + (self.KnotValue(i) / width - lower * width / 6.0) * toEnd
+             + (self.KnotValue(i + 1) / width - upper * width / 6.0) * fromStart;
+    }
+
+    // The value at the given unit parameter, mapped onto the spline's own
+    // parameter domain. Outside [0, 1] the parameter clamps rather than
+    // extrapolating: a natural spline is linear beyond its ends, and returning
+    // that continuation silently would hide a caller's mistake.
+    Eval(self: NaturalCubicSpline1D, t: Number): Number
+        => self.KnotCount < 2
+            ? self.KnotValue(0)
+            : self.SpanValueAt(self.ParameterDomain.Lerp(t.Clamp(0.0, 1.0)));
 }
