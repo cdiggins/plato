@@ -10,10 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
-    <ProjectReference Include="..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
     <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
     <ProjectReference Include="..\Plato.AST\Plato.AST.csproj" />
+    <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
   </ItemGroup>
 
 </Project>

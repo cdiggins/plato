@@ -41,7 +41,7 @@ concept ICoordinate{}
 concept IDifference<T>{Add(x:Self,amount:T):Self;Subtract(x:Self,amount:T):Self;Subtract(x:Self,y:Self):T;}
 concept IBoolean{And(a:Self,b:Self):Self;Or(a:Self,b:Self):Self;Not(a:Self):Self;}
 concept IInterval<T>where T:IVectorLike inherits IValue{Start(x:Self):T;End(x:Self):T;}
-concept IBounds<TValue,TDelta>where T:IVectorLike,T:IDifference<TDelta>inherits IValue{Min(x:Self):TValue;Max(x:Self):TValue;}
+concept IBounds<TValue,TDelta>where TValue:IVectorLike,TValue:IDifference<TDelta>inherits IValue{Min(x:Self):TValue;Max(x:Self):TValue;}
 type Integer2 implements IValue,IArrayLike<Integer>{A:Integer;B:Integer;}
 type Integer3 implements IValue,IArrayLike<Integer>{A:Integer;B:Integer;C:Integer;}
 type Integer4 implements IValue,IArrayLike<Integer>{A:Integer;B:Integer;C:Integer;D:Integer;}
@@ -87,6 +87,7 @@ type TorusKnot implements IAngularCurve3D,IClosedShape{P:Integer;Q:Integer;Radiu
 type TrefoilKnot implements IAngularCurve3D,IClosedShape{}
 type FigureEightKnot implements IAngularCurve3D,IClosedShape{}
 type Helix implements IAngularCurve3D,IOpenShape{Radius:Number;Height:Number;NumTurns:Number;}
+type ScalarField3D implements IValue{Function:Function1<Vector3,Number>;}
 concept IGeometry{}
 concept IGeometry2D inherits IGeometry{}
 concept IGeometry3D inherits IGeometry{}
@@ -125,7 +126,7 @@ concept IPointGeometry3D inherits IGeometry3D,IDeformable3D{Points(x:Self):IArra
 concept IGeometricPrimitive2D inherits IPointGeometry2D{}
 concept IGeometricPrimitive3D inherits IPointGeometry3D{}
 concept IPrimitiveGeometry2D<T>where T:IGeometricPrimitive2D inherits IGeometry2D{Primitives(x:Self):IArray<T>;}
-concept IPrimitiveGeometry3D<PrimitiveT>where T:IGeometricPrimitive3D inherits IGeometry3D{Primitives(x:Self):IArray<PrimitiveT>;}
+concept IPrimitiveGeometry3D<PrimitiveT>where PrimitiveT:IGeometricPrimitive3D inherits IGeometry3D{Primitives(x:Self):IArray<PrimitiveT>;}
 concept IIndexedGeometry3D<IndexT>inherits IPointGeometry3D{FaceIndices(x:Self):IArray<IndexT>;}
 concept ITransformable3D{Transform(x:Self,t:Transform3D):Self;}
 concept IDeformable3D inherits ITransformable3D{Deform(x:Self,f:Function1<Point3D,Point3D>):Self;}
@@ -246,3 +247,5 @@ type Perspective3D implements ITransform3D{FOV:Angle;AspectRatio:Number;Near:Num
 type Orthographic3D implements ITransform3D{Width:Number;Height:Number;Near:Number;Far:Number;}
 type FrenetFrame{Origin:Point3D;Tangent:Vector3;Normal:Vector3;Binormal:Vector3;}
 type PlaneProjection3D implements ITransform3D{Direction:Vector3;Plane:Plane;}
+type List<T>{}
+type Buffer<T>{}

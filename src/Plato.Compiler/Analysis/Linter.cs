@@ -65,6 +65,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
     ///             (the C# writer's uniform rendering rule decides property-vs-method call syntax by NAME)
     ///   LINT015 - a type declaration with fields whose NAME is a writer primitive; the writer emits the
     ///             runtime type for that name and silently discards the declared shape
+    ///   LINT016 - redundant 'inherits' clause on a concept (already implied by another inherited concept)
     /// The pass is read-only: it never mutates the compilation and has no effect on code generation.
     /// </summary>
     public class Linter
@@ -83,6 +84,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
             CheckUniqueTypeStructuralBans();
             CheckVocabularyReachability();
             CheckRedundantImplements();
+            CheckRedundantInherits();
             CheckReceiverMarkerAgreement();
             CheckFieldVersusNoArgFunctionNames();
             CheckPrimitiveNameShadowing();
@@ -635,6 +637,21 @@ namespace Ara3D.Geometry.Compiler.Analysis
                         $"type '{td.Name}' implements '{te.Def.Name}' redundantly; " +
                         $"'{implier.Def.Name}' already implies it");
                 }
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // LINT016: same predicate as LINT011, for concept-to-concept 'inherits'
+        // (Orderable inherits Equatable and Comparable, where Comparable already
+        // reaches Equatable). Shared detection lives in ConceptHierarchy.
+        // -------------------------------------------------------------------
+        public void CheckRedundantInherits()
+        {
+            foreach (var r in ConceptHierarchy.RedundantInherits(Compilation))
+            {
+                Add(GetLocation(r.Parent) ?? GetLocation(r.Concept), "LINT016", LintSeverity.Info,
+                    $"concept '{r.Concept.Name}' inherits '{r.Parent.Def.Name}' redundantly; " +
+                    $"'{r.ImpliedBy.Def.Name}' already implies it");
             }
         }
 

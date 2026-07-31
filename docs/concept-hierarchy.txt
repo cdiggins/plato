@@ -1,0 +1,188 @@
+# Plato concept hierarchy
+# 162 concepts, 131 direct inherits, 1 redundant
+# Tree edge = first declared parent; * = also inherits (see multi-parent section)
+
+Additive
+`-- Arithmetic *also Multiplicative, Divisible, Modular
+ArcLengthParameterized<TPoint>
+Bitwise
+Bounded2D
+Bounded3D
+Centroid2D
+Centroid3D
+ClosedShape
+ClosestPointQueryable2D
+ClosestPointQueryable3D
+Concatenable
+Connected
+ContainsPoint2D
+ContainsPoint3D
+ConvexShape
+Countable
++-- Indexable<T>
+|   +-- Indexable2D<T>
+|   `-- Indexable3D<T>
++-- MapLike<TKey,TValue>
++-- QueueLike<T>
++-- Sliceable
+`-- StackLike<T>
+Deformable2D
+Deformable3D
+Difference<TDelta>
+`-- OriginBased<TDelta>
+Divisible
+Equatable
++-- Hashable
++-- Orderable
+|   `-- Comparable
+`-- Value
+    +-- BoundsLike<TPoint,TDelta>
+    +-- Camera
+    +-- Coordinate *also Equatable, Interpolatable
+    +-- Face *also Hashable, Indexable<VertexIndex>
+    +-- GeoRegion
+    +-- Geometry
+    |   +-- Geometry2D
+    |   |   +-- Curve2D *also Curve<Point2D>
+    |   |   |   +-- AngularCurve2D
+    |   |   |   +-- ClosedCurve2D
+    |   |   |   +-- DifferentiableCurve2D
+    |   |   |   `-- PolarCurve2D
+    |   |   `-- PointSet2D
+    |   +-- Geometry3D
+    |   |   +-- Curve3D *also Curve<Point3D>
+    |   |   |   +-- AngularCurve3D
+    |   |   |   +-- ClosedCurve3D
+    |   |   |   +-- DifferentiableCurve3D
+    |   |   |   |   `-- FramedCurve3D
+    |   |   |   `-- PlanarCurve3D
+    |   |   +-- ParametricVolume *also Procedural<UvwCoordinate,Point3D>
+    |   |   +-- PointSet3D
+    |   |   +-- PrimitiveCollection3D<TPrimitive>
+    |   |   +-- Solid
+    |   |   |   +-- BoundaryRepresentation
+    |   |   |   `-- ConvexSolid
+    |   |   `-- Surface
+    |   |       +-- ClosedSurface
+    |   |       +-- HeightFieldSurface *also Procedural<Point2D,Number>
+    |   |       `-- ParametricSurface *also Procedural<UvCoordinate,Point3D>
+    |   |           `-- DifferentiableSurface
+    |   `-- GeometryND
+    +-- GraphLike
+    +-- Image
+    +-- IntervalLike<T>
+    +-- LightSource
+    +-- MatrixLike *also Additive, Scalable
+    +-- Numerical *also Additive, Scalable, Interpolatable, NumericalLimits
+    |   +-- Real *also Comparable, Hashable, Arithmetic, Invertible
+    |   `-- Vector *also Arithmetic, Indexable<Number>, Normed, Lattice, Hashable
+    +-- ProbabilityDistribution
+    +-- ProceduralTexture
+    +-- Quantity *also Comparable, Hashable, Additive, Scalable, Interpolatable
+    +-- TimeSampled
+    `-- Whole *also Comparable, Hashable, Arithmetic, Interpolatable, NumericalLimits
+Fitted
+ForceModel2D
+ForceModel3D
+HalfEdgeNavigable
+Index
+Interpolatable
+Invertible
+Jagged<T>
+Kinematic2D
+Kinematic3D
+Lattice
+`-- Clampable
+LengthMeasurable
+Logical
+`-- BooleanAlgebra
+Manifold
+MeshElementCounts
+`-- MeshIncidence
+Meshable2D
+Meshable3D
+`-- TriangulatedGeometry3D
+MetricSpace
+Modular
+Multiplicative
+NearestNeighborQueryable2D
+NearestNeighborQueryable3D
+NearestPoint2D
+NearestPoint3D
+Normed
+NumericalLimits
+OpenShape
+Orientable
+ParameterDomain
+PathLike
+Periodic<TPeriod>
+`-- PeriodicCurve<TRange> *also Curve<TRange>
+PlanarMeasurable
+PointCloudable3D
+Procedural<TDomain,TRange>
++-- Bijective<TDomain,TRange>
++-- Curve<TRange>
+|   `-- Curve1D
++-- Deformation2D
++-- Deformation3D
++-- EasingFunction
++-- Field<TDomain,TValue>
+|   +-- ColorField2D
+|   +-- ColorField3D
+|   +-- ComplexField2D
+|   +-- DirectionField2D
+|   +-- DirectionField3D
+|   +-- ScalarField2D
+|   |   +-- DifferentiableScalarField2D
+|   |   `-- SignedDistanceField2D
+|   |       `-- BoundedSignedDistanceField2D *also Bounded2D
+|   +-- ScalarField3D
+|   |   +-- DifferentiableScalarField3D
+|   |   `-- SignedDistanceField3D
+|   |       `-- BoundedSignedDistanceField3D *also Bounded3D
+|   +-- TensorField2D
+|   +-- TensorField3D
+|   +-- VectorField2D
+|   |   `-- DifferentiableVectorField2D
+|   `-- VectorField3D
+|       `-- DifferentiableVectorField3D
++-- ImplicitRegion2D
+`-- ImplicitVolume3D
+RayIntersectable2D
+RayIntersectable3D
+Scalable
+SetLike<T>
+SpatialIndex2D
+SpatialIndex3D
+SpatialMeasurable
+SupportMappable2D
+SupportMappable3D
+TimeVarying<TValue>
+TimeVaryingScalarField2D
+TimeVaryingScalarField3D
+TimeVaryingVectorField2D
+TimeVaryingVectorField3D
+Transformable<TTransform>
+Voxelizable3D
+
+## Multi-parent concepts
+Arithmetic inherits Additive, Multiplicative, Divisible, Modular  (tree under Additive)
+BoundedSignedDistanceField2D inherits SignedDistanceField2D, Bounded2D  (tree under SignedDistanceField2D)
+BoundedSignedDistanceField3D inherits SignedDistanceField3D, Bounded3D  (tree under SignedDistanceField3D)
+Coordinate inherits Value, Equatable, Interpolatable  (tree under Value)
+Curve2D inherits Geometry2D, Curve<Point2D>  (tree under Geometry2D)
+Curve3D inherits Geometry3D, Curve<Point3D>  (tree under Geometry3D)
+Face inherits Value, Hashable, Indexable<VertexIndex>  (tree under Value)
+HeightFieldSurface inherits Surface, Procedural<Point2D,Number>  (tree under Surface)
+MatrixLike inherits Value, Additive, Scalable  (tree under Value)
+Numerical inherits Value, Additive, Scalable, Interpolatable, NumericalLimits  (tree under Value)
+ParametricSurface inherits Surface, Procedural<UvCoordinate,Point3D>  (tree under Surface)
+ParametricVolume inherits Geometry3D, Procedural<UvwCoordinate,Point3D>  (tree under Geometry3D)
+PeriodicCurve<TRange> inherits Periodic<Number>, Curve<TRange>  (tree under Periodic<TPeriod>)
+Quantity inherits Value, Comparable, Hashable, Additive, Scalable, Interpolatable  (tree under Value)
+Real inherits Numerical, Comparable, Hashable, Arithmetic, Invertible  (tree under Numerical)
+Vector inherits Numerical, Arithmetic, Indexable<Number>, Normed, Lattice, Hashable  (tree under Numerical)
+Whole inherits Value, Comparable, Hashable, Arithmetic, Interpolatable, NumericalLimits  (tree under Value)
+
+## Redundant inherits (1)
+Coordinate inherits Equatable  # already via Value
