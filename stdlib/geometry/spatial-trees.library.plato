@@ -1,0 +1,227 @@
+//==
+// # Hierarchy queries — BVHs, quadtrees and octrees
+//
+// The `SpatialIndex2D` / `SpatialIndex3D` obligations of the hierarchies in
+// `spatial-trees.types.plato`, and the `RayIntersectable3D` obligation of
+// `Bvh3D`.
+//
+// Every traversal is written as a recursion over node indices, because the depth
+// is a property of the data rather than of the type and this vocabulary has no
+// loop. The recursion is the whole benefit of the structure: a node whose bounds
+// miss the query prunes its entire subtree, so the cost is the size of the
+// answer plus the boundary of the query region, not the size of the index.
+//
+// The empty result is spelled `Take(0)` on the structure's own permutation
+// array. That is not a workaround for a missing empty-array literal so much as
+// the one spelling that fixes the element type without naming it.
+
+library SpatialTrees
+{
+    //==
+    // # Bvh2D
+
+    // The leaf-order permutation holds every primitive exactly once.
+    ItemCount(self: Bvh2D): Integer
+        => self.PrimitiveIndices.Count;
+
+    // The primitives under `node` whose subtree meets the query bounds. A node
+    // index of -1 contributes nothing.
+    //
+    // Written as an expression rather than with `var` bindings on purpose: a
+    // `var` is evaluated whether or not the branch that reads it is taken, so
+    // binding the recursive descent would defeat the very pruning the guard
+    // exists for — and would not terminate on a node with one absent child. Every
+    // traversal in this file has the same shape for the same reason.
+    BvhCandidates(self: Bvh2D, bounds: Bounds2D, node: SpatialNodeIndex): Array<ItemIndex>
+        => node.Value < 0
+            ? self.PrimitiveIndices.Take(0)
+            : self.BvhNodeCandidates(bounds, self.Nodes[node.Value]);
+
+    // The primitives under one node, once it is known to exist.
+    BvhNodeCandidates(self: Bvh2D, bounds: Bounds2D, n: BvhNode2D): Array<ItemIndex>
+        => !n.Bounds.Overlaps(bounds)
+            ? self.PrimitiveIndices.Take(0)
+            : (n.LeftChild.Value < 0 && n.RightChild.Value < 0
+                ? self.PrimitiveIndices.Slice(n.Primitives.Start, n.Primitives.End)
+                : self.BvhCandidates(bounds, n.LeftChild)
+                      .Concatenate(self.BvhCandidates(bounds, n.RightChild)));
+
+    // Every primitive in a leaf whose bounds meet the query bounds, with false
+    // positives: a leaf is reported whole.
+    CandidatesInBounds(self: Bvh2D, bounds: Bounds2D): Array<ItemIndex>
+        => self.Nodes.Count == 0
+            ? self.PrimitiveIndices.Take(0)
+            : self.BvhCandidates(bounds, SpatialNodeIndex(0));
+
+    //==
+    // # Bvh3D
+
+    // The leaf-order permutation holds every primitive exactly once.
+    ItemCount(self: Bvh3D): Integer
+        => self.PrimitiveIndices.Count;
+
+    // The primitives under `node` whose subtree meets the query bounds.
+    BvhCandidates(self: Bvh3D, bounds: Bounds3D, node: SpatialNodeIndex): Array<ItemIndex>
+        => node.Value < 0
+            ? self.PrimitiveIndices.Take(0)
+            : self.BvhNodeCandidates(bounds, self.Nodes[node.Value]);
+
+    // The primitives under one node, once it is known to exist.
+    BvhNodeCandidates(self: Bvh3D, bounds: Bounds3D, n: BvhNode3D): Array<ItemIndex>
+        => !n.Bounds.Overlaps(bounds)
+            ? self.PrimitiveIndices.Take(0)
+            : (n.LeftChild.Value < 0 && n.RightChild.Value < 0
+                ? self.PrimitiveIndices.Slice(n.Primitives.Start, n.Primitives.End)
+                : self.BvhCandidates(bounds, n.LeftChild)
+                      .Concatenate(self.BvhCandidates(bounds, n.RightChild)));
+
+    // Every primitive in a leaf whose bounds meet the query bounds.
+    CandidatesInBounds(self: Bvh3D, bounds: Bounds3D): Array<ItemIndex>
+        => self.Nodes.Count == 0
+            ? self.PrimitiveIndices.Take(0)
+            : self.BvhCandidates(bounds, SpatialNodeIndex(0));
+
+    //==
+    // # Bvh3D — raycasting
+    //
+    // A hierarchy stores no geometry, only bounds and a permutation, so what it
+    // can answer about a ray is BROAD PHASE: the distance at which the ray first
+    // enters a leaf box. The reported hit therefore carries a real Hit flag,
+    // Distance and Position, and leaves the surface attributes at their empty
+    // values — Face is -1, the normal points back along the ray, and the two
+    // parametric coordinates are zero. A caller wanting a surface hit tests the
+    // primitives of `CandidatesInBounds` itself; that is the second phase the
+    // whole broad-phase/narrow-phase split exists for.
+
+    // The reach of a ray query: MaxDistance of zero or less means unbounded.
+    RayReach(query: RayQuery3D): Number
+        => query.MaxDistance <= 0.0 ? Number.MaxValue : query.MaxDistance;
+
+    // The parameter at which the ray enters the box, by the slab method, or
+    // Number.MaxValue when it misses or enters beyond `reach`. A ray parallel to
+    // a slab yields infinities that the min/max pair absorbs; a ray exactly IN
+    // the plane of a slab yields NaN, and the comparison then reports a miss.
+    // https://en.wikipedia.org/wiki/Slab_method
+    RayBoxEntry(ray: Ray3D, box: Bounds3D, reach: Number): Number {
+        var o = ray.Origin;
+        var d = ray.Direction.Vector;
+        var ax = (box.Min.X - o.X) / d.X;
+        var bx = (box.Max.X - o.X) / d.X;
+        var ay = (box.Min.Y - o.Y) / d.Y;
+        var by = (box.Max.Y - o.Y) / d.Y;
+        var az = (box.Min.Z - o.Z) / d.Z;
+        var bz = (box.Max.Z - o.Z) / d.Z;
+        var enter = ax.Min(bx).Max(ay.Min(by)).Max(az.Min(bz)).Max(0.0);
+        var exit = ax.Max(bx).Min(ay.Max(by)).Min(az.Max(bz));
+        return enter <= exit && enter <= reach ? enter : Number.MaxValue;
+    }
+
+    // The nearest leaf-box entry parameter under `node`, or Number.MaxValue when
+    // the ray reaches no leaf. An internal node whose own box the ray misses is
+    // not descended into — the pruning the hierarchy exists for.
+    NearestLeafEntry(self: Bvh3D, query: RayQuery3D, node: SpatialNodeIndex): Number
+        => node.Value < 0
+            ? Number.MaxValue
+            : self.NearestLeafEntryOf(query, self.Nodes[node.Value]);
+
+    // The nearest leaf-box entry under one node, once it is known to exist.
+    NearestLeafEntryOf(self: Bvh3D, query: RayQuery3D, n: BvhNode3D): Number
+        => RayBoxEntry(query.Ray, n.Bounds, RayReach(query)) >= Number.MaxValue
+            ? Number.MaxValue
+            : (n.LeftChild.Value < 0 && n.RightChild.Value < 0
+                ? RayBoxEntry(query.Ray, n.Bounds, RayReach(query))
+                : self.NearestLeafEntry(query, n.LeftChild)
+                      .Min(self.NearestLeafEntry(query, n.RightChild)));
+
+    // The broad-phase ray answer: whether the ray reaches any leaf box within the
+    // query's reach, and where. Surface attributes are left empty (see above).
+    Raycast(self: Bvh3D, query: RayQuery3D): RayHit3D {
+        var distance = self.Nodes.Count == 0
+            ? Number.MaxValue
+            : self.NearestLeafEntry(query, SpatialNodeIndex(0));
+        var hit = distance < Number.MaxValue;
+        return (hit,
+                hit ? distance : 0.0,
+                hit ? query.Ray.PointAt(distance) : query.Ray.Origin,
+                Direction3D(-query.Ray.Direction.Vector),
+                FaceIndex(-1),
+                BarycentricCoordinate(0.0, 0.0, 0.0),
+                UvCoordinate(0.0, 0.0));
+    }
+
+    //==
+    // # Quadtree2D
+    //
+    // Four consecutive children from FirstChild, or -1 for a leaf. A region tree
+    // stores items at the node that contains them, so an internal node can carry
+    // items of its own and its range is always emitted, not only at leaves.
+
+    // The permutation holds every item exactly once.
+    ItemCount(self: Quadtree2D): Integer
+        => self.ItemIndices.Count;
+
+    // The items of node `node` and of its four subtrees, restricted to nodes
+    // whose bounds meet the query.
+    QuadtreeCandidates(self: Quadtree2D, bounds: Bounds2D, node: SpatialNodeIndex): Array<ItemIndex>
+        => node.Value < 0
+            ? self.ItemIndices.Take(0)
+            : self.QuadtreeNodeCandidates(bounds, self.Nodes[node.Value]);
+
+    // The items of one node and its subtrees, once the node is known to exist.
+    QuadtreeNodeCandidates(self: Quadtree2D, bounds: Bounds2D, n: QuadtreeNode): Array<ItemIndex>
+        => !n.Bounds.Overlaps(bounds)
+            ? self.ItemIndices.Take(0)
+            : self.ItemIndices.Slice(n.Items.Start, n.Items.End).Concatenate(
+                n.FirstChild.Value < 0
+                    ? self.ItemIndices.Take(0)
+                    : 4.Range.FlatMap(c => self.QuadtreeCandidates(bounds, SpatialNodeIndex(n.FirstChild.Value + c))));
+
+    // Every item held by a node whose bounds meet the query bounds.
+    CandidatesInBounds(self: Quadtree2D, bounds: Bounds2D): Array<ItemIndex>
+        => self.Nodes.Count == 0
+            ? self.ItemIndices.Take(0)
+            : self.QuadtreeCandidates(bounds, SpatialNodeIndex(0));
+
+    //==
+    // # Octree3D and LooseOctree3D
+    //
+    // Eight consecutive children, otherwise identical to the quadtree. A loose
+    // octree differs only in how its bounds were SIZED when it was built — the
+    // stored node bounds are already the enlarged ones — so its query is the
+    // inner octree's query unchanged.
+
+    // The permutation holds every item exactly once.
+    ItemCount(self: Octree3D): Integer
+        => self.ItemIndices.Count;
+
+    // The items of node `node` and of its eight subtrees, restricted to nodes
+    // whose bounds meet the query.
+    OctreeCandidates(self: Octree3D, bounds: Bounds3D, node: SpatialNodeIndex): Array<ItemIndex>
+        => node.Value < 0
+            ? self.ItemIndices.Take(0)
+            : self.OctreeNodeCandidates(bounds, self.Nodes[node.Value]);
+
+    // The items of one node and its subtrees, once the node is known to exist.
+    OctreeNodeCandidates(self: Octree3D, bounds: Bounds3D, n: OctreeNode): Array<ItemIndex>
+        => !n.Bounds.Overlaps(bounds)
+            ? self.ItemIndices.Take(0)
+            : self.ItemIndices.Slice(n.Items.Start, n.Items.End).Concatenate(
+                n.FirstChild.Value < 0
+                    ? self.ItemIndices.Take(0)
+                    : 8.Range.FlatMap(c => self.OctreeCandidates(bounds, SpatialNodeIndex(n.FirstChild.Value + c))));
+
+    // Every item held by a node whose bounds meet the query bounds.
+    CandidatesInBounds(self: Octree3D, bounds: Bounds3D): Array<ItemIndex>
+        => self.Nodes.Count == 0
+            ? self.ItemIndices.Take(0)
+            : self.OctreeCandidates(bounds, SpatialNodeIndex(0));
+
+    // The wrapped octree's item count.
+    ItemCount(self: LooseOctree3D): Integer
+        => self.Octree.ItemCount;
+
+    // The wrapped octree's query: the looseness is already baked into the stored
+    // node bounds.
+    CandidatesInBounds(self: LooseOctree3D, bounds: Bounds3D): Array<ItemIndex>
+        => self.Octree.CandidatesInBounds(bounds);
+}

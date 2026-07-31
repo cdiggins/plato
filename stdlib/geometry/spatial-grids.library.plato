@@ -1,0 +1,164 @@
+//==
+// # Uniform grid queries and Morton code ordering
+//
+// The `SpatialIndex2D` / `SpatialIndex3D` obligations of the four grids in
+// `spatial-grids.types.plato`, plus the ordering and digest the Morton codes
+// owe `Comparable` and `Hashable`.
+//
+// Both grid families store their buckets in CSR form, so a broad-phase query is
+// the same two steps in all four: test each cell's world bounds against the
+// query bounds, and concatenate the bucket slices of the cells that survive. The
+// result is conservative by construction — every item whose own extent reaches
+// into the query region was binned into a cell that overlaps it — and it carries
+// false positives, which is what the concept promises.
+
+library SpatialGrids
+{
+    //==
+    // # SpatialHashGrid2D / 3D
+    //
+    // Sparse: only occupied cells exist, so the scan is over the stored cell
+    // list rather than over the region. Cell (i, j) covers
+    // [i * CellSize, (i+1) * CellSize) on each axis.
+
+    // The world bounds of the i-th stored cell.
+    CellBounds(self: SpatialHashGrid2D, i: Integer): Bounds2D {
+        var c = self.CellCoordinates[i];
+        var s = self.CellSize;
+        return (Point2D(c.X.ToNumber * s, c.Y.ToNumber * s),
+                Point2D((c.X + 1).ToNumber * s, (c.Y + 1).ToNumber * s));
+    }
+
+    // The i-th cell's bucket when it meets the query, and nothing when it does not.
+    CellCandidates(self: SpatialHashGrid2D, bounds: Bounds2D, i: Integer): Array<ItemIndex>
+        => self.CellBounds(i).Overlaps(bounds)
+            ? self.ItemIndices.Slice(self.BucketOffsets[i], self.BucketOffsets[i + 1])
+            : self.ItemIndices.Take(0);
+
+    // Every item binned into a cell that meets the query bounds.
+    CandidatesInBounds(self: SpatialHashGrid2D, bounds: Bounds2D): Array<ItemIndex>
+        => self.CellCoordinates.Count.Range.FlatMap(i => self.CellCandidates(bounds, i));
+
+    // Every binned item, counted once per cell it was binned into.
+    ItemCount(self: SpatialHashGrid2D): Integer
+        => self.ItemIndices.Count;
+
+    // The world bounds of the i-th stored cell.
+    CellBounds(self: SpatialHashGrid3D, i: Integer): Bounds3D {
+        var c = self.CellCoordinates[i];
+        var s = self.CellSize;
+        return (Point3D(c.X.ToNumber * s, c.Y.ToNumber * s, c.Z.ToNumber * s),
+                Point3D((c.X + 1).ToNumber * s, (c.Y + 1).ToNumber * s, (c.Z + 1).ToNumber * s));
+    }
+
+    // The i-th cell's bucket when it meets the query, and nothing when it does not.
+    CellCandidates(self: SpatialHashGrid3D, bounds: Bounds3D, i: Integer): Array<ItemIndex>
+        => self.CellBounds(i).Overlaps(bounds)
+            ? self.ItemIndices.Slice(self.BucketOffsets[i], self.BucketOffsets[i + 1])
+            : self.ItemIndices.Take(0);
+
+    // Every item binned into a cell that meets the query bounds.
+    CandidatesInBounds(self: SpatialHashGrid3D, bounds: Bounds3D): Array<ItemIndex>
+        => self.CellCoordinates.Count.Range.FlatMap(i => self.CellCandidates(bounds, i));
+
+    // Every binned item, counted once per cell it was binned into.
+    ItemCount(self: SpatialHashGrid3D): Integer
+        => self.ItemIndices.Count;
+
+    //==
+    // # BinningGrid2D / 3D
+    //
+    // Dense: every cell of the region has a bucket, so the scan is over the
+    // bucket count, which the CSR offsets carry (one more entry than buckets).
+    // Bucket b delinearizes with X varying fastest.
+
+    // The number of buckets, read off the CSR offset array.
+    BucketCount(self: BinningGrid2D): Integer
+        => self.BucketOffsets.Count - 1;
+
+    // The world bounds of bucket b.
+    BucketBounds(self: BinningGrid2D, b: Integer): Bounds2D {
+        var min = self.Bounds.Min;
+        var max = self.Bounds.Max;
+        var columns = self.CellCounts.Width;
+        var i = b % columns;
+        var j = b / columns;
+        var dx = (max.X - min.X) / columns.ToNumber;
+        var dy = (max.Y - min.Y) / self.CellCounts.Height.ToNumber;
+        return (Point2D(min.X + i.ToNumber * dx, min.Y + j.ToNumber * dy),
+                Point2D(min.X + (i + 1).ToNumber * dx, min.Y + (j + 1).ToNumber * dy));
+    }
+
+    // Bucket b's items when its cell meets the query, and nothing when it does not.
+    BucketCandidates(self: BinningGrid2D, bounds: Bounds2D, b: Integer): Array<ItemIndex>
+        => self.BucketBounds(b).Overlaps(bounds)
+            ? self.ItemIndices.Slice(self.BucketOffsets[b], self.BucketOffsets[b + 1])
+            : self.ItemIndices.Take(0);
+
+    // Every item binned into a cell that meets the query bounds.
+    CandidatesInBounds(self: BinningGrid2D, bounds: Bounds2D): Array<ItemIndex>
+        => self.BucketCount.Range.FlatMap(b => self.BucketCandidates(bounds, b));
+
+    // Every binned item, counted once per cell it was binned into.
+    ItemCount(self: BinningGrid2D): Integer
+        => self.ItemIndices.Count;
+
+    // The number of buckets, read off the CSR offset array.
+    BucketCount(self: BinningGrid3D): Integer
+        => self.BucketOffsets.Count - 1;
+
+    // The world bounds of bucket b.
+    BucketBounds(self: BinningGrid3D, b: Integer): Bounds3D {
+        var min = self.Bounds.Min;
+        var max = self.Bounds.Max;
+        var columns = self.CellCounts.Width;
+        var rows = self.CellCounts.Height;
+        var i = b % columns;
+        var j = b / columns % rows;
+        var k = b / (columns * rows);
+        var dx = (max.X - min.X) / columns.ToNumber;
+        var dy = (max.Y - min.Y) / rows.ToNumber;
+        var dz = (max.Z - min.Z) / self.CellCounts.Depth.ToNumber;
+        return (Point3D(min.X + i.ToNumber * dx, min.Y + j.ToNumber * dy, min.Z + k.ToNumber * dz),
+                Point3D(min.X + (i + 1).ToNumber * dx,
+                        min.Y + (j + 1).ToNumber * dy,
+                        min.Z + (k + 1).ToNumber * dz));
+    }
+
+    // Bucket b's items when its cell meets the query, and nothing when it does not.
+    BucketCandidates(self: BinningGrid3D, bounds: Bounds3D, b: Integer): Array<ItemIndex>
+        => self.BucketBounds(b).Overlaps(bounds)
+            ? self.ItemIndices.Slice(self.BucketOffsets[b], self.BucketOffsets[b + 1])
+            : self.ItemIndices.Take(0);
+
+    // Every item binned into a cell that meets the query bounds.
+    CandidatesInBounds(self: BinningGrid3D, bounds: Bounds3D): Array<ItemIndex>
+        => self.BucketCount.Range.FlatMap(b => self.BucketCandidates(bounds, b));
+
+    // Every binned item, counted once per cell it was binned into.
+    ItemCount(self: BinningGrid3D): Integer
+        => self.ItemIndices.Count;
+
+    //==
+    // # Morton codes
+    //
+    // The whole point of a Z-order code is that the natural order of the codes
+    // is a spatial order, so `Comparable` and `Hashable` both go straight to the
+    // carrier integer.
+
+    // Codes order as their carrier integers do — which is the Z-order.
+    LessThanOrEquals(a: MortonCode2D, b: MortonCode2D): Boolean
+        => a.Value <= b.Value;
+
+    // The carrier integer's own digest.
+    Hash(self: MortonCode2D): Integer
+        => self.Value.Hash;
+
+    // Codes order as their carrier integers do — which is the Z-order.
+    LessThanOrEquals(a: MortonCode3D, b: MortonCode3D): Boolean
+        => a.Value <= b.Value;
+
+    // The carrier integer's own digest.
+    Hash(self: MortonCode3D): Integer
+        => self.Value.Hash;
+}

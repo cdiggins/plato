@@ -1,0 +1,179 @@
+//==
+// # Kd-tree queries
+//
+// The `SpatialIndex2D` / `SpatialIndex3D` and `NearestNeighborQueryable2D` /
+// `NearestNeighborQueryable3D` obligations of `spatial-kdtrees.types.plato`.
+//
+// The range query descends the tree, visiting a child only when the query box
+// reaches across the splitting plane into that child's half-space. Like every
+// traversal in the spatial package it is written as an expression: a `var` is
+// evaluated whether or not its branch is taken, so binding the recursion would
+// throw away the pruning.
+//
+// The k-nearest search is a RANK SELECTION over the stored points, not a tree
+// descent. A correct branch-and-bound descent needs a running k-th-best bound —
+// mutable state carried across a traversal — which this vocabulary has no way to
+// express, and an incorrect descent is worse than a slow correct one. Rank
+// selection costs O(n^2 + k n) against the descent's O(k log n); it is a
+// reference body, and a backend is free to substitute a real descent. The
+// worklist entry is plato-321.
+
+library SpatialKdTrees
+{
+    //==
+    // # KdTree2D — range queries
+
+    // The permutation holds every point exactly once.
+    ItemCount(self: KdTree2D): Integer
+        => self.PointIndices.Count;
+
+    // The points under `node` inside the query bounds; -1 contributes nothing.
+    KdCandidates(self: KdTree2D, bounds: Bounds2D, node: SpatialNodeIndex): Array<ItemIndex>
+        => node.Value < 0
+            ? self.PointIndices.Take(0)
+            : self.KdNodeCandidates(bounds, self.Nodes[node.Value]);
+
+    // The query box's low edge on the node's splitting axis (0 = X, 1 = Y).
+    SplitLow(n: KdTreeNode2D, bounds: Bounds2D): Number
+        => n.SplitAxis == 0 ? bounds.Min.X : bounds.Min.Y;
+
+    // The query box's high edge on the node's splitting axis.
+    SplitHigh(n: KdTreeNode2D, bounds: Bounds2D): Number
+        => n.SplitAxis == 0 ? bounds.Max.X : bounds.Max.Y;
+
+    // One node's contribution: a leaf reports its whole item range, an internal
+    // node descends only into the half-spaces the query box actually reaches.
+    KdNodeCandidates(self: KdTree2D, bounds: Bounds2D, n: KdTreeNode2D): Array<ItemIndex>
+        => n.LeftChild.Value < 0 && n.RightChild.Value < 0
+            ? self.PointIndices.Slice(n.Items.Start, n.Items.End)
+            : (SplitLow(n, bounds) <= n.SplitValue
+                    ? self.KdCandidates(bounds, n.LeftChild)
+                    : self.PointIndices.Take(0))
+              .Concatenate(SplitHigh(n, bounds) >= n.SplitValue
+                    ? self.KdCandidates(bounds, n.RightChild)
+                    : self.PointIndices.Take(0));
+
+    // Every stored point in a leaf the query box reaches, with false positives:
+    // a leaf is reported whole.
+    CandidatesInBounds(self: KdTree2D, bounds: Bounds2D): Array<ItemIndex>
+        => self.Nodes.Count == 0
+            ? self.PointIndices.Take(0)
+            : self.KdCandidates(bounds, SpatialNodeIndex(0));
+
+    //==
+    // # KdTree2D — k nearest neighbors
+    //
+    // The rank of point i is how many points come strictly before it, ordering by
+    // distance and breaking ties by stored index so the order is total and the
+    // ranks are a permutation. The r-th result is then the point whose rank is r.
+
+    // True when point j comes before point i: nearer, or equally near and
+    // earlier in the point array.
+    NeighborPrecedes(self: KdTree2D, center: Point2D, j: Integer, i: Integer): Boolean {
+        var dj = self.Points[j].DistanceSquared(center);
+        var di = self.Points[i].DistanceSquared(center);
+        return dj < di || dj == di && j < i;
+    }
+
+    // How many points come strictly before point i.
+    NeighborRank(self: KdTree2D, center: Point2D, i: Integer): Integer
+        => self.Points.Count.Range.Reduce(0, (acc, j) => self.NeighborPrecedes(center, j, i) ? acc + 1 : acc);
+
+    // The index of the point of the given rank, or -1 when there is none.
+    NeighborAtRank(self: KdTree2D, center: Point2D, rank: Integer): Integer
+        => self.Points.Count.Range.Reduce(-1, (acc, i) => self.NeighborRank(center, i) == rank ? i : acc);
+
+    // How many results the query actually yields: at most NeighborCount, at most
+    // the number of stored points, and — when MaxDistance is positive — at most
+    // the number of points inside that radius.
+    NeighborResultCount(self: KdTree2D, query: KNearestQuery2D): Integer {
+        var withinRadius = query.MaxDistance <= 0.0
+            ? self.Points.Count
+            : self.Points.Reduce(0, (acc, p) => p.Distance(query.Center) <= query.MaxDistance ? acc + 1 : acc);
+        return query.NeighborCount.Min(self.Points.Count).Min(withinRadius).Max(0);
+    }
+
+    // The nearest points to the query centre, nearest first, paired with their
+    // distances.
+    FindNearest(self: KdTree2D, query: KNearestQuery2D): NearestNeighbors {
+        var count = self.NeighborResultCount(query);
+        var chosen = count.MapRange(r => self.NeighborAtRank(query.Center, r));
+        return (chosen.Map(i => self.PointIndices[i]),
+                chosen.Map(i => self.Points[i].Distance(query.Center)));
+    }
+
+    //==
+    // # KdTree3D — range queries
+
+    // The permutation holds every point exactly once.
+    ItemCount(self: KdTree3D): Integer
+        => self.PointIndices.Count;
+
+    // The points under `node` inside the query bounds; -1 contributes nothing.
+    KdCandidates(self: KdTree3D, bounds: Bounds3D, node: SpatialNodeIndex): Array<ItemIndex>
+        => node.Value < 0
+            ? self.PointIndices.Take(0)
+            : self.KdNodeCandidates(bounds, self.Nodes[node.Value]);
+
+    // The query box's low edge on the node's splitting axis (0 = X, 1 = Y, 2 = Z).
+    SplitLow(n: KdTreeNode3D, bounds: Bounds3D): Number
+        => n.SplitAxis == 0 ? bounds.Min.X : (n.SplitAxis == 1 ? bounds.Min.Y : bounds.Min.Z);
+
+    // The query box's high edge on the node's splitting axis.
+    SplitHigh(n: KdTreeNode3D, bounds: Bounds3D): Number
+        => n.SplitAxis == 0 ? bounds.Max.X : (n.SplitAxis == 1 ? bounds.Max.Y : bounds.Max.Z);
+
+    // One node's contribution: a leaf reports its whole item range, an internal
+    // node descends only into the half-spaces the query box actually reaches.
+    KdNodeCandidates(self: KdTree3D, bounds: Bounds3D, n: KdTreeNode3D): Array<ItemIndex>
+        => n.LeftChild.Value < 0 && n.RightChild.Value < 0
+            ? self.PointIndices.Slice(n.Items.Start, n.Items.End)
+            : (SplitLow(n, bounds) <= n.SplitValue
+                    ? self.KdCandidates(bounds, n.LeftChild)
+                    : self.PointIndices.Take(0))
+              .Concatenate(SplitHigh(n, bounds) >= n.SplitValue
+                    ? self.KdCandidates(bounds, n.RightChild)
+                    : self.PointIndices.Take(0));
+
+    // Every stored point in a leaf the query box reaches, with false positives.
+    CandidatesInBounds(self: KdTree3D, bounds: Bounds3D): Array<ItemIndex>
+        => self.Nodes.Count == 0
+            ? self.PointIndices.Take(0)
+            : self.KdCandidates(bounds, SpatialNodeIndex(0));
+
+    //==
+    // # KdTree3D — k nearest neighbors
+
+    // True when point j comes before point i: nearer, or equally near and
+    // earlier in the point array.
+    NeighborPrecedes(self: KdTree3D, center: Point3D, j: Integer, i: Integer): Boolean {
+        var dj = self.Points[j].DistanceSquared(center);
+        var di = self.Points[i].DistanceSquared(center);
+        return dj < di || dj == di && j < i;
+    }
+
+    // How many points come strictly before point i.
+    NeighborRank(self: KdTree3D, center: Point3D, i: Integer): Integer
+        => self.Points.Count.Range.Reduce(0, (acc, j) => self.NeighborPrecedes(center, j, i) ? acc + 1 : acc);
+
+    // The index of the point of the given rank, or -1 when there is none.
+    NeighborAtRank(self: KdTree3D, center: Point3D, rank: Integer): Integer
+        => self.Points.Count.Range.Reduce(-1, (acc, i) => self.NeighborRank(center, i) == rank ? i : acc);
+
+    // How many results the query actually yields.
+    NeighborResultCount(self: KdTree3D, query: KNearestQuery3D): Integer {
+        var withinRadius = query.MaxDistance <= 0.0
+            ? self.Points.Count
+            : self.Points.Reduce(0, (acc, p) => p.Distance(query.Center) <= query.MaxDistance ? acc + 1 : acc);
+        return query.NeighborCount.Min(self.Points.Count).Min(withinRadius).Max(0);
+    }
+
+    // The nearest points to the query centre, nearest first, paired with their
+    // distances.
+    FindNearest(self: KdTree3D, query: KNearestQuery3D): NearestNeighbors {
+        var count = self.NeighborResultCount(query);
+        var chosen = count.MapRange(r => self.NeighborAtRank(query.Center, r));
+        return (chosen.Map(i => self.PointIndices[i]),
+                chosen.Map(i => self.Points[i].Distance(query.Center)));
+    }
+}

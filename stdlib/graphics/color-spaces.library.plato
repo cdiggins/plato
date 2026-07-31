@@ -12,4 +12,65 @@ library ColorSpaces
     // Both xy coordinates participate in the digest.
     Hash(self: Chromaticity): Integer
         => self.X.Hash * 31 + self.Y.Hash;
+
+    //==
+    // # ColorXYZ — the Numerical obligations, component-wise over X/Y/Z
+    //
+    // Tristimulus values are a linear space by construction: CIE XYZ is defined
+    // as an integral against the colour matching functions, so summing two
+    // colours' tristimulus values is summing their spectra, and scaling is
+    // scaling the radiance. That makes the component-wise arithmetic below
+    // physically meaningful, unlike the same operations on a gamma-encoded or
+    // perceptual space — which is exactly why ColorLab and friends next door are
+    // plain `Value` and get no arithmetic.
+
+    // Component-wise sum: the tristimulus of the combined spectra.
+    Add(a: ColorXYZ, b: ColorXYZ): ColorXYZ
+        => (a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+
+    // Component-wise difference.
+    Subtract(a: ColorXYZ, b: ColorXYZ): ColorXYZ
+        => (a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+
+    // Component-wise negation: the additive inverse, not a realizable colour.
+    Negative(a: ColorXYZ): ColorXYZ
+        => (-a.X, -a.Y, -a.Z);
+
+    // Component-wise linear interpolation; t is unclamped. Interpolating in XYZ
+    // is a straight radiance blend — perceptually non-uniform, which is what
+    // ColorLab and OkLab exist for.
+    Lerp(a: ColorXYZ, b: ColorXYZ, t: Number): ColorXYZ
+        => (a.X + (b.X - a.X) * t,
+            a.Y + (b.Y - a.Y) * t,
+            a.Z + (b.Z - a.Z) * t);
+
+    // Scale every component: a change of radiance at constant chromaticity.
+    Multiply(a: ColorXYZ, scalar: Number): ColorXYZ
+        => (a.X * scalar, a.Y * scalar, a.Z * scalar);
+
+    // Divide every component. Precondition: scalar is non-zero.
+    Divide(a: ColorXYZ, scalar: Number): ColorXYZ
+        => (a.X / scalar, a.Y / scalar, a.Z / scalar);
+
+    // Component-wise remainder against a scalar.
+    Modulo(a: ColorXYZ, scalar: Number): ColorXYZ
+        => (a.X.Modulo(scalar), a.Y.Modulo(scalar), a.Z.Modulo(scalar));
+
+    // The additive identity: no light at all.
+    Zero(_: ColorXYZ): ColorXYZ
+        => (0.0, 0.0, 0.0);
+
+    // The multiplicative unit. Not a white point: equal tristimulus values are
+    // the equal-energy illuminant E, and every other white (D65, D50) has its own
+    // triple.
+    One(_: ColorXYZ): ColorXYZ
+        => (1.0, 1.0, 1.0);
+
+    // The component-wise least representable value.
+    MinValue(_: ColorXYZ): ColorXYZ
+        => (Number.MinValue, Number.MinValue, Number.MinValue);
+
+    // The component-wise greatest representable value.
+    MaxValue(_: ColorXYZ): ColorXYZ
+        => (Number.MaxValue, Number.MaxValue, Number.MaxValue);
 }
