@@ -37,11 +37,16 @@ points at directories this repo renamed (`src/`, `writers/`, `tests/`, `legacy/`
 
 ## Fix
 
-Name the four folders in the lint invocation (the CLI takes multiple roots:
-`lint stdlib\foundation stdlib\geometry stdlib\graphics stdlib\future --strict`), and re-point the
-gate scripts at the post-restructure layout. Both live in the studio repo, not here.
+**This repo's own copy is already correct** — `plato\tools\check-stdlib-fast.ps1` names the four
+tier folders (fixed at the tier split, `36089e4`) and takes `-Folders` for a subset. It is the
+gate to run. The stale one is `studio\tools\check-stdlib-fast.ps1`, which is a separate file that
+was never updated and drives a separate, pre-restructure `submodules\Plato` checkout.
+
+So: port this repo's version over the studio one (or delete the studio copy and have it call
+through), and re-point every Plato path in `studio\tools\*.ps1` at the post-restructure layout
+(`src/`, `writers/`, `tests/`, `legacy/`). Nothing to change here.
 
 ## Done means
 
-- [ ] `.\tools\check-stdlib-fast.ps1` passes both gates against a current Plato checkout.
-- [ ] Every path in `tools\*.ps1` that names a Plato project resolves after the restructure.
+- [ ] `studio\tools\check-stdlib-fast.ps1` passes both gates against a current Plato checkout.
+- [ ] Every path in `studio\tools\*.ps1` that names a Plato project resolves after the restructure.
