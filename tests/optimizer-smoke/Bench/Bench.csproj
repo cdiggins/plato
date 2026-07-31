@@ -19,10 +19,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\generated\Plato.Generated.Optimized\Plato.Generated.Optimized.csproj">
+    <ProjectReference Include="..\..\..\generated\Plato.Generated.Optimized\Plato.Generated.Optimized.csproj">
       <Aliases>opt</Aliases>
     </ProjectReference>
-    <ProjectReference Include="..\..\generated\Plato.Generated.Unoptimized\Plato.Generated.Unoptimized.csproj">
+    <ProjectReference Include="..\..\..\generated\Plato.Generated.Unoptimized\Plato.Generated.Unoptimized.csproj">
       <Aliases>unopt</Aliases>
     </ProjectReference>
   </ItemGroup>

@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Plato.Navigation\Plato.Navigation.csproj" />
+    <ProjectReference Include="..\..\src\Plato.Navigation\Plato.Navigation.csproj" />
   </ItemGroup>
 
 </Project>

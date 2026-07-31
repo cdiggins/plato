@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "compiler", "compiler", "{01A53387-4F25-05CF-63CA-8C5EEC564186}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.AST", "Plato.AST\Plato.AST.csproj", "{FC8F45F7-5C25-4585-8686-E522134FC648}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.AST", "src\Plato.AST\Plato.AST.csproj", "{FC8F45F7-5C25-4585-8686-E522134FC648}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ara3D.Parakeet.Cst", "parakeet\Parakeet.Cst\Ara3D.Parakeet.Cst.csproj", "{9EA7DB55-BA6B-4996-8083-A631CF67588D}"
 EndProject
@@ -13,35 +13,35 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ara3D.Parakeet.Grammars", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ara3D.Parakeet", "parakeet\Parakeet\Ara3D.Parakeet.csproj", "{441A5C84-FECB-4539-ACA5-D396EDE91362}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Parser", "Plato.Parser\Plato.Parser.csproj", "{40C55140-C8BC-4599-98BF-30B702F77AFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Parser", "src\Plato.Parser\Plato.Parser.csproj", "{40C55140-C8BC-4599-98BF-30B702F77AFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Compiler", "Plato.Compiler\Plato.Compiler.csproj", "{A3A2B9DE-6178-4A41-B871-F3422818F24E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Compiler", "src\Plato.Compiler\Plato.Compiler.csproj", "{A3A2B9DE-6178-4A41-B871-F3422818F24E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoTypeInference", "PlatoTypeInference\PlatoTypeInference.csproj", "{0CF54E6B-35B6-4411-8081-FB0A849CF9DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoTypeInference", "src\PlatoTypeInference\PlatoTypeInference.csproj", "{0CF54E6B-35B6-4411-8081-FB0A849CF9DD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "writers", "writers", "{24D6CA89-A5A4-1D6D-F88D-50C3F889CE7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.CSharpWriter", "Plato.CSharpWriter\Plato.CSharpWriter.csproj", "{D8281F1A-217E-4F49-8E5C-5BB3799B9F2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.CSharpWriter", "writers\Plato.CSharpWriter\Plato.CSharpWriter.csproj", "{D8281F1A-217E-4F49-8E5C-5BB3799B9F2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.CppWriter", "Plato.CppWriter\Plato.CppWriter.csproj", "{C316447C-87D1-4FC8-8876-E5F0DA00C799}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.CppWriter", "writers\Plato.CppWriter\Plato.CppWriter.csproj", "{C316447C-87D1-4FC8-8876-E5F0DA00C799}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.GlslWriter", "Plato.GlslWriter\Plato.GlslWriter.csproj", "{A977D602-4844-4B6F-A9FC-19A5A200D384}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.GlslWriter", "writers\Plato.GlslWriter\Plato.GlslWriter.csproj", "{A977D602-4844-4B6F-A9FC-19A5A200D384}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.RustWriter", "Plato.RustWriter\Plato.RustWriter.csproj", "{AD1FD3B2-B7B1-42F5-8F0D-9A3FFE0947BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.RustWriter", "writers\Plato.RustWriter\Plato.RustWriter.csproj", "{AD1FD3B2-B7B1-42F5-8F0D-9A3FFE0947BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.TypeScriptWriter", "Plato.TypeScriptWriter\Plato.TypeScriptWriter.csproj", "{F6E93A77-3F30-4742-8134-685BA200E3BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.TypeScriptWriter", "writers\Plato.TypeScriptWriter\Plato.TypeScriptWriter.csproj", "{F6E93A77-3F30-4742-8134-685BA200E3BB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{07C2787E-EAC7-C090-1BA3-A61EC2A24D84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.CLI", "Plato.CLI\Plato.CLI.csproj", "{B92F06DC-2367-499C-963C-00059A18E991}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.CLI", "src\Plato.CLI\Plato.CLI.csproj", "{B92F06DC-2367-499C-963C-00059A18E991}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ara3D.Parakeet.Parsers", "parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj", "{50EF62D2-0C51-42D1-A47B-8F680B2B5343}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.ContextExport", "Plato.ContextExport\Plato.ContextExport.csproj", "{42D5750E-57A2-41D7-A22E-B9B1F6CD9146}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.ContextExport", "src\Plato.ContextExport\Plato.ContextExport.csproj", "{42D5750E-57A2-41D7-A22E-B9B1F6CD9146}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Navigation", "Plato.Navigation\Plato.Navigation.csproj", "{856F18B3-EB6F-4C83-B49A-C05EC26BD626}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Navigation", "src\Plato.Navigation\Plato.Navigation.csproj", "{856F18B3-EB6F-4C83-B49A-C05EC26BD626}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Navigation.CLI", "Plato.Navigation.CLI\Plato.Navigation.CLI.csproj", "{FE637C2C-0A57-4E36-AB60-4F8381674642}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Navigation.CLI", "src\Plato.Navigation.CLI\Plato.Navigation.CLI.csproj", "{FE637C2C-0A57-4E36-AB60-4F8381674642}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "runtime", "runtime", "{B9B45A75-0C0F-0D50-E9F8-ABF69D9594D8}"
 EndProject
@@ -49,23 +49,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Generated.Optimized",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Generated.Unoptimized", "generated\Plato.Generated.Unoptimized\Plato.Generated.Unoptimized.csproj", "{3643290D-25FF-4099-BF67-CC019A5D208E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Small.Runtime", "small\Plato.Small.Runtime\Plato.Small.Runtime.csproj", "{D26CECCE-0117-4857-8351-1245BF63F6B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Small.Runtime", "legacy\small\Plato.Small.Runtime\Plato.Small.Runtime.csproj", "{D26CECCE-0117-4857-8351-1245BF63F6B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Small.Generated.Unoptimized", "small\Plato.Small.Generated.Unoptimized\Plato.Small.Generated.Unoptimized.csproj", "{17E35264-812B-41FD-A143-558826363FC0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Small.Generated.Unoptimized", "legacy\small\Plato.Small.Generated.Unoptimized\Plato.Small.Generated.Unoptimized.csproj", "{17E35264-812B-41FD-A143-558826363FC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Small.Optimized", "small\Plato.Small.Optimized\Plato.Small.Optimized.csproj", "{11C65162-A5A8-4F77-956A-CFBAA1338148}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Small.Optimized", "legacy\small\Plato.Small.Optimized\Plato.Small.Optimized.csproj", "{11C65162-A5A8-4F77-956A-CFBAA1338148}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "plato-src", "stdlib-legacy\stdlib-legacy.csproj", "{C4811E5F-FAC0-4D85-9167-57C3F4917228}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "plato-src", "legacy\stdlib-legacy\stdlib-legacy.csproj", "{C4811E5F-FAC0-4D85-9167-57C3F4917228}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoTests", "PlatoTests\PlatoTests.csproj", "{66B5B658-383C-4238-8BE0-7BC3DDA9EB60}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatoTests", "tests\PlatoTests\PlatoTests.csproj", "{66B5B658-383C-4238-8BE0-7BC3DDA9EB60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.ContextExport.Tests", "Plato.ContextExport.Tests\Plato.ContextExport.Tests.csproj", "{2F6B87E0-2B08-4025-B6FB-955EE28BE3CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.ContextExport.Tests", "tests\Plato.ContextExport.Tests\Plato.ContextExport.Tests.csproj", "{2F6B87E0-2B08-4025-B6FB-955EE28BE3CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.CppWriter.Tests", "Plato.CppWriter.Tests\Plato.CppWriter.Tests.csproj", "{33CD3840-30A3-4235-A03F-863F43349E19}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.CppWriter.Tests", "tests\Plato.CppWriter.Tests\Plato.CppWriter.Tests.csproj", "{33CD3840-30A3-4235-A03F-863F43349E19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Navigation.Tests", "Plato.Navigation.Tests\Plato.Navigation.Tests.csproj", "{A9ADDCA4-CFAA-46BB-9EFD-09EDD44482AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Navigation.Tests", "tests\Plato.Navigation.Tests\Plato.Navigation.Tests.csproj", "{A9ADDCA4-CFAA-46BB-9EFD-09EDD44482AF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "parakeet", "parakeet", "{509AE7B0-66FF-28ED-FE16-2FA8D1E45C9D}"
 EndProject

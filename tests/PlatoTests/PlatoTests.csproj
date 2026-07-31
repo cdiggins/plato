@@ -23,16 +23,19 @@
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
-    <ProjectReference Include="..\PlatoTypeInference\PlatoTypeInference.csproj" />
+    <ProjectReference Include="..\..\src\Plato.Compiler\Plato.Compiler.csproj" />
+    <ProjectReference Include="..\..\src\PlatoTypeInference\PlatoTypeInference.csproj" />
     <!-- Test-only: the emit-differential harness diffs the experimental TirCSharpBodyWriter against
          the current CSharpFunctionBodyWriter. Does NOT affect the default emit path. -->
-    <ProjectReference Include="..\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
-    <ProjectReference Include="..\Plato.TypeScriptWriter\Plato.TypeScriptWriter.csproj" />
-    <ProjectReference Include="..\Plato.RustWriter\Plato.RustWriter.csproj" />
+    <ProjectReference Include="..\..\writers\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
+    <ProjectReference Include="..\..\writers\Plato.TypeScriptWriter\Plato.TypeScriptWriter.csproj" />
+    <ProjectReference Include="..\..\writers\Plato.RustWriter\Plato.RustWriter.csproj" />
     <!-- Parser + utils, so checker tests can build a Compilation from real .plato source. -->
-    <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
     <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
+    <!-- This project compiles its own Ara3D.Geometry namespace; the package of that name
+         is the old V1 library and would make every extension method ambiguous. -->
+    <PackageReference Include="Ara3D.Geometry" Version="$(Ara3DVersion)" ExcludeAssets="compile" />
     <!-- Required by the Plato.Intrinsics shared sources (PlatoBuffer/PlatoList). -->
   </ItemGroup>
   <ItemGroup>

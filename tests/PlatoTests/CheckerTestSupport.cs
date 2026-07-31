@@ -16,14 +16,20 @@ namespace PlatoTests
     /// </summary>
     public static class CheckerTestSupport
     {
-        /// <summary>Walk up from the test output directory to find a repo folder by name.</summary>
+        /// <summary>Walk up from the test output directory to find a repo folder by name.
+        /// Source folders do not all sit at the repo root, so each name is probed at the
+        /// root and under the subfolders the restructure moved them into.</summary>
         public static string FindFolder(string name)
         {
+            var relatives = new[] { name, Path.Combine("legacy", name), Path.Combine("tests", name) };
             for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
             {
-                var candidate = Path.Combine(dir.FullName, name);
-                if (Directory.Exists(candidate))
-                    return candidate;
+                foreach (var relative in relatives)
+                {
+                    var candidate = Path.Combine(dir.FullName, relative);
+                    if (Directory.Exists(candidate))
+                        return candidate;
+                }
             }
             throw new DirectoryNotFoundException(
                 $"Could not locate '{name}' above " + AppContext.BaseDirectory);

@@ -36,6 +36,9 @@
 
   <ItemGroup>
     <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
+    <!-- This project compiles its own Ara3D.Geometry namespace; the package of that name
+         is the old V1 library and would make every extension method ambiguous. -->
+    <PackageReference Include="Ara3D.Geometry" Version="$(Ara3DVersion)" ExcludeAssets="compile" />
   </ItemGroup>
 
 </Project>

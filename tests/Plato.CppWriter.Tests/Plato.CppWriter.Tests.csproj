@@ -14,10 +14,10 @@
     <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Plato.CppWriter\Plato.CppWriter.csproj" />
-    <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
+    <ProjectReference Include="..\..\writers\Plato.CppWriter\Plato.CppWriter.csproj" />
+    <ProjectReference Include="..\..\src\Plato.Compiler\Plato.Compiler.csproj" />
     <!-- Parser + utils, so the tests can build a Compilation from real .plato source. -->
-    <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
     <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
   </ItemGroup>
 </Project>

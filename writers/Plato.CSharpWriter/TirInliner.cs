@@ -385,10 +385,13 @@ public static class TirInliner
         {
             if (n is TirParameter p && p.Def != null && renames.TryGetValue(p.Def, out var renamed))
                 return new TirParameter(renamed, p.Type, p.Origin);
-            if (n is TirLambda lam && lam.Parameters.Any(d => renames.ContainsKey(d)))
-                return new TirLambda(
-                    lam.Parameters.Select(d => renames.TryGetValue(d, out var r) ? r : d).ToList(),
-                    lam.Body, lam.Type, lam.Origin);
+            if (n is TirLambda lam)
+            {
+                if (lam.Parameters.Any(d => renames.ContainsKey(d)))
+                    return new TirLambda(
+                        lam.Parameters.Select(d => renames.TryGetValue(d, out var r) ? r : d).ToList(),
+                        lam.Body, lam.Type, lam.Origin);
+            }
             return n;
         });
     }
@@ -670,6 +673,6 @@ public static class TirInliner
     // Same shape TirCSharpBodyWriter recovers as a bare member-group name (Normalizer R3).
     private static bool IsEtaShaped(TirLambda lam)
         => lam?.Parameters != null && lam.Parameters.Count > 0
-           && lam.Parameters.All(p => p.Name != null && p.Name.StartsWith("_eta"))
-           && lam.Body is TirCall c && c.Args.Count == lam.Parameters.Count;
+           && lam.Body is TirCall c && c.Args.Count == lam.Parameters.Count
+           && lam.Parameters.All(p => p.Name != null && p.Name.StartsWith("_eta"));
 }

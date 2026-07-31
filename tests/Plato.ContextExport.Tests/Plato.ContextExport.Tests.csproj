@@ -20,10 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Plato.ContextExport\Plato.ContextExport.csproj" />
-    <ProjectReference Include="..\Plato.AST\Plato.AST.csproj" />
-    <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
-    <ProjectReference Include="..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
+    <ProjectReference Include="..\..\src\Plato.ContextExport\Plato.ContextExport.csproj" />
+    <ProjectReference Include="..\..\src\Plato.AST\Plato.AST.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
     <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
   </ItemGroup>
 

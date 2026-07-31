@@ -6,6 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
-    <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
+    <ProjectReference Include="..\..\src\Plato.Compiler\Plato.Compiler.csproj" />
   </ItemGroup>
 </Project>

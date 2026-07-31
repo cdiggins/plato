@@ -9,16 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
-    <ProjectReference Include="..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet.Parsers\Ara3D.Parakeet.Parsers.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet\Ara3D.Parakeet.csproj" />
     <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
     <ProjectReference Include="..\Plato.AST\Plato.AST.csproj" />
-    <ProjectReference Include="..\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
-    <ProjectReference Include="..\Plato.TypeScriptWriter\Plato.TypeScriptWriter.csproj" />
-    <ProjectReference Include="..\Plato.RustWriter\Plato.RustWriter.csproj" />
-    <ProjectReference Include="..\Plato.GlslWriter\Plato.GlslWriter.csproj" />
+    <ProjectReference Include="..\..\writers\Plato.CSharpWriter\Plato.CSharpWriter.csproj" />
+    <ProjectReference Include="..\..\writers\Plato.TypeScriptWriter\Plato.TypeScriptWriter.csproj" />
+    <ProjectReference Include="..\..\writers\Plato.RustWriter\Plato.RustWriter.csproj" />
+    <ProjectReference Include="..\..\writers\Plato.GlslWriter\Plato.GlslWriter.csproj" />
     <ProjectReference Include="..\Plato.Compiler\Plato.Compiler.csproj" />
-    <ProjectReference Include="..\Plato.CppWriter\Plato.CppWriter.csproj" />
+    <ProjectReference Include="..\..\writers\Plato.CppWriter\Plato.CppWriter.csproj" />
   </ItemGroup>
 
 </Project>

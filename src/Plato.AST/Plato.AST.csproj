@@ -5,7 +5,7 @@
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\parakeet\Parakeet.Cst\Ara3D.Parakeet.Cst.csproj" />
-    <ProjectReference Include="..\parakeet\Parakeet.Grammars\Ara3D.Parakeet.Grammars.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet.Cst\Ara3D.Parakeet.Cst.csproj" />
+    <ProjectReference Include="..\..\parakeet\Parakeet.Grammars\Ara3D.Parakeet.Grammars.csproj" />
   </ItemGroup>
 </Project>
