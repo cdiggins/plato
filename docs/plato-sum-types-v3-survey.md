@@ -1,6 +1,6 @@
 # Sum types in stdlib — kind-pattern migration survey
 
-**Date:** 2026-07-27 · **Tracker:** [plato-232](../../../tracker/issues/plato-232.md) ·
+**Date:** 2026-07-27 · **Tracker:** [plato-232](../tracker/issues/plato-232.md) ·
 **Parent doc:** [`plato-sum-types-design-2026-07-27.md`](plato-sum-types-design-2026-07-27.md)
 
 Companion survey for the sum-type feature. It enumerates every `XxxKind`

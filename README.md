@@ -111,7 +111,7 @@ The restrictions are the point. No mutation, no `this`, no visibility rules, no 
 
 ## Where it shines, and where it doesn't
 
-Plato is built for pure computational kernels over small value types: vector and matrix algebra, parametric curves and surfaces, signed distance fields, bounds and intervals, color spaces, transforms, meshes, procedural generation. The standard library in [`stdlib-legacy`](stdlib-legacy) reads remarkably close to the math it implements — curve definitions are one line from the textbook formulas they cite.
+Plato is built for pure computational kernels over small value types: vector and matrix algebra, parametric curves and surfaces, signed distance fields, bounds and intervals, color spaces, transforms, meshes, procedural generation. The standard library in [`stdlib-legacy`](legacy/stdlib-legacy) reads remarkably close to the math it implements — curve definitions are one line from the textbook formulas they cite.
 
 It is deliberately **not** a general-purpose language. There are no strings to speak of, no I/O, no mutation, no application state. Stateful systems, UI, protocols, and algorithms that are naturally imperative belong in the host language; Plato is the layer the host calls into.
 
@@ -206,7 +206,7 @@ The multi-target geometry sample browsers are **[live on GitHub Pages](https://c
 by [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
 
 The source lives in [`demos/`](demos/): one shared
-[`geometry.plato`](demos/stdlib-legacy/geometry.plato), a TypeScript + Three.js
+[`geometry.plato`](demos/plato-src/geometry.plato), a TypeScript + Three.js
 sample browser, and a Rust crate with a WebAssembly demo. To run them locally
 (Node 20+ is the only requirement — the WASM module is checked in, so the Rust
 demo doesn't even need a Rust toolchain):

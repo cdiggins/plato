@@ -2,7 +2,7 @@
 
 Small, self-contained `.plato` fixtures for the sum-type / exhaustive-`match`
 feature (tracker **plato-232**, design doc
-[`docs/plato-sum-types-design-2026-07-27.md`](../docs/plato-sum-types-design-2026-07-27.md)).
+[`docs/plato-sum-types-design-2026-07-27.md`](../../docs/plato-sum-types-design-2026-07-27.md)).
 These are **fixtures, not stdlib** — never merge into `stdlib-legacy` or `stdlib`. They exercise syntax the current front end does not yet accept;
 the wave-2 parser/AST implementer wires them into the test suite as the feature lands.
 

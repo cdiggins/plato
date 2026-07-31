@@ -7,4 +7,4 @@ Quick orientation while you open it:
 
 - Language + codegen overview: [`docs/plato-for-agents.md`](docs/plato-for-agents.md).
 - Which artifact is which, and what is frozen: [`docs/plato-library-map.md`](docs/plato-library-map.md).
-- Process, gates, and multi-agent guidance: [`../../docs/working-on-plato.md`](../../docs/working-on-plato.md).
+- Process, gates, and multi-agent guidance: studio's [`docs/working-on-plato.md`](https://github.com/ara3d/studio/blob/main/docs/working-on-plato.md) — that file is not part of this checkout.

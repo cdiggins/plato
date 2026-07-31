@@ -23,7 +23,7 @@
 | `ara3d-sdk/src/Plato.Intrinsics` | synced copy of V1 (so the SDK builds standalone) | **FROZEN** |
 | `submodules/Plato/Plato.Intrinsics.V2` | V2 (native scalars, extensions, System.Numerics) | **LIVE** |
 
-The source of truth for the runtime is `Plato.Intrinsics.V2`. Its C#-consumer surface (operators,
+The source of truth for the runtime is `src/Plato.Intrinsics.V2`. Its C#-consumer surface (operators,
 constructors, conversions, field-properties, static factories, BCL obligations) is contracted in
 `docs/plato-struct-surface.md` and guarded by `IntrinsicsApiSnapshotTests`.
 

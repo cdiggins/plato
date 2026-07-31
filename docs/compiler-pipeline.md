@@ -37,7 +37,7 @@ It is aimed at people working *on the compiler*. For the language itself see
                           styles, TS/Rust): the legacy writers, consuming the symbol graph.
 ```
 
-The passes live in [`Plato.Compiler/Checking/`](../Plato.Compiler/Checking). They matured in
+The passes live in [`Plato.Compiler/Checking/`](../src/Plato.Compiler/Checking). They matured in
 **shadow mode** against the real standard library (the "stdlib as oracle" strategy); since
 increment 3 the TIR is the **production emit path for default-style member bodies**, proven
 byte-identical to the legacy writer (the byte-identity gate `tools/regen-plato.ps1` now exercises

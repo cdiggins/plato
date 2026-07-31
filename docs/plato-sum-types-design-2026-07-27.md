@@ -1,9 +1,9 @@
 # Plato sum types with exhaustive matching — design
 
 **Date:** 2026-07-27
-**Tracker:** [plato-232](../../../tracker/issues/plato-232.md) (executes the RFC idea [plato-077](../../../tracker/issues/plato-077.md))
+**Tracker:** [plato-232](../tracker/issues/plato-232.md) (executes the RFC idea [plato-077](../tracker/issues/plato-077.md))
 **Status:** design / spec for a wave-2 (parser+AST) and wave-3 (stdlib migration) implementation. No compiler code is written by this doc.
-**Companion:** test corpus in [`plato-test-sum/`](../plato-test-sum/README.md); v3 migration survey in [`plato-sum-types-v3-survey.md`](plato-sum-types-v3-survey.md).
+**Companion:** test corpus in [`plato-test-sum/`](../tests/plato-test-sum/README.md); v3 migration survey in [`plato-sum-types-v3-survey.md`](plato-sum-types-v3-survey.md).
 
 This doc specifies a **fixed** design (it is not a menu of options). It documents that
 design at the depth an implementer needs, flags the genuinely open points as such, and
@@ -51,7 +51,7 @@ use hold zeroes and are ignored."* The type system does not know any of this. No
 stops a caller reading `P1` on a `Move` segment, and nothing forces a `switch` over
 `Kind` to handle `Arc`. The field names (`P1`, `P2`, `P3`) are positional and untyped
 by role; the meaning lives in prose. This is exactly the *partiality* weakness that
-[plato-077](../../../tracker/issues/plato-077.md) and `plato-overview.md` name as the
+[plato-077](../tracker/issues/plato-077.md) and `plato-overview.md` name as the
 weakest part of Plato's type story.
 
 A sum type says the same thing precisely, and the compiler checks it:
@@ -72,8 +72,8 @@ The v3 survey (companion doc) finds **115** `XxxKind` types across **39** files;
 minority are true sums like this one, and they are the migration targets.
 
 Sum types are also the top language gap for the Gratify kernel port
-([plato-076](../../../tracker/issues/plato-076.md)) and the precondition for the stdlib
-partiality cleanup ([plato-079](../../../tracker/issues/plato-079.md), which wants
+([plato-076](../tracker/issues/plato-076.md)) and the precondition for the stdlib
+partiality cleanup ([plato-079](../tracker/issues/plato-079.md), which wants
 `Option`/`Result` in place of `Tuple2<T, Boolean>` and sentinel values).
 
 ---
@@ -165,7 +165,7 @@ Notes for the parser implementer:
 - A sum type has **≥ 1** case. (A zero-case type is rejected; it is uninhabited and
   serves no purpose in v1.)
 - Case fields obey the ordinary field rules. In particular the **10-field tuple cap**
-  ([plato-230](../../../tracker/issues/plato-230.md)) applies **per case**, not to the
+  ([plato-230](../tracker/issues/plato-230.md)) applies **per case**, not to the
   flattened struct: each case synthesizes a constructor of its own arity, and no case
   may exceed 10 fields. The flattened struct may hold far more than 10 fields in total
   (PathSegment2D flattens to 12) — that is fine, because no single *constructor* takes
@@ -213,7 +213,7 @@ Generic sum types (`Option<T>`) are **allowed if low-risk**, and the fixed decis
 **support them iff the monomorphizer already specializes the sum's cases per type
 argument with no new unification machinery.** It does — a sum lowers to a struct
 (§5), and the monomorphizer already specializes struct types per instantiation
-([plato-231](../../../tracker/issues/plato-231.md) notes the same engine). So the
+([plato-231](../tracker/issues/plato-231.md) notes the same engine). So the
 default is **generics supported**, with `Option<T>` monomorphizing to `Option_Number`,
 `Option_Point2D`, … exactly as generic product types do today.
 
@@ -279,7 +279,7 @@ an open point — start qualified-only; add bare resolution if it drops out chea
 ## 5. C# representation
 
 A sum type is emitted as **one `readonly` `partial struct`** in the house style of
-`Plato.CSharpWriter/CSharpConcreteTypeWriter.cs` (see `generated/.../_Ring.g.cs` for a
+`writers/Plato.CSharpWriter/CSharpConcreteTypeWriter.cs` (see `generated/.../_Ring.g.cs` for a
 product-type reference). Shape:
 
 1. an `int Kind` discriminant (0-based, declaration order);

@@ -6,8 +6,8 @@ plus `Vector*`/`Matrix*`/`Angle`/…) that pairs with the frozen generated libra
 
 As of the consolidation plan (2026-07-12), the V1 line is **frozen**:
 
-- The **live** runtime is [`Plato.Intrinsics.V2`](../Plato.Intrinsics.V2) (System.Numerics-backed,
-  method-form), used by `Generated/Plato.Generated.{Unoptimized,Optimized}` — the one codebase
+- The **live** runtime is [`src/Plato.Intrinsics.V2`](../../src/Plato.Intrinsics.V2) (System.Numerics-backed,
+  method-form), used by `generated/Plato.Generated.{Unoptimized,Optimized}` — the one codebase
   going forward.
 - These files, the `ara3d-sdk` synced copy, and `ara3d-sdk/src/Plato.Generated` must **not change**.
   They are protected by a checksum tripwire, `tools/check-frozen-v1.ps1` (manifest

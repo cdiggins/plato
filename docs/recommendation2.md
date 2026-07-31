@@ -10,8 +10,8 @@
 >
 > **The actual sources of truth are:** the guiding vision in
 > [`plato-overview.md`](plato-overview.md) (author-written), the execution
-> status and decisions in [`../../../docs/plato-roadmap.md`](../../../docs/plato-roadmap.md),
-> the *verified* bug catalog in [`../../../docs/plato-library-review.md`](../../../docs/plato-library-review.md),
+> status and decisions in [`../../../docs/plato-roadmap.md`](archive/plato-roadmap.md),
+> the *verified* bug catalog in [`../../../docs/plato-library-review.md`](plato-library-review.md),
 > and the Plato source itself (`stdlib-legacy/`). When this doc conflicts with any
 > of those, they win.
 

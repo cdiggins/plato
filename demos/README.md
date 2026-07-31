@@ -22,7 +22,7 @@ demos/
 ```
 
 The curated `geometry.plato` here is a **demo subset** — not the full standard
-library in [`../stdlib-legacy/`](../stdlib-legacy/) at the repo root (which feeds C#
+library in [`../stdlib-legacy/`](../legacy/stdlib-legacy/) at the repo root (which feeds C#
 codegen for `Ara3D.Geometry`).
 
 ## Quick start
@@ -58,7 +58,7 @@ cd demos/rust/geometry-samples
 ./gen-plato.ps1
 ```
 
-Both call [`Plato.CLI`](../Plato.CLI) with `--typescript` or `--rust`.
+Both call [`Plato.CLI`](../src/Plato.CLI) with `--typescript` or `--rust`.
 
 ## GitHub Pages deployment
 
@@ -77,5 +77,5 @@ these demos live at `submodules/Plato/demos/`. `Plato.CLI` still references
 
 - [TypeScript demo README](typescript/geometry-samples/README.md)
 - [Rust demo README](rust/geometry-samples/README.md)
-- [Plato.TypeScriptWriter](../Plato.TypeScriptWriter/README.md)
-- [Plato.RustWriter](../Plato.RustWriter/README.md)
+- [Plato.TypeScriptWriter](../writers/Plato.TypeScriptWriter/README.md)
+- [Plato.RustWriter](../writers/Plato.RustWriter/README.md)

@@ -15,8 +15,8 @@ npm run gen:plato  # regenerate src/plato/plato.g.ts from demos/plato-src/
 ## The Plato pipeline
 
 Algorithms and types are written once in Plato
-([`../../stdlib-legacy/geometry.plato`](../../stdlib-legacy/geometry.plato)) and
-generated to TypeScript by [`Plato.TypeScriptWriter`](../../../Plato.TypeScriptWriter).
+([`../../stdlib-legacy/geometry.plato`](../../plato-src/geometry.plato)) and
+generated to TypeScript by [`Plato.TypeScriptWriter`](../../../writers/Plato.TypeScriptWriter).
 The same source also targets Rust (see
 [`../../rust/geometry-samples`](../../rust/geometry-samples)) and C#. The
 generated library is designed so TypeScript reads like the C# equivalent:

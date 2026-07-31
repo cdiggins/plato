@@ -1,8 +1,8 @@
-> **EXECUTED 2026-07-28** — see tracker issue [plato-257](../../../tracker/issues/plato-257.md). Historical record; do not execute. Archived copy: [docs/archive/plato-257-lessons-v1-plan.md](archive/plato-257-lessons-v1-plan.md).
+> **EXECUTED 2026-07-28** — see tracker issue [plato-257](../tracker/issues/plato-257.md). Historical record; do not execute. Archived copy: [docs/archive/plato-257-lessons-v1-plan.md](archive/plato-257-lessons-v1-plan.md).
 
 # plato-257 — Lessons V1: multi-agent authoring plan
 
-**Status:** EXECUTED (2026-07-28). Tracker: [plato-257](../../../tracker/issues/plato-257.md) — closed.
+**Status:** EXECUTED (2026-07-28). Tracker: [plato-257](../tracker/issues/plato-257.md) — closed.
 **Key input:** [`stdlib/`](../stdlib/) — 80 files, 150 concepts, 1111 types of
 declared vocabulary (no bodies yet). Lessons teach the *mathematics and geometry the
 vocabulary encodes*, using v3 type/concept names as the notation.

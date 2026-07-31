@@ -45,20 +45,20 @@ exactly one `library` block. The folder is flat — no subfolders.
 | Path | Purpose |
 |------|---------|
 | `stdlib/` | Forward stdlib vocabulary — types, concepts, **and** library bodies. New *vocabulary* goes here. Read its [`README`](../stdlib/README.md), [`CONVENTIONS`](../stdlib/CONVENTIONS.md), [`STYLE_GUIDE`](../stdlib/STYLE_GUIDE.md), and [`LIBRARIES`](../stdlib/LIBRARIES.md) before editing. |
-| `stdlib-tests/` | Forward law packet (`Law_*`) for `stdlib/` — **never merge into `stdlib`**. |
-| `stdlib-legacy/*.plato` | Shipping standard library (~3,500 lines → 11,000+ lines of C#). |
+| `tests/stdlib-tests/` | Forward law packet (`Law_*`) for `stdlib/` — **never merge into `stdlib`**. |
+| `legacy/stdlib-legacy/*.plato` | Shipping standard library (~3,500 lines → 11,000+ lines of C#). |
 | `stdlib-legacy-tests/` | Law/witness tests only — **never merge into `stdlib-legacy`**. |
 | `stdlib-snapshot-2026-07-09/` | Frozen pre-refactor snapshot — reference only. |
 | `demos/plato-src/geometry.plato` | Curated demo subset for TS/Rust browsers (not the full stdlib). |
-| `Plato.CLI/` | Compiler entry point. |
+| `src/Plato.CLI/` | Compiler entry point. |
 | `Plato.ContextExport/` | Compact export of types + concepts for agent context (`tools/export-types-context.bat`). |
 | `docs/types-and-concepts-context.txt` | Generated stdlib context (types + concepts only); regen via `tools/export-types-context.bat`. |
-| `Plato.TypeScriptWriter/` | TypeScript backend (POC). |
-| `Plato.RustWriter/` | Rust backend (POC). |
-| `Plato.GlslWriter/` | GLSL ES 3.00 / WebGL2 backend (POC). |
-| `Plato.CppWriter/` | C++17 / CUDA backend (POC; one emitter, two dialects). |
+| `writers/Plato.TypeScriptWriter/` | TypeScript backend (POC). |
+| `writers/Plato.RustWriter/` | Rust backend (POC). |
+| `writers/Plato.GlslWriter/` | GLSL ES 3.00 / WebGL2 backend (POC). |
+| `writers/Plato.CppWriter/` | C++17 / CUDA backend (POC; one emitter, two dialects). |
 | `Plato.Intrinsics.Legacy/` | **FROZEN V1** handwritten runtime — do not edit ([`plato-library-map.md`](plato-library-map.md)). |
-| `Plato.Intrinsics.V2/` | The **live** handwritten C# runtime that discharges the intrinsic contract. |
+| `src/Plato.Intrinsics.V2/` | The **live** handwritten C# runtime that discharges the intrinsic contract. |
 
 ---
 
@@ -85,7 +85,7 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
 ```
 
 - **Output:** one `.g.cs` per type, packed structs, aggressive inlining, `partial` for hand extensions. Flags: `--csharp-style=default|extensions`, `--optimize`, `--scalar=wrapper|float`.
-- **Intrinsics:** the live runtime is `Plato.Intrinsics.V2/`; it must supply every bodiless signature in `stdlib/foundation/intrinsics.library.plato` (gate: `IntrinsicObligationTests`). `Plato.Intrinsics.Legacy/` and the SDK copy are frozen V1 — never edit either.
+- **Intrinsics:** the live runtime is `src/Plato.Intrinsics.V2/`; it must supply every bodiless signature in `stdlib/foundation/intrinsics.library.plato` (gate: `IntrinsicObligationTests`). `legacy/Plato.Intrinsics.Legacy/` and the SDK copy are frozen V1 — never edit either.
 
 ### TypeScript (proof of concept)
 
@@ -121,11 +121,11 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
   <inputFolder> <outputFolder> --glsl
 ```
 
-- **Output:** single `plato.glsl` (GLSL ES 3.00). Free functions only; `Number`→`float`; vectors→`vecN`. No lambdas, no dynamic arrays, no strings. Details: [`Plato.GlslWriter/README.md`](../Plato.GlslWriter/README.md).
+- **Output:** single `plato.glsl` (GLSL ES 3.00). Free functions only; `Number`→`float`; vectors→`vecN`. No lambdas, no dynamic arrays, no strings. Details: [`writers/Plato.GlslWriter/README.md`](../writers/Plato.GlslWriter/README.md).
 
 ### C++ / CUDA (proof of concept)
 
-- **Tests:** `Plato.CppWriter.Tests` — generate then compile-gate with MSVC (`/std:c++17`); CUDA uses nvcc when present, else an MSVC + `cuda_runtime.h` shim.
+- **Tests:** `tests/Plato.CppWriter.Tests` — generate then compile-gate with MSVC (`/std:c++17`); CUDA uses nvcc when present, else an MSVC + `cuda_runtime.h` shim.
 - **Command:**
 
 ```bat
@@ -135,7 +135,7 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
   <inputFolder> <outputFolder> --cuda
 ```
 
-- **Output:** `plato.hpp` (C++17) or `plato.cu` (nvcc). **Bodies are identical; only the preamble differs** (`Dialects_Differ_Only_In_The_Preamble`). Free functions; `Number`→`float`; vectors→`float2/3/4`. Same representability gaps as GLSL for lambdas / dynamic arrays / strings in V1. Details: [`Plato.CppWriter/README.md`](../Plato.CppWriter/README.md). Not in `Ara3D.Studio.sln` yet.
+- **Output:** `plato.hpp` (C++17) or `plato.cu` (nvcc). **Bodies are identical; only the preamble differs** (`Dialects_Differ_Only_In_The_Preamble`). Free functions; `Number`→`float`; vectors→`float2/3/4`. Same representability gaps as GLSL for lambdas / dynamic arrays / strings in V1. Details: [`writers/Plato.CppWriter/README.md`](../writers/Plato.CppWriter/README.md). Not in `Ara3D.Studio.sln` yet.
 
 TS and Rust backends compile a curated demo library and pass a shared conformance suite; they have not yet consumed the full `stdlib-legacy` stdlib. Sum types are C#-only in v1 — the TS and Rust writers reject a sum declaration with a `CHK320` comment. Live demos: [cdiggins.github.io/plato](https://cdiggins.github.io/plato/). GLSL has eight live WebGL2 demos under `demos/glsl/`. C++/CUDA is compile-verified only (no runtime demos yet).
 
@@ -159,17 +159,17 @@ submodules\Plato\tools\export-types-context.bat
 ::   -> submodules\Plato\.temp\types-and-concepts-context-stats.txt
 ```
 
-**Caveat:** `Plato.CLI` in generate mode **exits 0 even on compile errors** — always verify output file count or build the result.
+**Caveat:** `src/Plato.CLI` in generate mode **exits 0 even on compile errors** — always verify output file count or build the result.
 
 ---
 
 ## Rules when editing Plato
 
-1. **`stdlib-legacy/` is WRITABLE** as of 2026-07-09 (content-leads refactor; the Phase-4 freeze is retired).
+1. **`legacy/stdlib-legacy/` is WRITABLE** as of 2026-07-09 (content-leads refactor; the Phase-4 freeze is retired).
    Edit freely; the frozen pre-refactor snapshot lives in `stdlib-snapshot-2026-07-09/` (reference only). Plan:
-   [`docs/plato-execution-plan-2026-07-09.md`](../../../docs/plato-execution-plan-2026-07-09.md).
+   [`docs/plato-execution-plan-2026-07-09.md`](plato-execution-plan-2026-07-09.md).
 2. **Do not hand-edit** `ara3d-sdk/src/Plato.Generated/` — regenerate via `regen-plato.ps1`.
-3. **Known bugs are being fixed**, tracked in `conformance/.../KnownFailures.json`; see [`docs/plato-library-review.md`](../../../docs/plato-library-review.md).
+3. **Known bugs are being fixed**, tracked in `tests/conformance/.../KnownFailures.json`; see [`docs/plato-library-review.md`](plato-library-review.md).
 4. **Do not touch** `parakeet/` (nested submodule).
 5. Conformance expected result: **142 pass / 36 ignored-known / 0 fail** (`.\tools\check-all.ps1` from studio root).
 6. Prefer `+`/`*`/`-`/`/` for ordinary arithmetic in library bodies; keep named
@@ -185,9 +185,10 @@ submodules\Plato\tools\export-types-context.bat
 | [`plato-language-semantics.md`](plato-language-semantics.md) | **Normative language semantics** — construct meaning, resolution, coercions, non-features |
 | [`../README.md`](../README.md) | Full language pitch, examples, demos |
 | [`../CLAUDE.md`](../CLAUDE.md) | Repo layout, hard rules, mission protocol |
-| [`../../../docs/plato-roadmap.md`](../../../docs/plato-roadmap.md) | Compiler and library roadmap (studio repo) |
-| [`../../../docs/plato-library-review.md`](../../../docs/plato-library-review.md) | Verified stdlib bug catalog (studio repo) |
-| [`../Plato.TypeScriptWriter/README.md`](../Plato.TypeScriptWriter/README.md) | TS output model |
-| [`../Plato.RustWriter/README.md`](../Plato.RustWriter/README.md) | Rust output model |
-| [`../Plato.GlslWriter/README.md`](../Plato.GlslWriter/README.md) | GLSL output model |
-| [`../Plato.CppWriter/README.md`](../Plato.CppWriter/README.md) | C++ / CUDA output model |
+| [`archive/plato-roadmap.md`](archive/plato-roadmap.md) | Compiler and library roadmap (historical) |
+| [`plato-library-review.md`](plato-library-review.md) | Verified stdlib bug catalog |
+| [`../tracker/BACKLOG.md`](../tracker/BACKLOG.md) | Open Plato work items |
+| [`../Plato.TypeScriptWriter/README.md`](../writers/Plato.TypeScriptWriter/README.md) | TS output model |
+| [`../Plato.RustWriter/README.md`](../writers/Plato.RustWriter/README.md) | Rust output model |
+| [`../Plato.GlslWriter/README.md`](../writers/Plato.GlslWriter/README.md) | GLSL output model |
+| [`../Plato.CppWriter/README.md`](../writers/Plato.CppWriter/README.md) | C++ / CUDA output model |

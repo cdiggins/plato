@@ -51,12 +51,12 @@ Plato is a pure, statically-typed functional language for defining algebraic dat
 - function with single arguments can be called like properties
 - three kinds:
     - **`type`** — pure data. Fields only, no methods, no visibility, no inheritance. `type Circle { Center: Point2D; Radius: Number; }`
-    - **`interface`** — abstract data types with a `Self` type, which compile to F-bounded generic interfaces in C# (`IVector<Self> where Self : IVector<Self>` in [Interfaces.g.cs:60](ara3d-sdk/src/Plato.Generated/Interfaces.g.cs:60)). These are **type classes**, not OO interfaces — there is no boxing, no vtable, no heterogeneous collections through them.
+    - **`interface`** — abstract data types with a `Self` type, which compile to F-bounded generic interfaces in C# (`IVector<Self> where Self : IVector<Self>` — see `Interfaces.g.cs` in the frozen V1 output, `ara3d-sdk/src/Plato.Generated`, or [the V2 equivalent](../generated/Plato.Generated.Unoptimized/Interfaces.g.cs) in this repo). These are **type classes**, not OO interfaces — there is no boxing, no vtable, no heterogeneous collections through them.
     - **`library`** — free functions, callable with dot syntax on their first argument. A function written once against an interface (`Lerp(a: IVectorLike, b: IVectorLike, t: Number)`) is stamped concretely into every implementing struct.
 - tuples construct any type structurally (`(t.Cos, t.Sin)` builds a `Point2D`); 
 - a function named after a type becomes an implicit conversion (`Point3D(v: Vector3)` in geometry.library becomes `implicit operator Point3D(Vector3)` in the output); 
 - operator overloading falls out of well-known names (`Add` → `+`); 
-- the `_: Type` first-parameter convention produces static members. [intrinsics.plato](ara3d-sdk/stdlib-legacy/intrinsics.plato) is the FFI: a declaration-only library that binds `System.Numerics` and `MathF` by signature, which is an unusually clean foreign-function story — the host platform is just another library whose bodies happen to live elsewhere.
+- the `_: Type` first-parameter convention produces static members. [intrinsics.plato](../legacy/stdlib-legacy/intrinsics.plato) is the FFI: a declaration-only library that binds `System.Numerics` and `MathF` by signature, which is an unusually clean foreign-function story — the host platform is just another library whose bodies happen to live elsewhere.
 
 ## Generate C# Code
 
@@ -73,7 +73,7 @@ Plato is a pure, statically-typed functional language for defining algebraic dat
 
 Plato is a considered synthesis rather than an invention from whole cloth, and its ancestry is legible:
 
-- **Haskell type classes / Swift protocols with Self / Rust traits** — the interface model. The algebraic hierarchy in [core.interfaces.plato](ara3d-sdk/stdlib-legacy/core.interfaces.plato) (`IAdditive` as an Abelian group, `IMultiplicative` as a monoid, `IArithmetic` as roughly a field) is the Haskell numeric class hierarchy redone by someone who cares about geometry more than number theory — and the deliberate splitting of `IMeasure`, `ICoordinate`, and `IVector` (points aren't vectors; angles aren't numbers; measures add but don't multiply) is closer to the *dimensional analysis* tradition of F#'s units of measure.
+- **Haskell type classes / Swift protocols with Self / Rust traits** — the interface model. The algebraic hierarchy in [core.interfaces.plato](../legacy/stdlib-legacy/core.interfaces.plato) (`IAdditive` as an Abelian group, `IMultiplicative` as a monoid, `IArithmetic` as roughly a field) is the Haskell numeric class hierarchy redone by someone who cares about geometry more than number theory — and the deliberate splitting of `IMeasure`, `ICoordinate`, and `IVector` (points aren't vectors; angles aren't numbers; measures add but don't multiply) is closer to the *dimensional analysis* tradition of F#'s units of measure.
 - **D and Nim** — uniform function call syntax as the central ergonomic move, here grounded concretely in C# extension methods as the compilation substrate.
 - **Eiffel** — the uniform access principle (nullary functions are properties; `v.Magnitude` doesn't reveal whether it's stored or computed).
 - **GLSL/HLSL** — the ergonomics of the standard library: swizzles (`v.ZXY`), scalar-vector promotion, `Lerp`/`SmoothStep`/`Fract`, component-wise everything. Plato reads like shader math for CPU code.
@@ -84,7 +84,7 @@ The closest *spiritual* relatives, though, aren't general-purpose languages at a
 
 ## What it does well
 
-**The boilerplate-to-semantics ratio is exceptional.** The whole standard library — the algebraic hierarchy, vectors, matrices, quaternions, intervals, bounds, transforms, meshes, colors, coordinate systems, and a genuinely delightful museum of classical curves with Wikipedia citations inline ([curves.plato](ara3d-sdk/stdlib-legacy/curves.plato) has cardioids, limaçons, trisectrices, torus knots) — is ~3,500 lines. The math reads like the math: `Cardoid(t: Angle): Number => 1.0 + t.Cos;` is one line from the textbook formula. Very few languages let a geometry library be this close to its own specification.
+**The boilerplate-to-semantics ratio is exceptional.** The whole standard library — the algebraic hierarchy, vectors, matrices, quaternions, intervals, bounds, transforms, meshes, colors, coordinate systems, and a genuinely delightful museum of classical curves with Wikipedia citations inline ([curves.plato](../legacy/stdlib-legacy/curves.plato) has cardioids, limaçons, trisectrices, torus knots) — is ~3,500 lines. The math reads like the math: `Cardoid(t: Angle): Number => 1.0 + t.Cos;` is one line from the textbook formula. Very few languages let a geometry library be this close to its own specification.
 
 **Zero-cost abstraction on a platform that historically didn't have it.** The compiler monomorphizes interface-generic functions into direct struct members with `AggressiveInlining` — no interface dispatch, no boxing, `StructLayout(Sequential, Pack=1)` for deterministic memory layout and interop. This is Rust's compilation model grafted onto .NET, obtained by construction rather than by JIT heroics. The generated structs are `partial`, leaving a clean escape hatch for handwritten members, and the generated extension classes even provide `System.Numerics.Vector3` interop overloads so the library composes with the ecosystem rather than fighting it.
 
@@ -94,13 +94,13 @@ The closest *spiritual* relatives, though, aren't general-purpose languages at a
 
 ## What it's best at — and what it would be bad at
 
-**Best at:** exactly what it's used for. Pure computational kernels over small value types: geometry, vector/matrix algebra, parametric curves and surfaces, signed distance fields, color spaces, interpolation, bounds/interval logic, procedural generation. The [procedurals.plato](ara3d-sdk/stdlib-legacy/procedurals.plato) design note — modeling curves, surfaces, SDFs, volumes, and textures uniformly as `IProcedural<TDomain, TRange>` — is the most intellectually interesting idea in the codebase: one interface unifying continuous geometry as functions, with union/intersection/difference as combinators. A CAD kernel's mathematical layer, a game engine's math library, a shader-shared lighting model: this is the sweet spot.
+**Best at:** exactly what it's used for. Pure computational kernels over small value types: geometry, vector/matrix algebra, parametric curves and surfaces, signed distance fields, color spaces, interpolation, bounds/interval logic, procedural generation. The [procedurals.plato](../legacy/stdlib-legacy/procedurals.plato) design note — modeling curves, surfaces, SDFs, volumes, and textures uniformly as `IProcedural<TDomain, TRange>` — is the most intellectually interesting idea in the codebase: one interface unifying continuous geometry as functions, with union/intersection/difference as combinators. A CAD kernel's mathematical layer, a game engine's math library, a shader-shared lighting model: this is the sweet spot.
 
 **Bad at:** general-purpose or systems programming:
 
 - **Error handling and partiality.** There are no sum types, no `Option`/`Result`, no pattern matching. Ray-triangle intersection can miss; matrix inversion can fail. Today that's handled by convention (`CanInvert: Boolean` alongside `Invert`, or the C#-side `Tuple2<Matrix3x2, Boolean>`), which is the weakest part of the type system's story.
 - **Strings, I/O, dates, protocols** — absent, correctly.
-- **Double precision.** `Number` compiles to `float` (the MathF binding, and `3.40282347E+38` limits in [constants.plato](ara3d-sdk/stdlib-legacy/constants.plato)). For the BIM/geospatial world Ara 3D lives in, large-coordinate models genuinely need doubles; a precision-generic story (or a compiler switch) is conspicuously missing.
+- **Double precision.** `Number` compiles to `float` (the MathF binding, and `3.40282347E+38` limits in [constants.plato](../legacy/stdlib-legacy/constants.plato)). For the BIM/geospatial world Ara 3D lives in, large-coordinate models genuinely need doubles; a precision-generic story (or a compiler switch) is conspicuously missing.
 
 ## Compared to Other Languages
 
@@ -129,15 +129,15 @@ The honest competitive summary: Plato's niche has no direct incumbent. Its real 
 
 ### Known Issues 
 
-- **Unary minus appears to bind looser than `+`.** `FromOne(x: IVector) => -x + One` ([vectors.plato:182](ara3d-sdk/stdlib-legacy/vectors.plato:182)) compiles to `this.Add(One).Negative` — i.e. `−(x+1)`, not `1−x` ([_Vector3.g.cs:88](ara3d-sdk/src/Plato.Generated/_Vector3.g.cs:88)). Same pattern in `SmoothStep`: `x.Sqr * (-x.Twice + 3.0)` ([algebra.plato:149](ara3d-sdk/stdlib-legacy/algebra.plato:149)) becomes `x²·(−(2x+3))` instead of `x²·(3−2x)`. Two independent confirmations in shipping generated code — either a parser precedence bug or an undocumented and very dangerous precedence rule.
+- **Unary minus appears to bind looser than `+`.** `FromOne(x: IVector) => -x + One` ([vectors.plato:182](../legacy/stdlib-legacy/vectors.plato:182)) compiles to `this.Add(One).Negative` — i.e. `−(x+1)`, not `1−x` (`_Vector3.g.cs:88` in the frozen V1 output at `ara3d-sdk/src/Plato.Generated`, which is not part of this repo). Same pattern in `SmoothStep`: `x.Sqr * (-x.Twice + 3.0)` ([algebra.plato:149](../legacy/stdlib-legacy/algebra.plato:149)) becomes `x²·(−(2x+3))` instead of `x²·(3−2x)`. Two independent confirmations in shipping generated code — either a parser precedence bug or an undocumented and very dangerous precedence rule.
 
-- **`Degrees(x: Integer)` returns turns** — [angles.plato:4](ara3d-sdk/stdlib-legacy/angles.plato:4) says `=> x.Number.Turns` (copy-paste from the line above). `90.Degrees` is a full 90 revolutions.
+- **`Degrees(x: Integer)` returns turns** — [angles.plato:4](../legacy/stdlib-legacy/angles.plato:4) says `=> x.Number.Turns` (copy-paste from the line above). `90.Degrees` is a full 90 revolutions.
 
-- **`Barycentric` is algebraically wrong:** `(v1 + (v2 - v1)) * uv.X + ...` ([algebra.plato:5](ara3d-sdk/stdlib-legacy/algebra.plato:5)) simplifies to `v2·u + (v3−v1)·v` — the `v1` base term is lost inside the parenthesization. Confirmed in the generated output.
+- **`Barycentric` is algebraically wrong:** `(v1 + (v2 - v1)) * uv.X + ...` ([algebra.plato:5](../legacy/stdlib-legacy/algebra.plato:5)) simplifies to `v2·u + (v3−v1)·v` — the `v1` base term is lost inside the parenthesization. Confirmed in the generated output.
 
-- **`MinNumber`/`MaxNumber` are sign-swapped** in [constants.plato:10](ara3d-sdk/stdlib-legacy/constants.plato:10), and `Lissajous` ignores its `a` parameter and produces a constant `y` ([curves.plato:220](ara3d-sdk/stdlib-legacy/curves.plato:220)).
+- **`MinNumber`/`MaxNumber` are sign-swapped** in [constants.plato:10](../legacy/stdlib-legacy/constants.plato:10), and `Lissajous` ignores its `a` parameter and produces a constant `y` ([curves.plato:220](../legacy/stdlib-legacy/curves.plato:220)).
 
-- **`Magnitude` diverges from `Length`:** generic `MagnitudeSquared` is `SumSqrComponents / NumComponents` ([core.library.plato:38](ara3d-sdk/stdlib-legacy/core.library.plato:38)) — an RMS, not a Euclidean norm — so the same `Vector3` answers `Length = 5` (intrinsic) and `Magnitude ≈ 2.89` for `(3,4,0)`, and generic `Normalize` doesn't produce unit vectors on the non-intrinsic path.
+- **`Magnitude` diverges from `Length`:** generic `MagnitudeSquared` is `SumSqrComponents / NumComponents` ([core.library.plato:38](../legacy/stdlib-legacy/core.library.plato:38)) — an RMS, not a Euclidean norm — so the same `Vector3` answers `Length = 5` (intrinsic) and `Magnitude ≈ 2.89` for `(3,4,0)`, and generic `Normalize` doesn't produce unit vectors on the non-intrinsic path.
 
 **As a design: it's already succeeded once.** The convergence with .NET generic math, and the industry's parallel movement toward restricted multi-target kernel DSLs (Slang most visibly), both say the bet was correct. The open question was never whether the design is right — it's whether a one-person language can cross the tooling chasm. Which brings us to the section where that calculus has genuinely changed.
 
