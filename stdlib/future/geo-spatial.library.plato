@@ -100,7 +100,7 @@ library GeoSpatial
     // The mean radius of the Earth, in meters (IUGG R1). The circle test needs a
     // planet to measure its surface distance on, and GeoCircle names none; this
     // is the value every "distance in meters between two lat/lons" tool assumes.
-    MeanEarthRadius(_: GeoCircle): Length
+    MeanEarthRadius(self: GeoCircle): Length
         => new Length(6371008.8);
 
     // Within the geodesic radius of the centre, measured on a sphere of mean

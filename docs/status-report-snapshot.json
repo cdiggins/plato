@@ -1,96 +1,96 @@
 {
-  "updated_at": "2026-07-31T18:21:01-04:00",
-  "note": "Written by tools/record-gates.py at 2026-07-31T18:21:01-04:00.",
+  "updated_at": "2026-07-31T19:14:42-04:00",
+  "note": "Written by tools/record-gates.py at 2026-07-31T19:14:42-04:00.",
   "gates": [
     {
       "name": "Plato.CLI build (Release)",
       "result": "PASS",
-      "seconds": "43s",
+      "seconds": "5s",
       "detail": "0 errors"
     },
     {
       "name": "lint --strict (four stdlib tiers)",
       "result": "PASS",
-      "seconds": "42s",
-      "detail": "0 error / 159 warning / 2549 info; ratchet 159"
+      "seconds": "14s",
+      "detail": "0 error / 44 warning / 2374 info; ratchet 44"
     },
     {
       "name": "PlatoTests (incl. both ratchets)",
       "result": "PASS",
-      "seconds": "349s",
+      "seconds": "137s",
       "detail": "196 passed / 0 failed"
     },
     {
       "name": "forward-stdlib codegen (full recipe)",
       "result": "PASS",
-      "seconds": "42s",
-      "detail": "1311 .g.cs, 48 degraded bodies"
+      "seconds": "44s",
+      "detail": "1321 .g.cs, 48 degraded bodies"
     },
     {
       "name": "forward conformance (build + law runner)",
-      "result": "FAIL",
-      "seconds": "8s",
-      "detail": "did not build"
+      "result": "PASS",
+      "seconds": "26s",
+      "detail": "44 passed / 0 failed / 3 skipped"
     },
     {
       "name": "stdlib fast gate (lint + checker ratchet)",
       "result": "PASS",
       "seconds": "538s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) 2026-07-29 17:54 ET"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 2026-07-29 17:54 ET"
     },
     {
       "name": "lint --strict forward stdlib",
       "result": "PASS",
       "seconds": "14s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) 0 parse / 0 resolution errors; warning/info findings present"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 0 parse / 0 resolution errors; warning/info findings present"
     },
     {
       "name": "frozen-v1 tripwire",
       "result": "PASS",
       "seconds": "<1s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) 210 files unchanged"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 210 files unchanged"
     },
     {
       "name": "Plato.CLI + Compiler build (Release)",
       "result": "PASS",
       "seconds": "~17s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) file-lock noise possible when Navigation MCP is live"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) file-lock noise possible when Navigation MCP is live"
     },
     {
       "name": "Plato.sln full build",
       "result": "BLOCKED",
       "seconds": "101s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) MSB3027 when Plato.Navigation.CLI holds DLL locks"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) MSB3027 when Plato.Navigation.CLI holds DLL locks"
     },
     {
       "name": "PlatoTests",
       "result": "PASS",
       "seconds": "77s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) 161 passed / 0 failed"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 161 passed / 0 failed"
     },
     {
       "name": "Plato.Navigation.Tests",
       "result": "PASS",
       "seconds": "42s",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) 30 passed / 0 failed"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) 30 passed / 0 failed"
     },
     {
       "name": "conformance suite",
       "result": "NOT RUN",
       "seconds": "\u2014",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) expected 0 fail when run; refresh snapshot after regen-conformance.ps1 -Test"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) expected 0 fail when run; refresh snapshot after regen-conformance.ps1 -Test"
     },
     {
       "name": "regen-generated diff gate",
       "result": "NOT RUN",
       "seconds": "\u2014",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) refresh after regen-generated.ps1"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) refresh after regen-generated.ps1"
     },
     {
       "name": "check-all.ps1 full battery",
       "result": "NOT RUN",
       "seconds": "\u2014",
-      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) run before merge / mission end"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) (stale \u2014 not run this time) run before merge / mission end"
     }
   ],
   "lint": {
@@ -98,17 +98,17 @@
     "parse_errors": 0,
     "resolution_errors": 0,
     "errors": 0,
-    "warnings": 159,
-    "infos": 2549,
-    "ratchet": 159,
+    "warnings": 44,
+    "infos": 2374,
+    "ratchet": 44,
     "counts": {
-      "LINT001": 122,
-      "LINT003": 2158,
+      "LINT001": 8,
+      "LINT003": 1971,
       "LINT009": 8,
       "LINT010": 63,
       "LINT011": 26,
-      "LINT013": 37,
-      "LINT014": 293,
+      "LINT013": 36,
+      "LINT014": 305,
       "LINT016": 1
     }
   },

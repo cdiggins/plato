@@ -125,7 +125,10 @@ library RotationsOps
     Slerp(self: Quaternion, quaternion2: Quaternion, amount: Number): Quaternion {
         var d = self.Dot(quaternion2);
         var flip = d < 0.0;
-        var cosOmega = flip ? -d : d;
+        // The magnitude, not `flip ? -d : d`: the two spellings agree, but the
+        // conditional's branches erase differently under `--scalar=float` and the
+        // C# writer cannot type the result (CS0172).
+        var cosOmega = d.Abs;
         var omega = cosOmega.AcosRadians;
         var invSinOmega = 1.0 / omega.Sin;
         var nearlyParallel = cosOmega > 0.999999;

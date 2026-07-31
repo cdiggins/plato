@@ -22,20 +22,21 @@ namespace PlatoTests
     [TestFixture]
     public static class ForwardStdLibLintTests
     {
-        // Measured 2026-07-31 at 32891dd: 159, Error 0. (Was 229 at 52b3f8c hours earlier;
-        // plato-321's obligation burn-down took 70 off it.)
+        // Measured 2026-07-31: 44, Error 0. (229 at 52b3f8c that morning, 159 mid-day; plato-321
+        // closed the obligation burn-down and took the rest.)
         //
         //   LINT001 - a type implements a concept but an obligation has no implementation; the
-        //             generated member throws NotImplementedException. Concentrated in the matrix
-        //             family (Matrix2x2 x10, MatrixN / Matrix4x3 / Matrix3x3 x9 each) plus
-        //             ColorXYZ x11 and HalfEdgeMesh x8. Same gap the writer reports as a degraded
-        //             body, seen from the declaration side.
+        //             generated member throws NotImplementedException. Down to 8, and all 8 are
+        //             one compiler defect rather than missing content: an obligation keyed by a
+        //             generic type's OWN parameter cannot be matched by a library function over a
+        //             type variable, so Array2D/Array3D's extents and the three animation tracks
+        //             are unimplementable from the library side. See plato-376.
         //   LINT013 - a concept with no concrete implementer that library bodies nonetheless
-        //             dispatch on, so that derived surface is unreachable (MetricSpace, Sliceable,
-        //             Concatenable, ...). Burn-down: plato-277.
+        //             dispatch on, so that derived surface is unreachable (Sliceable,
+        //             Concatenable, ...). 36 of the 44. Burn-down: plato-277 / plato-325.
         //
         // A ceiling to LOWER, never to raise. Lower it in the same commit that earns it.
-        private const int MaxLintRatchet = 159;
+        private const int MaxLintRatchet = 44;
 
         // The Linter runs every rule from its constructor.
         private static Linter LintForwardStdLib()

@@ -67,10 +67,10 @@ library NoiseWarped
     // the difference quotient is meaningful, unlike value or Worley noise.
 
     // The finite-difference step, in the field's input units.
-    CurlStep(_: CurlNoise2D): Number => 0.001;
+    CurlStep(self: CurlNoise2D): Number => 0.001;
 
     // The finite-difference step, in the field's input units.
-    CurlStep(_: CurlNoise3D): Number => 0.001;
+    CurlStep(self: CurlNoise3D): Number => 0.001;
 
     // The scalar potential whose rotated gradient is the field.
     CurlPotential(self: CurlNoise2D, p: Point2D): Number

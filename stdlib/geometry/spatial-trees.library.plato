@@ -93,12 +93,20 @@ library SpatialTrees
     // primitives of `CandidatesInBounds` itself; that is the second phase the
     // whole broad-phase/narrow-phase split exists for.
 
+    // The parameter value standing for "no intersection". A finite literal rather
+    // than `Number.MaxValue`: the limit constant does not survive `--scalar=float`
+    // erasure inside a conditional, where one branch stays `Number` and the other
+    // is already `float` and the C# writer cannot type the result (CS0172).
+    // Nothing here needs the true maximum — only a value no scene extent reaches.
+    MissDistance(): Number
+        => 1.0e30;
+
     // The reach of a ray query: MaxDistance of zero or less means unbounded.
     RayReach(query: RayQuery3D): Number
-        => query.MaxDistance <= 0.0 ? Number.MaxValue : query.MaxDistance;
+        => query.MaxDistance <= 0.0 ? MissDistance() : query.MaxDistance;
 
     // The parameter at which the ray enters the box, by the slab method, or
-    // Number.MaxValue when it misses or enters beyond `reach`. A ray parallel to
+    // the miss value when it misses or enters beyond `reach`. A ray parallel to
     // a slab yields infinities that the min/max pair absorbs; a ray exactly IN
     // the plane of a slab yields NaN, and the comparison then reports a miss.
     // https://en.wikipedia.org/wiki/Slab_method
@@ -113,21 +121,21 @@ library SpatialTrees
         var bz = (box.Max.Z - o.Z) / d.Z;
         var enter = ax.Min(bx).Max(ay.Min(by)).Max(az.Min(bz)).Max(0.0);
         var exit = ax.Max(bx).Min(ay.Max(by)).Min(az.Max(bz));
-        return enter <= exit && enter <= reach ? enter : Number.MaxValue;
+        return enter <= exit && enter <= reach ? enter : MissDistance();
     }
 
-    // The nearest leaf-box entry parameter under `node`, or Number.MaxValue when
+    // The nearest leaf-box entry parameter under `node`, or the miss value when
     // the ray reaches no leaf. An internal node whose own box the ray misses is
     // not descended into — the pruning the hierarchy exists for.
     NearestLeafEntry(self: Bvh3D, query: RayQuery3D, node: SpatialNodeIndex): Number
         => node.Value < 0
-            ? Number.MaxValue
+            ? MissDistance()
             : self.NearestLeafEntryOf(query, self.Nodes[node.Value]);
 
     // The nearest leaf-box entry under one node, once it is known to exist.
     NearestLeafEntryOf(self: Bvh3D, query: RayQuery3D, n: BvhNode3D): Number
-        => RayBoxEntry(query.Ray, n.Bounds, RayReach(query)) >= Number.MaxValue
-            ? Number.MaxValue
+        => RayBoxEntry(query.Ray, n.Bounds, RayReach(query)) >= MissDistance()
+            ? MissDistance()
             : (n.LeftChild.Value < 0 && n.RightChild.Value < 0
                 ? RayBoxEntry(query.Ray, n.Bounds, RayReach(query))
                 : self.NearestLeafEntry(query, n.LeftChild)
@@ -137,9 +145,9 @@ library SpatialTrees
     // query's reach, and where. Surface attributes are left empty (see above).
     Raycast(self: Bvh3D, query: RayQuery3D): RayHit3D {
         var distance = self.Nodes.Count == 0
-            ? Number.MaxValue
+            ? MissDistance()
             : self.NearestLeafEntry(query, SpatialNodeIndex(0));
-        var hit = distance < Number.MaxValue;
+        var hit = distance < MissDistance();
         return (hit,
                 hit ? distance : 0.0,
                 hit ? query.Ray.PointAt(distance) : query.Ray.Origin,

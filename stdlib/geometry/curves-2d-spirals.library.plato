@@ -66,18 +66,13 @@ library Curves2DSpirals
     PointAtLength(self: Clothoid2D, length: Number): Point2D
         => self.Eval(self.ParameterAtLength(length));
 
-    // TODO(concept-gap): Eval(Clothoid2D, Number) needs the Fresnel integrals
-    // S(x) and C(x). The term SUM is now expressible —
-    // `MapRange(terms, k => fresnelTerm(k)).Reduce(0.0, +)` folds a truncated
-    // Maclaurin series — so the "no fold over a term count" reason is retired.
-    // Two blockers remain, though, so no body is shipped: (1) a fixed-term
-    // Maclaurin series for S/C is accurate only for small |x| and degrades
-    // badly over the arc-length spans real road/rail clothoids use, needing a
-    // rational/asymptotic split this vocabulary has no primitive for; and (2)
-    // the map from `Flatness`/`Domain` onto the normalized Fresnel argument is
-    // not pinned down by the type, so a body would encode a guessed scaling.
-    // Left unimplemented rather than approximated silently; ArcLength /
-    // ParameterAtLength / PointAtLength above are exact and independent of it.
+    // `Eval(Clothoid2D, Number)` is at the foot of this file. It sidesteps both
+    // of the blockers the old TODO here recorded: quadrature of the tangent
+    // angle replaces the truncated Maclaurin series that degraded over real
+    // arc-length spans, and there is no guessed scaling because the type's own
+    // doc comment pins the argument — curvature is s / Flatness^2 and the
+    // parameter IS signed arc length, so the tangent angle is s^2 / (2
+    // Flatness^2) and nothing is left to choose.
 
     // The involute of a circle: x = R(cos theta + theta sin theta),
     // y = R(sin theta - theta cos theta), theta in radians.
@@ -153,7 +148,7 @@ library Curves2DSpirals
     // error near machine precision over the arc lengths a transition curve uses
     // (the integrand oscillates faster as |s| grows, so a very long arc wants
     // more).
-    QuadraturePanels(_: Clothoid2D): Integer => 64;
+    QuadraturePanels(self: Clothoid2D): Integer => 64;
 
     // The tangent angle at signed arc length s.
     TangentAngleAt(self: Clothoid2D, s: Number): Angle

@@ -44,15 +44,13 @@ library Surfaces
     // evaluation, in unit parameter.
     ParameterStep(): Number => 0.001;
 
-    // The unit tangent of a path at a unit parameter, by central difference. The
-    // sample points are clamped into the domain, so the ends see a one-sided
-    // difference rather than an extrapolated point.
-    PathTangent(path: Curve3D, t: Number): Vector3D {
-        var h = ParameterStep();
-        var lo = path.Eval((t - h).Clamp(0.0, 1.0));
-        var hi = path.Eval((t + h).Clamp(0.0, 1.0));
-        return lo.Between(hi).Normalize;
-    }
+    // A helper taking a CONCEPT-typed first parameter cannot be called on a
+    // concept-typed value from inside another body: the writer monomorphizes it
+    // per concrete type and no overload accepts the interface (the same shape
+    // LINT013 reports as an unreachable derived surface). So the path tangent and
+    // the base-surface normal below are written out at each of their three call
+    // sites rather than factored out. Only obligations — `Eval` here — dispatch
+    // through a concept.
 
     // The number of columns of a control net (the U direction).
     NetColumns(net: Array2D<Point3D>): Integer
@@ -239,10 +237,13 @@ library Surfaces
     // Approximation (see the file header): the cross-section frame is the path
     // tangent plus a deterministic perpendicular, not the rotation-minimizing
     // frame, so the section can twist relative to a true sweep where the path
-    // turns about its own tangent.
+    // turns about its own tangent. The tangent is a central difference with its
+    // sample parameters clamped, so the ends see a one-sided difference.
     Eval(s: SweptSurface, uv: UvCoordinate): Point3D {
+        var h = ParameterStep();
         var origin = s.Path.Eval(uv.V);
-        var tangent = PathTangent(s.Path, uv.V);
+        var tangent = s.Path.Eval((uv.V - h).Clamp(0.0, 1.0))
+            .Between(s.Path.Eval((uv.V + h).Clamp(0.0, 1.0))).Normalize;
         var e1 = AnyPerpendicular(tangent);
         var e2 = tangent.Cross(e1);
         var profile = s.Profile.Eval(uv.U);
@@ -256,8 +257,10 @@ library Surfaces
     // matters less here — a circular section is invariant under the twist the
     // fixed-up frame introduces.
     Eval(s: TubeSurface, uv: UvCoordinate): Point3D {
+        var h = ParameterStep();
         var origin = s.Path.Eval(uv.V);
-        var tangent = PathTangent(s.Path, uv.V);
+        var tangent = s.Path.Eval((uv.V - h).Clamp(0.0, 1.0))
+            .Between(s.Path.Eval((uv.V + h).Clamp(0.0, 1.0))).Normalize;
         var e1 = AnyPerpendicular(tangent);
         var e2 = tangent.Cross(e1);
         var around = uv.U.Turns;
@@ -267,23 +270,19 @@ library Surfaces
     ClosedU(s: TubeSurface): Boolean => true;
     ClosedV(s: TubeSurface): Boolean => false;
 
-    // The base surface's unit normal at a UV coordinate, from central
-    // differences of its evaluation. `ParametricSurface` exposes no derivative
-    // (only `DifferentiableSurface` does), so this is what an offset can read;
-    // the sample parameters are clamped, so the boundary gets a one-sided
+    // The base point displaced along the base normal by Distance. The normal is
+    // a central difference of the base's own evaluation, because
+    // `ParametricSurface` exposes no derivative (only `DifferentiableSurface`
+    // does); the sample parameters are clamped, so the boundary gets a one-sided
     // difference rather than an off-surface point.
-    ApproximateNormal(surface: ParametricSurface, uv: UvCoordinate): Vector3D {
+    Eval(s: OffsetSurface, uv: UvCoordinate): Point3D {
         var h = ParameterStep();
-        var alongU = surface.Eval(UvCoordinate((uv.U - h).Clamp(0.0, 1.0), uv.V))
-            .Between(surface.Eval(UvCoordinate((uv.U + h).Clamp(0.0, 1.0), uv.V)));
-        var alongV = surface.Eval(UvCoordinate(uv.U, (uv.V - h).Clamp(0.0, 1.0)))
-            .Between(surface.Eval(UvCoordinate(uv.U, (uv.V + h).Clamp(0.0, 1.0))));
-        return alongU.Cross(alongV).Normalize;
+        var alongU = s.Base.Eval(UvCoordinate((uv.U - h).Clamp(0.0, 1.0), uv.V))
+            .Between(s.Base.Eval(UvCoordinate((uv.U + h).Clamp(0.0, 1.0), uv.V)));
+        var alongV = s.Base.Eval(UvCoordinate(uv.U, (uv.V - h).Clamp(0.0, 1.0)))
+            .Between(s.Base.Eval(UvCoordinate(uv.U, (uv.V + h).Clamp(0.0, 1.0))));
+        return s.Base.Eval(uv) + alongU.Cross(alongV).Normalize * s.Distance;
     }
-
-    // The base point displaced along the base normal by Distance.
-    Eval(s: OffsetSurface, uv: UvCoordinate): Point3D
-        => s.Base.Eval(uv) + ApproximateNormal(s.Base, uv) * s.Distance;
     // Closure is inherited: offsetting along the normal preserves seams.
     ClosedU(s: OffsetSurface): Boolean => s.Base.ClosedU;
     ClosedV(s: OffsetSurface): Boolean => s.Base.ClosedV;

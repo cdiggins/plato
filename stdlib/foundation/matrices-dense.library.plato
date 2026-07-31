@@ -24,15 +24,17 @@ library MatricesDense
     // # Matrix2x2
 
     // Two rows.
-    RowCount(_: Matrix2x2): Integer => 2;
+    RowCount(self: Matrix2x2): Integer => 2;
 
     // Two columns.
-    ColumnCount(_: Matrix2x2): Integer => 2;
+    ColumnCount(self: Matrix2x2): Integer => 2;
 
     // Element (row, column), zero-based; column indexes into the row vector.
     // Precondition: 0 <= row < 2 and 0 <= column < 2.
     ElementAt(self: Matrix2x2, row: Integer, column: Integer): Number
-        => (row == 0 ? self.Row1 : self.Row2)[column];
+        => row == 0
+            ? (column == 0 ? self.Row1.X : self.Row1.Y)
+            : (column == 0 ? self.Row2.X : self.Row2.Y);
 
     // Element-wise sum.
     Add(a: Matrix2x2, b: Matrix2x2): Matrix2x2
@@ -70,15 +72,21 @@ library MatricesDense
     // # Matrix3x3
 
     // Three rows.
-    RowCount(_: Matrix3x3): Integer => 3;
+    RowCount(self: Matrix3x3): Integer => 3;
 
     // Three columns.
-    ColumnCount(_: Matrix3x3): Integer => 3;
+    ColumnCount(self: Matrix3x3): Integer => 3;
 
     // Element (row, column), zero-based.
     // Precondition: 0 <= row < 3 and 0 <= column < 3.
     ElementAt(self: Matrix3x3, row: Integer, column: Integer): Number
-        => (row == 0 ? self.Row1 : (row == 1 ? self.Row2 : self.Row3))[column];
+        => row == 0 ? self.RowElement(self.Row1, column)
+         : (row == 1 ? self.RowElement(self.Row2, column)
+                     : self.RowElement(self.Row3, column));
+
+    // One component of a three-component row, by column index.
+    RowElement(self: Matrix3x3, row: Number3, column: Integer): Number
+        => column == 0 ? row.X : (column == 1 ? row.Y : row.Z);
 
     // Element-wise sum.
     Add(a: Matrix3x3, b: Matrix3x3): Matrix3x3
@@ -111,17 +119,22 @@ library MatricesDense
     // `matrices-ops.library.plato`; only the members that file leaves out are here.
 
     // Four rows.
-    RowCount(_: Matrix4x4): Integer => 4;
+    RowCount(self: Matrix4x4): Integer => 4;
 
     // Four columns.
-    ColumnCount(_: Matrix4x4): Integer => 4;
+    ColumnCount(self: Matrix4x4): Integer => 4;
 
     // Element (row, column), zero-based.
     // Precondition: 0 <= row < 4 and 0 <= column < 4.
     ElementAt(self: Matrix4x4, row: Integer, column: Integer): Number
-        => (row == 0 ? self.Row1
-            : (row == 1 ? self.Row2
-            : (row == 2 ? self.Row3 : self.Row4)))[column];
+        => row == 0 ? self.RowElement(self.Row1, column)
+         : (row == 1 ? self.RowElement(self.Row2, column)
+         : (row == 2 ? self.RowElement(self.Row3, column)
+                     : self.RowElement(self.Row4, column)));
+
+    // One component of a four-component row, by column index.
+    RowElement(self: Matrix4x4, row: Number4, column: Integer): Number
+        => column == 0 ? row.X : (column == 1 ? row.Y : (column == 2 ? row.Z : row.W));
 
     // Every element negated.
     Negative(self: Matrix4x4): Matrix4x4
@@ -138,15 +151,17 @@ library MatricesDense
     // `matrices-ops.library.plato`.
 
     // Three rows: the 2x2 linear block plus the translation row.
-    RowCount(_: Matrix3x2): Integer => 3;
+    RowCount(self: Matrix3x2): Integer => 3;
 
     // Two columns.
-    ColumnCount(_: Matrix3x2): Integer => 2;
+    ColumnCount(self: Matrix3x2): Integer => 2;
 
     // Element (row, column), zero-based.
     // Precondition: 0 <= row < 3 and 0 <= column < 2.
     ElementAt(self: Matrix3x2, row: Integer, column: Integer): Number
-        => (row == 0 ? self.Row1 : (row == 1 ? self.Row2 : self.Row3))[column];
+        => row == 0 ? (column == 0 ? self.Row1.X : self.Row1.Y)
+         : (row == 1 ? (column == 0 ? self.Row2.X : self.Row2.Y)
+                     : (column == 0 ? self.Row3.X : self.Row3.Y));
 
     // Every element negated, translation row included.
     Negative(self: Matrix3x2): Matrix3x2
@@ -160,17 +175,22 @@ library MatricesDense
     // # Matrix4x3 — the 3D affine map
 
     // Four rows: the 3x3 linear block plus the translation row.
-    RowCount(_: Matrix4x3): Integer => 4;
+    RowCount(self: Matrix4x3): Integer => 4;
 
     // Three columns.
-    ColumnCount(_: Matrix4x3): Integer => 3;
+    ColumnCount(self: Matrix4x3): Integer => 3;
 
     // Element (row, column), zero-based.
     // Precondition: 0 <= row < 4 and 0 <= column < 3.
     ElementAt(self: Matrix4x3, row: Integer, column: Integer): Number
-        => (row == 0 ? self.Row1
-            : (row == 1 ? self.Row2
-            : (row == 2 ? self.Row3 : self.Row4)))[column];
+        => row == 0 ? self.RowElement(self.Row1, column)
+         : (row == 1 ? self.RowElement(self.Row2, column)
+         : (row == 2 ? self.RowElement(self.Row3, column)
+                     : self.RowElement(self.Row4, column)));
+
+    // One component of a three-component row, by column index.
+    RowElement(self: Matrix4x3, row: Number3, column: Integer): Number
+        => column == 0 ? row.X : (column == 1 ? row.Y : row.Z);
 
     // Element-wise sum.
     Add(a: Matrix4x3, b: Matrix4x3): Matrix4x3
@@ -214,27 +234,33 @@ library MatricesDense
     ElementAt(self: MatrixN, row: Integer, column: Integer): Number
         => self.Components[row * self.NumColumns + column];
 
+    // Spelled as explicit constructions rather than as bare tuples: a MatrixN
+    // result that is still a tuple when the next expression reads a field off it
+    // renders as a call on the field name (CS1955) once the shipping recipe turns
+    // field reads into methods. Naming the type gives the field read something
+    // to bind to.
+
     // Element-wise sum, in the shape of `a`.
     Add(a: MatrixN, b: MatrixN): MatrixN
-        => (a.NumRows, a.NumColumns, a.Components.Zip(b.Components, (x, y) => x + y));
+        => MatrixN(a.NumRows, a.NumColumns, a.Components.Zip(b.Components, (x, y) => x + y));
 
     // Element-wise difference, in the shape of `a`.
     Subtract(a: MatrixN, b: MatrixN): MatrixN
-        => (a.NumRows, a.NumColumns, a.Components.Zip(b.Components, (x, y) => x - y));
+        => MatrixN(a.NumRows, a.NumColumns, a.Components.Zip(b.Components, (x, y) => x - y));
 
     // Every element negated.
     Negative(self: MatrixN): MatrixN
-        => (self.NumRows, self.NumColumns, self.Components.Map(x => -x));
+        => MatrixN(self.NumRows, self.NumColumns, self.Components.Map(x => -x));
 
     // Every element scaled.
     Multiply(self: MatrixN, scalar: Number): MatrixN
-        => (self.NumRows, self.NumColumns, self.Components.Map(x => x * scalar));
+        => MatrixN(self.NumRows, self.NumColumns, self.Components.Map(x => x * scalar));
 
     // Every element divided.
     Divide(self: MatrixN, scalar: Number): MatrixN
-        => (self.NumRows, self.NumColumns, self.Components.Map(x => x / scalar));
+        => MatrixN(self.NumRows, self.NumColumns, self.Components.Map(x => x / scalar));
 
     // Every element reduced modulo the scalar.
     Modulo(self: MatrixN, scalar: Number): MatrixN
-        => (self.NumRows, self.NumColumns, self.Components.Map(x => x % scalar));
+        => MatrixN(self.NumRows, self.NumColumns, self.Components.Map(x => x % scalar));
 }

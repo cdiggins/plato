@@ -280,31 +280,15 @@ namespace Ara3D.Geometry
         public Matrix4x4 WithPivot(Vector3 pivot)
             => CreateTranslation(pivot) * this * CreateTranslation(-pivot);
 
-        // Exact `int`/`float` signatures: these discharge the (scalar-erased) MatrixLike
-        // obligations the forward-stdlib generation declares on the Matrix4x4 partial, and
-        // interface implementation demands the exact erased types.
+        // Exact `int` signature: this discharges the (scalar-erased) Hashable obligation the
+        // forward-stdlib generation declares on the Matrix4x4 partial, and interface
+        // implementation demands the exact erased type.
+        //
+        // RowCount / ColumnCount / ElementAt used to live here for the same reason. They moved
+        // to the declaration (`stdlib/foundation/matrices-dense.library.plato`, plato-321) and
+        // were deleted here in the same change: with bodies on both sides the generated partial
+        // and this one declare the same member, which is CS0111 (plato-375).
 
         [MethodImpl(AggressiveInlining)] public int Hash() => Sys.GetHashCode();
-
-        [MethodImpl(AggressiveInlining)] public int RowCount() => 4;
-
-        [MethodImpl(AggressiveInlining)] public int ColumnCount() => 4;
-
-        [MethodImpl(AggressiveInlining)]
-        public float ElementAt(int row, int column)
-        {
-            // Straight off the declared rows: no System.Numerics round-trip, and the row/column
-            // order is the declaration's own (RowN holds row N; component c is column c).
-            var r = row switch
-            {
-                0 => Row1, 1 => Row2, 2 => Row3, 3 => Row4,
-                _ => throw new ArgumentOutOfRangeException($"row {row} is outside a 4x4 matrix"),
-            };
-            return column switch
-            {
-                0 => r.X, 1 => r.Y, 2 => r.Z, 3 => r.W,
-                _ => throw new ArgumentOutOfRangeException($"column {column} is outside a 4x4 matrix"),
-            };
-        }
     }
 }
