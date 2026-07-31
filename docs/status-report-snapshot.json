@@ -1,88 +1,115 @@
 {
-  "updated_at": "2026-07-30T15:04:16-04:00",
-  "note": "Captured during initial status-report landing; refresh after gate runs.",
+  "updated_at": "2026-07-31T18:21:01-04:00",
+  "note": "Written by tools/record-gates.py at 2026-07-31T18:21:01-04:00.",
   "gates": [
+    {
+      "name": "Plato.CLI build (Release)",
+      "result": "PASS",
+      "seconds": "43s",
+      "detail": "0 errors"
+    },
+    {
+      "name": "lint --strict (four stdlib tiers)",
+      "result": "PASS",
+      "seconds": "42s",
+      "detail": "0 error / 159 warning / 2549 info; ratchet 159"
+    },
+    {
+      "name": "PlatoTests (incl. both ratchets)",
+      "result": "PASS",
+      "seconds": "349s",
+      "detail": "196 passed / 0 failed"
+    },
+    {
+      "name": "forward-stdlib codegen (full recipe)",
+      "result": "PASS",
+      "seconds": "42s",
+      "detail": "1311 .g.cs, 48 degraded bodies"
+    },
+    {
+      "name": "forward conformance (build + law runner)",
+      "result": "FAIL",
+      "seconds": "8s",
+      "detail": "did not build"
+    },
     {
       "name": "stdlib fast gate (lint + checker ratchet)",
       "result": "PASS",
       "seconds": "538s",
-      "detail": "2026-07-29 17:54 ET"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) 2026-07-29 17:54 ET"
     },
     {
       "name": "lint --strict forward stdlib",
       "result": "PASS",
       "seconds": "14s",
-      "detail": "0 parse / 0 resolution errors; warning/info findings present"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) 0 parse / 0 resolution errors; warning/info findings present"
     },
     {
       "name": "frozen-v1 tripwire",
       "result": "PASS",
       "seconds": "<1s",
-      "detail": "210 files unchanged"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) 210 files unchanged"
     },
     {
       "name": "Plato.CLI + Compiler build (Release)",
       "result": "PASS",
       "seconds": "~17s",
-      "detail": "file-lock noise possible when Navigation MCP is live"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) file-lock noise possible when Navigation MCP is live"
     },
     {
       "name": "Plato.sln full build",
       "result": "BLOCKED",
       "seconds": "101s",
-      "detail": "MSB3027 when Plato.Navigation.CLI holds DLL locks"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) MSB3027 when Plato.Navigation.CLI holds DLL locks"
     },
     {
       "name": "PlatoTests",
       "result": "PASS",
       "seconds": "77s",
-      "detail": "161 passed / 0 failed"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) 161 passed / 0 failed"
     },
     {
       "name": "Plato.Navigation.Tests",
       "result": "PASS",
       "seconds": "42s",
-      "detail": "30 passed / 0 failed"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) 30 passed / 0 failed"
     },
     {
       "name": "conformance suite",
       "result": "NOT RUN",
       "seconds": "\u2014",
-      "detail": "expected 0 fail when run; refresh snapshot after regen-conformance.ps1 -Test"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) expected 0 fail when run; refresh snapshot after regen-conformance.ps1 -Test"
     },
     {
       "name": "regen-generated diff gate",
       "result": "NOT RUN",
       "seconds": "\u2014",
-      "detail": "refresh after regen-generated.ps1"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) refresh after regen-generated.ps1"
     },
     {
       "name": "check-all.ps1 full battery",
       "result": "NOT RUN",
       "seconds": "\u2014",
-      "detail": "run before merge / mission end"
+      "detail": "(stale \u2014 not run this time) (stale \u2014 not run this time) run before merge / mission end"
     }
   ],
   "lint": {
+    "strict_exit": 0,
     "parse_errors": 0,
     "resolution_errors": 0,
-    "strict_exit": 0,
-    "warnings": 262,
-    "infos": 2404,
     "errors": 0,
+    "warnings": 159,
+    "infos": 2549,
+    "ratchet": 159,
     "counts": {
-      "LINT001": 260,
-      "LINT002": 0,
-      "LINT003": 2279,
-      "LINT004": 0,
-      "LINT005": 0,
-      "LINT006": 0,
-      "LINT007": 0,
-      "LINT008": 37,
+      "LINT001": 122,
+      "LINT003": 2158,
       "LINT009": 8,
-      "LINT010": 59,
-      "LINT011": 21,
-      "LINT012": 2
+      "LINT010": 63,
+      "LINT011": 26,
+      "LINT013": 37,
+      "LINT014": 293,
+      "LINT016": 1
     }
   },
   "nav": {

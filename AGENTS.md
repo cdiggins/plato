@@ -106,6 +106,16 @@ Iterate on the one gate relevant to your workstream; run `check-all.ps1` **once*
 Every gate is PowerShell and Windows-pathed. An agent on Linux/CI is limited to `dotnet build`
 and `dotnet test`.
 
+**Recording what the gates said:** `python tools/record-gates.py [--full]` runs them and writes
+the results down — current state into `docs/status-report-snapshot.json`, one appended history row
+into [`docs/gate-log.md`](docs/gate-log.md). `--full` adds a clean regeneration of the forward
+stdlib plus the conformance law runner (~7 min); without it you get lint + PlatoTests (~2 min).
+Run it at the end of a mission instead of hand-copying numbers into a report. Note that it
+REGENERATES before it tests: a suite that passes against a stale `Generated/` folder is the
+easiest wrong green in this repo to produce.
+**Ratchets are enforced in tests, not in the log:** `ForwardStdLibLintTests` (lint findings) and
+`ForwardStdLibCheckerTests` (type-checker diagnostics), both in `tests/PlatoTests`. Each holds a
+ceiling constant to LOWER, never raise, in the commit that earns it.
 **Status report (optional HTML):** from the Plato repo root,
 `python tools/gen-status-report.py` refreshes `docs/status-report.html` (live git/tracker;
 gate/lint/C# build rows from `docs/status-report-snapshot.json`). Not required on every commit.
