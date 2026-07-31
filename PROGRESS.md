@@ -1,7 +1,6 @@
-# v3 runtime mission (2026-07-27) — DONE
-- Created Plato.Intrinsics.V3/ (V2-seeded runtime + ConceptObligations.cs), Plato.Generated.V3/ (csproj + regenerated v3 output), Plato.Generated.V3.Tests/ (7 NUnit smoke tests, all pass).
-- Emitter fix: CSharpTypeWriter At/Count forward to single Array-typed field (VectorN); goldens byte-identical.
-- Standalone build errors 293 -> 244 -> 128 -> 0. Gates: PlatoTests 142/142, conformance 205/205, regen-generated 184/184 identical, frozen V1 clean. Committed 47e5240 (+ sweep 1432b10, review dc11c3e, emitter 5e3efb4/2f518d1). Not in sln.
+# v3 runtime mission (2026-07-27) — ABANDONED, REMOVED 2026-07-30
+- The V3 runtime/generated/test projects were deleted (no consumers). Surviving artifact of that
+  mission: the emitter fix in `CSharpTypeWriter` (At/Count forward to a single Array-typed field for VectorN).
 
 # PROGRESS — C++ / CUDA writer (worktree `cpp-opencl-writer`) — DONE
 
