@@ -7,14 +7,19 @@
 #                          PlatoTests/ForwardStdLibCheckerTests.cs
 #                          (worklist test: SummarizeForwardStdLibDiagnostics)
 # All paths derive from $PSScriptRoot, so this works from any Plato checkout or git worktree.
-# Usage: .\tools\check-stdlib-fast.ps1 [-SkipLint] [-SkipRatchet] [-Folders a,b]
+# Usage: .\tools\check-stdlib-fast.ps1 [-SkipLint] [-SkipRatchet] [-IncludeFuture] [-Folders a,b]
 #   -Folders lints an explicit set of roots instead of all of stdlib/, each enumerated
 #   top-directory-only and compiled as ONE program — the cumulative-tier subset form, e.g.
 #   -Folders stdlib\foundation,stdlib\geometry. Relative paths resolve against the repo root.
+#   -IncludeFuture adds stdlib\future to the default root list (stdlib-377). It is OFF by
+#   default: `future` is aspirational vocabulary that is neither linted nor converted to C#,
+#   and its findings would drown the shipping tiers'. It must still parse and type-check,
+#   which the checker ratchet below covers — that one always reads all four tiers.
 # Exit code: 0 if all executed gates pass, 1 otherwise.
 param(
     [switch]$SkipLint,
     [switch]$SkipRatchet,
+    [switch]$IncludeFuture,
     [string[]]$Folders
 )
 
@@ -46,19 +51,24 @@ if (-not $SkipLint) {
             if ([System.IO.Path]::IsPathRooted($_)) { $_ } else { Join-Path $root $_ } })
     } else {
         # stdlib is split into dependency-ordered tier folders and Plato.CLI enumerates each
-        # root top-directory-only, so the default gate names all four explicitly. Linting the
-        # bare `stdlib` folder would find ZERO files.
-        @('foundation','geometry','graphics','future') | ForEach-Object { Join-Path $root "stdlib\$_" }
+        # root top-directory-only, so the default gate names the shipping tiers explicitly.
+        # Linting the bare `stdlib` folder would find ZERO files. `future` joins only under
+        # -IncludeFuture; nothing reaches into it, so the three compile on their own.
+        $tiers = @('foundation','geometry','graphics')
+        if ($IncludeFuture) { $tiers += 'future' }
+        $tiers | ForEach-Object { Join-Path $root "stdlib\$_" }
     }
-    $name = if ($Folders) { "lint --strict ($($Folders -join ' + '))" } else { 'lint --strict (stdlib forward)' }
+    $name = if ($Folders) { "lint --strict ($($Folders -join ' + '))" }
+            elseif ($IncludeFuture) { 'lint --strict (stdlib forward + future)' }
+            else { 'lint --strict (stdlib forward)' }
     Run-Gate $name 'dotnet' (@(
-        'run','--project',(Join-Path $root 'Plato.CLI\Plato.CLI.csproj'),
+        'run','--project',(Join-Path $root 'src\Plato.CLI\Plato.CLI.csproj'),
         '-c','Release','--','lint') + $roots + @('--strict'))
 }
 
 if (-not $SkipRatchet) {
     Run-Gate 'checker ratchet (forward stdlib)' 'dotnet' @(
-        'test',(Join-Path $root 'PlatoTests\PlatoTests.csproj'),
+        'test',(Join-Path $root 'tests\PlatoTests\PlatoTests.csproj'),
         '-c','Release','--nologo','-v','q',
         '--filter','FullyQualifiedName~ForwardStdLibDiagnosticCountDoesNotRegress')
 }

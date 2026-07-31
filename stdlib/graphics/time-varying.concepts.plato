@@ -2,9 +2,9 @@
 // # Time-varying concepts
 //
 // The single abstraction shared by every animated value in this layer: something
-// that can be sampled at a moment in time. Tracks, tweens, and oscillators all
-// implement it; the concrete keyframe and track types live in
-// `keyframes-tracks.types.plato`.
+// that can be sampled at a moment in time. Tweens and oscillators implement it
+// here (`motion-graphics*.types.plato`); the keyframe and track types that also
+// implement it are aspirational and live in `future/keyframes-tracks.types.plato`.
 
 // A value that can be sampled at a moment in time. Tracks, tweens, and
 // oscillators are all time-varying.

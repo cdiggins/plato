@@ -1,14 +1,16 @@
 //==
-// # KeyframesTracks — derived functions for TimeVarying<TValue>
+// # TimeVaryingValues — derived functions for TimeVarying<TValue>
 //
 // Bodies for the `TimeVarying<TValue>` concept declared in
-// `keyframes-tracks.concepts.plato`. A time-varying value is sampled at a `Duration`
+// `time-varying.concepts.plato`. A time-varying value is sampled at a `Duration`
 // offset from its owner's start via `Sample`; the helpers rename that sampling
 // and work over a span given by two boundary Durations. Pure expressions only;
 // all inputs are immutable and evaluation is side-effect free. See `README.md`
 // for naming and unit conventions.
 
-library KeyframesTracks
+// The library block is TimeVaryingValues rather than the file stem's TimeVarying:
+// that name is already taken by the concept these bodies derive from.
+library TimeVaryingValues
 {
     //==
     // # TimeVarying<TValue>
@@ -20,9 +22,9 @@ library KeyframesTracks
     // The change/delta helpers subtract two samples, which the type variable
     // $TValue supports by the same duck-typing the interval helpers rely on
     // (IntervalLike.Extent subtracts two $T). A formal `where TValue: Additive`
-    // bound on TimeVarying is deferred: its implementors span keyframes-tracks.types.plato
-    // (AnimationTrack/TangentTrack) and motion-graphics.types.plato, which are outside
-    // this package's edit scope, so the bound cannot be filled tree-wide here.
+    // bound on TimeVarying is deferred: its implementors span motion-graphics.types.plato
+    // and future/keyframes-tracks.types.plato (AnimationTrack/TangentTrack), which are
+    // outside this package's edit scope, so the bound cannot be filled tree-wide here.
 
     // The sampled value at a time offset; a readable spelling of Sample.
     ValueAt(self: TimeVarying<$TValue>, time: Duration): $TValue

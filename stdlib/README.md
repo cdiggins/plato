@@ -57,6 +57,37 @@ A folder may reference only itself and the folders before it;
 - `future` may reach anything, nothing reaches into `future`. 
 - `foundation` reaches nothing, anything can reach into `foundation`
 
+### `future` is declared, not shipped
+
+`future` holds aspirational vocabulary — declarations for domains the library intends to cover
+but does not implement yet (animation tracks and clips, skeletal animation and IK, rigid
+dynamics, collision, kinematics, optimization, signals, geo-spatial, engineering, uncertainty).
+
+It is held to a lower bar than the other three tiers, on purpose:
+
+| | `foundation` / `geometry` / `graphics` | `future` |
+|---|---|---|
+| parses | yes | yes |
+| type-checks (0 diagnostics) | yes | yes |
+| linted | yes | only with an explicit flag |
+| converted to C# | yes | only with an explicit flag |
+
+So a `future` declaration must always resolve and type-check, but it is not expected to carry
+bodies, discharge every concept obligation, or survive codegen. The flags that opt it back in:
+
+- `.\tools\check-stdlib-fast.ps1 -IncludeFuture`
+- `.\tools\stage-stdlib.ps1 -IncludeFuture`
+- `python tools/record-gates.py --include-future`
+- `PlatoTests.ForwardStdLibLintTests.SummarizeForwardStdLibLintIncludingFuture` (reporting only)
+
+Parsing and type-checking are NOT behind a flag: `ForwardStdLibParsesAndCompiles` and
+`ForwardStdLibDiagnosticCountDoesNotRegress` always read all four tiers.
+
+A corollary for authors: a concept that a shipping tier implements must itself live in a
+shipping tier, even when most of its implementers are aspirational. That is why
+`TimeVarying<TValue>` sits in `graphics/time-varying.concepts.plato` while the keyframe and
+track types that implement it live in `future/`.
+
 ## Conventions and style
 
 Companion docs — read before editing this folder:

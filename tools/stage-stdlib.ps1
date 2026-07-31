@@ -13,6 +13,11 @@
 #   tools/stage-stdlib.ps1 -NoSync          # re-lint the staging copy as-is
 #   tools/stage-stdlib.ps1 -Snapshot        # rebuild Plato.CLI (Release) and re-pin the binary
 #   tools/stage-stdlib.ps1 -Folders a,b     # lint multiple roots (post-reorg tier subsets)
+#   tools/stage-stdlib.ps1 -IncludeFuture   # add stdlib\future to the default tier list
+#
+# stdlib\future is EXCLUDED by default (stdlib-377): it is aspirational vocabulary that is
+# neither linted nor converted to C#. It must still parse and type-check — that is the
+# PlatoTests checker ratchet's job, not this script's.
 #
 # -Folders bypasses the staging sync and lints the named folders IN PLACE (each enumerated
 # top-directory-only, all compiled as one program), so tier subsets read as they will in the
@@ -26,6 +31,7 @@
 param(
     [switch] $NoSync,
     [switch] $Snapshot,
+    [switch] $IncludeFuture,
     [string[]] $Folders
 )
 
@@ -43,10 +49,10 @@ $cli     = Join-Path $bin 'Plato.CLI.dll'
 
 if ($Snapshot) {
     Write-Host "Rebuilding Plato.CLI (Release) and re-pinning snapshot..."
-    dotnet build (Join-Path $repo 'Plato.CLI\Plato.CLI.csproj') -c Release --nologo -v q
+    dotnet build (Join-Path $repo 'src\Plato.CLI\Plato.CLI.csproj') -c Release --nologo -v q
     if ($LASTEXITCODE -ne 0) { throw "Plato.CLI build failed; snapshot NOT updated." }
     New-Item -ItemType Directory -Force $bin | Out-Null
-    Copy-Item (Join-Path $repo 'Plato.CLI\bin\Release\net8.0\*') $bin -Recurse -Force
+    Copy-Item (Join-Path $repo 'src\Plato.CLI\bin\Release\net8.0\*') $bin -Recurse -Force
     Write-Host "Pinned: $cli"
 }
 
@@ -61,8 +67,11 @@ if (-not $Folders) {
         if ($LASTEXITCODE -ge 8) { throw "robocopy failed ($LASTEXITCODE)" }
     }
     # Each root is enumerated top-directory-only, so name the tier folders rather than the
-    # staging root — linting the root itself would find ZERO files.
-    $Folders = @('foundation','geometry','graphics','future') | ForEach-Object { Join-Path $target $_ }
+    # staging root — linting the root itself would find ZERO files. `future` only under
+    # -IncludeFuture (see the header).
+    $tiers = @('foundation','geometry','graphics')
+    if ($IncludeFuture) { $tiers += 'future' }
+    $Folders = $tiers | ForEach-Object { Join-Path $target $_ }
 }
 
 $out = & dotnet $cli lint @Folders 2>&1

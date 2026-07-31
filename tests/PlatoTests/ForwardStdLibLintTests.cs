@@ -16,31 +16,39 @@ namespace PlatoTests
     /// passes every gate silently. Nothing enforced the printed number until this file.
     ///
     /// Info findings are deliberately excluded (the linter's own RatchetCount does the same):
-    /// LINT003 alone is ~2.2k unused-field notes over vocabulary declared ahead of its bodies, so
+    /// LINT003 alone is ~1.5k unused-field notes over vocabulary declared ahead of its bodies, so
     /// including them would make the ceiling a number nobody could move.
+    ///
+    /// SCOPE (stdlib-377): the ratchet lints the SHIPPING tiers only — foundation, geometry,
+    /// graphics. `stdlib/future` is aspirational vocabulary that is not converted to C# and not
+    /// linted; it must still parse and type-check, which
+    /// <see cref="ForwardStdLibCheckerTests"/> enforces over all four tiers.
+    /// <see cref="SummarizeForwardStdLibLintIncludingFuture"/> is the opt-in view that includes it.
     /// </summary>
     [TestFixture]
     public static class ForwardStdLibLintTests
     {
-        // Measured 2026-07-31: 44, Error 0. (229 at 52b3f8c that morning, 159 mid-day; plato-321
-        // closed the obligation burn-down and took the rest.)
+        // Measured 2026-07-31 over foundation+geometry+graphics: 38, Error 0. (44 for all four
+        // tiers before stdlib-377 dropped `future` from the gate; 229 at 52b3f8c that morning,
+        // 159 mid-day, then plato-321 closed the obligation burn-down.)
         //
         //   LINT001 - a type implements a concept but an obligation has no implementation; the
-        //             generated member throws NotImplementedException. Down to 8, and all 8 are
+        //             generated member throws NotImplementedException. Down to 6, and all 6 are
         //             one compiler defect rather than missing content: an obligation keyed by a
         //             generic type's OWN parameter cannot be matched by a library function over a
-        //             type variable, so Array2D/Array3D's extents and the three animation tracks
-        //             are unimplementable from the library side. See plato-376.
+        //             type variable, so Array2D/Array3D's extents are unimplementable from the
+        //             library side. See plato-376. (The three animation tracks that shared this
+        //             defect now live in `future` and are out of the gate.)
         //   LINT013 - a concept with no concrete implementer that library bodies nonetheless
         //             dispatch on, so that derived surface is unreachable (Sliceable,
-        //             Concatenable, ...). 36 of the 44. Burn-down: plato-277 / plato-325.
+        //             Concatenable, ...). 32 of the 38. Burn-down: plato-277 / plato-325.
         //
         // A ceiling to LOWER, never to raise. Lower it in the same commit that earns it.
-        private const int MaxLintRatchet = 44;
+        private const int MaxLintRatchet = 38;
 
         // The Linter runs every rule from its constructor.
         private static Linter LintForwardStdLib()
-            => new Linter(CheckerTestSupport.CompileForwardStdLib());
+            => new Linter(CheckerTestSupport.CompileForwardStdLibShippingTiers());
 
         private static IEnumerable<string> ByCode(Linter linter)
             => linter.Findings
@@ -70,8 +78,17 @@ namespace PlatoTests
         /// <summary>Not an assertion — the worklist. Run it to see what the ratchet is made of.</summary>
         [Test]
         public static void SummarizeForwardStdLibLint()
+            => Summarize(LintForwardStdLib());
+
+        /// <summary>The opt-in view: lint including `stdlib/future`, which the ratchet above does
+        /// not gate on. Reporting only — a finding here is information about vocabulary nobody is
+        /// shipping yet, not a regression.</summary>
+        [Test]
+        public static void SummarizeForwardStdLibLintIncludingFuture()
+            => Summarize(new Linter(CheckerTestSupport.CompileForwardStdLib()));
+
+        private static void Summarize(Linter linter)
         {
-            var linter = LintForwardStdLib();
             foreach (var line in ByCode(linter))
                 TestContext.WriteLine(line);
 

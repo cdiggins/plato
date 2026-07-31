@@ -16,13 +16,14 @@ type MotionBlurSettings
     Samples: Integer;
 }
 
-// Remaps playback time: sampling the track at composition time yields the
-// source time, in seconds, to show. Non-monotone tracks scrub backwards;
-// slopes above 1 fast-forward.
+// Remaps playback time: sampling the curve at composition time yields the
+// source time, in seconds, to show. Non-monotone curves scrub backwards;
+// slopes above 1 fast-forward. The curve is any TimeVarying<Number> — a tween,
+// an oscillator, or (once that vocabulary ships) a keyframed AnimationTrack.
 type TimeRemap
     implements Value
 {
-    Track: AnimationTrack<Number>;
+    Curve: TimeVarying<Number>;
 }
 
 // A playable range of frames under a fixed frame rate: the in point is shown

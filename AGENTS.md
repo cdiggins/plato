@@ -43,6 +43,11 @@ the writer code).
   `library` block. One kind of declaration per file, at most twelve top-level declarations per
   file. The folder is partitioned into four subfolders — `foundation/`, `geometry/`, `graphics/`
   and `future/` (aspirational vocabulary) — each of which is itself flat.
+  **`future/` is not linted and not converted to C#** (stdlib-377): the default tier list
+  everywhere is `foundation geometry graphics`, and `future` joins only under an explicit flag
+  (`-IncludeFuture` on the PowerShell gates, `--include-future` on `tools/record-gates.py`).
+  It must still PARSE and TYPE-CHECK — `ForwardStdLib*` in `tests/PlatoTests` reads all four
+  tiers unconditionally. Nothing in a shipping tier may reference a `future` declaration.
   **Read before editing:** [`stdlib/README.md`](stdlib/README.md) (what the folder is, counts,
   partition rules), [`stdlib/CONVENTIONS.md`](stdlib/CONVENTIONS.md) (domain semantics — frames,
   winding, units, the no-generic-`Optional<T>` rule; when two files disagree, this one wins),
@@ -90,7 +95,8 @@ the writer code).
 Iterate on the one gate relevant to your workstream; run `check-all.ps1` **once**, at the end.
 
 - `.\tools\check-stdlib-fast.ps1` — the forward-stdlib inner loop (seconds). Two gates:
-  `lint --strict` over `stdlib` (0 parse / 0 resolution errors) and the **checker ratchet**
+  `lint --strict` over the three shipping tiers (`-IncludeFuture` adds `future`; 0 parse /
+  0 resolution errors) and the **checker ratchet**
   (`ForwardStdLibDiagnosticCountDoesNotRegress` in `tests/PlatoTests/ForwardStdLibCheckerTests.cs`) —
   your change may not raise the diagnostic count, and when you lower it you lower the ceiling in
   the same commit.

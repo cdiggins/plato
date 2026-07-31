@@ -44,6 +44,18 @@ namespace PlatoTests
         public static string FindForwardStdLib()
             => FindFolder("stdlib");
 
+        /// <summary>The tiers that are CONVERTED to C# and LINTED by default (stdlib-377).
+        /// `future` is deliberately absent: it is aspirational vocabulary that must parse and
+        /// type-check, but is neither emitted nor linted unless explicitly asked for. The tier
+        /// rule (stdlib/README.md) is that nothing reaches into `future`, so these three compile
+        /// on their own with no dangling references.</summary>
+        public static readonly IReadOnlyList<string> ShippingTiers =
+            new[] { "foundation", "geometry", "graphics" };
+
+        /// <summary>Every tier, including `future` — the parse/type-check population.</summary>
+        public static readonly IReadOnlyList<string> AllTiers =
+            new[] { "foundation", "geometry", "graphics", "future" };
+
         public static AstNode ParseFile(string path)
         {
             var text = File.ReadAllText(path);
@@ -63,8 +75,16 @@ namespace PlatoTests
             => Directory.GetFiles(folder, "*.plato", SearchOption.AllDirectories);
 
         public static Compilation CompileFolder(string folder)
+            => CompileFolders(new[] { folder });
+
+        /// <summary>Compiles the union of several roots as ONE program, the same way
+        /// `Plato.CLI lint &lt;root&gt;...` does. A file reachable through two roots is parsed once.</summary>
+        public static Compilation CompileFolders(IEnumerable<string> folders)
         {
-            var asts = PlatoFiles(folder).Select(ParseFile).ToList();
+            var paths = folders.SelectMany(PlatoFiles)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            var asts = paths.Select(ParseFile).ToList();
             return new Compilation(Ara3D.Logging.Logger.Null, asts);
         }
 
@@ -77,5 +97,10 @@ namespace PlatoTests
         /// </summary>
         public static Compilation CompileForwardStdLib()
             => CompileFolder(FindForwardStdLib());
+
+        /// <summary>The forward vocabulary MINUS `future` — what the lint gate and the C#
+        /// codegen actually see by default. See <see cref="ShippingTiers"/>.</summary>
+        public static Compilation CompileForwardStdLibShippingTiers()
+            => CompileFolders(ShippingTiers.Select(t => Path.Combine(FindForwardStdLib(), t)));
     }
 }

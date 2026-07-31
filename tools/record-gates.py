@@ -39,7 +39,12 @@ CLI = "src/Plato.CLI/Plato.CLI.csproj"
 PLATO_TESTS = "tests/PlatoTests/PlatoTests.csproj"
 CONFORMANCE = "tests/conformance/Plato.ForwardConformanceTests/Plato.ForwardConformanceTests.csproj"
 GENERATED = "tests/conformance/Plato.ForwardConformanceTests/Generated"
-TIERS = ["stdlib/foundation", "stdlib/geometry", "stdlib/graphics", "stdlib/future"]
+# The tiers that are LINTED and CONVERTED to C# (stdlib-377). `stdlib/future` is aspirational
+# vocabulary: it must parse and type-check — PlatoTests enforces that over all four tiers — but it
+# is not linted and not emitted unless --include-future is passed. Nothing reaches into `future`,
+# so the three below compile as a closed program.
+TIERS = ["stdlib/foundation", "stdlib/geometry", "stdlib/graphics"]
+FUTURE_TIER = "stdlib/future"
 
 # The shipping recipe (docs/plato-library-map.md). Kept beside the codegen call it feeds.
 RECIPE = [
@@ -89,21 +94,23 @@ def gate(name: str, result: str, seconds: float, detail: str) -> dict:
     return {"name": name, "result": result, "seconds": f"{seconds:.0f}s", "detail": detail}
 
 
-def measure(full: bool) -> tuple[list[dict], dict, dict]:
+def measure(full: bool, include_future: bool = False) -> tuple[list[dict], dict, dict]:
     """Run the gates. Returns (gate rows, lint block, extras for the log row)."""
     gates: list[dict] = []
     extras: dict = {}
+    tiers = [*TIERS, FUTURE_TIER] if include_future else list(TIERS)
+    scope = "four stdlib tiers" if include_future else "three shipping stdlib tiers"
 
     out, code, secs = run(["dotnet", "build", CLI, "-c", "Release", "--nologo", "-v", "q"])
     gates.append(gate("Plato.CLI build (Release)", "PASS" if code == 0 else "FAIL", secs,
                       "0 errors" if code == 0 else "build failed — later gates are unreliable"))
 
     out, code, secs = run(["dotnet", "run", "--project", CLI, "-c", "Release", "--no-build",
-                           "--", "lint", *TIERS, "--strict"])
+                           "--", "lint", *tiers, "--strict"])
     lint = parse_lint(out)
     extras["lint"] = lint
     gates.append(gate(
-        "lint --strict (four stdlib tiers)", "PASS" if code == 0 else "FAIL", secs,
+        f"lint --strict ({scope})", "PASS" if code == 0 else "FAIL", secs,
         f"{lint['errors']} error / {lint['warnings']} warning / {lint['infos']} info; "
         f"ratchet {lint['ratchet']}"))
 
@@ -117,7 +124,7 @@ def measure(full: bool) -> tuple[list[dict], dict, dict]:
         return gates, lint, extras
 
     out, code, secs = run(["dotnet", "run", "--project", CLI, "-c", "Release", "--no-build", "--",
-                           *TIERS, "tests/stdlib-tests", f"--out={GENERATED}", *RECIPE])
+                           *tiers, "tests/stdlib-tests", f"--out={GENERATED}", *RECIPE])
     files = len(list((PLATO / GENERATED).glob("*.g.cs"))) if (PLATO / GENERATED).is_dir() else 0
     degraded = int(m.group(1)) if (m := re.search(r"DEGRADED bodies[^:]*: (\d+)", out)) else None
     extras["codegen"] = {"files": files, "degraded": degraded}
@@ -188,9 +195,12 @@ def main() -> int:
     ap.add_argument("--full", action="store_true",
                     help="also regenerate the forward stdlib and run the conformance law runner")
     ap.add_argument("--dry-run", action="store_true", help="measure and print; write nothing")
+    ap.add_argument("--include-future", action="store_true",
+                    help="also lint and convert stdlib/future (excluded by default: it is "
+                         "aspirational vocabulary that only has to parse and type-check)")
     args = ap.parse_args()
 
-    gates, lint, extras = measure(args.full)
+    gates, lint, extras = measure(args.full, args.include_future)
     width = max(len(g["name"]) for g in gates)
     for g in gates:
         print(f"{g['result']:5} {g['name']:{width}}  {g['seconds']:>5}  {g['detail']}")

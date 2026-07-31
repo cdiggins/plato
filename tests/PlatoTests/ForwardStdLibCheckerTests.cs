@@ -15,6 +15,10 @@ namespace PlatoTests
     /// <c>Plato.CLI lint</c>. Mirrors the stdlib-legacy pair: a reporting test (the worklist) and a
     /// ratchet. Also runs <see cref="SumTypeChecker"/>, since the forward stdlib is where sum types
     /// actually live (PathSegment2D, Paint, MaskSource2D, ScalarFieldNode2D/3D, WindowFunction).
+    ///
+    /// SCOPE: ALL FOUR tiers, <c>stdlib/future</c> included. stdlib-377 took <c>future</c> out of
+    /// the lint gate and out of C# codegen, but NOT out of parsing and type-checking — those are
+    /// the properties that keep aspirational vocabulary honest, and they are enforced here.
     /// </summary>
     [TestFixture]
     public static class ForwardStdLibCheckerTests
