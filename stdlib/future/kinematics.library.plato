@@ -75,4 +75,43 @@ library Kinematics
     // non-negative speed tolerance.
     IsStationaryAt(self: Kinematic3D, time: Duration, tolerance: Number): Boolean
         => self.VelocityAt(time).Magnitude <= tolerance;
+
+    //==
+    // # The Interpolatable fills
+    //
+    // Component-wise blending of motion states. This is a blend of STATES, not
+    // an integration of the motion: interpolating a position and a velocity
+    // independently gives a state whose velocity is generally not the derivative
+    // of its position. That is the right operation for cross-fading two captured
+    // states or blending two solver results, and the wrong one for advancing a
+    // simulation, which is what `PositionAt` and its family are for.
+    // t is unclamped throughout.
+
+    // Position, velocity and acceleration blended independently.
+    Lerp(a: KinematicState2D, b: KinematicState2D, t: Number): KinematicState2D
+        => (a.Position.Lerp(b.Position, t),
+            a.Velocity.Lerp(b.Velocity, t),
+            a.Acceleration.Lerp(b.Acceleration, t));
+
+    // Position, velocity and acceleration blended independently.
+    Lerp(a: KinematicState3D, b: KinematicState3D, t: Number): KinematicState3D
+        => (a.Position.Lerp(b.Position, t),
+            a.Velocity.Lerp(b.Velocity, t),
+            a.Acceleration.Lerp(b.Acceleration, t));
+
+    // The twist blended part-wise: linear velocity and angular rate.
+    Lerp(a: SpatialVelocity2D, b: SpatialVelocity2D, t: Number): SpatialVelocity2D
+        => (a.Linear.Lerp(b.Linear, t), a.Angular.Lerp(b.Angular, t));
+
+    // The twist blended part-wise.
+    Lerp(a: SpatialVelocity3D, b: SpatialVelocity3D, t: Number): SpatialVelocity3D
+        => (a.Linear.Lerp(b.Linear, t), a.Angular.Lerp(b.Angular, t));
+
+    // The wrench blended part-wise: force and torque.
+    Lerp(a: SpatialForce2D, b: SpatialForce2D, t: Number): SpatialForce2D
+        => (a.Force.Lerp(b.Force, t), a.Torque.Lerp(b.Torque, t));
+
+    // The wrench blended part-wise.
+    Lerp(a: SpatialForce3D, b: SpatialForce3D, t: Number): SpatialForce3D
+        => (a.Force.Lerp(b.Force, t), a.Torque.Lerp(b.Torque, t));
 }

@@ -1,0 +1,15 @@
+//==
+// # Material and margin members
+//
+// The concept obligations of `engineering-materials.types.plato`. Only
+// `SafetyFactor` owes one: it is `Comparable` on its dimensionless ratio, and a
+// larger ratio is a larger margin, so the order on the carrier IS the order on
+// the design margin — no inversion, unlike the utilisation ratios (demand over
+// capacity) some codes use instead.
+
+library EngineeringMaterials
+{
+    // Margins order by their capacity-over-demand ratio: larger is safer.
+    LessThanOrEquals(a: SafetyFactor, b: SafetyFactor): Boolean
+        => a.Value <= b.Value;
+}

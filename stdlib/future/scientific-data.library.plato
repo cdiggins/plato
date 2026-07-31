@@ -45,4 +45,43 @@ library ScientificData
     // collection is not empty.
     TimeSpan(self: TimeSampled): Duration
         => self.TimeAt(0).Between(self.TimeAt(self.SampleCount - 1));
+
+    //==
+    // # The TimeSampled fills
+    //
+    // Two shapes: a uniform series computes its sample times from Start and
+    // SamplePeriod, and an irregular one stores them. The derived surface above
+    // does not care which, which is the whole point of the concept.
+
+    // One time per stored value.
+    SampleCount(self: TimeSeries): Integer
+        => self.Values.Count;
+
+    // Start advanced by index whole sample periods.
+    TimeAt(self: TimeSeries, index: Integer): Instant
+        => self.Start + self.SamplePeriod * index.ToNumber;
+
+    // One time per stored value; Times and Values are parallel.
+    SampleCount(self: IrregularTimeSeries): Integer
+        => self.Values.Count;
+
+    // The stored sample time.
+    TimeAt(self: IrregularTimeSeries, index: Integer): Instant
+        => self.Times[index];
+
+    // One time per stored vector.
+    SampleCount(self: Vector3DTimeSeries): Integer
+        => self.Values.Count;
+
+    // Start advanced by index whole sample periods.
+    TimeAt(self: Vector3DTimeSeries, index: Integer): Instant
+        => self.Start + self.SamplePeriod * index.ToNumber;
+
+    // One time per logged occurrence; Times and Labels are parallel.
+    SampleCount(self: EventLog): Integer
+        => self.Times.Count;
+
+    // The time of the logged occurrence.
+    TimeAt(self: EventLog, index: Integer): Instant
+        => self.Times[index];
 }

@@ -1,0 +1,17 @@
+//==
+// # Font description members
+//
+// The concept obligations of the font-description types in
+// `text-fonts.types.plato`. Only `FontWeight` owes one today: it is `Comparable`
+// on the CSS 100-900 scale, and "bolder" is exactly "numerically greater" on
+// that scale — the whole reason the scale is numeric rather than an enumeration
+// of named weights.
+
+library TextFonts
+{
+    // Weights order along the CSS scale: Thin (100) before Normal (400) before
+    // Black (900), with the intermediate values variable fonts use ordering
+    // between them.
+    LessThanOrEquals(a: FontWeight, b: FontWeight): Boolean
+        => a.Value <= b.Value;
+}

@@ -24,4 +24,88 @@ library GeoSpatial
 
     Hash(self: MapTileIndex): Integer
         => ((self.Zoom.Hash * 31 + self.Column.Hash) * 31 + self.Row.Hash);
+
+    //==
+    // # The GeoRegion containment tests
+    //
+    // Altitude is ignored throughout, as the concept says. The bounds and circle
+    // tests are exact; the polygon test treats the rings as straight in
+    // longitude/latitude, which is the usual convention for a GeoJSON-style
+    // polygon and diverges from the geodesic edges the type's doc comment names
+    // only for rings whose edges span a large fraction of the planet.
+    // No ring test is antimeridian-aware: a ring whose longitudes wrap must be
+    // split at the antimeridian first, which is the same requirement GeoJSON
+    // places on its polygons.
+
+    // Inside the latitude band and inside the longitude band. West greater than
+    // East encodes a band crossing the antimeridian, so that case tests the
+    // union of the two pieces rather than their (empty) intersection.
+    ContainsCoordinate(self: GeoBounds, coordinate: GeoCoordinate): Boolean {
+        var latitude = coordinate.Latitude.Radians;
+        var longitude = coordinate.Longitude.Radians;
+        var west = self.West.Radians;
+        var east = self.East.Radians;
+        var inBand = latitude >= self.South.Radians && latitude <= self.North.Radians;
+        var inLongitudes = west <= east
+            ? longitude >= west && longitude <= east
+            : longitude >= west || longitude <= east;
+        return inBand && inLongitudes;
+    }
+
+    // True when the horizontal ray eastward from the test point crosses the edge
+    // (a, b): the standard crossing predicate, half-open in latitude so a vertex
+    // exactly at the test latitude counts once rather than twice.
+    // https://en.wikipedia.org/wiki/Point_in_polygon
+    EdgeCrossesRay(a: GeoCoordinate, b: GeoCoordinate, longitude: Number, latitude: Number): Boolean {
+        var ax = a.Longitude.Radians;
+        var ay = a.Latitude.Radians;
+        var bx = b.Longitude.Radians;
+        var by = b.Latitude.Radians;
+        var straddles = (ay > latitude) != (by > latitude);
+        return straddles && longitude < (bx - ax) * (latitude - ay) / (by - ay) + ax;
+    }
+
+    // True when the coordinate is inside the implicitly closed ring, by an odd
+    // crossing count.
+    RingContainsCoordinate(self: GeoPath, coordinate: GeoCoordinate): Boolean {
+        var ring = self.Coordinates;
+        var count = ring.Count;
+        var longitude = coordinate.Longitude.Radians;
+        var latitude = coordinate.Latitude.Radians;
+        return count.Range.Reduce(false, (inside, i) =>
+            EdgeCrossesRay(ring[i], ring[(i + 1) % count], longitude, latitude)
+                ? inside.Not
+                : inside);
+    }
+
+    // Inside the boundary ring and outside every hole.
+    ContainsCoordinate(self: GeoPolygon, coordinate: GeoCoordinate): Boolean
+        => self.Boundary.RingContainsCoordinate(coordinate)
+           && self.Holes.All(hole => hole.RingContainsCoordinate(coordinate).Not);
+
+    // The great-circle distance between two coordinates on a sphere of the given
+    // radius, by the haversine formula — which, unlike the spherical law of
+    // cosines, keeps its precision for the small distances a circular region
+    // usually spans. https://en.wikipedia.org/wiki/Haversine_formula
+    GreatCircleDistance(a: GeoCoordinate, b: GeoCoordinate, planetRadius: Length): Length {
+        var lat1 = a.Latitude.Radians;
+        var lat2 = b.Latitude.Radians;
+        var halfDeltaLat = (lat2 - lat1) * 0.5;
+        var halfDeltaLon = (b.Longitude.Radians - a.Longitude.Radians) * 0.5;
+        var h = halfDeltaLat.Sin.Square
+              + lat1.Cos * lat2.Cos * halfDeltaLon.Sin.Square;
+        return new Length(2.0 * h.Sqrt.Min(1.0).AsinRadians * planetRadius.Meters);
+    }
+
+    // The mean radius of the Earth, in meters (IUGG R1). The circle test needs a
+    // planet to measure its surface distance on, and GeoCircle names none; this
+    // is the value every "distance in meters between two lat/lons" tool assumes.
+    MeanEarthRadius(_: GeoCircle): Length
+        => new Length(6371008.8);
+
+    // Within the geodesic radius of the centre, measured on a sphere of mean
+    // Earth radius.
+    ContainsCoordinate(self: GeoCircle, coordinate: GeoCoordinate): Boolean
+        => GreatCircleDistance(self.Center, coordinate, self.MeanEarthRadius).Meters
+           <= self.Radius.Meters;
 }

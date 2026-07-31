@@ -53,4 +53,21 @@ library Time
     // The dimensionless ratio of two spans. Precondition: b is non-zero.
     Divide(a: Duration, b: Duration): Number
         => a.Seconds / b.Seconds;
+
+    //==
+    // # FrameTime and BeatTime — the Comparable fills
+    //
+    // Both order along their own time line, so both compare on their count. For
+    // FrameTime that is the FRAME NUMBER, not the wall-clock instant: comparing
+    // two frame times under different rates would need a common time line, and
+    // silently converting would make the order depend on a field the caller may
+    // not have meant to vary. Convert to Instant first if that is the question.
+
+    // Frame positions order by frame number. Precondition: both share a rate.
+    LessThanOrEquals(a: FrameTime, b: FrameTime): Boolean
+        => a.Frame <= b.Frame;
+
+    // Beat positions order by beat count.
+    LessThanOrEquals(a: BeatTime, b: BeatTime): Boolean
+        => a.Beats <= b.Beats;
 }
