@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-07-31 — [plato-375](issues/plato-375.md) — plato-321 matrix obligation bodies break forward codegen: CS0736 static-vs-instance + CS0111 against handwritten intrinsics — fixed; forward conformance PASS 44/0/3, lint ratchet 44
 - 2026-07-31 — [plato-321](issues/plato-321.md) — Burn down forward-stdlib LINT001 interface obligations (228 remaining) — 192 -> 8 LINT001; residue is plato-376 (generic-type obligation pairing). Batches c25e0bc d3f5047 11af469 01153a4 debb02c 8ddc9ab 249f9bc
 - 2026-07-31 — [plato-371](issues/plato-371.md) — Concept hierarchy export and redundant inherits lint — done (ff7b087)
 - 2026-07-31 — [plato-023](issues/plato-023.md) — TIR scalar lowering pass + type-checker completion — done: Mission 2 (TirScalarLowerer S0-S3, ScalarEraseAnalysis deleted) shipped; split leftovers to plato-369 (checker→0) and plato-370 (--scalar=double)

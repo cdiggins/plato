@@ -17,7 +17,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
 | [plato-369](issues/plato-369.md) | Burn down stdlib type-checker diagnostics to zero | debt | p1 | M | med | plato | ready |  |
-| [plato-375](issues/plato-375.md) | plato-321 matrix obligation bodies break forward codegen: CS0736 static-vs-instance + CS0111 against handwritten intrinsics | bug | p1 | S | low | plato | ready |  |
 | [plato-277](issues/plato-277.md) | stdlib concept-gap burn-down: the 17 markers that need a language or concept decision | debt | p2 | M | low | plato | ready |  |
 | [plato-323](issues/plato-323.md) | Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile | bug | p2 | L | med | plato | ready |  |
 | [plato-326](issues/plato-326.md) | Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns | bug | p2 | S | low | plato | ready |  |
