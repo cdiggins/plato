@@ -71,4 +71,32 @@ library Colors
     // All four channels participate in the digest.
     Hash(self: Color8): Integer
         => ((self.R.Hash * 31 + self.G.Hash) * 31 + self.B.Hash) * 31 + self.A.Hash;
+
+    //==
+    // # ColorGradient
+    //
+    // Sampling a stop list. Stops are assumed ordered by Position; a parameter
+    // before the first stop or after the last takes that stop's colour (clamped
+    // ends, not wrapped), and two stops at the same position make a hard edge
+    // rather than a division by zero.
+
+    // The index of the last stop at or before the parameter, or 0 when the
+    // parameter precedes every stop.
+    StopIndexAt(self: ColorGradient, t: Number): Integer
+        => self.Stops.Count.Range.Reduce(0, (acc, i) => self.Stops[i].Position <= t ? i : acc);
+
+    // The blend between the bracketing stop pair. Precondition: at least one stop.
+    GradientSample(self: ColorGradient, t: Number): Color {
+        var index = self.StopIndexAt(t);
+        var lower = self.Stops[index];
+        var upper = self.Stops[(index + 1).Min(self.Stops.Count - 1)];
+        var span = upper.Position - lower.Position;
+        var local = span <= 0.0 ? 0.0 : ((t - lower.Position) / span).Clamp(0.0, 1.0);
+        return lower.Color.Lerp(upper.Color, local);
+    }
+
+    // The colour of the gradient at the given parameter; transparent black when
+    // the gradient carries no stops at all.
+    ColorAtParameter(self: ColorGradient, t: Number): Color
+        => self.Stops.Count == 0 ? Color(0.0, 0.0, 0.0, 0.0) : self.GradientSample(t);
 }

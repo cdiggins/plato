@@ -29,4 +29,62 @@ library Texturing
     // True where the sampled texel is fully transparent (alpha at or below 0).
     IsTransparentAt(self: ProceduralTexture, uv: UvCoordinate): Boolean
         => self.ColorAt(uv).A <= 0.0;
+
+    //==
+    // # CheckerTexture
+    //
+    // The parity of the two tiled coordinates. Floor, not truncation: truncation
+    // folds -0.5 and +0.5 onto the same cell and puts a double-width square
+    // across the origin.
+
+    // Which of the two colors covers this UV coordinate.
+    ColorAt(self: CheckerTexture, uv: UvCoordinate): Color {
+        var i = (uv.U * self.Tiling.X).Floor.ToInteger;
+        var j = (uv.V * self.Tiling.Y).Floor.ToInteger;
+        return (i + j) % 2 == 0 ? self.ColorA : self.ColorB;
+    }
+
+    //==
+    // # GradientTexture
+    //
+    // The ramp position is the UV coordinate projected onto the gradient's
+    // direction, measured from the corner the direction points away from so that
+    // the whole unit square maps into [0, 1]. At Angle zero that is plain U.
+
+    // The gradient parameter at a UV coordinate: the projection onto the
+    // direction, normalized by the projected extent of the unit square.
+    GradientParameter(self: GradientTexture, uv: UvCoordinate): Number {
+        var dx = self.Angle.Cos;
+        var dy = self.Angle.Sin;
+        // The square's projected span is |dx| + |dy|; the offset places the
+        // corner that projects lowest at parameter zero.
+        var span = dx.Abs + dy.Abs;
+        var offset = (dx < 0.0 ? -dx : 0.0) + (dy < 0.0 ? -dy : 0.0);
+        return span == 0.0 ? 0.0 : (uv.U * dx + uv.V * dy + offset) / span;
+    }
+
+    // The color of the stop pair bracketing the parameter, blended between them.
+    // Positions are assumed non-decreasing; a parameter before the first stop or
+    // after the last takes that stop's color.
+    ColorAt(self: GradientTexture, uv: UvCoordinate): Color
+        => self.Gradient.ColorAtParameter(self.GradientParameter(uv));
+
+    //==
+    // # NoiseTexture
+    //
+    // Grey-scale fractal Brownian motion, evaluated in UV space with the noise
+    // package's own Perlin basis, remapped from [-1, 1] to the [0, 1] colour
+    // range and written to all three channels at full opacity.
+
+    // The fBm value at a UV coordinate, in [-1, 1].
+    NoiseValue(self: NoiseTexture, uv: UvCoordinate): Number
+        => FbmNoise2D(NoiseBasis.Perlin, self.Seed, self.Frequency,
+                      self.Octaves, self.Lacunarity, self.Gain)
+            .Eval(Point2D(uv.U, uv.V));
+
+    // The opaque grey whose intensity is the remapped noise value.
+    ColorAt(self: NoiseTexture, uv: UvCoordinate): Color {
+        var intensity = self.NoiseValue(uv) * 0.5 + 0.5;
+        return (intensity, intensity, intensity, 1.0);
+    }
 }
