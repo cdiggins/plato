@@ -39,10 +39,35 @@ property that keeps the aspirational vocabulary honest.
 
 ## Done means
 
-- [ ] Animation-track and skeletal-animation declaration files live under `stdlib/future`
-- [ ] `TimeVarying` concept + bodies remain in `graphics` and no shipping-tier file references a
+- [x] Animation-track and skeletal-animation declaration files live under `stdlib/future`
+- [x] `TimeVarying` concept + bodies remain in `graphics` and no shipping-tier file references a
       `future` declaration
-- [ ] `lint` and C# codegen skip `future` by default and include it behind an explicit flag
-- [ ] `future` still parses and type-checks (all four tiers, 0 diagnostics)
-- [ ] Lint ratchet ceiling lowered to the newly measured value in the same commit
-- [ ] `stdlib/README.md`, `stdlib/LIBRARIES.md` and `AGENTS.md` describe the new default
+- [x] `lint` and C# codegen skip `future` by default and include it behind an explicit flag
+- [x] `future` still parses and type-checks (all four tiers, 0 diagnostics)
+- [x] Lint ratchet ceiling lowered to the newly measured value in the same commit (44 -> 38)
+- [x] `stdlib/README.md`, `stdlib/LIBRARIES.md` and `AGENTS.md` describe the new default
+
+## Result
+
+Measured 2026-07-31 (`python tools/record-gates.py --full --dry-run`):
+
+| gate | result |
+|---|---|
+| Plato.CLI build (Release) | PASS |
+| lint --strict (three shipping tiers) | PASS — 0 error / 38 warning / 1486 info, ratchet 38 |
+| PlatoTests (both ratchets) | PASS — 197 passed / 0 failed |
+| forward-stdlib codegen (full recipe) | PASS — 1322 .g.cs, 31 degraded bodies |
+
+`TimeRemap.Track: AnimationTrack<Number>` became `TimeRemap.Curve: TimeVarying<Number>`: it was
+the one shipping-tier reference into the moved vocabulary, and the concept is what it always
+meant. The existential is object-safe, so `ForwardStdLibHasNoViewlessExistentialReferences`
+(CHK308) stays green.
+
+Two defects surfaced and were fixed in passing, since both blocked verifying this change:
+
+- `tools/check-stdlib-fast.ps1` and `tools/stage-stdlib.ps1` still used pre-reorg project paths
+  (`Plato.CLI\...` rather than `src\Plato.CLI\...`), so the inner-loop gate could not run at all.
+  This is the Plato-side twin of `plato-372`.
+- `tools/record-gates.py` never emptied the conformance `Generated/` folder, so `.g.cs` files
+  from a previous, wider generation kept compiling into the suite. Dropping a tier made that
+  visible as CS0246 on `GeoRegion<>` / `TimeSampled<>`; the same trap would fire on any rename.
