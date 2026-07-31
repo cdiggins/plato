@@ -11,7 +11,7 @@
 // A position in the 2D Cartesian plane
 // (https://en.wikipedia.org/wiki/Cartesian_coordinate_system).
 type Point2D
-    implements Coordinate, OriginBased<Vector2D>, Hashable
+    implements Coordinate, OriginBased<Vector2D>, Hashable, MetricSpace
 {
     X: Number;
     Y: Number;
@@ -19,7 +19,7 @@ type Point2D
 
 // A position in 3D Cartesian space.
 type Point3D
-    implements Coordinate, OriginBased<Vector3D>, Hashable
+    implements Coordinate, OriginBased<Vector3D>, Hashable, MetricSpace
 {
     X: Number;
     Y: Number;
@@ -28,7 +28,7 @@ type Point3D
 
 // A position in N-dimensional Cartesian space.
 type PointN
-    implements Coordinate, OriginBased<VectorN>
+    implements Coordinate, OriginBased<VectorN>, MetricSpace
 {
     Components: Array<Number>;
 }

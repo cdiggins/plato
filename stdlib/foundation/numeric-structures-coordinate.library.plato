@@ -25,9 +25,13 @@ library NumericStructuresCoordinate
     // Vector3D / VectorN). So Coordinate cannot inherit Difference<TDelta>
     // without gaining a type parameter, which would cascade to
     // every bare `Coordinate` mention tree-wide (a generic-arity change, not merely
-    // an added obligation). MetricSpace is likewise not inherited, and adding it
-    // would impose a concrete Distance obligation on all five types. Both are too
-    // invasive to justify here; the distance stays on the concrete point types.
+    // an added obligation). `Coordinate` therefore still does not inherit
+    // MetricSpace either: that would impose a concrete Distance on all five
+    // implementors, including the two parametric ones. What DID change is that
+    // the three Cartesian points now declare `MetricSpace` individually
+    // (points.types.plato) — they already had the body, so the declaration costs
+    // nothing and makes the `MetricSpace`-generic surface in
+    // `algebra-metric.library.plato` reachable.
     //
     // The Between-two-points delta is derivable for every Difference implementor;
     // Distance is not, because it
