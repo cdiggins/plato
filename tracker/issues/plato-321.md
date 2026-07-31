@@ -2,7 +2,7 @@
 id: plato-321
 title: Burn down forward-stdlib LINT001 interface obligations (228 remaining)
 type: debt
-status: idea
+status: in-progress
 priority: "?"
 effort: "?"
 risk: "?"

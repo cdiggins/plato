@@ -15,6 +15,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-320](issues/plato-320.md) | PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes | bug | p2 | S | low | plato | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
+| [plato-321](issues/plato-321.md) | Burn down forward-stdlib LINT001 interface obligations (228 remaining) | debt | ? | ? | ? | plato | in-progress |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
 | [plato-369](issues/plato-369.md) | Burn down stdlib type-checker diagnostics to zero | debt | p1 | M | med | plato | ready |  |
 | [plato-277](issues/plato-277.md) | stdlib concept-gap burn-down: the 17 markers that need a language or concept decision | debt | p2 | M | low | plato | ready |  |
@@ -89,7 +90,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-316](issues/plato-316.md) | Implement MeshIncidence on PolygonMesh3D and TriangleMesh3D | feature | ? | ? | ? | plato | idea |  |
 | [plato-317](issues/plato-317.md) | docs/stdlib-ai-summary.txt is stale - regenerate or retire | debt | ? | ? | ? | plato | idea |  |
 | [plato-318](issues/plato-318.md) | Plato mesh builders (TriangleMesh3DBuilder / QuadMesh3DBuilder) | idea | ? | ? | ? | plato | idea |  |
-| [plato-321](issues/plato-321.md) | Burn down forward-stdlib LINT001 interface obligations (228 remaining) | debt | ? | ? | ? | plato | idea |  |
 | [plato-325](issues/plato-325.md) | Triage the 35 LINT013 findings: concepts with unreachable derived surface | debt | ? | ? | ? | plato | idea |  |
 | [plato-337](issues/plato-337.md) | Rename MapRange to Map | idea | ? | ? | ? | plato | idea |  |
 | [plato-338](issues/plato-338.md) | Index slice sugar xs[a..b] | idea | ? | ? | ? | plato | idea |  |
