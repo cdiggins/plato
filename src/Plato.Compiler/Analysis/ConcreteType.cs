@@ -47,9 +47,9 @@ namespace Ara3D.Geometry.Compiler.Analysis
             DeclaredFunctions = AllInterfaces.SelectMany(c => c.DeclaredFunctions).Distinct(d => d.SignatureId)
                 .ToList();
 
-            OwnTypeParameterNames = TypeDef.TypeParameters.Select(tp => tp.Name).ToHashSet();
+            _ownTypeParameterNames = TypeDef.TypeParameters.Select(tp => tp.Name).ToHashSet();
             _implementationsBySignature = FirstBySignature(ImplementedFunctions, f => f.SignatureId);
-            _implementationsByCanonicalSignature = OwnTypeParameterNames.Count == 0
+            _implementationsByCanonicalSignature = _ownTypeParameterNames.Count == 0
                 ? new Dictionary<string, FunctionInstance>()
                 : FirstBySignature(ImplementedFunctions, CanonicalCandidateSignature);
 
@@ -88,9 +88,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
         // functions differing only in a variable name are still two declarations.
         // -------------------------------------------------------------------
 
-        /// <summary>The names of the type parameters of the declaring type itself (empty when it is not generic).</summary>
-        public IReadOnlyCollection<string> OwnTypeParameterNames { get; }
-
+        private readonly HashSet<string> _ownTypeParameterNames;
         private readonly IReadOnlyDictionary<string, FunctionInstance> _implementationsBySignature;
         private readonly IReadOnlyDictionary<string, FunctionInstance> _implementationsByCanonicalSignature;
 
@@ -110,20 +108,14 @@ namespace Ara3D.Geometry.Compiler.Analysis
 
         private static Dictionary<string, FunctionInstance> FirstBySignature(
             IEnumerable<FunctionInstance> functions, Func<FunctionInstance, string> key)
-        {
-            var r = new Dictionary<string, FunctionInstance>();
-            foreach (var f in functions)
-                if (!r.ContainsKey(key(f)))
-                    r.Add(key(f), f);
-            return r;
-        }
+            => functions.GroupBy(key).ToDictionary(g => g.Key, g => g.First());
 
         /// <summary>True when the obligation is keyed by a type parameter of the declaring type,
         /// which is the only shape the unification fallback exists for.</summary>
         private bool MentionsOwnTypeParameter(FunctionInstance f)
             => f.ParameterTypes.Append(f.ReturnType)
                 .SelectMany(t => t.SelfAndDescendants())
-                .Any(t => t.Def.Kind == TypeKind.TypeParameter && OwnTypeParameterNames.Contains(t.Name));
+                .Any(t => t.Def.Kind == TypeKind.TypeParameter && _ownTypeParameterNames.Contains(t.Name));
 
         /// <summary>The obligation's signature with its type parameters and variables canonically renamed.</summary>
         private static string CanonicalObligationSignature(FunctionInstance f)
