@@ -2,14 +2,14 @@
 id: compiler-387
 title: Property-free C# emission becomes unconditional
 type: debt
-status: in-progress
+status: done
 priority: p2
 effort: M
 risk: med
 area: compiler
 sprint: 
 created: 2026-08-01
-closed:
+closed: 2026-08-01
 links: []
 ---
 
