@@ -2,14 +2,14 @@
 id: stdlib-377
 title: Move animation tracks + skeletal animation to stdlib/future; exclude future from codegen and lint by default
 type: debt
-status: in-progress
+status: done
 priority: p2
 effort: M
 risk: low
 area: stdlib
 sprint: 
 created: 2026-07-31
-closed:
+closed: 2026-07-31
 links: [plato-376]
 ---
 
@@ -57,6 +57,13 @@ Measured 2026-07-31 (`python tools/record-gates.py --full --dry-run`):
 | lint --strict (three shipping tiers) | PASS — 0 error / 38 warning / 1486 info, ratchet 38 |
 | PlatoTests (both ratchets) | PASS — 197 passed / 0 failed |
 | forward-stdlib codegen (full recipe) | PASS — 1322 .g.cs, 31 degraded bodies |
+
+Re-measured later the same evening, after the `Generated/` cleanup below: lint ratchet 33,
+PlatoTests 200/200, codegen PASS at 1052 .g.cs (the drop is plato-378's intrinsics pruning
+landing in the same tree, not this change), and the stale-file CS0246 cluster is gone.
+`forward conformance (build + law runner)` is RED for an unrelated in-flight reason — 12 x
+CS0102 in `src/Plato.Intrinsics/Integer.cs` and `Number.cs`, where `Zero`/`One` are now defined
+both by hand and by generated constants. That belongs to plato-378's primitives split.
 
 `TimeRemap.Track: AnimationTrack<Number>` became `TimeRemap.Curve: TimeVarying<Number>`: it was
 the one shipping-tier reference into the moved vocabulary, and the concept is what it always
