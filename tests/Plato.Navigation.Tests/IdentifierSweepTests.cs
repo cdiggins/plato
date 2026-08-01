@@ -1,7 +1,8 @@
+using Ara3D.Geometry.Navigation;
 using Ara3D.Geometry.AST;
 using NUnit.Framework;
 
-namespace Ara3D.Geometry.Navigation.Tests;
+namespace Plato.Navigation.Tests;
 
 /// <summary>The "proven across the board" gate: every identifier the parser produced for the whole
 /// gated corpus must be accounted for by the index — as a definition site, as a reference site, or

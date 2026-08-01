@@ -1,7 +1,8 @@
+using Ara3D.Geometry.Navigation;
 using Ara3D.Utils;
 using NUnit.Framework;
 
-namespace Ara3D.Geometry.Navigation.Tests;
+namespace Plato.Navigation.Tests;
 
 /// <summary>The v2 gate: an incremental update must be indistinguishable from a full rebuild.
 /// Structural identity is checked through <see cref="NavigationJson"/>, which carries the sources,

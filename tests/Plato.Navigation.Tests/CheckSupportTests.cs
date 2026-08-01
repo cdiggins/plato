@@ -1,7 +1,8 @@
+using Ara3D.Geometry.Navigation;
 using Ara3D.Utils;
 using NUnit.Framework;
 
-namespace Ara3D.Geometry.Navigation.Tests;
+namespace Plato.Navigation.Tests;
 
 /// <summary>The safety clause of the plato_check seam: feeding the parse cache's ASTs to a full
 /// <see cref="Ara3D.Geometry.Compiler.Compilation"/> must not change what the index would build —

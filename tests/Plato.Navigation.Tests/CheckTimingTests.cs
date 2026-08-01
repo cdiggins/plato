@@ -1,10 +1,11 @@
+using Ara3D.Geometry.Navigation;
 using System.Diagnostics;
 using Ara3D.Utils;
 using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Geometry.Compiler.Checking;
 using NUnit.Framework;
 
-namespace Ara3D.Geometry.Navigation.Tests;
+namespace Plato.Navigation.Tests;
 
 /// <summary>The measurement the plato_check plan (docs/plato-mcp-improvements-plan-2026-07-30.md,
 /// P1 "first task") demands before any tool code: how long does a WARM check iteration cost on the

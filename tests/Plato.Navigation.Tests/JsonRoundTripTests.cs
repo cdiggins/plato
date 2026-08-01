@@ -1,6 +1,7 @@
+using Ara3D.Geometry.Navigation;
 using NUnit.Framework;
 
-namespace Ara3D.Geometry.Navigation.Tests;
+namespace Plato.Navigation.Tests;
 
 [TestFixture]
 public class JsonRoundTripTests

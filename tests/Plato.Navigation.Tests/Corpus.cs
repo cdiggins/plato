@@ -1,6 +1,7 @@
+using Ara3D.Geometry.Navigation;
 using Ara3D.Utils;
 
-namespace Ara3D.Geometry.Navigation.Tests;
+namespace Plato.Navigation.Tests;
 
 /// <summary>The gated corpus (D9): the FORWARD stdlib plus its law/witness libraries, parsed,
 /// bound and indexed exactly once for the whole test run.
@@ -16,7 +17,7 @@ public static class Corpus
     public static IReadOnlyList<DirectoryPath> Roots { get; } = new[]
     {
         RepoRoot.RelativeFolder("stdlib"),
-        RepoRoot.RelativeFolder("stdlib-tests")
+        RepoRoot.RelativeFolder("tests").RelativeFolder("stdlib-tests")
     };
 
     private static readonly Lazy<BoundSnapshot> _bound =

@@ -1,7 +1,8 @@
+using Ara3D.Geometry.Navigation;
 using Ara3D.Geometry.AST;
 using NUnit.Framework;
 
-namespace Ara3D.Geometry.Navigation.Tests;
+namespace Plato.Navigation.Tests;
 
 /// <summary>Round-trip invariants over the whole gated corpus: positions must lead back to the
 /// records they came from, in both directions.</summary>

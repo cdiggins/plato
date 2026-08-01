@@ -7,7 +7,7 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <Platforms>AnyCPU;x64</Platforms>
-    <RootNamespace>Ara3D.Geometry.Navigation.Tests</RootNamespace>
+    <RootNamespace>Plato.Navigation.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

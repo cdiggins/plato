@@ -1,8 +1,9 @@
+using Ara3D.Geometry.Navigation;
 using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Utils;
 using NUnit.Framework;
 
-namespace Ara3D.Geometry.Navigation.Tests;
+namespace Plato.Navigation.Tests;
 
 /// <summary>Each STY rule proven on a minimal in-memory file: one firing case, one clean case
 /// sitting just inside the limit or inside a comment/string, so the boundary is pinned.</summary>

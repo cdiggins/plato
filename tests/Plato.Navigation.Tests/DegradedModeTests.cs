@@ -1,8 +1,9 @@
+using Ara3D.Geometry.Navigation;
 using System.Diagnostics;
 using Ara3D.Utils;
 using NUnit.Framework;
 
-namespace Ara3D.Geometry.Navigation.Tests;
+namespace Plato.Navigation.Tests;
 
 /// <summary>D3: a broken file must cost only itself. An IDE indexes source mid-edit, so "one file
 /// is garbage" is the normal case, not an error case.</summary>

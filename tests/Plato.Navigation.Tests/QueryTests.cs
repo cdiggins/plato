@@ -1,7 +1,8 @@
+using Ara3D.Geometry.Navigation;
 using Ara3D.Utils;
 using NUnit.Framework;
 
-namespace Ara3D.Geometry.Navigation.Tests;
+namespace Plato.Navigation.Tests;
 
 [TestFixture]
 public class QueryTests
