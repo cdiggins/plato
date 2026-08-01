@@ -11,17 +11,23 @@ namespace Ara3D.Geometry
     public partial struct String
     {
         // -------------------------------------------------------------------------------
-        // Field 
+        // Field
         // -------------------------------------------------------------------------------
-        
-        [DataMember] public readonly string Value;
+
+        // Storage is private and the accessor normalizes (plato-383). This wrapper is a struct
+        // over a REFERENCE, so `default(String)` holds null and no constructor can intercept
+        // it; routing every Plato-visible member through `Value` makes the default behave as
+        // the empty string, the way every other wrapper's default is its zero value.
+        [DataMember(Name = nameof(Value))] private readonly string _value;
+
+        public string Value { [MethodImpl(AggressiveInlining)] get => _value ?? string.Empty; }
 
         // -------------------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------------------
 
         [MethodImpl(AggressiveInlining)]
-        public String(string value) => Value = value;
+        public String(string value) => _value = value;
 
         // -------------------------------------------------------------------------------
         // Methods 

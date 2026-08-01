@@ -111,13 +111,13 @@ Verdict: **right**, and it is also nearly the simplest thing.
 
 ## Done means
 
-- [ ] `default(String).Count` is `0` and `default(String).At(...)` behaves as on
+- [x] `default(String).Count` is `0` and `default(String).At(...)` behaves as on
       the empty string — no `NullReferenceException` from any Plato-visible member.
-- [ ] `DefaultWrapsANullString` in `tests/Plato.Intrinsics.Tests/StringTests.cs`
+- [x] `DefaultWrapsANullString` in `tests/Plato.Intrinsics.Tests/StringTests.cs`
       is inverted into a regression test asserting the empty-string default.
-- [ ] A family-level test asserts that every wrapper in `src/Plato.Intrinsics`
+- [x] A family-level test asserts that every wrapper in `src/Plato.Intrinsics`
       survives observation of its `default`.
-- [ ] `tests/Plato.Intrinsics.Tests` passes.
+- [x] `tests/Plato.Intrinsics.Tests` passes.
 
 ## Simplest fix
 

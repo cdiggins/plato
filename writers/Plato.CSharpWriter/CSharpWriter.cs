@@ -586,6 +586,11 @@ namespace Ara3D.Geometry.CSharpWriter
                 { "Number.IsInfinite", true },
                 { "Number.ToInteger", true },
                 { "String.Count", true },
+
+                // plato-383: String wraps a REFERENCE, so its storage is a private field behind a
+                // null-normalizing property (`default(String)` reads as the empty string). Value is
+                // the one wrapper accessor V2 does not spell as a field.
+                { "String.Value", true },
             };
 
         /// <summary>Whether V2 spells {typeName}.{name} as a property, or null when the declaration

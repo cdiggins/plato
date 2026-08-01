@@ -30,10 +30,46 @@ public static class PublicSurfaceTests
     public static void EveryWrapperIsAStructOverOneReadonlyField(Type t)
     {
         Assert.That(t.IsValueType, $"{t.Name} must be a struct");
-        var fields = t.GetFields(BindingFlags.Public | BindingFlags.Instance);
+        var fields = t.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         Assert.That(fields, Has.Length.EqualTo(1), $"{t.Name} must wrap exactly one field");
-        Assert.That(fields[0].Name, Is.EqualTo("Value"));
-        Assert.That(fields[0].IsInitOnly, $"{t.Name}.Value must be readonly");
+        Assert.That(fields[0].IsInitOnly, $"{t.Name}.{fields[0].Name} must be readonly");
+        // `Value` is that field on the wrappers over a value type; String normalizes its null
+        // default away behind a property over a private field (plato-383), so accept either.
+        Assert.That((MemberInfo?)t.GetProperty("Value") ?? t.GetField("Value"), Is.Not.Null,
+            $"{t.Name} must expose Value");
+    }
+
+    /// <summary>
+    /// plato-383: a wrapper's <c>default</c> is its zero value, so every member readable off it
+    /// without arguments must answer rather than throw. Reflective on purpose — this is the test
+    /// that catches the next wrapper added over a reference type.
+    /// </summary>
+    [TestCaseSource(nameof(Wrappers))]
+    public static void EveryWrapperSurvivesObservationOfItsDefault(Type t)
+    {
+        var d = Activator.CreateInstance(t);
+        const BindingFlags declared =
+            BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+        foreach (var p in t.GetProperties(declared).Where(p => p.GetIndexParameters().Length == 0))
+            Assert.DoesNotThrow(() => Observe(() => p.GetValue(d)), $"{t.Name}.{p.Name} on default");
+
+        foreach (var m in t.GetMethods(declared)
+                     .Where(m => !m.IsSpecialName && !m.IsGenericMethod && m.GetParameters().Length == 0))
+            Assert.DoesNotThrow(() => Observe(() => m.Invoke(d, null)), $"{t.Name}.{m.Name}() on default");
+    }
+
+    /// <summary>Reads through a reflective call, rethrowing what the member itself threw.</summary>
+    private static void Observe(Func<object?> read)
+    {
+        try
+        {
+            read();
+        }
+        catch (TargetInvocationException e) when (e.InnerException != null)
+        {
+            throw e.InnerException;
+        }
     }
 
     [TestCaseSource(nameof(Wrappers))]

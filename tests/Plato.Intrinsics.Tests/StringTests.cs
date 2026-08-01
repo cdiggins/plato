@@ -80,11 +80,23 @@ public static class StringTests
     }
 
     [Test]
-    public static void DefaultWrapsANullString()
+    public static void DefaultIsTheEmptyString()
     {
-        // pins current behavior: String is a struct over a reference, so default(String) is a
-        // null string rather than the empty one, and every observation on it throws.
-        Assert.That(default(String).Value, Is.Null);
-        Assert.Throws<NullReferenceException>(() => _ = default(String).Count);
+        // regression (plato-383): String is a struct over a reference, so default(String) holds
+        // a null; every Plato-visible member normalizes it, and none of them throws.
+        var d = default(String);
+        Assert.Multiple(() =>
+        {
+            Assert.That(d.Value, Is.EqualTo(""));
+            Assert.That(d.ToSystem(), Is.EqualTo(""));
+            Assert.That((string)d, Is.EqualTo(""));
+            Assert.That(d.Count.Value, Is.EqualTo(0));
+            Assert.That(d < S("a"));
+            Assert.That(d <= S(""));
+            Assert.That(S("a") > d);
+            Assert.That(d >= S(""));
+        });
+        // ...and indexing it fails the way indexing the empty string does.
+        Assert.Throws<IndexOutOfRangeException>(() => _ = d.At(0));
     }
 }
