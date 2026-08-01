@@ -52,9 +52,27 @@ library Primitives
 
     //==
     // # Boolean
+    //
+    // And / Or / Not are the whole host contract (plato-378); everything else
+    // on Boolean is a formula over them. Compare is NOT redeclared here — the
+    // Orderable generic in `core-comparison.library.plato` covers it, and
+    // reading the order off Compare (as this file used to) would now recurse.
 
-    // The truth ordering: false orders before true. Read off the Compare
-    // intrinsic so the two agree by construction.
+    // The truth ordering: false orders before true. a <= b holds unless a is
+    // true and b is false.
     LessThanOrEquals(a: Boolean, b: Boolean): Boolean
-        => a.Compare(b) <= 0;
+        => !a || b;
+
+    // Structural equality: both true, or both false.
+    Equals(a: Boolean, b: Boolean): Boolean
+        => (a && b) || (!a && !b);
+
+    // Exclusive or: true when the two differ.
+    // (https://en.wikipedia.org/wiki/Exclusive_or)
+    ExclusiveOr(a: Boolean, b: Boolean): Boolean
+        => !a.Equals(b);
+
+    // The digest of a truth value: 1 for true, 0 for false.
+    Hash(self: Boolean): Integer
+        => self ? 1 : 0;
 }

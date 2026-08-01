@@ -28,23 +28,24 @@ namespace PlatoTests
     [TestFixture]
     public static class ForwardStdLibLintTests
     {
-        // Measured 2026-07-31 over foundation+geometry+graphics: 38, Error 0. (44 for all four
-        // tiers before stdlib-377 dropped `future` from the gate; 229 at 52b3f8c that morning,
-        // 159 mid-day, then plato-321 closed the obligation burn-down.)
+        // Measured 2026-07-31 over foundation+geometry+graphics: 33, Error 0. (39 for all four
+        // tiers; 38/44 before plato-378, 229 at 52b3f8c that morning, 159 mid-day, then
+        // plato-321 closed the obligation burn-down.)
         //
         //   LINT001 - a type implements a concept but an obligation has no implementation; the
-        //             generated member throws NotImplementedException. Down to 6, and all 6 are
-        //             one compiler defect rather than missing content: an obligation keyed by a
-        //             generic type's OWN parameter cannot be matched by a library function over a
-        //             type variable, so Array2D/Array3D's extents are unimplementable from the
-        //             library side. See plato-376. (The three animation tracks that shared this
-        //             defect now live in `future` and are out of the gate.)
+        //             generated member throws NotImplementedException. Down to 1: `Tween<T>`'s
+        //             Sample. The five Array2D/Array3D extents that used to sit here are gone as
+        //             of plato-378 — giving those types an honest layout whose FIELDS are named
+        //             ColumnCount/RowCount/LayerCount discharges the obligations directly, so the
+        //             generic-type pairing defect never applies. That defect (plato-376) is
+        //             itself untouched and still blocks Tween and the two `future` tracks, which
+        //             additionally need Lerp on a bare T.
         //   LINT013 - a concept with no concrete implementer that library bodies nonetheless
         //             dispatch on, so that derived surface is unreachable (Sliceable,
-        //             Concatenable, ...). 32 of the 38. Burn-down: plato-277 / plato-325.
+        //             Concatenable, ...). 32 of the 33. Burn-down: plato-277 / plato-325.
         //
         // A ceiling to LOWER, never to raise. Lower it in the same commit that earns it.
-        private const int MaxLintRatchet = 38;
+        private const int MaxLintRatchet = 33;
 
         // The Linter runs every rule from its constructor.
         private static Linter LintForwardStdLib()

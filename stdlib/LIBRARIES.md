@@ -154,7 +154,11 @@ P1–P9 concept package (ground rule 1). All follow the same one-block-per-file 
 | `axes.library.plato` | `Axes` | `Axis3D` operations |
 | `axes-2d.library.plato` | `Axes2D` | `Axis2D` operations |
 | `axes-signed.library.plato` | `SignedAxes` | `SignedAxis3D` operations |
-| `intrinsics.library.plato` | `Intrinsics` | the whole host contract, and only over `primitive` types: scalars (including the radians trig kernel), arrays, and the `unique` `List<T>` / `Buffer<T>` surface; carries the intrinsics preamble and porting notes |
+| `intrinsics.library.plato` | `Intrinsics` | the host contract, reduced to an irreducible kernel by plato-378 and only over `primitive` types: the scalar kernel, the five-function array kernel, and the `unique` `List<T>` / `Buffer<T>` surface; carries the intrinsics preamble, the admission rule and the porting notes |
+| `primitives.library.plato` | `Primitives` | the primitive concept obligations the host contract does not supply: the identity conversions, `Number.Inverse`, the two `Lerp`s, and the derived Boolean surface |
+| `primitives-number.library.plato` | `PrimitivesNumber` | reference bodies for every derivable `Number` member (Abs, Sign, Min/Max, Ceiling/Truncate, Cbrt, the logarithms, the hyperbolics and the whole inverse-trig family, Zero/One/Tau/E, IsFinite) |
+| `primitives-integer.library.plato` | `PrimitivesInteger` | reference bodies for the derivable `Integer` members: Abs, Sign, Min/Max, Zero/One, Range |
+| `primitives-arrays.library.plato` | `PrimitivesArrays` | reference bodies for the whole derived array surface over the `MapRange` / `Reduce` kernel, plus the `Array2D` / `Array3D` construction and traversal that used to be intrinsic |
 | `angle-trig.library.plato` | `AngleTrig` | `Angle` arithmetic and trig, and the `Angle`-returning inverse trig on `Number`, over the radians kernel |
 | `vectors-tuples-ops.library.plato` | `VectorsTuplesOps` | reference bodies for `Number2/3/4/8` component-wise math and `Number4` transforms |
 | `vectors-geometric-ops.library.plato` | `VectorsGeometricOps` | reference bodies for `Vector2D`/`Vector3D` displacement algebra, reflection and transforms |

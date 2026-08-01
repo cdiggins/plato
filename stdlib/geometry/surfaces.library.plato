@@ -1,4 +1,4 @@
-//==
+﻿//==
 // # Surfaces — parametric evaluation of the named surface types
 //
 // The ParametricSurface obligations (Eval / ClosedU / ClosedV) for the types
@@ -54,11 +54,11 @@ library Surfaces
 
     // The number of columns of a control net (the U direction).
     NetColumns(net: Array2D<Point3D>): Integer
-        => net.Row(0).Count;
+        => net.ColumnCount;
 
     // The number of rows of a control net (the V direction).
     NetRows(net: Array2D<Point3D>): Integer
-        => net.Count / net.Row(0).Count;
+        => net.RowCount;
 
     //==
     // Patches and control nets
@@ -295,8 +295,8 @@ library Surfaces
     // X and rows along Y, and the samples sit at the corners of the sample grid,
     // so a Heights array of c columns spans c - 1 intervals across Domain.
     Eval(s: HeightField, position: Point2D): Number {
-        var columns = s.Heights.Row(0).Count;
-        var rows = s.Heights.Count / columns;
+        var columns = s.Heights.ColumnCount;
+        var rows = s.Heights.RowCount;
         var min = s.Domain.Min;
         var max = s.Domain.Max;
         var x = max.X == min.X ? 0.0 : (position.X - min.X) / (max.X - min.X) * (columns - 1).ToNumber;
@@ -309,8 +309,8 @@ library Surfaces
 
     // The sample at column i, row j, with both indices clamped into the array.
     SampleAt(s: HeightField, i: Integer, j: Integer): Number {
-        var columns = s.Heights.Row(0).Count;
-        var rows = s.Heights.Count / columns;
+        var columns = s.Heights.ColumnCount;
+        var rows = s.Heights.RowCount;
         return s.Heights.Row(j.Max(0).Min(rows - 1))[i.Max(0).Min(columns - 1)];
     }
 

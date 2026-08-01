@@ -1,0 +1,57 @@
+//==
+// # PrimitivesInteger — the derived Integer surface
+//
+// Reference bodies for every `Integer` member that used to be a host intrinsic
+// but is a formula over the surviving kernel (plato-378): the six arithmetic
+// operators, `LessThanOrEquals` / `Equals` / `Hash`, the six bitwise
+// operations, `MinValue` / `MaxValue` and `ToNumber`.
+//
+// As in `primitives-number.library.plato`, bodies use only the intrinsic
+// relations (`<=`, `==`), and the relational family (LessThan, GreaterThan,
+// GreaterThanOrEquals, Compare, Clamp, Lesser, Greater) is absent because
+// `core-comparison.library.plato` already provides it generically over
+// Orderable.
+
+library PrimitivesInteger
+{
+    //==
+    // # Sign and magnitude
+
+    // The absolute value. Precondition: self is not MinValue, whose magnitude
+    // is not representable.
+    Abs(self: Integer): Integer
+        => 0 <= self ? self : -self;
+
+    // -1, 0 or 1 according to the sign.
+    Sign(self: Integer): Integer
+        => 0 <= self ? (self <= 0 ? 0 : 1) : -1;
+
+    // The lesser of two integers.
+    Min(a: Integer, b: Integer): Integer
+        => a <= b ? a : b;
+
+    // The greater of two integers.
+    Max(a: Integer, b: Integer): Integer
+        => a <= b ? b : a;
+
+    //==
+    // # Constants
+    //
+    // Dispatch on an ignored receiver, the tree's constant idiom.
+
+    // The additive identity.
+    Zero(_: Integer): Integer
+        => 0;
+
+    // The multiplicative identity.
+    One(_: Integer): Integer
+        => 1;
+
+    //==
+    // # Enumeration
+
+    // The integers 0 up to but excluding self, in order: the standard index
+    // range behind every count-driven traversal. Reads as `n.Range`.
+    Range(self: Integer): Array<Integer>
+        => MapRange(self, i => i);
+}

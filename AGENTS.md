@@ -166,6 +166,14 @@ The ones agents most often rediscover the hard way:
   `*-ops.library.plato` — write ordinary Plato there, do not add a bodiless declaration. Every
   intrinsic you do add must have a `src/Plato.Intrinsics` counterpart or `IntrinsicObligationTests`
   fails. Full contract: `docs/plato-intrinsics-surface.md`.
+- **An intrinsic must not be expressible in Plato from the other intrinsics** (plato-378,
+  2026-07-31). The contract is an irreducible kernel — the scalar operators and transcendentals,
+  five array functions (`Count`, `At`, `MapRange`, `Reduce`, `FlatMap`), three Boolean
+  connectives, and the `List` / `Buffer` builders. If a portable reference body exists the
+  function belongs in a `*.library.plato` file (`primitives-number`, `primitives-integer`,
+  `primitives-arrays`), and a backend recovers native speed through its override table
+  (plato-368) — never by re-adding a bodiless declaration. Before adding one, write the body;
+  if the body compiles, that is your answer.
 
 ## Mission protocol
 

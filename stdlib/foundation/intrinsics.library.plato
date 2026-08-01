@@ -150,19 +150,15 @@ library Intrinsics
     LessThanOrEquals(a: String, b: String): Boolean;
 
     //==
-    // Array — the four-function kernel.
+    // Array — the five-function kernel.
     //
     // `Count` and `At` observe; `MapRange` is the ONLY constructor; `Reduce` is
-    // the only sequential fold; `FlatMap` is the only length-varying producer.
-    // Every other array function in the previous contract — Map, Take, Skip,
-    // Drop, TakeLast, Slice, SubArray, EveryNth, AtModulo, Append, Prepend,
-    // Concatenate, Repeat, Zip, MapPairs/Triplets/Quartets, All, Any, Slices,
-    // CartesianProduct — is a reindexing of MapRange and now has a reference
-    // body in `primitives-arrays.library.plato`.
+    // the only sequential fold; `FlatMap` the only length-varying producer.
+    // Every other array function in the previous contract is a reindexing of
+    // MapRange, with a reference body in `primitives-arrays.library.plato`.
     //
     // Reduce and FlatMap cannot follow: a Plato body is a pure expression with
-    // no loop and no recursion contract (GLSL forbids recursion outright), so
-    // the fold and the length-varying producer stay host-supplied.
+    // no loop and no recursion contract (GLSL forbids recursion outright).
 
     Count(xs: Array<$T>): Integer;
     At(xs: Array<$T>, n: Integer): $T;

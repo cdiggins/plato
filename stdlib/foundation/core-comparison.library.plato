@@ -47,6 +47,18 @@ library CoreComparison
     //     (false < true, lexicographic, code-point). Not expressible on a concept.
     // TODO(cross-package): fill the above in their owning packages.
 
+    //==
+    // Equatable
+    //
+    // Inequality is the negation of equality, once, for every Equatable. Written
+    // against `Equals` explicitly rather than the `!=` operator, which desugars
+    // to this very function. Added by plato-378 so that Number, Integer and
+    // Boolean no longer each need a NotEquals intrinsic.
+
+    // True when the two values are not equal.
+    NotEquals(a: Equatable, b: Equatable): Boolean
+        => !a.Equals(b);
+
     // True when a is strictly less than b.
     LessThan(a: Orderable, b: Orderable): Boolean
         => a <= b && a != b;

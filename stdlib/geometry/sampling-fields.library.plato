@@ -1,11 +1,11 @@
-//==
+﻿//==
 // # Sampled grid field evaluation
 //
 // The `Eval` bodies for the node-sampled fields of `sampling-fields.types.plato`.
 // Values are stored one per grid NODE, so a grid of n cells along an axis has
-// n + 1 samples on it; the node arrays are read through `Row(0).Count` rather
-// than through Indexable2D's ColumnCount, which the opaque Array2D/Array3D types
-// do not yet supply (see the TODO in `intrinsics.library.plato`).
+// n + 1 samples on it, read through Indexable2D's ColumnCount / RowCount. Those
+// bound to a `Row(0).Count` workaround until plato-378 gave Array2D/Array3D an
+// honest layout whose extent FIELDS discharge the obligations.
 //
 // Evaluation is multilinear between the surrounding nodes, and outside the
 // bounds it clamps to the edge — the behaviour the file header states, and the
@@ -37,11 +37,11 @@ library SamplingFields
 
     // The number of nodes along X (one more than the cell count).
     NodeColumns(self: SampledScalarGrid2D): Integer
-        => self.Values.Row(0).Count;
+        => self.Values.ColumnCount;
 
     // The number of nodes along Y.
     NodeRows(self: SampledScalarGrid2D): Integer
-        => self.Values.Count / self.NodeColumns;
+        => self.Values.RowCount;
 
     // The stored value at node (i, j), with both indices edge-clamped.
     NodeValue(self: SampledScalarGrid2D, i: Integer, j: Integer): Number
@@ -114,11 +114,11 @@ library SamplingFields
 
     // The number of nodes along X.
     NodeColumns(self: SampledVectorGrid2D): Integer
-        => self.Values.Row(0).Count;
+        => self.Values.ColumnCount;
 
     // The number of nodes along Y.
     NodeRows(self: SampledVectorGrid2D): Integer
-        => self.Values.Count / self.NodeColumns;
+        => self.Values.RowCount;
 
     // The stored vector at node (i, j), with both indices edge-clamped.
     NodeValue(self: SampledVectorGrid2D, i: Integer, j: Integer): Vector2D
@@ -191,11 +191,11 @@ library SamplingFields
 
     // The number of nodes along X.
     NodeColumns(self: SampledColorGrid2D): Integer
-        => self.Values.Row(0).Count;
+        => self.Values.ColumnCount;
 
     // The number of nodes along Y.
     NodeRows(self: SampledColorGrid2D): Integer
-        => self.Values.Count / self.NodeColumns;
+        => self.Values.RowCount;
 
     // The stored color at node (i, j), with both indices edge-clamped.
     NodeValue(self: SampledColorGrid2D, i: Integer, j: Integer): Color
