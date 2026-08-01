@@ -508,16 +508,25 @@ namespace Ara3D.Geometry.Compiler.Symbols
                 var astTypeDeclaration = SymbolsToNodes[typeDef] as AstTypeDeclaration;
                 TypeBindingsScope = TypeBindingsScope.Push();
                         
+                var typeParameterDefs = new List<TypeParameterDef>();
                 foreach (var tp in astTypeDeclaration.TypeParameters)
                 {
-                    var constraints = astTypeDeclaration.Constraints
-                        .Where(c => c.Name == tp.Name)
-                        .Select(c => ResolveType(c.Constraint)).ToList();
-                    var tpd = new TypeParameterDef(TypeBindingsScope, tp.Name, constraints);
+                    var tpd = new TypeParameterDef(TypeBindingsScope, tp.Name);
                     SymbolsToNodes[tpd] = tp;
                     BindType(tpd.Name, tpd);
                     typeDef.TypeParameters.Add(tpd);
+                    typeParameterDefs.Add(tpd);
                 }
+
+                // Declared bounds (plato-382) are resolved only once EVERY parameter of this
+                // declaration is bound, because a bound may name a sibling parameter — as in
+                // `IBounds<TValue, TDelta> where TValue: IDifference<TDelta>`. Bounds are matched to
+                // their parameter by identifier TEXT: AstIdentifier has no value equality, so the
+                // former node comparison never matched and every bound was silently discarded.
+                foreach (var tpd in typeParameterDefs)
+                    tpd.Constraints.AddRange(astTypeDeclaration.Constraints
+                        .Where(c => c.Name.Text == tpd.Name)
+                        .Select(c => ResolveType(c.Constraint)));
 
                 foreach (var m in astTypeDeclaration.Members)
                 {

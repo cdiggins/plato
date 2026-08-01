@@ -469,7 +469,11 @@ namespace Ara3D.Geometry.AST
                     ? type.SumTypeBody.Node.CaseDeclaration.Nodes.Select(ToAst).ToArray()
                     : Array.Empty<AstCaseDeclaration>();
 
-                return new AstTypeDeclaration(cstTopLevelDeclaration, TypeKind.ConcreteType, name, typeParameters, inherits, implements, Array.Empty<AstConstraint>(), members)
+                // Declared bounds on the type's own parameters (plato-382): "type Tween<T> where T: Interpolatable".
+                // Read exactly as the concept path below does; SymbolFactory copies them into TypeParameterDef.Constraints.
+                var constraints = type.ConstraintList.Node?.Constraint.Nodes.Select(ToAst).ToArray() ?? Array.Empty<AstConstraint>();
+
+                return new AstTypeDeclaration(cstTopLevelDeclaration, TypeKind.ConcreteType, name, typeParameters, inherits, implements, constraints, members)
                 {
                     // Affine-type modifier (roadmap Phase 6): "unique type ..."
                     IsUnique = type.UniqueKeyword.Present,

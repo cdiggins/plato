@@ -322,12 +322,17 @@ namespace Ara3D.Geometry.Compiler.Symbols
 
     public class TypeParameterDef : TypeDef
     {
-        public IReadOnlyList<TypeExpression> Constraints { get; }
+        /// <summary>The declared bounds of this parameter — one entry per `where T: C` clause.
+        /// A mutable list in the same idiom as <see cref="TypeDef.Implements"/>, because the symbol
+        /// factory can only RESOLVE a bound after every parameter of the declaration is bound: a
+        /// bound may name a sibling, as in `IBounds&lt;TValue, TDelta&gt; where TValue: IDifference&lt;TDelta&gt;`.</summary>
+        public List<TypeExpression> Constraints { get; } = new List<TypeExpression>();
 
-        public TypeParameterDef(Scope scope, string name, IReadOnlyList<TypeExpression> constraints = null)
+        public TypeParameterDef(Scope scope, string name, IEnumerable<TypeExpression> constraints = null)
             : base(scope, TypeKind.TypeParameter, name)
         {
-            Constraints = constraints ?? Array.Empty<TypeExpression>();
+            if (constraints != null)
+                Constraints.AddRange(constraints);
         }
 
         public override Symbol Rewrite(Func<Symbol, Symbol> f)
