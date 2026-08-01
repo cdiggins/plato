@@ -64,11 +64,16 @@ library PrimitivesArrays
     Skip(xs: Array<$T>, n: Integer): Array<$T>
         => MapRange(xs.Count - n, i => xs[i + n]);
 
-    // Every element after the first n — a synonym for Skip, kept because the
-    // former intrinsic contract declared both. Nothing in either stdlib
-    // generation calls it; retire it rather than growing a second spelling.
+    // Every element except the last n — the complement of Take, and the
+    // back-end twin of Skip. Precondition: 0 <= n <= Count.
+    //
+    // Take/Skip/TakeLast/Drop are a complete 2x2: Take and TakeLast KEEP n from
+    // the front and the back, Skip and Drop REMOVE n from the front and the
+    // back. The C# runtime spells this one `DropLast`
+    // (`Ara3D.Collections.LinqArray`) and has no `Drop`, so the plato-368
+    // override table maps the names across.
     Drop(xs: Array<$T>, n: Integer): Array<$T>
-        => xs.Skip(n);
+        => xs.Take(xs.Count - n);
 
     // The last n elements. Precondition: 0 <= n <= Count.
     TakeLast(xs: Array<$T>, n: Integer): Array<$T>

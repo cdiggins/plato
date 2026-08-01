@@ -101,9 +101,18 @@ Measured with `plato_check` against `stdlib` + `stdlib-tests`:
       table every derived view costs a closure per element on C#, where it used
       to bind to `Ara3D.Collections`. Nothing regressed in the gates because the
       gates do not execute; adoption in a hot path must wait for the table.
-- [ ] **`Drop` semantics.** The old contract declared `Drop` and `Skip` with no
-      documented difference and nothing in either stdlib generation calls
-      `Drop`. It is now a documented synonym of `Skip`. Confirm or retire it.
+- [x] **`Drop` semantics — RESOLVED.** First landed as a synonym of `Skip`,
+      which was wrong. `Drop(n)` is `Take(Count - n)`: remove the last n.
+      That completes a 2x2 — Take/TakeLast KEEP n from the front/back, Skip/Drop
+      REMOVE n from the front/back — and it is why the old contract declared all
+      four. The synonym reading left the "remove from the back" cell empty and
+      one name redundant.
+
+      Evidence: `Ara3D.Collections.LinqArray` defines
+      `DropLast(n) => Take(Count - n)` and has **no `Drop` at all**, so the old
+      `Drop` intrinsic never had a runtime counterpart — a phantom declaration,
+      which is why nothing ever called it. The plato-368 override table must map
+      Plato `Drop` onto the runtime's `DropLast`.
 - [ ] **Short-circuit loss.** `All` / `Any` are folds now, so they visit every
       element. Identical for pure callbacks; restore via the override table if a
       profile ever shows it.
