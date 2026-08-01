@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-08-01 — [docs-391](issues/docs-391.md) — AGENTS.md still documents the retired --methods / --no-properties flags — done (83df492)
 - 2026-08-01 — [compiler-387](issues/compiler-387.md) — Property-free C# emission becomes unconditional — done (7d825b5; writer half landed in bf50cbf via a concurrent bulk commit)
 - 2026-08-01 — [plato-383](issues/plato-383.md) — default(String) wraps a null system string; every observation throws — done (d826f74)
 - 2026-07-31 — [stdlib-377](issues/stdlib-377.md) — Move animation tracks + skeletal animation to stdlib/future; exclude future from codegen and lint by default — done (abe4db4); future tier is declared-only — parses and type-checks, not linted, not converted to C# without an explicit flag

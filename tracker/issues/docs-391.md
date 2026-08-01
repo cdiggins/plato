@@ -2,14 +2,14 @@
 id: docs-391
 title: AGENTS.md still documents the retired --methods / --no-properties flags
 type: debt
-status: ready
+status: done
 priority: p3
 effort: S
 risk: low
 area: docs
 sprint: 
 created: 2026-08-01
-closed:
+closed: 2026-08-01
 links: []
 ---
 
