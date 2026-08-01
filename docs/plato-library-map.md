@@ -38,6 +38,11 @@ Importers, all via `<Import ... Label="Shared" />` of the `.projitems`:
 | `generated/Plato.Generated.Optimized` | the same plus `--optimize --optimize-arrays --inline --methods --loops` (the adoption target) |
 
 Neither is a golden. The byte-identity diff-gate and `regen-generated.ps1` were retired 2026-07-30.
+Both are **empty shells** as of 2026-08-01: the emitted sources were deleted because the
+scalar-erasure recipe no longer matches the runtime, and only the `.csproj` (recipe + solution
+wiring) remains. `generated/Plato.Generated.Foundation.Unoptimized` — forward stdlib, wrapper
+scalars — is the live generated project. Detail in
+[`../generated/README.md`](../generated/README.md).
 
 ## What still lives in ara3d-sdk
 

@@ -1,20 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    Plato.Generated.Unoptimized - buildable golden of the extension-style, scalar-erased
-    Plato standard library with the OPTIMIZERS OFF.
+    Plato.Generated.Unoptimized - the extension-style, scalar-erased shape of the LEGACY Plato
+    standard library with the optimizers off (the readable reference shape).
 
-    Recipe (see generated\README.md) - flags shown without the leading dashes:
-        Plato.CLI stdlib-legacy generated\Plato.Generated.Unoptimized
-            csharp-style=extensions scalar=float
+    EMPTY SHELL since 2026-08-01: the .g.cs sources were deleted because the scalar-erasure
+    recipe no longer matches the runtime. This project is kept, and kept in Plato.sln, so the
+    recipe stays recorded and the solution builds green. See generated\README.md.
 
-    This is the readable reference shape: classic extension methods, Number/Integer/Boolean/
-    Character/String erased to native primitives, but no optimizer passes.
-    Diffing it against Plato.Generated.Optimized shows exactly what the optimizer passes do,
-    and that they are semantics-preserving.
+    Recipe - flags shown without the leading dashes:
+        Plato.CLI legacy\stdlib-legacy generated\Plato.Generated.Unoptimized
+            csharp-style=extensions scalar=float no-properties
 
-    Regenerate with tools\regen-generated.ps1 (studio repo). The .g.cs files ARE committed
-    (this is a golden); docs.html / interfaces.txt generator side-products are gitignored.
+    Not a golden (diff-gate retired 2026-07-30). docs.html / interfaces.txt are generator
+    side-products and are gitignored.
   -->
 
   <PropertyGroup>
@@ -30,8 +29,8 @@
     <NoWarn>$(NoWarn);CS0108;CS0114;CS0660;CS0661;CS1591</NoWarn>
   </PropertyGroup>
 
-  <!-- Link the handwritten intrinsics runtime (shared project). V2 exposes the primitive
-       no-arg members as METHODS (not properties), matching the no-properties recipe. -->
+  <!-- Link the handwritten intrinsics runtime (shared project). Its primitive no-arg members
+       are METHODS (not properties), matching the no-properties recipe. -->
   <Import Project="..\..\src\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
 
   <ItemGroup>

@@ -1,73 +1,95 @@
 # generated/ — buildable generated Plato projects
 
-This folder holds **buildable C# projects** produced by compiling the Plato standard library
-(`stdlib-legacy`) with `Plato.CLI`. Each project is a real SDK-style `.csproj`, references the
-intrinsics runtime, and compiles standalone on `net8.0`.
+This folder holds **buildable C# projects** produced by running `Plato.CLI` over a Plato
+standard library. Each is a real SDK-style `.csproj`, imports the handwritten intrinsics runtime
+as a shared project, and compiles standalone on `net8.0`.
 
-**These are no longer goldens** (retired 2026-07-30, see
-`tracker/decisions/2026-07-30-retire-legacy-conformance-and-goldens.md`): the byte-identity
-diff-gate and its `regen-generated.ps1` script are gone. The committed `.g.cs` files are ordinary
-cached output — regenerate them when useful, and accept staleness otherwise. They are still not
-for hand editing (`// DO NOT EDIT`): any change comes from rerunning `Plato.CLI` over
-`stdlib-legacy` with the flags below.
+**Nothing here is a golden.** The byte-identity diff-gate, the `regen-generated.ps1` script that
+drove it, and the legacy conformance suites were all retired 2026-07-30
+(`tracker/decisions/2026-07-30-retire-legacy-conformance-and-goldens.md`). The `.g.cs` files are
+ordinary cached output: regenerate them when useful, and accept staleness otherwise. They are
+still not for hand editing (`// DO NOT EDIT`) — a change comes from rerunning the recipe.
 
-## Variants
+## The projects
 
-Both variants use the extension-method C# style with **scalar erasure** (`scalar=float`): the
-`Number`/`Integer`/`Boolean`/`Character`/`String` wrapper structs are erased to the native
-`float`/`int`/`bool`/`char`/`string` primitives. `Angle`, `Time` and the other unit-carrying
-structs remain real types.
+| Project | Source | Recipe (CLI flags) | State |
+|---|---|---|---|
+| `Plato.Generated.Foundation.Unoptimized` | `stdlib/foundation` (forward) | `--csharp-style=extensions` | Live; sources committed. |
+| `Plato.Generated.Unoptimized` | `legacy/stdlib-legacy` | `--csharp-style=extensions --scalar=float --no-properties` | **Empty shell** (see below). |
+| `Plato.Generated.Optimized` | `legacy/stdlib-legacy` | the same plus `--optimize --optimize-arrays --inline --methods --loops` | **Empty shell** (see below). |
 
-| Project | Recipe (CLI flags) | Purpose |
-|---|---|---|
-| `Plato.Generated.Unoptimized` | `--csharp-style=extensions --scalar=float --no-properties` | Readable reference shape; optimizer passes OFF. |
-| `Plato.Generated.Optimized`   | `--csharp-style=extensions --scalar=float --optimize --optimize-arrays --inline --methods --loops --no-properties` | Intended adoption/shipping shape; full optimizer pipeline ON. |
+The forward project keeps scalars as **wrapper structs** — `Number`, `Integer`, `Boolean`,
+`Character`, `String` stay distinct types (decision `decc091`, 2026-08-01). The two legacy
+projects use the older **scalar-erasure** recipe (`--scalar=float`), which rewrites those wrappers
+to native `float`/`int`/`bool`/`char`/`string`. Erasure forces `--no-properties`: every no-arg
+member becomes a method, so the emitted `partial struct` halves agree with the method-form runtime.
+Genuine fields and pseudo-fields (`X`/`Y`/`Z`, `M11`, `Row1`, `Plane.Normal`, `Count`) keep
+field/property syntax in both recipes.
 
-Both variants are **property-free** (`--no-properties`): every no-arg member is a method,
-including the primitive-struct members (`angle.Cos()`, `v.Normalize()`, `n.Abs()`) that plain
-`--methods` still keeps as properties. To make the fused `partial struct` halves agree, both
-projects link **`Plato.Intrinsics`** (a copy of the handwritten runtime whose primitive
-members are methods, not properties) instead of `Plato.Intrinsics`. Genuine fields and
-pseudo-fields (`X`/`Y`/`Z`, `M11`, `Row1`, `Plane.Normal`, `Count`) stay property/field syntax.
+Each `.csproj` carries its own recipe in a header comment; that comment and this table are the
+two places the flags are written down.
 
-The optimized recipe is exactly the one the **Scalar conformance suite** semantically gates
-(`tools\regen-conformance-scalar.ps1`), so the optimized golden is proven equivalent to the
-unoptimized one. **Diff the two folders** to see precisely what the optimizer passes
-(`--optimize` component unrolling, `--optimize-arrays` eager materialization, `--inline`
-call inlining, `--methods` property/indexer erasure, `--loops` combinator-to-`for` lowering) do
-to the emitted code.
+## The two legacy projects are empty shells (2026-08-01)
+
+Their `.g.cs` sources were deleted on 2026-08-01. They no longer compiled: the scalar-erasure
+recipe emits against a runtime shape that has moved on — the intrinsic-kernel reduction
+(`plato-378`), the wrapper-scalar decision (`decc091`), and the departure of `Angle`, the matrices
+and `Quaternion` from `src/Plato.Intrinsics` into `bonepile/`. Since the 2026-07-30 retirement
+nothing regenerated them and no gate read them, so the checked-in text was stale output that only
+produced compiler errors in a solution build.
+
+The `.csproj` files are kept, still wired into `Plato.sln`, so the recipes stay recorded and the
+projects build green while empty. **This was a deliberate deletion, not data loss** — the content
+is reproducible from the source library by the command below, and the deleted text is in git
+history before this change.
+
+Whether the legacy recipe is worth reviving at all is a separate question; the empty shells are a
+placeholder, not a commitment.
+
+## Regenerating
+
+From the repo root, output folder first cleared of `*.g.cs`:
+
+```
+dotnet run --project src\Plato.CLI -c Release -- ^
+    legacy\stdlib-legacy generated\Plato.Generated.Unoptimized ^
+    --csharp-style=extensions --scalar=float --no-properties
+
+dotnet run --project src\Plato.CLI -c Release -- ^
+    legacy\stdlib-legacy generated\Plato.Generated.Optimized ^
+    --csharp-style=extensions --scalar=float --no-properties ^
+    --optimize --optimize-arrays --inline --methods --loops
+
+dotnet run --project src\Plato.CLI -c Release -- ^
+    stdlib\foundation generated\Plato.Generated.Foundation.Unoptimized ^
+    --csharp-style=extensions
+```
+
+Regenerating the two legacy projects is expected to reproduce the compile errors described above
+until the legacy library or the erasure recipe is brought back in line with the runtime; that is
+why they were emptied rather than refreshed.
+
+The `.csproj` in each folder is hand-maintained — a regeneration only writes `.g.cs`.
+`docs.html` / `interfaces.txt` are generator side-products and are gitignored.
 
 ## Intrinsics link
 
-Both projects consume the handwritten runtime by importing the shared project:
+All three projects consume the handwritten runtime by importing the shared project:
 
 ```xml
 <Import Project="..\..\src\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
 ```
 
-and reference `Ara3D.Collections` / `Ara3D.Memory` / `Ara3D.Utils` from `ara3d-sdk`.
-`Plato.Intrinsics` is the **method-form** copy of the wrapper structs (`Number`, `Vector2-8`,
-`Matrix`, `Angle`, …), used only by these `--no-properties` goldens. `Plato.Intrinsics` (V1)
-remains the source of truth for the property-form runtime and the default-mode SDK; it is byte-
-synced to ara3d-sdk (never edit that copy). When you change a member in one, mirror it in the
-other — V1 keeps the property, V2 exposes the method.
+and take `Ara3D.Collections` / `Ara3D.Memory` / `Ara3D.Utils` from the `Ara3D.SDK.Core` package.
+`src/Plato.Intrinsics` is now **the** runtime: the V1/V2 split this file used to describe is gone,
+the old `Plato.Intrinsics.Legacy` copy having been deleted 2026-07-31
+(`tracker/decisions/2026-07-31-retire-v1-runtime-and-freeze.md`). The copies still living in
+`ara3d-sdk` belong to that repo. Which artifact is which, and who consumes it, is mapped in
+[`../docs/plato-library-map.md`](../docs/plato-library-map.md).
 
-## Regenerating
+## No numbers here
 
-From the studio repo root:
-
-```
-.\tools\regen-generated.ps1          # diff the checked-in golden vs a fresh generation, exit 1 on drift
-.\tools\regen-generated.ps1 -Apply   # refresh the .g.cs files in place
-```
-
-The `.csproj` / `README.md` in each variant folder are hand-maintained; the regen script only
-touches `.g.cs`. `docs.html` / `interfaces.txt` are generator side-products and are gitignored.
-
-## Relationship to `golden/` and `ara3d-sdk/src/Plato.Generated`
-
-- `golden/Plato.Generated.V2/` — the older loose-`.g.cs` golden, diff-gated by `regen-golden-v2.ps1`
-  (a `.shproj`, not standalone-buildable). These `generated/` projects supersede it as the
-  buildable, solution-wired form.
-- `ara3d-sdk/src/Plato.Generated` — the default C# style, wrapper-typed output, byte-identity gated
-  by `regen-plato.ps1`. That is effectively the "original, unerased" golden.
+This file records no file counts, error counts or build timings by design
+(`docs/documentation-conventions.md`). For the current C# error totals per project run
+`powershell tools/dotnet-build-record.ps1 -Project <csproj> -TargetName <name>` and read
+`docs/status-report-snapshot.json`.
