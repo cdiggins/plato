@@ -641,6 +641,20 @@ namespace Ara3D.Geometry.Compiler.Symbols
 
                     
                     var f = new FunctionDef(ValueBindingsScope, m.Name, typeDef, m.Type, body, list.ToArray());
+
+                    // Bounds this function DECLARES on its own signature variables (plato-393):
+                    // `DeCasteljau(xs: Array<$T>, t: Number): $T where $T: Interpolatable`. Resolved
+                    // here, where the owner's type parameters are in scope; the target is kept as
+                    // WRITTEN ($T), because that is the name the checker's substitution uses. A
+                    // target naming nothing in the signature is reported by LINT002, not dropped
+                    // silently.
+                    foreach (var c in location.Constraints)
+                    {
+                        var bound = ResolveType(c.Constraint);
+                        if (bound != null)
+                            f.DeclaredBounds.Add(new DeclaredFunctionBound(c.Name.Text, bound));
+                    }
+
                     Debug.Assert(m.Function == null);
                     m.Function = f;
 

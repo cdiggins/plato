@@ -170,14 +170,18 @@ Consumes the constraint system and produces a substitution plus located diagnost
 | `CHK203` | ambiguous call — overloads match with differing return types |
 | `CHK204` | bounded-polymorphic call — concrete overloads tie on an unbound variable; deferred to monomorphization (info) |
 | `CHK205` | a call on a bare type parameter that its declared bounds do not supply |
+| `CHK206` | a call whose arguments do not satisfy a bound the callee declares on its own signature |
 | `CHK309` | a type argument does not satisfy the bound declared on that parameter |
 | `CHK310` | a declared `where` bound does not name a concept |
 
 ### Declared type-parameter bounds
 
 Both `concept` and `type` declarations may bound their parameters
-(`type Tween<T> where T: Interpolatable`). The bounds land on
-`TypeParameterDef.Constraints` and are read in two places, both in `Checking/`:
+(`type Tween<T> where T: Interpolatable`), and a library FUNCTION may bound its own signature
+variables (`DeCasteljau(xs: Array<$T>, t: Number): $T where $T: Interpolatable` — plato-393). The
+declaration-level bounds land on `TypeParameterDef.Constraints` and the function-level ones on
+`FunctionDef.DeclaredBounds`; `TypeConstraints.InheritedBounds` unions the two sources, so every
+consumer downstream reads one thing. They are read in three places, all in `Checking/`:
 
 - **`TypeConstraintChecker`** — a declaration-level pass, run like `SumTypeChecker` and
   `ExistentialConceptChecker`. Every construction the declaration writes (implements/inherits
@@ -187,6 +191,13 @@ Both `concept` and `type` declarations may bound their parameters
   parameter only when one of its bounds carries that concept. A library signature's variables
   inherit the bounds of the constructed types they appear in (`x: Tween<$T>` gives
   `$T: Interpolatable`), which is what makes an operation on a bare `$T` well-typed.
+
+- **The solver's candidate viability rule** — this is where ARGUMENT SATISFACTION for a function
+  bound is enforced. A candidate whose arguments matched is still rejected when what they bound its
+  variable to fails the bound the callee declares, so `DeCasteljau` over an `Array<String>` does not
+  resolve. Reported `CHK206` rather than `CHK201`, because the signature matched and only the bound
+  failed. (A bound on a TYPE is checked at its construction site instead, by `CHK309`: a type is
+  written, a function is called, and each is checked where it is used.)
 
 Bounds restrict where they are declared and change nothing where they are not: an *unbounded*
 parameter is as permissive as it was before bounds were read. An unlicensed call on a *bounded*

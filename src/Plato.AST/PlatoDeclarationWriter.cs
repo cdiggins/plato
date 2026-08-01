@@ -129,9 +129,20 @@ namespace Ara3D.Geometry.AST
                 .Write("(")
                 .WriteCommaList(method.Parameters, WriteParameter)
                 .Write("): ")
-                .WriteTypeNode(method.Type)
-                .WriteLine(";");
-            return r;
+                .WriteTypeNode(method.Type);
+
+            // A function may bound its own signature variables (plato-393). Inline, after the return
+            // type, exactly where the source writes it.
+            for (var i = 0; i < method.Constraints.Count; i++)
+            {
+                var c = method.Constraints[i];
+                r = r.Write(i == 0 ? " where " : ", ")
+                    .Write(c.Name.Text)
+                    .Write(": ")
+                    .WriteTypeNode(c.Constraint);
+            }
+
+            return r.WriteLine(";");
         }
 
         PlatoDeclarationWriter WriteParameter(PlatoDeclarationWriter w, AstParameterDeclaration parameter)

@@ -87,6 +87,25 @@ namespace Ara3D.Geometry.Compiler.Symbols
             CapturedSymbols = ComputeCapturedSymbols().ToList();
         }
 
+        /// <summary>The bounds this function DECLARES on its own signature type variables (plato-393):
+        /// `DeCasteljau(xs: Array&lt;$T&gt;, t: Number): $T where $T: Interpolatable`. Keyed by the
+        /// variable name as the signature spells it (`$T`), which is how the checker's substitution
+        /// and <see cref="Checking.TypeConstraints.InheritedBounds"/> key everything else.
+        ///
+        /// A mutable list in the same idiom as <see cref="TypeParameterDef.Constraints"/>: the
+        /// symbol factory resolves the bound types after the function exists. Copied by every
+        /// rewrite, so a normalized or monomorphized clone still carries what its declaration
+        /// promised.</summary>
+        public List<DeclaredFunctionBound> DeclaredBounds { get; } = new List<DeclaredFunctionBound>();
+
+        /// <summary>Copy this function's declared bounds onto a rewritten clone, and return it.</summary>
+        public FunctionDef WithDeclaredBoundsOf(FunctionDef source)
+        {
+            if (source != null && source.DeclaredBounds.Count > 0)
+                DeclaredBounds.AddRange(source.DeclaredBounds);
+            return this;
+        }
+
         public IEnumerable<ParameterOrVariableRefSymbol> ComputeCapturedSymbols()
         {
             var defs = new HashSet<DefSymbol>(GetAllDefs());
@@ -115,7 +134,19 @@ namespace Ara3D.Geometry.Compiler.Symbols
             => this.GetSignature();
 
         public override Symbol Rewrite(Func<Symbol, Symbol> f)
-            => f(new FunctionDef(Scope, Name, OwnerType, ReturnType, Body?.Rewrite(f), Parameters.ToArray()));
+            => f(new FunctionDef(Scope, Name, OwnerType, ReturnType, Body?.Rewrite(f), Parameters.ToArray())
+                .WithDeclaredBoundsOf(this));
+    }
+
+    /// <summary>One `where $T: Concept` clause on a function declaration: the signature variable it
+    /// targets, and the concept it must supply.</summary>
+    public class DeclaredFunctionBound
+    {
+        public string VariableName { get; }
+        public TypeExpression Bound { get; }
+        public DeclaredFunctionBound(string variableName, TypeExpression bound)
+            => (VariableName, Bound) = (variableName, bound);
+        public override string ToString() => $"{VariableName}: {Bound}";
     }
 
     public class ParameterDef : DefSymbol

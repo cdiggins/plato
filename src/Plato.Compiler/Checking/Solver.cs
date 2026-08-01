@@ -145,6 +145,13 @@ namespace Ara3D.Geometry.Compiler.Checking
             public TypeExpression[] Ps;
             public TypeExpression Ret;
             public Dictionary<string, TypeExpression> ConceptOf = new Dictionary<string, TypeExpression>();
+
+            /// <summary>The callee's DECLARED bounds (plato-393), restated over this call's fresh
+            /// instantiation variables: `where $T: Interpolatable` on the declaration becomes
+            /// `$G12: Interpolatable` here, so it can be judged against whatever the arguments bind
+            /// $G12 to. Empty for every function that declares no `where` clause.</summary>
+            public List<(TypeExpression Var, TypeExpression Bound)> Bounds
+                = new List<(TypeExpression, TypeExpression)>();
         }
 
         /// <summary>Whether a bare type parameter's DECLARED BOUNDS gate its use as a concept
@@ -171,6 +178,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             IReadOnlyList<TypeExpression> args, bool licensed = true)
         {
             _licenseBounds = licensed;
+            _boundFailures.Clear();
             var viable = new List<(Candidate cand, int cost)>();
             foreach (var f in oc.Candidates)
             {
@@ -186,10 +194,49 @@ namespace Ara3D.Geometry.Compiler.Checking
                     if (!m.ok) { ok = false; break; }
                     cost += m.cost;
                 }
+                if (ok && !BoundsSatisfied(cand, scratch))
+                    ok = false;
                 if (ok)
                     viable.Add((cand, cost));
             }
             return viable;
+        }
+
+        /// <summary>Why a candidate that MATCHED its arguments was rejected anyway: the type its
+        /// arguments bound a bounded signature variable to does not satisfy the declared bound.
+        /// Collected per trial so an all-candidates-failed call can say so instead of reporting the
+        /// misleading "no overload matches these argument types".</summary>
+        private readonly List<(TypeExpression Arg, TypeExpression Bound)> _boundFailures
+            = new List<(TypeExpression, TypeExpression)>();
+
+        /// <summary>
+        /// ARGUMENT SATISFACTION FOR A DECLARED FUNCTION BOUND (plato-393). A `where` clause on a
+        /// library function is a precondition on inference: whatever the arguments bind
+        /// <c>$T</c> to at THIS call must satisfy the bound, or this candidate is not viable.
+        /// `DeCasteljau(xs: Array&lt;$T&gt;, t: Number): $T where $T: Interpolatable` applied to an
+        /// <c>Array&lt;String&gt;</c> binds <c>$T := String</c>, which implements nothing the bound
+        /// asks for, and the call is rejected here rather than resolving to a promise the body
+        /// cannot keep.
+        ///
+        /// Satisfaction is <see cref="TypeConstraints.Satisfies"/> — the same reading CHK309 uses at
+        /// a construction site — so a still-unbound variable stays permissive and a bare parameter
+        /// is judged by the bounds IT carries (which is what lets the recursive call inside the
+        /// bounded function's own body resolve).
+        /// </summary>
+        private bool BoundsSatisfied(Candidate cand, Dictionary<string, TypeExpression> sub)
+        {
+            if (cand.Bounds.Count == 0)
+                return true;
+            var ok = true;
+            foreach (var (v, bound) in cand.Bounds)
+            {
+                var arg = Zonk(v, sub);
+                if (TypeConstraints.Satisfies(arg, Zonk(bound, sub), BoundsOf(arg)))
+                    continue;
+                _boundFailures.Add((arg, bound));
+                ok = false;
+            }
+            return ok;
         }
 
         /// <summary>The first argument that is a bare type parameter/variable CARRYING declared
@@ -245,6 +292,20 @@ namespace Ara3D.Geometry.Compiler.Checking
                 // Last resort: the "callee" may name a FIELD whose value is itself a function.
                 if (TryResolveFieldInvocation(oc, args))
                     return true;
+
+                // Every candidate matched its arguments and was rejected by its own declared bound
+                // (plato-393). "No overload matches (Array<String>, Number)" would be a lie — the
+                // signature does match; the bound is what the argument fails. Say that instead.
+                if (_boundFailures.Count > 0)
+                {
+                    var f = _boundFailures[0];
+                    Report(DiagnosticSeverity.Error, "CHK206",
+                        $"Call to '{oc.Name}' with argument types ({string.Join(", ", args)}) does not "
+                        + $"satisfy the bound declared on it: '{f.Arg}' does not implement '{f.Bound}'",
+                        oc.Origin);
+                    return true;
+                }
+
                 Report(DiagnosticSeverity.Error, "CHK201",
                     $"No overload of '{oc.Name}' matches argument types ({string.Join(", ", args)})", oc.Origin);
                 return true;
@@ -832,6 +893,12 @@ namespace Ara3D.Geometry.Compiler.Checking
             if (ret != null && conceptVarByInstance.TryGetValue(ret.ToString(), out var rv))
                 ret = rv; // Self-style refinement: return the concrete argument's type
             cand.Ret = ret;
+
+            // Carry the callee's declared bounds (plato-393) onto this instantiation's variables,
+            // so the caller's argument — not the declaration's own $T — is what gets judged.
+            foreach (var d in f.DeclaredBounds)
+                if (d?.Bound != null && map.TryGetValue(d.VariableName, out var v))
+                    cand.Bounds.Add((v, Substitute(d.Bound, map)));
 
             return cand;
         }

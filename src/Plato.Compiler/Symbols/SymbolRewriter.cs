@@ -57,7 +57,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
         public static FunctionDef ExpressionBodyToStatementBody(this FunctionDef self)
             => new FunctionDef(self.Scope, self.Name, self.OwnerType, self.ReturnType, 
                 ExpressionBodyToStatementBody(self.Body),
-                self.Parameters.ToArray());
+                self.Parameters.ToArray()).WithDeclaredBoundsOf(self);
 
         public static Symbol ExpressionBodyToStatementBody(this Symbol body)
         {
@@ -105,7 +105,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
                 case FunctionDef functionDef:
                     return new FunctionDef(functionDef.Scope, functionDef.Name, functionDef.OwnerType,
                         functionDef.ReturnType, functionDef.Body.TypedRewrite(f),
-                        functionDef.Parameters.RewriteList(f));
+                        functionDef.Parameters.RewriteList(f)).WithDeclaredBoundsOf(functionDef);
 
                 case FieldDef fieldDef:
                 case FunctionGroupDef functionGroupDef:

@@ -21,7 +21,8 @@ namespace Ara3D.Geometry.Compiler.Checking
     ///
     /// Diagnostics (CHK3xx):
     ///   CHK309 a type argument does not satisfy the bound declared on that parameter
-    ///   CHK310 a declared bound does not name a concept
+    ///   CHK310 a declared bound does not name a concept — on a type/concept parameter, or on a
+    ///          function's own signature variable (plato-393)
     ///
     /// UNIFORM OVER SUM TYPES BY CONSTRUCTION: the walk is over <see cref="TypeDef"/>, and a sum
     /// type's per-case field types are visited in the same loop as a record's fields. Nothing here
@@ -94,6 +95,15 @@ namespace Ara3D.Geometry.Compiler.Checking
                 foreach (var p in f.Parameters ?? Enumerable.Empty<ParameterDef>())
                     CheckType(p.Type, t, p, inherited);
                 CheckType(f.ReturnType, t, f, inherited);
+
+                // CHK310 again, for a bound the FUNCTION declares (plato-393). Same rule, same
+                // reason: `where $T: Number` promises something C# cannot express as a constraint.
+                foreach (var d in f.DeclaredBounds)
+                    if (d?.Bound?.Def != null && !d.Bound.Def.IsInterface())
+                        Error("CHK310",
+                            $"the bound '{d.Bound}' declared on '{d.VariableName}' of function "
+                            + $"'{f.Name}' (in '{t.Name}') is not a concept — a `where` bound must "
+                            + "name a concept", f);
             }
         }
 

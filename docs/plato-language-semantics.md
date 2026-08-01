@@ -198,6 +198,24 @@ A bound must name a concept (else CHK310). It means two things, both checked:
   `$T: Interpolatable`. A call on a bounded parameter that no bound supplies is an error (CHK205),
   though it still resolves; an *unbounded* parameter is unrestricted, since bounds are optional.
 
+**A function may bound its own signature variables.** The clause sits after the return type and
+before the body — the last thing in the signature, the same slot it occupies on `type` and
+`concept` — and names the variable exactly as the signature spells it, with the `$`:
+
+```plato
+DeCasteljau(xs: Array<$T>, t: Number): $T where $T: Interpolatable
+    => xs.Count <= 1 ? xs[0] : ...;
+```
+
+This is the only way to require an operation on a bare element of an *unbounded* container:
+`Array<T>` is a primitive with no bound to inherit, so before this the reduction had to be written
+once per element type. A declared function bound joins the inherited ones as a second source of the
+same thing, so it licenses calls inside the body identically, and it is emitted as the C# `where`
+clause on the generated method. Its extra obligation is at the CALL SITE: whatever the arguments
+bind the variable to must satisfy the bound, or the call does not resolve (CHK206) — a bound on a
+function is a precondition on inference, checked where inference happens. A bound naming a variable
+the signature never mentions constrains nothing and is reported by the linter (LINT002).
+
 After type checking, **monomorphization** grounds everything: each concept-generic or
 `$`-generic function is instantiated per concrete type combination actually used, `Self` is
 replaced by the receiver type, and the emitted code contains only direct calls on concrete types.

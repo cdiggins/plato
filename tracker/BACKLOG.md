@@ -48,7 +48,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-384](issues/plato-384.md) | Wrapper structs declare no Equals/GetHashCode/IEquatable: boxing and composition-dependent equality | debt | p3 | M | med | plato | idea |  |
 | [plato-385](issues/plato-385.md) | Boolean comparison operators return raw bool while Number/Integer return the wrapper | debt | p3 | S | low | plato | idea |  |
 | [plato-386](issues/plato-386.md) | ArrayIntrinsics.FlatMap leaks a mutable List through IReadOnlyList | debt | p3 | S | low | plato | idea |  |
-| [plato-393](issues/plato-393.md) | Where-clause bounds on library function declarations | problem | p3 | M | med | plato | idea |  |
+| [plato-394](issues/plato-394.md) | A function bound on a receiver type's own parameter emits an unsatisfiable C# constraint | problem | p3 | S | low | plato | idea |  |
 | [plato-076](issues/plato-076.md) | Port Gratify to Plato (feasibility: kernel vs framework) | idea | ? | ? | ? | plato | idea |  |
 | [plato-077](issues/plato-077.md) | Sum types + pattern matching in Plato (RFC first) | idea | ? | ? | ? | plato | idea |  |
 | [plato-078](issues/plato-078.md) | Revive and productionize the Plato TypeScript writer | feature | ? | ? | ? | plato | idea |  |

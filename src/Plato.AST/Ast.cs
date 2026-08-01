@@ -305,15 +305,23 @@ namespace Ara3D.Geometry.AST
         public AstNode Body { get; }
         public IReadOnlyList<AstParameterDeclaration> Parameters { get; }
 
-        public AstMethodDeclaration(ILocation location, 
+        /// <summary>The bounds declared on this function's OWN signature type variables (plato-393):
+        /// `DeCasteljau(xs: Array&lt;$T&gt;, t: Number): $T where $T: Interpolatable`. Each entry
+        /// names the variable as the signature spells it (with the `$`). Empty for the overwhelming
+        /// majority of declarations; a bound naming nothing in the signature is LINT002.</summary>
+        public IReadOnlyList<AstConstraint> Constraints { get; }
+
+        public AstMethodDeclaration(ILocation location,
             AstIdentifier name,
             AstTypeNode type,
             IEnumerable<AstParameterDeclaration> parameters,
-            AstNode body) :
+            AstNode body,
+            IEnumerable<AstConstraint> constraints = null) :
             base(location, name, type)
         {
             Body = body;
             Parameters = parameters.ToList();
+            Constraints = constraints?.ToList() ?? (IReadOnlyList<AstConstraint>)Array.Empty<AstConstraint>();
         }
 
         public override IEnumerable<AstNode> Children =>

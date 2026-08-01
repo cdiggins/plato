@@ -262,11 +262,17 @@ namespace Ara3D.Geometry.AST
             return new AstCaseDeclaration(caseDeclaration, name, fields);
         }
 
+        /// <summary>A bound's TARGET is spelled as its declaration spells the variable: bare on a
+        /// type or concept parameter (`where T: Additive`), `$`-prefixed on a library function's own
+        /// signature variable (`where $T: Interpolatable`). Both land here as the identifier text,
+        /// `$` included, which is exactly how the symbol layer names a type variable.</summary>
         public static AstConstraint ToAst(this CstConstraint constraint)
         {
-            return new AstConstraint(constraint, 
-                constraint.Identifier.Node.ToAst(), 
-                constraint.TypeAnnotation.Node.ToAst());
+            var name = constraint.TypeVar.Present
+                ? new AstIdentifier(constraint.TypeVar.Node.Identifier.Node,
+                    "$" + constraint.TypeVar.Node.Identifier.Node.Text)
+                : constraint.Identifier.Node.ToAst();
+            return new AstConstraint(constraint, name, constraint.TypeAnnotation.Node.ToAst());
         }
 
         public static AstMethodDeclaration ToAst(this CstMethodDeclaration md)
@@ -275,9 +281,11 @@ namespace Ara3D.Geometry.AST
                 md,
                 ToAst(md.Identifier.Node),
                 ToAst(md.TypeAnnotation.Node),
-                md.FunctionParameterList.Node?.FunctionParameter.Nodes.Select(ToAst).ToList() 
+                md.FunctionParameterList.Node?.FunctionParameter.Nodes.Select(ToAst).ToList()
                     ?? Enumerable.Empty<AstParameterDeclaration>(),
-                ToAst(md.FunctionBody.Node));
+                ToAst(md.FunctionBody.Node),
+                // plato-393: a function may bound its own signature variables.
+                md.ConstraintList.Node?.Constraint.Nodes.Select(ToAst).ToArray());
         }
 
         public static AstParameterDeclaration ToAst(this CstLambdaParameter lp, int index)

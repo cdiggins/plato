@@ -276,20 +276,51 @@ namespace Ara3D.Geometry.Compiler.Analysis
         {
             foreach (var td in Compilation.TypeDeclarations)
             {
-                if (td.Constraints.Count == 0)
-                    continue;
-                var declared = td.TypeParameters.Select(tp => tp.Name.Text).ToHashSet();
+                var typeParameters = td.TypeParameters.Select(tp => tp.Name.Text).ToHashSet();
                 foreach (var c in td.Constraints)
                 {
-                    if (!declared.Contains(c.Name.Text))
+                    if (!typeParameters.Contains(c.Name.Text))
                     {
-                        var declaredList = declared.Count == 0 ? "none" : string.Join(", ", declared);
+                        var declaredList = typeParameters.Count == 0 ? "none" : string.Join(", ", typeParameters);
                         Add(c, "LINT002", LintSeverity.Error,
                             $"'where' clause of '{td.Name.Text}' constrains '{c.Name.Text}' which is not a declared " +
                             $"type parameter (declared: {declaredList}); the constraint is silently ignored");
                     }
                 }
+
+                // The same rule for a FUNCTION's own `where` clause (plato-393): its target must be
+                // a type variable the signature actually mentions, or the enclosing declaration's
+                // parameter. A bound on a name that appears nowhere constrains nothing, and the
+                // symbol layer would drop it in silence — exactly the trap this rule exists for.
+                foreach (var md in td.Members.OfType<AstMethodDeclaration>())
+                {
+                    if (md.Constraints.Count == 0)
+                        continue;
+                    var inScope = new HashSet<string>(typeParameters);
+                    foreach (var t in md.Parameters.Select(p => p.Type).Append(md.Type))
+                        CollectTypeVariableNames(t, inScope);
+                    foreach (var c in md.Constraints)
+                    {
+                        if (inScope.Contains(c.Name.Text))
+                            continue;
+                        var inScopeList = inScope.Count == 0 ? "none" : string.Join(", ", inScope);
+                        Add(c, "LINT002", LintSeverity.Error,
+                            $"'where' clause of '{td.Name.Text}.{md.Name.Text}' constrains '{c.Name.Text}' which its " +
+                            $"signature does not mention (in scope: {inScopeList}); the constraint is silently ignored");
+                    }
+                }
             }
+        }
+
+        /// <summary>Every name a type expression writes, so a function's `where` target can be
+        /// checked against the signature that is supposed to introduce it.</summary>
+        private static void CollectTypeVariableNames(AstTypeNode t, HashSet<string> into)
+        {
+            if (t == null)
+                return;
+            into.Add(t.Name.Text);
+            foreach (var a in t.TypeArguments)
+                CollectTypeVariableNames(a, into);
         }
 
         // -------------------------------------------------------------------
@@ -564,7 +595,8 @@ namespace Ara3D.Geometry.Compiler.Analysis
             // off the AST here: reachability is a SYNTACTIC question — a bound written in the source
             // makes the concept reachable whether or not it resolved.
             var boundNames = Compilation.TypeDeclarations
-                .SelectMany(d => d.Constraints)
+                .SelectMany(d => d.Constraints
+                    .Concat(d.Members.OfType<AstMethodDeclaration>().SelectMany(m => m.Constraints)))
                 .Select(c => c.Constraint?.Name?.Text)
                 .Where(n => n != null)
                 .ToHashSet();

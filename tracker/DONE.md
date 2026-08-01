@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-08-01 — [plato-393](issues/plato-393.md) — Where-clause bounds on library function declarations — done — where-clause bounds on library function declarations, verified at the call site (CHK206) and emitted as the C# where clause; DeCasteljau collapsed from five overloads to one. Work is in the tree UNCOMMITTED (mission ran under a no-commit rule); follow-up plato-394 filed.
 - 2026-08-01 — [repo-392](issues/repo-392.md) — Repoint Navigation test corpus at tests/stdlib-tests; unshadow LINQ in test namespace — done (f994bf7)
 - 2026-08-01 — [docs-391](issues/docs-391.md) — AGENTS.md still documents the retired --methods / --no-properties flags — done (83df492)
 - 2026-08-01 — [compiler-387](issues/compiler-387.md) — Property-free C# emission becomes unconditional — done (7d825b5; writer half landed in bf50cbf via a concurrent bulk commit)

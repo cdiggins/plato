@@ -143,8 +143,9 @@ namespace Ara3D.Geometry.Compiler.Checking
         }
 
         /// <summary>
-        /// The bounds each of a function's signature type variables INHERITS from the constructed
-        /// types its signature mentions. `Sample(x: Tween&lt;$T&gt;, t: Duration): $T` sees
+        /// Every bound a function's signature type variables carry, from BOTH sources: the ones
+        /// INHERITED from the constructed types its signature mentions, and the ones the function
+        /// DECLARES itself in a `where` clause (plato-393). `Sample(x: Tween&lt;$T&gt;, t: Duration): $T` sees
         /// `Tween&lt;T&gt; where T: Interpolatable` and so learns `$T: Interpolatable` — which is what
         /// licenses a `Lerp` on a bare `$T` in the body, and what a later emission phase needs in
         /// order to put the `where` clause on the generated C# method.
@@ -190,6 +191,20 @@ namespace Ara3D.Geometry.Compiler.Checking
 
             foreach (var t in (f?.Parameters ?? Enumerable.Empty<ParameterDef>()).Select(p => p.Type).Append(f?.ReturnType))
                 Walk(t, 0);
+
+            // Bounds the function DECLARES on its own variables (plato-393) join the inherited ones
+            // as a second source of the same shape. They are collected whatever `source` says: a
+            // declared bound's "declaration" is this very function, whose emitted C# always carries
+            // the matching `where` clause, so it licenses a body under both readings.
+            foreach (var d in f?.DeclaredBounds ?? Enumerable.Empty<DeclaredFunctionBound>())
+            {
+                if (d?.Bound == null)
+                    continue;
+                if (!result.TryGetValue(d.VariableName, out var list))
+                    result[d.VariableName] = list = new List<TypeExpression>();
+                if (!list.Any(x => x.ToString() == d.Bound.ToString()))
+                    list.Add(d.Bound);
+            }
 
             return result.ToDictionary(kv => kv.Key, kv => (IReadOnlyList<TypeExpression>)kv.Value);
         }

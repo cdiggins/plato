@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;
@@ -51,7 +51,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return null;
             var body = Normalize(f.Body);
             return new FunctionDef(f.Scope, f.Name, f.OwnerType, f.ReturnType, body,
-                f.Parameters.ToArray());
+                f.Parameters.ToArray()).WithDeclaredBoundsOf(f);
         }
 
         private Expression Expr(Symbol s)
