@@ -52,10 +52,9 @@ The library is separated into the following folders:
 3. `stdlib/graphics`
 4. `stdlib/future`
 
-[`docs/stdlib-index.txt`](../docs/stdlib-index.txt) is the generated index of every type and
-concept in the three shipped tiers — one compressed declaration per line, grouped by tier. Read
-it to see what exists; regenerate it with `tools/export-types-context.bat` after changing
-`stdlib/`.
+[`types-and-concepts.txt`](types-and-concepts.txt) is a generated index of every type and concept
+in the three shipping tiers — read it to see what exists. It must be regenerated when this folder
+changes; [`AGENTS.md`](AGENTS.md) states the rule and the command.
 
 A folder may reference only itself and the folders before it; 
 

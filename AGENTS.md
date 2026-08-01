@@ -52,6 +52,9 @@ the writer code).
   (`-IncludeFuture` on the PowerShell gates, `--include-future` on `tools/record-gates.py`).
   It must still PARSE and TYPE-CHECK — `ForwardStdLib*` in `tests/PlatoTests` reads all four
   tiers unconditionally. Nothing in a shipping tier may reference a `future` declaration.
+  **Folder rules:** [`stdlib/AGENTS.md`](stdlib/AGENTS.md) — including the standing obligation to
+  regenerate `stdlib/types-and-concepts.txt` (the generated index of every shipping type and
+  concept) in the same commit as any declaration change.
   **Read before editing:** [`stdlib/README.md`](stdlib/README.md) (what the folder is, counts,
   partition rules), [`stdlib/CONVENTIONS.md`](stdlib/CONVENTIONS.md) (domain semantics — frames,
   winding, units, the no-generic-`Optional<T>` rule; when two files disagree, this one wins),

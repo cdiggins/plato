@@ -6,7 +6,7 @@
     Runs Plato.ContextExport over:
       1. The shipped stdlib/ tiers, one section per tier, declarations sorted
          by name within a tier →
-         docs/stdlib-index.txt  (tracked)
+         stdlib/types-and-concepts.txt  (tracked)
          The `future` tier is excluded: it is declared, not shipped.
       2. Flat declaration dump of legacy/stdlib-legacy →
          docs/types-and-concepts-context.txt  (tracked)
@@ -26,7 +26,7 @@ $Project = Join-Path $PlatoRoot 'src\Plato.ContextExport\Plato.ContextExport.csp
 $LegacySource = Join-Path $PlatoRoot 'legacy\stdlib-legacy'
 $ForwardSource = Join-Path $PlatoRoot 'stdlib'
 $FlatOutput = Join-Path $PlatoRoot 'docs\types-and-concepts-context.txt'
-$IndexOutput = Join-Path $PlatoRoot 'docs\stdlib-index.txt'
+$IndexOutput = Join-Path $PlatoRoot 'stdlib\types-and-concepts.txt'
 $StatsFile = Join-Path $PlatoRoot '.temp\types-and-concepts-context-stats.txt'
 $TempDir = Join-Path $PlatoRoot '.temp'
 
@@ -58,10 +58,9 @@ foreach ($tier in $Tiers) {
     }
 
     # Write via a temp file so PowerShell does not re-encode UTF-8 stdout from dotnet.
-    $tierTemp = Join-Path $TempDir "stdlib-index-$tier.txt"
+    $tierTemp = Join-Path $TempDir "types-and-concepts-$tier.txt"
     & dotnet run --project $Project -c Release --no-build -- `
         $tierSource `
-        --sorted `
         --output $tierTemp
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
