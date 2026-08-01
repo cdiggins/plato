@@ -74,7 +74,7 @@ public class OpenGenericBodyTests
         Assert.That(g.All(x => (Ara3D.Geometry.Boolean)(x.Value >= 0)).Value, Is.True);
         Assert.That(g.Any(x => (Ara3D.Geometry.Boolean)(x.Value == 12)).Value, Is.True);
         Assert.That(g.Any(x => (Ara3D.Geometry.Boolean)(x.Value == 99)).Value, Is.False);
-        Assert.That(g.IsEmpty.Value, Is.False);
+        Assert.That(g.IsEmpty().Value, Is.False);
         Assert.That(g.IsValidCell(2, 1).Value, Is.True);
         Assert.That(g.IsValidCell(3, 1).Value, Is.False);
     }

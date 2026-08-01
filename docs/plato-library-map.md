@@ -34,8 +34,8 @@ Importers, all via `<Import ... Label="Shared" />` of the `.projitems`:
 
 | Path | Recipe |
 |---|---|
-| `generated/Plato.Generated.Unoptimized` | `--csharp-style=extensions --scalar=float --no-properties` (readable reference) |
-| `generated/Plato.Generated.Optimized` | the same plus `--optimize --optimize-arrays --inline --methods --loops` (the adoption target) |
+| `generated/Plato.Generated.Unoptimized` | `--csharp-style=extensions --scalar=float` (readable reference) |
+| `generated/Plato.Generated.Optimized` | the same plus `--optimize --optimize-arrays --inline --loops` (the adoption target) |
 
 Neither is a golden. The byte-identity diff-gate and `regen-generated.ps1` were retired 2026-07-30.
 Both are **empty shells** as of 2026-08-01: the emitted sources were deleted because the

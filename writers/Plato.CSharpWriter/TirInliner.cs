@@ -182,7 +182,7 @@ public static class TirInliner
         // Under a lambda at the CALL SITE: only lambda-free callee bodies with all-cheap
         // arguments (see Inline).
         // Under a lambda, args must be cheap — the cost-based cheap-projection relaxation (the one
-        // recipe is --no-properties since C4, so this is unconditional).
+        // emitted C# is property-free, so this is unconditional).
         bool CheapArg(TirNode a) => IsCheapProjection(host, a);
         if (insideLambda && (calleeHasLambda || !call.Args.All(CheapArg)))
             return Refuse(InlineRefusal.InsideLambda);
@@ -217,7 +217,7 @@ public static class TirInliner
             {
                 // Delegate-parameter inlining (substituting a lambda into a Function-typed
                 // parameter, then β-reducing) relies on the uniform method-form surface
-                // (--no-properties, the one recipe since C4).
+                // (the emitted C# is property-free).
                 // A lambda substitutes into a delegate-typed parameter only when EVERY use is a
                 // CONSUMING position: the target of an application (which then β-reduces away — no
                 // residual lambda) or a direct call argument (target-typed by the callee's Func

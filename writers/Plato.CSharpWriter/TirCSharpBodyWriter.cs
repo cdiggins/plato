@@ -98,8 +98,8 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // namespace-qualified type name for statics, the namespace for bare type names. Mirrors the
     // FunctionGroupRefSymbol extension branch of the legacy writer exactly. In default mode (and
     // for struct-kept extension-style bodies) the context is null and the name is written bare.
-    // MethodsOnly: whether a bare STATIC name of the current receiver type is a generated
-    // static METHOD (needs "()"); handwritten statics keep member-access syntax.
+    // Whether a bare STATIC name of the current receiver type is a generated static METHOD
+    // (needs "()"); handwritten statics keep member-access syntax.
     private bool IsGeneratedStaticMethodName(string name)
         => _tw.TypeDef != null
            && _tw.Writer.GetExtensionPlanByTypeName(_tw.TypeDef.Name) is ExtensionStylePlan plan
@@ -110,7 +110,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (_tw.ExtensionReceiverName == null)
         {
             Write(name);
-            // MethodsOnly: a bare generated static of the enclosing type is a method.
+            // A bare generated static of the enclosing type is a method.
             if (IsGeneratedStaticMethodName(name))
                 Write("()");
             return;
@@ -119,7 +119,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         {
             Write($"{_tw.ExtensionReceiverName}.{name}");
             // Moved no-arg members are classic extension methods, not properties. Under
-            // --no-properties every no-arg member whose name is not pinned to struct-surface
+            // every no-arg member whose name is not pinned to struct-surface
             // property syntax is a method (this also covers the scalar types' members, whose
             // erased receiver is a primitive on which they are all extension methods).
             if (_tw.Writer.MovedNoArgNames.Contains(name)
@@ -693,7 +693,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             Write(")");
             return true;
         }
-        // No further arguments: a GENERATED nullary static emits as a method under --no-properties;
+        // No further arguments: a GENERATED nullary static emits as a method;
         // a handwritten one (Number.Pi, Number.MinValue) is a static field and keeps member syntax.
         var plan = _tw.Writer.GetExtensionPlanByTypeName(recvTypeName);
         if (plan != null && plan.GeneratedNoArgStaticNames.Contains(call.Name))
@@ -782,7 +782,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             return;
         }
 
-        // Indexer: At(a, i, ...) -> a[i, ...]. MethodsOnly: generated structs have no indexer,
+        // Indexer: At(a, i, ...) -> a[i, ...]. Generated structs have no indexer,
         // so a receiver of a known generated type calls .At(...) instead (IReadOnlyList and
         // other unknown receivers keep their own indexers).
         if (name == "At")
@@ -839,7 +839,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 Write("()");
                 return;
             }
-            // MethodsOnly: every no-arg member access is a method call unless the name is
+            // Every no-arg member access is a method call unless the name is
             // pinned to property/field syntax. STATIC member accesses (type-ref receiver) are
             // decided by the target type's plan: generated statics are methods, handwritten
             // statics (Number.MinValue) keep member syntax.

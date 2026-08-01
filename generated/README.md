@@ -15,19 +15,23 @@ still not for hand editing (`// DO NOT EDIT`) — a change comes from rerunning 
 | Project | Source | Recipe (CLI flags) | State |
 |---|---|---|---|
 | `Plato.Generated.Foundation.Unoptimized` | `stdlib/foundation` (forward) | `--csharp-style=extensions` | Live; sources committed. |
-| `Plato.Generated.Unoptimized` | `legacy/stdlib-legacy` | `--csharp-style=extensions --scalar=float --no-properties` | **Empty shell** (see below). |
-| `Plato.Generated.Optimized` | `legacy/stdlib-legacy` | the same plus `--optimize --optimize-arrays --inline --methods --loops` | **Empty shell** (see below). |
+| `Plato.Generated.Unoptimized` | `legacy/stdlib-legacy` | `--csharp-style=extensions --scalar=float` | **Empty shell** (see below). |
+| `Plato.Generated.Optimized` | `legacy/stdlib-legacy` | the same plus `--optimize --optimize-arrays --inline --loops` | **Empty shell** (see below). |
 
 The forward project keeps scalars as **wrapper structs** — `Number`, `Integer`, `Boolean`,
 `Character`, `String` stay distinct types (decision `decc091`, 2026-08-01). The two legacy
 projects use the older **scalar-erasure** recipe (`--scalar=float`), which rewrites those wrappers
-to native `float`/`int`/`bool`/`char`/`string`. Erasure forces `--no-properties`: every no-arg
-member becomes a method, so the emitted `partial struct` halves agree with the method-form runtime.
+to native `float`/`int`/`bool`/`char`/`string`.
+
+Every recipe is property-free: a no-arg member emits as a method, so the emitted `partial struct`
+halves agree with the method-form runtime. That is not selectable - see
+[`../tracker/decisions/2026-08-01-property-free-emission-is-unconditional.md`](../tracker/decisions/2026-08-01-property-free-emission-is-unconditional.md).
 Genuine fields and pseudo-fields (`X`/`Y`/`Z`, `M11`, `Row1`, `Plane.Normal`, `Count`) keep
-field/property syntax in both recipes.
+field/property syntax in every recipe.
 
 Each `.csproj` carries its own recipe in a header comment; that comment and this table are the
-two places the flags are written down.
+two places the flags are written down. (The two legacy `.csproj` headers still spell the retired
+`no-properties` flag; they are empty shells and were left untouched.)
 
 ## The two legacy projects are empty shells (2026-08-01)
 
@@ -53,12 +57,12 @@ From the repo root, output folder first cleared of `*.g.cs`:
 ```
 dotnet run --project src\Plato.CLI -c Release -- ^
     legacy\stdlib-legacy generated\Plato.Generated.Unoptimized ^
-    --csharp-style=extensions --scalar=float --no-properties
+    --csharp-style=extensions --scalar=float
 
 dotnet run --project src\Plato.CLI -c Release -- ^
     legacy\stdlib-legacy generated\Plato.Generated.Optimized ^
-    --csharp-style=extensions --scalar=float --no-properties ^
-    --optimize --optimize-arrays --inline --methods --loops
+    --csharp-style=extensions --scalar=float ^
+    --optimize --optimize-arrays --inline --loops
 
 dotnet run --project src\Plato.CLI -c Release -- ^
     stdlib\foundation generated\Plato.Generated.Foundation.Unoptimized ^

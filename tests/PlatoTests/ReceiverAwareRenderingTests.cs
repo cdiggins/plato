@@ -9,7 +9,7 @@ namespace PlatoTests
     /// Pins the RECEIVER-AWARE property-vs-method rendering rule
     /// (<see cref="CSharpWriter.IsStructSurfaceProperty"/>, plato-323 item 2).
     ///
-    /// Under <c>--no-properties</c> a no-arg member renders with property/field syntax iff the name is
+    /// A no-arg member renders with property/field syntax iff the name is
     /// on the RECEIVER's own struct surface. The rule used to be decided globally by name, from the
     /// union of every generated type's field names, so a field on ONE struct forced property syntax
     /// onto a same-named library function of every OTHER receiver — where that function is a method.

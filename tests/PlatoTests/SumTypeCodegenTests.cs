@@ -13,7 +13,7 @@ namespace PlatoTests
     /// <summary>
     /// Wave-2 (plato-232) codegen gate: run each sum-type fixture through the full pipeline
     /// (parse → check → elaborate → monomorphize → emit) under the shipping recipe
-    /// (--csharp-style=extensions --scalar=float --no-properties), assert the emitted C# has the
+    /// (--csharp-style=extensions --scalar=float), assert the emitted C# has the
     /// expected tagged-struct shape, and — the strong gate — compile the emitted struct + its match
     /// function in-proc with Roslyn and execute it, verifying the runtime match semantics.
     /// </summary>

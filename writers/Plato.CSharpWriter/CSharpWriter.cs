@@ -419,7 +419,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 return plan.KeptNoArgPropertyNames.Contains(name);
             // No plan describes this receiver: a concept INTERFACE, a generic type variable bound to
             // one, an IgnoredTypes collection/delegate, or an unknown handwritten type. Under
-            // --no-properties an interface declares every no-arg obligation as a METHOD, and the
+            // an interface declares every no-arg obligation as a METHOD, and the
             // IgnoredTypes receivers are handwritten BCL collections whose only property-shaped
             // members are already in the global set. So there is NO struct surface here — falling
             // back to the union let a field on some unrelated struct pin property syntax onto
@@ -555,7 +555,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 // 2026-08-01 kernel reduction: the irreducible kernel members live on the wrapper
                 // structs as PROPERTIES (wrapper-mode generated call sites use property syntax),
                 // while the declarations are bodiless library functions — so each needs a pin for
-                // the --no-properties recipes.
+                // every recipe.
                 { "Integer.Hash", true },
                 { "Integer.BitwiseNot", true },
                 { "Integer.ToNumber", true },

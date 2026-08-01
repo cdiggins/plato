@@ -50,7 +50,7 @@ FUTURE_TIER = "stdlib/future"
 # The shipping recipe (docs/plato-library-map.md). Kept beside the codegen call it feeds.
 RECIPE = [
     "--csharp-style=extensions", "--scalar=float", "--optimize", "--optimize-arrays",
-    "--inline", "--methods", "--loops", "--no-properties", "--static-abstract",
+    "--inline", "--loops", "--static-abstract",
 ]
 
 

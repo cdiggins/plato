@@ -14,8 +14,8 @@ namespace Ara3D.Geometry
     /// </summary>
     public interface NumericalLimits<TSelf>
     {
-        TSelf MinValue { get; }
-        TSelf MaxValue { get; }
+        TSelf MinValue();
+        TSelf MaxValue();
     }
 
     public partial struct Number : NumericalLimits<Number>

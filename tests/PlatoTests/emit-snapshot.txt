@@ -1,4 +1,4 @@
-# Plato V2 emit snapshot (C4 emitter gate). Recipe: --csharp-style=extensions --scalar=float --no-properties.
+# Plato V2 emit snapshot (C4 emitter gate). Recipe: --csharp-style=extensions --scalar=float.
 # Re-baseline with PLATO_UPDATE_EMIT_SNAPSHOT=1. Authoritative gate is tools/regen-generated.ps1.
 @ _Number.g.cs :: float Abs(this float self)
   [MethodImpl(AggressiveInlining)] public static float Abs(this float self) => ((Number)self).Abs();

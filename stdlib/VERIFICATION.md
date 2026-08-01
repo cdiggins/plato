@@ -240,7 +240,7 @@ backend runtime supplies the member. Three fixtures police that promise:
   write the Plato body first; if it compiles, that is your answer, and the function belongs in a
   `*.library.plato` file instead.
 - `IntrinsicsSurfaceTests` — polices the code writer's *picture* of the handwritten runtime
-  surface (whether each member is spelled as a property or a method under `--no-properties`),
+  surface (whether each member is spelled as a struct field/property or a method),
   where a silent disagreement means CS0030/CS1955 errors across a thousand files.
 
 `tests/Plato.Intrinsics.Tests/` is the NUnit suite for the runtime itself (numbers, integers,
@@ -265,7 +265,7 @@ filename collision), then runs two stages:
   then run.
 
 The code-generation options are the shipping ones: `--csharp-style=extensions --scalar=float
---optimize --optimize-arrays --inline --methods --loops --no-properties --static-abstract`.
+--optimize --optimize-arrays --inline --loops --static-abstract`.
 
 Code generation **succeeds**: it emits over a thousand `.g.cs` files, plus some **degraded
 bodies** — when the generator cannot produce real code for a member (its intermediate

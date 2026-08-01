@@ -11,8 +11,8 @@ namespace PlatoTests
     /// <summary>
     /// Fast in-proc emit-snapshot gate for the C4 emitter simplification (consolidation plan C4).
     /// Compiles the stdlib once (<see cref="CheckerTestSupport.CompileStdLib"/>), generates the whole
-    /// V2 (Unoptimized) library in-memory — <c>--csharp-style=extensions --scalar=float
-    /// --no-properties</c> — and pins the emitted line of ~30 representative member bodies against a
+    /// V2 (Unoptimized) library in-memory — <c>--csharp-style=extensions --scalar=float</c> —
+    /// and pins the emitted line of ~30 representative member bodies against a
     /// committed baseline (<c>emit-snapshot.txt</c>). Seconds, versus the ~60s regen+build+conformance
     /// cycle. The byte-identical goldens (<c>tools/regen-generated.ps1</c>) remain the authoritative
     /// gate; this is the seconds-fast inner loop that makes retiring the legacy writer non-risky, and
@@ -105,7 +105,7 @@ namespace PlatoTests
         {
             var w = BuildV2Library();
             var sb = new StringBuilder();
-            sb.AppendLine("# Plato V2 emit snapshot (C4 emitter gate). Recipe: --csharp-style=extensions --scalar=float --no-properties.");
+            sb.AppendLine("# Plato V2 emit snapshot (C4 emitter gate). Recipe: --csharp-style=extensions --scalar=float.");
             sb.AppendLine("# Re-baseline with PLATO_UPDATE_EMIT_SNAPSHOT=1. Authoritative gate is tools/regen-generated.ps1.");
             foreach (var (file, marker) in Pins)
             {

@@ -7,8 +7,8 @@
         SUBSET     full = all of stdlib-legacy ; min = the files in manifest-min.txt
         OPTIMIZER  nonopt = adoption shape only ; opt = + inline/optimize/optimize-arrays/loops
 
-    The adoption SHAPE is constant across all four (--csharp-style=extensions --scalar=float
-    --methods): native primitives, extension functions, no properties. The OPTIMIZER passes are
+    The adoption SHAPE is constant across all four (--csharp-style=extensions --scalar=float):
+    native primitives, extension functions, no properties. The OPTIMIZER passes are
     the axis under test. Each variant's C# lands in Smoke.<Subset>.<Opt>\Generated and is a real
     csproj, so `-Build` runs `dotnet build` as a compilation smoke test.
 
@@ -58,7 +58,7 @@ function Get-MinInput {
     return $minInput
 }
 
-$shape = @('--csharp-style=extensions', '--scalar=float', '--methods')
+$shape = @('--csharp-style=extensions', '--scalar=float')
 $opt   = @('--inline', '--optimize', '--optimize-arrays', '--loops')
 
 $variants = @()

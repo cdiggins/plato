@@ -41,7 +41,7 @@ Write-Host "== Building Plato.CLI ($Configuration) =="
 dotnet build $cliProj -c $Configuration -v minimal --nologo
 if ($LASTEXITCODE -ne 0) { throw "dotnet build failed (exit $LASTEXITCODE)" }
 
-$flags = @('--csharp-style=extensions', '--scalar=float', '--optimize', '--optimize-arrays', '--methods')
+$flags = @('--csharp-style=extensions', '--scalar=float', '--optimize', '--optimize-arrays')
 Write-Host "== Running Plato.CLI ($($flags -join ' ')) =="
 if (Test-Path $generated) { Remove-Item -Recurse -Force $generated }
 New-Item -ItemType Directory -Force $generated | Out-Null

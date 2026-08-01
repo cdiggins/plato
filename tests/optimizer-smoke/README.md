@@ -5,8 +5,8 @@ actually **compiles** the generated C#. Used while developing the optimizer TIR 
 
 ## The 2×2 matrix
 
-Two axes; the adoption **shape** (`--csharp-style=extensions --scalar=float --methods` —
-native primitives, extension functions, no properties) is constant across all four:
+Two axes; the adoption **shape** (`--csharp-style=extensions --scalar=float` —
+native primitives, extension functions) is constant across all four:
 
 | project | subset | optimizer passes |
 |---|---|---|

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -11,7 +11,7 @@ namespace PlatoTests
     /// Polices the writer's picture of the handwritten Plato.Intrinsics surface (plato-331).
     ///
     /// The writer generates no struct for a <see cref="CSharpWriter.PrimitiveTypes"/> entry, so under
-    /// <c>--no-properties</c> it cannot see the runtime's shape and decides property-vs-method
+    /// it cannot see the runtime's shape and decides property-vs-method
     /// spelling from proxies: the Plato declaration, <see cref="CSharpConcreteTypeWriter.PrimitiveFieldNames"/>
     /// for components, and the four-entry <see cref="CSharpWriter.PrimitiveSurfaceOverrides"/> pin
     /// table. When any of those silently disagrees with the actual V2 surface the symptom is
@@ -93,7 +93,7 @@ namespace PlatoTests
             }
 
             Assert.IsEmpty(unaccounted,
-                "V2 has public properties the writer does not know about; under --no-properties " +
+                "The runtime has public properties the writer does not know about; " +
                 "generated call sites will render them with the wrong spelling (CS0030/CS1955 far " +
                 "downstream). Either convert them to methods (V2 is a method-form runtime; " +
                 "plato-331 option 1) or record them in CSharpWriter.PrimitiveSurfaceOverrides. " +

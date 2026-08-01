@@ -34,6 +34,6 @@ nothing), applied in this fixed order after layer 5/6:
 | 11 | C# text | `TirCSharpBodyWriter` | — | the `.g.cs` body string |
 
 `--inline`=7, `--optimize`=8, `--optimize-arrays`=9, `--loops`=10 are independent of the shape
-axes (`--csharp-style`, `--scalar`, `--methods`). "Non-optimized" emits straight from 5/6;
+axes (`--csharp-style`, `--scalar`). "Non-optimized" emits straight from 5/6;
 "optimized" runs all four. All four passes are applied at every body-emit site through the single
 `CSharpWriter.RunOptimizerPasses(tir, fi)` helper — the one place `--dump-tir` records phases.
