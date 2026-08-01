@@ -5,6 +5,13 @@ companion doc for this folder, beside [`CONVENTIONS.md`](CONVENTIONS.md) (what t
 means), [`STYLE_GUIDE.md`](STYLE_GUIDE.md) (how to write it) and [`LIBRARIES.md`](LIBRARIES.md)
 (where function bodies go): this one is **how you know your edit is good.**
 
+This file describes the **policy** — what is checked and what that proves. Its companion
+[`docs/verification-inventory.md`](../docs/verification-inventory.md) describes the
+**implementations**: one entry per script, fixture, server tool and data file, with what each one
+runs, which corpus it reads, what it writes, and which question it answers. Read this file to know
+what should happen; read that one to find the code that does it, or to work out why two tools
+disagree.
+
 Scope: this folder (`stdlib/`, the current "forward" standard library) and its test suite
 (`tests/stdlib-tests/`). The older "legacy" pair (`legacy/stdlib-legacy/` +
 `legacy/stdlib-legacy-tests/`) has its own checks and is out of scope here; see
@@ -421,6 +428,9 @@ what the findings are, or it lands with the content fixed. It does not land sile
 
 ## See also
 
+- [`docs/verification-inventory.md`](../docs/verification-inventory.md) — **every tool that implements
+  the policy on this page**: where each script, fixture and server tool lives, what it runs, which
+  corpus it reads, and what it writes
 - [`AGENTS.md`](../AGENTS.md) — repo layout, hard rules, mission protocol
 - [`stdlib/README.md`](README.md) — tiers, the `future` bar, partition rules
 - [`stdlib/CONVENTIONS.md`](CONVENTIONS.md) — domain semantics (wins on conflict)
