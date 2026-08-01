@@ -2,14 +2,14 @@
 id: plato-383
 title: default(String) wraps a null system string; every observation throws
 type: bug
-status: idea
+status: done
 priority: p2
 effort: S
 risk: low
 area: plato
 sprint: 
 created: 2026-08-01
-closed:
+closed: 2026-08-01
 links: [src/Plato.Intrinsics/String.cs, tests/Plato.Intrinsics.Tests/StringTests.cs, plato-384]
 ---
 
