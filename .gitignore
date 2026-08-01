@@ -20,3 +20,6 @@
 # handwritten source lives here — the whole folder is script output.
 # NOTE: conformance/Plato.ForwardConformanceTests/Generated/ IS tracked; only this one is not.
 conformance/Ara3D.SDK.ConformanceTests/Generated/
+
+# Python bytecode from tools/*.py
+tools/__pycache__/
