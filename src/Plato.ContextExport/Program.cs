@@ -1,6 +1,4 @@
 using Ara3D.Geometry.AST;
-using Ara3D.Geometry.Compiler;
-using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Logging;
 using Ara3D.Parakeet;
 using Ara3D.Parsing;
@@ -12,19 +10,19 @@ public static class Program
 {
     // Plato.ContextExport <folder> [--pretty] [--diagnostics] [--diagnostics-file <path>]
     // [--compressed] [--tight-delimiters] [--no-compressed] [--no-tight-delimiters]
-    // [--hierarchy]
-    // Redirect stdout to a file under .temp/ at the repo root (see AGENTS.md); do not write captures here.
+    // [--output <path>]
+    // Without --output the declarations go to stdout; redirect to a file under .temp/ at the repo
+    // root (see AGENTS.md); do not write captures here.
     public static int Main(string[] args)
     {
         if (args.Length == 0 || args[0] is "-h" or "--help")
         {
             Console.Error.WriteLine("Usage: Plato.ContextExport <folder> [--pretty] [--diagnostics] [--diagnostics-file <path>]");
             Console.Error.WriteLine("       [--compressed] [--tight-delimiters] [--no-compressed] [--no-tight-delimiters]");
-            Console.Error.WriteLine("       [--hierarchy] [--output <path>]   ASCII concept inherits forest (bound compilation)");
+            Console.Error.WriteLine("       [--output <path>]   write declarations to a file instead of stdout");
             return 1;
         }
 
-        var hierarchy = args.Contains("--hierarchy");
         var format = PlatoFormatOptions.FromArgs(args);
         var diagnostics = args.Contains("--diagnostics");
         var diagnosticsFile = GetOptionValue(args, "--diagnostics-file");
@@ -50,17 +48,15 @@ public static class Program
             return 1;
         }
 
-        if (hierarchy)
-            return ExportHierarchy(files, GetOptionValue(args, "--output"));
-
-        return ExportFlat(files, format, diagnostics, diagnosticsFile);
+        return ExportFlat(files, format, diagnostics, diagnosticsFile, GetOptionValue(args, "--output"));
     }
 
     static int ExportFlat(
         List<FilePath> files,
         PlatoFormatOptions format,
         bool diagnostics,
-        string? diagnosticsFile)
+        string? diagnosticsFile,
+        string? outputPath)
     {
         var declarations = new List<AstTypeDeclaration>();
         foreach (var file in files.OrderBy(f => f.ToString(), StringComparer.OrdinalIgnoreCase))
@@ -78,8 +74,15 @@ public static class Program
 
         var separator = format.Pretty ? "\n\n" : "\n";
         var output = string.Join(separator, lines);
-        if (output.Length > 0)
+        if (outputPath != null)
+        {
+            var utf8 = new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+            File.WriteAllText(outputPath, output, utf8);
+        }
+        else if (output.Length > 0)
+        {
             Console.Out.Write(output);
+        }
 
         if (diagnostics || diagnosticsFile != null)
         {
@@ -104,39 +107,6 @@ public static class Program
             }
         }
 
-        return 0;
-    }
-
-    static int ExportHierarchy(List<FilePath> files, string? outputPath)
-    {
-        var asts = new List<AstNode>();
-        foreach (var file in files.OrderBy(f => f.ToString(), StringComparer.OrdinalIgnoreCase))
-        {
-            var ast = ParseFile(file);
-            if (ast == null)
-                return 1;
-            asts.Add(ast);
-        }
-
-        var compilation = new Compilation(Ara3D.Logging.Logger.Null, asts);
-        if (!compilation.CompletedCompilation)
-        {
-            Console.Error.WriteLine("Compilation did not complete; cannot build concept hierarchy.");
-            foreach (var d in compilation.Diagnostics)
-                Console.Error.WriteLine(d);
-            return 1;
-        }
-
-        var text = ConceptHierarchy.FormatAscii(compilation);
-        if (outputPath != null)
-        {
-            var utf8 = new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-            System.IO.File.WriteAllText(outputPath, text, utf8);
-        }
-        else
-        {
-            Console.Out.Write(text);
-        }
         return 0;
     }
 

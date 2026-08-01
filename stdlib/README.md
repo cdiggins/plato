@@ -52,6 +52,11 @@ The library is separated into the following folders:
 3. `stdlib/graphics`
 4. `stdlib/future`
 
+[`docs/stdlib-index.txt`](../docs/stdlib-index.txt) is the generated index of every type and
+concept in the three shipped tiers — one compressed declaration per line, grouped by tier. Read
+it to see what exists; regenerate it with `tools/export-types-context.bat` after changing
+`stdlib/`.
+
 A folder may reference only itself and the folders before it; 
 
 - `future` may reach anything, nothing reaches into `future`. 

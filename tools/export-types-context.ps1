@@ -1,14 +1,18 @@
 <#
 .SYNOPSIS
-    Export types/concepts context and the concept hierarchy for agent review.
+    Export the compressed types/concepts index for agent context.
 
 .DESCRIPTION
-    Runs Plato.ContextExport twice:
-      1. Flat declaration dump of legacy/stdlib-legacy →
+    Runs Plato.ContextExport over:
+      1. The shipped stdlib/ tiers, one section per tier →
+         docs/stdlib-index.txt  (tracked)
+         The `future` tier is excluded: it is declared, not shipped.
+      2. Flat declaration dump of legacy/stdlib-legacy →
          docs/types-and-concepts-context.txt  (tracked)
          .temp/types-and-concepts-context-stats.txt  (gitignored)
-      2. ASCII concept inherits forest of stdlib/ →
-         docs/concept-hierarchy.txt  (tracked)
+
+    Re-run whenever stdlib/ changes; both outputs are tracked, so a stale
+    index shows up as an uncommitted diff.
 
 .EXAMPLE
     .\tools\export-types-context.ps1
@@ -21,10 +25,14 @@ $Project = Join-Path $PlatoRoot 'src\Plato.ContextExport\Plato.ContextExport.csp
 $LegacySource = Join-Path $PlatoRoot 'legacy\stdlib-legacy'
 $ForwardSource = Join-Path $PlatoRoot 'stdlib'
 $FlatOutput = Join-Path $PlatoRoot 'docs\types-and-concepts-context.txt'
-$HierarchyOutput = Join-Path $PlatoRoot 'docs\concept-hierarchy.txt'
+$IndexOutput = Join-Path $PlatoRoot 'docs\stdlib-index.txt'
 $StatsFile = Join-Path $PlatoRoot '.temp\types-and-concepts-context-stats.txt'
+$TempDir = Join-Path $PlatoRoot '.temp'
 
-New-Item -ItemType Directory -Force (Join-Path $PlatoRoot '.temp') | Out-Null
+# Shipped tiers, in dependency order. `future` is deliberately absent.
+$Tiers = @('foundation', 'geometry', 'graphics')
+
+New-Item -ItemType Directory -Force $TempDir | Out-Null
 New-Item -ItemType Directory -Force (Split-Path $FlatOutput) | Out-Null
 
 if (-not (Test-Path $LegacySource)) {
@@ -40,6 +48,27 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 $utf8 = New-Object System.Text.UTF8Encoding $false
 
+Write-Host "Exporting stdlib index (stdlib, excluding future)..."
+$indexLines = New-Object System.Collections.Generic.List[string]
+foreach ($tier in $Tiers) {
+    $tierSource = Join-Path $ForwardSource $tier
+    if (-not (Test-Path $tierSource)) {
+        Write-Error "Stdlib tier folder not found: $tierSource"
+    }
+
+    # Write via a temp file so PowerShell does not re-encode UTF-8 stdout from dotnet.
+    $tierTemp = Join-Path $TempDir "stdlib-index-$tier.txt"
+    & dotnet run --project $Project -c Release --no-build -- `
+        $tierSource `
+        --output $tierTemp
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+    $indexLines.Add("// ---- $tier ----")
+    $indexLines.AddRange([string[]][System.IO.File]::ReadAllLines($tierTemp))
+}
+[System.IO.File]::WriteAllLines($IndexOutput, $indexLines, $utf8)
+Write-Host "Wrote $IndexOutput"
+
 Write-Host "Exporting flat context (legacy/stdlib-legacy)..."
 $lines = & dotnet run --project $Project -c Release --no-build -- `
     $LegacySource `
@@ -47,17 +76,6 @@ $lines = & dotnet run --project $Project -c Release --no-build -- `
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 [System.IO.File]::WriteAllLines($FlatOutput, $lines, $utf8)
 Write-Host "Wrote $FlatOutput"
-
-Write-Host "Exporting concept hierarchy (stdlib)..."
-# Write via a temp file so PowerShell does not re-encode UTF-8 stdout from dotnet.
-$HierarchyTemp = Join-Path $PlatoRoot '.temp\concept-hierarchy-raw.txt'
-& dotnet run --project $Project -c Release --no-build -- `
-    $ForwardSource `
-    --hierarchy `
-    --output $HierarchyTemp
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-Copy-Item -Force $HierarchyTemp $HierarchyOutput
-Write-Host "Wrote $HierarchyOutput"
 
 if (Test-Path $StatsFile) {
     Write-Host "Stats: $StatsFile"

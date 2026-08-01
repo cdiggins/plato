@@ -40,7 +40,8 @@ shipping generation (drives `Plato.Generated` / Studio).
 
 In `stdlib/`, one file holds exactly one **kind** of declaration and at most twelve top-level
 declarations: `<stem>.plato` = types, `<stem>.concepts.plato` = concepts, `<stem>.library.plato` =
-exactly one `library` block. The folder is flat — no subfolders.
+exactly one `library` block. Files sit directly in the tier folders (`foundation`, `geometry`,
+`graphics`, `future`) described by [`stdlib/README.md`](../stdlib/README.md).
 
 | Path | Purpose |
 |------|---------|
@@ -51,9 +52,9 @@ exactly one `library` block. The folder is flat — no subfolders.
 | `legacy/stdlib-snapshot-2026-07-09/` | Frozen pre-refactor snapshot — reference only. |
 | `demos/plato-src/geometry.plato` | Curated demo subset for TS/Rust browsers (not the full stdlib). |
 | `src/Plato.CLI/` | Compiler entry point. |
-| `Plato.ContextExport/` | Compact export of types + concepts for agent context (`tools/export-types-context.bat`). `--hierarchy` emits an ASCII concept inherits forest. |
-| `docs/types-and-concepts-context.txt` | Generated stdlib-legacy context (types + concepts only); regen via `tools/export-types-context.bat`. |
-| `docs/concept-hierarchy.txt` | Generated forward-stdlib concept inherits forest (+ redundant inherits); same regen script. |
+| `Plato.ContextExport/` | Compact export of types + concepts for agent context (`tools/export-types-context.bat`). |
+| `docs/stdlib-index.txt` | Generated index of every type + concept in the shipped `stdlib/` tiers (`future` excluded), one compressed declaration per line, grouped by tier. Regen via `tools/export-types-context.bat` whenever `stdlib/` changes. |
+| `docs/types-and-concepts-context.txt` | Generated stdlib-legacy context (types + concepts only); same regen script. |
 | `writers/Plato.TypeScriptWriter/` | TypeScript backend (POC). |
 | `writers/Plato.RustWriter/` | Rust backend (POC). |
 | `writers/Plato.GlslWriter/` | GLSL ES 3.00 / WebGL2 backend (POC). |
@@ -155,8 +156,8 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- lint submodules\Pl
 
 :: Export full stdlib context for agents (tracked doc + gitignored stats)
 submodules\Plato\tools\export-types-context.bat
+::   -> submodules\Plato\docs\stdlib-index.txt
 ::   -> submodules\Plato\docs\types-and-concepts-context.txt
-::   -> submodules\Plato\docs\concept-hierarchy.txt
 ::   -> submodules\Plato\.temp\types-and-concepts-context-stats.txt
 ```
 

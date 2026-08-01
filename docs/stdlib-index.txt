@@ -1,0 +1,1075 @@
+// ---- foundation ----
+concept Normed{Magnitude(x:Self):Number;MagnitudeSquared(x:Self):Number;}
+concept MetricSpace{Distance(a:Self,b:Self):Number;}
+concept Lattice{Min(a:Self,b:Self):Self;Max(a:Self,b:Self):Self;}
+concept Clampable inherits Lattice{Clamp(x:Self,min:Self,max:Self):Self;}
+concept Difference<TDelta>where TDelta:Additive,TDelta:Scalable{Add(x:Self,delta:TDelta):Self;Between(a:Self,b:Self):TDelta;}
+concept OriginBased<TDelta>inherits Difference<TDelta>{Offset(x:Self):TDelta;FromOffset(_:Self,d:TDelta):Self;}
+concept NumericalLimits{One(x:Self):Self;MinValue(x:Self):Self;MaxValue(x:Self):Self;}
+concept Numerical inherits Value,Additive,Scalable,Interpolatable,NumericalLimits{}
+concept Real inherits Numerical,Comparable,Hashable,Arithmetic,Invertible{ToNumber(x:Self):Number;Sqrt(x:Self):Self;Floor(x:Self):Self;Ceiling(x:Self):Self;}
+concept Whole inherits Value,Comparable,Hashable,Arithmetic,Interpolatable,NumericalLimits{ToInteger(x:Self):Integer;}
+concept Additive{Add(a:Self,b:Self):Self;Subtract(a:Self,b:Self):Self;Negative(x:Self):Self;Zero(x:Self):Self;}
+concept Multiplicative{Multiply(a:Self,b:Self):Self;}
+concept Divisible{Divide(a:Self,b:Self):Self;}
+concept Modular{Modulo(a:Self,b:Self):Self;}
+concept Invertible{Inverse(x:Self):Self;}
+concept Arithmetic inherits Additive,Multiplicative,Divisible,Modular{}
+concept Scalable{Multiply(x:Self,scalar:Number):Self;Divide(x:Self,scalar:Number):Self;Modulo(x:Self,scalar:Number):Self;}
+concept Interpolatable{Lerp(a:Self,b:Self,t:Number):Self;}
+type Axis3D{}
+type Axis2D{}
+type SignedAxis3D{}
+concept Sliceable inherits Countable{Slice(x:Self,from:Integer,exclusiveTo:Integer):Self;}
+concept Concatenable{Concat(a:Self,b:Self):Self;}
+concept SetLike<T>{Contains(x:Self,item:T):Boolean;}
+concept MapLike<TKey,TValue>inherits Countable{ContainsKey(x:Self,key:TKey):Boolean;ValueAt(x:Self,key:TKey):TValue;}
+concept StackLike<T>inherits Countable{Peek(x:Self):T;Push(x:Self,item:T):Self;Pop(x:Self):Self;}
+concept QueueLike<T>inherits Countable{Front(x:Self):T;Enqueue(x:Self,item:T):Self;Dequeue(x:Self):Self;}
+concept Countable{Count(x:Self):Integer;}
+concept Index{Value(x:Self):Integer;}
+concept Indexable<T>inherits Countable{At(x:Self,index:Integer):T;}
+concept Indexable2D<T>inherits Indexable<T>{ColumnCount(x:Self):Integer;RowCount(x:Self):Integer;At(x:Self,column:Integer,row:Integer):T;}
+concept Indexable3D<T>inherits Indexable<T>{ColumnCount(x:Self):Integer;RowCount(x:Self):Integer;LayerCount(x:Self):Integer;At(x:Self,column:Integer,row:Integer,layer:Integer):T;}
+concept Jagged<T>{Offsets(x:Self):Array<Integer>;Values(x:Self):Array<T>;}
+type JaggedArray<T>implements Value,Jagged<T>{Offsets:Array<Integer>;Values:Array<T>;}
+type Color implements Numerical{R:Number;G:Number;B:Number;A:Number;}
+type Color8 implements Value,Hashable{R:Integer;G:Integer;B:Integer;A:Integer;}
+type ColorHSV implements Value{Hue:Angle;Saturation:Number;Value:Number;}
+type ColorHSL implements Value{Hue:Angle;Saturation:Number;Lightness:Number;}
+type ColorStop implements Value{Position:Number;Color:Color;}
+type ColorGradient implements Value{Stops:Array<ColorStop>;}
+concept Equatable{Equals(a:Self,b:Self):Boolean;NotEquals(a:Self,b:Self):Boolean;}
+concept Value inherits Equatable{}
+concept Hashable inherits Equatable{Hash(x:Self):Integer;}
+concept Orderable inherits Equatable{LessThanOrEquals(a:Self,b:Self):Boolean;}
+concept Comparable inherits Orderable{Compare(a:Self,b:Self):Integer;}
+concept Logical{And(a:Self,b:Self):Self;Or(a:Self,b:Self):Self;Not(x:Self):Self;}
+concept BooleanAlgebra inherits Logical{ExclusiveOr(a:Self,b:Self):Self;}
+concept Bitwise{BitwiseAnd(a:Self,b:Self):Self;BitwiseOr(a:Self,b:Self):Self;BitwiseXor(a:Self,b:Self):Self;BitwiseNot(x:Self):Self;ShiftLeft(x:Self,bits:Integer):Self;ShiftRight(x:Self,bits:Integer):Self;}
+concept Procedural<TDomain,TRange>{Eval(x:Self,input:TDomain):TRange;}
+concept Bijective<TDomain,TRange>inherits Procedural<TDomain,TRange>{EvalInverse(x:Self,output:TRange):TDomain;}
+concept Periodic<TPeriod>where TPeriod:Additive,TPeriod:Modular{Period(x:Self):TPeriod;}
+concept ParameterDomain{Domain(x:Self):NumberInterval;}
+type GraphPath implements Value{VertexIndices:Array<GraphVertexIndex>;TotalWeight:Number;}
+type ShortestPathTree implements Value{SourceIndex:GraphVertexIndex;ParentIndices:Array<GraphVertexIndex>;Distances:Array<Number>;}
+type SpanningTree implements Value{ParentIndices:Array<GraphVertexIndex>;RootIndex:GraphVertexIndex;}
+type ConnectedComponents implements Value{ComponentLabels:Array<Integer>;ComponentCount:Integer;}
+type TopologicalOrder implements Value{OrderedVertexIndices:Array<GraphVertexIndex>;IsValid:Boolean;}
+type GraphColoring implements Value{VertexColors:Array<Integer>;ColorCount:Integer;}
+type GraphPartition implements Value{PartLabels:Array<Integer>;PartCount:Integer;CutEdgeCount:Integer;}
+type FlowNetwork implements Value{VertexCount:Integer;Edges:Array<WeightedEdge>;SourceIndex:GraphVertexIndex;SinkIndex:GraphVertexIndex;}
+type MaxFlowResult implements Value{TotalFlow:Number;EdgeFlows:Array<Number>;SourceSideVertices:Array<Boolean>;}
+type BipartiteMatching implements Value{LeftVertexCount:Integer;RightVertexCount:Integer;MatchedRightIndices:Array<GraphVertexIndex>;}
+type GraphLayout{}
+type LayoutedGraph{Graph:Graph;Positions:Array<Point2D>;}
+concept GraphLike inherits Value{VertexCount(x:Self):Integer;EdgeCount(x:Self):Integer;IsDirected(x:Self):Boolean;}
+type GraphVertexIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type GraphEdge implements Value,Hashable{Source:GraphVertexIndex;Target:GraphVertexIndex;}
+type Graph implements GraphLike{VertexCount:Integer;Edges:Array<GraphEdge>;Directed:Boolean;}
+type WeightedEdge implements Value{Source:GraphVertexIndex;Target:GraphVertexIndex;Weight:Number;}
+type WeightedGraph implements GraphLike{VertexCount:Integer;Edges:Array<WeightedEdge>;Directed:Boolean;}
+type AdjacencyMatrix implements Value{VertexCount:Integer;Weights:Array<Number>;}
+type AdjacencyStructure implements Value{VertexCount:Integer;NeighborOffsets:Array<Integer>;NeighborIndices:Array<GraphVertexIndex>;}
+type Hypergraph implements Value{VertexCount:Integer;HyperedgeOffsets:Array<Integer>;HyperedgeVertices:Array<GraphVertexIndex>;}
+concept IntervalLike<T>where T:Additive,T:Interpolatable,T:Comparable inherits Value{Start(x:Self):T;End(x:Self):T;}
+concept BoundsLike<TPoint,TDelta>where TPoint:Difference<TDelta>inherits Value{Min(x:Self):TPoint;Max(x:Self):TPoint;}
+type Bounds2D implements BoundsLike<Point2D,Vector2D>{Min:Point2D;Max:Point2D;}
+type Bounds3D implements BoundsLike<Point3D,Vector3D>{Min:Point3D;Max:Point3D;}
+type IntegerBounds2D implements Value{Min:IntegerVector2;Max:IntegerVector2;}
+type IntegerBounds3D implements Value{Min:IntegerVector3;Max:IntegerVector3;}
+type Rect2D implements Value{Center:Point2D;Size:Size2D;}
+type Size2D implements Value{Width:Number;Height:Number;}
+type Size3D implements Value{Width:Number;Height:Number;Depth:Number;}
+type IntegerSize2D implements Value,Hashable{Width:Integer;Height:Integer;}
+type IntegerSize3D implements Value,Hashable{Width:Integer;Height:Integer;Depth:Integer;}
+type NumberInterval implements IntervalLike<Number>{Start:Number;End:Number;}
+type AngleInterval implements IntervalLike<Angle>{Start:Angle;End:Angle;}
+type LengthInterval implements IntervalLike<Length>{Start:Length;End:Length;}
+type IntegerInterval implements IntervalLike<Integer>{Start:Integer;End:Integer;}
+type SparseMatrixEntry implements Value{Row:Integer;Column:Integer;Value:Number;}
+type SparseMatrix implements Value{NumRows:Integer;NumColumns:Integer;Entries:Array<SparseMatrixEntry>;}
+type BandedMatrix implements Value{NumRows:Integer;NumColumns:Integer;LowerBandwidth:Integer;UpperBandwidth:Integer;Values:Array<Number>;}
+concept MatrixLike inherits Value,Additive,Scalable{RowCount(x:Self):Integer;ColumnCount(x:Self):Integer;ElementAt(x:Self,row:Integer,column:Integer):Number;}
+type Matrix2x2 implements MatrixLike,Multiplicative{Row1:Number2;Row2:Number2;}
+type Matrix3x3 implements MatrixLike,Multiplicative{Row1:Number3;Row2:Number3;Row3:Number3;}
+type Matrix4x4 implements MatrixLike,Multiplicative{Row1:Number4;Row2:Number4;Row3:Number4;Row4:Number4;}
+type Matrix3x2 implements MatrixLike{Row1:Number2;Row2:Number2;Row3:Number2;}
+type Matrix4x3 implements MatrixLike{Row1:Number3;Row2:Number3;Row3:Number3;Row4:Number3;}
+type SymmetricMatrix3x3 implements Value{M11:Number;M12:Number;M13:Number;M22:Number;M23:Number;M33:Number;}
+type MatrixN implements MatrixLike{NumRows:Integer;NumColumns:Integer;Components:Array<Number>;}
+type Tensor implements Value{Extents:Array<Integer>;Components:Array<Number>;}
+type DualNumber implements Numerical{Value:Number;Derivative:Number;}
+type Complex implements Numerical{Real:Number;Imaginary:Number;}
+type Rational implements Value,Comparable{Numerator:Integer;Denominator:Integer;}
+type Proportion implements Numerical,Comparable{Value:Number;}
+type Percent implements Numerical,Comparable{Value:Number;}
+type Probability implements Numerical,Comparable{Value:Number;}
+type ItemIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type Cardinal implements Value,Comparable{Value:Integer;}
+type ComparisonTolerance implements Value{Absolute:Number;Relative:Number;}
+type PolarCoordinate implements Value{Radius:Number;Angle:Angle;}
+type CylindricalCoordinate implements Value{Radius:Number;Azimuth:Angle;Height:Number;}
+type SphericalCoordinate implements Value{Radius:Number;Azimuth:Angle;Inclination:Angle;}
+type GeoCoordinate implements Value{Latitude:Angle;Longitude:Angle;Altitude:Length;}
+type BarycentricCoordinate implements Value{U:Number;V:Number;W:Number;}
+type UvCoordinate implements Coordinate,OriginBased<Vector2D>{U:Number;V:Number;}
+type UvwCoordinate implements Coordinate,OriginBased<Vector3D>{U:Number;V:Number;W:Number;}
+concept Coordinate inherits Value,Equatable,Interpolatable{}
+type Point2D implements Coordinate,OriginBased<Vector2D>,Hashable,MetricSpace{X:Number;Y:Number;}
+type Point3D implements Coordinate,OriginBased<Vector3D>,Hashable,MetricSpace{X:Number;Y:Number;Z:Number;}
+type PointN implements Coordinate,OriginBased<VectorN>,MetricSpace{Components:Array<Number>;}
+type HomogeneousPoint2D implements Value{X:Number;Y:Number;W:Number;}
+type HomogeneousPoint3D implements Value{X:Number;Y:Number;Z:Number;W:Number;}
+type PiecewisePolynomial implements Value{Breakpoints:Array<Number>;Pieces:Array<Polynomial>;}
+type PadeApproximant implements Value{Center:Number;Numerator:Polynomial;Denominator:Polynomial;}
+type SturmChain implements Value{Polynomials:Array<Polynomial>;}
+type PowerSeries implements Value{Center:Number;Coefficients:Array<Number>;}
+type ChebyshevSeries implements Value{Interval:NumberInterval;Coefficients:Array<Number>;}
+type LegendreSeries implements Value{Coefficients:Array<Number>;}
+type HermiteSeries implements Value{Coefficients:Array<Number>;}
+type BernsteinPolynomial implements Value{Coefficients:Array<Number>;}
+type BivariatePolynomial implements Value{Coefficients:Array2D<Number>;}
+type FourierSeries implements Value{Fundamental:Frequency;CosineCoefficients:Array<Number>;SineCoefficients:Array<Number>;}
+type Polynomial implements Value{Coefficients:Array<Number>;}
+type Monomial implements Value{Coefficient:Number;Power:Integer;}
+type SparsePolynomial implements Value{Powers:Array<Integer>;Coefficients:Array<Number>;}
+type QuadraticPolynomial implements Value{A:Number;B:Number;C:Number;}
+type CubicPolynomial implements Value{A:Number;B:Number;C:Number;D:Number;}
+type QuarticPolynomial implements Value{A:Number;B:Number;C:Number;D:Number;E:Number;}
+type PolynomialRoots implements Value{RealRoots:Array<Number>;ComplexRoots:Array<Complex>;}
+type RationalFunction implements Value{Numerator:Polynomial;Denominator:Polynomial;}
+type Array2D<T>implements Indexable2D<T>{Elements:Array<T>;ColumnCount:Integer;RowCount:Integer;}
+type Array3D<T>implements Indexable3D<T>{Elements:Array<T>;ColumnCount:Integer;RowCount:Integer;LayerCount:Integer;}
+type Tuple2<T0,T1>{X0:T0;X1:T1;}
+type Tuple3<T0,T1,T2>{X0:T0;X1:T1;X2:T2;}
+type Tuple4<T0,T1,T2,T3>{X0:T0;X1:T1;X2:T2;X3:T3;}
+type Tuple5<T0,T1,T2,T3,T4>{X0:T0;X1:T1;X2:T2;X3:T3;X4:T4;}
+type Tuple6<T0,T1,T2,T3,T4,T5>{X0:T0;X1:T1;X2:T2;X3:T3;X4:T4;X5:T5;}
+type Tuple7<T0,T1,T2,T3,T4,T5,T6>{X0:T0;X1:T1;X2:T2;X3:T3;X4:T4;X5:T5;X6:T6;}
+type Tuple8<T0,T1,T2,T3,T4,T5,T6,T7>{X0:T0;X1:T1;X2:T2;X3:T3;X4:T4;X5:T5;X6:T6;X7:T7;}
+type Tuple9<T0,T1,T2,T3,T4,T5,T6,T7,T8>{X0:T0;X1:T1;X2:T2;X3:T3;X4:T4;X5:T5;X6:T6;X7:T7;X8:T8;}
+type Tuple10<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9>{X0:T0;X1:T1;X2:T2;X3:T3;X4:T4;X5:T5;X6:T6;X7:T7;X8:T8;X9:T9;}
+type Number implements Real{}
+type Integer implements Whole,Bitwise{}
+type Boolean implements Value,Orderable,Logical{}
+type Character implements Value,Orderable{}
+type String implements Value,Orderable,Countable{}
+type Type{}
+type Array<T>implements Indexable<T>{}
+type List<T>{}
+type Buffer<T>{}
+type Function0<TR>{}
+type Function1<T0,TR>{}
+type Function2<T0,T1,TR>{}
+type Function3<T0,T1,T2,TR>{}
+type Function4<T0,T1,T2,T3,TR>{}
+type Function5<T0,T1,T2,T3,T4,TR>{}
+type Function6<T0,T1,T2,T3,T4,T5,TR>{}
+type Function7<T0,T1,T2,T3,T4,T5,T6,TR>{}
+type Function8<T0,T1,T2,T3,T4,T5,T6,T7,TR>{}
+type Function9<T0,T1,T2,T3,T4,T5,T6,T7,T8,TR>{}
+type Dimension{LengthPower:Integer;MassPower:Integer;TimePower:Integer;CurrentPower:Integer;TemperaturePower:Integer;AmountPower:Integer;LuminosityPower:Integer;}
+type UnitOfMeasure{Name:String;Symbol:String;Dimension:Dimension;ScaleToSI:Number;OffsetToSI:Number;}
+type DynamicQuantity{Amount:Number;Unit:UnitOfMeasure;}
+type ElectricCurrent implements Quantity{Amperes:Number;}
+type ElectricCharge implements Quantity{Coulombs:Number;}
+type Voltage implements Quantity{Volts:Number;}
+type Resistance implements Quantity{Ohms:Number;}
+type Capacitance implements Quantity{Farads:Number;}
+type Inductance implements Quantity{Henries:Number;}
+type Angle implements Quantity{Radians:Number;}
+type SolidAngle implements Quantity{Steradians:Number;}
+type Length implements Quantity{Meters:Number;}
+type Area implements Quantity{SquareMeters:Number;}
+type Volume implements Quantity{CubicMeters:Number;}
+type WaveNumber implements Quantity{CyclesPerMeter:Number;}
+type Curvature implements Quantity{PerMeter:Number;}
+type Speed implements Quantity{MetersPerSecond:Number;}
+type Acceleration implements Quantity{MetersPerSecondSquared:Number;}
+type Jerk implements Quantity{MetersPerSecondCubed:Number;}
+type AngularVelocity implements Quantity{RadiansPerSecond:Number;}
+type AngularAcceleration implements Quantity{RadiansPerSecondSquared:Number;}
+type Frequency implements Quantity{Hertz:Number;}
+type Pressure implements Quantity{Pascals:Number;}
+type Stiffness implements Quantity{NewtonsPerMeter:Number;}
+type DampingCoefficient implements Quantity{NewtonSecondsPerMeter:Number;}
+type DynamicViscosity implements Quantity{PascalSeconds:Number;}
+type KinematicViscosity implements Quantity{SquareMetersPerSecond:Number;}
+type MassFlowRate implements Quantity{KilogramsPerSecond:Number;}
+type VolumetricFlowRate implements Quantity{CubicMetersPerSecond:Number;}
+type Strain implements Quantity{Ratio:Number;}
+type Mass implements Quantity{Kilograms:Number;}
+type Density implements Quantity{KilogramsPerCubicMeter:Number;}
+type ArealDensity implements Quantity{KilogramsPerSquareMeter:Number;}
+type LinearDensity implements Quantity{KilogramsPerMeter:Number;}
+type Force implements Quantity{Newtons:Number;}
+type Torque implements Quantity{NewtonMeters:Number;}
+type Impulse implements Quantity{NewtonSeconds:Number;}
+type Momentum implements Quantity{KilogramMetersPerSecond:Number;}
+type AngularMomentum implements Quantity{KilogramSquareMetersPerSecond:Number;}
+type MomentOfInertia implements Quantity{KilogramSquareMeters:Number;}
+type Energy implements Quantity{Joules:Number;}
+type Power implements Quantity{Watts:Number;}
+type LuminousIntensity implements Quantity{Candelas:Number;}
+type LuminousFlux implements Quantity{Lumens:Number;}
+type Illuminance implements Quantity{Lux:Number;}
+type Luminance implements Quantity{CandelasPerSquareMeter:Number;}
+type Irradiance implements Quantity{WattsPerSquareMeter:Number;}
+type Temperature implements Quantity{Kelvin:Number;}
+type TemperatureDelta implements Quantity{Kelvin:Number;}
+type HeatCapacity implements Quantity{JoulesPerKelvin:Number;}
+type ThermalConductivity implements Quantity{WattsPerMeterKelvin:Number;}
+type AmountOfSubstance implements Quantity{Moles:Number;}
+concept Quantity inherits Value,Comparable,Hashable,Additive,Scalable,Interpolatable{Amount(x:Self):Number;FromAmount(_:Self,x:Number):Self;}
+type GammaDistribution implements ProbabilityDistribution{Shape:Number;Scale:Number;}
+type BetaDistribution implements ProbabilityDistribution{Alpha:Number;Beta:Number;}
+type ChiSquaredDistribution implements ProbabilityDistribution{DegreesOfFreedom:Number;}
+type StudentTDistribution implements ProbabilityDistribution{DegreesOfFreedom:Number;}
+type UniformDistribution implements ProbabilityDistribution{Min:Number;Max:Number;}
+type NormalDistribution implements ProbabilityDistribution{Mean:Number;StandardDeviation:Number;}
+type LogNormalDistribution implements ProbabilityDistribution{LogMean:Number;LogStandardDeviation:Number;}
+type ExponentialDistribution implements ProbabilityDistribution{Rate:Number;}
+type CauchyDistribution implements ProbabilityDistribution{Location:Number;Scale:Number;}
+type LaplaceDistribution implements ProbabilityDistribution{Location:Number;Scale:Number;}
+type WeibullDistribution implements ProbabilityDistribution{Shape:Number;Scale:Number;}
+type ParetoDistribution implements ProbabilityDistribution{MinimumValue:Number;Shape:Number;}
+type TriangularDistribution implements ProbabilityDistribution{Min:Number;Mode:Number;Max:Number;}
+type VonMisesDistribution implements ProbabilityDistribution{MeanDirection:Angle;Concentration:Number;}
+type BernoulliDistribution implements ProbabilityDistribution{SuccessProbability:Probability;}
+type BinomialDistribution implements ProbabilityDistribution{TrialCount:Integer;SuccessProbability:Probability;}
+type GeometricDistribution implements ProbabilityDistribution{SuccessProbability:Probability;}
+type PoissonDistribution implements ProbabilityDistribution{Rate:Number;}
+type DiscreteDistribution implements ProbabilityDistribution{Weights:Array<Number>;}
+type NormalDistribution2D implements Value{Mean:Vector2D;Covariance:Covariance2D;}
+type NormalDistribution3D implements Value{Mean:Vector3D;Covariance:Covariance3D;}
+concept ProbabilityDistribution inherits Value{Mean(x:Self):Number;Variance(x:Self):Number;Pdf(x:Self,value:Number):Number;Cdf(x:Self,value:Number):Number;}
+type RandomState implements Value,Hashable{State:Integer;Stream:Integer;}
+type Quaternion implements Value,Multiplicative,Interpolatable{X:Number;Y:Number;Z:Number;W:Number;}
+type AxisAngle implements Value{Axis:Direction3D;Angle:Angle;}
+type RotationOrder{}
+type EulerAngles implements Value{Yaw:Angle;Pitch:Angle;Roll:Angle;Order:RotationOrder;}
+type Rotation2D implements Value,Multiplicative,Interpolatable{Angle:Angle;}
+type Bivector2D implements Value{XY:Number;}
+type Bivector3D implements Value{YZ:Number;ZX:Number;XY:Number;}
+type Rotor2D implements Value,Multiplicative{Scalar:Number;XY:Number;}
+type Rotor3D implements Value,Multiplicative{Scalar:Number;Bivector:Bivector3D;}
+type Covariance2D implements Value{Xx:Number;Xy:Number;Yy:Number;}
+type Covariance3D implements Value{Matrix:SymmetricMatrix3x3;}
+type CorrelationStatistic{}
+type CorrelationCoefficient implements Value{Statistic:CorrelationStatistic;Value:Number;SampleCount:Integer;}
+type LinearFit implements Value{Slope:Number;Intercept:Number;RSquared:Number;}
+type PolynomialFit implements Value{Coefficients:Array<Number>;RSquared:Number;}
+type SummaryStatistics implements Value{Count:Integer;Sum:Number;Mean:Number;Variance:Number;StandardDeviation:Number;Minimum:Number;Maximum:Number;Skewness:Number;Kurtosis:Number;}
+type RunningStatistics implements Value{Count:Integer;Mean:Number;M2:Number;}
+type WeightedValue<T>{Value:T;Weight:Number;}
+type Histogram implements Value{Range:NumberInterval;Counts:Array<Integer>;}
+type Histogram2D implements Value{RangeX:NumberInterval;RangeY:NumberInterval;Counts:Array2D<Integer>;}
+type Quantiles implements Value{Levels:Array<Probability>;Values:Array<Number>;}
+type FiveNumberSummary implements Value{Minimum:Number;LowerQuartile:Number;Median:Number;UpperQuartile:Number;Maximum:Number;}
+type BoxPlotStatistics implements Value{Summary:FiveNumberSummary;LowerWhisker:Number;UpperWhisker:Number;Outliers:Array<Number>;}
+type MovingAverage{}
+type OutlierDetection{}
+type Duration implements Quantity{Seconds:Number;}
+type Instant implements Value,Comparable,OriginBased<Duration>{SecondsSinceEpoch:Number;}
+type TimeInterval implements Value{Start:Instant;End:Instant;}
+type FrameRate{FramesPerSecond:Number;}
+type FrameTime implements Value,Comparable{Frame:Integer;Rate:FrameRate;}
+type Timecode{Hours:Integer;Minutes:Integer;Seconds:Integer;Frames:Integer;Rate:FrameRate;}
+type Tempo{BeatsPerMinute:Number;}
+type BeatTime implements Value,Comparable{Beats:Number;}
+type AffineTransform2D implements Value{Matrix:Matrix3x2;}
+type AffineTransform3D implements Value{Matrix:Matrix4x3;}
+type ProjectiveTransform2D implements Value{Matrix:Matrix3x3;}
+type ProjectiveTransform3D implements Value{Matrix:Matrix4x4;}
+type Frame2D implements Value{Origin:Point2D;XAxis:Direction2D;YAxis:Direction2D;}
+type Frame3D implements Value{Origin:Point3D;XAxis:Direction3D;YAxis:Direction3D;ZAxis:Direction3D;}
+type Basis3D implements Value{X:Vector3D;Y:Vector3D;Z:Vector3D;}
+type Motor3D implements Value,Multiplicative{Real:Quaternion;Dual:Quaternion;}
+type Pose2D implements Value,Interpolatable{Position:Point2D;Rotation:Rotation2D;}
+type Pose3D implements Value,Interpolatable{Position:Point3D;Orientation:Quaternion;}
+type Transform2D implements Value{Translation:Vector2D;Rotation:Rotation2D;Scale:Number2;}
+type Transform3D implements Value{Translation:Vector3D;Rotation:Quaternion;Scale:Number3;}
+concept Transformable<TTransform>{Transform(x:Self,transform:TTransform):Self;}
+concept Deformable2D{Deform(x:Self,mapping:Function1<Point2D,Point2D>):Self;}
+concept Deformable3D{Deform(x:Self,mapping:Function1<Point3D,Point3D>):Self;}
+type Vector2D implements Vector{X:Number;Y:Number;}
+type Vector3D implements Vector{X:Number;Y:Number;Z:Number;}
+type VectorN implements Vector{Components:Array<Number>;}
+type Direction2D implements Value{Vector:Vector2D;}
+type Direction3D implements Value{Vector:Vector3D;}
+type IntegerVector2 implements Value,Hashable{X:Integer;Y:Integer;}
+type IntegerVector3 implements Value,Hashable{X:Integer;Y:Integer;Z:Integer;}
+type IntegerVector4 implements Value,Hashable{X:Integer;Y:Integer;Z:Integer;W:Integer;}
+type Number2 implements Vector{X:Number;Y:Number;}
+type Number3 implements Vector{X:Number;Y:Number;Z:Number;}
+type Number4 implements Vector{X:Number;Y:Number;Z:Number;W:Number;}
+type Number8 implements Vector{X0:Number;X1:Number;X2:Number;X3:Number;X4:Number;X5:Number;X6:Number;X7:Number;}
+concept Vector inherits Numerical,Arithmetic,Indexable<Number>,Normed,Lattice,Hashable{Dot(a:Self,b:Self):Number;FromComponents(_:Self,xs:Array<Number>):Self;Broadcast(self:Self,x:Number):Self;}
+// ---- geometry ----
+concept BoundaryRepresentation inherits Solid{}
+type EdgeOrientation{}
+type BrepEdgeUse implements Value{Edge:UndirectedEdgeIndex;Orientation:EdgeOrientation;}
+type BrepCurve{}
+type BrepEdge implements Value{Start:VertexIndex;End:VertexIndex;Curve:BrepCurve;}
+type BrepLoop implements Value{Uses:Array<BrepEdgeUse>;}
+type BrepSurface{}
+type BrepFace implements Value{Surface:BrepSurface;Loops:Array<BrepLoop>;}
+type Brep3D implements BoundaryRepresentation,Deformable3D{Vertices:Array<Point3D>;Edges:Array<BrepEdge>;Faces:Array<BrepFace>;}
+type BrepValidation implements Value{EdgesInRange:Boolean;LoopUsesInRange:Boolean;LoopsConnected:Boolean;CurveEndpointsMatch:Boolean;Watertight:Boolean;}
+type CircularArc2D implements Curve2D{Center:Point2D;Radius:Number;Angles:AngleInterval;}
+type EllipticalArc2D implements Curve2D{Center:Point2D;Radii:Number2;Rotation:Angle;Angles:AngleInterval;}
+type Parabola2D implements Curve2D{Coefficient:Number;Domain:NumberInterval;}
+type Catenary2D implements Curve2D{Scale:Number;Domain:NumberInterval;}
+type SineCurve2D implements Curve2D{Amplitude:Number;Wavelength:Number;Phase:Angle;Domain:NumberInterval;}
+type QuadraticBezier2D implements Curve2D{P0:Point2D;P1:Point2D;P2:Point2D;}
+type CubicBezier2D implements Curve2D{P0:Point2D;P1:Point2D;P2:Point2D;P3:Point2D;}
+type RoseCurve2D implements PolarCurve2D{Radius:Number;PetalFrequency:Number;}
+type Cardioid2D implements ClosedCurve2D{Radius:Number;}
+type Limacon2D implements ClosedCurve2D{Offset:Number;Amplitude:Number;}
+type Lemniscate2D implements ClosedCurve2D{Scale:Number;}
+type Lissajous2D implements Curve2D{XAmplitude:Number;YAmplitude:Number;XFrequency:Number;YFrequency:Number;Phase:Angle;}
+type Superformula2D implements PolarCurve2D{Symmetry:Number;Exponent1:Number;Exponent2:Number;Exponent3:Number;XRadius:Number;YRadius:Number;}
+type CycloidOfCeva2D implements PolarCurve2D{Scale:Number;}
+type TschirnhausenCubic2D implements PolarCurve2D{Scale:Number;}
+type ConchoidOfDeSluze2D implements PolarCurve2D{Scale:Number;}
+type SinusoidalSpiral2D implements PolarCurve2D{Scale:Number;Exponent:Number;}
+type TrisectrixOfMaclaurin2D implements PolarCurve2D{Scale:Number;}
+type ButterflyCurve2D implements ClosedCurve2D{Scale:Number;}
+type ArchimedeanSpiral2D implements PolarCurve2D{StartRadius:Number;GrowthRate:Number;Angles:AngleInterval;}
+type LogarithmicSpiral2D implements PolarCurve2D{StartRadius:Number;GrowthRate:Number;Angles:AngleInterval;}
+type FermatSpiral2D implements PolarCurve2D{Scale:Number;Angles:AngleInterval;}
+type Clothoid2D implements Curve2D,ArcLengthParameterized<Point2D>{Flatness:Number;Domain:NumberInterval;}
+type CircleInvolute2D implements Curve2D{Radius:Number;Angles:AngleInterval;}
+type Cycloid2D implements Curve2D{Radius:Number;Angles:AngleInterval;}
+type Epicycloid2D implements Curve2D{FixedRadius:Number;RollingRadius:Number;}
+type Hypocycloid2D implements Curve2D{FixedRadius:Number;RollingRadius:Number;}
+type Epitrochoid2D implements Curve2D{FixedRadius:Number;RollingRadius:Number;PoleDistance:Number;}
+type Hypotrochoid2D implements Curve2D{FixedRadius:Number;RollingRadius:Number;PoleDistance:Number;}
+type CircularArc3D implements PlanarCurve3D{Frame:Frame3D;Radius:Number;Angles:AngleInterval;}
+type EllipticalArc3D implements PlanarCurve3D{Frame:Frame3D;Radii:Number2;Angles:AngleInterval;}
+type QuadraticBezier3D implements Curve3D{P0:Point3D;P1:Point3D;P2:Point3D;}
+type CubicBezier3D implements Curve3D{P0:Point3D;P1:Point3D;P2:Point3D;P3:Point3D;}
+type Helix implements Curve3D{Frame:Frame3D;Radius:Number;Pitch:Number;Angles:AngleInterval;}
+type ConicalSpiral3D implements Curve3D{Frame:Frame3D;Radii:NumberInterval;Height:Number;Angles:AngleInterval;}
+type SphericalSpiral3D implements Curve3D{Frame:Frame3D;Radius:Number;TurnCount:Number;}
+type TorusKnot implements ClosedCurve3D{Frame:Frame3D;AxisWindings:Integer;TubeWindings:Integer;MajorRadius:Number;MinorRadius:Number;}
+type TrefoilKnot implements ClosedCurve3D{Frame:Frame3D;Scale:Number;}
+type FigureEightKnot implements ClosedCurve3D{Frame:Frame3D;Scale:Number;}
+type VivianiCurve implements ClosedCurve3D{Frame:Frame3D;Radius:Number;}
+concept PeriodicCurve<TRange>inherits Periodic<Number>,Curve<TRange>{}
+concept DifferentiableCurve2D inherits Curve2D{TangentAt(x:Self,t:Number):Vector2D;CurvatureAt(x:Self,t:Number):Number;}
+concept DifferentiableCurve3D inherits Curve3D{TangentAt(x:Self,t:Number):Vector3D;CurvatureAt(x:Self,t:Number):Number;TorsionAt(x:Self,t:Number):Number;}
+concept FramedCurve3D inherits DifferentiableCurve3D{FrameAt(x:Self,t:Number):Frame3D;}
+concept PlanarCurve3D inherits Curve3D{CurvePlane(x:Self):Plane;}
+concept PolarCurve2D inherits Curve2D{RadiusAt(x:Self,angle:Angle):Number;}
+concept ArcLengthParameterized<TPoint>{ArcLength(x:Self):Number;PointAtLength(x:Self,length:Number):TPoint;ParameterAtLength(x:Self,length:Number):Number;}
+concept Curve<TRange>inherits Procedural<Number,TRange>{}
+concept Curve1D inherits Curve<Number>{}
+concept Curve2D inherits Geometry2D,Curve<Point2D>{}
+concept Curve3D inherits Geometry3D,Curve<Point3D>{}
+concept ClosedCurve2D inherits Curve2D{}
+concept ClosedCurve3D inherits Curve3D{}
+concept AngularCurve2D inherits Curve2D{Eval(x:Self,angle:Angle):Point2D;}
+concept AngularCurve3D inherits Curve3D{Eval(x:Self,angle:Angle):Point3D;}
+concept Deformation2D inherits Procedural<Point2D,Point2D>{}
+concept Deformation3D inherits Procedural<Point3D,Point3D>{}
+type Twist3D implements Value,Deformation3D{Origin:Point3D;Axis:Direction3D;AnglePerUnit:Angle;}
+type Bend3D implements Value,Deformation3D{Origin:Point3D;Axis:Direction3D;Direction:Direction3D;Curvature:Number;}
+type Taper3D implements Value,Deformation3D{Origin:Point3D;Axis:Direction3D;Rate:Number;}
+type Shear3D implements Value,Deformation3D{Origin:Point3D;Axis:Direction3D;Rate:Vector3D;}
+type Spherify3D implements Value,Deformation3D{Center:Point3D;Radius:Number;Strength:Number;}
+type Shear2D implements Value,Deformation2D{Origin:Point2D;Axis:Direction2D;Rate:Vector2D;}
+type Taper2D implements Value,Deformation2D{Origin:Point2D;Axis:Direction2D;Rate:Number;}
+type Twist2D implements Value,Deformation2D{Origin:Point2D;AnglePerUnit:Angle;}
+type MappingDeformation2D implements Value,Deformation2D{Mapping:Function1<Point2D,Point2D>;}
+type MappingDeformation3D implements Value,Deformation3D{Mapping:Function1<Point3D,Point3D>;}
+type FrenetFrame2D implements Value{Position:Point2D;Tangent:Direction2D;Normal:Direction2D;Curvature:Number;}
+type FrenetFrame3D implements Value{Position:Point3D;Tangent:Direction3D;Normal:Direction3D;Binormal:Direction3D;Curvature:Number;Torsion:Number;}
+type RotationMinimizingFrame3D implements Value{Position:Point3D;Tangent:Direction3D;Normal:Direction3D;Binormal:Direction3D;Parameter:Number;}
+type DarbouxFrame3D implements Value{Position:Point3D;Tangent:Direction3D;SurfaceNormal:Direction3D;TangentNormal:Direction3D;NormalCurvature:Number;GeodesicCurvature:Number;GeodesicTorsion:Number;}
+type CurveJet2D implements Value{Parameter:Number;Position:Point2D;FirstDerivative:Vector2D;SecondDerivative:Vector2D;}
+type CurveJet3D implements Value{Parameter:Number;Position:Point3D;FirstDerivative:Vector3D;SecondDerivative:Vector3D;ThirdDerivative:Vector3D;}
+type SurfaceJet3D implements Value{Uv:UvCoordinate;Position:Point3D;DerivativeU:Vector3D;DerivativeV:Vector3D;DerivativeUU:Vector3D;DerivativeUV:Vector3D;DerivativeVV:Vector3D;}
+type GeodesicPath3D{Points:Array<Point3D>;TotalLength:Number;}
+type OsculatingCircle2D implements Value{Center:Point2D;Radius:Number;ContactPoint:Point2D;}
+type CurvatureComb2D{CurvePoints:Array<Point2D>;CombTips:Array<Point2D>;Scale:Number;}
+type SurfacePoint3D implements Value{Position:Point3D;Normal:Direction3D;TangentU:Vector3D;TangentV:Vector3D;Uv:UvCoordinate;}
+type TangentSpace3D implements Value{Origin:Point3D;TangentU:Vector3D;TangentV:Vector3D;Normal:Direction3D;}
+type PrincipalCurvatures implements Value{Minimum:Number;Maximum:Number;MinimumDirection:Direction3D;MaximumDirection:Direction3D;}
+type SurfaceCurvature implements Value{Gaussian:Number;Mean:Number;Principal:PrincipalCurvatures;}
+type SurfacePointShape{}
+type FirstFundamentalForm implements Value{E:Number;F:Number;G:Number;}
+type SecondFundamentalForm implements Value{L:Number;M:Number;N:Number;}
+type ShapeOperator2D implements Value{Matrix:Matrix2x2;}
+type RiemannianMetric2D implements Value{G11:Number;G12:Number;G22:Number;}
+type ChristoffelSymbols2D implements Value{Gamma111:Number;Gamma112:Number;Gamma122:Number;Gamma211:Number;Gamma212:Number;Gamma222:Number;}
+type ConstantScalarField2D implements Value,ScalarField2D{Value:Number;}
+type ConstantScalarField3D implements Value,ScalarField3D{Value:Number;}
+type ConstantVectorField2D implements Value,VectorField2D{Value:Vector2D;}
+type ConstantVectorField3D implements Value,VectorField3D{Value:Vector3D;}
+concept DifferentiableScalarField2D inherits ScalarField2D{GradientAt(x:Self,point:Point2D):Vector2D;}
+concept DifferentiableScalarField3D inherits ScalarField3D{GradientAt(x:Self,point:Point3D):Vector3D;}
+concept DifferentiableVectorField2D inherits VectorField2D{JacobianAt(x:Self,point:Point2D):Matrix2x2;DivergenceAt(x:Self,point:Point2D):Number;CurlAt(x:Self,point:Point2D):Number;}
+concept DifferentiableVectorField3D inherits VectorField3D{JacobianAt(x:Self,point:Point3D):Matrix3x3;DivergenceAt(x:Self,point:Point3D):Number;CurlAt(x:Self,point:Point3D):Vector3D;}
+type ScalarFunctionField2D implements ScalarField2D{Function:Function1<Point2D,Number>;}
+type ScalarFunctionField3D implements ScalarField3D{Function:Function1<Point3D,Number>;}
+type VectorFunctionField2D implements VectorField2D{Function:Function1<Point2D,Vector2D>;}
+type VectorFunctionField3D implements VectorField3D{Function:Function1<Point3D,Vector3D>;}
+type FieldNodeIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type ScalarFieldNode2D implements Value{}
+type ScalarFieldGraph2D implements Value{Nodes:Array<ScalarFieldNode2D>;Root:FieldNodeIndex;}
+type ScalarFieldNode3D implements Value{}
+type ScalarFieldGraph3D implements Value{Nodes:Array<ScalarFieldNode3D>;Root:FieldNodeIndex;}
+concept TimeVaryingScalarField2D{EvalAtTime(x:Self,point:Point2D,time:Instant):Number;}
+concept TimeVaryingScalarField3D{EvalAtTime(x:Self,point:Point3D,time:Instant):Number;}
+concept TimeVaryingVectorField2D{EvalAtTime(x:Self,point:Point2D,time:Instant):Vector2D;}
+concept TimeVaryingVectorField3D{EvalAtTime(x:Self,point:Point3D,time:Instant):Vector3D;}
+concept Field<TDomain,TValue>inherits Procedural<TDomain,TValue>{}
+concept ScalarField2D inherits Field<Point2D,Number>{}
+concept ScalarField3D inherits Field<Point3D,Number>{}
+concept VectorField2D inherits Field<Point2D,Vector2D>{}
+concept VectorField3D inherits Field<Point3D,Vector3D>{}
+concept DirectionField2D inherits Field<Point2D,Direction2D>{}
+concept DirectionField3D inherits Field<Point3D,Direction3D>{}
+concept ColorField2D inherits Field<Point2D,Color>{}
+concept ColorField3D inherits Field<Point3D,Color>{}
+concept ComplexField2D inherits Field<Point2D,Complex>{}
+concept TensorField2D inherits Field<Point2D,Matrix2x2>{}
+concept TensorField3D inherits Field<Point3D,Matrix3x3>{}
+concept Fitted{Quality(x:Self):FitQuality;}
+type FitQuality implements Value{RootMeanSquareError:Number;MaximumError:Number;SampleCount:Integer;}
+type LineFit2D implements Value,Fitted{Line:Line2D;Quality:FitQuality;}
+type LineFit3D implements Value,Fitted{Line:Line3D;Quality:FitQuality;}
+type PlaneFit3D implements Value,Fitted{Plane:Plane;Quality:FitQuality;}
+type CircleFit2D implements Value,Fitted{Circle:Circle;Quality:FitQuality;}
+type SphereFit3D implements Value,Fitted{Sphere:Sphere;Quality:FitQuality;}
+type ConvexHull2D implements Value{Hull:Polygon2D;SourceIndices:Array<ItemIndex>;}
+type ConvexHull3D implements Value{Hull:TriangleMesh3D;SourceIndices:Array<ItemIndex>;}
+concept Bounded2D{Bounds(x:Self):Bounds2D;}
+concept Bounded3D{Bounds(x:Self):Bounds3D;}
+concept PointSet2D inherits Geometry2D{Points(x:Self):Array<Point2D>;}
+concept PointSet3D inherits Geometry3D{Points(x:Self):Array<Point3D>;}
+concept PrimitiveCollection3D<TPrimitive>inherits Geometry3D{Primitives(x:Self):Array<TPrimitive>;}
+concept LengthMeasurable{Length(x:Self):Number;}
+concept PlanarMeasurable{Area(x:Self):Number;Perimeter(x:Self):Number;}
+concept SpatialMeasurable{Volume(x:Self):Number;SurfaceArea(x:Self):Number;}
+concept Centroid2D{Centroid(x:Self):Point2D;}
+concept Centroid3D{Centroid(x:Self):Point3D;}
+concept ContainsPoint2D{Contains(x:Self,point:Point2D):Boolean;}
+concept ContainsPoint3D{Contains(x:Self,point:Point3D):Boolean;}
+concept NearestPoint2D{ClosestPoint(x:Self,point:Point2D):Point2D;}
+concept NearestPoint3D{ClosestPoint(x:Self,point:Point3D):Point3D;}
+concept SupportMappable2D{Support(x:Self,direction:Direction2D):Point2D;}
+concept SupportMappable3D{Support(x:Self,direction:Direction3D):Point3D;}
+concept Geometry inherits Value{}
+concept Geometry2D inherits Geometry{}
+concept Geometry3D inherits Geometry{}
+concept GeometryND inherits Geometry{}
+concept OpenShape{}
+concept ClosedShape{}
+concept ConvexShape{}
+concept Manifold{}
+concept Orientable{}
+concept Connected{}
+type BoundedSdf2D implements Value,BoundedSignedDistanceField2D{Sdf:FunctionSdf2D;Bounds:Bounds2D;}
+type BoundedSdf3D implements Value,BoundedSignedDistanceField3D{Sdf:FunctionSdf3D;Bounds:Bounds3D;}
+type FunctionSdf2D implements SignedDistanceField2D{Function:Function1<Point2D,Number>;}
+type FunctionSdf3D implements SignedDistanceField3D{Function:Function1<Point3D,Number>;}
+type FunctionRegion2D implements ImplicitRegion2D{Function:Function1<Point2D,Boolean>;}
+type FunctionVolume3D implements ImplicitVolume3D{Function:Function1<Point3D,Boolean>;}
+type MetaBall2D implements Value{Center:Point2D;Radius:Number;Strength:Number;}
+type MetaBall3D implements Value{Center:Point3D;Radius:Number;Strength:Number;}
+type MetaBallSystem2D implements Value,ScalarField2D{Balls:Array<MetaBall2D>;Threshold:Number;}
+type MetaBallSystem3D implements Value,ScalarField3D{Balls:Array<MetaBall3D>;Threshold:Number;}
+type SdfRoundingModifier implements Value{Radius:Number;}
+type SdfShellModifier implements Value{Thickness:Number;}
+type SdfOnionModifier implements Value{Thickness:Number;Count:Integer;}
+type SdfElongationModifier2D implements Value{Amount:Vector2D;}
+type SdfElongationModifier3D implements Value{Amount:Vector3D;}
+type SdfRepetitionModifier2D implements Value{Period:Vector2D;Counts:IntegerVector2;}
+type SdfRepetitionModifier3D implements Value{Period:Vector3D;Counts:IntegerVector3;}
+type SdfTwistModifier3D implements Value{AnglePerUnit:Angle;}
+type SdfBendModifier3D implements Value{Curvature:Number;}
+type SdfDisplacementModifier3D implements Value{Source:ItemIndex;Amplitude:Number;}
+type SampledSdf2D implements Value,BoundedSignedDistanceField2D{Values:Array2D<Number>;Bounds:Bounds2D;}
+type SampledSdf3D implements Value,BoundedSignedDistanceField3D{Values:Array3D<Number>;Bounds:Bounds3D;}
+type SdfCombine{}
+type SdfNodeIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type SdfNode2D implements Value{}
+type SdfTree2D implements Value{Nodes:Array<SdfNode2D>;Root:SdfNodeIndex;}
+type SdfNode3D implements Value{}
+type SdfTree3D implements Value{Nodes:Array<SdfNode3D>;Root:SdfNodeIndex;}
+concept SignedDistanceField2D inherits ScalarField2D{}
+concept SignedDistanceField3D inherits ScalarField3D{}
+concept BoundedSignedDistanceField2D inherits SignedDistanceField2D,Bounded2D{}
+concept BoundedSignedDistanceField3D inherits SignedDistanceField3D,Bounded3D{}
+concept ImplicitRegion2D inherits Procedural<Point2D,Boolean>{}
+concept ImplicitVolume3D inherits Procedural<Point3D,Boolean>{}
+type Plane implements Geometry3D,Connected,Manifold,Orientable,NearestPoint3D{Normal:Direction3D;Distance:Number;}
+type HalfSpace implements Geometry3D,ConvexShape,Connected,ContainsPoint3D,NearestPoint3D{Boundary:Plane;}
+type HalfPlane2D implements Geometry2D,ConvexShape,Connected,ContainsPoint2D,NearestPoint2D{Normal:Direction2D;Distance:Number;}
+type Slab2D implements Geometry2D,ConvexShape,Connected,ContainsPoint2D{Normal:Direction2D;Interval:NumberInterval;}
+type Slab3D implements Geometry3D,ConvexShape,Connected,ContainsPoint3D{Normal:Direction3D;Interval:NumberInterval;}
+type PlaneHit3D implements Value{Hit:Boolean;Point:Point3D;Parameter:Number;}
+type LineSegment2D implements Geometry2D,OpenShape,Connected,Bounded2D,LengthMeasurable,PointSet2D,Centroid2D,NearestPoint2D,Deformable2D{A:Point2D;B:Point2D;}
+type LineSegment3D implements Geometry3D,OpenShape,Connected,Bounded3D,LengthMeasurable,PointSet3D,Centroid3D,NearestPoint3D,Deformable3D{A:Point3D;B:Point3D;}
+type Line2D implements Geometry2D,Connected,NearestPoint2D{Origin:Point2D;Direction:Direction2D;}
+type Line3D implements Geometry3D,Connected,NearestPoint3D{Origin:Point3D;Direction:Direction3D;}
+type Ray2D implements Geometry2D,Connected,NearestPoint2D{Origin:Point2D;Direction:Direction2D;}
+type Ray3D implements Geometry3D,Connected,NearestPoint3D{Origin:Point3D;Direction:Direction3D;}
+type LineEquation2D implements Value{A:Number;B:Number;C:Number;}
+type AttributeDomain{}
+type MeshAttribute<T>{Name:String;Domain:AttributeDomain;Values:Array<T>;}
+type TangentBasis implements Value{Tangent:Direction3D;Bitangent:Direction3D;Normal:Direction3D;Handedness:Number;}
+type RichMesh3D implements Value,Meshable3D,Deformable3D{Mesh:TriangleMesh3D;NumberChannels:Array<MeshAttribute<Number>>;IntegerChannels:Array<MeshAttribute<Integer>>;VectorChannels:Array<MeshAttribute<Vector3D>>;UvChannels:Array<MeshAttribute<UvCoordinate>>;ColorChannels:Array<MeshAttribute<Color>>;TangentChannels:Array<MeshAttribute<TangentBasis>>;}
+type UvSeam implements Value{UndirectedEdges:Array<VertexPair>;}
+type UvChart implements Value{Faces:Array<FaceIndex>;UvBounds:Bounds2D;}
+type UvAtlas implements Value{Charts:Array<UvChart>;Seams:UvSeam;AtlasSize:IntegerSize2D;PaddingTexels:Integer;}
+type VertexGroup implements Value{Name:String;Vertices:Array<VertexIndex>;Weights:Array<Number>;}
+type TriangleArray3D implements Value,Geometry3D,Meshable3D,Bounded3D,PointSet3D,PrimitiveCollection3D<Triangle3D>,Deformable3D{Triangles:Array<Triangle3D>;}
+type QuadArray3D implements Value,Geometry3D,Meshable3D,Bounded3D,PointSet3D,PrimitiveCollection3D<Quad3D>,Deformable3D{Quads:Array<Quad3D>;}
+type LineSet3D implements Value,Deformable3D{Positions:Array<Point3D>;Lines:Array<VertexPair>;}
+type LineSet2D implements Value,Deformable2D{Positions:Array<Point2D>;Lines:Array<VertexPair>;}
+type PointCloud3D implements Value,Deformable3D{Positions:Array<Point3D>;}
+type PointCloud2D implements Value,Deformable2D{Positions:Array<Point2D>;}
+type SlotIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type MeshSection implements Value{FaceRange:IntegerInterval;Slot:SlotIndex;}
+type SegmentedMesh3D implements Value,Meshable3D,Deformable3D{Mesh:TriangleMesh3D;Sections:Array<MeshSection>;}
+type TetrahedronCell implements Value,Hashable{A:VertexIndex;B:VertexIndex;C:VertexIndex;D:VertexIndex;}
+type TetrahedralMesh3D implements Value,Meshable3D,Deformable3D{Positions:Array<Point3D>;Cells:Array<TetrahedronCell>;}
+type HexahedronCell implements Value,Hashable{A:VertexIndex;B:VertexIndex;C:VertexIndex;D:VertexIndex;E:VertexIndex;F:VertexIndex;G:VertexIndex;H:VertexIndex;}
+type HexahedralMesh3D implements Value,Deformable3D{Positions:Array<Point3D>;Cells:Array<HexahedronCell>;}
+concept Face inherits Value,Hashable,Indexable<VertexIndex>{}
+concept Meshable3D{ToTriangleMesh(x:Self):TriangleMesh3D;}
+concept Meshable2D{Triangulate(x:Self):TriangleMesh2D;}
+concept TriangulatedGeometry3D inherits Meshable3D{TriangleCount(x:Self):Integer;FaceAt(x:Self,face:FaceIndex):TriangleFace;PositionAt(x:Self,vertex:VertexIndex):Point3D;}
+type TriangleFace implements Face{A:VertexIndex;B:VertexIndex;C:VertexIndex;}
+type QuadFace implements Face{A:VertexIndex;B:VertexIndex;C:VertexIndex;D:VertexIndex;}
+type TriangleMesh3D implements Value,TriangulatedGeometry3D,MeshElementCounts,Deformable3D{Positions:Array<Point3D>;Faces:Array<TriangleFace>;}
+type TriangleMesh2D implements Value,Meshable2D,MeshElementCounts,Deformable2D{Positions:Array<Point2D>;Faces:Array<TriangleFace>;}
+type QuadMesh3D implements Value,Meshable3D,MeshElementCounts,Deformable3D{Positions:Array<Point3D>;Faces:Array<QuadFace>;}
+type PolygonMesh3D implements Value,Meshable3D,MeshElementCounts,MeshIncidence,Deformable3D{Positions:Array<Point3D>;Faces:JaggedArray<VertexIndex>;}
+type WhiteNoise2D implements Value,ScalarField2D{Seed:Integer;}
+type WhiteNoise3D implements Value,ScalarField3D{Seed:Integer;}
+type ValueNoise2D implements Value,ScalarField2D{Seed:Integer;Frequency:Number;}
+type ValueNoise3D implements Value,ScalarField3D{Seed:Integer;Frequency:Number;}
+type PerlinNoise2D implements Value,ScalarField2D{Seed:Integer;Frequency:Number;}
+type PerlinNoise3D implements Value,ScalarField3D{Seed:Integer;Frequency:Number;}
+type SimplexNoise2D implements Value,ScalarField2D{Seed:Integer;Frequency:Number;}
+type SimplexNoise3D implements Value,ScalarField3D{Seed:Integer;Frequency:Number;}
+type WorleyNoise2D implements Value,ScalarField2D{Seed:Integer;Frequency:Number;Jitter:Number;Distance:WorleyDistance;Feature:WorleyFeature;}
+type WorleyNoise3D implements Value,ScalarField3D{Seed:Integer;Frequency:Number;Jitter:Number;Distance:WorleyDistance;Feature:WorleyFeature;}
+type GaborNoise2D implements Value,ScalarField2D{Seed:Integer;Frequency:Number;Orientation:Angle;Bandwidth:Number;Anisotropy:Number;}
+type GaborNoise3D implements Value,ScalarField3D{Seed:Integer;Frequency:Number;Direction:Direction3D;Bandwidth:Number;Anisotropy:Number;}
+type FbmNoise2D implements Value,ScalarField2D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;}
+type FbmNoise3D implements Value,ScalarField3D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;}
+type TurbulenceNoise2D implements Value,ScalarField2D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;}
+type TurbulenceNoise3D implements Value,ScalarField3D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;}
+type RidgedNoise2D implements Value,ScalarField2D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;Offset:Number;}
+type RidgedNoise3D implements Value,ScalarField3D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;Offset:Number;}
+type DomainWarpNoise2D implements Value,ScalarField2D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;WarpStrength:Number;WarpFrequency:Number;Iterations:Integer;}
+type DomainWarpNoise3D implements Value,ScalarField3D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;WarpStrength:Number;WarpFrequency:Number;Iterations:Integer;}
+type CurlNoise2D implements Value,VectorField2D{Seed:Integer;Frequency:Number;}
+type CurlNoise3D implements Value,VectorField3D{Seed:Integer;Frequency:Number;}
+type NoiseBasis{}
+type WorleyDistance{}
+type WorleyFeature{}
+type RoundedRect2D implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D{Rect:Rect2D;CornerRadius:Number;}
+type OrientedBox2D implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D,NearestPoint2D,SupportMappable2D{Center:Point2D;Size:Size2D;Rotation:Angle;}
+type RegularPolygon implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D,SupportMappable2D{Center:Point2D;CircumRadius:Number;SideCount:Integer;Rotation:Angle;}
+type Circle implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D,NearestPoint2D,SupportMappable2D{Center:Point2D;Radius:Number;}
+type Annulus implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D{Center:Point2D;InnerRadius:Number;OuterRadius:Number;}
+type CircularSector implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D{Circle:Circle;Sweep:AngleInterval;}
+type CircularSegment implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D{Circle:Circle;Sweep:AngleInterval;}
+type Capsule2D implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D,NearestPoint2D,SupportMappable2D{A:Point2D;B:Point2D;Radius:Number;}
+type Ellipse implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D{Center:Point2D;SemiAxes:Number2;Rotation:Angle;}
+type SuperEllipse implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D{Center:Point2D;SemiAxes:Number2;Rotation:Angle;Exponent:Number;}
+type Triangle2D implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,PointSet2D,Centroid2D,ContainsPoint2D,NearestPoint2D,Deformable2D{A:Point2D;B:Point2D;C:Point2D;}
+type Quad2D implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded2D,PointSet2D,Centroid2D,ContainsPoint2D,Deformable2D{A:Point2D;B:Point2D;C:Point2D;D:Point2D;}
+type Parallelogram2D implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D,Deformable2D{Origin:Point2D;SideA:Vector2D;SideB:Vector2D;}
+concept PointCloudable3D{ToPointCloud(x:Self):PointCloud3D;}
+concept Voxelizable3D{ToOccupancyGrid(x:Self,cellSize:Number):OccupancyGrid3D;}
+type OrientedPointCloud3D implements Value,PointCloudable3D,Deformable3D{Positions:Array<Point3D>;Normals:Array<Direction3D>;}
+type ColoredPointCloud3D implements Value,PointCloudable3D,Deformable3D{Positions:Array<Point3D>;Colors:Array<Color>;}
+type AttributedPointCloud3D implements Value,PointCloudable3D,Deformable3D{Positions:Array<Point3D>;Normals:Array<Direction3D>;Colors:Array<Color>;Intensities:Array<Number>;}
+type Polyline2D implements Geometry2D,Connected,Bounded2D,LengthMeasurable,PointSet2D,Deformable2D{Points:Array<Point2D>;Closed:Boolean;}
+type Polyline3D implements Geometry3D,Connected,Bounded3D,LengthMeasurable,PointSet3D,Deformable3D{Points:Array<Point3D>;Closed:Boolean;}
+type PolylineN implements GeometryND,Connected,LengthMeasurable{Points:Array<PointN>;Closed:Boolean;}
+type Polygon3D implements Geometry3D,ClosedShape,Connected,Manifold,Orientable,PlanarMeasurable,Bounded3D,PointSet3D,Centroid3D,NearestPoint3D,Deformable3D{Points:Array<Point3D>;}
+type Prism3D implements Geometry3D,ClosedShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D{Base:Polygon3D;Offset:Vector3D;}
+type Pyramid3D implements Geometry3D,ClosedShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,Deformable3D{Base:Polygon3D;Apex:Point3D;}
+type Polygon2D implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded2D,PointSet2D,Centroid2D,ContainsPoint2D,NearestPoint2D,Deformable2D{Points:Array<Point2D>;}
+type ConvexPolygon2D implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,PointSet2D,Centroid2D,ContainsPoint2D,NearestPoint2D,SupportMappable2D,Deformable2D{Points:Array<Point2D>;}
+type PolygonWithHoles2D implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D,Deformable2D{Boundary:Polygon2D;Holes:Array<Polygon2D>;}
+type PolygonSet2D implements Geometry2D,ClosedShape,PlanarMeasurable,Bounded2D,ContainsPoint2D,Deformable2D{Polygons:Array<PolygonWithHoles2D>;}
+type RegularStar2D implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D{Center:Point2D;OuterRadius:Number;InnerRadius:Number;PointCount:Integer;Rotation:Angle;}
+type SampledCurve2D implements Value,Deformable2D{Parameters:Array<Number>;Points:Array<Point2D>;}
+type SampledCurve3D implements Value,Deformable3D{Parameters:Array<Number>;Points:Array<Point3D>;}
+type SampledSurfaceGrid implements Value,Deformable3D{UvDomain:Bounds2D;Points:Array2D<Point3D>;}
+type SampledScalarGrid2D implements Value,ScalarField2D{Grid:RegularGrid2D;Values:Array2D<Number>;}
+type SampledScalarGrid3D implements Value,ScalarField3D{Grid:RegularGrid3D;Values:Array3D<Number>;}
+type SampledVectorGrid2D implements Value,VectorField2D{Grid:RegularGrid2D;Values:Array2D<Vector2D>;}
+type SampledVectorGrid3D implements Value,VectorField3D{Grid:RegularGrid3D;Values:Array3D<Vector3D>;}
+type SampledColorGrid2D implements Value,ColorField2D{Grid:RegularGrid2D;Values:Array2D<Color>;}
+type RegularGrid2D implements Value{Bounds:Bounds2D;CellCounts:IntegerVector2;}
+type RegularGrid3D implements Value{Bounds:Bounds3D;CellCounts:IntegerVector3;}
+type GridCell2D implements Value{CellIndex:IntegerVector2;Bounds:Bounds2D;}
+type GridCell3D implements Value{CellIndex:IntegerVector3;Bounds:Bounds3D;}
+type SamplePattern{}
+type PoissonDiskPattern2D implements Value{Region:Bounds2D;MinimumDistance:Number;MaxAttempts:Integer;Seed:Integer;}
+type JitteredGridPattern2D implements Value{Region:Bounds2D;CellCounts:IntegerVector2;JitterAmount:Number;Seed:Integer;}
+type StratifiedPattern2D implements Value{Region:Bounds2D;StrataCounts:IntegerVector2;SamplesPerStratum:Integer;Seed:Integer;}
+type HaltonPattern2D implements Value{Region:Bounds2D;Count:Integer;BaseX:Integer;BaseY:Integer;}
+type HammersleyPattern2D implements Value{Region:Bounds2D;Count:Integer;Base:Integer;}
+type SobolPattern2D implements Value{Region:Bounds2D;Count:Integer;SkipCount:Integer;}
+type BlueNoisePattern2D implements Value{Region:Bounds2D;Count:Integer;Seed:Integer;}
+type InterpolationScheme{}
+type GridBoundary{}
+type GridSamplingScheme implements Value{Interpolation:InterpolationScheme;Boundary:GridBoundary;}
+type GridResampling2D implements Value{Source:RegularGrid2D;Target:RegularGrid2D;Scheme:GridSamplingScheme;}
+type GridResampling3D implements Value{Source:RegularGrid3D;Target:RegularGrid3D;Scheme:GridSamplingScheme;}
+type PlaneRelation3D{}
+type PolygonSoup3D implements Solid,Deformable3D{Polygons:Array<Polygon3D>;}
+type CsgOperation{}
+type CsgNodeIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type CsgNode3D{}
+type CsgTree3D implements Solid{Nodes:Array<CsgNode3D>;Root:CsgNodeIndex;}
+type ConvexPolytope3D implements ConvexSolid{Boundaries:Array<HalfSpace>;}
+type ExtrudedSolid implements Solid{Profile:PolygonWithHoles2D;Placement:Frame3D;Height:Number;}
+type RevolvedSolid implements Solid{Profile:PolygonWithHoles2D;Axis:Line3D;Angles:AngleInterval;}
+type LoftedSolid implements Solid{Sections:Array<Polygon3D>;Closed:Boolean;}
+type SweptSolid implements Solid{Profile:PolygonWithHoles2D;Path:Curve3D;}
+type RegularPrism implements ConvexSolid,ParametricSurface,Meshable3D{Frame:Frame3D;SideCount:Integer;Radius:Number;Height:Number;}
+type RegularPyramid implements ConvexSolid,ParametricSurface,Meshable3D{Frame:Frame3D;SideCount:Integer;Radius:Number;Height:Number;}
+type SquarePyramid implements ConvexSolid,ParametricSurface,Meshable3D{Frame:Frame3D;BaseLength:Number;Height:Number;}
+type Antiprism implements ConvexSolid,Meshable3D{Frame:Frame3D;SideCount:Integer;Radius:Number;Height:Number;}
+type PlatonicSolidKind{}
+type PlatonicSolid implements ConvexSolid,Meshable3D{Kind:PlatonicSolidKind;Frame:Frame3D;Radius:Number;}
+type ArchimedeanSolidKind{}
+type ArchimedeanSolid implements ConvexSolid,Meshable3D{Kind:ArchimedeanSolidKind;Frame:Frame3D;Radius:Number;}
+type CatalanSolidKind{}
+type CatalanSolid implements ConvexSolid,Meshable3D{Kind:CatalanSolidKind;Frame:Frame3D;Radius:Number;}
+type Box3D implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,NearestPoint3D,SupportMappable3D,ParametricSurface{Center:Point3D;Size:Size3D;Orientation:Quaternion;}
+type RoundedBox3D implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,SupportMappable3D{Box:Box3D;CornerRadius:Number;}
+type Cylinder implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,SupportMappable3D,ParametricSurface{Center:Point3D;Axis:Direction3D;Radius:Number;Height:Number;}
+type CylindricalShell implements Geometry3D,ClosedShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,ParametricSurface{Center:Point3D;Axis:Direction3D;Height:Number;InnerRadius:Number;OuterRadius:Number;}
+type Cone implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,SupportMappable3D,ParametricSurface{Apex:Point3D;Axis:Direction3D;Height:Number;Radius:Number;}
+type ConicalFrustum implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,ParametricSurface{Center:Point3D;Axis:Direction3D;Height:Number;BottomRadius:Number;TopRadius:Number;}
+type Capsule3D implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,NearestPoint3D,SupportMappable3D,ParametricSurface{A:Point3D;B:Point3D;Radius:Number;}
+type SpatialHashGrid2D implements Value,SpatialIndex2D{CellSize:Number;CellCoordinates:Array<IntegerVector2>;BucketOffsets:Array<Integer>;ItemIndices:Array<ItemIndex>;}
+type SpatialHashGrid3D implements Value,SpatialIndex3D{CellSize:Number;CellCoordinates:Array<IntegerVector3>;BucketOffsets:Array<Integer>;ItemIndices:Array<ItemIndex>;}
+type BinningGrid2D implements Value,SpatialIndex2D{Bounds:Bounds2D;CellCounts:IntegerSize2D;BucketOffsets:Array<Integer>;ItemIndices:Array<ItemIndex>;}
+type BinningGrid3D implements Value,SpatialIndex3D{Bounds:Bounds3D;CellCounts:IntegerSize3D;BucketOffsets:Array<Integer>;ItemIndices:Array<ItemIndex>;}
+type MortonCode2D implements Value,Hashable,Comparable{Value:Integer;}
+type MortonCode3D implements Value,Hashable,Comparable{Value:Integer;}
+type Paraboloid implements Geometry3D,Connected,Manifold,Orientable{Vertex:Point3D;Axis:Direction3D;FocalLength:Number;}
+type Quadric implements Geometry3D{Coefficients:Matrix4x4;}
+type KdTreeNode2D implements Value{SplitAxis:Integer;SplitValue:Number;LeftChild:SpatialNodeIndex;RightChild:SpatialNodeIndex;Items:IntegerInterval;}
+type KdTree2D implements Value,SpatialIndex2D,NearestNeighborQueryable2D{Points:Array<Point2D>;Nodes:Array<KdTreeNode2D>;PointIndices:Array<ItemIndex>;}
+type KdTreeNode3D implements Value{SplitAxis:Integer;SplitValue:Number;LeftChild:SpatialNodeIndex;RightChild:SpatialNodeIndex;Items:IntegerInterval;}
+type KdTree3D implements Value,SpatialIndex3D,NearestNeighborQueryable3D{Points:Array<Point3D>;Nodes:Array<KdTreeNode3D>;PointIndices:Array<ItemIndex>;}
+type Disk3D implements Geometry3D,ClosedShape,ConvexShape,Connected,Manifold,Orientable,PlanarMeasurable,Bounded3D,Centroid3D,NearestPoint3D{Center:Point3D;Normal:Direction3D;Radius:Number;}
+type Triangle3D implements Geometry3D,ConvexShape,Connected,Manifold,Orientable,PlanarMeasurable,Bounded3D,PointSet3D,Centroid3D,NearestPoint3D,Deformable3D{A:Point3D;B:Point3D;C:Point3D;}
+type Quad3D implements Geometry3D,Connected,Orientable,PlanarMeasurable,Bounded3D,PointSet3D,Centroid3D,Deformable3D{A:Point3D;B:Point3D;C:Point3D;D:Point3D;}
+type Containment{}
+type OverlapQuery2D implements Value{Bounds:Bounds2D;FilterMask:Integer;}
+type OverlapQuery3D implements Value{Bounds:Bounds3D;FilterMask:Integer;}
+type IntersectionResult2D implements Value{Intersects:Boolean;Points:Array<Point2D>;}
+type IntersectionResult3D implements Value{Intersects:Boolean;Points:Array<Point3D>;}
+type FrustumCullResult implements Value{FullyVisible:Array<ItemIndex>;PartiallyVisible:Array<ItemIndex>;CulledCount:Integer;}
+type KNearestQuery2D implements Value{Center:Point2D;NeighborCount:Integer;MaxDistance:Number;}
+type KNearestQuery3D implements Value{Center:Point3D;NeighborCount:Integer;MaxDistance:Number;}
+type RadiusQuery2D implements Value{Center:Point2D;Radius:Number;MaxCount:Integer;}
+type RadiusQuery3D implements Value{Center:Point3D;Radius:Number;MaxCount:Integer;}
+type NearestNeighbors implements Value{Indices:Array<ItemIndex>;Distances:Array<Number>;}
+type ClosestPointResult2D implements Value{Position:Point2D;Distance:Number;PrimitiveIndex:ItemIndex;Parameter:Number;}
+type ClosestPointResult3D implements Value{Position:Point3D;Distance:Number;Face:FaceIndex;Barycentric:BarycentricCoordinate;}
+type ClosestPairResult implements Value{IndexA:ItemIndex;IndexB:ItemIndex;Distance:Number;}
+type RayQuery2D implements Value{Ray:Ray2D;MaxDistance:Number;FilterMask:Integer;}
+type RayQuery3D implements Value{Ray:Ray3D;MaxDistance:Number;FilterMask:Integer;}
+type SweepQuery3D implements Value{Ray:Ray3D;Radius:Number;MaxDistance:Number;FilterMask:Integer;}
+type RayHit2D implements Value{Hit:Boolean;Distance:Number;Position:Point2D;Normal:Direction2D;PrimitiveIndex:ItemIndex;}
+type RayHit3D implements Value{Hit:Boolean;Distance:Number;Position:Point3D;Normal:Direction3D;Face:FaceIndex;Barycentric:BarycentricCoordinate;Uv:UvCoordinate;}
+concept RayIntersectable2D{Raycast(x:Self,query:RayQuery2D):RayHit2D;}
+concept RayIntersectable3D{Raycast(x:Self,query:RayQuery3D):RayHit3D;}
+concept ClosestPointQueryable2D{ClosestPoint(x:Self,point:Point2D):ClosestPointResult2D;}
+concept ClosestPointQueryable3D{ClosestPoint(x:Self,point:Point3D):ClosestPointResult3D;}
+concept NearestNeighborQueryable2D{FindNearest(x:Self,query:KNearestQuery2D):NearestNeighbors;}
+concept NearestNeighborQueryable3D{FindNearest(x:Self,query:KNearestQuery3D):NearestNeighbors;}
+type Tetrahedron implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,PointSet3D,Centroid3D,ContainsPoint3D,Deformable3D{A:Point3D;B:Point3D;C:Point3D;D:Point3D;}
+type Wedge implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D{Base:Triangle3D;Offset:Vector3D;}
+type ConvexVolume implements Geometry3D,ConvexShape,Connected,ContainsPoint3D{Planes:Array<Plane>;}
+type Sphere implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,NearestPoint3D,SupportMappable3D,ParametricSurface{Center:Point3D;Radius:Number;}
+type SphericalShell implements Geometry3D,ClosedShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D{Center:Point3D;InnerRadius:Number;OuterRadius:Number;}
+type SphericalCap implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D{Sphere:Sphere;Axis:Direction3D;PolarAngle:Angle;}
+type Ellipsoid implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,SupportMappable3D,ParametricSurface{Center:Point3D;SemiAxes:Number3;Orientation:Quaternion;}
+concept SpatialIndex2D{ItemCount(x:Self):Integer;CandidatesInBounds(x:Self,bounds:Bounds2D):Array<ItemIndex>;}
+concept SpatialIndex3D{ItemCount(x:Self):Integer;CandidatesInBounds(x:Self,bounds:Bounds3D):Array<ItemIndex>;}
+type Torus implements Geometry3D,ClosedShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,ParametricSurface{Center:Point3D;Axis:Direction3D;MajorRadius:Number;MinorRadius:Number;}
+type SpatialNodeIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type BvhNode2D implements Value{Bounds:Bounds2D;LeftChild:SpatialNodeIndex;RightChild:SpatialNodeIndex;Primitives:IntegerInterval;}
+type Bvh2D implements Value,SpatialIndex2D{Nodes:Array<BvhNode2D>;PrimitiveIndices:Array<ItemIndex>;}
+type BvhNode3D implements Value{Bounds:Bounds3D;LeftChild:SpatialNodeIndex;RightChild:SpatialNodeIndex;Primitives:IntegerInterval;}
+type Bvh3D implements Value,SpatialIndex3D,RayIntersectable3D{Nodes:Array<BvhNode3D>;PrimitiveIndices:Array<ItemIndex>;}
+type QuadtreeNode implements Value{Bounds:Bounds2D;FirstChild:SpatialNodeIndex;Items:IntegerInterval;}
+type Quadtree2D implements Value,SpatialIndex2D{Bounds:Bounds2D;Nodes:Array<QuadtreeNode>;ItemIndices:Array<ItemIndex>;MaxDepth:Integer;}
+type OctreeNode implements Value{Bounds:Bounds3D;FirstChild:SpatialNodeIndex;Items:IntegerInterval;}
+type Octree3D implements Value,SpatialIndex3D{Bounds:Bounds3D;Nodes:Array<OctreeNode>;ItemIndices:Array<ItemIndex>;MaxDepth:Integer;}
+type LooseOctree3D implements Value,SpatialIndex3D{Octree:Octree3D;Looseness:Number;}
+type BezierCurve2D implements Curve2D{ControlPoints:Array<Point2D>;}
+type BezierCurve3D implements Curve3D{ControlPoints:Array<Point3D>;}
+type RationalBezierCurve2D implements Curve2D{ControlPoints:Array<Point2D>;Weights:Array<Number>;}
+type RationalBezierCurve3D implements Curve3D{ControlPoints:Array<Point3D>;Weights:Array<Number>;}
+type CompositeBezier2D implements Curve2D{Segments:Array<CubicBezier2D>;}
+type CompositeBezier3D implements Curve3D{Segments:Array<CubicBezier3D>;}
+type KnotVector implements Value{Knots:Array<Number>;}
+type BSplineCurve2D implements Curve2D{ControlPoints:Array<Point2D>;Degree:Integer;Knots:KnotVector;}
+type BSplineCurve3D implements Curve3D{ControlPoints:Array<Point3D>;Degree:Integer;Knots:KnotVector;}
+type NurbsCurve2D implements Curve2D{ControlPoints:Array<Point2D>;Weights:Array<Number>;Degree:Integer;Knots:KnotVector;}
+type NurbsCurve3D implements Curve3D{ControlPoints:Array<Point3D>;Weights:Array<Number>;Degree:Integer;Knots:KnotVector;}
+type HermiteCurve2D implements Curve2D{Start:Point2D;StartTangent:Vector2D;End:Point2D;EndTangent:Vector2D;}
+type HermiteCurve3D implements Curve3D{Start:Point3D;StartTangent:Vector3D;End:Point3D;EndTangent:Vector3D;}
+type HermiteSpline2D implements Curve2D{Points:Array<Point2D>;Tangents:Array<Vector2D>;Closed:Boolean;}
+type HermiteSpline3D implements Curve3D{Points:Array<Point3D>;Tangents:Array<Vector3D>;Closed:Boolean;}
+type CatmullRomCurve2D implements Curve2D{Points:Array<Point2D>;Alpha:Number;Closed:Boolean;}
+type CatmullRomCurve3D implements Curve3D{Points:Array<Point3D>;Alpha:Number;Closed:Boolean;}
+type TcbSpline2D implements Curve2D{Points:Array<Point2D>;Tensions:Array<Number>;Continuities:Array<Number>;Biases:Array<Number>;Closed:Boolean;}
+type TcbSpline3D implements Curve3D{Points:Array<Point3D>;Tensions:Array<Number>;Continuities:Array<Number>;Biases:Array<Number>;Closed:Boolean;}
+type LinearSpline2D implements Curve2D{Points:Array<Point2D>;Closed:Boolean;}
+type LinearSpline3D implements Curve3D{Points:Array<Point3D>;Closed:Boolean;}
+type NaturalCubicSpline1D implements Curve1D{Parameters:Array<Number>;Values:Array<Number>;}
+type SurfaceOfRevolution implements ParametricSurface{Profile:Curve2D;Axis:Line3D;Angles:AngleInterval;}
+type ExtrudedSurface implements ParametricSurface{Profile:Curve3D;Direction:Direction3D;Distance:Number;}
+type RuledSurface implements ParametricSurface{Start:Curve3D;End:Curve3D;}
+type LoftedSurface implements ParametricSurface{Sections:Array<Polyline3D>;Closed:Boolean;}
+type SweptSurface implements ParametricSurface{Profile:Curve2D;Path:Curve3D;}
+type TubeSurface implements ParametricSurface{Path:Curve3D;Radius:Number;}
+type OffsetSurface implements ParametricSurface{Base:ParametricSurface;Distance:Number;}
+type BilinearPatch implements ParametricSurface{P00:Point3D;P10:Point3D;P01:Point3D;P11:Point3D;}
+type BezierPatch implements ParametricSurface{ControlPoints:Array2D<Point3D>;}
+type BSplineSurface implements ParametricSurface{ControlPoints:Array2D<Point3D>;UDegree:Integer;VDegree:Integer;UKnots:KnotVector;VKnots:KnotVector;}
+type NurbsSurface implements ParametricSurface{ControlPoints:Array2D<Point3D>;Weights:Array2D<Number>;UDegree:Integer;VDegree:Integer;UKnots:KnotVector;VKnots:KnotVector;}
+type PlanarPatch implements ParametricSurface{Frame:Frame3D;Domain:Bounds2D;}
+type CoonsPatch implements ParametricSurface{Bottom:Curve3D;Right:Curve3D;Top:Curve3D;Left:Curve3D;}
+type SphericalPatch implements ParametricSurface{Sphere:Sphere;Azimuths:AngleInterval;Inclinations:AngleInterval;}
+concept Surface inherits Geometry3D{}
+concept ClosedSurface inherits Surface{}
+concept ParametricSurface inherits Surface,Procedural<UvCoordinate,Point3D>{ClosedU(x:Self):Boolean;ClosedV(x:Self):Boolean;}
+concept DifferentiableSurface inherits ParametricSurface{TangentUAt(x:Self,uv:UvCoordinate):Vector3D;TangentVAt(x:Self,uv:UvCoordinate):Vector3D;NormalAt(x:Self,uv:UvCoordinate):Direction3D;}
+concept HeightFieldSurface inherits Surface,Procedural<Point2D,Number>{}
+concept Solid inherits Geometry3D{}
+concept ConvexSolid inherits Solid{}
+concept ParametricVolume inherits Geometry3D,Procedural<UvwCoordinate,Point3D>{}
+type TrimmedSurface implements Surface{Base:ParametricSurface;OuterLoop:Polyline2D;Holes:Array<Polyline2D>;}
+type HeightField implements HeightFieldSurface{Heights:Array2D<Number>;Domain:Bounds2D;}
+type MobiusStrip implements ParametricSurface{Frame:Frame3D;Radius:Number;Width:Number;HalfTwistCount:Integer;}
+type SubdivisionScheme{}
+type SubdivisionSurface implements Surface{ControlMesh:PolygonMesh3D;Scheme:SubdivisionScheme;Levels:Integer;}
+type VertexPair implements Value,Hashable{A:VertexIndex;B:VertexIndex;}
+type UndirectedEdgeList implements Value{UndirectedEdges:Array<VertexPair>;}
+type UndirectedEdgeAdjacency implements Value{UndirectedEdges:Array<VertexPair>;LeftFaces:Array<FaceIndex>;RightFaces:Array<FaceIndex>;}
+type VertexAdjacency implements Value,Jagged<VertexIndex>{Offsets:Array<Integer>;Neighbors:Array<VertexIndex>;}
+type FaceAdjacency implements Value,Jagged<FaceIndex>{Offsets:Array<Integer>;Neighbors:Array<FaceIndex>;}
+type VertexFaceAdjacency implements Value,Jagged<FaceIndex>{Offsets:Array<Integer>;Faces:Array<FaceIndex>;}
+type WindingOrder{}
+type Manifoldness{}
+type TopologySummary implements Value{VertexCount:Integer;UndirectedEdgeCount:Integer;FaceCount:Integer;BoundaryLoopCount:Integer;ConnectedComponentCount:Integer;EulerCharacteristic:Integer;Manifoldness:Manifoldness;}
+type HalfEdge implements Value{Origin:VertexIndex;Twin:HalfEdgeIndex;Next:HalfEdgeIndex;Previous:HalfEdgeIndex;Face:FaceIndex;}
+type HalfEdgeMesh implements Value,MeshElementCounts,HalfEdgeNavigable,Deformable3D{Positions:Array<Point3D>;HalfEdges:Array<HalfEdge>;FaceHalfEdges:Array<HalfEdgeIndex>;VertexHalfEdges:Array<HalfEdgeIndex>;}
+type BoundaryLoop implements Value{HalfEdges:Array<HalfEdgeIndex>;}
+type CornerTable implements Value{Corners:Array<VertexIndex>;Opposites:Array<CornerIndex>;}
+type VertexIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type UndirectedEdgeIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type FaceIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type CornerIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type HalfEdgeIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type CellIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+concept MeshElementCounts{VertexCount(x:Self):Integer;UndirectedEdgeCount(x:Self):Integer;FaceCount(x:Self):Integer;}
+concept MeshIncidence inherits MeshElementCounts{VerticesOfFace(x:Self,face:FaceIndex):Array<VertexIndex>;UndirectedEdgesOfFace(x:Self,face:FaceIndex):Array<UndirectedEdgeIndex>;FacesOfVertex(x:Self,vertex:VertexIndex):Array<FaceIndex>;UndirectedEdgesOfVertex(x:Self,vertex:VertexIndex):Array<UndirectedEdgeIndex>;VerticesOfUndirectedEdge(x:Self,edge:UndirectedEdgeIndex):VertexPair;FacesOfUndirectedEdge(x:Self,edge:UndirectedEdgeIndex):Array<FaceIndex>;}
+concept HalfEdgeNavigable{OriginOf(x:Self,halfEdge:HalfEdgeIndex):VertexIndex;TwinOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;NextOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;PreviousOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;FaceOf(x:Self,halfEdge:HalfEdgeIndex):FaceIndex;}
+type VoxelGrid3D<T>{Origin:Point3D;CellSize:Number;Values:Array3D<T>;}
+type OccupancyGrid2D implements Value{Origin:Point2D;CellSize:Number;Occupied:Array2D<Boolean>;}
+type OccupancyGrid3D implements Value{Origin:Point3D;CellSize:Number;Occupied:Array3D<Boolean>;}
+type DensityGrid2D implements Value{Origin:Point2D;CellSize:Number;Values:Array2D<Number>;}
+type DensityGrid3D implements Value{Origin:Point3D;CellSize:Number;Values:Array3D<Number>;}
+type VoxelColorGrid3D implements Value{Origin:Point3D;CellSize:Number;Colors:Array3D<Color>;}
+type LevelSetGrid3D implements Value{Origin:Point3D;CellSize:Number;Distances:Array3D<Number>;NarrowBandWidth:Number;BackgroundDistance:Number;}
+type SparseVoxelGrid3D<T>{Origin:Point3D;CellSize:Number;Coordinates:Array<IntegerVector3>;Values:Array<T>;}
+type VoxelBrick3D implements Value{Coordinate:IntegerVector3;Values:Array3D<Number>;}
+type BrickMap3D implements Value{Origin:Point3D;CellSize:Number;BrickSize:Integer;Bricks:Array<VoxelBrick3D>;}
+// ---- graphics ----
+type Viewport implements Value{PixelBounds:IntegerBounds2D;DepthRange:NumberInterval;}
+type LensDistortion implements Value{K1:Number;K2:Number;K3:Number;P1:Number;P2:Number;}
+type LensShift implements Value{Horizontal:Number;Vertical:Number;}
+type DepthOfFieldSettings implements Value{Enabled:Boolean;FocusDistance:Length;FStop:Number;BladeCount:Integer;BladeRotation:Angle;}
+concept Camera inherits Value{Pose(x:Self):Pose3D;Near(x:Self):Number;Far(x:Self):Number;AspectRatio(x:Self):Number;}
+type CameraProjection{}
+type PerspectiveCamera implements Camera{Pose:Pose3D;VerticalFov:Angle;AspectRatio:Number;Near:Number;Far:Number;}
+type OrthographicCamera implements Camera{Pose:Pose3D;OrthoHeight:Number;AspectRatio:Number;Near:Number;Far:Number;}
+type PhysicalCamera implements Camera{Pose:Pose3D;FocalLength:Length;SensorSize:Size2D;FStop:Number;FocusDistance:Length;Iso:Number;ShutterTime:Duration;Near:Number;Far:Number;}
+type FisheyeMapping{}
+type FisheyeCamera implements Camera{Pose:Pose3D;Mapping:FisheyeMapping;FieldOfView:Angle;Near:Number;Far:Number;}
+type EquirectangularCamera implements Camera{Pose:Pose3D;LongitudeSweep:AngleInterval;LatitudeSweep:AngleInterval;Near:Number;Far:Number;}
+type PanoramicCamera implements Camera{Pose:Pose3D;HorizontalSweep:Angle;VerticalFov:Angle;Near:Number;Far:Number;}
+type LookAtCamera implements Value{Position:Point3D;Target:Point3D;Up:Direction3D;VerticalFov:Angle;AspectRatio:Number;Near:Number;Far:Number;}
+type ProjectionPlane implements Value{LowerLeft:Point3D;LowerRight:Point3D;UpperLeft:Point3D;}
+type OffAxisCamera implements Value{Eye:Point3D;Screen:ProjectionPlane;Near:Number;Far:Number;}
+type StereoCameraRig implements Value{Template:PerspectiveCamera;EyeSeparation:Length;ConvergenceDistance:Length;}
+type ColorXYZ implements Numerical{X:Number;Y:Number;Z:Number;}
+type ColorXyY implements Value{Chromaticity:Chromaticity;Luminance:Number;}
+type ColorLab implements Value{L:Number;A:Number;B:Number;}
+type ColorLCh implements Value{L:Number;Chroma:Number;Hue:Angle;}
+type ColorLuv implements Value{L:Number;U:Number;V:Number;}
+type ColorOkLab implements Value{L:Number;A:Number;B:Number;}
+type ColorOkLCh implements Value{L:Number;Chroma:Number;Hue:Angle;}
+type Palette implements Value{Colors:Array<Color>;}
+type ColorHarmony{}
+type ColorDifference{}
+type ColorSRGB implements Value{R:Number;G:Number;B:Number;A:Number;}
+type ColorYUV implements Value{Y:Number;U:Number;V:Number;}
+type ColorYCbCr implements Value{Y:Number;Cb:Number;Cr:Number;}
+type ColorCMYK implements Value{Cyan:Number;Magenta:Number;Yellow:Number;Key:Number;}
+type ColorHWB implements Value{Hue:Angle;Whiteness:Number;Blackness:Number;}
+type SpectralColor implements Value{Wavelengths:Array<Length>;Amplitudes:Array<Number>;}
+type Chromaticity implements Value,Hashable{X:Number;Y:Number;}
+type WhitePoint implements Value{Chromaticity:Chromaticity;Luminance:Number;}
+type StandardIlluminant{}
+type TransferFunction{}
+type RgbPrimaries implements Value{Red:Chromaticity;Green:Chromaticity;Blue:Chromaticity;White:Chromaticity;}
+type RgbColorSpace implements Value{Name:String;Primaries:RgbPrimaries;Transfer:TransferFunction;}
+type NamedColorSpace{}
+type RenderingIntent{}
+type ChromaticAdaptation{}
+type ColorSpaceConversion implements Value{Source:NamedColorSpace;Target:NamedColorSpace;Adaptation:ChromaticAdaptation;Intent:RenderingIntent;}
+concept EasingFunction inherits Procedural<Number,Number>{}
+type EasingFamily{}
+type EasingPhase{}
+type ClassicEasing{}
+type CubicBezierEasing implements Value,EasingFunction{P1:Number2;P2:Number2;}
+type StepPosition{}
+type StepEasing implements Value,EasingFunction{Steps:Integer;Position:StepPosition;}
+type SmoothstepEasing implements Value,EasingFunction{Order:Integer;}
+type SpringParameters implements Value{Stiffness:Number;Damping:Number;Mass:Number;}
+type ElasticParameters implements Value{Amplitude:Number;Period:Number;}
+type BackParameters implements Value{Overshoot:Number;}
+type BounceParameters implements Value{Bounces:Integer;Restitution:Proportion;}
+type ColorChannel{}
+type ImageHistogram implements Value{Channel:ColorChannel;Counts:Array<Integer>;Range:NumberInterval;}
+type ToneCurve implements Value{Points:Array<Point2D>;}
+type LevelsAdjustment implements Value{InputBlack:Number;InputWhite:Number;Gamma:Number;OutputBlack:Number;OutputWhite:Number;}
+type CurvesAdjustment implements Value{Master:ToneCurve;Red:ToneCurve;Green:ToneCurve;Blue:ToneCurve;}
+type ColorMatrixAdjustment implements Value{Matrix:Matrix4x4;Offset:Number4;}
+type HueSaturationAdjustment implements Value{HueShift:Angle;SaturationScale:Number;LightnessOffset:Number;}
+type WhiteBalanceAdjustment implements Value{Temperature:Temperature;Tint:Number;}
+type BrightnessContrastAdjustment implements Value{Brightness:Number;Contrast:Number;}
+type ExposureAdjustment implements Value{Stops:Number;Offset:Number;GammaCorrection:Number;}
+type PosterizeParameters implements Value{Levels:Integer;}
+type ColorLookupTable implements Value{Size:Integer;Colors:Array<Color>;}
+type BlendMode{}
+type PorterDuff{}
+type ConvolutionKernel implements Value{Width:Integer;Height:Integer;Weights:Array<Number>;Scale:Number;Bias:Number;}
+type SeparableKernel implements Value{HorizontalTaps:Array<Number>;VerticalTaps:Array<Number>;}
+type GaussianBlurParameters implements Value{Radius:Integer;Sigma:Number;}
+type BoxBlurParameters implements Value{Radius:Integer;Passes:Integer;}
+type MotionBlurParameters implements Value{Angle:Angle;Distance:Number;}
+type UnsharpMaskParameters implements Value{Radius:Number;Amount:Number;Threshold:Number;}
+type EdgeDetection{}
+type MorphologyOperation{}
+type StructuringElement{}
+type MorphologyParameters implements Value{Operation:MorphologyOperation;Element:StructuringElement;Radius:Integer;Iterations:Integer;}
+type Threshold{}
+type ResampleFilter{}
+type ResizeParameters implements Value{TargetSize:IntegerSize2D;Filter:ResampleFilter;PreserveAspect:Boolean;}
+type ImageOrientation{}
+type Dither{}
+type QuantizeParameters implements Value{ColorCount:Integer;Dither:Dither;}
+type DenoiseParameters implements Value{Strength:Proportion;Radius:Integer;PreserveDetail:Proportion;}
+type VignetteParameters implements Value{Strength:Proportion;Radius:Proportion;Softness:Proportion;Center:UvCoordinate;}
+type ChromaticAberrationParameters implements Value{Strength:Number;Center:UvCoordinate;}
+type ImageCodec{}
+type EncodedImage implements Value{Codec:ImageCodec;Bytes:Array<Integer>;}
+type MipChain implements Value{Levels:Array<FloatImage>;}
+type TiledImage implements Value{Size:IntegerSize2D;TileSize:IntegerSize2D;Tiles:Array<FloatImage>;}
+type AnimatedImage implements Value{Frames:Array<Bitmap>;FrameDurations:Array<Duration>;LoopCount:Integer;}
+type ImageRegion implements Value{Bounds:IntegerBounds2D;}
+type VolumeImage implements Value{Size:IntegerSize3D;Values:Array<Number>;}
+type CubemapImage implements Value{Faces:Array<FloatImage>;}
+concept Image inherits Value{Size(x:Self):IntegerSize2D;Width(x:Self):Integer;Height(x:Self):Integer;}
+type ImageOrigin{}
+type PixelFormat{}
+type Bitmap implements Image{Size:IntegerSize2D;Pixels:Array<Color8>;}
+type FloatImage implements Image{Size:IntegerSize2D;Pixels:Array<Color>;}
+type GrayscaleImage implements Image{Size:IntegerSize2D;Values:Array<Number>;}
+type BinaryImage implements Image{Size:IntegerSize2D;Values:Array<Boolean>;}
+type PaletteIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type IndexedImage implements Image{Size:IntegerSize2D;Indices:Array<PaletteIndex>;Palette:Palette;}
+type DepthImage implements Image{Size:IntegerSize2D;Depths:Array<Number>;Near:Number;Far:Number;}
+type NormalImage implements Image{Size:IntegerSize2D;Normals:Array<Vector3D>;}
+type ShadowSettings implements Value{Resolution:Integer;Bias:Number;NormalBias:Number;PenumbraSize:Number;CascadeCount:Integer;MaxDistance:Number;}
+type LightLayerMask{Value:Integer;}
+type IesProfileReference implements Value{Name:String;Multiplier:Number;}
+type VolumetricLightSettings implements Value{Enabled:Boolean;Intensity:Number;Anisotropy:Number;MaxDistance:Number;}
+concept LightSource inherits Value{CastsShadows(x:Self):Boolean;}
+type Attenuation{}
+type DirectionalLight implements LightSource{Direction:Direction3D;Color:Color;Illuminance:Illuminance;AngularDiameter:Angle;CastsShadows:Boolean;}
+type PointLight implements LightSource{Position:Point3D;Color:Color;Flux:LuminousFlux;Range:Number;Falloff:Attenuation;CastsShadows:Boolean;}
+type SpotLight implements LightSource{Position:Point3D;Direction:Direction3D;Color:Color;Flux:LuminousFlux;InnerAngle:Angle;OuterAngle:Angle;Range:Number;Falloff:Attenuation;CastsShadows:Boolean;}
+type AreaLight implements LightSource{Center:Point3D;Orientation:Quaternion;Size:Size2D;Color:Color;Luminance:Luminance;TwoSided:Boolean;CastsShadows:Boolean;}
+type DiskLight implements LightSource{Center:Point3D;Normal:Direction3D;Radius:Number;Color:Color;Luminance:Luminance;TwoSided:Boolean;CastsShadows:Boolean;}
+type SphereLight implements LightSource{Center:Point3D;Radius:Number;Color:Color;Luminance:Luminance;CastsShadows:Boolean;}
+type TubeLight implements LightSource{Start:Point3D;End:Point3D;Radius:Number;Color:Color;Luminance:Luminance;CastsShadows:Boolean;}
+type EnvironmentLight implements Value{Cube:TextureCube;Rotation:Angle;Intensity:Number;Tint:Color;}
+type ProceduralSky implements Value{SunDirection:Direction3D;Turbidity:Number;GroundAlbedo:Color;Intensity:Number;}
+type AmbientLight implements Value{Color:Color;Illuminance:Illuminance;}
+type LightProbe implements Value{Position:Point3D;InfluenceRadius:Number;Intensity:Number;}
+type ClearCoatLayer implements Value{Intensity:Proportion;Roughness:Proportion;NormalScale:Number;IndexOfRefraction:Number;}
+type SheenLayer implements Value{Color:Color;Roughness:Proportion;}
+type SpecularLayer implements Value{Strength:Proportion;Color:Color;}
+type TransmissionLayer implements Value{Transmission:Proportion;IndexOfRefraction:Number;Thickness:Number;AttenuationColor:Color;AttenuationDistance:Number;}
+type IridescenceLayer implements Value{Intensity:Proportion;IndexOfRefraction:Number;ThicknessMinimum:Number;ThicknessMaximum:Number;}
+type AnisotropyLayer implements Value{Strength:Proportion;Rotation:Angle;}
+type SubsurfaceParameters implements Value{Color:Color;Radius:Number3;Scale:Number;Anisotropy:Number;}
+type LayeredMaterial implements Value{Base:TexturedMaterial;ClearCoat:ClearCoatLayer;Sheen:SheenLayer;Specular:SpecularLayer;Transmission:TransmissionLayer;Iridescence:IridescenceLayer;Anisotropy:AnisotropyLayer;Subsurface:SubsurfaceParameters;}
+type AlphaMode{}
+type AlphaSettings implements Value{Mode:AlphaMode;Opacity:Proportion;}
+type Brdf{}
+type Material implements Value{BaseColor:Color;Metallic:Proportion;Roughness:Proportion;EmissiveColor:Color;EmissiveStrength:Number;NormalScale:Number;OcclusionStrength:Proportion;Alpha:AlphaSettings;DoubleSided:Boolean;}
+type MaterialTextureSet implements Value{BaseColor:TextureBinding;MetallicRoughness:TextureBinding;Normal:TextureBinding;Occlusion:TextureBinding;Emissive:TextureBinding;}
+type TexturedMaterial implements Value{Base:Material;Textures:MaterialTextureSet;}
+type SpecularGlossinessMaterial implements Value{Diffuse:Color;Specular:Color;Glossiness:Proportion;Alpha:AlphaSettings;DoubleSided:Boolean;}
+type UnlitMaterial implements Value{Color:Color;Alpha:AlphaSettings;DoubleSided:Boolean;}
+type ToonMaterial implements Value{BaseColor:Color;ShadeColor:Color;StepCount:Integer;RimColor:Color;RimPower:Number;OutlineColor:Color;OutlineWidth:Number;}
+type MatcapMaterial implements Value{Capture:TextureBinding;Tint:Color;}
+type WireframeMaterial implements Value{WireColor:Color;FaceColor:Color;WireThickness:Number;}
+type OscillatorWaveform{}
+type Oscillator implements Value,TimeVarying<Number>{Waveform:OscillatorWaveform;Amplitude:Number;Frequency:Frequency;Phase:Angle;Bias:Number;}
+type WiggleMotion implements Value{Frequency:Frequency;Octaves:Integer;Amplitude:Number;Persistence:Number;Seed:Integer;}
+type MotionPath2D implements Value{Path:Path2D;OrientToPath:Boolean;StartOffset:Proportion;}
+type MotionPath3D implements Value{Poses:Array<Pose3D>;OrientToPath:Boolean;StartOffset:Proportion;}
+type CameraShake implements Value{Amplitude:Number;Frequency:Frequency;Seed:Integer;Damping:Number;}
+type MotionBlurSettings implements Value{ShutterAngle:Angle;Samples:Integer;}
+type TimeRemap implements Value{Curve:TimeVarying<Number>;}
+type FrameSequence implements Value{Rate:FrameRate;InPoint:FrameTime;OutPoint:FrameTime;}
+type BeatSync implements Value{Tempo:Tempo;Offset:BeatTime;Subdivision:Number;}
+type PlaybackCycle{}
+type LayerTransform2D implements Value{Anchor:Point2D;Position:Point2D;Rotation:Angle;Scale:Number2;Opacity:Proportion;}
+type Tween<T>implements TimeVarying<T>{From:T;To:T;Duration:Duration;Delay:Duration;Easing:ClassicEasing;}
+type TimelineItem implements Value{Name:String;Start:Duration;Duration:Duration;Easing:ClassicEasing;}
+type Timeline implements Value{Name:String;Duration:Duration;Items:Array<TimelineItem>;}
+type StaggerOrigin{}
+type Stagger implements Value{Count:Integer;ItemDelay:Duration;Origin:StaggerOrigin;Easing:ClassicEasing;}
+type MotionRepeater2D implements Value{Copies:Integer;Offset:LayerTransform2D;EndOpacity:Proportion;}
+type MotionEcho implements Value{Count:Integer;Spacing:Duration;Decay:Proportion;}
+concept PathLike{ToPath(x:Self):Path2D;}
+type PathSegment2D implements Value{}
+type Contour2D implements Value{Segments:Array<PathSegment2D>;Closed:Boolean;}
+type FillRule{}
+type Path2D implements Value{Contours:Array<Contour2D>;FillRule:FillRule;}
+type ContourIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type PathSegmentIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type PathLocation implements Value{Contour:ContourIndex;Segment:PathSegmentIndex;Parameter:Proportion;}
+type CornerRadii2D implements Value{TopLeft:Number2;TopRight:Number2;BottomRight:Number2;BottomLeft:Number2;}
+type PathBooleanOperation{}
+type PathSimplifyParameters implements Value{Tolerance:Number;PreserveCorners:Boolean;}
+type PathFlattenParameters implements Value{Tolerance:Number;MaxSegmentCount:Integer;}
+type Tonemap{}
+type ToneMappingSettings implements Value{Curve:Tonemap;ExposureCompensation:Number;WhitePoint:Number;}
+type AntiAliasing{}
+type AmbientOcclusionSettings implements Value{Enabled:Boolean;Radius:Number;Intensity:Number;Bias:Number;SampleCount:Integer;}
+type BloomSettings implements Value{Enabled:Boolean;Threshold:Number;Intensity:Number;Radius:Number;}
+type FogModel{}
+type FogSettings implements Value{Model:FogModel;Color:Color;}
+type RenderTargetDescriptor implements Value{Size:IntegerSize2D;ColorFormat:PixelFormat;HasDepth:Boolean;SampleCount:Integer;}
+type Denoiser{}
+type PathTracingSettings implements Value{SamplesPerPixel:Integer;MaxBounces:Integer;RadianceClamp:Number;Denoiser:Denoiser;Seed:Integer;}
+type ShadowFilter{}
+type QualityPreset{}
+type FaceCulling{}
+type DisplayColorSpace{}
+type RenderPipelineSettings implements Value{Quality:QualityPreset;Target:RenderTargetDescriptor;AntiAliasing:AntiAliasing;AmbientOcclusion:AmbientOcclusionSettings;Bloom:BloomSettings;Fog:FogSettings;ToneMapping:ToneMappingSettings;ColorSpace:DisplayColorSpace;}
+type FrameStatistics implements Value{FrameIndex:Integer;CpuTime:Duration;GpuTime:Duration;DrawCalls:Integer;TriangleCount:Integer;InstanceCount:Integer;}
+type VertexAttributeRole{}
+type VertexAttributeDescriptor implements Value{Role:VertexAttributeRole;ComponentCount:Integer;Normalized:Boolean;ByteOffset:Integer;}
+type VertexLayout implements Value{Attributes:Array<VertexAttributeDescriptor>;ByteStride:Integer;}
+type NodeContent2D{}
+type SceneNodeIndex2D implements Value,Hashable,Comparable,Index{Value:Integer;}
+type SceneNode2D implements Value{Name:String;Parent:SceneNodeIndex2D;Transform:Transform2D;Opacity:Proportion;Blend:BlendMode;Visible:Boolean;Content:NodeContent2D;ClipIndex:ItemIndex;}
+type MaskSource2D implements Value{}
+type ClipMask2D implements Value{Source:MaskSource2D;Inverted:Boolean;}
+type Scene2D implements Value{Nodes:Array<SceneNode2D>;Shapes:Array<StyledPath2D>;Texts:Array<TextLayout>;ImageReferences:Array<Integer>;Clips:Array<ClipMask2D>;}
+type Viewport2D implements Value{View:Bounds2D;PixelSize:IntegerSize2D;}
+type ExportSettings2D implements Value{DotsPerInch:Number;Background:Color;}
+type SceneHitResult2D implements Value{Node:SceneNodeIndex2D;LocalPosition:Point2D;}
+type SceneNodeIndex3D implements Value,Hashable,Comparable,Index{Value:Integer;}
+type MeshIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type MaterialIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type LightBindingIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type CameraBindingIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type MeshInstance implements Value{Mesh:MeshIndex;Material:MaterialIndex;Transform:Transform3D;}
+type InstanceSet implements Value{Mesh:MeshIndex;Material:MaterialIndex;Transforms:Array<Transform3D>;Colors:Array<Color>;}
+type LodGroup implements Value{Center:Point3D;Meshes:Array<MeshIndex>;SwitchDistances:Array<Number>;}
+type SceneNode3D implements Value{Name:String;Parent:SceneNodeIndex3D;Transform:Transform3D;Visible:Boolean;Mesh:MeshIndex;Material:MaterialIndex;Light:LightBindingIndex;Camera:CameraBindingIndex;LayerMask:Integer;}
+type Visibility{}
+type SceneLightSet implements Value{DirectionalLights:Array<DirectionalLight>;PointLights:Array<PointLight>;SpotLights:Array<SpotLight>;AreaLights:Array<AreaLight>;DiskLights:Array<DiskLight>;SphereLights:Array<SphereLight>;TubeLights:Array<TubeLight>;EnvironmentLights:Array<EnvironmentLight>;ProceduralSkies:Array<ProceduralSky>;AmbientLights:Array<AmbientLight>;}
+type SceneLightBinding implements Value{}
+type SceneCameraSet implements Value{PerspectiveCameras:Array<PerspectiveCamera>;OrthographicCameras:Array<OrthographicCamera>;PhysicalCameras:Array<PhysicalCamera>;FisheyeCameras:Array<FisheyeCamera>;EquirectangularCameras:Array<EquirectangularCamera>;PanoramicCameras:Array<PanoramicCamera>;}
+type SceneCameraBinding implements Value{}
+type SceneResources implements Value{Meshes:Array<TriangleMesh3D>;Materials:Array<Material>;Lights:SceneLightSet;LightBindings:Array<SceneLightBinding>;Cameras:SceneCameraSet;CameraBindings:Array<SceneCameraBinding>;}
+type RenderLayer implements Value{Name:String;Index:Integer;}
+type Scene3D implements Value{Name:String;Nodes:Array<SceneNode3D>;Resources:SceneResources;Layers:Array<RenderLayer>;Instances:Array<InstanceSet>;LodGroups:Array<LodGroup>;}
+type SceneStatistics implements Value{NodeCount:Integer;MeshCount:Integer;MaterialCount:Integer;LightCount:Integer;CameraCount:Integer;InstanceCount:Integer;TriangleCount:Integer;VertexCount:Integer;}
+type FontWeight implements Value,Comparable{Value:Integer;}
+type FontStyle{}
+type FontStretch{}
+type FontFace implements Value{Family:String;Weight:FontWeight;Style:FontStyle;Stretch:FontStretch;}
+type FontMetrics implements Value{Ascent:Number;Descent:Number;LineGap:Number;CapHeight:Number;XHeight:Number;UnderlinePosition:Number;UnderlineThickness:Number;}
+type OpenTypeFeature implements Value{Tag:String;Value:Integer;}
+type GlyphPlacement implements Value{GlyphId:Integer;Position:Point2D;Advance:Vector2D;}
+type GlyphRun implements Value{Font:FontFace;Size:Number;Placements:Array<GlyphPlacement>;}
+type GlyphOutline implements Value{GlyphId:Integer;Path:Path2D;Advance:Vector2D;}
+type TextOnPath implements Value{Run:TextRun;Path:Path2D;StartOffset:Number;Spacing:Number;}
+type TextDecoration{}
+type TextStyle implements Value{Font:FontFace;Size:Number;LetterSpacing:Number;WordSpacing:Number;LineHeight:Number;Color:Color;Decoration:TextDecoration;}
+type TextAlign{}
+type TextBaseline{}
+type TextDirection{}
+type TextOverflow{}
+type ParagraphStyle implements Value{Align:TextAlign;Direction:TextDirection;LineHeight:Number;FirstLineIndent:Number;ParagraphSpacing:Number;}
+type TextRun implements Value{Text:String;Style:TextStyle;}
+type TextLayout implements Value{Runs:Array<TextRun>;Paragraph:ParagraphStyle;MaxWidth:Number;MaxLineCount:Integer;Overflow:TextOverflow;}
+type WrapMode{}
+type FilterMode{}
+type TextureSampler implements Value{WrapU:WrapMode;WrapV:WrapMode;WrapW:WrapMode;Filter:FilterMode;Anisotropy:Number;MipBias:Number;BorderColor:Color;}
+type UvTransform implements Value{Offset:Vector2D;Rotation:Angle;Tiling:Number2;}
+type TextureProjection{}
+type TextureChannelMask{}
+type TextureBinding implements Value{Texture:Texture2D;Sampler:TextureSampler;Transform:UvTransform;UvSet:Integer;Channels:TextureChannelMask;}
+concept ProceduralTexture inherits Value{ColorAt(x:Self,uv:UvCoordinate):Color;}
+type Texture2D implements Value{Name:String;Size:IntegerSize2D;Format:PixelFormat;MipLevels:Integer;}
+type Texture3D implements Value{Name:String;Size:IntegerSize3D;Format:PixelFormat;MipLevels:Integer;}
+type TextureCube implements Value{Name:String;FaceSize:Integer;Format:PixelFormat;MipLevels:Integer;}
+type TextureArrayDescriptor implements Value{Name:String;Size:IntegerSize2D;LayerCount:Integer;Format:PixelFormat;MipLevels:Integer;}
+type CubemapLayout{}
+type CheckerTexture implements ProceduralTexture{ColorA:Color;ColorB:Color;Tiling:Number2;}
+type GradientTexture implements ProceduralTexture{Gradient:ColorGradient;Angle:Angle;}
+type NoiseTexture implements ProceduralTexture{Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;Seed:Integer;}
+type TriplanarProjection implements Value{BlendSharpness:Number;Tiling:Number2;}
+concept TimeVarying<TValue>{Sample(x:Self,time:Duration):TValue;}
+type GradientSpread{}
+type LinearGradient2D implements Value{Start:Point2D;End:Point2D;Gradient:ColorGradient;Spread:GradientSpread;}
+type RadialGradient2D implements Value{Center:Point2D;Radius:Number;Focus:Point2D;FocusRadius:Number;Gradient:ColorGradient;Spread:GradientSpread;}
+type SweepGradient2D implements Value{Center:Point2D;StartAngle:Angle;Gradient:ColorGradient;Spread:GradientSpread;}
+type TexturePaint2D implements Value{Texture:Texture2D;Transform:AffineTransform2D;}
+type Paint implements Value{}
+type FillStyle implements Value{Paint:Paint;Opacity:Proportion;}
+type ShadowStyle2D implements Value{Offset:Vector2D;BlurRadius:Number;Spread:Number;Color:Color;}
+type StyledPath2D implements Value{Path:Path2D;Fill:FillStyle;Stroke:StrokeStyle;}
+type LineCap{}
+type LineJoin{}
+type StrokeAlign{}
+type DashPattern implements Value{Intervals:Array<Number>;Phase:Number;}
+type StrokeStyle implements Value{Width:Number;Cap:LineCap;Join:LineJoin;MiterLimit:Number;Dash:DashPattern;Align:StrokeAlign;}
+type PathMarker implements Value{Path:Path2D;Size:Size2D;ReferencePoint:Vector2D;OrientToPath:Boolean;}
+type PathOffsetParameters implements Value{Distance:Number;Join:LineJoin;MiterLimit:Number;Cap:LineCap;}
+type PathDashParameters implements Value{Pattern:DashPattern;Cap:LineCap;}
