@@ -8,6 +8,11 @@
 #   Pose3D = Pose<Point3D,Quaternion>, Bitmap = ImageBuffer<Color8>, etc.
 #   Annulus = RadialShellPlanar; SphericalShell ~ RadialShellSolid;
 #   CylindricalShell still wants Axis+Height (not fully collapsed here).
+#   TriangleMesh3D = TriangleMesh<Point3D>; Box3D = Box<Point3D,Size<Number3>,Quaternion>;
+#   OrientedBox2D = Box<Point2D,Size<Number2>,Angle>; HalfPlane2D = HalfSpace<Point2D,...>;
+#   CircleFit2D = ShapeFit<Circle>, PlaneFit3D = ShapeFit<Plane>, LineFit = ShapeFit<Line<...>>;
+#   Quadtree2D/Octree3D = SpatialSubdivisionTree<Bounds<...>>; Texture2D = Texture<IntegerVector2>;
+#   CircularArc2D folds Center+Rotation into a Frame: CircularArc<Point2D,Frame<...>>.
 #
 concept Additive{Add(a:Self,b:Self):Self;Subtract(a:Self,b:Self):Self;Negative(x:Self):Self;Zero(x:Self):Self;}
 concept AngularCurve<TPoint>inherits Curve<TPoint>{Eval(x:Self,angle:Angle):TPoint;}
@@ -52,7 +57,7 @@ concept Face inherits Value,Hashable,Indexable<VertexIndex>{}
 concept Field<TDomain,TValue>inherits Procedural<TDomain,TValue>{}
 concept Fitted{Quality(x:Self):FitQuality;}
 concept Framed<TFrame>{Frame(x:Self):TFrame;}
-concept FramedCurve3D inherits DifferentiableCurve3D{FrameAt(x:Self,t:Number):Frame<Point3D,Direction<Vector3D>>;}
+concept FramedCurve3D inherits DifferentiableCurve<Point3D,Vector3D>{FrameAt(x:Self,t:Number):Frame<Point3D,Direction<Vector3D>>;}
 concept Geometry inherits Value{}
 concept Geometry2D inherits Geometry{}
 concept Geometry3D inherits Geometry{}
@@ -69,7 +74,7 @@ concept Index{Value(x:Self):Integer;}
 concept Indexable<T>inherits Countable{At(x:Self,index:Integer):T;}
 concept Indexable2D<T>inherits Indexable<T>{ColumnCount(x:Self):Integer;RowCount(x:Self):Integer;At(x:Self,column:Integer,row:Integer):T;}
 concept Indexable3D<T>inherits Indexable<T>{ColumnCount(x:Self):Integer;RowCount(x:Self):Integer;LayerCount(x:Self):Integer;At(x:Self,column:Integer,row:Integer,layer:Integer):T;}
-concept IndexedMesh<TPoint,TFace>inherits Meshable<TriangleMesh3D>{Positions(x:Self):Array<TPoint>;Faces(x:Self):Array<TFace>;}
+concept IndexedMesh<TPoint,TFace>inherits Meshable<TriangleMesh<TPoint>>{Positions(x:Self):Array<TPoint>;Faces(x:Self):Array<TFace>;}
 concept InnerOuterRadii{InnerRadius(x:Self):Number;OuterRadius(x:Self):Number;}
 concept Interpolatable{Lerp(a:Self,b:Self,t:Number):Self;}
 concept IntervalLike<T>where T:Additive,T:Interpolatable,T:Comparable inherits Value{Start(x:Self):T;End(x:Self):T;}
@@ -133,11 +138,11 @@ concept Surface inherits Geometry3D{}
 concept TimeVarying<TValue>{Sample(x:Self,time:Duration):TValue;}
 concept TimeVaryingField<TPoint,TValue>{EvalAtTime(x:Self,point:TPoint,time:Instant):TValue;}
 concept Transformable<TTransform>{Transform(x:Self,transform:TTransform):Self;}
-concept TriangulatedGeometry3D inherits Meshable<TriangleMesh3D>{TriangleCount(x:Self):Integer;FaceAt(x:Self,face:FaceIndex):TriangleFace;PositionAt(x:Self,vertex:VertexIndex):Point3D;}
+concept TriangulatedGeometry3D inherits Meshable<TriangleMesh<Point3D>>{TriangleCount(x:Self):Integer;FaceAt(x:Self,face:FaceIndex):TriangleFace;PositionAt(x:Self,vertex:VertexIndex):Point3D;}
 concept Value inherits Equatable{}
 concept Vector inherits Numerical,Arithmetic,Indexable<Number>,Normed,Lattice,Hashable{Dot(a:Self,b:Self):Number;FromComponents(_:Self,xs:Array<Number>):Self;Broadcast(self:Self,x:Number):Self;}
 concept VectorField<TPoint,TVector>inherits Field<TPoint,TVector>{}
-concept Voxelizable3D{ToOccupancyGrid(x:Self,cellSize:Number):OccupancyGrid3D;}
+concept Voxelizable3D{ToOccupancyGrid(x:Self,cellSize:Number):OccupancyGrid<Point3D,Array3D<Boolean>>;}
 concept Whole inherits Value,Comparable,Hashable,Arithmetic,Interpolatable,NumericalLimits{ToInteger(x:Self):Integer;}
 type Acceleration implements Quantity{MetersPerSecondSquared:Number;}
 type AdjacencyMatrix implements Value{VertexCount:Integer;Weights:Array<Number>;}
@@ -156,8 +161,8 @@ type AngularVelocity implements Quantity{RadiansPerSecond:Number;}
 type AnimatedImage implements Value{Frames:Array<ImageBuffer<Color8>>;FrameDurations:Array<Duration>;LoopCount:Integer;}
 type AnisotropyLayer implements Value{Strength:Proportion;Rotation:Angle;}
 type AntiAliasing{}
-type Antiprism implements ConvexSolid,Meshable<TriangleMesh3D>{Frame:Frame<Point3D,Direction<Vector3D>>;SideCount:Integer;Radius:Number;Height:Number;}
-type ArchimedeanSolid implements ConvexSolid,Meshable<TriangleMesh3D>{Kind:ArchimedeanSolidKind;Frame:Frame<Point3D,Direction<Vector3D>>;Radius:Number;}
+type Antiprism implements ConvexSolid,Meshable<TriangleMesh<Point3D>>{Frame:Frame<Point3D,Direction<Vector3D>>;SideCount:Integer;Radius:Number;Height:Number;}
+type ArchimedeanSolid implements ConvexSolid,Meshable<TriangleMesh<Point3D>>{Kind:ArchimedeanSolidKind;Frame:Frame<Point3D,Direction<Vector3D>>;Radius:Number;}
 type ArchimedeanSolidKind{}
 type ArchimedeanSpiral2D implements PolarCurve2D{StartRadius:Number;GrowthRate:Number;Angles:AngleInterval;}
 type Area implements Quantity{SquareMeters:Number;}
@@ -201,7 +206,7 @@ type BounceParameters implements Value{Bounces:Integer;Restitution:Proportion;}
 type BoundaryLoop implements Value{HalfEdges:Array<HalfEdgeIndex>;}
 type BoundedSdf<TPoint,TBounds>implements Value,BoundedSignedDistanceField<TPoint,TBounds>{Sdf:FunctionSdf<TPoint>;Bounds:TBounds;}
 type Bounds<TPoint,TDelta>where TPoint:Difference<TDelta>implements BoundsLike<TPoint,TDelta>{Min:TPoint;Max:TPoint;}
-type Box3D implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded<Bounds<Point3D,Vector3D>>,Centroid<Point3D>,ContainsPoint<Point3D>,NearestPoint<Point3D>,SupportMappable<Point3D,Direction<Vector3D>>,ParametricSurface{Center:Point3D;Size:Size<Number3>;Orientation:Quaternion;}
+type Box<TPoint,TSize,TOrientation>implements Geometry,ClosedShape,ConvexShape,Connected,Centroid<TPoint>,ContainsPoint<TPoint>,NearestPoint<TPoint>{Center:TPoint;Size:TSize;Orientation:TOrientation;}
 type BoxBlurParameters implements Value{Radius:Integer;Passes:Integer;}
 type BoxPlotStatistics implements Value{Summary:FiveNumberSummary;LowerWhisker:Number;UpperWhisker:Number;Outliers:Array<Number>;}
 type Brdf{}
@@ -226,7 +231,7 @@ type Capacitance implements Quantity{Farads:Number;}
 type Capsule<TPoint>implements Geometry,SegmentRadius<TPoint>,ClosedShape,ConvexShape,Connected{A:TPoint;B:TPoint;Radius:Number;}
 type Cardinal implements Value,Comparable{Value:Integer;}
 type Cardioid2D implements ClosedCurve<Point2D>{Radius:Number;}
-type CatalanSolid implements ConvexSolid,Meshable<TriangleMesh3D>{Kind:CatalanSolidKind;Frame:Frame<Point3D,Direction<Vector3D>>;Radius:Number;}
+type CatalanSolid implements ConvexSolid,Meshable<TriangleMesh<Point3D>>{Kind:CatalanSolidKind;Frame:Frame<Point3D,Direction<Vector3D>>;Radius:Number;}
 type CatalanSolidKind{}
 type Catenary2D implements Curve<Point2D>{Scale:Number;Domain:NumberInterval;}
 type CatmullRomCurve<TPoint>implements Curve<TPoint>{Points:Array<TPoint>;Alpha:Number;Closed:Boolean;}
@@ -241,10 +246,8 @@ type ChromaticAberrationParameters implements Value{Strength:Number;Center:UvCoo
 type ChromaticAdaptation{}
 type Chromaticity implements Value,Hashable{X:Number;Y:Number;}
 type Circle implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded<Bounds<Point2D,Vector2D>>,Centroid<Point2D>,ContainsPoint<Point2D>,NearestPoint<Point2D>,SupportMappable<Point2D,Direction<Vector2D>>{Center:Point2D;Radius:Number;}
-type CircleFit2D implements Value,Fitted{Circle:Circle;Quality:FitQuality;}
 type CircleInvolute2D implements Curve<Point2D>{Radius:Number;Angles:AngleInterval;}
-type CircularArc2D implements Curve<Point2D>{Center:Point2D;Radius:Number;Angles:AngleInterval;}
-type CircularArc3D implements PlanarCurve3D{Frame:Frame<Point3D,Direction<Vector3D>>;Radius:Number;Angles:AngleInterval;}
+type CircularArc<TPoint,TFrame>implements Curve<TPoint>{Frame:TFrame;Radius:Number;Angles:AngleInterval;}
 type CircularSector implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded<Bounds<Point2D,Vector2D>>,Centroid<Point2D>,ContainsPoint<Point2D>{Circle:Circle;Sweep:AngleInterval;}
 type CircularSegment implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded<Bounds<Point2D,Vector2D>>,Centroid<Point2D>,ContainsPoint<Point2D>{Circle:Circle;Sweep:AngleInterval;}
 type ClassicEasing{}
@@ -291,10 +294,9 @@ type ConstantVectorField<TPoint,TVector>implements Value,VectorField<TPoint,TVec
 type Containment{}
 type Contour2D implements Value{Segments:Array<PathSegment2D>;Closed:Boolean;}
 type ContourIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
-type ConvexHull2D implements Value{Hull:Polygon2D;SourceIndices:Array<ItemIndex>;}
-type ConvexHull3D implements Value{Hull:TriangleMesh3D;SourceIndices:Array<ItemIndex>;}
+type ConvexHull<THull>implements Value{Hull:THull;SourceIndices:Array<ItemIndex>;}
 type ConvexPolygon2D implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded<Bounds<Point2D,Vector2D>>,PointSet<Point2D>,Centroid<Point2D>,ContainsPoint<Point2D>,NearestPoint<Point2D>,SupportMappable<Point2D,Direction<Vector2D>>,Deformable<Point2D>{Points:Array<Point2D>;}
-type ConvexPolytope3D implements ConvexSolid{Boundaries:Array<HalfSpace>;}
+type ConvexPolytope3D implements ConvexSolid{Boundaries:Array<HalfSpace<Point3D,Direction<Vector3D>>>;}
 type ConvexVolume implements Geometry3D,ConvexShape,Connected,ContainsPoint<Point3D>{Planes:Array<Plane>;}
 type ConvolutionKernel implements Value{Width:Integer;Height:Integer;Weights:Array<Number>;Scale:Number;Bias:Number;}
 type CoonsPatch implements ParametricSurface{Bottom:Curve<Point3D>;Right:Curve<Point3D>;Top:Curve<Point3D>;Left:Curve<Point3D>;}
@@ -353,8 +355,7 @@ type ElectricCharge implements Quantity{Coulombs:Number;}
 type ElectricCurrent implements Quantity{Amperes:Number;}
 type Ellipse implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded<Bounds<Point2D,Vector2D>>,Centroid<Point2D>,ContainsPoint<Point2D>{Center:Point2D;SemiAxes:Number2;Rotation:Angle;}
 type Ellipsoid implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded<Bounds<Point3D,Vector3D>>,Centroid<Point3D>,ContainsPoint<Point3D>,SupportMappable<Point3D,Direction<Vector3D>>,ParametricSurface{Center:Point3D;SemiAxes:Number3;Orientation:Quaternion;}
-type EllipticalArc2D implements Curve<Point2D>{Center:Point2D;Radii:Number2;Rotation:Angle;Angles:AngleInterval;}
-type EllipticalArc3D implements PlanarCurve3D{Frame:Frame<Point3D,Direction<Vector3D>>;Radii:Number2;Angles:AngleInterval;}
+type EllipticalArc<TPoint,TFrame>implements Curve<TPoint>{Frame:TFrame;Radii:Number2;Angles:AngleInterval;}
 type EncodedImage implements Value{Codec:ImageCodec;Bytes:Array<Integer>;}
 type Energy implements Quantity{Joules:Number;}
 type EnvironmentLight implements Value{Cube:TextureCube;Rotation:Angle;Intensity:Number;Tint:Color;}
@@ -437,8 +438,7 @@ type GridSamplingScheme implements Value{Interpolation:InterpolationScheme;Bound
 type HalfEdge implements Value{Origin:VertexIndex;Twin:HalfEdgeIndex;Next:HalfEdgeIndex;Previous:HalfEdgeIndex;Face:FaceIndex;}
 type HalfEdgeIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
 type HalfEdgeMesh implements Value,MeshElementCounts,HalfEdgeNavigable,Deformable<Point3D>{Positions:Array<Point3D>;HalfEdges:Array<HalfEdge>;FaceHalfEdges:Array<HalfEdgeIndex>;VertexHalfEdges:Array<HalfEdgeIndex>;}
-type HalfPlane2D implements Geometry2D,ConvexShape,Connected,ContainsPoint<Point2D>,NearestPoint<Point2D>{Normal:Direction<Vector2D>;Distance:Number;}
-type HalfSpace implements Geometry3D,ConvexShape,Connected,ContainsPoint<Point3D>,NearestPoint<Point3D>{Boundary:Plane;}
+type HalfSpace<TPoint,TDirection>implements Geometry,ConvexShape,Connected,ContainsPoint<TPoint>,NearestPoint<TPoint>{Normal:TDirection;Distance:Number;}
 type HaltonPattern2D implements Value{Region:Bounds<Point2D,Vector2D>;Count:Integer;BaseX:Integer;BaseY:Integer;}
 type HammersleyPattern2D implements Value{Region:Bounds<Point2D,Vector2D>;Count:Integer;Base:Integer;}
 type HeatCapacity implements Quantity{JoulesPerKelvin:Number;}
@@ -509,8 +509,6 @@ type Limacon2D implements ClosedCurve<Point2D>{Offset:Number;Amplitude:Number;}
 type Line<TPoint,TDirection>implements Geometry,Connected,NearestPoint<TPoint>{Origin:TPoint;Direction:TDirection;}
 type LineCap{}
 type LineEquation2D implements Value{A:Number;B:Number;C:Number;}
-type LineFit2D implements Value,Fitted{Line:Line<Point2D,Direction<Vector2D>>;Quality:FitQuality;}
-type LineFit3D implements Value,Fitted{Line:Line<Point3D,Direction<Vector3D>>;Quality:FitQuality;}
 type LineJoin{}
 type LineSegment<TPoint,TDelta>where TPoint:Difference<TDelta>implements Geometry,OpenShape,Connected,Bounded<Bounds<TPoint,TDelta>>,LengthMeasurable,PointSet<TPoint>,Centroid<TPoint>,NearestPoint<TPoint>,Deformable<TPoint>{A:TPoint;B:TPoint;}
 type LineSet<TPoint>implements Value,Deformable<TPoint>{Positions:Array<TPoint>;Lines:Array<VertexPair>;}
@@ -526,7 +524,7 @@ type LoftedSurface implements ParametricSurface{Sections:Array<Polyline<Point3D>
 type LogNormalDistribution implements ProbabilityDistribution{LogMean:Number;LogStandardDeviation:Number;}
 type LogarithmicSpiral2D implements PolarCurve2D{StartRadius:Number;GrowthRate:Number;Angles:AngleInterval;}
 type LookAtCamera implements Value{Position:Point3D;Target:Point3D;Up:Direction<Vector3D>;VerticalFov:Angle;AspectRatio:Number;Near:Number;Far:Number;}
-type LooseOctree3D implements Value,SpatialIndex<Bounds<Point3D,Vector3D>>{Octree:Octree3D;Looseness:Number;}
+type LooseOctree3D implements Value,SpatialIndex<Bounds<Point3D,Vector3D>>{Octree:SpatialSubdivisionTree<Bounds<Point3D,Vector3D>>;Looseness:Number;}
 type Luminance implements Quantity{CandelasPerSquareMeter:Number;}
 type LuminousFlux implements Quantity{Lumens:Number;}
 type LuminousIntensity implements Quantity{Candelas:Number;}
@@ -559,8 +557,7 @@ type Momentum implements Quantity{KilogramMetersPerSecond:Number;}
 type Monomial implements Value{Coefficient:Number;Power:Integer;}
 type MorphologyOperation{}
 type MorphologyParameters implements Value{Operation:MorphologyOperation;Element:StructuringElement;Radius:Integer;Iterations:Integer;}
-type MortonCode2D implements Value,Hashable,Comparable{Value:Integer;}
-type MortonCode3D implements Value,Hashable,Comparable{Value:Integer;}
+type MortonCode<TPoint>implements Value,Hashable,Comparable{Value:Integer;}
 type MotionBlurParameters implements Value{Angle:Angle;Distance:Number;}
 type MotionBlurSettings implements Value{ShutterAngle:Angle;Samples:Integer;}
 type MotionEcho implements Value{Count:Integer;Spacing:Duration;Decay:Proportion;}
@@ -586,12 +583,9 @@ type NumberInterval implements IntervalLike<Number>{Start:Number;End:Number;}
 type NurbsCurve<TPoint>implements ControlPointCurve<TPoint>{ControlPoints:Array<TPoint>;Weights:Array<Number>;Degree:Integer;Knots:KnotVector;}
 type NurbsSurface implements ParametricSurface{ControlPoints:Array2D<Point3D>;Weights:Array2D<Number>;UDegree:Integer;VDegree:Integer;UKnots:KnotVector;VKnots:KnotVector;}
 type OccupancyGrid<TPoint,TArray>implements Value,GridField<TPoint,Boolean>{Origin:TPoint;CellSize:Number;Occupied:TArray;}
-type Octree3D implements Value,SpatialIndex<Bounds<Point3D,Vector3D>>{Bounds:Bounds<Point3D,Vector3D>;Nodes:Array<OctreeNode>;ItemIndices:Array<ItemIndex>;MaxDepth:Integer;}
-type OctreeNode implements Value{Bounds:Bounds<Point3D,Vector3D>;FirstChild:SpatialNodeIndex;Items:IntegerInterval;}
 type OffAxisCamera implements Value{Eye:Point3D;Screen:ProjectionPlane;Near:Number;Far:Number;}
 type OffsetSurface implements ParametricSurface{Base:ParametricSurface;Distance:Number;}
 type OpenTypeFeature implements Value{Tag:String;Value:Integer;}
-type OrientedBox2D implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded<Bounds<Point2D,Vector2D>>,Centroid<Point2D>,ContainsPoint<Point2D>,NearestPoint<Point2D>,SupportMappable<Point2D,Direction<Vector2D>>{Center:Point2D;Size:Size<Number2>;Rotation:Angle;}
 type OrientedPointCloud3D implements Value,PointCloudable3D,Deformable<Point3D>{Positions:Array<Point3D>;Normals:Array<Direction<Vector3D>>;}
 type OrthographicCamera implements Camera{Pose:Pose<Point3D,Quaternion>;OrthoHeight:Number;AspectRatio:Number;Near:Number;Far:Number;}
 type Oscillator implements Value,TimeVarying<Number>{Waveform:OscillatorWaveform;Amplitude:Number;Frequency:Frequency;Phase:Angle;Bias:Number;}
@@ -628,10 +622,9 @@ type PiecewisePolynomial implements Value{Breakpoints:Array<Number>;Pieces:Array
 type PixelFormat{}
 type PlanarPatch implements ParametricSurface{Frame:Frame<Point3D,Direction<Vector3D>>;Domain:Bounds<Point2D,Vector2D>;}
 type Plane implements Geometry3D,Connected,Manifold,Orientable,NearestPoint<Point3D>{Normal:Direction<Vector3D>;Distance:Number;}
-type PlaneFit3D implements Value,Fitted{Plane:Plane;Quality:FitQuality;}
 type PlaneHit3D implements Value{Hit:Boolean;Point:Point3D;Parameter:Number;}
 type PlaneRelation3D{}
-type PlatonicSolid implements ConvexSolid,Meshable<TriangleMesh3D>{Kind:PlatonicSolidKind;Frame:Frame<Point3D,Direction<Vector3D>>;Radius:Number;}
+type PlatonicSolid implements ConvexSolid,Meshable<TriangleMesh<Point3D>>{Kind:PlatonicSolidKind;Frame:Frame<Point3D,Direction<Vector3D>>;Radius:Number;}
 type PlatonicSolidKind{}
 type PlaybackCycle{}
 type Point2D implements Coordinate,OriginBased<Vector2D>,Hashable,MetricSpace{X:Number;Y:Number;}
@@ -644,7 +637,7 @@ type PoissonDistribution implements ProbabilityDistribution{Rate:Number;}
 type PolarCoordinate implements Value{Radius:Number;Angle:Angle;}
 type Polygon2D implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded<Bounds<Point2D,Vector2D>>,PointSet<Point2D>,Centroid<Point2D>,ContainsPoint<Point2D>,NearestPoint<Point2D>,Deformable<Point2D>{Points:Array<Point2D>;}
 type Polygon3D implements Geometry3D,ClosedShape,Connected,Manifold,Orientable,PlanarMeasurable,Bounded<Bounds<Point3D,Vector3D>>,PointSet<Point3D>,Centroid<Point3D>,NearestPoint<Point3D>,Deformable<Point3D>{Points:Array<Point3D>;}
-type PolygonMesh3D implements Value,Meshable<TriangleMesh3D>,MeshElementCounts,MeshIncidence,Deformable<Point3D>{Positions:Array<Point3D>;Faces:JaggedArray<VertexIndex>;}
+type PolygonMesh3D implements Value,Meshable<TriangleMesh<Point3D>>,MeshElementCounts,MeshIncidence,Deformable<Point3D>{Positions:Array<Point3D>;Faces:JaggedArray<VertexIndex>;}
 type PolygonSet2D implements Geometry2D,ClosedShape,PlanarMeasurable,Bounded<Bounds<Point2D,Vector2D>>,ContainsPoint<Point2D>,Deformable<Point2D>{Polygons:Array<PolygonWithHoles2D>;}
 type PolygonSoup3D implements Solid,Deformable<Point3D>{Polygons:Array<Polygon3D>;}
 type PolygonWithHoles2D implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded<Bounds<Point2D,Vector2D>>,Centroid<Point2D>,ContainsPoint<Point2D>,Deformable<Point2D>{Boundary:Polygon2D;Holes:Array<Polygon2D>;}
@@ -668,14 +661,12 @@ type ProjectiveTransform<TMatrix>implements Value{Matrix:TMatrix;}
 type Proportion implements Numerical,Comparable{Value:Number;}
 type Pyramid3D implements Geometry3D,ClosedShape,Connected,SpatialMeasurable,Bounded<Bounds<Point3D,Vector3D>>,Centroid<Point3D>,ContainsPoint<Point3D>,Deformable<Point3D>{Base:Polygon3D;Apex:Point3D;}
 type Quad<TPoint>implements Geometry,Connected,PlanarMeasurable,PointSet<TPoint>,Centroid<TPoint>,Deformable<TPoint>{A:TPoint;B:TPoint;C:TPoint;D:TPoint;}
-type QuadArray3D implements Value,Geometry3D,Meshable<TriangleMesh3D>,Bounded<Bounds<Point3D,Vector3D>>,PointSet<Point3D>,PrimitiveCollection<Quad<Point3D>>,Deformable<Point3D>{Quads:Array<Quad<Point3D>>;}
+type QuadArray3D implements Value,Geometry3D,Meshable<TriangleMesh<Point3D>>,Bounded<Bounds<Point3D,Vector3D>>,PointSet<Point3D>,PrimitiveCollection<Quad<Point3D>>,Deformable<Point3D>{Quads:Array<Quad<Point3D>>;}
 type QuadFace implements Face{A:VertexIndex;B:VertexIndex;C:VertexIndex;D:VertexIndex;}
-type QuadMesh3D implements Value,Meshable<TriangleMesh3D>,MeshElementCounts,Deformable<Point3D>{Positions:Array<Point3D>;Faces:Array<QuadFace>;}
+type QuadMesh3D implements Value,Meshable<TriangleMesh<Point3D>>,MeshElementCounts,Deformable<Point3D>{Positions:Array<Point3D>;Faces:Array<QuadFace>;}
 type QuadraticBezier<TPoint>implements Curve<TPoint>{P0:TPoint;P1:TPoint;P2:TPoint;}
 type QuadraticPolynomial implements Value{A:Number;B:Number;C:Number;}
 type Quadric implements Geometry3D{Coefficients:Matrix4x4;}
-type Quadtree2D implements Value,SpatialIndex<Bounds<Point2D,Vector2D>>{Bounds:Bounds<Point2D,Vector2D>;Nodes:Array<QuadtreeNode>;ItemIndices:Array<ItemIndex>;MaxDepth:Integer;}
-type QuadtreeNode implements Value{Bounds:Bounds<Point2D,Vector2D>;FirstChild:SpatialNodeIndex;Items:IntegerInterval;}
 type QualityPreset{}
 type Quantiles implements Value{Levels:Array<Probability>;Values:Array<Number>;}
 type QuantizeParameters implements Value{ColorCount:Integer;Dither:Dither;}
@@ -695,8 +686,8 @@ type RayQuery<TPoint,TDirection>implements Value{Ray:Ray<TPoint,TDirection>;MaxD
 type Rect2D implements Value{Center:Point2D;Size:Size<Number2>;}
 type RegularGrid<TBounds,TCounts>implements Value{Bounds:TBounds;CellCounts:TCounts;}
 type RegularPolygon implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded<Bounds<Point2D,Vector2D>>,Centroid<Point2D>,ContainsPoint<Point2D>,SupportMappable<Point2D,Direction<Vector2D>>{Center:Point2D;CircumRadius:Number;SideCount:Integer;Rotation:Angle;}
-type RegularPrism implements ConvexSolid,ParametricSurface,Meshable<TriangleMesh3D>{Frame:Frame<Point3D,Direction<Vector3D>>;SideCount:Integer;Radius:Number;Height:Number;}
-type RegularPyramid implements ConvexSolid,ParametricSurface,Meshable<TriangleMesh3D>{Frame:Frame<Point3D,Direction<Vector3D>>;SideCount:Integer;Radius:Number;Height:Number;}
+type RegularPrism implements ConvexSolid,ParametricSurface,Meshable<TriangleMesh<Point3D>>{Frame:Frame<Point3D,Direction<Vector3D>>;SideCount:Integer;Radius:Number;Height:Number;}
+type RegularPyramid implements ConvexSolid,ParametricSurface,Meshable<TriangleMesh<Point3D>>{Frame:Frame<Point3D,Direction<Vector3D>>;SideCount:Integer;Radius:Number;Height:Number;}
 type RegularStar2D implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded<Bounds<Point2D,Vector2D>>,Centroid<Point2D>,ContainsPoint<Point2D>{Center:Point2D;OuterRadius:Number;InnerRadius:Number;PointCount:Integer;Rotation:Angle;}
 type RenderLayer implements Value{Name:String;Index:Integer;}
 type RenderPipelineSettings implements Value{Quality:QualityPreset;Target:RenderTargetDescriptor;AntiAliasing:AntiAliasing;AmbientOcclusion:AmbientOcclusionSettings;Bloom:BloomSettings;Fog:FogSettings;ToneMapping:ToneMappingSettings;ColorSpace:DisplayColorSpace;}
@@ -708,7 +699,7 @@ type ResizeParameters implements Value{TargetSize:IntegerSize<IntegerVector2>;Fi
 type RevolvedSolid implements Solid{Profile:PolygonWithHoles2D;Axis:Line<Point3D,Direction<Vector3D>>;Angles:AngleInterval;}
 type RgbColorSpace implements Value{Name:String;Primaries:RgbPrimaries;Transfer:TransferFunction;}
 type RgbPrimaries implements Value{Red:Chromaticity;Green:Chromaticity;Blue:Chromaticity;White:Chromaticity;}
-type RichMesh3D implements Value,Meshable<TriangleMesh3D>,Deformable<Point3D>{Mesh:TriangleMesh3D;NumberChannels:Array<MeshAttribute<Number>>;IntegerChannels:Array<MeshAttribute<Integer>>;VectorChannels:Array<MeshAttribute<Vector3D>>;UvChannels:Array<MeshAttribute<UvCoordinate>>;ColorChannels:Array<MeshAttribute<Color>>;TangentChannels:Array<MeshAttribute<TangentBasis>>;}
+type RichMesh3D implements Value,Meshable<TriangleMesh<Point3D>>,Deformable<Point3D>{Mesh:TriangleMesh<Point3D>;NumberChannels:Array<MeshAttribute<Number>>;IntegerChannels:Array<MeshAttribute<Integer>>;VectorChannels:Array<MeshAttribute<Vector3D>>;UvChannels:Array<MeshAttribute<UvCoordinate>>;ColorChannels:Array<MeshAttribute<Color>>;TangentChannels:Array<MeshAttribute<TangentBasis>>;}
 type RidgedNoise<TPoint>implements Value,ScalarField<TPoint>{Basis:NoiseBasis;Seed:Integer;Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;Offset:Number;}
 type RiemannianMetric2D implements Value{G11:Number;G12:Number;G22:Number;}
 type RoseCurve2D implements PolarCurve2D{Radius:Number;PetalFrequency:Number;}
@@ -717,7 +708,7 @@ type RotationMinimizingFrame3D implements Value{Position:Point3D;Tangent:Directi
 type RotationOrder{}
 type Rotor2D implements Value,Multiplicative{Scalar:Number;XY:Number;}
 type Rotor3D implements Value,Multiplicative{Scalar:Number;Bivector:Bivector3D;}
-type RoundedBox3D implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded<Bounds<Point3D,Vector3D>>,Centroid<Point3D>,ContainsPoint<Point3D>,SupportMappable<Point3D,Direction<Vector3D>>{Box:Box3D;CornerRadius:Number;}
+type RoundedBox3D implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded<Bounds<Point3D,Vector3D>>,Centroid<Point3D>,ContainsPoint<Point3D>,SupportMappable<Point3D,Direction<Vector3D>>{Box:Box<Point3D,Size<Number3>,Quaternion>;CornerRadius:Number;}
 type RoundedRect2D implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded<Bounds<Point2D,Vector2D>>,Centroid<Point2D>,ContainsPoint<Point2D>{Rect:Rect2D;CornerRadius:Number;}
 type RuledSurface implements ParametricSurface{Start:Curve<Point3D>;End:Curve<Point3D>;}
 type RunningStatistics implements Value{Count:Integer;Mean:Number;M2:Number;}
@@ -727,10 +718,8 @@ type SampledCurve<TPoint>implements Value,Deformable<TPoint>{Parameters:Array<Nu
 type SampledFieldGrid<TPoint,TValue,TArray,TGrid>implements Value,Field<TPoint,TValue>{Grid:TGrid;Values:TArray;}
 type SampledSdf<TPoint,TBounds,TArray>implements Value,BoundedSignedDistanceField<TPoint,TBounds>{Values:TArray;Bounds:TBounds;}
 type SampledSurfaceGrid implements Value,Deformable<Point3D>{UvDomain:Bounds<Point2D,Vector2D>;Points:Array2D<Point3D>;}
-type ScalarFieldGraph2D implements Value{Nodes:Array<ScalarFieldNode2D>;Root:FieldNodeIndex;}
-type ScalarFieldGraph3D implements Value{Nodes:Array<ScalarFieldNode3D>;Root:FieldNodeIndex;}
-type ScalarFieldNode2D implements Value{}
-type ScalarFieldNode3D implements Value{}
+type ScalarFieldGraph<TPoint>implements Value{Nodes:Array<ScalarFieldNode<TPoint>>;Root:FieldNodeIndex;}
+type ScalarFieldNode<TPoint>implements Value{}
 type ScalarFunctionField<TPoint>implements ScalarField<TPoint>{Function:Function1<TPoint,Number>;}
 type Scene2D implements Value{Nodes:Array<SceneNode2D>;Shapes:Array<StyledPath2D>;Texts:Array<TextLayout>;ImageReferences:Array<Integer>;Clips:Array<ClipMask2D>;}
 type Scene3D implements Value{Name:String;Nodes:Array<SceneNode3D>;Resources:SceneResources;Layers:Array<RenderLayer>;Instances:Array<InstanceSet>;LodGroups:Array<LodGroup>;}
@@ -743,30 +732,27 @@ type SceneNode2D implements Value{Name:String;Parent:SceneNodeIndex2D;Transform:
 type SceneNode3D implements Value{Name:String;Parent:SceneNodeIndex3D;Transform:Transform<Vector3D,Quaternion,Number3>;Visible:Boolean;Mesh:MeshIndex;Material:MaterialIndex;Light:LightBindingIndex;Camera:CameraBindingIndex;LayerMask:Integer;}
 type SceneNodeIndex2D implements Value,Hashable,Comparable,Index{Value:Integer;}
 type SceneNodeIndex3D implements Value,Hashable,Comparable,Index{Value:Integer;}
-type SceneResources implements Value{Meshes:Array<TriangleMesh3D>;Materials:Array<Material>;Lights:SceneLightSet;LightBindings:Array<SceneLightBinding>;Cameras:SceneCameraSet;CameraBindings:Array<SceneCameraBinding>;}
+type SceneResources implements Value{Meshes:Array<TriangleMesh<Point3D>>;Materials:Array<Material>;Lights:SceneLightSet;LightBindings:Array<SceneLightBinding>;Cameras:SceneCameraSet;CameraBindings:Array<SceneCameraBinding>;}
 type SceneStatistics implements Value{NodeCount:Integer;MeshCount:Integer;MaterialCount:Integer;LightCount:Integer;CameraCount:Integer;InstanceCount:Integer;TriangleCount:Integer;VertexCount:Integer;}
 type SdfBendModifier3D implements Value{Curvature:Number;}
 type SdfCombine{}
 type SdfDisplacementModifier3D implements Value{Source:ItemIndex;Amplitude:Number;}
-type SdfElongationModifier2D implements Value{Amount:Vector2D;}
-type SdfElongationModifier3D implements Value{Amount:Vector3D;}
-type SdfNode2D implements Value{}
-type SdfNode3D implements Value{}
+type SdfElongationModifier<TVector>implements Value{Amount:TVector;}
+type SdfNode<TPoint>implements Value{}
 type SdfNodeIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
 type SdfOnionModifier implements Value{Thickness:Number;Count:Integer;}
-type SdfRepetitionModifier2D implements Value{Period:Vector2D;Counts:IntegerVector2;}
-type SdfRepetitionModifier3D implements Value{Period:Vector3D;Counts:IntegerVector3;}
+type SdfRepetitionModifier<TVector,TCounts>implements Value{Period:TVector;Counts:TCounts;}
 type SdfRoundingModifier implements Value{Radius:Number;}
 type SdfShellModifier implements Value{Thickness:Number;}
-type SdfTree2D implements Value{Nodes:Array<SdfNode2D>;Root:SdfNodeIndex;}
-type SdfTree3D implements Value{Nodes:Array<SdfNode3D>;Root:SdfNodeIndex;}
+type SdfTree<TPoint>implements Value{Nodes:Array<SdfNode<TPoint>>;Root:SdfNodeIndex;}
 type SdfTwistModifier3D implements Value{AnglePerUnit:Angle;}
 type SecondFundamentalForm implements Value{L:Number;M:Number;N:Number;}
-type SegmentedMesh3D implements Value,Meshable<TriangleMesh3D>,Deformable<Point3D>{Mesh:TriangleMesh3D;Sections:Array<MeshSection>;}
+type SegmentedMesh3D implements Value,Meshable<TriangleMesh<Point3D>>,Deformable<Point3D>{Mesh:TriangleMesh<Point3D>;Sections:Array<MeshSection>;}
 type SeparableKernel implements Value{HorizontalTaps:Array<Number>;VerticalTaps:Array<Number>;}
 type ShadowFilter{}
 type ShadowSettings implements Value{Resolution:Integer;Bias:Number;NormalBias:Number;PenumbraSize:Number;CascadeCount:Integer;MaxDistance:Number;}
 type ShadowStyle2D implements Value{Offset:Vector2D;BlurRadius:Number;Spread:Number;Color:Color;}
+type ShapeFit<TShape>implements Value,Fitted{Shape:TShape;Quality:FitQuality;}
 type ShapeOperator2D implements Value{Matrix:Matrix2x2;}
 type Shear<TPoint,TDirection,TRate>implements Value,Deformation<TPoint>{Origin:TPoint;Axis:TDirection;Rate:TRate;}
 type SheenLayer implements Value{Color:Color;Roughness:Proportion;}
@@ -776,8 +762,7 @@ type SimplexNoise<TPoint>implements Value,ScalarField<TPoint>{Seed:Integer;Frequ
 type SineCurve2D implements Curve<Point2D>{Amplitude:Number;Wavelength:Number;Phase:Angle;Domain:NumberInterval;}
 type SinusoidalSpiral2D implements PolarCurve2D{Scale:Number;Exponent:Number;}
 type Size<T>implements Value{Extents:T;}
-type Slab2D implements Geometry2D,ConvexShape,Connected,ContainsPoint<Point2D>{Normal:Direction<Vector2D>;Interval:NumberInterval;}
-type Slab3D implements Geometry3D,ConvexShape,Connected,ContainsPoint<Point3D>{Normal:Direction<Vector3D>;Interval:NumberInterval;}
+type Slab<TPoint,TDirection>implements Geometry,ConvexShape,Connected,ContainsPoint<TPoint>{Normal:TDirection;Interval:NumberInterval;}
 type SlotIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
 type SmoothstepEasing implements Value,EasingFunction{Order:Integer;}
 type SobolPattern2D implements Value{Region:Bounds<Point2D,Vector2D>;Count:Integer;SkipCount:Integer;}
@@ -789,12 +774,13 @@ type SparsePolynomial implements Value{Powers:Array<Integer>;Coefficients:Array<
 type SparseVoxelGrid3D<T>{Origin:Point3D;CellSize:Number;Coordinates:Array<IntegerVector3>;Values:Array<T>;}
 type SpatialHashGrid<TCoord,TBounds>implements Value,SpatialIndex<TBounds>{CellSize:Number;CellCoordinates:Array<TCoord>;BucketOffsets:Array<Integer>;ItemIndices:Array<ItemIndex>;}
 type SpatialNodeIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
+type SpatialSubdivisionTree<TBounds>implements Value,SpatialIndex<TBounds>{Bounds:TBounds;Nodes:Array<SpatialTreeNode<TBounds>>;ItemIndices:Array<ItemIndex>;MaxDepth:Integer;}
+type SpatialTreeNode<TBounds>implements Value{Bounds:TBounds;FirstChild:SpatialNodeIndex;Items:IntegerInterval;}
 type SpectralColor implements Value{Wavelengths:Array<Length>;Amplitudes:Array<Number>;}
 type SpecularGlossinessMaterial implements Value{Diffuse:Color;Specular:Color;Glossiness:Proportion;Alpha:AlphaSettings;DoubleSided:Boolean;}
 type SpecularLayer implements Value{Strength:Proportion;Color:Color;}
 type Speed implements Quantity{MetersPerSecond:Number;}
 type Sphere implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded<Bounds<Point3D,Vector3D>>,Centroid<Point3D>,ContainsPoint<Point3D>,NearestPoint<Point3D>,SupportMappable<Point3D,Direction<Vector3D>>,ParametricSurface{Center:Point3D;Radius:Number;}
-type SphereFit3D implements Value,Fitted{Sphere:Sphere;Quality:FitQuality;}
 type SphereLight implements LightSource{Center:Point3D;Radius:Number;Color:Color;Luminance:Luminance;CastsShadows:Boolean;}
 type SphericalCap implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded<Bounds<Point3D,Vector3D>>,Centroid<Point3D>,ContainsPoint<Point3D>{Sphere:Sphere;Axis:Direction<Vector3D>;PolarAngle:Angle;}
 type SphericalCoordinate implements Value{Radius:Number;Azimuth:Angle;Inclination:Angle;}
@@ -803,7 +789,7 @@ type SphericalSpiral3D implements Curve<Point3D>{Frame:Frame<Point3D,Direction<V
 type Spherify3D implements Value,Deformation<Point3D>{Center:Point3D;Radius:Number;Strength:Number;}
 type SpotLight implements LightSource{Position:Point3D;Direction:Direction<Vector3D>;Color:Color;Flux:LuminousFlux;InnerAngle:Angle;OuterAngle:Angle;Range:Number;Falloff:Attenuation;CastsShadows:Boolean;}
 type SpringParameters implements Value{Stiffness:Number;Damping:Number;Mass:Number;}
-type SquarePyramid implements ConvexSolid,ParametricSurface,Meshable<TriangleMesh3D>{Frame:Frame<Point3D,Direction<Vector3D>>;BaseLength:Number;Height:Number;}
+type SquarePyramid implements ConvexSolid,ParametricSurface,Meshable<TriangleMesh<Point3D>>{Frame:Frame<Point3D,Direction<Vector3D>>;BaseLength:Number;Height:Number;}
 type Stagger implements Value{Count:Integer;ItemDelay:Duration;Origin:StaggerOrigin;Easing:ClassicEasing;}
 type StaggerOrigin{}
 type StandardIlluminant{}
@@ -844,7 +830,7 @@ type Temperature implements Quantity{Kelvin:Number;}
 type TemperatureDelta implements Quantity{Kelvin:Number;}
 type Tempo{BeatsPerMinute:Number;}
 type Tensor implements Value{Extents:Array<Integer>;Components:Array<Number>;}
-type TetrahedralMesh3D implements Value,Meshable<TriangleMesh3D>,Deformable<Point3D>{Positions:Array<Point3D>;Cells:Array<TetrahedronCell>;}
+type TetrahedralMesh3D implements Value,Meshable<TriangleMesh<Point3D>>,Deformable<Point3D>{Positions:Array<Point3D>;Cells:Array<TetrahedronCell>;}
 type Tetrahedron implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded<Bounds<Point3D,Vector3D>>,PointSet<Point3D>,Centroid<Point3D>,ContainsPoint<Point3D>,Deformable<Point3D>{A:Point3D;B:Point3D;C:Point3D;D:Point3D;}
 type TetrahedronCell implements Value,Hashable{A:VertexIndex;B:VertexIndex;C:VertexIndex;D:VertexIndex;}
 type TextAlign{}
@@ -856,13 +842,12 @@ type TextOnPath implements Value{Run:TextRun;Path:Path2D;StartOffset:Number;Spac
 type TextOverflow{}
 type TextRun implements Value{Text:String;Style:TextStyle;}
 type TextStyle implements Value{Font:FontFace;Size:Number;LetterSpacing:Number;WordSpacing:Number;LineHeight:Number;Color:Color;Decoration:TextDecoration;}
-type Texture2D implements Value{Name:String;Size:IntegerSize<IntegerVector2>;Format:PixelFormat;MipLevels:Integer;}
-type Texture3D implements Value{Name:String;Size:IntegerSize<IntegerVector3>;Format:PixelFormat;MipLevels:Integer;}
+type Texture<TExtents>implements Value{Name:String;Size:IntegerSize<TExtents>;Format:PixelFormat;MipLevels:Integer;}
 type TextureArrayDescriptor implements Value{Name:String;Size:IntegerSize<IntegerVector2>;LayerCount:Integer;Format:PixelFormat;MipLevels:Integer;}
-type TextureBinding implements Value{Texture:Texture2D;Sampler:TextureSampler;Transform:UvTransform;UvSet:Integer;Channels:TextureChannelMask;}
+type TextureBinding implements Value{Texture:Texture<IntegerVector2>;Sampler:TextureSampler;Transform:UvTransform;UvSet:Integer;Channels:TextureChannelMask;}
 type TextureChannelMask{}
 type TextureCube implements Value{Name:String;FaceSize:Integer;Format:PixelFormat;MipLevels:Integer;}
-type TexturePaint2D implements Value{Texture:Texture2D;Transform:AffineTransform<Matrix3x2>;}
+type TexturePaint2D implements Value{Texture:Texture<IntegerVector2>;Transform:AffineTransform<Matrix3x2>;}
 type TextureProjection{}
 type TextureSampler implements Value{WrapU:WrapMode;WrapV:WrapMode;WrapW:WrapMode;Filter:FilterMode;Anisotropy:Number;MipBias:Number;BorderColor:Color;}
 type TexturedMaterial implements Value{Base:Material;Textures:MaterialTextureSet;}
@@ -888,10 +873,9 @@ type Transform<TTranslation,TRotation,TScale>implements Value{Translation:TTrans
 type TransmissionLayer implements Value{Transmission:Proportion;IndexOfRefraction:Number;Thickness:Number;AttenuationColor:Color;AttenuationDistance:Number;}
 type TrefoilKnot implements ClosedCurve<Point3D>{Frame:Frame<Point3D,Direction<Vector3D>>;Scale:Number;}
 type Triangle<TPoint>implements Geometry,ClosedShape,ConvexShape,Connected,PlanarMeasurable,PointSet<TPoint>,Centroid<TPoint>,NearestPoint<TPoint>,Deformable<TPoint>{A:TPoint;B:TPoint;C:TPoint;}
-type TriangleArray3D implements Value,Geometry3D,Meshable<TriangleMesh3D>,Bounded<Bounds<Point3D,Vector3D>>,PointSet<Point3D>,PrimitiveCollection<Triangle<Point3D>>,Deformable<Point3D>{Triangles:Array<Triangle<Point3D>>;}
+type TriangleArray3D implements Value,Geometry3D,Meshable<TriangleMesh<Point3D>>,Bounded<Bounds<Point3D,Vector3D>>,PointSet<Point3D>,PrimitiveCollection<Triangle<Point3D>>,Deformable<Point3D>{Triangles:Array<Triangle<Point3D>>;}
 type TriangleFace implements Face{A:VertexIndex;B:VertexIndex;C:VertexIndex;}
-type TriangleMesh2D implements Value,Meshable<TriangleMesh2D>,MeshElementCounts,Deformable<Point2D>{Positions:Array<Point2D>;Faces:Array<TriangleFace>;}
-type TriangleMesh3D implements Value,TriangulatedGeometry3D,MeshElementCounts,Deformable<Point3D>{Positions:Array<Point3D>;Faces:Array<TriangleFace>;}
+type TriangleMesh<TPoint>implements Value,MeshElementCounts,Deformable<TPoint>{Positions:Array<TPoint>;Faces:Array<TriangleFace>;}
 type TriangularDistribution implements ProbabilityDistribution{Min:Number;Mode:Number;Max:Number;}
 type TrimmedSurface implements Surface{Base:ParametricSurface;OuterLoop:Polyline<Point2D>;Holes:Array<Polyline<Point2D>>;}
 type TriplanarProjection implements Value{BlendSharpness:Number;Tiling:Number2;}
