@@ -16,7 +16,8 @@ namespace PlatoTests
     ///     <c>Tween&lt;String&gt;</c> anywhere is CHK309, because String is not Interpolatable.
     ///   * <see cref="Solver"/>'s bound-licensed member lookup — a call on a bare <c>T</c> resolves
     ///     through a concept exactly when a declared bound supplies it. An unlicensed call still
-    ///     resolves (pre-bounds behavior) but is reported CHK205, a warning.
+    ///     resolves (pre-bounds behavior) but is reported CHK205, an error (plato-382 phase D
+    ///     promoted it from warning once the forward stdlib had no unlicensed call left).
     ///
     /// The front end these build on is covered by <see cref="TypeConstraintParsingTests"/>.
     /// </summary>
@@ -275,11 +276,12 @@ library Ops
             StringAssert.Contains("Measurable", unlicensed[0].Message);
             StringAssert.Contains("Lerp", unlicensed[0].Message);
 
-            // A WARNING, deliberately: the call still resolves exactly as it did before bounds were
-            // read, so nothing downstream of the checker changes behavior. See Solver.ResolveOverloadCore.
-            Assert.AreEqual(DiagnosticSeverity.Warning, unlicensed[0].Severity);
-            Assert.IsFalse(diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error),
-                "an unlicensed call is a warning, not an error");
+            // An ERROR (plato-382 phase D): a declaration may not promise what the type system
+            // cannot check. The call still RESOLVES — nothing downstream of the checker changes
+            // behavior, only the severity of the report. See Solver.ResolveOverloadCore.
+            Assert.AreEqual(DiagnosticSeverity.Error, unlicensed[0].Severity);
+            Assert.AreEqual(1, diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error),
+                "CHK205 is the only error: the call resolves, so no CHK201 cascade follows it");
         }
 
         [Test]

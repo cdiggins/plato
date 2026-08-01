@@ -28,8 +28,10 @@ type LayerTransform2D
 // A single eased transition of one value: From at the start to To at the end of
 // Duration, shaped by Easing, after an initial Delay. Sampling before the delay
 // yields From; after Delay + Duration, To.
+// T must be Interpolatable: blending From and To is the whole of Sample.
 // (https://en.wikipedia.org/wiki/Inbetweening)
 type Tween<T>
+    where T: Interpolatable
     implements TimeVarying<T>
 {
     From: T;

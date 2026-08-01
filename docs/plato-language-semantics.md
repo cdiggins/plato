@@ -195,8 +195,8 @@ A bound must name a concept (else CHK310). It means two things, both checked:
 - **It licenses operations on the bare parameter.** `Lerp` on a value of type `T` is well-typed
   inside a declaration bounded by `Interpolatable`, and a library signature's `$`-variables inherit
   the bounds of the types they appear in — `Sample(x: Tween<$T>, t: Duration): $T` sees
-  `$T: Interpolatable`. A call on a bounded parameter that no bound supplies is reported (CHK205)
-  but still resolves; an *unbounded* parameter is unrestricted, since bounds are optional.
+  `$T: Interpolatable`. A call on a bounded parameter that no bound supplies is an error (CHK205),
+  though it still resolves; an *unbounded* parameter is unrestricted, since bounds are optional.
 
 After type checking, **monomorphization** grounds everything: each concept-generic or
 `$`-generic function is instantiated per concrete type combination actually used, `Self` is

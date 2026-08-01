@@ -231,20 +231,19 @@ namespace PlatoTests
 
         /// <summary>
         /// plato-382, the OTHER direction: a call on a bare bounded type parameter that no declared
-        /// bound supplies. These resolve (they did before bounds were read, and still do), so they
-        /// are warnings, not errors — but each one is a declaration that under-promises, and each is
-        /// a one-clause library fix. The set is asserted by name rather than counted so that fixing
-        /// one is a visible edit here, and so a NEW one cannot hide behind a ceiling.
+        /// bound supplies — a declaration that under-promises what its own bodies do. The forward
+        /// stdlib now has none, which is what allowed CHK205 to be promoted from warning to ERROR
+        /// (phase D). The set is asserted by name rather than counted so that a NEW one cannot hide
+        /// behind a ceiling; the expected set is EMPTY and adding to it needs a stated reason.
         /// </summary>
         [Test]
         public static void ForwardStdLibUnlicensedBoundedCalls()
         {
-            // BoundsLike<TPoint, TDelta> declares only `where TPoint: Difference<TDelta>`, but
-            // Center calls MidPoint, which lives on Interpolatable. Every actual TPoint (Point2D/3D/4D)
-            // is Interpolatable — the declaration simply does not say so. The fix is to add
-            // `TPoint: Interpolatable` to intervals-bounds.concepts.plato; it is a library change,
-            // deliberately not made by the compiler-side phase that found it.
-            var known = new[] { "IntervalsTransformsBounds.Center" };
+            // Was { "IntervalsTransformsBounds.Center" } until `TPoint: Interpolatable` was declared
+            // on BoundsLike (stdlib/foundation/intervals-bounds.concepts.plato): Center and Lerp
+            // blend the two corners, which only Interpolatable supplies, and every actual TPoint
+            // (Point2D/Point3D) is Interpolatable — the declaration simply had not said so.
+            var known = new string[0];
 
             var results = new TypeChecker(CheckerTestSupport.CompileForwardStdLib()).CheckAll();
             var found = results

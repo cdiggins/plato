@@ -11,7 +11,7 @@ concept Bounded2D{Bounds(x:Self):Bounds2D;}
 concept Bounded3D{Bounds(x:Self):Bounds3D;}
 concept BoundedSignedDistanceField2D inherits SignedDistanceField2D,Bounded2D{}
 concept BoundedSignedDistanceField3D inherits SignedDistanceField3D,Bounded3D{}
-concept BoundsLike<TPoint,TDelta>where TPoint:Difference<TDelta>inherits Value{Min(x:Self):TPoint;Max(x:Self):TPoint;}
+concept BoundsLike<TPoint,TDelta>where TPoint:Difference<TDelta>,TPoint:Interpolatable inherits Value{Min(x:Self):TPoint;Max(x:Self):TPoint;}
 concept Camera inherits Value{Pose(x:Self):Pose3D;Near(x:Self):Number;Far(x:Self):Number;AspectRatio(x:Self):Number;}
 concept Centroid2D{Centroid(x:Self):Point2D;}
 concept Centroid3D{Centroid(x:Self):Point3D;}
@@ -1006,7 +1006,7 @@ type Tuple8<T0,T1,T2,T3,T4,T5,T6,T7>{X0:T0;X1:T1;X2:T2;X3:T3;X4:T4;X5:T5;X6:T6;X
 type Tuple9<T0,T1,T2,T3,T4,T5,T6,T7,T8>{X0:T0;X1:T1;X2:T2;X3:T3;X4:T4;X5:T5;X6:T6;X7:T7;X8:T8;}
 type TurbulenceNoise2D implements Value,ScalarField2D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;}
 type TurbulenceNoise3D implements Value,ScalarField3D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;}
-type Tween<T>implements TimeVarying<T>{From:T;To:T;Duration:Duration;Delay:Duration;Easing:ClassicEasing;}
+type Tween<T>where T:Interpolatable implements TimeVarying<T>{From:T;To:T;Duration:Duration;Delay:Duration;Easing:ClassicEasing;}
 type Twist2D implements Value,Deformation2D{Origin:Point2D;AnglePerUnit:Angle;}
 type Twist3D implements Value,Deformation3D{Origin:Point3D;Axis:Direction3D;AnglePerUnit:Angle;}
 type Type{}

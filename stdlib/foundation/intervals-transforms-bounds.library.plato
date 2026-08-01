@@ -16,10 +16,10 @@ library IntervalsTransformsBounds
     //==
     // BoundsLike<TPoint, TDelta> — an axis-aligned region between corner points
     // Min and Max, with TDelta the displacement type (TPoint: Difference<TDelta>).
-    // TPoint's instances (Point2D/3D/4D) are Coordinate (=> Interpolatable) and
-    // Difference, but NOT Orderable/Lattice.
+    // TPoint is declared Difference<TDelta> and Interpolatable, so the corner
+    // arithmetic below is licensed; it is NOT Orderable/Lattice.
 
-    // The center point of the region. Uses P1's MidPoint(Interpolatable).
+    // The center point of the region; the MidPoint of the two corners.
     Center(self: BoundsLike<$TPoint, $TDelta>): $TPoint
         => self.Min.MidPoint(self.Max);
 

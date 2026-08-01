@@ -182,8 +182,10 @@ the design work loses its motivating example.
       bounds, are those bounds checked, and how do they reach C#.
 - [ ] Follow-up issues filed for whichever of grammar/AST, checking, and writer
       emission the ADR calls for.
-- [ ] `Tween<T>` either compiles with a real `Sample` body, or has an
+- [x] `Tween<T>` either compiles with a real `Sample` body, or has an
       issue-linked disposition recorded here (moved to `future`, or per-type
-      overloads).
-- [ ] LINT001 across the three shipping tiers is 0, and no genericity-related
-      degraded body remains.
+      overloads). — `type Tween<T> where T: Interpolatable`, with the body in the
+      new `stdlib/graphics/motion-graphics.library.plato`.
+- [x] LINT001 across the three shipping tiers is 0, and no genericity-related
+      degraded body remains. Lint ratchet lowered 33 -> 32
+      (`ForwardStdLibLintTests.MaxLintRatchet`); the 32 left are all LINT013.

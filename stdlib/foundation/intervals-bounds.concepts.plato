@@ -21,9 +21,10 @@ concept IntervalLike<T>
 // An axis-aligned bounding region between component-wise Min and Max corners
 // (https://en.wikipedia.org/wiki/Minimum_bounding_box).
 // TDelta is the displacement type between two corner points (the vector type of
-// TPoint), so Extent/Diagonal can name the Max - Min delta.
+// TPoint), so Extent/Diagonal can name the Max - Min delta. TPoint is also
+// Interpolatable, which is what lets Center and Lerp blend the two corners.
 concept BoundsLike<TPoint, TDelta>
-    where TPoint: Difference<TDelta>
+    where TPoint: Difference<TDelta>, TPoint: Interpolatable
     inherits Value
 {
     Min(x: Self): TPoint;

@@ -169,7 +169,7 @@ Consumes the constraint system and produces a substitution plus located diagnost
 | `CHK202` | multiple overloads match with a common return type (info) |
 | `CHK203` | ambiguous call — overloads match with differing return types |
 | `CHK204` | bounded-polymorphic call — concrete overloads tie on an unbound variable; deferred to monomorphization (info) |
-| `CHK205` | a call on a bare type parameter that its declared bounds do not supply (warning) |
+| `CHK205` | a call on a bare type parameter that its declared bounds do not supply |
 | `CHK309` | a type argument does not satisfy the bound declared on that parameter |
 | `CHK310` | a declared `where` bound does not name a concept |
 
@@ -190,8 +190,9 @@ Both `concept` and `type` declarations may bound their parameters
 
 Bounds restrict where they are declared and change nothing where they are not: an *unbounded*
 parameter is as permissive as it was before bounds were read. An unlicensed call on a *bounded*
-parameter still resolves, and is reported `CHK205` — a warning, because tightening it to an error
-is a language change that belongs with the library edits that declare the missing bounds.
+parameter is `CHK205`, an error — a declaration may not promise what the type system cannot check.
+It still RESOLVES, so elaboration and emission are unaffected and no `CHK201` cascade follows;
+only the report is raised.
 `TypeConstraints` is the single reading of a bound shared by both consumers.
 
 ### Scope

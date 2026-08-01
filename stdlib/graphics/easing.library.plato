@@ -87,4 +87,72 @@ library Easing
          : self.Order == 1 ? t.SmoothStep
          : self.Order == 2 ? t.SmootherStep
          : t;
+
+    //==
+    // # ClassicEasing — the classic catalog as a curve
+    //
+    // https://en.wikipedia.org/wiki/Inbetweening
+    // ClassicEasing is a selector, not a record, so its curve is written here.
+    // Linear is the identity; every other selection is one family's ease-in
+    // shape placed by its phase — Out is the reversed shape 1 - f(1 - t), and
+    // InOut runs the In shape over the first half and the reversed one over the
+    // second. Only the ten In shapes are spelled out; the phases are derived.
+
+    // The decelerating bounce: four parabolic arcs of decreasing height over the
+    // unit interval. The Bounce family is conventionally defined by this
+    // out-phase shape, so the In shape below is its reversal rather than the
+    // other way round.
+    BounceOut(t: Number): Number {
+        var amplitude = 7.5625;
+        var period = 2.75;
+        return t < 1.0 / period
+                 ? amplitude * t * t
+             : t < 2.0 / period
+                 ? amplitude * (t - 1.5 / period) * (t - 1.5 / period) + 0.75
+             : t < 2.5 / period
+                 ? amplitude * (t - 2.25 / period) * (t - 2.25 / period) + 0.9375
+             : amplitude * (t - 2.625 / period) * (t - 2.625 / period) + 0.984375;
+    }
+
+    // The ease-in (accelerating from rest) shape of a family at normalized
+    // time t. Every shape is pinned at f(0) = 0 and f(1) = 1; Back and Elastic
+    // deliberately dip below zero on the way.
+    EaseIn(family: EasingFamily, t: Number): Number
+        => match (family) {
+            Quad => t * t;
+            Cubic => t * t * t;
+            Quart => t * t * t * t;
+            Quint => t * t * t * t * t;
+            Sine => 1.0 - Angle(t * Number.HalfPi).Cos;
+            // 2^(10(t - 1)), pinned to 0 at the start where the power is 2^-10.
+            Expo => t <= 0.0 ? 0.0 : 2.0.Pow(10.0 * (t - 1.0));
+            Circ => 1.0 - (1.0 - t * t).Sqrt;
+            // t^2 ((s + 1) t - s) with the conventional overshoot s = 1.70158,
+            // which anticipates about 10% below zero before advancing.
+            Back => 2.70158 * t * t * t - 1.70158 * t * t;
+            // A growing oscillation that arrives at 1: the conventional
+            // one-third-turn period with the endpoints pinned.
+            Elastic => t <= 0.0 ? 0.0
+                     : t >= 1.0 ? 1.0
+                     : -(2.0.Pow(10.0 * t - 10.0))
+                       * Angle((t * 10.0 - 10.75) * Number.Tau / 3.0).Sin;
+            Bounce => 1.0 - BounceOut(1.0 - t);
+        };
+
+    // A family's curve in a given phase at normalized time t.
+    EaseAt(family: EasingFamily, phase: EasingPhase, t: Number): Number
+        => match (phase) {
+            In => EaseIn(family, t);
+            Out => 1.0 - EaseIn(family, 1.0 - t);
+            InOut => t < 0.5
+                       ? EaseIn(family, 2.0 * t) / 2.0
+                       : 1.0 - EaseIn(family, 2.0 - 2.0 * t) / 2.0;
+        };
+
+    // The classic easing curve at normalized time t.
+    Eval(self: ClassicEasing, t: Number): Number
+        => match (self) {
+            Linear => t;
+            Eased(family, phase) => EaseAt(family, phase, t);
+        };
 }

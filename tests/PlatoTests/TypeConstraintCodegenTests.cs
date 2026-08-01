@@ -85,13 +85,25 @@ library Tweens
 }
 ";
 
-        private static CSharpWriter Emit()
+        // The same world plus a bounded generic SUM. Kept out of `Source` so the product-path
+        // assertions above are unaffected by a declaration that CHK306 still rejects.
+        private const string SumSource = Source + @"
+// A bounded generic sum. CHK306 rejects generic sums today (plato-079 is the lift), but the sum
+// writer takes its `where` clauses from the same TypeParameterDef.Constraints the product writer
+// does, and nothing about bounds is record-specific — this pins that, so lifting CHK306 does not
+// have to rediscover whether bounds survive the sum path.
+type Blend<T>
+    where T: Interpolatable
+    = Held(Value: T) | Ramp(From: T, To: T);
+";
+
+        private static CSharpWriter Emit(string source = null)
         {
             var dir = Path.Combine(Path.GetTempPath(), "plato382c-" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(dir);
             try
             {
-                File.WriteAllText(Path.Combine(dir, "corpus.plato"), Source);
+                File.WriteAllText(Path.Combine(dir, "corpus.plato"), source ?? Source);
                 var comp = CheckerTestSupport.CompileFolder(dir);
                 CollectionAssert.IsEmpty(comp.SymbolFactory.Errors.Select(e => e.ToString()).ToArray(),
                     "the fixture must resolve cleanly or every assertion below would be vacuous");
@@ -134,6 +146,18 @@ library Tweens
             var src = File_(Emit(), "_Crate.g.cs");
             StringAssert.Contains("public partial struct Crate<T>", src);
             StringAssert.DoesNotContain("where", src);
+        }
+
+        [Test]
+        public static void ABoundedGenericSum_EmitsTheWhereClauseThroughTheSumPath()
+        {
+            // Groundwork for plato-079 only — this does NOT lift CHK306, which still rejects a
+            // generic sum in the checker. What it proves is that when CHK306 is lifted the emitter
+            // is already correct: the sum struct carries the declared bound, so a case payload of
+            // type T can be operated on exactly as a product field can.
+            var src = File_(Emit(SumSource), "_Blend.g.cs");
+            StringAssert.Contains("public partial struct Blend<T>", src);
+            StringAssert.Contains("where T : Interpolatable<T>", src);
         }
 
         // --- (2) the where clause on an emitted generic function ------------------

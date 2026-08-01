@@ -25,7 +25,19 @@ namespace PlatoTests
         // — a library redesign, not a checker rule), plus library repairs (Meshes.Lines/Transform,
         // Transforms.Quaternion, Vectors.Column/Dot, Curves2D/3D Bezier, Barycentric). The count drifts
         // with library growth, so the baseline is a ceiling to lower.
-        private const int MaxFunctionsWithDiagnostics = 25;
+        //
+        // RE-PINNED 25 -> 26 on 2026-08-01 (plato-382 phase D). Nothing in this corpus changed and no
+        // body got worse: CHK205 — a call on a bounded type parameter that no declared bound supplies —
+        // was promoted from warning to ERROR, and `IInterval.Size` was the one legacy function whose
+        // only diagnostic was that warning. (`IInterval.MoveTo` and `IInterval.Recenter` carry the same
+        // warning but were already failing CHK101, so they did not move the count.) All three
+        // are the SAME under-promise: `interface IInterval<T> where T: IVectorLike`
+        // (legacy/stdlib-legacy/core.interfaces.plato) whose bodies Add/Subtract two bare `T`, which
+        // IVectorLike does not supply. It cannot be fixed by adding `T: IAdditive`: `IInterval<Point2D>`
+        // (Line2D) would then be CHK309, because Point2D subtracts to a Vector2 rather than to itself —
+        // it is the same IInterval/IBounds redesign already named above, not a new defect. LOWER this
+        // when that redesign lands; do not raise it again.
+        private const int MaxFunctionsWithDiagnostics = 26;
 
         [Test]
         public static void StdLibDiagnosticCountDoesNotRegress()

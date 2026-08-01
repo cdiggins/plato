@@ -17,18 +17,22 @@ library SplinesBezier
     // closed form per degree: repeatedly replace the control values by the
     // lerps of adjacent pairs until one remains. It only needs Lerp, so it is
     // generic in the type variable `$T` and serves points, vectors, and
-    // weights. The `Interpolatable` requirement on `$T` is implicit: library
-    // functions have no where-clause grammar (bounds are spelled only on
-    // concept declarations), so the Lerp call in the body carries it.
+    // weights. That genericity cannot be SPELLED here: a `where` bound goes on a
+    // type or concept declaration, never on a library function, so the
+    // `Interpolatable` requirement on `$T` has nowhere to live and the reduction
+    // is written once per control-value type instead.
 
     // The de Casteljau reduction of a control polygon at t.
     // Precondition: xs is non-empty.
     //
-    // Spelled once per control-value type rather than once over `$T`. The body needs Lerp, and
-    // an implicit bound on a library type variable does not survive to a backend: the shipping
-    // C# recipe erases the concept interfaces, so the emitted generic parameter carries no
-    // constraint and the Lerp call in it has nothing to bind to. These are the instantiations
-    // the Eval overloads below actually use.
+    // Spelled once per control-value type rather than once over `$T`. The body needs Lerp on a
+    // bare element, and no spelling of this signature can PROMISE that: `where` bounds are
+    // declared on a type or concept declaration (plato-382), and a library function's type
+    // variable inherits a bound only from a constructed type in its signature — here that type is
+    // `Array<T>`, which is unbounded and must stay so. An unbounded `$T` would resolve (bounds
+    // restrict only where declared), but the promise would be undeclared, and a body dispatching
+    // on an unbounded parameter emits as a throwing stub rather than as C#. These are the
+    // instantiations the Eval overloads below actually use.
     DeCasteljau(xs: Array<Point2D>, t: Number): Point2D
         => xs.Count <= 1
            ? xs[0]

@@ -25,15 +25,13 @@ namespace Ara3D.Geometry.AST
             Write(" ").Write(declaration.Name.Text);
             WriteTypeParameters(declaration.TypeParameters);
 
+            // Both kinds may bound their parameters (plato-382), and the clause sits in the same
+            // place on both: `<params> where <bounds> <base-list>`.
+            WriteConstraints(declaration.Constraints);
             if (declaration.Kind == TypeKind.Interface)
-            {
-                WriteConstraints(declaration.Constraints);
                 WriteInheritsOrImplements("inherits", declaration.Inherits);
-            }
             else
-            {
                 WriteInheritsOrImplements("implements", declaration.Implements);
-            }
 
             return WriteLine().Brace(w => w.WriteMembers(declaration.Members));
         }

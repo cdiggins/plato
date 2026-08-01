@@ -218,17 +218,19 @@ namespace Ara3D.Geometry.Compiler.Checking
             {
                 // Nothing is licensed. Retry with bound-licensing OFF, which is exactly how the
                 // solver behaved before bounds were read at all. A call that only resolves this way
-                // is using an operation the declaration never promised: it RESOLVES (so neither
-                // elaboration nor emission changes) and is reported as a warning naming the bound to
-                // add. Making it an error is a language tightening that belongs with the library
-                // change that declares the missing bounds, not with the machinery that finds them.
+                // is using an operation the declaration never promised, so it is an ERROR naming the
+                // bound to add — a declaration may not promise what the type system cannot check
+                // (plato-382). It still RESOLVES (elaboration and emission are unchanged), because a
+                // diagnostic is more useful than a cascade of "no overload matches" below it. The
+                // severity was a warning only while the forward stdlib still had an undeclared bound
+                // of its own; that was fixed by declaring `TPoint: Interpolatable` on BoundsLike.
                 var bounded = BoundedArgument(args);
                 if (bounded != null)
                 {
                     var relaxed = TrialCandidates(oc, args, licensed: false);
                     if (relaxed.Count > 0)
                     {
-                        Report(DiagnosticSeverity.Warning, "CHK205",
+                        Report(DiagnosticSeverity.Error, "CHK205",
                             $"Call to '{oc.Name}' on '{bounded}' is not licensed by its declared bounds "
                             + $"({string.Join(", ", BoundsOf(bounded))}): the call resolves, but no bound "
                             + $"promises '{oc.Name}' — add the concept that supplies it to the `where` clause",

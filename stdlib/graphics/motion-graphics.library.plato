@@ -1,0 +1,26 @@
+//==
+// # MotionGraphics — sampling a tween
+//
+// The `TimeVarying<T>` obligation of `Tween<T>`
+// (`motion-graphics.types.plato`): the eased blend from From to To across
+// Duration, after Delay. `Tween<T>` declares `where T: Interpolatable`, which
+// is what licenses the Lerp on a bare T here.
+//
+// The other composition types in that file are data read by a renderer and
+// carry no obligation, so nothing else is derived here.
+
+library MotionGraphics
+{
+    // The tween's value at a time offset from the composition's start. Sampling
+    // before Delay yields From, after Delay + Duration yields To; in between the
+    // linear fraction is reshaped by Easing. A non-positive Duration is an
+    // instantaneous switch at the delay.
+    Sample(self: Tween<$T>, time: Duration): $T {
+        var elapsed = time.Seconds - self.Delay.Seconds;
+        var span = self.Duration.Seconds;
+        var fraction = span <= 0.0
+            ? (elapsed < 0.0 ? 0.0 : 1.0)
+            : (elapsed / span).Clamp(0.0, 1.0);
+        return self.From.Lerp(self.To, self.Easing.Eval(fraction));
+    }
+}
