@@ -19,7 +19,11 @@ Also checked out as `submodules/Plato` inside the studio monorepo.
 `net8.0-windows` and pulls WPF, IFC and `Studio.API` into the compiler.
 
 **Work tracking** lives here under [`tracker/`](tracker/) (`python tools/track.py list --open`).
-**Durable docs** live under [`docs/`](docs/). Gate scripts still live in the studio repo
+**Durable docs** live under [`docs/`](docs/), and are written to
+[`docs/documentation-conventions.md`](docs/documentation-conventions.md) — chiefly: **a durable doc
+states design, not measurements.** No file counts, finding counts, ratchet ceilings or test tallies
+in prose; name the constant, command or log that holds the number. The repo-local `write-docs` skill
+loads those rules. Gate scripts still live in the studio repo
 (`C:\Users\cdigg\git\studio\tools\`) until those move too.
 
 Plan + status: [`docs/plato-execution-plan-2026-07-09.md`](docs/plato-execution-plan-2026-07-09.md).
