@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <Platforms>AnyCPU;x64</Platforms>
+    <!-- The imported Plato.Intrinsics shared sources use unsafe blocks (Vector4). -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- The runtime's explicit NumericalLimits<> implementations are fenced behind this
+         symbol; ChurnShims/ConceptShims.cs supplies the interface they compile against. -->
+    <DefineConstants>$(DefineConstants);PLATO_FORWARD_CONCEPTS</DefineConstants>
+  </PropertyGroup>
+  <!-- Behavioural tests for the handwritten runtime. Plato.Intrinsics is a SHARED project
+       (no assembly of its own), so its sources compile into this test assembly. This suite
+       tests the runtime ONLY: no compiler or writer project references. -->
+  <Import Project="..\..\src\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+    <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
+    <!-- This project compiles its own Ara3D.Geometry namespace; the package of that name
+         is the old V1 library and would make every extension method ambiguous. -->
+    <PackageReference Include="Ara3D.Geometry" Version="$(Ara3DVersion)" ExcludeAssets="compile" />
+  </ItemGroup>
+</Project>
