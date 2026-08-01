@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using Ara3D.Geometry.CSharpWriter;
 using NUnit.Framework;
@@ -81,7 +81,6 @@ library Quantities
                 {
                     ExtensionStyle = true,
                     ScalarErase = true,
-                    NoProperties = true,
                 };
                 w.WriteAll("float");
                 foreach (var kv in w.Files)

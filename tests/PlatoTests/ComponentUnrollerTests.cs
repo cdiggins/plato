@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using Ara3D.Geometry.CSharpWriter;
 using NUnit.Framework;
 
@@ -25,7 +25,6 @@ namespace PlatoTests
             {
                 ExtensionStyle = true,
                 ScalarErase = true,
-                NoProperties = true,
                 Optimize = optimize,
                 OptimizeArrays = true,
                 InlineCalls = true,

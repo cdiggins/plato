@@ -11,9 +11,12 @@
     Deliberate differences from Plato.Generated.Unoptimized (decision 2026-08-01):
       * source is the FORWARD stdlib (stdlib\foundation), not stdlib-legacy;
       * scalars are KEPT AS WRAPPER STRUCTS - Number / Integer / Boolean / Character / String
-        remain distinct types. No scalar erasure (no scalar=float), and therefore no
-        methods / no-properties either, since both of those require the erased recipe;
+        remain distinct types. No scalar erasure (no scalar=float);
       * no optimizer pass runs (no optimize, inline, loops, optimize-arrays).
+
+    Like every other C# target, the emitted code is PROPERTY-FREE: a no-arg member is a method
+    unless the handwritten runtime spells it as a struct field. That is no longer selectable -
+    see tracker\decisions\2026-08-01-property-free-emission-is-unconditional.md.
 
     This is ordinary cached output, not a golden: regenerate it any time with the command
     above. docs.html / interfaces.txt are generator side-products.

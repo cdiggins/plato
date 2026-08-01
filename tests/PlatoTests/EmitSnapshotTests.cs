@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -86,7 +86,6 @@ namespace PlatoTests
             {
                 ExtensionStyle = true,
                 ScalarErase = true,
-                NoProperties = true,
             };
             w.WriteAll("float");
             return w;

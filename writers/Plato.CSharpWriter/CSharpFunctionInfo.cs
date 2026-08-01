@@ -104,13 +104,12 @@ namespace Ara3D.Geometry.CSharpWriter
         // TODO: this used to be a way to signal static methods.
         public bool IsStatic => ParameterNames.Count == 0 || ParameterNames[0] == "_";
 
-        // --no-properties: a no-arg member that would emit as a property emits as a METHOD instead,
-        // unless its name is on the struct surface (a field, primitive pseudo-field, or Count — see
+        // A no-arg member that would read as a property emits as a METHOD, unless its name is on
+        // the struct surface (a field, a primitive pseudo-field, or Count — see
         // CSharpWriter.StructSurfacePropertyNames, the uniform rendering rule).
-        public bool NoProperties => (TypeToCSharp as CSharpTypeWriter)?.Writer?.NoProperties ?? false;
         // Interface DECLARATIONS are always methods (struct-surface obligations are satisfied by
         // explicit interface implementations forwarding to the property/field).
-        public bool EmitAsMethod => NoProperties && !IsIndexer
+        public bool EmitAsMethod => !IsIndexer
             && ((Function.Kind == FunctionInstanceKind.InterfaceDeclared && OwnerType == null)
                 || !((TypeToCSharp as CSharpTypeWriter) is CSharpTypeWriter tw
                      && (tw.Writer?.IsStructSurfaceProperty(tw.TypeDef?.Name, Name) ?? false)));

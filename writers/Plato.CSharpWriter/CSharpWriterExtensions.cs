@@ -67,19 +67,13 @@ namespace Ara3D.Geometry.CSharpWriter
         // sole C# body writer since the legacy CSharpFunctionBodyWriter was retired (C4).
         // optimizeArrays = true: loop-into-buffer lowering of multi-consumed Map/MapRange results
         //                (--optimize-arrays, optimizer stage 2 increment 1; see TirArrayMaterializer).
-        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false, bool optimizeArrays = false, bool inlineCalls = false, bool methodsOnly = false, bool lowerLoops = false, string tirDumpDir = null, bool noProperties = false, bool inlineReport = false, bool staticAbstract = false)
+        // The emitted C# is always property-free: a no-arg member emits as a METHOD unless the
+        // handwritten runtime spells it as a struct field/property (see the 2026-08-01 ADR).
+        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false, bool optimizeArrays = false, bool inlineCalls = false, bool lowerLoops = false, string tirDumpDir = null, bool inlineReport = false, bool staticAbstract = false)
         {
-            // --methods and --no-properties collapsed to one flag at C4 (the weaker --methods
-            // variant, which kept primitive handwritten members as properties, was retired with
-            // the default style). Either flag now selects the property-free output.
-            noProperties = noProperties || methodsOnly;
             if (scalarErase && !extensionStyle)
                 throw new NotSupportedException("--scalar=float requires --csharp-style=extensions (the default wrapper-struct layout keeps scalar members inside partial structs, which do not exist under erasure)");
-            if (noProperties && !scalarErase)
-                throw new NotSupportedException("--no-properties requires --scalar=float (erased interfaces)");
-            if (staticAbstract && !noProperties)
-                throw new NotSupportedException("--static-abstract requires --no-properties (a static abstract member is always method-form; the property-style interface surface has no shape for it)");
-            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, NoProperties = noProperties, LowerLoops = lowerLoops, StaticAbstract = staticAbstract, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
+            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, LowerLoops = lowerLoops, StaticAbstract = staticAbstract, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
             if (inlineReport)
                 writer.InlineReport = new InlineReport();
             writer.WriteAll("float");

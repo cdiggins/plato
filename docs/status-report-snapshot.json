@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-01T12:44:48-04:00",
+  "updated_at": "2026-08-01T13:11:12-04:00",
   "note": "Written by tools/record-gates.py at 2026-07-31T19:14:42-04:00.",
   "gates": [
     {
@@ -121,7 +121,7 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-08-01T12:44:48-04:00",
+    "updated_at": "2026-08-01T13:11:12-04:00",
     "targets": {
       "forward-conformance": {
         "built_at": "2026-07-30T15:04:16-04:00",
@@ -264,7 +264,7 @@
         "warning_by_code": {}
       },
       "generated-foundation-unoptimized": {
-        "built_at": "2026-08-01T12:42:50-04:00",
+        "built_at": "2026-08-01T13:11:12-04:00",
         "project": "C:\\Users\\cdigg\\git\\plato\\generated\\Plato.Generated.Foundation.Unoptimized\\Plato.Generated.Foundation.Unoptimized.csproj",
         "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\csharp-build-logs\\generated-foundation-unoptimized.log",
         "configuration": "Release",
@@ -278,12 +278,12 @@
         "warning_by_code": {}
       }
     },
-    "latest_target": "generated-optimized",
+    "latest_target": "generated-foundation-unoptimized",
     "latest": {
-      "target": "generated-optimized",
+      "target": "generated-foundation-unoptimized",
       "total_errors": 0,
       "total_warnings": 0,
-      "built_at": "2026-08-01T12:44:48-04:00",
+      "built_at": "2026-08-01T13:11:12-04:00",
       "exit_code": 0,
       "by_category": {},
       "by_code_top": {}

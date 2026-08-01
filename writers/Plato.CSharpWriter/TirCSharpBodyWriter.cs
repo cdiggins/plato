@@ -101,7 +101,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // MethodsOnly: whether a bare STATIC name of the current receiver type is a generated
     // static METHOD (needs "()"); handwritten statics keep member-access syntax.
     private bool IsGeneratedStaticMethodName(string name)
-        => _tw.Writer.NoProperties && _tw.TypeDef != null
+        => _tw.TypeDef != null
            && _tw.Writer.GetExtensionPlanByTypeName(_tw.TypeDef.Name) is ExtensionStylePlan plan
            && plan.GeneratedNoArgStaticNames.Contains(name);
 
@@ -123,7 +123,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             // property syntax is a method (this also covers the scalar types' members, whose
             // erased receiver is a primitive on which they are all extension methods).
             if (_tw.Writer.MovedNoArgNames.Contains(name)
-                || (_tw.Writer.NoProperties && !IsSurfacePropertyOn(_tw.TypeDef?.Name, name)))
+                || !IsSurfacePropertyOn(_tw.TypeDef?.Name, name))
                 Write("()");
             return;
         }
@@ -192,9 +192,9 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // getter — the same rule the reference writer applies per isStatic.
         var numParams = _tir.Original?.NumParameters ?? _tir.Parameters.Count;
         var isProp = _isStatic ? numParams == 0 : numParams == 1;
-        // MethodsOnly (--methods): the signature declared a METHOD unless the name is pinned
-        // to property syntax — frame the body to match.
-        if (_tw.Writer.NoProperties && _fi != null && _fi.EmitAsMethod)
+        // The signature declared a METHOD unless the name is pinned to property syntax — frame
+        // the body to match.
+        if (_fi != null && _fi.EmitAsMethod)
             isProp = false;
 
         // The reference writer hoists lambda-captured references into `var _var{N} = x;` blocks
@@ -717,10 +717,8 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // keyword arrives as TirDefault, not here.)
         if (args.Count == 0)
         {
-            Write($"Constants.{name}");
-            // MethodsOnly: constants are static methods.
-            if (_tw.Writer.NoProperties)
-                Write("()");
+            // Constants are static methods.
+            Write($"Constants.{name}()");
             return;
         }
 
@@ -790,7 +788,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (name == "At")
         {
             var recvType = TirRewrite.StripCoerce(args[0])?.Type?.Name;
-            if (_tw.Writer.NoProperties && recvType != null
+            if (recvType != null
                 && _tw.Writer.GetExtensionPlanByTypeName(recvType) != null
                 && !CSharpWriter.ScalarPrimitives.ContainsKey(recvType))
             {
@@ -845,17 +843,14 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             // pinned to property/field syntax. STATIC member accesses (type-ref receiver) are
             // decided by the target type's plan: generated statics are methods, handwritten
             // statics (Number.MinValue) keep member syntax.
-            if (_tw.Writer.NoProperties)
+            if (TirRewrite.StripCoerce(args[0]) is TirTypeRef recvT)
             {
-                if (TirRewrite.StripCoerce(args[0]) is TirTypeRef recvT)
-                {
-                    var recvPlan = _tw.Writer.GetExtensionPlanByTypeName(recvT.TypeDef?.Name);
-                    if (recvPlan != null && recvPlan.GeneratedNoArgStaticNames.Contains(name))
-                        Write("()");
-                }
-                else if (!IsSurfacePropertyOn(TirRewrite.StripCoerce(args[0])?.Type?.Name, name))
+                var recvPlan = _tw.Writer.GetExtensionPlanByTypeName(recvT.TypeDef?.Name);
+                if (recvPlan != null && recvPlan.GeneratedNoArgStaticNames.Contains(name))
                     Write("()");
             }
+            else if (!IsSurfacePropertyOn(TirRewrite.StripCoerce(args[0])?.Type?.Name, name))
+                Write("()");
             return;
         }
 

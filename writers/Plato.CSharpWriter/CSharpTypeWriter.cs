@@ -137,12 +137,10 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         // When writing interfaces, the "Self" type is literally "Self".
         SelfType = "Self";
 
-        // Scalar erasure: concept interfaces keep the wrapper types. Handwritten members in
-        // Plato.Intrinsics (which cannot change) satisfy interface obligations with wrapper
-        // signatures, so erasing interface declarations would break the intrinsics build.
-        // MethodsOnly (--methods): every obligation is generated (no handwritten member
-        // satisfies a concept interface), so the interfaces erase and declare methods.
-        EraseScalars = Writer.NoProperties && Writer.ScalarErase;
+        // Scalar erasure: every concept obligation is GENERATED (no handwritten Plato.Intrinsics
+        // member satisfies a concept interface), so an erased recipe erases the interfaces too.
+        // Without erasure the interfaces are wrapper-typed like everything else.
+        EraseScalars = Writer.ScalarErase;
 
         var type = TypeDef;
         Debug.Assert(type.IsInterface());
@@ -211,8 +209,6 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         {
             var fi = ToFunctionInfo(m.Function, null, FunctionInstanceKind.InterfaceDeclared);
             WriteLine(fi.MethodInterface);
-            if (fi.IsIndexer && !Writer.NoProperties)
-                WriteLine(fi.IndexerInterface);
         }
         return WriteEndBlock();
     }
@@ -283,8 +279,6 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         if (f.Name == "At" && singleArrayField != null)
         {
             WriteLine($" => {singleArrayField}[{pns[1]}];");
-            if (!Writer.NoProperties)
-                WriteLine($"{f.IndexerSig} {{ {Annotation} get => At({pns[1]}); }}");
             return this;
         }
 
@@ -301,9 +295,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
                 s += $"{p} == {i} ? {fs[i]} : ";
             s += $"throw new System.IndexOutOfRangeException()";
             WriteLine($" => {s};");
-            // MethodsOnly: no indexers — At() is the access surface.
-            if (!Writer.NoProperties)
-                WriteLine($"{f.IndexerSig} {{ {Annotation} get => At({pns[1]}); }}");
+            // No indexers are generated — At() is the access surface.
             return this;
         }
 
@@ -443,9 +435,6 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
                 WriteLine(f.PairedOperatorImpl);
         }
 
-        if (f.IsIndexer && !Writer.NoProperties)
-            WriteLine(f.IndexerImpl);
-
         if (f.IsImplicit)
         {
             if (f.OwnerType.Name == f.Name)
@@ -501,8 +490,6 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
                 continue;
             }
             WriteLine(fi.MethodInterface);
-            if (fi.IsIndexer && !Writer.NoProperties)
-                WriteLine(fi.IndexerInterface);
         }
         return WriteEndBlock();
     }

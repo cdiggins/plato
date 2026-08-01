@@ -135,11 +135,12 @@ namespace Ara3D.Geometry
 #if PLATO_FORWARD_CONCEPTS
         // `NumericalLimits<Self>` declares MinValue / MaxValue as INSTANCE members, and the
         // wrapper already spends those two names on statics, so the obligation is discharged
-        // explicitly. Guarded: the interface only exists in a project that compiles the
-        // forward stdlib's Interfaces.g.cs, and this shared project is also imported by the
-        // legacy generated projects and the tests, which have no such type.
-        Number NumericalLimits<Number>.MinValue { [MethodImpl(AggressiveInlining)] get => MinValue; }
-        Number NumericalLimits<Number>.MaxValue { [MethodImpl(AggressiveInlining)] get => MaxValue; }
+        // explicitly. They are METHODS because the generated interfaces are property-free.
+        // Guarded: the interface only exists in a project that compiles the forward stdlib's
+        // Interfaces.g.cs, and this shared project is also imported by the legacy generated
+        // projects and the tests, which have no such type.
+        [MethodImpl(AggressiveInlining)] Number NumericalLimits<Number>.MinValue() => MinValue;
+        [MethodImpl(AggressiveInlining)] Number NumericalLimits<Number>.MaxValue() => MaxValue;
 #endif
     }
 }

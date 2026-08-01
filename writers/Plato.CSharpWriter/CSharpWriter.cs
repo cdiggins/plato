@@ -83,10 +83,10 @@ namespace Ara3D.Geometry.CSharpWriter
                     ExtensionPlans[c.TypeDef] = new ExtensionStylePlan(this, c);
 
             // The struct-surface property-name set (the uniform rendering rule): every name that
-            // renders with member/property syntax at a call site. Under --no-properties this is
-            // exactly the per-type field + pseudo-field names (unioned below) plus the BCL
-            // Count/NumColumns/NumRows obligations — no handwritten "pins" (the V2 runtime exposes
-            // those members as methods).
+            // renders with member/property syntax at a call site — exactly the per-type field +
+            // pseudo-field names (unioned below) plus the BCL Count/NumColumns/NumRows
+            // obligations. Concept interfaces declare no-arg obligations as METHODS, so they
+            // contribute nothing here.
             var keptNoArg = new HashSet<string>();
             foreach (var p in ExtensionPlans.Values)
                 keptNoArg.UnionWith(p.KeptNoArgPropertyNames);
@@ -95,47 +95,35 @@ namespace Ara3D.Geometry.CSharpWriter
             // even under the receiver-aware rule (see IsStructSurfaceProperty).
             var globalNames = new HashSet<string>();
 
-            // Property-ful (non-NoProperties) extension style only: interface-declared no-arg
-            // members are C# interface properties, so their names keep property syntax everywhere.
-            // Under --no-properties interfaces declare METHODS, so nothing is seeded here.
+            // BCL/collection parity: Count (IReadOnlyCollection) and NumColumns/NumRows
+            // (the handwritten Ara3D.Collections IReadOnlyList2D) are PROPERTIES on
+            // receivers the emitter does not generate; generated code calls them on both
+            // handwritten and generated receivers, and call-site syntax is decided by name.
+            // GLOBAL: no ExtensionStylePlan owns them, so the per-receiver rule below cannot
+            // find them on any plan and they must stay name-keyed.
+            globalNames.Add("Count");
+            globalNames.Add("NumColumns");
+            globalNames.Add("NumRows");
+
+            // Sum-type flattened fields (wave-2, plato-232) are genuine struct fields, so the
+            // match lowering's projections (seg.Move_EndPoint) must read with field/property
+            // syntax, never a "()" method call. The Kind tag field likewise. (Per-case Is<Case>
+            // predicates are deliberately NOT added — they are methods and keep their "()".)
+            // GLOBAL for the same reason: the flattened fields live on the sum's generated
+            // struct, whose per-case projections are read through receivers the plans do not
+            // describe.
             foreach (var t in Compilation.AllTypeAndLibraryDefinitions)
-                if (t != null && t.IsInterface())
-                    foreach (var m in t.Methods)
-                        if (m.Function.NumParameters == 1 && !NoProperties)
-                            keptNoArg.Add(m.Function.Name);
+                if (t != null && t.IsSum)
+                {
+                    globalNames.Add("Kind");
+                    foreach (var c in t.Cases)
+                        foreach (var f in c.Fields)
+                            globalNames.Add(f.FlatName);
+                }
 
-            if (NoProperties)
-            {
-                // BCL/collection parity: Count (IReadOnlyCollection) and NumColumns/NumRows
-                // (the handwritten Ara3D.Collections IReadOnlyList2D) are PROPERTIES on
-                // receivers the emitter does not generate; generated code calls them on both
-                // handwritten and generated receivers, and call-site syntax is decided by name.
-                // GLOBAL: no ExtensionStylePlan owns them, so the per-receiver rule below cannot
-                // find them on any plan and they must stay name-keyed.
-                globalNames.Add("Count");
-                globalNames.Add("NumColumns");
-                globalNames.Add("NumRows");
-
-                // Sum-type flattened fields (wave-2, plato-232) are genuine struct fields, so the
-                // match lowering's projections (seg.Move_EndPoint) must read with field/property
-                // syntax, never a "()" method call. The Kind tag field likewise. (Per-case Is<Case>
-                // predicates are deliberately NOT added — they are methods and keep their "()".)
-                // GLOBAL for the same reason: the flattened fields live on the sum's generated
-                // struct, whose per-case projections are read through receivers the plans do not
-                // describe.
-                foreach (var t in Compilation.AllTypeAndLibraryDefinitions)
-                    if (t != null && t.IsSum)
-                    {
-                        globalNames.Add("Kind");
-                        foreach (var c in t.Cases)
-                            foreach (var f in c.Fields)
-                                globalNames.Add(f.FlatName);
-                    }
-
-                keptNoArg.UnionWith(globalNames);
-                StructSurfacePropertyNames = keptNoArg;
-                GlobalStructSurfacePropertyNames = globalNames;
-            }
+            keptNoArg.UnionWith(globalNames);
+            StructSurfacePropertyNames = keptNoArg;
+            GlobalStructSurfacePropertyNames = globalNames;
 
             var movedNoArg = new HashSet<string>();
             foreach (var p in ExtensionPlans.Values)
@@ -339,23 +327,6 @@ namespace Ara3D.Geometry.CSharpWriter
         public TirFunction TestGetGroundTir(string concreteTypeName, string functionName)
             => TirSource.TryGetGroundTirByNames(concreteTypeName, functionName);
 
-        // The single property/method flag (--no-properties / --methods, unified at C4). When true,
-        // the generated output declares NO C# properties or indexers — the shipping V2 recipe:
-        //   - concept interfaces (Interfaces.g.cs) declare no-arg obligations as METHODS with
-        //     scalar-ERASED signatures (bool Closed(); float Eval(float x); ...);
-        //   - struct-KEPT members (obligations, conversions, statics, stubs) emit as methods with
-        //     erased signatures; struct indexers are dropped (At() remains);
-        //   - the IArrayLike scaffolding (NumComponents/Components) and nullary constants
-        //     (Constants.Pi()) become methods; call sites get "()" accordingly.
-        // The UNIFORM RENDERING RULE decides call-site syntax: a member renders as member/property
-        // syntax iff its name is on the struct surface (a genuine field, a primitive pseudo-field
-        // X/Y/Z/M11..., or a BCL Count/NumRows/NumColumns obligation — see StructSurfacePropertyNames);
-        // every other member is a method call. Requires ExtensionStyle + ScalarErase.
-        // (Historically two flags — MethodsOnly kept the primitive handwritten members as
-        // properties, NoProperties erased them too; the weaker MethodsOnly variant was retired
-        // with the default style at C4, leaving this one flag.)
-        public bool NoProperties;
-
         // When true (--static-abstract), a concept member whose receiver is `_` — Plato's
         // constructor-shaped idiom for a TYPE-level operation (`Zero(_: Self): Self`,
         // `FromAmount(_: Self, x: Number): Self`) — emits as a C# `static abstract` interface
@@ -372,6 +343,19 @@ namespace Ara3D.Geometry.CSharpWriter
         // which is what keeps hard rule 2 intact; the forward recipe opts in.
         public bool StaticAbstract;
 
+        // PROPERTY-FREE EMISSION (unconditional; see the 2026-08-01 ADR). The generated output
+        // declares no C# properties and no indexers:
+        //   - concept interfaces (Interfaces.g.cs) declare no-arg obligations as METHODS;
+        //   - struct-KEPT members (obligations, conversions, statics, stubs) emit as methods;
+        //     struct indexers are dropped (At() remains);
+        //   - the IArrayLike scaffolding (NumComponents/Components) and nullary constants
+        //     (Constants.Pi()) are methods; call sites get "()" accordingly.
+        // The UNIFORM RENDERING RULE decides call-site syntax: a member renders with member/property
+        // syntax iff its name is on the struct surface (a genuine field, a primitive pseudo-field
+        // X/Y/Z/M11..., or a BCL Count/NumRows/NumColumns obligation — see below); every other
+        // member is a method call. This is independent of ScalarErase: a wrapper-scalar recipe is
+        // just as property-free as an erased one.
+        //
         // The UNION over all types of the names that keep PROPERTY/field access syntax — struct
         // fields, the primitive pseudo-fields (X/Y/Z, M11...), the BCL Count/NumRows/NumColumns
         // obligations, and the sum-type flattened fields. Built in BuildExtensionPlans.
@@ -387,7 +371,7 @@ namespace Ara3D.Geometry.CSharpWriter
         // on every receiver: the BCL/collection obligations (Count/NumColumns/NumRows, properties on
         // handwritten receivers the emitter never generates) and the sum-type flattened fields +
         // Kind tag (read through match-lowering projections on receivers the plans do not describe).
-        // A subset of StructSurfacePropertyNames; null unless NoProperties.
+        // A subset of StructSurfacePropertyNames.
         public HashSet<string> GlobalStructSurfacePropertyNames { get; private set; }
 
         // The RECEIVER-AWARE rendering rule (plato-323): does `name` render with property/field
@@ -417,16 +401,16 @@ namespace Ara3D.Geometry.CSharpWriter
         {
             if (name == null)
                 return false;
-            // The four handwritten V2 members the declaration mis-describes. Checked before the
-            // scalar short-circuit because one of them (Number.Angle) is read off the WRAPPER, in
-            // the `((Number)x).Angle` forwarder the erased per-type file emits.
-            if (NoProperties)
-            {
-                var ov = PrimitiveSurfaceOverride(ownerTypeName, name);
-                if (ov.HasValue)
-                    return ov.Value;
-            }
-            if (IsScalarTypeName(ownerTypeName))
+            // The handwritten members the declaration mis-describes. Checked before the scalar
+            // short-circuit because some of them are read off the WRAPPER, in the
+            // `((Number)x).Sqrt` forwarders an erased per-type file emits.
+            var ov = PrimitiveSurfaceOverride(ownerTypeName, name);
+            if (ov.HasValue)
+                return ov.Value;
+            // An ERASED scalar receiver has no generated struct at all, so every no-arg member of
+            // it is a classic extension method on the primitive and always takes "()". Without
+            // erasure the wrapper struct is real and its own plan decides, like any other type.
+            if (ScalarErase && IsScalarTypeName(ownerTypeName))
                 return false;
             if (GlobalStructSurfacePropertyNames?.Contains(name) ?? false)
                 return true;
@@ -540,13 +524,13 @@ namespace Ara3D.Geometry.CSharpWriter
         };
 
         // The handwritten struct surface of a PRIMITIVE type, where the Plato.Intrinsics runtime
-        // (--no-properties) disagrees with what the Plato declaration implies. The writer generates
+        // disagrees with what the Plato declaration implies. The writer generates
         // NO struct for a PrimitiveTypes entry (CSharpConcreteTypeWriter's "// Fields" block is
         // `!IsPrimitive`), so it cannot see the runtime's real shape and reads the declaration as a
         // proxy: a declared field is a property/field, everything else is a method. That proxy is
         // right for the whole V2 surface except these members, hence a short exception list
         // rather than a second full surface record. Keyed "{Type}.{Member}"; the value is whether
-        // V2 spells the member as a PROPERTY. Consulted only under NoProperties.
+        // the runtime spells the member as a PROPERTY.
         //
         //   Matrix4x4.Translation / .Rotation / Number.Angle — NOT declared as fields (they are
         //     library functions in Plato), yet V2 keeps them as properties. Before the

@@ -192,6 +192,43 @@ The ones agents most often rediscover the hard way:
 - On completion: close your tracker issue (`python tools/track.py close <id> --outcome "..."`)
   and record any lasting decision in the relevant `docs/` plan, and keep the final report
   under ~300 words using: files touched / gates table / surprises / rerun commands.
+
+### Writing the final report
+
+The report is read by a human who was not in your session. It is not a diff summary and not a
+set of notes to yourself. Terse is fine; **unexplained is not** — the reader must not have to ask
+"what does that mean?" about any line of it.
+
+- **Every named thing gets a clause saying what it is, the first time it appears.** Constants,
+  tables, allowlists, test names, gate names, issue ids. Not `re-pinned to the five scalars` but
+  `re-pinned to the five scalars (the gate's scope list — Number/Integer/Boolean/Character/String;
+  the other receivers left the runtime, so they are out of scope rather than fixed)`.
+- **Say the consequence, not just the mechanism.** A reader wants to know what is now true that
+  was not true before, and what would break if the change were wrong.
+- **Name the decision behind every allowlist entry.** Adding a name to a known-missing /
+  ignored / override list is a judgement call. Report which call you made and why it is not a
+  regression — that is the part a reviewer is actually checking.
+- **A tracker item filed is not a finding reported.** One sentence per filed issue, in plain
+  terms: what is wrong, what it costs, how big the fix is. The issue file holds the detail; the
+  report has to make the reader able to decide whether to care.
+- **Distinguish verified / done-but-unverified / not started**, and say which gates you actually
+  ran versus inherited from a previous run.
+- No arrow chains, no invented abbreviations, no compound noun phrases standing in for a
+  sentence. If a phrase needs a paragraph to unpack, you are at the wrong altitude: describe the
+  effect instead of the mechanism.
+
+### Build output and logs
+
+Compile errors are evidence; do not let them exist only in your scrollback. Any C# build whose
+result you intend to report — especially a RED one — goes through
+`powershell tools/dotnet-build-record.ps1 -Project <csproj> -TargetName <name>` (add `-RecordOnly`
+when you expect failure and want the run recorded rather than aborted). That writes the full build
+log to `.temp/csharp-build-logs/<target>.log` and the error totals, by CS code and by category,
+into `docs/status-report-snapshot.json`. `.temp/` is git-ignored and per-target files are
+overwritten, so it is a working store, not a history: when a red build matters beyond the session,
+**quote the distinct error codes and one representative message per code in the tracker issue or
+the commit message**, which are the durable records. A bare `dotnet build` on a Plato project
+leaves nothing behind and is the wrong tool when you care about the result.
 - `PROGRESS.md` and `COMMIT_MSG.txt` at the repo root are single-slot scratch files. Sessions run
   concurrently here — if one already holds another mission's notes, leave it alone and put yours in
   your own commit message rather than overwriting someone's work in progress.

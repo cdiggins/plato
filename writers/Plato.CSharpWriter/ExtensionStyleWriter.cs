@@ -120,12 +120,9 @@ public class ExtensionStylePlan
     // struct to keep them in - everything becomes an extension method on the primitive).
     public bool IsErasedScalar { get; }
 
-    // CSharpWriter.NoProperties, captured because DemoteMovedNames runs after construction.
-    private readonly bool _noProperties;
-
-    // --no-properties only: no-arg STATIC members of this type with generated bodies — emitted as
-    // static METHODS, so bare-name call sites need "()". Consulted per-receiver-type by the body
-    // writer (TirCSharpBodyWriter.IsGeneratedStaticMethodName / WriteCallCore).
+    // No-arg STATIC members of this type with generated bodies — emitted as static METHODS, so
+    // bare-name call sites need "()". Consulted per-receiver-type by the body writer
+    // (TirCSharpBodyWriter.IsGeneratedStaticMethodName / WriteCallCore).
     public HashSet<string> GeneratedNoArgStaticNames { get; } = new HashSet<string>();
 
     public IEnumerable<FunctionInstance> MovedFunctions => _moved;
@@ -141,7 +138,6 @@ public class ExtensionStylePlan
         var name = ct.Name + typeParamsStr;
         var isPrimitive = CSharpWriter.PrimitiveTypes.ContainsKey(name);
         IsErasedScalar = writer.ScalarErase && CSharpWriter.ScalarPrimitives.ContainsKey(name);
-        _noProperties = writer.NoProperties;
 
         // Generic concrete types keep all their members (mirrors the V1 decision to not
         // generate per-type extension classes for generic types).
@@ -174,26 +170,21 @@ public class ExtensionStylePlan
             keepNames.Add(f.Name);
 
         // No-arg property/field names that remain member-syntax in the struct. An erased scalar
-        // type has no struct, so it contributes none. Under --no-properties only the genuine
-        // struct-surface names (fields + pseudo-fields) qualify — generated no-arg members (stubs
-        // included) become methods; the property-ful extension style also keeps the no-arg stubs.
+        // type has no struct, so it contributes none. Only the genuine struct-surface names
+        // (fields + pseudo-fields) qualify — every generated no-arg member, stubs included,
+        // becomes a method.
         if (!IsErasedScalar)
         {
             // A PRIMITIVE type's struct is HANDWRITTEN — the writer emits no fields for it at all
             // (CSharpConcreteTypeWriter's "// Fields" block is `!IsPrimitive`) — so a Plato-declared
             // field of such a type is on the C# struct surface only if the runtime actually spells it
             // that way. It almost always does; CSharpWriter.PrimitiveSurfaceOverrides records where
-            // the V2 runtime does not (`Angle.Radians` is a method there).
+            // the handwritten runtime does not.
             foreach (var fn in fieldNames)
-                if (!(writer.NoProperties && isPrimitive
-                      && CSharpWriter.PrimitiveSurfaceOverride(ct.Name, fn) == false))
+                if (!(isPrimitive && CSharpWriter.PrimitiveSurfaceOverride(ct.Name, fn) == false))
                     KeptNoArgPropertyNames.Add(fn);
             if (pseudoFields != null)
                 KeptNoArgPropertyNames.UnionWith(pseudoFields);
-            if (!writer.NoProperties)
-                foreach (var f in ct.UnimplementedFunctions)
-                    if (f.ParameterNames.Count == 1)
-                        KeptNoArgPropertyNames.Add(f.Name);
         }
 
         if (IsErasedScalar)
@@ -239,12 +230,8 @@ public class ExtensionStylePlan
             if (keep)
             {
                 keepNames.Add(f.Name);
-                // Under --no-properties kept GENERATED members emit as methods, so a kept no-arg
-                // member keeps property syntax only in the property-ful extension style.
-                if (!IsErasedScalar && !fi.IsStatic && f.ParameterNames.Count == 1
-                    && !writer.NoProperties)
-                    KeptNoArgPropertyNames.Add(f.Name);
-                if (writer.NoProperties && fi.IsStatic && f.Implementation.Body != null
+                // A kept GENERATED member emits as a method, so it adds no property name here.
+                if (fi.IsStatic && f.Implementation.Body != null
                     && f.ParameterNames.Count <= 1)
                     GeneratedNoArgStaticNames.Add(f.Name);
             }
@@ -257,7 +244,7 @@ public class ExtensionStylePlan
             if (!keepNames.Contains(f.Name))
                 _moved.Add(f);
             else if (!IsErasedScalar && f.ParameterNames.Count == 1
-                && (!writer.NoProperties || KeptNoArgPropertyNames.Contains(f.Name)
+                && (KeptNoArgPropertyNames.Contains(f.Name)
                     || fieldNames.Contains(f.Name)
                     || (pseudoFields != null && System.Linq.Enumerable.Contains(pseudoFields, f.Name))))
                 KeptNoArgPropertyNames.Add(f.Name); // stays in the struct as a property (name-shadow keep)
@@ -280,16 +267,12 @@ public class ExtensionStylePlan
         foreach (var f in demoted)
         {
             _moved.Remove(f);
-            // Coming back into the struct does not make the member a PROPERTY. It is one only in
-            // the property-ful extension style; under --no-properties a kept generated member emits
-            // as a METHOD (CSharpFunctionInfo.EmitAsMethod), exactly like every other non-field
-            // member of this type. Recording it here was what re-injected the global name collision
-            // into every plan and defeated the receiver-aware rendering rule (plato-323 item 2): a
-            // field named `Amount` on an image filter demoted `Amount(x: Angle)` on 60 unrelated
-            // quantity types and then pinned property syntax onto all of them.
-            // Scalar erasure: an erased scalar type has no struct at all, so it never contributes.
-            if (!IsErasedScalar && !_noProperties && f.ParameterNames.Count == 1)
-                KeptNoArgPropertyNames.Add(f.Name);
+            // Coming back into the struct does not make the member a PROPERTY: a kept generated
+            // member emits as a METHOD (CSharpFunctionInfo.EmitAsMethod), exactly like every other
+            // non-field member of this type. Recording it here was what re-injected the global name
+            // collision into every plan and defeated the receiver-aware rendering rule (plato-323
+            // item 2): a field named `Amount` on an image filter demoted `Amount(x: Angle)` on 60
+            // unrelated quantity types and then pinned property syntax onto all of them.
         }
     }
 }

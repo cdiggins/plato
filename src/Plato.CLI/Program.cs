@@ -46,16 +46,9 @@ namespace Ara3D.Geometry.CLI
             // small library functions are inlined before the other optimizer passes run.
             var inline = args.Contains("--inline");
 
-            // No properties/indexers in the generated output: concept interfaces declare
-            // scalar-erased METHOD obligations, kept struct members and constants emit as
-            // methods. Requires --scalar=float (and the default TIR path).
-            var methods = args.Contains("--methods");
-
-            // No properties AT ALL in the generated output (strict superset of --methods): the
-            // primitive-struct no-arg members that --methods still keeps as properties also emit
-            // as methods. For a runtime whose primitive structs expose them as methods
-            // (Plato.Intrinsics). Implies --methods.
-            var noProperties = args.Contains("--no-properties");
+            // (The generated C# has no properties and no indexers; that is not selectable. The
+            // former --methods / --no-properties flags were retired 2026-08-01 — see
+            // tracker/decisions/2026-08-01-property-free-emission-is-unconditional.md.)
 
             // Emit `_`-receiver concept members (Plato's constructor-shaped idiom for a type-level
             // operation) as C# `static abstract` interface members rather than omitting them.
@@ -197,7 +190,7 @@ namespace Ara3D.Geometry.CLI
             else
             {
                 logger.Log("Writing C# Files");
-                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", optimizeArrays, inline, methods, loops, tirDumpDir, noProperties, inlineReport, staticAbstract);
+                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract);
                 logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}");
                 if (output.DegradedBodies.Count > 0)
                 {

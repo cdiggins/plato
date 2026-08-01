@@ -68,11 +68,11 @@ namespace Ara3D.Geometry
         public IReadOnlyList<T> MapRange<T>(Func<Integer, T> f) => new ReadOnlyList<T>(Value, i => f(i));
 
 #if PLATO_FORWARD_CONCEPTS
-        // See the note on Number: explicit because the two names are already statics, and
-        // guarded because NumericalLimits<Self> only exists where the forward stdlib's
-        // Interfaces.g.cs is compiled.
-        Integer NumericalLimits<Integer>.MinValue { [MethodImpl(AggressiveInlining)] get => MinValue; }
-        Integer NumericalLimits<Integer>.MaxValue { [MethodImpl(AggressiveInlining)] get => MaxValue; }
+        // See the note on Number: explicit because the two names are already statics, methods
+        // because the generated interfaces are property-free, and guarded because
+        // NumericalLimits<Self> only exists where the forward stdlib's Interfaces.g.cs is compiled.
+        [MethodImpl(AggressiveInlining)] Integer NumericalLimits<Integer>.MinValue() => MinValue;
+        [MethodImpl(AggressiveInlining)] Integer NumericalLimits<Integer>.MaxValue() => MaxValue;
 #endif
 
         // -------------------------------------------------------------------------------
