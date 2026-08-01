@@ -231,18 +231,13 @@ namespace Ara3D.Geometry.Compiler.Analysis
         {
             foreach (var ct in Compilation.ConcreteTypes)
             {
-                // Same pairing the writer and LINT001 use: an obligation is discharged by
-                // the implementation sharing its (substituted) signature.
-                var implBySignature = new Dictionary<string, FunctionInstance>();
-                foreach (var impl in ct.ImplementedFunctions)
-                    if (!implBySignature.ContainsKey(impl.SignatureId))
-                        implBySignature.Add(impl.SignatureId, impl);
-
                 foreach (var declared in ct.DeclaredFunctions)
                 {
                     if (MembersImplementedByWriter.Contains(declared.Name))
                         continue; // synthesized by the writer; no authored receiver to compare
-                    if (!implBySignature.TryGetValue(declared.SignatureId, out var impl))
+                    // Same pairing the writer and LINT001 use (ConcreteType.ImplementationFor).
+                    var impl = ct.ImplementationFor(declared);
+                    if (impl == null)
                         continue; // unimplemented is LINT001's business, not this rule's
                     if (declared.ParameterNames.Count == 0 || impl.ParameterNames.Count == 0)
                         continue;

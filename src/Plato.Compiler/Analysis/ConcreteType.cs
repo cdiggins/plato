@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
 using Ara3D.Geometry.Compiler.Types;
@@ -45,13 +47,113 @@ namespace Ara3D.Geometry.Compiler.Analysis
             DeclaredFunctions = AllInterfaces.SelectMany(c => c.DeclaredFunctions).Distinct(d => d.SignatureId)
                 .ToList();
 
-            var implementedSigs = new HashSet<string>(ImplementedFunctions.Select(f => f.SignatureId));
-            UnimplementedFunctions = DeclaredFunctions.Where(f => !implementedSigs.Contains(f.SignatureId)).ToList();
+            OwnTypeParameterNames = TypeDef.TypeParameters.Select(tp => tp.Name).ToHashSet();
+            _implementationsBySignature = FirstBySignature(ImplementedFunctions, f => f.SignatureId);
+            _implementationsByCanonicalSignature = OwnTypeParameterNames.Count == 0
+                ? new Dictionary<string, FunctionInstance>()
+                : FirstBySignature(ImplementedFunctions, CanonicalCandidateSignature);
+
+            UnimplementedFunctions = DeclaredFunctions.Where(f => ImplementationFor(f) == null).ToList();
 
             InterfaceFunctionGroups = ConcreteFunctions
                 .Concat(GetInterfaceFunctions())
                 .GroupBy(f => f.SignatureId)
                 .Select(g => g.ToList()).ToList();
+        }
+
+        // -------------------------------------------------------------------
+        // Pairing an obligation with the implementation that discharges it.
+        //
+        // The primary key is the rendered SignatureId: the substituted signatures
+        // must match textually. For a GENERIC concrete type that key can never
+        // fire. The obligation is substituted with the type's OWN type parameter
+        // (ColumnCount(Array2D<T>):Integer), while the only way to WRITE the
+        // implementation is over a type variable (ColumnCount(xs: Array2D<$T>)),
+        // and 'T' is not the string the analysis gives that variable — so every
+        // obligation of a generic type reported as unimplemented and the writer
+        // emitted a throwing member (plato-376).
+        //
+        // The fallback is a one-way positional unification. Both signatures are
+        // re-rendered with their type variables (and, on the obligation side, the
+        // declaring type's own parameters) renamed to #0, #1, ... in order of first
+        // appearance. First-occurrence renaming makes the variable NAME irrelevant
+        // while preserving its REPETITION pattern, so Sample(Tween<$A>, Number):$B
+        // does not discharge Sample(Tween<T>, Number):T. It is one-way because only
+        // a candidate's VARIABLE may stand in for the obligation's parameter: a
+        // candidate naming a concrete type there (ColumnCount(Array2D<Integer>))
+        // renders that name and matches nothing generic. Every other position must
+        // still agree exactly.
+        //
+        // Duplicate detection (LINT004) deliberately does NOT use this: two library
+        // functions differing only in a variable name are still two declarations.
+        // -------------------------------------------------------------------
+
+        /// <summary>The names of the type parameters of the declaring type itself (empty when it is not generic).</summary>
+        public IReadOnlyCollection<string> OwnTypeParameterNames { get; }
+
+        private readonly IReadOnlyDictionary<string, FunctionInstance> _implementationsBySignature;
+        private readonly IReadOnlyDictionary<string, FunctionInstance> _implementationsByCanonicalSignature;
+
+        /// <summary>
+        /// The implementation that discharges <paramref name="obligation"/>, or null when the
+        /// obligation is unimplemented. This is the single pairing every consumer must use — the
+        /// linter and the writers have to agree on which members are going to throw.
+        /// </summary>
+        public FunctionInstance ImplementationFor(FunctionInstance obligation)
+            => _implementationsBySignature.TryGetValue(obligation.SignatureId, out var exact)
+                ? exact
+                : MentionsOwnTypeParameter(obligation)
+                  && _implementationsByCanonicalSignature.TryGetValue(
+                      CanonicalObligationSignature(obligation), out var unified)
+                    ? unified
+                    : null;
+
+        private static Dictionary<string, FunctionInstance> FirstBySignature(
+            IEnumerable<FunctionInstance> functions, Func<FunctionInstance, string> key)
+        {
+            var r = new Dictionary<string, FunctionInstance>();
+            foreach (var f in functions)
+                if (!r.ContainsKey(key(f)))
+                    r.Add(key(f), f);
+            return r;
+        }
+
+        /// <summary>True when the obligation is keyed by a type parameter of the declaring type,
+        /// which is the only shape the unification fallback exists for.</summary>
+        private bool MentionsOwnTypeParameter(FunctionInstance f)
+            => f.ParameterTypes.Append(f.ReturnType)
+                .SelectMany(t => t.SelfAndDescendants())
+                .Any(t => t.Def.Kind == TypeKind.TypeParameter && OwnTypeParameterNames.Contains(t.Name));
+
+        /// <summary>The obligation's signature with its type parameters and variables canonically renamed.</summary>
+        private static string CanonicalObligationSignature(FunctionInstance f)
+            => CanonicalSignature(f, t => t.Def.Kind == TypeKind.TypeParameter || t.Def.IsTypeVariable());
+
+        /// <summary>The candidate's signature with its type VARIABLES canonically renamed; a concrete
+        /// type keeps its name, which is what makes the unification one-way.</summary>
+        private static string CanonicalCandidateSignature(FunctionInstance f)
+            => CanonicalSignature(f, t => t.Def.IsTypeVariable());
+
+        private static string CanonicalSignature(FunctionInstance f, Func<TypeInstance, bool> renameable)
+        {
+            var canonical = new Dictionary<string, string>();
+
+            string Render(TypeInstance t)
+            {
+                if (renameable(t))
+                {
+                    if (!canonical.TryGetValue(t.Name, out var name))
+                        canonical.Add(t.Name, name = $"#{canonical.Count}");
+                    return name;
+                }
+                return t.Args.Count == 0
+                    ? t.Name
+                    : $"{t.Name}<{t.Args.Select(Render).JoinStringsWithComma()}>";
+            }
+
+            // Parameters first, so "first appearance" is source order.
+            var parameters = f.ParameterTypes.Select(Render).ToList().JoinStringsWithComma();
+            return $"{f.Name}({parameters}):{Render(f.ReturnType)}";
         }
 
         public InterfaceImplementation CreateConceptImplementation(TypeExpression type)
