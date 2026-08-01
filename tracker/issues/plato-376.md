@@ -2,14 +2,14 @@
 id: plato-376
 title: Concept obligations on a GENERIC type can never be discharged
 type: bug
-status: in-progress
+status: done
 priority: p2
 effort: M
 risk: low
 area: plato
 sprint: 
 created: 2026-07-31
-closed:
+closed: 2026-08-01
 links: [src/Plato.Compiler/Analysis/Linter.cs, stdlib/foundation/primitives-arrays.types.plato, stdlib/graphics/keyframes-tracks.types.plato]
 ---
 
@@ -150,3 +150,26 @@ blocker is unrelated to pairing — `Sample` needs `Lerp` on a bare `T`, and a
 library type variable carries no constraint that survives the shipping C# recipe
 (see "The second blocker on the tracks" above). That needs its own issue; the
 last box stays unticked until it is filed or fixed.
+
+**Update 2026-08-01 — the three paragraphs above about `Tween<T>` were overtaken
+by `plato-382`, which is now closed.** They stood for the few hours between the
+pairing fix and the split issue landing, and are kept as the historical record of
+why the split was made; every forward-looking claim in them is now false:
+
+- `Tween<T>` no longer reports LINT001. It declares
+  `type Tween<T> where T: Interpolatable`, and its `Sample` is a real body in the
+  new `stdlib/graphics/motion-graphics.library.plato` — not a throwing stub.
+- "A library type variable carries no constraint that survives the shipping C#
+  recipe" is no longer true. Declared bounds on `type`, `concept` and (via
+  `plato-393`) library-function declarations are verified by the checker and
+  emitted as F-bounded C# `where` clauses. The decision is
+  `tracker/decisions/2026-08-01-declared-type-parameter-bounds-are-verified-and-emitted.md`;
+  the same change collapsed `DeCasteljau` from five hand-spelled overloads to one.
+- LINT001 across the three shipping tiers is 0, and the lint ratchet dropped
+  33 -> 32 (`ForwardStdLibLintTests.MaxLintRatchet`).
+
+Nothing above this update changes: the pairing fix in
+`ConcreteType.ImplementationFor` is what THIS issue did, and it stands as written.
+The last `Done means` box was discharged by the split itself (plato-382 filed
+2026-08-01); plato-382 has since been implemented and closed, so this issue closes
+with no residue.

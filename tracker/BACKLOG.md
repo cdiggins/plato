@@ -14,7 +14,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-240](issues/plato-240.md) | vscode-plato: compiler-backed Go to Definition + Find All References | feature | p2 | M | low | plato | in-progress |  |
 | [plato-306](issues/plato-306.md) | Generic Difference defaults via optional delta conversion concept | idea | p2 | M | low | plato | in-progress |  |
 | [plato-320](issues/plato-320.md) | PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes | bug | p2 | S | low | plato | in-progress |  |
-| [plato-376](issues/plato-376.md) | Concept obligations on a GENERIC type can never be discharged | bug | p2 | M | low | plato | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
@@ -129,3 +128,4 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-379](issues/plato-379.md) | Unify Indexable and MapLike into Indexable<TIndex, TValue> | idea | ? | ? | ? | plato | idea |  |
 | [plato-380](issues/plato-380.md) | Integer2/Integer3 key types: re-express Indexable2D/3D as key instances | idea | ? | ? | ? | plato | idea |  |
 | [plato-381](issues/plato-381.md) | Concrete Dictionary type: decide whether keyed-lookup vocabulary earns its keep | idea | ? | ? | ? | plato | idea |  |
+| [repo-396](issues/repo-396.md) | Retire bonepile All/Any LINQ shadows; guard Corpus roots | retire | ? | ? | ? | repo | idea |  |
