@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Types;
 
 namespace Ara3D.Geometry.Compiler.Checking
 {
@@ -45,7 +46,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                     if (!_groundTirByKey.ContainsKey(key))
                         _groundTirByKey[key] = m.Tir;
                 }
-                else if (IsOpenGenericEmittable(m.Tir) && !_openGenericTirByKey.ContainsKey(key))
+                else if (IsOpenGenericEmittable(m.Tir, m.Original) && !_openGenericTirByKey.ContainsKey(key))
                 {
                     _openGenericTirByKey[key] = m.Tir;
                 }
@@ -63,39 +64,90 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// stores, passes them to a function value, constructs an <c>Array2D&lt;T&gt;</c> — and
         /// never performs an operation ON one. The test is conservative and structural:
         ///   * no unresolved elaboration node (its emission would be a guess), and
-        ///   * no call that DISPATCHES on a residual type variable, i.e. whose receiver argument's
-        ///     type is BARE and abstract (a type variable / type parameter / Self, with no type
-        ///     arguments of its own). That is the case the C# type parameter cannot satisfy — a
-        ///     body needing <c>Subtract</c> or <c>Lerp</c> on a bare T, e.g.
-        ///     <c>TimeVaryingValues.Change</c> — and it stays a throwing stub.
+        ///   * no UNLICENSED call that DISPATCHES on a residual type variable, i.e. whose receiver
+        ///     argument's type is BARE and abstract (a type variable / type parameter / Self, with
+        ///     no type arguments of its own) AND whose member no declared bound supplies. An
+        ///     unbounded C# type parameter cannot satisfy such a call, so it stays a throwing stub.
         /// A residual variable in any other position (element of an array, argument of a passed-in
         /// function, type argument of the receiver or of a constructed type) is exactly the type
         /// parameter the emitted signature already declares, so the body is valid C# as written.
+        ///
+        /// LICENSING (plato-382 phase C). When <paramref name="original"/> is supplied, a dispatch
+        /// on a bare receiver is emittable if a bound the receiver is KNOWN to carry — declared on
+        /// the parameter itself (<c>type Tween&lt;T&gt; where T: Interpolatable</c>) or inherited by
+        /// the signature variable through a constructed type it appears in
+        /// (<see cref="TypeConstraints.InheritedBounds"/>) — carries the concept that declares the
+        /// callee. That is the same licence <see cref="Solver.BoundsPermit"/> used to resolve the
+        /// call, and the emitted signature carries the matching C# <c>where</c> clause, so the body
+        /// is valid C#. Without a licensing bound the refusal stands.
         /// </summary>
         // Public so FallbackDiagnosticsTests can mirror the emit path's coverage rule exactly.
-        public static bool IsOpenGenericEmittable(TirFunction tir)
+        public static bool IsOpenGenericEmittable(TirFunction tir, FunctionDef original = null)
         {
             if (tir?.Body == null)
                 return false;
+            // Only bounds the emitted signature actually carries may license a call — otherwise the
+            // body would name a member the generated C# type parameter cannot reach.
+            var inherited = original != null
+                ? TypeConstraints.InheritedBounds(original, TypeConstraints.EmittedToCSharp)
+                : null;
             foreach (var n in tir.AllNodes)
             {
                 if (n is TirUnresolved)
                     return false;
-                if (n is TirCall c && c.Args.Count > 0 && DispatchesOnAbstractReceiver(c))
-                    return false;
+                if (n is TirCall c && c.Args.Count > 0)
+                {
+                    var recv = AbstractReceiverType(c);
+                    if (recv != null && !BoundLicenses(recv, c, inherited))
+                        return false;
+                }
             }
             return true;
         }
 
-        private static bool DispatchesOnAbstractReceiver(TirCall c)
+        /// <summary>The receiver type of a call that DISPATCHES on a bare abstract head (a type
+        /// variable / type parameter / Self with no type arguments of its own), or null when the
+        /// receiver is ground or constructed.</summary>
+        private static TypeExpression AbstractReceiverType(TirCall c)
         {
             var recv = c.Args[0];
             while (recv is TirCoerce coerce)
                 recv = coerce.Inner;
             var t = recv?.Type ?? (c.ParameterTypes.Count > 0 ? c.ParameterTypes[0] : null);
-            // A bare abstract head with no type arguments: the receiver IS the unknown type.
-            return t?.Def != null && t.TypeArgs.Count == 0 && !TypeSubstitution.IsGround(t);
+            return t?.Def != null && t.TypeArgs.Count == 0 && !TypeSubstitution.IsGround(t) ? t : null;
         }
+
+        /// <summary>Whether one of the bounds <paramref name="recv"/> is known to carry supplies the
+        /// member <paramref name="c"/> calls — the emit-time reading of the same licence the solver
+        /// applied. Prefers the callee's declaring concept (an exact structural match through the
+        /// bound's concept closure) and falls back to the member NAME, for a callee whose owner the
+        /// monomorphizer has already replaced with an implementing type.</summary>
+        private static bool BoundLicenses(TypeExpression recv, TirCall c,
+            IReadOnlyDictionary<string, IReadOnlyList<TypeExpression>> inherited)
+        {
+            if (inherited == null)
+                return false;
+            var extra = recv.Name != null && inherited.TryGetValue(recv.Name, out var e) ? e : null;
+            var bounds = TypeConstraints.KnownBounds(recv, extra);
+            if (bounds.Count == 0)
+                return false;
+
+            var owner = c.Callee?.OwnerType;
+            if (owner != null && owner.IsInterface()
+                && bounds.Any(b => ConceptClosure.FindInstance(b, owner.Name) != null))
+                return true;
+
+            var name = c.Name ?? c.Callee?.Name;
+            return name != null && bounds.Any(b => ConceptSupplies(b, name));
+        }
+
+        /// <summary>Whether a bound's concept closure declares a member of this name.</summary>
+        private static bool ConceptSupplies(TypeExpression bound, string name)
+            => ConceptClosure.InstancesOf(bound)
+                .Append(bound)
+                .Where(i => i?.Def != null)
+                .SelectMany(i => i.Def.Methods)
+                .Any(m => m?.Name == name);
 
         /// <summary>The fully-ground monomorphized TIR body for a (source function, concrete type),
         /// or null when none exists (non-ground / unresolved / not bodied).</summary>

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-01T13:26:31-04:00",
+  "updated_at": "2026-08-01T15:11:20-04:00",
   "note": "Written by tools/record-gates.py at 2026-07-31T19:14:42-04:00.",
   "gates": [
     {
@@ -121,7 +121,7 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-08-01T13:26:31-04:00",
+    "updated_at": "2026-08-01T15:11:20-04:00",
     "targets": {
       "forward-conformance": {
         "built_at": "2026-07-30T15:04:16-04:00",
@@ -276,14 +276,28 @@
         "by_code": {},
         "by_category": {},
         "warning_by_code": {}
+      },
+      "plato382c-foundation": {
+        "built_at": "2026-08-01T15:11:20-04:00",
+        "project": "C:\\Users\\cdigg\\git\\plato\\generated\\Plato.Generated.Foundation.Unoptimized\\Plato.Generated.Foundation.Unoptimized.csproj",
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\csharp-build-logs\\plato382c-foundation.log",
+        "configuration": "Release",
+        "exit_code": 0,
+        "total_errors": 0,
+        "total_warnings": 0,
+        "summary_errors": 0,
+        "summary_warnings": 0,
+        "by_code": {},
+        "by_category": {},
+        "warning_by_code": {}
       }
     },
-    "latest_target": "generated-foundation-unoptimized",
+    "latest_target": "plato382c-foundation",
     "latest": {
-      "target": "generated-foundation-unoptimized",
+      "target": "plato382c-foundation",
       "total_errors": 0,
       "total_warnings": 0,
-      "built_at": "2026-08-01T13:26:31-04:00",
+      "built_at": "2026-08-01T15:11:20-04:00",
       "exit_code": 0,
       "by_category": {},
       "by_code_top": {}

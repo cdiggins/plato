@@ -22,6 +22,18 @@ namespace Ara3D.Geometry.CSharpWriter
             : "";
         public string SimpleName => ConcreteType.Name;
         public string Name => SimpleName + TypeParamsStr;
+
+        /// <summary>The `where` clauses this type's DECLARED bounds require (plato-382):
+        /// `type Tween&lt;T&gt; where T: Interpolatable` emits
+        /// `public partial struct Tween&lt;T&gt; ... where T : Interpolatable&lt;T&gt;`. Empty for
+        /// an unbounded or non-generic type, which is every type in the shipping tiers today.
+        /// The struct DECLARATION is the only place C# wants it: every other mention of the type
+        /// inside its own file (`With`, `Create`, `Default`, the operators) is a USE of the already
+        /// declared parameters, and generic types are excluded from the per-type extension class
+        /// (see <see cref="WriteExtensionMethods"/>) and keep all their members in extension style
+        /// (see ExtensionStylePlan's isGeneric), so no second declaration of `T` exists.</summary>
+        public string WhereClauses
+            => CSharpBoundWriter.WhereClauses(ConcreteType.TypeDef.TypeParameters, TypeWriter);
         public bool IsPrimitive => CSharpWriter.PrimitiveTypes.ContainsKey(Name);
 
         /// <summary>The handwritten runtime supplies this type's bodiless members and operators —
@@ -104,7 +116,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 TypeWriter.WriteLine($"[DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]");
 
             TypeWriter.Write($"public partial struct {Name}");
-            TypeWriter.WriteLine(implements);
+            TypeWriter.WriteLine(implements + WhereClauses);
             TypeWriter.WriteStartBlock();
 
             if (!IsPrimitive)
@@ -750,8 +762,11 @@ namespace Ara3D.Geometry.CSharpWriter
             var flatParamNames = FieldNames.Select(CSharpTypeWriter.FieldNameToParameterName).ToList();
 
             tw.WriteLine("[DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]");
+            // A generic sum is CHK306 today, so WhereClauses is empty here; it is written the same
+            // way as the product path deliberately — nothing about bounds is record-specific, so
+            // lifting CHK306 (plato-079) needs no change on this line.
             tw.Write($"public partial struct {Name}");
-            tw.WriteLine(implements);
+            tw.WriteLine(implements + WhereClauses);
             tw.WriteStartBlock();
 
             tw.WriteLine("// Discriminant (0-based, declaration order)");

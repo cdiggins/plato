@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Ara3D.Geometry.AST;
 using Ara3D.Geometry.Compiler.Analysis;
+using Ara3D.Geometry.Compiler.Checking;
 using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Utils;
 using Ara3D.Geometry.Compiler.Types;
@@ -23,6 +24,7 @@ namespace Ara3D.Geometry.CSharpWriter
             Generics = fi.TypeVariables;
             TypeGenerics = owner?.TypeParameters.Select(tp => tp.Name).ToList() ?? [];
             RebindReceiverTypeVariables();
+            ReadInheritedBounds();
             AllGenerics = Generics.Concat(TypeGenerics).Distinct().ToList();
             if (ParameterNames.Count != ParameterTypes.Count)
                 throw new Exception("Parameter names and types must have the same length");
@@ -120,7 +122,63 @@ namespace Ara3D.Geometry.CSharpWriter
         public bool IsProperty => ParameterNames.Count <= 1 && !EmitAsMethod && Generics.Count == 0;
         public static string Annotation => "[MethodImpl(AggressiveInlining)] ";
         public string FunctionAnnotation => IsProperty ? "" : Annotation;
-        public string Constraints => Function.ConstrainedTypeVariables.Select(ConstraintString).JoinStrings("");
+        public string Constraints
+            => Function.ConstrainedTypeVariables.Select(ConstraintString).JoinStrings("")
+               + InheritedConstraints;
+
+        /// <summary>
+        /// plato-382: the `where` clauses this function's own type variables INHERIT from the
+        /// declared bounds of the constructed types its signature mentions —
+        /// <c>Sample(x: Tween&lt;$T&gt;, t: Number): $T</c> over
+        /// <c>type Tween&lt;T&gt; where T: Interpolatable</c> emits
+        /// <c>Sample&lt;_T0&gt;(...) where _T0 : Interpolatable&lt;_T0&gt;</c>. Without this the
+        /// emitted body's <c>Lerp</c> on a bare <c>_T0</c> would not compile.
+        ///
+        /// Only variables that are still the FUNCTION's own generic parameters get a clause. A
+        /// variable that <see cref="RebindReceiverTypeVariables"/> folded into the owning type's
+        /// parameter (the ordinary case for a member of a generic type) is declared by the STRUCT,
+        /// which carries the clause itself (see CSharpConcreteTypeWriter.WhereClauses) — restating
+        /// it on the member would be CS0460.
+        /// </summary>
+        public string InheritedConstraints
+        {
+            get
+            {
+                if (_inheritedBounds.Count == 0)
+                    return "";
+                var alreadyConstrained = Function.ConstrainedTypeVariables
+                    .Where(ctv => ctv?.Constraint != null)
+                    .Select(ctv => ctv.Name)
+                    .ToHashSet();
+                return _inheritedBounds
+                    .Where(b => Generics.Contains(b.Name) && !alreadyConstrained.Contains(b.Name))
+                    .Select(b => CSharpBoundWriter.WhereClause(b.Name, b.Bounds, this))
+                    .JoinStrings("");
+            }
+        }
+
+        // (emitted type-variable name, the bounds it inherits). Computed once in the constructor:
+        // reading it needs the FunctionDef and the symbol-level variable names, neither of which
+        // survives into the rendered signature strings.
+        private readonly List<(string Name, IReadOnlyList<TypeExpression> Bounds)> _inheritedBounds
+            = new List<(string, IReadOnlyList<TypeExpression>)>();
+
+        private void ReadInheritedBounds()
+        {
+            var fd = Function?.Implementation;
+            if (fd == null)
+                return;
+            // Only bounds whose DECLARATION also carries a C# where clause: a clause on a callee is
+            // discharged at the call site by the clause on the type being constructed there.
+            var inherited = TypeConstraints.InheritedBounds(fd, TypeConstraints.EmittedToCSharp);
+            if (inherited.Count == 0)
+                return;
+            foreach (var ctv in Function.ConstrainedTypeVariables)
+                if (ctv?.SourceType?.Name != null
+                    && inherited.TryGetValue(ctv.SourceType.Name, out var bounds))
+                    _inheritedBounds.Add((ctv.Name, bounds));
+        }
+
         public string MethodSignature => $"{FunctionAnnotation}public {StaticKeyword}{ReturnType} {Name}{GenericsString}{MethodParametersString}{Constraints}";
         public string StaticArgsString => NumParameters > 0 ? $"({ParameterNames.JoinStringsWithComma()})" : "";
         public string MethodArgsString => NumParameters > 1 ? $"({ParameterNames.Skip(1).JoinStringsWithComma()})" : IsProperty ? "" : "()";

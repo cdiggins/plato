@@ -88,7 +88,7 @@ namespace PlatoTests
                     }
                     // The TIR emit path also covers non-ground bodies that are type-agnostic in
                     // their residue: TirEmitSource emits those once as open-generic C# members.
-                    if (TirEmitSource.IsOpenGenericEmittable(m.Tir))
+                    if (TirEmitSource.IsOpenGenericEmittable(m.Tir, m.Original))
                     {
                         openGeneric++;
                         continue;

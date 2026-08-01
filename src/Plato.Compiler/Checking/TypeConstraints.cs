@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.AST;
@@ -27,6 +28,21 @@ namespace Ara3D.Geometry.Compiler.Checking
     public static class TypeConstraints
     {
         private static readonly IReadOnlyList<TypeExpression> None = new TypeExpression[0];
+
+        /// <summary>
+        /// Which declarations' bounds are carried into generated code (plato-382 phase C): the ones
+        /// declared on a CONCRETE type — `type Tween&lt;T&gt; where T: Interpolatable`, the construct
+        /// this issue added. A concept's own `where` clause is deliberately NOT emitted yet: those
+        /// predate bound checking, the shipping vocabulary carries several, and putting them on the
+        /// generated interfaces would propagate a constraint to every mention of the interface at
+        /// once. Emitting them is a separate, library-wide change.
+        ///
+        /// One predicate so the two halves cannot disagree: a `where` clause is emitted on a
+        /// function's signature exactly when it comes from a declaration whose own C# form carries
+        /// the matching clause, and <see cref="TirEmitSource.IsOpenGenericEmittable"/> licenses a
+        /// call from exactly the same set.
+        /// </summary>
+        public static bool EmittedToCSharp(TypeDef d) => d != null && !d.IsInterface();
 
         /// <summary>The bounds DECLARED on a type-parameter reference (`T` inside the body of the
         /// declaration that introduced it). Empty for a unification variable, a concrete type, or an
@@ -136,8 +152,12 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// Keyed by variable NAME, matching the solver's substitution. Deliberately covers the
         /// declared signature only (parameters and return type): a bound must be visible in the
         /// signature to be honest about what a caller has to supply.
+        ///
+        /// <paramref name="source"/> restricts WHICH declarations' bounds are collected; null (the
+        /// checker's reading) collects them all. See <see cref="EmittedToCSharp"/> for the emitter's.
         /// </summary>
-        public static IReadOnlyDictionary<string, IReadOnlyList<TypeExpression>> InheritedBounds(FunctionDef f)
+        public static IReadOnlyDictionary<string, IReadOnlyList<TypeExpression>> InheritedBounds(
+            FunctionDef f, Func<TypeDef, bool> source = null)
         {
             var result = new Dictionary<string, List<TypeExpression>>();
 
@@ -145,10 +165,11 @@ namespace Ara3D.Geometry.Compiler.Checking
             {
                 if (t?.Def == null || depth > 8)
                     return;
+                var collect = source == null || source(t.Def);
                 for (var i = 0; i < t.TypeArgs.Count; i++)
                 {
                     var arg = t.TypeArgs[i];
-                    if (arg?.Def != null
+                    if (collect && arg?.Def != null
                         && (arg.Def.Kind == TypeKind.TypeVariable || arg.Def.Kind == TypeKind.TypeParameter))
                     {
                         var bounds = BoundsAt(t, i);
