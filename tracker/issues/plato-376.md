@@ -2,7 +2,7 @@
 id: plato-376
 title: Concept obligations on a GENERIC type can never be discharged
 type: bug
-status: ready
+status: in-progress
 priority: p2
 effort: M
 risk: low
@@ -90,12 +90,12 @@ if this issue is picked up for the Array2D half alone.
 
 ## Done means
 
-- [ ] A generic type's concept obligation is discharged by a library function
+- [x] A generic type's concept obligation is discharged by a library function
       over a type variable, with a `LinterTests` case pinning both the match and
       a non-match
-- [ ] Array2D/Array3D `ColumnCount`/`RowCount`/`LayerCount` no longer report
+- [x] Array2D/Array3D `ColumnCount`/`RowCount`/`LayerCount` no longer report
       LINT001, and the TODO in `intrinsics.library.plato` is removed
-- [ ] The `Row(0).Count` workarounds in `sampling-fields.library.plato` and
+- [x] The `Row(0).Count` workarounds in `sampling-fields.library.plato` and
       `surfaces.library.plato` are replaced with the real members
 - [ ] The remaining track blocker is either fixed or split into its own issue
 
@@ -103,3 +103,49 @@ if this issue is picked up for the Array2D half alone.
 
 Positional one-way unification in the pairing step (approach 1), scoped to the
 Array2D/Array3D half, with the animation tracks split out.
+
+## Resolution
+
+**Compiler (this issue).** Pairing lives in one place now:
+`ConcreteType.ImplementationFor` decides which implementation discharges an
+obligation, and `ImplementedFunctions`/`UnimplementedFunctions`, LINT001, LINT012
+and every writer read that one decision. Exact `SignatureId` equality is still
+the primary key; the fallback is approach 1 — both signatures re-rendered with
+their type variables (and, on the obligation side, the declaring type's own
+parameters) renamed `#0, #1, ...` in order of first appearance, then compared.
+First-occurrence renaming makes the variable NAME irrelevant while preserving its
+REPETITION pattern, and only the obligation side may rename a type PARAMETER, so
+the unification is one-way: a candidate naming a concrete type in that position
+discharges nothing. `CheckDuplicateLibrarySignatures` (LINT004) is untouched —
+duplicate detection stays exact. Covered by
+`tests/PlatoTests/LinterGenericObligationTests.cs` (the match under an arbitrary
+variable name; a concrete type argument; an inconsistent repetition pattern).
+
+**Stdlib half — landed ahead of this, in plato-378 (`91a7f57`).** Giving
+`Array2D`/`Array3D` an honest layout made the extents FIELDS, and a field
+discharges an obligation directly, so the five grid findings were already gone
+before the pairing fix: the `intrinsics.library.plato` TODO is removed and both
+`Row(0).Count` workarounds now read `ColumnCount` / `RowCount`. The pairing fix
+therefore changes no stdlib finding today — it removes the defect for the next
+generic type rather than for these five members.
+
+**Lint counts (three shipping tiers).** 8 LINT001 at filing → 1 before this
+change (plato-378 cleared the five grid members; the two track types moved to
+`stdlib/future` under stdlib-377) → 1 after. The survivor is
+`Sample(Tween<T>, Duration):T`. Whole-corpus totals unchanged at 1535 findings,
+ratchet 33 (0 Error + 33 Warning): no new finding of any code.
+
+**Gates.** PlatoTests 202/202; `tools\check-stdlib-fast.ps1` both gates PASS
+(lint --strict 0 errors, checker ratchet). Forward conformance does NOT build at
+the time of writing — 6 x CS0102 (`Number.Zero/One/Tau/E`, `Integer.Zero/One`
+declared on both the generated partial and `src/Plato.Intrinsics`). Measured with
+this change stashed as well: identical errors, so it belongs to the in-flight
+plato-378 constant migration, not to the pairing fix.
+
+**Animation tracks are OUT of scope here.** `AnimationTrack`/`TangentTrack` moved
+to `stdlib/future` (stdlib-377) and are neither linted nor emitted; `Tween<T>`
+remains in `stdlib/graphics` and still reports LINT001, because its second
+blocker is unrelated to pairing — `Sample` needs `Lerp` on a bare `T`, and a
+library type variable carries no constraint that survives the shipping C# recipe
+(see "The second blocker on the tracks" above). That needs its own issue; the
+last box stays unticked until it is filed or fixed.

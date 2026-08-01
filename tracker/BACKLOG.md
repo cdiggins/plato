@@ -14,6 +14,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-240](issues/plato-240.md) | vscode-plato: compiler-backed Go to Definition + Find All References | feature | p2 | M | low | plato | in-progress |  |
 | [plato-306](issues/plato-306.md) | Generic Difference defaults via optional delta conversion concept | idea | p2 | M | low | plato | in-progress |  |
 | [plato-320](issues/plato-320.md) | PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes | bug | p2 | S | low | plato | in-progress |  |
+| [plato-376](issues/plato-376.md) | Concept obligations on a GENERIC type can never be discharged | bug | p2 | M | low | plato | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
@@ -24,7 +25,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-372](issues/plato-372.md) | Studio gate scripts are stale: check-stdlib-fast lints stdlib top-only and finds no files | bug | p2 | S | low | plato | ready |  |
 | [plato-373](issues/plato-373.md) | Ellipse.Perimeter (Ramanujan II) is 4e-4 off for flattened ellipses | bug | p2 | S | low | plato | ready |  |
 | [plato-374](issues/plato-374.md) | Concept-generic law bodies mix the concept default with the type's override | bug | p2 | M | low | plato | ready |  |
-| [plato-376](issues/plato-376.md) | Concept obligations on a GENERIC type can never be discharged | bug | p2 | M | low | plato | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred concept constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
