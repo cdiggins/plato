@@ -5,7 +5,8 @@ namespace Ara3D.Geometry.AST
     public sealed record PlatoFormatOptions(
         bool Pretty = false,
         bool Compressed = true,
-        bool TightDelimiters = true)
+        bool TightDelimiters = true,
+        bool Arrows = false)
     {
         public static PlatoFormatOptions CompactDefault { get; } = new();
 
@@ -18,7 +19,7 @@ namespace Ara3D.Geometry.AST
             var tightDelimiters = pretty
                 ? args.Contains("--tight-delimiters")
                 : !args.Contains("--no-tight-delimiters");
-            return new PlatoFormatOptions(pretty, compressed, tightDelimiters);
+            return new PlatoFormatOptions(pretty, compressed, tightDelimiters, args.Contains("--arrows"));
         }
     }
 }

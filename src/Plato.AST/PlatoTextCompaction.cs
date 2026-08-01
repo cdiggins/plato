@@ -5,7 +5,10 @@ namespace Ara3D.Geometry.AST
     public static class PlatoTextCompaction
     {
         static bool IsDelimiter(char c)
-            => c is '{' or '}' or ',' or ';' or '<' or '>' or ':';
+            => c is '{' or '}' or ',' or ';' or '<' or '>' or ':' or Arrow;
+
+        // Stands in for `inherits` / `implements` when PlatoFormatOptions.Arrows is set.
+        public const char Arrow = '→';
 
         public static string Apply(string text, PlatoFormatOptions options)
         {

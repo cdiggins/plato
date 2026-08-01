@@ -4,7 +4,8 @@
 
 .DESCRIPTION
     Runs Plato.ContextExport over:
-      1. The shipped stdlib/ tiers, one section per tier →
+      1. The shipped stdlib/ tiers, one section per tier, declarations sorted
+         by name within a tier →
          docs/stdlib-index.txt  (tracked)
          The `future` tier is excluded: it is declared, not shipped.
       2. Flat declaration dump of legacy/stdlib-legacy →
@@ -60,6 +61,7 @@ foreach ($tier in $Tiers) {
     $tierTemp = Join-Path $TempDir "stdlib-index-$tier.txt"
     & dotnet run --project $Project -c Release --no-build -- `
         $tierSource `
+        --sorted `
         --output $tierTemp
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 

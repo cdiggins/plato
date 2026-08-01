@@ -19,7 +19,10 @@ public static class Program
         {
             Console.Error.WriteLine("Usage: Plato.ContextExport <folder> [--pretty] [--diagnostics] [--diagnostics-file <path>]");
             Console.Error.WriteLine("       [--compressed] [--tight-delimiters] [--no-compressed] [--no-tight-delimiters]");
-            Console.Error.WriteLine("       [--output <path>]   write declarations to a file instead of stdout");
+            Console.Error.WriteLine("       [--arrows] [--sorted] [--output <path>]");
+            Console.Error.WriteLine("  --arrows  write `inherits`/`implements` as a single arrow");
+            Console.Error.WriteLine("  --sorted  order declarations by name instead of by source file");
+            Console.Error.WriteLine("  --output  write declarations to a file instead of stdout");
             return 1;
         }
 
@@ -48,7 +51,13 @@ public static class Program
             return 1;
         }
 
-        return ExportFlat(files, format, diagnostics, diagnosticsFile, GetOptionValue(args, "--output"));
+        return ExportFlat(
+            files,
+            format,
+            diagnostics,
+            diagnosticsFile,
+            GetOptionValue(args, "--output"),
+            args.Contains("--sorted"));
     }
 
     static int ExportFlat(
@@ -56,7 +65,8 @@ public static class Program
         PlatoFormatOptions format,
         bool diagnostics,
         string? diagnosticsFile,
-        string? outputPath)
+        string? outputPath,
+        bool sorted)
     {
         var declarations = new List<AstTypeDeclaration>();
         foreach (var file in files.OrderBy(f => f.ToString(), StringComparer.OrdinalIgnoreCase))
@@ -68,8 +78,14 @@ public static class Program
             declarations.AddRange(ast.Types.Where(IsExportable));
         }
 
+        IEnumerable<AstTypeDeclaration> ordered = declarations;
+        if (sorted)
+            ordered = declarations
+                .OrderBy(d => d.Name.Text, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(d => d.Name.Text, StringComparer.Ordinal);
+
         var lines = new List<string>();
-        foreach (var declaration in declarations)
+        foreach (var declaration in ordered)
             lines.Add(PlatoDeclarationWriter.WriteFormatted(declaration, format));
 
         var separator = format.Pretty ? "\n\n" : "\n";

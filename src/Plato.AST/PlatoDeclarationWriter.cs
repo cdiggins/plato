@@ -6,11 +6,15 @@ namespace Ara3D.Geometry.AST
 {
     public class PlatoDeclarationWriter : CodeBuilder<PlatoDeclarationWriter>
     {
+        public PlatoFormatOptions Options { get; init; } = PlatoFormatOptions.CompactDefault;
+
         public static string Write(AstTypeDeclaration declaration)
             => new PlatoDeclarationWriter().WriteDeclaration(declaration).ToString();
 
         public static string WriteFormatted(AstTypeDeclaration declaration, PlatoFormatOptions options)
-            => PlatoTextCompaction.Apply(Write(declaration), options);
+            => PlatoTextCompaction.Apply(
+                new PlatoDeclarationWriter { Options = options }.WriteDeclaration(declaration).ToString(),
+                options);
 
         public PlatoDeclarationWriter WriteDeclaration(AstTypeDeclaration declaration)
         {
@@ -63,6 +67,15 @@ namespace Ara3D.Geometry.AST
         {
             if (types.Count == 0)
                 return this;
+
+            // A concept only ever inherits and a type only ever implements, so one arrow is
+            // unambiguous for both.
+            if (Options.Arrows)
+                return WriteLine()
+                    .Write("    ")
+                    .Write(PlatoTextCompaction.Arrow.ToString())
+                    .WriteCommaList(types, WriteTypeNode);
+
             return WriteLine()
                 .Write("    ")
                 .Write(keyword)
