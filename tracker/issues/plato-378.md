@@ -115,12 +115,22 @@ Measured with `plato_check` against `stdlib` + `stdlib-tests`:
       declaration, which is why nothing ever called it. No override-table name
       mapping is needed now.
 
-- [ ] **Residual naming split (pre-existing, not introduced here).** On `Array`
-      the remove-from-the-front operation is `Skip`; on the `Sliceable` concept
-      the same operation is `Drop` (`Slice(count, Count - count)`). Array does
-      not implement Sliceable, so there is no overload collision and both are
-      correct in their own vocabulary — but one tree should not spell one
-      operation two ways. Unify or document as deliberate.
+- [x] **Naming split — RESOLVED.** `CollectionsContainers.Drop(Sliceable)` was
+      the same remove-from-the-front operation that `Array` spells `Skip`, so it
+      is now `Skip` on the concept too. Across both vocabularies `Skip` removes
+      from the front and `DropLast` from the back; `Drop` no longer appears as an
+      identifier anywhere in `stdlib/`. Sliceable has no concrete implementer
+      (LINT013), so nothing called the old name.
+
+- [ ] **Sub-range naming, still split.** The same audit turned up a second and
+      messier disagreement, left alone because it is wider than plato-378:
+      `Array.Slice(from, to)` is half-open by ENDPOINT, while
+      `Sliceable.Slice(start, count)` takes a COUNT — the same name with
+      different parameter meanings. `Array.SubArray(from, count)` equals
+      `Sliceable.Slice`, and `Sliceable.SubRange(start, end)` equals
+      `Array.Slice`. Four names, two operations, crossed over. Array does not
+      implement Sliceable so nothing collides today, but any type that ever
+      implements both inherits the ambiguity. Pick one convention.
 - [ ] **Short-circuit loss.** `All` / `Any` are folds now, so they visit every
       element. Identical for pure callbacks; restore via the override table if a
       profile ever shows it.

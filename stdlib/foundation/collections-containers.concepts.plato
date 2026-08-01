@@ -6,7 +6,7 @@
 // immutable; operations that "modify" return new collections.
 
 // Supports taking a contiguous sub-range. Inherits Countable so that end-relative
-// helpers (Drop, TakeLast, DropLast) can convert a count into a start offset.
+// helpers (Skip, TakeLast, DropLast) can convert a count into a start offset.
 // (https://en.wikipedia.org/wiki/Array_slicing)
 concept Sliceable
     inherits Countable

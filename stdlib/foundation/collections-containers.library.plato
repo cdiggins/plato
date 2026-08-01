@@ -13,7 +13,7 @@ library CollectionsContainers
     // # Sliceable
     //
     // Contiguous sub-range helpers built on Slice(start, count). The end-relative
-    // helpers (Drop, TakeLast, DropLast) read Count, which Sliceable now inherits
+    // helpers (Skip, TakeLast, DropLast) read Count, which Sliceable now inherits
     // from Countable.
     // Note: these return the bare concept type Sliceable rather than the concrete
     // implementing type, so chained calls (self.Take(n).Take(m)) resolve against
@@ -29,7 +29,12 @@ library CollectionsContainers
 
     // Everything after the first `count` elements: Slice(count, Count - count).
     // Precondition: 0 <= count <= Count.
-    Drop(self: Sliceable, count: Integer): Sliceable
+    //
+    // Spelled `Drop` until plato-378. One tree should not spell one operation
+    // two ways, and `Skip` is the spelling `Array` already uses for exactly this
+    // (`primitives-arrays.library.plato`) — so `Skip` removes from the front and
+    // `DropLast` from the back, in both vocabularies.
+    Skip(self: Sliceable, count: Integer): Sliceable
         => self.Slice(count, self.Count - count);
 
     // The last `count` elements: Slice(Count - count, count).

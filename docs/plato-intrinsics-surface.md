@@ -46,10 +46,11 @@ It is now `DropLast(n) => Take(Count - n)`, completing the 2x2 that `Take` /
 `Skip` / `TakeLast` were already three quarters of, and agreeing by name and by
 definition with `CollectionsContainers.DropLast(Sliceable)`.
 
-Note the residual naming split, which predates this work: on `Array` the
-remove-from-the-front operation is `Skip`, while on the `Sliceable` concept the
-same operation is `Drop` (`Slice(count, Count - count)`). Both spellings are
-correct in their own vocabulary; unifying them is a separate decision.
+`Sliceable` was renamed to match in the same change: its `Drop`
+(`Slice(count, Count - count)`) is the same remove-from-the-front operation that
+`Array` spells `Skip`, so it is now `Skip` there too. Across both vocabularies
+`Skip` removes from the front and `DropLast` from the back, and the name `Drop`
+no longer appears in the tree.
 | `Equals`, `ExclusiveOr`, `Compare`, `Hash` on Boolean | `foundation/primitives.library.plato` |
 | `NotEquals` on every primitive | `foundation/core-comparison.library.plato`, once, over `Equatable` |
 | `LessThan`, `GreaterThan`, `GreaterThanOrEquals`, `Compare`, `Clamp` on Number and Integer | already generic over `Orderable` in `foundation/core-comparison.library.plato` — deleted outright, not re-derived |
