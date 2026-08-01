@@ -119,3 +119,5 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-361](issues/plato-361.md) | Resolve HalfEdge vs DirectedEdge vocabulary overlap | idea | ? | ? | ? | plato | idea |  |
 | [plato-366](issues/plato-366.md) | Derive Wrapper<T> obligations for single-field types (retire the 98-line quantity projection file) | idea | ? | ? | ? | plato | idea |  |
 | [plato-379](issues/plato-379.md) | Unify Indexable and MapLike into Indexable<TIndex, TValue> | idea | ? | ? | ? | plato | idea |  |
+| [plato-380](issues/plato-380.md) | Integer2/Integer3 key types: re-express Indexable2D/3D as key instances | idea | ? | ? | ? | plato | idea |  |
+| [plato-381](issues/plato-381.md) | Concrete Dictionary type: decide whether keyed-lookup vocabulary earns its keep | idea | ? | ? | ? | plato | idea |  |
