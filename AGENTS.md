@@ -104,12 +104,13 @@ the writer code).
 
 Iterate on the one gate relevant to your workstream; run `check-all.ps1` **once**, at the end.
 
-- `.\tools\check-stdlib-fast.ps1` — the forward-stdlib inner loop (seconds). Two gates:
+- `.\tools\check-stdlib-fast.ps1` — the forward-stdlib inner loop (seconds). Three gates:
   `lint --strict` over the three shipping tiers (`-IncludeFuture` adds `future`; 0 parse /
-  0 resolution errors) and the **checker ratchet**
+  0 resolution errors), the **checker ratchet**
   (`ForwardStdLibDiagnosticCountDoesNotRegress` in `tests/PlatoTests/ForwardStdLibCheckerTests.cs`) —
   your change may not raise the diagnostic count, and when you lower it you lower the ceiling in
-  the same commit.
+  the same commit — and **index freshness**, which fails when `stdlib/types-and-concepts.txt` no
+  longer matches the source ([`stdlib/AGENTS.md`](stdlib/AGENTS.md)). `-SkipIndex` opts out.
 - `.\tools\regen-forward-conformance.ps1` — forward-stdlib milestone gate. Stage 1 gating (see
   `tests/conformance/Plato.ForwardConformanceTests/` above); `-Codegen` / `-Test` run the diagnostic stages.
 - `.\tools\check-all.ps1` — full gate battery, PASS/FAIL table. **Run once at the end of a mission**; iterate on a single relevant gate during development.

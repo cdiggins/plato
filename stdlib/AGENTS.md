@@ -14,10 +14,10 @@ Folder-scoped rules for editing the forward standard library. The repo-wide guid
 ## Regenerate `types-and-concepts.txt` with every change
 
 [`types-and-concepts.txt`](types-and-concepts.txt) is **generated** — one compressed declaration
-per line for every type and concept in the three shipping tiers, sorted by name within a tier.
-It exists so an agent can see what the library actually contains without opening every file, and
-so a name it does not find there is known not to exist. That guarantee holds only while the file
-matches the source.
+per line for every type and concept in the three shipping tiers, every concept first and then
+every type, each group sorted by name. It exists so an agent can see what the library actually
+contains without opening every file, and so a name it does not find there is known not to exist.
+That guarantee holds only while the file matches the source.
 
 **If your change adds, removes, or renames a type or a concept, or changes a member signature,
 regenerate the file in the same commit:**
@@ -33,6 +33,7 @@ Rules:
 - **Never hand-edit it.** Edit the `.plato` source and re-run the tool.
 - **Regenerating is not optional.** A stale index is worse than no index: a reader cannot tell a
   stale line from a fresh one, so one wrong entry discredits the file.
-- The file is tracked, so an unregenerated change shows up as an uncommitted diff — but nothing
-  fails the build. Checking is on you.
+- **The inner-loop gate enforces this.** `.\tools\check-stdlib-fast.ps1` runs an `index freshness`
+  gate that regenerates into `.temp/` and compares; it fails if the tracked file has drifted. The
+  gate never writes the tracked file — only `export-types-context.bat` does.
 - `future/` is excluded on purpose: it is declared, not shipped. Do not add it.

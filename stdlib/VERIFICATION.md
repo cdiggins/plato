@@ -90,9 +90,10 @@ Read the `plato-mcp` skill before using it. Two gotchas that matter for validati
 powershell -File tools/check-stdlib-fast.ps1
 ```
 
-Two checks, a PASS/FAIL table, failing output replayed: `lint --strict` over the three shipping
-tiers, and the type-checker ratchet. Flags: `-SkipLint`, `-SkipRatchet`, `-IncludeFuture`,
-`-Folders a,b` (lint an explicit subset of tiers).
+Three checks, a PASS/FAIL table, failing output replayed: `lint --strict` over the three shipping
+tiers, the type-checker ratchet, and index freshness — whether `types-and-concepts.txt` still
+matches the source (the rule it enforces is in [`AGENTS.md`](AGENTS.md)). Flags: `-SkipLint`,
+`-SkipRatchet`, `-SkipIndex`, `-IncludeFuture`, `-Folders a,b` (lint an explicit subset of tiers).
 
 **When the compiler itself is being changed** — `tools/stage-stdlib.ps1` lints a scratch copy of
 `stdlib/` against a *pinned* (frozen, known-good) `Plato.CLI` snapshot in

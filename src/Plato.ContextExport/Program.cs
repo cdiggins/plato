@@ -8,16 +8,18 @@ namespace Ara3D.Geometry.ContextExport;
 
 public static class Program
 {
-    // Plato.ContextExport <folder> [--pretty] [--diagnostics] [--diagnostics-file <path>]
+    // Plato.ContextExport <folder>... [--pretty] [--diagnostics] [--diagnostics-file <path>]
     // [--compressed] [--tight-delimiters] [--no-compressed] [--no-tight-delimiters]
-    // [--output <path>]
+    // [--arrows] [--output <path>]
+    // Several folders may be given; they are exported as one list, so the caller chooses the
+    // corpus (e.g. the shipping stdlib tiers, leaving `future` out) without post-processing.
     // Without --output the declarations go to stdout; redirect to a file under .temp/ at the repo
     // root (see AGENTS.md); do not write captures here.
     public static int Main(string[] args)
     {
         if (args.Length == 0 || args[0] is "-h" or "--help")
         {
-            Console.Error.WriteLine("Usage: Plato.ContextExport <folder> [--pretty] [--diagnostics] [--diagnostics-file <path>]");
+            Console.Error.WriteLine("Usage: Plato.ContextExport <folder>... [--pretty] [--diagnostics] [--diagnostics-file <path>]");
             Console.Error.WriteLine("       [--compressed] [--tight-delimiters] [--no-compressed] [--no-tight-delimiters]");
             Console.Error.WriteLine("       [--arrows] [--output <path>]");
             Console.Error.WriteLine("  --arrows  write `inherits`/`implements` as a single arrow");
@@ -29,24 +31,28 @@ public static class Program
         var diagnostics = args.Contains("--diagnostics");
         var diagnosticsFile = GetOptionValue(args, "--diagnostics-file");
 
-        var folderPath = GetFolderArgument(args);
-        if (folderPath == null)
+        var folderPaths = GetFolderArguments(args);
+        if (folderPaths.Count == 0)
         {
             Console.Error.WriteLine("Missing input folder.");
             return 1;
         }
 
-        var folder = new DirectoryPath(folderPath);
-        if (!folder.Exists())
+        var files = new List<FilePath>();
+        foreach (var folderPath in folderPaths)
         {
-            Console.Error.WriteLine($"Folder not found: {folder}");
-            return 1;
+            var folder = new DirectoryPath(folderPath);
+            if (!folder.Exists())
+            {
+                Console.Error.WriteLine($"Folder not found: {folder}");
+                return 1;
+            }
+            files.AddRange(folder.GetFiles("*.plato", recurse: true));
         }
 
-        var files = folder.GetFiles("*.plato", recurse: true).ToList();
         if (files.Count == 0)
         {
-            Console.Error.WriteLine($"No .plato files found in {folder}");
+            Console.Error.WriteLine($"No .plato files found in {string.Join(", ", folderPaths)}");
             return 1;
         }
 
@@ -70,9 +76,11 @@ public static class Program
             declarations.AddRange(ast.Types.Where(IsExportable));
         }
 
-        // Alphabetical, so a reader can find a name without knowing which file declares it.
+        // Concepts first, then types, each alphabetical: a reader can find a name without knowing
+        // which file declares it, and the vocabulary of abstractions reads before its instances.
         var ordered = declarations
-            .OrderBy(d => d.Name.Text, StringComparer.OrdinalIgnoreCase)
+            .OrderBy(d => d.Kind == TypeKind.Interface ? 0 : 1)
+            .ThenBy(d => d.Name.Text, StringComparer.OrdinalIgnoreCase)
             .ThenBy(d => d.Name.Text, StringComparer.Ordinal);
 
         var lines = new List<string>();
@@ -137,8 +145,9 @@ public static class Program
         return parser.Cst?.ToAst() as AstFile;
     }
 
-    static string? GetFolderArgument(string[] args)
+    static List<string> GetFolderArguments(string[] args)
     {
+        var folders = new List<string>();
         for (var i = 0; i < args.Length; i++)
         {
             if (args[i] is "--diagnostics-file" or "--output")
@@ -147,9 +156,9 @@ public static class Program
                 continue;
             }
             if (!args[i].StartsWith("--"))
-                return args[i];
+                folders.Add(args[i]);
         }
-        return null;
+        return folders;
     }
 
     static string? GetOptionValue(string[] args, string option)

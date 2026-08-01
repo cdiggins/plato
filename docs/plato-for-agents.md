@@ -53,7 +53,7 @@ exactly one `library` block. Files sit directly in the tier folders (`foundation
 | `demos/plato-src/geometry.plato` | Curated demo subset for TS/Rust browsers (not the full stdlib). |
 | `src/Plato.CLI/` | Compiler entry point. |
 | `Plato.ContextExport/` | Compact export of types + concepts for agent context (`tools/export-types-context.bat`). |
-| `stdlib/types-and-concepts.txt` | Generated index of every type + concept in the shipping `stdlib/` tiers (`future` excluded), one compressed declaration per line, sorted by name within a tier. Regeneration is mandatory when `stdlib/` changes — see [`stdlib/AGENTS.md`](../stdlib/AGENTS.md). |
+| `stdlib/types-and-concepts.txt` | Generated index of every type + concept in the shipping `stdlib/` tiers (`future` excluded), one compressed declaration per line, every concept first and then every type, each group sorted by name. Regeneration is mandatory when `stdlib/` changes — see [`stdlib/AGENTS.md`](../stdlib/AGENTS.md). |
 | `docs/types-and-concepts-context.txt` | Generated stdlib-legacy context (types + concepts only); same regen script. |
 | `writers/Plato.TypeScriptWriter/` | TypeScript backend (POC). |
 | `writers/Plato.RustWriter/` | Rust backend (POC). |

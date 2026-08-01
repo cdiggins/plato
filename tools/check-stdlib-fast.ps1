@@ -6,8 +6,12 @@
 #                          every stdlib function; ceiling lives in
 #                          PlatoTests/ForwardStdLibCheckerTests.cs
 #                          (worklist test: SummarizeForwardStdLibDiagnostics)
+#   3. index freshness     stdlib/types-and-concepts.txt still matches stdlib/. The rule it
+#                          enforces lives in stdlib/AGENTS.md; the gate only regenerates into
+#                          .temp/ and compares, so it never writes the tracked file.
 # All paths derive from $PSScriptRoot, so this works from any Plato checkout or git worktree.
-# Usage: .\tools\check-stdlib-fast.ps1 [-SkipLint] [-SkipRatchet] [-IncludeFuture] [-Folders a,b]
+# Usage: .\tools\check-stdlib-fast.ps1 [-SkipLint] [-SkipRatchet] [-SkipIndex] [-IncludeFuture]
+#                                      [-Folders a,b]
 #   -Folders lints an explicit set of roots instead of all of stdlib/, each enumerated
 #   top-directory-only and compiled as ONE program — the cumulative-tier subset form, e.g.
 #   -Folders stdlib\foundation,stdlib\geometry. Relative paths resolve against the repo root.
@@ -19,6 +23,7 @@
 param(
     [switch]$SkipLint,
     [switch]$SkipRatchet,
+    [switch]$SkipIndex,
     [switch]$IncludeFuture,
     [string[]]$Folders
 )
@@ -71,6 +76,14 @@ if (-not $SkipRatchet) {
         'test',(Join-Path $root 'tests\PlatoTests\PlatoTests.csproj'),
         '-c','Release','--nologo','-v','q',
         '--filter','FullyQualifiedName~ForwardStdLibDiagnosticCountDoesNotRegress')
+}
+
+if (-not $SkipIndex) {
+    # -IncludeFuture is deliberately not forwarded: the index covers the shipping tiers only.
+    Run-Gate 'index freshness (types-and-concepts)' 'powershell' @(
+        '-NoProfile','-ExecutionPolicy','Bypass',
+        '-File',(Join-Path $PSScriptRoot 'export-types-context.ps1'),
+        '-Check','-IndexOnly')
 }
 
 $results | Format-Table -AutoSize | Out-String | Write-Host
