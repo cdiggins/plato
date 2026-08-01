@@ -115,15 +115,24 @@ Measured with `plato_check` against `stdlib` + `stdlib-tests`:
       (`Linter.MembersImplementedByWriter`); the C# writer may emit both. The
       forward codegen path is red for unrelated reasons (plato-308), so this is
       not yet observable.
-- [ ] Add a count gate to `IntrinsicsSurfaceTests` so the contract cannot grow
-      back silently.
-- [ ] Replace the `Row(0).Count` workarounds in `sampling-fields.library.plato`
-      and `surfaces.library.plato` now that the real extent members bind.
+## Verification
+
+`PlatoTests` **202/202 passed, 0 failed** (Release, 2026-07-31). Specifically:
+
+- `IntrinsicObligationTests` + `IntrinsicsSurfaceTests` — 7/7. Removing
+  declarations cannot break the obligation direction, and it did not.
+- `ForwardStdLibLintTests` + `ForwardStdLibCheckerTests` — 9/9 with the ceiling
+  lowered to 33. Type-checker diagnostics 0 / 3166 functions, ceiling 0.
+- `IntrinsicContractSizeTests` (new) — 2/2, independently counting 65.
 
 ## Done means
 
 - [x] Contract reduced to an irreducible kernel; admission rule stated in-file
+      and in `AGENTS.md`
 - [x] Reference bodies exist for everything removed
 - [x] stdlib gates no worse than baseline on every axis, lint strictly better
-- [ ] C# test suite green (`PlatoTests`)
-- [ ] Count gate pinning the contract size
+- [x] C# test suite green (`PlatoTests` 202/202)
+- [x] Count gate pinning the contract size (`IntrinsicContractSizeTests`), plus
+      a companion test that no other `*.library.plato` file declares a bodiless
+      signature
+- [x] `Row(0).Count` workarounds replaced with the real extent members
