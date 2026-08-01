@@ -43,6 +43,7 @@ namespace PlatoTests
 
             var eligible = 0;
             var ground = 0;
+            var openGeneric = 0;
             var buckets = new Dictionary<string, List<string>>();
             void Add(string bucket, string detail)
             {
@@ -85,6 +86,13 @@ namespace PlatoTests
                         ground++;
                         continue;
                     }
+                    // The TIR emit path also covers non-ground bodies that are type-agnostic in
+                    // their residue: TirEmitSource emits those once as open-generic C# members.
+                    if (TirEmitSource.IsOpenGenericEmittable(m.Tir))
+                    {
+                        openGeneric++;
+                        continue;
+                    }
 
                     // Not ground: find the offending nodes.
                     var unresolved = m.Tir.AllNodes.OfType<TirUnresolved>().ToList();
@@ -112,7 +120,8 @@ namespace PlatoTests
 
             TestContext.WriteLine($"eligible member bodies : {eligible}");
             TestContext.WriteLine($"fully ground (TIR path): {ground}");
-            TestContext.WriteLine($"fallback               : {eligible - ground}");
+            TestContext.WriteLine($"open-generic (TIR path): {openGeneric}");
+            TestContext.WriteLine($"fallback               : {eligible - ground - openGeneric}");
             TestContext.WriteLine("");
             foreach (var b in buckets.OrderByDescending(kv => kv.Value.Count))
             {
@@ -135,7 +144,7 @@ namespace PlatoTests
             }
 
             Assert.Greater(eligible, 0);
-            Assert.AreEqual(0, eligible - ground,
+            Assert.AreEqual(0, eligible - ground - openGeneric,
                 "the TIR emit path must cover every eligible member body (the increment-3 flip invariant); see the classification above");
         }
 

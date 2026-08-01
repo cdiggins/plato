@@ -43,16 +43,17 @@ namespace PlatoTests
         /// the scalars, and scoping this fixture by it would have silently shrunk the surface being
         /// policed exactly as each type stopped being a primitive — the opposite of what these
         /// tests are for. The names are pinned, so a type appearing or vanishing is a failure.
+        /// (2026-08-01: the SIMD-backed family — Angle, Plane, Quaternion, the matrices,
+        /// Vector2/3/4/8 — left the runtime for bonepile/; the generated library owns those shapes
+        /// now, so the pinned surface is the five scalars.)
         /// </summary>
         internal static readonly IReadOnlyList<string> V2StructNames = new[]
         {
-            "Angle", "Boolean", "Character", "Integer", "Matrix3x2", "Matrix4x4",
-            "Number", "Plane", "Quaternion", "String",
-            "Vector2", "Vector3", "Vector4", "Vector8",
+            "Boolean", "Character", "Integer", "Number", "String",
         };
 
         internal static IReadOnlyList<Type> V2PrimitiveStructs()
-            => typeof(Ara3D.Geometry.Plane).Assembly
+            => typeof(Ara3D.Geometry.Number).Assembly
                 .GetTypes()
                 .Where(t => t.Namespace == "Ara3D.Geometry"
                             && t.IsValueType

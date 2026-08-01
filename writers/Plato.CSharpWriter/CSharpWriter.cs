@@ -565,7 +565,27 @@ namespace Ara3D.Geometry.CSharpWriter
                 // Matrix4x4.Translation / .Rotation left this table with plato-308: the forward
                 // stdlib has reference bodies for both, so they are GENERATED members now and the
                 // handwritten properties are gone — nothing left to pin.
-                { "Number.Angle", true },
+                // Number.Angle left 2026-08-01: the property left the runtime with the kernel
+                // reduction (the conversion is generated now), so the declaration proxy is right.
+
+                // 2026-08-01 kernel reduction: the irreducible kernel members live on the wrapper
+                // structs as PROPERTIES (wrapper-mode generated call sites use property syntax),
+                // while the declarations are bodiless library functions — so each needs a pin for
+                // the --no-properties recipes.
+                { "Integer.Hash", true },
+                { "Integer.BitwiseNot", true },
+                { "Integer.ToNumber", true },
+                { "Number.Hash", true },
+                { "Number.Floor", true },
+                { "Number.Sqrt", true },
+                { "Number.Exp", true },
+                { "Number.NaturalLog", true },
+                { "Number.Sin", true },
+                { "Number.Cos", true },
+                { "Number.IsNaN", true },
+                { "Number.IsInfinite", true },
+                { "Number.ToInteger", true },
+                { "String.Count", true },
             };
 
         /// <summary>Whether V2 spells {typeName}.{name} as a property, or null when the declaration

@@ -28,7 +28,7 @@ namespace PlatoTests
     [TestFixture]
     public static class IntrinsicObligationTests
     {
-        private static readonly Assembly V2Assembly = typeof(Ara3D.Geometry.Plane).Assembly;
+        private static readonly Assembly V2Assembly = typeof(Ara3D.Geometry.Number).Assembly;
 
         // Scoped by the pinned V2 struct NAMES, not by CSharpWriter.PrimitiveTypes: plato-365 is
         // emptying that dictionary down to the scalars, and a PrimitiveTypes-scoped filter would
@@ -41,8 +41,7 @@ namespace PlatoTests
         private static readonly IReadOnlyList<Type> V2StaticClasses
             = V2Assembly.GetTypes()
                 .Where(t => t.Namespace == "Ara3D.Geometry"
-                            && t.IsClass && t.IsAbstract && t.IsSealed
-                            && t.Name != "IntrinsicsTestShims")
+                            && t.IsClass && t.IsAbstract && t.IsSealed)
                 .ToList();
 
         /// <summary>The erased C# type a primitive can appear as in extension-method receiver
@@ -55,13 +54,6 @@ namespace PlatoTests
                 { "Boolean", typeof(bool) },
                 { "Character", typeof(char) },
                 { "String", typeof(string) },
-                { "Matrix3x2", typeof(System.Numerics.Matrix3x2) },
-                { "Matrix4x4", typeof(System.Numerics.Matrix4x4) },
-                { "Quaternion", typeof(System.Numerics.Quaternion) },
-                { "Vector2", typeof(System.Numerics.Vector2) },
-                { "Vector3", typeof(System.Numerics.Vector3) },
-                { "Vector4", typeof(System.Numerics.Vector4) },
-                { "Vector8", typeof(System.Runtime.Intrinsics.Vector256<float>) },
             };
 
         private static bool HasRuntimeCounterpart(string typeName, string memberName, int arity)
@@ -155,38 +147,59 @@ namespace PlatoTests
         /// SHAPE the forward declaration wins by design.</summary>
         private static readonly IReadOnlyList<string> LegacyKnownMissing = new[]
         {
-            // plato-365: Plane's shape is now the forward declaration (Normal: Direction3D,
-            // Distance: Number, Hesse form). stdlib-legacy asks for the System.Numerics parity
-            // surface — `D` (which is -Distance) plus the two With* over it. Re-adding `D` would
-            // re-import exactly the sign ambiguity this increment removed.
-            "Plane.D",
-            "Plane.WithD",
+            // The plato-365/plato-308 entries this list carried for Plane, Angle, Matrix3x2,
+            // Matrix4x4 and Quaternion left 2026-08-01: those structs left the runtime for
+            // bonepile/ entirely, so their receivers are outside this gate's scope
+            // (V2StructNames is the five scalars) rather than discharged.
 
-            // plato-308: the forward stdlib grew REFERENCE BODIES for these (angles-ops /
-            // matrices-ops / rotations-ops), so the generated partial declares each one and the
-            // handwritten twin became a duplicate-member error in the forward build — the whole
-            // reason the forward conformance suite could not compile. stdlib-legacy still spells
-            // them as intrinsics because it has no such bodies; where the two corpora disagree
-            // about who OWNS a member, the forward declaration wins (see the summary above).
-            "Angle.Cos",
-            "Angle.Cosh",
-            "Angle.Sin",
-            "Angle.SinCos",
-            "Angle.Sinh",
-            "Angle.Tan",
-            "Angle.Tanh",
-            "Matrix3x2.Invert",
-            "Matrix4x4.CreateFromQuaternion",
-            "Matrix4x4.CreateFromYawPitchRoll",
-            "Matrix4x4.CreateReflection",
-            "Matrix4x4.CreateRotationX",
-            "Matrix4x4.CreateRotationY",
-            "Matrix4x4.CreateRotationZ",
-            "Matrix4x4.Decompose",
-            "Matrix4x4.Determinant",
-            "Matrix4x4.Rotation",
-            "Matrix4x4.Translation",
-            "Quaternion.Length",
+            // 2026-08-01 kernel reduction: the forward stdlib owns Plato reference bodies for
+            // the derived scalar surface, so the runtime shrank to the irreducible kernel and
+            // the NumberIntrinsics/IntegerIntrinsics/BooleanIntrinsics extension classes were
+            // deleted. stdlib-legacy still spells all of these as intrinsics; legacy generation
+            // is retired, so the forward ownership wins (same rule as the plato-308 block above).
+            "Boolean.ExclusiveOr",
+            "Integer.Abs",
+            "Integer.MakeArray2D",
+            "Integer.Number",
+            "Integer.Range",
+            "Integer.Sign",
+            "Number.Abs",
+            "Number.Acos",
+            "Number.Acosh",
+            "Number.Angle",
+            "Number.Asin",
+            "Number.Asinh",
+            "Number.Atan",
+            "Number.Atan2",
+            "Number.Atanh",
+            "Number.BitDecrement",
+            "Number.BitIncrement",
+            "Number.Cbrt",
+            "Number.Ceiling",
+            "Number.Clamp",
+            "Number.CopySign",
+            "Number.Cubic",
+            "Number.IEEERemainder",
+            "Number.ILogB",
+            "Number.Linear",
+            "Number.Log",
+            "Number.Log10",
+            "Number.Log2",
+            "Number.Max",
+            "Number.MaxMagnitude",
+            "Number.Min",
+            "Number.MinMagnitude",
+            "Number.Quadratic",
+            "Number.Reciprocal",
+            "Number.ReciprocalEstimate",
+            "Number.ReciprocalSqrtEstimate",
+            "Number.ReciprocalSquareRootEstimate",
+            "Number.RoundAwayFromZero",
+            "Number.RoundToZero",
+            "Number.ScaleB",
+            "Number.Sign",
+            "Number.Square",
+            "Number.Truncate",
         };
 
         [Test]
@@ -217,7 +230,7 @@ type Function3<T0, T1, T2, TR> { }
 
 library Intrinsics
 {
-    Abs(self: Number): Number;
+    Floor(self: Number): Number;
     Frobnicate987(self: Number): Number;
 }
 ";

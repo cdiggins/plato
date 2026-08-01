@@ -97,7 +97,8 @@ if this issue is picked up for the Array2D half alone.
       LINT001, and the TODO in `intrinsics.library.plato` is removed
 - [x] The `Row(0).Count` workarounds in `sampling-fields.library.plato` and
       `surfaces.library.plato` are replaced with the real members
-- [ ] The remaining track blocker is either fixed or split into its own issue
+- [x] The remaining track blocker is either fixed or split into its own issue
+      (split 2026-08-01: plato-382, constrained type parameters + constraint-carrying emission)
 
 ## Simplest fix
 

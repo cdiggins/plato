@@ -157,7 +157,9 @@ namespace Ara3D.Geometry.Compiler.Analysis
             "FieldNames", "FieldValues", "TypeName",
             "Equals", "NotEquals", "GetHashCode", "ToString", "GetType",
             "Components", "CreateFromComponents", "CreateFromComponent", "NumComponents",
-            "Range", "MakeArray2D", "MapRange",
+            // "Range" and "MakeArray2D" left 2026-08-01 with their CSharpWriter.IgnoredFunctions
+            // entries: both have Plato bodies in the forward stdlib now.
+            "MapRange",
             // Synthesized by the writer (CSharpTypeWriter.GenerateFunc) from the type's shape:
             // from the FIELDS for a fixed-arity type (Point3D: X/Y/Z), or by delegating to the
             // single field that is itself indexable for a runtime-arity type (VectorN: Components).

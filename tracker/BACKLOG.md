@@ -36,11 +36,16 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-333](issues/plato-333.md) | IntegerInterval is half-open but inherits closed IntervalLike bodies | bug | p2 | S | med | plato | idea |  |
 | [plato-365](issues/plato-365.md) | Retire non-scalar primitives: PrimitiveTypes = scalars only, System.Numerics behind intrinsic bridge | debt | p2 | M | med | plato | idea |  |
 | [plato-370](issues/plato-370.md) | Implement --scalar=double via TirScalarLowerer map + double intrinsics | feature | p2 | M | med | plato | idea |  |
+| [plato-383](issues/plato-383.md) | default(String) wraps a null system string; every observation throws | bug | p2 | S | low | plato | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
 | [plato-235](issues/plato-235.md) | GLSL overload erasure picks the winner by emission order, not by intent | problem | p3 | M | med | plato | idea |  |
 | [plato-334](issues/plato-334.md) | Query/solve result types share no concept: success flag spelled four ways | debt | p3 | M | low | plato | idea |  |
 | [plato-335](issues/plato-335.md) | No CRS identity token: geospatial types cannot say which reference system they are in | problem | p3 | S | low | plato | idea |  |
 | [plato-336](issues/plato-336.md) | Triangulate and hull results lose provenance back to input points | debt | p3 | M | med | plato | idea |  |
+| [plato-382](issues/plato-382.md) | Constrained type parameters on concrete types, and constraint-carrying C# emission | problem | p3 | L | med | plato | idea |  |
+| [plato-384](issues/plato-384.md) | Wrapper structs declare no Equals/GetHashCode/IEquatable: boxing and composition-dependent equality | debt | p3 | M | med | plato | idea |  |
+| [plato-385](issues/plato-385.md) | Boolean comparison operators return raw bool while Number/Integer return the wrapper | debt | p3 | S | low | plato | idea |  |
+| [plato-386](issues/plato-386.md) | ArrayIntrinsics.FlatMap leaks a mutable List through IReadOnlyList | debt | p3 | S | low | plato | idea |  |
 | [plato-076](issues/plato-076.md) | Port Gratify to Plato (feasibility: kernel vs framework) | idea | ? | ? | ? | plato | idea |  |
 | [plato-077](issues/plato-077.md) | Sum types + pattern matching in Plato (RFC first) | idea | ? | ? | ? | plato | idea |  |
 | [plato-078](issues/plato-078.md) | Revive and productionize the Plato TypeScript writer | feature | ? | ? | ? | plato | idea |  |

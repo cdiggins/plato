@@ -72,7 +72,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// function, type argument of the receiver or of a constructed type) is exactly the type
         /// parameter the emitted signature already declares, so the body is valid C# as written.
         /// </summary>
-        private static bool IsOpenGenericEmittable(TirFunction tir)
+        // Public so FallbackDiagnosticsTests can mirror the emit path's coverage rule exactly.
+        public static bool IsOpenGenericEmittable(TirFunction tir)
         {
             if (tir?.Body == null)
                 return false;
