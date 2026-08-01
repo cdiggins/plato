@@ -932,6 +932,10 @@ namespace Ara3D.Geometry.CSharpWriter
         {
 
             TypeWriter.WriteLine("// Implemented interface functions");
+            // Plato overloads on return type; C# does not. Two declarations that reduce to the
+            // same C# signature on this type (Array2D.Map -> Array2D<T2> and -> Array<T2>) would
+            // be CS0111, so the first one written wins.
+            var emitted = new HashSet<string>();
             foreach (var g in ConcreteType.InterfaceFunctionGroups)
             {
                 var f = Analyzer.ChooseBestFunction(g, out _);
@@ -954,6 +958,14 @@ namespace Ara3D.Geometry.CSharpWriter
                 // linter — generated code is not the reporting channel.
 
                 var fi = TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef);
+                // Type-variable NAMES are per-declaration (_T0 vs _T1), so normalize them
+                // positionally before comparing - otherwise the two Maps look distinct.
+                var key = fi.ParameterTypes.Skip(1).JoinStringsWithComma();
+                for (var gi = 0; gi < fi.Generics.Count; gi++)
+                    key = System.Text.RegularExpressions.Regex.Replace(
+                        key, $@"{System.Text.RegularExpressions.Regex.Escape(fi.Generics[gi])}", $"#{gi}");
+                if (!emitted.Add($"{fi.Name}`{fi.Generics.Count}({key})"))
+                    continue;
                 TypeWriter.WriteMemberFunction(fi, IsIntrinsicBacked, HasFunctionNamed);
             }
             TypeWriter.WriteLine();

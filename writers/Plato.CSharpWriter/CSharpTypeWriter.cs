@@ -284,7 +284,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         {
             WriteLine($" => {singleArrayField}[{pns[1]}];");
             if (!Writer.NoProperties)
-                WriteLine($"{f.IndexerSig} {{ {Annotation} get => At(n); }}");
+                WriteLine($"{f.IndexerSig} {{ {Annotation} get => At({pns[1]}); }}");
             return this;
         }
 
@@ -303,7 +303,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
             WriteLine($" => {s};");
             // MethodsOnly: no indexers — At() is the access surface.
             if (!Writer.NoProperties)
-                WriteLine($"{f.IndexerSig} {{ {Annotation} get => At(n); }}");
+                WriteLine($"{f.IndexerSig} {{ {Annotation} get => At({pns[1]}); }}");
             return this;
         }
 
@@ -394,8 +394,16 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     public CSharpTypeWriter WriteStaticFunction(CSharpFunctionInfo fi)
         => Write($"{fi.StaticSignature}").WriteBody(fi, true);
 
+    // Plato overloads on RETURN type; C# does not. Two declarations that reduce to the same C#
+    // member signature on one type (Array2D.Map -> Array2D<T2> and the Container Map ->
+    // Array<T2>) are CS0111, so the first one written wins. Keyed per type writer.
+    private readonly HashSet<string> _emittedMemberSignatures = new HashSet<string>();
+
     public CSharpTypeWriter WriteMemberFunction(CSharpFunctionInfo f, bool isPrimitive, Func<string, bool> hasFunction = null)
     {
+        if (!_emittedMemberSignatures.Add(MemberSignatureKey(f)))
+            return this;
+
         if (!isPrimitive || f.Body != null)
         {
             //WriteLine($"// {f.Function.SignatureId}; [{f.Function.Substitutions}]; {f.Function.TypeVariableAnalysis}");
@@ -440,11 +448,30 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
                 Debug.WriteLine("Skipping implicit cast to self");
             else if (f.OwnerType.Fields.Count == 1 && f.OwnerType.Fields[0].Type.Def.Name == f.Name)
                 Debug.WriteLine("Skipping implicit cast to single field (already included)");
+            // The TARGET type already emits this exact conversion from its single field
+            // (`implicit operator Angle(Number)` in _Angle.g.cs, from Angle's lone `Radians:
+            // Number`). Emitting the mirror image here as well makes every Number -> Angle
+            // conversion ambiguous (CS0457).
+            else if (f.Function.ReturnType?.Def is { } target
+                     && target.Fields.Count == 1
+                     && target.Fields[0].Type?.Def?.Name == f.OwnerType.Name)
+                Debug.WriteLine("Skipping implicit cast already emitted by the target type");
             else
                 WriteLine(f.ImplicitImpl);
         }
 
         return this;
+    }
+
+    // Type-variable NAMES are per-declaration (_T0 in one, _T1 in another), so normalize them
+    // positionally before comparing.
+    private static string MemberSignatureKey(CSharpFunctionInfo f)
+    {
+        var key = f.MethodParameterTypes.JoinStringsWithComma();
+        for (var i = 0; i < f.Generics.Count; i++)
+            key = System.Text.RegularExpressions.Regex.Replace(
+                key, System.Text.RegularExpressions.Regex.Escape(f.Generics[i]), $"#{i}");
+        return $"{f.Name}`{f.Generics.Count}({key})";
     }
 
     public CSharpFunctionInfo ToFunctionInfo(FunctionDef fd, TypeDef td, FunctionInstanceKind kind)
@@ -535,8 +562,12 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         // interfaces, same as their IArray* concepts (stdlib-legacy never uses them in emitted
         // type positions — it goes through the IArray concepts — but stdlib uses
         // Array<T> directly in fields and signatures).
-        if (name == "Array" || name == "Array2D" || name == "Array3D")
-            return "IReadOnlyList" + name.Substring("Array".Length);
+        // Array2D / Array3D left this mapping 2026-08-01: since plato-378 they are ORDINARY
+        // Plato types with an honest layout (Elements + ColumnCount + RowCount), and a field
+        // read on them cannot bind against a runtime interface - C# has no extension
+        // properties. They now generate as structs like any other declared type.
+        if (name == "Array")
+            return "IReadOnlyList";
 
         if (name.Contains("IArray"))
         {

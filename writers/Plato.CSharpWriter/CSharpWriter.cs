@@ -574,8 +574,6 @@ namespace Ara3D.Geometry.CSharpWriter
         public static HashSet<string> IgnoredTypes = new HashSet<string>()
         {
             "Array",
-            "Array2D",
-            "Array3D",
             "Function0",
             "Function1",
             "Function2",
@@ -598,9 +596,11 @@ namespace Ara3D.Geometry.CSharpWriter
             "CreateFromComponent",
             "NumComponents",
             
-            // Implemented elswehere
-            "Range",
-            "MakeArray2D",
+            // Implemented elswehere.
+            // "Range" left this list 2026-08-01: the forward stdlib gives it a Plato body
+            // (primitives-integer.library.plato, `Range(self) => MapRange(self, i => i)`), and
+            // while it was ignored no ExtensionStylePlan owned it, so every call site rendered
+            // with PROPERTY syntax (`n.Range`) against a handwritten extension METHOD.
             "MapRange",
         };
 
@@ -772,8 +772,6 @@ namespace Ara3D.Geometry.CSharpWriter
         public static readonly HashSet<string> ConcreteArrayTypeNames = new HashSet<string>()
         {
             "Array",
-            "Array2D",
-            "Array3D",
         };
 
         // Is this the receiver of a library function that emits as a classic extension method on a

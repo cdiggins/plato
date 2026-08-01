@@ -103,24 +103,9 @@ using System.Runtime.Serialization;
                 => Value.CompareTo(other);
         }
 
-        /// <summary>
-        /// Plato member functions for <see cref="Boolean"/>, as extension methods (the
-        /// all-extension-methods runtime: struct = fields + operators, behaviour = extensions).
-        /// </summary>
-        public static class BooleanIntrinsics
-        {
-            [MethodImpl(AggressiveInlining)]
-            public static Boolean ExclusiveOr(this Boolean self, Boolean other)
-                => self.Value ^ other;
-
-            // Forward-stdlib scalar obligations; exact `int` returns for the scalar-erased
-            // Comparable/Hashable obligations (see the same note on Angle.Compare/Hash).
-            [MethodImpl(AggressiveInlining)]
-            public static int Compare(this Boolean a, Boolean b)
-                => a.Value.CompareTo(b.Value);
-
-            [MethodImpl(AggressiveInlining)]
-            public static int Hash(this Boolean self)
-                => self.Value.GetHashCode();
-        }
+        // The Boolean half of the intrinsic contract is just And / Or / Not, which the
+        // generated partial struct renders from the operators above. ExclusiveOr, Compare,
+        // Hash and LessThanOrEquals all have Plato reference bodies now
+        // (primitives.library.plato), so there is no BooleanIntrinsics class: a duplicate
+        // here would make every generated call site ambiguous (CS0121).
     }

@@ -42,10 +42,38 @@ namespace Ara3D.Geometry
         // -------------------------------------------------------------------------------
         // Type-token constants (the `_`-receiver members in intrinsics-scalars)
         // -------------------------------------------------------------------------------
+        // Zero / One are NOT here: the forward stdlib gives them Plato bodies
+        // (primitives-integer.library.plato) and the generated partial struct declares them
+        // (plato-378 constant migration).
         public static Integer MinValue = int.MinValue;
         public static Integer MaxValue = int.MaxValue;
-        public static Integer Zero = 0;
-        public static Integer One = 1;
+
+        // ------------------------------------------------------------------------------
+        // Concept obligations that no Plato declaration can carry for a primitive. These
+        // must be INSTANCE members (an extension method cannot implement an interface
+        // member). Bitwise's no-arg member is a property; its argument-taking members are
+        // methods, matching the Bitwise<Self> concept.
+        // ------------------------------------------------------------------------------
+
+        public Integer Hash { [MethodImpl(AggressiveInlining)] get => Value.GetHashCode(); }
+        public Integer BitwiseNot { [MethodImpl(AggressiveInlining)] get => ~Value; }
+        public Number ToNumber { [MethodImpl(AggressiveInlining)] get => Value; }
+
+        [MethodImpl(AggressiveInlining)] public Integer BitwiseXor(Integer b) => Value ^ b.Value;
+        [MethodImpl(AggressiveInlining)] public Integer ShiftLeft(Integer bits) => Value << bits.Value;
+        [MethodImpl(AggressiveInlining)] public Integer ShiftRight(Integer bits) => Value >> bits.Value;
+
+        /// <summary>The array kernel's only constructor (intrinsics.library.plato).</summary>
+        [MethodImpl(AggressiveInlining)]
+        public IReadOnlyList<T> MapRange<T>(Func<Integer, T> f) => new ReadOnlyList<T>(Value, i => f(i));
+
+#if PLATO_FORWARD_CONCEPTS
+        // See the note on Number: explicit because the two names are already statics, and
+        // guarded because NumericalLimits<Self> only exists where the forward stdlib's
+        // Interfaces.g.cs is compiled.
+        Integer NumericalLimits<Integer>.MinValue { [MethodImpl(AggressiveInlining)] get => MinValue; }
+        Integer NumericalLimits<Integer>.MaxValue { [MethodImpl(AggressiveInlining)] get => MaxValue; }
+#endif
 
         // -------------------------------------------------------------------------------
         // Operators (forward to int)
@@ -75,6 +103,24 @@ namespace Ara3D.Geometry
         public static Integer operator -(Integer n)
             => -n.Value;
 
+        // The Bitwise concept's two operator-named members; the generated struct renders
+        // BitwiseAnd / BitwiseOr from these.
+        [MethodImpl(AggressiveInlining)]
+        public static Integer operator &(Integer a, Integer b)
+            => a.Value & b.Value;
+
+        [MethodImpl(AggressiveInlining)]
+        public static Integer operator |(Integer a, Integer b)
+            => a.Value | b.Value;
+
+        [MethodImpl(AggressiveInlining)]
+        public static Integer operator ^(Integer a, Integer b)
+            => a.Value ^ b.Value;
+
+        [MethodImpl(AggressiveInlining)]
+        public static Integer operator ~(Integer a)
+            => ~a.Value;
+
         [MethodImpl(AggressiveInlining)]
         public static Boolean operator <(Integer a, Integer b)
             => a.Value < b.Value;
@@ -103,63 +149,7 @@ namespace Ara3D.Geometry
         /// Implicit conversion to <see cref="Number"/> type.
         /// </summary>
         public static implicit operator Number(Integer n)
-            => n.Number();
-
-        /// <summary>
-        /// Conversion function 
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public Number Number() => Value;
+            => n.ToNumber;
     }
 
-    /// <summary>
-    /// Plato math intrinsics for <see cref="Integer"/>, as extension methods (the
-    /// all-extension-methods runtime).
-    /// </summary>
-    public static class IntegerIntrinsics
-    {
-        /// <summary>
-        /// The absolute value of the integer.
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public static Integer Abs(this Integer self) => Math.Abs(self.Value);
-
-        /// <summary>
-        /// An integer that indicates the sign of this integer (-1, 0, or 1).
-        /// </summary>
-        [MethodImpl(AggressiveInlining)] public static Integer Sign(this Integer self) => Math.Sign(self.Value);
-
-        /// <summary>
-        /// Linear interpolation, using default integer rounding.
-        /// </summary>
-        public static Integer Lerp(this Integer self, Integer other, Number t)
-        {
-            var delta = other - self;
-            return (int)(self.Value + (delta.Value * t));
-        }
-
-        /// <summary>
-        /// Creates a range of integers from 0 to this integer. The ELEMENT type is the erased
-        /// primitive, matching ArrayExtensions.Range — see the note on that class (plato-323).
-        /// </summary>
-        [MethodImpl(AggressiveInlining)]
-        public static IReadOnlyList<int> Range(this Integer self) => ArrayExtensions.Range(self);
-
-        // Forward-stdlib scalar obligations (intrinsics-scalars.library.plato). Exact `int`
-        // returns for Compare/Hash: the scalar-erased Comparable/Hashable obligations demand the
-        // erased type (see the same note on Angle.Compare/Hash). ShiftLeft/ShiftRight and the
-        // Bitwise pair have no operator-name mapping in Operators, so the writer cannot
-        // synthesize them from the struct's operator overloads.
-        [MethodImpl(AggressiveInlining)] public static int Compare(this Integer a, Integer b) => a.Value.CompareTo(b.Value);
-        [MethodImpl(AggressiveInlining)] public static int Hash(this Integer self) => self.Value.GetHashCode();
-        [MethodImpl(AggressiveInlining)] public static Integer Min(this Integer a, Integer b) => Math.Min(a.Value, b.Value);
-        [MethodImpl(AggressiveInlining)] public static Integer Max(this Integer a, Integer b) => Math.Max(a.Value, b.Value);
-        [MethodImpl(AggressiveInlining)] public static Integer BitwiseNot(this Integer x) => ~x.Value;
-        [MethodImpl(AggressiveInlining)] public static Integer BitwiseXor(this Integer a, Integer b) => a.Value ^ b.Value;
-        [MethodImpl(AggressiveInlining)] public static Integer ShiftLeft(this Integer x, Integer bits) => x.Value << bits.Value;
-        [MethodImpl(AggressiveInlining)] public static Integer ShiftRight(this Integer x, Integer bits) => x.Value >> bits.Value;
-        [MethodImpl(AggressiveInlining)] public static Number ToNumber(this Integer self) => self.Value;
-        // Integer's own Whole obligation: the identity conversion, which no Plato declaration can
-        // carry for a primitive (see Number.ToNumber).
-        [MethodImpl(AggressiveInlining)] public static Integer ToInteger(this Integer self) => self;
-        [MethodImpl(AggressiveInlining)] public static ReadOnlyList<T> Repeat<T>(this Integer n, T x) => n.MapRange(_ => x);
-    }
 }

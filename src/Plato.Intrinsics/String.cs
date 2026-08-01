@@ -32,7 +32,9 @@ namespace Ara3D.Geometry
 
         public Character this[Integer n] { [MethodImpl(AggressiveInlining)] get => At(n); }
 
-        [MethodImpl(AggressiveInlining)] public Integer Count() => Value.Length;
+        // Property, not method: `Count` is the `Countable` concept member, and an interface
+        // obligation can only be discharged by a member of the matching shape.
+        public Integer Count { [MethodImpl(AggressiveInlining)] get => Value.Length; }
         
         // -------------------------------------------------------------------------------
         // Conversions

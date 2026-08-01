@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Plato.Generated.Foundation.Unoptimized - buildable C# emitted from the FORWARD stdlib
+    foundation tier only (stdlib\foundation), with WRAPPER scalars and the optimizers OFF.
+
+    Recipe - flags shown without the leading dashes:
+        Plato.CLI stdlib\foundation generated\Plato.Generated.Foundation.Unoptimized
+            csharp-style=extensions
+
+    Deliberate differences from Plato.Generated.Unoptimized (decision 2026-08-01):
+      * source is the FORWARD stdlib (stdlib\foundation), not stdlib-legacy;
+      * scalars are KEPT AS WRAPPER STRUCTS - Number / Integer / Boolean / Character / String
+        remain distinct types. No scalar erasure (no scalar=float), and therefore no
+        methods / no-properties either, since both of those require the erased recipe;
+      * no optimizer pass runs (no optimize, inline, loops, optimize-arrays).
+
+    This is ordinary cached output, not a golden: regenerate it any time with the command
+    above. docs.html / interfaces.txt are generator side-products.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>AnyCPU;x64</Platforms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>Ara3D.Geometry</RootNamespace>
+    <!-- Generated code produces a large number of benign warnings. -->
+    <NoWarn>$(NoWarn);CS0108;CS0114;CS0660;CS0661;CS1591</NoWarn>
+    <!-- Turns on the parts of Plato.Intrinsics that mention the forward stdlib's concept
+         interfaces (NumericalLimits<Self> and friends). Only a project that compiles
+         Interfaces.g.cs from stdlib/foundation has those types; the legacy generated
+         projects and tests/PlatoTests import the same shared project and do not. -->
+    <DefineConstants>$(DefineConstants);PLATO_FORWARD_CONCEPTS</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Link the handwritten intrinsics runtime (shared project - it compiles INTO this
+       project and fuses with the generated partial structs). -->
+  <Import Project="..\..\src\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
+
+  <ItemGroup>
+    <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
+    <!-- This project compiles its own Ara3D.Geometry namespace; the package of that name
+         is the old V1 library and would make every extension method ambiguous. -->
+    <PackageReference Include="Ara3D.Geometry" Version="$(Ara3DVersion)" ExcludeAssets="compile" />
+  </ItemGroup>
+
+</Project>

@@ -22,27 +22,72 @@ namespace Ara3D.Geometry.CSharpWriter
             ParameterTypes = Function.ParameterTypes.Select(this.ToCSharpType).ToList();
             Generics = fi.TypeVariables;
             TypeGenerics = owner?.TypeParameters.Select(tp => tp.Name).ToList() ?? [];
+            RebindReceiverTypeVariables();
             AllGenerics = Generics.Concat(TypeGenerics).Distinct().ToList();
             if (ParameterNames.Count != ParameterTypes.Count)
                 throw new Exception("Parameter names and types must have the same length");
         }
 
         public List<string> AllGenerics { get; }
-        
+
+        /// <summary>
+        /// A library function over a GENERIC concrete type arrives with its OWN free type
+        /// variable where the type's parameter belongs: <c>Count(self: Array2D&lt;$T&gt;)</c>
+        /// renders as <c>Integer Count&lt;_T0&gt;</c> on <c>Array2D&lt;T&gt;</c>, which is not
+        /// valid C# for a property and does not discharge <c>Countable.Count</c>. When the
+        /// receiver reads exactly <c>Owner&lt;a1..an&gt;</c> and some <c>ai</c> is one of this
+        /// function's own type variables, that variable IS the owner's parameter in position i,
+        /// so rebind it and drop it from the member's generic list. Positions that are not the
+        /// function's own variables (Map's result element) are left alone.
+        /// </summary>
+        private void RebindReceiverTypeVariables()
+        {
+            if (OwnerType == null || Generics.Count == 0 || TypeGenerics.Count == 0 || ParameterTypes.Count == 0)
+                return;
+
+            var recv = ParameterTypes[0];
+            var prefix = OwnerType.Name + "<";
+            if (!recv.StartsWith(prefix) || !recv.EndsWith(">"))
+                return;
+
+            var args = recv.Substring(prefix.Length, recv.Length - prefix.Length - 1).Split(',').Select(a => a.Trim()).ToList();
+            if (args.Count != TypeGenerics.Count)
+                return;
+
+            var rebinds = new Dictionary<string, string>();
+            for (var i = 0; i < args.Count; i++)
+                if (Generics.Contains(args[i]))
+                    rebinds[args[i]] = TypeGenerics[i];
+            if (rebinds.Count == 0)
+                return;
+
+            string Rebind(string t)
+            {
+                foreach (var kv in rebinds)
+                    t = System.Text.RegularExpressions.Regex.Replace(t, $@"\b{System.Text.RegularExpressions.Regex.Escape(kv.Key)}\b", kv.Value);
+                return t;
+            }
+
+            ReturnType = Rebind(ReturnType);
+            ParameterTypes = ParameterTypes.Select(Rebind).ToList();
+            Generics = Generics.Where(g => !rebinds.ContainsKey(g)).ToList();
+        }
+
+
         public ITypeToCSharp TypeToCSharp { get; }
         public FunctionInstance Function { get; }
         public string Name => Function.Name;
 
-        public string ReturnType { get; }
+        public string ReturnType { get; private set; }
         public TypeDef OwnerType { get; }
         public Symbol Body => Function.Implementation.Body;
         public bool IsImplicit => Function.IsImplicitCast;
-        public IReadOnlyList<string> Generics { get; }
+        public IReadOnlyList<string> Generics { get; private set; }
         public IReadOnlyList<string> TypeGenerics { get; }
         public int NumParameters => ParameterNames.Count;
         public IReadOnlyList<string> ParameterNames => Function.ParameterNames;
         public string FirstParameterName => ParameterNames[0];
-        public IReadOnlyList<string> ParameterTypes { get; }
+        public IReadOnlyList<string> ParameterTypes { get; private set; }
         public IEnumerable<string> MethodParameterNames => ParameterNames.Skip(1);
         public IEnumerable<string> MethodParameterTypes => ParameterTypes.Skip(1);
         public IEnumerable<string> Parameters => ParameterNames.Zip(ParameterTypes, (n, t) => $"{t} {n}");
@@ -50,7 +95,7 @@ namespace Ara3D.Geometry.CSharpWriter
         public string GenericsString => Generics.Count > 0 ? $"<{Generics.JoinStringsWithComma()}>" : "";
         public string StaticParametersString => NumParameters > 0 ? $"({Parameters.JoinStringsWithComma()})" : EmitAsMethod ? "()" : "";
         public string ExtensionParametersString => NumParameters > 0 ? $"(this {Parameters.JoinStringsWithComma()})" : "";
-        public string MethodParametersString => NumParameters > 1 ? $"({MethodParameters.JoinStringsWithComma()})" : EmitAsMethod ? "()" : "";
+        public string MethodParametersString => NumParameters > 1 ? $"({MethodParameters.JoinStringsWithComma()})" : IsProperty ? "" : "()";
         public string StaticSignature => $"{FunctionAnnotation}public static {ReturnType} {Name}{GenericsString}{StaticParametersString}{Constraints}";
         
         public string ExtensionGenericsString => AllGenerics.Count > 0 ? $"<{AllGenerics.JoinStringsWithComma()}>" : "";
@@ -71,13 +116,15 @@ namespace Ara3D.Geometry.CSharpWriter
                      && (tw.Writer?.IsStructSurfaceProperty(tw.TypeDef?.Name, Name) ?? false)));
 
         public string StaticKeyword => IsStatic ? "static " : "";
-        public bool IsProperty => ParameterNames.Count <= 1 && !EmitAsMethod;
+        // A C# property cannot be generic, so a no-arg member that still carries a type
+        // variable (Array2D.Count<T>) must render as a METHOD however the recipe is configured.
+        public bool IsProperty => ParameterNames.Count <= 1 && !EmitAsMethod && Generics.Count == 0;
         public static string Annotation => "[MethodImpl(AggressiveInlining)] ";
         public string FunctionAnnotation => IsProperty ? "" : Annotation;
         public string Constraints => Function.ConstrainedTypeVariables.Select(ConstraintString).JoinStrings("");
         public string MethodSignature => $"{FunctionAnnotation}public {StaticKeyword}{ReturnType} {Name}{GenericsString}{MethodParametersString}{Constraints}";
         public string StaticArgsString => NumParameters > 0 ? $"({ParameterNames.JoinStringsWithComma()})" : "";
-        public string MethodArgsString => NumParameters > 1 ? $"({ParameterNames.Skip(1).JoinStringsWithComma()})" : EmitAsMethod ? "()" : "";
+        public string MethodArgsString => NumParameters > 1 ? $"({ParameterNames.Skip(1).JoinStringsWithComma()})" : IsProperty ? "" : "()";
         public string IntrinsicsArgsString => NumParameters > 0 ? $"({ParameterNames.Skip(1).Prepend("this").JoinStringsWithComma()})" : "";
         public bool IsMethodOf(string typeName) => ParameterTypes.Count > 0 && ParameterTypes[0] == typeName;
 
@@ -114,7 +161,10 @@ namespace Ara3D.Geometry.CSharpWriter
             throw new NotImplementedException();
         }
 
-        public bool IsIndexer => Name == "At";
+        // C# indexers cannot be generic, so a generic `At<T>(T index)` (the `Index`-constrained
+        // overload in collections-indexable) has no indexer companion - emitting one produced a
+        // `this[_T0 index]` referencing a type parameter that is not in scope (CS0246).
+        public bool IsIndexer => Name == "At" && Generics.Count == 0;
         public string IndexerSig => $"public {ReturnType} this[{MethodParameters.JoinStringsWithComma()}]";
         public string IndexerImpl => $"{IndexerSig} {{ {Annotation} get => {Name}{MethodArgsString}; }}";
         public string IndexerInterface => $"{ReturnType} this[{MethodParameters.JoinStringsWithComma()}] {{ get; }}";

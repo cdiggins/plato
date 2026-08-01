@@ -13,8 +13,9 @@ namespace Ara3D.Geometry
         // a nested ReadOnlyList in generic inference (`caps.Concatenate(walls)`).
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<T> MakeArray<T>(params T[] args) => args;
 
-        [MethodImpl(AggressiveInlining)] public static ReadOnlyList2D<T> MakeArray2D<T>(this Integer columns, Integer rows, Func<Integer, Integer, T> f) 
-            => new ReadOnlyList2D<T>((columns * rows).MapRange(i => f(i % columns, i / columns)), columns, rows);
+        // MakeArray2D left this file 2026-08-01: Array2D is an ordinary Plato type with an
+        // honest layout since plato-378, so `primitives-arrays.library.plato` carries the
+        // reference body and a duplicate here made every call site ambiguous (CS0121).
 
         [MethodImpl(AggressiveInlining)] public static Integer CombineHashCodes() => 17;
         [MethodImpl(AggressiveInlining)] public static Integer CombineHashCodes<T0>(T0 x0) => HashCode.Combine(x0);

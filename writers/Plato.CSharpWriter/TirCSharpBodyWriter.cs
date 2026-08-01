@@ -769,6 +769,21 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             return;
         }
 
+        // Plato's `Count(xs: Array<$T>): Integer` maps onto the runtime list interface, whose
+        // Count is a BCL `int`. Under the WRAPPER-scalar recipe Integer and int are different
+        // types, so any no-arg Plato member chained off the count (`xs.Count.Range`,
+        // `xs.Count.ToNumber`) renders as PROPERTY syntax against an `int` receiver - and C#
+        // has no extension properties, so nothing can satisfy it. Re-wrap at the source.
+        // Under --scalar=float the two are the same type and the cast would be noise.
+        if (name == "Count" && args.Count == 1 && !_tw.Writer.ScalarErase
+            && TirRewrite.StripCoerce(args[0])?.Type?.Name == "Array")
+        {
+            Write("((Integer)");
+            WriteNode(args[0]);
+            Write(".Count)");
+            return;
+        }
+
         // Indexer: At(a, i, ...) -> a[i, ...]. MethodsOnly: generated structs have no indexer,
         // so a receiver of a known generated type calls .At(...) instead (IReadOnlyList and
         // other unknown receivers keep their own indexers).
