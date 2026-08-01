@@ -1,5 +1,6 @@
 using Ara3D.Geometry.Navigation;
 using Ara3D.Geometry.AST;
+using Ara3D.Utils;
 using NUnit.Framework;
 
 namespace Plato.Navigation.Tests;
@@ -9,6 +10,18 @@ namespace Plato.Navigation.Tests;
 [TestFixture]
 public class InvariantTests
 {
+    /// <summary>A moved corpus folder must fail here with one clear message, not as dozens of
+    /// downstream shape failures (repo-392).</summary>
+    [Test]
+    public void EveryCorpusRootExistsAndHasPlatoFiles()
+    {
+        foreach (var root in Corpus.Roots)
+        {
+            Assert.That(root.Exists(), Is.True, $"corpus root '{root}' does not exist");
+            Assert.That(root.GetFiles("*.plato", true), Is.Not.Empty, $"corpus root '{root}' has no .plato files");
+        }
+    }
+
     [Test]
     public void EveryDefinitionIsFoundAtItsOwnSpan()
     {

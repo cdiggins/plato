@@ -117,14 +117,6 @@ public static class ArrayExtensions
         => xs.Aggregate(acc, f);
 
     [MethodImpl(AggressiveInlining)]
-    public static Boolean All<T0>(this IReadOnlyList<T0> xs, Func<T0, Boolean> f)
-        => xs.Enumerate().All(x => f(x));
-
-    [MethodImpl(AggressiveInlining)]
-    public static Boolean Any<T0>(this IReadOnlyList<T0> xs, Func<T0, Boolean> f)
-        => xs.Enumerate().Any(x => f(x));
-
-    [MethodImpl(AggressiveInlining)]
     public static List<T1> FlatMap<T0, T1>(this IReadOnlyList<T0> xs, Func<T0, IReadOnlyList<T1>> f)
     {
         var r = new List<T1>();
