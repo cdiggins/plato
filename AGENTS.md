@@ -56,7 +56,7 @@ the writer code).
   declaration files).
   Inner loop: `.\tools\check-stdlib-fast.ps1` from the studio root.
   **How it is tested and validated:** [`docs/stdlib-verification-ladder.md`](docs/stdlib-verification-ladder.md)
-  — the six rungs (parse → resolve → lint → style → type-check → codegen → law execution),
+  — the seven rungs (parse → resolve → lint → style → type-check → codegen → law execution),
   which command runs each, the three ratchets and their scopes, and the wrong-greens to avoid.
 - `tests/stdlib-tests/` — forward law packet (`Law_*` functions) for `stdlib/`. Merged with `stdlib` by
   `tools\regen-forward-conformance.ps1`. Keep separate from `stdlib`, same as the legacy pair.

@@ -3,25 +3,28 @@
 **How `stdlib/` is tested and validated — what each rung proves, what it cannot prove, and which
 command runs it.**
 
-Scope: the **forward** stdlib (`stdlib/`, 424 `.plato` files — foundation 133, geometry 192,
-graphics 52, future 47) and its law packet (`tests/stdlib-tests/`, 3 files, 37 `Law_*` functions).
-The legacy pair (`legacy/stdlib-legacy/` + `legacy/stdlib-legacy-tests/`) has its own gates and is
-out of scope here; see [`AGENTS.md`](../AGENTS.md).
+Scope: the **forward** stdlib (`stdlib/`) and its law packet (`tests/stdlib-tests/`). The legacy
+pair (`legacy/stdlib-legacy/` + `legacy/stdlib-legacy-tests/`) has its own gates and is out of scope
+here; see [`AGENTS.md`](../AGENTS.md).
 
 The organizing idea: **a `.plato` file is not a program you can run.** Nothing in `stdlib/` executes
 until it has been converted to C# and linked against `src/Plato.Intrinsics`. So validation is a
-ladder of six rungs, each cheaper and weaker than the one above it, and the honest question about
+ladder of seven rungs, each cheaper and weaker than the one above it, and the honest question about
 any stdlib claim is *how far up the ladder is it backed?*
 
-| Rung | Proves | Cost | Enforced by |
-|---|---|---|---|
-| 0 · parse | the text is Plato | ms | `ForwardStdLibParsesAndCompiles` |
-| 1 · resolve | every name binds to something | ~6 s | same test + `lint --strict` |
-| 2 · lint | structural defects the writer would turn into runtime holes | ~6 s | `ForwardStdLibLintTests` (ratchet) |
-| 3 · style | authoring invariants no compiler pass owns | ~50 ms | `StyleChecker` via `plato_check` |
-| 4 · type-check | every function body is well-typed | ~7 s | `ForwardStdLibCheckerTests` (ratchet) |
-| 5 · codegen | the vocabulary survives the C# writer and compiles | ~2 min | `regen-forward-conformance.ps1 -Codegen` |
-| 6 · execute | the bodies compute the right answers | ~5 min | `Plato.ForwardConformanceTests` law runner |
+| Rung | Proves | Enforced by |
+|---|---|---|
+| 0 · parse | the text is Plato | `ForwardStdLibParsesAndCompiles` |
+| 1 · resolve | every name binds to something | same test + `lint --strict` |
+| 2 · lint | structural defects the writer would turn into runtime holes | `ForwardStdLibLintTests` (ratchet) |
+| 3 · style | authoring invariants no compiler pass owns | `StyleChecker` via `plato_check` |
+| 4 · type-check | every function body is well-typed | `ForwardStdLibCheckerTests` (ratchet) |
+| 5 · codegen | the vocabulary survives the C# writer and compiles | `regen-forward-conformance.ps1 -Codegen` |
+| 6 · execute | the bodies compute the right answers | `Plato.ForwardConformanceTests` law runner |
+
+Rungs 0–4 run in seconds, rung 5 in minutes, rung 6 in minutes plus a build. For measured
+per-gate timings use `.\tools\gate-timings.ps1` (runs / median / P90 / max, from the shared
+timing log) rather than a number written down here.
 
 Rungs 0–4 are static and green. Rung 5 generates but does not yet compile clean. Rung 6 is the only
 rung that runs a body, and it is the one still being brought up
@@ -35,7 +38,7 @@ important thing this document has to say.
 ## The inner loop: which command, when
 
 **While editing** — `plato_check` from the `plato-navigation` MCP server. It runs rungs 0–4 inside a
-warm process against cached ASTs, so it costs seconds instead of the 1–2 minutes two cold `dotnet`
+warm process against cached ASTs, so it costs seconds instead of the minutes two cold `dotnet`
 processes need, and returns structured findings instead of console text:
 
 ```
@@ -71,8 +74,8 @@ while trunk is green.
 python tools/record-gates.py
 ```
 
-`--full` adds a clean regeneration plus the conformance law runner (~5 min); `--dry-run` measures
-and writes nothing. It writes current state to `docs/status-report-snapshot.json` and appends one
+`--full` adds a clean regeneration plus the conformance law runner; `--dry-run` measures and writes
+nothing. It writes current state to `docs/status-report-snapshot.json` and appends one
 history row to [`docs/gate-log.md`](gate-log.md). Note that it **regenerates before it tests** — a
 suite that passes against a stale `Generated/` folder is the easiest wrong green in this repo to
 produce.
@@ -93,7 +96,8 @@ produce.
 `ForwardStdLibParsesAndCompiles` (`tests/PlatoTests/ForwardStdLibCheckerTests.cs`) parses every
 `.plato` file under all four tiers and builds a `Compilation`, asserting four empty collections:
 parse failures, `SymbolFactory.Errors` (name resolution), `SemanticErrors`, `InternalErrors`, plus
-`CompletedCompilation`. It also carries a **corpus floor** — `files.Count > 300` — because every
+`CompletedCompilation`. It also carries a **corpus floor** — a minimum file count, set far below the
+real one so ordinary growth or pruning never trips it — because every
 other assertion is an `IsEmpty`, so an enumeration bug that found no files would pass this gate
 while proving nothing. That is not hypothetical: it happened when the tier subfolders landed and a
 top-only enumeration silently emptied the corpus.
@@ -107,8 +111,9 @@ somewhere. It proves nothing about types and nothing about values.
 
 ### Rung 2 · Lint
 
-`Linter` (`src/Plato.Compiler/Analysis/Linter.cs`) runs 16 rules, LINT001–LINT016. The ones that
-carry validation weight rather than tidiness:
+`Linter` (`src/Plato.Compiler/Analysis/Linter.cs`) runs a numbered rule set, `LINT001` upward; the
+class comment at the top of that file is the authoritative list. The ones that carry validation
+weight rather than tidiness:
 
 - **LINT001** — a type implements a concept but an obligation has no implementation. The generated
   member throws `NotImplementedException`. This is a *runtime hole with a green compile*, which is
@@ -117,13 +122,14 @@ carry validation weight rather than tidiness:
   (static vs instance). Written as a lint rule after that shape produced 40 CS0736 errors a thousand
   generated files downstream.
 - **LINT013** — a concept with no concrete implementer that library bodies nonetheless dispatch on:
-  unreachable derived surface. 32 of the current 33-finding ratchet.
+  unreachable derived surface. The bulk of the lint ratchet is this one rule.
 - **LINT002 / 004 / 005** — errors: bad `where` clauses, duplicate signatures, uninferable type
   variables.
 - **LINT006 / 007** — the affine-type structural bans (no `unique` builder in a field, none as a
   generic argument).
-- **LINT003** — declared-but-unused fields. **Info, deliberately excluded from the ratchet**: ~1.5k
-  findings over vocabulary declared ahead of its bodies. It also **cannot see field reads inside
+- **LINT003** — declared-but-unused fields. **Info, deliberately excluded from the ratchet**: it
+  fires in the thousands over vocabulary declared ahead of its bodies, which would make the ceiling
+  a number nobody could move. It also **cannot see field reads inside
   statement blocks or `var` initializers**, so converting an expression body to a statement body
   makes the count *rise* for fields that are genuinely read. Do not read LINT003 deltas as coverage.
 
@@ -210,17 +216,19 @@ collision), then runs two stages:
 The recipe is the shipping one: `--csharp-style=extensions --scalar=float --optimize
 --optimize-arrays --inline --methods --loops --no-properties --static-abstract`.
 
-Codegen **succeeds** — ~1321 `.g.cs` files at the last recorded run, with 48 degraded bodies (a
-member with no ground TIR emits a throwing stub and is recorded in `Writer.DegradedBodies` rather
-than aborting the whole output). Whether the generated C# **compiles** is the live question; see
-"Current state" below. Build-level quarantine of failing files was measured and does **not** work —
+Codegen **succeeds**: it emits over a thousand `.g.cs` files, plus some *degraded bodies* — a member
+with no ground TIR emits a throwing stub and is recorded in `Writer.DegradedBodies` rather than
+aborting the whole output. Both counts are reported by the run itself and logged in
+[`docs/gate-log.md`](gate-log.md); the degraded count is a burn-down number, so read it there rather
+than from prose. Whether the generated C# **compiles** is the live question — see "Reading the
+current state" below. Build-level quarantine of failing files was measured and does **not** work —
 the forward stdlib is too densely linked and exclusion cascades into CS0246.
 
 ### Rung 6 · Execute the laws
 
-`tests/stdlib-tests/` holds `Law_*` / `Witness_*` Boolean functions in `library` blocks —
-`foundation.laws.plato`, `polyhedra.laws.plato`, `special-numerics.laws.plato`, 37 laws today. They
-are **never merged into `stdlib/`**; the harness merges them at gate time.
+`tests/stdlib-tests/` holds `Law_*` / `Witness_*` Boolean functions in `library` blocks, one
+`*.laws.plato` file per domain. They are **never merged into `stdlib/`**; the harness merges them at
+gate time.
 
 `tests/conformance/Plato.ForwardConformanceTests` discovers `Law_*` members by **reflection** over
 the generated assembly and runs each as a test case. Consequences to respect:
@@ -244,11 +252,14 @@ lands.
 
 Three ceilings, all enforced **in tests**, none in a log:
 
-| Ratchet | File | Ceiling | Scope |
-|---|---|---|---|
-| lint findings (E+W, Info excluded) | `ForwardStdLibLintTests` | 33 | foundation + geometry + graphics |
-| type-checker diagnostics | `ForwardStdLibCheckerTests` | 0 | all four tiers |
-| intrinsic contract size | `IntrinsicContractSizeTests` | 65 | `intrinsics.library.plato` |
+| Ratchet | Constant | Scope |
+|---|---|---|
+| lint findings (E+W, Info excluded) | `ForwardStdLibLintTests.MaxLintRatchet` | foundation + geometry + graphics |
+| type-checker diagnostics | `ForwardStdLibCheckerTests.MaxFunctionsWithDiagnostics` | all four tiers |
+| intrinsic contract size | `IntrinsicContractSizeTests.MaxIntrinsics` | `intrinsics.library.plato` |
+
+**The constant in the test is the only copy of each ceiling.** Do not restate its value here or in
+any other doc — a second copy is a copy that goes stale silently while the enforced one moves.
 
 The rule is the same for all three: **a ceiling to LOWER, never to raise.** When you earn a lower
 number, lower it in the same commit. If a ceiling genuinely has to move up, say why in the comment
@@ -274,15 +285,18 @@ Opt `future` back in with `-IncludeFuture` (PowerShell gates), `--include-future
 (`record-gates.py`), or the `SummarizeForwardStdLibLintIncludingFuture` reporting test. Parsing and
 type-checking are **not** behind a flag.
 
-So four different tools report four legitimately different lint counts, and none of them is wrong:
+So four different tools report four legitimately different lint counts, and none of them is wrong.
+Before comparing two numbers, check they cover the same corpus:
 
-- lint ratchet test: shipping tiers only → ceiling 33
-- `record-gates.py` / `lint --strict`: shipping tiers (or four with the flag)
-- `plato_check`: all four tiers **plus** `tests/stdlib-tests/` → currently 39
-- `SummarizeForwardStdLibLintIncludingFuture`: four tiers, reporting only
+| Tool | Corpus |
+|---|---|
+| lint ratchet test | shipping tiers only |
+| `record-gates.py` / `lint --strict` | shipping tiers (four with the flag) |
+| `plato_check` | all four tiers **plus** `tests/stdlib-tests/` |
+| `SummarizeForwardStdLibLintIncludingFuture` | four tiers, reporting only |
 
-The same applies to type-check counts: the ratchet compiles `stdlib/` alone and expects 0;
-`plato_check` includes the law packet, so a defect in a law shows up there and *not* in the ratchet.
+The same applies to type-check counts: the ratchet compiles `stdlib/` alone; `plato_check` includes
+the law packet, so a defect in a law shows up there and *not* in the ratchet.
 
 ---
 
@@ -291,7 +305,7 @@ The same applies to type-check counts: the ratchet compiles `stdlib/` alone and 
 Every item below happened. They are the reason several assertions look paranoid.
 
 1. **Empty corpus passes everything.** A top-only enumeration after the tier reorg found zero files;
-   every `IsEmpty` assertion passed. Mitigated by the corpus floor (`> 300 files`) and by
+   every `IsEmpty` assertion passed. Mitigated by the corpus floor and by
    `regen-forward-conformance.ps1` enumerating `-Recurse`.
 2. **Zero law cases passes NUnit.** Mitigated by `BlockerGuardTests`.
 3. **Stale `Generated/`.** A suite that passes against last week's output proves nothing.
@@ -306,27 +320,28 @@ Every item below happened. They are the reason several assertions look paranoid.
 
 ---
 
-## Current state (measured 2026-08-01, working tree dirty)
+## Reading the current state
 
-Via `plato_check` over `stdlib/` + `tests/stdlib-tests/`:
+**This document deliberately records no measurements.** Counts of files, findings, diagnostics,
+generated files and passing tests all move every week; a copy of one in prose is a fact that goes
+stale silently, and a reader cannot tell a stale copy from a fresh one. Every such number has exactly
+one live home:
 
-| Gate | Result |
+| Question | Where the answer lives |
 |---|---|
-| parse | 0 failed files (427 files indexed) |
-| resolve | 0 resolution / 0 semantic / 0 internal errors |
-| lint | 0 errors, 39 warnings (four tiers + laws; shipping-tier ratchet is 33) |
-| types | 3208 functions checked, **3 failing** — all three `CHK201` in the *uncommitted* `stdlib-tests/polyhedra.laws.plato` (`No overload of 'Equals' matches (PlatonicSolidKind, PlatonicSolidKind)`), none in `stdlib/` |
-| sums | 3 × `CHK304` (`match` on a non-sum), same uncommitted file |
-| style | 0 errors, 28 warnings (all STY004, long doc comments) |
+| what do the gates say right now? | `plato_check`, or `python tools/record-gates.py --dry-run` |
+| what did they say at commit X? | [`docs/gate-log.md`](gate-log.md) — one appended row per run |
+| current machine-readable state | `docs/status-report-snapshot.json` (+ `tools/gen-status-report.py` for HTML) |
+| what is the ceiling for a ratchet? | the constant in the test (see the ratchet table above) |
+| how long does a gate take? | `.\tools\gate-timings.ps1` |
+| what is left on a burn-down? | the tracker issue, via `python tools/track.py show <id>` |
 
-Last recorded full run ([`docs/gate-log.md`](gate-log.md), `36369e5`): lint ratchet 44 (0 error + 44
-warning), 2374 info, PlatoTests 196/196, codegen 1321 files / 48 degraded, **conformance 44 pass / 0
-fail / 3 skip**.
-
-> That last figure means rung 6 has run green at least once. `plato-308` and the conformance
-> `README.md` both still describe the older 324-error declaration-layer blocker and are **stale**;
-> the declaration layer is fixed and the residue is the body layer tracked as
-> [plato-323](../tracker/issues/plato-323.md). Re-measure before quoting either document.
+**Prefer measuring to reading.** Several status blocks in this repo describe blockers that were
+fixed after they were written — the conformance suite's `README.md` and
+[plato-308](../tracker/issues/plato-308.md) both still describe a declaration-layer error inventory
+that no longer exists, while the gate log shows the law runner passing. That pattern is the norm, not
+the exception: **when a document and a gate disagree, the gate is right.** Re-measure before quoting
+any status prose, including this file.
 
 ---
 
