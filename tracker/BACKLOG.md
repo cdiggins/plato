@@ -118,3 +118,4 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-360](issues/plato-360.md) | Lint Reduce that should be Sum | idea | ? | ? | ? | plato | idea |  |
 | [plato-361](issues/plato-361.md) | Resolve HalfEdge vs DirectedEdge vocabulary overlap | idea | ? | ? | ? | plato | idea |  |
 | [plato-366](issues/plato-366.md) | Derive Wrapper<T> obligations for single-field types (retire the 98-line quantity projection file) | idea | ? | ? | ? | plato | idea |  |
+| [plato-379](issues/plato-379.md) | Unify Indexable and MapLike into Indexable<TIndex, TValue> | idea | ? | ? | ? | plato | idea |  |
