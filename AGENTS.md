@@ -73,7 +73,7 @@ the writer code).
 - `legacy/stdlib-snapshot-2026-07-09/` — **FROZEN 2026-07-09 snapshot** of the pre-refactor library (ex-`plato-src-legacy`).
   Reference only; never edit, never compile. Diff `stdlib-legacy` against it to see how far the library has moved.
 - `legacy/stdlib-legacy-tests/` — law/witness libraries (`Law_*`, `Witness_*` Boolean functions). Never merge into stdlib-legacy.
-- `src/Plato.CLI/` — entry point. `Program.cs` args: `[input] [output] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--scalar=...] [--methods] [--no-properties] [--loops]` and `lint <folder> [--strict]`. Exits 1 on parse/compile failure (fixed 2026-07-10). The legacy default C# style and `--no-tir` were retired at C4 (the TIR is the sole body writer). `--inline` is wired for the C# writer today; GLSL/C++/CUDA skip lambdas until that lowering is shared.
+- `src/Plato.CLI/` — entry point. `Program.cs` args: `[input] [output] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--scalar=...] [--loops]` and `lint <folder> [--strict]`. Exits 1 on parse/compile failure (fixed 2026-07-10). The legacy default C# style and `--no-tir` were retired at C4 (the TIR is the sole body writer); `--methods` / `--no-properties` were retired at `compiler-387` (property-free emission is unconditional). `--inline` is wired for the C# writer today; GLSL/C++/CUDA skip lambdas until that lowering is shared.
 - `src/Plato.Compiler/` — compilation + `Analysis/Linter.cs` (LINT001–005) + `Checking/` (the type checker + Typed IR: Normalize → Constrain → Solve → Elaborate → Monomorphize; handoff doc `docs/type-checker-handoff.md`).
 - `src/Plato.AST/` — the old associativity bug was FIXED in `392dfa8` (2026-07-09); [`docs/archive/plato-assoc-bug-diagnosis.md`](docs/archive/plato-assoc-bug-diagnosis.md) is historical.
 - `writers/Plato.CSharpWriter/` — `CSharpWriter.cs` (flags: `ExtensionStyle`, `Optimize`, `ScalarErase`, `NoProperties`), `TirCSharpBodyWriter.cs` (the SOLE C# body writer — every function body renders from the monomorphized Typed IR; the legacy `CSharpFunctionBodyWriter` was deleted at C4), `ExtensionStyleWriter.cs` (classic extension methods, one static class per Plato library; moved no-arg fns are METHODS `v.Magnitude()`), `TirScalarLowerer.cs` (`--scalar=float` erasure as a TIR lowering pass — it replaced the emit-time `ScalarEraseAnalysis`, deleted at S3), `ComponentUnroller.cs` (`--optimize` field-wise unrolling table).
@@ -168,8 +168,13 @@ The ones agents most often rediscover the hard way:
   conditionals with no new TIR node. Design doc: `docs/plato-sum-types-design-2026-07-27.md`.
   Consequence for the stdlib: no generic `Optional<T>` / `Maybe<T>` — see `stdlib/CONVENTIONS.md`
   for the three sanctioned partial-operation styles.
-- **The shipping recipe is property-free.** `--no-properties` plus the V2 runtime makes the
-  `Generated` libraries method-form; see `docs/plato-library-map.md` for the recipe per artifact.
+- **Generated C# is property-free, unconditionally.** Every no-arg member emits as a method and
+  no indexers are emitted; there is no flag and no property-ful variant to test. The `--methods`
+  and `--no-properties` flags were retired at `compiler-387` (2026-08-01) along with the
+  `CSharpWriter.NoProperties` field — passing either is now an unrecognised argument. Decision:
+  [`tracker/decisions/2026-08-01-property-free-emission-is-unconditional.md`](tracker/decisions/2026-08-01-property-free-emission-is-unconditional.md).
+  Property-vs-method spelling is now independent of `--scalar=float`, which had been its
+  precondition. Recipe per artifact: `docs/plato-library-map.md`.
 - **Intrinsics may mention only `primitive` types** (2026-07-30). A bodiless signature is legal
   only inside `stdlib/foundation/intrinsics.library.plato` and only over the set declared with
   the `primitive` keyword in `stdlib/foundation/primitives.plato`. Operations on `Angle`,
