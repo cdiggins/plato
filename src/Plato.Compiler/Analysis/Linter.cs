@@ -559,7 +559,10 @@ namespace Ara3D.Geometry.Compiler.Analysis
                 }
             }
 
-            // 'where' bounds are dropped by the resolver (see LINT002), so read them off the AST.
+            // 'where' bounds now reach the symbols too (plato-382: TypeParameterDef.Constraints is
+            // populated, and Checking/TypeConstraintChecker verifies them), but they are still read
+            // off the AST here: reachability is a SYNTACTIC question — a bound written in the source
+            // makes the concept reachable whether or not it resolved.
             var boundNames = Compilation.TypeDeclarations
                 .SelectMany(d => d.Constraints)
                 .Select(c => c.Constraint?.Name?.Text)

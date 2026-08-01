@@ -168,6 +168,31 @@ Consumes the constraint system and produces a substitution plus located diagnost
 | `CHK201` | no overload matches the argument types |
 | `CHK202` | multiple overloads match with a common return type (info) |
 | `CHK203` | ambiguous call — overloads match with differing return types |
+| `CHK204` | bounded-polymorphic call — concrete overloads tie on an unbound variable; deferred to monomorphization (info) |
+| `CHK205` | a call on a bare type parameter that its declared bounds do not supply (warning) |
+| `CHK309` | a type argument does not satisfy the bound declared on that parameter |
+| `CHK310` | a declared `where` bound does not name a concept |
+
+### Declared type-parameter bounds
+
+Both `concept` and `type` declarations may bound their parameters
+(`type Tween<T> where T: Interpolatable`). The bounds land on
+`TypeParameterDef.Constraints` and are read in two places, both in `Checking/`:
+
+- **`TypeConstraintChecker`** — a declaration-level pass, run like `SumTypeChecker` and
+  `ExistentialConceptChecker`. Every construction the declaration writes (implements/inherits
+  clauses, field types, sum-case field types, method signatures) must supply arguments that satisfy
+  the bounds, or `CHK309`; a bound that is not a concept is `CHK310`.
+- **The solver's bound-licensed member lookup** — a bare type parameter stands in for a concept
+  parameter only when one of its bounds carries that concept. A library signature's variables
+  inherit the bounds of the constructed types they appear in (`x: Tween<$T>` gives
+  `$T: Interpolatable`), which is what makes an operation on a bare `$T` well-typed.
+
+Bounds restrict where they are declared and change nothing where they are not: an *unbounded*
+parameter is as permissive as it was before bounds were read. An unlicensed call on a *bounded*
+parameter still resolves, and is reported `CHK205` — a warning, because tightening it to an error
+is a language change that belongs with the library edits that declare the missing bounds.
+`TypeConstraints` is the single reading of a bound shared by both consumers.
 
 ### Scope
 

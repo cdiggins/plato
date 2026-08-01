@@ -1,0 +1,201 @@
+using System.Collections.Generic;
+using System.Linq;
+using Ara3D.Geometry.AST;
+using Ara3D.Geometry.Compiler.Symbols;
+using Ara3D.Geometry.Compiler.Types;
+
+namespace Ara3D.Geometry.Compiler.Checking
+{
+    /// <summary>
+    /// THE reading of declared type-parameter bounds (`concept C&lt;T&gt; where T: Additive`,
+    /// `type Tween&lt;T&gt; where T: Interpolatable`) for the checker. One place answers three
+    /// questions, so the instantiation-site gate and the member-lookup licence can never disagree:
+    ///
+    ///   * what bounds does parameter <c>i</c> of a CONSTRUCTED type carry, with the construction's
+    ///     own arguments substituted in (<c>BoundsLike&lt;Point2D, Vector2D&gt;</c> with
+    ///     `where TPoint: Difference&lt;TDelta&gt;` yields <c>Difference&lt;Vector2D&gt;</c>);
+    ///   * does a given type argument SATISFY a bound;
+    ///   * which bounds does a library function's signature variable inherit from the constructed
+    ///     types it mentions (<c>Sample(x: Tween&lt;$T&gt;, ...)</c> gives <c>$T: Interpolatable</c>).
+    ///
+    /// Satisfaction is concept membership as <see cref="ConceptClosure"/> defines it — the same
+    /// transitive, per-level-substituted walk the solver already uses for concept parameters — so a
+    /// bound is satisfied by exactly the types the solver would accept where the bound is written
+    /// out as a parameter type. Nothing here is record- or sum-specific: a bound on a sum type's
+    /// parameter resolves through this identical path.
+    /// </summary>
+    public static class TypeConstraints
+    {
+        private static readonly IReadOnlyList<TypeExpression> None = new TypeExpression[0];
+
+        /// <summary>The bounds DECLARED on a type-parameter reference (`T` inside the body of the
+        /// declaration that introduced it). Empty for a unification variable, a concrete type, or an
+        /// unbounded parameter.</summary>
+        public static IReadOnlyList<TypeExpression> DeclaredBounds(TypeExpression t)
+            => (t?.Def as TypeParameterDef)?.Constraints ?? None;
+
+        /// <summary>The bounds parameter <paramref name="i"/> of <paramref name="constructed"/>
+        /// carries, with the construction's parameter-to-argument map applied so a bound naming a
+        /// sibling parameter is reported in terms of the ACTUAL argument.</summary>
+        public static IReadOnlyList<TypeExpression> BoundsAt(TypeExpression constructed, int i)
+        {
+            var tps = constructed?.Def?.TypeParameters;
+            if (tps == null || i >= tps.Count)
+                return None;
+            var bounds = tps[i].Constraints;
+            if (bounds.Count == 0)
+                return None;
+            var map = ArgumentMap(constructed);
+            return bounds.Select(b => Substitute(b, map)).ToList();
+        }
+
+        /// <summary>Whether <paramref name="arg"/> satisfies <paramref name="bound"/>.
+        ///
+        /// A concrete type satisfies a bound when its concept closure carries the bound's concept.
+        /// A type PARAMETER or unification variable satisfies it when one of the bounds IT carries
+        /// implies the required one — and, when it carries no bounds at all, permissively: Plato
+        /// does not require bounds, so an unbounded parameter is "not yet known to fail", exactly as
+        /// the solver has always treated it. <c>Self</c> satisfies anything (the reifier decides
+        /// what Self is), and a non-concept bound is not this function's error to report (CHK310).
+        /// </summary>
+        public static bool Satisfies(TypeExpression arg, TypeExpression bound,
+            IReadOnlyList<TypeExpression> extraArgBounds = null)
+        {
+            if (arg?.Def == null || bound?.Def == null || !bound.Def.IsInterface())
+                return true;
+            if (arg.Def.Kind == TypeKind.SelfType)
+                return true;
+
+            if (arg.Def.Kind == TypeKind.TypeParameter || arg.Def.Kind == TypeKind.TypeVariable)
+            {
+                var carried = KnownBounds(arg, extraArgBounds);
+                return carried.Count == 0 || carried.Any(b => Implies(b, bound));
+            }
+
+            var instance = ConceptClosure.FindInstance(arg, bound.Def.Name);
+            return instance != null && ArgumentsAgree(instance, bound);
+        }
+
+        /// <summary>Whether the instance a type carries agrees with the bound's own type arguments.
+        /// Compared only where BOTH sides are ground: `Difference&lt;Vector2D&gt;` does not satisfy
+        /// `Difference&lt;Duration&gt;`, but anything still holding a variable is left to the solver
+        /// rather than pre-judged here.</summary>
+        private static bool ArgumentsAgree(TypeExpression instance, TypeExpression bound)
+        {
+            if (instance.TypeArgs.Count != bound.TypeArgs.Count)
+                return true; // arity is not this check's business (CHK102 territory)
+            for (var i = 0; i < instance.TypeArgs.Count; i++)
+            {
+                var a = instance.TypeArgs[i];
+                var b = bound.TypeArgs[i];
+                if (IsGround(a) && IsGround(b) && a.ToString() != b.ToString())
+                    return false;
+            }
+            return true;
+        }
+
+        /// <summary>No unification variable, type parameter or Self anywhere in the type.</summary>
+        private static bool IsGround(TypeExpression t)
+            => t?.Def != null
+               && t.Def.Kind != TypeKind.TypeVariable
+               && t.Def.Kind != TypeKind.TypeParameter
+               && t.Def.Kind != TypeKind.SelfType
+               && t.TypeArgs.All(IsGround);
+
+        /// <summary>Every bound a parameter/variable is known to carry: the ones declared on its own
+        /// declaration, plus any inherited through a signature (see <see cref="InheritedBounds"/>).</summary>
+        public static IReadOnlyList<TypeExpression> KnownBounds(TypeExpression t,
+            IReadOnlyList<TypeExpression> extra = null)
+        {
+            var declared = DeclaredBounds(t);
+            if (extra == null || extra.Count == 0)
+                return declared;
+            if (declared.Count == 0)
+                return extra;
+            return declared.Concat(extra).ToList();
+        }
+
+        /// <summary>Whether holding <paramref name="held"/> is enough to satisfy
+        /// <paramref name="required"/> — i.e. the required concept is in the held bound's own
+        /// closure (`Difference&lt;TDelta&gt;` implies `Value` when Difference inherits it).</summary>
+        public static bool Implies(TypeExpression held, TypeExpression required)
+        {
+            if (held?.Def == null || required?.Def == null)
+                return false;
+            var instance = ConceptClosure.FindInstance(held, required.Def.Name);
+            return instance != null && ArgumentsAgree(instance, required);
+        }
+
+        /// <summary>
+        /// The bounds each of a function's signature type variables INHERITS from the constructed
+        /// types its signature mentions. `Sample(x: Tween&lt;$T&gt;, t: Duration): $T` sees
+        /// `Tween&lt;T&gt; where T: Interpolatable` and so learns `$T: Interpolatable` — which is what
+        /// licenses a `Lerp` on a bare `$T` in the body, and what a later emission phase needs in
+        /// order to put the `where` clause on the generated C# method.
+        ///
+        /// Keyed by variable NAME, matching the solver's substitution. Deliberately covers the
+        /// declared signature only (parameters and return type): a bound must be visible in the
+        /// signature to be honest about what a caller has to supply.
+        /// </summary>
+        public static IReadOnlyDictionary<string, IReadOnlyList<TypeExpression>> InheritedBounds(FunctionDef f)
+        {
+            var result = new Dictionary<string, List<TypeExpression>>();
+
+            void Walk(TypeExpression t, int depth)
+            {
+                if (t?.Def == null || depth > 8)
+                    return;
+                for (var i = 0; i < t.TypeArgs.Count; i++)
+                {
+                    var arg = t.TypeArgs[i];
+                    if (arg?.Def != null
+                        && (arg.Def.Kind == TypeKind.TypeVariable || arg.Def.Kind == TypeKind.TypeParameter))
+                    {
+                        var bounds = BoundsAt(t, i);
+                        if (bounds.Count > 0)
+                        {
+                            if (!result.TryGetValue(arg.Name, out var list))
+                                result[arg.Name] = list = new List<TypeExpression>();
+                            // A variable mentioned twice in one signature (`(x: Gauge<$T>, y: Gauge<$T>)`)
+                            // inherits the same bound twice; the set is what matters, not the count.
+                            foreach (var b in bounds)
+                                if (!list.Any(x => x.ToString() == b.ToString()))
+                                    list.Add(b);
+                        }
+                    }
+                    Walk(arg, depth + 1);
+                }
+            }
+
+            foreach (var t in (f?.Parameters ?? Enumerable.Empty<ParameterDef>()).Select(p => p.Type).Append(f?.ReturnType))
+                Walk(t, 0);
+
+            return result.ToDictionary(kv => kv.Key, kv => (IReadOnlyList<TypeExpression>)kv.Value);
+        }
+
+        // --- substitution --------------------------------------------------------
+
+        /// <summary>A constructed type's declared parameters mapped to its actual arguments.</summary>
+        public static IReadOnlyDictionary<string, TypeExpression> ArgumentMap(TypeExpression t)
+        {
+            var map = new Dictionary<string, TypeExpression>();
+            var tps = t?.Def?.TypeParameters;
+            if (tps == null)
+                return map;
+            for (var i = 0; i < tps.Count && i < t.TypeArgs.Count; i++)
+                map[tps[i].Name] = t.TypeArgs[i];
+            return map;
+        }
+
+        private static TypeExpression Substitute(TypeExpression t, IReadOnlyDictionary<string, TypeExpression> map)
+        {
+            if (t == null)
+                return null;
+            if (map.TryGetValue(t.Name, out var replacement))
+                return replacement;
+            return t.TypeArgs.Count == 0
+                ? t
+                : new TypeExpression(t.Def, t.TypeArgs.Select(a => Substitute(a, map)).ToArray());
+        }
+    }
+}

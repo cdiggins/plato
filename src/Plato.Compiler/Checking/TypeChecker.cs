@@ -28,7 +28,14 @@ namespace Ara3D.Geometry.Compiler.Checking
             var vars = new TypeVarFactory();
             var generator = new ConstraintGenerator(Compilation, vars);
             var system = generator.Generate(normalized);
-            var solver = new Solver(Compilation, vars) { RigidVars = SignatureVars(f) };
+            var solver = new Solver(Compilation, vars)
+            {
+                RigidVars = SignatureVars(f),
+                // The bounds this signature's variables inherit from the constructed types it
+                // mentions (`x: Tween<$T>` with `Tween<T> where T: Interpolatable`). They license
+                // member lookup on a bare `$T` in the body — see Solver.BoundsPermit (plato-382).
+                VarBounds = TypeConstraints.InheritedBounds(f),
+            };
             solver.Solve(system);
             return new TypeCheckResult(f, normalized, system, solver);
         }

@@ -45,6 +45,20 @@ namespace Ara3D.Geometry.Compiler.Checking
         private bool IsRigid(TypeExpression t)
             => t?.Def != null && t.Def.Kind == TypeKind.TypeVariable && RigidVars.Contains(t.Name);
 
+        /// <summary>The bounds each of the checked function's signature type variables INHERITS from
+        /// the constructed types in its signature — `Sample(x: Tween&lt;$T&gt;, ...)` with
+        /// `type Tween&lt;T&gt; where T: Interpolatable` gives `$T: Interpolatable` (plato-382).
+        /// This is what LICENSES a member call on a bare `$T`: see <see cref="BoundsPermit"/>.
+        /// Set per function by the <see cref="TypeChecker"/>; empty (nothing known) by default.</summary>
+        public IReadOnlyDictionary<string, IReadOnlyList<TypeExpression>> VarBounds { get; set; }
+            = new Dictionary<string, IReadOnlyList<TypeExpression>>();
+
+        /// <summary>Every bound a bare parameter/variable is known to carry: those declared on the
+        /// declaration that introduced it, plus those inherited through the signature under check.</summary>
+        private IReadOnlyList<TypeExpression> BoundsOf(TypeExpression t)
+            => TypeConstraints.KnownBounds(t,
+                t?.Name != null && VarBounds.TryGetValue(t.Name, out var inherited) ? inherited : null);
+
         private readonly TypeVarFactory _vars;
         private const int MaxDepth = 512;
 
@@ -133,17 +147,30 @@ namespace Ara3D.Geometry.Compiler.Checking
             public Dictionary<string, TypeExpression> ConceptOf = new Dictionary<string, TypeExpression>();
         }
 
+        /// <summary>Whether a bare type parameter's DECLARED BOUNDS gate its use as a concept
+        /// (plato-382). True everywhere except the deliberate relaxed retry in
+        /// <see cref="ResolveOverloadCore"/>, which reproduces the pre-bounds behavior; the wrapper
+        /// restores it so no other constraint sees the relaxation.</summary>
+        private bool _licenseBounds = true;
+
         private bool ResolveOverload(OverloadConstraint oc, bool force)
         {
-            var args = oc.ArgTypes.Select(a => Zonk(a, Substitution)).ToList();
+            try
+            {
+                return ResolveOverloadCore(oc, force);
+            }
+            finally
+            {
+                _licenseBounds = true;
+            }
+        }
 
-            // Defer until the argument types are ground — EXCEPT function-shaped arguments
-            // (Function{N}), whose holes are lambda parameter/result types that the chosen
-            // candidate's signature is supposed to determine (checking-mode inference for HOFs).
-            if (!force && args.Any(a => HasVar(a) && !IsFunctionShaped(a)))
-                return false; // not ground yet — defer
-
-            // Trial each candidate on a scratch substitution; keep the viable ones with their cost.
+        /// <summary>Trial every candidate of the right arity on a scratch substitution; the viable
+        /// ones with their cost.</summary>
+        private List<(Candidate cand, int cost)> TrialCandidates(OverloadConstraint oc,
+            IReadOnlyList<TypeExpression> args, bool licensed = true)
+        {
+            _licenseBounds = licensed;
             var viable = new List<(Candidate cand, int cost)>();
             foreach (var f in oc.Candidates)
             {
@@ -161,6 +188,54 @@ namespace Ara3D.Geometry.Compiler.Checking
                 }
                 if (ok)
                     viable.Add((cand, cost));
+            }
+            return viable;
+        }
+
+        /// <summary>The first argument that is a bare type parameter/variable CARRYING declared
+        /// bounds — the one whose bounds could be what made every candidate unviable.</summary>
+        private TypeExpression BoundedArgument(IReadOnlyList<TypeExpression> args)
+            => args.FirstOrDefault(a => a?.Def != null
+                && (IsVar(a) || a.Def.Kind == TypeKind.TypeParameter)
+                && BoundsOf(a).Count > 0);
+
+        private bool ResolveOverloadCore(OverloadConstraint oc, bool force)
+        {
+            var args = oc.ArgTypes.Select(a => Zonk(a, Substitution)).ToList();
+
+            // Defer until the argument types are ground — EXCEPT function-shaped arguments
+            // (Function{N}), whose holes are lambda parameter/result types that the chosen
+            // candidate's signature is supposed to determine (checking-mode inference for HOFs).
+            if (!force && args.Any(a => HasVar(a) && !IsFunctionShaped(a)))
+                return false; // not ground yet — defer
+
+            // Trial each candidate on a scratch substitution; keep the viable ones with their cost.
+            // BOUND-LICENSED first (plato-382): a bare bounded type parameter stands in for a concept
+            // only where a declared bound supplies it.
+            var viable = TrialCandidates(oc, args);
+
+            if (viable.Count == 0)
+            {
+                // Nothing is licensed. Retry with bound-licensing OFF, which is exactly how the
+                // solver behaved before bounds were read at all. A call that only resolves this way
+                // is using an operation the declaration never promised: it RESOLVES (so neither
+                // elaboration nor emission changes) and is reported as a warning naming the bound to
+                // add. Making it an error is a language tightening that belongs with the library
+                // change that declares the missing bounds, not with the machinery that finds them.
+                var bounded = BoundedArgument(args);
+                if (bounded != null)
+                {
+                    var relaxed = TrialCandidates(oc, args, licensed: false);
+                    if (relaxed.Count > 0)
+                    {
+                        Report(DiagnosticSeverity.Warning, "CHK205",
+                            $"Call to '{oc.Name}' on '{bounded}' is not licensed by its declared bounds "
+                            + $"({string.Join(", ", BoundsOf(bounded))}): the call resolves, but no bound "
+                            + $"promises '{oc.Name}' — add the concept that supplies it to the `where` clause",
+                            oc.Origin);
+                        viable = relaxed;
+                    }
+                }
             }
 
             if (viable.Count == 0)
@@ -455,16 +530,19 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// argument's transitive Implements/Inherits closure with per-level type-argument
         /// substitution, and — on a name match — unifies the found instance's arguments with the
         /// concept's (binding element holes: <c>IVectorLike : IArrayLike&lt;Number&gt;</c> binds
-        /// <c>$T = Number</c>). A type variable or type parameter satisfies anything (it may yet be
-        /// bound); <c>Self</c> satisfies anything (the reifier decides what Self is).
+        /// <c>$T = Number</c>). An UNBOUNDED type variable or type parameter satisfies anything (it
+        /// may yet be bound); a BOUNDED one satisfies only what its bounds supply
+        /// (<see cref="BoundsPermit"/>); <c>Self</c> satisfies anything (the reifier decides what
+        /// Self is).
         /// </summary>
         private bool SatisfiesConcept(TypeExpression argType, TypeExpression concept, Dictionary<string, TypeExpression> sub)
         {
             if (argType?.Def == null || concept?.Def == null)
                 return true;
-            if (IsVar(argType) || argType.Def.Kind == TypeKind.TypeParameter
-                || argType.Def.Kind == TypeKind.SelfType)
+            if (argType.Def.Kind == TypeKind.SelfType)
                 return true;
+            if (IsVar(argType) || argType.Def.Kind == TypeKind.TypeParameter)
+                return BoundsPermit(argType, concept, sub);
 
             if (argType.Def.Name == concept.Def.Name)
                 return UnifyAllOrNothing(argType, concept, sub);
@@ -474,6 +552,36 @@ namespace Ara3D.Geometry.Compiler.Checking
                     && UnifyAllOrNothing(inst, concept, sub))
                     return true;
 
+            return false;
+        }
+
+        /// <summary>
+        /// BOUND-LICENSED MEMBER LOOKUP (plato-382). Whether a bare type parameter / signature
+        /// variable may stand in for <paramref name="concept"/>. This is the seam that turns a
+        /// declared bound into something load-bearing: an operation on a bare <c>T</c> resolves
+        /// through a concept parameter exactly when one of <c>T</c>'s declared bounds carries that
+        /// concept — <c>Tween&lt;T&gt; where T: Interpolatable</c> is what makes <c>Lerp</c> on a
+        /// <c>T</c> well-typed, and what makes <c>Magnitude</c> on the same <c>T</c> a no-match.
+        ///
+        /// An UNBOUNDED parameter stays permissive, unchanged from before bounds existed. Plato does
+        /// not require bounds, and the whole forward vocabulary is written without them; rejecting
+        /// the unbounded case would be a language change (every generic library body over a bare
+        /// <c>$T</c> would stop resolving), not a constraint check. So bounds RESTRICT where they are
+        /// declared and change nothing where they are not.
+        /// </summary>
+        private bool BoundsPermit(TypeExpression argType, TypeExpression concept, Dictionary<string, TypeExpression> sub)
+        {
+            if (!_licenseBounds)
+                return true;
+            var bounds = BoundsOf(argType);
+            if (bounds.Count == 0)
+                return true;
+            foreach (var b in bounds)
+            {
+                var instance = ConceptClosure.FindInstance(b, concept.Def.Name);
+                if (instance != null && UnifyAllOrNothing(instance, concept, sub))
+                    return true;
+            }
             return false;
         }
 

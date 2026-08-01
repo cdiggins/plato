@@ -51,7 +51,8 @@ type Circle implements ClosedShape2D
 From a field list the compiler derives the full value surface: a constructor taking the fields in
 order, conversions to and from the same-shape tuple, deconstruction, structural equality and
 hashing, and immutable per-field setters (`c.WithRadius(2.0)` returns a new `Circle`). Types may
-be generic (`type Tuple2<T0, T1> { X0: T0; X1: T1; }`).
+be generic (`type Tuple2<T0, T1> { X0: T0; X1: T1; }`), and a generic type's parameters may carry
+`where` bounds (§5).
 
 The `implements` list names concepts the type satisfies (§4), and is what makes every
 concept-generic function available on the type. Note the obligation is enforced *softly*: a
@@ -171,6 +172,31 @@ declarations (`<T0, T1>` — no `$`) are rigid within that declaration. Function
 way to produce them, appear only as arguments to higher-order functions, and their parameter
 types are inferred from the target signature (annotations are not written). Passing a named
 function where a function value is expected eta-expands it to a lambda automatically.
+
+**Declared bounds (`where`).** Both `concept` and `type` declarations may bound their parameters,
+between the parameter list and the `implements`/`inherits` list:
+
+```plato
+type Tween<T>
+    where T: Interpolatable
+    implements TimeVarying<T>
+{
+    From: T;
+    To: T;
+}
+```
+
+A bound must name a concept (else CHK310). It means two things, both checked:
+
+- **Every construction must satisfy it.** `Tween<String>` is rejected wherever it is written —
+  field type, signature, or nested inside another type argument — with CHK309, because `String`
+  does not implement `Interpolatable`. Satisfaction is the same transitive closure walk concept
+  satisfaction uses.
+- **It licenses operations on the bare parameter.** `Lerp` on a value of type `T` is well-typed
+  inside a declaration bounded by `Interpolatable`, and a library signature's `$`-variables inherit
+  the bounds of the types they appear in — `Sample(x: Tween<$T>, t: Duration): $T` sees
+  `$T: Interpolatable`. A call on a bounded parameter that no bound supplies is reported (CHK205)
+  but still resolves; an *unbounded* parameter is unrestricted, since bounds are optional.
 
 After type checking, **monomorphization** grounds everything: each concept-generic or
 `$`-generic function is instantiated per concrete type combination actually used, `Self` is

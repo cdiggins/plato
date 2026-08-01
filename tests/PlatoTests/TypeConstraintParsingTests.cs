@@ -18,8 +18,9 @@ namespace PlatoTests
     ///
     /// Scope is the front end only: these assert that the clause PARSES, reaches
     /// <see cref="AstTypeDeclaration.Constraints"/>, and is copied into
-    /// <c>TypeParameterDef.Constraints</c> by the symbol factory. Nothing here claims the bound is
-    /// ENFORCED — no checking rule consumes it yet, which is the next phase of plato-382.
+    /// <c>TypeParameterDef.Constraints</c> by the symbol factory. What the checker then DOES with
+    /// the bound — reject an unsatisfying type argument, license a member call on a bare parameter —
+    /// is <see cref="TypeConstraintCheckingTests"/>.
     /// </summary>
     [TestFixture]
     public static class TypeConstraintParsingTests

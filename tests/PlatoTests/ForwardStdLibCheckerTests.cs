@@ -203,6 +203,62 @@ namespace PlatoTests
                 "Forward stdlib has existential references to view-less concepts (CHK308).");
         }
 
+        // plato-382: every construction of a bounded generic type in the forward vocabulary must
+        // supply an argument that satisfies the bound, and every bound must name a concept. Zero is
+        // a hard gate, not a ratchet — a CHK309 means a declaration promises something its argument
+        // cannot do, which is precisely the class of error bounds were added to catch.
+        [Test]
+        public static void ForwardStdLibSatisfiesEveryDeclaredBound()
+        {
+            var comp = CheckerTestSupport.CompileForwardStdLib();
+            var errors = new TypeConstraintChecker(comp).Check()
+                .Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
+            foreach (var d in errors)
+                TestContext.WriteLine($"  {d.Code} {d.Message}");
+
+            // The population, so a green here is not vacuous: bounds must actually exist to be met.
+            var bounded = comp.AllTypeAndLibraryDefinitions
+                .Where(t => t != null && t.TypeParameters.Any(p => p.Constraints.Count > 0))
+                .ToList();
+            TestContext.WriteLine($"declarations carrying bounds: {bounded.Count}");
+            foreach (var t in bounded)
+                TestContext.WriteLine($"  {t.Name}<{string.Join(", ", t.TypeParameters.Select(p => p.Name))}>");
+            Assert.IsNotEmpty(bounded,
+                "no declaration in the forward stdlib carries a bound — the gate would prove nothing");
+
+            Assert.IsEmpty(errors, "Forward stdlib violates a declared type-parameter bound (CHK309/CHK310).");
+        }
+
+        /// <summary>
+        /// plato-382, the OTHER direction: a call on a bare bounded type parameter that no declared
+        /// bound supplies. These resolve (they did before bounds were read, and still do), so they
+        /// are warnings, not errors — but each one is a declaration that under-promises, and each is
+        /// a one-clause library fix. The set is asserted by name rather than counted so that fixing
+        /// one is a visible edit here, and so a NEW one cannot hide behind a ceiling.
+        /// </summary>
+        [Test]
+        public static void ForwardStdLibUnlicensedBoundedCalls()
+        {
+            // BoundsLike<TPoint, TDelta> declares only `where TPoint: Difference<TDelta>`, but
+            // Center calls MidPoint, which lives on Interpolatable. Every actual TPoint (Point2D/3D/4D)
+            // is Interpolatable — the declaration simply does not say so. The fix is to add
+            // `TPoint: Interpolatable` to intervals-bounds.concepts.plato; it is a library change,
+            // deliberately not made by the compiler-side phase that found it.
+            var known = new[] { "IntervalsTransformsBounds.Center" };
+
+            var results = new TypeChecker(CheckerTestSupport.CompileForwardStdLib()).CheckAll();
+            var found = results
+                .SelectMany(r => r.Diagnostics.Where(d => d.Code == "CHK205")
+                    .Select(d => (Where: $"{r.Function?.OwnerType?.Name}.{r.Function?.Name}", d.Message)))
+                .ToList();
+            foreach (var f in found)
+                TestContext.WriteLine($"  {f.Where}: {f.Message}");
+
+            CollectionAssert.AreEquivalent(known, found.Select(f => f.Where).Distinct().ToList(),
+                "the set of bound-unlicensed calls changed — add the missing bound to the declaration, "
+                + "or record the new one here with the reason");
+        }
+
         [Test]
         public static void ForwardStdLibDiagnosticCountDoesNotRegress()
         {
