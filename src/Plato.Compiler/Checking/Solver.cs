@@ -56,8 +56,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <summary>Every bound a bare parameter/variable is known to carry: those declared on the
         /// declaration that introduced it, plus those inherited through the signature under check.</summary>
         private IReadOnlyList<TypeExpression> BoundsOf(TypeExpression t)
-            => TypeConstraints.KnownBounds(t,
-                t?.Name != null && VarBounds.TryGetValue(t.Name, out var inherited) ? inherited : null);
+            => TypeConstraints.KnownBounds(t, VarBounds);
 
         private readonly TypeVarFactory _vars;
         private const int MaxDepth = 512;

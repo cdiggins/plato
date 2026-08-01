@@ -191,7 +191,6 @@ consumer downstream reads one thing. They are read in three places, all in `Chec
   parameter only when one of its bounds carries that concept. A library signature's variables
   inherit the bounds of the constructed types they appear in (`x: Tween<$T>` gives
   `$T: Interpolatable`), which is what makes an operation on a bare `$T` well-typed.
-
 - **The solver's candidate viability rule** — this is where ARGUMENT SATISFACTION for a function
   bound is enforced. A candidate whose arguments matched is still rejected when what they bound its
   variable to fails the bound the callee declares, so `DeCasteljau` over an `Array<String>` does not
@@ -204,7 +203,16 @@ parameter is as permissive as it was before bounds were read. An unlicensed call
 parameter is `CHK205`, an error — a declaration may not promise what the type system cannot check.
 It still RESOLVES, so elaboration and emission are unaffected and no `CHK201` cascade follows;
 only the report is raised.
-`TypeConstraints` is the single reading of a bound shared by both consumers.
+
+`Checking/TypeConstraints.cs` holds the single reading of a bound that all three consumers share,
+so the construction-site gate and the two solver licences cannot disagree. The EMISSION side reads
+the same file: `TirEmitSource.IsOpenGenericEmittable` licenses a body whose call dispatches on a
+bare receiver exactly when a bound supplies the member, and the C# writer renders the matching
+`where` clause (`writers/Plato.CSharpWriter/CSharpBoundWriter.cs`). Which declarations' bounds
+reach C# is the one predicate `TypeConstraints.EmittedToCSharp` — concrete types today, concept
+interfaces excluded — read by the emission licence and the writer alike, so a body is never
+licensed by a bound the emitted signature does not carry. Decision:
+[`tracker/decisions/2026-08-01-declared-type-parameter-bounds-are-verified-and-emitted.md`](../tracker/decisions/2026-08-01-declared-type-parameter-bounds-are-verified-and-emitted.md).
 
 ### Scope
 

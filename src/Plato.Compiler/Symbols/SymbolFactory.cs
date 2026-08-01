@@ -524,7 +524,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
                 // their parameter by identifier TEXT: AstIdentifier has no value equality, so the
                 // former node comparison never matched and every bound was silently discarded.
                 foreach (var tpd in typeParameterDefs)
-                    tpd.Constraints.AddRange(astTypeDeclaration.Constraints
+                    tpd.DeclareBounds(astTypeDeclaration.Constraints
                         .Where(c => c.Name.Text == tpd.Name)
                         .Select(c => ResolveType(c.Constraint)));
 
@@ -652,7 +652,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
                     {
                         var bound = ResolveType(c.Constraint);
                         if (bound != null)
-                            f.DeclaredBounds.Add(new DeclaredFunctionBound(c.Name.Text, bound));
+                            f.DeclareBound(new DeclaredFunctionBound(c.Name.Text, bound));
                     }
 
                     Debug.Assert(m.Function == null);

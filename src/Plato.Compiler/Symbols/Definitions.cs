@@ -92,17 +92,21 @@ namespace Ara3D.Geometry.Compiler.Symbols
         /// variable name as the signature spells it (`$T`), which is how the checker's substitution
         /// and <see cref="Checking.TypeConstraints.InheritedBounds"/> key everything else.
         ///
-        /// A mutable list in the same idiom as <see cref="TypeParameterDef.Constraints"/>: the
-        /// symbol factory resolves the bound types after the function exists. Copied by every
-        /// rewrite, so a normalized or monomorphized clone still carries what its declaration
-        /// promised.</summary>
-        public List<DeclaredFunctionBound> DeclaredBounds { get; } = new List<DeclaredFunctionBound>();
+        /// Read-only to everyone but <see cref="DeclareBound"/>, which the symbol factory calls once
+        /// the function exists. Copied by every rewrite, so a normalized or monomorphized clone
+        /// still carries what its declaration promised.</summary>
+        public IReadOnlyList<DeclaredFunctionBound> DeclaredBounds => _declaredBounds;
+
+        private readonly List<DeclaredFunctionBound> _declaredBounds = new List<DeclaredFunctionBound>();
+
+        public void DeclareBound(DeclaredFunctionBound bound)
+            => _declaredBounds.Add(bound);
 
         /// <summary>Copy this function's declared bounds onto a rewritten clone, and return it.</summary>
         public FunctionDef WithDeclaredBoundsOf(FunctionDef source)
         {
-            if (source != null && source.DeclaredBounds.Count > 0)
-                DeclaredBounds.AddRange(source.DeclaredBounds);
+            if (source != null)
+                _declaredBounds.AddRange(source.DeclaredBounds);
             return this;
         }
 
@@ -354,16 +358,23 @@ namespace Ara3D.Geometry.Compiler.Symbols
     public class TypeParameterDef : TypeDef
     {
         /// <summary>The declared bounds of this parameter — one entry per `where T: C` clause.
-        /// A mutable list in the same idiom as <see cref="TypeDef.Implements"/>, because the symbol
-        /// factory can only RESOLVE a bound after every parameter of the declaration is bound: a
-        /// bound may name a sibling, as in `IBounds&lt;TValue, TDelta&gt; where TValue: IDifference&lt;TDelta&gt;`.</summary>
-        public List<TypeExpression> Constraints { get; } = new List<TypeExpression>();
+        /// Read-only to everyone but <see cref="DeclareBounds"/>.</summary>
+        public IReadOnlyList<TypeExpression> Constraints => _constraints;
+
+        private readonly List<TypeExpression> _constraints = new List<TypeExpression>();
+
+        /// <summary>Record the resolved bounds, once, after the declaration's parameters all exist.
+        /// The two-pass shape is forced by the language: a bound may name a SIBLING parameter, as in
+        /// `IBounds&lt;TValue, TDelta&gt; where TValue: IDifference&lt;TDelta&gt;`, so no bound can
+        /// resolve while the parameter list is still being built.</summary>
+        public void DeclareBounds(IEnumerable<TypeExpression> bounds)
+            => _constraints.AddRange(bounds);
 
         public TypeParameterDef(Scope scope, string name, IEnumerable<TypeExpression> constraints = null)
             : base(scope, TypeKind.TypeParameter, name)
         {
             if (constraints != null)
-                Constraints.AddRange(constraints);
+                _constraints.AddRange(constraints);
         }
 
         public override Symbol Rewrite(Func<Symbol, Symbol> f)

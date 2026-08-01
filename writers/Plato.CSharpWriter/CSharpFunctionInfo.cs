@@ -141,21 +141,15 @@ namespace Ara3D.Geometry.CSharpWriter
         /// it on the member would be CS0460.
         /// </summary>
         public string InheritedConstraints
-        {
-            get
-            {
-                if (_inheritedBounds.Count == 0)
-                    return "";
-                var alreadyConstrained = Function.ConstrainedTypeVariables
-                    .Where(ctv => ctv?.Constraint != null)
-                    .Select(ctv => ctv.Name)
-                    .ToHashSet();
-                return _inheritedBounds
-                    .Where(b => Generics.Contains(b.Name) && !alreadyConstrained.Contains(b.Name))
-                    .Select(b => CSharpBoundWriter.WhereClause(b.Name, b.Bounds, this))
-                    .JoinStrings("");
-            }
-        }
+            => _inheritedBounds
+                .Where(b => Generics.Contains(b.Name) && !HasOwnConstraint(b.Name))
+                .Select(b => CSharpBoundWriter.WhereClause(b.Name, b.Bounds, this))
+                .JoinStrings("");
+
+        /// <summary>Whether <see cref="ConstraintString"/> already writes a clause for this
+        /// variable; a second one for the same variable would be a duplicate `where`.</summary>
+        private bool HasOwnConstraint(string name)
+            => Function.ConstrainedTypeVariables.Any(ctv => ctv?.Constraint != null && ctv.Name == name);
 
         // (emitted type-variable name, the bounds it inherits). Computed once in the constructor:
         // reading it needs the FunctionDef and the symbol-level variable names, neither of which
@@ -171,8 +165,6 @@ namespace Ara3D.Geometry.CSharpWriter
             // Only bounds whose DECLARATION also carries a C# where clause: a clause on a callee is
             // discharged at the call site by the clause on the type being constructed there.
             var inherited = TypeConstraints.InheritedBounds(fd, TypeConstraints.EmittedToCSharp);
-            if (inherited.Count == 0)
-                return;
             foreach (var ctv in Function.ConstrainedTypeVariables)
                 if (ctv?.SourceType?.Name != null
                     && inherited.TryGetValue(ctv.SourceType.Name, out var bounds))

@@ -24,6 +24,11 @@ namespace Ara3D.Geometry.Compiler.Checking
     /// bound is satisfied by exactly the types the solver would accept where the bound is written
     /// out as a parameter type. Nothing here is record- or sum-specific: a bound on a sum type's
     /// parameter resolves through this identical path.
+    ///
+    /// VOCABULARY. The clause is a CONSTRAINT (which is what the syntax layer calls it —
+    /// <see cref="AstConstraint"/>, <see cref="Symbols.TypeParameterDef.Constraints"/>, LINT002);
+    /// the concept it names is a BOUND, which is what this file and the checker call it. One clause
+    /// may state several bounds, so the two words are not synonyms and neither name is redundant.
     /// </summary>
     public static class TypeConstraints
     {
@@ -118,6 +123,19 @@ namespace Ara3D.Geometry.Compiler.Checking
                && t.Def.Kind != TypeKind.SelfType
                && t.TypeArgs.All(IsGround);
 
+        /// <summary>Every bound a parameter/variable is known to carry, at a site that also holds a
+        /// signature's inherited bounds keyed by variable name (the shape
+        /// <see cref="InheritedBounds"/> returns). THE reading used by the solver's licence, the
+        /// construction-site check and the emit-time licence alike.</summary>
+        public static IReadOnlyList<TypeExpression> KnownBounds(TypeExpression t,
+            IReadOnlyDictionary<string, IReadOnlyList<TypeExpression>> inherited)
+            => KnownBounds(t, Inherited(t, inherited));
+
+        /// <summary>What a signature's inherited bounds say about one variable, or null.</summary>
+        public static IReadOnlyList<TypeExpression> Inherited(TypeExpression t,
+            IReadOnlyDictionary<string, IReadOnlyList<TypeExpression>> inherited)
+            => t?.Name != null && inherited != null && inherited.TryGetValue(t.Name, out var b) ? b : null;
+
         /// <summary>Every bound a parameter/variable is known to carry: the ones declared on its own
         /// declaration, plus any inherited through a signature (see <see cref="InheritedBounds"/>).</summary>
         public static IReadOnlyList<TypeExpression> KnownBounds(TypeExpression t,
@@ -162,6 +180,17 @@ namespace Ara3D.Geometry.Compiler.Checking
         {
             var result = new Dictionary<string, List<TypeExpression>>();
 
+            // A variable mentioned twice in one signature (`(x: Gauge<$T>, y: Gauge<$T>)`) inherits
+            // the same bound twice, and a declared bound may restate an inherited one; the SET is
+            // what every consumer reads, so identical spellings collapse.
+            void Add(string name, TypeExpression bound)
+            {
+                if (!result.TryGetValue(name, out var list))
+                    result[name] = list = new List<TypeExpression>();
+                if (!list.Any(x => x.ToString() == bound.ToString()))
+                    list.Add(bound);
+            }
+
             void Walk(TypeExpression t, int depth)
             {
                 if (t?.Def == null || depth > 8)
@@ -173,17 +202,8 @@ namespace Ara3D.Geometry.Compiler.Checking
                     if (collect && arg?.Def != null
                         && (arg.Def.Kind == TypeKind.TypeVariable || arg.Def.Kind == TypeKind.TypeParameter))
                     {
-                        var bounds = BoundsAt(t, i);
-                        if (bounds.Count > 0)
-                        {
-                            if (!result.TryGetValue(arg.Name, out var list))
-                                result[arg.Name] = list = new List<TypeExpression>();
-                            // A variable mentioned twice in one signature (`(x: Gauge<$T>, y: Gauge<$T>)`)
-                            // inherits the same bound twice; the set is what matters, not the count.
-                            foreach (var b in bounds)
-                                if (!list.Any(x => x.ToString() == b.ToString()))
-                                    list.Add(b);
-                        }
+                        foreach (var b in BoundsAt(t, i))
+                            Add(arg.Name, b);
                     }
                     Walk(arg, depth + 1);
                 }
@@ -197,14 +217,8 @@ namespace Ara3D.Geometry.Compiler.Checking
             // declared bound's "declaration" is this very function, whose emitted C# always carries
             // the matching `where` clause, so it licenses a body under both readings.
             foreach (var d in f?.DeclaredBounds ?? Enumerable.Empty<DeclaredFunctionBound>())
-            {
-                if (d?.Bound == null)
-                    continue;
-                if (!result.TryGetValue(d.VariableName, out var list))
-                    result[d.VariableName] = list = new List<TypeExpression>();
-                if (!list.Any(x => x.ToString() == d.Bound.ToString()))
-                    list.Add(d.Bound);
-            }
+                if (d?.Bound != null)
+                    Add(d.VariableName, d.Bound);
 
             return result.ToDictionary(kv => kv.Key, kv => (IReadOnlyList<TypeExpression>)kv.Value);
         }

@@ -44,11 +44,11 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-334](issues/plato-334.md) | Query/solve result types share no concept: success flag spelled four ways | debt | p3 | M | low | plato | idea |  |
 | [plato-335](issues/plato-335.md) | No CRS identity token: geospatial types cannot say which reference system they are in | problem | p3 | S | low | plato | idea |  |
 | [plato-336](issues/plato-336.md) | Triangulate and hull results lose provenance back to input points | debt | p3 | M | med | plato | idea |  |
-| [plato-382](issues/plato-382.md) | Constrained type parameters on concrete types, and constraint-carrying C# emission | problem | p3 | L | med | plato | idea |  |
 | [plato-384](issues/plato-384.md) | Wrapper structs declare no Equals/GetHashCode/IEquatable: boxing and composition-dependent equality | debt | p3 | M | med | plato | idea |  |
 | [plato-385](issues/plato-385.md) | Boolean comparison operators return raw bool while Number/Integer return the wrapper | debt | p3 | S | low | plato | idea |  |
 | [plato-386](issues/plato-386.md) | ArrayIntrinsics.FlatMap leaks a mutable List through IReadOnlyList | debt | p3 | S | low | plato | idea |  |
 | [plato-394](issues/plato-394.md) | A function bound on a receiver type's own parameter emits an unsatisfiable C# constraint | problem | p3 | S | low | plato | idea |  |
+| [plato-395](issues/plato-395.md) | TimeVarying<TValue> carries no bound, so Change stays a throwing stub | debt | p3 | M | low | plato | idea |  |
 | [plato-076](issues/plato-076.md) | Port Gratify to Plato (feasibility: kernel vs framework) | idea | ? | ? | ? | plato | idea |  |
 | [plato-077](issues/plato-077.md) | Sum types + pattern matching in Plato (RFC first) | idea | ? | ? | ? | plato | idea |  |
 | [plato-078](issues/plato-078.md) | Revive and productionize the Plato TypeScript writer | feature | ? | ? | ? | plato | idea |  |

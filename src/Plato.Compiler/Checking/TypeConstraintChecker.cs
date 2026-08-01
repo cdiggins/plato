@@ -52,15 +52,22 @@ namespace Ara3D.Geometry.Compiler.Checking
         // --- the bounds themselves ------------------------------------------------
 
         /// <summary>CHK310: a bound must name a concept. `where T: Number` promises something the
-        /// language cannot check and C# cannot express as a constraint.</summary>
+        /// language cannot check and C# cannot express as a constraint. One reading for both places
+        /// a bound may be written — a declaration's parameter, and a function's own signature
+        /// variable (plato-393); <paramref name="target"/> names which, for the message.</summary>
+        private void CheckBoundIsConcept(TypeExpression bound, string target, Symbol origin)
+        {
+            if (bound?.Def != null && !bound.Def.IsInterface())
+                Error("CHK310",
+                    $"the bound '{bound}' declared on {target} is not a concept — a `where` bound "
+                    + "must name a concept", origin);
+        }
+
         private void CheckBoundsAreConcepts(TypeDef t)
         {
             foreach (var tp in t.TypeParameters)
                 foreach (var bound in tp.Constraints)
-                    if (bound?.Def != null && !bound.Def.IsInterface())
-                        Error("CHK310",
-                            $"the bound '{bound}' declared on parameter '{tp.Name}' of '{t.Name}' is not a "
-                            + "concept — a `where` bound must name a concept", t);
+                    CheckBoundIsConcept(bound, $"parameter '{tp.Name}' of '{t.Name}'", t);
         }
 
         // --- the construction sites -----------------------------------------------
@@ -96,14 +103,9 @@ namespace Ara3D.Geometry.Compiler.Checking
                     CheckType(p.Type, t, p, inherited);
                 CheckType(f.ReturnType, t, f, inherited);
 
-                // CHK310 again, for a bound the FUNCTION declares (plato-393). Same rule, same
-                // reason: `where $T: Number` promises something C# cannot express as a constraint.
                 foreach (var d in f.DeclaredBounds)
-                    if (d?.Bound?.Def != null && !d.Bound.Def.IsInterface())
-                        Error("CHK310",
-                            $"the bound '{d.Bound}' declared on '{d.VariableName}' of function "
-                            + $"'{f.Name}' (in '{t.Name}') is not a concept — a `where` bound must "
-                            + "name a concept", f);
+                    CheckBoundIsConcept(d?.Bound,
+                        $"'{d?.VariableName}' of function '{f.Name}' (in '{t.Name}')", f);
             }
         }
 
@@ -119,9 +121,9 @@ namespace Ara3D.Geometry.Compiler.Checking
             for (var i = 0; i < te.TypeArgs.Count; i++)
             {
                 var arg = te.TypeArgs[i];
+                var extra = TypeConstraints.Inherited(arg, inherited);
                 foreach (var bound in TypeConstraints.BoundsAt(te, i))
                 {
-                    var extra = ExtraBounds(arg, inherited);
                     if (TypeConstraints.Satisfies(arg, bound, extra))
                         continue;
                     var parameterName = te.Def.TypeParameters[i].Name;
@@ -148,10 +150,6 @@ namespace Ara3D.Geometry.Compiler.Checking
                 ? $"'{arg}' implements '{bound.Def.Name}' at different type arguments"
                 : $"'{arg}' does not implement '{bound.Def.Name}'";
         }
-
-        private static IReadOnlyList<TypeExpression> ExtraBounds(TypeExpression arg,
-            IReadOnlyDictionary<string, IReadOnlyList<TypeExpression>> inherited)
-            => arg?.Name != null && inherited != null && inherited.TryGetValue(arg.Name, out var b) ? b : null;
 
         private void Error(string code, string message, Symbol origin)
             => Diagnostics.Add(new CheckDiagnostic(DiagnosticSeverity.Error, code, message, origin));

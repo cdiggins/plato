@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-08-01 — [plato-382](issues/plato-382.md) — Constrained type parameters on concrete types, and constraint-carrying C# emission — done (37e3231 grammar/AST, 784873f checker, 5595c2b emission, 77e47d3 stdlib, 06e9d36 function bounds); ADR tracker/decisions/2026-08-01-declared-type-parameter-bounds-are-verified-and-emitted.md
 - 2026-08-01 — [plato-393](issues/plato-393.md) — Where-clause bounds on library function declarations — done — where-clause bounds on library function declarations, verified at the call site (CHK206) and emitted as the C# where clause; DeCasteljau collapsed from five overloads to one. Work is in the tree UNCOMMITTED (mission ran under a no-commit rule); follow-up plato-394 filed.
 - 2026-08-01 — [repo-392](issues/repo-392.md) — Repoint Navigation test corpus at tests/stdlib-tests; unshadow LINQ in test namespace — done (f994bf7)
 - 2026-08-01 — [docs-391](issues/docs-391.md) — AGENTS.md still documents the retired --methods / --no-properties flags — done (83df492)

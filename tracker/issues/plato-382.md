@@ -2,14 +2,14 @@
 id: plato-382
 title: Constrained type parameters on concrete types, and constraint-carrying C# emission
 type: problem
-status: idea
+status: done
 priority: p3
 effort: L
 risk: med
 area: plato
 sprint: 
 created: 2026-08-01
-closed:
+closed: 2026-08-01
 links: [stdlib/graphics/motion-graphics.types.plato, stdlib/graphics/time-varying.concepts.plato, src/Plato.Compiler/Checking/TirEmitSource.cs, parakeet/Parakeet.Grammars/PlatoGrammar.cs, src/Plato.AST/AstNodeFactory.cs, plato-376, stdlib-377]
 ---
 
@@ -178,10 +178,19 @@ the design work loses its motivating example.
 
 ## Done means
 
-- [ ] An ADR in `tracker/decisions/` answers: do `type` declarations take `where`
-      bounds, are those bounds checked, and how do they reach C#.
-- [ ] Follow-up issues filed for whichever of grammar/AST, checking, and writer
-      emission the ADR calls for.
+- [x] An ADR in `tracker/decisions/` answers: do `type` declarations take `where`
+      bounds, are those bounds checked, and how do they reach C#. —
+      `tracker/decisions/2026-08-01-declared-type-parameter-bounds-are-verified-and-emitted.md`.
+      Yes to all three: verified (CHK309 construction site, CHK206 call site, CHK310 non-concept,
+      CHK205 unlicensed member call) and emitted (F-bounded `where` clauses on structs and
+      methods; concept interfaces excluded by the `TypeConstraints.EmittedToCSharp` policy, with
+      the widening path recorded).
+- [x] Follow-up issues filed for whichever of grammar/AST, checking, and writer
+      emission the ADR calls for. — all three parts LANDED here rather than being deferred
+      (grammar/AST `37e3231`, checking `784873f`, emission `5595c2b`). What was split out instead
+      is the work the ADR could not close: `plato-393` (function bounds — landed, `06e9d36`),
+      `plato-394` (a function bound folded into a receiver type's parameter loses its emitted
+      clause), `plato-395` (`TimeVarying<TValue>` unbounded, so `Change` stays a throwing stub).
 - [x] `Tween<T>` either compiles with a real `Sample` body, or has an
       issue-linked disposition recorded here (moved to `future`, or per-type
       overloads). — `type Tween<T> where T: Interpolatable`, with the body in the
@@ -189,3 +198,10 @@ the design work loses its motivating example.
 - [x] LINT001 across the three shipping tiers is 0, and no genericity-related
       degraded body remains. Lint ratchet lowered 33 -> 32
       (`ForwardStdLibLintTests.MaxLintRatchet`); the 32 left are all LINT013.
+      Scope of the second half, stated exactly (phase E): no genericity-related degraded body
+      remains in the EMITTED tier (`foundation`, the one project in `generated/`). Two remain in
+      the non-emitted tiers and both are correct refusals under this design, not gaps in it:
+      `TimeVaryingValues.Change` over the unbounded `TimeVarying<TValue>` — a correct refusal under
+      this design, now tracked as `plato-395`. The other degraded bodies in those tiers
+      (`StepEasing.Eval`, and two in `geometry`) are on concrete non-generic receivers, pre-date
+      this work, and have nothing to do with bounds.

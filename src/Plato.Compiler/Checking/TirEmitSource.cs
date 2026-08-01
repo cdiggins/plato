@@ -127,8 +127,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         {
             if (inherited == null)
                 return false;
-            var extra = recv.Name != null && inherited.TryGetValue(recv.Name, out var e) ? e : null;
-            var bounds = TypeConstraints.KnownBounds(recv, extra);
+            var bounds = TypeConstraints.KnownBounds(recv, inherited);
             if (bounds.Count == 0)
                 return false;
 
