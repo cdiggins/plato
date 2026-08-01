@@ -122,15 +122,22 @@ Measured with `plato_check` against `stdlib` + `stdlib-tests`:
       identifier anywhere in `stdlib/`. Sliceable has no concrete implementer
       (LINT013), so nothing called the old name.
 
-- [ ] **Sub-range naming, still split.** The same audit turned up a second and
-      messier disagreement, left alone because it is wider than plato-378:
-      `Array.Slice(from, to)` is half-open by ENDPOINT, while
-      `Sliceable.Slice(start, count)` takes a COUNT — the same name with
-      different parameter meanings. `Array.SubArray(from, count)` equals
-      `Sliceable.Slice`, and `Sliceable.SubRange(start, end)` equals
-      `Array.Slice`. Four names, two operations, crossed over. Array does not
-      implement Sliceable so nothing collides today, but any type that ever
-      implements both inherits the ambiguity. Pick one convention.
+- [x] **Sub-range naming — RESOLVED.** `Slice` meant two different things: on
+      `Array` it was half-open by ENDPOINT, on `Sliceable` it took a COUNT. The
+      concept is now `Slice(x: Self, from: Integer, exclusiveTo: Integer)`, so
+      **everything named `Slice` takes endpoints** and `Array.SubArray(from,
+      count)` is the single count-based form.
+
+      The endpoint convention won because every actual call site in the tree
+      already used it — `Slice(offsets[i], offsets[i+1])` in
+      `spatial-grids.library.plato`, `Slice(n.Items.Start, n.Items.End)` in
+      `spatial-kdtrees` / `spatial-trees`. The concept was the outlier, and it
+      had no implementer, so nothing had to change to follow it.
+
+      `Sliceable.SubRange(start, end)` was deleted: it existed only to offer the
+      endpoint form over a count-based `Slice`, and became a duplicate.
+      Sliceable's derived helpers (Take / Skip / TakeLast / DropLast) were
+      rewritten to pass endpoints.
 - [ ] **Short-circuit loss.** `All` / `Any` are folds now, so they visit every
       element. Identical for pure callbacks; restore via the override table if a
       profile ever shows it.

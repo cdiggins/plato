@@ -46,11 +46,22 @@ It is now `DropLast(n) => Take(Count - n)`, completing the 2x2 that `Take` /
 `Skip` / `TakeLast` were already three quarters of, and agreeing by name and by
 definition with `CollectionsContainers.DropLast(Sliceable)`.
 
-`Sliceable` was renamed to match in the same change: its `Drop`
-(`Slice(count, Count - count)`) is the same remove-from-the-front operation that
-`Array` spells `Skip`, so it is now `Skip` there too. Across both vocabularies
-`Skip` removes from the front and `DropLast` from the back, and the name `Drop`
-no longer appears in the tree.
+`Sliceable` was brought into line in the same change, on two counts:
+
+- Its `Drop` (`Slice(count, Count - count)`) is the same remove-from-the-front
+  operation `Array` spells `Skip`, so it is now `Skip` there too. Across both
+  vocabularies `Skip` removes from the front and `DropLast` from the back, and
+  the name `Drop` no longer appears in the tree.
+- Its `Slice` took a `(start, count)` pair where `Array.Slice` took endpoints —
+  one name, two meanings. The obligation is now
+  `Slice(x: Self, from: Integer, exclusiveTo: Integer)`, so **everything named
+  `Slice` is half-open by endpoint** and `Array.SubArray(from, count)` is the
+  single count-based sub-range. `Sliceable.SubRange` was deleted as a duplicate
+  of the new `Slice`.
+
+The endpoint convention won because every call site in the tree already used it
+(`Slice(offsets[i], offsets[i+1])`, `Slice(n.Items.Start, n.Items.End)`); the
+concept was the outlier and had no implementer.
 | `Equals`, `ExclusiveOr`, `Compare`, `Hash` on Boolean | `foundation/primitives.library.plato` |
 | `NotEquals` on every primitive | `foundation/core-comparison.library.plato`, once, over `Equatable` |
 | `LessThan`, `GreaterThan`, `GreaterThanOrEquals`, `Compare`, `Clamp` on Number and Integer | already generic over `Orderable` in `foundation/core-comparison.library.plato` — deleted outright, not re-derived |

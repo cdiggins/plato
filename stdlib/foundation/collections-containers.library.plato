@@ -12,22 +12,22 @@ library CollectionsContainers
     //==
     // # Sliceable
     //
-    // Contiguous sub-range helpers built on Slice(start, count). The end-relative
-    // helpers (Skip, TakeLast, DropLast) read Count, which Sliceable now inherits
-    // from Countable.
+    // Contiguous sub-range helpers built on the half-open Slice(from, exclusiveTo).
+    // The end-relative helpers (Skip, TakeLast, DropLast) read Count, which
+    // Sliceable now inherits from Countable.
     // Note: these return the bare concept type Sliceable rather than the concrete
     // implementing type, so chained calls (self.Take(n).Take(m)) resolve against
     // the concept surface and type-check; the concrete type is simply not recovered.
+    //
+    // `SubRange(start, end)` used to sit here as the endpoint form over a
+    // count-based Slice. plato-378 made Slice itself the endpoint form, which
+    // made the two identical, so SubRange is gone.
 
-    // The first `count` elements: Slice(0, count).
+    // The first `count` elements. Precondition: 0 <= count <= Count.
     Take(self: Sliceable, count: Integer): Sliceable
         => self.Slice(0, count);
 
-    // The half-open range [start, end): Slice(start, end - start).
-    SubRange(self: Sliceable, start: Integer, end: Integer): Sliceable
-        => self.Slice(start, end - start);
-
-    // Everything after the first `count` elements: Slice(count, Count - count).
+    // Everything after the first `count` elements.
     // Precondition: 0 <= count <= Count.
     //
     // Spelled `Drop` until plato-378. One tree should not spell one operation
@@ -35,14 +35,13 @@ library CollectionsContainers
     // (`primitives-arrays.library.plato`) — so `Skip` removes from the front and
     // `DropLast` from the back, in both vocabularies.
     Skip(self: Sliceable, count: Integer): Sliceable
-        => self.Slice(count, self.Count - count);
+        => self.Slice(count, self.Count);
 
-    // The last `count` elements: Slice(Count - count, count).
-    // Precondition: 0 <= count <= Count.
+    // The last `count` elements. Precondition: 0 <= count <= Count.
     TakeLast(self: Sliceable, count: Integer): Sliceable
-        => self.Slice(self.Count - count, count);
+        => self.Slice(self.Count - count, self.Count);
 
-    // Everything except the last `count` elements: Slice(0, Count - count).
+    // Everything except the last `count` elements.
     // Precondition: 0 <= count <= Count.
     DropLast(self: Sliceable, count: Integer): Sliceable
         => self.Slice(0, self.Count - count);

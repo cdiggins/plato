@@ -6,12 +6,19 @@
 // immutable; operations that "modify" return new collections.
 
 // Supports taking a contiguous sub-range. Inherits Countable so that end-relative
-// helpers (Skip, TakeLast, DropLast) can convert a count into a start offset.
+// helpers (Skip, TakeLast, DropLast) can convert a count into an endpoint.
 // (https://en.wikipedia.org/wiki/Array_slicing)
+//
+// The range is HALF-OPEN BY ENDPOINT: [from, exclusiveTo), so the result holds
+// exclusiveTo - from elements and Slice(0, Count) is the whole collection. This
+// took a (start, count) pair until plato-378, which made `Slice` mean two
+// different things depending on the receiver — every actual call site in the
+// tree passes endpoints (`Slice(offsets[i], offsets[i+1])`), and `Array.Slice`
+// was already the endpoint form. A count-based sub-range is `Array.SubArray`.
 concept Sliceable
     inherits Countable
 {
-    Slice(x: Self, start: Integer, count: Integer): Self;
+    Slice(x: Self, from: Integer, exclusiveTo: Integer): Self;
 }
 
 // Supports joining two collections end to end. (https://en.wikipedia.org/wiki/Concatenation)

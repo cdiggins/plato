@@ -81,13 +81,18 @@ library PrimitivesArrays
     TakeLast(xs: Array<$T>, n: Integer): Array<$T>
         => MapRange(n, i => xs[xs.Count - n + i]);
 
-    // `count` elements starting at `from`. Precondition: the window is in range.
+    // `count` elements starting at `from` — the COUNT-based sub-range, and the
+    // only one. Everything named Slice takes endpoints.
+    // Precondition: the window is in range.
     SubArray(xs: Array<$T>, from: Integer, count: Integer): Array<$T>
         => MapRange(count, i => xs[from + i]);
 
-    // The half-open window [from, to). Precondition: 0 <= from <= to <= Count.
-    Slice(xs: Array<$T>, from: Integer, to: Integer): Array<$T>
-        => MapRange(to - from, i => xs[from + i]);
+    // The half-open window [from, exclusiveTo), holding exclusiveTo - from
+    // elements. Matches `Sliceable.Slice` exactly, so `Slice` means the same
+    // thing on every receiver in the tree (plato-378).
+    // Precondition: 0 <= from <= exclusiveTo <= Count.
+    Slice(xs: Array<$T>, from: Integer, exclusiveTo: Integer): Array<$T>
+        => MapRange(exclusiveTo - from, i => xs[from + i]);
 
     // Every nth element starting at index 0. The count rounds UP: a 5-element
     // array stepped by 2 yields indices 0, 2 and 4. Precondition: n > 0.
