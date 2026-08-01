@@ -36,7 +36,20 @@ kernel. The contract went from 141 to 65.
 |---|---|
 | `Abs`, `Sign`, `CopySign`, `Min`, `Max`, `Square`, `Reciprocal`, `Cbrt`, `Ceiling`, `Truncate`, `Log`, `Log2`, `Log10`, `Tan`, `Sinh`, `Cosh`, `Tanh`, the six `*Radians` inverse forms, `Zero`, `One`, `Tau`, `E`, `IsFinite` | `foundation/primitives-number.library.plato` |
 | `Abs`, `Sign`, `Min`, `Max`, `Zero`, `One`, `Range` on Integer | `foundation/primitives-integer.library.plato` |
-| `Map`, `MapPairs/Triplets/Quartets`, `Zip` (2 and 3), `Take`, `Skip`, `Drop`, `TakeLast`, `SubArray`, `Slice`, `EveryNth`, `AtModulo`, `Repeat`, `Append`, `Prepend`, `Concatenate`, `All`, `Any`, `Slices`, `CartesianProduct`, and the whole `Array2D`/`Array3D` surface including `MakeArray2D` | `foundation/primitives-arrays.library.plato` |
+| `Map`, `MapPairs/Triplets/Quartets`, `Zip` (2 and 3), `Take`, `Skip`, `Drop` (now `DropLast`, see below), `TakeLast`, `SubArray`, `Slice`, `EveryNth`, `AtModulo`, `Repeat`, `Append`, `Prepend`, `Concatenate`, `All`, `Any`, `Slices`, `CartesianProduct`, and the whole `Array2D`/`Array3D` surface including `MakeArray2D` | `foundation/primitives-arrays.library.plato` |
+
+The array sub-range family was also corrected on the way out. The old contract
+declared `Skip` and `Drop` with no stated difference, and `Drop` had no runtime
+counterpart at all — `Ara3D.Collections.LinqArray` defines `Skip` and `DropLast`
+and has no `Drop` — which is why nothing in either stdlib generation called it.
+It is now `DropLast(n) => Take(Count - n)`, completing the 2x2 that `Take` /
+`Skip` / `TakeLast` were already three quarters of, and agreeing by name and by
+definition with `CollectionsContainers.DropLast(Sliceable)`.
+
+Note the residual naming split, which predates this work: on `Array` the
+remove-from-the-front operation is `Skip`, while on the `Sliceable` concept the
+same operation is `Drop` (`Slice(count, Count - count)`). Both spellings are
+correct in their own vocabulary; unifying them is a separate decision.
 | `Equals`, `ExclusiveOr`, `Compare`, `Hash` on Boolean | `foundation/primitives.library.plato` |
 | `NotEquals` on every primitive | `foundation/core-comparison.library.plato`, once, over `Equatable` |
 | `LessThan`, `GreaterThan`, `GreaterThanOrEquals`, `Compare`, `Clamp` on Number and Integer | already generic over `Orderable` in `foundation/core-comparison.library.plato` — deleted outright, not re-derived |

@@ -101,18 +101,26 @@ Measured with `plato_check` against `stdlib` + `stdlib-tests`:
       table every derived view costs a closure per element on C#, where it used
       to bind to `Ara3D.Collections`. Nothing regressed in the gates because the
       gates do not execute; adoption in a hot path must wait for the table.
-- [x] **`Drop` semantics — RESOLVED.** First landed as a synonym of `Skip`,
-      which was wrong. `Drop(n)` is `Take(Count - n)`: remove the last n.
-      That completes a 2x2 — Take/TakeLast KEEP n from the front/back, Skip/Drop
-      REMOVE n from the front/back — and it is why the old contract declared all
-      four. The synonym reading left the "remove from the back" cell empty and
-      one name redundant.
+- [x] **`Drop` — RESOLVED, renamed to `DropLast`.** First landed as a synonym of
+      `Skip`, which duplicated `Skip` and left the remove-from-the-back cell of
+      the sub-range family empty. It is now
+      `DropLast(n) => Take(Count - n)`, completing the 2x2: Take/TakeLast KEEP n
+      from the front/back, Skip/DropLast REMOVE n from the front/back.
 
-      Evidence: `Ara3D.Collections.LinqArray` defines
-      `DropLast(n) => Take(Count - n)` and has **no `Drop` at all**, so the old
-      `Drop` intrinsic never had a runtime counterpart — a phantom declaration,
-      which is why nothing ever called it. The plato-368 override table must map
-      Plato `Drop` onto the runtime's `DropLast`.
+      Three independent sources agree on that name and definition:
+      `CollectionsContainers.DropLast(Sliceable)` is already defined as
+      `Slice(0, Count - count)`; `Ara3D.Collections.LinqArray` defines
+      `DropLast(n) => Take(Count - n)`; and neither has a `Drop` on this shape.
+      The old `Drop` intrinsic had **no runtime counterpart at all** — a phantom
+      declaration, which is why nothing ever called it. No override-table name
+      mapping is needed now.
+
+- [ ] **Residual naming split (pre-existing, not introduced here).** On `Array`
+      the remove-from-the-front operation is `Skip`; on the `Sliceable` concept
+      the same operation is `Drop` (`Slice(count, Count - count)`). Array does
+      not implement Sliceable, so there is no overload collision and both are
+      correct in their own vocabulary — but one tree should not spell one
+      operation two ways. Unify or document as deliberate.
 - [ ] **Short-circuit loss.** `All` / `Any` are folds now, so they visit every
       element. Identical for pure callbacks; restore via the override table if a
       profile ever shows it.
