@@ -59,7 +59,7 @@ the writer code).
   literals, formulas), [`stdlib/LIBRARIES.md`](stdlib/LIBRARIES.md) (how library files relate to
   declaration files).
   Inner loop: `.\tools\check-stdlib-fast.ps1` from the studio root.
-  **How it is tested and validated:** [`docs/stdlib-verification-ladder.md`](docs/stdlib-verification-ladder.md)
+  **How it is tested and validated:** [`stdlib/VERIFICATION.md`](stdlib/VERIFICATION.md)
   — the seven rungs (parse → resolve → lint → style → type-check → codegen → law execution),
   which command runs each, the three ratchets and their scopes, and the wrong-greens to avoid.
 - `tests/stdlib-tests/` — forward law packet (`Law_*` functions) for `stdlib/`. Merged with `stdlib` by

@@ -76,7 +76,7 @@ Replace the number with its authority. In this repo:
 
 A document that deliberately omits measurements should say so, in one sentence, where a reader would
 expect the numbers. Otherwise the next well-meaning author helpfully adds them back.
-[`docs/stdlib-verification-ladder.md`](stdlib-verification-ladder.md) is the worked example.
+[`stdlib/VERIFICATION.md`](../stdlib/VERIFICATION.md) is the worked example.
 
 ### When a document and a gate disagree, the gate is right
 

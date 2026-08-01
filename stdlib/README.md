@@ -97,5 +97,8 @@ track types that implement it live in `future/`.
 
 Companion docs — read before editing this folder:
 
-- [`CONVENTIONS.md`](CONVENTIONS.md) 
-- [`STYLE_GUIDE.md`](STYLE_GUIDE.md) 
+- [`CONVENTIONS.md`](CONVENTIONS.md) — what the vocabulary means (frames, winding, units)
+- [`STYLE_GUIDE.md`](STYLE_GUIDE.md) — how to write declarations and bodies
+- [`LIBRARIES.md`](LIBRARIES.md) — how `*.library.plato` files relate to declaration files
+- [`VERIFICATION.md`](VERIFICATION.md) — how to know your edit is good: the seven-rung gate
+  ladder, which command runs each rung, and the ratchets

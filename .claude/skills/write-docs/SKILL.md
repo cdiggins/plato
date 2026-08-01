@@ -9,7 +9,7 @@ argument-hint: [path to the document being written or edited]
 Normative source: [`docs/documentation-conventions.md`](../../../docs/documentation-conventions.md).
 Read it when a case is not covered below. This skill is the working checklist.
 
-Worked example of the style: [`docs/stdlib-verification-ladder.md`](../../../docs/stdlib-verification-ladder.md).
+Worked example of the style: [`stdlib/VERIFICATION.md`](../../../stdlib/VERIFICATION.md).
 
 ## The one rule that keeps getting violated
 

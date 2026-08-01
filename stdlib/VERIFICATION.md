@@ -1,10 +1,12 @@
-# The stdlib verification ladder
+# Verification — how this library is tested
 
-**How `stdlib/` is tested and validated — what each rung proves, what it cannot prove, and which
-command runs it.**
+**What each rung of the verification ladder proves, what it cannot prove, and which command runs
+it.** The fourth companion doc for this folder, beside [`CONVENTIONS.md`](CONVENTIONS.md) (what the
+vocabulary means), [`STYLE_GUIDE.md`](STYLE_GUIDE.md) (how to write it) and
+[`LIBRARIES.md`](LIBRARIES.md) (where bodies go): this one is **how you know your edit is good.**
 
-Scope: the **forward** stdlib (`stdlib/`) and its law packet (`tests/stdlib-tests/`). The legacy
-pair (`legacy/stdlib-legacy/` + `legacy/stdlib-legacy-tests/`) has its own gates and is out of scope
+Scope: this folder and its law packet (`tests/stdlib-tests/`). The legacy pair
+(`legacy/stdlib-legacy/` + `legacy/stdlib-legacy-tests/`) has its own gates and is out of scope
 here; see [`AGENTS.md`](../AGENTS.md).
 
 The organizing idea: **a `.plato` file is not a program you can run.** Nothing in `stdlib/` executes
@@ -76,7 +78,7 @@ python tools/record-gates.py
 
 `--full` adds a clean regeneration plus the conformance law runner; `--dry-run` measures and writes
 nothing. It writes current state to `docs/status-report-snapshot.json` and appends one
-history row to [`docs/gate-log.md`](gate-log.md). Note that it **regenerates before it tests** — a
+history row to [`docs/gate-log.md`](../docs/gate-log.md). Note that it **regenerates before it tests** — a
 suite that passes against a stale `Generated/` folder is the easiest wrong green in this repo to
 produce.
 
@@ -219,7 +221,7 @@ The recipe is the shipping one: `--csharp-style=extensions --scalar=float --opti
 Codegen **succeeds**: it emits over a thousand `.g.cs` files, plus some *degraded bodies* — a member
 with no ground TIR emits a throwing stub and is recorded in `Writer.DegradedBodies` rather than
 aborting the whole output. Both counts are reported by the run itself and logged in
-[`docs/gate-log.md`](gate-log.md); the degraded count is a burn-down number, so read it there rather
+[`docs/gate-log.md`](../docs/gate-log.md); the degraded count is a burn-down number, so read it there rather
 than from prose. Whether the generated C# **compiles** is the live question — see "Reading the
 current state" below. Build-level quarantine of failing files was measured and does **not** work —
 the forward stdlib is too densely linked and exclusion cascades into CS0246.
@@ -330,7 +332,7 @@ one live home:
 | Question | Where the answer lives |
 |---|---|
 | what do the gates say right now? | `plato_check`, or `python tools/record-gates.py --dry-run` |
-| what did they say at commit X? | [`docs/gate-log.md`](gate-log.md) — one appended row per run |
+| what did they say at commit X? | [`docs/gate-log.md`](../docs/gate-log.md) — one appended row per run |
 | current machine-readable state | `docs/status-report-snapshot.json` (+ `tools/gen-status-report.py` for HTML) |
 | what is the ceiling for a ratchet? | the constant in the test (see the ratchet table above) |
 | how long does a gate take? | `.\tools\gate-timings.ps1` |
@@ -371,10 +373,10 @@ the content fixed. It does not land silent.
 ## See also
 
 - [`AGENTS.md`](../AGENTS.md) — repo layout, hard rules, mission protocol
-- [`stdlib/README.md`](../stdlib/README.md) — tiers, the `future` bar, partition rules
-- [`stdlib/CONVENTIONS.md`](../stdlib/CONVENTIONS.md) — domain semantics (wins on conflict)
-- [`stdlib/STYLE_GUIDE.md`](../stdlib/STYLE_GUIDE.md) / [`stdlib/LIBRARIES.md`](../stdlib/LIBRARIES.md) — authoring rules the style checker encodes
-- [`docs/plato-library-map.md`](plato-library-map.md) — which artifact is which, and the recipe per artifact
-- [`docs/gate-log.md`](gate-log.md) — appended history of gate runs
+- [`stdlib/README.md`](README.md) — tiers, the `future` bar, partition rules
+- [`stdlib/CONVENTIONS.md`](CONVENTIONS.md) — domain semantics (wins on conflict)
+- [`stdlib/STYLE_GUIDE.md`](STYLE_GUIDE.md) / [`stdlib/LIBRARIES.md`](LIBRARIES.md) — authoring rules the style checker encodes
+- [`docs/plato-library-map.md`](../docs/plato-library-map.md) — which artifact is which, and the recipe per artifact
+- [`docs/gate-log.md`](../docs/gate-log.md) — appended history of gate runs
 - `tests/conformance/Plato.ForwardConformanceTests/README.md` — law runner detail (status section is stale)
 - the `plato-mcp` skill — `plato_check` and the symbol query chain
