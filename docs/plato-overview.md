@@ -51,7 +51,7 @@ Plato is a pure, statically-typed functional language for defining algebraic dat
 - function with single arguments can be called like properties
 - three kinds:
     - **`type`** — pure data. Fields only, no methods, no visibility, no inheritance. `type Circle { Center: Point2D; Radius: Number; }`
-    - **`interface`** — abstract data types with a `Self` type, which compile to F-bounded generic interfaces in C# (`IVector<Self> where Self : IVector<Self>` — see `Interfaces.g.cs` in the frozen V1 output, `ara3d-sdk/src/Plato.Generated`, or [the V2 equivalent](../generated/Plato.Generated.Unoptimized/Interfaces.g.cs) in this repo). These are **type classes**, not OO interfaces — there is no boxing, no vtable, no heterogeneous collections through them.
+    - **`interface`** — abstract data types with a `Self` type, which compile to F-bounded generic interfaces in C# (`IVector<Self> where Self : IVector<Self>` — see `Interfaces.g.cs` in the frozen V1 output, `ara3d-sdk/src/Plato.Generated`, or [the forward equivalent](../generated/Plato.Generated.Foundation.Unoptimized/Interfaces.g.cs) in this repo). These are **type classes**, not OO interfaces — there is no boxing, no vtable, no heterogeneous collections through them.
     - **`library`** — free functions, callable with dot syntax on their first argument. A function written once against an interface (`Lerp(a: IVectorLike, b: IVectorLike, t: Number)`) is stamped concretely into every implementing struct.
 - tuples construct any type structurally (`(t.Cos, t.Sin)` builds a `Point2D`); 
 - a function named after a type becomes an implicit conversion (`Point3D(v: Vector3)` in geometry.library becomes `implicit operator Point3D(Vector3)` in the output); 

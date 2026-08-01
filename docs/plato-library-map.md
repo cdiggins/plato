@@ -26,7 +26,7 @@ BCL obligations) is contracted in `docs/plato-struct-surface.md` and guarded by
 
 Importers, all via `<Import ... Label="Shared" />` of the `.projitems`:
 
-- `generated/Plato.Generated.Unoptimized`, `generated/Plato.Generated.Optimized`
+- `generated/Plato.Generated.Foundation.Unoptimized`
 - `tests/optimizer-smoke/smoke.props` (all four smoke variants)
 - `experiments/csg/Ara3D.Csg.Tests`, `experiments/earcut/Ara3D.Earcut.Tests`
 
@@ -34,14 +34,17 @@ Importers, all via `<Import ... Label="Shared" />` of the `.projitems`:
 
 | Path | Recipe |
 |---|---|
-| `generated/Plato.Generated.Unoptimized` | `--csharp-style=extensions --scalar=float` (readable reference) |
-| `generated/Plato.Generated.Optimized` | the same plus `--optimize --optimize-arrays --inline --loops` (the adoption target) |
+| `generated/Plato.Generated.Foundation.Unoptimized` | `--csharp-style=extensions` over `stdlib/foundation` — wrapper scalars, optimizers off |
 
-Neither is a golden. The byte-identity diff-gate and `regen-generated.ps1` were retired 2026-07-30.
-Both are **empty shells** as of 2026-08-01: the emitted sources were deleted because the
-scalar-erasure recipe no longer matches the runtime, and only the `.csproj` (recipe + solution
-wiring) remains. `generated/Plato.Generated.Foundation.Unoptimized` — forward stdlib, wrapper
-scalars — is the live generated project. Detail in
+It is not a golden. The byte-identity diff-gate and `regen-generated.ps1` were retired 2026-07-30.
+
+`Plato.Generated.Unoptimized` and `Plato.Generated.Optimized` were **retired 2026-08-01**. Both
+were emitted from `legacy/stdlib-legacy` with the scalar-erasure recipe, which no longer matches
+the runtime; erasure itself is on the way out
+([`../tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md`](../tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md)).
+Their sources, project files and solution entries are gone, along with
+`tests/optimizer-smoke/Bench`, which existed only to benchmark one against the other. Recovering
+them means a fresh recipe, not a revert. Detail in
 [`../generated/README.md`](../generated/README.md).
 
 ## What still lives in ara3d-sdk

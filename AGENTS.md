@@ -88,7 +88,7 @@ the writer code).
   the gating stage and passes; Stage 2 (codegen + law runner) generates but does not compile —
   tracked as `plato-308`, detail in that folder's `README.md`. A red Stage 2 is not your fault
   unless your error count exceeds the number in the issue.
-- `generated/` — buildable generated projects (extension-style, scalar-erased): `Plato.Generated.Unoptimized` (optimizers off, readable reference) and `Plato.Generated.Optimized` (full optimizer pipeline, adoption shape). **No longer goldens** (2026-07-30 retirement): the byte-identity diff-gate and its `regen-generated.ps1` script are gone; these are ordinary cached output anyone may regenerate, and staleness is acceptable. Docs in `generated/README.md`.
+- `generated/` — buildable generated projects. `Plato.Generated.Foundation.Unoptimized` (forward `stdlib/foundation`, extension-style, **wrapper** scalars, optimizers off) is the only one; the two scalar-erased legacy projects were retired 2026-08-01. **Not a golden** (2026-07-30 retirement): the byte-identity diff-gate and its `regen-generated.ps1` script are gone; this is ordinary cached output anyone may regenerate, and staleness is acceptable. Docs in `generated/README.md`.
 - `src/Plato.Navigation/` (+ `src/Plato.Navigation.CLI/`, `tests/Plato.Navigation.Tests/`) — navigation index over a source snapshot: go-to-def,
   find-refs, outline, name search, JSON export, and an `IncrementalIndexer` with a per-file parse
   cache. Reuses the parser and binder; adds no second resolver. Its README lists the known

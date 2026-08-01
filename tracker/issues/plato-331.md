@@ -67,13 +67,15 @@ appears a thousand generated files downstream as CS0030 or CS1955.
 
 1. **Finish the port**: convert the ten non-component properties to method form in V2 and update
    their internal callers (`Plane.WithNormal`/`WithD` read `Normal`/`D`; `Matrix4x4.Rotation` calls
-   `Decompose()`), then delete `PrimitiveSurfaceOverrides`. NOT free, and the coupling is the whole
-   difficulty: V2 is shared by `Plato.Generated.Unoptimized` / `.Optimized` and
-   `Ara3D.SDK.ConformanceTests`, and `stdlib-legacy` declares `Matrix*.Row*` and `Plane.Normal/D`
-   as fields -- so the declaration proxy would then be wrong in the other direction and the same
-   table would return with inverted values, unless the primitive rule changes to
-   "surface = `PrimitiveFieldNames` only" in the same commit. That is a coupled runtime + writer +
-   golden change: expect the ~200 goldens to move again, with the conformance law suite as the gate.
+   `Decompose()`), then delete `PrimitiveSurfaceOverrides`. The coupling described here has since
+   **loosened**: `Plato.Generated.Unoptimized` / `.Optimized` were retired 2026-08-01
+   (`../decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md`) and the goldens went
+   in the 2026-07-30 retirement, so the runtime's remaining consumers are
+   `Plato.Generated.Foundation.Unoptimized` and `Ara3D.SDK.ConformanceTests`. `stdlib-legacy` still
+   declares `Matrix*.Row*` and `Plane.Normal/D` as fields, so if the legacy tier is ever revived
+   the declaration proxy would be wrong in the other direction and this table would return with
+   inverted values, unless the primitive rule changes to "surface = `PrimitiveFieldNames` only" in
+   the same commit. Re-scope this approach against the current consumer set before starting.
 2. **Leave the runtime alone and make the table self-policing**: keep
    `PrimitiveSurfaceOverrides` as the writer's deliberate record of the handwritten surface, and add
    a reflection test that fails when a V2 public property appears that is neither a

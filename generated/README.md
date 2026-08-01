@@ -15,40 +15,36 @@ still not for hand editing (`// DO NOT EDIT`) — a change comes from rerunning 
 | Project | Source | Recipe (CLI flags) | State |
 |---|---|---|---|
 | `Plato.Generated.Foundation.Unoptimized` | `stdlib/foundation` (forward) | `--csharp-style=extensions` | Live; sources committed. |
-| `Plato.Generated.Unoptimized` | `legacy/stdlib-legacy` | `--csharp-style=extensions --scalar=float` | **Empty shell** (see below). |
-| `Plato.Generated.Optimized` | `legacy/stdlib-legacy` | the same plus `--optimize --optimize-arrays --inline --loops` | **Empty shell** (see below). |
 
-The forward project keeps scalars as **wrapper structs** — `Number`, `Integer`, `Boolean`,
-`Character`, `String` stay distinct types (decision `decc091`, 2026-08-01). The two legacy
-projects use the older **scalar-erasure** recipe (`--scalar=float`), which rewrites those wrappers
-to native `float`/`int`/`bool`/`char`/`string`.
+It keeps scalars as **wrapper structs** — `Number`, `Integer`, `Boolean`, `Character`, `String`
+stay distinct types. That is now the only scalar representation
+([`../tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md`](../tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md)).
 
-Every recipe is property-free: a no-arg member emits as a method, so the emitted `partial struct`
-halves agree with the method-form runtime. That is not selectable - see
+The recipe is property-free: a no-arg member emits as a method, so the emitted `partial struct`
+halves agree with the method-form runtime. That is not selectable — see
 [`../tracker/decisions/2026-08-01-property-free-emission-is-unconditional.md`](../tracker/decisions/2026-08-01-property-free-emission-is-unconditional.md).
 Genuine fields and pseudo-fields (`X`/`Y`/`Z`, `M11`, `Row1`, `Plane.Normal`, `Count`) keep
-field/property syntax in every recipe.
+field/property syntax.
 
-Each `.csproj` carries its own recipe in a header comment; that comment and this table are the
-two places the flags are written down. (The two legacy `.csproj` headers still spell the retired
-`no-properties` flag; they are empty shells and were left untouched.)
+The `.csproj` carries its recipe in a header comment; that comment and this table are the two
+places the flags are written down.
 
-## The two legacy projects are empty shells (2026-08-01)
+## The two legacy projects were retired (2026-08-01)
 
-Their `.g.cs` sources were deleted on 2026-08-01. They no longer compiled: the scalar-erasure
-recipe emits against a runtime shape that has moved on — the intrinsic-kernel reduction
-(`plato-378`), the wrapper-scalar decision (`decc091`), and the departure of `Angle`, the matrices
-and `Quaternion` from `src/Plato.Intrinsics` into `bonepile/`. Since the 2026-07-30 retirement
-nothing regenerated them and no gate read them, so the checked-in text was stale output that only
-produced compiler errors in a solution build.
+`Plato.Generated.Unoptimized` and `Plato.Generated.Optimized` are **gone** — sources, `.csproj`,
+and `Plato.sln` entries. `tests/optimizer-smoke/Bench` went with them, since it existed only to
+benchmark the optimized library against the unoptimized one through `extern alias`.
 
-The `.csproj` files are kept, still wired into `Plato.sln`, so the recipes stay recorded and the
-projects build green while empty. **This was a deliberate deletion, not data loss** — the content
-is reproducible from the source library by the command below, and the deleted text is in git
-history before this change.
+Both were emitted from `legacy/stdlib-legacy` with the **scalar-erasure** recipe
+(`--scalar=float`), which rewrites the wrapper structs to native `float`/`int`/`bool`/`char`/
+`string`. That recipe stopped matching the runtime — the intrinsic-kernel reduction (`plato-378`),
+the wrapper-scalar decision, and the departure of `Angle`, the matrices and `Quaternion` from
+`src/Plato.Intrinsics` into `bonepile/`. Their sources were emptied on 2026-08-01 and the shells
+removed the same day once erasure itself was settled as a dead end.
 
-Whether the legacy recipe is worth reviving at all is a separate question; the empty shells are a
-placeholder, not a commitment.
+**Deliberate retirement, not data loss** — every deleted file is in git history, and the emitted
+text was always reproducible from its source library. Reviving the legacy tier means choosing a
+recipe that works against the current runtime, not reverting these commits.
 
 ## Regenerating
 
@@ -56,29 +52,16 @@ From the repo root, output folder first cleared of `*.g.cs`:
 
 ```
 dotnet run --project src\Plato.CLI -c Release -- ^
-    legacy\stdlib-legacy generated\Plato.Generated.Unoptimized ^
-    --csharp-style=extensions --scalar=float
-
-dotnet run --project src\Plato.CLI -c Release -- ^
-    legacy\stdlib-legacy generated\Plato.Generated.Optimized ^
-    --csharp-style=extensions --scalar=float ^
-    --optimize --optimize-arrays --inline --loops
-
-dotnet run --project src\Plato.CLI -c Release -- ^
     stdlib\foundation generated\Plato.Generated.Foundation.Unoptimized ^
     --csharp-style=extensions
 ```
 
-Regenerating the two legacy projects is expected to reproduce the compile errors described above
-until the legacy library or the erasure recipe is brought back in line with the runtime; that is
-why they were emptied rather than refreshed.
-
-The `.csproj` in each folder is hand-maintained — a regeneration only writes `.g.cs`.
+The `.csproj` is hand-maintained — a regeneration only writes `.g.cs`.
 `docs.html` / `interfaces.txt` are generator side-products and are gitignored.
 
 ## Intrinsics link
 
-All three projects consume the handwritten runtime by importing the shared project:
+The project consumes the handwritten runtime by importing the shared project:
 
 ```xml
 <Import Project="..\..\src\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
