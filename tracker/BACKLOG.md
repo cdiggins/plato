@@ -128,4 +128,3 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-379](issues/plato-379.md) | Unify Indexable and MapLike into Indexable<TIndex, TValue> | idea | ? | ? | ? | plato | idea |  |
 | [plato-380](issues/plato-380.md) | Integer2/Integer3 key types: re-express Indexable2D/3D as key instances | idea | ? | ? | ? | plato | idea |  |
 | [plato-381](issues/plato-381.md) | Concrete Dictionary type: decide whether keyed-lookup vocabulary earns its keep | idea | ? | ? | ? | plato | idea |  |
-| [repo-396](issues/repo-396.md) | Retire bonepile All/Any LINQ shadows; guard Corpus roots | retire | ? | ? | ? | repo | idea |  |
