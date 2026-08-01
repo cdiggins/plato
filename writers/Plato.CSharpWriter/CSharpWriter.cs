@@ -299,6 +299,14 @@ namespace Ara3D.Geometry.CSharpWriter
         public TirFunction TryGetGroundTir(FunctionDef original, TypeDef concreteType)
             => TirSource.TryGetGroundTir(original, concreteType);
 
+        /// <summary>The open-generic monomorphized TIR body for a (source function, generic concrete
+        /// type) — the fallback when no ground instantiation exists because the compiled tier holds
+        /// no call site at a concrete type argument. Non-null only for bodies that are type-agnostic
+        /// in the residual variables, which are exactly the type parameters the emitted C# signature
+        /// already declares (see <see cref="TirEmitSource.TryGetOpenGenericTir(FunctionDef, TypeDef)"/>).</summary>
+        public TirFunction TryGetOpenGenericTir(FunctionDef original, TypeDef concreteType)
+            => TirSource.TryGetOpenGenericTir(original, concreteType);
+
         /// <summary>The generic (unspecialized) TIR for a STATIC body — a constant or an IArray
         /// library function — or null when the function's elaboration has unresolved nodes.</summary>
         public TirFunction TryGetStaticTir(FunctionDef original)

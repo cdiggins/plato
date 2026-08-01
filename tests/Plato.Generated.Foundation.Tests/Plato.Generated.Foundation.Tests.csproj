@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <!-- Executes the EMITTED foundation surface. The generated project already fuses the
+       handwritten Plato.Intrinsics shared sources into its own assembly, so this suite only
+       references it (importing the shared project again would duplicate every type). -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\generated\Plato.Generated.Foundation.Unoptimized\Plato.Generated.Foundation.Unoptimized.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
+    <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
+    <!-- The package of this name is the old V1 library; compiling against it would make
+         every extension method ambiguous with the generated namespace. -->
+    <PackageReference Include="Ara3D.Geometry" Version="$(Ara3DVersion)" ExcludeAssets="compile" />
+  </ItemGroup>
+</Project>

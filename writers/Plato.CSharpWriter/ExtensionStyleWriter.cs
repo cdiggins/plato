@@ -348,6 +348,7 @@ public static class ExtensionStyleWriter
             // keeps body-less functions in the struct).
             var tir = m.Function.Implementation?.Body != null
                     ? writer.TryGetGroundTir(m.Function.Implementation, m.ConcreteType.TypeDef)
+                      ?? writer.TryGetOpenGenericTir(m.Function.Implementation, m.ConcreteType.TypeDef)
                     : null;
             if (tir == null)
             {

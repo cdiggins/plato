@@ -338,6 +338,10 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         var tir = isMember
             ? Writer.TryGetGroundTir(f.Function.Implementation, TypeDef)
             : Writer.TryGetStaticTir(f.Function.Implementation);
+        // No ground instantiation, but the body may still be TYPE-AGNOSTIC in the type variables
+        // the emitted signature already declares (`Array2D<T>.Map<T2>`): emit it once, open.
+        if (tir == null && isMember)
+            tir = Writer.TryGetOpenGenericTir(f.Function.Implementation, TypeDef);
         if (tir == null)
         {
             // No fully-ground monomorphized TIR for this bodied member. Under the shipping
