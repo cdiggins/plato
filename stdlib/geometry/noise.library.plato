@@ -201,7 +201,7 @@ library Noise
             Simplex => SimplexNoise3D(seed, frequency).Eval(p);
             Worley => 1.0 - 2.0 * WorleyNoise3D(seed, frequency, 1.0,
                                                 WorleyDistance.Euclidean, WorleyFeature.F1).Eval(p);
-            Gabor => GaborNoise3D(seed, frequency, Direction3D(Vector3D(0.0, 0.0, 1.0)), 1.0, 0.0).Eval(p);
+            Gabor => GaborNoise3D(seed, frequency, Direction3D(Vector3D.UnitZ), 1.0, 0.0).Eval(p);
         };
 
     //==

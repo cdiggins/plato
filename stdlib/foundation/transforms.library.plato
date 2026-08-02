@@ -1210,15 +1210,15 @@ library Transforms
 
     // The elemental rotation about the world X axis.
     CreateRotationX(_: Quaternion, angle: Angle): Quaternion
-        => Quaternion.CreateFromAxisAngle(Vector3D(1.0, 0.0, 0.0), angle);
+        => Quaternion.CreateFromAxisAngle(Vector3D.UnitX, angle);
 
     // The elemental rotation about the world Y axis.
     CreateRotationY(_: Quaternion, angle: Angle): Quaternion
-        => Quaternion.CreateFromAxisAngle(Vector3D(0.0, 1.0, 0.0), angle);
+        => Quaternion.CreateFromAxisAngle(Vector3D.UnitY, angle);
 
     // The elemental rotation about the world Z axis.
     CreateRotationZ(_: Quaternion, angle: Angle): Quaternion
-        => Quaternion.CreateFromAxisAngle(Vector3D(0.0, 0.0, 1.0), angle);
+        => Quaternion.CreateFromAxisAngle(Vector3D.UnitZ, angle);
 
     // The quaternion of an axis-angle rotation.
     // https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation
@@ -1232,7 +1232,7 @@ library Transforms
         var n = q.Normalize;
         var s = (1.0 - n.W.Square).Max(0.0).Sqrt;
         var axis = s < 0.000001
-            ? Vector3D(1.0, 0.0, 0.0)
+            ? Vector3D.UnitX
             : Vector3D(n.X / s, n.Y / s, n.Z / s);
         return (Direction3D(axis), n.W.Clamp(-1.0, 1.0).Acos * 2.0);
     }

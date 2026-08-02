@@ -96,7 +96,7 @@ library Solids
     AxisFrame(center: Point3D, axis: Direction3D): Frame3D
     {
         var z = axis.Vector;
-        var helper = z.Z.Abs < 0.9 ? Vector3D(0.0, 0.0, 1.0) : Vector3D(1.0, 0.0, 0.0);
+        var helper = z.Z.Abs < 0.9 ? Vector3D.UnitZ : Vector3D.UnitX;
         var x = helper.Cross(z).Normalize;
         var y = z.Cross(x);
         return (center, Direction3D(x), Direction3D(y), Direction3D(z));

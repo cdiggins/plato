@@ -58,7 +58,7 @@ library Deformations
     {
         var o = self.Center.Between(p);
         var lenSq = o.Dot(o);
-        var dir = lenSq > 0.0000001 ? o.Normalize : Vector3D(0.0, 0.0, 1.0);
+        var dir = lenSq > 0.0000001 ? o.Normalize : Vector3D.UnitZ;
         return p.Lerp(self.Center + dir * self.Radius, self.Strength);
     }
 

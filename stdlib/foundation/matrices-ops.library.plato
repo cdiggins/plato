@@ -345,7 +345,7 @@ library MatricesOps
     // The standard basis vector for an axis index: 0 -> X, 1 -> Y, 2 -> Z.
     CanonicalAxis(index: Integer): Vector3D
         => index == 0
-            ? Vector3D(1.0, 0.0, 0.0)
+            ? Vector3D.UnitX
             : (index == 1 ? Vector3D(0.0, 1.0, 0.0) : Vector3D(0.0, 0.0, 1.0));
 
     // A three-axis basis with one axis replaced.

@@ -43,7 +43,7 @@ library Surfaces
     // degenerate. Precondition: v is non-zero.
     AnyPerpendicular(v: Vector3D): Vector3D {
         var axis = v.X.Abs <= v.Y.Abs && v.X.Abs <= v.Z.Abs
-            ? Vector3D(1.0, 0.0, 0.0)
+            ? Vector3D.UnitX
             : (v.Y.Abs <= v.Z.Abs ? Vector3D(0.0, 1.0, 0.0) : Vector3D(0.0, 0.0, 1.0));
         return v.Cross(axis).Normalize;
     }

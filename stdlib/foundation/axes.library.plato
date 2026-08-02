@@ -18,9 +18,9 @@ library Axes
     // The unit basis vector along this axis: X => (1,0,0), Y => (0,1,0), Z => (0,0,1).
     Vector3D(self: Axis3D): Vector3D
         => match (self) {
-            X => Vector3D(1.0, 0.0, 0.0);
-            Y => Vector3D(0.0, 1.0, 0.0);
-            Z => Vector3D(0.0, 0.0, 1.0);
+            X => Vector3D.UnitX;
+            Y => Vector3D.UnitY;
+            Z => Vector3D.UnitZ;
         };
 
     // The unit direction along this axis (the basis vector, already unit length).
@@ -87,8 +87,8 @@ library Axes
     // The unit basis vector along this axis: X => (1,0), Y => (0,1).
     Vector2D(self: Axis2D): Vector2D
         => match (self) {
-            X => Vector2D(1.0, 0.0);
-            Y => Vector2D(0.0, 1.0);
+            X => Vector2D.UnitX;
+            Y => Vector2D.UnitY;
         };
 
     // The unit direction along this axis (the basis vector, already unit length).
@@ -162,11 +162,11 @@ library Axes
     // The unit vector of this oriented axis (the unsigned basis vector times Sign).
     Vector3D(self: SignedAxis3D): Vector3D
         => match (self) {
-            PosX => Vector3D(1.0, 0.0, 0.0);
+            PosX => Vector3D.UnitX;
             NegX => Vector3D(-1.0, 0.0, 0.0);
-            PosY => Vector3D(0.0, 1.0, 0.0);
+            PosY => Vector3D.UnitY;
             NegY => Vector3D(0.0, -1.0, 0.0);
-            PosZ => Vector3D(0.0, 0.0, 1.0);
+            PosZ => Vector3D.UnitZ;
             NegZ => Vector3D(0.0, 0.0, -1.0);
         };
 
