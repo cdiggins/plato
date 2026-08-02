@@ -31,8 +31,10 @@
 //   quaternion convention through their isomorphisms.
 // - Compose(first, second) means "apply first, then second" on EVERY type, so
 //   users never need to remember which product order a representation uses.
-// - A function named after a type is a conversion; each is total on its stated
-//   precondition (e.g. Pose3D(Matrix4x4) requires a rigid matrix).
+// - A function named after a type is an implicit conversion and must be
+//   faithful (Convention: see CONVENTIONS.md - Conversions). Each one here is
+//   total on its stated precondition (e.g. Pose3D(Matrix4x4) requires a rigid
+//   matrix).
 // - EulerAngles: Yaw is about Y, Pitch about X, Roll about Z; RotationOrder
 //   lists the axes in application order (first-applied first), about fixed
 //   world axes.
@@ -80,7 +82,8 @@ interface IDeformable3D
 // `transforms.types.plato`), so composition between representations of
 // different kinds is defined by converting both sides to that common ground;
 // every 3D rotation representation reaches the unit `Quaternion`, the canonical
-// rotation form. As stated above, a member named after a type is a conversion.
+// rotation form. A member named after a type is an implicit conversion
+// (Convention: see CONVENTIONS.md - Conversions).
 //
 // The interfaces narrow as they inherit: IRotational3D is a IRigid3D is an IAffine3D.
 // State the narrowest one a type satisfies — a rigid transform composes and

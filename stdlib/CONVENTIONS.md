@@ -29,6 +29,65 @@ concrete styles — any fourth style is rejected in review:
 3. **Concrete (non-generic) sum where the classification IS the payload**:
    `SphereSphereIntersection = Separate | ExternalTouch | OverlapCircle(...) | ...`.
 
+## Conversions — type-named is implicit, `ToX` is explicit
+
+A one-parameter function whose name is its own concrete return type **is an
+implicit conversion**. Nothing marks it as one: the compiler infers it from the
+spelling (`FunctionInstance.IsImplicitCast`), the type checker feeds it into
+overload resolution as a cast relation (`TypeRelations.ComputeCasts`), and the
+C# writer emits an `implicit operator` for every concrete implementer. Naming a
+function after a type is therefore a decision about the type system, not about
+taste.
+
+**The bar is faithfulness.** A type-named conversion may only be written when
+the result denotes the *same mathematical object* as its argument, re-expressed.
+Nothing about the value may be invented and nothing may be discarded.
+
+The practical test is: **did writing it force a choice the argument did not
+already contain?** If the body had to pick a resolution, a cell size, a
+tolerance, a sample count, a rounding mode, or which diagonal to split a quad
+along, the conversion invents information and is not faithful. If it drops a
+channel, a distance metric, a bound, a parameterisation, or any structure a
+reader could expect to survive, it is not faithful either. Faithful conversions
+are re-encodings: a rotation into the quaternion that represents it, a field
+into a closure that evaluates it, a rigid pose into the affine transform that
+performs the same map.
+
+**Everything else is spelled `ToX` and stays explicit.** `ToX` is the honest
+name for an approximation, a sampling, a projection, or a discard: the call site
+shows the reader that something was decided or lost. A `ToX` function is
+ordinary — it is never picked up as a cast — so it may take extra parameters and
+carry the choice in its signature.
+
+**Never both spellings for one (source, target) pair.** One pair, one function,
+one name. Two names for the same conversion means one of them is wrong about
+whether the conversion is faithful, and a reader has no way to tell which.
+
+**Where a whole family converts to one canonical form, declare the obligation on
+an interface** rather than repeating a library function per type. The transform
+representations do this: `IAffine2D` / `IAffine3D` / `IRigid2D` / `IRigid3D` /
+`IRotational3D` (`transforms.concepts.plato`) each name the single canonical
+type their implementers convert into, which is what makes composing two
+different representations well defined. Members named after a type follow this
+same rule inside an interface, and the writer reifies one implicit conversion
+per concrete implementer. A single conversion from an odd type stays an ordinary
+library function.
+
+**Because implicitness is inferred from the name, a return type can mint casts
+by accident.** An interface member named `Length`, `Area` or `Volume` returning
+`Number` is a plain accessor; change that return type to the quantity type of
+the same name (`quantities.types.plato`) and every implementer silently gains an
+implicit conversion. The guard is the cast-inventory pin
+(`tests/PlatoTests/ImplicitCastInventoryTests.cs`, golden file
+`tests/PlatoTests/implicit-cast-inventory.txt`): every implicit cast the
+stdlib defines is listed there, so a conversion nobody meant to create fails the
+test instead of shipping. Update the golden deliberately, in the commit that
+earns the new casts.
+
+*Owners:* the convention is stated only here. Conversion-bearing declarations
+cite it — `transforms.concepts.plato` for the transform family,
+`fields-implicits.library.plato` for the field and SDF lifts.
+
 ## Matrices — row-vector multiplication (`System.Numerics`)
 
 Plato multiplies a **row vector on the left**: `v' = v M`. `RowN` holds row *N*,
