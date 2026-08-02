@@ -1,8 +1,8 @@
 // Law library for the FORWARD stdlib (stdlib/) conformance harness.
 //
 // This is the v3 sibling of stdlib-legacy-tests/laws.plato. It is NOT part of the
-// production vocabulary: it lives in stdlib-tests/ and is merged with stdlib/ only by
-// tools/regen-forward-conformance.ps1.
+// production vocabulary: it lives in stdlib/tests/, which is not a tier, and is merged with
+// the stdlib tiers only by tools/regen-forward-conformance.ps1.
 //
 // Convention (identical to the legacy harness): every function prefixed with Law_
 // returns Boolean and is a property that must hold for ALL values of its parameter

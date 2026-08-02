@@ -19,6 +19,8 @@ namespace PlatoTests
     /// SCOPE: ALL FOUR tiers, <c>stdlib/future</c> included. stdlib-377 took <c>future</c> out of
     /// the lint gate and out of C# codegen, but NOT out of parsing and type-checking — those are
     /// the properties that keep aspirational vocabulary honest, and they are enforced here.
+    /// The tiers and NOTHING ELSE under <c>stdlib/</c>: the law packet in <c>stdlib/tests/</c> is a
+    /// separate program (stdlib-398), gated by the forward conformance run, not by this ratchet.
     /// </summary>
     [TestFixture]
     public static class ForwardStdLibCheckerTests
@@ -61,30 +63,33 @@ namespace PlatoTests
             }
         }
 
-        private static IReadOnlyList<string> ParseFailures(string folder)
-            => CheckerTestSupport.PlatoFiles(folder)
-                .Select(ParseFailure)
-                .Where(s => s.Length > 0)
-                .ToList();
+        private static IReadOnlyList<string> ParseFailures(IEnumerable<string> files)
+            => files.Select(ParseFailure).Where(s => s.Length > 0).ToList();
+
+        /// <summary>Corpus floor: a COLLAPSE GUARD, not a file count. Every other assertion in
+        /// <see cref="ForwardStdLibParsesAndCompiles"/> is an IsEmpty over results derived from the
+        /// enumeration, so an empty corpus would pass the whole gate while proving nothing — which is
+        /// what a top-directory-only scan of `stdlib/` actually does now that the library lives in tier
+        /// subfolders. Sits far below the real corpus so that ordinary growth, pruning or consolidation
+        /// never trips it, and is never re-pinned to the current count. It last moved when the split
+        /// declaration files were merged into stem files (50b0134), which roughly halved the corpus
+        /// while the old floor stayed where a four-hundred-file corpus had put it (stdlib-400).</summary>
+        private const int MinCorpusFiles = 100;
 
         [Test]
         public static void ForwardStdLibParsesAndCompiles()
         {
             var folder = CheckerTestSupport.FindForwardStdLib();
-            var files = CheckerTestSupport.PlatoFiles(folder);
+            var files = CheckerTestSupport.ForwardStdLibFiles();
             TestContext.WriteLine($"forward stdlib: {folder}");
-            TestContext.WriteLine($"files (*.plato, recursive): {files.Count}");
+            TestContext.WriteLine($"tiers: {string.Join(", ", CheckerTestSupport.AllTiers)}");
+            TestContext.WriteLine($"files (*.plato, all tiers): {files.Count}");
 
-            // Corpus floor. Every assertion below is an IsEmpty over results derived from `files`,
-            // so an empty corpus would make this whole gate pass while proving nothing — exactly
-            // what a top-only enumeration did once the tier subfolders landed. Deliberately far
-            // below the real count (398 at the 2026-07-30 reorg) so ordinary growth or pruning
-            // never trips it; it only catches "the enumeration stopped finding the library".
-            Assert.Greater(files.Count, 300,
+            Assert.Greater(files.Count, MinCorpusFiles,
                 $"forward stdlib corpus collapsed to {files.Count} files under {folder} — "
-                + "the enumeration is broken, not the library");
+                + "the enumeration is broken, not the library (see MinCorpusFiles)");
 
-            var failures = ParseFailures(folder);
+            var failures = ParseFailures(files);
             foreach (var f in failures)
                 TestContext.WriteLine($"  PARSE FAIL {f}");
 
@@ -111,8 +116,8 @@ namespace PlatoTests
 
             Assert.IsEmpty(failures, "forward stdlib files failed to parse");
 
-            // Green since plato-289 and held across the plato-293 re-partition: all 349 files parse
-            // and compile clean. This must hold in Debug AND Release — the bug it replaced was a Debug.Assert
+            // Green since plato-289 and held across the plato-293 re-partition: every tier file
+            // parses and compiles clean. This must hold in Debug AND Release — the bug it replaced was a Debug.Assert
             // in FunctionInstance that fired only under Debug and was then swallowed.
             Assert.IsEmpty(comp.SymbolFactory.Errors, "forward stdlib has symbol resolution errors");
             Assert.IsEmpty(comp.SemanticErrors, "forward stdlib has semantic errors");

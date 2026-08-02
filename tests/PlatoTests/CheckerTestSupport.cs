@@ -56,6 +56,18 @@ namespace PlatoTests
         public static readonly IReadOnlyList<string> AllTiers =
             new[] { "foundation", "geometry", "graphics", "future" };
 
+        /// <summary>The forward corpus is the TIER folders, never the whole `stdlib/` tree
+        /// (stdlib-398). `stdlib/tests/` sits there too and is a SEPARATE program: the law packet is
+        /// merged with the tiers only by `tools/regen-forward-conformance.ps1`, so a recursive scan
+        /// would put law diagnostics under the checker ratchet, which is scoped to the library.</summary>
+        public static IReadOnlyList<string> ForwardStdLibTierFolders()
+            => AllTiers.Select(t => Path.Combine(FindForwardStdLib(), t)).ToList();
+
+        /// <summary>Every *.plato in the forward tiers — the population the ForwardStdLib* fixtures
+        /// parse, check and assert over.</summary>
+        public static IReadOnlyList<string> ForwardStdLibFiles()
+            => ForwardStdLibTierFolders().SelectMany(PlatoFiles).ToList();
+
         public static AstNode ParseFile(string path)
         {
             var text = File.ReadAllText(path);
@@ -91,12 +103,11 @@ namespace PlatoTests
         public static Compilation CompileStdLib()
             => CompileFolder(FindPlatoSrc());
 
-        /// <summary>
-        /// Compiles the forward vocabulary. Plato.CLI enumerates *.plato non-recursively, which picks
-        /// up both the declaration files and the *.library.plato bodies sitting flat beside them.
-        /// </summary>
+        /// <summary>Compiles the forward vocabulary — all four tiers, declarations plus the
+        /// *.library.plato bodies flat beside them. See <see cref="ForwardStdLibTierFolders"/> for why
+        /// this is tier-scoped rather than a recursive walk of `stdlib/`.</summary>
         public static Compilation CompileForwardStdLib()
-            => CompileFolder(FindForwardStdLib());
+            => CompileFolders(ForwardStdLibTierFolders());
 
         /// <summary>The forward vocabulary MINUS `future` — what the lint gate and the C#
         /// codegen actually see by default. See <see cref="ShippingTiers"/>.</summary>

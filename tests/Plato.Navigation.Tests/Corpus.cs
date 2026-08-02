@@ -14,10 +14,13 @@ public static class Corpus
 {
     public static DirectoryPath RepoRoot { get; } = FindRepoRoot();
 
+    /// <summary>One root: the law/witness packet moved to `stdlib/tests/` (stdlib-398) and
+    /// <see cref="SourceSnapshot.FromDirectories"/> recurses, so `stdlib` already covers it. Naming
+    /// both would hand the snapshot the same file twice, which is a duplicate-key throw, not a
+    /// no-op.</summary>
     public static IReadOnlyList<DirectoryPath> Roots { get; } = new[]
     {
-        RepoRoot.RelativeFolder("stdlib"),
-        RepoRoot.RelativeFolder("tests").RelativeFolder("stdlib-tests")
+        RepoRoot.RelativeFolder("stdlib")
     };
 
     private static readonly Lazy<BoundSnapshot> _bound =

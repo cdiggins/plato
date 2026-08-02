@@ -46,6 +46,11 @@ GENERATED = "tests/conformance/Plato.ForwardConformanceTests/Generated"
 # so the three below compile as a closed program.
 TIERS = ["stdlib/foundation", "stdlib/geometry", "stdlib/graphics"]
 FUTURE_TIER = "stdlib/future"
+# The forward law packet (Law_*/Witness_* libraries). It lives inside stdlib/ but is NOT a tier:
+# only the codegen step below merges it with the library, exactly as the conformance run does.
+# Plato.CLI enumerates each root top-directory-only, so naming it beside the tiers is not a
+# duplicate (stdlib-398).
+LAW_PACKET = "stdlib/tests"
 
 # The shipping recipe (docs/plato-library-map.md). Kept beside the codegen call it feeds.
 RECIPE = [
@@ -133,7 +138,7 @@ def measure(full: bool, include_future: bool = False) -> tuple[list[dict], dict,
         shutil.rmtree(PLATO / GENERATED)
     (PLATO / GENERATED).mkdir(parents=True, exist_ok=True)
     out, code, secs = run(["dotnet", "run", "--project", CLI, "-c", "Release", "--no-build", "--",
-                           *tiers, "tests/stdlib-tests", f"--out={GENERATED}", *RECIPE])
+                           *tiers, LAW_PACKET, f"--out={GENERATED}", *RECIPE])
     files = len(list((PLATO / GENERATED).glob("*.g.cs"))) if (PLATO / GENERATED).is_dir() else 0
     degraded = int(m.group(1)) if (m := re.search(r"DEGRADED bodies[^:]*: (\d+)", out)) else None
     extras["codegen"] = {"files": files, "degraded": degraded}
