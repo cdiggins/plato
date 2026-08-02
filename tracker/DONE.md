@@ -3,6 +3,8 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-08-02 — [stdlib-400](issues/stdlib-400.md) — Corpus-floor assertion stale after the stdlib file consolidation — done (c42dea5) - floor is now MinCorpusFiles, a collapse guard
+- 2026-08-02 — [stdlib-398](issues/stdlib-398.md) — Law packet moved into stdlib/ breaks the checker ratchet — done (c42dea5) - forward corpus is tier-scoped; packet stays at stdlib/tests
 - 2026-08-01 — [repo-396](issues/repo-396.md) — Retire bonepile All/Any LINQ shadows; guard Corpus roots — done (14e8311)
 - 2026-08-01 — [plato-376](issues/plato-376.md) — Interface obligations on a GENERIC type can never be discharged — done — pairing fix landed in ConcreteType.ImplementationFor (positional one-way unification, tests in tests/PlatoTests/LinterGenericObligationTests.cs); the Array2D/Array3D half was cleared by plato-378 (91a7f57); the last box (split the remaining track blocker) was discharged by filing plato-382, now itself implemented and closed (37e3231 grammar/AST, 784873f checking, 5595c2b emission, 77e47d3 stdlib, 06e9d36 function bounds, 8f0135e ADR/close) — Tween<T> now declares where T: Interpolatable with a real Sample body, LINT001 across the three shipping tiers is 0, ratchet 33 -> 32. Resolution amended 2026-08-01 to retract its stale forward-looking claims about Tween.
 - 2026-08-01 — [plato-382](issues/plato-382.md) — Constrained type parameters on concrete types, and constraint-carrying C# emission — done (37e3231 grammar/AST, 784873f checker, 5595c2b emission, 77e47d3 stdlib, 06e9d36 function bounds); ADR tracker/decisions/2026-08-01-declared-type-parameter-bounds-are-verified-and-emitted.md

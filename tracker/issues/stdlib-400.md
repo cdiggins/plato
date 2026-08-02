@@ -2,14 +2,14 @@
 id: stdlib-400
 title: Corpus-floor assertion stale after the stdlib file consolidation
 type: bug
-status: ready
+status: done
 priority: p3
 effort: S
 risk: low
 area: stdlib
 sprint: 
 created: 2026-08-02
-closed:
+closed: 2026-08-02
 links: []
 ---
 
@@ -44,7 +44,17 @@ Note the count is also affected by `stdlib-398`: the forward law packet now sits
 inside the recursive scan, so it contributes files that were previously outside it. Settle that
 issue's location question first, or the floor will need moving twice.
 
+## Resolution (c42dea5)
+
+The literal became the named constant `MinCorpusFiles`, whose doc comment says it is a COLLAPSE
+GUARD rather than a file count, records that it last moved at the stem-file consolidation, and tells
+the next reader not to re-pin it to the current corpus. The assertion message points at the constant.
+
+`stdlib-398` was settled first, in the same commit: the corpus is now the four tier folders, so the
+law packet at `stdlib/tests` does not contribute to the count and the floor will not need moving a
+second time.
+
 ## Done means
 
-- [ ] `ForwardStdLibParsesAndCompiles` passes, with a floor that still fails on an empty scan
-- [ ] The assertion's message explains which change moved it
+- [x] `ForwardStdLibParsesAndCompiles` passes, with a floor that still fails on an empty scan
+- [x] The assertion's message explains which change moved it

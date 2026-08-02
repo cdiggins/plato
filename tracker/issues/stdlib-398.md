@@ -2,7 +2,7 @@
 id: stdlib-398
 title: Law packet moved into stdlib/ breaks the checker ratchet
 type: bug
-status: ready
+status: done
 priority: p2
 effort: S
 risk: low
@@ -10,6 +10,7 @@ area: stdlib
 sprint: 
 created: 2026-08-02
 links: []
+closed: 2026-08-02
 ---
 
 ## Symptom
@@ -67,8 +68,29 @@ to be or not.
 
 Option 1 matches the documented design.
 
+## Resolution (c42dea5, 25d0938)
+
+**Option 3, generalized** — the packet stays at `stdlib/tests/`, and the fixtures stopped walking
+`stdlib/` recursively. `CheckerTestSupport` gained `ForwardStdLibTierFolders()` /
+`ForwardStdLibFiles()`, and `CompileForwardStdLib()` plus `ForwardStdLibParsesAndCompiles` now
+enumerate the four tier folders. Not a special-case skip of one path: the forward corpus is defined
+as the tiers, so any future non-tier folder under `stdlib/` is out of scope by construction, and the
+pre-move scope split is restored (laws gated by the conformance run, library by the ratchet) with no
+file move and no library change.
+
+Option 1 was ruled out because the move into `stdlib/` is intended. Option 2 (give the sum-kind types
+an `Equals`) is a real gap and remains worth doing on its own merits — it is what the three laws
+need to type-check — but it is a library change, not a fix for a mis-scoped gate.
+
+Consumers: `Corpus.cs` now has ONE root (`SourceSnapshot.FromDirectories` recurses, so `stdlib`
+already covers `stdlib/tests`; naming both would be a duplicate-key throw), `record-gates.py` names
+`stdlib/tests` in its codegen step, and the MCP launcher
+(`~/.claude/skills/plato-mcp/ensure-server.ps1`, outside this repo) defaults to the single `stdlib`
+root. Studio's `regen-forward-conformance.ps1` still names `submodules/Plato/tests/stdlib-tests`;
+that copy lives in the other repo and was not touched here.
+
 ## Done means
 
-- [ ] `tools/check-stdlib-fast.ps1` passes all three gates with the ratchet ceiling still at 0
-- [ ] `Corpus.cs`, `record-gates.py` and the MCP default roots name a path that exists
-- [ ] The law packet's README and the location it describes agree
+- [x] `tools/check-stdlib-fast.ps1` passes all three gates with the ratchet ceiling still at 0
+- [x] `Corpus.cs`, `record-gates.py` and the MCP default roots name a path that exists
+- [x] The law packet's README and the location it describes agree
