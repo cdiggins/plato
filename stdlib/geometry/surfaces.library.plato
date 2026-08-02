@@ -60,13 +60,11 @@ library Surfaces
     // sites rather than factored out. Only obligations — `Eval` here — dispatch
     // through an interface.
 
-    // The number of columns of a control net (the U direction).
-    NetColumns(net: Array2D<Point3D>): Integer
-        => net.ColumnCount;
-
-    // The number of rows of a control net (the V direction).
-    NetRows(net: Array2D<Point3D>): Integer
-        => net.RowCount;
+    // The same restriction bites one step further out: a helper whose first parameter
+    // is a CONCRETE INSTANTIATION of a generic type (`net: Array2D<Point3D>`) is not
+    // monomorphized into an extension either, so the call sites read the control net's
+    // ColumnCount (U direction) and RowCount (V direction) fields directly. There is
+    // nothing to factor out — both were one-line field reads.
 
     //==
     // Patches and control nets
@@ -81,7 +79,7 @@ library Surfaces
     // The tensor-product de Casteljau: reduce each row of the control net along
     // U, then reduce the resulting column of points along V.
     Eval(s: BezierPatch, uv: UvCoordinate): Point3D
-        => NetRows(s.ControlPoints)
+        => s.ControlPoints.RowCount
             .MapRange(r => s.ControlPoints.Row(r).DeCasteljau(uv.U))
             .DeCasteljau(uv.V);
     ClosedU(s: BezierPatch): Boolean => false;
@@ -95,7 +93,7 @@ library Surfaces
         var vDomain = s.VKnots.Domain(s.VDegree);
         var u = KnotParameter(uDomain, uv.U);
         var v = KnotParameter(vDomain, uv.V);
-        var columns = NetColumns(s.ControlPoints);
+        var columns = s.ControlPoints.ColumnCount;
         var sum = s.ControlPoints.Count.Range.Reduce(Vector3D.Zero, (acc, k) =>
             acc + s.ControlPoints.Row(k / columns)[k % columns].PositionVector
                 * (BasisFunction(s.UKnots, uDomain.End, k % columns, s.UDegree, u)
@@ -113,7 +111,7 @@ library Surfaces
         var vDomain = s.VKnots.Domain(s.VDegree);
         var u = KnotParameter(uDomain, uv.U);
         var v = KnotParameter(vDomain, uv.V);
-        var columns = NetColumns(s.ControlPoints);
+        var columns = s.ControlPoints.ColumnCount;
         var count = s.ControlPoints.Count;
         var numerator = count.Range.Reduce(Vector3D.Zero, (acc, k) =>
             acc + s.ControlPoints.Row(k / columns)[k % columns].PositionVector

@@ -288,7 +288,7 @@ library Lines
     // The complementary closed half-space: the region on the other side of the same
     // boundary plane, obtained by flipping that plane.
     Flip(h: HalfSpace): HalfSpace
-        => h.Boundary.Flip;
+        => HalfSpace(h.Boundary.Flip);
 
     // Where the infinite line crosses the plane. Misses (Hit false) only when the
     // line is parallel to the plane (Dot(Normal, Direction) = 0), including a line

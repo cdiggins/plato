@@ -312,6 +312,13 @@ namespace Ara3D.Geometry.Compiler.Checking
             var name = call.Function?.Name;
             if (call.Args.Count == 1 && call.HasArgList && IsTypeName(name))
                 return EmissionKind.Conversion;
+            // A type-named call with an ARG LIST and more than one argument is a CONSTRUCTION
+            // (`Vector2D(a.Cos, a.Sin)`). Without this it falls through to InstanceMethod and the
+            // writer reads argument 0 as the receiver — `a.Cos().Vector2D(a.Sin())`. The resolved
+            // path gets this from FunctionType.Constructor; a call inside a lambda body whose
+            // argument types the solver could not ground arrives here instead.
+            if (call.Args.Count > 1 && call.HasArgList && IsTypeName(name))
+                return EmissionKind.Constructor;
             if (call.Args.Count == 1 && !call.HasArgList)
                 return EmissionKind.Property;
             if (IsOperatorName(name))

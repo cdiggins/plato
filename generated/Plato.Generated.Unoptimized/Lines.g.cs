@@ -101,7 +101,7 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static Integer Hash(this Plane pl) => pl.Normal.Vector.Hash().Multiply(((Integer)31)).Add(pl.Distance.Hash());
-        [MethodImpl(AggressiveInlining)] public static HalfSpace Flip(this HalfSpace h) => h.Boundary.Flip();
+        [MethodImpl(AggressiveInlining)] public static HalfSpace Flip(this HalfSpace h) => new Ara3D.Geometry.HalfSpace(h.Boundary.Flip());
         [MethodImpl(AggressiveInlining)] public static Number SignedDistance(this HalfPlane2D h, Point2D point) => point.PositionVector().Dot(h.Normal.Vector).Subtract(h.Distance);
     }
 }

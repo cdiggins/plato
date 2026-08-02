@@ -65,11 +65,11 @@ library MeshesPolygon
 
     // The vertex a corner refers to. Precondition: the corner is present.
     CornerVertex(self: PolygonMesh3D, corner: CornerIndex): VertexIndex
-        => self.Faces.Values[corner];
+        => self.Faces.Values[corner.Value];
 
     // The position a corner refers to. Precondition: the corner is present.
     CornerPosition(self: PolygonMesh3D, corner: CornerIndex): Point3D
-        => self.Positions[self.CornerVertex(corner)];
+        => self.Positions[self.CornerVertex(corner).Value];
 
     //==
     // IWhole-face views. The vertex loop itself is `Faces.Row(face)`.

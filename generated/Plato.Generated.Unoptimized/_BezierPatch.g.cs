@@ -74,7 +74,7 @@ namespace Ara3D.Geometry
             var _var954 = uv;
             {
                 var _var953 = this;
-                return this.ControlPoints.NetRows().MapRange((r)  => _var953.ControlPoints.Row(r).DeCasteljau(_var954.U)).DeCasteljau(uv.V);
+                return this.ControlPoints.RowCount.MapRange((r)  => _var953.ControlPoints.Row(r).DeCasteljau(_var954.U)).DeCasteljau(uv.V);
             }
         }
 

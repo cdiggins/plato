@@ -115,7 +115,7 @@ namespace Ara3D.Geometry
                                                         var vDomain = this.VKnots.Domain(this.VDegree);
                                                         var u = uDomain.KnotParameter(uv.U);
                                                         var v = vDomain.KnotParameter(uv.V);
-                                                        var columns = this.ControlPoints.NetColumns();
+                                                        var columns = this.ControlPoints.ColumnCount;
                                                         var count = this.ControlPoints.Count;
                                                         var numerator = count.Range().Reduce(default(Ara3D.Geometry.Vector3D).Zero(), (acc, k)  => acc.Add(_var980.ControlPoints.Row(k.Divide(columns))[k.Modulo(columns)].PositionVector().Multiply(_var981.Weights.Row(k.Divide(columns))[k.Modulo(columns)].Multiply(_var982.UKnots.BasisFunction(uDomain.End, k.Modulo(columns), _var983.UDegree, u)).Multiply(_var984.VKnots.BasisFunction(vDomain.End, k.Divide(columns), _var985.VDegree, v)))));
                                                         var denominator = count.Range().Reduce(((Number)0), (acc, k)  => acc.Add(_var986.Weights.Row(k.Divide(columns))[k.Modulo(columns)].Multiply(_var987.UKnots.BasisFunction(uDomain.End, k.Modulo(columns), _var988.UDegree, u)).Multiply(_var989.VKnots.BasisFunction(vDomain.End, k.Divide(columns), _var990.VDegree, v))));

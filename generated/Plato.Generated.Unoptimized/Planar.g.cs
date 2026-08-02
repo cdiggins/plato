@@ -62,7 +62,7 @@ namespace Ara3D.Geometry
                         var _var1369 = g;
                         return g.SideCount.MapRange((i) => {
                             var a = _var1369.Rotation.Add(i.ToNumber().Divide(_var1370.SideCount.ToNumber()).Turns());
-                            return _var1371.Center.Add(a.Cos().Vector2D(a.Sin()).Multiply(_var1372.CircumRadius));
+                            return _var1371.Center.Add(new Ara3D.Geometry.Vector2D(a.Cos(), a.Sin()).Multiply(_var1372.CircumRadius));
                         }
                         );
                     }

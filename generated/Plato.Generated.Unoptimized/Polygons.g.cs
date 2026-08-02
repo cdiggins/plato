@@ -33,7 +33,7 @@ namespace Ara3D.Geometry
                             return s.PointCount.Multiply(((Integer)2)).MapRange((i) => {
                                 var radius = i.IsEven() ? _var1375.OuterRadius : _var1376.InnerRadius;
                                 var a = _var1377.Rotation.Add(i.ToNumber().Divide(((Number)2).Multiply(_var1378.PointCount.ToNumber())).Turns());
-                                return _var1379.Center.Add(a.Cos().Vector2D(a.Sin()).Multiply(radius));
+                                return _var1379.Center.Add(new Ara3D.Geometry.Vector2D(a.Cos(), a.Sin()).Multiply(radius));
                             }
                             );
                         }

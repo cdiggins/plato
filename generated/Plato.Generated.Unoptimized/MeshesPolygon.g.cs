@@ -19,8 +19,8 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Integer CornerCount(this PolygonMesh3D self) => ((Integer)self.Faces.Values.Count);
         [MethodImpl(AggressiveInlining)] public static Integer FaceArity(this PolygonMesh3D self, Integer face) => self.Faces.RowLength(face);
         [MethodImpl(AggressiveInlining)] public static CornerIndex FaceCorner(this PolygonMesh3D self, Integer face, Integer slot) => new Ara3D.Geometry.CornerIndex(self.Faces.Offsets[face].Add(slot.Modulo(self.FaceArity(face))));
-        [MethodImpl(AggressiveInlining)] public static VertexIndex CornerVertex(this PolygonMesh3D self, CornerIndex corner) => self.Faces.Values[corner];
-        [MethodImpl(AggressiveInlining)] public static Point3D CornerPosition(this PolygonMesh3D self, CornerIndex corner) => self.Positions[self.CornerVertex(corner)];
+        [MethodImpl(AggressiveInlining)] public static VertexIndex CornerVertex(this PolygonMesh3D self, CornerIndex corner) => self.Faces.Values[corner.Value];
+        [MethodImpl(AggressiveInlining)] public static Point3D CornerPosition(this PolygonMesh3D self, CornerIndex corner) => self.Positions[self.CornerVertex(corner).Value];
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<Point3D> FacePositions(this PolygonMesh3D self, Integer face){
             var _var2785 = self;
             return self.Faces.Row(face).Map((v)  => _var2785.Positions[v.Value]);

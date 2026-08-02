@@ -15,7 +15,7 @@ still not for hand editing (`// DO NOT EDIT`) — a change comes from rerunning 
 | Project | Source | Recipe (CLI flags) | State |
 |---|---|---|---|
 | `Plato.Generated.Foundation.Unoptimized` | `stdlib/foundation` (forward) | `--csharp-style=extensions` | Live; sources committed. Builds clean. |
-| `Plato.Generated.Unoptimized` | `stdlib/foundation` + `geometry` + `graphics` (forward) | `--out=…`, `--csharp-style=extensions` | Live; sources committed. **Emits, does not yet compile clean** — not in `Plato.sln`. |
+| `Plato.Generated.Unoptimized` | `stdlib/foundation` + `geometry` + `graphics` (forward) | `--out=…`, `--csharp-style=extensions` | Live; sources committed. Builds clean. Not in `Plato.sln`. |
 
 The wide project is the same recipe over every *shipping* tier: `stdlib/future` (not shipping) and
 `stdlib/tests` (test programs, not library) are excluded. Roots are enumerated top-directory-only
