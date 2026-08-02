@@ -38,9 +38,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly BivariatePolynomial Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Array2D<Number>(BivariatePolynomial self) => self.Coefficients;
-        [MethodImpl(AggressiveInlining)] public static implicit operator BivariatePolynomial(Array2D<Number> value) => new BivariatePolynomial(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(BivariatePolynomial other) => Coefficients.Equals(other.Coefficients);

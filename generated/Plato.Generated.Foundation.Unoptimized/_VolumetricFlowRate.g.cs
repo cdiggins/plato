@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly VolumetricFlowRate Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(VolumetricFlowRate self) => self.CubicMetersPerSecond;
-        [MethodImpl(AggressiveInlining)] public static implicit operator VolumetricFlowRate(Number value) => new VolumetricFlowRate(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator VolumetricFlowRate(Integer value) => new VolumetricFlowRate(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator VolumetricFlowRate(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator VolumetricFlowRate(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(VolumetricFlowRate value) => value.CubicMetersPerSecond;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

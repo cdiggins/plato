@@ -37,12 +37,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly FrameRate Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(FrameRate self) => self.FramesPerSecond;
-        [MethodImpl(AggressiveInlining)] public static implicit operator FrameRate(Number value) => new FrameRate(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator FrameRate(Integer value) => new FrameRate(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator FrameRate(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator FrameRate(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(FrameRate value) => value.FramesPerSecond;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

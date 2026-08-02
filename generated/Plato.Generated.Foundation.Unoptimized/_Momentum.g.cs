@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Momentum Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Momentum self) => self.KilogramMetersPerSecond;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Momentum(Number value) => new Momentum(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Momentum(Integer value) => new Momentum(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Momentum(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Momentum(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Momentum value) => value.KilogramMetersPerSecond;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

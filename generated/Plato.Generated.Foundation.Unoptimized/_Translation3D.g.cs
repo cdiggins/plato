@@ -37,9 +37,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Translation3D Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Vector3D(Translation3D self) => self.Vector;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Translation3D(Vector3D value) => new Translation3D(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(Translation3D other) => Vector.Equals(other.Vector);

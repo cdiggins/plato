@@ -37,9 +37,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly GeometricDistribution Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Probability(GeometricDistribution self) => self.SuccessProbability;
-        [MethodImpl(AggressiveInlining)] public static implicit operator GeometricDistribution(Probability value) => new GeometricDistribution(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(GeometricDistribution other) => SuccessProbability.Equals(other.SuccessProbability);

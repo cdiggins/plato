@@ -39,9 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly GraphVertexIndex Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Integer(GraphVertexIndex self) => self.Value;
-        [MethodImpl(AggressiveInlining)] public static implicit operator GraphVertexIndex(Integer value) => new GraphVertexIndex(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(GraphVertexIndex other) => Value.Equals(other.Value);

@@ -39,12 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly SolidAngle Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(SolidAngle self) => self.Steradians;
-        [MethodImpl(AggressiveInlining)] public static implicit operator SolidAngle(Number value) => new SolidAngle(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator SolidAngle(Integer value) => new SolidAngle(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator SolidAngle(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator SolidAngle(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(SolidAngle value) => value.Steradians;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

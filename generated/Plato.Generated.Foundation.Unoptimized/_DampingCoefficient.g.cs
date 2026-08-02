@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly DampingCoefficient Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(DampingCoefficient self) => self.NewtonSecondsPerMeter;
-        [MethodImpl(AggressiveInlining)] public static implicit operator DampingCoefficient(Number value) => new DampingCoefficient(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator DampingCoefficient(Integer value) => new DampingCoefficient(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator DampingCoefficient(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator DampingCoefficient(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(DampingCoefficient value) => value.NewtonSecondsPerMeter;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

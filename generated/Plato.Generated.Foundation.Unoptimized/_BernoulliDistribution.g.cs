@@ -37,9 +37,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly BernoulliDistribution Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Probability(BernoulliDistribution self) => self.SuccessProbability;
-        [MethodImpl(AggressiveInlining)] public static implicit operator BernoulliDistribution(Probability value) => new BernoulliDistribution(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(BernoulliDistribution other) => SuccessProbability.Equals(other.SuccessProbability);

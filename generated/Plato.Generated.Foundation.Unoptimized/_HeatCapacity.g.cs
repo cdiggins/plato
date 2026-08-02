@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly HeatCapacity Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(HeatCapacity self) => self.JoulesPerKelvin;
-        [MethodImpl(AggressiveInlining)] public static implicit operator HeatCapacity(Number value) => new HeatCapacity(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator HeatCapacity(Integer value) => new HeatCapacity(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator HeatCapacity(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator HeatCapacity(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(HeatCapacity value) => value.JoulesPerKelvin;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

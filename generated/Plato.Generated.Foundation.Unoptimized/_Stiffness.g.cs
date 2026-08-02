@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Stiffness Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Stiffness self) => self.NewtonsPerMeter;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Stiffness(Number value) => new Stiffness(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Stiffness(Integer value) => new Stiffness(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Stiffness(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Stiffness(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Stiffness value) => value.NewtonsPerMeter;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

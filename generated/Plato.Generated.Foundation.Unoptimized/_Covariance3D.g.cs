@@ -36,9 +36,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Covariance3D Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator SymmetricMatrix3x3(Covariance3D self) => self.Matrix;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Covariance3D(SymmetricMatrix3x3 value) => new Covariance3D(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(Covariance3D other) => Matrix.Equals(other.Matrix);

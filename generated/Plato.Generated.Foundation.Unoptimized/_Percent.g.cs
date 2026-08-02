@@ -37,12 +37,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Percent Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Percent self) => self.Value;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Percent(Number value) => new Percent(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Percent(Integer value) => new Percent(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Percent(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Percent(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Percent value) => value.Value;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

@@ -37,9 +37,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Scaling3D Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number3(Scaling3D self) => self.Amount;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Scaling3D(Number3 value) => new Scaling3D(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(Scaling3D other) => Amount.Equals(other.Amount);

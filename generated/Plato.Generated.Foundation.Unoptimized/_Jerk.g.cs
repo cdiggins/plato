@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Jerk Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Jerk self) => self.MetersPerSecondCubed;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Jerk(Number value) => new Jerk(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Jerk(Integer value) => new Jerk(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Jerk(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Jerk(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Jerk value) => value.MetersPerSecondCubed;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

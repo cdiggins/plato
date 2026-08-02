@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Curvature Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Curvature self) => self.PerMeter;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Curvature(Number value) => new Curvature(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Curvature(Integer value) => new Curvature(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Curvature(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Curvature(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Curvature value) => value.PerMeter;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

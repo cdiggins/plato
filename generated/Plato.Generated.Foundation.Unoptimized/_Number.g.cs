@@ -62,6 +62,7 @@ namespace Ara3D.Geometry
         // Implemented interface functions
         [MethodImpl(AggressiveInlining)] public _T0 Multiply<_T0>(_T0 x) where _T0 : IScalable<_T0> => x.Multiply(this);
         [MethodImpl(AggressiveInlining)] public Angle Angle() => new Angle(this);
+        [MethodImpl(AggressiveInlining)]  public static implicit operator Angle(Number x) => x.Angle();
         [MethodImpl(AggressiveInlining)] public Angle Multiply(Angle a) => new Angle(this.Multiply(a.Radians));
         [MethodImpl(AggressiveInlining)] public static Number GoldenRatio() => ((Number)1).Add(((Number)5).Sqrt()).Divide(((Number)2));
         [MethodImpl(AggressiveInlining)] public static Number Phi() => Ara3D.Geometry.Number.GoldenRatio();

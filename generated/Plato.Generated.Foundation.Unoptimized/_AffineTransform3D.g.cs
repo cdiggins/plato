@@ -37,9 +37,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly AffineTransform3D Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Matrix4x3(AffineTransform3D self) => self.Matrix;
-        [MethodImpl(AggressiveInlining)] public static implicit operator AffineTransform3D(Matrix4x3 value) => new AffineTransform3D(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(AffineTransform3D other) => Matrix.Equals(other.Matrix);

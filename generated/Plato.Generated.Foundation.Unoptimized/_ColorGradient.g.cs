@@ -38,7 +38,7 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly ColorGradient Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(ColorGradient other) => Stops.Equals(other.Stops);

@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Irradiance Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Irradiance self) => self.WattsPerSquareMeter;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Irradiance(Number value) => new Irradiance(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Irradiance(Integer value) => new Irradiance(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Irradiance(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Irradiance(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Irradiance value) => value.WattsPerSquareMeter;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

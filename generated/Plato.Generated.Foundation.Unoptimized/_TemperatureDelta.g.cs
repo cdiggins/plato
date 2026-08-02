@@ -39,12 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly TemperatureDelta Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(TemperatureDelta self) => self.Kelvin;
-        [MethodImpl(AggressiveInlining)] public static implicit operator TemperatureDelta(Number value) => new TemperatureDelta(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator TemperatureDelta(Integer value) => new TemperatureDelta(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator TemperatureDelta(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator TemperatureDelta(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(TemperatureDelta value) => value.Kelvin;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

@@ -36,12 +36,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Tempo Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Tempo self) => self.BeatsPerMinute;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Tempo(Number value) => new Tempo(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Tempo(Integer value) => new Tempo(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Tempo(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Tempo(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Tempo value) => value.BeatsPerMinute;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

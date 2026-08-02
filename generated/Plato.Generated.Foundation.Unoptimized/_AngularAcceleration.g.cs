@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly AngularAcceleration Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(AngularAcceleration self) => self.RadiansPerSecondSquared;
-        [MethodImpl(AggressiveInlining)] public static implicit operator AngularAcceleration(Number value) => new AngularAcceleration(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator AngularAcceleration(Integer value) => new AngularAcceleration(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator AngularAcceleration(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator AngularAcceleration(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(AngularAcceleration value) => value.RadiansPerSecondSquared;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

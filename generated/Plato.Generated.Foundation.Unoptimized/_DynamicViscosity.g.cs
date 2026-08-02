@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly DynamicViscosity Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(DynamicViscosity self) => self.PascalSeconds;
-        [MethodImpl(AggressiveInlining)] public static implicit operator DynamicViscosity(Number value) => new DynamicViscosity(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator DynamicViscosity(Integer value) => new DynamicViscosity(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator DynamicViscosity(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator DynamicViscosity(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(DynamicViscosity value) => value.PascalSeconds;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

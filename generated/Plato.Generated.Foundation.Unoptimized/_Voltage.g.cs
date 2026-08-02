@@ -39,12 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Voltage Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Voltage self) => self.Volts;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Voltage(Number value) => new Voltage(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Voltage(Integer value) => new Voltage(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Voltage(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Voltage(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Voltage value) => value.Volts;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly AngularMomentum Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(AngularMomentum self) => self.KilogramSquareMetersPerSecond;
-        [MethodImpl(AggressiveInlining)] public static implicit operator AngularMomentum(Number value) => new AngularMomentum(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator AngularMomentum(Integer value) => new AngularMomentum(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator AngularMomentum(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator AngularMomentum(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(AngularMomentum value) => value.KilogramSquareMetersPerSecond;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

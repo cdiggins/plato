@@ -39,12 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Torque Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Torque self) => self.NewtonMeters;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Torque(Number value) => new Torque(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Torque(Integer value) => new Torque(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Torque(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Torque(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Torque value) => value.NewtonMeters;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

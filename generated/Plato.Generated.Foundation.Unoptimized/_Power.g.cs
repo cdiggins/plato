@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Power Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Power self) => self.Watts;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Power(Number value) => new Power(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Power(Integer value) => new Power(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Power(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Power(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Power value) => value.Watts;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

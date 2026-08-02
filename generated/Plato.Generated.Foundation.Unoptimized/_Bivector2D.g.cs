@@ -37,12 +37,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Bivector2D Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Bivector2D self) => self.XY;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Bivector2D(Number value) => new Bivector2D(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Bivector2D(Integer value) => new Bivector2D(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Bivector2D(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Bivector2D(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Bivector2D value) => value.XY;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

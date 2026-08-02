@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly AmountOfSubstance Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(AmountOfSubstance self) => self.Moles;
-        [MethodImpl(AggressiveInlining)] public static implicit operator AmountOfSubstance(Number value) => new AmountOfSubstance(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator AmountOfSubstance(Integer value) => new AmountOfSubstance(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator AmountOfSubstance(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator AmountOfSubstance(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(AmountOfSubstance value) => value.Moles;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

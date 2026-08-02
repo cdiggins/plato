@@ -36,9 +36,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Cardinal Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Integer(Cardinal self) => self.Value;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Cardinal(Integer value) => new Cardinal(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(Cardinal other) => Value.Equals(other.Value);

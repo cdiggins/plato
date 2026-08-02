@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Frequency Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Frequency self) => self.Hertz;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Frequency(Number value) => new Frequency(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Frequency(Integer value) => new Frequency(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Frequency(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Frequency(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Frequency value) => value.Hertz;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

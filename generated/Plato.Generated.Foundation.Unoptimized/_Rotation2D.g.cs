@@ -36,9 +36,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Rotation2D Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Angle(Rotation2D self) => self.Angle;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Rotation2D(Angle value) => new Rotation2D(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(Rotation2D other) => Angle.Equals(other.Angle);

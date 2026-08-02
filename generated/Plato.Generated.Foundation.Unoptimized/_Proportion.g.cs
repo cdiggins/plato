@@ -37,12 +37,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Proportion Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Proportion self) => self.Value;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Proportion(Number value) => new Proportion(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Proportion(Integer value) => new Proportion(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Proportion(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Proportion(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Proportion value) => value.Value;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

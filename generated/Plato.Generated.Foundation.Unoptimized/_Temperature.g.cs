@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Temperature Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Temperature self) => self.Kelvin;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Temperature(Number value) => new Temperature(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Temperature(Integer value) => new Temperature(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Temperature(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Temperature(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Temperature value) => value.Kelvin;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

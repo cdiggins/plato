@@ -39,12 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly KinematicViscosity Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(KinematicViscosity self) => self.SquareMetersPerSecond;
-        [MethodImpl(AggressiveInlining)] public static implicit operator KinematicViscosity(Number value) => new KinematicViscosity(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator KinematicViscosity(Integer value) => new KinematicViscosity(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator KinematicViscosity(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator KinematicViscosity(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(KinematicViscosity value) => value.SquareMetersPerSecond;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

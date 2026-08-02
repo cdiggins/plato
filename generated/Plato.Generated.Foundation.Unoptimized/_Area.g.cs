@@ -39,12 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Area Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Area self) => self.SquareMeters;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Area(Number value) => new Area(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Area(Integer value) => new Area(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Area(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Area(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Area value) => value.SquareMeters;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

@@ -39,12 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Volume Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Volume self) => self.CubicMeters;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Volume(Number value) => new Volume(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Volume(Integer value) => new Volume(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Volume(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Volume(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Volume value) => value.CubicMeters;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

@@ -36,12 +36,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Duration Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Duration self) => self.Seconds;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Duration(Number value) => new Duration(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Duration(Integer value) => new Duration(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Duration(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Duration(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Duration value) => value.Seconds;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

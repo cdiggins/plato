@@ -39,12 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Length Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Length self) => self.Meters;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Length(Number value) => new Length(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Length(Integer value) => new Length(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Length(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Length(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Length value) => value.Meters;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

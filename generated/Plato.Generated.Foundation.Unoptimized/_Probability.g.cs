@@ -36,12 +36,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Probability Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Probability self) => self.Value;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Probability(Number value) => new Probability(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Probability(Integer value) => new Probability(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Probability(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Probability(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Probability value) => value.Value;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

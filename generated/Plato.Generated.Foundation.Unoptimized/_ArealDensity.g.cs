@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly ArealDensity Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(ArealDensity self) => self.KilogramsPerSquareMeter;
-        [MethodImpl(AggressiveInlining)] public static implicit operator ArealDensity(Number value) => new ArealDensity(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator ArealDensity(Integer value) => new ArealDensity(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator ArealDensity(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator ArealDensity(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(ArealDensity value) => value.KilogramsPerSquareMeter;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

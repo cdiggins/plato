@@ -39,12 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Force Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Force self) => self.Newtons;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Force(Number value) => new Force(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Force(Integer value) => new Force(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Force(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Force(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Force value) => value.Newtons;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

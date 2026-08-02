@@ -37,12 +37,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly PoissonDistribution Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(PoissonDistribution self) => self.Rate;
-        [MethodImpl(AggressiveInlining)] public static implicit operator PoissonDistribution(Number value) => new PoissonDistribution(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator PoissonDistribution(Integer value) => new PoissonDistribution(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator PoissonDistribution(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator PoissonDistribution(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(PoissonDistribution value) => value.Rate;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

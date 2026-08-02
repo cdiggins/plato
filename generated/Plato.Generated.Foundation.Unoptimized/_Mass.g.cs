@@ -39,12 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Mass Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Mass self) => self.Kilograms;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Mass(Number value) => new Mass(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Mass(Integer value) => new Mass(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Mass(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Mass(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Mass value) => value.Kilograms;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

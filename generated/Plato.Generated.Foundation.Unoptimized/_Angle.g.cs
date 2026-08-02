@@ -39,12 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Angle Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Angle self) => self.Radians;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Angle(Number value) => new Angle(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Angle(Integer value) => new Angle(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Angle(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Angle(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Angle value) => value.Radians;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly MomentOfInertia Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(MomentOfInertia self) => self.KilogramSquareMeters;
-        [MethodImpl(AggressiveInlining)] public static implicit operator MomentOfInertia(Number value) => new MomentOfInertia(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator MomentOfInertia(Integer value) => new MomentOfInertia(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator MomentOfInertia(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator MomentOfInertia(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(MomentOfInertia value) => value.KilogramSquareMeters;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

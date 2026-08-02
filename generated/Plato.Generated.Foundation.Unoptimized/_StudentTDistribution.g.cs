@@ -37,12 +37,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly StudentTDistribution Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(StudentTDistribution self) => self.DegreesOfFreedom;
-        [MethodImpl(AggressiveInlining)] public static implicit operator StudentTDistribution(Number value) => new StudentTDistribution(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator StudentTDistribution(Integer value) => new StudentTDistribution(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator StudentTDistribution(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator StudentTDistribution(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(StudentTDistribution value) => value.DegreesOfFreedom;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

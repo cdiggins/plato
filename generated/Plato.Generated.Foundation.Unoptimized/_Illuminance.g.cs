@@ -39,12 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Illuminance Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Illuminance self) => self.Lux;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Illuminance(Number value) => new Illuminance(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Illuminance(Integer value) => new Illuminance(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Illuminance(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Illuminance(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Illuminance value) => value.Lux;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

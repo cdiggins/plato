@@ -39,12 +39,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Energy Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Energy self) => self.Joules;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Energy(Number value) => new Energy(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Energy(Integer value) => new Energy(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Energy(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Energy(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Energy value) => value.Joules;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

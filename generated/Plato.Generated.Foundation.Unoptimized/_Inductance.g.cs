@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Inductance Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Inductance self) => self.Henries;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Inductance(Number value) => new Inductance(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Inductance(Integer value) => new Inductance(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Inductance(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Inductance(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Inductance value) => value.Henries;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

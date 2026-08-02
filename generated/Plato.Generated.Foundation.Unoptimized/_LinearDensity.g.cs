@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly LinearDensity Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(LinearDensity self) => self.KilogramsPerMeter;
-        [MethodImpl(AggressiveInlining)] public static implicit operator LinearDensity(Number value) => new LinearDensity(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator LinearDensity(Integer value) => new LinearDensity(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator LinearDensity(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator LinearDensity(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(LinearDensity value) => value.KilogramsPerMeter;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

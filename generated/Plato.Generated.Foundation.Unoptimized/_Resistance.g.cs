@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Resistance Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Resistance self) => self.Ohms;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Resistance(Number value) => new Resistance(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Resistance(Integer value) => new Resistance(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Resistance(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Resistance(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Resistance value) => value.Ohms;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

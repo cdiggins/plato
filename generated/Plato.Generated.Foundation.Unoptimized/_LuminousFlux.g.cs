@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly LuminousFlux Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(LuminousFlux self) => self.Lumens;
-        [MethodImpl(AggressiveInlining)] public static implicit operator LuminousFlux(Number value) => new LuminousFlux(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator LuminousFlux(Integer value) => new LuminousFlux(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator LuminousFlux(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator LuminousFlux(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(LuminousFlux value) => value.Lumens;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

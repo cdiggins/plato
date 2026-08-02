@@ -40,9 +40,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly ItemIndex Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Integer(ItemIndex self) => self.Value;
-        [MethodImpl(AggressiveInlining)] public static implicit operator ItemIndex(Integer value) => new ItemIndex(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(ItemIndex other) => Value.Equals(other.Value);

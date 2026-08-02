@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Capacitance Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Capacitance self) => self.Farads;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Capacitance(Number value) => new Capacitance(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Capacitance(Integer value) => new Capacitance(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Capacitance(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Capacitance(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Capacitance value) => value.Farads;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

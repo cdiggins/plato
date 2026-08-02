@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly MassFlowRate Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(MassFlowRate self) => self.KilogramsPerSecond;
-        [MethodImpl(AggressiveInlining)] public static implicit operator MassFlowRate(Number value) => new MassFlowRate(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator MassFlowRate(Integer value) => new MassFlowRate(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator MassFlowRate(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator MassFlowRate(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(MassFlowRate value) => value.KilogramsPerSecond;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

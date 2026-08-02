@@ -38,12 +38,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Instant Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Instant self) => self.SecondsSinceEpoch;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Instant(Number value) => new Instant(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Instant(Integer value) => new Instant(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Instant(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Instant(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Instant value) => value.SecondsSinceEpoch;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

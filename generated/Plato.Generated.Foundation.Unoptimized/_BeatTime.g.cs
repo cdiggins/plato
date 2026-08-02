@@ -38,12 +38,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly BeatTime Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(BeatTime self) => self.Beats;
-        [MethodImpl(AggressiveInlining)] public static implicit operator BeatTime(Number value) => new BeatTime(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator BeatTime(Integer value) => new BeatTime(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator BeatTime(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator BeatTime(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(BeatTime value) => value.Beats;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

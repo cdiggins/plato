@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly ElectricCharge Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(ElectricCharge self) => self.Coulombs;
-        [MethodImpl(AggressiveInlining)] public static implicit operator ElectricCharge(Number value) => new ElectricCharge(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator ElectricCharge(Integer value) => new ElectricCharge(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator ElectricCharge(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator ElectricCharge(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(ElectricCharge value) => value.Coulombs;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

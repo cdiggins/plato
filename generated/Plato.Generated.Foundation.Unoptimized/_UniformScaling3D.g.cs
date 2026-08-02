@@ -37,12 +37,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly UniformScaling3D Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(UniformScaling3D self) => self.Amount;
-        [MethodImpl(AggressiveInlining)] public static implicit operator UniformScaling3D(Number value) => new UniformScaling3D(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator UniformScaling3D(Integer value) => new UniformScaling3D(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator UniformScaling3D(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator UniformScaling3D(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(UniformScaling3D value) => value.Amount;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

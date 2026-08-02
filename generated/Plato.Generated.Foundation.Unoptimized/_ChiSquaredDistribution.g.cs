@@ -36,12 +36,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly ChiSquaredDistribution Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(ChiSquaredDistribution self) => self.DegreesOfFreedom;
-        [MethodImpl(AggressiveInlining)] public static implicit operator ChiSquaredDistribution(Number value) => new ChiSquaredDistribution(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator ChiSquaredDistribution(Integer value) => new ChiSquaredDistribution(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator ChiSquaredDistribution(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator ChiSquaredDistribution(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(ChiSquaredDistribution value) => value.DegreesOfFreedom;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

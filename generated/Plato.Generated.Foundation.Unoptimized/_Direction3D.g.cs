@@ -44,9 +44,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Direction3D Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Vector3D(Direction3D self) => self.Vector;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Direction3D(Vector3D value) => new Direction3D(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(Direction3D other) => Vector.Equals(other.Vector);

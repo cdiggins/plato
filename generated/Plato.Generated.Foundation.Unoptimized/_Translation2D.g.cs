@@ -37,9 +37,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Translation2D Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Vector2D(Translation2D self) => self.Vector;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Translation2D(Vector2D value) => new Translation2D(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(Translation2D other) => Vector.Equals(other.Vector);

@@ -38,9 +38,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Transform2D Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Matrix3x3(Transform2D self) => self.Matrix;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Transform2D(Matrix3x3 value) => new Transform2D(value);
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
         [MethodImpl(AggressiveInlining)] public Boolean Equals(Transform2D other) => Matrix.Equals(other.Matrix);

@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly ThermalConductivity Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(ThermalConductivity self) => self.WattsPerMeterKelvin;
-        [MethodImpl(AggressiveInlining)] public static implicit operator ThermalConductivity(Number value) => new ThermalConductivity(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator ThermalConductivity(Integer value) => new ThermalConductivity(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator ThermalConductivity(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator ThermalConductivity(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(ThermalConductivity value) => value.WattsPerMeterKelvin;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString

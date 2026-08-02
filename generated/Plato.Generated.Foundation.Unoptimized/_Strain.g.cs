@@ -41,12 +41,8 @@ namespace Ara3D.Geometry
         // Static default implementation
         public static readonly Strain Default = default;
 
-        // Implicit converters to/from single field
+        // Implicit converter to the single field (unwrap only)
         [MethodImpl(AggressiveInlining)] public static implicit operator Number(Strain self) => self.Ratio;
-        [MethodImpl(AggressiveInlining)] public static implicit operator Strain(Number value) => new Strain(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Strain(Integer value) => new Strain(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Strain(int value) => new Integer(value);
-        [MethodImpl(AggressiveInlining)] public static implicit operator Strain(float value) => new Number(value);
         [MethodImpl(AggressiveInlining)] public static implicit operator float(Strain value) => value.Ratio;
 
         // Object virtual function overrides: Equals, GetHashCode, ToString
