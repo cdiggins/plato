@@ -15,6 +15,7 @@ public static class Program
           def <file> <line> <col>        definitions of the symbol at a position (0-based)
           refs <file> <line> <col>       references to the symbol at a position (0-based)
           export <out.json>              write the whole index, sources included, as JSON
+          simplify [--code C] [--write]  propose (or apply) redundancy-removing rewrites
         """;
 
     public static int Main(string[] args)
@@ -38,6 +39,8 @@ public static class Program
             return Stats(roots);
         if (verb == "bench")
             return Bench(roots);
+        if (verb == "simplify")
+            return Simplify(roots, Option(args, "--code"), args.Contains("--write"));
 
         var index = NavigationIndex.Build(SourceSnapshot.FromDirectories(roots));
         return verb switch
@@ -182,6 +185,36 @@ public static class Program
         Console.WriteLine($"{positional[0]}: {json.Length} bytes, {index.Defs.Count} defs, {index.Refs.Count} refs");
         return 0;
     }
+
+    /// <summary>Preview by default; <c>--write</c> rewrites the files in place. Every edit is
+    /// re-validated against the text read back from disk, so a stale offset throws rather than
+    /// corrupting a file. Verify with the check gates afterwards.</summary>
+    private static int Simplify(IReadOnlyList<DirectoryPath> roots, string? code, bool write)
+    {
+        var parsed = CheckSupport.Parse(SourceSnapshot.FromDirectories(roots), new ParseCache());
+        var edits = Simplifier.Check(parsed)
+            .Where(e => code == null || string.Equals(e.Code, code, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        foreach (var e in edits)
+            Console.WriteLine($"{e.File}:{e.Line}:{e.Column}\t{e.Code}\t{OneLine(e.Before)}\t=>\t{OneLine(e.After)}");
+
+        if (write)
+            foreach (var group in edits.GroupBy(e => e.File))
+            {
+                var text = File.ReadAllText(group.Key);
+                var next = Simplifier.Apply(text, group.ToList());
+                if (next != text)
+                    File.WriteAllText(group.Key, next);
+            }
+
+        Console.WriteLine($"{edits.Count} edit(s) in {edits.Select(e => e.File).Distinct().Count()} file(s)"
+                          + (write ? ", written" : ", preview only (--write applies them)"));
+        return 0;
+    }
+
+    private static string OneLine(string text)
+        => string.Join(" ", text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
 
     private static SymbolHit? HitAt(NavigationIndex index, IReadOnlyList<string> positional)
         => positional.Count < 3
