@@ -13,7 +13,7 @@ namespace Ara3D.Geometry.CLI
 {
     public static class Program
     {
-        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline]
+        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--loops] [--static-abstract] [--dump-tir=<dir>] [--inline-report]
         //        Plato.CLI <inputFolder>... --out=<outputFolder> [same flags]
         //        Plato.CLI lint <inputFolder>... [--strict]
         // With no arguments, the folders come from Config and C# is generated (original behavior).
@@ -70,9 +70,11 @@ namespace Ara3D.Geometry.CLI
             // to stderr after emission (M0 optimizer instrumentation). No effect on emitted C#.
             var inlineReport = args.Contains("--inline-report");
 
-            // The C# emitter produces one recipe: extension-style, scalar-erased output. The legacy
-            // default (wrapper-struct) style was retired with CSharpFunctionBodyWriter (consolidation
-            // plan C4); --csharp-style=extensions is still accepted for script/flag parity.
+            // The C# emitter produces one recipe: extension-style, wrapper-scalar, property-free
+            // output. The legacy default style was retired with CSharpFunctionBodyWriter
+            // (consolidation plan C4); --csharp-style=extensions is still accepted for script/flag
+            // parity. (Scalar ERASURE, which this comment used to name as part of the recipe, was
+            // itself retired 2026-08-01 — see the --scalar= rejection below.)
             var csharpStyle = args.Where(a => a.StartsWith("--csharp-style="))
                 .Select(a => a.Substring("--csharp-style=".Length)).LastOrDefault() ?? "extensions";
             if (csharpStyle != "extensions")
