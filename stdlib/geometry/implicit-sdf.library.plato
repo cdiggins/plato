@@ -147,7 +147,7 @@ library ImplicitSdf
     // # SDF modifier application
     //
     // The parameter records declared in `implicit-sdf.types.plato`, applied to
-    // a source field. IValue modifiers reshape an already-sampled distance; domain
+    // a source field. Value modifiers reshape an already-sampled distance; domain
     // modifiers reshape the position BEFORE the source is sampled, so they compose
     // with `MapDomain`. Domain modifiers other than repetition preserve exact
     // distances; repetition, twist, bend, and displacement return bounds.
@@ -447,7 +447,7 @@ library ImplicitSdf
         match (combine) {
             Union => UnionDistance(a, b);
             Intersection => IntersectionDistance(a, b);
-            IDifference => SubtractDistance(a, b);
+            Difference => SubtractDistance(a, b);
             ExclusiveOr => ExclusiveOrDistance(a, b);
             SmoothUnion(radius) => SmoothUnionDistance(a, b, radius);
             SmoothIntersection(radius) => SmoothIntersectionDistance(a, b, radius);

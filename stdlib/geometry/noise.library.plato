@@ -184,7 +184,7 @@ library Noise
     BasisValue2D(basis: NoiseBasis, seed: Integer, frequency: Number, p: Point2D): Number
         => match (basis) {
             White => WhiteNoise2D(seed).Eval(p) * 2.0 - 1.0;
-            IValue => ValueNoise2D(seed, frequency).Eval(p);
+            Value => ValueNoise2D(seed, frequency).Eval(p);
             Perlin => PerlinNoise2D(seed, frequency).Eval(p);
             Simplex => SimplexNoise2D(seed, frequency).Eval(p);
             Worley => 1.0 - 2.0 * WorleyNoise2D(seed, frequency, 1.0,
@@ -196,7 +196,7 @@ library Noise
     BasisValue3D(basis: NoiseBasis, seed: Integer, frequency: Number, p: Point3D): Number
         => match (basis) {
             White => WhiteNoise3D(seed).Eval(p) * 2.0 - 1.0;
-            IValue => ValueNoise3D(seed, frequency).Eval(p);
+            Value => ValueNoise3D(seed, frequency).Eval(p);
             Perlin => PerlinNoise3D(seed, frequency).Eval(p);
             Simplex => SimplexNoise3D(seed, frequency).Eval(p);
             Worley => 1.0 - 2.0 * WorleyNoise3D(seed, frequency, 1.0,
@@ -237,7 +237,7 @@ library Noise
         => HashToUnit(LatticeHash(self.Seed, p.X.Hash, p.Y.Hash, p.Z.Hash));
 
     //==
-    // # IValue noise
+    // # Value noise
     //
     // One random value per lattice corner, faded between them. Cheap, and the
     // extrema sit ON the lattice, which is the lattice artifact the type's doc
