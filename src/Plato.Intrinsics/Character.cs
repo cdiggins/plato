@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using static System.Runtime.CompilerServices.MethodImplOptions;
 
 namespace Ara3D.Geometry
@@ -7,8 +8,8 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A simple wrapper around the built-in <c>char</c> type.
     /// </summary>
-    [DataContract]
-    public partial struct Character
+    [DataContract, JsonConverter(typeof(CharacterJsonConverter))]
+    public readonly partial struct Character
     {
         // -------------------------------------------------------------------------------
         // Field

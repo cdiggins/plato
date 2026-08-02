@@ -68,6 +68,23 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     public static string IIStr(InterfaceImplementation ii)
         => $"{ii.Interface.Name} : {ii.TypeExpression} [ {ii.Substitutions} ]";
 
+    /// <summary>Carry a Plato declaration's `//` comment block (see
+    /// <see cref="Compiler.Symbols.DocComment"/>) into the emitted C# as an XML doc comment.
+    /// The generated struct is where this vocabulary is actually read, so the prose has to travel
+    /// with it; nothing is written when the declaration has no comment.</summary>
+    public CSharpTypeWriter WriteDoc(string doc)
+    {
+        if (string.IsNullOrWhiteSpace(doc))
+            return this;
+        WriteLine("/// <summary>");
+        foreach (var line in doc.Split('\n'))
+            WriteLine("/// " + EscapeXml(line.TrimEnd('\r')));
+        return WriteLine("/// </summary>");
+    }
+
+    private static string EscapeXml(string s)
+        => s.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+
     public CSharpTypeWriter WriteConcreteType(ConcreteType ct)
     {
         Debug.Assert(ct.TypeDef == TypeDef);
@@ -137,9 +154,9 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
 
         var inherits = type.Inherits.Select(this.ToCSharpType).ToList();
 
-        // plato-311 (Option A, dual-interface lowering): a self-constrained concept with at least
+        // plato-311 (Option A, dual-interface lowering): a self-constrained interface with at least
         // one object-safe member also gets a non-generic existential view `interface C` — what a
-        // bare (type-position) reference to the concept renders as. The F-bounded `interface
+        // bare (type-position) reference to the interface renders as. The F-bounded `interface
         // C<Self>` inherits it (`: C, ...`) alongside its existing base interfaces, so nothing
         // reachable through `C<Self>` today is lost; the view is purely additive.
         if (type.IsSelfConstrained() && type.HasObjectSafeSurface())
@@ -151,6 +168,8 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         var inherited = inherits.Count > 0 ? ": " + inherits.JoinStringsWithComma() : "";
         var selfConstraint = type.IsSelfConstrained() ? " where Self : " + FullName : "";
 
+        WriteDoc(type.Doc);
+        WriteLine(CSharpWriter.GeneratedCodeAttribute);
         Write("public interface ").Write(FullName).Write(inherited).WriteLine(selfConstraint);
 
         // TODO: maybe make the "Self" actually constrained on the interface.
@@ -158,7 +177,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         return WriteInterfaceFunctions(type);
     }
 
-    // plato-311: the non-generic existential view's own name — the concept's name plus its OWN
+    // plato-311: the non-generic existential view's own name — the interface's name plus its OWN
     // (non-Self) type parameters, e.g. "Curve3D" or "Procedural<T, U>". Self never appears: every
     // member on the view is object-safe, so Self occurs only as the (implicit, unwritten) receiver.
     private static string ViewTypeName(TypeDef type)
@@ -167,7 +186,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         return ownParams.Count > 0 ? $"{type.Name}<{ownParams.JoinStringsWithComma()}>" : type.Name;
     }
 
-    // The view name for an INHERITED concept reference (as written in an `inherits`/`implements`
+    // The view name for an INHERITED interface reference (as written in an `inherits`/`implements`
     // clause), e.g. rendering `Procedural<Number, Point3D>` for Curve3D's base — the explicit
     // (non-Self) type arguments as written, resolved through the ordinary type converter.
     private string InheritedViewTypeName(TypeExpression te)
@@ -176,9 +195,9 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         return args.Count > 0 ? $"{te.Def.Name}<{args.JoinStringsWithComma()}>" : te.Def.Name;
     }
 
-    // plato-311: emit the non-generic existential view interface for a self-constrained concept
+    // plato-311: emit the non-generic existential view interface for a self-constrained interface
     // that has an object-safe surface — the object-safe subset of its members (Self appears only
-    // as the receiver), inheriting the views of any base concepts that have their own view.
+    // as the receiver), inheriting the views of any base interfaces that have their own view.
     private CSharpTypeWriter WriteConceptView(TypeDef type)
     {
         var viewInherits = type.Inherits
@@ -229,7 +248,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     /// (VectorN: a single Array&lt;Number&gt; field) where the FIELD is the component surface —
     /// enumerating fields there gives Count == 1 and At(0) == the whole collection.
     ///
-    /// The test is the field type's CONCEPT, not the spelling of its name: the library declares
+    /// The test is the field type's interface, not the spelling of its name: the library declares
     /// such fields both as Array&lt;T&gt; (stdlib, implements Indexable&lt;T&gt;) and as IArray&lt;T&gt;
     /// (stdlib-legacy, declares At/Count directly), and both are the same shape. Requiring a linear
     /// At AND Count also excludes Array2D/Array3D, which implement Indexable2D/3D and have no
@@ -326,7 +345,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
             // (stdlib-legacy) recipes this never happens (fallback = 0, byte-identity gate).
             // For the forward stdlib some bodies genuinely cannot ground yet (residual checker
             // diagnostics, generic concrete types never instantiated at a ground type, bodies
-            // referencing concept members with no implementer). Degrade gracefully: emit a
+            // referencing interface members with no implementer). Degrade gracefully: emit a
             // throwing stub that names the reason, count it as a burn-down number, and keep
             // writing every other member/file rather than aborting all output.
             var member = $"{(TypeDef != null ? TypeDef.Name + "." : "")}{f.Name}";
@@ -469,9 +488,13 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
                 // plain `static` method; otherwise it is omitted from the interface as before
                 // (which is why the contract used to be invisible in C#). See plato-312.
                 if (Writer.StaticAbstract)
+                {
+                    WriteDoc(m.Doc);
                     WriteLine(fi.StaticAbstractInterface);
+                }
                 continue;
             }
+            WriteDoc(m.Doc);
             WriteLine(fi.MethodInterface);
         }
         return WriteEndBlock();
@@ -513,7 +536,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
 
         // Function0..Function9 map to System.Func; a type whose NAME merely starts with the
         // substring "Function" (FunctionVolume3D, FunctionRegion2D, FunctionSdf2D/3D,
-        // FunctionalProcedural, ...) is a distinct concrete/concept type and must render as
+        // FunctionalProcedural, ...) is a distinct concrete/interface type and must render as
         // itself. The digit-after-prefix check is the same test Plato.RustWriter and
         // Plato.TypeScriptWriter already use (plato-310: this writer was missing it, so every
         // FunctionN-prefixed non-FunctionN type silently rendered as bare `System.Func`, losing
@@ -527,8 +550,8 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         var name = type.Name;
 
         // The concrete Array/Array2D/Array3D primitive types render as the runtime list
-        // interfaces, same as their IArray* concepts (stdlib-legacy never uses them in emitted
-        // type positions — it goes through the IArray concepts — but stdlib uses
+        // interfaces, same as their IArray* interfaces (stdlib-legacy never uses them in emitted
+        // type positions — it goes through the IArray interfaces — but stdlib uses
         // Array<T> directly in fields and signatures).
         // Array2D / Array3D left this mapping 2026-08-01: since plato-378 they are ORDINARY
         // Plato types with an honest layout (Elements + ColumnCount + RowCount), and a field

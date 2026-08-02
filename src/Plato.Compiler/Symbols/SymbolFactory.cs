@@ -457,6 +457,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
                 if (astTypeDeclaration.Kind == TypeKind.Library)
                 {
                     var typeDef = new TypeDef(TypeBindingsScope, astTypeDeclaration.Kind, astTypeDeclaration.Name);
+                    typeDef.Doc = DocComment.Extract(astTypeDeclaration);
                     SymbolsToNodes.Add(typeDef, astTypeDeclaration);
                     BindType(typeDef);
                     TypeDefs.Add(typeDef);
@@ -469,6 +470,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
                 if (astTypeDeclaration.Kind != TypeKind.Library)
                 {
                     var typeDef = new TypeDef(TypeBindingsScope, astTypeDeclaration.Kind, astTypeDeclaration.Name);
+                    typeDef.Doc = DocComment.Extract(astTypeDeclaration);
 
                     // Affine-type modifier (roadmap Phase 6): only the intrinsic builder
                     // types may be declared unique. Hard-reject anything else: the error
@@ -533,6 +535,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
                     if (m is AstFieldDeclaration fd)
                     {
                         var fDef = new FieldDef(ValueBindingsScope, typeDef, ResolveType(fd.Type), fd.Name.Text);
+                        fDef.Doc = DocComment.Extract(fd);
                         typeDef.Fields.Add(fDef);
                         SymbolsToNodes.Add(fDef, fd);
                         CreateOrLookupGroupDefinition(fDef);
@@ -540,6 +543,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
                     else if (m is AstMethodDeclaration md)
                     {
                         var mDef = new MethodDef(ValueBindingsScope, typeDef, ResolveType(md.Type), md.Name.Text);
+                        mDef.Doc = DocComment.Extract(md);
                         typeDef.Methods.Add(mDef);
                         SymbolsToNodes.Add(mDef, md);
                         CreateOrLookupGroupDefinition(mDef);

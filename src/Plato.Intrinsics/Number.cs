@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using static System.Runtime.CompilerServices.MethodImplOptions;
 
 namespace Ara3D.Geometry
@@ -10,8 +11,8 @@ namespace Ara3D.Geometry
     /// The Plato math intrinsics live in <see cref="NumberIntrinsics"/> as extension methods
     /// (all-extension-methods runtime: struct = field + constructor + operators + conversions).
     /// </summary>
-    [DataContract]
-    public partial struct Number
+    [DataContract, JsonConverter(typeof(NumberJsonConverter))]
+    public readonly partial struct Number
     {
         // -------------------------------------------------------------------------------
         // Field (the wrapped float)
@@ -104,10 +105,10 @@ namespace Ara3D.Geometry
         // ------------------------------------------------------------------------------
         // The rest of the Number half of the intrinsic contract. These are INSTANCE
         // members of the struct, not extension methods: several of them discharge a
-        // concept obligation (which an extension method cannot do), and the generated
+        // interface obligation (which an extension method cannot do), and the generated
         // extension forwarders call every one of them on the wrapper receiver
         // (`self.Sqrt`, `self.Pow(power)`). No-arg members are PROPERTIES because the
-        // concepts declare them as properties in the wrapper-scalar recipe.
+        // interfaces declare them as properties in the wrapper-scalar recipe.
         //
         // Everything derivable from these has a Plato reference body in
         // primitives.library.plato (Abs, Sign, Square, Reciprocal, Min, Max,
@@ -133,14 +134,14 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Number Atan2Radians(Number x) => MathF.Atan2(Value, x.Value);
 
 #if PLATO_FORWARD_CONCEPTS
-        // `NumericalLimits<Self>` declares MinValue / MaxValue as INSTANCE members, and the
+        // `INumericalLimits<Self>` declares MinValue / MaxValue as INSTANCE members, and the
         // wrapper already spends those two names on statics, so the obligation is discharged
         // explicitly. They are METHODS because the generated interfaces are property-free.
         // Guarded: the interface only exists in a project that compiles the forward stdlib's
         // Interfaces.g.cs, and this shared project is also imported by the legacy generated
         // projects and the tests, which have no such type.
-        [MethodImpl(AggressiveInlining)] Number NumericalLimits<Number>.MinValue() => MinValue;
-        [MethodImpl(AggressiveInlining)] Number NumericalLimits<Number>.MaxValue() => MaxValue;
+        [MethodImpl(AggressiveInlining)] Number INumericalLimits<Number>.MinValue() => MinValue;
+        [MethodImpl(AggressiveInlining)] Number INumericalLimits<Number>.MaxValue() => MaxValue;
 #endif
     }
 }

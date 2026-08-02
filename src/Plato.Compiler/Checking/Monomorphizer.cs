@@ -9,7 +9,7 @@ namespace Ara3D.Geometry.Compiler.Checking
 {
     /// <summary>
     /// The monomorphize sub-pass: specializes each generic/abstract <see cref="TirFunction"/> per
-    /// concrete instantiation, the way Plato's compilation model already stamps generic/concept
+    /// concrete instantiation, the way Plato's compilation model already stamps generic/interface
     /// functions into concrete per-type implementations. It is driven off, and cross-checked
     /// against, the existing reification machinery (<see cref="Types.ReifiedFunction"/> /
     /// <see cref="Types.ReifiedType"/> / <see cref="Compilation.ReifiedFunctions"/>) — that set is
@@ -22,7 +22,7 @@ namespace Ara3D.Geometry.Compiler.Checking
     {
         public Compilation Compilation { get; }
 
-        /// <summary>Resolves a concept-method call, specialized for a concrete receiver, to that
+        /// <summary>Resolves an interface-method call, specialized for a concrete receiver, to that
         /// receiver's concrete implementation (or null to leave the call as an abstract dispatch).
         /// Signature: (name, receiverType, groundParameterTypes, groundReturnType) → implementation.
         /// Overridable so re-dispatch can be unit-tested without a full <see cref="Compilation"/>.</summary>
@@ -96,7 +96,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                     // Residual grounding: variables the signature pairing cannot reach can still
                     // be determined by the GROUND context — the reified return type at the
                     // function's return positions (a tuple result pairs against the concrete
-                    // struct's fields) and the reified Self type's own concept instances (a
+                    // struct's fields) and the reified Self type's own interface instances (a
                     // leftover IArrayLike<$x> pairs against Self's IArrayLike<Number>). Derive
                     // those bindings from the first specialization and re-specialize.
                     if (!tir.AllNodes.All(NodeIsGround))
@@ -162,7 +162,7 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         /// <summary>Specialize a TIR function under a substitution: every node's type, every call's
         /// instantiated signature, every coercion/new target is grounded where the substitution
-        /// covers it. Total — never throws. Concept-method calls whose receiver became concrete are
+        /// covers it. Total — never throws. Interface-method calls whose receiver became concrete are
         /// re-dispatched to the concrete implementation on an unambiguous match.</summary>
         public TirFunction Specialize(TirFunction f, TypeSubstitution sub, MonomorphizeStats stats = null)
         {
@@ -241,7 +241,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             var type = _sub.Apply(call.Type);
             var args = SpecializeNodes(call.Args);
 
-            // Ground a Self-refined CONCEPT parameter to the concrete argument type. A concept method
+            // Ground a Self-refined interface parameter to the concrete argument type. An interface method
             // records every Self position as its owning interface (Add's parameters as IArithmetic);
             // once the arguments are concrete, that interface IS the Self type here, so leaving it
             // abstract keeps the writer from telling a genuine vector broadcast
@@ -253,7 +253,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             // relies on.
             ps = GroundConceptParameters(ps, args);
 
-            // Ground a Self-refined RETURN / value type (also recorded as the owning concept
+            // Ground a Self-refined RETURN / value type (also recorded as the owning interface
             // interface — `Multiply(self, other): Self`) to the receiver's concrete type. Without
             // this the result of a scalar operation like `t.Multiply(t)` stays typed as its interface,
             // and an enclosing call then reads a non-scalar receiver and mis-broadcasts it.
@@ -266,12 +266,12 @@ namespace Ara3D.Geometry.Compiler.Checking
 
             var callee = call.Callee;
 
-            // Concept re-dispatch (direct case only): a call whose callee is an abstract concept
+            // Interface re-dispatch (direct case only): a call whose callee is an abstract interface
             // declaration, now that its receiver has become concrete, re-points to that type's
             // concrete implementation — but only on an unambiguous match, so we never mis-dispatch.
             // The EmissionKind is NOT re-derived: it encodes the call-site SHAPE (member access vs
             // arg list), which is what the emitted syntax keys on; the target only changes identity.
-            if (callee != null && callee.FunctionType == FunctionType.Concept && ps != null && ps.Count > 0)
+            if (callee != null && callee.FunctionType == FunctionType.Interface && ps != null && ps.Count > 0)
             {
                 var target = RedispatchResolver?.Invoke(call.Name, ps[0], ps, ret);
                 if (target != null)
@@ -294,13 +294,13 @@ namespace Ara3D.Geometry.Compiler.Checking
         private static readonly HashSet<string> ScalarWrapperNames = new HashSet<string>
             { "Number", "Integer", "Boolean", "Character", "String" };
 
-        /// <summary>Replace each Self-refined concept parameter type (a self-constrained interface,
+        /// <summary>Replace each Self-refined interface parameter type (a self-constrained interface,
         /// left abstract by the checker's Self machinery) with the concrete type it denotes at this
         /// call: the argument's own concrete type, or — for a scalar argument being broadcast — the
         /// receiver's concrete type (every Self position shares one type). Only the parameter TYPE is
         /// sharpened; the scalar broadcast itself stays IMPLICIT (no inserted coercion), because a
         /// broadcast coercion node interacts badly with the downstream component unroller — the writer
-        /// restores the wrapper at the (post-unroll) emit boundary instead. Non-concept parameters and
+        /// restores the wrapper at the (post-unroll) emit boundary instead. Non-interface parameters and
         /// non-ground arguments are left untouched, so this only ever sharpens the signature.</summary>
         private IReadOnlyList<TypeExpression> GroundConceptParameters(
             IReadOnlyList<TypeExpression> ps, IReadOnlyList<TirNode> args)
@@ -333,7 +333,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// derived from ground context: return-position types pair against the reified return type
         /// (a <c>Tuple2&lt;Angle,$r&gt;</c> against concrete <c>AnglePair</c> pairs element-wise
         /// with its fields), and any leftover interface instance pairs against the reified Self
-        /// type's own instance of that concept (<c>IArrayLike&lt;$x&gt;</c> against Time's
+        /// type's own instance of that interface (<c>IArrayLike&lt;$x&gt;</c> against Time's
         /// <c>IArrayLike&lt;Number&gt;</c>).</summary>
         private TypeSubstitution DeriveResidualBindings(TirFunction tir, TypeExpression self, TypeExpression returnType)
         {
@@ -369,7 +369,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                     PairReturnPosition(r.Value);
             }
 
-            // Leftover interface instances vs. the Self type's own concept instances.
+            // Leftover interface instances vs. the Self type's own interface instances.
             if (self != null)
                 foreach (var t in tir.AllNodes.SelectMany(CarriedTypes))
                     if (t?.Def != null && t.Def.IsInterface() && t.TypeArgs.Count > 0
@@ -410,7 +410,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <summary>Pair a residual (partially abstract) type against a ground one, binding the
         /// abstract side's variables: recurse on equal heads, bind a bare variable, pair a
         /// <c>Tuple{N}</c> against a concrete N-field struct's field types, and pair an interface
-        /// instance against the ground type's instance of that concept.</summary>
+        /// instance against the ground type's instance of that interface.</summary>
         private static void ResidualPair(TypeExpression residual, TypeExpression ground,
             Dictionary<string, TypeExpression> map)
         {
@@ -452,10 +452,10 @@ namespace Ara3D.Geometry.Compiler.Checking
             }
         }
 
-        // --- concept re-dispatch resolution --------------------------------------
+        // --- interface re-dispatch resolution --------------------------------------
 
         /// <summary>The default re-dispatch: find, among the receiver type's reified functions, the
-        /// unique non-concept implementation whose name and ground parameter types match the call.
+        /// unique non-interface implementation whose name and ground parameter types match the call.
         /// Returns null (leave the call as an abstract dispatch) on 0 or &gt;1 matches. Concrete
         /// receiver only — never dispatches through an interface or unbound type.</summary>
         private FunctionDef DefaultRedispatch(string name, TypeExpression receiver,
@@ -470,7 +470,7 @@ namespace Ara3D.Geometry.Compiler.Checking
 
             var matches = candidates.Where(rf =>
                 rf.Original != null
-                && rf.Original.FunctionType != FunctionType.Concept // an implementation, not the declaration
+                && rf.Original.FunctionType != FunctionType.Interface // an implementation, not the declaration
                 && rf.ReifiedType?.Type != null
                 && rf.ReifiedType.Type.Name == receiver.Def.Name    // owned by the receiver's reified type
                 && SignaturesMatch(rf.ParameterTypes, groundParams)).ToList();
@@ -537,12 +537,12 @@ namespace Ara3D.Geometry.Compiler.Checking
         }
     }
 
-    /// <summary>Per-function monomorphization counters (concept re-dispatch coverage).</summary>
+    /// <summary>Per-function monomorphization counters (interface re-dispatch coverage).</summary>
     public class MonomorphizeStats
     {
-        /// <summary>Concept-method calls re-pointed to a concrete implementation.</summary>
+        /// <summary>Interface-method calls re-pointed to a concrete implementation.</summary>
         public int Redispatched;
-        /// <summary>Concept-method calls left as abstract dispatch (no unambiguous concrete match).</summary>
+        /// <summary>Interface-method calls left as abstract dispatch (no unambiguous concrete match).</summary>
         public int DeferredConcept;
     }
 

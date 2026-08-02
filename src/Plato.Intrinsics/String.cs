@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using static System.Runtime.CompilerServices.MethodImplOptions;
 
 namespace Ara3D.Geometry
@@ -7,8 +8,8 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A simple wrapper around the built-in <c>string</c> type.
     /// </summary>
-    [DataContract]
-    public partial struct String
+    [DataContract, JsonConverter(typeof(StringJsonConverter))]
+    public readonly partial struct String
     {
         // -------------------------------------------------------------------------------
         // Field
@@ -38,7 +39,7 @@ namespace Ara3D.Geometry
 
         public Character this[Integer n] { [MethodImpl(AggressiveInlining)] get => At(n); }
 
-        // Property, not method: `Count` is the `Countable` concept member, and an interface
+        // Property, not method: `Count` is the `Countable` interface member, and an interface
         // obligation can only be discharged by a member of the matching shape.
         public Integer Count { [MethodImpl(AggressiveInlining)] get => Value.Length; }
         

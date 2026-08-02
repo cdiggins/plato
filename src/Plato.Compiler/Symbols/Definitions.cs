@@ -14,6 +14,11 @@ namespace Ara3D.Geometry.Compiler.Symbols
         public override string Name { get; }
         public Scope Scope { get; }
 
+        /// <summary>The `//` comment block written above this declaration in the Plato source, or
+        /// null. Recovered by <see cref="DocComment"/> and carried into the emitted C# as an XML
+        /// doc comment — the generated struct is where this vocabulary is actually read.</summary>
+        public string Doc { get; set; }
+
         protected DefSymbol(Scope scope, TypeExpression type, string name)
         {
             Scope = scope;
@@ -69,7 +74,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
             }
             else if (ownerType.IsInterface())
             {
-                FunctionType = FunctionType.Concept;
+                FunctionType = FunctionType.Interface;
             }
             else if (ownerType.IsLibrary())
             {
@@ -142,8 +147,8 @@ namespace Ara3D.Geometry.Compiler.Symbols
                 .WithDeclaredBoundsOf(this));
     }
 
-    /// <summary>One `where $T: Concept` clause on a function declaration: the signature variable it
-    /// targets, and the concept it must supply.</summary>
+    /// <summary>One `where $T: Interface` clause on a function declaration: the signature variable it
+    /// targets, and the interface it must supply.</summary>
     public class DeclaredFunctionBound
     {
         public string VariableName { get; }
@@ -295,7 +300,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
             return Inherits.Any(i => i.Def.IsSelfConstrained());
         }
 
-        // plato-311 (Option A, dual-interface lowering): a concept method is "object safe" when
+        // plato-311 (Option A, dual-interface lowering): an interface method is "object safe" when
         // Self appears ONLY as the receiver (Parameters[0]) — never in a later parameter or in the
         // return type. Object-safe methods form the non-generic existential view interface
         // (`interface C`, "any C"); everything else stays reachable only through the F-bounded
@@ -316,20 +321,20 @@ namespace Ara3D.Geometry.Compiler.Symbols
             return !f.ParametersAndReturnType.Skip(1).Any(te => te.UsesSelfType());
         }
 
-        /// <summary>The object-safe surface DIRECTLY DECLARED on this concept (not inherited):
+        /// <summary>The object-safe surface DIRECTLY DECLARED on this interface (not inherited):
         /// instance methods where Self appears only as the receiver. This is what
-        /// Plato.CSharpWriter lists in the concept's own non-generic view interface body — an
+        /// Plato.CSharpWriter lists in the interface's own non-generic view interface body — an
         /// inherited object-safe member reaches the view through interface inheritance from the
-        /// base concept's OWN view instead of being redeclared here.</summary>
+        /// base interface's OWN view instead of being redeclared here.</summary>
         public IEnumerable<MethodDef> ObjectSafeMethods()
             => Methods.Where(IsObjectSafeMethod);
 
-        /// <summary>True when this concept — or any concept it inherits, transitively — has at
+        /// <summary>True when this interface — or any interface it inherits, transitively — has at
         /// least one object-safe member, i.e. it has a non-generic existential view (`interface
-        /// C`) at all. Many concepts (marker/classification concepts like `Geometry3D`, and
-        /// composite concepts like `Curve3D` that declare no methods of their own) carry their
+        /// C`) at all. Many interfaces (marker/classification interfaces like `Geometry3D`, and
+        /// composite interfaces like `Curve3D` that declare no methods of their own) carry their
         /// entire member surface through inheritance, so this must walk the full ancestry, not
-        /// just <see cref="Methods"/>. A concept with no object-safe surface anywhere in its
+        /// just <see cref="Methods"/>. An interface with no object-safe surface anywhere in its
         /// ancestry has NO view — using it in type position is a CHK308 diagnostic, not emission.</summary>
         public bool HasObjectSafeSurface()
             => GetSelfAndAllInheritedTypes().Any(t => t.Methods.Any(IsObjectSafeMethod));

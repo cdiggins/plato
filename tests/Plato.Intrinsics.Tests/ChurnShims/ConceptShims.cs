@@ -1,7 +1,7 @@
 namespace Ara3D.Geometry
 {
     /// <summary>
-    /// Stand-in for the GENERATED concept interface <c>NumericalLimits&lt;Self&gt;</c>
+    /// Stand-in for the GENERATED interface interface <c>INumericalLimits&lt;Self&gt;</c>
     /// (stdlib/foundation). <c>Number</c> and <c>Integer</c> carry explicit implementations of it,
     /// and an explicit implementation only compiles when the interface — and the base list that
     /// names it — are visible. The generated partial struct supplies the base list downstream;
@@ -12,17 +12,17 @@ namespace Ara3D.Geometry
     /// stand-in. This is the sole concession the suite makes to the shared project not being
     /// self-contained.
     /// </summary>
-    public interface NumericalLimits<TSelf>
+    public interface INumericalLimits<TSelf>
     {
         TSelf MinValue();
         TSelf MaxValue();
     }
 
-    public partial struct Number : NumericalLimits<Number>
+    public readonly partial struct Number : INumericalLimits<Number>
     {
     }
 
-    public partial struct Integer : NumericalLimits<Integer>
+    public readonly partial struct Integer : INumericalLimits<Integer>
     {
     }
 }

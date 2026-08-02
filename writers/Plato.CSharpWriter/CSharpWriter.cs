@@ -71,7 +71,7 @@ namespace Ara3D.Geometry.CSharpWriter
             // The struct-surface property-name set (the uniform rendering rule): every name that
             // renders with member/property syntax at a call site — exactly the per-type field +
             // pseudo-field names (unioned below) plus the BCL Count/NumColumns/NumRows
-            // obligations. Concept interfaces declare no-arg obligations as METHODS, so they
+            // obligations. Interface interfaces declare no-arg obligations as METHODS, so they
             // contribute nothing here.
             var keptNoArg = new HashSet<string>();
             foreach (var p in ExtensionPlans.Values)
@@ -275,14 +275,14 @@ namespace Ara3D.Geometry.CSharpWriter
         public TirFunction TestGetGroundTir(string concreteTypeName, string functionName)
             => TirSource.TryGetGroundTirByNames(concreteTypeName, functionName);
 
-        // When true (--static-abstract), a concept member whose receiver is `_` — Plato's
+        // When true (--static-abstract), an interface member whose receiver is `_` — Plato's
         // constructor-shaped idiom for a TYPE-level operation (`Zero(_: Self): Self`,
         // `FromAmount(_: Self, x: Number): Self`) — emits as a C# `static abstract` interface
         // member instead of being omitted from the interface entirely. The implementing type
         // already emits a plain `static` method for it (CSharpFunctionInfo.IsStatic), so the two
         // halves finally agree; previously the interface either skipped the member (losing the
         // contract) or declared it as an instance member that a static method cannot satisfy
-        // (CS0736). See the 2026-07-29 static-concept-members ADR and plato-312.
+        // (CS0736). See the 2026-07-29 static-interface-members ADR and plato-312.
         //
         // OPT-IN because it is not free for stdlib-legacy: `IArrayLike<T>` there declares
         // NumComponents / CreateFromComponents / CreateFromComponent with `_` receivers, so
@@ -293,7 +293,7 @@ namespace Ara3D.Geometry.CSharpWriter
 
         // PROPERTY-FREE EMISSION (unconditional; see the 2026-08-01 ADR). The generated output
         // declares no C# properties and no indexers:
-        //   - concept interfaces (Interfaces.g.cs) declare no-arg obligations as METHODS;
+        //   - interface interfaces (Interfaces.g.cs) declare no-arg obligations as METHODS;
         //   - struct-KEPT members (obligations, conversions, statics, stubs) emit as methods;
         //     struct indexers are dropped (At() remains);
         //   - the IArrayLike scaffolding (NumComponents/Components) and nullary constants
@@ -333,7 +333,7 @@ namespace Ara3D.Geometry.CSharpWriter
         //
         // So: resolve `name` against the receiver's OWN plan when the receiver has one, and fall
         // back to the global union only for receivers no plan describes (handwritten runtime types,
-        // IgnoredTypes, concept interfaces, generic parameters). GlobalStructSurfacePropertyNames
+        // IgnoredTypes, interface interfaces, generic parameters). GlobalStructSurfacePropertyNames
         // short-circuits first because those names are properties on every receiver by construction.
         //
         // Both halves of the rule stay consistent with the DECLARATIONS because every consumer —
@@ -355,7 +355,7 @@ namespace Ara3D.Geometry.CSharpWriter
             var plan = GetExtensionPlanByTypeName(ownerTypeName);
             if (plan != null)
                 return plan.KeptNoArgPropertyNames.Contains(name);
-            // No plan describes this receiver: a concept INTERFACE, a generic type variable bound to
+            // No plan describes this receiver: an interface, a generic type variable bound to
             // one, an IgnoredTypes collection/delegate, or an unknown handwritten type. Under
             // an interface declares every no-arg obligation as a METHOD, and the
             // IgnoredTypes receivers are handwritten BCL collections whose only property-shaped
@@ -545,6 +545,15 @@ namespace Ara3D.Geometry.CSharpWriter
             "GetHashCode",
             "ToString",
             "GetType",
+            // The serialization surface the writer synthesizes on every struct (see
+            // CSharpConcreteTypeWriter.WriteSerializationSurface). A library function of the same
+            // name would be a duplicate member, exactly as ToString/Equals would.
+            "ToJson",
+            "FromJson",
+            "AppendJson",
+            "TryFormat",
+            "Parse",
+            "TryParse",
             // These are functions of IArrayLike
             "Components",
             "CreateFromComponents",
@@ -630,15 +639,44 @@ namespace Ara3D.Geometry.CSharpWriter
         public static bool IsIntrinsicBacked(string name)
             => name != null && (PrimitiveTypes.ContainsKey(name) || IntrinsicBackedTypes.Contains(name));
 
+        /// <summary>The version stamped into every emitted <c>[GeneratedCode]</c> attribute. Read
+        /// from the writer assembly rather than hard-coded, so it cannot drift.</summary>
+        public static readonly string ToolVersion
+            = typeof(CSharpWriter).Assembly.GetName().Version?.ToString() ?? "0.0.0.0";
+
+        public const string ToolName = "Plato";
+
+        /// <summary>The attributes every emitted type carries: `[GeneratedCode]` is what analyzers,
+        /// StyleCop and `dotnet format` key off per-type, and `[ExcludeFromCodeCoverage]` keeps
+        /// hundreds of thousands of emitted lines out of the coverage denominator. Fully qualified
+        /// on purpose — a `using` for either namespace could collide with a Plato type name.</summary>
+        public static string GeneratedCodeAttributes
+            => $"[System.CodeDom.Compiler.GeneratedCode(\"{ToolName}\", \"{ToolVersion}\")"
+               + ", System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]";
+
+        /// <summary>The interface-level form. `ExcludeFromCodeCoverage` is class/struct-only
+        /// (CS0592), and an interface has no bodies to keep out of a coverage report anyway.</summary>
+        public static string GeneratedCodeAttribute
+            => $"[System.CodeDom.Compiler.GeneratedCode(\"{ToolName}\", \"{ToolVersion}\")]";
+
         public CSharpWriter WriteFile(FilePath fileName, Func<CSharpWriter> f)
         {
             StartNewFile(fileName);
-            WriteLine($"// Autogenerated file: DO NOT EDIT");
-            WriteLine($"// Created on {DateTime.Now}");
+            // `<auto-generated/>` must be the FIRST line: that marker is what StyleCop, the .NET
+            // analyzers, `dotnet format` and most coverage tools read to skip a file wholesale.
+            // No timestamp — regenerating unchanged sources must produce an unchanged file, so a
+            // stale checkout shows a real diff rather than a clock difference.
+            WriteLine("//------------------------------------------------------------------------------");
+            WriteLine("// <auto-generated>");
+            WriteLine("//     This code was generated by the Plato compiler. DO NOT EDIT.");
+            WriteLine("//     Changes to this file will be lost when the code is regenerated.");
+            WriteLine("// </auto-generated>");
+            WriteLine("//------------------------------------------------------------------------------");
             WriteLine();
             WriteLine("using System.Runtime.CompilerServices;");
             WriteLine("using System.Runtime.Serialization;");
             WriteLine("using System.Runtime.InteropServices;");
+            WriteLine("using System.Text.Json.Serialization;");
             WriteLine("using static System.Runtime.CompilerServices.MethodImplOptions;");
             WriteLine("using Ara3D.Collections;");
             WriteLine("");
@@ -720,7 +758,7 @@ namespace Ara3D.Geometry.CSharpWriter
         }
 
         // The CONCRETE array types. A library function whose receiver is one of these renders
-        // exactly like a legacy `IArray*`-concept receiver — ToCSharpTypeName maps both to the
+        // exactly like a legacy `IArray*`-interface receiver — ToCSharpTypeName maps both to the
         // runtime list interfaces (Array<T> -> IReadOnlyList<T>, Array2D -> IReadOnlyList2D, ...)
         // — so it belongs on the same classic-extension-method path (see
         // IsListExtensionReceiver / WriteInterfaceLibraryMethods).
@@ -731,7 +769,7 @@ namespace Ara3D.Geometry.CSharpWriter
 
         // Is this the receiver of a library function that emits as a classic extension method on a
         // runtime list interface in Extensions.g.cs? Two spellings of the same shape:
-        //   - an `IArray*` CONCEPT (but not IArrayLike, the fixed-arity component scaffolding) —
+        //   - an `IArray*` interface (but not IArrayLike, the fixed-arity component scaffolding) —
         //     stdlib-legacy's spelling;
         //   - the CONCRETE Array/Array2D/Array3D types — the forward stdlib's spelling
         //     (`BoundsOfPoints(points: Array<Point2D>)`).

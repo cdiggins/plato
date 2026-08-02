@@ -11,7 +11,7 @@ namespace PlatoTests
     /// <summary>
     /// Parser-free unit tests for the monomorphize sub-pass: a <see cref="TypeSubstitution"/> grounds
     /// abstract types; <see cref="Monomorphizer.Specialize"/> rewrites every node's type; a
-    /// concept-method <see cref="TirCall"/> re-points to a concrete implementation on an unambiguous
+    /// interface-method <see cref="TirCall"/> re-points to a concrete implementation on an unambiguous
     /// match and is left unchanged otherwise. The "runs over real code" proof lives in
     /// <see cref="MonomorphizerIntegrationTests"/>.
     /// </summary>
@@ -35,7 +35,7 @@ namespace PlatoTests
         private static TypeSubstitution Sub(params (string key, TypeExpression to)[] pairs)
             => new TypeSubstitution(pairs.ToDictionary(p => p.key, p => p.to));
 
-        /// <summary>An interface (concept) method: body-less, first param is the receiver.</summary>
+        /// <summary>An interface method: body-less, first param is the receiver.</summary>
         private static FunctionDef ConceptMethod(string iface, string name, TypeExpression ret, params TypeExpression[] ps)
         {
             var owner = new TypeDef(null, TypeKind.Interface, iface);
@@ -44,7 +44,7 @@ namespace PlatoTests
         }
 
         /// <summary>A body-less library function => FunctionType.Intrinsic (a concrete implementation
-        /// a concept call can re-dispatch to).</summary>
+        /// an interface call can re-dispatch to).</summary>
         private static FunctionDef Intrinsic(string name, TypeExpression ret, params TypeExpression[] ps)
         {
             var lib = new TypeDef(null, TypeKind.Library, "Lib");
@@ -142,12 +142,12 @@ namespace PlatoTests
             Assert.IsInstanceOf<TirUnresolved>(result.Body); // no throw; placeholder preserved
         }
 
-        // --- concept re-dispatch (direct case) -----------------------------------
+        // --- interface re-dispatch (direct case) -----------------------------------
 
         [Test]
         public static void ConceptCallRePointsToConcreteImplementationOnUniqueMatch()
         {
-            // Multiply(a: Self, b: Self): Self — a concept declaration.
+            // Multiply(a: Self, b: Self): Self — an interface declaration.
             var conceptMul = ConceptMethod("IMultiplicative", "Multiply", Self(), Self(), Self());
             // Vector3's concrete implementation, provided as an intrinsic.
             var concreteMul = Intrinsic("Multiply", Con("Vector3"), Con("Vector3"), Con("Vector3"));
@@ -172,7 +172,7 @@ namespace PlatoTests
             var result = mono.Specialize(tir, Sub(("Self", Con("Vector3"))), stats);
 
             var rc = result.AllNodes.OfType<TirCall>().Single();
-            Assert.AreSame(concreteMul, rc.Callee, "the concept call must re-point to the concrete impl");
+            Assert.AreSame(concreteMul, rc.Callee, "the interface call must re-point to the concrete impl");
             // The EmissionKind is PRESERVED across re-dispatch: it encodes the call-site shape
             // (member access vs arg list), which is what emitted syntax keys on — re-deriving it
             // from the target would turn `this.Matrix` into `this.Matrix()`.
@@ -199,7 +199,7 @@ namespace PlatoTests
             var result = mono.Specialize(tir, Sub(("Self", Con("Vector3"))), stats);
 
             var rc = result.AllNodes.OfType<TirCall>().Single();
-            Assert.AreSame(conceptMul, rc.Callee, "an unresolved concept call stays as the abstract dispatch");
+            Assert.AreSame(conceptMul, rc.Callee, "an unresolved interface call stays as the abstract dispatch");
             Assert.AreEqual(0, stats.Redispatched);
             Assert.AreEqual(1, stats.DeferredConcept);
         }
@@ -253,7 +253,7 @@ namespace PlatoTests
                 $"Monomorphizer: {_all.Count} instantiations ({_compilation.ReifiedFunctions.Count()} reified); " +
                 $"{bodied.Count} have a body (from {distinctFns} distinct source functions); " +
                 $"{ground} monomorphize to fully-ground TIR; " +
-                $"concept re-dispatch: {redispatched} re-pointed, {deferred} deferred.");
+                $"interface re-dispatch: {redispatched} re-pointed, {deferred} deferred.");
 
             Assert.Greater(bodied.Count, 0, "expected bodied instantiations");
             Assert.Greater(ground, 0, "expected a non-trivial subset to monomorphize to fully-ground TIR");
@@ -306,15 +306,15 @@ namespace PlatoTests
         [Test]
         public static void ConceptCallsAreEitherReDispatchedOrDeferredConsistently()
         {
-            // Safety + accounting: after specialization, a TirCall still carrying a concept
+            // Safety + accounting: after specialization, a TirCall still carrying an interface
             // declaration as its callee is exactly a deferred re-dispatch; the re-pointed ones are
-            // gone (and, by construction, never target another concept declaration).
+            // gone (and, by construction, never target another interface declaration).
             foreach (var m in _all.Where(m => m.HasBody))
             {
                 var remainingConceptCalls = m.Tir.AllNodes.OfType<TirCall>()
-                    .Count(c => c.Callee != null && c.Callee.FunctionType == FunctionType.Concept);
+                    .Count(c => c.Callee != null && c.Callee.FunctionType == FunctionType.Interface);
                 Assert.AreEqual(m.Stats.DeferredConcept, remainingConceptCalls,
-                    $"concept-call accounting mismatch in '{m.Original?.Name}' on '{m.ConcreteType?.Name}'");
+                    $"interface-call accounting mismatch in '{m.Original?.Name}' on '{m.ConcreteType?.Name}'");
             }
         }
     }

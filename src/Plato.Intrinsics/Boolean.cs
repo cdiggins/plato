@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
     using static System.Runtime.CompilerServices.MethodImplOptions;
 
     namespace Ara3D.Geometry
@@ -8,8 +9,8 @@ using System.Runtime.Serialization;
         /// A simple wrapper around the built-in <c>Boolean</c> type,
         /// forwarding logical operations and common methods to <c>Boolean</c>.
         /// </summary>
-        [DataContract]
-        public partial struct Boolean
+        [DataContract, JsonConverter(typeof(BooleanJsonConverter))]
+        public readonly partial struct Boolean
         {
             // -------------------------------------------------------------------------------
             // Field (the wrapped Boolean)

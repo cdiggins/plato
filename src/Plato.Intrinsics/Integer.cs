@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using Ara3D.Collections;
 using static System.Runtime.CompilerServices.MethodImplOptions;
 
@@ -9,8 +10,8 @@ namespace Ara3D.Geometry
     /// A simple wrapper around the built-in <c>int</c> type,
     /// forwarding all arithmetic and common methods to <c>int</c>.
     /// </summary>
-    [DataContract]
-    public partial struct Integer 
+    [DataContract, JsonConverter(typeof(IntegerJsonConverter))]
+    public readonly partial struct Integer 
     {
         // -------------------------------------------------------------------------------
         // Field (the wrapped int)
@@ -49,10 +50,10 @@ namespace Ara3D.Geometry
         public static Integer MaxValue = int.MaxValue;
 
         // ------------------------------------------------------------------------------
-        // Concept obligations that no Plato declaration can carry for a primitive. These
+        // Interface obligations that no Plato declaration can carry for a primitive. These
         // must be INSTANCE members (an extension method cannot implement an interface
         // member). Bitwise's no-arg member is a property; its argument-taking members are
-        // methods, matching the Bitwise<Self> concept.
+        // methods, matching the Bitwise<Self> interface.
         // ------------------------------------------------------------------------------
 
         public Integer Hash { [MethodImpl(AggressiveInlining)] get => Value.GetHashCode(); }
@@ -70,9 +71,9 @@ namespace Ara3D.Geometry
 #if PLATO_FORWARD_CONCEPTS
         // See the note on Number: explicit because the two names are already statics, methods
         // because the generated interfaces are property-free, and guarded because
-        // NumericalLimits<Self> only exists where the forward stdlib's Interfaces.g.cs is compiled.
-        [MethodImpl(AggressiveInlining)] Integer NumericalLimits<Integer>.MinValue() => MinValue;
-        [MethodImpl(AggressiveInlining)] Integer NumericalLimits<Integer>.MaxValue() => MaxValue;
+        // INumericalLimits<Self> only exists where the forward stdlib's Interfaces.g.cs is compiled.
+        [MethodImpl(AggressiveInlining)] Integer INumericalLimits<Integer>.MinValue() => MinValue;
+        [MethodImpl(AggressiveInlining)] Integer INumericalLimits<Integer>.MaxValue() => MaxValue;
 #endif
 
         // -------------------------------------------------------------------------------
@@ -103,7 +104,7 @@ namespace Ara3D.Geometry
         public static Integer operator -(Integer n)
             => -n.Value;
 
-        // The Bitwise concept's two operator-named members; the generated struct renders
+        // The Bitwise interface's two operator-named members; the generated struct renders
         // BitwiseAnd / BitwiseOr from these.
         [MethodImpl(AggressiveInlining)]
         public static Integer operator &(Integer a, Integer b)

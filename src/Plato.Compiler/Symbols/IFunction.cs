@@ -9,7 +9,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
         Field,
         Constructor,
         Cast,
-        Concept,
+        Interface,
         Library,
         Lambda,
         // A synthesized per-case static factory of a sum type (wave-2, plato-232):

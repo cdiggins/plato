@@ -10,8 +10,10 @@ using Ara3D.Geometry.Compiler.Types;
 
 namespace Ara3D.Geometry.CSharpWriter
 {
-    // TODO: this should probably be merged with CSharpTypeWriter. I don't see a clear advantage for it to be alone. 
-    public class CSharpConcreteTypeWriter
+    // TODO: this should probably be merged with CSharpTypeWriter. I don't see a clear advantage for it to be alone.
+    // The JSON / IFormattable / IParsable surface lives in the other half of this partial class
+    // (CSharpSerializationWriter.cs).
+    public partial class CSharpConcreteTypeWriter
     {
         public CSharpTypeWriter TypeWriter { get; }
         public CSharpWriter Writer => TypeWriter.Writer;
@@ -71,12 +73,10 @@ namespace Ara3D.Geometry.CSharpWriter
                 return;
             }
 
-            var implements = ConcreteType.Interfaces.Count > 0
-                ? $": " + ConcreteType.Interfaces.Select(TypeWriter.ToCSharpType).JoinStringsWithComma()
-                : "";
-
             FieldTypes = ConcreteType.TypeDef.Fields.Select(f => TypeWriter.ToCSharpType(f.Type)).ToList();
             FieldNames = ConcreteType.TypeDef.Fields.Select(f => f.Name).ToList();
+
+            var implements = BaseListString();
             var parameterNames = FieldNames.Select(CSharpTypeWriter.FieldNameToParameterName).ToList();
             Debug.Assert(FieldTypes.Count == FieldNames.Count);
 
@@ -90,20 +90,16 @@ namespace Ara3D.Geometry.CSharpWriter
             var fieldNamesStr = FieldNames.JoinStringsWithComma();
             var assignments = FieldNames.Zip(parameterNames, (fn, pn) => $"{fn} = {pn}; ").JoinStrings("");
 
-            if (IsPrimitive)
-                TypeWriter.WriteLine($"[StructLayout(LayoutKind.Sequential, Pack=1)]");
-            else
-                TypeWriter.WriteLine($"[DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]");
-
-            TypeWriter.Write($"public partial struct {Name}");
-            TypeWriter.WriteLine(implements + WhereClauses);
-            TypeWriter.WriteStartBlock();
+            WriteTypeHeader(implements);
 
             if (!IsPrimitive)
             {
                 TypeWriter.WriteLine("// Fields");
                 for (var i = 0; i < FieldTypes.Count; ++i)
-                    TypeWriter.WriteLine($"[DataMember] public readonly {FieldTypes[i]} {FieldNames[i]};");
+                {
+                    TypeWriter.WriteDoc(ConcreteType.TypeDef.Fields[i].Doc);
+                    TypeWriter.WriteLine($"{DataMemberAttribute(i)} public readonly {FieldTypes[i]} {FieldNames[i]};");
+                }
                 TypeWriter.WriteLine("");
 
                 TypeWriter.WriteLine("// With functions ");
@@ -121,7 +117,8 @@ namespace Ara3D.Geometry.CSharpWriter
                 TypeWriter.WriteLine("// Regular Constructor");
                 if (FieldNames.Count > 0)
                 {
-                    TypeWriter.WriteLine($"{Attr} public {SimpleName}({parametersStr}) {{ {assignments}}}");
+                    TypeWriter.WriteLine(
+                        $"{Attr}{JsonConstructorAttribute(parameterNames)} public {SimpleName}({parametersStr}) {{ {assignments}}}");
                 }
 
                 TypeWriter.WriteLine();
@@ -157,7 +154,7 @@ namespace Ara3D.Geometry.CSharpWriter
 
                 // Only implicit operators if the field type does not render as a C# interface
                 // (user-defined conversions to/from an interface are illegal, CS0552). The
-                // IsInterface check covers concept-typed fields; the IReadOnlyList check covers
+                // IsInterface check covers interface-typed fields; the IReadOnlyList check covers
                 // the concrete Array/Array2D/Array3D types, which render as list interfaces.
                 //
                 // plato-308: a PRIMITIVE-backed type (a handwritten Plato.Intrinsics struct, e.g.
@@ -207,9 +204,6 @@ namespace Ara3D.Geometry.CSharpWriter
                     TypeWriter.WriteLine($"{Attr} public static {boolT} operator!=({Name} a, {Name} b) => false;");
                 }
                 TypeWriter.WriteLine($"{Attr} public override int GetHashCode() => Intrinsics.CombineHashCodes({fieldNamesStr});");
-
-                var toStr = "$\"{{ " + FieldNames.Select(fn => $"\\\"{fn}\\\" = {{{fn}}}").JoinStringsWithComma() + " }}\"";
-                TypeWriter.WriteLine($"{Attr} public override string ToString() => {toStr};");
             }
             // A primitive whose handwritten counterpart is a WRAPPER (the five scalars) carries a
             // `Value` payload the scaffolding reads. `Type` and the Function arities do not: they
@@ -235,9 +229,10 @@ namespace Ara3D.Geometry.CSharpWriter
                 TypeWriter.WriteLine($"{Attr} public static {boolT} operator==({Name} a, {Name} b) => a.Equals(b);");
                 TypeWriter.WriteLine($"{Attr} public static {boolT} operator!=({Name} a, {Name} b) => !a.Equals(b);");
                 TypeWriter.WriteLine($"{Attr} public override int GetHashCode() => Value.GetHashCode();");
-                TypeWriter.WriteLine($"{Attr} public override string ToString() => Value.ToString();");
             }
             TypeWriter.WriteLine();
+
+            WriteSerializationSurface();
 
             // TODO: this might be a problem for primitives. 
 
@@ -249,7 +244,7 @@ namespace Ara3D.Geometry.CSharpWriter
             {
                 var its = TypeWriter.ToCSharpType(i);
                 // plato-311: a property-form (or pinned-name) member satisfies the generic
-                // interface only through its explicit implementation, so the concept's non-generic
+                // interface only through its explicit implementation, so the interface's non-generic
                 // existential view â€” reached transitively via `C<Self> : C` â€” needs its own
                 // explicit implementation for the same member; the view spelling of the interface
                 // name is the only difference. Members satisfied by ordinary public methods
@@ -263,7 +258,19 @@ namespace Ara3D.Geometry.CSharpWriter
                         ? viewIts
                         : null;
                     var fieldIndex = FieldNames.IndexOf(f.Name);
-                    if (f.ParameterTypes.Count == 1 && fieldIndex >= 0)
+                    // A one-argument obligation NAMED FOR THIS TYPE is the identity conversion —
+                    // IRigid3D declares `Pose3D()`, and Pose3D itself has to answer it. SkipFunction
+                    // deliberately keeps it off the public surface (a public `Pose3D Pose3D()` on
+                    // Pose3D is a cast to self), but the interface still needs discharging, so it
+                    // lands here as an explicit implementation returning `this`.
+                    if (f.ParameterTypes.Count == 1 && f.Name == SimpleName)
+                    {
+                        if (emittedExplicitImpls.Add($"{its}.{f.Name}"))
+                            TypeWriter.WriteLine($"{Attr} {Name} {its}.{f.Name}() => this;");
+                        if (viewTarget != null && emittedExplicitImpls.Add($"{viewTarget}.{f.Name}"))
+                            TypeWriter.WriteLine($"{Attr} {Name} {viewTarget}.{f.Name}() => this;");
+                    }
+                    else if (f.ParameterTypes.Count == 1 && fieldIndex >= 0)
                     {
                         // The interface and the field erase together, so the field's own rendered
                         // type is what the obligation wants.
@@ -320,7 +327,7 @@ namespace Ara3D.Geometry.CSharpWriter
             {
                 TypeWriter.WriteLine("// Array predefined functions");
 
-                // The IArray<T> concept erases with the recipe, so the IReadOnlyList<T> element
+                // The IArray<T> interface erases with the recipe, so the IReadOnlyList<T> element
                 // type erases with it.
                 var argType = arrayConcept.Substitutions.Replace(arrayConcept.TypeExpression.TypeArgs[0]);
                 var elem = TypeWriter.ToCSharpType(argType);
@@ -371,7 +378,7 @@ namespace Ara3D.Geometry.CSharpWriter
 
                 TypeWriter.WriteLine($"// IArrayLike predefined functions");
                 // These satisfy the IArrayLike<Self, T> obligation directly. NumComponents returns
-                // the concept's Integer wrapper.
+                // the interface's Integer wrapper.
                 TypeWriter.WriteLine($"{Attr} public Integer NumComponents() => {nComps};");
                 TypeWriter.WriteLine($"{Attr} public IReadOnlyList<{fieldType}> Components() => Intrinsics.MakeArray<{fieldType}>({localFieldNames.JoinStringsWithComma()});");
                 {
@@ -388,7 +395,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 }
             }
 
-            // Kept members (interface obligations, operators, stubs) erase exactly as the concept
+            // Kept members (interface obligations, operators, stubs) erase exactly as the interface
             // interfaces they satisfy do, so their signatures line up member-for-member.
             WriteImplementedInterfaceFunctions();
 
@@ -415,23 +422,18 @@ namespace Ara3D.Geometry.CSharpWriter
             var cases = ConcreteType.TypeDef.Cases;
             const string boolT = "Boolean";
 
-            var implements = ConcreteType.Interfaces.Count > 0
-                ? ": " + ConcreteType.Interfaces.Select(TypeWriter.ToCSharpType).JoinStringsWithComma()
-                : "";
+            var implements = BaseListString();
 
             // Parameter names for the flattened fields (the private ctor's named args).
             var flatParamNames = FieldNames.Select(CSharpTypeWriter.FieldNameToParameterName).ToList();
 
-            tw.WriteLine("[DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]");
             // A generic sum is CHK306 today, so WhereClauses is empty here; it is written the same
             // way as the product path deliberately â€” nothing about bounds is record-specific, so
             // lifting CHK306 (plato-079) needs no change on this line.
-            tw.Write($"public partial struct {Name}");
-            tw.WriteLine(implements + WhereClauses);
-            tw.WriteStartBlock();
+            WriteTypeHeader(implements);
 
             tw.WriteLine("// Discriminant (0-based, declaration order)");
-            tw.WriteLine("[DataMember] public readonly int Kind;");
+            tw.WriteLine("[DataMember(Order = 0), JsonInclude] public readonly int Kind;");
             tw.WriteLine();
 
             tw.WriteLine("// Case tags");
@@ -443,7 +445,7 @@ namespace Ara3D.Geometry.CSharpWriter
             {
                 tw.WriteLine("// Flattened per-case fields (Case_Field); inactive cases hold default.");
                 for (var i = 0; i < flat.Count; ++i)
-                    tw.WriteLine($"[DataMember] public readonly {FieldTypes[i]} {FieldNames[i]};");
+                    tw.WriteLine($"{DataMemberAttribute(i + 1)} public readonly {FieldTypes[i]} {FieldNames[i]};");
                 tw.WriteLine();
             }
 
@@ -501,8 +503,12 @@ namespace Ara3D.Geometry.CSharpWriter
             var hashArgs = new List<string> { "Kind" };
             hashArgs.AddRange(FieldNames);
             tw.WriteLine($"{Attr} public override int GetHashCode() => Intrinsics.CombineHashCodes({hashArgs.JoinStringsWithComma()});");
-            tw.WriteLine($"{Attr} public override string ToString() => {SumToString(cases, flat)};");
             tw.WriteLine();
+
+            // The sum serializes as its honest layout — the Kind discriminant plus every flattened
+            // field — which is exactly what DataContract writes, so the two round-trip alike. The
+            // old tag-aware ternary chain rendered `Move(1, 2)`, which no parser reads back.
+            WriteSerializationSurface();
 
             // Shared tail: the library functions over this type (EndPoint, ...) and any interface
             // obligations, exactly as for a product type.
@@ -514,26 +520,58 @@ namespace Ara3D.Geometry.CSharpWriter
             WriteExtensionMethods();
         }
 
-        // A tag-aware ToString rendered as a ternary chain (last case is the unconditional else,
-        // matching the exhaustive match lowering and dodging the switch-expression CS8509).
-        private static string SumToString(IReadOnlyList<Ara3D.Geometry.Compiler.Symbols.SumCaseDef> cases,
-            IReadOnlyList<Ara3D.Geometry.Compiler.Symbols.SumCaseField> flat)
+        /// <summary>The struct's base list: the interface interfaces it implements, plus the four
+        /// System interfaces the serialization surface discharges.</summary>
+        private string BaseListString()
         {
-            string Body(Ara3D.Geometry.Compiler.Symbols.SumCaseDef c)
-            {
-                if (c.Fields.Count == 0)
-                    return $"\"{c.Name}\"";
-                var parts = string.Join(", ", c.Fields.Select(f => $"{{{f.FlatName}}}"));
-                return $"$\"{c.Name}({parts})\"";
-            }
-            if (cases.Count == 1)
-                return Body(cases[0]);
-            var sb = new System.Text.StringBuilder();
-            for (var i = 0; i < cases.Count - 1; ++i)
-                sb.Append($"Kind == {cases[i].TagConstName} ? {Body(cases[i])} : ");
-            sb.Append(Body(cases[cases.Count - 1]));
-            return sb.ToString();
+            var bases = ConcreteType.Interfaces.Select(TypeWriter.ToCSharpType).ToList();
+            if (HasSerializationSurface)
+                bases.Add(SerializationInterfaces);
+            return bases.Count > 0 ? ": " + bases.JoinStringsWithComma() : "";
         }
+
+        /// <summary>The doc comment, attributes and declaration line, shared by the product and sum
+        /// paths.
+        ///
+        /// `readonly` is on every generated struct: the fields already are, and the modifier is
+        /// what stops the compiler from defensively copying the struct at every readonly-context
+        /// call site. The handwritten halves of the five scalar wrappers carry it too - a partial
+        /// struct's declarations must agree.</summary>
+        private void WriteTypeHeader(string implements)
+        {
+            TypeWriter.WriteDoc(ConcreteType.TypeDef.Doc);
+            // A primitive's [DataContract] is on the handwritten half of the partial.
+            TypeWriter.WriteLine(IsPrimitive
+                ? "[StructLayout(LayoutKind.Sequential, Pack=1)]"
+                : "[DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]");
+            TypeWriter.WriteLine(CSharpWriter.GeneratedCodeAttributes);
+            TypeWriter.Write($"public readonly partial struct {Name}");
+            TypeWriter.WriteLine(implements + WhereClauses);
+            TypeWriter.WriteStartBlock();
+        }
+
+        /// <summary>`[DataMember(Order = n)]` — DataContractSerializer orders members ALPHABETICALLY
+        /// without it, so renaming or reordering a Plato field silently changes the wire format of
+        /// every already-serialized document. `[JsonInclude]` is what makes System.Text.Json see
+        /// the member at all: it ignores fields unless the field opts in or the serializer is
+        /// configured with IncludeFields.</summary>
+        private static string DataMemberAttribute(int order)
+            => $"[DataMember(Order = {order}), JsonInclude]";
+
+        /// <summary>`[JsonConstructor]` — readonly fields cannot be assigned by the deserializer, so
+        /// System.Text.Json needs the parameterized constructor to build the value; a struct
+        /// otherwise defaults to its parameterless constructor and yields all-zero results.
+        ///
+        /// Emitted only when every parameter name matches its field name case-insensitively, which
+        /// is what System.Text.Json binds on. A field whose name is a C# keyword takes an
+        /// underscore-prefixed parameter (`Type` -> `_Type`) that would not bind, and an
+        /// unbindable [JsonConstructor] throws at run time rather than being ignored — so those
+        /// types are left without it and keep the writer's own Parse/TryParse.</summary>
+        private string JsonConstructorAttribute(IReadOnlyList<string> parameterNames)
+            => parameterNames.Count == FieldNames.Count
+               && !parameterNames.Where((p, i) => !string.Equals(p, FieldNames[i], StringComparison.OrdinalIgnoreCase)).Any()
+                ? " [JsonConstructor]"
+                : "";
 
         public bool SkipFunction(FunctionInstance f, bool skipFields = true)
             => SkipFunction(f, FieldNames, SimpleName, skipFields);
