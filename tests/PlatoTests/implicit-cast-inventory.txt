@@ -9,6 +9,7 @@ AffineTransform3D -> Matrix4x4
 AffineTransform3D -> Transform3D
 AmbientLight -> Color
 AmbientLight -> Illuminance
+ArchimedeanSolid -> PolygonMesh3D
 AreaLight -> Color
 AreaLight -> Luminance
 Axis2D -> Direction2D
@@ -32,6 +33,7 @@ BoundedSdf2D -> ScalarFunctionField2D
 BoundedSdf3D -> FunctionSdf3D
 BoundedSdf3D -> ScalarFunctionField3D
 CameraShake -> Frequency
+CatalanSolid -> PolygonMesh3D
 CircleFit2D -> Circle
 CircularSector -> Circle
 CircularSegment -> Circle
@@ -90,6 +92,7 @@ PathTracingSettings -> Denoiser
 PerlinNoise2D -> ScalarFunctionField2D
 PerlinNoise3D -> ScalarFunctionField3D
 PlaneFit3D -> Plane
+PlatonicSolid -> PolygonMesh3D
 PointLight -> Color
 PolarCoordinate -> Angle
 Pose2D -> AffineTransform2D

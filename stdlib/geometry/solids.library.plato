@@ -310,13 +310,16 @@ library Solids
                               Repeat(0, Repeat(0, VertexIndex(0))));
 
     //==
-    // Unit meshes by kind: the dispatch from the kind sums into the seed and
-    // catalog factories, each result at circumscribed radius one.
+    // Meshes of the solid sums: the dispatch from each sum into the seed and
+    // catalog factories, every result at circumscribed radius one. Each is
+    // named after its return type, so a solid converts to its mesh implicitly
+    // and a placed instance is that mesh transformed
+    // (Convention: see CONVENTIONS.md - Conversions).
 
     // The five Platonic seeds are already projected onto the unit sphere, so
     // they pass through directly.
-    UnitPolygonMesh(kind: PlatonicSolidKind): PolygonMesh3D
-        => match (kind) {
+    PolygonMesh3D(s: PlatonicSolid): PolygonMesh3D
+        => match (s) {
             Tetrahedron => PolygonMesh3D.Tetrahedron;
             Cube => PolygonMesh3D.Cube;
             Octahedron => PolygonMesh3D.Octahedron;
@@ -327,8 +330,8 @@ library Solids
     // All thirteen Archimedeans dispatch into the catalog (the base ambo and
     // truncate families in `polyhedra.library.plato`, the expand,
     // bevel and snub families in `polyhedra.library.plato`).
-    UnitPolygonMesh(kind: ArchimedeanSolidKind): PolygonMesh3D
-        => match (kind) {
+    PolygonMesh3D(s: ArchimedeanSolid): PolygonMesh3D
+        => match (s) {
             TruncatedTetrahedron => PolygonMesh3D.TruncatedTetrahedron.ScaledToUnitCircumradius;
             Cuboctahedron => PolygonMesh3D.Cuboctahedron.ScaledToUnitCircumradius;
             TruncatedCube => PolygonMesh3D.TruncatedCube.ScaledToUnitCircumradius;
@@ -347,8 +350,8 @@ library Solids
     // All thirteen Catalans dispatch into the catalog (rescaled, never
     // projected — see the header; the nine newer duals live in
     // `polyhedra.library.plato`).
-    UnitPolygonMesh(kind: CatalanSolidKind): PolygonMesh3D
-        => match (kind) {
+    PolygonMesh3D(s: CatalanSolid): PolygonMesh3D
+        => match (s) {
             TriakisTetrahedron => PolygonMesh3D.TriakisTetrahedron.ScaledToUnitCircumradius;
             RhombicDodecahedron => PolygonMesh3D.RhombicDodecahedron.ScaledToUnitCircumradius;
             TriakisOctahedron => PolygonMesh3D.TriakisOctahedron.ScaledToUnitCircumradius;
@@ -365,17 +368,9 @@ library Solids
         };
 
     //==
-    // Placed instances: unit mesh, scaled to the circumscribed radius, mapped
-    // into the frame.
-
-    ToPolygonMesh(s: PlatonicSolid): PolygonMesh3D
-        => s.Kind.UnitPolygonMesh.ScaledAboutOrigin(s.Radius).TransformedByFrame(s.Frame);
-
-    ToPolygonMesh(s: ArchimedeanSolid): PolygonMesh3D
-        => s.Kind.UnitPolygonMesh.ScaledAboutOrigin(s.Radius).TransformedByFrame(s.Frame);
-
-    ToPolygonMesh(s: CatalanSolid): PolygonMesh3D
-        => s.Kind.UnitPolygonMesh.ScaledAboutOrigin(s.Radius).TransformedByFrame(s.Frame);
+    // Placing a polyhedral solid needs no type of its own: the mesh is
+    // transformable, so the placed form is
+    // `PlatonicSolid.Icosahedron.PolygonMesh3D.ScaledAboutOrigin(r).TransformedByFrame(f)`.
 
     //==
     // Parametric builders: closed meshes for the prism, pyramid and antiprism

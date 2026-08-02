@@ -23,7 +23,7 @@ library Polyhedra
     // This covers the ambo and truncate families and their duals. The expand,
     // bevel and snub families, and the remaining nine Catalan duals, follow in the
     // next two sections; together the three catalogs name all thirteen of each of
-    // the `ArchimedeanSolidKind` / `CatalanSolidKind` sums in `solids.types.plato`.
+    // the `ArchimedeanSolid` / `CatalanSolid` sums in `solids.types.plato`.
     //
     // Vertices are NOT normalized to a common radius: the Archimedeans below are
     // vertex-transitive and may be passed through ProjectedToUnitSphere, the
@@ -509,51 +509,51 @@ library Polyhedra
     // The dual Platonic solid: cube and octahedron swap, dodecahedron and
     // icosahedron swap, and the tetrahedron is self-dual
     // (https://en.wikipedia.org/wiki/Platonic_solid).
-    Dual(self: PlatonicSolidKind): PlatonicSolidKind
+    Dual(self: PlatonicSolid): PlatonicSolid
         => match (self) {
-            Tetrahedron => PlatonicSolidKind.Tetrahedron;
-            Cube => PlatonicSolidKind.Octahedron;
-            Octahedron => PlatonicSolidKind.Cube;
-            Dodecahedron => PlatonicSolidKind.Icosahedron;
-            Icosahedron => PlatonicSolidKind.Dodecahedron;
+            Tetrahedron => PlatonicSolid.Tetrahedron;
+            Cube => PlatonicSolid.Octahedron;
+            Octahedron => PlatonicSolid.Cube;
+            Dodecahedron => PlatonicSolid.Icosahedron;
+            Icosahedron => PlatonicSolid.Dodecahedron;
         };
 
     // The Catalan dual of each Archimedean solid
     // (https://en.wikipedia.org/wiki/Catalan_solid).
-    Dual(self: ArchimedeanSolidKind): CatalanSolidKind
+    Dual(self: ArchimedeanSolid): CatalanSolid
         => match (self) {
-            TruncatedTetrahedron => CatalanSolidKind.TriakisTetrahedron;
-            Cuboctahedron => CatalanSolidKind.RhombicDodecahedron;
-            TruncatedCube => CatalanSolidKind.TriakisOctahedron;
-            TruncatedOctahedron => CatalanSolidKind.TetrakisHexahedron;
-            Rhombicuboctahedron => CatalanSolidKind.DeltoidalIcositetrahedron;
-            TruncatedCuboctahedron => CatalanSolidKind.DisdyakisDodecahedron;
-            SnubCube => CatalanSolidKind.PentagonalIcositetrahedron;
-            Icosidodecahedron => CatalanSolidKind.RhombicTriacontahedron;
-            TruncatedDodecahedron => CatalanSolidKind.TriakisIcosahedron;
-            TruncatedIcosahedron => CatalanSolidKind.PentakisDodecahedron;
-            Rhombicosidodecahedron => CatalanSolidKind.DeltoidalHexecontahedron;
-            TruncatedIcosidodecahedron => CatalanSolidKind.DisdyakisTriacontahedron;
-            SnubDodecahedron => CatalanSolidKind.PentagonalHexecontahedron;
+            TruncatedTetrahedron => CatalanSolid.TriakisTetrahedron;
+            Cuboctahedron => CatalanSolid.RhombicDodecahedron;
+            TruncatedCube => CatalanSolid.TriakisOctahedron;
+            TruncatedOctahedron => CatalanSolid.TetrakisHexahedron;
+            Rhombicuboctahedron => CatalanSolid.DeltoidalIcositetrahedron;
+            TruncatedCuboctahedron => CatalanSolid.DisdyakisDodecahedron;
+            SnubCube => CatalanSolid.PentagonalIcositetrahedron;
+            Icosidodecahedron => CatalanSolid.RhombicTriacontahedron;
+            TruncatedDodecahedron => CatalanSolid.TriakisIcosahedron;
+            TruncatedIcosahedron => CatalanSolid.PentakisDodecahedron;
+            Rhombicosidodecahedron => CatalanSolid.DeltoidalHexecontahedron;
+            TruncatedIcosidodecahedron => CatalanSolid.DisdyakisTriacontahedron;
+            SnubDodecahedron => CatalanSolid.PentagonalHexecontahedron;
         };
 
     // The Archimedean dual of each Catalan solid: the inverse of the map above
     // (https://en.wikipedia.org/wiki/Archimedean_solid).
-    Dual(self: CatalanSolidKind): ArchimedeanSolidKind
+    Dual(self: CatalanSolid): ArchimedeanSolid
         => match (self) {
-            TriakisTetrahedron => ArchimedeanSolidKind.TruncatedTetrahedron;
-            RhombicDodecahedron => ArchimedeanSolidKind.Cuboctahedron;
-            TriakisOctahedron => ArchimedeanSolidKind.TruncatedCube;
-            TetrakisHexahedron => ArchimedeanSolidKind.TruncatedOctahedron;
-            DeltoidalIcositetrahedron => ArchimedeanSolidKind.Rhombicuboctahedron;
-            DisdyakisDodecahedron => ArchimedeanSolidKind.TruncatedCuboctahedron;
-            PentagonalIcositetrahedron => ArchimedeanSolidKind.SnubCube;
-            RhombicTriacontahedron => ArchimedeanSolidKind.Icosidodecahedron;
-            TriakisIcosahedron => ArchimedeanSolidKind.TruncatedDodecahedron;
-            PentakisDodecahedron => ArchimedeanSolidKind.TruncatedIcosahedron;
-            DeltoidalHexecontahedron => ArchimedeanSolidKind.Rhombicosidodecahedron;
-            DisdyakisTriacontahedron => ArchimedeanSolidKind.TruncatedIcosidodecahedron;
-            PentagonalHexecontahedron => ArchimedeanSolidKind.SnubDodecahedron;
+            TriakisTetrahedron => ArchimedeanSolid.TruncatedTetrahedron;
+            RhombicDodecahedron => ArchimedeanSolid.Cuboctahedron;
+            TriakisOctahedron => ArchimedeanSolid.TruncatedCube;
+            TetrakisHexahedron => ArchimedeanSolid.TruncatedOctahedron;
+            DeltoidalIcositetrahedron => ArchimedeanSolid.Rhombicuboctahedron;
+            DisdyakisDodecahedron => ArchimedeanSolid.TruncatedCuboctahedron;
+            PentagonalIcositetrahedron => ArchimedeanSolid.SnubCube;
+            RhombicTriacontahedron => ArchimedeanSolid.Icosidodecahedron;
+            TriakisIcosahedron => ArchimedeanSolid.TruncatedDodecahedron;
+            PentakisDodecahedron => ArchimedeanSolid.TruncatedIcosahedron;
+            DeltoidalHexecontahedron => ArchimedeanSolid.Rhombicosidodecahedron;
+            DisdyakisTriacontahedron => ArchimedeanSolid.TruncatedIcosidodecahedron;
+            PentagonalHexecontahedron => ArchimedeanSolid.SnubDodecahedron;
         };
 
     //==

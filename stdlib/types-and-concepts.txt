@@ -198,8 +198,7 @@ type AnisotropyLayer implements IValue{Strength:Proportion;Rotation:Angle;}
 type Annulus implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,ICentered2D,IContainsPoint2D{Center:Point2D;InnerRadius:Number;OuterRadius:Number;}
 type AntiAliasing{}
 type Antiprism implements IConvexSolid,IPolygonMesh3D{Frame:Frame3D;SideCount:Integer;Radius:Number;Height:Number;}
-type ArchimedeanSolid implements IConvexSolid,IPolygonMesh3D{Kind:ArchimedeanSolidKind;Frame:Frame3D;Radius:Number;}
-type ArchimedeanSolidKind{}
+type ArchimedeanSolid{}
 type ArchimedeanSpiral2D implements IPolarCurve2D{StartRadius:Number;GrowthRate:Number;Angles:AngleInterval;}
 type Area implements IQuantity{SquareMeters:Number;}
 type ArealDensity implements IQuantity{KilogramsPerSquareMeter:Number;}
@@ -277,8 +276,7 @@ type Capsule2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IArea
 type Capsule3D implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,INearestPoint3D,ISupport3D,IParametricSurface{A:Point3D;B:Point3D;Radius:Number;}
 type Cardinal implements IValue,IComparable{Value:Integer;}
 type Cardioid2D implements IClosedCurve2D{Radius:Number;}
-type CatalanSolid implements IConvexSolid,IPolygonMesh3D{Kind:CatalanSolidKind;Frame:Frame3D;Radius:Number;}
-type CatalanSolidKind{}
+type CatalanSolid{}
 type Catenary2D implements ICurve2D{Scale:Number;Domain:NumberInterval;}
 type CatmullRomCurve2D implements ICurve2D,IDeformable2D{Points:Array<Point2D>;Alpha:Number;Closed:Boolean;}
 type CatmullRomCurve3D implements ICurve3D,IDeformable3D{Points:Array<Point3D>;Alpha:Number;Closed:Boolean;}
@@ -725,8 +723,7 @@ type Plane implements IGeometry3D,IConnected,IManifold,IOrientable,INearestPoint
 type PlaneFit3D implements IValue,IFitted{Plane:Plane;Quality:FitQuality;}
 type PlaneHit3D implements IValue{Hit:Boolean;Point:Point3D;Parameter:Number;}
 type PlaneRelation3D{}
-type PlatonicSolid implements IConvexSolid,IPolygonMesh3D{Kind:PlatonicSolidKind;Frame:Frame3D;Radius:Number;}
-type PlatonicSolidKind{}
+type PlatonicSolid{}
 type PlatonicSolidMesh{}
 type PlaybackCycle{}
 type Point2D implements ICoordinate,IOriginBased<Vector2D>,IHashable,IMetricSpace,ITransformable2D{X:Number;Y:Number;}

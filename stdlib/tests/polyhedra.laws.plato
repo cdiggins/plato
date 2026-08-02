@@ -11,12 +11,12 @@ library PolyhedraLaws
     // returns the original kind. Exact structural equality is correct here —
     // the kinds are payload-free sums, no floats involved.
 
-    Law_PlatonicDualIsInvolution(k: PlatonicSolidKind): Boolean
+    Law_PlatonicDualIsInvolution(k: PlatonicSolid): Boolean
         => k.Dual.Dual == k;
 
-    Law_ArchimedeanDualIsInvolution(k: ArchimedeanSolidKind): Boolean
+    Law_ArchimedeanDualIsInvolution(k: ArchimedeanSolid): Boolean
         => k.Dual.Dual == k;
 
-    Law_CatalanDualIsInvolution(k: CatalanSolidKind): Boolean
+    Law_CatalanDualIsInvolution(k: CatalanSolid): Boolean
         => k.Dual.Dual == k;
 }

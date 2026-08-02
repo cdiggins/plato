@@ -223,20 +223,12 @@ type Antiprism
     Height: Number;
 }
 
-// One of the five Platonic solids (https://en.wikipedia.org/wiki/Platonic_solid).
-type PlatonicSolidKind
-    = Tetrahedron | Cube | Octahedron | Dodecahedron | Icosahedron;
-
-// A regular polyhedron of the given kind, centered at the frame origin in the
-// frame's orientation, with vertices at circumscribed radius Radius
-// (https://en.wikipedia.org/wiki/Platonic_solid).
+// One of the five Platonic solids (https://en.wikipedia.org/wiki/Platonic_solid),
+// each naming the unit solid: centered at the origin, axis-aligned, with
+// vertices at circumscribed radius one. `PolygonMesh3D(PlatonicSolid)` in
+// `solids.library.plato` is the mesh; place it by transforming that mesh.
 type PlatonicSolid
-    implements IConvexSolid, IPolygonMesh3D
-{
-    Kind: PlatonicSolidKind;
-    Frame: Frame3D;
-    Radius: Number;
-}
+    = Tetrahedron | Cube | Octahedron | Dodecahedron | Icosahedron;
 
 // A fieldless grouping type: a receiver for the catalog of unit Platonic
 // solid meshes (`PlatonicSolidMesh.Icosahedron`, `PlatonicSolidMesh.All`, ...
@@ -246,8 +238,9 @@ type PlatonicSolidMesh
 }
 
 // One of the thirteen Archimedean solids
-// (https://en.wikipedia.org/wiki/Archimedean_solid).
-type ArchimedeanSolidKind
+// (https://en.wikipedia.org/wiki/Archimedean_solid), each naming the unit
+// solid at circumscribed radius one.
+type ArchimedeanSolid
     = TruncatedTetrahedron
     | Cuboctahedron
     | TruncatedCube
@@ -262,23 +255,13 @@ type ArchimedeanSolidKind
     | TruncatedIcosidodecahedron
     | SnubDodecahedron;
 
-// A semi-regular polyhedron of the given kind, centered at the frame origin
-// in the frame's orientation, with vertices at circumscribed radius Radius
-// (https://en.wikipedia.org/wiki/Archimedean_solid).
-type ArchimedeanSolid
-    implements IConvexSolid, IPolygonMesh3D
-{
-    Kind: ArchimedeanSolidKind;
-    Frame: Frame3D;
-    Radius: Number;
-}
-
 // One of the thirteen Catalan solids (duals of the Archimedean solids)
 // (https://en.wikipedia.org/wiki/Catalan_solid). All faces of a given solid
 // are congruent (face-transitive); they do not mix polygon sizes. Initial
 // hybrid construction lives in C# `Ara3D.Geometry.Polyhedra` /
-// `ConwayOperators` (Platonic seeds + dual/ambo/truncate aliases).
-type CatalanSolidKind
+// `ConwayOperators` (Platonic seeds + dual/ambo/truncate aliases). Each names
+// the unit solid at circumscribed radius one.
+type CatalanSolid
     = TriakisTetrahedron
     | RhombicDodecahedron
     | TriakisOctahedron
@@ -292,13 +275,3 @@ type CatalanSolidKind
     | DeltoidalHexecontahedron
     | DisdyakisTriacontahedron
     | PentagonalHexecontahedron;
-
-// A Catalan solid of the given kind, centered at the frame origin in the
-// frame's orientation, with vertices at circumscribed radius Radius.
-type CatalanSolid
-    implements IConvexSolid, IPolygonMesh3D
-{
-    Kind: CatalanSolidKind;
-    Frame: Frame3D;
-    Radius: Number;
-}
