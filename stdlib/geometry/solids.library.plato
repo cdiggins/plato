@@ -4,6 +4,7 @@
 // Sections, in order:
 //  - Solids — parametric surfaces for the solids
 //  - The typed polyhedral solids as polygon meshes
+//  - Deformation bodies for the profile-generated solids
 
 library Solids
 {
@@ -474,4 +475,17 @@ library Solids
 
     ToTriangleMesh(s: Antiprism): TriangleMesh3D
         => s.ToPolygonMesh.ToTriangleMesh;
+    //==
+    // # Deformation bodies for the profile-generated solids
+    //
+    // The Deformable3D obligation of the one solid in `solids.types.plato` that
+    // is spanned by stored points. Extrude, revolve and sweep are absent: each
+    // carries a placement frame, an axis or a path curve, and a point mapping
+    // supplies no image for those.
+
+    // Each cross-section deformed in turn; the sections keep their point counts,
+    // so the loft's correspondence between them survives, and Closed is a
+    // topological flag rather than geometry.
+    Deform(self: LoftedSolid, mapping: Function1<Point3D, Point3D>): LoftedSolid
+        => (self.Sections.Map(section => section.Deform(mapping)), self.Closed);
 }

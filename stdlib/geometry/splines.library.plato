@@ -6,6 +6,7 @@
 //  - Knot vectors and B-spline / NURBS domains
 //  - Piecewise indexing and Hermite evaluation
 //  - Evaluating the interpolating splines
+//  - Deformation bodies for the control-point curves
 
 library Splines
 {
@@ -680,4 +681,84 @@ library Splines
         => self.KnotCount < 2
             ? self.KnotValue(0)
             : self.SpanValueAt(self.ParameterDomain.Lerp(t.Clamp(0.0, 1.0)));
+    //==
+    // # Deformation bodies for the control-point curves
+    //
+    // The Deformable2D / Deformable3D obligations of the curves in
+    // `splines.types.plato`: every stored position is carried through the
+    // mapping and everything else — weights, knots, degree, the shape
+    // parameters, the closed flag — is untouched, because none of it is
+    // geometry. Exact for an affine mapping, which commutes with each basis;
+    // under a nonlinear one the result is the spline over the moved points, not
+    // the image of the original curve. The Hermite types are absent on purpose
+    // (see `splines.types.plato`): a tangent has no image under a point mapping.
+
+    // Every control point carried through the mapping.
+    Deform(self: BezierCurve2D, mapping: Function1<Point2D, Point2D>): BezierCurve2D
+        => BezierCurve2D(self.ControlPoints.Map(mapping));
+
+    // Every control point carried through the mapping.
+    Deform(self: BezierCurve3D, mapping: Function1<Point3D, Point3D>): BezierCurve3D
+        => BezierCurve3D(self.ControlPoints.Map(mapping));
+
+    // Control points deformed; the weights are ratios, not positions.
+    Deform(self: RationalBezierCurve2D, mapping: Function1<Point2D, Point2D>): RationalBezierCurve2D
+        => (self.ControlPoints.Map(mapping), self.Weights);
+
+    // Control points deformed; the weights are ratios, not positions.
+    Deform(self: RationalBezierCurve3D, mapping: Function1<Point3D, Point3D>): RationalBezierCurve3D
+        => (self.ControlPoints.Map(mapping), self.Weights);
+
+    // Each segment deformed in turn; shared endpoints stay shared because the
+    // same mapping sends each to the same image.
+    Deform(self: CompositeBezier2D, mapping: Function1<Point2D, Point2D>): CompositeBezier2D
+        => CompositeBezier2D(self.Segments.Map(seg => seg.Deform(mapping)));
+
+    // Each segment deformed in turn; shared endpoints stay shared.
+    Deform(self: CompositeBezier3D, mapping: Function1<Point3D, Point3D>): CompositeBezier3D
+        => CompositeBezier3D(self.Segments.Map(seg => seg.Deform(mapping)));
+
+    // Control points deformed; degree and knots are parameter-domain data.
+    Deform(self: BSplineCurve2D, mapping: Function1<Point2D, Point2D>): BSplineCurve2D
+        => (self.ControlPoints.Map(mapping), self.Degree, self.Knots);
+
+    // Control points deformed; degree and knots are parameter-domain data.
+    Deform(self: BSplineCurve3D, mapping: Function1<Point3D, Point3D>): BSplineCurve3D
+        => (self.ControlPoints.Map(mapping), self.Degree, self.Knots);
+
+    // Control points deformed; weights, degree and knots unchanged.
+    Deform(self: NurbsCurve2D, mapping: Function1<Point2D, Point2D>): NurbsCurve2D
+        => (self.ControlPoints.Map(mapping), self.Weights, self.Degree, self.Knots);
+
+    // Control points deformed; weights, degree and knots unchanged.
+    Deform(self: NurbsCurve3D, mapping: Function1<Point3D, Point3D>): NurbsCurve3D
+        => (self.ControlPoints.Map(mapping), self.Weights, self.Degree, self.Knots);
+
+    // Interpolated points deformed; Alpha selects the parameterization, not a
+    // position, so it survives.
+    Deform(self: CatmullRomCurve2D, mapping: Function1<Point2D, Point2D>): CatmullRomCurve2D
+        => (self.Points.Map(mapping), self.Alpha, self.Closed);
+
+    // Interpolated points deformed; Alpha and the closed flag unchanged.
+    Deform(self: CatmullRomCurve3D, mapping: Function1<Point3D, Point3D>): CatmullRomCurve3D
+        => (self.Points.Map(mapping), self.Alpha, self.Closed);
+
+    // Knot points deformed; the per-knot tension, continuity and bias shape the
+    // tangents and carry no position of their own.
+    Deform(self: TcbSpline2D, mapping: Function1<Point2D, Point2D>): TcbSpline2D
+        => (self.Points.Map(mapping), self.Tensions, self.Continuities, self.Biases, self.Closed);
+
+    // Knot points deformed; the TCB parameters unchanged.
+    Deform(self: TcbSpline3D, mapping: Function1<Point3D, Point3D>): TcbSpline3D
+        => (self.Points.Map(mapping), self.Tensions, self.Continuities, self.Biases, self.Closed);
+
+    // Every point carried through the mapping; a piecewise-linear spline is the
+    // one member of this family whose deformed form IS the image of the curve
+    // whenever the mapping is affine.
+    Deform(self: LinearSpline2D, mapping: Function1<Point2D, Point2D>): LinearSpline2D
+        => (self.Points.Map(mapping), self.Closed);
+
+    // Every point carried through the mapping.
+    Deform(self: LinearSpline3D, mapping: Function1<Point3D, Point3D>): LinearSpline3D
+        => (self.Points.Map(mapping), self.Closed);
 }

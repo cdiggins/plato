@@ -96,6 +96,17 @@ library CurvesShapes
                             self.P3.PositionVector, t)
                .ToPoint;
 
+    // The Deformable2D obligation: every control point carried through the
+    // mapping. Exact for an affine mapping, which commutes with the Bernstein
+    // basis; under a nonlinear one the result is the Bezier over the moved
+    // control points, not the image of the curve.
+    Deform(self: QuadraticBezier2D, mapping: Function1<Point2D, Point2D>): QuadraticBezier2D
+        => (mapping(self.P0), mapping(self.P1), mapping(self.P2));
+
+    // The Deformable2D obligation: every control point carried through the mapping.
+    Deform(self: CubicBezier2D, mapping: Function1<Point2D, Point2D>): CubicBezier2D
+        => (mapping(self.P0), mapping(self.P1), mapping(self.P2), mapping(self.P3));
+
     //==
     // # Evaluating the polar and figure curves
     //
@@ -457,6 +468,15 @@ library CurvesShapes
                .CubicBezier(self.P1.PositionVector, self.P2.PositionVector,
                             self.P3.PositionVector, t)
                .ToPoint;
+
+    // The Deformable3D obligation: every control point carried through the
+    // mapping, with the same affine-exactness caveat as the plane arcs above.
+    Deform(self: QuadraticBezier3D, mapping: Function1<Point3D, Point3D>): QuadraticBezier3D
+        => (mapping(self.P0), mapping(self.P1), mapping(self.P2));
+
+    // The Deformable3D obligation: every control point carried through the mapping.
+    Deform(self: CubicBezier3D, mapping: Function1<Point3D, Point3D>): CubicBezier3D
+        => (mapping(self.P0), mapping(self.P1), mapping(self.P2), mapping(self.P3));
 
     //==
     // # Helices and spirals

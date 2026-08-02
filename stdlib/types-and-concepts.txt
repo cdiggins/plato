@@ -40,8 +40,8 @@ concept Curve<TRange>inherits Procedural<Number,TRange>{}
 concept Curve1D inherits Curve<Number>{}
 concept Curve2D inherits Geometry2D,Curve<Point2D>{}
 concept Curve3D inherits Geometry3D,Curve<Point3D>{}
-concept Deformable2D{Deform(x:Self,mapping:Function1<Point2D,Point2D>):Self;}
-concept Deformable3D{Deform(x:Self,mapping:Function1<Point3D,Point3D>):Self;}
+concept Deformable2D inherits Transformable2D{Deform(x:Self,mapping:Function1<Point2D,Point2D>):Self;}
+concept Deformable3D inherits Transformable3D{Deform(x:Self,mapping:Function1<Point3D,Point3D>):Self;}
 concept Deformation2D inherits Procedural<Point2D,Point2D>{}
 concept Deformation3D inherits Procedural<Point3D,Point3D>{}
 concept Difference<TDelta>where TDelta:Additive,TDelta:Scalable{Add(x:Self,delta:TDelta):Self;Between(a:Self,b:Self):TDelta;}
@@ -220,10 +220,10 @@ type Bend3D implements Value,Deformation3D{Origin:Point3D;Axis:Direction3D;Direc
 type BernoulliDistribution implements ProbabilityDistribution{SuccessProbability:Probability;}
 type BernsteinPolynomial implements Value{Coefficients:Array<Number>;}
 type BetaDistribution implements ProbabilityDistribution{Alpha:Number;Beta:Number;}
-type BezierCurve2D implements Curve2D{ControlPoints:Array<Point2D>;}
-type BezierCurve3D implements Curve3D{ControlPoints:Array<Point3D>;}
-type BezierPatch implements ParametricSurface{ControlPoints:Array2D<Point3D>;}
-type BilinearPatch implements ParametricSurface{P00:Point3D;P10:Point3D;P01:Point3D;P11:Point3D;}
+type BezierCurve2D implements Curve2D,Deformable2D{ControlPoints:Array<Point2D>;}
+type BezierCurve3D implements Curve3D,Deformable3D{ControlPoints:Array<Point3D>;}
+type BezierPatch implements ParametricSurface,Deformable3D{ControlPoints:Array2D<Point3D>;}
+type BilinearPatch implements ParametricSurface,Deformable3D{P00:Point3D;P10:Point3D;P01:Point3D;P11:Point3D;}
 type BinaryImage implements Image{Size:IntegerSize2D;Values:Array<Boolean>;}
 type BinningGrid2D implements Value,SpatialIndex2D{Bounds:Bounds2D;CellCounts:IntegerSize2D;BucketOffsets:Array<Integer>;ItemIndices:Array<ItemIndex>;}
 type BinningGrid3D implements Value,SpatialIndex3D{Bounds:Bounds3D;CellCounts:IntegerSize3D;BucketOffsets:Array<Integer>;ItemIndices:Array<ItemIndex>;}
@@ -257,9 +257,9 @@ type BrepSurface{}
 type BrepValidation implements Value{EdgesInRange:Boolean;LoopUsesInRange:Boolean;LoopsConnected:Boolean;CurveEndpointsMatch:Boolean;Watertight:Boolean;}
 type BrickMap3D implements Value{Origin:Point3D;CellSize:Number;BrickSize:Integer;Bricks:Array<VoxelBrick3D>;}
 type BrightnessContrastAdjustment implements Value{Brightness:Number;Contrast:Number;}
-type BSplineCurve2D implements Curve2D{ControlPoints:Array<Point2D>;Degree:Integer;Knots:KnotVector;}
-type BSplineCurve3D implements Curve3D{ControlPoints:Array<Point3D>;Degree:Integer;Knots:KnotVector;}
-type BSplineSurface implements ParametricSurface{ControlPoints:Array2D<Point3D>;UDegree:Integer;VDegree:Integer;UKnots:KnotVector;VKnots:KnotVector;}
+type BSplineCurve2D implements Curve2D,Deformable2D{ControlPoints:Array<Point2D>;Degree:Integer;Knots:KnotVector;}
+type BSplineCurve3D implements Curve3D,Deformable3D{ControlPoints:Array<Point3D>;Degree:Integer;Knots:KnotVector;}
+type BSplineSurface implements ParametricSurface,Deformable3D{ControlPoints:Array2D<Point3D>;UDegree:Integer;VDegree:Integer;UKnots:KnotVector;VKnots:KnotVector;}
 type Buffer<T>{}
 type ButterflyCurve2D implements ClosedCurve2D{Scale:Number;}
 type Bvh2D implements Value,SpatialIndex2D{Nodes:Array<BvhNode2D>;PrimitiveIndices:Array<ItemIndex>;}
@@ -277,8 +277,8 @@ type Cardioid2D implements ClosedCurve2D{Radius:Number;}
 type CatalanSolid implements ConvexSolid,Meshable3D{Kind:CatalanSolidKind;Frame:Frame3D;Radius:Number;}
 type CatalanSolidKind{}
 type Catenary2D implements Curve2D{Scale:Number;Domain:NumberInterval;}
-type CatmullRomCurve2D implements Curve2D{Points:Array<Point2D>;Alpha:Number;Closed:Boolean;}
-type CatmullRomCurve3D implements Curve3D{Points:Array<Point3D>;Alpha:Number;Closed:Boolean;}
+type CatmullRomCurve2D implements Curve2D,Deformable2D{Points:Array<Point2D>;Alpha:Number;Closed:Boolean;}
+type CatmullRomCurve3D implements Curve3D,Deformable3D{Points:Array<Point3D>;Alpha:Number;Closed:Boolean;}
 type CauchyDistribution implements ProbabilityDistribution{Location:Number;Scale:Number;}
 type CellIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
 type Character implements Value,Orderable{}
@@ -330,8 +330,8 @@ type ColorYCbCr implements Value{Y:Number;Cb:Number;Cr:Number;}
 type ColorYUV implements Value{Y:Number;U:Number;V:Number;}
 type ComparisonTolerance implements Value{Absolute:Number;Relative:Number;}
 type Complex implements Numerical{Real:Number;Imaginary:Number;}
-type CompositeBezier2D implements Curve2D{Segments:Array<CubicBezier2D>;}
-type CompositeBezier3D implements Curve3D{Segments:Array<CubicBezier3D>;}
+type CompositeBezier2D implements Curve2D,Deformable2D{Segments:Array<CubicBezier2D>;}
+type CompositeBezier3D implements Curve3D,Deformable3D{Segments:Array<CubicBezier3D>;}
 type ConchoidOfDeSluze2D implements PolarCurve2D{Scale:Number;}
 type Cone implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,SupportMappable3D,ParametricSurface{Apex:Point3D;Axis:Direction3D;Height:Number;Radius:Number;}
 type ConicalFrustum implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,ParametricSurface{Center:Point3D;Axis:Direction3D;Height:Number;BottomRadius:Number;TopRadius:Number;}
@@ -364,8 +364,8 @@ type CsgOperation{}
 type CsgTree3D implements Solid{Nodes:Array<CsgNode3D>;Root:CsgNodeIndex;}
 type CubemapImage implements Value{Faces:Array<FloatImage>;}
 type CubemapLayout{}
-type CubicBezier2D implements Curve2D{P0:Point2D;P1:Point2D;P2:Point2D;P3:Point2D;}
-type CubicBezier3D implements Curve3D{P0:Point3D;P1:Point3D;P2:Point3D;P3:Point3D;}
+type CubicBezier2D implements Curve2D,Deformable2D{P0:Point2D;P1:Point2D;P2:Point2D;P3:Point2D;}
+type CubicBezier3D implements Curve3D,Deformable3D{P0:Point3D;P1:Point3D;P2:Point3D;P3:Point3D;}
 type CubicBezierEasing implements Value,EasingFunction{P1:Number2;P2:Number2;}
 type CubicPolynomial implements Value{A:Number;B:Number;C:Number;D:Number;}
 type CurlNoise2D implements Value,VectorField2D{Seed:Integer;Frequency:Number;}
@@ -591,8 +591,8 @@ type Line3D implements Geometry3D,OpenShape,Connected,Bounded3D,LengthMeasurable
 type LinearDensity implements Quantity{KilogramsPerMeter:Number;}
 type LinearFit implements Value{Slope:Number;Intercept:Number;RSquared:Number;}
 type LinearGradient2D implements Value{Start:Point2D;End:Point2D;Gradient:ColorGradient;Spread:GradientSpread;}
-type LinearSpline2D implements Curve2D{Points:Array<Point2D>;Closed:Boolean;}
-type LinearSpline3D implements Curve3D{Points:Array<Point3D>;Closed:Boolean;}
+type LinearSpline2D implements Curve2D,Deformable2D{Points:Array<Point2D>;Closed:Boolean;}
+type LinearSpline3D implements Curve3D,Deformable3D{Points:Array<Point3D>;Closed:Boolean;}
 type LineCap{}
 type LineEquation2D implements Value{A:Number;B:Number;C:Number;}
 type LineFit2D implements Value,Fitted{Line:InfiniteLine2D;Quality:FitQuality;}
@@ -603,8 +603,8 @@ type LineSet3D implements Value,IndexedSegmentGeometry3D,Deformable3D{Positions:
 type Lissajous2D implements Curve2D{XAmplitude:Number;YAmplitude:Number;XFrequency:Number;YFrequency:Number;Phase:Angle;}
 type List<T>{}
 type LodGroup implements Value{Center:Point3D;Meshes:Array<MeshIndex>;SwitchDistances:Array<Number>;}
-type LoftedSolid implements Solid{Sections:Array<Polygon3D>;Closed:Boolean;}
-type LoftedSurface implements ParametricSurface{Sections:Array<Polyline3D>;Closed:Boolean;}
+type LoftedSolid implements Solid,Deformable3D{Sections:Array<Polygon3D>;Closed:Boolean;}
+type LoftedSurface implements ParametricSurface,Deformable3D{Sections:Array<Polyline3D>;Closed:Boolean;}
 type LogarithmicSpiral2D implements PolarCurve2D{StartRadius:Number;GrowthRate:Number;Angles:AngleInterval;}
 type LogNormalDistribution implements ProbabilityDistribution{LogMean:Number;LogStandardDeviation:Number;}
 type LookAtCamera implements Value{Position:Point3D;Target:Point3D;Up:Direction3D;VerticalFov:Angle;AspectRatio:Number;Near:Number;Far:Number;}
@@ -670,9 +670,9 @@ type Number3 implements Vector{X:Number;Y:Number;Z:Number;}
 type Number4 implements Vector{X:Number;Y:Number;Z:Number;W:Number;}
 type Number8 implements Vector{X0:Number;X1:Number;X2:Number;X3:Number;X4:Number;X5:Number;X6:Number;X7:Number;}
 type NumberInterval implements IntervalLike<Number>{Start:Number;End:Number;}
-type NurbsCurve2D implements Curve2D{ControlPoints:Array<Point2D>;Weights:Array<Number>;Degree:Integer;Knots:KnotVector;}
-type NurbsCurve3D implements Curve3D{ControlPoints:Array<Point3D>;Weights:Array<Number>;Degree:Integer;Knots:KnotVector;}
-type NurbsSurface implements ParametricSurface{ControlPoints:Array2D<Point3D>;Weights:Array2D<Number>;UDegree:Integer;VDegree:Integer;UKnots:KnotVector;VKnots:KnotVector;}
+type NurbsCurve2D implements Curve2D,Deformable2D{ControlPoints:Array<Point2D>;Weights:Array<Number>;Degree:Integer;Knots:KnotVector;}
+type NurbsCurve3D implements Curve3D,Deformable3D{ControlPoints:Array<Point3D>;Weights:Array<Number>;Degree:Integer;Knots:KnotVector;}
+type NurbsSurface implements ParametricSurface,Deformable3D{ControlPoints:Array2D<Point3D>;Weights:Array2D<Number>;UDegree:Integer;VDegree:Integer;UKnots:KnotVector;VKnots:KnotVector;}
 type OccupancyGrid2D implements Value{Origin:Point2D;CellSize:Number;Occupied:Array2D<Boolean>;}
 type OccupancyGrid3D implements Value{Origin:Point3D;CellSize:Number;Occupied:Array3D<Boolean>;}
 type Octree3D implements Value,SpatialIndex3D{Bounds:Bounds3D;Nodes:Array<OctreeNode>;ItemIndices:Array<ItemIndex>;MaxDepth:Integer;}
@@ -725,8 +725,8 @@ type PlaneRelation3D{}
 type PlatonicSolid implements ConvexSolid,Meshable3D{Kind:PlatonicSolidKind;Frame:Frame3D;Radius:Number;}
 type PlatonicSolidKind{}
 type PlaybackCycle{}
-type Point2D implements Coordinate,OriginBased<Vector2D>,Hashable,MetricSpace{X:Number;Y:Number;}
-type Point3D implements Coordinate,OriginBased<Vector3D>,Hashable,MetricSpace{X:Number;Y:Number;Z:Number;}
+type Point2D implements Coordinate,OriginBased<Vector2D>,Hashable,MetricSpace,Transformable2D{X:Number;Y:Number;}
+type Point3D implements Coordinate,OriginBased<Vector3D>,Hashable,MetricSpace,Transformable3D{X:Number;Y:Number;Z:Number;}
 type PointCloud2D implements Value,Deformable2D{Positions:Array<Point2D>;}
 type PointCloud3D implements Value,Deformable3D{Positions:Array<Point3D>;}
 type PointLight implements LightSource{Position:Point3D;Color:Color;Flux:LuminousFlux;Range:Number;Falloff:Attenuation;CastsShadows:Boolean;}
@@ -765,8 +765,8 @@ type Quad3D implements Geometry3D,Connected,Orientable,PlanarMeasurable,Bounded3
 type QuadArray3D implements Value,QuadGeometry3D{Quads:Array<Quad3D>;}
 type QuadFace implements Face{A:VertexIndex;B:VertexIndex;C:VertexIndex;D:VertexIndex;}
 type QuadMesh3D implements Value,Meshable3D,IndexedQuadGeometry3D,MeshElementCounts,Deformable3D{Positions:Array<Point3D>;Faces:Array<QuadFace>;}
-type QuadraticBezier2D implements Curve2D{P0:Point2D;P1:Point2D;P2:Point2D;}
-type QuadraticBezier3D implements Curve3D{P0:Point3D;P1:Point3D;P2:Point3D;}
+type QuadraticBezier2D implements Curve2D,Deformable2D{P0:Point2D;P1:Point2D;P2:Point2D;}
+type QuadraticBezier3D implements Curve3D,Deformable3D{P0:Point3D;P1:Point3D;P2:Point3D;}
 type QuadraticPolynomial implements Value{A:Number;B:Number;C:Number;}
 type Quadric implements Geometry3D{Coefficients:Matrix4x4;}
 type Quadtree2D implements Value,SpatialIndex2D{Bounds:Bounds2D;Nodes:Array<QuadtreeNode>;ItemIndices:Array<ItemIndex>;MaxDepth:Integer;}
@@ -781,8 +781,8 @@ type RadiusQuery2D implements Value{Center:Point2D;Radius:Number;MaxCount:Intege
 type RadiusQuery3D implements Value{Center:Point3D;Radius:Number;MaxCount:Integer;}
 type RandomState implements Value,Hashable{State:Integer;Stream:Integer;}
 type Rational implements Value,Comparable{Numerator:Integer;Denominator:Integer;}
-type RationalBezierCurve2D implements Curve2D{ControlPoints:Array<Point2D>;Weights:Array<Number>;}
-type RationalBezierCurve3D implements Curve3D{ControlPoints:Array<Point3D>;Weights:Array<Number>;}
+type RationalBezierCurve2D implements Curve2D,Deformable2D{ControlPoints:Array<Point2D>;Weights:Array<Number>;}
+type RationalBezierCurve3D implements Curve3D,Deformable3D{ControlPoints:Array<Point3D>;Weights:Array<Number>;}
 type RationalFunction implements Value{Numerator:Polynomial;Denominator:Polynomial;}
 type Ray2D implements Geometry2D,Connected,NearestPoint2D{Origin:Point2D;Direction:Direction2D;}
 type Ray3D implements Geometry3D,Connected,NearestPoint3D{Origin:Point3D;Direction:Direction3D;}
@@ -940,7 +940,7 @@ type StudentTDistribution implements ProbabilityDistribution{DegreesOfFreedom:Nu
 type SturmChain implements Value{Polynomials:Array<Polynomial>;}
 type StyledPath2D implements Value{Path:Path2D;Fill:FillStyle;Stroke:StrokeStyle;}
 type SubdivisionScheme{}
-type SubdivisionSurface implements Surface{ControlMesh:PolygonMesh3D;Scheme:SubdivisionScheme;Levels:Integer;}
+type SubdivisionSurface implements Surface,Deformable3D{ControlMesh:PolygonMesh3D;Scheme:SubdivisionScheme;Levels:Integer;}
 type SubsurfaceParameters implements Value{Color:Color;Radius:Number3;Scale:Number;Anisotropy:Number;}
 type SummaryStatistics implements Value{Count:Integer;Sum:Number;Mean:Number;Variance:Number;StandardDeviation:Number;Minimum:Number;Maximum:Number;Skewness:Number;Kurtosis:Number;}
 type SuperEllipse implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D{Center:Point2D;SemiAxes:Number2;Rotation:Angle;Exponent:Number;}
@@ -959,8 +959,8 @@ type TangentBasis implements Value{Tangent:Direction3D;Bitangent:Direction3D;Nor
 type TangentSpace3D implements Value{Origin:Point3D;TangentU:Vector3D;TangentV:Vector3D;Normal:Direction3D;}
 type Taper2D implements Value,Deformation2D{Origin:Point2D;Axis:Direction2D;Rate:Number;}
 type Taper3D implements Value,Deformation3D{Origin:Point3D;Axis:Direction3D;Rate:Number;}
-type TcbSpline2D implements Curve2D{Points:Array<Point2D>;Tensions:Array<Number>;Continuities:Array<Number>;Biases:Array<Number>;Closed:Boolean;}
-type TcbSpline3D implements Curve3D{Points:Array<Point3D>;Tensions:Array<Number>;Continuities:Array<Number>;Biases:Array<Number>;Closed:Boolean;}
+type TcbSpline2D implements Curve2D,Deformable2D{Points:Array<Point2D>;Tensions:Array<Number>;Continuities:Array<Number>;Biases:Array<Number>;Closed:Boolean;}
+type TcbSpline3D implements Curve3D,Deformable3D{Points:Array<Point3D>;Tensions:Array<Number>;Continuities:Array<Number>;Biases:Array<Number>;Closed:Boolean;}
 type Temperature implements Quantity{Kelvin:Number;}
 type TemperatureDelta implements Quantity{Kelvin:Number;}
 type Tempo{BeatsPerMinute:Number;}

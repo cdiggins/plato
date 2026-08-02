@@ -4,6 +4,7 @@
 // Sections, in order:
 //  - Surfaces — parametric evaluation of the named surface types
 //  - Derived functions for the surface, solid, and volume concepts
+//  - Deformation bodies for the control-net and sampled surfaces
 
 library Surfaces
 {
@@ -486,4 +487,46 @@ library Surfaces
     // another marker. They add no members over their bases, and Geometry3D's own
     // derived helpers live in the geometry package (P5). No curve/surface-specific
     // function is derivable for them here without new members, so none is offered.
+    //==
+    // # Deformation bodies for the control-net and sampled surfaces
+    //
+    // The Deformable3D obligations of the surfaces in `surfaces.types.plato`
+    // that are spanned by stored points: every position is carried through the
+    // mapping, and the parameter-domain data — weights, knots, degrees, the
+    // subdivision scheme and level — passes through untouched. Exact for an
+    // affine mapping; under a nonlinear one the result is the surface over the
+    // moved net, not the image of the original surface.
+    //
+    // The generated surfaces (revolve, extrude, rule, loft-by-curve, sweep,
+    // tube, offset) are absent: each stores an axis, a direction, a distance or
+    // a generator curve, none of which a point mapping can carry. So is
+    // HeightField, whose samples are elevations over a fixed XY grid rather than
+    // free positions.
+
+    // Every corner carried through the mapping.
+    Deform(self: BilinearPatch, mapping: Function1<Point3D, Point3D>): BilinearPatch
+        => (mapping(self.P00), mapping(self.P10), mapping(self.P01), mapping(self.P11));
+
+    // Every control point of the net carried through the mapping.
+    Deform(self: BezierPatch, mapping: Function1<Point3D, Point3D>): BezierPatch
+        => BezierPatch(self.ControlPoints.Map(mapping));
+
+    // Control net deformed; degrees and knot vectors are parameter-domain data.
+    Deform(self: BSplineSurface, mapping: Function1<Point3D, Point3D>): BSplineSurface
+        => (self.ControlPoints.Map(mapping), self.UDegree, self.VDegree, self.UKnots, self.VKnots);
+
+    // Control net deformed; weights, degrees and knot vectors unchanged.
+    Deform(self: NurbsSurface, mapping: Function1<Point3D, Point3D>): NurbsSurface
+        => (self.ControlPoints.Map(mapping), self.Weights, self.UDegree, self.VDegree, self.UKnots, self.VKnots);
+
+    // Each cross-section deformed in turn; the sections keep their point counts,
+    // so the loft's correspondence between them survives.
+    Deform(self: LoftedSurface, mapping: Function1<Point3D, Point3D>): LoftedSurface
+        => (self.Sections.Map(section => section.Deform(mapping)), self.Closed);
+
+    // The control mesh deformed; the scheme and refinement level are not
+    // geometry. The limit surface of the deformed mesh, which for an affine
+    // mapping is the deformed limit surface — subdivision is affine-invariant.
+    Deform(self: SubdivisionSurface, mapping: Function1<Point3D, Point3D>): SubdivisionSurface
+        => (self.ControlMesh.Deform(mapping), self.Scheme, self.Levels);
 }

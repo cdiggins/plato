@@ -478,10 +478,16 @@ library Intervals
     Transform(self: Deformable3D, transform: Transform3D): Self
         => self.Deform(p => p.Transform(transform));
 
-    // TODO(follow-up): the concrete per-type `Deform` bodies (InfiniteLine2D/3D,
-    // Line2D/3D, Ray2D/3D, Triangle2D/3D, Quad2D/3D, Circle, Ellipse,
-    // Polygon2D/3D, Polyline2D/3D, RegularPolygon, PolygonWithHoles2D,
-    // Tetrahedron, and the mesh types) are the remaining half of this item. They
-    // are one-liners over each type's fields but belong to the packages that own
-    // those declarations, so they are not written here.
+    // The concrete per-type `Deform` bodies live with the packages that own the
+    // declarations, not here — the geometry primitives in `polygons.library.plato`
+    // and `spatial-primitives.library.plato`, the meshes in `meshes.library.plato`,
+    // the control-point curves and surfaces in `splines.library.plato` and
+    // `surfaces.library.plato`.
+    //
+    // A type earns Deform when a mapped point set determines it completely. The
+    // ones that look like they should but do not each carry a note at their own
+    // declaration: InfiniteLine2D/3D and Ray2D/3D store a Direction, Circle,
+    // Ellipse and RegularPolygon a radius, Wedge and Prism3D a sweep vector,
+    // ConvexVolume a set of planes, and the Hermite splines their tangents. None
+    // of those has an image under an arbitrary point mapping.
 }

@@ -87,7 +87,7 @@ type SineCurve2D
 // point P1. Tangents at the ends aim at P1
 // (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type QuadraticBezier2D
-    implements Curve2D
+    implements Curve2D, Deformable2D
 {
     P0: Point2D;
     P1: Point2D;
@@ -98,7 +98,7 @@ type QuadraticBezier2D
 // points P1 and P2. The workhorse of vector graphics and font outlines
 // (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type CubicBezier2D
-    implements Curve2D
+    implements Curve2D, Deformable2D
 {
     P0: Point2D;
     P1: Point2D;
@@ -422,7 +422,7 @@ type EllipticalArc3D
 // A quadratic Bezier arc in space: interpolates P0 to P2, shaped by the middle
 // control point P1 (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type QuadraticBezier3D
-    implements Curve3D
+    implements Curve3D, Deformable3D
 {
     P0: Point3D;
     P1: Point3D;
@@ -432,7 +432,7 @@ type QuadraticBezier3D
 // A cubic Bezier arc in space: interpolates P0 to P3, shaped by the interior
 // control points P1 and P2 (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type CubicBezier3D
-    implements Curve3D
+    implements Curve3D, Deformable3D
 {
     P0: Point3D;
     P1: Point3D;

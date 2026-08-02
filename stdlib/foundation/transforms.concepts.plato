@@ -3,7 +3,9 @@
 //
 // The concepts that mark a value as carryable through a transform:
 // Transformable2D/3D for the general transform of a dimension, Deformable2D/3D
-// for an arbitrary point mapping.
+// for an arbitrary point mapping. Deformable inherits Transformable — an
+// arbitrary point mapping subsumes any named transform — so implementing Deform
+// is the only obligation a shape has, and Transform arrives derived.
 // Also the concepts that mark a transform representation by the canonical form
 // it converts into: Affine2D/Affine3D for the general affine transform of a
 // dimension, Rotational3D for the unit quaternion.
@@ -51,14 +53,20 @@ concept Transformable3D
     Transform(x: Self, transform: Transform3D): Self;
 }
 
-// Can be deformed by an arbitrary 2D point mapping.
+// Can be deformed by an arbitrary 2D point mapping. Strictly stronger than
+// Transformable2D — a named transform is one particular point mapping — so the
+// Transform member is derived from Deform in `intervals.library.plato` and an
+// implementor supplies Deform alone.
 concept Deformable2D
+    inherits Transformable2D
 {
     Deform(x: Self, mapping: Function1<Point2D, Point2D>): Self;
 }
 
-// Can be deformed by an arbitrary 3D point mapping.
+// Can be deformed by an arbitrary 3D point mapping. Strictly stronger than
+// Transformable3D, and its Transform member is likewise derived from Deform.
 concept Deformable3D
+    inherits Transformable3D
 {
     Deform(x: Self, mapping: Function1<Point3D, Point3D>): Self;
 }
