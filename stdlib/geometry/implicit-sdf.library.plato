@@ -40,18 +40,23 @@ library ImplicitSdf
 
     // Any planar SDF as a bounded function SDF with the given domain hint.
     WithBounds(self: ISignedDistanceField2D, bounds: Bounds2D): BoundedSdf2D
-        => self.ToFunctionSdf.WithBounds(bounds);
+        => self.FunctionSdf2D.WithBounds(bounds);
 
     // Any spatial SDF as a bounded function SDF with the given domain hint.
     WithBounds(self: ISignedDistanceField3D, bounds: Bounds3D): BoundedSdf3D
-        => self.ToFunctionSdf.WithBounds(bounds);
+        => self.FunctionSdf3D.WithBounds(bounds);
 
-    // Drop the bounds, keeping only the stored planar distance function.
-    ToFunctionSdf(self: BoundedSdf2D): FunctionSdf2D
+    // The stored planar distance function. Implicit, and faithful as an SDF: Eval
+    // ignores Bounds entirely, so both values are the same distance function. The
+    // bounds are a caller-supplied conservative hint about where sampling is
+    // worthwhile, not part of what the field means, and any valid bounds would do
+    // (Convention: see CONVENTIONS.md - Conversions). This overload exists to
+    // return the stored field directly rather than re-wrap it in a closure.
+    FunctionSdf2D(self: BoundedSdf2D): FunctionSdf2D
         => self.Sdf;
 
-    // Drop the bounds, keeping only the stored spatial distance function.
-    ToFunctionSdf(self: BoundedSdf3D): FunctionSdf3D
+    // The stored spatial distance function. Implicit, for the same reason.
+    FunctionSdf3D(self: BoundedSdf3D): FunctionSdf3D
         => self.Sdf;
 
     //==

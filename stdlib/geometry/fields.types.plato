@@ -49,9 +49,10 @@ type ConstantVectorField3D
 // graphs of the next section: a function-valued field is built from a
 // lambda, evaluated by invoking the stored function, and combined with another
 // field into a new field holding the composed lambda. The combinators (Combine,
-// MapValue, MapDomain, Union, Intersection, IDifference, Offset) live in
-// `fields-implicits.library.plato`; `ToFunctionField` lifts any field
-// interface implementor into this form so the combinators apply to all of them.
+// MapValue, MapDomain, Union, Intersection, Difference, Offset) live in
+// `fields-implicits.library.plato`, where a conversion named after each of these
+// types lifts any field interface implementor into this form, implicitly, so the
+// combinators apply to all of them.
 //
 // These are deliberately monomorphic (one type per domain/range pair) rather
 // than one generic function-carrying type: the monomorphic shape is what

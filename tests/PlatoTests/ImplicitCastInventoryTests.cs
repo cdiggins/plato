@@ -27,6 +27,11 @@ namespace PlatoTests
     /// that is linted and converted to C#. <c>stdlib/future</c> is deliberately out: it is
     /// aspirational, it emits nothing, and its churn would make this golden noise.
     ///
+    /// NOT covered: the C# writer's single-field mirror, which emits an implicit operator both
+    /// ways between a one-field type and its field's type. Those come from the type's shape, not
+    /// from any Plato declaration, so they are in no cast relation and in no line below
+    /// (tracked as compiler-399).
+    ///
     /// The rule these conversions must satisfy is in <c>stdlib/CONVENTIONS.md</c>, section
     /// "Conversions": a type-named conversion must be faithful — same mathematical object, no
     /// invented parameter, nothing dropped. Anything approximate or lossy is spelled <c>ToX</c>

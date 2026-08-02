@@ -84,6 +84,24 @@ stdlib defines is listed there, so a conversion nobody meant to create fails the
 test instead of shipping. Update the golden deliberately, in the commit that
 earns the new casts.
 
+That pin covers conversions **declared in Plato**. The C# writer additionally
+mints an implicit operator in both directions between any single-field type and
+its field's type, which no Plato declaration mentions and the pin does not see —
+tracked as `compiler-399`.
+
+**Families already decided.** Implicit, because each is a re-encoding: the
+transform representations onto their common ground, and every field / SDF onto
+its function-valued form (`fields-implicits.library.plato`). Explicit, and to
+stay explicit: `IMesh3D.ToTriangleMesh` (triangulating a polygon or quad mesh
+chooses diagonals; a tetrahedral mesh keeps only its boundary; a rich mesh drops
+its attributes), `IPointCloud3D.ToPointCloud` (drops normals, colors,
+intensities), `ToRegion` / `ToVolume` on a signed distance field (keep
+membership, drop the distance), the curve-to-polyline samplers (a sample count is
+invented), `ToPoint` on a vector (a displacement is not a position), and
+`ToInteger` on a number (rounds). Where an interface declares the obligation,
+the whole family shares one spelling: `IMesh3D` is explicit for everyone,
+including the implementers whose own lift happens to be faithful.
+
 *Owners:* the convention is stated only here. Conversion-bearing declarations
 cite it — `transforms.concepts.plato` for the transform family,
 `fields-implicits.library.plato` for the field and SDF lifts.

@@ -464,23 +464,28 @@ library FieldsImplicits
     // One interface-typed function per family lifts EVERY implementor of that field
     // interface — constant fields, metaball systems, sampled SDFs, noise, and the
     // function-valued fields themselves — into the combinator algebra below.
+    //
+    // Each is named after its return type, so each is an IMPLICIT conversion: the
+    // lifted field evaluates to the same value at every point as the field it came
+    // from, nothing is sampled or approximated, and no parameter is invented
+    // (Convention: see CONVENTIONS.md - Conversions).
 
     // The field as a function-valued planar scalar field, holding a lambda that
     // evaluates this field.
-    ToFunctionField(self: IScalarField2D): ScalarFunctionField2D
+    ScalarFunctionField2D(self: IScalarField2D): ScalarFunctionField2D
         => ScalarFunctionField2D(p => self.Eval(p));
 
     // The field as a function-valued spatial scalar field, holding a lambda that
     // evaluates this field.
-    ToFunctionField(self: IScalarField3D): ScalarFunctionField3D
+    ScalarFunctionField3D(self: IScalarField3D): ScalarFunctionField3D
         => ScalarFunctionField3D(p => self.Eval(p));
 
     // The field as a function-valued planar vector field.
-    ToFunctionField(self: IVectorField2D): VectorFunctionField2D
+    VectorFunctionField2D(self: IVectorField2D): VectorFunctionField2D
         => VectorFunctionField2D(p => self.Eval(p));
 
     // The field as a function-valued spatial vector field.
-    ToFunctionField(self: IVectorField3D): VectorFunctionField3D
+    VectorFunctionField3D(self: IVectorField3D): VectorFunctionField3D
         => VectorFunctionField3D(p => self.Eval(p));
 
     //==
@@ -718,16 +723,18 @@ library FieldsImplicits
         => self.Function(point);
 
     // Any planar SDF as a function-valued one, so the combinators below apply to
-    // every implementor.
-    ToFunctionSdf(self: ISignedDistanceField2D): FunctionSdf2D
+    // every implementor. Implicit: the same distance at every point
+    // (Convention: see CONVENTIONS.md - Conversions).
+    FunctionSdf2D(self: ISignedDistanceField2D): FunctionSdf2D
         => FunctionSdf2D(p => self.Eval(p));
 
-    // Any spatial SDF as a function-valued one.
-    ToFunctionSdf(self: ISignedDistanceField3D): FunctionSdf3D
+    // Any spatial SDF as a function-valued one. Implicit, for the same reason.
+    FunctionSdf3D(self: ISignedDistanceField3D): FunctionSdf3D
         => FunctionSdf3D(p => self.Eval(p));
 
     // The region a planar SDF induces: inside is where the distance is negative.
-    // Discards the distance, keeping only membership.
+    // Discards the distance, keeping only membership — and `< 0.0` also excludes
+    // the zero level set — so this stays an explicit ToX, never a conversion.
     ToRegion(self: ISignedDistanceField2D): FunctionRegion2D
         => FunctionRegion2D(p => self.Eval(p) < 0.0);
 
