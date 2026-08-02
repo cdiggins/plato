@@ -310,6 +310,52 @@ library Solids
                               Repeat(0, Repeat(0, VertexIndex(0))));
 
     //==
+    // The catalogs: each sum enumerated once, at the identity layer rather than
+    // over meshes, so a caller can reach a name, a dual or a mesh from the same
+    // array (`PlatonicSolid.All.Map(s => s.PolygonMesh3D)` for the meshes).
+
+    // The five Platonic solids in ascending face count.
+    All(_: PlatonicSolid): Array<PlatonicSolid>
+        => [PlatonicSolid.Tetrahedron,
+            PlatonicSolid.Cube,
+            PlatonicSolid.Octahedron,
+            PlatonicSolid.Dodecahedron,
+            PlatonicSolid.Icosahedron];
+
+    // The thirteen Archimedean solids, in the order of the sum declaration.
+    All(_: ArchimedeanSolid): Array<ArchimedeanSolid>
+        => [ArchimedeanSolid.TruncatedTetrahedron,
+            ArchimedeanSolid.Cuboctahedron,
+            ArchimedeanSolid.TruncatedCube,
+            ArchimedeanSolid.TruncatedOctahedron,
+            ArchimedeanSolid.Rhombicuboctahedron,
+            ArchimedeanSolid.TruncatedCuboctahedron,
+            ArchimedeanSolid.SnubCube,
+            ArchimedeanSolid.Icosidodecahedron,
+            ArchimedeanSolid.TruncatedDodecahedron,
+            ArchimedeanSolid.TruncatedIcosahedron,
+            ArchimedeanSolid.Rhombicosidodecahedron,
+            ArchimedeanSolid.TruncatedIcosidodecahedron,
+            ArchimedeanSolid.SnubDodecahedron];
+
+    // The thirteen Catalan solids, each the dual of the Archimedean at the
+    // same position in `All(ArchimedeanSolid)`.
+    All(_: CatalanSolid): Array<CatalanSolid>
+        => [CatalanSolid.TriakisTetrahedron,
+            CatalanSolid.RhombicDodecahedron,
+            CatalanSolid.TriakisOctahedron,
+            CatalanSolid.TetrakisHexahedron,
+            CatalanSolid.DeltoidalIcositetrahedron,
+            CatalanSolid.DisdyakisDodecahedron,
+            CatalanSolid.PentagonalIcositetrahedron,
+            CatalanSolid.RhombicTriacontahedron,
+            CatalanSolid.TriakisIcosahedron,
+            CatalanSolid.PentakisDodecahedron,
+            CatalanSolid.DeltoidalHexecontahedron,
+            CatalanSolid.DisdyakisTriacontahedron,
+            CatalanSolid.PentagonalHexecontahedron];
+
+    //==
     // Meshes of the solid sums: the dispatch from each sum into the seed and
     // catalog factories, every result at circumscribed radius one. Each is
     // named after its return type, so a solid converts to its mesh implicitly

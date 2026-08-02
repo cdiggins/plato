@@ -661,33 +661,4 @@ library Polyhedra
         return PolygonMeshOfVertexNumbers(points, faces).ProjectedToUnitSphere;
     }
 
-    //==
-    // # The Platonic catalog on its grouping type
-    //
-    // The same five seed meshes gathered under the fieldless
-    // `PlatonicSolidMesh` receiver: read as `PlatonicSolidMesh.Icosahedron`,
-    // and enumerate all five with `PlatonicSolidMesh.All`.
-
-    Tetrahedron(_: PlatonicSolidMesh): PolygonMesh3D
-        => PolygonMesh3D.Tetrahedron;
-
-    Cube(_: PlatonicSolidMesh): PolygonMesh3D
-        => PolygonMesh3D.Cube;
-
-    Octahedron(_: PlatonicSolidMesh): PolygonMesh3D
-        => PolygonMesh3D.Octahedron;
-
-    Dodecahedron(_: PlatonicSolidMesh): PolygonMesh3D
-        => PolygonMesh3D.Dodecahedron;
-
-    Icosahedron(_: PlatonicSolidMesh): PolygonMesh3D
-        => PolygonMesh3D.Icosahedron;
-
-    // The five Platonic solid meshes in ascending face count.
-    All(_: PlatonicSolidMesh): Array<PolygonMesh3D>
-        => [PlatonicSolidMesh.Tetrahedron,
-            PlatonicSolidMesh.Cube,
-            PlatonicSolidMesh.Octahedron,
-            PlatonicSolidMesh.Dodecahedron,
-            PlatonicSolidMesh.Icosahedron];
 }
