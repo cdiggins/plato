@@ -3,6 +3,9 @@
 //
 // The concepts that mark a value as carryable through a transform: Transformable
 // for a named transform type, Deformable2D/3D for an arbitrary point mapping.
+// Also the concepts that mark a transform representation by the canonical form
+// it converts into: Affine2D/Affine3D for the general affine transform of a
+// dimension, Rotational3D for the unit quaternion.
 // A transform maps points to points. The representations themselves are declared
 // in the `transforms-*.plato` files (pose, TRS, affine/projective, frames,
 // motor) and their operations in the matching `transforms-*.library.plato`
@@ -47,4 +50,39 @@ concept Deformable2D
 concept Deformable3D
 {
     Deform(x: Self, mapping: Function1<Point3D, Point3D>): Self;
+}
+
+//==
+// # Common-ground concepts
+//
+// The concepts that mark a transform representation by the canonical form it
+// converts into. Every named 2D or 3D transform reaches the general affine
+// transform of its dimension (`AffineTransform2D` / `AffineTransform3D` in
+// `transforms.types.plato`), so composition between representations of
+// different kinds is defined by converting both sides to that common ground;
+// every 3D rotation representation reaches the unit `Quaternion`, the canonical
+// rotation form. As stated above, a member named after a type is a conversion.
+
+// Converts to the general 2D affine transform: the common ground for composing
+// 2D transforms of different kinds.
+// https://en.wikipedia.org/wiki/Affine_transformation
+concept Affine2D
+{
+    AffineTransform2D(x: Self): AffineTransform2D;
+}
+
+// Converts to the general 3D affine transform: the common ground for composing
+// 3D transforms of different kinds.
+// https://en.wikipedia.org/wiki/Affine_transformation
+concept Affine3D
+{
+    AffineTransform3D(x: Self): AffineTransform3D;
+}
+
+// A 3D rotation representation: converts to a unit quaternion, the canonical
+// form every 3D rotation shares.
+// https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+concept Rotational3D
+{
+    Quaternion(x: Self): Quaternion;
 }

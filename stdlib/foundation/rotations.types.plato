@@ -27,7 +27,7 @@ type Quaternion
 // A rotation of Angle about a unit Axis, following the right-hand rule
 // (https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation).
 type AxisAngle
-    implements Value
+    implements Value, Rotational3D
 {
     Axis: Direction3D;
     Angle: Angle;
@@ -39,7 +39,7 @@ type RotationOrder = XYZ | XZY | YXZ | YZX | ZXY | ZYX;
 // Three chained elemental rotations under an explicit composition order
 // (https://en.wikipedia.org/wiki/Euler_angles).
 type EulerAngles
-    implements Value
+    implements Value, Rotational3D
 {
     Yaw: Angle;
     Pitch: Angle;
@@ -86,7 +86,7 @@ type Rotor2D
 // quaternion, expressed in plane-based components
 // (https://en.wikipedia.org/wiki/Geometric_algebra).
 type Rotor3D
-    implements Value, Multiplicative
+    implements Value, Multiplicative, Rotational3D
 {
     Scalar: Number;
     Bivector: Bivector3D;

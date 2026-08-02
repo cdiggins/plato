@@ -7,6 +7,7 @@
 //  - Motors
 //  - Rigid poses
 //  - TRS transforms
+//  - Elementary transforms
 
 //==
 // # Affine and projective transforms
@@ -22,7 +23,7 @@
 // A general 2D affine map: any composition of linear maps and translations
 // (https://en.wikipedia.org/wiki/Affine_transformation).
 type AffineTransform2D
-    implements Value
+    implements Value, Affine2D
 {
     Matrix: Matrix3x2;
 }
@@ -30,7 +31,7 @@ type AffineTransform2D
 // A general 3D affine map: any composition of linear maps and translations
 // (https://en.wikipedia.org/wiki/Affine_transformation).
 type AffineTransform3D
-    implements Value
+    implements Value, Affine3D
 {
     Matrix: Matrix4x3;
 }
@@ -62,7 +63,7 @@ type ProjectiveTransform3D
 // An orthonormal coordinate frame in the plane: an origin and two perpendicular
 // unit axes.
 type Frame2D
-    implements Value
+    implements Value, Affine2D
 {
     Origin: Point2D;
     XAxis: Direction2D;
@@ -72,7 +73,7 @@ type Frame2D
 // An orthonormal coordinate frame in space: an origin and three mutually
 // perpendicular unit axes.
 type Frame3D
-    implements Value
+    implements Value, Affine3D
 {
     Origin: Point3D;
     XAxis: Direction3D;
@@ -83,7 +84,7 @@ type Frame3D
 // Three basis vectors in 3D; not necessarily orthonormal
 // (https://en.wikipedia.org/wiki/Basis_(linear_algebra)).
 type Basis3D
-    implements Value
+    implements Value, Affine3D
 {
     X: Vector3D;
     Y: Vector3D;
@@ -104,7 +105,7 @@ type Basis3D
 // quaternion. Unit dual quaternions are isomorphic to the motors of 3D PGA.
 // https://en.wikipedia.org/wiki/Dual_quaternion
 type Motor3D
-    implements Value, Multiplicative
+    implements Value, Multiplicative, Affine3D
 {
     Real: Quaternion;
     Dual: Quaternion;
@@ -121,7 +122,7 @@ type Motor3D
 // A rigid placement in the plane: position plus rotation. Also known as a 2D
 // rigid transform (https://en.wikipedia.org/wiki/Rigid_transformation).
 type Pose2D
-    implements Value, Interpolatable
+    implements Value, Interpolatable, Affine2D
 {
     Position: Point2D;
     Rotation: Rotation2D;
@@ -131,7 +132,7 @@ type Pose2D
 // rigid transform (https://en.wikipedia.org/wiki/Rigid_transformation);
 // composition preserves distances and angles.
 type Pose3D
-    implements Value, Interpolatable
+    implements Value, Interpolatable, Affine3D
 {
     Position: Point3D;
     Orientation: Quaternion;
@@ -150,7 +151,7 @@ type Pose3D
 // A translate-rotate-scale transform in 2D, applied scale first, then rotation,
 // then translation.
 type Transform2D
-    implements Value
+    implements Value, Affine2D
 {
     Translation: Vector2D;
     Rotation: Rotation2D;
@@ -160,9 +161,126 @@ type Transform2D
 // A translate-rotate-scale transform in 3D, applied scale first, then rotation,
 // then translation.
 type Transform3D
-    implements Value
+    implements Value, Affine3D
 {
     Translation: Vector3D;
     Rotation: Quaternion;
     Scale: Number3;
+}
+
+//==
+// # Elementary transforms
+//
+// The single-purpose building blocks — the atoms — of the transform surface: one
+// named operation each, in the plane and in space. Every one of them converts to
+// the general affine transform of its dimension, and that affine form is how they
+// compose: the elementary families are NOT closed under composition (two
+// translations compose to a translation, but a rotation and a scaling do not stay
+// in either family). The `*About*` types apply their operation about `Center`
+// rather than about the origin. The operations live in
+// `transforms.library.plato`.
+
+// A translation in the plane: every point is displaced by the same vector
+// (https://en.wikipedia.org/wiki/Translation_(geometry)).
+type Translation2D
+    implements Value, Affine2D
+{
+    Vector: Vector2D;
+}
+
+// A translation in space: every point is displaced by the same vector
+// (https://en.wikipedia.org/wiki/Translation_(geometry)).
+type Translation3D
+    implements Value, Affine3D
+{
+    Vector: Vector3D;
+}
+
+// An axis-aligned scaling about the origin in the plane, with an independent
+// factor per axis (https://en.wikipedia.org/wiki/Scaling_(geometry)).
+type Scaling2D
+    implements Value, Affine2D
+{
+    Amount: Number2;
+}
+
+// An axis-aligned scaling about the origin in space, with an independent factor
+// per axis (https://en.wikipedia.org/wiki/Scaling_(geometry)).
+type Scaling3D
+    implements Value, Affine3D
+{
+    Amount: Number3;
+}
+
+// A uniform scaling about the origin in the plane: the same factor on every axis,
+// so angles are preserved (https://en.wikipedia.org/wiki/Homothety).
+type UniformScaling2D
+    implements Value, Affine2D
+{
+    Amount: Number;
+}
+
+// A uniform scaling about the origin in space: the same factor on every axis, so
+// angles are preserved (https://en.wikipedia.org/wiki/Homothety).
+type UniformScaling3D
+    implements Value, Affine3D
+{
+    Amount: Number;
+}
+
+// A mirror across a line in the plane, given as a point on the line and the
+// direction along it (https://en.wikipedia.org/wiki/Reflection_(mathematics)).
+type Reflection2D
+    implements Value, Affine2D
+{
+    Origin: Point2D;
+    Direction: Direction2D;
+}
+
+// A mirror across a plane in space, given as a point on the plane and its unit
+// normal (https://en.wikipedia.org/wiki/Reflection_(mathematics)).
+type Reflection3D
+    implements Value, Affine3D
+{
+    Origin: Point3D;
+    Normal: Direction3D;
+}
+
+// A rotation in the plane about an arbitrary center rather than the origin
+// (https://en.wikipedia.org/wiki/Rotation_(mathematics)).
+type RotationAbout2D
+    implements Value, Affine2D
+{
+    Rotation: Rotation2D;
+    Center: Point2D;
+}
+
+// A rotation in space about an arbitrary center rather than the origin; the
+// rotation axis passes through Center
+// (https://en.wikipedia.org/wiki/Rotation_(mathematics)).
+type RotationAbout3D
+    implements Value, Affine3D
+{
+    Rotation: Quaternion;
+    Center: Point3D;
+}
+
+// An axis-aligned scaling in the plane about an arbitrary center rather than the
+// origin; Center is the one fixed point
+// (https://en.wikipedia.org/wiki/Scaling_(geometry)).
+type ScalingAbout2D
+    implements Value, Affine2D
+{
+    Amount: Number2;
+    Center: Point2D;
+}
+
+// An axis-aligned scaling in space about an arbitrary center rather than the
+// origin; Center is the one fixed point
+// (https://en.wikipedia.org/wiki/Scaling_(geometry)).
+type ScalingAbout3D
+    implements Value, Affine3D
+{
+    Amount: Number3;
+    Center: Point3D;
 }

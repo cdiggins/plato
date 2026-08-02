@@ -3,6 +3,7 @@
 //
 // Sections, in order:
 //  - Affine and projective transform operations
+//  - Elementary transforms
 //  - Frame and basis operations
 //  - Transform identity statics
 //  - Motor operations
@@ -213,6 +214,417 @@ library Transforms
         => a.Compose(b);
 
     //==
+    // # Elementary transforms
+    //
+    // The single-purpose transforms of `transforms.types.plato` — translation,
+    // scaling, reflection, and the about-a-centre forms. Each one names what it
+    // does instead of hiding it in a matrix, and each converts into the affine
+    // transform of its dimension (its `Affine2D` / `Affine3D` obligation), which
+    // is where transforms of different kinds are composed.
+
+    //==
+    // Translations — a rigid shift. A translation moves positions but not
+    // displacements, so its action on a vector is the identity.
+    // https://en.wikipedia.org/wiki/Translation_(geometry)
+
+    // The translation as an affine map (identity linear part).
+    AffineTransform2D(t: Translation2D): AffineTransform2D
+        => AffineTransform2D(Matrix3x2.CreateTranslation(t.Vector));
+
+    // Shift the point by the translation's displacement.
+    Transform(p: Point2D, t: Translation2D): Point2D
+        => p + t.Vector;
+
+    // Alias for Transform with transform-on-left (* operator): t * p.
+    Multiply(t: Translation2D, p: Point2D): Point2D
+        => Transform(p, t);
+
+    // A translation does not act on displacements.
+    Transform(v: Vector2D, t: Translation2D): Vector2D
+        => v;
+
+    // Alias for Transform with transform-on-left (* operator): t * v.
+    Multiply(t: Translation2D, v: Vector2D): Vector2D
+        => Transform(v, t);
+
+    // The translation that undoes this one (the opposite displacement).
+    Inverse(t: Translation2D): Translation2D
+        => Translation2D(-t.Vector);
+
+    // The zero translation.
+    Identity(_: Translation2D): Translation2D
+        => Translation2D(Vector2D(0.0, 0.0));
+
+    // The translation as an affine map (identity linear part).
+    AffineTransform3D(t: Translation3D): AffineTransform3D
+        => Matrix4x4.CreateTranslation(t.Vector).AffineTransform3D;
+
+    // Shift the point by the translation's displacement.
+    Transform(p: Point3D, t: Translation3D): Point3D
+        => p + t.Vector;
+
+    // Alias for Transform with transform-on-left (* operator): t * p.
+    Multiply(t: Translation3D, p: Point3D): Point3D
+        => Transform(p, t);
+
+    // A translation does not act on displacements.
+    Transform(v: Vector3D, t: Translation3D): Vector3D
+        => v;
+
+    // Alias for Transform with transform-on-left (* operator): t * v.
+    Multiply(t: Translation3D, v: Vector3D): Vector3D
+        => Transform(v, t);
+
+    // The translation that undoes this one (the opposite displacement).
+    Inverse(t: Translation3D): Translation3D
+        => Translation3D(-t.Vector);
+
+    // The zero translation.
+    Identity(_: Translation3D): Translation3D
+        => Translation3D(Vector3D(0.0, 0.0, 0.0));
+
+    //==
+    // Scalings about the origin — per-axis and uniform. Unlike a translation a
+    // scaling is linear, so it acts on displacements as well as positions.
+    // https://en.wikipedia.org/wiki/Scaling_(geometry)
+
+    // The per-axis scaling as an affine map.
+    AffineTransform2D(s: Scaling2D): AffineTransform2D
+        => AffineTransform2D(Matrix3x2.CreateScale(s.Amount));
+
+    // Scale the point's offset from the origin per axis.
+    Transform(p: Point2D, s: Scaling2D): Point2D
+        => (p.PositionVector * s.Amount).ToPoint;
+
+    // Alias for Transform with transform-on-left (* operator): s * p.
+    Multiply(s: Scaling2D, p: Point2D): Point2D
+        => Transform(p, s);
+
+    // Scale the displacement per axis.
+    Transform(v: Vector2D, s: Scaling2D): Vector2D
+        => v * s.Amount;
+
+    // Alias for Transform with transform-on-left (* operator): s * v.
+    Multiply(s: Scaling2D, v: Vector2D): Vector2D
+        => Transform(v, s);
+
+    // The reciprocal scaling. Precondition: no component of Amount is zero.
+    Inverse(s: Scaling2D): Scaling2D
+        => Scaling2D(Number2(1.0 / s.Amount.X, 1.0 / s.Amount.Y));
+
+    // The unit scaling.
+    Identity(_: Scaling2D): Scaling2D
+        => Scaling2D(Number2(1.0, 1.0));
+
+    // The per-axis scaling as an affine map.
+    AffineTransform3D(s: Scaling3D): AffineTransform3D
+        => Matrix4x4.CreateScale(s.Amount).AffineTransform3D;
+
+    // Scale the point's offset from the origin per axis.
+    Transform(p: Point3D, s: Scaling3D): Point3D
+        => (p.PositionVector * s.Amount).ToPoint;
+
+    // Alias for Transform with transform-on-left (* operator): s * p.
+    Multiply(s: Scaling3D, p: Point3D): Point3D
+        => Transform(p, s);
+
+    // Scale the displacement per axis.
+    Transform(v: Vector3D, s: Scaling3D): Vector3D
+        => v * s.Amount;
+
+    // Alias for Transform with transform-on-left (* operator): s * v.
+    Multiply(s: Scaling3D, v: Vector3D): Vector3D
+        => Transform(v, s);
+
+    // The reciprocal scaling. Precondition: no component of Amount is zero.
+    Inverse(s: Scaling3D): Scaling3D
+        => Scaling3D(Number3(1.0 / s.Amount.X, 1.0 / s.Amount.Y, 1.0 / s.Amount.Z));
+
+    // The unit scaling.
+    Identity(_: Scaling3D): Scaling3D
+        => Scaling3D(Number3(1.0, 1.0, 1.0));
+
+    // The uniform scaling as an affine map.
+    AffineTransform2D(s: UniformScaling2D): AffineTransform2D
+        => AffineTransform2D(Matrix3x2.CreateScale(s.Amount));
+
+    // Scale the point's offset from the origin.
+    Transform(p: Point2D, s: UniformScaling2D): Point2D
+        => (p.PositionVector * s.Amount).ToPoint;
+
+    // Alias for Transform with transform-on-left (* operator): s * p.
+    Multiply(s: UniformScaling2D, p: Point2D): Point2D
+        => Transform(p, s);
+
+    // Scale the displacement.
+    Transform(v: Vector2D, s: UniformScaling2D): Vector2D
+        => v * s.Amount;
+
+    // Alias for Transform with transform-on-left (* operator): s * v.
+    Multiply(s: UniformScaling2D, v: Vector2D): Vector2D
+        => Transform(v, s);
+
+    // The reciprocal scaling. Precondition: Amount is not zero.
+    Inverse(s: UniformScaling2D): UniformScaling2D
+        => UniformScaling2D(1.0 / s.Amount);
+
+    // The unit scaling.
+    Identity(_: UniformScaling2D): UniformScaling2D
+        => UniformScaling2D(1.0);
+
+    // The uniform scaling as an affine map.
+    AffineTransform3D(s: UniformScaling3D): AffineTransform3D
+        => Matrix4x4.CreateScale(s.Amount).AffineTransform3D;
+
+    // Scale the point's offset from the origin.
+    Transform(p: Point3D, s: UniformScaling3D): Point3D
+        => (p.PositionVector * s.Amount).ToPoint;
+
+    // Alias for Transform with transform-on-left (* operator): s * p.
+    Multiply(s: UniformScaling3D, p: Point3D): Point3D
+        => Transform(p, s);
+
+    // Scale the displacement.
+    Transform(v: Vector3D, s: UniformScaling3D): Vector3D
+        => v * s.Amount;
+
+    // Alias for Transform with transform-on-left (* operator): s * v.
+    Multiply(s: UniformScaling3D, v: Vector3D): Vector3D
+        => Transform(v, s);
+
+    // The reciprocal scaling. Precondition: Amount is not zero.
+    Inverse(s: UniformScaling3D): UniformScaling3D
+        => UniformScaling3D(1.0 / s.Amount);
+
+    // The unit scaling.
+    Identity(_: UniformScaling3D): UniformScaling3D
+        => UniformScaling3D(1.0);
+
+    //==
+    // Reflections — the mirror in a line (2D) or a plane (3D). A reflection is
+    // its own inverse, and no reflection is the identity map, so there is no
+    // Identity static here. https://en.wikipedia.org/wiki/Reflection_(mathematics)
+
+    // The mirror as an affine map: translate the mirror's origin to the world
+    // origin, reflect the basis, translate back. The linear rows are the images
+    // of the world axes, so the reflection formula is not restated.
+    AffineTransform2D(r: Reflection2D): AffineTransform2D {
+        var o = r.Origin.PositionVector;
+        var n = Vector2D(-r.Direction.Vector.Y, r.Direction.Vector.X);
+        var x = Vector2D(1.0, 0.0).Reflect(n);
+        var y = Vector2D(0.0, 1.0).Reflect(n);
+        var linear = AffineTransform2D(Matrix3x2(
+            Number2(x.X, x.Y),
+            Number2(y.X, y.Y),
+            Number2(0.0, 0.0)));
+        return AffineTransform2D(Matrix3x2.CreateTranslation(-o))
+            .Compose(linear)
+            .Compose(AffineTransform2D(Matrix3x2.CreateTranslation(o)));
+    }
+
+    // Mirror the point in the line: reflect its offset from the line's origin.
+    Transform(p: Point2D, r: Reflection2D): Point2D
+        => r.Origin + r.Origin.Between(p).Transform(r);
+
+    // Alias for Transform with transform-on-left (* operator): r * p.
+    Multiply(r: Reflection2D, p: Point2D): Point2D
+        => Transform(p, r);
+
+    // Mirror the displacement in the line's direction (a reflection is linear,
+    // so it does act on displacements).
+    Transform(v: Vector2D, r: Reflection2D): Vector2D
+        => v.Reflect(Vector2D(-r.Direction.Vector.Y, r.Direction.Vector.X));
+
+    // Alias for Transform with transform-on-left (* operator): r * v.
+    Multiply(r: Reflection2D, v: Vector2D): Vector2D
+        => Transform(v, r);
+
+    // A reflection is an involution: it undoes itself.
+    Inverse(r: Reflection2D): Reflection2D
+        => r;
+
+    // The mirror as an affine map: translate the mirror's origin to the world
+    // origin, reflect the basis, translate back.
+    AffineTransform3D(r: Reflection3D): AffineTransform3D {
+        var o = r.Origin.PositionVector;
+        var n = r.Normal.Vector;
+        var x = Vector3D(1.0, 0.0, 0.0).Reflect(n);
+        var y = Vector3D(0.0, 1.0, 0.0).Reflect(n);
+        var z = Vector3D(0.0, 0.0, 1.0).Reflect(n);
+        var linear = AffineTransform3D(Matrix4x3(
+            Number3(x.X, x.Y, x.Z),
+            Number3(y.X, y.Y, y.Z),
+            Number3(z.X, z.Y, z.Z),
+            Number3(0.0, 0.0, 0.0)));
+        return Matrix4x4.CreateTranslation(-o).AffineTransform3D
+            .Compose(linear)
+            .Compose(Matrix4x4.CreateTranslation(o).AffineTransform3D);
+    }
+
+    // Mirror the point in the plane: reflect its offset from the plane's origin.
+    Transform(p: Point3D, r: Reflection3D): Point3D
+        => r.Origin + r.Origin.Between(p).Transform(r);
+
+    // Alias for Transform with transform-on-left (* operator): r * p.
+    Multiply(r: Reflection3D, p: Point3D): Point3D
+        => Transform(p, r);
+
+    // Mirror the displacement in the plane's normal (a reflection is linear, so
+    // it does act on displacements).
+    Transform(v: Vector3D, r: Reflection3D): Vector3D
+        => v.Reflect(r.Normal.Vector);
+
+    // Alias for Transform with transform-on-left (* operator): r * v.
+    Multiply(r: Reflection3D, v: Vector3D): Vector3D
+        => Transform(v, r);
+
+    // A reflection is an involution: it undoes itself.
+    Inverse(r: Reflection3D): Reflection3D
+        => r;
+
+    //==
+    // About-a-centre transforms — a rotation or a scaling conjugated by the
+    // translation of its centre. The linear part is unaffected by the centre, so
+    // their action on displacements is the centre-free one.
+
+    // The rotation about the centre as an affine map.
+    AffineTransform2D(r: RotationAbout2D): AffineTransform2D
+        => AffineTransform2D(Matrix3x2.CreateRotation(r.Rotation.Angle, r.Center));
+
+    // Rotate the point about the centre.
+    Transform(p: Point2D, r: RotationAbout2D): Point2D
+        => r.Center + r.Center.Between(p).Transform(r.Rotation);
+
+    // Alias for Transform with transform-on-left (* operator): r * p.
+    Multiply(r: RotationAbout2D, p: Point2D): Point2D
+        => Transform(p, r);
+
+    // Rotate the displacement (the centre does not act on displacements).
+    Transform(v: Vector2D, r: RotationAbout2D): Vector2D
+        => v.Transform(r.Rotation);
+
+    // Alias for Transform with transform-on-left (* operator): r * v.
+    Multiply(r: RotationAbout2D, v: Vector2D): Vector2D
+        => Transform(v, r);
+
+    // The opposite rotation about the same centre.
+    Inverse(r: RotationAbout2D): RotationAbout2D
+        => RotationAbout2D(r.Rotation.Inverse, r.Center);
+
+    // The zero rotation about the origin.
+    Identity(_: RotationAbout2D): RotationAbout2D
+        => RotationAbout2D(Rotation2D.Identity, Point2D(0.0, 0.0));
+
+    // The rotation about the centre as an affine map: translate the centre to
+    // the world origin, rotate, translate back.
+    AffineTransform3D(r: RotationAbout3D): AffineTransform3D {
+        var c = r.Center.PositionVector;
+        return Matrix4x4.CreateTranslation(-c).AffineTransform3D
+            .Compose(r.Rotation.AffineTransform3D)
+            .Compose(Matrix4x4.CreateTranslation(c).AffineTransform3D);
+    }
+
+    // Rotate the point about the centre.
+    Transform(p: Point3D, r: RotationAbout3D): Point3D
+        => r.Center + r.Center.Between(p).Transform(r.Rotation);
+
+    // Alias for Transform with transform-on-left (* operator): r * p.
+    Multiply(r: RotationAbout3D, p: Point3D): Point3D
+        => Transform(p, r);
+
+    // Rotate the displacement (the centre does not act on displacements).
+    Transform(v: Vector3D, r: RotationAbout3D): Vector3D
+        => v.Transform(r.Rotation);
+
+    // Alias for Transform with transform-on-left (* operator): r * v.
+    Multiply(r: RotationAbout3D, v: Vector3D): Vector3D
+        => Transform(v, r);
+
+    // The opposite rotation about the same centre.
+    Inverse(r: RotationAbout3D): RotationAbout3D
+        => RotationAbout3D(r.Rotation.Inverse, r.Center);
+
+    // The zero rotation about the origin.
+    Identity(_: RotationAbout3D): RotationAbout3D
+        => RotationAbout3D(Quaternion.Identity, Point3D(0.0, 0.0, 0.0));
+
+    // The scaling about the centre as an affine map.
+    AffineTransform2D(s: ScalingAbout2D): AffineTransform2D
+        => AffineTransform2D(Matrix3x2.CreateScale(s.Amount, s.Center));
+
+    // Scale the point's offset from the centre per axis.
+    Transform(p: Point2D, s: ScalingAbout2D): Point2D
+        => s.Center + s.Center.Between(p) * s.Amount;
+
+    // Alias for Transform with transform-on-left (* operator): s * p.
+    Multiply(s: ScalingAbout2D, p: Point2D): Point2D
+        => Transform(p, s);
+
+    // Scale the displacement per axis (the centre does not act on
+    // displacements).
+    Transform(v: Vector2D, s: ScalingAbout2D): Vector2D
+        => v * s.Amount;
+
+    // Alias for Transform with transform-on-left (* operator): s * v.
+    Multiply(s: ScalingAbout2D, v: Vector2D): Vector2D
+        => Transform(v, s);
+
+    // The reciprocal scaling about the same centre. Precondition: no component
+    // of Amount is zero.
+    Inverse(s: ScalingAbout2D): ScalingAbout2D
+        => ScalingAbout2D(Number2(1.0 / s.Amount.X, 1.0 / s.Amount.Y), s.Center);
+
+    // The unit scaling about the origin.
+    Identity(_: ScalingAbout2D): ScalingAbout2D
+        => ScalingAbout2D(Number2(1.0, 1.0), Point2D(0.0, 0.0));
+
+    // The scaling about the centre as an affine map: translate the centre to the
+    // world origin, scale, translate back.
+    AffineTransform3D(s: ScalingAbout3D): AffineTransform3D {
+        var c = s.Center.PositionVector;
+        return Matrix4x4.CreateTranslation(-c).AffineTransform3D
+            .Compose(Matrix4x4.CreateScale(s.Amount).AffineTransform3D)
+            .Compose(Matrix4x4.CreateTranslation(c).AffineTransform3D);
+    }
+
+    // Scale the point's offset from the centre per axis.
+    Transform(p: Point3D, s: ScalingAbout3D): Point3D
+        => s.Center + s.Center.Between(p) * s.Amount;
+
+    // Alias for Transform with transform-on-left (* operator): s * p.
+    Multiply(s: ScalingAbout3D, p: Point3D): Point3D
+        => Transform(p, s);
+
+    // Scale the displacement per axis (the centre does not act on
+    // displacements).
+    Transform(v: Vector3D, s: ScalingAbout3D): Vector3D
+        => v * s.Amount;
+
+    // Alias for Transform with transform-on-left (* operator): s * v.
+    Multiply(s: ScalingAbout3D, v: Vector3D): Vector3D
+        => Transform(v, s);
+
+    // The reciprocal scaling about the same centre. Precondition: no component
+    // of Amount is zero.
+    Inverse(s: ScalingAbout3D): ScalingAbout3D
+        => ScalingAbout3D(Number3(1.0 / s.Amount.X, 1.0 / s.Amount.Y, 1.0 / s.Amount.Z), s.Center);
+
+    // The unit scaling about the origin.
+    Identity(_: ScalingAbout3D): ScalingAbout3D
+        => ScalingAbout3D(Number3(1.0, 1.0, 1.0), Point3D(0.0, 0.0, 0.0));
+
+    //==
+    // Aiming — the rotation that points an object along a direction.
+
+    // The rotation that aims local -Z along `forward` with local +Y as close to
+    // `up` as possible, matching the view-space frame of
+    // CONVENTIONS.md - View space. Built from the CreateWorld basis so the
+    // handedness is stated in exactly one place. Preconditions (unchecked):
+    // `forward` and `up` are not parallel.
+    LookRotation(forward: Direction3D, up: Direction3D): Quaternion
+        => Matrix4x4.CreateWorld(Point3D(0.0, 0.0, 0.0), forward.Vector, up.Vector).Quaternion;
+
+    //==
     // # Frame and basis operations
     //
     // Matrix interchange between the coordinate frames of `transforms.types.plato`
@@ -241,6 +653,10 @@ library Transforms
     Pose2D(f: Frame2D): Pose2D
         => f.Matrix3x2.Pose2D;
 
+    // Any frame is affine: its frame-local-to-world matrix is the affine map.
+    AffineTransform2D(f: Frame2D): AffineTransform2D
+        => AffineTransform2D(f.Matrix3x2);
+
     // The homogeneous matrix mapping frame-local coordinates to world
     // coordinates.
     Matrix4x4(f: Frame3D): Matrix4x4 {
@@ -268,12 +684,25 @@ library Transforms
     Pose3D(f: Frame3D): Pose3D
         => f.Matrix4x4.Pose3D;
 
+    // Any frame is affine: its frame-local-to-world matrix is the affine map.
+    AffineTransform3D(f: Frame3D): AffineTransform3D
+        => f.Matrix4x4.AffineTransform3D;
+
     // The world-axis images under a rotation: the columns of its rotation
     // matrix as a (generally orthonormal) basis.
     Basis3D(q: Quaternion): Basis3D
         => (Vector3D(1.0, 0.0, 0.0).Transform(q),
             Vector3D(0.0, 1.0, 0.0).Transform(q),
             Vector3D(0.0, 0.0, 1.0).Transform(q));
+
+    // The linear map that sends the world axes to the basis vectors; the
+    // translation row is zero, since a basis carries no origin.
+    AffineTransform3D(b: Basis3D): AffineTransform3D
+        => AffineTransform3D(Matrix4x3(
+            Number3(b.X.X, b.X.Y, b.X.Z),
+            Number3(b.Y.X, b.Y.Y, b.Y.Z),
+            Number3(b.Z.X, b.Z.Y, b.Z.Z),
+            Number3(0.0, 0.0, 0.0)));
 
     //==
     // # Transform identity statics
@@ -435,6 +864,10 @@ library Transforms
     // The homogeneous matrix of the motor's rigid motion.
     Matrix4x4(m: Motor3D): Matrix4x4
         => m.Pose3D.Matrix4x4;
+
+    // Any motor is affine: it is the rigid pose it encodes.
+    AffineTransform3D(m: Motor3D): AffineTransform3D
+        => m.Pose3D.AffineTransform3D;
 
     //==
     // # Point support

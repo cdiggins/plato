@@ -1,4 +1,6 @@
 concept Additive{Add(a:Self,b:Self):Self;Subtract(a:Self,b:Self):Self;Negative(x:Self):Self;Zero(x:Self):Self;}
+concept Affine2D{AffineTransform2D(x:Self):AffineTransform2D;}
+concept Affine3D{AffineTransform3D(x:Self):AffineTransform3D;}
 concept AngularCurve2D inherits Curve2D{Eval(x:Self,angle:Angle):Point2D;}
 concept AngularCurve3D inherits Curve3D{Eval(x:Self,angle:Angle):Point3D;}
 concept ArcLengthParameterized<TPoint>{ArcLength(x:Self):Number;PointAtLength(x:Self,length:Number):TPoint;ParameterAtLength(x:Self,length:Number):Number;}
@@ -135,6 +137,7 @@ concept QueueLike<T>inherits Countable{Front(x:Self):T;Enqueue(x:Self,item:T):Se
 concept RayIntersectable2D{Raycast(x:Self,query:RayQuery2D):RayHit2D;}
 concept RayIntersectable3D{Raycast(x:Self,query:RayQuery3D):RayHit3D;}
 concept Real inherits Numerical,Comparable,Hashable,Arithmetic,Invertible{ToNumber(x:Self):Number;Sqrt(x:Self):Self;Floor(x:Self):Self;Ceiling(x:Self):Self;}
+concept Rotational3D{Quaternion(x:Self):Quaternion;}
 concept Scalable{Multiply(x:Self,scalar:Number):Self;Divide(x:Self,scalar:Number):Self;Modulo(x:Self,scalar:Number):Self;}
 concept ScalarField2D inherits Field<Point2D,Number>{}
 concept ScalarField3D inherits Field<Point3D,Number>{}
@@ -172,8 +175,8 @@ concept Whole inherits Value,Comparable,Hashable,Arithmetic,Interpolatable,Numer
 type Acceleration implements Quantity{MetersPerSecondSquared:Number;}
 type AdjacencyMatrix implements Value{VertexCount:Integer;Weights:Array<Number>;}
 type AdjacencyStructure implements Value{VertexCount:Integer;NeighborOffsets:Array<Integer>;NeighborIndices:Array<GraphVertexIndex>;}
-type AffineTransform2D implements Value{Matrix:Matrix3x2;}
-type AffineTransform3D implements Value{Matrix:Matrix4x3;}
+type AffineTransform2D implements Value,Affine2D{Matrix:Matrix3x2;}
+type AffineTransform3D implements Value,Affine3D{Matrix:Matrix4x3;}
 type AlphaMode{}
 type AlphaSettings implements Value{Mode:AlphaMode;Opacity:Proportion;}
 type AmbientLight implements Value{Color:Color;Illuminance:Illuminance;}
@@ -203,11 +206,11 @@ type AttributeDomain{}
 type AttributedPointCloud3D implements Value,PointCloudable3D,Deformable3D{Positions:Array<Point3D>;Normals:Array<Direction3D>;Colors:Array<Color>;Intensities:Array<Number>;}
 type Axis2D{}
 type Axis3D{}
-type AxisAngle implements Value{Axis:Direction3D;Angle:Angle;}
+type AxisAngle implements Value,Rotational3D{Axis:Direction3D;Angle:Angle;}
 type BackParameters implements Value{Overshoot:Number;}
 type BandedMatrix implements Value{NumRows:Integer;NumColumns:Integer;LowerBandwidth:Integer;UpperBandwidth:Integer;Values:Array<Number>;}
 type BarycentricCoordinate implements Value{U:Number;V:Number;W:Number;}
-type Basis3D implements Value{X:Vector3D;Y:Vector3D;Z:Vector3D;}
+type Basis3D implements Value,Affine3D{X:Vector3D;Y:Vector3D;Z:Vector3D;}
 type BeatSync implements Value{Tempo:Tempo;Offset:BeatTime;Subdivision:Number;}
 type BeatTime implements Value,Comparable{Beats:Number;}
 type Bend3D implements Value,Deformation3D{Origin:Point3D;Axis:Direction3D;Direction:Direction3D;Curvature:Number;}
@@ -416,7 +419,7 @@ type EnvironmentLight implements Value{Cube:TextureCube;Rotation:Angle;Intensity
 type Epicycloid2D implements Curve2D{FixedRadius:Number;RollingRadius:Number;}
 type Epitrochoid2D implements Curve2D{FixedRadius:Number;RollingRadius:Number;PoleDistance:Number;}
 type EquirectangularCamera implements Camera{Pose:Pose3D;LongitudeSweep:AngleInterval;LatitudeSweep:AngleInterval;Near:Number;Far:Number;}
-type EulerAngles implements Value{Yaw:Angle;Pitch:Angle;Roll:Angle;Order:RotationOrder;}
+type EulerAngles implements Value,Rotational3D{Yaw:Angle;Pitch:Angle;Roll:Angle;Order:RotationOrder;}
 type ExponentialDistribution implements ProbabilityDistribution{Rate:Number;}
 type ExportSettings2D implements Value{DotsPerInch:Number;Background:Color;}
 type ExposureAdjustment implements Value{Stops:Number;Offset:Number;GammaCorrection:Number;}
@@ -449,8 +452,8 @@ type FontStyle{}
 type FontWeight implements Value,Comparable{Value:Integer;}
 type Force implements Quantity{Newtons:Number;}
 type FourierSeries implements Value{Fundamental:Frequency;CosineCoefficients:Array<Number>;SineCoefficients:Array<Number>;}
-type Frame2D implements Value{Origin:Point2D;XAxis:Direction2D;YAxis:Direction2D;}
-type Frame3D implements Value{Origin:Point3D;XAxis:Direction3D;YAxis:Direction3D;ZAxis:Direction3D;}
+type Frame2D implements Value,Affine2D{Origin:Point2D;XAxis:Direction2D;YAxis:Direction2D;}
+type Frame3D implements Value,Affine3D{Origin:Point3D;XAxis:Direction3D;YAxis:Direction3D;ZAxis:Direction3D;}
 type FrameRate{FramesPerSecond:Number;}
 type FrameSequence implements Value{Rate:FrameRate;InPoint:FrameTime;OutPoint:FrameTime;}
 type FrameStatistics implements Value{FrameIndex:Integer;CpuTime:Duration;GpuTime:Duration;DrawCalls:Integer;TriangleCount:Integer;InstanceCount:Integer;}
@@ -646,7 +649,7 @@ type MotionEcho implements Value{Count:Integer;Spacing:Duration;Decay:Proportion
 type MotionPath2D implements Value{Path:Path2D;OrientToPath:Boolean;StartOffset:Proportion;}
 type MotionPath3D implements Value{Poses:Array<Pose3D>;OrientToPath:Boolean;StartOffset:Proportion;}
 type MotionRepeater2D implements Value{Copies:Integer;Offset:LayerTransform2D;EndOpacity:Proportion;}
-type Motor3D implements Value,Multiplicative{Real:Quaternion;Dual:Quaternion;}
+type Motor3D implements Value,Multiplicative,Affine3D{Real:Quaternion;Dual:Quaternion;}
 type MovingAverage{}
 type NamedColorSpace{}
 type NaturalCubicSpline1D implements Curve1D{Parameters:Array<Number>;Values:Array<Number>;}
@@ -741,8 +744,8 @@ type Polynomial implements Value{Coefficients:Array<Number>;}
 type PolynomialFit implements Value{Coefficients:Array<Number>;RSquared:Number;}
 type PolynomialRoots implements Value{RealRoots:Array<Number>;ComplexRoots:Array<Complex>;}
 type PorterDuff{}
-type Pose2D implements Value,Interpolatable{Position:Point2D;Rotation:Rotation2D;}
-type Pose3D implements Value,Interpolatable{Position:Point3D;Orientation:Quaternion;}
+type Pose2D implements Value,Interpolatable,Affine2D{Position:Point2D;Rotation:Rotation2D;}
+type Pose3D implements Value,Interpolatable,Affine3D{Position:Point3D;Orientation:Quaternion;}
 type PosterizeParameters implements Value{Levels:Integer;}
 type Power implements Quantity{Watts:Number;}
 type PowerSeries implements Value{Center:Number;Coefficients:Array<Number>;}
@@ -787,6 +790,8 @@ type RayHit3D implements Value{Hit:Boolean;Distance:Number;Position:Point3D;Norm
 type RayQuery2D implements Value{Ray:Ray2D;MaxDistance:Number;FilterMask:Integer;}
 type RayQuery3D implements Value{Ray:Ray3D;MaxDistance:Number;FilterMask:Integer;}
 type Rect2D implements Value{Center:Point2D;Size:Size2D;}
+type Reflection2D implements Value,Affine2D{Origin:Point2D;Direction:Direction2D;}
+type Reflection3D implements Value,Affine3D{Origin:Point3D;Normal:Direction3D;}
 type RegularGrid2D implements Value{Bounds:Bounds2D;CellCounts:IntegerVector2;}
 type RegularGrid3D implements Value{Bounds:Bounds3D;CellCounts:IntegerVector3;}
 type RegularPolygon implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D,SupportMappable2D{Center:Point2D;CircumRadius:Number;SideCount:Integer;Rotation:Angle;}
@@ -809,10 +814,12 @@ type RidgedNoise3D implements Value,ScalarField3D{Basis:NoiseBasis;Seed:Integer;
 type RiemannianMetric2D implements Value{G11:Number;G12:Number;G22:Number;}
 type RoseCurve2D implements PolarCurve2D{Radius:Number;PetalFrequency:Number;}
 type Rotation2D implements Value,Multiplicative,Interpolatable{Angle:Angle;}
+type RotationAbout2D implements Value,Affine2D{Rotation:Rotation2D;Center:Point2D;}
+type RotationAbout3D implements Value,Affine3D{Rotation:Quaternion;Center:Point3D;}
 type RotationMinimizingFrame3D implements Value{Position:Point3D;Tangent:Direction3D;Normal:Direction3D;Binormal:Direction3D;Parameter:Number;}
 type RotationOrder{}
 type Rotor2D implements Value,Multiplicative{Scalar:Number;XY:Number;}
-type Rotor3D implements Value,Multiplicative{Scalar:Number;Bivector:Bivector3D;}
+type Rotor3D implements Value,Multiplicative,Rotational3D{Scalar:Number;Bivector:Bivector3D;}
 type RoundedBox3D implements Geometry3D,ClosedShape,ConvexShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,SupportMappable3D{Box:Box3D;CornerRadius:Number;}
 type RoundedRect2D implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,Centroid2D,ContainsPoint2D{Rect:Rect2D;CornerRadius:Number;}
 type RuledSurface implements ParametricSurface{Start:Curve3D;End:Curve3D;}
@@ -834,6 +841,10 @@ type ScalarFieldNode2D implements Value{}
 type ScalarFieldNode3D implements Value{}
 type ScalarFunctionField2D implements ScalarField2D{Function:Function1<Point2D,Number>;}
 type ScalarFunctionField3D implements ScalarField3D{Function:Function1<Point3D,Number>;}
+type Scaling2D implements Value,Affine2D{Amount:Number2;}
+type Scaling3D implements Value,Affine3D{Amount:Number3;}
+type ScalingAbout2D implements Value,Affine2D{Amount:Number2;Center:Point2D;}
+type ScalingAbout3D implements Value,Affine3D{Amount:Number3;Center:Point3D;}
 type Scene2D implements Value{Nodes:Array<SceneNode2D>;Shapes:Array<StyledPath2D>;Texts:Array<TextLayout>;ImageReferences:Array<Integer>;Clips:Array<ClipMask2D>;}
 type Scene3D implements Value{Name:String;Nodes:Array<SceneNode3D>;Resources:SceneResources;Layers:Array<RenderLayer>;Instances:Array<InstanceSet>;LodGroups:Array<LodGroup>;}
 type SceneCameraBinding implements Value{}
@@ -993,8 +1004,10 @@ type Torque implements Quantity{NewtonMeters:Number;}
 type Torus implements Geometry3D,ClosedShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,ParametricSurface{Center:Point3D;Axis:Direction3D;MajorRadius:Number;MinorRadius:Number;}
 type TorusKnot implements ClosedCurve3D{Frame:Frame3D;AxisWindings:Integer;TubeWindings:Integer;MajorRadius:Number;MinorRadius:Number;}
 type TransferFunction{}
-type Transform2D implements Value{Translation:Vector2D;Rotation:Rotation2D;Scale:Number2;}
-type Transform3D implements Value{Translation:Vector3D;Rotation:Quaternion;Scale:Number3;}
+type Transform2D implements Value,Affine2D{Translation:Vector2D;Rotation:Rotation2D;Scale:Number2;}
+type Transform3D implements Value,Affine3D{Translation:Vector3D;Rotation:Quaternion;Scale:Number3;}
+type Translation2D implements Value,Affine2D{Vector:Vector2D;}
+type Translation3D implements Value,Affine3D{Vector:Vector3D;}
 type TransmissionLayer implements Value{Transmission:Proportion;IndexOfRefraction:Number;Thickness:Number;AttenuationColor:Color;AttenuationDistance:Number;}
 type TrefoilKnot implements ClosedCurve3D{Frame:Frame3D;Scale:Number;}
 type Triangle2D implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,PointSet2D,Centroid2D,ContainsPoint2D,NearestPoint2D,Deformable2D{A:Point2D;B:Point2D;C:Point2D;}
@@ -1029,6 +1042,8 @@ type UndirectedEdgeAdjacency implements Value{UndirectedEdges:Array<VertexPair>;
 type UndirectedEdgeIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
 type UndirectedEdgeList implements Value{UndirectedEdges:Array<VertexPair>;}
 type UniformDistribution implements ProbabilityDistribution{Min:Number;Max:Number;}
+type UniformScaling2D implements Value,Affine2D{Amount:Number;}
+type UniformScaling3D implements Value,Affine3D{Amount:Number;}
 type UnitOfMeasure{Name:String;Symbol:String;Dimension:Dimension;ScaleToSI:Number;OffsetToSI:Number;}
 type UnlitMaterial implements Value{Color:Color;Alpha:AlphaSettings;DoubleSided:Boolean;}
 type UnsharpMaskParameters implements Value{Radius:Number;Amount:Number;Threshold:Number;}
