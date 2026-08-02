@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// Rotational force, stored in newton-meters (https://en.wikipedia.org/wiki/Torque).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Torque: IQuantity<Torque>, System.IFormattable, System.ISpanFormattable, System.IParsable<Torque>, System.ISpanParsable<Torque>
     {
@@ -25,7 +25,7 @@ namespace Ara3D.Geometry
         /// <summary>
         /// Rotational force, stored in newton-meters (https://en.wikipedia.org/wiki/Torque).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number NewtonMeters;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("NewtonMeters")] public readonly Number NewtonMeters;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Torque WithNewtonMeters(Number newtonMeters) => new Torque(newtonMeters);

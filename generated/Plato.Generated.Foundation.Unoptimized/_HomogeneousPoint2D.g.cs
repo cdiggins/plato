@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// A 2D point in homogeneous form; the Cartesian point is (X/W, Y/W)
     /// (https://en.wikipedia.org/wiki/Homogeneous_coordinates).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct HomogeneousPoint2D: IValue<HomogeneousPoint2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<HomogeneousPoint2D>, System.ISpanParsable<HomogeneousPoint2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number X;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Y;
-        [DataMember(Order = 2), JsonInclude] public readonly Number W;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Number X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Number Y;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("W")] public readonly Number W;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public HomogeneousPoint2D WithX(Number x) => new HomogeneousPoint2D(x, Y, W);

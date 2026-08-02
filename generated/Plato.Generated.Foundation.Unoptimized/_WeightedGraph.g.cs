@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// A graph in weighted edge-list form. When Directed is false each edge is an
     /// unordered pair with a single shared weight.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct WeightedGraph: IGraph<WeightedGraph>, System.IFormattable, System.ISpanFormattable, System.IParsable<WeightedGraph>, System.ISpanParsable<WeightedGraph>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer VertexCount;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<WeightedEdge> Edges;
-        [DataMember(Order = 2), JsonInclude] public readonly Boolean Directed;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("VertexCount")] public readonly Integer VertexCount;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Edges")] public readonly IReadOnlyList<WeightedEdge> Edges;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Directed")] public readonly Boolean Directed;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public WeightedGraph WithVertexCount(Integer vertexCount) => new WeightedGraph(vertexCount, Edges, Directed);

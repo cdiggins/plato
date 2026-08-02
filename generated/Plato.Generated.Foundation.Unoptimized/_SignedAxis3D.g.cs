@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// One of the six oriented cardinal axes of 3D space: the outward normals of a
     /// unit cube's faces (the positive and negative sense of each `Axis3D`).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct SignedAxis3D: System.IFormattable, System.ISpanFormattable, System.IParsable<SignedAxis3D>, System.ISpanParsable<SignedAxis3D>
     {
         // Discriminant (0-based, declaration order)
-        [DataMember(Order = 0), JsonInclude] public readonly int Kind;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Kind")] public readonly int Kind;
 
         // Case tags
         public const int Kind_PosX = 0;

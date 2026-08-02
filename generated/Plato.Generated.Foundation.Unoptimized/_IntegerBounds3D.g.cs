@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A whole-number 3D bounding region: voxel boxes. Contains Min, excludes Max.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct IntegerBounds3D: IValue<IntegerBounds3D>, System.IFormattable, System.ISpanFormattable, System.IParsable<IntegerBounds3D>, System.ISpanParsable<IntegerBounds3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IntegerVector3 Min;
-        [DataMember(Order = 1), JsonInclude] public readonly IntegerVector3 Max;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Min")] public readonly IntegerVector3 Min;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Max")] public readonly IntegerVector3 Max;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public IntegerBounds3D WithMin(IntegerVector3 min) => new IntegerBounds3D(min, Max);

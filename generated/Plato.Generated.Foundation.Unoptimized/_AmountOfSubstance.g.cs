@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Amount of substance, stored in moles
     /// (https://en.wikipedia.org/wiki/Amount_of_substance).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct AmountOfSubstance: IQuantity<AmountOfSubstance>, System.IFormattable, System.ISpanFormattable, System.IParsable<AmountOfSubstance>, System.ISpanParsable<AmountOfSubstance>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Amount of substance, stored in moles
         /// (https://en.wikipedia.org/wiki/Amount_of_substance).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Moles;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Moles")] public readonly Number Moles;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public AmountOfSubstance WithMoles(Number moles) => new AmountOfSubstance(moles);

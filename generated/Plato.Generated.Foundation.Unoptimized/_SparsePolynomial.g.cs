@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A sparse polynomial as parallel arrays: term i is Coefficients[i] times x
     /// raised to Powers[i]. Powers are distinct, non-negative, and ascending.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct SparsePolynomial: IValue<SparsePolynomial>, System.IFormattable, System.ISpanFormattable, System.IParsable<SparsePolynomial>, System.ISpanParsable<SparsePolynomial>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Integer> Powers;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Number> Coefficients;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Powers")] public readonly IReadOnlyList<Integer> Powers;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Coefficients")] public readonly IReadOnlyList<Number> Coefficients;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public SparsePolynomial WithPowers(IReadOnlyList<Integer> powers) => new SparsePolynomial(powers, Coefficients);

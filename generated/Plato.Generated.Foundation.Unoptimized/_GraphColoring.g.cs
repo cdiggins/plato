@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// Colors are zero-based integers in [0, ColorCount).
     /// (https://en.wikipedia.org/wiki/Graph_coloring)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct GraphColoring: IValue<GraphColoring>, System.IFormattable, System.ISpanFormattable, System.IParsable<GraphColoring>, System.ISpanParsable<GraphColoring>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Integer> VertexColors;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer ColorCount;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("VertexColors")] public readonly IReadOnlyList<Integer> VertexColors;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("ColorCount")] public readonly Integer ColorCount;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public GraphColoring WithVertexColors(IReadOnlyList<Integer> vertexColors) => new GraphColoring(vertexColors, ColorCount);

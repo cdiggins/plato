@@ -22,13 +22,13 @@ namespace Ara3D.Geometry
     /// can start from Empty(). Prefer Bounds2D for culling/containment; prefer Rect2D
     /// (center+size) for layout. Convention: see CONVENTIONS.md - Bounds.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Bounds2D: IBounds<Bounds2D, Point2D, Vector2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Bounds2D>, System.ISpanParsable<Bounds2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Point2D Min;
-        [DataMember(Order = 1), JsonInclude] public readonly Point2D Max;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Min")] public readonly Point2D Min;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Max")] public readonly Point2D Max;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Bounds2D WithMin(Point2D min) => new Bounds2D(min, Max);

@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Angular momentum, stored in kilogram-square-meters per second
     /// (https://en.wikipedia.org/wiki/Angular_momentum).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct AngularMomentum: IQuantity<AngularMomentum>, System.IFormattable, System.ISpanFormattable, System.IParsable<AngularMomentum>, System.ISpanParsable<AngularMomentum>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Angular momentum, stored in kilogram-square-meters per second
         /// (https://en.wikipedia.org/wiki/Angular_momentum).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number KilogramSquareMetersPerSecond;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("KilogramSquareMetersPerSecond")] public readonly Number KilogramSquareMetersPerSecond;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public AngularMomentum WithKilogramSquareMetersPerSecond(Number kilogramSquareMetersPerSecond) => new AngularMomentum(kilogramSquareMetersPerSecond);

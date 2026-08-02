@@ -19,14 +19,14 @@ namespace Ara3D.Geometry
     /// Counts selects the x bin, the row index selects the y bin; bin edges follow
     /// the same half-open convention as Histogram.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Histogram2D: IValue<Histogram2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Histogram2D>, System.ISpanParsable<Histogram2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly NumberInterval RangeX;
-        [DataMember(Order = 1), JsonInclude] public readonly NumberInterval RangeY;
-        [DataMember(Order = 2), JsonInclude] public readonly Array2D<Integer> Counts;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("RangeX")] public readonly NumberInterval RangeX;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("RangeY")] public readonly NumberInterval RangeY;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Counts")] public readonly Array2D<Integer> Counts;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Histogram2D WithRangeX(NumberInterval rangeX) => new Histogram2D(rangeX, RangeY, Counts);

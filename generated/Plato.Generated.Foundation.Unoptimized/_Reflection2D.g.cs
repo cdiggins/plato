@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A mirror across a line in the plane, given as a point on the line and the
     /// direction along it (https://en.wikipedia.org/wiki/Reflection_(mathematics)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Reflection2D: IValue<Reflection2D>, IAffine2D, System.IFormattable, System.ISpanFormattable, System.IParsable<Reflection2D>, System.ISpanParsable<Reflection2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Point2D Origin;
-        [DataMember(Order = 1), JsonInclude] public readonly Direction2D Direction;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Origin")] public readonly Point2D Origin;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Direction")] public readonly Direction2D Direction;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Reflection2D WithOrigin(Point2D origin) => new Reflection2D(origin, Direction);

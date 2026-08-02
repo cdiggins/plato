@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// rigid transform (https://en.wikipedia.org/wiki/Rigid_transformation);
     /// composition preserves distances and angles.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Pose3D: IValue<Pose3D>, IInterpolatable<Pose3D>, IRigid3D, System.IFormattable, System.ISpanFormattable, System.IParsable<Pose3D>, System.ISpanParsable<Pose3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Point3D Position;
-        [DataMember(Order = 1), JsonInclude] public readonly Quaternion Orientation;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Position")] public readonly Point3D Position;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Orientation")] public readonly Quaternion Orientation;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Pose3D WithPosition(Point3D position) => new Pose3D(position, Orientation);

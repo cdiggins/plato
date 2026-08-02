@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A half-open span of time: contains Start, excludes End
     /// (https://en.wikipedia.org/wiki/Interval_(mathematics)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct TimeInterval: IValue<TimeInterval>, System.IFormattable, System.ISpanFormattable, System.IParsable<TimeInterval>, System.ISpanParsable<TimeInterval>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Instant Start;
-        [DataMember(Order = 1), JsonInclude] public readonly Instant End;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Start")] public readonly Instant Start;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("End")] public readonly Instant End;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public TimeInterval WithStart(Instant start) => new TimeInterval(start, End);

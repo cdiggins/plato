@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A signed whole number. (https://en.wikipedia.org/wiki/Integer_(computer_science))
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    [StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Integer: IWhole<Integer>, IBitwise<Integer>, System.IFormattable, System.ISpanFormattable, System.IParsable<Integer>, System.ISpanParsable<Integer>
     {

@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Luminance, stored in candelas per square meter (nits)
     /// (https://en.wikipedia.org/wiki/Luminance).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Luminance: IQuantity<Luminance>, System.IFormattable, System.ISpanFormattable, System.IParsable<Luminance>, System.ISpanParsable<Luminance>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Luminance, stored in candelas per square meter (nits)
         /// (https://en.wikipedia.org/wiki/Luminance).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number CandelasPerSquareMeter;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("CandelasPerSquareMeter")] public readonly Number CandelasPerSquareMeter;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Luminance WithCandelasPerSquareMeter(Number candelasPerSquareMeter) => new Luminance(candelasPerSquareMeter);

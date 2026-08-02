@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A double-sided exponential peaked at Location with diversity Scale.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct LaplaceDistribution: IProbabilityDistribution<LaplaceDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<LaplaceDistribution>, System.ISpanParsable<LaplaceDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Location;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Scale;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Location")] public readonly Number Location;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Scale")] public readonly Number Scale;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public LaplaceDistribution WithLocation(Number location) => new LaplaceDistribution(location, Scale);

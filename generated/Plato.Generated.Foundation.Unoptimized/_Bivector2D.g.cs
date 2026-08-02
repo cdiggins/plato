@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// An oriented plane element in 2D (the single XY component); the generator of
     /// 2D rotations in geometric algebra (https://en.wikipedia.org/wiki/Bivector).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Bivector2D: IValue<Bivector2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Bivector2D>, System.ISpanParsable<Bivector2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number XY;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("XY")] public readonly Number XY;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Bivector2D WithXY(Number xY) => new Bivector2D(xY);

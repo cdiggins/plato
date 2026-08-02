@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Electrical capacitance, stored in farads
     /// (https://en.wikipedia.org/wiki/Capacitance).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Capacitance: IQuantity<Capacitance>, System.IFormattable, System.ISpanFormattable, System.IParsable<Capacitance>, System.ISpanParsable<Capacitance>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Electrical capacitance, stored in farads
         /// (https://en.wikipedia.org/wiki/Capacitance).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Farads;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Farads")] public readonly Number Farads;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Capacitance WithFarads(Number farads) => new Capacitance(farads);

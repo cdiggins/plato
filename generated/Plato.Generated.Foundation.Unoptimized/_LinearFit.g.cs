@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// An ordinary least-squares line y = Slope * x + Intercept. RSquared is the
     /// coefficient of determination in [0, 1].
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct LinearFit: IValue<LinearFit>, System.IFormattable, System.ISpanFormattable, System.IParsable<LinearFit>, System.ISpanParsable<LinearFit>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Slope;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Intercept;
-        [DataMember(Order = 2), JsonInclude] public readonly Number RSquared;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Slope")] public readonly Number Slope;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Intercept")] public readonly Number Intercept;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("RSquared")] public readonly Number RSquared;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public LinearFit WithSlope(Number slope) => new LinearFit(slope, Intercept, RSquared);

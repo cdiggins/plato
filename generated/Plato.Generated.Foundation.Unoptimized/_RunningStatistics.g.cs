@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// A Welford-style streaming accumulator. M2 is the running sum of squared
     /// deviations from the current mean; sample variance = M2 / (Count - 1).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct RunningStatistics: IValue<RunningStatistics>, System.IFormattable, System.ISpanFormattable, System.IParsable<RunningStatistics>, System.ISpanParsable<RunningStatistics>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer Count;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Mean;
-        [DataMember(Order = 2), JsonInclude] public readonly Number M2;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Count")] public readonly Integer Count;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Mean")] public readonly Number Mean;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("M2")] public readonly Number M2;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public RunningStatistics WithCount(Integer count) => new RunningStatistics(count, Mean, M2);

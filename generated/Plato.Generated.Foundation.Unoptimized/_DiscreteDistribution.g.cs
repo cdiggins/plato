@@ -19,12 +19,12 @@ namespace Ara3D.Geometry
     /// probability Weights[i] divided by the sum of Weights. Weights are
     /// non-negative and need not be normalized.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct DiscreteDistribution: IProbabilityDistribution<DiscreteDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<DiscreteDistribution>, System.ISpanParsable<DiscreteDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Number> Weights;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Weights")] public readonly IReadOnlyList<Number> Weights;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public DiscreteDistribution WithWeights(IReadOnlyList<Number> weights) => new DiscreteDistribution(weights);

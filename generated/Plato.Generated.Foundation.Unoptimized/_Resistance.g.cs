@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Electrical resistance, stored in ohms
     /// (https://en.wikipedia.org/wiki/Electrical_resistance_and_conductance).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Resistance: IQuantity<Resistance>, System.IFormattable, System.ISpanFormattable, System.IParsable<Resistance>, System.ISpanParsable<Resistance>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Electrical resistance, stored in ohms
         /// (https://en.wikipedia.org/wiki/Electrical_resistance_and_conductance).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Ohms;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Ohms")] public readonly Number Ohms;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Resistance WithOhms(Number ohms) => new Resistance(ohms);

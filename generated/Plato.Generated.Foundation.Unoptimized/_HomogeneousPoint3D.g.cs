@@ -18,15 +18,15 @@ namespace Ara3D.Geometry
     /// A 3D point in homogeneous form; the Cartesian point is (X/W, Y/W, Z/W)
     /// (https://en.wikipedia.org/wiki/Homogeneous_coordinates).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct HomogeneousPoint3D: IValue<HomogeneousPoint3D>, System.IFormattable, System.ISpanFormattable, System.IParsable<HomogeneousPoint3D>, System.ISpanParsable<HomogeneousPoint3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number X;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Y;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Z;
-        [DataMember(Order = 3), JsonInclude] public readonly Number W;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Number X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Number Y;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Z")] public readonly Number Z;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("W")] public readonly Number W;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public HomogeneousPoint3D WithX(Number x) => new HomogeneousPoint3D(x, Y, Z, W);

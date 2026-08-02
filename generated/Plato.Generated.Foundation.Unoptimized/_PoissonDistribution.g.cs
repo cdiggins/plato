@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// The count of events in a fixed window when events arrive independently at
     /// the given mean Rate.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct PoissonDistribution: IProbabilityDistribution<PoissonDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<PoissonDistribution>, System.ISpanParsable<PoissonDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Rate;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Rate")] public readonly Number Rate;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public PoissonDistribution WithRate(Number rate) => new PoissonDistribution(rate);

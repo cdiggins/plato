@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Heat capacity, stored in joules per kelvin
     /// (https://en.wikipedia.org/wiki/Heat_capacity).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct HeatCapacity: IQuantity<HeatCapacity>, System.IFormattable, System.ISpanFormattable, System.IParsable<HeatCapacity>, System.ISpanParsable<HeatCapacity>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Heat capacity, stored in joules per kelvin
         /// (https://en.wikipedia.org/wiki/Heat_capacity).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number JoulesPerKelvin;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("JoulesPerKelvin")] public readonly Number JoulesPerKelvin;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public HeatCapacity WithJoulesPerKelvin(Number joulesPerKelvin) => new HeatCapacity(joulesPerKelvin);

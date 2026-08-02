@@ -20,12 +20,12 @@ namespace Ara3D.Geometry
     /// it names a direction line, not an orientation; the six oriented cube-face
     /// normals are `SignedAxis3D`.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Axis3D: System.IFormattable, System.ISpanFormattable, System.IParsable<Axis3D>, System.ISpanParsable<Axis3D>
     {
         // Discriminant (0-based, declaration order)
-        [DataMember(Order = 0), JsonInclude] public readonly int Kind;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Kind")] public readonly int Kind;
 
         // Case tags
         public const int Kind_X = 0;

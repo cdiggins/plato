@@ -21,12 +21,12 @@ namespace Ara3D.Geometry
     /// multiples beyond the quartiles for Iqr, and median-absolute-deviation
     /// multiples for Mad (https://en.wikipedia.org/wiki/Median_absolute_deviation).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct OutlierDetection: System.IFormattable, System.ISpanFormattable, System.IParsable<OutlierDetection>, System.ISpanParsable<OutlierDetection>
     {
         // Discriminant (0-based, declaration order)
-        [DataMember(Order = 0), JsonInclude] public readonly int Kind;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Kind")] public readonly int Kind;
 
         // Case tags
         public const int Kind_ZScore = 0;
@@ -34,9 +34,9 @@ namespace Ara3D.Geometry
         public const int Kind_Mad = 2;
 
         // Flattened per-case fields (Case_Field); inactive cases hold default.
-        [DataMember(Order = 1), JsonInclude] public readonly Number ZScore_Threshold;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Iqr_Threshold;
-        [DataMember(Order = 3), JsonInclude] public readonly Number Mad_Threshold;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("ZScore_Threshold")] public readonly Number ZScore_Threshold;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Iqr_Threshold")] public readonly Number Iqr_Threshold;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("Mad_Threshold")] public readonly Number Mad_Threshold;
 
         // All-fields constructor (private: build via the per-case factories)
         [MethodImpl(AggressiveInlining)] [JsonConstructor] private OutlierDetection(int kind, Number zScore_Threshold, Number iqr_Threshold, Number mad_Threshold) { Kind = kind; ZScore_Threshold = zScore_Threshold; Iqr_Threshold = iqr_Threshold; Mad_Threshold = mad_Threshold; }

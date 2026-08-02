@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// The gamma distribution in shape/scale form; its mean is Shape * Scale.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct GammaDistribution: IProbabilityDistribution<GammaDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<GammaDistribution>, System.ISpanParsable<GammaDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Shape;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Scale;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Shape")] public readonly Number Shape;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Scale")] public readonly Number Scale;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public GammaDistribution WithShape(Number shape) => new GammaDistribution(shape, Scale);

@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// Student's t distribution; approaches the standard normal as
     /// DegreesOfFreedom grows.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct StudentTDistribution: IProbabilityDistribution<StudentTDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<StudentTDistribution>, System.ISpanParsable<StudentTDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number DegreesOfFreedom;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("DegreesOfFreedom")] public readonly Number DegreesOfFreedom;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public StudentTDistribution WithDegreesOfFreedom(Number degreesOfFreedom) => new StudentTDistribution(degreesOfFreedom);

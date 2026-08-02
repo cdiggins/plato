@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// A correlation coefficient in [-1, 1] together with the statistic used and
     /// the number of paired observations behind it.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct CorrelationCoefficient: IValue<CorrelationCoefficient>, System.IFormattable, System.ISpanFormattable, System.IParsable<CorrelationCoefficient>, System.ISpanParsable<CorrelationCoefficient>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly CorrelationStatistic Statistic;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Value;
-        [DataMember(Order = 2), JsonInclude] public readonly Integer SampleCount;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Statistic")] public readonly CorrelationStatistic Statistic;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Value")] public readonly Number Value;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("SampleCount")] public readonly Integer SampleCount;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public CorrelationCoefficient WithStatistic(CorrelationStatistic statistic) => new CorrelationCoefficient(statistic, Value, SampleCount);

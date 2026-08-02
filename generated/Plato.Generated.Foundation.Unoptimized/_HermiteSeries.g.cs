@@ -19,12 +19,12 @@ namespace Ara3D.Geometry
     /// (https://en.wikipedia.org/wiki/Hermite_polynomials): Coefficients[k]
     /// weights H_k.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct HermiteSeries: IValue<HermiteSeries>, System.IFormattable, System.ISpanFormattable, System.IParsable<HermiteSeries>, System.ISpanParsable<HermiteSeries>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Number> Coefficients;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Coefficients")] public readonly IReadOnlyList<Number> Coefficients;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public HermiteSeries WithCoefficients(IReadOnlyList<Number> coefficients) => new HermiteSeries(coefficients);

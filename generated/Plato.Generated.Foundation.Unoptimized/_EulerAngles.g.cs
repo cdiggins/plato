@@ -18,15 +18,15 @@ namespace Ara3D.Geometry
     /// Three chained elemental rotations under an explicit composition order
     /// (https://en.wikipedia.org/wiki/Euler_angles).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct EulerAngles: IValue<EulerAngles>, IRotational3D, System.IFormattable, System.ISpanFormattable, System.IParsable<EulerAngles>, System.ISpanParsable<EulerAngles>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Angle Yaw;
-        [DataMember(Order = 1), JsonInclude] public readonly Angle Pitch;
-        [DataMember(Order = 2), JsonInclude] public readonly Angle Roll;
-        [DataMember(Order = 3), JsonInclude] public readonly RotationOrder Order;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Yaw")] public readonly Angle Yaw;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Pitch")] public readonly Angle Pitch;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Roll")] public readonly Angle Roll;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("Order")] public readonly RotationOrder Order;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public EulerAngles WithYaw(Angle yaw) => new EulerAngles(yaw, Pitch, Roll, Order);

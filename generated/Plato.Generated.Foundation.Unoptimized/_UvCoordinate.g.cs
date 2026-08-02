@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// (https://en.wikipedia.org/wiki/UV_mapping).
     /// Convention: see CONVENTIONS.md - UV origin (origin top-left, U right, V down).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct UvCoordinate: ICoordinate<UvCoordinate>, IOriginBased<UvCoordinate, Vector2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<UvCoordinate>, System.ISpanParsable<UvCoordinate>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number U;
-        [DataMember(Order = 1), JsonInclude] public readonly Number V;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("U")] public readonly Number U;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("V")] public readonly Number V;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public UvCoordinate WithU(Number u) => new UvCoordinate(u, V);

@@ -19,14 +19,14 @@ namespace Ara3D.Geometry
     /// pair. Vertices without edges exist implicitly via VertexCount.
     /// (https://en.wikipedia.org/wiki/Graph_(abstract_data_type))
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Graph: IGraph<Graph>, System.IFormattable, System.ISpanFormattable, System.IParsable<Graph>, System.ISpanParsable<Graph>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer VertexCount;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<GraphEdge> Edges;
-        [DataMember(Order = 2), JsonInclude] public readonly Boolean Directed;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("VertexCount")] public readonly Integer VertexCount;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Edges")] public readonly IReadOnlyList<GraphEdge> Edges;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Directed")] public readonly Boolean Directed;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Graph WithVertexCount(Integer vertexCount) => new Graph(vertexCount, Edges, Directed);

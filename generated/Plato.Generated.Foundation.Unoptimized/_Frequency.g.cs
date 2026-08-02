@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Repetition rate, stored in hertz (cycles per second)
     /// (https://en.wikipedia.org/wiki/Frequency).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Frequency: IQuantity<Frequency>, System.IFormattable, System.ISpanFormattable, System.IParsable<Frequency>, System.ISpanParsable<Frequency>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Repetition rate, stored in hertz (cycles per second)
         /// (https://en.wikipedia.org/wiki/Frequency).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Hertz;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Hertz")] public readonly Number Hertz;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Frequency WithHertz(Number hertz) => new Frequency(hertz);

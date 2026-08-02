@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Thermal conductivity, stored in watts per meter-kelvin
     /// (https://en.wikipedia.org/wiki/Thermal_conductivity_and_resistivity).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ThermalConductivity: IQuantity<ThermalConductivity>, System.IFormattable, System.ISpanFormattable, System.IParsable<ThermalConductivity>, System.ISpanParsable<ThermalConductivity>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Thermal conductivity, stored in watts per meter-kelvin
         /// (https://en.wikipedia.org/wiki/Thermal_conductivity_and_resistivity).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number WattsPerMeterKelvin;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("WattsPerMeterKelvin")] public readonly Number WattsPerMeterKelvin;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ThermalConductivity WithWattsPerMeterKelvin(Number wattsPerMeterKelvin) => new ThermalConductivity(wattsPerMeterKelvin);

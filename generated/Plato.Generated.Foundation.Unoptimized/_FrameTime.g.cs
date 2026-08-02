@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A discrete frame position under a given frame rate.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct FrameTime: IValue<FrameTime>, IComparable<FrameTime>, System.IFormattable, System.ISpanFormattable, System.IParsable<FrameTime>, System.ISpanParsable<FrameTime>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer Frame;
-        [DataMember(Order = 1), JsonInclude] public readonly FrameRate Rate;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Frame")] public readonly Integer Frame;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Rate")] public readonly FrameRate Rate;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public FrameTime WithFrame(Integer frame) => new FrameTime(frame, Rate);

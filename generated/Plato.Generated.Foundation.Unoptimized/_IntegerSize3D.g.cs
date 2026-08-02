@@ -17,14 +17,14 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A discrete 3D extent: voxel-grid dimensions.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct IntegerSize3D: IValue<IntegerSize3D>, IHashable<IntegerSize3D>, System.IFormattable, System.ISpanFormattable, System.IParsable<IntegerSize3D>, System.ISpanParsable<IntegerSize3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer Width;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer Height;
-        [DataMember(Order = 2), JsonInclude] public readonly Integer Depth;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Width")] public readonly Integer Width;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Height")] public readonly Integer Height;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Depth")] public readonly Integer Depth;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public IntegerSize3D WithWidth(Integer width) => new IntegerSize3D(width, Height, Depth);

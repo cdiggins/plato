@@ -19,12 +19,12 @@ namespace Ara3D.Geometry
     /// powers); an empty array is the zero polynomial, and the degree is the
     /// coefficient count minus 1.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Polynomial: IValue<Polynomial>, System.IFormattable, System.ISpanFormattable, System.IParsable<Polynomial>, System.ISpanParsable<Polynomial>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Number> Coefficients;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Coefficients")] public readonly IReadOnlyList<Number> Coefficients;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Polynomial WithCoefficients(IReadOnlyList<Number> coefficients) => new Polynomial(coefficients);

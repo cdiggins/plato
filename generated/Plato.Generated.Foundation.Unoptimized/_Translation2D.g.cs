@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// A translation in the plane: every point is displaced by the same vector
     /// (https://en.wikipedia.org/wiki/Translation_(geometry)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Translation2D: IValue<Translation2D>, IRigid2D, System.IFormattable, System.ISpanFormattable, System.IParsable<Translation2D>, System.ISpanParsable<Translation2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Vector2D Vector;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Vector")] public readonly Vector2D Vector;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Translation2D WithVector(Vector2D vector) => new Translation2D(vector);

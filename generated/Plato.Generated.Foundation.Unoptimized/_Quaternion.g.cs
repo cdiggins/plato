@@ -18,15 +18,15 @@ namespace Ara3D.Geometry
     /// A unit quaternion encoding a 3D rotation
     /// (https://en.wikipedia.org/wiki/Quaternion). Invariant: X*X + Y*Y + Z*Z + W*W = 1.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Quaternion: IValue<Quaternion>, IMultiplicative<Quaternion>, IInterpolatable<Quaternion>, IRigid3D, System.IFormattable, System.ISpanFormattable, System.IParsable<Quaternion>, System.ISpanParsable<Quaternion>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number X;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Y;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Z;
-        [DataMember(Order = 3), JsonInclude] public readonly Number W;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Number X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Number Y;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Z")] public readonly Number Z;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("W")] public readonly Number W;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Quaternion WithX(Number x) => new Quaternion(x, Y, Z, W);

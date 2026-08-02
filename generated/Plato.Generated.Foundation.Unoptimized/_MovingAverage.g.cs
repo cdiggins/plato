@@ -21,12 +21,12 @@ namespace Ara3D.Geometry
     /// (Exponential), or a Gaussian-weighted window with its standard deviation in
     /// samples (Gaussian).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct MovingAverage: System.IFormattable, System.ISpanFormattable, System.IParsable<MovingAverage>, System.ISpanParsable<MovingAverage>
     {
         // Discriminant (0-based, declaration order)
-        [DataMember(Order = 0), JsonInclude] public readonly int Kind;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Kind")] public readonly int Kind;
 
         // Case tags
         public const int Kind_Simple = 0;
@@ -34,10 +34,10 @@ namespace Ara3D.Geometry
         public const int Kind_Gaussian = 2;
 
         // Flattened per-case fields (Case_Field); inactive cases hold default.
-        [DataMember(Order = 1), JsonInclude] public readonly Integer Simple_WindowSize;
-        [DataMember(Order = 2), JsonInclude] public readonly Proportion Exponential_Alpha;
-        [DataMember(Order = 3), JsonInclude] public readonly Integer Gaussian_WindowSize;
-        [DataMember(Order = 4), JsonInclude] public readonly Number Gaussian_StandardDeviation;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Simple_WindowSize")] public readonly Integer Simple_WindowSize;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Exponential_Alpha")] public readonly Proportion Exponential_Alpha;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("Gaussian_WindowSize")] public readonly Integer Gaussian_WindowSize;
+        [DataMember(Order = 4), JsonInclude, JsonPropertyName("Gaussian_StandardDeviation")] public readonly Number Gaussian_StandardDeviation;
 
         // All-fields constructor (private: build via the per-case factories)
         [MethodImpl(AggressiveInlining)] [JsonConstructor] private MovingAverage(int kind, Integer simple_WindowSize, Proportion exponential_Alpha, Integer gaussian_WindowSize, Number gaussian_StandardDeviation) { Kind = kind; Simple_WindowSize = simple_WindowSize; Exponential_Alpha = exponential_Alpha; Gaussian_WindowSize = gaussian_WindowSize; Gaussian_StandardDeviation = gaussian_StandardDeviation; }

@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Mass per volume, stored in kilograms per cubic meter
     /// (https://en.wikipedia.org/wiki/Density).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Density: IQuantity<Density>, System.IFormattable, System.ISpanFormattable, System.IParsable<Density>, System.ISpanParsable<Density>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Mass per volume, stored in kilograms per cubic meter
         /// (https://en.wikipedia.org/wiki/Density).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number KilogramsPerCubicMeter;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("KilogramsPerCubicMeter")] public readonly Number KilogramsPerCubicMeter;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Density WithKilogramsPerCubicMeter(Number kilogramsPerCubicMeter) => new Density(kilogramsPerCubicMeter);

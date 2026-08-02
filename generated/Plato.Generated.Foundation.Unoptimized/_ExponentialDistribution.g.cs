@@ -17,12 +17,12 @@ namespace Ara3D.Geometry
     /// <summary>
     /// Waiting time between Poisson events. Rate is per unit; the mean is 1 / Rate.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ExponentialDistribution: IProbabilityDistribution<ExponentialDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<ExponentialDistribution>, System.ISpanParsable<ExponentialDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Rate;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Rate")] public readonly Number Rate;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ExponentialDistribution WithRate(Number rate) => new ExponentialDistribution(rate);

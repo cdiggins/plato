@@ -19,18 +19,18 @@ namespace Ara3D.Geometry
     /// (https://en.wikipedia.org/wiki/Dimensional_analysis). A dimensionless value
     /// has all zeros.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Dimension: System.IFormattable, System.ISpanFormattable, System.IParsable<Dimension>, System.ISpanParsable<Dimension>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer LengthPower;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer MassPower;
-        [DataMember(Order = 2), JsonInclude] public readonly Integer TimePower;
-        [DataMember(Order = 3), JsonInclude] public readonly Integer CurrentPower;
-        [DataMember(Order = 4), JsonInclude] public readonly Integer TemperaturePower;
-        [DataMember(Order = 5), JsonInclude] public readonly Integer AmountPower;
-        [DataMember(Order = 6), JsonInclude] public readonly Integer LuminosityPower;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("LengthPower")] public readonly Integer LengthPower;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("MassPower")] public readonly Integer MassPower;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("TimePower")] public readonly Integer TimePower;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("CurrentPower")] public readonly Integer CurrentPower;
+        [DataMember(Order = 4), JsonInclude, JsonPropertyName("TemperaturePower")] public readonly Integer TemperaturePower;
+        [DataMember(Order = 5), JsonInclude, JsonPropertyName("AmountPower")] public readonly Integer AmountPower;
+        [DataMember(Order = 6), JsonInclude, JsonPropertyName("LuminosityPower")] public readonly Integer LuminosityPower;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Dimension WithLengthPower(Integer lengthPower) => new Dimension(lengthPower, MassPower, TimePower, CurrentPower, TemperaturePower, AmountPower, LuminosityPower);

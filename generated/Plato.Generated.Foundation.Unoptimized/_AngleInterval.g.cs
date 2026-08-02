@@ -23,13 +23,13 @@ namespace Ara3D.Geometry
     /// in intervals.library.plato; the generic linear IInterval helpers
     /// are correct only for non-wrapping ranges. Convention: see CONVENTIONS.md - Angles.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct AngleInterval: IInterval<AngleInterval, Angle>, System.IFormattable, System.ISpanFormattable, System.IParsable<AngleInterval>, System.ISpanParsable<AngleInterval>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Angle Start;
-        [DataMember(Order = 1), JsonInclude] public readonly Angle End;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Start")] public readonly Angle Start;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("End")] public readonly Angle End;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public AngleInterval WithStart(Angle start) => new AngleInterval(start, End);

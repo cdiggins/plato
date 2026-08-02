@@ -20,13 +20,13 @@ namespace Ara3D.Geometry
     /// length divided by the bin count; the final bin also includes the Range End.
     /// Values outside Range are not counted.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Histogram: IValue<Histogram>, System.IFormattable, System.ISpanFormattable, System.IParsable<Histogram>, System.ISpanParsable<Histogram>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly NumberInterval Range;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Integer> Counts;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Range")] public readonly NumberInterval Range;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Counts")] public readonly IReadOnlyList<Integer> Counts;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Histogram WithRange(NumberInterval range) => new Histogram(range, Counts);

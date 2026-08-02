@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// (https://en.wikipedia.org/wiki/Chebyshev_polynomials): Coefficients[k]
     /// weights T_k evaluated after Interval is mapped linearly onto [-1, 1].
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ChebyshevSeries: IValue<ChebyshevSeries>, System.IFormattable, System.ISpanFormattable, System.IParsable<ChebyshevSeries>, System.ISpanParsable<ChebyshevSeries>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly NumberInterval Interval;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Number> Coefficients;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Interval")] public readonly NumberInterval Interval;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Coefficients")] public readonly IReadOnlyList<Number> Coefficients;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ChebyshevSeries WithInterval(NumberInterval interval) => new ChebyshevSeries(interval, Coefficients);

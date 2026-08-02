@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Rate of change of angular velocity, stored in radians per second squared
     /// (https://en.wikipedia.org/wiki/Angular_acceleration).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct AngularAcceleration: IQuantity<AngularAcceleration>, System.IFormattable, System.ISpanFormattable, System.IParsable<AngularAcceleration>, System.ISpanParsable<AngularAcceleration>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Rate of change of angular velocity, stored in radians per second squared
         /// (https://en.wikipedia.org/wiki/Angular_acceleration).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number RadiansPerSecondSquared;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("RadiansPerSecondSquared")] public readonly Number RadiansPerSecondSquared;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public AngularAcceleration WithRadiansPerSecondSquared(Number radiansPerSecondSquared) => new AngularAcceleration(radiansPerSecondSquared);

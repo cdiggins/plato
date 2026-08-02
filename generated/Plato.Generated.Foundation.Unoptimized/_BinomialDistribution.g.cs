@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// The number of successes in TrialCount independent Bernoulli trials.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct BinomialDistribution: IProbabilityDistribution<BinomialDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<BinomialDistribution>, System.ISpanParsable<BinomialDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer TrialCount;
-        [DataMember(Order = 1), JsonInclude] public readonly Probability SuccessProbability;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("TrialCount")] public readonly Integer TrialCount;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("SuccessProbability")] public readonly Probability SuccessProbability;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public BinomialDistribution WithTrialCount(Integer trialCount) => new BinomialDistribution(trialCount, SuccessProbability);

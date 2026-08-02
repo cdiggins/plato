@@ -20,13 +20,13 @@ namespace Ara3D.Geometry
     /// the circle. Pdf and Cdf take the angle in radians, and Mean reports the
     /// mean direction in radians.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct VonMisesDistribution: IProbabilityDistribution<VonMisesDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<VonMisesDistribution>, System.ISpanParsable<VonMisesDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Angle MeanDirection;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Concentration;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("MeanDirection")] public readonly Angle MeanDirection;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Concentration")] public readonly Number Concentration;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public VonMisesDistribution WithMeanDirection(Angle meanDirection) => new VonMisesDistribution(meanDirection, Concentration);

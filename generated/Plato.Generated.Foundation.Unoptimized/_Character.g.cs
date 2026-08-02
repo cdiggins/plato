@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A single character of text. (https://en.wikipedia.org/wiki/Character_(computing))
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    [StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Character: IValue<Character>, IOrderable<Character>, System.IFormattable, System.ISpanFormattable, System.IParsable<Character>, System.ISpanParsable<Character>
     {

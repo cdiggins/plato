@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Rate of rotation, stored in radians per second
     /// (https://en.wikipedia.org/wiki/Angular_velocity).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct AngularVelocity: IQuantity<AngularVelocity>, System.IFormattable, System.ISpanFormattable, System.IParsable<AngularVelocity>, System.ISpanParsable<AngularVelocity>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Rate of rotation, stored in radians per second
         /// (https://en.wikipedia.org/wiki/Angular_velocity).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number RadiansPerSecond;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("RadiansPerSecond")] public readonly Number RadiansPerSecond;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public AngularVelocity WithRadiansPerSecond(Number radiansPerSecond) => new AngularVelocity(radiansPerSecond);

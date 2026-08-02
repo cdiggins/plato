@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// A translate-rotate-scale transform in 3D, applied scale first, then rotation,
     /// then translation.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct TrsTransform3D: IValue<TrsTransform3D>, IAffine3D, System.IFormattable, System.ISpanFormattable, System.IParsable<TrsTransform3D>, System.ISpanParsable<TrsTransform3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Vector3D Translation;
-        [DataMember(Order = 1), JsonInclude] public readonly Quaternion Rotation;
-        [DataMember(Order = 2), JsonInclude] public readonly Number3 Scale;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Translation")] public readonly Vector3D Translation;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Rotation")] public readonly Quaternion Rotation;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Scale")] public readonly Number3 Scale;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public TrsTransform3D WithTranslation(Vector3D translation) => new TrsTransform3D(translation, Rotation, Scale);

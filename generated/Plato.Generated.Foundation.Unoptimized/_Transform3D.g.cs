@@ -19,12 +19,12 @@ namespace Ara3D.Geometry
     /// perspective projections. The widest transform of space, and the one
     /// `ITransformable3D` carries (https://en.wikipedia.org/wiki/Homography).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Transform3D: IValue<Transform3D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Transform3D>, System.ISpanParsable<Transform3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Matrix4x4 Matrix;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Matrix")] public readonly Matrix4x4 Matrix;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Transform3D WithMatrix(Matrix4x4 matrix) => new Transform3D(matrix);

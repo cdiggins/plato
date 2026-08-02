@@ -20,14 +20,14 @@ namespace Ara3D.Geometry
     /// Numerator over Denominator that matches a power series to the highest order
     /// the two degrees allow. The Denominator's constant term is normalized to 1.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct PadeApproximant: IValue<PadeApproximant>, System.IFormattable, System.ISpanFormattable, System.IParsable<PadeApproximant>, System.ISpanParsable<PadeApproximant>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Center;
-        [DataMember(Order = 1), JsonInclude] public readonly Polynomial Numerator;
-        [DataMember(Order = 2), JsonInclude] public readonly Polynomial Denominator;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Center")] public readonly Number Center;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Numerator")] public readonly Polynomial Numerator;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Denominator")] public readonly Polynomial Denominator;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public PadeApproximant WithCenter(Number center) => new PadeApproximant(center, Numerator, Denominator);

@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A color at a normalized position within a gradient; Position is in [0, 1].
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ColorStop: IValue<ColorStop>, System.IFormattable, System.ISpanFormattable, System.IParsable<ColorStop>, System.ISpanParsable<ColorStop>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Position;
-        [DataMember(Order = 1), JsonInclude] public readonly Color Color;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Position")] public readonly Number Position;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Color")] public readonly Color Color;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ColorStop WithPosition(Number position) => new ColorStop(position, Color);

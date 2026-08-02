@@ -17,14 +17,14 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A 3x3 matrix: 3D linear maps, 2D homogeneous transforms, orientation bases.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Matrix3x3: IMatrix<Matrix3x3>, IMultiplicative<Matrix3x3>, System.IFormattable, System.ISpanFormattable, System.IParsable<Matrix3x3>, System.ISpanParsable<Matrix3x3>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number3 Row1;
-        [DataMember(Order = 1), JsonInclude] public readonly Number3 Row2;
-        [DataMember(Order = 2), JsonInclude] public readonly Number3 Row3;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Row1")] public readonly Number3 Row1;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Row2")] public readonly Number3 Row2;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Row3")] public readonly Number3 Row3;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Matrix3x3 WithRow1(Number3 row1) => new Matrix3x3(row1, Row2, Row3);

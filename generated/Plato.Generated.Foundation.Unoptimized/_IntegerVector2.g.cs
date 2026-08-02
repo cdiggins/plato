@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A pair of whole-number components: pixel offsets, grid steps.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct IntegerVector2: IValue<IntegerVector2>, IHashable<IntegerVector2>, System.IFormattable, System.ISpanFormattable, System.IParsable<IntegerVector2>, System.ISpanParsable<IntegerVector2>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer X;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer Y;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Integer X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Integer Y;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public IntegerVector2 WithX(Integer x) => new IntegerVector2(x, Y);

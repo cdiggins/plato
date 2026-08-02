@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Luminous flux, stored in lumens
     /// (https://en.wikipedia.org/wiki/Luminous_flux).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct LuminousFlux: IQuantity<LuminousFlux>, System.IFormattable, System.ISpanFormattable, System.IParsable<LuminousFlux>, System.ISpanParsable<LuminousFlux>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Luminous flux, stored in lumens
         /// (https://en.wikipedia.org/wiki/Luminous_flux).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Lumens;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Lumens")] public readonly Number Lumens;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public LuminousFlux WithLumens(Number lumens) => new LuminousFlux(lumens);

@@ -18,15 +18,15 @@ namespace Ara3D.Geometry
     /// An 8-bit-per-channel RGBA color with components in [0, 255]; storage and
     /// interop form, typically sRGB-encoded (https://en.wikipedia.org/wiki/SRGB).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Color8: IValue<Color8>, IHashable<Color8>, System.IFormattable, System.ISpanFormattable, System.IParsable<Color8>, System.ISpanParsable<Color8>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer R;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer G;
-        [DataMember(Order = 2), JsonInclude] public readonly Integer B;
-        [DataMember(Order = 3), JsonInclude] public readonly Integer A;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("R")] public readonly Integer R;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("G")] public readonly Integer G;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("B")] public readonly Integer B;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("A")] public readonly Integer A;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Color8 WithR(Integer r) => new Color8(r, G, B, A);

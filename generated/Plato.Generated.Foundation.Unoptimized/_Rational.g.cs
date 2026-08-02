@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// An exact ratio of two integers
     /// (https://en.wikipedia.org/wiki/Rational_number). Denominator is never zero.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Rational: IValue<Rational>, IComparable<Rational>, System.IFormattable, System.ISpanFormattable, System.IParsable<Rational>, System.ISpanParsable<Rational>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer Numerator;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer Denominator;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Numerator")] public readonly Integer Numerator;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Denominator")] public readonly Integer Denominator;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Rational WithNumerator(Integer numerator) => new Rational(numerator, Denominator);

@@ -17,12 +17,12 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A rotation in the plane, stored as a single angle.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Rotation2D: IValue<Rotation2D>, IMultiplicative<Rotation2D>, IInterpolatable<Rotation2D>, IRigid2D, System.IFormattable, System.ISpanFormattable, System.IParsable<Rotation2D>, System.ISpanParsable<Rotation2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Angle Angle;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Angle")] public readonly Angle Angle;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Rotation2D WithAngle(Angle angle) => new Rotation2D(angle);

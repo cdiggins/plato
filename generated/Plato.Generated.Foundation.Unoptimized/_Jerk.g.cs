@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Rate of change of acceleration, stored in meters per second cubed
     /// (https://en.wikipedia.org/wiki/Jerk_(physics)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Jerk: IQuantity<Jerk>, System.IFormattable, System.ISpanFormattable, System.IParsable<Jerk>, System.ISpanParsable<Jerk>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Rate of change of acceleration, stored in meters per second cubed
         /// (https://en.wikipedia.org/wiki/Jerk_(physics)).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number MetersPerSecondCubed;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("MetersPerSecondCubed")] public readonly Number MetersPerSecondCubed;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Jerk WithMetersPerSecondCubed(Number metersPerSecondCubed) => new Jerk(metersPerSecondCubed);

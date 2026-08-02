@@ -20,14 +20,14 @@ namespace Ara3D.Geometry
     /// CutEdgeCount is the number of edges whose endpoints lie in different parts.
     /// (https://en.wikipedia.org/wiki/Graph_partition)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct GraphPartition: IValue<GraphPartition>, System.IFormattable, System.ISpanFormattable, System.IParsable<GraphPartition>, System.ISpanParsable<GraphPartition>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Integer> PartLabels;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer PartCount;
-        [DataMember(Order = 2), JsonInclude] public readonly Integer CutEdgeCount;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("PartLabels")] public readonly IReadOnlyList<Integer> PartLabels;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("PartCount")] public readonly Integer PartCount;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("CutEdgeCount")] public readonly Integer CutEdgeCount;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public GraphPartition WithPartLabels(IReadOnlyList<Integer> partLabels) => new GraphPartition(partLabels, PartCount, CutEdgeCount);

@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A discrete 2D extent: image and grid dimensions.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct IntegerSize2D: IValue<IntegerSize2D>, IHashable<IntegerSize2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<IntegerSize2D>, System.ISpanParsable<IntegerSize2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer Width;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer Height;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Width")] public readonly Integer Width;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Height")] public readonly Integer Height;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public IntegerSize2D WithWidth(Integer width) => new IntegerSize2D(width, Height);

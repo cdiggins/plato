@@ -17,14 +17,14 @@ namespace Ara3D.Geometry
     /// <summary>
     /// An immutable collection addressed by column and row.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Array2D<T>: IIndexable2D<T>, System.IFormattable, System.ISpanFormattable, System.IParsable<Array2D<T>>, System.ISpanParsable<Array2D<T>>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<T> Elements;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer ColumnCount;
-        [DataMember(Order = 2), JsonInclude] public readonly Integer RowCount;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Elements")] public readonly IReadOnlyList<T> Elements;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("ColumnCount")] public readonly Integer ColumnCount;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("RowCount")] public readonly Integer RowCount;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Array2D<T> WithElements(IReadOnlyList<T> elements) => new Array2D<T>(elements, ColumnCount, RowCount);

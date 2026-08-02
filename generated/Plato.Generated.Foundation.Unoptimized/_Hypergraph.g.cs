@@ -21,14 +21,14 @@ namespace Ara3D.Geometry
     /// HyperedgeVertices[HyperedgeOffsets[h + 1]].
     /// (https://en.wikipedia.org/wiki/Hypergraph)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Hypergraph: IValue<Hypergraph>, System.IFormattable, System.ISpanFormattable, System.IParsable<Hypergraph>, System.ISpanParsable<Hypergraph>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer VertexCount;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Integer> HyperedgeOffsets;
-        [DataMember(Order = 2), JsonInclude] public readonly IReadOnlyList<GraphVertexIndex> HyperedgeVertices;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("VertexCount")] public readonly Integer VertexCount;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("HyperedgeOffsets")] public readonly IReadOnlyList<Integer> HyperedgeOffsets;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("HyperedgeVertices")] public readonly IReadOnlyList<GraphVertexIndex> HyperedgeVertices;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Hypergraph WithVertexCount(Integer vertexCount) => new Hypergraph(vertexCount, HyperedgeOffsets, HyperedgeVertices);

@@ -32,12 +32,12 @@ namespace Ara3D.Geometry
     /// not yet filled; the interface-generic bodies below therefore compute only at the
     /// Number instantiation today.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct VectorN: IVector<VectorN>, System.IFormattable, System.ISpanFormattable, System.IParsable<VectorN>, System.ISpanParsable<VectorN>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Number> Components;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Components")] public readonly IReadOnlyList<Number> Components;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public VectorN WithComponents(IReadOnlyList<Number> components) => new VectorN(components);

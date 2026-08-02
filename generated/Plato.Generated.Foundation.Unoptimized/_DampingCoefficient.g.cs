@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Viscous damping coefficient, stored in newton-seconds per meter
     /// (https://en.wikipedia.org/wiki/Damping).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct DampingCoefficient: IQuantity<DampingCoefficient>, System.IFormattable, System.ISpanFormattable, System.IParsable<DampingCoefficient>, System.ISpanParsable<DampingCoefficient>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Viscous damping coefficient, stored in newton-seconds per meter
         /// (https://en.wikipedia.org/wiki/Damping).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number NewtonSecondsPerMeter;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("NewtonSecondsPerMeter")] public readonly Number NewtonSecondsPerMeter;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public DampingCoefficient WithNewtonSecondsPerMeter(Number newtonSecondsPerMeter) => new DampingCoefficient(newtonSecondsPerMeter);

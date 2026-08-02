@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// (https://en.wikipedia.org/wiki/Rational_function). The Denominator is not the
     /// zero polynomial; the function is undefined at its roots (poles).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct RationalFunction: IValue<RationalFunction>, System.IFormattable, System.ISpanFormattable, System.IParsable<RationalFunction>, System.ISpanParsable<RationalFunction>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Polynomial Numerator;
-        [DataMember(Order = 1), JsonInclude] public readonly Polynomial Denominator;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Numerator")] public readonly Polynomial Numerator;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Denominator")] public readonly Polynomial Denominator;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public RationalFunction WithNumerator(Polynomial numerator) => new RationalFunction(numerator, Denominator);

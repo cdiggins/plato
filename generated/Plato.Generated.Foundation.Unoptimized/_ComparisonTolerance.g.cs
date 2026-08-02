@@ -23,13 +23,13 @@ namespace Ara3D.Geometry
     /// overloads in algebra.library.plato accept it. Engineering Tolerance
     /// (uncertainty.types.plato) is a manufacturing acceptance allowance, NOT this type.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ComparisonTolerance: IValue<ComparisonTolerance>, System.IFormattable, System.ISpanFormattable, System.IParsable<ComparisonTolerance>, System.ISpanParsable<ComparisonTolerance>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Absolute;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Relative;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Absolute")] public readonly Number Absolute;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Relative")] public readonly Number Relative;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ComparisonTolerance WithAbsolute(Number absolute) => new ComparisonTolerance(absolute, Relative);

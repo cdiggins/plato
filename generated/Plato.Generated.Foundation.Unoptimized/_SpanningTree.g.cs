@@ -20,13 +20,13 @@ namespace Ara3D.Geometry
     /// graphs) also carry -1.
     /// (https://en.wikipedia.org/wiki/Spanning_tree)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct SpanningTree: IValue<SpanningTree>, System.IFormattable, System.ISpanFormattable, System.IParsable<SpanningTree>, System.ISpanParsable<SpanningTree>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<GraphVertexIndex> ParentIndices;
-        [DataMember(Order = 1), JsonInclude] public readonly GraphVertexIndex RootIndex;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("ParentIndices")] public readonly IReadOnlyList<GraphVertexIndex> ParentIndices;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("RootIndex")] public readonly GraphVertexIndex RootIndex;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public SpanningTree WithParentIndices(IReadOnlyList<GraphVertexIndex> parentIndices) => new SpanningTree(parentIndices, RootIndex);

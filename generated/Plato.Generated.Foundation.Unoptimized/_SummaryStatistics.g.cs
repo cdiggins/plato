@@ -19,20 +19,20 @@ namespace Ara3D.Geometry
     /// use the sample (n - 1) convention; Skewness and Kurtosis are standardized
     /// moments, with Kurtosis reported as excess (normal = 0).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct SummaryStatistics: IValue<SummaryStatistics>, System.IFormattable, System.ISpanFormattable, System.IParsable<SummaryStatistics>, System.ISpanParsable<SummaryStatistics>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer Count;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Sum;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Mean;
-        [DataMember(Order = 3), JsonInclude] public readonly Number Variance;
-        [DataMember(Order = 4), JsonInclude] public readonly Number StandardDeviation;
-        [DataMember(Order = 5), JsonInclude] public readonly Number Minimum;
-        [DataMember(Order = 6), JsonInclude] public readonly Number Maximum;
-        [DataMember(Order = 7), JsonInclude] public readonly Number Skewness;
-        [DataMember(Order = 8), JsonInclude] public readonly Number Kurtosis;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Count")] public readonly Integer Count;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Sum")] public readonly Number Sum;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Mean")] public readonly Number Mean;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("Variance")] public readonly Number Variance;
+        [DataMember(Order = 4), JsonInclude, JsonPropertyName("StandardDeviation")] public readonly Number StandardDeviation;
+        [DataMember(Order = 5), JsonInclude, JsonPropertyName("Minimum")] public readonly Number Minimum;
+        [DataMember(Order = 6), JsonInclude, JsonPropertyName("Maximum")] public readonly Number Maximum;
+        [DataMember(Order = 7), JsonInclude, JsonPropertyName("Skewness")] public readonly Number Skewness;
+        [DataMember(Order = 8), JsonInclude, JsonPropertyName("Kurtosis")] public readonly Number Kurtosis;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public SummaryStatistics WithCount(Integer count) => new SummaryStatistics(count, Sum, Mean, Variance, StandardDeviation, Minimum, Maximum, Skewness, Kurtosis);

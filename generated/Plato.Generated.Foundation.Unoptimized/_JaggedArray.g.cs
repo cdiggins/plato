@@ -22,13 +22,13 @@ namespace Ara3D.Geometry
     /// (PolygonMesh3D.Faces); only a type whose own storage already names the rows
     /// differently (the adjacency tables) implements IJagged directly instead.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct JaggedArray<T>: IValue<JaggedArray<T>>, IJagged<T>, System.IFormattable, System.ISpanFormattable, System.IParsable<JaggedArray<T>>, System.ISpanParsable<JaggedArray<T>>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Integer> Offsets;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<T> Values;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Offsets")] public readonly IReadOnlyList<Integer> Offsets;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Values")] public readonly IReadOnlyList<T> Values;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public JaggedArray<T> WithOffsets(IReadOnlyList<Integer> offsets) => new JaggedArray<T>(offsets, Values);

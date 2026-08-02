@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// Energy or work, stored in joules (https://en.wikipedia.org/wiki/Energy).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Energy: IQuantity<Energy>, System.IFormattable, System.ISpanFormattable, System.IParsable<Energy>, System.ISpanParsable<Energy>
     {
@@ -25,7 +25,7 @@ namespace Ara3D.Geometry
         /// <summary>
         /// Energy or work, stored in joules (https://en.wikipedia.org/wiki/Energy).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Joules;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Joules")] public readonly Number Joules;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Energy WithJoules(Number joules) => new Energy(joules);

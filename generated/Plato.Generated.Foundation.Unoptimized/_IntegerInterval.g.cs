@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A directed interval of whole numbers: index ranges. Contains Start, excludes End.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct IntegerInterval: IInterval<IntegerInterval, Integer>, System.IFormattable, System.ISpanFormattable, System.IParsable<IntegerInterval>, System.ISpanParsable<IntegerInterval>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer Start;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer End;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Start")] public readonly Integer Start;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("End")] public readonly Integer End;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public IntegerInterval WithStart(Integer start) => new IntegerInterval(start, End);

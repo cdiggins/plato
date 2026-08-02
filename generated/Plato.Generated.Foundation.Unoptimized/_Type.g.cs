@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// A type reified as a value. Carries no members of its own; it exists so a static
     /// member can be reached through a type token (the `_: Type` receiver convention).
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    [StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Type
     {

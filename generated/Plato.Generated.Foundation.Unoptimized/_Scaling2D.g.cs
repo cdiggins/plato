@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// An axis-aligned scaling about the origin in the plane, with an independent
     /// factor per axis (https://en.wikipedia.org/wiki/Scaling_(geometry)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Scaling2D: IValue<Scaling2D>, IAffine2D, System.IFormattable, System.ISpanFormattable, System.IParsable<Scaling2D>, System.ISpanParsable<Scaling2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number2 Amount;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Amount")] public readonly Number2 Amount;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Scaling2D WithAmount(Number2 amount) => new Scaling2D(amount);

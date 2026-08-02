@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// (https://en.wikipedia.org/wiki/Tensor). Extents lists the size of each
     /// dimension; storage is row-major.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Tensor: IValue<Tensor>, System.IFormattable, System.ISpanFormattable, System.IParsable<Tensor>, System.ISpanParsable<Tensor>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Integer> Extents;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Number> Components;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Extents")] public readonly IReadOnlyList<Integer> Extents;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Components")] public readonly IReadOnlyList<Number> Components;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Tensor WithExtents(IReadOnlyList<Integer> extents) => new Tensor(extents, Components);

@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// A 3D position as radius, azimuth (about Z from +X), and inclination from the
     /// +Z pole (https://en.wikipedia.org/wiki/Spherical_coordinate_system).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct SphericalCoordinate: IValue<SphericalCoordinate>, System.IFormattable, System.ISpanFormattable, System.IParsable<SphericalCoordinate>, System.ISpanParsable<SphericalCoordinate>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Radius;
-        [DataMember(Order = 1), JsonInclude] public readonly Angle Azimuth;
-        [DataMember(Order = 2), JsonInclude] public readonly Angle Inclination;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Radius")] public readonly Number Radius;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Azimuth")] public readonly Angle Azimuth;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Inclination")] public readonly Angle Inclination;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public SphericalCoordinate WithRadius(Number radius) => new SphericalCoordinate(radius, Azimuth, Inclination);

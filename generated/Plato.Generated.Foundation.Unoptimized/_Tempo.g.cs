@@ -17,12 +17,12 @@ namespace Ara3D.Geometry
     /// <summary>
     /// Musical tempo, in beats per minute (https://en.wikipedia.org/wiki/Tempo).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Tempo: System.IFormattable, System.ISpanFormattable, System.IParsable<Tempo>, System.ISpanParsable<Tempo>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number BeatsPerMinute;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("BeatsPerMinute")] public readonly Number BeatsPerMinute;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Tempo WithBeatsPerMinute(Number beatsPerMinute) => new Tempo(beatsPerMinute);

@@ -17,12 +17,12 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A probability in [0, 1]. (https://en.wikipedia.org/wiki/Probability)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Probability: INumerical<Probability>, IComparable<Probability>, System.IFormattable, System.ISpanFormattable, System.IParsable<Probability>, System.ISpanParsable<Probability>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Value;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Value")] public readonly Number Value;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Probability WithValue(Number value) => new Probability(value);

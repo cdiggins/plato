@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Mass per area, stored in kilograms per square meter
     /// (https://en.wikipedia.org/wiki/Area_density).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ArealDensity: IQuantity<ArealDensity>, System.IFormattable, System.ISpanFormattable, System.IParsable<ArealDensity>, System.ISpanParsable<ArealDensity>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Mass per area, stored in kilograms per square meter
         /// (https://en.wikipedia.org/wiki/Area_density).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number KilogramsPerSquareMeter;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("KilogramsPerSquareMeter")] public readonly Number KilogramsPerSquareMeter;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ArealDensity WithKilogramsPerSquareMeter(Number kilogramsPerSquareMeter) => new ArealDensity(kilogramsPerSquareMeter);

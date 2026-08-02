@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// Temperature difference, stored in kelvin.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct TemperatureDelta: IQuantity<TemperatureDelta>, System.IFormattable, System.ISpanFormattable, System.IParsable<TemperatureDelta>, System.ISpanParsable<TemperatureDelta>
     {
@@ -25,7 +25,7 @@ namespace Ara3D.Geometry
         /// <summary>
         /// Temperature difference, stored in kelvin.
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Kelvin;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Kelvin")] public readonly Number Kelvin;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public TemperatureDelta WithKelvin(Number kelvin) => new TemperatureDelta(kelvin);

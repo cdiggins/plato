@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// Immutable text. (https://en.wikipedia.org/wiki/String_(computer_science))
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    [StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct String: IValue<String>, IOrderable<String>, ICountable, System.IFormattable, System.ISpanFormattable, System.IParsable<String>, System.ISpanParsable<String>
     {

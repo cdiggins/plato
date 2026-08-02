@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// The algorithm family used to position a graph's vertices for display.
     /// (https://en.wikipedia.org/wiki/Graph_drawing)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct GraphLayout: System.IFormattable, System.ISpanFormattable, System.IParsable<GraphLayout>, System.ISpanParsable<GraphLayout>
     {
         // Discriminant (0-based, declaration order)
-        [DataMember(Order = 0), JsonInclude] public readonly int Kind;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Kind")] public readonly int Kind;
 
         // Case tags
         public const int Kind_ForceDirected = 0;

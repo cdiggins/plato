@@ -19,15 +19,15 @@ namespace Ara3D.Geometry
     /// extreme data values within 1.5 interquartile ranges of the quartiles) and
     /// the data values lying beyond the whiskers.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct BoxPlotStatistics: IValue<BoxPlotStatistics>, System.IFormattable, System.ISpanFormattable, System.IParsable<BoxPlotStatistics>, System.ISpanParsable<BoxPlotStatistics>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly FiveNumberSummary Summary;
-        [DataMember(Order = 1), JsonInclude] public readonly Number LowerWhisker;
-        [DataMember(Order = 2), JsonInclude] public readonly Number UpperWhisker;
-        [DataMember(Order = 3), JsonInclude] public readonly IReadOnlyList<Number> Outliers;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Summary")] public readonly FiveNumberSummary Summary;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("LowerWhisker")] public readonly Number LowerWhisker;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("UpperWhisker")] public readonly Number UpperWhisker;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("Outliers")] public readonly IReadOnlyList<Number> Outliers;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public BoxPlotStatistics WithSummary(FiveNumberSummary summary) => new BoxPlotStatistics(summary, LowerWhisker, UpperWhisker, Outliers);

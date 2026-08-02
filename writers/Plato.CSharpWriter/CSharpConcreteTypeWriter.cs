@@ -98,7 +98,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 for (var i = 0; i < FieldTypes.Count; ++i)
                 {
                     TypeWriter.WriteDoc(ConcreteType.TypeDef.Fields[i].Doc);
-                    TypeWriter.WriteLine($"{DataMemberAttribute(i)} public readonly {FieldTypes[i]} {FieldNames[i]};");
+                    TypeWriter.WriteLine($"{DataMemberAttribute(i, FieldNames[i])} public readonly {FieldTypes[i]} {FieldNames[i]};");
                 }
                 TypeWriter.WriteLine("");
 
@@ -433,7 +433,7 @@ namespace Ara3D.Geometry.CSharpWriter
             WriteTypeHeader(implements);
 
             tw.WriteLine("// Discriminant (0-based, declaration order)");
-            tw.WriteLine("[DataMember(Order = 0), JsonInclude] public readonly int Kind;");
+            tw.WriteLine(DataMemberAttribute(0, "Kind") + " public readonly int Kind;");
             tw.WriteLine();
 
             tw.WriteLine("// Case tags");
@@ -445,7 +445,7 @@ namespace Ara3D.Geometry.CSharpWriter
             {
                 tw.WriteLine("// Flattened per-case fields (Case_Field); inactive cases hold default.");
                 for (var i = 0; i < flat.Count; ++i)
-                    tw.WriteLine($"{DataMemberAttribute(i + 1)} public readonly {FieldTypes[i]} {FieldNames[i]};");
+                    tw.WriteLine($"{DataMemberAttribute(i + 1, FieldNames[i])} public readonly {FieldTypes[i]} {FieldNames[i]};");
                 tw.WriteLine();
             }
 
@@ -558,13 +558,23 @@ namespace Ara3D.Geometry.CSharpWriter
             TypeWriter.WriteStartBlock();
         }
 
-        /// <summary>`[DataMember(Order = n)]` — DataContractSerializer orders members ALPHABETICALLY
-        /// without it, so renaming or reordering a Plato field silently changes the wire format of
-        /// every already-serialized document. `[JsonInclude]` is what makes System.Text.Json see
-        /// the member at all: it ignores fields unless the field opts in or the serializer is
-        /// configured with IncludeFields.</summary>
-        private static string DataMemberAttribute(int order)
-            => $"[DataMember(Order = {order}), JsonInclude]";
+        /// <summary>
+        /// The three attributes that make a field's wire representation a property of the TYPE
+        /// rather than of whoever happens to be serializing it:
+        ///
+        ///   `[DataMember(Order = n)]` — DataContractSerializer orders members ALPHABETICALLY
+        ///     without it, so renaming or reordering a Plato field silently changes the wire format
+        ///     of every already-serialized document.
+        ///   `[JsonInclude]` — what makes System.Text.Json see the member at all: it ignores fields
+        ///     unless the field opts in or the serializer is configured with IncludeFields.
+        ///   `[JsonPropertyName]` — pins the JSON name against the caller's
+        ///     `JsonSerializerOptions.PropertyNamingPolicy`, which otherwise rewrites it. Without
+        ///     it, `JsonSerializer.Serialize(p, camelCase)` wrote `{"x":...}` while the emitted
+        ///     ToJson wrote `{"X":...}` — two spellings of the same value, from the same type, in
+        ///     one process. The attribute wins over the policy, so the two agree again.
+        /// </summary>
+        private static string DataMemberAttribute(int order, string name)
+            => $"[DataMember(Order = {order}), JsonInclude, JsonPropertyName(\"{name}\")]";
 
         /// <summary>`[JsonConstructor]` — readonly fields cannot be assigned by the deserializer, so
         /// System.Text.Json needs the parameterized constructor to build the value; a struct

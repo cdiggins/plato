@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Impulse (force integrated over time), stored in newton-seconds
     /// (https://en.wikipedia.org/wiki/Impulse_(physics)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Impulse: IQuantity<Impulse>, System.IFormattable, System.ISpanFormattable, System.IParsable<Impulse>, System.ISpanParsable<Impulse>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Impulse (force integrated over time), stored in newton-seconds
         /// (https://en.wikipedia.org/wiki/Impulse_(physics)).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number NewtonSeconds;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("NewtonSeconds")] public readonly Number NewtonSeconds;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Impulse WithNewtonSeconds(Number newtonSeconds) => new Impulse(newtonSeconds);

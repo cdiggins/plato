@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A continuous 2D extent: width and height.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Size2D: IValue<Size2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Size2D>, System.ISpanParsable<Size2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Width;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Height;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Width")] public readonly Number Width;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Height")] public readonly Number Height;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Size2D WithWidth(Number width) => new Size2D(width, Height);

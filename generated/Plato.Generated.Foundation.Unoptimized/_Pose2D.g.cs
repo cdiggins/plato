@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A rigid placement in the plane: position plus rotation. Also known as a 2D
     /// rigid transform (https://en.wikipedia.org/wiki/Rigid_transformation).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Pose2D: IValue<Pose2D>, IInterpolatable<Pose2D>, IRigid2D, System.IFormattable, System.ISpanFormattable, System.IParsable<Pose2D>, System.ISpanParsable<Pose2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Point2D Position;
-        [DataMember(Order = 1), JsonInclude] public readonly Rotation2D Rotation;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Position")] public readonly Point2D Position;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Rotation")] public readonly Rotation2D Rotation;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Pose2D WithPosition(Point2D position) => new Pose2D(position, Rotation);

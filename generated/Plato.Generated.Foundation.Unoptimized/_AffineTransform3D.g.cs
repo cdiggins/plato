@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// A general 3D affine map: any composition of linear maps and translations
     /// (https://en.wikipedia.org/wiki/Affine_transformation).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct AffineTransform3D: IValue<AffineTransform3D>, IAffine3D, System.IFormattable, System.ISpanFormattable, System.IParsable<AffineTransform3D>, System.ISpanParsable<AffineTransform3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Matrix4x3 Matrix;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Matrix")] public readonly Matrix4x3 Matrix;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public AffineTransform3D WithMatrix(Matrix4x3 matrix) => new AffineTransform3D(matrix);

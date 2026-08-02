@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A bivariate normal distribution with the given mean point and covariance.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct NormalDistribution2D: IValue<NormalDistribution2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<NormalDistribution2D>, System.ISpanParsable<NormalDistribution2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Vector2D Mean;
-        [DataMember(Order = 1), JsonInclude] public readonly Covariance2D Covariance;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Mean")] public readonly Vector2D Mean;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Covariance")] public readonly Covariance2D Covariance;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public NormalDistribution2D WithMean(Vector2D mean) => new NormalDistribution2D(mean, Covariance);

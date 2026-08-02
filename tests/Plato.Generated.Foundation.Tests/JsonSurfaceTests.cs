@@ -17,6 +17,9 @@ public class JsonSurfaceTests
 {
     private static readonly CultureInfo Comma = new CultureInfo("de-DE");
 
+    private static readonly JsonSerializerOptions Camel =
+        new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
     private static void InCommaCulture(System.Action action)
     {
         var previous = CultureInfo.CurrentCulture;
@@ -88,6 +91,41 @@ public class JsonSurfaceTests
     [Test]
     public void MissingMembersDefault()
         => Assert.That(Point3D.Parse("{\"X\":1}"), Is.EqualTo(new Point3D(1f, 0f, 0f)));
+
+    /// <summary>
+    /// Member matching is case-INSENSITIVE. System.Text.Json matches case-sensitively by default,
+    /// and a document whose members match NOTHING still deserializes — every field just takes its
+    /// default — so a camelCase producer silently handed back the origin instead of the point.
+    /// </summary>
+    [Test]
+    public void ParseAcceptsAnyCasing()
+    {
+        Assert.That(Point3D.Parse("{\"x\":1,\"y\":2,\"z\":3}"), Is.EqualTo(new Point3D(1f, 2f, 3f)));
+        Assert.That(Point3D.Parse("{\"X\":1,\"y\":2,\"Z\":3}"), Is.EqualTo(new Point3D(1f, 2f, 3f)));
+    }
+
+    /// <summary>
+    /// A caller's PropertyNamingPolicy does not move a generated type's member names: the wire
+    /// format belongs to the TYPE, so the emitted ToJson and JsonSerializer agree no matter how the
+    /// serializer is configured. Without the pinning, camelCase options produced `{"x":...}` from
+    /// JsonSerializer and `{"X":...}` from ToJson — and feeding the first back to Parse gave the
+    /// origin. (Whitespace is NOT pinned: WriteIndented is formatting, not contract.)
+    /// </summary>
+    [Test]
+    public void ANamingPolicyDoesNotMoveMemberNames()
+    {
+        var camel = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+        var p = new Point3D(1f, 2f, 3f);
+        Assert.That(JsonSerializer.Serialize(p, camel), Is.EqualTo(p.ToJson()));
+        Assert.That(Point3D.Parse(JsonSerializer.Serialize(p, camel)), Is.EqualTo(p));
+        Assert.That(JsonSerializer.Deserialize<Point3D>(p.ToJson(), camel), Is.EqualTo(p));
+
+        // Nested members and a sum's discriminant are pinned the same way.
+        var pose = new Pose3D(new Point3D(1f, 2f, 3f), Quaternion.Identity());
+        Assert.That(JsonSerializer.Serialize(pose, camel), Is.EqualTo(pose.ToJson()));
+        var kendall = CorrelationStatistic.Kendall();
+        Assert.That(JsonSerializer.Serialize(kendall, camel), Is.EqualTo(kendall.ToJson()));
+    }
 
     [Test]
     public void NonFiniteNumbersRoundTrip()
@@ -230,6 +268,10 @@ public class JsonSurfaceTests
             var serialized = JsonSerializer.Serialize(value, t, PlatoJson.Options);
             if (written != serialized)
                 mismatches.Add($"{t.Name}: writer={written} serializer={serialized}");
+            // ...and under a naming policy, which [JsonPropertyName] pins against.
+            var camelized = JsonSerializer.Serialize(value, t, Camel);
+            if (written != camelized)
+                mismatches.Add($"{t.Name}: writer={written} camelCase serializer={camelized}");
         }
         Assert.That(mismatches, Is.Empty);
     }

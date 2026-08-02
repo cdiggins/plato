@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A planar position as distance from origin and angle from the positive X axis
     /// (https://en.wikipedia.org/wiki/Polar_coordinate_system).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct PolarCoordinate: IValue<PolarCoordinate>, System.IFormattable, System.ISpanFormattable, System.IParsable<PolarCoordinate>, System.ISpanParsable<PolarCoordinate>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Radius;
-        [DataMember(Order = 1), JsonInclude] public readonly Angle Angle;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Radius")] public readonly Number Radius;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Angle")] public readonly Angle Angle;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public PolarCoordinate WithRadius(Number radius) => new PolarCoordinate(radius, Angle);

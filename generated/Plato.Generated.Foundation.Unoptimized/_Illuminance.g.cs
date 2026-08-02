@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// Illuminance, stored in lux (https://en.wikipedia.org/wiki/Illuminance).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Illuminance: IQuantity<Illuminance>, System.IFormattable, System.ISpanFormattable, System.IParsable<Illuminance>, System.ISpanParsable<Illuminance>
     {
@@ -25,7 +25,7 @@ namespace Ara3D.Geometry
         /// <summary>
         /// Illuminance, stored in lux (https://en.wikipedia.org/wiki/Illuminance).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Lux;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Lux")] public readonly Number Lux;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Illuminance WithLux(Number lux) => new Illuminance(lux);

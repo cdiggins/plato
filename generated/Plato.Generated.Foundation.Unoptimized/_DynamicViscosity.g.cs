@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Dynamic viscosity, stored in pascal-seconds
     /// (https://en.wikipedia.org/wiki/Viscosity).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct DynamicViscosity: IQuantity<DynamicViscosity>, System.IFormattable, System.ISpanFormattable, System.IParsable<DynamicViscosity>, System.ISpanParsable<DynamicViscosity>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Dynamic viscosity, stored in pascal-seconds
         /// (https://en.wikipedia.org/wiki/Viscosity).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number PascalSeconds;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("PascalSeconds")] public readonly Number PascalSeconds;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public DynamicViscosity WithPascalSeconds(Number pascalSeconds) => new DynamicViscosity(pascalSeconds);

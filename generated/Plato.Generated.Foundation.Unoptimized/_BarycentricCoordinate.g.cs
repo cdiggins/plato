@@ -32,14 +32,14 @@ namespace Ara3D.Geometry
     /// may place the point anywhere on the plane; the point lies *inside* the
     /// triangle (a *convex* combination) exactly when additionally U, V, W &gt;= 0.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct BarycentricCoordinate: IValue<BarycentricCoordinate>, System.IFormattable, System.ISpanFormattable, System.IParsable<BarycentricCoordinate>, System.ISpanParsable<BarycentricCoordinate>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number U;
-        [DataMember(Order = 1), JsonInclude] public readonly Number V;
-        [DataMember(Order = 2), JsonInclude] public readonly Number W;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("U")] public readonly Number U;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("V")] public readonly Number V;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("W")] public readonly Number W;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public BarycentricCoordinate WithU(Number u) => new BarycentricCoordinate(u, V, W);

@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A displacement or direction in 2D space.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Vector2D: IVector<Vector2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Vector2D>, System.ISpanParsable<Vector2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number X;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Y;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Number X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Number Y;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Vector2D WithX(Number x) => new Vector2D(x, Y);

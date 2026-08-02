@@ -19,12 +19,12 @@ namespace Ara3D.Geometry
     /// (https://en.wikipedia.org/wiki/Beat_(music)); combine with Tempo to reach
     /// seconds.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct BeatTime: IValue<BeatTime>, IComparable<BeatTime>, System.IFormattable, System.ISpanFormattable, System.IParsable<BeatTime>, System.ISpanParsable<BeatTime>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Beats;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Beats")] public readonly Number Beats;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public BeatTime WithBeats(Number beats) => new BeatTime(beats);

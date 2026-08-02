@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Electric current, stored in amperes
     /// (https://en.wikipedia.org/wiki/Electric_current).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ElectricCurrent: IQuantity<ElectricCurrent>, System.IFormattable, System.ISpanFormattable, System.IParsable<ElectricCurrent>, System.ISpanParsable<ElectricCurrent>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Electric current, stored in amperes
         /// (https://en.wikipedia.org/wiki/Electric_current).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Amperes;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Amperes")] public readonly Number Amperes;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ElectricCurrent WithAmperes(Number amperes) => new ElectricCurrent(amperes);

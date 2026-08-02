@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Rate of change of speed, stored in meters per second squared
     /// (https://en.wikipedia.org/wiki/Acceleration).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Acceleration: IQuantity<Acceleration>, System.IFormattable, System.ISpanFormattable, System.IParsable<Acceleration>, System.ISpanParsable<Acceleration>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Rate of change of speed, stored in meters per second squared
         /// (https://en.wikipedia.org/wiki/Acceleration).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number MetersPerSecondSquared;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("MetersPerSecondSquared")] public readonly Number MetersPerSecondSquared;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Acceleration WithMetersPerSecondSquared(Number metersPerSecondSquared) => new Acceleration(metersPerSecondSquared);

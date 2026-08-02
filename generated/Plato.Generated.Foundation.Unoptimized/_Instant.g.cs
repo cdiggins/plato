@@ -19,12 +19,12 @@ namespace Ara3D.Geometry
     /// epoch (https://en.wikipedia.org/wiki/Epoch_(computing)).
     /// Subtracting two instants yields a Duration.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Instant: IValue<Instant>, IComparable<Instant>, IOriginBased<Instant, Duration>, System.IFormattable, System.ISpanFormattable, System.IParsable<Instant>, System.ISpanParsable<Instant>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number SecondsSinceEpoch;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("SecondsSinceEpoch")] public readonly Number SecondsSinceEpoch;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Instant WithSecondsSinceEpoch(Number secondsSinceEpoch) => new Instant(secondsSinceEpoch);

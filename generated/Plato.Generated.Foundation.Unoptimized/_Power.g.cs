@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Rate of energy transfer, stored in watts
     /// (https://en.wikipedia.org/wiki/Power_(physics)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Power: IQuantity<Power>, System.IFormattable, System.ISpanFormattable, System.IParsable<Power>, System.ISpanParsable<Power>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Rate of energy transfer, stored in watts
         /// (https://en.wikipedia.org/wiki/Power_(physics)).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Watts;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Watts")] public readonly Number Watts;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Power WithWatts(Number watts) => new Power(watts);

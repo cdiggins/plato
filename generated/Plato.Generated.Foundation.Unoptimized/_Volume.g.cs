@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A spatial volume, stored in cubic meters (https://en.wikipedia.org/wiki/Volume).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Volume: IQuantity<Volume>, System.IFormattable, System.ISpanFormattable, System.IParsable<Volume>, System.ISpanParsable<Volume>
     {
@@ -25,7 +25,7 @@ namespace Ara3D.Geometry
         /// <summary>
         /// A spatial volume, stored in cubic meters (https://en.wikipedia.org/wiki/Volume).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number CubicMeters;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("CubicMeters")] public readonly Number CubicMeters;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Volume WithCubicMeters(Number cubicMeters) => new Volume(cubicMeters);

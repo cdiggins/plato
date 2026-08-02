@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A directed interval of unitless numbers.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct NumberInterval: IInterval<NumberInterval, Number>, System.IFormattable, System.ISpanFormattable, System.IParsable<NumberInterval>, System.ISpanParsable<NumberInterval>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Start;
-        [DataMember(Order = 1), JsonInclude] public readonly Number End;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Start")] public readonly Number Start;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("End")] public readonly Number End;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public NumberInterval WithStart(Number start) => new NumberInterval(start, End);

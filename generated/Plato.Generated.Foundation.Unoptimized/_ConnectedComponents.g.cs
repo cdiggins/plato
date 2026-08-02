@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// zero-based component of vertex v, in [0, ComponentCount).
     /// (https://en.wikipedia.org/wiki/Component_(graph_theory))
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ConnectedComponents: IValue<ConnectedComponents>, System.IFormattable, System.ISpanFormattable, System.IParsable<ConnectedComponents>, System.ISpanParsable<ConnectedComponents>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Integer> ComponentLabels;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer ComponentCount;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("ComponentLabels")] public readonly IReadOnlyList<Integer> ComponentLabels;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("ComponentCount")] public readonly Integer ComponentCount;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ConnectedComponents WithComponentLabels(IReadOnlyList<Integer> componentLabels) => new ConnectedComponents(componentLabels, ComponentCount);

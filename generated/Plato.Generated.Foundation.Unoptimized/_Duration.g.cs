@@ -17,12 +17,12 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A span of time, stored in seconds. The delta type of Instant.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Duration: IQuantity<Duration>, System.IFormattable, System.ISpanFormattable, System.IParsable<Duration>, System.ISpanParsable<Duration>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Seconds;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Seconds")] public readonly Number Seconds;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Duration WithSeconds(Number seconds) => new Duration(seconds);

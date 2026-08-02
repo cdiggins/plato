@@ -17,19 +17,19 @@ namespace Ara3D.Geometry
     /// <summary>
     /// An octuple of Numbers: the low-level intrinsic 8-tuple (SIMD-width lane math).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Number8: IVector<Number8>, System.IFormattable, System.ISpanFormattable, System.IParsable<Number8>, System.ISpanParsable<Number8>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number X0;
-        [DataMember(Order = 1), JsonInclude] public readonly Number X1;
-        [DataMember(Order = 2), JsonInclude] public readonly Number X2;
-        [DataMember(Order = 3), JsonInclude] public readonly Number X3;
-        [DataMember(Order = 4), JsonInclude] public readonly Number X4;
-        [DataMember(Order = 5), JsonInclude] public readonly Number X5;
-        [DataMember(Order = 6), JsonInclude] public readonly Number X6;
-        [DataMember(Order = 7), JsonInclude] public readonly Number X7;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X0")] public readonly Number X0;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("X1")] public readonly Number X1;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("X2")] public readonly Number X2;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("X3")] public readonly Number X3;
+        [DataMember(Order = 4), JsonInclude, JsonPropertyName("X4")] public readonly Number X4;
+        [DataMember(Order = 5), JsonInclude, JsonPropertyName("X5")] public readonly Number X5;
+        [DataMember(Order = 6), JsonInclude, JsonPropertyName("X6")] public readonly Number X6;
+        [DataMember(Order = 7), JsonInclude, JsonPropertyName("X7")] public readonly Number X7;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Number8 WithX0(Number x0) => new Number8(x0, X1, X2, X3, X4, X5, X6, X7);

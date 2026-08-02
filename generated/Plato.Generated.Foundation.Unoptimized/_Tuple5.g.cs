@@ -14,16 +14,16 @@ using Ara3D.Collections;
 
 namespace Ara3D.Geometry
 {
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Tuple5<T0, T1, T2, T3, T4>: System.IFormattable, System.ISpanFormattable, System.IParsable<Tuple5<T0, T1, T2, T3, T4>>, System.ISpanParsable<Tuple5<T0, T1, T2, T3, T4>>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly T0 X0;
-        [DataMember(Order = 1), JsonInclude] public readonly T1 X1;
-        [DataMember(Order = 2), JsonInclude] public readonly T2 X2;
-        [DataMember(Order = 3), JsonInclude] public readonly T3 X3;
-        [DataMember(Order = 4), JsonInclude] public readonly T4 X4;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X0")] public readonly T0 X0;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("X1")] public readonly T1 X1;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("X2")] public readonly T2 X2;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("X3")] public readonly T3 X3;
+        [DataMember(Order = 4), JsonInclude, JsonPropertyName("X4")] public readonly T4 X4;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Tuple5<T0, T1, T2, T3, T4> WithX0(T0 x0) => new Tuple5<T0, T1, T2, T3, T4>(x0, X1, X2, X3, X4);

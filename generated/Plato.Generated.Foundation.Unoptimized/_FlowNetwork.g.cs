@@ -19,15 +19,15 @@ namespace Ara3D.Geometry
     /// (unit-agnostic), with distinguished source and sink vertices.
     /// (https://en.wikipedia.org/wiki/Flow_network)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct FlowNetwork: IValue<FlowNetwork>, System.IFormattable, System.ISpanFormattable, System.IParsable<FlowNetwork>, System.ISpanParsable<FlowNetwork>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer VertexCount;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<WeightedEdge> Edges;
-        [DataMember(Order = 2), JsonInclude] public readonly GraphVertexIndex SourceIndex;
-        [DataMember(Order = 3), JsonInclude] public readonly GraphVertexIndex SinkIndex;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("VertexCount")] public readonly Integer VertexCount;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Edges")] public readonly IReadOnlyList<WeightedEdge> Edges;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("SourceIndex")] public readonly GraphVertexIndex SourceIndex;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("SinkIndex")] public readonly GraphVertexIndex SinkIndex;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public FlowNetwork WithVertexCount(Integer vertexCount) => new FlowNetwork(vertexCount, Edges, SourceIndex, SinkIndex);

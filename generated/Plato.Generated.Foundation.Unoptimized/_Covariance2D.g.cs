@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// The 2x2 symmetric covariance of a bivariate sample: Xx and Yy are the
     /// variances of x and y; Xy is their covariance.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Covariance2D: IValue<Covariance2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Covariance2D>, System.ISpanParsable<Covariance2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Xx;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Xy;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Yy;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Xx")] public readonly Number Xx;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Xy")] public readonly Number Xy;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Yy")] public readonly Number Yy;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Covariance2D WithXx(Number xx) => new Covariance2D(xx, Xy, Yy);

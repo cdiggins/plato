@@ -14,21 +14,21 @@ using Ara3D.Collections;
 
 namespace Ara3D.Geometry
 {
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Tuple10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>: System.IFormattable, System.ISpanFormattable, System.IParsable<Tuple10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>>, System.ISpanParsable<Tuple10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly T0 X0;
-        [DataMember(Order = 1), JsonInclude] public readonly T1 X1;
-        [DataMember(Order = 2), JsonInclude] public readonly T2 X2;
-        [DataMember(Order = 3), JsonInclude] public readonly T3 X3;
-        [DataMember(Order = 4), JsonInclude] public readonly T4 X4;
-        [DataMember(Order = 5), JsonInclude] public readonly T5 X5;
-        [DataMember(Order = 6), JsonInclude] public readonly T6 X6;
-        [DataMember(Order = 7), JsonInclude] public readonly T7 X7;
-        [DataMember(Order = 8), JsonInclude] public readonly T8 X8;
-        [DataMember(Order = 9), JsonInclude] public readonly T9 X9;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X0")] public readonly T0 X0;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("X1")] public readonly T1 X1;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("X2")] public readonly T2 X2;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("X3")] public readonly T3 X3;
+        [DataMember(Order = 4), JsonInclude, JsonPropertyName("X4")] public readonly T4 X4;
+        [DataMember(Order = 5), JsonInclude, JsonPropertyName("X5")] public readonly T5 X5;
+        [DataMember(Order = 6), JsonInclude, JsonPropertyName("X6")] public readonly T6 X6;
+        [DataMember(Order = 7), JsonInclude, JsonPropertyName("X7")] public readonly T7 X7;
+        [DataMember(Order = 8), JsonInclude, JsonPropertyName("X8")] public readonly T8 X8;
+        [DataMember(Order = 9), JsonInclude, JsonPropertyName("X9")] public readonly T9 X9;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Tuple10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> WithX0(T0 x0) => new Tuple10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(x0, X1, X2, X3, X4, X5, X6, X7, X8, X9);

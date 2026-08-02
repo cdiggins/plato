@@ -21,14 +21,14 @@ namespace Ara3D.Geometry
     /// that arise in finite-element and graph problems.
     /// (https://en.wikipedia.org/wiki/Sparse_matrix)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct SparseMatrix: IValue<SparseMatrix>, System.IFormattable, System.ISpanFormattable, System.IParsable<SparseMatrix>, System.ISpanParsable<SparseMatrix>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer NumRows;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer NumColumns;
-        [DataMember(Order = 2), JsonInclude] public readonly IReadOnlyList<SparseMatrixEntry> Entries;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("NumRows")] public readonly Integer NumRows;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("NumColumns")] public readonly Integer NumColumns;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Entries")] public readonly IReadOnlyList<SparseMatrixEntry> Entries;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public SparseMatrix WithNumRows(Integer numRows) => new SparseMatrix(numRows, NumColumns, Entries);

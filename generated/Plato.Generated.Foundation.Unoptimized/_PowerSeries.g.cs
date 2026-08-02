@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A truncated power series about Center: the sum of Coefficients[k] times
     /// (x - Center)^k (https://en.wikipedia.org/wiki/Power_series).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct PowerSeries: IValue<PowerSeries>, System.IFormattable, System.ISpanFormattable, System.IParsable<PowerSeries>, System.ISpanParsable<PowerSeries>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Center;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Number> Coefficients;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Center")] public readonly Number Center;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Coefficients")] public readonly IReadOnlyList<Number> Coefficients;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public PowerSeries WithCenter(Number center) => new PowerSeries(center, Coefficients);

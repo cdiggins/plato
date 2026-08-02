@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Rate of change of position, stored in meters per second
     /// (https://en.wikipedia.org/wiki/Speed).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Speed: IQuantity<Speed>, System.IFormattable, System.ISpanFormattable, System.IParsable<Speed>, System.ISpanParsable<Speed>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Rate of change of position, stored in meters per second
         /// (https://en.wikipedia.org/wiki/Speed).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number MetersPerSecond;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("MetersPerSecond")] public readonly Number MetersPerSecond;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Speed WithMetersPerSecond(Number metersPerSecond) => new Speed(metersPerSecond);

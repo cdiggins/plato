@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// A uniform scaling about the origin in space: the same factor on every axis, so
     /// angles are preserved (https://en.wikipedia.org/wiki/Homothety).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct UniformScaling3D: IValue<UniformScaling3D>, IAffine3D, System.IFormattable, System.ISpanFormattable, System.IParsable<UniformScaling3D>, System.ISpanParsable<UniformScaling3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Amount;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Amount")] public readonly Number Amount;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public UniformScaling3D WithAmount(Number amount) => new UniformScaling3D(amount);

@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Electric charge, stored in coulombs
     /// (https://en.wikipedia.org/wiki/Electric_charge).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ElectricCharge: IQuantity<ElectricCharge>, System.IFormattable, System.ISpanFormattable, System.IParsable<ElectricCharge>, System.ISpanParsable<ElectricCharge>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Electric charge, stored in coulombs
         /// (https://en.wikipedia.org/wiki/Electric_charge).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Coulombs;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Coulombs")] public readonly Number Coulombs;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ElectricCharge WithCoulombs(Number coulombs) => new ElectricCharge(coulombs);

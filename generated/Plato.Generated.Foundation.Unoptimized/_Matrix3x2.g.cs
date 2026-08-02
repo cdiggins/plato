@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// A 3-row, 2-column matrix: a 2D affine map (2x2 linear part plus a translation
     /// row).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Matrix3x2: IMatrix<Matrix3x2>, System.IFormattable, System.ISpanFormattable, System.IParsable<Matrix3x2>, System.ISpanParsable<Matrix3x2>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number2 Row1;
-        [DataMember(Order = 1), JsonInclude] public readonly Number2 Row2;
-        [DataMember(Order = 2), JsonInclude] public readonly Number2 Row3;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Row1")] public readonly Number2 Row1;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Row2")] public readonly Number2 Row2;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Row3")] public readonly Number2 Row3;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Matrix3x2 WithRow1(Number2 row1) => new Matrix3x2(row1, Row2, Row3);

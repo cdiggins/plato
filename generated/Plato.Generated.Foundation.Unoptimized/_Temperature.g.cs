@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Absolute temperature, stored in kelvin
     /// (https://en.wikipedia.org/wiki/Thermodynamic_temperature).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Temperature: IQuantity<Temperature>, System.IFormattable, System.ISpanFormattable, System.IParsable<Temperature>, System.ISpanParsable<Temperature>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Absolute temperature, stored in kelvin
         /// (https://en.wikipedia.org/wiki/Thermodynamic_temperature).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Kelvin;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Kelvin")] public readonly Number Kelvin;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Temperature WithKelvin(Number kelvin) => new Temperature(kelvin);

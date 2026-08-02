@@ -130,12 +130,24 @@ namespace Ara3D.Geometry
         /// The options the generated <c>Parse</c>/<c>TryParse</c> read with. Pass them to
         /// <c>JsonSerializer</c> to get the same tolerance on any hand-written call site.
         ///
-        /// The only departure from the defaults is the named floating-point literals: JSON has no
-        /// non-finite number, and <see cref="WriteValue{T}"/> writes those as the quoted names, so
-        /// the reader has to accept them back.
+        /// Two departures from the defaults:
+        ///   * Case-INSENSITIVE member matching. System.Text.Json matches case-sensitively by
+        ///     default, and an object whose members match NOTHING still deserializes — every field
+        ///     simply takes its default. So `{"x":1,"y":2,"z":3}` read as a Point3D silently
+        ///     produced the origin rather than failing. Casing is the one difference a producer
+        ///     realistically introduces (a camelCase naming policy at the far end), so accepting it
+        ///     turns the most likely silent-wrong-answer back into a correct read.
+        ///   * Named floating-point literals. JSON has no non-finite number, and
+        ///     <see cref="WriteValue{T}"/> writes those as the quoted names, so the reader has to
+        ///     accept them back.
+        ///
+        /// Unmapped members are still IGNORED, deliberately: tolerating a member you do not know
+        /// is what lets a document written by a newer version of a type be read by an older one.
+        /// `UnmappedMemberHandling.Disallow` here would trade that away for strictness.
         /// </summary>
         public static readonly JsonSerializerOptions Options = new JsonSerializerOptions
         {
+            PropertyNameCaseInsensitive = true,
             NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
         };
 

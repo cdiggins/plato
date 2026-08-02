@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// origin; Center is the one fixed point
     /// (https://en.wikipedia.org/wiki/Scaling_(geometry)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ScalingAbout2D: IValue<ScalingAbout2D>, IAffine2D, System.IFormattable, System.ISpanFormattable, System.IParsable<ScalingAbout2D>, System.ISpanParsable<ScalingAbout2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number2 Amount;
-        [DataMember(Order = 1), JsonInclude] public readonly Point2D Center;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Amount")] public readonly Number2 Amount;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Center")] public readonly Point2D Center;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ScalingAbout2D WithAmount(Number2 amount) => new ScalingAbout2D(amount, Center);

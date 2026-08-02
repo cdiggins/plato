@@ -20,13 +20,13 @@ namespace Ara3D.Geometry
     /// more than Pieces; piece i applies on the half-open span from Breakpoints[i]
     /// to Breakpoints[i+1] and is evaluated in the local variable x - Breakpoints[i].
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct PiecewisePolynomial: IValue<PiecewisePolynomial>, System.IFormattable, System.ISpanFormattable, System.IParsable<PiecewisePolynomial>, System.ISpanParsable<PiecewisePolynomial>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Number> Breakpoints;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Polynomial> Pieces;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Breakpoints")] public readonly IReadOnlyList<Number> Breakpoints;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Pieces")] public readonly IReadOnlyList<Polynomial> Pieces;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public PiecewisePolynomial WithBreakpoints(IReadOnlyList<Number> breakpoints) => new PiecewisePolynomial(breakpoints, Pieces);

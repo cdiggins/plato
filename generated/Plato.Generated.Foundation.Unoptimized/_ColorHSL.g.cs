@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// A color in hue-saturation-lightness form; Hue is an angle around the color wheel.
     /// Same model family as HSV: https://en.wikipedia.org/wiki/HSL_and_HSV
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ColorHSL: IValue<ColorHSL>, System.IFormattable, System.ISpanFormattable, System.IParsable<ColorHSL>, System.ISpanParsable<ColorHSL>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Angle Hue;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Saturation;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Lightness;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Hue")] public readonly Angle Hue;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Saturation")] public readonly Number Saturation;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Lightness")] public readonly Number Lightness;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ColorHSL WithHue(Angle hue) => new ColorHSL(hue, Saturation, Lightness);

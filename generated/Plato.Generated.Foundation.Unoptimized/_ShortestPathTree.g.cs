@@ -21,14 +21,14 @@ namespace Ara3D.Geometry
     /// the source (meaningful only when v is the source or has a parent).
     /// (https://en.wikipedia.org/wiki/Shortest-path_tree)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ShortestPathTree: IValue<ShortestPathTree>, System.IFormattable, System.ISpanFormattable, System.IParsable<ShortestPathTree>, System.ISpanParsable<ShortestPathTree>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly GraphVertexIndex SourceIndex;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<GraphVertexIndex> ParentIndices;
-        [DataMember(Order = 2), JsonInclude] public readonly IReadOnlyList<Number> Distances;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("SourceIndex")] public readonly GraphVertexIndex SourceIndex;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("ParentIndices")] public readonly IReadOnlyList<GraphVertexIndex> ParentIndices;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Distances")] public readonly IReadOnlyList<Number> Distances;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ShortestPathTree WithSourceIndex(GraphVertexIndex sourceIndex) => new ShortestPathTree(sourceIndex, ParentIndices, Distances);

@@ -17,16 +17,16 @@ namespace Ara3D.Geometry
     /// <summary>
     /// The quartic A*x^4 + B*x^3 + C*x^2 + D*x + E (descending school form).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct QuarticPolynomial: IValue<QuarticPolynomial>, System.IFormattable, System.ISpanFormattable, System.IParsable<QuarticPolynomial>, System.ISpanParsable<QuarticPolynomial>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number A;
-        [DataMember(Order = 1), JsonInclude] public readonly Number B;
-        [DataMember(Order = 2), JsonInclude] public readonly Number C;
-        [DataMember(Order = 3), JsonInclude] public readonly Number D;
-        [DataMember(Order = 4), JsonInclude] public readonly Number E;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("A")] public readonly Number A;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("B")] public readonly Number B;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("C")] public readonly Number C;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("D")] public readonly Number D;
+        [DataMember(Order = 4), JsonInclude, JsonPropertyName("E")] public readonly Number E;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public QuarticPolynomial WithA(Number a) => new QuarticPolynomial(a, B, C, D, E);

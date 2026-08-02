@@ -17,14 +17,14 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A displacement or direction in 3D space.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Vector3D: IVector<Vector3D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Vector3D>, System.ISpanParsable<Vector3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number X;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Y;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Z;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Number X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Number Y;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Z")] public readonly Number Z;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Vector3D WithX(Number x) => new Vector3D(x, Y, Z);

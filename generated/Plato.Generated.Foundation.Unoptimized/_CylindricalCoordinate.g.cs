@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// A 3D position as planar polar coordinates plus height along Z
     /// (https://en.wikipedia.org/wiki/Cylindrical_coordinate_system).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct CylindricalCoordinate: IValue<CylindricalCoordinate>, System.IFormattable, System.ISpanFormattable, System.IParsable<CylindricalCoordinate>, System.ISpanParsable<CylindricalCoordinate>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Radius;
-        [DataMember(Order = 1), JsonInclude] public readonly Angle Azimuth;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Height;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Radius")] public readonly Number Radius;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Azimuth")] public readonly Angle Azimuth;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Height")] public readonly Number Height;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public CylindricalCoordinate WithRadius(Number radius) => new CylindricalCoordinate(radius, Azimuth, Height);

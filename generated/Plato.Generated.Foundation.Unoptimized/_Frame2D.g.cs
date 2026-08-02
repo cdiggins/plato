@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// An orthonormal coordinate frame in the plane: an origin and two perpendicular
     /// unit axes.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Frame2D: IValue<Frame2D>, IRigid2D, System.IFormattable, System.ISpanFormattable, System.IParsable<Frame2D>, System.ISpanParsable<Frame2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Point2D Origin;
-        [DataMember(Order = 1), JsonInclude] public readonly Direction2D XAxis;
-        [DataMember(Order = 2), JsonInclude] public readonly Direction2D YAxis;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Origin")] public readonly Point2D Origin;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("XAxis")] public readonly Direction2D XAxis;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("YAxis")] public readonly Direction2D YAxis;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Frame2D WithOrigin(Point2D origin) => new Frame2D(origin, XAxis, YAxis);

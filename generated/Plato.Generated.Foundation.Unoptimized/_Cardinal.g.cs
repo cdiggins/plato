@@ -17,12 +17,12 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A count of items; never negative. (https://en.wikipedia.org/wiki/Cardinal_number)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Cardinal: IValue<Cardinal>, IComparable<Cardinal>, System.IFormattable, System.ISpanFormattable, System.IParsable<Cardinal>, System.ISpanParsable<Cardinal>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer Value;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Value")] public readonly Integer Value;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Cardinal WithValue(Integer value) => new Cardinal(value);

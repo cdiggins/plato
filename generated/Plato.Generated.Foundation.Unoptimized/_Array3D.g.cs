@@ -17,15 +17,15 @@ namespace Ara3D.Geometry
     /// <summary>
     /// An immutable collection addressed by column, row, and layer.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Array3D<T>: IIndexable3D<T>, System.IFormattable, System.ISpanFormattable, System.IParsable<Array3D<T>>, System.ISpanParsable<Array3D<T>>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<T> Elements;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer ColumnCount;
-        [DataMember(Order = 2), JsonInclude] public readonly Integer RowCount;
-        [DataMember(Order = 3), JsonInclude] public readonly Integer LayerCount;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Elements")] public readonly IReadOnlyList<T> Elements;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("ColumnCount")] public readonly Integer ColumnCount;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("RowCount")] public readonly Integer RowCount;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("LayerCount")] public readonly Integer LayerCount;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Array3D<T> WithElements(IReadOnlyList<T> elements) => new Array3D<T>(elements, ColumnCount, RowCount, LayerCount);

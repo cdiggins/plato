@@ -21,13 +21,13 @@ namespace Ara3D.Geometry
     /// Derivative 0 (`c.DualConstant`); the derivative of the whole expression falls
     /// out of the arithmetic. (https://en.wikipedia.org/wiki/Dual_number)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct DualNumber: INumerical<DualNumber>, System.IFormattable, System.ISpanFormattable, System.IParsable<DualNumber>, System.ISpanParsable<DualNumber>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Value;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Derivative;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Value")] public readonly Number Value;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Derivative")] public readonly Number Derivative;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public DualNumber WithValue(Number value) => new DualNumber(value, Derivative);

@@ -17,14 +17,14 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A triple of whole-number components: voxel offsets, 3D grid steps.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct IntegerVector3: IValue<IntegerVector3>, IHashable<IntegerVector3>, System.IFormattable, System.ISpanFormattable, System.IParsable<IntegerVector3>, System.ISpanParsable<IntegerVector3>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer X;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer Y;
-        [DataMember(Order = 2), JsonInclude] public readonly Integer Z;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Integer X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Integer Y;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Z")] public readonly Integer Z;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public IntegerVector3 WithX(Integer x) => new IntegerVector3(x, Y, Z);

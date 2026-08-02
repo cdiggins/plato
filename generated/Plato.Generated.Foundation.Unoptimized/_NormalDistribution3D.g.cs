@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A trivariate normal distribution with the given mean point and covariance.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct NormalDistribution3D: IValue<NormalDistribution3D>, System.IFormattable, System.ISpanFormattable, System.IParsable<NormalDistribution3D>, System.ISpanParsable<NormalDistribution3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Vector3D Mean;
-        [DataMember(Order = 1), JsonInclude] public readonly Covariance3D Covariance;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Mean")] public readonly Vector3D Mean;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Covariance")] public readonly Covariance3D Covariance;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public NormalDistribution3D WithMean(Vector3D mean) => new NormalDistribution3D(mean, Covariance);

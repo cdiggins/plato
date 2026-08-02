@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A mirror across a plane in space, given as a point on the plane and its unit
     /// normal (https://en.wikipedia.org/wiki/Reflection_(mathematics)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Reflection3D: IValue<Reflection3D>, IAffine3D, System.IFormattable, System.ISpanFormattable, System.IParsable<Reflection3D>, System.ISpanParsable<Reflection3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Point3D Origin;
-        [DataMember(Order = 1), JsonInclude] public readonly Direction3D Normal;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Origin")] public readonly Point3D Origin;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Normal")] public readonly Direction3D Normal;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Reflection3D WithOrigin(Point3D origin) => new Reflection3D(origin, Normal);

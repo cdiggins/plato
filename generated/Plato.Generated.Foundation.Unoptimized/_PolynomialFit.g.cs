@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A least-squares polynomial fit. Coefficients[k] multiplies x^k (ascending
     /// powers). RSquared is the coefficient of determination in [0, 1].
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct PolynomialFit: IValue<PolynomialFit>, System.IFormattable, System.ISpanFormattable, System.IParsable<PolynomialFit>, System.ISpanParsable<PolynomialFit>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Number> Coefficients;
-        [DataMember(Order = 1), JsonInclude] public readonly Number RSquared;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Coefficients")] public readonly IReadOnlyList<Number> Coefficients;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("RSquared")] public readonly Number RSquared;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public PolynomialFit WithCoefficients(IReadOnlyList<Number> coefficients) => new PolynomialFit(coefficients, RSquared);

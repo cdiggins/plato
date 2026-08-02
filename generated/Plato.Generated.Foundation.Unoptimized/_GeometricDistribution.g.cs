@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// The number of failures before the first success in repeated Bernoulli
     /// trials.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct GeometricDistribution: IProbabilityDistribution<GeometricDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<GeometricDistribution>, System.ISpanParsable<GeometricDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Probability SuccessProbability;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("SuccessProbability")] public readonly Probability SuccessProbability;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public GeometricDistribution WithSuccessProbability(Probability successProbability) => new GeometricDistribution(successProbability);

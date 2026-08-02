@@ -19,17 +19,17 @@ namespace Ara3D.Geometry
     /// (https://en.wikipedia.org/wiki/Symmetric_matrix): inertia tensors,
     /// covariance, stress and strain states.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct SymmetricMatrix3x3: IValue<SymmetricMatrix3x3>, System.IFormattable, System.ISpanFormattable, System.IParsable<SymmetricMatrix3x3>, System.ISpanParsable<SymmetricMatrix3x3>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number M11;
-        [DataMember(Order = 1), JsonInclude] public readonly Number M12;
-        [DataMember(Order = 2), JsonInclude] public readonly Number M13;
-        [DataMember(Order = 3), JsonInclude] public readonly Number M22;
-        [DataMember(Order = 4), JsonInclude] public readonly Number M23;
-        [DataMember(Order = 5), JsonInclude] public readonly Number M33;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("M11")] public readonly Number M11;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("M12")] public readonly Number M12;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("M13")] public readonly Number M13;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("M22")] public readonly Number M22;
+        [DataMember(Order = 4), JsonInclude, JsonPropertyName("M23")] public readonly Number M23;
+        [DataMember(Order = 5), JsonInclude, JsonPropertyName("M33")] public readonly Number M33;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public SymmetricMatrix3x3 WithM11(Number m11) => new SymmetricMatrix3x3(m11, M12, M13, M22, M23, M33);

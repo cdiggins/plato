@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// Uniform density on [Min, Max].
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct UniformDistribution: IProbabilityDistribution<UniformDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<UniformDistribution>, System.ISpanParsable<UniformDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Min;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Max;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Min")] public readonly Number Min;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Max")] public readonly Number Max;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public UniformDistribution WithMin(Number min) => new UniformDistribution(min, Max);

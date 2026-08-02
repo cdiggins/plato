@@ -22,13 +22,13 @@ namespace Ara3D.Geometry
     /// yields the same next value, so generation is pure: each draw returns a new
     /// RandomState.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct RandomState: IValue<RandomState>, IHashable<RandomState>, System.IFormattable, System.ISpanFormattable, System.IParsable<RandomState>, System.ISpanParsable<RandomState>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer State;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer Stream;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("State")] public readonly Integer State;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Stream")] public readonly Integer Stream;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public RandomState WithState(Integer state) => new RandomState(state, Stream);

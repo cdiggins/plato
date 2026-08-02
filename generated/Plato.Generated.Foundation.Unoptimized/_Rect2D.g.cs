@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A rectangle given by its center and size; axis-aligned.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Rect2D: IValue<Rect2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Rect2D>, System.ISpanParsable<Rect2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Point2D Center;
-        [DataMember(Order = 1), JsonInclude] public readonly Size2D Size;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Center")] public readonly Point2D Center;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Size")] public readonly Size2D Size;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Rect2D WithCenter(Point2D center) => new Rect2D(center, Size);

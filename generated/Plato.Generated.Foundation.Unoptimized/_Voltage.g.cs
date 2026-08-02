@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// Electric potential, stored in volts (https://en.wikipedia.org/wiki/Voltage).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Voltage: IQuantity<Voltage>, System.IFormattable, System.ISpanFormattable, System.IParsable<Voltage>, System.ISpanParsable<Voltage>
     {
@@ -25,7 +25,7 @@ namespace Ara3D.Geometry
         /// <summary>
         /// Electric potential, stored in volts (https://en.wikipedia.org/wiki/Voltage).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Volts;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Volts")] public readonly Number Volts;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Voltage WithVolts(Number volts) => new Voltage(volts);

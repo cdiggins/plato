@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A whole-number 2D bounding region: pixel rectangles. Contains Min, excludes Max.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct IntegerBounds2D: IValue<IntegerBounds2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<IntegerBounds2D>, System.ISpanParsable<IntegerBounds2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IntegerVector2 Min;
-        [DataMember(Order = 1), JsonInclude] public readonly IntegerVector2 Max;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Min")] public readonly IntegerVector2 Min;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Max")] public readonly IntegerVector2 Max;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public IntegerBounds2D WithMin(IntegerVector2 min) => new IntegerBounds2D(min, Max);

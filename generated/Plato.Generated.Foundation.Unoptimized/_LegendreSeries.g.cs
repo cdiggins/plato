@@ -19,12 +19,12 @@ namespace Ara3D.Geometry
     /// (https://en.wikipedia.org/wiki/Legendre_polynomials): Coefficients[k]
     /// weights P_k.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct LegendreSeries: IValue<LegendreSeries>, System.IFormattable, System.ISpanFormattable, System.IParsable<LegendreSeries>, System.ISpanParsable<LegendreSeries>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Number> Coefficients;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Coefficients")] public readonly IReadOnlyList<Number> Coefficients;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public LegendreSeries WithCoefficients(IReadOnlyList<Number> coefficients) => new LegendreSeries(coefficients);

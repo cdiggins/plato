@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A complex number with real and imaginary parts
     /// (https://en.wikipedia.org/wiki/Complex_number).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Complex: INumerical<Complex>, System.IFormattable, System.ISpanFormattable, System.IParsable<Complex>, System.ISpanParsable<Complex>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Real;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Imaginary;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Real")] public readonly Number Real;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Imaginary")] public readonly Number Imaginary;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Complex WithReal(Number real) => new Complex(real, Imaginary);

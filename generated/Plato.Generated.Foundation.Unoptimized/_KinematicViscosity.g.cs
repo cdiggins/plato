@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// Kinematic viscosity, stored in square meters per second.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct KinematicViscosity: IQuantity<KinematicViscosity>, System.IFormattable, System.ISpanFormattable, System.IParsable<KinematicViscosity>, System.ISpanParsable<KinematicViscosity>
     {
@@ -25,7 +25,7 @@ namespace Ara3D.Geometry
         /// <summary>
         /// Kinematic viscosity, stored in square meters per second.
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number SquareMetersPerSecond;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("SquareMetersPerSecond")] public readonly Number SquareMetersPerSecond;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public KinematicViscosity WithSquareMetersPerSecond(Number squareMetersPerSecond) => new KinematicViscosity(squareMetersPerSecond);

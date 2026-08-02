@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A spatial distance, stored in meters (https://en.wikipedia.org/wiki/Length).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Length: IQuantity<Length>, System.IFormattable, System.ISpanFormattable, System.IParsable<Length>, System.ISpanParsable<Length>
     {
@@ -25,7 +25,7 @@ namespace Ara3D.Geometry
         /// <summary>
         /// A spatial distance, stored in meters (https://en.wikipedia.org/wiki/Length).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Meters;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Meters")] public readonly Number Meters;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Length WithMeters(Number meters) => new Length(meters);

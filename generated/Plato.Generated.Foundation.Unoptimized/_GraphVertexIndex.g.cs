@@ -20,12 +20,12 @@ namespace Ara3D.Geometry
     /// parent, an unmatched pairing).
     /// (https://en.wikipedia.org/wiki/Vertex_(graph_theory))
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct GraphVertexIndex: IValue<GraphVertexIndex>, IHashable<GraphVertexIndex>, IComparable<GraphVertexIndex>, IIndex, System.IFormattable, System.ISpanFormattable, System.IParsable<GraphVertexIndex>, System.ISpanParsable<GraphVertexIndex>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer Value;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Value")] public readonly Integer Value;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public GraphVertexIndex WithValue(Integer value) => new GraphVertexIndex(value);

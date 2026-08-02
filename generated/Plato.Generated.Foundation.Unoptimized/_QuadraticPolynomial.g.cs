@@ -17,14 +17,14 @@ namespace Ara3D.Geometry
     /// <summary>
     /// The quadratic A*x^2 + B*x + C (descending school form).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct QuadraticPolynomial: IValue<QuadraticPolynomial>, System.IFormattable, System.ISpanFormattable, System.IParsable<QuadraticPolynomial>, System.ISpanParsable<QuadraticPolynomial>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number A;
-        [DataMember(Order = 1), JsonInclude] public readonly Number B;
-        [DataMember(Order = 2), JsonInclude] public readonly Number C;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("A")] public readonly Number A;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("B")] public readonly Number B;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("C")] public readonly Number C;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public QuadraticPolynomial WithA(Number a) => new QuadraticPolynomial(a, B, C);

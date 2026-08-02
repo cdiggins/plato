@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Force per area, stored in pascals. Also used for stress
     /// (https://en.wikipedia.org/wiki/Pressure).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Pressure: IQuantity<Pressure>, System.IFormattable, System.ISpanFormattable, System.IParsable<Pressure>, System.ISpanParsable<Pressure>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Force per area, stored in pascals. Also used for stress
         /// (https://en.wikipedia.org/wiki/Pressure).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Pascals;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Pascals")] public readonly Number Pascals;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Pressure WithPascals(Number pascals) => new Pressure(pascals);

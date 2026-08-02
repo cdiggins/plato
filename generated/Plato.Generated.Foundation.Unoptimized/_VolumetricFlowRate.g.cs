@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Volume flow, stored in cubic meters per second
     /// (https://en.wikipedia.org/wiki/Volumetric_flow_rate).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct VolumetricFlowRate: IQuantity<VolumetricFlowRate>, System.IFormattable, System.ISpanFormattable, System.IParsable<VolumetricFlowRate>, System.ISpanParsable<VolumetricFlowRate>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Volume flow, stored in cubic meters per second
         /// (https://en.wikipedia.org/wiki/Volumetric_flow_rate).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number CubicMetersPerSecond;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("CubicMetersPerSecond")] public readonly Number CubicMetersPerSecond;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public VolumetricFlowRate WithCubicMetersPerSecond(Number cubicMetersPerSecond) => new VolumetricFlowRate(cubicMetersPerSecond);

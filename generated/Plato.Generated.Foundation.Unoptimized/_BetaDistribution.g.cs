@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A distribution on [0, 1] with shape parameters Alpha and Beta; the conjugate
     /// prior of a Bernoulli success probability.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct BetaDistribution: IProbabilityDistribution<BetaDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<BetaDistribution>, System.ISpanParsable<BetaDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Alpha;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Beta;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Alpha")] public readonly Number Alpha;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Beta")] public readonly Number Beta;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public BetaDistribution WithAlpha(Number alpha) => new BetaDistribution(alpha, Beta);

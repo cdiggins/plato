@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Elastic stiffness of a spring, stored in newtons per meter
     /// (https://en.wikipedia.org/wiki/Stiffness).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Stiffness: IQuantity<Stiffness>, System.IFormattable, System.ISpanFormattable, System.IParsable<Stiffness>, System.ISpanParsable<Stiffness>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Elastic stiffness of a spring, stored in newtons per meter
         /// (https://en.wikipedia.org/wiki/Stiffness).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number NewtonsPerMeter;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("NewtonsPerMeter")] public readonly Number NewtonsPerMeter;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Stiffness WithNewtonsPerMeter(Number newtonsPerMeter) => new Stiffness(newtonsPerMeter);

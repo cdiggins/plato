@@ -18,16 +18,16 @@ namespace Ara3D.Geometry
     /// An SMPTE-style timecode under a given frame rate
     /// (https://en.wikipedia.org/wiki/SMPTE_timecode).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Timecode: System.IFormattable, System.ISpanFormattable, System.IParsable<Timecode>, System.ISpanParsable<Timecode>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer Hours;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer Minutes;
-        [DataMember(Order = 2), JsonInclude] public readonly Integer Seconds;
-        [DataMember(Order = 3), JsonInclude] public readonly Integer Frames;
-        [DataMember(Order = 4), JsonInclude] public readonly FrameRate Rate;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Hours")] public readonly Integer Hours;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Minutes")] public readonly Integer Minutes;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Seconds")] public readonly Integer Seconds;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("Frames")] public readonly Integer Frames;
+        [DataMember(Order = 4), JsonInclude, JsonPropertyName("Rate")] public readonly FrameRate Rate;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Timecode WithHours(Integer hours) => new Timecode(hours, Minutes, Seconds, Frames, Rate);

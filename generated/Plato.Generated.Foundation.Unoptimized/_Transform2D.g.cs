@@ -19,12 +19,12 @@ namespace Ara3D.Geometry
     /// the widest transform of the plane, and the one `ITransformable2D` carries
     /// (https://en.wikipedia.org/wiki/Homography).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Transform2D: IValue<Transform2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Transform2D>, System.ISpanParsable<Transform2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Matrix3x3 Matrix;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Matrix")] public readonly Matrix3x3 Matrix;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Transform2D WithMatrix(Matrix3x3 matrix) => new Transform2D(matrix);

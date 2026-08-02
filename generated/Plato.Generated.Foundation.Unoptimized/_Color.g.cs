@@ -21,15 +21,15 @@ namespace Ara3D.Geometry
     /// Convention: see CONVENTIONS.md - Color (linear-light, straight alpha; A is
     /// straight; do not lerp/construct from sRGB bytes without decoding).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Color: INumerical<Color>, System.IFormattable, System.ISpanFormattable, System.IParsable<Color>, System.ISpanParsable<Color>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number R;
-        [DataMember(Order = 1), JsonInclude] public readonly Number G;
-        [DataMember(Order = 2), JsonInclude] public readonly Number B;
-        [DataMember(Order = 3), JsonInclude] public readonly Number A;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("R")] public readonly Number R;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("G")] public readonly Number G;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("B")] public readonly Number B;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("A")] public readonly Number A;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Color WithR(Number r) => new Color(r, G, B, A);

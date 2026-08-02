@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// Force, stored in newtons (https://en.wikipedia.org/wiki/Force).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Force: IQuantity<Force>, System.IFormattable, System.ISpanFormattable, System.IParsable<Force>, System.ISpanParsable<Force>
     {
@@ -25,7 +25,7 @@ namespace Ara3D.Geometry
         /// <summary>
         /// Force, stored in newtons (https://en.wikipedia.org/wiki/Force).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Newtons;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Newtons")] public readonly Number Newtons;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Force WithNewtons(Number newtons) => new Force(newtons);

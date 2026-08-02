@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// order with multiplicity; ComplexRoots lists the strictly complex roots,
     /// one representative per conjugate pair (positive imaginary part).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct PolynomialRoots: IValue<PolynomialRoots>, System.IFormattable, System.ISpanFormattable, System.IParsable<PolynomialRoots>, System.ISpanParsable<PolynomialRoots>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Number> RealRoots;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Complex> ComplexRoots;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("RealRoots")] public readonly IReadOnlyList<Number> RealRoots;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("ComplexRoots")] public readonly IReadOnlyList<Complex> ComplexRoots;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public PolynomialRoots WithRealRoots(IReadOnlyList<Number> realRoots) => new PolynomialRoots(realRoots, ComplexRoots);

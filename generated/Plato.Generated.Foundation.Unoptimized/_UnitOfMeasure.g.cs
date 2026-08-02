@@ -18,16 +18,16 @@ namespace Ara3D.Geometry
     /// A named unit of measure with a conversion to SI: si = value * ScaleToSI + OffsetToSI
     /// (https://en.wikipedia.org/wiki/Unit_of_measurement).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct UnitOfMeasure: System.IFormattable, System.ISpanFormattable, System.IParsable<UnitOfMeasure>, System.ISpanParsable<UnitOfMeasure>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly String Name;
-        [DataMember(Order = 1), JsonInclude] public readonly String Symbol;
-        [DataMember(Order = 2), JsonInclude] public readonly Dimension Dimension;
-        [DataMember(Order = 3), JsonInclude] public readonly Number ScaleToSI;
-        [DataMember(Order = 4), JsonInclude] public readonly Number OffsetToSI;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Name")] public readonly String Name;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Symbol")] public readonly String Symbol;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Dimension")] public readonly Dimension Dimension;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("ScaleToSI")] public readonly Number ScaleToSI;
+        [DataMember(Order = 4), JsonInclude, JsonPropertyName("OffsetToSI")] public readonly Number OffsetToSI;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public UnitOfMeasure WithName(String name) => new UnitOfMeasure(name, Symbol, Dimension, ScaleToSI, OffsetToSI);

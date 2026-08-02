@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// A 64-bit floating-point approximation of a real number.
     /// (https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    [StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Number: IReal<Number>, System.IFormattable, System.ISpanFormattable, System.IParsable<Number>, System.ISpanParsable<Number>
     {

@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A single term: Coefficient times x raised to a non-negative Power
     /// (https://en.wikipedia.org/wiki/Monomial).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Monomial: IValue<Monomial>, System.IFormattable, System.ISpanFormattable, System.IParsable<Monomial>, System.ISpanParsable<Monomial>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Coefficient;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer Power;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Coefficient")] public readonly Number Coefficient;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Power")] public readonly Integer Power;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Monomial WithCoefficient(Number coefficient) => new Monomial(coefficient, Power);

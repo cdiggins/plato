@@ -21,13 +21,13 @@ namespace Ara3D.Geometry
     /// quaternion. Unit dual quaternions are isomorphic to the motors of 3D PGA.
     /// https://en.wikipedia.org/wiki/Dual_quaternion
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Motor3D: IValue<Motor3D>, IMultiplicative<Motor3D>, IRigid3D, System.IFormattable, System.ISpanFormattable, System.IParsable<Motor3D>, System.ISpanParsable<Motor3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Quaternion Real;
-        [DataMember(Order = 1), JsonInclude] public readonly Quaternion Dual;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Real")] public readonly Quaternion Real;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Dual")] public readonly Quaternion Dual;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Motor3D WithReal(Quaternion real) => new Motor3D(real, Dual);

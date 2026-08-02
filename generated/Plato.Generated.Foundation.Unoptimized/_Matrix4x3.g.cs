@@ -18,15 +18,15 @@ namespace Ara3D.Geometry
     /// A 4-row, 3-column matrix: a 3D affine map (3x3 linear part plus a translation
     /// row).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Matrix4x3: IMatrix<Matrix4x3>, System.IFormattable, System.ISpanFormattable, System.IParsable<Matrix4x3>, System.ISpanParsable<Matrix4x3>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number3 Row1;
-        [DataMember(Order = 1), JsonInclude] public readonly Number3 Row2;
-        [DataMember(Order = 2), JsonInclude] public readonly Number3 Row3;
-        [DataMember(Order = 3), JsonInclude] public readonly Number3 Row4;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Row1")] public readonly Number3 Row1;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Row2")] public readonly Number3 Row2;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Row3")] public readonly Number3 Row3;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("Row4")] public readonly Number3 Row4;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Matrix4x3 WithRow1(Number3 row1) => new Matrix4x3(row1, Row2, Row3, Row4);

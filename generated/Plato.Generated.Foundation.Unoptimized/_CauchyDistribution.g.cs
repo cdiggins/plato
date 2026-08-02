@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A heavy-tailed distribution with undefined moments: Mean and Variance
     /// conventionally report Location and positive infinity.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct CauchyDistribution: IProbabilityDistribution<CauchyDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<CauchyDistribution>, System.ISpanParsable<CauchyDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Location;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Scale;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Location")] public readonly Number Location;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Scale")] public readonly Number Scale;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public CauchyDistribution WithLocation(Number location) => new CauchyDistribution(location, Scale);

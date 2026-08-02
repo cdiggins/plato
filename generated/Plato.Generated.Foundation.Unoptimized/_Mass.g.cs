@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// Mass, stored in kilograms (https://en.wikipedia.org/wiki/Mass).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Mass: IQuantity<Mass>, System.IFormattable, System.ISpanFormattable, System.IParsable<Mass>, System.ISpanParsable<Mass>
     {
@@ -25,7 +25,7 @@ namespace Ara3D.Geometry
         /// <summary>
         /// Mass, stored in kilograms (https://en.wikipedia.org/wiki/Mass).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Kilograms;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Kilograms")] public readonly Number Kilograms;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Mass WithKilograms(Number kilograms) => new Mass(kilograms);

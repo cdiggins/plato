@@ -17,14 +17,14 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A triple of Numbers: the low-level intrinsic 3-tuple.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Number3: IVector<Number3>, System.IFormattable, System.ISpanFormattable, System.IParsable<Number3>, System.ISpanParsable<Number3>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number X;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Y;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Z;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Number X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Number Y;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Z")] public readonly Number Z;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Number3 WithX(Number x) => new Number3(x, Y, Z);

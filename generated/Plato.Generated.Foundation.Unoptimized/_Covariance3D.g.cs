@@ -17,12 +17,12 @@ namespace Ara3D.Geometry
     /// <summary>
     /// The 3x3 symmetric covariance of a trivariate sample.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Covariance3D: IValue<Covariance3D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Covariance3D>, System.ISpanParsable<Covariance3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly SymmetricMatrix3x3 Matrix;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Matrix")] public readonly SymmetricMatrix3x3 Matrix;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Covariance3D WithMatrix(SymmetricMatrix3x3 matrix) => new Covariance3D(matrix);

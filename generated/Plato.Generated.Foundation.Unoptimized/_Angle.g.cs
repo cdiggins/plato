@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A planar angle, stored in radians (https://en.wikipedia.org/wiki/Angle).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Angle: IQuantity<Angle>, System.IFormattable, System.ISpanFormattable, System.IParsable<Angle>, System.ISpanParsable<Angle>
     {
@@ -25,7 +25,7 @@ namespace Ara3D.Geometry
         /// <summary>
         /// A planar angle, stored in radians (https://en.wikipedia.org/wiki/Angle).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Radians;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Radians")] public readonly Number Radians;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Angle WithRadians(Number radians) => new Angle(radians);

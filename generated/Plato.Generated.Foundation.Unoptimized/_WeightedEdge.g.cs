@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// An edge carrying a numeric weight: distance, cost, capacity, or similarity,
     /// as the application defines (unit-agnostic).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct WeightedEdge: IValue<WeightedEdge>, System.IFormattable, System.ISpanFormattable, System.IParsable<WeightedEdge>, System.ISpanParsable<WeightedEdge>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly GraphVertexIndex Source;
-        [DataMember(Order = 1), JsonInclude] public readonly GraphVertexIndex Target;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Weight;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Source")] public readonly GraphVertexIndex Source;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Target")] public readonly GraphVertexIndex Target;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Weight")] public readonly Number Weight;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public WeightedEdge WithSource(GraphVertexIndex source) => new WeightedEdge(source, Target, Weight);

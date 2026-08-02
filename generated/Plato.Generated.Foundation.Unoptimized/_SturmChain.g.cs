@@ -20,12 +20,12 @@ namespace Ara3D.Geometry
     /// original polynomial, Polynomials[1] its derivative, and each later entry is
     /// the negated remainder of the two before it.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct SturmChain: IValue<SturmChain>, System.IFormattable, System.ISpanFormattable, System.IParsable<SturmChain>, System.ISpanParsable<SturmChain>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Polynomial> Polynomials;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Polynomials")] public readonly IReadOnlyList<Polynomial> Polynomials;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public SturmChain WithPolynomials(IReadOnlyList<Polynomial> polynomials) => new SturmChain(polynomials);

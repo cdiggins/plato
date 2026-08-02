@@ -18,15 +18,15 @@ namespace Ara3D.Geometry
     /// A 4x4 matrix: 3D homogeneous transforms and projections
     /// (https://en.wikipedia.org/wiki/Transformation_matrix).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Matrix4x4: IMatrix<Matrix4x4>, IMultiplicative<Matrix4x4>, System.IFormattable, System.ISpanFormattable, System.IParsable<Matrix4x4>, System.ISpanParsable<Matrix4x4>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number4 Row1;
-        [DataMember(Order = 1), JsonInclude] public readonly Number4 Row2;
-        [DataMember(Order = 2), JsonInclude] public readonly Number4 Row3;
-        [DataMember(Order = 3), JsonInclude] public readonly Number4 Row4;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Row1")] public readonly Number4 Row1;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Row2")] public readonly Number4 Row2;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Row3")] public readonly Number4 Row3;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("Row4")] public readonly Number4 Row4;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Matrix4x4 WithRow1(Number4 row1) => new Matrix4x4(row1, Row2, Row3, Row4);

@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// contains a cycle, in which case OrderedVertexIndices is partial or empty.
     /// (https://en.wikipedia.org/wiki/Topological_sorting)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct TopologicalOrder: IValue<TopologicalOrder>, System.IFormattable, System.ISpanFormattable, System.IParsable<TopologicalOrder>, System.ISpanParsable<TopologicalOrder>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<GraphVertexIndex> OrderedVertexIndices;
-        [DataMember(Order = 1), JsonInclude] public readonly Boolean IsValid;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("OrderedVertexIndices")] public readonly IReadOnlyList<GraphVertexIndex> OrderedVertexIndices;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("IsValid")] public readonly Boolean IsValid;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public TopologicalOrder WithOrderedVertexIndices(IReadOnlyList<GraphVertexIndex> orderedVertexIndices) => new TopologicalOrder(orderedVertexIndices, IsValid);

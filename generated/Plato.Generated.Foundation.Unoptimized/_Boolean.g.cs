@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A truth value: true or false. (https://en.wikipedia.org/wiki/Boolean_data_type)
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    [StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Boolean: IValue<Boolean>, IOrderable<Boolean>, ILogical<Boolean>, System.IFormattable, System.ISpanFormattable, System.IParsable<Boolean>, System.ISpanParsable<Boolean>
     {

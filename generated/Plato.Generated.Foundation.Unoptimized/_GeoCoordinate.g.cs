@@ -19,14 +19,14 @@ namespace Ara3D.Geometry
     /// above the reference ellipsoid
     /// (https://en.wikipedia.org/wiki/Geographic_coordinate_system).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct GeoCoordinate: IValue<GeoCoordinate>, System.IFormattable, System.ISpanFormattable, System.IParsable<GeoCoordinate>, System.ISpanParsable<GeoCoordinate>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Angle Latitude;
-        [DataMember(Order = 1), JsonInclude] public readonly Angle Longitude;
-        [DataMember(Order = 2), JsonInclude] public readonly Length Altitude;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Latitude")] public readonly Angle Latitude;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Longitude")] public readonly Angle Longitude;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Altitude")] public readonly Length Altitude;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public GeoCoordinate WithLatitude(Angle latitude) => new GeoCoordinate(latitude, Longitude, Altitude);

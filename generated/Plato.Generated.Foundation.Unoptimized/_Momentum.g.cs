@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Linear momentum, stored in kilogram-meters per second
     /// (https://en.wikipedia.org/wiki/Momentum).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Momentum: IQuantity<Momentum>, System.IFormattable, System.ISpanFormattable, System.IParsable<Momentum>, System.ISpanParsable<Momentum>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Linear momentum, stored in kilogram-meters per second
         /// (https://en.wikipedia.org/wiki/Momentum).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number KilogramMetersPerSecond;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("KilogramMetersPerSecond")] public readonly Number KilogramMetersPerSecond;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Momentum WithKilogramMetersPerSecond(Number kilogramMetersPerSecond) => new Momentum(kilogramMetersPerSecond);

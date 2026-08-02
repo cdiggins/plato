@@ -20,14 +20,14 @@ namespace Ara3D.Geometry
     /// the Fundamental frequency; CosineCoefficients[0] is the constant (DC) term and
     /// SineCoefficients[0] is ignored. The two arrays have equal length.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct FourierSeries: IValue<FourierSeries>, System.IFormattable, System.ISpanFormattable, System.IParsable<FourierSeries>, System.ISpanParsable<FourierSeries>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Frequency Fundamental;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Number> CosineCoefficients;
-        [DataMember(Order = 2), JsonInclude] public readonly IReadOnlyList<Number> SineCoefficients;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Fundamental")] public readonly Frequency Fundamental;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("CosineCoefficients")] public readonly IReadOnlyList<Number> CosineCoefficients;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("SineCoefficients")] public readonly IReadOnlyList<Number> SineCoefficients;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public FourierSeries WithFundamental(Frequency fundamental) => new FourierSeries(fundamental, CosineCoefficients, SineCoefficients);

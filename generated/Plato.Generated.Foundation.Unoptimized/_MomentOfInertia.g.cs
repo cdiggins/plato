@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Rotational inertia about an axis, stored in kilogram-square-meters
     /// (https://en.wikipedia.org/wiki/Moment_of_inertia).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct MomentOfInertia: IQuantity<MomentOfInertia>, System.IFormattable, System.ISpanFormattable, System.IParsable<MomentOfInertia>, System.ISpanParsable<MomentOfInertia>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Rotational inertia about an axis, stored in kilogram-square-meters
         /// (https://en.wikipedia.org/wiki/Moment_of_inertia).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number KilogramSquareMeters;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("KilogramSquareMeters")] public readonly Number KilogramSquareMeters;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public MomentOfInertia WithKilogramSquareMeters(Number kilogramSquareMeters) => new MomentOfInertia(kilogramSquareMeters);

@@ -24,16 +24,16 @@ namespace Ara3D.Geometry
     /// diagonal matrix, one and one is tridiagonal.
     /// (https://en.wikipedia.org/wiki/Band_matrix)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct BandedMatrix: IValue<BandedMatrix>, System.IFormattable, System.ISpanFormattable, System.IParsable<BandedMatrix>, System.ISpanParsable<BandedMatrix>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer NumRows;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer NumColumns;
-        [DataMember(Order = 2), JsonInclude] public readonly Integer LowerBandwidth;
-        [DataMember(Order = 3), JsonInclude] public readonly Integer UpperBandwidth;
-        [DataMember(Order = 4), JsonInclude] public readonly IReadOnlyList<Number> Values;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("NumRows")] public readonly Integer NumRows;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("NumColumns")] public readonly Integer NumColumns;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("LowerBandwidth")] public readonly Integer LowerBandwidth;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("UpperBandwidth")] public readonly Integer UpperBandwidth;
+        [DataMember(Order = 4), JsonInclude, JsonPropertyName("Values")] public readonly IReadOnlyList<Number> Values;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public BandedMatrix WithNumRows(Integer numRows) => new BandedMatrix(numRows, NumColumns, LowerBandwidth, UpperBandwidth, Values);

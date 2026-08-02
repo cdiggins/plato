@@ -14,13 +14,13 @@ using Ara3D.Collections;
 
 namespace Ara3D.Geometry
 {
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Tuple2<T0, T1>: System.IFormattable, System.ISpanFormattable, System.IParsable<Tuple2<T0, T1>>, System.ISpanParsable<Tuple2<T0, T1>>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly T0 X0;
-        [DataMember(Order = 1), JsonInclude] public readonly T1 X1;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X0")] public readonly T0 X0;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("X1")] public readonly T1 X1;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Tuple2<T0, T1> WithX0(T0 x0) => new Tuple2<T0, T1>(x0, X1);

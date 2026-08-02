@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// quaternion, expressed in plane-based components
     /// (https://en.wikipedia.org/wiki/Geometric_algebra).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Rotor3D: IValue<Rotor3D>, IMultiplicative<Rotor3D>, IRotational3D, System.IFormattable, System.ISpanFormattable, System.IParsable<Rotor3D>, System.ISpanParsable<Rotor3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Scalar;
-        [DataMember(Order = 1), JsonInclude] public readonly Bivector3D Bivector;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Scalar")] public readonly Number Scalar;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Bivector")] public readonly Bivector3D Bivector;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Rotor3D WithScalar(Number scalar) => new Rotor3D(scalar, Bivector);

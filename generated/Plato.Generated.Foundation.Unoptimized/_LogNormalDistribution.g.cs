@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A positive variable whose logarithm is normally distributed; LogMean and
     /// LogStandardDeviation parameterize that underlying normal.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct LogNormalDistribution: IProbabilityDistribution<LogNormalDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<LogNormalDistribution>, System.ISpanParsable<LogNormalDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number LogMean;
-        [DataMember(Order = 1), JsonInclude] public readonly Number LogStandardDeviation;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("LogMean")] public readonly Number LogMean;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("LogStandardDeviation")] public readonly Number LogStandardDeviation;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public LogNormalDistribution WithLogMean(Number logMean) => new LogNormalDistribution(logMean, LogStandardDeviation);

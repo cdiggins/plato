@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// The Gaussian distribution with the given mean and standard deviation.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct NormalDistribution: IProbabilityDistribution<NormalDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<NormalDistribution>, System.ISpanParsable<NormalDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Mean;
-        [DataMember(Order = 1), JsonInclude] public readonly Number StandardDeviation;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Mean")] public readonly Number Mean;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("StandardDeviation")] public readonly Number StandardDeviation;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public NormalDistribution WithMean(Number mean) => new NormalDistribution(mean, StandardDeviation);

@@ -19,14 +19,14 @@ namespace Ara3D.Geometry
     /// the generator of 3D rotations in geometric algebra
     /// (https://en.wikipedia.org/wiki/Geometric_algebra).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Bivector3D: IValue<Bivector3D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Bivector3D>, System.ISpanParsable<Bivector3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number YZ;
-        [DataMember(Order = 1), JsonInclude] public readonly Number ZX;
-        [DataMember(Order = 2), JsonInclude] public readonly Number XY;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("YZ")] public readonly Number YZ;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("ZX")] public readonly Number ZX;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("XY")] public readonly Number XY;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Bivector3D WithYZ(Number yZ) => new Bivector3D(yZ, ZX, XY);

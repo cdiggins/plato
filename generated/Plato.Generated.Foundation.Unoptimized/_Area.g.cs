@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A surface measure, stored in square meters (https://en.wikipedia.org/wiki/Area).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Area: IQuantity<Area>, System.IFormattable, System.ISpanFormattable, System.IParsable<Area>, System.ISpanParsable<Area>
     {
@@ -25,7 +25,7 @@ namespace Ara3D.Geometry
         /// <summary>
         /// A surface measure, stored in square meters (https://en.wikipedia.org/wiki/Area).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number SquareMeters;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("SquareMeters")] public readonly Number SquareMeters;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Area WithSquareMeters(Number squareMeters) => new Area(squareMeters);

@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A rotation of Angle about a unit Axis, following the right-hand rule
     /// (https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct AxisAngle: IValue<AxisAngle>, IRotational3D, System.IFormattable, System.ISpanFormattable, System.IParsable<AxisAngle>, System.ISpanParsable<AxisAngle>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Direction3D Axis;
-        [DataMember(Order = 1), JsonInclude] public readonly Angle Angle;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Axis")] public readonly Direction3D Axis;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Angle")] public readonly Angle Angle;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public AxisAngle WithAxis(Direction3D axis) => new AxisAngle(axis, Angle);

@@ -21,14 +21,14 @@ namespace Ara3D.Geometry
     /// correct sum.
     /// (https://en.wikipedia.org/wiki/Sparse_matrix#Coordinate_list_(COO))
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct SparseMatrixEntry: IValue<SparseMatrixEntry>, System.IFormattable, System.ISpanFormattable, System.IParsable<SparseMatrixEntry>, System.ISpanParsable<SparseMatrixEntry>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer Row;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer Column;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Value;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Row")] public readonly Integer Row;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Column")] public readonly Integer Column;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Value")] public readonly Number Value;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public SparseMatrixEntry WithRow(Integer row) => new SparseMatrixEntry(row, Column, Value);

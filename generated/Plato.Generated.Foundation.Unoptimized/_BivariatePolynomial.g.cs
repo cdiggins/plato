@@ -19,12 +19,12 @@ namespace Ara3D.Geometry
     /// the power of x and the row index is the power of y, so the entry at
     /// (i, j) multiplies x^i * y^j.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct BivariatePolynomial: IValue<BivariatePolynomial>, System.IFormattable, System.ISpanFormattable, System.IParsable<BivariatePolynomial>, System.ISpanParsable<BivariatePolynomial>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Array2D<Number> Coefficients;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Coefficients")] public readonly Array2D<Number> Coefficients;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public BivariatePolynomial WithCoefficients(Array2D<Number> coefficients) => new BivariatePolynomial(coefficients);

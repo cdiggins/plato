@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Curvature, stored as reciprocal meters (1/radius)
     /// (https://en.wikipedia.org/wiki/Curvature).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Curvature: IQuantity<Curvature>, System.IFormattable, System.ISpanFormattable, System.IParsable<Curvature>, System.ISpanParsable<Curvature>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Curvature, stored as reciprocal meters (1/radius)
         /// (https://en.wikipedia.org/wiki/Curvature).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number PerMeter;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("PerMeter")] public readonly Number PerMeter;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Curvature WithPerMeter(Number perMeter) => new Curvature(perMeter);

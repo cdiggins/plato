@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// An axis-aligned scaling about the origin in space, with an independent factor
     /// per axis (https://en.wikipedia.org/wiki/Scaling_(geometry)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Scaling3D: IValue<Scaling3D>, IAffine3D, System.IFormattable, System.ISpanFormattable, System.IParsable<Scaling3D>, System.ISpanParsable<Scaling3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number3 Amount;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Amount")] public readonly Number3 Amount;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Scaling3D WithAmount(Number3 amount) => new Scaling3D(amount);

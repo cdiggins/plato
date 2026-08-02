@@ -19,12 +19,12 @@ namespace Ara3D.Geometry
     /// (https://en.wikipedia.org/wiki/Color_gradient). Stops are ordered by
     /// ascending Position.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ColorGradient: IValue<ColorGradient>, System.IFormattable, System.ISpanFormattable, System.IParsable<ColorGradient>, System.ISpanParsable<ColorGradient>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<ColorStop> Stops;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Stops")] public readonly IReadOnlyList<ColorStop> Stops;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ColorGradient WithStops(IReadOnlyList<ColorStop> stops) => new ColorGradient(stops);

@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A connection between two vertices, by zero-based index. In an undirected
     /// graph the Source/Target order carries no meaning.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct GraphEdge: IValue<GraphEdge>, IHashable<GraphEdge>, System.IFormattable, System.ISpanFormattable, System.IParsable<GraphEdge>, System.ISpanParsable<GraphEdge>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly GraphVertexIndex Source;
-        [DataMember(Order = 1), JsonInclude] public readonly GraphVertexIndex Target;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Source")] public readonly GraphVertexIndex Source;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Target")] public readonly GraphVertexIndex Target;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public GraphEdge WithSource(GraphVertexIndex source) => new GraphEdge(source, Target);

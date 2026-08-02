@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// rotation axis passes through Center
     /// (https://en.wikipedia.org/wiki/Rotation_(mathematics)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct RotationAbout3D: IValue<RotationAbout3D>, IRigid3D, System.IFormattable, System.ISpanFormattable, System.IParsable<RotationAbout3D>, System.ISpanParsable<RotationAbout3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Quaternion Rotation;
-        [DataMember(Order = 1), JsonInclude] public readonly Point3D Center;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Rotation")] public readonly Quaternion Rotation;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Center")] public readonly Point3D Center;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public RotationAbout3D WithRotation(Quaternion rotation) => new RotationAbout3D(rotation, Center);

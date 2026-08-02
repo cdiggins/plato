@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A pair of Numbers: the low-level intrinsic 2-tuple.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Number2: IVector<Number2>, System.IFormattable, System.ISpanFormattable, System.IParsable<Number2>, System.ISpanParsable<Number2>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number X;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Y;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Number X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Number Y;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Number2 WithX(Number x) => new Number2(x, Y);

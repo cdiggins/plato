@@ -21,13 +21,13 @@ namespace Ara3D.Geometry
     /// it contains no point and is the identity for Union, so accumulation can start
     /// from Empty(). Convention: see CONVENTIONS.md - Bounds.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Bounds3D: IBounds<Bounds3D, Point3D, Vector3D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Bounds3D>, System.ISpanParsable<Bounds3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Point3D Min;
-        [DataMember(Order = 1), JsonInclude] public readonly Point3D Max;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Min")] public readonly Point3D Min;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Max")] public readonly Point3D Max;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Bounds3D WithMin(Point3D min) => new Bounds3D(min, Max);

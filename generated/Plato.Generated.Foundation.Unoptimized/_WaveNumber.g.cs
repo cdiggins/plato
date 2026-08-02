@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Spatial frequency (cycles per meter); the reciprocal of wavelength
     /// (https://en.wikipedia.org/wiki/Wavenumber).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct WaveNumber: IQuantity<WaveNumber>, System.IFormattable, System.ISpanFormattable, System.IParsable<WaveNumber>, System.ISpanParsable<WaveNumber>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Spatial frequency (cycles per meter); the reciprocal of wavelength
         /// (https://en.wikipedia.org/wiki/Wavenumber).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number CyclesPerMeter;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("CyclesPerMeter")] public readonly Number CyclesPerMeter;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public WaveNumber WithCyclesPerMeter(Number cyclesPerMeter) => new WaveNumber(cyclesPerMeter);

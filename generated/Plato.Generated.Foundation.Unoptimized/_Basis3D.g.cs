@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// Three basis vectors in 3D; not necessarily orthonormal
     /// (https://en.wikipedia.org/wiki/Basis_(linear_algebra)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Basis3D: IValue<Basis3D>, IAffine3D, System.IFormattable, System.ISpanFormattable, System.IParsable<Basis3D>, System.ISpanParsable<Basis3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Vector3D X;
-        [DataMember(Order = 1), JsonInclude] public readonly Vector3D Y;
-        [DataMember(Order = 2), JsonInclude] public readonly Vector3D Z;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Vector3D X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Vector3D Y;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Z")] public readonly Vector3D Z;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Basis3D WithX(Vector3D x) => new Basis3D(x, Y, Z);

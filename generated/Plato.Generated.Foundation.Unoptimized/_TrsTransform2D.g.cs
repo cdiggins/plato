@@ -18,14 +18,14 @@ namespace Ara3D.Geometry
     /// A translate-rotate-scale transform in 2D, applied scale first, then rotation,
     /// then translation.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct TrsTransform2D: IValue<TrsTransform2D>, IAffine2D, System.IFormattable, System.ISpanFormattable, System.IParsable<TrsTransform2D>, System.ISpanParsable<TrsTransform2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Vector2D Translation;
-        [DataMember(Order = 1), JsonInclude] public readonly Rotation2D Rotation;
-        [DataMember(Order = 2), JsonInclude] public readonly Number2 Scale;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Translation")] public readonly Vector2D Translation;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Rotation")] public readonly Rotation2D Rotation;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Scale")] public readonly Number2 Scale;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public TrsTransform2D WithTranslation(Vector2D translation) => new TrsTransform2D(translation, Rotation, Scale);

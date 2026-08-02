@@ -20,14 +20,14 @@ namespace Ara3D.Geometry
     /// matched to left vertex l, or -1 when unmatched.
     /// (https://en.wikipedia.org/wiki/Matching_(graph_theory))
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct BipartiteMatching: IValue<BipartiteMatching>, System.IFormattable, System.ISpanFormattable, System.IParsable<BipartiteMatching>, System.ISpanParsable<BipartiteMatching>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer LeftVertexCount;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer RightVertexCount;
-        [DataMember(Order = 2), JsonInclude] public readonly IReadOnlyList<GraphVertexIndex> MatchedRightIndices;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("LeftVertexCount")] public readonly Integer LeftVertexCount;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("RightVertexCount")] public readonly Integer RightVertexCount;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("MatchedRightIndices")] public readonly IReadOnlyList<GraphVertexIndex> MatchedRightIndices;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public BipartiteMatching WithLeftVertexCount(Integer leftVertexCount) => new BipartiteMatching(leftVertexCount, RightVertexCount, MatchedRightIndices);

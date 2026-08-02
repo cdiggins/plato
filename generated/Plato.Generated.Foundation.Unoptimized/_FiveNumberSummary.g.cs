@@ -17,16 +17,16 @@ namespace Ara3D.Geometry
     /// <summary>
     /// The classic five-number summary: extremes, quartiles, and median.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct FiveNumberSummary: IValue<FiveNumberSummary>, System.IFormattable, System.ISpanFormattable, System.IParsable<FiveNumberSummary>, System.ISpanParsable<FiveNumberSummary>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Minimum;
-        [DataMember(Order = 1), JsonInclude] public readonly Number LowerQuartile;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Median;
-        [DataMember(Order = 3), JsonInclude] public readonly Number UpperQuartile;
-        [DataMember(Order = 4), JsonInclude] public readonly Number Maximum;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Minimum")] public readonly Number Minimum;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("LowerQuartile")] public readonly Number LowerQuartile;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Median")] public readonly Number Median;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("UpperQuartile")] public readonly Number UpperQuartile;
+        [DataMember(Order = 4), JsonInclude, JsonPropertyName("Maximum")] public readonly Number Maximum;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public FiveNumberSummary WithMinimum(Number minimum) => new FiveNumberSummary(minimum, LowerQuartile, Median, UpperQuartile, Maximum);

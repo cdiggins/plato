@@ -19,15 +19,15 @@ namespace Ara3D.Geometry
     /// homogeneous coordinates (https://en.wikipedia.org/wiki/Homogeneous_coordinates)
     /// and RGBA math.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Number4: IVector<Number4>, System.IFormattable, System.ISpanFormattable, System.IParsable<Number4>, System.ISpanParsable<Number4>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number X;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Y;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Z;
-        [DataMember(Order = 3), JsonInclude] public readonly Number W;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Number X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Number Y;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Z")] public readonly Number Z;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("W")] public readonly Number W;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Number4 WithX(Number x) => new Number4(x, Y, Z, W);

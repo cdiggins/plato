@@ -17,14 +17,14 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A triangular density rising from Min to a peak at Mode and falling to Max.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct TriangularDistribution: IProbabilityDistribution<TriangularDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<TriangularDistribution>, System.ISpanParsable<TriangularDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Min;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Mode;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Max;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Min")] public readonly Number Min;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Mode")] public readonly Number Mode;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Max")] public readonly Number Max;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public TriangularDistribution WithMin(Number min) => new TriangularDistribution(min, Mode, Max);

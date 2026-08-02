@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// A proportion expressed per hundred: 45.0 means 45%.
     /// (https://en.wikipedia.org/wiki/Percentage)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Percent: INumerical<Percent>, IComparable<Percent>, System.IFormattable, System.ISpanFormattable, System.IParsable<Percent>, System.ISpanParsable<Percent>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Value;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Value")] public readonly Number Value;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Percent WithValue(Number value) => new Percent(value);

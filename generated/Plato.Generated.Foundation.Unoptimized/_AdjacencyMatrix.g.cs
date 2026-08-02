@@ -21,13 +21,13 @@ namespace Ara3D.Geometry
     /// for unweighted graphs).
     /// (https://en.wikipedia.org/wiki/Adjacency_matrix)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct AdjacencyMatrix: IValue<AdjacencyMatrix>, System.IFormattable, System.ISpanFormattable, System.IParsable<AdjacencyMatrix>, System.ISpanParsable<AdjacencyMatrix>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer VertexCount;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Number> Weights;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("VertexCount")] public readonly Integer VertexCount;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Weights")] public readonly IReadOnlyList<Number> Weights;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public AdjacencyMatrix WithVertexCount(Integer vertexCount) => new AdjacencyMatrix(vertexCount, Weights);

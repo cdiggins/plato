@@ -18,15 +18,15 @@ namespace Ara3D.Geometry
     /// An orthonormal coordinate frame in space: an origin and three mutually
     /// perpendicular unit axes.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Frame3D: IValue<Frame3D>, IRigid3D, System.IFormattable, System.ISpanFormattable, System.IParsable<Frame3D>, System.ISpanParsable<Frame3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Point3D Origin;
-        [DataMember(Order = 1), JsonInclude] public readonly Direction3D XAxis;
-        [DataMember(Order = 2), JsonInclude] public readonly Direction3D YAxis;
-        [DataMember(Order = 3), JsonInclude] public readonly Direction3D ZAxis;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Origin")] public readonly Point3D Origin;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("XAxis")] public readonly Direction3D XAxis;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("YAxis")] public readonly Direction3D YAxis;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("ZAxis")] public readonly Direction3D ZAxis;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Frame3D WithOrigin(Point3D origin) => new Frame3D(origin, XAxis, YAxis, ZAxis);

@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A graph paired with 2D positions for its vertices (unit-agnostic canvas
     /// coordinates). Positions is parallel to the implicit vertex range.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct LayoutedGraph: System.IFormattable, System.ISpanFormattable, System.IParsable<LayoutedGraph>, System.ISpanParsable<LayoutedGraph>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Graph Graph;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Point2D> Positions;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Graph")] public readonly Graph Graph;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Positions")] public readonly IReadOnlyList<Point2D> Positions;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public LayoutedGraph WithGraph(Graph graph) => new LayoutedGraph(graph, Positions);

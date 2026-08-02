@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Luminous intensity, stored in candelas
     /// (https://en.wikipedia.org/wiki/Luminous_intensity).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct LuminousIntensity: IQuantity<LuminousIntensity>, System.IFormattable, System.ISpanFormattable, System.IParsable<LuminousIntensity>, System.ISpanParsable<LuminousIntensity>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Luminous intensity, stored in candelas
         /// (https://en.wikipedia.org/wiki/Luminous_intensity).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Candelas;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Candelas")] public readonly Number Candelas;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public LuminousIntensity WithCandelas(Number candelas) => new LuminousIntensity(candelas);

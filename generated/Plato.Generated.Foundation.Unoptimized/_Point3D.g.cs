@@ -17,14 +17,14 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A position in 3D Cartesian space.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Point3D: ICoordinate<Point3D>, IOriginBased<Point3D, Vector3D>, IHashable<Point3D>, IMetricSpace<Point3D>, ITransformable3D<Point3D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Point3D>, System.ISpanParsable<Point3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number X;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Y;
-        [DataMember(Order = 2), JsonInclude] public readonly Number Z;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Number X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Number Y;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Z")] public readonly Number Z;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Point3D WithX(Number x) => new Point3D(x, Y, Z);

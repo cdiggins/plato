@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Radiant flux per area, stored in watts per square meter
     /// (https://en.wikipedia.org/wiki/Irradiance).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Irradiance: IQuantity<Irradiance>, System.IFormattable, System.ISpanFormattable, System.IParsable<Irradiance>, System.ISpanParsable<Irradiance>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Radiant flux per area, stored in watts per square meter
         /// (https://en.wikipedia.org/wiki/Irradiance).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number WattsPerSquareMeter;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("WattsPerSquareMeter")] public readonly Number WattsPerSquareMeter;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Irradiance WithWattsPerSquareMeter(Number wattsPerSquareMeter) => new Irradiance(wattsPerSquareMeter);

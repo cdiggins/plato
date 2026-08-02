@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A position in the 2D Cartesian plane
     /// (https://en.wikipedia.org/wiki/Cartesian_coordinate_system).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Point2D: ICoordinate<Point2D>, IOriginBased<Point2D, Vector2D>, IHashable<Point2D>, IMetricSpace<Point2D>, ITransformable2D<Point2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Point2D>, System.ISpanParsable<Point2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number X;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Y;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Number X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Number Y;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Point2D WithX(Number x) => new Point2D(x, Y);

@@ -25,12 +25,12 @@ namespace Ara3D.Geometry
     /// input is undefined. Check unit length with `IsUnit`
     /// (algebra.library.plato) for diagnostics.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Direction3D: IValue<Direction3D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Direction3D>, System.ISpanParsable<Direction3D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Vector3D Vector;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Vector")] public readonly Vector3D Vector;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Direction3D WithVector(Vector3D vector) => new Direction3D(vector);

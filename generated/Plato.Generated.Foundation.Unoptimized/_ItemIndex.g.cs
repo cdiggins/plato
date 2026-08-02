@@ -21,12 +21,12 @@ namespace Ara3D.Geometry
     /// domains with richer element vocabularies declare their own (VertexIndex,
     /// BoneIndex, ...).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ItemIndex: IValue<ItemIndex>, IHashable<ItemIndex>, IComparable<ItemIndex>, IIndex, System.IFormattable, System.ISpanFormattable, System.IParsable<ItemIndex>, System.ISpanParsable<ItemIndex>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer Value;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Value")] public readonly Integer Value;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ItemIndex WithValue(Integer value) => new ItemIndex(value);

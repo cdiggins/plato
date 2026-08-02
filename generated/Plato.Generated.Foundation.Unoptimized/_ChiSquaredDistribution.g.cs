@@ -17,12 +17,12 @@ namespace Ara3D.Geometry
     /// <summary>
     /// The sum of DegreesOfFreedom squared standard normals.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ChiSquaredDistribution: IProbabilityDistribution<ChiSquaredDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<ChiSquaredDistribution>, System.ISpanParsable<ChiSquaredDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number DegreesOfFreedom;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("DegreesOfFreedom")] public readonly Number DegreesOfFreedom;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ChiSquaredDistribution WithDegreesOfFreedom(Number degreesOfFreedom) => new ChiSquaredDistribution(degreesOfFreedom);

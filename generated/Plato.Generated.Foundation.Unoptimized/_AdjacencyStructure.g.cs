@@ -21,14 +21,14 @@ namespace Ara3D.Geometry
     /// NeighborIndices[NeighborOffsets[v + 1]].
     /// (https://en.wikipedia.org/wiki/Adjacency_list)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct AdjacencyStructure: IValue<AdjacencyStructure>, System.IFormattable, System.ISpanFormattable, System.IParsable<AdjacencyStructure>, System.ISpanParsable<AdjacencyStructure>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer VertexCount;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Integer> NeighborOffsets;
-        [DataMember(Order = 2), JsonInclude] public readonly IReadOnlyList<GraphVertexIndex> NeighborIndices;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("VertexCount")] public readonly Integer VertexCount;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("NeighborOffsets")] public readonly IReadOnlyList<Integer> NeighborOffsets;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("NeighborIndices")] public readonly IReadOnlyList<GraphVertexIndex> NeighborIndices;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public AdjacencyStructure WithVertexCount(Integer vertexCount) => new AdjacencyStructure(vertexCount, NeighborOffsets, NeighborIndices);

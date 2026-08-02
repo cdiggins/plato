@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// A unitless scalar expected to lie in [0, 1]: blend weights, normalized
     /// parameters, opacity.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Proportion: INumerical<Proportion>, IComparable<Proportion>, System.IFormattable, System.ISpanFormattable, System.IParsable<Proportion>, System.ISpanParsable<Proportion>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Value;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Value")] public readonly Number Value;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Proportion WithValue(Number value) => new Proportion(value);

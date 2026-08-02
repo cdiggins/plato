@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// fits, and importance sampling.
     /// (https://en.wikipedia.org/wiki/Weighted_arithmetic_mean)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct WeightedValue<T>: System.IFormattable, System.ISpanFormattable, System.IParsable<WeightedValue<T>>, System.ISpanParsable<WeightedValue<T>>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly T Value;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Weight;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Value")] public readonly T Value;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Weight")] public readonly Number Weight;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public WeightedValue<T> WithValue(T value) => new WeightedValue<T>(value, Weight);

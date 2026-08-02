@@ -18,12 +18,12 @@ namespace Ara3D.Geometry
     /// A single trial that succeeds with the given probability: mass at 1 for
     /// success, 0 for failure.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct BernoulliDistribution: IProbabilityDistribution<BernoulliDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<BernoulliDistribution>, System.ISpanParsable<BernoulliDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Probability SuccessProbability;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("SuccessProbability")] public readonly Probability SuccessProbability;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public BernoulliDistribution WithSuccessProbability(Probability successProbability) => new BernoulliDistribution(successProbability);

@@ -20,14 +20,14 @@ namespace Ara3D.Geometry
     /// is true when v lies on the source side of a minimum cut.
     /// (https://en.wikipedia.org/wiki/Maximum_flow_problem)
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct MaxFlowResult: IValue<MaxFlowResult>, System.IFormattable, System.ISpanFormattable, System.IParsable<MaxFlowResult>, System.ISpanParsable<MaxFlowResult>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number TotalFlow;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Number> EdgeFlows;
-        [DataMember(Order = 2), JsonInclude] public readonly IReadOnlyList<Boolean> SourceSideVertices;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("TotalFlow")] public readonly Number TotalFlow;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("EdgeFlows")] public readonly IReadOnlyList<Number> EdgeFlows;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("SourceSideVertices")] public readonly IReadOnlyList<Boolean> SourceSideVertices;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public MaxFlowResult WithTotalFlow(Number totalFlow) => new MaxFlowResult(totalFlow, EdgeFlows, SourceSideVertices);

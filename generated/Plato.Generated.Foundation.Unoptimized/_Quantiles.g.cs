@@ -19,13 +19,13 @@ namespace Ara3D.Geometry
     /// cumulative probability Levels[i] (https://en.wikipedia.org/wiki/Quantile).
     /// Levels ascend and lie in [0, 1].
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Quantiles: IValue<Quantiles>, System.IFormattable, System.ISpanFormattable, System.IParsable<Quantiles>, System.ISpanParsable<Quantiles>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Probability> Levels;
-        [DataMember(Order = 1), JsonInclude] public readonly IReadOnlyList<Number> Values;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Levels")] public readonly IReadOnlyList<Probability> Levels;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Values")] public readonly IReadOnlyList<Number> Values;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Quantiles WithLevels(IReadOnlyList<Probability> levels) => new Quantiles(levels, Values);

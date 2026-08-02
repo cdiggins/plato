@@ -17,7 +17,7 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A solid angle, stored in steradians (https://en.wikipedia.org/wiki/Solid_angle).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct SolidAngle: IQuantity<SolidAngle>, System.IFormattable, System.ISpanFormattable, System.IParsable<SolidAngle>, System.ISpanParsable<SolidAngle>
     {
@@ -25,7 +25,7 @@ namespace Ara3D.Geometry
         /// <summary>
         /// A solid angle, stored in steradians (https://en.wikipedia.org/wiki/Solid_angle).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number Steradians;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Steradians")] public readonly Number Steradians;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public SolidAngle WithSteradians(Number steradians) => new SolidAngle(steradians);

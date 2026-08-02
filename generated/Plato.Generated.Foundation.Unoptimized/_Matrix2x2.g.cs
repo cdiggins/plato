@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A 2x2 matrix: 2D linear maps (rotation, scale, shear).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Matrix2x2: IMatrix<Matrix2x2>, IMultiplicative<Matrix2x2>, System.IFormattable, System.ISpanFormattable, System.IParsable<Matrix2x2>, System.ISpanParsable<Matrix2x2>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number2 Row1;
-        [DataMember(Order = 1), JsonInclude] public readonly Number2 Row2;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Row1")] public readonly Number2 Row1;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Row2")] public readonly Number2 Row2;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Matrix2x2 WithRow1(Number2 row1) => new Matrix2x2(row1, Row2);

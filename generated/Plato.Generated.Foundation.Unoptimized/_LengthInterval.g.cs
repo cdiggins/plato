@@ -17,13 +17,13 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A directed interval of lengths.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct LengthInterval: IInterval<LengthInterval, Length>, System.IFormattable, System.ISpanFormattable, System.IParsable<LengthInterval>, System.ISpanParsable<LengthInterval>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Length Start;
-        [DataMember(Order = 1), JsonInclude] public readonly Length End;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Start")] public readonly Length Start;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("End")] public readonly Length End;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public LengthInterval WithStart(Length start) => new LengthInterval(start, End);

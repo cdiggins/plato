@@ -17,15 +17,15 @@ namespace Ara3D.Geometry
     /// <summary>
     /// A quadruple of whole-number components.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct IntegerVector4: IValue<IntegerVector4>, IHashable<IntegerVector4>, System.IFormattable, System.ISpanFormattable, System.IParsable<IntegerVector4>, System.ISpanParsable<IntegerVector4>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Integer X;
-        [DataMember(Order = 1), JsonInclude] public readonly Integer Y;
-        [DataMember(Order = 2), JsonInclude] public readonly Integer Z;
-        [DataMember(Order = 3), JsonInclude] public readonly Integer W;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("X")] public readonly Integer X;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Y")] public readonly Integer Y;
+        [DataMember(Order = 2), JsonInclude, JsonPropertyName("Z")] public readonly Integer Z;
+        [DataMember(Order = 3), JsonInclude, JsonPropertyName("W")] public readonly Integer W;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public IntegerVector4 WithX(Integer x) => new IntegerVector4(x, Y, Z, W);

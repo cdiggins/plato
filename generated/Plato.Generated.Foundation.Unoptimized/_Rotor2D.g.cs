@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A 2D geometric-algebra rotor: scalar plus bivector part. Equivalent to a unit
     /// complex number (https://en.wikipedia.org/wiki/Rotor_(mathematics)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Rotor2D: IValue<Rotor2D>, IMultiplicative<Rotor2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Rotor2D>, System.ISpanParsable<Rotor2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number Scalar;
-        [DataMember(Order = 1), JsonInclude] public readonly Number XY;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Scalar")] public readonly Number Scalar;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("XY")] public readonly Number XY;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public Rotor2D WithScalar(Number scalar) => new Rotor2D(scalar, XY);

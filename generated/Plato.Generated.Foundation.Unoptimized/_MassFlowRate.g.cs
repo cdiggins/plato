@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Mass flow, stored in kilograms per second
     /// (https://en.wikipedia.org/wiki/Mass_flow_rate).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct MassFlowRate: IQuantity<MassFlowRate>, System.IFormattable, System.ISpanFormattable, System.IParsable<MassFlowRate>, System.ISpanParsable<MassFlowRate>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Mass flow, stored in kilograms per second
         /// (https://en.wikipedia.org/wiki/Mass_flow_rate).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number KilogramsPerSecond;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("KilogramsPerSecond")] public readonly Number KilogramsPerSecond;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public MassFlowRate WithKilogramsPerSecond(Number kilogramsPerSecond) => new MassFlowRate(kilogramsPerSecond);

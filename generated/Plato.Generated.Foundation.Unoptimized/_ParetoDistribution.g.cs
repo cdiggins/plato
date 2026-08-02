@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A power-law tail on values at or above MinimumValue, decaying with the
     /// given Shape exponent.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct ParetoDistribution: IProbabilityDistribution<ParetoDistribution>, System.IFormattable, System.ISpanFormattable, System.IParsable<ParetoDistribution>, System.ISpanParsable<ParetoDistribution>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Number MinimumValue;
-        [DataMember(Order = 1), JsonInclude] public readonly Number Shape;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("MinimumValue")] public readonly Number MinimumValue;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Shape")] public readonly Number Shape;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public ParetoDistribution WithMinimumValue(Number minimumValue) => new ParetoDistribution(minimumValue, Shape);

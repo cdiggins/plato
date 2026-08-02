@@ -14,7 +14,7 @@ using Ara3D.Collections;
 
 namespace Ara3D.Geometry
 {
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct Function8<T0, T1, T2, T3, T4, T5, T6, T7, TR>: System.IFormattable, System.ISpanFormattable, System.IParsable<Function8<T0, T1, T2, T3, T4, T5, T6, T7, TR>>, System.ISpanParsable<Function8<T0, T1, T2, T3, T4, T5, T6, T7, TR>>
     {

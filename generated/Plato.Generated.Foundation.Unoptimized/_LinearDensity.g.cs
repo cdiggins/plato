@@ -18,7 +18,7 @@ namespace Ara3D.Geometry
     /// Mass per length, stored in kilograms per meter
     /// (https://en.wikipedia.org/wiki/Linear_density).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct LinearDensity: IQuantity<LinearDensity>, System.IFormattable, System.ISpanFormattable, System.IParsable<LinearDensity>, System.ISpanParsable<LinearDensity>
     {
@@ -27,7 +27,7 @@ namespace Ara3D.Geometry
         /// Mass per length, stored in kilograms per meter
         /// (https://en.wikipedia.org/wiki/Linear_density).
         /// </summary>
-        [DataMember(Order = 0), JsonInclude] public readonly Number KilogramsPerMeter;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("KilogramsPerMeter")] public readonly Number KilogramsPerMeter;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public LinearDensity WithKilogramsPerMeter(Number kilogramsPerMeter) => new LinearDensity(kilogramsPerMeter);

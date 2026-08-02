@@ -20,12 +20,12 @@ namespace Ara3D.Geometry
     /// weights the k-th Bernstein basis polynomial. The coefficients act as control
     /// values, as in a Bezier curve.
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct BernsteinPolynomial: IValue<BernsteinPolynomial>, System.IFormattable, System.ISpanFormattable, System.IParsable<BernsteinPolynomial>, System.ISpanParsable<BernsteinPolynomial>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly IReadOnlyList<Number> Coefficients;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Coefficients")] public readonly IReadOnlyList<Number> Coefficients;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public BernsteinPolynomial WithCoefficients(IReadOnlyList<Number> coefficients) => new BernsteinPolynomial(coefficients);

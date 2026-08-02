@@ -18,13 +18,13 @@ namespace Ara3D.Geometry
     /// A rotation in the plane about an arbitrary center rather than the origin
     /// (https://en.wikipedia.org/wiki/Rotation_(mathematics)).
     /// </summary>
-    [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
+    [DataContract, StructLayout(LayoutKind.Sequential)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public readonly partial struct RotationAbout2D: IValue<RotationAbout2D>, IRigid2D, System.IFormattable, System.ISpanFormattable, System.IParsable<RotationAbout2D>, System.ISpanParsable<RotationAbout2D>
     {
         // Fields
-        [DataMember(Order = 0), JsonInclude] public readonly Rotation2D Rotation;
-        [DataMember(Order = 1), JsonInclude] public readonly Point2D Center;
+        [DataMember(Order = 0), JsonInclude, JsonPropertyName("Rotation")] public readonly Rotation2D Rotation;
+        [DataMember(Order = 1), JsonInclude, JsonPropertyName("Center")] public readonly Point2D Center;
 
         // With functions 
         [MethodImpl(AggressiveInlining)] public RotationAbout2D WithRotation(Rotation2D rotation) => new RotationAbout2D(rotation, Center);
