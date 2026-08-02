@@ -214,7 +214,7 @@ namespace Ara3D.Geometry
             return points.PolygonMeshOfVertexNumbers(faces).ProjectedToUnitSphere();
         }
 
-        [MethodImpl(AggressiveInlining)] public static PolygonMesh3D EmptyPolygonMesh() => ((Integer)0).Repeat(Ara3D.Geometry.Point3D.Origin).PolygonMeshOfFaces(((Integer)0).Repeat(((Integer)0).Repeat(new VertexIndex(((Integer)0)))));
+        [MethodImpl(AggressiveInlining)] public static PolygonMesh3D EmptyPolygonMesh() => ((Integer)0).Repeat(default(Ara3D.Geometry.Point3D).Origin()).PolygonMeshOfFaces(((Integer)0).Repeat(((Integer)0).Repeat(new VertexIndex(((Integer)0)))));
         [MethodImpl(AggressiveInlining)] public Integer EulerCharacteristic() => this.VertexCount().Subtract(this.UndirectedEdgeCount()).Add(this.FaceCount());
         [MethodImpl(AggressiveInlining)] public PolygonMesh3D Transform(Quaternion transform){
             var _var311 = transform;

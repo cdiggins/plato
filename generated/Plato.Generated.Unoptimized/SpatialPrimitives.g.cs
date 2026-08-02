@@ -30,7 +30,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Vector3D DiskHalfExtents(this Vector3D axis, Number radius) => (radius.Multiply(((Number)1).Subtract(axis.X.Square()).Max(((Number)0)).Sqrt()), radius.Multiply(((Number)1).Subtract(axis.Y.Square()).Max(((Number)0)).Sqrt()), radius.Multiply(((Number)1).Subtract(axis.Z.Square()).Max(((Number)0)).Sqrt()));
         [MethodImpl(AggressiveInlining)] public static Vector3D RadialSupport(this Vector3D v, Vector3D axis, Number radius){
             var perp = v.PerpendicularComponent(axis);
-            return perp.MagnitudeSquared().LessThanOrEquals(((Number)0)) ? Ara3D.Geometry.Vector3D.Zero : perp.Normalize().Multiply(radius);
+            return perp.MagnitudeSquared().LessThanOrEquals(((Number)0)) ? default(Ara3D.Geometry.Vector3D).Zero() : perp.Normalize().Multiply(radius);
         }
 
         [MethodImpl(AggressiveInlining)] public static Number EffectiveCornerRadius(this RoundedBox3D b) => b.CornerRadius.Clamp(((Number)0), b.Box.Size.Width.Min(b.Box.Size.Height).Min(b.Box.Size.Depth).Multiply(((Number)0.5)));

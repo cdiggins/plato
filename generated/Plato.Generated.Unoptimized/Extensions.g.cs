@@ -384,7 +384,7 @@ namespace Ara3D.Geometry
             var _var85 = points;
             {
                 var _var84 = points;
-                return ((Integer)points.Count).MapRange((i)  => _var84[i].PositionVector().Cross(_var85.AtModulo(i.Add(((Integer)1))).PositionVector())).Reduce(Ara3D.Geometry.Vector3D.Zero, (acc, c)  => acc.Add(c)).Multiply(((Number)0.5));
+                return ((Integer)points.Count).MapRange((i)  => _var84[i].PositionVector().Cross(_var85.AtModulo(i.Add(((Integer)1))).PositionVector())).Reduce(default(Ara3D.Geometry.Vector3D).Zero(), (acc, c)  => acc.Add(c)).Multiply(((Number)0.5));
             }
         }
 

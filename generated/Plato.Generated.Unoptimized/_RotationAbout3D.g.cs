@@ -85,7 +85,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)]  public static Point3D operator *(RotationAbout3D r, Point3D p) => r.Multiply(p);
         [MethodImpl(AggressiveInlining)] public Vector3D Multiply(Vector3D v) => v.Transform(this);
         [MethodImpl(AggressiveInlining)]  public static Vector3D operator *(RotationAbout3D r, Vector3D v) => r.Multiply(v);
-        [MethodImpl(AggressiveInlining)] public static RotationAbout3D Identity() => (Ara3D.Geometry.Quaternion.Identity(), Ara3D.Geometry.Point3D.Origin);
+        [MethodImpl(AggressiveInlining)] public static RotationAbout3D Identity() => (Ara3D.Geometry.Quaternion.Identity(), default(Ara3D.Geometry.Point3D).Origin());
         [MethodImpl(AggressiveInlining)] public Pose3D Pose3D(){
             var c = this.Center.PositionVector();
             return (c.Subtract(c.Transform(this.Rotation)).ToPoint(), this.Rotation);

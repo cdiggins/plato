@@ -81,7 +81,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Boolean Contains(Point2D point) => this.Center.Between(point).MagnitudeSquared().LessThanOrEquals(this.Radius.Square());
         [MethodImpl(AggressiveInlining)] public Point2D ClosestPoint(Point2D point) => this.Contains(point) ? point : this.Center.Add(this.Center.Between(point).Normalize().Multiply(this.Radius));
         [MethodImpl(AggressiveInlining)] public Point2D Support(Direction2D direction) => this.Center.Add(direction.Vector.Multiply(this.Radius));
-        [MethodImpl(AggressiveInlining)] public static Circle UnitCircle() => (Ara3D.Geometry.Point2D.Origin, ((Number)1));
+        [MethodImpl(AggressiveInlining)] public static Circle UnitCircle() => (default(Ara3D.Geometry.Point2D).Origin(), ((Number)1));
         [MethodImpl(AggressiveInlining)] public Point2D Centroid() => this.Center;
 
         // Unimplemented interface functions

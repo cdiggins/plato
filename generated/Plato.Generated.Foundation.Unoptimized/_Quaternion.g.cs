@@ -132,7 +132,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Quaternion Identity() => (((Number)0), ((Number)0), ((Number)0), ((Number)1));
         [MethodImpl(AggressiveInlining)] public Motor3D Motor3D() => (this, new Quaternion(((Number)0), ((Number)0), ((Number)0), ((Number)0)));
         [MethodImpl(AggressiveInlining)]  public static implicit operator Motor3D(Quaternion q) => q.Motor3D();
-        [MethodImpl(AggressiveInlining)] public Pose3D Pose3D() => (Ara3D.Geometry.Point3D.Origin, this);
+        [MethodImpl(AggressiveInlining)] public Pose3D Pose3D() => (default(Ara3D.Geometry.Point3D).Origin(), this);
         [MethodImpl(AggressiveInlining)]  public static implicit operator Pose3D(Quaternion q) => q.Pose3D();
         [MethodImpl(AggressiveInlining)] public static Quaternion CreateRotationX(Angle angle) => Ara3D.Geometry.Quaternion.CreateFromAxisAngle(Ara3D.Geometry.Vector3D.UnitX(), angle);
         [MethodImpl(AggressiveInlining)] public static Quaternion CreateRotationY(Angle angle) => Ara3D.Geometry.Quaternion.CreateFromAxisAngle(Ara3D.Geometry.Vector3D.UnitY(), angle);

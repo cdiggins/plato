@@ -95,7 +95,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Matrix4x4 Matrix4x4() => this.Pose3D().Matrix4x4();
         [MethodImpl(AggressiveInlining)]  public static implicit operator Matrix4x4(Motor3D m) => m.Matrix4x4();
         [MethodImpl(AggressiveInlining)] public AffineTransform3D AffineTransform3D() => this.Pose3D().AffineTransform3D();
-        [MethodImpl(AggressiveInlining)]  public static implicit operator AffineTransform3D(Motor3D m) => m.AffineTransform3D();
+        [MethodImpl(AggressiveInlining)]  public static implicit operator AffineTransform3D(Motor3D x) => x.AffineTransform3D();
 
         // Unimplemented interface functions
     }

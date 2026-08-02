@@ -87,7 +87,7 @@ namespace Ara3D.Geometry
                     {
                         var domain = this.ParameterDomain();
                         var u = domain.KnotParameter(t);
-                        var sum = ((Integer)this.ControlPoints.Count).Range().Reduce(Ara3D.Geometry.Vector2D.Zero, (acc, i)  => acc.Add(_var819.ControlPoints[i].PositionVector().Multiply(_var820.Knots.BasisFunction(domain.End, i, _var821.Degree, u))));
+                        var sum = ((Integer)this.ControlPoints.Count).Range().Reduce(default(Ara3D.Geometry.Vector2D).Zero(), (acc, i)  => acc.Add(_var819.ControlPoints[i].PositionVector().Multiply(_var820.Knots.BasisFunction(domain.End, i, _var821.Degree, u))));
                         return (sum.X, sum.Y);
                     }
                 }

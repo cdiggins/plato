@@ -54,12 +54,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static Brep3D Rotate(this Brep3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static Brep3D Rotate(this Brep3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static Brep3D RotateX(this Brep3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static Brep3D RotateY(this Brep3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static Brep3D RotateZ(this Brep3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static Brep3D Scale(this Brep3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Brep3D Scale(this Brep3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Brep3D Scale(this Brep3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Brep3D Scale(this Brep3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Brep3D ScaleX(this Brep3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Brep3D ScaleY(this Brep3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Brep3D ScaleZ(this Brep3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -105,9 +105,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static QuadraticBezier2D RotateAbout(this QuadraticBezier2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static QuadraticBezier2D Rotate(this QuadraticBezier2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static QuadraticBezier2D Scale(this QuadraticBezier2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static QuadraticBezier2D Scale(this QuadraticBezier2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static QuadraticBezier2D Rotate(this QuadraticBezier2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static QuadraticBezier2D Scale(this QuadraticBezier2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static QuadraticBezier2D Scale(this QuadraticBezier2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static QuadraticBezier2D ScaleX(this QuadraticBezier2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static QuadraticBezier2D ScaleY(this QuadraticBezier2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static QuadraticBezier2D TranslateX(this QuadraticBezier2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -151,9 +151,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static CubicBezier2D RotateAbout(this CubicBezier2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static CubicBezier2D Rotate(this CubicBezier2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static CubicBezier2D Scale(this CubicBezier2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static CubicBezier2D Scale(this CubicBezier2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static CubicBezier2D Rotate(this CubicBezier2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static CubicBezier2D Scale(this CubicBezier2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static CubicBezier2D Scale(this CubicBezier2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static CubicBezier2D ScaleX(this CubicBezier2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static CubicBezier2D ScaleY(this CubicBezier2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static CubicBezier2D TranslateX(this CubicBezier2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -196,12 +196,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static QuadraticBezier3D Rotate(this QuadraticBezier3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static QuadraticBezier3D Rotate(this QuadraticBezier3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static QuadraticBezier3D RotateX(this QuadraticBezier3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static QuadraticBezier3D RotateY(this QuadraticBezier3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static QuadraticBezier3D RotateZ(this QuadraticBezier3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static QuadraticBezier3D Scale(this QuadraticBezier3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static QuadraticBezier3D Scale(this QuadraticBezier3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static QuadraticBezier3D Scale(this QuadraticBezier3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static QuadraticBezier3D Scale(this QuadraticBezier3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static QuadraticBezier3D ScaleX(this QuadraticBezier3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static QuadraticBezier3D ScaleY(this QuadraticBezier3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static QuadraticBezier3D ScaleZ(this QuadraticBezier3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -246,12 +246,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static CubicBezier3D Rotate(this CubicBezier3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static CubicBezier3D Rotate(this CubicBezier3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static CubicBezier3D RotateX(this CubicBezier3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static CubicBezier3D RotateY(this CubicBezier3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static CubicBezier3D RotateZ(this CubicBezier3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static CubicBezier3D Scale(this CubicBezier3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static CubicBezier3D Scale(this CubicBezier3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static CubicBezier3D Scale(this CubicBezier3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static CubicBezier3D Scale(this CubicBezier3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static CubicBezier3D ScaleX(this CubicBezier3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static CubicBezier3D ScaleY(this CubicBezier3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static CubicBezier3D ScaleZ(this CubicBezier3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -297,9 +297,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static Line2D RotateAbout(this Line2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static Line2D Rotate(this Line2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static Line2D Scale(this Line2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Line2D Scale(this Line2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Line2D Rotate(this Line2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static Line2D Scale(this Line2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Line2D Scale(this Line2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Line2D ScaleX(this Line2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Line2D ScaleY(this Line2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static Line2D TranslateX(this Line2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -342,12 +342,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static Line3D Rotate(this Line3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static Line3D Rotate(this Line3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static Line3D RotateX(this Line3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static Line3D RotateY(this Line3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static Line3D RotateZ(this Line3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static Line3D Scale(this Line3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Line3D Scale(this Line3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Line3D Scale(this Line3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Line3D Scale(this Line3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Line3D ScaleX(this Line3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Line3D ScaleY(this Line3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Line3D ScaleZ(this Line3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -392,12 +392,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static TriangleMesh3D Rotate(this TriangleMesh3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static TriangleMesh3D Rotate(this TriangleMesh3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static TriangleMesh3D RotateX(this TriangleMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static TriangleMesh3D RotateY(this TriangleMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static TriangleMesh3D RotateZ(this TriangleMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static TriangleMesh3D Scale(this TriangleMesh3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static TriangleMesh3D Scale(this TriangleMesh3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static TriangleMesh3D Scale(this TriangleMesh3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static TriangleMesh3D Scale(this TriangleMesh3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static TriangleMesh3D ScaleX(this TriangleMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static TriangleMesh3D ScaleY(this TriangleMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static TriangleMesh3D ScaleZ(this TriangleMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -443,9 +443,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static TriangleMesh2D RotateAbout(this TriangleMesh2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static TriangleMesh2D Rotate(this TriangleMesh2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static TriangleMesh2D Scale(this TriangleMesh2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static TriangleMesh2D Scale(this TriangleMesh2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static TriangleMesh2D Rotate(this TriangleMesh2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static TriangleMesh2D Scale(this TriangleMesh2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static TriangleMesh2D Scale(this TriangleMesh2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static TriangleMesh2D ScaleX(this TriangleMesh2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static TriangleMesh2D ScaleY(this TriangleMesh2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static TriangleMesh2D TranslateX(this TriangleMesh2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -488,12 +488,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static QuadMesh3D Rotate(this QuadMesh3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static QuadMesh3D Rotate(this QuadMesh3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static QuadMesh3D RotateX(this QuadMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static QuadMesh3D RotateY(this QuadMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static QuadMesh3D RotateZ(this QuadMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static QuadMesh3D Scale(this QuadMesh3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static QuadMesh3D Scale(this QuadMesh3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static QuadMesh3D Scale(this QuadMesh3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static QuadMesh3D Scale(this QuadMesh3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static QuadMesh3D ScaleX(this QuadMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static QuadMesh3D ScaleY(this QuadMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static QuadMesh3D ScaleZ(this QuadMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -538,12 +538,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static PolygonMesh3D Rotate(this PolygonMesh3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static PolygonMesh3D Rotate(this PolygonMesh3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static PolygonMesh3D RotateX(this PolygonMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static PolygonMesh3D RotateY(this PolygonMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static PolygonMesh3D RotateZ(this PolygonMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static PolygonMesh3D Scale(this PolygonMesh3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static PolygonMesh3D Scale(this PolygonMesh3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static PolygonMesh3D Scale(this PolygonMesh3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static PolygonMesh3D Scale(this PolygonMesh3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static PolygonMesh3D ScaleX(this PolygonMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static PolygonMesh3D ScaleY(this PolygonMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static PolygonMesh3D ScaleZ(this PolygonMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -588,12 +588,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static RichMesh3D Rotate(this RichMesh3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static RichMesh3D Rotate(this RichMesh3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static RichMesh3D RotateX(this RichMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static RichMesh3D RotateY(this RichMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static RichMesh3D RotateZ(this RichMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static RichMesh3D Scale(this RichMesh3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static RichMesh3D Scale(this RichMesh3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static RichMesh3D Scale(this RichMesh3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static RichMesh3D Scale(this RichMesh3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static RichMesh3D ScaleX(this RichMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static RichMesh3D ScaleY(this RichMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static RichMesh3D ScaleZ(this RichMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -638,12 +638,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static TriangleArray3D Rotate(this TriangleArray3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static TriangleArray3D Rotate(this TriangleArray3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static TriangleArray3D RotateX(this TriangleArray3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static TriangleArray3D RotateY(this TriangleArray3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static TriangleArray3D RotateZ(this TriangleArray3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static TriangleArray3D Scale(this TriangleArray3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static TriangleArray3D Scale(this TriangleArray3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static TriangleArray3D Scale(this TriangleArray3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static TriangleArray3D Scale(this TriangleArray3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static TriangleArray3D ScaleX(this TriangleArray3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static TriangleArray3D ScaleY(this TriangleArray3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static TriangleArray3D ScaleZ(this TriangleArray3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -688,12 +688,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static QuadArray3D Rotate(this QuadArray3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static QuadArray3D Rotate(this QuadArray3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static QuadArray3D RotateX(this QuadArray3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static QuadArray3D RotateY(this QuadArray3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static QuadArray3D RotateZ(this QuadArray3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static QuadArray3D Scale(this QuadArray3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static QuadArray3D Scale(this QuadArray3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static QuadArray3D Scale(this QuadArray3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static QuadArray3D Scale(this QuadArray3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static QuadArray3D ScaleX(this QuadArray3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static QuadArray3D ScaleY(this QuadArray3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static QuadArray3D ScaleZ(this QuadArray3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -738,12 +738,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static LineSet3D Rotate(this LineSet3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static LineSet3D Rotate(this LineSet3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static LineSet3D RotateX(this LineSet3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static LineSet3D RotateY(this LineSet3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static LineSet3D RotateZ(this LineSet3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static LineSet3D Scale(this LineSet3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static LineSet3D Scale(this LineSet3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static LineSet3D Scale(this LineSet3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static LineSet3D Scale(this LineSet3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static LineSet3D ScaleX(this LineSet3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static LineSet3D ScaleY(this LineSet3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static LineSet3D ScaleZ(this LineSet3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -789,9 +789,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static LineSet2D RotateAbout(this LineSet2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static LineSet2D Rotate(this LineSet2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static LineSet2D Scale(this LineSet2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static LineSet2D Scale(this LineSet2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static LineSet2D Rotate(this LineSet2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static LineSet2D Scale(this LineSet2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static LineSet2D Scale(this LineSet2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static LineSet2D ScaleX(this LineSet2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static LineSet2D ScaleY(this LineSet2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static LineSet2D TranslateX(this LineSet2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -834,12 +834,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static PointCloud3D Rotate(this PointCloud3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static PointCloud3D Rotate(this PointCloud3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static PointCloud3D RotateX(this PointCloud3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static PointCloud3D RotateY(this PointCloud3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static PointCloud3D RotateZ(this PointCloud3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static PointCloud3D Scale(this PointCloud3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static PointCloud3D Scale(this PointCloud3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static PointCloud3D Scale(this PointCloud3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static PointCloud3D Scale(this PointCloud3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static PointCloud3D ScaleX(this PointCloud3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static PointCloud3D ScaleY(this PointCloud3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static PointCloud3D ScaleZ(this PointCloud3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -885,9 +885,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static PointCloud2D RotateAbout(this PointCloud2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static PointCloud2D Rotate(this PointCloud2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static PointCloud2D Scale(this PointCloud2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static PointCloud2D Scale(this PointCloud2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static PointCloud2D Rotate(this PointCloud2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static PointCloud2D Scale(this PointCloud2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static PointCloud2D Scale(this PointCloud2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static PointCloud2D ScaleX(this PointCloud2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static PointCloud2D ScaleY(this PointCloud2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static PointCloud2D TranslateX(this PointCloud2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -930,12 +930,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static SegmentedMesh3D Rotate(this SegmentedMesh3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static SegmentedMesh3D Rotate(this SegmentedMesh3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static SegmentedMesh3D RotateX(this SegmentedMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static SegmentedMesh3D RotateY(this SegmentedMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static SegmentedMesh3D RotateZ(this SegmentedMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static SegmentedMesh3D Scale(this SegmentedMesh3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static SegmentedMesh3D Scale(this SegmentedMesh3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static SegmentedMesh3D Scale(this SegmentedMesh3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static SegmentedMesh3D Scale(this SegmentedMesh3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static SegmentedMesh3D ScaleX(this SegmentedMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static SegmentedMesh3D ScaleY(this SegmentedMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static SegmentedMesh3D ScaleZ(this SegmentedMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -980,12 +980,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static TetrahedralMesh3D Rotate(this TetrahedralMesh3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static TetrahedralMesh3D Rotate(this TetrahedralMesh3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static TetrahedralMesh3D RotateX(this TetrahedralMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static TetrahedralMesh3D RotateY(this TetrahedralMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static TetrahedralMesh3D RotateZ(this TetrahedralMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static TetrahedralMesh3D Scale(this TetrahedralMesh3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static TetrahedralMesh3D Scale(this TetrahedralMesh3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static TetrahedralMesh3D Scale(this TetrahedralMesh3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static TetrahedralMesh3D Scale(this TetrahedralMesh3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static TetrahedralMesh3D ScaleX(this TetrahedralMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static TetrahedralMesh3D ScaleY(this TetrahedralMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static TetrahedralMesh3D ScaleZ(this TetrahedralMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -1030,12 +1030,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static HexahedralMesh3D Rotate(this HexahedralMesh3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static HexahedralMesh3D Rotate(this HexahedralMesh3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static HexahedralMesh3D RotateX(this HexahedralMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static HexahedralMesh3D RotateY(this HexahedralMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static HexahedralMesh3D RotateZ(this HexahedralMesh3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static HexahedralMesh3D Scale(this HexahedralMesh3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static HexahedralMesh3D Scale(this HexahedralMesh3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static HexahedralMesh3D Scale(this HexahedralMesh3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static HexahedralMesh3D Scale(this HexahedralMesh3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static HexahedralMesh3D ScaleX(this HexahedralMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static HexahedralMesh3D ScaleY(this HexahedralMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static HexahedralMesh3D ScaleZ(this HexahedralMesh3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -1081,9 +1081,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static Triangle2D RotateAbout(this Triangle2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static Triangle2D Rotate(this Triangle2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static Triangle2D Scale(this Triangle2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Triangle2D Scale(this Triangle2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Triangle2D Rotate(this Triangle2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static Triangle2D Scale(this Triangle2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Triangle2D Scale(this Triangle2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Triangle2D ScaleX(this Triangle2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Triangle2D ScaleY(this Triangle2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static Triangle2D TranslateX(this Triangle2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -1127,9 +1127,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static Quad2D RotateAbout(this Quad2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static Quad2D Rotate(this Quad2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static Quad2D Scale(this Quad2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Quad2D Scale(this Quad2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Quad2D Rotate(this Quad2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static Quad2D Scale(this Quad2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Quad2D Scale(this Quad2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Quad2D ScaleX(this Quad2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Quad2D ScaleY(this Quad2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static Quad2D TranslateX(this Quad2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -1173,9 +1173,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static Parallelogram2D RotateAbout(this Parallelogram2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static Parallelogram2D Rotate(this Parallelogram2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static Parallelogram2D Scale(this Parallelogram2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Parallelogram2D Scale(this Parallelogram2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Parallelogram2D Rotate(this Parallelogram2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static Parallelogram2D Scale(this Parallelogram2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Parallelogram2D Scale(this Parallelogram2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Parallelogram2D ScaleX(this Parallelogram2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Parallelogram2D ScaleY(this Parallelogram2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static Parallelogram2D TranslateX(this Parallelogram2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -1218,12 +1218,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static OrientedPointCloud3D Rotate(this OrientedPointCloud3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static OrientedPointCloud3D Rotate(this OrientedPointCloud3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static OrientedPointCloud3D RotateX(this OrientedPointCloud3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static OrientedPointCloud3D RotateY(this OrientedPointCloud3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static OrientedPointCloud3D RotateZ(this OrientedPointCloud3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static OrientedPointCloud3D Scale(this OrientedPointCloud3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static OrientedPointCloud3D Scale(this OrientedPointCloud3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static OrientedPointCloud3D Scale(this OrientedPointCloud3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static OrientedPointCloud3D Scale(this OrientedPointCloud3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static OrientedPointCloud3D ScaleX(this OrientedPointCloud3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static OrientedPointCloud3D ScaleY(this OrientedPointCloud3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static OrientedPointCloud3D ScaleZ(this OrientedPointCloud3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -1268,12 +1268,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static ColoredPointCloud3D Rotate(this ColoredPointCloud3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static ColoredPointCloud3D Rotate(this ColoredPointCloud3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static ColoredPointCloud3D RotateX(this ColoredPointCloud3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static ColoredPointCloud3D RotateY(this ColoredPointCloud3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static ColoredPointCloud3D RotateZ(this ColoredPointCloud3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static ColoredPointCloud3D Scale(this ColoredPointCloud3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static ColoredPointCloud3D Scale(this ColoredPointCloud3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static ColoredPointCloud3D Scale(this ColoredPointCloud3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static ColoredPointCloud3D Scale(this ColoredPointCloud3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static ColoredPointCloud3D ScaleX(this ColoredPointCloud3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static ColoredPointCloud3D ScaleY(this ColoredPointCloud3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static ColoredPointCloud3D ScaleZ(this ColoredPointCloud3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -1318,12 +1318,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static AttributedPointCloud3D Rotate(this AttributedPointCloud3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static AttributedPointCloud3D Rotate(this AttributedPointCloud3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static AttributedPointCloud3D RotateX(this AttributedPointCloud3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static AttributedPointCloud3D RotateY(this AttributedPointCloud3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static AttributedPointCloud3D RotateZ(this AttributedPointCloud3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static AttributedPointCloud3D Scale(this AttributedPointCloud3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static AttributedPointCloud3D Scale(this AttributedPointCloud3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static AttributedPointCloud3D Scale(this AttributedPointCloud3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static AttributedPointCloud3D Scale(this AttributedPointCloud3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static AttributedPointCloud3D ScaleX(this AttributedPointCloud3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static AttributedPointCloud3D ScaleY(this AttributedPointCloud3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static AttributedPointCloud3D ScaleZ(this AttributedPointCloud3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -1369,9 +1369,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static Polygon2D RotateAbout(this Polygon2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static Polygon2D Rotate(this Polygon2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static Polygon2D Scale(this Polygon2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Polygon2D Scale(this Polygon2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Polygon2D Rotate(this Polygon2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static Polygon2D Scale(this Polygon2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Polygon2D Scale(this Polygon2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Polygon2D ScaleX(this Polygon2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Polygon2D ScaleY(this Polygon2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static Polygon2D TranslateX(this Polygon2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -1415,9 +1415,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static ConvexPolygon2D RotateAbout(this ConvexPolygon2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static ConvexPolygon2D Rotate(this ConvexPolygon2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static ConvexPolygon2D Scale(this ConvexPolygon2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static ConvexPolygon2D Scale(this ConvexPolygon2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static ConvexPolygon2D Rotate(this ConvexPolygon2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static ConvexPolygon2D Scale(this ConvexPolygon2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static ConvexPolygon2D Scale(this ConvexPolygon2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static ConvexPolygon2D ScaleX(this ConvexPolygon2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static ConvexPolygon2D ScaleY(this ConvexPolygon2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static ConvexPolygon2D TranslateX(this ConvexPolygon2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -1461,9 +1461,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static PolygonWithHoles2D RotateAbout(this PolygonWithHoles2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static PolygonWithHoles2D Rotate(this PolygonWithHoles2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static PolygonWithHoles2D Scale(this PolygonWithHoles2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static PolygonWithHoles2D Scale(this PolygonWithHoles2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static PolygonWithHoles2D Rotate(this PolygonWithHoles2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static PolygonWithHoles2D Scale(this PolygonWithHoles2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static PolygonWithHoles2D Scale(this PolygonWithHoles2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static PolygonWithHoles2D ScaleX(this PolygonWithHoles2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static PolygonWithHoles2D ScaleY(this PolygonWithHoles2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static PolygonWithHoles2D TranslateX(this PolygonWithHoles2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -1507,9 +1507,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static PolygonSet2D RotateAbout(this PolygonSet2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static PolygonSet2D Rotate(this PolygonSet2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static PolygonSet2D Scale(this PolygonSet2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static PolygonSet2D Scale(this PolygonSet2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static PolygonSet2D Rotate(this PolygonSet2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static PolygonSet2D Scale(this PolygonSet2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static PolygonSet2D Scale(this PolygonSet2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static PolygonSet2D ScaleX(this PolygonSet2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static PolygonSet2D ScaleY(this PolygonSet2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static PolygonSet2D TranslateX(this PolygonSet2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -1553,9 +1553,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static Polyline2D RotateAbout(this Polyline2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static Polyline2D Rotate(this Polyline2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static Polyline2D Scale(this Polyline2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Polyline2D Scale(this Polyline2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Polyline2D Rotate(this Polyline2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static Polyline2D Scale(this Polyline2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Polyline2D Scale(this Polyline2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Polyline2D ScaleX(this Polyline2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Polyline2D ScaleY(this Polyline2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static Polyline2D TranslateX(this Polyline2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -1598,12 +1598,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static Polyline3D Rotate(this Polyline3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static Polyline3D Rotate(this Polyline3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static Polyline3D RotateX(this Polyline3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static Polyline3D RotateY(this Polyline3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static Polyline3D RotateZ(this Polyline3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static Polyline3D Scale(this Polyline3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Polyline3D Scale(this Polyline3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Polyline3D Scale(this Polyline3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Polyline3D Scale(this Polyline3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Polyline3D ScaleX(this Polyline3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Polyline3D ScaleY(this Polyline3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Polyline3D ScaleZ(this Polyline3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -1648,12 +1648,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static Polygon3D Rotate(this Polygon3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static Polygon3D Rotate(this Polygon3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static Polygon3D RotateX(this Polygon3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static Polygon3D RotateY(this Polygon3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static Polygon3D RotateZ(this Polygon3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static Polygon3D Scale(this Polygon3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Polygon3D Scale(this Polygon3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Polygon3D Scale(this Polygon3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Polygon3D Scale(this Polygon3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Polygon3D ScaleX(this Polygon3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Polygon3D ScaleY(this Polygon3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Polygon3D ScaleZ(this Polygon3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -1698,12 +1698,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static Pyramid3D Rotate(this Pyramid3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static Pyramid3D Rotate(this Pyramid3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static Pyramid3D RotateX(this Pyramid3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static Pyramid3D RotateY(this Pyramid3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static Pyramid3D RotateZ(this Pyramid3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static Pyramid3D Scale(this Pyramid3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Pyramid3D Scale(this Pyramid3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Pyramid3D Scale(this Pyramid3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Pyramid3D Scale(this Pyramid3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Pyramid3D ScaleX(this Pyramid3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Pyramid3D ScaleY(this Pyramid3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Pyramid3D ScaleZ(this Pyramid3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -1749,9 +1749,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static SampledCurve2D RotateAbout(this SampledCurve2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static SampledCurve2D Rotate(this SampledCurve2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static SampledCurve2D Scale(this SampledCurve2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static SampledCurve2D Scale(this SampledCurve2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static SampledCurve2D Rotate(this SampledCurve2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static SampledCurve2D Scale(this SampledCurve2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static SampledCurve2D Scale(this SampledCurve2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static SampledCurve2D ScaleX(this SampledCurve2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static SampledCurve2D ScaleY(this SampledCurve2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static SampledCurve2D TranslateX(this SampledCurve2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -1794,12 +1794,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static SampledCurve3D Rotate(this SampledCurve3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static SampledCurve3D Rotate(this SampledCurve3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static SampledCurve3D RotateX(this SampledCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static SampledCurve3D RotateY(this SampledCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static SampledCurve3D RotateZ(this SampledCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static SampledCurve3D Scale(this SampledCurve3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static SampledCurve3D Scale(this SampledCurve3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static SampledCurve3D Scale(this SampledCurve3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static SampledCurve3D Scale(this SampledCurve3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static SampledCurve3D ScaleX(this SampledCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static SampledCurve3D ScaleY(this SampledCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static SampledCurve3D ScaleZ(this SampledCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -1844,12 +1844,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static SampledSurfaceGrid Rotate(this SampledSurfaceGrid self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static SampledSurfaceGrid Rotate(this SampledSurfaceGrid self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static SampledSurfaceGrid RotateX(this SampledSurfaceGrid self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static SampledSurfaceGrid RotateY(this SampledSurfaceGrid self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static SampledSurfaceGrid RotateZ(this SampledSurfaceGrid self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static SampledSurfaceGrid Scale(this SampledSurfaceGrid self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static SampledSurfaceGrid Scale(this SampledSurfaceGrid self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static SampledSurfaceGrid Scale(this SampledSurfaceGrid self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static SampledSurfaceGrid Scale(this SampledSurfaceGrid self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static SampledSurfaceGrid ScaleX(this SampledSurfaceGrid self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static SampledSurfaceGrid ScaleY(this SampledSurfaceGrid self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static SampledSurfaceGrid ScaleZ(this SampledSurfaceGrid self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -1894,12 +1894,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static PolygonSoup3D Rotate(this PolygonSoup3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static PolygonSoup3D Rotate(this PolygonSoup3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static PolygonSoup3D RotateX(this PolygonSoup3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static PolygonSoup3D RotateY(this PolygonSoup3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static PolygonSoup3D RotateZ(this PolygonSoup3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static PolygonSoup3D Scale(this PolygonSoup3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static PolygonSoup3D Scale(this PolygonSoup3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static PolygonSoup3D Scale(this PolygonSoup3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static PolygonSoup3D Scale(this PolygonSoup3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static PolygonSoup3D ScaleX(this PolygonSoup3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static PolygonSoup3D ScaleY(this PolygonSoup3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static PolygonSoup3D ScaleZ(this PolygonSoup3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -1944,12 +1944,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static LoftedSolid Rotate(this LoftedSolid self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static LoftedSolid Rotate(this LoftedSolid self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static LoftedSolid RotateX(this LoftedSolid self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static LoftedSolid RotateY(this LoftedSolid self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static LoftedSolid RotateZ(this LoftedSolid self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static LoftedSolid Scale(this LoftedSolid self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static LoftedSolid Scale(this LoftedSolid self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static LoftedSolid Scale(this LoftedSolid self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static LoftedSolid Scale(this LoftedSolid self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static LoftedSolid ScaleX(this LoftedSolid self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static LoftedSolid ScaleY(this LoftedSolid self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static LoftedSolid ScaleZ(this LoftedSolid self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -1994,12 +1994,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static Triangle3D Rotate(this Triangle3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static Triangle3D Rotate(this Triangle3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static Triangle3D RotateX(this Triangle3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static Triangle3D RotateY(this Triangle3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static Triangle3D RotateZ(this Triangle3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static Triangle3D Scale(this Triangle3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Triangle3D Scale(this Triangle3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Triangle3D Scale(this Triangle3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Triangle3D Scale(this Triangle3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Triangle3D ScaleX(this Triangle3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Triangle3D ScaleY(this Triangle3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Triangle3D ScaleZ(this Triangle3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -2044,12 +2044,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static Quad3D Rotate(this Quad3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static Quad3D Rotate(this Quad3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static Quad3D RotateX(this Quad3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static Quad3D RotateY(this Quad3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static Quad3D RotateZ(this Quad3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static Quad3D Scale(this Quad3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Quad3D Scale(this Quad3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Quad3D Scale(this Quad3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Quad3D Scale(this Quad3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Quad3D ScaleX(this Quad3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Quad3D ScaleY(this Quad3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Quad3D ScaleZ(this Quad3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -2094,12 +2094,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static Tetrahedron Rotate(this Tetrahedron self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static Tetrahedron Rotate(this Tetrahedron self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static Tetrahedron RotateX(this Tetrahedron self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static Tetrahedron RotateY(this Tetrahedron self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static Tetrahedron RotateZ(this Tetrahedron self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static Tetrahedron Scale(this Tetrahedron self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static Tetrahedron Scale(this Tetrahedron self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static Tetrahedron Scale(this Tetrahedron self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static Tetrahedron Scale(this Tetrahedron self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static Tetrahedron ScaleX(this Tetrahedron self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Tetrahedron ScaleY(this Tetrahedron self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static Tetrahedron ScaleZ(this Tetrahedron self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -2145,9 +2145,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static BezierCurve2D RotateAbout(this BezierCurve2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static BezierCurve2D Rotate(this BezierCurve2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static BezierCurve2D Scale(this BezierCurve2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static BezierCurve2D Scale(this BezierCurve2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static BezierCurve2D Rotate(this BezierCurve2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static BezierCurve2D Scale(this BezierCurve2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static BezierCurve2D Scale(this BezierCurve2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static BezierCurve2D ScaleX(this BezierCurve2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static BezierCurve2D ScaleY(this BezierCurve2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static BezierCurve2D TranslateX(this BezierCurve2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -2190,12 +2190,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static BezierCurve3D Rotate(this BezierCurve3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static BezierCurve3D Rotate(this BezierCurve3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static BezierCurve3D RotateX(this BezierCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static BezierCurve3D RotateY(this BezierCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static BezierCurve3D RotateZ(this BezierCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static BezierCurve3D Scale(this BezierCurve3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static BezierCurve3D Scale(this BezierCurve3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static BezierCurve3D Scale(this BezierCurve3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static BezierCurve3D Scale(this BezierCurve3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static BezierCurve3D ScaleX(this BezierCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static BezierCurve3D ScaleY(this BezierCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static BezierCurve3D ScaleZ(this BezierCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -2241,9 +2241,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static RationalBezierCurve2D RotateAbout(this RationalBezierCurve2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static RationalBezierCurve2D Rotate(this RationalBezierCurve2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static RationalBezierCurve2D Scale(this RationalBezierCurve2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static RationalBezierCurve2D Scale(this RationalBezierCurve2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static RationalBezierCurve2D Rotate(this RationalBezierCurve2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static RationalBezierCurve2D Scale(this RationalBezierCurve2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static RationalBezierCurve2D Scale(this RationalBezierCurve2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static RationalBezierCurve2D ScaleX(this RationalBezierCurve2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static RationalBezierCurve2D ScaleY(this RationalBezierCurve2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static RationalBezierCurve2D TranslateX(this RationalBezierCurve2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -2286,12 +2286,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static RationalBezierCurve3D Rotate(this RationalBezierCurve3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static RationalBezierCurve3D Rotate(this RationalBezierCurve3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static RationalBezierCurve3D RotateX(this RationalBezierCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static RationalBezierCurve3D RotateY(this RationalBezierCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static RationalBezierCurve3D RotateZ(this RationalBezierCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static RationalBezierCurve3D Scale(this RationalBezierCurve3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static RationalBezierCurve3D Scale(this RationalBezierCurve3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static RationalBezierCurve3D Scale(this RationalBezierCurve3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static RationalBezierCurve3D Scale(this RationalBezierCurve3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static RationalBezierCurve3D ScaleX(this RationalBezierCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static RationalBezierCurve3D ScaleY(this RationalBezierCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static RationalBezierCurve3D ScaleZ(this RationalBezierCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -2337,9 +2337,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static CompositeBezier2D RotateAbout(this CompositeBezier2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static CompositeBezier2D Rotate(this CompositeBezier2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static CompositeBezier2D Scale(this CompositeBezier2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static CompositeBezier2D Scale(this CompositeBezier2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static CompositeBezier2D Rotate(this CompositeBezier2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static CompositeBezier2D Scale(this CompositeBezier2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static CompositeBezier2D Scale(this CompositeBezier2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static CompositeBezier2D ScaleX(this CompositeBezier2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static CompositeBezier2D ScaleY(this CompositeBezier2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static CompositeBezier2D TranslateX(this CompositeBezier2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -2382,12 +2382,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static CompositeBezier3D Rotate(this CompositeBezier3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static CompositeBezier3D Rotate(this CompositeBezier3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static CompositeBezier3D RotateX(this CompositeBezier3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static CompositeBezier3D RotateY(this CompositeBezier3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static CompositeBezier3D RotateZ(this CompositeBezier3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static CompositeBezier3D Scale(this CompositeBezier3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static CompositeBezier3D Scale(this CompositeBezier3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static CompositeBezier3D Scale(this CompositeBezier3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static CompositeBezier3D Scale(this CompositeBezier3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static CompositeBezier3D ScaleX(this CompositeBezier3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static CompositeBezier3D ScaleY(this CompositeBezier3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static CompositeBezier3D ScaleZ(this CompositeBezier3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -2433,9 +2433,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static BSplineCurve2D RotateAbout(this BSplineCurve2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static BSplineCurve2D Rotate(this BSplineCurve2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static BSplineCurve2D Scale(this BSplineCurve2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static BSplineCurve2D Scale(this BSplineCurve2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static BSplineCurve2D Rotate(this BSplineCurve2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static BSplineCurve2D Scale(this BSplineCurve2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static BSplineCurve2D Scale(this BSplineCurve2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static BSplineCurve2D ScaleX(this BSplineCurve2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static BSplineCurve2D ScaleY(this BSplineCurve2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static BSplineCurve2D TranslateX(this BSplineCurve2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -2478,12 +2478,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static BSplineCurve3D Rotate(this BSplineCurve3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static BSplineCurve3D Rotate(this BSplineCurve3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static BSplineCurve3D RotateX(this BSplineCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static BSplineCurve3D RotateY(this BSplineCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static BSplineCurve3D RotateZ(this BSplineCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static BSplineCurve3D Scale(this BSplineCurve3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static BSplineCurve3D Scale(this BSplineCurve3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static BSplineCurve3D Scale(this BSplineCurve3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static BSplineCurve3D Scale(this BSplineCurve3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static BSplineCurve3D ScaleX(this BSplineCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static BSplineCurve3D ScaleY(this BSplineCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static BSplineCurve3D ScaleZ(this BSplineCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -2529,9 +2529,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static NurbsCurve2D RotateAbout(this NurbsCurve2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static NurbsCurve2D Rotate(this NurbsCurve2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static NurbsCurve2D Scale(this NurbsCurve2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static NurbsCurve2D Scale(this NurbsCurve2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static NurbsCurve2D Rotate(this NurbsCurve2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static NurbsCurve2D Scale(this NurbsCurve2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static NurbsCurve2D Scale(this NurbsCurve2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static NurbsCurve2D ScaleX(this NurbsCurve2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static NurbsCurve2D ScaleY(this NurbsCurve2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static NurbsCurve2D TranslateX(this NurbsCurve2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -2574,12 +2574,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static NurbsCurve3D Rotate(this NurbsCurve3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static NurbsCurve3D Rotate(this NurbsCurve3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static NurbsCurve3D RotateX(this NurbsCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static NurbsCurve3D RotateY(this NurbsCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static NurbsCurve3D RotateZ(this NurbsCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static NurbsCurve3D Scale(this NurbsCurve3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static NurbsCurve3D Scale(this NurbsCurve3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static NurbsCurve3D Scale(this NurbsCurve3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static NurbsCurve3D Scale(this NurbsCurve3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static NurbsCurve3D ScaleX(this NurbsCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static NurbsCurve3D ScaleY(this NurbsCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static NurbsCurve3D ScaleZ(this NurbsCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -2625,9 +2625,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static CatmullRomCurve2D RotateAbout(this CatmullRomCurve2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static CatmullRomCurve2D Rotate(this CatmullRomCurve2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static CatmullRomCurve2D Scale(this CatmullRomCurve2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static CatmullRomCurve2D Scale(this CatmullRomCurve2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static CatmullRomCurve2D Rotate(this CatmullRomCurve2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static CatmullRomCurve2D Scale(this CatmullRomCurve2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static CatmullRomCurve2D Scale(this CatmullRomCurve2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static CatmullRomCurve2D ScaleX(this CatmullRomCurve2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static CatmullRomCurve2D ScaleY(this CatmullRomCurve2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static CatmullRomCurve2D TranslateX(this CatmullRomCurve2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -2670,12 +2670,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static CatmullRomCurve3D Rotate(this CatmullRomCurve3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static CatmullRomCurve3D Rotate(this CatmullRomCurve3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static CatmullRomCurve3D RotateX(this CatmullRomCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static CatmullRomCurve3D RotateY(this CatmullRomCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static CatmullRomCurve3D RotateZ(this CatmullRomCurve3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static CatmullRomCurve3D Scale(this CatmullRomCurve3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static CatmullRomCurve3D Scale(this CatmullRomCurve3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static CatmullRomCurve3D Scale(this CatmullRomCurve3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static CatmullRomCurve3D Scale(this CatmullRomCurve3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static CatmullRomCurve3D ScaleX(this CatmullRomCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static CatmullRomCurve3D ScaleY(this CatmullRomCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static CatmullRomCurve3D ScaleZ(this CatmullRomCurve3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -2721,9 +2721,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static TcbSpline2D RotateAbout(this TcbSpline2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static TcbSpline2D Rotate(this TcbSpline2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static TcbSpline2D Scale(this TcbSpline2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static TcbSpline2D Scale(this TcbSpline2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static TcbSpline2D Rotate(this TcbSpline2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static TcbSpline2D Scale(this TcbSpline2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static TcbSpline2D Scale(this TcbSpline2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static TcbSpline2D ScaleX(this TcbSpline2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static TcbSpline2D ScaleY(this TcbSpline2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static TcbSpline2D TranslateX(this TcbSpline2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -2766,12 +2766,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static TcbSpline3D Rotate(this TcbSpline3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static TcbSpline3D Rotate(this TcbSpline3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static TcbSpline3D RotateX(this TcbSpline3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static TcbSpline3D RotateY(this TcbSpline3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static TcbSpline3D RotateZ(this TcbSpline3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static TcbSpline3D Scale(this TcbSpline3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static TcbSpline3D Scale(this TcbSpline3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static TcbSpline3D Scale(this TcbSpline3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static TcbSpline3D Scale(this TcbSpline3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static TcbSpline3D ScaleX(this TcbSpline3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static TcbSpline3D ScaleY(this TcbSpline3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static TcbSpline3D ScaleZ(this TcbSpline3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -2817,9 +2817,9 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)] public static LinearSpline2D RotateAbout(this LinearSpline2D self, Point2D center, Angle angle) => self.RotateAbout(center, new Ara3D.Geometry.Rotation2D(angle));
-        [MethodImpl(AggressiveInlining)] public static LinearSpline2D Rotate(this LinearSpline2D self, Angle angle) => self.RotateAbout(Ara3D.Geometry.Point2D.Origin, angle);
-        [MethodImpl(AggressiveInlining)] public static LinearSpline2D Scale(this LinearSpline2D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static LinearSpline2D Scale(this LinearSpline2D self, Number2 factors) => self.ScaleAbout(Ara3D.Geometry.Point2D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static LinearSpline2D Rotate(this LinearSpline2D self, Angle angle) => self.RotateAbout(default(Ara3D.Geometry.Point2D).Origin(), angle);
+        [MethodImpl(AggressiveInlining)] public static LinearSpline2D Scale(this LinearSpline2D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static LinearSpline2D Scale(this LinearSpline2D self, Number2 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point2D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static LinearSpline2D ScaleX(this LinearSpline2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static LinearSpline2D ScaleY(this LinearSpline2D self, Number factor) => self.Scale(new Ara3D.Geometry.Number2(((Number)1), factor));
         [MethodImpl(AggressiveInlining)] public static LinearSpline2D TranslateX(this LinearSpline2D self, Number distance) => self.Translate(Ara3D.Geometry.Vector2D.UnitX().Multiply(distance));
@@ -2862,12 +2862,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static LinearSpline3D Rotate(this LinearSpline3D self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static LinearSpline3D Rotate(this LinearSpline3D self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static LinearSpline3D RotateX(this LinearSpline3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static LinearSpline3D RotateY(this LinearSpline3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static LinearSpline3D RotateZ(this LinearSpline3D self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static LinearSpline3D Scale(this LinearSpline3D self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static LinearSpline3D Scale(this LinearSpline3D self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static LinearSpline3D Scale(this LinearSpline3D self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static LinearSpline3D Scale(this LinearSpline3D self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static LinearSpline3D ScaleX(this LinearSpline3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static LinearSpline3D ScaleY(this LinearSpline3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static LinearSpline3D ScaleZ(this LinearSpline3D self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -2912,12 +2912,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static LoftedSurface Rotate(this LoftedSurface self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static LoftedSurface Rotate(this LoftedSurface self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static LoftedSurface RotateX(this LoftedSurface self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static LoftedSurface RotateY(this LoftedSurface self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static LoftedSurface RotateZ(this LoftedSurface self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static LoftedSurface Scale(this LoftedSurface self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static LoftedSurface Scale(this LoftedSurface self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static LoftedSurface Scale(this LoftedSurface self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static LoftedSurface Scale(this LoftedSurface self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static LoftedSurface ScaleX(this LoftedSurface self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static LoftedSurface ScaleY(this LoftedSurface self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static LoftedSurface ScaleZ(this LoftedSurface self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -2962,12 +2962,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static BilinearPatch Rotate(this BilinearPatch self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static BilinearPatch Rotate(this BilinearPatch self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static BilinearPatch RotateX(this BilinearPatch self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static BilinearPatch RotateY(this BilinearPatch self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static BilinearPatch RotateZ(this BilinearPatch self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static BilinearPatch Scale(this BilinearPatch self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static BilinearPatch Scale(this BilinearPatch self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static BilinearPatch Scale(this BilinearPatch self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static BilinearPatch Scale(this BilinearPatch self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static BilinearPatch ScaleX(this BilinearPatch self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static BilinearPatch ScaleY(this BilinearPatch self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static BilinearPatch ScaleZ(this BilinearPatch self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -3012,12 +3012,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static BezierPatch Rotate(this BezierPatch self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static BezierPatch Rotate(this BezierPatch self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static BezierPatch RotateX(this BezierPatch self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static BezierPatch RotateY(this BezierPatch self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static BezierPatch RotateZ(this BezierPatch self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static BezierPatch Scale(this BezierPatch self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static BezierPatch Scale(this BezierPatch self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static BezierPatch Scale(this BezierPatch self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static BezierPatch Scale(this BezierPatch self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static BezierPatch ScaleX(this BezierPatch self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static BezierPatch ScaleY(this BezierPatch self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static BezierPatch ScaleZ(this BezierPatch self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -3062,12 +3062,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static BSplineSurface Rotate(this BSplineSurface self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static BSplineSurface Rotate(this BSplineSurface self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static BSplineSurface RotateX(this BSplineSurface self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static BSplineSurface RotateY(this BSplineSurface self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static BSplineSurface RotateZ(this BSplineSurface self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static BSplineSurface Scale(this BSplineSurface self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static BSplineSurface Scale(this BSplineSurface self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static BSplineSurface Scale(this BSplineSurface self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static BSplineSurface Scale(this BSplineSurface self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static BSplineSurface ScaleX(this BSplineSurface self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static BSplineSurface ScaleY(this BSplineSurface self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static BSplineSurface ScaleZ(this BSplineSurface self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -3112,12 +3112,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static NurbsSurface Rotate(this NurbsSurface self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static NurbsSurface Rotate(this NurbsSurface self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static NurbsSurface RotateX(this NurbsSurface self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static NurbsSurface RotateY(this NurbsSurface self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static NurbsSurface RotateZ(this NurbsSurface self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static NurbsSurface Scale(this NurbsSurface self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static NurbsSurface Scale(this NurbsSurface self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static NurbsSurface Scale(this NurbsSurface self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static NurbsSurface Scale(this NurbsSurface self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static NurbsSurface ScaleX(this NurbsSurface self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static NurbsSurface ScaleY(this NurbsSurface self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static NurbsSurface ScaleZ(this NurbsSurface self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -3162,12 +3162,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static SubdivisionSurface Rotate(this SubdivisionSurface self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static SubdivisionSurface Rotate(this SubdivisionSurface self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static SubdivisionSurface RotateX(this SubdivisionSurface self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static SubdivisionSurface RotateY(this SubdivisionSurface self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static SubdivisionSurface RotateZ(this SubdivisionSurface self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static SubdivisionSurface Scale(this SubdivisionSurface self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static SubdivisionSurface Scale(this SubdivisionSurface self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static SubdivisionSurface Scale(this SubdivisionSurface self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static SubdivisionSurface Scale(this SubdivisionSurface self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static SubdivisionSurface ScaleX(this SubdivisionSurface self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static SubdivisionSurface ScaleY(this SubdivisionSurface self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static SubdivisionSurface ScaleZ(this SubdivisionSurface self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));
@@ -3212,12 +3212,12 @@ namespace Ara3D.Geometry
             }
         }
 
-        [MethodImpl(AggressiveInlining)] public static HalfEdgeMesh Rotate(this HalfEdgeMesh self, Quaternion rotation) => self.RotateAbout(Ara3D.Geometry.Point3D.Origin, rotation);
+        [MethodImpl(AggressiveInlining)] public static HalfEdgeMesh Rotate(this HalfEdgeMesh self, Quaternion rotation) => self.RotateAbout(default(Ara3D.Geometry.Point3D).Origin(), rotation);
         [MethodImpl(AggressiveInlining)] public static HalfEdgeMesh RotateX(this HalfEdgeMesh self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationX(angle));
         [MethodImpl(AggressiveInlining)] public static HalfEdgeMesh RotateY(this HalfEdgeMesh self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationY(angle));
         [MethodImpl(AggressiveInlining)] public static HalfEdgeMesh RotateZ(this HalfEdgeMesh self, Angle angle) => self.Rotate(Ara3D.Geometry.Quaternion.CreateRotationZ(angle));
-        [MethodImpl(AggressiveInlining)] public static HalfEdgeMesh Scale(this HalfEdgeMesh self, Number factor) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factor);
-        [MethodImpl(AggressiveInlining)] public static HalfEdgeMesh Scale(this HalfEdgeMesh self, Number3 factors) => self.ScaleAbout(Ara3D.Geometry.Point3D.Origin, factors);
+        [MethodImpl(AggressiveInlining)] public static HalfEdgeMesh Scale(this HalfEdgeMesh self, Number factor) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factor);
+        [MethodImpl(AggressiveInlining)] public static HalfEdgeMesh Scale(this HalfEdgeMesh self, Number3 factors) => self.ScaleAbout(default(Ara3D.Geometry.Point3D).Origin(), factors);
         [MethodImpl(AggressiveInlining)] public static HalfEdgeMesh ScaleX(this HalfEdgeMesh self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(factor, ((Number)1), ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static HalfEdgeMesh ScaleY(this HalfEdgeMesh self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), factor, ((Number)1)));
         [MethodImpl(AggressiveInlining)] public static HalfEdgeMesh ScaleZ(this HalfEdgeMesh self, Number factor) => self.Scale(new Ara3D.Geometry.Number3(((Number)1), ((Number)1), factor));

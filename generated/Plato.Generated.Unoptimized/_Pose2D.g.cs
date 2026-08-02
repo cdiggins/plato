@@ -84,7 +84,7 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)]  public static implicit operator Frame2D(Pose2D pose) => pose.Frame2D();
-        [MethodImpl(AggressiveInlining)] public static Pose2D Identity() => (Ara3D.Geometry.Point2D.Origin, Ara3D.Geometry.Rotation2D.Identity());
+        [MethodImpl(AggressiveInlining)] public static Pose2D Identity() => (default(Ara3D.Geometry.Point2D).Origin(), Ara3D.Geometry.Rotation2D.Identity());
         [MethodImpl(AggressiveInlining)] public Point2D Multiply(Point2D p) => p.Transform(this);
         [MethodImpl(AggressiveInlining)]  public static Point2D operator *(Pose2D pose, Point2D p) => pose.Multiply(p);
         [MethodImpl(AggressiveInlining)] public Vector2D Multiply(Vector2D v) => v.Transform(this);
@@ -94,7 +94,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Pose2D Lerp(Pose2D b, Number t) => (this.Position.Lerp(b.Position, t), this.Rotation.Lerp(b.Rotation, t));
         [MethodImpl(AggressiveInlining)] public Matrix3x2 Matrix3x2() => this.Rotation.Matrix3x2().Multiply(Ara3D.Geometry.Matrix3x2.CreateTranslation(this.Position.PositionVector()));
         [MethodImpl(AggressiveInlining)]  public static implicit operator Matrix3x2(Pose2D pose) => pose.Matrix3x2();
-        [MethodImpl(AggressiveInlining)] public TrsTransform2D TrsTransform2D() => (this.Position.PositionVector(), this.Rotation, Ara3D.Geometry.Number2.One);
+        [MethodImpl(AggressiveInlining)] public TrsTransform2D TrsTransform2D() => (this.Position.PositionVector(), this.Rotation, default(Ara3D.Geometry.Number2).One());
         [MethodImpl(AggressiveInlining)]  public static implicit operator TrsTransform2D(Pose2D pose) => pose.TrsTransform2D();
 
         // Unimplemented interface functions

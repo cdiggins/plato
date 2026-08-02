@@ -37,7 +37,7 @@ namespace Ara3D.Geometry
             var _var2816 = self;
             {
                 var _var2815 = self;
-                return self.CornerCount().MapRange((c)  => new Ara3D.Geometry.CornerIndex(c)).Reduce(((Integer)0).Repeat(Ara3D.Geometry.Point3D.Origin), (acc, c)  => _var2815.IsCanonicalCorner(c) ? acc.Append(_var2816.CornerLerp(c, ((Number)0.5))) : acc);
+                return self.CornerCount().MapRange((c)  => new Ara3D.Geometry.CornerIndex(c)).Reduce(((Integer)0).Repeat(default(Ara3D.Geometry.Point3D).Origin()), (acc, c)  => _var2815.IsCanonicalCorner(c) ? acc.Append(_var2816.CornerLerp(c, ((Number)0.5))) : acc);
             }
         }
 

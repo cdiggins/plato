@@ -122,7 +122,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Vector3D Transform(this Vector3D v, Rotor3D r) => v.Transform(r.Quaternion());
         [MethodImpl(AggressiveInlining)] public static Vector3D Transform(this Vector3D v, TrsTransform3D t) => v.Multiply(t.Scale).Transform(t.Rotation);
         [MethodImpl(AggressiveInlining)] public static Direction2D Transform(this Direction2D d, Rotation2D r) => new Ara3D.Geometry.Direction2D(d.Vector.Transform(r));
-        [MethodImpl(AggressiveInlining)] public static Quaternion LookRotation(this Direction3D forward, Direction3D up) => Ara3D.Geometry.Matrix4x4.CreateWorld(Ara3D.Geometry.Point3D.Origin, forward.Vector, up.Vector).Quaternion();
+        [MethodImpl(AggressiveInlining)] public static Quaternion LookRotation(this Direction3D forward, Direction3D up) => Ara3D.Geometry.Matrix4x4.CreateWorld(default(Ara3D.Geometry.Point3D).Origin(), forward.Vector, up.Vector).Quaternion();
         [MethodImpl(AggressiveInlining)] public static Direction3D Transform(this Direction3D d, Quaternion q) => new Ara3D.Geometry.Direction3D(d.Vector.Transform(q));
     }
 }

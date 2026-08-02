@@ -19,9 +19,7 @@ still not for hand editing (`// DO NOT EDIT`) — a change comes from rerunning 
 
 The wide project is the same recipe over every *shipping* tier: `stdlib/future` (not shipping) and
 `stdlib/tests` (test programs, not library) are excluded. Roots are enumerated top-directory-only
-and compiled as one program, so the tier subset is expressed by naming folders. Its `.csproj` file
-is `Plato.GeneratedUnoptimized.csproj` (no dot before `Unoptimized`), which does not match its
-folder name — deliberate, as requested when it was created.
+and compiled as one program, so the tier subset is expressed by naming folders.
 
 Both keep scalars as **wrapper structs** — `Number`, `Integer`, `Boolean`, `Character`, `String`
 stay distinct types. That is now the only scalar representation

@@ -587,6 +587,30 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         return true;
     }
 
+    // Emits a call written type-level (`Number3.One`) whose callee is an INSTANCE member, as
+    // `default({ns}.{T}).{Name}(rest)`. Returns false unless the receiver is a type reference AND
+    // the callee takes a named (value) receiver: a `_` receiver is genuinely type-level and emits
+    // as a static, handwritten or generated, which the plain member form already gets right.
+    private bool TryWriteTypeRefInstanceCall(TirCall call)
+    {
+        var callee = call.Callee;
+        var args = call.Args;
+        if (callee == null || args.Count == 0 || callee.NumParameters != args.Count)
+            return false;
+        if (callee.GetParameterName(0) == "_")
+            return false;
+        if (TirRewrite.StripCoerce(args[0]) is not TirTypeRef recvT)
+            return false;
+        var recvTypeName = recvT.TypeDef?.Name;
+        if (recvTypeName == null || !_tw.Writer.IsConcreteTypeName(recvTypeName))
+            return false;
+
+        Write($"default({_tw.Writer.Namespace}.{recvTypeName}).{call.Name}(");
+        WriteArgs(args.Skip(1));
+        Write(")");
+        return true;
+    }
+
     private void WriteCall(TirCall call)
     {
         // Under scalar lowering every scalar-returning-wrapper call site already carries an explicit
@@ -643,6 +667,16 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // ignored receiver argument is dropped. A type-ref receiver already reads as the type and
         // falls through to the generic member form below.
         if (TryWriteTypeLevelCall(call))
+            return;
+
+        // The MIRROR case: a TYPE-REF receiver on a member whose callee declares a NAMED (value)
+        // receiver. `Zero` / `One` / `Origin` are deliberately INSTANCE obligations - a runtime-arity
+        // VectorN takes its arity from the receiver, so the interface is shaped for that implementor
+        // (tracker/decisions/2026-07-29-static-concept-members-corrected.md) - yet the stdlib reads
+        // them type-level (`Number3.One`, `Point3D.Origin`, `Vector3D.Zero`). Written literally that
+        // is a C# method group, so the receiver becomes `default(T)`: for a fixed-arity type the
+        // member ignores the receiver's VALUE, which is exactly what `default` supplies.
+        if (TryWriteTypeRefInstanceCall(call))
             return;
 
         // A lowered-loop result temp is a C# ARRAY: Count reads become Length.

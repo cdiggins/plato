@@ -80,7 +80,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)]  public static Point2D operator *(RotationAbout2D r, Point2D p) => r.Multiply(p);
         [MethodImpl(AggressiveInlining)] public Vector2D Multiply(Vector2D v) => v.Transform(this);
         [MethodImpl(AggressiveInlining)]  public static Vector2D operator *(RotationAbout2D r, Vector2D v) => r.Multiply(v);
-        [MethodImpl(AggressiveInlining)] public static RotationAbout2D Identity() => (Ara3D.Geometry.Rotation2D.Identity(), Ara3D.Geometry.Point2D.Origin);
+        [MethodImpl(AggressiveInlining)] public static RotationAbout2D Identity() => (Ara3D.Geometry.Rotation2D.Identity(), default(Ara3D.Geometry.Point2D).Origin());
         [MethodImpl(AggressiveInlining)] public Pose2D Pose2D(){
             var c = this.Center.PositionVector();
             return (c.Subtract(c.Transform(this.Rotation)).ToPoint(), this.Rotation);
