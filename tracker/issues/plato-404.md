@@ -2,14 +2,14 @@
 id: plato-404
 title: plato_simplify SIM001 rewrites tuples outside return position, breaking the type check
 type: bug
-status: ready
+status: done
 priority: p2
 effort: S
 risk: low
 area: plato
 sprint: 
 created: 2026-08-02
-closed:
+closed: 2026-08-02
 links: []
 ---
 

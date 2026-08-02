@@ -28,7 +28,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-373](issues/plato-373.md) | Ellipse.Perimeter (Ramanujan II) is 4e-4 off for flattened ellipses | bug | p2 | S | low | plato | ready |  |
 | [plato-374](issues/plato-374.md) | Interface-generic law bodies mix the interface default with the type's override | bug | p2 | M | low | plato | ready |  |
 | [plato-389](issues/plato-389.md) | plato_check has no tier awareness: future and stdlib-tests count toward its verdict | bug | p2 | S | low | plato | ready |  |
-| [plato-404](issues/plato-404.md) | plato_simplify SIM001 rewrites tuples outside return position, breaking the type check | bug | p2 | S | low | plato | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [repo-401](issues/repo-401.md) | record-gates.py --full passes the retired --scalar=float flag | bug | p3 | S | low | repo | ready |  |
@@ -42,7 +41,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-365](issues/plato-365.md) | Retire non-scalar primitives: PrimitiveTypes = scalars only, System.Numerics behind intrinsic bridge | debt | p2 | M | med | plato | idea |  |
 | [plato-370](issues/plato-370.md) | Double-precision scalars (approach must be re-designed — TirScalarLowerer is gone) | feature | p2 | L | med | plato | idea |  |
 | [plato-390](issues/plato-390.md) | Extract Plato.Verify: one policy engine behind the gates, the tests and plato_check | feature | p2 | L | med | plato | idea |  |
-| [plato-407](issues/plato-407.md) | Simplify rules for duplicated bodies an interface already covers | idea | p2 | M | low | plato | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
 | [plato-235](issues/plato-235.md) | GLSL overload erasure picks the winner by emission order, not by intent | problem | p3 | M | med | plato | idea |  |
 | [plato-334](issues/plato-334.md) | Query/solve result types share no interface: success flag spelled four ways | debt | p3 | M | low | plato | idea |  |

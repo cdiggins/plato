@@ -2,14 +2,14 @@
 id: plato-407
 title: Simplify rules for duplicated bodies an interface already covers
 type: idea
-status: idea
+status: done
 priority: p2
 effort: M
 risk: low
 area: plato
 sprint: 
 created: 2026-08-02
-closed:
+closed: 2026-08-02
 links: []
 ---
 

@@ -3,6 +3,8 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-08-02 — [plato-407](issues/plato-407.md) — Simplify rules for duplicated bodies an interface already covers — done (79cde6b)
+- 2026-08-02 — [plato-404](issues/plato-404.md) — plato_simplify SIM001 rewrites tuples outside return position, breaking the type check — done (88888d7)
 - 2026-08-02 — [plato-406](issues/plato-406.md) — plato_check style gate produced findings for retired rules, then stopped — done (studio 72472f8)
 - 2026-08-02 — [plato-405](issues/plato-405.md) — plato_simplify has no compact result mode: a full-corpus run exceeds the MCP result budget — done (studio d7651d1)
 - 2026-08-02 — [compiler-403](issues/compiler-403.md) — ExistentialConceptCheckerTests point at pre-rename fixture filenames — done (051f538) - fixtures renamed to the post-sweep interface names; PlatoTests 247/247
