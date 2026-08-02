@@ -1,13 +1,17 @@
-# Plato library map — the runtime and the generated libraries (2026-07-31)
+# Plato library map — the runtime and the generated libraries (2026-08-02)
 
 > The one-page answer to "what are all these Plato.* things and which one is real?" Read this before
 > touching the generated libraries or the intrinsics runtime.
 
 ## TL;DR
 
-There is now exactly one shape. The old wrapper-scalar, property-bearing shape (**V1**) was deleted
-from this repo on 2026-07-31, along with its freeze. What remains is native scalars (`float`),
-extension methods, no properties, `System.Numerics`-backed and SIMD-capable.
+There is now exactly one shape: **wrapper scalars** (`Number` / `Integer` / `Boolean` /
+`Character` / `String` stay distinct structs), extension methods, no properties or indexers,
+`System.Numerics`-backed. The old property-bearing V1 shape was deleted from this repo on
+2026-07-31 along with its freeze; scalar erasure to native `float` — the shape this paragraph used
+to describe — was retired the day after
+([decision](../tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md)),
+and `--scalar=` is now a hard CLI error.
 
 Nothing in this repo is frozen. `generated/` is ordinary cached output — regenerate it whenever you
 like; staleness is acceptable and there is no byte-identity gate.
@@ -65,11 +69,17 @@ one.
 
 | Gate | Command | Run from | Protects |
 |---|---|---|---|
-| Forward stdlib | `tools/check-stdlib-fast.ps1` | plato | lint clean + checker diagnostic ratchet |
+| Forward stdlib (inner loop) | `tools/check-stdlib-fast.ps1` | plato | lint clean + checker diagnostic ratchet + `types-and-concepts.txt` freshness |
+| Forward stdlib (warm) | MCP `plato_check` | server | same gates, cached in the running navigation server; see the `plato-mcp` skill |
 | Forward conformance | `tools/regen-forward-conformance.ps1` | studio | stdlib tiers + law packet type-check |
 | Compiler unit tests | `dotnet test tests/PlatoTests` | plato | checker/optimizer behavior, intrinsic obligations |
-| Everything | `tools/check-all.ps1` | studio | all of the above + lint + SDK build + GeometryTests |
+| Studio battery | `tools/check-all.ps1` | studio | frozen-V1 tripwire + both `lint --strict` passes + SDK build + GeometryTests. **Not a superset** — it runs none of the rows above. |
 
-`tools/check-frozen-v1.ps1` and its `frozen-v1.sha256` manifest are **retired**. They still exist in
-the studio checkout and will fail there against the deleted files until someone removes them and
-their `check-all.ps1` row.
+`tools/check-frozen-v1.ps1` (studio) is **not** retired. Its third root — this repo's V1 runtime
+copy — went away when V1 was deleted, but the two it still guards are the `ara3d-sdk` copies
+Ara3D.Studio builds against, so the gate passes and remains meaningful. Nothing in *this* repo is
+frozen; the `check-all.ps1` row protects the other checkout.
+
+`check-all.ps1` does not run the Plato-repo gates. It runs the frozen-V1 tripwire, both `lint
+--strict` passes, and the SDK build + GeometryTests. `check-stdlib-fast.ps1`, `dotnet test
+tests/PlatoTests` and `regen-forward-conformance.ps1` are separate commands you run yourself.

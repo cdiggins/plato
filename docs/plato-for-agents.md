@@ -2,7 +2,10 @@
 
 Plato is a small, pure, statically typed language for geometry and numeric libraries. In the [Ara 3D studio](https://github.com/ara3d/studio) monorepo it lives at `submodules/Plato/`. Write algorithms once in `.plato` files; the compiler emits idiomatic libraries for multiple targets.
 
-**Why agents care:** the full language plus standard library is ~34K tokens — small enough to hold in context. One declaration fans out into hundreds of generated members across types and targets, so global consistency is a single edit, not a multi-file refactor.
+**Why agents care:** the whole language plus its standard-library vocabulary fits in one context
+window — the compressed index is [`stdlib/types-and-concepts.txt`](../stdlib/types-and-concepts.txt),
+one line per declaration. One declaration fans out into many generated members across types and
+targets, so global consistency is a single edit, not a multi-file refactor.
 
 ---
 
@@ -33,10 +36,11 @@ library AngularCurves2D {
 
 ## Source layout
 
-Paths below are relative to this submodule (`submodules/Plato/`).
+Paths below are relative to this repo's root (also checked out as `submodules/Plato/` in studio).
 
-**Stdlib mapping:** `stdlib` = forward vocabulary (the next-generation library); `stdlib-legacy` =
-shipping generation (drives `Plato.Generated` / Studio).
+**Stdlib mapping:** `stdlib` = forward vocabulary, and the only library this repo generates C# from;
+`legacy/stdlib-legacy` = the older generation whose emitted C# now lives, checked in and frozen, in
+the `ara3d-sdk` repo. Do not confuse the two.
 
 In `stdlib/`, one file holds exactly one **kind** of declaration, with no cap on how many:
 `<stem>.plato` = types, `<stem>.concepts.plato` = interface declarations (filename stem kept),
@@ -47,12 +51,10 @@ In `stdlib/`, one file holds exactly one **kind** of declaration, with no cap on
 |------|---------|
 | `stdlib/` | Forward stdlib vocabulary — types, interfaces, **and** library bodies. New *vocabulary* goes here. Read its [`README`](../stdlib/README.md), [`CONVENTIONS`](../stdlib/CONVENTIONS.md), [`STYLE_GUIDE`](../stdlib/STYLE_GUIDE.md), and [`LIBRARIES`](../stdlib/LIBRARIES.md) before editing. |
 | `stdlib/tests/` | Forward law packet (`Law_*`) for `stdlib/`. Inside the folder, but **not a tier** — the library's gates name the tiers, so they never see it. |
-| `legacy/stdlib-legacy/*.plato` | Shipping standard library (~3,500 lines → 11,000+ lines of C#). |
-| `stdlib-legacy-tests/` | Law/witness tests only — **never merge into `stdlib-legacy`**. |
-| `legacy/stdlib-snapshot-2026-07-09/` | Frozen pre-refactor snapshot — reference only. |
+| `legacy/stdlib-legacy/*.plato` | Shipping standard library. Writable; no longer a codegen source in this repo. |
 | `demos/plato-src/geometry.plato` | Curated demo subset for TS/Rust browsers (not the full stdlib). |
 | `src/Plato.CLI/` | Compiler entry point. |
-| `Plato.ContextExport/` | Compact export of types + interfaces for agent context (`tools/export-types-context.bat`). |
+| `src/Plato.ContextExport/` | Compact export of types + interfaces for agent context (`tools/export-types-context.bat`). |
 | `stdlib/types-and-concepts.txt` | Generated index of every type + interface in the shipping `stdlib/` tiers (`future` excluded), one compressed declaration per line, every interface first and then every type, each group sorted by name. Regeneration is mandatory when `stdlib/` changes — see [`stdlib/AGENTS.md`](../stdlib/AGENTS.md). |
 | `docs/types-and-concepts-context.txt` | Generated stdlib-legacy context (types + interfaces only); same regen script. |
 | `writers/Plato.TypeScriptWriter/` | TypeScript backend (POC). |
@@ -65,28 +67,49 @@ In `stdlib/`, one file holds exactly one **kind** of declaration, with no cap on
 
 ## How codegen works
 
-All backends share the same pipeline: parse `.plato` → build AST → compile (resolve symbols) → walk compilation with a language-specific writer.
+All backends share the same front end: parse `.plato` → build AST → compile (resolve symbols) →
+type-check into the Typed IR (Normalize → Constrain → Solve → Elaborate → Monomorphize) → walk the
+compilation with a language-specific writer. Every C# body is rendered from the monomorphized TIR
+by `TirCSharpBodyWriter`; there is no second body writer.
 
 ```
-stdlib-legacy/*.plato  →  Plato.CLI  →  Plato.CSharpWriter   →  ara3d-sdk/src/Plato.Generated/
-                                 →  Plato.TypeScriptWriter →  plato.g.ts
-                                 →  Plato.RustWriter       →  plato.rs
-                                 →  Plato.GlslWriter       →  plato.glsl
-                                 →  Plato.CppWriter        →  plato.hpp / plato.cu
+stdlib/<tier>/*.plato  →  Plato.CLI  →  Plato.CSharpWriter     →  one .g.cs per type
+                                     →  Plato.TypeScriptWriter →  plato.g.ts
+                                     →  Plato.RustWriter       →  plato.rs
+                                     →  Plato.GlslWriter       →  plato.glsl
+                                     →  Plato.CppWriter        →  plato.hpp / plato.cu
 ```
 
-### C# (production)
+### C# (the live recipe)
 
-- **Consumer:** `ara3d-sdk/src/Plato.Generated/` — checked-in output that backs `Ara3D.Geometry`.
-- **Command** (from studio repo root): `.\tools\regen-plato.ps1` (diff-gates byte identity; `-Apply` writes changes). Or directly:
+- **Consumer:** [`generated/Plato.Generated.Foundation.Unoptimized`](../generated/README.md) — a
+  buildable project whose `.g.cs` files are ordinary cached output. Not a golden: there is no
+  byte-identity gate and staleness is acceptable. Regenerating is the only way to change it.
+- **Command** (from this repo's root, output folder first cleared of `*.g.cs`):
 
 ```bat
-dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
-  submodules\Plato\stdlib-legacy ara3d-sdk\src\Plato.Generated
+dotnet run --project src\Plato.CLI -c Release -- ^
+  stdlib\foundation generated\Plato.Generated.Foundation.Unoptimized ^
+  --csharp-style=extensions
 ```
 
-- **Output:** one `.g.cs` per type, packed structs, aggressive inlining, `partial` for hand extensions. Flags: `--csharp-style=default|extensions`, `--optimize`, `--scalar=wrapper|float`.
-- **Intrinsics:** the runtime is `src/Plato.Intrinsics/`; it must supply every bodiless signature in `stdlib/foundation/intrinsics.library.plato` (gate: `IntrinsicObligationTests`). The old V1 runtime was deleted 2026-07-31; the copy in `ara3d-sdk` belongs to that repo.
+- **Output:** one `.g.cs` per type, `partial` for hand extensions, extension methods (one static
+  class per Plato library), and **no properties or indexers** — every no-arg member is a method,
+  unconditionally
+  ([decision](../tracker/decisions/2026-08-01-property-free-emission-is-unconditional.md)).
+- **Flags.** `--csharp-style=extensions` is the only accepted value (the default style went at C4).
+  `--scalar=…` is a **hard error**: scalars are always wrapper structs
+  ([decision](../tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md)).
+  Optional: `--optimize` (component unrolling), `--optimize-arrays`, `--inline`, `--loops`,
+  `--static-abstract`, and the diagnostics-only `--dump-tir=<dir>` / `--inline-report`.
+  `--out=<folder>` frees every positional argument to be an input root, which is how several tiers
+  are compiled as one program.
+- **`ara3d-sdk/src/Plato.Generated/` is not generated from here any more.** It is a checked-in copy
+  of the old V1 shape owned by the `ara3d-sdk` repo and frozen by studio's
+  `tools/check-frozen-v1.ps1`. The `regen-plato.ps1` script that used to re-derive it is gone; see
+  [`plato-library-map.md`](plato-library-map.md).
+- **Intrinsics:** the runtime is `src/Plato.Intrinsics/`; it must supply every bodiless signature in
+  `stdlib/foundation/intrinsics.library.plato` (gate: `IntrinsicObligationTests`).
 
 ### TypeScript (proof of concept)
 
@@ -94,7 +117,7 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
 - **Command:**
 
 ```bat
-dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
+dotnet run --project src\Plato.CLI -c Release -- ^
   <inputFolder> <outputFolder> --typescript
 ```
 
@@ -106,7 +129,7 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
 - **Command:**
 
 ```bat
-dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
+dotnet run --project src\Plato.CLI -c Release -- ^
   <inputFolder> <outputFolder> --rust
 ```
 
@@ -118,7 +141,7 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
 - **Command:**
 
 ```bat
-dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
+dotnet run --project src\Plato.CLI -c Release -- ^
   <inputFolder> <outputFolder> --glsl
 ```
 
@@ -130,9 +153,9 @@ dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
 - **Command:**
 
 ```bat
-dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
+dotnet run --project src\Plato.CLI -c Release -- ^
   <inputFolder> <outputFolder> --cpp
-dotnet run --project submodules\Plato\Plato.CLI -c Release -- ^
+dotnet run --project src\Plato.CLI -c Release -- ^
   <inputFolder> <outputFolder> --cuda
 ```
 
@@ -144,37 +167,50 @@ TS and Rust backends compile a curated demo library and pass a shared conformanc
 
 ## Commands agents use
 
-Run from the studio repo root unless noted.
+Run from **this repo's** root. Only `check-all.ps1` and `regen-forward-conformance.ps1` still live
+in the studio checkout.
 
 ```bat
-:: Regenerate production C#
-.\tools\regen-plato.ps1              :: check drift (exit 1 if changed)
-.\tools\regen-plato.ps1 -Apply       :: write + sync intrinsics
+:: Inner loop after every edit batch: lint + checker ratchet + index freshness
+.\tools\check-stdlib-fast.ps1
 
-:: Lint plato source (parse + resolve, no output)
-dotnet run --project submodules\Plato\Plato.CLI -c Release -- lint submodules\Plato\stdlib-legacy
+:: Faster still when the Plato Navigation MCP server is up: plato_check runs the same
+:: gates warm, inside the server, against cached ASTs (see the `plato-mcp` skill).
 
-:: Export full stdlib context for agents (tracked doc + gitignored stats)
-submodules\Plato\tools\export-types-context.bat
-::   -> submodules\Plato\stdlib\types-and-concepts.txt
-::   -> submodules\Plato\docs\types-and-concepts-context.txt
-::   -> submodules\Plato\.temp\types-and-concepts-context-stats.txt
+:: Lint plato source directly (parse + resolve, no output). Each root is enumerated
+:: TOP-DIRECTORY-ONLY, so tiers are named explicitly — `lint stdlib` alone finds nothing.
+dotnet run --project src\Plato.CLI -c Release -- ^
+  lint stdlib\foundation stdlib\geometry stdlib\graphics --strict
+
+:: Export the stdlib index for agent context (tracked docs + gitignored stats)
+tools\export-types-context.bat
+::   -> stdlib\types-and-concepts.txt          (forward tiers; regeneration is MANDATORY
+::                                              in any commit that changes stdlib/)
+::   -> docs\types-and-concepts-context.txt    (stdlib-legacy)
+::   -> .temp\types-and-concepts-context-stats.txt
 ```
 
-**Caveat:** `src/Plato.CLI` in generate mode **exits 0 even on compile errors** — always verify output file count or build the result.
+**Exit codes.** Generate mode returns 1 on a parse failure, an unresolvable input folder, an
+incomplete compilation, or a retired flag (`--scalar=`, `--csharp-style` other than `extensions`).
+It still returns **0** when individual bodies fail to lower: those are emitted as throwing stubs and
+logged as `DEGRADED bodies` on the console. Read that line — a green exit is not a clean library.
 
 ---
 
 ## Rules when editing Plato
 
-1. **`legacy/stdlib-legacy/` is WRITABLE** as of 2026-07-09 (content-leads refactor; the Phase-4 freeze is retired).
-   Edit freely; the frozen pre-refactor snapshot lives in `legacy/stdlib-snapshot-2026-07-09/` (reference only). Plan:
-   [`docs/plato-execution-plan-2026-07-09.md`](plato-execution-plan-2026-07-09.md).
-2. **Do not hand-edit** `ara3d-sdk/src/Plato.Generated/` — regenerate via `regen-plato.ps1`.
-3. **Known bugs are being fixed**, tracked in `tests/conformance/.../KnownFailures.json`; see [`docs/plato-library-review.md`](plato-library-review.md).
+1. **Nothing in this repo is frozen.** `legacy/stdlib-legacy/` is writable (2026-07-09), and
+   `generated/` is ordinary cached output — the golden diff-gate and the V1 runtime freeze were
+   retired 2026-07-30 / 2026-07-31. The pre-refactor snapshot and the legacy law packet were
+   deleted; recover them from git history if you need them.
+2. **Do not hand-edit any `.g.cs`** — a change comes from rerunning the recipe. That includes
+   `ara3d-sdk/src/Plato.Generated/`, which is owned by the `ara3d-sdk` repo and is not regenerated
+   from here at all.
+3. **Known bugs are being fixed**, tracked in
+   `tests/conformance/Plato.ForwardConformanceTests/KnownFailures.json` — fixing a bug means
+   removing its entry in the same change; see [`docs/plato-library-review.md`](plato-library-review.md).
 4. **Do not touch** `parakeet/` (nested submodule).
-5. Conformance expected result: **142 pass / 36 ignored-known / 0 fail** (`.\tools\check-all.ps1` from studio root).
-6. Prefer `+`/`*`/`-`/`/` for ordinary arithmetic in library bodies; keep named
+5. Prefer `+`/`*`/`-`/`/` for ordinary arithmetic in library bodies; keep named
    `Add`/`Multiply`/… at definition sites — see [`stdlib/STYLE_GUIDE.md`](../stdlib/STYLE_GUIDE.md)
    (Arithmetic spelling).
 
@@ -190,7 +226,7 @@ submodules\Plato\tools\export-types-context.bat
 | [`archive/plato-roadmap.md`](archive/plato-roadmap.md) | Compiler and library roadmap (historical) |
 | [`plato-library-review.md`](plato-library-review.md) | Verified stdlib bug catalog |
 | [`../tracker/BACKLOG.md`](../tracker/BACKLOG.md) | Open Plato work items |
-| [`../Plato.TypeScriptWriter/README.md`](../writers/Plato.TypeScriptWriter/README.md) | TS output model |
-| [`../Plato.RustWriter/README.md`](../writers/Plato.RustWriter/README.md) | Rust output model |
-| [`../Plato.GlslWriter/README.md`](../writers/Plato.GlslWriter/README.md) | GLSL output model |
-| [`../Plato.CppWriter/README.md`](../writers/Plato.CppWriter/README.md) | C++ / CUDA output model |
+| [`../writers/Plato.TypeScriptWriter/README.md`](../writers/Plato.TypeScriptWriter/README.md) | TS output model |
+| [`../writers/Plato.RustWriter/README.md`](../writers/Plato.RustWriter/README.md) | Rust output model |
+| [`../writers/Plato.GlslWriter/README.md`](../writers/Plato.GlslWriter/README.md) | GLSL output model |
+| [`../writers/Plato.CppWriter/README.md`](../writers/Plato.CppWriter/README.md) | C++ / CUDA output model |
