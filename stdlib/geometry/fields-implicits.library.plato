@@ -635,14 +635,9 @@ library FieldsImplicits
     RootNode(self: SdfTree3D): SdfNode3D
         => self.Nodes[self.Root.Value];
 
-    // Node indices order by position in the node array, so a tree's nodes are
-    // already in a valid evaluation order.
-    LessThanOrEquals(a: SdfNodeIndex, b: SdfNodeIndex): Boolean
-        => a.Value <= b.Value;
-
-    // A node index hashes as its underlying position.
-    Hash(self: SdfNodeIndex): Integer
-        => self.Value.Hash;
+    // SdfNodeIndex implements IIndex, so its ordering and hash are the derived
+    // IIndex bodies in `collections.library.plato`: node indices order by
+    // position in the node array, which is already a valid evaluation order.
 
     //==
     // # IField expression graphs
@@ -657,13 +652,8 @@ library FieldsImplicits
     RootNode(self: ScalarFieldGraph3D): ScalarFieldNode3D
         => self.Nodes[self.Root.Value];
 
-    // IField node indices order by position in the node array.
-    LessThanOrEquals(a: FieldNodeIndex, b: FieldNodeIndex): Boolean
-        => a.Value <= b.Value;
-
-    // A field node index hashes as its underlying position.
-    Hash(self: FieldNodeIndex): Integer
-        => self.Value.Hash;
+    // FieldNodeIndex likewise implements IIndex, so its ordering and hash come
+    // from the derived IIndex bodies.
 
     //==
     // # Sampled signed distance field lattice geometry

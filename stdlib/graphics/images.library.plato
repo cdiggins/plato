@@ -13,7 +13,16 @@ library Images
     //==
     // # IImage
     //
-    // A raster with known dimensions (Size, Width, Height in whole pixels).
+    // A raster with known dimensions: Size is the one obligation, and every
+    // raster stores it, so the whole-pixel Width and Height are projections of it.
+
+    // The width of the image in whole pixels.
+    Width(self: IImage): Integer
+        => self.Size.Width;
+
+    // The height of the image in whole pixels.
+    Height(self: IImage): Integer
+        => self.Size.Height;
 
     // The total number of pixels: Width times Height.
     PixelCount(self: IImage): Integer
@@ -67,51 +76,4 @@ library Images
     PixelIndex(self: IImage, x: Integer, y: Integer): Integer
         => y * self.Width + x;
 
-    //==
-    // # Concrete image types — IImage dimension accessors
-    //
-    // Each raster stores its dimensions in Size; Width and Height project the
-    // IntegerSize2D components for the IImage interface surface.
-
-    Width(self: Bitmap): Integer
-        => self.Size.Width;
-
-    Height(self: Bitmap): Integer
-        => self.Size.Height;
-
-    Width(self: FloatImage): Integer
-        => self.Size.Width;
-
-    Height(self: FloatImage): Integer
-        => self.Size.Height;
-
-    Width(self: GrayscaleImage): Integer
-        => self.Size.Width;
-
-    Height(self: GrayscaleImage): Integer
-        => self.Size.Height;
-
-    Width(self: BinaryImage): Integer
-        => self.Size.Width;
-
-    Height(self: BinaryImage): Integer
-        => self.Size.Height;
-
-    Width(self: IndexedImage): Integer
-        => self.Size.Width;
-
-    Height(self: IndexedImage): Integer
-        => self.Size.Height;
-
-    Width(self: DepthImage): Integer
-        => self.Size.Width;
-
-    Height(self: DepthImage): Integer
-        => self.Size.Height;
-
-    Width(self: NormalImage): Integer
-        => self.Size.Width;
-
-    Height(self: NormalImage): Integer
-        => self.Size.Height;
 }

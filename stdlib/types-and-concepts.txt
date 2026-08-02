@@ -71,7 +71,7 @@ interface IGraph inherits IValue{VertexCount(x:Self):Integer;EdgeCount(x:Self):I
 interface IHalfEdge{OriginOf(x:Self,halfEdge:HalfEdgeIndex):VertexIndex;TwinOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;NextOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;PreviousOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;FaceOf(x:Self,halfEdge:HalfEdgeIndex):FaceIndex;}
 interface IHashable inherits IEquatable{Hash(x:Self):Integer;}
 interface IHeightFieldSurface inherits ISurface,IProcedural<Point2D,Number>{}
-interface IImage inherits IValue{Size(x:Self):IntegerSize2D;Width(x:Self):Integer;Height(x:Self):Integer;}
+interface IImage inherits IValue{Size(x:Self):IntegerSize2D;}
 interface IImplicitRegion2D inherits IProcedural<Point2D,Boolean>{}
 interface IImplicitVolume3D inherits IProcedural<Point3D,Boolean>{}
 interface IIndex{Value(x:Self):Integer;}
