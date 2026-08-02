@@ -157,6 +157,18 @@ public class JsonSurfaceTests
         Assert.That(NumberInterval.Parse(interval.ToJson()), Is.EqualTo(interval));
     }
 
+    /// <summary>A sum type serializes as its honest layout — the Kind discriminant plus the
+    /// flattened per-case fields — which is what DataContract already writes, so both round-trip
+    /// alike. The old ToString rendered `Move(1, 2)`, which no parser reads back.</summary>
+    [Test]
+    public void SumTypesRoundTrip()
+    {
+        var kendall = CorrelationStatistic.Kendall();
+        Assert.That(kendall.ToJson(), Is.EqualTo("{\"Kind\":2}"));
+        Assert.That(CorrelationStatistic.Parse(kendall.ToJson()), Is.EqualTo(kendall));
+        Assert.That(CorrelationStatistic.Parse(kendall.ToJson()).IsKendall().Value, Is.True);
+    }
+
     [Test]
     public void StructsAreReadonly()
         => Assert.That(
