@@ -29,7 +29,7 @@ type RevolvedSolid
     implements Solid
 {
     Profile: PolygonWithHoles2D;
-    Axis: Line3D;
+    Axis: InfiniteLine3D;
     Angles: AngleInterval;
 }
 

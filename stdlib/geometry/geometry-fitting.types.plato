@@ -29,7 +29,7 @@ type FitQuality
 type LineFit2D
     implements Value, Fitted
 {
-    Line: Line2D;
+    Line: InfiniteLine2D;
     Quality: FitQuality;
 }
 
@@ -38,7 +38,7 @@ type LineFit2D
 type LineFit3D
     implements Value, Fitted
 {
-    Line: Line3D;
+    Line: InfiniteLine3D;
     Quality: FitQuality;
 }
 

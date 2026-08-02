@@ -95,10 +95,10 @@ library IntervalsTransformsTransformable
     Transform(self: Deformable3D, transform: ProjectiveTransform3D): Self
         => self.Deform(p => p.Transform(transform));
 
-    // TODO(follow-up): the concrete per-type `Deform` bodies (Line2D/3D, Ray2D/3D,
-    // Triangle2D/3D, Quad2D/3D, Circle, Ellipse, Polygon2D/3D, Polyline2D/3D,
-    // RegularPolygon, PolygonWithHoles2D, Tetrahedron, and the mesh types) are the
-    // remaining half of this item. They are one-liners over each type's fields
-    // but belong to the packages that own those declarations, so they are not
-    // written here.
+    // TODO(follow-up): the concrete per-type `Deform` bodies (InfiniteLine2D/3D,
+    // Line2D/3D, Ray2D/3D, Triangle2D/3D, Quad2D/3D, Circle, Ellipse,
+    // Polygon2D/3D, Polyline2D/3D, RegularPolygon, PolygonWithHoles2D,
+    // Tetrahedron, and the mesh types) are the remaining half of this item. They
+    // are one-liners over each type's fields but belong to the packages that own
+    // those declarations, so they are not written here.
 }

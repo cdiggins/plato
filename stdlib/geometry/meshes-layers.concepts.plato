@@ -83,13 +83,13 @@ concept GeometryCollection<TGeom>
 // bindings add Meshable, which the segment bindings cannot: a set of segments
 // has no interior to triangulate.
 //
-// The line primitive is LineSegment2D / LineSegment3D, not Line2D / Line3D: a
-// line set stores bounded segments, while Line*D is an infinite line.
+// The line primitive is Line2D / Line3D, not InfiniteLine2D / InfiniteLine3D:
+// a line set stores bounded segments, while InfiniteLine*D is an infinite line.
 
 // Bounded segments in space over their own endpoints: wireframes, edge
 // overlays, sampled space curves.
 concept SegmentGeometry3D
-    inherits Geometry3D, PrimitiveGeometry<Point3D, LineSegment3D>, PointSet3D, Bounded3D, Deformable3D
+    inherits Geometry3D, PrimitiveGeometry<Point3D, Line3D>, PointSet3D, Bounded3D, Deformable3D
 { }
 
 // Triangles in space, wound counter-clockwise seen from the front: the
@@ -107,7 +107,7 @@ concept QuadGeometry3D
 // Bounded segments in the plane: sketch overlays, hatch patterns, planar
 // graphs drawn as geometry.
 concept SegmentGeometry2D
-    inherits Geometry2D, PrimitiveGeometry<Point2D, LineSegment2D>, PointSet2D, Bounded2D, Deformable2D
+    inherits Geometry2D, PrimitiveGeometry<Point2D, Line2D>, PointSet2D, Bounded2D, Deformable2D
 { }
 
 // Triangles in the plane, wound counter-clockwise: triangulations, Delaunay
@@ -133,7 +133,7 @@ concept QuadGeometry2D
 // Segments in space over a shared vertex pool, each spelled as a vertex pair:
 // the storage form of a wireframe. `LineSet3D` is the concrete type.
 concept IndexedSegmentGeometry3D
-    inherits IndexedGeometry<Point3D, LineSegment3D, VertexPair>, SegmentGeometry3D
+    inherits IndexedGeometry<Point3D, Line3D, VertexPair>, SegmentGeometry3D
 { }
 
 // Triangles in space over a shared vertex pool, each spelled as a TriangleFace:
@@ -151,7 +151,7 @@ concept IndexedQuadGeometry3D
 // Segments in the plane over a shared vertex pool. `LineSet2D` is the concrete
 // type.
 concept IndexedSegmentGeometry2D
-    inherits IndexedGeometry<Point2D, LineSegment2D, VertexPair>, SegmentGeometry2D
+    inherits IndexedGeometry<Point2D, Line2D, VertexPair>, SegmentGeometry2D
 { }
 
 // Triangles in the plane over a shared vertex pool: concretely

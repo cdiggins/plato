@@ -66,7 +66,7 @@ library LinesPlanes
     // Where the infinite line crosses the plane. Misses (Hit false) only when the
     // line is parallel to the plane (Dot(Normal, Direction) = 0), including a line
     // lying in the plane -- there is then no single crossing point.
-    Intersect(l: Line3D, pl: Plane): PlaneHit3D
+    Intersect(l: InfiniteLine3D, pl: Plane): PlaneHit3D
     {
         var denom = l.Direction.Vector.Dot(pl.Normal.Vector);
         var t = 0.0 - pl.SignedDistance(l.Origin) / denom;
@@ -89,7 +89,7 @@ library LinesPlanes
     // Where the segment crosses the plane, with Parameter in [0, 1] along A -> B.
     // Misses when the segment is parallel to the plane OR both endpoints lie on the
     // same side (the crossing parameter falls outside [0, 1]).
-    Intersect(s: LineSegment3D, pl: Plane): PlaneHit3D
+    Intersect(s: Line3D, pl: Plane): PlaneHit3D
     {
         var denom = s.A.Between(s.B).Dot(pl.Normal.Vector);
         var t = 0.0 - pl.SignedDistance(s.A) / denom;

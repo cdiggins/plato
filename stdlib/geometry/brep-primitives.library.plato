@@ -15,7 +15,7 @@ library BrepPrimitives
         => BrepEdge(
             VertexIndex(start),
             VertexIndex(end),
-            Line(LineSegment3D(vertices[start], vertices[end])));
+            Line(Line3D(vertices[start], vertices[end])));
 
     // A forward citation of edge e in a face boundary loop.
     ForwardUse(e: Integer): BrepEdgeUse

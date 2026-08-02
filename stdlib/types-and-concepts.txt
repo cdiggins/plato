@@ -78,8 +78,8 @@ concept Indexable3D<T>inherits Indexable<T>{ColumnCount(x:Self):Integer;RowCount
 concept IndexedGeometry<TPoint,TPrim,TIndex>inherits PrimitiveGeometry<TPoint,TPrim>{Vertices(x:Self):Array<TPoint>;FaceIndices(x:Self):Array<TIndex>;}
 concept IndexedQuadGeometry2D inherits IndexedGeometry<Point2D,Quad2D,QuadFace>,QuadGeometry2D{}
 concept IndexedQuadGeometry3D inherits IndexedGeometry<Point3D,Quad3D,QuadFace>,QuadGeometry3D{}
-concept IndexedSegmentGeometry2D inherits IndexedGeometry<Point2D,LineSegment2D,VertexPair>,SegmentGeometry2D{}
-concept IndexedSegmentGeometry3D inherits IndexedGeometry<Point3D,LineSegment3D,VertexPair>,SegmentGeometry3D{}
+concept IndexedSegmentGeometry2D inherits IndexedGeometry<Point2D,Line2D,VertexPair>,SegmentGeometry2D{}
+concept IndexedSegmentGeometry3D inherits IndexedGeometry<Point3D,Line3D,VertexPair>,SegmentGeometry3D{}
 concept IndexedTriangleGeometry2D inherits IndexedGeometry<Point2D,Triangle2D,TriangleFace>,TriangleGeometry2D{}
 concept IndexedTriangleGeometry3D inherits IndexedGeometry<Point3D,Triangle3D,TriangleFace>,TriangleGeometry3D{}
 concept Interpolatable{Lerp(a:Self,b:Self,t:Number):Self;}
@@ -138,8 +138,8 @@ concept Real inherits Numerical,Comparable,Hashable,Arithmetic,Invertible{ToNumb
 concept Scalable{Multiply(x:Self,scalar:Number):Self;Divide(x:Self,scalar:Number):Self;Modulo(x:Self,scalar:Number):Self;}
 concept ScalarField2D inherits Field<Point2D,Number>{}
 concept ScalarField3D inherits Field<Point3D,Number>{}
-concept SegmentGeometry2D inherits Geometry2D,PrimitiveGeometry<Point2D,LineSegment2D>,PointSet2D,Bounded2D,Deformable2D{}
-concept SegmentGeometry3D inherits Geometry3D,PrimitiveGeometry<Point3D,LineSegment3D>,PointSet3D,Bounded3D,Deformable3D{}
+concept SegmentGeometry2D inherits Geometry2D,PrimitiveGeometry<Point2D,Line2D>,PointSet2D,Bounded2D,Deformable2D{}
+concept SegmentGeometry3D inherits Geometry3D,PrimitiveGeometry<Point3D,Line3D>,PointSet3D,Bounded3D,Deformable3D{}
 concept SetLike<T>{Contains(x:Self,item:T):Boolean;}
 concept SignedDistanceField2D inherits ScalarField2D{}
 concept SignedDistanceField3D inherits ScalarField3D{}
@@ -534,6 +534,8 @@ type ImageRegion implements Value{Bounds:IntegerBounds2D;}
 type Impulse implements Quantity{NewtonSeconds:Number;}
 type IndexedImage implements Image{Size:IntegerSize2D;Indices:Array<PaletteIndex>;Palette:Palette;}
 type Inductance implements Quantity{Henries:Number;}
+type InfiniteLine2D implements Geometry2D,Connected,NearestPoint2D{Origin:Point2D;Direction:Direction2D;}
+type InfiniteLine3D implements Geometry3D,Connected,NearestPoint3D{Origin:Point3D;Direction:Direction3D;}
 type InstanceSet implements Value{Mesh:MeshIndex;Material:MaterialIndex;Transforms:Array<Transform3D>;Colors:Array<Color>;}
 type Instant implements Value,Comparable,OriginBased<Duration>{SecondsSinceEpoch:Number;}
 type Integer implements Whole,Bitwise{}
@@ -578,8 +580,8 @@ type LightBindingIndex implements Value,Hashable,Comparable,Index{Value:Integer;
 type LightLayerMask{Value:Integer;}
 type LightProbe implements Value{Position:Point3D;InfluenceRadius:Number;Intensity:Number;}
 type Limacon2D implements ClosedCurve2D{Offset:Number;Amplitude:Number;}
-type Line2D implements Geometry2D,Connected,NearestPoint2D{Origin:Point2D;Direction:Direction2D;}
-type Line3D implements Geometry3D,Connected,NearestPoint3D{Origin:Point3D;Direction:Direction3D;}
+type Line2D implements Geometry2D,OpenShape,Connected,Bounded2D,LengthMeasurable,PointSet2D,Centroid2D,NearestPoint2D,Deformable2D{A:Point2D;B:Point2D;}
+type Line3D implements Geometry3D,OpenShape,Connected,Bounded3D,LengthMeasurable,PointSet3D,Centroid3D,NearestPoint3D,Deformable3D{A:Point3D;B:Point3D;}
 type LinearDensity implements Quantity{KilogramsPerMeter:Number;}
 type LinearFit implements Value{Slope:Number;Intercept:Number;RSquared:Number;}
 type LinearGradient2D implements Value{Start:Point2D;End:Point2D;Gradient:ColorGradient;Spread:GradientSpread;}
@@ -587,11 +589,9 @@ type LinearSpline2D implements Curve2D{Points:Array<Point2D>;Closed:Boolean;}
 type LinearSpline3D implements Curve3D{Points:Array<Point3D>;Closed:Boolean;}
 type LineCap{}
 type LineEquation2D implements Value{A:Number;B:Number;C:Number;}
-type LineFit2D implements Value,Fitted{Line:Line2D;Quality:FitQuality;}
-type LineFit3D implements Value,Fitted{Line:Line3D;Quality:FitQuality;}
+type LineFit2D implements Value,Fitted{Line:InfiniteLine2D;Quality:FitQuality;}
+type LineFit3D implements Value,Fitted{Line:InfiniteLine3D;Quality:FitQuality;}
 type LineJoin{}
-type LineSegment2D implements Geometry2D,OpenShape,Connected,Bounded2D,LengthMeasurable,PointSet2D,Centroid2D,NearestPoint2D,Deformable2D{A:Point2D;B:Point2D;}
-type LineSegment3D implements Geometry3D,OpenShape,Connected,Bounded3D,LengthMeasurable,PointSet3D,Centroid3D,NearestPoint3D,Deformable3D{A:Point3D;B:Point3D;}
 type LineSet2D implements Value,IndexedSegmentGeometry2D,Deformable2D{Positions:Array<Point2D>;Lines:Array<VertexPair>;}
 type LineSet3D implements Value,IndexedSegmentGeometry3D,Deformable3D{Positions:Array<Point3D>;Lines:Array<VertexPair>;}
 type Lissajous2D implements Curve2D{XAmplitude:Number;YAmplitude:Number;XFrequency:Number;YFrequency:Number;Phase:Angle;}
@@ -800,7 +800,7 @@ type RenderTargetDescriptor implements Value{Size:IntegerSize2D;ColorFormat:Pixe
 type ResampleFilter{}
 type Resistance implements Quantity{Ohms:Number;}
 type ResizeParameters implements Value{TargetSize:IntegerSize2D;Filter:ResampleFilter;PreserveAspect:Boolean;}
-type RevolvedSolid implements Solid{Profile:PolygonWithHoles2D;Axis:Line3D;Angles:AngleInterval;}
+type RevolvedSolid implements Solid{Profile:PolygonWithHoles2D;Axis:InfiniteLine3D;Angles:AngleInterval;}
 type RgbColorSpace implements Value{Name:String;Primaries:RgbPrimaries;Transfer:TransferFunction;}
 type RgbPrimaries implements Value{Red:Chromaticity;Green:Chromaticity;Blue:Chromaticity;White:Chromaticity;}
 type RichMesh3D implements Value,Meshable3D,Deformable3D{Mesh:TriangleMesh3D;NumberChannels:Array<MeshAttribute<Number>>;IntegerChannels:Array<MeshAttribute<Integer>>;VectorChannels:Array<MeshAttribute<Vector3D>>;UvChannels:Array<MeshAttribute<UvCoordinate>>;ColorChannels:Array<MeshAttribute<Color>>;TangentChannels:Array<MeshAttribute<TangentBasis>>;}
@@ -935,7 +935,7 @@ type SuperEllipse implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,B
 type Superformula2D implements PolarCurve2D{Symmetry:Number;Exponent1:Number;Exponent2:Number;Exponent3:Number;XRadius:Number;YRadius:Number;}
 type SurfaceCurvature implements Value{Gaussian:Number;Mean:Number;Principal:PrincipalCurvatures;}
 type SurfaceJet3D implements Value{Uv:UvCoordinate;Position:Point3D;DerivativeU:Vector3D;DerivativeV:Vector3D;DerivativeUU:Vector3D;DerivativeUV:Vector3D;DerivativeVV:Vector3D;}
-type SurfaceOfRevolution implements ParametricSurface{Profile:Curve2D;Axis:Line3D;Angles:AngleInterval;}
+type SurfaceOfRevolution implements ParametricSurface{Profile:Curve2D;Axis:InfiniteLine3D;Angles:AngleInterval;}
 type SurfacePoint3D implements Value{Position:Point3D;Normal:Direction3D;TangentU:Vector3D;TangentV:Vector3D;Uv:UvCoordinate;}
 type SurfacePointShape{}
 type SweepGradient2D implements Value{Center:Point2D;StartAngle:Angle;Gradient:ColorGradient;Spread:GradientSpread;}

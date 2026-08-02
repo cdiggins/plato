@@ -28,7 +28,7 @@ type BrepEdgeUse
 // case is the straight segment from the edge's Start vertex to its End vertex.
 // Arc / Polyline cases are future sum cases, not new fields.
 type BrepCurve
-    = Line(Segment: LineSegment3D);
+    = Line(Segment: Line3D);
 
 // One undirected shell edge: the two vertices it connects and the one curve
 // it owns. The curve runs from Start (parameter 0) to End (parameter 1);
