@@ -57,14 +57,18 @@ retiring them is an adoption project on that side.
 So "Studio ships V1" is still true today. What changed is that this repo no longer carries a second
 copy of it, no longer guards it with a checksum tripwire, and no longer names anything "V2".
 
-## Gates (run from the studio repo root)
+## Gates
 
-| Gate | Command | Protects |
-|---|---|---|
-| Forward stdlib | `tools/check-stdlib-fast.ps1` | lint clean + checker diagnostic ratchet |
-| Forward conformance | `tools/regen-forward-conformance.ps1` | stdlib + law packet type-check |
-| Compiler unit tests | `dotnet test tests/PlatoTests` | checker/optimizer behavior, intrinsic obligations |
-| Everything | `tools/check-all.ps1` | all of the above + lint + SDK build + GeometryTests |
+The "run from" column says which checkout the command resolves its paths against. The studio copy
+of `check-stdlib-fast.ps1` is stale (it points into `studio/submodules/Plato`); use the Plato-local
+one.
+
+| Gate | Command | Run from | Protects |
+|---|---|---|---|
+| Forward stdlib | `tools/check-stdlib-fast.ps1` | plato | lint clean + checker diagnostic ratchet |
+| Forward conformance | `tools/regen-forward-conformance.ps1` | studio | stdlib tiers + law packet type-check |
+| Compiler unit tests | `dotnet test tests/PlatoTests` | plato | checker/optimizer behavior, intrinsic obligations |
+| Everything | `tools/check-all.ps1` | studio | all of the above + lint + SDK build + GeometryTests |
 
 `tools/check-frozen-v1.ps1` and its `frozen-v1.sha256` manifest are **retired**. They still exist in
 the studio checkout and will fail there against the deleted files until someone removes them and

@@ -13,7 +13,7 @@ what should happen; read that one to find the code that does it, or to work out 
 disagree.
 
 Scope: this folder (`stdlib/`, the current "forward" standard library) and its test suite
-(`tests/stdlib-tests/`). The older "legacy" pair (`legacy/stdlib-legacy/` +
+(`stdlib/tests/`, a folder inside it that is deliberately not one of the tiers). The older "legacy" pair (`legacy/stdlib-legacy/` +
 `legacy/stdlib-legacy-tests/`) has its own checks and is out of scope here; see
 [`AGENTS.md`](../AGENTS.md).
 
@@ -30,7 +30,7 @@ Scope: this folder (`stdlib/`, the current "forward" standard library) and its t
   the test). When you reduce the count, you lower the ceiling in the same commit; it is never
   raised without a written justification. This stops old defects from quietly multiplying while
   they are being burned down.
-- **Law** — a Boolean function named `Law_*` in `tests/stdlib-tests/` stating a property that
+- **Law** — a Boolean function named `Law_*` in `stdlib/tests/` stating a property that
   should always hold (e.g. that an operation is commutative). Running the laws is the only check
   that actually *executes* library code. `Witness_*` functions are helpers that construct example
   values for laws.
@@ -85,8 +85,8 @@ gates: "parse,resolve,lint,types,sums,style"   # or a subset; `types` alone neve
 
 Read the `plato-mcp` skill before using it. Two gotchas that matter for validation:
 
-- **Its corpus is `stdlib/` *plus* `tests/stdlib-tests/`** (both are index roots), and it lints
-  all four tiers. The gate tests scope differently — see "Scope differences" below — so its
+- **Its corpus is the whole of `stdlib/`** (one index root, walked recursively, so the law packet in
+  `stdlib/tests/` is in it), and it lints all four tiers. The gate tests scope differently — see "Scope differences" below — so its
   numbers will not match the ratchet ceilings, by design.
 - In its response, `data.ok` (inside the payload) is the verdict on the code; the outer envelope's
   `ok` only says the call itself worked.
@@ -119,8 +119,7 @@ history row to [`docs/gate-log.md`](../docs/gate-log.md). Note that it **regener
 it tests** — a test suite that passes against a stale `Generated/` folder is the easiest wrong
 green in this repo to produce.
 
-> **The studio copies of the gate scripts are stale.** `AGENTS.md` still says the gates run from
-> `C:\Users\cdigg\git\studio\tools\`. Those copies predate the repo reorganization: they reference
+> **The studio copies of the gate scripts are stale.** They predate the repo reorganization: they reference
 > `submodules\Plato\Plato.CLI\` and lint only the top level of `stdlib`, which now finds **zero
 > files** and passes as a wrong green ([plato-372](../tracker/issues/plato-372.md)). Prefer the
 > repo-local `tools/check-stdlib-fast.ps1` and `tools/stage-stdlib.ps1`, which derive every path
@@ -256,7 +255,7 @@ half* of the contract: the handwritten C# the stdlib bottoms out in.
 powershell -File C:\Users\cdigg\git\studio\tools\regen-forward-conformance.ps1 -Codegen
 ```
 
-The script merges `stdlib/` + `tests/stdlib-tests/` into a temporary folder (throwing on any
+The script merges the `stdlib/` tiers + `stdlib/tests/` into a temporary folder (throwing on any
 filename collision), then runs two stages:
 
 - **Stage 1** (gating, currently green): type-check the merged sources, assert 0 symbol
@@ -282,9 +281,10 @@ densely interlinked, and each exclusion cascades into CS0246 (missing type) erro
 
 ### Rung 6 · Execute the laws
 
-`tests/stdlib-tests/` holds the `Law_*` / `Witness_*` Boolean functions in `library` blocks, one
-`*.laws.plato` file per domain. They are **never merged into `stdlib/`**; the harness merges the
-two folders at gate time.
+`stdlib/tests/` holds the `Law_*` / `Witness_*` Boolean functions in `library` blocks, one
+`*.laws.plato` file per domain. The folder is inside `stdlib/` but is **not a tier**, so the
+library's own gates (which enumerate tiers) never read it; the harness merges the tiers and the
+packet at gate time.
 
 `tests/conformance/Plato.ForwardConformanceTests` discovers `Law_*` members by **reflection** over
 the generated assembly and runs each as a test case. Consequences to respect:
@@ -349,7 +349,7 @@ wrong. Before comparing two numbers, check they cover the same corpus:
 |---|---|
 | lint ratchet test | shipping tiers only |
 | `record-gates.py` / `lint --strict` | shipping tiers (all four with the flag) |
-| `plato_check` | all four tiers **plus** `tests/stdlib-tests/` |
+| `plato_check` | all four tiers **plus** `stdlib/tests/` |
 | `SummarizeForwardStdLibLintIncludingFuture` | all four tiers, reporting only |
 
 The same applies to type-check counts: the ratchet compiles `stdlib/` alone; `plato_check` also
@@ -408,7 +408,7 @@ any status prose, including this file.
 ## Adding coverage
 
 **A new law.** Verify every member it calls with `plato_search_symbols` / `plato_definition`. Put
-it in a `library` block in `tests/stdlib-tests/` — never in `stdlib/`. Keep it in a struct (the
+it in a `library` block in `stdlib/tests/` — never in a tier folder. Keep it in a struct (the
 runner reflects over instance members). Filenames must not collide with any `stdlib/` file; the
 merge step throws on collision. Then run `regen-forward-conformance.ps1 -Test`.
 

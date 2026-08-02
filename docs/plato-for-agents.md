@@ -46,7 +46,7 @@ In `stdlib/`, one file holds exactly one **kind** of declaration, with no cap on
 | Path | Purpose |
 |------|---------|
 | `stdlib/` | Forward stdlib vocabulary — types, interfaces, **and** library bodies. New *vocabulary* goes here. Read its [`README`](../stdlib/README.md), [`CONVENTIONS`](../stdlib/CONVENTIONS.md), [`STYLE_GUIDE`](../stdlib/STYLE_GUIDE.md), and [`LIBRARIES`](../stdlib/LIBRARIES.md) before editing. |
-| `tests/stdlib-tests/` | Forward law packet (`Law_*`) for `stdlib/` — **never merge into `stdlib`**. |
+| `stdlib/tests/` | Forward law packet (`Law_*`) for `stdlib/`. Inside the folder, but **not a tier** — the library's gates name the tiers, so they never see it. |
 | `legacy/stdlib-legacy/*.plato` | Shipping standard library (~3,500 lines → 11,000+ lines of C#). |
 | `stdlib-legacy-tests/` | Law/witness tests only — **never merge into `stdlib-legacy`**. |
 | `legacy/stdlib-snapshot-2026-07-09/` | Frozen pre-refactor snapshot — reference only. |

@@ -26,7 +26,7 @@ regenerate the file in the same commit:**
 .\tools\export-types-context.bat
 ```
 
-From the studio root: `.\submodules\Plato\tools\export-types-context.bat`.
+From this repo's root: `.\tools\export-types-context.bat`.
 
 Rules:
 

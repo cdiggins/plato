@@ -106,7 +106,7 @@ checkout. Confirm which tree you are gating before trusting a result here — se
 
 ### `studio/tools/regen-forward-conformance.ps1`
 
-- **Runs** merges `stdlib/` and `tests/stdlib-tests/` into a temporary folder, throwing on any
+- **Runs** merges the `stdlib/` tiers and `stdlib/tests/` into a temporary folder, throwing on any
   filename collision, then two stages. Stage 1 (gating) type-checks the merged sources and asserts
   no resolution errors and at least one `Law_` function, proving the library and the laws resolve
   against each other. Stage 2 (`-Codegen` / `-Test`) generates C# with the shipping recipe, builds
@@ -130,8 +130,9 @@ checkout. Confirm which tree you are gating before trusting a result here — se
 - **Runs** parse, resolve to a full `Compilation`, `Linter`, `TypeChecker.CheckAll`,
   `SumTypeChecker` with `ExistentialConceptChecker`, and `StyleChecker`. Each gate is memoized per
   index generation, so asking for one never pays for another and a repeat with no edits is free.
-- **Corpus** whatever the server was launched with as `--root`, in practice all four tiers **plus**
-  `tests/stdlib-tests/`. The code has no concept of a tier.
+- **Corpus** whatever the server was launched with as `--root`, in practice `stdlib/` walked
+  recursively: all four tiers **plus** the law packet in `stdlib/tests/`. The code has no concept
+  of a tier.
 - **Input** `gates` (a subset), `files` (scopes the *report* only — the whole corpus is always
   compiled), `maxFindings`.
 - **Output** structured findings. `data.ok` inside the payload is the verdict on the code; the

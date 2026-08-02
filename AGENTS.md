@@ -6,7 +6,8 @@ This is the canonical guide for agents and developers working in `submodules/Pla
 **Start here for the language and multi-target codegen:** [`docs/plato-for-agents.md`](docs/plato-for-agents.md).
 **Confused by the Plato.Generated / Intrinsics artifacts?** [`docs/plato-library-map.md`](docs/plato-library-map.md) maps every artifact and who consumes it.
 **Process / monorepo coupling:** studio's [`docs/working-on-plato.md`](https://github.com/ara3d/studio/blob/main/docs/working-on-plato.md)
-(gate scripts still run from the studio checkout). **Docs and work tracking live in this repo.**
+(only the whole-monorepo gates still run from the studio checkout — the stdlib inner loop is
+repo-local; see **Commands**). **Docs and work tracking live in this repo.**
 
 Plato: pure language for geometry libraries, compiled to C# (TS/Rust/GLSL/C++/CUDA writers exist as POCs).
 Also checked out as `submodules/Plato` inside the studio monorepo.
@@ -23,8 +24,9 @@ Also checked out as `submodules/Plato` inside the studio monorepo.
 [`docs/documentation-conventions.md`](docs/documentation-conventions.md) — chiefly: **a durable doc
 states design, not measurements.** No file counts, finding counts, ratchet ceilings or test tallies
 in prose; name the constant, command or log that holds the number. The repo-local `write-docs` skill
-loads those rules. Gate scripts still live in the studio repo
-(`C:\Users\cdigg\git\studio\tools\`) until those move too.
+loads those rules. The stdlib gate scripts are repo-local, in this checkout's `tools\`; only
+`check-all.ps1` and `regen-forward-conformance.ps1` still live in the studio repo
+(`C:\Users\cdigg\git\studio\tools\`).
 
 Plan + status: [`docs/plato-execution-plan-2026-07-09.md`](docs/plato-execution-plan-2026-07-09.md).
 Bug catalog: [`docs/plato-library-review.md`](docs/plato-library-review.md).
@@ -61,12 +63,15 @@ the writer code).
   [`stdlib/STYLE_GUIDE.md`](stdlib/STYLE_GUIDE.md) (authoring style for bodies, comments,
   literals, formulas), [`stdlib/LIBRARIES.md`](stdlib/LIBRARIES.md) (how library files relate to
   declaration files).
-  Inner loop: `.\tools\check-stdlib-fast.ps1` from the studio root.
+  Inner loop: `.\tools\check-stdlib-fast.ps1` from THIS repo's root. Do not reach for the studio
+  copy of that script: it resolves paths under `studio\submodules\Plato` and is stale.
   **How it is tested and validated:** [`stdlib/VERIFICATION.md`](stdlib/VERIFICATION.md)
   — the seven rungs (parse → resolve → lint → style → type-check → codegen → law execution),
   which command runs each, the three ratchets and their scopes, and the wrong-greens to avoid.
-- `tests/stdlib-tests/` — forward law packet (`Law_*` functions) for `stdlib/`. Merged with `stdlib` by
-  `tools\regen-forward-conformance.ps1`. Keep separate from `stdlib`, same as the legacy pair.
+- `stdlib/tests/` — forward law packet (`Law_*` functions) for `stdlib/`. It lives inside the folder
+  but is **not a tier**, so no gate over the library sees it: the lint gate, the checker ratchet and
+  the codegen recipe all name the tiers explicitly (stdlib-398). Merged with the tiers by
+  `tools\regen-forward-conformance.ps1`; a consumer that wants the laws names `stdlib/tests`.
 - `legacy/stdlib-legacy/` — **Shipping stdlib** (ex-`plato-src`). **WRITABLE as of 2026-07-09** (content-leads
   refactor; the old Phase-4 freeze is retired). Edit freely for runtime/body fixes; gate =
   `lint --strict` + `check-all.ps1` green (the golden-refresh step retired 2026-07-30). Plan: [`docs/plato-execution-plan-2026-07-09.md`](docs/plato-execution-plan-2026-07-09.md).
@@ -84,7 +89,8 @@ the writer code).
   suite below is the sole conformance target; making it run is `plato-308`. Until then, executable
   coverage = PlatoTests + GeometryTests.
 - `tests/conformance/Plato.ForwardConformanceTests/` — forward-stdlib harness driven by
-  `tools\regen-forward-conformance.ps1`. Stage 1 (type-check merged `stdlib` + `stdlib-tests`) is
+  `tools\regen-forward-conformance.ps1`. Stage 1 (type-check the `stdlib` tiers merged with
+  `stdlib/tests`) is
   the gating stage and passes; Stage 2 (codegen + law runner) generates but does not compile —
   tracked as `plato-308`, detail in that folder's `README.md`. A red Stage 2 is not your fault
   unless your error count exceeds the number in the issue.
@@ -100,8 +106,10 @@ the writer code).
   commit here only records which parakeet commit to use. Never stage files inside it from
   this repo.
 
-## Commands (run from `C:\Users\cdigg\git\studio`)
+## Commands
 
+Rows marked **(studio)** are the only ones that still run from `C:\Users\cdigg\git\studio`;
+everything else runs from this repo's root and derives its paths from its own location.
 Iterate on the one gate relevant to your workstream; run `check-all.ps1` **once**, at the end.
 
 - `.\tools\check-stdlib-fast.ps1` — the forward-stdlib inner loop (seconds). Three gates:
@@ -111,9 +119,9 @@ Iterate on the one gate relevant to your workstream; run `check-all.ps1` **once*
   your change may not raise the diagnostic count, and when you lower it you lower the ceiling in
   the same commit — and **index freshness**, which fails when `stdlib/types-and-concepts.txt` no
   longer matches the source ([`stdlib/AGENTS.md`](stdlib/AGENTS.md)). `-SkipIndex` opts out.
-- `.\tools\regen-forward-conformance.ps1` — forward-stdlib milestone gate. Stage 1 gating (see
+- **(studio)** `.\tools\regen-forward-conformance.ps1` — forward-stdlib milestone gate. Stage 1 gating (see
   `tests/conformance/Plato.ForwardConformanceTests/` above); `-Codegen` / `-Test` run the diagnostic stages.
-- `.\tools\check-all.ps1` — full gate battery, PASS/FAIL table. **Run once at the end of a mission**; iterate on a single relevant gate during development.
+- **(studio)** `.\tools\check-all.ps1` — full gate battery, PASS/FAIL table. **Run once at the end of a mission**; iterate on a single relevant gate during development.
 - `.\tools\gate-timings.ps1` — how long the gates take. Every gate script records its duration
   (and failures) via `tools\gate-timing.ps1` into `%LOCALAPPDATA%\ara3d\gate-timings.csv`; this
   reports runs / median / P90 / max / total per gate, sorted by total time. `-Days`, `-Gate`,
