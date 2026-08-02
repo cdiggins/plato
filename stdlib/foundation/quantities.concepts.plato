@@ -7,7 +7,7 @@
 // different type, so they are deliberately not Arithmetic. Each implementing
 // type's field name states its canonical (SI or conventional) unit
 // (https://en.wikipedia.org/wiki/International_System_of_Units). The concrete
-// types live in the `quantities-*.plato` files; the obligation fills that make
+// types live in `quantities.types.plato`; the obligation fills that make
 // them usable live in `quantities.library.plato`.
 
 // A one-dimensional measured amount with an implicit unit.

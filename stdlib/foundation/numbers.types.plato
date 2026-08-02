@@ -1,4 +1,11 @@
 //==
+// # Numbers
+//
+// Sections, in order:
+//  - Extended numbers
+//  - Dual numbers
+
+//==
 // # Extended numbers
 //
 // Number-like value types beyond the primitives: constrained scalars, exact
@@ -68,11 +75,32 @@ type Cardinal
 // are close when |x - y| <= Absolute + Relative * max(|x|, |y|). Both fields are
 // non-negative. This is the ONE numerical-comparison epsilon record for the
 // whole library (see CONVENTIONS.md - Floating-point comparison); the AlmostEqual
-// overloads in algebra-numeric.library.plato accept it. Engineering Tolerance
+// overloads in algebra.library.plato accept it. Engineering Tolerance
 // (uncertainty.types.plato) is a manufacturing acceptance allowance, NOT this type.
 type ComparisonTolerance
     implements Value
 {
     Absolute: Number;
     Relative: Number;
+}
+
+//==
+// # Dual numbers
+//
+// The carrier of forward-mode automatic differentiation: a value paired with
+// the derivative of that value with respect to one seed variable. Evaluating
+// any composition of the arithmetic in `numbers.library.plato` over duals
+// yields the exact derivative alongside the result, with no finite-difference
+// step size and no symbolic expansion.
+
+// A value carried together with its first derivative with respect to a single
+// seed variable: the algebra of x + e*x', where e is nilpotent (e^2 = 0).
+// Seed an input with Derivative 1 (`x.DualVariable`) and every constant with
+// Derivative 0 (`c.DualConstant`); the derivative of the whole expression falls
+// out of the arithmetic. (https://en.wikipedia.org/wiki/Dual_number)
+type DualNumber
+    implements Numerical
+{
+    Value: Number;
+    Derivative: Number;
 }

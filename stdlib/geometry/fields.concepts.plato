@@ -1,4 +1,12 @@
 //==
+// # Fields
+//
+// Sections, in order:
+//  - Field concepts
+//  - Differentiable field concepts
+//  - Time-varying field concepts
+
+//==
 // # Field concepts
 //
 // The root Field capability and the point-domain field concepts built on it:
@@ -6,7 +14,7 @@
 // and over space. Every field is Procedural over a point domain, so curves,
 // easings, and fields share one evaluation vocabulary. Concrete field types
 // (noise, SDFs, sampled grids) implement the concepts declared here; the
-// derived bodies live in the `fields-implicits-*.library.plato` files.
+// derived bodies live in `fields-implicits.library.plato`.
 // See https://en.wikipedia.org/wiki/Scalar_field and
 // https://en.wikipedia.org/wiki/Vector_field.
 
@@ -88,3 +96,87 @@ concept TensorField2D
 concept TensorField3D
     inherits Field<Point3D, Matrix3x3>
 { }
+
+//==
+// # Differentiable field concepts
+//
+// Scalar and vector fields that carry a first derivative alongside their
+// value: the gradient of a scalar field, and the Jacobian, divergence, and
+// curl of a vector field. Derivatives may be analytic or numeric; either way
+// they are exposed as ordinary field operations
+// (https://en.wikipedia.org/wiki/Differentiable_function).
+
+// A planar scalar field with an analytic or numeric first derivative. The
+// gradient points in the direction of steepest increase
+// (https://en.wikipedia.org/wiki/Gradient).
+concept DifferentiableScalarField2D
+    inherits ScalarField2D
+{
+    GradientAt(x: Self, point: Point2D): Vector2D;
+}
+
+// A spatial scalar field with an analytic or numeric first derivative. The
+// gradient of a signed distance field is the outward surface normal direction
+// (https://en.wikipedia.org/wiki/Signed_distance_function).
+concept DifferentiableScalarField3D
+    inherits ScalarField3D
+{
+    GradientAt(x: Self, point: Point3D): Vector3D;
+}
+
+// A planar vector field with first derivatives: the Jacobian, its trace
+// (divergence), and the scalar 2D curl (rotation about the plane normal)
+// (https://en.wikipedia.org/wiki/Divergence,
+// https://en.wikipedia.org/wiki/Curl_(mathematics)).
+concept DifferentiableVectorField2D
+    inherits VectorField2D
+{
+    JacobianAt(x: Self, point: Point2D): Matrix2x2;
+    DivergenceAt(x: Self, point: Point2D): Number;
+    CurlAt(x: Self, point: Point2D): Number;
+}
+
+// A spatial vector field with first derivatives: the Jacobian, its trace
+// (divergence), and the curl vector
+// (https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant).
+concept DifferentiableVectorField3D
+    inherits VectorField3D
+{
+    JacobianAt(x: Self, point: Point3D): Matrix3x3;
+    DivergenceAt(x: Self, point: Point3D): Number;
+    CurlAt(x: Self, point: Point3D): Vector3D;
+}
+
+//==
+// # Time-varying field concepts
+//
+// Fields whose values evolve over a timeline. The time argument is an Instant
+// on the animation or simulation timeline.
+
+// A planar scalar field that changes over time: animated masks, ripples,
+// and evolving density maps.
+concept TimeVaryingScalarField2D
+{
+    EvalAtTime(x: Self, point: Point2D, time: Instant): Number;
+}
+
+// A spatial scalar field that changes over time: simulation densities,
+// temperatures, and animated implicit shapes.
+concept TimeVaryingScalarField3D
+{
+    EvalAtTime(x: Self, point: Point3D, time: Instant): Number;
+}
+
+// A planar vector field that changes over time: 2D flows and animated
+// displacement maps.
+concept TimeVaryingVectorField2D
+{
+    EvalAtTime(x: Self, point: Point2D, time: Instant): Vector2D;
+}
+
+// A spatial vector field that changes over time: velocity fields of fluids,
+// wind, and turbulence used for advection.
+concept TimeVaryingVectorField3D
+{
+    EvalAtTime(x: Self, point: Point3D, time: Instant): Vector3D;
+}

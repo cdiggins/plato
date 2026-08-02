@@ -1,36 +1,49 @@
 //==
-// # SpatialPrimitives — frame, axis, and disk-extent helpers
+// # Spatial primitives
 //
-// The shared kernels every `spatial-*.library.plato` file is written in terms of: the
-// rotated-frame conversions, the centred axis-aligned box, the perpendicular
-// component of a vector about an axis, and the disk half-extents that make every
-// tight cylinder / cone / disk / torus box a one-liner.
-//
-// Conventions fixed here, and GOVERNING EVERY `spatial-*.library.plato` FILE. They
-// are stated because nothing executes these bodies before they ship:
-//
-//   * PLACED, not origin-centred: every solid carries its own Center / Apex /
-//     endpoints and its own Axis or Orientation. No body assumes the world frame.
-//   * SIZES ARE FULL EXTENTS, so every box body halves them; RADII are radii, and
-//     HEIGHTS are full heights.
-//   * A SOLID DENOTES THE FILLED REGION INCLUDING ITS BOUNDARY. `SurfaceArea` is
-//     therefore the area of the WHOLE boundary of that region: a cylinder's two caps
-//     are included, a spherical cap's flat cutting disk is included, a shell's inner
-//     surface is included. Where that choice is not forced it is restated on the
-//     body.
-//   * `Volume` and `SurfaceArea` are NON-NEGATIVE. `Tetrahedron` additionally offers
-//     `SignedVolume`, matching its declaration's stated sign convention.
-//   * CONTAINMENT is boundary-INCLUSIVE everywhere (every test is a `<=` on a
-//     distance or a coordinate), matching `ContainsPoint3D`'s doc.
-//   * `ClosestPoint` on a filled solid returns the query point itself when the query
-//     is inside, which `NearestPoint3D` explicitly permits. `Disk3D` and `Triangle3D`
-//     are flat patches, not solids, so theirs always land ON the patch.
-//   * BOUNDS are TIGHT unless a body says CONSERVATIVE. Three do: the two
-//     spherical-cap-like shapes, where a tight box needs an angular-extreme analysis
-//     these files do not attempt.
+// Sections, in order:
+//  - SpatialPrimitives — frame, axis, and disk-extent helpers
+//  - Oriented-box and rounded-box bodies
+//  - Capsule bodies
+//  - Cylinder, pipe, cone, and frustum bodies
+//  - Disk, triangle, and quadrilateral bodies
+//  - Tetrahedron, wedge, and convex-volume bodies
+//  - Sphere, shell, cap, and ellipsoid bodies
+//  - Torus bodies
 
 library SpatialPrimitives
 {
+    //==
+    // # SpatialPrimitives — frame, axis, and disk-extent helpers
+    //
+    // The shared kernels every `spatial-*.library.plato` file is written in terms of: the
+    // rotated-frame conversions, the centred axis-aligned box, the perpendicular
+    // component of a vector about an axis, and the disk half-extents that make every
+    // tight cylinder / cone / disk / torus box a one-liner.
+    //
+    // Conventions fixed here, and GOVERNING EVERY `spatial-*.library.plato` FILE. They
+    // are stated because nothing executes these bodies before they ship:
+    //
+    //   * PLACED, not origin-centred: every solid carries its own Center / Apex /
+    //     endpoints and its own Axis or Orientation. No body assumes the world frame.
+    //   * SIZES ARE FULL EXTENTS, so every box body halves them; RADII are radii, and
+    //     HEIGHTS are full heights.
+    //   * A SOLID DENOTES THE FILLED REGION INCLUDING ITS BOUNDARY. `SurfaceArea` is
+    //     therefore the area of the WHOLE boundary of that region: a cylinder's two caps
+    //     are included, a spherical cap's flat cutting disk is included, a shell's inner
+    //     surface is included. Where that choice is not forced it is restated on the
+    //     body.
+    //   * `Volume` and `SurfaceArea` are NON-NEGATIVE. `Tetrahedron` additionally offers
+    //     `SignedVolume`, matching its declaration's stated sign convention.
+    //   * CONTAINMENT is boundary-INCLUSIVE everywhere (every test is a `<=` on a
+    //     distance or a coordinate), matching `ContainsPoint3D`'s doc.
+    //   * `ClosestPoint` on a filled solid returns the query point itself when the query
+    //     is inside, which `NearestPoint3D` explicitly permits. `Disk3D` and `Triangle3D`
+    //     are flat patches, not solids, so theirs always land ON the patch.
+    //   * BOUNDS are TIGHT unless a body says CONSERVATIVE. Three do: the two
+    //     spherical-cap-like shapes, where a tight box needs an angular-extreme analysis
+    //     these files do not attempt.
+
     //==
     // # Frame and axis helpers
 
@@ -78,5 +91,955 @@ library SpatialPrimitives
         return perp.MagnitudeSquared <= 0.0
             ? Vector3D(0.0, 0.0, 0.0)
             : perp.Normalize * radius;
+    }
+
+    //==
+    // # Oriented-box and rounded-box bodies
+    //
+    // Volume, surface area, bounds, centroid, containment, nearest-point and support
+    // bodies for the types declared in `spatial-primitives.types.plato`. The frame helpers,
+    // and the conventions governing every body here, are in the shared section above.
+
+    //==
+    // # Box3D
+    //
+    // https://en.wikipedia.org/wiki/Cuboid
+
+    // Width times height times depth.
+    Volume(b: Box3D): Number
+        => b.Size.Width * b.Size.Height * b.Size.Depth;
+
+    // 2 * (wh + wd + hd).
+    SurfaceArea(b: Box3D): Number
+        => 2.0 * (b.Size.Width * b.Size.Height
+            + b.Size.Width * b.Size.Depth
+            + b.Size.Height * b.Size.Depth);
+
+    // The stored centre.
+    Centroid(b: Box3D): Point3D
+        => b.Center;
+
+    // TIGHT: the half-extent along a world axis is the sum of the three local
+    // half-extents weighted by the absolute components of the rotated local axes —
+    // the box's support function evaluated on that axis.
+    Bounds(b: Box3D): Bounds3D
+    {
+        var f = b.Orientation.Basis3D;
+        var hx = b.Size.Width * 0.5;
+        var hy = b.Size.Height * 0.5;
+        var hz = b.Size.Depth * 0.5;
+        return CenteredBounds(b.Center,
+            hx * f.X.X.Abs + hy * f.Y.X.Abs + hz * f.Z.X.Abs,
+            hx * f.X.Y.Abs + hy * f.Y.Y.Abs + hz * f.Z.Y.Abs,
+            hx * f.X.Z.Abs + hy * f.Y.Z.Abs + hz * f.Z.Z.Abs);
+    }
+
+    // True when the query, in the box's own frame, is within the half-extents on
+    // all three axes. Boundary inclusive.
+    Contains(b: Box3D, point: Point3D): Boolean
+    {
+        var q = LocalOffset(b.Center, b.Orientation, point);
+        return q.X.Abs <= b.Size.Width * 0.5
+            && q.Y.Abs <= b.Size.Height * 0.5
+            && q.Z.Abs <= b.Size.Depth * 0.5;
+    }
+
+    // The query point when it is inside, otherwise the query clamped to the box in
+    // the box's own frame and mapped back to world.
+    ClosestPoint(b: Box3D, point: Point3D): Point3D
+    {
+        var hx = b.Size.Width * 0.5;
+        var hy = b.Size.Height * 0.5;
+        var hz = b.Size.Depth * 0.5;
+        var q = LocalOffset(b.Center, b.Orientation, point);
+        var clamped = Vector3D(q.X.Clamp(-hx, hx), q.Y.Clamp(-hy, hy), q.Z.Clamp(-hz, hz));
+        return b.Contains(point)
+            ? point
+            : b.Center + WorldOffset(b.Orientation, clamped);
+    }
+
+    // The corner farthest along `direction`: each local axis independently takes
+    // the sign of the direction's component on it.
+    Support(b: Box3D, direction: Direction3D): Point3D
+    {
+        var f = b.Orientation.Basis3D;
+        var d = direction.Vector;
+        return b.Center
+            + f.X * (d.Dot(f.X) >= 0.0 ? b.Size.Width * 0.5 : b.Size.Width * -0.5)
+            + f.Y * (d.Dot(f.Y) >= 0.0 ? b.Size.Height * 0.5 : b.Size.Height * -0.5)
+            + f.Z * (d.Dot(f.Z) >= 0.0 ? b.Size.Depth * 0.5 : b.Size.Depth * -0.5);
+    }
+
+    //==
+    // # RoundedBox3D
+    //
+    // The Minkowski sum of a shrunken box with a ball of radius r. Writing the
+    // shrunken (core) edge lengths p, q, s, Steiner's formula for a parallel body
+    // gives the volume and area below exactly:
+    //   V = pqs + r*2(pq+ps+qs) + pi*r^2*(p+q+s) + (4/3)pi*r^3
+    //   A = 2(pq+ps+qs) + 2*pi*r*(p+q+s) + 4*pi*r^2
+    // reading term by term as: the core box, the six face slabs, the twelve
+    // quarter-cylinder edges (four per direction = one whole cylinder), and the
+    // eight corner octants (= one whole ball).
+    // https://en.wikipedia.org/wiki/Steiner_formula
+
+    // CornerRadius clamped to the declaration's stated range: never negative, never
+    // more than half the smallest extent. Every body below reads this.
+    EffectiveCornerRadius(b: RoundedBox3D): Number
+        => b.CornerRadius.Clamp(0.0,
+            b.Box.Size.Width.Min(b.Box.Size.Height).Min(b.Box.Size.Depth) * 0.5);
+
+    // The core box's full edge lengths (the original extents less twice the radius).
+    CoreExtents(b: RoundedBox3D): Vector3D
+    {
+        var r = b.EffectiveCornerRadius;
+        return (b.Box.Size.Width - 2.0 * r,
+                b.Box.Size.Height - 2.0 * r,
+                b.Box.Size.Depth - 2.0 * r);
+    }
+
+    // Steiner's parallel-body volume (see the section note).
+    Volume(b: RoundedBox3D): Number
+    {
+        var r = b.EffectiveCornerRadius;
+        var e = b.CoreExtents;
+        var faces = e.X * e.Y + e.X * e.Z + e.Y * e.Z;
+        return e.X * e.Y * e.Z
+            + 2.0 * r * faces
+            + Number.Pi * r.Square * (e.X + e.Y + e.Z)
+            + 4.0 / 3.0 * Number.Pi * r.Cube;
+    }
+
+    // Steiner's parallel-body surface area (see the section note).
+    SurfaceArea(b: RoundedBox3D): Number
+    {
+        var r = b.EffectiveCornerRadius;
+        var e = b.CoreExtents;
+        return 2.0 * (e.X * e.Y + e.X * e.Z + e.Y * e.Z)
+            + 2.0 * Number.Pi * r * (e.X + e.Y + e.Z)
+            + 4.0 * Number.Pi * r.Square;
+    }
+
+    // The box's centre; rounding is symmetric on every axis.
+    Centroid(b: RoundedBox3D): Point3D
+        => b.Box.Center;
+
+    // The underlying box's bounds — the rounded solid touches all six faces, so
+    // this is tight.
+    Bounds(b: RoundedBox3D): Bounds3D
+        => b.Box.Bounds;
+
+    // The standard rounded-box inside test: fold the query into the first octant of
+    // the box's own frame, subtract the core half-extents, and compare the
+    // resulting distance to the corner radius. Boundary inclusive.
+    // https://iquilezles.org/articles/distfunctions/
+    Contains(b: RoundedBox3D, point: Point3D): Boolean
+    {
+        var r = b.EffectiveCornerRadius;
+        var e = b.CoreExtents;
+        var local = LocalOffset(b.Box.Center, b.Box.Orientation, point);
+        var qx = local.X.Abs - e.X * 0.5;
+        var qy = local.Y.Abs - e.Y * 0.5;
+        var qz = local.Z.Abs - e.Z * 0.5;
+        var outside = (qx.Max(0.0).Square + qy.Max(0.0).Square + qz.Max(0.0).Square).Sqrt;
+        return outside + qx.Max(qy).Max(qz).Min(0.0) <= r;
+    }
+
+    // The support of a Minkowski sum is the sum of the supports: the core box's
+    // extreme corner displaced by r along `direction`.
+    Support(b: RoundedBox3D, direction: Direction3D): Point3D
+    {
+        var f = b.Box.Orientation.Basis3D;
+        var e = b.CoreExtents;
+        var d = direction.Vector;
+        return b.Box.Center
+            + f.X * (d.Dot(f.X) >= 0.0 ? e.X * 0.5 : e.X * -0.5)
+            + f.Y * (d.Dot(f.Y) >= 0.0 ? e.Y * 0.5 : e.Y * -0.5)
+            + f.Z * (d.Dot(f.Z) >= 0.0 ? e.Z * 0.5 : e.Z * -0.5)
+            + d * b.EffectiveCornerRadius;
+    }
+
+    //==
+    // # Capsule bodies
+    //
+    // Volume, surface area, bounds, centroid, containment, nearest-point and support
+    // bodies for `Capsule3D` (declared in `spatial-primitives.types.plato`). The conventions
+    // governing every body here are in the shared section above.
+
+    //==
+    // # Capsule3D
+    //
+    // The Minkowski sum of the segment [A, B] with a ball of radius r.
+    // https://en.wikipedia.org/wiki/Capsule_(geometry)
+
+    // The length of the capsule's spine.
+    SpineLength(c: Capsule3D): Number
+        => c.A.Between(c.B).Magnitude;
+
+    // The cylindrical middle pi*r^2*L plus the two hemispherical ends, which
+    // together make one whole ball (4/3)*pi*r^3.
+    Volume(c: Capsule3D): Number
+        => Number.Pi * c.Radius.Square * c.SpineLength + 4.0 / 3.0 * Number.Pi * c.Radius.Cube;
+
+    // The cylindrical lateral surface 2*pi*r*L plus the two hemispheres, which
+    // together make one whole sphere 4*pi*r^2. There are no flat caps.
+    SurfaceArea(c: Capsule3D): Number
+        => 2.0 * Number.Pi * c.Radius * c.SpineLength + 4.0 * Number.Pi * c.Radius.Square;
+
+    // The spine's midpoint, by the capsule's mirror symmetries.
+    Centroid(c: Capsule3D): Point3D
+        => c.A.MidPoint(c.B);
+
+    // The bounds of the two endpoints grown by the radius on every side.
+    Bounds(c: Capsule3D): Bounds3D
+        => (Point3D(c.A.X.Min(c.B.X) - c.Radius,
+                    c.A.Y.Min(c.B.Y) - c.Radius,
+                    c.A.Z.Min(c.B.Z) - c.Radius),
+            Point3D(c.A.X.Max(c.B.X) + c.Radius,
+                    c.A.Y.Max(c.B.Y) + c.Radius,
+                    c.A.Z.Max(c.B.Z) + c.Radius));
+
+    // True when the point is within Radius of the spine segment.
+    Contains(c: Capsule3D, point: Point3D): Boolean
+        => DistanceToSegment(c.A, c.B, point) <= c.Radius;
+
+    // The query point when it lies in the capsule, otherwise the radial projection
+    // onto the boundary from the nearest spine point.
+    ClosestPoint(c: Capsule3D, point: Point3D): Point3D
+    {
+        var spine = ClosestPointOnSegment(c.A, c.B, point);
+        var outward = spine.Between(point);
+        return outward.MagnitudeSquared <= c.Radius.Square
+            ? point
+            : spine + outward.Normalize * c.Radius;
+    }
+
+    // The support of a Minkowski sum: the farther spine endpoint along `direction`,
+    // displaced by r along it.
+    Support(c: Capsule3D, direction: Direction3D): Point3D
+        => (direction.Vector.Dot(c.A.PositionVector) >= direction.Vector.Dot(c.B.PositionVector)
+            ? c.A : c.B) + direction.Vector * c.Radius;
+
+    //==
+    // # Cylinder, pipe, cone, and frustum bodies
+    //
+    // Volume, surface area, bounds, centroid, containment and support bodies for the
+    // axis-swept solids declared in `spatial-primitives.types.plato`. The capsule's
+    // bodies are in the capsule section; the frame and disk-extent helpers, and the
+    // conventions governing every body here, are in the shared primitives section.
+
+    //==
+    // # Cylinder
+    //
+    // https://en.wikipedia.org/wiki/Cylinder
+
+    // pi * r^2 * h.
+    Volume(c: Cylinder): Number
+        => Number.Pi * c.Radius.Square * c.Height;
+
+    // The lateral surface 2*pi*r*h PLUS both flat caps 2*pi*r^2, since the solid's
+    // boundary includes them.
+    SurfaceArea(c: Cylinder): Number
+        => 2.0 * Number.Pi * c.Radius * c.Height + 2.0 * Number.Pi * c.Radius.Square;
+
+    // The stored centre, which is the midpoint of the axis segment.
+    Centroid(c: Cylinder): Point3D
+        => c.Center;
+
+    // TIGHT: the axial half-extent (h/2)|axis.e| plus the cap disk's own extent
+    // r*sqrt(1 - (axis.e)^2) on each world axis e.
+    Bounds(c: Cylinder): Bounds3D
+    {
+        var a = c.Axis.Vector;
+        var disk = DiskHalfExtents(a, c.Radius);
+        var half = c.Height * 0.5;
+        return CenteredBounds(c.Center,
+            half * a.X.Abs + disk.X,
+            half * a.Y.Abs + disk.Y,
+            half * a.Z.Abs + disk.Z);
+    }
+
+    // True when the query is within half the height along the axis AND within the
+    // radius of the axis. Boundary inclusive on both.
+    Contains(c: Cylinder, point: Point3D): Boolean
+    {
+        var v = c.Center.Between(point);
+        return v.Dot(c.Axis.Vector).Abs <= c.Height * 0.5
+            && PerpendicularComponent(v, c.Axis.Vector).MagnitudeSquared <= c.Radius.Square;
+    }
+
+    // The rim point of whichever cap faces `direction`: the axial extreme plus the
+    // radial extreme, chosen independently.
+    Support(c: Cylinder, direction: Direction3D): Point3D
+    {
+        var a = c.Axis.Vector;
+        var d = direction.Vector;
+        var axial = a * (d.Dot(a) >= 0.0 ? c.Height * 0.5 : c.Height * -0.5);
+        return c.Center + axial + RadialSupport(d, a, c.Radius);
+    }
+
+    //==
+    // # CylindricalShell
+
+    // pi * h * (R^2 - r^2).
+    Volume(s: CylindricalShell): Number
+        => Number.Pi * s.Height * (s.OuterRadius.Square - s.InnerRadius.Square);
+
+    // Both lateral surfaces 2*pi*h*(R + r) plus the two annular caps
+    // 2*pi*(R^2 - r^2). The inner wall is part of the solid's boundary.
+    SurfaceArea(s: CylindricalShell): Number
+        => 2.0 * Number.Pi * s.Height * (s.OuterRadius + s.InnerRadius)
+        + 2.0 * Number.Pi * (s.OuterRadius.Square - s.InnerRadius.Square);
+
+    // The stored centre.
+    Centroid(s: CylindricalShell): Point3D
+        => s.Center;
+
+    // The outer cylinder's bounds, which the shell touches everywhere.
+    Bounds(s: CylindricalShell): Bounds3D
+    {
+        var a = s.Axis.Vector;
+        var disk = DiskHalfExtents(a, s.OuterRadius);
+        var half = s.Height * 0.5;
+        return CenteredBounds(s.Center,
+            half * a.X.Abs + disk.X,
+            half * a.Y.Abs + disk.Y,
+            half * a.Z.Abs + disk.Z);
+    }
+
+    // True when the query is within half the height along the axis AND its distance
+    // from the axis lies in [InnerRadius, OuterRadius].
+    Contains(s: CylindricalShell, point: Point3D): Boolean
+    {
+        var v = s.Center.Between(point);
+        var radialSquared = PerpendicularComponent(v, s.Axis.Vector).MagnitudeSquared;
+        return v.Dot(s.Axis.Vector).Abs <= s.Height * 0.5
+            && radialSquared >= s.InnerRadius.Square
+            && radialSquared <= s.OuterRadius.Square;
+    }
+
+    //==
+    // # Cone
+    //
+    // https://en.wikipedia.org/wiki/Cone
+
+    // The centre of the base disk: Apex displaced by Height along Axis.
+    BaseCenter(c: Cone): Point3D
+        => c.Apex + c.Axis.Vector * c.Height;
+
+    // The slant height sqrt(r^2 + h^2).
+    SlantHeight(c: Cone): Number
+        => (c.Radius.Square + c.Height.Square).Sqrt;
+
+    // (1/3) * pi * r^2 * h.
+    Volume(c: Cone): Number
+        => Number.Pi * c.Radius.Square * c.Height / 3.0;
+
+    // The lateral surface pi*r*l PLUS the base disk pi*r^2, since the base closes
+    // the solid.
+    SurfaceArea(c: Cone): Number
+        => Number.Pi * c.Radius.Square + Number.Pi * c.Radius * c.SlantHeight;
+
+    // On the axis, three quarters of the way from the Apex to the base — i.e. one
+    // quarter of the height above the base, the standard solid-cone result.
+    Centroid(c: Cone): Point3D
+        => c.Apex + c.Axis.Vector * (0.75 * c.Height);
+
+    // TIGHT: the union of the Apex and the base disk's own bounds.
+    Bounds(c: Cone): Bounds3D
+        => UnionOfBounds(Bounds3D(c.Apex, c.Apex),
+            DiskBounds(c.BaseCenter, c.Axis.Vector, c.Radius));
+
+    // True when the query lies between the Apex and the base plane AND within the
+    // cone's radius at that height, which grows linearly as r*t/h. Boundary
+    // inclusive.
+    Contains(c: Cone, point: Point3D): Boolean
+    {
+        var v = c.Apex.Between(point);
+        var t = v.Dot(c.Axis.Vector);
+        return t >= 0.0 && t <= c.Height
+            && PerpendicularComponent(v, c.Axis.Vector).Magnitude <= c.Radius * t / c.Height;
+    }
+
+    // Either the Apex or the extreme point of the base rim, whichever is farther
+    // along `direction`. Exact because the cone is the convex hull of those two
+    // features.
+    Support(c: Cone, direction: Direction3D): Point3D
+    {
+        var d = direction.Vector;
+        var rim = c.BaseCenter + RadialSupport(d, c.Axis.Vector, c.Radius);
+        return d.Dot(c.Apex.PositionVector) >= d.Dot(rim.PositionVector) ? c.Apex : rim;
+    }
+
+    //==
+    // # ConicalFrustum
+    //
+    // https://en.wikipedia.org/wiki/Frustum
+
+    // The centre of the bottom disk, at -Height/2 along Axis.
+    BottomCenter(f: ConicalFrustum): Point3D
+        => f.Center - f.Axis.Vector * (f.Height * 0.5);
+
+    // The centre of the top disk, at +Height/2 along Axis.
+    TopCenter(f: ConicalFrustum): Point3D
+        => f.Center + f.Axis.Vector * (f.Height * 0.5);
+
+    // The slant height sqrt((r1 - r2)^2 + h^2).
+    SlantHeight(f: ConicalFrustum): Number
+        => ((f.BottomRadius - f.TopRadius).Square + f.Height.Square).Sqrt;
+
+    // (pi * h / 3) * (r1^2 + r1*r2 + r2^2).
+    // https://en.wikipedia.org/wiki/Frustum#Volume
+    Volume(f: ConicalFrustum): Number
+        => Number.Pi * f.Height
+        * (f.BottomRadius.Square + f.BottomRadius * f.TopRadius + f.TopRadius.Square) / 3.0;
+
+    // The lateral surface pi*(r1 + r2)*l PLUS both disks pi*(r1^2 + r2^2).
+    SurfaceArea(f: ConicalFrustum): Number
+        => Number.Pi * (f.BottomRadius.Square + f.TopRadius.Square)
+        + Number.Pi * (f.BottomRadius + f.TopRadius) * f.SlantHeight;
+
+    // On the axis, at (h/4) * (r1^2 + 2*r1*r2 + 3*r2^2) / (r1^2 + r1*r2 + r2^2)
+    // above the BOTTOM disk — restated here relative to Center, which sits at h/2.
+    // Checks out at both ends: r2 = 0 gives h/4 (the cone) and r1 = r2 gives h/2
+    // (the cylinder). https://en.wikipedia.org/wiki/Frustum
+    Centroid(f: ConicalFrustum): Point3D
+    {
+        var r1 = f.BottomRadius;
+        var r2 = f.TopRadius;
+        var fromBottom = f.Height * 0.25
+            * (r1.Square + 2.0 * r1 * r2 + 3.0 * r2.Square)
+            / (r1.Square + r1 * r2 + r2.Square);
+        return f.BottomCenter + f.Axis.Vector * fromBottom;
+    }
+
+    // TIGHT: the union of the two disks' own bounds.
+    Bounds(f: ConicalFrustum): Bounds3D
+        => UnionOfBounds(DiskBounds(f.BottomCenter, f.Axis.Vector, f.BottomRadius),
+            DiskBounds(f.TopCenter, f.Axis.Vector, f.TopRadius));
+
+    // True when the query lies between the two disks AND within the frustum's
+    // radius at that height, which interpolates linearly from r1 to r2.
+    Contains(f: ConicalFrustum, point: Point3D): Boolean
+    {
+        var v = f.Center.Between(point);
+        var t = v.Dot(f.Axis.Vector);
+        var fraction = (t + f.Height * 0.5) / f.Height;
+        return t.Abs <= f.Height * 0.5
+            && PerpendicularComponent(v, f.Axis.Vector).Magnitude
+                <= f.BottomRadius + (f.TopRadius - f.BottomRadius) * fraction;
+    }
+
+    //==
+    // # Disk, triangle, and quadrilateral bodies
+    //
+    // Area, perimeter, bounds, centroid and nearest-point bodies for the flat patches
+    // declared in `spatial-primitives.types.plato`, plus the triangle's vector area, face normal,
+    // and supporting plane. These are patches, not solids: `Area` is the patch's own area
+    // and `ClosestPoint` always lands ON the patch. The frame and disk-extent helpers are
+    // in the shared section above, and the point-list kernels in
+    // `geometry.library.plato`.
+
+    //==
+    // # Disk3D
+    //
+    // A flat patch, not a solid: `Area` is the patch's area and `Perimeter` its rim.
+
+    // pi * r^2.
+    Area(d: Disk3D): Number
+        => Number.Pi * d.Radius.Square;
+
+    // The rim's circumference 2 * pi * r.
+    Perimeter(d: Disk3D): Number
+        => 2.0 * Number.Pi * d.Radius;
+
+    // The stored centre.
+    Centroid(d: Disk3D): Point3D
+        => d.Center;
+
+    // TIGHT: the disk's own per-axis extents.
+    Bounds(d: Disk3D): Bounds3D
+        => DiskBounds(d.Center, d.Normal.Vector, d.Radius);
+
+    // The query projected onto the disk's plane, then pulled radially back to the
+    // rim if it landed outside. Always lands ON the patch.
+    ClosestPoint(d: Disk3D, point: Point3D): Point3D
+    {
+        var inPlane = PerpendicularComponent(d.Center.Between(point), d.Normal.Vector);
+        var distance = inPlane.Magnitude;
+        return d.Center + (distance <= d.Radius
+            ? inPlane
+            : inPlane * (d.Radius / distance));
+    }
+
+    //==
+    // # Triangle3D
+
+    // The three vertices in stored order.
+    Points(t: Triangle3D): Array<Point3D>
+        => [t.A, t.B, t.C];
+
+    // Twice the vector area: the cross product of two edge vectors, whose direction
+    // is the right-hand-rule normal and whose magnitude is twice the area.
+    TwiceVectorArea(t: Triangle3D): Vector3D
+        => t.A.Between(t.B).Cross(t.A.Between(t.C));
+
+    // Half the magnitude of the edge cross product.
+    // https://en.wikipedia.org/wiki/Triangle#Using_vectors
+    Area(t: Triangle3D): Number
+        => t.TwiceVectorArea.Magnitude * 0.5;
+
+    // The unit face normal, following the right-hand rule around A, B, C (this
+    // type's stated orientation). Undefined for a degenerate (collinear) triangle,
+    // whose vector area is zero.
+    Normal(t: Triangle3D): Direction3D
+        => Direction3D(t.TwiceVectorArea.Normalize);
+
+    // The plane the triangle lies in, in Hesse form: the face normal with Distance
+    // the signed distance from the world origin (Dot(Normal, A)). The declared
+    // conversion clipping and BSP authors reach for.
+    FromTriangle(t: Triangle3D): Plane
+        => (t.Normal, t.A.PositionVector.Dot(t.Normal.Vector));
+
+    // The sum of the three side lengths.
+    Perimeter(t: Triangle3D): Number
+        => t.A.Between(t.B).Magnitude
+        + t.B.Between(t.C).Magnitude
+        + t.C.Between(t.A).Magnitude;
+
+    // The arithmetic mean of the three vertices, which for a triangle is also its
+    // area centroid.
+    Centroid(t: Triangle3D): Point3D
+        => ((t.A.X + t.B.X + t.C.X) / 3.0,
+            (t.A.Y + t.B.Y + t.C.Y) / 3.0,
+            (t.A.Z + t.B.Z + t.C.Z) / 3.0);
+
+    // True when `point`, ASSUMED ALREADY IN THE TRIANGLE'S PLANE, lies inside it:
+    // all three edge cross products agree with the triangle's own normal.
+    ContainsCoplanar(t: Triangle3D, point: Point3D): Boolean
+    {
+        var n = t.TwiceVectorArea;
+        return t.A.Between(t.B).Cross(t.A.Between(point)).Dot(n) >= 0.0
+            && t.B.Between(t.C).Cross(t.B.Between(point)).Dot(n) >= 0.0
+            && t.C.Between(t.A).Cross(t.C.Between(point)).Dot(n) >= 0.0;
+    }
+
+    // The query projected onto the triangle's plane when that projection lands
+    // inside, otherwise the nearest point of the three edges. A degenerate
+    // (collinear) triangle has no plane, so the edge branch takes over — its
+    // projection test fails on the zero normal.
+    ClosestPoint(t: Triangle3D, point: Point3D): Point3D
+    {
+        var n = t.TwiceVectorArea.Normalize;
+        var projected = point - n * t.A.Between(point).Dot(n);
+        return t.ContainsCoplanar(projected)
+            ? projected
+            : t.Points.ClosestPointOnChain(true, point);
+    }
+
+    // The triangle with all three vertices carried through the mapping.
+    Deform(t: Triangle3D, mapping: Function1<Point3D, Point3D>): Triangle3D
+        => (mapping(t.A), mapping(t.B), mapping(t.C));
+
+    //==
+    // # Quad3D
+    //
+    // Measured through the A-B-C / A-C-D TRIANGULATION. Exact for the planar case
+    // the declaration calls ideal; for a genuinely non-planar bilinear patch the
+    // triangulated area UNDERSTATES the curved surface area (the two flat triangles
+    // are the chordal approximation of it) and the centroid is that of the two
+    // triangles rather than of the patch. TODO(content): the bilinear patch's own
+    // area is an elliptic integral with no closed form; a quadrature helper would
+    // be needed to do better.
+
+    // The four vertices in stored order.
+    Points(q: Quad3D): Array<Point3D>
+        => [q.A, q.B, q.C, q.D];
+
+    // The sum of the two triangles A-B-C and A-C-D.
+    Area(q: Quad3D): Number
+        => Triangle3D(q.A, q.B, q.C).Area + Triangle3D(q.A, q.C, q.D).Area;
+
+    // The sum of the four side lengths.
+    Perimeter(q: Quad3D): Number
+        => q.Points.ChainLength(true);
+
+    // The area-weighted mean of the two triangles' centroids, which is the exact
+    // area centroid for a planar quad.
+    Centroid(q: Quad3D): Point3D
+    {
+        var first = Triangle3D(q.A, q.B, q.C);
+        var second = Triangle3D(q.A, q.C, q.D);
+        var total = first.Area + second.Area;
+        return first.Centroid.Lerp(second.Centroid, second.Area / total);
+    }
+
+    // The quad with all four vertices carried through the mapping.
+    Deform(q: Quad3D, mapping: Function1<Point3D, Point3D>): Quad3D
+        => (mapping(q.A), mapping(q.B), mapping(q.C), mapping(q.D));
+
+    //==
+    // # Tetrahedron, wedge, and convex-volume bodies
+    //
+    // Volume, surface area, bounds, centroid and containment bodies for the flat-faced
+    // solids declared in `spatial-primitives.types.plato`. `SignedVolume` and the scalar triple
+    // product it is built from carry the sign convention the tetrahedron's declaration
+    // states. The conventions governing every body here are in the shared section
+    // above.
+
+    //==
+    // # Tetrahedron
+    //
+    // https://en.wikipedia.org/wiki/Tetrahedron
+
+    // The four vertices in stored order.
+    Points(t: Tetrahedron): Array<Point3D>
+        => [t.A, t.B, t.C, t.D];
+
+    // Six times the signed volume of the simplex (a, b, c, d): the scalar triple
+    // product (b - a) x (c - a) . (d - a). Positive when d lies on the side of
+    // triangle (a, b, c) its right-hand-rule normal points to. The orientation
+    // predicate the containment test below is built from.
+    SixTimesSignedVolume(a: Point3D, b: Point3D, c: Point3D, d: Point3D): Number
+        => a.Between(b).Cross(a.Between(c)).Dot(a.Between(d));
+
+    // The signed volume, positive when D lies on the positive side of triangle
+    // A, B, C — the sign convention the declaration states.
+    SignedVolume(t: Tetrahedron): Number
+        => SixTimesSignedVolume(t.A, t.B, t.C, t.D) / 6.0;
+
+    // The magnitude of the signed volume; never negative.
+    Volume(t: Tetrahedron): Number
+        => t.SignedVolume.Abs;
+
+    // The sum of the four face triangles.
+    SurfaceArea(t: Tetrahedron): Number
+        => Triangle3D(t.A, t.B, t.C).Area
+        + Triangle3D(t.A, t.B, t.D).Area
+        + Triangle3D(t.A, t.C, t.D).Area
+        + Triangle3D(t.B, t.C, t.D).Area;
+
+    // The arithmetic mean of the four vertices, which for a simplex is also its
+    // volume centroid.
+    Centroid(t: Tetrahedron): Point3D
+        => ((t.A.X + t.B.X + t.C.X + t.D.X) * 0.25,
+            (t.A.Y + t.B.Y + t.C.Y + t.D.Y) * 0.25,
+            (t.A.Z + t.B.Z + t.C.Z + t.D.Z) * 0.25);
+
+    // True when the four sub-tetrahedra formed by replacing one vertex with the
+    // query all have the SAME orientation as the whole — equivalently, when all
+    // four barycentric coordinates are non-negative. A zero term means the query is
+    // on that face, so the boundary is included.
+    Contains(t: Tetrahedron, point: Point3D): Boolean
+    {
+        var whole = SixTimesSignedVolume(t.A, t.B, t.C, t.D);
+        return SixTimesSignedVolume(point, t.B, t.C, t.D) * whole >= 0.0
+            && SixTimesSignedVolume(t.A, point, t.C, t.D) * whole >= 0.0
+            && SixTimesSignedVolume(t.A, t.B, point, t.D) * whole >= 0.0
+            && SixTimesSignedVolume(t.A, t.B, t.C, point) * whole >= 0.0;
+    }
+
+    // The tetrahedron with all four vertices carried through the mapping.
+    Deform(t: Tetrahedron, mapping: Function1<Point3D, Point3D>): Tetrahedron
+        => (mapping(t.A), mapping(t.B), mapping(t.C), mapping(t.D));
+
+    //==
+    // # Wedge
+    //
+    // A triangular prism: the Base triangle swept by Offset, possibly obliquely.
+
+    // |(AB x AC) . Offset| / 2 — the base area times the component of Offset
+    // perpendicular to the base. Correct for an oblique sweep (Cavalieri).
+    Volume(w: Wedge): Number
+        => w.Base.TwiceVectorArea.Dot(w.Offset).Abs * 0.5;
+
+    // The two triangular ends plus one parallelogram per base edge, each of area
+    // |edge x Offset|.
+    SurfaceArea(w: Wedge): Number
+        => 2.0 * w.Base.Area
+        + w.Base.A.Between(w.Base.B).Cross(w.Offset).Magnitude
+        + w.Base.B.Between(w.Base.C).Cross(w.Offset).Magnitude
+        + w.Base.C.Between(w.Base.A).Cross(w.Offset).Magnitude;
+
+    // The base centroid displaced by half the sweep; the wedge is uniform along
+    // Offset.
+    Centroid(w: Wedge): Point3D
+        => w.Base.Centroid + w.Offset * 0.5;
+
+    // The union of the base triangle's bounds and the swept copy's.
+    Bounds(w: Wedge): Bounds3D
+        => UnionOfBounds(w.Base.Bounds, w.Base.Bounds.TranslateBounds(w.Offset));
+
+    // True when the query solves (point - A) = u*AB + v*AC + s*Offset with u, v
+    // and u+v in [0, 1] (inside the base triangle) and s in [0, 1] (inside the
+    // sweep). Solved by Cramer's rule on the 3x3 frame; each determinant is a
+    // scalar triple product. Boundary inclusive. Undefined (division by zero) when
+    // Offset lies in the base plane. https://en.wikipedia.org/wiki/Cramer%27s_rule
+    Contains(w: Wedge, point: Point3D): Boolean
+    {
+        var ab = w.Base.A.Between(w.Base.B);
+        var ac = w.Base.A.Between(w.Base.C);
+        var ap = w.Base.A.Between(point);
+        var determinant = ab.Cross(ac).Dot(w.Offset);
+        var u = ap.Cross(ac).Dot(w.Offset) / determinant;
+        var v = ab.Cross(ap).Dot(w.Offset) / determinant;
+        var s = ab.Cross(ac).Dot(ap) / determinant;
+        return u >= 0.0 && v >= 0.0 && u + v <= 1.0 && s >= 0.0 && s <= 1.0;
+    }
+
+    //==
+    // # ConvexVolume
+
+    // True when the query is behind EVERY bounding plane (the normals point
+    // outward), which is exactly the intersection of the half-spaces. Boundary
+    // inclusive. An empty plane list reports true — the intersection of no
+    // half-spaces is all of space.
+    Contains(v: ConvexVolume, point: Point3D): Boolean
+        => v.Planes.All(p => p.SignedDistance(point) <= 0.0);
+
+    //==
+    // # Sphere, shell, cap, and ellipsoid bodies
+    //
+    // Volume, surface area, bounds, centroid, containment, nearest-point and support
+    // bodies for the types declared in `spatial-primitives.types.plato`. The frame and disk-extent
+    // helpers, and the conventions governing every body here, are in the shared
+    // section above.
+
+    //==
+    // # Sphere
+    //
+    // https://en.wikipedia.org/wiki/Sphere
+
+    // (4/3) * pi * r^3.
+    Volume(s: Sphere): Number
+        => 4.0 / 3.0 * Number.Pi * s.Radius.Cube;
+
+    // 4 * pi * r^2.
+    SurfaceArea(s: Sphere): Number
+        => 4.0 * Number.Pi * s.Radius.Square;
+
+    // The ball's centre of mass is its centre.
+    Centroid(s: Sphere): Point3D
+        => s.Center;
+
+    // The cube of side 2r about the centre.
+    Bounds(s: Sphere): Bounds3D
+        => CenteredBounds(s.Center, s.Radius, s.Radius, s.Radius);
+
+    // True when the point is within Radius of the centre; boundary inclusive.
+    Contains(s: Sphere, point: Point3D): Boolean
+        => s.Center.Between(point).MagnitudeSquared <= s.Radius.Square;
+
+    // The query point when it lies in the ball, otherwise its radial projection
+    // onto the sphere.
+    ClosestPoint(s: Sphere, point: Point3D): Point3D
+        => s.Contains(point)
+        ? point
+        : s.Center + s.Center.Between(point).Normalize * s.Radius;
+
+    // The point of the sphere farthest along `direction`.
+    Support(s: Sphere, direction: Direction3D): Point3D
+        => s.Center + direction.Vector * s.Radius;
+
+    //==
+    // # SphericalShell
+
+    // (4/3) * pi * (R^3 - r^3).
+    Volume(s: SphericalShell): Number
+        => 4.0 / 3.0 * Number.Pi * (s.OuterRadius.Cube - s.InnerRadius.Cube);
+
+    // BOTH boundary spheres: 4*pi*(R^2 + r^2). The shell is a solid region with two
+    // boundary components, and `SurfaceArea` is the area of its whole boundary.
+    SurfaceArea(s: SphericalShell): Number
+        => 4.0 * Number.Pi * (s.OuterRadius.Square + s.InnerRadius.Square);
+
+    // The centre, by spherical symmetry.
+    Centroid(s: SphericalShell): Point3D
+        => s.Center;
+
+    // The bounds of the outer sphere.
+    Bounds(s: SphericalShell): Bounds3D
+        => CenteredBounds(s.Center, s.OuterRadius, s.OuterRadius, s.OuterRadius);
+
+    // True when the distance from the centre lies in [InnerRadius, OuterRadius];
+    // both boundaries inclusive.
+    Contains(s: SphericalShell, point: Point3D): Boolean
+    {
+        var distanceSquared = s.Center.Between(point).MagnitudeSquared;
+        return distanceSquared >= s.InnerRadius.Square
+            && distanceSquared <= s.OuterRadius.Square;
+    }
+
+    //==
+    // # SphericalCap
+    //
+    // https://en.wikipedia.org/wiki/Spherical_cap
+
+    // The cap's height along the axis: R * (1 - cos theta). Runs from 0 (empty) to
+    // 2R (the whole ball, at theta = pi).
+    CapHeight(c: SphericalCap): Number
+        => c.Sphere.Radius * (1.0 - c.PolarAngle.Cos);
+
+    // The radius of the flat cutting disk: R * sin theta.
+    CapBaseRadius(c: SphericalCap): Number
+        => c.Sphere.Radius * c.PolarAngle.Sin;
+
+    // (pi * h^2 / 3) * (3R - h).
+    Volume(c: SphericalCap): Number
+        => Number.Pi * c.CapHeight.Square * (3.0 * c.Sphere.Radius - c.CapHeight) / 3.0;
+
+    // The curved cap 2*pi*R*h PLUS the flat cutting disk pi*a^2, because the solid
+    // cap's boundary includes the plane that closes it (the declaration says the
+    // cap is "closed by the cutting plane").
+    SurfaceArea(c: SphericalCap): Number
+        => 2.0 * Number.Pi * c.Sphere.Radius * c.CapHeight
+        + Number.Pi * c.CapBaseRadius.Square;
+
+    // On the axis, at 3*(2R - h)^2 / (4*(3R - h)) from the SPHERE's centre. Checks
+    // out at both ends: h = R gives 3R/8 (the hemisphere) and h = 2R gives 0 (the
+    // whole ball). https://en.wikipedia.org/wiki/Spherical_cap
+    Centroid(c: SphericalCap): Point3D
+    {
+        var h = c.CapHeight;
+        var r = c.Sphere.Radius;
+        var distance = 3.0 * (2.0 * r - h).Square / (4.0 * (3.0 * r - h));
+        return c.Sphere.Center + c.Axis.Vector * distance;
+    }
+
+    // CONSERVATIVE, not tight: the whole sphere's bounds. A tight box would have to
+    // decide, per world axis, whether the cap reaches that axis' extreme on the
+    // sphere or is cut short by the base disk.
+    // TODO(content): tighten to the cap's own extremes.
+    Bounds(c: SphericalCap): Bounds3D
+        => c.Sphere.Bounds;
+
+    // True when the point lies in the ball AND within PolarAngle of the axis as
+    // seen from the sphere's centre — the latter written as a plane test,
+    // (p - C).axis >= R cos theta, which is exactly the cutting plane.
+    Contains(c: SphericalCap, point: Point3D): Boolean
+    {
+        var v = c.Sphere.Center.Between(point);
+        return v.MagnitudeSquared <= c.Sphere.Radius.Square
+            && v.Dot(c.Axis.Vector) >= c.Sphere.Radius * c.PolarAngle.Cos;
+    }
+
+    //==
+    // # Ellipsoid
+    //
+    // https://en.wikipedia.org/wiki/Ellipsoid
+
+    // (4/3) * pi * a * b * c. https://en.wikipedia.org/wiki/Ellipsoid#Volume
+    Volume(e: Ellipsoid): Number
+        => 4.0 / 3.0 * Number.Pi * e.SemiAxes.X * e.SemiAxes.Y * e.SemiAxes.Z;
+
+    // APPROXIMATE. The surface area of a general ellipsoid is an incomplete
+    // elliptic integral with no elementary closed form; this is KNUD THOMSEN'S
+    // FORMULA,
+    //     S ~= 4 pi ( ((ab)^p + (ac)^p + (bc)^p) / 3 ) ^ (1/p),   p = 1.6075,
+    // whose relative error is at most 1.061% over ALL semi-axis ratios and is zero
+    // for a sphere. https://en.wikipedia.org/wiki/Ellipsoid#Approximate_formula
+    SurfaceArea(e: Ellipsoid): Number
+    {
+        var p = 1.6075;
+        var ab = (e.SemiAxes.X * e.SemiAxes.Y).Pow(p);
+        var ac = (e.SemiAxes.X * e.SemiAxes.Z).Pow(p);
+        var bc = (e.SemiAxes.Y * e.SemiAxes.Z).Pow(p);
+        return 4.0 * Number.Pi * ((ab + ac + bc) / 3.0).Pow(1.0 / p);
+    }
+
+    // The centre, by the ellipsoid's point symmetry.
+    Centroid(e: Ellipsoid): Point3D
+        => e.Center;
+
+    // TIGHT: the support of the ellipsoid along a world axis is
+    // sqrt(sum over local axes of (semiAxis * axisImage.component)^2), because the
+    // ellipsoid is the unit ball mapped by the (rotated, scaled) semi-axis frame.
+    Bounds(e: Ellipsoid): Bounds3D
+    {
+        var b = e.Orientation.Basis3D;
+        var a = e.SemiAxes;
+        var ex = ((a.X * b.X.X).Square + (a.Y * b.Y.X).Square + (a.Z * b.Z.X).Square).Sqrt;
+        var ey = ((a.X * b.X.Y).Square + (a.Y * b.Y.Y).Square + (a.Z * b.Z.Y).Square).Sqrt;
+        var ez = ((a.X * b.X.Z).Square + (a.Y * b.Y.Z).Square + (a.Z * b.Z.Z).Square).Sqrt;
+        return CenteredBounds(e.Center, ex, ey, ez);
+    }
+
+    // True when (x/a)^2 + (y/b)^2 + (z/c)^2 <= 1 in the ellipsoid's own frame.
+    Contains(e: Ellipsoid, point: Point3D): Boolean
+    {
+        var q = LocalOffset(e.Center, e.Orientation, point);
+        return (q.X / e.SemiAxes.X).Square
+            + (q.Y / e.SemiAxes.Y).Square
+            + (q.Z / e.SemiAxes.Z).Square <= 1.0;
+    }
+
+    // The support point of an ellipsoid: in its own frame the point is
+    // A^2 d / |A d| with A the diagonal semi-axis matrix, which is the image under
+    // A of the unit-sphere support in the direction A d.
+    Support(e: Ellipsoid, direction: Direction3D): Point3D
+    {
+        var d = direction.Vector.Transform(e.Orientation.Inverse);
+        var a = e.SemiAxes;
+        var scaled = Vector3D(a.X * d.X, a.Y * d.Y, a.Z * d.Z);
+        var local = Vector3D(a.X * scaled.X, a.Y * scaled.Y, a.Z * scaled.Z)
+            / scaled.Magnitude;
+        return e.Center + WorldOffset(e.Orientation, local);
+    }
+
+    // The circumscribed sphere of a box: centered at the box center with radius
+    // half the Min -> Max diagonal length. Lives here rather than beside the other
+    // Bounds3D bodies (foundation) because `Sphere` is a geometry type.
+    BoundingSphere(self: Bounds3D): Sphere
+        => Sphere(self.Center, self.Diagonal.Magnitude.Half);
+
+    //==
+    // # Torus bodies
+    //
+    // Volume, surface area, bounds, centroid and containment bodies for the type
+    // declared in `spatial-primitives.types.plato`. Volume and surface area come from Pappus's
+    // centroid theorem and are valid only for the non-self-intersecting ring torus. The
+    // disk-extent helper, and the conventions governing every body here, are in the
+    // shared section above.
+
+    //==
+    // # Torus
+    //
+    // https://en.wikipedia.org/wiki/Torus
+
+    // 2 * pi^2 * R * r^2 — Pappus's centroid theorem applied to the minor disk swept
+    // around the major circle. Valid only for the non-self-intersecting ring torus
+    // (r <= R), which the declaration flags.
+    // https://en.wikipedia.org/wiki/Pappus%27s_centroid_theorem
+    Volume(t: Torus): Number
+        => 2.0 * Number.Pi.Square * t.MajorRadius * t.MinorRadius.Square;
+
+    // 4 * pi^2 * R * r — Pappus's theorem applied to the minor circle. Ring torus
+    // only, as above.
+    SurfaceArea(t: Torus): Number
+        => 4.0 * Number.Pi.Square * t.MajorRadius * t.MinorRadius;
+
+    // The stored centre, by the torus's rotational and mirror symmetry.
+    Centroid(t: Torus): Point3D
+        => t.Center;
+
+    // TIGHT: the torus is the major circle Minkowski-summed with a ball of the minor
+    // radius, so its support along a world axis is the circle's support
+    // R*sqrt(1 - (axis.e)^2) plus r.
+    Bounds(t: Torus): Bounds3D
+    {
+        var e = DiskHalfExtents(t.Axis.Vector, t.MajorRadius);
+        return CenteredBounds(t.Center,
+            e.X + t.MinorRadius, e.Y + t.MinorRadius, e.Z + t.MinorRadius);
+    }
+
+    // True when the query is within MinorRadius of the major circle: writing the
+    // query in axial (t) and radial (d) cylindrical coordinates about the centre,
+    // (d - R)^2 + t^2 <= r^2. Boundary inclusive.
+    Contains(t: Torus, point: Point3D): Boolean
+    {
+        var v = t.Center.Between(point);
+        var axial = v.Dot(t.Axis.Vector);
+        var radial = PerpendicularComponent(v, t.Axis.Vector).Magnitude;
+        return (radial - t.MajorRadius).Square + axial.Square <= t.MinorRadius.Square;
     }
 }

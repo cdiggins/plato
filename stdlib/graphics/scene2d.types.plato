@@ -5,7 +5,7 @@
 // a tree via parent indices, and node content (styled paths, text layouts,
 // image references) lives in parallel pools addressed by index. Viewport and
 // export settings close the file. BlendMode is owned by
-// `image-processing-compositing.types.plato`.
+// `image-processing.types.plato`.
 
 // The content a scene node carries. None is a pure transform node; Group has
 // children only and is composited as an isolation group. The indexed cases

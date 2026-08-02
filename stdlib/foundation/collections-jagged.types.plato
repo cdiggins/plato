@@ -6,7 +6,7 @@
 
 // A standalone list of variable-length rows in CSR form: the concrete carrier
 // of the Jagged packing (invariant stated once on the `Jagged` concept in
-// `collections-jagged.concepts.plato`). Builders such as FromRows return this
+// `collections.concepts.plato`). Builders such as FromRows return this
 // type, and a domain type that HAS ragged rows holds one as a field
 // (PolygonMesh3D.Faces); only a type whose own storage already names the rows
 // differently (the adjacency tables) implements Jagged directly instead.

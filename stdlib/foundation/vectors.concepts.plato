@@ -4,10 +4,10 @@
 // The concept shared by every numeric vector in this vocabulary
 // (https://en.wikipedia.org/wiki/Euclidean_vector): component-wise arithmetic,
 // norms, a dot product, and a read-and-construct component surface. The
-// implementing types are declared in `vectors-tuples.types.plato` (the intrinsic
-// Number2/3/4/8 tier) and `vectors-geometric.types.plato` (Vector2D/3D, VectorN,
+// implementing types are declared in `vectors.types.plato` (the intrinsic
+// Number2/3/4/8 tier) and `vectors.types.plato` (Vector2D/3D, VectorN,
 // Direction2D/3D); the concept-generic bodies derived from this concept live in
-// the `numeric-structures-*.library.plato` files.
+// `numeric-structures.library.plato`.
 
 // The family of fixed-arity numeric vectors: component-wise arithmetic, norms,
 // dot product, and component-wise extremes
@@ -16,7 +16,7 @@
 // Indexable<Number> supplies the read half of the component surface (Count is
 // the arity, At(i) the i-th component). FromComponents and Broadcast supply the
 // construction half, which is what makes component-wise map, zip, and fold
-// derivable generically in `numeric-structures-components.library.plato` — every lifted
+// derivable generically in `numeric-structures.library.plato` — every lifted
 // Number function (Abs, Floor, Pow, Lerp, ...) and every reduction
 // (SumComponents, MinComponent, Magnitude) is written once against this pair
 // rather than once per concrete type.
@@ -33,7 +33,7 @@ concept Vector
     // Builds a value of this vector type with every component set to x (the
     // component-wise constant). The receiver supplies the arity, so unlike
     // FromComponents this is genuinely an INSTANCE member: VectorN.Broadcast reads
-    // self's component count (numeric-structures-components.library.plato), and a
+    // self's component count (numeric-structures.library.plato), and a
     // runtime-arity vector has no other source for it, so the receiver must be
     // `self: Self`, not the ignored-receiver form used by FromComponents.
     Broadcast(self: Self, x: Number): Self;

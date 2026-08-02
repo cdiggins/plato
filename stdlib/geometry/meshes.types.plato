@@ -1,4 +1,15 @@
 //==
+// # Meshes
+//
+// Sections, in order:
+//  - Surface meshes
+//  - Mesh attributes
+//  - Unwelded face arrays
+//  - Line sets and bare point clouds
+//  - Mesh partitioning
+//  - Volumetric meshes
+
+//==
 // # Surface meshes
 //
 // Indexed surface geometry: shared vertex position arrays referenced by typed
@@ -14,7 +25,7 @@
 // The three vertex indices of one triangle, wound counter-clockwise when
 // viewed from the front side. Face supplies Value, Hashable, and the
 // Indexable<VertexIndex> corner surface (Count/At bodies in
-// `meshes-faces.library.plato`).
+// `meshes.library.plato`).
 type TriangleFace
     implements Face
 {
@@ -26,7 +37,7 @@ type TriangleFace
 // The four vertex indices of one quadrilateral face, wound counter-clockwise
 // when viewed from the front side. Coplanarity is not guaranteed; when a
 // planar approximation is needed, split along the A-C diagonal — FanTriangles
-// in `meshes-faces.library.plato` is that split.
+// in `meshes.library.plato` is that split.
 type QuadFace
     implements Face
 {
@@ -86,4 +97,272 @@ type PolygonMesh3D
 {
     Positions: Array<Point3D>;
     Faces: JaggedArray<VertexIndex>;
+}
+
+//==
+// # Mesh attributes
+//
+// Named data channels layered over a base mesh: normals, UVs, colors,
+// weights, tangents. A channel's storage length is dictated by its domain
+// (per-vertex, per-face, per-corner, per-undirected-edge, or uniform). Channels
+// are parallel arrays; they never alter the base mesh's connectivity.
+
+// Which mesh element an attribute's values attach to: one value per vertex,
+// per face, per face-vertex slot (allowing seams and hard edges), per
+// undirected edge, or a single value for the whole mesh.
+type AttributeDomain = PerVertex | PerFace | PerCorner | PerUndirectedEdge | Uniform;
+
+// A named channel of per-element values. The length of Values must equal
+// the element count implied by Domain (exactly 1 when Uniform). Names are
+// unique within one channel group of a mesh.
+type MeshAttribute<T>
+{
+    Name: String;
+    Domain: AttributeDomain;
+    Values: Array<T>;
+}
+
+// An orthonormal surface frame for normal mapping
+// (https://en.wikipedia.org/wiki/Normal_mapping) and anisotropic shading.
+// Handedness is +1 or -1: the sign relating Bitangent to the cross product of
+// Normal and Tangent (mirrored UV islands flip it).
+type TangentBasis
+    implements Value
+{
+    Tangent: Direction3D;
+    Bitangent: Direction3D;
+    Normal: Direction3D;
+    Handedness: Number;
+}
+
+// A triangle mesh plus typed attribute channels, grouped by value type.
+// An absent group is an empty array. Well-known channel names include
+// "normal" (PerVertex or PerCorner Vector3D), "uv0" (PerCorner UvCoordinate),
+// and "color" (PerVertex Color).
+type RichMesh3D
+    implements Value, Meshable3D, Deformable3D
+{
+    Mesh: TriangleMesh3D;
+    NumberChannels: Array<MeshAttribute<Number>>;
+    IntegerChannels: Array<MeshAttribute<Integer>>;
+    VectorChannels: Array<MeshAttribute<Vector3D>>;
+    UvChannels: Array<MeshAttribute<UvCoordinate>>;
+    ColorChannels: Array<MeshAttribute<Color>>;
+    TangentChannels: Array<MeshAttribute<TangentBasis>>;
+}
+
+//==
+// ## UV layout bookkeeping
+
+// The undirected mesh edges across which UV coordinates are discontinuous:
+// texture seams. Pairs are canonical (A.Value <= B.Value).
+type UvSeam
+    implements Value
+{
+    UndirectedEdges: Array<VertexPair>;
+}
+
+// A connected set of faces that maps to one contiguous region of UV space
+// (https://en.wikipedia.org/wiki/UV_mapping). UvBounds is that region,
+// expressed in UV space via Bounds2D (X = U, Y = V).
+// Convention: see CONVENTIONS.md - UV origin (origin top-left, U right, V down).
+type UvChart
+    implements Value
+{
+    Faces: Array<FaceIndex>;
+    UvBounds: Bounds2D;
+}
+
+// A complete UV layout (https://en.wikipedia.org/wiki/Texture_atlas): charts
+// packed into the unit UV square at the texel resolution AtlasSize, the seams
+// the unwrap introduced, and the padding (in texels) kept between charts to
+// avoid bleeding.
+type UvAtlas
+    implements Value
+{
+    Charts: Array<UvChart>;
+    Seams: UvSeam;
+    AtlasSize: IntegerSize2D;
+    PaddingTexels: Integer;
+}
+
+//==
+// ## Deformation-support channels
+//
+// Blend shapes (morph targets) live with skeletal animation as MorphTarget
+// (`skeletal-animation.types.plato`); this section holds the mesh-side selection channels.
+
+// A named weighted subset of vertices: soft selections, deformer influence
+// regions, pinning masks. Vertices and Weights are parallel arrays; weights
+// lie in [0, 1]; vertices not listed have weight 0.
+type VertexGroup
+    implements Value
+{
+    Name: String;
+    Vertices: Array<VertexIndex>;
+    Weights: Array<Number>;
+}
+
+//==
+// # Unwelded face arrays
+//
+// Faces stored whole, with no index table and no vertex sharing: the form that
+// comes out of CSG, marching cubes, tessellation, and STL import before a weld
+// pass. The indexed counterparts are `TriangleMesh3D` / `QuadMesh3D`
+// (declared above); representing unwelded geometry as one of those would need a
+// 3n-entry identity index array, which wastes storage and falsely claims
+// sharing.
+//
+// `Array` in the name is the invariant: immutable direct storage of whole faces.
+// These types deliberately do NOT implement `MeshElementCounts` — an unwelded
+// array cannot dedupe undirected edges without building incidence, and
+// `topology.concepts.plato` forbids guessing that count without building incidence.
+// Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+
+// Independent triangles in space, each carrying its own three corner positions.
+// Face order is authored order; `ToTriangleMesh` welds nothing, it only supplies
+// the identity index table.
+type TriangleArray3D
+    implements Value, TriangleGeometry3D
+{
+    Triangles: Array<Triangle3D>;
+}
+
+// Independent quadrilaterals in space, each carrying its own four corner
+// positions. As with `Quad3D`, coplanarity is not guaranteed; triangulation
+// splits on the A-C diagonal.
+type QuadArray3D
+    implements Value, QuadGeometry3D
+{
+    Quads: Array<Quad3D>;
+}
+
+//==
+// # Line sets and bare point clouds
+//
+// Geometry with no faces: straight segments over a shared vertex array
+// (wireframes, edge overlays, sketch and hatch patterns), and unstructured
+// position sets carrying no connectivity at all. Enriched clouds that add
+// normals, colors, or sensor channels live in `pointclouds.types.plato`.
+
+// Straight segments over shared vertices: wireframes
+// (https://en.wikipedia.org/wiki/Wire-frame_model), edge overlays, debug
+// lines. Each VertexPair is one independent segment, in authored direction.
+type LineSet3D
+    implements Value, IndexedSegmentGeometry3D, Deformable3D
+{
+    Positions: Array<Point3D>;
+    Lines: Array<VertexPair>;
+}
+
+// Straight segments over shared vertices in the plane: sketch overlays,
+// planar graphs, hatch patterns.
+type LineSet2D
+    implements Value, IndexedSegmentGeometry2D, Deformable2D
+{
+    Positions: Array<Point2D>;
+    Lines: Array<VertexPair>;
+}
+
+// An unstructured set of 3D positions with no connectivity
+// (https://en.wikipedia.org/wiki/Point_cloud): scan data, particle snapshots,
+// sampling results. Enriched variants live in `pointclouds.types.plato`.
+type PointCloud3D
+    implements Value, Deformable3D
+{
+    Positions: Array<Point3D>;
+}
+
+// An unstructured set of 2D positions with no connectivity.
+type PointCloud2D
+    implements Value, Deformable2D
+{
+    Positions: Array<Point2D>;
+}
+
+//==
+// # Mesh partitioning
+//
+// Slot-tagged contiguous runs of faces: the material assignment, draw batching,
+// and sub-object identity layer over a triangle mesh.
+
+// A zero-based index into an externally owned slot table: material
+// assignment, draw batching, sub-object identity. -1 means "no slot".
+type SlotIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A contiguous run of faces tagged with a slot: material assignment,
+// draw batching, sub-object identity. FaceRange is half-open (contains
+// Start, excludes End) and indexes faces of the owning mesh.
+type MeshSection
+    implements Value
+{
+    FaceRange: IntegerInterval;
+    Slot: SlotIndex;
+}
+
+// A triangle mesh partitioned into sections. Sections are non-overlapping,
+// sorted ascending by FaceRange.Start, and together cover every face.
+type SegmentedMesh3D
+    implements Value, Meshable3D, Deformable3D
+{
+    Mesh: TriangleMesh3D;
+    Sections: Array<MeshSection>;
+}
+
+//==
+// # Volumetric meshes
+//
+// Indexed volume elements over a shared vertex array: the tetrahedral and
+// hexahedral cell records and the meshes built from them, as used by
+// finite-element and structured simulation volumes.
+
+// The four vertex indices of one tetrahedron
+// (https://en.wikipedia.org/wiki/Tetrahedron), ordered so the signed volume is
+// positive (D on the counter-clockwise side of triangle A-B-C).
+type TetrahedronCell
+    implements Value, Hashable
+{
+    A: VertexIndex;
+    B: VertexIndex;
+    C: VertexIndex;
+    D: VertexIndex;
+}
+
+// An indexed tetrahedral mesh: finite-element volumes, volumetric
+// simulations. ToTriangleMesh yields the boundary surface.
+type TetrahedralMesh3D
+    implements Value, Meshable3D, Deformable3D
+{
+    Positions: Array<Point3D>;
+    Cells: Array<TetrahedronCell>;
+}
+
+// The eight vertex indices of one hexahedron
+// (https://en.wikipedia.org/wiki/Hexahedron). A, B, C, D form the bottom quad
+// wound counter-clockwise when viewed from outside (below); E, F, G, H are the
+// corresponding vertices of the top quad (E above A, and so on).
+type HexahedronCell
+    implements Value, Hashable
+{
+    A: VertexIndex;
+    B: VertexIndex;
+    C: VertexIndex;
+    D: VertexIndex;
+    E: VertexIndex;
+    F: VertexIndex;
+    G: VertexIndex;
+    H: VertexIndex;
+}
+
+// An indexed hexahedral mesh: structured simulation volumes, voxel-like
+// finite elements with shared vertices.
+type HexahedralMesh3D
+    implements Value, Deformable3D
+{
+    Positions: Array<Point3D>;
+    Cells: Array<HexahedronCell>;
 }

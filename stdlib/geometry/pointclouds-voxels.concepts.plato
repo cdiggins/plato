@@ -3,7 +3,7 @@
 //
 // Shedding structure down to a bare point cloud, and conservative rasterization
 // into a binary occupancy grid. The derived functionality of both lives in
-// `meshes-geometry.library.plato`.
+// `meshes.library.plato`.
 
 // Anything that can shed its structure and yield its points as a bare
 // position cloud: meshes, enriched clouds, scan slices.

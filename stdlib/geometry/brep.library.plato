@@ -1,20 +1,28 @@
 //==
-// # BREP shell operations
+// # B-rep
 //
-// Evaluation, topology queries, validation, and deformation for the edge-use
-// shell declared in `brep.types.plato`. Geometry dispatch is an exhaustive `match`
-// over the `BrepCurve` / `BrepSurface` sums, so adding a curved case is a new
-// arm in each function here, not a new field anywhere.
-//
-// Deform is the faceted decay: it moves the CONTROL points (vertices, segment
-// endpoints, patch corners) through the mapping and rebuilds each sum case
-// from them, so straight edges stay straight and a warped Planar face decays
-// to the Bilinear case through its four UV corners. The exact
-// function-composition deform of the C# sketch needs function-valued payloads
-// that these sums intentionally do not carry.
+// Sections, in order:
+//  - BREP shell operations
+//  - BREP primitive shells
+//  - BREP tessellation
 
 library Brep
 {
+    //==
+    // # BREP shell operations
+    //
+    // Evaluation, topology queries, validation, and deformation for the edge-use
+    // shell declared in `brep.types.plato`. Geometry dispatch is an exhaustive `match`
+    // over the `BrepCurve` / `BrepSurface` sums, so adding a curved case is a new
+    // arm in each function here, not a new field anywhere.
+    //
+    // Deform is the faceted decay: it moves the CONTROL points (vertices, segment
+    // endpoints, patch corners) through the mapping and rebuilds each sum case
+    // from them, so straight edges stay straight and a warped Planar face decays
+    // to the Bilinear case through its four UV corners. The exact
+    // function-composition deform of the C# sketch needs function-valued payloads
+    // that these sums intentionally do not carry.
+
     //==
     // Geometry evaluation
 
@@ -172,4 +180,134 @@ library Brep
             b.Vertices.Map(mapping),
             b.Edges.Map(e => e.Deform(mapping)),
             b.Faces.Map(f => f.Deform(mapping)));
+
+    //==
+    // # BREP primitive shells
+    //
+    // Literal watertight shells built directly from the brep.types.plato vocabulary.
+    // v1 ships the axis-aligned box; the cylinder-with-seam and prism of the C#
+    // sketch wait on the Arc / QuadGrid sum cases. Conversion FROM the generative
+    // solids (`ExtrudedSolid.ToBrep`, ...) is explicitly out of scope here and
+    // tracked separately.
+
+    // A straight shell edge between two vertices of a position array, carrying
+    // the line segment through those positions as its curve.
+    StraightEdge(vertices: Array<Point3D>, start: Integer, end: Integer): BrepEdge
+        => BrepEdge(
+            VertexIndex(start),
+            VertexIndex(end),
+            Line(Line3D(vertices[start], vertices[end])));
+
+    // A forward citation of edge e in a face boundary loop.
+    ForwardUse(e: Integer): BrepEdgeUse
+        => BrepEdgeUse(UndirectedEdgeIndex(e), EdgeOrientation.Forward);
+
+    // A reversed citation of edge e in a face boundary loop.
+    ReversedUse(e: Integer): BrepEdgeUse
+        => BrepEdgeUse(UndirectedEdgeIndex(e), EdgeOrientation.Reversed);
+
+    // The bilinear face surface over a quad a-b-c-d wound counter-clockwise
+    // seen from outside: U runs a to b, V runs a to d, so du x dv points out.
+    QuadPatch(a: Point3D, b: Point3D, c: Point3D, d: Point3D): BrepSurface
+        => Bilinear(BilinearPatch(a, b, d, c));
+
+    // The axis-aligned box shell: base on the XY plane, centered in X and Y,
+    // V=8, E=12, F=6, Euler characteristic 2. Every edge is cited once
+    // forward and once reversed, so the result is watertight by construction.
+    Box(width: Number, depth: Number, height: Number): Brep3D
+    {
+        var x = width / 2.0;
+        var y = depth / 2.0;
+        var p0 = Point3D(-x, -y, 0.0);
+        var p1 = Point3D(x, -y, 0.0);
+        var p2 = Point3D(-x, y, 0.0);
+        var p3 = Point3D(x, y, 0.0);
+        var p4 = Point3D(-x, -y, height);
+        var p5 = Point3D(x, -y, height);
+        var p6 = Point3D(-x, y, height);
+        var p7 = Point3D(x, y, height);
+        var vertices = [p0, p1, p2, p3, p4, p5, p6, p7];
+        var edges = [
+            StraightEdge(vertices, 0, 2),
+            StraightEdge(vertices, 2, 3),
+            StraightEdge(vertices, 3, 1),
+            StraightEdge(vertices, 1, 0),
+            StraightEdge(vertices, 4, 5),
+            StraightEdge(vertices, 5, 7),
+            StraightEdge(vertices, 7, 6),
+            StraightEdge(vertices, 6, 4),
+            StraightEdge(vertices, 3, 7),
+            StraightEdge(vertices, 5, 1),
+            StraightEdge(vertices, 0, 4),
+            StraightEdge(vertices, 6, 2)];
+        var faces = [
+            // Bottom (0-2-3-1, seen from below).
+            BrepFace(QuadPatch(p0, p2, p3, p1),
+                [BrepLoop([ForwardUse(0), ForwardUse(1), ForwardUse(2), ForwardUse(3)])]),
+            // Top (4-5-7-6).
+            BrepFace(QuadPatch(p4, p5, p7, p6),
+                [BrepLoop([ForwardUse(4), ForwardUse(5), ForwardUse(6), ForwardUse(7)])]),
+            // +X side (1-3-7-5).
+            BrepFace(QuadPatch(p1, p3, p7, p5),
+                [BrepLoop([ReversedUse(2), ForwardUse(8), ReversedUse(5), ForwardUse(9)])]),
+            // -X side (0-4-6-2).
+            BrepFace(QuadPatch(p0, p4, p6, p2),
+                [BrepLoop([ForwardUse(10), ReversedUse(7), ForwardUse(11), ReversedUse(0)])]),
+            // +Y side (2-6-7-3).
+            BrepFace(QuadPatch(p2, p6, p7, p3),
+                [BrepLoop([ReversedUse(11), ReversedUse(6), ReversedUse(8), ReversedUse(1)])]),
+            // -Y side (0-1-5-4).
+            BrepFace(QuadPatch(p0, p1, p5, p4),
+                [BrepLoop([ReversedUse(3), ReversedUse(9), ReversedUse(4), ReversedUse(10)])])];
+        return Brep3D(vertices, edges, faces);
+    }
+
+    //==
+    // # BREP tessellation
+    //
+    // The exact-to-discrete seam for BREP shells: sampling each face's surface
+    // over the full unit UV square into an indexed triangle mesh. Like the C#
+    // sketch it ports, v1 tessellates the FULL UV grid and ignores loop clipping
+    // — exact for the faceted Planar / Bilinear cases whose loops span the whole
+    // patch (Box does), approximate once trimming loops arrive. Triangles wind
+    // counter-clockwise seen from outside when the surface follows the outward
+    // du x dv convention (brep.types.plato).
+
+    // One triangle of a full-grid tessellation over a cols x cols vertex
+    // lattice (cols = resolution + 1): triangles 2*cell and 2*cell + 1 split
+    // grid cell `k / 2` along its low-UV-to-high-UV diagonal.
+    GridTriangleFace(k: Integer, cols: Integer): TriangleFace
+    {
+        var cell = k / 2;
+        var col = cell % (cols - 1);
+        var row = cell / (cols - 1);
+        var a = row * cols + col;
+        var b = a + 1;
+        var c = a + cols + 1;
+        var d = a + cols;
+        return k % 2 == 0
+            ? TriangleFace(VertexIndex(a), VertexIndex(b), VertexIndex(c))
+            : TriangleFace(VertexIndex(a), VertexIndex(c), VertexIndex(d));
+    }
+
+    // The face's surface sampled on a (resolution + 1)^2 UV grid, two
+    // triangles per cell. Precondition: resolution >= 1. Vertices are not
+    // welded across faces; per-shell welding is future work.
+    Tessellate(f: BrepFace, resolution: Integer): TriangleMesh3D
+    {
+        var cols = resolution + 1;
+        var positions = MapRange(cols * cols, i =>
+            f.Surface.Eval(UvCoordinate(
+                (i % cols).ToNumber / resolution.ToNumber,
+                (i / cols).ToNumber / resolution.ToNumber)));
+        var faces = MapRange(2 * resolution * resolution, k =>
+            GridTriangleFace(k, cols));
+        return TriangleMesh3D(positions, faces);
+    }
+
+    // Every face tessellated at the same resolution, in face order — one mesh
+    // per face, matching the per-face material/selection granularity Studio
+    // consumers want.
+    Tessellate(b: Brep3D, resolution: Integer): Array<TriangleMesh3D>
+        => b.Faces.Map(f => f.Tessellate(resolution));
 }

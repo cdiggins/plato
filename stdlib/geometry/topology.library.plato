@@ -1,0 +1,110 @@
+//==
+// # Topology
+//
+// Sections, in order:
+//  - Concrete bodies for the adjacency tables
+//  - The half-edge mesh's own members
+
+library Topology
+{
+    //==
+    // # Concrete bodies for the adjacency tables
+    //
+    // The `Jagged` projections for the three CSR adjacency tables declared in
+    // `topology.types.plato`. Each table already stores its boundaries in a
+    // field literally named `Offsets`, so only the payload projection is written
+    // here; the shared row vocabulary comes from `collections.library.plato`.
+
+    //==
+    // # Adjacency tables as Jagged rows
+    //
+    // Rows are the source elements (vertices, then faces); a row is that
+    // element's neighbourhood run.
+
+    // The neighbours of each vertex, packed vertex by vertex.
+    Values(self: VertexAdjacency): Array<VertexIndex>
+        => self.Neighbors;
+
+    // The edge-adjacent faces of each face, packed face by face.
+    Values(self: FaceAdjacency): Array<FaceIndex>
+        => self.Neighbors;
+
+    // The incident faces of each vertex, packed vertex by vertex.
+    Values(self: VertexFaceAdjacency): Array<FaceIndex>
+        => self.Faces;
+
+    //==
+    // # VertexPair
+
+    // Both endpoints participate in the digest.
+    Hash(self: VertexPair): Integer
+        => self.A.Hash * 31 + self.B.Hash;
+
+    //==
+    // # The half-edge mesh's own members
+    //
+    // The concept obligations of HalfEdgeMesh (`topology.types.plato`):
+    // Deformable3D, the MeshElementCounts triple, and the five HalfEdgeNavigable
+    // steps. Every navigation step is one array read — that constant-time
+    // neighbourhood walk is the entire reason the structure stores what it stores.
+    //
+    // Boundary convention (see the type's doc comment): -1 means "none", so a
+    // half-edge on a boundary has Twin = -1 and a half-edge running along a hole has
+    // Face = -1. The steps below return that sentinel rather than failing; a caller
+    // walking a loop tests for it.
+
+    // The Deformable3D obligation: every vertex position carried through the
+    // mapping, connectivity unchanged.
+    Deform(self: HalfEdgeMesh, mapping: Function1<Point3D, Point3D>): HalfEdgeMesh
+        => (self.Positions.Map(mapping),
+            self.HalfEdges,
+            self.FaceHalfEdges,
+            self.VertexHalfEdges);
+
+    //==
+    // # MeshElementCounts
+
+    // One position per vertex.
+    VertexCount(self: HalfEdgeMesh): Integer
+        => self.Positions.Count;
+
+    // Two half-edges per undirected edge on the interior, but only one along a
+    // boundary — so the count is the number of half-edges less the twinned ones
+    // halved: (halfEdges + boundaryHalfEdges) / 2, which is the same as counting
+    // each half-edge once and each twinned pair once.
+    UndirectedEdgeCount(self: HalfEdgeMesh): Integer {
+        var twinned = self.HalfEdges.Reduce(0, (acc, h) => h.Twin.Value < 0 ? acc : acc + 1);
+        return self.HalfEdges.Count - twinned / 2;
+    }
+
+    // One representative half-edge per face.
+    FaceCount(self: HalfEdgeMesh): Integer
+        => self.FaceHalfEdges.Count;
+
+    //==
+    // # HalfEdgeNavigable
+    //
+    // The five constant-time steps, each a lookup in the half-edge record.
+    // Precondition on all five: halfEdge is a valid index into HalfEdges.
+
+    // The vertex this half-edge leaves.
+    OriginOf(self: HalfEdgeMesh, halfEdge: HalfEdgeIndex): VertexIndex
+        => self.HalfEdges[halfEdge.Value].Origin;
+
+    // The oppositely directed half-edge of the same undirected edge; -1 on a
+    // boundary.
+    TwinOf(self: HalfEdgeMesh, halfEdge: HalfEdgeIndex): HalfEdgeIndex
+        => self.HalfEdges[halfEdge.Value].Twin;
+
+    // The next half-edge counter-clockwise around the bordered face.
+    NextOf(self: HalfEdgeMesh, halfEdge: HalfEdgeIndex): HalfEdgeIndex
+        => self.HalfEdges[halfEdge.Value].Next;
+
+    // The previous half-edge around the bordered face.
+    PreviousOf(self: HalfEdgeMesh, halfEdge: HalfEdgeIndex): HalfEdgeIndex
+        => self.HalfEdges[halfEdge.Value].Previous;
+
+    // The face this half-edge borders; -1 when it runs along a hole.
+    FaceOf(self: HalfEdgeMesh, halfEdge: HalfEdgeIndex): FaceIndex
+        => self.HalfEdges[halfEdge.Value].Face;
+}

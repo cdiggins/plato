@@ -1,0 +1,184 @@
+//==
+// # Planar
+//
+// Sections, in order:
+//  - Rectangles, oriented boxes, and regular polygons
+//  - Circles and circle-derived planar regions
+//  - Ellipses and superellipses
+//  - Planar triangles and quadrilaterals
+
+//==
+// # Rectangles, oriented boxes, and regular polygons
+//
+// The remaining parametric planar regions: an axis-aligned rectangle with uniformly
+// rounded corners, a rectangle with arbitrary rotation, and the regular n-gon
+// inscribed in a circle. Sizes are FULL extents, so every body halves them; winding
+// convention: counter-clockwise is positive.
+
+// An axis-aligned rectangle with corners rounded by a uniform CornerRadius.
+// CornerRadius is clamped to half the smaller side; zero gives the exact
+// rectangle, the maximum gives a stadium or circle.
+type RoundedRect2D
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
+{
+    Rect: Rect2D;
+    CornerRadius: Number;
+}
+
+// A rectangle with arbitrary rotation: Size gives the full width and height
+// along the box's local axes, rotated by Rotation about Center
+// (https://en.wikipedia.org/wiki/Oriented_bounding_box).
+type OrientedBox2D
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D, NearestPoint2D, SupportMappable2D
+{
+    Center: Point2D;
+    Size: Size2D;
+    Rotation: Angle;
+}
+
+// A regular polygon with SideCount equal sides and vertices on the circle of
+// radius CircumRadius about Center; Rotation turns the first vertex away from
+// +X. Invariant: SideCount >= 3. (https://en.wikipedia.org/wiki/Regular_polygon)
+type RegularPolygon
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D, SupportMappable2D
+{
+    Center: Point2D;
+    CircumRadius: Number;
+    SideCount: Integer;
+    Rotation: Angle;
+}
+
+//==
+// # Circles and circle-derived planar regions
+//
+// The disk and the regions cut from or swept around it: the annulus between two
+// concentric circles, the pie-slice sector, the chord-bounded segment, and the
+// stadium traced by sweeping a disk along a segment. Angles are measured from +X,
+// counter-clockwise; winding convention: counter-clockwise is positive.
+
+// The disk of all points within Radius of Center; its boundary is the circle
+// proper (https://en.wikipedia.org/wiki/Circle). Radius is non-negative.
+type Circle
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D, NearestPoint2D, SupportMappable2D
+{
+    Center: Point2D;
+    Radius: Number;
+}
+
+// The ring-shaped region between two concentric circles.
+// Invariant: 0 <= InnerRadius <= OuterRadius.
+// (https://en.wikipedia.org/wiki/Annulus_(mathematics))
+type Annulus
+    implements Geometry2D, ClosedShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
+{
+    Center: Point2D;
+    InnerRadius: Number;
+    OuterRadius: Number;
+}
+
+// A pie slice: the region swept from the circle's center over the angular
+// interval Sweep, bounded by two radii and the arc between them. Angles are
+// measured from +X, counter-clockwise.
+// (https://en.wikipedia.org/wiki/Circular_sector)
+type CircularSector
+    implements Geometry2D, ClosedShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
+{
+    Circle: Circle;
+    Sweep: AngleInterval;
+}
+
+// The region between a chord and the arc it subtends (a sector minus its inner
+// triangle); always convex. Sweep gives the arc's angular interval on the circle.
+// (https://en.wikipedia.org/wiki/Circular_segment)
+type CircularSegment
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
+{
+    Circle: Circle;
+    Sweep: AngleInterval;
+}
+
+// A stadium: all points within Radius of the segment from A to B. Equivalently
+// the convex hull of two equal circles at A and B.
+// (https://en.wikipedia.org/wiki/Stadium_(geometry))
+type Capsule2D
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D, NearestPoint2D, SupportMappable2D
+{
+    A: Point2D;
+    B: Point2D;
+    Radius: Number;
+}
+
+//==
+// # Ellipses and superellipses
+//
+// The rotated conic regions: the ellipse proper and the Lame superellipse that
+// interpolates between the diamond, the ellipse and the rectangle as its exponent
+// grows. Both store a centre, a semi-axis pair, and a rotation about that centre.
+
+// An ellipse region with semi-axis lengths SemiAxes (a along local X, b along
+// local Y), rotated by Rotation about Center. A circle when a equals b.
+// (https://en.wikipedia.org/wiki/Ellipse)
+type Ellipse
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
+{
+    Center: Point2D;
+    SemiAxes: Number2;
+    Rotation: Angle;
+}
+
+// A superellipse (Lame curve) region: |x/a|^Exponent + |y/b|^Exponent <= 1 in
+// the frame rotated by Rotation about Center, with SemiAxes (a, b). Exponent 2
+// is the ellipse, 1 the diamond, large values approach the rectangle; convex
+// when Exponent >= 1. (https://en.wikipedia.org/wiki/Superellipse)
+type SuperEllipse
+    implements Geometry2D, ClosedShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D
+{
+    Center: Point2D;
+    SemiAxes: Number2;
+    Rotation: Angle;
+    Exponent: Number;
+}
+
+//==
+// # Planar triangles and quadrilaterals
+//
+// The straight-edged planar regions: the triangle, the general simple
+// quadrilateral, and the parallelogram spanned from a corner by two side vectors.
+// Each stores the minimal defining data; derived measures come from the concepts it
+// implements. Winding convention: counter-clockwise is positive.
+// Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+
+// Three vertices, counter-clockwise for positive area
+// (https://en.wikipedia.org/wiki/Triangle). Degenerate when the vertices are
+// collinear.
+type Triangle2D
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, PointSet2D, Centroid2D, ContainsPoint2D, NearestPoint2D, Deformable2D
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+}
+
+// Four vertices in counter-clockwise order. Assumed simple (edges do not cross);
+// not necessarily convex or a parallelogram.
+// (https://en.wikipedia.org/wiki/Quadrilateral)
+type Quad2D
+    implements Geometry2D, ClosedShape, Connected, PlanarMeasurable, Bounded2D, PointSet2D, Centroid2D, ContainsPoint2D, Deformable2D
+{
+    A: Point2D;
+    B: Point2D;
+    C: Point2D;
+    D: Point2D;
+}
+
+// The quadrilateral spanned from Origin by two side vectors: vertices at Origin,
+// Origin + SideA, Origin + SideA + SideB, and Origin + SideB
+// (https://en.wikipedia.org/wiki/Parallelogram). Degenerate when the sides are
+// parallel.
+type Parallelogram2D
+    implements Geometry2D, ClosedShape, ConvexShape, Connected, PlanarMeasurable, Bounded2D, Centroid2D, ContainsPoint2D, Deformable2D
+{
+    Origin: Point2D;
+    SideA: Vector2D;
+    SideB: Vector2D;
+}

@@ -1,6 +1,14 @@
 //==
 // # Intervals
 //
+// Sections, in order:
+//  - Intervals
+//  - Bounding regions
+//  - Extents and sizes
+
+//==
+// # Intervals
+//
 // One-dimensional directed spans
 // (https://en.wikipedia.org/wiki/Interval_(mathematics)), one concrete type per
 // element type. Every one implements `IntervalLike<T>`
@@ -22,7 +30,7 @@ type NumberInterval
 // which may CROSS the +/-pi seam: an arc from 170 deg to -170 deg is the short
 // 20 deg sweep across the seam, not the long way round. Arc consumers
 // (CircularArc2D, CircularSector) read it this way. Wrap-aware Span/Contains live
-// in intervals-transforms-interval.library.plato; the generic linear IntervalLike helpers
+// in intervals.library.plato; the generic linear IntervalLike helpers
 // are correct only for non-wrapping ranges. Convention: see CONVENTIONS.md - Angles.
 type AngleInterval
     implements IntervalLike<Angle>
@@ -45,4 +53,106 @@ type IntegerInterval
 {
     Start: Integer;
     End: Integer;
+}
+
+//==
+// # Bounding regions
+//
+// Axis-aligned bounding regions (https://en.wikipedia.org/wiki/Bounding_volume)
+// in 2D and 3D, over continuous and whole-number coordinates, plus the
+// center-and-size rectangle. Bounds are inclusive on Min, inclusive on Max unless
+// a doc comment says otherwise; the extent types they are measured in follow in
+// the next section.
+// Convention: see CONVENTIONS.md - Bounds (inclusive Min/Max; inverted
+// Min>Max is the empty encoding and the Union identity).
+
+// An axis-aligned bounding rectangle in 2D
+// (https://en.wikipedia.org/wiki/Axis-aligned_bounding_box). Inclusive on Min and
+// Max. An inverted box (Min greater than Max on either axis) is the EMPTY
+// encoding: it contains no point and is the identity for Union, so accumulation
+// can start from Empty(). Prefer Bounds2D for culling/containment; prefer Rect2D
+// (center+size) for layout. Convention: see CONVENTIONS.md - Bounds.
+type Bounds2D
+    implements BoundsLike<Point2D, Vector2D>
+{
+    Min: Point2D;
+    Max: Point2D;
+}
+
+// An axis-aligned bounding box in 3D
+// (https://en.wikipedia.org/wiki/Axis-aligned_bounding_box). Inclusive on Min and
+// Max. An inverted box (Min greater than Max on any axis) is the EMPTY encoding:
+// it contains no point and is the identity for Union, so accumulation can start
+// from Empty(). Convention: see CONVENTIONS.md - Bounds.
+type Bounds3D
+    implements BoundsLike<Point3D, Vector3D>
+{
+    Min: Point3D;
+    Max: Point3D;
+}
+
+// A whole-number 2D bounding region: pixel rectangles. Contains Min, excludes Max.
+type IntegerBounds2D
+    implements Value
+{
+    Min: IntegerVector2;
+    Max: IntegerVector2;
+}
+
+// A whole-number 3D bounding region: voxel boxes. Contains Min, excludes Max.
+type IntegerBounds3D
+    implements Value
+{
+    Min: IntegerVector3;
+    Max: IntegerVector3;
+}
+
+// A rectangle given by its center and size; axis-aligned.
+type Rect2D
+    implements Value
+{
+    Center: Point2D;
+    Size: Size2D;
+}
+
+//==
+// # Extents and sizes
+//
+// Non-negative extents rather than positions: the width/height/depth of a
+// region. They are deliberately distinct from the vector types, so a size can
+// never be mistaken for a displacement, and from the bounding regions above,
+// which pair a size with a placement.
+
+// A continuous 2D extent: width and height.
+type Size2D
+    implements Value
+{
+    Width: Number;
+    Height: Number;
+}
+
+// A continuous 3D extent: width, height, and depth.
+type Size3D
+    implements Value
+{
+    Width: Number;
+    Height: Number;
+    Depth: Number;
+}
+
+// A discrete 2D extent: image and grid dimensions.
+type IntegerSize2D
+    implements Value, Hashable
+{
+    Width: Integer;
+    Height: Integer;
+}
+
+// A discrete 3D extent: voxel-grid dimensions.
+type IntegerSize3D
+    implements Value, Hashable
+{
+    Width: Integer;
+    Height: Integer;
+    Depth: Integer;
 }

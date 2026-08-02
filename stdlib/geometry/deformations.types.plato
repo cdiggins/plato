@@ -5,7 +5,7 @@
 // Deformation3D and is evaluated by `Eval` in `deformations.library.plato`.
 // Parameters are world-space (origin + axis/rate); bounds-normalized variants
 // can wrap these later. Zero rate / zero strength is the identity. Related SDF
-// domain ops live in `implicit-sdf-modifiers.types.plato` (often the inverse map).
+// domain ops live in `implicit-sdf.types.plato` (often the inverse map).
 // Classic Barr trio: Twist / Bend / Taper
 // (https://doi.org/10.1145/800031.808573).
 

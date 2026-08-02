@@ -1,0 +1,403 @@
+//==
+// # Image processing
+//
+// Sections, in order:
+//  - Image processing - tonal and color adjustments
+//  - Image processing - compositing
+//  - Image processing - filters and morphology
+//  - Image processing - resampling, quantization, and lens effects
+
+//==
+// # Image processing - tonal and color adjustments
+//
+// Per-pixel remappings of tone and color: the channel selector and histogram
+// used to analyze an image, then the curves, levels, matrices, white balance,
+// exposure, posterize, and 3D LUT records that describe how to change it.
+// These are parameter records - pure data consumed by processing functions in
+// a later pass.
+
+//==
+// ## Channels and histograms
+
+// A color channel selected for analysis or adjustment.
+// (https://en.wikipedia.org/wiki/Channel_(digital_image))
+type ColorChannel
+    = Red | Green | Blue | Alpha | Luminance | Hue | Saturation | Value | Lightness;
+
+// A distribution of one channel's pixel values. Counts holds the number of
+// pixels per bin; the bins uniformly partition Range in order.
+// (https://en.wikipedia.org/wiki/Image_histogram)
+type ImageHistogram
+    implements Value
+{
+    Channel: ColorChannel;
+    Counts: Array<Integer>;
+    Range: NumberInterval;
+}
+
+//==
+// ## Tonal and color adjustments
+
+// A monotone tone-mapping curve as control points in the unit square,
+// smoothly interpolated: X is input level, Y is output level. Points ascend
+// in X. (https://en.wikipedia.org/wiki/Curve_(tonality))
+type ToneCurve
+    implements Value
+{
+    Points: Array<Point2D>;
+}
+
+// A levels adjustment: input black/white points are remapped through a gamma
+// (midtone) exponent onto output black/white points.
+type LevelsAdjustment
+    implements Value
+{
+    InputBlack: Number;
+    InputWhite: Number;
+    Gamma: Number;
+    OutputBlack: Number;
+    OutputWhite: Number;
+}
+
+// A curves adjustment: a master tone curve applied to all channels plus an
+// independent curve per color channel.
+type CurvesAdjustment
+    implements Value
+{
+    Master: ToneCurve;
+    Red: ToneCurve;
+    Green: ToneCurve;
+    Blue: ToneCurve;
+}
+
+// A linear color transform: each output RGBA is the matrix times the input
+// RGBA plus Offset. Encodes saturation, channel mixing, sepia, and friends.
+type ColorMatrixAdjustment
+    implements Value
+{
+    Matrix: Matrix4x4;
+    Offset: Number4;
+}
+
+// A hue rotation with saturation scaling and lightness offset.
+// SaturationScale of 1 and LightnessOffset of 0 leave those axes unchanged.
+// (https://en.wikipedia.org/wiki/HSL_and_HSV)
+type HueSaturationAdjustment
+    implements Value
+{
+    HueShift: Angle;
+    SaturationScale: Number;
+    LightnessOffset: Number;
+}
+
+// A white-balance correction toward a target illuminant: Temperature slides
+// blue-orange, Tint slides green-magenta (0 is neutral).
+// (https://en.wikipedia.org/wiki/Color_balance)
+type WhiteBalanceAdjustment
+    implements Value
+{
+    Temperature: Temperature;
+    Tint: Number;
+}
+
+// A brightness (additive) and contrast (scaling about mid-gray) adjustment;
+// 0 brightness and 0 contrast is the identity.
+type BrightnessContrastAdjustment
+    implements Value
+{
+    Brightness: Number;
+    Contrast: Number;
+}
+
+// An exposure adjustment in photographic stops: Stops multiplies linear light
+// by two to that power; Offset lifts blacks; GammaCorrection bends midtones.
+// (https://en.wikipedia.org/wiki/Exposure_(photography))
+type ExposureAdjustment
+    implements Value
+{
+    Stops: Number;
+    Offset: Number;
+    GammaCorrection: Number;
+}
+
+// A posterize adjustment: quantizes each channel to Levels evenly spaced
+// values (Levels of 2 or more). (https://en.wikipedia.org/wiki/Posterization)
+type PosterizeParameters
+    implements Value
+{
+    Levels: Integer;
+}
+
+// A 3D color lookup table: a Size-cubed lattice of output colors indexed by
+// input RGB. Colors holds Size cubed entries, red-fastest then green then
+// blue; intermediate inputs interpolate trilinearly.
+// (https://en.wikipedia.org/wiki/3D_lookup_table)
+type ColorLookupTable
+    implements Value
+{
+    Size: Integer;
+    Colors: Array<Color>;
+}
+
+//==
+// # Image processing - compositing
+//
+// How two layers combine: the color-mixing blend modes familiar from image
+// editors and CSS, and the Porter-Duff operators that decide how source and
+// destination *coverage* (alpha) combine. Both are pure data consumed by
+// compositing functions in a later pass.
+
+//==
+// ## Compositing
+
+// How a source color combines with a destination color when layered
+// (Photoshop/CSS blend modes). (https://en.wikipedia.org/wiki/Blend_modes)
+type BlendMode
+    = Normal
+    | Multiply
+    | Screen
+    | Overlay
+    | Darken
+    | Lighten
+    | ColorDodge
+    | ColorBurn
+    | HardLight
+    | SoftLight
+    | Difference
+    | Exclusion
+    | Hue
+    | Saturation
+    | Color
+    | Luminosity
+    | Add
+    | Subtract
+    | Divide;
+
+// A Porter-Duff alpha-compositing operator: how source and destination
+// coverage combine. (https://en.wikipedia.org/wiki/Alpha_compositing)
+type PorterDuff
+    = Clear
+    | Source
+    | Destination
+    | SourceOver
+    | DestinationOver
+    | SourceIn
+    | DestinationIn
+    | SourceOut
+    | DestinationOut
+    | SourceAtop
+    | DestinationAtop
+    | Xor
+    | Plus;
+
+//==
+// # Image processing - filters and morphology
+//
+// Neighborhood operations: convolution kernels and the blurs and sharpeners
+// built from them, edge detectors, mathematical morphology, and thresholding.
+// These are parameter records - pure data consumed by processing functions in
+// a later pass. Distances and radii are in pixels unless noted.
+
+//==
+// ## Convolution and blurs
+
+// A dense 2D convolution kernel. Weights are row-major, Width times Height
+// entries; odd dimensions center the kernel on the target pixel. Each output
+// is the weighted sum times Scale plus Bias.
+// (https://en.wikipedia.org/wiki/Kernel_(image_processing))
+type ConvolutionKernel
+    implements Value
+{
+    Width: Integer;
+    Height: Integer;
+    Weights: Array<Number>;
+    Scale: Number;
+    Bias: Number;
+}
+
+// A separable convolution: a horizontal pass then a vertical pass, equivalent
+// to convolving with the outer product of the two tap arrays but far cheaper.
+// (https://en.wikipedia.org/wiki/Separable_filter)
+type SeparableKernel
+    implements Value
+{
+    HorizontalTaps: Array<Number>;
+    VerticalTaps: Array<Number>;
+}
+
+// Gaussian blur settings. Radius bounds the kernel extent in pixels; a Sigma
+// of 0 or less derives the standard deviation from Radius.
+// (https://en.wikipedia.org/wiki/Gaussian_blur)
+type GaussianBlurParameters
+    implements Value
+{
+    Radius: Integer;
+    Sigma: Number;
+}
+
+// Box blur settings: a uniform square average of the given radius, repeated
+// Passes times (three passes closely approximate a Gaussian).
+// (https://en.wikipedia.org/wiki/Box_blur)
+type BoxBlurParameters
+    implements Value
+{
+    Radius: Integer;
+    Passes: Integer;
+}
+
+// Linear motion blur: smearing along a direction over a distance in pixels.
+// (https://en.wikipedia.org/wiki/Motion_blur_(media))
+type MotionBlurParameters
+    implements Value
+{
+    Angle: Angle;
+    Distance: Number;
+}
+
+// Unsharp-mask sharpening: Amount scales the high-frequency difference added
+// back; Radius is the blur extent; Threshold suppresses sharpening where the
+// local difference is below it (noise protection).
+// (https://en.wikipedia.org/wiki/Unsharp_masking)
+type UnsharpMaskParameters
+    implements Value
+{
+    Radius: Number;
+    Amount: Number;
+    Threshold: Number;
+}
+
+//==
+// ## Edges, morphology, and thresholds
+
+// An edge-detection operation. Canny carries its two hysteresis thresholds;
+// the other operators carry a single magnitude cutoff.
+// (https://en.wikipedia.org/wiki/Edge_detection)
+type EdgeDetection
+    = Sobel(Threshold: Number)
+    | Prewitt(Threshold: Number)
+    | Scharr(Threshold: Number)
+    | Laplacian(Threshold: Number)
+    | LaplacianOfGaussian(Threshold: Number)
+    | Canny(LowThreshold: Number, HighThreshold: Number);
+
+// A mathematical-morphology operation; Gradient is dilation minus erosion.
+// (https://en.wikipedia.org/wiki/Mathematical_morphology)
+type MorphologyOperation
+    = Erode | Dilate | Open | Close | TopHat | BlackHat | Gradient;
+
+// The neighborhood shape a morphological operation sweeps over the image.
+// (https://en.wikipedia.org/wiki/Structuring_element)
+type StructuringElement = Box | Disk | Cross | Diamond;
+
+// A complete morphological operation: what to do, with which element shape,
+// how large, and how many times.
+type MorphologyParameters
+    implements Value
+{
+    Operation: MorphologyOperation;
+    Element: StructuringElement;
+    Radius: Integer;
+    Iterations: Integer;
+}
+
+// A thresholding operation for reducing an image to two (or clamped) levels.
+// The fixed-level kinds carry their normalized cutoff; Otsu computes its own
+// global level; the adaptive kinds carry the local window size and an offset
+// that biases the computed local level.
+// (https://en.wikipedia.org/wiki/Thresholding_(image_processing))
+type Threshold
+    = Binary(Level: Proportion)
+    | BinaryInverted(Level: Proportion)
+    | Truncate(Level: Proportion)
+    | ToZero(Level: Proportion)
+    | Otsu
+    | AdaptiveMean(BlockSize: Integer, Offset: Number)
+    | AdaptiveGaussian(BlockSize: Integer, Offset: Number);
+
+//==
+// # Image processing - resampling, quantization, and lens effects
+//
+// Operations that change an image's sampling grid, its color precision, or its
+// apparent optics: reconstruction filters and resize settings, lossless
+// reorientation, dithering and color quantization, denoising, vignetting, and
+// chromatic aberration. These are parameter records - pure data consumed by
+// processing functions in a later pass. Distances and radii are in pixels
+// unless noted.
+
+//==
+// ## Resampling, quantization, and lens effects
+
+// A reconstruction filter used when resampling an image.
+// (https://en.wikipedia.org/wiki/Image_scaling)
+type ResampleFilter
+    = Nearest | Bilinear | Bicubic | Lanczos2 | Lanczos3 | Mitchell | CatmullRom | Box;
+
+// Resize settings. When PreserveAspect is true the image is fit within
+// TargetSize keeping its aspect ratio; otherwise it stretches to fill.
+type ResizeParameters
+    implements Value
+{
+    TargetSize: IntegerSize2D;
+    Filter: ResampleFilter;
+    PreserveAspect: Boolean;
+}
+
+// A lossless pixel reorientation (the eight EXIF orientations).
+// (https://en.wikipedia.org/wiki/Exif)
+type ImageOrientation
+    = Identity
+    | FlipHorizontal
+    | Rotate180
+    | FlipVertical
+    | Transpose
+    | Rotate90
+    | Transverse
+    | Rotate270;
+
+// An error-diffusion or ordered-dithering pattern used when reducing color
+// depth. (https://en.wikipedia.org/wiki/Dither)
+type Dither
+    = None | Bayer2 | Bayer4 | Bayer8 | FloydSteinberg | Atkinson | BlueNoise | WhiteNoise;
+
+// Color-quantization settings: reduce an image to at most ColorCount palette
+// entries, hiding banding with the chosen dither.
+// (https://en.wikipedia.org/wiki/Color_quantization)
+type QuantizeParameters
+    implements Value
+{
+    ColorCount: Integer;
+    Dither: Dither;
+}
+
+// Edge-preserving denoise settings: Strength sets how aggressively noise is
+// removed within Radius, while PreserveDetail protects fine structure.
+// (https://en.wikipedia.org/wiki/Noise_reduction)
+type DenoiseParameters
+    implements Value
+{
+    Strength: Proportion;
+    Radius: Integer;
+    PreserveDetail: Proportion;
+}
+
+// A vignette: darkening toward the frame edges. Radius is where falloff
+// begins (0 center, 1 corners); Softness widens the transition; Center is in
+// normalized UV coordinates. (https://en.wikipedia.org/wiki/Vignetting)
+type VignetteParameters
+    implements Value
+{
+    Strength: Proportion;
+    Radius: Proportion;
+    Softness: Proportion;
+    Center: UvCoordinate;
+}
+
+// Chromatic aberration: radial separation of the color channels away from
+// Center (normalized UV), Strength in pixels at the frame corner.
+// (https://en.wikipedia.org/wiki/Chromatic_aberration)
+type ChromaticAberrationParameters
+    implements Value
+{
+    Strength: Number;
+    Center: UvCoordinate;
+}

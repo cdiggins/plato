@@ -5,15 +5,15 @@
 // field (SDF; https://en.wikipedia.org/wiki/Signed_distance_function) reports
 // how far a point is from a surface, negative inside; an implicit region
 // reports only membership (see also https://en.wikipedia.org/wiki/Implicit_surface).
-// The concrete types implementing these concepts are declared in the
-// `implicit-sdf-*.plato` files.
+// The concrete types implementing these concepts are declared in
+// `implicit-sdf.types.plato`.
 //
 // Unbounded vs bounded: `SignedDistanceField2D/3D` are pure distance oracles
 // with no finite domain. `BoundedSignedDistanceField2D/3D` add a conservative
 // AABB (`Bounded2D/3D`) for culling and acceleration; `DistanceAt` /
 // `Eval` still evaluate the underlying field everywhere — bounds are hints,
 // not a change to distance semantics. Analytic wrappers live in
-// `implicit-sdf-bounded.types.plato`; sampled lattices (`SampledSdf*`) already
+// `implicit-sdf.types.plato`; sampled lattices (`SampledSdf*`) already
 // carry a `Bounds` spanning their finite support and implement the bounded
 // concepts.
 

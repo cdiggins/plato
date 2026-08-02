@@ -23,7 +23,7 @@ library TimeVaryingValues
     // $TValue supports by the same duck-typing the interval helpers rely on
     // (IntervalLike.Extent subtracts two $T). A formal `where TValue: Additive`
     // bound on TimeVarying is deferred: its implementors span motion-graphics.types.plato
-    // and future/keyframes-tracks.types.plato (AnimationTrack/TangentTrack), which are
+    // and future/keyframes.types.plato (AnimationTrack/TangentTrack), which are
     // outside this package's edit scope, so the bound cannot be filled tree-wide here.
 
     // The sampled value at a time offset; a readable spelling of Sample.

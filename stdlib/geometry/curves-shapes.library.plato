@@ -1,0 +1,528 @@
+//==
+// # Curves shapes
+//
+// Sections, in order:
+//  - Evaluating plane arcs, function graphs, and polynomial pieces
+//  - Evaluating the polar and figure curves
+//  - Evaluating the plane spirals and roulettes
+//  - Evaluating the named space curves
+
+library CurvesShapes
+{
+    //==
+    // # Evaluating plane arcs, function graphs, and polynomial pieces
+    //
+    // Closed-form evaluation of the types declared in `curves-shapes.types.plato`, plus
+    // the two angle-to-point helpers (CirclePoint, RotateBy) that every circular,
+    // polar, and roulette formula in the curves-2d family is written against.
+    //
+    // Conventions:
+    //   * The canonical curve parameter is `t` in [0, 1] (the `Procedural` domain
+    //     inherited through `Curve2D`).
+    //   * Types carrying an `Angles: AngleInterval` sweep map t through
+    //     `Angles.Lerp(t)`; types without one map t to `t.Turns`, one full
+    //     revolution, as `curves.concepts.plato` documents for
+    //     `PolarCurve2D`.
+
+    //==
+    // # Shared helpers
+
+    // The displacement of length `radius` at the given angle from +X:
+    // (radius * cos theta, radius * sin theta). The angle-to-point evaluator
+    // under every circular, polar, and roulette formula below.
+    CirclePoint(theta: Angle, radius: Number): Vector2D
+        => Vector2D(theta.Cos * radius, theta.Sin * radius);
+
+    // The vector rotated counter-clockwise by the given angle.
+    RotateBy(v: Vector2D, angle: Angle): Vector2D
+        => Vector2D(v.X * angle.Cos - v.Y * angle.Sin,
+                    v.X * angle.Sin + v.Y * angle.Cos);
+
+    //==
+    // # Arcs and conic pieces
+
+    // The point at the swept angle on the circle of radius Radius about Center.
+    Eval(self: CircularArc2D, t: Number): Point2D
+        => self.Center + self.Angles.Lerp(t).CirclePoint(self.Radius);
+
+    // The point at the swept parametric angle on the ellipse: the axis-aligned
+    // point (a cos theta, b sin theta) tilted by Rotation and placed at Center.
+    Eval(self: EllipticalArc2D, t: Number): Point2D
+        => self.Center
+         + Vector2D(self.Radii.X * self.Angles.Lerp(t).Cos,
+                    self.Radii.Y * self.Angles.Lerp(t).Sin).RotateBy(self.Rotation);
+
+    // The point (x, Coefficient * x^2) with x swept over Domain.
+    // https://en.wikipedia.org/wiki/Parabola
+    Eval(self: Parabola2D, t: Number): Point2D
+        => Point2D(self.Domain.Lerp(t), self.Coefficient * self.Domain.Lerp(t).Square);
+
+    //==
+    // # Function graphs
+
+    // The point (x, Scale * cosh(x / Scale)) with x swept over Domain. The
+    // hyperbolic cosine is only declared on Angle, so the ratio is cast with
+    // the radians constructor before Cosh.
+    // https://en.wikipedia.org/wiki/Catenary
+    Eval(self: Catenary2D, t: Number): Point2D
+        => Point2D(self.Domain.Lerp(t),
+                   self.Scale * (self.Domain.Lerp(t) / self.Scale).Angle.Cosh);
+
+    // The point (x, Amplitude * sin(2*pi*x/Wavelength + Phase)) with x swept
+    // over Domain. https://en.wikipedia.org/wiki/Sine_wave
+    Eval(self: SineCurve2D, t: Number): Point2D
+        => Point2D(self.Domain.Lerp(t),
+                   self.Amplitude
+                   * ((self.Domain.Lerp(t) / self.Wavelength).Turns + self.Phase).Sin);
+
+    //==
+    // # Polynomial arcs
+    //
+    // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+    // The Bernstein forms live in `library Polynomials` (polynomials.types.plato),
+    // generic over `Numerical`; control points are converted to displacements
+    // with PositionVector and the result back with ToPoint.
+
+    // The quadratic Bezier point at t.
+    Eval(self: QuadraticBezier2D, t: Number): Point2D
+        => self.P0.PositionVector
+               .QuadraticBezier(self.P1.PositionVector, self.P2.PositionVector, t)
+               .ToPoint;
+
+    // The cubic Bezier point at t.
+    Eval(self: CubicBezier2D, t: Number): Point2D
+        => self.P0.PositionVector
+               .CubicBezier(self.P1.PositionVector, self.P2.PositionVector,
+                            self.P3.PositionVector, t)
+               .ToPoint;
+
+    //==
+    // # Evaluating the polar and figure curves
+    //
+    // Closed-form evaluation of the types declared in `curves-shapes.types.plato`, plus
+    // the generic `PolarCurve2D` bridge that turns a `RadiusAt` into a position for
+    // every polar implementor in the tree. The shared `CirclePoint` helper is in
+    // the arcs section above.
+    //
+    // Conventions:
+    //   * The canonical curve parameter is `t` in [0, 1] (the `Procedural` domain
+    //     inherited through `Curve2D`).
+    //   * `PolarCurve2D` implementors only need `RadiusAt`. The generic
+    //     `Eval(PolarCurve2D, Number)` below turns that into a position, so the
+    //     polar zoo costs one line per curve.
+
+    //==
+    // # PolarCurve2D — the generic bridge
+    //
+    // A polar curve is fully determined by RadiusAt, so its Eval is derivable
+    // once for every implementor. Curves that carry an explicit `Angles` sweep
+    // override this with their own Eval below.
+
+    // The position at the canonical parameter t: the polar radius taken at
+    // t full turns, converted to Cartesian.
+    Eval(self: PolarCurve2D, t: Number): Point2D
+        => self.CartesianPositionAt(t.Turns);
+
+    //==
+    // # Polar and figure curves
+
+    // r = Radius * cos(k * theta).
+    // https://en.wikipedia.org/wiki/Rose_(mathematics)
+    RadiusAt(self: RoseCurve2D, angle: Angle): Number
+        => self.Radius * (angle * self.PetalFrequency).Cos;
+
+    // r = 2 * Radius * (1 + cos theta), over one full turn.
+    // https://en.wikipedia.org/wiki/Cardioid
+    Eval(self: Cardioid2D, t: Number): Point2D
+        => t.Turns.CirclePoint(2.0 * self.Radius * (1.0 + t.Turns.Cos)).ToPoint;
+
+    // r = Offset + Amplitude * cos theta, over one full turn.
+    // https://en.wikipedia.org/wiki/Lima%C3%A7on
+    Eval(self: Limacon2D, t: Number): Point2D
+        => t.Turns.CirclePoint(self.Offset + self.Amplitude * t.Turns.Cos).ToPoint;
+
+    // r = sqrt(Scale^2 * cos(2 theta)), over one full turn. The radius is
+    // imaginary on the quadrants where cos(2 theta) is negative; those
+    // parameters lie off the real curve.
+    // https://en.wikipedia.org/wiki/Lemniscate_of_Bernoulli
+    Eval(self: Lemniscate2D, t: Number): Point2D
+        => t.Turns.CirclePoint((self.Scale.Square * (t.Turns * 2.0).Cos).Sqrt).ToPoint;
+
+    // x = XAmplitude * sin(2*pi*XFrequency*t + Phase),
+    // y = YAmplitude * sin(2*pi*YFrequency*t).
+    // https://en.wikipedia.org/wiki/Lissajous_curve
+    Eval(self: Lissajous2D, t: Number): Point2D
+        => Point2D(self.XAmplitude * ((self.XFrequency * t).Turns + self.Phase).Sin,
+                   self.YAmplitude * (self.YFrequency * t).Turns.Sin);
+
+    // r = ( |cos(m theta / 4) / a|^n2 + |sin(m theta / 4) / b|^n3 )^(-1/n1).
+    // https://en.wikipedia.org/wiki/Superformula
+    RadiusAt(self: Superformula2D, angle: Angle): Number
+        => (((angle * self.Symmetry / 4.0).Cos / self.XRadius).Abs.Pow(self.Exponent2)
+            + ((angle * self.Symmetry / 4.0).Sin / self.YRadius).Abs.Pow(self.Exponent3))
+           .Pow(-1.0 / self.Exponent1);
+
+    //==
+    // # Further classical polar curves
+
+    // r = Scale * (1 + 2 cos(2 theta)).
+    // https://en.wikipedia.org/wiki/Tommaso_Ceva#The_Cycloid_of_Ceva
+    RadiusAt(self: CycloidOfCeva2D, angle: Angle): Number
+        => self.Scale * (1.0 + 2.0 * (angle * 2.0).Cos);
+
+    // r = Scale * sec(theta / 3)^3.
+    // https://en.wikipedia.org/wiki/Tschirnhausen_cubic
+    RadiusAt(self: TschirnhausenCubic2D, angle: Angle): Number
+        => self.Scale * (angle / 3.0).Sec.Cube;
+
+    // r = sec theta + Scale * cos theta.
+    // https://en.wikipedia.org/wiki/Conchoid_of_de_Sluze
+    RadiusAt(self: ConchoidOfDeSluze2D, angle: Angle): Number
+        => angle.Sec + self.Scale * angle.Cos;
+
+    // r = (Scale^n * cos(n theta))^(1/n). Precondition: Exponent is non-zero.
+    // https://en.wikipedia.org/wiki/Sinusoidal_spiral
+    RadiusAt(self: SinusoidalSpiral2D, angle: Angle): Number
+        => (self.Scale.Pow(self.Exponent) * (angle * self.Exponent).Cos)
+           .Pow(1.0 / self.Exponent);
+
+    // r = 2 * Scale / cos(theta / 3).
+    // https://en.wikipedia.org/wiki/Trisectrix_of_Maclaurin
+    RadiusAt(self: TrisectrixOfMaclaurin2D, angle: Angle): Number
+        => 2.0 * self.Scale / (angle / 3.0).Cos;
+
+    // The butterfly curve over its full 12-pi period:
+    //   x = sin u * f(u), y = cos u * f(u),
+    //   f(u) = exp(cos u) - 2 cos(4u) - sin(u / 12)^5,  u = 6 * pi * t.
+    // https://en.wikipedia.org/wiki/Butterfly_curve_(transcendental)
+    ButterflyFactor(u: Angle): Number
+        => u.Cos.Exp - 2.0 * (u * 4.0).Cos - (u / 12.0).Sin.Pow(5.0);
+
+    // The butterfly point at the canonical parameter t.
+    Eval(self: ButterflyCurve2D, t: Number): Point2D
+        => Point2D(self.Scale * (t * 6.0).Turns.Sin * (t * 6.0).Turns.ButterflyFactor,
+                   self.Scale * (t * 6.0).Turns.Cos * (t * 6.0).Turns.ButterflyFactor);
+
+    //==
+    // # Evaluating the plane spirals and roulettes
+    //
+    // Closed-form evaluation of the types declared in `curves-shapes.types.plato`.
+    // The spirals are `PolarCurve2D` implementors that carry an explicit `Angles`
+    // sweep, so each supplies a `RadiusAt` plus an `Eval` overriding the generic
+    // full-turn mapping of the polar section above; the roulettes are written
+    // directly in Cartesian form. The shared `CirclePoint` helper is in the arcs
+    // section.
+    //
+    // TODO(concept-gap): an angular curve concept — a curve whose
+    // natural parameter is an `Angle`, with a single bridge
+    // `Eval(curve, t: Number) => curve.Eval(t.Turns)`. This is NOT a fold gap and
+    // the P2 `Reduce`/`MapRange` primitives do not touch it: the block is purely a
+    // missing concept surface. The clean fix is `concept AngularCurve2D` (with the
+    // obligation `Eval(self, theta: Angle): Point2D`) plus one bridge, whose
+    // natural home is `curves.concepts.plato` alongside the other curve
+    // concepts — a file owned by the curves package, not editable from this
+    // library-body pass. Until that concept lands, the roulettes and figure curves
+    // below each spell out the `t.Turns` conversion in their own `Eval`.
+
+    //==
+    // # Spirals and transition curves
+
+    // r = StartRadius + GrowthRate * theta, theta in radians.
+    // https://en.wikipedia.org/wiki/Archimedean_spiral
+    RadiusAt(self: ArchimedeanSpiral2D, angle: Angle): Number
+        => self.StartRadius + self.GrowthRate * angle.Radians;
+
+    // The point at the swept angle, overriding the generic full-turn mapping.
+    Eval(self: ArchimedeanSpiral2D, t: Number): Point2D
+        => self.CartesianPositionAt(self.Angles.Lerp(t));
+
+    // r = StartRadius * exp(GrowthRate * theta), theta in radians.
+    // https://en.wikipedia.org/wiki/Logarithmic_spiral
+    RadiusAt(self: LogarithmicSpiral2D, angle: Angle): Number
+        => self.StartRadius * (self.GrowthRate * angle.Radians).Exp;
+
+    // The point at the swept angle, overriding the generic full-turn mapping.
+    Eval(self: LogarithmicSpiral2D, t: Number): Point2D
+        => self.CartesianPositionAt(self.Angles.Lerp(t));
+
+    // r = Scale * sqrt(theta), theta in radians. Precondition: theta >= 0.
+    // https://en.wikipedia.org/wiki/Fermat%27s_spiral
+    RadiusAt(self: FermatSpiral2D, angle: Angle): Number
+        => self.Scale * angle.Radians.Sqrt;
+
+    // The point at the swept angle, overriding the generic full-turn mapping.
+    Eval(self: FermatSpiral2D, t: Number): Point2D
+        => self.CartesianPositionAt(self.Angles.Lerp(t));
+
+    // The clothoid is parameterized by signed arc length, so its arc length is
+    // just the width of Domain.
+    // https://en.wikipedia.org/wiki/Euler_spiral
+    ArcLength(self: Clothoid2D): Number
+        => self.Domain.Extent.Abs;
+
+    // The canonical [0,1] parameter reached after walking the given distance
+    // from the start. Precondition: ArcLength > 0.
+    ParameterAtLength(self: Clothoid2D, length: Number): Number
+        => length / self.ArcLength;
+
+    // The point reached after walking the given distance along the curve.
+    PointAtLength(self: Clothoid2D, length: Number): Point2D
+        => self.Eval(self.ParameterAtLength(length));
+
+    // `Eval(Clothoid2D, Number)` is at the foot of the spirals section. It sidesteps both
+    // of the blockers the old TODO here recorded: quadrature of the tangent
+    // angle replaces the truncated Maclaurin series that degraded over real
+    // arc-length spans, and there is no guessed scaling because the type's own
+    // doc comment pins the argument — curvature is s / Flatness^2 and the
+    // parameter IS signed arc length, so the tangent angle is s^2 / (2
+    // Flatness^2) and nothing is left to choose.
+
+    // The involute of a circle: x = R(cos theta + theta sin theta),
+    // y = R(sin theta - theta cos theta), theta in radians.
+    // https://en.wikipedia.org/wiki/Involute
+    Eval(self: CircleInvolute2D, t: Number): Point2D
+        => Point2D(self.Radius * (self.Angles.Lerp(t).Cos
+                                  + self.Angles.Lerp(t).Radians * self.Angles.Lerp(t).Sin),
+                   self.Radius * (self.Angles.Lerp(t).Sin
+                                  - self.Angles.Lerp(t).Radians * self.Angles.Lerp(t).Cos));
+
+    //==
+    // # Roulettes (rolling-circle curves)
+
+    // x = R(theta - sin theta), y = R(1 - cos theta), theta in radians.
+    // https://en.wikipedia.org/wiki/Cycloid
+    Eval(self: Cycloid2D, t: Number): Point2D
+        => Point2D(self.Radius * (self.Angles.Lerp(t).Radians - self.Angles.Lerp(t).Sin),
+                   self.Radius * (1.0 - self.Angles.Lerp(t).Cos));
+
+    // x = (R+r)cos t - r cos((R+r)/r t); y = (R+r)sin t - r sin((R+r)/r t).
+    // https://en.wikipedia.org/wiki/Epicycloid
+    Eval(self: Epicycloid2D, t: Number): Point2D
+        => (t.Turns.CirclePoint(self.FixedRadius + self.RollingRadius)
+            - ((self.FixedRadius + self.RollingRadius) / self.RollingRadius * t.Turns)
+                  .CirclePoint(self.RollingRadius))
+           .ToPoint;
+
+    // x = (R-r)cos t + r cos((R-r)/r t); y = (R-r)sin t - r sin((R-r)/r t).
+    // Written component-wise because the two terms differ in sign.
+    // https://en.wikipedia.org/wiki/Hypocycloid
+    Eval(self: Hypocycloid2D, t: Number): Point2D
+        => Point2D((self.FixedRadius - self.RollingRadius) * t.Turns.Cos
+                   + self.RollingRadius
+                     * ((self.FixedRadius - self.RollingRadius) / self.RollingRadius
+                        * t.Turns).Cos,
+                   (self.FixedRadius - self.RollingRadius) * t.Turns.Sin
+                   - self.RollingRadius
+                     * ((self.FixedRadius - self.RollingRadius) / self.RollingRadius
+                        * t.Turns).Sin);
+
+    // x = (R+r)cos t - d cos((R+r)/r t); y = (R+r)sin t - d sin((R+r)/r t).
+    // https://en.wikipedia.org/wiki/Epitrochoid
+    Eval(self: Epitrochoid2D, t: Number): Point2D
+        => (t.Turns.CirclePoint(self.FixedRadius + self.RollingRadius)
+            - ((self.FixedRadius + self.RollingRadius) / self.RollingRadius * t.Turns)
+                  .CirclePoint(self.PoleDistance))
+           .ToPoint;
+
+    // x = (R-r)cos t + d cos((R-r)/r t); y = (R-r)sin t - d sin((R-r)/r t).
+    // https://en.wikipedia.org/wiki/Hypotrochoid
+    Eval(self: Hypotrochoid2D, t: Number): Point2D
+        => Point2D((self.FixedRadius - self.RollingRadius) * t.Turns.Cos
+                   + self.PoleDistance
+                     * ((self.FixedRadius - self.RollingRadius) / self.RollingRadius
+                        * t.Turns).Cos,
+                   (self.FixedRadius - self.RollingRadius) * t.Turns.Sin
+                   - self.PoleDistance
+                     * ((self.FixedRadius - self.RollingRadius) / self.RollingRadius
+                        * t.Turns).Sin);
+
+    //==
+    // # Clothoid2D — the Euler spiral
+    //
+    // Curvature grows linearly with arc length, kappa(s) = s / Flatness^2, so
+    // the tangent angle is theta(s) = s^2 / (2 Flatness^2) and the position is
+    // the pair of Fresnel integrals of that angle. Those integrals have no
+    // elementary closed form, so this is composite Simpson quadrature from the
+    // origin to the requested arc length — the same thing a table lookup
+    // interpolates, computed instead.
+    // https://en.wikipedia.org/wiki/Euler_spiral
+
+    // The number of quadrature panels. Even, as Simpson requires; 64 holds the
+    // error near machine precision over the arc lengths a transition curve uses
+    // (the integrand oscillates faster as |s| grows, so a very long arc wants
+    // more).
+    QuadraturePanels(self: Clothoid2D): Integer => 64;
+
+    // The tangent angle at signed arc length s.
+    TangentAngleAt(self: Clothoid2D, s: Number): Angle
+        => Angle(s * s / (2.0 * self.Flatness * self.Flatness));
+
+    // Simpson's weight for sample i of n panels: 1 at the ends, 4 at odd
+    // interior samples, 2 at even ones.
+    SimpsonWeight(i: Integer, panels: Integer): Number
+        => i == 0 || i == panels ? 1.0 : (i % 2 == 1 ? 4.0 : 2.0);
+
+    // The point at the given unit parameter: the Fresnel integrals evaluated to
+    // the arc length that parameter names within Domain.
+    Eval(self: Clothoid2D, t: Number): Point2D {
+        var panels = self.QuadraturePanels;
+        var s = self.Domain.Lerp(t.Clamp(0.0, 1.0));
+        var step = s / panels.ToNumber;
+        var samples = (panels + 1).Range;
+        var x = samples.Reduce(0.0, (acc, i) =>
+            acc + SimpsonWeight(i, panels) * self.TangentAngleAt(step * i.ToNumber).Cos);
+        var y = samples.Reduce(0.0, (acc, i) =>
+            acc + SimpsonWeight(i, panels) * self.TangentAngleAt(step * i.ToNumber).Sin);
+        return (x * step / 3.0, y * step / 3.0);
+    }
+
+    //==
+    // # Evaluating the named space curves
+    //
+    // Closed-form evaluation of the space curves declared in `curves-shapes.types.plato`.
+    //
+    // Conventions:
+    //   * The canonical curve parameter is `t` in [0, 1].
+    //   * Types carrying an `Angles: AngleInterval` sweep map t through
+    //     `Angles.Lerp(t)`; the knots and closed curves map t to `t.Turns`, one
+    //     full revolution of their defining parameter.
+    //   * Every formula is written in the curve's own frame and placed with
+    //     `FramePoint` below, so the declaration comment "winds about the frame's
+    //     Z axis" is what the body actually does.
+    //
+    // TODO(concept-gap): an angular curve whose natural parameter is an `Angle`,
+    // bridged by one `Eval(curve, t: Number) => curve.Eval(t.Turns)`, has no
+    // counterpart concept here. This is NOT a fold gap; the P2
+    // `Reduce`/`MapRange` primitives do not touch it. The clean fix is a
+    // `concept AngularCurve3D` (obligation `Eval(self, theta: Angle): Point3D`)
+    // plus one bridge, whose natural home is `curves.concepts.plato`,
+    // owned by the curves package and not editable from this library-body pass.
+    // Until it lands the `t.Turns` conversion is repeated in each `Eval` below.
+    // See the matching note in the spirals section above.
+
+    //==
+    // # Shared helpers
+
+    // The point at the given local coordinates of an orthonormal frame:
+    // Origin + x*XAxis + y*YAxis + z*ZAxis. Places a curve written in its own
+    // canonical position into world space.
+    FramePoint(f: Frame3D, x: Number, y: Number, z: Number): Point3D
+        => f.Origin + f.XAxis.Vector * x + f.YAxis.Vector * y + f.ZAxis.Vector * z;
+
+    // The plane a frame's XY axes span: normal along Z, offset the projection
+    // of the origin onto that normal.
+    FramePlane(f: Frame3D): Plane
+        => Plane(f.ZAxis, f.ZAxis.Vector.Dot(f.Origin.PositionVector));
+
+    //==
+    // # Planar arcs in space
+
+    // Every point of a circular arc lies in its frame's XY plane.
+    CurvePlane(self: CircularArc3D): Plane
+        => self.Frame.FramePlane;
+
+    // The point at the swept angle on the circle of radius Radius in the
+    // frame's XY plane.
+    Eval(self: CircularArc3D, t: Number): Point3D
+        => self.Frame.FramePoint(self.Radius * self.Angles.Lerp(t).Cos,
+                                 self.Radius * self.Angles.Lerp(t).Sin,
+                                 0.0);
+
+    // Every point of an elliptical arc lies in its frame's XY plane.
+    CurvePlane(self: EllipticalArc3D): Plane
+        => self.Frame.FramePlane;
+
+    // The point at the swept parametric angle on the ellipse with semi-axes
+    // Radii along the frame's X and Y axes.
+    Eval(self: EllipticalArc3D, t: Number): Point3D
+        => self.Frame.FramePoint(self.Radii.X * self.Angles.Lerp(t).Cos,
+                                 self.Radii.Y * self.Angles.Lerp(t).Sin,
+                                 0.0);
+
+    //==
+    // # Polynomial arcs
+    //
+    // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+    // The Bernstein forms live in `library Polynomials` (polynomials.types.plato).
+
+    // The quadratic Bezier point at t.
+    Eval(self: QuadraticBezier3D, t: Number): Point3D
+        => self.P0.PositionVector
+               .QuadraticBezier(self.P1.PositionVector, self.P2.PositionVector, t)
+               .ToPoint;
+
+    // The cubic Bezier point at t.
+    Eval(self: CubicBezier3D, t: Number): Point3D
+        => self.P0.PositionVector
+               .CubicBezier(self.P1.PositionVector, self.P2.PositionVector,
+                            self.P3.PositionVector, t)
+               .ToPoint;
+
+    //==
+    // # Helices and spirals
+
+    // x = R cos theta, y = R sin theta, z = Pitch * (theta / one turn).
+    // https://en.wikipedia.org/wiki/Helix
+    Eval(self: Helix, t: Number): Point3D
+        => self.Frame.FramePoint(self.Radius * self.Angles.Lerp(t).Cos,
+                                 self.Radius * self.Angles.Lerp(t).Sin,
+                                 self.Pitch * self.Angles.Lerp(t).Turns);
+
+    // A conical spiral: the winding radius interpolates across Radii while the
+    // curve climbs Height over the full sweep.
+    // https://en.wikipedia.org/wiki/Conical_spiral
+    Eval(self: ConicalSpiral3D, t: Number): Point3D
+        => self.Frame.FramePoint(self.Radii.Lerp(t) * self.Angles.Lerp(t).Cos,
+                                 self.Radii.Lerp(t) * self.Angles.Lerp(t).Sin,
+                                 self.Height * t);
+
+    // A spherical spiral (loxodrome): the inclination sweeps a half turn from
+    // pole to pole while the azimuth completes TurnCount revolutions.
+    // https://en.wikipedia.org/wiki/Spherical_spiral
+    Eval(self: SphericalSpiral3D, t: Number): Point3D
+        => self.Frame.FramePoint(
+               self.Radius * (t * 0.5).Turns.Sin * (t * self.TurnCount).Turns.Cos,
+               self.Radius * (t * 0.5).Turns.Sin * (t * self.TurnCount).Turns.Sin,
+               self.Radius * (t * 0.5).Turns.Cos);
+
+    //==
+    // # Knots and classical space curves
+
+    // The (p,q) torus knot: r = MajorRadius + MinorRadius cos(q phi),
+    // x = r cos(p phi), y = r sin(p phi), z = -MinorRadius sin(q phi).
+    // https://en.wikipedia.org/wiki/Torus_knot
+    Eval(self: TorusKnot, t: Number): Point3D
+        => self.Frame.FramePoint(
+               (self.MajorRadius
+                + self.MinorRadius * (t.Turns * self.TubeWindings.ToNumber).Cos)
+               * (t.Turns * self.AxisWindings.ToNumber).Cos,
+               (self.MajorRadius
+                + self.MinorRadius * (t.Turns * self.TubeWindings.ToNumber).Cos)
+               * (t.Turns * self.AxisWindings.ToNumber).Sin,
+               -self.MinorRadius * (t.Turns * self.TubeWindings.ToNumber).Sin);
+
+    // The trefoil knot in symmetric canonical form:
+    // x = sin t + 2 sin 2t, y = cos t - 2 cos 2t, z = -sin 3t.
+    // https://en.wikipedia.org/wiki/Trefoil_knot
+    Eval(self: TrefoilKnot, t: Number): Point3D
+        => self.Frame.FramePoint(
+               self.Scale * (t.Turns.Sin + 2.0 * (t.Turns * 2.0).Sin),
+               self.Scale * (t.Turns.Cos - 2.0 * (t.Turns * 2.0).Cos),
+               self.Scale * -(t.Turns * 3.0).Sin);
+
+    // The figure-eight knot: x = (2 + cos 2t) cos 3t, y = (2 + cos 2t) sin 3t,
+    // z = sin 4t.
+    // https://en.wikipedia.org/wiki/Figure-eight_knot_(mathematics)
+    Eval(self: FigureEightKnot, t: Number): Point3D
+        => self.Frame.FramePoint(
+               self.Scale * (2.0 + (t.Turns * 2.0).Cos) * (t.Turns * 3.0).Cos,
+               self.Scale * (2.0 + (t.Turns * 2.0).Cos) * (t.Turns * 3.0).Sin,
+               self.Scale * (t.Turns * 4.0).Sin);
+
+    // Viviani's curve: x = R(1 + cos t), y = R sin t, z = 2R sin(t / 2).
+    // https://en.wikipedia.org/wiki/Viviani%27s_curve
+    Eval(self: VivianiCurve, t: Number): Point3D
+        => self.Frame.FramePoint(self.Radius * (1.0 + t.Turns.Cos),
+                                 self.Radius * t.Turns.Sin,
+                                 2.0 * self.Radius * (t.Turns / 2.0).Sin);
+}

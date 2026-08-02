@@ -52,7 +52,7 @@ type BrepLoop
 
 // The exact geometry a BREP face carries, over the unit UV square. v1 is
 // faceted: a planar rectangle patch or a bilinear four-corner patch (both from
-// surfaces-patches.types.plato). QuadGrid / cylindrical cases are future sum cases.
+// surfaces.types.plato). QuadGrid / cylindrical cases are future sum cases.
 type BrepSurface
     = Planar(Patch: PlanarPatch)
     | Bilinear(Patch: BilinearPatch);

@@ -1,0 +1,427 @@
+//==
+// # Collections
+//
+// Sections, in order:
+//  - Collections containers
+//  - Collections grids
+//  - Collections indexable
+//  - Derived row access over the Jagged concept
+//  - Collections sampling
+
+library Collections
+{
+    //==
+    // # Collections containers
+    //
+    // Derived functionality for the container-shape concepts
+    // (`collections.concepts.plato`): sub-range helpers built on Slice,
+    // self-concatenation, negated membership and key tests, and the LIFO/FIFO
+    // conveniences (https://en.wikipedia.org/wiki/Abstract_data_type).
+
+    //==
+    // # Sliceable
+    //
+    // Contiguous sub-range helpers built on the half-open Slice(from, exclusiveTo).
+    // The end-relative helpers (Skip, TakeLast, DropLast) read Count, which
+    // Sliceable now inherits from Countable.
+    // Note: these return the bare concept type Sliceable rather than the concrete
+    // implementing type, so chained calls (self.Take(n).Take(m)) resolve against
+    // the concept surface and type-check; the concrete type is simply not recovered.
+    //
+    // `SubRange(start, end)` used to sit here as the endpoint form over a
+    // count-based Slice. plato-378 made Slice itself the endpoint form, which
+    // made the two identical, so SubRange is gone.
+
+    // The first `count` elements. Precondition: 0 <= count <= Count.
+    Take(self: Sliceable, count: Integer): Sliceable
+        => self.Slice(0, count);
+
+    // Everything after the first `count` elements.
+    // Precondition: 0 <= count <= Count.
+    //
+    // Spelled `Drop` until plato-378. One tree should not spell one operation
+    // two ways, and `Skip` is the spelling `Array` already uses for exactly this
+    // (`primitives.library.plato`) — so `Skip` removes from the front and
+    // `DropLast` from the back, in both vocabularies.
+    Skip(self: Sliceable, count: Integer): Sliceable
+        => self.Slice(count, self.Count);
+
+    // The last `count` elements. Precondition: 0 <= count <= Count.
+    TakeLast(self: Sliceable, count: Integer): Sliceable
+        => self.Slice(self.Count - count, self.Count);
+
+    // Everything except the last `count` elements.
+    // Precondition: 0 <= count <= Count.
+    DropLast(self: Sliceable, count: Integer): Sliceable
+        => self.Slice(0, self.Count - count);
+
+    //==
+    // # Concatenable
+    //
+    // Joining helpers built on Concat(a, b).
+
+    // The collection joined to itself end to end.
+    Doubled(self: Concatenable): Concatenable
+        => self.Concat(self);
+
+    //==
+    // # SetLike
+    //
+    // Membership helpers built on Contains(item).
+
+    // True when the item is not a member.
+    DoesNotContain(self: SetLike<$T>, item: $T): Boolean
+        => self.Contains(item).Not;
+
+    //==
+    // # MapLike
+    //
+    // Key-lookup helpers. MapLike inherits Countable, so IsEmpty / IsNotEmpty
+    // apply directly.
+
+    // True when the map has no entry for the given key.
+    DoesNotContainKey(self: MapLike<$TKey, $TValue>, key: $TKey): Boolean
+        => self.ContainsKey(key).Not;
+
+    //==
+    // # StackLike
+    //
+    // LIFO helpers. Push / Pop return new stacks.
+
+    // Replace the top element: pop the current top, then push the new item.
+    // Precondition: the stack is not empty.
+    ReplaceTop(self: StackLike<$T>, item: $T): StackLike<$T>
+        => self.Pop.Push(item);
+
+    //==
+    // # QueueLike
+    //
+    // FIFO helpers. Enqueue / Dequeue return new queues.
+
+    // Move the front element to the back, preserving the order of the rest.
+    // Precondition: the queue is not empty.
+    Rotate(self: QueueLike<$T>): QueueLike<$T>
+        => self.Enqueue(self.Front).Dequeue;
+
+    //==
+    // # Collections grids
+    //
+    // Derived functionality for the multi-dimensional Indexable concepts
+    // (`collections.concepts.plato`): bounds checks, corner-cell access,
+    // and the row-major flat-index conversions
+    // (https://en.wikipedia.org/wiki/Row-_and_column-major_order) for 2D grids, 3D
+    // volumes and 4D hypervolumes.
+
+    //==
+    // # Indexable2D
+    //
+    // Cell access, bounds checks, and row-major flat-index conversions for a
+    // column x row grid.
+
+    // True when (column, row) lies within the grid.
+    IsValidCell(self: Indexable2D<$T>, column: Integer, row: Integer): Boolean
+        => column >= 0 && column < self.ColumnCount
+        && row >= 0 && row < self.RowCount;
+
+    // The row-major flat index of cell (column, row): row * ColumnCount + column.
+    FlattenIndex(self: Indexable2D<$T>, column: Integer, row: Integer): Integer
+        => row * self.ColumnCount + column;
+
+    // The (column, row) pair for a row-major flat index. Inverse of FlattenIndex.
+    UnflattenIndex(self: Indexable2D<$T>, index: Integer): Tuple2<Integer, Integer>
+        => (index % self.ColumnCount, index / self.ColumnCount);
+
+    // The top-left cell (0, 0). Precondition: the grid is not empty.
+    FirstCell(self: Indexable2D<$T>): $T
+        => self.At(0, 0);
+
+    // The bottom-right cell. Precondition: the grid is not empty.
+    LastCell(self: Indexable2D<$T>): $T
+        => self.At(self.ColumnCount - 1, self.RowCount - 1);
+
+    //==
+    // # Indexable3D
+    //
+    // Cell access and bounds checks for a column x row x layer volume.
+
+    // True when (column, row, layer) lies within the volume.
+    IsValidCell(self: Indexable3D<$T>, column: Integer, row: Integer, layer: Integer): Boolean
+        => column >= 0 && column < self.ColumnCount
+        && row >= 0 && row < self.RowCount
+        && layer >= 0 && layer < self.LayerCount;
+
+    // The row-major flat index of cell (column, row, layer):
+    // (layer * RowCount + row) * ColumnCount + column.
+    FlattenIndex(self: Indexable3D<$T>, column: Integer, row: Integer, layer: Integer): Integer
+        => (layer * self.RowCount + row) * self.ColumnCount + column;
+
+    // The (column, row, layer) triple for a row-major flat index. Inverse of FlattenIndex.
+    UnflattenIndex(self: Indexable3D<$T>, index: Integer): Tuple3<Integer, Integer, Integer>
+        => (index % self.ColumnCount,
+            (index / self.ColumnCount) % self.RowCount,
+            index / (self.ColumnCount * self.RowCount));
+
+    // The first cell (0, 0, 0). Precondition: not empty.
+    FirstCell(self: Indexable3D<$T>): $T
+        => self.At(0, 0, 0);
+
+    // The last cell. Precondition: not empty.
+    LastCell(self: Indexable3D<$T>): $T
+        => self.At(self.ColumnCount - 1, self.RowCount - 1, self.LayerCount - 1);
+
+    //==
+    // # Collections indexable
+    //
+    // Derived functionality for Countable, Index and one-dimensional Indexable
+    // (`collections.concepts.plato`): emptiness tests, typed-index
+    // predicates, endpoint access, and the fold / map family
+    // (https://en.wikipedia.org/wiki/Fold_(higher-order_function)).
+    //
+    // This file also carries the shared provenance note for the whole
+    // `collections-*` / `functional-*` library family, which was split out of a
+    // single combined collections-and-functional library.
+    //
+    // Bodies for the concepts declared in `collections.concepts.plato`,
+    // `collections.concepts.plato` and
+    // `functional.concepts.plato`. Every function's first parameter is
+    // concept-typed, so it becomes available on every implementing type. Pure
+    // expressions only; collections are immutable, so "modifying" helpers return
+    // new values. See `../README.md` for conventions.
+
+    //==
+    // # Countable
+    //
+    // Emptiness tests derived from the element count.
+
+    // True when the collection has no elements.
+    IsEmpty(self: Countable): Boolean
+        => self.Count == 0;
+
+    // True when the collection has at least one element.
+    IsNotEmpty(self: Countable): Boolean
+        => self.Count > 0;
+
+    // True when the collection holds exactly one element.
+    IsSingleton(self: Countable): Boolean
+        => self.Count == 1;
+
+    //==
+    // # Index
+    //
+    // A typed zero-based position; Value == -1 is the "none" sentinel.
+
+    // True when the index refers to nothing. A negative value means none,
+    // conventionally -1.
+    IsNone(self: Index): Boolean
+        => self.Value < 0;
+
+    // True when the index refers to a real position (non-negative).
+    IsPresent(self: Index): Boolean
+        => self.Value >= 0;
+
+    // The digest of a typed index. Every Index implementor is a single-field
+    // wrapper over Integer, so the raw value's hash is the whole content of the
+    // value and is therefore consistent with structural equality by construction.
+    Hash(self: Index): Integer
+        => self.Value.Hash;
+
+    // The natural total order on typed indices: compare the raw positions. This
+    // is reflexive, antisymmetric and transitive because Integer's order is, and
+    // it agrees with equality because Value is the only field. The "none"
+    // sentinel (-1) sorts below every present position, which is the conventional
+    // reading. Discharges the Orderable obligation for every Index implementor;
+    // Comparable.Compare then follows from Core's Compare(Orderable).
+    LessThanOrEquals(a: Index, b: Index): Boolean
+        => a.Value <= b.Value;
+
+    // Deliberately NOT covered here: MortonCode2D/3D (spatial-structures) and
+    // FontWeight (text) are also single-`Value: Integer` wrappers, but they do
+    // not implement Index and must not — they are opaque codes, not element
+    // references (README, "typed index types" convention). No concept-typed
+    // generic can reach them; their Hash / LessThanOrEquals are concrete
+    // obligations for P8 and the text domain respectively.
+    // TODO(cross-package): concrete Hash/LessThanOrEquals for those three.
+
+    //==
+    // # Indexable
+    //
+    // Endpoint access and bounds checking for a one-dimensional collection.
+
+    // The index of the last element (Count - 1); negative when empty.
+    LastIndex(self: Indexable<$T>): Integer
+        => self.Count - 1;
+
+    // True when index lies within [0, Count).
+    IsValidIndex(self: Indexable<$T>, index: Integer): Boolean
+        => index >= 0 && index < self.Count;
+
+    // Element access via a typed Index wrapper. Precondition: the index is present.
+    At(self: Indexable<$T>, index: Index): $T
+        => self[index.Value];
+
+    // True when a typed Index refers to a real position within [0, Count).
+    IsValidIndex(self: Indexable<$T>, index: Index): Boolean
+        => index.Value >= 0 && index.Value < self.Count;
+
+    // The first element. Precondition: the collection is not empty.
+    First(self: Indexable<$T>): $T
+        => self[0];
+
+    // The last element. Precondition: the collection is not empty.
+    Last(self: Indexable<$T>): $T
+        => self[self.Count - 1];
+
+    // The middle element (rounding the index down). Precondition: not empty.
+    Middle(self: Indexable<$T>): $T
+        => self[self.Count / 2];
+
+    //==
+    // # Indexable — fold / map family
+    //
+    // The general element-traversal primitives, usable on ANY Indexable rather
+    // than only on the concrete Array intrinsics. Each first materializes the
+    // elements in index order via `MapRange(Count, i => At(i))` and then defers
+    // to the corresponding Array intrinsic. Written with >= 2 parameters carrying
+    // a type variable, so they clear the FunctionInstance single-type-var guard.
+
+    // Folds the elements left to right from an initial accumulator: applies
+    // f(acc, element) across the collection in index order. The general reduction
+    // primitive behind sums, extents, and running aggregates on any indexable.
+    // (https://en.wikipedia.org/wiki/Fold_(higher-order_function))
+    Reduce(xs: Indexable<$T>, acc: $U, f: Function2<$U, $T, $U>): $U
+        => MapRange(xs.Count, i => xs[i]).Reduce(acc, f);
+
+    // A new Array holding f applied to each element in index order.
+    // (https://en.wikipedia.org/wiki/Map_(higher-order_function))
+    Map(xs: Indexable<$T>, f: Function1<$T, $U>): Array<$U>
+        => MapRange(xs.Count, i => xs[i]).Map(f);
+
+    // True when every element satisfies the predicate (vacuously true when empty).
+    All(xs: Indexable<$T>, predicate: Function1<$T, Boolean>): Boolean
+        => MapRange(xs.Count, i => xs[i]).All(predicate);
+
+    // True when at least one element satisfies the predicate (false when empty).
+    Any(xs: Indexable<$T>, predicate: Function1<$T, Boolean>): Boolean
+        => MapRange(xs.Count, i => xs[i]).Any(predicate);
+
+    //==
+    // # Derived row access over the Jagged concept
+    //
+    // Row arithmetic written once against `Jagged<T>`
+    // (`collections.concepts.plato`) so no mesh or adjacency file re-derives
+    // offset slicing. Concept-receiver form throughout, as in the sections above.
+    //
+    // `JaggedArray<T>` needs no projection here: its `Offsets` and `Values` fields
+    // satisfy the concept surface directly, so a type that HOLDS one reaches the row
+    // vocabulary through that field (`mesh.Faces.Row(f)`). The projections for the
+    // domain types that implement Jagged over differently-named storage live beside
+    // those types (`topology.library.plato`).
+
+    //==
+    // # Jagged<T>
+    //
+    // Accessors derived from the two obligations. Every row query is bounds-free
+    // by construction: the caller supplies a row in [0, RowCount).
+
+    // The number of rows: one fewer than the number of offset boundaries.
+    RowCount(self: Jagged<$T>): Integer
+        => self.Offsets.Count - 1;
+
+    // The number of items in row i: Offsets[i+1] - Offsets[i].
+    // Precondition: 0 <= i < RowCount.
+    RowLength(self: Jagged<$T>, i: Integer): Integer
+        => self.Offsets[i + 1] - self.Offsets[i];
+
+    // The items of row i, copied out of the packed Values array.
+    // Precondition: 0 <= i < RowCount.
+    Row(self: Jagged<$T>, i: Integer): Array<$T>
+        => self.Values.SubArray(self.Offsets[i], self.RowLength(i));
+
+    // The k-th item of row `row`, addressed without materializing the row.
+    // Precondition: 0 <= row < RowCount and 0 <= k < RowLength(row).
+    RowElement(self: Jagged<$T>, row: Integer, k: Integer): $T
+        => self.Values[self.Offsets[row] + k];
+
+    // True when there are no rows at all (the empty encoding: Offsets = [0]).
+    HasNoRows(self: Jagged<$T>): Boolean
+        => self.RowCount.IsZero;
+
+    //==
+    // # Builders
+    //
+    // A plain library function rather than a concept member: static-abstract
+    // concept members are not available in this language yet.
+
+    // Pack an array of rows into a JaggedArray: Offsets is the exclusive prefix
+    // sum of the row lengths (hence Count + 1 entries, last equal to the total),
+    // Values is the rows flattened in order.
+    // C# oracle: `Ara3D.Geometry.Primitives.PolygonMesh3D`.
+    // The fold runs over integer row LENGTHS rather than over the rows: a lambda
+    // parameter that is itself a collection binds Count ambiguously (Array vs the
+    // unique List builder), which the checker rejects.
+    FromRows(rows: Array<Array<$T>>): JaggedArray<$T>
+    {
+        var offsets = (rows.Count + 1).MapRange(i => i.MapRange(j => rows[j].Count).Reduce(0, (acc, n) => acc + n));
+        return (offsets, rows.FlatMap(r => r));
+    }
+
+    //==
+    // # Collections sampling
+    //
+    // The array-producing primitives under every "evaluate this thing at n evenly
+    // spaced parameters" helper: evenly spaced fractions of the unit interval and
+    // their interpolated counterparts
+    // (https://en.wikipedia.org/wiki/Linear_interpolation).
+
+    //==
+    // # Sampling and discretization
+    //
+    // The array-producing primitive under every "evaluate this thing at n evenly
+    // spaced parameters" helper: curve Sample / ToPolyline, CirclePoints,
+    // RegularPolygon vertices, and grid tessellation. These live in this package
+    // (P2) rather than with Interpolatable (P1) because they are fundamentally
+    // collection *construction*: no concept in this tree can build a collection,
+    // so they are written directly against the `Integer.Range` and `Array.Map`
+    // intrinsics. P1 may not call P2, hence the LinearSpace-over-Interpolatable
+    // overloads live here too rather than in core-algebra.
+
+    // `count` evenly spaced parameters spanning the closed unit interval:
+    // element i is i / (count - 1), so the first is 0 and the last is exactly 1.
+    // Precondition: count >= 2. This is the right form for an OPEN curve, where
+    // both endpoints are wanted.
+    Fractions(count: Integer): Array<Number>
+        => count.Range.Map(i => i.ToNumber / (count - 1).ToNumber);
+
+    // `count` evenly spaced parameters spanning the half-open unit interval:
+    // element i is i / count, so the first is 0 and 1 is never reached.
+    // Precondition: count >= 1. This is the right form for a CLOSED (periodic)
+    // curve, where parameter 1 would duplicate parameter 0.
+    FractionsExclusive(count: Integer): Array<Number>
+        => count.Range.Map(i => i.ToNumber / count.ToNumber);
+
+    // `count` evenly spaced parameters over [0, 1], endpoints included. The
+    // numpy-style spelling of Fractions; both names are kept because callers read
+    // "linear space" for sampling and "fractions" for index arithmetic.
+    LinearSpace(count: Integer): Array<Number>
+        => count.Fractions;
+
+    // `count` evenly spaced parameters over [0, 1), the upper end excluded.
+    LinearSpaceExclusive(count: Integer): Array<Number>
+        => count.FractionsExclusive;
+
+    // `count` evenly spaced values from a to b inclusive, for anything that can be
+    // interpolated (numbers, points, vectors, colors, transforms).
+    // Precondition: count >= 2.
+    LinearSpace(a: Interpolatable, b: Interpolatable, count: Integer): Array<Interpolatable>
+        => count.Fractions.Map(t => a.Lerp(b, t));
+
+    // `count` evenly spaced values from a (inclusive) to b (exclusive); the
+    // periodic form. Precondition: count >= 1.
+    LinearSpaceExclusive(a: Interpolatable, b: Interpolatable, count: Integer): Array<Interpolatable>
+        => count.FractionsExclusive.Map(t => a.Lerp(b, t));
+
+    // The sum of an array of numbers. The one numeric reduction the vocabulary
+    // spells by name; the collection surface has no `Sum`.
+    SumOf(values: Array<Number>): Number
+        => values.Reduce(0.0, (acc, x) => acc + x);
+}

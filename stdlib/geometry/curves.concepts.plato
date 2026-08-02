@@ -1,4 +1,11 @@
 //==
+// # Curves
+//
+// Sections, in order:
+//  - Curve concepts
+//  - Curve capability concepts
+
+//==
 // # Curve concepts
 //
 // Continuous curves as pure functions: a curve maps one parameter to a position
@@ -6,8 +13,8 @@
 // documents otherwise, the canonical parameter domain of a curve is the unit
 // interval [0,1], and closed curves satisfy Eval(0) = Eval(1). The optional
 // capabilities a curve may add on top — derivatives, moving frames, polar form,
-// periodicity, arc-length measurement — are declared in
-// `curves-capabilities.concepts.plato`. See https://en.wikipedia.org/wiki/Curve.
+// periodicity, arc-length measurement — are declared in the next section.
+// See https://en.wikipedia.org/wiki/Curve.
 
 //==
 // # Curves
@@ -15,7 +22,7 @@
 // A continuous map from one real parameter to a value of TRange: the generic
 // root of every curve. Dimension-agnostic curve helpers constrain on this, so
 // an Eval-only derivation is written once instead of once per embedding
-// (see `Sample` in curves-sampling.library.plato). Mirrors the
+// (see `Sample` in curves.library.plato). Mirrors the
 // `Field<TDomain, TValue>` root of `fields.concepts.plato`.
 concept Curve<TRange>
     inherits Procedural<Number, TRange>
@@ -56,7 +63,7 @@ concept ClosedCurve3D
 // A plane curve whose natural parameter is an angle: its defining equation
 // sweeps a bearing about a center or pole (circles, ellipses, roulettes,
 // figure curves). Implementors supply the angular evaluation; the bridge in
-// `curves-angular.library.plato` derives the canonical evaluation, mapping
+// `curves.library.plato` derives the canonical evaluation, mapping
 // t in [0,1] to one full turn.
 concept AngularCurve2D
     inherits Curve2D
@@ -66,10 +73,93 @@ concept AngularCurve2D
 
 // A space curve whose natural parameter is an angle: helices, torus knots,
 // and the other named space curves that wind about an axis. Implementors
-// supply the angular evaluation; the bridge in `curves-angular.library.plato`
+// supply the angular evaluation; the bridge in `curves.library.plato`
 // derives the canonical evaluation, mapping t in [0,1] to one full turn.
 concept AngularCurve3D
     inherits Curve3D
 {
     Eval(x: Self, angle: Angle): Point3D;
+}
+
+//==
+// # Curve capability concepts
+//
+// The optional capabilities a curve may satisfy on top of the `Curve<TRange>`
+// root declared above: an explicit period, first and second
+// derivatives, a moving frame, planarity, polar form, and arc-length
+// parameterization. Split from the roots because a file holds at most twelve
+// top-level declarations and because these are opt-in refinements rather than
+// classifications. Bodies live in `curves.library.plato`.
+
+// A curve whose parameterization repeats: evaluating at t and t + Period yields
+// the same position. All closed curves may be traversed periodically; a periodic
+// curve makes the period explicit. TRange is the evaluated value type (Number,
+// Point2D, or Point3D); inheriting Curve makes the wrapped evaluation
+// Eval(t mod Period) derivable (see EvalWrapped in curves.library.plato)
+// (https://en.wikipedia.org/wiki/Periodic_function).
+concept PeriodicCurve<TRange>
+    inherits Periodic<Number>, Curve<TRange>
+{ }
+
+// A 2D curve with a defined first derivative. TangentAt is the (not necessarily
+// unit-length) velocity; CurvatureAt is the signed plane curvature (positive
+// turning left, negative turning right)
+// (https://en.wikipedia.org/wiki/Curvature).
+concept DifferentiableCurve2D
+    inherits Curve2D
+{
+    TangentAt(x: Self, t: Number): Vector2D;
+    CurvatureAt(x: Self, t: Number): Number;
+}
+
+// A 3D curve with a defined first derivative. TangentAt is the velocity,
+// CurvatureAt is the unsigned space curvature, and TorsionAt measures how
+// sharply the curve leaves its osculating plane
+// (https://en.wikipedia.org/wiki/Torsion_of_a_curve).
+concept DifferentiableCurve3D
+    inherits Curve3D
+{
+    TangentAt(x: Self, t: Number): Vector3D;
+    CurvatureAt(x: Self, t: Number): Number;
+    TorsionAt(x: Self, t: Number): Number;
+}
+
+// A 3D curve carrying a continuous moving frame (Frenet or rotation-minimizing):
+// the frame origin lies on the curve and its Z axis is tangent. The basis for
+// sweeps, lofts, and camera paths
+// (https://en.wikipedia.org/wiki/Frenet%E2%80%93Serret_formulas).
+concept FramedCurve3D
+    inherits DifferentiableCurve3D
+{
+    FrameAt(x: Self, t: Number): Frame3D;
+}
+
+// A 3D curve that lies entirely within a single plane
+// (https://en.wikipedia.org/wiki/Plane_curve).
+concept PlanarCurve3D
+    inherits Curve3D
+{
+    CurvePlane(x: Self): Plane;
+}
+
+// A plane curve expressed in polar form about the origin: the position at angle
+// theta is (RadiusAt(theta) * cos(theta), RadiusAt(theta) * sin(theta)).
+// The canonical [0,1] parameter maps to one full turn unless documented otherwise
+// (https://en.wikipedia.org/wiki/Polar_coordinate_system).
+concept PolarCurve2D
+    inherits Curve2D
+{
+    RadiusAt(x: Self, angle: Angle): Number;
+}
+
+// A curve measurable by arc length. ArcLength is the total length over the
+// canonical domain; PointAtLength walks a distance along the curve from its
+// start; ParameterAtLength converts a distance to the canonical parameter.
+// TPoint is the concrete point type of the curve (Point2D, Point3D, or Number)
+// (https://en.wikipedia.org/wiki/Arc_length).
+concept ArcLengthParameterized<TPoint>
+{
+    ArcLength(x: Self): Number;
+    PointAtLength(x: Self, length: Number): TPoint;
+    ParameterAtLength(x: Self, length: Number): Number;
 }

@@ -1,0 +1,236 @@
+//==
+// # Keyframes
+//
+// Sections, in order:
+//  - Animation blending
+//  - Animation clips and playback
+//  - Keyframes and tracks
+
+//==
+// # Animation blending
+//
+// The structures that combine several clips into one result: weighted, possibly
+// additive layers in a blend stack, and the one- and two-dimensional blend
+// spaces that mix clips by a continuous parameter.
+
+// One clip's contribution in a blend stack. Weight scales the clip's influence;
+// when Additive is true the clip's values are added on top of the layers below
+// instead of interpolated with them.
+type AnimationLayer
+{
+    Clip: AnimationClip;
+    Weight: Proportion;
+    Additive: Boolean;
+}
+
+// A clip placed at a position along a one-dimensional blend axis.
+type BlendSpaceSample1D
+{
+    Position: Number;
+    Clip: AnimationClip;
+}
+
+// Blends clips by a single parameter (walk speed, aim angle): sampling at a
+// parameter value interpolates the clips nearest it. Samples are ordered by
+// ascending Position.
+type BlendSpace1D
+{
+    Samples: Array<BlendSpaceSample1D>;
+}
+
+// A clip placed at a position on a two-dimensional blend plane.
+type BlendSpaceSample2D
+{
+    Position: Number2;
+    Clip: AnimationClip;
+}
+
+// Blends clips by two parameters (strafe and forward speed): sampling at a
+// point interpolates the surrounding clips.
+type BlendSpace2D
+{
+    Samples: Array<BlendSpaceSample2D>;
+}
+
+//==
+// # Animation clips and playback
+//
+// Self-contained bundles of named tracks, the trigger events on their time
+// lines, the playhead that runs them, and the finite state machine that
+// sequences one clip into the next. Event times are Duration offsets from the
+// start of the owning clip.
+
+// A named trigger on a clip's time line, with an opaque payload for the
+// consumer. Time is the offset from the start of the clip.
+type AnimationEvent
+{
+    Time: Duration;
+    Name: String;
+    Payload: String;
+}
+
+// A named, self-contained bundle of animation: typed named tracks, trigger
+// events, and a total Duration. Track names address targets in the consumer;
+// tracks whose keys extend past Duration are clipped by the player.
+type AnimationClip
+{
+    Name: String;
+    Duration: Duration;
+    Events: Array<AnimationEvent>;
+    NumberTracks: Array<NamedTrack<Number>>;
+    Vector2DTracks: Array<NamedTrack<Vector2D>>;
+    Vector3DTracks: Array<NamedTrack<Vector3D>>;
+    QuaternionTracks: Array<NamedTrack<Quaternion>>;
+    ColorTracks: Array<NamedTrack<Color>>;
+    TransformTracks: Array<NamedTrack<Transform3D>>;
+}
+
+// The direction time advances during playback.
+type PlaybackDirection = Forward | Reverse;
+
+// The playback position and rate of a running animation. Time is the offset
+// into the clip; Speed is a rate multiplier (1 is natural speed).
+type AnimationPlayhead
+{
+    Time: Duration;
+    Speed: Number;
+    Direction: PlaybackDirection;
+    Playing: Boolean;
+}
+
+// A zero-based index of a state within an animation state machine's States
+// array. -1 means "any state" where a transition allows it.
+type AnimationStateIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A named node in an animation state machine: the clip it plays, its rate
+// multiplier, and whether it loops while active.
+type AnimationState
+{
+    Name: String;
+    Clip: AnimationClip;
+    Speed: Number;
+    Looping: Boolean;
+}
+
+// A directed edge between states. FromState and ToState index the owning
+// machine's States; FromState -1 means "from any state". ExitTime is the
+// normalized time in the source state at which the transition may fire (0
+// means immediately); Duration is the cross-fade length shaped by Easing.
+type AnimationTransition
+{
+    FromState: AnimationStateIndex;
+    ToState: AnimationStateIndex;
+    Duration: Duration;
+    Easing: ClassicEasing;
+    ExitTime: Proportion;
+}
+
+// A finite state machine over animation states. InitialState indexes States.
+// (https://en.wikipedia.org/wiki/Finite-state_machine)
+type AnimationStateMachine
+{
+    States: Array<AnimationState>;
+    Transitions: Array<AnimationTransition>;
+    InitialState: AnimationStateIndex;
+}
+
+//==
+// # Keyframes and tracks
+//
+// Typed keys on a time line and the tracks that interpolate between them: the
+// interpolation and extrapolation policies, plain and tangent-handled keys,
+// single-value and named tracks, and the per-channel transform tracks. Key
+// times are Duration offsets from the start of the owning track.
+
+// How a track interpolates between a key and its successor: hold the key's
+// value until the next key (Constant), interpolate linearly, follow a smooth
+// spline with automatic tangents (CubicSpline), use explicit weighted tangent
+// handles (Bezier) or explicit tangent slopes (Hermite), or approach the next
+// value like a damped spring (Spring).
+// (https://en.wikipedia.org/wiki/Interpolation)
+type KeyInterpolation = Constant | Linear | CubicSpline | Bezier | Hermite | Spring;
+
+// How a track behaves when sampled outside its keyed range: clamp to the
+// boundary key's value (Hold), repeat the keyed range (Loop), alternate
+// forward and reversed repeats (PingPong), extrapolate along the boundary
+// slope (LinearContinue), or repeat while offsetting each cycle by the
+// range's net value change (LoopWithOffset).
+// (https://en.wikipedia.org/wiki/Extrapolation)
+type Extrapolation = Hold | Loop | PingPong | LinearContinue | LoopWithOffset;
+
+// A single typed key on a time line. Time is the offset from the start of the
+// owning track. Easing shapes the parameter on the segment from this key to the
+// next; it applies when Interpolation is not tangent-based.
+// (https://en.wikipedia.org/wiki/Key_frame)
+type Keyframe<T>
+{
+    Time: Duration;
+    Value: T;
+    Interpolation: KeyInterpolation;
+    Easing: ClassicEasing;
+}
+
+// A key with explicit incoming and outgoing tangents for Bezier and Hermite
+// interpolation. Tangents are value slopes per second; the weights give each
+// handle's reach as a fraction of the segment span (classic default one third).
+// (https://en.wikipedia.org/wiki/Cubic_Hermite_spline)
+type TangentKeyframe<T>
+{
+    Time: Duration;
+    Value: T;
+    InTangent: T;
+    OutTangent: T;
+    InWeight: Proportion;
+    OutWeight: Proportion;
+}
+
+// A sequence of keys over one value, with extrapolation policies before the
+// first key and after the last. Keys are ordered by ascending Time.
+type AnimationTrack<T>
+    implements TimeVarying<T>
+{
+    Keys: Array<Keyframe<T>>;
+    Before: Extrapolation;
+    After: Extrapolation;
+}
+
+// A track of tangent keyframes, for curves authored with explicit handles.
+// Keys are ordered by ascending Time.
+type TangentTrack<T>
+    implements TimeVarying<T>
+{
+    Keys: Array<TangentKeyframe<T>>;
+    Before: Extrapolation;
+    After: Extrapolation;
+}
+
+// A track bound to a target name: a property path, channel name, or bone name,
+// depending on the consumer.
+type NamedTrack<T>
+{
+    Name: String;
+    Track: AnimationTrack<T>;
+}
+
+// Per-channel animation of a 2D transform: translation, rotation, and scale
+// each keyed independently.
+type TransformTrack2D
+{
+    Translation: AnimationTrack<Vector2D>;
+    Rotation: AnimationTrack<Angle>;
+    Scale: AnimationTrack<Number2>;
+}
+
+// Per-channel animation of a 3D transform: translation, rotation, and scale
+// each keyed independently. Rotation keys interpolate by spherical
+// interpolation (https://en.wikipedia.org/wiki/Spherical_linear_interpolation).
+type TransformTrack3D
+{
+    Translation: AnimationTrack<Vector3D>;
+    Rotation: AnimationTrack<Quaternion>;
+    Scale: AnimationTrack<Number3>;
+}

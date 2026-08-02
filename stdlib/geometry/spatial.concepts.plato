@@ -1,0 +1,77 @@
+//==
+// # Spatial
+//
+// Sections, in order:
+//  - Spatial query concepts
+//  - Spatial index concepts
+
+//==
+// # Spatial query concepts
+//
+// What a piece of geometry can be asked: cast a ray at it, ask it for its
+// closest point, or search its points for the k nearest. The derived
+// functionality — including the convenience overloads that assemble the query
+// records — lives in `spatial-structures.library.plato`.
+
+// Anything a 2D ray can be cast against.
+concept RayIntersectable2D
+{
+    Raycast(x: Self, query: RayQuery2D): RayHit2D;
+}
+
+// Anything a 3D ray can be cast against.
+concept RayIntersectable3D
+{
+    Raycast(x: Self, query: RayQuery3D): RayHit3D;
+}
+
+// Anything that can report its closest point to a 2D query point.
+concept ClosestPointQueryable2D
+{
+    ClosestPoint(x: Self, point: Point2D): ClosestPointResult2D;
+}
+
+// Anything that can report its closest point to a 3D query point.
+concept ClosestPointQueryable3D
+{
+    ClosestPoint(x: Self, point: Point3D): ClosestPointResult3D;
+}
+
+// Anything that can answer k-nearest-neighbor searches over 2D points.
+concept NearestNeighborQueryable2D
+{
+    FindNearest(x: Self, query: KNearestQuery2D): NearestNeighbors;
+}
+
+// Anything that can answer k-nearest-neighbor searches over 3D points.
+concept NearestNeighborQueryable3D
+{
+    FindNearest(x: Self, query: KNearestQuery3D): NearestNeighbors;
+}
+
+//==
+// # Spatial index concepts
+//
+// The broad-phase query surface every acceleration structure implements: an
+// item count and a bounds query returning candidate indices, which may include
+// false positives. The derived functionality lives in
+// `spatial-structures.library.plato`.
+
+// A queryable acceleration structure over indexed 2D primitives
+// (https://en.wikipedia.org/wiki/Spatial_database). Candidate results are
+// indices into the caller's primitive list and may include false positives
+// (exact tests are the caller's second phase).
+concept SpatialIndex2D
+{
+    ItemCount(x: Self): Integer;
+    CandidatesInBounds(x: Self, bounds: Bounds2D): Array<ItemIndex>;
+}
+
+// A queryable acceleration structure over indexed 3D primitives. Candidate
+// results are indices into the caller's primitive list and may include
+// false positives (exact tests are the caller's second phase).
+concept SpatialIndex3D
+{
+    ItemCount(x: Self): Integer;
+    CandidatesInBounds(x: Self, bounds: Bounds3D): Array<ItemIndex>;
+}

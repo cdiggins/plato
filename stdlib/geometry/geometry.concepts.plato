@@ -1,4 +1,13 @@
 //==
+// # Geometry
+//
+// Sections, in order:
+//  - Geometry classification and topological markers
+//  - Fitted-shape concept
+//  - Geometry bounds, point sets, measures, and centroids
+//  - Geometry point queries
+
+//==
 // # Geometry classification and topological markers
 //
 // What a geometric entity IS: the root marker, the embedding-dimension family
@@ -7,8 +16,7 @@
 // (topological) dimension is NOT a member here: it is already implied by which
 // family a type belongs to (Curve*, Surface, Solid). The `Dimensioned` concept
 // was retired unimplemented. The capability concepts that say what can be QUERIED on
-// such an entity live in `geometry-measures.concepts.plato` and
-// `geometry-queries.concepts.plato`.
+// such an entity follow in the sections below.
 
 //==
 // # Classification
@@ -75,3 +83,160 @@ concept Orientable
 // (https://en.wikipedia.org/wiki/Connected_space)
 concept Connected
 { }
+
+//==
+// # Fitted-shape concept
+//
+// What every fit result has in common: the residual statistics of the fit.
+// The shape itself is deliberately not part of the concept — each fit names
+// its own shape field (Line, Plane, Circle, Sphere), and a caller that wants
+// the shape already knows which fit it is holding. What a caller does NOT want
+// to write per shape is the tolerance check, which is what this concept makes
+// writable once. The implementing types are in `geometry.types.plato`.
+
+// Reports how well a fitted shape matches the samples it was fitted to.
+// (https://en.wikipedia.org/wiki/Goodness_of_fit)
+concept Fitted
+{
+    Quality(x: Self): FitQuality;
+}
+
+//==
+// # Geometry bounds, point sets, measures, and centroids
+//
+// What a geometric entity reports about its own extent: an axis-aligned bounding
+// region, the finite ordered set of defining points, the length / area / volume
+// measures, and the centre of mass under uniform density. All measures are
+// unit-agnostic Numbers in coordinate units; physical units are assigned by the
+// application, not the geometry.
+
+//==
+// # Bounds
+
+// Has a finite axis-aligned bounding rectangle enclosing every point of the shape.
+// (https://en.wikipedia.org/wiki/Minimum_bounding_box)
+concept Bounded2D
+{
+    Bounds(x: Self): Bounds2D;
+}
+
+// Has a finite axis-aligned bounding box enclosing every point of the shape.
+// (https://en.wikipedia.org/wiki/Bounding_volume)
+concept Bounded3D
+{
+    Bounds(x: Self): Bounds3D;
+}
+
+//==
+// # Point sets
+
+// Exposes the finite ordered set of defining points of a 2D entity: the vertices
+// of a polygon, the endpoints of a segment, the samples of a scatter.
+concept PointSet2D
+    inherits Geometry2D
+{
+    Points(x: Self): Array<Point2D>;
+}
+
+// Exposes the finite ordered set of defining points of a 3D entity.
+concept PointSet3D
+    inherits Geometry3D
+{
+    Points(x: Self): Array<Point3D>;
+}
+
+//==
+// # Measures
+//
+// Unit-agnostic measures: lengths in coordinate units, areas in squared units,
+// volumes in cubed units.
+
+// Has a finite total length: segments, polylines, and bounded curve spans.
+// (https://en.wikipedia.org/wiki/Arc_length)
+concept LengthMeasurable
+{
+    Length(x: Self): Number;
+}
+
+// Has a finite area and a finite boundary length: closed 2D regions, and flat
+// or curved bounded patches in any embedding. (https://en.wikipedia.org/wiki/Area)
+concept PlanarMeasurable
+{
+    Area(x: Self): Number;
+    Perimeter(x: Self): Number;
+}
+
+// Has a finite enclosed volume and a finite boundary area: closed 3D solids.
+// (https://en.wikipedia.org/wiki/Volume)
+concept SpatialMeasurable
+{
+    Volume(x: Self): Number;
+    SurfaceArea(x: Self): Number;
+}
+
+//==
+// # Centroids
+
+// Can report its center of mass under uniform density in the plane.
+// (https://en.wikipedia.org/wiki/Centroid)
+concept Centroid2D
+{
+    Centroid(x: Self): Point2D;
+}
+
+// Can report its center of mass under uniform density in space.
+// (https://en.wikipedia.org/wiki/Centroid)
+concept Centroid3D
+{
+    Centroid(x: Self): Point3D;
+}
+
+//==
+// # Geometry point queries
+//
+// What a geometric entity answers about a GIVEN POINT: point membership, the point
+// of itself nearest a query, and — for convex shapes — the support mapping that
+// GJK-style collision queries are built on.
+
+// Supports a point-membership test in the plane. For closed shapes the boundary
+// counts as inside. (https://en.wikipedia.org/wiki/Point_in_polygon)
+concept ContainsPoint2D
+{
+    Contains(x: Self, point: Point2D): Boolean;
+}
+
+// Supports a point-membership test in space. For solids the boundary counts as
+// inside.
+concept ContainsPoint3D
+{
+    Contains(x: Self, point: Point3D): Boolean;
+}
+
+// Can find the point of itself nearest to a query point in the plane. The result
+// lies on the shape; for a region it may be an interior point (the query itself
+// when contained).
+concept NearestPoint2D
+{
+    ClosestPoint(x: Self, point: Point2D): Point2D;
+}
+
+// Can find the point of itself nearest to a query point in space.
+concept NearestPoint3D
+{
+    ClosestPoint(x: Self, point: Point3D): Point3D;
+}
+
+// Supplies the support mapping of a convex 2D shape: the farthest point of the
+// shape in a given direction. Ties may resolve to any extreme point. The basis
+// of GJK-style collision queries. (https://en.wikipedia.org/wiki/Support_function)
+concept SupportMappable2D
+{
+    Support(x: Self, direction: Direction2D): Point2D;
+}
+
+// Supplies the support mapping of a convex 3D shape: the farthest point of the
+// shape in a given direction. (https://en.wikipedia.org/wiki/Support_function)
+concept SupportMappable3D
+{
+    Support(x: Self, direction: Direction3D): Point3D;
+}

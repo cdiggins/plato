@@ -1,7 +1,7 @@
 // Law library for the series/numeric special-function bodies: the von Mises
-// CDF (Bessel series, `random-continuous-tails.library.plato`) and the
+// CDF (Bessel series, `random.library.plato`) and the
 // superellipse perimeter (Simpson arc-length integral,
-// `planar-ellipses.library.plato`).
+// `planar.library.plato`).
 //
 // Same conventions as `foundation.laws.plato`: `Law_*` Boolean functions are
 // universally quantified over their parameters; helpers without the prefix are

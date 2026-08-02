@@ -8,7 +8,7 @@
 // agree bit-for-bit.
 //
 // The rotation *conversions* (axis-angle, Euler, rotor, matrix embeddings) live in
-// `transforms-rotations.library.plato`; this file holds only the algebra and the
+// `transforms.library.plato`; this file holds only the algebra and the
 // three `Create*` constructors.
 //
 // https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation

@@ -1,0 +1,242 @@
+//==
+// # Topology
+//
+// Sections, in order:
+//  - Mesh edge lists and adjacency tables
+//  - Topological classification
+//  - Half-edge and corner connectivity
+//  - Typed mesh element indices
+
+//==
+// # Mesh edge lists and adjacency tables
+//
+// The derived connectivity tables of a mesh: undirected edges named by their
+// endpoint vertices, and the vertex/face neighbourhood tables built over them.
+//
+// The adjacency tables are Jagged (CSR) row collections — packing invariant on
+// the `Jagged` concept in `collections.concepts.plato`; the payload
+// projections are in `topology.library.plato`.
+
+//==
+// ## Undirected edges as vertex pairs
+
+// An undirected edge named by its two endpoint vertices. The canonical form
+// orders the pair so that A.Value <= B.Value; producers emit canonical pairs
+// unless documented otherwise (LineSet segments preserve authored direction).
+type VertexPair
+    implements Value, Hashable
+{
+    A: VertexIndex;
+    B: VertexIndex;
+}
+
+// The undirected edges of a mesh, extracted once and stored canonically:
+// each pair ordered A.Value <= B.Value, pairs sorted lexicographically.
+// An edge's position in this array is its UndirectedEdgeIndex.
+type UndirectedEdgeList
+    implements Value
+{
+    UndirectedEdges: Array<VertexPair>;
+}
+
+// Per-edge incident faces, parallel to an UndirectedEdgeList: LeftFaces[i] is
+// the face on the side of UndirectedEdges[i] where the traversal A to B runs
+// counter-clockwise along the face loop; RightFaces[i] is the opposite side. A
+// boundary edge stores -1 in RightFaces; a wire edge stores -1 in both.
+type UndirectedEdgeAdjacency
+    implements Value
+{
+    UndirectedEdges: Array<VertexPair>;
+    LeftFaces: Array<FaceIndex>;
+    RightFaces: Array<FaceIndex>;
+}
+
+//==
+// ## Adjacency tables (CSR)
+
+// Vertex-to-vertex adjacency: one row per vertex, so Offsets has
+// (vertex count + 1) entries. Each vertex's neighbour run is sorted ascending.
+type VertexAdjacency
+    implements Value, Jagged<VertexIndex>
+{
+    Offsets: Array<Integer>;
+    Neighbors: Array<VertexIndex>;
+}
+
+// Face-to-face adjacency across shared edges: one row per face, so Offsets has
+// (face count + 1) entries. Row f holds the faces sharing an edge with face f.
+type FaceAdjacency
+    implements Value, Jagged<FaceIndex>
+{
+    Offsets: Array<Integer>;
+    Neighbors: Array<FaceIndex>;
+}
+
+// The faces incident to each vertex: one row per vertex, so Offsets has
+// (vertex count + 1) entries. Row v holds the faces touching vertex v.
+type VertexFaceAdjacency
+    implements Value, Jagged<FaceIndex>
+{
+    Offsets: Array<Integer>;
+    Faces: Array<FaceIndex>;
+}
+
+//==
+// # Topological classification
+//
+// How a surface is oriented and how close it is to being a 2-manifold, plus the
+// aggregate element counts and Euler characteristic that summarize a mesh's
+// topology.
+
+// The rotational direction of a face loop as seen from the front side.
+// CounterClockwise is the library default
+// (https://en.wikipedia.org/wiki/Curve_orientation).
+// Convention: see CONVENTIONS.md - Winding, handedness, and normals (right-handed,
+// CCW-front; mirroring inverts winding).
+type WindingOrder = CounterClockwise | Clockwise;
+
+// How close a surface is to being a 2-manifold
+// (https://en.wikipedia.org/wiki/Manifold): Manifold means every undirected
+// edge borders exactly two faces and vertex stars are disks;
+// ManifoldWithBoundary allows undirected edges bordering one or two faces.
+type Manifoldness = Unknown | Manifold | ManifoldWithBoundary | NonManifold;
+
+// Aggregate topological measurements of a mesh. EulerCharacteristic equals
+// VertexCount - UndirectedEdgeCount + FaceCount
+// (https://en.wikipedia.org/wiki/Euler_characteristic); a closed connected
+// manifold of genus g has Euler characteristic 2 - 2g. The edge count is of
+// DEDUPLICATED undirected edges — half the half-edge count on a closed
+// manifold — or the characteristic is wrong.
+type TopologySummary
+    implements Value
+{
+    VertexCount: Integer;
+    UndirectedEdgeCount: Integer;
+    FaceCount: Integer;
+    BoundaryLoopCount: Integer;
+    ConnectedComponentCount: Integer;
+    EulerCharacteristic: Integer;
+    Manifoldness: Manifoldness;
+}
+
+//==
+// # Half-edge and corner connectivity
+//
+// The two explicit connectivity encodings that support constant-time
+// neighbourhood navigation: the half-edge structure for general polygon meshes,
+// and the corner table for triangle meshes. Both name their neighbours by typed
+// index, with -1 standing for a boundary or a hole.
+
+//==
+// ## Half-edge structures
+
+// One directed side of an undirected mesh edge
+// (https://en.wikipedia.org/wiki/Doubly_connected_edge_list). Origin is the
+// vertex this half-edge leaves. Next and Previous walk the loop of the
+// bordered face in counter-clockwise order. Twin is the oppositely directed
+// half-edge, -1 when the edge is on a boundary. Face is the bordered face, -1
+// when this half-edge runs along a hole.
+type HalfEdge
+    implements Value
+{
+    Origin: VertexIndex;
+    Twin: HalfEdgeIndex;
+    Next: HalfEdgeIndex;
+    Previous: HalfEdgeIndex;
+    Face: FaceIndex;
+}
+
+// A 3D mesh in half-edge form, supporting constant-time neighborhood
+// navigation. FaceHalfEdges[f] is one half-edge on face f's loop;
+// VertexHalfEdges[v] is one half-edge leaving vertex v, -1 for an isolated
+// vertex. Requires a manifold (possibly bounded) surface.
+type HalfEdgeMesh
+    implements Value, MeshElementCounts, HalfEdgeNavigable, Deformable3D
+{
+    Positions: Array<Point3D>;
+    HalfEdges: Array<HalfEdge>;
+    FaceHalfEdges: Array<HalfEdgeIndex>;
+    VertexHalfEdges: Array<HalfEdgeIndex>;
+}
+
+// One closed loop of boundary half-edges (half-edges whose Face is -1),
+// listed in walk order around the hole.
+type BoundaryLoop
+    implements Value
+{
+    HalfEdges: Array<HalfEdgeIndex>;
+}
+
+//==
+// ## Corner tables
+
+// Triangle-corner connectivity. Corner c belongs to triangle c / 3; its next
+// corner within the triangle is 3 * (c / 3) + ((c + 1) mod 3). Corners[c] is
+// the vertex sitting at corner c. Opposites[c] is the corner facing the same
+// edge from the adjacent triangle, or -1 when that edge is on the boundary.
+type CornerTable
+    implements Value
+{
+    Corners: Array<VertexIndex>;
+    Opposites: Array<CornerIndex>;
+}
+
+//==
+// # Typed mesh element indices
+//
+// The zero-based typed index structs that name mesh elements: vertices,
+// undirected edges, faces, face corners, half-edges, and volumetric cells. A
+// typed index can never be silently confused with another kind, and they all
+// share one absence encoding.
+// No index type is named a bare `Edge`: an edge index is either
+// UndirectedEdgeIndex or HalfEdgeIndex, and the two are not interchangeable
+// (the undirected count is half the directed count on a closed manifold).
+// Convention: see CONVENTIONS.md - Typed indices (Value is zero-based, and -1
+// means "none" / "not present").
+
+// A zero-based index of a vertex within a mesh or point set. -1 means "none".
+type VertexIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of an undirected edge within an UndirectedEdgeList.
+// -1 means "none". The directed counterpart is HalfEdgeIndex.
+type UndirectedEdgeIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of a face within a mesh. -1 means "none".
+type FaceIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of a face corner (one vertex slot of one face). For
+// triangle meshes, corner c belongs to triangle c / 3 and slot c mod 3.
+// -1 means "none".
+type CornerIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of a half-edge (one directed side of an undirected
+// edge). -1 means "none".
+type HalfEdgeIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of a volumetric cell (tetrahedron, hexahedron, voxel
+// region) within a cell complex. -1 means "none".
+type CellIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}

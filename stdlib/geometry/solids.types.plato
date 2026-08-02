@@ -1,0 +1,297 @@
+//==
+// # Solids
+//
+// Sections, in order:
+//  - Constructive and implicit-form solids
+//  - Polygon-soup solids for boundary CSG
+//  - Profile-generated solids
+//  - Polyhedral solids
+
+//==
+// # Constructive and implicit-form solids
+//
+// Solids defined by set operations rather than by a generator or a vertex list:
+// the flattened constructive-solid-geometry tree and the half-space intersection
+// (https://en.wikipedia.org/wiki/Constructive_solid_geometry). Primitive closed
+// shapes (Sphere, Box3D, Cylinder, Cone, Torus...) live in the `spatial-*` files
+// and serve
+// directly as CSG leaves.
+
+//==
+// # Constructive solid geometry
+
+// The Boolean operation applied at an interior CSG node
+// (https://en.wikipedia.org/wiki/Constructive_solid_geometry). Difference
+// subtracts the right child from the left; smooth variants blend over their
+// own Radius (in model units).
+type CsgOperation
+    = Union
+    | Intersection
+    | Difference
+    | SmoothUnion(Radius: Number)
+    | SmoothIntersection(Radius: Number)
+    | SmoothDifference(Radius: Number);
+
+// A zero-based index of a node within a CSG tree's flat node array.
+// -1 means "none" (a leaf's missing children).
+type CsgNodeIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// One node of a flattened CSG tree. Interior nodes combine two children by
+// Operation; leaf nodes reference a primitive by index into a primitive
+// collection supplied alongside the tree. Child references are node indices
+// into the same flat array, never embedded nodes.
+type CsgNode3D
+    = Leaf(PrimitiveIndex: ItemIndex)
+    | Interior(Operation: CsgOperation, LeftChild: CsgNodeIndex, RightChild: CsgNodeIndex);
+
+// A constructive solid geometry tree stored as a flat node array with child
+// indices (no pointers); Root is the index of the root node in Nodes
+// (https://en.wikipedia.org/wiki/Constructive_solid_geometry).
+type CsgTree3D
+    implements Solid
+{
+    Nodes: Array<CsgNode3D>;
+    Root: CsgNodeIndex;
+}
+
+//==
+// # Derived and implicit-form solids
+
+// A convex polytope given as the intersection of half-spaces
+// (https://en.wikipedia.org/wiki/Convex_polytope). The intersection is assumed
+// bounded; redundant half-spaces are permitted.
+type ConvexPolytope3D
+    implements ConvexSolid
+{
+    Boundaries: Array<HalfSpace>;
+}
+
+//==
+// # Polygon-soup solids for boundary CSG
+//
+// The boundary-representation side of constructive solid geometry: a solid as a
+// soup of outward-facing convex planar polygons, and the polygon-versus-plane
+// classification the clipping and boolean bodies dispatch on. The implicit /
+// tree side of CSG is the section above; the algorithm bodies live in
+// `solids-csg.library.plato`.
+// (https://en.wikipedia.org/wiki/Constructive_solid_geometry)
+
+// How a planar polygon sits relative to a plane: entirely in the plane's front
+// (positive) half-space, entirely behind, lying in the plane itself (within the
+// classification tolerance), or crossing it (vertices strictly on both sides).
+// The four-way answer every plane-clipping and BSP construction dispatches on.
+// (https://en.wikipedia.org/wiki/Binary_space_partitioning)
+type PlaneRelation3D
+    = Front
+    | Back
+    | Coplanar
+    | Spanning;
+
+// A closed solid bounded by a soup of CONVEX planar polygons whose outward
+// normals (CCW winding, CONVENTIONS.md - winding) bound a watertight volume:
+// csg.js's polygon-list model of a solid. Unordered, unindexed, and permitted
+// to hold T-junctions from clipping; convexity of every face is the invariant
+// the Sutherland-Hodgman clipping bodies rely on.
+// (https://en.wikipedia.org/wiki/Boundary_representation)
+type PolygonSoup3D
+    implements Solid, Deformable3D
+{
+    Polygons: Array<Polygon3D>;
+}
+
+//==
+// # Profile-generated solids
+//
+// Closed, bounded volumes formed by carrying a planar profile through space:
+// extrude, revolve, loft, and sweep (https://en.wikipedia.org/wiki/Solid_geometry).
+// Each names the profile it starts from and the placement or path that carries
+// it; the resulting boundary is watertight because the generator caps both ends.
+
+//==
+// # Profile-generated solids
+
+// The solid formed by extruding a planar profile (with optional holes) along
+// the placement frame's Z axis for the given Height
+// (https://en.wikipedia.org/wiki/Extrusion). The profile lies in the frame's
+// XY plane.
+type ExtrudedSolid
+    implements Solid
+{
+    Profile: PolygonWithHoles2D;
+    Placement: Frame3D;
+    Height: Number;
+}
+
+// The solid swept by revolving a planar profile about an axis
+// (https://en.wikipedia.org/wiki/Solid_of_revolution). The profile's X
+// coordinate is the radial distance from the axis and its Y coordinate runs
+// along the axis; a partial sweep over Angles is capped by two flat faces.
+type RevolvedSolid
+    implements Solid
+{
+    Profile: PolygonWithHoles2D;
+    Axis: InfiniteLine3D;
+    Angles: AngleInterval;
+}
+
+// The solid interpolating an ordered stack of planar closed cross-sections,
+// capped by the first and last sections (https://en.wikipedia.org/wiki/Loft_(3D)).
+// Sections must share point counts; Closed joins the last section back to the
+// first into a ring instead.
+type LoftedSolid
+    implements Solid
+{
+    Sections: Array<Polygon3D>;
+    Closed: Boolean;
+}
+
+// The solid swept by carrying a planar profile (with optional holes) along a
+// path in the path's rotation-minimizing frame, capped at both path ends.
+type SweptSolid
+    implements Solid
+{
+    Profile: PolygonWithHoles2D;
+    Path: Curve3D;
+}
+
+//==
+// # Polyhedral solids
+//
+// The flat-faced convex solids named by their symmetry rather than by a
+// generator: right regular prisms, pyramids, and antiprisms, plus the five
+// Platonic and thirteen Archimedean solids
+// (https://en.wikipedia.org/wiki/Polyhedron). Each is centered at its frame
+// origin in the frame's orientation. The parametric boundary surfaces of the
+// prism and pyramid families live in `solids.library.plato`.
+
+//==
+// # Polyhedral solids
+
+// A right regular prism: two parallel regular SideCount-gons of circumscribed
+// radius Radius in planes perpendicular to the frame's Z axis, separated by
+// Height and joined by rectangles (https://en.wikipedia.org/wiki/Prism_(geometry)).
+// (The general polygon-swept prism is Prism3D, `polygons.types.plato`.)
+type RegularPrism
+    implements ConvexSolid, ParametricSurface, Meshable3D
+{
+    Frame: Frame3D;
+    SideCount: Integer;
+    Radius: Number;
+    Height: Number;
+}
+
+// A right regular pyramid: a regular SideCount-gon of circumscribed radius
+// Radius in the plane perpendicular to the frame's Z axis at -Height/2,
+// tapering to an apex on that axis at +Height/2
+// (https://en.wikipedia.org/wiki/Pyramid_(geometry)). (The general polygon-based
+// pyramid is Pyramid3D, polygons.plato.)
+type RegularPyramid
+    implements ConvexSolid, ParametricSurface, Meshable3D
+{
+    Frame: Frame3D;
+    SideCount: Integer;
+    Radius: Number;
+    Height: Number;
+}
+
+// A right pyramid on an axis-aligned square base of side BaseLength, centered
+// on the frame's Z axis at -Height/2, tapering to an apex at +Height/2. The
+// square-base special case kept separate from RegularPyramid because its base
+// is axis-aligned rather than inscribed in the unit circle
+// (https://en.wikipedia.org/wiki/Square_pyramid).
+type SquarePyramid
+    implements ConvexSolid, ParametricSurface, Meshable3D
+{
+    Frame: Frame3D;
+    BaseLength: Number;
+    Height: Number;
+}
+
+// A right antiprism: two parallel regular SideCount-gons rotated a half step
+// against each other and joined by a band of 2 * SideCount triangles
+// (https://en.wikipedia.org/wiki/Antiprism).
+type Antiprism
+    implements ConvexSolid, Meshable3D
+{
+    Frame: Frame3D;
+    SideCount: Integer;
+    Radius: Number;
+    Height: Number;
+}
+
+// One of the five Platonic solids (https://en.wikipedia.org/wiki/Platonic_solid).
+type PlatonicSolidKind
+    = Tetrahedron | Cube | Octahedron | Dodecahedron | Icosahedron;
+
+// A regular polyhedron of the given kind, centered at the frame origin in the
+// frame's orientation, with vertices at circumscribed radius Radius
+// (https://en.wikipedia.org/wiki/Platonic_solid).
+type PlatonicSolid
+    implements ConvexSolid, Meshable3D
+{
+    Kind: PlatonicSolidKind;
+    Frame: Frame3D;
+    Radius: Number;
+}
+
+// One of the thirteen Archimedean solids
+// (https://en.wikipedia.org/wiki/Archimedean_solid).
+type ArchimedeanSolidKind
+    = TruncatedTetrahedron
+    | Cuboctahedron
+    | TruncatedCube
+    | TruncatedOctahedron
+    | Rhombicuboctahedron
+    | TruncatedCuboctahedron
+    | SnubCube
+    | Icosidodecahedron
+    | TruncatedDodecahedron
+    | TruncatedIcosahedron
+    | Rhombicosidodecahedron
+    | TruncatedIcosidodecahedron
+    | SnubDodecahedron;
+
+// A semi-regular polyhedron of the given kind, centered at the frame origin
+// in the frame's orientation, with vertices at circumscribed radius Radius
+// (https://en.wikipedia.org/wiki/Archimedean_solid).
+type ArchimedeanSolid
+    implements ConvexSolid, Meshable3D
+{
+    Kind: ArchimedeanSolidKind;
+    Frame: Frame3D;
+    Radius: Number;
+}
+
+// One of the thirteen Catalan solids (duals of the Archimedean solids)
+// (https://en.wikipedia.org/wiki/Catalan_solid). All faces of a given solid
+// are congruent (face-transitive); they do not mix polygon sizes. Initial
+// hybrid construction lives in C# `Ara3D.Geometry.Polyhedra` /
+// `ConwayOperators` (Platonic seeds + dual/ambo/truncate aliases).
+type CatalanSolidKind
+    = TriakisTetrahedron
+    | RhombicDodecahedron
+    | TriakisOctahedron
+    | TetrakisHexahedron
+    | DeltoidalIcositetrahedron
+    | DisdyakisDodecahedron
+    | PentagonalIcositetrahedron
+    | RhombicTriacontahedron
+    | TriakisIcosahedron
+    | PentakisDodecahedron
+    | DeltoidalHexecontahedron
+    | DisdyakisTriacontahedron
+    | PentagonalHexecontahedron;
+
+// A Catalan solid of the given kind, centered at the frame origin in the
+// frame's orientation, with vertices at circumscribed radius Radius.
+type CatalanSolid
+    implements ConvexSolid, Meshable3D
+{
+    Kind: CatalanSolidKind;
+    Frame: Frame3D;
+    Radius: Number;
+}

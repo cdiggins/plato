@@ -2,7 +2,7 @@
 // # Field expression graph evaluation
 //
 // Recursive evaluation of the flat expression graphs declared in
-// `fields-graphs.types.plato`. Lives in its own `library` block, rather than in the
+// `fields.types.plato`. Lives in its own `library` block, rather than in the
 // concept-package libraries, because a graph walk needs a recursive dispatch
 // over the node sum that an expression-only package file cannot host cleanly.
 //

@@ -1,13 +1,19 @@
 //==
 // # Statistics
 //
+// Sections, in order:
+//  - Statistics
+//  - Covariance, correlation, and fits
+
+//==
+// # Statistics
+//
 // Univariate descriptive statistics: summaries, histograms, quantiles, and
 // the smoothing and outlier rules applied to a single sample
 // (https://en.wikipedia.org/wiki/Descriptive_statistics). Conventions: sample
 // statistics use Bessel's correction (divide by n - 1); kurtosis is excess
 // kurtosis (a normal distribution scores 0). The bivariate surface --
-// covariance, correlation, and fits -- lives in
-// `statistics-correlation.types.plato`.
+// covariance, correlation, and fits -- follows in the next section.
 
 // Descriptive statistics of a univariate sample. Variance and StandardDeviation
 // use the sample (n - 1) convention; Skewness and Kurtosis are standardized
@@ -122,3 +128,62 @@ type OutlierDetection
     = ZScore(Threshold: Number)
     | Iqr(Threshold: Number)
     | Mad(Threshold: Number);
+
+//==
+// # Covariance, correlation, and fits
+//
+// The bivariate half of the statistics vocabulary: sample covariances, the
+// correlation statistics computed from paired observations, and the
+// least-squares models fitted to them. Paired arrays are index-aligned and
+// equal in length; the univariate summaries are the section above, and
+// the derived readings of these records in
+// `statistics.library.plato`.
+
+// The 2x2 symmetric covariance of a bivariate sample: Xx and Yy are the
+// variances of x and y; Xy is their covariance.
+type Covariance2D
+    implements Value
+{
+    Xx: Number;
+    Xy: Number;
+    Yy: Number;
+}
+
+// The 3x3 symmetric covariance of a trivariate sample.
+type Covariance3D
+    implements Value
+{
+    Matrix: SymmetricMatrix3x3;
+}
+
+// The correlation statistic to compute.
+type CorrelationStatistic = Pearson | Spearman | Kendall;
+
+// A correlation coefficient in [-1, 1] together with the statistic used and
+// the number of paired observations behind it.
+type CorrelationCoefficient
+    implements Value
+{
+    Statistic: CorrelationStatistic;
+    Value: Number;
+    SampleCount: Integer;
+}
+
+// An ordinary least-squares line y = Slope * x + Intercept. RSquared is the
+// coefficient of determination in [0, 1].
+type LinearFit
+    implements Value
+{
+    Slope: Number;
+    Intercept: Number;
+    RSquared: Number;
+}
+
+// A least-squares polynomial fit. Coefficients[k] multiplies x^k (ascending
+// powers). RSquared is the coefficient of determination in [0, 1].
+type PolynomialFit
+    implements Value
+{
+    Coefficients: Array<Number>;
+    RSquared: Number;
+}

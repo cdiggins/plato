@@ -1,4 +1,14 @@
 //==
+// # Random
+//
+// Sections, in order:
+//  - Random numbers and probability distributions
+//  - Continuous distributions
+//  - Gamma and beta family distributions
+//  - Discrete distributions
+//  - Multivariate distributions
+
+//==
 // # Random numbers and probability distributions
 //
 // A deterministic random-number generator state and a vocabulary of parametric
@@ -6,10 +16,8 @@
 // https://en.wikipedia.org/wiki/Probability_distribution). Distributions are
 // pure parameter records; drawing samples pairs a distribution with a
 // RandomState in a later pass. The distribution concept lives in
-// `random.concepts.plato`, the distributions themselves in
-// `random-continuous.types.plato`, `random-discrete.types.plato` and
-// `random-multivariate.types.plato`, and every body in the `random*.library.plato`
-// files.
+// `random.concepts.plato`, the distributions themselves in the sections below,
+// and every body in `random.library.plato`.
 
 // The state of a PCG-style pseudo-random generator
 // (https://en.wikipedia.org/wiki/Permuted_congruential_generator). State
@@ -22,4 +30,216 @@ type RandomState
 {
     State: Integer;
     Stream: Integer;
+}
+
+//==
+// # Continuous distributions
+//
+// The elementary continuous families and the heavy-tailed, lifetime, and
+// shaped laws built beside them: the uniform and normal forms, the
+// waiting-time and power-law distributions, and the circular von Mises
+// distribution. Each type is a pure parameter record; its Mean/Variance/Pdf/
+// Cdf bodies live in `random.library.plato`, which also states the
+// parameterization and the preconditions of each family. The gamma and beta
+// families follow in the next section.
+
+// Uniform density on [Min, Max].
+type UniformDistribution
+    implements ProbabilityDistribution
+{
+    Min: Number;
+    Max: Number;
+}
+
+// The Gaussian distribution with the given mean and standard deviation.
+type NormalDistribution
+    implements ProbabilityDistribution
+{
+    Mean: Number;
+    StandardDeviation: Number;
+}
+
+// A positive variable whose logarithm is normally distributed; LogMean and
+// LogStandardDeviation parameterize that underlying normal.
+type LogNormalDistribution
+    implements ProbabilityDistribution
+{
+    LogMean: Number;
+    LogStandardDeviation: Number;
+}
+
+// Waiting time between Poisson events. Rate is per unit; the mean is 1 / Rate.
+type ExponentialDistribution
+    implements ProbabilityDistribution
+{
+    Rate: Number;
+}
+
+// A heavy-tailed distribution with undefined moments: Mean and Variance
+// conventionally report Location and positive infinity.
+type CauchyDistribution
+    implements ProbabilityDistribution
+{
+    Location: Number;
+    Scale: Number;
+}
+
+// A double-sided exponential peaked at Location with diversity Scale.
+type LaplaceDistribution
+    implements ProbabilityDistribution
+{
+    Location: Number;
+    Scale: Number;
+}
+
+// A lifetime distribution: Shape below 1 models infant mortality, 1 is
+// exponential, above 1 models wear-out failures.
+type WeibullDistribution
+    implements ProbabilityDistribution
+{
+    Shape: Number;
+    Scale: Number;
+}
+
+// A power-law tail on values at or above MinimumValue, decaying with the
+// given Shape exponent.
+type ParetoDistribution
+    implements ProbabilityDistribution
+{
+    MinimumValue: Number;
+    Shape: Number;
+}
+
+// A triangular density rising from Min to a peak at Mode and falling to Max.
+type TriangularDistribution
+    implements ProbabilityDistribution
+{
+    Min: Number;
+    Mode: Number;
+    Max: Number;
+}
+
+// A circular distribution of angles concentrated around MeanDirection; the
+// circular analog of the normal distribution. Concentration 0 is uniform on
+// the circle. Pdf and Cdf take the angle in radians, and Mean reports the
+// mean direction in radians.
+type VonMisesDistribution
+    implements ProbabilityDistribution
+{
+    MeanDirection: Angle;
+    Concentration: Number;
+}
+
+//==
+// # Gamma and beta family distributions
+//
+// The continuous families whose densities are expressed with the gamma or
+// beta function: the gamma distribution itself, the beta distribution on
+// [0, 1], and the chi-squared and Student's t sampling distributions derived
+// from the normal. Each type is a pure parameter record; its
+// Mean/Variance/Pdf/Cdf bodies live in `random.library.plato`,
+// which also states the parameterization and the preconditions of each family.
+
+// The gamma distribution in shape/scale form; its mean is Shape * Scale.
+type GammaDistribution
+    implements ProbabilityDistribution
+{
+    Shape: Number;
+    Scale: Number;
+}
+
+// A distribution on [0, 1] with shape parameters Alpha and Beta; the conjugate
+// prior of a Bernoulli success probability.
+type BetaDistribution
+    implements ProbabilityDistribution
+{
+    Alpha: Number;
+    Beta: Number;
+}
+
+// The sum of DegreesOfFreedom squared standard normals.
+type ChiSquaredDistribution
+    implements ProbabilityDistribution
+{
+    DegreesOfFreedom: Number;
+}
+
+// Student's t distribution; approaches the standard normal as
+// DegreesOfFreedom grows.
+type StudentTDistribution
+    implements ProbabilityDistribution
+{
+    DegreesOfFreedom: Number;
+}
+
+//==
+// # Discrete distributions
+//
+// The distributions supported on the whole numbers: success counts, waiting
+// counts, arrival counts, and an explicit weight table over outcome indices.
+// Pdf is the probability mass at the value rounded down to a whole number.
+// Bodies live in `random.library.plato`.
+
+// A single trial that succeeds with the given probability: mass at 1 for
+// success, 0 for failure.
+type BernoulliDistribution
+    implements ProbabilityDistribution
+{
+    SuccessProbability: Probability;
+}
+
+// The number of successes in TrialCount independent Bernoulli trials.
+type BinomialDistribution
+    implements ProbabilityDistribution
+{
+    TrialCount: Integer;
+    SuccessProbability: Probability;
+}
+
+// The number of failures before the first success in repeated Bernoulli
+// trials.
+type GeometricDistribution
+    implements ProbabilityDistribution
+{
+    SuccessProbability: Probability;
+}
+
+// The count of events in a fixed window when events arrive independently at
+// the given mean Rate.
+type PoissonDistribution
+    implements ProbabilityDistribution
+{
+    Rate: Number;
+}
+
+// A finite distribution over outcome indices 0..count-1: outcome i has
+// probability Weights[i] divided by the sum of Weights. Weights are
+// non-negative and need not be normalized.
+type DiscreteDistribution
+    implements ProbabilityDistribution
+{
+    Weights: Array<Number>;
+}
+
+//==
+// # Multivariate distributions
+//
+// Jointly normal distributions over the plane and space
+// (https://en.wikipedia.org/wiki/Multivariate_normal_distribution). These are
+// not univariate, so they do not implement ProbabilityDistribution.
+
+// A bivariate normal distribution with the given mean point and covariance.
+type NormalDistribution2D
+    implements Value
+{
+    Mean: Vector2D;
+    Covariance: Covariance2D;
+}
+
+// A trivariate normal distribution with the given mean point and covariance.
+type NormalDistribution3D
+    implements Value
+{
+    Mean: Vector3D;
+    Covariance: Covariance3D;
 }

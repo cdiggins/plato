@@ -1,17 +1,27 @@
 //==
-// # GeometryTraits — derived functions for the geometry classification concepts
+// # Geometry
 //
-// Bodies for the classification, intrinsic-dimension, and topological-marker
-// concepts declared in `geometry.concepts.plato`. Every function's first parameter
-// is concept-typed, so each helper becomes available on every implementing type.
-// Pure expressions only; all geometry is immutable, so nothing mutates in place.
-// The bounds / measure / centroid bodies are in `geometry-measures.library.plato`,
-// the point queries in `geometry-queries.library.plato`, the shared point-list
-// formulas in `geometry-kernels.library.plato`, and the two PointSet obligations in
-// `geometry-pointsets.library.plato`.
+// Sections, in order:
+//  - GeometryTraits — derived functions for the geometry classification concepts
+//  - Fit quality and residuals
+//  - Convex hull readings
+//  - The shared point-list formulas
+//  - Bounds, measures, and centroids
+//  - Bounds and vertex centroid of a point-set shape
+//  - Containment, nearest point, and support mapping
 
 library GeometryTraits
 {
+    //==
+    // # GeometryTraits — derived functions for the geometry classification concepts
+    //
+    // Bodies for the classification, intrinsic-dimension, and topological-marker
+    // concepts declared in `geometry.concepts.plato`. Every function's first parameter
+    // is concept-typed, so each helper becomes available on every implementing type.
+    // Pure expressions only; all geometry is immutable, so nothing mutates in place.
+    // The bounds / measure / centroid bodies, the point queries, the shared
+    // point-list formulas and the two PointSet obligations all follow below.
+
     //==
     // # Geometry classification
     //
@@ -76,4 +86,744 @@ library GeometryTraits
     // (one-sided reflection hook).
     IsConnected(self: Connected): Boolean
         => true;
+
+    //==
+    // # Fit quality and residuals
+    //
+    // The derived readings of a FitQuality and the per-sample residual of each
+    // fitted shape declared in `geometry.types.plato`. A residual is the
+    // distance from one sample to the fitted shape — the quantity the fit
+    // minimizes — so these are the definitions an estimator's own quality record
+    // must agree with, and the way a caller re-checks a fit against new samples.
+    //
+    // Radial residuals (circle, sphere) measure to the shape's boundary, so a
+    // sample at the centre has a residual equal to the radius. Line and plane
+    // residuals are unsigned perpendicular distances.
+
+    //==
+    // # Fit quality
+    //
+    // https://en.wikipedia.org/wiki/Root-mean-square_deviation
+
+    // The mean square of the residuals: the square of the RMS error.
+    MeanSquareError(self: FitQuality): Number
+        => self.RootMeanSquareError.Square;
+
+    // The sum of the squared residuals — the objective a least-squares fit
+    // minimizes — recovered as the mean square times the sample count.
+    SumOfSquaredError(self: FitQuality): Number
+        => self.MeanSquareError * self.SampleCount.ToNumber;
+
+    // True when no sample deviates from the shape at all.
+    IsExact(self: FitQuality): Boolean
+        => self.MaximumError == 0.0;
+
+    // True when at least one sample stands behind the fit.
+    HasSamples(self: FitQuality): Boolean
+        => self.SampleCount > 0;
+
+    // True when every sample lies within the tolerance of the shape, judged
+    // by the worst one.
+    IsWithin(self: FitQuality, tolerance: Number): Boolean
+        => self.MaximumError <= tolerance;
+
+    // How far the worst sample stands out from the typical one: the maximum
+    // error over the RMS error. One means perfectly uniform residuals, large
+    // values indicate an outlier. Precondition: RootMeanSquareError is
+    // non-zero.
+    OutlierRatio(self: FitQuality): Number
+        => self.MaximumError / self.RootMeanSquareError;
+
+    //==
+    // # Any fit
+    //
+    // The tolerance check written once for every fitted shape, over the
+    // `Fitted` concept rather than per shape.
+
+    // True when every sample of the fit lies within the tolerance of its
+    // shape.
+    IsWithin(self: Fitted, tolerance: Number): Boolean
+        => self.Quality.IsWithin(tolerance);
+
+    // True when the fit reproduces its samples exactly.
+    IsExact(self: Fitted): Boolean
+        => self.Quality.IsExact;
+
+    // True when the fit stands on enough samples to be meaningful: the shape
+    // needs at least the given count to be over-determined rather than merely
+    // interpolated.
+    IsOverDetermined(self: Fitted, minimumSamples: Integer): Boolean
+        => self.Quality.SampleCount > minimumSamples;
+
+    //==
+    // # Residuals
+    //
+    // The distance from one sample to the fitted shape.
+
+    // The perpendicular distance from a sample to the fitted line.
+    Residual(self: LineFit2D, sample: Point2D): Number
+        => self.Line.DistanceTo(sample);
+
+    // The perpendicular distance from a sample to the fitted line.
+    Residual(self: LineFit3D, sample: Point3D): Number
+        => self.Line.DistanceTo(sample);
+
+    // The unsigned perpendicular distance from a sample to the fitted plane.
+    Residual(self: PlaneFit3D, sample: Point3D): Number
+        => self.Plane.SignedDistance(sample).Abs;
+
+    // The radial residual: how far the sample's distance from the centre
+    // departs from the fitted radius.
+    Residual(self: CircleFit2D, sample: Point2D): Number
+        => (sample.Distance(self.Circle.Center) - self.Circle.Radius).Abs;
+
+    // The radial residual of a sample against the fitted sphere.
+    Residual(self: SphereFit3D, sample: Point3D): Number
+        => (sample.Distance(self.Sphere.Center) - self.Sphere.Radius).Abs;
+
+    //==
+    // # Which side
+    //
+    // The signed reading of a residual, where the shape separates two regions.
+
+    // True when the sample lies on the fitted plane's front side, the side its
+    // normal points into.
+    IsInFront(self: PlaneFit3D, sample: Point3D): Boolean
+        => self.Plane.SignedDistance(sample) > 0.0;
+
+    // True when the sample lies inside the fitted circle.
+    Contains(self: CircleFit2D, sample: Point2D): Boolean
+        => sample.Distance(self.Circle.Center) < self.Circle.Radius;
+
+    // True when the sample lies inside the fitted sphere.
+    Contains(self: SphereFit3D, sample: Point3D): Boolean
+        => sample.Distance(self.Sphere.Center) < self.Sphere.Radius;
+
+    //==
+    // # Convex hull readings
+    //
+    // The counts, degeneracy tests, and provenance lookups of the hull records in
+    // `geometry.types.plato`. Computing a hull needs a sorting surface this
+    // vocabulary does not declare; what follows is everything that reads off the
+    // record once an implementation has produced it.
+
+    //==
+    // # 2D hulls
+
+    // The number of vertices on the hull boundary.
+    HullVertexCount(self: ConvexHull2D): Integer
+        => self.Hull.Points.Count;
+
+    // The source point a hull vertex came from. Precondition: vertex is a
+    // valid position in the hull boundary.
+    SourceOf(self: ConvexHull2D, vertex: Integer): ItemIndex
+        => self.SourceIndices[vertex];
+
+    // The hull vertices as the source points they came from, in hull order.
+    // The provenance the hull preserves: index a per-point attribute array
+    // with these to carry attributes onto the hull.
+    SourcePoints(self: ConvexHull2D, points: Array<Point2D>): Array<Point2D>
+        => self.SourceIndices.Map(i => points[i.Value]);
+
+    // True when the hull has no area: fewer than three vertices, which is what
+    // an empty, single-point, or collinear input produces.
+    IsDegenerate(self: ConvexHull2D): Boolean
+        => self.HullVertexCount < 3;
+
+    //==
+    // # 3D hulls
+
+    // The number of vertices on the hull surface.
+    HullVertexCount(self: ConvexHull3D): Integer
+        => self.Hull.Positions.Count;
+
+    // The number of triangles on the hull surface.
+    HullFaceCount(self: ConvexHull3D): Integer
+        => self.Hull.Faces.Count;
+
+    // The source point a hull vertex came from. Precondition: vertex is a
+    // valid position in the hull's vertex array.
+    SourceOf(self: ConvexHull3D, vertex: Integer): ItemIndex
+        => self.SourceIndices[vertex];
+
+    // The hull vertices as the source points they came from, in hull vertex
+    // order.
+    SourcePoints(self: ConvexHull3D, points: Array<Point3D>): Array<Point3D>
+        => self.SourceIndices.Map(i => points[i.Value]);
+
+    // True when the hull encloses no volume: fewer than four vertices, which
+    // is what an empty, degenerate, or coplanar input produces.
+    IsDegenerate(self: ConvexHull3D): Boolean
+        => self.HullVertexCount < 4;
+
+    // The Euler characteristic of the closed hull surface, which is 2 for any
+    // non-degenerate convex hull; a different value means the mesh is not the
+    // closed surface a hull should be. Edge count follows from the triangle
+    // count on a closed triangulation (2E = 3F).
+    // (https://en.wikipedia.org/wiki/Euler_characteristic)
+    HullEulerCharacteristic(self: ConvexHull3D): Integer
+        => self.HullVertexCount - self.HullFaceCount * 3 / 2 + self.HullFaceCount;
+
+    //==
+    // # The shared point-list formulas
+    //
+    // The formulas every point-list shape in the line, planar-shape, polygon and
+    // spatial-primitive files is built from. They take a plain `Array<Point2D>` /
+    // `Array<Point3D>` rather than a concept so that a shape whose points are NOT its
+    // `PointSet` members (a regular polygon's computed vertices, a polygon's holes) can
+    // call them too. Aggregate reductions (centroid-of-points, bounds-of-points, total
+    // polyline length) are folded through the P2 Indexable Reduce/Map family: the
+    // kernels below materialize their elements once and reduce. Difference.Between(a, b)
+    // yields (b - a) — pinned in the algebra concepts — so the sign of BoundsSize and
+    // every Between-based delta below rests on a documented convention, not observed
+    // behavior.
+
+    //==
+    // # Point-list kernels
+    //
+    // The formulas every point-list shape in `lines.types.plato`, `planar.types.plato`,
+    // `polygons.types.plato` and the `spatial-*.types.plato` files is built from. They take a
+    // plain `Array<Point2D>` / `Array<Point3D>` rather than a concept so that a
+    // shape whose points are NOT its `PointSet` members (a regular polygon's
+    // computed vertices, a polygon's holes) can call them too.
+    //
+    // Conventions fixed here and inherited by every caller:
+    //   * Winding: counter-clockwise is positive (README / CONVENTIONS.md - Winding).
+    //     `ShoelaceArea` is SIGNED; the `Area` obligations take its absolute value.
+    //   * Vertex order: a closed ring lists each vertex once; the closing edge from
+    //     the last vertex back to the first is implicit (hence `AtModulo`).
+    //   * Containment is the even-odd (crossing) rule and is exact only for a
+    //     SIMPLE ring. On the boundary itself the answer is whatever the floating
+    //     point comparison happens to give — see `PolygonContainsPoint`.
+
+    // Twice the signed area of triangle (a, b, c): the z component of
+    // (b - a) x (c - a). Positive when a -> b -> c turns counter-clockwise, zero
+    // when the three points are collinear. The primitive orientation predicate.
+    // https://en.wikipedia.org/wiki/Curve_orientation
+    TwiceSignedArea(a: Point2D, b: Point2D, c: Point2D): Number
+        => (b.X - a.X) * (c.Y - a.Y) - (b.Y - a.Y) * (c.X - a.X);
+
+    // The tightest axis-aligned rectangle containing every listed point.
+    // Precondition: at least one point.
+    BoundsOfPoints(points: Array<Point2D>): Bounds2D
+    {
+        var lo = points.Reduce(points.First, (acc, p) => Point2D(acc.X.Min(p.X), acc.Y.Min(p.Y)));
+        var hi = points.Reduce(points.First, (acc, p) => Point2D(acc.X.Max(p.X), acc.Y.Max(p.Y)));
+        return (lo, hi);
+    }
+
+    // The tightest axis-aligned box containing every listed point.
+    // Precondition: at least one point.
+    BoundsOfPoints(points: Array<Point3D>): Bounds3D
+    {
+        var lo = points.Reduce(points.First, (acc, p) => Point3D(acc.X.Min(p.X), acc.Y.Min(p.Y), acc.Z.Min(p.Z)));
+        var hi = points.Reduce(points.First, (acc, p) => Point3D(acc.X.Max(p.X), acc.Y.Max(p.Y), acc.Z.Max(p.Z)));
+        return (lo, hi);
+    }
+
+    // The vertex centroid of a non-empty point list: the componentwise arithmetic
+    // mean, treating every listed point as an equal point mass. Distinct from
+    // PolygonAreaCentroid, which weights by enclosed area; the two agree only for
+    // shapes whose vertices are uniformly distributed. Precondition: at least one point.
+    AverageOfPoints(points: Array<Point2D>): Point2D
+        => (SumOf(points.Map(p => p.X)) / points.Count.ToNumber,
+            SumOf(points.Map(p => p.Y)) / points.Count.ToNumber);
+
+    // The vertex centroid of a non-empty point list in space: the componentwise
+    // arithmetic mean. Precondition: at least one point.
+    AverageOfPoints(points: Array<Point3D>): Point3D
+        => (SumOf(points.Map(p => p.X)) / points.Count.ToNumber,
+            SumOf(points.Map(p => p.Y)) / points.Count.ToNumber,
+            SumOf(points.Map(p => p.Z)) / points.Count.ToNumber);
+
+    // The smallest rectangle containing both operands.
+    UnionOfBounds(a: Bounds2D, b: Bounds2D): Bounds2D
+        => (Point2D(a.Min.X.Min(b.Min.X), a.Min.Y.Min(b.Min.Y)),
+            Point2D(a.Max.X.Max(b.Max.X), a.Max.Y.Max(b.Max.Y)));
+
+    // The smallest box containing both operands.
+    UnionOfBounds(a: Bounds3D, b: Bounds3D): Bounds3D
+        => (Point3D(a.Min.X.Min(b.Min.X), a.Min.Y.Min(b.Min.Y), a.Min.Z.Min(b.Min.Z)),
+            Point3D(a.Max.X.Max(b.Max.X), a.Max.Y.Max(b.Max.Y), a.Max.Z.Max(b.Max.Z)));
+
+    // The overlap of two rectangles (component-wise Max of mins, Min of maxs).
+    // Disjoint operands yield the empty inverted encoding.
+    IntersectionOfBounds(a: Bounds2D, b: Bounds2D): Bounds2D
+        => (Point2D(a.Min.X.Max(b.Min.X), a.Min.Y.Max(b.Min.Y)),
+            Point2D(a.Max.X.Min(b.Max.X), a.Max.Y.Min(b.Max.Y)));
+
+    // The overlap of two boxes. Disjoint operands yield the empty encoding.
+    IntersectionOfBounds(a: Bounds3D, b: Bounds3D): Bounds3D
+        => (Point3D(a.Min.X.Max(b.Min.X), a.Min.Y.Max(b.Min.Y), a.Min.Z.Max(b.Min.Z)),
+            Point3D(a.Max.X.Min(b.Max.X), a.Max.Y.Min(b.Max.Y), a.Max.Z.Min(b.Max.Z)));
+
+    // The rectangle grown by `amount` on every side (the Minkowski sum with a
+    // square of half-width `amount`; https://en.wikipedia.org/wiki/Minkowski_addition).
+    GrowBounds(b: Bounds2D, amount: Number): Bounds2D
+        => (Point2D(b.Min.X - amount, b.Min.Y - amount),
+            Point2D(b.Max.X + amount, b.Max.Y + amount));
+
+    // The box grown by `amount` on every side.
+    GrowBounds(b: Bounds3D, amount: Number): Bounds3D
+        => (Point3D(b.Min.X - amount, b.Min.Y - amount, b.Min.Z - amount),
+            Point3D(b.Max.X + amount, b.Max.Y + amount, b.Max.Z + amount));
+
+    // The total length of the chain joining consecutive points. When `closed`, the
+    // edge from the last point back to the first is counted too.
+    // Precondition: at least two points (at least one when closed).
+    ChainLength(points: Array<Point2D>, closed: Boolean): Number
+        => SumOf((closed ? points.Count : points.Count - 1)
+            .MapRange(i => points[i].Between(points.AtModulo(i + 1)).Magnitude));
+
+    // The total length of the chain joining consecutive points in space.
+    ChainLength(points: Array<Point3D>, closed: Boolean): Number
+        => SumOf((closed ? points.Count : points.Count - 1)
+            .MapRange(i => points[i].Between(points.AtModulo(i + 1)).Magnitude));
+
+    // The SIGNED area enclosed by the closed ring, by the shoelace (surveyor's)
+    // formula: positive for counter-clockwise winding, negative for clockwise. For
+    // a self-intersecting ring this is the winding-weighted area, not the area of
+    // the point set; callers wanting a non-negative measure take the absolute
+    // value. https://en.wikipedia.org/wiki/Shoelace_formula
+    ShoelaceArea(points: Array<Point2D>): Number
+        => 0.5 * SumOf(points.Count.MapRange(i =>
+            points[i].X * points.AtModulo(i + 1).Y
+            - points.AtModulo(i + 1).X * points[i].Y));
+
+    // The centroid (center of mass under uniform density) of the region enclosed by
+    // a closed ring: Cx = 1/(6A) * sum (x_i + x_i+1) * cross_i, and likewise for Cy,
+    // where cross_i is the shoelace term and A the signed area.
+    // Precondition: non-zero signed area (a degenerate ring has no centroid).
+    // https://en.wikipedia.org/wiki/Centroid#Of_a_polygon
+    PolygonAreaCentroid(points: Array<Point2D>): Point2D
+    {
+        var n = points.Count;
+        var cross = n.MapRange(i =>
+            points[i].X * points.AtModulo(i + 1).Y
+            - points.AtModulo(i + 1).X * points[i].Y);
+        var twiceArea = SumOf(cross);
+        var cx = SumOf(n.MapRange(i => (points[i].X + points.AtModulo(i + 1).X) * cross[i]));
+        var cy = SumOf(n.MapRange(i => (points[i].Y + points.AtModulo(i + 1).Y) * cross[i]));
+        return (cx / (3.0 * twiceArea), cy / (3.0 * twiceArea));
+    }
+
+    // True when the horizontal ray from `point` towards +X crosses the edge
+    // (a, b). The half-open rule on the y comparison (`a.Y > point.Y` exclusive-or
+    // `b.Y > point.Y`) counts each vertex exactly once, so a ray through a vertex
+    // does not double count.
+    EdgeCrossesRay(a: Point2D, b: Point2D, point: Point2D): Boolean
+        => (a.Y > point.Y).ExclusiveOr(b.Y > point.Y)
+        && point.X < (b.X - a.X) * (point.Y - a.Y) / (b.Y - a.Y) + a.X;
+
+    // True when `point` lies inside the closed ring, by the even-odd (crossing
+    // number) rule: inside when the ray towards +X crosses an odd number of edges.
+    // Exact for a simple (non-self-intersecting) ring; for a self-intersecting one
+    // it reports the even-odd region rather than the non-zero-winding region.
+    // Points exactly ON the boundary are not classified reliably — the strict `<`
+    // in EdgeCrossesRay makes the answer depend on floating point, so callers that
+    // need a boundary guarantee must test the boundary separately.
+    // https://en.wikipedia.org/wiki/Point_in_polygon
+    PolygonContainsPoint(points: Array<Point2D>, point: Point2D): Boolean
+        => points.Count
+            .MapRange(i => EdgeCrossesRay(points[i], points.AtModulo(i + 1), point) ? 1 : 0)
+            .Reduce(0, (acc, c) => acc + c)
+            .IsOdd;
+
+    // The point of the segment [a, b] nearest to `point`: the projection parameter
+    // clamped to [0, 1]. A degenerate segment (a equals b) returns a.
+    ClosestPointOnSegment(a: Point2D, b: Point2D, point: Point2D): Point2D
+    {
+        var ab = a.Between(b);
+        var lengthSquared = ab.MagnitudeSquared;
+        var t = lengthSquared <= 0.0 ? 0.0 : a.Between(point).Dot(ab) / lengthSquared;
+        return a + ab * t.Clamp(0.0, 1.0);
+    }
+
+    // The point of the segment [a, b] in space nearest to `point`.
+    ClosestPointOnSegment(a: Point3D, b: Point3D, point: Point3D): Point3D
+    {
+        var ab = a.Between(b);
+        var lengthSquared = ab.MagnitudeSquared;
+        var t = lengthSquared <= 0.0 ? 0.0 : a.Between(point).Dot(ab) / lengthSquared;
+        return a + ab * t.Clamp(0.0, 1.0);
+    }
+
+    // The distance from `point` to the segment [a, b].
+    DistanceToSegment(a: Point2D, b: Point2D, point: Point2D): Number
+        => ClosestPointOnSegment(a, b, point).Between(point).Magnitude;
+
+    // The distance from `point` to the segment [a, b] in space.
+    DistanceToSegment(a: Point3D, b: Point3D, point: Point3D): Number
+        => ClosestPointOnSegment(a, b, point).Between(point).Magnitude;
+
+    // The point of the polyline (or closed ring, when `closed`) nearest to `point`:
+    // the nearest of the per-edge nearest points.
+    ClosestPointOnChain(points: Array<Point2D>, closed: Boolean, point: Point2D): Point2D
+    {
+        var candidates = (closed ? points.Count : points.Count - 1)
+            .MapRange(i => ClosestPointOnSegment(points[i], points.AtModulo(i + 1), point));
+        return candidates.Reduce(candidates.First, (best, c) =>
+            c.Between(point).MagnitudeSquared < best.Between(point).MagnitudeSquared ? c : best);
+    }
+
+    // The point of the space polyline (or closed ring) nearest to `point`.
+    ClosestPointOnChain(points: Array<Point3D>, closed: Boolean, point: Point3D): Point3D
+    {
+        var candidates = (closed ? points.Count : points.Count - 1)
+            .MapRange(i => ClosestPointOnSegment(points[i], points.AtModulo(i + 1), point));
+        return candidates.Reduce(candidates.First, (best, c) =>
+            c.Between(point).MagnitudeSquared < best.Between(point).MagnitudeSquared ? c : best);
+    }
+
+    //==
+    // # Bounds, measures, and centroids
+    //
+    // Bodies for the Bounded2D / Bounded3D, LengthMeasurable / PlanarMeasurable /
+    // SpatialMeasurable and Centroid2D / Centroid3D concepts declared in
+    // `geometry.concepts.plato`.
+    //
+    // Conventions used throughout:
+    //   * Points are positions (`points.types.plato`); subtracting two points gives a vector
+    //     via Difference.Between(a, b), which yields (b - a). Vectors carry Magnitude /
+    //     MagnitudeSquared (Normed) and Dot (Vector).
+    //   * Distances are computed as the magnitude of a Between delta, so the argument
+    //     order of Between never affects a distance result.
+    //   * Measures are unit-agnostic Numbers in coordinate units (see README.md).
+    //
+    // Cross-package reuse (this library deliberately does NOT re-spell generics that lower
+    // packages already ship):
+    //   * P1: Half(Scalable), AlmostZero(Real, tolerance).
+    //   * P4: Center(BoundsLike<$TPoint>).
+
+    //==
+    // # Bounded2D
+    //
+    // Everything derived from the axis-aligned Bounds2D (Min / Max corners, each a
+    // Point2D) — an AABB (https://en.wikipedia.org/wiki/Axis-aligned_bounding_box;
+    // see also https://en.wikipedia.org/wiki/Bounding_volume). Named with a
+    // `Bounds` prefix so nothing collides with the members BoundsLike itself
+    // carries, and so BoundsCenter reads distinctly from a shape centroid.
+
+    // The center of the bounding rectangle. Delegates to P4's Center(BoundsLike).
+    BoundsCenter(self: Bounded2D): Point2D
+        => self.Bounds.Center;
+
+    // The extent of the bounding rectangle as a vector (Max - Min); components are
+    // non-negative for a well-formed box.
+    BoundsSize(self: Bounded2D): Vector2D
+        => self.Bounds.Min.Between(self.Bounds.Max);
+
+    // The horizontal extent of the bounding rectangle.
+    BoundsWidth(self: Bounded2D): Number
+        => self.BoundsSize.X;
+
+    // The vertical extent of the bounding rectangle.
+    BoundsHeight(self: Bounded2D): Number
+        => self.BoundsSize.Y;
+
+    // The area of the bounding rectangle (width times height).
+    BoundsArea(self: Bounded2D): Number
+        => self.BoundsWidth * self.BoundsHeight;
+
+    // The length of the bounding rectangle's diagonal.
+    BoundsDiagonalLength(self: Bounded2D): Number
+        => self.BoundsSize.Magnitude;
+
+    // True when the point lies within the bounding rectangle (inclusive).
+    BoundsContainsPoint(self: Bounded2D, point: Point2D): Boolean
+        => point.X >= self.Bounds.Min.X && point.X <= self.Bounds.Max.X
+        && point.Y >= self.Bounds.Min.Y && point.Y <= self.Bounds.Max.Y;
+
+    // True when this shape's bounds lie entirely within `outer`'s bounds (inclusive).
+    FitsInside(self: Bounded2D, outer: Bounded2D): Boolean
+        => self.Bounds.Min.X >= outer.Bounds.Min.X && self.Bounds.Min.Y >= outer.Bounds.Min.Y
+        && self.Bounds.Max.X <= outer.Bounds.Max.X && self.Bounds.Max.Y <= outer.Bounds.Max.Y;
+
+    // True when the two shapes' bounding rectangles overlap (touching counts).
+    BoundsOverlaps(self: Bounded2D, other: Bounded2D): Boolean
+        => self.Bounds.Min.X <= other.Bounds.Max.X && self.Bounds.Max.X >= other.Bounds.Min.X
+        && self.Bounds.Min.Y <= other.Bounds.Max.Y && self.Bounds.Max.Y >= other.Bounds.Min.Y;
+
+    //==
+    // # Bounded3D
+    //
+    // The 3D analogues over Bounds3D (Min / Max are Point3D).
+
+    // The center of the bounding box. Delegates to P4's Center(BoundsLike).
+    BoundsCenter(self: Bounded3D): Point3D
+        => self.Bounds.Center;
+
+    // The extent of the bounding box as a vector (Max - Min).
+    BoundsSize(self: Bounded3D): Vector3D
+        => self.Bounds.Min.Between(self.Bounds.Max);
+
+    // The extent of the bounding box along X.
+    BoundsWidth(self: Bounded3D): Number
+        => self.BoundsSize.X;
+
+    // The extent of the bounding box along Y.
+    BoundsHeight(self: Bounded3D): Number
+        => self.BoundsSize.Y;
+
+    // The extent of the bounding box along Z.
+    BoundsDepth(self: Bounded3D): Number
+        => self.BoundsSize.Z;
+
+    // The volume of the bounding box (width times height times depth).
+    BoundsVolume(self: Bounded3D): Number
+        => self.BoundsWidth * self.BoundsHeight * self.BoundsDepth;
+
+    // The length of the bounding box's space diagonal.
+    BoundsDiagonalLength(self: Bounded3D): Number
+        => self.BoundsSize.Magnitude;
+
+    // True when the point lies within the bounding box (inclusive).
+    BoundsContainsPoint(self: Bounded3D, point: Point3D): Boolean
+        => point.X >= self.Bounds.Min.X && point.X <= self.Bounds.Max.X
+        && point.Y >= self.Bounds.Min.Y && point.Y <= self.Bounds.Max.Y
+        && point.Z >= self.Bounds.Min.Z && point.Z <= self.Bounds.Max.Z;
+
+    // True when this shape's bounds lie entirely within `outer`'s bounds (inclusive).
+    FitsInside(self: Bounded3D, outer: Bounded3D): Boolean
+        => self.Bounds.Min.X >= outer.Bounds.Min.X && self.Bounds.Min.Y >= outer.Bounds.Min.Y
+        && self.Bounds.Min.Z >= outer.Bounds.Min.Z
+        && self.Bounds.Max.X <= outer.Bounds.Max.X && self.Bounds.Max.Y <= outer.Bounds.Max.Y
+        && self.Bounds.Max.Z <= outer.Bounds.Max.Z;
+
+    // True when the two shapes' bounding boxes overlap (touching counts).
+    BoundsOverlaps(self: Bounded3D, other: Bounded3D): Boolean
+        => self.Bounds.Min.X <= other.Bounds.Max.X && self.Bounds.Max.X >= other.Bounds.Min.X
+        && self.Bounds.Min.Y <= other.Bounds.Max.Y && self.Bounds.Max.Y >= other.Bounds.Min.Y
+        && self.Bounds.Min.Z <= other.Bounds.Max.Z && self.Bounds.Max.Z >= other.Bounds.Min.Z;
+
+    //==
+    // # PointSet2D / PointSet3D
+    //
+    // No helpers are defined here: the defining points are an Array (Indexable), so
+    // the useful per-element conveniences already come from P2's generics on the
+    // Points array — callers write `self.Points.IsEmpty`, `self.Points.First`,
+    // `self.Points.Last`, `self.Points.Count`, `self.Points.At(i)`. Re-spelling any
+    // of them at this layer would be pure rule-11 duplication. Aggregate reductions
+    // (centroid, bounds) are the fold concept-gap noted at the top of the file.
+
+    //==
+    // # LengthMeasurable
+    //
+    // Conveniences over a finite total Length. Half(Length) already comes from P1's
+    // Half(Scalable); it is not respelled here.
+
+    // True when the length is within `tolerance` of zero (a degenerate span).
+    // Delegates to P1's AlmostZero(Real, tolerance) rather than an exact == 0.0.
+    IsDegenerate(self: LengthMeasurable, tolerance: Number): Boolean
+        => self.Length.AlmostZero(tolerance);
+
+    // True when this entity is longer than another length-measurable entity.
+    LongerThan(self: LengthMeasurable, other: LengthMeasurable): Boolean
+        => self.Length > other.Length;
+
+    //==
+    // # PlanarMeasurable
+    //
+    // Conveniences over a finite Area and boundary Perimeter.
+
+    // True when the area is within `tolerance` of zero (a degenerate region).
+    IsDegenerate(self: PlanarMeasurable, tolerance: Number): Boolean
+        => self.Area.AlmostZero(tolerance);
+
+    // The ratio of enclosed area to boundary length; larger for "fuller" regions.
+    // Precondition: non-zero perimeter.
+    AreaPerimeterRatio(self: PlanarMeasurable): Number
+        => self.Area / self.Perimeter;
+
+    // True when this region encloses more area than another.
+    LargerAreaThan(self: PlanarMeasurable, other: PlanarMeasurable): Boolean
+        => self.Area > other.Area;
+
+    // The isoperimetric quotient 4*Pi*Area / Perimeter^2: a scale-invariant
+    // compactness measure in (0, 1], equal to 1 only for a disc
+    // (https://en.wikipedia.org/wiki/Isoperimetric_inequality).
+    // Precondition: non-zero perimeter.
+    IsoperimetricQuotient(self: PlanarMeasurable): Number
+        => 4.0 * self.Area.Pi * self.Area / (self.Perimeter * self.Perimeter);
+
+    //==
+    // # SpatialMeasurable
+    //
+    // Conveniences over a finite Volume and boundary SurfaceArea.
+
+    // True when the volume is within `tolerance` of zero (a degenerate solid).
+    IsDegenerate(self: SpatialMeasurable, tolerance: Number): Boolean
+        => self.Volume.AlmostZero(tolerance);
+
+    // The ratio of enclosed volume to boundary area; larger for more "compact"
+    // solids. Precondition: non-zero surface area.
+    VolumeSurfaceRatio(self: SpatialMeasurable): Number
+        => self.Volume / self.SurfaceArea;
+
+    // True when this solid encloses more volume than another.
+    LargerVolumeThan(self: SpatialMeasurable, other: SpatialMeasurable): Boolean
+        => self.Volume > other.Volume;
+
+    //==
+    // # Centroid2D / Centroid3D
+    //
+    // Proximity of a query point to the center of mass
+    // (https://en.wikipedia.org/wiki/Centroid).
+
+    // The straight-line distance from the centroid to a query point.
+    DistanceFromCentroid(self: Centroid2D, point: Point2D): Number
+        => self.Centroid.Between(point).Magnitude;
+
+    // The squared distance from the centroid to a query point; avoids the square
+    // root when only relative distances are compared.
+    DistanceFromCentroidSquared(self: Centroid2D, point: Point2D): Number
+        => self.Centroid.Between(point).MagnitudeSquared;
+
+    // The straight-line distance from the centroid to a query point.
+    DistanceFromCentroid(self: Centroid3D, point: Point3D): Number
+        => self.Centroid.Between(point).Magnitude;
+
+    // The squared distance from the centroid to a query point.
+    DistanceFromCentroidSquared(self: Centroid3D, point: Point3D): Number
+        => self.Centroid.Between(point).MagnitudeSquared;
+
+    //==
+    // # Bounds and vertex centroid of a point-set shape
+    //
+    // The two obligations a `PointSet2D` / `PointSet3D` implementor gets for free from
+    // its defining point list, folded through the reductions above. No
+    // per-element conveniences are defined here:
+    // the defining points are an Array (Indexable), so `self.Points.IsEmpty`,
+    // `self.Points.First`, `self.Points.Count` and `self.Points.At(i)` already come from
+    // P2's generics, and re-spelling them at this layer would be pure rule-11
+    // duplication.
+
+    //==
+    // # PointSet bounds
+    //
+    // The one measure that is genuinely shared by every point-set shape: the
+    // axis-aligned bounds of a shape whose defining points are its extreme points.
+    // That holds for every implementor in this tree — segments, triangles, quads,
+    // polylines and polygons are all contained in the convex hull of their listed
+    // points, and each listed point lies on the shape, so the bounds are TIGHT.
+    // (Quad3D's bilinear patch is likewise contained in the hull of its corners.)
+    // Shapes whose extent is NOT determined by a stored point list — circles,
+    // capsules, cylinders, tori — supply their own body in their declaration file.
+
+    // The tightest axis-aligned rectangle containing the shape.
+    Bounds(self: PointSet2D): Bounds2D
+        => self.Points.BoundsOfPoints;
+
+    // The tightest axis-aligned box containing the shape.
+    Bounds(self: PointSet3D): Bounds3D
+        => self.Points.BoundsOfPoints;
+
+    //==
+    // # PointSet vertex centroid
+    //
+    // The arithmetic mean of a shape's defining points, folded over the Points
+    // array. This is the centroid of the VERTICES as equal point masses, NOT the
+    // area/volume-weighted center of mass a Centroid2D/3D implementor reports; the
+    // two differ whenever the vertices are unevenly distributed. Offered on the
+    // PointSet surface because it is well defined for any point set, including a
+    // scatter with no interior. Precondition: at least one defining point.
+
+    // The vertex centroid of the shape: the arithmetic mean of its defining points.
+    VertexCentroid(self: PointSet2D): Point2D
+        => self.Points.AverageOfPoints;
+
+    // The vertex centroid of the shape in space: the arithmetic mean of its points.
+    VertexCentroid(self: PointSet3D): Point3D
+        => self.Points.AverageOfPoints;
+
+    //==
+    // # PrimitiveGeometry
+    //
+    // The primitive-level sibling of the point surface above: whole faces rather
+    // than the points inside them. Dispatches on the layer-1 view in
+    // `meshes.concepts.plato`, so it serves soups and indexed meshes alike.
+
+    // The number of whole primitives the geometry stores.
+    PrimitiveCount(self: PrimitiveGeometry<$TPoint, $TPrimitive>): Integer
+        => self.Primitives.Count;
+
+    //==
+    // # Containment, nearest point, and support mapping
+    //
+    // Bodies for the ContainsPoint2D / 3D, NearestPoint2D / 3D and SupportMappable2D /
+    // 3D concepts declared in `geometry.concepts.plato`. Distances are computed
+    // as the magnitude of a Between delta, so the argument order of Between never
+    // affects a distance result.
+
+    //==
+    // # ContainsPoint2D / ContainsPoint3D
+    //
+    // Membership conveniences built on Contains(point). A batched ContainsAll over
+    // an Array<Point> is the fold concept-gap noted at the top of the file.
+
+    // True when the point is NOT a member of the shape.
+    Excludes(self: ContainsPoint2D, point: Point2D): Boolean
+        => self.Contains(point).Not;
+
+    // True when the point is NOT a member of the shape.
+    Excludes(self: ContainsPoint3D, point: Point3D): Boolean
+        => self.Contains(point).Not;
+
+    //==
+    // # NearestPoint2D / NearestPoint3D
+    //
+    // Distance queries built on the nearest-point projection ClosestPoint(point).
+
+    // The straight-line distance from a query point to the nearest point of the shape.
+    DistanceTo(self: NearestPoint2D, point: Point2D): Number
+        => self.ClosestPoint(point).Between(point).Magnitude;
+
+    // The squared distance to the shape; avoids the square root when only relative
+    // distances are compared.
+    DistanceToSquared(self: NearestPoint2D, point: Point2D): Number
+        => self.ClosestPoint(point).Between(point).MagnitudeSquared;
+
+    // True when the shape lies within `radius` of the query point (inclusive).
+    // Compares squared distances, so no square root is taken.
+    WithinDistance(self: NearestPoint2D, point: Point2D, radius: Number): Boolean
+        => self.DistanceToSquared(point) <= radius * radius;
+
+    // The straight-line distance from a query point to the nearest point of the shape.
+    DistanceTo(self: NearestPoint3D, point: Point3D): Number
+        => self.ClosestPoint(point).Between(point).Magnitude;
+
+    // The squared distance to the shape; avoids the square root when only relative
+    // distances are compared.
+    DistanceToSquared(self: NearestPoint3D, point: Point3D): Number
+        => self.ClosestPoint(point).Between(point).MagnitudeSquared;
+
+    // True when the shape lies within `radius` of the query point (inclusive).
+    WithinDistance(self: NearestPoint3D, point: Point3D, radius: Number): Boolean
+        => self.DistanceToSquared(point) <= radius * radius;
+
+    //==
+    // # SupportMappable2D / SupportMappable3D
+    //
+    // The support mapping returns the farthest point of a convex shape in a given
+    // direction (https://en.wikipedia.org/wiki/Support_function). SupportExtent
+    // projects that point onto the direction, giving the signed extent of the
+    // shape along it — the scalar GJK / SAT actually consume.
+    // A `var` local fetches the support point once (LIBRARIES.md permits var locals
+    // in statement bodies) instead of re-evaluating Support per component.
+
+    // The signed extent of the shape along `direction`: the support point projected
+    // onto the (unit) direction vector.
+    SupportExtent(self: SupportMappable2D, direction: Direction2D): Number
+    {
+        var p = self.Support(direction);
+        return p.X * direction.Vector.X + p.Y * direction.Vector.Y;
+    }
+
+    // The signed extent of the shape along `direction`: the support point projected
+    // onto the (unit) direction vector.
+    SupportExtent(self: SupportMappable3D, direction: Direction3D): Number
+    {
+        var p = self.Support(direction);
+        return p.X * direction.Vector.X + p.Y * direction.Vector.Y + p.Z * direction.Vector.Z;
+    }
 }

@@ -4,7 +4,7 @@
 // Unstructured 3D sample sets carrying per-point channels — normals, colors,
 // and sensor attributes — as produced by scanning, LiDAR, and photogrammetry.
 // Every channel array is parallel to Positions. The bare, position-only clouds
-// are in `meshes-lines-points.types.plato`.
+// are in `meshes.types.plato`.
 
 // A point cloud carrying a unit normal per point: the input to surface
 // reconstruction (https://en.wikipedia.org/wiki/Surface_reconstruction) and

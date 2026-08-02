@@ -1,20 +1,27 @@
 //==
-// # Lines — segment measures, projections, and parametric evaluation
+// # Lines
 //
-// The measure, centroid and nearest-point bodies for the segment, line and ray
-// types declared in `lines.types.plato` (`LIBRARIES.md` ground rules 1 and 10: an inline
-// `library` block is the sanctioned home for bodies that belong beside their
-// declarations).
-//
-// Conventions:
-//   * `Bounds` for the two segment types comes from the generic
-//     `Bounds(PointSet2D/3D)` in `geometry-pointsets.library.plato`; nothing here
-//     respells it.
-//   * Every `Direction` field is a UNIT vector by its type invariant, so the
-//     projection formulas below divide by no length.
+// Sections, in order:
+//  - Lines — segment measures, projections, and parametric evaluation
+//  - Plane, half-space, and slab operations
 
 library Lines
 {
+    //==
+    // # Lines — segment measures, projections, and parametric evaluation
+    //
+    // The measure, centroid and nearest-point bodies for the segment, line and ray
+    // types declared in `lines.types.plato` (`LIBRARIES.md` ground rules 1 and 10: an inline
+    // `library` block is the sanctioned home for bodies that belong beside their
+    // declarations).
+    //
+    // Conventions:
+    //   * `Bounds` for the two segment types comes from the generic
+    //     `Bounds(PointSet2D/3D)` in `geometry.library.plato`; nothing here
+    //     respells it.
+    //   * Every `Direction` field is a UNIT vector by its type invariant, so the
+    //     projection formulas below divide by no length.
+
     //==
     // # Line segments
 
@@ -219,4 +226,269 @@ library Lines
         var s = (a == 0.0 ? s0 : (t * b - c) / a).Clamp(0.0, 1.0);
         return (sa.A + d1 * s, sb.A + d2 * t);
     }
+
+    //==
+    // # Plane, half-space, and slab operations
+    //
+    // The signed-distance, side, intersection, containment and nearest-point bodies for
+    // the types declared in `lines.types.plato`.
+    //
+    // Conventions:
+    //   * `Contains` on the half-plane, half-space and slab regions is CLOSED: a point
+    //     exactly on the bounding line/plane is contained, matching the concept doc
+    //     ("for closed shapes the boundary counts as inside") and the `<=` in each
+    //     declaration's own doc comment.
+    //   * `ClosestPoint` on a REGION (half-plane, half-space) returns the query point
+    //     itself when the query is inside, as `NearestPoint2D`/`3D` permits.
+    //   * The signed distance of a point p from the world origin along a unit normal n
+    //     is Dot(n, p) — written `p.PositionVector.Dot(n.Vector)` here, since a point
+    //     is not a vector in this vocabulary (`transforms.library.plato`).
+
+    //==
+    // # Planes and half-spaces
+    //
+    // Hesse normal form: the plane is the set of p with Dot(Normal, p) = Distance,
+    // so SignedDistance(p) = Dot(Normal, p) - Distance is the signed distance from
+    // the plane, positive on the side the normal points to.
+    // https://en.wikipedia.org/wiki/Hesse_normal_form
+
+    // The signed distance from `point` to the plane, positive on the side the
+    // normal points to. Exact because Normal is a unit vector by its invariant.
+    SignedDistance(pl: Plane, point: Point3D): Number
+        => point.PositionVector.Dot(pl.Normal.Vector) - pl.Distance;
+
+    // The signed distance from `point` to the half-plane's boundary line, positive
+    // outside the half-plane.
+    SignedDistance(h: HalfPlane2D, point: Point2D): Number
+        => point.PositionVector.Dot(h.Normal.Vector) - h.Distance;
+
+    // The foot of the perpendicular from `point` onto the plane.
+    ClosestPoint(pl: Plane, point: Point3D): Point3D
+        => point - pl.Normal.Vector * pl.SignedDistance(point);
+
+    // Which side of the plane `point` lies on: +1 on the side Normal points to,
+    // -1 behind, 0 on the plane. The sign of SignedDistance; the name every
+    // clipping / BSP lesson reaches for.
+    Side(pl: Plane, point: Point3D): Integer
+        => pl.SignedDistance(point).Sign;
+
+    // The plane through `point` with unit `normal`, in Hesse form: Distance is
+    // Dot(normal, point), the signed distance from the world origin. The usual way
+    // to build a plane from a point-and-normal (e.g. a triangle's vertex and face
+    // normal).
+    FromPointNormal(point: Point3D, normal: Direction3D): Plane
+        => (normal, point.PositionVector.Dot(normal.Vector));
+
+    // The same plane facing the other way: both Normal and Distance negated, so the
+    // point set Dot(Normal, p) = Distance is unchanged while its front side flips.
+    // The teachable one-liner that keeps the two fields in step.
+    Flip(pl: Plane): Plane
+        => (Direction3D(pl.Normal.Vector * -1.0), -pl.Distance);
+
+    // The complementary closed half-space: the region on the other side of the same
+    // boundary plane, obtained by flipping that plane.
+    Flip(h: HalfSpace): HalfSpace
+        => h.Boundary.Flip;
+
+    // Where the infinite line crosses the plane. Misses (Hit false) only when the
+    // line is parallel to the plane (Dot(Normal, Direction) = 0), including a line
+    // lying in the plane -- there is then no single crossing point.
+    Intersect(l: InfiniteLine3D, pl: Plane): PlaneHit3D
+    {
+        var denom = l.Direction.Vector.Dot(pl.Normal.Vector);
+        var t = 0.0 - pl.SignedDistance(l.Origin) / denom;
+        return denom == 0.0
+            ? PlaneHit3D(false, l.Origin, 0.0)
+            : PlaneHit3D(true, l.PointAt(t), t);
+    }
+
+    // Where the ray crosses the plane. Misses when the ray is parallel to the plane
+    // OR crosses behind the origin (t < 0).
+    Intersect(r: Ray3D, pl: Plane): PlaneHit3D
+    {
+        var denom = r.Direction.Vector.Dot(pl.Normal.Vector);
+        var t = 0.0 - pl.SignedDistance(r.Origin) / denom;
+        return denom == 0.0 || t < 0.0
+            ? PlaneHit3D(false, r.Origin, 0.0)
+            : PlaneHit3D(true, r.PointAt(t), t);
+    }
+
+    // Where the segment crosses the plane, with Parameter in [0, 1] along A -> B.
+    // Misses when the segment is parallel to the plane OR both endpoints lie on the
+    // same side (the crossing parameter falls outside [0, 1]).
+    Intersect(s: Line3D, pl: Plane): PlaneHit3D
+    {
+        var denom = s.A.Between(s.B).Dot(pl.Normal.Vector);
+        var t = 0.0 - pl.SignedDistance(s.A) / denom;
+        return denom == 0.0 || t < 0.0 || t > 1.0
+            ? PlaneHit3D(false, s.A, 0.0)
+            : PlaneHit3D(true, s.PointAt(t), t);
+    }
+
+    // True when `point` lies on or behind the boundary plane
+    // (Dot(Normal, point) <= Distance). Boundary inclusive.
+    Contains(h: HalfSpace, point: Point3D): Boolean
+        => h.Boundary.SignedDistance(point) <= 0.0;
+
+    // The query point itself when it is inside the half-space, otherwise its
+    // projection onto the boundary plane.
+    ClosestPoint(h: HalfSpace, point: Point3D): Point3D
+        => h.Contains(point) ? point : h.Boundary.ClosestPoint(point);
+
+    // True when `point` lies on or behind the boundary line. Boundary inclusive.
+    Contains(h: HalfPlane2D, point: Point2D): Boolean
+        => h.SignedDistance(point) <= 0.0;
+
+    // The query point itself when it is inside the half-plane, otherwise its
+    // projection onto the boundary line.
+    ClosestPoint(h: HalfPlane2D, point: Point2D): Point2D
+        => h.Contains(point)
+        ? point
+        : point - h.Normal.Vector * h.SignedDistance(point);
+
+    //==
+    // # Plane — the former host intrinsics
+    //
+    // These ten bodies used to be bodiless declarations in
+    // `intrinsics-planes.library.plato`, forwarded to `System.Numerics.Plane`.
+    // They are ordinary Plato now, so the host contract is one file with no
+    // exceptions; the trade is that generated C# no longer routes plane
+    // operations through System.Numerics and loses its SIMD acceleration.
+    //
+    // Two conventions decide the signs below and are stated per body:
+    //   * Hesse form is `Dot(Normal, p) = Distance` (this vocabulary), where
+    //     System.Numerics uses `Dot(Normal, p) + D = 0`, i.e. `D = -Distance`.
+    //   * Matrices multiply a ROW vector on the left, `v' = v M`
+    //     (CONVENTIONS.md - Matrices), so `RowN` is the image of basis vector N.
+
+    // A copy of the plane whose normal has unit length, with Distance divided by
+    // the same factor so the point set Dot(Normal, p) = Distance is unchanged.
+    // The identity when Direction3D's unit invariant holds; the repair path after
+    // a non-rigid transform has broken it.
+    Normalize(pl: Plane): Plane
+    {
+        var len = pl.Normal.Vector.Length;
+        return (Direction3D(pl.Normal.Vector / len), pl.Distance / len);
+    }
+
+    // The plane through three points, facing the side from which the winding
+    // point1 -> point2 -> point3 reads counter-clockwise: the normal is the unit
+    // cross product (point2 - point1) x (point3 - point1) under the right-hand
+    // rule, and Distance is Dot(normal, point1), the offset from the world origin.
+    // Undefined for collinear points, where the cross product is zero.
+    CreateFromVertices(_: Plane, point1: Point3D, point2: Point3D, point3: Point3D): Plane
+    {
+        var n = point1.Between(point2).Cross(point1.Between(point3)).Normalize;
+        return (Direction3D(n), point1.PositionVector.Dot(n));
+    }
+
+    // The dot product of the plane's four Hesse coefficients with a homogeneous
+    // 4-vector. The fourth coefficient is -Distance, which is System.Numerics'
+    // `D`, so this agrees with `Plane.Dot` there: for value = (p, 1) it is the
+    // signed distance of p, and for value = (v, 0) the component of v along Normal.
+    Dot(pl: Plane, value: Number4): Number
+        => pl.Normal.Vector.X * value.X
+         + pl.Normal.Vector.Y * value.Y
+         + pl.Normal.Vector.Z * value.Z
+         - pl.Distance * value.W;
+
+    // The signed distance from a point to the plane, Dot(Normal, p) - Distance,
+    // positive on the side the normal points to. The same quantity as
+    // SignedDistance above, under the name the System.Numerics surface uses.
+    DotCoordinate(pl: Plane, value: Point3D): Number
+        => pl.SignedDistance(value);
+
+    // The dot product of the plane's normal with a displacement: the component of
+    // that displacement along the normal. Translation-invariant, so Distance plays
+    // no part.
+    DotNormal(pl: Plane, value: Vector3D): Number
+        => value.Dot(pl.Normal.Vector);
+
+    // The plane rotated by a quaternion. A rotation is rigid and fixes the origin,
+    // so only the normal moves: the origin offset Distance is unchanged, and the
+    // rotated normal is still unit.
+    Transform(pl: Plane, rotation: Quaternion): Plane
+        => (Direction3D(pl.Normal.Vector.Transform(rotation)), pl.Distance);
+
+    // The plane carried through an arbitrary 4x4 transform. A plane is a covector,
+    // so it transforms by the INVERSE TRANSPOSE of the point transform: with this
+    // library's row-vector convention (v' = v M), the coefficient row
+    // (Normal, -Distance) is multiplied by Transpose(Invert(matrix)). The result's
+    // normal is NOT renormalized -- a non-uniform scale leaves it non-unit, which
+    // breaks Direction3D's invariant until Normalize repairs it.
+    Transform(pl: Plane, matrix: Matrix4x4): Plane
+    {
+        var m = matrix.Invert.Transpose;
+        var n = pl.Normal.Vector;
+        var q = Number4(n.X, n.Y, n.Z, -pl.Distance).Transform(m);
+        return (Direction3D(Vector3D(q.X, q.Y, q.Z)), -q.W);
+    }
+
+    // The matrix that mirrors points through the plane:
+    // p' = p - 2 (Dot(N, p) - Distance) N. In row-vector form the linear block is
+    // I - 2 N (x) N (symmetric, so transposition is moot) and the translation row
+    // is 2 Distance N. The plane is normalized first so a broken unit invariant
+    // cannot scale the reflection.
+    CreateReflection(_: Matrix4x4, value: Plane): Matrix4x4
+    {
+        var p = value.Normalize;
+        var n = p.Normal.Vector;
+        var d = p.Distance;
+        return (Number4(1.0 - 2.0 * n.X * n.X, 0.0 - 2.0 * n.X * n.Y, 0.0 - 2.0 * n.X * n.Z, 0.0),
+                Number4(0.0 - 2.0 * n.Y * n.X, 1.0 - 2.0 * n.Y * n.Y, 0.0 - 2.0 * n.Y * n.Z, 0.0),
+                Number4(0.0 - 2.0 * n.Z * n.X, 0.0 - 2.0 * n.Z * n.Y, 1.0 - 2.0 * n.Z * n.Z, 0.0),
+                Number4(2.0 * d * n.X, 2.0 * d * n.Y, 2.0 * d * n.Z, 1.0));
+    }
+
+    // The matrix that flattens points onto the plane along `lightDirection`,
+    // turning geometry into its own shadow. The projection of p is p - s L with
+    // s = (Dot(N, p) - Distance) / Dot(N, L); the matrix carries that expression
+    // multiplied through by Dot(N, L), leaving the divide to the homogeneous w
+    // component (w' = Dot(N, L)). Row-vector form, so column j of row i is the
+    // i-th component's contribution. Degenerate when the light runs parallel to
+    // the plane (Dot(N, L) = 0), where the shadow is not defined.
+    CreateShadow(_: Matrix4x4, lightDirection: Vector3D, plane: Plane): Matrix4x4
+    {
+        var p = plane.Normalize;
+        var n = p.Normal.Vector;
+        var l = lightDirection;
+        var k = n.Dot(l);
+        var d = p.Distance;
+        return (Number4(k - n.X * l.X, 0.0 - n.X * l.Y, 0.0 - n.X * l.Z, 0.0),
+                Number4(0.0 - n.Y * l.X, k - n.Y * l.Y, 0.0 - n.Y * l.Z, 0.0),
+                Number4(0.0 - n.Z * l.X, 0.0 - n.Z * l.Y, k - n.Z * l.Z, 0.0),
+                Number4(d * l.X, d * l.Y, d * l.Z, k));
+    }
+
+    // The Hashable obligation Plane inherits through Geometry -> Value. Both
+    // fields participate in the digest, following the VertexPair / Chromaticity
+    // pattern; the compiler does not derive Hash.
+    Hash(pl: Plane): Integer
+        => pl.Normal.Vector.Hash * 31 + pl.Distance.Hash;
+
+    //==
+    // # Slabs
+    //
+    // A slab is the preimage of a closed number interval under the linear map
+    // p -> Dot(Normal, p), so containment is exactly interval containment.
+    // `Contains(IntervalLike, value)` (P4) is endpoint-inclusive and assumes the
+    // interval is stored forward (Start <= End), which is the slab's own invariant.
+
+    // True when the point's signed distance along Normal lies within Interval.
+    Contains(s: Slab2D, point: Point2D): Boolean
+        => s.Interval.Contains(point.PositionVector.Dot(s.Normal.Vector));
+
+    // True when the point's signed distance along Normal lies within Interval.
+    Contains(s: Slab3D, point: Point3D): Boolean
+        => s.Interval.Contains(point.PositionVector.Dot(s.Normal.Vector));
+
+    // The three axis-aligned slabs of a box, one per world axis (X, Y, Z), each
+    // spanning that axis' Min..Max coordinate. A point lies in the box exactly when
+    // it lies in all three slabs, which is the standard slab reduction of a
+    // ray/box or box/box test.
+    // https://en.wikipedia.org/wiki/Slab_method
+    Slabs(b: Bounds3D): Array<Slab3D>
+        => [Slab3D(Direction3D(Vector3D.UnitX), NumberInterval(b.Min.X, b.Max.X)),
+            Slab3D(Direction3D(Vector3D.UnitY), NumberInterval(b.Min.Y, b.Max.Y)),
+            Slab3D(Direction3D(Vector3D.UnitZ), NumberInterval(b.Min.Z, b.Max.Z))];
 }

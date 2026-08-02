@@ -1,12 +1,19 @@
 //==
+// # Points
+//
+// Sections, in order:
+//  - Cartesian and homogeneous points
+//  - Curvilinear coordinates
+//  - Parametric coordinates
+
+//==
 // # Cartesian and homogeneous points
 //
 // Points are positions in a space (https://en.wikipedia.org/wiki/Point_(geometry));
 // they are not vectors. Subtracting two points yields a vector, and adding a
-// vector to a point yields a point (the Difference concept). This file holds the
-// Cartesian positions and their homogeneous (projective) form; the curvilinear
-// systems live in `points-curvilinear.types.plato` and the parametric weightings in
-// `points-parametric.types.plato`.
+// vector to a point yields a point (the Difference concept). This section holds
+// the Cartesian positions and their homogeneous (projective) form; the
+// curvilinear systems and the parametric weightings follow below.
 
 // A position in the 2D Cartesian plane
 // (https://en.wikipedia.org/wiki/Cartesian_coordinate_system).
@@ -51,5 +58,105 @@ type HomogeneousPoint3D
     X: Number;
     Y: Number;
     Z: Number;
+    W: Number;
+}
+
+//==
+// # Curvilinear coordinates
+//
+// Positions expressed as radii and angles rather than Cartesian components
+// (https://en.wikipedia.org/wiki/Curvilinear_coordinates). Each alternative
+// coordinate system is a distinct type, not a convention layered over
+// `Point2D`/`Point3D`, so a polar pair can never be mistaken for a Cartesian one.
+// Angles are the `Angle` type throughout (see CONVENTIONS.md - Angles).
+
+// A planar position as distance from origin and angle from the positive X axis
+// (https://en.wikipedia.org/wiki/Polar_coordinate_system).
+type PolarCoordinate
+    implements Value
+{
+    Radius: Number;
+    Angle: Angle;
+}
+
+// A 3D position as planar polar coordinates plus height along Z
+// (https://en.wikipedia.org/wiki/Cylindrical_coordinate_system).
+type CylindricalCoordinate
+    implements Value
+{
+    Radius: Number;
+    Azimuth: Angle;
+    Height: Number;
+}
+
+// A 3D position as radius, azimuth (about Z from +X), and inclination from the
+// +Z pole (https://en.wikipedia.org/wiki/Spherical_coordinate_system).
+type SphericalCoordinate
+    implements Value
+{
+    Radius: Number;
+    Azimuth: Angle;
+    Inclination: Angle;
+}
+
+// A position on a planet's surface: geodetic latitude, longitude, and altitude
+// above the reference ellipsoid
+// (https://en.wikipedia.org/wiki/Geographic_coordinate_system).
+type GeoCoordinate
+    implements Value
+{
+    Latitude: Angle;
+    Longitude: Angle;
+    Altitude: Length;
+}
+
+//==
+// # Parametric coordinates
+//
+// Positions given relative to a host element rather than to world space: weights
+// on a triangle's vertices, and normalized parameters on a surface or volume.
+// Their meaning is only defined together with the element they parameterize, so
+// they are kept as distinct types from the Cartesian points above.
+
+// Weights relative to a triangle's vertices. Vertex binding: U -> the first
+// vertex (A), V -> the second (B), W -> the third (C), so the point recovered on
+// the triangle's support plane is U*A + V*B + W*C (see `Evaluate` in
+// numeric-structures.library.plato).
+// See https://en.wikipedia.org/wiki/Barycentric_coordinate_system.
+//
+// Invariant: U + V + W = 1 identifies a point on the support plane (an affine
+// combination). Off-plane or non-normalized triples (U + V + W != 1) are
+// degenerate for triangle evaluation; `IsNormalized` tests the sum against a
+// tolerance. The three fields are kept deliberately (a two-component (V, W) form
+// with U = 1 - V - W was rejected): the redundant U reads directly, and the
+// invariant is documented rather than enforced by shape.
+//
+// Affine vs convex: U + V + W = 1 alone is an *affine* combination and
+// may place the point anywhere on the plane; the point lies *inside* the
+// triangle (a *convex* combination) exactly when additionally U, V, W >= 0.
+type BarycentricCoordinate
+    implements Value
+{
+    U: Number;
+    V: Number;
+    W: Number;
+}
+
+// A normalized 2D surface parameter: texture lookup, patch evaluation
+// (https://en.wikipedia.org/wiki/UV_mapping).
+// Convention: see CONVENTIONS.md - UV origin (origin top-left, U right, V down).
+type UvCoordinate
+    implements Coordinate, OriginBased<Vector2D>
+{
+    U: Number;
+    V: Number;
+}
+
+// A normalized 3D volume parameter: 3D textures, trivariate patches.
+type UvwCoordinate
+    implements Coordinate, OriginBased<Vector3D>
+{
+    U: Number;
+    V: Number;
     W: Number;
 }

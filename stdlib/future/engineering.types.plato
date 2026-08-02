@@ -1,0 +1,348 @@
+//==
+// # Engineering
+//
+// Sections, in order:
+//  - Beams, supports, and loads
+//  - Fits and machine elements
+//  - Engineering materials and states of stress
+//  - Cross-section profiles
+
+//==
+// # Beams, supports, and loads
+//
+// A straight prismatic member ready for 1D structural analysis, together with
+// the restraints and loads placed along its axis. Positions are Lengths
+// measured from the beam's start; load magnitudes carry the units named by
+// their case.
+
+// How a beam is restrained at a support point: translation and rotation
+// (Fixed), translation only (Pinned), transverse translation only (Roller),
+// or an unrestrained end (Free).
+// (https://en.wikipedia.org/wiki/Structural_support)
+type BeamRestraint = Fixed | Pinned | Roller | Free;
+
+// A support placed along a beam. Position is measured from the beam's start
+// along its axis.
+type BeamSupport
+    implements Value
+{
+    Restraint: BeamRestraint;
+    Position: Length;
+}
+
+// A load on a beam. Positions are measured from the beam's start; each case
+// carries the magnitude in its own units: newtons for PointForce, newtons
+// per meter for DistributedForce (uniform over StartPosition..EndPosition),
+// newton-meters for Moment. Transverse loads are positive downward by
+// convention.
+// (https://en.wikipedia.org/wiki/Structural_load)
+type BeamLoad
+    implements Value
+    = PointForce(Position: Length, Magnitude: Number)
+    | DistributedForce(StartPosition: Length, EndPosition: Length, Magnitude: Number)
+    | Moment(Position: Length, Magnitude: Number);
+
+// A straight prismatic beam ready for 1D structural analysis: overall length,
+// section properties, material, and the supports and loads along its axis.
+// (https://en.wikipedia.org/wiki/Beam_(structure))
+type Beam
+{
+    Length: Length;
+    Section: SectionProperties;
+    Material: EngineeringMaterial;
+    Supports: Array<BeamSupport>;
+    Loads: Array<BeamLoad>;
+}
+
+//==
+// # Fits and machine elements
+//
+// Shaft-hole fits and the defining parameter records of standard machine
+// elements: gears, bolted joints, springs, welds, pressure vessels, and
+// bearings. Physical fields use quantity types (Length, Force, Pressure,
+// Torque, Angle); raw Number fields are dimensionless.
+
+//==
+// # Fits and tolerances
+
+// The engagement class of a shaft-hole pair: the shaft is always smaller
+// (Clearance), may clear or interfere (Transition), or is always larger
+// (Interference).
+// (https://en.wikipedia.org/wiki/Engineering_fit)
+type FitClass = Clearance | Transition | Interference;
+
+// A cylindrical fit between a hole and a shaft at a shared nominal diameter,
+// with a toleranced deviation for each member.
+// (https://en.wikipedia.org/wiki/Engineering_tolerance)
+type ShaftHoleFit
+    implements Value
+{
+    NominalDiameter: Length;
+    HoleTolerance: Tolerance;
+    ShaftTolerance: Tolerance;
+    Engagement: FitClass;
+}
+
+//==
+// # Machine element parameters
+
+// Defining parameters of an involute spur gear. Module is the pitch diameter
+// per tooth; ProfileShiftCoefficient is the dimensionless addendum
+// modification (x-factor).
+// (https://en.wikipedia.org/wiki/Involute_gear)
+type GearParameters
+    implements Value
+{
+    ToothCount: Integer;
+    Module: Length;
+    PressureAngle: Angle;
+    FaceWidth: Length;
+    ProfileShiftCoefficient: Number;
+}
+
+// Defining parameters of a preloaded bolted joint: fastener geometry plus the
+// installation preload and the torque that produces it.
+// (https://en.wikipedia.org/wiki/Bolted_joint)
+type BoltedJointParameters
+    implements Value
+{
+    BoltDiameter: Length;
+    ThreadPitch: Length;
+    Preload: Force;
+    TighteningTorque: Torque;
+}
+
+// Defining parameters of a round-wire helical compression or extension
+// spring. ActiveCoils may be fractional; ShearModulus is the wire material's
+// modulus of rigidity.
+// (https://en.wikipedia.org/wiki/Coil_spring)
+type HelicalSpringParameters
+    implements Value
+{
+    WireDiameter: Length;
+    MeanCoilDiameter: Length;
+    ActiveCoils: Number;
+    ShearModulus: Pressure;
+}
+
+// Defining parameters of a fillet weld sized for strength: leg and throat
+// dimensions, the effective (load-carrying) length, and the allowable shear
+// stress of the weld metal.
+// (https://en.wikipedia.org/wiki/Fillet_weld)
+type WeldParameters
+    implements Value
+{
+    LegSize: Length;
+    ThroatThickness: Length;
+    EffectiveLength: Length;
+    AllowableStress: Pressure;
+}
+
+// Defining parameters of a thin-walled cylindrical pressure vessel under
+// internal pressure.
+// (https://en.wikipedia.org/wiki/Pressure_vessel)
+type PressureVesselParameters
+    implements Value
+{
+    InnerDiameter: Length;
+    WallThickness: Length;
+    InternalPressure: Pressure;
+}
+
+// Catalog parameters of a rolling-element bearing: bore and outer diameters
+// plus the dynamic and static load ratings.
+// (https://en.wikipedia.org/wiki/Rolling-element_bearing)
+type BearingParameters
+    implements Value
+{
+    BoreDiameter: Length;
+    OuterDiameter: Length;
+    DynamicLoadRating: Force;
+    StaticLoadRating: Force;
+}
+
+//==
+// # Engineering materials and states of stress
+//
+// Isotropic material records, the design margin computed against them, and the
+// stress and strain states at a point of a loaded body. Physical fields use
+// quantity types (Density, Pressure, ...); raw Number fields document their
+// units.
+
+//==
+// # Materials
+
+// An isotropic engineering material. PoissonRatio is dimensionless (typically
+// 0 to 0.5); ThermalExpansion is the linear coefficient in reciprocal kelvin;
+// SpecificHeat is in joules per kilogram-kelvin.
+// (https://en.wikipedia.org/wiki/List_of_materials_properties)
+type EngineeringMaterial
+{
+    Name: String;
+    Density: Density;
+    YoungsModulus: Pressure;
+    PoissonRatio: Number;
+    YieldStrength: Pressure;
+    TensileStrength: Pressure;
+    ThermalExpansion: Number;
+    ThermalConductivity: ThermalConductivity;
+    SpecificHeat: Number;
+}
+
+// A dimensionless margin between capacity and demand: capacity divided by
+// demand. Values above 1 indicate a passing design.
+// (https://en.wikipedia.org/wiki/Factor_of_safety)
+type SafetyFactor
+    implements Value, Comparable
+{
+    Value: Number;
+}
+
+//==
+// # Stress and strain states
+
+// A plane-stress state at a point: normal components along X and Y and the
+// in-plane shear component.
+// (https://en.wikipedia.org/wiki/Plane_stress)
+type StressState2D
+    implements Value
+{
+    NormalX: Pressure;
+    NormalY: Pressure;
+    ShearXY: Pressure;
+}
+
+// A full 3D stress state at a point, as a symmetric tensor. All components are
+// in pascals; off-diagonal entries are the shear stresses.
+// (https://en.wikipedia.org/wiki/Cauchy_stress_tensor)
+type StressState3D
+    implements Value
+{
+    Matrix: SymmetricMatrix3x3;
+}
+
+// A plane-strain state at a point. All components are dimensionless;
+// ShearXY is the engineering shear strain (gamma), not the tensor component.
+// (https://en.wikipedia.org/wiki/Strain_(mechanics))
+type StrainState2D
+    implements Value
+{
+    NormalX: Number;
+    NormalY: Number;
+    ShearXY: Number;
+}
+
+// A full 3D strain state at a point, as a symmetric tensor of dimensionless
+// tensor strains. Off-diagonal entries are tensor shears (half the engineering
+// shear strains).
+// (https://en.wikipedia.org/wiki/Infinitesimal_strain_theory)
+type StrainState3D
+    implements Value
+{
+    Matrix: SymmetricMatrix3x3;
+}
+
+//==
+// # Cross-section profiles
+//
+// Dimensioned shapes of prismatic members. All are described in the section
+// plane; derive analysis-ready values via SectionProperties. Dimensions are
+// Length; the derived moments and moduli are raw Numbers that document their
+// units.
+
+// A solid rectangular cross-section.
+type RectangularSection
+    implements Value
+{
+    Width: Length;
+    Height: Length;
+}
+
+// A solid circular cross-section (round bar).
+type CircularSection
+    implements Value
+{
+    Diameter: Length;
+}
+
+// A circular tube: outer diameter and wall thickness.
+type HollowCircularSection
+    implements Value
+{
+    OuterDiameter: Length;
+    WallThickness: Length;
+}
+
+// A rectangular tube (box section) of uniform wall thickness.
+// (https://en.wikipedia.org/wiki/Hollow_structural_section)
+type RectangularTubeSection
+    implements Value
+{
+    Width: Length;
+    Height: Length;
+    WallThickness: Length;
+}
+
+// A doubly symmetric I (wide-flange) section. Depth is the overall height
+// between flange outer faces.
+// (https://en.wikipedia.org/wiki/I-beam)
+type IBeamSection
+    implements Value
+{
+    Depth: Length;
+    FlangeWidth: Length;
+    FlangeThickness: Length;
+    WebThickness: Length;
+}
+
+// A C-shaped channel section. Depth is the overall height; flanges project to
+// one side of the web.
+// (https://en.wikipedia.org/wiki/Structural_channel)
+type ChannelSection
+    implements Value
+{
+    Depth: Length;
+    FlangeWidth: Length;
+    FlangeThickness: Length;
+    WebThickness: Length;
+}
+
+// A T-shaped section: one flange with a central stem. Depth is the overall
+// height including the flange.
+// (https://en.wikipedia.org/wiki/T-beam)
+type TSection
+    implements Value
+{
+    Depth: Length;
+    FlangeWidth: Length;
+    FlangeThickness: Length;
+    StemThickness: Length;
+}
+
+// An L-shaped (angle) section with two legs of uniform thickness.
+// (https://en.wikipedia.org/wiki/Structural_steel)
+type AngleSection
+    implements Value
+{
+    LegA: Length;
+    LegB: Length;
+    Thickness: Length;
+}
+
+// Analysis-ready properties of a cross-section about its centroidal axes.
+// Centroid is in meters in the section plane. Second moments and the torsion
+// constant are in meters to the fourth power; section moduli are in cubic
+// meters. Y and Z are the section's principal in-plane axes.
+// (https://en.wikipedia.org/wiki/Second_moment_of_area)
+type SectionProperties
+    implements Value
+{
+    Area: Area;
+    Centroid: Point2D;
+    SecondMomentY: Number;
+    SecondMomentZ: Number;
+    ProductMoment: Number;
+    TorsionConstant: Number;
+    SectionModulusY: Number;
+    SectionModulusZ: Number;
+}

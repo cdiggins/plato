@@ -1,8 +1,8 @@
-// Law library for the polyhedral dual kind maps (stdlib/polyhedra-duals.library.plato).
+// Law library for the polyhedral dual kind maps (stdlib/polyhedra.library.plato).
 //
 // Same harness and conventions as foundation.laws.plato: Law_-prefixed Boolean
 // functions, merged with stdlib/ only by tools/regen-forward-conformance.ps1.
-// Every member referenced was verified against stdlib/polyhedra-duals.library.plato
+// Every member referenced was verified against stdlib/polyhedra.library.plato
 // (LIBRARIES.md rule 3).
 library PolyhedraLaws
 {

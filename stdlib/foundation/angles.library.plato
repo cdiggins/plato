@@ -1,17 +1,24 @@
 //==
 // # Angles
 //
-// Unit constructors and accessors for `Angle` (`quantities-geometric.types.plato`), plus the
-// reciprocal trigonometric functions (https://en.wikipedia.org/wiki/Trigonometric_functions).
-//
-// `Angle` stores radians and the only intrinsic way to build one is the
-// radians cast `Angle(x: Number)` (`intrinsics.library.plato`). This library supplies
-// the other units, in both directions, so that the README rule "angles are
-// `Angle`, never raw `Number`" is actually usable: write `0.25.Turns` or
-// `90.Degrees`, never a bare number of degrees.
+// Sections, in order:
+//  - Angles
+//  - The public trigonometric surface on `Angle`
 
 library Angles
 {
+    //==
+    // # Angles
+    //
+    // Unit constructors and accessors for `Angle` (`quantities.types.plato`), plus the
+    // reciprocal trigonometric functions (https://en.wikipedia.org/wiki/Trigonometric_functions).
+    //
+    // `Angle` stores radians and the only intrinsic way to build one is the
+    // radians cast `Angle(x: Number)` (`intrinsics.library.plato`). This library supplies
+    // the other units, in both directions, so that the README rule "angles are
+    // `Angle`, never raw `Number`" is actually usable: write `0.25.Turns` or
+    // `90.Degrees`, never a bare number of degrees.
+
     //==
     // Number -> Angle constructors
 
@@ -147,4 +154,150 @@ library Angles
     // across the 0 / 2*pi seam, unlike a raw radians comparison.
     EquivalentAngle(a: Angle, b: Angle): Boolean
         => a.Normalize.Radians == b.Normalize.Radians;
+
+    //==
+    // # The public trigonometric surface on `Angle`
+    //
+    // `Angle` (`quantities.types.plato`) stores radians, and the scalar
+    // trigonometric kernel is declared over radians-as-`Number` in
+    // `intrinsics.library.plato`. This library is the thin, portable layer between
+    // them: every function here unwraps `Radians`, calls the scalar intrinsic, and
+    // re-wraps where the result is angular.
+    //
+    // Conventions:
+    //   * Angular results are `Angle`, never raw `Number`
+    //     (CONVENTIONS.md - angles). The inverse family (`Acos`, `Asin`, `Atan`,
+    //     `Atan2`, ...) therefore returns `Angle`, delegating to the `*Radians`
+    //     intrinsics that differ only in return type.
+    //   * `SinCos` returns the pair in (Sin, Cos) order, matching `MathF.SinCos`
+    //     and the host `AngleIntrinsics.SinCos`.
+    //   * The arithmetic and ordering members restate, at `Angle`, what the generic
+    //     `Quantity` bodies give every quantity type; they exist because these exact
+    //     signatures were host intrinsics.
+    //
+    // https://en.wikipedia.org/wiki/Trigonometric_functions
+
+    //==
+    // # Construction
+
+    // The angle of the given number of radians. The one cast into `Angle`;
+    // other units go through the conversions below (`Turns`, `Degrees`, ...).
+    Angle(x: Number): Angle
+        => new Angle(x);
+
+    //==
+    // # Circular trigonometric functions
+
+    // The cosine: the x coordinate of the unit-circle point at this angle.
+    Cos(self: Angle): Number
+        => self.Radians.Cos;
+
+    // The sine: the y coordinate of the unit-circle point at this angle.
+    Sin(self: Angle): Number
+        => self.Radians.Sin;
+
+    // The tangent: Sin / Cos. Undefined at odd multiples of a quarter turn.
+    Tan(self: Angle): Number
+        => self.Radians.Tan;
+
+    // The sine and cosine together, in that order — the pair every rotation
+    // matrix and circle sweep needs at once.
+    SinCos(self: Angle): Tuple2<Number, Number>
+        => (self.Sin, self.Cos);
+
+    //==
+    // # Hyperbolic functions
+    //
+    // The hyperbola analogues of the circular functions, taking the radians
+    // payload as the hyperbolic argument.
+    // https://en.wikipedia.org/wiki/Hyperbolic_functions
+
+    // The hyperbolic cosine.
+    Cosh(self: Angle): Number
+        => self.Radians.Cosh;
+
+    // The hyperbolic sine.
+    Sinh(self: Angle): Number
+        => self.Radians.Sinh;
+
+    // The hyperbolic tangent.
+    Tanh(self: Angle): Number
+        => self.Radians.Tanh;
+
+    //==
+    // # Arithmetic and ordering
+    //
+    // Radians in, radians out. Angle times angle and angle over angle are
+    // deliberately absent: neither product is a well-defined angle.
+
+    // The sum of two angles. Not normalized.
+    Add(a: Angle, b: Angle): Angle
+        => new Angle(a.Radians + b.Radians);
+
+    // The difference of two angles. Not normalized.
+    Subtract(a: Angle, b: Angle): Angle
+        => new Angle(a.Radians - b.Radians);
+
+    // The angle scaled by a unitless factor.
+    Multiply(a: Angle, x: Number): Angle
+        => new Angle(a.Radians * x);
+
+    // The angle scaled by a unitless factor, with the factor on the left.
+    Multiply(x: Number, a: Angle): Angle
+        => new Angle(x * a.Radians);
+
+    // The angle divided by a unitless factor.
+    Divide(a: Angle, x: Number): Angle
+        => new Angle(a.Radians / x);
+
+    // The additive inverse: the same magnitude, the opposite sense of rotation.
+    Negative(n: Angle): Angle
+        => new Angle(-n.Radians);
+
+    // Total order by radians. Raw, not periodic: two angles a full turn apart
+    // compare as different (see `EquivalentAngle` for periodic equality).
+    Compare(a: Angle, b: Angle): Integer
+        => a.Radians.Compare(b.Radians);
+
+    // A digest of the radians payload, consistent with equality.
+    Hash(self: Angle): Integer
+        => self.Radians.Hash;
+
+    //==
+    // # Inverse trigonometric functions
+    //
+    // The public, `Angle`-returning surface over the `*Radians` intrinsics.
+    // Each is a partial function: the arc- family requires its argument to be
+    // in the domain of the corresponding forward function (`Acos` and `Asin`
+    // need [-1, 1]; `Acosh` needs >= 1; `Atanh` needs (-1, 1)).
+    // https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
+
+    // The angle whose cosine is `self`, in [0, pi]. Precondition: -1 <= self <= 1.
+    Acos(self: Number): Angle
+        => new Angle(self.AcosRadians);
+
+    // The inverse hyperbolic cosine. Precondition: self >= 1.
+    Acosh(self: Number): Angle
+        => new Angle(self.AcoshRadians);
+
+    // The angle whose sine is `self`, in [-pi/2, pi/2]. Precondition: -1 <= self <= 1.
+    Asin(self: Number): Angle
+        => new Angle(self.AsinRadians);
+
+    // The inverse hyperbolic sine. Defined for every number.
+    Asinh(self: Number): Angle
+        => new Angle(self.AsinhRadians);
+
+    // The angle whose tangent is `self`, in (-pi/2, pi/2).
+    Atan(self: Number): Angle
+        => new Angle(self.AtanRadians);
+
+    // The angle of the point (x, self) from the positive x axis, in (-pi, pi];
+    // quadrant-correct, unlike `Atan`. The receiver is the y coordinate.
+    Atan2(self: Number, x: Number): Angle
+        => new Angle(self.Atan2Radians(x));
+
+    // The inverse hyperbolic tangent. Precondition: -1 < self < 1.
+    Atanh(self: Number): Angle
+        => new Angle(self.AtanhRadians);
 }

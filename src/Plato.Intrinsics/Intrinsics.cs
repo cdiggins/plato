@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using Ara3D.Collections;
 using static System.Runtime.CompilerServices.MethodImplOptions;
 
@@ -14,7 +14,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static IReadOnlyList<T> MakeArray<T>(params T[] args) => args;
 
         // MakeArray2D left this file 2026-08-01: Array2D is an ordinary Plato type with an
-        // honest layout since plato-378, so `primitives-arrays.library.plato` carries the
+        // honest layout since plato-378, so `primitives.library.plato` carries the
         // reference body and a duplicate here made every call site ambiguous (CS0121).
 
         [MethodImpl(AggressiveInlining)] public static Integer CombineHashCodes() => 17;

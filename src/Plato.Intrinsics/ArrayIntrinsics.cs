@@ -9,7 +9,7 @@ namespace Ara3D.Geometry
     /// <c>Count</c> and <c>At</c> observe, <c>MapRange</c> is the only constructor,
     /// <c>Reduce</c> the only sequential fold, <c>FlatMap</c> the only length-varying producer.
     /// Every other array function has a Plato reference body in
-    /// <c>primitives-arrays.library.plato</c> and must NOT be duplicated here - a duplicate
+    /// <c>primitives.library.plato</c> and must NOT be duplicated here - a duplicate
     /// makes each generated call site ambiguous (CS0121).
     ///
     /// <c>Count</c> and <c>At</c> are not declared: <c>IReadOnlyList{T}.Count</c> and its

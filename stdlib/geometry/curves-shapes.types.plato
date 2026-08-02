@@ -1,0 +1,528 @@
+//==
+// # Curves shapes
+//
+// Sections, in order:
+//  - Plane arcs, function graphs, and polynomial pieces
+//  - Polar and figure curves in 2D
+//  - Plane spirals, transition curves, and roulettes
+//  - Analytic curves in 3D
+
+//==
+// # Plane arcs, function graphs, and polynomial pieces
+//
+// The elementary open pieces of plane geometry: conic arcs, the graphs of the
+// standard transcendental functions, and the quadratic and cubic Bezier arcs
+// that vector graphics is built from. Each type stores the minimal defining
+// parameters; the canonical [0,1] curve parameter maps onto the documented
+// sweep or domain. Types whose placement fields are absent are defined in
+// canonical position (centered at or starting from the origin) and are placed
+// elsewhere with a transform. Evaluation lives in
+// `curves-shapes.library.plato`.
+
+//==
+// # Arcs and conic pieces
+
+// A portion of a circle: the points at distance Radius from Center, swept over
+// the angle interval measured from the +X axis
+// (https://en.wikipedia.org/wiki/Circular_arc).
+type CircularArc2D
+    implements Curve2D
+{
+    Center: Point2D;
+    Radius: Number;
+    Angles: AngleInterval;
+}
+
+// A portion of an axis-rotated ellipse. Radii holds the semi-axis lengths along
+// the ellipse's local X and Y; Rotation tilts the major frame from the +X axis;
+// Angles sweeps the parametric angle (https://en.wikipedia.org/wiki/Ellipse).
+type EllipticalArc2D
+    implements Curve2D
+{
+    Center: Point2D;
+    Radii: Number2;
+    Rotation: Angle;
+    Angles: AngleInterval;
+}
+
+// A parabola in canonical position: y = Coefficient * x * x, vertex at the
+// origin, opening along +Y. The parameter is x, ranging over Domain
+// (https://en.wikipedia.org/wiki/Parabola).
+type Parabola2D
+    implements Curve2D
+{
+    Coefficient: Number;
+    Domain: NumberInterval;
+}
+
+//==
+// # Function graphs
+
+// The graph of a hanging chain: y = Scale * cosh(x / Scale). Scale is the
+// classic catenary constant a; the parameter is x, ranging over Domain
+// (https://en.wikipedia.org/wiki/Catenary).
+type Catenary2D
+    implements Curve2D
+{
+    Scale: Number;
+    Domain: NumberInterval;
+}
+
+// One or more cycles of a sine wave along the X axis:
+// y = Amplitude * sin(2 * pi * x / Wavelength + Phase). The parameter is x,
+// ranging over Domain (https://en.wikipedia.org/wiki/Sine_wave).
+type SineCurve2D
+    implements Curve2D
+{
+    Amplitude: Number;
+    Wavelength: Number;
+    Phase: Angle;
+    Domain: NumberInterval;
+}
+
+//==
+// # Polynomial arcs
+
+// A quadratic Bezier arc: interpolates P0 to P2, shaped by the middle control
+// point P1. Tangents at the ends aim at P1
+// (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
+type QuadraticBezier2D
+    implements Curve2D
+{
+    P0: Point2D;
+    P1: Point2D;
+    P2: Point2D;
+}
+
+// A cubic Bezier arc: interpolates P0 to P3, shaped by the interior control
+// points P1 and P2. The workhorse of vector graphics and font outlines
+// (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
+type CubicBezier2D
+    implements Curve2D
+{
+    P0: Point2D;
+    P1: Point2D;
+    P2: Point2D;
+    P3: Point2D;
+}
+
+//==
+// # Polar and figure curves in 2D
+//
+// The named plane curves whose natural description is a radius as a function of
+// angle — roses, cardioids, limacons, lemniscates, and the classical trisecting
+// and conchoidal cubics — together with the two figure curves (Lissajous,
+// butterfly) that are drawn the same way. Most are `PolarCurve2D`, so a single
+// RadiusAt body is their whole implementation; those live in
+// `curves-shapes.library.plato`. Every type is in canonical position about
+// the origin and is placed elsewhere with a transform.
+
+//==
+// # Polar and figure curves
+
+// The rose r = Radius * cos(PetalFrequency * theta). A whole odd frequency k
+// yields k petals; a whole even k yields 2k petals; fractional frequencies
+// close only over multiple turns
+// (https://en.wikipedia.org/wiki/Rose_(mathematics)).
+type RoseCurve2D
+    implements PolarCurve2D
+{
+    Radius: Number;
+    PetalFrequency: Number;
+}
+
+// The cardioid r = 2 * Radius * (1 + cos theta): the heart-shaped path traced
+// by a circle of radius Radius rolling around an equal fixed circle. Always
+// closed; total width is 4 * Radius (https://en.wikipedia.org/wiki/Cardioid).
+type Cardioid2D
+    implements ClosedCurve2D
+{
+    Radius: Number;
+}
+
+// The limacon r = Offset + Amplitude * cos theta. Offset > Amplitude gives a
+// dimpled oval, equality gives the cardioid, Offset < Amplitude adds an inner
+// loop. Always closed (https://en.wikipedia.org/wiki/Lima%C3%A7on).
+type Limacon2D
+    implements ClosedCurve2D
+{
+    Offset: Number;
+    Amplitude: Number;
+}
+
+// The lemniscate of Bernoulli, r * r = Scale * Scale * cos(2 * theta): a
+// figure-eight crossing itself at the origin; Scale is the half-width
+// (https://en.wikipedia.org/wiki/Lemniscate_of_Bernoulli).
+type Lemniscate2D
+    implements ClosedCurve2D
+{
+    Scale: Number;
+}
+
+// A Lissajous figure: x = XAmplitude * sin(2 * pi * XFrequency * t + Phase),
+// y = YAmplitude * sin(2 * pi * YFrequency * t). Closes when the frequency
+// ratio is rational; the canonical parameter covers one combined period
+// (https://en.wikipedia.org/wiki/Lissajous_curve).
+type Lissajous2D
+    implements Curve2D
+{
+    XAmplitude: Number;
+    YAmplitude: Number;
+    XFrequency: Number;
+    YFrequency: Number;
+    Phase: Angle;
+}
+
+// The Gielis superformula, a polar shape family covering polygons, stars,
+// and organic outlines. Symmetry is the lobe count m; Exponent1..3 are the
+// n1, n2, n3 shape exponents; XRadius and YRadius are the a and b scale
+// divisors. Closed when Symmetry is a whole number
+// (https://en.wikipedia.org/wiki/Superformula).
+type Superformula2D
+    implements PolarCurve2D
+{
+    Symmetry: Number;
+    Exponent1: Number;
+    Exponent2: Number;
+    Exponent3: Number;
+    XRadius: Number;
+    YRadius: Number;
+}
+
+//==
+// # Further classical polar curves
+//
+// Further classical polar curves.
+// Every one is a `PolarCurve2D`, so a single RadiusAt
+// body below is the whole implementation: PolarPositionAt / CartesianPositionAt
+// / Eval come from `curves.library.plato`.
+
+// The cycloid of Ceva r = Scale * (1 + 2 * cos(2 * theta)): a trisecting
+// curve with a single loop inside a larger oval.
+// https://en.wikipedia.org/wiki/Tommaso_Ceva#The_Cycloid_of_Ceva
+type CycloidOfCeva2D
+    implements PolarCurve2D
+{
+    Scale: Number;
+}
+
+// Tschirnhausen's cubic in polar form, r = Scale * sec(theta / 3)^3: a cubic
+// with one loop and two branches running to infinity. Undefined where
+// theta / 3 reaches a quarter turn.
+// https://en.wikipedia.org/wiki/Tschirnhausen_cubic
+type TschirnhausenCubic2D
+    implements PolarCurve2D
+{
+    Scale: Number;
+}
+
+// The conchoid of de Sluze r = sec(theta) + Scale * cos(theta): a family whose
+// members include the cissoid, the right strophoid, and the trisectrix of
+// Maclaurin. Undefined at odd quarter turns.
+// https://en.wikipedia.org/wiki/Conchoid_of_de_Sluze
+type ConchoidOfDeSluze2D
+    implements PolarCurve2D
+{
+    Scale: Number;
+}
+
+// The sinusoidal spiral r^Exponent = Scale^Exponent * cos(Exponent * theta).
+// Exponent selects the member: -1 a line, 1 a circle, 2 the lemniscate,
+// -2 a hyperbola, 1/2 a cardioid. Precondition: Exponent is non-zero.
+// https://en.wikipedia.org/wiki/Sinusoidal_spiral
+type SinusoidalSpiral2D
+    implements PolarCurve2D
+{
+    Scale: Number;
+    Exponent: Number;
+}
+
+// The trisectrix of Maclaurin in polar form, r = 2 * Scale / cos(theta / 3):
+// the classical angle-trisecting cubic.
+// https://en.wikipedia.org/wiki/Trisectrix_of_Maclaurin
+type TrisectrixOfMaclaurin2D
+    implements PolarCurve2D
+{
+    Scale: Number;
+}
+
+// The transcendental butterfly curve, in canonical position and scaled by
+// Scale. Not a polar curve about the origin in the PolarCurve2D sense: the
+// radial factor is paired with the raw parameter angle, so it carries its own
+// Eval below. The canonical [0,1] parameter covers the full 12-pi period.
+// https://en.wikipedia.org/wiki/Butterfly_curve_(transcendental)
+type ButterflyCurve2D
+    implements ClosedCurve2D
+{
+    Scale: Number;
+}
+
+//==
+// # Plane spirals, transition curves, and roulettes
+//
+// The plane curves traced by a steadily growing radius or by a point carried on
+// a rolling circle: the classical spirals, the road-and-rail transition curve,
+// the gear-tooth involute, and the cycloid family. Each type stores the minimal
+// defining parameters; the canonical [0,1] curve parameter maps onto the
+// documented sweep or domain, and types without placement fields are defined in
+// canonical position. Evaluation lives in `curves-shapes.library.plato`.
+
+//==
+// # Spirals and transition curves
+
+// The Archimedean spiral r = StartRadius + GrowthRate * theta (theta in
+// radians), swept over Angles: evenly spaced coils
+// (https://en.wikipedia.org/wiki/Archimedean_spiral).
+type ArchimedeanSpiral2D
+    implements PolarCurve2D
+{
+    StartRadius: Number;
+    GrowthRate: Number;
+    Angles: AngleInterval;
+}
+
+// The logarithmic (equiangular) spiral r = StartRadius * exp(GrowthRate *
+// theta), swept over Angles: self-similar coils, constant crossing angle
+// (https://en.wikipedia.org/wiki/Logarithmic_spiral).
+type LogarithmicSpiral2D
+    implements PolarCurve2D
+{
+    StartRadius: Number;
+    GrowthRate: Number;
+    Angles: AngleInterval;
+}
+
+// One branch of Fermat's spiral r = Scale * sqrt(theta), swept over Angles:
+// evenly filling coils, the basis of sunflower/phyllotaxis layouts
+// (https://en.wikipedia.org/wiki/Fermat%27s_spiral).
+type FermatSpiral2D
+    implements PolarCurve2D
+{
+    Scale: Number;
+    Angles: AngleInterval;
+}
+
+// A clothoid (Euler spiral) arc: curvature grows linearly with arc length,
+// kappa(s) = s / (Flatness * Flatness). The parameter is signed arc length s
+// over Domain. The standard road and rail transition curve
+// (https://en.wikipedia.org/wiki/Euler_spiral).
+type Clothoid2D
+    implements Curve2D, ArcLengthParameterized<Point2D>
+{
+    Flatness: Number;
+    Domain: NumberInterval;
+}
+
+// The involute of a circle of radius Radius: the path of a taut string
+// unwinding from the circle, over the unwinding-angle interval. The profile
+// of standard gear teeth (https://en.wikipedia.org/wiki/Involute).
+type CircleInvolute2D
+    implements Curve2D
+{
+    Radius: Number;
+    Angles: AngleInterval;
+}
+
+//==
+// # Roulettes (rolling-circle curves)
+//
+// See https://en.wikipedia.org/wiki/Roulette_(curve).
+
+// The path of a point on the rim of a circle of radius Radius rolling along
+// the X axis: x = Radius * (theta - sin theta), y = Radius * (1 - cos theta),
+// with the rolling angle theta swept over Angles
+// (https://en.wikipedia.org/wiki/Cycloid).
+type Cycloid2D
+    implements Curve2D
+{
+    Radius: Number;
+    Angles: AngleInterval;
+}
+
+// The path of a rim point on a circle of radius RollingRadius rolling outside
+// a fixed circle of radius FixedRadius. Closes after a whole number of laps
+// when the radius ratio is rational; the canonical parameter covers one lap
+// around the fixed circle (https://en.wikipedia.org/wiki/Epicycloid).
+type Epicycloid2D
+    implements Curve2D
+{
+    FixedRadius: Number;
+    RollingRadius: Number;
+}
+
+// The path of a rim point on a circle of radius RollingRadius rolling inside
+// a fixed circle of radius FixedRadius. Straight lines, ellipses, and the
+// astroid arise from particular radius ratios
+// (https://en.wikipedia.org/wiki/Hypocycloid).
+type Hypocycloid2D
+    implements Curve2D
+{
+    FixedRadius: Number;
+    RollingRadius: Number;
+}
+
+// A generalized epicycloid: the traced point sits PoleDistance from the center
+// of the rolling circle rather than on its rim (spirograph curves)
+// (https://en.wikipedia.org/wiki/Epitrochoid).
+type Epitrochoid2D
+    implements Curve2D
+{
+    FixedRadius: Number;
+    RollingRadius: Number;
+    PoleDistance: Number;
+}
+
+// A generalized hypocycloid: the traced point sits PoleDistance from the center
+// of the circle rolling inside the fixed circle (spirograph curves)
+// (https://en.wikipedia.org/wiki/Hypotrochoid).
+type Hypotrochoid2D
+    implements Curve2D
+{
+    FixedRadius: Number;
+    RollingRadius: Number;
+    PoleDistance: Number;
+}
+
+//==
+// # Analytic curves in 3D
+//
+// Named closed-form space curves. Planar arcs carry a Frame3D whose origin is
+// the curve center and whose XY plane contains the curve; spirals and knots
+// wind about the frame's Z axis. The canonical [0,1] parameter maps onto the
+// documented sweep.
+
+//==
+// # Planar arcs in space
+
+// A circular arc in space: radius Radius about the frame origin, in the
+// frame's XY plane, swept over Angles measured from the frame's X axis
+// (https://en.wikipedia.org/wiki/Circular_arc).
+type CircularArc3D
+    implements PlanarCurve3D
+{
+    Frame: Frame3D;
+    Radius: Number;
+    Angles: AngleInterval;
+}
+
+// An elliptical arc in space: semi-axis lengths Radii along the frame's X and
+// Y axes, swept over the parametric angle interval
+// (https://en.wikipedia.org/wiki/Ellipse).
+type EllipticalArc3D
+    implements PlanarCurve3D
+{
+    Frame: Frame3D;
+    Radii: Number2;
+    Angles: AngleInterval;
+}
+
+//==
+// # Polynomial arcs
+
+// A quadratic Bezier arc in space: interpolates P0 to P2, shaped by the middle
+// control point P1 (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
+type QuadraticBezier3D
+    implements Curve3D
+{
+    P0: Point3D;
+    P1: Point3D;
+    P2: Point3D;
+}
+
+// A cubic Bezier arc in space: interpolates P0 to P3, shaped by the interior
+// control points P1 and P2 (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
+type CubicBezier3D
+    implements Curve3D
+{
+    P0: Point3D;
+    P1: Point3D;
+    P2: Point3D;
+    P3: Point3D;
+}
+
+//==
+// # Helices and spirals
+
+// A circular helix winding about the frame's Z axis at distance Radius,
+// rising Pitch per full turn (right-handed for positive Pitch), swept over
+// the angle interval (https://en.wikipedia.org/wiki/Helix).
+type Helix
+    implements Curve3D
+{
+    Frame: Frame3D;
+    Radius: Number;
+    Pitch: Number;
+    Angles: AngleInterval;
+}
+
+// A spiral on a cone about the frame's Z axis: the winding radius interpolates
+// across Radii while the curve climbs Height over the full sweep of Angles
+// (https://en.wikipedia.org/wiki/Conical_spiral).
+type ConicalSpiral3D
+    implements Curve3D
+{
+    Frame: Frame3D;
+    Radii: NumberInterval;
+    Height: Number;
+    Angles: AngleInterval;
+}
+
+// A loxodrome: a spiral on a sphere of radius Radius crossing every meridian
+// at a constant angle, running pole to pole along the frame's Z axis and
+// completing TurnCount revolutions
+// (https://en.wikipedia.org/wiki/Rhumb_line).
+type SphericalSpiral3D
+    implements Curve3D
+{
+    Frame: Frame3D;
+    Radius: Number;
+    TurnCount: Number;
+}
+
+//==
+// # Knots and classical space curves
+
+// The (p,q) torus knot on the torus with the given major and minor radii about
+// the frame's Z axis. AxisWindings is p (laps around the main axis) and
+// TubeWindings is q (laps through the hole); coprime windings give a true knot
+// (https://en.wikipedia.org/wiki/Torus_knot).
+type TorusKnot
+    implements ClosedCurve3D
+{
+    Frame: Frame3D;
+    AxisWindings: Integer;
+    TubeWindings: Integer;
+    MajorRadius: Number;
+    MinorRadius: Number;
+}
+
+// The trefoil knot, the simplest nontrivial knot (the (2,3) torus knot), in
+// its symmetric canonical form scaled by Scale
+// (https://en.wikipedia.org/wiki/Trefoil_knot).
+type TrefoilKnot
+    implements ClosedCurve3D
+{
+    Frame: Frame3D;
+    Scale: Number;
+}
+
+// The figure-eight knot (the unique four-crossing knot) in its canonical
+// parametric form scaled by Scale
+// (https://en.wikipedia.org/wiki/Figure-eight_knot_(mathematics)).
+type FigureEightKnot
+    implements ClosedCurve3D
+{
+    Frame: Frame3D;
+    Scale: Number;
+}
+
+// Viviani's curve: the figure-eight intersection of the sphere of radius
+// Radius centered at the frame origin with the cylinder of radius Radius / 2
+// tangent to the frame's Z axis
+// (https://en.wikipedia.org/wiki/Viviani%27s_curve).
+type VivianiCurve
+    implements ClosedCurve3D
+{
+    Frame: Frame3D;
+    Radius: Number;
+}

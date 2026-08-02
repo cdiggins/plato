@@ -1,13 +1,25 @@
 //==
-// # Extended-number arithmetic
+// # Numbers
 //
-// Operator and concept obligations for the types of `numbers.types.plato`: Complex
-// (full Numerical plus ComplexÃ—Complex product/quotient), Rational (Comparable
-// plus field arithmetic), and the unitless constrained scalars Proportion /
-// Percent / Probability (Numerical + Comparable on their carrier).
+// Sections, in order:
+//  - Extended-number arithmetic
+//  - Dual-number arithmetic (forward-mode automatic differentiation)
+//  - Modified Bessel functions I0 and I1
+//  - Beta and regularized incomplete beta
+//  - Error function and complement
+//  - Gamma and log-gamma
+//  - Regularized incomplete gamma functions
 
 library Numbers
 {
+    //==
+    // # Extended-number arithmetic
+    //
+    // Operator and concept obligations for the types of `numbers.types.plato`: Complex
+    // (full Numerical plus ComplexÃ—Complex product/quotient), Rational (Comparable
+    // plus field arithmetic), and the unitless constrained scalars Proportion /
+    // Percent / Probability (Numerical + Comparable on their carrier).
+
     //==
     // Complex â€” Numerical obligations and complex field arithmetic.
     // https://en.wikipedia.org/wiki/Complex_number
@@ -233,4 +245,476 @@ library Numbers
     // Counts order exactly as their carrier integers do.
     LessThanOrEquals(a: Cardinal, b: Cardinal): Boolean
         => a.Value <= b.Value;
+
+    //==
+    // # Dual-number arithmetic (forward-mode automatic differentiation)
+    //
+    // The Numerical obligations of `DualNumber` plus the elementary functions,
+    // each carrying its own differentiation rule. Every body is the textbook rule
+    // applied to the pair: the Value component is the ordinary computation, the
+    // Derivative component is that rule times the incoming derivative (the chain
+    // rule). https://en.wikipedia.org/wiki/Automatic_differentiation
+    //
+    // Usage: seed the variable of interest with `DualVariable`, every other input
+    // with `DualConstant`, then evaluate the expression with these operators. The
+    // result's Derivative is the exact partial derivative with respect to the seed.
+    //
+    // Preconditions match the underlying real functions (no division by a zero
+    // Value, no Sqrt or NaturalLog of a non-positive Value); a derivative rule
+    // that divides by the Value inherits that restriction and is noted where the
+    // rule is more restrictive than the function itself.
+
+    //==
+    // # Seeding
+
+    // The dual for a constant: the value with a zero derivative.
+    DualConstant(self: Number): DualNumber
+        => (self, 0.0);
+
+    // The dual for the variable being differentiated: the value seeded with a
+    // unit derivative, so d(self)/d(self) = 1 propagates through the chain.
+    DualVariable(self: Number): DualNumber
+        => (self, 1.0);
+
+    //==
+    // # Additive obligations
+    //
+    // Differentiation is linear, so sums and differences are component-wise.
+
+    // (a + b)' = a' + b'.
+    Add(a: DualNumber, b: DualNumber): DualNumber
+        => (a.Value + b.Value, a.Derivative + b.Derivative);
+
+    // (a - b)' = a' - b'.
+    Subtract(a: DualNumber, b: DualNumber): DualNumber
+        => (a.Value - b.Value, a.Derivative - b.Derivative);
+
+    // (-x)' = -x'.
+    Negative(x: DualNumber): DualNumber
+        => (-x.Value, -x.Derivative);
+
+    // The additive identity: a zero value whose derivative is also zero.
+    Zero(_: DualNumber): DualNumber
+        => (0.0, 0.0);
+
+    //==
+    // # Multiplicative obligations
+    //
+    // https://en.wikipedia.org/wiki/Product_rule
+    // https://en.wikipedia.org/wiki/Quotient_rule
+
+    // The product rule: (a*b)' = a'*b + a*b'.
+    Multiply(a: DualNumber, b: DualNumber): DualNumber
+        => (a.Value * b.Value,
+            a.Derivative * b.Value + a.Value * b.Derivative);
+
+    // Scaling by a constant factor scales the derivative with it.
+    Multiply(x: DualNumber, scalar: Number): DualNumber
+        => (x.Value * scalar, x.Derivative * scalar);
+
+    // The quotient rule: (a/b)' = (a'*b - a*b') / b^2.
+    // Precondition: b.Value is non-zero.
+    Divide(a: DualNumber, b: DualNumber): DualNumber
+        => (a.Value / b.Value,
+            (a.Derivative * b.Value - a.Value * b.Derivative) / b.Value.Square);
+
+    // Dividing by a constant factor divides the derivative by it.
+    // Precondition: scalar is non-zero.
+    Divide(x: DualNumber, scalar: Number): DualNumber
+        => (x.Value / scalar, x.Derivative / scalar);
+
+    // The remainder against a constant factor. The derivative is unchanged:
+    // away from the wrap points the remainder differs from the value by a
+    // locally constant multiple of the divisor.
+    Modulo(x: DualNumber, scalar: Number): DualNumber
+        => (x.Value.Modulo(scalar), x.Derivative);
+
+    // The multiplicative unit: the constant one.
+    One(_: DualNumber): DualNumber
+        => (1.0, 0.0);
+
+    //==
+    // # Interpolation and limits
+
+    // Linear interpolation of value and derivative alike; t is unclamped and
+    // treated as a constant (its own derivative does not participate).
+    Lerp(a: DualNumber, b: DualNumber, t: Number): DualNumber
+        => (a.Value + (b.Value - a.Value) * t,
+            a.Derivative + (b.Derivative - a.Derivative) * t);
+
+    // The least representable value, as a constant.
+    MinValue(_: DualNumber): DualNumber
+        => (Number.MinValue, 0.0);
+
+    // The greatest representable value, as a constant.
+    MaxValue(_: DualNumber): DualNumber
+        => (Number.MaxValue, 0.0);
+
+    //==
+    // # Powers and roots
+
+    // (x^2)' = 2*x*x'.
+    Square(x: DualNumber): DualNumber
+        => (x.Value.Square, 2.0 * x.Value * x.Derivative);
+
+    // (1/x)' = -x' / x^2. Precondition: Value is non-zero.
+    Reciprocal(x: DualNumber): DualNumber
+        => (x.Value.Reciprocal, -x.Derivative / x.Value.Square);
+
+    // (sqrt x)' = x' / (2 * sqrt x). Precondition: Value is strictly positive
+    // (the rule divides by the root, so zero is excluded even though the
+    // square root itself is defined there).
+    Sqrt(x: DualNumber): DualNumber
+        => (x.Value.Sqrt, x.Derivative / (2.0 * x.Value.Sqrt));
+
+    // A constant real power: (x^p)' = p * x^(p-1) * x'.
+    // https://en.wikipedia.org/wiki/Power_rule
+    Pow(x: DualNumber, power: Number): DualNumber
+        => (x.Value.Pow(power),
+            power * x.Value.Pow(power - 1.0) * x.Derivative);
+
+    //==
+    // # Exponential and logarithm
+
+    // (e^x)' = e^x * x'.
+    Exp(x: DualNumber): DualNumber
+        => (x.Value.Exp, x.Value.Exp * x.Derivative);
+
+    // (ln x)' = x' / x. Precondition: Value is strictly positive.
+    NaturalLog(x: DualNumber): DualNumber
+        => (x.Value.NaturalLog, x.Derivative / x.Value);
+
+    //==
+    // # Trigonometry
+    //
+    // https://en.wikipedia.org/wiki/Differentiation_of_trigonometric_functions
+
+    // (sin x)' = cos x * x'.
+    Sin(x: DualNumber): DualNumber
+        => (x.Value.Sin, x.Value.Cos * x.Derivative);
+
+    // (cos x)' = -sin x * x'.
+    Cos(x: DualNumber): DualNumber
+        => (x.Value.Cos, -x.Value.Sin * x.Derivative);
+
+    // (tan x)' = x' / cos^2 x. Precondition: Value is not an odd multiple of
+    // a quarter turn, where the tangent and this rule both diverge.
+    Tan(x: DualNumber): DualNumber
+        => (x.Value.Tan, x.Derivative / x.Value.Cos.Square);
+
+    //==
+    // # Magnitude
+
+    // (|x|)' = sign(x) * x'. Precondition: Value is non-zero, where the
+    // absolute value has no derivative.
+    Abs(x: DualNumber): DualNumber
+        => (x.Value.Abs, x.Value.Sign.ToNumber * x.Derivative);
+
+    //==
+    // # Modified Bessel functions I0 and I1
+    //
+    // The modified Bessel functions of the first kind of order zero and one,
+    // with a series/asymptotic split at |x| = 15: the ascending power series
+    // (which is entire and fully double-accurate for small arguments) below the
+    // split, and the large-argument asymptotic expansion
+    // I_nu(x) ~ exp(x)/sqrt(2*pi*x) * sum_k (-1)^k a_k(nu)/x^k above it. The
+    // series is summed to a fixed 60 terms (saturated well past double precision
+    // at x = 15); the asymptotic sum is truncated at 14 terms, near its optimal
+    // truncation point at the split, giving ~1e-13 relative error there and
+    // improving as x grows. Overall expected accuracy: ~1e-15 relative for
+    // |x| <= 15, ~1e-13 relative beyond. Both overflow with exp(x) past
+    // x ~ 713. Higher orders I_nu are NOT provided: the stable route is
+    // downward recurrence, a different structure than these two closed forms.
+    //
+    // I0/I1 are the modified Bessel functions cited by the TODO(content)
+    // markers on the von Mises Variance/Pdf in
+    // `random.library.plato`.
+    // https://en.wikipedia.org/wiki/Bessel_function#Modified_Bessel_functions
+
+    // The tail of the ascending series for I_nu from term index k onward,
+    // in the variable q = x^2/4: term(k+1) = term(k) * q / ((k+1)(k+1+nu)).
+    // Seed with k = 0, term = 1; the order-nu prefactor (x/2)^nu / nu! is
+    // applied by the caller. Fixed 60 terms.
+    BesselISeriesSum(nu: Number, q: Number, k: Integer, term: Number): Number
+        => k >= 60
+            ? term
+            : term + BesselISeriesSum(nu, q, k + 1,
+                  term * q / ((k.ToNumber + 1.0) * (k.ToNumber + 1.0 + nu)));
+
+    // The truncated asymptotic sum for I_nu at large x, in mu = 4*nu^2:
+    // term(k+1) = term(k) * ((2k+1)^2 - mu) / (8 (k+1) x). Seed with k = 0,
+    // term = 1. Fixed 14 terms, near optimal truncation at x = 15.
+    BesselIAsymptoticSum(mu: Number, x: Number, k: Integer, term: Number): Number
+        => k >= 14
+            ? term
+            : term + BesselIAsymptoticSum(mu, x, k + 1,
+                  term * ((2.0 * k.ToNumber + 1.0).Square - mu)
+                       / (8.0 * (k.ToNumber + 1.0) * x));
+
+    // The modified Bessel function I0(x): even, I0(0) = 1, growing like
+    // exp(x)/sqrt(2*pi*x). Series for |x| <= 15, asymptotic beyond.
+    BesselI0(x: Number): Number
+    {
+        var ax = x.Abs;
+        return ax <= 15.0
+            ? BesselISeriesSum(0.0, ax.Square / 4.0, 0, 1.0)
+            : ax.Exp / (Number.Tau * ax).Sqrt * BesselIAsymptoticSum(0.0, ax, 0, 1.0);
+    }
+
+    // The modified Bessel function I1(x): odd, I1(0) = 0, the derivative of
+    // I0. Series (with the (x/2) prefactor) for |x| <= 15, asymptotic with
+    // mu = 4 beyond; the sign of x is restored at the end.
+    BesselI1(x: Number): Number
+    {
+        var ax = x.Abs;
+        var magnitude = ax <= 15.0
+            ? ax / 2.0 * BesselISeriesSum(1.0, ax.Square / 4.0, 0, 1.0)
+            : ax.Exp / (Number.Tau * ax).Sqrt * BesselIAsymptoticSum(4.0, ax, 0, 1.0);
+        return x < 0.0 ? -magnitude : magnitude;
+    }
+
+    //==
+    // # Beta and regularized incomplete beta
+    //
+    // The (complete) beta function in direct and log form, and the regularized
+    // incomplete beta function I_x(a, b) via the classic Numerical Recipes
+    // `betacf` continued fraction with the symmetry transform
+    // I_x(a, b) = 1 - I_{1-x}(b, a) applied when x is past the convergence split
+    // (a + 1) / (a + b + 2). The continued fraction is evaluated bottom-up to a
+    // fixed depth of 100 odd/even coefficient PAIRS (200 coefficients), double
+    // Numerical Recipes' ITMAX budget. Expected accuracy: ~1e-13 relative for
+    // moderate a and b (both <= ~100).
+    //
+    // I_x(a, b) is the incomplete-beta function cited by the TODO(content)
+    // markers on the beta and Student-t CDFs in
+    // `random.library.plato` and the binomial CDF note in
+    // `random.library.plato`.
+    // https://en.wikipedia.org/wiki/Beta_function
+
+    // ln B(a, b) = ln Gamma(a) + ln Gamma(b) - ln Gamma(a + b), stable far
+    // beyond where the direct product overflows. Precondition: a > 0, b > 0.
+    // Inherits the ~1e-13 relative accuracy of LogGamma.
+    LogBeta(a: Number, b: Number): Number
+        => LogGamma(a) + LogGamma(b) - LogGamma(a + b);
+
+    // The complete beta function B(a, b) = Gamma(a) Gamma(b) / Gamma(a + b),
+    // via the log form. Precondition: a > 0, b > 0. Overflows only when the
+    // true value does.
+    Beta(a: Number, b: Number): Number
+        => LogBeta(a, b).Exp;
+
+    // The Numerical Recipes `betacf` continued fraction, evaluated bottom-up
+    // one odd/even coefficient pair per level: this returns
+    // F(m) = 1 + d(2m+1) / (1 + d(2m+2) / F(m+1)) with the standard
+    //   d(2m+1) = -(a+m)(a+b+m) x / ((a+2m)(a+2m+1))
+    //   d(2m)   =  m(b-m) x / ((a+2m-1)(a+2m))
+    // truncated at 100 pairs. I_x(a, b) then equals
+    // exp(a*ln(x) + b*ln(1-x) - LogBeta(a, b)) / (a * F(0)). Converges
+    // rapidly for x < (a + 1) / (a + b + 2), the only region it is used in.
+    BetaContinuedFraction(a: Number, b: Number, x: Number, m: Integer): Number
+    {
+        var mm = m.ToNumber;
+        var dOdd = -((a + mm) * (a + b + mm) * x)
+                 / ((a + 2.0 * mm) * (a + 2.0 * mm + 1.0));
+        var dEven = (mm + 1.0) * (b - mm - 1.0) * x
+                  / ((a + 2.0 * mm + 1.0) * (a + 2.0 * mm + 2.0));
+        return m >= 100
+            ? 1.0
+            : 1.0 + dOdd / (1.0 + dEven / BetaContinuedFraction(a, b, x, m + 1));
+    }
+
+    // The regularized incomplete beta function I_x(a, b), the CDF of the beta
+    // distribution: 0 at x = 0 rising to 1 at x = 1. Continued fraction
+    // directly when x < (a + 1) / (a + b + 2), otherwise through the symmetry
+    // I_x(a, b) = 1 - I_{1-x}(b, a) so the fraction always runs in its
+    // fast-convergence region. Precondition: a > 0, b > 0, 0 <= x <= 1.
+    // Expected accuracy: ~1e-13 relative for moderate a and b.
+    // https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function
+    RegularizedBeta(a: Number, b: Number, x: Number): Number
+    {
+        var bt = (a * x.NaturalLog + b * (1.0 - x).NaturalLog - LogBeta(a, b)).Exp;
+        return x <= 0.0
+            ? 0.0
+            : x >= 1.0
+                ? 1.0
+                : x < (a + 1.0) / (a + b + 2.0)
+                    ? bt / (a * BetaContinuedFraction(a, b, x, 0))
+                    : 1.0 - bt / (b * BetaContinuedFraction(b, a, 1.0 - x, 0));
+    }
+
+    //==
+    // # Error function and complement
+    //
+    // erf and erfc, computed through the regularized incomplete gamma functions
+    // via the exact identities erf(x) = P(1/2, x^2) and erfc(x) = Q(1/2, x^2)
+    // for x >= 0, extended to negative arguments by oddness. No dedicated
+    // rational approximation is used: the incomplete-gamma route above is
+    // already ~1e-13 relative here (a = 1/2 is deep inside its comfortable range), and reusing
+    // it keeps one numerical core instead of two. In particular erfc keeps
+    // RELATIVE accuracy in the far right tail because Q is computed by the
+    // continued fraction there — unlike `StandardNormalCdf` in
+    // `random.library.plato`, whose Zelen & Severo bound (7.5e-8) is absolute.
+    //
+    // erf/erfc are the error functions named as missing by the special-function
+    // notes in `random.library.plato`.
+    // https://en.wikipedia.org/wiki/Error_function
+
+    // The error function erf(x) = (2/sqrt(pi)) * integral of exp(-t^2) from
+    // 0 to x: odd, erf(0) = 0, approaching +/-1. Expected accuracy: ~1e-13
+    // relative; near +/-1 the error is absolute (use Erfc for tail ratios).
+    Erf(x: Number): Number
+        => x < 0.0
+            ? -RegularizedGammaP(0.5, x.Square)
+            : RegularizedGammaP(0.5, x.Square);
+
+    // The complementary error function erfc(x) = 1 - erf(x): 2 at -inf, 1 at
+    // 0, 0 at +inf. For x >= 0 this is Q(1/2, x^2) evaluated by the continued
+    // fraction, so the right tail keeps ~1e-13 RELATIVE accuracy down to the
+    // underflow floor; for x < 0 it is the complement 1 + erf(|x|)-style
+    // form, accurate absolutely (the value is near 2 there, so that is also
+    // relative).
+    Erfc(x: Number): Number
+        => x < 0.0
+            ? 1.0 + RegularizedGammaP(0.5, x.Square)
+            : RegularizedGammaQ(0.5, x.Square);
+
+    //==
+    // # Gamma and log-gamma
+    //
+    // The gamma function and its natural logarithm, computed with the Lanczos
+    // approximation using the widely published g = 7, n = 9 coefficient set
+    // (Godfrey's coefficients, the same set used by the classic Python/Wikipedia
+    // reference implementations). The expected relative error of the Lanczos sum
+    // is about 1e-13 on the primary domain x >= 0.5; the `Pow`/`Exp` assembly and
+    // the reflection formula each cost a few more ULP, so treat both functions as
+    // good to roughly 12 significant digits. Arguments below 0.5 go through the
+    // Euler reflection formula Gamma(x) * Gamma(1 - x) = pi / sin(pi * x).
+    //
+    // These are the `Gamma(Number)` / `LogGamma(Number)` functions cited by the
+    // TODO(content) markers in `random.library.plato`,
+    // `random.library.plato` (Weibull moments) and
+    // `planar.library.plato` (superellipse area).
+    // https://en.wikipedia.org/wiki/Lanczos_approximation
+
+    // The Lanczos partial-fraction sum A_g(z) for g = 7, n = 9, evaluated at
+    // the SHIFTED argument z = x - 1. A pure rational combination, so it is
+    // accurate to about 1e-13 relative wherever the reconstruction below is
+    // valid (z >= -0.5).
+    LanczosSum(z: Number): Number
+        => 0.99999999999980993
+         + 676.5203681218851 / (z + 1.0)
+         - 1259.1392167224028 / (z + 2.0)
+         + 771.32342877765313 / (z + 3.0)
+         - 176.61502916214059 / (z + 4.0)
+         + 12.507343278686905 / (z + 5.0)
+         - 0.13857109526572012 / (z + 6.0)
+         + 0.0000099843695780195716 / (z + 7.0)
+         + 0.00000015056327351493116 / (z + 8.0);
+
+    // The gamma function. For x >= 0.5 this is the Lanczos reconstruction
+    // sqrt(2*pi) * t^(z + 1/2) * exp(-t) * A_g(z) with z = x - 1 and
+    // t = z + g + 1/2; for x < 0.5 it is the reflection formula, which also
+    // extends the function to negative non-integer arguments with the correct
+    // sign. Precondition: x is not zero or a negative integer (the poles).
+    // Expected accuracy: ~1e-12 relative. Overflows for x > ~171.6.
+    // https://en.wikipedia.org/wiki/Gamma_function
+    Gamma(x: Number): Number
+    {
+        var z = x - 1.0;
+        var t = z + 7.5;
+        return x < 0.5
+            ? Number.Pi / (Angle(Number.Pi * x).Sin * Gamma(1.0 - x))
+            : Number.Tau.Sqrt * t.Pow(z + 0.5) * (-t).Exp * LanczosSum(z);
+    }
+
+    // The natural logarithm of the gamma function, ln Gamma(x), computed in
+    // log space so it stays finite far beyond where Gamma overflows (up to
+    // x ~ 2.5e305). Precondition: x > 0 (the log-space reflection used below
+    // 0.5 assumes sin(pi * x) > 0, which holds only on (0, 1)).
+    // Expected accuracy: ~1e-13 relative for x >= 0.5.
+    // https://en.wikipedia.org/wiki/Gamma_function#The_log-gamma_function
+    LogGamma(x: Number): Number
+    {
+        var z = x - 1.0;
+        var t = z + 7.5;
+        return x < 0.5
+            ? (Number.Pi / Angle(Number.Pi * x).Sin).NaturalLog - LogGamma(1.0 - x)
+            : Number.Tau.Sqrt.NaturalLog + (z + 0.5) * t.NaturalLog - t
+              + LanczosSum(z).NaturalLog;
+    }
+
+    //==
+    // # Regularized incomplete gamma functions
+    //
+    // P(a, x) and Q(a, x) = 1 - P(a, x), following the classic Numerical Recipes
+    // `gammp`/`gammq` structure: the power series for the lower function when
+    // x < a + 1 (where it converges fastest) and the continued fraction for the
+    // upper function when x >= a + 1, each complemented to give the other half.
+    // Both evaluations are run to a FIXED depth instead of an epsilon exit —
+    // 200 series terms and a 120-level continued fraction — which comfortably
+    // exceeds the worst-case term counts Numerical Recipes budgets (ITMAX = 100)
+    // for either region. Expected accuracy: ~1e-13 relative for moderate a
+    // (a <= ~100); for very large a the split point x = a + 1 costs a few more
+    // digits, as in every implementation of this structure.
+    //
+    // These are the regularized lower/upper incomplete gamma functions cited by
+    // the TODO(content) markers on the gamma, chi-squared and Poisson CDFs in
+    // `random.library.plato` and `random.library.plato`.
+    // https://en.wikipedia.org/wiki/Incomplete_gamma_function
+
+    // The tail of the lower-gamma power series from term index n onward,
+    // where `term` carries the current term value x^n / (a * (a+1) * ... *
+    // (a+n)). Seed with n = 0, term = 1/a; the full series then satisfies
+    // P(a, x) = exp(a*ln(x) - x - LogGamma(a)) * sum. Converges geometrically
+    // once n exceeds x, so 200 terms is far past double-precision saturation
+    // for the x < a + 1 region this is used in.
+    LowerGammaSeriesSum(a: Number, x: Number, n: Integer, term: Number): Number
+        => n >= 200
+            ? term
+            : term + LowerGammaSeriesSum(a, x, n + 1,
+                  term * x / (a + n.ToNumber + 1.0));
+
+    // The Legendre continued fraction for the upper function, evaluated
+    // bottom-up: F(k) = x + 2k + 1 - a - (k+1)(k+1-a) / F(k+1), truncated at
+    // a fixed depth of 120 levels. Q(a, x) then equals
+    // exp(a*ln(x) - x - LogGamma(a)) / F(0). Converges rapidly for the
+    // x >= a + 1 region it is used in.
+    GammaContinuedFraction(a: Number, x: Number, k: Integer): Number
+        => k >= 120
+            ? x + 2.0 * k.ToNumber + 1.0 - a
+            : x + 2.0 * k.ToNumber + 1.0 - a
+              - (k.ToNumber + 1.0) * (k.ToNumber + 1.0 - a)
+                / GammaContinuedFraction(a, x, k + 1);
+
+    // The regularized LOWER incomplete gamma function P(a, x), the CDF of the
+    // gamma distribution with shape a and unit scale: 0 at x = 0 rising to 1.
+    // Series representation below the split x = a + 1, complement of the
+    // continued fraction above it. Precondition: a > 0, x >= 0.
+    // Expected accuracy: ~1e-13 relative for moderate a.
+    // https://en.wikipedia.org/wiki/Incomplete_gamma_function#Regularized_gamma_functions_and_Poisson_random_variables
+    RegularizedGammaP(a: Number, x: Number): Number
+    {
+        var prefactor = (a * x.NaturalLog - x - LogGamma(a)).Exp;
+        return x <= 0.0
+            ? 0.0
+            : x < a + 1.0
+                ? prefactor * LowerGammaSeriesSum(a, x, 0, 1.0 / a)
+                : 1.0 - prefactor / GammaContinuedFraction(a, x, 0);
+    }
+
+    // The regularized UPPER incomplete gamma function Q(a, x) = 1 - P(a, x),
+    // the survival function of the unit-scale gamma distribution. Continued
+    // fraction above the split x = a + 1 (so the far tail keeps RELATIVE
+    // accuracy), complement of the series below it (so near-zero tails are
+    // accurate only absolutely, as in Numerical Recipes). Precondition:
+    // a > 0, x >= 0.
+    RegularizedGammaQ(a: Number, x: Number): Number
+    {
+        var prefactor = (a * x.NaturalLog - x - LogGamma(a)).Exp;
+        return x <= 0.0
+            ? 1.0
+            : x < a + 1.0
+                ? 1.0 - prefactor * LowerGammaSeriesSum(a, x, 0, 1.0 / a)
+                : prefactor / GammaContinuedFraction(a, x, 0);
+    }
 }

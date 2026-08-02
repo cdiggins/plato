@@ -1,25 +1,34 @@
 //==
-// # Primitive concept obligations
+// # Primitives
 //
-// The handful of members the `primitive` declarations in `primitives.plato` owe
-// their concept lists but that the host contract does NOT supply. Everything a
-// backend must implement natively is in `intrinsics.library.plato`; what is left
-// is derivable in Plato from those intrinsics, so it belongs here rather than
-// growing the porting checklist:
-//
-//   * the two identity conversions (`Number.ToNumber`, `Integer.ToInteger`),
-//     which exist so a body generic over `Real` or `Whole` can name the carrier;
-//   * `Number.Inverse` and the two `Lerp`s, one-line formulas over arithmetic
-//     the host already provides;
-//   * `Boolean.LessThanOrEquals`, read off the `Compare` intrinsic (false orders
-//     before true).
-//
-// Without these the generated members throw, so every derived body that reaches
-// them — and `Real`/`Whole`-generic code reaches ToNumber/ToInteger constantly —
-// throws with it.
+// Sections, in order:
+//  - Primitive concept obligations
+//  - The derived array surface
+//  - The derived Integer surface
+//  - The derived Number surface
 
 library Primitives
 {
+    //==
+    // # Primitive concept obligations
+    //
+    // The handful of members the `primitive` declarations in `primitives.plato` owe
+    // their concept lists but that the host contract does NOT supply. Everything a
+    // backend must implement natively is in `intrinsics.library.plato`; what is left
+    // is derivable in Plato from those intrinsics, so it belongs here rather than
+    // growing the porting checklist:
+    //
+    //   * the two identity conversions (`Number.ToNumber`, `Integer.ToInteger`),
+    //     which exist so a body generic over `Real` or `Whole` can name the carrier;
+    //   * `Number.Inverse` and the two `Lerp`s, one-line formulas over arithmetic
+    //     the host already provides;
+    //   * `Boolean.LessThanOrEquals`, read off the `Compare` intrinsic (false orders
+    //     before true).
+    //
+    // Without these the generated members throw, so every derived body that reaches
+    // them — and `Real`/`Whole`-generic code reaches ToNumber/ToInteger constantly —
+    // throws with it.
+
     //==
     // # Number
 
@@ -55,7 +64,7 @@ library Primitives
     //
     // And / Or / Not are the whole host contract (plato-378); everything else
     // on Boolean is a formula over them. Compare is NOT redeclared here — the
-    // Orderable generic in `core-comparison.library.plato` covers it, and
+    // Orderable generic in `core.library.plato` covers it, and
     // reading the order off Compare (as this file used to) would now recurse.
 
     // The truth ordering: false orders before true. a <= b holds unless a is
@@ -75,4 +84,449 @@ library Primitives
     // The digest of a truth value: 1 for true, 0 for false.
     Hash(self: Boolean): Integer
         => self ? 1 : 0;
+
+    //==
+    // # The derived array surface
+    //
+    // Reference bodies for everything that used to be an Array / Array2D / Array3D
+    // host intrinsic (plato-378). The kernel left in `intrinsics.library.plato` is
+    // four functions — `Count`, `At`, `MapRange`, `Reduce` — plus `FlatMap`;
+    // everything here is a reindexing of `MapRange` or a fold over `Reduce`.
+    //
+    // These define the SEMANTICS. A backend that has a faster native form
+    // (Ara3D.Collections.Slice, std::span, a GLSL swizzle) substitutes it through
+    // its override table (plato-368) rather than by re-adding an intrinsic. Without
+    // that table every derived view below costs a closure per element on C#, so the
+    // override table is a prerequisite for adopting this file in a hot path, not an
+    // optimization on top of it.
+    //
+    // Bodies beside a declaration file, per LIBRARIES.md ground rule 1: the sibling
+    // declarations are `primitives.plato` (Array) and
+    // `primitives.types.plato` (Array2D / Array3D).
+
+    //==
+    // # Array — mapping
+
+    // A new Array holding f applied to each element in index order.
+    // (https://en.wikipedia.org/wiki/Map_(higher-order_function))
+    Map(xs: Array<$T1>, f: Function1<$T1, $T2>): Array<$T2>
+        => MapRange(xs.Count, i => f(xs[i]));
+
+    // f applied to each disjoint adjacent PAIR: elements 0-1, 2-3, and so on.
+    // Trailing elements that do not fill a pair are dropped.
+    MapPairs(xs: Array<$T>, f: Function2<$T, $T, $TR>): Array<$TR>
+        => MapRange(xs.Count / 2, i => f(xs[i * 2], xs[i * 2 + 1]));
+
+    // f applied to each disjoint adjacent TRIPLE. Trailing remainder dropped.
+    MapTriplets(xs: Array<$T>, f: Function3<$T, $T, $T, $TR>): Array<$TR>
+        => MapRange(xs.Count / 3, i => f(xs[i * 3], xs[i * 3 + 1], xs[i * 3 + 2]));
+
+    // f applied to each disjoint adjacent QUARTET. Trailing remainder dropped.
+    MapQuartets(xs: Array<$T>, f: Function4<$T, $T, $T, $T, $TR>): Array<$TR>
+        => MapRange(xs.Count / 4, i => f(xs[i * 4], xs[i * 4 + 1], xs[i * 4 + 2], xs[i * 4 + 3]));
+
+    // f applied to matching pairs from two arrays, stopping at the shorter one.
+    // (https://en.wikipedia.org/wiki/Convolution_(computer_science))
+    Zip(xs: Array<$T1>, ys: Array<$T2>, f: Function2<$T1, $T2, $T3>): Array<$T3>
+        => MapRange(xs.Count.Lesser(ys.Count), i => f(xs[i], ys[i]));
+
+    // f applied to matching triples from three arrays, stopping at the shortest.
+    Zip(xs: Array<$T1>, ys: Array<$T2>, zs: Array<$T3>, f: Function3<$T1, $T2, $T3, $T4>): Array<$T4>
+        => MapRange(xs.Count.Lesser(ys.Count).Lesser(zs.Count), i => f(xs[i], ys[i], zs[i]));
+
+    //==
+    // # Array — sub-ranges
+    //
+    // Every one is a window onto the source: a MapRange whose callback shifts or
+    // scales the index. None copies, and none validates — the preconditions are
+    // the caller's, as everywhere in this vocabulary.
+
+    // The first n elements. Precondition: 0 <= n <= Count.
+    Take(xs: Array<$T>, n: Integer): Array<$T>
+        => MapRange(n, i => xs[i]);
+
+    // Every element after the first n. Precondition: 0 <= n <= Count.
+    Skip(xs: Array<$T>, n: Integer): Array<$T>
+        => MapRange(xs.Count - n, i => xs[i + n]);
+
+    // Every element except the last n — the complement of Take, and the
+    // back-end twin of Skip. Precondition: 0 <= n <= Count.
+    //
+    // Take/Skip/TakeLast/DropLast are a complete 2x2: Take and TakeLast KEEP n
+    // from the front and the back, Skip and DropLast REMOVE n from the front and
+    // the back. This was `Drop` until plato-378, which both duplicated `Skip`
+    // and left the remove-from-the-back cell empty. The name now agrees with
+    // `Collections.DropLast(Sliceable)`, which is defined identically
+    // as `Slice(0, Count - count)`, and with the C# runtime's
+    // `Ara3D.Collections.LinqArray.DropLast`.
+    DropLast(xs: Array<$T>, n: Integer): Array<$T>
+        => xs.Take(xs.Count - n);
+
+    // The last n elements. Precondition: 0 <= n <= Count.
+    TakeLast(xs: Array<$T>, n: Integer): Array<$T>
+        => MapRange(n, i => xs[xs.Count - n + i]);
+
+    // `count` elements starting at `from` — the COUNT-based sub-range, and the
+    // only one. Everything named Slice takes endpoints.
+    // Precondition: the window is in range.
+    SubArray(xs: Array<$T>, from: Integer, count: Integer): Array<$T>
+        => MapRange(count, i => xs[from + i]);
+
+    // The half-open window [from, exclusiveTo), holding exclusiveTo - from
+    // elements. Matches `Sliceable.Slice` exactly, so `Slice` means the same
+    // thing on every receiver in the tree (plato-378).
+    // Precondition: 0 <= from <= exclusiveTo <= Count.
+    Slice(xs: Array<$T>, from: Integer, exclusiveTo: Integer): Array<$T>
+        => MapRange(exclusiveTo - from, i => xs[from + i]);
+
+    // Every nth element starting at index 0. The count rounds UP: a 5-element
+    // array stepped by 2 yields indices 0, 2 and 4. Precondition: n > 0.
+    EveryNth(self: Array<$T>, n: Integer): Array<$T>
+        => MapRange((self.Count + n - 1) / n, i => self[i * n]);
+
+    // The element at n reduced modulo Count, so an index may run off the END and
+    // wrap. The idiom behind closed-polygon edge walks: points.AtModulo(i+1).
+    // Preconditions: the array is not empty, and n is not negative — a negative
+    // n leaves the remainder negative rather than wrapping to the tail.
+    AtModulo(xs: Array<$T>, n: Integer): $T
+        => xs[n % xs.Count];
+
+    //==
+    // # Array — construction
+
+    // n copies of x. The count comes first because the compiler requires a
+    // concrete first parameter, so the V1 form Repeat(x, n) became Repeat(n, x).
+    Repeat(n: Integer, x: $T): Array<$T>
+        => MapRange(n, i => x);
+
+    // The array with value appended after the last element.
+    Append(self: Array<$T>, value: $T): Array<$T>
+        => MapRange(self.Count + 1, i => i < self.Count ? self[i] : value);
+
+    // The array with value inserted before the first element.
+    Prepend(self: Array<$T>, value: $T): Array<$T>
+        => MapRange(self.Count + 1, i => i == 0 ? value : self[i - 1]);
+
+    // The two arrays joined end to end.
+    // (https://en.wikipedia.org/wiki/Concatenation)
+    Concatenate(xs: Array<$T>, ys: Array<$T>): Array<$T>
+        => MapRange(xs.Count + ys.Count, i => i < xs.Count ? xs[i] : ys[i - xs.Count]);
+
+    //==
+    // # Array — predicates
+    //
+    // Folds rather than short-circuiting loops: a Plato body has no early exit,
+    // so All and Any visit every element. Semantically identical for the pure
+    // callbacks this vocabulary allows; a backend that wants the short circuit
+    // supplies it through the override table.
+
+    // True when every element satisfies the predicate (vacuously true when empty).
+    All(xs: Array<$T>, f: Function1<$T, Boolean>): Boolean
+        => xs.Reduce(true, (acc, x) => acc && f(x));
+
+    // True when at least one element satisfies the predicate (false when empty).
+    Any(xs: Array<$T>, f: Function1<$T, Boolean>): Boolean
+        => xs.Reduce(false, (acc, x) => acc || f(x));
+
+    //==
+    // # Array2D
+    //
+    // The Indexable2D obligations the two extent FIELDS do not already cover,
+    // plus construction. Row-major, matching Collections.FlattenIndex.
+
+    // The total cell count: every element of the backing store.
+    Count(self: Array2D<$T>): Integer
+        => self.Elements.Count;
+
+    // The cell at a row-major flat index. Precondition: 0 <= n < Count.
+    At(self: Array2D<$T>, n: Integer): $T
+        => self.Elements[n];
+
+    // The cell at (column, row). Precondition: the cell is in range.
+    At(self: Array2D<$T>, column: Integer, row: Integer): $T
+        => self.Elements[row * self.ColumnCount + column];
+
+    // A columns x rows grid whose cell (c, r) is f(c, r).
+    MakeArray2D(columns: Integer, rows: Integer, f: Function2<Integer, Integer, $T>): Array2D<$T>
+    {
+        var elements = MapRange(columns * rows, i => f(i % columns, i / columns));
+        return (elements, columns, rows);
+    }
+
+    // The cells of one column, top to bottom. Precondition: col is in range.
+    Column(self: Array2D<$T>, col: Integer): Array<$T>
+        => MapRange(self.RowCount, r => self.At(col, r));
+
+    // The cells of one row, left to right. Precondition: row is in range.
+    Row(self: Array2D<$T>, row: Integer): Array<$T>
+        => MapRange(self.ColumnCount, c => self.At(c, row));
+
+    // A grid of the same shape holding f applied to every cell.
+    Map(xs: Array2D<$T1>, f: Function1<$T1, $T2>): Array2D<$T2>
+    {
+        var elements = xs.Elements.Map(f);
+        return (elements, xs.ColumnCount, xs.RowCount);
+    }
+
+    // The array cut into rows of `size`, as a grid. A trailing partial row is
+    // dropped. Precondition: size > 0.
+    Slices(xs: Array<$T>, size: Integer): Array2D<$T>
+    {
+        var rows = xs.Count / size;
+        return (xs.Take(rows * size), size, rows);
+    }
+
+    // The grid whose cell (c, r) is func(columns[c], rows[r]).
+    // (https://en.wikipedia.org/wiki/Cartesian_product)
+    CartesianProduct(columns: Array<$TColumn>, rows: Array<$TRow>, func: Function2<$TColumn, $TRow, $TResult>): Array2D<$TResult>
+        => MakeArray2D(columns.Count, rows.Count, (c, r) => func(columns[c], rows[r]));
+
+    //==
+    // # Array3D
+
+    // The total cell count: every element of the backing store.
+    Count(self: Array3D<$T>): Integer
+        => self.Elements.Count;
+
+    // The cell at a row-major flat index. Precondition: 0 <= n < Count.
+    At(self: Array3D<$T>, n: Integer): $T
+        => self.Elements[n];
+
+    // The cell at (column, row, layer). Precondition: the cell is in range.
+    At(self: Array3D<$T>, column: Integer, row: Integer, layer: Integer): $T
+        => self.Elements[(layer * self.RowCount + row) * self.ColumnCount + column];
+
+    // A columns x rows x layers volume whose cell (c, r, l) is f(c, r, l).
+    MakeArray3D(columns: Integer, rows: Integer, layers: Integer, f: Function3<Integer, Integer, Integer, $T>): Array3D<$T>
+    {
+        var plane = columns * rows;
+        var elements = MapRange(plane * layers, i => f(i % columns, (i / columns) % rows, i / plane));
+        return (elements, columns, rows, layers);
+    }
+
+    //==
+    // # The derived Integer surface
+    //
+    // Reference bodies for every `Integer` member that used to be a host intrinsic
+    // but is a formula over the surviving kernel (plato-378): the six arithmetic
+    // operators, `LessThanOrEquals` / `Equals` / `Hash`, the six bitwise
+    // operations, `MinValue` / `MaxValue` and `ToNumber`.
+    //
+    // As in the Number section above, bodies use only the intrinsic
+    // relations (`<=`, `==`), and the relational family (LessThan, GreaterThan,
+    // GreaterThanOrEquals, Compare, Clamp, Lesser, Greater) is absent because
+    // `core.library.plato` already provides it generically over
+    // Orderable.
+
+    //==
+    // # Sign and magnitude
+
+    // The absolute value. Precondition: self is not MinValue, whose magnitude
+    // is not representable.
+    Abs(self: Integer): Integer
+        => 0 <= self ? self : -self;
+
+    // -1, 0 or 1 according to the sign.
+    Sign(self: Integer): Integer
+        => 0 <= self ? (self <= 0 ? 0 : 1) : -1;
+
+    // The lesser of two integers.
+    Min(a: Integer, b: Integer): Integer
+        => a <= b ? a : b;
+
+    // The greater of two integers.
+    Max(a: Integer, b: Integer): Integer
+        => a <= b ? b : a;
+
+    //==
+    // # Constants
+    //
+    // Dispatch on an ignored receiver, the tree's constant idiom.
+
+    // The additive identity.
+    Zero(_: Integer): Integer
+        => 0;
+
+    // The multiplicative identity.
+    One(_: Integer): Integer
+        => 1;
+
+    //==
+    // # Enumeration
+
+    // The integers 0 up to but excluding self, in order: the standard index
+    // range behind every count-driven traversal. Reads as `n.Range`.
+    Range(self: Integer): Array<Integer>
+        => MapRange(self, i => i);
+
+    //==
+    // # The derived Number surface
+    //
+    // Reference bodies for every `Number` member that used to be a host intrinsic
+    // but is a formula over the surviving kernel (plato-378). The kernel is the
+    // six arithmetic operators, `LessThanOrEquals` / `Equals` / `Hash`, `Floor`,
+    // `Round`, `Sqrt` / `Exp` / `NaturalLog` / `Pow` / `FusedMultiplyAdd`,
+    // `Sin` / `Cos` / `Atan2Radians`, the four limits, `IsNaN` / `IsInfinite` and
+    // `ToInteger`.
+    //
+    // Bodies are written against the INTRINSIC relations only (`<=`, `==`), never
+    // against the derived `<` or `>`, so nothing here can recurse back through the
+    // Orderable generics in `core.library.plato`.
+    //
+    // Accuracy note: a native `Log10`, `Cbrt` or `Acos` is usually a few ulp better
+    // than the identity below. That is the whole point of the plato-368 override
+    // table — these bodies fix the SEMANTICS and a backend substitutes its own
+    // verified implementation. Do not tighten a formula here to chase ulps.
+    //
+    // The relational family (LessThan, GreaterThan, GreaterThanOrEquals, Compare,
+    // Clamp, Lesser, Greater, Min3, Max3) is deliberately absent: those are already
+    // generic over Orderable in `core.library.plato`, and LIBRARIES.md
+    // ground rule 11 forbids a per-type copy.
+
+    //==
+    // # Sign and magnitude
+
+    // The absolute value: distance from zero.
+    Abs(self: Number): Number
+        => 0.0 <= self ? self : -self;
+
+    // -1, 0 or 1 according to the sign. Zero is unsigned: both -0.0 and 0.0
+    // report 0.
+    Sign(self: Number): Integer
+        => 0.0 <= self ? (self <= 0.0 ? 0 : 1) : -1;
+
+    // The magnitude of self carrying the sign of y. A y of -0.0 reads as
+    // non-negative here, where IEEE copysign reads it as negative.
+    CopySign(self: Number, y: Number): Number
+        => 0.0 <= y ? self.Abs : -self.Abs;
+
+    // The lesser of two numbers.
+    Min(self: Number, other: Number): Number
+        => self <= other ? self : other;
+
+    // The greater of two numbers.
+    Max(self: Number, other: Number): Number
+        => self <= other ? other : self;
+
+    //==
+    // # Powers and roots
+
+    // The number multiplied by itself.
+    Square(self: Number): Number
+        => self * self;
+
+    // One over the number. Division by zero yields an infinity rather than
+    // signalling, as everywhere in this vocabulary. Synonym of `Inverse`.
+    Reciprocal(self: Number): Number
+        => 1.0 / self;
+
+    // The real cube root, defined for negative input by odd symmetry —
+    // Pow alone would return NaN there.
+    // (https://en.wikipedia.org/wiki/Cube_root)
+    Cbrt(self: Number): Number
+        => 0.0 <= self ? self.Pow(1.0 / 3.0) : -((-self).Pow(1.0 / 3.0));
+
+    //==
+    // # Rounding
+    //
+    // Floor is the kernel; the other two are its reflections.
+
+    // The smallest whole value greater than or equal to self.
+    Ceiling(self: Number): Number
+        => -((-self).Floor);
+
+    // The whole part, rounding toward zero.
+    Truncate(self: Number): Number
+        => 0.0 <= self ? self.Floor : self.Ceiling;
+
+    //==
+    // # Logarithms
+    //
+    // (https://en.wikipedia.org/wiki/Logarithm)
+
+    // The logarithm of self in the given base.
+    Log(self: Number, newBase: Number): Number
+        => self.NaturalLog / newBase.NaturalLog;
+
+    // The base-two logarithm.
+    Log2(self: Number): Number
+        => self.NaturalLog / Number.Ln2;
+
+    // The base-ten logarithm.
+    Log10(self: Number): Number
+        => self.NaturalLog / Number.Ln10;
+
+    //==
+    // # Trigonometry over the radians kernel
+    //
+    // Sin, Cos and Atan2Radians are the kernel. The hyperbolics come from Exp
+    // and the inverse family from Atan2Radians and NaturalLog.
+
+    // The tangent of an angle in radians.
+    Tan(self: Number): Number
+        => self.Sin / self.Cos;
+
+    // The hyperbolic sine. (https://en.wikipedia.org/wiki/Hyperbolic_functions)
+    Sinh(self: Number): Number
+        => (self.Exp - (-self).Exp) / 2.0;
+
+    // The hyperbolic cosine.
+    Cosh(self: Number): Number
+        => (self.Exp + (-self).Exp) / 2.0;
+
+    // The hyperbolic tangent.
+    Tanh(self: Number): Number
+        => self.Sinh / self.Cosh;
+
+    // The arccosine in radians: atan2(sqrt(1 - x^2), x). Precondition: |x| <= 1.
+    AcosRadians(self: Number): Number
+        => (1.0 - self * self).Sqrt.Atan2Radians(self);
+
+    // The arcsine in radians: atan2(x, sqrt(1 - x^2)). Precondition: |x| <= 1.
+    AsinRadians(self: Number): Number
+        => self.Atan2Radians((1.0 - self * self).Sqrt);
+
+    // The arctangent in radians: atan2(x, 1).
+    AtanRadians(self: Number): Number
+        => self.Atan2Radians(1.0);
+
+    // The inverse hyperbolic cosine. Precondition: x >= 1.
+    AcoshRadians(self: Number): Number
+        => (self + (self * self - 1.0).Sqrt).NaturalLog;
+
+    // The inverse hyperbolic sine, defined for every real x.
+    AsinhRadians(self: Number): Number
+        => (self + (self * self + 1.0).Sqrt).NaturalLog;
+
+    // The inverse hyperbolic tangent. Precondition: |x| < 1.
+    AtanhRadians(self: Number): Number
+        => ((1.0 + self) / (1.0 - self)).NaturalLog * 0.5;
+
+    //==
+    // # Constants and classification
+    //
+    // Pi is the kernel constant; the other two are formulas over it and Exp.
+    // Dispatch on an ignored receiver, the tree's constant idiom.
+
+    // The additive identity.
+    Zero(_: Number): Number
+        => 0.0;
+
+    // The multiplicative identity.
+    One(_: Number): Number
+        => 1.0;
+
+    // The circle constant, two pi. (https://en.wikipedia.org/wiki/Turn_(angle))
+    Tau(_: Number): Number
+        => 2.0 * Number.Pi;
+
+    // Euler's number, the base of the natural logarithm.
+    // (https://en.wikipedia.org/wiki/E_(mathematical_constant))
+    E(_: Number): Number
+        => 1.0.Exp;
+
+    // True when the value is an ordinary finite number: neither NaN nor an
+    // infinity.
+    IsFinite(self: Number): Boolean
+        => !self.IsNaN && !self.IsInfinite;
 }

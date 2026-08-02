@@ -1,0 +1,781 @@
+//==
+// # Spatial structures
+//
+// Sections, in order:
+//  - Uniform grid queries and Morton code ordering
+//  - Kd-tree queries
+//  - Derived functionality for spatial indexes and queries
+//  - Hierarchy queries — BVHs, quadtrees and octrees
+
+library SpatialStructures
+{
+    //==
+    // # Uniform grid queries and Morton code ordering
+    //
+    // The `SpatialIndex2D` / `SpatialIndex3D` obligations of the four grids in
+    // `spatial-structures.types.plato`, plus the ordering and digest the Morton codes
+    // owe `Comparable` and `Hashable`.
+    //
+    // Both grid families store their buckets in CSR form, so a broad-phase query is
+    // the same two steps in all four: test each cell's world bounds against the
+    // query bounds, and concatenate the bucket slices of the cells that survive. The
+    // result is conservative by construction — every item whose own extent reaches
+    // into the query region was binned into a cell that overlaps it — and it carries
+    // false positives, which is what the concept promises.
+
+    //==
+    // # SpatialHashGrid2D / 3D
+    //
+    // Sparse: only occupied cells exist, so the scan is over the stored cell
+    // list rather than over the region. Cell (i, j) covers
+    // [i * CellSize, (i+1) * CellSize) on each axis.
+
+    // The world bounds of the i-th stored cell.
+    CellBounds(self: SpatialHashGrid2D, i: Integer): Bounds2D {
+        var c = self.CellCoordinates[i];
+        var s = self.CellSize;
+        return (Point2D(c.X.ToNumber * s, c.Y.ToNumber * s),
+                Point2D((c.X + 1).ToNumber * s, (c.Y + 1).ToNumber * s));
+    }
+
+    // The i-th cell's bucket when it meets the query, and nothing when it does not.
+    CellCandidates(self: SpatialHashGrid2D, bounds: Bounds2D, i: Integer): Array<ItemIndex>
+        => self.CellBounds(i).Overlaps(bounds)
+            ? self.ItemIndices.Slice(self.BucketOffsets[i], self.BucketOffsets[i + 1])
+            : self.ItemIndices.Take(0);
+
+    // Every item binned into a cell that meets the query bounds.
+    CandidatesInBounds(self: SpatialHashGrid2D, bounds: Bounds2D): Array<ItemIndex>
+        => self.CellCoordinates.Count.Range.FlatMap(i => self.CellCandidates(bounds, i));
+
+    // Every binned item, counted once per cell it was binned into.
+    ItemCount(self: SpatialHashGrid2D): Integer
+        => self.ItemIndices.Count;
+
+    // The world bounds of the i-th stored cell.
+    CellBounds(self: SpatialHashGrid3D, i: Integer): Bounds3D {
+        var c = self.CellCoordinates[i];
+        var s = self.CellSize;
+        return (Point3D(c.X.ToNumber * s, c.Y.ToNumber * s, c.Z.ToNumber * s),
+                Point3D((c.X + 1).ToNumber * s, (c.Y + 1).ToNumber * s, (c.Z + 1).ToNumber * s));
+    }
+
+    // The i-th cell's bucket when it meets the query, and nothing when it does not.
+    CellCandidates(self: SpatialHashGrid3D, bounds: Bounds3D, i: Integer): Array<ItemIndex>
+        => self.CellBounds(i).Overlaps(bounds)
+            ? self.ItemIndices.Slice(self.BucketOffsets[i], self.BucketOffsets[i + 1])
+            : self.ItemIndices.Take(0);
+
+    // Every item binned into a cell that meets the query bounds.
+    CandidatesInBounds(self: SpatialHashGrid3D, bounds: Bounds3D): Array<ItemIndex>
+        => self.CellCoordinates.Count.Range.FlatMap(i => self.CellCandidates(bounds, i));
+
+    // Every binned item, counted once per cell it was binned into.
+    ItemCount(self: SpatialHashGrid3D): Integer
+        => self.ItemIndices.Count;
+
+    //==
+    // # BinningGrid2D / 3D
+    //
+    // Dense: every cell of the region has a bucket, so the scan is over the
+    // bucket count, which the CSR offsets carry (one more entry than buckets).
+    // Bucket b delinearizes with X varying fastest.
+
+    // The number of buckets, read off the CSR offset array.
+    BucketCount(self: BinningGrid2D): Integer
+        => self.BucketOffsets.Count - 1;
+
+    // The world bounds of bucket b.
+    BucketBounds(self: BinningGrid2D, b: Integer): Bounds2D {
+        var min = self.Bounds.Min;
+        var max = self.Bounds.Max;
+        var columns = self.CellCounts.Width;
+        var i = b % columns;
+        var j = b / columns;
+        var dx = (max.X - min.X) / columns.ToNumber;
+        var dy = (max.Y - min.Y) / self.CellCounts.Height.ToNumber;
+        return (Point2D(min.X + i.ToNumber * dx, min.Y + j.ToNumber * dy),
+                Point2D(min.X + (i + 1).ToNumber * dx, min.Y + (j + 1).ToNumber * dy));
+    }
+
+    // Bucket b's items when its cell meets the query, and nothing when it does not.
+    BucketCandidates(self: BinningGrid2D, bounds: Bounds2D, b: Integer): Array<ItemIndex>
+        => self.BucketBounds(b).Overlaps(bounds)
+            ? self.ItemIndices.Slice(self.BucketOffsets[b], self.BucketOffsets[b + 1])
+            : self.ItemIndices.Take(0);
+
+    // Every item binned into a cell that meets the query bounds.
+    CandidatesInBounds(self: BinningGrid2D, bounds: Bounds2D): Array<ItemIndex>
+        => self.BucketCount.Range.FlatMap(b => self.BucketCandidates(bounds, b));
+
+    // Every binned item, counted once per cell it was binned into.
+    ItemCount(self: BinningGrid2D): Integer
+        => self.ItemIndices.Count;
+
+    // The number of buckets, read off the CSR offset array.
+    BucketCount(self: BinningGrid3D): Integer
+        => self.BucketOffsets.Count - 1;
+
+    // The world bounds of bucket b.
+    BucketBounds(self: BinningGrid3D, b: Integer): Bounds3D {
+        var min = self.Bounds.Min;
+        var max = self.Bounds.Max;
+        var columns = self.CellCounts.Width;
+        var rows = self.CellCounts.Height;
+        var i = b % columns;
+        var j = b / columns % rows;
+        var k = b / (columns * rows);
+        var dx = (max.X - min.X) / columns.ToNumber;
+        var dy = (max.Y - min.Y) / rows.ToNumber;
+        var dz = (max.Z - min.Z) / self.CellCounts.Depth.ToNumber;
+        return (Point3D(min.X + i.ToNumber * dx, min.Y + j.ToNumber * dy, min.Z + k.ToNumber * dz),
+                Point3D(min.X + (i + 1).ToNumber * dx,
+                        min.Y + (j + 1).ToNumber * dy,
+                        min.Z + (k + 1).ToNumber * dz));
+    }
+
+    // Bucket b's items when its cell meets the query, and nothing when it does not.
+    BucketCandidates(self: BinningGrid3D, bounds: Bounds3D, b: Integer): Array<ItemIndex>
+        => self.BucketBounds(b).Overlaps(bounds)
+            ? self.ItemIndices.Slice(self.BucketOffsets[b], self.BucketOffsets[b + 1])
+            : self.ItemIndices.Take(0);
+
+    // Every item binned into a cell that meets the query bounds.
+    CandidatesInBounds(self: BinningGrid3D, bounds: Bounds3D): Array<ItemIndex>
+        => self.BucketCount.Range.FlatMap(b => self.BucketCandidates(bounds, b));
+
+    // Every binned item, counted once per cell it was binned into.
+    ItemCount(self: BinningGrid3D): Integer
+        => self.ItemIndices.Count;
+
+    //==
+    // # Morton codes
+    //
+    // The whole point of a Z-order code is that the natural order of the codes
+    // is a spatial order, so `Comparable` and `Hashable` both go straight to the
+    // carrier integer.
+
+    // Codes order as their carrier integers do — which is the Z-order.
+    LessThanOrEquals(a: MortonCode2D, b: MortonCode2D): Boolean
+        => a.Value <= b.Value;
+
+    // The carrier integer's own digest.
+    Hash(self: MortonCode2D): Integer
+        => self.Value.Hash;
+
+    // Codes order as their carrier integers do — which is the Z-order.
+    LessThanOrEquals(a: MortonCode3D, b: MortonCode3D): Boolean
+        => a.Value <= b.Value;
+
+    // The carrier integer's own digest.
+    Hash(self: MortonCode3D): Integer
+        => self.Value.Hash;
+
+    //==
+    // # Kd-tree queries
+    //
+    // The `SpatialIndex2D` / `SpatialIndex3D` and `NearestNeighborQueryable2D` /
+    // `NearestNeighborQueryable3D` obligations of `spatial-structures.types.plato`.
+    //
+    // The range query descends the tree, visiting a child only when the query box
+    // reaches across the splitting plane into that child's half-space. Like every
+    // traversal in the spatial package it is written as an expression: a `var` is
+    // evaluated whether or not its branch is taken, so binding the recursion would
+    // throw away the pruning.
+    //
+    // The k-nearest search is a RANK SELECTION over the stored points, not a tree
+    // descent. A correct branch-and-bound descent needs a running k-th-best bound —
+    // mutable state carried across a traversal — which this vocabulary has no way to
+    // express, and an incorrect descent is worse than a slow correct one. Rank
+    // selection costs O(n^2 + k n) against the descent's O(k log n); it is a
+    // reference body, and a backend is free to substitute a real descent. The
+    // worklist entry is plato-321.
+
+    //==
+    // # KdTree2D — range queries
+
+    // The permutation holds every point exactly once.
+    ItemCount(self: KdTree2D): Integer
+        => self.PointIndices.Count;
+
+    // The points under `node` inside the query bounds; -1 contributes nothing.
+    KdCandidates(self: KdTree2D, bounds: Bounds2D, node: SpatialNodeIndex): Array<ItemIndex>
+        => node.Value < 0
+            ? self.PointIndices.Take(0)
+            : self.KdNodeCandidates(bounds, self.Nodes[node.Value]);
+
+    // The query box's low edge on the node's splitting axis (0 = X, 1 = Y).
+    SplitLow(n: KdTreeNode2D, bounds: Bounds2D): Number
+        => n.SplitAxis == 0 ? bounds.Min.X : bounds.Min.Y;
+
+    // The query box's high edge on the node's splitting axis.
+    SplitHigh(n: KdTreeNode2D, bounds: Bounds2D): Number
+        => n.SplitAxis == 0 ? bounds.Max.X : bounds.Max.Y;
+
+    // One node's contribution: a leaf reports its whole item range, an internal
+    // node descends only into the half-spaces the query box actually reaches.
+    KdNodeCandidates(self: KdTree2D, bounds: Bounds2D, n: KdTreeNode2D): Array<ItemIndex>
+        => n.LeftChild.Value < 0 && n.RightChild.Value < 0
+            ? self.PointIndices.Slice(n.Items.Start, n.Items.End)
+            : (SplitLow(n, bounds) <= n.SplitValue
+                    ? self.KdCandidates(bounds, n.LeftChild)
+                    : self.PointIndices.Take(0))
+              .Concatenate(SplitHigh(n, bounds) >= n.SplitValue
+                    ? self.KdCandidates(bounds, n.RightChild)
+                    : self.PointIndices.Take(0));
+
+    // Every stored point in a leaf the query box reaches, with false positives:
+    // a leaf is reported whole.
+    CandidatesInBounds(self: KdTree2D, bounds: Bounds2D): Array<ItemIndex>
+        => self.Nodes.Count == 0
+            ? self.PointIndices.Take(0)
+            : self.KdCandidates(bounds, SpatialNodeIndex(0));
+
+    //==
+    // # KdTree2D — k nearest neighbors
+    //
+    // The rank of point i is how many points come strictly before it, ordering by
+    // distance and breaking ties by stored index so the order is total and the
+    // ranks are a permutation. The r-th result is then the point whose rank is r.
+
+    // True when point j comes before point i: nearer, or equally near and
+    // earlier in the point array.
+    NeighborPrecedes(self: KdTree2D, center: Point2D, j: Integer, i: Integer): Boolean {
+        var dj = self.Points[j].DistanceSquared(center);
+        var di = self.Points[i].DistanceSquared(center);
+        return dj < di || dj == di && j < i;
+    }
+
+    // How many points come strictly before point i.
+    NeighborRank(self: KdTree2D, center: Point2D, i: Integer): Integer
+        => self.Points.Count.Range.Reduce(0, (acc, j) => self.NeighborPrecedes(center, j, i) ? acc + 1 : acc);
+
+    // The index of the point of the given rank, or -1 when there is none.
+    NeighborAtRank(self: KdTree2D, center: Point2D, rank: Integer): Integer
+        => self.Points.Count.Range.Reduce(-1, (acc, i) => self.NeighborRank(center, i) == rank ? i : acc);
+
+    // How many results the query actually yields: at most NeighborCount, at most
+    // the number of stored points, and — when MaxDistance is positive — at most
+    // the number of points inside that radius.
+    NeighborResultCount(self: KdTree2D, query: KNearestQuery2D): Integer {
+        var withinRadius = query.MaxDistance <= 0.0
+            ? self.Points.Count
+            : self.Points.Reduce(0, (acc, p) => p.Distance(query.Center) <= query.MaxDistance ? acc + 1 : acc);
+        return query.NeighborCount.Min(self.Points.Count).Min(withinRadius).Max(0);
+    }
+
+    // The nearest points to the query centre, nearest first, paired with their
+    // distances.
+    FindNearest(self: KdTree2D, query: KNearestQuery2D): NearestNeighbors {
+        var count = self.NeighborResultCount(query);
+        var chosen = count.MapRange(r => self.NeighborAtRank(query.Center, r));
+        return (chosen.Map(i => self.PointIndices[i]),
+                chosen.Map(i => self.Points[i].Distance(query.Center)));
+    }
+
+    //==
+    // # KdTree3D — range queries
+
+    // The permutation holds every point exactly once.
+    ItemCount(self: KdTree3D): Integer
+        => self.PointIndices.Count;
+
+    // The points under `node` inside the query bounds; -1 contributes nothing.
+    KdCandidates(self: KdTree3D, bounds: Bounds3D, node: SpatialNodeIndex): Array<ItemIndex>
+        => node.Value < 0
+            ? self.PointIndices.Take(0)
+            : self.KdNodeCandidates(bounds, self.Nodes[node.Value]);
+
+    // The query box's low edge on the node's splitting axis (0 = X, 1 = Y, 2 = Z).
+    SplitLow(n: KdTreeNode3D, bounds: Bounds3D): Number
+        => n.SplitAxis == 0 ? bounds.Min.X : (n.SplitAxis == 1 ? bounds.Min.Y : bounds.Min.Z);
+
+    // The query box's high edge on the node's splitting axis.
+    SplitHigh(n: KdTreeNode3D, bounds: Bounds3D): Number
+        => n.SplitAxis == 0 ? bounds.Max.X : (n.SplitAxis == 1 ? bounds.Max.Y : bounds.Max.Z);
+
+    // One node's contribution: a leaf reports its whole item range, an internal
+    // node descends only into the half-spaces the query box actually reaches.
+    KdNodeCandidates(self: KdTree3D, bounds: Bounds3D, n: KdTreeNode3D): Array<ItemIndex>
+        => n.LeftChild.Value < 0 && n.RightChild.Value < 0
+            ? self.PointIndices.Slice(n.Items.Start, n.Items.End)
+            : (SplitLow(n, bounds) <= n.SplitValue
+                    ? self.KdCandidates(bounds, n.LeftChild)
+                    : self.PointIndices.Take(0))
+              .Concatenate(SplitHigh(n, bounds) >= n.SplitValue
+                    ? self.KdCandidates(bounds, n.RightChild)
+                    : self.PointIndices.Take(0));
+
+    // Every stored point in a leaf the query box reaches, with false positives.
+    CandidatesInBounds(self: KdTree3D, bounds: Bounds3D): Array<ItemIndex>
+        => self.Nodes.Count == 0
+            ? self.PointIndices.Take(0)
+            : self.KdCandidates(bounds, SpatialNodeIndex(0));
+
+    //==
+    // # KdTree3D — k nearest neighbors
+
+    // True when point j comes before point i: nearer, or equally near and
+    // earlier in the point array.
+    NeighborPrecedes(self: KdTree3D, center: Point3D, j: Integer, i: Integer): Boolean {
+        var dj = self.Points[j].DistanceSquared(center);
+        var di = self.Points[i].DistanceSquared(center);
+        return dj < di || dj == di && j < i;
+    }
+
+    // How many points come strictly before point i.
+    NeighborRank(self: KdTree3D, center: Point3D, i: Integer): Integer
+        => self.Points.Count.Range.Reduce(0, (acc, j) => self.NeighborPrecedes(center, j, i) ? acc + 1 : acc);
+
+    // The index of the point of the given rank, or -1 when there is none.
+    NeighborAtRank(self: KdTree3D, center: Point3D, rank: Integer): Integer
+        => self.Points.Count.Range.Reduce(-1, (acc, i) => self.NeighborRank(center, i) == rank ? i : acc);
+
+    // How many results the query actually yields.
+    NeighborResultCount(self: KdTree3D, query: KNearestQuery3D): Integer {
+        var withinRadius = query.MaxDistance <= 0.0
+            ? self.Points.Count
+            : self.Points.Reduce(0, (acc, p) => p.Distance(query.Center) <= query.MaxDistance ? acc + 1 : acc);
+        return query.NeighborCount.Min(self.Points.Count).Min(withinRadius).Max(0);
+    }
+
+    // The nearest points to the query centre, nearest first, paired with their
+    // distances.
+    FindNearest(self: KdTree3D, query: KNearestQuery3D): NearestNeighbors {
+        var count = self.NeighborResultCount(query);
+        var chosen = count.MapRange(r => self.NeighborAtRank(query.Center, r));
+        return (chosen.Map(i => self.PointIndices[i]),
+                chosen.Map(i => self.Points[i].Distance(query.Center)));
+    }
+
+    //==
+    // # Derived functionality for spatial indexes and queries
+    //
+    // Pure, expression-bodied helpers for the concepts declared in
+    // `spatial.concepts.plato` (SpatialIndex2D, SpatialIndex3D) and
+    // `spatial.concepts.plato` (RayIntersectable2D/3D,
+    // ClosestPointQueryable2D/3D, NearestNeighborQueryable2D/3D). Part of P8 of the
+    // concept library.
+    //
+    // Result records expose their fields, so hit/distance predicates just read them,
+    // and the convenience overloads assemble the query records so a caller can cast a
+    // bare ray or ask for a bare k-nearest count. Emptiness follows one pattern —
+    // `IsEmpty` wherever no overload clash forces a prefixed spelling (per-concept
+    // `IsEmpty` collisions are disambiguated by concept type).
+
+    //==
+    // SpatialIndex2D — broad-phase candidate queries over indexed 2D primitives.
+    // Candidates may include false positives; exact tests are the caller's phase two.
+
+    // True when the index holds no primitives.
+    IsEmpty(self: SpatialIndex2D): Boolean
+        => self.ItemCount.IsZero;
+
+    // The number of candidate primitives overlapping the bounds (with false positives).
+    CandidateCountInBounds(self: SpatialIndex2D, bounds: Bounds2D): Integer
+        => self.CandidatesInBounds(bounds).Count;
+
+    // True when any candidate primitive overlaps the bounds.
+    HasCandidatesInBounds(self: SpatialIndex2D, bounds: Bounds2D): Boolean
+        => self.CandidateCountInBounds(bounds).IsPositive;
+
+    //==
+    // SpatialIndex3D — broad-phase candidate queries over indexed 3D primitives.
+
+    // True when the index holds no primitives.
+    IsEmpty(self: SpatialIndex3D): Boolean
+        => self.ItemCount.IsZero;
+
+    // The number of candidate primitives overlapping the bounds (with false positives).
+    CandidateCountInBounds(self: SpatialIndex3D, bounds: Bounds3D): Integer
+        => self.CandidatesInBounds(bounds).Count;
+
+    // True when any candidate primitive overlaps the bounds.
+    HasCandidatesInBounds(self: SpatialIndex3D, bounds: Bounds3D): Boolean
+        => self.CandidateCountInBounds(bounds).IsPositive;
+
+    //==
+    // RayIntersectable2D — anything a 2D ray can be cast against. The convenience
+    // overloads build the RayQuery record so callers can cast a bare ray. A
+    // MaxDistance of 0 means unbounded; a FilterMask of -1 accepts every category.
+
+    // An unbounded, accept-all raycast request for a bare ray.
+    UnboundedRayQuery(self: RayIntersectable2D, ray: Ray2D): RayQuery2D
+        => (ray, 0.0, -1);
+
+    // Cast a bare ray with no distance bound and no filtering.
+    Raycast(self: RayIntersectable2D, ray: Ray2D): RayHit2D
+        => self.Raycast(self.UnboundedRayQuery(ray));
+
+    // True when the query strikes something.
+    DidHit(self: RayIntersectable2D, query: RayQuery2D): Boolean
+        => self.Raycast(query).Hit;
+
+    // True when a bare unbounded, accept-all ray strikes something.
+    DidHit(self: RayIntersectable2D, ray: Ray2D): Boolean
+        => self.Raycast(ray).Hit;
+
+    // True when the query strikes nothing.
+    Missed(self: RayIntersectable2D, query: RayQuery2D): Boolean
+        => self.DidHit(query).Not;
+
+    // The distance from the ray origin to the first hit. Precondition: the query hits.
+    HitDistance(self: RayIntersectable2D, query: RayQuery2D): Number
+        => self.Raycast(query).Distance;
+
+    // The world position of the first hit. Precondition: the query hits.
+    HitPosition(self: RayIntersectable2D, query: RayQuery2D): Point2D
+        => self.Raycast(query).Position;
+
+    // The surface normal at the first hit, pointing against the ray. Precondition: hits.
+    HitNormal(self: RayIntersectable2D, query: RayQuery2D): Direction2D
+        => self.Raycast(query).Normal;
+
+    // The struck primitive's index in the caller's list (-1 when inapplicable).
+    // Precondition: the query hits.
+    HitPrimitiveIndex(self: RayIntersectable2D, query: RayQuery2D): ItemIndex
+        => self.Raycast(query).PrimitiveIndex;
+
+    //==
+    // RayIntersectable3D — anything a 3D ray can be cast against.
+
+    // An unbounded, accept-all raycast request for a bare ray.
+    UnboundedRayQuery(self: RayIntersectable3D, ray: Ray3D): RayQuery3D
+        => (ray, 0.0, -1);
+
+    // Cast a bare ray with no distance bound and no filtering.
+    Raycast(self: RayIntersectable3D, ray: Ray3D): RayHit3D
+        => self.Raycast(self.UnboundedRayQuery(ray));
+
+    // True when the query strikes something.
+    DidHit(self: RayIntersectable3D, query: RayQuery3D): Boolean
+        => self.Raycast(query).Hit;
+
+    // True when a bare unbounded, accept-all ray strikes something.
+    DidHit(self: RayIntersectable3D, ray: Ray3D): Boolean
+        => self.Raycast(ray).Hit;
+
+    // True when the query strikes nothing.
+    Missed(self: RayIntersectable3D, query: RayQuery3D): Boolean
+        => self.DidHit(query).Not;
+
+    // The distance from the ray origin to the first hit. Precondition: the query hits.
+    HitDistance(self: RayIntersectable3D, query: RayQuery3D): Number
+        => self.Raycast(query).Distance;
+
+    // The world position of the first hit. Precondition: the query hits.
+    HitPosition(self: RayIntersectable3D, query: RayQuery3D): Point3D
+        => self.Raycast(query).Position;
+
+    // The surface normal at the first hit, pointing against the ray. Precondition: hits.
+    HitNormal(self: RayIntersectable3D, query: RayQuery3D): Direction3D
+        => self.Raycast(query).Normal;
+
+    // The struck triangle of the first hit (-1 when the target is not a mesh).
+    HitFace(self: RayIntersectable3D, query: RayQuery3D): FaceIndex
+        => self.Raycast(query).Face;
+
+    // The barycentric location of the first hit within its struck triangle.
+    // Precondition: the query hits a mesh.
+    HitBarycentric(self: RayIntersectable3D, query: RayQuery3D): BarycentricCoordinate
+        => self.Raycast(query).Barycentric;
+
+    // The interpolated surface UV at the first hit ((0, 0) when the target has no
+    // UVs). Precondition: the query hits.
+    HitUv(self: RayIntersectable3D, query: RayQuery3D): UvCoordinate
+        => self.Raycast(query).Uv;
+
+    //==
+    // ClosestPointQueryable2D — reports its closest point to a 2D query point.
+
+    // The distance from `point` to the nearest point on this geometry.
+    DistanceTo(self: ClosestPointQueryable2D, point: Point2D): Number
+        => self.ClosestPoint(point).Distance;
+
+    // The position on this geometry nearest to `point`.
+    ClosestPointPosition(self: ClosestPointQueryable2D, point: Point2D): Point2D
+        => self.ClosestPoint(point).Position;
+
+    // True when `point` lies within `tolerance` of this geometry.
+    IsNear(self: ClosestPointQueryable2D, point: Point2D, tolerance: Number): Boolean
+        => self.DistanceTo(point) <= tolerance;
+
+    //==
+    // ClosestPointQueryable3D — reports its closest point to a 3D query point.
+
+    // The distance from `point` to the nearest point on this surface.
+    DistanceTo(self: ClosestPointQueryable3D, point: Point3D): Number
+        => self.ClosestPoint(point).Distance;
+
+    // The position on this surface nearest to `point`.
+    ClosestPointPosition(self: ClosestPointQueryable3D, point: Point3D): Point3D
+        => self.ClosestPoint(point).Position;
+
+    // True when `point` lies within `tolerance` of this surface.
+    IsNear(self: ClosestPointQueryable3D, point: Point3D, tolerance: Number): Boolean
+        => self.DistanceTo(point) <= tolerance;
+
+    //==
+    // NearestNeighborQueryable2D — k-nearest-neighbor search over 2D points. The
+    // convenience overloads assemble the KNearestQuery record (unbounded distance).
+
+    // A k-nearest request around `center` for `count` neighbors, distance-unbounded.
+    NearestQuery(self: NearestNeighborQueryable2D, center: Point2D, count: Integer): KNearestQuery2D
+        => (center, count, 0.0);
+
+    // The `count` nearest points to `center`, sorted ascending by distance.
+    FindNearest(self: NearestNeighborQueryable2D, center: Point2D, count: Integer): NearestNeighbors
+        => self.FindNearest(self.NearestQuery(center, count));
+
+    // The single nearest point to `center`.
+    FindNearest(self: NearestNeighborQueryable2D, center: Point2D): NearestNeighbors
+        => self.FindNearest(center, 1);
+
+    //==
+    // NearestNeighborQueryable3D — k-nearest-neighbor search over 3D points.
+
+    // A k-nearest request around `center` for `count` neighbors, distance-unbounded.
+    NearestQuery(self: NearestNeighborQueryable3D, center: Point3D, count: Integer): KNearestQuery3D
+        => (center, count, 0.0);
+
+    // The `count` nearest points to `center`, sorted ascending by distance.
+    FindNearest(self: NearestNeighborQueryable3D, center: Point3D, count: Integer): NearestNeighbors
+        => self.FindNearest(self.NearestQuery(center, count));
+
+    // The single nearest point to `center`.
+    FindNearest(self: NearestNeighborQueryable3D, center: Point3D): NearestNeighbors
+        => self.FindNearest(center, 1);
+
+    //==
+    // # Hierarchy queries — BVHs, quadtrees and octrees
+    //
+    // The `SpatialIndex2D` / `SpatialIndex3D` obligations of the hierarchies in
+    // `spatial-structures.types.plato`, and the `RayIntersectable3D` obligation of
+    // `Bvh3D`.
+    //
+    // Every traversal is written as a recursion over node indices, because the depth
+    // is a property of the data rather than of the type and this vocabulary has no
+    // loop. The recursion is the whole benefit of the structure: a node whose bounds
+    // miss the query prunes its entire subtree, so the cost is the size of the
+    // answer plus the boundary of the query region, not the size of the index.
+    //
+    // The empty result is spelled `Take(0)` on the structure's own permutation
+    // array. That is not a workaround for a missing empty-array literal so much as
+    // the one spelling that fixes the element type without naming it.
+
+    //==
+    // # Bvh2D
+
+    // The leaf-order permutation holds every primitive exactly once.
+    ItemCount(self: Bvh2D): Integer
+        => self.PrimitiveIndices.Count;
+
+    // The primitives under `node` whose subtree meets the query bounds. A node
+    // index of -1 contributes nothing.
+    //
+    // Written as an expression rather than with `var` bindings on purpose: a
+    // `var` is evaluated whether or not the branch that reads it is taken, so
+    // binding the recursive descent would defeat the very pruning the guard
+    // exists for — and would not terminate on a node with one absent child. Every
+    // traversal in this library has the same shape for the same reason.
+    BvhCandidates(self: Bvh2D, bounds: Bounds2D, node: SpatialNodeIndex): Array<ItemIndex>
+        => node.Value < 0
+            ? self.PrimitiveIndices.Take(0)
+            : self.BvhNodeCandidates(bounds, self.Nodes[node.Value]);
+
+    // The primitives under one node, once it is known to exist.
+    BvhNodeCandidates(self: Bvh2D, bounds: Bounds2D, n: BvhNode2D): Array<ItemIndex>
+        => !n.Bounds.Overlaps(bounds)
+            ? self.PrimitiveIndices.Take(0)
+            : (n.LeftChild.Value < 0 && n.RightChild.Value < 0
+                ? self.PrimitiveIndices.Slice(n.Primitives.Start, n.Primitives.End)
+                : self.BvhCandidates(bounds, n.LeftChild)
+                      .Concatenate(self.BvhCandidates(bounds, n.RightChild)));
+
+    // Every primitive in a leaf whose bounds meet the query bounds, with false
+    // positives: a leaf is reported whole.
+    CandidatesInBounds(self: Bvh2D, bounds: Bounds2D): Array<ItemIndex>
+        => self.Nodes.Count == 0
+            ? self.PrimitiveIndices.Take(0)
+            : self.BvhCandidates(bounds, SpatialNodeIndex(0));
+
+    //==
+    // # Bvh3D
+
+    // The leaf-order permutation holds every primitive exactly once.
+    ItemCount(self: Bvh3D): Integer
+        => self.PrimitiveIndices.Count;
+
+    // The primitives under `node` whose subtree meets the query bounds.
+    BvhCandidates(self: Bvh3D, bounds: Bounds3D, node: SpatialNodeIndex): Array<ItemIndex>
+        => node.Value < 0
+            ? self.PrimitiveIndices.Take(0)
+            : self.BvhNodeCandidates(bounds, self.Nodes[node.Value]);
+
+    // The primitives under one node, once it is known to exist.
+    BvhNodeCandidates(self: Bvh3D, bounds: Bounds3D, n: BvhNode3D): Array<ItemIndex>
+        => !n.Bounds.Overlaps(bounds)
+            ? self.PrimitiveIndices.Take(0)
+            : (n.LeftChild.Value < 0 && n.RightChild.Value < 0
+                ? self.PrimitiveIndices.Slice(n.Primitives.Start, n.Primitives.End)
+                : self.BvhCandidates(bounds, n.LeftChild)
+                      .Concatenate(self.BvhCandidates(bounds, n.RightChild)));
+
+    // Every primitive in a leaf whose bounds meet the query bounds.
+    CandidatesInBounds(self: Bvh3D, bounds: Bounds3D): Array<ItemIndex>
+        => self.Nodes.Count == 0
+            ? self.PrimitiveIndices.Take(0)
+            : self.BvhCandidates(bounds, SpatialNodeIndex(0));
+
+    //==
+    // # Bvh3D — raycasting
+    //
+    // A hierarchy stores no geometry, only bounds and a permutation, so what it
+    // can answer about a ray is BROAD PHASE: the distance at which the ray first
+    // enters a leaf box. The reported hit therefore carries a real Hit flag,
+    // Distance and Position, and leaves the surface attributes at their empty
+    // values — Face is -1, the normal points back along the ray, and the two
+    // parametric coordinates are zero. A caller wanting a surface hit tests the
+    // primitives of `CandidatesInBounds` itself; that is the second phase the
+    // whole broad-phase/narrow-phase split exists for.
+
+    // The parameter value standing for "no intersection". A finite literal rather
+    // than `Number.MaxValue`: the limit constant does not survive `--scalar=float`
+    // erasure inside a conditional, where one branch stays `Number` and the other
+    // is already `float` and the C# writer cannot type the result (CS0172).
+    // Nothing here needs the true maximum — only a value no scene extent reaches.
+    MissDistance(): Number
+        => 1.0e30;
+
+    // The reach of a ray query: MaxDistance of zero or less means unbounded.
+    RayReach(query: RayQuery3D): Number
+        => query.MaxDistance <= 0.0 ? MissDistance() : query.MaxDistance;
+
+    // The parameter at which the ray enters the box, by the slab method, or
+    // the miss value when it misses or enters beyond `reach`. A ray parallel to
+    // a slab yields infinities that the min/max pair absorbs; a ray exactly IN
+    // the plane of a slab yields NaN, and the comparison then reports a miss.
+    // https://en.wikipedia.org/wiki/Slab_method
+    RayBoxEntry(ray: Ray3D, box: Bounds3D, reach: Number): Number {
+        var o = ray.Origin;
+        var d = ray.Direction.Vector;
+        var ax = (box.Min.X - o.X) / d.X;
+        var bx = (box.Max.X - o.X) / d.X;
+        var ay = (box.Min.Y - o.Y) / d.Y;
+        var by = (box.Max.Y - o.Y) / d.Y;
+        var az = (box.Min.Z - o.Z) / d.Z;
+        var bz = (box.Max.Z - o.Z) / d.Z;
+        var enter = ax.Min(bx).Max(ay.Min(by)).Max(az.Min(bz)).Max(0.0);
+        var exit = ax.Max(bx).Min(ay.Max(by)).Min(az.Max(bz));
+        return enter <= exit && enter <= reach ? enter : MissDistance();
+    }
+
+    // The nearest leaf-box entry parameter under `node`, or the miss value when
+    // the ray reaches no leaf. An internal node whose own box the ray misses is
+    // not descended into — the pruning the hierarchy exists for.
+    NearestLeafEntry(self: Bvh3D, query: RayQuery3D, node: SpatialNodeIndex): Number
+        => node.Value < 0
+            ? MissDistance()
+            : self.NearestLeafEntryOf(query, self.Nodes[node.Value]);
+
+    // The nearest leaf-box entry under one node, once it is known to exist.
+    NearestLeafEntryOf(self: Bvh3D, query: RayQuery3D, n: BvhNode3D): Number
+        => RayBoxEntry(query.Ray, n.Bounds, RayReach(query)) >= MissDistance()
+            ? MissDistance()
+            : (n.LeftChild.Value < 0 && n.RightChild.Value < 0
+                ? RayBoxEntry(query.Ray, n.Bounds, RayReach(query))
+                : self.NearestLeafEntry(query, n.LeftChild)
+                      .Min(self.NearestLeafEntry(query, n.RightChild)));
+
+    // The broad-phase ray answer: whether the ray reaches any leaf box within the
+    // query's reach, and where. Surface attributes are left empty (see above).
+    Raycast(self: Bvh3D, query: RayQuery3D): RayHit3D {
+        var distance = self.Nodes.Count == 0
+            ? MissDistance()
+            : self.NearestLeafEntry(query, SpatialNodeIndex(0));
+        var hit = distance < MissDistance();
+        return (hit,
+                hit ? distance : 0.0,
+                hit ? query.Ray.PointAt(distance) : query.Ray.Origin,
+                Direction3D(-query.Ray.Direction.Vector),
+                FaceIndex(-1),
+                BarycentricCoordinate(0.0, 0.0, 0.0),
+                UvCoordinate(0.0, 0.0));
+    }
+
+    //==
+    // # Quadtree2D
+    //
+    // Four consecutive children from FirstChild, or -1 for a leaf. A region tree
+    // stores items at the node that contains them, so an internal node can carry
+    // items of its own and its range is always emitted, not only at leaves.
+
+    // The permutation holds every item exactly once.
+    ItemCount(self: Quadtree2D): Integer
+        => self.ItemIndices.Count;
+
+    // The items of node `node` and of its four subtrees, restricted to nodes
+    // whose bounds meet the query.
+    QuadtreeCandidates(self: Quadtree2D, bounds: Bounds2D, node: SpatialNodeIndex): Array<ItemIndex>
+        => node.Value < 0
+            ? self.ItemIndices.Take(0)
+            : self.QuadtreeNodeCandidates(bounds, self.Nodes[node.Value]);
+
+    // The items of one node and its subtrees, once the node is known to exist.
+    QuadtreeNodeCandidates(self: Quadtree2D, bounds: Bounds2D, n: QuadtreeNode): Array<ItemIndex>
+        => !n.Bounds.Overlaps(bounds)
+            ? self.ItemIndices.Take(0)
+            : self.ItemIndices.Slice(n.Items.Start, n.Items.End).Concatenate(
+                n.FirstChild.Value < 0
+                    ? self.ItemIndices.Take(0)
+                    : 4.Range.FlatMap(c => self.QuadtreeCandidates(bounds, SpatialNodeIndex(n.FirstChild.Value + c))));
+
+    // Every item held by a node whose bounds meet the query bounds.
+    CandidatesInBounds(self: Quadtree2D, bounds: Bounds2D): Array<ItemIndex>
+        => self.Nodes.Count == 0
+            ? self.ItemIndices.Take(0)
+            : self.QuadtreeCandidates(bounds, SpatialNodeIndex(0));
+
+    //==
+    // # Octree3D and LooseOctree3D
+    //
+    // Eight consecutive children, otherwise identical to the quadtree. A loose
+    // octree differs only in how its bounds were SIZED when it was built — the
+    // stored node bounds are already the enlarged ones — so its query is the
+    // inner octree's query unchanged.
+
+    // The permutation holds every item exactly once.
+    ItemCount(self: Octree3D): Integer
+        => self.ItemIndices.Count;
+
+    // The items of node `node` and of its eight subtrees, restricted to nodes
+    // whose bounds meet the query.
+    OctreeCandidates(self: Octree3D, bounds: Bounds3D, node: SpatialNodeIndex): Array<ItemIndex>
+        => node.Value < 0
+            ? self.ItemIndices.Take(0)
+            : self.OctreeNodeCandidates(bounds, self.Nodes[node.Value]);
+
+    // The items of one node and its subtrees, once the node is known to exist.
+    OctreeNodeCandidates(self: Octree3D, bounds: Bounds3D, n: OctreeNode): Array<ItemIndex>
+        => !n.Bounds.Overlaps(bounds)
+            ? self.ItemIndices.Take(0)
+            : self.ItemIndices.Slice(n.Items.Start, n.Items.End).Concatenate(
+                n.FirstChild.Value < 0
+                    ? self.ItemIndices.Take(0)
+                    : 8.Range.FlatMap(c => self.OctreeCandidates(bounds, SpatialNodeIndex(n.FirstChild.Value + c))));
+
+    // Every item held by a node whose bounds meet the query bounds.
+    CandidatesInBounds(self: Octree3D, bounds: Bounds3D): Array<ItemIndex>
+        => self.Nodes.Count == 0
+            ? self.ItemIndices.Take(0)
+            : self.OctreeCandidates(bounds, SpatialNodeIndex(0));
+
+    // The wrapped octree's item count.
+    ItemCount(self: LooseOctree3D): Integer
+        => self.Octree.ItemCount;
+
+    // The wrapped octree's query: the looseness is already baked into the stored
+    // node bounds.
+    CandidatesInBounds(self: LooseOctree3D, bounds: Bounds3D): Array<ItemIndex>
+        => self.Octree.CandidatesInBounds(bounds);
+}

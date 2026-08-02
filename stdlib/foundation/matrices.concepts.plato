@@ -5,7 +5,7 @@
 // row and column, over the Additive and Scalable surface every matrix supports.
 // The implementing types are declared in `matrices.types.plato`; the concept-generic
 // helpers derived from this concept (Trace, FrobeniusNorm, IsSquare, ...) live in
-// `numeric-structures-matrix.library.plato`.
+// `numeric-structures.library.plato`.
 
 // The family of matrix types: element access by zero-based row and column.
 concept MatrixLike

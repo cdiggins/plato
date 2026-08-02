@@ -1,4 +1,12 @@
 //==
+// # Polynomials
+//
+// Sections, in order:
+//  - Polynomials and series
+//  - Composite and derived forms
+//  - Series in classical bases
+
+//==
 // # Polynomials and series
 //
 // Dense and sparse polynomials (https://en.wikipedia.org/wiki/Polynomial),
@@ -83,4 +91,119 @@ type RationalFunction
 {
     Numerator: Polynomial;
     Denominator: Polynomial;
+}
+
+//==
+// # Composite and derived forms
+//
+// Polynomial constructions assembled out of the forms declared in
+// the sections above: a piecewise polynomial over ascending breakpoints, a
+// Pade approximant pairing a numerator with a normalized denominator, and a
+// Sturm chain for counting real roots by sign changes.
+
+// A piecewise polynomial (spline in polynomial form;
+// https://en.wikipedia.org/wiki/Piecewise). Breakpoints ascend and number one
+// more than Pieces; piece i applies on the half-open span from Breakpoints[i]
+// to Breakpoints[i+1] and is evaluated in the local variable x - Breakpoints[i].
+type PiecewisePolynomial
+    implements Value
+{
+    Breakpoints: Array<Number>;
+    Pieces: Array<Polynomial>;
+}
+
+// A Pade approximant about Center
+// (https://en.wikipedia.org/wiki/Pad%C3%A9_approximant): the rational function
+// Numerator over Denominator that matches a power series to the highest order
+// the two degrees allow. The Denominator's constant term is normalized to 1.
+type PadeApproximant
+    implements Value
+{
+    Center: Number;
+    Numerator: Polynomial;
+    Denominator: Polynomial;
+}
+
+// A Sturm sequence for counting real roots in an interval by sign changes
+// (https://en.wikipedia.org/wiki/Sturm%27s_theorem). Polynomials[0] is the
+// original polynomial, Polynomials[1] its derivative, and each later entry is
+// the negated remainder of the two before it.
+type SturmChain
+    implements Value
+{
+    Polynomials: Array<Polynomial>;
+}
+
+//==
+// # Series in classical bases
+//
+// Truncated series: each stores the coefficients of finitely many basis
+// terms, ascending by term index.
+
+// A truncated power series about Center: the sum of Coefficients[k] times
+// (x - Center)^k (https://en.wikipedia.org/wiki/Power_series).
+type PowerSeries
+    implements Value
+{
+    Center: Number;
+    Coefficients: Array<Number>;
+}
+
+// A truncated series over Chebyshev polynomials of the first kind
+// (https://en.wikipedia.org/wiki/Chebyshev_polynomials): Coefficients[k]
+// weights T_k evaluated after Interval is mapped linearly onto [-1, 1].
+type ChebyshevSeries
+    implements Value
+{
+    Interval: NumberInterval;
+    Coefficients: Array<Number>;
+}
+
+// A truncated series over Legendre polynomials on [-1, 1]
+// (https://en.wikipedia.org/wiki/Legendre_polynomials): Coefficients[k]
+// weights P_k.
+type LegendreSeries
+    implements Value
+{
+    Coefficients: Array<Number>;
+}
+
+// A truncated series over physicists' Hermite polynomials
+// (https://en.wikipedia.org/wiki/Hermite_polynomials): Coefficients[k]
+// weights H_k.
+type HermiteSeries
+    implements Value
+{
+    Coefficients: Array<Number>;
+}
+
+// A polynomial over the Bernstein basis of degree count - 1 on [0, 1]
+// (https://en.wikipedia.org/wiki/Bernstein_polynomial): Coefficients[k]
+// weights the k-th Bernstein basis polynomial. The coefficients act as control
+// values, as in a Bezier curve.
+type BernsteinPolynomial
+    implements Value
+{
+    Coefficients: Array<Number>;
+}
+
+// A dense polynomial in two variables. The column index of Coefficients is
+// the power of x and the row index is the power of y, so the entry at
+// (i, j) multiplies x^i * y^j.
+type BivariatePolynomial
+    implements Value
+{
+    Coefficients: Array2D<Number>;
+}
+
+// A truncated real Fourier series
+// (https://en.wikipedia.org/wiki/Fourier_series). Term k oscillates at k times
+// the Fundamental frequency; CosineCoefficients[0] is the constant (DC) term and
+// SineCoefficients[0] is ignored. The two arrays have equal length.
+type FourierSeries
+    implements Value
+{
+    Fundamental: Frequency;
+    CosineCoefficients: Array<Number>;
+    SineCoefficients: Array<Number>;
 }

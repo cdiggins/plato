@@ -1,48 +1,55 @@
 //==
-// # Quantities — obligation fills for the concrete quantity types
+// # Quantities
 //
-// `concept Quantity` (`quantities.concepts.plato`) inherits `Comparable`, `Hashable`,
-// `Additive`, `Scalable`, and `Interpolatable`. None of those has a generic
-// implementation that a concrete quantity type can inherit for free, so every
-// one of the ~49 physical quantity types owes ten members. Left unfilled, the
-// compiler emits a throwing stub for each — 490 `NotImplementedException`s.
-// The pattern is to write every obligation out per type when no generic shortcut
-// exists.
-//
-// This library takes the same idea one level higher. `Quantity` declares two
-// members that together make a quantity isomorphic to a `Number`:
-//
-//     Amount(x: Self): Number;          // project to the raw amount
-//     FromAmount(_: Self, x: Number);   // rebuild from a raw amount
-//
-// `FromAmount` is what turns the ten obligations
-// into ten *generic* one-liners over `Quantity` (below) plus two mechanical
-// per-type lines. Cost falls from 49x10 hand-written bodies to 49x2, and every
-// quantity type gets identical, correct arithmetic instead of 49 chances to
-// mistype a unit conversion.
-//
-// `Quantity` is one-dimensional and has no intrinsic operator surface
-// to collide with generic fills. `Angle` is the one quantity with intrinsic operators
-// (`intrinsics.library.plato`: Add/Subtract/Multiply/Divide/Negative/Compare/Hash); the
-// intrinsic declarations win for those, and the generics fill only what is left
-// (Lerp, LessThanOrEquals, Modulo, Amount, FromAmount).
-//
-// Naming note: the dispatch-on-ignored-receiver form `FromAmount(_: Self, x)`
-// is the tree's idiom for a constructor-shaped function (compare `Number.Pi` in
-// `constants.library.plato`); zero-argument functions are not idiomatic here.
-//
-// This lives in its own file rather than in `numeric-structures-quantity.library.plato`
-// (the P3 package that owns the `Quantity` *concept*) on purpose. P3 holds
-// derived helpers that are generic over concepts; what follows is 98 bodies
-// naming 49 concrete types one at a time, which would swamp that file and has a
-// different reason to change — it grows whenever a `quantities-*.plato` file adds
-// a type, not when a concept gains a member. `LIBRARIES.md` ground rule 1 names
-// files `<domain>.library.plato` after the domain they serve;
-// `quantities.library.plato` serving the `quantities-*` domain follows that rule
-// directly.
+// Sections, in order:
+//  - Quantities — obligation fills for the concrete quantity types
+//  - Quantities - per-type Amount / FromAmount projections
 
 library Quantities
 {
+    //==
+    // # Quantities — obligation fills for the concrete quantity types
+    //
+    // `concept Quantity` (`quantities.concepts.plato`) inherits `Comparable`, `Hashable`,
+    // `Additive`, `Scalable`, and `Interpolatable`. None of those has a generic
+    // implementation that a concrete quantity type can inherit for free, so every
+    // one of the ~49 physical quantity types owes ten members. Left unfilled, the
+    // compiler emits a throwing stub for each — 490 `NotImplementedException`s.
+    // The pattern is to write every obligation out per type when no generic shortcut
+    // exists.
+    //
+    // This library takes the same idea one level higher. `Quantity` declares two
+    // members that together make a quantity isomorphic to a `Number`:
+    //
+    //     Amount(x: Self): Number;          // project to the raw amount
+    //     FromAmount(_: Self, x: Number);   // rebuild from a raw amount
+    //
+    // `FromAmount` is what turns the ten obligations
+    // into ten *generic* one-liners over `Quantity` (below) plus two mechanical
+    // per-type lines. Cost falls from 49x10 hand-written bodies to 49x2, and every
+    // quantity type gets identical, correct arithmetic instead of 49 chances to
+    // mistype a unit conversion.
+    //
+    // `Quantity` is one-dimensional and has no intrinsic operator surface
+    // to collide with generic fills. `Angle` is the one quantity with intrinsic operators
+    // (`intrinsics.library.plato`: Add/Subtract/Multiply/Divide/Negative/Compare/Hash); the
+    // intrinsic declarations win for those, and the generics fill only what is left
+    // (Lerp, LessThanOrEquals, Modulo, Amount, FromAmount).
+    //
+    // Naming note: the dispatch-on-ignored-receiver form `FromAmount(_: Self, x)`
+    // is the tree's idiom for a constructor-shaped function (compare `Number.Pi` in
+    // `constants.library.plato`); zero-argument functions are not idiomatic here.
+    //
+    // This lives in its own file rather than in `numeric-structures.library.plato`
+    // (the P3 package that owns the `Quantity` *concept*) on purpose. P3 holds
+    // derived helpers that are generic over concepts; what follows is 98 bodies
+    // naming 49 concrete types one at a time, which would swamp that file and has a
+    // different reason to change — it grows whenever a `quantities-*.plato` file adds
+    // a type, not when a concept gains a member. `LIBRARIES.md` ground rule 1 names
+    // files `<domain>.library.plato` after the domain they serve;
+    // `quantities.library.plato` serving the quantities domain follows that rule
+    // directly.
+
     //==
     // # Generic obligations
     //
@@ -94,4 +101,238 @@ library Quantities
     // wrapping a quantity into a repeating range.
     Modulo(x: Quantity, scalar: Number): Quantity
         => x.FromAmount(x.Amount.Modulo(scalar));
+
+    //==
+    // # Quantities - per-type Amount / FromAmount projections
+    //
+    // The mechanical half of the pattern documented above:
+    // two lines per concrete quantity type, naming its canonical-unit field and
+    // rebuilding a value from a raw amount in that same unit. Split out of that
+    // file because it has a different reason to change - it grows whenever a
+    // `quantities-*.plato` file adds a type, not when a concept gains a member.
+
+    //==
+    // # Per-type projections
+    //
+    // Two lines per concrete type: read the canonical-unit field, and rebuild
+    // from a raw amount in that same unit. The unit named here is the one in
+    // the type's field name, so no conversion happens anywhere in this section.
+    // Adding a quantity type to `quantities.types.plato` means adding a pair here.
+
+    //==
+    // # Geometric and kinematic quantities
+
+    // Angle <-> a raw amount in radians.
+    Amount(x: Angle): Number => x.Radians;
+    FromAmount(_: Angle, x: Number): Angle => new Angle(x);
+
+    // SolidAngle <-> a raw amount in steradians.
+    Amount(x: SolidAngle): Number => x.Steradians;
+    FromAmount(_: SolidAngle, x: Number): SolidAngle => new SolidAngle(x);
+
+    // Length <-> a raw amount in meters.
+    Amount(x: Length): Number => x.Meters;
+    FromAmount(_: Length, x: Number): Length => new Length(x);
+
+    // Area <-> a raw amount in square meters.
+    Amount(x: Area): Number => x.SquareMeters;
+    FromAmount(_: Area, x: Number): Area => new Area(x);
+
+    // Volume <-> a raw amount in cubic meters.
+    Amount(x: Volume): Number => x.CubicMeters;
+    FromAmount(_: Volume, x: Number): Volume => new Volume(x);
+
+    // Speed <-> a raw amount in meters per second.
+    Amount(x: Speed): Number => x.MetersPerSecond;
+    FromAmount(_: Speed, x: Number): Speed => new Speed(x);
+
+    // Acceleration <-> a raw amount in meters per second squared.
+    Amount(x: Acceleration): Number => x.MetersPerSecondSquared;
+    FromAmount(_: Acceleration, x: Number): Acceleration => new Acceleration(x);
+
+    // Jerk <-> a raw amount in meters per second cubed.
+    Amount(x: Jerk): Number => x.MetersPerSecondCubed;
+    FromAmount(_: Jerk, x: Number): Jerk => new Jerk(x);
+
+    // AngularVelocity <-> a raw amount in radians per second.
+    Amount(x: AngularVelocity): Number => x.RadiansPerSecond;
+    FromAmount(_: AngularVelocity, x: Number): AngularVelocity => new AngularVelocity(x);
+
+    // AngularAcceleration <-> a raw amount in radians per second squared.
+    Amount(x: AngularAcceleration): Number => x.RadiansPerSecondSquared;
+    FromAmount(_: AngularAcceleration, x: Number): AngularAcceleration => new AngularAcceleration(x);
+
+    // WaveNumber <-> a raw amount in cycles per meter.
+    Amount(x: WaveNumber): Number => x.CyclesPerMeter;
+    FromAmount(_: WaveNumber, x: Number): WaveNumber => new WaveNumber(x);
+
+    // Curvature <-> a raw amount in per meter.
+    Amount(x: Curvature): Number => x.PerMeter;
+    FromAmount(_: Curvature, x: Number): Curvature => new Curvature(x);
+
+    //==
+    // # Mechanical quantities
+
+    // Mass <-> a raw amount in kilograms.
+    Amount(x: Mass): Number => x.Kilograms;
+    FromAmount(_: Mass, x: Number): Mass => new Mass(x);
+
+    // Density <-> a raw amount in kilograms per cubic meter.
+    Amount(x: Density): Number => x.KilogramsPerCubicMeter;
+    FromAmount(_: Density, x: Number): Density => new Density(x);
+
+    // ArealDensity <-> a raw amount in kilograms per square meter.
+    Amount(x: ArealDensity): Number => x.KilogramsPerSquareMeter;
+    FromAmount(_: ArealDensity, x: Number): ArealDensity => new ArealDensity(x);
+
+    // LinearDensity <-> a raw amount in kilograms per meter.
+    Amount(x: LinearDensity): Number => x.KilogramsPerMeter;
+    FromAmount(_: LinearDensity, x: Number): LinearDensity => new LinearDensity(x);
+
+    // Force <-> a raw amount in newtons.
+    Amount(x: Force): Number => x.Newtons;
+    FromAmount(_: Force, x: Number): Force => new Force(x);
+
+    // Torque <-> a raw amount in newton meters.
+    Amount(x: Torque): Number => x.NewtonMeters;
+    FromAmount(_: Torque, x: Number): Torque => new Torque(x);
+
+    // Impulse <-> a raw amount in newton seconds.
+    Amount(x: Impulse): Number => x.NewtonSeconds;
+    FromAmount(_: Impulse, x: Number): Impulse => new Impulse(x);
+
+    // Momentum <-> a raw amount in kilogram meters per second.
+    Amount(x: Momentum): Number => x.KilogramMetersPerSecond;
+    FromAmount(_: Momentum, x: Number): Momentum => new Momentum(x);
+
+    // AngularMomentum <-> a raw amount in kilogram square meters per second.
+    Amount(x: AngularMomentum): Number => x.KilogramSquareMetersPerSecond;
+    FromAmount(_: AngularMomentum, x: Number): AngularMomentum => new AngularMomentum(x);
+
+    // MomentOfInertia <-> a raw amount in kilogram square meters.
+    Amount(x: MomentOfInertia): Number => x.KilogramSquareMeters;
+    FromAmount(_: MomentOfInertia, x: Number): MomentOfInertia => new MomentOfInertia(x);
+
+    // Energy <-> a raw amount in joules.
+    Amount(x: Energy): Number => x.Joules;
+    FromAmount(_: Energy, x: Number): Energy => new Energy(x);
+
+    // Power <-> a raw amount in watts.
+    Amount(x: Power): Number => x.Watts;
+    FromAmount(_: Power, x: Number): Power => new Power(x);
+
+    // Pressure <-> a raw amount in pascals.
+    Amount(x: Pressure): Number => x.Pascals;
+    FromAmount(_: Pressure, x: Number): Pressure => new Pressure(x);
+
+    // Stiffness <-> a raw amount in newtons per meter.
+    Amount(x: Stiffness): Number => x.NewtonsPerMeter;
+    FromAmount(_: Stiffness, x: Number): Stiffness => new Stiffness(x);
+
+    // DampingCoefficient <-> a raw amount in newton seconds per meter.
+    Amount(x: DampingCoefficient): Number => x.NewtonSecondsPerMeter;
+    FromAmount(_: DampingCoefficient, x: Number): DampingCoefficient => new DampingCoefficient(x);
+
+    // DynamicViscosity <-> a raw amount in pascal seconds.
+    Amount(x: DynamicViscosity): Number => x.PascalSeconds;
+    FromAmount(_: DynamicViscosity, x: Number): DynamicViscosity => new DynamicViscosity(x);
+
+    // KinematicViscosity <-> a raw amount in square meters per second.
+    Amount(x: KinematicViscosity): Number => x.SquareMetersPerSecond;
+    FromAmount(_: KinematicViscosity, x: Number): KinematicViscosity => new KinematicViscosity(x);
+
+    // MassFlowRate <-> a raw amount in kilograms per second.
+    Amount(x: MassFlowRate): Number => x.KilogramsPerSecond;
+    FromAmount(_: MassFlowRate, x: Number): MassFlowRate => new MassFlowRate(x);
+
+    // VolumetricFlowRate <-> a raw amount in cubic meters per second.
+    Amount(x: VolumetricFlowRate): Number => x.CubicMetersPerSecond;
+    FromAmount(_: VolumetricFlowRate, x: Number): VolumetricFlowRate => new VolumetricFlowRate(x);
+
+    // Strain <-> a raw amount in ratio.
+    Amount(x: Strain): Number => x.Ratio;
+    FromAmount(_: Strain, x: Number): Strain => new Strain(x);
+
+    //==
+    // # Thermal, electrical, chemical, and photometric quantities
+
+    // Temperature <-> a raw amount in kelvin.
+    Amount(x: Temperature): Number => x.Kelvin;
+    FromAmount(_: Temperature, x: Number): Temperature => new Temperature(x);
+
+    // TemperatureDelta <-> a raw amount in kelvin.
+    Amount(x: TemperatureDelta): Number => x.Kelvin;
+    FromAmount(_: TemperatureDelta, x: Number): TemperatureDelta => new TemperatureDelta(x);
+
+    // HeatCapacity <-> a raw amount in joules per kelvin.
+    Amount(x: HeatCapacity): Number => x.JoulesPerKelvin;
+    FromAmount(_: HeatCapacity, x: Number): HeatCapacity => new HeatCapacity(x);
+
+    // ThermalConductivity <-> a raw amount in watts per meter kelvin.
+    Amount(x: ThermalConductivity): Number => x.WattsPerMeterKelvin;
+    FromAmount(_: ThermalConductivity, x: Number): ThermalConductivity => new ThermalConductivity(x);
+
+    // Frequency <-> a raw amount in hertz.
+    Amount(x: Frequency): Number => x.Hertz;
+    FromAmount(_: Frequency, x: Number): Frequency => new Frequency(x);
+
+    // ElectricCurrent <-> a raw amount in amperes.
+    Amount(x: ElectricCurrent): Number => x.Amperes;
+    FromAmount(_: ElectricCurrent, x: Number): ElectricCurrent => new ElectricCurrent(x);
+
+    // ElectricCharge <-> a raw amount in coulombs.
+    Amount(x: ElectricCharge): Number => x.Coulombs;
+    FromAmount(_: ElectricCharge, x: Number): ElectricCharge => new ElectricCharge(x);
+
+    // Voltage <-> a raw amount in volts.
+    Amount(x: Voltage): Number => x.Volts;
+    FromAmount(_: Voltage, x: Number): Voltage => new Voltage(x);
+
+    // Resistance <-> a raw amount in ohms.
+    Amount(x: Resistance): Number => x.Ohms;
+    FromAmount(_: Resistance, x: Number): Resistance => new Resistance(x);
+
+    // Capacitance <-> a raw amount in farads.
+    Amount(x: Capacitance): Number => x.Farads;
+    FromAmount(_: Capacitance, x: Number): Capacitance => new Capacitance(x);
+
+    // Inductance <-> a raw amount in henries.
+    Amount(x: Inductance): Number => x.Henries;
+    FromAmount(_: Inductance, x: Number): Inductance => new Inductance(x);
+
+    // AmountOfSubstance <-> a raw amount in moles.
+    Amount(x: AmountOfSubstance): Number => x.Moles;
+    FromAmount(_: AmountOfSubstance, x: Number): AmountOfSubstance => new AmountOfSubstance(x);
+
+    // LuminousIntensity <-> a raw amount in candelas.
+    Amount(x: LuminousIntensity): Number => x.Candelas;
+    FromAmount(_: LuminousIntensity, x: Number): LuminousIntensity => new LuminousIntensity(x);
+
+    // LuminousFlux <-> a raw amount in lumens.
+    Amount(x: LuminousFlux): Number => x.Lumens;
+    FromAmount(_: LuminousFlux, x: Number): LuminousFlux => new LuminousFlux(x);
+
+    // Illuminance <-> a raw amount in lux.
+    Amount(x: Illuminance): Number => x.Lux;
+    FromAmount(_: Illuminance, x: Number): Illuminance => new Illuminance(x);
+
+    // Luminance <-> a raw amount in candelas per square meter.
+    Amount(x: Luminance): Number => x.CandelasPerSquareMeter;
+    FromAmount(_: Luminance, x: Number): Luminance => new Luminance(x);
+
+    // Irradiance <-> a raw amount in watts per square meter.
+    Amount(x: Irradiance): Number => x.WattsPerSquareMeter;
+    FromAmount(_: Irradiance, x: Number): Irradiance => new Irradiance(x);
+
+    //==
+    // # Quantity types declared outside the `quantities-*.plato` files
+    //
+    // `Duration` (`time.types.plato`) is the fiftieth `Quantity` implementor. Its pair
+    // lives here rather than in a time library because the pattern is one thing and
+    // should be read in one place; `time.library.plato` is the natural home to move
+    // it to if the projection set grows.
+
+    // Duration <-> a raw amount in seconds.
+    Amount(x: Duration): Number => x.Seconds;
+    FromAmount(_: Duration, x: Number): Duration => new Duration(x);
 }

@@ -1,31 +1,40 @@
 //==
-// # Polygons — planar polygon, hole, set, and star bodies
+// # Polygons
 //
-// Area, perimeter, bounds, centroid, containment, nearest-point and support bodies
-// for the types declared in `polygons.types.plato` (`LIBRARIES.md` ground rules 1 and 10).
-// The 2D ring kernels — shoelace area, area centroid, even-odd containment, chain
-// length, chain projection — live in `geometry-kernels.library.plato` and are not
-// respelled here.
-//
-// Conventions fixed here:
-//
-//   * WINDING: counter-clockwise boundaries enclose positive area; holes wind
-//     opposite to the boundary that contains them. The hole-aware bodies below rely
-//     only on the DECLARED containment invariants, never on the stored hole winding —
-//     `Area(PolygonWithHoles2D)` subtracts absolute hole areas rather than adding
-//     signed ones, so a hole stored with the wrong winding still subtracts.
-//   * `Area` is NON-NEGATIVE everywhere. `SignedArea(Polygon2D)` is offered
-//     separately for callers that need the orientation; it is the raw shoelace value,
-//     which for a self-intersecting ring is the winding-weighted area, not the area
-//     of the covered point set.
-//   * CONTAINMENT is the even-odd rule, so a point exactly on a boundary edge is not
-//     classified reliably.
-//   * `Perimeter` of a region with holes counts EVERY boundary component: the outer
-//     ring plus every hole ring. Likewise `Perimeter(PolygonSet2D)` sums all
-//     components.
+// Sections, in order:
+//  - Polygons — planar polygon, hole, set, and star bodies
+//  - Planar-polygon kernels in space
+//  - Polyline length and deformation
+//  - Planar-polygon-in-space, prism, and pyramid bodies
 
 library Polygons
 {
+    //==
+    // # Polygons — planar polygon, hole, set, and star bodies
+    //
+    // Area, perimeter, bounds, centroid, containment, nearest-point and support bodies
+    // for the types declared in `polygons.types.plato` (`LIBRARIES.md` ground rules 1 and 10).
+    // The 2D ring kernels — shoelace area, area centroid, even-odd containment, chain
+    // length, chain projection — live in `geometry.library.plato` and are not
+    // respelled here.
+    //
+    // Conventions fixed here:
+    //
+    //   * WINDING: counter-clockwise boundaries enclose positive area; holes wind
+    //     opposite to the boundary that contains them. The hole-aware bodies below rely
+    //     only on the DECLARED containment invariants, never on the stored hole winding —
+    //     `Area(PolygonWithHoles2D)` subtracts absolute hole areas rather than adding
+    //     signed ones, so a hole stored with the wrong winding still subtracts.
+    //   * `Area` is NON-NEGATIVE everywhere. `SignedArea(Polygon2D)` is offered
+    //     separately for callers that need the orientation; it is the raw shoelace value,
+    //     which for a self-intersecting ring is the winding-weighted area, not the area
+    //     of the covered point set.
+    //   * CONTAINMENT is the even-odd rule, so a point exactly on a boundary edge is not
+    //     classified reliably.
+    //   * `Perimeter` of a region with holes counts EVERY boundary component: the outer
+    //     ring plus every hole ring. Likewise `Perimeter(PolygonSet2D)` sums all
+    //     components.
+
     //==
     // # Polygon2D and ConvexPolygon2D
 
@@ -207,4 +216,261 @@ library Polygons
     // which the even-odd rule handles correctly.
     Contains(s: RegularStar2D, point: Point2D): Boolean
         => s.RegularStarVertices.PolygonContainsPoint(point);
+
+    //==
+    // # Planar-polygon kernels in space
+    //
+    // The SPACE analogues of the 2D ring kernels in `geometry.library.plato`:
+    // Newell's vector area, a stable in-plane projection basis, the projected even-odd
+    // containment test, the fan-decomposition centroid of a planar ring, and the bodily
+    // translation of a box. Every polygon body that works in 3D is written in terms of
+    // these, and `TranslateBounds` additionally serves the swept-solid bounds in
+    // `spatial-primitives.library.plato`.
+
+    //==
+    // # Planar-polygon kernels in space
+
+    // The vector area of a closed ring: (1/2) * sum of Pi x Pi+1 over the position
+    // vectors. Its magnitude is the enclosed area and its direction is the
+    // right-hand-rule normal, both independent of where the origin sits (the
+    // origin-dependent terms cancel around a closed loop). Newell's method.
+    // https://en.wikipedia.org/wiki/Polygon#Area
+    VectorArea(points: Array<Point3D>): Vector3D
+        => points.Count
+            .MapRange(i => points[i].PositionVector.Cross(points.AtModulo(i + 1).PositionVector))
+            .Reduce(Vector3D(0.0, 0.0, 0.0), (acc, c) => acc + c)
+            * 0.5;
+
+    // Any unit vector perpendicular to `normal`. Crossed against whichever world
+    // axis `normal` is least aligned with, so the construction never degenerates;
+    // the resulting azimuth is arbitrary but stable, which is all a projection
+    // basis needs. Precondition: normal is non-zero.
+    PlaneTangent(normal: Vector3D): Vector3D
+        => (normal.Z.Abs < 0.9 ? Vector3D(0.0, 0.0, 1.0) : Vector3D(1.0, 0.0, 0.0))
+            .Cross(normal).Normalize;
+
+    // A space point expressed in the plane coordinates (u, v) anchored at `origin`.
+    PlaneCoordinates(origin: Point3D, u: Vector3D, v: Vector3D, p: Point3D): Point2D
+        => (origin.Between(p).Dot(u), origin.Between(p).Dot(v));
+
+    // True when `point` projects INSIDE the planar ring. Only the in-plane position
+    // is tested: a point far off the plane whose projection lands inside reports
+    // true, so callers must check the plane distance themselves when they care.
+    // Exact for any simple planar polygon, convex or not.
+    PlanarPolygonContains(points: Array<Point3D>, normal: Vector3D, point: Point3D): Boolean
+    {
+        var u = PlaneTangent(normal);
+        var v = normal.Normalize.Cross(u);
+        var origin = points.First;
+        var flat = points.Map(q => PlaneCoordinates(origin, u, v, q));
+        return flat.PolygonContainsPoint(PlaneCoordinates(origin, u, v, point));
+    }
+
+    // The area centroid of a planar ring in space: the area-weighted mean of the
+    // fan triangles (P0, Pi, Pi+1), each weighted by its SIGNED area about the
+    // polygon normal. The signs make the fan exact for a non-convex simple polygon
+    // too — the triangles that stray outside the ring cancel.
+    // https://en.wikipedia.org/wiki/Centroid#By_geometric_decomposition
+    // Precondition: non-zero area.
+    PlanarPolygonCentroid(points: Array<Point3D>): Point3D
+    {
+        var normal = points.VectorArea.Normalize;
+        var origin = points.First;
+        var count = points.Count;
+        var areas = count.MapRange(i => 0.5 * origin.Between(points[i])
+            .Cross(origin.Between(points.AtModulo(i + 1))).Dot(normal));
+        var total = SumOf(areas);
+        var cx = SumOf(count.MapRange(i => areas[i]
+            * (origin.X + points[i].X + points.AtModulo(i + 1).X) / 3.0));
+        var cy = SumOf(count.MapRange(i => areas[i]
+            * (origin.Y + points[i].Y + points.AtModulo(i + 1).Y) / 3.0));
+        var cz = SumOf(count.MapRange(i => areas[i]
+            * (origin.Z + points[i].Z + points.AtModulo(i + 1).Z) / 3.0));
+        return (cx / total, cy / total, cz / total);
+    }
+
+    // The bounds translated bodily by `offset`.
+    TranslateBounds(b: Bounds3D, offset: Vector3D): Bounds3D
+        => (b.Min + offset, b.Max + offset);
+
+    //==
+    // # Polyline length and deformation
+    //
+    // The length and deformation bodies for the chains declared in
+    // `polygons.types.plato`. The `Closed` flag decides whether the wrap-around edge
+    // counts; the underlying `ChainLength` kernel is in `geometry.library.plato`.
+
+    //==
+    // # Polylines
+
+    // The summed length of the chain; the wrap-around edge counts only when Closed.
+    Length(p: Polyline2D): Number
+        => p.Points.ChainLength(p.Closed);
+
+    // The summed length of the chain in space.
+    Length(p: Polyline3D): Number
+        => p.Points.ChainLength(p.Closed);
+
+    // The summed length of the chain in N dimensions. Written out rather than
+    // delegated because ChainLength is spelled for Point2D/Point3D only; PointN's
+    // delta type is VectorN, whose Magnitude comes from Normed.
+    Length(p: PolylineN): Number
+        => SumOf((p.Closed ? p.Points.Count : p.Points.Count - 1)
+            .MapRange(i => p.Points[i].Between(p.Points.AtModulo(i + 1)).Magnitude));
+
+    // The polyline with every vertex carried through the mapping; Closed is kept.
+    Deform(p: Polyline2D, mapping: Function1<Point2D, Point2D>): Polyline2D
+        => (p.Points.Map(mapping), p.Closed);
+
+    // The polyline with every vertex carried through the mapping; Closed is kept.
+    Deform(p: Polyline3D, mapping: Function1<Point3D, Point3D>): Polyline3D
+        => (p.Points.Map(mapping), p.Closed);
+
+    //==
+    // # Planar-polygon-in-space, prism, and pyramid bodies
+    //
+    // Area, perimeter, centroid, normal, nearest-point, volume, surface-area, bounds and
+    // containment bodies for the types declared in `polygons.types.plato`. They are
+    // written in terms of the space kernels above.
+    //
+    // Conventions fixed here:
+    //
+    //   * Polygon3D is assumed PLANAR (its declaration says so) and SIMPLE.
+    //   * CONTAINMENT in the plane is the even-odd rule projected into the polygon's own
+    //     plane, so a point exactly on a boundary edge is not classified reliably. The
+    //     prism's and pyramid's height parameters ARE boundary inclusive.
+    //   * `Area` and `Volume` are NON-NEGATIVE.
+
+    //==
+    // # Polygon3D
+
+    // The magnitude of the vector area (Newell). Exact for a planar ring; for a
+    // non-planar ring it is the area of the ring's projection onto the best-fit
+    // plane, which the declaration's planarity invariant rules out.
+    Area(p: Polygon3D): Number
+        => p.Points.VectorArea.Magnitude;
+
+    // The total boundary length, including the closing edge.
+    Perimeter(p: Polygon3D): Number
+        => p.Points.ChainLength(true);
+
+    // The area centroid of the planar ring.
+    Centroid(p: Polygon3D): Point3D
+        => p.Points.PlanarPolygonCentroid;
+
+    // The unit normal, following the right-hand rule around the winding.
+    Normal(p: Polygon3D): Direction3D
+        => Direction3D(p.Points.VectorArea.Normalize);
+
+    // The Deformable3D obligation: every boundary vertex carried through the
+    // mapping. The declaration's planarity invariant survives affine mappings
+    // only; a nonlinear mapping leaves a ring the planar bodies above treat as
+    // its best-fit-plane projection (the same control-point decay as
+    // `brep.library.plato`).
+    Deform(p: Polygon3D, mapping: Function1<Point3D, Point3D>): Polygon3D
+        => Polygon3D(p.Points.Map(mapping));
+
+    // The query projected onto the polygon's plane when that projection lands
+    // inside the ring, otherwise the nearest point of the boundary. Exact for any
+    // simple planar polygon, convex or not.
+    ClosestPoint(p: Polygon3D, point: Point3D): Point3D
+    {
+        var normal = p.Points.VectorArea.Normalize;
+        var origin = p.Points.First;
+        var projected = point - normal * origin.Between(point).Dot(normal);
+        return p.Points.PlanarPolygonContains(normal, projected)
+            ? projected
+            : p.Points.ClosestPointOnChain(true, point);
+    }
+
+    //==
+    // # Prism3D
+    //
+    // The base swept along Offset. Precondition throughout: Offset is not parallel
+    // to the base plane (the prism would have zero height and the containment test
+    // would divide by zero).
+
+    // |vectorArea . Offset| — the base area times the component of Offset
+    // perpendicular to the base, which is the prism's height. Correct for an
+    // oblique prism (Cavalieri's principle).
+    // https://en.wikipedia.org/wiki/Prism_(geometry)#Volume
+    Volume(p: Prism3D): Number
+        => p.Base.Points.VectorArea.Dot(p.Offset).Abs;
+
+    // The two parallel bases plus one parallelogram per base edge, each of area
+    // |edge x Offset|.
+    SurfaceArea(p: Prism3D): Number
+        => 2.0 * p.Base.Area
+        + SumOf(p.Base.Points.Count.MapRange(i => p.Base.Points[i]
+            .Between(p.Base.Points.AtModulo(i + 1)).Cross(p.Offset).Magnitude));
+
+    // The base centroid displaced by half the sweep: the prism is uniform along
+    // Offset.
+    Centroid(p: Prism3D): Point3D
+        => p.Base.Centroid + p.Offset * 0.5;
+
+    // The union of the base's bounds and the swept copy's.
+    Bounds(p: Prism3D): Bounds3D
+        => UnionOfBounds(p.Base.Bounds, p.Base.Bounds.TranslateBounds(p.Offset));
+
+    // True when the query's sweep parameter lies in [0, 1] AND the query slid back
+    // along Offset onto the base plane lands inside the base ring.
+    Contains(p: Prism3D, point: Point3D): Boolean
+    {
+        var normal = p.Base.Points.VectorArea.Normalize;
+        var origin = p.Base.Points.First;
+        var s = origin.Between(point).Dot(normal) / p.Offset.Dot(normal);
+        return s >= 0.0 && s <= 1.0
+            && p.Base.Points.PlanarPolygonContains(normal, point - p.Offset * s);
+    }
+
+    //==
+    // # Pyramid3D
+    //
+    // Precondition throughout: the Apex is not in the base plane (the declaration's
+    // stated degenerate case).
+
+    // (1/3) * baseArea * height, with the height the perpendicular distance from
+    // the Apex to the base plane — written as |vectorArea . (Apex - P0)| / 3.
+    // https://en.wikipedia.org/wiki/Pyramid_(geometry)#Volume
+    Volume(y: Pyramid3D): Number
+        => y.Base.Points.VectorArea.Dot(y.Base.Points.First.Between(y.Apex)).Abs / 3.0;
+
+    // The base plus one triangle per base edge, each spanned by that edge and the
+    // Apex.
+    SurfaceArea(y: Pyramid3D): Number
+        => y.Base.Area
+        + SumOf(y.Base.Points.Count.MapRange(i => 0.5 * y.Base.Points[i]
+            .Between(y.Base.Points.AtModulo(i + 1))
+            .Cross(y.Base.Points[i].Between(y.Apex)).Magnitude));
+
+    // One quarter of the way from the base centroid towards the Apex: the standard
+    // centroid of any solid cone over a planar base.
+    // https://en.wikipedia.org/wiki/Pyramid_(geometry)
+    Centroid(y: Pyramid3D): Point3D
+        => y.Base.Centroid + y.Base.Centroid.Between(y.Apex) * 0.25;
+
+    // The union of the base's bounds and the Apex.
+    Bounds(y: Pyramid3D): Bounds3D
+        => UnionOfBounds(y.Base.Bounds, Bounds3D(y.Apex, y.Apex));
+
+    // The Deformable3D obligation: the base ring and the Apex carried through
+    // the same mapping — the cone over the deformed base from the deformed apex.
+    Deform(y: Pyramid3D, mapping: Function1<Point3D, Point3D>): Pyramid3D
+        => (y.Base.Deform(mapping), mapping(y.Apex));
+
+    // True when the query lies between the Apex plane-height and the base
+    // (parameter t in [0, 1], t = 0 at the Apex, t = 1 in the base plane) AND the
+    // ray from the Apex through the query meets the base plane inside the base
+    // ring. Boundary inclusive on t.
+    Contains(y: Pyramid3D, point: Point3D): Boolean
+    {
+        var normal = y.Base.Points.VectorArea.Normalize;
+        var origin = y.Base.Points.First;
+        var t = 1.0 - origin.Between(point).Dot(normal)
+            / origin.Between(y.Apex).Dot(normal);
+        return t >= 0.0 && t <= 1.0
+            && (t <= 0.0 || y.Base.Points.PlanarPolygonContains(normal,
+                y.Apex + y.Apex.Between(point) * (1.0 / t)));
+    }
 }

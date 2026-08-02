@@ -5,7 +5,7 @@
 // (`functional.concepts.plato`): batch evaluation, bijection round trips, and
 // the accessors over a preferred parameter domain
 // (https://en.wikipedia.org/wiki/Domain_of_a_function). Shared provenance note:
-// `collections-indexable.library.plato`.
+// `collections.library.plato`.
 
 library FunctionalProcedural
 {
@@ -42,7 +42,7 @@ library FunctionalProcedural
     // period type, and Plato was said to have no type-parameter constraint
     // syntax). The premise was false — concept `where` clauses are live and used
     // (IntervalLike / BoundsLike in intervals-bounds.concepts.plato, MetricSpace
-    // in algebra-metric.concepts.plato). Periodic<TPeriod> now carries
+    // in algebra.concepts.plato). Periodic<TPeriod> now carries
     // `where TPeriod: Additive, TPeriod: Modular`, and WrapPhase below is derived
     // from that bound. The one implementor path
     // (PeriodicCurve<TRange> inherits Periodic<Number>) satisfies it: Number
@@ -55,7 +55,7 @@ library FunctionalProcedural
     // and Procedural, and a library function cannot state a two-concept bound —
     // MethodDeclaration takes no type parameters at all, so a constraint can only
     // sit on a concept declaration. PeriodicCurve is the concept that has both, and
-    // EvalWrapped lives there (curves-capabilities.library.plato).
+    // EvalWrapped lives there (curves.library.plato).
     //
     // NormalizedPhase is likewise not derivable generically: dividing a TPeriod by
     // a TPeriod to get a Number needs a division Modular does not supply.

@@ -1,0 +1,301 @@
+//==
+// # Sampling
+//
+// Sections, in order:
+//  - Sampled curves and surfaces
+//  - Sampled fields on grids
+//  - Regular grids
+//  - Sample patterns
+//  - Interpolation and resampling
+
+//==
+// # Sampled curves and surfaces
+//
+// Curves and surfaces recorded at discrete parameters rather than evaluated
+// analytically: the discretized counterparts of the parametric forms, carrying
+// their sample parameters so the original parameterization survives.
+
+// A planar curve recorded at discrete parameters: Parameters and Points have
+// equal length and Parameters ascend. Evaluation between samples
+// interpolates linearly.
+type SampledCurve2D
+    implements Value, Deformable2D
+{
+    Parameters: Array<Number>;
+    Points: Array<Point2D>;
+}
+
+// A spatial curve recorded at discrete parameters: Parameters and Points have
+// equal length and Parameters ascend. Evaluation between samples
+// interpolates linearly.
+type SampledCurve3D
+    implements Value, Deformable3D
+{
+    Parameters: Array<Number>;
+    Points: Array<Point3D>;
+}
+
+// A surface recorded as a lattice of positions: Points holds one 3D position
+// per (column, row) sample of the UV domain, with columns spanning U and
+// rows spanning V uniformly across UvDomain.
+type SampledSurfaceGrid
+    implements Value, Deformable3D
+{
+    UvDomain: Bounds2D;
+    Points: Array2D<Point3D>;
+}
+
+//==
+// # Sampled fields on grids
+//
+// Field values stored one per grid node (lattice point), so each Values
+// extent equals the grid's cell count plus one along that axis. Evaluation
+// between nodes interpolates; outside the bounds, values clamp to the edge
+// unless a resampling descriptor says otherwise.
+
+// A planar scalar field stored on grid nodes; evaluation interpolates
+// bilinearly. Backs heightmaps, masks, and discretized potentials.
+type SampledScalarGrid2D
+    implements Value, ScalarField2D
+{
+    Grid: RegularGrid2D;
+    Values: Array2D<Number>;
+}
+
+// A spatial scalar field stored on grid nodes; evaluation interpolates
+// trilinearly. Backs voxel densities and simulation quantities.
+type SampledScalarGrid3D
+    implements Value, ScalarField3D
+{
+    Grid: RegularGrid3D;
+    Values: Array3D<Number>;
+}
+
+// A planar vector field stored on grid nodes; evaluation interpolates each
+// component bilinearly. Backs 2D flow fields and displacement maps.
+type SampledVectorGrid2D
+    implements Value, VectorField2D
+{
+    Grid: RegularGrid2D;
+    Values: Array2D<Vector2D>;
+}
+
+// A spatial vector field stored on grid nodes; evaluation interpolates each
+// component trilinearly. Backs velocity volumes and deformation lattices.
+type SampledVectorGrid3D
+    implements Value, VectorField3D
+{
+    Grid: RegularGrid3D;
+    Values: Array3D<Vector3D>;
+}
+
+// A planar color field stored on grid nodes; evaluation interpolates each
+// channel bilinearly. An image with explicit world-space placement.
+type SampledColorGrid2D
+    implements Value, ColorField2D
+{
+    Grid: RegularGrid2D;
+    Values: Array2D<Color>;
+}
+
+//==
+// # Regular grids
+//
+// Regular lattices over bounded regions: the axis-aligned cell decomposition
+// that the discretized field and resampling descriptors of the other sections
+// are defined against. Sampling
+// metadata stays explicit so arrays of values retain their spatial meaning.
+
+// A regular lattice of axis-aligned cells filling a planar bounding region.
+// CellCounts gives the number of cells per axis; node counts are one greater
+// per axis. Cell (0, 0) touches the minimum corner of Bounds
+// (https://en.wikipedia.org/wiki/Regular_grid).
+type RegularGrid2D
+    implements Value
+{
+    Bounds: Bounds2D;
+    CellCounts: IntegerVector2;
+}
+
+// A regular lattice of axis-aligned cells filling a spatial bounding region.
+// CellCounts gives the number of cells per axis; node counts are one greater
+// per axis. Cell (0, 0, 0) touches the minimum corner of Bounds
+// (https://en.wikipedia.org/wiki/Regular_grid).
+type RegularGrid3D
+    implements Value
+{
+    Bounds: Bounds3D;
+    CellCounts: IntegerVector3;
+}
+
+// One cell of a planar regular grid: its integer coordinates within the grid
+// and its axis-aligned bounds in world space.
+type GridCell2D
+    implements Value
+{
+    CellIndex: IntegerVector2;
+    Bounds: Bounds2D;
+}
+
+// One cell of a spatial regular grid: its integer coordinates within the grid
+// and its axis-aligned bounds in world space.
+type GridCell3D
+    implements Value
+{
+    CellIndex: IntegerVector3;
+    Bounds: Bounds3D;
+}
+
+//==
+// # Sample patterns
+//
+// Parameter records describing how to scatter points over a planar region.
+// Generation is deterministic for a given record, including its Seed.
+
+// The scattering strategy of a planar sample pattern.
+type SamplePattern
+    = RegularGrid
+    | JitteredGrid
+    | Stratified
+    | PoissonDisk
+    | Halton
+    | Hammersley
+    | Sobol
+    | BlueNoise;
+
+// Poisson-disk scattering: random points where no two are closer than
+// MinimumDistance. MaxAttempts bounds the candidates tried per point
+// (typically 30). Produces even, organic distributions.
+type PoissonDiskPattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    MinimumDistance: Number;
+    MaxAttempts: Integer;
+    Seed: Integer;
+}
+
+// Jittered-grid scattering: one point per grid cell, displaced from the cell
+// center by JitterAmount in [0, 1] (0 = regular grid, 1 = anywhere in the
+// cell).
+type JitteredGridPattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    CellCounts: IntegerVector2;
+    JitterAmount: Number;
+    Seed: Integer;
+}
+
+// Stratified scattering: the region is divided into StrataCounts strata and
+// SamplesPerStratum points are placed uniformly at random within each,
+// bounding the variance of Monte Carlo estimates
+// (https://en.wikipedia.org/wiki/Stratified_sampling).
+type StratifiedPattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    StrataCounts: IntegerVector2;
+    SamplesPerStratum: Integer;
+    Seed: Integer;
+}
+
+// Halton low-discrepancy scattering: Count quasi-random points from radical
+// inverses in bases BaseX and BaseY, which must be coprime (typically 2
+// and 3). Deterministic and progressive: prefixes are well distributed
+// (https://en.wikipedia.org/wiki/Halton_sequence).
+type HaltonPattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    Count: Integer;
+    BaseX: Integer;
+    BaseY: Integer;
+}
+
+// Hammersley low-discrepancy scattering: point i has first coordinate i/Count
+// and second the radical inverse of i in Base (typically 2). Requires Count
+// to be fixed in advance; even better distributed than Halton
+// (https://en.wikipedia.org/wiki/Low-discrepancy_sequence).
+type HammersleyPattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    Count: Integer;
+    Base: Integer;
+}
+
+// Sobol low-discrepancy scattering: Count points of the 2D Sobol sequence,
+// skipping the first SkipCount elements (commonly to drop the origin)
+// (https://en.wikipedia.org/wiki/Sobol_sequence).
+type SobolPattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    Count: Integer;
+    SkipCount: Integer;
+}
+
+// Blue-noise scattering: Count points iteratively relaxed toward an even,
+// isotropic distribution with energy concentrated in high frequencies.
+// Ideal for stippling, dithering, and sample-position tables
+// (https://en.wikipedia.org/wiki/Colors_of_noise).
+type BlueNoisePattern2D
+    implements Value
+{
+    Region: Bounds2D;
+    Count: Integer;
+    Seed: Integer;
+}
+
+//==
+// # Interpolation and resampling
+//
+// How values between grid samples are reconstructed, how coordinates outside
+// a grid are treated, and the descriptors for transferring values from one
+// regular grid onto another.
+
+// How values between grid samples are reconstructed
+// (https://en.wikipedia.org/wiki/Multivariate_interpolation).
+type InterpolationScheme
+    = Nearest
+    | Linear
+    | Bilinear
+    | Bicubic
+    | Trilinear
+    | Tricubic
+    | CatmullRom
+    | CubicBSpline;
+
+// How a sampled grid treats coordinates outside its bounds: clamp to the
+// edge value, tile, reflect, or read zero.
+type GridBoundary = ClampToEdge | Wrap | Mirror | ZeroOutside;
+
+// A reconstruction policy for sampled grids: which interpolation scheme to
+// use between nodes and how to treat out-of-bounds coordinates.
+type GridSamplingScheme
+    implements Value
+{
+    Interpolation: InterpolationScheme;
+    Boundary: GridBoundary;
+}
+
+// A planar resampling operation: values defined on Source are transferred
+// onto the nodes of Target using the given sampling scheme.
+type GridResampling2D
+    implements Value
+{
+    Source: RegularGrid2D;
+    Target: RegularGrid2D;
+    Scheme: GridSamplingScheme;
+}
+
+// A spatial resampling operation: values defined on Source are transferred
+// onto the nodes of Target using the given sampling scheme.
+type GridResampling3D
+    implements Value
+{
+    Source: RegularGrid3D;
+    Target: RegularGrid3D;
+    Scheme: GridSamplingScheme;
+}

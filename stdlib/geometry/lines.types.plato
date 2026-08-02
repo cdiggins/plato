@@ -1,12 +1,19 @@
 //==
+// # Lines
+//
+// Sections, in order:
+//  - Line segments, infinite lines, and rays
+//  - Planes, half-spaces, and slabs
+
+//==
 // # Line segments, infinite lines, and rays
 //
 // The one-dimensional flat (affine) primitives. Extent distinguishes them: a
 // segment (https://en.wikipedia.org/wiki/Line_segment) is bounded by two endpoints,
 // a ray (https://en.wikipedia.org/wiki/Ray_(geometry)) extends one way from its
 // origin, and a line (https://en.wikipedia.org/wiki/Line_(geometry)) extends both
-// ways. The two-dimensional flats and the regions they bound are in
-// `lines-planes.types.plato`.
+// ways. The two-dimensional flats and the regions they bound follow in the
+// next section.
 
 //==
 // # Segments
@@ -78,4 +85,93 @@ type LineEquation2D
     A: Number;
     B: Number;
     C: Number;
+}
+
+//==
+// # Planes, half-spaces, and slabs
+//
+// The two-dimensional flat (https://en.wikipedia.org/wiki/Plane_(geometry)) and the
+// regions it bounds: the half-plane and half-space on and behind a boundary flat,
+// the slab between two parallel flats, and the record a plane-intersection query
+// returns.
+
+//==
+// # Planes and half-spaces
+
+// An infinite plane in Hesse normal form: the points p with Dot(Normal, p)
+// equal to Distance. Distance is the signed distance from the world origin to
+// the plane along Normal. (https://en.wikipedia.org/wiki/Hesse_normal_form)
+type Plane
+    implements Geometry3D, Connected, Manifold, Orientable, NearestPoint3D
+{
+    // The plane's UNIT normal (unit by Direction3D's own invariant); it points into
+    // the plane's front / positive half-space.
+    Normal: Direction3D;
+
+    // The SIGNED distance from the WORLD ORIGIN to the plane, measured along Normal
+    // (the Hesse form's d) -- NOT the distance from an arbitrary reference point,
+    // and easy to misread as a generic offset. Because Normal is a unit vector this
+    // is a true length in the coordinate frame's own units, and the signed distance
+    // of any point p is SignedDistance(plane, p) = Dot(Normal, p) - Distance.
+    Distance: Number;
+}
+
+// The closed 3D region on and behind a boundary plane: the points p with
+// Dot(Normal, p) <= Distance (https://en.wikipedia.org/wiki/Half-space_(geometry)).
+// The boundary's normal points out of the half-space.
+type HalfSpace
+    implements Geometry3D, ConvexShape, Connected, ContainsPoint3D, NearestPoint3D
+{
+    Boundary: Plane;
+}
+
+// The closed 2D region on and behind a boundary line in Hesse normal form: the
+// points p with Dot(Normal, p) <= Distance
+// (https://en.wikipedia.org/wiki/Half-plane). Normal points out of the half-plane.
+type HalfPlane2D
+    implements Geometry2D, ConvexShape, Connected, ContainsPoint2D, NearestPoint2D
+{
+    Normal: Direction2D;
+    Distance: Number;
+}
+
+//==
+// # Slabs
+
+// The closed 2D region between two parallel lines: the points p whose signed
+// distance Dot(Normal, p) lies within Interval. Interval runs from the lower to
+// the upper signed distance.
+type Slab2D
+    implements Geometry2D, ConvexShape, Connected, ContainsPoint2D
+{
+    Normal: Direction2D;
+    Interval: NumberInterval;
+}
+
+// The closed 3D region between two parallel planes: the points p whose signed
+// distance Dot(Normal, p) lies within Interval. The workhorse of separating-axis
+// and ray-box tests.
+type Slab3D
+    implements Geometry3D, ConvexShape, Connected, ContainsPoint3D
+{
+    Normal: Direction3D;
+    Interval: NumberInterval;
+}
+
+//==
+// # Query results
+
+// The outcome of intersecting a line, ray, or segment with a Plane. Hit is the
+// validity flag (CONVENTIONS.md - partial operations: a concrete result record
+// with a validity field, never a generic Optional): when Hit is true, Point is
+// the crossing point and Parameter its parameter along the queried primitive;
+// when Hit is false (the primitive is parallel to the plane, including the
+// coincident case, or crosses outside a ray's or segment's extent) Point and
+// Parameter are the queried primitive's own origin and 0 and carry no meaning.
+type PlaneHit3D
+    implements Value
+{
+    Hit: Boolean;
+    Point: Point3D;
+    Parameter: Number;
 }

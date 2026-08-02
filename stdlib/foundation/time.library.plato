@@ -4,9 +4,9 @@
 // Affine Instant / Duration operations for the types of `time.types.plato`.
 // Instants are positions on a time line; Durations are differences between
 // them — deliberately distinct from Number (same discipline as Size2D vs
-// Vector2D in `intervals-sizes.types.plato`). Duration already discharges its
+// Vector2D in `intervals.types.plato`). Duration already discharges its
 // Quantity obligations via `quantities.library.plato` / Amount-FromAmount in
-// `quantities-projections.library.plato`; this file adds Instant Difference
+// `quantities.library.plato`; this file adds Instant Difference
 // and Comparable fills, plus the Duration↔Number and Duration/Duration
 // operators that Quantity alone does not cover.
 
@@ -18,7 +18,7 @@ library Time
     // two names: seconds since the epoch, and a span of seconds.
     //
     // Add, Between, Subtract (both spellings) and Lerp are all derived over the
-    // Difference and OriginBased concepts in algebra-metric.library.plato. Between keeps the
+    // Difference and OriginBased concepts in algebra.library.plato. Between keeps the
     // b - a orientation, matching the point types. Instant gains interpolation
     // and an Origin (the epoch, now nameable) it never had. The commuted
     // Add(Duration, Instant) stays concrete: library dispatch is on the first

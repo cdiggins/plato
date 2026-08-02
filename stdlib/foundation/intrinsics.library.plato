@@ -38,7 +38,7 @@ library Intrinsics
     // Number — the irreducible scalar kernel.
     //
     // Everything derivable from these has a reference body in
-    // `primitives-number.library.plato`: Abs, Sign, Square, Reciprocal, Min,
+    // `primitives.library.plato`: Abs, Sign, Square, Reciprocal, Min,
     // Max, Ceiling, Truncate, Cbrt, Log/Log2/Log10, the Tan/Cosh/Sinh/Tanh
     // family, the whole inverse-trig family (over Atan2Radians and NaturalLog),
     // Zero/One/Tau/E, IsFinite, and the five relational operators the Orderable
@@ -54,7 +54,7 @@ library Intrinsics
     // The total order and structural equality. LessThanOrEquals is the single
     // Orderable primitive; LessThan / GreaterThan / GreaterThanOrEquals /
     // Compare / Clamp / Lesser / Greater all derive from it in
-    // `core-comparison.library.plato`, and NotEquals from Equals.
+    // `core.library.plato`, and NotEquals from Equals.
     LessThanOrEquals(a: Number, b: Number): Boolean;
     Equals(a: Number, b: Number): Boolean;
 
@@ -77,7 +77,7 @@ library Intrinsics
     FusedMultiplyAdd(self: Number, y: Number, z: Number): Number;
 
     // Trigonometric kernel over radians-as-Number. The public trig surface lives
-    // on Angle (angle-trig.library.plato) with plain Plato bodies delegating
+    // on Angle (angles.library.plato) with plain Plato bodies delegating
     // here. Sin, Cos and the two-argument arctangent are the whole kernel:
     // Tan/Cosh/Sinh/Tanh and the six inverse forms derive from these plus Exp
     // and NaturalLog.
@@ -101,7 +101,7 @@ library Intrinsics
     //==
     // Integer
     //
-    // Derived in `primitives-integer.library.plato`: Abs, Sign, Min, Max,
+    // Derived in `primitives.library.plato`: Abs, Sign, Min, Max,
     // Zero, One, Range, and the relational family.
 
     Add(a: Integer, b: Integer): Integer;
@@ -155,7 +155,7 @@ library Intrinsics
     // `Count` and `At` observe; `MapRange` is the ONLY constructor; `Reduce` is
     // the only sequential fold; `FlatMap` the only length-varying producer.
     // Every other array function in the previous contract is a reindexing of
-    // MapRange, with a reference body in `primitives-arrays.library.plato`.
+    // MapRange, with a reference body in `primitives.library.plato`.
     //
     // Reduce and FlatMap cannot follow: a Plato body is a pure expression with
     // no loop and no recursion contract (GLSL forbids recursion outright).
@@ -223,9 +223,9 @@ library Intrinsics
 
 // Notes — intrinsics deliberately omitted from this file:
 // - Array2D / Array3D (the whole former section, plus MakeArray2D): they now carry
-//   an honest layout in `primitives-arrays.types.plato` (Elements + ColumnCount +
+//   an honest layout in `primitives.types.plato` (Elements + ColumnCount +
 //   RowCount [+ LayerCount]), so construction and traversal are ordinary Plato
-//   bodies in `primitives-arrays.library.plato`. This retires the documented
+//   bodies in `primitives.library.plato`. This retires the documented
 //   exception to the primitive-only rule.
 // - Everything on Angle, Number2/3/4/8, Vector2D/3D, Matrix3x2/4x4 and Quaternion:
 //   migrated to Plato reference bodies (angle-trig, vectors-tuples-ops,
@@ -244,4 +244,4 @@ library Intrinsics
 // - Shift/Stride/WithNext/MapIndices/PrependAndAppend: niche array forms; the
 //   surviving kernel plus the derived family in primitives-arrays covers them.
 // - Rest/Reverse/Indices: derived functions over MapRange and Count, not
-//   intrinsics; they live in `primitives-arrays.library.plato`.
+//   intrinsics; they live in `primitives.library.plato`.

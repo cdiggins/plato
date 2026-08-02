@@ -1,11 +1,19 @@
 //==
 // # Uncertainty
 //
+// Sections, in order:
+//  - Uncertainty
+//  - Uncertain geometry and estimation
+//  - Measurements, calibration, and sampled ensembles
+
+//==
+// # Uncertainty
+//
 // Scalar values that carry uncertainty without losing their nominal reading:
 // measurement uncertainty, confidence intervals, engineering tolerances, and
 // fuzzy numbers. Standard uncertainties are one standard deviation (1-sigma)
 // unless a coverage factor says otherwise. Uncertain geometry, state
-// estimation, and error propagation live in `uncertainty-estimation.types.plato`.
+// estimation, and error propagation follow in the sections below.
 
 // A measured or estimated number with its standard (1-sigma) uncertainty,
 // in the same implicit unit as the value.
@@ -108,4 +116,184 @@ type TrapezoidalFuzzyNumber
     B: Number;
     C: Number;
     D: Number;
+}
+
+//==
+// # Uncertain geometry and estimation
+//
+// Geometric values carrying Gaussian uncertainty as a covariance, the state
+// and model records of a linear Kalman filter, and the choice of how
+// uncertainty is carried through a computation. Covariance orders match the
+// value they describe; the scalar uncertainty types are the section above.
+
+//==
+// # Uncertain geometry
+
+// A 2D vector with a 2x2 covariance of its components.
+type UncertainVector2D
+    implements Value
+{
+    Value: Vector2D;
+    Covariance: Covariance2D;
+}
+
+// A 3D vector with a 3x3 covariance of its components.
+type UncertainVector3D
+    implements Value
+{
+    Value: Vector3D;
+    Covariance: Covariance3D;
+}
+
+// A 2D position with a 2x2 covariance of its coordinates.
+type UncertainPoint2D
+    implements Value
+{
+    Value: Point2D;
+    Covariance: Covariance2D;
+}
+
+// A 3D position with a 3x3 covariance of its coordinates.
+type UncertainPoint3D
+    implements Value
+{
+    Value: Point3D;
+    Covariance: Covariance3D;
+}
+
+//==
+// # State estimation
+
+// A Kalman estimate: the state mean vector and its covariance matrix, whose
+// order matches the state length.
+// (https://en.wikipedia.org/wiki/Kalman_filter)
+type KalmanState
+    implements Value
+{
+    State: Array<Number>;
+    Covariance: MatrixN;
+}
+
+// The model matrices of a linear Kalman filter: state Transition (F),
+// Observation (H), ProcessNoise covariance (Q), and ObservationNoise
+// covariance (R).
+type KalmanFilterParameters
+    implements Value
+{
+    Transition: MatrixN;
+    Observation: MatrixN;
+    ProcessNoise: MatrixN;
+    ObservationNoise: MatrixN;
+}
+
+//==
+// # Error propagation
+
+// How uncertainty is propagated through a computation: first-order Taylor
+// (Linear), sampled with the given count and deterministic seed
+// (MonteCarlo), or sigma points (Unscented).
+// (https://en.wikipedia.org/wiki/Propagation_of_uncertainty)
+type ErrorPropagation
+    = Linear
+    | MonteCarlo(SampleCount: Integer, Seed: Integer)
+    | Unscented;
+
+//==
+// # Measurements, calibration, and sampled ensembles
+//
+// Where an uncertain value came from: an instrument reading with its
+// provenance, the calibration model that turns raw instrument output into a
+// quantity, and the sample ensembles a Monte-Carlo propagation produces. The
+// uncertainty records and the covariance-carrying geometric values live in the
+// sections above;
+// these types say who measured a value, when, and how well.
+
+//==
+// # Measurements
+
+// One reading of any measurable value, with its provenance: when it was taken,
+// what produced it, and a Quality in [0, 1] rating the reading's own
+// trustworthiness (sensor confidence, fit score, signal strength) — which is a
+// different thing from the value's uncertainty. Carry T as an UncertainNumber
+// or an UncertainQuantity when the reading has a known uncertainty.
+// (https://en.wikipedia.org/wiki/Measurement)
+type Measurement<T>
+{
+    Value: T;
+    Timestamp: Instant;
+    Source: String;
+    Quality: Probability;
+}
+
+// A time-ordered run of readings of the same value from the same source:
+// a sensor log, a repeated observation, an instrument sweep. Measurements are
+// ordered by Timestamp, ascending.
+type MeasurementSeries<T>
+{
+    Measurements: Array<Measurement<T>>;
+}
+
+//==
+// # Calibration
+
+// One fitted coefficient of a calibration model: its name, its value with the
+// uncertainty the fit assigned it, and the unit that value is expressed in.
+type CalibrationParameter
+    implements Value
+{
+    Name: String;
+    Value: UncertainNumber;
+    Unit: UnitOfMeasure;
+}
+
+// The fitted model that converts an instrument's raw output into a physical
+// quantity: the named parameter set plus the instant the calibration was
+// performed, which is what dates a measurement's traceability.
+// (https://en.wikipedia.org/wiki/Calibration)
+type CalibrationModel
+    implements Value
+{
+    Name: String;
+    Parameters: Array<CalibrationParameter>;
+    PerformedAt: Instant;
+}
+
+//==
+// # Sampled ensembles
+//
+// The sampled counterpart of an analytic uncertainty: rather than propagating
+// a covariance, propagate many draws and read the statistics off the result.
+// The Linear and Unscented alternatives are the ErrorPropagation cases above.
+
+// One draw of a Monte-Carlo propagation: the sampled value and the importance
+// weight it carries. Weights are non-negative; a plain unweighted draw uses 1.
+// (https://en.wikipedia.org/wiki/Monte_Carlo_method)
+type MonteCarloSample<T>
+{
+    Value: T;
+    Weight: Number;
+}
+
+// A weighted collection of draws standing in for one uncertain value. The
+// ensemble mean and spread are the sampled estimate of that value's nominal
+// reading and its uncertainty.
+// (https://en.wikipedia.org/wiki/Ensemble_(mathematical_physics))
+type Ensemble<T>
+{
+    Samples: Array<MonteCarloSample<T>>;
+}
+
+//==
+// # Uncertain pose
+
+// A rigid placement with the 6x6 covariance of its own error, ordered
+// translation before rotation. The state a scanner, tracker, or SLAM front end
+// actually reports: a pose is never known exactly, and the covariance is what
+// downstream registration needs in order to weight it.
+// (https://en.wikipedia.org/wiki/Pose_(computer_vision))
+type UncertainPose3D
+    implements Value
+{
+    Value: Pose3D;
+    Covariance: MatrixN;
 }

@@ -5,7 +5,7 @@
 // conversions out to the geometric vocabulary (Vector, Direction, Number tuple,
 // Point) and the little axis algebra around them (Ordinal, Component, the
 // tangent/perpendicular cycles, Sign, Opposite) live in `axes.library.plato`,
-// `axes-2d.library.plato`, and `axes-signed.library.plato`. They are the typed
+// `axes.library.plato`, and `axes.library.plato`. They are the typed
 // replacement for the `Integer` axis selector that CONVENTIONS.md used to
 // sanction — kd-tree split axes, `UpAxis` / `ForwardAxis` fields, and
 // longest-extent queries become non-mixable typed values instead of a bare

@@ -1,6 +1,13 @@
 //==
 // # Higher dimensions
 //
+// Sections, in order:
+//  - Higher dimensions
+//  - Escape-time fractal parameters
+
+//==
+// # Higher dimensions
+//
 // Dimension-generic (N-dimensional) structures over PointN/VectorN: spheres,
 // hyperplanes, simplices, and affine subspaces. The arity of the stored points
 // and vectors sets the dimension. All distances are unit-agnostic world units.
@@ -43,4 +50,47 @@ type SubspaceN
 {
     Origin: PointN;
     BasisVectors: Array<VectorN>;
+}
+
+//==
+// # Escape-time fractal parameters
+//
+// The parameter records of escape-time fractals in the 2D and 4D number
+// systems: quadratic Julia sets and Mandelbrot views in the complex plane, and
+// their quaternion counterpart. Iteration caps are dimensionless counts;
+// escape radii are in the units of the number system being iterated.
+
+// Parameters of a quadratic Julia set in the complex plane: z maps to
+// z^2 + C. Iteration stops at MaxIterations or when the magnitude of z
+// exceeds EscapeRadius (complex-plane units, at least 2).
+// (https://en.wikipedia.org/wiki/Julia_set)
+type JuliaSetParameters
+    implements Value
+{
+    C: Complex;
+    MaxIterations: Integer;
+    EscapeRadius: Number;
+}
+
+// A view into the Mandelbrot set: the complex-plane center, a dimensionless
+// magnification (1 shows roughly the classic 4-unit-wide view; larger values
+// show proportionally smaller regions), and the iteration cap.
+// (https://en.wikipedia.org/wiki/Mandelbrot_set)
+type MandelbrotView
+    implements Value
+{
+    Center: Complex;
+    Zoom: Number;
+    MaxIterations: Integer;
+}
+
+// Parameters of a quaternion Julia set (a 4D fractal usually displayed as a
+// 3D slice): q maps to q^2 + C. Iteration stops at MaxIterations or when the
+// magnitude of q exceeds EscapeRadius (quaternion-space units).
+type QuaternionJuliaParameters
+    implements Value
+{
+    C: Quaternion;
+    MaxIterations: Integer;
+    EscapeRadius: Number;
 }

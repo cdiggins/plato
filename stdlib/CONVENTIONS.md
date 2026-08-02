@@ -42,9 +42,8 @@ This is the **same layout and multiplication model as `System.Numerics.Matrix4x4
 treat Plato `Matrix4x4` as Numerics-compatible, not as a column-major/OpenGL
 `M v` textbook matrix.
 *Owners:* `matrices.types.plato` (Matrix2x2..4x4, Matrix3x2, Matrix4x3, MatrixN);
-the transform representations in `transforms-trs.types.plato` /
-`transforms-affine.types.plato` / `transforms-frames.types.plato` and their bodies in the
-`transforms-*.library.plato` files.
+the transform representations in `transforms.types.plato` and their bodies in
+`transforms.library.plato`.
 
 ## World space — Z-up, right-handed
 
@@ -63,9 +62,9 @@ outward normal follows the right-hand rule over the CCW vertex order.
 authority for this winding choice; Plato matches Studio. A mirroring transform
 (negative determinant) inverts winding — the usual source of "suddenly inverted"
 meshes after a mirror; re-orient on import rather than carrying a per-mesh flag.
-*Owners:* `topology-classification.types.plato` (WindingOrder), `meshes.types.plato` (face
-normals), `planar-triangles.types.plato` (Triangle2D: CCW positive area) /
-`spatial-patches.types.plato` (Triangle3D: right-hand normal).
+*Owners:* `topology.types.plato` (WindingOrder), `meshes.types.plato` (face
+normals), `planar.types.plato` (Triangle2D: CCW positive area) /
+`spatial-primitives.types.plato` (Triangle3D: right-hand normal).
 
 ## Typed indices — `-1` means "none"
 
@@ -75,26 +74,26 @@ A cross-array reference is a typed index (implements `Index`, single
 position. For multi-references, an **empty array** is the corresponding "none".
 CSR/offset arrays, counts, and bitmasks are plain `Integer` and are *not*
 governed by this rule. (The CSR packing itself is the `Jagged` concept in
-`collections-jagged.concepts.plato`, which states that invariant once.) **Axis selectors are no longer plain `Integer`**: a
+`collections.concepts.plato`, which states that invariant once.) **Axis selectors are no longer plain `Integer`**: a
 cardinal-axis choice is the typed `Axis3D` / `Axis2D` / `SignedAxis3D` sum
 (`axes.types.plato`), whose `Ordinal` recovers the `Integer` component index when one
 is genuinely needed — kd-tree split axes, `UpAxis` / `ForwardAxis` fields, and
 longest-extent queries take an axis type, not a bare `0`/`1`/`2`.
-*Owners:* `Index` concept (`collections-indexable.concepts.plato`); every typed
-index type (`topology-indices.types.plato` VertexIndex/UndirectedEdgeIndex/..., domain files);
+*Owners:* `Index` concept (`collections.concepts.plato`); every typed
+index type (`topology.types.plato` VertexIndex/UndirectedEdgeIndex/..., domain files);
 `ItemIndex` (`numbers.types.plato`); axis selectors (`axes.types.plato`
 Axis3D/Axis2D/SignedAxis3D).
 
 ## Angles — `Angle`-typed, radians-canonical
 
 An angle is always the `Angle` type, **never a raw `Number`**. `Angle` stores
-**radians** (`quantities-geometric.types.plato`); radians is the storage unit, not the
+**radians** (`quantities.types.plato`); radians is the storage unit, not the
 interchange type. Build angles through the unit constructors
 `n.Degrees` / `n.Turns` / `n.Gradians` / `n.ArcMinutes` / `n.ArcSeconds`
 (`angles.library.plato`); the raw path is the radians cast `Angle(x)`
-(`angle-trig.library.plato`). Read them back with the matching accessors
+(`angles.library.plato`). Read them back with the matching accessors
 (`a.Degrees`, `a.Turns`, ...).
-*Owners:* `Angle` (`quantities-geometric.types.plato`), `angles.library.plato`.
+*Owners:* `Angle` (`quantities.types.plato`), `angles.library.plato`.
 
 ### Canonical angle interval
 
@@ -113,7 +112,7 @@ encoded by inversion: `Start > End` for a `NumberInterval`, or `Min` component-
 wise greater than `Max` for `Bounds`. An empty region contains no points and is
 the identity for `Union` — this is what makes "grow from empty" correct.
 *Owners:* `intervals.types.plato` (NumberInterval, AngleInterval, LengthInterval,
-IntegerInterval), `intervals-bounds.types.plato` (Bounds2D/3D, IntegerBounds2D/3D,
+IntegerInterval), `intervals.types.plato` (Bounds2D/3D, IntegerBounds2D/3D,
 Rect2D); concept in `intervals-bounds.concepts.plato` (IntervalLike, BoundsLike).
 
 ## Color — linear-light, straight alpha
@@ -146,24 +145,24 @@ The texture-coordinate origin `(u, v) = (0, 0)` is at the **top-left**; `U`
 increases to the right and `V` increases **downward**, over the unit square
 `[0,1] x [0,1]`. This matches the default image storage (`images.types.plato`:
 row-major from the top-left pixel, `ImageOrigin.TopLeft`) and the `UvChart`
-mapping (`mesh-attributes.types.plato`: `Bounds2D` with `X = U, Y = V`). The
+mapping (`meshes.types.plato`: `Bounds2D` with `X = U, Y = V`). The
 OpenGL-style bottom-left origin is opt-in via `ImageOrigin.BottomLeft`.
 Top-left is chosen because the existing images / mesh-attributes / texturing
 files already imply it.
-*Owners:* `points-parametric.types.plato` (UvCoordinate, UvwCoordinate); cited from
-`mesh-attributes.types.plato`, `images.types.plato`, `texturing.types.plato`.
+*Owners:* `points.types.plato` (UvCoordinate, UvwCoordinate); cited from
+`meshes.types.plato`, `images.types.plato`, `texturing.types.plato`.
 
 ## Floating-point comparison — one epsilon policy
 
 Numerical near-equality uses a single record, **`ComparisonTolerance`**
 (`numbers.types.plato`) with `{ Absolute: Number, Relative: Number }`. The test is
 `|x - y| <= Absolute + Relative * max(|x|, |y|)`. `AlmostEqual` overloads accept
-it (`algebra-numeric.library.plato`, beside the scalar-tolerance `AlmostEqual`;
-the component-wise vector lift is in `numeric-structures-algebra.library.plato`).
+it (`algebra.library.plato`, beside the scalar-tolerance `AlmostEqual`;
+the component-wise vector lift is in `numeric-structures.library.plato`).
 
 Engineering `Tolerance` (`uncertainty.types.plato`) is **explicitly NOT** this type:
 its `Plus` / `Minus` are asymmetric **acceptance allowances** about a `Nominal`
 manufacturing value, not comparison epsilons — do not stuff floating-point
 epsilons into it (and use `UncertainNumber` for 1-sigma uncertainties).
 *Owners:* `ComparisonTolerance` (`numbers.types.plato`), `AlmostEqual`
-(`algebra-numeric.library.plato`), `Tolerance` (`uncertainty.types.plato`).
+(`algebra.library.plato`), `Tolerance` (`uncertainty.types.plato`).

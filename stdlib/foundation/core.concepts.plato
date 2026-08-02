@@ -1,0 +1,87 @@
+//==
+// # Core
+//
+// Sections, in order:
+//  - Core comparison concepts
+//  - Core logic concepts
+
+//==
+// # Core comparison concepts
+//
+// Equality, hashing, and total order: the smallest, most widely shared
+// capabilities. Nearly every other concept in the library inherits from
+// something here.
+
+// Supports equality comparison. Equality is structural: two values are equal when
+// all their components are equal. (https://en.wikipedia.org/wiki/Equality_(mathematics))
+concept Equatable
+{
+    Equals(a: Self, b: Self): Boolean;
+    NotEquals(a: Self, b: Self): Boolean;
+}
+
+// An immutable value type: identity is determined entirely by content.
+// Values can be freely copied, shared, and compared.
+// (https://en.wikipedia.org/wiki/Value_type_and_reference_type)
+concept Value
+    inherits Equatable
+{ }
+
+// Can produce a stable integer digest of itself, consistent with equality.
+// (https://en.wikipedia.org/wiki/Hash_function)
+concept Hashable
+    inherits Equatable
+{
+    Hash(x: Self): Integer;
+}
+
+// Has a total order. LessThanOrEquals is reflexive, antisymmetric, and transitive.
+// (https://en.wikipedia.org/wiki/Total_order)
+concept Orderable
+    inherits Equatable
+{
+    LessThanOrEquals(a: Self, b: Self): Boolean;
+}
+
+// Orderable with a three-way comparison: negative when a < b, zero when equal,
+// positive when a > b. (https://en.wikipedia.org/wiki/Three-way_comparison)
+concept Comparable
+    inherits Orderable
+{
+    Compare(a: Self, b: Self): Integer;
+}
+
+//==
+// # Core logic concepts
+//
+// Truth-valued and bit-level algebra: the Boolean operations shared by truth
+// values, set-like types, and whole-number representations.
+
+// Supports the Boolean algebra of conjunction, disjunction, and negation.
+// Also models set-like union/intersection/complement.
+// (https://en.wikipedia.org/wiki/Boolean_algebra)
+concept Logical
+{
+    And(a: Self, b: Self): Self;
+    Or(a: Self, b: Self): Self;
+    Not(x: Self): Self;
+}
+
+// Logical extended with exclusive-or. (https://en.wikipedia.org/wiki/Exclusive_or)
+concept BooleanAlgebra
+    inherits Logical
+{
+    ExclusiveOr(a: Self, b: Self): Self;
+}
+
+// Supports bit-level operations. Applies to whole-number representations.
+// (https://en.wikipedia.org/wiki/Bitwise_operation)
+concept Bitwise
+{
+    BitwiseAnd(a: Self, b: Self): Self;
+    BitwiseOr(a: Self, b: Self): Self;
+    BitwiseXor(a: Self, b: Self): Self;
+    BitwiseNot(x: Self): Self;
+    ShiftLeft(x: Self, bits: Integer): Self;
+    ShiftRight(x: Self, bits: Integer): Self;
+}

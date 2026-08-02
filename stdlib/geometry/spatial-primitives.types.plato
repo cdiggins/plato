@@ -1,0 +1,265 @@
+//==
+// # Spatial primitives
+//
+// Sections, in order:
+//  - Oriented boxes
+//  - Cylinders, cones, and capsules
+//  - Flat patches in space
+//  - Simplices and polyhedral solids
+//  - Spheres and ellipsoids
+//  - Tori
+
+//==
+// # Oriented boxes
+//
+// The rectangular solids: the oriented box and its Minkowski-rounded form. Size
+// gives the FULL extents along the box's local axes, so every body halves them; a
+// solid denotes the filled region including its boundary surface.
+
+// An oriented solid box: Size gives the full extents along the box's local
+// axes, oriented by Orientation about Center. Axis-aligned when Orientation is
+// identity (prefer Bounds3D for that case). (https://en.wikipedia.org/wiki/Cuboid)
+type Box3D
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, NearestPoint3D, SupportMappable3D, ParametricSurface
+{
+    Center: Point3D;
+    Size: Size3D;
+    Orientation: Quaternion;
+}
+
+// A box with edges and corners rounded by CornerRadius: the Minkowski sum of a
+// shrunken box and a ball. CornerRadius is clamped to half the smallest extent.
+// (https://en.wikipedia.org/wiki/Minkowski_addition)
+type RoundedBox3D
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D
+{
+    Box: Box3D;
+    CornerRadius: Number;
+}
+
+//==
+// # Cylinders, cones, and capsules
+//
+// The solids swept along an axis or a segment: the right circular cylinder and its
+// hollow pipe form, the cone and the frustum that truncates it, and the capsule
+// traced by sweeping a ball along a segment. Axes are unit directions and heights
+// are FULL heights; a solid denotes the filled region including its boundary
+// surface.
+
+// A solid right circular cylinder with flat caps. Center is the midpoint of the
+// axis segment; the cylinder extends Height/2 each way along Axis.
+// (https://en.wikipedia.org/wiki/Cylinder)
+type Cylinder
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D, ParametricSurface
+{
+    Center: Point3D;
+    Axis: Direction3D;
+    Radius: Number;
+    Height: Number;
+}
+
+// The hollow region between two coaxial cylinders: a pipe / tube wall, closed
+// by two flat annular caps. Center is the midpoint of the axis segment and the
+// shell extends Height/2 each way along Axis.
+// Invariant: 0 <= InnerRadius <= OuterRadius.
+type CylindricalShell
+    implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, ParametricSurface
+{
+    Center: Point3D;
+    Axis: Direction3D;
+    Height: Number;
+    InnerRadius: Number;
+    OuterRadius: Number;
+}
+
+// A solid right circular cone. Axis points from Apex toward the base; the base
+// is the disk of Radius at Apex + Axis * Height, and closes the solid.
+// (https://en.wikipedia.org/wiki/Cone)
+type Cone
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D, ParametricSurface
+{
+    Apex: Point3D;
+    Axis: Direction3D;
+    Height: Number;
+    Radius: Number;
+}
+
+// A cone with its tip cut off by a plane parallel to the base: a solid bounded
+// by two parallel disks and the lateral surface. Center is the midpoint of the
+// axis segment; the bottom disk (BottomRadius) sits at -Height/2 along Axis,
+// the top disk (TopRadius) at +Height/2. (https://en.wikipedia.org/wiki/Frustum)
+type ConicalFrustum
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, ParametricSurface
+{
+    Center: Point3D;
+    Axis: Direction3D;
+    Height: Number;
+    BottomRadius: Number;
+    TopRadius: Number;
+}
+
+// All points within Radius of the segment from A to B: a cylinder with
+// hemispherical ends. The smooth, convex sweep of a ball along a segment.
+// (https://en.wikipedia.org/wiki/Capsule_(geometry))
+type Capsule3D
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, NearestPoint3D, SupportMappable3D, ParametricSurface
+{
+    A: Point3D;
+    B: Point3D;
+    Radius: Number;
+}
+
+//==
+// # Flat patches in space
+//
+// The two-dimensional patches embedded in 3D — a circular disk, a triangle, and a
+// quadrilateral. Unlike the solids they are NOT filled regions: their `Area` is the
+// patch's own area and their `Perimeter` its rim. The triangle's normal follows the
+// right-hand rule around its stored vertex order.
+// Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+
+// A flat circular patch: the points of the plane through Center with the given
+// Normal that lie within Radius of Center.
+// (https://en.wikipedia.org/wiki/Disk_(mathematics))
+type Disk3D
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, Manifold, Orientable, PlanarMeasurable, Bounded3D, Centroid3D, NearestPoint3D
+{
+    Center: Point3D;
+    Normal: Direction3D;
+    Radius: Number;
+}
+
+// Three vertices in space; the fundamental rendering and meshing primitive.
+// The normal follows the right-hand rule around A, B, C.
+// (https://en.wikipedia.org/wiki/Triangle)
+type Triangle3D
+    implements Geometry3D, ConvexShape, Connected, Manifold, Orientable, PlanarMeasurable, Bounded3D, PointSet3D, Centroid3D, NearestPoint3D, Deformable3D
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+}
+
+// Four vertices in order in space. Planar and convex in the ideal case;
+// otherwise interpreted as the bilinear patch over its corners.
+// (https://en.wikipedia.org/wiki/Bilinear_interpolation)
+type Quad3D
+    implements Geometry3D, Connected, Orientable, PlanarMeasurable, Bounded3D, PointSet3D, Centroid3D, Deformable3D
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    D: Point3D;
+}
+
+//==
+// # Simplices and polyhedral solids
+//
+// The flat-faced solids: the tetrahedron (the 3D simplex), the triangular prism
+// swept by a vector, and the convex region carved out by a set of bounding planes. A
+// solid denotes the filled region including its boundary surface.
+
+// The solid simplex spanned by four vertices. Signed volume is positive when
+// D lies on the positive side of triangle A, B, C.
+// (https://en.wikipedia.org/wiki/Tetrahedron)
+type Tetrahedron
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, PointSet3D, Centroid3D, ContainsPoint3D, Deformable3D
+{
+    A: Point3D;
+    B: Point3D;
+    C: Point3D;
+    D: Point3D;
+}
+
+// A triangular prism: the Base triangle swept by Offset. Offset need not be
+// perpendicular to the base (an oblique wedge).
+// NOT Deformable3D: the sweep VECTOR has no principled image under a point
+// mapping (see Prism3D in `polygons.types.plato`).
+// (https://en.wikipedia.org/wiki/Wedge_(geometry))
+type Wedge
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
+{
+    Base: Triangle3D;
+    Offset: Vector3D;
+}
+
+// The intersection of the half-spaces behind each plane (normals point
+// outward): a convex region. Bounded only when the planes enclose a finite
+// volume; a camera frustum is the canonical instance.
+// NOT Deformable3D: the region is carved by PLANES, not spanned by points; the
+// image of a plane under an arbitrary mapping is not a plane.
+// (https://en.wikipedia.org/wiki/Convex_polytope)
+type ConvexVolume
+    implements Geometry3D, ConvexShape, Connected, ContainsPoint3D
+{
+    Planes: Array<Plane>;
+}
+
+//==
+// # Spheres and ellipsoids
+//
+// The radially symmetric solids (https://en.wikipedia.org/wiki/Solid_geometry): the
+// ball, the hollow region between two concentric spheres, the cap cut from a ball by
+// a plane, and the ellipsoid that generalizes all three. A solid type denotes the
+// filled region INCLUDING its boundary surface; axes are unit directions.
+
+// The ball of all points within Radius of Center; its boundary is the sphere
+// proper. Radius is non-negative. (https://en.wikipedia.org/wiki/Sphere)
+type Sphere
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, NearestPoint3D, SupportMappable3D, ParametricSurface
+{
+    Center: Point3D;
+    Radius: Number;
+}
+
+// The hollow region between two concentric spheres.
+// Invariant: 0 <= InnerRadius <= OuterRadius.
+// (https://en.wikipedia.org/wiki/Spherical_shell)
+type SphericalShell
+    implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
+{
+    Center: Point3D;
+    InnerRadius: Number;
+    OuterRadius: Number;
+}
+
+// The solid cap cut from a ball: the points of Sphere within PolarAngle of the
+// Axis direction as seen from the center, closed by the cutting plane.
+// PolarAngle is in (0, pi]; pi gives the whole ball.
+// (https://en.wikipedia.org/wiki/Spherical_cap)
+type SphericalCap
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
+{
+    Sphere: Sphere;
+    Axis: Direction3D;
+    PolarAngle: Angle;
+}
+
+// A solid ellipsoid with semi-axis lengths SemiAxes along its local X, Y, and Z,
+// oriented by Orientation about Center. A sphere when all semi-axes are equal.
+// (https://en.wikipedia.org/wiki/Ellipsoid)
+type Ellipsoid
+    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D, ParametricSurface
+{
+    Center: Point3D;
+    SemiAxes: Number3;
+    Orientation: Quaternion;
+}
+
+//==
+// # Tori
+//
+// The ring solid swept by a disk around a circle. A solid denotes the filled region
+// including its boundary surface; the axis is a unit direction.
+
+// A solid torus: all points within MinorRadius of the circle of MajorRadius
+// about Center in the plane perpendicular to Axis. Self-intersecting when
+// MinorRadius exceeds MajorRadius. (https://en.wikipedia.org/wiki/Torus)
+type Torus
+    implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, ParametricSurface
+{
+    Center: Point3D;
+    Axis: Direction3D;
+    MajorRadius: Number;
+    MinorRadius: Number;
+}

@@ -1,41 +1,49 @@
 //==
-// # Shared random-number helpers
+// # Random
 //
-// The numerical building blocks every distribution body is written against —
-// factorial, the binomial coefficient, the standard normal density and its
-// rational CDF approximation — plus the `RandomState` hash. The
-// `ProbabilityDistribution` obligations themselves are split by family across
-// `random-continuous.library.plato`, `random-continuous-gamma.library.plato`,
-// `random-continuous-tails.library.plato` and `random-discrete.library.plato`.
-// The derived surface built *on top* of the concept (StandardDeviation,
-// SurvivalAt, ProbabilityBetween, ...) lives with the other concept traits in
-// `random-distributions.library.plato` and is not repeated here.
-//
-// ## Special functions
-//
-// The special-function vocabulary lives in the `numbers-special-*` libraries:
-// `Gamma`/`LogGamma`, `Beta`/`LogBeta`, the regularized incomplete forms
-// `RegularizedGammaP`/`RegularizedGammaQ`/`RegularizedBeta`, the error
-// functions `Erf`/`Erfc`, and the modified Bessel functions
-// `BesselI0`/`BesselI1`. The gamma-, beta- and Bessel-dependent distribution
-// bodies (Gamma/Beta/ChiSquared/StudentT Pdf+Cdf, the Weibull moments, the
-// von Mises Variance and Pdf) are implemented against them at their sites.
-// Two deliberate exceptions remain:
-//
-// - VonMises: Cdf has no closed form (an infinite Bessel series) and is
-//   omitted; see its site.
-// - Poisson: Cdf is implemented by direct summation, which is exact-in-form but
-//   O(k); it is not the incomplete-gamma closed form.
-//
-// The normal CDF has no elementary closed form. It predates `Erf` and is
-// computed here with the *named* Zelen & Severo rational approximation
-// (Abramowitz & Stegun 26.2.17), whose stated absolute error bound is 7.5e-8.
-// It is an approximation, not an identity, and is labelled as such at its
-// definition; rewriting it as (1 + Erf(z/sqrt 2))/2 is a separate content
-// change.
+// Sections, in order:
+//  - Shared random-number helpers
+//  - Uniform, normal, and exponential bodies
+//  - Gamma- and beta-family bodies
+//  - Heavy-tailed, lifetime, and shaped distribution bodies
+//  - Discrete distribution bodies
+//  - Derived functions for ProbabilityDistribution
 
 library Random
 {
+    //==
+    // # Shared random-number helpers
+    //
+    // The numerical building blocks every distribution body is written against —
+    // factorial, the binomial coefficient, the standard normal density and its
+    // rational CDF approximation — plus the `RandomState` hash. The
+    // `ProbabilityDistribution` obligations themselves are split by family across
+    // the sections below, as is the derived surface built *on top* of the concept
+    // (StandardDeviation, SurvivalAt, ProbabilityBetween, ...).
+    //
+    // ## Special functions
+    //
+    // The special-function vocabulary lives in `numbers.library.plato`:
+    // `Gamma`/`LogGamma`, `Beta`/`LogBeta`, the regularized incomplete forms
+    // `RegularizedGammaP`/`RegularizedGammaQ`/`RegularizedBeta`, the error
+    // functions `Erf`/`Erfc`, and the modified Bessel functions
+    // `BesselI0`/`BesselI1`. The gamma-, beta- and Bessel-dependent distribution
+    // bodies (Gamma/Beta/ChiSquared/StudentT Pdf+Cdf, the Weibull moments, the
+    // von Mises Variance and Pdf) are implemented against them at their sites.
+    // Two deliberate exceptions remain:
+    //
+    // - VonMises: Cdf has no closed form (an infinite Bessel series) and is
+    //   omitted; see its site.
+    // - Poisson: Cdf is implemented by direct summation, which is exact-in-form but
+    //   O(k); it is not the incomplete-gamma closed form.
+    //
+    // The normal CDF has no elementary closed form. It predates `Erf` and is
+    // computed here with the *named* Zelen & Severo rational approximation
+    // (Abramowitz & Stegun 26.2.17), whose stated absolute error bound is 7.5e-8.
+    // It is an approximation, not an identity, and is labelled as such at its
+    // definition; rewriting it as (1 + Erf(z/sqrt 2))/2 is a separate content
+    // change.
+
     //==
     // # Numerical helpers
     //
@@ -102,4 +110,793 @@ library Random
     // wraps, which is the intended behaviour for a hash.
     Hash(self: RandomState): Integer
         => self.State.Hash * 31 + self.Stream.Hash;
+
+    //==
+    // # Uniform, normal, and exponential bodies
+    //
+    // The `ProbabilityDistribution` obligations for the four elementary continuous
+    // families of `random.types.plato`: UniformDistribution,
+    // NormalDistribution, LogNormalDistribution and ExponentialDistribution. Every
+    // Pdf and Mean here is exact; the Cdf of the two normal forms inherits the
+    // 7.5e-8 error bound of `StandardNormalCdf` in the shared helpers above.
+
+    //==
+    // # UniformDistribution
+    //
+    // Parameterization: continuous uniform on the CLOSED interval [Min, Max].
+    // Precondition: Min < Max (the degenerate Min == Max case divides by zero).
+    // https://en.wikipedia.org/wiki/Continuous_uniform_distribution
+
+    // The midpoint of the interval: (Min + Max) / 2.
+    Mean(self: UniformDistribution): Number
+        => (self.Min + self.Max) / 2.0;
+
+    // The variance of a uniform variable: (Max - Min)^2 / 12.
+    Variance(self: UniformDistribution): Number
+        => (self.Max - self.Min).Square / 12.0;
+
+    // The density: the constant 1 / (Max - Min) inside [Min, Max], zero outside.
+    Pdf(self: UniformDistribution, value: Number): Number
+        => value < self.Min || value > self.Max
+            ? 0.0
+            : 1.0 / (self.Max - self.Min);
+
+    // The cumulative probability: the position of value within the interval,
+    // clamped to [0, 1].
+    Cdf(self: UniformDistribution, value: Number): Number
+        => ((value - self.Min) / (self.Max - self.Min)).Clamp(0.0, 1.0);
+
+    //==
+    // # NormalDistribution
+    //
+    // Parameterization: (mean, STANDARD DEVIATION) — the second field is sigma,
+    // NOT sigma squared. Precondition: StandardDeviation > 0. `Mean` is already
+    // discharged by the field of the same name.
+    // https://en.wikipedia.org/wiki/Normal_distribution
+
+    // The variance: the square of the standard deviation.
+    Variance(self: NormalDistribution): Number
+        => self.StandardDeviation.Square;
+
+    // The Gaussian density at value: phi(z) / sigma where z is the standardized
+    // score (value - mean) / sigma. Exact.
+    Pdf(self: NormalDistribution, value: Number): Number
+        => StandardNormalPdf((value - self.Mean) / self.StandardDeviation)
+         / self.StandardDeviation;
+
+    // The cumulative probability at value, as the standard normal CDF of the
+    // standardized score. Inherits the 7.5e-8 error bound of StandardNormalCdf.
+    Cdf(self: NormalDistribution, value: Number): Number
+        => StandardNormalCdf((value - self.Mean) / self.StandardDeviation);
+
+    //==
+    // # LogNormalDistribution
+    //
+    // Parameterization: LogMean (mu) and LogStandardDeviation (sigma) are the
+    // mean and STANDARD DEVIATION OF THE UNDERLYING NORMAL, i.e. of ln(X), not
+    // of X. Support is x > 0. Precondition: LogStandardDeviation > 0.
+    // https://en.wikipedia.org/wiki/Log-normal_distribution
+
+    // The mean of the variable itself: exp(mu + sigma^2 / 2).
+    Mean(self: LogNormalDistribution): Number
+        => (self.LogMean + self.LogStandardDeviation.Square / 2.0).Exp;
+
+    // The variance of the variable itself:
+    // (exp(sigma^2) - 1) * exp(2*mu + sigma^2).
+    Variance(self: LogNormalDistribution): Number
+        => (self.LogStandardDeviation.Square.Exp - 1.0)
+         * (2.0 * self.LogMean + self.LogStandardDeviation.Square).Exp;
+
+    // The density at value: phi((ln v - mu) / sigma) / (v * sigma) for v > 0,
+    // and zero on the non-positive half line. Exact.
+    Pdf(self: LogNormalDistribution, value: Number): Number
+        => value <= 0.0
+            ? 0.0
+            : StandardNormalPdf((value.NaturalLog - self.LogMean) / self.LogStandardDeviation)
+                / (value * self.LogStandardDeviation);
+
+    // The cumulative probability at value: Phi((ln v - mu) / sigma) for v > 0,
+    // zero otherwise. Inherits the StandardNormalCdf error bound.
+    Cdf(self: LogNormalDistribution, value: Number): Number
+        => value <= 0.0
+            ? 0.0
+            : StandardNormalCdf((value.NaturalLog - self.LogMean) / self.LogStandardDeviation);
+
+    //==
+    // # ExponentialDistribution
+    //
+    // Parameterization: RATE (lambda), not scale — the mean is 1 / Rate.
+    // Support is x >= 0. Precondition: Rate > 0.
+    // https://en.wikipedia.org/wiki/Exponential_distribution
+
+    // The mean waiting time: the reciprocal of the rate.
+    Mean(self: ExponentialDistribution): Number
+        => 1.0 / self.Rate;
+
+    // The variance: 1 / Rate^2.
+    Variance(self: ExponentialDistribution): Number
+        => 1.0 / self.Rate.Square;
+
+    // The density: Rate * exp(-Rate * v) for v >= 0, zero for negative v.
+    Pdf(self: ExponentialDistribution, value: Number): Number
+        => value < 0.0
+            ? 0.0
+            : self.Rate * (-self.Rate * value).Exp;
+
+    // The cumulative probability: 1 - exp(-Rate * v) for v >= 0, zero for
+    // negative v.
+    Cdf(self: ExponentialDistribution, value: Number): Number
+        => value < 0.0
+            ? 0.0
+            : 1.0 - (-self.Rate * value).Exp;
+
+    //==
+    // # Gamma- and beta-family bodies
+    //
+    // The `ProbabilityDistribution` obligations for GammaDistribution,
+    // BetaDistribution, ChiSquaredDistribution and StudentTDistribution. These four
+    // share one shape: their Mean and Variance are elementary closed forms, while
+    // every Pdf and Cdf goes through the special-function vocabulary of the
+    // `numbers.library.plato` — `Gamma`/`LogGamma`, `Beta`, and the
+    // regularized incomplete forms `RegularizedGammaP` and `RegularizedBeta`.
+    // The accuracy of each body is bounded by the accuracy stated on those
+    // functions (roughly 1e-12 relative on their primary domains).
+
+    //==
+    // # GammaDistribution
+    //
+    // Parameterization: SHAPE (k) and SCALE (theta) — theta is a scale, NOT a
+    // rate; the rate form uses beta = 1 / theta. Support is x > 0.
+    // Precondition: Shape > 0 and Scale > 0.
+    // https://en.wikipedia.org/wiki/Gamma_distribution
+
+    // The mean: Shape * Scale.
+    Mean(self: GammaDistribution): Number
+        => self.Shape * self.Scale;
+
+    // The variance: Shape * Scale^2.
+    Variance(self: GammaDistribution): Number
+        => self.Shape * self.Scale.Square;
+
+    // The gamma density: x^(k-1) * exp(-x/theta) / (Gamma(k) * theta^k) for
+    // x > 0, zero at and below zero (the x = 0 endpoint is taken as 0 even for
+    // k < 1, where the true density diverges).
+    Pdf(self: GammaDistribution, value: Number): Number
+        => value <= 0.0
+            ? 0.0
+            : value.Pow(self.Shape - 1.0) * (-value / self.Scale).Exp
+                / (Gamma(self.Shape) * self.Scale.Pow(self.Shape));
+
+    // The gamma CDF: the regularized lower incomplete gamma P(k, x/theta) for
+    // x > 0, zero at and below zero.
+    Cdf(self: GammaDistribution, value: Number): Number
+        => value <= 0.0
+            ? 0.0
+            : RegularizedGammaP(self.Shape, value / self.Scale);
+
+    //==
+    // # BetaDistribution
+    //
+    // Parameterization: shape parameters Alpha and Beta, support the closed
+    // interval [0, 1]. Precondition: Alpha > 0 and Beta > 0.
+    // https://en.wikipedia.org/wiki/Beta_distribution
+
+    // The mean: Alpha / (Alpha + Beta).
+    Mean(self: BetaDistribution): Number
+        => self.Alpha / (self.Alpha + self.Beta);
+
+    // The variance: Alpha*Beta / ((Alpha+Beta)^2 * (Alpha+Beta+1)).
+    Variance(self: BetaDistribution): Number
+        => self.Alpha * self.Beta
+         / ((self.Alpha + self.Beta).Square * (self.Alpha + self.Beta + 1.0));
+
+    // The beta density: x^(a-1) * (1-x)^(b-1) / B(a, b) on (0, 1), zero
+    // outside the open interval (the endpoints are taken as 0 even where the
+    // true density diverges, i.e. a < 1 at 0 or b < 1 at 1).
+    Pdf(self: BetaDistribution, value: Number): Number
+        => value <= 0.0 || value >= 1.0
+            ? 0.0
+            : value.Pow(self.Alpha - 1.0) * (1.0 - value).Pow(self.Beta - 1.0)
+                / Beta(self.Alpha, self.Beta);
+
+    // The beta CDF: the regularized incomplete beta I_x(a, b), clamped to 0
+    // below the support and 1 above it.
+    Cdf(self: BetaDistribution, value: Number): Number
+        => value <= 0.0
+            ? 0.0
+            : value >= 1.0
+                ? 1.0
+                : RegularizedBeta(self.Alpha, self.Beta, value);
+
+    //==
+    // # ChiSquaredDistribution
+    //
+    // Parameterization: DegreesOfFreedom (k), the number of squared standard
+    // normals summed. Support is x > 0. Precondition: DegreesOfFreedom > 0.
+    // https://en.wikipedia.org/wiki/Chi-squared_distribution
+
+    // The mean: the degrees of freedom.
+    Mean(self: ChiSquaredDistribution): Number
+        => self.DegreesOfFreedom;
+
+    // The variance: twice the degrees of freedom.
+    Variance(self: ChiSquaredDistribution): Number
+        => 2.0 * self.DegreesOfFreedom;
+
+    // The chi-squared density: x^(k/2-1) * exp(-x/2) / (2^(k/2) * Gamma(k/2))
+    // for x > 0, zero at and below zero — the gamma density with shape k/2 and
+    // scale 2.
+    Pdf(self: ChiSquaredDistribution, value: Number): Number
+    {
+        var h = 0.5 * self.DegreesOfFreedom;
+        return value <= 0.0
+            ? 0.0
+            : value.Pow(h - 1.0) * (-0.5 * value).Exp / (2.0.Pow(h) * Gamma(h));
+    }
+
+    // The chi-squared CDF: the regularized lower incomplete gamma P(k/2, x/2)
+    // for x > 0, zero at and below zero.
+    Cdf(self: ChiSquaredDistribution, value: Number): Number
+        => value <= 0.0
+            ? 0.0
+            : RegularizedGammaP(0.5 * self.DegreesOfFreedom, 0.5 * value);
+
+    //==
+    // # StudentTDistribution
+    //
+    // Parameterization: DegreesOfFreedom (nu), location 0 and scale 1 (this is
+    // the standard, non-shifted t). Support is the whole real line.
+    // Precondition: DegreesOfFreedom > 0.
+    // https://en.wikipedia.org/wiki/Student%27s_t-distribution
+
+    // The mean: 0 by symmetry. Precondition: DegreesOfFreedom > 1 — the mean is
+    // undefined at or below one degree of freedom, where this reports 0 anyway.
+    Mean(self: StudentTDistribution): Number
+        => 0.0;
+
+    // The variance: nu / (nu - 2). Precondition: DegreesOfFreedom > 2; the
+    // variance is infinite on (1, 2] and undefined at or below 1.
+    Variance(self: StudentTDistribution): Number
+        => self.DegreesOfFreedom / (self.DegreesOfFreedom - 2.0);
+
+    // The Student-t density: (1 + t^2/nu)^(-(nu+1)/2) / (sqrt(nu) * B(1/2, nu/2)).
+    Pdf(self: StudentTDistribution, value: Number): Number
+    {
+        var nu = self.DegreesOfFreedom;
+        return (1.0 + value.Square / nu).Pow(-0.5 * (nu + 1.0))
+             / (nu.Sqrt * Beta(0.5, 0.5 * nu));
+    }
+
+    // The Student-t CDF through the regularized incomplete beta: with
+    // x = nu / (nu + t^2), the tail is I_x(nu/2, 1/2) / 2, so the CDF is the
+    // tail for t < 0 and one minus the tail for t >= 0 (by the symmetry of the
+    // density about 0; at t = 0 both branches give exactly 1/2).
+    Cdf(self: StudentTDistribution, value: Number): Number
+    {
+        var nu = self.DegreesOfFreedom;
+        var tail = 0.5 * RegularizedBeta(0.5 * nu, 0.5, nu / (nu + value.Square));
+        return value < 0.0 ? tail : 1.0 - tail;
+    }
+
+    //==
+    // # Heavy-tailed, lifetime, and shaped distribution bodies
+    //
+    // The `ProbabilityDistribution` obligations for the remaining continuous
+    // families of `random.types.plato`: the heavy-tailed CauchyDistribution
+    // and the peaked LaplaceDistribution, the lifetime and power-law
+    // WeibullDistribution and ParetoDistribution, the bounded
+    // TriangularDistribution, and the circular VonMisesDistribution. All bodies
+    // here are exact closed forms except the von Mises CDF (which has no closed
+    // form and is a truncated Bessel series; see its site); the Weibull moments
+    // and the von Mises bodies go through `Gamma` and the modified Bessel
+    // functions `BesselI0`/`BesselI1` of `numbers.library.plato`, so
+    // their accuracy is bounded by the accuracy stated on those functions.
+
+    //==
+    // # CauchyDistribution
+    //
+    // Parameterization: Location (x0, the median and mode) and Scale (gamma,
+    // the half width at half maximum) — Scale is NOT a standard deviation; the
+    // Cauchy distribution has none. Precondition: Scale > 0.
+    // https://en.wikipedia.org/wiki/Cauchy_distribution
+
+    // The mean is undefined (the defining integral does not converge). By the
+    // convention stated on the type, this reports the Location, which is the
+    // median and mode.
+    Mean(self: CauchyDistribution): Number
+        => self.Location;
+
+    // The variance is undefined. By the convention stated on the type, this
+    // reports positive infinity, spelled as 1.0/0.0 — which is exactly the IEEE
+    // +Infinity on every float backend, so it needs no constant. Deliberately
+    // NOT adding a `PositiveInfinity` to `NumericalLimits`: that concept is
+    // declared in the core/algebra concept files (owned elsewhere) and a new
+    // member imposes a fresh obligation on every Numerical implementor
+    // tree-wide, which is out of proportion to this one call.
+    Variance(self: CauchyDistribution): Number
+        => 1.0 / 0.0;
+
+    // The Cauchy density: 1 / (pi * gamma * (1 + ((v - x0)/gamma)^2)). Exact.
+    Pdf(self: CauchyDistribution, value: Number): Number
+        => 1.0
+         / (Number.Pi * self.Scale
+            * (1.0 + ((value - self.Location) / self.Scale).Square));
+
+    // The Cauchy CDF: 1/2 + atan((v - x0)/gamma) / pi. Exact. `Atan` returns an
+    // `Angle` in this tree, so its Radians payload is taken explicitly.
+    Cdf(self: CauchyDistribution, value: Number): Number
+        => 0.5 + ((value - self.Location) / self.Scale).Atan.Radians / Number.Pi;
+
+    //==
+    // # LaplaceDistribution
+    //
+    // Parameterization: Location (mu, the mean/median/mode) and Scale (b, the
+    // "diversity") — the variance is 2b^2, so b is NOT a standard deviation.
+    // Precondition: Scale > 0.
+    // https://en.wikipedia.org/wiki/Laplace_distribution
+
+    // The mean: the location parameter.
+    Mean(self: LaplaceDistribution): Number
+        => self.Location;
+
+    // The variance: 2 * Scale^2.
+    Variance(self: LaplaceDistribution): Number
+        => 2.0 * self.Scale.Square;
+
+    // The double-sided exponential density: exp(-|v - mu| / b) / (2b). Exact.
+    Pdf(self: LaplaceDistribution, value: Number): Number
+        => (-(value - self.Location).Abs / self.Scale).Exp / (2.0 * self.Scale);
+
+    // The Laplace CDF: below the location, half the rising exponential; at or
+    // above it, one minus half the falling exponential. Exact.
+    Cdf(self: LaplaceDistribution, value: Number): Number
+        => value < self.Location
+            ? 0.5 * ((value - self.Location) / self.Scale).Exp
+            : 1.0 - 0.5 * (-(value - self.Location) / self.Scale).Exp;
+
+    //==
+    // # WeibullDistribution
+    //
+    // Parameterization: SHAPE (k) and SCALE (lambda) — the two-parameter
+    // Weibull with location 0, support x >= 0. Precondition: Shape > 0 and
+    // Scale > 0.
+    // https://en.wikipedia.org/wiki/Weibull_distribution
+
+    // The mean: lambda * Gamma(1 + 1/k).
+    Mean(self: WeibullDistribution): Number
+        => self.Scale * Gamma(1.0 + 1.0 / self.Shape);
+
+    // The variance: lambda^2 * (Gamma(1 + 2/k) - Gamma(1 + 1/k)^2).
+    Variance(self: WeibullDistribution): Number
+        => self.Scale.Square
+         * (Gamma(1.0 + 2.0 / self.Shape) - Gamma(1.0 + 1.0 / self.Shape).Square);
+
+    // The Weibull density: (k/lambda) * (v/lambda)^(k-1) * exp(-(v/lambda)^k)
+    // for v >= 0, zero for negative v. Exact — no special functions needed.
+    Pdf(self: WeibullDistribution, value: Number): Number
+        => value < 0.0
+            ? 0.0
+            : (self.Shape / self.Scale)
+                * (value / self.Scale).Pow(self.Shape - 1.0)
+                * (-(value / self.Scale).Pow(self.Shape)).Exp;
+
+    // The Weibull CDF: 1 - exp(-(v/lambda)^k) for v >= 0, zero for negative v.
+    // Exact.
+    Cdf(self: WeibullDistribution, value: Number): Number
+        => value < 0.0
+            ? 0.0
+            : 1.0 - (-(value / self.Scale).Pow(self.Shape)).Exp;
+
+    //==
+    // # ParetoDistribution
+    //
+    // Parameterization: MinimumValue (x_m, the scale and the lower bound of the
+    // support) and Shape (alpha, the tail index) — the Pareto Type I. Support is
+    // x >= MinimumValue. Precondition: MinimumValue > 0 and Shape > 0.
+    // https://en.wikipedia.org/wiki/Pareto_distribution
+
+    // The mean: alpha * x_m / (alpha - 1). Precondition: Shape > 1 — the mean is
+    // infinite for Shape <= 1, where this expression is not meaningful.
+    Mean(self: ParetoDistribution): Number
+        => self.Shape * self.MinimumValue / (self.Shape - 1.0);
+
+    // The variance: x_m^2 * alpha / ((alpha-1)^2 * (alpha-2)). Precondition:
+    // Shape > 2 — the variance is infinite for Shape <= 2.
+    Variance(self: ParetoDistribution): Number
+        => self.MinimumValue.Square * self.Shape
+         / ((self.Shape - 1.0).Square * (self.Shape - 2.0));
+
+    // The Pareto density: alpha * x_m^alpha / v^(alpha+1) for v >= x_m, zero
+    // below the minimum. Exact.
+    Pdf(self: ParetoDistribution, value: Number): Number
+        => value < self.MinimumValue
+            ? 0.0
+            : self.Shape * self.MinimumValue.Pow(self.Shape)
+                / value.Pow(self.Shape + 1.0);
+
+    // The Pareto CDF: 1 - (x_m / v)^alpha for v >= x_m, zero below the minimum.
+    // Exact.
+    Cdf(self: ParetoDistribution, value: Number): Number
+        => value < self.MinimumValue
+            ? 0.0
+            : 1.0 - (self.MinimumValue / value).Pow(self.Shape);
+
+    //==
+    // # TriangularDistribution
+    //
+    // Parameterization: lower limit Min (a), mode c, upper limit Max (b), with
+    // support the closed interval [a, b]. Precondition: a <= c <= b and a < b.
+    // https://en.wikipedia.org/wiki/Triangular_distribution
+
+    // The mean: (a + c + b) / 3.
+    Mean(self: TriangularDistribution): Number
+        => (self.Min + self.Mode + self.Max) / 3.0;
+
+    // The variance: (a^2 + b^2 + c^2 - ab - ac - bc) / 18.
+    Variance(self: TriangularDistribution): Number
+        => (self.Min.Square + self.Max.Square + self.Mode.Square
+            - self.Min * self.Max - self.Min * self.Mode - self.Max * self.Mode)
+         / 18.0;
+
+    // The triangular density: rising 2(v-a)/((b-a)(c-a)) on [a, c), peaking at
+    // 2/(b-a) at the mode, falling 2(b-v)/((b-a)(b-c)) on (c, b], zero outside
+    // [a, b]. Exact. The peak case is taken explicitly so that the degenerate
+    // ends (c == a or c == b) do not divide by zero at the mode itself.
+    Pdf(self: TriangularDistribution, value: Number): Number
+        => value < self.Min || value > self.Max
+            ? 0.0
+            : value == self.Mode
+                ? 2.0 / (self.Max - self.Min)
+                : value < self.Mode
+                    ? 2.0 * (value - self.Min)
+                        / ((self.Max - self.Min) * (self.Mode - self.Min))
+                    : 2.0 * (self.Max - value)
+                        / ((self.Max - self.Min) * (self.Max - self.Mode));
+
+    // The triangular CDF: 0 below a, (v-a)^2/((b-a)(c-a)) on [a, c],
+    // 1 - (b-v)^2/((b-a)(b-c)) on (c, b], 1 above b. Exact.
+    Cdf(self: TriangularDistribution, value: Number): Number
+        => value <= self.Min
+            ? 0.0
+            : value >= self.Max
+                ? 1.0
+                : value <= self.Mode
+                    ? (value - self.Min).Square
+                        / ((self.Max - self.Min) * (self.Mode - self.Min))
+                    : 1.0 - (self.Max - value).Square
+                        / ((self.Max - self.Min) * (self.Max - self.Mode));
+
+    //==
+    // # VonMisesDistribution
+    //
+    // Parameterization: MeanDirection (mu, an Angle) and Concentration (kappa,
+    // the reciprocal-variance analogue; kappa = 0 is uniform on the circle).
+    // Pdf/Cdf take the angle in radians as a Number, per the type's doc comment.
+    // https://en.wikipedia.org/wiki/Von_Mises_distribution
+
+    // The mean direction in radians, as stated on the type.
+    Mean(self: VonMisesDistribution): Number
+        => self.MeanDirection.Radians;
+
+    // The circular variance 1 - I1(kappa)/I0(kappa): 0 as kappa -> infinity
+    // (all mass at the mean direction), 1 at kappa = 0 (uniform on the circle,
+    // since I1(0) = 0 and I0(0) = 1).
+    Variance(self: VonMisesDistribution): Number
+        => 1.0 - BesselI1(self.Concentration) / BesselI0(self.Concentration);
+
+    // The von Mises density: exp(kappa * cos(v - mu)) / (2*pi * I0(kappa)),
+    // with v the angle in radians. Periodic with period 2*pi, so no support
+    // guard is needed; at kappa = 0 it is the circular uniform 1/(2*pi).
+    Pdf(self: VonMisesDistribution, value: Number): Number
+        => (self.Concentration
+            * Angle(value - self.MeanDirection.Radians).Cos).Exp
+         / (Number.Tau * BesselI0(self.Concentration));
+
+    // The order-j modified Bessel function I_j(x) via the ascending series:
+    // (x/2)^j / j! * sum_k (x^2/4)^k / (k! (k+j)!), reusing the fixed-60-term
+    // `BesselISeriesSum` kernel with the order-j prefactor spelled through
+    // `Gamma(j + 1)`. LOCAL to the von Mises CDF below: full double accuracy
+    // only for |x| <= 15 (the series regime of the Bessel bodies); the
+    // stable general-purpose route for higher orders is downward recurrence,
+    // which this deliberately does not attempt.
+    VonMisesBesselI(j: Integer, x: Number): Number
+        => (x / 2.0).Pow(j.ToNumber) / Gamma(j.ToNumber + 1.0)
+         * BesselISeriesSum(j.ToNumber, x.Square / 4.0, 0, 1.0);
+
+    // The von Mises CDF of the WRAPPED angle, with the cut at the antipode:
+    // F(mu - pi) = 0 and F -> 1 as value -> mu + pi, and any real input is
+    // first wrapped into [mu - pi, mu + pi). There is NO closed form; this is
+    // the standard Fourier/Bessel series (Abramowitz & Stegun 9.6.34 applied
+    // to the density),
+    //     F(x) = 1/2 + (x-mu)/(2 pi)
+    //          + (1/(pi I0(kappa))) * sum_j I_j(kappa) sin(j (x-mu)) / j,
+    // truncated at 32 terms. The terms decay like exp(-j^2/(2 kappa)), so for
+    // Concentration <= 15 (the full-accuracy regime of the Bessel kernel) the
+    // truncation error is below ~1e-10 absolute; accuracy degrades gradually
+    // beyond that. At kappa = 0 the series vanishes exactly (I_j(0) = 0),
+    // leaving the circular uniform CDF 1/2 + (x-mu)/(2 pi).
+    // https://en.wikipedia.org/wiki/Von_Mises_distribution
+    Cdf(self: VonMisesDistribution, value: Number): Number
+    {
+        var x = value - self.MeanDirection.Radians;
+        var wrapped = x - Number.Tau * ((x + Number.Pi) / Number.Tau).Floor;
+        var uniformPart = 0.5 + wrapped / Number.Tau;
+        return self.Concentration <= 0.0
+            ? uniformPart
+            : uniformPart
+              + SumOf(32.MapRange(j =>
+                    VonMisesBesselI(j + 1, self.Concentration)
+                    * Angle((j.ToNumber + 1.0) * wrapped).Sin
+                    / (j.ToNumber + 1.0)))
+                / (Number.Pi * BesselI0(self.Concentration));
+    }
+
+    //==
+    // # Discrete distribution bodies
+    //
+    // The `ProbabilityDistribution` obligations for the types of
+    // `random.types.plato`. Pdf reads the probability mass at the value rounded
+    // down to a whole number, per that file's convention. The Binomial and Poisson
+    // CDFs sum the masses directly — exact in form and O(k) — because their closed
+    // forms are regularized incomplete beta and gamma functions, which this tree
+    // cannot express. Factorial and BinomialCoefficient come from the shared
+    // helpers at the top of this library.
+
+    //==
+    // # BernoulliDistribution
+    //
+    // Parameterization: SuccessProbability (p) in [0, 1]. Support is {0, 1};
+    // per the section note above, Pdf reads the mass at the value rounded down.
+    // https://en.wikipedia.org/wiki/Bernoulli_distribution
+
+    // The mean: the success probability.
+    Mean(self: BernoulliDistribution): Number
+        => self.SuccessProbability.Value;
+
+    // The variance: p * (1 - p).
+    Variance(self: BernoulliDistribution): Number
+        => self.SuccessProbability.Value * (1.0 - self.SuccessProbability.Value);
+
+    // The mass at floor(value): p at 1, 1 - p at 0, zero elsewhere. Exact.
+    Pdf(self: BernoulliDistribution, value: Number): Number
+        => value.Floor == 1.0
+            ? self.SuccessProbability.Value
+            : value.Floor == 0.0
+                ? 1.0 - self.SuccessProbability.Value
+                : 0.0;
+
+    // The step CDF: 0 below zero, 1 - p on [0, 1), 1 at or above one. Exact.
+    Cdf(self: BernoulliDistribution, value: Number): Number
+        => value < 0.0
+            ? 0.0
+            : value < 1.0
+                ? 1.0 - self.SuccessProbability.Value
+                : 1.0;
+
+    //==
+    // # BinomialDistribution
+    //
+    // Parameterization: TrialCount (n) independent trials each succeeding with
+    // SuccessProbability (p). Support is the whole numbers 0..n; Pdf reads the
+    // mass at the value rounded down. Precondition: TrialCount >= 0.
+    // https://en.wikipedia.org/wiki/Binomial_distribution
+
+    // The mean: n * p.
+    Mean(self: BinomialDistribution): Number
+        => self.TrialCount.ToNumber * self.SuccessProbability.Value;
+
+    // The variance: n * p * (1 - p).
+    Variance(self: BinomialDistribution): Number
+        => self.TrialCount.ToNumber * self.SuccessProbability.Value
+         * (1.0 - self.SuccessProbability.Value);
+
+    // The mass at k = floor(value): C(n, k) * p^k * (1-p)^(n-k) inside the
+    // support, zero outside. Exact in form; the coefficient is built by the
+    // multiplicative recurrence, so large n loses precision but does not
+    // overflow through an intermediate factorial.
+    Pdf(self: BinomialDistribution, value: Number): Number
+    {
+        var k = value.Floor.ToInteger;
+        var p = self.SuccessProbability.Value;
+        return k < 0 || k > self.TrialCount
+            ? 0.0
+            : BinomialCoefficient(self.TrialCount, k)
+                * p.Pow(k.ToNumber)
+                * (1.0 - p).Pow((self.TrialCount - k).ToNumber);
+    }
+
+    // The cumulative mass at k = floor(value), by direct summation of the masses
+    // 0..k. Exact in form and O(k); the closed form is a regularized incomplete
+    // beta, which this tree cannot express.
+    Cdf(self: BinomialDistribution, value: Number): Number
+    {
+        var k = value.Floor.ToInteger;
+        return k < 0
+            ? 0.0
+            : k >= self.TrialCount
+                ? 1.0
+                : (k + 1).Range
+                    .Map(i => self.Pdf(i.ToNumber))
+                    .Reduce(0.0, (total, mass) => total + mass);
+    }
+
+    //==
+    // # GeometricDistribution
+    //
+    // Parameterization: the number of FAILURES BEFORE the first success, so the
+    // support is {0, 1, 2, ...} — NOT the "number of trials" variant supported
+    // on {1, 2, ...}, which has mean 1/p. This matches the type's doc comment.
+    // Precondition: SuccessProbability > 0.
+    // https://en.wikipedia.org/wiki/Geometric_distribution
+
+    // The mean number of failures before the first success: (1 - p) / p.
+    Mean(self: GeometricDistribution): Number
+        => (1.0 - self.SuccessProbability.Value) / self.SuccessProbability.Value;
+
+    // The variance: (1 - p) / p^2.
+    Variance(self: GeometricDistribution): Number
+        => (1.0 - self.SuccessProbability.Value)
+         / self.SuccessProbability.Value.Square;
+
+    // The mass at k = floor(value): (1-p)^k * p for k >= 0, zero below. Exact.
+    Pdf(self: GeometricDistribution, value: Number): Number
+        => value < 0.0
+            ? 0.0
+            : (1.0 - self.SuccessProbability.Value).Pow(value.Floor)
+                * self.SuccessProbability.Value;
+
+    // The cumulative mass at k = floor(value): 1 - (1-p)^(k+1) for k >= 0, zero
+    // below. Exact.
+    Cdf(self: GeometricDistribution, value: Number): Number
+        => value < 0.0
+            ? 0.0
+            : 1.0 - (1.0 - self.SuccessProbability.Value).Pow(value.Floor + 1.0);
+
+    //==
+    // # PoissonDistribution
+    //
+    // Parameterization: Rate (lambda) is the EXPECTED COUNT over the fixed
+    // window, not a per-unit-time rate to be multiplied by a duration. Support
+    // is the whole numbers; Pdf reads the mass at the value rounded down.
+    // Precondition: Rate > 0.
+    // https://en.wikipedia.org/wiki/Poisson_distribution
+
+    // The mean: the rate.
+    Mean(self: PoissonDistribution): Number
+        => self.Rate;
+
+    // The variance: the rate (a Poisson variable is equidispersed).
+    Variance(self: PoissonDistribution): Number
+        => self.Rate;
+
+    // The mass at k = floor(value): lambda^k * exp(-lambda) / k!, zero for
+    // negative values. Exact in form; the explicit factorial limits usable k to
+    // roughly 170 before overflow.
+    Pdf(self: PoissonDistribution, value: Number): Number
+    {
+        var k = value.Floor.ToInteger;
+        return k < 0
+            ? 0.0
+            : self.Rate.Pow(k.ToNumber) * (-self.Rate).Exp / Factorial(k);
+    }
+
+    // The cumulative mass at k = floor(value), by direct summation of the masses
+    // 0..k. Exact in form and O(k); the closed form is a regularized incomplete
+    // gamma, which this tree cannot express.
+    Cdf(self: PoissonDistribution, value: Number): Number
+    {
+        var k = value.Floor.ToInteger;
+        return k < 0
+            ? 0.0
+            : (k + 1).Range
+                .Map(i => self.Pdf(i.ToNumber))
+                .Reduce(0.0, (total, mass) => total + mass);
+    }
+
+    //==
+    // # DiscreteDistribution
+    //
+    // Parameterization: outcome i in 0..Count-1 carries probability
+    // Weights[i] / sum(Weights); the weights are non-negative and need not be
+    // normalized. Pdf reads the mass at the value rounded down. Precondition:
+    // Weights is non-empty and its sum is positive.
+    // https://en.wikipedia.org/wiki/Categorical_distribution
+
+    // The total weight; the normalizing constant for every other body here.
+    TotalWeight(self: DiscreteDistribution): Number
+        => self.Weights.Reduce(0.0, (total, weight) => total + weight);
+
+    // The mean outcome index: the weight-weighted average of 0..Count-1.
+    Mean(self: DiscreteDistribution): Number
+        => self.Weights.Count.Range
+            .Map(i => i.ToNumber * self.Weights[i])
+            .Reduce(0.0, (total, term) => total + term)
+         / self.TotalWeight;
+
+    // The variance of the outcome index, as E[i^2] - E[i]^2.
+    Variance(self: DiscreteDistribution): Number
+        => self.Weights.Count.Range
+            .Map(i => i.ToNumber.Square * self.Weights[i])
+            .Reduce(0.0, (total, term) => total + term)
+         / self.TotalWeight
+         - self.Mean.Square;
+
+    // The mass at outcome k = floor(value): Weights[k] over the total weight,
+    // zero outside 0..Count-1. Exact.
+    Pdf(self: DiscreteDistribution, value: Number): Number
+    {
+        var k = value.Floor.ToInteger;
+        return k < 0 || k >= self.Weights.Count
+            ? 0.0
+            : self.Weights[k] / self.TotalWeight;
+    }
+
+    // The cumulative mass at outcome k = floor(value): the weights of outcomes
+    // 0..k over the total weight, clamped to the ends of the support. Exact.
+    Cdf(self: DiscreteDistribution, value: Number): Number
+    {
+        var k = value.Floor.ToInteger;
+        return k < 0
+            ? 0.0
+            : k >= self.Weights.Count - 1
+                ? 1.0
+                : (k + 1).Range
+                    .Map(i => self.Weights[i])
+                    .Reduce(0.0, (total, weight) => total + weight)
+                    / self.TotalWeight;
+    }
+
+    //==
+    // # Derived functions for ProbabilityDistribution
+    //
+    // Bodies for the `ProbabilityDistribution` concept declared in
+    // `random.concepts.plato`,
+    // which exposes Mean, Variance, Pdf and Cdf. The derived surface is the tail
+    // and interval probabilities that read from Cdf, plus the spread and density
+    // comparisons. The concrete per-distribution obligation fills (and the named
+    // numerical approximations they need) stay in the `random*.library.plato`
+    // family; only the concept-generic helpers live here. Pure
+    // expressions only; all inputs are immutable and evaluation is side-effect
+    // free.
+
+    //==
+    // # ProbabilityDistribution
+    //
+    // A univariate distribution exposing Mean, Variance, Pdf, and Cdf. The
+    // derived surface is the tail and interval probabilities that read from Cdf,
+    // plus density comparisons
+    // (https://en.wikipedia.org/wiki/Probability_distribution).
+
+    // The standard deviation: the square root of the variance, in the same units
+    // as the values. Precondition: the variance is non-negative
+    // (https://en.wikipedia.org/wiki/Standard_deviation).
+    StandardDeviation(self: ProbabilityDistribution): Number
+        => self.Variance.Sqrt;
+
+    // The cumulative probability of drawing at most value; a readable spelling
+    // of Cdf (https://en.wikipedia.org/wiki/Cumulative_distribution_function).
+    ProbabilityAtMost(self: ProbabilityDistribution, value: Number): Number
+        => self.Cdf(value);
+
+    // The survival function at value: the probability of drawing more than
+    // value, 1 - Cdf(value)
+    // (https://en.wikipedia.org/wiki/Survival_function).
+    SurvivalAt(self: ProbabilityDistribution, value: Number): Number
+        => 1.0 - self.Cdf(value);
+
+    // The probability mass in the half-open interval (low, high]: Cdf(high) -
+    // Cdf(low). Precondition: low <= high.
+    ProbabilityBetween(self: ProbabilityDistribution, low: Number, high: Number): Number
+        => self.Cdf(high) - self.Cdf(low);
+
+    // The precision: the reciprocal of the variance. Precondition: the variance
+    // is positive (undefined for the degenerate and heavy-tailed cases)
+    // (https://en.wikipedia.org/wiki/Precision_%28statistics%29).
+    Precision(self: ProbabilityDistribution): Number
+        => 1.0 / self.Variance;
+
+    // True when value a is at least as likely (dense) as value b under this
+    // distribution.
+    IsAtLeastAsLikelyAs(self: ProbabilityDistribution, a: Number, b: Number): Boolean
+        => self.Pdf(a) >= self.Pdf(b);
 }

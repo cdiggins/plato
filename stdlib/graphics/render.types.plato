@@ -1,0 +1,207 @@
+//==
+// # Render
+//
+// Sections, in order:
+//  - Tone mapping, anti-aliasing, and post-processing
+//  - Render settings
+//  - Vertex data layout
+
+//==
+// # Tone mapping, anti-aliasing, and post-processing
+//
+// The image-space stages a renderer applies after shading, gathered as plain
+// settings records: tone mapping, edge anti-aliasing, ambient occlusion, bloom,
+// and distance fog. Distances are unit-agnostic scene Numbers; exposure
+// compensation is in photographic stops (EV).
+
+// The curve compressing HDR radiance into display range; None clamps.
+// (https://en.wikipedia.org/wiki/Tone_mapping)
+type Tonemap = None | Reinhard | Aces | Filmic | Agx;
+
+// Tone mapping controls. ExposureCompensation is in photographic stops (EV;
+// +1 doubles brightness), applied before the curve; WhitePoint is the input
+// level mapped to display white (its exact meaning is curve-dependent).
+// (https://en.wikipedia.org/wiki/Exposure_value)
+type ToneMappingSettings
+    implements Value
+{
+    Curve: Tonemap;
+    ExposureCompensation: Number;
+    WhitePoint: Number;
+}
+
+// The edge anti-aliasing technique: hardware multisampling with its sample
+// count (Msaa), fast post-process (Fxaa), temporal (Taa), or morphological
+// (Smaa). (https://en.wikipedia.org/wiki/Spatial_anti-aliasing)
+type AntiAliasing
+    = None
+    | Msaa(SampleCount: Integer)
+    | Fxaa
+    | Taa
+    | Smaa;
+
+// Screen-space ambient occlusion controls. Radius is the occlusion search
+// distance in scene units; Intensity scales the darkening; Bias offsets
+// samples to avoid self-occlusion; SampleCount trades quality for speed.
+// (https://en.wikipedia.org/wiki/Ambient_occlusion)
+type AmbientOcclusionSettings
+    implements Value
+{
+    Enabled: Boolean;
+    Radius: Number;
+    Intensity: Number;
+    Bias: Number;
+    SampleCount: Integer;
+}
+
+// Bloom: glow bleeding from bright pixels. Threshold is the luminance above
+// which pixels contribute; Intensity scales the added glow; Radius is the
+// blur spread as a fraction of screen height.
+// See https://en.wikipedia.org/wiki/Bloom_(shader_effect).
+type BloomSettings
+    implements Value
+{
+    Enabled: Boolean;
+    Threshold: Number;
+    Intensity: Number;
+    Radius: Number;
+}
+
+// The distance-fog model, each case carrying its own controls: Linear fades
+// between Start and End (scene units); the exponential models are driven by
+// Density; Height fog's density decays with altitude at HeightFalloff.
+// (https://en.wikipedia.org/wiki/Distance_fog)
+type FogModel
+    = None
+    | Linear(Start: Number, End: Number)
+    | Exponential(Density: Number)
+    | ExponentialSquared(Density: Number)
+    | Height(Density: Number, HeightFalloff: Number);
+
+// Fog controls: the model plus the fog color.
+type FogSettings
+    implements Value
+{
+    Model: FogModel;
+    Color: Color;
+}
+
+//==
+// # Render settings
+//
+// Backend-neutral descriptions of render targets, vertex data layout,
+// post-processing, and renderer quality. Distances are unit-agnostic scene
+// Numbers; frame times are Durations; exposure compensation is in
+// photographic stops (EV).
+
+// Describes an on-screen or off-screen render target. ColorFormat uses the
+// pixel formats of `images.types.plato`; SampleCount is the MSAA sample count (1 = no
+// multisampling); HasDepth requests a depth attachment.
+// (https://en.wikipedia.org/wiki/Framebuffer)
+type RenderTargetDescriptor
+    implements Value
+{
+    Size: IntegerSize2D;
+    ColorFormat: PixelFormat;
+    HasDepth: Boolean;
+    SampleCount: Integer;
+}
+
+//==
+// # Path tracing, shadows, and output
+
+// The denoiser applied to a path-traced image: real-time temporal (Fast) or
+// offline machine-learning based (HighQuality).
+type Denoiser = None | Fast | HighQuality;
+
+// Path-tracing quality controls. SamplesPerPixel and MaxBounces bound the
+// integration work; RadianceClamp caps per-sample radiance to suppress
+// fireflies (0 = unclamped); Seed makes runs reproducible.
+// (https://en.wikipedia.org/wiki/Path_tracing)
+type PathTracingSettings
+    implements Value
+{
+    SamplesPerPixel: Integer;
+    MaxBounces: Integer;
+    RadianceClamp: Number;
+    Denoiser: Denoiser;
+    Seed: Integer;
+}
+
+// The shadow-map filtering technique: percentage-closer (Pcf),
+// contact-hardening (Pcss), variance (Vsm), or exponential (Esm).
+type ShadowFilter = Hard | Pcf | Pcss | Vsm | Esm;
+
+// An overall speed-versus-fidelity preset a renderer maps onto its own knobs.
+type QualityPreset = Draft | Preview | Production;
+
+// Which triangle facing is culled during rasterization; None draws both
+// faces. (https://en.wikipedia.org/wiki/Back-face_culling)
+type FaceCulling = None | Back | Front;
+
+// The color encoding of the final displayed image. Distinct from working
+// color spaces (the `color-spaces-*` files): this names the presentation encoding only.
+// Rec2020Pq is HDR10.
+type DisplayColorSpace
+    = SrgbNonlinear | LinearRec709 | DisplayP3 | Rec2020Pq | Rec2020Hlg;
+
+// The full post-processing and output configuration of a render pipeline,
+// gathering the individual settings records into one value.
+// (https://en.wikipedia.org/wiki/Graphics_pipeline)
+type RenderPipelineSettings
+    implements Value
+{
+    Quality: QualityPreset;
+    Target: RenderTargetDescriptor;
+    AntiAliasing: AntiAliasing;
+    AmbientOcclusion: AmbientOcclusionSettings;
+    Bloom: BloomSettings;
+    Fog: FogSettings;
+    ToneMapping: ToneMappingSettings;
+    ColorSpace: DisplayColorSpace;
+}
+
+// Timing and workload measurements for one rendered frame.
+type FrameStatistics
+    implements Value
+{
+    FrameIndex: Integer;
+    CpuTime: Duration;
+    GpuTime: Duration;
+    DrawCalls: Integer;
+    TriangleCount: Integer;
+    InstanceCount: Integer;
+}
+
+//==
+// # Vertex data layout
+//
+// How the per-vertex data handed to a renderer is packed: the semantic role of
+// each attribute stream, its component count and normalization, and the
+// interleaved byte layout of a whole vertex. Offsets and strides are in
+// bytes.
+
+// The semantic role of one vertex attribute stream.
+type VertexAttributeRole
+    = Position | Normal | Tangent | Uv0 | Uv1 | Color | BoneWeights | BoneIndices;
+
+// One attribute within a vertex: its role, the number of scalar components
+// (3 for a position, 2 for a UV), whether integer data is normalized to
+// [0, 1] when read, and its byte offset from the start of the vertex.
+type VertexAttributeDescriptor
+    implements Value
+{
+    Role: VertexAttributeRole;
+    ComponentCount: Integer;
+    Normalized: Boolean;
+    ByteOffset: Integer;
+}
+
+// The complete interleaved layout of one vertex: its attributes plus the
+// stride in bytes between consecutive vertices.
+type VertexLayout
+    implements Value
+{
+    Attributes: Array<VertexAttributeDescriptor>;
+    ByteStride: Integer;
+}

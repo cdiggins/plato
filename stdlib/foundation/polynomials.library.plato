@@ -19,8 +19,8 @@
 // into the corresponding function below.
 //
 // Not repeated here: `Barycentric` (already generic on Numerical in
-// algebra-numeric.library.plato) and `SmoothStep`/`SmootherStep` (Number-concrete
-// shaping functions, also in algebra-numeric.library.plato).
+// algebra.library.plato) and `SmoothStep`/`SmootherStep` (Number-concrete
+// shaping functions, also in algebra.library.plato).
 //
 // Conventions: coefficients come first in descending-power (school) order,
 // matching the QuadraticPolynomial/CubicPolynomial/QuarticPolynomial types of

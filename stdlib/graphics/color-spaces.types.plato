@@ -1,11 +1,20 @@
 //==
+// # Color spaces
+//
+// Sections, in order:
+//  - Color spaces and color science
+//  - Device-independent color models
+//  - Palettes, harmony, and color difference
+//  - Device-referred and video color models
+
+//==
 // # Color spaces and color science
 //
 // The vocabulary that *defines* a color space: chromaticity coordinates, white
 // points and standard illuminants, primaries, transfer characteristics, and the
 // chromatic adaptation and rendering intent a conversion between two spaces
-// needs. The color representations themselves live in `color-spaces-models`
-// (device-independent) and `color-spaces-video` (device-referred and video).
+// needs. The color representations themselves are the device-independent and
+// device-referred/video sections below.
 // Conversions are functions in a later pass; these types name the endpoints
 // and the knobs.
 
@@ -102,4 +111,198 @@ type ColorSpaceConversion
     Target: NamedColorSpace;
     Adaptation: ChromaticAdaptation;
     Intent: RenderingIntent;
+}
+
+//==
+// # Device-independent color models
+//
+// Colors expressed in spaces that do not depend on any particular device: the
+// CIE tristimulus hub (`ColorXYZ`) that conversions pass through, its xyY
+// factoring, and the perceptual (uniform-ish) spaces built on top of it —
+// CIELAB, CIELUV, and OkLab, each with a cylindrical lightness/chroma/hue
+// form. The spaces themselves are defined in `color-spaces`.
+
+//==
+// ## Device-independent color types
+
+// A color as CIE 1931 XYZ tristimulus values; the device-independent hub
+// through which color space conversions pass. Y is luminance.
+// (https://en.wikipedia.org/wiki/CIE_1931_color_space)
+type ColorXYZ
+    implements Numerical
+{
+    X: Number;
+    Y: Number;
+    Z: Number;
+}
+
+// A color as an xy chromaticity plus luminance Y (the CIE xyY form);
+// separates "which color" from "how bright".
+type ColorXyY
+    implements Value
+{
+    Chromaticity: Chromaticity;
+    Luminance: Number;
+}
+
+// A color in CIELAB: perceptual lightness L in [0, 100] with opponent axes
+// A (green-red) and B (blue-yellow), relative to a reference white.
+// (https://en.wikipedia.org/wiki/CIELAB_color_space)
+type ColorLab
+    implements Value
+{
+    L: Number;
+    A: Number;
+    B: Number;
+}
+
+// CIELAB in cylindrical form: lightness, chroma (colorfulness), and hue angle.
+// (https://en.wikipedia.org/wiki/HCL_color_space)
+type ColorLCh
+    implements Value
+{
+    L: Number;
+    Chroma: Number;
+    Hue: Angle;
+}
+
+// A color in CIELUV: an alternative perceptual space favored for additive
+// (emissive) displays. (https://en.wikipedia.org/wiki/CIELUV)
+type ColorLuv
+    implements Value
+{
+    L: Number;
+    U: Number;
+    V: Number;
+}
+
+// A color in OkLab: a modern perceptual space with better hue linearity than
+// CIELAB; the preferred space for perceptual blending and gradients.
+// (https://en.wikipedia.org/wiki/Oklab_color_space)
+type ColorOkLab
+    implements Value
+{
+    L: Number;
+    A: Number;
+    B: Number;
+}
+
+// OkLab in cylindrical form: lightness, chroma, and hue angle.
+type ColorOkLCh
+    implements Value
+{
+    L: Number;
+    Chroma: Number;
+    Hue: Angle;
+}
+
+//==
+// # Palettes, harmony, and color difference
+//
+// Colors considered as a set rather than one at a time: an ordered palette (a
+// swatch list, an indexed-image color table, a categorical scale), the
+// hue-wheel relationships used to derive one from a base color, and the delta
+// E formulas that measure how far apart two colors look.
+
+//==
+// ## Palettes, harmony, and difference
+
+// An ordered set of colors used together: a swatch list, an indexed-image
+// color table, or a categorical scale.
+// (https://en.wikipedia.org/wiki/Palette_(computing))
+type Palette
+    implements Value
+{
+    Colors: Array<Color>;
+}
+
+// A classical hue-wheel relationship used to derive palettes from a base color.
+// (https://en.wikipedia.org/wiki/Harmony_(color))
+type ColorHarmony
+    = Complementary
+    | Analogous
+    | Triadic
+    | SplitComplementary
+    | Tetradic
+    | Square
+    | Monochromatic;
+
+// A perceptual color-difference (delta E) formula.
+// (https://en.wikipedia.org/wiki/Color_difference)
+type ColorDifference = CIE76 | CIE94 | CIEDE2000 | CMC | EuclideanOkLab;
+
+//==
+// # Device-referred and video color models
+//
+// Colors expressed the way a device, codec, or press expects them: gamma-
+// encoded sRGB, the luma-plus-chroma video forms, subtractive CMYK ink
+// coverage, the CSS hue/whiteness/blackness model, and sampled spectra. These
+// are interchange forms — decode to the linear-light `Color` (`color.types.plato`)
+// before doing arithmetic on them.
+
+//==
+// ## Device-referred and video color types
+
+// A gamma-encoded sRGB color with alpha, components nominally in [0, 1]: the
+// interchange form of most 2D content. Decode to linear `Color` before
+// arithmetic. (https://en.wikipedia.org/wiki/SRGB)
+type ColorSRGB
+    implements Value
+{
+    R: Number;
+    G: Number;
+    B: Number;
+    A: Number;
+}
+
+// A color as luma Y plus U/V chroma differences (analog video convention).
+// (https://en.wikipedia.org/wiki/Y%E2%80%B2UV)
+type ColorYUV
+    implements Value
+{
+    Y: Number;
+    U: Number;
+    V: Number;
+}
+
+// A color as luma Y plus Cb/Cr chroma offsets (digital video and JPEG
+// convention). (https://en.wikipedia.org/wiki/YCbCr)
+type ColorYCbCr
+    implements Value
+{
+    Y: Number;
+    Cb: Number;
+    Cr: Number;
+}
+
+// A subtractive process color: cyan, magenta, yellow, and key (black) ink
+// coverages, each in [0, 1]. (https://en.wikipedia.org/wiki/CMYK_color_model)
+type ColorCMYK
+    implements Value
+{
+    Cyan: Number;
+    Magenta: Number;
+    Yellow: Number;
+    Key: Number;
+}
+
+// A color as a hue angle plus whiteness and blackness mixed in (the CSS HWB
+// model); an intuitive tint/shade parameterization.
+// (https://en.wikipedia.org/wiki/HWB_color_model)
+type ColorHWB
+    implements Value
+{
+    Hue: Angle;
+    Whiteness: Number;
+    Blackness: Number;
+}
+
+// A color as a sampled spectral power distribution. Wavelengths ascend and
+// pair one-to-one with Amplitudes (relative power per sample).
+// (https://en.wikipedia.org/wiki/Spectral_power_distribution)
+type SpectralColor
+    implements Value
+{
+    Wavelengths: Array<Length>;
+    Amplitudes: Array<Number>;
 }

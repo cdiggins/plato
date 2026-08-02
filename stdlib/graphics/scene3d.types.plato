@@ -1,4 +1,12 @@
 //==
+// # Scene3D
+//
+// Sections, in order:
+//  - 3D scenes
+//  - Scene index types
+//  - Scene instancing and levels of detail
+
+//==
 // # 3D scenes
 //
 // A retained scene description: a node hierarchy plus flat resource pools.
@@ -144,4 +152,96 @@ type SceneStatistics
     InstanceCount: Integer;
     TriangleCount: Integer;
     VertexCount: Integer;
+}
+
+//==
+// # Scene index types
+//
+// The zero-based typed indices that address into a Scene3D and its resource
+// pools. A typed index can never be silently confused with another kind, and
+// they all share one absence encoding.
+// Convention: see CONVENTIONS.md - Typed indices (Value is zero-based, and -1
+// means "none" / "not present").
+
+// A zero-based index of a node within Scene3D.Nodes. -1 means "none"
+// (a root's parent).
+type SceneNodeIndex3D
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of a mesh within SceneResources.Meshes. -1 means "none".
+type MeshIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of a material within SceneResources.Materials.
+// -1 means "none" / "use the mesh's default".
+type MaterialIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of a light binding within SceneResources.LightBindings.
+// -1 means "none".
+type LightBindingIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+// A zero-based index of a camera binding within
+// SceneResources.CameraBindings. -1 means "none".
+type CameraBindingIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+//==
+// # Scene instancing and levels of detail
+//
+// Placed copies of the meshes in a SceneResources pool: single instances, the
+// hardware-instanced form that shares one mesh across many transforms, and
+// discrete level-of-detail groups. Mesh and Material fields are indices into
+// SceneResources; distances are unit-agnostic scene Numbers.
+
+// One placed copy of a mesh: Mesh and Material index into SceneResources;
+// Transform is in world space.
+type MeshInstance
+    implements Value
+{
+    Mesh: MeshIndex;
+    Material: MaterialIndex;
+    Transform: Transform3D;
+}
+
+// Many placed copies of one mesh (hardware instancing). Mesh and Material
+// index into SceneResources. Colors, when non-empty, runs parallel to
+// Transforms and tints each instance; an empty Colors array means no
+// per-instance color. (https://en.wikipedia.org/wiki/Geometry_instancing)
+type InstanceSet
+    implements Value
+{
+    Mesh: MeshIndex;
+    Material: MaterialIndex;
+    Transforms: Array<Transform3D>;
+    Colors: Array<Color>;
+}
+
+// Discrete levels of detail for one object. Meshes (indices into
+// SceneResources.Meshes) and SwitchDistances are parallel arrays ordered by
+// ascending distance: Meshes[i] is shown while the view distance from Center
+// is below SwitchDistances[i]; beyond the last distance the object is culled.
+// See https://en.wikipedia.org/wiki/Level_of_detail_(computer_graphics).
+type LodGroup
+    implements Value
+{
+    Center: Point3D;
+    Meshes: Array<MeshIndex>;
+    SwitchDistances: Array<Number>;
 }

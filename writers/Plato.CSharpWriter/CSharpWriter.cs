@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Ara3D.Geometry.Compiler.Analysis;
@@ -553,7 +553,7 @@ namespace Ara3D.Geometry.CSharpWriter
             
             // Implemented elswehere.
             // "Range" left this list 2026-08-01: the forward stdlib gives it a Plato body
-            // (primitives-integer.library.plato, `Range(self) => MapRange(self, i => i)`), and
+            // (primitives.library.plato, `Range(self) => MapRange(self, i => i)`), and
             // while it was ignored no ExtensionStylePlan owned it, so every call site rendered
             // with PROPERTY syntax (`n.Range`) against a handwritten extension METHOD.
             "MapRange",

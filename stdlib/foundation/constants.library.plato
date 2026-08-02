@@ -7,7 +7,7 @@
 // Constants dispatch on an ignored receiver of the result type (`Pi(_: Number)`),
 // matching the intrinsic constants in `intrinsics.library.plato`
 // and the `Identity(_: Quaternion)` family in
-// `transforms-identities.library.plato`. Read them
+// `transforms.library.plato`. Read them
 // as `Number.GoldenRatio`, `Vector3D.UnitZ`, `Circle.UnitCircle`.
 //
 // `Pi`, `Tau`, `E`, `Epsilon`, `MinValue`, `MaxValue`, `Zero`, `One` and

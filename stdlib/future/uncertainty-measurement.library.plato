@@ -2,7 +2,7 @@
 // # Measurement, calibration, and ensemble readings
 //
 // The derived readings of the provenance records in
-// `uncertainty-measurement.types.plato`: when a reading was taken relative to
+// `uncertainty.types.plato`: when a reading was taken relative to
 // another, whether a calibration is still the one in force, and the sampled
 // statistics of an ensemble.
 //

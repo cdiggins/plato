@@ -92,7 +92,7 @@ namespace Ara3D.Geometry
         // type-level idiom, so a moved extension body re-qualifies the bare name to a
         // STATIC read on the wrapper (`Ara3D.Geometry.Number.Pi`).
         // Zero / One / Tau / E are NOT here: the forward stdlib gives them Plato bodies
-        // (primitives-number.library.plato, constants.library.plato) and the generated
+        // (primitives.library.plato, constants.library.plato) and the generated
         // partial struct declares them (plato-378 constant migration).
         // ------------------------------------------------------------------------------
 
@@ -110,7 +110,7 @@ namespace Ara3D.Geometry
         // concepts declare them as properties in the wrapper-scalar recipe.
         //
         // Everything derivable from these has a Plato reference body in
-        // primitives-number.library.plato (Abs, Sign, Square, Reciprocal, Min, Max,
+        // primitives.library.plato (Abs, Sign, Square, Reciprocal, Min, Max,
         // Ceiling, Truncate, Cbrt, Log/Log2/Log10, Tan/Sinh/Cosh/Tanh, the inverse-trig
         // family, IsFinite) and MUST NOT be duplicated here - a duplicate makes every
         // generated call site ambiguous (CS0121).

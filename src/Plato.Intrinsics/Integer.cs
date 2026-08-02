@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using Ara3D.Collections;
 using static System.Runtime.CompilerServices.MethodImplOptions;
@@ -43,7 +43,7 @@ namespace Ara3D.Geometry
         // Type-token constants (the `_`-receiver members in intrinsics-scalars)
         // -------------------------------------------------------------------------------
         // Zero / One are NOT here: the forward stdlib gives them Plato bodies
-        // (primitives-integer.library.plato) and the generated partial struct declares them
+        // (primitives.library.plato) and the generated partial struct declares them
         // (plato-378 constant migration).
         public static Integer MinValue = int.MinValue;
         public static Integer MaxValue = int.MaxValue;

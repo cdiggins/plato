@@ -1,4 +1,11 @@
 //==
+// # Rigid dynamics
+//
+// Sections, in order:
+//  - Rigid-body dynamics
+//  - Forces, impulses, and gravitation
+
+//==
 // # Rigid-body dynamics
 //
 // Mass properties, rigid-body state, surface materials, and simulation
@@ -131,4 +138,136 @@ type TimeStepSettings
     VelocityIterations: Integer;
     PositionIterations: Integer;
     MaxStepsPerFrame: Integer;
+}
+
+//==
+// # Forces, impulses, and gravitation
+//
+// What acts on a rigid body: forces and impulses applied at a point, radial
+// blasts, the environmental force models (gravity, drag, buoyancy), and the
+// Keplerian elements describing the orbit a point gravity produces. Forces
+// are in newtons, impulses in newton-seconds, and positions in meters.
+
+//==
+// # Applied forces and impulses
+
+// A force applied to a planar body: the force in newtons and the world-space
+// point of application in meters.
+type AppliedForce2D
+    implements Value
+{
+    Force: Vector2D;
+    ApplicationPoint: Point2D;
+}
+
+// A force applied to a spatial body: the force in newtons and the world-space
+// point of application in meters.
+type AppliedForce3D
+    implements Value
+{
+    Force: Vector3D;
+    ApplicationPoint: Point3D;
+}
+
+// An instantaneous impulse applied to a planar body: the impulse in
+// newton-seconds and the world-space point of application in meters.
+type AppliedImpulse2D
+    implements Value
+{
+    Impulse: Vector2D;
+    ApplicationPoint: Point2D;
+}
+
+// An instantaneous impulse applied to a spatial body: the impulse in
+// newton-seconds and the world-space point of application in meters.
+// (https://en.wikipedia.org/wiki/Impulse_(physics))
+type AppliedImpulse3D
+    implements Value
+{
+    Impulse: Vector3D;
+    ApplicationPoint: Point3D;
+}
+
+// An outward radial impulse (explosion): bodies within Radius of Center
+// receive an impulse of up to Magnitude directed away from Center, falling
+// off linearly to zero at Radius.
+type RadialImpulse3D
+    implements Value
+{
+    Center: Point3D;
+    Magnitude: Impulse;
+    Radius: Length;
+}
+
+//==
+// # Environmental force models
+
+// Uniform planar gravity: the same acceleration, in meters per second
+// squared, applied to every dynamic body regardless of position.
+type UniformGravity2D
+    implements Value
+{
+    Acceleration: Vector2D;
+}
+
+// Uniform spatial gravity: the same acceleration, in meters per second
+// squared, applied to every dynamic body regardless of position (e.g.
+// (0, -9.81, 0)).
+type UniformGravity3D
+    implements Value
+{
+    Acceleration: Vector3D;
+}
+
+// Newtonian point gravity: bodies are attracted toward Center with
+// acceleration mu / r^2. GravitationalParameter is mu = G * M in cubic meters
+// per second squared.
+// (https://en.wikipedia.org/wiki/Newton%27s_law_of_universal_gravitation)
+type PointGravity
+    implements Value
+{
+    Center: Point3D;
+    GravitationalParameter: Number;
+}
+
+// A drag force opposing velocity: force = -(LinearCoefficient * v +
+// QuadraticCoefficient * |v| * v). LinearCoefficient is in newton-seconds per
+// meter; QuadraticCoefficient is in newton-seconds-squared per square meter.
+// (https://en.wikipedia.org/wiki/Drag_(physics))
+type DragModel
+    implements Value
+{
+    LinearCoefficient: Number;
+    QuadraticCoefficient: Number;
+}
+
+// A buoyancy force model for bodies in a liquid half-space. The fluid fills
+// everything below SurfaceHeight measured along UpAxis; FluidVelocity is the
+// current in meters per second used for relative drag.
+// (https://en.wikipedia.org/wiki/Buoyancy)
+type BuoyancyModel
+    implements Value
+{
+    FluidDensity: Density;
+    SurfaceHeight: Length;
+    UpAxis: Direction3D;
+    FluidVelocity: Vector3D;
+}
+
+//==
+// # Orbits
+
+// The six classical Keplerian orbital elements. Eccentricity is
+// dimensionless (0 = circular, less than 1 = elliptic, 1 = parabolic,
+// greater than 1 = hyperbolic); the four angles are in radians.
+// (https://en.wikipedia.org/wiki/Orbital_elements)
+type OrbitalElements
+    implements Value
+{
+    SemiMajorAxis: Length;
+    Eccentricity: Number;
+    Inclination: Angle;
+    LongitudeOfAscendingNode: Angle;
+    ArgumentOfPeriapsis: Angle;
+    TrueAnomaly: Angle;
 }

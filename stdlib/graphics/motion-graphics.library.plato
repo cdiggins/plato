@@ -1,16 +1,23 @@
 //==
-// # MotionGraphics — sampling a tween
+// # Motion graphics
 //
-// The `TimeVarying<T>` obligation of `Tween<T>`
-// (`motion-graphics.types.plato`): the eased blend from From to To across
-// Duration, after Delay. `Tween<T>` declares `where T: Interpolatable`, which
-// is what licenses the Lerp on a bare T here.
-//
-// The other composition types in that file are data read by a renderer and
-// carry no obligation, so nothing else is derived here.
+// Sections, in order:
+//  - MotionGraphics — sampling a tween
+//  - Procedural motion evaluation
 
 library MotionGraphics
 {
+    //==
+    // # MotionGraphics — sampling a tween
+    //
+    // The `TimeVarying<T>` obligation of `Tween<T>`
+    // (`motion-graphics.types.plato`): the eased blend from From to To across
+    // Duration, after Delay. `Tween<T>` declares `where T: Interpolatable`, which
+    // is what licenses the Lerp on a bare T here.
+    //
+    // The other composition types in that file are data read by a renderer and
+    // carry no obligation, so nothing else is derived here.
+
     // The tween's value at a time offset from the composition's start. Sampling
     // before Delay yields From, after Delay + Duration yields To; in between the
     // linear fraction is reshaped by Easing. A non-positive Duration is an
@@ -23,4 +30,46 @@ library MotionGraphics
             : (elapsed / span).Clamp(0.0, 1.0);
         return self.From.Lerp(self.To, self.Easing.Eval(fraction));
     }
+
+    //==
+    // # Procedural motion evaluation
+    //
+    // The `TimeVarying<Number>` obligation of `Oscillator`
+    // (`motion-graphics.types.plato`): the signal
+    // `Bias + Amplitude * wave(Frequency * time + Phase)` the type's doc comment
+    // states, one waveform per case.
+    //
+    // Every waveform is normalized to [-1, 1] and phase-aligned with the sine, so
+    // switching waveform changes the shape and nothing else — the signal still
+    // leaves zero rising at phase zero and peaks a quarter turn later. That
+    // alignment is why the triangle is written around a quarter-turn shift rather
+    // than as the more obvious `2|2t - 1| - 1`.
+
+    // The unit-amplitude waveform value at a phase angle, in [-1, 1].
+    WaveformValue(waveform: OscillatorWaveform, phase: Angle): Number {
+        var turns = phase.Turns;
+        var cycle = turns - turns.Floor;
+        var shifted = turns + 0.25 - (turns + 0.25).Floor;
+        return match (waveform) {
+            Sine => phase.Sin;
+            // The sign of the sine: a hard edge at every zero crossing.
+            Square => phase.Sin >= 0.0 ? 1.0 : -1.0;
+            Triangle => 1.0 - 4.0 * (shifted - 0.5).Abs;
+            // A rising ramp: -1 at the start of the cycle, +1 at its end.
+            Sawtooth => 2.0 * cycle - 1.0;
+            // Smooth pseudo-random: one dimension of lattice value noise walked
+            // along the phase, so successive cycles differ but the signal stays
+            // continuous.
+            Noise => ValueNoise2D(0, 1.0).Eval(Point2D(turns, 0.0));
+        };
+    }
+
+    // The phase of the oscillator at a time: the frequency carried over the
+    // elapsed seconds, offset by the oscillator's own phase.
+    PhaseAt(self: Oscillator, time: Duration): Angle
+        => Angle(self.Frequency.Hertz * time.Seconds * Number.Tau + self.Phase.Radians);
+
+    // The signal value at a time.
+    Sample(self: Oscillator, time: Duration): Number
+        => self.Bias + self.Amplitude * WaveformValue(self.Waveform, self.PhaseAt(time));
 }

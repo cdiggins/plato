@@ -25,7 +25,7 @@ There is no longer an exception to rule 1. `Array2D` / `Array3D` were the last o
 field-less, so their construction and traversal could not be written in Plato. They now declare
 a flat `Elements: Array<T>` store plus extents named for the obligations they discharge
 (`ColumnCount` / `RowCount` / `LayerCount`), and their whole surface is ordinary Plato in
-`foundation/primitives-arrays.library.plato`.
+`foundation/primitives.library.plato`.
 
 ## What is NOT here any more
 
@@ -34,9 +34,9 @@ kernel. The contract went from 141 to 65.
 
 | Was intrinsic | Now a reference body in |
 |---|---|
-| `Abs`, `Sign`, `CopySign`, `Min`, `Max`, `Square`, `Reciprocal`, `Cbrt`, `Ceiling`, `Truncate`, `Log`, `Log2`, `Log10`, `Tan`, `Sinh`, `Cosh`, `Tanh`, the six `*Radians` inverse forms, `Zero`, `One`, `Tau`, `E`, `IsFinite` | `foundation/primitives-number.library.plato` |
-| `Abs`, `Sign`, `Min`, `Max`, `Zero`, `One`, `Range` on Integer | `foundation/primitives-integer.library.plato` |
-| `Map`, `MapPairs/Triplets/Quartets`, `Zip` (2 and 3), `Take`, `Skip`, `Drop` (now `DropLast`, see below), `TakeLast`, `SubArray`, `Slice`, `EveryNth`, `AtModulo`, `Repeat`, `Append`, `Prepend`, `Concatenate`, `All`, `Any`, `Slices`, `CartesianProduct`, and the whole `Array2D`/`Array3D` surface including `MakeArray2D` | `foundation/primitives-arrays.library.plato` |
+| `Abs`, `Sign`, `CopySign`, `Min`, `Max`, `Square`, `Reciprocal`, `Cbrt`, `Ceiling`, `Truncate`, `Log`, `Log2`, `Log10`, `Tan`, `Sinh`, `Cosh`, `Tanh`, the six `*Radians` inverse forms, `Zero`, `One`, `Tau`, `E`, `IsFinite` | `foundation/primitives.library.plato` |
+| `Abs`, `Sign`, `Min`, `Max`, `Zero`, `One`, `Range` on Integer | `foundation/primitives.library.plato` |
+| `Map`, `MapPairs/Triplets/Quartets`, `Zip` (2 and 3), `Take`, `Skip`, `Drop` (now `DropLast`, see below), `TakeLast`, `SubArray`, `Slice`, `EveryNth`, `AtModulo`, `Repeat`, `Append`, `Prepend`, `Concatenate`, `All`, `Any`, `Slices`, `CartesianProduct`, and the whole `Array2D`/`Array3D` surface including `MakeArray2D` | `foundation/primitives.library.plato` |
 
 The array sub-range family was also corrected on the way out. The old contract
 declared `Skip` and `Drop` with no stated difference, and `Drop` had no runtime
@@ -63,8 +63,8 @@ The endpoint convention won because every call site in the tree already used it
 (`Slice(offsets[i], offsets[i+1])`, `Slice(n.Items.Start, n.Items.End)`); the
 concept was the outlier and had no implementer.
 | `Equals`, `ExclusiveOr`, `Compare`, `Hash` on Boolean | `foundation/primitives.library.plato` |
-| `NotEquals` on every primitive | `foundation/core-comparison.library.plato`, once, over `Equatable` |
-| `LessThan`, `GreaterThan`, `GreaterThanOrEquals`, `Compare`, `Clamp` on Number and Integer | already generic over `Orderable` in `foundation/core-comparison.library.plato` — deleted outright, not re-derived |
+| `NotEquals` on every primitive | `foundation/core.library.plato`, once, over `Equatable` |
+| `LessThan`, `GreaterThan`, `GreaterThanOrEquals`, `Compare`, `Clamp` on Number and Integer | already generic over `Orderable` in `foundation/core.library.plato` — deleted outright, not re-derived |
 
 The array kernel is the load-bearing part: `MapRange` is the ONLY constructor and every
 reshaping function is a reindexing of it. `Reduce` and `FlatMap` stay because a Plato body is a
@@ -84,9 +84,9 @@ not primitives. Those have portable Plato reference bodies too:
 
 | Types | Reference bodies |
 |---|---|
-| `Angle` (trig, arithmetic) and the `Angle`-returning inverse trig on `Number` | `foundation/angle-trig.library.plato` |
-| `Number2`, `Number3`, `Number4`, `Number8` | `foundation/vectors-tuples-ops.library.plato` |
-| `Vector2D`, `Vector3D` | `foundation/vectors-geometric-ops.library.plato` |
+| `Angle` (trig, arithmetic) and the `Angle`-returning inverse trig on `Number` | `foundation/angles.library.plato` |
+| `Number2`, `Number3`, `Number4`, `Number8` | `foundation/vectors.library.plato` |
+| `Vector2D`, `Vector3D` | `foundation/vectors.library.plato` |
 | `Matrix3x2`, `Matrix4x4` | `foundation/matrices-ops.library.plato` |
 | `Quaternion` | `foundation/rotations-ops.library.plato` |
 | `CombineHash`, used by the per-type `Hash` bodies | `foundation/hashing.library.plato` |
@@ -98,7 +98,7 @@ body remains the semantics it must agree with. Backend-side reconciliation is `p
 Note the split this created in the trig surface. The scalar kernel is intrinsic and works in
 radians (`Cos(self: Number): Number`); the inverse family carries a `Radians` suffix
 (`AcosRadians`) because the public `Acos(self: Number): Angle` shares the receiver type and
-differs only in return type. The `Angle`-typed surface is Plato, in `angle-trig.library.plato`.
+differs only in return type. The `Angle`-typed surface is Plato, in `angles.library.plato`.
 
 Policy (from `intrinsics.library.plato`): a function may be declared intrinsic only if
 every priority-1..4 backend — C#, C++, CUDA, TypeScript — can supply it natively or with a

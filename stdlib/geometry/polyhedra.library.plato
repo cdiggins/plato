@@ -1,0 +1,663 @@
+//==
+// # Polyhedra
+//
+// Sections, in order:
+//  - Named solids as Conway programs on the seeds
+//  - The remaining nine Catalan duals
+//  - The expand, bevel and snub Archimedeans
+//  - Dual, ambo and truncate on polygon meshes
+//  - Expand, snub and bevel on polygon meshes
+//  - Polyhedral dual pairings on the solid kinds
+//  - The five Platonic solids as polygon meshes
+
+library Polyhedra
+{
+    //==
+    // # Named solids as Conway programs on the seeds
+    //
+    // The Archimedean and Catalan solids this tree can name so far, each a one-line
+    // Conway program over a Platonic seed
+    // rather than another coordinate table. Read
+    // as `PolygonMesh3D.Cuboctahedron`, `PolygonMesh3D.RhombicDodecahedron`, …
+    //
+    // This covers the ambo and truncate families and their duals. The expand,
+    // bevel and snub families, and the remaining nine Catalan duals, follow in the
+    // next two sections; together the three catalogs name all thirteen of each of
+    // the `ArchimedeanSolidKind` / `CatalanSolidKind` sums in `solids.types.plato`.
+    //
+    // Vertices are NOT normalized to a common radius: the Archimedeans below are
+    // vertex-transitive and may be passed through ProjectedToUnitSphere, the
+    // Catalans must not be.
+
+    //==
+    // Archimedean — rectified seeds (https://en.wikipedia.org/wiki/Archimedean_solid).
+
+    // 8 triangles + 6 squares on 12 vertices
+    // (https://en.wikipedia.org/wiki/Cuboctahedron).
+    Cuboctahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Cube.Ambo;
+
+    // 20 triangles + 12 pentagons on 30 vertices
+    // (https://en.wikipedia.org/wiki/Icosidodecahedron).
+    Icosidodecahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Dodecahedron.Ambo;
+
+    //==
+    // Archimedean — truncated seeds.
+
+    // 4 triangles + 4 hexagons on 12 vertices
+    // (https://en.wikipedia.org/wiki/Truncated_tetrahedron).
+    TruncatedTetrahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Tetrahedron.Truncate;
+
+    // 8 triangles + 6 octagons on 24 vertices
+    // (https://en.wikipedia.org/wiki/Truncated_cube).
+    TruncatedCube(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Cube.Truncate;
+
+    // 6 squares + 8 hexagons on 24 vertices
+    // (https://en.wikipedia.org/wiki/Truncated_octahedron).
+    TruncatedOctahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Octahedron.Truncate;
+
+    // 20 triangles + 12 decagons on 60 vertices
+    // (https://en.wikipedia.org/wiki/Truncated_dodecahedron).
+    TruncatedDodecahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Dodecahedron.Truncate;
+
+    // 12 pentagons + 20 hexagons on 60 vertices: the football
+    // (https://en.wikipedia.org/wiki/Truncated_icosahedron).
+    TruncatedIcosahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Icosahedron.Truncate;
+
+    //==
+    // Catalan — duals of the above (https://en.wikipedia.org/wiki/Catalan_solid).
+    // Face-transitive, so their vertices sit at more than one radius.
+
+    // 12 rhombi on 14 vertices: the dual of the cuboctahedron
+    // (https://en.wikipedia.org/wiki/Rhombic_dodecahedron).
+    RhombicDodecahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Cuboctahedron.Dual;
+
+    // 30 rhombi on 32 vertices: the dual of the icosidodecahedron
+    // (https://en.wikipedia.org/wiki/Rhombic_triacontahedron).
+    RhombicTriacontahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Icosidodecahedron.Dual;
+
+    // 12 isosceles triangles on 8 vertices: the dual of the truncated
+    // tetrahedron (https://en.wikipedia.org/wiki/Triakis_tetrahedron).
+    TriakisTetrahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.TruncatedTetrahedron.Dual;
+
+    // 24 isosceles triangles on 14 vertices: the dual of the truncated cube
+    // (https://en.wikipedia.org/wiki/Triakis_octahedron).
+    TriakisOctahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.TruncatedCube.Dual;
+
+    //==
+    // # The remaining nine Catalan duals
+    //
+    // The Catalan solids the base catalog could
+    // not name, each simply the Conway `Dual` of
+    // its Archimedean partner — the same pairing the duals section records on the
+    // kind sums. Together with the base catalog's four this names
+    // all thirteen Catalans (https://en.wikipedia.org/wiki/Catalan_solid).
+    //
+    // All are face-transitive, so their vertices sit at more than one radius: never
+    // pass them through ProjectedToUnitSphere. The duals of the two snubs inherit
+    // their source's chirality.
+
+    // 24 isosceles triangles on 14 vertices: the dual of the truncated
+    // octahedron (https://en.wikipedia.org/wiki/Tetrakis_hexahedron).
+    TetrakisHexahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.TruncatedOctahedron.Dual;
+
+    // 60 isosceles triangles on 32 vertices: the dual of the truncated
+    // dodecahedron (https://en.wikipedia.org/wiki/Triakis_icosahedron).
+    TriakisIcosahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.TruncatedDodecahedron.Dual;
+
+    // 60 isosceles triangles on 32 vertices: the dual of the truncated
+    // icosahedron (https://en.wikipedia.org/wiki/Pentakis_dodecahedron).
+    PentakisDodecahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.TruncatedIcosahedron.Dual;
+
+    // 24 kites on 26 vertices: the dual of the rhombicuboctahedron
+    // (https://en.wikipedia.org/wiki/Deltoidal_icositetrahedron).
+    DeltoidalIcositetrahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Rhombicuboctahedron.Dual;
+
+    // 60 kites on 62 vertices: the dual of the rhombicosidodecahedron
+    // (https://en.wikipedia.org/wiki/Deltoidal_hexecontahedron).
+    DeltoidalHexecontahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Rhombicosidodecahedron.Dual;
+
+    // 48 scalene triangles on 26 vertices: the dual of the truncated
+    // cuboctahedron (https://en.wikipedia.org/wiki/Disdyakis_dodecahedron).
+    DisdyakisDodecahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.TruncatedCuboctahedron.Dual;
+
+    // 120 scalene triangles on 62 vertices: the dual of the truncated
+    // icosidodecahedron (https://en.wikipedia.org/wiki/Disdyakis_triacontahedron).
+    DisdyakisTriacontahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.TruncatedIcosidodecahedron.Dual;
+
+    // 24 irregular pentagons on 38 vertices: the chiral dual of the snub cube
+    // (https://en.wikipedia.org/wiki/Pentagonal_icositetrahedron).
+    PentagonalIcositetrahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.SnubCube.Dual;
+
+    // 60 irregular pentagons on 92 vertices: the chiral dual of the snub
+    // dodecahedron (https://en.wikipedia.org/wiki/Pentagonal_hexecontahedron).
+    PentagonalHexecontahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.SnubDodecahedron.Dual;
+
+    //==
+    // # The expand, bevel and snub Archimedeans
+    //
+    // The six Archimedean solids the base catalog
+    // could not name: the expand, bevel and
+    // snub families, each a one-line Conway program
+    // over a Platonic seed. Together
+    // with the base catalog this names all thirteen Archimedeans.
+    //
+    // The `shrink` / `twist` constants below are the values that make each result
+    // UNIFORM — every edge the same length (verified numerically to 1e-15 relative
+    // spread). The expand shrinks have closed forms; the snub constants are the
+    // roots of the usual snub polynomials (tribonacci-flavoured for the cube) and
+    // are recorded as solved decimals. Twists are positive, picking the
+    // counter-clockwise enantiomer of each chiral snub; negate them for the mirror.
+    //
+    // Bevel's vertex faces are rectangles rather than squares: topology and
+    // planarity exact, edge lengths not all equal.
+
+    //==
+    // Expand family (https://en.wikipedia.org/wiki/Rhombicuboctahedron).
+
+    // 8 triangles + 18 squares on 24 vertices; uniform at shrink = sqrt(2) - 1.
+    Rhombicuboctahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Cube.Expand(Number.SqrtTwo - 1.0);
+
+    // 20 triangles + 30 squares + 12 pentagons on 60 vertices; uniform at
+    // shrink = phi / 3
+    // (https://en.wikipedia.org/wiki/Rhombicosidodecahedron).
+    Rhombicosidodecahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Dodecahedron.Expand(Number.Phi / 3.0);
+
+    //==
+    // Bevel family (https://en.wikipedia.org/wiki/Truncated_cuboctahedron).
+
+    // 12 squares + 8 hexagons + 6 octagons on 48 vertices.
+    TruncatedCuboctahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Cube.Bevel;
+
+    // 30 squares + 20 hexagons + 12 decagons on 120 vertices
+    // (https://en.wikipedia.org/wiki/Truncated_icosidodecahedron).
+    TruncatedIcosidodecahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Dodecahedron.Bevel;
+
+    //==
+    // Snub family — chiral; these are the counter-clockwise enantiomers.
+
+    // 32 triangles + 6 squares on 24 vertices; the twist is the classical
+    // 16.4675 degrees (https://en.wikipedia.org/wiki/Snub_cube).
+    SnubCube(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Cube.Snub(0.437593286000961, Angle(0.287413148757778));
+
+    // 80 triangles + 12 pentagons on 60 vertices; the twist is the classical
+    // 13.1064 degrees (https://en.wikipedia.org/wiki/Snub_dodecahedron).
+    SnubDodecahedron(_: PolygonMesh3D): PolygonMesh3D
+        => PolygonMesh3D.Dodecahedron.Snub(0.562121964811048, Angle(0.228749892022033));
+
+    //==
+    // # Dual, ambo and truncate on polygon meshes
+    //
+    // The three core Conway polyhedron operators
+    // (https://en.wikipedia.org/wiki/Conway_polyhedron_notation) that generate the
+    // catalog: applied to the Platonic seeds of the last section they produce the
+    // Archimedean and Catalan solids that the catalog sections above name. The
+    // expand, snub and bevel operators follow in the next section.
+    //
+    // Each operator is the same three lines — new positions, new faces around the
+    // old faces, new faces around the old vertices — because the corner numbering
+    // of `meshes-polygon.library.plato` already names every element the
+    // operators need:
+    //
+    //   dual      one new vertex per FACE      (its centroid)
+    //   ambo      one new vertex per EDGE      (its midpoint)
+    //   truncate  one new vertex per CORNER    (a third of the way along its edge)
+    //
+    // So the new vertex numbering is just the face / edge / corner numbering, and
+    // no lookup table is built anywhere.
+    //
+    // Precondition for all three: a closed manifold mesh with convex faces.
+    //
+    // NONE of them normalizes the result onto the unit sphere. That is deliberate:
+    // pushing vertices out to a common radius is only meaning-preserving for a
+    // VERTEX-transitive solid, and a Catalan dual is face-transitive instead — its
+    // vertices genuinely sit at two or three different radii, so normalizing it
+    // bends every face out of plane. Callers who know their result is
+    // vertex-transitive (any Archimedean) can apply ProjectedToUnitSphere
+    // themselves.
+    // C# oracle: `Ara3D.Geometry.ConwayOperators` — but note the oracle normalizes
+    // in all three operators and takes the vertex ring unreversed, so its duals come
+    // out inside-out and its Catalan faces non-planar. The bodies below are the
+    // corrected form, not a port of those two decisions.
+
+    //==
+    // Dual — vertices become faces and faces become vertices, so V and F swap
+    // while E is unchanged (https://en.wikipedia.org/wiki/Dual_polyhedron).
+    // Cube <-> octahedron, dodecahedron <-> icosahedron, tetrahedron is self-dual.
+
+    // The outward unit normal of a face: its Newell vector area
+    // (`polygons.library.plato`), normalized. Exact for a planar face,
+    // and the least-squares plane normal of a nearly planar one.
+    // Precondition: the face is non-degenerate.
+    FaceUnitNormal(self: PolygonMesh3D, face: Integer): Vector3D
+        => self.FacePositions(face).VectorArea.Normalize;
+
+    // One dual vertex per face, placed by polar reciprocation about the unit
+    // sphere: a face lying in the plane { x : x.n = d } (unit normal n, support
+    // distance d = n.centroid) reciprocates to the point n / d
+    // (https://en.wikipedia.org/wiki/Dual_polyhedron#Polar_reciprocation). Every
+    // dual face then lies in a plane by construction — all reciprocals of planes
+    // through a point v lie in { x : x.v = 1 } — which is what keeps the Catalan
+    // solids planar; the face centroids alone do not, and centroid / |centroid|^2
+    // is only right when the centroid ray is perpendicular to the face (true for
+    // a face with a symmetry axis, false for e.g. the edge-triangles of a snub).
+    // Precondition: no face plane passes through the origin.
+    PolarVertices(self: PolygonMesh3D): Array<Point3D>
+        => self.FaceCount.MapRange(f =>
+            (self.FaceUnitNormal(f)
+                / self.FaceUnitNormal(f).Dot(self.FaceCentroid(f).PositionVector)).ToPoint);
+
+    // The dual face of a vertex: the faces meeting at it, named by the dual
+    // vertices they became. Taken in REVERSED rotation order — a face built
+    // around a vertex winds opposite to the rotation that generated it, so
+    // without the reversal every dual face points inward.
+    DualFaceOfVertex(self: PolygonMesh3D, vertex: VertexIndex): Array<VertexIndex>
+        => self.ReversedVertexCornerRing(vertex).Map(c => VertexIndex(self.CornerFace(c).Value));
+
+    // One dual vertex per face, one dual face per vertex.
+    Dual(self: PolygonMesh3D): PolygonMesh3D
+        => PolygonMeshOfFaces(
+            self.PolarVertices,
+            self.VertexCount.MapRange(v => self.DualFaceOfVertex(VertexIndex(v))));
+
+    //==
+    // Ambo — rectification: cut each vertex back to the midpoints of its edges,
+    // leaving one face per original face and one per original vertex, meeting at
+    // one vertex per original edge (https://en.wikipedia.org/wiki/Rectification_(geometry)).
+    // Cube -> cuboctahedron, dodecahedron -> icosidodecahedron.
+
+    // The midpoint of every undirected edge, in edge-index order: the vertices
+    // of the ambo. Folded over the corners in ascending order keeping only the
+    // canonical half of each twin pair — whose rank IS its edge index, so the
+    // result lands in CornerUndirectedEdge order by construction. `Repeat(0, …)` is the
+    // empty seed.
+    UndirectedEdgeMidpoints(self: PolygonMesh3D): Array<Point3D>
+        => self.CornerCount
+            .MapRange(c => CornerIndex(c))
+            .Reduce(Repeat(0, Point3D(0.0, 0.0, 0.0)),
+                (acc, c) => self.IsCanonicalCorner(c) ? acc.Append(self.CornerLerp(c, 0.5)) : acc);
+
+    // The shrunken copy of an original face: its own edges' midpoints, in order.
+    AmboFaceOfFace(self: PolygonMesh3D, face: Integer): Array<VertexIndex>
+        => self.FaceArity(face).MapRange(slot =>
+            VertexIndex(self.CornerUndirectedEdge(self.FaceCorner(face, slot)).Value));
+
+    // The face left where a vertex was: the midpoints of the edges meeting at
+    // it. Taken in reversed rotation order so it winds counter-clockwise seen
+    // from outside, like the faces it neighbours.
+    AmboFaceOfVertex(self: PolygonMesh3D, vertex: VertexIndex): Array<VertexIndex>
+        => self.ReversedVertexCornerRing(vertex).Map(c => VertexIndex(self.CornerUndirectedEdge(c).Value));
+
+    // One vertex per edge; one face per original face plus one per original vertex.
+    Ambo(self: PolygonMesh3D): PolygonMesh3D
+        => PolygonMeshOfFaces(
+                self.UndirectedEdgeMidpoints,
+                Concatenate(
+                    self.FaceCount.MapRange(f => self.AmboFaceOfFace(f)),
+                    self.VertexCount.MapRange(v => self.AmboFaceOfVertex(VertexIndex(v)))));
+
+    //==
+    // Truncate — cut each vertex off a third of the way along its edges, so
+    // every original n-gon becomes a 2n-gon and every vertex becomes a face of
+    // its own degree (https://en.wikipedia.org/wiki/Truncation_(geometry)).
+    // Cube -> truncated cube, icosahedron -> truncated icosahedron.
+
+    // One new vertex per corner, a third of the way along that corner's edge.
+    // The corner numbering therefore IS the truncated mesh's vertex numbering.
+    TruncationPoints(self: PolygonMesh3D): Array<Point3D>
+        => self.CornerCount.MapRange(c => self.CornerLerp(CornerIndex(c), 1.0 / 3.0));
+
+    // The widened copy of an original face: each of its edges contributes two
+    // new vertices — the near one from the corner itself, the far one from that
+    // corner's twin, which cuts at the other end of the same edge.
+    TruncateFaceOfFace(self: PolygonMesh3D, face: Integer): Array<VertexIndex>
+        => (self.FaceArity(face) * 2).MapRange(k =>
+            k % 2 == 0
+                ? VertexIndex(self.FaceCorner(face, k / 2).Value)
+                : VertexIndex(self.TwinCorner(self.FaceCorner(face, k / 2)).Value));
+
+    // The face exposed by cutting a vertex off: the new vertex on each edge
+    // that met there, in reversed rotation order so it winds counter-clockwise
+    // seen from outside.
+    TruncateFaceOfVertex(self: PolygonMesh3D, vertex: VertexIndex): Array<VertexIndex>
+        => self.ReversedVertexCornerRing(vertex).Map(c => VertexIndex(c.Value));
+
+    // One vertex per corner; one face per original face plus one per original vertex.
+    Truncate(self: PolygonMesh3D): PolygonMesh3D
+        => PolygonMeshOfFaces(
+                self.TruncationPoints,
+                Concatenate(
+                    self.FaceCount.MapRange(f => self.TruncateFaceOfFace(f)),
+                    self.VertexCount.MapRange(v => self.TruncateFaceOfVertex(VertexIndex(v)))));
+
+    //==
+    // # Expand, snub and bevel on polygon meshes
+    //
+    // The three remaining Conway operators
+    // (https://en.wikipedia.org/wiki/Conway_polyhedron_notation) the catalog needs:
+    // with them every Archimedean solid is a one-line program over a Platonic seed,
+    // and every Catalan its dual (see the catalog sections above).
+    //
+    // Expand and snub share one construction: every FACE is shrunk toward its
+    // centroid (and for snub also twisted about its normal), so the new vertex
+    // numbering is the CORNER numbering of `meshes-polygon.library.plato`, exactly
+    // as in truncate. The moved faces are then stitched back together:
+    //
+    //   expand    one QUAD per edge                       (the pulled-apart edge)
+    //   snub      two TRIANGLES per edge                  (the quad, split with a twist)
+    //   bevel     truncate of ambo (the Conway identity b = ta), nothing new
+    //
+    // plus one face per original vertex in both cases (the reversed vertex ring,
+    // shared with truncate). Preconditions as for the other operators: a closed
+    // manifold mesh with convex faces. The `shrink` and `twist` parameters are free;
+    // the values that make the result UNIFORM (all edges equal) depend on the seed
+    // and are recorded at the call sites in the expanded catalog above.
+    // Snub is chiral: the twist sign picks the enantiomer, and the triangle split
+    // below matches a POSITIVE (counter-clockwise seen from outside) twist.
+    //
+    // Like the core Conway operators above, nothing here
+    // normalizes the result onto the unit sphere.
+
+    //==
+    // The shared vertex placement: one new vertex per corner.
+
+    // A corner's vertex pulled toward its face's centroid by `shrink` (1 keeps
+    // it in place, 0 collapses the face) and rotated by `twist` about the face's
+    // outward normal, staying in the face plane. The in-plane rotation is
+    // u * cos + (n x u) * sin for offset u and unit normal n.
+    TwistedCornerPoint(self: PolygonMesh3D, corner: CornerIndex, shrink: Number, twist: Angle): Point3D
+    {
+        var face = self.CornerFace(corner).Value;
+        var centroid = self.FaceCentroid(face);
+        var normal = self.FaceUnitNormal(face);
+        var offset = centroid.Between(self.CornerPosition(corner)) * shrink;
+        return (centroid.PositionVector
+            + offset * twist.Cos
+            + normal.Cross(offset) * twist.Sin).ToPoint;
+    }
+
+    // Every corner's moved vertex, in corner order: the vertex table shared by
+    // expand and snub. The corner numbering therefore IS the result's vertex
+    // numbering, and no lookup table is built.
+    TwistedFacePoints(self: PolygonMesh3D, shrink: Number, twist: Angle): Array<Point3D>
+        => self.CornerCount.MapRange(c => self.TwistedCornerPoint(CornerIndex(c), shrink, twist));
+
+    //==
+    // The moved copies of the original faces and vertices. The face copy is the
+    // identity on corner numbers; the vertex face is truncate's
+    // (`TruncateFaceOfVertex`), reused as-is since both name one new vertex per
+    // corner of the ring.
+
+    // The shrunk (and possibly twisted) copy of an original face: its own
+    // corners, read as vertices of the result.
+    MovedFaceOfFace(self: PolygonMesh3D, face: Integer): Array<VertexIndex>
+        => self.FaceArity(face).MapRange(slot =>
+            VertexIndex(self.FaceCorner(face, slot).Value));
+
+    //==
+    // Stitching the pulled-apart edges back together.
+
+    // The quad left where an edge was pulled apart: the edge's two corners on
+    // one face and their twins' on the other, wound opposite to the moved faces
+    // it borders so the result stays counter-clockwise seen from outside.
+    // Precondition: `corner` is canonical (one call per undirected edge).
+    ExpandFaceOfEdge(self: PolygonMesh3D, corner: CornerIndex): Array<VertexIndex>
+    {
+        var twin = self.TwinCorner(corner);
+        return [VertexIndex(self.NextCorner(corner).Value),
+                VertexIndex(corner.Value),
+                VertexIndex(self.NextCorner(twin).Value),
+                VertexIndex(twin.Value)];
+    }
+
+    // The same quad split along the diagonal that matches a positive twist,
+    // giving the snub's two edge-triangles.
+    // Precondition: `corner` is canonical.
+    SnubFacesOfEdge(self: PolygonMesh3D, corner: CornerIndex): Array<Array<VertexIndex>>
+    {
+        var twin = self.TwinCorner(corner);
+        return [[VertexIndex(self.NextCorner(corner).Value),
+                 VertexIndex(corner.Value),
+                 VertexIndex(twin.Value)],
+                [VertexIndex(corner.Value),
+                 VertexIndex(self.NextCorner(twin).Value),
+                 VertexIndex(twin.Value)]];
+    }
+
+    // One stitch per undirected edge: folded over the corners keeping only the
+    // canonical half of each twin pair, appending that edge's stitch faces.
+    // `Repeat(0, ...)` is the empty seed.
+    EdgeStitchFaces(self: PolygonMesh3D, stitch: Function2<PolygonMesh3D, CornerIndex, Array<Array<VertexIndex>>>): Array<Array<VertexIndex>>
+        => self.CornerCount
+            .MapRange(c => CornerIndex(c))
+            .Reduce(Repeat(0, Repeat(0, VertexIndex(0))),
+                (acc, c) => self.IsCanonicalCorner(c) ? Concatenate(acc, stitch(self, c)) : acc);
+
+    // All faces of an expand or snub: the moved face copies, the vertex faces,
+    // and the per-edge stitches.
+    ExpansionFaces(self: PolygonMesh3D, stitch: Function2<PolygonMesh3D, CornerIndex, Array<Array<VertexIndex>>>): Array<Array<VertexIndex>>
+        => Concatenate(
+            Concatenate(
+                self.FaceCount.MapRange(f => self.MovedFaceOfFace(f)),
+                self.VertexCount.MapRange(v => self.TruncateFaceOfVertex(VertexIndex(v)))),
+            self.EdgeStitchFaces(stitch));
+
+    //==
+    // The operators.
+
+    // Expand (cantellation, https://en.wikipedia.org/wiki/Cantellation_(geometry)):
+    // faces shrink in place, a quad appears per edge, an n-gon per degree-n
+    // vertex. Cube -> rhombicuboctahedron at shrink = sqrt(2) - 1.
+    // V' = C, E' = 2E + C, F' = F + V + E.
+    Expand(self: PolygonMesh3D, shrink: Number): PolygonMesh3D
+        => PolygonMeshOfFaces(
+            self.TwistedFacePoints(shrink, Angle(0.0)),
+            self.ExpansionFaces((m, c) => [m.ExpandFaceOfEdge(c)]));
+
+    // Snub (https://en.wikipedia.org/wiki/Snub_(geometry)): expand with a twist,
+    // each edge-quad split into two triangles. Chiral — `twist` > 0 gives one
+    // enantiomer, < 0 its mirror. Cube -> snub cube.
+    // V' = C, E' = 3E + C, F' = F + V + 2E.
+    Snub(self: PolygonMesh3D, shrink: Number, twist: Angle): PolygonMesh3D
+        => PolygonMeshOfFaces(
+            self.TwistedFacePoints(shrink, twist),
+            self.ExpansionFaces((m, c) => m.SnubFacesOfEdge(c)));
+
+    // Bevel (omnitruncation): the Conway identity b = ta — truncate the ambo.
+    // Cube -> truncated cuboctahedron. Topologically exact; the vertex faces
+    // come out as rectangles rather than squares (the uniform bevel is not
+    // reachable by literal truncation), which a caller may accept or relax.
+    Bevel(self: PolygonMesh3D): PolygonMesh3D
+        => self.Ambo.Truncate;
+
+    //==
+    // # Polyhedral dual pairings on the solid kinds
+    //
+    // The known dual-polyhedron partner of each named solid kind, as total maps on
+    // the kind sums in `solids.types.plato`
+    // (https://en.wikipedia.org/wiki/Dual_polyhedron). This is the identity-level
+    // counterpart of the geometric Conway `Dual` on `PolygonMesh3D`
+    //: that operation constructs the dual mesh of
+    // any mesh; these maps record which named form the dual of a named form is, so
+    // the Archimedean/Catalan pairing is vocabulary rather than a catalog comment.
+    // Dual is an involution: `kind.Dual.Dual == kind` for every kind below.
+
+    // The dual Platonic solid: cube and octahedron swap, dodecahedron and
+    // icosahedron swap, and the tetrahedron is self-dual
+    // (https://en.wikipedia.org/wiki/Platonic_solid).
+    Dual(self: PlatonicSolidKind): PlatonicSolidKind
+        => match (self) {
+            Tetrahedron => PlatonicSolidKind.Tetrahedron;
+            Cube => PlatonicSolidKind.Octahedron;
+            Octahedron => PlatonicSolidKind.Cube;
+            Dodecahedron => PlatonicSolidKind.Icosahedron;
+            Icosahedron => PlatonicSolidKind.Dodecahedron;
+        };
+
+    // The Catalan dual of each Archimedean solid
+    // (https://en.wikipedia.org/wiki/Catalan_solid).
+    Dual(self: ArchimedeanSolidKind): CatalanSolidKind
+        => match (self) {
+            TruncatedTetrahedron => CatalanSolidKind.TriakisTetrahedron;
+            Cuboctahedron => CatalanSolidKind.RhombicDodecahedron;
+            TruncatedCube => CatalanSolidKind.TriakisOctahedron;
+            TruncatedOctahedron => CatalanSolidKind.TetrakisHexahedron;
+            Rhombicuboctahedron => CatalanSolidKind.DeltoidalIcositetrahedron;
+            TruncatedCuboctahedron => CatalanSolidKind.DisdyakisDodecahedron;
+            SnubCube => CatalanSolidKind.PentagonalIcositetrahedron;
+            Icosidodecahedron => CatalanSolidKind.RhombicTriacontahedron;
+            TruncatedDodecahedron => CatalanSolidKind.TriakisIcosahedron;
+            TruncatedIcosahedron => CatalanSolidKind.PentakisDodecahedron;
+            Rhombicosidodecahedron => CatalanSolidKind.DeltoidalHexecontahedron;
+            TruncatedIcosidodecahedron => CatalanSolidKind.DisdyakisTriacontahedron;
+            SnubDodecahedron => CatalanSolidKind.PentagonalHexecontahedron;
+        };
+
+    // The Archimedean dual of each Catalan solid: the inverse of the map above
+    // (https://en.wikipedia.org/wiki/Archimedean_solid).
+    Dual(self: CatalanSolidKind): ArchimedeanSolidKind
+        => match (self) {
+            TriakisTetrahedron => ArchimedeanSolidKind.TruncatedTetrahedron;
+            RhombicDodecahedron => ArchimedeanSolidKind.Cuboctahedron;
+            TriakisOctahedron => ArchimedeanSolidKind.TruncatedCube;
+            TetrakisHexahedron => ArchimedeanSolidKind.TruncatedOctahedron;
+            DeltoidalIcositetrahedron => ArchimedeanSolidKind.Rhombicuboctahedron;
+            DisdyakisDodecahedron => ArchimedeanSolidKind.TruncatedCuboctahedron;
+            PentagonalIcositetrahedron => ArchimedeanSolidKind.SnubCube;
+            RhombicTriacontahedron => ArchimedeanSolidKind.Icosidodecahedron;
+            TriakisIcosahedron => ArchimedeanSolidKind.TruncatedDodecahedron;
+            PentakisDodecahedron => ArchimedeanSolidKind.TruncatedIcosahedron;
+            DeltoidalHexecontahedron => ArchimedeanSolidKind.Rhombicosidodecahedron;
+            DisdyakisTriacontahedron => ArchimedeanSolidKind.TruncatedIcosidodecahedron;
+            PentagonalHexecontahedron => ArchimedeanSolidKind.SnubDodecahedron;
+        };
+
+    //==
+    // # The five Platonic solids as polygon meshes
+    //
+    // The regular convex polyhedra (https://en.wikipedia.org/wiki/Platonic_solid),
+    // each as an explicit vertex table and face table, centred on the origin and
+    // projected onto the unit sphere so the circumscribed radius is one. Read as
+    // `PolygonMesh3D.Cube`, `PolygonMesh3D.Icosahedron`, … (the constant idiom:
+    // dispatch on an ignored receiver of the result type).
+    //
+    // These five are the SEEDS: every other catalog solid in this tree is a Conway
+    // program over one of them rather than
+    // another table. Faces wind counter-clockwise seen from outside
+    // (Convention: see CONVENTIONS.md - Winding, handedness, and normals).
+    //
+    // The tables are literal because the vertex coordinates ARE the definition —
+    // golden-ratio rectangles for the icosahedron, a cube plus golden rectangles
+    // for the dodecahedron. Generating them from symmetry groups instead would
+    // hide, not explain. C# oracle: `Ara3D.Geometry.Polyhedra`.
+
+    // Four triangles, four vertices: alternate corners of a cube
+    // (https://en.wikipedia.org/wiki/Tetrahedron).
+    Tetrahedron(_: PolygonMesh3D): PolygonMesh3D
+    {
+        var h = 1.0 / Number.SqrtTwo;
+        var points = [Point3D(1.0, 0.0, -h),
+                      Point3D(-1.0, 0.0, -h),
+                      Point3D(0.0, 1.0, h),
+                      Point3D(0.0, -1.0, h)];
+        var faces = [[0, 1, 2], [1, 0, 3], [0, 2, 3], [1, 3, 2]];
+        return PolygonMeshOfVertexNumbers(points, faces).ProjectedToUnitSphere;
+    }
+
+    // Six squares, eight vertices (https://en.wikipedia.org/wiki/Cube).
+    Cube(_: PolygonMesh3D): PolygonMesh3D
+    {
+        var points = [Point3D(-1.0, -1.0, -1.0),
+                      Point3D(-1.0, 1.0, -1.0),
+                      Point3D(1.0, 1.0, -1.0),
+                      Point3D(1.0, -1.0, -1.0),
+                      Point3D(-1.0, -1.0, 1.0),
+                      Point3D(-1.0, 1.0, 1.0),
+                      Point3D(1.0, 1.0, 1.0),
+                      Point3D(1.0, -1.0, 1.0)];
+        var faces = [[0, 1, 2, 3], [1, 5, 6, 2], [7, 6, 5, 4],
+                     [4, 0, 3, 7], [4, 5, 1, 0], [3, 2, 6, 7]];
+        return PolygonMeshOfVertexNumbers(points, faces).ProjectedToUnitSphere;
+    }
+
+    // Eight triangles on the six axis points: the dual of the cube
+    // (https://en.wikipedia.org/wiki/Octahedron).
+    Octahedron(_: PolygonMesh3D): PolygonMesh3D
+    {
+        var points = [Point3D(1.0, 0.0, 0.0),
+                      Point3D(-1.0, 0.0, 0.0),
+                      Point3D(0.0, 1.0, 0.0),
+                      Point3D(0.0, -1.0, 0.0),
+                      Point3D(0.0, 0.0, 1.0),
+                      Point3D(0.0, 0.0, -1.0)];
+        var faces = [[0, 2, 4], [0, 4, 3], [0, 3, 5], [0, 5, 2],
+                     [1, 2, 5], [1, 5, 3], [1, 3, 4], [1, 4, 2]];
+        return PolygonMeshOfVertexNumbers(points, faces).ProjectedToUnitSphere;
+    }
+
+    // Twelve pentagons on twenty vertices: a cube's eight corners plus three
+    // mutually perpendicular golden rectangles
+    // (https://en.wikipedia.org/wiki/Regular_dodecahedron).
+    Dodecahedron(_: PolygonMesh3D): PolygonMesh3D
+    {
+        var p = Number.Phi;
+        var q = Number.RPhi;
+        var points = [Point3D(-1.0, -1.0, -1.0), Point3D(-1.0, -1.0, 1.0),
+                      Point3D(-1.0, 1.0, -1.0), Point3D(-1.0, 1.0, 1.0),
+                      Point3D(1.0, -1.0, -1.0), Point3D(1.0, -1.0, 1.0),
+                      Point3D(1.0, 1.0, -1.0), Point3D(1.0, 1.0, 1.0),
+                      Point3D(0.0, -q, -p), Point3D(0.0, -q, p),
+                      Point3D(0.0, q, -p), Point3D(0.0, q, p),
+                      Point3D(-q, -p, 0.0), Point3D(-q, p, 0.0),
+                      Point3D(q, -p, 0.0), Point3D(q, p, 0.0),
+                      Point3D(-p, 0.0, -q), Point3D(p, 0.0, -q),
+                      Point3D(-p, 0.0, q), Point3D(p, 0.0, q)];
+        var faces = [[11, 7, 15, 13, 3], [19, 17, 6, 15, 7], [4, 8, 10, 6, 17],
+                     [0, 16, 2, 10, 8], [12, 1, 18, 16, 0], [10, 2, 13, 15, 6],
+                     [16, 18, 3, 13, 2], [1, 9, 11, 3, 18], [14, 12, 0, 8, 4],
+                     [9, 5, 19, 7, 11], [5, 14, 4, 17, 19], [12, 14, 5, 9, 1]];
+        return PolygonMeshOfVertexNumbers(points, faces).ProjectedToUnitSphere;
+    }
+
+    // Twenty triangles on twelve vertices: three mutually perpendicular golden
+    // rectangles (https://en.wikipedia.org/wiki/Regular_icosahedron).
+    Icosahedron(_: PolygonMesh3D): PolygonMesh3D
+    {
+        var p = Number.Phi;
+        var points = [Point3D(-1.0, p, 0.0), Point3D(1.0, p, 0.0),
+                      Point3D(-1.0, -p, 0.0), Point3D(1.0, -p, 0.0),
+                      Point3D(0.0, -1.0, p), Point3D(0.0, 1.0, p),
+                      Point3D(0.0, -1.0, -p), Point3D(0.0, 1.0, -p),
+                      Point3D(p, 0.0, -1.0), Point3D(p, 0.0, 1.0),
+                      Point3D(-p, 0.0, -1.0), Point3D(-p, 0.0, 1.0)];
+        var faces = [[0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
+                     [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
+                     [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
+                     [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]];
+        return PolygonMeshOfVertexNumbers(points, faces).ProjectedToUnitSphere;
+    }
+}

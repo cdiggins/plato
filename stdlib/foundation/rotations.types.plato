@@ -11,7 +11,7 @@
 // files, not restated here. Bivector3D is
 // the geometric-algebra dual of a Vector3D cross product (components YZ, ZX, XY
 // <-> X, Y, Z under the right-hand convention); construct one from a vector pair
-// with `Wedge` in `numeric-structures-vector.library.plato`.
+// with `Wedge` in `numeric-structures.library.plato`.
 
 // A unit quaternion encoding a 3D rotation
 // (https://en.wikipedia.org/wiki/Quaternion). Invariant: X*X + Y*Y + Z*Z + W*W = 1.

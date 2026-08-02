@@ -1,0 +1,433 @@
+//==
+// # Algebra
+//
+// Sections, in order:
+//  - Algebra metric
+//  - Algebra numeric
+//  - Algebra operations
+
+library Algebra
+{
+    //==
+    // # Algebra metric
+    //
+    // Derived functionality for the magnitude, distance and lattice concepts
+    // (`algebra.concepts.plato`): unit-length tests, proximity predicates,
+    // nearest-of selection, and the component-wise clamp
+    // (https://en.wikipedia.org/wiki/Metric_space). Shared provenance note:
+    // `core.library.plato`.
+
+    //==
+    // Normed
+
+    // True when x has unit length, within the given tolerance on the squared
+    // magnitude (avoids the square root).
+    IsUnit(x: Normed, tolerance: Number): Boolean
+        => x.MagnitudeSquared.AlmostEqual(1.0, tolerance);
+
+    // True when x has (near) zero length, within the given squared-magnitude tolerance.
+    IsZeroLength(x: Normed, tolerance: Number): Boolean
+        => x.MagnitudeSquared <= tolerance;
+
+    //==
+    // MetricSpace
+
+    // True when a and b are within the given tolerance of each other.
+    IsNear(a: MetricSpace, b: MetricSpace, tolerance: Number): Boolean
+        => a.Distance(b) <= tolerance;
+
+    // True when candidate is strictly nearer to reference than other is.
+    // Example: origin.IsNearerThan(p, q) tests whether p is closer to origin than q.
+    IsNearerThan(reference: MetricSpace, candidate: MetricSpace, other: MetricSpace): Boolean
+        => reference.Distance(candidate).LessThan(reference.Distance(other));
+
+    // Whichever of a and b is nearer to reference (ties resolve to a).
+    Nearest(reference: MetricSpace, a: MetricSpace, b: MetricSpace): MetricSpace
+        => reference.Distance(a) <= reference.Distance(b) ? a : b;
+
+    //==
+    // Lattice
+
+    // Component-wise clamp of x into the inclusive box [min, max], derived from the
+    // lattice Min/Max. Assumes min <= max component-wise. (Provides the default body
+    // for the Clampable.Clamp member, since Clampable inherits Lattice.)
+    Clamp(x: Lattice, min: Lattice, max: Lattice): Lattice
+        => x.Max(min).Min(max);
+
+    //==
+    // Difference<TDelta> — the affine surface, derived
+    //
+    // `Difference` declares only Add(Self, TDelta) and Between(Self, Self): the
+    // torsor action and its inverse. Everything below follows from those two plus
+    // the concept's `where TDelta: Additive, TDelta: Scalable` bound, so an
+    // implementing type owes two members rather than the six it used to spell out
+    // by hand. Point2D/Point3D and Instant previously wrote all of this per type
+    // (transforms.library.plato, time.library.plato); PointN, UvCoordinate
+    // and UvwCoordinate declared `implements Difference<...>` and wrote none of
+    // it, so they carried throwing stubs until these bodies existed.
+    //
+    // The earlier note here said Plato had no type-parameter constraint syntax and
+    // that MidPoint was therefore unreachable. That was already out of date:
+    // `where` clauses on concepts are live (IntervalLike / BoundsLike in
+    // intervals-bounds.concepts.plato), and MidPoint now falls out of the Lerp
+    // below via Interpolatable.
+
+    // The position displaced by the negation of delta. The `-` spelling of
+    // Add(x, -delta).
+    Subtract(x: Difference<$D>, delta: $D): Difference<$D>
+        => x.Add(delta.Negative);
+
+    // The displacement from b to a (a - b). Same delta as Between(b, a); the `-`
+    // operator spelling of position difference. Orientation follows Between.
+    Subtract(a: Difference<$D>, b: Difference<$D>): $D
+        => b.Between(a);
+
+    // NOT derivable here: the commuted `Add(delta, position)`. A library function
+    // dispatches on its FIRST parameter, which the compiler requires to be a
+    // concrete type or a concept — a bare type variable is rejected with
+    // "not a concrete type or concept". So reversed-operand forms over a concept
+    // cannot be spelled generically at all, and any position type wanting
+    // `delta + position` writes it concretely (Instant does, in
+    // time.library.plato). Same reason the delta-centric `Apply(delta, position)`
+    // API shape was set aside: library dispatch is on the first parameter.
+
+    // The position a fraction `t` of the way from a to b, walked along the
+    // displacement between them. t is unclamped, so it extrapolates. This is the
+    // Interpolatable obligation for every Coordinate that is also a Difference,
+    // and it is what makes MidPoint / LerpClamped / SmoothLerp (P1, over
+    // Interpolatable) reach the position types.
+    Lerp(a: Difference<$D>, b: Difference<$D>, t: Number): Difference<$D>
+        => a.Add(a.Between(b) * t);
+
+    //==
+    // OriginBased<TDelta> — the last two primitives, derived
+    //
+    // With an origin fixed, the position space and the delta space are the same
+    // space under two names, so the torsor action and its inverse are just delta
+    // arithmetic with a round trip through the conversions. An OriginBased type
+    // therefore owes Offset and FromOffset and nothing else: Add and Between come
+    // from here, and Subtract / Lerp from the Difference section above.
+    //
+    // This is the same shape as Quantity's Amount/FromAmount seam
+    // (quantities.library.plato), one level up: there the carrier is a Number and
+    // the full additive structure is transported onto Self; here the carrier is
+    // the delta group and only the affine action is transported, because a
+    // position deliberately does NOT gain Self + Self or a scalar multiple.
+
+    // The position displaced by delta.
+    Add(x: OriginBased<$D>, delta: $D): OriginBased<$D>
+        => x.FromOffset(x.Offset + delta);
+
+    // The displacement from a to b (b - a), matching the Difference orientation.
+    Between(a: OriginBased<$D>, b: OriginBased<$D>): $D
+        => b.Offset - a.Offset;
+
+    // The origin itself: the position at zero displacement. The receiver only
+    // selects the type, and for runtime-arity positions supplies the arity.
+    // Reaches TDelta's Zero through the concept's `where TDelta: Additive` bound
+    // (Zero lives on Additive, not NumericalLimits, so Duration resolves too).
+    Origin(x: OriginBased<$D>): OriginBased<$D>
+        => x.FromOffset(x.Offset.Zero);
+
+    //==
+    // # Algebra numeric
+    //
+    // Derived functionality for the numeric tower (`algebra.concepts.plato`):
+    // identity tests, blends, sign and absolute value, tolerance comparisons,
+    // remapping, and the Number-concrete shaping functions
+    // (https://en.wikipedia.org/wiki/Real_number). Shared provenance note:
+    // `core.library.plato`.
+
+    //==
+    // Numerical
+
+    // True when x equals the additive identity (zero).
+    IsZero(x: Numerical): Boolean
+        => x == x.Zero;
+
+    // True when x equals the multiplicative identity (one).
+    IsOne(x: Numerical): Boolean
+        => x == x.One;
+
+    // The weighted sum a*s + b*t of two values with scalar weights.
+    // (https://en.wikipedia.org/wiki/Linear_combination)
+    LinearCombination(a: Numerical, b: Numerical, s: Number, t: Number): Numerical
+        => a * s + b * t;
+
+    // Barycentric blend of three values: at (u,v)=(0,0) yields a, (1,0) yields b,
+    // (0,1) yields c. (https://en.wikipedia.org/wiki/Barycentric_coordinate_system)
+    Barycentric(a: Numerical, b: Numerical, c: Numerical, u: Number, v: Number): Numerical
+        => a + (b - a) * u + (c - a) * v;
+
+    //==
+    // Real
+
+    // The absolute value of x (its magnitude on the number line).
+    Abs(x: Real): Real
+        => x.LessThan(x.Zero) ? x.Negative : x;
+
+    // The sign of x as an integer: -1, 0, or +1.
+    Sign(x: Real): Integer
+        => x.Compare(x.Zero);
+
+    // The complement of x within the unit interval: one minus x. Handy for weights
+    // and easing (e.g. the (1 - t) factor in a Bezier blend).
+    OneMinus(x: Real): Real
+        => x.One - x;
+
+    // True when x is strictly greater than zero.
+    IsPositive(x: Real): Boolean
+        => x.Zero.LessThan(x);
+
+    // True when x is strictly less than zero.
+    IsNegative(x: Real): Boolean
+        => x.LessThan(x.Zero);
+
+    // True when x and y differ by no more than the given (non-negative) tolerance.
+    AlmostEqual(x: Real, y: Real, tolerance: Real): Boolean
+        => (x - y).Abs <= tolerance;
+
+    // True when x and y are close under the combined absolute+relative policy:
+    // |x - y| <= tol.Absolute + tol.Relative * max(|x|, |y|). This is the library's
+    // one numerical-comparison epsilon (see CONVENTIONS.md - Floating-point
+    // comparison). Note: engineering Tolerance (uncertainty.types.plato) is an acceptance
+    // allowance, NOT ComparisonTolerance, and does not belong here.
+    AlmostEqual(x: Number, y: Number, tol: ComparisonTolerance): Boolean
+        => (x - y).Abs <= tol.Absolute + tol.Relative * x.Abs.Greater(y.Abs);
+
+    // True when x is within the given (non-negative) tolerance of zero.
+    AlmostZero(x: Real, tolerance: Real): Boolean
+        => x.Abs <= tolerance;
+
+    // True when x sits at either end of the unit interval, within the given
+    // (non-negative) tolerance. Useful for detecting degenerate curve parameters.
+    AlmostZeroOrOne(x: Real, tolerance: Real): Boolean
+        => x.AlmostZero(tolerance) || x.AlmostEqual(x.One, tolerance);
+
+    // Clamps x to the inclusive range [0, 1].
+    Saturate(x: Real): Real
+        => x.Clamp(x.Zero, x.One);
+
+    // The parameter t in [0,1] for which Lerp(a, b, t) equals value. Assumes a != b.
+    InverseLerp(a: Real, b: Real, value: Real): Number
+        => ((value - a) / (b - a)).ToNumber;
+
+    // Remaps value from the input range [inputMin, inputMax] onto the output range
+    // [outputMin, outputMax]. Assumes inputMin != inputMax.
+    Remap(value: Real, inputMin: Real, inputMax: Real, outputMin: Real, outputMax: Real): Real
+        => outputMin.Lerp(outputMax, inputMin.InverseLerp(inputMax, value));
+
+    // Divides x by divisor, returning fallback instead when divisor is zero.
+    SafeDivide(x: Real, divisor: Real, fallback: Real): Real
+        => divisor.IsZero ? fallback : x / divisor;
+
+    // The fractional part of x: x minus its floor, always in [0, 1). For negative
+    // x this is the periodic fraction (e.g. FractionalPart(-0.25) = 0.75), matching Floor.
+    FractionalPart(x: Real): Real
+        => x - x.Floor;
+
+    // x rounded to the nearest whole value, halves rounding up (toward +infinity),
+    // via Floor(x + 1/2). Note: deliberately half-up, unlike the host intrinsic
+    // Round (typically banker's rounding) — do not "simplify" to Round.
+    RoundedToNearest(x: Real): Real
+        => (x + x.One.Half).Floor;
+
+    //==
+    // Number
+    //
+    // A small set of shaping helpers that are deliberately Number-concrete rather
+    // than generic over Real: they read the `Pow` intrinsic (declared only on
+    // Number), and on a type that is simultaneously Multiplicative and Scalable a
+    // generic `x * 2.0` has two equally good readings. Vector/quantity versions
+    // belong with the component-wise lifting on `Vector` (P3), not here.
+
+    // x raised to the reciprocal power: the y-th root of x. InversePow(x, 2) is
+    // the square root, InversePow(x, 3) the cube root. Precondition: y is not zero.
+    InversePow(x: Number, y: Number): Number
+        => x.Pow(1.0 / y);
+
+    // The classic smoothstep shaping function 3x^2 - 2x^3, with zero slope at
+    // both ends of the unit interval. Assumes x is in [0, 1]; saturate first if not.
+    // (For interpolation between two values use SmoothLerp above.)
+    // (https://en.wikipedia.org/wiki/Smoothstep)
+    SmoothStep(x: Number): Number
+        => x * x * (3.0 - 2.0 * x);
+
+    // Ken Perlin's quintic shaping function 6x^5 - 15x^4 + 10x^3, with zero first
+    // AND second derivative at both ends. Assumes x is in [0, 1].
+    // Same article family: https://en.wikipedia.org/wiki/Smoothstep
+    SmootherStep(x: Number): Number
+        => x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
+
+    // The staircase function: x quantized down to the nearest of `steps` equal
+    // treads per unit. Precondition: steps is positive.
+    // https://mathworld.wolfram.com/StaircaseFunction.html
+    StaircaseFloor(x: Number, steps: Integer): Number
+        => (x * steps.ToNumber).Floor / steps.ToNumber;
+
+    // The staircase function quantizing up to the nearest tread of `steps` per
+    // unit. Precondition: steps is positive.
+    StaircaseCeiling(x: Number, steps: Integer): Number
+        => (x * steps.ToNumber).Ceiling / steps.ToNumber;
+
+    // The staircase function quantizing to the nearest tread of `steps` per unit,
+    // halves going up. Precondition: steps is positive.
+    StaircaseRound(x: Number, steps: Integer): Number
+        => (x * steps.ToNumber).RoundedToNearest / steps.ToNumber;
+
+    //==
+    // Whole
+
+    // True when x equals zero.
+    IsZero(x: Whole): Boolean
+        => x == x.Zero;
+
+    // True when x equals one.
+    IsOne(x: Whole): Boolean
+        => x == x.One;
+
+    // The absolute value of x.
+    Abs(x: Whole): Whole
+        => x.LessThan(x.Zero) ? x.Negative : x;
+
+    // The sign of x as an integer: -1, 0, or +1.
+    Sign(x: Whole): Integer
+        => x.Compare(x.Zero);
+
+    // True when x is evenly divisible by two.
+    IsEven(x: Whole): Boolean
+        => x.Modulo(x.One + x.One) == x.Zero;
+
+    // True when x is not evenly divisible by two.
+    IsOdd(x: Whole): Boolean
+        => x.IsEven.Not;
+
+    // True when x is strictly greater than zero.
+    IsPositive(x: Whole): Boolean
+        => x.Zero.LessThan(x);
+
+    // True when x is strictly less than zero.
+    IsNegative(x: Whole): Boolean
+        => x.LessThan(x.Zero);
+
+    //==
+    // # Algebra operations
+    //
+    // Derived functionality for the elementary operation concepts
+    // (`algebra.concepts.plato`): powers, the named scalar fractions and
+    // multiples, and the interpolation helpers built on `Lerp`
+    // (https://en.wikipedia.org/wiki/Linear_interpolation). Shared provenance note:
+    // `core.library.plato`.
+
+    //==
+    // Additive
+
+    // The value added to itself: x + x. (Name overlaps C#'s Double type; unambiguous
+    // here as a method and worth keeping for the additive-doubling idiom.)
+    Double(x: Additive): Additive
+        => x + x;
+
+    //==
+    // Multiplicative
+
+    // The value multiplied by itself: x * x.
+    Square(x: Multiplicative): Multiplicative
+        => x * x;
+
+    // The value raised to the third power: x * x * x.
+    Cube(x: Multiplicative): Multiplicative
+        => x * x * x;
+
+    // The value raised to the fourth power.
+    Pow4(x: Multiplicative): Multiplicative
+        => x.Square.Square;
+
+    // The value raised to the fifth power.
+    Pow5(x: Multiplicative): Multiplicative
+        => x.Square.Square * x;
+
+    //==
+    // Invertible
+    //
+    // No derivations: Inverse is the sole member and every useful combination
+    // (e.g. a/b as a * b.Inverse) requires Multiplicative, which Invertible does
+    // not inherit. Types that are both (Real via Arithmetic) get division directly.
+
+    //==
+    // Scalable
+
+    // Half of x (divides by two).
+    Half(x: Scalable): Scalable
+        => x / 2.0;
+
+    // One third of x (divides by three).
+    Third(x: Scalable): Scalable
+        => x / 3.0;
+
+    // One quarter of x (divides by four).
+    Quarter(x: Scalable): Scalable
+        => x / 4.0;
+
+    // One eighth of x.
+    Eighth(x: Scalable): Scalable
+        => x / 8.0;
+
+    // One sixteenth of x.
+    Sixteenth(x: Scalable): Scalable
+        => x / 16.0;
+
+    // One tenth of x.
+    Tenth(x: Scalable): Scalable
+        => x / 10.0;
+
+    // One hundredth of x.
+    Hundredth(x: Scalable): Scalable
+        => x / 100.0;
+
+    // One thousandth of x.
+    Thousandth(x: Scalable): Scalable
+        => x / 1000.0;
+
+    // One millionth of x.
+    Millionth(x: Scalable): Scalable
+        => x / 1000000.0;
+
+    // One billionth of x (short-scale billion, 1e9).
+    Billionth(x: Scalable): Scalable
+        => x / 1000000000.0;
+
+    // A million times x.
+    Million(x: Scalable): Scalable
+        => x * 1000000.0;
+
+    // A billion times x (short-scale billion, 1e9).
+    Billion(x: Scalable): Scalable
+        => x * 1000000000.0;
+
+    // Scales x by the given percentage (100 yields x unchanged).
+    Percent(x: Scalable, percent: Number): Scalable
+        => x * (percent / 100.0);
+
+    // Scalar-on-the-left multiplication, so `2.0 * v` reads as well as `v * 2.0`.
+    // Delegates to the Scalable member; adds no new semantics.
+    Multiply(scalar: Number, x: Scalable): Scalable
+        => x * scalar;
+
+    //==
+    // Interpolatable
+
+    // The midpoint between a and b (linear interpolation at t = 0.5).
+    MidPoint(a: Interpolatable, b: Interpolatable): Interpolatable
+        => a.Lerp(b, 0.5);
+
+    // Linear interpolation with the parameter t clamped to [0, 1], so the result
+    // never extrapolates beyond the a..b segment.
+    LerpClamped(a: Interpolatable, b: Interpolatable, t: Number): Interpolatable
+        => a.Lerp(b, t.Saturate);
+
+    // Interpolates from a to b with smoothstep easing: the parameter t is reshaped
+    // by the weight t*t*(3 - 2*t), giving zero slope at both ends for a gentle
+    // start and stop. Requested cross-package by P3 (Coordinate). Assumes t in [0,1].
+    SmoothLerp(a: Interpolatable, b: Interpolatable, t: Number): Interpolatable
+        => a.Lerp(b, t * t * (3.0 - 2.0 * t));
+}

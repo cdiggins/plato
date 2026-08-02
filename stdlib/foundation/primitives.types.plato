@@ -1,0 +1,69 @@
+//==
+// # Primitives
+//
+// Sections, in order:
+//  - Multi-dimensional arrays
+//  - Tuples
+
+//==
+// # Multi-dimensional arrays
+//
+// Immutable, eagerly-or-lazily backed ordered collections. The compiler maps
+// indexing syntax to At.
+//
+// The one-dimensional `Array<T>` moved to `primitives.plato` (plato-367): it is a
+// name the compiler assumes. The rank-2 and rank-3 forms below are NOT - they are
+// ordinary types whose shape is their declaration, so they stay `type`.
+//
+// Both carry an HONEST LAYOUT as of plato-378: a flat row-major `Elements` store
+// plus the extents. They used to be opaque and field-less, which is why their
+// construction and traversal had to be host intrinsics — the one documented
+// exception to the primitive-only rule in `intrinsics.library.plato`. With a
+// declared shape the exception is gone: `MakeArray2D`, `At`, `Column`, `Row`,
+// `Map`, `Slices` and `CartesianProduct` are ordinary Plato bodies in
+// `primitives.library.plato`.
+//
+// The extent fields are named for the concept obligations they discharge
+// (`ColumnCount` / `RowCount` / `LayerCount` on Indexable2D / Indexable3D), so a
+// field satisfies each one directly rather than needing a library function keyed
+// on the type's own parameter — the shape plato-376 says can never bind.
+//
+// Row-major throughout, matching `Collections.FlattenIndex`:
+// index = (layer * RowCount + row) * ColumnCount + column.
+
+// An immutable collection addressed by column and row.
+type Array2D<T>
+    implements Indexable2D<T>
+{
+    Elements: Array<T>;
+    ColumnCount: Integer;
+    RowCount: Integer;
+}
+
+// An immutable collection addressed by column, row, and layer.
+type Array3D<T>
+    implements Indexable3D<T>
+{
+    Elements: Array<T>;
+    ColumnCount: Integer;
+    RowCount: Integer;
+    LayerCount: Integer;
+}
+
+//==
+// # Tuples
+//
+// Anonymous product types (https://en.wikipedia.org/wiki/Tuple). Tuple literals
+// construct them: (a, b) is a Tuple2. The compiler synthesizes a TupleN
+// constructor for every type with N fields, and supports at most 10-field
+// tuples — so no type may exceed 10 fields.
+
+type Tuple2<T0, T1> { X0: T0; X1: T1; }
+type Tuple3<T0, T1, T2> { X0: T0; X1: T1; X2: T2; }
+type Tuple4<T0, T1, T2, T3> { X0: T0; X1: T1; X2: T2; X3: T3; }
+type Tuple5<T0, T1, T2, T3, T4> { X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; }
+type Tuple6<T0, T1, T2, T3, T4, T5> { X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; }
+type Tuple7<T0, T1, T2, T3, T4, T5, T6> { X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; X6: T6; }
+type Tuple8<T0, T1, T2, T3, T4, T5, T6, T7> { X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; X6: T6; X7: T7; }
+type Tuple9<T0, T1, T2, T3, T4, T5, T6, T7, T8> { X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; X6: T6; X7: T7; X8: T8; }
+type Tuple10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> { X0: T0; X1: T1; X2: T2; X3: T3; X4: T4; X5: T5; X6: T6; X7: T7; X8: T8; X9: T9; }

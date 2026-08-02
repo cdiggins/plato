@@ -5,7 +5,7 @@
 // counted mesh elements (MeshElementCounts), which elements touch which
 // (MeshIncidence), and constant-time half-edge navigation (HalfEdgeNavigable).
 // The derived functionality of all three lives in
-// `meshes-topology.library.plato`.
+// `meshes.library.plato`.
 //
 // The rungs exist because real representations sit on different ones. An
 // indexed triangle soup can count vertices and faces; a face-vertex list can

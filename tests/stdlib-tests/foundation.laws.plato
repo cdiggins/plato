@@ -66,7 +66,7 @@ library FoundationLaws
     // Same property, stated over AngleInterval's OWN surface.
     //
     // DOMAIN: AngleInterval reinterprets both Contains and Center as ARC operations
-    // (intervals-transforms-interval.library.plato), so the generic law above does
+    // (intervals.library.plato), so the generic law above does
     // not describe this type. Worse, monomorphizing it produces a CHIMERA: the
     // concept's linear Center is inlined into the law body (resolution happens
     // against IntervalLike, where the specialization is invisible), while the
@@ -115,7 +115,7 @@ library FoundationLaws
     //
     // These pin the ONE thing the plato-306 refactor could silently break. Add and
     // Between used to be hand-written per type; they are now derived once over the
-    // concepts (algebra-metric.library.plato), so a single orientation slip would flip
+    // concepts (algebra.library.plato), so a single orientation slip would flip
     // the sign for Point2D, Point3D, PointN, UvCoordinate, UvwCoordinate AND Instant at
     // once. Written concretely rather than over `Difference<$D>` so the residual can be
     // measured with a tolerance: an exact float compare on a round-tripped position is

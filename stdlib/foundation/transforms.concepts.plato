@@ -7,7 +7,7 @@
 // in the `transforms-*.plato` files (pose, TRS, affine/projective, frames,
 // motor) and their operations in the matching `transforms-*.library.plato`
 // files; the derived bodies for the concepts below live in
-// `intervals-transforms-transformable.library.plato` and
+// `intervals.library.plato` and
 // `intervals-transforms-deformable.library.plato`. The shared conventions of
 // the whole transform surface are stated once here.
 

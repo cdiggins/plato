@@ -64,12 +64,12 @@ library IntervalsTransformsDeformable
 
     // The ScaleAbout/RotateAbout helpers use Difference.Between(a, b) = b - a,
     // the displacement from a to b. That direction is now the documented contract
-    // on the Difference concept (algebra-metric.concepts.plato), so it is relied on here
+    // on the Difference concept (algebra.concepts.plato), so it is relied on here
     // rather than merely assumed.
 
     // RESOLVED (was TODO(concept-gap): RotateAbout is omitted): rotating a Point2D
     // needed a point-rotation operation, which is now reachable - `library
-    // TransformsRotations` in transforms-rotations.library.plato supplies
+    // Transforms` in transforms.library.plato supplies
     // Transform(Vector2D, Rotation2D), and
     // constants.library.plato supplies the axis vectors. RotateAbout/Rotate are
     // implemented above.

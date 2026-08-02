@@ -1,0 +1,217 @@
+//==
+// # Solids CSG
+//
+// Sections, in order:
+//  - Union, intersection, and difference of polygon soups
+//  - Polygon-versus-plane classification and splitting
+//  - Point-in-solid parity and fragmenting against a solid
+//  - Deformation body for the polygon-soup solid
+
+library SolidsCsg
+{
+    //==
+    // # Union, intersection, and difference of polygon soups
+    //
+    // Boolean operations on closed `PolygonSoup3D` solids, the plane-clip
+    // re-expression of csg.js: every boolean output is assembled from fragments of
+    // A's faces cut by B's planes (so no fragment straddles B's boundary — see the
+    // clipping section) and kept by whether the fragment's
+    // centroid lies inside or outside B, plus the symmetric fragments of B against
+    // A. Correct-over-fast: a boolean costs O(|A|^2 |B| + |B|^2 |A|); a BSP-tree
+    // variant is a later, separate pass.
+    // (https://en.wikipedia.org/wiki/Constructive_solid_geometry)
+    //
+    // Precondition throughout: both solids are closed, with convex CCW-outward
+    // faces. Exactly coplanar shared faces of the two solids are the known
+    // unreliable case (their fragment centroids sit ON the other boundary).
+
+    // The fragments of a's faces, cut by b's planes, whose centroid's
+    // insideness of b equals `keepInside`. The centroid of a convex fragment is
+    // interior to it, so it classifies the whole fragment.
+    KeptFragments(a: PolygonSoup3D, b: PolygonSoup3D, keepInside: Boolean): Array<Polygon3D>
+        => a.Fragments(b.Planes, Number.CsgPlaneTolerance)
+            .FlatMap(f => KeepPolygon(b.Contains(f.Centroid).ExclusiveOr(keepInside).Not, f));
+
+    // The polygon turned inside out: reversed winding flips its outward normal.
+    ReversedWinding(p: Polygon3D): Polygon3D
+        => Polygon3D(p.Points.Count.MapRange(i => p.Points[p.Points.Count - 1 - i]));
+
+    // A | B: the surface of A outside B, plus the surface of B outside A.
+    Union(a: PolygonSoup3D, b: PolygonSoup3D): PolygonSoup3D
+        => PolygonSoup3D(a.KeptFragments(b, false).Concatenate(b.KeptFragments(a, false)));
+
+    // A & B: the surface of A inside B, plus the surface of B inside A.
+    Intersection(a: PolygonSoup3D, b: PolygonSoup3D): PolygonSoup3D
+        => PolygonSoup3D(a.KeptFragments(b, true).Concatenate(b.KeptFragments(a, true)));
+
+    // A - B: the surface of A outside B, plus the surface of B inside A turned
+    // inside out, so it faces into the carved cavity.
+    Difference(a: PolygonSoup3D, b: PolygonSoup3D): PolygonSoup3D
+        => PolygonSoup3D(a.KeptFragments(b, false)
+            .Concatenate(b.KeptFragments(a, true).Map(f => f.ReversedWinding)));
+
+    //==
+    // # Polygon-versus-plane classification and splitting
+    //
+    // The foundational CSG primitives on the types in `solids.types.plato`:
+    // the supporting plane of a convex polygon, the four-way polygon/plane
+    // classification, and Sutherland-Hodgman clipping of a convex polygon to a
+    // half-space and splitting by a plane.
+    // (https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm)
+    //
+    // Conventions:
+    //   * Every polygon is CONVEX and planar with CCW-outward winding
+    //     (`PolygonSoup3D`'s invariant); clipping a non-convex ring is not defined
+    //     here.
+    //   * The plane's FRONT is its positive half-space (`lines.types.plato`);
+    //     clipping keeps the front, boundary inclusive.
+
+    // The on-plane thickness for polygon/plane classification: a vertex within
+    // this absolute distance of a plane counts as lying ON it. One shared knob
+    // rather than a magic number in each body.
+    CsgPlaneTolerance(_: Number): Number
+        => 0.00000001;
+
+    // The plane a planar polygon lies in, facing the polygon's outward normal.
+    SupportingPlane(p: Polygon3D): Plane
+        => FromPointNormal(p.Points.First, p.Normal);
+
+    // How the polygon sits relative to the plane, with vertices within
+    // `tolerance` of the plane counting as on it: Spanning when vertices lie
+    // strictly on both sides, otherwise the side any strict vertex lies on,
+    // otherwise Coplanar.
+    RelationTo(p: Polygon3D, pl: Plane, tolerance: Number): PlaneRelation3D
+    {
+        var anyFront = p.Points.Any(q => pl.SignedDistance(q) > tolerance);
+        var anyBack = p.Points.Any(q => pl.SignedDistance(q) < -tolerance);
+        return anyFront && anyBack
+            ? PlaneRelation3D.Spanning
+            : (anyFront
+                ? PlaneRelation3D.Front
+                : (anyBack ? PlaneRelation3D.Back : PlaneRelation3D.Coplanar));
+    }
+
+    // A 0- or 1-element list: the point when `condition` holds, else empty.
+    // The keep-or-drop building block inside a FlatMap (A1: no Optional<T>).
+    KeepPoint(condition: Boolean, p: Point3D): Array<Point3D>
+        => (condition ? 1 : 0).MapRange(i => p);
+
+    // A 0- or 1-element list: the polygon when `condition` holds, else empty.
+    KeepPolygon(condition: Boolean, p: Polygon3D): Array<Polygon3D>
+        => (condition ? 1 : 0).MapRange(i => p);
+
+    // Where the segment (a, b) meets the plane. Meaningful only when the
+    // endpoints lie strictly on opposite sides (the interpolant is then in
+    // (0, 1)); a same-side or coplanar segment yields an unusable point the
+    // caller must drop.
+    CrossingPoint(pl: Plane, a: Point3D, b: Point3D): Point3D
+        => a.Lerp(b, pl.SignedDistance(a) / (pl.SignedDistance(a) - pl.SignedDistance(b)));
+
+    // The vertices edge (a -> b) contributes to the ring clipped to the plane's
+    // front half-space: a itself when a is on or in front of the plane, then
+    // the crossing point when the edge changes sides.
+    ClipEdge(pl: Plane, a: Point3D, b: Point3D): Array<Point3D>
+        => KeepPoint(pl.SignedDistance(a) >= 0.0, a)
+            .Concatenate(KeepPoint(
+                (pl.SignedDistance(a) >= 0.0).ExclusiveOr(pl.SignedDistance(b) >= 0.0),
+                pl.CrossingPoint(a, b)));
+
+    // The convex polygon restricted to the plane's front half-space
+    // (Sutherland-Hodgman against a single plane): each edge contributes its
+    // kept endpoint and its crossing point, in ring order. May yield a ring of
+    // fewer than three vertices when the polygon lies behind the plane.
+    ClipToHalfSpace(p: Polygon3D, pl: Plane): Polygon3D
+        => Polygon3D(p.Points.Count.MapRange(i => i)
+            .FlatMap(i => pl.ClipEdge(p.Points[i], p.Points.AtModulo(i + 1))));
+
+    // The polygon as a 0- or 1-element list: dropped when its ring has fewer
+    // than three vertices and so bounds no area.
+    NonDegenerate(p: Polygon3D): Array<Polygon3D>
+        => KeepPolygon(p.Points.Count >= 3, p);
+
+    // The polygon split by the plane into its non-degenerate pieces: itself,
+    // uncut, when it does not span the plane (a coplanar polygon is kept once,
+    // not clipped into both half-spaces), otherwise its front piece followed by
+    // its back piece.
+    SplitByPlane(p: Polygon3D, pl: Plane, tolerance: Number): Array<Polygon3D> =>
+        match (p.RelationTo(pl, tolerance)) {
+            Front => [p];
+            Back => [p];
+            Coplanar => [p];
+            Spanning => p.ClipToHalfSpace(pl).NonDegenerate
+                .Concatenate(p.ClipToHalfSpace(pl.Flip).NonDegenerate);
+        };
+
+    //==
+    // # Point-in-solid parity and fragmenting against a solid
+    //
+    // The two mid-level CSG services the boolean bodies compose: an even-odd
+    // (crossing parity) interior test for a `PolygonSoup3D`, and the fragmenting of
+    // polygons by every supporting plane of another solid. After cutting by every
+    // plane of solid B, no fragment crosses a B plane, hence none crosses B's
+    // boundary — so a single interior test on any interior point of the fragment
+    // (its centroid) classifies the whole fragment.
+    // (https://en.wikipedia.org/wiki/Point_in_polygon)
+    //
+    // Robustness posture: exact floating point with a fixed skew probe direction
+    // (the same posture as csg.js) — a probe ray is assumed to graze no edge and
+    // parallel no face. Exactly coplanar faces of two solids sit on each other's
+    // boundary and are not classified reliably.
+
+    // The fixed probe direction for parity tests: an arbitrary irrational skew
+    // direction (normalized (pi/6, ln 2, pi/4)), parallel to no axis-aligned
+    // face and unlikely to graze an edge.
+    CsgProbeDirection(_: Direction3D): Direction3D
+        => Direction3D(Vector3D(0.5235987755982988, 0.6931471805599453, 0.7853981633974483).Normalize);
+
+    // True when the ray from `q` along `direction` strikes the polygon: it
+    // crosses the supporting plane at a non-negative parameter, at a point
+    // inside the ring. Grazing hits exactly on the ring boundary are not
+    // classified reliably (exact-float posture above).
+    RayHits(p: Polygon3D, q: Point3D, direction: Direction3D): Boolean
+    {
+        var hit = Ray3D(q, direction).Intersect(p.SupportingPlane);
+        return hit.Hit && p.Points.PlanarPolygonContains(p.Normal.Vector, hit.Point);
+    }
+
+    // True when `q` is inside the solid, by even-odd parity: the probe ray from
+    // `q` crosses the boundary an odd number of times. Points on the boundary
+    // itself are not classified reliably.
+    // https://en.wikipedia.org/wiki/Point_in_polygon
+    Contains(s: PolygonSoup3D, q: Point3D): Boolean
+        => s.Polygons
+            .Map(f => f.RayHits(q, Direction3D.CsgProbeDirection) ? 1 : 0)
+            .Reduce(0, (acc, c) => acc + c)
+            .IsOdd;
+
+    // The supporting planes of the solid's polygons, one per polygon, in order.
+    Planes(s: PolygonSoup3D): Array<Plane>
+        => s.Polygons.Map(f => f.SupportingPlane);
+
+    // One cutting plane applied to every current fragment.
+    CutByPlane(fragments: Array<Polygon3D>, pl: Plane, tolerance: Number): Array<Polygon3D>
+        => fragments.FlatMap(f => f.SplitByPlane(pl, tolerance));
+
+    // The pieces of one polygon after cutting by every plane in turn: a
+    // plane-arrangement subdivision of the polygon, so no piece crosses any of
+    // the planes. O(count^2) pieces in the worst case, not 2^count.
+    FragmentAgainst(p: Polygon3D, planes: Array<Plane>, tolerance: Number): Array<Polygon3D>
+        => planes.Reduce([p], (fragments, pl) => fragments.CutByPlane(pl, tolerance));
+
+    // Every polygon of the solid, each cut by every plane.
+    Fragments(s: PolygonSoup3D, planes: Array<Plane>, tolerance: Number): Array<Polygon3D>
+        => s.Polygons.FlatMap(f => f.FragmentAgainst(planes, tolerance));
+
+    //==
+    // # Deformation body for the polygon-soup solid
+    //
+    // The Deformable3D obligation of PolygonSoup3D (`solids.types.plato`):
+    // every face polygon deformed vertex-wise. The soup's convex-planar invariant
+    // survives affine mappings only; after a nonlinear mapping the clipping bodies
+    // see each ring through its best-fit plane (the same control-point decay as
+    // `brep.library.plato`), so re-tessellate first when exactness matters.
+
+    // The Deformable3D obligation: every polygon deformed vertex-wise.
+    Deform(self: PolygonSoup3D, mapping: Function1<Point3D, Point3D>): PolygonSoup3D
+        => PolygonSoup3D(self.Polygons.Map(p => p.Deform(mapping)));
+}

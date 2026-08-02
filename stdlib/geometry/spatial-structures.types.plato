@@ -1,0 +1,539 @@
+//==
+// # Spatial structures
+//
+// Sections, in order:
+//  - Uniform grids and space-filling curve codes
+//  - Implicit surfaces
+//  - Kd-trees
+//  - Overlap, intersection, and culling
+//  - Proximity queries
+//  - Ray and sweep queries
+//  - Bounding volume hierarchies and region trees
+
+//==
+// # Uniform grids and space-filling curve codes
+//
+// Flat, non-hierarchical spatial indexes keyed by cell coordinate — sparse hash
+// grids and dense binning grids, both storing their buckets in CSR form — plus
+// the Morton (Z-order) codes that linearize a cell coordinate into a single
+// sortable integer.
+
+//==
+// ## Hash and binning grids
+
+// A sparse uniform grid over the plane, keyed by integer cell coordinate
+// (world position divided by CellSize, floored). Only occupied cells are
+// stored: cell i has coordinate CellCoordinates[i] and items
+// ItemIndices[BucketOffsets[i] .. BucketOffsets[i+1]) (half-open CSR;
+// BucketOffsets has one more entry than CellCoordinates).
+type SpatialHashGrid2D
+    implements Value, SpatialIndex2D
+{
+    CellSize: Number;
+    CellCoordinates: Array<IntegerVector2>;
+    BucketOffsets: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
+}
+
+// A sparse uniform grid over space, keyed by integer cell coordinate. Same
+// CSR encoding as SpatialHashGrid2D with 3D cell coordinates.
+type SpatialHashGrid3D
+    implements Value, SpatialIndex3D
+{
+    CellSize: Number;
+    CellCoordinates: Array<IntegerVector3>;
+    BucketOffsets: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
+}
+
+// A dense uniform binning grid over a bounded 2D region: every cell has a
+// bucket. Cells linearize row-major with X varying fastest: cell (i, j) is
+// bucket j * CellCounts.Width + i. Bucket b's items are
+// ItemIndices[BucketOffsets[b] .. BucketOffsets[b+1]) (half-open CSR).
+type BinningGrid2D
+    implements Value, SpatialIndex2D
+{
+    Bounds: Bounds2D;
+    CellCounts: IntegerSize2D;
+    BucketOffsets: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
+}
+
+// A dense uniform binning grid over a bounded 3D region. Cells linearize
+// with X varying fastest, then Y, then Z: cell (i, j, k) is bucket
+// (k * CellCounts.Height + j) * CellCounts.Width + i. Same CSR encoding as
+// BinningGrid2D.
+type BinningGrid3D
+    implements Value, SpatialIndex3D
+{
+    Bounds: Bounds3D;
+    CellCounts: IntegerSize3D;
+    BucketOffsets: Array<Integer>;
+    ItemIndices: Array<ItemIndex>;
+}
+
+//==
+// ## Space-filling curve codes
+
+// A 2D Morton (Z-order) code (https://en.wikipedia.org/wiki/Z-order_curve):
+// the bits of a cell's X and Y coordinates interleaved (X in even bit
+// positions). Sorting by code groups spatially nearby cells: the basis of
+// linear BVH builds and cache-friendly sweeps.
+type MortonCode2D
+    implements Value, Hashable, Comparable
+{
+    Value: Integer;
+}
+
+// A 3D Morton (Z-order) code: X, Y, and Z coordinate bits interleaved
+// (X in bit positions 0, 3, 6, ...).
+type MortonCode3D
+    implements Value, Hashable, Comparable
+{
+    Value: Integer;
+}
+
+//==
+// # Implicit surfaces
+//
+// Unbounded surfaces defined by an equation rather than by stored extents: the
+// circular paraboloid and the general quadric that subsumes spheres, ellipsoids,
+// cones, cylinders, paraboloids and hyperboloids. They are surfaces, not solids, so
+// they carry no volume or containment obligation.
+
+// An infinite circular paraboloid surface opening along Axis from Vertex
+// (https://en.wikipedia.org/wiki/Paraboloid): points at height h above the
+// vertex plane lie at radius r with r * r = 4 * FocalLength * h. The reflector
+// shape: rays parallel to Axis converge at the focus.
+type Paraboloid
+    implements Geometry3D, Connected, Manifold, Orientable
+{
+    Vertex: Point3D;
+    Axis: Direction3D;
+    FocalLength: Number;
+}
+
+// A general quadric surface: the homogeneous points p with
+// Transpose(p) * Coefficients * p = 0 (https://en.wikipedia.org/wiki/Quadric).
+// Coefficients is symmetric. Spheres, ellipsoids, cones, cylinders,
+// paraboloids, and hyperboloids are all special cases.
+type Quadric
+    implements Geometry3D
+{
+    Coefficients: Matrix4x4;
+}
+
+//==
+// # Kd-trees
+//
+// Axis-aligned binary space partitions over a copied point set: the workhorse
+// index for nearest-neighbor and range queries. Node indexing and the
+// leaf-order permutation array follow the conventions of the grids section.
+
+// One node of a 2D kd-tree. SplitAxis is 0 for X, 1 for Y; internal nodes
+// split space at SplitValue on that axis with children LeftChild (below)
+// and RightChild (above), both node indices. Leaves have children of -1 and
+// a non-empty half-open Items range into the owning tree's PointIndices.
+type KdTreeNode2D
+    implements Value
+{
+    SplitAxis: Integer;
+    SplitValue: Number;
+    LeftChild: SpatialNodeIndex;
+    RightChild: SpatialNodeIndex;
+    Items: IntegerInterval;
+}
+
+// A kd-tree (https://en.wikipedia.org/wiki/K-d_tree) over a copy of its 2D
+// point set: nearest-neighbor and range queries. Node 0 is the root;
+// PointIndices is the leaf-order permutation of Points.
+type KdTree2D
+    implements Value, SpatialIndex2D, NearestNeighborQueryable2D
+{
+    Points: Array<Point2D>;
+    Nodes: Array<KdTreeNode2D>;
+    PointIndices: Array<ItemIndex>;
+}
+
+// One node of a 3D kd-tree. SplitAxis is 0 for X, 1 for Y, 2 for Z;
+// otherwise encoded exactly like KdTreeNode2D.
+type KdTreeNode3D
+    implements Value
+{
+    SplitAxis: Integer;
+    SplitValue: Number;
+    LeftChild: SpatialNodeIndex;
+    RightChild: SpatialNodeIndex;
+    Items: IntegerInterval;
+}
+
+// A kd-tree over a copy of its 3D point set: nearest-neighbor and range
+// queries. Node 0 is the root; PointIndices is the leaf-order permutation
+// of Points.
+type KdTree3D
+    implements Value, SpatialIndex3D, NearestNeighborQueryable3D
+{
+    Points: Array<Point3D>;
+    Nodes: Array<KdTreeNode3D>;
+    PointIndices: Array<ItemIndex>;
+}
+
+//==
+// # Overlap, intersection, and culling
+//
+// How one region relates to another, filtered requests for everything inside an
+// axis-aligned region, the discrete intersection points of two primitives, and
+// the outcome of culling an indexed set against a convex volume. FilterMask is a
+// category bitmask combined with a candidate's category bits by bitwise AND
+// (non-zero passes), and -1 (all bits set) accepts everything.
+
+// How one region A relates to another region B: no shared points, an overlap
+// without full containment, A fully containing B, or A lying fully inside B.
+type Containment = Disjoint | Intersects | Contains | Within;
+
+// A filtered request for everything overlapping a 2D axis-aligned region.
+type OverlapQuery2D
+    implements Value
+{
+    Bounds: Bounds2D;
+    FilterMask: Integer;
+}
+
+// A filtered request for everything overlapping a 3D axis-aligned region.
+type OverlapQuery3D
+    implements Value
+{
+    Bounds: Bounds3D;
+    FilterMask: Integer;
+}
+
+// The intersection of two 2D primitives
+// (https://en.wikipedia.org/wiki/Intersection_(geometry)): a flag plus the
+// discrete intersection points (empty when Intersects is false, or when the
+// overlap is a region rather than isolated points).
+type IntersectionResult2D
+    implements Value
+{
+    Intersects: Boolean;
+    Points: Array<Point2D>;
+}
+
+// The intersection of two 3D primitives: a flag plus the discrete
+// intersection points (empty when Intersects is false, or when the overlap
+// is a curve or region rather than isolated points).
+type IntersectionResult3D
+    implements Value
+{
+    Intersects: Boolean;
+    Points: Array<Point3D>;
+}
+
+// The outcome of culling an indexed set against a convex volume (typically a
+// camera frustum, https://en.wikipedia.org/wiki/Viewing_frustum): indices
+// fully inside, indices straddling the boundary, and the count of items
+// rejected outright.
+type FrustumCullResult
+    implements Value
+{
+    FullyVisible: Array<ItemIndex>;
+    PartiallyVisible: Array<ItemIndex>;
+    CulledCount: Integer;
+}
+
+//==
+// # Proximity queries
+//
+// Nearest-neighbor, radius, and closest-point requests with their result
+// records. Distances are world-space and non-negative; a MaxDistance that is
+// zero or negative means "unbounded", and a MaxCount of zero or less means
+// unlimited.
+
+// A k-nearest-neighbors request around a 2D point
+// (https://en.wikipedia.org/wiki/Nearest_neighbor_search). NeighborCount is
+// the maximum number of results; MaxDistance of zero or less means unbounded.
+type KNearestQuery2D
+    implements Value
+{
+    Center: Point2D;
+    NeighborCount: Integer;
+    MaxDistance: Number;
+}
+
+// A k-nearest-neighbors request around a 3D point. NeighborCount is the
+// maximum number of results; MaxDistance of zero or less means unbounded.
+type KNearestQuery3D
+    implements Value
+{
+    Center: Point3D;
+    NeighborCount: Integer;
+    MaxDistance: Number;
+}
+
+// An all-points-within-radius request around a 2D point
+// (https://en.wikipedia.org/wiki/Fixed-radius_near_neighbors). MaxCount of
+// zero or less means unlimited.
+type RadiusQuery2D
+    implements Value
+{
+    Center: Point2D;
+    Radius: Number;
+    MaxCount: Integer;
+}
+
+// An all-points-within-radius request around a 3D point. MaxCount of zero
+// or less means unlimited.
+type RadiusQuery3D
+    implements Value
+{
+    Center: Point3D;
+    Radius: Number;
+    MaxCount: Integer;
+}
+
+// The result of a nearest-neighbor search: parallel arrays of item indices
+// (into the caller's item list) and their distances from the query point,
+// sorted ascending by distance. Empty arrays mean nothing was in range.
+type NearestNeighbors
+    implements Value
+{
+    Indices: Array<ItemIndex>;
+    Distances: Array<Number>;
+}
+
+// The closest point on some 2D primitive to a query point. PrimitiveIndex
+// identifies which primitive in the caller's list (-1 when the target is a
+// single object); Parameter is the normalized position along the primitive
+// when it is curve-like, 0 otherwise.
+type ClosestPointResult2D
+    implements Value
+{
+    Position: Point2D;
+    Distance: Number;
+    PrimitiveIndex: ItemIndex;
+    Parameter: Number;
+}
+
+// The closest point on a 3D surface to a query point. Face is the triangle
+// holding the closest point (-1 when the target is not a mesh); Barycentric
+// locates it within that triangle.
+type ClosestPointResult3D
+    implements Value
+{
+    Position: Point3D;
+    Distance: Number;
+    Face: FaceIndex;
+    Barycentric: BarycentricCoordinate;
+}
+
+// The closest pair between two indexed sets
+// (https://en.wikipedia.org/wiki/Closest_pair_of_points_problem): IndexA into
+// the first set, IndexB into the second, and the separating distance (0 when
+// touching or overlapping).
+type ClosestPairResult
+    implements Value
+{
+    IndexA: ItemIndex;
+    IndexB: ItemIndex;
+    Distance: Number;
+}
+
+//==
+// # Ray and sweep queries
+//
+// Raycast and sphere-sweep requests and their hit records, kept as plain data so
+// they can be batched, serialized, and replayed. Distances are world-space and
+// non-negative; a MaxDistance that is zero or negative means "unbounded";
+// FilterMask is a category bitmask combined with a candidate's category bits by
+// bitwise AND (non-zero passes), and -1 (all bits set) accepts everything.
+
+// A bounded, filtered 2D raycast request
+// (https://en.wikipedia.org/wiki/Ray_casting).
+type RayQuery2D
+    implements Value
+{
+    Ray: Ray2D;
+    MaxDistance: Number;
+    FilterMask: Integer;
+}
+
+// A bounded, filtered 3D raycast request.
+type RayQuery3D
+    implements Value
+{
+    Ray: Ray3D;
+    MaxDistance: Number;
+    FilterMask: Integer;
+}
+
+// A sphere-sweep (thick ray) request: a sphere of the given radius travels
+// along the ray until it first touches something.
+type SweepQuery3D
+    implements Value
+{
+    Ray: Ray3D;
+    Radius: Number;
+    MaxDistance: Number;
+    FilterMask: Integer;
+}
+
+// The result of a 2D raycast. When Hit is false the remaining fields are
+// meaningless. Distance is measured from the ray origin along its
+// direction; Normal points against the ray (out of the struck primitive);
+// PrimitiveIndex identifies the struck primitive in the caller's list,
+// -1 when inapplicable.
+type RayHit2D
+    implements Value
+{
+    Hit: Boolean;
+    Distance: Number;
+    Position: Point2D;
+    Normal: Direction2D;
+    PrimitiveIndex: ItemIndex;
+}
+
+// The result of a 3D raycast against triangulated geometry. When Hit is false
+// the remaining fields are meaningless. Face is the struck triangle (-1 when
+// the target is not a mesh); Barycentric locates the hit within that triangle
+// (https://en.wikipedia.org/wiki/Barycentric_coordinate_system); Uv is the
+// interpolated surface parameter at the hit, (0, 0) when the target carries no
+// UVs.
+type RayHit3D
+    implements Value
+{
+    Hit: Boolean;
+    Distance: Number;
+    Position: Point3D;
+    Normal: Direction3D;
+    Face: FaceIndex;
+    Barycentric: BarycentricCoordinate;
+    Uv: UvCoordinate;
+}
+
+//==
+// # Bounding volume hierarchies and region trees
+//
+// Pure-data hierarchical indexes over collections of primitives, plus the node
+// index shared by every spatial structure in this vocabulary. Every structure
+// follows the same flat-array conventions:
+//
+// - Nodes live in one array; a node refers to other nodes by SpatialNodeIndex
+//   position in that array, with -1 meaning "no child". Node 0 is the root.
+// - A structure never stores primitives; it stores a permutation array of
+//   primitive indices (Array<ItemIndex>) into the caller's primitive list.
+//   Leaves reference half-open IntegerInterval ranges of that permutation.
+// - An empty range (Start equals End) means "no items".
+
+// A zero-based index of a node within a spatial structure's flat node array.
+// -1 means "no child" / "leaf".
+type SpatialNodeIndex
+    implements Value, Hashable, Comparable, Index
+{
+    Value: Integer;
+}
+
+//==
+// ## Bounding volume hierarchies
+
+// One node of a 2D bounding volume hierarchy. Internal nodes carry child
+// node indices and an empty Primitives range; leaves carry LeftChild and
+// RightChild of -1 and a non-empty half-open range into the owning
+// hierarchy's PrimitiveIndices.
+type BvhNode2D
+    implements Value
+{
+    Bounds: Bounds2D;
+    LeftChild: SpatialNodeIndex;
+    RightChild: SpatialNodeIndex;
+    Primitives: IntegerInterval;
+}
+
+// A binary bounding volume hierarchy
+// (https://en.wikipedia.org/wiki/Bounding_volume_hierarchy) over 2D
+// primitives. Node 0 is the root; PrimitiveIndices is the leaf-order
+// permutation of the caller's primitive list.
+type Bvh2D
+    implements Value, SpatialIndex2D
+{
+    Nodes: Array<BvhNode2D>;
+    PrimitiveIndices: Array<ItemIndex>;
+}
+
+// One node of a 3D bounding volume hierarchy. Same encoding as BvhNode2D
+// with 3D bounds.
+type BvhNode3D
+    implements Value
+{
+    Bounds: Bounds3D;
+    LeftChild: SpatialNodeIndex;
+    RightChild: SpatialNodeIndex;
+    Primitives: IntegerInterval;
+}
+
+// A binary bounding volume hierarchy over 3D primitives: the standard
+// ray-tracing and broad-phase accelerator. Node 0 is the root;
+// PrimitiveIndices is the leaf-order permutation of the caller's primitives.
+type Bvh3D
+    implements Value, SpatialIndex3D, RayIntersectable3D
+{
+    Nodes: Array<BvhNode3D>;
+    PrimitiveIndices: Array<ItemIndex>;
+}
+
+//==
+// ## Region trees (quadtree, octree)
+
+// One node of a quadtree. FirstChild is the node index of the first of four
+// consecutive children (ordered -X-Y, +X-Y, -X+Y, +X+Y), or -1 for a leaf.
+// Items is a half-open range into the owning tree's ItemIndices.
+type QuadtreeNode
+    implements Value
+{
+    Bounds: Bounds2D;
+    FirstChild: SpatialNodeIndex;
+    Items: IntegerInterval;
+}
+
+// A quadtree (https://en.wikipedia.org/wiki/Quadtree) over a square 2D region.
+// Node 0 is the root and covers Bounds; each level splits its square into four
+// equal quadrants, to at most MaxDepth levels below the root.
+type Quadtree2D
+    implements Value, SpatialIndex2D
+{
+    Bounds: Bounds2D;
+    Nodes: Array<QuadtreeNode>;
+    ItemIndices: Array<ItemIndex>;
+    MaxDepth: Integer;
+}
+
+// One node of an octree. FirstChild is the node index of the first of eight
+// consecutive children (ordered by octant: X varies fastest, then Y, then
+// Z), or -1 for a leaf. Items is a half-open range into ItemIndices.
+type OctreeNode
+    implements Value
+{
+    Bounds: Bounds3D;
+    FirstChild: SpatialNodeIndex;
+    Items: IntegerInterval;
+}
+
+// An octree (https://en.wikipedia.org/wiki/Octree) over a cubic 3D region.
+// Node 0 is the root and covers Bounds; each level splits its cube into eight
+// equal octants, to at most MaxDepth levels below the root.
+type Octree3D
+    implements Value, SpatialIndex3D
+{
+    Bounds: Bounds3D;
+    Nodes: Array<OctreeNode>;
+    ItemIndices: Array<ItemIndex>;
+    MaxDepth: Integer;
+}
+
+// An octree whose node bounds are enlarged by the factor Looseness (1 means
+// exact; 2 is common), letting each item live wholly inside one node:
+// cheap incremental updates for moving objects.
+type LooseOctree3D
+    implements Value, SpatialIndex3D
+{
+    Octree: Octree3D;
+    Looseness: Number;
+}

@@ -1,0 +1,209 @@
+//==
+// # Algebra
+//
+// Sections, in order:
+//  - Magnitude, distance, and order-lattice concepts
+//  - Numeric tower concepts
+//  - Algebraic operation concepts
+
+//==
+// # Magnitude, distance, and order-lattice concepts
+//
+// The geometric half of the algebra vocabulary: length, distance, component-wise
+// extrema and clamping, and the affine point/delta relationship.
+
+// Has a notion of length or magnitude (https://en.wikipedia.org/wiki/Norm_(mathematics)).
+// MagnitudeSquared avoids the square root when only relative comparisons are needed.
+concept Normed
+{
+    Magnitude(x: Self): Number;
+    MagnitudeSquared(x: Self): Number;
+}
+
+// A space with a distance between any two of its values. (https://en.wikipedia.org/wiki/Metric_space)
+concept MetricSpace
+{
+    Distance(a: Self, b: Self): Number;
+}
+
+// Supports component-wise minimum and maximum: a lattice. (https://en.wikipedia.org/wiki/Lattice_(order))
+concept Lattice
+{
+    Min(a: Self, b: Self): Self;
+    Max(a: Self, b: Self): Self;
+}
+
+// Can be clamped to lie within inclusive bounds. (https://en.wikipedia.org/wiki/Clamping_(graphics))
+concept Clampable
+    inherits Lattice
+{
+    Clamp(x: Self, min: Self, max: Self): Self;
+}
+
+// A position-like type whose difference is a separate delta type: subtracting two
+// points yields a vector; adding a vector to a point yields a point.
+// See affine space (https://en.wikipedia.org/wiki/Affine_space).
+//
+// TDelta is bound to Additive and Scalable: the deltas are the group acting on
+// the positions, so they must at least add, negate, and scale. Every delta in
+// this vocabulary already satisfies both (Vector2D/3D/N via Numerical, Duration
+// via Quantity), and the bound is what lets the rest of the affine surface —
+// Subtract in both spellings, Lerp, and the reversed Add — be derived once in
+// algebra.library.plato instead of hand-written per implementor.
+//
+// Only two members are primitive. Add and Between are exactly the torsor action
+// and its inverse; everything else in the affine API follows from them.
+concept Difference<TDelta>
+    where TDelta: Additive, TDelta: Scalable
+{
+    Add(x: Self, delta: TDelta): Self;
+    // The displacement FROM a TO b, i.e. b - a. Direction convention: Between and
+    // Add are inverse, so a.Add(a.Between(b)) == b. Every implementor and every
+    // caller relies on this orientation (Point2D/Point3D honor it in
+    // transforms.library.plato; the ScaleAbout/RotateAbout helpers in
+    // intervals-transforms-deformable.library.plato assume it).
+    Between(a: Self, b: Self): TDelta;
+}
+
+// An affine position measured as a displacement from a distinguished origin.
+// Fixing an origin makes the position space and its delta space interchangeable
+// (in the language of https://en.wikipedia.org/wiki/Torsor, a trivialized
+// torsor), which is what lets Add and Between themselves be derived rather than
+// declared: an implementing type owes only the two conversions below.
+//
+// A Point's origin is (0, 0[, 0]); an Instant's is its epoch. Both were already
+// spelling these conversions by hand under other names — PositionVector/ToPoint
+// on the point types, SecondsSinceEpoch on Instant.
+//
+// This is deliberately OPTIONAL and deliberately a SUBTYPE. Optional, because a
+// position type whose delta conversion is not a cheap relabeling — a homogeneous
+// point, where recovering the Cartesian delta needs a divide by W — implements
+// `Difference` directly and writes Add/Between itself. A subtype, so that a type
+// declares one concept rather than two and cannot claim the conversions while
+// forgetting the affine API they serve.
+concept OriginBased<TDelta>
+    inherits Difference<TDelta>
+{
+    // The displacement of this position from the origin.
+    Offset(x: Self): TDelta;
+    // The position at the given displacement from the origin. The receiver only
+    // selects the type (and, for runtime-arity positions, the arity).
+    FromOffset(_: Self, d: TDelta): Self;
+}
+
+//==
+// # Numeric tower concepts
+//
+// The number-like family, from representable limits up through the reals and the
+// whole numbers. Each level adds capability to the level below; Number and
+// Integer are the canonical instances of Real and Whole.
+
+// Has a distinguished one element and representable extremes. The additive
+// identity is NOT here: Zero is a property of the additive group and lives on
+// `Additive` (algebra.concepts.plato), which every Numerical also
+// inherits — so a Numerical still reaches Zero, while a Quantity or MatrixLike
+// gets it without having to claim representable extremes it has no meaning for.
+concept NumericalLimits
+{
+    One(x: Self): Self;
+    MinValue(x: Self): Self;
+    MaxValue(x: Self): Self;
+}
+
+// The family of number-like value types: additive, scalable, interpolatable,
+// with known limits. Includes reals, complex numbers, vectors, and quantities.
+concept Numerical
+    inherits Value, Additive, Scalable, Interpolatable, NumericalLimits
+{ }
+
+// A continuous one-dimensional number with full arithmetic and total order.
+// Number is the canonical instance. (https://en.wikipedia.org/wiki/Real_number)
+concept Real
+    inherits Numerical, Comparable, Hashable, Arithmetic, Invertible
+{
+    ToNumber(x: Self): Number;
+
+    // The non-negative square root (https://en.wikipedia.org/wiki/Square_root). Precondition: x is not negative.
+    Sqrt(x: Self): Self;
+    // Floor and ceiling (https://en.wikipedia.org/wiki/Floor_and_ceiling_functions):
+    // The largest whole value less than or equal to x.
+    Floor(x: Self): Self;
+    // The smallest whole value greater than or equal to x.
+    Ceiling(x: Self): Self;
+}
+
+// Whole-number semantics: exact, ordered, arithmetic without a multiplicative
+// inverse (division truncates). (https://en.wikipedia.org/wiki/Integer)
+concept Whole
+    inherits Value, Comparable, Hashable, Arithmetic, Interpolatable, NumericalLimits
+{
+    ToInteger(x: Self): Integer;
+}
+
+//==
+// # Algebraic operation concepts
+//
+// The elementary arithmetic capabilities, each one small algebraic structure:
+// addition, multiplication, division, remainder, inversion, scalar scaling, and
+// linear blending. Numeric, vector, and quantity types assemble them as needed.
+
+// An additive group: addition, subtraction, negation, and the identity element
+// (https://en.wikipedia.org/wiki/Additive_group). Zero lives here rather than on
+// NumericalLimits because it is an algebraic property of the group, not a fact
+// about representation: a Quantity or a MatrixLike is an additive group without
+// being a number, and a `where T: Additive` bound must be able to name the
+// identity for any fold or accumulation seeded from it.
+concept Additive
+{
+    Add(a: Self, b: Self): Self;
+    Subtract(a: Self, b: Self): Self;
+    Negative(x: Self): Self;
+    Zero(x: Self): Self;
+}
+
+// A multiplicative operation between two values of the same type. (https://en.wikipedia.org/wiki/Multiplication)
+concept Multiplicative
+{
+    Multiply(a: Self, b: Self): Self;
+}
+
+// Division between two values of the same type. (https://en.wikipedia.org/wiki/Division_(mathematics))
+concept Divisible
+{
+    Divide(a: Self, b: Self): Self;
+}
+
+// Remainder arithmetic between two values of the same type. (https://en.wikipedia.org/wiki/Modulo_operation)
+concept Modular
+{
+    Modulo(a: Self, b: Self): Self;
+}
+
+// Has a multiplicative inverse (reciprocal). (https://en.wikipedia.org/wiki/Multiplicative_inverse)
+concept Invertible
+{
+    Inverse(x: Self): Self;
+}
+
+// The four basic operations plus remainder: a field with modulo. (https://en.wikipedia.org/wiki/Field_(mathematics))
+concept Arithmetic
+    inherits Additive, Multiplicative, Divisible, Modular
+{ }
+
+// Can be multiplied and divided by a unitless scalar (https://en.wikipedia.org/wiki/Scalar_multiplication).
+// Vectors, quantities, and colors are scalable even when they cannot multiply
+// among themselves.
+concept Scalable
+{
+    Multiply(x: Self, scalar: Number): Self;
+    Divide(x: Self, scalar: Number): Self;
+    Modulo(x: Self, scalar: Number): Self;
+}
+
+// Supports linear interpolation (https://en.wikipedia.org/wiki/Linear_interpolation).
+// The parameter t is unclamped: 0 yields a, 1 yields b, values outside [0,1]
+// extrapolate.
+concept Interpolatable
+{
+    Lerp(a: Self, b: Self, t: Number): Self;
+}

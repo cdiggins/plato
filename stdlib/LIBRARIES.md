@@ -14,23 +14,22 @@ below now genuinely covers these library bodies — which it did **not** while t
 
 ## Ground rules
 
-1. **One `library` block per file**, named `<domain>.library.plato` where the domain matches
-   the concept or declaration file it serves, with a PascalCase block name matching the stem
-   (`collections-indexable.library.plato` holds `library CollectionsIndexable`).
+1. **One `library` block per file**, named `<domain>.library.plato` after the domain it serves,
+   with a PascalCase block name derived from the stem (`collections.library.plato` holds
+   `library Collections`).
 
    This is exact and has no exceptions:
    `grep -l "^library " *.plato` returns **exactly the `*.library.plato` files** and
-   nothing else. **No declaration file carries an inline `library` block.** The former inline
-   blocks in `transforms`, `polynomials`, `solids`, `surfaces`, `implicit-sdf`, `primitives`,
-   `intrinsics`, `curves-2d`, `curves-3d`, `splines` and `fields` were all moved into their own
-   `*.library.plato` files; the sanctioned home for bodies that belong beside a declaration is
-   now a sibling `.library.plato` file with the same stem, not the declaration file itself.
+   nothing else. **No declaration file carries an inline `library` block.** The sanctioned home
+   for bodies that belong beside a declaration is a sibling `.library.plato` file with the same
+   stem, not the declaration file itself.
 
-   A work *package* may therefore span several library files - P1 is five files, P7 is nine -
-   because a package's bodies are grouped by the subject they serve, not packed into one file
-   until a cap complains. Fifty-four of them
-   belong to the P1–P9 packages below; the rest serve foundation domains or
-   carry concrete per-type bodies and are listed in "Libraries outside the package table".
+   Inside a block, `//==` section banners divide the subjects the domain covers; a domain that
+   grew several separate bodies keeps them as sections of one library rather than as separate
+   files. A work *package* may still span several library files where its bodies serve several
+   domains. The P1–P9 packages below claim some of the library files; the rest serve foundation
+   domains or carry concrete per-type bodies and are listed in "Libraries outside the package
+   table".
 2. **Function form**: `Name(self: ConceptName, ...): ReturnType => expression;` — first
    parameter is the concept. Prefer a single expression where one reads well.
 
@@ -44,10 +43,10 @@ below now genuinely covers these library bodies — which it did **not** while t
    What stays banned: side effects, and mutation of anything aliased. Outside `unique` types the
    language does not offer either.
 
-   Precedent for statement bodies: the transform bodies (now the `transforms-*.library.plato`
-   files) have used `var` throughout since well before the v3 libraries existed;
-   `polynomials.library.plato`, `solids.library.plato`, `surfaces.library.plato` and the
-   `implicit-sdf-*.library.plato` files follow it.
+   Precedent for statement bodies: the transform bodies (now `transforms.library.plato`) have
+   used `var` throughout since well before the v3 libraries existed;
+   `polynomials.library.plato`, `solids.library.plato`, `surfaces.library.plato` and
+   `implicit-sdf.library.plato` follow it.
 
    Caveat when choosing a body form: **LINT003 cannot see field reads inside statement blocks or
    `var` initializers** — only reads in the returned/final expression register
@@ -105,26 +104,23 @@ below now genuinely covers these library bodies — which it did **not** while t
 
 | Pkg | Library files | Concept source files | Concepts |
 |-----|--------------|---------------------|----------|
-| P1 | `core-comparison`, `core-logic`, `algebra-operations`, `algebra-numeric`, `algebra-metric` | `core-comparison.concepts`, `core-logic.concepts`, `algebra-operations.concepts`, `algebra-numeric.concepts`, `algebra-metric.concepts` | Equatable, Value, Hashable, Orderable, Comparable, Logical, BooleanAlgebra, Bitwise, Additive, Multiplicative, Divisible, Modular, Invertible, Arithmetic, Scalable, Interpolatable, NumericalLimits, Numerical, Real, Whole, Normed, MetricSpace, Lattice, Clampable, Difference |
-| P2 | `collections-indexable`, `collections-containers`, `collections-grids`, `collections-sampling`, `functional-procedural` | `collections-indexable.concepts`, `collections-containers.concepts`, `functional.concepts` | Countable, Index, Indexable/2D/3D/4D, Sliceable, Concatenable, SetLike, MapLike, StackLike, QueueLike, Procedural, Bijective, Periodic, ParameterDomain |
-| P3 | `numeric-structures-quantity`, `numeric-structures-vector`, `numeric-structures-components`, `numeric-structures-matrix`, `numeric-structures-coordinate`, `numeric-structures-algebra` | `quantities.concepts`, `vectors.concepts`, `matrices.concepts`, `points.concepts` | Quantity, Vector, MatrixLike, Coordinate |
-| P4 | `intervals-transforms-interval`, `intervals-transforms-bounds`, `intervals-transforms-transformable`, `intervals-transforms-deformable` | `intervals-bounds.concepts`, `transforms.concepts` | IntervalLike, BoundsLike, Transformable, Deformable2D, Deformable3D |
-| P5 | `geometry`, `geometry-measures`, `geometry-pointsets`, `geometry-queries`, `geometry-kernels` | `geometry.concepts`, `geometry-measures.concepts`, `geometry-queries.concepts` | Geometry family, shape traits, Bounded2D/3D, PointSet2D/3D, measurables, centroids, containment, nearest-point, support mapping |
-| P6 | `curves`, `curves-capabilities`, `curves-sampling`, `surfaces-solids` | `curves.concepts`, `curves-capabilities.concepts`, `surfaces-solids.concepts` | Curve<TRange>, Curve1D-3D, ClosedCurve2D/3D, PeriodicCurve, DifferentiableCurve2D/3D, FramedCurve3D, PlanarCurve3D, PolarCurve2D, ArcLengthParameterized, Surface, ClosedSurface, ParametricSurface, DifferentiableSurface, HeightFieldSurface, Solid, ConvexSolid, ParametricVolume |
-| P7 | `fields-implicits-core`, `fields-implicits-differentiable`, `fields-implicits-distance`, `fields-implicits-function`, `fields-implicits-metaballs`, `fields-implicits-nodes`, `fields-implicits-sampled`, `fields-implicits-shapes`, `fields-implicits-time-varying` | `fields.concepts`, `fields-differentiable.concepts`, `fields-time-varying.concepts`, `implicit-sdf.concepts` | Field, ScalarField2D/3D, VectorField2D/3D, DirectionField, ColorField, ComplexField2D, TensorField, the Differentiable and TimeVarying field families, SignedDistanceField2D/3D, ImplicitRegion2D, ImplicitVolume3D |
-| P8 | `meshes-topology`, `meshes-geometry`, `meshes-polygon-incidence`, `spatial-queries` | `topology.concepts`, `meshes.concepts`, `pointclouds-voxels.concepts`, `spatial-structures.concepts`, `spatial-queries.concepts` | MeshElementCounts, MeshIncidence, HalfEdgeNavigable, Meshable2D/3D, TriangulatedGeometry3D, PointCloudable3D, Voxelizable3D, SpatialIndex2D/3D, RayIntersectable2D/3D, ClosestPointQueryable2D/3D, NearestNeighborQueryable2D/3D |
-| P9 | `easing`, `time-varying`, `paths`, `images`, `texturing`, `cameras`, `lights`, `kinematics`, `rigid-dynamics`, `random-distributions`, `graphs`, `scientific-data`, `geo-spatial` | `easing.concepts`, `time-varying.concepts`, `paths.concepts`, `images.concepts`, `texturing.concepts`, `cameras.concepts`, `lights.concepts`, `kinematics.concepts`, `rigid-dynamics.concepts`, `random.concepts`, `graphs.concepts`, `scientific-data.concepts`, `geo-spatial.concepts` | EasingFunction, TimeVarying, PathLike, Image, ProceduralTexture, Camera, LightSource, Kinematic2D/3D, ForceModel2D/3D, ProbabilityDistribution, GraphLike, TimeSampled, GeoRegion |
+| P1 | `core`, `algebra` | `core.concepts`, `algebra.concepts` | Equatable, Value, Hashable, Orderable, Comparable, Logical, BooleanAlgebra, Bitwise, Additive, Multiplicative, Divisible, Modular, Invertible, Arithmetic, Scalable, Interpolatable, NumericalLimits, Numerical, Real, Whole, Normed, MetricSpace, Lattice, Clampable, Difference |
+| P2 | `collections`, `functional-procedural` | `collections.concepts`, `functional.concepts` | Countable, Index, Indexable/2D/3D/4D, Sliceable, Concatenable, SetLike, MapLike, StackLike, QueueLike, Procedural, Bijective, Periodic, ParameterDomain |
+| P3 | `numeric-structures` | `quantities.concepts`, `vectors.concepts`, `matrices.concepts`, `points.concepts` | Quantity, Vector, MatrixLike, Coordinate |
+| P4 | `intervals`, `intervals-transforms-deformable` | `intervals-bounds.concepts`, `transforms.concepts` | IntervalLike, BoundsLike, Transformable, Deformable2D, Deformable3D |
+| P5 | `geometry` | `geometry.concepts` | Geometry family, shape traits, Bounded2D/3D, PointSet2D/3D, measurables, centroids, containment, nearest-point, support mapping |
+| P6 | `curves`, `surfaces` | `curves.concepts`, `surfaces-solids.concepts` | Curve<TRange>, Curve1D-3D, ClosedCurve2D/3D, PeriodicCurve, DifferentiableCurve2D/3D, FramedCurve3D, PlanarCurve3D, PolarCurve2D, ArcLengthParameterized, Surface, ClosedSurface, ParametricSurface, DifferentiableSurface, HeightFieldSurface, Solid, ConvexSolid, ParametricVolume |
+| P7 | `fields-implicits` | `fields.concepts`, `implicit-sdf.concepts` | Field, ScalarField2D/3D, VectorField2D/3D, DirectionField, ColorField, ComplexField2D, TensorField, the Differentiable and TimeVarying field families, SignedDistanceField2D/3D, ImplicitRegion2D, ImplicitVolume3D |
+| P8 | `meshes`, `meshes-polygon`, `spatial-structures` | `topology.concepts`, `meshes.concepts`, `pointclouds-voxels.concepts`, `spatial.concepts` | MeshElementCounts, MeshIncidence, HalfEdgeNavigable, Meshable2D/3D, TriangulatedGeometry3D, PointCloudable3D, Voxelizable3D, SpatialIndex2D/3D, RayIntersectable2D/3D, ClosestPointQueryable2D/3D, NearestNeighborQueryable2D/3D |
+| P9 | `easing`, `time-varying`, `paths`, `images`, `texturing`, `cameras`, `lights`, `kinematics`, `rigid-dynamics`, `random`, `graphs`, `scientific-data`, `geo-spatial` | `easing.concepts`, `time-varying.concepts`, `paths.concepts`, `images.concepts`, `texturing.concepts`, `cameras.concepts`, `lights.concepts`, `kinematics.concepts`, `rigid-dynamics.concepts`, `random.concepts`, `graphs.concepts`, `scientific-data.concepts`, `geo-spatial.concepts` | EasingFunction, TimeVarying, PathLike, Image, ProceduralTexture, Camera, LightSource, Kinematic2D/3D, ForceModel2D/3D, ProbabilityDistribution, GraphLike, TimeSampled, GeoRegion |
 
-File names in the two middle columns omit the `.plato` extension: `core-logic` means
-`core-logic.library.plato`, `core-logic.concepts` means `core-logic.concepts.plato`. The nine
-package rows account for 54 of the 121 library files and for all 42 `*.concepts.plato` files.
+File names in the two middle columns omit the `.plato` extension: `core` means
+`core.library.plato`, `core.concepts` means `core.concepts.plato`.
 
-**P9 was formerly a single monolithic file.** One 499-line `library DomainTraits` served thirteen
-unrelated concepts - easing curves, animation tracks, vector paths, rasters, procedural
-textures, cameras, lights, kinematics, force models, probability distributions, graphs, time
-series and geodetic regions. It is now thirteen files, one per concept, each named after the
-domain it serves. `random-distributions.library.plato` carries that longer stem because
-`random.library.plato` was already taken by the concrete per-distribution bodies.
+A package row names the file a package's bodies live in, not a file the package owns outright.
+Where a domain's concept bodies and its concrete per-type bodies share a domain they share a
+file: `random.library.plato` holds both the `ProbabilityDistribution` traits of P9 and the
+per-distribution bodies, separated by section banners rather than by file.
 
 Cross-package dependency: lower-package libraries may be referenced by higher ones (P5+ may
 call P1 helpers), but prefer self-sufficiency; never create cycles.
@@ -139,59 +135,41 @@ call P1 helpers), but prefer self-sufficiency; never create cycles.
 
 ## Libraries outside the package table
 
-These sixty-six files serve foundation domains or hold concrete per-type bodies rather than a
-P1–P9 concept package (ground rule 1). All follow the same one-block-per-file naming.
+The remaining `*.library.plato` files serve foundation domains or hold concrete per-type bodies
+rather than a P1–P9 concept package (ground rule 1). All follow the same one-block-per-file
+naming; `grep "^library " */*.library.plato` is the live list.
 
-**Foundation domains (23):**
+**Foundation domains:**
 
 | Library file | Block | Serves |
 |---|---|---|
 | `constants.library.plato` | `Constants` | irrationals, unit conversions, axis vectors, canonical unit shapes |
-| `angles.library.plato` | `Angles` | `Angle` unit constructors/accessors (Turns, Degrees, Gradians, ArcMinutes, ArcSeconds) and Sec/Csc/Cot |
-| `quantities.library.plato` | `Quantities` | the concrete `Quantity` obligation fills for ~50 quantity types |
-| `quantities-projections.library.plato` | `QuantityProjections` | the `Amount` / `FromAmount` pair per concrete quantity type |
-| `color.library.plato` | `Colors` | `Color` arithmetic |
-| `color-named.library.plato` | `NamedColors` | the 141 CSS/X11 named colors as sRGB `Color8` |
-| `axes.library.plato` | `Axes` | `Axis3D` operations |
-| `axes-2d.library.plato` | `Axes2D` | `Axis2D` operations |
-| `axes-signed.library.plato` | `SignedAxes` | `SignedAxis3D` operations |
+| `angles.library.plato` | `Angles` | `Angle` unit constructors/accessors (Turns, Degrees, Gradians, ArcMinutes, ArcSeconds), Sec/Csc/Cot, and the `Angle` arithmetic and trig over the radians kernel |
+| `quantities.library.plato` | `Quantities` | the concrete `Quantity` obligation fills, and the `Amount` / `FromAmount` pair per concrete quantity type |
+| `color.library.plato` | `Colors` | `Color` arithmetic, and the CSS/X11 named colors as sRGB `Color8` |
+| `axes.library.plato` | `Axes` | `Axis3D`, `Axis2D` and `SignedAxis3D` operations |
 | `intrinsics.library.plato` | `Intrinsics` | the host contract, reduced to an irreducible kernel by plato-378 and only over `primitive` types: the scalar kernel, the five-function array kernel, and the `unique` `List<T>` / `Buffer<T>` surface; carries the intrinsics preamble, the admission rule and the porting notes |
-| `primitives.library.plato` | `Primitives` | the primitive concept obligations the host contract does not supply: the identity conversions, `Number.Inverse`, the two `Lerp`s, and the derived Boolean surface |
-| `primitives-number.library.plato` | `PrimitivesNumber` | reference bodies for every derivable `Number` member (Abs, Sign, Min/Max, Ceiling/Truncate, Cbrt, the logarithms, the hyperbolics and the whole inverse-trig family, Zero/One/Tau/E, IsFinite) |
-| `primitives-integer.library.plato` | `PrimitivesInteger` | reference bodies for the derivable `Integer` members: Abs, Sign, Min/Max, Zero/One, Range |
-| `primitives-arrays.library.plato` | `PrimitivesArrays` | reference bodies for the whole derived array surface over the `MapRange` / `Reduce` kernel, plus the `Array2D` / `Array3D` construction and traversal that used to be intrinsic |
-| `angle-trig.library.plato` | `AngleTrig` | `Angle` arithmetic and trig, and the `Angle`-returning inverse trig on `Number`, over the radians kernel |
-| `vectors-tuples-ops.library.plato` | `VectorsTuplesOps` | reference bodies for `Number2/3/4/8` component-wise math and `Number4` transforms |
-| `vectors-geometric-ops.library.plato` | `VectorsGeometricOps` | reference bodies for `Vector2D`/`Vector3D` displacement algebra, reflection and transforms |
+| `primitives.library.plato` | `Primitives` | the primitive concept obligations the host contract does not supply (identity conversions, `Number.Inverse`, the two `Lerp`s, the derived Boolean surface), plus reference bodies for the derivable `Number`, `Integer` and array surfaces |
+| `numbers.library.plato` | `Numbers` | the special-function vocabulary (gamma, beta, erf, Bessel) and the dual-number surface |
+| `vectors.library.plato` | `Vectors` | reference bodies for `Number2/3/4/8` component-wise math and for `Vector2D`/`Vector3D` displacement algebra, reflection and transforms |
+| `matrices.library.plato` | `Matrices` | dense and sparse matrix bodies |
 | `matrices-ops.library.plato` | `MatricesOps` | reference bodies for `Matrix3x2`/`Matrix4x4`, including invert, decompose and the `Create*` factories |
 | `rotations-ops.library.plato` | `RotationsOps` | reference bodies for `Quaternion`, including `Slerp` and `CreateFromRotationMatrix` |
 | `hashing.library.plato` | `Hashing` | `CombineHash`, the fold the per-type `Hash` reference bodies are written against |
-| `transforms-points.library.plato` | `TransformsPoints` | Point2D/3D Difference, Lerp, point-vector converters |
-| `transforms-pose.library.plato` | `TransformsPose` | Pose2D/3D application and composition |
-| `transforms-trs.library.plato` | `TransformsTrs` | Transform2D/3D (TRS) application and conversion |
-| `transforms-affine.library.plato` | `TransformsAffine` | affine and projective transform application |
-| `transforms-frames.library.plato` | `TransformsFrames` | Frame2D/3D and Basis3D |
-| `transforms-motor.library.plato` | `TransformsMotor` | Motor3D (dual quaternion) |
-| `transforms-rotations.library.plato` | `TransformsRotations` | quaternion / rotor / Rotation2D application and conversion |
-| `transforms-identities.library.plato` | `TransformsIdentities` | the `Identity(_: T)` family across every transform representation |
+| `transforms.library.plato` | `Transforms` | point conversion, pose, TRS, affine and projective application, frames and bases, motors, rotation conversion, and the `Identity(_: T)` family |
+| `statistics.library.plato` | `Statistics` | univariate summary bodies and the bivariate covariance / correlation / fit readings |
+| `random.library.plato` | `Random` | the shared numerical helpers and the per-distribution bodies, alongside P9's `ProbabilityDistribution` traits |
+| `polynomials.library.plato` | `Polynomials` | polynomial evaluation and the cubic bases |
+| `time.library.plato` | `Time` | `Instant` / `Duration` arithmetic |
 | `deformations.library.plato` | `Deformations` | `Deformation2D/3D` catalog Eval bodies and Deformable lifts |
 
-**Concrete geometry bodies (19):** `lines`, `lines-planes`, `planar-triangles`,
-`planar-circles`, `planar-ellipses`, `planar-boxes`, `planar-shapes`, `polygons`,
-`polygons-polylines`, `polygons-spatial`, `polygons-kernels`, `spatial-spheres`,
-`spatial-boxes`, `spatial-cylinders`, `spatial-capsules`, `spatial-tori`, `spatial-patches`,
-`spatial-simplices`, `spatial-primitives` (all `.library.plato`).
+**Concrete geometry bodies:** `lines`, `planar`, `polygons`, `polyhedra`, `spatial-primitives`,
+`brep`, `pointclouds`, `topology` (all `.library.plato`).
 
-**Concrete curve / surface / solid bodies (10):** `curves-2d-arcs`, `curves-2d-polar`,
-`curves-2d-spirals`, `curves-3d`, `splines-bezier`, `splines-bspline`, `splines-hermite`,
-`splines-interpolating`, `surfaces`, `solids` (all `.library.plato`).
+**Concrete curve / surface / solid bodies:** `curves-shapes`, `splines`, `surfaces`, `solids`,
+`solids-csg` (all `.library.plato`).
 
-**Concrete field / implicit bodies (6):** `fields-graphs`, `implicit-sdf-primitives`,
-`implicit-sdf-operators`, `implicit-sdf-modifiers`, `implicit-sdf-sampled`,
-`implicit-sdf-trees` (all `.library.plato`).
-
-**Concrete math bodies (8):** `polynomials`, `statistics`, `statistics-correlation`, `random`,
-`random-continuous`, `random-continuous-gamma`, `random-continuous-tails`, `random-discrete`
+**Concrete field / implicit bodies:** `fields-graphs`, `implicit-sdf`, `noise`, `sampling`
 (all `.library.plato`).
 
 Constants use the tree's constant idiom — dispatch on an ignored receiver of the result type,
