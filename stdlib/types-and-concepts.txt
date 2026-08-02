@@ -724,6 +724,7 @@ type PlaneHit3D implements IValue{Hit:Boolean;Point:Point3D;Parameter:Number;}
 type PlaneRelation3D{}
 type PlatonicSolid implements IConvexSolid,IMesh3D{Kind:PlatonicSolidKind;Frame:Frame3D;Radius:Number;}
 type PlatonicSolidKind{}
+type PlatonicSolidMesh{}
 type PlaybackCycle{}
 type Point2D implements ICoordinate,IOriginBased<Vector2D>,IHashable,IMetricSpace,ITransformable2D{X:Number;Y:Number;}
 type Point3D implements ICoordinate,IOriginBased<Vector3D>,IHashable,IMetricSpace,ITransformable3D{X:Number;Y:Number;Z:Number;}

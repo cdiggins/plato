@@ -238,6 +238,13 @@ type PlatonicSolid
     Radius: Number;
 }
 
+// A fieldless grouping type: a receiver for the catalog of unit Platonic
+// solid meshes (`PlatonicSolidMesh.Icosahedron`, `PlatonicSolidMesh.All`, ...
+// in `polyhedra.library.plato`), each returning a `PolygonMesh3D`.
+type PlatonicSolidMesh
+{
+}
+
 // One of the thirteen Archimedean solids
 // (https://en.wikipedia.org/wiki/Archimedean_solid).
 type ArchimedeanSolidKind
