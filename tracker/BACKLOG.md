@@ -20,6 +20,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-369](issues/plato-369.md) | Burn down stdlib type-checker diagnostics to zero | debt | p1 | M | med | plato | ready |  |
 | [plato-388](issues/plato-388.md) | Single verification policy manifest: one data file the gates, tests and plato_check all read | debt | p1 | M | med | plato | ready |  |
 | [compiler-397](issues/compiler-397.md) | IArrayLike types with no generated fields emit an empty component type | bug | p2 | S | low | compiler | ready |  |
+| [compiler-408](issues/compiler-408.md) | Transform operator aliases cannot be derived: an interface-typed parameter does not re-resolve per implementor | problem | p2 | M | med | compiler | ready |  |
 | [plato-277](issues/plato-277.md) | stdlib interface-gap burn-down: the 17 markers that need a language or interface decision | debt | p2 | M | low | plato | ready |  |
 | [plato-323](issues/plato-323.md) | Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile | bug | p2 | L | med | plato | ready |  |
 | [plato-326](issues/plato-326.md) | Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns | bug | p2 | S | low | plato | ready |  |
@@ -28,9 +29,11 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-374](issues/plato-374.md) | Interface-generic law bodies mix the interface default with the type's override | bug | p2 | M | low | plato | ready |  |
 | [plato-389](issues/plato-389.md) | plato_check has no tier awareness: future and stdlib-tests count toward its verdict | bug | p2 | S | low | plato | ready |  |
 | [plato-404](issues/plato-404.md) | plato_simplify SIM001 rewrites tuples outside return position, breaking the type check | bug | p2 | S | low | plato | ready |  |
+| [plato-406](issues/plato-406.md) | plato_check style gate reports zero warnings when the index is served from the parse cache | bug | p2 | S | low | plato | ready |  |
 | [compiler-403](issues/compiler-403.md) | ExistentialConceptCheckerTests point at pre-rename fixture filenames | bug | p3 | S | low | compiler | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
+| [plato-405](issues/plato-405.md) | plato_simplify has no compact result mode: a full-corpus run exceeds the MCP result budget | debt | p3 | S | low | plato | ready |  |
 | [repo-401](issues/repo-401.md) | record-gates.py --full passes the retired --scalar=float flag | bug | p3 | S | low | repo | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
@@ -42,6 +45,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-365](issues/plato-365.md) | Retire non-scalar primitives: PrimitiveTypes = scalars only, System.Numerics behind intrinsic bridge | debt | p2 | M | med | plato | idea |  |
 | [plato-370](issues/plato-370.md) | Double-precision scalars (approach must be re-designed — TirScalarLowerer is gone) | feature | p2 | L | med | plato | idea |  |
 | [plato-390](issues/plato-390.md) | Extract Plato.Verify: one policy engine behind the gates, the tests and plato_check | feature | p2 | L | med | plato | idea |  |
+| [plato-407](issues/plato-407.md) | Simplify rules for duplicated bodies an interface already covers | idea | p2 | M | low | plato | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
 | [plato-235](issues/plato-235.md) | GLSL overload erasure picks the winner by emission order, not by intent | problem | p3 | M | med | plato | idea |  |
 | [plato-334](issues/plato-334.md) | Query/solve result types share no interface: success flag spelled four ways | debt | p3 | M | low | plato | idea |  |
