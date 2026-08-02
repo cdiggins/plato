@@ -14,9 +14,16 @@ still not for hand editing (`// DO NOT EDIT`) — a change comes from rerunning 
 
 | Project | Source | Recipe (CLI flags) | State |
 |---|---|---|---|
-| `Plato.Generated.Foundation.Unoptimized` | `stdlib/foundation` (forward) | `--csharp-style=extensions` | Live; sources committed. |
+| `Plato.Generated.Foundation.Unoptimized` | `stdlib/foundation` (forward) | `--csharp-style=extensions` | Live; sources committed. Builds clean. |
+| `Plato.Generated.Unoptimized` | `stdlib/foundation` + `geometry` + `graphics` (forward) | `--out=…`, `--csharp-style=extensions` | Live; sources committed. **Emits, does not yet compile clean** — not in `Plato.sln`. |
 
-It keeps scalars as **wrapper structs** — `Number`, `Integer`, `Boolean`, `Character`, `String`
+The wide project is the same recipe over every *shipping* tier: `stdlib/future` (not shipping) and
+`stdlib/tests` (test programs, not library) are excluded. Roots are enumerated top-directory-only
+and compiled as one program, so the tier subset is expressed by naming folders. Its `.csproj` file
+is `Plato.GeneratedUnoptimized.csproj` (no dot before `Unoptimized`), which does not match its
+folder name — deliberate, as requested when it was created.
+
+Both keep scalars as **wrapper structs** — `Number`, `Integer`, `Boolean`, `Character`, `String`
 stay distinct types. That is now the only scalar representation
 ([`../tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md`](../tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md)).
 
@@ -31,8 +38,9 @@ places the flags are written down.
 
 ## The two legacy projects were retired (2026-08-01)
 
-`Plato.Generated.Unoptimized` and `Plato.Generated.Optimized` are **gone** — sources, `.csproj`,
-and `Plato.sln` entries. `tests/optimizer-smoke/Bench` went with them, since it existed only to
+The legacy `Plato.Generated.Unoptimized` and `Plato.Generated.Optimized` are **gone** — sources,
+`.csproj`, and `Plato.sln` entries. (The forward project in the table above reuses the first name;
+it is a different artifact, emitted from `stdlib/`, not from `legacy/stdlib-legacy`.) `tests/optimizer-smoke/Bench` went with them, since it existed only to
 benchmark the optimized library against the unoptimized one through `extern alias`.
 
 Both were emitted from `legacy/stdlib-legacy` with the **scalar-erasure** recipe
@@ -47,6 +55,8 @@ text was always reproducible from its source library. Reviving the legacy tier m
 recipe that works against the current runtime, not reverting these commits.
 
 ## Regenerating
+
+`Plato.Generated.Foundation.Unoptimized`:
 
 ```
 .\tools\regen-foundation.ps1
@@ -67,12 +77,24 @@ dotnet run --project src\Plato.CLI -c Release -- ^
     --csharp-style=extensions
 ```
 
-The `.csproj` is hand-maintained — a regeneration only writes `.g.cs`.
+`Plato.Generated.Unoptimized` has no script; clear its `*.g.cs` and run:
+
+```
+dotnet run --project src\Plato.CLI -c Release -- ^
+    stdlib\foundation stdlib\geometry stdlib\graphics ^
+    --out=generated\Plato.Generated.Unoptimized ^
+    --csharp-style=extensions
+```
+
+`--out=` is what frees every positional argument to be an input root; without it the CLI rejects
+more than two positional folders.
+
+The `.csproj` files are hand-maintained — a regeneration only writes `.g.cs`.
 `docs.html` is a generator side-product and is gitignored.
 
 ## Intrinsics link
 
-The project consumes the handwritten runtime by importing the shared project:
+Each project consumes the handwritten runtime by importing the shared project:
 
 ```xml
 <Import Project="..\..\src\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />

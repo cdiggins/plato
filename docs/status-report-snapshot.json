@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-02T15:28:48-04:00",
+  "updated_at": "2026-08-02T19:03:46-04:00",
   "note": "Written by tools/record-gates.py at 2026-07-31T19:14:42-04:00.",
   "gates": [
     {
@@ -121,7 +121,7 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-08-02T15:28:48-04:00",
+    "updated_at": "2026-08-02T19:03:46-04:00",
     "targets": {
       "forward-conformance": {
         "built_at": "2026-08-02T15:27:35-04:00",
@@ -314,17 +314,105 @@
         "by_code": {},
         "by_category": {},
         "warning_by_code": {}
+      },
+      "generated-full-unoptimized": {
+        "built_at": "2026-08-02T19:03:46-04:00",
+        "project": "C:\\Users\\cdigg\\git\\plato\\generated\\Plato.Generated.Unoptimized\\Plato.GeneratedUnoptimized.csproj",
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\csharp-build-logs\\generated-full-unoptimized.log",
+        "configuration": "Release",
+        "exit_code": 1,
+        "total_errors": 235,
+        "total_warnings": 0,
+        "summary_errors": 235,
+        "summary_warnings": 0,
+        "by_code": {
+          "CS1929": 195,
+          "CS8135": 13,
+          "CS1503": 11,
+          "CS0411": 9,
+          "CS1061": 5,
+          "CS0029": 1,
+          "CS0428": 1
+        },
+        "by_category": {
+          "extension_receiver": {
+            "count": 195,
+            "label": "Extension method receiver type",
+            "codes": [
+              "CS1929"
+            ]
+          },
+          "other": {
+            "count": 13,
+            "label": "Other / uncategorized",
+            "codes": [
+              "CS8135"
+            ]
+          },
+          "argument_type": {
+            "count": 11,
+            "label": "Argument type mismatch",
+            "codes": [
+              "CS1503"
+            ]
+          },
+          "type_inference_failed": {
+            "count": 9,
+            "label": "Type inference failed",
+            "codes": [
+              "CS0411"
+            ]
+          },
+          "missing_member": {
+            "count": 5,
+            "label": "Missing member on receiver (CS1061)",
+            "codes": [
+              "CS1061"
+            ]
+          },
+          "cannot_implicitly_convert": {
+            "count": 1,
+            "label": "Cannot implicitly convert",
+            "codes": [
+              "CS0029"
+            ]
+          },
+          "method_group_conversion": {
+            "count": 1,
+            "label": "Method group must be invoked / cannot convert",
+            "codes": [
+              "CS0428"
+            ]
+          }
+        },
+        "warning_by_code": {}
       }
     },
-    "latest_target": "gen-foundation",
+    "latest_target": "generated-full-unoptimized",
     "latest": {
-      "target": "gen-foundation",
-      "total_errors": 0,
+      "target": "generated-full-unoptimized",
+      "total_errors": 235,
       "total_warnings": 0,
-      "built_at": "2026-08-02T15:28:48-04:00",
-      "exit_code": 0,
-      "by_category": {},
-      "by_code_top": {}
+      "built_at": "2026-08-02T19:03:46-04:00",
+      "exit_code": 1,
+      "by_category": {
+        "extension_receiver": 195,
+        "other": 13,
+        "argument_type": 11,
+        "type_inference_failed": 9,
+        "missing_member": 5,
+        "cannot_implicitly_convert": 1,
+        "method_group_conversion": 1
+      },
+      "by_code_top": {
+        "CS1929": 195,
+        "CS8135": 13,
+        "CS1503": 11,
+        "CS0411": 9,
+        "CS1061": 5,
+        "CS0029": 1,
+        "CS0428": 1
+      }
     }
   }
 }
