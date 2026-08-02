@@ -1,0 +1,28 @@
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <Identity Id="PlatoVSIX.d29accef-73ff-4bf1-a82c-79277f2b1520" Version="1.1" Language="en-US" Publisher="ara3d" />
+    <DisplayName>Plato</DisplayName>
+    <Description xml:space="preserve">Syntax highlighting for the Plato programming language (.plato) in Visual Studio. For Go to Definition / Find References, use the vscode-plato extension in Cursor or VS Code.</Description>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 19.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[17.0, 19.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[17.0, 19.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" Version="[4.5,)" />
+  </Dependencies>
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,19.0)" DisplayName="Visual Studio core editor" />
+  </Prerequisites>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.VsPackage" Path="PlatoVSIX.pkgdef" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="PlatoVSIX.dll" />
+  </Assets>
+</PackageManifest>

@@ -1038,6 +1038,68 @@ library Transforms
         => (m.Translation.ToPoint, m.Rotation);
 
     //==
+    // Rigid conversions — the Pose obligations of `Rigid2D` / `Rigid3D`. Each
+    // rigid representation names the pose it is: a translation is a pose with
+    // the identity rotation, a rotation is a pose at the origin, a
+    // rotation-about-a-centre is the conjugation of the two. Composition and
+    // inversion of any two rigid transforms stay inside the family, which is
+    // what the concept buys over Affine2D/Affine3D.
+
+    // A translation is the pose at that offset with no rotation.
+    Pose2D(t: Translation2D): Pose2D
+        => (t.Vector.ToPoint, Rotation2D.Identity);
+
+    // A translation is the pose at that offset with no rotation.
+    Pose3D(t: Translation3D): Pose3D
+        => (t.Vector.ToPoint, Quaternion.Identity);
+
+    // A plane rotation is the pose at the origin with that rotation.
+    Pose2D(r: Rotation2D): Pose2D
+        => (Vector2D(0.0, 0.0).ToPoint, r);
+
+    // A quaternion is the pose at the origin with that orientation.
+    Pose3D(q: Quaternion): Pose3D
+        => (Vector3D(0.0, 0.0, 0.0).ToPoint, q);
+
+    // Any 3D rotation representation is the pose at the origin with its
+    // quaternion; this one body serves AxisAngle, EulerAngles and Rotor3D.
+    Pose3D(r: Rotational3D): Pose3D
+        => r.Quaternion.Pose3D;
+
+    // Rotating about a centre: translate the centre to the origin, rotate,
+    // translate back.
+    Pose2D(r: RotationAbout2D): Pose2D {
+        var c = r.Center.PositionVector;
+        return ((c - c.Transform(r.Rotation)).ToPoint, r.Rotation);
+    }
+
+    // Rotating about a centre: translate the centre to the origin, rotate,
+    // translate back.
+    Pose3D(r: RotationAbout3D): Pose3D {
+        var c = r.Center.PositionVector;
+        return ((c - c.Transform(r.Rotation)).ToPoint, r.Rotation);
+    }
+
+    // Any rigid transform is affine, through the pose it names. Concrete
+    // conversions on the individual types take precedence over this one.
+    AffineTransform2D(x: Rigid2D): AffineTransform2D
+        => x.Pose2D.AffineTransform2D;
+
+    // Any rigid transform is affine, through the pose it names.
+    AffineTransform3D(x: Rigid3D): AffineTransform3D
+        => x.Pose3D.AffineTransform3D;
+
+    // Rigid transforms are closed under composition: apply `first`, then
+    // `second`, with no matrix round-trip and no drift out of the family.
+    Compose(first: Rigid2D, second: Rigid2D): Pose2D
+        => first.Pose2D.Compose(second.Pose2D);
+
+    // Rigid transforms are closed under composition: apply `first`, then
+    // `second`.
+    Compose(first: Rigid3D, second: Rigid3D): Pose3D
+        => first.Pose3D.Compose(second.Pose3D);
+
+    //==
     // # Rotation operations and conversions
     //
     // Application, composition, inversion, and interchange for every rotation

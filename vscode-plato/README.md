@@ -8,8 +8,8 @@ Highlighting is derived from the Plato Parakeet grammar (`type` / `interface` / 
 etc.). Navigation talks to `Plato.Navigation.CLI serve` over stdio NDJSON — the same index the
 plato-navigation MCP uses.
 
-The older Visual Studio package (`PlatoVSIX`) targeted the full Visual Studio IDE and is unrelated
-to this extension.
+For the full Visual Studio IDE, use `../visualstudio-plato/` (MEF classifier). That package is
+unrelated to this VS Code / Cursor extension.
 
 ## Install (development)
 
@@ -76,7 +76,6 @@ folder, or set `plato.navigation.cliProject`.
 
 ## Related
 
-- Visual Studio (full IDE) classifier sources historically lived under
-  `ara3d-sdk/toolchain/Plato/PlatoVSIX`.
+- Visual Studio (full IDE): `../visualstudio-plato/`
 - Language reference: `../docs/plato-for-agents.md`
 - Navigation library: `../src/Plato.Navigation/`

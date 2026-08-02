@@ -63,7 +63,7 @@ type ProjectiveTransform3D
 // An orthonormal coordinate frame in the plane: an origin and two perpendicular
 // unit axes.
 type Frame2D
-    implements Value, Affine2D
+    implements Value, Rigid2D
 {
     Origin: Point2D;
     XAxis: Direction2D;
@@ -73,7 +73,7 @@ type Frame2D
 // An orthonormal coordinate frame in space: an origin and three mutually
 // perpendicular unit axes.
 type Frame3D
-    implements Value, Affine3D
+    implements Value, Rigid3D
 {
     Origin: Point3D;
     XAxis: Direction3D;
@@ -105,7 +105,7 @@ type Basis3D
 // quaternion. Unit dual quaternions are isomorphic to the motors of 3D PGA.
 // https://en.wikipedia.org/wiki/Dual_quaternion
 type Motor3D
-    implements Value, Multiplicative, Affine3D
+    implements Value, Multiplicative, Rigid3D
 {
     Real: Quaternion;
     Dual: Quaternion;
@@ -122,7 +122,7 @@ type Motor3D
 // A rigid placement in the plane: position plus rotation. Also known as a 2D
 // rigid transform (https://en.wikipedia.org/wiki/Rigid_transformation).
 type Pose2D
-    implements Value, Interpolatable, Affine2D
+    implements Value, Interpolatable, Rigid2D
 {
     Position: Point2D;
     Rotation: Rotation2D;
@@ -132,7 +132,7 @@ type Pose2D
 // rigid transform (https://en.wikipedia.org/wiki/Rigid_transformation);
 // composition preserves distances and angles.
 type Pose3D
-    implements Value, Interpolatable, Affine3D
+    implements Value, Interpolatable, Rigid3D
 {
     Position: Point3D;
     Orientation: Quaternion;
@@ -183,7 +183,7 @@ type Transform3D
 // A translation in the plane: every point is displaced by the same vector
 // (https://en.wikipedia.org/wiki/Translation_(geometry)).
 type Translation2D
-    implements Value, Affine2D
+    implements Value, Rigid2D
 {
     Vector: Vector2D;
 }
@@ -191,7 +191,7 @@ type Translation2D
 // A translation in space: every point is displaced by the same vector
 // (https://en.wikipedia.org/wiki/Translation_(geometry)).
 type Translation3D
-    implements Value, Affine3D
+    implements Value, Rigid3D
 {
     Vector: Vector3D;
 }
@@ -249,7 +249,7 @@ type Reflection3D
 // A rotation in the plane about an arbitrary center rather than the origin
 // (https://en.wikipedia.org/wiki/Rotation_(mathematics)).
 type RotationAbout2D
-    implements Value, Affine2D
+    implements Value, Rigid2D
 {
     Rotation: Rotation2D;
     Center: Point2D;
@@ -259,7 +259,7 @@ type RotationAbout2D
 // rotation axis passes through Center
 // (https://en.wikipedia.org/wiki/Rotation_(mathematics)).
 type RotationAbout3D
-    implements Value, Affine3D
+    implements Value, Rigid3D
 {
     Rotation: Quaternion;
     Center: Point3D;

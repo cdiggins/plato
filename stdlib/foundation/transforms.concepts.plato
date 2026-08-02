@@ -62,6 +62,10 @@ concept Deformable3D
 // different kinds is defined by converting both sides to that common ground;
 // every 3D rotation representation reaches the unit `Quaternion`, the canonical
 // rotation form. As stated above, a member named after a type is a conversion.
+//
+// The concepts narrow as they inherit: Rotational3D is a Rigid3D is an Affine3D.
+// State the narrowest one a type satisfies — a rigid transform composes and
+// inverts exactly, where the affine form only promises a matrix.
 
 // Converts to the general 2D affine transform: the common ground for composing
 // 2D transforms of different kinds.
@@ -79,10 +83,32 @@ concept Affine3D
     AffineTransform3D(x: Self): AffineTransform3D;
 }
 
+// An orientation-preserving isometry of the plane: converts to a rigid pose.
+// Distances and angles survive it, and the family is closed under composition
+// and inversion, neither of which holds for Affine2D.
+// https://en.wikipedia.org/wiki/Rigid_transformation
+concept Rigid2D
+    inherits Affine2D
+{
+    Pose2D(x: Self): Pose2D;
+}
+
+// An orientation-preserving isometry of space: converts to a rigid pose.
+// Reflections are isometries but are NOT rigid here — they reverse
+// orientation — and no scaling or shear qualifies.
+// https://en.wikipedia.org/wiki/Rigid_transformation
+concept Rigid3D
+    inherits Affine3D
+{
+    Pose3D(x: Self): Pose3D;
+}
+
 // A 3D rotation representation: converts to a unit quaternion, the canonical
-// form every 3D rotation shares.
+// form every 3D rotation shares. A rotation is the rigid transform whose
+// translation is zero, hence the inheritance.
 // https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
 concept Rotational3D
+    inherits Rigid3D
 {
     Quaternion(x: Self): Quaternion;
 }

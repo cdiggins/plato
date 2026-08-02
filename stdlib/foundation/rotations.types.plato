@@ -16,7 +16,7 @@
 // A unit quaternion encoding a 3D rotation
 // (https://en.wikipedia.org/wiki/Quaternion). Invariant: X*X + Y*Y + Z*Z + W*W = 1.
 type Quaternion
-    implements Value, Multiplicative, Interpolatable
+    implements Value, Multiplicative, Interpolatable, Rigid3D
 {
     X: Number;
     Y: Number;
@@ -49,7 +49,7 @@ type EulerAngles
 
 // A rotation in the plane, stored as a single angle.
 type Rotation2D
-    implements Value, Multiplicative, Interpolatable
+    implements Value, Multiplicative, Interpolatable, Rigid2D
 {
     Angle: Angle;
 }
