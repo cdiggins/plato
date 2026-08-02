@@ -29,10 +29,8 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-374](issues/plato-374.md) | Interface-generic law bodies mix the interface default with the type's override | bug | p2 | M | low | plato | ready |  |
 | [plato-389](issues/plato-389.md) | plato_check has no tier awareness: future and stdlib-tests count toward its verdict | bug | p2 | S | low | plato | ready |  |
 | [plato-404](issues/plato-404.md) | plato_simplify SIM001 rewrites tuples outside return position, breaking the type check | bug | p2 | S | low | plato | ready |  |
-| [plato-406](issues/plato-406.md) | plato_check style gate produced findings for retired rules, then stopped | bug | p2 | S | low | plato | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
-| [plato-405](issues/plato-405.md) | plato_simplify has no compact result mode: a full-corpus run exceeds the MCP result budget | debt | p3 | S | low | plato | ready |  |
 | [repo-401](issues/repo-401.md) | record-gates.py --full passes the retired --scalar=float flag | bug | p3 | S | low | repo | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
