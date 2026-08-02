@@ -51,6 +51,20 @@ library MeshesIndexed
     Deform(self: TriangleMesh3D, mapping: Function1<Point3D, Point3D>): TriangleMesh3D
         => (self.Positions.Map(mapping), self.Faces);
 
+    // The IndexedGeometry obligations: the shared pool and the index table.
+    Vertices(self: TriangleMesh3D): Array<Point3D>
+        => self.Positions;
+
+    FaceIndices(self: TriangleMesh3D): Array<TriangleFace>
+        => self.Faces;
+
+    // The PrimitiveGeometry obligation: each face gathered into a concrete
+    // triangle. Precondition (IndexedGeometry): every index is in range.
+    Primitives(self: TriangleMesh3D): Array<Triangle3D>
+        => self.Faces.Map(f => Triangle3D(self.Positions[f.A.Value],
+                                          self.Positions[f.B.Value],
+                                          self.Positions[f.C.Value]));
+
     //==
     // # TriangleMesh2D
 
@@ -77,6 +91,20 @@ library MeshesIndexed
     Deform(self: TriangleMesh2D, mapping: Function1<Point2D, Point2D>): TriangleMesh2D
         => (self.Positions.Map(mapping), self.Faces);
 
+    // The IndexedGeometry obligations: the shared pool and the index table.
+    Vertices(self: TriangleMesh2D): Array<Point2D>
+        => self.Positions;
+
+    FaceIndices(self: TriangleMesh2D): Array<TriangleFace>
+        => self.Faces;
+
+    // The PrimitiveGeometry obligation: each face gathered into a concrete
+    // planar triangle.
+    Primitives(self: TriangleMesh2D): Array<Triangle2D>
+        => self.Faces.Map(f => Triangle2D(self.Positions[f.A.Value],
+                                          self.Positions[f.B.Value],
+                                          self.Positions[f.C.Value]));
+
     //==
     // # QuadMesh3D
 
@@ -102,4 +130,19 @@ library MeshesIndexed
     // mapping, faces unchanged.
     Deform(self: QuadMesh3D, mapping: Function1<Point3D, Point3D>): QuadMesh3D
         => (self.Positions.Map(mapping), self.Faces);
+
+    // The IndexedGeometry obligations: the shared pool and the index table.
+    Vertices(self: QuadMesh3D): Array<Point3D>
+        => self.Positions;
+
+    FaceIndices(self: QuadMesh3D): Array<QuadFace>
+        => self.Faces;
+
+    // The PrimitiveGeometry obligation: each face gathered into a concrete
+    // quad. Coplanarity is not guaranteed; see QuadFace.
+    Primitives(self: QuadMesh3D): Array<Quad3D>
+        => self.Faces.Map(f => Quad3D(self.Positions[f.A.Value],
+                                      self.Positions[f.B.Value],
+                                      self.Positions[f.C.Value],
+                                      self.Positions[f.D.Value]));
 }

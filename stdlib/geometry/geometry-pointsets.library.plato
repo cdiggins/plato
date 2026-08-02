@@ -50,12 +50,13 @@ library GeometryPointSets
         => self.Points.AverageOfPoints;
 
     //==
-    // # PrimitiveCollection
+    // # PrimitiveGeometry
     //
     // The primitive-level sibling of the point surface above: whole faces rather
-    // than the points inside them.
+    // than the points inside them. Dispatches on the layer-1 view in
+    // `meshes-layers.concepts.plato`, so it serves soups and indexed meshes alike.
 
     // The number of whole primitives the geometry stores.
-    PrimitiveCount(self: PrimitiveCollection3D<$TPrimitive>): Integer
+    PrimitiveCount(self: PrimitiveGeometry<$TPoint, $TPrimitive>): Integer
         => self.Primitives.Count;
 }

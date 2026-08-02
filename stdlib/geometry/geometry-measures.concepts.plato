@@ -42,18 +42,6 @@ concept PointSet3D
     Points(x: Self): Array<Point3D>;
 }
 
-// Exposes the finite ordered set of whole primitives a 3D entity is built from:
-// the triangles of an unwelded triangle array, the quads of a quad array. The
-// sibling of PointSet3D one level up — primitives rather than the points inside
-// them — and the seam that lets a count or a fold be written once for any
-// primitive soup. There is deliberately no 2D counterpart until a 2D
-// implementor exists.
-concept PrimitiveCollection3D<TPrimitive>
-    inherits Geometry3D
-{
-    Primitives(x: Self): Array<TPrimitive>;
-}
-
 //==
 // # Measures
 //

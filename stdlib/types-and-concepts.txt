@@ -76,6 +76,12 @@ concept Indexable<T>inherits Countable{At(x:Self,index:Integer):T;}
 concept Indexable2D<T>inherits Indexable<T>{ColumnCount(x:Self):Integer;RowCount(x:Self):Integer;At(x:Self,column:Integer,row:Integer):T;}
 concept Indexable3D<T>inherits Indexable<T>{ColumnCount(x:Self):Integer;RowCount(x:Self):Integer;LayerCount(x:Self):Integer;At(x:Self,column:Integer,row:Integer,layer:Integer):T;}
 concept IndexedGeometry<TPoint,TPrim,TIndex>inherits PrimitiveGeometry<TPoint,TPrim>{Vertices(x:Self):Array<TPoint>;FaceIndices(x:Self):Array<TIndex>;}
+concept IndexedQuadGeometry2D inherits IndexedGeometry<Point2D,Quad2D,QuadFace>,QuadGeometry2D{}
+concept IndexedQuadGeometry3D inherits IndexedGeometry<Point3D,Quad3D,QuadFace>,QuadGeometry3D{}
+concept IndexedSegmentGeometry2D inherits IndexedGeometry<Point2D,LineSegment2D,VertexPair>,SegmentGeometry2D{}
+concept IndexedSegmentGeometry3D inherits IndexedGeometry<Point3D,LineSegment3D,VertexPair>,SegmentGeometry3D{}
+concept IndexedTriangleGeometry2D inherits IndexedGeometry<Point2D,Triangle2D,TriangleFace>,TriangleGeometry2D{}
+concept IndexedTriangleGeometry3D inherits IndexedGeometry<Point3D,Triangle3D,TriangleFace>,TriangleGeometry3D{}
 concept Interpolatable{Lerp(a:Self,b:Self,t:Number):Self;}
 concept IntervalLike<T>where T:Additive,T:Interpolatable,T:Comparable inherits Value{Start(x:Self):T;End(x:Self):T;}
 concept Invertible{Inverse(x:Self):Self;}
@@ -118,11 +124,12 @@ concept PointGeometry<TPoint>inherits Geometry{Points(x:Self):Array<TPoint>;}
 concept PointSet2D inherits Geometry2D{Points(x:Self):Array<Point2D>;}
 concept PointSet3D inherits Geometry3D{Points(x:Self):Array<Point3D>;}
 concept PolarCurve2D inherits Curve2D{RadiusAt(x:Self,angle:Angle):Number;}
-concept PrimitiveCollection3D<TPrimitive>inherits Geometry3D{Primitives(x:Self):Array<TPrimitive>;}
 concept PrimitiveGeometry<TPoint,TPrim>inherits PointGeometry<TPoint>{Primitives(x:Self):Array<TPrim>;}
 concept ProbabilityDistribution inherits Value{Mean(x:Self):Number;Variance(x:Self):Number;Pdf(x:Self,value:Number):Number;Cdf(x:Self,value:Number):Number;}
 concept Procedural<TDomain,TRange>{Eval(x:Self,input:TDomain):TRange;}
 concept ProceduralTexture inherits Value{ColorAt(x:Self,uv:UvCoordinate):Color;}
+concept QuadGeometry2D inherits Geometry2D,PrimitiveGeometry<Point2D,Quad2D>{}
+concept QuadGeometry3D inherits Geometry3D,PrimitiveGeometry<Point3D,Quad3D>{}
 concept Quantity inherits Value,Comparable,Hashable,Additive,Scalable,Interpolatable{Amount(x:Self):Number;FromAmount(_:Self,x:Number):Self;}
 concept QueueLike<T>inherits Countable{Front(x:Self):T;Enqueue(x:Self,item:T):Self;Dequeue(x:Self):Self;}
 concept RayIntersectable2D{Raycast(x:Self,query:RayQuery2D):RayHit2D;}
@@ -131,6 +138,8 @@ concept Real inherits Numerical,Comparable,Hashable,Arithmetic,Invertible{ToNumb
 concept Scalable{Multiply(x:Self,scalar:Number):Self;Divide(x:Self,scalar:Number):Self;Modulo(x:Self,scalar:Number):Self;}
 concept ScalarField2D inherits Field<Point2D,Number>{}
 concept ScalarField3D inherits Field<Point3D,Number>{}
+concept SegmentGeometry2D inherits Geometry2D,PrimitiveGeometry<Point2D,LineSegment2D>{}
+concept SegmentGeometry3D inherits Geometry3D,PrimitiveGeometry<Point3D,LineSegment3D>{}
 concept SetLike<T>{Contains(x:Self,item:T):Boolean;}
 concept SignedDistanceField2D inherits ScalarField2D{}
 concept SignedDistanceField3D inherits ScalarField3D{}
@@ -151,6 +160,8 @@ concept TimeVaryingScalarField3D{EvalAtTime(x:Self,point:Point3D,time:Instant):N
 concept TimeVaryingVectorField2D{EvalAtTime(x:Self,point:Point2D,time:Instant):Vector2D;}
 concept TimeVaryingVectorField3D{EvalAtTime(x:Self,point:Point3D,time:Instant):Vector3D;}
 concept Transformable<TTransform>{Transform(x:Self,transform:TTransform):Self;}
+concept TriangleGeometry2D inherits Geometry2D,PrimitiveGeometry<Point2D,Triangle2D>{}
+concept TriangleGeometry3D inherits Geometry3D,PrimitiveGeometry<Point3D,Triangle3D>{}
 concept TriangulatedGeometry3D inherits Meshable3D{TriangleCount(x:Self):Integer;FaceAt(x:Self,face:FaceIndex):TriangleFace;PositionAt(x:Self,vertex:VertexIndex):Point3D;}
 concept Value inherits Equatable{}
 concept Vector inherits Numerical,Arithmetic,Indexable<Number>,Normed,Lattice,Hashable{Dot(a:Self,b:Self):Number;FromComponents(_:Self,xs:Array<Number>):Self;Broadcast(self:Self,x:Number):Self;}
@@ -581,8 +592,8 @@ type LineFit3D implements Value,Fitted{Line:Line3D;Quality:FitQuality;}
 type LineJoin{}
 type LineSegment2D implements Geometry2D,OpenShape,Connected,Bounded2D,LengthMeasurable,PointSet2D,Centroid2D,NearestPoint2D,Deformable2D{A:Point2D;B:Point2D;}
 type LineSegment3D implements Geometry3D,OpenShape,Connected,Bounded3D,LengthMeasurable,PointSet3D,Centroid3D,NearestPoint3D,Deformable3D{A:Point3D;B:Point3D;}
-type LineSet2D implements Value,Deformable2D{Positions:Array<Point2D>;Lines:Array<VertexPair>;}
-type LineSet3D implements Value,Deformable3D{Positions:Array<Point3D>;Lines:Array<VertexPair>;}
+type LineSet2D implements Value,IndexedSegmentGeometry2D,Deformable2D{Positions:Array<Point2D>;Lines:Array<VertexPair>;}
+type LineSet3D implements Value,IndexedSegmentGeometry3D,Deformable3D{Positions:Array<Point3D>;Lines:Array<VertexPair>;}
 type Lissajous2D implements Curve2D{XAmplitude:Number;YAmplitude:Number;XFrequency:Number;YFrequency:Number;Phase:Angle;}
 type List<T>{}
 type LodGroup implements Value{Center:Point3D;Meshes:Array<MeshIndex>;SwitchDistances:Array<Number>;}
@@ -747,9 +758,9 @@ type Proportion implements Numerical,Comparable{Value:Number;}
 type Pyramid3D implements Geometry3D,ClosedShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,Deformable3D{Base:Polygon3D;Apex:Point3D;}
 type Quad2D implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded2D,PointSet2D,Centroid2D,ContainsPoint2D,Deformable2D{A:Point2D;B:Point2D;C:Point2D;D:Point2D;}
 type Quad3D implements Geometry3D,Connected,Orientable,PlanarMeasurable,Bounded3D,PointSet3D,Centroid3D,Deformable3D{A:Point3D;B:Point3D;C:Point3D;D:Point3D;}
-type QuadArray3D implements Value,Geometry3D,Meshable3D,Bounded3D,PointSet3D,PrimitiveCollection3D<Quad3D>,Deformable3D{Quads:Array<Quad3D>;}
+type QuadArray3D implements Value,Geometry3D,Meshable3D,Bounded3D,PointSet3D,QuadGeometry3D,Deformable3D{Quads:Array<Quad3D>;}
 type QuadFace implements Face{A:VertexIndex;B:VertexIndex;C:VertexIndex;D:VertexIndex;}
-type QuadMesh3D implements Value,Meshable3D,MeshElementCounts,Deformable3D{Positions:Array<Point3D>;Faces:Array<QuadFace>;}
+type QuadMesh3D implements Value,Meshable3D,IndexedQuadGeometry3D,MeshElementCounts,Deformable3D{Positions:Array<Point3D>;Faces:Array<QuadFace>;}
 type QuadraticBezier2D implements Curve2D{P0:Point2D;P1:Point2D;P2:Point2D;}
 type QuadraticBezier3D implements Curve3D{P0:Point3D;P1:Point3D;P2:Point3D;}
 type QuadraticPolynomial implements Value{A:Number;B:Number;C:Number;}
@@ -988,10 +999,10 @@ type TransmissionLayer implements Value{Transmission:Proportion;IndexOfRefractio
 type TrefoilKnot implements ClosedCurve3D{Frame:Frame3D;Scale:Number;}
 type Triangle2D implements Geometry2D,ClosedShape,ConvexShape,Connected,PlanarMeasurable,Bounded2D,PointSet2D,Centroid2D,ContainsPoint2D,NearestPoint2D,Deformable2D{A:Point2D;B:Point2D;C:Point2D;}
 type Triangle3D implements Geometry3D,ConvexShape,Connected,Manifold,Orientable,PlanarMeasurable,Bounded3D,PointSet3D,Centroid3D,NearestPoint3D,Deformable3D{A:Point3D;B:Point3D;C:Point3D;}
-type TriangleArray3D implements Value,Geometry3D,Meshable3D,Bounded3D,PointSet3D,PrimitiveCollection3D<Triangle3D>,Deformable3D{Triangles:Array<Triangle3D>;}
+type TriangleArray3D implements Value,Geometry3D,Meshable3D,Bounded3D,PointSet3D,TriangleGeometry3D,Deformable3D{Triangles:Array<Triangle3D>;}
 type TriangleFace implements Face{A:VertexIndex;B:VertexIndex;C:VertexIndex;}
-type TriangleMesh2D implements Value,Meshable2D,MeshElementCounts,Deformable2D{Positions:Array<Point2D>;Faces:Array<TriangleFace>;}
-type TriangleMesh3D implements Value,TriangulatedGeometry3D,MeshElementCounts,Deformable3D{Positions:Array<Point3D>;Faces:Array<TriangleFace>;}
+type TriangleMesh2D implements Value,Meshable2D,IndexedTriangleGeometry2D,MeshElementCounts,Deformable2D{Positions:Array<Point2D>;Faces:Array<TriangleFace>;}
+type TriangleMesh3D implements Value,TriangulatedGeometry3D,IndexedTriangleGeometry3D,MeshElementCounts,Deformable3D{Positions:Array<Point3D>;Faces:Array<TriangleFace>;}
 type TriangularDistribution implements ProbabilityDistribution{Min:Number;Mode:Number;Max:Number;}
 type TrimmedSurface implements Surface{Base:ParametricSurface;OuterLoop:Polyline2D;Holes:Array<Polyline2D>;}
 type TriplanarProjection implements Value{BlendSharpness:Number;Tiling:Number2;}

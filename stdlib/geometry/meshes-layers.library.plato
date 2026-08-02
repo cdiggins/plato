@@ -1,0 +1,21 @@
+//==
+// # MeshLayers — what the layered mesh vocabulary derives for free
+//
+// The bodies an implementor of `meshes-layers.concepts.plato` does not have to
+// write. An indexed geometry declares its vertex pool and its index table; the
+// point view then follows from the pool, because for indexed storage the shape's
+// points ARE the pool. (That is not true one layer down: an unwelded soup has no
+// pool, and its Points are the flattened corners of its primitives, so the soups
+// supply Points themselves in `meshes-face-arrays.library.plato`.)
+//
+// `Primitives` is deliberately NOT derived here. Gathering an index tuple into a
+// concrete primitive needs that primitive's constructor, which the generic layer
+// cannot name, so each named binding supplies its own one-line gather.
+
+library MeshLayers
+{
+    // The PointGeometry obligation of any indexed geometry: the shared vertex
+    // pool is exactly the set of points the shape is built from.
+    Points(self: IndexedGeometry<$TPoint, $TPrim, $TIndex>): Array<$TPoint>
+        => self.Vertices;
+}

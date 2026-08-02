@@ -25,4 +25,31 @@ library MeshesLinesPoints
     // The Deformable2D obligation: every position carried through the mapping.
     Deform(self: PointCloud2D, mapping: Function1<Point2D, Point2D>): PointCloud2D
         => PointCloud2D(self.Positions.Map(mapping));
+
+    //==
+    // # The indexed-segment layer
+
+    // The IndexedGeometry obligations: the shared pool and the segment table.
+    Vertices(self: LineSet3D): Array<Point3D>
+        => self.Positions;
+
+    FaceIndices(self: LineSet3D): Array<VertexPair>
+        => self.Lines;
+
+    // The PrimitiveGeometry obligation: each pair gathered into a concrete
+    // segment, in authored direction.
+    Primitives(self: LineSet3D): Array<LineSegment3D>
+        => self.Lines.Map(e => LineSegment3D(self.Positions[e.A.Value],
+                                             self.Positions[e.B.Value]));
+
+    Vertices(self: LineSet2D): Array<Point2D>
+        => self.Positions;
+
+    FaceIndices(self: LineSet2D): Array<VertexPair>
+        => self.Lines;
+
+    // The PrimitiveGeometry obligation, in the plane.
+    Primitives(self: LineSet2D): Array<LineSegment2D>
+        => self.Lines.Map(e => LineSegment2D(self.Positions[e.A.Value],
+                                             self.Positions[e.B.Value]));
 }

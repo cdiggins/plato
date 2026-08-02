@@ -10,7 +10,7 @@
 // (https://en.wikipedia.org/wiki/Wire-frame_model), edge overlays, debug
 // lines. Each VertexPair is one independent segment, in authored direction.
 type LineSet3D
-    implements Value, Deformable3D
+    implements Value, IndexedSegmentGeometry3D, Deformable3D
 {
     Positions: Array<Point3D>;
     Lines: Array<VertexPair>;
@@ -19,7 +19,7 @@ type LineSet3D
 // Straight segments over shared vertices in the plane: sketch overlays,
 // planar graphs, hatch patterns.
 type LineSet2D
-    implements Value, Deformable2D
+    implements Value, IndexedSegmentGeometry2D, Deformable2D
 {
     Positions: Array<Point2D>;
     Lines: Array<VertexPair>;

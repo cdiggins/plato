@@ -13,12 +13,11 @@
 // and space are the same tower instantiated twice: a triangulation is
 // `IndexedGeometry<Point2D, Triangle2D, TriangleFace>` and an interchange mesh
 // is `IndexedGeometry<Point3D, Triangle3D, TriangleFace>`. A UV domain is the
-// planar instantiation sharing its index table with the spatial one. There are
-// deliberately no named per-primitive aliases (no `TriangleGeometry3D`): each
-// would abstract over a single concrete type, which is a second spelling of
-// that type rather than an abstraction, and would collide with the type names
-// in `meshes.types.plato`. Functions constrain on the generic concept with
-// concrete arguments instead.
+// planar instantiation sharing its index table with the spatial one. The named
+// bindings — `TriangleGeometry3D`, `IndexedTriangleGeometry2D` and the rest —
+// live in `meshes-layers-named.concepts.plato`, and are what declarations and
+// signatures should name; these generic layers exist to be instantiated, not
+// usually to be written directly.
 //
 // Manifoldness, closedness and orientability are deliberately absent: they are
 // structural markers in `geometry.concepts.plato`, bolted on per type the way
