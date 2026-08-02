@@ -252,7 +252,8 @@ namespace Ara3D.Geometry.Compiler.Symbols
         public Symbol ResolveMatch(AstMatch astMatch)
         {
             var scrutinee = ResolveExpr(astMatch.Scrutinee);
-            var subjectDef = (scrutinee as RefSymbol)?.Def?.Type?.Def;
+            var subjectDef = (scrutinee as RefSymbol)?.Def?.Type?.Def
+                             ?? SumTypeOfCall(scrutinee as FunctionCall);
 
             var arms = new List<MatchArm>();
             foreach (var astArm in astMatch.Arms)
@@ -272,7 +273,42 @@ namespace Ara3D.Geometry.Compiler.Symbols
                 arms.Add(new MatchArm(caseName, binders, body));
             }
 
-            return new MatchExpression(scrutinee, subjectDef, arms);
+            var match = new MatchExpression(scrutinee, subjectDef, arms);
+            // Registered so a CHK3xx diagnostic on this match carries a source location
+            // (InternalResolve only maps symbols returned through Resolve).
+            SymbolsToNodes[match] = astMatch;
+            return match;
+        }
+
+        /// <summary>The sum type a call-shaped match scrutinee (`u.Orientation`,
+        /// `p.RelationTo(pl, tol)`) evaluates to. Resolution runs before type checking, so this
+        /// reads declared signatures only: a one-argument access on a typed receiver is looked up
+        /// as a FIELD of the receiver's type (accessor functions join their group too late in the
+        /// declaration walk to consult), and any other call is answered by its function group when
+        /// every arity-matching overload that returns a sum agrees on WHICH sum. An ambiguous or
+        /// non-sum scrutinee yields null and CHK304 reports it.</summary>
+        private TypeDef SumTypeOfCall(FunctionCall call)
+        {
+            if (call == null)
+                return null;
+
+            if (call.Args.Count == 1 && call.Args[0] is RefSymbol receiverRef)
+            {
+                var field = receiverRef.Def?.Type?.Def?.Fields?
+                    .FirstOrDefault(f => f.Name == call.Function?.Name);
+                if (field?.Type?.Def is TypeDef fieldType && fieldType.IsSum)
+                    return fieldType;
+            }
+
+            if (!(call.Function is FunctionGroupRefSymbol fg) || fg.Def?.Functions == null)
+                return null;
+            var sums = fg.Def.Functions
+                .Where(f => f.NumParameters == call.Args.Count)
+                .Select(f => f.ReturnType?.Def)
+                .Where(d => d != null && d.IsSum)
+                .Distinct()
+                .ToList();
+            return sums.Count == 1 ? sums[0] : null;
         }
 
         public Symbol NewExpression(AstNew astNew)
@@ -585,6 +621,20 @@ namespace Ara3D.Geometry.Compiler.Symbols
                         AddCompilerGeneratedFunction(typeDef,
                             new FunctionDef(ValueBindingsScope, caseDef.Name, typeDef,
                                 typeDef.ToTypeExpression(), null, ps));
+                    }
+
+                    // Structural equality (stdlib-402): the tagged struct the writer emits
+                    // defines Equals/NotEquals, so declare both here and `a == b` between two
+                    // sum values resolves like any overload. Skipped in a self-contained
+                    // fixture that declares no Boolean.
+                    var booleanType = GetTypeDefinition("Boolean")?.ToTypeExpression();
+                    if (booleanType != null)
+                    {
+                        foreach (var eqName in new[] { "Equals", "NotEquals" })
+                            AddCompilerGeneratedFunction(typeDef,
+                                new FunctionDef(ValueBindingsScope, eqName, typeDef, booleanType, null,
+                                    new ParameterDef(ValueBindingsScope, "a", typeDef.ToTypeExpression(), 0),
+                                    new ParameterDef(ValueBindingsScope, "b", typeDef.ToTypeExpression(), 1)));
                     }
                 }
 

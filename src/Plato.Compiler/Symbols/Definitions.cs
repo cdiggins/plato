@@ -60,6 +60,12 @@ namespace Ara3D.Geometry.Compiler.Symbols
                 // A synthesized per-case static factory (PathSegment2D.Move) — wave-2.
                 FunctionType = FunctionType.SumFactory;
             }
+            else if (ownerType.IsSum && (name == "Equals" || name == "NotEquals") && parameters.Length == 2)
+            {
+                // Synthesized structural equality on a sum (stdlib-402); the tagged struct
+                // the writer emits defines both members.
+                FunctionType = FunctionType.SumEquality;
+            }
             else if (name == "Cast" && parameters.Length == 1)
             {
                  FunctionType = FunctionType.Cast;

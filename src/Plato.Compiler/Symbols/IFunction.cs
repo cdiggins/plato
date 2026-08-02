@@ -15,6 +15,10 @@ namespace Ara3D.Geometry.Compiler.Symbols
         // A synthesized per-case static factory of a sum type (wave-2, plato-232):
         // PathSegment2D.Move(p). Emitted as a static factory, called qualified.
         SumFactory,
+        // Synthesized structural equality on a sum type (stdlib-402): Equals/NotEquals
+        // over the tagged struct, which defines both (design doc §6 emission). Bodyless;
+        // exists so the checker can resolve `a == b` between two sum values.
+        SumEquality,
     }
 
     public interface IFunction

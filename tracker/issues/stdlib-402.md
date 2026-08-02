@@ -2,14 +2,14 @@
 id: stdlib-402
 title: Sum-kind types have no Equals, so laws comparing two sum values cannot type-check
 type: bug
-status: ready
+status: done
 priority: p2
 effort: M
 risk: med
 area: stdlib
 sprint: 
 created: 2026-08-02
-closed:
+closed: 2026-08-02
 links: [tracker/issues/stdlib-398.md, tracker/decisions/2026-07-29-polyhedra-dual-kind-map.md]
 ---
 
@@ -47,8 +47,25 @@ will keep producing them.
 Approach 1 is the one worth costing; the other two are workarounds recorded so the trade-off is
 visible.
 
+## Resolution
+
+**Approach 1** — the binder synthesizes structural `Equals` and `NotEquals` on every sum type,
+next to the per-case factories (`SymbolFactory`, new `FunctionType.SumEquality` in
+`IFunction`/`Definitions`). They are bodyless, like the factories: the tagged struct the writer
+emits already defines both members (design doc §6), so the declarations only exist for the
+checker to resolve `a == b` between two sum values. The "what does equality mean for a case
+carrying fields" question was already answered by the design doc: factories zero the inactive
+fields, so whole-struct structural equality is exact.
+
+The same pass fixed the sibling gap the checker exposed once the laws compiled: a match whose
+scrutinee is call-shaped (`u.Orientation`, `self.Position`, `p.RelationTo(pl, tol)`) had no
+subject type at resolve time and died with a location-less CHK304. `ResolveMatch` now reads the
+declared field type off the receiver (or the agreeing sum return of the arity-matching group
+overloads), and registers the `MatchExpression` in `SymbolsToNodes` so any CHK3xx on a match
+carries a source location.
+
 ## Done means
 
-- [ ] Two values of a sum type can be compared for equality from Plato source, or a decision record
+- [x] Two values of a sum type can be compared for equality from Plato source, or a decision record
       says why they cannot and what to write instead
-- [ ] The three polyhedra involution laws type-check
+- [x] The three polyhedra involution laws type-check
