@@ -162,7 +162,7 @@ library SolidsCsg
     // direction (normalized (pi/6, ln 2, pi/4)), parallel to no axis-aligned
     // face and unlikely to graze an edge.
     CsgProbeDirection(_: Direction3D): Direction3D
-        => Direction3D(Vector3D(0.5235987755982988, 0.6931471805599453, 0.7853981633974483).Normalize);
+        => Direction3D(Vector3D(Number.Pi / 6.0, Number.Ln2, Number.Pi / 4.0).Normalize);
 
     // True when the ray from `q` along `direction` strikes the polygon: it
     // crosses the supporting plane at a non-negative parameter, at a point

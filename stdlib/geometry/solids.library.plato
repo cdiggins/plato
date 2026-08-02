@@ -306,7 +306,7 @@ library Solids
     // returns it any more, but callers may still want the zero element).
     // Detect it with `MeshIsEmpty` or `VertexCount == 0`.
     EmptyPolygonMesh(_: PolygonMesh3D): PolygonMesh3D
-        => PolygonMeshOfFaces(Repeat(0, Point3D(0.0, 0.0, 0.0)),
+        => PolygonMeshOfFaces(Repeat(0, Point3D.Origin),
                               Repeat(0, Repeat(0, VertexIndex(0))));
 
     //==

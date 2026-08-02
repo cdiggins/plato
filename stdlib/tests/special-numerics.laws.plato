@@ -112,6 +112,6 @@ library SpecialNumericsLaws
     // The unit circle as a superellipse (a = b = 1, Exponent 2) has perimeter
     // 2 pi.
     Law_SuperEllipseUnitCirclePerimeter(t: Number): Boolean
-        => SuperEllipse(Point2D(0.0, 0.0), Number2(1.0, 1.0), Angle(0.0), 2.0)
+        => SuperEllipse(Point2D.Origin, Number2.One, Angle(0.0), 2.0)
             .Perimeter.SpecialEq(Number.Tau);
 }

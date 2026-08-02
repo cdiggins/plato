@@ -89,7 +89,7 @@ library SpatialPrimitives
     {
         var perp = PerpendicularComponent(v, axis);
         return perp.MagnitudeSquared <= 0.0
-            ? Vector3D(0.0, 0.0, 0.0)
+            ? Vector3D.Zero
             : perp.Normalize * radius;
     }
 

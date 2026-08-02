@@ -298,7 +298,7 @@ library Polyhedra
     UndirectedEdgeMidpoints(self: PolygonMesh3D): Array<Point3D>
         => self.CornerCount
             .MapRange(c => CornerIndex(c))
-            .Reduce(Repeat(0, Point3D(0.0, 0.0, 0.0)),
+            .Reduce(Repeat(0, Point3D.Origin),
                 (acc, c) => self.IsCanonicalCorner(c) ? acc.Append(self.CornerLerp(c, 0.5)) : acc);
 
     // The shrunken copy of an original face: its own edges' midpoints, in order.

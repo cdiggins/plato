@@ -238,7 +238,7 @@ library Polygons
     VectorArea(points: Array<Point3D>): Vector3D
         => points.Count
             .MapRange(i => points[i].PositionVector.Cross(points.AtModulo(i + 1).PositionVector))
-            .Reduce(Vector3D(0.0, 0.0, 0.0), (acc, c) => acc + c)
+            .Reduce(Vector3D.Zero, (acc, c) => acc + c)
             * 0.5;
 
     // Any unit vector perpendicular to `normal`. Crossed against whichever world

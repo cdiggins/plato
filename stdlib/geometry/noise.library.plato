@@ -305,7 +305,7 @@ library Noise
         var n10 = LatticeGradient2D(self.Seed, i + 1, j).Dot((dx - 1.0, dy));
         var n01 = LatticeGradient2D(self.Seed, i, j + 1).Dot((dx, dy - 1.0));
         var n11 = LatticeGradient2D(self.Seed, i + 1, j + 1).Dot((dx - 1.0, dy - 1.0));
-        return n00.Lerp(n10, u).Lerp(n01.Lerp(n11, u), v) * 1.4142135623730951;
+        return n00.Lerp(n10, u).Lerp(n01.Lerp(n11, u), v) * Number.SqrtTwo;
     }
 
     // The faded blend of the eight corner gradient contributions.
@@ -359,10 +359,9 @@ library Noise
 
     // The sum of the three simplex corner contributions.
     Eval(self: SimplexNoise2D, p: Point2D): Number {
-        // The skew and unskew factors of the 2D simplex lattice:
-        // (sqrt(3) - 1) / 2 and (3 - sqrt(3)) / 6.
-        var skew = 0.3660254037844386;
-        var unskew = 0.21132486540518713;
+        // The skew and unskew factors of the 2D simplex lattice.
+        var skew = (Number.SqrtThree - 1.0) / 2.0;
+        var unskew = (3.0 - Number.SqrtThree) / 6.0;
         var x = p.X * self.Frequency;
         var y = p.Y * self.Frequency;
         var s = (x + y) * skew;

@@ -36,15 +36,15 @@ library IntervalsTransformsDeformable
 
     // Rotate every point about the origin by `angle` (counter-clockwise).
     Rotate(self: IDeformable2D, angle: Angle): Self
-        => self.RotateAbout(Point2D(0.0, 0.0), angle);
+        => self.RotateAbout(Point2D.Origin, angle);
 
     // Uniformly scale about the origin by `factor`.
     Scale(self: IDeformable2D, factor: Number): Self
-        => self.ScaleAbout(Point2D(0.0, 0.0), factor);
+        => self.ScaleAbout(Point2D.Origin, factor);
 
     // Non-uniformly scale about the origin by a per-axis `factors` vector.
     Scale(self: IDeformable2D, factors: Number2): Self
-        => self.ScaleAbout(Point2D(0.0, 0.0), factors);
+        => self.ScaleAbout(Point2D.Origin, factors);
 
     // Scale about the origin along X only.
     ScaleX(self: IDeformable2D, factor: Number): Self
@@ -95,7 +95,7 @@ library IntervalsTransformsDeformable
 
     // Rotate every point about the origin by `rotation`.
     Rotate(self: IDeformable3D, rotation: Quaternion): Self
-        => self.RotateAbout(Point3D(0.0, 0.0, 0.0), rotation);
+        => self.RotateAbout(Point3D.Origin, rotation);
 
     // Rotate about the world X axis through the origin.
     RotateX(self: IDeformable3D, angle: Angle): Self
@@ -111,11 +111,11 @@ library IntervalsTransformsDeformable
 
     // Uniformly scale about the origin by `factor`.
     Scale(self: IDeformable3D, factor: Number): Self
-        => self.ScaleAbout(Point3D(0.0, 0.0, 0.0), factor);
+        => self.ScaleAbout(Point3D.Origin, factor);
 
     // Non-uniformly scale about the origin by a per-axis `factors` vector.
     Scale(self: IDeformable3D, factors: Number3): Self
-        => self.ScaleAbout(Point3D(0.0, 0.0, 0.0), factors);
+        => self.ScaleAbout(Point3D.Origin, factors);
 
     // Scale about the origin along X only.
     ScaleX(self: IDeformable3D, factor: Number): Self

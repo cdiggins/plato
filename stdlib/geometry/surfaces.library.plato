@@ -96,7 +96,7 @@ library Surfaces
         var u = KnotParameter(uDomain, uv.U);
         var v = KnotParameter(vDomain, uv.V);
         var columns = NetColumns(s.ControlPoints);
-        var sum = s.ControlPoints.Count.Range.Reduce(Vector3D(0.0, 0.0, 0.0), (acc, k) =>
+        var sum = s.ControlPoints.Count.Range.Reduce(Vector3D.Zero, (acc, k) =>
             acc + s.ControlPoints.Row(k / columns)[k % columns].PositionVector
                 * (BasisFunction(s.UKnots, uDomain.End, k % columns, s.UDegree, u)
                    * BasisFunction(s.VKnots, vDomain.End, k / columns, s.VDegree, v)));
@@ -115,7 +115,7 @@ library Surfaces
         var v = KnotParameter(vDomain, uv.V);
         var columns = NetColumns(s.ControlPoints);
         var count = s.ControlPoints.Count;
-        var numerator = count.Range.Reduce(Vector3D(0.0, 0.0, 0.0), (acc, k) =>
+        var numerator = count.Range.Reduce(Vector3D.Zero, (acc, k) =>
             acc + s.ControlPoints.Row(k / columns)[k % columns].PositionVector
                 * (s.Weights.Row(k / columns)[k % columns]
                    * BasisFunction(s.UKnots, uDomain.End, k % columns, s.UDegree, u)

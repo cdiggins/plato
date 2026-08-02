@@ -253,7 +253,7 @@ library Transforms
 
     // The zero translation.
     Identity(_: Translation2D): Translation2D
-        => Translation2D(Vector2D(0.0, 0.0));
+        => Translation2D(Vector2D.Zero);
 
     // The translation as an affine map (identity linear part).
     AffineTransform3D(t: Translation3D): AffineTransform3D
@@ -281,7 +281,7 @@ library Transforms
 
     // The zero translation.
     Identity(_: Translation3D): Translation3D
-        => Translation3D(Vector3D(0.0, 0.0, 0.0));
+        => Translation3D(Vector3D.Zero);
 
     //==
     // Scalings about the origin — per-axis and uniform. Unlike a translation a
@@ -314,7 +314,7 @@ library Transforms
 
     // The unit scaling.
     Identity(_: Scaling2D): Scaling2D
-        => Scaling2D(Number2(1.0, 1.0));
+        => Scaling2D(Number2.One);
 
     // The per-axis scaling as an affine map.
     AffineTransform3D(s: Scaling3D): AffineTransform3D
@@ -342,7 +342,7 @@ library Transforms
 
     // The unit scaling.
     Identity(_: Scaling3D): Scaling3D
-        => Scaling3D(Number3(1.0, 1.0, 1.0));
+        => Scaling3D(Number3.One);
 
     // The uniform scaling as an affine map.
     AffineTransform2D(s: UniformScaling2D): AffineTransform2D
@@ -513,7 +513,7 @@ library Transforms
 
     // The zero rotation about the origin.
     Identity(_: RotationAbout2D): RotationAbout2D
-        => RotationAbout2D(Rotation2D.Identity, Point2D(0.0, 0.0));
+        => RotationAbout2D(Rotation2D.Identity, Point2D.Origin);
 
     // The rotation about the centre as an affine map: translate the centre to
     // the world origin, rotate, translate back.
@@ -546,7 +546,7 @@ library Transforms
 
     // The zero rotation about the origin.
     Identity(_: RotationAbout3D): RotationAbout3D
-        => RotationAbout3D(Quaternion.Identity, Point3D(0.0, 0.0, 0.0));
+        => RotationAbout3D(Quaternion.Identity, Point3D.Origin);
 
     // The scaling about the centre as an affine map.
     AffineTransform2D(s: ScalingAbout2D): AffineTransform2D
@@ -576,7 +576,7 @@ library Transforms
 
     // The unit scaling about the origin.
     Identity(_: ScalingAbout2D): ScalingAbout2D
-        => ScalingAbout2D(Number2(1.0, 1.0), Point2D(0.0, 0.0));
+        => ScalingAbout2D(Number2.One, Point2D.Origin);
 
     // The scaling about the centre as an affine map: translate the centre to the
     // world origin, scale, translate back.
@@ -611,7 +611,7 @@ library Transforms
 
     // The unit scaling about the origin.
     Identity(_: ScalingAbout3D): ScalingAbout3D
-        => ScalingAbout3D(Number3(1.0, 1.0, 1.0), Point3D(0.0, 0.0, 0.0));
+        => ScalingAbout3D(Number3.One, Point3D.Origin);
 
     //==
     // Aiming — the rotation that points an object along a direction.
@@ -622,7 +622,7 @@ library Transforms
     // handedness is stated in exactly one place. Preconditions (unchecked):
     // `forward` and `up` are not parallel.
     LookRotation(forward: Direction3D, up: Direction3D): Quaternion
-        => Matrix4x4.CreateWorld(Point3D(0.0, 0.0, 0.0), forward.Vector, up.Vector).Quaternion;
+        => Matrix4x4.CreateWorld(Point3D.Origin, forward.Vector, up.Vector).Quaternion;
 
     //==
     // # Frame and basis operations
@@ -737,19 +737,19 @@ library Transforms
 
     // The pose at the origin with no rotation.
     Identity(_: Pose2D): Pose2D
-        => (Point2D(0.0, 0.0), Rotation2D.Identity);
+        => (Point2D.Origin, Rotation2D.Identity);
 
     // The pose at the origin with no rotation.
     Identity(_: Pose3D): Pose3D
-        => (Point3D(0.0, 0.0, 0.0), Quaternion.Identity);
+        => (Point3D.Origin, Quaternion.Identity);
 
     // The TRS transform that leaves everything unchanged.
     Identity(_: TrsTransform2D): TrsTransform2D
-        => (Vector2D(0.0, 0.0), Rotation2D.Identity, Number2(1.0, 1.0));
+        => (Vector2D.Zero, Rotation2D.Identity, Number2.One);
 
     // The TRS transform that leaves everything unchanged.
     Identity(_: TrsTransform3D): TrsTransform3D
-        => (Vector3D(0.0, 0.0, 0.0), Quaternion.Identity, Number3(1.0, 1.0, 1.0));
+        => (Vector3D.Zero, Quaternion.Identity, Number3.One);
 
     // The identity 2D affine map.
     Identity(_: Matrix3x2): Matrix3x2
@@ -1055,11 +1055,11 @@ library Transforms
 
     // A plane rotation is the pose at the origin with that rotation.
     Pose2D(r: Rotation2D): Pose2D
-        => (Vector2D(0.0, 0.0).ToPoint, r);
+        => (Point2D.Origin, r);
 
     // A quaternion is the pose at the origin with that orientation.
     Pose3D(q: Quaternion): Pose3D
-        => (Vector3D(0.0, 0.0, 0.0).ToPoint, q);
+        => (Point3D.Origin, q);
 
     // Any 3D rotation representation is the pose at the origin with its
     // quaternion; this one body serves AxisAngle, EulerAngles and Rotor3D.
@@ -1412,7 +1412,7 @@ library Transforms
 
     // A rigid pose widened to a TRS transform with unit scale.
     TrsTransform2D(pose: Pose2D): TrsTransform2D
-        => (pose.Position.PositionVector, pose.Rotation, Number2(1.0, 1.0));
+        => (pose.Position.PositionVector, pose.Rotation, Number2.One);
 
     // The rigid part of the transform, discarding scale. Named Pose rather
     // than Pose2D because the conversion is lossy and must stay explicit.
@@ -1460,7 +1460,7 @@ library Transforms
 
     // A rigid pose widened to a TRS transform with unit scale.
     TrsTransform3D(pose: Pose3D): TrsTransform3D
-        => (pose.Position.PositionVector, pose.Orientation, Number3(1.0, 1.0, 1.0));
+        => (pose.Position.PositionVector, pose.Orientation, Number3.One);
 
     // The rigid part of the transform, discarding scale. Named Pose rather
     // than Pose3D because the conversion is lossy and must stay explicit.

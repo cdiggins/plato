@@ -212,7 +212,7 @@ library Splines
     Eval(self: BSplineCurve2D, t: Number): Point2D {
         var domain = self.ParameterDomain;
         var u = KnotParameter(domain, t);
-        var sum = self.ControlPoints.Count.Range.Reduce(Vector2D(0.0, 0.0), (acc, i) =>
+        var sum = self.ControlPoints.Count.Range.Reduce(Vector2D.Zero, (acc, i) =>
             acc + self.ControlPoints[i].PositionVector
                 * BasisFunction(self.Knots, domain.End, i, self.Degree, u));
         return (sum.X, sum.Y);
@@ -222,7 +222,7 @@ library Splines
     Eval(self: BSplineCurve3D, t: Number): Point3D {
         var domain = self.ParameterDomain;
         var u = KnotParameter(domain, t);
-        var sum = self.ControlPoints.Count.Range.Reduce(Vector3D(0.0, 0.0, 0.0), (acc, i) =>
+        var sum = self.ControlPoints.Count.Range.Reduce(Vector3D.Zero, (acc, i) =>
             acc + self.ControlPoints[i].PositionVector
                 * BasisFunction(self.Knots, domain.End, i, self.Degree, u));
         return (sum.X, sum.Y, sum.Z);
@@ -235,7 +235,7 @@ library Splines
         var domain = self.ParameterDomain;
         var u = KnotParameter(domain, t);
         var count = self.ControlPoints.Count;
-        var numerator = count.Range.Reduce(Vector2D(0.0, 0.0), (acc, i) =>
+        var numerator = count.Range.Reduce(Vector2D.Zero, (acc, i) =>
             acc + self.WeightedControlPoint(i)
                 * BasisFunction(self.Knots, domain.End, i, self.Degree, u));
         var denominator = count.Range.Reduce(0.0, (acc, i) =>
@@ -249,7 +249,7 @@ library Splines
         var domain = self.ParameterDomain;
         var u = KnotParameter(domain, t);
         var count = self.ControlPoints.Count;
-        var numerator = count.Range.Reduce(Vector3D(0.0, 0.0, 0.0), (acc, i) =>
+        var numerator = count.Range.Reduce(Vector3D.Zero, (acc, i) =>
             acc + self.WeightedControlPoint(i)
                 * BasisFunction(self.Knots, domain.End, i, self.Degree, u));
         var denominator = count.Range.Reduce(0.0, (acc, i) =>
