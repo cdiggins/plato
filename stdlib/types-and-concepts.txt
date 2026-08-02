@@ -62,7 +62,7 @@ concept FramedCurve3D inherits DifferentiableCurve3D{FrameAt(x:Self,t:Number):Fr
 concept Geometry inherits Value{}
 concept Geometry2D inherits Geometry{}
 concept Geometry3D inherits Geometry{}
-concept GeometryCollection<TGeom>{Elements(x:Self):Array<TGeom>;}
+concept GeometryCollection<TGeom>inherits Geometry{Elements(x:Self):Array<TGeom>;}
 concept GeometryND inherits Geometry{}
 concept GraphLike inherits Value{VertexCount(x:Self):Integer;EdgeCount(x:Self):Integer;IsDirected(x:Self):Boolean;}
 concept HalfEdgeNavigable{OriginOf(x:Self,halfEdge:HalfEdgeIndex):VertexIndex;TwinOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;NextOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;PreviousOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;FaceOf(x:Self,halfEdge:HalfEdgeIndex):FaceIndex;}
@@ -76,12 +76,6 @@ concept Indexable<T>inherits Countable{At(x:Self,index:Integer):T;}
 concept Indexable2D<T>inherits Indexable<T>{ColumnCount(x:Self):Integer;RowCount(x:Self):Integer;At(x:Self,column:Integer,row:Integer):T;}
 concept Indexable3D<T>inherits Indexable<T>{ColumnCount(x:Self):Integer;RowCount(x:Self):Integer;LayerCount(x:Self):Integer;At(x:Self,column:Integer,row:Integer,layer:Integer):T;}
 concept IndexedGeometry<TPoint,TPrim,TIndex>inherits PrimitiveGeometry<TPoint,TPrim>{Vertices(x:Self):Array<TPoint>;FaceIndices(x:Self):Array<TIndex>;}
-concept IndexedLineGeometry2D inherits IndexedGeometry<Point2D,Line2D,VertexPair>,LineGeometry2D{}
-concept IndexedLineGeometry3D inherits IndexedGeometry<Point3D,Line3D,VertexPair>,LineGeometry3D{}
-concept IndexedQuadGeometry2D inherits IndexedGeometry<Point2D,Quad2D,QuadFace>,QuadGeometry2D{}
-concept IndexedQuadGeometry3D inherits IndexedGeometry<Point3D,Quad3D,QuadFace>,QuadGeometry3D{}
-concept IndexedTriangleGeometry2D inherits IndexedGeometry<Point2D,Triangle2D,TriangleFace>,TriangleGeometry2D{}
-concept IndexedTriangleGeometry3D inherits IndexedGeometry<Point3D,Triangle3D,TriangleFace>,TriangleGeometry3D{}
 concept Interpolatable{Lerp(a:Self,b:Self,t:Number):Self;}
 concept IntervalLike<T>where T:Additive,T:Interpolatable,T:Comparable inherits Value{Start(x:Self):T;End(x:Self):T;}
 concept Invertible{Inverse(x:Self):Self;}
@@ -89,8 +83,6 @@ concept Jagged<T>{Offsets(x:Self):Array<Integer>;Values(x:Self):Array<T>;}
 concept Lattice{Min(a:Self,b:Self):Self;Max(a:Self,b:Self):Self;}
 concept LengthMeasurable{Length(x:Self):Number;}
 concept LightSource inherits Value{CastsShadows(x:Self):Boolean;}
-concept LineGeometry2D inherits Geometry2D,PrimitiveGeometry<Point2D,Line2D>{}
-concept LineGeometry3D inherits Geometry3D,PrimitiveGeometry<Point3D,Line3D>{}
 concept Logical{And(a:Self,b:Self):Self;Or(a:Self,b:Self):Self;Not(x:Self):Self;}
 concept Manifold{}
 concept MapLike<TKey,TValue>inherits Countable{ContainsKey(x:Self,key:TKey):Boolean;ValueAt(x:Self,key:TKey):TValue;}
@@ -122,7 +114,7 @@ concept PeriodicCurve<TRange>inherits Periodic<Number>,Curve<TRange>{}
 concept PlanarCurve3D inherits Curve3D{CurvePlane(x:Self):Plane;}
 concept PlanarMeasurable{Area(x:Self):Number;Perimeter(x:Self):Number;}
 concept PointCloudable3D{ToPointCloud(x:Self):PointCloud3D;}
-concept PointGeometry<TPoint>{Points(x:Self):Array<TPoint>;}
+concept PointGeometry<TPoint>inherits Geometry{Points(x:Self):Array<TPoint>;}
 concept PointSet2D inherits Geometry2D{Points(x:Self):Array<Point2D>;}
 concept PointSet3D inherits Geometry3D{Points(x:Self):Array<Point3D>;}
 concept PolarCurve2D inherits Curve2D{RadiusAt(x:Self,angle:Angle):Number;}
@@ -131,8 +123,6 @@ concept PrimitiveGeometry<TPoint,TPrim>inherits PointGeometry<TPoint>{Primitives
 concept ProbabilityDistribution inherits Value{Mean(x:Self):Number;Variance(x:Self):Number;Pdf(x:Self,value:Number):Number;Cdf(x:Self,value:Number):Number;}
 concept Procedural<TDomain,TRange>{Eval(x:Self,input:TDomain):TRange;}
 concept ProceduralTexture inherits Value{ColorAt(x:Self,uv:UvCoordinate):Color;}
-concept QuadGeometry2D inherits Geometry2D,PrimitiveGeometry<Point2D,Quad2D>{}
-concept QuadGeometry3D inherits Geometry3D,PrimitiveGeometry<Point3D,Quad3D>{}
 concept Quantity inherits Value,Comparable,Hashable,Additive,Scalable,Interpolatable{Amount(x:Self):Number;FromAmount(_:Self,x:Number):Self;}
 concept QueueLike<T>inherits Countable{Front(x:Self):T;Enqueue(x:Self,item:T):Self;Dequeue(x:Self):Self;}
 concept RayIntersectable2D{Raycast(x:Self,query:RayQuery2D):RayHit2D;}
@@ -161,8 +151,6 @@ concept TimeVaryingScalarField3D{EvalAtTime(x:Self,point:Point3D,time:Instant):N
 concept TimeVaryingVectorField2D{EvalAtTime(x:Self,point:Point2D,time:Instant):Vector2D;}
 concept TimeVaryingVectorField3D{EvalAtTime(x:Self,point:Point3D,time:Instant):Vector3D;}
 concept Transformable<TTransform>{Transform(x:Self,transform:TTransform):Self;}
-concept TriangleGeometry2D inherits Geometry2D,PrimitiveGeometry<Point2D,Triangle2D>{}
-concept TriangleGeometry3D inherits Geometry3D,PrimitiveGeometry<Point3D,Triangle3D>{}
 concept TriangulatedGeometry3D inherits Meshable3D{TriangleCount(x:Self):Integer;FaceAt(x:Self,face:FaceIndex):TriangleFace;PositionAt(x:Self,vertex:VertexIndex):Point3D;}
 concept Value inherits Equatable{}
 concept Vector inherits Numerical,Arithmetic,Indexable<Number>,Normed,Lattice,Hashable{Dot(a:Self,b:Self):Number;FromComponents(_:Self,xs:Array<Number>):Self;Broadcast(self:Self,x:Number):Self;}

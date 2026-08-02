@@ -1,29 +1,37 @@
 //==
 // # Mesh geometry layers
 //
-// The layered vocabulary every mesh-like shape sits on, and the 3D names that
-// pin it to concrete primitives. Three layers: the vertex data as a view, the
-// primitives as a view, and the indexed storage those primitives are gathered
-// from. Layer 1 is the layer most algorithms should target — bounds, transform,
-// area, raycast need to see primitives and nothing more, and soups, indexed
-// meshes and tessellated procedural surfaces all satisfy it. Layer 2 is the
-// storage layer, needed only by welding, adjacency and subdivision-class
-// algorithms that must know which primitives share a vertex. The 2D names live
-// in `meshes-layers-2d.concepts.plato`.
+// The layered vocabulary every mesh-like shape sits on: the vertex data as a
+// view, the primitives as a view, and the indexed storage those primitives are
+// gathered from. Layer 1 is the layer most algorithms should target — bounds,
+// area, raycast, transform need to see primitives and nothing more, and soups,
+// indexed meshes and tessellated procedural surfaces all satisfy it. Layer 2 is
+// the storage layer, needed only by welding, adjacency and subdivision-class
+// algorithms that must know which primitives share a vertex.
+//
+// Every layer is generic over the point type and the primitive, so the plane
+// and space are the same tower instantiated twice: a triangulation is
+// `IndexedGeometry<Point2D, Triangle2D, TriangleFace>` and an interchange mesh
+// is `IndexedGeometry<Point3D, Triangle3D, TriangleFace>`. A UV domain is the
+// planar instantiation sharing its index table with the spatial one. There are
+// deliberately no named per-primitive aliases (no `TriangleGeometry3D`): each
+// would abstract over a single concrete type, which is a second spelling of
+// that type rather than an abstraction, and would collide with the type names
+// in `meshes.types.plato`. Functions constrain on the generic concept with
+// concrete arguments instead.
 //
 // Manifoldness, closedness and orientability are deliberately absent: they are
 // structural markers in `geometry.concepts.plato`, bolted on per type the way
-// `ClosedCurve2D` marks a curve, not members of this tower.
+// `ClosedCurve2D` marks a curve, not members of this tower. Element counts and
+// incidence live in `topology.concepts.plato`.
 // Convention: see CONVENTIONS.md - Winding, handedness, and normals.
-
-//==
-// # The layers
 
 // Exposes the points a shape is built from, in a fixed order, generic over the
 // embedding. The dimension-agnostic root of the tower: `PointSet2D` /
 // `PointSet3D` (`geometry-measures.concepts.plato`) are the non-generic
 // siblings that carry the Geometry2D / Geometry3D marker with them.
 concept PointGeometry<TPoint>
+    inherits Geometry
 {
     Points(x: Self): Array<TPoint>;
 }
@@ -40,9 +48,11 @@ concept PrimitiveGeometry<TPoint, TPrim>
 
 // Primitives stored as index tuples into a shared vertex pool: the storage
 // layer under an indexed mesh (https://en.wikipedia.org/wiki/Polygon_mesh).
-// Every index must be valid — no -1 inside a face. `Primitives` is derivable
-// here (gather Vertices by FaceIndices), so an implementor supplies the pool
-// and the index table and inherits the view.
+// Every index must be valid — no -1 inside a face. TIndex is the typed index
+// tuple that fixes the primitive's arity — VertexPair, TriangleFace, QuadFace —
+// so the pairing of primitive to arity needs no separate name to hold it.
+// `Primitives` is derivable here (gather Vertices by FaceIndices), so an
+// implementor supplies the pool and the index table and inherits the view.
 concept IndexedGeometry<TPoint, TPrim, TIndex>
     inherits PrimitiveGeometry<TPoint, TPrim>
 {
@@ -54,51 +64,7 @@ concept IndexedGeometry<TPoint, TPrim, TIndex>
 // scene parts, connected components, a batch of meshes drawn together. The
 // elements keep their own type; the collection adds no geometry of its own.
 concept GeometryCollection<TGeom>
+    inherits Geometry
 {
     Elements(x: Self): Array<TGeom>;
 }
-
-//==
-// # Named 3D layers
-//
-// The named pairings: each fixes the primitive (and, at layer 2, the index
-// tuple that spells it) so users write against a single name instead of
-// repeating type arguments.
-
-// Straight segments in space over their own endpoints: wireframes, edge
-// overlays, sampled space curves.
-concept LineGeometry3D
-    inherits Geometry3D, PrimitiveGeometry<Point3D, Line3D>
-{ }
-
-// Triangles in space, wound counter-clockwise seen from the front: the
-// universal surface primitive.
-concept TriangleGeometry3D
-    inherits Geometry3D, PrimitiveGeometry<Point3D, Triangle3D>
-{ }
-
-// Quadrilaterals in space, wound counter-clockwise seen from the front.
-// Coplanarity is not guaranteed.
-concept QuadGeometry3D
-    inherits Geometry3D, PrimitiveGeometry<Point3D, Quad3D>
-{ }
-
-// Segments in space over a shared vertex pool, each spelled as a vertex pair:
-// the storage form of a wireframe. `LineSet3D` (`meshes-lines-points.types.plato`)
-// is the concrete type.
-concept IndexedLineGeometry3D
-    inherits IndexedGeometry<Point3D, Line3D, VertexPair>, LineGeometry3D
-{ }
-
-// Triangles in space over a shared vertex pool, each spelled as a TriangleFace:
-// the workhorse interchange form, concretely `TriangleMesh3D`
-// (`meshes.types.plato`).
-concept IndexedTriangleGeometry3D
-    inherits IndexedGeometry<Point3D, Triangle3D, TriangleFace>, TriangleGeometry3D
-{ }
-
-// Quadrilaterals in space over a shared vertex pool, each spelled as a
-// QuadFace: subdivision cages, quad-dominant retopology, structured patches.
-concept IndexedQuadGeometry3D
-    inherits IndexedGeometry<Point3D, Quad3D, QuadFace>, QuadGeometry3D
-{ }
