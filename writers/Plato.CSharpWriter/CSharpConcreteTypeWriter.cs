@@ -541,9 +541,17 @@ namespace Ara3D.Geometry.CSharpWriter
         {
             TypeWriter.WriteDoc(ConcreteType.TypeDef.Doc);
             // A primitive's [DataContract] is on the handwritten half of the partial.
+            //
+            // No `Pack`. Sequential layout at the default packing is already deterministic - the
+            // C rule (each field at the next multiple of its natural alignment, size rounded up to
+            // the struct's alignment) is what every C and C++ compiler applies, so it is the
+            // packing that agrees with the other side of an interop boundary. `Pack=1` bought no
+            // determinism we did not already have and cost alignment: no aligned SIMD loads,
+            // `Vector128`/`Vector256` unusable over the fields, and faulting unaligned access on
+            // some ARM64 paths. See docs/csharp-type-generation-design.md.
             TypeWriter.WriteLine(IsPrimitive
-                ? "[StructLayout(LayoutKind.Sequential, Pack=1)]"
-                : "[DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]");
+                ? "[StructLayout(LayoutKind.Sequential)]"
+                : "[DataContract, StructLayout(LayoutKind.Sequential)]");
             TypeWriter.WriteLine(CSharpWriter.GeneratedCodeAttributes);
             TypeWriter.Write($"public readonly partial struct {Name}");
             TypeWriter.WriteLine(implements + WhereClauses);
