@@ -48,7 +48,18 @@ recipe that works against the current runtime, not reverting these commits.
 
 ## Regenerating
 
-From the repo root, output folder first cleared of `*.g.cs`:
+```
+.\tools\regen-foundation.ps1
+```
+
+That clears stale `*.g.cs` (so a type deleted from the library stops being emitted), runs the
+recipe, and **builds** the result — the build is what makes the regeneration mean anything, since
+generate mode exits 0 even when a body fails to lower into a throwing stub. `-WhatIf` previews the
+diff into `.temp\` without touching the tracked output, `-Test` adds
+`tests\Plato.Generated.Foundation.Tests`, `-Flags` tries an experimental recipe.
+
+The underlying invocation, if you want to run it by hand from the repo root with the output folder
+cleared first:
 
 ```
 dotnet run --project src\Plato.CLI -c Release -- ^

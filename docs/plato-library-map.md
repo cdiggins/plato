@@ -71,6 +71,7 @@ one.
 |---|---|---|---|
 | Forward stdlib (inner loop) | `tools/check-stdlib-fast.ps1` | plato | lint clean + checker diagnostic ratchet + `types-and-concepts.txt` freshness |
 | Forward stdlib (warm) | MCP `plato_check` | server | same gates, cached in the running navigation server; see the `plato-mcp` skill |
+| Foundation codegen | `tools/regen-foundation.ps1` | plato | the foundation tier still emits C# that compiles (`-WhatIf` previews, `-Test` runs the generated tests) |
 | Forward conformance | `tools/regen-forward-conformance.ps1` | studio | stdlib tiers + law packet type-check |
 | Compiler unit tests | `dotnet test tests/PlatoTests` | plato | checker/optimizer behavior, intrinsic obligations |
 | Studio battery | `tools/check-all.ps1` | studio | frozen-V1 tripwire + both `lint --strict` passes + SDK build + GeometryTests. **Not a superset** — it runs none of the rows above. |

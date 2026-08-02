@@ -119,6 +119,13 @@ Iterate on the one gate relevant to your workstream; run `check-all.ps1` **once*
   your change may not raise the diagnostic count, and when you lower it you lower the ceiling in
   the same commit — and **index freshness**, which fails when `stdlib/types-and-concepts.txt` no
   longer matches the source ([`stdlib/AGENTS.md`](stdlib/AGENTS.md)). `-SkipIndex` opts out.
+- `.\tools\regen-foundation.ps1` — the codegen rung (rung 5 of `stdlib/VERIFICATION.md`) for the
+  foundation tier, in one command: clear stale `*.g.cs`, run the C# recipe over `stdlib\foundation`,
+  then build the result on net8.0. It fails on a `DEGRADED bodies` line, which the CLI itself
+  reports with exit code 0. `-Test` adds `Plato.Generated.Foundation.Tests`; `-WhatIf` generates
+  into `.temp\` and reports changed / added / removed instead of writing the tracked output;
+  `-Flags` passes an experimental recipe (`--optimize`, `--inline`, …) the `.csproj` header does not
+  describe. Not a golden gate — a non-zero `-WhatIf` diff is information, not a failure.
 - **(studio)** `.\tools\regen-forward-conformance.ps1` — forward-stdlib milestone gate. Stage 1 gating (see
   `tests/conformance/Plato.ForwardConformanceTests/` above); `-Codegen` / `-Test` run the diagnostic stages.
 - **(studio)** `.\tools\check-all.ps1` — full gate battery, PASS/FAIL table. **Run once at the end of a mission**; iterate on a single relevant gate during development.

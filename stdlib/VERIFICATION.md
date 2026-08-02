@@ -56,15 +56,18 @@ run, and the honest question about any stdlib claim is *how far up the ladder is
 | 2 · lint | no structural defects that would become runtime failures | `ForwardStdLibLintTests` (ratchet) |
 | 3 · style | authoring rules no compiler pass enforces | `StyleChecker` via `plato_check` |
 | 4 · type-check | every function body is well-typed | `ForwardStdLibCheckerTests` (ratchet) |
-| 5 · codegen | the library survives conversion to C# and that C# compiles | `regen-forward-conformance.ps1 -Codegen` |
+| 5 · codegen | the library survives conversion to C# and that C# compiles | `tools\regen-foundation.ps1` (foundation tier); `regen-forward-conformance.ps1 -Codegen` (all tiers) |
 | 6 · execute | the code computes the right answers (the laws hold) | `Plato.ForwardConformanceTests` law runner |
 
 Rungs 0–4 run in seconds, rung 5 in minutes, rung 6 in minutes plus a build. For measured
 per-gate timings use `.\tools\gate-timings.ps1` (runs / median / P90 / max, from the shared timing
 log) rather than a number written down here.
 
-Rungs 0–4 are static analysis and currently green. Rung 5 generates C# but that C# does not yet
-compile clean. Rung 6 is the only rung that runs a function body, and it is still being brought up
+Rungs 0–4 are static analysis and currently green. Rung 5 splits: the **foundation** tier
+regenerates and compiles clean, which `tools\regen-foundation.ps1` runs end to end in one command
+(regenerate → build, optionally `-Test`, or `-WhatIf` to preview drift without touching the tracked
+output); the tiers above it generate C# that does not yet compile. Rung 6 is the only rung that
+runs a function body, and it is still being brought up
 ([plato-308](../tracker/issues/plato-308.md) / [plato-323](../tracker/issues/plato-323.md)).
 **Until rung 6 is routinely green, every behavioural claim about `stdlib/` — that a formula is
 correct, that a sign is right — is backed by human inspection, not by a test.** That is the single

@@ -85,7 +85,9 @@ stdlib/<tier>/*.plato  →  Plato.CLI  →  Plato.CSharpWriter     →  one .g.c
 - **Consumer:** [`generated/Plato.Generated.Foundation.Unoptimized`](../generated/README.md) — a
   buildable project whose `.g.cs` files are ordinary cached output. Not a golden: there is no
   byte-identity gate and staleness is acceptable. Regenerating is the only way to change it.
-- **Command** (from this repo's root, output folder first cleared of `*.g.cs`):
+- **Command** (from this repo's root): `.\tools\regen-foundation.ps1` — clears stale `*.g.cs`, runs
+  the recipe, then builds the result. `-WhatIf` previews the diff without writing; `-Test` adds the
+  generated-project tests. The invocation it wraps:
 
 ```bat
 dotnet run --project src\Plato.CLI -c Release -- ^
@@ -173,6 +175,9 @@ in the studio checkout.
 ```bat
 :: Inner loop after every edit batch: lint + checker ratchet + index freshness
 .\tools\check-stdlib-fast.ps1
+
+:: Codegen rung: regenerate the foundation tier and build the emitted C#
+.\tools\regen-foundation.ps1          :: -WhatIf previews, -Test runs the generated tests
 
 :: Faster still when the Plato Navigation MCP server is up: plato_check runs the same
 :: gates warm, inside the server, against cached ASTs (see the `plato-mcp` skill).
