@@ -77,13 +77,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Axis3D FromJson(string input) => PlatoJson.Deserialize<Axis3D>((System.ReadOnlySpan<char>)input);
 
         // Implemented interface functions
-        [MethodImpl(AggressiveInlining)] public Vector3D Vector3D() => this.IsX() ? new Vector3D(((Number)1), ((Number)0), ((Number)0)) : this.IsY() ? new Vector3D(((Number)0), ((Number)1), ((Number)0)) : new Vector3D(((Number)0), ((Number)0), ((Number)1));
+        [MethodImpl(AggressiveInlining)] public Vector3D Vector3D() => this.IsX() ? Ara3D.Geometry.Vector3D.UnitX() : this.IsY() ? Ara3D.Geometry.Vector3D.UnitY() : Ara3D.Geometry.Vector3D.UnitZ();
         [MethodImpl(AggressiveInlining)]  public static implicit operator Vector3D(Axis3D self) => self.Vector3D();
         [MethodImpl(AggressiveInlining)] public Direction3D Direction3D() => new Direction3D(this.Vector3D());
         [MethodImpl(AggressiveInlining)]  public static implicit operator Direction3D(Axis3D self) => self.Direction3D();
-        [MethodImpl(AggressiveInlining)] public Number3 Number3() => this.IsX() ? new Number3(((Number)1), ((Number)0), ((Number)0)) : this.IsY() ? new Number3(((Number)0), ((Number)1), ((Number)0)) : new Number3(((Number)0), ((Number)0), ((Number)1));
+        [MethodImpl(AggressiveInlining)] public Number3 Number3() => this.IsX() ? (((Number)1), ((Number)0), ((Number)0)) : this.IsY() ? (((Number)0), ((Number)1), ((Number)0)) : (((Number)0), ((Number)0), ((Number)1));
         [MethodImpl(AggressiveInlining)]  public static implicit operator Number3(Axis3D self) => self.Number3();
-        [MethodImpl(AggressiveInlining)] public Point3D Point3D() => this.IsX() ? new Point3D(((Number)1), ((Number)0), ((Number)0)) : this.IsY() ? new Point3D(((Number)0), ((Number)1), ((Number)0)) : new Point3D(((Number)0), ((Number)0), ((Number)1));
+        [MethodImpl(AggressiveInlining)] public Point3D Point3D() => this.IsX() ? (((Number)1), ((Number)0), ((Number)0)) : this.IsY() ? (((Number)0), ((Number)1), ((Number)0)) : (((Number)0), ((Number)0), ((Number)1));
         [MethodImpl(AggressiveInlining)]  public static implicit operator Point3D(Axis3D self) => self.Point3D();
 
         // Unimplemented interface functions

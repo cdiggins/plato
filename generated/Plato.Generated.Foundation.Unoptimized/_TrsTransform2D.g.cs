@@ -79,7 +79,7 @@ namespace Ara3D.Geometry
         // Implemented interface functions
         [MethodImpl(AggressiveInlining)] public AffineTransform2D AffineTransform2D() => new AffineTransform2D(this.Matrix3x2());
         [MethodImpl(AggressiveInlining)]  public static implicit operator AffineTransform2D(TrsTransform2D t) => t.AffineTransform2D();
-        [MethodImpl(AggressiveInlining)] public static TrsTransform2D Identity() => (new Vector2D(((Number)0), ((Number)0)), Ara3D.Geometry.Rotation2D.Identity(), new Number2(((Number)1), ((Number)1)));
+        [MethodImpl(AggressiveInlining)] public static TrsTransform2D Identity() => (Ara3D.Geometry.Vector2D.Zero, Ara3D.Geometry.Rotation2D.Identity(), Ara3D.Geometry.Number2.One);
         [MethodImpl(AggressiveInlining)] public Point2D Multiply(Point2D p) => p.Transform(this);
         [MethodImpl(AggressiveInlining)]  public static Point2D operator *(TrsTransform2D t, Point2D p) => t.Multiply(p);
         [MethodImpl(AggressiveInlining)] public Vector2D Multiply(Vector2D v) => v.Transform(this);

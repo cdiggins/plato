@@ -128,7 +128,7 @@ library Brep
     // Every structural check at once. All five fields are computed, so call
     // the individual range checks first on shells of unknown provenance.
     Validate(b: Brep3D, tolerance: Number): BrepValidation
-        => BrepValidation(
+        => (
             b.EdgesInRange,
             b.LoopUsesInRange,
             b.LoopsConnected,
@@ -167,16 +167,16 @@ library Brep
 
     // The edge with its curve deformed; the vertex indices are unchanged.
     Deform(e: BrepEdge, mapping: Function1<Point3D, Point3D>): BrepEdge
-        => BrepEdge(e.Start, e.End, e.Curve.Deform(mapping));
+        => (e.Start, e.End, e.Curve.Deform(mapping));
 
     // The face with its surface deformed; the loop topology is unchanged.
     Deform(f: BrepFace, mapping: Function1<Point3D, Point3D>): BrepFace
-        => BrepFace(f.Surface.Deform(mapping), f.Loops);
+        => (f.Surface.Deform(mapping), f.Loops);
 
     // The IDeformable3D obligation: the whole shell with vertices, edge curves,
     // and face surfaces moved through the same mapping — topology unchanged.
     Deform(b: Brep3D, mapping: Function1<Point3D, Point3D>): Brep3D
-        => Brep3D(
+        => (
             b.Vertices.Map(mapping),
             b.Edges.Map(e => e.Deform(mapping)),
             b.Faces.Map(f => f.Deform(mapping)));
@@ -193,18 +193,18 @@ library Brep
     // A straight shell edge between two vertices of a position array, carrying
     // the line segment through those positions as its curve.
     StraightEdge(vertices: Array<Point3D>, start: Integer, end: Integer): BrepEdge
-        => BrepEdge(
+        => (
             VertexIndex(start),
             VertexIndex(end),
             Line(Line3D(vertices[start], vertices[end])));
 
     // A forward citation of edge e in a face boundary loop.
     ForwardUse(e: Integer): BrepEdgeUse
-        => BrepEdgeUse(UndirectedEdgeIndex(e), EdgeOrientation.Forward);
+        => (UndirectedEdgeIndex(e), EdgeOrientation.Forward);
 
     // A reversed citation of edge e in a face boundary loop.
     ReversedUse(e: Integer): BrepEdgeUse
-        => BrepEdgeUse(UndirectedEdgeIndex(e), EdgeOrientation.Reversed);
+        => (UndirectedEdgeIndex(e), EdgeOrientation.Reversed);
 
     // The bilinear face surface over a quad a-b-c-d wound counter-clockwise
     // seen from outside: U runs a to b, V runs a to d, so du x dv points out.
@@ -259,7 +259,7 @@ library Brep
             // -Y side (0-1-5-4).
             BrepFace(QuadPatch(p0, p1, p5, p4),
                 [BrepLoop([ReversedUse(3), ReversedUse(9), ReversedUse(4), ReversedUse(10)])])];
-        return Brep3D(vertices, edges, faces);
+        return (vertices, edges, faces);
     }
 
     //==
@@ -286,8 +286,8 @@ library Brep
         var c = a + cols + 1;
         var d = a + cols;
         return k % 2 == 0
-            ? TriangleFace(VertexIndex(a), VertexIndex(b), VertexIndex(c))
-            : TriangleFace(VertexIndex(a), VertexIndex(c), VertexIndex(d));
+            ? (VertexIndex(a), VertexIndex(b), VertexIndex(c))
+            : (VertexIndex(a), VertexIndex(c), VertexIndex(d));
     }
 
     // The face's surface sampled on a (resolution + 1)^2 UV grid, two
@@ -302,7 +302,7 @@ library Brep
                 (i / cols).ToNumber / resolution.ToNumber)));
         var faces = MapRange(2 * resolution * resolution, k =>
             GridTriangleFace(k, cols));
-        return TriangleMesh3D(positions, faces);
+        return (positions, faces);
     }
 
     // Every face tessellated at the same resolution, in face order — one mesh

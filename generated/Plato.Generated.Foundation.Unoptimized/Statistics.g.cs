@@ -30,7 +30,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Integer TotalCount(this Histogram self) => self.Counts.Reduce(((Integer)0), (total, count)  => total.Add(count));
         [MethodImpl(AggressiveInlining)] public static Number BinStart(this Histogram self, Integer bin) => self.Range.Start.Add(bin.ToNumber.Multiply(self.BinWidth()));
         [MethodImpl(AggressiveInlining)] public static Number BinCenter(this Histogram self, Integer bin) => self.Range.Start.Add(bin.ToNumber.Add(((Number)0.5)).Multiply(self.BinWidth()));
-        [MethodImpl(AggressiveInlining)] public static NumberInterval BinInterval(this Histogram self, Integer bin) => new Ara3D.Geometry.NumberInterval(self.BinStart(bin), self.BinStart(bin.Add(((Integer)1))));
+        [MethodImpl(AggressiveInlining)] public static NumberInterval BinInterval(this Histogram self, Integer bin) => (self.BinStart(bin), self.BinStart(bin.Add(((Integer)1))));
         [MethodImpl(AggressiveInlining)] public static Integer BinIndexOf(this Histogram self, Number value) => value.LessThan(self.Range.Start).Or(value.GreaterThan(self.Range.End)) ? ((Integer)1).Negative() : value.Equals(self.Range.End) ? ((Integer)self.Counts.Count).Subtract(((Integer)1)) : value.Subtract(self.Range.Start).Divide(self.BinWidth()).Floor().ToInteger;
         [MethodImpl(AggressiveInlining)] public static Number Frequency(this Histogram self, Integer bin) => self.Counts[bin].ToNumber.Divide(self.TotalCount().ToNumber);
         [MethodImpl(AggressiveInlining)] public static Number Density(this Histogram self, Integer bin) => self.Frequency(bin).Divide(self.BinWidth());

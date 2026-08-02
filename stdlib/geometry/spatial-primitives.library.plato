@@ -990,7 +990,7 @@ library SpatialPrimitives
     // half the Min -> Max diagonal length. Lives here rather than beside the other
     // Bounds3D bodies (foundation) because `Sphere` is a geometry type.
     BoundingSphere(self: Bounds3D): Sphere
-        => Sphere(self.Center, self.Diagonal.Magnitude.Half);
+        => (self.Center, self.Diagonal.Magnitude.Half);
 
     //==
     // # Torus bodies

@@ -79,27 +79,27 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Integer RowCount() => this.NumRows;
         [MethodImpl(AggressiveInlining)] public Integer ColumnCount() => this.NumColumns;
         [MethodImpl(AggressiveInlining)] public Number ElementAt(Integer row, Integer column) => this.Components[row.Multiply(this.NumColumns).Add(column)];
-        [MethodImpl(AggressiveInlining)] public MatrixN Add(MatrixN b) => new MatrixN(this.NumRows, this.NumColumns, this.Components.Zip(b.Components, (x, y)  => x.Add(y)));
+        [MethodImpl(AggressiveInlining)] public MatrixN Add(MatrixN b) => (this.NumRows, this.NumColumns, this.Components.Zip(b.Components, (x, y)  => x.Add(y)));
         [MethodImpl(AggressiveInlining)]  public static MatrixN operator +(MatrixN a, MatrixN b) => a.Add(b);
-        [MethodImpl(AggressiveInlining)] public MatrixN Subtract(MatrixN b) => new MatrixN(this.NumRows, this.NumColumns, this.Components.Zip(b.Components, (x, y)  => x.Subtract(y)));
+        [MethodImpl(AggressiveInlining)] public MatrixN Subtract(MatrixN b) => (this.NumRows, this.NumColumns, this.Components.Zip(b.Components, (x, y)  => x.Subtract(y)));
         [MethodImpl(AggressiveInlining)]  public static MatrixN operator -(MatrixN a, MatrixN b) => a.Subtract(b);
-        [MethodImpl(AggressiveInlining)] public MatrixN Negative() => new MatrixN(this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Negative()));
+        [MethodImpl(AggressiveInlining)] public MatrixN Negative() => (this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Negative()));
         [MethodImpl(AggressiveInlining)]  public static MatrixN operator -(MatrixN self) => self.Negative();
         [MethodImpl(AggressiveInlining)] public MatrixN Multiply(Number scalar){
             var _var52 = scalar;
-            return new MatrixN(this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Multiply(_var52)));
+            return (this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Multiply(_var52)));
         }
 
         [MethodImpl(AggressiveInlining)]  public static MatrixN operator *(MatrixN self, Number scalar) => self.Multiply(scalar);
         [MethodImpl(AggressiveInlining)] public MatrixN Divide(Number scalar){
             var _var53 = scalar;
-            return new MatrixN(this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Divide(_var53)));
+            return (this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Divide(_var53)));
         }
 
         [MethodImpl(AggressiveInlining)]  public static MatrixN operator /(MatrixN self, Number scalar) => self.Divide(scalar);
         [MethodImpl(AggressiveInlining)] public MatrixN Modulo(Number scalar){
             var _var54 = scalar;
-            return new MatrixN(this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Modulo(_var54)));
+            return (this.NumRows, this.NumColumns, this.Components.Map((x)  => x.Modulo(_var54)));
         }
 
         [MethodImpl(AggressiveInlining)]  public static MatrixN operator %(MatrixN self, Number scalar) => self.Modulo(scalar);

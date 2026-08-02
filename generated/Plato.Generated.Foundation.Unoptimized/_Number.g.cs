@@ -105,10 +105,10 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Duration Multiply(Duration d) => new Duration(this.Multiply(d.Seconds));
         [MethodImpl(AggressiveInlining)] public Vector2D Multiply(Vector2D right) => (this.Multiply(right.X), this.Multiply(right.Y));
         [MethodImpl(AggressiveInlining)] public Vector3D Multiply(Vector3D right) => (this.Multiply(right.X), this.Multiply(right.Y), this.Multiply(right.Z));
-        [MethodImpl(AggressiveInlining)] public Number2 Multiply(Number2 right) => new Number2(this.Multiply(right.X), this.Multiply(right.Y));
-        [MethodImpl(AggressiveInlining)] public Number3 Multiply(Number3 right) => new Number3(this.Multiply(right.X), this.Multiply(right.Y), this.Multiply(right.Z));
-        [MethodImpl(AggressiveInlining)] public Number4 Multiply(Number4 right) => new Number4(this.Multiply(right.X), this.Multiply(right.Y), this.Multiply(right.Z), this.Multiply(right.W));
-        [MethodImpl(AggressiveInlining)] public Number8 Multiply(Number8 right) => new Number8(this.Multiply(right.X0), this.Multiply(right.X1), this.Multiply(right.X2), this.Multiply(right.X3), this.Multiply(right.X4), this.Multiply(right.X5), this.Multiply(right.X6), this.Multiply(right.X7));
+        [MethodImpl(AggressiveInlining)] public Number2 Multiply(Number2 right) => (this.Multiply(right.X), this.Multiply(right.Y));
+        [MethodImpl(AggressiveInlining)] public Number3 Multiply(Number3 right) => (this.Multiply(right.X), this.Multiply(right.Y), this.Multiply(right.Z));
+        [MethodImpl(AggressiveInlining)] public Number4 Multiply(Number4 right) => (this.Multiply(right.X), this.Multiply(right.Y), this.Multiply(right.Z), this.Multiply(right.W));
+        [MethodImpl(AggressiveInlining)] public Number8 Multiply(Number8 right) => (this.Multiply(right.X0), this.Multiply(right.X1), this.Multiply(right.X2), this.Multiply(right.X3), this.Multiply(right.X4), this.Multiply(right.X5), this.Multiply(right.X6), this.Multiply(right.X7));
         [MethodImpl(AggressiveInlining)] public Boolean LessThan(Number b) => this.LessThanOrEquals(b).And(this.NotEquals(b));
         [MethodImpl(AggressiveInlining)] public Boolean GreaterThan(Number b) => b.LessThan(this);
         [MethodImpl(AggressiveInlining)] public Boolean GreaterThanOrEquals(Number b) => b.LessThanOrEquals(this);

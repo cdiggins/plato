@@ -77,25 +77,25 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] Integer ICountable.Count() => Count;
 
         // Implemented interface functions
-        [MethodImpl(AggressiveInlining)] public static Number3 FromComponents(IReadOnlyList<Number> xs) => new Number3(xs[((Integer)0)], xs[((Integer)1)], xs[((Integer)2)]);
-        [MethodImpl(AggressiveInlining)] public Number3 Broadcast(Number x) => new Number3(x, x, x);
-        [MethodImpl(AggressiveInlining)] public Number3 Add(Number3 right) => new Number3(this.X.Add(right.X), this.Y.Add(right.Y), this.Z.Add(right.Z));
+        [MethodImpl(AggressiveInlining)] public static Number3 FromComponents(IReadOnlyList<Number> xs) => (xs[((Integer)0)], xs[((Integer)1)], xs[((Integer)2)]);
+        [MethodImpl(AggressiveInlining)] public Number3 Broadcast(Number x) => (x, x, x);
+        [MethodImpl(AggressiveInlining)] public Number3 Add(Number3 right) => (this.X.Add(right.X), this.Y.Add(right.Y), this.Z.Add(right.Z));
         [MethodImpl(AggressiveInlining)]  public static Number3 operator +(Number3 left, Number3 right) => left.Add(right);
-        [MethodImpl(AggressiveInlining)] public Number3 Subtract(Number3 right) => new Number3(this.X.Subtract(right.X), this.Y.Subtract(right.Y), this.Z.Subtract(right.Z));
+        [MethodImpl(AggressiveInlining)] public Number3 Subtract(Number3 right) => (this.X.Subtract(right.X), this.Y.Subtract(right.Y), this.Z.Subtract(right.Z));
         [MethodImpl(AggressiveInlining)]  public static Number3 operator -(Number3 left, Number3 right) => left.Subtract(right);
-        [MethodImpl(AggressiveInlining)] public Number3 Multiply(Number3 right) => new Number3(this.X.Multiply(right.X), this.Y.Multiply(right.Y), this.Z.Multiply(right.Z));
+        [MethodImpl(AggressiveInlining)] public Number3 Multiply(Number3 right) => (this.X.Multiply(right.X), this.Y.Multiply(right.Y), this.Z.Multiply(right.Z));
         [MethodImpl(AggressiveInlining)]  public static Number3 operator *(Number3 left, Number3 right) => left.Multiply(right);
-        [MethodImpl(AggressiveInlining)] public Number3 Multiply(Number scalar) => new Number3(this.X.Multiply(scalar), this.Y.Multiply(scalar), this.Z.Multiply(scalar));
+        [MethodImpl(AggressiveInlining)] public Number3 Multiply(Number scalar) => (this.X.Multiply(scalar), this.Y.Multiply(scalar), this.Z.Multiply(scalar));
         [MethodImpl(AggressiveInlining)]  public static Number3 operator *(Number3 left, Number scalar) => left.Multiply(scalar);
-        [MethodImpl(AggressiveInlining)] public Number3 Divide(Number3 right) => new Number3(this.X.Divide(right.X), this.Y.Divide(right.Y), this.Z.Divide(right.Z));
+        [MethodImpl(AggressiveInlining)] public Number3 Divide(Number3 right) => (this.X.Divide(right.X), this.Y.Divide(right.Y), this.Z.Divide(right.Z));
         [MethodImpl(AggressiveInlining)]  public static Number3 operator /(Number3 left, Number3 right) => left.Divide(right);
-        [MethodImpl(AggressiveInlining)] public Number3 Divide(Number scalar) => new Number3(this.X.Divide(scalar), this.Y.Divide(scalar), this.Z.Divide(scalar));
+        [MethodImpl(AggressiveInlining)] public Number3 Divide(Number scalar) => (this.X.Divide(scalar), this.Y.Divide(scalar), this.Z.Divide(scalar));
         [MethodImpl(AggressiveInlining)]  public static Number3 operator /(Number3 left, Number scalar) => left.Divide(scalar);
-        [MethodImpl(AggressiveInlining)] public Number3 Negative() => new Number3(this.X.Negative(), this.Y.Negative(), this.Z.Negative());
+        [MethodImpl(AggressiveInlining)] public Number3 Negative() => (this.X.Negative(), this.Y.Negative(), this.Z.Negative());
         [MethodImpl(AggressiveInlining)]  public static Number3 operator -(Number3 value) => value.Negative();
         [MethodImpl(AggressiveInlining)] public Number Dot(Number3 right) => this.X.Multiply(right.X).Add(this.Y.Multiply(right.Y)).Add(this.Z.Multiply(right.Z));
-        [MethodImpl(AggressiveInlining)] public Number3 Max(Number3 value2) => new Number3(this.X.Max(value2.X), this.Y.Max(value2.Y), this.Z.Max(value2.Z));
-        [MethodImpl(AggressiveInlining)] public Number3 Min(Number3 value2) => new Number3(this.X.Min(value2.X), this.Y.Min(value2.Y), this.Z.Min(value2.Z));
+        [MethodImpl(AggressiveInlining)] public Number3 Max(Number3 value2) => (this.X.Max(value2.X), this.Y.Max(value2.Y), this.Z.Max(value2.Z));
+        [MethodImpl(AggressiveInlining)] public Number3 Min(Number3 value2) => (this.X.Min(value2.X), this.Y.Min(value2.Y), this.Z.Min(value2.Z));
         [MethodImpl(AggressiveInlining)] public Integer Hash() => this.X.Hash().CombineHash(this.Y.Hash()).CombineHash(this.Z.Hash());
         [MethodImpl(AggressiveInlining)] public Number3 Modulo(Number3 b) => this.ZipComponents(b, (x, y)  => x.Modulo(y));
         [MethodImpl(AggressiveInlining)]  public static Number3 operator %(Number3 a, Number3 b) => a.Modulo(b);

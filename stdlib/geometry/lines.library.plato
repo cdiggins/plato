@@ -298,8 +298,8 @@ library Lines
         var denom = l.Direction.Vector.Dot(pl.Normal.Vector);
         var t = 0.0 - pl.SignedDistance(l.Origin) / denom;
         return denom == 0.0
-            ? PlaneHit3D(false, l.Origin, 0.0)
-            : PlaneHit3D(true, l.PointAt(t), t);
+            ? (false, l.Origin, 0.0)
+            : (true, l.PointAt(t), t);
     }
 
     // Where the ray crosses the plane. Misses when the ray is parallel to the plane
@@ -309,8 +309,8 @@ library Lines
         var denom = r.Direction.Vector.Dot(pl.Normal.Vector);
         var t = 0.0 - pl.SignedDistance(r.Origin) / denom;
         return denom == 0.0 || t < 0.0
-            ? PlaneHit3D(false, r.Origin, 0.0)
-            : PlaneHit3D(true, r.PointAt(t), t);
+            ? (false, r.Origin, 0.0)
+            : (true, r.PointAt(t), t);
     }
 
     // Where the segment crosses the plane, with Parameter in [0, 1] along A -> B.
@@ -321,8 +321,8 @@ library Lines
         var denom = s.A.Between(s.B).Dot(pl.Normal.Vector);
         var t = 0.0 - pl.SignedDistance(s.A) / denom;
         return denom == 0.0 || t < 0.0 || t > 1.0
-            ? PlaneHit3D(false, s.A, 0.0)
-            : PlaneHit3D(true, s.PointAt(t), t);
+            ? (false, s.A, 0.0)
+            : (true, s.PointAt(t), t);
     }
 
     // True when `point` lies on or behind the boundary plane

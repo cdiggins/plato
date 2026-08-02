@@ -76,8 +76,8 @@ namespace Ara3D.Geometry
         // Implemented interface functions
         [MethodImpl(AggressiveInlining)] public static Vector2D UnitX() => new Vector2D(((Number)1), ((Number)0));
         [MethodImpl(AggressiveInlining)] public static Vector2D UnitY() => new Vector2D(((Number)0), ((Number)1));
-        [MethodImpl(AggressiveInlining)] public static Vector2D FromComponents(IReadOnlyList<Number> xs) => new Vector2D(xs[((Integer)0)], xs[((Integer)1)]);
-        [MethodImpl(AggressiveInlining)] public Vector2D Broadcast(Number x) => new Vector2D(x, x);
+        [MethodImpl(AggressiveInlining)] public static Vector2D FromComponents(IReadOnlyList<Number> xs) => (xs[((Integer)0)], xs[((Integer)1)]);
+        [MethodImpl(AggressiveInlining)] public Vector2D Broadcast(Number x) => (x, x);
         [MethodImpl(AggressiveInlining)] public Vector2D Add(Vector2D right) => (this.X.Add(right.X), this.Y.Add(right.Y));
         [MethodImpl(AggressiveInlining)]  public static Vector2D operator +(Vector2D left, Vector2D right) => left.Add(right);
         [MethodImpl(AggressiveInlining)] public Vector2D Subtract(Vector2D right) => (this.X.Subtract(right.X), this.Y.Subtract(right.Y));

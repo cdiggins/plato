@@ -136,7 +136,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Integer Hash(this Matrix3x2 self) => self.Row1.Hash().CombineHash(self.Row2.Hash()).CombineHash(self.Row3.Hash());
         [MethodImpl(AggressiveInlining)] public static Integer IndexOfLargest(this Number x, Number y, Number z) => x.LessThan(y) ? y.LessThan(z) ? ((Integer)2) : ((Integer)1) : x.LessThan(z) ? ((Integer)2) : ((Integer)0);
         [MethodImpl(AggressiveInlining)] public static Integer IndexOfSmallest(this Number x, Number y, Number z) => x.LessThan(y) ? x.LessThan(z) ? ((Integer)0) : ((Integer)2) : y.LessThan(z) ? ((Integer)1) : ((Integer)2);
-        [MethodImpl(AggressiveInlining)] public static Vector3D CanonicalAxis(this Integer index) => index.Equals(((Integer)0)) ? new Ara3D.Geometry.Vector3D(((Number)1), ((Number)0), ((Number)0)) : index.Equals(((Integer)1)) ? new Ara3D.Geometry.Vector3D(((Number)0), ((Number)1), ((Number)0)) : new Ara3D.Geometry.Vector3D(((Number)0), ((Number)0), ((Number)1));
+        [MethodImpl(AggressiveInlining)] public static Vector3D CanonicalAxis(this Integer index) => index.Equals(((Integer)0)) ? Ara3D.Geometry.Vector3D.UnitX() : index.Equals(((Integer)1)) ? Ara3D.Geometry.Vector3D.UnitY() : Ara3D.Geometry.Vector3D.UnitZ();
         [MethodImpl(AggressiveInlining)] public static Matrix4x4 AxisMatrix(this Vector3D xAxis, Vector3D yAxis, Vector3D zAxis) => (new Ara3D.Geometry.Number4(xAxis.X, xAxis.Y, xAxis.Z, ((Number)0)), new Ara3D.Geometry.Number4(yAxis.X, yAxis.Y, yAxis.Z, ((Number)0)), new Ara3D.Geometry.Number4(zAxis.X, zAxis.Y, zAxis.Z, ((Number)0)), new Ara3D.Geometry.Number4(((Number)0), ((Number)0), ((Number)0), ((Number)1)));
     }
 }

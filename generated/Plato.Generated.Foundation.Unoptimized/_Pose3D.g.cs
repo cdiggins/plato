@@ -87,7 +87,7 @@ namespace Ara3D.Geometry
         }
 
         [MethodImpl(AggressiveInlining)]  public static implicit operator Frame3D(Pose3D pose) => pose.Frame3D();
-        [MethodImpl(AggressiveInlining)] public static Pose3D Identity() => (new Point3D(((Number)0), ((Number)0), ((Number)0)), Ara3D.Geometry.Quaternion.Identity());
+        [MethodImpl(AggressiveInlining)] public static Pose3D Identity() => (Ara3D.Geometry.Point3D.Origin, Ara3D.Geometry.Quaternion.Identity());
         [MethodImpl(AggressiveInlining)] public Motor3D Motor3D(){
             var q = this.Orientation;
             var t = new Quaternion(this.Position.X, this.Position.Y, this.Position.Z, ((Number)0));
@@ -104,7 +104,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Pose3D Lerp(Pose3D b, Number t) => (this.Position.Lerp(b.Position, t), this.Orientation.Slerp(b.Orientation, t));
         [MethodImpl(AggressiveInlining)] public Matrix4x4 Matrix4x4() => this.Orientation.Matrix4x4().Multiply(Ara3D.Geometry.Matrix4x4.CreateTranslation(this.Position.PositionVector()));
         [MethodImpl(AggressiveInlining)]  public static implicit operator Matrix4x4(Pose3D pose) => pose.Matrix4x4();
-        [MethodImpl(AggressiveInlining)] public TrsTransform3D TrsTransform3D() => (this.Position.PositionVector(), this.Orientation, new Number3(((Number)1), ((Number)1), ((Number)1)));
+        [MethodImpl(AggressiveInlining)] public TrsTransform3D TrsTransform3D() => (this.Position.PositionVector(), this.Orientation, Ara3D.Geometry.Number3.One);
         [MethodImpl(AggressiveInlining)]  public static implicit operator TrsTransform3D(Pose3D pose) => pose.TrsTransform3D();
 
         // Unimplemented interface functions

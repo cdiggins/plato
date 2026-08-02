@@ -71,13 +71,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Axis2D FromJson(string input) => PlatoJson.Deserialize<Axis2D>((System.ReadOnlySpan<char>)input);
 
         // Implemented interface functions
-        [MethodImpl(AggressiveInlining)] public Vector2D Vector2D() => this.IsX() ? new Vector2D(((Number)1), ((Number)0)) : new Vector2D(((Number)0), ((Number)1));
+        [MethodImpl(AggressiveInlining)] public Vector2D Vector2D() => this.IsX() ? Ara3D.Geometry.Vector2D.UnitX() : Ara3D.Geometry.Vector2D.UnitY();
         [MethodImpl(AggressiveInlining)]  public static implicit operator Vector2D(Axis2D self) => self.Vector2D();
         [MethodImpl(AggressiveInlining)] public Direction2D Direction2D() => new Direction2D(this.Vector2D());
         [MethodImpl(AggressiveInlining)]  public static implicit operator Direction2D(Axis2D self) => self.Direction2D();
-        [MethodImpl(AggressiveInlining)] public Number2 Number2() => this.IsX() ? new Number2(((Number)1), ((Number)0)) : new Number2(((Number)0), ((Number)1));
+        [MethodImpl(AggressiveInlining)] public Number2 Number2() => this.IsX() ? (((Number)1), ((Number)0)) : (((Number)0), ((Number)1));
         [MethodImpl(AggressiveInlining)]  public static implicit operator Number2(Axis2D self) => self.Number2();
-        [MethodImpl(AggressiveInlining)] public Point2D Point2D() => this.IsX() ? new Point2D(((Number)1), ((Number)0)) : new Point2D(((Number)0), ((Number)1));
+        [MethodImpl(AggressiveInlining)] public Point2D Point2D() => this.IsX() ? (((Number)1), ((Number)0)) : (((Number)0), ((Number)1));
         [MethodImpl(AggressiveInlining)]  public static implicit operator Point2D(Axis2D self) => self.Point2D();
 
         // Unimplemented interface functions

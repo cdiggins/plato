@@ -31,11 +31,11 @@ library CurvesShapes
     // (radius * cos theta, radius * sin theta). The angle-to-point evaluator
     // under every circular, polar, and roulette formula below.
     CirclePoint(theta: Angle, radius: Number): Vector2D
-        => Vector2D(theta.Cos * radius, theta.Sin * radius);
+        => (theta.Cos * radius, theta.Sin * radius);
 
     // The vector rotated counter-clockwise by the given angle.
     RotateBy(v: Vector2D, angle: Angle): Vector2D
-        => Vector2D(v.X * angle.Cos - v.Y * angle.Sin,
+        => (v.X * angle.Cos - v.Y * angle.Sin,
                     v.X * angle.Sin + v.Y * angle.Cos);
 
     //==
@@ -55,7 +55,7 @@ library CurvesShapes
     // The point (x, Coefficient * x^2) with x swept over Domain.
     // https://en.wikipedia.org/wiki/Parabola
     Eval(self: Parabola2D, t: Number): Point2D
-        => Point2D(self.Domain.Lerp(t), self.Coefficient * self.Domain.Lerp(t).Square);
+        => (self.Domain.Lerp(t), self.Coefficient * self.Domain.Lerp(t).Square);
 
     //==
     // # Function graphs
@@ -65,13 +65,13 @@ library CurvesShapes
     // the radians constructor before Cosh.
     // https://en.wikipedia.org/wiki/Catenary
     Eval(self: Catenary2D, t: Number): Point2D
-        => Point2D(self.Domain.Lerp(t),
+        => (self.Domain.Lerp(t),
                    self.Scale * (self.Domain.Lerp(t) / self.Scale).Angle.Cosh);
 
     // The point (x, Amplitude * sin(2*pi*x/Wavelength + Phase)) with x swept
     // over Domain. https://en.wikipedia.org/wiki/Sine_wave
     Eval(self: SineCurve2D, t: Number): Point2D
-        => Point2D(self.Domain.Lerp(t),
+        => (self.Domain.Lerp(t),
                    self.Amplitude
                    * ((self.Domain.Lerp(t) / self.Wavelength).Turns + self.Phase).Sin);
 
@@ -163,7 +163,7 @@ library CurvesShapes
     // y = YAmplitude * sin(2*pi*YFrequency*t).
     // https://en.wikipedia.org/wiki/Lissajous_curve
     Eval(self: Lissajous2D, t: Number): Point2D
-        => Point2D(self.XAmplitude * ((self.XFrequency * t).Turns + self.Phase).Sin,
+        => (self.XAmplitude * ((self.XFrequency * t).Turns + self.Phase).Sin,
                    self.YAmplitude * (self.YFrequency * t).Turns.Sin);
 
     // r = ( |cos(m theta / 4) / a|^n2 + |sin(m theta / 4) / b|^n3 )^(-1/n1).
@@ -211,7 +211,7 @@ library CurvesShapes
 
     // The butterfly point at the canonical parameter t.
     Eval(self: ButterflyCurve2D, t: Number): Point2D
-        => Point2D(self.Scale * (t * 6.0).Turns.Sin * (t * 6.0).Turns.ButterflyFactor,
+        => (self.Scale * (t * 6.0).Turns.Sin * (t * 6.0).Turns.ButterflyFactor,
                    self.Scale * (t * 6.0).Turns.Cos * (t * 6.0).Turns.ButterflyFactor);
 
     //==
@@ -292,7 +292,7 @@ library CurvesShapes
     // y = R(sin theta - theta cos theta), theta in radians.
     // https://en.wikipedia.org/wiki/Involute
     Eval(self: CircleInvolute2D, t: Number): Point2D
-        => Point2D(self.Radius * (self.Angles.Lerp(t).Cos
+        => (self.Radius * (self.Angles.Lerp(t).Cos
                                   + self.Angles.Lerp(t).Radians * self.Angles.Lerp(t).Sin),
                    self.Radius * (self.Angles.Lerp(t).Sin
                                   - self.Angles.Lerp(t).Radians * self.Angles.Lerp(t).Cos));
@@ -303,7 +303,7 @@ library CurvesShapes
     // x = R(theta - sin theta), y = R(1 - cos theta), theta in radians.
     // https://en.wikipedia.org/wiki/Cycloid
     Eval(self: Cycloid2D, t: Number): Point2D
-        => Point2D(self.Radius * (self.Angles.Lerp(t).Radians - self.Angles.Lerp(t).Sin),
+        => (self.Radius * (self.Angles.Lerp(t).Radians - self.Angles.Lerp(t).Sin),
                    self.Radius * (1.0 - self.Angles.Lerp(t).Cos));
 
     // x = (R+r)cos t - r cos((R+r)/r t); y = (R+r)sin t - r sin((R+r)/r t).
@@ -318,7 +318,7 @@ library CurvesShapes
     // Written component-wise because the two terms differ in sign.
     // https://en.wikipedia.org/wiki/Hypocycloid
     Eval(self: Hypocycloid2D, t: Number): Point2D
-        => Point2D((self.FixedRadius - self.RollingRadius) * t.Turns.Cos
+        => ((self.FixedRadius - self.RollingRadius) * t.Turns.Cos
                    + self.RollingRadius
                      * ((self.FixedRadius - self.RollingRadius) / self.RollingRadius
                         * t.Turns).Cos,
@@ -338,7 +338,7 @@ library CurvesShapes
     // x = (R-r)cos t + d cos((R-r)/r t); y = (R-r)sin t - d sin((R-r)/r t).
     // https://en.wikipedia.org/wiki/Hypotrochoid
     Eval(self: Hypotrochoid2D, t: Number): Point2D
-        => Point2D((self.FixedRadius - self.RollingRadius) * t.Turns.Cos
+        => ((self.FixedRadius - self.RollingRadius) * t.Turns.Cos
                    + self.PoleDistance
                      * ((self.FixedRadius - self.RollingRadius) / self.RollingRadius
                         * t.Turns).Cos,
@@ -423,7 +423,7 @@ library CurvesShapes
     // The plane a frame's XY axes span: normal along Z, offset the projection
     // of the origin onto that normal.
     FramePlane(f: Frame3D): Plane
-        => Plane(f.ZAxis, f.ZAxis.Vector.Dot(f.Origin.PositionVector));
+        => (f.ZAxis, f.ZAxis.Vector.Dot(f.Origin.PositionVector));
 
     //==
     // # Planar arcs in space

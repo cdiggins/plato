@@ -346,7 +346,7 @@ library MatricesOps
     CanonicalAxis(index: Integer): Vector3D
         => index == 0
             ? Vector3D.UnitX
-            : (index == 1 ? Vector3D(0.0, 1.0, 0.0) : Vector3D(0.0, 0.0, 1.0));
+            : (index == 1 ? Vector3D.UnitY : Vector3D.UnitZ);
 
     // A three-axis basis with one axis replaced.
     ReplaceAxis(basis: Array<Vector3D>, index: Integer, axis: Vector3D): Array<Vector3D>

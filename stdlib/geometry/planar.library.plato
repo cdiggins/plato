@@ -443,7 +443,7 @@ library Planar
     // ignored receiver of the result type, read as `Circle.UnitCircle`.
     // (https://en.wikipedia.org/wiki/Unit_circle)
     UnitCircle(_: Circle): Circle
-        => Circle(Point2D.Origin, 1.0);
+        => (Point2D.Origin, 1.0);
 
     //==
     // # Ellipse and superellipse bodies

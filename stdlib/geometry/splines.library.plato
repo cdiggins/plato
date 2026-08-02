@@ -135,7 +135,7 @@ library Splines
     // [Degree, Count - Degree - 1]. Outside it the basis is not a partition of
     // unity. Precondition: the knot count matches the degree and point count.
     Domain(self: KnotVector, degree: Integer): NumberInterval
-        => NumberInterval(self.KnotAt(degree), self.KnotAt(self.Count - degree - 1));
+        => (self.KnotAt(degree), self.KnotAt(self.Count - degree - 1));
 
     // The domain of a plane B-spline: its knot vector restricted by its degree.
     ParameterDomain(self: BSplineCurve2D): NumberInterval
@@ -585,7 +585,7 @@ library Splines
 
     // The parameter range the spline interpolates over.
     ParameterDomain(self: NaturalCubicSpline1D): NumberInterval
-        => NumberInterval(self.KnotParameter(0), self.KnotParameter(self.KnotCount - 1));
+        => (self.KnotParameter(0), self.KnotParameter(self.KnotCount - 1));
 
     //==
     // # NaturalCubicSpline1D — evaluation

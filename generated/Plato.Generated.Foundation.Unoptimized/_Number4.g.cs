@@ -82,25 +82,25 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] Integer ICountable.Count() => Count;
 
         // Implemented interface functions
-        [MethodImpl(AggressiveInlining)] public static Number4 FromComponents(IReadOnlyList<Number> xs) => new Number4(xs[((Integer)0)], xs[((Integer)1)], xs[((Integer)2)], xs[((Integer)3)]);
-        [MethodImpl(AggressiveInlining)] public Number4 Broadcast(Number x) => new Number4(x, x, x, x);
-        [MethodImpl(AggressiveInlining)] public Number4 Add(Number4 right) => new Number4(this.X.Add(right.X), this.Y.Add(right.Y), this.Z.Add(right.Z), this.W.Add(right.W));
+        [MethodImpl(AggressiveInlining)] public static Number4 FromComponents(IReadOnlyList<Number> xs) => (xs[((Integer)0)], xs[((Integer)1)], xs[((Integer)2)], xs[((Integer)3)]);
+        [MethodImpl(AggressiveInlining)] public Number4 Broadcast(Number x) => (x, x, x, x);
+        [MethodImpl(AggressiveInlining)] public Number4 Add(Number4 right) => (this.X.Add(right.X), this.Y.Add(right.Y), this.Z.Add(right.Z), this.W.Add(right.W));
         [MethodImpl(AggressiveInlining)]  public static Number4 operator +(Number4 left, Number4 right) => left.Add(right);
-        [MethodImpl(AggressiveInlining)] public Number4 Subtract(Number4 right) => new Number4(this.X.Subtract(right.X), this.Y.Subtract(right.Y), this.Z.Subtract(right.Z), this.W.Subtract(right.W));
+        [MethodImpl(AggressiveInlining)] public Number4 Subtract(Number4 right) => (this.X.Subtract(right.X), this.Y.Subtract(right.Y), this.Z.Subtract(right.Z), this.W.Subtract(right.W));
         [MethodImpl(AggressiveInlining)]  public static Number4 operator -(Number4 left, Number4 right) => left.Subtract(right);
-        [MethodImpl(AggressiveInlining)] public Number4 Multiply(Number4 right) => new Number4(this.X.Multiply(right.X), this.Y.Multiply(right.Y), this.Z.Multiply(right.Z), this.W.Multiply(right.W));
+        [MethodImpl(AggressiveInlining)] public Number4 Multiply(Number4 right) => (this.X.Multiply(right.X), this.Y.Multiply(right.Y), this.Z.Multiply(right.Z), this.W.Multiply(right.W));
         [MethodImpl(AggressiveInlining)]  public static Number4 operator *(Number4 left, Number4 right) => left.Multiply(right);
-        [MethodImpl(AggressiveInlining)] public Number4 Multiply(Number scalar) => new Number4(this.X.Multiply(scalar), this.Y.Multiply(scalar), this.Z.Multiply(scalar), this.W.Multiply(scalar));
+        [MethodImpl(AggressiveInlining)] public Number4 Multiply(Number scalar) => (this.X.Multiply(scalar), this.Y.Multiply(scalar), this.Z.Multiply(scalar), this.W.Multiply(scalar));
         [MethodImpl(AggressiveInlining)]  public static Number4 operator *(Number4 left, Number scalar) => left.Multiply(scalar);
-        [MethodImpl(AggressiveInlining)] public Number4 Divide(Number4 right) => new Number4(this.X.Divide(right.X), this.Y.Divide(right.Y), this.Z.Divide(right.Z), this.W.Divide(right.W));
+        [MethodImpl(AggressiveInlining)] public Number4 Divide(Number4 right) => (this.X.Divide(right.X), this.Y.Divide(right.Y), this.Z.Divide(right.Z), this.W.Divide(right.W));
         [MethodImpl(AggressiveInlining)]  public static Number4 operator /(Number4 left, Number4 right) => left.Divide(right);
-        [MethodImpl(AggressiveInlining)] public Number4 Divide(Number scalar) => new Number4(this.X.Divide(scalar), this.Y.Divide(scalar), this.Z.Divide(scalar), this.W.Divide(scalar));
+        [MethodImpl(AggressiveInlining)] public Number4 Divide(Number scalar) => (this.X.Divide(scalar), this.Y.Divide(scalar), this.Z.Divide(scalar), this.W.Divide(scalar));
         [MethodImpl(AggressiveInlining)]  public static Number4 operator /(Number4 left, Number scalar) => left.Divide(scalar);
-        [MethodImpl(AggressiveInlining)] public Number4 Negative() => new Number4(this.X.Negative(), this.Y.Negative(), this.Z.Negative(), this.W.Negative());
+        [MethodImpl(AggressiveInlining)] public Number4 Negative() => (this.X.Negative(), this.Y.Negative(), this.Z.Negative(), this.W.Negative());
         [MethodImpl(AggressiveInlining)]  public static Number4 operator -(Number4 value) => value.Negative();
         [MethodImpl(AggressiveInlining)] public Number Dot(Number4 right) => this.X.Multiply(right.X).Add(this.Y.Multiply(right.Y)).Add(this.Z.Multiply(right.Z)).Add(this.W.Multiply(right.W));
-        [MethodImpl(AggressiveInlining)] public Number4 Max(Number4 value2) => new Number4(this.X.Max(value2.X), this.Y.Max(value2.Y), this.Z.Max(value2.Z), this.W.Max(value2.W));
-        [MethodImpl(AggressiveInlining)] public Number4 Min(Number4 value2) => new Number4(this.X.Min(value2.X), this.Y.Min(value2.Y), this.Z.Min(value2.Z), this.W.Min(value2.W));
+        [MethodImpl(AggressiveInlining)] public Number4 Max(Number4 value2) => (this.X.Max(value2.X), this.Y.Max(value2.Y), this.Z.Max(value2.Z), this.W.Max(value2.W));
+        [MethodImpl(AggressiveInlining)] public Number4 Min(Number4 value2) => (this.X.Min(value2.X), this.Y.Min(value2.Y), this.Z.Min(value2.Z), this.W.Min(value2.W));
         [MethodImpl(AggressiveInlining)] public Integer Hash() => this.X.Hash().CombineHash(this.Y.Hash()).CombineHash(this.Z.Hash()).CombineHash(this.W.Hash());
         [MethodImpl(AggressiveInlining)] public Number4 Modulo(Number4 b) => this.ZipComponents(b, (x, y)  => x.Modulo(y));
         [MethodImpl(AggressiveInlining)]  public static Number4 operator %(Number4 a, Number4 b) => a.Modulo(b);

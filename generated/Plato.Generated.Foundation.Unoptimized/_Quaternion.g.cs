@@ -132,15 +132,15 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Quaternion Identity() => (((Number)0), ((Number)0), ((Number)0), ((Number)1));
         [MethodImpl(AggressiveInlining)] public Motor3D Motor3D() => (this, new Quaternion(((Number)0), ((Number)0), ((Number)0), ((Number)0)));
         [MethodImpl(AggressiveInlining)]  public static implicit operator Motor3D(Quaternion q) => q.Motor3D();
-        [MethodImpl(AggressiveInlining)] public Pose3D Pose3D() => (new Vector3D(((Number)0), ((Number)0), ((Number)0)).ToPoint(), this);
+        [MethodImpl(AggressiveInlining)] public Pose3D Pose3D() => (Ara3D.Geometry.Point3D.Origin, this);
         [MethodImpl(AggressiveInlining)]  public static implicit operator Pose3D(Quaternion q) => q.Pose3D();
-        [MethodImpl(AggressiveInlining)] public static Quaternion CreateRotationX(Angle angle) => Ara3D.Geometry.Quaternion.CreateFromAxisAngle(new Vector3D(((Number)1), ((Number)0), ((Number)0)), angle);
-        [MethodImpl(AggressiveInlining)] public static Quaternion CreateRotationY(Angle angle) => Ara3D.Geometry.Quaternion.CreateFromAxisAngle(new Vector3D(((Number)0), ((Number)1), ((Number)0)), angle);
-        [MethodImpl(AggressiveInlining)] public static Quaternion CreateRotationZ(Angle angle) => Ara3D.Geometry.Quaternion.CreateFromAxisAngle(new Vector3D(((Number)0), ((Number)0), ((Number)1)), angle);
+        [MethodImpl(AggressiveInlining)] public static Quaternion CreateRotationX(Angle angle) => Ara3D.Geometry.Quaternion.CreateFromAxisAngle(Ara3D.Geometry.Vector3D.UnitX(), angle);
+        [MethodImpl(AggressiveInlining)] public static Quaternion CreateRotationY(Angle angle) => Ara3D.Geometry.Quaternion.CreateFromAxisAngle(Ara3D.Geometry.Vector3D.UnitY(), angle);
+        [MethodImpl(AggressiveInlining)] public static Quaternion CreateRotationZ(Angle angle) => Ara3D.Geometry.Quaternion.CreateFromAxisAngle(Ara3D.Geometry.Vector3D.UnitZ(), angle);
         [MethodImpl(AggressiveInlining)] public AxisAngle AxisAngle(){
             var n = this.Normalize();
             var s = ((Number)1).Subtract(n.W.Square()).Max(((Number)0)).Sqrt();
-            var axis = s.LessThan(((Number)1E-06)) ? new Vector3D(((Number)1), ((Number)0), ((Number)0)) : new Vector3D(n.X.Divide(s), n.Y.Divide(s), n.Z.Divide(s));
+            var axis = s.LessThan(((Number)1E-06)) ? Ara3D.Geometry.Vector3D.UnitX() : new Vector3D(n.X.Divide(s), n.Y.Divide(s), n.Z.Divide(s));
             return (new Direction3D(axis), n.W.Clamp(((Number)1).Negative(), ((Number)1)).Acos().Multiply(((Number)2)));
         }
 

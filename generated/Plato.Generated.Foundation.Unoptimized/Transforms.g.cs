@@ -76,12 +76,12 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static UniformScaling3D Inverse(this UniformScaling3D s) => new Ara3D.Geometry.UniformScaling3D(((Number)1).Divide(s.Amount));
         [MethodImpl(AggressiveInlining)] public static Reflection2D Inverse(this Reflection2D r) => r;
         [MethodImpl(AggressiveInlining)] public static Reflection3D Inverse(this Reflection3D r) => r;
-        [MethodImpl(AggressiveInlining)] public static RotationAbout2D Inverse(this RotationAbout2D r) => new Ara3D.Geometry.RotationAbout2D(r.Rotation.Inverse(), r.Center);
+        [MethodImpl(AggressiveInlining)] public static RotationAbout2D Inverse(this RotationAbout2D r) => (r.Rotation.Inverse(), r.Center);
         [MethodImpl(AggressiveInlining)] public static Pose2D Compose(this RotationAbout2D first, RotationAbout2D second) => first.Pose2D().Compose(second.Pose2D());
-        [MethodImpl(AggressiveInlining)] public static RotationAbout3D Inverse(this RotationAbout3D r) => new Ara3D.Geometry.RotationAbout3D(r.Rotation.Inverse(), r.Center);
+        [MethodImpl(AggressiveInlining)] public static RotationAbout3D Inverse(this RotationAbout3D r) => (r.Rotation.Inverse(), r.Center);
         [MethodImpl(AggressiveInlining)] public static Pose3D Compose(this RotationAbout3D first, RotationAbout3D second) => first.Pose3D().Compose(second.Pose3D());
-        [MethodImpl(AggressiveInlining)] public static ScalingAbout2D Inverse(this ScalingAbout2D s) => new Ara3D.Geometry.ScalingAbout2D(new Ara3D.Geometry.Number2(((Number)1).Divide(s.Amount.X), ((Number)1).Divide(s.Amount.Y)), s.Center);
-        [MethodImpl(AggressiveInlining)] public static ScalingAbout3D Inverse(this ScalingAbout3D s) => new Ara3D.Geometry.ScalingAbout3D(new Ara3D.Geometry.Number3(((Number)1).Divide(s.Amount.X), ((Number)1).Divide(s.Amount.Y), ((Number)1).Divide(s.Amount.Z)), s.Center);
+        [MethodImpl(AggressiveInlining)] public static ScalingAbout2D Inverse(this ScalingAbout2D s) => (new Ara3D.Geometry.Number2(((Number)1).Divide(s.Amount.X), ((Number)1).Divide(s.Amount.Y)), s.Center);
+        [MethodImpl(AggressiveInlining)] public static ScalingAbout3D Inverse(this ScalingAbout3D s) => (new Ara3D.Geometry.Number3(((Number)1).Divide(s.Amount.X), ((Number)1).Divide(s.Amount.Y), ((Number)1).Divide(s.Amount.Z)), s.Center);
         [MethodImpl(AggressiveInlining)] public static Vector2D Transform(this Vector2D v, AffineTransform2D a) => v.TransformNormal(a.Matrix);
         [MethodImpl(AggressiveInlining)] public static Vector2D Transform(this Vector2D v, Translation2D t) => v;
         [MethodImpl(AggressiveInlining)] public static Vector2D Transform(this Vector2D v, Scaling2D s) => v.Multiply(s.Amount);
@@ -122,7 +122,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Vector3D Transform(this Vector3D v, Rotor3D r) => v.Transform(r.Quaternion());
         [MethodImpl(AggressiveInlining)] public static Vector3D Transform(this Vector3D v, TrsTransform3D t) => v.Multiply(t.Scale).Transform(t.Rotation);
         [MethodImpl(AggressiveInlining)] public static Direction2D Transform(this Direction2D d, Rotation2D r) => new Ara3D.Geometry.Direction2D(d.Vector.Transform(r));
-        [MethodImpl(AggressiveInlining)] public static Quaternion LookRotation(this Direction3D forward, Direction3D up) => Ara3D.Geometry.Matrix4x4.CreateWorld(new Ara3D.Geometry.Point3D(((Number)0), ((Number)0), ((Number)0)), forward.Vector, up.Vector).Quaternion();
+        [MethodImpl(AggressiveInlining)] public static Quaternion LookRotation(this Direction3D forward, Direction3D up) => Ara3D.Geometry.Matrix4x4.CreateWorld(Ara3D.Geometry.Point3D.Origin, forward.Vector, up.Vector).Quaternion();
         [MethodImpl(AggressiveInlining)] public static Direction3D Transform(this Direction3D d, Quaternion q) => new Ara3D.Geometry.Direction3D(d.Vector.Transform(q));
     }
 }

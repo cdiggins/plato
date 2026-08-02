@@ -509,11 +509,11 @@ library Transforms
 
     // The opposite rotation about the same centre.
     Inverse(r: RotationAbout2D): RotationAbout2D
-        => RotationAbout2D(r.Rotation.Inverse, r.Center);
+        => (r.Rotation.Inverse, r.Center);
 
     // The zero rotation about the origin.
     Identity(_: RotationAbout2D): RotationAbout2D
-        => RotationAbout2D(Rotation2D.Identity, Point2D.Origin);
+        => (Rotation2D.Identity, Point2D.Origin);
 
     // The rotation about the centre as an affine map: translate the centre to
     // the world origin, rotate, translate back.
@@ -542,11 +542,11 @@ library Transforms
 
     // The opposite rotation about the same centre.
     Inverse(r: RotationAbout3D): RotationAbout3D
-        => RotationAbout3D(r.Rotation.Inverse, r.Center);
+        => (r.Rotation.Inverse, r.Center);
 
     // The zero rotation about the origin.
     Identity(_: RotationAbout3D): RotationAbout3D
-        => RotationAbout3D(Quaternion.Identity, Point3D.Origin);
+        => (Quaternion.Identity, Point3D.Origin);
 
     // The scaling about the centre as an affine map.
     AffineTransform2D(s: ScalingAbout2D): AffineTransform2D
@@ -572,11 +572,11 @@ library Transforms
     // The reciprocal scaling about the same centre. Precondition: no component
     // of Amount is zero.
     Inverse(s: ScalingAbout2D): ScalingAbout2D
-        => ScalingAbout2D(Number2(1.0 / s.Amount.X, 1.0 / s.Amount.Y), s.Center);
+        => (Number2(1.0 / s.Amount.X, 1.0 / s.Amount.Y), s.Center);
 
     // The unit scaling about the origin.
     Identity(_: ScalingAbout2D): ScalingAbout2D
-        => ScalingAbout2D(Number2.One, Point2D.Origin);
+        => (Number2.One, Point2D.Origin);
 
     // The scaling about the centre as an affine map: translate the centre to the
     // world origin, scale, translate back.
@@ -607,11 +607,11 @@ library Transforms
     // The reciprocal scaling about the same centre. Precondition: no component
     // of Amount is zero.
     Inverse(s: ScalingAbout3D): ScalingAbout3D
-        => ScalingAbout3D(Number3(1.0 / s.Amount.X, 1.0 / s.Amount.Y, 1.0 / s.Amount.Z), s.Center);
+        => (Number3(1.0 / s.Amount.X, 1.0 / s.Amount.Y, 1.0 / s.Amount.Z), s.Center);
 
     // The unit scaling about the origin.
     Identity(_: ScalingAbout3D): ScalingAbout3D
-        => ScalingAbout3D(Number3.One, Point3D.Origin);
+        => (Number3.One, Point3D.Origin);
 
     //==
     // Aiming — the rotation that points an object along a direction.

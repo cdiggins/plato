@@ -459,23 +459,23 @@ library Curves
     // The open polyline through `count` evenly spaced samples of the curve.
     // Precondition: count >= 2.
     ToPolyline2D(self: ICurve2D, count: Integer): Polyline2D
-        => Polyline2D(self.Sample(count), false);
+        => (self.Sample(count), false);
 
     // The open polyline through `count` evenly spaced samples of the curve.
     // Precondition: count >= 2.
     ToPolyline3D(self: ICurve3D, count: Integer): Polyline3D
-        => Polyline3D(self.Sample(count), false);
+        => (self.Sample(count), false);
 
     // The closed polyline through `count` evenly spaced samples of a closed
     // curve; the seam is left to the polyline's own Closed flag rather than
     // repeated as a point. Precondition: count >= 3.
     ToClosedPolyline2D(self: IClosedCurve2D, count: Integer): Polyline2D
-        => Polyline2D(self.SamplePeriodic(count), true);
+        => (self.SamplePeriodic(count), true);
 
     // The closed polyline through `count` evenly spaced samples of a closed
     // curve. Precondition: count >= 3.
     ToClosedPolyline3D(self: IClosedCurve3D, count: Integer): Polyline3D
-        => Polyline3D(self.SamplePeriodic(count), true);
+        => (self.SamplePeriodic(count), true);
 
     // `count` polar coordinates of a polar curve, evenly spaced over one full
     // turn with the duplicate seam omitted. Precondition: count >= 1.

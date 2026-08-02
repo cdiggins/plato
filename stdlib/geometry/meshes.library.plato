@@ -836,10 +836,10 @@ library Meshes
     // The k-th face of a tetrahedron (k in 0..3), wound so its normal points OUT
     // of a positively oriented cell.
     TetrahedronFace(cell: TetrahedronCell, k: Integer): TriangleFace
-        => k == 0 ? TriangleFace(cell.A, cell.C, cell.B)
-         : (k == 1 ? TriangleFace(cell.A, cell.B, cell.D)
-         : (k == 2 ? TriangleFace(cell.B, cell.C, cell.D)
-                   : TriangleFace(cell.C, cell.A, cell.D)));
+        => k == 0 ? (cell.A, cell.C, cell.B)
+         : (k == 1 ? (cell.A, cell.B, cell.D)
+         : (k == 2 ? (cell.B, cell.C, cell.D)
+                   : (cell.C, cell.A, cell.D)));
 
     // A face's orientation-free identity: its three corner indices in ascending
     // order, so the two windings of a shared interior face match.

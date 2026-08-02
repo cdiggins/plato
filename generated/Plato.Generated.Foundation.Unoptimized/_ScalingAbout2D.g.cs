@@ -81,7 +81,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)]  public static Point2D operator *(ScalingAbout2D s, Point2D p) => s.Multiply(p);
         [MethodImpl(AggressiveInlining)] public Vector2D Multiply(Vector2D v) => v.Transform(this);
         [MethodImpl(AggressiveInlining)]  public static Vector2D operator *(ScalingAbout2D s, Vector2D v) => s.Multiply(v);
-        [MethodImpl(AggressiveInlining)] public static ScalingAbout2D Identity() => new ScalingAbout2D(new Number2(((Number)1), ((Number)1)), new Point2D(((Number)0), ((Number)0)));
+        [MethodImpl(AggressiveInlining)] public static ScalingAbout2D Identity() => (Ara3D.Geometry.Number2.One, Ara3D.Geometry.Point2D.Origin);
 
         // Unimplemented interface functions
     }

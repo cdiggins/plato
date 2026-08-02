@@ -80,8 +80,8 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Vector3D UnitX() => new Vector3D(((Number)1), ((Number)0), ((Number)0));
         [MethodImpl(AggressiveInlining)] public static Vector3D UnitY() => new Vector3D(((Number)0), ((Number)1), ((Number)0));
         [MethodImpl(AggressiveInlining)] public static Vector3D UnitZ() => new Vector3D(((Number)0), ((Number)0), ((Number)1));
-        [MethodImpl(AggressiveInlining)] public static Vector3D FromComponents(IReadOnlyList<Number> xs) => new Vector3D(xs[((Integer)0)], xs[((Integer)1)], xs[((Integer)2)]);
-        [MethodImpl(AggressiveInlining)] public Vector3D Broadcast(Number x) => new Vector3D(x, x, x);
+        [MethodImpl(AggressiveInlining)] public static Vector3D FromComponents(IReadOnlyList<Number> xs) => (xs[((Integer)0)], xs[((Integer)1)], xs[((Integer)2)]);
+        [MethodImpl(AggressiveInlining)] public Vector3D Broadcast(Number x) => (x, x, x);
         [MethodImpl(AggressiveInlining)] public Vector3D Add(Vector3D right) => (this.X.Add(right.X), this.Y.Add(right.Y), this.Z.Add(right.Z));
         [MethodImpl(AggressiveInlining)]  public static Vector3D operator +(Vector3D left, Vector3D right) => left.Add(right);
         [MethodImpl(AggressiveInlining)] public Vector3D Subtract(Vector3D right) => (this.X.Subtract(right.X), this.Y.Subtract(right.Y), this.Z.Subtract(right.Z));

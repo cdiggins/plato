@@ -75,7 +75,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)]  public static Point2D operator *(Translation2D t, Point2D p) => t.Multiply(p);
         [MethodImpl(AggressiveInlining)] public Vector2D Multiply(Vector2D v) => v.Transform(this);
         [MethodImpl(AggressiveInlining)]  public static Vector2D operator *(Translation2D t, Vector2D v) => t.Multiply(v);
-        [MethodImpl(AggressiveInlining)] public static Translation2D Identity() => new Translation2D(new Vector2D(((Number)0), ((Number)0)));
+        [MethodImpl(AggressiveInlining)] public static Translation2D Identity() => new Translation2D(Ara3D.Geometry.Vector2D.Zero);
         [MethodImpl(AggressiveInlining)] public Pose2D Pose2D() => (this.Vector.ToPoint(), Ara3D.Geometry.Rotation2D.Identity());
         [MethodImpl(AggressiveInlining)]  public static implicit operator Pose2D(Translation2D t) => t.Pose2D();
 

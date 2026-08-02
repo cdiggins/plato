@@ -470,7 +470,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Integer Sign(this Duration self) => self.Amount().Sign();
         [MethodImpl(AggressiveInlining)] public static Duration Abs(this Duration self) => self.IsNegative() ? self.Negative() : self;
         [MethodImpl(AggressiveInlining)] public static Duration AbsoluteDifference(this Duration a, Duration b) => a.Subtract(b).Abs();
-        [MethodImpl(AggressiveInlining)] public static Vector2D Perp(this Vector2D v) => new Ara3D.Geometry.Vector2D(v.Y.Negative(), v.X);
+        [MethodImpl(AggressiveInlining)] public static Vector2D Perp(this Vector2D v) => (v.Y.Negative(), v.X);
         [MethodImpl(AggressiveInlining)] public static Number Cross(this Vector2D a, Vector2D b) => a.X.Multiply(b.Y).Subtract(a.Y.Multiply(b.X));
         [MethodImpl(AggressiveInlining)] public static Direction2D FromVector(this Vector2D v) => new Ara3D.Geometry.Direction2D(v.Normalize());
         [MethodImpl(AggressiveInlining)] public static Direction2D TryFromVector(this Vector2D v, Direction2D fallback) => v.MagnitudeSquared().GreaterThan(((Number)0)) ? new Ara3D.Geometry.Direction2D(v.Normalize()) : fallback;
@@ -552,7 +552,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public static Vector2D NormalizeOr(this Vector2D self, Vector2D fallback) => self.MagnitudeSquared().GreaterThan(((Number)0)) ? self.Normalize() : fallback;
         [MethodImpl(AggressiveInlining)] public static Number ScalarTriple(this Vector3D a, Vector3D b, Vector3D c) => a.Dot(b.Cross(c));
         [MethodImpl(AggressiveInlining)] public static Boolean AreParallel(this Vector3D a, Vector3D b, Number tolerance) => a.Cross(b).MagnitudeSquared().LessThanOrEquals(tolerance.Multiply(tolerance));
-        [MethodImpl(AggressiveInlining)] public static Bivector3D Wedge(this Vector3D a, Vector3D b) => new Ara3D.Geometry.Bivector3D(a.Y.Multiply(b.Z).Subtract(a.Z.Multiply(b.Y)), a.Z.Multiply(b.X).Subtract(a.X.Multiply(b.Z)), a.X.Multiply(b.Y).Subtract(a.Y.Multiply(b.X)));
+        [MethodImpl(AggressiveInlining)] public static Bivector3D Wedge(this Vector3D a, Vector3D b) => (a.Y.Multiply(b.Z).Subtract(a.Z.Multiply(b.Y)), a.Z.Multiply(b.X).Subtract(a.X.Multiply(b.Z)), a.X.Multiply(b.Y).Subtract(a.Y.Multiply(b.X)));
         [MethodImpl(AggressiveInlining)] public static Direction3D FromVector(this Vector3D v) => new Ara3D.Geometry.Direction3D(v.Normalize());
         [MethodImpl(AggressiveInlining)] public static Direction3D TryFromVector(this Vector3D v, Direction3D fallback) => v.MagnitudeSquared().GreaterThan(((Number)0)) ? new Ara3D.Geometry.Direction3D(v.Normalize()) : fallback;
         [MethodImpl(AggressiveInlining)] public static Direction3D FromVectorUnchecked(this Vector3D v) => new Ara3D.Geometry.Direction3D(v);

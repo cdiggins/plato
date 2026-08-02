@@ -55,7 +55,7 @@ library Statistics
 
     // The half-open span [BinStart(i), BinStart(i+1)) of bin i, as an interval.
     BinInterval(self: Histogram, bin: Integer): NumberInterval
-        => NumberInterval(self.BinStart(bin), self.BinStart(bin + 1));
+        => (self.BinStart(bin), self.BinStart(bin + 1));
 
     // The index of the bin containing value, or -1 when value lies outside
     // Range. The Range End belongs to the final bin, per the type's convention.

@@ -249,27 +249,27 @@ library Matrices
 
     // Element-wise sum, in the shape of `a`.
     Add(a: MatrixN, b: MatrixN): MatrixN
-        => MatrixN(a.NumRows, a.NumColumns, a.Components.Zip(b.Components, (x, y) => x + y));
+        => (a.NumRows, a.NumColumns, a.Components.Zip(b.Components, (x, y) => x + y));
 
     // Element-wise difference, in the shape of `a`.
     Subtract(a: MatrixN, b: MatrixN): MatrixN
-        => MatrixN(a.NumRows, a.NumColumns, a.Components.Zip(b.Components, (x, y) => x - y));
+        => (a.NumRows, a.NumColumns, a.Components.Zip(b.Components, (x, y) => x - y));
 
     // Every element negated.
     Negative(self: MatrixN): MatrixN
-        => MatrixN(self.NumRows, self.NumColumns, self.Components.Map(x => -x));
+        => (self.NumRows, self.NumColumns, self.Components.Map(x => -x));
 
     // Every element scaled.
     Multiply(self: MatrixN, scalar: Number): MatrixN
-        => MatrixN(self.NumRows, self.NumColumns, self.Components.Map(x => x * scalar));
+        => (self.NumRows, self.NumColumns, self.Components.Map(x => x * scalar));
 
     // Every element divided.
     Divide(self: MatrixN, scalar: Number): MatrixN
-        => MatrixN(self.NumRows, self.NumColumns, self.Components.Map(x => x / scalar));
+        => (self.NumRows, self.NumColumns, self.Components.Map(x => x / scalar));
 
     // Every element reduced modulo the scalar.
     Modulo(self: MatrixN, scalar: Number): MatrixN
-        => MatrixN(self.NumRows, self.NumColumns, self.Components.Map(x => x % scalar));
+        => (self.NumRows, self.NumColumns, self.Components.Map(x => x % scalar));
 
     //==
     // # Sparse and banded matrix readings
