@@ -1,7 +1,7 @@
 //==
-// # Interval and bounds concepts
+// # Interval and bounds interfaces
 //
-// The two concepts behind the one-dimensional spans of `intervals.types.plato` and the
+// The two interfaces behind the one-dimensional spans of `intervals.types.plato` and the
 // axis-aligned regions of `intervals.types.plato`. Their derived bodies live in
 // `intervals.library.plato` and
 // `intervals.library.plato`.
@@ -10,7 +10,7 @@
 
 // A one-dimensional directed span from Start to End. Start may exceed End,
 // which encodes a reversed interval.
-interface IIntervalLike<T>
+interface IInterval<T>
     where T: IAdditive, T: IInterpolatable, T: IComparable
     inherits IValue
 {
@@ -23,7 +23,7 @@ interface IIntervalLike<T>
 // TDelta is the displacement type between two corner points (the vector type of
 // TPoint), so Extent/Diagonal can name the Max - Min delta. TPoint is also
 // IInterpolatable, which is what lets Center and Lerp blend the two corners.
-interface IBoundsLike<TPoint, TDelta>
+interface IBounds<TPoint, TDelta>
     where TPoint: IDifference<TDelta>, TPoint: IInterpolatable
     inherits IValue
 {

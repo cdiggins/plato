@@ -1,14 +1,14 @@
-# stdlib concept libraries — implementation bodies
+# stdlib interface libraries — implementation bodies
 
 The `*.library.plato` files in `stdlib/` hold `library` blocks that implement **derived
-functionality for the concepts** declared in the domain declaration files. In Plato, a function
-whose first parameter is concept-typed is like a C# extension method on an interface: it becomes
-available on every type that implements the concept. These libraries implement
-derived functionality on the concepts declared in the domain files — build on
+functionality for the interfaces** declared in the domain declaration files. In Plato, a function
+whose first parameter is interface-typed is like a C# extension method on an interface: it becomes
+available on every type that implements the interface. These libraries implement
+derived functionality on the interfaces declared in the domain files — build on
 good ideas from earlier vocabulary, replace bad names, drop dead weight.
 
 The library files live side-by-side with the declaration files they implement (they were flattened
-out of the old `concept-library/` subfolder). Because `lint` enumerates `*.plato` non-recursively
+out of the old `interface-library/` subfolder). Because `lint` enumerates `*.plato` non-recursively
 (`Plato.CLI/Program.cs:101` / `:197` use `GetFiles("*.plato", TopDirectoryOnly)`), the lint command
 below now genuinely covers these library bodies — which it did **not** while they sat in a subfolder.
 
@@ -31,7 +31,7 @@ below now genuinely covers these library bodies — which it did **not** while t
    domains or carry concrete per-type bodies and are listed in "Libraries outside the package
    table".
 2. **Function form**: `Name(self: ConceptName, ...): ReturnType => expression;` — first
-   parameter is the concept. Prefer a single expression where one reads well.
+   parameter is the interface. Prefer a single expression where one reads well.
 
    **Local bindings and affine mutation are permitted.** `var` is a pure local binding and
    changes nothing about referential transparency; write `{ var q = ...; return ...; }` when a
@@ -62,8 +62,8 @@ below now genuinely covers these library bodies — which it did **not** while t
    such a function when every type variable is determined by its parameter(s) (as these are),
    and only rejects a type variable reachable solely through the return type. A builder can now
    be constructed, mutated, observed with `Count`, and consumed with `Freeze`.
-3. **Only call what exists**: functions declared on the concept itself, its inherited
-   concepts, or functions you define in your own library file. Verify every member name
+3. **Only call what exists**: functions declared on the interface itself, its inherited
+   interfaces, or functions you define in your own library file. Verify every member name
    with the plato-navigation MCP tools (`plato_search_symbols` → `plato_definition` /
    `plato_source`). Never guess a member name.
 4. **Better names than v1**: no abbreviations (`Sqr` → `Square`), no cryptic forms
@@ -72,53 +72,53 @@ below now genuinely covers these library bodies — which it did **not** while t
    `Lerp`, `Clamp`, `Dot`, `Cross`.
 5. **Doc comments**: every function gets a `//` comment stating what it computes and any
    preconditions. Section banners use `//==`.
-6. **No new types, no new concepts** *while implementing a package*. Declarations live in the
-   domain declaration files; the library files are bodies only. If a concept lacks a member you
-   need, note it in a `// TODO(concept-gap):` comment and work around it or skip the function.
+6. **No new types, no new interfaces** *while implementing a package*. Declarations live in the
+   domain declaration files; the library files are bodies only. If an interface lacks a member you
+   need, note it in a `// TODO(interface-gap):` comment and work around it or skip the function.
 
-   Those TODOs are a **burn-down queue, not a permanent ban**. A concept surface may be extended
+   Those TODOs are a **burn-down queue, not a permanent ban**. An interface surface may be extended
    deliberately, as its own piece of work with its own justification — `Vector.FromComponents` /
    `Broadcast` and `Quantity.FromAmount` were both added exactly that way, and each discharged
-   hundreds of LINT001 obligations that were otherwise unreachable. Extending a concept adds an
-   obligation to **every** implementor tree-wide, so grep `implements <Concept>` across all files
+   hundreds of LINT001 obligations that were otherwise unreachable. Extending an interface adds an
+   obligation to **every** implementor tree-wide, so grep `implements <Interface>` across all files
    first and fill the new obligations in the same change.
-7. **Generic functions** may use type variables constrained by concepts where the concept is
-   generic (`IntervalLike<T>`, `Field<TDomain,TValue>`); mirror the declaration's parameters.
+7. **Generic functions** may use type variables constrained by interfaces where the interface is
+   generic (`IInterval<T>`, `Field<TDomain,TValue>`); mirror the declaration's parameters.
 8. **Angles are `Angle`**, never raw `Number`. Respect the unit conventions in
    [`README.md`](README.md).
 9. **Validate before you finish**: run
    `dotnet run --project submodules/Plato/Plato.CLI -c Release -- lint submodules/Plato/stdlib`
    from `C:\Users\cdigg\git\studio` — zero parse errors, zero symbol-resolution errors.
    After every edit call `plato_reload` so the MCP index stays fresh.
-10. **Scope discipline**: implement ONLY functions for the concepts in your package, and never
+10. **Scope discipline**: implement ONLY functions for the interfaces in your package, and never
     edit another package's `*.library.plato` files. The boundary is by file kind and package
     ownership: declaration files declare, your package's `*.library.plato` files implement.
 
     Editing a domain declaration file is out of bounds *as a side effect of implementing a
-    package*. It is in bounds as **deliberate, separately-justified work** — extending a concept
+    package*. It is in bounds as **deliberate, separately-justified work** — extending an interface
     surface (rule 6), or adding a new sibling `*.library.plato` file for bodies that belong
     beside a declaration (rule 1). Say which you are doing and why; do not drift into a
     declaration file to unblock a body.
 
 ## Work packages
 
-| Pkg | Library files | Concept source files | Concepts |
+| Pkg | Library files | Interface source files | Interfaces |
 |-----|--------------|---------------------|----------|
-| P1 | `core`, `algebra` | `core.concepts`, `algebra.concepts` | Equatable, Value, Hashable, Orderable, Comparable, Logical, BooleanAlgebra, Bitwise, Additive, Multiplicative, Divisible, Modular, Invertible, Arithmetic, Scalable, Interpolatable, NumericalLimits, Numerical, Real, Whole, Normed, MetricSpace, Lattice, Clampable, Difference |
-| P2 | `collections`, `functional-procedural` | `collections.concepts`, `functional.concepts` | Countable, Index, Indexable/2D/3D/4D, Sliceable, Concatenable, SetLike, MapLike, StackLike, QueueLike, Procedural, Bijective, Periodic, ParameterDomain |
-| P3 | `numeric-structures` | `quantities.concepts`, `vectors.concepts`, `matrices.concepts`, `points.concepts` | Quantity, Vector, MatrixLike, Coordinate |
-| P4 | `intervals`, `intervals-transforms-deformable` | `intervals-bounds.concepts`, `transforms.concepts` | IntervalLike, BoundsLike, Transformable2D, Transformable3D, Deformable2D, Deformable3D |
-| P5 | `geometry` | `geometry.concepts` | Geometry family, shape traits, Bounded2D/3D, PointSet2D/3D, measurables, centroids, containment, nearest-point, support mapping |
-| P6 | `curves`, `surfaces` | `curves.concepts`, `surfaces-solids.concepts` | Curve<TRange>, Curve1D-3D, ClosedCurve2D/3D, PeriodicCurve, DifferentiableCurve2D/3D, FramedCurve3D, PlanarCurve3D, PolarCurve2D, ArcLengthParameterized, Surface, ClosedSurface, ParametricSurface, DifferentiableSurface, HeightFieldSurface, Solid, ConvexSolid, ParametricVolume |
-| P7 | `fields-implicits` | `fields.concepts`, `implicit-sdf.concepts` | Field, ScalarField2D/3D, VectorField2D/3D, DirectionField, ColorField, ComplexField2D, TensorField, the Differentiable and TimeVarying field families, SignedDistanceField2D/3D, ImplicitRegion2D, ImplicitVolume3D |
-| P8 | `meshes`, `meshes-polygon`, `spatial-structures` | `topology.concepts`, `meshes.concepts`, `pointclouds-voxels.concepts`, `spatial.concepts` | MeshElementCounts, MeshIncidence, HalfEdgeNavigable, Meshable2D/3D, TriangulatedGeometry3D, PointCloudable3D, Voxelizable3D, SpatialIndex2D/3D, RayIntersectable2D/3D, ClosestPointQueryable2D/3D, NearestNeighborQueryable2D/3D |
-| P9 | `easing`, `time-varying`, `paths`, `images`, `texturing`, `cameras`, `lights`, `kinematics`, `rigid-dynamics`, `random`, `graphs`, `scientific-data`, `geo-spatial` | `easing.concepts`, `time-varying.concepts`, `paths.concepts`, `images.concepts`, `texturing.concepts`, `cameras.concepts`, `lights.concepts`, `kinematics.concepts`, `rigid-dynamics.concepts`, `random.concepts`, `graphs.concepts`, `scientific-data.concepts`, `geo-spatial.concepts` | EasingFunction, TimeVarying, PathLike, Image, ProceduralTexture, Camera, LightSource, Kinematic2D/3D, ForceModel2D/3D, ProbabilityDistribution, GraphLike, TimeSampled, GeoRegion |
+| P1 | `core`, `algebra` | `core.interfaces`, `algebra.interfaces` | Equatable, Value, Hashable, Orderable, Comparable, Logical, BooleanAlgebra, Bitwise, Additive, Multiplicative, Divisible, Modular, Invertible, Arithmetic, Scalable, Interpolatable, NumericalLimits, Numerical, Real, Whole, Normed, MetricSpace, Lattice, Clampable, Difference |
+| P2 | `collections`, `functional-procedural` | `collections.interfaces`, `functional.interfaces` | Countable, Index, Indexable/2D/3D/4D, Sliceable, Concatenable, ISet, IMap, IStack, IQueue, Procedural, Bijective, Periodic, ParameterDomain |
+| P3 | `numeric-structures` | `quantities.interfaces`, `vectors.interfaces`, `matrices.interfaces`, `points.interfaces` | Quantity, Vector, IMatrix, Coordinate |
+| P4 | `intervals`, `intervals-transforms-deformable` | `intervals-bounds.interfaces`, `transforms.interfaces` | IInterval, IBounds, Transformable2D, Transformable3D, Deformable2D, Deformable3D |
+| P5 | `geometry` | `geometry.interfaces` | Geometry family, shape traits, Bounded2D/3D, PointSet2D/3D, measurables, centroids, containment, nearest-point, support mapping |
+| P6 | `curves`, `surfaces` | `curves.interfaces`, `surfaces-solids.interfaces` | Curve<TRange>, Curve1D-3D, ClosedCurve2D/3D, PeriodicCurve, DifferentiableCurve2D/3D, FramedCurve3D, PlanarCurve3D, PolarCurve2D, ArcLengthParameterized, Surface, ClosedSurface, ParametricSurface, DifferentiableSurface, HeightFieldSurface, Solid, ConvexSolid, ParametricVolume |
+| P7 | `fields-implicits` | `fields.interfaces`, `implicit-sdf.interfaces` | Field, ScalarField2D/3D, VectorField2D/3D, DirectionField, ColorField, ComplexField2D, TensorField, the Differentiable and TimeVarying field families, SignedDistanceField2D/3D, ImplicitRegion2D, ImplicitVolume3D |
+| P8 | `meshes`, `meshes-polygon`, `spatial-structures` | `topology.interfaces`, `meshes.interfaces`, `pointclouds-voxels.interfaces`, `spatial.interfaces` | MeshElementCounts, MeshIncidence, IHalfEdge, IMesh2D/3D, TriangulatedGeometry3D, IPointCloud3D, IVoxel3D, SpatialIndex2D/3D, IRaycast2D/3D, IClosestPoint2D/3D, INearestNeighbor2D/3D |
+| P9 | `easing`, `time-varying`, `paths`, `images`, `texturing`, `cameras`, `lights`, `kinematics`, `rigid-dynamics`, `random`, `graphs`, `scientific-data`, `geo-spatial` | `easing.interfaces`, `time-varying.interfaces`, `paths.interfaces`, `images.interfaces`, `texturing.interfaces`, `cameras.interfaces`, `lights.interfaces`, `kinematics.interfaces`, `rigid-dynamics.interfaces`, `random.interfaces`, `graphs.interfaces`, `scientific-data.interfaces`, `geo-spatial.interfaces` | EasingFunction, TimeVarying, IPath, Image, ProceduralTexture, Camera, LightSource, Kinematic2D/3D, ForceModel2D/3D, ProbabilityDistribution, IGraph, TimeSampled, GeoRegion |
 
 File names in the two middle columns omit the `.plato` extension: `core` means
-`core.library.plato`, `core.concepts` means `core.concepts.plato`.
+`core.library.plato`, `core.interfaces` means `core.concepts.plato`.
 
 A package row names the file a package's bodies live in, not a file the package owns outright.
-Where a domain's concept bodies and its concrete per-type bodies share a domain they share a
+Where a domain's interface bodies and its concrete per-type bodies share a domain they share a
 file: `random.library.plato` holds both the `ProbabilityDistribution` traits of P9 and the
 per-distribution bodies, separated by section banners rather than by file.
 
@@ -126,17 +126,17 @@ Cross-package dependency: lower-package libraries may be referenced by higher on
 call P1 helpers), but prefer self-sufficiency; never create cycles.
 
 11. **No duplication of lower-package generics.** Before writing a helper, check whether a
-    lower-package library already provides it generically via an inherited concept (e.g. P1's
+    lower-package library already provides it generically via an inherited interface (e.g. P1's
     `MidPoint(Interpolatable)`, `Clamp`/`Between` on `Orderable`, `Half(Scalable)`,
-    `Double(Additive)`, `LerpClamped(Interpolatable)`, `Saturate(Real)`). If your concept
-    inherits that concept, the generic already applies — do not re-declare a per-concept copy,
+    `Double(Additive)`, `LerpClamped(Interpolatable)`, `Saturate(Real)`). If your interface
+    inherits that interface, the generic already applies — do not re-declare a per-interface copy,
     and never under a different spelling. If a function only uses inherited members, it belongs
-    in the package that owns the base concept; leave a `// TODO(cross-package):` note instead.
+    in the package that owns the base interface; leave a `// TODO(cross-package):` note instead.
 
 ## Libraries outside the package table
 
 The remaining `*.library.plato` files serve foundation domains or hold concrete per-type bodies
-rather than a P1–P9 concept package (ground rule 1). All follow the same one-block-per-file
+rather than a P1–P9 interface package (ground rule 1). All follow the same one-block-per-file
 naming; `grep "^library " */*.library.plato` is the live list.
 
 **Foundation domains:**
@@ -149,7 +149,7 @@ naming; `grep "^library " */*.library.plato` is the live list.
 | `color.library.plato` | `Colors` | `Color` arithmetic, and the CSS/X11 named colors as sRGB `Color8` |
 | `axes.library.plato` | `Axes` | `Axis3D`, `Axis2D` and `SignedAxis3D` operations |
 | `intrinsics.library.plato` | `Intrinsics` | the host contract, reduced to an irreducible kernel by plato-378 and only over `primitive` types: the scalar kernel, the five-function array kernel, and the `unique` `List<T>` / `Buffer<T>` surface; carries the intrinsics preamble, the admission rule and the porting notes |
-| `primitives.library.plato` | `Primitives` | the primitive concept obligations the host contract does not supply (identity conversions, `Number.Inverse`, the two `Lerp`s, the derived Boolean surface), plus reference bodies for the derivable `Number`, `Integer` and array surfaces |
+| `primitives.library.plato` | `Primitives` | the primitive interface obligations the host contract does not supply (identity conversions, `Number.Inverse`, the two `Lerp`s, the derived Boolean surface), plus reference bodies for the derivable `Number`, `Integer` and array surfaces |
 | `numbers.library.plato` | `Numbers` | the special-function vocabulary (gamma, beta, erf, Bessel) and the dual-number surface |
 | `vectors.library.plato` | `Vectors` | reference bodies for `Number2/3/4/8` component-wise math and for `Vector2D`/`Vector3D` displacement algebra, reflection and transforms |
 | `matrices.library.plato` | `Matrices` | dense and sparse matrix bodies |

@@ -1,5 +1,5 @@
 //==
-// # Graph concepts
+// # Graph interfaces
 //
 // The shared interface of every graph-shaped type: how many vertices and edges
 // it has, and whether its edges are directed. Vertices are the zero-based
@@ -8,7 +8,7 @@
 // The family of graph-shaped types: a vertex count, an edge count, and a
 // directedness flag. Vertices are the integers 0 through VertexCount - 1.
 // (https://en.wikipedia.org/wiki/Graph_(discrete_mathematics))
-interface IGraphLike
+interface IGraph
     inherits IValue
 {
     VertexCount(x: Self): Integer;

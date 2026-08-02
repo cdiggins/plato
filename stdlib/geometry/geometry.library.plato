@@ -2,7 +2,7 @@
 // # IGeometry
 //
 // Sections, in order:
-//  - GeometryTraits — derived functions for the geometry classification concepts
+//  - GeometryTraits — derived functions for the geometry classification interfaces
 //  - Fit quality and residuals
 //  - Convex hull readings
 //  - The shared point-list formulas
@@ -13,11 +13,11 @@
 library GeometryTraits
 {
     //==
-    // # GeometryTraits — derived functions for the geometry classification concepts
+    // # GeometryTraits — derived functions for the geometry classification interfaces
     //
     // Bodies for the classification, intrinsic-dimension, and topological-marker
-    // concepts declared in `geometry.concepts.plato`. Every function's first parameter
-    // is concept-typed, so each helper becomes available on every implementing type.
+    // interfaces declared in `geometry.concepts.plato`. Every function's first parameter
+    // is interface-typed, so each helper becomes available on every implementing type.
     // Pure expressions only; all geometry is immutable, so nothing mutates in place.
     // The bounds / measure / centroid bodies, the point queries, the shared
     // point-list formulas and the two PointSet obligations all follow below.
@@ -50,7 +50,7 @@ library GeometryTraits
     //
     // Open / Closed form a genuine duality (a type is one or the other), so both
     // sides get the true *and* false overloads. The remaining markers have no
-    // negative counterpart concept, so IsConvex / IsManifold / IsOrientable /
+    // negative counterpart interface, so IsConvex / IsManifold / IsOrientable /
     // IsConnected are one-sided reflection hooks: they answer true when the fact is
     // statically promised, and simply do not resolve on a type that lacks the marker.
 
@@ -138,7 +138,7 @@ library GeometryTraits
     // # Any fit
     //
     // The tolerance check written once for every fitted shape, over the
-    // `IFitted` concept rather than per shape.
+    // `IFitted` interface rather than per shape.
 
     // True when every sample of the fit lies within the tolerance of its
     // shape.
@@ -269,12 +269,12 @@ library GeometryTraits
     //
     // The formulas every point-list shape in the line, planar-shape, polygon and
     // spatial-primitive files is built from. They take a plain `Array<Point2D>` /
-    // `Array<Point3D>` rather than a concept so that a shape whose points are NOT its
+    // `Array<Point3D>` rather than an interface so that a shape whose points are NOT its
     // `PointSet` members (a regular polygon's computed vertices, a polygon's holes) can
     // call them too. Aggregate reductions (centroid-of-points, bounds-of-points, total
     // polyline length) are folded through the P2 IIndexable Reduce/Map family: the
     // kernels below materialize their elements once and reduce. IDifference.Between(a, b)
-    // yields (b - a) — pinned in the algebra concepts — so the sign of BoundsSize and
+    // yields (b - a) — pinned in the algebra interfaces — so the sign of BoundsSize and
     // every Between-based delta below rests on a documented convention, not observed
     // behavior.
 
@@ -283,7 +283,7 @@ library GeometryTraits
     //
     // The formulas every point-list shape in `lines.types.plato`, `planar.types.plato`,
     // `polygons.types.plato` and the `spatial-*.types.plato` files is built from. They take a
-    // plain `Array<Point2D>` / `Array<Point3D>` rather than a concept so that a
+    // plain `Array<Point2D>` / `Array<Point3D>` rather than an interface so that a
     // shape whose points are NOT its `PointSet` members (a regular polygon's
     // computed vertices, a polygon's holes) can call them too.
     //
@@ -478,8 +478,8 @@ library GeometryTraits
     //==
     // # Bounds, measures, and centroids
     //
-    // Bodies for the IBounded2D / IBounded3D, ILengthMeasurable / IPlanarMeasurable /
-    // ISpatialMeasurable and ICentroid2D / ICentroid3D concepts declared in
+    // Bodies for the IBounded2D / IBounded3D, ILength / IArea /
+    // IVolume and ICentroid2D / ICentroid3D interfaces declared in
     // `geometry.concepts.plato`.
     //
     // Conventions used throughout:
@@ -493,7 +493,7 @@ library GeometryTraits
     // Cross-package reuse (this library deliberately does NOT re-spell generics that lower
     // packages already ship):
     //   * P1: Half(IScalable), AlmostZero(IReal, tolerance).
-    //   * P4: Center(IBoundsLike<$TPoint>).
+    //   * P4: Center(IBounds<$TPoint>).
 
     //==
     // # IBounded2D
@@ -501,10 +501,10 @@ library GeometryTraits
     // Everything derived from the axis-aligned Bounds2D (Min / Max corners, each a
     // Point2D) — an AABB (https://en.wikipedia.org/wiki/Axis-aligned_bounding_box;
     // see also https://en.wikipedia.org/wiki/Bounding_volume). Named with a
-    // `Bounds` prefix so nothing collides with the members IBoundsLike itself
+    // `Bounds` prefix so nothing collides with the members IBounds itself
     // carries, and so BoundsCenter reads distinctly from a shape centroid.
 
-    // The center of the bounding rectangle. Delegates to P4's Center(IBoundsLike).
+    // The center of the bounding rectangle. Delegates to P4's Center(IBounds).
     BoundsCenter(self: IBounded2D): Point2D
         => self.Bounds.Center;
 
@@ -549,7 +549,7 @@ library GeometryTraits
     //
     // The 3D analogues over Bounds3D (Min / Max are Point3D).
 
-    // The center of the bounding box. Delegates to P4's Center(IBoundsLike).
+    // The center of the bounding box. Delegates to P4's Center(IBounds).
     BoundsCenter(self: IBounded3D): Point3D
         => self.Bounds.Center;
 
@@ -604,64 +604,64 @@ library GeometryTraits
     // Points array — callers write `self.Points.IsEmpty`, `self.Points.First`,
     // `self.Points.Last`, `self.Points.Count`, `self.Points.At(i)`. Re-spelling any
     // of them at this layer would be pure rule-11 duplication. Aggregate reductions
-    // (centroid, bounds) are the fold concept-gap noted at the top of the file.
+    // (centroid, bounds) are the fold interface-gap noted at the top of the file.
 
     //==
-    // # ILengthMeasurable
+    // # ILength
     //
     // Conveniences over a finite total Length. Half(Length) already comes from P1's
     // Half(IScalable); it is not respelled here.
 
     // True when the length is within `tolerance` of zero (a degenerate span).
     // Delegates to P1's AlmostZero(IReal, tolerance) rather than an exact == 0.0.
-    IsDegenerate(self: ILengthMeasurable, tolerance: Number): Boolean
+    IsDegenerate(self: ILength, tolerance: Number): Boolean
         => self.Length.AlmostZero(tolerance);
 
     // True when this entity is longer than another length-measurable entity.
-    LongerThan(self: ILengthMeasurable, other: ILengthMeasurable): Boolean
+    LongerThan(self: ILength, other: ILength): Boolean
         => self.Length > other.Length;
 
     //==
-    // # IPlanarMeasurable
+    // # IArea
     //
     // Conveniences over a finite Area and boundary Perimeter.
 
     // True when the area is within `tolerance` of zero (a degenerate region).
-    IsDegenerate(self: IPlanarMeasurable, tolerance: Number): Boolean
+    IsDegenerate(self: IArea, tolerance: Number): Boolean
         => self.Area.AlmostZero(tolerance);
 
     // The ratio of enclosed area to boundary length; larger for "fuller" regions.
     // Precondition: non-zero perimeter.
-    AreaPerimeterRatio(self: IPlanarMeasurable): Number
+    AreaPerimeterRatio(self: IArea): Number
         => self.Area / self.Perimeter;
 
     // True when this region encloses more area than another.
-    LargerAreaThan(self: IPlanarMeasurable, other: IPlanarMeasurable): Boolean
+    LargerAreaThan(self: IArea, other: IArea): Boolean
         => self.Area > other.Area;
 
     // The isoperimetric quotient 4*Pi*Area / Perimeter^2: a scale-invariant
     // compactness measure in (0, 1], equal to 1 only for a disc
     // (https://en.wikipedia.org/wiki/Isoperimetric_inequality).
     // Precondition: non-zero perimeter.
-    IsoperimetricQuotient(self: IPlanarMeasurable): Number
+    IsoperimetricQuotient(self: IArea): Number
         => 4.0 * self.Area.Pi * self.Area / (self.Perimeter * self.Perimeter);
 
     //==
-    // # ISpatialMeasurable
+    // # IVolume
     //
     // Conveniences over a finite Volume and boundary SurfaceArea.
 
     // True when the volume is within `tolerance` of zero (a degenerate solid).
-    IsDegenerate(self: ISpatialMeasurable, tolerance: Number): Boolean
+    IsDegenerate(self: IVolume, tolerance: Number): Boolean
         => self.Volume.AlmostZero(tolerance);
 
     // The ratio of enclosed volume to boundary area; larger for more "compact"
     // solids. Precondition: non-zero surface area.
-    VolumeSurfaceRatio(self: ISpatialMeasurable): Number
+    VolumeSurfaceRatio(self: IVolume): Number
         => self.Volume / self.SurfaceArea;
 
     // True when this solid encloses more volume than another.
-    LargerVolumeThan(self: ISpatialMeasurable, other: ISpatialMeasurable): Boolean
+    LargerVolumeThan(self: IVolume, other: IVolume): Boolean
         => self.Volume > other.Volume;
 
     //==
@@ -750,8 +750,8 @@ library GeometryTraits
     //==
     // # Containment, nearest point, and support mapping
     //
-    // Bodies for the IContainsPoint2D / 3D, INearestPoint2D / 3D and ISupportMappable2D /
-    // 3D concepts declared in `geometry.concepts.plato`. Distances are computed
+    // Bodies for the IContainsPoint2D / 3D, INearestPoint2D / 3D and ISupport2D /
+    // 3D interfaces declared in `geometry.concepts.plato`. Distances are computed
     // as the magnitude of a Between delta, so the argument order of Between never
     // affects a distance result.
 
@@ -759,7 +759,7 @@ library GeometryTraits
     // # IContainsPoint2D / IContainsPoint3D
     //
     // Membership conveniences built on Contains(point). A batched ContainsAll over
-    // an Array<Point> is the fold concept-gap noted at the top of the file.
+    // an Array<Point> is the fold interface-gap noted at the top of the file.
 
     // True when the point is NOT a member of the shape.
     Excludes(self: IContainsPoint2D, point: Point2D): Boolean
@@ -802,7 +802,7 @@ library GeometryTraits
         => self.DistanceToSquared(point) <= radius * radius;
 
     //==
-    // # ISupportMappable2D / ISupportMappable3D
+    // # ISupport2D / ISupport3D
     //
     // The support mapping returns the farthest point of a convex shape in a given
     // direction (https://en.wikipedia.org/wiki/Support_function). SupportExtent
@@ -813,7 +813,7 @@ library GeometryTraits
 
     // The signed extent of the shape along `direction`: the support point projected
     // onto the (unit) direction vector.
-    SupportExtent(self: ISupportMappable2D, direction: Direction2D): Number
+    SupportExtent(self: ISupport2D, direction: Direction2D): Number
     {
         var p = self.Support(direction);
         return p.X * direction.Vector.X + p.Y * direction.Vector.Y;
@@ -821,7 +821,7 @@ library GeometryTraits
 
     // The signed extent of the shape along `direction`: the support point projected
     // onto the (unit) direction vector.
-    SupportExtent(self: ISupportMappable3D, direction: Direction3D): Number
+    SupportExtent(self: ISupport3D, direction: Direction3D): Number
     {
         var p = self.Support(direction);
         return p.X * direction.Vector.X + p.Y * direction.Vector.Y + p.Z * direction.Vector.Z;

@@ -11,7 +11,7 @@ library Algebra
     //==
     // # Algebra metric
     //
-    // Derived functionality for the magnitude, distance and lattice concepts
+    // Derived functionality for the magnitude, distance and lattice interfaces
     // (`algebra.concepts.plato`): unit-length tests, proximity predicates,
     // nearest-of selection, and the component-wise clamp
     // (https://en.wikipedia.org/wiki/Metric_space). Shared provenance note:
@@ -59,7 +59,7 @@ library Algebra
     //
     // `IDifference` declares only Add(Self, TDelta) and Between(Self, Self): the
     // torsor action and its inverse. Everything below follows from those two plus
-    // the concept's `where TDelta: IAdditive, TDelta: IScalable` bound, so an
+    // the interface's `where TDelta: IAdditive, TDelta: IScalable` bound, so an
     // implementing type owes two members rather than the six it used to spell out
     // by hand. Point2D/Point3D and Instant previously wrote all of this per type
     // (transforms.library.plato, time.library.plato); PointN, UvCoordinate
@@ -68,7 +68,7 @@ library Algebra
     //
     // The earlier note here said Plato had no type-parameter constraint syntax and
     // that MidPoint was therefore unreachable. That was already out of date:
-    // `where` clauses on concepts are live (IIntervalLike / IBoundsLike in
+    // `where` clauses on interfaces are live (IInterval / IBounds in
     // intervals-bounds.concepts.plato), and MidPoint now falls out of the Lerp
     // below via IInterpolatable.
 
@@ -84,8 +84,8 @@ library Algebra
 
     // NOT derivable here: the commuted `Add(delta, position)`. A library function
     // dispatches on its FIRST parameter, which the compiler requires to be a
-    // concrete type or a concept — a bare type variable is rejected with
-    // "not a concrete type or concept". So reversed-operand forms over a concept
+    // concrete type or an interface — a bare type variable is rejected with
+    // "not a concrete type or interface". So reversed-operand forms over an interface
     // cannot be spelled generically at all, and any position type wanting
     // `delta + position` writes it concretely (Instant does, in
     // time.library.plato). Same reason the delta-centric `Apply(delta, position)`
@@ -124,7 +124,7 @@ library Algebra
 
     // The origin itself: the position at zero displacement. The receiver only
     // selects the type, and for runtime-arity positions supplies the arity.
-    // Reaches TDelta's Zero through the concept's `where TDelta: IAdditive` bound
+    // Reaches TDelta's Zero through the interface's `where TDelta: IAdditive` bound
     // (Zero lives on IAdditive, not INumericalLimits, so Duration resolves too).
     Origin(x: IOriginBased<$D>): IOriginBased<$D>
         => x.FromOffset(x.Offset.Zero);
@@ -313,7 +313,7 @@ library Algebra
     //==
     // # Algebra operations
     //
-    // Derived functionality for the elementary operation concepts
+    // Derived functionality for the elementary operation interfaces
     // (`algebra.concepts.plato`): powers, the named scalar fractions and
     // multiples, and the interpolation helpers built on `Lerp`
     // (https://en.wikipedia.org/wiki/Linear_interpolation). Shared provenance note:

@@ -6,7 +6,7 @@
 //  - Bodies for the unwelded face arrays
 //  - The IFace corner surface and its derived loop walks
 //  - Derived functionality for meshable and sampled geometry
-//  - Concept obligations of the indexed surface meshes
+//  - Interface obligations of the indexed surface meshes
 //  - What the layered mesh vocabulary derives for free
 //  - Deformation bodies for line sets and bare point clouds
 //  - Deformation body for the partitioned mesh
@@ -35,14 +35,14 @@ library Meshes
             self.ColorChannels,
             self.TangentChannels);
 
-    // The IMeshable3D obligation: the geometry without its attribute channels.
+    // The IMesh3D obligation: the geometry without its attribute channels.
     ToTriangleMesh(self: RichMesh3D): TriangleMesh3D
         => self.Mesh;
 
     //==
     // # Bodies for the unwelded face arrays
     //
-    // The concept obligations of `TriangleArray3D` / `QuadArray3D`
+    // The interface obligations of `TriangleArray3D` / `QuadArray3D`
     // (`meshes.types.plato`). `Points` flattens the faces in authored order,
     // which is what makes the index table of `ToTriangleMesh` the identity: corner k
     // of face i is position (arity * i + k). `Bounds` comes free from `IPointSet3D`
@@ -56,7 +56,7 @@ library Meshes
     Points(a: TriangleArray3D): Array<Point3D>
         => a.Triangles.FlatMap(t => t.Points);
 
-    // The IMeshable3D obligation. No welding: positions are the flattened corners
+    // The IMesh3D obligation. No welding: positions are the flattened corners
     // and the faces index them consecutively, so a mesh with shared vertices
     // requires a separate weld pass.
     ToTriangleMesh(a: TriangleArray3D): TriangleMesh3D
@@ -91,7 +91,7 @@ library Meshes
                 TriangleFace(VertexIndex(b), VertexIndex(b + 2), VertexIndex(b + 3))];
     }
 
-    // The IMeshable3D obligation: two triangles per quad over the flattened
+    // The IMesh3D obligation: two triangles per quad over the flattened
     // corners.
     ToTriangleMesh(a: QuadArray3D): TriangleMesh3D
         => (a.Points,
@@ -109,7 +109,7 @@ library Meshes
     //==
     // # The IFace corner surface and its derived loop walks
     //
-    // Bodies for the `IFace` concept (`meshes.concepts.plato`): the Count/At
+    // Bodies for the `IFace` interface (`meshes.concepts.plato`): the Count/At
     // obligations of the two fixed-arity face records (`meshes.types.plato`), and the
     // loop vocabulary derived from them — edges, membership, and the fan
     // triangulation that fixes the A-C diagonal split of a quad in code rather
@@ -233,56 +233,56 @@ library Meshes
     //==
     // # Derived functionality for meshable and sampled geometry
     //
-    // Pure, expression-bodied helpers for the concepts declared in
-    // `meshes.concepts.plato` (IMeshable3D, IMeshable2D, ITriangulatedGeometry3D) and
-    // `pointclouds-voxels.concepts.plato` (IPointCloudable3D, IVoxelizable3D), plus the
+    // Pure, expression-bodied helpers for the interfaces declared in
+    // `meshes.concepts.plato` (IMesh3D, IMesh2D, ITriangulatedGeometry3D) and
+    // `pointclouds-voxels.concepts.plato` (IPointCloud3D, IVoxel3D), plus the
     // shared quad-grid face-index routine behind every grid-shaped tessellation.
-    // Part of P8 of the concept library.
+    // Part of P8 of the interface library.
     //
-    // IMeshable3D, IMeshable2D, ITriangulatedGeometry3D, IPointCloudable3D, and
-    // IVoxelizable3D helpers, plus the shared quad-grid face-index routine behind
+    // IMesh3D, IMesh2D, ITriangulatedGeometry3D, IPointCloud3D, and
+    // IVoxel3D helpers, plus the shared quad-grid face-index routine behind
     // every grid-shaped tessellation.
     //
-    // IMeshable3D exposes mesh vertex/face counts and topology without a manual
+    // IMesh3D exposes mesh vertex/face counts and topology without a manual
     // ToTriangleMesh hop. Triangle3D is built from a typed FaceIndex rather than a
     // bare index tuple.
 
     //==
-    // IMeshable3D — anything that can produce an indexed triangle mesh of itself.
+    // IMesh3D — anything that can produce an indexed triangle mesh of itself.
     // The forwards below expose the triangulation's topology without a manual
     // ToTriangleMesh hop (TriangleMesh3D is itself IMeshElementCounts).
 
     // The vertex count of this object's triangle-mesh approximation.
-    MeshVertexCount(self: IMeshable3D): Integer
+    MeshVertexCount(self: IMesh3D): Integer
         => self.ToTriangleMesh.VertexCount;
 
     // The face count of this object's triangle-mesh approximation.
-    MeshFaceCount(self: IMeshable3D): Integer
+    MeshFaceCount(self: IMesh3D): Integer
         => self.ToTriangleMesh.FaceCount;
 
     // The Euler characteristic of this object's triangle-mesh approximation.
-    MeshEulerCharacteristic(self: IMeshable3D): Integer
+    MeshEulerCharacteristic(self: IMesh3D): Integer
         => self.ToTriangleMesh.EulerCharacteristic;
 
     // True when the triangle-mesh approximation has no vertices.
-    MeshIsEmpty(self: IMeshable3D): Boolean
+    MeshIsEmpty(self: IMesh3D): Boolean
         => self.ToTriangleMesh.IsEmpty;
 
     //==
-    // IMeshable2D — anything in the plane that can triangulate itself. Same
+    // IMesh2D — anything in the plane that can triangulate itself. Same
     // topology forwards over the produced TriangleMesh2D (also a
     // IMeshElementCounts).
 
     // The vertex count of this shape's planar triangulation.
-    TriangulationVertexCount(self: IMeshable2D): Integer
+    TriangulationVertexCount(self: IMesh2D): Integer
         => self.Triangulate.VertexCount;
 
     // The triangle (face) count of this shape's planar triangulation.
-    TriangulationFaceCount(self: IMeshable2D): Integer
+    TriangulationFaceCount(self: IMesh2D): Integer
         => self.Triangulate.FaceCount;
 
     // True when the shape triangulates to nothing.
-    TriangulationIsEmpty(self: IMeshable2D): Boolean
+    TriangulationIsEmpty(self: IMesh2D): Boolean
         => self.Triangulate.IsEmpty;
 
     //==
@@ -363,41 +363,41 @@ library Meshes
         => AllQuadFaceIndices(self.ColumnCount, self.RowCount, closedU, closedV);
 
     //==
-    // IPointCloudable3D — anything that can shed its structure to a bare point cloud.
+    // IPointCloud3D — anything that can shed its structure to a bare point cloud.
 
     // The number of points once reduced to a bare cloud.
-    PointCount(self: IPointCloudable3D): Integer
+    PointCount(self: IPointCloud3D): Integer
         => self.ToPointCloud.Positions.Count;
 
     // The i-th point of the bare cloud. Precondition: i in [0, PointCount).
-    PointAt(self: IPointCloudable3D, i: Integer): Point3D
+    PointAt(self: IPointCloud3D, i: Integer): Point3D
         => self.ToPointCloud.Positions[i];
 
     // True when reducing to a bare cloud yields no points.
-    IsEmpty(self: IPointCloudable3D): Boolean
+    IsEmpty(self: IPointCloud3D): Boolean
         => self.PointCount.IsZero;
 
     //==
-    // IVoxelizable3D — conservative rasterization into a binary occupancy grid.
+    // IVoxel3D — conservative rasterization into a binary occupancy grid.
 
     // The total number of grid cells at the given cell size. Count of the Occupied
     // Array3D is the TOTAL cell count (occupied plus empty), not the occupied count.
-    VoxelCellCount(self: IVoxelizable3D, cellSize: Number): Integer
+    VoxelCellCount(self: IVoxel3D, cellSize: Number): Integer
         => self.ToOccupancyGrid(cellSize).Occupied.Count;
 
     // The number of OCCUPIED cells at the given cell size: a boolean fold over the
     // occupancy raster. Array3D<Boolean> inherits the flat IIndexable surface, so P2's
     // Reduce reaches every cell by flat index; the accumulator counts the true cells.
-    VoxelOccupiedCount(self: IVoxelizable3D, cellSize: Number): Integer
+    VoxelOccupiedCount(self: IVoxel3D, cellSize: Number): Integer
         => self.ToOccupancyGrid(cellSize).Occupied.Reduce(0, (acc, b) => b ? acc + 1 : acc);
 
     //==
-    // # Concept obligations of the indexed surface meshes
+    // # Interface obligations of the indexed surface meshes
     //
     // The concrete bodies that make TriangleMesh3D, TriangleMesh2D and QuadMesh3D
-    // (`meshes.types.plato`) honor their declared concepts: the IMeshElementCounts census
+    // (`meshes.types.plato`) honor their declared interfaces: the IMeshElementCounts census
     // for all three, ITriangulatedGeometry3D random access for TriangleMesh3D,
-    // IMeshable2D for TriangleMesh2D, and IMeshable3D for QuadMesh3D. Undirected
+    // IMesh2D for TriangleMesh2D, and IMesh3D for QuadMesh3D. Undirected
     // edge counts dedupe through the first-occurrence rule stated with the face
     // arrays below, so they hold for open meshes as well as closed ones.
 
@@ -431,7 +431,7 @@ library Meshes
     PositionAt(self: TriangleMesh3D, vertex: VertexIndex): Point3D
         => self.Positions[vertex.Value];
 
-    // The IMeshable3D obligation (inherited through ITriangulatedGeometry3D):
+    // The IMesh3D obligation (inherited through ITriangulatedGeometry3D):
     // an indexed triangle mesh is its own triangulation.
     ToTriangleMesh(self: TriangleMesh3D): TriangleMesh3D
         => self;
@@ -471,7 +471,7 @@ library Meshes
     UndirectedEdgeCount(self: TriangleMesh2D): Integer
         => self.Faces.DirectedEdges.UndirectedEdgeCount;
 
-    // The IMeshable2D obligation: a planar triangle mesh is its own
+    // The IMesh2D obligation: a planar triangle mesh is its own
     // triangulation.
     Triangulate(self: TriangleMesh2D): TriangleMesh2D
         => self;
@@ -511,7 +511,7 @@ library Meshes
     UndirectedEdgeCount(self: QuadMesh3D): Integer
         => self.Faces.DirectedEdges.UndirectedEdgeCount;
 
-    // The IMeshable3D obligation: two triangles per quad over the shared
+    // The IMesh3D obligation: two triangles per quad over the shared
     // positions, split on the A-C diagonal (the fan from corner 0).
     ToTriangleMesh(self: QuadMesh3D): TriangleMesh3D
         => (self.Positions, self.Faces.FlatMap(q => q.FanTriangles));
@@ -620,7 +620,7 @@ library Meshes
     Deform(self: SegmentedMesh3D, mapping: Function1<Point3D, Point3D>): SegmentedMesh3D
         => (self.Mesh.Deform(mapping), self.Sections);
 
-    // The IMeshable3D obligation: the geometry without its section partition.
+    // The IMesh3D obligation: the geometry without its section partition.
     // The face order is the partition's order, so a caller that wants to keep
     // the grouping reads Sections alongside this.
     ToTriangleMesh(self: SegmentedMesh3D): TriangleMesh3D
@@ -629,11 +629,11 @@ library Meshes
     //==
     // # Derived functionality for mesh connectivity
     //
-    // Pure, expression-bodied helpers for the concepts declared in
+    // Pure, expression-bodied helpers for the interfaces declared in
     // `topology.concepts.plato` (IMeshElementCounts, IMeshIncidence,
-    // IHalfEdgeNavigable). Part of P8 of the concept library.
+    // IHalfEdge). Part of P8 of the interface library.
     //
-    // The three sections follow the concept ladder: what counts alone can tell you,
+    // The three sections follow the interface ladder: what counts alone can tell you,
     // what incidence adds, and what a built half-edge structure adds. Each helper
     // sits on the weakest rung that can answer it — the valence of a vertex needs
     // incidence but not half-edges, so it is written once, there.
@@ -745,39 +745,39 @@ library Meshes
         => self.FaceCountOfUndirectedEdge(edge) > 2;
 
     //==
-    // IHalfEdgeNavigable — constant-time walks over a half-edge structure
+    // IHalfEdge — constant-time walks over a half-edge structure
     // (https://en.wikipedia.org/wiki/Doubly_connected_edge_list). Callers
     // must never pass -1; absence surfaces as a -1 IValue in the returned index.
     // (Twin is -1 on a boundary edge; IFace is -1 for a half-edge along a hole.)
 
     // The vertex a half-edge points at: the origin of its next half-edge.
-    DestinationOf(self: IHalfEdgeNavigable, halfEdge: HalfEdgeIndex): VertexIndex
+    DestinationOf(self: IHalfEdge, halfEdge: HalfEdgeIndex): VertexIndex
         => self.OriginOf(self.NextOf(halfEdge));
 
     // True when this half-edge has an opposite half-edge (its edge is interior).
-    HasTwin(self: IHalfEdgeNavigable, halfEdge: HalfEdgeIndex): Boolean
+    HasTwin(self: IHalfEdge, halfEdge: HalfEdgeIndex): Boolean
         => self.TwinOf(halfEdge).IsPresent;
 
     // True when the undirected edge this half-edge is one side of lies on the
     // boundary — equivalently, when it has no twin.
-    LiesOnBoundary(self: IHalfEdgeNavigable, halfEdge: HalfEdgeIndex): Boolean
+    LiesOnBoundary(self: IHalfEdge, halfEdge: HalfEdgeIndex): Boolean
         => self.TwinOf(halfEdge).IsNone;
 
     // True when this half-edge runs along a hole rather than bordering a face.
-    BordersHole(self: IHalfEdgeNavigable, halfEdge: HalfEdgeIndex): Boolean
+    BordersHole(self: IHalfEdge, halfEdge: HalfEdgeIndex): Boolean
         => self.FaceOf(halfEdge).IsNone;
 
     // The next outgoing half-edge around the same origin vertex, advancing
     // counter-clockwise (faces wind CCW): the twin of the half-edge that arrives
     // at the origin. Returns -1 when that arriving half-edge is on the boundary
     // (no twin) — i.e. at the counter-clockwise end of an open fan.
-    RotateAroundOrigin(self: IHalfEdgeNavigable, halfEdge: HalfEdgeIndex): HalfEdgeIndex
+    RotateAroundOrigin(self: IHalfEdge, halfEdge: HalfEdgeIndex): HalfEdgeIndex
         => self.TwinOf(self.PreviousOf(halfEdge));
 
     // The two endpoint vertices of a half-edge in its own direction: A is the
     // Origin, B is the Destination. NOT canonically ordered (A.Value may exceed
     // B.Value); take the twin's endpoints for the reverse direction.
-    DirectedEndpointsOf(self: IHalfEdgeNavigable, halfEdge: HalfEdgeIndex): VertexPair
+    DirectedEndpointsOf(self: IHalfEdge, halfEdge: HalfEdgeIndex): VertexPair
         => (self.OriginOf(halfEdge), self.DestinationOf(halfEdge));
 
     //==
@@ -823,14 +823,14 @@ library Meshes
     //==
     // # TetrahedralMesh3D — the boundary surface
     //
-    // The IMeshable3D obligation: the surface of a volume mesh is the set of
+    // The IMesh3D obligation: the surface of a volume mesh is the set of
     // faces belonging to exactly ONE cell. An interior face is shared by two
     // tetrahedra and appears twice; a boundary face appears once.
     //
     // The multiplicity test is a scan of every candidate face against every
     // other, so extraction is quadratic in the cell count. A hash-grouped pass
     // would be linear, but grouping needs a keyed container this vocabulary does
-    // not have (see LINT013 on IMapLike). Correct and slow beats fast and absent;
+    // not have (see LINT013 on IMap). Correct and slow beats fast and absent;
     // the worklist entry is plato-321.
 
     // The k-th face of a tetrahedron (k in 0..3), wound so its normal points OUT

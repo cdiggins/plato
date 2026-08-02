@@ -20,7 +20,7 @@
 // crossings; counter-clockwise winding encloses positive area.
 // (https://en.wikipedia.org/wiki/Simple_polygon)
 type Polygon2D
-    implements IGeometry2D, IClosedShape, IConnected, IPlanarMeasurable, IBounded2D, IPointSet2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, IDeformable2D
+    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, IPointSet2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, IDeformable2D
 {
     Points: Array<Point2D>;
 }
@@ -29,7 +29,7 @@ type Polygon2D
 // The stronger invariant unlocks constant-cost support mapping and logarithmic
 // containment tests. (https://en.wikipedia.org/wiki/Convex_polygon)
 type ConvexPolygon2D
-    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IPlanarMeasurable, IBounded2D, IPointSet2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, ISupportMappable2D, IDeformable2D
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, IPointSet2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, ISupport2D, IDeformable2D
 {
     Points: Array<Point2D>;
 }
@@ -39,7 +39,7 @@ type ConvexPolygon2D
 // disjoint, and wind opposite to it.
 // (https://en.wikipedia.org/wiki/Polygon_with_holes)
 type PolygonWithHoles2D
-    implements IGeometry2D, IClosedShape, IConnected, IPlanarMeasurable, IBounded2D, ICentroid2D, IContainsPoint2D, IDeformable2D
+    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D, IDeformable2D
 {
     Boundary: Polygon2D;
     Holes: Array<Polygon2D>;
@@ -49,7 +49,7 @@ type PolygonWithHoles2D
 // shape of Boolean operations over polygons; possibly disconnected, possibly
 // empty. (https://en.wikipedia.org/wiki/Boolean_operations_on_polygons)
 type PolygonSet2D
-    implements IGeometry2D, IClosedShape, IPlanarMeasurable, IBounded2D, IContainsPoint2D, IDeformable2D
+    implements IGeometry2D, IClosedShape, IArea, IBounded2D, IContainsPoint2D, IDeformable2D
 {
     Polygons: Array<PolygonWithHoles2D>;
 }
@@ -59,7 +59,7 @@ type PolygonSet2D
 // turns the first tip away from +X (https://en.wikipedia.org/wiki/Star_polygon).
 // Invariants: PointCount >= 3, 0 < InnerRadius <= OuterRadius.
 type RegularStar2D
-    implements IGeometry2D, IClosedShape, IConnected, IPlanarMeasurable, IBounded2D, ICentroid2D, IContainsPoint2D
+    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D
 {
     Center: Point2D;
     OuterRadius: Number;
@@ -79,7 +79,7 @@ type RegularStar2D
 // A chain of straight segments joining consecutive Points. When Closed, an
 // extra segment joins the last point back to the first. At least two points.
 type Polyline2D
-    implements IGeometry2D, IConnected, IBounded2D, ILengthMeasurable, IPointSet2D, IDeformable2D
+    implements IGeometry2D, IConnected, IBounded2D, ILength, IPointSet2D, IDeformable2D
 {
     Points: Array<Point2D>;
     Closed: Boolean;
@@ -88,7 +88,7 @@ type Polyline2D
 // A chain of straight segments in space. When Closed, an extra segment joins
 // the last point back to the first.
 type Polyline3D
-    implements IGeometry3D, IConnected, IBounded3D, ILengthMeasurable, IPointSet3D, IDeformable3D
+    implements IGeometry3D, IConnected, IBounded3D, ILength, IPointSet3D, IDeformable3D
 {
     Points: Array<Point3D>;
     Closed: Boolean;
@@ -97,7 +97,7 @@ type Polyline3D
 // A chain of straight segments in N-dimensional space. When Closed, an extra
 // segment joins the last point back to the first. All points share one arity.
 type PolylineN
-    implements IGeometryND, IConnected, ILengthMeasurable
+    implements IGeometryND, IConnected, ILength
 {
     Points: Array<PointN>;
     Closed: Boolean;
@@ -117,7 +117,7 @@ type PolylineN
 // order, the last implicitly joined to the first. The normal follows the
 // right-hand rule around the winding.
 type Polygon3D
-    implements IGeometry3D, IClosedShape, IConnected, IManifold, IOrientable, IPlanarMeasurable, IBounded3D, IPointSet3D, ICentroid3D, INearestPoint3D, IDeformable3D
+    implements IGeometry3D, IClosedShape, IConnected, IManifold, IOrientable, IArea, IBounded3D, IPointSet3D, ICentroid3D, INearestPoint3D, IDeformable3D
 {
     Points: Array<Point3D>;
 }
@@ -132,7 +132,7 @@ type Polygon3D
 // principled action on a vector — the image of a translational sweep under a
 // nonlinear mapping is not a translational sweep.
 type Prism3D
-    implements IGeometry3D, IClosedShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D
+    implements IGeometry3D, IClosedShape, IConnected, IVolume, IBounded3D, ICentroid3D, IContainsPoint3D
 {
     Base: Polygon3D;
     Offset: Vector3D;
@@ -142,7 +142,7 @@ type Prism3D
 // (https://en.wikipedia.org/wiki/Pyramid_(geometry)). Degenerate when Apex lies
 // in the base plane.
 type Pyramid3D
-    implements IGeometry3D, IClosedShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D, IDeformable3D
+    implements IGeometry3D, IClosedShape, IConnected, IVolume, IBounded3D, ICentroid3D, IContainsPoint3D, IDeformable3D
 {
     Base: Polygon3D;
     Apex: Point3D;

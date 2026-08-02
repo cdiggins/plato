@@ -13,7 +13,7 @@
 //
 // Every member referenced below was verified against stdlib/intervals-transforms.library.plato
 // and stdlib/core-algebra.library.plato (LIBRARIES.md rule 3). This packet targets the
-// interval remap kit (At/ParameterOf/Remap), the generic IntervalLike surface, and the
+// interval remap kit (At/ParameterOf/Remap), the generic IInterval surface, and the
 // concrete Bounds2D/Bounds3D AABB operations.
 library FoundationLaws
 {
@@ -49,18 +49,18 @@ library FoundationLaws
         => i.Start.LawEq(i.End) || x.Remap(i, i).LawEq(x);
 
     //==
-    // Generic IntervalLike<T> surface (Contains / Center, guarded to forward orientation).
+    // Generic IInterval<T> surface (Contains / Center, guarded to forward orientation).
 
     // A forward interval contains its own Start endpoint (closed interval, inclusive).
-    Law_ContainsStart(self: IntervalLike<$T>): Boolean
+    Law_ContainsStart(self: IInterval<$T>): Boolean
         => self.IsReversed || self.Contains(self.Start);
 
     // A forward interval contains its own End endpoint.
-    Law_ContainsEnd(self: IntervalLike<$T>): Boolean
+    Law_ContainsEnd(self: IInterval<$T>): Boolean
         => self.IsReversed || self.Contains(self.End);
 
     // A forward interval contains its own center.
-    Law_ContainsCenter(self: IntervalLike<$T>): Boolean
+    Law_ContainsCenter(self: IInterval<$T>): Boolean
         => self.IsReversed || self.Contains(self.Center);
 
     // Same property, stated over AngleInterval's OWN surface.
@@ -69,7 +69,7 @@ library FoundationLaws
     // (intervals.library.plato), so the generic law above does
     // not describe this type. Worse, monomorphizing it produces a CHIMERA: the
     // concept's linear Center is inlined into the law body (resolution happens
-    // against IntervalLike, where the specialization is invisible), while the
+    // against IInterval, where the specialization is invisible), while the
     // Contains call survives as a call and is re-bound by C# extension-method
     // overload resolution to the type's wrap-aware one (tracked as plato-374). Arc
     // Contains of a linear midpoint holds for neither reading, and it fails for

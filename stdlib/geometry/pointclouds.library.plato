@@ -24,7 +24,7 @@ library PointClouds
         => (self.Positions.Map(mapping), self.Normals, self.Colors, self.Intensities);
 
     //==
-    // # The IPointCloudable3D obligations
+    // # The IPointCloud3D obligations
     //
     // Every enriched cloud keeps its samples in Positions and its channels in
     // arrays parallel to it, so dropping to a bare cloud is dropping the

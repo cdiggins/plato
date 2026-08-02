@@ -1,7 +1,7 @@
 //==
 // # FunctionalProcedural
 //
-// Derived functionality for the function-like concepts
+// Derived functionality for the function-like interfaces
 // (`functional.concepts.plato`): batch evaluation, bijection round trips, and
 // the accessors over a preferred parameter domain
 // (https://en.wikipedia.org/wiki/Domain_of_a_function). Shared provenance note:
@@ -13,7 +13,7 @@ library FunctionalProcedural
     // # IProcedural
     //
     // Evaluation over a batch of inputs. The result collection is constructed by
-    // the Array.Map intrinsic, so this no longer needs a concept that can build
+    // the Array.Map intrinsic, so this no longer needs an interface that can build
     // one.
 
     // Evaluate the mapping at every input, preserving order. Result element i is
@@ -38,10 +38,10 @@ library FunctionalProcedural
     //==
     // # IPeriodic
     //
-    // RESOLVED (was TODO(concept-gap): a wrapping helper needs Modulo on the
+    // RESOLVED (was TODO(interface-gap): a wrapping helper needs Modulo on the
     // period type, and Plato was said to have no type-parameter constraint
-    // syntax). The premise was false — concept `where` clauses are live and used
-    // (IIntervalLike / IBoundsLike in intervals-bounds.concepts.plato, IMetricSpace
+    // syntax). The premise was false — interface `where` clauses are live and used
+    // (IInterval / IBounds in intervals-bounds.concepts.plato, IMetricSpace
     // in algebra.concepts.plato). IPeriodic<TPeriod> now carries
     // `where TPeriod: IAdditive, TPeriod: IModular`, and WrapPhase below is derived
     // from that bound. The one implementor path
@@ -52,9 +52,9 @@ library FunctionalProcedural
     // one for WrapPhase, which takes the domain value as a parameter rather than
     // reading it off the surface. It IS what keeps wrapped *evaluation* from being
     // derived here: a generic EvalWrapped needs a receiver that is both IPeriodic
-    // and IProcedural, and a library function cannot state a two-concept bound —
+    // and IProcedural, and a library function cannot state a two-interface bound —
     // MethodDeclaration takes no type parameters at all, so a constraint can only
-    // sit on a concept declaration. IPeriodicCurve is the concept that has both, and
+    // sit on an interface declaration. IPeriodicCurve is the interface that has both, and
     // EvalWrapped lives there (curves.library.plato).
     //
     // NormalizedPhase is likewise not derivable generically: dividing a TPeriod by

@@ -452,7 +452,7 @@ library Solids
     }
 
     //==
-    // IMeshable3D obligations: every typed solid triangulates through its
+    // IMesh3D obligations: every typed solid triangulates through its
     // polygon mesh (fan triangulation, `meshes-polygon.library.plato`).
 
     ToTriangleMesh(s: PlatonicSolid): TriangleMesh3D

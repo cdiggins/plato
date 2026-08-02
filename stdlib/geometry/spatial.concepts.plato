@@ -2,11 +2,11 @@
 // # Spatial
 //
 // Sections, in order:
-//  - Spatial query concepts
-//  - Spatial index concepts
+//  - Spatial query interfaces
+//  - Spatial index interfaces
 
 //==
-// # Spatial query concepts
+// # Spatial query interfaces
 //
 // What a piece of geometry can be asked: cast a ray at it, ask it for its
 // closest point, or search its points for the k nearest. The derived
@@ -14,43 +14,43 @@
 // records — lives in `spatial-structures.library.plato`.
 
 // Anything a 2D ray can be cast against.
-interface IRayIntersectable2D
+interface IRaycast2D
 {
     Raycast(x: Self, query: RayQuery2D): RayHit2D;
 }
 
 // Anything a 3D ray can be cast against.
-interface IRayIntersectable3D
+interface IRaycast3D
 {
     Raycast(x: Self, query: RayQuery3D): RayHit3D;
 }
 
 // Anything that can report its closest point to a 2D query point.
-interface IClosestPointQueryable2D
+interface IClosestPoint2D
 {
     ClosestPoint(x: Self, point: Point2D): ClosestPointResult2D;
 }
 
 // Anything that can report its closest point to a 3D query point.
-interface IClosestPointQueryable3D
+interface IClosestPoint3D
 {
     ClosestPoint(x: Self, point: Point3D): ClosestPointResult3D;
 }
 
 // Anything that can answer k-nearest-neighbor searches over 2D points.
-interface INearestNeighborQueryable2D
+interface INearestNeighbor2D
 {
     FindNearest(x: Self, query: KNearestQuery2D): NearestNeighbors;
 }
 
 // Anything that can answer k-nearest-neighbor searches over 3D points.
-interface INearestNeighborQueryable3D
+interface INearestNeighbor3D
 {
     FindNearest(x: Self, query: KNearestQuery3D): NearestNeighbors;
 }
 
 //==
-// # Spatial index concepts
+// # Spatial index interfaces
 //
 // The broad-phase query surface every acceleration structure implements: an
 // item count and a bounds query returning candidate indices, which may include

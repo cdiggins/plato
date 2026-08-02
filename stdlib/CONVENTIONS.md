@@ -73,13 +73,13 @@ A cross-array reference is a typed index (implements `Index`, single
 **"none" / absent** sentinel; a non-negative `Value` is a valid zero-based
 position. For multi-references, an **empty array** is the corresponding "none".
 CSR/offset arrays, counts, and bitmasks are plain `Integer` and are *not*
-governed by this rule. (The CSR packing itself is the `Jagged` concept in
+governed by this rule. (The CSR packing itself is the `Jagged` interface in
 `collections.concepts.plato`, which states that invariant once.) **Axis selectors are no longer plain `Integer`**: a
 cardinal-axis choice is the typed `Axis3D` / `Axis2D` / `SignedAxis3D` sum
 (`axes.types.plato`), whose `Ordinal` recovers the `Integer` component index when one
 is genuinely needed — kd-tree split axes, `UpAxis` / `ForwardAxis` fields, and
 longest-extent queries take an axis type, not a bare `0`/`1`/`2`.
-*Owners:* `Index` concept (`collections.concepts.plato`); every typed
+*Owners:* `Index` interface (`collections.concepts.plato`); every typed
 index type (`topology.types.plato` VertexIndex/UndirectedEdgeIndex/..., domain files);
 `ItemIndex` (`numbers.types.plato`); axis selectors (`axes.types.plato`
 Axis3D/Axis2D/SignedAxis3D).
@@ -113,7 +113,7 @@ wise greater than `Max` for `Bounds`. An empty region contains no points and is
 the identity for `Union` — this is what makes "grow from empty" correct.
 *Owners:* `intervals.types.plato` (NumberInterval, AngleInterval, LengthInterval,
 IntegerInterval), `intervals.types.plato` (Bounds2D/3D, IntegerBounds2D/3D,
-Rect2D); concept in `intervals-bounds.concepts.plato` (IntervalLike, BoundsLike).
+Rect2D); interface in `intervals-bounds.concepts.plato` (IInterval, IBounds).
 
 ## Color — linear-light, straight alpha
 
@@ -136,7 +136,7 @@ looking down local **`-Z`**, local **`+Y` up**, and local **`+X` right**
 `right = normalize(forward × up)` in that right-handed order, where `up` is the
 world up axis (`+Z`). Projection matrices and per-backend look-at lowerings must
 honour this so handedness bugs are not rediscovered per backend.
-*Owner:* `cameras.concepts.plato` (the `Camera` concept), `cameras.types.plato`
+*Owner:* `cameras.concepts.plato` (the `Camera` interface), `cameras.types.plato`
 (LookAtCamera and the concrete camera types).
 
 ## UV origin — top-left, V increases downward

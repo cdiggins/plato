@@ -2,12 +2,12 @@
 // # Algebra
 //
 // Sections, in order:
-//  - Magnitude, distance, and order-lattice concepts
-//  - Numeric tower concepts
-//  - Algebraic operation concepts
+//  - Magnitude, distance, and order-lattice interfaces
+//  - Numeric tower interfaces
+//  - Algebraic operation interfaces
 
 //==
-// # Magnitude, distance, and order-lattice concepts
+// # Magnitude, distance, and order-lattice interfaces
 //
 // The geometric half of the algebra vocabulary: length, distance, component-wise
 // extrema and clamping, and the affine point/delta relationship.
@@ -79,7 +79,7 @@ interface IDifference<TDelta>
 // position type whose delta conversion is not a cheap relabeling — a homogeneous
 // point, where recovering the Cartesian delta needs a divide by W — implements
 // `IDifference` directly and writes Add/Between itself. A subtype, so that a type
-// declares one concept rather than two and cannot claim the conversions while
+// declares one interface rather than two and cannot claim the conversions while
 // forgetting the affine API they serve.
 interface IOriginBased<TDelta>
     inherits IDifference<TDelta>
@@ -92,7 +92,7 @@ interface IOriginBased<TDelta>
 }
 
 //==
-// # Numeric tower concepts
+// # Numeric tower interfaces
 //
 // The number-like family, from representable limits up through the reals and the
 // whole numbers. Each level adds capability to the level below; Number and
@@ -101,7 +101,7 @@ interface IOriginBased<TDelta>
 // Has a distinguished one element and representable extremes. The additive
 // identity is NOT here: Zero is a property of the additive group and lives on
 // `IAdditive` (algebra.concepts.plato), which every INumerical also
-// inherits — so a INumerical still reaches Zero, while a IQuantity or IMatrixLike
+// inherits — so a INumerical still reaches Zero, while a IQuantity or IMatrix
 // gets it without having to claim representable extremes it has no meaning for.
 interface INumericalLimits
 {
@@ -141,7 +141,7 @@ interface IWhole
 }
 
 //==
-// # Algebraic operation concepts
+// # Algebraic operation interfaces
 //
 // The elementary arithmetic capabilities, each one small algebraic structure:
 // addition, multiplication, division, remainder, inversion, scalar scaling, and
@@ -150,7 +150,7 @@ interface IWhole
 // An additive group: addition, subtraction, negation, and the identity element
 // (https://en.wikipedia.org/wiki/Additive_group). Zero lives here rather than on
 // INumericalLimits because it is an algebraic property of the group, not a fact
-// about representation: a IQuantity or a IMatrixLike is an additive group without
+// about representation: a IQuantity or a IMatrix is an additive group without
 // being a number, and a `where T: IAdditive` bound must be able to name the
 // identity for any fold or accumulation seeded from it.
 interface IAdditive

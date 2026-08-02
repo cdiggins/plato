@@ -14,7 +14,7 @@
 // endpoint vertices, and the vertex/face neighbourhood tables built over them.
 //
 // The adjacency tables are IJagged (CSR) row collections — packing invariant on
-// the `IJagged` concept in `collections.concepts.plato`; the payload
+// the `IJagged` interface in `collections.concepts.plato`; the payload
 // projections are in `topology.library.plato`.
 
 //==
@@ -151,7 +151,7 @@ type HalfEdge
 // VertexHalfEdges[v] is one half-edge leaving vertex v, -1 for an isolated
 // vertex. Requires a manifold (possibly bounded) surface.
 type HalfEdgeMesh
-    implements IValue, IMeshElementCounts, IHalfEdgeNavigable, IDeformable3D
+    implements IValue, IMeshElementCounts, IHalfEdge, IDeformable3D
 {
     Positions: Array<Point3D>;
     HalfEdges: Array<HalfEdge>;
@@ -191,7 +191,7 @@ type CornerTable
 // No index type is named a bare `Edge`: an edge index is either
 // UndirectedEdgeIndex or HalfEdgeIndex, and the two are not interchangeable
 // (the undirected count is half the directed count on a closed manifold).
-// Convention: see CONVENTIONS.md - Typed indices (IValue is zero-based, and -1
+// Convention: see CONVENTIONS.md - Typed indices (Value is zero-based, and -1
 // means "none" / "not present").
 
 // A zero-based index of a vertex within a mesh or point set. -1 means "none".

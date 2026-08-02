@@ -1,5 +1,5 @@
 //==
-// # IVector path concepts
+// # IVector path interfaces
 //
 // The capability shared by everything that can hand back a vector outline.
 // Implemented by the primitive 2D shapes, by glyph outlines, and by the
@@ -8,7 +8,7 @@
 
 // Anything that can present itself as a vector path: primitive shapes, glyph
 // outlines, dashed or offset results.
-interface IPathLike
+interface IPath
 {
     ToPath(x: Self): Path2D;
 }

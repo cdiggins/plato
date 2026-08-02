@@ -1,9 +1,9 @@
 //==
-// # Mesh topology concepts
+// # Mesh topology interfaces
 //
 // Three rungs of a ladder, each strictly stronger than the one below:
 // counted mesh elements (IMeshElementCounts), which elements touch which
-// (IMeshIncidence), and constant-time half-edge navigation (IHalfEdgeNavigable).
+// (IMeshIncidence), and constant-time half-edge navigation (IHalfEdge).
 // The derived functionality of all three lives in
 // `meshes.library.plato`.
 //
@@ -62,7 +62,7 @@ interface IMeshIncidence
 // from half-edges means walking a face loop or a vertex fan and materializing
 // an array, which is a build step rather than a constant-time read. A
 // half-edge type is free to implement both.
-interface IHalfEdgeNavigable
+interface IHalfEdge
 {
     OriginOf(x: Self, halfEdge: HalfEdgeIndex): VertexIndex;
     TwinOf(x: Self, halfEdge: HalfEdgeIndex): HalfEdgeIndex;

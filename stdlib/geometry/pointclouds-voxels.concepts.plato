@@ -1,5 +1,5 @@
 //==
-// # Point-cloud and voxel concepts
+// # Point-cloud and voxel interfaces
 //
 // Shedding structure down to a bare point cloud, and conservative rasterization
 // into a binary occupancy grid. The derived functionality of both lives in
@@ -7,14 +7,14 @@
 
 // Anything that can shed its structure and yield its points as a bare
 // position cloud: meshes, enriched clouds, scan slices.
-interface IPointCloudable3D
+interface IPointCloud3D
 {
     ToPointCloud(x: Self): PointCloud3D;
 }
 
 // Anything that can be conservatively rasterized into a binary voxel grid
 // (https://en.wikipedia.org/wiki/Voxel) at a caller-chosen cell size.
-interface IVoxelizable3D
+interface IVoxel3D
 {
     ToOccupancyGrid(x: Self, cellSize: Number): OccupancyGrid3D;
 }

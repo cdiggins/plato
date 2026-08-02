@@ -22,7 +22,7 @@
 // [0, 1] is A + (B - A) * t (t = 0 is A, t = 1 is B) -- the same parametric
 // contract the ray and line types state. Degenerate when A equals B.
 type Line2D
-    implements IGeometry2D, IOpenShape, IConnected, IBounded2D, ILengthMeasurable, IPointSet2D, ICentroid2D, INearestPoint2D, IDeformable2D
+    implements IGeometry2D, IOpenShape, IConnected, IBounded2D, ILength, IPointSet2D, ICentroid2D, INearestPoint2D, IDeformable2D
 {
     A: Point2D;
     B: Point2D;
@@ -31,7 +31,7 @@ type Line2D
 // A straight bounded span in space, directed from A to B. The point at parameter
 // t in [0, 1] is A + (B - A) * t. Degenerate when A equals B.
 type Line3D
-    implements IGeometry3D, IOpenShape, IConnected, IBounded3D, ILengthMeasurable, IPointSet3D, ICentroid3D, INearestPoint3D, IDeformable3D
+    implements IGeometry3D, IOpenShape, IConnected, IBounded3D, ILength, IPointSet3D, ICentroid3D, INearestPoint3D, IDeformable3D
 {
     A: Point3D;
     B: Point3D;

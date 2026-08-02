@@ -2,12 +2,12 @@
 // # Collections
 //
 // Sections, in order:
-//  - Container shape concepts
-//  - IIndexable collection concepts
-//  - IJagged (ragged row) collection concept
+//  - Container shape interfaces
+//  - IIndexable collection interfaces
+//  - IJagged (ragged row) collection interface
 
 //==
-// # Container shape concepts
+// # Container shape interfaces
 //
 // The abstract data types layered over a collection: sub-ranges, concatenation,
 // membership, keyed lookup, and the LIFO/FIFO disciplines. All collections are
@@ -36,13 +36,13 @@ interface IConcatenable
 }
 
 // Supports a membership test. (https://en.wikipedia.org/wiki/Set_(abstract_data_type))
-interface ISetLike<T>
+interface ISet<T>
 {
     Contains(x: Self, item: T): Boolean;
 }
 
 // A keyed lookup collection. (https://en.wikipedia.org/wiki/Associative_array)
-interface IMapLike<TKey, TValue>
+interface IMap<TKey, TValue>
     inherits ICountable
 {
     ContainsKey(x: Self, key: TKey): Boolean;
@@ -51,7 +51,7 @@ interface IMapLike<TKey, TValue>
 
 // Last-in-first-out access. Push and Pop return new collections.
 // (https://en.wikipedia.org/wiki/Stack_(abstract_data_type))
-interface IStackLike<T>
+interface IStack<T>
     inherits ICountable
 {
     Peek(x: Self): T;
@@ -61,7 +61,7 @@ interface IStackLike<T>
 
 // First-in-first-out access. Enqueue and Dequeue return new collections.
 // (https://en.wikipedia.org/wiki/Queue_(abstract_data_type))
-interface IQueueLike<T>
+interface IQueue<T>
     inherits ICountable
 {
     Front(x: Self): T;
@@ -70,7 +70,7 @@ interface IQueueLike<T>
 }
 
 //==
-// # IIndexable collection concepts
+// # IIndexable collection interfaces
 //
 // Counting, typed positions, and random access by index in one to four
 // dimensions. All collections are immutable; operations that "modify" return new
@@ -82,9 +82,9 @@ interface ICountable
     Count(x: Self): Integer;
 }
 
-// A typed zero-based position within an ordered collection. IValue is the raw
+// A typed zero-based position within an ordered collection. Value is the raw
 // index; -1 means "none" / "not present". Implementors are single-field
-// wrappers over Integer (VertexIndex, FaceIndex, ...), so the IValue field
+// wrappers over Integer (VertexIndex, FaceIndex, ...), so the Value field
 // satisfies this surface directly.
 interface IIndex
 {
@@ -119,7 +119,7 @@ interface IIndexable3D<T>
 }
 
 //==
-// # IJagged (ragged row) collection concept
+// # IJagged (ragged row) collection interface
 //
 // The one packing seam for variable-length rows: a flat value array plus a
 // boundary array. Meshes (face corners), adjacency tables, and any other list

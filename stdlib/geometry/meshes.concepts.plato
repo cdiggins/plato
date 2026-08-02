@@ -2,11 +2,11 @@
 // # Meshes
 //
 // Sections, in order:
-//  - Mesh concepts
+//  - Mesh interfaces
 //  - Mesh geometry layers
 
 //==
-// # Mesh concepts
+// # Mesh interfaces
 //
 // What it means to be meshable: producing an indexed triangle mesh (3D),
 // producing a planar triangulation (2D), already exposing an explicit
@@ -25,7 +25,7 @@ interface IFace
 
 // Anything that can produce an explicit indexed triangle mesh approximation
 // of itself: solids, parametric surfaces, implicit surfaces, other meshes.
-interface IMeshable3D
+interface IMesh3D
 {
     ToTriangleMesh(x: Self): TriangleMesh3D;
 }
@@ -33,7 +33,7 @@ interface IMeshable3D
 // Anything in the plane that can produce a triangulation of itself
 // (https://en.wikipedia.org/wiki/Polygon_triangulation): polygons, planar
 // regions, 2D meshes.
-interface IMeshable2D
+interface IMesh2D
 {
     Triangulate(x: Self): TriangleMesh2D;
 }
@@ -41,7 +41,7 @@ interface IMeshable2D
 // IGeometry that already exposes an indexed triangle set: random access to
 // faces and vertex positions by typed index.
 interface ITriangulatedGeometry3D
-    inherits IMeshable3D
+    inherits IMesh3D
 {
     TriangleCount(x: Self): Integer;
     FaceAt(x: Self, face: FaceIndex): TriangleFace;
@@ -131,7 +131,7 @@ interface IGeometryCollection<TGeom>
 // dimensional capabilities every such shape can honor: PointSet for the free
 // Bounds and VertexCentroid, Bounded for the box itself, Deformable for the
 // point mapping that Transform is then derived from. The triangle and quad
-// bindings add Meshable, which the segment bindings cannot: a set of segments
+// bindings add IMesh, which the segment bindings cannot: a set of segments
 // has no interior to triangulate.
 //
 // The line primitive is Line2D / Line3D, not InfiniteLine2D / InfiniteLine3D:
@@ -146,13 +146,13 @@ interface ISegmentGeometry3D
 // Triangles in space, wound counter-clockwise seen from the front: the
 // universal surface primitive.
 interface ITriangleGeometry3D
-    inherits IGeometry3D, IPrimitiveGeometry<Point3D, Triangle3D>, IPointSet3D, IBounded3D, IDeformable3D, IMeshable3D
+    inherits IGeometry3D, IPrimitiveGeometry<Point3D, Triangle3D>, IPointSet3D, IBounded3D, IDeformable3D, IMesh3D
 { }
 
 // Quadrilaterals in space, wound counter-clockwise seen from the front.
 // Coplanarity is not guaranteed.
 interface IQuadGeometry3D
-    inherits IGeometry3D, IPrimitiveGeometry<Point3D, Quad3D>, IPointSet3D, IBounded3D, IDeformable3D, IMeshable3D
+    inherits IGeometry3D, IPrimitiveGeometry<Point3D, Quad3D>, IPointSet3D, IBounded3D, IDeformable3D, IMesh3D
 { }
 
 // Bounded segments in the plane: sketch overlays, hatch patterns, planar
@@ -164,7 +164,7 @@ interface ISegmentGeometry2D
 // Triangles in the plane, wound counter-clockwise: triangulations, Delaunay
 // output, finite-element cells, UV domains.
 interface ITriangleGeometry2D
-    inherits IGeometry2D, IPrimitiveGeometry<Point2D, Triangle2D>, IPointSet2D, IBounded2D, IDeformable2D, IMeshable2D
+    inherits IGeometry2D, IPrimitiveGeometry<Point2D, Triangle2D>, IPointSet2D, IBounded2D, IDeformable2D, IMesh2D
 { }
 
 // Quadrilaterals in the plane, wound counter-clockwise: structured grid cells
@@ -176,7 +176,7 @@ interface IQuadGeometry2D
 //==
 // # Named layer 2 — the indexed storage
 //
-// The same six primitives over a shared vertex pool. The concept names carry
+// The same six primitives over a shared vertex pool. The interface names carry
 // the Indexed prefix because the bare nouns are taken by the concrete storage
 // types — `TriangleMesh3D`, `QuadMesh3D`, `LineSet3D`, `LineSet2D` — and the
 // prefix is in any case what distinguishes this layer from the view above.

@@ -1,7 +1,7 @@
 //==
-// # Graphs — derived functions for IGraphLike
+// # Graphs — derived functions for IGraph
 //
-// Bodies for the `IGraphLike` concept declared in `graphs.concepts.plato`: a
+// Bodies for the `IGraph` interface declared in `graphs.concepts.plato`: a
 // vertex-and-edge structure exposing VertexCount, EdgeCount and the
 // directedness flag. The helpers are the counting summaries those three members
 // support — the handshake-lemma degree sum, the simple-graph edge ceiling,
@@ -11,37 +11,37 @@
 library Graphs
 {
     //==
-    // # IGraphLike
+    // # IGraph
     //
     // A vertex-and-edge structure exposing VertexCount, EdgeCount, and the
     // directedness flag. Helpers include the handshake-lemma degree sum and the
     // completeness test.
 
     // True when the graph is undirected.
-    IsUndirected(self: IGraphLike): Boolean
+    IsUndirected(self: IGraph): Boolean
         => self.IsDirected.Not;
 
     // True when the graph has no vertices.
-    IsEmpty(self: IGraphLike): Boolean
+    IsEmpty(self: IGraph): Boolean
         => self.VertexCount == 0;
 
     // True when the graph has at least one vertex.
-    IsNotEmpty(self: IGraphLike): Boolean
+    IsNotEmpty(self: IGraph): Boolean
         => self.VertexCount > 0;
 
     // True when the graph has at least one edge.
-    HasEdges(self: IGraphLike): Boolean
+    HasEdges(self: IGraph): Boolean
         => self.EdgeCount > 0;
 
     // The sum of all vertex degrees. By the handshake lemma this is twice the
     // edge count, whether the graph is directed (in-degree plus out-degree) or
     // undirected (https://en.wikipedia.org/wiki/Handshaking_lemma).
-    DegreeSum(self: IGraphLike): Integer
+    DegreeSum(self: IGraph): Integer
         => self.EdgeCount * 2;
 
     // The maximum number of simple edges the graph could hold: V*(V-1) directed,
     // V*(V-1)/2 undirected (no self-loops, no parallel edges).
-    MaxPossibleEdges(self: IGraphLike): Integer
+    MaxPossibleEdges(self: IGraph): Integer
         => self.IsDirected
             ? self.VertexCount * (self.VertexCount - 1)
             : self.VertexCount * (self.VertexCount - 1) / 2;
@@ -49,18 +49,18 @@ library Graphs
     // True when the graph holds every possible simple edge. Precondition: the
     // graph is simple (no self-loops or parallel edges)
     // (https://en.wikipedia.org/wiki/Complete_graph).
-    IsComplete(self: IGraphLike): Boolean
+    IsComplete(self: IGraph): Boolean
         => self.EdgeCount == self.MaxPossibleEdges;
 
     // The average vertex degree: the degree sum (2E) over the vertex count, as a
     // Number via Integer.ToNumber. Precondition: the graph is non-empty.
-    AverageDegree(self: IGraphLike): Number
+    AverageDegree(self: IGraph): Number
         => self.DegreeSum.ToNumber / self.VertexCount.ToNumber;
 
     // The edge density: actual edges over the maximum possible simple edges, in
     // [0, 1]. Precondition: the graph has at least two vertices (MaxPossibleEdges > 0)
     // (https://en.wikipedia.org/wiki/Dense_graph).
-    EdgeDensity(self: IGraphLike): Number
+    EdgeDensity(self: IGraph): Number
         => self.EdgeCount.ToNumber / self.MaxPossibleEdges.ToNumber;
 
     // The number of stored edges.

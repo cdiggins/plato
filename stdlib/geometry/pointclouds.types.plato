@@ -10,7 +10,7 @@
 // reconstruction (https://en.wikipedia.org/wiki/Surface_reconstruction) and
 // oriented splatting. Positions and Normals are parallel.
 type OrientedPointCloud3D
-    implements IValue, IPointCloudable3D, IDeformable3D
+    implements IValue, IPointCloud3D, IDeformable3D
 {
     Positions: Array<Point3D>;
     Normals: Array<Direction3D>;
@@ -18,7 +18,7 @@ type OrientedPointCloud3D
 
 // A point cloud carrying a color per point. Positions and Colors are parallel.
 type ColoredPointCloud3D
-    implements IValue, IPointCloudable3D, IDeformable3D
+    implements IValue, IPointCloud3D, IDeformable3D
 {
     Positions: Array<Point3D>;
     Colors: Array<Color>;
@@ -29,7 +29,7 @@ type ColoredPointCloud3D
 // parallel to Positions; an empty channel array means the channel is absent.
 // Intensities are unitless sensor return strengths.
 type AttributedPointCloud3D
-    implements IValue, IPointCloudable3D, IDeformable3D
+    implements IValue, IPointCloud3D, IDeformable3D
 {
     Positions: Array<Point3D>;
     Normals: Array<Direction3D>;

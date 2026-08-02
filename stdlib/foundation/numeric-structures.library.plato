@@ -2,21 +2,21 @@
 // # Numeric structures
 //
 // Sections, in order:
-//  - Component-wise algebra for the IVector concept
+//  - Component-wise algebra for the IVector interface
 //  - Numeric structures components — the IVector component surface
 //  - Derived functions for point-like types
-//  - Derived functions for the IMatrixLike concept
-//  - Derived functions for the IQuantity concept
-//  - Geometric helpers for the IVector concept
+//  - Derived functions for the IMatrix interface
+//  - Derived functions for the IQuantity interface
+//  - Geometric helpers for the IVector interface
 
 library NumericStructures
 {
     //==
-    // # Component-wise algebra for the IVector concept
+    // # Component-wise algebra for the IVector interface
     //
     // The IAdditive / IArithmetic / IScalable / ILattice / IInterpolatable surface and
     // the per-component lifts of the Number intrinsics, all written once against the
-    // component combinators below — written once against the IVector concept
+    // component combinators below — written once against the IVector interface
     // rather than once per concrete type.
 
     //==
@@ -79,7 +79,7 @@ library NumericStructures
     //
     // Each of these is the corresponding function from
     // `intrinsics.library.plato` or the `core-*` / `algebra-*` libraries
-    // applied to every component — written once against the IVector concept.
+    // applied to every component — written once against the IVector interface.
 
     // Component-wise absolute value.
     Abs(self: IVector): IVector
@@ -196,7 +196,7 @@ library NumericStructures
     // Reduce, All, Any) lift straight onto vectors, and every derived body below
     // is written once instead of once per concrete type.
     //
-    // As elsewhere in these libraries, the helpers return the bare concept type
+    // As elsewhere in these libraries, the helpers return the bare interface type
     // IVector rather than the concrete implementing type.
 
     // The components of self as an Array<Number>, in index order.
@@ -372,21 +372,21 @@ library NumericStructures
     // # Derived functions for point-like types
     //
     // The per-concrete-type Euclidean distances that stand in for a generic metric
-    // on the ICoordinate concept (`points.concepts.plato`), plus the barycentric
+    // on the ICoordinate interface (`points.concepts.plato`), plus the barycentric
     // evaluation and normalization test for `points.types.plato`.
 
     //==
     // # ICoordinate
     //
     // A position in some space (IValue, IEquatable, IInterpolatable). ICoordinate is a
-    // marker concept whose only operation is Lerp, and CoreAlgebra already ships
+    // marker interface whose only operation is Lerp, and CoreAlgebra already ships
     // MidPoint, LerpClamped and SmoothLerp on IInterpolatable — which ICoordinate
     // inherits — so every interpolation convenience it can support already exists
     // upstream (SmoothLerp landed at algebra.library.plato) and no
     // ICoordinate-specific body is added here.
     //
-    // TODO(concept-gap): a generic Distance over ICoordinate is out of reach, and
-    // NOT via a cheap concept extension. All five implementors (Point2D, Point3D,
+    // TODO(interface-gap): a generic Distance over ICoordinate is out of reach, and
+    // NOT via a cheap interface extension. All five implementors (Point2D, Point3D,
     // PointN in points.types.plato; UvCoordinate, UvwCoordinate in
     // points.types.plato) implement IOriginBased<TDelta> (hence
     // IDifference<TDelta>) — but each with a DIFFERENT delta type (Vector2D /
@@ -410,7 +410,7 @@ library NumericStructures
     //
     // So the Euclidean distance is provided per concrete point type below, each as
     // `Between(a, b).Magnitude` over that type's own IDifference delta. This is the
-    // sanctioned resolution: concrete functions rather than a concept obligation that
+    // sanctioned resolution: concrete functions rather than an interface obligation that
     // would force a generic-arity change on ICoordinate. DistanceSquared mirrors Distance without
     // the square root, for radius and nearest-neighbour comparisons.
 
@@ -509,61 +509,61 @@ library NumericStructures
         => self.X.Hash.CombineHash(self.Y.Hash).CombineHash(self.Z.Hash);
 
     //==
-    // # Derived functions for the IMatrixLike concept
+    // # Derived functions for the IMatrix interface
     //
     // Shape predicates, diagonal access, and the scalar folds over ElementAt (Trace,
-    // FrobeniusNorm) for the IMatrixLike concept declared in
+    // FrobeniusNorm) for the IMatrix interface declared in
     // `matrices.concepts.plato`, plus the IAdditive/IScalable-derived interpolation.
 
     //==
-    // # IMatrixLike
+    // # IMatrix
     //
     // Dense numeric matrices (IValue, IAdditive, IScalable) with RowCount,
     // ColumnCount, and ElementAt(row, column). Double and Half come from
     // CoreAlgebra (IAdditive / IScalable). Trace and FrobeniusNorm are now derivable
     // as scalar folds over ElementAt (via MapRange + Array.Reduce); see below.
     //
-    // TODO(concept-gap): Transpose remains blocked — it must CONSTRUCT a matrix, and
-    // IMatrixLike exposes no construction primitive. The MakeArray2D intrinsic builds
-    // an Array2D<Number>, not a concrete IMatrixLike, so a generic
-    // Transpose(IMatrixLike): IMatrixLike cannot be spelled here; each concrete matrix
+    // TODO(interface-gap): Transpose remains blocked — it must CONSTRUCT a matrix, and
+    // IMatrix exposes no construction primitive. The MakeArray2D intrinsic builds
+    // an Array2D<Number>, not a concrete IMatrix, so a generic
+    // Transpose(IMatrix): IMatrix cannot be spelled here; each concrete matrix
     // type (matrices.types.plato) supplies its own, returning its own type (e.g. the
     // Matrix4x4.Transpose intrinsic).
 
     // True when the matrix has equal row and column counts.
-    IsSquare(self: IMatrixLike): Boolean
+    IsSquare(self: IMatrix): Boolean
         => self.RowCount == self.ColumnCount;
 
     // The total number of elements (rows times columns).
-    ElementCount(self: IMatrixLike): Integer
+    ElementCount(self: IMatrix): Integer
         => self.RowCount * self.ColumnCount;
 
     // True when the matrix has no elements (no rows or no columns).
-    IsEmpty(self: IMatrixLike): Boolean
+    IsEmpty(self: IMatrix): Boolean
         => self.RowCount == 0 || self.ColumnCount == 0;
 
     // True when the matrix is a single row.
-    IsRowVector(self: IMatrixLike): Boolean
+    IsRowVector(self: IMatrix): Boolean
         => self.RowCount == 1;
 
     // True when the matrix is a single column.
-    IsColumnVector(self: IMatrixLike): Boolean
+    IsColumnVector(self: IMatrix): Boolean
         => self.ColumnCount == 1;
 
     // True when two matrices have the same row and column counts.
-    SameShape(a: IMatrixLike, b: IMatrixLike): Boolean
+    SameShape(a: IMatrix, b: IMatrix): Boolean
         => a.RowCount == b.RowCount && a.ColumnCount == b.ColumnCount;
 
     // The element on the main diagonal at position i (i.e. element (i, i)).
     // Precondition: i is a valid row and column index.
-    DiagonalElement(self: IMatrixLike, i: Integer): Number
+    DiagonalElement(self: IMatrix, i: Integer): Number
         => self.ElementAt(i, i);
 
     // The trace: the sum of the main-diagonal elements, folded over the diagonal
     // indices via MapRange + Array.Reduce
     // (https://en.wikipedia.org/wiki/Trace_(linear_algebra)). Precondition: the
     // matrix is square.
-    Trace(self: IMatrixLike): Number
+    Trace(self: IMatrix): Number
         => self.RowCount.MapRange(i => self.ElementAt(i, i)).Reduce(0.0, (acc, x) => acc + x);
 
     // The Frobenius norm: the square root of the sum of the squares of every
@@ -571,7 +571,7 @@ library NumericStructures
     // index k maps to element (k / ColumnCount, k % ColumnCount), so the whole
     // matrix is folded in one pass.
     // Precondition: at least one element.
-    FrobeniusNorm(self: IMatrixLike): Number
+    FrobeniusNorm(self: IMatrix): Number
         => self.ElementCount
             .MapRange(k => self.ElementAt(k / self.ColumnCount, k % self.ColumnCount).Square)
             .Reduce(0.0, (acc, x) => acc + x)
@@ -579,11 +579,11 @@ library NumericStructures
 
     // Linear interpolation of two matrices, derived from IAdditive and IScalable.
     // t is unclamped: 0 yields a, 1 yields b. Precondition: a and b share a shape.
-    Lerp(a: IMatrixLike, b: IMatrixLike, t: Number): IMatrixLike
+    Lerp(a: IMatrix, b: IMatrix, t: Number): IMatrix
         => a + (b - a) * t;
 
     // The element-wise average of two matrices. Precondition: a and b share a shape.
-    Average(a: IMatrixLike, b: IMatrixLike): IMatrixLike
+    Average(a: IMatrix, b: IMatrix): IMatrix
         => (a + b) / 2.0;
 
     //==
@@ -591,7 +591,7 @@ library NumericStructures
     //
     // `IAdditive.Zero` cannot be derived generically here for the same reason
     // Transpose cannot (see the TODO above): it must CONSTRUCT a matrix, and
-    // IMatrixLike exposes no construction primitive. So each concrete type
+    // IMatrix exposes no construction primitive. So each concrete type
     // supplies its own, exactly as the note above prescribes. The fixed-size
     // types are TYPE-TOKEN members (`_` receiver: reachable as Matrix2x2.Zero
     // or off any value); their shape is static, so the rows are written out
@@ -625,12 +625,12 @@ library NumericStructures
         => (x.NumRows, x.NumColumns, x.ElementCount.MapRange(k => 0.0));
 
     //==
-    // # Derived functions for the IQuantity concept
+    // # Derived functions for the IQuantity interface
     //
-    // Bodies for the IQuantity concept declared in `quantities.concepts.plato`.
+    // Bodies for the IQuantity interface declared in `quantities.concepts.plato`.
     // Ordering, interpolation, Double and Half all come from the `core-*` /
     // `algebra-*` libraries via
-    // the inherited concepts; only what is specific to the Amount projection is
+    // the inherited interfaces; only what is specific to the Amount projection is
     // added here. Pure expressions only; all values are immutable.
 
     //==
@@ -639,7 +639,7 @@ library NumericStructures
     // A one-dimensional measured amount (IValue, IComparable, IHashable, IAdditive,
     // IScalable, IInterpolatable) with an Amount projected to a raw Number.
     // Ordering (Lesser/Greater/Clamp/Between), MidPoint, LerpClamped, Double and
-    // Half all come from CoreAlgebra via the inherited concepts; only the
+    // Half all come from CoreAlgebra via the inherited interfaces; only the
     // Amount-based sign/zero predicates and the same-type absolute value are
     // added here. IQuantity is deliberately not IArithmetic (multiplying two
     // quantities yields a different type), so no product helper is offered.
@@ -670,7 +670,7 @@ library NumericStructures
         => (a - b).Abs;
 
     //==
-    // # Geometric helpers for the IVector concept
+    // # Geometric helpers for the IVector interface
     //
     // The geometry that sits on top of Dot and Magnitude: distances, projection and
     // rejection, reflection, angles between vectors, safe normalization, the 3D
@@ -688,7 +688,7 @@ library NumericStructures
     // operations. MidPoint and LerpClamped come from CoreAlgebra (IInterpolatable).
     // IVector is ILattice but not IClampable, so the box clamps below stay here.
     //
-    // The former concept-gap is closed: IVector now declares FromComponents and
+    // The former interface-gap is closed: IVector now declares FromComponents and
     // Broadcast alongside the inherited At/Count, so the component surface is
     // read-and-construct. Everything below the "component-wise lifting" banner —
     // the map/zip/fold combinators, the reductions (SumComponents, MinComponent,

@@ -41,7 +41,7 @@ type GraphEdge
 // pair. Vertices without edges exist implicitly via VertexCount.
 // (https://en.wikipedia.org/wiki/Graph_(abstract_data_type))
 type Graph
-    implements IGraphLike
+    implements IGraph
 {
     VertexCount: Integer;
     Edges: Array<GraphEdge>;
@@ -61,7 +61,7 @@ type WeightedEdge
 // A graph in weighted edge-list form. When Directed is false each edge is an
 // unordered pair with a single shared weight.
 type WeightedGraph
-    implements IGraphLike
+    implements IGraph
 {
     VertexCount: Integer;
     Edges: Array<WeightedEdge>;

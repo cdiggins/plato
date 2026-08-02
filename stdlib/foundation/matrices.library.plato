@@ -2,16 +2,16 @@
 // # Matrices
 //
 // Sections, in order:
-//  - Dense matrix members — the IMatrixLike, IAdditive and IScalable surface
+//  - Dense matrix members — the IMatrix, IAdditive and IScalable surface
 //  - Sparse and banded matrix readings
 
 library Matrices
 {
     //==
-    // # Dense matrix members — the IMatrixLike, IAdditive and IScalable surface
+    // # Dense matrix members — the IMatrix, IAdditive and IScalable surface
     //
     // The per-type bodies that make the concrete matrices of `matrices.types.plato`
-    // genuine `IMatrixLike` implementations: the shape pair (RowCount, ColumnCount),
+    // genuine `IMatrix` implementations: the shape pair (RowCount, ColumnCount),
     // zero-based element access, and the element-wise IAdditive / IScalable
     // arithmetic. Without these the generated members throw, so the whole derived
     // surface in `numeric-structures.library.plato` (Trace, FrobeniusNorm,

@@ -5,7 +5,7 @@
 //  - Collections containers
 //  - Collections grids
 //  - Collections indexable
-//  - Derived row access over the IJagged concept
+//  - Derived row access over the IJagged interface
 //  - Collections sampling
 
 library Collections
@@ -13,7 +13,7 @@ library Collections
     //==
     // # Collections containers
     //
-    // Derived functionality for the container-shape concepts
+    // Derived functionality for the container-shape interfaces
     // (`collections.concepts.plato`): sub-range helpers built on Slice,
     // self-concatenation, negated membership and key tests, and the LIFO/FIFO
     // conveniences (https://en.wikipedia.org/wiki/Abstract_data_type).
@@ -24,9 +24,9 @@ library Collections
     // Contiguous sub-range helpers built on the half-open Slice(from, exclusiveTo).
     // The end-relative helpers (Skip, TakeLast, DropLast) read Count, which
     // ISliceable now inherits from ICountable.
-    // Note: these return the bare concept type ISliceable rather than the concrete
+    // Note: these return the bare interface type ISliceable rather than the concrete
     // implementing type, so chained calls (self.Take(n).Take(m)) resolve against
-    // the concept surface and type-check; the concrete type is simply not recovered.
+    // the interface surface and type-check; the concrete type is simply not recovered.
     //
     // `SubRange(start, end)` used to sit here as the endpoint form over a
     // count-based Slice. plato-378 made Slice itself the endpoint form, which
@@ -65,48 +65,48 @@ library Collections
         => self.Concat(self);
 
     //==
-    // # ISetLike
+    // # ISet
     //
     // Membership helpers built on Contains(item).
 
     // True when the item is not a member.
-    DoesNotContain(self: ISetLike<$T>, item: $T): Boolean
+    DoesNotContain(self: ISet<$T>, item: $T): Boolean
         => self.Contains(item).Not;
 
     //==
-    // # IMapLike
+    // # IMap
     //
-    // Key-lookup helpers. IMapLike inherits ICountable, so IsEmpty / IsNotEmpty
+    // Key-lookup helpers. IMap inherits ICountable, so IsEmpty / IsNotEmpty
     // apply directly.
 
     // True when the map has no entry for the given key.
-    DoesNotContainKey(self: IMapLike<$TKey, $TValue>, key: $TKey): Boolean
+    DoesNotContainKey(self: IMap<$TKey, $TValue>, key: $TKey): Boolean
         => self.ContainsKey(key).Not;
 
     //==
-    // # IStackLike
+    // # IStack
     //
     // LIFO helpers. Push / Pop return new stacks.
 
     // Replace the top element: pop the current top, then push the new item.
     // Precondition: the stack is not empty.
-    ReplaceTop(self: IStackLike<$T>, item: $T): IStackLike<$T>
+    ReplaceTop(self: IStack<$T>, item: $T): IStack<$T>
         => self.Pop.Push(item);
 
     //==
-    // # IQueueLike
+    // # IQueue
     //
     // FIFO helpers. Enqueue / Dequeue return new queues.
 
     // Move the front element to the back, preserving the order of the rest.
     // Precondition: the queue is not empty.
-    Rotate(self: IQueueLike<$T>): IQueueLike<$T>
+    Rotate(self: IQueue<$T>): IQueue<$T>
         => self.Enqueue(self.Front).Dequeue;
 
     //==
     // # Collections grids
     //
-    // Derived functionality for the multi-dimensional IIndexable concepts
+    // Derived functionality for the multi-dimensional IIndexable interfaces
     // (`collections.concepts.plato`): bounds checks, corner-cell access,
     // and the row-major flat-index conversions
     // (https://en.wikipedia.org/wiki/Row-_and_column-major_order) for 2D grids, 3D
@@ -181,10 +181,10 @@ library Collections
     // `collections-*` / `functional-*` library family, which was split out of a
     // single combined collections-and-functional library.
     //
-    // Bodies for the concepts declared in `collections.concepts.plato`,
+    // Bodies for the interfaces declared in `collections.concepts.plato`,
     // `collections.concepts.plato` and
     // `functional.concepts.plato`. Every function's first parameter is
-    // concept-typed, so it becomes available on every implementing type. Pure
+    // interface-typed, so it becomes available on every implementing type. Pure
     // expressions only; collections are immutable, so "modifying" helpers return
     // new values. See `../README.md` for conventions.
 
@@ -208,7 +208,7 @@ library Collections
     //==
     // # IIndex
     //
-    // A typed zero-based position; IValue == -1 is the "none" sentinel.
+    // A typed zero-based position; Value == -1 is the "none" sentinel.
 
     // True when the index refers to nothing. A negative value means none,
     // conventionally -1.
@@ -227,7 +227,7 @@ library Collections
 
     // The natural total order on typed indices: compare the raw positions. This
     // is reflexive, antisymmetric and transitive because Integer's order is, and
-    // it agrees with equality because IValue is the only field. The "none"
+    // it agrees with equality because Value is the only field. The "none"
     // sentinel (-1) sorts below every present position, which is the conventional
     // reading. Discharges the IOrderable obligation for every IIndex implementor;
     // IComparable.Compare then follows from Core's Compare(IOrderable).
@@ -237,7 +237,7 @@ library Collections
     // Deliberately NOT covered here: MortonCode2D/3D (spatial-structures) and
     // FontWeight (text) are also single-`Value: Integer` wrappers, but they do
     // not implement IIndex and must not — they are opaque codes, not element
-    // references (README, "typed index types" convention). No concept-typed
+    // references (README, "typed index types" convention). No interface-typed
     // generic can reach them; their Hash / LessThanOrEquals are concrete
     // obligations for P8 and the text domain respectively.
     // TODO(cross-package): concrete Hash/LessThanOrEquals for those three.
@@ -305,14 +305,14 @@ library Collections
         => MapRange(xs.Count, i => xs[i]).Any(predicate);
 
     //==
-    // # Derived row access over the IJagged concept
+    // # Derived row access over the IJagged interface
     //
     // Row arithmetic written once against `IJagged<T>`
     // (`collections.concepts.plato`) so no mesh or adjacency file re-derives
-    // offset slicing. Concept-receiver form throughout, as in the sections above.
+    // offset slicing. Interface-receiver form throughout, as in the sections above.
     //
     // `JaggedArray<T>` needs no projection here: its `Offsets` and `Values` fields
-    // satisfy the concept surface directly, so a type that HOLDS one reaches the row
+    // satisfy the interface surface directly, so a type that HOLDS one reaches the row
     // vocabulary through that field (`mesh.Faces.Row(f)`). The projections for the
     // domain types that implement IJagged over differently-named storage live beside
     // those types (`topology.library.plato`).
@@ -349,8 +349,8 @@ library Collections
     //==
     // # Builders
     //
-    // A plain library function rather than a concept member: static-abstract
-    // concept members are not available in this language yet.
+    // A plain library function rather than an interface member: static-abstract
+    // interface members are not available in this language yet.
 
     // Pack an array of rows into a JaggedArray: Offsets is the exclusive prefix
     // sum of the row lengths (hence Count + 1 entries, last equal to the total),
@@ -380,7 +380,7 @@ library Collections
     // spaced parameters" helper: curve Sample / ToPolyline, CirclePoints,
     // RegularPolygon vertices, and grid tessellation. These live in this package
     // (P2) rather than with IInterpolatable (P1) because they are fundamentally
-    // collection *construction*: no concept in this tree can build a collection,
+    // collection *construction*: no interface in this tree can build a collection,
     // so they are written directly against the `Integer.Range` and `Array.Map`
     // intrinsics. P1 may not call P2, hence the LinearSpace-over-IInterpolatable
     // overloads live here too rather than in core-algebra.

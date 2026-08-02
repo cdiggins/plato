@@ -147,7 +147,7 @@ library MeshesPolygon
                          self.CornerVertex(self.FaceCorner(face, i + 1)),
                          self.CornerVertex(self.FaceCorner(face, i + 2))));
 
-    // The IMeshable3D obligation: fan every face, sharing the position array
+    // The IMesh3D obligation: fan every face, sharing the position array
     // unchanged so vertex numbering survives the conversion.
     ToTriangleMesh(self: PolygonMesh3D): TriangleMesh3D
         => (self.Positions,

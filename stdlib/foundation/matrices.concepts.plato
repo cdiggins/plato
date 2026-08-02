@@ -1,14 +1,14 @@
 //==
-// # Matrix concept
+// # Matrix interface
 //
-// The concept shared by every dense numeric matrix: element access by zero-based
+// The interface shared by every dense numeric matrix: element access by zero-based
 // row and column, over the IAdditive and IScalable surface every matrix supports.
-// The implementing types are declared in `matrices.types.plato`; the concept-generic
-// helpers derived from this concept (Trace, FrobeniusNorm, IsSquare, ...) live in
+// The implementing types are declared in `matrices.types.plato`; the interface-generic
+// helpers derived from this interface (Trace, FrobeniusNorm, IsSquare, ...) live in
 // `numeric-structures.library.plato`.
 
 // The family of matrix types: element access by zero-based row and column.
-interface IMatrixLike
+interface IMatrix
     inherits IValue, IAdditive, IScalable
 {
     RowCount(x: Self): Integer;

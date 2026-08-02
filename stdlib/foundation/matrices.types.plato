@@ -11,19 +11,19 @@
 // Dense numeric matrices (https://en.wikipedia.org/wiki/Matrix_(mathematics))
 // stored as row vectors: RowN holds row N, so element (r, c) is component c of
 // row r. Fixed sizes cover graphics and geometry; MatrixN and Tensor cover
-// scientific computing. The IMatrixLike concept they implement is declared in
+// scientific computing. The IMatrix interface they implement is declared in
 // `matrices.concepts.plato`.
 // Convention: see CONVENTIONS.md - Matrices (System.Numerics-compatible row-vector
 // multiplication, v' = v M).
 // Discoverability: the concrete operations for the fixed-size
 // matrices (Determinant, Invert, Multiply, Transform, Lerp, ...) are declared on
 // the intrinsic hub in `intrinsics.library.plato`, not restated here;
-// concept-generic helpers (Trace, FrobeniusNorm, IsSquare, ...) live in
+// interface-generic helpers (Trace, FrobeniusNorm, IsSquare, ...) live in
 // `numeric-structures.library.plato`.
 
 // A 2x2 matrix: 2D linear maps (rotation, scale, shear).
 type Matrix2x2
-    implements IMatrixLike, IMultiplicative
+    implements IMatrix, IMultiplicative
 {
     Row1: Number2;
     Row2: Number2;
@@ -31,7 +31,7 @@ type Matrix2x2
 
 // A 3x3 matrix: 3D linear maps, 2D homogeneous transforms, orientation bases.
 type Matrix3x3
-    implements IMatrixLike, IMultiplicative
+    implements IMatrix, IMultiplicative
 {
     Row1: Number3;
     Row2: Number3;
@@ -41,7 +41,7 @@ type Matrix3x3
 // A 4x4 matrix: 3D homogeneous transforms and projections
 // (https://en.wikipedia.org/wiki/Transformation_matrix).
 type Matrix4x4
-    implements IMatrixLike, IMultiplicative
+    implements IMatrix, IMultiplicative
 {
     Row1: Number4;
     Row2: Number4;
@@ -52,7 +52,7 @@ type Matrix4x4
 // A 3-row, 2-column matrix: a 2D affine map (2x2 linear part plus a translation
 // row).
 type Matrix3x2
-    implements IMatrixLike
+    implements IMatrix
 {
     Row1: Number2;
     Row2: Number2;
@@ -62,7 +62,7 @@ type Matrix3x2
 // A 4-row, 3-column matrix: a 3D affine map (3x3 linear part plus a translation
 // row).
 type Matrix4x3
-    implements IMatrixLike
+    implements IMatrix
 {
     Row1: Number3;
     Row2: Number3;
@@ -83,7 +83,7 @@ type SymmetricMatrix3x3
 
 // A dense matrix with runtime-determined shape, row-major storage.
 type MatrixN
-    implements IMatrixLike
+    implements IMatrix
 {
     NumRows: Integer;
     NumColumns: Integer;
@@ -106,8 +106,8 @@ type Tensor
 // Matrices whose storage is proportional to their non-zero content rather than
 // to their shape: coordinate-list sparse storage and the banded form of a
 // matrix whose non-zeros hug the diagonal. The dense counterparts (and the
-// IMatrixLike concept) are the section above; these types deliberately
-// do not claim IMatrixLike, because element access is a search rather than an
+// IMatrix interface) are the section above; these types deliberately
+// do not claim IMatrix, because element access is a search rather than an
 // offset.
 // Convention: see CONVENTIONS.md - Matrices (row-vector multiplication,
 // v' = v M); rows and columns here mean the same thing they do there.

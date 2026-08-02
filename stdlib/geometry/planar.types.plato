@@ -19,7 +19,7 @@
 // CornerRadius is clamped to half the smaller side; zero gives the exact
 // rectangle, the maximum gives a stadium or circle.
 type RoundedRect2D
-    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IPlanarMeasurable, IBounded2D, ICentroid2D, IContainsPoint2D
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D
 {
     Rect: Rect2D;
     CornerRadius: Number;
@@ -29,7 +29,7 @@ type RoundedRect2D
 // along the box's local axes, rotated by Rotation about Center
 // (https://en.wikipedia.org/wiki/Oriented_bounding_box).
 type OrientedBox2D
-    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IPlanarMeasurable, IBounded2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, ISupportMappable2D
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, ISupport2D
 {
     Center: Point2D;
     Size: Size2D;
@@ -40,7 +40,7 @@ type OrientedBox2D
 // radius CircumRadius about Center; Rotation turns the first vertex away from
 // +X. Invariant: SideCount >= 3. (https://en.wikipedia.org/wiki/Regular_polygon)
 type RegularPolygon
-    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IPlanarMeasurable, IBounded2D, ICentroid2D, IContainsPoint2D, ISupportMappable2D
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D, ISupport2D
 {
     Center: Point2D;
     CircumRadius: Number;
@@ -59,7 +59,7 @@ type RegularPolygon
 // The disk of all points within Radius of Center; its boundary is the circle
 // proper (https://en.wikipedia.org/wiki/Circle). Radius is non-negative.
 type Circle
-    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IPlanarMeasurable, IBounded2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, ISupportMappable2D
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, ISupport2D
 {
     Center: Point2D;
     Radius: Number;
@@ -69,7 +69,7 @@ type Circle
 // Invariant: 0 <= InnerRadius <= OuterRadius.
 // (https://en.wikipedia.org/wiki/Annulus_(mathematics))
 type Annulus
-    implements IGeometry2D, IClosedShape, IConnected, IPlanarMeasurable, IBounded2D, ICentroid2D, IContainsPoint2D
+    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D
 {
     Center: Point2D;
     InnerRadius: Number;
@@ -81,7 +81,7 @@ type Annulus
 // measured from +X, counter-clockwise.
 // (https://en.wikipedia.org/wiki/Circular_sector)
 type CircularSector
-    implements IGeometry2D, IClosedShape, IConnected, IPlanarMeasurable, IBounded2D, ICentroid2D, IContainsPoint2D
+    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D
 {
     Circle: Circle;
     Sweep: AngleInterval;
@@ -91,7 +91,7 @@ type CircularSector
 // triangle); always convex. Sweep gives the arc's angular interval on the circle.
 // (https://en.wikipedia.org/wiki/Circular_segment)
 type CircularSegment
-    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IPlanarMeasurable, IBounded2D, ICentroid2D, IContainsPoint2D
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D
 {
     Circle: Circle;
     Sweep: AngleInterval;
@@ -101,7 +101,7 @@ type CircularSegment
 // the convex hull of two equal circles at A and B.
 // (https://en.wikipedia.org/wiki/Stadium_(geometry))
 type Capsule2D
-    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IPlanarMeasurable, IBounded2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, ISupportMappable2D
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, ISupport2D
 {
     A: Point2D;
     B: Point2D;
@@ -119,7 +119,7 @@ type Capsule2D
 // local Y), rotated by Rotation about Center. A circle when a equals b.
 // (https://en.wikipedia.org/wiki/Ellipse)
 type Ellipse
-    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IPlanarMeasurable, IBounded2D, ICentroid2D, IContainsPoint2D
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D
 {
     Center: Point2D;
     SemiAxes: Number2;
@@ -131,7 +131,7 @@ type Ellipse
 // is the ellipse, 1 the diamond, large values approach the rectangle; convex
 // when Exponent >= 1. (https://en.wikipedia.org/wiki/Superellipse)
 type SuperEllipse
-    implements IGeometry2D, IClosedShape, IConnected, IPlanarMeasurable, IBounded2D, ICentroid2D, IContainsPoint2D
+    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D
 {
     Center: Point2D;
     SemiAxes: Number2;
@@ -144,7 +144,7 @@ type SuperEllipse
 //
 // The straight-edged planar regions: the triangle, the general simple
 // quadrilateral, and the parallelogram spanned from a corner by two side vectors.
-// Each stores the minimal defining data; derived measures come from the concepts it
+// Each stores the minimal defining data; derived measures come from the interfaces it
 // implements. Winding convention: counter-clockwise is positive.
 // Convention: see CONVENTIONS.md - Winding, handedness, and normals.
 
@@ -152,7 +152,7 @@ type SuperEllipse
 // (https://en.wikipedia.org/wiki/Triangle). Degenerate when the vertices are
 // collinear.
 type Triangle2D
-    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IPlanarMeasurable, IBounded2D, IPointSet2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, IDeformable2D
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, IPointSet2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, IDeformable2D
 {
     A: Point2D;
     B: Point2D;
@@ -163,7 +163,7 @@ type Triangle2D
 // not necessarily convex or a parallelogram.
 // (https://en.wikipedia.org/wiki/Quadrilateral)
 type Quad2D
-    implements IGeometry2D, IClosedShape, IConnected, IPlanarMeasurable, IBounded2D, IPointSet2D, ICentroid2D, IContainsPoint2D, IDeformable2D
+    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, IPointSet2D, ICentroid2D, IContainsPoint2D, IDeformable2D
 {
     A: Point2D;
     B: Point2D;
@@ -176,7 +176,7 @@ type Quad2D
 // (https://en.wikipedia.org/wiki/Parallelogram). Degenerate when the sides are
 // parallel.
 type Parallelogram2D
-    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IPlanarMeasurable, IBounded2D, ICentroid2D, IContainsPoint2D, IDeformable2D
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D, IDeformable2D
 {
     Origin: Point2D;
     SideA: Vector2D;

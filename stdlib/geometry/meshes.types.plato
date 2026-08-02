@@ -63,7 +63,7 @@ type TriangleMesh3D
 // An indexed triangle mesh in the plane: triangulations of polygons, Delaunay
 // triangulations, finite-element meshes. Faces wind counter-clockwise.
 type TriangleMesh2D
-    implements IValue, IMeshable2D, IIndexedTriangleGeometry2D, IMeshElementCounts, IDeformable2D
+    implements IValue, IMesh2D, IIndexedTriangleGeometry2D, IMeshElementCounts, IDeformable2D
 {
     Positions: Array<Point2D>;
     Faces: Array<TriangleFace>;
@@ -72,7 +72,7 @@ type TriangleMesh2D
 // An indexed quadrilateral mesh in 3D: subdivision cages, quad-dominant
 // retopology, structured patches.
 type QuadMesh3D
-    implements IValue, IMeshable3D, IIndexedQuadGeometry3D, IMeshElementCounts, IDeformable3D
+    implements IValue, IMesh3D, IIndexedQuadGeometry3D, IMeshElementCounts, IDeformable3D
 {
     Positions: Array<Point3D>;
     Faces: Array<QuadFace>;
@@ -91,9 +91,9 @@ type QuadMesh3D
 // packing invariant, so every row query is reused through `m.Faces` — without the
 // generic names `Offsets` / `Values` landing on the mesh itself. Further jagged
 // members (vertex-to-face adjacency, for one) are then additional fields rather
-// than a second concept the type cannot implement twice.
+// than a second interface the type cannot implement twice.
 type PolygonMesh3D
-    implements IValue, IMeshable3D, IMeshElementCounts, IMeshIncidence, IDeformable3D
+    implements IValue, IMesh3D, IMeshElementCounts, IMeshIncidence, IDeformable3D
 {
     Positions: Array<Point3D>;
     Faces: JaggedArray<VertexIndex>;
@@ -140,7 +140,7 @@ type TangentBasis
 // "normal" (PerVertex or PerCorner Vector3D), "uv0" (PerCorner UvCoordinate),
 // and "color" (PerVertex Color).
 type RichMesh3D
-    implements IValue, IMeshable3D, IDeformable3D
+    implements IValue, IMesh3D, IDeformable3D
 {
     Mesh: TriangleMesh3D;
     NumberChannels: Array<MeshAttribute<Number>>;
@@ -307,7 +307,7 @@ type MeshSection
 // A triangle mesh partitioned into sections. Sections are non-overlapping,
 // sorted ascending by FaceRange.Start, and together cover every face.
 type SegmentedMesh3D
-    implements IValue, IMeshable3D, IDeformable3D
+    implements IValue, IMesh3D, IDeformable3D
 {
     Mesh: TriangleMesh3D;
     Sections: Array<MeshSection>;
@@ -335,7 +335,7 @@ type TetrahedronCell
 // An indexed tetrahedral mesh: finite-element volumes, volumetric
 // simulations. ToTriangleMesh yields the boundary surface.
 type TetrahedralMesh3D
-    implements IValue, IMeshable3D, IDeformable3D
+    implements IValue, IMesh3D, IDeformable3D
 {
     Positions: Array<Point3D>;
     Cells: Array<TetrahedronCell>;

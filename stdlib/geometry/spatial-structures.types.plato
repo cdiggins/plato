@@ -148,7 +148,7 @@ type KdTreeNode2D
 // point set: nearest-neighbor and range queries. Node 0 is the root;
 // PointIndices is the leaf-order permutation of Points.
 type KdTree2D
-    implements IValue, ISpatialIndex2D, INearestNeighborQueryable2D
+    implements IValue, ISpatialIndex2D, INearestNeighbor2D
 {
     Points: Array<Point2D>;
     Nodes: Array<KdTreeNode2D>;
@@ -171,7 +171,7 @@ type KdTreeNode3D
 // queries. Node 0 is the root; PointIndices is the leaf-order permutation
 // of Points.
 type KdTree3D
-    implements IValue, ISpatialIndex3D, INearestNeighborQueryable3D
+    implements IValue, ISpatialIndex3D, INearestNeighbor3D
 {
     Points: Array<Point3D>;
     Nodes: Array<KdTreeNode3D>;
@@ -473,7 +473,7 @@ type BvhNode3D
 // ray-tracing and broad-phase accelerator. Node 0 is the root;
 // PrimitiveIndices is the leaf-order permutation of the caller's primitives.
 type Bvh3D
-    implements IValue, ISpatialIndex3D, IRayIntersectable3D
+    implements IValue, ISpatialIndex3D, IRaycast3D
 {
     Nodes: Array<BvhNode3D>;
     PrimitiveIndices: Array<ItemIndex>;

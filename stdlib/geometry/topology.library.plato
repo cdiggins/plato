@@ -43,8 +43,8 @@ library Topology
     //==
     // # The half-edge mesh's own members
     //
-    // The concept obligations of HalfEdgeMesh (`topology.types.plato`):
-    // IDeformable3D, the IMeshElementCounts triple, and the five IHalfEdgeNavigable
+    // The interface obligations of HalfEdgeMesh (`topology.types.plato`):
+    // IDeformable3D, the IMeshElementCounts triple, and the five IHalfEdge
     // steps. Every navigation step is one array read — that constant-time
     // neighbourhood walk is the entire reason the structure stores what it stores.
     //
@@ -82,7 +82,7 @@ library Topology
         => self.FaceHalfEdges.Count;
 
     //==
-    // # IHalfEdgeNavigable
+    // # IHalfEdge
     //
     // The five constant-time steps, each a lookup in the half-edge record.
     // Precondition on all five: halfEdge is a valid index into HalfEdges.

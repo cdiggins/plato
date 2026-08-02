@@ -1,7 +1,7 @@
 //==
 // # TimeVaryingValues — derived functions for ITimeVarying<TValue>
 //
-// Bodies for the `ITimeVarying<TValue>` concept declared in
+// Bodies for the `ITimeVarying<TValue>` interface declared in
 // `time-varying.concepts.plato`. A time-varying value is sampled at a `Duration`
 // offset from its owner's start via `Sample`; the helpers rename that sampling
 // and work over a span given by two boundary Durations. Pure expressions only;
@@ -9,7 +9,7 @@
 // for naming and unit conventions.
 
 // The library block is TimeVaryingValues rather than the file stem's TimeVarying:
-// that name is already taken by the concept these bodies derive from.
+// that name is already taken by the interface these bodies derive from.
 library TimeVaryingValues
 {
     //==
@@ -21,7 +21,7 @@ library TimeVaryingValues
     //
     // The change/delta helpers subtract two samples, which the type variable
     // $TValue supports by the same duck-typing the interval helpers rely on
-    // (IIntervalLike.Extent subtracts two $T). A formal `where TValue: IAdditive`
+    // (IInterval.Extent subtracts two $T). A formal `where TValue: IAdditive`
     // bound on ITimeVarying is deferred: its implementors span motion-graphics.types.plato
     // and future/keyframes.types.plato (AnimationTrack/TangentTrack), which are
     // outside this package's edit scope, so the bound cannot be filled tree-wide here.

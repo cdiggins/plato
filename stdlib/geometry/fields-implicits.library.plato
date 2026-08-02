@@ -17,11 +17,11 @@ library FieldsImplicits
     //==
     // # IField evaluation and scalar/vector queries
     //
-    // Bodies for the root `IField` concept and the plain scalar and vector fields
+    // Bodies for the root `IField` interface and the plain scalar and vector fields
     // declared in `fields.concepts.plato`. Every field inherits
     // `IProcedural<TDomain, TRange>`, whose sole operation is `Eval(x, input)`. The
     // generic `ValueAt` below names that evaluation for every field;
-    // concept-specific helpers exist only where they carry semantic weight beyond
+    // interface-specific helpers exist only where they carry semantic weight beyond
     // respelling Eval (sign and level-set queries, magnitude, flow direction). See
     // `README.md` for naming and unit conventions.
 
@@ -31,7 +31,7 @@ library FieldsImplicits
     // The root spatial-field capability: a pure mapping from a domain position to
     // a value. Only `Eval` is available, so the single helper is a readable alias
     // that serves every field type — color, complex, tensor, vector, direction —
-    // which is why those concepts add no pure-evaluation alias of their own.
+    // which is why those interfaces add no pure-evaluation alias of their own.
 
     // The field's value at a domain position; a readable spelling of Eval.
     ValueAt(self: IField<$TDomain, $TValue>, point: $TDomain): $TValue
@@ -43,7 +43,7 @@ library FieldsImplicits
     // A real-valued field over the plane. Level-set membership and sign queries
     // are the natural derived surface over a bare scalar evaluation
     // (https://en.wikipedia.org/wiki/Level_set).
-    // TODO(concept-gap): a numeric finite-difference gradient would need to sample
+    // TODO(interface-gap): a numeric finite-difference gradient would need to sample
     // the field at points offset from `point`, but no sanctioned Point2D offset
     // operation is in scope here (IDifference.Add needs a Vector2D that ICoordinate
     // cannot supply); use IDifferentiableScalarField2D for gradients instead.
@@ -129,7 +129,7 @@ library FieldsImplicits
     // # IDirectionField2D / IDirectionField3D
     //
     // Fields of unit directions. Evaluation is the generic ValueAt(IField), which
-    // already returns the sampled Direction2D / Direction3D, so no concept-
+    // already returns the sampled Direction2D / Direction3D, so no interface-
     // specific helper carries weight beyond it.
 
     //==
@@ -148,13 +148,13 @@ library FieldsImplicits
     // # ITensorField2D / ITensorField3D
     //
     // Matrix-valued fields. Evaluation is the generic ValueAt(IField); tensor
-    // invariants are not derivable from the IMatrixLike surface (see the P3
+    // invariants are not derivable from the IMatrix surface (see the P3
     // NumericStructures gaps).
 
     //==
     // # Differentiable field bodies
     //
-    // Bodies for the differentiable field concepts declared in
+    // Bodies for the differentiable field interfaces declared in
     // `fields.concepts.plato`: gradient directions, slope, and
     // stationarity for scalar fields, and the divergence / curl classifiers that
     // name local flow behaviour for vector fields.
@@ -282,7 +282,7 @@ library FieldsImplicits
     //==
     // # Signed distance and membership queries
     //
-    // Bodies for the implicit concepts declared in `implicit-sdf.concepts.plato`:
+    // Bodies for the implicit interfaces declared in `implicit-sdf.concepts.plato`:
     // the inside / outside / boundary surface a signed distance field induces, and
     // the matching membership surface for predicate-only regions and volumes.
 
@@ -408,7 +408,7 @@ library FieldsImplicits
     //
     // Bodies for the constant fields of `fields.types.plato` and the
     // function-valued fields of `fields.types.plato`, plus the combinator
-    // algebra over them: lifting any field concept implementor into stored-function
+    // algebra over them: lifting any field interface implementor into stored-function
     // form, pointwise composition, and constructive solid geometry on distance
     // fields. Every combinator returns a NEW field holding the composed lambda.
 
@@ -461,8 +461,8 @@ library FieldsImplicits
     //==
     // # Lifting any field into function-valued form
     //
-    // One concept-typed function per family lifts EVERY implementor of that field
-    // concept — constant fields, metaball systems, sampled SDFs, noise, and the
+    // One interface-typed function per family lifts EVERY implementor of that field
+    // interface — constant fields, metaball systems, sampled SDFs, noise, and the
     // function-valued fields themselves — into the combinator algebra below.
 
     // The field as a function-valued planar scalar field, holding a lambda that
@@ -696,7 +696,7 @@ library FieldsImplicits
     // # Function-valued implicit shape algebra
     //
     // Bodies for the stored-function implicit shapes of
-    // `implicit-sdf.types.plato`: evaluation, the lifts from any SDF concept
+    // `implicit-sdf.types.plato`: evaluation, the lifts from any SDF interface
     // implementor, and the CSG algebra closed over each form — SDF booleans are
     // min/max on the stored distance, region booleans are the Boolean connectives
     // on the stored predicate.
@@ -820,7 +820,7 @@ library FieldsImplicits
     //==
     // # Time-varying field bodies
     //
-    // Bodies for the time-varying field concepts declared in
+    // Bodies for the time-varying field interfaces declared in
     // `fields.concepts.plato`: sampling at an instant, and the change
     // and monotonicity queries between two instants.
 
@@ -828,7 +828,7 @@ library FieldsImplicits
     // # ITimeVaryingScalarField2D
     //
     // A planar scalar field evolving over a timeline; sampled at (point, time).
-    // TODO(concept-gap): an average rate of change would divide the value change
+    // TODO(interface-gap): an average rate of change would divide the value change
     // by the elapsed time, but Instant differences yield a Duration and no
     // sanctioned Duration-to-Number division is in scope here; only the raw
     // change and monotonicity tests are offered.

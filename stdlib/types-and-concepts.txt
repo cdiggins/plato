@@ -4,6 +4,7 @@ interface IAffine3D{AffineTransform3D(x:Self):AffineTransform3D;}
 interface IAngularCurve2D inherits ICurve2D{Eval(x:Self,angle:Angle):Point2D;}
 interface IAngularCurve3D inherits ICurve3D{Eval(x:Self,angle:Angle):Point3D;}
 interface IArcLengthParameterized<TPoint>{ArcLength(x:Self):Number;PointAtLength(x:Self,length:Number):TPoint;ParameterAtLength(x:Self,length:Number):Number;}
+interface IArea{Area(x:Self):Number;Perimeter(x:Self):Number;}
 interface IArithmetic inherits IAdditive,IMultiplicative,IDivisible,IModular{}
 interface IBijective<TDomain,TRange>inherits IProcedural<TDomain,TRange>{EvalInverse(x:Self,output:TRange):TDomain;}
 interface IBitwise{BitwiseAnd(a:Self,b:Self):Self;BitwiseOr(a:Self,b:Self):Self;BitwiseXor(a:Self,b:Self):Self;BitwiseNot(x:Self):Self;ShiftLeft(x:Self,bits:Integer):Self;ShiftRight(x:Self,bits:Integer):Self;}
@@ -13,7 +14,7 @@ interface IBounded2D{Bounds(x:Self):Bounds2D;}
 interface IBounded3D{Bounds(x:Self):Bounds3D;}
 interface IBoundedSignedDistanceField2D inherits ISignedDistanceField2D,IBounded2D{}
 interface IBoundedSignedDistanceField3D inherits ISignedDistanceField3D,IBounded3D{}
-interface IBoundsLike<TPoint,TDelta>where TPoint:IDifference<TDelta>,TPoint:IInterpolatable inherits IValue{Min(x:Self):TPoint;Max(x:Self):TPoint;}
+interface IBounds<TPoint,TDelta>where TPoint:IDifference<TDelta>,TPoint:IInterpolatable inherits IValue{Min(x:Self):TPoint;Max(x:Self):TPoint;}
 interface ICamera inherits IValue{Pose(x:Self):Pose3D;Near(x:Self):Number;Far(x:Self):Number;AspectRatio(x:Self):Number;}
 interface ICentroid2D{Centroid(x:Self):Point2D;}
 interface ICentroid3D{Centroid(x:Self):Point3D;}
@@ -22,8 +23,8 @@ interface IClosedCurve2D inherits ICurve2D{}
 interface IClosedCurve3D inherits ICurve3D{}
 interface IClosedShape{}
 interface IClosedSurface inherits ISurface{}
-interface IClosestPointQueryable2D{ClosestPoint(x:Self,point:Point2D):ClosestPointResult2D;}
-interface IClosestPointQueryable3D{ClosestPoint(x:Self,point:Point3D):ClosestPointResult3D;}
+interface IClosestPoint2D{ClosestPoint(x:Self,point:Point2D):ClosestPointResult2D;}
+interface IClosestPoint3D{ClosestPoint(x:Self,point:Point3D):ClosestPointResult3D;}
 interface IColorField2D inherits IField<Point2D,Color>{}
 interface IColorField3D inherits IField<Point3D,Color>{}
 interface IComparable inherits IOrderable{Compare(a:Self,b:Self):Integer;}
@@ -66,8 +67,8 @@ interface IGeometry2D inherits IGeometry{}
 interface IGeometry3D inherits IGeometry{}
 interface IGeometryCollection<TGeom>inherits IGeometry{Elements(x:Self):Array<TGeom>;}
 interface IGeometryND inherits IGeometry{}
-interface IGraphLike inherits IValue{VertexCount(x:Self):Integer;EdgeCount(x:Self):Integer;IsDirected(x:Self):Boolean;}
-interface IHalfEdgeNavigable{OriginOf(x:Self,halfEdge:HalfEdgeIndex):VertexIndex;TwinOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;NextOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;PreviousOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;FaceOf(x:Self,halfEdge:HalfEdgeIndex):FaceIndex;}
+interface IGraph inherits IValue{VertexCount(x:Self):Integer;EdgeCount(x:Self):Integer;IsDirected(x:Self):Boolean;}
+interface IHalfEdge{OriginOf(x:Self,halfEdge:HalfEdgeIndex):VertexIndex;TwinOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;NextOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;PreviousOf(x:Self,halfEdge:HalfEdgeIndex):HalfEdgeIndex;FaceOf(x:Self,halfEdge:HalfEdgeIndex):FaceIndex;}
 interface IHashable inherits IEquatable{Hash(x:Self):Integer;}
 interface IHeightFieldSurface inherits ISurface,IProcedural<Point2D,Number>{}
 interface IImage inherits IValue{Size(x:Self):IntegerSize2D;Width(x:Self):Integer;Height(x:Self):Integer;}
@@ -85,25 +86,25 @@ interface IIndexedSegmentGeometry3D inherits IIndexedGeometry<Point3D,Line3D,Ver
 interface IIndexedTriangleGeometry2D inherits IIndexedGeometry<Point2D,Triangle2D,TriangleFace>,ITriangleGeometry2D{}
 interface IIndexedTriangleGeometry3D inherits IIndexedGeometry<Point3D,Triangle3D,TriangleFace>,ITriangleGeometry3D{}
 interface IInterpolatable{Lerp(a:Self,b:Self,t:Number):Self;}
-interface IIntervalLike<T>where T:IAdditive,T:IInterpolatable,T:IComparable inherits IValue{Start(x:Self):T;End(x:Self):T;}
+interface IInterval<T>where T:IAdditive,T:IInterpolatable,T:IComparable inherits IValue{Start(x:Self):T;End(x:Self):T;}
 interface IInvertible{Inverse(x:Self):Self;}
 interface IJagged<T>{Offsets(x:Self):Array<Integer>;Values(x:Self):Array<T>;}
 interface ILattice{Min(a:Self,b:Self):Self;Max(a:Self,b:Self):Self;}
-interface ILengthMeasurable{Length(x:Self):Number;}
+interface ILength{Length(x:Self):Number;}
 interface ILightSource inherits IValue{CastsShadows(x:Self):Boolean;}
 interface ILogical{And(a:Self,b:Self):Self;Or(a:Self,b:Self):Self;Not(x:Self):Self;}
 interface IManifold{}
-interface IMapLike<TKey,TValue>inherits ICountable{ContainsKey(x:Self,key:TKey):Boolean;ValueAt(x:Self,key:TKey):TValue;}
-interface IMatrixLike inherits IValue,IAdditive,IScalable{RowCount(x:Self):Integer;ColumnCount(x:Self):Integer;ElementAt(x:Self,row:Integer,column:Integer):Number;}
-interface IMeshable2D{Triangulate(x:Self):TriangleMesh2D;}
-interface IMeshable3D{ToTriangleMesh(x:Self):TriangleMesh3D;}
+interface IMap<TKey,TValue>inherits ICountable{ContainsKey(x:Self,key:TKey):Boolean;ValueAt(x:Self,key:TKey):TValue;}
+interface IMatrix inherits IValue,IAdditive,IScalable{RowCount(x:Self):Integer;ColumnCount(x:Self):Integer;ElementAt(x:Self,row:Integer,column:Integer):Number;}
+interface IMesh2D{Triangulate(x:Self):TriangleMesh2D;}
+interface IMesh3D{ToTriangleMesh(x:Self):TriangleMesh3D;}
 interface IMeshElementCounts{VertexCount(x:Self):Integer;UndirectedEdgeCount(x:Self):Integer;FaceCount(x:Self):Integer;}
 interface IMeshIncidence inherits IMeshElementCounts{VerticesOfFace(x:Self,face:FaceIndex):Array<VertexIndex>;UndirectedEdgesOfFace(x:Self,face:FaceIndex):Array<UndirectedEdgeIndex>;FacesOfVertex(x:Self,vertex:VertexIndex):Array<FaceIndex>;UndirectedEdgesOfVertex(x:Self,vertex:VertexIndex):Array<UndirectedEdgeIndex>;VerticesOfUndirectedEdge(x:Self,edge:UndirectedEdgeIndex):VertexPair;FacesOfUndirectedEdge(x:Self,edge:UndirectedEdgeIndex):Array<FaceIndex>;}
 interface IMetricSpace{Distance(a:Self,b:Self):Number;}
 interface IModular{Modulo(a:Self,b:Self):Self;}
 interface IMultiplicative{Multiply(a:Self,b:Self):Self;}
-interface INearestNeighborQueryable2D{FindNearest(x:Self,query:KNearestQuery2D):NearestNeighbors;}
-interface INearestNeighborQueryable3D{FindNearest(x:Self,query:KNearestQuery3D):NearestNeighbors;}
+interface INearestNeighbor2D{FindNearest(x:Self,query:KNearestQuery2D):NearestNeighbors;}
+interface INearestNeighbor3D{FindNearest(x:Self,query:KNearestQuery3D):NearestNeighbors;}
 interface INearestPoint2D{ClosestPoint(x:Self,point:Point2D):Point2D;}
 interface INearestPoint3D{ClosestPoint(x:Self,point:Point3D):Point3D;}
 interface INormed{Magnitude(x:Self):Number;MagnitudeSquared(x:Self):Number;}
@@ -116,12 +117,11 @@ interface IOriginBased<TDelta>inherits IDifference<TDelta>{Offset(x:Self):TDelta
 interface IParameterDomain{Domain(x:Self):NumberInterval;}
 interface IParametricSurface inherits ISurface,IProcedural<UvCoordinate,Point3D>{ClosedU(x:Self):Boolean;ClosedV(x:Self):Boolean;}
 interface IParametricVolume inherits IGeometry3D,IProcedural<UvwCoordinate,Point3D>{}
-interface IPathLike{ToPath(x:Self):Path2D;}
+interface IPath{ToPath(x:Self):Path2D;}
 interface IPeriodic<TPeriod>where TPeriod:IAdditive,TPeriod:IModular{Period(x:Self):TPeriod;}
 interface IPeriodicCurve<TRange>inherits IPeriodic<Number>,ICurve<TRange>{}
 interface IPlanarCurve3D inherits ICurve3D{CurvePlane(x:Self):Plane;}
-interface IPlanarMeasurable{Area(x:Self):Number;Perimeter(x:Self):Number;}
-interface IPointCloudable3D{ToPointCloud(x:Self):PointCloud3D;}
+interface IPointCloud3D{ToPointCloud(x:Self):PointCloud3D;}
 interface IPointGeometry<TPoint>inherits IGeometry{Points(x:Self):Array<TPoint>;}
 interface IPointSet2D inherits IGeometry2D{Points(x:Self):Array<Point2D>;}
 interface IPointSet3D inherits IGeometry3D{Points(x:Self):Array<Point3D>;}
@@ -131,11 +131,11 @@ interface IProbabilityDistribution inherits IValue{Mean(x:Self):Number;Variance(
 interface IProcedural<TDomain,TRange>{Eval(x:Self,input:TDomain):TRange;}
 interface IProceduralTexture inherits IValue{ColorAt(x:Self,uv:UvCoordinate):Color;}
 interface IQuadGeometry2D inherits IGeometry2D,IPrimitiveGeometry<Point2D,Quad2D>,IPointSet2D,IBounded2D,IDeformable2D{}
-interface IQuadGeometry3D inherits IGeometry3D,IPrimitiveGeometry<Point3D,Quad3D>,IPointSet3D,IBounded3D,IDeformable3D,IMeshable3D{}
+interface IQuadGeometry3D inherits IGeometry3D,IPrimitiveGeometry<Point3D,Quad3D>,IPointSet3D,IBounded3D,IDeformable3D,IMesh3D{}
 interface IQuantity inherits IValue,IComparable,IHashable,IAdditive,IScalable,IInterpolatable{Amount(x:Self):Number;FromAmount(_:Self,x:Number):Self;}
-interface IQueueLike<T>inherits ICountable{Front(x:Self):T;Enqueue(x:Self,item:T):Self;Dequeue(x:Self):Self;}
-interface IRayIntersectable2D{Raycast(x:Self,query:RayQuery2D):RayHit2D;}
-interface IRayIntersectable3D{Raycast(x:Self,query:RayQuery3D):RayHit3D;}
+interface IQueue<T>inherits ICountable{Front(x:Self):T;Enqueue(x:Self,item:T):Self;Dequeue(x:Self):Self;}
+interface IRaycast2D{Raycast(x:Self,query:RayQuery2D):RayHit2D;}
+interface IRaycast3D{Raycast(x:Self,query:RayQuery3D):RayHit3D;}
 interface IReal inherits INumerical,IComparable,IHashable,IArithmetic,IInvertible{ToNumber(x:Self):Number;Sqrt(x:Self):Self;Floor(x:Self):Self;Ceiling(x:Self):Self;}
 interface IRigid2D inherits IAffine2D{Pose2D(x:Self):Pose2D;}
 interface IRigid3D inherits IAffine3D{Pose3D(x:Self):Pose3D;}
@@ -145,17 +145,16 @@ interface IScalarField2D inherits IField<Point2D,Number>{}
 interface IScalarField3D inherits IField<Point3D,Number>{}
 interface ISegmentGeometry2D inherits IGeometry2D,IPrimitiveGeometry<Point2D,Line2D>,IPointSet2D,IBounded2D,IDeformable2D{}
 interface ISegmentGeometry3D inherits IGeometry3D,IPrimitiveGeometry<Point3D,Line3D>,IPointSet3D,IBounded3D,IDeformable3D{}
-interface ISetLike<T>{Contains(x:Self,item:T):Boolean;}
+interface ISet<T>{Contains(x:Self,item:T):Boolean;}
 interface ISignedDistanceField2D inherits IScalarField2D{}
 interface ISignedDistanceField3D inherits IScalarField3D{}
 interface ISliceable inherits ICountable{Slice(x:Self,from:Integer,exclusiveTo:Integer):Self;}
 interface ISolid inherits IGeometry3D{}
 interface ISpatialIndex2D{ItemCount(x:Self):Integer;CandidatesInBounds(x:Self,bounds:Bounds2D):Array<ItemIndex>;}
 interface ISpatialIndex3D{ItemCount(x:Self):Integer;CandidatesInBounds(x:Self,bounds:Bounds3D):Array<ItemIndex>;}
-interface ISpatialMeasurable{Volume(x:Self):Number;SurfaceArea(x:Self):Number;}
-interface IStackLike<T>inherits ICountable{Peek(x:Self):T;Push(x:Self,item:T):Self;Pop(x:Self):Self;}
-interface ISupportMappable2D{Support(x:Self,direction:Direction2D):Point2D;}
-interface ISupportMappable3D{Support(x:Self,direction:Direction3D):Point3D;}
+interface IStack<T>inherits ICountable{Peek(x:Self):T;Push(x:Self,item:T):Self;Pop(x:Self):Self;}
+interface ISupport2D{Support(x:Self,direction:Direction2D):Point2D;}
+interface ISupport3D{Support(x:Self,direction:Direction3D):Point3D;}
 interface ISurface inherits IGeometry3D{}
 interface ITensorField2D inherits IField<Point2D,Matrix2x2>{}
 interface ITensorField3D inherits IField<Point3D,Matrix3x3>{}
@@ -166,14 +165,15 @@ interface ITimeVaryingVectorField2D{EvalAtTime(x:Self,point:Point2D,time:Instant
 interface ITimeVaryingVectorField3D{EvalAtTime(x:Self,point:Point3D,time:Instant):Vector3D;}
 interface ITransformable2D{Transform(x:Self,transform:Transform2D):Self;}
 interface ITransformable3D{Transform(x:Self,transform:Transform3D):Self;}
-interface ITriangleGeometry2D inherits IGeometry2D,IPrimitiveGeometry<Point2D,Triangle2D>,IPointSet2D,IBounded2D,IDeformable2D,IMeshable2D{}
-interface ITriangleGeometry3D inherits IGeometry3D,IPrimitiveGeometry<Point3D,Triangle3D>,IPointSet3D,IBounded3D,IDeformable3D,IMeshable3D{}
-interface ITriangulatedGeometry3D inherits IMeshable3D{TriangleCount(x:Self):Integer;FaceAt(x:Self,face:FaceIndex):TriangleFace;PositionAt(x:Self,vertex:VertexIndex):Point3D;}
+interface ITriangleGeometry2D inherits IGeometry2D,IPrimitiveGeometry<Point2D,Triangle2D>,IPointSet2D,IBounded2D,IDeformable2D,IMesh2D{}
+interface ITriangleGeometry3D inherits IGeometry3D,IPrimitiveGeometry<Point3D,Triangle3D>,IPointSet3D,IBounded3D,IDeformable3D,IMesh3D{}
+interface ITriangulatedGeometry3D inherits IMesh3D{TriangleCount(x:Self):Integer;FaceAt(x:Self,face:FaceIndex):TriangleFace;PositionAt(x:Self,vertex:VertexIndex):Point3D;}
 interface IValue inherits IEquatable{}
 interface IVector inherits INumerical,IArithmetic,IIndexable<Number>,INormed,ILattice,IHashable{Dot(a:Self,b:Self):Number;FromComponents(_:Self,xs:Array<Number>):Self;Broadcast(self:Self,x:Number):Self;}
 interface IVectorField2D inherits IField<Point2D,Vector2D>{}
 interface IVectorField3D inherits IField<Point3D,Vector3D>{}
-interface IVoxelizable3D{ToOccupancyGrid(x:Self,cellSize:Number):OccupancyGrid3D;}
+interface IVolume{Volume(x:Self):Number;SurfaceArea(x:Self):Number;}
+interface IVoxel3D{ToOccupancyGrid(x:Self,cellSize:Number):OccupancyGrid3D;}
 interface IWhole inherits IValue,IComparable,IHashable,IArithmetic,IInterpolatable,INumericalLimits{ToInteger(x:Self):Integer;}
 type Acceleration implements IQuantity{MetersPerSecondSquared:Number;}
 type AdjacencyMatrix implements IValue{VertexCount:Integer;Weights:Array<Number>;}
@@ -186,16 +186,16 @@ type AmbientLight implements IValue{Color:Color;Illuminance:Illuminance;}
 type AmbientOcclusionSettings implements IValue{Enabled:Boolean;Radius:Number;Intensity:Number;Bias:Number;SampleCount:Integer;}
 type AmountOfSubstance implements IQuantity{Moles:Number;}
 type Angle implements IQuantity{Radians:Number;}
-type AngleInterval implements IIntervalLike<Angle>{Start:Angle;End:Angle;}
+type AngleInterval implements IInterval<Angle>{Start:Angle;End:Angle;}
 type AngularAcceleration implements IQuantity{RadiansPerSecondSquared:Number;}
 type AngularMomentum implements IQuantity{KilogramSquareMetersPerSecond:Number;}
 type AngularVelocity implements IQuantity{RadiansPerSecond:Number;}
 type AnimatedImage implements IValue{Frames:Array<Bitmap>;FrameDurations:Array<Duration>;LoopCount:Integer;}
 type AnisotropyLayer implements IValue{Strength:Proportion;Rotation:Angle;}
-type Annulus implements IGeometry2D,IClosedShape,IConnected,IPlanarMeasurable,IBounded2D,ICentroid2D,IContainsPoint2D{Center:Point2D;InnerRadius:Number;OuterRadius:Number;}
+type Annulus implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D{Center:Point2D;InnerRadius:Number;OuterRadius:Number;}
 type AntiAliasing{}
-type Antiprism implements IConvexSolid,IMeshable3D{Frame:Frame3D;SideCount:Integer;Radius:Number;Height:Number;}
-type ArchimedeanSolid implements IConvexSolid,IMeshable3D{Kind:ArchimedeanSolidKind;Frame:Frame3D;Radius:Number;}
+type Antiprism implements IConvexSolid,IMesh3D{Frame:Frame3D;SideCount:Integer;Radius:Number;Height:Number;}
+type ArchimedeanSolid implements IConvexSolid,IMesh3D{Kind:ArchimedeanSolidKind;Frame:Frame3D;Radius:Number;}
 type ArchimedeanSolidKind{}
 type ArchimedeanSpiral2D implements IPolarCurve2D{StartRadius:Number;GrowthRate:Number;Angles:AngleInterval;}
 type Area implements IQuantity{SquareMeters:Number;}
@@ -206,7 +206,7 @@ type Array2D<T>implements IIndexable2D<T>{Elements:Array<T>;ColumnCount:Integer;
 type Array3D<T>implements IIndexable3D<T>{Elements:Array<T>;ColumnCount:Integer;RowCount:Integer;LayerCount:Integer;}
 type Attenuation{}
 type AttributeDomain{}
-type AttributedPointCloud3D implements IValue,IPointCloudable3D,IDeformable3D{Positions:Array<Point3D>;Normals:Array<Direction3D>;Colors:Array<Color>;Intensities:Array<Number>;}
+type AttributedPointCloud3D implements IValue,IPointCloud3D,IDeformable3D{Positions:Array<Point3D>;Normals:Array<Direction3D>;Colors:Array<Color>;Intensities:Array<Number>;}
 type Axis2D{}
 type Axis3D{}
 type AxisAngle implements IValue,IRotational3D{Axis:Direction3D;Angle:Angle;}
@@ -241,9 +241,9 @@ type BounceParameters implements IValue{Bounces:Integer;Restitution:Proportion;}
 type BoundaryLoop implements IValue{HalfEdges:Array<HalfEdgeIndex>;}
 type BoundedSdf2D implements IValue,IBoundedSignedDistanceField2D{Sdf:FunctionSdf2D;Bounds:Bounds2D;}
 type BoundedSdf3D implements IValue,IBoundedSignedDistanceField3D{Sdf:FunctionSdf3D;Bounds:Bounds3D;}
-type Bounds2D implements IBoundsLike<Point2D,Vector2D>{Min:Point2D;Max:Point2D;}
-type Bounds3D implements IBoundsLike<Point3D,Vector3D>{Min:Point3D;Max:Point3D;}
-type Box3D implements IGeometry3D,IClosedShape,IConvexShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D,INearestPoint3D,ISupportMappable3D,IParametricSurface{Center:Point3D;Size:Size3D;Orientation:Quaternion;}
+type Bounds2D implements IBounds<Point2D,Vector2D>{Min:Point2D;Max:Point2D;}
+type Bounds3D implements IBounds<Point3D,Vector3D>{Min:Point3D;Max:Point3D;}
+type Box3D implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,INearestPoint3D,ISupport3D,IParametricSurface{Center:Point3D;Size:Size3D;Orientation:Quaternion;}
 type BoxBlurParameters implements IValue{Radius:Integer;Passes:Integer;}
 type BoxPlotStatistics implements IValue{Summary:FiveNumberSummary;LowerWhisker:Number;UpperWhisker:Number;Outliers:Array<Number>;}
 type Brdf{}
@@ -263,18 +263,18 @@ type BSplineSurface implements IParametricSurface,IDeformable3D{ControlPoints:Ar
 type Buffer<T>{}
 type ButterflyCurve2D implements IClosedCurve2D{Scale:Number;}
 type Bvh2D implements IValue,ISpatialIndex2D{Nodes:Array<BvhNode2D>;PrimitiveIndices:Array<ItemIndex>;}
-type Bvh3D implements IValue,ISpatialIndex3D,IRayIntersectable3D{Nodes:Array<BvhNode3D>;PrimitiveIndices:Array<ItemIndex>;}
+type Bvh3D implements IValue,ISpatialIndex3D,IRaycast3D{Nodes:Array<BvhNode3D>;PrimitiveIndices:Array<ItemIndex>;}
 type BvhNode2D implements IValue{Bounds:Bounds2D;LeftChild:SpatialNodeIndex;RightChild:SpatialNodeIndex;Primitives:IntegerInterval;}
 type BvhNode3D implements IValue{Bounds:Bounds3D;LeftChild:SpatialNodeIndex;RightChild:SpatialNodeIndex;Primitives:IntegerInterval;}
 type CameraBindingIndex implements IValue,IHashable,IComparable,IIndex{Value:Integer;}
 type CameraProjection{}
 type CameraShake implements IValue{Amplitude:Number;Frequency:Frequency;Seed:Integer;Damping:Number;}
 type Capacitance implements IQuantity{Farads:Number;}
-type Capsule2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IPlanarMeasurable,IBounded2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,ISupportMappable2D{A:Point2D;B:Point2D;Radius:Number;}
-type Capsule3D implements IGeometry3D,IClosedShape,IConvexShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D,INearestPoint3D,ISupportMappable3D,IParametricSurface{A:Point3D;B:Point3D;Radius:Number;}
+type Capsule2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,ISupport2D{A:Point2D;B:Point2D;Radius:Number;}
+type Capsule3D implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,INearestPoint3D,ISupport3D,IParametricSurface{A:Point3D;B:Point3D;Radius:Number;}
 type Cardinal implements IValue,IComparable{Value:Integer;}
 type Cardioid2D implements IClosedCurve2D{Radius:Number;}
-type CatalanSolid implements IConvexSolid,IMeshable3D{Kind:CatalanSolidKind;Frame:Frame3D;Radius:Number;}
+type CatalanSolid implements IConvexSolid,IMesh3D{Kind:CatalanSolidKind;Frame:Frame3D;Radius:Number;}
 type CatalanSolidKind{}
 type Catenary2D implements ICurve2D{Scale:Number;Domain:NumberInterval;}
 type CatmullRomCurve2D implements ICurve2D,IDeformable2D{Points:Array<Point2D>;Alpha:Number;Closed:Boolean;}
@@ -289,13 +289,13 @@ type ChristoffelSymbols2D implements IValue{Gamma111:Number;Gamma112:Number;Gamm
 type ChromaticAberrationParameters implements IValue{Strength:Number;Center:UvCoordinate;}
 type ChromaticAdaptation{}
 type Chromaticity implements IValue,IHashable{X:Number;Y:Number;}
-type Circle implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IPlanarMeasurable,IBounded2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,ISupportMappable2D{Center:Point2D;Radius:Number;}
+type Circle implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,ISupport2D{Center:Point2D;Radius:Number;}
 type CircleFit2D implements IValue,IFitted{Circle:Circle;Quality:FitQuality;}
 type CircleInvolute2D implements ICurve2D{Radius:Number;Angles:AngleInterval;}
 type CircularArc2D implements ICurve2D{Center:Point2D;Radius:Number;Angles:AngleInterval;}
 type CircularArc3D implements IPlanarCurve3D{Frame:Frame3D;Radius:Number;Angles:AngleInterval;}
-type CircularSector implements IGeometry2D,IClosedShape,IConnected,IPlanarMeasurable,IBounded2D,ICentroid2D,IContainsPoint2D{Circle:Circle;Sweep:AngleInterval;}
-type CircularSegment implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IPlanarMeasurable,IBounded2D,ICentroid2D,IContainsPoint2D{Circle:Circle;Sweep:AngleInterval;}
+type CircularSector implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D{Circle:Circle;Sweep:AngleInterval;}
+type CircularSegment implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D{Circle:Circle;Sweep:AngleInterval;}
 type ClassicEasing{}
 type ClearCoatLayer implements IValue{Intensity:Proportion;Roughness:Proportion;NormalScale:Number;IndexOfRefraction:Number;}
 type ClipMask2D implements IValue{Source:MaskSource2D;Inverted:Boolean;}
@@ -308,7 +308,7 @@ type Color8 implements IValue,IHashable{R:Integer;G:Integer;B:Integer;A:Integer;
 type ColorChannel{}
 type ColorCMYK implements IValue{Cyan:Number;Magenta:Number;Yellow:Number;Key:Number;}
 type ColorDifference{}
-type ColoredPointCloud3D implements IValue,IPointCloudable3D,IDeformable3D{Positions:Array<Point3D>;Colors:Array<Color>;}
+type ColoredPointCloud3D implements IValue,IPointCloud3D,IDeformable3D{Positions:Array<Point3D>;Colors:Array<Color>;}
 type ColorGradient implements IValue{Stops:Array<ColorStop>;}
 type ColorHarmony{}
 type ColorHSL implements IValue{Hue:Angle;Saturation:Number;Lightness:Number;}
@@ -333,8 +333,8 @@ type Complex implements INumerical{Real:Number;Imaginary:Number;}
 type CompositeBezier2D implements ICurve2D,IDeformable2D{Segments:Array<CubicBezier2D>;}
 type CompositeBezier3D implements ICurve3D,IDeformable3D{Segments:Array<CubicBezier3D>;}
 type ConchoidOfDeSluze2D implements IPolarCurve2D{Scale:Number;}
-type Cone implements IGeometry3D,IClosedShape,IConvexShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D,ISupportMappable3D,IParametricSurface{Apex:Point3D;Axis:Direction3D;Height:Number;Radius:Number;}
-type ConicalFrustum implements IGeometry3D,IClosedShape,IConvexShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D,IParametricSurface{Center:Point3D;Axis:Direction3D;Height:Number;BottomRadius:Number;TopRadius:Number;}
+type Cone implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,ISupport3D,IParametricSurface{Apex:Point3D;Axis:Direction3D;Height:Number;Radius:Number;}
+type ConicalFrustum implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,IParametricSurface{Center:Point3D;Axis:Direction3D;Height:Number;BottomRadius:Number;TopRadius:Number;}
 type ConicalSpiral3D implements ICurve3D{Frame:Frame3D;Radii:NumberInterval;Height:Number;Angles:AngleInterval;}
 type ConnectedComponents implements IValue{ComponentLabels:Array<Integer>;ComponentCount:Integer;}
 type ConstantScalarField2D implements IValue,IScalarField2D{Value:Number;}
@@ -346,7 +346,7 @@ type Contour2D implements IValue{Segments:Array<PathSegment2D>;Closed:Boolean;}
 type ContourIndex implements IValue,IHashable,IComparable,IIndex{Value:Integer;}
 type ConvexHull2D implements IValue{Hull:Polygon2D;SourceIndices:Array<ItemIndex>;}
 type ConvexHull3D implements IValue{Hull:TriangleMesh3D;SourceIndices:Array<ItemIndex>;}
-type ConvexPolygon2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IPlanarMeasurable,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,ISupportMappable2D,IDeformable2D{Points:Array<Point2D>;}
+type ConvexPolygon2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IArea,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,ISupport2D,IDeformable2D{Points:Array<Point2D>;}
 type ConvexPolytope3D implements IConvexSolid{Boundaries:Array<HalfSpace>;}
 type ConvexVolume implements IGeometry3D,IConvexShape,IConnected,IContainsPoint3D{Planes:Array<Plane>;}
 type ConvolutionKernel implements IValue{Width:Integer;Height:Integer;Weights:Array<Number>;Scale:Number;Bias:Number;}
@@ -377,9 +377,9 @@ type CurveJet3D implements IValue{Parameter:Number;Position:Point3D;FirstDerivat
 type CurvesAdjustment implements IValue{Master:ToneCurve;Red:ToneCurve;Green:ToneCurve;Blue:ToneCurve;}
 type Cycloid2D implements ICurve2D{Radius:Number;Angles:AngleInterval;}
 type CycloidOfCeva2D implements IPolarCurve2D{Scale:Number;}
-type Cylinder implements IGeometry3D,IClosedShape,IConvexShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D,ISupportMappable3D,IParametricSurface{Center:Point3D;Axis:Direction3D;Radius:Number;Height:Number;}
+type Cylinder implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,ISupport3D,IParametricSurface{Center:Point3D;Axis:Direction3D;Radius:Number;Height:Number;}
 type CylindricalCoordinate implements IValue{Radius:Number;Azimuth:Angle;Height:Number;}
-type CylindricalShell implements IGeometry3D,IClosedShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D,IParametricSurface{Center:Point3D;Axis:Direction3D;Height:Number;InnerRadius:Number;OuterRadius:Number;}
+type CylindricalShell implements IGeometry3D,IClosedShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,IParametricSurface{Center:Point3D;Axis:Direction3D;Height:Number;InnerRadius:Number;OuterRadius:Number;}
 type DampingCoefficient implements IQuantity{NewtonSecondsPerMeter:Number;}
 type DarbouxFrame3D implements IValue{Position:Point3D;Tangent:Direction3D;SurfaceNormal:Direction3D;TangentNormal:Direction3D;NormalCurvature:Number;GeodesicCurvature:Number;GeodesicTorsion:Number;}
 type DashPattern implements IValue{Intervals:Array<Number>;Phase:Number;}
@@ -395,7 +395,7 @@ type Direction2D implements IValue{Vector:Vector2D;}
 type Direction3D implements IValue{Vector:Vector3D;}
 type DirectionalLight implements ILightSource{Direction:Direction3D;Color:Color;Illuminance:Illuminance;AngularDiameter:Angle;CastsShadows:Boolean;}
 type DiscreteDistribution implements IProbabilityDistribution{Weights:Array<Number>;}
-type Disk3D implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IManifold,IOrientable,IPlanarMeasurable,IBounded3D,ICentroid3D,INearestPoint3D{Center:Point3D;Normal:Direction3D;Radius:Number;}
+type Disk3D implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IManifold,IOrientable,IArea,IBounded3D,ICentroid3D,INearestPoint3D{Center:Point3D;Normal:Direction3D;Radius:Number;}
 type DiskLight implements ILightSource{Center:Point3D;Normal:Direction3D;Radius:Number;Color:Color;Luminance:Luminance;TwoSided:Boolean;CastsShadows:Boolean;}
 type DisplayColorSpace{}
 type Dither{}
@@ -412,8 +412,8 @@ type EdgeOrientation{}
 type ElasticParameters implements IValue{Amplitude:Number;Period:Number;}
 type ElectricCharge implements IQuantity{Coulombs:Number;}
 type ElectricCurrent implements IQuantity{Amperes:Number;}
-type Ellipse implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IPlanarMeasurable,IBounded2D,ICentroid2D,IContainsPoint2D{Center:Point2D;SemiAxes:Number2;Rotation:Angle;}
-type Ellipsoid implements IGeometry3D,IClosedShape,IConvexShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D,ISupportMappable3D,IParametricSurface{Center:Point3D;SemiAxes:Number3;Orientation:Quaternion;}
+type Ellipse implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D{Center:Point2D;SemiAxes:Number2;Rotation:Angle;}
+type Ellipsoid implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,ISupport3D,IParametricSurface{Center:Point3D;SemiAxes:Number3;Orientation:Quaternion;}
 type EllipticalArc2D implements ICurve2D{Center:Point2D;Radii:Number2;Rotation:Angle;Angles:AngleInterval;}
 type EllipticalArc3D implements IPlanarCurve3D{Frame:Frame3D;Radii:Number2;Angles:AngleInterval;}
 type EncodedImage implements IValue{Codec:ImageCodec;Bytes:Array<Integer>;}
@@ -491,7 +491,7 @@ type GlyphPlacement implements IValue{GlyphId:Integer;Position:Point2D;Advance:V
 type GlyphRun implements IValue{Font:FontFace;Size:Number;Placements:Array<GlyphPlacement>;}
 type GradientSpread{}
 type GradientTexture implements IProceduralTexture{Gradient:ColorGradient;Angle:Angle;}
-type Graph implements IGraphLike{VertexCount:Integer;Edges:Array<GraphEdge>;Directed:Boolean;}
+type Graph implements IGraph{VertexCount:Integer;Edges:Array<GraphEdge>;Directed:Boolean;}
 type GraphColoring implements IValue{VertexColors:Array<Integer>;ColorCount:Integer;}
 type GraphEdge implements IValue,IHashable{Source:GraphVertexIndex;Target:GraphVertexIndex;}
 type GraphLayout{}
@@ -507,7 +507,7 @@ type GridResampling3D implements IValue{Source:RegularGrid3D;Target:RegularGrid3
 type GridSamplingScheme implements IValue{Interpolation:InterpolationScheme;Boundary:GridBoundary;}
 type HalfEdge implements IValue{Origin:VertexIndex;Twin:HalfEdgeIndex;Next:HalfEdgeIndex;Previous:HalfEdgeIndex;Face:FaceIndex;}
 type HalfEdgeIndex implements IValue,IHashable,IComparable,IIndex{Value:Integer;}
-type HalfEdgeMesh implements IValue,IMeshElementCounts,IHalfEdgeNavigable,IDeformable3D{Positions:Array<Point3D>;HalfEdges:Array<HalfEdge>;FaceHalfEdges:Array<HalfEdgeIndex>;VertexHalfEdges:Array<HalfEdgeIndex>;}
+type HalfEdgeMesh implements IValue,IMeshElementCounts,IHalfEdge,IDeformable3D{Positions:Array<Point3D>;HalfEdges:Array<HalfEdge>;FaceHalfEdges:Array<HalfEdgeIndex>;VertexHalfEdges:Array<HalfEdgeIndex>;}
 type HalfPlane2D implements IGeometry2D,IConvexShape,IConnected,IContainsPoint2D,INearestPoint2D{Normal:Direction2D;Distance:Number;}
 type HalfSpace implements IGeometry3D,IConvexShape,IConnected,IContainsPoint3D,INearestPoint3D{Boundary:Plane;}
 type HaltonPattern2D implements IValue{Region:Bounds2D;Count:Integer;BaseX:Integer;BaseY:Integer;}
@@ -547,7 +547,7 @@ type Instant implements IValue,IComparable,IOriginBased<Duration>{SecondsSinceEp
 type Integer implements IWhole,IBitwise{}
 type IntegerBounds2D implements IValue{Min:IntegerVector2;Max:IntegerVector2;}
 type IntegerBounds3D implements IValue{Min:IntegerVector3;Max:IntegerVector3;}
-type IntegerInterval implements IIntervalLike<Integer>{Start:Integer;End:Integer;}
+type IntegerInterval implements IInterval<Integer>{Start:Integer;End:Integer;}
 type IntegerSize2D implements IValue,IHashable{Width:Integer;Height:Integer;}
 type IntegerSize3D implements IValue,IHashable{Width:Integer;Height:Integer;Depth:Integer;}
 type IntegerVector2 implements IValue,IHashable{X:Integer;Y:Integer;}
@@ -562,8 +562,8 @@ type ItemIndex implements IValue,IHashable,IComparable,IIndex{Value:Integer;}
 type JaggedArray<T>implements IValue,IJagged<T>{Offsets:Array<Integer>;Values:Array<T>;}
 type Jerk implements IQuantity{MetersPerSecondCubed:Number;}
 type JitteredGridPattern2D implements IValue{Region:Bounds2D;CellCounts:IntegerVector2;JitterAmount:Number;Seed:Integer;}
-type KdTree2D implements IValue,ISpatialIndex2D,INearestNeighborQueryable2D{Points:Array<Point2D>;Nodes:Array<KdTreeNode2D>;PointIndices:Array<ItemIndex>;}
-type KdTree3D implements IValue,ISpatialIndex3D,INearestNeighborQueryable3D{Points:Array<Point3D>;Nodes:Array<KdTreeNode3D>;PointIndices:Array<ItemIndex>;}
+type KdTree2D implements IValue,ISpatialIndex2D,INearestNeighbor2D{Points:Array<Point2D>;Nodes:Array<KdTreeNode2D>;PointIndices:Array<ItemIndex>;}
+type KdTree3D implements IValue,ISpatialIndex3D,INearestNeighbor3D{Points:Array<Point3D>;Nodes:Array<KdTreeNode3D>;PointIndices:Array<ItemIndex>;}
 type KdTreeNode2D implements IValue{SplitAxis:Integer;SplitValue:Number;LeftChild:SpatialNodeIndex;RightChild:SpatialNodeIndex;Items:IntegerInterval;}
 type KdTreeNode3D implements IValue{SplitAxis:Integer;SplitValue:Number;LeftChild:SpatialNodeIndex;RightChild:SpatialNodeIndex;Items:IntegerInterval;}
 type KinematicViscosity implements IQuantity{SquareMetersPerSecond:Number;}
@@ -577,7 +577,7 @@ type LayoutedGraph{Graph:Graph;Positions:Array<Point2D>;}
 type LegendreSeries implements IValue{Coefficients:Array<Number>;}
 type Lemniscate2D implements IClosedCurve2D{Scale:Number;}
 type Length implements IQuantity{Meters:Number;}
-type LengthInterval implements IIntervalLike<Length>{Start:Length;End:Length;}
+type LengthInterval implements IInterval<Length>{Start:Length;End:Length;}
 type LensDistortion implements IValue{K1:Number;K2:Number;K3:Number;P1:Number;P2:Number;}
 type LensShift implements IValue{Horizontal:Number;Vertical:Number;}
 type LevelsAdjustment implements IValue{InputBlack:Number;InputWhite:Number;Gamma:Number;OutputBlack:Number;OutputWhite:Number;}
@@ -586,8 +586,8 @@ type LightBindingIndex implements IValue,IHashable,IComparable,IIndex{Value:Inte
 type LightLayerMask{Value:Integer;}
 type LightProbe implements IValue{Position:Point3D;InfluenceRadius:Number;Intensity:Number;}
 type Limacon2D implements IClosedCurve2D{Offset:Number;Amplitude:Number;}
-type Line2D implements IGeometry2D,IOpenShape,IConnected,IBounded2D,ILengthMeasurable,IPointSet2D,ICentroid2D,INearestPoint2D,IDeformable2D{A:Point2D;B:Point2D;}
-type Line3D implements IGeometry3D,IOpenShape,IConnected,IBounded3D,ILengthMeasurable,IPointSet3D,ICentroid3D,INearestPoint3D,IDeformable3D{A:Point3D;B:Point3D;}
+type Line2D implements IGeometry2D,IOpenShape,IConnected,IBounded2D,ILength,IPointSet2D,ICentroid2D,INearestPoint2D,IDeformable2D{A:Point2D;B:Point2D;}
+type Line3D implements IGeometry3D,IOpenShape,IConnected,IBounded3D,ILength,IPointSet3D,ICentroid3D,INearestPoint3D,IDeformable3D{A:Point3D;B:Point3D;}
 type LinearDensity implements IQuantity{KilogramsPerMeter:Number;}
 type LinearFit implements IValue{Slope:Number;Intercept:Number;RSquared:Number;}
 type LinearGradient2D implements IValue{Start:Point2D;End:Point2D;Gradient:ColorGradient;Spread:GradientSpread;}
@@ -622,12 +622,12 @@ type MatcapMaterial implements IValue{Capture:TextureBinding;Tint:Color;}
 type Material implements IValue{BaseColor:Color;Metallic:Proportion;Roughness:Proportion;EmissiveColor:Color;EmissiveStrength:Number;NormalScale:Number;OcclusionStrength:Proportion;Alpha:AlphaSettings;DoubleSided:Boolean;}
 type MaterialIndex implements IValue,IHashable,IComparable,IIndex{Value:Integer;}
 type MaterialTextureSet implements IValue{BaseColor:TextureBinding;MetallicRoughness:TextureBinding;Normal:TextureBinding;Occlusion:TextureBinding;Emissive:TextureBinding;}
-type Matrix2x2 implements IMatrixLike,IMultiplicative{Row1:Number2;Row2:Number2;}
-type Matrix3x2 implements IMatrixLike{Row1:Number2;Row2:Number2;Row3:Number2;}
-type Matrix3x3 implements IMatrixLike,IMultiplicative{Row1:Number3;Row2:Number3;Row3:Number3;}
-type Matrix4x3 implements IMatrixLike{Row1:Number3;Row2:Number3;Row3:Number3;Row4:Number3;}
-type Matrix4x4 implements IMatrixLike,IMultiplicative{Row1:Number4;Row2:Number4;Row3:Number4;Row4:Number4;}
-type MatrixN implements IMatrixLike{NumRows:Integer;NumColumns:Integer;Components:Array<Number>;}
+type Matrix2x2 implements IMatrix,IMultiplicative{Row1:Number2;Row2:Number2;}
+type Matrix3x2 implements IMatrix{Row1:Number2;Row2:Number2;Row3:Number2;}
+type Matrix3x3 implements IMatrix,IMultiplicative{Row1:Number3;Row2:Number3;Row3:Number3;}
+type Matrix4x3 implements IMatrix{Row1:Number3;Row2:Number3;Row3:Number3;Row4:Number3;}
+type Matrix4x4 implements IMatrix,IMultiplicative{Row1:Number4;Row2:Number4;Row3:Number4;Row4:Number4;}
+type MatrixN implements IMatrix{NumRows:Integer;NumColumns:Integer;Components:Array<Number>;}
 type MaxFlowResult implements IValue{TotalFlow:Number;EdgeFlows:Array<Number>;SourceSideVertices:Array<Boolean>;}
 type MeshAttribute<T>{Name:String;Domain:AttributeDomain;Values:Array<T>;}
 type MeshIndex implements IValue,IHashable,IComparable,IIndex{Value:Integer;}
@@ -669,7 +669,7 @@ type Number2 implements IVector{X:Number;Y:Number;}
 type Number3 implements IVector{X:Number;Y:Number;Z:Number;}
 type Number4 implements IVector{X:Number;Y:Number;Z:Number;W:Number;}
 type Number8 implements IVector{X0:Number;X1:Number;X2:Number;X3:Number;X4:Number;X5:Number;X6:Number;X7:Number;}
-type NumberInterval implements IIntervalLike<Number>{Start:Number;End:Number;}
+type NumberInterval implements IInterval<Number>{Start:Number;End:Number;}
 type NurbsCurve2D implements ICurve2D,IDeformable2D{ControlPoints:Array<Point2D>;Weights:Array<Number>;Degree:Integer;Knots:KnotVector;}
 type NurbsCurve3D implements ICurve3D,IDeformable3D{ControlPoints:Array<Point3D>;Weights:Array<Number>;Degree:Integer;Knots:KnotVector;}
 type NurbsSurface implements IParametricSurface,IDeformable3D{ControlPoints:Array2D<Point3D>;Weights:Array2D<Number>;UDegree:Integer;VDegree:Integer;UKnots:KnotVector;VKnots:KnotVector;}
@@ -680,8 +680,8 @@ type OctreeNode implements IValue{Bounds:Bounds3D;FirstChild:SpatialNodeIndex;It
 type OffAxisCamera implements IValue{Eye:Point3D;Screen:ProjectionPlane;Near:Number;Far:Number;}
 type OffsetSurface implements IParametricSurface{Base:IParametricSurface;Distance:Number;}
 type OpenTypeFeature implements IValue{Tag:String;Value:Integer;}
-type OrientedBox2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IPlanarMeasurable,IBounded2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,ISupportMappable2D{Center:Point2D;Size:Size2D;Rotation:Angle;}
-type OrientedPointCloud3D implements IValue,IPointCloudable3D,IDeformable3D{Positions:Array<Point3D>;Normals:Array<Direction3D>;}
+type OrientedBox2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,ISupport2D{Center:Point2D;Size:Size2D;Rotation:Angle;}
+type OrientedPointCloud3D implements IValue,IPointCloud3D,IDeformable3D{Positions:Array<Point3D>;Normals:Array<Direction3D>;}
 type OrthographicCamera implements ICamera{Pose:Pose3D;OrthoHeight:Number;AspectRatio:Number;Near:Number;Far:Number;}
 type Oscillator implements IValue,ITimeVarying<Number>{Waveform:OscillatorWaveform;Amplitude:Number;Frequency:Frequency;Phase:Angle;Bias:Number;}
 type OscillatorWaveform{}
@@ -697,7 +697,7 @@ type PanoramicCamera implements ICamera{Pose:Pose3D;HorizontalSweep:Angle;Vertic
 type Parabola2D implements ICurve2D{Coefficient:Number;Domain:NumberInterval;}
 type Paraboloid implements IGeometry3D,IConnected,IManifold,IOrientable{Vertex:Point3D;Axis:Direction3D;FocalLength:Number;}
 type ParagraphStyle implements IValue{Align:TextAlign;Direction:TextDirection;LineHeight:Number;FirstLineIndent:Number;ParagraphSpacing:Number;}
-type Parallelogram2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IPlanarMeasurable,IBounded2D,ICentroid2D,IContainsPoint2D,IDeformable2D{Origin:Point2D;SideA:Vector2D;SideB:Vector2D;}
+type Parallelogram2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D,IDeformable2D{Origin:Point2D;SideA:Vector2D;SideB:Vector2D;}
 type ParetoDistribution implements IProbabilityDistribution{MinimumValue:Number;Shape:Number;}
 type Path2D implements IValue{Contours:Array<Contour2D>;FillRule:FillRule;}
 type PathBooleanOperation{}
@@ -722,7 +722,7 @@ type Plane implements IGeometry3D,IConnected,IManifold,IOrientable,INearestPoint
 type PlaneFit3D implements IValue,IFitted{Plane:Plane;Quality:FitQuality;}
 type PlaneHit3D implements IValue{Hit:Boolean;Point:Point3D;Parameter:Number;}
 type PlaneRelation3D{}
-type PlatonicSolid implements IConvexSolid,IMeshable3D{Kind:PlatonicSolidKind;Frame:Frame3D;Radius:Number;}
+type PlatonicSolid implements IConvexSolid,IMesh3D{Kind:PlatonicSolidKind;Frame:Frame3D;Radius:Number;}
 type PlatonicSolidKind{}
 type PlaybackCycle{}
 type Point2D implements ICoordinate,IOriginBased<Vector2D>,IHashable,IMetricSpace,ITransformable2D{X:Number;Y:Number;}
@@ -734,15 +734,15 @@ type PointN implements ICoordinate,IOriginBased<VectorN>,IMetricSpace{Components
 type PoissonDiskPattern2D implements IValue{Region:Bounds2D;MinimumDistance:Number;MaxAttempts:Integer;Seed:Integer;}
 type PoissonDistribution implements IProbabilityDistribution{Rate:Number;}
 type PolarCoordinate implements IValue{Radius:Number;Angle:Angle;}
-type Polygon2D implements IGeometry2D,IClosedShape,IConnected,IPlanarMeasurable,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,IDeformable2D{Points:Array<Point2D>;}
-type Polygon3D implements IGeometry3D,IClosedShape,IConnected,IManifold,IOrientable,IPlanarMeasurable,IBounded3D,IPointSet3D,ICentroid3D,INearestPoint3D,IDeformable3D{Points:Array<Point3D>;}
-type PolygonMesh3D implements IValue,IMeshable3D,IMeshElementCounts,IMeshIncidence,IDeformable3D{Positions:Array<Point3D>;Faces:JaggedArray<VertexIndex>;}
-type PolygonSet2D implements IGeometry2D,IClosedShape,IPlanarMeasurable,IBounded2D,IContainsPoint2D,IDeformable2D{Polygons:Array<PolygonWithHoles2D>;}
+type Polygon2D implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,IDeformable2D{Points:Array<Point2D>;}
+type Polygon3D implements IGeometry3D,IClosedShape,IConnected,IManifold,IOrientable,IArea,IBounded3D,IPointSet3D,ICentroid3D,INearestPoint3D,IDeformable3D{Points:Array<Point3D>;}
+type PolygonMesh3D implements IValue,IMesh3D,IMeshElementCounts,IMeshIncidence,IDeformable3D{Positions:Array<Point3D>;Faces:JaggedArray<VertexIndex>;}
+type PolygonSet2D implements IGeometry2D,IClosedShape,IArea,IBounded2D,IContainsPoint2D,IDeformable2D{Polygons:Array<PolygonWithHoles2D>;}
 type PolygonSoup3D implements ISolid,IDeformable3D{Polygons:Array<Polygon3D>;}
-type PolygonWithHoles2D implements IGeometry2D,IClosedShape,IConnected,IPlanarMeasurable,IBounded2D,ICentroid2D,IContainsPoint2D,IDeformable2D{Boundary:Polygon2D;Holes:Array<Polygon2D>;}
-type Polyline2D implements IGeometry2D,IConnected,IBounded2D,ILengthMeasurable,IPointSet2D,IDeformable2D{Points:Array<Point2D>;Closed:Boolean;}
-type Polyline3D implements IGeometry3D,IConnected,IBounded3D,ILengthMeasurable,IPointSet3D,IDeformable3D{Points:Array<Point3D>;Closed:Boolean;}
-type PolylineN implements IGeometryND,IConnected,ILengthMeasurable{Points:Array<PointN>;Closed:Boolean;}
+type PolygonWithHoles2D implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D,IDeformable2D{Boundary:Polygon2D;Holes:Array<Polygon2D>;}
+type Polyline2D implements IGeometry2D,IConnected,IBounded2D,ILength,IPointSet2D,IDeformable2D{Points:Array<Point2D>;Closed:Boolean;}
+type Polyline3D implements IGeometry3D,IConnected,IBounded3D,ILength,IPointSet3D,IDeformable3D{Points:Array<Point3D>;Closed:Boolean;}
+type PolylineN implements IGeometryND,IConnected,ILength{Points:Array<PointN>;Closed:Boolean;}
 type Polynomial implements IValue{Coefficients:Array<Number>;}
 type PolynomialFit implements IValue{Coefficients:Array<Number>;RSquared:Number;}
 type PolynomialRoots implements IValue{RealRoots:Array<Number>;ComplexRoots:Array<Complex>;}
@@ -754,17 +754,17 @@ type Power implements IQuantity{Watts:Number;}
 type PowerSeries implements IValue{Center:Number;Coefficients:Array<Number>;}
 type Pressure implements IQuantity{Pascals:Number;}
 type PrincipalCurvatures implements IValue{Minimum:Number;Maximum:Number;MinimumDirection:Direction3D;MaximumDirection:Direction3D;}
-type Prism3D implements IGeometry3D,IClosedShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D{Base:Polygon3D;Offset:Vector3D;}
+type Prism3D implements IGeometry3D,IClosedShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D{Base:Polygon3D;Offset:Vector3D;}
 type Probability implements INumerical,IComparable{Value:Number;}
 type ProceduralSky implements IValue{SunDirection:Direction3D;Turbidity:Number;GroundAlbedo:Color;Intensity:Number;}
 type ProjectionPlane implements IValue{LowerLeft:Point3D;LowerRight:Point3D;UpperLeft:Point3D;}
 type Proportion implements INumerical,IComparable{Value:Number;}
-type Pyramid3D implements IGeometry3D,IClosedShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D,IDeformable3D{Base:Polygon3D;Apex:Point3D;}
-type Quad2D implements IGeometry2D,IClosedShape,IConnected,IPlanarMeasurable,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,IDeformable2D{A:Point2D;B:Point2D;C:Point2D;D:Point2D;}
-type Quad3D implements IGeometry3D,IConnected,IOrientable,IPlanarMeasurable,IBounded3D,IPointSet3D,ICentroid3D,IDeformable3D{A:Point3D;B:Point3D;C:Point3D;D:Point3D;}
+type Pyramid3D implements IGeometry3D,IClosedShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,IDeformable3D{Base:Polygon3D;Apex:Point3D;}
+type Quad2D implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,IDeformable2D{A:Point2D;B:Point2D;C:Point2D;D:Point2D;}
+type Quad3D implements IGeometry3D,IConnected,IOrientable,IArea,IBounded3D,IPointSet3D,ICentroid3D,IDeformable3D{A:Point3D;B:Point3D;C:Point3D;D:Point3D;}
 type QuadArray3D implements IValue,IQuadGeometry3D{Quads:Array<Quad3D>;}
 type QuadFace implements IFace{A:VertexIndex;B:VertexIndex;C:VertexIndex;D:VertexIndex;}
-type QuadMesh3D implements IValue,IMeshable3D,IIndexedQuadGeometry3D,IMeshElementCounts,IDeformable3D{Positions:Array<Point3D>;Faces:Array<QuadFace>;}
+type QuadMesh3D implements IValue,IMesh3D,IIndexedQuadGeometry3D,IMeshElementCounts,IDeformable3D{Positions:Array<Point3D>;Faces:Array<QuadFace>;}
 type QuadraticBezier2D implements ICurve2D,IDeformable2D{P0:Point2D;P1:Point2D;P2:Point2D;}
 type QuadraticBezier3D implements ICurve3D,IDeformable3D{P0:Point3D;P1:Point3D;P2:Point3D;}
 type QuadraticPolynomial implements IValue{A:Number;B:Number;C:Number;}
@@ -795,10 +795,10 @@ type Reflection2D implements IValue,IAffine2D{Origin:Point2D;Direction:Direction
 type Reflection3D implements IValue,IAffine3D{Origin:Point3D;Normal:Direction3D;}
 type RegularGrid2D implements IValue{Bounds:Bounds2D;CellCounts:IntegerVector2;}
 type RegularGrid3D implements IValue{Bounds:Bounds3D;CellCounts:IntegerVector3;}
-type RegularPolygon implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IPlanarMeasurable,IBounded2D,ICentroid2D,IContainsPoint2D,ISupportMappable2D{Center:Point2D;CircumRadius:Number;SideCount:Integer;Rotation:Angle;}
-type RegularPrism implements IConvexSolid,IParametricSurface,IMeshable3D{Frame:Frame3D;SideCount:Integer;Radius:Number;Height:Number;}
-type RegularPyramid implements IConvexSolid,IParametricSurface,IMeshable3D{Frame:Frame3D;SideCount:Integer;Radius:Number;Height:Number;}
-type RegularStar2D implements IGeometry2D,IClosedShape,IConnected,IPlanarMeasurable,IBounded2D,ICentroid2D,IContainsPoint2D{Center:Point2D;OuterRadius:Number;InnerRadius:Number;PointCount:Integer;Rotation:Angle;}
+type RegularPolygon implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D,ISupport2D{Center:Point2D;CircumRadius:Number;SideCount:Integer;Rotation:Angle;}
+type RegularPrism implements IConvexSolid,IParametricSurface,IMesh3D{Frame:Frame3D;SideCount:Integer;Radius:Number;Height:Number;}
+type RegularPyramid implements IConvexSolid,IParametricSurface,IMesh3D{Frame:Frame3D;SideCount:Integer;Radius:Number;Height:Number;}
+type RegularStar2D implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D{Center:Point2D;OuterRadius:Number;InnerRadius:Number;PointCount:Integer;Rotation:Angle;}
 type RenderingIntent{}
 type RenderLayer implements IValue{Name:String;Index:Integer;}
 type RenderPipelineSettings implements IValue{Quality:QualityPreset;Target:RenderTargetDescriptor;AntiAliasing:AntiAliasing;AmbientOcclusion:AmbientOcclusionSettings;Bloom:BloomSettings;Fog:FogSettings;ToneMapping:ToneMappingSettings;ColorSpace:DisplayColorSpace;}
@@ -809,7 +809,7 @@ type ResizeParameters implements IValue{TargetSize:IntegerSize2D;Filter:Resample
 type RevolvedSolid implements ISolid{Profile:PolygonWithHoles2D;Axis:InfiniteLine3D;Angles:AngleInterval;}
 type RgbColorSpace implements IValue{Name:String;Primaries:RgbPrimaries;Transfer:TransferFunction;}
 type RgbPrimaries implements IValue{Red:Chromaticity;Green:Chromaticity;Blue:Chromaticity;White:Chromaticity;}
-type RichMesh3D implements IValue,IMeshable3D,IDeformable3D{Mesh:TriangleMesh3D;NumberChannels:Array<MeshAttribute<Number>>;IntegerChannels:Array<MeshAttribute<Integer>>;VectorChannels:Array<MeshAttribute<Vector3D>>;UvChannels:Array<MeshAttribute<UvCoordinate>>;ColorChannels:Array<MeshAttribute<Color>>;TangentChannels:Array<MeshAttribute<TangentBasis>>;}
+type RichMesh3D implements IValue,IMesh3D,IDeformable3D{Mesh:TriangleMesh3D;NumberChannels:Array<MeshAttribute<Number>>;IntegerChannels:Array<MeshAttribute<Integer>>;VectorChannels:Array<MeshAttribute<Vector3D>>;UvChannels:Array<MeshAttribute<UvCoordinate>>;ColorChannels:Array<MeshAttribute<Color>>;TangentChannels:Array<MeshAttribute<TangentBasis>>;}
 type RidgedNoise2D implements IValue,IScalarField2D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;Offset:Number;}
 type RidgedNoise3D implements IValue,IScalarField3D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;Offset:Number;}
 type RiemannianMetric2D implements IValue{G11:Number;G12:Number;G22:Number;}
@@ -821,8 +821,8 @@ type RotationMinimizingFrame3D implements IValue{Position:Point3D;Tangent:Direct
 type RotationOrder{}
 type Rotor2D implements IValue,IMultiplicative{Scalar:Number;XY:Number;}
 type Rotor3D implements IValue,IMultiplicative,IRotational3D{Scalar:Number;Bivector:Bivector3D;}
-type RoundedBox3D implements IGeometry3D,IClosedShape,IConvexShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D,ISupportMappable3D{Box:Box3D;CornerRadius:Number;}
-type RoundedRect2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IPlanarMeasurable,IBounded2D,ICentroid2D,IContainsPoint2D{Rect:Rect2D;CornerRadius:Number;}
+type RoundedBox3D implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,ISupport3D{Box:Box3D;CornerRadius:Number;}
+type RoundedRect2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D{Rect:Rect2D;CornerRadius:Number;}
 type RuledSurface implements IParametricSurface{Start:ICurve3D;End:ICurve3D;}
 type RunningStatistics implements IValue{Count:Integer;Mean:Number;M2:Number;}
 type SampledColorGrid2D implements IValue,IColorField2D{Grid:RegularGrid2D;Values:Array2D<Color>;}
@@ -876,7 +876,7 @@ type SdfTree2D implements IValue{Nodes:Array<SdfNode2D>;Root:SdfNodeIndex;}
 type SdfTree3D implements IValue{Nodes:Array<SdfNode3D>;Root:SdfNodeIndex;}
 type SdfTwistModifier3D implements IValue{AnglePerUnit:Angle;}
 type SecondFundamentalForm implements IValue{L:Number;M:Number;N:Number;}
-type SegmentedMesh3D implements IValue,IMeshable3D,IDeformable3D{Mesh:TriangleMesh3D;Sections:Array<MeshSection>;}
+type SegmentedMesh3D implements IValue,IMesh3D,IDeformable3D{Mesh:TriangleMesh3D;Sections:Array<MeshSection>;}
 type SeparableKernel implements IValue{HorizontalTaps:Array<Number>;VerticalTaps:Array<Number>;}
 type ShadowFilter{}
 type ShadowSettings implements IValue{Resolution:Integer;Bias:Number;NormalBias:Number;PenumbraSize:Number;CascadeCount:Integer;MaxDistance:Number;}
@@ -911,18 +911,18 @@ type SpectralColor implements IValue{Wavelengths:Array<Length>;Amplitudes:Array<
 type SpecularGlossinessMaterial implements IValue{Diffuse:Color;Specular:Color;Glossiness:Proportion;Alpha:AlphaSettings;DoubleSided:Boolean;}
 type SpecularLayer implements IValue{Strength:Proportion;Color:Color;}
 type Speed implements IQuantity{MetersPerSecond:Number;}
-type Sphere implements IGeometry3D,IClosedShape,IConvexShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D,INearestPoint3D,ISupportMappable3D,IParametricSurface{Center:Point3D;Radius:Number;}
+type Sphere implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,INearestPoint3D,ISupport3D,IParametricSurface{Center:Point3D;Radius:Number;}
 type SphereFit3D implements IValue,IFitted{Sphere:Sphere;Quality:FitQuality;}
 type SphereLight implements ILightSource{Center:Point3D;Radius:Number;Color:Color;Luminance:Luminance;CastsShadows:Boolean;}
-type SphericalCap implements IGeometry3D,IClosedShape,IConvexShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D{Sphere:Sphere;Axis:Direction3D;PolarAngle:Angle;}
+type SphericalCap implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D{Sphere:Sphere;Axis:Direction3D;PolarAngle:Angle;}
 type SphericalCoordinate implements IValue{Radius:Number;Azimuth:Angle;Inclination:Angle;}
 type SphericalPatch implements IParametricSurface{Sphere:Sphere;Azimuths:AngleInterval;Inclinations:AngleInterval;}
-type SphericalShell implements IGeometry3D,IClosedShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D{Center:Point3D;InnerRadius:Number;OuterRadius:Number;}
+type SphericalShell implements IGeometry3D,IClosedShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D{Center:Point3D;InnerRadius:Number;OuterRadius:Number;}
 type SphericalSpiral3D implements ICurve3D{Frame:Frame3D;Radius:Number;TurnCount:Number;}
 type Spherify3D implements IValue,IDeformation3D{Center:Point3D;Radius:Number;Strength:Number;}
 type SpotLight implements ILightSource{Position:Point3D;Direction:Direction3D;Color:Color;Flux:LuminousFlux;InnerAngle:Angle;OuterAngle:Angle;Range:Number;Falloff:Attenuation;CastsShadows:Boolean;}
 type SpringParameters implements IValue{Stiffness:Number;Damping:Number;Mass:Number;}
-type SquarePyramid implements IConvexSolid,IParametricSurface,IMeshable3D{Frame:Frame3D;BaseLength:Number;Height:Number;}
+type SquarePyramid implements IConvexSolid,IParametricSurface,IMesh3D{Frame:Frame3D;BaseLength:Number;Height:Number;}
 type Stagger implements IValue{Count:Integer;ItemDelay:Duration;Origin:StaggerOrigin;Easing:ClassicEasing;}
 type StaggerOrigin{}
 type StandardIlluminant{}
@@ -943,7 +943,7 @@ type SubdivisionScheme{}
 type SubdivisionSurface implements ISurface,IDeformable3D{ControlMesh:PolygonMesh3D;Scheme:SubdivisionScheme;Levels:Integer;}
 type SubsurfaceParameters implements IValue{Color:Color;Radius:Number3;Scale:Number;Anisotropy:Number;}
 type SummaryStatistics implements IValue{Count:Integer;Sum:Number;Mean:Number;Variance:Number;StandardDeviation:Number;Minimum:Number;Maximum:Number;Skewness:Number;Kurtosis:Number;}
-type SuperEllipse implements IGeometry2D,IClosedShape,IConnected,IPlanarMeasurable,IBounded2D,ICentroid2D,IContainsPoint2D{Center:Point2D;SemiAxes:Number2;Rotation:Angle;Exponent:Number;}
+type SuperEllipse implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D{Center:Point2D;SemiAxes:Number2;Rotation:Angle;Exponent:Number;}
 type Superformula2D implements IPolarCurve2D{Symmetry:Number;Exponent1:Number;Exponent2:Number;Exponent3:Number;XRadius:Number;YRadius:Number;}
 type SurfaceCurvature implements IValue{Gaussian:Number;Mean:Number;Principal:PrincipalCurvatures;}
 type SurfaceJet3D implements IValue{Uv:UvCoordinate;Position:Point3D;DerivativeU:Vector3D;DerivativeV:Vector3D;DerivativeUU:Vector3D;DerivativeUV:Vector3D;DerivativeVV:Vector3D;}
@@ -965,8 +965,8 @@ type Temperature implements IQuantity{Kelvin:Number;}
 type TemperatureDelta implements IQuantity{Kelvin:Number;}
 type Tempo{BeatsPerMinute:Number;}
 type Tensor implements IValue{Extents:Array<Integer>;Components:Array<Number>;}
-type TetrahedralMesh3D implements IValue,IMeshable3D,IDeformable3D{Positions:Array<Point3D>;Cells:Array<TetrahedronCell>;}
-type Tetrahedron implements IGeometry3D,IClosedShape,IConvexShape,IConnected,ISpatialMeasurable,IBounded3D,IPointSet3D,ICentroid3D,IContainsPoint3D,IDeformable3D{A:Point3D;B:Point3D;C:Point3D;D:Point3D;}
+type TetrahedralMesh3D implements IValue,IMesh3D,IDeformable3D{Positions:Array<Point3D>;Cells:Array<TetrahedronCell>;}
+type Tetrahedron implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,IPointSet3D,ICentroid3D,IContainsPoint3D,IDeformable3D{A:Point3D;B:Point3D;C:Point3D;D:Point3D;}
 type TetrahedronCell implements IValue,IHashable{A:VertexIndex;B:VertexIndex;C:VertexIndex;D:VertexIndex;}
 type TextAlign{}
 type TextBaseline{}
@@ -1002,7 +1002,7 @@ type ToonMaterial implements IValue{BaseColor:Color;ShadeColor:Color;StepCount:I
 type TopologicalOrder implements IValue{OrderedVertexIndices:Array<GraphVertexIndex>;IsValid:Boolean;}
 type TopologySummary implements IValue{VertexCount:Integer;UndirectedEdgeCount:Integer;FaceCount:Integer;BoundaryLoopCount:Integer;ConnectedComponentCount:Integer;EulerCharacteristic:Integer;Manifoldness:Manifoldness;}
 type Torque implements IQuantity{NewtonMeters:Number;}
-type Torus implements IGeometry3D,IClosedShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D,IParametricSurface{Center:Point3D;Axis:Direction3D;MajorRadius:Number;MinorRadius:Number;}
+type Torus implements IGeometry3D,IClosedShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,IParametricSurface{Center:Point3D;Axis:Direction3D;MajorRadius:Number;MinorRadius:Number;}
 type TorusKnot implements IClosedCurve3D{Frame:Frame3D;AxisWindings:Integer;TubeWindings:Integer;MajorRadius:Number;MinorRadius:Number;}
 type TransferFunction{}
 type Transform2D implements IValue{Matrix:Matrix3x3;}
@@ -1011,11 +1011,11 @@ type Translation2D implements IValue,IRigid2D{Vector:Vector2D;}
 type Translation3D implements IValue,IRigid3D{Vector:Vector3D;}
 type TransmissionLayer implements IValue{Transmission:Proportion;IndexOfRefraction:Number;Thickness:Number;AttenuationColor:Color;AttenuationDistance:Number;}
 type TrefoilKnot implements IClosedCurve3D{Frame:Frame3D;Scale:Number;}
-type Triangle2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IPlanarMeasurable,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,IDeformable2D{A:Point2D;B:Point2D;C:Point2D;}
-type Triangle3D implements IGeometry3D,IConvexShape,IConnected,IManifold,IOrientable,IPlanarMeasurable,IBounded3D,IPointSet3D,ICentroid3D,INearestPoint3D,IDeformable3D{A:Point3D;B:Point3D;C:Point3D;}
+type Triangle2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IArea,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,IDeformable2D{A:Point2D;B:Point2D;C:Point2D;}
+type Triangle3D implements IGeometry3D,IConvexShape,IConnected,IManifold,IOrientable,IArea,IBounded3D,IPointSet3D,ICentroid3D,INearestPoint3D,IDeformable3D{A:Point3D;B:Point3D;C:Point3D;}
 type TriangleArray3D implements IValue,ITriangleGeometry3D{Triangles:Array<Triangle3D>;}
 type TriangleFace implements IFace{A:VertexIndex;B:VertexIndex;C:VertexIndex;}
-type TriangleMesh2D implements IValue,IMeshable2D,IIndexedTriangleGeometry2D,IMeshElementCounts,IDeformable2D{Positions:Array<Point2D>;Faces:Array<TriangleFace>;}
+type TriangleMesh2D implements IValue,IMesh2D,IIndexedTriangleGeometry2D,IMeshElementCounts,IDeformable2D{Positions:Array<Point2D>;Faces:Array<TriangleFace>;}
 type TriangleMesh3D implements IValue,ITriangulatedGeometry3D,IIndexedTriangleGeometry3D,IMeshElementCounts,IDeformable3D{Positions:Array<Point3D>;Faces:Array<TriangleFace>;}
 type TriangularDistribution implements IProbabilityDistribution{Min:Number;Mode:Number;Max:Number;}
 type TrimmedSurface implements ISurface{Base:IParametricSurface;OuterLoop:Polyline2D;Holes:Array<Polyline2D>;}
@@ -1086,10 +1086,10 @@ type VoxelBrick3D implements IValue{Coordinate:IntegerVector3;Values:Array3D<Num
 type VoxelColorGrid3D implements IValue{Origin:Point3D;CellSize:Number;Colors:Array3D<Color>;}
 type VoxelGrid3D<T>{Origin:Point3D;CellSize:Number;Values:Array3D<T>;}
 type WaveNumber implements IQuantity{CyclesPerMeter:Number;}
-type Wedge implements IGeometry3D,IClosedShape,IConvexShape,IConnected,ISpatialMeasurable,IBounded3D,ICentroid3D,IContainsPoint3D{Base:Triangle3D;Offset:Vector3D;}
+type Wedge implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D{Base:Triangle3D;Offset:Vector3D;}
 type WeibullDistribution implements IProbabilityDistribution{Shape:Number;Scale:Number;}
 type WeightedEdge implements IValue{Source:GraphVertexIndex;Target:GraphVertexIndex;Weight:Number;}
-type WeightedGraph implements IGraphLike{VertexCount:Integer;Edges:Array<WeightedEdge>;Directed:Boolean;}
+type WeightedGraph implements IGraph{VertexCount:Integer;Edges:Array<WeightedEdge>;Directed:Boolean;}
 type WeightedValue<T>{Value:T;Weight:Number;}
 type WhiteBalanceAdjustment implements IValue{Temperature:Temperature;Tint:Number;}
 type WhiteNoise2D implements IValue,IScalarField2D{Seed:Integer;}

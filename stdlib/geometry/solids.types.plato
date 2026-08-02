@@ -176,7 +176,7 @@ type SweptSolid
 // Height and joined by rectangles (https://en.wikipedia.org/wiki/Prism_(geometry)).
 // (The general polygon-swept prism is Prism3D, `polygons.types.plato`.)
 type RegularPrism
-    implements IConvexSolid, IParametricSurface, IMeshable3D
+    implements IConvexSolid, IParametricSurface, IMesh3D
 {
     Frame: Frame3D;
     SideCount: Integer;
@@ -190,7 +190,7 @@ type RegularPrism
 // (https://en.wikipedia.org/wiki/Pyramid_(geometry)). (The general polygon-based
 // pyramid is Pyramid3D, polygons.plato.)
 type RegularPyramid
-    implements IConvexSolid, IParametricSurface, IMeshable3D
+    implements IConvexSolid, IParametricSurface, IMesh3D
 {
     Frame: Frame3D;
     SideCount: Integer;
@@ -204,7 +204,7 @@ type RegularPyramid
 // is axis-aligned rather than inscribed in the unit circle
 // (https://en.wikipedia.org/wiki/Square_pyramid).
 type SquarePyramid
-    implements IConvexSolid, IParametricSurface, IMeshable3D
+    implements IConvexSolid, IParametricSurface, IMesh3D
 {
     Frame: Frame3D;
     BaseLength: Number;
@@ -215,7 +215,7 @@ type SquarePyramid
 // against each other and joined by a band of 2 * SideCount triangles
 // (https://en.wikipedia.org/wiki/Antiprism).
 type Antiprism
-    implements IConvexSolid, IMeshable3D
+    implements IConvexSolid, IMesh3D
 {
     Frame: Frame3D;
     SideCount: Integer;
@@ -231,7 +231,7 @@ type PlatonicSolidKind
 // frame's orientation, with vertices at circumscribed radius Radius
 // (https://en.wikipedia.org/wiki/Platonic_solid).
 type PlatonicSolid
-    implements IConvexSolid, IMeshable3D
+    implements IConvexSolid, IMesh3D
 {
     Kind: PlatonicSolidKind;
     Frame: Frame3D;
@@ -259,7 +259,7 @@ type ArchimedeanSolidKind
 // in the frame's orientation, with vertices at circumscribed radius Radius
 // (https://en.wikipedia.org/wiki/Archimedean_solid).
 type ArchimedeanSolid
-    implements IConvexSolid, IMeshable3D
+    implements IConvexSolid, IMesh3D
 {
     Kind: ArchimedeanSolidKind;
     Frame: Frame3D;
@@ -289,7 +289,7 @@ type CatalanSolidKind
 // A Catalan solid of the given kind, centered at the frame origin in the
 // frame's orientation, with vertices at circumscribed radius Radius.
 type CatalanSolid
-    implements IConvexSolid, IMeshable3D
+    implements IConvexSolid, IMesh3D
 {
     Kind: CatalanSolidKind;
     Frame: Frame3D;

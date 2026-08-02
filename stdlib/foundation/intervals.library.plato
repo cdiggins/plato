@@ -27,46 +27,46 @@ library Intervals
     //==
     // # Derived functionality for bounding regions
     //
-    // Bodies for the `IBoundsLike<TPoint, TDelta>` concept declared in
+    // Bodies for the `IBounds<TPoint, TDelta>` interface declared in
     // `intervals-bounds.concepts.plato`, plus the concrete Bounds2D/Bounds3D
     // operations that the generic surface cannot express.
     //
-    // Design note on the concept surface: IBoundsLike<TPoint, TDelta> carries a delta
+    // Design note on the interface surface: IBounds<TPoint, TDelta> carries a delta
     // type (TDelta = the vector of TPoint, via TPoint: IDifference<TDelta>), so
     // Extent/Diagonal are expressible. Contains/Union/Intersection/Clamp still are
     // not: they need component-wise Min/Max (a ILattice) on TPoint, which the point
     // types do not implement.
 
     //==
-    // IBoundsLike<TPoint, TDelta> — an axis-aligned region between corner points
+    // IBounds<TPoint, TDelta> — an axis-aligned region between corner points
     // Min and Max, with TDelta the displacement type (TPoint: IDifference<TDelta>).
     // TPoint is declared IDifference<TDelta> and IInterpolatable, so the corner
     // arithmetic below is licensed; it is NOT IOrderable/ILattice.
 
     // The center point of the region; the MidPoint of the two corners.
-    Center(self: IBoundsLike<$TPoint, $TDelta>): $TPoint
+    Center(self: IBounds<$TPoint, $TDelta>): $TPoint
         => self.Min.MidPoint(self.Max);
 
     // The point a fraction `t` of the way along the Min -> Max diagonal. t is
     // unclamped. For per-axis interpolation use a point-typed parameter once the
-    // concept exposes component access (see the note below).
-    Lerp(self: IBoundsLike<$TPoint, $TDelta>, t: Number): $TPoint
+    // interface exposes component access (see the note below).
+    Lerp(self: IBounds<$TPoint, $TDelta>, t: Number): $TPoint
         => self.Min.Lerp(self.Max, t);
 
     // The displacement spanning the region: Max - Min (the Min -> Max diagonal
     // vector). Now expressible via TPoint: IDifference<TDelta>.
-    Extent(self: IBoundsLike<$TPoint, $TDelta>): $TDelta
+    Extent(self: IBounds<$TPoint, $TDelta>): $TDelta
         => self.Min.Between(self.Max);
 
     // The Min -> Max diagonal displacement; a named alias for Extent.
-    Diagonal(self: IBoundsLike<$TPoint, $TDelta>): $TDelta
+    Diagonal(self: IBounds<$TPoint, $TDelta>): $TDelta
         => self.Extent;
 
     // Not derivable GENERICALLY here: Contains(point|bounds), Union, Intersection,
     // Expand, and corner enumeration need component-wise Min/Max (a ILattice) on
     // TPoint, which Point2D/Point3D do not implement. They ARE expressible on the
     // CONCRETE Bounds2D/Bounds3D via per-axis (X/Y/Z) field access, so the mirror of
-    // the IIntervalLike surface is written concretely below (items 29, 185). Making the
+    // the IInterval surface is written concretely below (items 29, 185). Making the
     // point types ILattice/IClampable would let it collapse back to one generic body.
 
     //==
@@ -164,153 +164,153 @@ library Intervals
     //==
     // # Derived functionality for intervals
     //
-    // Bodies for the `IIntervalLike<T>` concept declared in
+    // Bodies for the `IInterval<T>` interface declared in
     // `intervals-bounds.concepts.plato`, plus the two concrete specializations that
     // the generic surface cannot reach: the NumberInterval remap kit (which needs
     // T/T division) and the wrap-aware AngleInterval helpers (which must survive the
     // +/-pi seam).
     //
-    // Design notes on the concept surface:
-    //   * IIntervalLike<T> now bounds T to (IAdditive + IInterpolatable + IComparable) —
+    // Design notes on the interface surface:
+    //   * IInterval<T> now bounds T to (IAdditive + IInterpolatable + IComparable) —
     //     every concrete instance (Number, Angle, Length, Integer) satisfies it, and
     //     those are the only capabilities used on T here.
     //   * Directed intervals: Contains/Overlaps/Union/Intersection/Clamp assume the
     //     forward orientation Start <= End. Use IsForward to test, Reverse to fix.
-    //   * Interval-returning transforms return `Self`, not `IIntervalLike<T>`: they are
+    //   * Interval-returning transforms return `Self`, not `IInterval<T>`: they are
     //     shape-preserving, so a NumberInterval in yields a NumberInterval out. The
     //     tuple bodies below build the receiver's own concrete type, which `Self` names
-    //     and `IIntervalLike<T>` does not — the concept cannot say WHICH implementer a
+    //     and `IInterval<T>` does not — the interface cannot say WHICH implementer a
     //     tuple becomes, so declaring it there is both wrong for callers (they lose the
     //     concrete type) and unresolvable for the checker (CHK101 Tuple2<T,T> vs
-    //     IIntervalLike<T>). Same convention as ThenTransform in
+    //     IInterval<T>). Same convention as ThenTransform in
     //     intervals.library.plato and the Deformable surface.
 
     //==
-    // IIntervalLike<T> — a directed one-dimensional span from Start to End
+    // IInterval<T> — a directed one-dimensional span from Start to End
     // (https://en.wikipedia.org/wiki/Interval_(mathematics)).
     // T is used only through IAdditive (Add/Subtract), IInterpolatable (Lerp), and
     // IComparable (LessThanOrEquals / Lesser / Greater / Clamp), the capabilities
     // shared by every concrete interval element type (Number, Angle, Length,
     // Integer). The comparison helpers (Lesser/Greater/Clamp) come from P1
-    // (core.library.plato), which derives them for any IOrderable. The concept now
-    // states the bound explicitly: IIntervalLike<T> where T: IAdditive,
+    // (core.library.plato), which derives them for any IOrderable. The interface now
+    // states the bound explicitly: IInterval<T> where T: IAdditive,
     // IInterpolatable, IComparable.
 
     // The signed span from Start to End (End - Start); negative for a reversed
     // interval. Named Extent to avoid confusion with area/volume Size.
-    Extent(self: IIntervalLike<$T>): $T
+    Extent(self: IInterval<$T>): $T
         => self.End - self.Start;
 
     // True when the interval is stored in forward orientation (Start <= End).
-    IsForward(self: IIntervalLike<$T>): Boolean
+    IsForward(self: IInterval<$T>): Boolean
         => self.Start.LessThanOrEquals(self.End);
 
     // True when the interval is stored reversed (Start > End).
-    IsReversed(self: IIntervalLike<$T>): Boolean
+    IsReversed(self: IInterval<$T>): Boolean
         => self.IsForward.Not;
 
     // The point a fraction `t` of the way from Start to End. t is unclamped:
     // 0 yields Start, 1 yields End, values outside [0,1] extrapolate
     // (https://en.wikipedia.org/wiki/Linear_interpolation).
-    Lerp(self: IIntervalLike<$T>, t: Number): $T
+    Lerp(self: IInterval<$T>, t: Number): $T
         => self.Start.Lerp(self.End, t);
 
     // The midpoint of the interval.
-    Center(self: IIntervalLike<$T>): $T
+    Center(self: IInterval<$T>): $T
         => self.Lerp(0.5);
 
     // True when `value` lies within the closed interval [Start, End] (both
     // endpoints inclusive). Assumes forward orientation; Reverse a reversed span.
-    Contains(self: IIntervalLike<$T>, value: $T): Boolean
+    Contains(self: IInterval<$T>, value: $T): Boolean
         => self.Start <= value && value <= self.End;
 
     // True when `other` lies entirely within this closed interval (endpoints
     // inclusive). Forward orientation on both.
-    ContainsInterval(self: IIntervalLike<$T>, other: IIntervalLike<$T>): Boolean
+    ContainsInterval(self: IInterval<$T>, other: IInterval<$T>): Boolean
         => self.Contains(other.Start) && self.Contains(other.End);
 
     // True when the two closed intervals share any point, endpoints inclusive
     // (touching at a single endpoint counts). Closed-form; assumes forward
     // orientation on both.
-    Overlaps(self: IIntervalLike<$T>, other: IIntervalLike<$T>): Boolean
+    Overlaps(self: IInterval<$T>, other: IInterval<$T>): Boolean
         => self.Start <= other.End && other.Start <= self.End;
 
     // Restrict `value` to the closed interval [Start, End]. Assumes forward
     // orientation. Uses P1's Clamp(IOrderable, lower, upper).
-    Clamp(self: IIntervalLike<$T>, value: $T): $T
+    Clamp(self: IInterval<$T>, value: $T): $T
         => value.Clamp(self.Start, self.End);
 
     // The smallest interval containing both operands (the convex hull of the two).
     // Forward orientation: start at the lesser start, end at the greater end.
-    Union(self: IIntervalLike<$T>, other: IIntervalLike<$T>): Self
+    Union(self: IInterval<$T>, other: IInterval<$T>): Self
         => (self.Start.Lesser(other.Start), self.End.Greater(other.End));
 
     // The overlapping interval common to both. Forward orientation: start at the
     // greater start, end at the lesser end. Empty (Start > End) when they are
     // disjoint — test with IsForward.
-    Intersection(self: IIntervalLike<$T>, other: IIntervalLike<$T>): Self
+    Intersection(self: IInterval<$T>, other: IInterval<$T>): Self
         => (self.Start.Greater(other.Start), self.End.Lesser(other.End));
 
     // The same span traversed in the opposite direction (End becomes Start).
-    Reverse(self: IIntervalLike<$T>): Self
+    Reverse(self: IInterval<$T>): Self
         => (self.End, self.Start);
 
     // The interval shifted so it starts at `start`, keeping the same extent.
-    StartAt(self: IIntervalLike<$T>, start: $T): Self
+    StartAt(self: IInterval<$T>, start: $T): Self
         => (start, start + self.Extent);
 
     // The interval translated by `delta`, moving both endpoints together.
-    Translate(self: IIntervalLike<$T>, delta: $T): Self
+    Translate(self: IInterval<$T>, delta: $T): Self
         => (self.Start + delta, self.End + delta);
 
     // The interval grown symmetrically by `amount` at each end (negative shrinks).
-    Grow(self: IIntervalLike<$T>, amount: $T): Self
+    Grow(self: IInterval<$T>, amount: $T): Self
         => (self.Start - amount, self.End + amount);
 
     // The leading sub-span from Start up to fraction `t`.
-    Prefix(self: IIntervalLike<$T>, t: Number): Self
+    Prefix(self: IInterval<$T>, t: Number): Self
         => (self.Start, self.Lerp(t));
 
     // The trailing sub-span from fraction `t` to End.
-    Suffix(self: IIntervalLike<$T>, t: Number): Self
+    Suffix(self: IInterval<$T>, t: Number): Self
         => (self.Lerp(t), self.End);
 
     // The first half of the interval.
-    FirstHalf(self: IIntervalLike<$T>): Self
+    FirstHalf(self: IInterval<$T>): Self
         => self.Prefix(0.5);
 
     // The second half of the interval.
-    SecondHalf(self: IIntervalLike<$T>): Self
+    SecondHalf(self: IInterval<$T>): Self
         => self.Suffix(0.5);
 
     // The sub-interval covering fractions `startFraction`..`endFraction` of this one.
-    Subinterval(self: IIntervalLike<$T>, startFraction: Number, endFraction: Number): Self
+    Subinterval(self: IInterval<$T>, startFraction: Number, endFraction: Number): Self
         => (self.Lerp(startFraction), self.Lerp(endFraction));
 
     // Split at fraction `t` into the leading and trailing sub-spans.
-    SplitAt(self: IIntervalLike<$T>, t: Number): Tuple2<Self, Self>
+    SplitAt(self: IInterval<$T>, t: Number): Tuple2<Self, Self>
         => (self.Prefix(t), self.Suffix(t));
 
     // Split into two equal halves.
-    Split(self: IIntervalLike<$T>): Tuple2<Self, Self>
+    Split(self: IInterval<$T>): Tuple2<Self, Self>
         => self.SplitAt(0.5);
 
-    // TODO(concept-gap): Normalize (inverse Lerp: value -> fraction) is not
+    // TODO(interface-gap): Normalize (inverse Lerp: value -> fraction) is not
     // derivable here — it needs T/T division, which only Number supports among the
     // interval element types (Angle/Length/Integer are not IDivisible by Self).
     // The NumberInterval-specialized ParameterOf below fills exactly this gap.
 
     //==
     // NumberInterval — the remap primitive.
-    // The generic IIntervalLike surface above gives every interval Lerp/Clamp/Extent,
+    // The generic IInterval surface above gives every interval Lerp/Clamp/Extent,
     // but the inverse map (value -> parameter) needs T/T division, which only Number
     // supports. NumberInterval therefore carries the three-function remap kit
     // At / ParameterOf / Clamp; Remap composes the first two across a
     // pair of intervals. Clamp(interval, value) is already inherited generically from
-    // IIntervalLike (see above), so it is not re-declared here (LIBRARIES.md rule 11).
+    // IInterval (see above), so it is not re-declared here (LIBRARIES.md rule 11).
 
     // The value a fraction `t` of the way from Start to End (forward lerp). The
-    // remap-primitive spelling of the inherited IIntervalLike.Lerp; 0 yields Start,
+    // remap-primitive spelling of the inherited IInterval.Lerp; 0 yields Start,
     // 1 yields End, and t outside [0,1] extrapolates.
     At(self: NumberInterval, t: Number): Number
         => self.Lerp(t);
@@ -333,7 +333,7 @@ library Intervals
     // chain Overlap and read Start/End directly. When the two are disjoint the result
     // is inverted (Start > End) — the empty encoding (Convention: see CONVENTIONS.md -
     // Bounds); test it with IsForward. The remap-kit spelling of the generic
-    // IIntervalLike.Intersection, which returns the same NumberInterval via `Self`.
+    // IInterval.Intersection, which returns the same NumberInterval via `Self`.
     Overlap(a: NumberInterval, b: NumberInterval): NumberInterval
         => (a.Start.Greater(b.Start), a.End.Lesser(b.End));
 
@@ -344,7 +344,7 @@ library Intervals
     // -170 deg is the short 20 deg sweep across the seam, not the long way round. The
     // wrap-aware helpers below reduce every offset into [0, one turn) via Angle.Wrap
     // (angles.library.plato) before comparing, so they are stable across the seam,
-    // unlike the generic linear IIntervalLike.Contains/Extent (which read Start<=End
+    // unlike the generic linear IInterval.Contains/Extent (which read Start<=End
     // literally and are only correct for non-wrapping ranges). Union/Intersection are
     // deliberately NOT specialized for angular ranges: the union of two circular arcs
     // is not always an arc, so no sound closed form exists on this type; consumers
@@ -359,13 +359,13 @@ library Intervals
     // True when `a` lies on the CCW arc from Start to End, endpoints inclusive and
     // seam-crossing handled: `a`'s CCW offset from Start (reduced to [0, one turn))
     // must not exceed the arc's Span. Correct across the +/-pi seam, where the linear
-    // IIntervalLike.Contains is not.
+    // IInterval.Contains is not.
     Contains(self: AngleInterval, a: Angle): Boolean
         => (a - self.Start).Wrap(1.0.Turns) <= (self.End - self.Start).Wrap(1.0.Turns);
 
     // The angle half way ALONG the arc: Start advanced by half the Span. This is the
     // seam-aware partner of Contains above, and it is deliberately not the generic
-    // IIntervalLike.Center (Lerp(0.5), the arithmetic mean of the stored endpoints).
+    // IInterval.Center (Lerp(0.5), the arithmetic mean of the stored endpoints).
     // The two agree exactly whenever the raw End - Start lies in [0, one turn), which
     // is the regime every arc consumer works in; they diverge only once the stored
     // extent wraps, and there the arithmetic mean is not on the arc at all. For
@@ -378,7 +378,7 @@ library Intervals
     //==
     // # Derived functionality for ITransformable2D / ITransformable3D
     //
-    // Bodies for the `ITransformable2D` / `ITransformable3D` concepts declared in
+    // Bodies for the `ITransformable2D` / `ITransformable3D` interfaces declared in
     // `transforms.concepts.plato`: the ordered multi-transform convenience
     // overloads, and the lifting of every transform representation through Deform so
     // that a single Deform primitive yields a complete transform surface.
@@ -386,8 +386,8 @@ library Intervals
     //==
     // ITransformable2D / ITransformable3D — a value that can be carried through the
     // general transform of its dimension. The convenience overloads below are named
-    // ThenTransform rather than reusing the concept's `Transform` name: overloading a
-    // concept-declared member on arity alone is easy to misread, and ThenTransform
+    // ThenTransform rather than reusing the interface's `Transform` name: overloading a
+    // interface-declared member on arity alone is easy to misread, and ThenTransform
     // states the sequencing intent.
 
     // Apply two transforms in order: `first` then `second`. Equal to
@@ -411,7 +411,7 @@ library Intervals
     // Deliberately NOT extended: an inverse-transform and a transform-about-a-pivot
     // helper would need an inverse, and a homography has none in general — its
     // matrix is singular whenever the map collapses a dimension. Identity is a
-    // per-representation static (see `transforms.library.plato`), not a concept
+    // per-representation static (see `transforms.library.plato`), not an interface
     // member, for the same reason it is not derivable here.
 
     //==
@@ -421,7 +421,7 @@ library Intervals
     // bare Point2D/Point3D; lifting that point map through Deform generalizes the
     // pattern to all Deformable types. Implementing Deform for a new shape therefore
     // gives it Transform for all thirteen representations below, and the last of each
-    // dimension's group is the concept member of ITransformable2D / ITransformable3D.
+    // dimension's group is the interface member of ITransformable2D / ITransformable3D.
 
     // Rotate a 2D shape about the origin.
     Transform(self: IDeformable2D, transform: Rotation2D): Self
