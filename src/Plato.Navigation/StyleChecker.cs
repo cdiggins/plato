@@ -18,22 +18,19 @@ namespace Ara3D.Geometry.Navigation;
 ///   STY003 (Error)   - the token `implicit` in non-comment source. Implicit operators are a
 ///                      C#-side decision (ara3d-056: reserved for a few argument-position API
 ///                      edges); the vocabulary must not declare them.
-///   STY004 (Warning) - a `//` comment block longer than 12 lines. Doc comments state what a
-///                      declaration is and its invariants (STYLE_GUIDE.md); essays belong in
-///                      CONVENTIONS.md or a linked doc. The file-header block (first block,
-///                      line 1) is exempt: headers legitimately carry the file's charter.
 ///   STY005 (Error)   - more than one declaration kind in a file, or a kind that contradicts the
 ///                      file's `.concepts.` / `.types.` / `.library.` suffix. One kind per file
 ///                      is the re-partition invariant that makes a file's name tell its contents.
-///   STY006 (Warning) - more than 64 top-level declarations in a file (the re-partition cap).
-///                      Set high enough that a file is flagged only when it has stopped being one
-///                      subject; a cohesive design is not split to satisfy a count.
+///
+/// Deliberately absent: caps on doc-comment length and on declarations per file. Both were
+/// authoring preferences a checker cannot judge — length is not the same as verbosity, and a file
+/// is too long when it has stopped being one subject, which is a reading, not a count. MaxFields
+/// stays because it is not a preference: the stdlib declares Tuple2..Tuple10, and SymbolFactory
+/// silently skips the tuple constructor for a wider type.
 /// </summary>
 public static class StyleChecker
 {
     public const int MaxFields = 10;
-    public const int MaxDeclarations = 64;
-    public const int MaxDocCommentLines = 12;
 
     private static readonly Regex NewToken = new(@"\bNew\b", RegexOptions.Compiled);
     private static readonly Regex ImplicitToken = new(@"\bimplicit\b", RegexOptions.Compiled);
@@ -48,13 +45,11 @@ public static class StyleChecker
         var path = file.File.Path.ToString()!;
 
         CheckTokens(findings, path, file.File.Text);
-        CheckDocCommentLength(findings, path, file.File.Text);
 
         if (file.Ast != null)
         {
             CheckFieldCounts(findings, path, file.Ast);
             CheckOneKindPerFile(findings, path, file.Ast);
-            CheckDeclarationCount(findings, path, file.Ast);
         }
 
         return findings;
@@ -89,32 +84,6 @@ public static class StyleChecker
         return comment >= 0 ? noStrings[..comment] : noStrings;
     }
 
-    /// <summary>STY004: consecutive whole-line `//` blocks longer than the cap, excluding a block
-    /// that starts on line 1 (the file header).</summary>
-    private static void CheckDocCommentLength(List<LintFinding> findings, string path, string text)
-    {
-        var lines = text.Split('\n');
-        var blockStart = -1;
-        for (var i = 0; i <= lines.Length; i++)
-        {
-            var isComment = i < lines.Length && lines[i].TrimStart().StartsWith("//", StringComparison.Ordinal);
-            if (isComment)
-            {
-                if (blockStart < 0)
-                    blockStart = i;
-                continue;
-            }
-            if (blockStart >= 0)
-            {
-                var length = i - blockStart;
-                if (length > MaxDocCommentLines && blockStart > 0)
-                    findings.Add(new LintFinding(path, blockStart + 1, "STY004", LintSeverity.Warning,
-                        $"doc comment block is {length} lines (cap {MaxDocCommentLines}); state what the declaration is and its invariants, and link out for the essay"));
-                blockStart = -1;
-            }
-        }
-    }
-
     /// <summary>STY002: the C# TupleN cap.</summary>
     private static void CheckFieldCounts(List<LintFinding> findings, string path, AstFile ast)
     {
@@ -143,13 +112,6 @@ public static class StyleChecker
         if (suffix != null && kinds.Count == 1 && kinds[0] != suffix)
             findings.Add(new LintFinding(path, 1, "STY005", LintSeverity.Error,
                 $"file suffix says '{suffix}' but the declarations are '{kinds[0]}'; rename the file or move the declarations"));
-    }
-
-    private static void CheckDeclarationCount(List<LintFinding> findings, string path, AstFile ast)
-    {
-        if (ast.Types.Count > MaxDeclarations)
-            findings.Add(new LintFinding(path, 1, "STY006", LintSeverity.Warning,
-                $"file holds {ast.Types.Count} top-level declarations (cap {MaxDeclarations}); split it along its natural seams"));
     }
 
     /// <summary>The re-partition's three file kinds. Primitives ride with types; anything the

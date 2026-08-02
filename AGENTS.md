@@ -44,9 +44,8 @@ the writer code).
 - `stdlib/` — **Forward stdlib vocabulary** (ex-`plato-src-v3`). New *vocabulary* goes here.
   Since the plato-293 re-partition it carries **both** declarations and implementation bodies:
   `<stem>.plato` = types, `<stem>.concepts.plato` = concepts, `<stem>.library.plato` = exactly one
-  `library` block. One kind of declaration per file, under a loose per-file declaration cap
-  (STY006 — [`stdlib/VERIFICATION.md`](stdlib/VERIFICATION.md) states the number).
-  The folder is partitioned into four subfolders — `foundation/`, `geometry/`, `graphics/`
+  `library` block. One kind of declaration per file; there is no cap on how many declarations a
+  file may hold, so group by subject. The folder is partitioned into four subfolders — `foundation/`, `geometry/`, `graphics/`
   and `future/` (aspirational vocabulary) — each of which is itself flat.
   **`future/` is not linted and not converted to C#** (stdlib-377): the default tier list
   everywhere is `foundation geometry graphics`, and `future` joins only under an explicit flag

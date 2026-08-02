@@ -40,8 +40,8 @@ it, the command that measures it, or the log that records it.
 
 **Keep:**
 
-- Normative limits that are part of a specification — "the `TupleN` surface stops at 10 fields", "a
-  doc-comment block caps at 12 lines". These are decisions, not censuses.
+- Normative limits that are part of a specification — "the `TupleN` surface stops at 10 fields".
+  These are decisions, not censuses.
 - Historical incident figures tied to a fixed past event — "that shape produced 40 CS0736 errors".
   The event is over; the number cannot drift.
 - Orders of magnitude, stated as such — "runs in seconds", "fires in the thousands", "over a

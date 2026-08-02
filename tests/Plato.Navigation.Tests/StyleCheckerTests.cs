@@ -46,21 +46,6 @@ public static class StyleCheckerTests
     }
 
     [Test]
-    public static void DocCommentLengthCapsAtTwelve_HeaderExempt()
-    {
-        static string Block(int n) => string.Join("\n", Enumerable.Range(1, n).Select(i => $"// line {i}"));
-
-        var midFileLong = "type A { X: Number; }\n" + Block(13) + "\ntype B { Y: Number; }";
-        Assert.That(Codes(midFileLong), Has.Member("STY004"));
-
-        var midFileAtCap = "type A { X: Number; }\n" + Block(12) + "\ntype B { Y: Number; }";
-        Assert.That(Codes(midFileAtCap), Has.No.Member("STY004"));
-
-        var headerOnly = Block(30) + "\ntype A { X: Number; }";
-        Assert.That(Codes(headerOnly), Has.No.Member("STY004"), "the file-header block is exempt");
-    }
-
-    [Test]
     public static void OneKindPerFile()
     {
         Assert.That(Codes("concept IFoo\n{\n    Size(x: Self): Number;\n}\ntype Foo { A: Number; }"),
@@ -70,16 +55,6 @@ public static class StyleCheckerTests
         Assert.That(Codes("type Foo { A: Number; }", "foo.types.plato"), Has.No.Member("STY005"));
         Assert.That(Codes("type Foo { A: Number; }", "foo.plato"),
             Has.No.Member("STY005"), "no suffix, homogeneous - nothing to contradict");
-    }
-
-    [Test]
-    public static void DeclarationCountCapsAtMaxDeclarations()
-    {
-        static string Decls(int n)
-            => string.Join("\n", Enumerable.Range(1, n).Select(i => $"type T{i} {{ A: Number; }}"));
-
-        Assert.That(Codes(Decls(StyleChecker.MaxDeclarations)), Has.No.Member("STY006"));
-        Assert.That(Codes(Decls(StyleChecker.MaxDeclarations + 1)), Has.Member("STY006"));
     }
 
     /// <summary>Not a gate: prints the current stdlib's style-finding profile so a threshold change

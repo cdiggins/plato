@@ -192,12 +192,14 @@ effectively free.
 - **STY003** (Error) — the token `implicit`; implicit conversion operators are a C#-side decision.
 - **STY005** (Error) — more than one kind of declaration in a file, or a kind contradicting the
   file's `.concepts.` / `.types.` / `.library.` name suffix.
-- **STY004 / STY006** (Warning) — doc-comment blocks over 12 lines (file header exempt); more than
-  64 top-level declarations per file. The declaration cap is deliberately loose: it catches a file
-  that has stopped being about one subject, and is not a reason to split a cohesive design.
 
-STY001/002/003/005 are the ones that prevent a file from having a working generated form; treat
-them as hard errors.
+STY004 (doc-comment length) and STY006 (declarations per file) were retired: both measured a
+proxy rather than the thing they cared about. A comment is too long when it stops stating what a
+declaration is, and a file is too long when it stops being about one subject — neither is a line
+count, and enforcing the count pushed authors to split cohesive designs.
+
+Every surviving STY rule is an Error, and each one prevents a file from having a working generated
+form. There is no advisory tier left.
 
 ### Rung 4 · Type-check
 
