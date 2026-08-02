@@ -200,7 +200,9 @@ public static class Program
             .ToList();
 
         foreach (var e in edits)
-            Console.WriteLine($"{e.File}:{e.Line}:{e.Column}\t{e.Code}\t{OneLine(e.Before)}\t=>\t{OneLine(e.After)}");
+            Console.WriteLine(e.Applicable
+                ? $"{e.File}:{e.Line}:{e.Column}\t{e.Code}\t{OneLine(e.Before)}\t=>\t{OneLine(e.After)}"
+                : $"{e.File}:{e.Line}:{e.Column}\t{e.Code}\t{OneLine(e.Before)}\treport\t{e.Message}");
 
         if (write)
             foreach (var group in edits.GroupBy(e => e.File))
@@ -211,8 +213,9 @@ public static class Program
                     File.WriteAllText(group.Key, next);
             }
 
-        Console.WriteLine($"{edits.Count} edit(s) in {edits.Select(e => e.File).Distinct().Count()} file(s)"
-                          + (write ? ", written" : ", preview only (--write applies them)"));
+        var reports = edits.Count(e => !e.Applicable);
+        Console.WriteLine($"{edits.Count - reports} edit(s) and {reports} report(s) in {edits.Select(e => e.File).Distinct().Count()} file(s)"
+                          + (write ? ", edits written" : ", preview only (--write applies the edits; reports are never applied)"));
         return 0;
     }
 

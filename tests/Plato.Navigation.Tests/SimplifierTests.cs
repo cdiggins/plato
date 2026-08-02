@@ -220,3 +220,242 @@ public static class SimplifierTests
             Throws.ArgumentException);
     }
 }
+
+/// <summary>SIM003 and SIM004, the duplicated-body rules (plato-407), on the shapes that were found
+/// by hand: the IIndex accessors SdfNodeIndex spelled out for itself, and the families of one-line
+/// bodies (Width over the rasters, Centroid over the centre-symmetric shapes) whose receivers shared
+/// an interface nobody had used yet.</summary>
+[TestFixture]
+public static class SimplifierDuplicateBodyTests
+{
+    private const string Concepts = """
+        interface IIndex
+        {
+            Value(x: Self): Integer;
+        }
+
+        interface IImage
+        {
+            Size(x: Self): IntegerSize2D;
+        }
+
+        interface ICentroid2D
+        {
+            Centroid(x: Self): Point2D;
+        }
+        """;
+
+    private const string Indices = """
+        library Collections
+        {
+            // The digest of a typed index.
+            Hash(self: IIndex): Integer
+                => self.Value.Hash;
+
+            // The natural total order on typed indices.
+            LessThanOrEquals(a: IIndex, b: IIndex): Boolean
+                => a.Value <= b.Value;
+        }
+        """;
+
+    private static ParsedFile Parse(string name, string text)
+        => BoundSnapshot.ParseFile(new SourceFile(0, new FilePath(name), text));
+
+    private static List<SimplifyEdit> Check(params (string Name, string Text)[] files)
+        => Simplifier.Check(files.Select(f => Parse(f.Name, f.Text)).ToList());
+
+    /// <summary>The `1ae4ecc` case: `Hash(self: SdfNodeIndex)` was byte-identical to the derived
+    /// `Hash(self: IIndex)`, and `LessThanOrEquals` matches even though its second parameter is the
+    /// concrete type where the interface version spells the interface.</summary>
+    [Test]
+    public static void InterfaceDerivedBodyMakesTheConcreteCopyRemovable()
+    {
+        var types = """
+            type SdfNodeIndex
+                implements IIndex
+            {
+                Value: Integer;
+            }
+            """;
+        var subject = """
+            library FieldsImplicits
+            {
+                // A node index hashes as its underlying position.
+                Hash(self: SdfNodeIndex): Integer
+                    => self.Value.Hash;
+
+                // Node indices order by position in the node array.
+                LessThanOrEquals(a: SdfNodeIndex, b: SdfNodeIndex): Boolean
+                    => a.Value <= b.Value;
+            }
+            """;
+        var edits = Check(("fields.library.plato", subject), ("fields.types.plato", types),
+            ("collections.concepts.plato", Concepts), ("collections.library.plato", Indices));
+
+        Assert.That(edits.Select(e => e.Code), Is.EqualTo(new[] { "SIM003", "SIM003" }));
+        Assert.That(edits[0].Message, Does.Contain("IIndex").And.Contain("SdfNodeIndex"));
+
+        var applied = Simplifier.Apply(subject, edits);
+        Assert.Multiple(() =>
+        {
+            Assert.That(applied, Does.Not.Contain("SdfNodeIndex"), "both concrete copies and their comments go");
+            Assert.That(applied, Does.Contain("library FieldsImplicits"));
+        });
+    }
+
+    [Test]
+    public static void ADifferentBodyIsNotDerived()
+    {
+        var types = """
+            type SdfNodeIndex
+                implements IIndex
+            {
+                Value: Integer;
+            }
+            """;
+        var subject = """
+            library FieldsImplicits
+            {
+                Hash(self: SdfNodeIndex): Integer
+                    => self.Value.Hash + 1;
+            }
+            """;
+        Assert.That(Check(("fields.library.plato", subject), ("fields.types.plato", types),
+                ("collections.concepts.plato", Concepts), ("collections.library.plato", Indices)),
+            Is.Empty, "the interface derives a different value");
+    }
+
+    [Test]
+    public static void ATypeThatDoesNotImplementTheInterfaceKeepsItsBody()
+    {
+        var types = """
+            type SdfNodeIndex
+            {
+                Value: Integer;
+            }
+            """;
+        var subject = """
+            library FieldsImplicits
+            {
+                Hash(self: SdfNodeIndex): Integer
+                    => self.Value.Hash;
+            }
+            """;
+        Assert.That(Check(("fields.library.plato", subject), ("fields.types.plato", types),
+                ("collections.concepts.plato", Concepts), ("collections.library.plato", Indices)),
+            Is.Empty, "nothing derives Hash for a type outside IIndex");
+    }
+
+    /// <summary>The `1ae4ecc` Width family: seven rasters, one body, one interface they all carry.
+    /// Reported, never applied — deriving it is a vocabulary decision.</summary>
+    [Test]
+    public static void SharedInterfaceFamilyIsReportedNotApplied()
+    {
+        var types = """
+            type Bitmap implements IImage { Size: IntegerSize2D; }
+            type FloatImage implements IImage { Size: IntegerSize2D; }
+            type DepthImage implements IImage { Size: IntegerSize2D; }
+            """;
+        var subject = """
+            library Images
+            {
+                Width(self: Bitmap): Integer
+                    => self.Size.Width;
+
+                Width(self: FloatImage): Integer
+                    => self.Size.Width;
+
+                Width(self: DepthImage): Integer
+                    => self.Size.Width;
+            }
+            """;
+        var edits = Check(("images.library.plato", subject), ("images.types.plato", types),
+            ("images.concepts.plato", Concepts));
+
+        Assert.That(edits.Select(e => e.Code), Is.EqualTo(new[] { "SIM004" }));
+        Assert.Multiple(() =>
+        {
+            Assert.That(edits[0].Applicable, Is.False);
+            Assert.That(edits[0].Message, Does.Contain("IImage").And.Contain("Bitmap").And.Contain("3 types"));
+            Assert.That(Simplifier.Apply(subject, edits), Is.EqualTo(subject), "SIM004 never rewrites");
+        });
+    }
+
+    /// <summary>The `f5fc7ca` Centroid family: the receivers spell the parameter differently, which
+    /// is exactly the "modulo the receiver's name" the rule has to see through.</summary>
+    [Test]
+    public static void ReceiverNamesDoNotSplitAFamily()
+    {
+        var types = """
+            type Circle implements ICentroid2D { Center: Point2D; }
+            type Annulus implements ICentroid2D { Center: Point2D; }
+            type RegularPolygon implements ICentroid2D { Center: Point2D; }
+            """;
+        var subject = """
+            library Planar
+            {
+                Centroid(c: Circle): Point2D
+                    => c.Center;
+
+                Centroid(a: Annulus): Point2D
+                    => a.Center;
+
+                Centroid(g: RegularPolygon): Point2D
+                    => g.Center;
+            }
+            """;
+        var edits = Check(("planar.library.plato", subject), ("planar.types.plato", types),
+            ("geometry.concepts.plato", Concepts));
+
+        Assert.That(edits.Select(e => e.Code), Is.EqualTo(new[] { "SIM004" }));
+        Assert.That(edits[0].Message, Does.Contain("ICentroid2D"));
+    }
+
+    [Test]
+    public static void ASmallFamilyIsNotReported()
+    {
+        var types = """
+            type Bitmap implements IImage { Size: IntegerSize2D; }
+            type FloatImage implements IImage { Size: IntegerSize2D; }
+            """;
+        var subject = """
+            library Images
+            {
+                Width(self: Bitmap): Integer
+                    => self.Size.Width;
+
+                Width(self: FloatImage): Integer
+                    => self.Size.Width;
+            }
+            """;
+        Assert.That(Check(("images.library.plato", subject), ("images.types.plato", types),
+                ("images.concepts.plato", Concepts)),
+            Is.Empty, $"two identical bodies are below the family size of {Simplifier.FamilySize}");
+    }
+
+    [Test]
+    public static void AFamilyWithNoSharedInterfaceIsNotReported()
+    {
+        var types = """
+            type Bitmap implements IImage { Size: IntegerSize2D; }
+            type FloatImage { Size: IntegerSize2D; }
+            type DepthImage { Size: IntegerSize2D; }
+            """;
+        var subject = """
+            library Images
+            {
+                Width(self: Bitmap): Integer
+                    => self.Size.Width;
+
+                Width(self: FloatImage): Integer
+                    => self.Size.Width;
+
+                Width(self: DepthImage): Integer
+                    => self.Size.Width;
+            }
+            """;
+        Assert.That(Check(("images.library.plato", subject), ("images.types.plato", types),
+                ("images.concepts.plato", Concepts)),
+            Is.Empty, "with no interface in common there is nothing to derive the body on");
+    }
+}

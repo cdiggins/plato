@@ -865,10 +865,6 @@ library Transforms
     Matrix4x4(m: Motor3D): Matrix4x4
         => m.Pose3D.Matrix4x4;
 
-    // Any motor is affine: it is the rigid pose it encodes.
-    AffineTransform3D(m: Motor3D): AffineTransform3D
-        => m.Pose3D.AffineTransform3D;
-
     //==
     // # Point support
     //

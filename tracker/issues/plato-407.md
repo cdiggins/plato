@@ -40,7 +40,31 @@ Note the limit found while doing this by hand (compiler-408): a body written
 against an interface-typed parameter binds against the interface, so the second
 rule must only propose collapses where the shared body needs no re-resolution.
 
+## Resolution
+
+Landed as `SIM003` (rule 1, applicable) and `SIM004` (rule 2, report only) in
+`src/Plato.Navigation/Simplifier.cs`.
+
+SIM003 matches a concrete library function against every library function whose
+receiver is an interface in the concrete receiver's transitive `implements` /
+`inherits` closure, requiring the same name, the same result type and the same
+body once every parameter is renamed to its position. A remaining parameter
+matches by name or when the interface version spells it as an interface the
+concrete parameter implements, which is what covers
+`LessThanOrEquals(a: IIndex, b: IIndex)`. Applying it deletes the declaration
+with its own comment block. Over the shipping tiers it proposed one edit —
+`AffineTransform3D(m: Motor3D)`, which `AffineTransform3D(x: IRigid3D)` already
+derives — and that edit was applied.
+
+SIM004 groups library functions by (name, result type, remaining parameter
+types, body modulo parameter names), keeps groups of three or more concrete
+receivers, and reports the interfaces every receiver in the group implements.
+It never rewrites: `SimplifyEdit.Applicable` is false for these, and `Apply`
+skips them. Over the shipping tiers it reports 31 families, including the 12-
+and 13-member `Multiply` alias families in `transforms.library.plato` that
+compiler-408 says cannot be collapsed as they stand.
+
 ## Done means
 
-- [ ] Rule 1 implemented, previewed and applied over the shipping tiers
-- [ ] Rule 2 implemented as a report
+- [x] Rule 1 implemented, previewed and applied over the shipping tiers
+- [x] Rule 2 implemented as a report
