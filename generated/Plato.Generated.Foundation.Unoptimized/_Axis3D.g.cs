@@ -33,7 +33,7 @@ namespace Ara3D.Geometry
         public const int Kind_Z = 2;
 
         // All-fields constructor (private: build via the per-case factories)
-        [MethodImpl(AggressiveInlining)] private Axis3D(int kind) { Kind = kind; }
+        [MethodImpl(AggressiveInlining)] [JsonConstructor] private Axis3D(int kind) { Kind = kind; }
 
         // Per-case static factories: set own fields, default the rest.
         [MethodImpl(AggressiveInlining)] public static Axis3D X() => new Axis3D(Kind_X);
@@ -68,25 +68,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Axis3D result)
-        {
-            result = default;
-            int _v0 = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-                if (reader.NameIs("Kind")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v0)) return false; }
-            }
-            if (!reader.Completed) return false;
-            result = new Axis3D(_v0);
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Axis3D result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Axis3D result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static Axis3D Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("Axis3D", input);
-        [MethodImpl(AggressiveInlining)] public static Axis3D Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static Axis3D Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static Axis3D FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Axis3D result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Axis3D result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Axis3D result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static Axis3D Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<Axis3D>(input);
+        [MethodImpl(AggressiveInlining)] public static Axis3D Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<Axis3D>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Axis3D Parse(string input) => PlatoJson.Deserialize<Axis3D>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Axis3D FromJson(string input) => PlatoJson.Deserialize<Axis3D>((System.ReadOnlySpan<char>)input);
 
         // Implemented interface functions
         [MethodImpl(AggressiveInlining)] public Vector3D Vector3D() => this.IsX() ? new Vector3D(((Number)1), ((Number)0), ((Number)0)) : this.IsY() ? new Vector3D(((Number)0), ((Number)1), ((Number)0)) : new Vector3D(((Number)0), ((Number)0), ((Number)1));

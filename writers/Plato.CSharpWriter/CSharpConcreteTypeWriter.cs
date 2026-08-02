@@ -118,7 +118,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 if (FieldNames.Count > 0)
                 {
                     TypeWriter.WriteLine(
-                        $"{Attr}{JsonConstructorAttribute(parameterNames)} public {SimpleName}({parametersStr}) {{ {assignments}}}");
+                        $"{Attr}{JsonConstructorAttribute} public {SimpleName}({parametersStr}) {{ {assignments}}}");
                 }
 
                 TypeWriter.WriteLine();
@@ -457,7 +457,7 @@ namespace Ara3D.Geometry.CSharpWriter
             var assigns = new List<string> { "Kind = kind;" };
             for (var i = 0; i < flat.Count; ++i)
                 assigns.Add($"{FieldNames[i]} = {flatParamNames[i]};");
-            tw.WriteLine($"{Attr} private {SimpleName}({ctorParams.JoinStringsWithComma()}) {{ {string.Join(" ", assigns)} }}");
+            tw.WriteLine($"{Attr}{JsonConstructorAttribute} private {SimpleName}({ctorParams.JoinStringsWithComma()}) {{ {string.Join(" ", assigns)} }}");
             tw.WriteLine();
 
             // Per-case static factories.
@@ -560,18 +560,16 @@ namespace Ara3D.Geometry.CSharpWriter
 
         /// <summary>`[JsonConstructor]` — readonly fields cannot be assigned by the deserializer, so
         /// System.Text.Json needs the parameterized constructor to build the value; a struct
-        /// otherwise defaults to its parameterless constructor and yields all-zero results.
+        /// otherwise defaults to its parameterless constructor and yields all-zero results. It is
+        /// also how the generated Parse/TryParse work at all, since those hand the input to
+        /// System.Text.Json.
         ///
-        /// Emitted only when every parameter name matches its field name case-insensitively, which
-        /// is what System.Text.Json binds on. A field whose name is a C# keyword takes an
-        /// underscore-prefixed parameter (`Type` -> `_Type`) that would not bind, and an
-        /// unbindable [JsonConstructor] throws at run time rather than being ignored — so those
-        /// types are left without it and keep the writer's own Parse/TryParse.</summary>
-        private string JsonConstructorAttribute(IReadOnlyList<string> parameterNames)
-            => parameterNames.Count == FieldNames.Count
-               && !parameterNames.Where((p, i) => !string.Equals(p, FieldNames[i], StringComparison.OrdinalIgnoreCase)).Any()
-                ? " [JsonConstructor]"
-                : "";
+        /// Unconditional: <see cref="CSharpTypeWriter.FieldNameToParameterName"/> guarantees every
+        /// parameter name matches its field case-insensitively, which is what the binding needs.
+        /// A private constructor is fine — the attribute is honoured on non-public constructors,
+        /// which is what lets a sum type (whose all-fields constructor is deliberately private)
+        /// round-trip.</summary>
+        public const string JsonConstructorAttribute = " [JsonConstructor]";
 
         public bool SkipFunction(FunctionInstance f, bool skipFields = true)
             => SkipFunction(f, FieldNames, SimpleName, skipFields);

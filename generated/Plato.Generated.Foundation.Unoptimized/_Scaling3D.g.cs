@@ -59,25 +59,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Scaling3D result)
-        {
-            result = default;
-            Number3 _v0 = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-                if (reader.NameIs("Amount")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v0)) return false; }
-            }
-            if (!reader.Completed) return false;
-            result = new Scaling3D(_v0);
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Scaling3D result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Scaling3D result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static Scaling3D Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("Scaling3D", input);
-        [MethodImpl(AggressiveInlining)] public static Scaling3D Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static Scaling3D Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static Scaling3D FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Scaling3D result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Scaling3D result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Scaling3D result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static Scaling3D Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<Scaling3D>(input);
+        [MethodImpl(AggressiveInlining)] public static Scaling3D Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<Scaling3D>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Scaling3D Parse(string input) => PlatoJson.Deserialize<Scaling3D>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Scaling3D FromJson(string input) => PlatoJson.Deserialize<Scaling3D>((System.ReadOnlySpan<char>)input);
 
         // Explicit implementation of interfaces by forwarding properties to fields
 

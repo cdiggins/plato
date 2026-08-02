@@ -8,83 +8,83 @@ using Ara3D.Geometry.Compiler.Types;
 namespace Ara3D.Geometry.Compiler.Analysis
 {
     /// <summary>
-    /// Concept-lattice helpers shared by LINT016 and the ContextExport hierarchy dump:
+    /// Interface-lattice helpers shared by LINT016 and the ContextExport hierarchy dump:
     /// redundant direct <c>inherits</c> edges, and an ASCII spanning forest of the DAG.
     /// </summary>
     public static class ConceptHierarchy
     {
         public readonly struct RedundantInherit
         {
-            public TypeDef Concept { get; }
+            public TypeDef Interface { get; }
             public TypeExpression Parent { get; }
             public TypeExpression ImpliedBy { get; }
 
-            public RedundantInherit(TypeDef concept, TypeExpression parent, TypeExpression impliedBy)
+            public RedundantInherit(TypeDef iface, TypeExpression parent, TypeExpression impliedBy)
             {
-                Concept = concept;
+                Interface = iface;
                 Parent = parent;
                 ImpliedBy = impliedBy;
             }
         }
 
-        public static IReadOnlyList<TypeDef> Concepts(Compilation compilation)
+        public static IReadOnlyList<TypeDef> Interfaces(Compilation compilation)
             => compilation.GetConcepts()
                 .OrderBy(c => c.Name, StringComparer.Ordinal)
                 .ToList();
 
         /// <summary>
         /// Direct <c>inherits</c> clauses already reached through another direct parent
-        /// of the same concept (same predicate as LINT011, over concept-to-concept edges).
+        /// of the same interface (same predicate as LINT011, over interface-to-interface edges).
         /// </summary>
         public static IReadOnlyList<RedundantInherit> RedundantInherits(Compilation compilation)
         {
             var results = new List<RedundantInherit>();
-            foreach (var concept in Concepts(compilation))
+            foreach (var iface in Interfaces(compilation))
             {
-                if (concept.Inherits.Count < 2)
+                if (iface.Inherits.Count < 2)
                     continue;
-                foreach (var parent in concept.Inherits)
+                foreach (var parent in iface.Inherits)
                 {
                     if (parent?.Def == null)
                         continue;
-                    var impliedBy = concept.Inherits.FirstOrDefault(other =>
+                    var impliedBy = iface.Inherits.FirstOrDefault(other =>
                         other?.Def != null &&
                         other.Def != parent.Def &&
                         other.Def.GetAllImplementedConcepts().Any(i => i.Def == parent.Def));
                     if (impliedBy == null)
                         continue;
-                    results.Add(new RedundantInherit(concept, parent, impliedBy));
+                    results.Add(new RedundantInherit(iface, parent, impliedBy));
                 }
             }
             return results;
         }
 
-        public static string DisplayName(TypeDef concept)
+        public static string DisplayName(TypeDef iface)
         {
-            if (concept == null)
+            if (iface == null)
                 return "?";
-            if (concept.TypeParameters.Count == 0)
-                return concept.Name;
-            return $"{concept.Name}<{string.Join(",", concept.TypeParameters.Select(p => p.Name))}>";
+            if (iface.TypeParameters.Count == 0)
+                return iface.Name;
+            return $"{iface.Name}<{string.Join(",", iface.TypeParameters.Select(p => p.Name))}>";
         }
 
         /// <summary>
-        /// ASCII spanning forest of the concept DAG. Each concept is printed once under its
+        /// ASCII spanning forest of the interface DAG. Each interface is printed once under its
         /// first direct parent in declaration order (or as a root if it inherits nothing).
         /// Secondary parents are noted with <c>*</c> on a one-line cross-reference, without
         /// re-expanding the subtree. A trailing section lists redundant inherits.
         /// </summary>
         public static string FormatAscii(Compilation compilation)
         {
-            var concepts = Concepts(compilation);
-            var byDef = concepts.ToDictionary(c => c);
+            var interfaces = Interfaces(compilation);
+            var byDef = interfaces.ToDictionary(c => c);
             var children = new Dictionary<TypeDef, List<TypeDef>>();
-            foreach (var c in concepts)
+            foreach (var c in interfaces)
                 children[c] = new List<TypeDef>();
 
             // Child → ordered list of direct parents (declaration order).
             var parents = new Dictionary<TypeDef, List<TypeExpression>>();
-            foreach (var c in concepts)
+            foreach (var c in interfaces)
             {
                 parents[c] = c.Inherits.Where(i => i?.Def != null && byDef.ContainsKey(i.Def)).ToList();
                 foreach (var p in parents[c])
@@ -97,7 +97,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
             // Canonical parent = first declared inherits that resolves; else root.
             var canonicalParent = new Dictionary<TypeDef, TypeDef>();
             var roots = new List<TypeDef>();
-            foreach (var c in concepts)
+            foreach (var c in interfaces)
             {
                 var first = parents[c].FirstOrDefault();
                 if (first == null)
@@ -109,8 +109,8 @@ namespace Ara3D.Geometry.Compiler.Analysis
             var sb = new StringBuilder();
             var edgeCount = parents.Values.Sum(p => p.Count);
             var redundant = RedundantInherits(compilation);
-            sb.AppendLine($"# Plato concept hierarchy");
-            sb.AppendLine($"# {concepts.Count} concepts, {edgeCount} direct inherits, {redundant.Count} redundant");
+            sb.AppendLine($"# Plato interface hierarchy");
+            sb.AppendLine($"# {interfaces.Count} interfaces, {edgeCount} direct inherits, {redundant.Count} redundant");
             sb.AppendLine($"# Tree edge = first declared parent; * = also inherits (see multi-parent section)");
             sb.AppendLine();
 
@@ -118,27 +118,27 @@ namespace Ara3D.Geometry.Compiler.Analysis
             foreach (var root in roots)
                 FormatNode(sb, root, children, canonicalParent, parents, printed, prefix: "", isLast: true, isRoot: true);
 
-            // Concepts whose only parents failed to resolve still need a home.
-            foreach (var orphan in concepts.Where(c => !printed.Contains(c)))
+            // Interfaces whose only parents failed to resolve still need a home.
+            foreach (var orphan in interfaces.Where(c => !printed.Contains(c)))
             {
                 sb.AppendLine();
                 sb.AppendLine($"# unresolved-parent:");
                 FormatNode(sb, orphan, children, canonicalParent, parents, printed, prefix: "", isLast: true, isRoot: true);
             }
 
-            var multiParent = concepts
+            var multiParent = interfaces
                 .Where(c => parents[c].Count > 1)
-                .Select(c => (Concept: c, Parents: parents[c]))
+                .Select(c => (Interface: c, Parents: parents[c]))
                 .ToList();
             if (multiParent.Count > 0)
             {
                 sb.AppendLine();
-                sb.AppendLine("## Multi-parent concepts");
-                foreach (var (concept, pars) in multiParent)
+                sb.AppendLine("## Multi-parent interfaces");
+                foreach (var (iface, pars) in multiParent)
                 {
                     var names = string.Join(", ", pars.Select(p => p.ToString()));
-                    var canonical = canonicalParent.TryGetValue(concept, out var cp) ? DisplayName(cp) : "?";
-                    sb.AppendLine($"{DisplayName(concept)} inherits {names}  (tree under {canonical})");
+                    var canonical = canonicalParent.TryGetValue(iface, out var cp) ? DisplayName(cp) : "?";
+                    sb.AppendLine($"{DisplayName(iface)} inherits {names}  (tree under {canonical})");
                 }
             }
 
@@ -153,7 +153,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
                 foreach (var r in redundant)
                 {
                     sb.AppendLine(
-                        $"{DisplayName(r.Concept)} inherits {r.Parent}  " +
+                        $"{DisplayName(r.Interface)} inherits {r.Parent}  " +
                         $"# already via {r.ImpliedBy}");
                 }
             }

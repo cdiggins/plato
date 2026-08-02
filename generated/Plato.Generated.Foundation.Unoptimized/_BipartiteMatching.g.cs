@@ -68,29 +68,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out BipartiteMatching result)
-        {
-            result = default;
-            Integer _v0 = default;
-            Integer _v1 = default;
-            IReadOnlyList<GraphVertexIndex> _v2 = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-                if (reader.NameIs("LeftVertexCount")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v0)) return false; }
-                else if (reader.NameIs("RightVertexCount")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v1)) return false; }
-                else if (reader.NameIs("MatchedRightIndices")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v2)) return false; }
-            }
-            if (!reader.Completed) return false;
-            result = new BipartiteMatching(_v0, _v1, _v2);
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out BipartiteMatching result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out BipartiteMatching result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static BipartiteMatching Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("BipartiteMatching", input);
-        [MethodImpl(AggressiveInlining)] public static BipartiteMatching Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static BipartiteMatching Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static BipartiteMatching FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out BipartiteMatching result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out BipartiteMatching result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out BipartiteMatching result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static BipartiteMatching Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<BipartiteMatching>(input);
+        [MethodImpl(AggressiveInlining)] public static BipartiteMatching Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<BipartiteMatching>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static BipartiteMatching Parse(string input) => PlatoJson.Deserialize<BipartiteMatching>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static BipartiteMatching FromJson(string input) => PlatoJson.Deserialize<BipartiteMatching>((System.ReadOnlySpan<char>)input);
 
         // Explicit implementation of interfaces by forwarding properties to fields
 

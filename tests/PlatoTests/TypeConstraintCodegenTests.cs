@@ -36,7 +36,7 @@ namespace PlatoTests
 type Number { }
 type Boolean { }
 
-concept Interpolatable
+interface Interpolatable
 {
     Lerp(a: Self, b: Self, t: Number): Self;
 }
@@ -133,7 +133,7 @@ type Blend<T>
         public static void BoundedGenericType_EmitsTheWhereClauseOnTheStruct()
         {
             var src = File_(Emit(), "_Tween.g.cs");
-            StringAssert.Contains("public partial struct Tween<T>", src);
+            StringAssert.Contains("public readonly partial struct Tween<T>", src);
             StringAssert.Contains("where T : Interpolatable<T>", src);
         }
 
@@ -143,7 +143,7 @@ type Blend<T>
             // The scope line, in the emitter as in the checker: a declaration with no `where`
             // clause emits exactly what it emitted before bounds existed.
             var src = File_(Emit(), "_Crate.g.cs");
-            StringAssert.Contains("public partial struct Crate<T>", src);
+            StringAssert.Contains("public readonly partial struct Crate<T>", src);
             StringAssert.DoesNotContain("where", src);
         }
 
@@ -155,7 +155,7 @@ type Blend<T>
             // is already correct: the sum struct carries the declared bound, so a case payload of
             // type T can be operated on exactly as a product field can.
             var src = File_(Emit(SumSource), "_Blend.g.cs");
-            StringAssert.Contains("public partial struct Blend<T>", src);
+            StringAssert.Contains("public readonly partial struct Blend<T>", src);
             StringAssert.Contains("where T : Interpolatable<T>", src);
         }
 

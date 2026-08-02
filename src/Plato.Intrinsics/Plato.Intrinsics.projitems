@@ -15,10 +15,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)GridExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Integer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Intrinsics.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)JsonValueParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Number.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatoJson.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PlatoJsonReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatoScalarJsonConverters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatoBuffer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatoList.cs" />

@@ -117,7 +117,7 @@ namespace Ara3D.Geometry
         public static void FillRule_EmitsExpectedStructShape()
         {
             var src = Emit("fillrule.plato").Files["_FillRule.g.cs"].ToString();
-            Assert.That(src, Does.Contain("public partial struct FillRule"));
+            Assert.That(src, Does.Contain("public readonly partial struct FillRule"));
             Assert.That(src, Does.Contain("public readonly int Kind"));
             Assert.That(src, Does.Contain("public const int Kind_NonZero = 0"));
             Assert.That(src, Does.Contain("public const int Kind_EvenOdd = 1"));
@@ -134,7 +134,7 @@ namespace Ara3D.Geometry
         {
             var w = Emit("pathsegment.plato");
             var src = w.Files["_PathSegment2D.g.cs"].ToString();
-            Assert.That(src, Does.Contain("public partial struct PathSegment2D"));
+            Assert.That(src, Does.Contain("public readonly partial struct PathSegment2D"));
             Assert.That(src, Does.Contain("public readonly int Kind"));
             Assert.That(src, Does.Contain("public const int Kind_Move = 0"));
             Assert.That(src, Does.Contain("public const int Kind_Close = 5"));
@@ -174,11 +174,13 @@ namespace Ara3D.Geometry
             Assert.AreEqual(false, Unwrap(isEvenOdd.Invoke(null, new[] { nonZero })));
             Assert.AreEqual(true, Unwrap(isEvenOdd.Invoke(null, new[] { evenOdd })));
 
-            // Tag + predicate + ToString.
+            // Tag + predicate + ToString. A sum's ToString is its JSON: the Kind discriminant plus
+            // any flattened per-case fields. It used to render the case NAME ("NonZero"), which
+            // reads well but no parser reads back — see CSharpSerializationWriter.
             Assert.AreEqual(0, fillRule.GetField("Kind").GetValue(nonZero));
             Assert.AreEqual(true, Unwrap(fillRule.GetMethod("IsNonZero").Invoke(nonZero, null)));
-            Assert.AreEqual("NonZero", nonZero.ToString());
-            Assert.AreEqual("EvenOdd", evenOdd.ToString());
+            Assert.AreEqual("{\"Kind\":0}", nonZero.ToString());
+            Assert.AreEqual("{\"Kind\":1}", evenOdd.ToString());
         }
 
         [Test]
@@ -250,8 +252,8 @@ namespace Ara3D.Geometry
             var evenOdd = fillRule.GetMethod("EvenOdd").Invoke(null, null);
             var flip = fillRules.GetMethod("Flip");
 
-            Assert.AreEqual("EvenOdd", flip.Invoke(null, new[] { nonZero }).ToString());
-            Assert.AreEqual("NonZero", flip.Invoke(null, new[] { evenOdd }).ToString());
+            Assert.AreEqual("{\"Kind\":1}", flip.Invoke(null, new[] { nonZero }).ToString());
+            Assert.AreEqual("{\"Kind\":0}", flip.Invoke(null, new[] { evenOdd }).ToString());
         }
     }
 }

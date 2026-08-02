@@ -24,7 +24,7 @@ namespace Ara3D.Geometry
     /// </summary>
     [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public readonly partial struct Bounds2D: IBoundsLike<Bounds2D, Point2D, Vector2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Bounds2D>, System.ISpanParsable<Bounds2D>
+    public readonly partial struct Bounds2D: IBounds<Bounds2D, Point2D, Vector2D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Bounds2D>, System.ISpanParsable<Bounds2D>
     {
         // Fields
         [DataMember(Order = 0), JsonInclude] public readonly Point2D Min;
@@ -67,33 +67,19 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Bounds2D result)
-        {
-            result = default;
-            Point2D _v0 = default;
-            Point2D _v1 = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-                if (reader.NameIs("Min")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v0)) return false; }
-                else if (reader.NameIs("Max")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v1)) return false; }
-            }
-            if (!reader.Completed) return false;
-            result = new Bounds2D(_v0, _v1);
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Bounds2D result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Bounds2D result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static Bounds2D Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("Bounds2D", input);
-        [MethodImpl(AggressiveInlining)] public static Bounds2D Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static Bounds2D Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static Bounds2D FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Bounds2D result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Bounds2D result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Bounds2D result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static Bounds2D Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<Bounds2D>(input);
+        [MethodImpl(AggressiveInlining)] public static Bounds2D Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<Bounds2D>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Bounds2D Parse(string input) => PlatoJson.Deserialize<Bounds2D>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Bounds2D FromJson(string input) => PlatoJson.Deserialize<Bounds2D>((System.ReadOnlySpan<char>)input);
 
         // Explicit implementation of interfaces by forwarding properties to fields
-        [MethodImpl(AggressiveInlining)] Point2D IBoundsLike<Bounds2D, Point2D, Vector2D>.Min() => Min;
-        [MethodImpl(AggressiveInlining)] Point2D IBoundsLike<Point2D, Vector2D>.Min() => Min;
-        [MethodImpl(AggressiveInlining)] Point2D IBoundsLike<Bounds2D, Point2D, Vector2D>.Max() => Max;
-        [MethodImpl(AggressiveInlining)] Point2D IBoundsLike<Point2D, Vector2D>.Max() => Max;
+        [MethodImpl(AggressiveInlining)] Point2D IBounds<Bounds2D, Point2D, Vector2D>.Min() => Min;
+        [MethodImpl(AggressiveInlining)] Point2D IBounds<Point2D, Vector2D>.Min() => Min;
+        [MethodImpl(AggressiveInlining)] Point2D IBounds<Bounds2D, Point2D, Vector2D>.Max() => Max;
+        [MethodImpl(AggressiveInlining)] Point2D IBounds<Point2D, Vector2D>.Max() => Max;
 
         // Implemented interface functions
         [MethodImpl(AggressiveInlining)] public static Bounds2D Empty() => (new Point2D(Ara3D.Geometry.Number.MaxValue, Ara3D.Geometry.Number.MaxValue), new Point2D(Ara3D.Geometry.Number.MinValue, Ara3D.Geometry.Number.MinValue));

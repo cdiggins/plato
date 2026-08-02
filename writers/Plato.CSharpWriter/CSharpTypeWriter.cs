@@ -277,6 +277,16 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     {
         var pns = f.ParameterNames;
         var fs = t.TypeDef.Fields.Select(tf => tf.Name).ToList();
+
+        // `Count` is the one member this writer emits in PROPERTY form, and a public property is
+        // something System.Text.Json serializes. A generated struct's JSON is its [DataMember]
+        // fields and nothing else, so the property has to opt out — otherwise JsonSerializer
+        // writes a `Count` member that the emitted AppendJson does not (and, on a default
+        // Array2D, throws reading it off a null Elements). [JsonIgnore] is property/field-only,
+        // so it goes on this branch alone: `At` emits as a method.
+        if (f.Name == "Count")
+            Write("[JsonIgnore] ");
+
         Write(f.MethodSignature);
 
         var singleArrayField = SingleIndexableFieldName(t);
@@ -405,6 +415,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         if (!isPrimitive || f.Body != null)
         {
             //WriteLine($"// {f.Function.SignatureId}; [{f.Function.Substitutions}]; {f.Function.TypeVariableAnalysis}");
+            WriteJsonIgnoreIfProperty(f);
             Write(f.MethodSignature);
             WriteBody(f, false);
         }
@@ -412,6 +423,7 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         {
             if (f.IsOperator)
             {
+                WriteJsonIgnoreIfProperty(f);
                 Write(f.MethodSignature);
 
                 if (f.ParameterNames.Count == 1)
@@ -456,6 +468,20 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         }
 
         return this;
+    }
+
+    /// <summary>
+    /// A generated struct's JSON is its [DataMember] fields and nothing else — but System.Text.Json
+    /// serializes public PROPERTIES, and the emitted surface has a few (`Count` on the array-like
+    /// types, an operator pinned to property syntax). Left alone, JsonSerializer would write a
+    /// member the emitted AppendJson does not, and reading a default Array2D's Count off a null
+    /// Elements throws. Every property therefore opts out; [JsonIgnore] is property/field-only, so
+    /// this is exactly the members that render as properties.
+    /// </summary>
+    private void WriteJsonIgnoreIfProperty(CSharpFunctionInfo f)
+    {
+        if (f.IsProperty)
+            Write("[JsonIgnore] ");
     }
 
     // Type-variable NAMES are per-declaration (_T0 in one, _T1 in another), so normalize them
@@ -518,10 +544,27 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         return CSharpKeywords.Contains(fieldName);
     }
 
+    /// <summary>
+    /// The constructor / With / Create parameter name for a field. Normally the field name with a
+    /// lower-case first letter, which keeps the parameter distinct from the field it assigns.
+    ///
+    /// Every result BINDS to its field case-insensitively, and that is a requirement, not a
+    /// nicety: the all-fields constructor carries [JsonConstructor], and System.Text.Json matches
+    /// each constructor parameter to the member it fills BY NAME — a parameter that matches
+    /// nothing is an InvalidOperationException the first time the type is deserialized. So a field
+    /// whose lower-case form is a C# keyword takes the verbatim identifier (`Type` -> `@type`, the
+    /// identifier `type`) rather than an underscore-prefixed name that would match nothing, and a
+    /// field already spelled lower-case takes its capitalized form for the same reason.
+    /// </summary>
     public static string FieldNameToParameterName(string fieldName)
-        => fieldName.Length == 0 || fieldName[0].IsLower() || IsReserved(fieldName.DecapitalizeFirst())
-            ? $"_{fieldName}"
-            : fieldName.DecapitalizeFirst();
+    {
+        if (fieldName.Length == 0)
+            return "_";
+        if (fieldName[0].IsLower())
+            return char.ToUpperInvariant(fieldName[0]) + fieldName.Substring(1);
+        var name = fieldName.DecapitalizeFirst();
+        return IsReserved(name) ? "@" + name : name;
+    }
 
     public CSharpTypeWriter Write(TypeExpression typeExpression)
         => Write(this.ToCSharpType(typeExpression)).Write(" ");

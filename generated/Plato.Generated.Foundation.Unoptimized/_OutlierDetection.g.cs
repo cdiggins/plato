@@ -39,7 +39,7 @@ namespace Ara3D.Geometry
         [DataMember(Order = 3), JsonInclude] public readonly Number Mad_Threshold;
 
         // All-fields constructor (private: build via the per-case factories)
-        [MethodImpl(AggressiveInlining)] private OutlierDetection(int kind, Number zScore_Threshold, Number iqr_Threshold, Number mad_Threshold) { Kind = kind; ZScore_Threshold = zScore_Threshold; Iqr_Threshold = iqr_Threshold; Mad_Threshold = mad_Threshold; }
+        [MethodImpl(AggressiveInlining)] [JsonConstructor] private OutlierDetection(int kind, Number zScore_Threshold, Number iqr_Threshold, Number mad_Threshold) { Kind = kind; ZScore_Threshold = zScore_Threshold; Iqr_Threshold = iqr_Threshold; Mad_Threshold = mad_Threshold; }
 
         // Per-case static factories: set own fields, default the rest.
         [MethodImpl(AggressiveInlining)] public static OutlierDetection ZScore(Number threshold) => new OutlierDetection(Kind_ZScore, threshold, default, default);
@@ -77,31 +77,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out OutlierDetection result)
-        {
-            result = default;
-            int _v0 = default;
-            Number _v1 = default;
-            Number _v2 = default;
-            Number _v3 = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-                if (reader.NameIs("Kind")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v0)) return false; }
-                else if (reader.NameIs("ZScore_Threshold")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v1)) return false; }
-                else if (reader.NameIs("Iqr_Threshold")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v2)) return false; }
-                else if (reader.NameIs("Mad_Threshold")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v3)) return false; }
-            }
-            if (!reader.Completed) return false;
-            result = new OutlierDetection(_v0, _v1, _v2, _v3);
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out OutlierDetection result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out OutlierDetection result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static OutlierDetection Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("OutlierDetection", input);
-        [MethodImpl(AggressiveInlining)] public static OutlierDetection Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static OutlierDetection Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static OutlierDetection FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out OutlierDetection result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out OutlierDetection result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out OutlierDetection result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static OutlierDetection Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<OutlierDetection>(input);
+        [MethodImpl(AggressiveInlining)] public static OutlierDetection Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<OutlierDetection>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static OutlierDetection Parse(string input) => PlatoJson.Deserialize<OutlierDetection>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static OutlierDetection FromJson(string input) => PlatoJson.Deserialize<OutlierDetection>((System.ReadOnlySpan<char>)input);
 
         // Implemented interface functions
 

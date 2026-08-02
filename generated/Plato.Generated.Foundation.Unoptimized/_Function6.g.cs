@@ -49,23 +49,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Function6<T0, T1, T2, T3, T4, T5, TR> result)
-        {
-            result = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-            }
-            if (!reader.Completed) return false;
-            result = default;
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Function6<T0, T1, T2, T3, T4, T5, TR> result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Function6<T0, T1, T2, T3, T4, T5, TR> result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static Function6<T0, T1, T2, T3, T4, T5, TR> Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("Function6", input);
-        [MethodImpl(AggressiveInlining)] public static Function6<T0, T1, T2, T3, T4, T5, TR> Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static Function6<T0, T1, T2, T3, T4, T5, TR> Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static Function6<T0, T1, T2, T3, T4, T5, TR> FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Function6<T0, T1, T2, T3, T4, T5, TR> result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Function6<T0, T1, T2, T3, T4, T5, TR> result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Function6<T0, T1, T2, T3, T4, T5, TR> result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static Function6<T0, T1, T2, T3, T4, T5, TR> Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<Function6<T0, T1, T2, T3, T4, T5, TR>>(input);
+        [MethodImpl(AggressiveInlining)] public static Function6<T0, T1, T2, T3, T4, T5, TR> Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<Function6<T0, T1, T2, T3, T4, T5, TR>>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Function6<T0, T1, T2, T3, T4, T5, TR> Parse(string input) => PlatoJson.Deserialize<Function6<T0, T1, T2, T3, T4, T5, TR>>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Function6<T0, T1, T2, T3, T4, T5, TR> FromJson(string input) => PlatoJson.Deserialize<Function6<T0, T1, T2, T3, T4, T5, TR>>((System.ReadOnlySpan<char>)input);
 
         // Explicit implementation of interfaces by forwarding properties to fields
 

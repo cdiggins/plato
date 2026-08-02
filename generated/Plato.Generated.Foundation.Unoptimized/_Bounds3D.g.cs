@@ -23,7 +23,7 @@ namespace Ara3D.Geometry
     /// </summary>
     [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public readonly partial struct Bounds3D: IBoundsLike<Bounds3D, Point3D, Vector3D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Bounds3D>, System.ISpanParsable<Bounds3D>
+    public readonly partial struct Bounds3D: IBounds<Bounds3D, Point3D, Vector3D>, System.IFormattable, System.ISpanFormattable, System.IParsable<Bounds3D>, System.ISpanParsable<Bounds3D>
     {
         // Fields
         [DataMember(Order = 0), JsonInclude] public readonly Point3D Min;
@@ -66,33 +66,19 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Bounds3D result)
-        {
-            result = default;
-            Point3D _v0 = default;
-            Point3D _v1 = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-                if (reader.NameIs("Min")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v0)) return false; }
-                else if (reader.NameIs("Max")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v1)) return false; }
-            }
-            if (!reader.Completed) return false;
-            result = new Bounds3D(_v0, _v1);
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Bounds3D result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Bounds3D result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static Bounds3D Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("Bounds3D", input);
-        [MethodImpl(AggressiveInlining)] public static Bounds3D Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static Bounds3D Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static Bounds3D FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Bounds3D result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Bounds3D result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Bounds3D result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static Bounds3D Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<Bounds3D>(input);
+        [MethodImpl(AggressiveInlining)] public static Bounds3D Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<Bounds3D>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Bounds3D Parse(string input) => PlatoJson.Deserialize<Bounds3D>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Bounds3D FromJson(string input) => PlatoJson.Deserialize<Bounds3D>((System.ReadOnlySpan<char>)input);
 
         // Explicit implementation of interfaces by forwarding properties to fields
-        [MethodImpl(AggressiveInlining)] Point3D IBoundsLike<Bounds3D, Point3D, Vector3D>.Min() => Min;
-        [MethodImpl(AggressiveInlining)] Point3D IBoundsLike<Point3D, Vector3D>.Min() => Min;
-        [MethodImpl(AggressiveInlining)] Point3D IBoundsLike<Bounds3D, Point3D, Vector3D>.Max() => Max;
-        [MethodImpl(AggressiveInlining)] Point3D IBoundsLike<Point3D, Vector3D>.Max() => Max;
+        [MethodImpl(AggressiveInlining)] Point3D IBounds<Bounds3D, Point3D, Vector3D>.Min() => Min;
+        [MethodImpl(AggressiveInlining)] Point3D IBounds<Point3D, Vector3D>.Min() => Min;
+        [MethodImpl(AggressiveInlining)] Point3D IBounds<Bounds3D, Point3D, Vector3D>.Max() => Max;
+        [MethodImpl(AggressiveInlining)] Point3D IBounds<Point3D, Vector3D>.Max() => Max;
 
         // Implemented interface functions
         [MethodImpl(AggressiveInlining)] public static Bounds3D Empty() => (new Point3D(Ara3D.Geometry.Number.MaxValue, Ara3D.Geometry.Number.MaxValue, Ara3D.Geometry.Number.MaxValue), new Point3D(Ara3D.Geometry.Number.MinValue, Ara3D.Geometry.Number.MinValue, Ara3D.Geometry.Number.MinValue));

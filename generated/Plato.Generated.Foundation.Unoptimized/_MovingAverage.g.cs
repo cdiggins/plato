@@ -40,7 +40,7 @@ namespace Ara3D.Geometry
         [DataMember(Order = 4), JsonInclude] public readonly Number Gaussian_StandardDeviation;
 
         // All-fields constructor (private: build via the per-case factories)
-        [MethodImpl(AggressiveInlining)] private MovingAverage(int kind, Integer simple_WindowSize, Proportion exponential_Alpha, Integer gaussian_WindowSize, Number gaussian_StandardDeviation) { Kind = kind; Simple_WindowSize = simple_WindowSize; Exponential_Alpha = exponential_Alpha; Gaussian_WindowSize = gaussian_WindowSize; Gaussian_StandardDeviation = gaussian_StandardDeviation; }
+        [MethodImpl(AggressiveInlining)] [JsonConstructor] private MovingAverage(int kind, Integer simple_WindowSize, Proportion exponential_Alpha, Integer gaussian_WindowSize, Number gaussian_StandardDeviation) { Kind = kind; Simple_WindowSize = simple_WindowSize; Exponential_Alpha = exponential_Alpha; Gaussian_WindowSize = gaussian_WindowSize; Gaussian_StandardDeviation = gaussian_StandardDeviation; }
 
         // Per-case static factories: set own fields, default the rest.
         [MethodImpl(AggressiveInlining)] public static MovingAverage Simple(Integer windowSize) => new MovingAverage(Kind_Simple, windowSize, default, default, default);
@@ -79,33 +79,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out MovingAverage result)
-        {
-            result = default;
-            int _v0 = default;
-            Integer _v1 = default;
-            Proportion _v2 = default;
-            Integer _v3 = default;
-            Number _v4 = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-                if (reader.NameIs("Kind")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v0)) return false; }
-                else if (reader.NameIs("Simple_WindowSize")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v1)) return false; }
-                else if (reader.NameIs("Exponential_Alpha")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v2)) return false; }
-                else if (reader.NameIs("Gaussian_WindowSize")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v3)) return false; }
-                else if (reader.NameIs("Gaussian_StandardDeviation")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v4)) return false; }
-            }
-            if (!reader.Completed) return false;
-            result = new MovingAverage(_v0, _v1, _v2, _v3, _v4);
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out MovingAverage result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out MovingAverage result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static MovingAverage Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("MovingAverage", input);
-        [MethodImpl(AggressiveInlining)] public static MovingAverage Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static MovingAverage Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static MovingAverage FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out MovingAverage result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out MovingAverage result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out MovingAverage result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static MovingAverage Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<MovingAverage>(input);
+        [MethodImpl(AggressiveInlining)] public static MovingAverage Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<MovingAverage>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static MovingAverage Parse(string input) => PlatoJson.Deserialize<MovingAverage>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static MovingAverage FromJson(string input) => PlatoJson.Deserialize<MovingAverage>((System.ReadOnlySpan<char>)input);
 
         // Implemented interface functions
 

@@ -68,31 +68,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Array3D<T> result)
-        {
-            result = default;
-            IReadOnlyList<T> _v0 = default;
-            Integer _v1 = default;
-            Integer _v2 = default;
-            Integer _v3 = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-                if (reader.NameIs("Elements")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v0)) return false; }
-                else if (reader.NameIs("ColumnCount")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v1)) return false; }
-                else if (reader.NameIs("RowCount")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v2)) return false; }
-                else if (reader.NameIs("LayerCount")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v3)) return false; }
-            }
-            if (!reader.Completed) return false;
-            result = new Array3D<T>(_v0, _v1, _v2, _v3);
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Array3D<T> result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Array3D<T> result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static Array3D<T> Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("Array3D", input);
-        [MethodImpl(AggressiveInlining)] public static Array3D<T> Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static Array3D<T> Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static Array3D<T> FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Array3D<T> result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Array3D<T> result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Array3D<T> result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static Array3D<T> Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<Array3D<T>>(input);
+        [MethodImpl(AggressiveInlining)] public static Array3D<T> Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<Array3D<T>>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Array3D<T> Parse(string input) => PlatoJson.Deserialize<Array3D<T>>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Array3D<T> FromJson(string input) => PlatoJson.Deserialize<Array3D<T>>((System.ReadOnlySpan<char>)input);
 
         // Explicit implementation of interfaces by forwarding properties to fields
         [MethodImpl(AggressiveInlining)] Integer ICountable.Count() => Count;
@@ -101,7 +83,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] Integer IIndexable3D<T>.LayerCount() => LayerCount;
 
         // Implemented interface functions
-        public Integer Count { [MethodImpl(AggressiveInlining)] get  => ((Integer)this.Elements.Count); } 
+        [JsonIgnore] public Integer Count { [MethodImpl(AggressiveInlining)] get  => ((Integer)this.Elements.Count); } 
         [MethodImpl(AggressiveInlining)] public T At(Integer n) => this.Elements[n];
         [MethodImpl(AggressiveInlining)] public T At(Integer column, Integer row, Integer layer) => this.Elements[layer.Multiply(this.RowCount).Add(row).Multiply(this.ColumnCount).Add(column)];
         [MethodImpl(AggressiveInlining)] public Boolean IsValidCell(Integer column, Integer row, Integer layer) => column.GreaterThanOrEquals(((Integer)0)).And(column.LessThan(this.ColumnCount)).And(row.GreaterThanOrEquals(((Integer)0))).And(row.LessThan(this.RowCount)).And(layer.GreaterThanOrEquals(((Integer)0))).And(layer.LessThan(this.LayerCount));

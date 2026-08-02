@@ -27,20 +27,20 @@ namespace Ara3D.Geometry.Compiler.Types
 
             Verifier.AssertEquals(type.Methods.Count, 0);
 
-            // Add functions for each concept 
-            foreach (var concept in Type.GetAllImplementedConcepts())
+            // Add functions for each interface 
+            foreach (var iface in Type.GetAllImplementedConcepts())
             {
-                var conceptDef = concept.Def;
+                var conceptDef = iface.Def;
 
                 var _typeArgs = new Dictionary<TypeParameterDef, TypeExpression>();
 
                 // TODO: this should be a compilation error. 
-                if (concept.TypeArgs.Count != conceptDef.TypeParameters.Count)
+                if (iface.TypeArgs.Count != conceptDef.TypeParameters.Count)
                     throw new Exception("Type mismatch");
 
-                for (var i = 0; i < concept.TypeArgs.Count; i++)
+                for (var i = 0; i < iface.TypeArgs.Count; i++)
                 {
-                    var typeArg = concept.TypeArgs[i];
+                    var typeArg = iface.TypeArgs[i];
                     var typeParam = conceptDef.TypeParameters[i];
                     _typeArgs.Add(typeParam, typeArg);
                 }

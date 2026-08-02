@@ -20,11 +20,17 @@ namespace Ara3D.Geometry.CSharpWriter
     ///   Parse / TryParse (string and span)      — System.IParsable&lt;T&gt; / System.ISpanParsable&lt;T&gt;
     ///   ToJson / FromJson / AppendJson          — the convenience surface callers actually reach for
     ///
-    /// Field VALUES are written and read through <c>PlatoJson</c>'s runtime dispatch, never by
-    /// naming the field's type. That is what lets one uniform line per field compile for every
-    /// field shape a Plato type can have — a nested struct, a scalar wrapper, an
-    /// <c>IReadOnlyList</c>, a <c>System.Func</c>, an open type parameter. Shapes with no parse
-    /// simply return false at run time instead of failing to compile.
+    /// The two directions are NOT symmetric in how they get there, deliberately:
+    ///   * WRITING is emitted — one <c>PlatoJson.WriteMember</c> line per field, dispatched on the
+    ///     runtime type of the value, so it compiles for every field shape a Plato type can have
+    ///     (nested struct, scalar wrapper, <c>IReadOnlyList</c>, <c>System.Func</c>, open type
+    ///     parameter) and needs no serializer options to produce the canonical text.
+    ///   * READING hands the input to System.Text.Json, against the
+    ///     <c>[JsonInclude]</c>/<c>[JsonConstructor]</c> contract these structs already carry.
+    ///     Every field shape is the serializer's problem rather than the writer's, and the parse
+    ///     cannot disagree with <c>JsonSerializer</c> about a type's shape because it IS
+    ///     <c>JsonSerializer</c>. The two directions agreeing is pinned by a test that sweeps every
+    ///     generated type (JsonSurfaceTests).
     /// </summary>
     public partial class CSharpConcreteTypeWriter
     {
@@ -43,11 +49,6 @@ namespace Ara3D.Geometry.CSharpWriter
 
         private bool IsScalarPrimitive
             => IsPrimitive && CSharpWriter.ScalarPrimitives.ContainsKey(SimpleName);
-
-        /// <summary>Local names for the parsed field values. Deliberately not the constructor's
-        /// parameter names: those are derived from the field names and would shadow members inside
-        /// a static method that also mentions them.</summary>
-        private static string ParsedLocal(int i) => $"_v{i}";
 
         public void WriteSerializationSurface()
         {
@@ -70,12 +71,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 $"destination, out charsWritten);");
             tw.WriteLine();
 
-            if (IsScalarPrimitive)
-                WriteScalarTryParse();
-            else
-                WriteObjectTryParse();
-
-            WriteParseTail();
+            WriteParseSurface();
             tw.WriteLine();
         }
 
@@ -134,75 +130,48 @@ namespace Ara3D.Geometry.CSharpWriter
         // Reading
         // ---------------------------------------------------------------------------------
 
-        private void WriteObjectTryParse()
+        /// <summary>
+        /// The whole parse surface, identical for a product, a sum and a scalar wrapper: hand the
+        /// text to System.Text.Json.
+        ///
+        /// This used to be a per-field loop over a hand-rolled scanner, with the field VALUES
+        /// resolved by reflection because a Plato field can be any shape. All of that is what
+        /// System.Text.Json already does, and better: it is the same reader that produced the
+        /// [JsonInclude] / [JsonConstructor] contract these structs already carry, so the parse and
+        /// the serializer cannot disagree about a type's shape.
+        ///
+        /// `provider` is accepted (System.IParsable requires it) and ignored. JSON numbers are
+        /// culture-invariant by specification, so there is no reading of them a provider could
+        /// change; the parameter exists for the interface, not for behaviour.
+        /// </summary>
+        private void WriteParseSurface()
         {
             var tw = TypeWriter;
-            var members = JsonMembers().ToList();
-            var types = JsonMemberTypes().ToList();
-
             tw.WriteLine(
-                $"public static bool TryParse(System.ReadOnlySpan<char> input, " +
-                $"System.IFormatProvider provider, out {Name} result)");
-            tw.WriteStartBlock();
-            tw.WriteLine("result = default;");
-            for (var i = 0; i < members.Count; ++i)
-                tw.WriteLine($"{types[i]} {ParsedLocal(i)} = default;");
-            tw.WriteLine("var reader = new JsonObjectReader(input);");
-            tw.WriteLine("while (reader.Read())");
-            tw.WriteStartBlock();
-            for (var i = 0; i < members.Count; ++i)
-                tw.WriteLine(
-                    $"{(i == 0 ? "" : "else ")}if (reader.NameIs(\"{members[i]}\")) " +
-                    $"{{ if (!PlatoJson.TryParseValue(reader.Value, provider, out {ParsedLocal(i)})) return false; }}");
-            tw.WriteEndBlock();
-            tw.WriteLine("if (!reader.Completed) return false;");
-            tw.WriteLine(members.Count == 0
-                ? $"result = default;"
-                : $"result = new {Name}({Enumerable.Range(0, members.Count).Select(ParsedLocal).JoinStringsWithComma()});");
-            tw.WriteLine("return true;");
-            tw.WriteEndBlock();
-        }
-
-        private void WriteScalarTryParse()
-        {
-            var tw = TypeWriter;
-            var payload = CSharpWriter.ScalarPrimitives[SimpleName];
-            tw.WriteLine(
-                $"public static bool TryParse(System.ReadOnlySpan<char> input, " +
-                $"System.IFormatProvider provider, out {Name} result)");
-            tw.WriteStartBlock();
-            tw.WriteLine("result = default;");
-            tw.WriteLine($"if (!PlatoJson.TryParseValue<{payload}>(input, provider, out var value)) return false;");
-            tw.WriteLine($"result = new {Name}(value);");
-            tw.WriteLine("return true;");
-            tw.WriteEndBlock();
-        }
-
-        // The string-flavoured half of IParsable/ISpanParsable, plus the Parse throwing forms.
-        // `(System.ReadOnlySpan<char>)input` uses the implicit string->span conversion; a bare
-        // `input` would bind back to the string overload. A null string converts to an empty span,
-        // which fails to parse — which is what IParsable.TryParse(null, ...) is required to do.
-        private void WriteParseTail()
-        {
-            var tw = TypeWriter;
+                $"{Attr} public static bool TryParse(System.ReadOnlySpan<char> input, " +
+                $"System.IFormatProvider provider, out {Name} result) " +
+                $"=> PlatoJson.TryDeserialize(input, out result);");
+            // `(System.ReadOnlySpan<char>)input` takes the implicit string->span conversion; a bare
+            // `input` would bind back to this same string overload. A null string converts to an
+            // empty span, which fails to parse — what IParsable.TryParse(null, ...) must do.
             tw.WriteLine(
                 $"{Attr} public static bool TryParse(string input, System.IFormatProvider provider, out {Name} result) " +
-                $"=> TryParse((System.ReadOnlySpan<char>)input, provider, out result);");
+                $"=> PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);");
             tw.WriteLine(
                 $"{Attr} public static bool TryParse(string input, out {Name} result) " +
-                $"=> TryParse((System.ReadOnlySpan<char>)input, null, out result);");
+                $"=> PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);");
             tw.WriteLine(
-                $"public static {Name} Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) " +
-                $"=> TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat(\"{SimpleName}\", input);");
+                $"{Attr} public static {Name} Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) " +
+                $"=> PlatoJson.Deserialize<{Name}>(input);");
             tw.WriteLine(
                 $"{Attr} public static {Name} Parse(string input, System.IFormatProvider provider) " +
-                $"=> Parse((System.ReadOnlySpan<char>)input, provider);");
+                $"=> PlatoJson.Deserialize<{Name}>((System.ReadOnlySpan<char>)input);");
             tw.WriteLine(
                 $"{Attr} public static {Name} Parse(string input) " +
-                $"=> Parse((System.ReadOnlySpan<char>)input, null);");
+                $"=> PlatoJson.Deserialize<{Name}>((System.ReadOnlySpan<char>)input);");
             tw.WriteLine(
                 $"{Attr} public static {Name} FromJson(string input) " +
-                $"=> Parse((System.ReadOnlySpan<char>)input, null);");
+                $"=> PlatoJson.Deserialize<{Name}>((System.ReadOnlySpan<char>)input);");
         }
 
         // ---------------------------------------------------------------------------------
@@ -214,8 +183,5 @@ namespace Ara3D.Geometry.CSharpWriter
         /// DataContract already serializes — so the JSON round-trips without a case registry.</summary>
         private IEnumerable<string> JsonMembers()
             => ConcreteType.TypeDef.IsSum ? FieldNames.Prepend("Kind") : FieldNames;
-
-        private IEnumerable<string> JsonMemberTypes()
-            => ConcreteType.TypeDef.IsSum ? FieldTypes.Prepend("int") : FieldTypes;
     }
 }

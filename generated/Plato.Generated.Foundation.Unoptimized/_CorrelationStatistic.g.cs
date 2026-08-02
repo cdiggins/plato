@@ -30,7 +30,7 @@ namespace Ara3D.Geometry
         public const int Kind_Kendall = 2;
 
         // All-fields constructor (private: build via the per-case factories)
-        [MethodImpl(AggressiveInlining)] private CorrelationStatistic(int kind) { Kind = kind; }
+        [MethodImpl(AggressiveInlining)] [JsonConstructor] private CorrelationStatistic(int kind) { Kind = kind; }
 
         // Per-case static factories: set own fields, default the rest.
         [MethodImpl(AggressiveInlining)] public static CorrelationStatistic Pearson() => new CorrelationStatistic(Kind_Pearson);
@@ -65,25 +65,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out CorrelationStatistic result)
-        {
-            result = default;
-            int _v0 = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-                if (reader.NameIs("Kind")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v0)) return false; }
-            }
-            if (!reader.Completed) return false;
-            result = new CorrelationStatistic(_v0);
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out CorrelationStatistic result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out CorrelationStatistic result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static CorrelationStatistic Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("CorrelationStatistic", input);
-        [MethodImpl(AggressiveInlining)] public static CorrelationStatistic Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static CorrelationStatistic Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static CorrelationStatistic FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out CorrelationStatistic result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out CorrelationStatistic result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out CorrelationStatistic result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static CorrelationStatistic Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<CorrelationStatistic>(input);
+        [MethodImpl(AggressiveInlining)] public static CorrelationStatistic Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<CorrelationStatistic>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static CorrelationStatistic Parse(string input) => PlatoJson.Deserialize<CorrelationStatistic>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static CorrelationStatistic FromJson(string input) => PlatoJson.Deserialize<CorrelationStatistic>((System.ReadOnlySpan<char>)input);
 
         // Implemented interface functions
 

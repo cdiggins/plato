@@ -70,31 +70,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Number4 result)
-        {
-            result = default;
-            Number _v0 = default;
-            Number _v1 = default;
-            Number _v2 = default;
-            Number _v3 = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-                if (reader.NameIs("X")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v0)) return false; }
-                else if (reader.NameIs("Y")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v1)) return false; }
-                else if (reader.NameIs("Z")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v2)) return false; }
-                else if (reader.NameIs("W")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v3)) return false; }
-            }
-            if (!reader.Completed) return false;
-            result = new Number4(_v0, _v1, _v2, _v3);
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Number4 result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Number4 result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static Number4 Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("Number4", input);
-        [MethodImpl(AggressiveInlining)] public static Number4 Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static Number4 Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static Number4 FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Number4 result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Number4 result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Number4 result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static Number4 Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<Number4>(input);
+        [MethodImpl(AggressiveInlining)] public static Number4 Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<Number4>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Number4 Parse(string input) => PlatoJson.Deserialize<Number4>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Number4 FromJson(string input) => PlatoJson.Deserialize<Number4>((System.ReadOnlySpan<char>)input);
 
         // Explicit implementation of interfaces by forwarding properties to fields
         [MethodImpl(AggressiveInlining)] Integer ICountable.Count() => Count;
@@ -142,7 +124,7 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public Number At<_T0>(_T0 index) where _T0 : IIndex => this.At(index.Value());
 
         // Unimplemented interface functions
-        public Integer Count { [MethodImpl(AggressiveInlining)] get => 4; }
+        [JsonIgnore] public Integer Count { [MethodImpl(AggressiveInlining)] get => 4; }
         [MethodImpl(AggressiveInlining)] public Number At(Integer index) => index == 0 ? X : index == 1 ? Y : index == 2 ? Z : index == 3 ? W : throw new System.IndexOutOfRangeException();
     }
     // Extension methods for the type

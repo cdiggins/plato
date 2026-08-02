@@ -74,37 +74,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Tuple7<T0, T1, T2, T3, T4, T5, T6> result)
-        {
-            result = default;
-            T0 _v0 = default;
-            T1 _v1 = default;
-            T2 _v2 = default;
-            T3 _v3 = default;
-            T4 _v4 = default;
-            T5 _v5 = default;
-            T6 _v6 = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-                if (reader.NameIs("X0")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v0)) return false; }
-                else if (reader.NameIs("X1")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v1)) return false; }
-                else if (reader.NameIs("X2")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v2)) return false; }
-                else if (reader.NameIs("X3")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v3)) return false; }
-                else if (reader.NameIs("X4")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v4)) return false; }
-                else if (reader.NameIs("X5")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v5)) return false; }
-                else if (reader.NameIs("X6")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v6)) return false; }
-            }
-            if (!reader.Completed) return false;
-            result = new Tuple7<T0, T1, T2, T3, T4, T5, T6>(_v0, _v1, _v2, _v3, _v4, _v5, _v6);
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Tuple7<T0, T1, T2, T3, T4, T5, T6> result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Tuple7<T0, T1, T2, T3, T4, T5, T6> result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static Tuple7<T0, T1, T2, T3, T4, T5, T6> Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("Tuple7", input);
-        [MethodImpl(AggressiveInlining)] public static Tuple7<T0, T1, T2, T3, T4, T5, T6> Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static Tuple7<T0, T1, T2, T3, T4, T5, T6> Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static Tuple7<T0, T1, T2, T3, T4, T5, T6> FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Tuple7<T0, T1, T2, T3, T4, T5, T6> result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Tuple7<T0, T1, T2, T3, T4, T5, T6> result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Tuple7<T0, T1, T2, T3, T4, T5, T6> result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static Tuple7<T0, T1, T2, T3, T4, T5, T6> Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<Tuple7<T0, T1, T2, T3, T4, T5, T6>>(input);
+        [MethodImpl(AggressiveInlining)] public static Tuple7<T0, T1, T2, T3, T4, T5, T6> Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<Tuple7<T0, T1, T2, T3, T4, T5, T6>>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Tuple7<T0, T1, T2, T3, T4, T5, T6> Parse(string input) => PlatoJson.Deserialize<Tuple7<T0, T1, T2, T3, T4, T5, T6>>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Tuple7<T0, T1, T2, T3, T4, T5, T6> FromJson(string input) => PlatoJson.Deserialize<Tuple7<T0, T1, T2, T3, T4, T5, T6>>((System.ReadOnlySpan<char>)input);
 
         // Explicit implementation of interfaces by forwarding properties to fields
 

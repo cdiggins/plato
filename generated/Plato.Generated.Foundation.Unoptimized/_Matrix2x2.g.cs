@@ -19,7 +19,7 @@ namespace Ara3D.Geometry
     /// </summary>
     [DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0"), System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public readonly partial struct Matrix2x2: IMatrixLike<Matrix2x2>, IMultiplicative<Matrix2x2>, System.IFormattable, System.ISpanFormattable, System.IParsable<Matrix2x2>, System.ISpanParsable<Matrix2x2>
+    public readonly partial struct Matrix2x2: IMatrix<Matrix2x2>, IMultiplicative<Matrix2x2>, System.IFormattable, System.ISpanFormattable, System.IParsable<Matrix2x2>, System.ISpanParsable<Matrix2x2>
     {
         // Fields
         [DataMember(Order = 0), JsonInclude] public readonly Number2 Row1;
@@ -62,27 +62,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Matrix2x2 result)
-        {
-            result = default;
-            Number2 _v0 = default;
-            Number2 _v1 = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-                if (reader.NameIs("Row1")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v0)) return false; }
-                else if (reader.NameIs("Row2")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v1)) return false; }
-            }
-            if (!reader.Completed) return false;
-            result = new Matrix2x2(_v0, _v1);
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Matrix2x2 result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Matrix2x2 result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static Matrix2x2 Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("Matrix2x2", input);
-        [MethodImpl(AggressiveInlining)] public static Matrix2x2 Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static Matrix2x2 Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static Matrix2x2 FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out Matrix2x2 result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out Matrix2x2 result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out Matrix2x2 result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static Matrix2x2 Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<Matrix2x2>(input);
+        [MethodImpl(AggressiveInlining)] public static Matrix2x2 Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<Matrix2x2>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Matrix2x2 Parse(string input) => PlatoJson.Deserialize<Matrix2x2>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static Matrix2x2 FromJson(string input) => PlatoJson.Deserialize<Matrix2x2>((System.ReadOnlySpan<char>)input);
 
         // Explicit implementation of interfaces by forwarding properties to fields
         [MethodImpl(AggressiveInlining)] Matrix2x2 IAdditive<Matrix2x2>.Zero() => Zero();

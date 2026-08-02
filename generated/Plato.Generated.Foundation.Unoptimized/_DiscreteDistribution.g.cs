@@ -58,25 +58,13 @@ namespace Ara3D.Geometry
         [MethodImpl(AggressiveInlining)] public string ToJson() => ToString(null, null);
         [MethodImpl(AggressiveInlining)] public bool TryFormat(System.Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format, System.IFormatProvider provider) => PlatoJson.TryFormatString(ToString(format.Length == 0 ? null : format.ToString(), provider), destination, out charsWritten);
 
-        public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out DiscreteDistribution result)
-        {
-            result = default;
-            IReadOnlyList<Number> _v0 = default;
-            var reader = new JsonObjectReader(input);
-            while (reader.Read())
-            {
-                if (reader.NameIs("Weights")) { if (!PlatoJson.TryParseValue(reader.Value, provider, out _v0)) return false; }
-            }
-            if (!reader.Completed) return false;
-            result = new DiscreteDistribution(_v0);
-            return true;
-        }
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out DiscreteDistribution result) => TryParse((System.ReadOnlySpan<char>)input, provider, out result);
-        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out DiscreteDistribution result) => TryParse((System.ReadOnlySpan<char>)input, null, out result);
-        public static DiscreteDistribution Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => TryParse(input, provider, out var result) ? result : throw PlatoJson.BadFormat("DiscreteDistribution", input);
-        [MethodImpl(AggressiveInlining)] public static DiscreteDistribution Parse(string input, System.IFormatProvider provider) => Parse((System.ReadOnlySpan<char>)input, provider);
-        [MethodImpl(AggressiveInlining)] public static DiscreteDistribution Parse(string input) => Parse((System.ReadOnlySpan<char>)input, null);
-        [MethodImpl(AggressiveInlining)] public static DiscreteDistribution FromJson(string input) => Parse((System.ReadOnlySpan<char>)input, null);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(System.ReadOnlySpan<char> input, System.IFormatProvider provider, out DiscreteDistribution result) => PlatoJson.TryDeserialize(input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, System.IFormatProvider provider, out DiscreteDistribution result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static bool TryParse(string input, out DiscreteDistribution result) => PlatoJson.TryDeserialize((System.ReadOnlySpan<char>)input, out result);
+        [MethodImpl(AggressiveInlining)] public static DiscreteDistribution Parse(System.ReadOnlySpan<char> input, System.IFormatProvider provider) => PlatoJson.Deserialize<DiscreteDistribution>(input);
+        [MethodImpl(AggressiveInlining)] public static DiscreteDistribution Parse(string input, System.IFormatProvider provider) => PlatoJson.Deserialize<DiscreteDistribution>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static DiscreteDistribution Parse(string input) => PlatoJson.Deserialize<DiscreteDistribution>((System.ReadOnlySpan<char>)input);
+        [MethodImpl(AggressiveInlining)] public static DiscreteDistribution FromJson(string input) => PlatoJson.Deserialize<DiscreteDistribution>((System.ReadOnlySpan<char>)input);
 
         // Explicit implementation of interfaces by forwarding properties to fields
 

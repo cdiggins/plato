@@ -111,7 +111,7 @@ namespace Ara3D.Geometry
     /// Has a distinguished one element and representable extremes. The additive
     /// identity is NOT here: Zero is a property of the additive group and lives on
     /// `IAdditive` (algebra.concepts.plato), which every INumerical also
-    /// inherits — so a INumerical still reaches Zero, while a IQuantity or IMatrixLike
+    /// inherits — so a INumerical still reaches Zero, while a IQuantity or IMatrix
     /// gets it without having to claim representable extremes it has no meaning for.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0")]
@@ -172,7 +172,7 @@ namespace Ara3D.Geometry
     /// An additive group: addition, subtraction, negation, and the identity element
     /// (https://en.wikipedia.org/wiki/Additive_group). Zero lives here rather than on
     /// INumericalLimits because it is an algebraic property of the group, not a fact
-    /// about representation: a IQuantity or a IMatrixLike is an additive group without
+    /// about representation: a IQuantity or a IMatrix is an additive group without
     /// being a number, and a `where T: IAdditive` bound must be able to name the
     /// identity for any fold or accumulation seeded from it.
     /// </summary>
@@ -277,7 +277,7 @@ namespace Ara3D.Geometry
     /// Supports a membership test. (https://en.wikipedia.org/wiki/Set_(abstract_data_type))
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0")]
-    public interface ISetLike<T>
+    public interface ISet<T>
     {
         Boolean Contains(T item);
     }
@@ -285,12 +285,12 @@ namespace Ara3D.Geometry
     /// A keyed lookup collection. (https://en.wikipedia.org/wiki/Associative_array)
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0")]
-    public interface IMapLike<TKey, TValue>: ICountable
+    public interface IMap<TKey, TValue>: ICountable
     {
         Boolean ContainsKey(TKey key);
         TValue ValueAt(TKey key);
     }
-    public interface IStackLike<T>: ICountable
+    public interface IStack<T>: ICountable
     {
         T Peek();
     }
@@ -299,13 +299,13 @@ namespace Ara3D.Geometry
     /// (https://en.wikipedia.org/wiki/Stack_(abstract_data_type))
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0")]
-    public interface IStackLike<Self, T>: IStackLike<T>, ICountable where Self : IStackLike<Self, T>
+    public interface IStack<Self, T>: IStack<T>, ICountable where Self : IStack<Self, T>
     {
         T Peek();
         Self Push(T item);
         Self Pop();
     }
-    public interface IQueueLike<T>: ICountable
+    public interface IQueue<T>: ICountable
     {
         T Front();
     }
@@ -314,7 +314,7 @@ namespace Ara3D.Geometry
     /// (https://en.wikipedia.org/wiki/Queue_(abstract_data_type))
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0")]
-    public interface IQueueLike<Self, T>: IQueueLike<T>, ICountable where Self : IQueueLike<Self, T>
+    public interface IQueue<Self, T>: IQueue<T>, ICountable where Self : IQueue<Self, T>
     {
         T Front();
         Self Enqueue(T item);
@@ -512,7 +512,7 @@ namespace Ara3D.Geometry
     {
         NumberInterval Domain();
     }
-    public interface IGraphLike
+    public interface IGraph
     {
         Integer VertexCount();
         Integer EdgeCount();
@@ -524,13 +524,13 @@ namespace Ara3D.Geometry
     /// (https://en.wikipedia.org/wiki/Graph_(discrete_mathematics))
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0")]
-    public interface IGraphLike<Self>: IGraphLike, IValue<Self> where Self : IGraphLike<Self>
+    public interface IGraph<Self>: IGraph, IValue<Self> where Self : IGraph<Self>
     {
         Integer VertexCount();
         Integer EdgeCount();
         Boolean IsDirected();
     }
-    public interface IIntervalLike<T>
+    public interface IInterval<T>
     {
         T Start();
         T End();
@@ -540,12 +540,12 @@ namespace Ara3D.Geometry
     /// which encodes a reversed interval.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0")]
-    public interface IIntervalLike<Self, T>: IIntervalLike<T>, IValue<Self> where Self : IIntervalLike<Self, T>
+    public interface IInterval<Self, T>: IInterval<T>, IValue<Self> where Self : IInterval<Self, T>
     {
         T Start();
         T End();
     }
-    public interface IBoundsLike<TPoint, TDelta>
+    public interface IBounds<TPoint, TDelta>
     {
         TPoint Min();
         TPoint Max();
@@ -558,12 +558,12 @@ namespace Ara3D.Geometry
     /// IInterpolatable, which is what lets Center and Lerp blend the two corners.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0")]
-    public interface IBoundsLike<Self, TPoint, TDelta>: IBoundsLike<TPoint, TDelta>, IValue<Self> where Self : IBoundsLike<Self, TPoint, TDelta>
+    public interface IBounds<Self, TPoint, TDelta>: IBounds<TPoint, TDelta>, IValue<Self> where Self : IBounds<Self, TPoint, TDelta>
     {
         TPoint Min();
         TPoint Max();
     }
-    public interface IMatrixLike
+    public interface IMatrix
     {
         Integer RowCount();
         Integer ColumnCount();
@@ -573,7 +573,7 @@ namespace Ara3D.Geometry
     /// The family of matrix types: element access by zero-based row and column.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("Plato", "1.0.0.0")]
-    public interface IMatrixLike<Self>: IMatrixLike, IValue<Self>, IAdditive<Self>, IScalable<Self> where Self : IMatrixLike<Self>
+    public interface IMatrix<Self>: IMatrix, IValue<Self>, IAdditive<Self>, IScalable<Self> where Self : IMatrix<Self>
     {
         Integer RowCount();
         Integer ColumnCount();

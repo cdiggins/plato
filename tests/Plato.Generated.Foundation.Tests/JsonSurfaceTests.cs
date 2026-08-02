@@ -198,4 +198,72 @@ public class JsonSurfaceTests
         var pose = new Pose3D(new Point3D(1f, 2f, 3f), Quaternion.Identity());
         Assert.That(JsonSerializer.Serialize(pose), Is.EqualTo(pose.ToJson()));
     }
+
+    /// <summary>Every non-generic generated struct, at its default value.</summary>
+    private static System.Collections.Generic.List<System.Type> GeneratedStructs()
+        => typeof(Point3D).Assembly.GetTypes()
+            .Where(t => t.IsValueType
+                        && !t.IsGenericTypeDefinition
+                        && t.IsDefined(typeof(System.CodeDom.Compiler.GeneratedCodeAttribute), false)
+                        && typeof(System.IFormattable).IsAssignableFrom(t))
+            .OrderBy(t => t.Name)
+            .ToList();
+
+    /// <summary>
+    /// The drift guard. The two directions reach JSON by different routes — writing is emitted
+    /// code, reading is System.Text.Json against [JsonInclude]/[JsonConstructor] — so a field that
+    /// one side sees and the other does not would silently break round-tripping for that type
+    /// alone. Sweeping every generated type at its default value compares the two member lists
+    /// directly, which is exactly the thing that can drift.
+    /// </summary>
+    [Test]
+    public void EveryGeneratedTypeAgreesWithJsonSerializer()
+    {
+        var types = GeneratedStructs();
+        Assert.That(types, Is.Not.Empty, "found no generated structs - the sweep is vacuous");
+
+        var mismatches = new System.Collections.Generic.List<string>();
+        foreach (var t in types)
+        {
+            var value = System.Activator.CreateInstance(t);
+            var written = ((System.IFormattable)value).ToString(null, null);
+            var serialized = JsonSerializer.Serialize(value, t, PlatoJson.Options);
+            if (written != serialized)
+                mismatches.Add($"{t.Name}: writer={written} serializer={serialized}");
+        }
+        Assert.That(mismatches, Is.Empty);
+    }
+
+    [Test]
+    public void EveryGeneratedTypeRoundTripsItsDefault()
+    {
+        var types = GeneratedStructs();
+        Assert.That(types, Is.Not.Empty, "found no generated structs - the sweep is vacuous");
+
+        var failures = new System.Collections.Generic.List<string>();
+        foreach (var t in types)
+        {
+            var value = System.Activator.CreateInstance(t);
+            var json = ((System.IFormattable)value).ToString(null, null);
+            var tryParse = t.GetMethod("TryParse", new[] { typeof(string), t.MakeByRefType() });
+            if (tryParse == null)
+            {
+                failures.Add($"{t.Name}: no TryParse(string, out {t.Name})");
+                continue;
+            }
+            var args = new object[] { json, null };
+            if (!(bool)tryParse.Invoke(null, args))
+            {
+                failures.Add($"{t.Name}: TryParse rejected its own output {json}");
+                continue;
+            }
+            // Compared as TEXT, not with Equals: a generated Equals dereferences its fields, and
+            // an array-like type's list field is null at its default value. Text -> value -> text
+            // is the property this sweep is actually about.
+            var again = ((System.IFormattable)args[1]).ToString(null, null);
+            if (again != json)
+                failures.Add($"{t.Name}: {json} round-tripped to {again}");
+        }
+        Assert.That(failures, Is.Empty);
+    }
 }

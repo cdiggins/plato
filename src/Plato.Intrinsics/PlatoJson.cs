@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Ara3D.Geometry
 {
@@ -10,6 +12,9 @@ namespace Ara3D.Geometry
     /// provider)`, `TryFormat`, `Parse` and `TryParse` on a generated struct are thin shells over
     /// these helpers, so the wire format and its culture-invariance are decided in ONE place
     /// instead of being baked into emitted text.
+    ///
+    /// Writing is done here; READING is System.Text.Json (<see cref="TryDeserialize{T}"/>), against
+    /// the [JsonInclude] / [JsonConstructor] contract the generated structs carry.
     ///
     /// Two properties the emitted code relies on:
     ///   * Invariant by default. A null <c>IFormatProvider</c> means <see cref="Invariant"/>, so
@@ -121,26 +126,58 @@ namespace Ara3D.Geometry
             return false;
         }
 
-        /// <summary>Parse one raw JSON value into <typeparamref name="T"/>, dispatched at runtime
-        /// (see <see cref="JsonValueParser{T}"/>). Returns false — never throws, never fails to
-        /// compile — for a field type with no parse, which is what lets the writer emit the parse
-        /// surface for every struct including those with function- or interface-typed fields.</summary>
-        public static bool TryParseValue<T>(ReadOnlySpan<char> raw, IFormatProvider provider, out T value)
+        /// <summary>
+        /// The options the generated <c>Parse</c>/<c>TryParse</c> read with. Pass them to
+        /// <c>JsonSerializer</c> to get the same tolerance on any hand-written call site.
+        ///
+        /// The only departure from the defaults is the named floating-point literals: JSON has no
+        /// non-finite number, and <see cref="WriteValue{T}"/> writes those as the quoted names, so
+        /// the reader has to accept them back.
+        /// </summary>
+        public static readonly JsonSerializerOptions Options = new JsonSerializerOptions
         {
-            var fn = JsonValueParser<T>.TryParse;
-            if (fn != null)
-                return fn(raw, provider, out value);
-            value = default;
-            return false;
+            NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
+        };
+
+        /// <summary>
+        /// The generated <c>TryParse</c>. System.Text.Json signals bad input by throwing, so the
+        /// try/catch IS the Try-pattern here — which means a REJECTED parse costs an exception.
+        /// That is the price of not maintaining a second JSON reader, and it is paid only on the
+        /// failure path; validating untrusted input in a tight loop wants
+        /// <c>JsonDocument</c>/<c>Utf8JsonReader</c> directly.
+        ///
+        /// Only <see cref="JsonException"/> is caught. A shape the serializer cannot bind at all
+        /// (a constructor parameter matching no member) raises <c>InvalidOperationException</c>,
+        /// and that is a defect in the emitted type rather than bad input — it must surface, not
+        /// turn into <c>false</c>.
+        /// </summary>
+        public static bool TryDeserialize<T>(ReadOnlySpan<char> json, out T result)
+        {
+            try
+            {
+                result = JsonSerializer.Deserialize<T>(json, Options);
+                return true;
+            }
+            catch (JsonException)
+            {
+                result = default;
+                return false;
+            }
         }
 
-        public static T ParseValue<T>(ReadOnlySpan<char> raw, IFormatProvider provider)
-            => TryParseValue<T>(raw, provider, out var v)
-                ? v
-                : throw new FormatException($"Not valid JSON for {typeof(T)}: {raw.ToString()}");
-
-        /// <summary>The exception an <c>IParsable</c> Parse throws on bad input.</summary>
-        public static FormatException BadFormat(string typeName, ReadOnlySpan<char> s)
-            => new FormatException($"Input is not valid JSON for {typeName}: {s.ToString()}");
+        /// <summary>The throwing half. <c>System.IParsable.Parse</c> is specified to raise
+        /// <see cref="FormatException"/>, so the JsonException becomes one (kept as the inner
+        /// exception, since its message carries the line and position).</summary>
+        public static T Deserialize<T>(ReadOnlySpan<char> json)
+        {
+            try
+            {
+                return JsonSerializer.Deserialize<T>(json, Options);
+            }
+            catch (JsonException e)
+            {
+                throw new FormatException($"Input is not valid JSON for {typeof(T)}", e);
+            }
+        }
     }
 }

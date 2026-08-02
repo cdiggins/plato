@@ -19,7 +19,7 @@ namespace Ara3D.Geometry.Compiler.Checking
     /// Argument matching is tiered, mirroring Plato's own resolution primitives
     /// (<see cref="TypeExtensions.IsImplementing"/> and <see cref="Compilation.GetRelation"/>):
     ///
-    ///   exact (unify) &lt; generic (bind a type variable) &lt; concept (arg implements an interface
+    ///   exact (unify) &lt; generic (bind a type variable) &lt; interface (arg implements an interface
     ///   parameter, with the return refined to the concrete arg — "Self") &lt; conversion (an implicit
     ///   cast relation exists). Lower cost wins, so a concrete overload beats a generic one and an
     ///   exact match beats a conversion.
@@ -136,8 +136,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         // --- overload resolution -------------------------------------------------
 
         /// <summary>An instantiated candidate: fresh generic holes, interface params replaced by
-        /// fresh "concept" variables (recorded in <see cref="ConceptOf"/>), and a return type
-        /// refined to share a concept variable when it names the same interface as a parameter.</summary>
+        /// fresh "interface" variables (recorded in <see cref="ConceptOf"/>), and a return type
+        /// refined to share an interface variable when it names the same interface as a parameter.</summary>
         private class Candidate
         {
             public FunctionDef Function;
@@ -153,7 +153,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                 = new List<(TypeExpression, TypeExpression)>();
         }
 
-        /// <summary>Whether a bare type parameter's DECLARED BOUNDS gate its use as a concept
+        /// <summary>Whether a bare type parameter's DECLARED BOUNDS gate its use as an interface
         /// (plato-382). True everywhere except the deliberate relaxed retry in
         /// <see cref="ResolveOverloadCore"/>, which reproduces the pre-bounds behavior; the wrapper
         /// restores it so no other constraint sees the relaxation.</summary>
@@ -256,7 +256,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return false; // not ground yet — defer
 
             // Trial each candidate on a scratch substitution; keep the viable ones with their cost.
-            // BOUND-LICENSED first (plato-382): a bare bounded type parameter stands in for a concept
+            // BOUND-LICENSED first (plato-382): a bare bounded type parameter stands in for an interface
             // only where a declared bound supplies it.
             var viable = TrialCandidates(oc, args);
 
@@ -279,7 +279,7 @@ namespace Ara3D.Geometry.Compiler.Checking
                         Report(DiagnosticSeverity.Error, "CHK205",
                             $"Call to '{oc.Name}' on '{bounded}' is not licensed by its declared bounds "
                             + $"({string.Join(", ", BoundsOf(bounded))}): the call resolves, but no bound "
-                            + $"promises '{oc.Name}' — add the concept that supplies it to the `where` clause",
+                            + $"promises '{oc.Name}' — add the interface that supplies it to the `where` clause",
                             oc.Origin);
                         viable = relaxed;
                     }
@@ -336,7 +336,7 @@ namespace Ara3D.Geometry.Compiler.Checking
 
             // A tie at the best cost: well-defined iff all winners agree on the return type — OR
             // every winner's return is still an unbound type VARIABLE. The latter is the
-            // concept-method case: each candidate returns its own fresh Self var (the winning trials'
+            // interface-method case: each candidate returns its own fresh Self var (the winning trials'
             // scratch bindings were discarded, so the shared var is unbound here). These carry no
             // genuine disagreement — monomorphization grounds every one of them to the SAME concrete
             // argument type, and re-dispatch there selects the right concrete overload by type. So
@@ -447,7 +447,7 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         private void CommitCandidate(Candidate cand, IReadOnlyList<TypeExpression> args, OverloadConstraint oc)
         {
-            // Re-run the matches on the real substitution to bind generic/concept variables. Because
+            // Re-run the matches on the real substitution to bind generic/interface variables. Because
             // the base substitution and argument order are identical to the winning trial, this
             // reproduces that trial's per-argument outcomes exactly, so the recorded match kinds are
             // faithful. Capture them (and any cast function) for the elaborate pass.
@@ -459,12 +459,12 @@ namespace Ara3D.Geometry.Compiler.Checking
                 var m = MatchArg(args[i], cand.Ps[i], cand, Substitution);
                 kinds[i] = m.kind;
 
-                // The declared parameter type: a concept parameter is recorded as its interface (the
-                // fresh concept var only exists to carry the Self binding), everything else as the
+                // The declared parameter type: an interface parameter is recorded as its interface (the
+                // fresh interface var only exists to carry the Self binding), everything else as the
                 // instantiated parameter.
                 var p = cand.Ps[i];
-                var target = p != null && IsVar(p) && cand.ConceptOf.TryGetValue(p.Name, out var concept)
-                    ? concept
+                var target = p != null && IsVar(p) && cand.ConceptOf.TryGetValue(p.Name, out var iface)
+                    ? iface
                     : p;
                 paramTypes[i] = Zonk(target, Substitution);
 
@@ -472,17 +472,17 @@ namespace Ara3D.Geometry.Compiler.Checking
                     conversions[i] = FindConversion(Zonk(args[i], Substitution), paramTypes[i]);
             }
 
-            // Refine the element types of generic concept parameters from the concrete argument
+            // Refine the element types of generic interface parameters from the concrete argument
             // (List<Number> : IArray<$T> => $T = Number). Best-effort and post-commit: it only
             // sharpens the result type and never rejects the already-chosen overload.
             for (var i = 0; i < args.Count; i++)
             {
                 var p = cand.Ps[i];
-                if (p != null && IsVar(p) && cand.ConceptOf.TryGetValue(p.Name, out var concept))
+                if (p != null && IsVar(p) && cand.ConceptOf.TryGetValue(p.Name, out var iface))
                 {
-                    var direct = DirectInstance(Zonk(args[i], Substitution), concept.Def);
+                    var direct = DirectInstance(Zonk(args[i], Substitution), iface.Def);
                     if (direct != null)
-                        BindBestEffort(concept, direct, Substitution);
+                        BindBestEffort(iface, direct, Substitution);
                 }
             }
 
@@ -526,20 +526,20 @@ namespace Ara3D.Geometry.Compiler.Checking
             return strict;
         }
 
-        /// <summary>The type used to compare a candidate's parameter for specificity: a concept
-        /// parameter contributes its interface (the fresh concept var carries no usable name),
+        /// <summary>The type used to compare a candidate's parameter for specificity: an interface
+        /// parameter contributes its interface (the fresh interface var carries no usable name),
         /// everything else the instantiated parameter, zonked.</summary>
         private TypeExpression SpecificityType(Candidate cand, int i, Dictionary<string, TypeExpression> sub)
         {
             var p = cand.Ps[i];
-            if (p != null && IsVar(p) && cand.ConceptOf.TryGetValue(p.Name, out var concept))
-                return Zonk(concept, sub);
+            if (p != null && IsVar(p) && cand.ConceptOf.TryGetValue(p.Name, out var iface))
+                return Zonk(iface, sub);
             return Zonk(p, sub);
         }
 
         /// <summary>
         /// Match one argument against one (instantiated) parameter, returning success, a cost, and
-        /// the match kind. Order of preference: exact unify, generic binding, concept satisfaction,
+        /// the match kind. Order of preference: exact unify, generic binding, interface satisfaction,
         /// implicit cast. The ok/cost values are unchanged from before the kind was added, so
         /// overload ranking is unaffected.
         /// </summary>
@@ -548,19 +548,19 @@ namespace Ara3D.Geometry.Compiler.Checking
             if (param == null || argType == null)
                 return (true, ExactCost, ArgMatchKind.Exact);
 
-            // A concept parameter: the argument must implement the interface (or convert to it).
-            if (IsVar(param) && cand.ConceptOf.TryGetValue(param.Name, out var concept))
+            // An interface parameter: the argument must implement the interface (or convert to it).
+            if (IsVar(param) && cand.ConceptOf.TryGetValue(param.Name, out var iface))
             {
-                if (SatisfiesConcept(argType, Zonk(concept, sub), sub))
+                if (SatisfiesConcept(argType, Zonk(iface, sub), sub))
                 {
-                    // Viability + Self here; SatisfiesConcept also binds the concept's element
+                    // Viability + Self here; SatisfiesConcept also binds the interface's element
                     // holes from the argument's instance (IVectorLike : IArrayLike<Number> binds
                     // $T = Number). The coarser post-commit refinement in CommitCandidate remains
                     // for the paths this walk does not reach.
-                    Unify(param, argType, sub, null, record: false); // Self: bind the concept var to the concrete arg
-                    return (true, ConceptCost, ArgMatchKind.Concept);
+                    Unify(param, argType, sub, null, record: false); // Self: bind the interface var to the concrete arg
+                    return (true, ConceptCost, ArgMatchKind.Interface);
                 }
-                if (HasConversion(argType, concept))
+                if (HasConversion(argType, iface))
                     return (true, ConversionCost, ArgMatchKind.Conversion);
                 return (false, 0, ArgMatchKind.Exact);
             }
@@ -585,33 +585,33 @@ namespace Ara3D.Geometry.Compiler.Checking
         }
 
         /// <summary>
-        /// Solver-side concept satisfaction: does <paramref name="argType"/> implement
-        /// <paramref name="concept"/>? Unlike <see cref="TypeExtensions.IsImplementing"/> (which
+        /// Solver-side interface satisfaction: does <paramref name="argType"/> implement
+        /// <paramref name="interface"/>? Unlike <see cref="TypeExtensions.IsImplementing"/> (which
         /// requires equal type-argument counts up front, so a non-generic interface like
         /// <c>IVectorLike</c> can never satisfy <c>IArrayLike&lt;$T&gt;</c>), this walks the
         /// argument's transitive Implements/Inherits closure with per-level type-argument
         /// substitution, and — on a name match — unifies the found instance's arguments with the
-        /// concept's (binding element holes: <c>IVectorLike : IArrayLike&lt;Number&gt;</c> binds
+        /// interface's (binding element holes: <c>IVectorLike : IArrayLike&lt;Number&gt;</c> binds
         /// <c>$T = Number</c>). An UNBOUNDED type variable or type parameter satisfies anything (it
         /// may yet be bound); a BOUNDED one satisfies only what its bounds supply
         /// (<see cref="BoundsPermit"/>); <c>Self</c> satisfies anything (the reifier decides what
         /// Self is).
         /// </summary>
-        private bool SatisfiesConcept(TypeExpression argType, TypeExpression concept, Dictionary<string, TypeExpression> sub)
+        private bool SatisfiesConcept(TypeExpression argType, TypeExpression iface, Dictionary<string, TypeExpression> sub)
         {
-            if (argType?.Def == null || concept?.Def == null)
+            if (argType?.Def == null || iface?.Def == null)
                 return true;
             if (argType.Def.Kind == TypeKind.SelfType)
                 return true;
             if (IsVar(argType) || argType.Def.Kind == TypeKind.TypeParameter)
-                return BoundsPermit(argType, concept, sub);
+                return BoundsPermit(argType, iface, sub);
 
-            if (argType.Def.Name == concept.Def.Name)
-                return UnifyAllOrNothing(argType, concept, sub);
+            if (argType.Def.Name == iface.Def.Name)
+                return UnifyAllOrNothing(argType, iface, sub);
 
             foreach (var inst in ConceptClosure.InstancesOf(argType))
-                if (inst?.Def != null && inst.Def.Name == concept.Def.Name
-                    && UnifyAllOrNothing(inst, concept, sub))
+                if (inst?.Def != null && inst.Def.Name == iface.Def.Name
+                    && UnifyAllOrNothing(inst, iface, sub))
                     return true;
 
             return false;
@@ -619,10 +619,10 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         /// <summary>
         /// BOUND-LICENSED MEMBER LOOKUP (plato-382). Whether a bare type parameter / signature
-        /// variable may stand in for <paramref name="concept"/>. This is the seam that turns a
+        /// variable may stand in for <paramref name="interface"/>. This is the seam that turns a
         /// declared bound into something load-bearing: an operation on a bare <c>T</c> resolves
-        /// through a concept parameter exactly when one of <c>T</c>'s declared bounds carries that
-        /// concept — <c>Tween&lt;T&gt; where T: Interpolatable</c> is what makes <c>Lerp</c> on a
+        /// through an interface parameter exactly when one of <c>T</c>'s declared bounds carries that
+        /// interface — <c>Tween&lt;T&gt; where T: Interpolatable</c> is what makes <c>Lerp</c> on a
         /// <c>T</c> well-typed, and what makes <c>Magnitude</c> on the same <c>T</c> a no-match.
         ///
         /// An UNBOUNDED parameter stays permissive, unchanged from before bounds existed. Plato does
@@ -631,7 +631,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <c>$T</c> would stop resolving), not a constraint check. So bounds RESTRICT where they are
         /// declared and change nothing where they are not.
         /// </summary>
-        private bool BoundsPermit(TypeExpression argType, TypeExpression concept, Dictionary<string, TypeExpression> sub)
+        private bool BoundsPermit(TypeExpression argType, TypeExpression iface, Dictionary<string, TypeExpression> sub)
         {
             if (!_licenseBounds)
                 return true;
@@ -640,8 +640,8 @@ namespace Ara3D.Geometry.Compiler.Checking
                 return true;
             foreach (var b in bounds)
             {
-                var instance = ConceptClosure.FindInstance(b, concept.Def.Name);
-                if (instance != null && UnifyAllOrNothing(instance, concept, sub))
+                var instance = ConceptClosure.FindInstance(b, iface.Def.Name);
+                if (instance != null && UnifyAllOrNothing(instance, iface, sub))
                     return true;
             }
             return false;
@@ -843,9 +843,9 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         /// <summary>
         /// Give a candidate's generic holes fresh unification variables, replace interface
-        /// parameters with fresh "concept" variables (so a concrete argument binds through them),
-        /// and refine an interface return type to the concept variable of the parameter it names.
-        /// A CONCEPT METHOD's <c>Self</c> becomes a concept variable constrained to the owning
+        /// parameters with fresh "interface" variables (so a concrete argument binds through them),
+        /// and refine an interface return type to the interface variable of the parameter it names.
+        /// An interface METHOD's <c>Self</c> becomes an interface variable constrained to the owning
         /// interface (with the interface's type parameters as fresh holes), so
         /// <c>Divide(self: Self, other: Number): Self</c> on <c>IScalarArithmetic</c> matches any
         /// implementing argument and returns its concrete type — the "Self" behavior.
@@ -859,8 +859,8 @@ namespace Ara3D.Geometry.Compiler.Checking
             var cand = new Candidate { Function = f, Ps = new TypeExpression[f.Parameters.Count] };
             var conceptVarByInstance = new Dictionary<string, TypeExpression>();
 
-            // Concept method: map "Self" (anywhere in the signature — Substitute keys by name) to a
-            // fresh concept variable constrained to the owning interface's instance.
+            // Interface method: map "Self" (anywhere in the signature — Substitute keys by name) to a
+            // fresh interface variable constrained to the owning interface's instance.
             if (f.OwnerType != null && f.OwnerType.IsInterface())
             {
                 var ownerInstance = f.OwnerType.ToTypeExpression();
@@ -946,7 +946,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             // that bare $T (`value.Between(x.Min, x.Max)` with value: $T) commits to the scalar
             // Between(Number,…) overload by binding $T := Number, which then poisons the whole body's
             // view of $T — the emitted C# casts a Point2D to (float). Left free, the call binds the
-            // concept overload instead and monomorphization grounds $T to the concrete type.
+            // interface overload instead and monomorphization grounds $T to the concrete type.
             // Rigidity is lifted for record == true (Phase-1 equalities and the committed
             // result-unify), and flexible variables still bind toward a rigid one.
             var aRigid = !record && IsRigid(a);

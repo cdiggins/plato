@@ -55,17 +55,17 @@ namespace Ara3D.Geometry.Compiler.Analysis
     ///   LINT005 - generic type variables used only once, or used in a return type but not inferable from parameters
     ///   LINT006 - unique (affine) builder type used as a field type (builders may not be stored in fields)
     ///   LINT007 - unique (affine) builder type used as a generic type argument (no containers of builders)
-    ///   LINT008 - concept with no concrete implementer
-    ///   LINT009 - concept that nothing in the compilation mentions at all
-    ///   LINT010 - concrete type that implements no concept and that no function or field mentions
-    ///   LINT011 - redundant 'implements' clause (already implied by another implemented concept)
+    ///   LINT008 - interface with no concrete implementer
+    ///   LINT009 - interface that nothing in the compilation mentions at all
+    ///   LINT010 - concrete type that implements no interface and that no function or field mentions
+    ///   LINT011 - redundant 'implements' clause (already implied by another implemented interface)
     ///   LINT012 - obligation and implementation disagree on the '_' receiver marker (static vs instance)
-    ///   LINT013 - concept with no implementer that library bodies nonetheless dispatch on (unreachable derived surface)
+    ///   LINT013 - interface with no implementer that library bodies nonetheless dispatch on (unreachable derived surface)
     ///   LINT014 - a name that is BOTH a struct field and a no-arg library function on an unrelated receiver
     ///             (the C# writer's uniform rendering rule decides property-vs-method call syntax by NAME)
     ///   LINT015 - a type declaration with fields whose NAME is a writer primitive; the writer emits the
     ///             runtime type for that name and silently discards the declared shape
-    ///   LINT016 - redundant 'inherits' clause on a concept (already implied by another inherited concept)
+    ///   LINT016 - redundant 'inherits' clause on an interface (already implied by another inherited interface)
     /// The pass is read-only: it never mutates the compilation and has no effect on code generation.
     /// </summary>
     public class Linter
@@ -130,7 +130,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
             var node = Compilation.GetAstNode(symbol);
             if (node != null)
                 return node;
-            // Library/concept functions are not mapped directly; their owning MethodDef is.
+            // Library/interface functions are not mapped directly; their owning MethodDef is.
             if (symbol is FunctionDef fd && fd.OwnerType != null)
             {
                 var method = fd.OwnerType.Methods.FirstOrDefault(m => m.Function == fd);
@@ -166,6 +166,10 @@ namespace Ara3D.Geometry.Compiler.Analysis
             // A type whose shape fits neither must declare an explicit At/Count library body — that
             // lands in ImplementedFunctions and never reaches the synthesis (e.g. RegularPolygon).
             "At", "Count",
+            // The serialization surface every generated struct carries (CSharpSerializationWriter):
+            // JSON in and out, plus the System.IFormattable / ISpanFormattable / IParsable /
+            // ISpanParsable members that discharge those interfaces.
+            "ToJson", "FromJson", "AppendJson", "TryFormat", "Parse", "TryParse",
         };
 
         public void CheckUnimplementedInterfaceObligations()
@@ -205,7 +209,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
         // (CSharpFunctionInfo.IsStatic => ParameterNames[0] == "_") and emits a
         // static member for '_' and an instance member otherwise.
         //
-        // A concept declaring Zero(x: Self) with an implementation written
+        // An interface declaring Zero(x: Self) with an implementation written
         // Zero(_: Color) is LEGAL since the type-token-members increment: the C#
         // writer emits the pair `public static Color Zero()` + explicit interface
         // implementation `Color Additive<Color>.Zero() => Zero();`, so the static
@@ -222,7 +226,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
         // caught until C# compilation, more than a thousand generated files
         // downstream. This rule is the gate: it puts the disagreement at the
         // implementation, at lint time, in any backend. See plato-312 and the
-        // 2026-07-29 static-concept-members ADR.
+        // 2026-07-29 static-interface-members ADR.
         // -------------------------------------------------------------------
 
         /// <summary>Plato's marker for "receiver type matters, receiver value does not".</summary>
@@ -432,7 +436,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
         }
 
         // -------------------------------------------------------------------
-        // LINT005: Generic type-variable consistency in library and concept
+        // LINT005: Generic type-variable consistency in library and interface
         // function signatures:
         //   (a) a type variable used in the return type but in no parameter can
         //       never be inferred;
@@ -534,32 +538,32 @@ namespace Ara3D.Geometry.Compiler.Analysis
         }
 
         // -------------------------------------------------------------------
-        // LINT008/LINT009/LINT010: reachability of the vocabulary. In a concept-
+        // LINT008/LINT009/LINT010: reachability of the vocabulary. In an interface-
         // oriented library a declaration earns its place by being implemented or
         // used; these three rules report the declarations that are neither.
-        //   LINT008 - a concept no concrete type implements. Either dead
+        //   LINT008 - an interface no concrete type implements. Either dead
         //             vocabulary or a forgotten 'implements' line. Implementer
-        //             lookup is transitive over concept inheritance, so an
-        //             abstract intermediate concept counts as implemented as
-        //             soon as any descendant concept has an implementer.
-        //   LINT009 - a concept that nothing mentions at all: not implemented,
+        //             lookup is transitive over interface inheritance, so an
+        //             abstract intermediate interface counts as implemented as
+        //             soon as any descendant interface has an implementer.
+        //   LINT009 - an interface that nothing mentions at all: not implemented,
         //             not inherited, never a parameter/return type, never a
         //             'where' bound. Strictly stronger than LINT008, and
         //             reported instead of it.
-        //   LINT010 - a concrete type that implements no concept AND that no
+        //   LINT010 - a concrete type that implements no interface AND that no
         //             other declaration mentions (no function signature, no
         //             field type). An unfinished declaration.
         // All three are Info: on a declarations-first folder they describe the
         // shape of the vocabulary rather than a defect.
         // -------------------------------------------------------------------
-        // The number of library functions that dispatch on a concept: functions whose
-        // FIRST parameter is the concept, which is the shape every derived body takes
+        // The number of library functions that dispatch on an interface: functions whose
+        // FIRST parameter is the interface, which is the shape every derived body takes
         // (LIBRARIES.md rule 2). Counting only that position keeps the rule about
         // unreachable derived surface rather than about incidental mentions.
-        private int DispatchedLibraryBodyCount(TypeDef concept)
+        private int DispatchedLibraryBodyCount(TypeDef iface)
             => Compilation.LibraryDefinitionsByName.Values
                 .SelectMany(lib => lib.Functions)
-                .Count(f => f.Parameters.Count > 0 && f.Parameters[0].Type?.Def == concept);
+                .Count(f => f.Parameters.Count > 0 && f.Parameters[0].Type?.Def == iface);
 
         public void CheckVocabularyReachability()
         {
@@ -593,7 +597,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
             // 'where' bounds now reach the symbols too (plato-382: TypeParameterDef.Constraints is
             // populated, and Checking/TypeConstraintChecker verifies them), but they are still read
             // off the AST here: reachability is a SYNTACTIC question — a bound written in the source
-            // makes the concept reachable whether or not it resolved.
+            // makes the interface reachable whether or not it resolved.
             var boundNames = Compilation.TypeDeclarations
                 .SelectMany(d => d.Constraints
                     .Concat(d.Members.OfType<AstMethodDeclaration>().SelectMany(m => m.Constraints)))
@@ -609,23 +613,23 @@ namespace Ara3D.Geometry.Compiler.Analysis
                     continue;
                 if (!used)
                     Add(c, "LINT009", LintSeverity.Info,
-                        $"concept '{c.Name}' is unreachable: no concrete type implements it, no concept " +
+                        $"interface '{c.Name}' is unreachable: no concrete type implements it, no interface " +
                         $"inherits it, and it appears in no parameter type, return type or 'where' bound");
                 else
                 {
-                    // LINT013 takes precedence over LINT008: an implementer-less concept that
+                    // LINT013 takes precedence over LINT008: an implementer-less interface that
                     // library bodies dispatch on is not "vocabulary declared ahead of use", it
                     // is derived API no caller can ever reach.
                     var bodies = DispatchedLibraryBodyCount(c);
                     if (bodies > 0)
                         Add(c, "LINT013", LintSeverity.Warning,
-                            $"concept '{c.Name}' has no concrete implementer, yet {bodies} library " +
+                            $"interface '{c.Name}' has no concrete implementer, yet {bodies} library " +
                             $"function(s) dispatch on it; that derived surface is unreachable. " +
-                            $"Implement the concept, or delete it together with those bodies");
+                            $"Implement the interface, or delete it together with those bodies");
                     else
                         Add(c, "LINT008", LintSeverity.Info,
-                            $"concept '{c.Name}' has no concrete implementer" +
-                            (inherited.Contains(c) ? " (directly or through a descendant concept)" : "") +
+                            $"interface '{c.Name}' has no concrete implementer" +
+                            (inherited.Contains(c) ? " (directly or through a descendant interface)" : "") +
                             "; it is either dead vocabulary or a missing 'implements' clause");
                 }
             }
@@ -637,7 +641,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
                 if (td.Implements.Count > 0 || mentioned.Contains(td))
                     continue;
                 Add(td, "LINT010", LintSeverity.Info,
-                    $"concrete type '{td.Name}' implements no concept and is mentioned by no function " +
+                    $"concrete type '{td.Name}' implements no interface and is mentioned by no function " +
                     $"signature or field; it participates in nothing");
             }
         }
@@ -647,7 +651,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
         // same type (Sphere implements ParametricSurface and Geometry3D, where
         // ParametricSurface already reaches Geometry3D). Legal, and sometimes
         // written deliberately to restate the top-level category - hence Info -
-        // but it hides the real concept lattice and goes stale when the lattice
+        // but it hides the real interface lattice and goes stale when the lattice
         // is refactored.
         // -------------------------------------------------------------------
         public void CheckRedundantImplements()
@@ -673,7 +677,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
         }
 
         // -------------------------------------------------------------------
-        // LINT016: same predicate as LINT011, for concept-to-concept 'inherits'
+        // LINT016: same predicate as LINT011, for interface-to-interface 'inherits'
         // (Orderable inherits Equatable and Comparable, where Comparable already
         // reaches Equatable). Shared detection lives in ConceptHierarchy.
         // -------------------------------------------------------------------
@@ -681,8 +685,8 @@ namespace Ara3D.Geometry.Compiler.Analysis
         {
             foreach (var r in ConceptHierarchy.RedundantInherits(Compilation))
             {
-                Add(GetLocation(r.Parent) ?? GetLocation(r.Concept), "LINT016", LintSeverity.Info,
-                    $"concept '{r.Concept.Name}' inherits '{r.Parent.Def.Name}' redundantly; " +
+                Add(GetLocation(r.Parent) ?? GetLocation(r.Interface), "LINT016", LintSeverity.Info,
+                    $"interface '{r.Interface.Name}' inherits '{r.Parent.Def.Name}' redundantly; " +
                     $"'{r.ImpliedBy.Def.Name}' already implies it");
             }
         }
@@ -715,11 +719,11 @@ namespace Ara3D.Geometry.Compiler.Analysis
         // fix landed); it measures how much of the vocabulary is coupled by name collision.
         //
         // The predicate deliberately excludes the two shapes that are DESIGN, not defect:
-        //   * same-type (or concept-satisfying) field forwarding. A field named N on T is
-        //     exactly how T discharges an obligation N declared by a concept T implements,
-        //     and a library function N over that concept is the derived surface reading it.
+        //   * same-type (or interface-satisfying) field forwarding. A field named N on T is
+        //     exactly how T discharges an obligation N declared by an interface T implements,
+        //     and a library function N over that interface is the derived surface reading it.
         //     Property syntax there is correct on both sides. Only a receiver that is
-        //     NEITHER a field owner NOR a concept a field owner satisfies is ambiguous
+        //     NEITHER a field owner NOR an interface a field owner satisfies is ambiguous
         //     (ConceptGrounding.GroundsSelf is the same test the writer/checker use).
         //   * a '_' receiver. That is Plato's type-level idiom and the writer emits a
         //     STATIC member for it (CSharpFunctionInfo.IsStatic, LINT012), which is never
@@ -771,7 +775,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
 
                     var receiver = f.Parameters[0].Type.Def;
                     // Field forwarding (the receiver owns the field, or the field owner
-                    // satisfies the receiver concept) is the intended design, not a collision.
+                    // satisfies the receiver interface) is the intended design, not a collision.
                     var unrelated = owners
                         .Where(o => o != receiver && !ConceptGrounding.GroundsSelf(o, receiver))
                         .ToList();
@@ -807,7 +811,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
         // silent wrong bits at runtime (plato-365).
         //
         // FIELDLESS declarations of a primitive name are NOT flagged: that is the
-        // sanctioned idiom by which the stdlib states which concepts an intrinsic
+        // sanctioned idiom by which the stdlib states which interfaces an intrinsic
         // satisfies (`type Number implements Real { }`, stdlib/foundation/
         // primitives.types.plato). Nothing is discarded, because nothing was declared.
         // The rule is about a declared SHAPE that the writer throws away.
@@ -829,7 +833,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
                 if (td.Kind != TypeKind.ConcreteType && td.Kind != TypeKind.Primitive)
                     continue;
                 if (td.Fields.Count == 0)
-                    continue; // declaring an intrinsic's concept surface; nothing is discarded
+                    continue; // declaring an intrinsic's interface surface; nothing is discarded
                 if (!WriterPrimitiveNames.All.Contains(td.Name))
                     continue;
 
