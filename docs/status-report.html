@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Plato Status Report — 2026-08-01 16:54 Eastern Daylight Time</title>
+<title>Plato Status Report — 2026-08-02 15:28 Eastern Daylight Time</title>
 <style>
 :root {
   --bg: #0f1419; --panel: #1a222c; --panel2: #232d3a; --text: #e7ecf2;
@@ -82,10 +82,10 @@ tr.muted-row { opacity: .55; }
 <body>
 <header>
   <h1>Plato status report</h1>
-  <div class="meta">Generated 2026-08-01 16:54:25 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>06e9d36</code></div>
+  <div class="meta">Generated 2026-08-02 15:28:48 Eastern Daylight Time · <code>docs/status-report.html</code> · HEAD <code>25d0938</code></div>
   <div class="overall">
     <span><span class="badge attention">ATTENTION</span></span>
-    <span>15 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-08-01T16:54:25-04:00; live git/tracker refreshed this generation.</span>
+    <span>96 dirty Plato paths; studio submodule pointer drifts from HEAD; gate snapshot from 2026-08-02T15:28:48-04:00; live git/tracker refreshed this generation.</span>
   </div>
 </header>
 <main>
@@ -94,12 +94,12 @@ tr.muted-row { opacity: .55; }
   <h2>Snapshot</h2>
   <div class="grid">
     <div class="card"><div class="n">main</div><div class="l">Branch · <span class="badge pass">synced</span></div></div>
-    <div class="card"><div class="n">06e9d36</div><div class="l">HEAD</div></div>
-    <div class="card"><div class="n">15</div><div class="l">Dirty paths</div></div>
-    <div class="card"><div class="n">34</div><div class="l">Commits today</div></div>
-    <div class="card"><div class="n">298</div><div class="l">Commits last 7 days</div></div>
+    <div class="card"><div class="n">25d0938</div><div class="l">HEAD</div></div>
+    <div class="card"><div class="n">96</div><div class="l">Dirty paths</div></div>
+    <div class="card"><div class="n">24</div><div class="l">Commits today</div></div>
+    <div class="card"><div class="n">339</div><div class="l">Commits last 7 days</div></div>
     <div class="card"><div class="n">0</div><div class="l">Issues in progress</div></div>
-    <div class="card"><div class="n">0</div><div class="l">Latest C# errors (foundation-unoptimized)</div></div>
+    <div class="card"><div class="n">0</div><div class="l">Latest C# errors (gen-foundation)</div></div>
   </div>
 </section>
 
@@ -107,41 +107,205 @@ tr.muted-row { opacity: .55; }
   <h2>Git — Plato</h2>
   <div class="kv">
     <div class="k">Status</div><div><code>## main...origin/main
- M docs/compiler-pipeline.md
  M docs/status-report-snapshot.json
- M src/Plato.Compiler/Checking/Solver.cs
- M src/Plato.Compiler/Checking/TirEmitSource.cs
- M src/Plato.Compiler/Checking/TypeConstraintChecker.cs
- M src/Plato.Compiler/Checking/TypeConstraints.cs
- M src/Plato.Compiler/Symbols/Definitions.cs
- M src/Plato.Compiler/Symbols/SymbolFactory.cs
- M tracker/BACKLOG.md
- M tracker/DONE.md
- M tracker/issues/plato-382.md
- M writers/Plato.CSharpWriter/CSharpFunctionInfo.cs
-?? tests/stdlib-tests/easing.laws.plato
-?? tracker/decisions/2026-08-01-declared-type-parameter-bounds-are-verified-and-emitted.md
-?? tracker/issues/plato-395.md</code></div>
-    <div class="k">HEAD</div><div><code>06e9d36d585e02f4dcc80a5da6df7b39b39d7b5f</code></div>
-    <div class="k">origin/main</div><div><code>06e9d36d585e02f4dcc80a5da6df7b39b39d7b5f</code></div>
+ M docs/status-report.html
+ M generated/Plato.Generated.Foundation.Unoptimized/_Acceleration.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_AffineTransform2D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_AffineTransform3D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_AmountOfSubstance.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Angle.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_AngularAcceleration.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_AngularMomentum.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_AngularVelocity.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Area.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_ArealDensity.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_BeatTime.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_BernoulliDistribution.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_BernsteinPolynomial.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_BivariatePolynomial.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Bivector2D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Capacitance.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Cardinal.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_ChiSquaredDistribution.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_ColorGradient.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Covariance3D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Curvature.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_DampingCoefficient.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Density.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Direction2D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Direction3D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_DiscreteDistribution.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Duration.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_DynamicViscosity.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_ElectricCharge.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_ElectricCurrent.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Energy.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_ExponentialDistribution.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Force.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_FrameRate.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Frequency.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_GeometricDistribution.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_GraphVertexIndex.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_HeatCapacity.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_HermiteSeries.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Illuminance.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Impulse.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Inductance.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Instant.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Irradiance.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_ItemIndex.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Jerk.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_KinematicViscosity.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_LegendreSeries.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Length.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_LinearDensity.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Luminance.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_LuminousFlux.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_LuminousIntensity.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Mass.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_MassFlowRate.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_MomentOfInertia.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Momentum.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Number.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Percent.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_PointN.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_PoissonDistribution.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Polynomial.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Power.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Pressure.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Probability.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Proportion.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Resistance.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Rotation2D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Scaling2D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Scaling3D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_SolidAngle.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Speed.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Stiffness.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Strain.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_StudentTDistribution.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_SturmChain.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Temperature.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_TemperatureDelta.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Tempo.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_ThermalConductivity.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Torque.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Transform2D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Transform3D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Translation2D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Translation3D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_UniformScaling2D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_UniformScaling3D.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_VectorN.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Voltage.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_Volume.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_VolumetricFlowRate.g.cs
+ M generated/Plato.Generated.Foundation.Unoptimized/_WaveNumber.g.cs
+ M writers/Plato.CSharpWriter/CSharpConcreteTypeWriter.cs
+ M writers/Plato.CSharpWriter/CSharpTypeWriter.cs</code></div>
+    <div class="k">HEAD</div><div><code>25d0938ac849f53ae86fea240c244e0400806738</code></div>
+    <div class="k">origin/main</div><div><code>25d0938ac849f53ae86fea240c244e0400806738</code></div>
     <div class="k">Unpushed</div><div><span class="muted">in sync with origin/main</span></div>
-    <div class="k">Dirty (excl. .claude/)</div><div><code>M docs/compiler-pipeline.md<br> M docs/status-report-snapshot.json<br> M src/Plato.Compiler/Checking/Solver.cs<br> M src/Plato.Compiler/Checking/TirEmitSource.cs<br> M src/Plato.Compiler/Checking/TypeConstraintChecker.cs<br> M src/Plato.Compiler/Checking/TypeConstraints.cs<br> M src/Plato.Compiler/Symbols/Definitions.cs<br> M src/Plato.Compiler/Symbols/SymbolFactory.cs<br> M tracker/BACKLOG.md<br> M tracker/DONE.md<br> M tracker/issues/plato-382.md<br> M writers/Plato.CSharpWriter/CSharpFunctionInfo.cs<br>?? tests/stdlib-tests/easing.laws.plato<br>?? tracker/decisions/2026-08-01-declared-type-parameter-bounds-are-verified-and-emitted.md<br>?? tracker/issues/plato-395.md</code></div>
+    <div class="k">Dirty (excl. .claude/)</div><div><code>M docs/status-report-snapshot.json<br> M docs/status-report.html<br> M generated/Plato.Generated.Foundation.Unoptimized/_Acceleration.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_AffineTransform2D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_AffineTransform3D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_AmountOfSubstance.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Angle.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_AngularAcceleration.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_AngularMomentum.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_AngularVelocity.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Area.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_ArealDensity.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_BeatTime.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_BernoulliDistribution.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_BernsteinPolynomial.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_BivariatePolynomial.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Bivector2D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Capacitance.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Cardinal.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_ChiSquaredDistribution.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_ColorGradient.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Covariance3D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Curvature.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_DampingCoefficient.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Density.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Direction2D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Direction3D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_DiscreteDistribution.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Duration.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_DynamicViscosity.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_ElectricCharge.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_ElectricCurrent.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Energy.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_ExponentialDistribution.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Force.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_FrameRate.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Frequency.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_GeometricDistribution.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_GraphVertexIndex.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_HeatCapacity.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_HermiteSeries.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Illuminance.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Impulse.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Inductance.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Instant.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Irradiance.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_ItemIndex.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Jerk.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_KinematicViscosity.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_LegendreSeries.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Length.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_LinearDensity.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Luminance.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_LuminousFlux.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_LuminousIntensity.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Mass.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_MassFlowRate.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_MomentOfInertia.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Momentum.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Number.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Percent.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_PointN.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_PoissonDistribution.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Polynomial.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Power.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Pressure.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Probability.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Proportion.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Resistance.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Rotation2D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Scaling2D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Scaling3D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_SolidAngle.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Speed.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Stiffness.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Strain.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_StudentTDistribution.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_SturmChain.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Temperature.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_TemperatureDelta.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Tempo.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_ThermalConductivity.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Torque.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Transform2D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Transform3D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Translation2D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Translation3D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_UniformScaling2D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_UniformScaling3D.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_VectorN.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Voltage.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_Volume.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_VolumetricFlowRate.g.cs<br> M generated/Plato.Generated.Foundation.Unoptimized/_WaveNumber.g.cs<br> M writers/Plato.CSharpWriter/CSharpConcreteTypeWriter.cs<br> M writers/Plato.CSharpWriter/CSharpTypeWriter.cs</code></div>
   </div>
   <h3>Diffstat (unstaged, excl. this report)</h3>
-  <pre>docs/compiler-pipeline.md                          | 12 ++++-
- docs/status-report-snapshot.json                   | 24 +++++++---
- src/Plato.Compiler/Checking/Solver.cs              |  3 +-
- src/Plato.Compiler/Checking/TirEmitSource.cs       |  3 +-
- .../Checking/TypeConstraintChecker.cs              | 32 +++++++------
- src/Plato.Compiler/Checking/TypeConstraints.cs     | 52 ++++++++++++++--------
- src/Plato.Compiler/Symbols/Definitions.cs          | 35 ++++++++++-----
- src/Plato.Compiler/Symbols/SymbolFactory.cs        |  4 +-
- tracker/BACKLOG.md                                 |  2 +-
- tracker/DONE.md                                    |  1 +
- tracker/issues/plato-382.md                        | 28 +++++++++---
- writers/Plato.CSharpWriter/CSharpFunctionInfo.cs   | 26 ++++-------
- 12 files changed, 137 insertions(+), 85 deletions(-)</pre>
-  <div class="note">15 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
+  <pre>docs/status-report-snapshot.json                   | 104 +++++++++------------
+ .../_Acceleration.g.cs                             |   6 +-
+ .../_AffineTransform2D.g.cs                        |   3 +-
+ .../_AffineTransform3D.g.cs                        |   3 +-
+ .../_AmountOfSubstance.g.cs                        |   6 +-
+ .../_Angle.g.cs                                    |   6 +-
+ .../_AngularAcceleration.g.cs                      |   6 +-
+ .../_AngularMomentum.g.cs                          |   6 +-
+ .../_AngularVelocity.g.cs                          |   6 +-
+ .../_Area.g.cs                                     |   6 +-
+ .../_ArealDensity.g.cs                             |   6 +-
+ .../_BeatTime.g.cs                                 |   6 +-
+ .../_BernoulliDistribution.g.cs                    |   3 +-
+ .../_BernsteinPolynomial.g.cs                      |   2 +-
+ .../_BivariatePolynomial.g.cs                      |   3 +-
+ .../_Bivector2D.g.cs                               |   6 +-
+ .../_Capacitance.g.cs                              |   6 +-
+ .../_Cardinal.g.cs                                 |   3 +-
+ .../_ChiSquaredDistribution.g.cs                   |   6 +-
+ .../_ColorGradient.g.cs                            |   2 +-
+ .../_Covariance3D.g.cs                             |   3 +-
+ .../_Curvature.g.cs                                |   6 +-
+ .../_DampingCoefficient.g.cs                       |   6 +-
+ .../_Density.g.cs                                  |   6 +-
+ .../_Direction2D.g.cs                              |   3 +-
+ .../_Direction3D.g.cs                              |   3 +-
+ .../_DiscreteDistribution.g.cs                     |   2 +-
+ .../_Duration.g.cs                                 |   6 +-
+ .../_DynamicViscosity.g.cs                         |   6 +-
+ .../_ElectricCharge.g.cs                           |   6 +-
+ .../_ElectricCurrent.g.cs                          |   6 +-
+ .../_Energy.g.cs                                   |   6 +-
+ .../_ExponentialDistribution.g.cs                  |   6 +-
+ .../_Force.g.cs                                    |   6 +-
+ .../_FrameRate.g.cs                                |   6 +-
+ .../_Frequency.g.cs                                |   6 +-
+ .../_GeometricDistribution.g.cs                    |   3 +-
+ .../_GraphVertexIndex.g.cs                         |   3 +-
+ .../_HeatCapacity.g.cs                             |   6 +-
+ .../_HermiteSeries.g.cs                            |   2 +-
+ .../_Illuminance.g.cs                              |   6 +-
+ .../_Impulse.g.cs                                  |   6 +-
+ .../_Inductance.g.cs                               |   6 +-
+ .../_Instant.g.cs                                  |   6 +-
+ .../_Irradiance.g.cs                               |   6 +-
+ .../_ItemIndex.g.cs                                |   3 +-
+ .../_Jerk.g.cs                                     |   6 +-
+ .../_KinematicViscosity.g.cs                       |   6 +-
+ .../_LegendreSeries.g.cs                           |   2 +-
+ .../_Length.g.cs                                   |   6 +-
+ .../_LinearDensity.g.cs                            |   6 +-
+ .../_Luminance.g.cs                                |   6 +-
+ .../_LuminousFlux.g.cs                             |   6 +-
+ .../_LuminousIntensity.g.cs                        |   6 +-
+ .../_Mass.g.cs                                     |   6 +-
+ .../_MassFlowRate.g.cs                             |   6 +-
+ .../_MomentOfInertia.g.cs                          |   6 +-
+ .../_Momentum.g.cs                                 |   6 +-
+ .../_Number.g.cs                                   |   1 +
+ .../_Percent.g.cs                                  |   6 +-
+ .../_PointN.g.cs                                   |   2 +-
+ .../_PoissonDistribution.g.cs                      |   6 +-
+ .../_Polynomial.g.cs                               |   2 +-
+ .../_Power.g.cs                                    |   6 +-
+ .../_Pressure.g.cs                                 |   6 +-
+ .../_Probability.g.cs                              |   6 +-
+ .../_Proportion.g.cs                               |   6 +-
+ .../_Resistance.g.cs                               |   6 +-
+ .../_Rotation2D.g.cs                               |   3 +-
+ .../_Scaling2D.g.cs                                |   3 +-
+ .../_Scaling3D.g.cs                                |   3 +-
+ .../_SolidAngle.g.cs                               |   6 +-
+ .../_Speed.g.cs                                    |   6 +-
+ .../_Stiffness.g.cs                                |   6 +-
+ .../_Strain.g.cs                                   |   6 +-
+ .../_StudentTDistribution.g.cs                     |   6 +-
+ .../_SturmChain.g.cs                               |   2 +-
+ .../_Temperature.g.cs                              |   6 +-
+ .../_TemperatureDelta.g.cs                         |   6 +-
+ .../_Tempo.g.cs                                    |   6 +-
+ .../_ThermalConductivity.g.cs                      |   6 +-
+ .../_Torque.g.cs                                   |   6 +-
+ .../_Transform2D.g.cs                              |   3 +-
+ .../_Transform3D.g.cs                              |   3 +-
+ .../_Translation2D.g.cs                            |   3 +-
+ .../_Translation3D.g.cs                            |   3 +-
+ .../_UniformScaling2D.g.cs                         |   6 +-
+ .../_UniformScaling3D.g.cs                         |   6 +-
+ .../_VectorN.g.cs                                  |   2 +-
+ .../_Voltage.g.cs                                  |   6 +-
+ .../_Volume.g.cs                                   |   6 +-
+ .../_VolumetricFlowRate.g.cs                       |   6 +-
+ .../_WaveNumber.g.cs                               |   6 +-
+ .../Plato.CSharpWriter/CSharpConcreteTypeWriter.cs |  42 +++++----
+ writers/Plato.CSharpWriter/CSharpTypeWriter.cs     |  16 ++--
+ 95 files changed, 169 insertions(+), 450 deletions(-)</pre>
+  <div class="note">96 dirty path(s) at generation time (see list). Untracked <code>.claude/</code> under Plato is ignored in agent hygiene rules — do not stage it. Report regenerated at commit time via <code>tools/githooks/pre-commit</code>.</div>
 </section>
 
 <section>
@@ -149,7 +313,7 @@ tr.muted-row { opacity: .55; }
   <div class="kv">
     <div class="k">Status</div><div><code>(studio not found)</code></div>
     <div class="k">Committed Plato pointer</div><div><code>?</code> <span class="badge blocked">DRIFT</span></div>
-    <div class="k">Plato HEAD</div><div><code>06e9d36d585e02f4dcc80a5da6df7b39b39d7b5f</code></div>
+    <div class="k">Plato HEAD</div><div><code>25d0938ac849f53ae86fea240c244e0400806738</code></div>
     <div class="k">Plato-related dirty</div><div><code><span class="muted">none</span></code></div>
   </div>
   <div class="note">If drifted, bump with an explicit <code>git commit -- submodules/Plato</code> in studio after Plato pushes.</div>
@@ -161,7 +325,7 @@ tr.muted-row { opacity: .55; }
   <div><code>eedf2f0ad60d2f50329eebb6d4258f89591dc9f7 parakeet (v1.4.3-80-geedf2f0)<br> afb989aeca1fa9e280967b3e47eeab4b3d15f811 submodules/workquarry (heads/main)</code></div>
   <p class="muted">parakeet: do not stage casually (known pre-existing dirty grammar submodule).</p>
   <h3>Worktrees</h3>
-  <div><code>C:/Users/cdigg/git/plato                                             06e9d36 [main]<br>C:/Users/cdigg/git/plato/.claude/worktrees/jovial-kowalevski-4a6837  784873f [claude/jovial-kowalevski-4a6837]</code></div>
+  <div><code>C:/Users/cdigg/git/plato                                             25d0938 [main]<br>C:/Users/cdigg/git/plato/.claude/worktrees/jovial-kowalevski-4a6837  c3f4ef1 (detached HEAD)</code></div>
   <h3>Studio-level submodules</h3>
   <pre>(studio not found)</pre>
 </section>
@@ -174,7 +338,7 @@ tr.muted-row { opacity: .55; }
     <div class="card"><div class="n">33,693</div><div class="l">References</div></div>
     <div class="card"><div class="n">0</div><div class="l">Diagnostics</div></div>
   </div>
-  <p class="muted" style="margin:.75rem 0 0">Roots: stdlib + stdlib-tests · built 2026-07-29T21:46:46Z · snapshot 2026-08-01T16:54:25-04:00</p>
+  <p class="muted" style="margin:.75rem 0 0">Roots: stdlib + stdlib-tests · built 2026-07-29T21:46:46Z · snapshot 2026-08-02T15:28:48-04:00</p>
 </section>
 
 <section>
@@ -187,15 +351,15 @@ tr.muted-row { opacity: .55; }
 
   <h3>C# build errors (latest recorded)</h3>
   <div class="kv" style="margin-bottom:.85rem">
-    <div class="k">Latest target</div><div><code>foundation-unoptimized</code> · <span class="badge pass">0 errors</span></div>
+    <div class="k">Latest target</div><div><code>gen-foundation</code> · <span class="badge pass">0 errors</span></div>
     <div class="k">Errors / warnings</div><div>0 / 0</div>
-    <div class="k">Recorded at</div><div>2026-08-01T16:54:25-04:00</div>
+    <div class="k">Recorded at</div><div>2026-08-02T15:28:48-04:00</div>
     <div class="k">How updated</div><div>Every Plato C# build via <code>tools/dotnet-build-record.ps1</code> (wired into <code>regen-forward-conformance.ps1</code>, <code>regen-generated.ps1</code>). Writes <code>docs/status-report-snapshot.json</code> → this page.</div>
   </div>
   <h3>Recorded build targets</h3>
   <table>
     <thead><tr><th>Target</th><th>Errors</th><th>Warnings</th><th>Result</th><th>When</th></tr></thead>
-    <tbody><tr><td><code>foundation-unoptimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T16:54:25-04:00</td></tr><tr><td><code>foundation-plato393</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T16:24:43-04:00</td></tr><tr><td><code>foundation-unopt</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T15:47:21-04:00</td></tr><tr><td><code>plato382c-foundation</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T15:11:20-04:00</td></tr><tr><td><code>generated-foundation-unoptimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T13:26:31-04:00</td></tr><tr><td><code>generated-optimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T12:44:48-04:00</td></tr><tr><td><code>generated-unoptimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T12:44:36-04:00</td></tr><tr><td><code>forward-conformance</code></td><td class="num">41</td><td class="num">0</td><td><span class="badge fail">ERRORS</span></td><td>2026-07-30T15:04:16-04:00</td></tr><tr><td><code>plato-cli</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T15:03:19-04:00</td></tr><tr><td><code>plato-generated-optimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T12:20:31-04:00</td></tr><tr><td><code>plato-generated-unoptimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T12:20:17-04:00</td></tr></tbody>
+    <tbody><tr><td><code>gen-foundation</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-02T15:28:48-04:00</td></tr><tr><td><code>gen-foundation-baseline</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-02T15:28:23-04:00</td></tr><tr><td><code>forward-conformance</code></td><td class="num">4</td><td class="num">0</td><td><span class="badge fail">ERRORS</span></td><td>2026-08-02T15:27:35-04:00</td></tr><tr><td><code>foundation-unoptimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T16:54:25-04:00</td></tr><tr><td><code>foundation-plato393</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T16:24:43-04:00</td></tr><tr><td><code>foundation-unopt</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T15:47:21-04:00</td></tr><tr><td><code>plato382c-foundation</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T15:11:20-04:00</td></tr><tr><td><code>generated-foundation-unoptimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T13:26:31-04:00</td></tr><tr><td><code>generated-optimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T12:44:48-04:00</td></tr><tr><td><code>generated-unoptimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-08-01T12:44:36-04:00</td></tr><tr><td><code>plato-cli</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T15:03:19-04:00</td></tr><tr><td><code>plato-generated-optimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T12:20:31-04:00</td></tr><tr><td><code>plato-generated-unoptimized</code></td><td class="num">0</td><td class="num">0</td><td><span class="badge pass">OK</span></td><td>2026-07-30T12:20:17-04:00</td></tr></tbody>
   </table>
   <h3>Latest errors by category</h3>
   <table>
@@ -261,10 +425,10 @@ tr.muted-row { opacity: .55; }
 </section>
 
 <section>
-  <h2>Committed work today (34 commits)</h2>
+  <h2>Committed work today (24 commits)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr><td><code>06e9d36</code></td><td>2026-08-01 16:30:23 -0400</td><td>feat(<a href="#plato-393"><code>plato-393</code></a>): where-clause bounds on library functions; DeCasteljau x5 -&gt; 1</td></tr><tr><td><code>77e47d3</code></td><td>2026-08-01 16:00:54 -0400</td><td>feat(<a href="#plato-382"><code>plato-382</code></a>): stdlib bounds — Tween real Sample, BoundsLike bound, CHK205 error</td></tr><tr><td><code>5595c2b</code></td><td>2026-08-01 15:20:21 -0400</td><td>feat(<a href="#plato-382"><code>plato-382</code></a>): emit declared bounds as C# where-clauses, un-stub licensed bodies</td></tr><tr><td><code>5a5b496</code></td><td>2026-08-01 15:14:11 -0400</td><td>docs(tracker): close repo-392 (done)</td></tr><tr><td><code>f994bf7</code></td><td>2026-08-01 15:14:05 -0400</td><td>fix(repo-392): repoint Navigation corpus, unshadow LINQ</td></tr><tr><td><code>784873f</code></td><td>2026-08-01 14:55:11 -0400</td><td>feat(<a href="#plato-382"><code>plato-382</code></a>): verified type-parameter bounds in the checker</td></tr><tr><td><code>37e3231</code></td><td>2026-08-01 13:46:42 -0400</td><td>feat(<a href="#plato-382"><code>plato-382</code></a>): parse &#x27;where&#x27; bounds on type declarations, carry to symbols</td></tr><tr><td><code>b556de9</code></td><td>2026-08-01 13:45:25 -0400</td><td>docs(tracker): close docs-391 (done)</td></tr><tr><td><code>83df492</code></td><td>2026-08-01 13:45:01 -0400</td><td>docs(docs-391): drop the retired emitter flags from AGENTS.md</td></tr><tr><td><code>84f33b0</code></td><td>2026-08-01 13:43:44 -0400</td><td>chore(generated): retire the scalar-erased legacy projects</td></tr><tr><td><code>f4fbf23</code></td><td>2026-08-01 13:43:22 -0400</td><td>docs(docs-391): file AGENTS.md drift from the retired emitter flags</td></tr><tr><td><code>b0495d7</code></td><td>2026-08-01 13:27:19 -0400</td><td>docs(decisions): record wrapper scalars as the only representation</td></tr><tr><td><code>7ce1bfe</code></td><td>2026-08-01 13:26:41 -0400</td><td>docs(tracker): close compiler-387 (done)</td></tr><tr><td><code>7d825b5</code></td><td>2026-08-01 13:25:14 -0400</td><td>refactor(compiler-387): retire the property-ful C# emission variant</td></tr><tr><td><code>abe88df</code></td><td>2026-08-01 13:14:10 -0400</td><td>docs(<a href="#plato-388"><code>plato-388</code></a>): inventory every verification tool, link from VERIFICATION.md</td></tr><tr><td><code>bf50cbf</code></td><td>2026-08-01 13:11:55 -0400</td><td>chore: checkpoint AGENTS.md report guidance + regenerated output</td></tr><tr><td><code>591e63d</code></td><td>2026-08-01 13:00:11 -0400</td><td>docs(tracker): close <a href="#plato-383"><code>plato-383</code></a> (done)</td></tr><tr><td><code>d826f74</code></td><td>2026-08-01 13:00:01 -0400</td><td>fix(<a href="#plato-383"><code>plato-383</code></a>): default(String) reads as the empty string</td></tr><tr><td><code>c57e70c</code></td><td>2026-08-01 12:49:07 -0400</td><td>chore(generated): empty the stale legacy generated projects</td></tr><tr><td><code>155a195</code></td><td>2026-08-01 10:25:43 -0400</td><td>fix(tests): PlatoTests green after kernel reduction</td></tr><tr><td><code>91bd6ac</code></td><td>2026-08-01 10:01:27 -0400</td><td>feat(emit): open-generic bodies for type-agnostic functions</td></tr><tr><td><code>65d65c2</code></td><td>2026-08-01 09:58:37 -0400</td><td>feat(gate): enforce types-and-concepts.txt freshness</td></tr><tr><td><code>408007f</code></td><td>2026-08-01 09:48:14 -0400</td><td>docs: move stdlib index into stdlib/types-and-concepts.txt</td></tr><tr><td><code>58697d2</code></td><td>2026-08-01 09:37:07 -0400</td><td>docs: sort stdlib index by name</td></tr><tr><td><code>a227be2</code></td><td>2026-08-01 09:28:49 -0400</td><td>docs: define VERIFICATION.md jargon for unfamiliar readers</td></tr><tr><td><code>a426188</code></td><td>2026-08-01 09:21:31 -0400</td><td>docs: move the verification ladder into stdlib/ as VERIFICATION.md</td></tr><tr><td><code>26a1dd5</code></td><td>2026-08-01 09:20:27 -0400</td><td>docs: generated stdlib index, drop concept hierarchy</td></tr><tr><td><code>b1d6eea</code></td><td>2026-08-01 09:07:10 -0400</td><td>docs: documentation conventions + repo-local write-docs skill</td></tr><tr><td><code>bc9f9d2</code></td><td>2026-08-01 08:57:58 -0400</td><td>docs: strip drifting measurements from the verification ladder</td></tr><tr><td><code>f2593f6</code></td><td>2026-08-01 08:49:02 -0400</td><td>docs: stdlib verification ladder</td></tr><tr><td><code>766e210</code></td><td>2026-08-01 00:41:26 -0400</td><td>test: NUnit suite for the Plato.Intrinsics runtime</td></tr><tr><td><code>decc091</code></td><td>2026-08-01 00:41:13 -0400</td><td>feat(generated): foundation tier emitted with wrapper scalars</td></tr><tr><td><code>1097b8d</code></td><td>2026-08-01 00:17:43 -0400</td><td>docs(tracker): <a href="#plato-380"><code>plato-380</code></a>, <a href="#plato-381"><code>plato-381</code></a> — spin-offs from <a href="#plato-379"><code>plato-379</code></a></td></tr><tr><td><code>c00b6a0</code></td><td>2026-08-01 00:15:48 -0400</td><td>docs(tracker): <a href="#plato-379"><code>plato-379</code></a> — unify Indexable and MapLike</td></tr></tbody>
+    <tbody><tr><td><code>25d0938</code></td><td>2026-08-02 15:28:43 -0400</td><td>docs: law packet lives at stdlib/tests; gate scripts are repo-local</td></tr><tr><td><code>c42dea5</code></td><td>2026-08-02 15:28:00 -0400</td><td>fix(stdlib-398,stdlib-400): tier-scope forward corpus, fix stale floor</td></tr><tr><td><code>2490f2c</code></td><td>2026-08-02 15:13:07 -0400</td><td>fix(csharp-writer): a JSON member&#x27;s name is the type&#x27;s, not the caller&#x27;s</td></tr><tr><td><code>b680e80</code></td><td>2026-08-02 15:07:32 -0400</td><td>docs(stdlib-400): file the stale corpus-floor assertion</td></tr><tr><td><code>4f60ede</code></td><td>2026-08-02 14:58:53 -0400</td><td>refactor(stdlib): promote the faithful field and SDF lifts to implicit conversions</td></tr><tr><td><code>b68af65</code></td><td>2026-08-02 14:47:13 -0400</td><td>docs(compiler-399): file the single-field mirror&#x27;s unsound implicit operators</td></tr><tr><td><code>a5d3543</code></td><td>2026-08-02 13:32:10 -0400</td><td>docs(stdlib): rule for type-named implicit vs ToX explicit conversions, and pin the casts</td></tr><tr><td><code>e22669a</code></td><td>2026-08-02 13:20:23 -0400</td><td>docs(stdlib-398): file the law-packet relocation breakage</td></tr><tr><td><code>c09c254</code></td><td>2026-08-02 13:19:27 -0400</td><td>fix(stdlib): restore sum-case names mangled by the interface-prefix rename</td></tr><tr><td><code>162dbbb</code></td><td>2026-08-02 13:10:15 -0400</td><td>fix(stdlib): finish the law-packet move, drop the duplicate FoundationLaws</td></tr><tr><td><code>e85f761</code></td><td>2026-08-02 13:08:54 -0400</td><td>wip: concept-&gt;interface terminology sweep + navigation serve verb (checkpoint)</td></tr><tr><td><code>29c8e4d</code></td><td>2026-08-02 13:03:07 -0400</td><td>refactor(csharp-writer): drop Pack=1 from generated structs</td></tr><tr><td><code>c2e8730</code></td><td>2026-08-02 12:48:47 -0400</td><td>refactor(csharp-writer): TryParse is System.Text.Json</td></tr><tr><td><code>c94c00c</code></td><td>2026-08-02 12:08:30 -0400</td><td>refactor(stdlib): drop redundant Like/able interface suffixes</td></tr><tr><td><code>63aea8c</code></td><td>2026-08-02 11:52:15 -0400</td><td>docs: C# type generation design notes</td></tr><tr><td><code>1700753</code></td><td>2026-08-02 11:48:02 -0400</td><td>test(csharp-writer): pin the sum-type JSON shape</td></tr><tr><td><code>6dbdc18</code></td><td>2026-08-02 11:47:15 -0400</td><td>feat(csharp-writer): real JSON, IFormattable/IParsable, readonly structs</td></tr><tr><td><code>e710782</code></td><td>2026-08-02 11:05:24 -0400</td><td>chore(writer): drop interfaces.txt side-product</td></tr><tr><td><code>4eef8db</code></td><td>2026-08-02 10:50:26 -0400</td><td>refactor(stdlib): rename concepts to interface I*</td></tr><tr><td><code>49da0d2</code></td><td>2026-08-02 01:35:03 -0400</td><td>feat(transforms): give the point-spanned types Deform</td></tr><tr><td><code>9456c54</code></td><td>2026-08-02 01:25:08 -0400</td><td>refactor(transforms): generalize Transform2D/Transform3D</td></tr><tr><td><code>f98a250</code></td><td>2026-08-02 01:02:34 -0400</td><td>feat(transforms): Rigid2D and Rigid3D concepts</td></tr><tr><td><code>2a38c94</code></td><td>2026-08-02 00:27:36 -0400</td><td>feat(transforms): elementary transform types and common-ground concepts</td></tr><tr><td><code>50b0134</code></td><td>2026-08-02 00:20:10 -0400</td><td>chore(stdlib): consolidate split files into stem files</td></tr></tbody>
   </table>
 </section>
 
@@ -272,7 +436,7 @@ tr.muted-row { opacity: .55; }
   <h2>Recent history (20)</h2>
   <table>
     <thead><tr><th>Hash</th><th>When</th><th>Subject</th></tr></thead>
-    <tbody><tr class="today"><td><code>06e9d36</code></td><td>2026-08-01 16:30:23 -0400</td><td>feat(<a href="#plato-393"><code>plato-393</code></a>): where-clause bounds on library functions; DeCasteljau x5 -&gt; 1</td></tr><tr class="today"><td><code>77e47d3</code></td><td>2026-08-01 16:00:54 -0400</td><td>feat(<a href="#plato-382"><code>plato-382</code></a>): stdlib bounds — Tween real Sample, BoundsLike bound, CHK205 error</td></tr><tr class="today"><td><code>5595c2b</code></td><td>2026-08-01 15:20:21 -0400</td><td>feat(<a href="#plato-382"><code>plato-382</code></a>): emit declared bounds as C# where-clauses, un-stub licensed bodies</td></tr><tr class="today"><td><code>5a5b496</code></td><td>2026-08-01 15:14:11 -0400</td><td>docs(tracker): close repo-392 (done)</td></tr><tr class="today"><td><code>f994bf7</code></td><td>2026-08-01 15:14:05 -0400</td><td>fix(repo-392): repoint Navigation corpus, unshadow LINQ</td></tr><tr class="today"><td><code>784873f</code></td><td>2026-08-01 14:55:11 -0400</td><td>feat(<a href="#plato-382"><code>plato-382</code></a>): verified type-parameter bounds in the checker</td></tr><tr class="today"><td><code>37e3231</code></td><td>2026-08-01 13:46:42 -0400</td><td>feat(<a href="#plato-382"><code>plato-382</code></a>): parse &#x27;where&#x27; bounds on type declarations, carry to symbols</td></tr><tr class="today"><td><code>b556de9</code></td><td>2026-08-01 13:45:25 -0400</td><td>docs(tracker): close docs-391 (done)</td></tr><tr class="today"><td><code>83df492</code></td><td>2026-08-01 13:45:01 -0400</td><td>docs(docs-391): drop the retired emitter flags from AGENTS.md</td></tr><tr class="today"><td><code>84f33b0</code></td><td>2026-08-01 13:43:44 -0400</td><td>chore(generated): retire the scalar-erased legacy projects</td></tr><tr class="today"><td><code>f4fbf23</code></td><td>2026-08-01 13:43:22 -0400</td><td>docs(docs-391): file AGENTS.md drift from the retired emitter flags</td></tr><tr class="today"><td><code>b0495d7</code></td><td>2026-08-01 13:27:19 -0400</td><td>docs(decisions): record wrapper scalars as the only representation</td></tr><tr class="today"><td><code>7ce1bfe</code></td><td>2026-08-01 13:26:41 -0400</td><td>docs(tracker): close compiler-387 (done)</td></tr><tr class="today"><td><code>7d825b5</code></td><td>2026-08-01 13:25:14 -0400</td><td>refactor(compiler-387): retire the property-ful C# emission variant</td></tr><tr class="today"><td><code>abe88df</code></td><td>2026-08-01 13:14:10 -0400</td><td>docs(<a href="#plato-388"><code>plato-388</code></a>): inventory every verification tool, link from VERIFICATION.md</td></tr><tr class="today"><td><code>bf50cbf</code></td><td>2026-08-01 13:11:55 -0400</td><td>chore: checkpoint AGENTS.md report guidance + regenerated output</td></tr><tr class="today"><td><code>591e63d</code></td><td>2026-08-01 13:00:11 -0400</td><td>docs(tracker): close <a href="#plato-383"><code>plato-383</code></a> (done)</td></tr><tr class="today"><td><code>d826f74</code></td><td>2026-08-01 13:00:01 -0400</td><td>fix(<a href="#plato-383"><code>plato-383</code></a>): default(String) reads as the empty string</td></tr><tr class="today"><td><code>c57e70c</code></td><td>2026-08-01 12:49:07 -0400</td><td>chore(generated): empty the stale legacy generated projects</td></tr><tr class="today"><td><code>155a195</code></td><td>2026-08-01 10:25:43 -0400</td><td>fix(tests): PlatoTests green after kernel reduction</td></tr></tbody>
+    <tbody><tr class="today"><td><code>25d0938</code></td><td>2026-08-02 15:28:43 -0400</td><td>docs: law packet lives at stdlib/tests; gate scripts are repo-local</td></tr><tr class="today"><td><code>c42dea5</code></td><td>2026-08-02 15:28:00 -0400</td><td>fix(stdlib-398,stdlib-400): tier-scope forward corpus, fix stale floor</td></tr><tr class="today"><td><code>2490f2c</code></td><td>2026-08-02 15:13:07 -0400</td><td>fix(csharp-writer): a JSON member&#x27;s name is the type&#x27;s, not the caller&#x27;s</td></tr><tr class="today"><td><code>b680e80</code></td><td>2026-08-02 15:07:32 -0400</td><td>docs(stdlib-400): file the stale corpus-floor assertion</td></tr><tr class="today"><td><code>4f60ede</code></td><td>2026-08-02 14:58:53 -0400</td><td>refactor(stdlib): promote the faithful field and SDF lifts to implicit conversions</td></tr><tr class="today"><td><code>b68af65</code></td><td>2026-08-02 14:47:13 -0400</td><td>docs(compiler-399): file the single-field mirror&#x27;s unsound implicit operators</td></tr><tr class="today"><td><code>a5d3543</code></td><td>2026-08-02 13:32:10 -0400</td><td>docs(stdlib): rule for type-named implicit vs ToX explicit conversions, and pin the casts</td></tr><tr class="today"><td><code>e22669a</code></td><td>2026-08-02 13:20:23 -0400</td><td>docs(stdlib-398): file the law-packet relocation breakage</td></tr><tr class="today"><td><code>c09c254</code></td><td>2026-08-02 13:19:27 -0400</td><td>fix(stdlib): restore sum-case names mangled by the interface-prefix rename</td></tr><tr class="today"><td><code>162dbbb</code></td><td>2026-08-02 13:10:15 -0400</td><td>fix(stdlib): finish the law-packet move, drop the duplicate FoundationLaws</td></tr><tr class="today"><td><code>e85f761</code></td><td>2026-08-02 13:08:54 -0400</td><td>wip: concept-&gt;interface terminology sweep + navigation serve verb (checkpoint)</td></tr><tr class="today"><td><code>29c8e4d</code></td><td>2026-08-02 13:03:07 -0400</td><td>refactor(csharp-writer): drop Pack=1 from generated structs</td></tr><tr class="today"><td><code>c2e8730</code></td><td>2026-08-02 12:48:47 -0400</td><td>refactor(csharp-writer): TryParse is System.Text.Json</td></tr><tr class="today"><td><code>c94c00c</code></td><td>2026-08-02 12:08:30 -0400</td><td>refactor(stdlib): drop redundant Like/able interface suffixes</td></tr><tr class="today"><td><code>63aea8c</code></td><td>2026-08-02 11:52:15 -0400</td><td>docs: C# type generation design notes</td></tr><tr class="today"><td><code>1700753</code></td><td>2026-08-02 11:48:02 -0400</td><td>test(csharp-writer): pin the sum-type JSON shape</td></tr><tr class="today"><td><code>6dbdc18</code></td><td>2026-08-02 11:47:15 -0400</td><td>feat(csharp-writer): real JSON, IFormattable/IParsable, readonly structs</td></tr><tr class="today"><td><code>e710782</code></td><td>2026-08-02 11:05:24 -0400</td><td>chore(writer): drop interfaces.txt side-product</td></tr><tr class="today"><td><code>4eef8db</code></td><td>2026-08-02 10:50:26 -0400</td><td>refactor(stdlib): rename concepts to interface I*</td></tr><tr class="today"><td><code>49da0d2</code></td><td>2026-08-02 01:35:03 -0400</td><td>feat(transforms): give the point-spanned types Deform</td></tr></tbody>
   </table>
 </section>
 

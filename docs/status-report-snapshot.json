@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-01T16:54:25-04:00",
+  "updated_at": "2026-08-02T15:28:48-04:00",
   "note": "Written by tools/record-gates.py at 2026-07-31T19:14:42-04:00.",
   "gates": [
     {
@@ -121,73 +121,27 @@
     "roots": "stdlib + stdlib-tests"
   },
   "csharp_builds": {
-    "updated_at": "2026-08-01T16:54:25-04:00",
+    "updated_at": "2026-08-02T15:28:48-04:00",
     "targets": {
       "forward-conformance": {
-        "built_at": "2026-07-30T15:04:16-04:00",
-        "project": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\conformance\\Plato.ForwardConformanceTests\\Plato.ForwardConformanceTests.csproj",
-        "log": "C:\\Users\\cdigg\\git\\studio\\submodules\\Plato\\.temp\\csharp-build-logs\\forward-conformance.log",
+        "built_at": "2026-08-02T15:27:35-04:00",
+        "project": "C:\\Users\\cdigg\\git\\plato\\tests\\conformance\\Plato.ForwardConformanceTests\\Plato.ForwardConformanceTests.csproj",
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\csharp-build-logs\\forward-conformance.log",
         "configuration": "Release",
         "exit_code": 1,
-        "total_errors": 41,
+        "total_errors": 4,
         "total_warnings": 0,
-        "summary_errors": 41,
+        "summary_errors": 4,
         "summary_warnings": 0,
         "by_code": {
-          "CS1061": 18,
-          "CS1929": 7,
-          "CS0029": 5,
-          "CS0411": 3,
-          "CS0019": 2,
-          "CS0023": 2,
-          "CS1662": 2,
-          "CS0266": 1,
-          "CS1501": 1
+          "CS0535": 4
         },
         "by_category": {
-          "missing_member": {
-            "count": 18,
-            "label": "Missing member on receiver (CS1061)",
+          "missing_interface_member": {
+            "count": 4,
+            "label": "Missing interface member on runtime/type",
             "codes": [
-              "CS1061"
-            ]
-          },
-          "extension_receiver": {
-            "count": 7,
-            "label": "Extension method receiver type",
-            "codes": [
-              "CS1929"
-            ]
-          },
-          "other": {
-            "count": 6,
-            "label": "Other / uncategorized",
-            "codes": [
-              "CS1662",
-              "CS0023",
-              "CS1501",
-              "CS0266"
-            ]
-          },
-          "cannot_implicitly_convert": {
-            "count": 5,
-            "label": "Cannot implicitly convert",
-            "codes": [
-              "CS0029"
-            ]
-          },
-          "type_inference_failed": {
-            "count": 3,
-            "label": "Type inference failed",
-            "codes": [
-              "CS0411"
-            ]
-          },
-          "operator_type_mismatch": {
-            "count": 2,
-            "label": "Operator type mismatch",
-            "codes": [
-              "CS0019"
+              "CS0535"
             ]
           }
         },
@@ -332,14 +286,42 @@
         "by_code": {},
         "by_category": {},
         "warning_by_code": {}
+      },
+      "gen-foundation-baseline": {
+        "built_at": "2026-08-02T15:28:23-04:00",
+        "project": "C:\\Users\\cdigg\\git\\plato\\generated\\Plato.Generated.Foundation.Unoptimized\\Plato.Generated.Foundation.Unoptimized.csproj",
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\csharp-build-logs\\gen-foundation-baseline.log",
+        "configuration": "Release",
+        "exit_code": 0,
+        "total_errors": 0,
+        "total_warnings": 0,
+        "summary_errors": 0,
+        "summary_warnings": 0,
+        "by_code": {},
+        "by_category": {},
+        "warning_by_code": {}
+      },
+      "gen-foundation": {
+        "built_at": "2026-08-02T15:28:48-04:00",
+        "project": "C:\\Users\\cdigg\\git\\plato\\generated\\Plato.Generated.Foundation.Unoptimized\\Plato.Generated.Foundation.Unoptimized.csproj",
+        "log": "C:\\Users\\cdigg\\git\\plato\\.temp\\csharp-build-logs\\gen-foundation.log",
+        "configuration": "Release",
+        "exit_code": 0,
+        "total_errors": 0,
+        "total_warnings": 0,
+        "summary_errors": 0,
+        "summary_warnings": 0,
+        "by_code": {},
+        "by_category": {},
+        "warning_by_code": {}
       }
     },
-    "latest_target": "foundation-unoptimized",
+    "latest_target": "gen-foundation",
     "latest": {
-      "target": "foundation-unoptimized",
+      "target": "gen-foundation",
       "total_errors": 0,
       "total_warnings": 0,
-      "built_at": "2026-08-01T16:54:25-04:00",
+      "built_at": "2026-08-02T15:28:48-04:00",
       "exit_code": 0,
       "by_category": {},
       "by_code_top": {}
