@@ -10,7 +10,12 @@ let launch: { command: string; baseArgs: string[] } | undefined;
 let activeRoots: string[] = [];
 
 /** Well-known Plato corpora — used only when walking up from an open file. */
-const CORPUS_DIR_NAMES = new Set(["stdlib-legacy", "stdlib-legacy-tests", "stdlib"]);
+const CORPUS_DIR_NAMES = new Set([
+  "stdlib",
+  "stdlib-tests",
+  "stdlib-legacy",
+  "stdlib-legacy-tests",
+]);
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   output = vscode.window.createOutputChannel("Plato Navigation");
@@ -262,11 +267,22 @@ function resolveLaunch(context: vscode.ExtensionContext): { command: string; bas
   const config = vscode.workspace.getConfiguration("plato.navigation");
   const dotnet = config.get<string>("dotnetPath") || "dotnet";
 
+  const searchRoots = [
+    ...(vscode.workspace.workspaceFolders?.map((f) => f.uri.fsPath) ?? []),
+    // Installed-from-location: vscode-plato/ sits next to src/ in the Plato repo.
+    context.extensionPath,
+  ];
+  const configured = config.get<string>("cliProject");
   const cliProject =
-    config.get<string>("cliProject") ||
-    findCliProject(vscode.workspace.workspaceFolders?.map((f) => f.uri.fsPath) ?? []);
+    (configured
+      ? path.isAbsolute(configured)
+        ? configured
+        : path.resolve(searchRoots[0] ?? context.extensionPath, configured)
+      : undefined) || findCliProject(searchRoots);
   if (!cliProject)
     throw new Error("Could not find Plato.Navigation.CLI.csproj. Set plato.navigation.cliProject.");
+
+  output.appendLine(`Navigation CLI project: ${cliProject}`);
 
   const outDir = path.join(path.dirname(cliProject), "bin", "Release", "net8.0");
   const dll = path.join(outDir, "Plato.Navigation.CLI.dll");
@@ -291,15 +307,26 @@ function resolveLaunch(context: vscode.ExtensionContext): { command: string; bas
   return { command: dotnet, baseArgs: [dll, "serve"] };
 }
 
+/** Relative locations of Plato.Navigation.CLI.csproj under a Plato or studio root. */
+const CLI_PROJECT_RELATIVE = [
+  // Current layout (post folder restructure): src/Plato.Navigation.CLI/
+  path.join("src", "Plato.Navigation.CLI", "Plato.Navigation.CLI.csproj"),
+  // Pre-restructure layout at the Plato repo root
+  path.join("Plato.Navigation.CLI", "Plato.Navigation.CLI.csproj"),
+];
+
 function findCliProject(starts: string[]): string | undefined {
-  const name = path.join("Plato.Navigation.CLI", "Plato.Navigation.CLI.csproj");
   for (const start of starts) {
     let dir = start;
     for (let i = 0; i < 8; i++) {
-      const candidate = path.join(dir, "submodules", "Plato", name);
-      if (fs.existsSync(candidate)) return candidate;
-      const direct = path.join(dir, name);
-      if (fs.existsSync(direct)) return direct;
+      for (const rel of CLI_PROJECT_RELATIVE) {
+        // Studio checkout: …/studio/submodules/Plato/<rel>
+        const viaSubmodule = path.join(dir, "submodules", "Plato", rel);
+        if (fs.existsSync(viaSubmodule)) return viaSubmodule;
+        // Plato repo (or vscode-plato parent walk): …/plato/<rel>
+        const direct = path.join(dir, rel);
+        if (fs.existsSync(direct)) return direct;
+      }
       const parent = path.dirname(dir);
       if (parent === dir) break;
       dir = parent;

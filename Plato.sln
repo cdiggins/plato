@@ -430,9 +430,9 @@ Global
 		SolutionGuid = {DA1ED7DC-2723-49C9-A05C-9D845C8AE27C}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		src\Plato.Intrinsics\Plato.Intrinsics.projitems*{1b38b9f1-82b0-45bf-ba06-43e68d06937e}*SharedItemsImports = 5
+		src\Plato.Intrinsics\Plato.Intrinsics.projitems*{12eb5a4a-cad8-48c5-8f34-e30052a6ee32}*SharedItemsImports = 5
 		src\Plato.Intrinsics\Plato.Intrinsics.projitems*{1f9bcaa8-63e7-4782-ae6d-aeb2d7c89912}*SharedItemsImports = 13
-		src\Plato.Intrinsics\Plato.Intrinsics.projitems*{3643290d-25ff-4099-bf67-cc019a5d208e}*SharedItemsImports = 5
 		src\Plato.Intrinsics\Plato.Intrinsics.projitems*{66b5b658-383c-4238-8be0-7bc3dda9eb60}*SharedItemsImports = 5
+		src\Plato.Intrinsics\Plato.Intrinsics.projitems*{f344dad2-4f1e-4aaf-8035-76d5914cf237}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

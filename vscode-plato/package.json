@@ -1,8 +1,8 @@
 {
   "name": "plato",
   "displayName": "Plato",
-  "description": "Syntax highlighting for the Plato programming language (.plato)",
-  "version": "0.1.0",
+  "description": "Syntax highlighting and compiler-backed navigation for the Plato programming language (.plato)",
+  "version": "0.2.4",
   "publisher": "ara3d",
   "license": "MIT",
   "engines": {
@@ -14,11 +14,26 @@
   "keywords": [
     "plato",
     "geometry",
-    "syntax"
+    "syntax",
+    "navigation"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/ara3d/plato"
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:plato"
+  ],
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "@types/vscode": "^1.74.0",
+    "typescript": "^5.4.0"
   },
   "contributes": {
     "languages": [
@@ -40,6 +55,35 @@
         "scopeName": "source.plato",
         "path": "./syntaxes/plato.tmLanguage.json"
       }
-    ]
+    ],
+    "commands": [
+      {
+        "command": "plato.navigation.reload",
+        "title": "Plato: Reload Navigation Index"
+      }
+    ],
+    "configuration": {
+      "title": "Plato",
+      "properties": {
+        "plato.navigation.roots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Plato source folders to index. Empty = discover from the open file (nearest stdlib / stdlib-legacy / … corpus) or each workspace folder."
+        },
+        "plato.navigation.cliProject": {
+          "type": "string",
+          "default": "",
+          "description": "Path to Plato.Navigation.CLI.csproj (absolute, or relative to the first workspace folder). Leave empty to auto-discover under src/Plato.Navigation.CLI."
+        },
+        "plato.navigation.dotnetPath": {
+          "type": "string",
+          "default": "dotnet",
+          "description": "dotnet executable used to build and run Plato.Navigation.CLI when no .exe is present."
+        }
+      }
+    }
   }
 }
