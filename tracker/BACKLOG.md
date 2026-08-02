@@ -19,6 +19,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
 | [plato-369](issues/plato-369.md) | Burn down stdlib type-checker diagnostics to zero | debt | p1 | M | med | plato | ready |  |
 | [plato-388](issues/plato-388.md) | Single verification policy manifest: one data file the gates, tests and plato_check all read | debt | p1 | M | med | plato | ready |  |
+| [compiler-397](issues/compiler-397.md) | IArrayLike types with no generated fields emit an empty component type | bug | p2 | S | low | compiler | ready |  |
 | [plato-277](issues/plato-277.md) | stdlib interface-gap burn-down: the 17 markers that need a language or interface decision | debt | p2 | M | low | plato | ready |  |
 | [plato-323](issues/plato-323.md) | Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile | bug | p2 | L | med | plato | ready |  |
 | [plato-326](issues/plato-326.md) | Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns | bug | p2 | S | low | plato | ready |  |
@@ -26,6 +27,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-373](issues/plato-373.md) | Ellipse.Perimeter (Ramanujan II) is 4e-4 off for flattened ellipses | bug | p2 | S | low | plato | ready |  |
 | [plato-374](issues/plato-374.md) | Interface-generic law bodies mix the interface default with the type's override | bug | p2 | M | low | plato | ready |  |
 | [plato-389](issues/plato-389.md) | plato_check has no tier awareness: future and stdlib-tests count toward its verdict | bug | p2 | S | low | plato | ready |  |
+| [stdlib-398](issues/stdlib-398.md) | Law packet moved into stdlib/ breaks the checker ratchet | bug | p2 | S | low | stdlib | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
@@ -37,7 +39,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-333](issues/plato-333.md) | IntegerInterval is half-open but inherits closed IntervalLike bodies | bug | p2 | S | med | plato | idea |  |
 | [plato-365](issues/plato-365.md) | Retire non-scalar primitives: PrimitiveTypes = scalars only, System.Numerics behind intrinsic bridge | debt | p2 | M | med | plato | idea |  |
 | [plato-370](issues/plato-370.md) | Double-precision scalars (approach must be re-designed — TirScalarLowerer is gone) | feature | p2 | L | med | plato | idea |  |
-| [compiler-397](issues/compiler-397.md) | IArrayLike types with no generated fields emit an empty component type | bug | p2 | S | low | compiler | ready |  |
 | [plato-390](issues/plato-390.md) | Extract Plato.Verify: one policy engine behind the gates, the tests and plato_check | feature | p2 | L | med | plato | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
 | [plato-235](issues/plato-235.md) | GLSL overload erasure picks the winner by emission order, not by intent | problem | p3 | M | med | plato | idea |  |
@@ -83,7 +84,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-265](issues/plato-265.md) | HTML Plato library browser via Fable spike | idea | ? | ? | ? | plato | idea |  |
 | [plato-266](issues/plato-266.md) | Inline external links in Plato stdlib docs | idea | ? | ? | ? | plato | idea |  |
 | [plato-267](issues/plato-267.md) | Generate images for Plato types | idea | ? | ? | ? | plato | idea |  |
-| [plato-268](issues/plato-268.md) | Pick canonical type-class keyword: interface vs interface vs trait | idea | ? | ? | ? | plato | idea |  |
+| [plato-268](issues/plato-268.md) | Pick canonical type-class keyword: interface vs concept vs trait | idea | ? | ? | ? | plato | idea |  |
 | [plato-269](issues/plato-269.md) | Differential: plato-src-v3 vs plato-src | idea | ? | ? | ? | plato | idea |  |
 | [plato-270](issues/plato-270.md) | Differential: Ara3D.Geometry vs Plato stdlib | idea | ? | ? | ? | plato | idea |  |
 | [plato-271](issues/plato-271.md) | Decide Plato numeric precision and fixed-size types | idea | ? | ? | ? | plato | idea |  |
