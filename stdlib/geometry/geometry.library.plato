@@ -496,6 +496,20 @@ library GeometryTraits
     //   * P4: Center(IBounds<$TPoint>).
 
     //==
+    // # ICentered2D / ICentered3D
+    //
+    // A shape stored about a centre it is symmetric in has that centre for its
+    // centroid, which discharges ICentroid2D / ICentroid3D for every one of them.
+
+    // The centroid of a centre-symmetric planar shape: its stored centre.
+    Centroid(self: ICentered2D): Point2D
+        => self.Center;
+
+    // The centroid of a centre-symmetric solid or surface: its stored centre.
+    Centroid(self: ICentered3D): Point3D
+        => self.Center;
+
+    //==
     // # IBounded2D
     //
     // Everything derived from the axis-aligned Bounds2D (Min / Max corners, each a

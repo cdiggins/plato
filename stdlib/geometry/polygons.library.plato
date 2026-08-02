@@ -204,9 +204,6 @@ library Polygons
             - 2.0 * s.OuterRadius * s.InnerRadius
                 * (0.5 / s.PointCount.ToNumber).Turns.Cos).Sqrt;
 
-    // The stored centre, by the star's n-fold rotational symmetry.
-    Centroid(s: RegularStar2D): Point2D
-        => s.Center;
 
     // TIGHT: the bounds of the computed vertices (only the tips can be extreme).
     Bounds(s: RegularStar2D): Bounds2D

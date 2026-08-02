@@ -59,7 +59,7 @@ type PolygonSet2D
 // turns the first tip away from +X (https://en.wikipedia.org/wiki/Star_polygon).
 // Invariants: PointCount >= 3, 0 < InnerRadius <= OuterRadius.
 type RegularStar2D
-    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D
+    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, ICentered2D, IContainsPoint2D
 {
     Center: Point2D;
     OuterRadius: Number;

@@ -153,6 +153,11 @@ library MeshesPolygon
         => (self.Positions,
             self.FaceCount.MapRange(f => f).FlatMap(f => self.FaceTriangleFan(f)));
 
+    // The IMesh3D obligation of every IPolygonMesh3D: triangulate the polygon
+    // mesh the type already knows how to produce.
+    ToTriangleMesh(self: IPolygonMesh3D): TriangleMesh3D
+        => self.ToPolygonMesh.ToTriangleMesh;
+
     //==
     // # Half-edge navigation over PolygonMesh3D corners
     //

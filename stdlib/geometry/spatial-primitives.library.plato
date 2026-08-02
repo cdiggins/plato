@@ -115,9 +115,6 @@ library SpatialPrimitives
             + b.Size.Width * b.Size.Depth
             + b.Size.Height * b.Size.Depth);
 
-    // The stored centre.
-    Centroid(b: Box3D): Point3D
-        => b.Center;
 
     // TIGHT: the half-extent along a world axis is the sum of the three local
     // half-extents weighted by the absolute components of the rotated local axes —
@@ -342,9 +339,6 @@ library SpatialPrimitives
     SurfaceArea(c: Cylinder): Number
         => 2.0 * Number.Pi * c.Radius * c.Height + 2.0 * Number.Pi * c.Radius.Square;
 
-    // The stored centre, which is the midpoint of the axis segment.
-    Centroid(c: Cylinder): Point3D
-        => c.Center;
 
     // TIGHT: the axial half-extent (h/2)|axis.e| plus the cap disk's own extent
     // r*sqrt(1 - (axis.e)^2) on each world axis e.
@@ -391,9 +385,6 @@ library SpatialPrimitives
         => 2.0 * Number.Pi * s.Height * (s.OuterRadius + s.InnerRadius)
         + 2.0 * Number.Pi * (s.OuterRadius.Square - s.InnerRadius.Square);
 
-    // The stored centre.
-    Centroid(s: CylindricalShell): Point3D
-        => s.Center;
 
     // The outer cylinder's bounds, which the shell touches everywhere.
     Bounds(s: CylindricalShell): Bounds3D
@@ -553,9 +544,6 @@ library SpatialPrimitives
     Perimeter(d: Disk3D): Number
         => 2.0 * Number.Pi * d.Radius;
 
-    // The stored centre.
-    Centroid(d: Disk3D): Point3D
-        => d.Center;
 
     // TIGHT: the disk's own per-axis extents.
     Bounds(d: Disk3D): Bounds3D
@@ -818,9 +806,6 @@ library SpatialPrimitives
     SurfaceArea(s: Sphere): Number
         => 4.0 * Number.Pi * s.Radius.Square;
 
-    // The ball's centre of mass is its centre.
-    Centroid(s: Sphere): Point3D
-        => s.Center;
 
     // The cube of side 2r about the centre.
     Bounds(s: Sphere): Bounds3D
@@ -853,9 +838,6 @@ library SpatialPrimitives
     SurfaceArea(s: SphericalShell): Number
         => 4.0 * Number.Pi * (s.OuterRadius.Square + s.InnerRadius.Square);
 
-    // The centre, by spherical symmetry.
-    Centroid(s: SphericalShell): Point3D
-        => s.Center;
 
     // The bounds of the outer sphere.
     Bounds(s: SphericalShell): Bounds3D

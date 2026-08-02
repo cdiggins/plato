@@ -30,6 +30,16 @@ interface IMesh3D
     ToTriangleMesh(x: Self): TriangleMesh3D;
 }
 
+// Anything whose natural explicit form is a polygon mesh rather than a triangle
+// mesh: the typed solids, whose faces are the polygons of their construction.
+// The triangle mesh follows by fan triangulation, so ToPolygonMesh is the only
+// obligation and ToTriangleMesh arrives derived.
+interface IPolygonMesh3D
+    inherits IMesh3D
+{
+    ToPolygonMesh(x: Self): PolygonMesh3D;
+}
+
 // Anything in the plane that can produce a triangulation of itself
 // (https://en.wikipedia.org/wiki/Polygon_triangulation): polygons, planar
 // regions, 2D meshes.

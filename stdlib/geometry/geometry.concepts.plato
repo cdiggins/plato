@@ -191,6 +191,23 @@ interface ICentroid3D
     Centroid(x: Self): Point3D;
 }
 
+// A planar shape stored about a centre it is symmetric in: boxes, circles,
+// annuli, regular polygons and stars. The centre IS the centroid for such a
+// shape, so Center is the only obligation and Centroid arrives derived.
+interface ICentered2D
+    inherits ICentroid2D
+{
+    Center(x: Self): Point2D;
+}
+
+// A solid or surface stored about a centre it is symmetric in: boxes,
+// spheres, cylinders, disks and their shells. Centroid is likewise derived.
+interface ICentered3D
+    inherits ICentroid3D
+{
+    Center(x: Self): Point3D;
+}
+
 //==
 // # IGeometry point queries
 //

@@ -97,9 +97,6 @@ library Planar
     Perimeter(b: OrientedBox2D): Number
         => 2.0 * (b.Size.Width + b.Size.Height);
 
-    // The stored centre.
-    Centroid(b: OrientedBox2D): Point2D
-        => b.Center;
 
     // TIGHT bounds of a rotated rectangle: the half-extent along each world axis is
     // the sum of the two local half-extents weighted by |cos| and |sin| — the
@@ -169,9 +166,6 @@ library Planar
         => 2.0 * g.SideCount.ToNumber * g.CircumRadius
         * (0.5 / g.SideCount.ToNumber).Turns.Sin;
 
-    // The stored centre, which is both the circumcentre and the area centroid.
-    Centroid(g: RegularPolygon): Point2D
-        => g.Center;
 
     // TIGHT: the bounds of the computed vertices. (The circumscribed circle's box
     // would be conservative whenever no vertex lands on an axis.)
@@ -228,9 +222,6 @@ library Planar
     Perimeter(c: Circle): Number
         => 2.0 * Number.Pi * c.Radius;
 
-    // The disk's centre of mass is its centre.
-    Centroid(c: Circle): Point2D
-        => c.Center;
 
     // The square of side 2r about the centre.
     Bounds(c: Circle): Bounds2D
@@ -266,9 +257,6 @@ library Planar
     Perimeter(a: Annulus): Number
         => 2.0 * Number.Pi * (a.OuterRadius + a.InnerRadius);
 
-    // The centre, by rotational symmetry.
-    Centroid(a: Annulus): Point2D
-        => a.Center;
 
     // The bounds of the outer circle.
     Bounds(a: Annulus): Bounds2D
@@ -519,10 +507,6 @@ library Planar
     //
     // https://en.wikipedia.org/wiki/Superellipse
 
-    // The centre, by the superellipse's point symmetry (it is symmetric in both
-    // local axes for every exponent).
-    Centroid(se: SuperEllipse): Point2D
-        => se.Center;
 
     // CONSERVATIVE, not tight: the world-axis-aligned box of the ROTATED local
     // bounding rectangle [-a, a] x [-b, b], which contains the superellipse for

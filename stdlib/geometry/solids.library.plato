@@ -452,29 +452,10 @@ library Solids
     }
 
     //==
-    // IMesh3D obligations: every typed solid triangulates through its
-    // polygon mesh (fan triangulation, `meshes-polygon.library.plato`).
+    // The IMesh3D obligation of every typed solid is the derived
+    // ToTriangleMesh(IPolygonMesh3D) in `meshes-polygon.library.plato`: each one
+    // triangulates through its own polygon mesh by fan triangulation.
 
-    ToTriangleMesh(s: PlatonicSolid): TriangleMesh3D
-        => s.ToPolygonMesh.ToTriangleMesh;
-
-    ToTriangleMesh(s: ArchimedeanSolid): TriangleMesh3D
-        => s.ToPolygonMesh.ToTriangleMesh;
-
-    ToTriangleMesh(s: CatalanSolid): TriangleMesh3D
-        => s.ToPolygonMesh.ToTriangleMesh;
-
-    ToTriangleMesh(s: RegularPrism): TriangleMesh3D
-        => s.ToPolygonMesh.ToTriangleMesh;
-
-    ToTriangleMesh(s: RegularPyramid): TriangleMesh3D
-        => s.ToPolygonMesh.ToTriangleMesh;
-
-    ToTriangleMesh(s: SquarePyramid): TriangleMesh3D
-        => s.ToPolygonMesh.ToTriangleMesh;
-
-    ToTriangleMesh(s: Antiprism): TriangleMesh3D
-        => s.ToPolygonMesh.ToTriangleMesh;
     //==
     // # Deformation bodies for the profile-generated solids
     //

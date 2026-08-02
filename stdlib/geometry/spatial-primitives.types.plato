@@ -20,7 +20,7 @@
 // axes, oriented by Orientation about Center. Axis-aligned when Orientation is
 // identity (prefer Bounds3D for that case). (https://en.wikipedia.org/wiki/Cuboid)
 type Box3D
-    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, IVolume, IBounded3D, ICentroid3D, IContainsPoint3D, INearestPoint3D, ISupport3D, IParametricSurface
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, IVolume, IBounded3D, ICentered3D, IContainsPoint3D, INearestPoint3D, ISupport3D, IParametricSurface
 {
     Center: Point3D;
     Size: Size3D;
@@ -50,7 +50,7 @@ type RoundedBox3D
 // axis segment; the cylinder extends Height/2 each way along Axis.
 // (https://en.wikipedia.org/wiki/Cylinder)
 type Cylinder
-    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, IVolume, IBounded3D, ICentroid3D, IContainsPoint3D, ISupport3D, IParametricSurface
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, IVolume, IBounded3D, ICentered3D, IContainsPoint3D, ISupport3D, IParametricSurface
 {
     Center: Point3D;
     Axis: Direction3D;
@@ -63,7 +63,7 @@ type Cylinder
 // shell extends Height/2 each way along Axis.
 // Invariant: 0 <= InnerRadius <= OuterRadius.
 type CylindricalShell
-    implements IGeometry3D, IClosedShape, IConnected, IVolume, IBounded3D, ICentroid3D, IContainsPoint3D, IParametricSurface
+    implements IGeometry3D, IClosedShape, IConnected, IVolume, IBounded3D, ICentered3D, IContainsPoint3D, IParametricSurface
 {
     Center: Point3D;
     Axis: Direction3D;
@@ -122,7 +122,7 @@ type Capsule3D
 // Normal that lie within Radius of Center.
 // (https://en.wikipedia.org/wiki/Disk_(mathematics))
 type Disk3D
-    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, IManifold, IOrientable, IArea, IBounded3D, ICentroid3D, INearestPoint3D
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, IManifold, IOrientable, IArea, IBounded3D, ICentered3D, INearestPoint3D
 {
     Center: Point3D;
     Normal: Direction3D;
@@ -206,7 +206,7 @@ type ConvexVolume
 // The ball of all points within Radius of Center; its boundary is the sphere
 // proper. Radius is non-negative. (https://en.wikipedia.org/wiki/Sphere)
 type Sphere
-    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, IVolume, IBounded3D, ICentroid3D, IContainsPoint3D, INearestPoint3D, ISupport3D, IParametricSurface
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, IVolume, IBounded3D, ICentered3D, IContainsPoint3D, INearestPoint3D, ISupport3D, IParametricSurface
 {
     Center: Point3D;
     Radius: Number;
@@ -216,7 +216,7 @@ type Sphere
 // Invariant: 0 <= InnerRadius <= OuterRadius.
 // (https://en.wikipedia.org/wiki/Spherical_shell)
 type SphericalShell
-    implements IGeometry3D, IClosedShape, IConnected, IVolume, IBounded3D, ICentroid3D, IContainsPoint3D
+    implements IGeometry3D, IClosedShape, IConnected, IVolume, IBounded3D, ICentered3D, IContainsPoint3D
 {
     Center: Point3D;
     InnerRadius: Number;
