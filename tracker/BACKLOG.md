@@ -27,7 +27,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-373](issues/plato-373.md) | Ellipse.Perimeter (Ramanujan II) is 4e-4 off for flattened ellipses | bug | p2 | S | low | plato | ready |  |
 | [plato-374](issues/plato-374.md) | Interface-generic law bodies mix the interface default with the type's override | bug | p2 | M | low | plato | ready |  |
 | [plato-389](issues/plato-389.md) | plato_check has no tier awareness: future and stdlib-tests count toward its verdict | bug | p2 | S | low | plato | ready |  |
-| [stdlib-402](issues/stdlib-402.md) | Sum-kind types have no Equals, so laws comparing two sum values cannot type-check | bug | p2 | M | med | stdlib | ready |  |
+| [plato-404](issues/plato-404.md) | plato_simplify SIM001 rewrites tuples outside return position, breaking the type check | bug | p2 | S | low | plato | ready |  |
 | [compiler-403](issues/compiler-403.md) | ExistentialConceptCheckerTests point at pre-rename fixture filenames | bug | p3 | S | low | compiler | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
