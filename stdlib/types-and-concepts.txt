@@ -164,7 +164,8 @@ concept TimeVaryingScalarField2D{EvalAtTime(x:Self,point:Point2D,time:Instant):N
 concept TimeVaryingScalarField3D{EvalAtTime(x:Self,point:Point3D,time:Instant):Number;}
 concept TimeVaryingVectorField2D{EvalAtTime(x:Self,point:Point2D,time:Instant):Vector2D;}
 concept TimeVaryingVectorField3D{EvalAtTime(x:Self,point:Point3D,time:Instant):Vector3D;}
-concept Transformable<TTransform>{Transform(x:Self,transform:TTransform):Self;}
+concept Transformable2D{Transform(x:Self,transform:Transform2D):Self;}
+concept Transformable3D{Transform(x:Self,transform:Transform3D):Self;}
 concept TriangleGeometry2D inherits Geometry2D,PrimitiveGeometry<Point2D,Triangle2D>,PointSet2D,Bounded2D,Deformable2D,Meshable2D{}
 concept TriangleGeometry3D inherits Geometry3D,PrimitiveGeometry<Point3D,Triangle3D>,PointSet3D,Bounded3D,Deformable3D,Meshable3D{}
 concept TriangulatedGeometry3D inherits Meshable3D{TriangleCount(x:Self):Integer;FaceAt(x:Self,face:FaceIndex):TriangleFace;PositionAt(x:Self,vertex:VertexIndex):Point3D;}
@@ -541,7 +542,7 @@ type IndexedImage implements Image{Size:IntegerSize2D;Indices:Array<PaletteIndex
 type Inductance implements Quantity{Henries:Number;}
 type InfiniteLine2D implements Geometry2D,Connected,NearestPoint2D{Origin:Point2D;Direction:Direction2D;}
 type InfiniteLine3D implements Geometry3D,Connected,NearestPoint3D{Origin:Point3D;Direction:Direction3D;}
-type InstanceSet implements Value{Mesh:MeshIndex;Material:MaterialIndex;Transforms:Array<Transform3D>;Colors:Array<Color>;}
+type InstanceSet implements Value{Mesh:MeshIndex;Material:MaterialIndex;Transforms:Array<TrsTransform3D>;Colors:Array<Color>;}
 type Instant implements Value,Comparable,OriginBased<Duration>{SecondsSinceEpoch:Number;}
 type Integer implements Whole,Bitwise{}
 type IntegerBounds2D implements Value{Min:IntegerVector2;Max:IntegerVector2;}
@@ -630,7 +631,7 @@ type MatrixN implements MatrixLike{NumRows:Integer;NumColumns:Integer;Components
 type MaxFlowResult implements Value{TotalFlow:Number;EdgeFlows:Array<Number>;SourceSideVertices:Array<Boolean>;}
 type MeshAttribute<T>{Name:String;Domain:AttributeDomain;Values:Array<T>;}
 type MeshIndex implements Value,Hashable,Comparable,Index{Value:Integer;}
-type MeshInstance implements Value{Mesh:MeshIndex;Material:MaterialIndex;Transform:Transform3D;}
+type MeshInstance implements Value{Mesh:MeshIndex;Material:MaterialIndex;Transform:TrsTransform3D;}
 type MeshSection implements Value{FaceRange:IntegerInterval;Slot:SlotIndex;}
 type MetaBall2D implements Value{Center:Point2D;Radius:Number;Strength:Number;}
 type MetaBall3D implements Value{Center:Point3D;Radius:Number;Strength:Number;}
@@ -757,8 +758,6 @@ type Prism3D implements Geometry3D,ClosedShape,Connected,SpatialMeasurable,Bound
 type Probability implements Numerical,Comparable{Value:Number;}
 type ProceduralSky implements Value{SunDirection:Direction3D;Turbidity:Number;GroundAlbedo:Color;Intensity:Number;}
 type ProjectionPlane implements Value{LowerLeft:Point3D;LowerRight:Point3D;UpperLeft:Point3D;}
-type ProjectiveTransform2D implements Value{Matrix:Matrix3x3;}
-type ProjectiveTransform3D implements Value{Matrix:Matrix4x4;}
 type Proportion implements Numerical,Comparable{Value:Number;}
 type Pyramid3D implements Geometry3D,ClosedShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,Deformable3D{Base:Polygon3D;Apex:Point3D;}
 type Quad2D implements Geometry2D,ClosedShape,Connected,PlanarMeasurable,Bounded2D,PointSet2D,Centroid2D,ContainsPoint2D,Deformable2D{A:Point2D;B:Point2D;C:Point2D;D:Point2D;}
@@ -854,8 +853,8 @@ type SceneCameraSet implements Value{PerspectiveCameras:Array<PerspectiveCamera>
 type SceneHitResult2D implements Value{Node:SceneNodeIndex2D;LocalPosition:Point2D;}
 type SceneLightBinding implements Value{}
 type SceneLightSet implements Value{DirectionalLights:Array<DirectionalLight>;PointLights:Array<PointLight>;SpotLights:Array<SpotLight>;AreaLights:Array<AreaLight>;DiskLights:Array<DiskLight>;SphereLights:Array<SphereLight>;TubeLights:Array<TubeLight>;EnvironmentLights:Array<EnvironmentLight>;ProceduralSkies:Array<ProceduralSky>;AmbientLights:Array<AmbientLight>;}
-type SceneNode2D implements Value{Name:String;Parent:SceneNodeIndex2D;Transform:Transform2D;Opacity:Proportion;Blend:BlendMode;Visible:Boolean;Content:NodeContent2D;ClipIndex:ItemIndex;}
-type SceneNode3D implements Value{Name:String;Parent:SceneNodeIndex3D;Transform:Transform3D;Visible:Boolean;Mesh:MeshIndex;Material:MaterialIndex;Light:LightBindingIndex;Camera:CameraBindingIndex;LayerMask:Integer;}
+type SceneNode2D implements Value{Name:String;Parent:SceneNodeIndex2D;Transform:TrsTransform2D;Opacity:Proportion;Blend:BlendMode;Visible:Boolean;Content:NodeContent2D;ClipIndex:ItemIndex;}
+type SceneNode3D implements Value{Name:String;Parent:SceneNodeIndex3D;Transform:TrsTransform3D;Visible:Boolean;Mesh:MeshIndex;Material:MaterialIndex;Light:LightBindingIndex;Camera:CameraBindingIndex;LayerMask:Integer;}
 type SceneNodeIndex2D implements Value,Hashable,Comparable,Index{Value:Integer;}
 type SceneNodeIndex3D implements Value,Hashable,Comparable,Index{Value:Integer;}
 type SceneResources implements Value{Meshes:Array<TriangleMesh3D>;Materials:Array<Material>;Lights:SceneLightSet;LightBindings:Array<SceneLightBinding>;Cameras:SceneCameraSet;CameraBindings:Array<SceneCameraBinding>;}
@@ -1006,8 +1005,8 @@ type Torque implements Quantity{NewtonMeters:Number;}
 type Torus implements Geometry3D,ClosedShape,Connected,SpatialMeasurable,Bounded3D,Centroid3D,ContainsPoint3D,ParametricSurface{Center:Point3D;Axis:Direction3D;MajorRadius:Number;MinorRadius:Number;}
 type TorusKnot implements ClosedCurve3D{Frame:Frame3D;AxisWindings:Integer;TubeWindings:Integer;MajorRadius:Number;MinorRadius:Number;}
 type TransferFunction{}
-type Transform2D implements Value,Affine2D{Translation:Vector2D;Rotation:Rotation2D;Scale:Number2;}
-type Transform3D implements Value,Affine3D{Translation:Vector3D;Rotation:Quaternion;Scale:Number3;}
+type Transform2D implements Value{Matrix:Matrix3x3;}
+type Transform3D implements Value{Matrix:Matrix4x4;}
 type Translation2D implements Value,Rigid2D{Vector:Vector2D;}
 type Translation3D implements Value,Rigid3D{Vector:Vector3D;}
 type TransmissionLayer implements Value{Transmission:Proportion;IndexOfRefraction:Number;Thickness:Number;AttenuationColor:Color;AttenuationDistance:Number;}
@@ -1022,6 +1021,8 @@ type TriangularDistribution implements ProbabilityDistribution{Min:Number;Mode:N
 type TrimmedSurface implements Surface{Base:ParametricSurface;OuterLoop:Polyline2D;Holes:Array<Polyline2D>;}
 type TriplanarProjection implements Value{BlendSharpness:Number;Tiling:Number2;}
 type TrisectrixOfMaclaurin2D implements PolarCurve2D{Scale:Number;}
+type TrsTransform2D implements Value,Affine2D{Translation:Vector2D;Rotation:Rotation2D;Scale:Number2;}
+type TrsTransform3D implements Value,Affine3D{Translation:Vector3D;Rotation:Quaternion;Scale:Number3;}
 type TschirnhausenCubic2D implements PolarCurve2D{Scale:Number;}
 type TubeLight implements LightSource{Start:Point3D;End:Point3D;Radius:Number;Color:Color;Luminance:Luminance;CastsShadows:Boolean;}
 type TubeSurface implements ParametricSurface{Path:Curve3D;Radius:Number;}

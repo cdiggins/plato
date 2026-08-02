@@ -82,7 +82,7 @@ type AnimationClip
     Vector3DTracks: Array<NamedTrack<Vector3D>>;
     QuaternionTracks: Array<NamedTrack<Quaternion>>;
     ColorTracks: Array<NamedTrack<Color>>;
-    TransformTracks: Array<NamedTrack<Transform3D>>;
+    TransformTracks: Array<NamedTrack<TrsTransform3D>>;
 }
 
 // The direction time advances during playback.

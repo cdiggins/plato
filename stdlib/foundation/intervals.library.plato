@@ -5,7 +5,7 @@
 //  - Extents and sizes — concrete bodies
 //  - Derived functionality for bounding regions
 //  - Derived functionality for intervals
-//  - Derived functionality for Transformable
+//  - Derived functionality for Transformable2D / Transformable3D
 
 library Intervals
 {
@@ -376,36 +376,43 @@ library Intervals
         => self.Start + self.Span * 0.5;
 
     //==
-    // # Derived functionality for Transformable
+    // # Derived functionality for Transformable2D / Transformable3D
     //
-    // Bodies for the `Transformable<TTransform>` concept declared in
+    // Bodies for the `Transformable2D` / `Transformable3D` concepts declared in
     // `transforms.concepts.plato`: the ordered multi-transform convenience
     // overloads, and the lifting of every transform representation through Deform so
     // that a single Deform primitive yields a complete transform surface.
 
     //==
-    // Transformable<TTransform> — a value that can be carried through a transform.
-    // The convenience overloads below are named ThenTransform rather than reusing
-    // the concept's `Transform` name: overloading a concept-declared member on arity
-    // alone is easy to misread, and ThenTransform states the sequencing intent.
+    // Transformable2D / Transformable3D — a value that can be carried through the
+    // general transform of its dimension. The convenience overloads below are named
+    // ThenTransform rather than reusing the concept's `Transform` name: overloading a
+    // concept-declared member on arity alone is easy to misread, and ThenTransform
+    // states the sequencing intent.
 
-    // Apply two transforms in order: `first` then `second`. A convenience over
-    // chaining Transform calls; the concept exposes no transform composition of its
-    // own to fold these into a single map.
-    ThenTransform(self: Transformable<$TTransform>, first: $TTransform, second: $TTransform): Self
+    // Apply two transforms in order: `first` then `second`. Equal to
+    // Transform(first.Compose(second)) — the helper exists so the caller does not
+    // have to name the composition.
+    ThenTransform(self: Transformable2D, first: Transform2D, second: Transform2D): Self
         => self.Transform(first).Transform(second);
 
     // Apply three transforms in order.
-    ThenTransform(self: Transformable<$TTransform>, first: $TTransform, second: $TTransform, third: $TTransform): Self
+    ThenTransform(self: Transformable2D, first: Transform2D, second: Transform2D, third: Transform2D): Self
         => self.Transform(first).Transform(second).Transform(third);
 
-    // Deliberately NOT extended: richer helpers (inverse-transform,
-    // transform-about-a-pivot, identity) need Invertible/Composable/Identity on
-    // TTransform. Constraining Transformable that way is not sound, because the
-    // transform family is not uniformly invertible or composable — the TRS types
-    // (Transform2D/Transform3D) are not closed under composition (see
-    // transforms.types.plato) and the projective types expose no inverse. The pivot and
-    // identity helpers therefore live per-representation, not on the concept.
+    // Apply two transforms in order: `first` then `second`.
+    ThenTransform(self: Transformable3D, first: Transform3D, second: Transform3D): Self
+        => self.Transform(first).Transform(second);
+
+    // Apply three transforms in order.
+    ThenTransform(self: Transformable3D, first: Transform3D, second: Transform3D, third: Transform3D): Self
+        => self.Transform(first).Transform(second).Transform(third);
+
+    // Deliberately NOT extended: an inverse-transform and a transform-about-a-pivot
+    // helper would need an inverse, and a homography has none in general — its
+    // matrix is singular whenever the map collapses a dimension. Identity is a
+    // per-representation static (see `transforms.library.plato`), not a concept
+    // member, for the same reason it is not derivable here.
 
     //==
     // Deform implies Transform — lifting a point map through Deform gives every
@@ -413,7 +420,8 @@ library Intervals
     // The `transforms-*.library.plato` files already apply each representation to a
     // bare Point2D/Point3D; lifting that point map through Deform generalizes the
     // pattern to all Deformable types. Implementing Deform for a new shape therefore
-    // also satisfies Transformable<T> for all thirteen T below.
+    // gives it Transform for all thirteen representations below, and the last of each
+    // dimension's group is the concept member of Transformable2D / Transformable3D.
 
     // Rotate a 2D shape about the origin.
     Transform(self: Deformable2D, transform: Rotation2D): Self
@@ -428,7 +436,7 @@ library Intervals
         => self.Deform(p => p.Transform(transform));
 
     // Apply a 2D TRS transform (scale, rotate, then translate).
-    Transform(self: Deformable2D, transform: Transform2D): Self
+    Transform(self: Deformable2D, transform: TrsTransform2D): Self
         => self.Deform(p => p.Transform(transform));
 
     // Apply a general 2D affine map
@@ -438,7 +446,7 @@ library Intervals
 
     // Apply a 2D homography. Precondition: no point of the shape maps onto the
     // line at infinity.
-    Transform(self: Deformable2D, transform: ProjectiveTransform2D): Self
+    Transform(self: Deformable2D, transform: Transform2D): Self
         => self.Deform(p => p.Transform(transform));
 
     // Rotate a 3D shape about the origin.
@@ -458,7 +466,7 @@ library Intervals
         => self.Deform(p => p.Transform(transform));
 
     // Apply a 3D TRS transform (scale, rotate, then translate).
-    Transform(self: Deformable3D, transform: Transform3D): Self
+    Transform(self: Deformable3D, transform: TrsTransform3D): Self
         => self.Deform(p => p.Transform(transform));
 
     // Apply a general 3D affine map.
@@ -467,7 +475,7 @@ library Intervals
 
     // Apply a 3D homography. Precondition: no point of the shape maps onto the
     // plane at infinity.
-    Transform(self: Deformable3D, transform: ProjectiveTransform3D): Self
+    Transform(self: Deformable3D, transform: Transform3D): Self
         => self.Deform(p => p.Transform(transform));
 
     // TODO(follow-up): the concrete per-type `Deform` bodies (InfiniteLine2D/3D,

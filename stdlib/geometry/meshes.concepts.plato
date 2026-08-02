@@ -69,7 +69,7 @@ concept TriangulatedGeometry3D
 // tower instantiated twice: a UV domain is the planar instantiation sharing its
 // index table with the spatial mesh it parameterizes. The named bindings are
 // where dimension arrives, and therefore where the dimensional capabilities
-// attach — PointSet, Bounded and Deformable. Transformable is NOT listed: a
+// attach — PointSet, Bounded and Deformable. Transformable3D is NOT listed: a
 // Deformable type already gets Transform for all thirteen transform
 // representations from `intervals.library.plato`.
 //

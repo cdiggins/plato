@@ -62,7 +62,7 @@ library Transforms
         => a.Matrix.Invert.X1;
 
     // Any TRS transform is affine.
-    AffineTransform2D(t: Transform2D): AffineTransform2D
+    AffineTransform2D(t: TrsTransform2D): AffineTransform2D
         => AffineTransform2D(t.Matrix3x2);
 
     // Any rigid pose is affine.
@@ -132,7 +132,7 @@ library Transforms
         => a.Matrix4x4.CanInvert;
 
     // Any TRS transform is affine.
-    AffineTransform3D(t: Transform3D): AffineTransform3D
+    AffineTransform3D(t: TrsTransform3D): AffineTransform3D
         => t.Matrix4x4.AffineTransform3D;
 
     // Any rigid pose is affine.
@@ -160,9 +160,9 @@ library Transforms
     }
 
     // Any 2D affine map is projective (third column becomes 0, 0, 1).
-    ProjectiveTransform2D(a: AffineTransform2D): ProjectiveTransform2D {
+    Transform2D(a: AffineTransform2D): Transform2D {
         var m = a.Matrix;
-        return ProjectiveTransform2D(Matrix3x3(
+        return Transform2D(Matrix3x3(
             Number3(m.Row1.X, m.Row1.Y, 0.0),
             Number3(m.Row2.X, m.Row2.Y, 0.0),
             Number3(m.Row3.X, m.Row3.Y, 1.0)));
@@ -171,46 +171,46 @@ library Transforms
     // Apply the homography: lift to homogeneous coordinates, map, and divide
     // by the resulting weight. Precondition: the point is not mapped onto the
     // line at infinity (weight is non-zero).
-    Transform(p: Point2D, t: ProjectiveTransform2D): Point2D {
+    Transform(p: Point2D, t: Transform2D): Point2D {
         var m = t.Matrix;
         var v = m.Row1 * p.X + m.Row2 * p.Y + m.Row3;
         return (v.X / v.Z, v.Y / v.Z);
     }
 
     // Alias for Transform with transform-on-left (* operator): t * p.
-    Multiply(t: ProjectiveTransform2D, p: Point2D): Point2D
+    Multiply(t: Transform2D, p: Point2D): Point2D
         => Transform(p, t);
 
     // The homography that applies `first`, then `second` (row-vector product).
-    Compose(first: ProjectiveTransform2D, second: ProjectiveTransform2D): ProjectiveTransform2D
-        => ProjectiveTransform2D(first.Matrix * second.Matrix);
+    Compose(first: Transform2D, second: Transform2D): Transform2D
+        => Transform2D(first.Matrix * second.Matrix);
 
     // Alias for Compose, enabling the * operator: a * b applies a first.
-    Multiply(a: ProjectiveTransform2D, b: ProjectiveTransform2D): ProjectiveTransform2D
+    Multiply(a: Transform2D, b: Transform2D): Transform2D
         => a.Compose(b);
 
     // Any 3D affine map is projective.
-    ProjectiveTransform3D(a: AffineTransform3D): ProjectiveTransform3D
-        => ProjectiveTransform3D(a.Matrix4x4);
+    Transform3D(a: AffineTransform3D): Transform3D
+        => Transform3D(a.Matrix4x4);
 
     // Apply the homography: lift to homogeneous coordinates, map, and divide
     // by the resulting weight. Precondition: the point is not mapped onto the
     // plane at infinity (weight is non-zero).
-    Transform(p: Point3D, t: ProjectiveTransform3D): Point3D {
+    Transform(p: Point3D, t: Transform3D): Point3D {
         var v = Number4(p.X, p.Y, p.Z, 1.0).Transform(t.Matrix);
         return (v.X / v.W, v.Y / v.W, v.Z / v.W);
     }
 
     // Alias for Transform with transform-on-left (* operator): t * p.
-    Multiply(t: ProjectiveTransform3D, p: Point3D): Point3D
+    Multiply(t: Transform3D, p: Point3D): Point3D
         => Transform(p, t);
 
     // The homography that applies `first`, then `second` (row-vector product).
-    Compose(first: ProjectiveTransform3D, second: ProjectiveTransform3D): ProjectiveTransform3D
-        => ProjectiveTransform3D(first.Matrix * second.Matrix);
+    Compose(first: Transform3D, second: Transform3D): Transform3D
+        => Transform3D(first.Matrix * second.Matrix);
 
     // Alias for Compose, enabling the * operator: a * b applies a first.
-    Multiply(a: ProjectiveTransform3D, b: ProjectiveTransform3D): ProjectiveTransform3D
+    Multiply(a: Transform3D, b: Transform3D): Transform3D
         => a.Compose(b);
 
     //==
@@ -744,11 +744,11 @@ library Transforms
         => (Point3D(0.0, 0.0, 0.0), Quaternion.Identity);
 
     // The TRS transform that leaves everything unchanged.
-    Identity(_: Transform2D): Transform2D
+    Identity(_: TrsTransform2D): TrsTransform2D
         => (Vector2D(0.0, 0.0), Rotation2D.Identity, Number2(1.0, 1.0));
 
     // The TRS transform that leaves everything unchanged.
-    Identity(_: Transform3D): Transform3D
+    Identity(_: TrsTransform3D): TrsTransform3D
         => (Vector3D(0.0, 0.0, 0.0), Quaternion.Identity, Number3(1.0, 1.0, 1.0));
 
     // The identity 2D affine map.
@@ -776,12 +776,12 @@ library Transforms
         => AffineTransform3D(Matrix4x3.Identity);
 
     // The identity 2D projective transform.
-    Identity(_: ProjectiveTransform2D): ProjectiveTransform2D
-        => ProjectiveTransform2D(Matrix3x3.Identity);
+    Identity(_: Transform2D): Transform2D
+        => Transform2D(Matrix3x3.Identity);
 
     // The identity 3D projective transform.
-    Identity(_: ProjectiveTransform3D): ProjectiveTransform3D
-        => ProjectiveTransform3D(Matrix4x4.Identity);
+    Identity(_: Transform3D): Transform3D
+        => Transform3D(Matrix4x4.Identity);
 
     //==
     // # Motor operations
@@ -1377,24 +1377,24 @@ library Transforms
     // compose them through their matrix or affine forms.
 
     // Apply the transform: scale, rotate, then translate.
-    Transform(p: Point2D, t: Transform2D): Point2D
+    Transform(p: Point2D, t: TrsTransform2D): Point2D
         => ((p.PositionVector * t.Scale).Transform(t.Rotation) + t.Translation).ToPoint;
 
     // Alias for Transform with transform-on-left (* operator): t * p.
-    Multiply(t: Transform2D, p: Point2D): Point2D
+    Multiply(t: TrsTransform2D, p: Point2D): Point2D
         => Transform(p, t);
 
     // Apply the scale and rotation to a displacement (translation does not act
     // on vectors).
-    Transform(v: Vector2D, t: Transform2D): Vector2D
+    Transform(v: Vector2D, t: TrsTransform2D): Vector2D
         => (v * t.Scale).Transform(t.Rotation);
 
     // Alias for Transform with transform-on-left (* operator): t * v.
-    Multiply(t: Transform2D, v: Vector2D): Vector2D
+    Multiply(t: TrsTransform2D, v: Vector2D): Vector2D
         => Transform(v, t);
 
     // The affine matrix of the transform: S * R * T in row-vector order.
-    Matrix3x2(t: Transform2D): Matrix3x2
+    Matrix3x2(t: TrsTransform2D): Matrix3x2
         => Matrix3x2.CreateScale(t.Scale) * t.Rotation.Matrix3x2
             * Matrix3x2.CreateTranslation(t.Translation);
 
@@ -1402,68 +1402,68 @@ library Transforms
     // (rotating a non-uniform scale leaves the TRS family); the product is the
     // matrix form of first-then-second, re-read as TRS with unit shear assumed.
     // Prefer AffineTransform2D.Compose when the result must stay exact.
-    Compose(first: Transform2D, second: Transform2D): AffineTransform2D
+    Compose(first: TrsTransform2D, second: TrsTransform2D): AffineTransform2D
         => AffineTransform2D(first).Compose(AffineTransform2D(second));
 
     // Alias for Compose, enabling the * operator: a * b applies a first.
     // Returns AffineTransform2D because TRS is not closed under composition.
-    Multiply(a: Transform2D, b: Transform2D): AffineTransform2D
+    Multiply(a: TrsTransform2D, b: TrsTransform2D): AffineTransform2D
         => a.Compose(b);
 
     // A rigid pose widened to a TRS transform with unit scale.
-    Transform2D(pose: Pose2D): Transform2D
+    TrsTransform2D(pose: Pose2D): TrsTransform2D
         => (pose.Position.PositionVector, pose.Rotation, Number2(1.0, 1.0));
 
     // The rigid part of the transform, discarding scale. Named Pose rather
     // than Pose2D because the conversion is lossy and must stay explicit.
-    Pose(t: Transform2D): Pose2D
+    Pose(t: TrsTransform2D): Pose2D
         => (t.Translation.ToPoint, t.Rotation);
 
     // Apply the transform: scale, rotate, then translate.
-    Transform(p: Point3D, t: Transform3D): Point3D
+    Transform(p: Point3D, t: TrsTransform3D): Point3D
         => ((p.PositionVector * t.Scale).Transform(t.Rotation) + t.Translation).ToPoint;
 
     // Alias for Transform with transform-on-left (* operator): t * p.
-    Multiply(t: Transform3D, p: Point3D): Point3D
+    Multiply(t: TrsTransform3D, p: Point3D): Point3D
         => Transform(p, t);
 
     // Apply the scale and rotation to a displacement.
-    Transform(v: Vector3D, t: Transform3D): Vector3D
+    Transform(v: Vector3D, t: TrsTransform3D): Vector3D
         => (v * t.Scale).Transform(t.Rotation);
 
     // Alias for Transform with transform-on-left (* operator): t * v.
-    Multiply(t: Transform3D, v: Vector3D): Vector3D
+    Multiply(t: TrsTransform3D, v: Vector3D): Vector3D
         => Transform(v, t);
 
     // The homogeneous matrix of the transform: S * R * T in row-vector order.
-    Matrix4x4(t: Transform3D): Matrix4x4
+    Matrix4x4(t: TrsTransform3D): Matrix4x4
         => Matrix4x4.CreateScale(t.Scale) * t.Rotation.Matrix4x4
             * Matrix4x4.CreateTranslation(t.Translation);
 
     // Compose through the matrix product, then re-decompose into TRS.
     // Precondition: the product is a scale-rotate-translate composition
-    // (Decompose succeeds); shear is not representable as Transform3D.
-    Compose(first: Transform3D, second: Transform3D): Transform3D
-        => Transform3D(first.Matrix4x4 * second.Matrix4x4);
+    // (Decompose succeeds); shear is not representable as TrsTransform3D.
+    Compose(first: TrsTransform3D, second: TrsTransform3D): TrsTransform3D
+        => TrsTransform3D(first.Matrix4x4 * second.Matrix4x4);
 
     // Alias for Compose, enabling the * operator: a * b applies a first.
-    Multiply(a: Transform3D, b: Transform3D): Transform3D
+    Multiply(a: TrsTransform3D, b: TrsTransform3D): TrsTransform3D
         => a.Compose(b);
 
     // The TRS decomposition of a matrix. Precondition: the matrix is a
     // scale-rotate-translate composition (Decompose succeeds); shear and
     // projection are not representable.
-    Transform3D(m: Matrix4x4): Transform3D {
+    TrsTransform3D(m: Matrix4x4): TrsTransform3D {
         var d = m.Decompose;
         return (d.X2, d.X1, d.X0);
     }
 
     // A rigid pose widened to a TRS transform with unit scale.
-    Transform3D(pose: Pose3D): Transform3D
+    TrsTransform3D(pose: Pose3D): TrsTransform3D
         => (pose.Position.PositionVector, pose.Orientation, Number3(1.0, 1.0, 1.0));
 
     // The rigid part of the transform, discarding scale. Named Pose rather
     // than Pose3D because the conversion is lossy and must stay explicit.
-    Pose(t: Transform3D): Pose3D
+    Pose(t: TrsTransform3D): Pose3D
         => (t.Translation.ToPoint, t.Rotation);
 }

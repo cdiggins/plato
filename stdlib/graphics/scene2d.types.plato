@@ -36,7 +36,7 @@ type SceneNode2D
 {
     Name: String;
     Parent: SceneNodeIndex2D;
-    Transform: Transform2D;
+    Transform: TrsTransform2D;
     Opacity: Proportion;
     Blend: BlendMode;
     Visible: Boolean;

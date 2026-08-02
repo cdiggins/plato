@@ -19,6 +19,12 @@
 // belongs here. Each is a thin wrapper over the matrix that carries it
 // (`matrices.types.plato`); the operations live in
 // `transforms.library.plato`.
+//
+// The projective types carry the UNQUALIFIED names `Transform2D` / `Transform3D`
+// because they are the widest map of their dimension: every other representation
+// converts into one, so they are what `Transformable2D` / `Transformable3D`
+// (`transforms.concepts.plato`) accept. The narrower families are named for what
+// narrows them — `AffineTransform*D`, `TrsTransform*D`, `Pose*D`.
 
 // A general 2D affine map: any composition of linear maps and translations
 // (https://en.wikipedia.org/wiki/Affine_transformation).
@@ -36,17 +42,19 @@ type AffineTransform3D
     Matrix: Matrix4x3;
 }
 
-// A full 2D projective map (homography), operating on homogeneous coordinates
+// A full 2D projective map (homography), operating on homogeneous coordinates:
+// the widest transform of the plane, and the one `Transformable2D` carries
 // (https://en.wikipedia.org/wiki/Homography).
-type ProjectiveTransform2D
+type Transform2D
     implements Value
 {
     Matrix: Matrix3x3;
 }
 
 // A full 3D projective map, operating on homogeneous coordinates; includes
-// perspective projections (https://en.wikipedia.org/wiki/Homography).
-type ProjectiveTransform3D
+// perspective projections. The widest transform of space, and the one
+// `Transformable3D` carries (https://en.wikipedia.org/wiki/Homography).
+type Transform3D
     implements Value
 {
     Matrix: Matrix4x4;
@@ -150,7 +158,7 @@ type Pose3D
 
 // A translate-rotate-scale transform in 2D, applied scale first, then rotation,
 // then translation.
-type Transform2D
+type TrsTransform2D
     implements Value, Affine2D
 {
     Translation: Vector2D;
@@ -160,7 +168,7 @@ type Transform2D
 
 // A translate-rotate-scale transform in 3D, applied scale first, then rotation,
 // then translation.
-type Transform3D
+type TrsTransform3D
     implements Value, Affine3D
 {
     Translation: Vector3D;

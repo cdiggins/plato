@@ -28,7 +28,7 @@ type SceneNode3D
 {
     Name: String;
     Parent: SceneNodeIndex3D;
-    Transform: Transform3D;
+    Transform: TrsTransform3D;
     Visible: Boolean;
     Mesh: MeshIndex;
     Material: MaterialIndex;
@@ -217,7 +217,7 @@ type MeshInstance
 {
     Mesh: MeshIndex;
     Material: MaterialIndex;
-    Transform: Transform3D;
+    Transform: TrsTransform3D;
 }
 
 // Many placed copies of one mesh (hardware instancing). Mesh and Material
@@ -229,7 +229,7 @@ type InstanceSet
 {
     Mesh: MeshIndex;
     Material: MaterialIndex;
-    Transforms: Array<Transform3D>;
+    Transforms: Array<TrsTransform3D>;
     Colors: Array<Color>;
 }
 

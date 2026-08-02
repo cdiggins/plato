@@ -1,8 +1,9 @@
 //==
 // # Transform concepts
 //
-// The concepts that mark a value as carryable through a transform: Transformable
-// for a named transform type, Deformable2D/3D for an arbitrary point mapping.
+// The concepts that mark a value as carryable through a transform:
+// Transformable2D/3D for the general transform of a dimension, Deformable2D/3D
+// for an arbitrary point mapping.
 // Also the concepts that mark a transform representation by the canonical form
 // it converts into: Affine2D/Affine3D for the general affine transform of a
 // dimension, Rotational3D for the unit quaternion.
@@ -34,10 +35,20 @@
 //   lists the axes in application order (first-applied first), about fixed
 //   world axes.
 
-// Can be carried through a transform of type TTransform, yielding a new Self.
-concept Transformable<TTransform>
+// Can be carried through any transform of the plane, yielding a new Self.
+// Transform2D is the widest 2D map (`transforms.types.plato`), so every other
+// representation reaches this one member by converting up to it.
+concept Transformable2D
 {
-    Transform(x: Self, transform: TTransform): Self;
+    Transform(x: Self, transform: Transform2D): Self;
+}
+
+// Can be carried through any transform of space, yielding a new Self.
+// Transform3D is the widest 3D map (`transforms.types.plato`), so every other
+// representation reaches this one member by converting up to it.
+concept Transformable3D
+{
+    Transform(x: Self, transform: Transform3D): Self;
 }
 
 // Can be deformed by an arbitrary 2D point mapping.
