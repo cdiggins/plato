@@ -193,7 +193,8 @@ effectively free.
 - **STY005** (Error) — more than one kind of declaration in a file, or a kind contradicting the
   file's `.concepts.` / `.types.` / `.library.` name suffix.
 - **STY004 / STY006** (Warning) — doc-comment blocks over 12 lines (file header exempt); more than
-  12 top-level declarations per file.
+  64 top-level declarations per file. The declaration cap is deliberately loose: it catches a file
+  that has stopped being about one subject, and is not a reason to split a cohesive design.
 
 STY001/002/003/005 are the ones that prevent a file from having a working generated form; treat
 them as hard errors.

@@ -25,12 +25,14 @@ namespace Ara3D.Geometry.Navigation;
 ///   STY005 (Error)   - more than one declaration kind in a file, or a kind that contradicts the
 ///                      file's `.concepts.` / `.types.` / `.library.` suffix. One kind per file
 ///                      is the re-partition invariant that makes a file's name tell its contents.
-///   STY006 (Warning) - more than 12 top-level declarations in a file (the re-partition cap).
+///   STY006 (Warning) - more than 64 top-level declarations in a file (the re-partition cap).
+///                      Set high enough that a file is flagged only when it has stopped being one
+///                      subject; a cohesive design is not split to satisfy a count.
 /// </summary>
 public static class StyleChecker
 {
     public const int MaxFields = 10;
-    public const int MaxDeclarations = 12;
+    public const int MaxDeclarations = 64;
     public const int MaxDocCommentLines = 12;
 
     private static readonly Regex NewToken = new(@"\bNew\b", RegexOptions.Compiled);

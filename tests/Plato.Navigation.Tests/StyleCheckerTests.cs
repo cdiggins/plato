@@ -73,13 +73,13 @@ public static class StyleCheckerTests
     }
 
     [Test]
-    public static void DeclarationCountCapsAtTwelve()
+    public static void DeclarationCountCapsAtMaxDeclarations()
     {
         static string Decls(int n)
             => string.Join("\n", Enumerable.Range(1, n).Select(i => $"type T{i} {{ A: Number; }}"));
 
-        Assert.That(Codes(Decls(12)), Has.No.Member("STY006"));
-        Assert.That(Codes(Decls(13)), Has.Member("STY006"));
+        Assert.That(Codes(Decls(StyleChecker.MaxDeclarations)), Has.No.Member("STY006"));
+        Assert.That(Codes(Decls(StyleChecker.MaxDeclarations + 1)), Has.Member("STY006"));
     }
 
     /// <summary>Not a gate: prints the current stdlib's style-finding profile so a threshold change

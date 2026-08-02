@@ -3,9 +3,9 @@
 //
 // The whole layered vocabulary of mesh-like geometry: the three generic layers,
 // the collection, and the named bindings that pin them to concrete primitives.
-// Kept in one file deliberately, above the STY006 declaration cap — the layers
-// and their bindings are one design, and splitting them hid the correspondence
-// between a layer and the names that instantiate it.
+// Kept in one file deliberately — the layers and their bindings are one design,
+// and splitting them hid the correspondence between a layer and the names that
+// instantiate it.
 //
 // Layer 0 is the vertex data as a view, layer 1 the primitives as a view, and
 // layer 2 the indexed storage those primitives are gathered from. Layer 1 is the

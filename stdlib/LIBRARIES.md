@@ -27,7 +27,8 @@ below now genuinely covers these library bodies — which it did **not** while t
    now a sibling `.library.plato` file with the same stem, not the declaration file itself.
 
    A work *package* may therefore span several library files - P1 is five files, P7 is nine -
-   because the twelve-declaration-per-file cap applies to libraries too. Fifty-four of them
+   because a package's bodies are grouped by the subject they serve, not packed into one file
+   until a cap complains. Fifty-four of them
    belong to the P1–P9 packages below; the rest serve foundation domains or
    carry concrete per-type bodies and are listed in "Libraries outside the package table".
 2. **Function form**: `Name(self: ConceptName, ...): ReturnType => expression;` — first

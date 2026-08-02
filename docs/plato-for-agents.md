@@ -38,8 +38,9 @@ Paths below are relative to this submodule (`submodules/Plato/`).
 **Stdlib mapping:** `stdlib` = forward vocabulary (the next-generation library); `stdlib-legacy` =
 shipping generation (drives `Plato.Generated` / Studio).
 
-In `stdlib/`, one file holds exactly one **kind** of declaration and at most twelve top-level
-declarations: `<stem>.plato` = types, `<stem>.concepts.plato` = concepts, `<stem>.library.plato` =
+In `stdlib/`, one file holds exactly one **kind** of declaration, under a loose per-file
+declaration cap (STY006 — see [`stdlib/VERIFICATION.md`](../stdlib/VERIFICATION.md) for the
+number): `<stem>.plato` = types, `<stem>.concepts.plato` = concepts, `<stem>.library.plato` =
 exactly one `library` block. Files sit directly in the tier folders (`foundation`, `geometry`,
 `graphics`, `future`) described by [`stdlib/README.md`](../stdlib/README.md).
 
