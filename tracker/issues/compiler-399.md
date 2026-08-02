@@ -2,14 +2,14 @@
 id: compiler-399
 title: Single-field mirror emits unsound implicit operators in generated C#
 type: problem
-status: ready
+status: done
 priority: p2
 effort: M
 risk: med
 area: compiler
 sprint: 
 created: 2026-08-02
-closed:
+closed: 2026-08-02
 links: []
 ---
 
@@ -81,8 +81,27 @@ partial view of what the shipped C# actually coerces.
    visible and cannot grow unnoticed. This does not fix the unsoundness but stops it spreading,
    and is independent of 1 and 2.
 
+## Resolution (2026-08-02, `1105851`)
+
+Option 1 was taken in its stronger form: the inbound direction is **not emitted at all** rather
+than demoted to `explicit`. An explicit operator would still be a nameless door — for
+`Direction2D` it reads as routine while asserting normalization — and it would be ambiguous
+(CS0457) against a Plato-declared implicit conversion for the same pair.
+
+The deciding fact is that the LANGUAGE never had the inbound conversion: `SymbolFactory`
+synthesizes only the unwrap cast for a one-field type and a constructor for the wrap, so
+`ComputeCasts` holds no wrap relation. Emitting one made the C# coerce where Plato does not.
+Removing it also un-suppressed genuine declared casts: `CSharpTypeWriter` used to skip
+`Angle(x: Number): Angle` because the shape mirror covered the pair, so the pinned
+`Number -> Angle` relation had no C# counterpart of its own. It does now, in `_Number.g.cs`.
+
+Fallout was nil — no stdlib body was leaning on the nameless wrap.
+
 ## Done means
 
-- [ ] A decision is recorded in `tracker/decisions/` on which directions the field mirror may emit
-- [ ] Generated C# matches that decision
-- [ ] The pin (or a sibling pin) covers writer-emitted implicit operators, not only Plato-declared casts
+- [x] A decision is recorded in `tracker/decisions/` on which directions the field mirror may emit
+      — [`2026-08-02-single-field-mirror-unwraps-only.md`](../decisions/2026-08-02-single-field-mirror-unwraps-only.md)
+- [x] Generated C# matches that decision — both shipping-tier regens carry unwrap only
+- [x] The pin (or a sibling pin) covers writer-emitted implicit operators, not only Plato-declared
+      casts — `tests/PlatoTests/EmittedConversionInventoryTests.cs` inventories the conversion
+      operators the writer emits, read out of the emitted text rather than the cast relations
