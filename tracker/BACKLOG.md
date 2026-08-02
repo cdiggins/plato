@@ -31,6 +31,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [stdlib-398](issues/stdlib-398.md) | Law packet moved into stdlib/ breaks the checker ratchet | bug | p2 | S | low | stdlib | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
+| [stdlib-400](issues/stdlib-400.md) | Corpus-floor assertion stale after the stdlib file consolidation | bug | p3 | S | low | stdlib | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
 | [plato-028](issues/plato-028.md) | Consumer-driven refactoring direction (Earcut gaps, query vocabulary, topology) | feature | p2 | L | med | plato | idea |  |
