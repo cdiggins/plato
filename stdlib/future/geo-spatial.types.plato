@@ -20,7 +20,7 @@
 // the longitude band traveling eastward from West to East. West greater than
 // East encodes a region crossing the antimeridian.
 type GeoBounds
-    implements GeoRegion
+    implements IGeoRegion
 {
     South: Angle;
     North: Angle;
@@ -40,7 +40,7 @@ type GeoPath
 // the first); the boundary winds counter-clockwise seen from above, holes
 // clockwise.
 type GeoPolygon
-    implements GeoRegion
+    implements IGeoRegion
 {
     Boundary: GeoPath;
     Holes: Array<GeoPath>;
@@ -50,7 +50,7 @@ type GeoPolygon
 // geodetic coordinates.
 // (https://en.wikipedia.org/wiki/Great-circle_distance)
 type GeoSegment
-    implements Value
+    implements IValue
 {
     Start: GeoCoordinate;
     End: GeoCoordinate;
@@ -59,7 +59,7 @@ type GeoSegment
 // A circular region on the planet's surface: all points within a geodesic
 // distance Radius of Center, measured along the surface.
 type GeoCircle
-    implements GeoRegion
+    implements IGeoRegion
 {
     Center: GeoCoordinate;
     Radius: Length;
@@ -71,7 +71,7 @@ type GeoCircle
 // A navigation heading measured clockwise from true north.
 // (https://en.wikipedia.org/wiki/Bearing_(navigation))
 type CompassBearing
-    implements Value
+    implements IValue
 {
     Angle: Angle;
 }
@@ -81,7 +81,7 @@ type CompassBearing
 // (positive right-wing-down).
 // (https://en.wikipedia.org/wiki/Aircraft_principal_axes)
 type GeoPose
-    implements Value
+    implements IValue
 {
     Position: GeoCoordinate;
     Heading: CompassBearing;
@@ -112,7 +112,7 @@ type ElevationGrid
 // PixelWidth per column; northing shrinks by PixelHeight per row.
 // (https://en.wikipedia.org/wiki/World_file)
 type GeoTransform
-    implements Value
+    implements IValue
 {
     OriginEasting: Length;
     OriginNorthing: Length;
@@ -125,7 +125,7 @@ type GeoTransform
 // northernmost row.
 // (https://en.wikipedia.org/wiki/Tiled_web_map)
 type MapTileIndex
-    implements Value, Hashable
+    implements IValue, IHashable
 {
     Zoom: Integer;
     Column: Integer;
@@ -147,7 +147,7 @@ type MapTileIndex
 // (a / (a - b); WGS84 uses 298.257223563).
 // (https://en.wikipedia.org/wiki/Earth_ellipsoid)
 type ReferenceEllipsoid
-    implements Value
+    implements IValue
 {
     SemiMajorAxis: Length;
     InverseFlattening: Number;
@@ -192,7 +192,7 @@ type MapProjection
 // southern hemisphere half.
 // (https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system)
 type UtmZone
-    implements Value
+    implements IValue
 {
     ZoneNumber: Integer;
     NorthernHemisphere: Boolean;
@@ -206,7 +206,7 @@ type UtmZone
 // when the projection is not zonal.
 // (https://en.wikipedia.org/wiki/Projected_coordinate_system)
 type ProjectedCoordinate
-    implements Value
+    implements IValue
 {
     Easting: Length;
     Northing: Length;
@@ -218,7 +218,7 @@ type ProjectedCoordinate
 // north pole, Y completing the right-handed frame.
 // (https://en.wikipedia.org/wiki/Earth-centered,_Earth-fixed_coordinate_system)
 type EcefCoordinate
-    implements Value
+    implements IValue
 {
     X: Length;
     Y: Length;
@@ -229,7 +229,7 @@ type EcefCoordinate
 // in the local horizontal plane, Up is along the ellipsoid normal.
 // (https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates)
 type EnuCoordinate
-    implements Value
+    implements IValue
 {
     East: Length;
     North: Length;

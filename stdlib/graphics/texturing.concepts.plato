@@ -8,8 +8,8 @@
 // A pattern evaluated directly at a UV coordinate instead of stored texels.
 // Implementations are resolution-independent and infinitely tileable unless
 // documented otherwise. (https://en.wikipedia.org/wiki/Procedural_texture)
-concept ProceduralTexture
-    inherits Value
+interface IProceduralTexture
+    inherits IValue
 {
     ColorAt(x: Self, uv: UvCoordinate): Color;
 }

@@ -149,7 +149,7 @@ library Transforms
     // https://en.wikipedia.org/wiki/Homography
 
     // The product of two 3x3 matrices (row times column). Also discharges the
-    // Multiplicative obligation on Matrix3x3.
+    // IMultiplicative obligation on Matrix3x3.
     Multiply(a: Matrix3x3, b: Matrix3x3): Matrix3x3 {
         var c1 = Number3(b.Row1.X, b.Row2.X, b.Row3.X);
         var c2 = Number3(b.Row1.Y, b.Row2.Y, b.Row3.Y);
@@ -219,7 +219,7 @@ library Transforms
     // The single-purpose transforms of `transforms.types.plato` — translation,
     // scaling, reflection, and the about-a-centre forms. Each one names what it
     // does instead of hiding it in a matrix, and each converts into the affine
-    // transform of its dimension (its `Affine2D` / `Affine3D` obligation), which
+    // transform of its dimension (its `IAffine2D` / `IAffine3D` obligation), which
     // is where transforms of different kinds are composed.
 
     //==
@@ -790,8 +790,8 @@ library Transforms
     // application for the rigid-motion motors of `transforms.types.plato`.
 
     //==
-    // Motors — rigid motions in dual-quaternion form. Real carries the
-    // rotation; Dual = 0.5 * t * Real carries the translation t (all products
+    // Motors — rigid motions in dual-quaternion form. IReal carries the
+    // rotation; Dual = 0.5 * t * IReal carries the translation t (all products
     // Hamilton). https://en.wikipedia.org/wiki/Dual_quaternion
 
     // The motor of a rigid pose.
@@ -802,7 +802,7 @@ library Transforms
     }
 
     // The pose of a motor: rotation from the real part, translation
-    // t = 2 * Dual * conjugate(Real).
+    // t = 2 * Dual * conjugate(IReal).
     Pose3D(m: Motor3D): Pose3D {
         var q = m.Real.Normalize;
         var t = m.Dual * 2.0 * q.Conjugate;
@@ -872,13 +872,13 @@ library Transforms
     //==
     // # Point support
     //
-    // The Difference obligations of Point2D/Point3D, point interpolation, and the
+    // The IDifference obligations of Point2D/Point3D, point interpolation, and the
     // explicit point <-> vector converters that every other transform library builds
     // on. Kept separate from the representations because nothing here depends on a
     // transform type.
 
     //==
-    // Point support — the OriginBased conversions of Point2D/Point3D/PointN, and
+    // Point support — the IOriginBased conversions of Point2D/Point3D/PointN, and
     // the explicit point <-> vector converters spelled in the direction callers
     // read them.
     //
@@ -919,7 +919,7 @@ library Transforms
     //==
     // The named point <-> vector converters. These are the long-standing spelling
     // (curves-shapes.library.plato and the transform libraries call PositionVector);
-    // they now delegate to the OriginBased conversions rather than restating the
+    // they now delegate to the IOriginBased conversions rather than restating the
     // field copy, so there is one place where a point becomes a vector.
     // ToPoint reads in the opposite direction from FromOffset — it dispatches on
     // the VECTOR, which is what callers holding a vector want.
@@ -1038,12 +1038,12 @@ library Transforms
         => (m.Translation.ToPoint, m.Rotation);
 
     //==
-    // Rigid conversions — the Pose obligations of `Rigid2D` / `Rigid3D`. Each
+    // Rigid conversions — the Pose obligations of `IRigid2D` / `IRigid3D`. Each
     // rigid representation names the pose it is: a translation is a pose with
     // the identity rotation, a rotation is a pose at the origin, a
     // rotation-about-a-centre is the conjugation of the two. Composition and
     // inversion of any two rigid transforms stay inside the family, which is
-    // what the concept buys over Affine2D/Affine3D.
+    // what the concept buys over IAffine2D/IAffine3D.
 
     // A translation is the pose at that offset with no rotation.
     Pose2D(t: Translation2D): Pose2D
@@ -1063,7 +1063,7 @@ library Transforms
 
     // Any 3D rotation representation is the pose at the origin with its
     // quaternion; this one body serves AxisAngle, EulerAngles and Rotor3D.
-    Pose3D(r: Rotational3D): Pose3D
+    Pose3D(r: IRotational3D): Pose3D
         => r.Quaternion.Pose3D;
 
     // Rotating about a centre: translate the centre to the origin, rotate,
@@ -1082,21 +1082,21 @@ library Transforms
 
     // Any rigid transform is affine, through the pose it names. Concrete
     // conversions on the individual types take precedence over this one.
-    AffineTransform2D(x: Rigid2D): AffineTransform2D
+    AffineTransform2D(x: IRigid2D): AffineTransform2D
         => x.Pose2D.AffineTransform2D;
 
     // Any rigid transform is affine, through the pose it names.
-    AffineTransform3D(x: Rigid3D): AffineTransform3D
+    AffineTransform3D(x: IRigid3D): AffineTransform3D
         => x.Pose3D.AffineTransform3D;
 
     // Rigid transforms are closed under composition: apply `first`, then
     // `second`, with no matrix round-trip and no drift out of the family.
-    Compose(first: Rigid2D, second: Rigid2D): Pose2D
+    Compose(first: IRigid2D, second: IRigid2D): Pose2D
         => first.Pose2D.Compose(second.Pose2D);
 
     // Rigid transforms are closed under composition: apply `first`, then
     // `second`.
-    Compose(first: Rigid3D, second: Rigid3D): Pose3D
+    Compose(first: IRigid3D, second: IRigid3D): Pose3D
         => first.Pose3D.Compose(second.Pose3D);
 
     //==

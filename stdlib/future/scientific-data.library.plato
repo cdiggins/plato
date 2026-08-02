@@ -1,53 +1,53 @@
 //==
-// # ScientificData — derived functions for TimeSampled
+// # ScientificData — derived functions for ITimeSampled
 //
-// Bodies for the `TimeSampled` concept declared in
+// Bodies for the `ITimeSampled` concept declared in
 // `scientific-data.concepts.plato`: a time-indexed collection of SampleCount
 // samples, each with a TimeAt(index). The helpers are the emptiness,
 // index-validity and endpoint-time summaries; sample times are Instants, so a
-// span is their Difference (a Duration). Pure expressions only; all inputs are
+// span is their IDifference (a Duration). Pure expressions only; all inputs are
 // immutable and evaluation is side-effect free. See `README.md` for naming and
 // unit conventions.
 
 library ScientificData
 {
     //==
-    // # TimeSampled
+    // # ITimeSampled
     //
     // A time-indexed collection: SampleCount samples, each with a TimeAt(index).
-    // Times are Instants, so a span is their Difference (a Duration).
+    // Times are Instants, so a span is their IDifference (a Duration).
 
     // True when the collection holds no samples.
-    IsEmpty(self: TimeSampled): Boolean
+    IsEmpty(self: ITimeSampled): Boolean
         => self.SampleCount == 0;
 
     // True when the collection holds at least one sample.
-    IsNotEmpty(self: TimeSampled): Boolean
+    IsNotEmpty(self: ITimeSampled): Boolean
         => self.SampleCount > 0;
 
     // The index of the last sample (SampleCount - 1); negative when empty.
-    LastSampleIndex(self: TimeSampled): Integer
+    LastSampleIndex(self: ITimeSampled): Integer
         => self.SampleCount - 1;
 
     // True when index addresses a real sample, within [0, SampleCount).
-    IsValidSampleIndex(self: TimeSampled, index: Integer): Boolean
+    IsValidSampleIndex(self: ITimeSampled, index: Integer): Boolean
         => index >= 0 && index < self.SampleCount;
 
     // The time of the first sample. Precondition: the collection is not empty.
-    FirstTime(self: TimeSampled): Instant
+    FirstTime(self: ITimeSampled): Instant
         => self.TimeAt(0);
 
     // The time of the last sample. Precondition: the collection is not empty.
-    LastTime(self: TimeSampled): Instant
+    LastTime(self: ITimeSampled): Instant
         => self.TimeAt(self.SampleCount - 1);
 
     // The elapsed span from the first to the last sample. Precondition: the
     // collection is not empty.
-    TimeSpan(self: TimeSampled): Duration
+    TimeSpan(self: ITimeSampled): Duration
         => self.TimeAt(0).Between(self.TimeAt(self.SampleCount - 1));
 
     //==
-    // # The TimeSampled fills
+    // # The ITimeSampled fills
     //
     // Two shapes: a uniform series computes its sample times from Start and
     // SamplePeriod, and an irregular one stores them. The derived surface above

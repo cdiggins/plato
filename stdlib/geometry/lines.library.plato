@@ -17,7 +17,7 @@ library Lines
     //
     // Conventions:
     //   * `Bounds` for the two segment types comes from the generic
-    //     `Bounds(PointSet2D/3D)` in `geometry.library.plato`; nothing here
+    //     `Bounds(IPointSet2D/3D)` in `geometry.library.plato`; nothing here
     //     respells it.
     //   * Every `Direction` field is a UNIT vector by its type invariant, so the
     //     projection formulas below divide by no length.
@@ -239,7 +239,7 @@ library Lines
     //     ("for closed shapes the boundary counts as inside") and the `<=` in each
     //     declaration's own doc comment.
     //   * `ClosestPoint` on a REGION (half-plane, half-space) returns the query point
-    //     itself when the query is inside, as `NearestPoint2D`/`3D` permits.
+    //     itself when the query is inside, as `INearestPoint2D`/`3D` permits.
     //   * The signed distance of a point p from the world origin along a unit normal n
     //     is Dot(n, p) — written `p.PositionVector.Dot(n.Vector)` here, since a point
     //     is not a vector in this vocabulary (`transforms.library.plato`).
@@ -460,7 +460,7 @@ library Lines
                 Number4(d * l.X, d * l.Y, d * l.Z, k));
     }
 
-    // The Hashable obligation Plane inherits through Geometry -> Value. Both
+    // The IHashable obligation Plane inherits through IGeometry -> IValue. Both
     // fields participate in the digest, following the VertexPair / Chromaticity
     // pattern; the compiler does not derive Hash.
     Hash(pl: Plane): Integer
@@ -471,7 +471,7 @@ library Lines
     //
     // A slab is the preimage of a closed number interval under the linear map
     // p -> Dot(Normal, p), so containment is exactly interval containment.
-    // `Contains(IntervalLike, value)` (P4) is endpoint-inclusive and assumes the
+    // `Contains(IIntervalLike, value)` (P4) is endpoint-inclusive and assumes the
     // interval is stored forward (Start <= End), which is the slab's own invariant.
 
     // True when the point's signed distance along Normal lies within Interval.

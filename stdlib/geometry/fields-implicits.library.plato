@@ -2,7 +2,7 @@
 // # Fields implicits
 //
 // Sections, in order:
-//  - Field evaluation and scalar/vector queries
+//  - IField evaluation and scalar/vector queries
 //  - Differentiable field bodies
 //  - Signed distance and membership queries
 //  - Constant and function-valued field algebra
@@ -15,18 +15,18 @@
 library FieldsImplicits
 {
     //==
-    // # Field evaluation and scalar/vector queries
+    // # IField evaluation and scalar/vector queries
     //
-    // Bodies for the root `Field` concept and the plain scalar and vector fields
+    // Bodies for the root `IField` concept and the plain scalar and vector fields
     // declared in `fields.concepts.plato`. Every field inherits
-    // `Procedural<TDomain, TRange>`, whose sole operation is `Eval(x, input)`. The
+    // `IProcedural<TDomain, TRange>`, whose sole operation is `Eval(x, input)`. The
     // generic `ValueAt` below names that evaluation for every field;
     // concept-specific helpers exist only where they carry semantic weight beyond
     // respelling Eval (sign and level-set queries, magnitude, flow direction). See
     // `README.md` for naming and unit conventions.
 
     //==
-    // # Field<TDomain, TValue>
+    // # IField<TDomain, TValue>
     //
     // The root spatial-field capability: a pure mapping from a domain position to
     // a value. Only `Eval` is available, so the single helper is a readable alias
@@ -34,121 +34,121 @@ library FieldsImplicits
     // which is why those concepts add no pure-evaluation alias of their own.
 
     // The field's value at a domain position; a readable spelling of Eval.
-    ValueAt(self: Field<$TDomain, $TValue>, point: $TDomain): $TValue
+    ValueAt(self: IField<$TDomain, $TValue>, point: $TDomain): $TValue
         => self.Eval(point);
 
     //==
-    // # ScalarField2D
+    // # IScalarField2D
     //
     // A real-valued field over the plane. Level-set membership and sign queries
     // are the natural derived surface over a bare scalar evaluation
     // (https://en.wikipedia.org/wiki/Level_set).
     // TODO(concept-gap): a numeric finite-difference gradient would need to sample
     // the field at points offset from `point`, but no sanctioned Point2D offset
-    // operation is in scope here (Difference.Add needs a Vector2D that Coordinate
-    // cannot supply); use DifferentiableScalarField2D for gradients instead.
+    // operation is in scope here (IDifference.Add needs a Vector2D that ICoordinate
+    // cannot supply); use IDifferentiableScalarField2D for gradients instead.
 
     // True where the field is strictly positive at the point. Note: values within
     // rounding of zero classify by sign noise; use IsNearLevelAt for a balanced,
     // tolerance-based test around a level.
-    IsPositiveAt(self: ScalarField2D, point: Point2D): Boolean
+    IsPositiveAt(self: IScalarField2D, point: Point2D): Boolean
         => self.Eval(point) > 0.0;
 
     // True where the field is strictly negative at the point. Note: near-zero
     // values classify by sign noise; use IsNearLevelAt around zero for balance.
-    IsNegativeAt(self: ScalarField2D, point: Point2D): Boolean
+    IsNegativeAt(self: IScalarField2D, point: Point2D): Boolean
         => self.Eval(point) < 0.0;
 
     // True where the field's value at the point is at or above level: the closed
     // super-level-set membership test { p : field(p) >= level }.
-    IsAtOrAboveLevel(self: ScalarField2D, point: Point2D, level: Number): Boolean
+    IsAtOrAboveLevel(self: IScalarField2D, point: Point2D, level: Number): Boolean
         => self.Eval(point) >= level;
 
     // True where the field's value at the point is within tolerance of level: a
     // balanced test for the level set. Precondition: tolerance is non-negative.
-    IsNearLevelAt(self: ScalarField2D, point: Point2D, level: Number, tolerance: Number): Boolean
+    IsNearLevelAt(self: IScalarField2D, point: Point2D, level: Number, tolerance: Number): Boolean
         => (self.Eval(point) - level).Abs <= tolerance;
 
     //==
-    // # ScalarField3D
+    // # IScalarField3D
     //
     // A real-valued field over space. Mirrors the planar sign and level-set
     // queries above.
 
     // True where the field is strictly positive at the point. Note: near-zero
     // values classify by sign noise; prefer IsNearLevelAt for a balanced test.
-    IsPositiveAt(self: ScalarField3D, point: Point3D): Boolean
+    IsPositiveAt(self: IScalarField3D, point: Point3D): Boolean
         => self.Eval(point) > 0.0;
 
     // True where the field is strictly negative at the point. Note: near-zero
     // values classify by sign noise; prefer IsNearLevelAt for a balanced test.
-    IsNegativeAt(self: ScalarField3D, point: Point3D): Boolean
+    IsNegativeAt(self: IScalarField3D, point: Point3D): Boolean
         => self.Eval(point) < 0.0;
 
     // True where the field's value at the point is at or above level: the closed
     // super-level-set membership test.
-    IsAtOrAboveLevel(self: ScalarField3D, point: Point3D, level: Number): Boolean
+    IsAtOrAboveLevel(self: IScalarField3D, point: Point3D, level: Number): Boolean
         => self.Eval(point) >= level;
 
     // True where the field's value at the point is within tolerance of level.
     // Precondition: tolerance is non-negative.
-    IsNearLevelAt(self: ScalarField3D, point: Point3D, level: Number, tolerance: Number): Boolean
+    IsNearLevelAt(self: IScalarField3D, point: Point3D, level: Number, tolerance: Number): Boolean
         => (self.Eval(point) - level).Abs <= tolerance;
 
     //==
-    // # VectorField2D
+    // # IVectorField2D
     //
     // A planar vector field. Evaluation itself is the generic ValueAt; the helpers
     // here project the sampled vector to scalar and direction summaries.
 
     // The length of the sampled vector: flow speed or displacement magnitude.
-    MagnitudeAt(self: VectorField2D, point: Point2D): Number
+    MagnitudeAt(self: IVectorField2D, point: Point2D): Number
         => self.Eval(point).Magnitude;
 
     // The unit flow direction of the sampled vector. Precondition: the field is
     // non-zero at the point.
-    FlowDirectionAt(self: VectorField2D, point: Point2D): Vector2D
+    FlowDirectionAt(self: IVectorField2D, point: Point2D): Vector2D
         => self.Eval(point).Normalize;
 
     //==
-    // # VectorField3D
+    // # IVectorField3D
     //
     // A spatial vector field. Mirrors the planar magnitude and flow-direction
     // helpers.
 
     // The length of the sampled vector: flow speed or displacement magnitude.
-    MagnitudeAt(self: VectorField3D, point: Point3D): Number
+    MagnitudeAt(self: IVectorField3D, point: Point3D): Number
         => self.Eval(point).Magnitude;
 
     // The unit flow direction of the sampled vector. Precondition: the field is
     // non-zero at the point.
-    FlowDirectionAt(self: VectorField3D, point: Point3D): Vector3D
+    FlowDirectionAt(self: IVectorField3D, point: Point3D): Vector3D
         => self.Eval(point).Normalize;
 
     //==
-    // # DirectionField2D / DirectionField3D
+    // # IDirectionField2D / IDirectionField3D
     //
-    // Fields of unit directions. Evaluation is the generic ValueAt(Field), which
+    // Fields of unit directions. Evaluation is the generic ValueAt(IField), which
     // already returns the sampled Direction2D / Direction3D, so no concept-
     // specific helper carries weight beyond it.
 
     //==
-    // # ColorField2D / ColorField3D
+    // # IColorField2D / IColorField3D
     //
     // Color fields (procedural textures, gradients, solid textures). Evaluation is
-    // the generic ValueAt(Field); no further helper is derivable from Eval alone.
+    // the generic ValueAt(IField); no further helper is derivable from Eval alone.
 
     //==
-    // # ComplexField2D
+    // # IComplexField2D
     //
-    // A complex-valued planar field. Evaluation is the generic ValueAt(Field);
+    // A complex-valued planar field. Evaluation is the generic ValueAt(IField);
     // complex-specific analysis needs members Complex does not expose here.
 
     //==
-    // # TensorField2D / TensorField3D
+    // # ITensorField2D / ITensorField3D
     //
-    // Matrix-valued fields. Evaluation is the generic ValueAt(Field); tensor
-    // invariants are not derivable from the MatrixLike surface (see the P3
+    // Matrix-valued fields. Evaluation is the generic ValueAt(IField); tensor
+    // invariants are not derivable from the IMatrixLike surface (see the P3
     // NumericStructures gaps).
 
     //==
@@ -160,66 +160,66 @@ library FieldsImplicits
     // name local flow behaviour for vector fields.
 
     //==
-    // # DifferentiableScalarField2D
+    // # IDifferentiableScalarField2D
     //
     // A planar scalar field with an analytic first derivative. The gradient points
     // toward steepest increase; helpers name the directions and critical points.
 
     // The gradient direction of steepest increase, unit length. Precondition: the
     // gradient is non-zero at the point.
-    SteepestAscentDirectionAt(self: DifferentiableScalarField2D, point: Point2D): Vector2D
+    SteepestAscentDirectionAt(self: IDifferentiableScalarField2D, point: Point2D): Vector2D
         => self.GradientAt(point).Normalize;
 
     // The direction of steepest decrease, unit length: the negated gradient.
     // Precondition: the gradient is non-zero at the point.
-    SteepestDescentDirectionAt(self: DifferentiableScalarField2D, point: Point2D): Vector2D
+    SteepestDescentDirectionAt(self: IDifferentiableScalarField2D, point: Point2D): Vector2D
         => self.GradientAt(point).Normalize.Negative;
 
     // The unit outward normal to the level curve through the point: the unit
     // gradient. For a signed distance field this is the boundary normal.
     // Precondition: the gradient is non-zero at the point.
-    BoundaryNormalAt(self: DifferentiableScalarField2D, point: Point2D): Vector2D
+    BoundaryNormalAt(self: IDifferentiableScalarField2D, point: Point2D): Vector2D
         => self.SteepestAscentDirectionAt(point);
 
     // The steepness of the field at the point: the gradient's length.
-    SlopeAt(self: DifferentiableScalarField2D, point: Point2D): Number
+    SlopeAt(self: IDifferentiableScalarField2D, point: Point2D): Number
         => self.GradientAt(point).Magnitude;
 
     // True where the gradient nearly vanishes (a critical point) within tolerance.
-    IsStationaryAt(self: DifferentiableScalarField2D, point: Point2D, tolerance: Number): Boolean
+    IsStationaryAt(self: IDifferentiableScalarField2D, point: Point2D, tolerance: Number): Boolean
         => self.GradientAt(point).Magnitude <= tolerance;
 
     //==
-    // # DifferentiableScalarField3D
+    // # IDifferentiableScalarField3D
     //
     // A spatial scalar field with an analytic first derivative. For a signed
     // distance field the normalized gradient is the outward surface normal.
 
     // The gradient direction of steepest increase, unit length. Precondition: the
     // gradient is non-zero at the point.
-    SteepestAscentDirectionAt(self: DifferentiableScalarField3D, point: Point3D): Vector3D
+    SteepestAscentDirectionAt(self: IDifferentiableScalarField3D, point: Point3D): Vector3D
         => self.GradientAt(point).Normalize;
 
     // The direction of steepest decrease, unit length: the negated gradient.
     // Precondition: the gradient is non-zero at the point.
-    SteepestDescentDirectionAt(self: DifferentiableScalarField3D, point: Point3D): Vector3D
+    SteepestDescentDirectionAt(self: IDifferentiableScalarField3D, point: Point3D): Vector3D
         => self.GradientAt(point).Normalize.Negative;
 
     // The outward surface normal at the point: the unit gradient. Exact for a
     // signed distance field. Precondition: the gradient is non-zero at the point.
-    SurfaceNormalAt(self: DifferentiableScalarField3D, point: Point3D): Vector3D
+    SurfaceNormalAt(self: IDifferentiableScalarField3D, point: Point3D): Vector3D
         => self.SteepestAscentDirectionAt(point);
 
     // The steepness of the field at the point: the gradient's length.
-    SlopeAt(self: DifferentiableScalarField3D, point: Point3D): Number
+    SlopeAt(self: IDifferentiableScalarField3D, point: Point3D): Number
         => self.GradientAt(point).Magnitude;
 
     // True where the gradient nearly vanishes (a critical point) within tolerance.
-    IsStationaryAt(self: DifferentiableScalarField3D, point: Point3D, tolerance: Number): Boolean
+    IsStationaryAt(self: IDifferentiableScalarField3D, point: Point3D, tolerance: Number): Boolean
         => self.GradientAt(point).Magnitude <= tolerance;
 
     //==
-    // # DifferentiableVectorField2D
+    // # IDifferentiableVectorField2D
     //
     // A planar vector field with first derivatives: divergence (trace of the
     // Jacobian) and scalar curl. The predicates classify local flow behaviour.
@@ -227,56 +227,56 @@ library FieldsImplicits
     // True where the field neither expands nor compresses within tolerance
     // (divergence-free / incompressible flow)
     // (https://en.wikipedia.org/wiki/Incompressible_flow).
-    IsIncompressibleAt(self: DifferentiableVectorField2D, point: Point2D, tolerance: Number): Boolean
+    IsIncompressibleAt(self: IDifferentiableVectorField2D, point: Point2D, tolerance: Number): Boolean
         => self.DivergenceAt(point).Abs <= tolerance;
 
     // True where the field spreads outward (positive divergence): a source. Note:
     // near-zero divergence classifies by sign noise; use IsIncompressibleAt for a
     // balanced test.
-    IsSourceAt(self: DifferentiableVectorField2D, point: Point2D): Boolean
+    IsSourceAt(self: IDifferentiableVectorField2D, point: Point2D): Boolean
         => self.DivergenceAt(point) > 0.0;
 
     // True where the field converges inward (negative divergence): a sink. Note:
     // near-zero divergence classifies by sign noise; use IsIncompressibleAt for a
     // balanced test.
-    IsSinkAt(self: DifferentiableVectorField2D, point: Point2D): Boolean
+    IsSinkAt(self: IDifferentiableVectorField2D, point: Point2D): Boolean
         => self.DivergenceAt(point) < 0.0;
 
     // True where the field has no local rotation within tolerance (irrotational)
     // (https://en.wikipedia.org/wiki/Irrotational_flow).
-    IsIrrotationalAt(self: DifferentiableVectorField2D, point: Point2D, tolerance: Number): Boolean
+    IsIrrotationalAt(self: IDifferentiableVectorField2D, point: Point2D, tolerance: Number): Boolean
         => self.CurlAt(point).Abs <= tolerance;
 
     //==
-    // # DifferentiableVectorField3D
+    // # IDifferentiableVectorField3D
     //
     // A spatial vector field with first derivatives: divergence and the curl
     // vector (vorticity). Mirrors the planar classifiers with a vector curl.
 
     // True where the field neither expands nor compresses within tolerance
     // (divergence-free / incompressible flow).
-    IsIncompressibleAt(self: DifferentiableVectorField3D, point: Point3D, tolerance: Number): Boolean
+    IsIncompressibleAt(self: IDifferentiableVectorField3D, point: Point3D, tolerance: Number): Boolean
         => self.DivergenceAt(point).Abs <= tolerance;
 
     // True where the field spreads outward (positive divergence): a source. Note:
     // near-zero divergence classifies by sign noise; use IsIncompressibleAt for a
     // balanced test.
-    IsSourceAt(self: DifferentiableVectorField3D, point: Point3D): Boolean
+    IsSourceAt(self: IDifferentiableVectorField3D, point: Point3D): Boolean
         => self.DivergenceAt(point) > 0.0;
 
     // True where the field converges inward (negative divergence): a sink. Note:
     // near-zero divergence classifies by sign noise; use IsIncompressibleAt for a
     // balanced test.
-    IsSinkAt(self: DifferentiableVectorField3D, point: Point3D): Boolean
+    IsSinkAt(self: IDifferentiableVectorField3D, point: Point3D): Boolean
         => self.DivergenceAt(point) < 0.0;
 
     // The strength of local rotation: the length of the curl (vorticity) vector
     // (https://en.wikipedia.org/wiki/Vorticity).
-    VorticityMagnitudeAt(self: DifferentiableVectorField3D, point: Point3D): Number
+    VorticityMagnitudeAt(self: IDifferentiableVectorField3D, point: Point3D): Number
         => self.CurlAt(point).Magnitude;
 
     // True where the field has no local rotation within tolerance (irrotational).
-    IsIrrotationalAt(self: DifferentiableVectorField3D, point: Point3D, tolerance: Number): Boolean
+    IsIrrotationalAt(self: IDifferentiableVectorField3D, point: Point3D, tolerance: Number): Boolean
         => self.CurlAt(point).Magnitude <= tolerance;
 
     //==
@@ -287,7 +287,7 @@ library FieldsImplicits
     // the matching membership surface for predicate-only regions and volumes.
 
     //==
-    // # SignedDistanceField2D
+    // # ISignedDistanceField2D
     //
     // A planar SDF: value is the signed distance to a boundary curve, negative
     // inside. The rich inside/outside/boundary surface builds on that one scalar
@@ -295,112 +295,112 @@ library FieldsImplicits
 
     // The signed distance from the point to the boundary; a readable spelling of
     // Eval. Negative inside, zero on the boundary, positive outside.
-    DistanceAt(self: SignedDistanceField2D, point: Point2D): Number
+    DistanceAt(self: ISignedDistanceField2D, point: Point2D): Number
         => self.Eval(point);
 
     // The unsigned distance from the point to the boundary: the magnitude of the
     // signed distance.
-    ClearanceAt(self: SignedDistanceField2D, point: Point2D): Number
+    ClearanceAt(self: ISignedDistanceField2D, point: Point2D): Number
         => self.Eval(point).Abs;
 
     // True when the point is strictly inside the boundary (negative distance).
-    IsInside(self: SignedDistanceField2D, point: Point2D): Boolean
+    IsInside(self: ISignedDistanceField2D, point: Point2D): Boolean
         => self.Eval(point) < 0.0;
 
     // True when the point is strictly outside the boundary (positive distance).
-    IsOutside(self: SignedDistanceField2D, point: Point2D): Boolean
+    IsOutside(self: ISignedDistanceField2D, point: Point2D): Boolean
         => self.Eval(point) > 0.0;
 
     // True when the point lies on the boundary curve within the given tolerance.
     // Precondition: tolerance is non-negative.
-    IsOnBoundary(self: SignedDistanceField2D, point: Point2D, tolerance: Number): Boolean
+    IsOnBoundary(self: ISignedDistanceField2D, point: Point2D, tolerance: Number): Boolean
         => self.Eval(point).Abs <= tolerance;
 
     // True when the point is inside or exactly on the boundary (distance <= 0):
     // the closed-region membership test.
-    Contains(self: SignedDistanceField2D, point: Point2D): Boolean
+    Contains(self: ISignedDistanceField2D, point: Point2D): Boolean
         => self.Eval(point) <= 0.0;
 
     // How far the point lies inside the boundary: positive within, zero or
     // negative outside. The negated signed distance.
-    PenetrationDepthAt(self: SignedDistanceField2D, point: Point2D): Number
+    PenetrationDepthAt(self: ISignedDistanceField2D, point: Point2D): Number
         => self.Eval(point).Negative;
 
     //==
-    // # SignedDistanceField3D
+    // # ISignedDistanceField3D
     //
     // A spatial SDF: value is the signed distance to a surface, negative inside.
     // Mirrors the planar inside/outside/surface surface.
 
     // The signed distance from the point to the surface; a readable spelling of
     // Eval. Negative inside, zero on the surface, positive outside.
-    DistanceAt(self: SignedDistanceField3D, point: Point3D): Number
+    DistanceAt(self: ISignedDistanceField3D, point: Point3D): Number
         => self.Eval(point);
 
     // The unsigned distance from the point to the surface: the magnitude of the
     // signed distance.
-    ClearanceAt(self: SignedDistanceField3D, point: Point3D): Number
+    ClearanceAt(self: ISignedDistanceField3D, point: Point3D): Number
         => self.Eval(point).Abs;
 
     // True when the point is strictly inside the surface (negative distance).
-    IsInside(self: SignedDistanceField3D, point: Point3D): Boolean
+    IsInside(self: ISignedDistanceField3D, point: Point3D): Boolean
         => self.Eval(point) < 0.0;
 
     // True when the point is strictly outside the surface (positive distance).
-    IsOutside(self: SignedDistanceField3D, point: Point3D): Boolean
+    IsOutside(self: ISignedDistanceField3D, point: Point3D): Boolean
         => self.Eval(point) > 0.0;
 
     // True when the point lies on the surface within the given tolerance.
     // Precondition: tolerance is non-negative.
-    IsOnSurface(self: SignedDistanceField3D, point: Point3D, tolerance: Number): Boolean
+    IsOnSurface(self: ISignedDistanceField3D, point: Point3D, tolerance: Number): Boolean
         => self.Eval(point).Abs <= tolerance;
 
     // True when the point is inside or exactly on the surface (distance <= 0):
     // the closed-solid membership test.
-    Contains(self: SignedDistanceField3D, point: Point3D): Boolean
+    Contains(self: ISignedDistanceField3D, point: Point3D): Boolean
         => self.Eval(point) <= 0.0;
 
     // How far the point lies inside the surface: positive within, zero or
     // negative outside. The negated signed distance.
-    DepthBelowSurfaceAt(self: SignedDistanceField3D, point: Point3D): Number
+    DepthBelowSurfaceAt(self: ISignedDistanceField3D, point: Point3D): Number
         => self.Eval(point).Negative;
 
     //==
-    // # ImplicitRegion2D
+    // # IImplicitRegion2D
     //
     // A planar region defined by a membership predicate; carries no distance.
     // Naming aligns with the SDF surface: Contains / IsInside / IsOutside.
 
     // True when the point is inside the region; a readable spelling of Eval.
-    Contains(self: ImplicitRegion2D, point: Point2D): Boolean
+    Contains(self: IImplicitRegion2D, point: Point2D): Boolean
         => self.Eval(point);
 
     // True when the point is inside the region. Alias of Contains aligning with
     // the signed-distance-field vocabulary.
-    IsInside(self: ImplicitRegion2D, point: Point2D): Boolean
+    IsInside(self: IImplicitRegion2D, point: Point2D): Boolean
         => self.Eval(point);
 
     // True when the point is outside the region.
-    IsOutside(self: ImplicitRegion2D, point: Point2D): Boolean
+    IsOutside(self: IImplicitRegion2D, point: Point2D): Boolean
         => self.Eval(point).Not;
 
     //==
-    // # ImplicitVolume3D
+    // # IImplicitVolume3D
     //
     // A spatial volume defined by a membership predicate; carries no distance.
     // Naming aligns with the SDF surface: Contains / IsInside / IsOutside.
 
     // True when the point is inside the volume; a readable spelling of Eval.
-    Contains(self: ImplicitVolume3D, point: Point3D): Boolean
+    Contains(self: IImplicitVolume3D, point: Point3D): Boolean
         => self.Eval(point);
 
     // True when the point is inside the volume. Alias of Contains aligning with
     // the signed-distance-field vocabulary.
-    IsInside(self: ImplicitVolume3D, point: Point3D): Boolean
+    IsInside(self: IImplicitVolume3D, point: Point3D): Boolean
         => self.Eval(point);
 
     // True when the point is outside the volume.
-    IsOutside(self: ImplicitVolume3D, point: Point3D): Boolean
+    IsOutside(self: IImplicitVolume3D, point: Point3D): Boolean
         => self.Eval(point).Not;
 
     //==
@@ -467,20 +467,20 @@ library FieldsImplicits
 
     // The field as a function-valued planar scalar field, holding a lambda that
     // evaluates this field.
-    ToFunctionField(self: ScalarField2D): ScalarFunctionField2D
+    ToFunctionField(self: IScalarField2D): ScalarFunctionField2D
         => ScalarFunctionField2D(p => self.Eval(p));
 
     // The field as a function-valued spatial scalar field, holding a lambda that
     // evaluates this field.
-    ToFunctionField(self: ScalarField3D): ScalarFunctionField3D
+    ToFunctionField(self: IScalarField3D): ScalarFunctionField3D
         => ScalarFunctionField3D(p => self.Eval(p));
 
     // The field as a function-valued planar vector field.
-    ToFunctionField(self: VectorField2D): VectorFunctionField2D
+    ToFunctionField(self: IVectorField2D): VectorFunctionField2D
         => VectorFunctionField2D(p => self.Eval(p));
 
     // The field as a function-valued spatial vector field.
-    ToFunctionField(self: VectorField3D): VectorFunctionField3D
+    ToFunctionField(self: IVectorField3D): VectorFunctionField3D
         => VectorFunctionField3D(p => self.Eval(p));
 
     //==
@@ -640,7 +640,7 @@ library FieldsImplicits
         => self.Value.Hash;
 
     //==
-    // # Field expression graphs
+    // # IField expression graphs
     //
     // The same flat-graph shape over scalar fields.
 
@@ -652,7 +652,7 @@ library FieldsImplicits
     RootNode(self: ScalarFieldGraph3D): ScalarFieldNode3D
         => self.Nodes[self.Root.Value];
 
-    // Field node indices order by position in the node array.
+    // IField node indices order by position in the node array.
     LessThanOrEquals(a: FieldNodeIndex, b: FieldNodeIndex): Boolean
         => a.Value <= b.Value;
 
@@ -719,20 +719,20 @@ library FieldsImplicits
 
     // Any planar SDF as a function-valued one, so the combinators below apply to
     // every implementor.
-    ToFunctionSdf(self: SignedDistanceField2D): FunctionSdf2D
+    ToFunctionSdf(self: ISignedDistanceField2D): FunctionSdf2D
         => FunctionSdf2D(p => self.Eval(p));
 
     // Any spatial SDF as a function-valued one.
-    ToFunctionSdf(self: SignedDistanceField3D): FunctionSdf3D
+    ToFunctionSdf(self: ISignedDistanceField3D): FunctionSdf3D
         => FunctionSdf3D(p => self.Eval(p));
 
     // The region a planar SDF induces: inside is where the distance is negative.
     // Discards the distance, keeping only membership.
-    ToRegion(self: SignedDistanceField2D): FunctionRegion2D
+    ToRegion(self: ISignedDistanceField2D): FunctionRegion2D
         => FunctionRegion2D(p => self.Eval(p) < 0.0);
 
     // The volume a spatial SDF induces: inside is where the distance is negative.
-    ToVolume(self: SignedDistanceField3D): FunctionVolume3D
+    ToVolume(self: ISignedDistanceField3D): FunctionVolume3D
         => FunctionVolume3D(p => self.Eval(p) < 0.0);
 
     // The union of two planar SDFs: the pointwise minimum distance.
@@ -825,7 +825,7 @@ library FieldsImplicits
     // and monotonicity queries between two instants.
 
     //==
-    // # TimeVaryingScalarField2D
+    // # ITimeVaryingScalarField2D
     //
     // A planar scalar field evolving over a timeline; sampled at (point, time).
     // TODO(concept-gap): an average rate of change would divide the value change
@@ -835,82 +835,82 @@ library FieldsImplicits
 
     // The scalar value at the point at a given instant; a readable spelling of
     // EvalAtTime.
-    ValueAtTime(self: TimeVaryingScalarField2D, point: Point2D, time: Instant): Number
+    ValueAtTime(self: ITimeVaryingScalarField2D, point: Point2D, time: Instant): Number
         => self.EvalAtTime(point, time);
 
     // The change in value at the point from the earlier instant to the later one.
-    ChangeBetween(self: TimeVaryingScalarField2D, point: Point2D, earlier: Instant, later: Instant): Number
+    ChangeBetween(self: ITimeVaryingScalarField2D, point: Point2D, earlier: Instant, later: Instant): Number
         => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
 
     // True where the value at the point is greater at the later instant than the
     // earlier one.
-    HasIncreasedBetween(self: TimeVaryingScalarField2D, point: Point2D, earlier: Instant, later: Instant): Boolean
+    HasIncreasedBetween(self: ITimeVaryingScalarField2D, point: Point2D, earlier: Instant, later: Instant): Boolean
         => self.EvalAtTime(point, later) > self.EvalAtTime(point, earlier);
 
     // True where the value at the point is smaller at the later instant than the
     // earlier one.
-    HasDecreasedBetween(self: TimeVaryingScalarField2D, point: Point2D, earlier: Instant, later: Instant): Boolean
+    HasDecreasedBetween(self: ITimeVaryingScalarField2D, point: Point2D, earlier: Instant, later: Instant): Boolean
         => self.EvalAtTime(point, later) < self.EvalAtTime(point, earlier);
 
     //==
-    // # TimeVaryingScalarField3D
+    // # ITimeVaryingScalarField3D
     //
     // A spatial scalar field evolving over a timeline.
 
     // The scalar value at the point at a given instant; a readable spelling of
     // EvalAtTime.
-    ValueAtTime(self: TimeVaryingScalarField3D, point: Point3D, time: Instant): Number
+    ValueAtTime(self: ITimeVaryingScalarField3D, point: Point3D, time: Instant): Number
         => self.EvalAtTime(point, time);
 
     // The change in value at the point from the earlier instant to the later one.
-    ChangeBetween(self: TimeVaryingScalarField3D, point: Point3D, earlier: Instant, later: Instant): Number
+    ChangeBetween(self: ITimeVaryingScalarField3D, point: Point3D, earlier: Instant, later: Instant): Number
         => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
 
     // True where the value at the point is greater at the later instant than the
     // earlier one.
-    HasIncreasedBetween(self: TimeVaryingScalarField3D, point: Point3D, earlier: Instant, later: Instant): Boolean
+    HasIncreasedBetween(self: ITimeVaryingScalarField3D, point: Point3D, earlier: Instant, later: Instant): Boolean
         => self.EvalAtTime(point, later) > self.EvalAtTime(point, earlier);
 
     // True where the value at the point is smaller at the later instant than the
     // earlier one.
-    HasDecreasedBetween(self: TimeVaryingScalarField3D, point: Point3D, earlier: Instant, later: Instant): Boolean
+    HasDecreasedBetween(self: ITimeVaryingScalarField3D, point: Point3D, earlier: Instant, later: Instant): Boolean
         => self.EvalAtTime(point, later) < self.EvalAtTime(point, earlier);
 
     //==
-    // # TimeVaryingVectorField2D
+    // # ITimeVaryingVectorField2D
     //
     // A planar vector field evolving over a timeline: 2D flows and animated
     // displacement maps.
 
     // The vector at the point at a given instant; a readable spelling of
     // EvalAtTime.
-    VectorAtTime(self: TimeVaryingVectorField2D, point: Point2D, time: Instant): Vector2D
+    VectorAtTime(self: ITimeVaryingVectorField2D, point: Point2D, time: Instant): Vector2D
         => self.EvalAtTime(point, time);
 
     // The flow speed at the point at a given instant: the sampled vector's length.
-    MagnitudeAtTime(self: TimeVaryingVectorField2D, point: Point2D, time: Instant): Number
+    MagnitudeAtTime(self: ITimeVaryingVectorField2D, point: Point2D, time: Instant): Number
         => self.EvalAtTime(point, time).Magnitude;
 
     // The change in the vector at the point from the earlier instant to the later.
-    ChangeBetween(self: TimeVaryingVectorField2D, point: Point2D, earlier: Instant, later: Instant): Vector2D
+    ChangeBetween(self: ITimeVaryingVectorField2D, point: Point2D, earlier: Instant, later: Instant): Vector2D
         => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
 
     //==
-    // # TimeVaryingVectorField3D
+    // # ITimeVaryingVectorField3D
     //
     // A spatial vector field evolving over a timeline: fluid velocity, wind, and
     // turbulence used for advection.
 
     // The vector at the point at a given instant; a readable spelling of
     // EvalAtTime.
-    VectorAtTime(self: TimeVaryingVectorField3D, point: Point3D, time: Instant): Vector3D
+    VectorAtTime(self: ITimeVaryingVectorField3D, point: Point3D, time: Instant): Vector3D
         => self.EvalAtTime(point, time);
 
     // The flow speed at the point at a given instant: the sampled vector's length.
-    MagnitudeAtTime(self: TimeVaryingVectorField3D, point: Point3D, time: Instant): Number
+    MagnitudeAtTime(self: ITimeVaryingVectorField3D, point: Point3D, time: Instant): Number
         => self.EvalAtTime(point, time).Magnitude;
 
     // The change in the vector at the point from the earlier instant to the later.
-    ChangeBetween(self: TimeVaryingVectorField3D, point: Point3D, earlier: Instant, later: Instant): Vector3D
+    ChangeBetween(self: ITimeVaryingVectorField3D, point: Point3D, earlier: Instant, later: Instant): Vector3D
         => self.EvalAtTime(point, later) - self.EvalAtTime(point, earlier);
 }

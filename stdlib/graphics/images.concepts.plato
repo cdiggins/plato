@@ -1,5 +1,5 @@
 //==
-// # Image concepts
+// # IImage concepts
 //
 // The single abstraction shared by every raster type: a rectangular grid with
 // known dimensions. Pixel access is deliberately absent, because pixel
@@ -11,8 +11,8 @@
 // A raster image: a rectangular pixel grid with known dimensions. Pixel access
 // is deliberately not part of the concept; each concrete image type exposes its
 // own pixel representation. (https://en.wikipedia.org/wiki/Raster_graphics)
-concept Image
-    inherits Value
+interface IImage
+    inherits IValue
 {
     Size(x: Self): IntegerSize2D;
     Width(x: Self): Integer;

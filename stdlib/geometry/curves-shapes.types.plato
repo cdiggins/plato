@@ -26,7 +26,7 @@
 // the angle interval measured from the +X axis
 // (https://en.wikipedia.org/wiki/Circular_arc).
 type CircularArc2D
-    implements Curve2D
+    implements ICurve2D
 {
     Center: Point2D;
     Radius: Number;
@@ -37,7 +37,7 @@ type CircularArc2D
 // the ellipse's local X and Y; Rotation tilts the major frame from the +X axis;
 // Angles sweeps the parametric angle (https://en.wikipedia.org/wiki/Ellipse).
 type EllipticalArc2D
-    implements Curve2D
+    implements ICurve2D
 {
     Center: Point2D;
     Radii: Number2;
@@ -49,7 +49,7 @@ type EllipticalArc2D
 // origin, opening along +Y. The parameter is x, ranging over Domain
 // (https://en.wikipedia.org/wiki/Parabola).
 type Parabola2D
-    implements Curve2D
+    implements ICurve2D
 {
     Coefficient: Number;
     Domain: NumberInterval;
@@ -62,7 +62,7 @@ type Parabola2D
 // classic catenary constant a; the parameter is x, ranging over Domain
 // (https://en.wikipedia.org/wiki/Catenary).
 type Catenary2D
-    implements Curve2D
+    implements ICurve2D
 {
     Scale: Number;
     Domain: NumberInterval;
@@ -72,7 +72,7 @@ type Catenary2D
 // y = Amplitude * sin(2 * pi * x / Wavelength + Phase). The parameter is x,
 // ranging over Domain (https://en.wikipedia.org/wiki/Sine_wave).
 type SineCurve2D
-    implements Curve2D
+    implements ICurve2D
 {
     Amplitude: Number;
     Wavelength: Number;
@@ -87,7 +87,7 @@ type SineCurve2D
 // point P1. Tangents at the ends aim at P1
 // (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type QuadraticBezier2D
-    implements Curve2D, Deformable2D
+    implements ICurve2D, IDeformable2D
 {
     P0: Point2D;
     P1: Point2D;
@@ -98,7 +98,7 @@ type QuadraticBezier2D
 // points P1 and P2. The workhorse of vector graphics and font outlines
 // (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type CubicBezier2D
-    implements Curve2D, Deformable2D
+    implements ICurve2D, IDeformable2D
 {
     P0: Point2D;
     P1: Point2D;
@@ -112,7 +112,7 @@ type CubicBezier2D
 // The named plane curves whose natural description is a radius as a function of
 // angle — roses, cardioids, limacons, lemniscates, and the classical trisecting
 // and conchoidal cubics — together with the two figure curves (Lissajous,
-// butterfly) that are drawn the same way. Most are `PolarCurve2D`, so a single
+// butterfly) that are drawn the same way. Most are `IPolarCurve2D`, so a single
 // RadiusAt body is their whole implementation; those live in
 // `curves-shapes.library.plato`. Every type is in canonical position about
 // the origin and is placed elsewhere with a transform.
@@ -125,7 +125,7 @@ type CubicBezier2D
 // close only over multiple turns
 // (https://en.wikipedia.org/wiki/Rose_(mathematics)).
 type RoseCurve2D
-    implements PolarCurve2D
+    implements IPolarCurve2D
 {
     Radius: Number;
     PetalFrequency: Number;
@@ -135,7 +135,7 @@ type RoseCurve2D
 // by a circle of radius Radius rolling around an equal fixed circle. Always
 // closed; total width is 4 * Radius (https://en.wikipedia.org/wiki/Cardioid).
 type Cardioid2D
-    implements ClosedCurve2D
+    implements IClosedCurve2D
 {
     Radius: Number;
 }
@@ -144,7 +144,7 @@ type Cardioid2D
 // dimpled oval, equality gives the cardioid, Offset < Amplitude adds an inner
 // loop. Always closed (https://en.wikipedia.org/wiki/Lima%C3%A7on).
 type Limacon2D
-    implements ClosedCurve2D
+    implements IClosedCurve2D
 {
     Offset: Number;
     Amplitude: Number;
@@ -154,7 +154,7 @@ type Limacon2D
 // figure-eight crossing itself at the origin; Scale is the half-width
 // (https://en.wikipedia.org/wiki/Lemniscate_of_Bernoulli).
 type Lemniscate2D
-    implements ClosedCurve2D
+    implements IClosedCurve2D
 {
     Scale: Number;
 }
@@ -164,7 +164,7 @@ type Lemniscate2D
 // ratio is rational; the canonical parameter covers one combined period
 // (https://en.wikipedia.org/wiki/Lissajous_curve).
 type Lissajous2D
-    implements Curve2D
+    implements ICurve2D
 {
     XAmplitude: Number;
     YAmplitude: Number;
@@ -179,7 +179,7 @@ type Lissajous2D
 // divisors. Closed when Symmetry is a whole number
 // (https://en.wikipedia.org/wiki/Superformula).
 type Superformula2D
-    implements PolarCurve2D
+    implements IPolarCurve2D
 {
     Symmetry: Number;
     Exponent1: Number;
@@ -193,7 +193,7 @@ type Superformula2D
 // # Further classical polar curves
 //
 // Further classical polar curves.
-// Every one is a `PolarCurve2D`, so a single RadiusAt
+// Every one is a `IPolarCurve2D`, so a single RadiusAt
 // body below is the whole implementation: PolarPositionAt / CartesianPositionAt
 // / Eval come from `curves.library.plato`.
 
@@ -201,7 +201,7 @@ type Superformula2D
 // curve with a single loop inside a larger oval.
 // https://en.wikipedia.org/wiki/Tommaso_Ceva#The_Cycloid_of_Ceva
 type CycloidOfCeva2D
-    implements PolarCurve2D
+    implements IPolarCurve2D
 {
     Scale: Number;
 }
@@ -211,7 +211,7 @@ type CycloidOfCeva2D
 // theta / 3 reaches a quarter turn.
 // https://en.wikipedia.org/wiki/Tschirnhausen_cubic
 type TschirnhausenCubic2D
-    implements PolarCurve2D
+    implements IPolarCurve2D
 {
     Scale: Number;
 }
@@ -221,7 +221,7 @@ type TschirnhausenCubic2D
 // Maclaurin. Undefined at odd quarter turns.
 // https://en.wikipedia.org/wiki/Conchoid_of_de_Sluze
 type ConchoidOfDeSluze2D
-    implements PolarCurve2D
+    implements IPolarCurve2D
 {
     Scale: Number;
 }
@@ -231,7 +231,7 @@ type ConchoidOfDeSluze2D
 // -2 a hyperbola, 1/2 a cardioid. Precondition: Exponent is non-zero.
 // https://en.wikipedia.org/wiki/Sinusoidal_spiral
 type SinusoidalSpiral2D
-    implements PolarCurve2D
+    implements IPolarCurve2D
 {
     Scale: Number;
     Exponent: Number;
@@ -241,18 +241,18 @@ type SinusoidalSpiral2D
 // the classical angle-trisecting cubic.
 // https://en.wikipedia.org/wiki/Trisectrix_of_Maclaurin
 type TrisectrixOfMaclaurin2D
-    implements PolarCurve2D
+    implements IPolarCurve2D
 {
     Scale: Number;
 }
 
 // The transcendental butterfly curve, in canonical position and scaled by
-// Scale. Not a polar curve about the origin in the PolarCurve2D sense: the
+// Scale. Not a polar curve about the origin in the IPolarCurve2D sense: the
 // radial factor is paired with the raw parameter angle, so it carries its own
 // Eval below. The canonical [0,1] parameter covers the full 12-pi period.
 // https://en.wikipedia.org/wiki/Butterfly_curve_(transcendental)
 type ButterflyCurve2D
-    implements ClosedCurve2D
+    implements IClosedCurve2D
 {
     Scale: Number;
 }
@@ -274,7 +274,7 @@ type ButterflyCurve2D
 // radians), swept over Angles: evenly spaced coils
 // (https://en.wikipedia.org/wiki/Archimedean_spiral).
 type ArchimedeanSpiral2D
-    implements PolarCurve2D
+    implements IPolarCurve2D
 {
     StartRadius: Number;
     GrowthRate: Number;
@@ -285,7 +285,7 @@ type ArchimedeanSpiral2D
 // theta), swept over Angles: self-similar coils, constant crossing angle
 // (https://en.wikipedia.org/wiki/Logarithmic_spiral).
 type LogarithmicSpiral2D
-    implements PolarCurve2D
+    implements IPolarCurve2D
 {
     StartRadius: Number;
     GrowthRate: Number;
@@ -296,7 +296,7 @@ type LogarithmicSpiral2D
 // evenly filling coils, the basis of sunflower/phyllotaxis layouts
 // (https://en.wikipedia.org/wiki/Fermat%27s_spiral).
 type FermatSpiral2D
-    implements PolarCurve2D
+    implements IPolarCurve2D
 {
     Scale: Number;
     Angles: AngleInterval;
@@ -307,7 +307,7 @@ type FermatSpiral2D
 // over Domain. The standard road and rail transition curve
 // (https://en.wikipedia.org/wiki/Euler_spiral).
 type Clothoid2D
-    implements Curve2D, ArcLengthParameterized<Point2D>
+    implements ICurve2D, IArcLengthParameterized<Point2D>
 {
     Flatness: Number;
     Domain: NumberInterval;
@@ -317,7 +317,7 @@ type Clothoid2D
 // unwinding from the circle, over the unwinding-angle interval. The profile
 // of standard gear teeth (https://en.wikipedia.org/wiki/Involute).
 type CircleInvolute2D
-    implements Curve2D
+    implements ICurve2D
 {
     Radius: Number;
     Angles: AngleInterval;
@@ -333,7 +333,7 @@ type CircleInvolute2D
 // with the rolling angle theta swept over Angles
 // (https://en.wikipedia.org/wiki/Cycloid).
 type Cycloid2D
-    implements Curve2D
+    implements ICurve2D
 {
     Radius: Number;
     Angles: AngleInterval;
@@ -344,7 +344,7 @@ type Cycloid2D
 // when the radius ratio is rational; the canonical parameter covers one lap
 // around the fixed circle (https://en.wikipedia.org/wiki/Epicycloid).
 type Epicycloid2D
-    implements Curve2D
+    implements ICurve2D
 {
     FixedRadius: Number;
     RollingRadius: Number;
@@ -355,7 +355,7 @@ type Epicycloid2D
 // astroid arise from particular radius ratios
 // (https://en.wikipedia.org/wiki/Hypocycloid).
 type Hypocycloid2D
-    implements Curve2D
+    implements ICurve2D
 {
     FixedRadius: Number;
     RollingRadius: Number;
@@ -365,7 +365,7 @@ type Hypocycloid2D
 // of the rolling circle rather than on its rim (spirograph curves)
 // (https://en.wikipedia.org/wiki/Epitrochoid).
 type Epitrochoid2D
-    implements Curve2D
+    implements ICurve2D
 {
     FixedRadius: Number;
     RollingRadius: Number;
@@ -376,7 +376,7 @@ type Epitrochoid2D
 // of the circle rolling inside the fixed circle (spirograph curves)
 // (https://en.wikipedia.org/wiki/Hypotrochoid).
 type Hypotrochoid2D
-    implements Curve2D
+    implements ICurve2D
 {
     FixedRadius: Number;
     RollingRadius: Number;
@@ -398,7 +398,7 @@ type Hypotrochoid2D
 // frame's XY plane, swept over Angles measured from the frame's X axis
 // (https://en.wikipedia.org/wiki/Circular_arc).
 type CircularArc3D
-    implements PlanarCurve3D
+    implements IPlanarCurve3D
 {
     Frame: Frame3D;
     Radius: Number;
@@ -409,7 +409,7 @@ type CircularArc3D
 // Y axes, swept over the parametric angle interval
 // (https://en.wikipedia.org/wiki/Ellipse).
 type EllipticalArc3D
-    implements PlanarCurve3D
+    implements IPlanarCurve3D
 {
     Frame: Frame3D;
     Radii: Number2;
@@ -422,7 +422,7 @@ type EllipticalArc3D
 // A quadratic Bezier arc in space: interpolates P0 to P2, shaped by the middle
 // control point P1 (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type QuadraticBezier3D
-    implements Curve3D, Deformable3D
+    implements ICurve3D, IDeformable3D
 {
     P0: Point3D;
     P1: Point3D;
@@ -432,7 +432,7 @@ type QuadraticBezier3D
 // A cubic Bezier arc in space: interpolates P0 to P3, shaped by the interior
 // control points P1 and P2 (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type CubicBezier3D
-    implements Curve3D, Deformable3D
+    implements ICurve3D, IDeformable3D
 {
     P0: Point3D;
     P1: Point3D;
@@ -447,7 +447,7 @@ type CubicBezier3D
 // rising Pitch per full turn (right-handed for positive Pitch), swept over
 // the angle interval (https://en.wikipedia.org/wiki/Helix).
 type Helix
-    implements Curve3D
+    implements ICurve3D
 {
     Frame: Frame3D;
     Radius: Number;
@@ -459,7 +459,7 @@ type Helix
 // across Radii while the curve climbs Height over the full sweep of Angles
 // (https://en.wikipedia.org/wiki/Conical_spiral).
 type ConicalSpiral3D
-    implements Curve3D
+    implements ICurve3D
 {
     Frame: Frame3D;
     Radii: NumberInterval;
@@ -472,7 +472,7 @@ type ConicalSpiral3D
 // completing TurnCount revolutions
 // (https://en.wikipedia.org/wiki/Rhumb_line).
 type SphericalSpiral3D
-    implements Curve3D
+    implements ICurve3D
 {
     Frame: Frame3D;
     Radius: Number;
@@ -487,7 +487,7 @@ type SphericalSpiral3D
 // TubeWindings is q (laps through the hole); coprime windings give a true knot
 // (https://en.wikipedia.org/wiki/Torus_knot).
 type TorusKnot
-    implements ClosedCurve3D
+    implements IClosedCurve3D
 {
     Frame: Frame3D;
     AxisWindings: Integer;
@@ -500,7 +500,7 @@ type TorusKnot
 // its symmetric canonical form scaled by Scale
 // (https://en.wikipedia.org/wiki/Trefoil_knot).
 type TrefoilKnot
-    implements ClosedCurve3D
+    implements IClosedCurve3D
 {
     Frame: Frame3D;
     Scale: Number;
@@ -510,7 +510,7 @@ type TrefoilKnot
 // parametric form scaled by Scale
 // (https://en.wikipedia.org/wiki/Figure-eight_knot_(mathematics)).
 type FigureEightKnot
-    implements ClosedCurve3D
+    implements IClosedCurve3D
 {
     Frame: Frame3D;
     Scale: Number;
@@ -521,7 +521,7 @@ type FigureEightKnot
 // tangent to the frame's Z axis
 // (https://en.wikipedia.org/wiki/Viviani%27s_curve).
 type VivianiCurve
-    implements ClosedCurve3D
+    implements IClosedCurve3D
 {
     Frame: Frame3D;
     Radius: Number;

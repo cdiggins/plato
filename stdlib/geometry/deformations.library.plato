@@ -1,8 +1,8 @@
 //==
 // # Deformations — Eval bodies and apply lifts
 //
-// Bodies for Deformation2D/Deformation3D (`deformations.concepts.plato`) on the
-// catalog types in `deformations.types.plato`, plus lifts onto Deformable2D/3D and
+// Bodies for IDeformation2D/IDeformation3D (`deformations.concepts.plato`) on the
+// catalog types in `deformations.types.plato`, plus lifts onto IDeformable2D/3D and
 // point sugar. Weighted apply takes a ScalarField as a separate modulator —
 // falloff is never a field of the warp itself.
 //
@@ -20,7 +20,7 @@ library Deformations
         => origin + origin.Between(point).Transform(Quaternion(AxisAngle(axis, angle)));
 
     //==
-    // # Deformation3D catalog
+    // # IDeformation3D catalog
 
     // Twist about Axis: angle accumulates with signed height along the axis.
     Eval(self: Twist3D, p: Point3D): Point3D
@@ -63,7 +63,7 @@ library Deformations
     }
 
     //==
-    // # Deformation2D catalog
+    // # IDeformation2D catalog
 
     // Planar shear: translate by Rate scaled by signed progress along Axis.
     Eval(self: Shear2D, p: Point2D): Point2D
@@ -104,35 +104,35 @@ library Deformations
     // Multiply by a Number scales strength: p.Lerp(d.Eval(p), t).
 
     // Planar composition: apply first, then second.
-    Compose(first: Deformation2D, second: Deformation2D): MappingDeformation2D
+    Compose(first: IDeformation2D, second: IDeformation2D): MappingDeformation2D
         => MappingDeformation2D(p => second.Eval(first.Eval(p)));
 
     // Spatial composition: apply first, then second.
-    Compose(first: Deformation3D, second: Deformation3D): MappingDeformation3D
+    Compose(first: IDeformation3D, second: IDeformation3D): MappingDeformation3D
         => MappingDeformation3D(p => second.Eval(first.Eval(p)));
 
     // Alias for Compose — enables `a * b` (applies a first).
-    Multiply(a: Deformation2D, b: Deformation2D): MappingDeformation2D
+    Multiply(a: IDeformation2D, b: IDeformation2D): MappingDeformation2D
         => a.Compose(b);
 
     // Alias for Compose — enables `a * b` (applies a first).
-    Multiply(a: Deformation3D, b: Deformation3D): MappingDeformation3D
+    Multiply(a: IDeformation3D, b: IDeformation3D): MappingDeformation3D
         => a.Compose(b);
 
     // Constant-strength planar warp: t of 0 is identity, 1 is full warp.
-    Multiply(d: Deformation2D, t: Number): MappingDeformation2D
+    Multiply(d: IDeformation2D, t: Number): MappingDeformation2D
         => MappingDeformation2D(p => p.Lerp(d.Eval(p), t));
 
     // Constant-strength spatial warp: t of 0 is identity, 1 is full warp.
-    Multiply(d: Deformation3D, t: Number): MappingDeformation3D
+    Multiply(d: IDeformation3D, t: Number): MappingDeformation3D
         => MappingDeformation3D(p => p.Lerp(d.Eval(p), t));
 
     // Commutative strength: `t * d` same as `d * t`.
-    Multiply(t: Number, d: Deformation2D): MappingDeformation2D
+    Multiply(t: Number, d: IDeformation2D): MappingDeformation2D
         => d.Multiply(t);
 
     // Commutative strength: `t * d` same as `d * t`.
-    Multiply(t: Number, d: Deformation3D): MappingDeformation3D
+    Multiply(t: Number, d: IDeformation3D): MappingDeformation3D
         => d.Multiply(t);
 
     //==
@@ -141,26 +141,26 @@ library Deformations
     // Bridge Deformation* into the existing Deformable* seam and point sugar.
     // Weighted forms take a scalar field; weight 0 is identity, 1 is full warp.
     // Apply a planar deformation to deformable geometry.
-    Deform(self: Deformable2D, d: Deformation2D): Self
+    Deform(self: IDeformable2D, d: IDeformation2D): Self
         => self.Deform(p => d.Eval(p));
 
     // Apply a spatial deformation to deformable geometry.
-    Deform(self: Deformable3D, d: Deformation3D): Self
+    Deform(self: IDeformable3D, d: IDeformation3D): Self
         => self.Deform(p => d.Eval(p));
 
     // Point sugar: p.Deform(d), parallel to p.Transform(m).
-    Deform(p: Point2D, d: Deformation2D): Point2D
+    Deform(p: Point2D, d: IDeformation2D): Point2D
         => d.Eval(p);
 
     // Point sugar: p.Deform(d), parallel to p.Transform(m).
-    Deform(p: Point3D, d: Deformation3D): Point3D
+    Deform(p: Point3D, d: IDeformation3D): Point3D
         => d.Eval(p);
 
     // Weighted planar deform: lerp between p and d.Eval(p) by weight.Eval(p).
-    Deform(self: Deformable2D, d: Deformation2D, weight: ScalarField2D): Self
+    Deform(self: IDeformable2D, d: IDeformation2D, weight: IScalarField2D): Self
         => self.Deform(p => p.Lerp(d.Eval(p), weight.Eval(p)));
 
     // Weighted spatial deform: lerp between p and d.Eval(p) by weight.Eval(p).
-    Deform(self: Deformable3D, d: Deformation3D, weight: ScalarField3D): Self
+    Deform(self: IDeformable3D, d: IDeformation3D, weight: IScalarField3D): Self
         => self.Deform(p => p.Lerp(d.Eval(p), weight.Eval(p)));
 }

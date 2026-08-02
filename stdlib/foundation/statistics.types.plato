@@ -19,7 +19,7 @@
 // use the sample (n - 1) convention; Skewness and Kurtosis are standardized
 // moments, with Kurtosis reported as excess (normal = 0).
 type SummaryStatistics
-    implements Value
+    implements IValue
 {
     Count: Integer;
     Sum: Number;
@@ -35,7 +35,7 @@ type SummaryStatistics
 // A Welford-style streaming accumulator. M2 is the running sum of squared
 // deviations from the current mean; sample variance = M2 / (Count - 1).
 type RunningStatistics
-    implements Value
+    implements IValue
 {
     Count: Integer;
     Mean: Number;
@@ -56,7 +56,7 @@ type WeightedValue<T>
 // length divided by the bin count; the final bin also includes the Range End.
 // Values outside Range are not counted.
 type Histogram
-    implements Value
+    implements IValue
 {
     Range: NumberInterval;
     Counts: Array<Integer>;
@@ -66,7 +66,7 @@ type Histogram
 // Counts selects the x bin, the row index selects the y bin; bin edges follow
 // the same half-open convention as Histogram.
 type Histogram2D
-    implements Value
+    implements IValue
 {
     RangeX: NumberInterval;
     RangeY: NumberInterval;
@@ -77,7 +77,7 @@ type Histogram2D
 // cumulative probability Levels[i] (https://en.wikipedia.org/wiki/Quantile).
 // Levels ascend and lie in [0, 1].
 type Quantiles
-    implements Value
+    implements IValue
 {
     Levels: Array<Probability>;
     Values: Array<Number>;
@@ -85,7 +85,7 @@ type Quantiles
 
 // The classic five-number summary: extremes, quartiles, and median.
 type FiveNumberSummary
-    implements Value
+    implements IValue
 {
     Minimum: Number;
     LowerQuartile: Number;
@@ -98,7 +98,7 @@ type FiveNumberSummary
 // extreme data values within 1.5 interquartile ranges of the quartiles) and
 // the data values lying beyond the whiskers.
 type BoxPlotStatistics
-    implements Value
+    implements IValue
 {
     Summary: FiveNumberSummary;
     LowerWhisker: Number;
@@ -142,7 +142,7 @@ type OutlierDetection
 // The 2x2 symmetric covariance of a bivariate sample: Xx and Yy are the
 // variances of x and y; Xy is their covariance.
 type Covariance2D
-    implements Value
+    implements IValue
 {
     Xx: Number;
     Xy: Number;
@@ -151,7 +151,7 @@ type Covariance2D
 
 // The 3x3 symmetric covariance of a trivariate sample.
 type Covariance3D
-    implements Value
+    implements IValue
 {
     Matrix: SymmetricMatrix3x3;
 }
@@ -162,7 +162,7 @@ type CorrelationStatistic = Pearson | Spearman | Kendall;
 // A correlation coefficient in [-1, 1] together with the statistic used and
 // the number of paired observations behind it.
 type CorrelationCoefficient
-    implements Value
+    implements IValue
 {
     Statistic: CorrelationStatistic;
     Value: Number;
@@ -172,7 +172,7 @@ type CorrelationCoefficient
 // An ordinary least-squares line y = Slope * x + Intercept. RSquared is the
 // coefficient of determination in [0, 1].
 type LinearFit
-    implements Value
+    implements IValue
 {
     Slope: Number;
     Intercept: Number;
@@ -182,7 +182,7 @@ type LinearFit
 // A least-squares polynomial fit. Coefficients[k] multiplies x^k (ascending
 // powers). RSquared is the coefficient of determination in [0, 1].
 type PolynomialFit
-    implements Value
+    implements IValue
 {
     Coefficients: Array<Number>;
     RSquared: Number;

@@ -3,8 +3,8 @@
 //
 // Sections, in order:
 //  - Container shape concepts
-//  - Indexable collection concepts
-//  - Jagged (ragged row) collection concept
+//  - IIndexable collection concepts
+//  - IJagged (ragged row) collection concept
 
 //==
 // # Container shape concepts
@@ -13,7 +13,7 @@
 // membership, keyed lookup, and the LIFO/FIFO disciplines. All collections are
 // immutable; operations that "modify" return new collections.
 
-// Supports taking a contiguous sub-range. Inherits Countable so that end-relative
+// Supports taking a contiguous sub-range. Inherits ICountable so that end-relative
 // helpers (Skip, TakeLast, DropLast) can convert a count into an endpoint.
 // (https://en.wikipedia.org/wiki/Array_slicing)
 //
@@ -23,27 +23,27 @@
 // different things depending on the receiver — every actual call site in the
 // tree passes endpoints (`Slice(offsets[i], offsets[i+1])`), and `Array.Slice`
 // was already the endpoint form. A count-based sub-range is `Array.SubArray`.
-concept Sliceable
-    inherits Countable
+interface ISliceable
+    inherits ICountable
 {
     Slice(x: Self, from: Integer, exclusiveTo: Integer): Self;
 }
 
 // Supports joining two collections end to end. (https://en.wikipedia.org/wiki/Concatenation)
-concept Concatenable
+interface IConcatenable
 {
     Concat(a: Self, b: Self): Self;
 }
 
 // Supports a membership test. (https://en.wikipedia.org/wiki/Set_(abstract_data_type))
-concept SetLike<T>
+interface ISetLike<T>
 {
     Contains(x: Self, item: T): Boolean;
 }
 
 // A keyed lookup collection. (https://en.wikipedia.org/wiki/Associative_array)
-concept MapLike<TKey, TValue>
-    inherits Countable
+interface IMapLike<TKey, TValue>
+    inherits ICountable
 {
     ContainsKey(x: Self, key: TKey): Boolean;
     ValueAt(x: Self, key: TKey): TValue;
@@ -51,8 +51,8 @@ concept MapLike<TKey, TValue>
 
 // Last-in-first-out access. Push and Pop return new collections.
 // (https://en.wikipedia.org/wiki/Stack_(abstract_data_type))
-concept StackLike<T>
-    inherits Countable
+interface IStackLike<T>
+    inherits ICountable
 {
     Peek(x: Self): T;
     Push(x: Self, item: T): Self;
@@ -61,8 +61,8 @@ concept StackLike<T>
 
 // First-in-first-out access. Enqueue and Dequeue return new collections.
 // (https://en.wikipedia.org/wiki/Queue_(abstract_data_type))
-concept QueueLike<T>
-    inherits Countable
+interface IQueueLike<T>
+    inherits ICountable
 {
     Front(x: Self): T;
     Enqueue(x: Self, item: T): Self;
@@ -70,38 +70,38 @@ concept QueueLike<T>
 }
 
 //==
-// # Indexable collection concepts
+// # IIndexable collection concepts
 //
 // Counting, typed positions, and random access by index in one to four
 // dimensions. All collections are immutable; operations that "modify" return new
 // collections.
 
 // Has a finite number of elements.
-concept Countable
+interface ICountable
 {
     Count(x: Self): Integer;
 }
 
-// A typed zero-based position within an ordered collection. Value is the raw
+// A typed zero-based position within an ordered collection. IValue is the raw
 // index; -1 means "none" / "not present". Implementors are single-field
-// wrappers over Integer (VertexIndex, FaceIndex, ...), so the Value field
+// wrappers over Integer (VertexIndex, FaceIndex, ...), so the IValue field
 // satisfies this surface directly.
-concept Index
+interface IIndex
 {
     Value(x: Self): Integer;
 }
 
 // An ordered collection addressable by zero-based index.
 // (https://en.wikipedia.org/wiki/Array_(data_structure))
-concept Indexable<T>
-    inherits Countable
+interface IIndexable<T>
+    inherits ICountable
 {
     At(x: Self, index: Integer): T;
 }
 
 // A collection addressed by column and row (row-major count semantics).
-concept Indexable2D<T>
-    inherits Indexable<T>
+interface IIndexable2D<T>
+    inherits IIndexable<T>
 {
     ColumnCount(x: Self): Integer;
     RowCount(x: Self): Integer;
@@ -109,8 +109,8 @@ concept Indexable2D<T>
 }
 
 // A collection addressed by column, row, and layer.
-concept Indexable3D<T>
-    inherits Indexable<T>
+interface IIndexable3D<T>
+    inherits IIndexable<T>
 {
     ColumnCount(x: Self): Integer;
     RowCount(x: Self): Integer;
@@ -119,7 +119,7 @@ concept Indexable3D<T>
 }
 
 //==
-// # Jagged (ragged row) collection concept
+// # IJagged (ragged row) collection concept
 //
 // The one packing seam for variable-length rows: a flat value array plus a
 // boundary array. Meshes (face corners), adjacency tables, and any other list
@@ -134,7 +134,7 @@ concept Indexable3D<T>
 // Values = []. Offsets hold one-past-end boundaries, not element references, so
 // they stay plain Integer
 // (Convention: see CONVENTIONS.md - Typed indices).
-concept Jagged<T>
+interface IJagged<T>
 {
     Offsets(x: Self): Array<Integer>;
     Values(x: Self): Array<T>;

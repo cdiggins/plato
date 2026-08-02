@@ -2,8 +2,8 @@
 // # Mesh topology concepts
 //
 // Three rungs of a ladder, each strictly stronger than the one below:
-// counted mesh elements (MeshElementCounts), which elements touch which
-// (MeshIncidence), and constant-time half-edge navigation (HalfEdgeNavigable).
+// counted mesh elements (IMeshElementCounts), which elements touch which
+// (IMeshIncidence), and constant-time half-edge navigation (IHalfEdgeNavigable).
 // The derived functionality of all three lives in
 // `meshes.library.plato`.
 //
@@ -23,9 +23,9 @@
 // UndirectedEdgeCount counts DEDUPLICATED undirected edges — one per pair of
 // half-edges, not one per directed side and not one per face corner. A
 // representation that cannot dedupe without building incidence should implement
-// MeshIncidence and derive the count from it rather than guess: an over-count
+// IMeshIncidence and derive the count from it rather than guess: an over-count
 // silently corrupts every Euler-characteristic result.
-concept MeshElementCounts
+interface IMeshElementCounts
 {
     VertexCount(x: Self): Integer;
     UndirectedEdgeCount(x: Self): Integer;
@@ -42,8 +42,8 @@ concept MeshElementCounts
 // FacesOfVertex by scanning. Results are in no guaranteed order unless the
 // implementing type documents one, and an empty array is the "none" answer
 // (an isolated vertex, a wire edge bordering no face).
-concept MeshIncidence
-    inherits MeshElementCounts
+interface IMeshIncidence
+    inherits IMeshElementCounts
 {
     VerticesOfFace(x: Self, face: FaceIndex): Array<VertexIndex>;
     UndirectedEdgesOfFace(x: Self, face: FaceIndex): Array<UndirectedEdgeIndex>;
@@ -62,7 +62,7 @@ concept MeshIncidence
 // from half-edges means walking a face loop or a vertex fan and materializing
 // an array, which is a build step rather than a constant-time read. A
 // half-edge type is free to implement both.
-concept HalfEdgeNavigable
+interface IHalfEdgeNavigable
 {
     OriginOf(x: Self, halfEdge: HalfEdgeIndex): VertexIndex;
     TwinOf(x: Self, halfEdge: HalfEdgeIndex): HalfEdgeIndex;

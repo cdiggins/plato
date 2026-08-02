@@ -25,7 +25,7 @@
 // images (Bitmap, FloatImage, or MipChain), not in the descriptor.
 // (https://en.wikipedia.org/wiki/Texture_mapping)
 type Texture2D
-    implements Value
+    implements IValue
 {
     Name: String;
     Size: IntegerSize2D;
@@ -36,7 +36,7 @@ type Texture2D
 // A 3D (volume) texture descriptor. Pixel data lives in a VolumeImage or an
 // equivalent layer stack. A MipLevels of 0 requests a full chain.
 type Texture3D
-    implements Value
+    implements IValue
 {
     Name: String;
     Size: IntegerSize3D;
@@ -47,7 +47,7 @@ type Texture3D
 // A cubemap descriptor: six square faces of FaceSize texels per side. Pixel
 // data lives in a CubemapImage. A MipLevels of 0 requests a full chain.
 type TextureCube
-    implements Value
+    implements IValue
 {
     Name: String;
     FaceSize: Integer;
@@ -58,7 +58,7 @@ type TextureCube
 // A 2D texture-array descriptor: LayerCount same-sized layers addressable by
 // index in shaders.
 type TextureArrayDescriptor
-    implements Value
+    implements IValue
 {
     Name: String;
     Size: IntegerSize2D;
@@ -73,12 +73,12 @@ type CubemapLayout
     = HorizontalCross | VerticalCross | HorizontalStrip | VerticalStrip | Equirectangular;
 
 //==
-// ## Procedural textures
+// ## IProcedural textures
 
 // A two-color checkerboard; Tiling is the number of A/B cell pairs across
 // each UV axis. (https://en.wikipedia.org/wiki/Checkerboard)
 type CheckerTexture
-    implements ProceduralTexture
+    implements IProceduralTexture
 {
     ColorA: Color;
     ColorB: Color;
@@ -88,7 +88,7 @@ type CheckerTexture
 // A linear gradient across UV space: the gradient ramp swept along the given
 // direction angle (0 sweeps left to right).
 type GradientTexture
-    implements ProceduralTexture
+    implements IProceduralTexture
 {
     Gradient: ColorGradient;
     Angle: Angle;
@@ -99,7 +99,7 @@ type GradientTexture
 // deterministically seeded.
 // (https://en.wikipedia.org/wiki/Fractional_Brownian_motion)
 type NoiseTexture
-    implements ProceduralTexture
+    implements IProceduralTexture
 {
     Frequency: Number;
     Octaves: Integer;
@@ -112,7 +112,7 @@ type NoiseTexture
 // surface normal. Higher BlendSharpness narrows the blend bands; Tiling
 // scales the projected UVs.
 type TriplanarProjection
-    implements Value
+    implements IValue
 {
     BlendSharpness: Number;
     Tiling: Number2;
@@ -150,7 +150,7 @@ type FilterMode
 // bias, and the border color used by ClampToBorder.
 // (https://en.wikipedia.org/wiki/Anisotropic_filtering)
 type TextureSampler
-    implements Value
+    implements IValue
 {
     WrapU: WrapMode;
     WrapV: WrapMode;
@@ -167,7 +167,7 @@ type TextureSampler
 // An affine transform applied to UV coordinates before sampling, composed as
 // Tiling (scale) first, then Rotation, then Offset.
 type UvTransform
-    implements Value
+    implements IValue
 {
     Offset: Vector2D;
     Rotation: Angle;
@@ -186,7 +186,7 @@ type TextureChannelMask = R | G | B | A | RG | RGB | RGBA;
 // transform, which UV set of the mesh to use (zero-based), and which channels
 // to read. The unit of texturing that materials and shaders reference.
 type TextureBinding
-    implements Value
+    implements IValue
 {
     Texture: Texture2D;
     Sampler: TextureSampler;

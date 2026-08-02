@@ -20,7 +20,7 @@
 // meters; Velocity is in meters per second; Acceleration is in meters per
 // second squared.
 type KinematicState2D
-    implements Value, Interpolatable
+    implements IValue, IInterpolatable
 {
     Position: Point2D;
     Velocity: Vector2D;
@@ -31,7 +31,7 @@ type KinematicState2D
 // Velocity is in meters per second; Acceleration is in meters per second
 // squared.
 type KinematicState3D
-    implements Value, Interpolatable
+    implements IValue, IInterpolatable
 {
     Position: Point3D;
     Velocity: Vector3D;
@@ -42,7 +42,7 @@ type KinematicState3D
 // signed angular velocity, and signed angular acceleration (counterclockwise
 // positive).
 type AngularState2D
-    implements Value
+    implements IValue
 {
     Orientation: Angle;
     AngularVelocity: AngularVelocity;
@@ -54,7 +54,7 @@ type AngularState2D
 // AngularAcceleration is in radians per second squared about each world axis.
 // (https://en.wikipedia.org/wiki/Angular_velocity)
 type AngularState3D
-    implements Value
+    implements IValue
 {
     Orientation: Quaternion;
     AngularVelocity: Vector3D;
@@ -66,7 +66,7 @@ type AngularState3D
 // is in meters per second squared; angular rates are counterclockwise
 // positive.
 type RigidKinematicState2D
-    implements Value
+    implements IValue
 {
     Pose: Pose2D;
     LinearVelocity: Vector2D;
@@ -82,7 +82,7 @@ type RigidKinematicState2D
 // world axes.
 // (https://en.wikipedia.org/wiki/Rigid_body)
 type RigidKinematicState3D
-    implements Value
+    implements IValue
 {
     Pose: Pose3D;
     LinearVelocity: Vector3D;
@@ -98,7 +98,7 @@ type RigidKinematicState3D
 // meters per second, plus the body's signed angular velocity
 // (counterclockwise positive). Known as a twist in screw theory.
 type SpatialVelocity2D
-    implements Value, Interpolatable
+    implements IValue, IInterpolatable
 {
     Linear: Vector2D;
     Angular: AngularVelocity;
@@ -109,7 +109,7 @@ type SpatialVelocity2D
 // Known as a twist in screw theory.
 // (https://en.wikipedia.org/wiki/Screw_theory)
 type SpatialVelocity3D
-    implements Value, Interpolatable
+    implements IValue, IInterpolatable
 {
     Linear: Vector3D;
     Angular: Vector3D;
@@ -119,7 +119,7 @@ type SpatialVelocity3D
 // plus the signed out-of-plane torque (counterclockwise positive).
 // Known as a wrench in screw theory.
 type SpatialForce2D
-    implements Value, Interpolatable
+    implements IValue, IInterpolatable
 {
     Force: Vector2D;
     Torque: Torque;
@@ -129,7 +129,7 @@ type SpatialForce2D
 // torque in newton-meters about each axis. Known as a wrench in screw theory.
 // (https://en.wikipedia.org/wiki/Torque)
 type SpatialForce3D
-    implements Value, Interpolatable
+    implements IValue, IInterpolatable
 {
     Force: Vector3D;
     Torque: Vector3D;
@@ -152,7 +152,7 @@ type SpatialForce3D
 // Velocities[i] the velocity in meters per second. Velocities may be empty
 // when unknown.
 type Trajectory2D
-    implements Value
+    implements IValue
 {
     Times: Array<Duration>;
     Positions: Array<Point2D>;
@@ -165,7 +165,7 @@ type Trajectory2D
 // when unknown.
 // (https://en.wikipedia.org/wiki/Trajectory)
 type Trajectory3D
-    implements Value
+    implements IValue
 {
     Times: Array<Duration>;
     Positions: Array<Point3D>;
@@ -180,7 +180,7 @@ type Trajectory3D
 // second; Gravity is a constant acceleration in meters per second squared.
 // (https://en.wikipedia.org/wiki/Projectile_motion)
 type BallisticTrajectory
-    implements Value
+    implements IValue
 {
     InitialPosition: Point3D;
     InitialVelocity: Vector3D;
@@ -192,7 +192,7 @@ type BallisticTrajectory
 // phase InitialPhase.
 // (https://en.wikipedia.org/wiki/Circular_motion)
 type UniformCircularMotion
-    implements Value
+    implements IValue
 {
     Center: Point3D;
     Axis: Direction3D;
@@ -206,7 +206,7 @@ type UniformCircularMotion
 // the oscillating quantity (unit-agnostic).
 // (https://en.wikipedia.org/wiki/Simple_harmonic_motion)
 type SimpleHarmonicMotion
-    implements Value
+    implements IValue
 {
     Offset: Number;
     Amplitude: Number;
@@ -219,7 +219,7 @@ type SimpleHarmonicMotion
 // units of one per second (0 = undamped).
 // (https://en.wikipedia.org/wiki/Pendulum)
 type Pendulum
-    implements Value
+    implements IValue
 {
     ArmLength: Length;
     Gravity: Acceleration;
@@ -229,7 +229,7 @@ type Pendulum
 // The instantaneous state of a pendulum: signed deflection from the rest
 // (hanging) direction and its rate of change.
 type PendulumState
-    implements Value
+    implements IValue
 {
     Deflection: Angle;
     AngularVelocity: AngularVelocity;

@@ -36,9 +36,9 @@ library SpatialPrimitives
     //   * `Volume` and `SurfaceArea` are NON-NEGATIVE. `Tetrahedron` additionally offers
     //     `SignedVolume`, matching its declaration's stated sign convention.
     //   * CONTAINMENT is boundary-INCLUSIVE everywhere (every test is a `<=` on a
-    //     distance or a coordinate), matching `ContainsPoint3D`'s doc.
+    //     distance or a coordinate), matching `IContainsPoint3D`'s doc.
     //   * `ClosestPoint` on a filled solid returns the query point itself when the query
-    //     is inside, which `NearestPoint3D` explicitly permits. `Disk3D` and `Triangle3D`
+    //     is inside, which `INearestPoint3D` explicitly permits. `Disk3D` and `Triangle3D`
     //     are flat patches, not solids, so theirs always land ON the patch.
     //   * BOUNDS are TIGHT unless a body says CONSERVATIVE. Three do: the two
     //     spherical-cap-like shapes, where a tight box needs an angular-extreme analysis

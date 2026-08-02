@@ -2,308 +2,308 @@
 // # Numeric structures
 //
 // Sections, in order:
-//  - Component-wise algebra for the Vector concept
-//  - Numeric structures components — the Vector component surface
+//  - Component-wise algebra for the IVector concept
+//  - Numeric structures components — the IVector component surface
 //  - Derived functions for point-like types
-//  - Derived functions for the MatrixLike concept
-//  - Derived functions for the Quantity concept
-//  - Geometric helpers for the Vector concept
+//  - Derived functions for the IMatrixLike concept
+//  - Derived functions for the IQuantity concept
+//  - Geometric helpers for the IVector concept
 
 library NumericStructures
 {
     //==
-    // # Component-wise algebra for the Vector concept
+    // # Component-wise algebra for the IVector concept
     //
-    // The Additive / Arithmetic / Scalable / Lattice / Interpolatable surface and
+    // The IAdditive / IArithmetic / IScalable / ILattice / IInterpolatable surface and
     // the per-component lifts of the Number intrinsics, all written once against the
-    // component combinators below — written once against the Vector concept
+    // component combinators below — written once against the IVector concept
     // rather than once per concrete type.
 
     //==
-    // # Vector — component-wise algebra
+    // # IVector — component-wise algebra
     //
-    // The Additive / Arithmetic / Scalable / Lattice / Interpolatable surface,
+    // The IAdditive / IArithmetic / IScalable / ILattice / IInterpolatable surface,
     // all component-wise. Concrete types whose backend has a native vector
     // instruction (Number2/3/4/8 in `intrinsics.library.plato`) override these.
 
     // Component-wise sum.
-    Add(a: Vector, b: Vector): Vector
+    Add(a: IVector, b: IVector): IVector
         => a.ZipComponents(b, (x, y) => x + y);
 
     // Component-wise difference.
-    Subtract(a: Vector, b: Vector): Vector
+    Subtract(a: IVector, b: IVector): IVector
         => a.ZipComponents(b, (x, y) => x - y);
 
     // Component-wise (Hadamard) product.
-    Multiply(a: Vector, b: Vector): Vector
+    Multiply(a: IVector, b: IVector): IVector
         => a.ZipComponents(b, (x, y) => x * y);
 
     // Component-wise quotient. Precondition: no component of b is zero.
-    Divide(a: Vector, b: Vector): Vector
+    Divide(a: IVector, b: IVector): IVector
         => a.ZipComponents(b, (x, y) => x / y);
 
     // Component-wise remainder. Precondition: no component of b is zero.
-    Modulo(a: Vector, b: Vector): Vector
+    Modulo(a: IVector, b: IVector): IVector
         => a.ZipComponents(b, (x, y) => x % y);
 
     // The vector with every component negated.
-    Negative(self: Vector): Vector
+    Negative(self: IVector): IVector
         => self.MapComponents(x => x.Negative);
 
     // Every component scaled by a unitless scalar.
-    Multiply(self: Vector, scalar: Number): Vector
+    Multiply(self: IVector, scalar: Number): IVector
         => self.MapComponents(x => x * scalar);
 
     // Every component divided by a unitless scalar. Precondition: scalar is non-zero.
-    Divide(self: Vector, scalar: Number): Vector
+    Divide(self: IVector, scalar: Number): IVector
         => self.MapComponents(x => x / scalar);
 
     // Every component reduced modulo a unitless scalar. Precondition: non-zero.
-    Modulo(self: Vector, scalar: Number): Vector
+    Modulo(self: IVector, scalar: Number): IVector
         => self.MapComponents(x => x % scalar);
 
-    // The component-wise minimum (the Lattice meet).
-    Min(a: Vector, b: Vector): Vector
+    // The component-wise minimum (the ILattice meet).
+    Min(a: IVector, b: IVector): IVector
         => a.ZipComponents(b, (x, y) => x.Min(y));
 
-    // The component-wise maximum (the Lattice join).
-    Max(a: Vector, b: Vector): Vector
+    // The component-wise maximum (the ILattice join).
+    Max(a: IVector, b: IVector): IVector
         => a.ZipComponents(b, (x, y) => x.Max(y));
 
     // Component-wise linear interpolation; t is unclamped.
-    Lerp(a: Vector, b: Vector, t: Number): Vector
+    Lerp(a: IVector, b: IVector, t: Number): IVector
         => a.ZipComponents(b, (x, y) => x + (y - x) * t);
 
     //==
-    // # Vector — lifted Number functions
+    // # IVector — lifted Number functions
     //
     // Each of these is the corresponding function from
     // `intrinsics.library.plato` or the `core-*` / `algebra-*` libraries
-    // applied to every component — written once against the Vector concept.
+    // applied to every component — written once against the IVector concept.
 
     // Component-wise absolute value.
-    Abs(self: Vector): Vector
+    Abs(self: IVector): IVector
         => self.MapComponents(x => x.Abs);
 
     // Component-wise floor (largest whole value at or below each component).
-    Floor(self: Vector): Vector
+    Floor(self: IVector): IVector
         => self.MapComponents(x => x.Floor);
 
     // Component-wise ceiling (smallest whole value at or above each component).
-    Ceiling(self: Vector): Vector
+    Ceiling(self: IVector): IVector
         => self.MapComponents(x => x.Ceiling);
 
     // Component-wise truncation toward zero.
-    Truncate(self: Vector): Vector
+    Truncate(self: IVector): IVector
         => self.MapComponents(x => x.Truncate);
 
     // Component-wise square root. Precondition: no component is negative.
-    Sqrt(self: Vector): Vector
+    Sqrt(self: IVector): IVector
         => self.MapComponents(x => x.Sqrt);
 
     // Component-wise cube root.
-    Cbrt(self: Vector): Vector
+    Cbrt(self: IVector): IVector
         => self.MapComponents(x => x.Cbrt);
 
     // Component-wise exponential (e raised to each component).
-    Exp(self: Vector): Vector
+    Exp(self: IVector): IVector
         => self.MapComponents(x => x.Exp);
 
     // Component-wise natural logarithm. Precondition: every component is positive.
-    NaturalLog(self: Vector): Vector
+    NaturalLog(self: IVector): IVector
         => self.MapComponents(x => x.NaturalLog);
 
     // Component-wise base-2 logarithm. Precondition: every component is positive.
-    Log2(self: Vector): Vector
+    Log2(self: IVector): IVector
         => self.MapComponents(x => x.Log2);
 
     // Component-wise base-10 logarithm. Precondition: every component is positive.
-    Log10(self: Vector): Vector
+    Log10(self: IVector): IVector
         => self.MapComponents(x => x.Log10);
 
     // Component-wise reciprocal. Precondition: no component is zero.
-    Reciprocal(self: Vector): Vector
+    Reciprocal(self: IVector): IVector
         => self.MapComponents(x => x.Reciprocal);
 
     // Each component raised to the corresponding component of power.
-    Pow(self: Vector, power: Vector): Vector
+    Pow(self: IVector, power: IVector): IVector
         => self.ZipComponents(power, (x, y) => x.Pow(y));
 
     // Each component raised to the same scalar power.
-    Pow(self: Vector, power: Number): Vector
+    Pow(self: IVector, power: Number): IVector
         => self.MapComponents(x => x.Pow(power));
 
     // Each component given the sign of the corresponding component of sign.
-    CopySign(self: Vector, sign: Vector): Vector
+    CopySign(self: IVector, sign: IVector): IVector
         => self.ZipComponents(sign, (x, y) => x.CopySign(y));
 
     // Component-wise fused multiply-add: self * y + z with a single rounding.
-    FusedMultiplyAdd(self: Vector, y: Vector, z: Vector): Vector
+    FusedMultiplyAdd(self: IVector, y: IVector, z: IVector): IVector
         => self.ZipComponents(y, z, (a, b, c) => a.FusedMultiplyAdd(b, c));
 
     // Restricts every component to the scalar range [lo, hi]. Precondition: lo <= hi.
-    Clamp(self: Vector, lo: Number, hi: Number): Vector
+    Clamp(self: IVector, lo: Number, hi: Number): IVector
         => self.MapComponents(x => x.Clamp(lo, hi));
 
     // Component-wise fractional part: each component minus its floor, in [0, 1).
-    FractionalPart(self: Vector): Vector
+    FractionalPart(self: IVector): IVector
         => self.MapComponents(x => x.FractionalPart);
 
     // The component-wise complement within the unit interval: one minus each component.
-    OneMinus(self: Vector): Vector
+    OneMinus(self: IVector): IVector
         => self.MapComponents(x => x.OneMinus);
 
     // Each component rounded to the nearest whole value, halves rounding up.
-    RoundedToNearest(self: Vector): Vector
+    RoundedToNearest(self: IVector): IVector
         => self.MapComponents(x => x.RoundedToNearest);
 
     // True when every pair of corresponding components differs by no more than
     // the given (non-negative) tolerance.
-    AlmostEqual(a: Vector, b: Vector, tolerance: Number): Boolean
+    AlmostEqual(a: IVector, b: IVector, tolerance: Number): Boolean
         => a.AllZipComponents(b, (x, y) => x.AlmostEqual(y, tolerance));
 
     // True when every component is within the given tolerance of zero.
-    AlmostZero(self: Vector, tolerance: Number): Boolean
+    AlmostZero(self: IVector, tolerance: Number): Boolean
         => self.AllComponents(x => x.AlmostZero(tolerance));
 
     // True when every component lies in the inclusive box [lower, upper].
-    Between(self: Vector, lower: Vector, upper: Vector): Boolean
+    Between(self: IVector, lower: IVector, upper: IVector): Boolean
         => self.AllZipComponents(lower, upper, (x, a, b) => x.Between(a, b));
 
     // True when every component is finite (no infinity, no NaN).
-    IsFinite(self: Vector): Boolean
+    IsFinite(self: IVector): Boolean
         => self.AllComponents(x => x.IsFinite);
 
     // True when at least one component is NaN.
-    HasNaN(self: Vector): Boolean
+    HasNaN(self: IVector): Boolean
         => self.AnyComponent(x => x.IsNaN);
 
     //==
-    // # Numeric structures components — the Vector component surface
+    // # Numeric structures components — the IVector component surface
     //
     // The map/zip/fold combinators over a vector's components, the reductions built
     // on them (SumComponents, Magnitude, Dot), the distinguished elements derived
     // from Broadcast, and the per-concrete-type FromComponents/Broadcast primitives
     // that close the loop. Everything here is written once and applies to every
-    // Vector implementor.
+    // IVector implementor.
 
     //==
-    // # Vector â€” component-wise lifting
+    // # IVector â€” component-wise lifting
     //
-    // Vector declares FromComponents and Broadcast and inherits Count/At from
-    // Indexable<Number>, so a vector can be both read as and rebuilt from an
+    // IVector declares FromComponents and Broadcast and inherits Count/At from
+    // IIndexable<Number>, so a vector can be both read as and rebuilt from an
     // Array<Number>. That closes the loop: the Array intrinsics (Map, Zip,
     // Reduce, All, Any) lift straight onto vectors, and every derived body below
     // is written once instead of once per concrete type.
     //
     // As elsewhere in these libraries, the helpers return the bare concept type
-    // Vector rather than the concrete implementing type.
+    // IVector rather than the concrete implementing type.
 
     // The components of self as an Array<Number>, in index order.
-    ComponentArray(self: Vector): Array<Number>
+    ComponentArray(self: IVector): Array<Number>
         => self.Count.Range.Map(i => self[i]);
 
     // A vector of the same type with f applied to each component.
-    MapComponents(self: Vector, f: Function1<Number, Number>): Vector
+    MapComponents(self: IVector, f: Function1<Number, Number>): IVector
         => self.FromComponents(self.ComponentArray.Map(f));
 
     // A vector whose i-th component is f applied to the i-th components of a and
     // b. Precondition: a and b have the same arity.
-    ZipComponents(a: Vector, b: Vector, f: Function2<Number, Number, Number>): Vector
+    ZipComponents(a: IVector, b: IVector, f: Function2<Number, Number, Number>): IVector
         => a.FromComponents(a.ComponentArray.Zip(b.ComponentArray, f));
 
     // The three-way component-wise zip. Precondition: equal arities.
-    ZipComponents(a: Vector, b: Vector, c: Vector, f: Function3<Number, Number, Number, Number>): Vector
+    ZipComponents(a: IVector, b: IVector, c: IVector, f: Function3<Number, Number, Number, Number>): IVector
         => a.FromComponents(a.ComponentArray.Zip(b.ComponentArray, c.ComponentArray, f));
 
     // Folds the components left to right, starting from initial.
-    ReduceComponents(self: Vector, initial: Number, f: Function2<Number, Number, Number>): Number
+    ReduceComponents(self: IVector, initial: Number, f: Function2<Number, Number, Number>): Number
         => self.ComponentArray.Reduce(initial, f);
 
     // True when every component satisfies the predicate.
-    AllComponents(self: Vector, predicate: Function1<Number, Boolean>): Boolean
+    AllComponents(self: IVector, predicate: Function1<Number, Boolean>): Boolean
         => self.ComponentArray.All(predicate);
 
     // True when at least one component satisfies the predicate.
-    AnyComponent(self: Vector, predicate: Function1<Number, Boolean>): Boolean
+    AnyComponent(self: IVector, predicate: Function1<Number, Boolean>): Boolean
         => self.ComponentArray.Any(predicate);
 
     // True when the paired components of a and b all satisfy the predicate.
-    AllZipComponents(a: Vector, b: Vector, f: Function2<Number, Number, Boolean>): Boolean
+    AllZipComponents(a: IVector, b: IVector, f: Function2<Number, Number, Boolean>): Boolean
         => a.ComponentArray.Zip(b.ComponentArray, f).All(x => x);
 
     // True when the tripled components of a, b and c all satisfy the predicate.
-    AllZipComponents(a: Vector, b: Vector, c: Vector, f: Function3<Number, Number, Number, Boolean>): Boolean
+    AllZipComponents(a: IVector, b: IVector, c: IVector, f: Function3<Number, Number, Number, Boolean>): Boolean
         => a.ComponentArray.Zip(b.ComponentArray, c.ComponentArray, f).All(x => x);
 
     // True when at least one paired component of a and b satisfies the predicate.
-    AnyZipComponents(a: Vector, b: Vector, f: Function2<Number, Number, Boolean>): Boolean
+    AnyZipComponents(a: IVector, b: IVector, f: Function2<Number, Number, Boolean>): Boolean
         => a.ComponentArray.Zip(b.ComponentArray, f).Any(x => x);
 
     // True when at least one tripled component of a, b and c satisfies the predicate.
-    AnyZipComponents(a: Vector, b: Vector, c: Vector, f: Function3<Number, Number, Number, Boolean>): Boolean
+    AnyZipComponents(a: IVector, b: IVector, c: IVector, f: Function3<Number, Number, Number, Boolean>): Boolean
         => a.ComponentArray.Zip(b.ComponentArray, c.ComponentArray, f).Any(x => x);
 
     //==
-    // # Vector â€” component reductions
+    // # IVector â€” component reductions
 
     // The sum of all components.
-    SumComponents(self: Vector): Number
+    SumComponents(self: IVector): Number
         => self.ReduceComponents(0.0, (acc, x) => acc + x);
 
     // The sum of the squares of all components; the squared Euclidean norm.
-    SumSqrComponents(self: Vector): Number
+    SumSqrComponents(self: IVector): Number
         => self.ReduceComponents(0.0, (acc, x) => acc + x * x);
 
     // The smallest component. Precondition: the vector has at least one component.
-    MinComponent(self: Vector): Number
+    MinComponent(self: IVector): Number
         => self.ReduceComponents(self[0], (acc, x) => acc.Min(x));
 
     // The largest component. Precondition: the vector has at least one component.
-    MaxComponent(self: Vector): Number
+    MaxComponent(self: IVector): Number
         => self.ReduceComponents(self[0], (acc, x) => acc.Max(x));
 
     // The arithmetic mean of the components. Precondition: non-empty.
-    AvgComponent(self: Vector): Number
+    AvgComponent(self: IVector): Number
         => self.SumComponents / self.Count.ToNumber;
 
-    // The Euclidean length (the Normed member, derived from the components).
-    Magnitude(self: Vector): Number
+    // The Euclidean length (the INormed member, derived from the components).
+    Magnitude(self: IVector): Number
         => self.MagnitudeSquared.Sqrt;
 
     // The squared Euclidean length; avoids the square root.
-    MagnitudeSquared(self: Vector): Number
+    MagnitudeSquared(self: IVector): Number
         => self.SumSqrComponents;
 
     // The dot product: the sum of the products of corresponding components.
     // Precondition: a and b have the same arity.
-    Dot(a: Vector, b: Vector): Number
+    Dot(a: IVector, b: IVector): Number
         => a.ZipComponents(b, (x, y) => x * y).SumComponents;
 
     //==
-    // # Vector â€” distinguished elements
+    // # IVector â€” distinguished elements
     //
-    // The NumericalLimits surface follows from Broadcast alone: each element is
+    // The INumericalLimits surface follows from Broadcast alone: each element is
     // the corresponding Number constant in every component.
 
     // The vector with every component zero (the additive identity).
-    Zero(self: Vector): Vector
+    Zero(self: IVector): IVector
         => self.Broadcast(0.0);
 
     // The vector with every component one.
-    One(self: Vector): Vector
+    One(self: IVector): IVector
         => self.Broadcast(1.0);
 
     // The vector with every component at the smallest representable Number.
-    MinValue(self: Vector): Vector
+    MinValue(self: IVector): IVector
         => self.Broadcast(Number.MinValue);
 
     // The vector with every component at the largest representable Number.
-    MaxValue(self: Vector): Vector
+    MaxValue(self: IVector): IVector
         => self.Broadcast(Number.MaxValue);
 
     //==
-    // # Vector construction, per concrete type
+    // # IVector construction, per concrete type
     //
     // FromComponents and Broadcast are the only primitives the generic bodies
     // above need; each implementing type supplies them once here through its
@@ -372,46 +372,46 @@ library NumericStructures
     // # Derived functions for point-like types
     //
     // The per-concrete-type Euclidean distances that stand in for a generic metric
-    // on the Coordinate concept (`points.concepts.plato`), plus the barycentric
+    // on the ICoordinate concept (`points.concepts.plato`), plus the barycentric
     // evaluation and normalization test for `points.types.plato`.
 
     //==
-    // # Coordinate
+    // # ICoordinate
     //
-    // A position in some space (Value, Equatable, Interpolatable). Coordinate is a
+    // A position in some space (IValue, IEquatable, IInterpolatable). ICoordinate is a
     // marker concept whose only operation is Lerp, and CoreAlgebra already ships
-    // MidPoint, LerpClamped and SmoothLerp on Interpolatable — which Coordinate
+    // MidPoint, LerpClamped and SmoothLerp on IInterpolatable — which ICoordinate
     // inherits — so every interpolation convenience it can support already exists
     // upstream (SmoothLerp landed at algebra.library.plato) and no
-    // Coordinate-specific body is added here.
+    // ICoordinate-specific body is added here.
     //
-    // TODO(concept-gap): a generic Distance over Coordinate is out of reach, and
+    // TODO(concept-gap): a generic Distance over ICoordinate is out of reach, and
     // NOT via a cheap concept extension. All five implementors (Point2D, Point3D,
     // PointN in points.types.plato; UvCoordinate, UvwCoordinate in
-    // points.types.plato) implement OriginBased<TDelta> (hence
-    // Difference<TDelta>) — but each with a DIFFERENT delta type (Vector2D /
-    // Vector3D / VectorN). So Coordinate cannot inherit Difference<TDelta>
+    // points.types.plato) implement IOriginBased<TDelta> (hence
+    // IDifference<TDelta>) — but each with a DIFFERENT delta type (Vector2D /
+    // Vector3D / VectorN). So ICoordinate cannot inherit IDifference<TDelta>
     // without gaining a type parameter, which would cascade to
-    // every bare `Coordinate` mention tree-wide (a generic-arity change, not merely
-    // an added obligation). `Coordinate` therefore still does not inherit
-    // MetricSpace either: that would impose a concrete Distance on all five
+    // every bare `ICoordinate` mention tree-wide (a generic-arity change, not merely
+    // an added obligation). `ICoordinate` therefore still does not inherit
+    // IMetricSpace either: that would impose a concrete Distance on all five
     // implementors, including the two parametric ones. What DID change is that
-    // the three Cartesian points now declare `MetricSpace` individually
+    // the three Cartesian points now declare `IMetricSpace` individually
     // (points.types.plato) — they already had the body, so the declaration costs
-    // nothing and makes the `MetricSpace`-generic surface in
+    // nothing and makes the `IMetricSpace`-generic surface in
     // `algebra.library.plato` reachable.
     //
-    // The Between-two-points delta is derivable for every Difference implementor;
+    // The Between-two-points delta is derivable for every IDifference implementor;
     // Distance is not, because it
-    // additionally needs TDelta: Normed, and Difference cannot bind that —
-    // Instant's delta is a Duration, which is not Normed. A library function
+    // additionally needs TDelta: INormed, and IDifference cannot bind that —
+    // Instant's delta is a Duration, which is not INormed. A library function
     // cannot add the bound either (no `where` on library functions), so the six
     // Distance / DistanceSquared bodies below stay concrete.
     //
     // So the Euclidean distance is provided per concrete point type below, each as
-    // `Between(a, b).Magnitude` over that type's own Difference delta. This is the
+    // `Between(a, b).Magnitude` over that type's own IDifference delta. This is the
     // sanctioned resolution: concrete functions rather than a concept obligation that
-    // would force a generic-arity change on Coordinate. DistanceSquared mirrors Distance without
+    // would force a generic-arity change on ICoordinate. DistanceSquared mirrors Distance without
     // the square root, for radius and nearest-neighbour comparisons.
 
     // The Euclidean distance between two 2D positions.
@@ -441,12 +441,12 @@ library NumericStructures
         => a.Between(b).MagnitudeSquared;
 
     //==
-    // # UvCoordinate / UvwCoordinate — the OriginBased conversions
+    // # UvCoordinate / UvwCoordinate — the IOriginBased conversions
     //
     // Two lines each, and the whole affine surface (Add, Between, Subtract in
     // both spellings, Lerp, Origin) follows from them via
     // algebra.library.plato. These types previously declared
-    // `implements Difference<...>` without supplying bodies, so every derived
+    // `implements IDifference<...>` without supplying bodies, so every derived
     // member was a throwing stub until Offset/FromOffset landed here.
     //
     // The origin is the parameter-space origin: (0, 0) is the UV origin defined
@@ -493,9 +493,9 @@ library NumericStructures
         => (self.U + self.V + self.W).AlmostEqual(1.0, tolerance);
 
     //==
-    // # Hashable — the Cartesian points
+    // # IHashable — the Cartesian points
     //
-    // Point2D and Point3D declare Hashable (points.types.plato) and so owe a Hash.
+    // Point2D and Point3D declare IHashable (points.types.plato) and so owe a Hash.
     // Folded component-wise with the shared CombineHash (hashing.library.plato),
     // exactly as the vector twins in `vectors.library.plato` are: two
     // points that compare equal therefore hash equal within a run.
@@ -509,61 +509,61 @@ library NumericStructures
         => self.X.Hash.CombineHash(self.Y.Hash).CombineHash(self.Z.Hash);
 
     //==
-    // # Derived functions for the MatrixLike concept
+    // # Derived functions for the IMatrixLike concept
     //
     // Shape predicates, diagonal access, and the scalar folds over ElementAt (Trace,
-    // FrobeniusNorm) for the MatrixLike concept declared in
-    // `matrices.concepts.plato`, plus the Additive/Scalable-derived interpolation.
+    // FrobeniusNorm) for the IMatrixLike concept declared in
+    // `matrices.concepts.plato`, plus the IAdditive/IScalable-derived interpolation.
 
     //==
-    // # MatrixLike
+    // # IMatrixLike
     //
-    // Dense numeric matrices (Value, Additive, Scalable) with RowCount,
+    // Dense numeric matrices (IValue, IAdditive, IScalable) with RowCount,
     // ColumnCount, and ElementAt(row, column). Double and Half come from
-    // CoreAlgebra (Additive / Scalable). Trace and FrobeniusNorm are now derivable
+    // CoreAlgebra (IAdditive / IScalable). Trace and FrobeniusNorm are now derivable
     // as scalar folds over ElementAt (via MapRange + Array.Reduce); see below.
     //
     // TODO(concept-gap): Transpose remains blocked — it must CONSTRUCT a matrix, and
-    // MatrixLike exposes no construction primitive. The MakeArray2D intrinsic builds
-    // an Array2D<Number>, not a concrete MatrixLike, so a generic
-    // Transpose(MatrixLike): MatrixLike cannot be spelled here; each concrete matrix
+    // IMatrixLike exposes no construction primitive. The MakeArray2D intrinsic builds
+    // an Array2D<Number>, not a concrete IMatrixLike, so a generic
+    // Transpose(IMatrixLike): IMatrixLike cannot be spelled here; each concrete matrix
     // type (matrices.types.plato) supplies its own, returning its own type (e.g. the
     // Matrix4x4.Transpose intrinsic).
 
     // True when the matrix has equal row and column counts.
-    IsSquare(self: MatrixLike): Boolean
+    IsSquare(self: IMatrixLike): Boolean
         => self.RowCount == self.ColumnCount;
 
     // The total number of elements (rows times columns).
-    ElementCount(self: MatrixLike): Integer
+    ElementCount(self: IMatrixLike): Integer
         => self.RowCount * self.ColumnCount;
 
     // True when the matrix has no elements (no rows or no columns).
-    IsEmpty(self: MatrixLike): Boolean
+    IsEmpty(self: IMatrixLike): Boolean
         => self.RowCount == 0 || self.ColumnCount == 0;
 
     // True when the matrix is a single row.
-    IsRowVector(self: MatrixLike): Boolean
+    IsRowVector(self: IMatrixLike): Boolean
         => self.RowCount == 1;
 
     // True when the matrix is a single column.
-    IsColumnVector(self: MatrixLike): Boolean
+    IsColumnVector(self: IMatrixLike): Boolean
         => self.ColumnCount == 1;
 
     // True when two matrices have the same row and column counts.
-    SameShape(a: MatrixLike, b: MatrixLike): Boolean
+    SameShape(a: IMatrixLike, b: IMatrixLike): Boolean
         => a.RowCount == b.RowCount && a.ColumnCount == b.ColumnCount;
 
     // The element on the main diagonal at position i (i.e. element (i, i)).
     // Precondition: i is a valid row and column index.
-    DiagonalElement(self: MatrixLike, i: Integer): Number
+    DiagonalElement(self: IMatrixLike, i: Integer): Number
         => self.ElementAt(i, i);
 
     // The trace: the sum of the main-diagonal elements, folded over the diagonal
     // indices via MapRange + Array.Reduce
     // (https://en.wikipedia.org/wiki/Trace_(linear_algebra)). Precondition: the
     // matrix is square.
-    Trace(self: MatrixLike): Number
+    Trace(self: IMatrixLike): Number
         => self.RowCount.MapRange(i => self.ElementAt(i, i)).Reduce(0.0, (acc, x) => acc + x);
 
     // The Frobenius norm: the square root of the sum of the squares of every
@@ -571,33 +571,33 @@ library NumericStructures
     // index k maps to element (k / ColumnCount, k % ColumnCount), so the whole
     // matrix is folded in one pass.
     // Precondition: at least one element.
-    FrobeniusNorm(self: MatrixLike): Number
+    FrobeniusNorm(self: IMatrixLike): Number
         => self.ElementCount
             .MapRange(k => self.ElementAt(k / self.ColumnCount, k % self.ColumnCount).Square)
             .Reduce(0.0, (acc, x) => acc + x)
             .Sqrt;
 
-    // Linear interpolation of two matrices, derived from Additive and Scalable.
+    // Linear interpolation of two matrices, derived from IAdditive and IScalable.
     // t is unclamped: 0 yields a, 1 yields b. Precondition: a and b share a shape.
-    Lerp(a: MatrixLike, b: MatrixLike, t: Number): MatrixLike
+    Lerp(a: IMatrixLike, b: IMatrixLike, t: Number): IMatrixLike
         => a + (b - a) * t;
 
     // The element-wise average of two matrices. Precondition: a and b share a shape.
-    Average(a: MatrixLike, b: MatrixLike): MatrixLike
+    Average(a: IMatrixLike, b: IMatrixLike): IMatrixLike
         => (a + b) / 2.0;
 
     //==
     // # The zero matrix, per concrete type
     //
-    // `Additive.Zero` cannot be derived generically here for the same reason
+    // `IAdditive.Zero` cannot be derived generically here for the same reason
     // Transpose cannot (see the TODO above): it must CONSTRUCT a matrix, and
-    // MatrixLike exposes no construction primitive. So each concrete type
+    // IMatrixLike exposes no construction primitive. So each concrete type
     // supplies its own, exactly as the note above prescribes. The fixed-size
     // types are TYPE-TOKEN members (`_` receiver: reachable as Matrix2x2.Zero
     // or off any value); their shape is static, so the rows are written out
     // literally. MatrixN carries its shape at runtime and so must keep a real
     // receiver, rebuilding a zero-filled component array from it.
-    // (Zero lives on Additive, not NumericalLimits.)
+    // (Zero lives on IAdditive, not INumericalLimits.)
 
     // The 2x2 matrix with every element zero (the additive identity).
     Zero(_: Matrix2x2): Matrix2x2
@@ -625,52 +625,52 @@ library NumericStructures
         => (x.NumRows, x.NumColumns, x.ElementCount.MapRange(k => 0.0));
 
     //==
-    // # Derived functions for the Quantity concept
+    // # Derived functions for the IQuantity concept
     //
-    // Bodies for the Quantity concept declared in `quantities.concepts.plato`.
+    // Bodies for the IQuantity concept declared in `quantities.concepts.plato`.
     // Ordering, interpolation, Double and Half all come from the `core-*` /
     // `algebra-*` libraries via
     // the inherited concepts; only what is specific to the Amount projection is
     // added here. Pure expressions only; all values are immutable.
 
     //==
-    // # Quantity
+    // # IQuantity
     //
-    // A one-dimensional measured amount (Value, Comparable, Hashable, Additive,
-    // Scalable, Interpolatable) with an Amount projected to a raw Number.
+    // A one-dimensional measured amount (IValue, IComparable, IHashable, IAdditive,
+    // IScalable, IInterpolatable) with an Amount projected to a raw Number.
     // Ordering (Lesser/Greater/Clamp/Between), MidPoint, LerpClamped, Double and
     // Half all come from CoreAlgebra via the inherited concepts; only the
     // Amount-based sign/zero predicates and the same-type absolute value are
-    // added here. Quantity is deliberately not Arithmetic (multiplying two
+    // added here. IQuantity is deliberately not IArithmetic (multiplying two
     // quantities yields a different type), so no product helper is offered.
 
-    // True when the underlying amount is exactly zero. (Quantity is not Numerical,
+    // True when the underlying amount is exactly zero. (IQuantity is not INumerical,
     // so CoreAlgebra's IsZero does not apply.)
-    IsZero(self: Quantity): Boolean
+    IsZero(self: IQuantity): Boolean
         => self.Amount == 0.0;
 
     // True when the underlying amount is strictly greater than zero.
-    IsPositive(self: Quantity): Boolean
+    IsPositive(self: IQuantity): Boolean
         => self.Amount > 0.0;
 
     // True when the underlying amount is strictly less than zero.
-    IsNegative(self: Quantity): Boolean
+    IsNegative(self: IQuantity): Boolean
         => self.Amount < 0.0;
 
     // The sign of the quantity: 1 when positive, -1 when negative, 0 when zero.
-    Sign(self: Quantity): Integer
+    Sign(self: IQuantity): Integer
         => self.Amount.Sign;
 
     // The absolute value: the quantity with a non-negative amount.
-    Abs(self: Quantity): Quantity
+    Abs(self: IQuantity): IQuantity
         => self.IsNegative ? self.Negative : self;
 
     // The magnitude of the gap between two quantities; always non-negative.
-    AbsoluteDifference(a: Quantity, b: Quantity): Quantity
+    AbsoluteDifference(a: IQuantity, b: IQuantity): IQuantity
         => (a - b).Abs;
 
     //==
-    // # Geometric helpers for the Vector concept
+    // # Geometric helpers for the IVector concept
     //
     // The geometry that sits on top of Dot and Magnitude: distances, projection and
     // rejection, reflection, angles between vectors, safe normalization, the 3D
@@ -678,89 +678,89 @@ library NumericStructures
     // factories. The component-wise machinery is in the sections above.
 
     //==
-    // # Vector
+    // # IVector
     //
     // Fixed-arity numeric vectors
-    // (https://en.wikipedia.org/wiki/Vector_(mathematics_and_physics); Numerical,
-    // Arithmetic, Indexable<Number>, Normed, Lattice, Hashable) with a Dot product
+    // (https://en.wikipedia.org/wiki/Vector_(mathematics_and_physics); INumerical,
+    // IArithmetic, IIndexable<Number>, INormed, ILattice, IHashable) with a Dot product
     // (https://en.wikipedia.org/wiki/Dot_product). Magnitude and
-    // MagnitudeSquared come from Normed; Min/Max are the component-wise lattice
-    // operations. MidPoint and LerpClamped come from CoreAlgebra (Interpolatable).
-    // Vector is Lattice but not Clampable, so the box clamps below stay here.
+    // MagnitudeSquared come from INormed; Min/Max are the component-wise lattice
+    // operations. MidPoint and LerpClamped come from CoreAlgebra (IInterpolatable).
+    // IVector is ILattice but not IClampable, so the box clamps below stay here.
     //
-    // The former concept-gap is closed: Vector now declares FromComponents and
+    // The former concept-gap is closed: IVector now declares FromComponents and
     // Broadcast alongside the inherited At/Count, so the component surface is
     // read-and-construct. Everything below the "component-wise lifting" banner —
     // the map/zip/fold combinators, the reductions (SumComponents, MinComponent,
-    // AvgComponent), the arithmetic and lattice bodies, the NumericalLimits
+    // AvgComponent), the arithmetic and lattice bodies, the INumericalLimits
     // elements, and the per-component lifts of the Number intrinsics — is derived
     // once here and applies to every implementing type.
 
     // The unit vector in the same direction. Precondition: non-zero magnitude.
-    Normalize(self: Vector): Vector
+    Normalize(self: IVector): IVector
         => self / self.Magnitude;
 
     // The straight-line distance between the tips of two vectors.
-    Distance(a: Vector, b: Vector): Number
+    Distance(a: IVector, b: IVector): Number
         => (a - b).Magnitude;
 
     // The squared distance between two vectors; avoids the square root when only
     // relative distances are compared.
-    DistanceSquared(a: Vector, b: Vector): Number
+    DistanceSquared(a: IVector, b: IVector): Number
         => (a - b).MagnitudeSquared;
 
     // True when b lies within the given radius of a (inclusive). Compares squared
     // distances, so no square root is taken.
-    WithinDistance(a: Vector, b: Vector, radius: Number): Boolean
+    WithinDistance(a: IVector, b: IVector, radius: Number): Boolean
         => a.DistanceSquared(b) <= radius * radius;
 
     // The signed length of self projected onto onto. Precondition: onto is non-zero.
-    ScalarProjection(self: Vector, onto: Vector): Number
+    ScalarProjection(self: IVector, onto: IVector): Number
         => self.Dot(onto) / onto.Magnitude;
 
     // The component of self parallel to onto
     // (https://en.wikipedia.org/wiki/Vector_projection). Precondition: onto is
     // non-zero.
-    ProjectOnto(self: Vector, onto: Vector): Vector
+    ProjectOnto(self: IVector, onto: IVector): IVector
         => onto * (self.Dot(onto) / onto.Dot(onto));
 
     // The component of self perpendicular to onto. Precondition: onto is non-zero.
-    RejectFrom(self: Vector, onto: Vector): Vector
+    RejectFrom(self: IVector, onto: IVector): IVector
         => self - self.ProjectOnto(onto);
 
     // Reflects self across the plane whose normal is given. Precondition: normal
     // is a unit vector.
-    Reflect(self: Vector, normal: Vector): Vector
+    Reflect(self: IVector, normal: IVector): IVector
         => self - normal * (2.0 * self.Dot(normal));
 
     // The cosine of the angle between a and b: Dot divided by the product of
     // magnitudes. Preconditions: a and b are non-zero.
-    CosineSimilarity(a: Vector, b: Vector): Number
+    CosineSimilarity(a: IVector, b: IVector): Number
         => a.Dot(b) / (a.Magnitude * b.Magnitude);
 
     // The unsigned angle between a and b, in [0, Pi]. The cosine similarity is
     // clamped to [-1, 1] before Acos so floating-point drift cannot produce a NaN.
     // Preconditions: a and b are non-zero.
-    AngleBetween(a: Vector, b: Vector): Angle
+    AngleBetween(a: IVector, b: IVector): Angle
         => a.CosineSimilarity(b).Clamp(-1.0, 1.0).Acos;
 
     // A vector in the same direction as self but with the given length.
     // Precondition: self is non-zero.
-    ScaledToLength(self: Vector, length: Number): Vector
+    ScaledToLength(self: IVector, length: Number): IVector
         => self.Normalize * length;
 
     // Restricts each component of self to the box spanned by lo and hi, using the
     // component-wise lattice operations. Precondition: lo <= hi component-wise.
-    Clamp(self: Vector, lo: Vector, hi: Vector): Vector
+    Clamp(self: IVector, lo: IVector, hi: IVector): IVector
         => self.Max(lo).Min(hi);
 
     // Restricts each component of self to [0, 1] using the vector's own Zero and
     // One elements (the component-wise analogue of CoreAlgebra's Saturate).
-    Saturate(self: Vector): Vector
+    Saturate(self: IVector): IVector
         => self.Max(self.Zero).Min(self.One);
 
     //==
-    // # Vector — safe normalization and directions (normalization pitfalls)
+    // # IVector — safe normalization and directions (normalization pitfalls)
     //
     // Convention: see CONVENTIONS.md - Partial operations (fallback-parameter
     // style, no generic Optional). `Normalize` above carries a non-zero
@@ -769,7 +769,7 @@ library NumericStructures
 
     // The unit vector in the same direction as self, or fallback when self has
     // (near) zero length and no direction is defined. Total: never divides by zero.
-    NormalizeOr(self: Vector, fallback: Vector): Vector
+    NormalizeOr(self: IVector, fallback: IVector): IVector
         => self.MagnitudeSquared > 0.0 ? self.Normalize : fallback;
 
     //==

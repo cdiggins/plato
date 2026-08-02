@@ -20,7 +20,7 @@ type NodeContent2D
 // A zero-based index of a node within Scene2D's flat node array. -1 means
 // "none" (a root's parent, a hit-test miss).
 type SceneNodeIndex2D
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -32,7 +32,7 @@ type SceneNodeIndex2D
 // payload in the owning scene's pools. ClipIndex selects a clip mask from
 // the scene's clip pool, -1 for none.
 type SceneNode2D
-    implements Value
+    implements IValue
 {
     Name: String;
     Parent: SceneNodeIndex2D;
@@ -48,7 +48,7 @@ type SceneNode2D
 // interior of a path under the path's own fill rule. Alpha and Luminance take
 // coverage from the rendered output of the scene node at the given index.
 type MaskSource2D
-    implements Value
+    implements IValue
     = Path(Path: Path2D)                    // interior of a path under its own fill rule
     | Alpha(SourceNode: SceneNodeIndex2D)       // alpha channel of the rendered node at this index
     | Luminance(SourceNode: SceneNodeIndex2D);  // luminance of the rendered node at this index
@@ -57,7 +57,7 @@ type MaskSource2D
 // Inverted swaps inside and outside.
 // (https://en.wikipedia.org/wiki/Clipping_path)
 type ClipMask2D
-    implements Value
+    implements IValue
 {
     Source: MaskSource2D;
     Inverted: Boolean;
@@ -66,10 +66,10 @@ type ClipMask2D
 // A complete 2D scene: the parent-indexed node array plus the content pools
 // nodes address by index. ImageReferences holds opaque integer handles into
 // an external image/texture table owned by the host asset system; a node
-// with Image content stores an index into this array.
+// with IImage content stores an index into this array.
 // (https://en.wikipedia.org/wiki/Scene_graph)
 type Scene2D
-    implements Value
+    implements IValue
 {
     Nodes: Array<SceneNode2D>;
     Shapes: Array<StyledPath2D>;
@@ -82,7 +82,7 @@ type Scene2D
 // of the scene that is visible, and the pixel dimensions of the target it
 // maps onto. (https://en.wikipedia.org/wiki/Viewport)
 type Viewport2D
-    implements Value
+    implements IValue
 {
     View: Bounds2D;
     PixelSize: IntegerSize2D;
@@ -93,7 +93,7 @@ type Viewport2D
 // composited beneath the scene (zero alpha for transparent output).
 // (https://en.wikipedia.org/wiki/Dots_per_inch)
 type ExportSettings2D
-    implements Value
+    implements IValue
 {
     DotsPerInch: Number;
     Background: Color;
@@ -103,7 +103,7 @@ type ExportSettings2D
 // topmost node hit (-1 for a miss) and the hit position in that node's local
 // space. (https://en.wikipedia.org/wiki/Hit-testing)
 type SceneHitResult2D
-    implements Value
+    implements IValue
 {
     Node: SceneNodeIndex2D;
     LocalPosition: Point2D;

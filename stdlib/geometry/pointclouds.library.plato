@@ -1,7 +1,7 @@
 //==
 // # PointClouds — deformation bodies for the enriched point clouds
 //
-// The Deformable3D obligations of the attributed clouds in `pointclouds.types.plato`:
+// The IDeformable3D obligations of the attributed clouds in `pointclouds.types.plato`:
 // positions are carried through the mapping and every parallel channel passes
 // through unchanged. Normals are NOT re-derived — they stay exact under rigid
 // mappings and go stale under bending ones, and only a surface (which a cloud
@@ -9,22 +9,22 @@
 
 library PointClouds
 {
-    // The Deformable3D obligation: positions deformed; the parallel normals
+    // The IDeformable3D obligation: positions deformed; the parallel normals
     // are carried unchanged (stale after a non-rigid mapping).
     Deform(self: OrientedPointCloud3D, mapping: Function1<Point3D, Point3D>): OrientedPointCloud3D
         => (self.Positions.Map(mapping), self.Normals);
 
-    // The Deformable3D obligation: positions deformed, colors unchanged.
+    // The IDeformable3D obligation: positions deformed, colors unchanged.
     Deform(self: ColoredPointCloud3D, mapping: Function1<Point3D, Point3D>): ColoredPointCloud3D
         => (self.Positions.Map(mapping), self.Colors);
 
-    // The Deformable3D obligation: positions deformed; normals, colors, and
+    // The IDeformable3D obligation: positions deformed; normals, colors, and
     // intensities carried unchanged (normals stale after a non-rigid mapping).
     Deform(self: AttributedPointCloud3D, mapping: Function1<Point3D, Point3D>): AttributedPointCloud3D
         => (self.Positions.Map(mapping), self.Normals, self.Colors, self.Intensities);
 
     //==
-    // # The PointCloudable3D obligations
+    // # The IPointCloudable3D obligations
     //
     // Every enriched cloud keeps its samples in Positions and its channels in
     // arrays parallel to it, so dropping to a bare cloud is dropping the

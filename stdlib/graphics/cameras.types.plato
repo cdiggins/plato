@@ -3,7 +3,7 @@
 //
 // Sections, in order:
 //  - Cameras and projections
-//  - Camera optics and output regions
+//  - ICamera optics and output regions
 
 //==
 // # Cameras and projections
@@ -27,7 +27,7 @@ type CameraProjection
 // See https://en.wikipedia.org/wiki/Pinhole_camera_model and
 // https://en.wikipedia.org/wiki/Perspective_projection.
 type PerspectiveCamera
-    implements Camera
+    implements ICamera
 {
     Pose: Pose3D;
     VerticalFov: Angle;
@@ -40,7 +40,7 @@ type PerspectiveCamera
 // volume in scene units; the width is OrthoHeight times AspectRatio.
 // (https://en.wikipedia.org/wiki/Orthographic_projection)
 type OrthographicCamera
-    implements Camera
+    implements ICamera
 {
     Pose: Pose3D;
     OrthoHeight: Number;
@@ -53,11 +53,11 @@ type OrthographicCamera
 // and FocusDistance are physical lengths (a 50mm lens is 0.05 meters);
 // SensorSize is in millimeters by photographic convention; FStop is the
 // aperture number N in f/N (https://en.wikipedia.org/wiki/F-number); Iso is
-// ISO 12232 sensitivity; ShutterTime is the exposure duration. Field of view
+// ISO 12232 sensitivity; ShutterTime is the exposure duration. IField of view
 // follows from FocalLength and SensorSize; exposure follows from FStop,
 // ShutterTime, and Iso.
 type PhysicalCamera
-    implements Camera
+    implements ICamera
 {
     Pose: Pose3D;
     FocalLength: Length;
@@ -79,7 +79,7 @@ type FisheyeMapping = Equidistant | EquisolidAngle | Orthographic | Stereographi
 // FieldOfView is the full cone angle covered by the image circle; some mappings
 // support a full hemisphere or more.
 type FisheyeCamera
-    implements Camera
+    implements ICamera
 {
     Pose: Pose3D;
     Mapping: FisheyeMapping;
@@ -92,7 +92,7 @@ type FisheyeCamera
 // (equirectangular / lat-long; https://en.wikipedia.org/wiki/Equirectangular_projection).
 // Sweeps of 360 by 180 degrees capture the whole sphere; smaller sweeps crop it.
 type EquirectangularCamera
-    implements Camera
+    implements ICamera
 {
     Pose: Pose3D;
     LongitudeSweep: AngleInterval;
@@ -105,7 +105,7 @@ type EquirectangularCamera
 // HorizontalSweep is the arc covered around the pose's vertical axis;
 // VerticalFov is the perspective field of view across the cylinder height.
 type PanoramicCamera
-    implements Camera
+    implements ICamera
 {
     Pose: Pose3D;
     HorizontalSweep: Angle;
@@ -117,7 +117,7 @@ type PanoramicCamera
 // A perspective camera authored by aiming: positioned at Position, looking at
 // Target, with Up resolving the roll about the view axis.
 type LookAtCamera
-    implements Value
+    implements IValue
 {
     Position: Point3D;
     Target: Point3D;
@@ -132,7 +132,7 @@ type LookAtCamera
 // of its corners; the fourth follows by parallelogram completion. The plane
 // need not be perpendicular to the view direction.
 type ProjectionPlane
-    implements Value
+    implements IValue
 {
     LowerLeft: Point3D;
     LowerRight: Point3D;
@@ -143,7 +143,7 @@ type ProjectionPlane
 // projection rectangle in world space. Serves head-tracked displays, CAVEs,
 // portals, and tiled display walls.
 type OffAxisCamera
-    implements Value
+    implements IValue
 {
     Eye: Point3D;
     Screen: ProjectionPlane;
@@ -157,7 +157,7 @@ type OffAxisCamera
 // axis (typical human separation is 0.063 meters). ConvergenceDistance is where
 // the two view axes cross: the zero-parallax plane.
 type StereoCameraRig
-    implements Value
+    implements IValue
 {
     Template: PerspectiveCamera;
     EyeSeparation: Length;
@@ -165,7 +165,7 @@ type StereoCameraRig
 }
 
 //==
-// # Camera optics and output regions
+// # ICamera optics and output regions
 //
 // The lens-side and image-side companions of the camera types in
 // the section above: the pixel region a camera renders into, lens distortion and
@@ -176,7 +176,7 @@ type StereoCameraRig
 // normalized device depth is mapped onto. PixelBounds contains Min, excludes
 // Max. (https://en.wikipedia.org/wiki/Viewport)
 type Viewport
-    implements Value
+    implements IValue
 {
     PixelBounds: IntegerBounds2D;
     DepthRange: NumberInterval;
@@ -186,7 +186,7 @@ type Viewport
 // P1 and P2 are tangential (decentering) terms. All zero means an ideal lens.
 // See https://en.wikipedia.org/wiki/Distortion_(optics).
 type LensDistortion
-    implements Value
+    implements IValue
 {
     K1: Number;
     K2: Number;
@@ -200,7 +200,7 @@ type LensDistortion
 // Vertical shifts the image up (the architectural facade correction).
 // (https://en.wikipedia.org/wiki/Tilt%E2%80%93shift_photography)
 type LensShift
-    implements Value
+    implements IValue
 {
     Horizontal: Number;
     Vertical: Number;
@@ -212,7 +212,7 @@ type LensShift
 // BladeCount shapes the bokeh polygon (0 means a perfect circle); BladeRotation
 // orients that polygon.
 type DepthOfFieldSettings
-    implements Value
+    implements IValue
 {
     Enabled: Boolean;
     FocusDistance: Length;

@@ -72,7 +72,7 @@ library Polyhedra
 
     //==
     // Catalan — duals of the above (https://en.wikipedia.org/wiki/Catalan_solid).
-    // Face-transitive, so their vertices sit at more than one radius.
+    // IFace-transitive, so their vertices sit at more than one radius.
 
     // 12 rhombi on 14 vertices: the dual of the cuboctahedron
     // (https://en.wikipedia.org/wiki/Rhombic_dodecahedron).

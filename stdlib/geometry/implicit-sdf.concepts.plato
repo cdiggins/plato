@@ -8,9 +8,9 @@
 // The concrete types implementing these concepts are declared in
 // `implicit-sdf.types.plato`.
 //
-// Unbounded vs bounded: `SignedDistanceField2D/3D` are pure distance oracles
-// with no finite domain. `BoundedSignedDistanceField2D/3D` add a conservative
-// AABB (`Bounded2D/3D`) for culling and acceleration; `DistanceAt` /
+// Unbounded vs bounded: `ISignedDistanceField2D/3D` are pure distance oracles
+// with no finite domain. `IBoundedSignedDistanceField2D/3D` add a conservative
+// AABB (`IBounded2D/3D`) for culling and acceleration; `DistanceAt` /
 // `Eval` still evaluate the underlying field everywhere — bounds are hints,
 // not a change to distance semantics. Analytic wrappers live in
 // `implicit-sdf.types.plato`; sampled lattices (`SampledSdf*`) already
@@ -20,40 +20,40 @@
 // A planar scalar field whose value is the signed distance to a boundary
 // curve: negative inside, zero on the boundary, positive outside. Values are
 // exact distances or conservative lower bounds of them.
-concept SignedDistanceField2D
-    inherits ScalarField2D
+interface ISignedDistanceField2D
+    inherits IScalarField2D
 { }
 
 // A spatial scalar field whose value is the signed distance to a surface:
 // negative inside, zero on the surface, positive outside. Values are exact
 // distances or conservative lower bounds of them.
-concept SignedDistanceField3D
-    inherits ScalarField3D
+interface ISignedDistanceField3D
+    inherits IScalarField3D
 { }
 
 // A planar SDF plus a conservative axis-aligned domain for culling. Bounds
 // should enclose every point where distance ≤ 0 when used as a solid hint;
 // for sampled lattices they span the lattice. Outside Bounds, callers may
 // skip work; Eval / DistanceAt remain defined and unchanged.
-concept BoundedSignedDistanceField2D
-    inherits SignedDistanceField2D, Bounded2D
+interface IBoundedSignedDistanceField2D
+    inherits ISignedDistanceField2D, IBounded2D
 { }
 
 // A spatial SDF plus a conservative axis-aligned domain for culling. Same
 // semantics as the planar form: Bounds are acceleration hints, not a clamp
 // on distance evaluation.
-concept BoundedSignedDistanceField3D
-    inherits SignedDistanceField3D, Bounded3D
+interface IBoundedSignedDistanceField3D
+    inherits ISignedDistanceField3D, IBounded3D
 { }
 
 // A planar region described by a membership predicate: true when the point
 // is inside. Carries no distance information.
-concept ImplicitRegion2D
-    inherits Procedural<Point2D, Boolean>
+interface IImplicitRegion2D
+    inherits IProcedural<Point2D, Boolean>
 { }
 
 // A spatial volume described by a membership predicate: true when the point
 // is inside. Carries no distance information.
-concept ImplicitVolume3D
-    inherits Procedural<Point3D, Boolean>
+interface IImplicitVolume3D
+    inherits IProcedural<Point3D, Boolean>
 { }

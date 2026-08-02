@@ -1,20 +1,20 @@
 //==
-// # Geometry
+// # IGeometry
 //
 // Sections, in order:
-//  - Geometry classification and topological markers
-//  - Fitted-shape concept
-//  - Geometry bounds, point sets, measures, and centroids
-//  - Geometry point queries
+//  - IGeometry classification and topological markers
+//  - IFitted-shape concept
+//  - IGeometry bounds, point sets, measures, and centroids
+//  - IGeometry point queries
 
 //==
-// # Geometry classification and topological markers
+// # IGeometry classification and topological markers
 //
 // What a geometric entity IS: the root marker, the embedding-dimension family
-// (Geometry2D / Geometry3D / GeometryND), and the pure structural markers a shape
+// (IGeometry2D / IGeometry3D / IGeometryND), and the pure structural markers a shape
 // promises (open, closed, convex, manifold, orientable, connected). Intrinsic
 // (topological) dimension is NOT a member here: it is already implied by which
-// family a type belongs to (Curve*, Surface, Solid). The `Dimensioned` concept
+// family a type belongs to (ICurve*, ISurface, ISolid). The `Dimensioned` concept
 // was retired unimplemented. The capability concepts that say what can be QUERIED on
 // such an entity follow in the sections below.
 
@@ -23,26 +23,26 @@
 
 // The root marker for every geometric entity: an immutable value describing a
 // locus of points in some space. (https://en.wikipedia.org/wiki/Locus_(mathematics))
-concept Geometry
-    inherits Value
+interface IGeometry
+    inherits IValue
 { }
 
-// Geometry embedded in the 2D Cartesian plane.
+// IGeometry embedded in the 2D Cartesian plane.
 // (https://en.wikipedia.org/wiki/Euclidean_plane)
-concept Geometry2D
-    inherits Geometry
+interface IGeometry2D
+    inherits IGeometry
 { }
 
-// Geometry embedded in 3D Cartesian space.
+// IGeometry embedded in 3D Cartesian space.
 // (https://en.wikipedia.org/wiki/Three-dimensional_space)
-concept Geometry3D
-    inherits Geometry
+interface IGeometry3D
+    inherits IGeometry
 { }
 
-// Geometry embedded in an N-dimensional space whose dimension is known only at
+// IGeometry embedded in an N-dimensional space whose dimension is known only at
 // runtime.
-concept GeometryND
-    inherits Geometry
+interface IGeometryND
+    inherits IGeometry
 { }
 
 //==
@@ -53,39 +53,39 @@ concept GeometryND
 
 // Marks a shape whose boundary has free ends and does not close on itself:
 // an arc, an open polyline, a curve span.
-concept OpenShape
+interface IOpenShape
 { }
 
 // Marks a shape that closes on itself and separates inside from outside:
 // a circle, a polygon, a sphere, a solid.
 // (https://en.wikipedia.org/wiki/Jordan_curve_theorem)
-concept ClosedShape
+interface IClosedShape
 { }
 
 // Marks a shape that contains the entire straight segment between any two of
 // its points. (https://en.wikipedia.org/wiki/Convex_set)
-concept ConvexShape
+interface IConvexShape
 { }
 
 // Marks a shape that is locally flat everywhere: every point has a neighborhood
 // like a line (for 1D shapes) or a disk (for 2D shapes). Excludes T-junctions
-// and self-intersections. (https://en.wikipedia.org/wiki/Manifold)
-concept Manifold
+// and self-intersections. (https://en.wikipedia.org/wiki/IManifold)
+interface IManifold
 { }
 
 // Marks a shape that admits a consistent global orientation (a two-sided
 // surface; the Moebius strip is the standard counterexample).
 // (https://en.wikipedia.org/wiki/Orientability)
-concept Orientable
+interface IOrientable
 { }
 
 // Marks a shape consisting of a single connected piece.
 // (https://en.wikipedia.org/wiki/Connected_space)
-concept Connected
+interface IConnected
 { }
 
 //==
-// # Fitted-shape concept
+// # IFitted-shape concept
 //
 // What every fit result has in common: the residual statistics of the fit.
 // The shape itself is deliberately not part of the concept — each fit names
@@ -96,13 +96,13 @@ concept Connected
 
 // Reports how well a fitted shape matches the samples it was fitted to.
 // (https://en.wikipedia.org/wiki/Goodness_of_fit)
-concept Fitted
+interface IFitted
 {
     Quality(x: Self): FitQuality;
 }
 
 //==
-// # Geometry bounds, point sets, measures, and centroids
+// # IGeometry bounds, point sets, measures, and centroids
 //
 // What a geometric entity reports about its own extent: an axis-aligned bounding
 // region, the finite ordered set of defining points, the length / area / volume
@@ -115,14 +115,14 @@ concept Fitted
 
 // Has a finite axis-aligned bounding rectangle enclosing every point of the shape.
 // (https://en.wikipedia.org/wiki/Minimum_bounding_box)
-concept Bounded2D
+interface IBounded2D
 {
     Bounds(x: Self): Bounds2D;
 }
 
 // Has a finite axis-aligned bounding box enclosing every point of the shape.
 // (https://en.wikipedia.org/wiki/Bounding_volume)
-concept Bounded3D
+interface IBounded3D
 {
     Bounds(x: Self): Bounds3D;
 }
@@ -132,15 +132,15 @@ concept Bounded3D
 
 // Exposes the finite ordered set of defining points of a 2D entity: the vertices
 // of a polygon, the endpoints of a segment, the samples of a scatter.
-concept PointSet2D
-    inherits Geometry2D
+interface IPointSet2D
+    inherits IGeometry2D
 {
     Points(x: Self): Array<Point2D>;
 }
 
 // Exposes the finite ordered set of defining points of a 3D entity.
-concept PointSet3D
-    inherits Geometry3D
+interface IPointSet3D
+    inherits IGeometry3D
 {
     Points(x: Self): Array<Point3D>;
 }
@@ -153,14 +153,14 @@ concept PointSet3D
 
 // Has a finite total length: segments, polylines, and bounded curve spans.
 // (https://en.wikipedia.org/wiki/Arc_length)
-concept LengthMeasurable
+interface ILengthMeasurable
 {
     Length(x: Self): Number;
 }
 
 // Has a finite area and a finite boundary length: closed 2D regions, and flat
 // or curved bounded patches in any embedding. (https://en.wikipedia.org/wiki/Area)
-concept PlanarMeasurable
+interface IPlanarMeasurable
 {
     Area(x: Self): Number;
     Perimeter(x: Self): Number;
@@ -168,7 +168,7 @@ concept PlanarMeasurable
 
 // Has a finite enclosed volume and a finite boundary area: closed 3D solids.
 // (https://en.wikipedia.org/wiki/Volume)
-concept SpatialMeasurable
+interface ISpatialMeasurable
 {
     Volume(x: Self): Number;
     SurfaceArea(x: Self): Number;
@@ -179,20 +179,20 @@ concept SpatialMeasurable
 
 // Can report its center of mass under uniform density in the plane.
 // (https://en.wikipedia.org/wiki/Centroid)
-concept Centroid2D
+interface ICentroid2D
 {
     Centroid(x: Self): Point2D;
 }
 
 // Can report its center of mass under uniform density in space.
 // (https://en.wikipedia.org/wiki/Centroid)
-concept Centroid3D
+interface ICentroid3D
 {
     Centroid(x: Self): Point3D;
 }
 
 //==
-// # Geometry point queries
+// # IGeometry point queries
 //
 // What a geometric entity answers about a GIVEN POINT: point membership, the point
 // of itself nearest a query, and — for convex shapes — the support mapping that
@@ -200,14 +200,14 @@ concept Centroid3D
 
 // Supports a point-membership test in the plane. For closed shapes the boundary
 // counts as inside. (https://en.wikipedia.org/wiki/Point_in_polygon)
-concept ContainsPoint2D
+interface IContainsPoint2D
 {
     Contains(x: Self, point: Point2D): Boolean;
 }
 
 // Supports a point-membership test in space. For solids the boundary counts as
 // inside.
-concept ContainsPoint3D
+interface IContainsPoint3D
 {
     Contains(x: Self, point: Point3D): Boolean;
 }
@@ -215,13 +215,13 @@ concept ContainsPoint3D
 // Can find the point of itself nearest to a query point in the plane. The result
 // lies on the shape; for a region it may be an interior point (the query itself
 // when contained).
-concept NearestPoint2D
+interface INearestPoint2D
 {
     ClosestPoint(x: Self, point: Point2D): Point2D;
 }
 
 // Can find the point of itself nearest to a query point in space.
-concept NearestPoint3D
+interface INearestPoint3D
 {
     ClosestPoint(x: Self, point: Point3D): Point3D;
 }
@@ -229,14 +229,14 @@ concept NearestPoint3D
 // Supplies the support mapping of a convex 2D shape: the farthest point of the
 // shape in a given direction. Ties may resolve to any extreme point. The basis
 // of GJK-style collision queries. (https://en.wikipedia.org/wiki/Support_function)
-concept SupportMappable2D
+interface ISupportMappable2D
 {
     Support(x: Self, direction: Direction2D): Point2D;
 }
 
 // Supplies the support mapping of a convex 3D shape: the farthest point of the
 // shape in a given direction. (https://en.wikipedia.org/wiki/Support_function)
-concept SupportMappable3D
+interface ISupportMappable3D
 {
     Support(x: Self, direction: Direction3D): Point3D;
 }

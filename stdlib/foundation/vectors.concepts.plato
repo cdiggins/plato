@@ -1,5 +1,5 @@
 //==
-// # Vector concept
+// # IVector concept
 //
 // The concept shared by every numeric vector in this vocabulary
 // (https://en.wikipedia.org/wiki/Euclidean_vector): component-wise arithmetic,
@@ -13,15 +13,15 @@
 // dot product, and component-wise extremes
 // (https://en.wikipedia.org/wiki/Vector_space).
 //
-// Indexable<Number> supplies the read half of the component surface (Count is
+// IIndexable<Number> supplies the read half of the component surface (Count is
 // the arity, At(i) the i-th component). FromComponents and Broadcast supply the
 // construction half, which is what makes component-wise map, zip, and fold
 // derivable generically in `numeric-structures.library.plato` — every lifted
 // Number function (Abs, Floor, Pow, Lerp, ...) and every reduction
 // (SumComponents, MinComponent, Magnitude) is written once against this pair
 // rather than once per concrete type.
-concept Vector
-    inherits Numerical, Arithmetic, Indexable<Number>, Normed, Lattice, Hashable
+interface IVector
+    inherits INumerical, IArithmetic, IIndexable<Number>, INormed, ILattice, IHashable
 {
     Dot(a: Self, b: Self): Number;
 

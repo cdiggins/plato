@@ -12,9 +12,9 @@ library SpatialStructures
     //==
     // # Uniform grid queries and Morton code ordering
     //
-    // The `SpatialIndex2D` / `SpatialIndex3D` obligations of the four grids in
+    // The `ISpatialIndex2D` / `ISpatialIndex3D` obligations of the four grids in
     // `spatial-structures.types.plato`, plus the ordering and digest the Morton codes
-    // owe `Comparable` and `Hashable`.
+    // owe `IComparable` and `IHashable`.
     //
     // Both grid families store their buckets in CSR form, so a broad-phase query is
     // the same two steps in all four: test each cell's world bounds against the
@@ -152,7 +152,7 @@ library SpatialStructures
     // # Morton codes
     //
     // The whole point of a Z-order code is that the natural order of the codes
-    // is a spatial order, so `Comparable` and `Hashable` both go straight to the
+    // is a spatial order, so `IComparable` and `IHashable` both go straight to the
     // carrier integer.
 
     // Codes order as their carrier integers do — which is the Z-order.
@@ -174,8 +174,8 @@ library SpatialStructures
     //==
     // # Kd-tree queries
     //
-    // The `SpatialIndex2D` / `SpatialIndex3D` and `NearestNeighborQueryable2D` /
-    // `NearestNeighborQueryable3D` obligations of `spatial-structures.types.plato`.
+    // The `ISpatialIndex2D` / `ISpatialIndex3D` and `INearestNeighborQueryable2D` /
+    // `INearestNeighborQueryable3D` obligations of `spatial-structures.types.plato`.
     //
     // The range query descends the tree, visiting a child only when the query box
     // reaches across the splitting plane into that child's half-space. Like every
@@ -352,9 +352,9 @@ library SpatialStructures
     // # Derived functionality for spatial indexes and queries
     //
     // Pure, expression-bodied helpers for the concepts declared in
-    // `spatial.concepts.plato` (SpatialIndex2D, SpatialIndex3D) and
-    // `spatial.concepts.plato` (RayIntersectable2D/3D,
-    // ClosestPointQueryable2D/3D, NearestNeighborQueryable2D/3D). Part of P8 of the
+    // `spatial.concepts.plato` (ISpatialIndex2D, ISpatialIndex3D) and
+    // `spatial.concepts.plato` (IRayIntersectable2D/3D,
+    // IClosestPointQueryable2D/3D, INearestNeighborQueryable2D/3D). Part of P8 of the
     // concept library.
     //
     // Result records expose their fields, so hit/distance predicates just read them,
@@ -364,193 +364,193 @@ library SpatialStructures
     // `IsEmpty` collisions are disambiguated by concept type).
 
     //==
-    // SpatialIndex2D — broad-phase candidate queries over indexed 2D primitives.
+    // ISpatialIndex2D — broad-phase candidate queries over indexed 2D primitives.
     // Candidates may include false positives; exact tests are the caller's phase two.
 
     // True when the index holds no primitives.
-    IsEmpty(self: SpatialIndex2D): Boolean
+    IsEmpty(self: ISpatialIndex2D): Boolean
         => self.ItemCount.IsZero;
 
     // The number of candidate primitives overlapping the bounds (with false positives).
-    CandidateCountInBounds(self: SpatialIndex2D, bounds: Bounds2D): Integer
+    CandidateCountInBounds(self: ISpatialIndex2D, bounds: Bounds2D): Integer
         => self.CandidatesInBounds(bounds).Count;
 
     // True when any candidate primitive overlaps the bounds.
-    HasCandidatesInBounds(self: SpatialIndex2D, bounds: Bounds2D): Boolean
+    HasCandidatesInBounds(self: ISpatialIndex2D, bounds: Bounds2D): Boolean
         => self.CandidateCountInBounds(bounds).IsPositive;
 
     //==
-    // SpatialIndex3D — broad-phase candidate queries over indexed 3D primitives.
+    // ISpatialIndex3D — broad-phase candidate queries over indexed 3D primitives.
 
     // True when the index holds no primitives.
-    IsEmpty(self: SpatialIndex3D): Boolean
+    IsEmpty(self: ISpatialIndex3D): Boolean
         => self.ItemCount.IsZero;
 
     // The number of candidate primitives overlapping the bounds (with false positives).
-    CandidateCountInBounds(self: SpatialIndex3D, bounds: Bounds3D): Integer
+    CandidateCountInBounds(self: ISpatialIndex3D, bounds: Bounds3D): Integer
         => self.CandidatesInBounds(bounds).Count;
 
     // True when any candidate primitive overlaps the bounds.
-    HasCandidatesInBounds(self: SpatialIndex3D, bounds: Bounds3D): Boolean
+    HasCandidatesInBounds(self: ISpatialIndex3D, bounds: Bounds3D): Boolean
         => self.CandidateCountInBounds(bounds).IsPositive;
 
     //==
-    // RayIntersectable2D — anything a 2D ray can be cast against. The convenience
+    // IRayIntersectable2D — anything a 2D ray can be cast against. The convenience
     // overloads build the RayQuery record so callers can cast a bare ray. A
     // MaxDistance of 0 means unbounded; a FilterMask of -1 accepts every category.
 
     // An unbounded, accept-all raycast request for a bare ray.
-    UnboundedRayQuery(self: RayIntersectable2D, ray: Ray2D): RayQuery2D
+    UnboundedRayQuery(self: IRayIntersectable2D, ray: Ray2D): RayQuery2D
         => (ray, 0.0, -1);
 
     // Cast a bare ray with no distance bound and no filtering.
-    Raycast(self: RayIntersectable2D, ray: Ray2D): RayHit2D
+    Raycast(self: IRayIntersectable2D, ray: Ray2D): RayHit2D
         => self.Raycast(self.UnboundedRayQuery(ray));
 
     // True when the query strikes something.
-    DidHit(self: RayIntersectable2D, query: RayQuery2D): Boolean
+    DidHit(self: IRayIntersectable2D, query: RayQuery2D): Boolean
         => self.Raycast(query).Hit;
 
     // True when a bare unbounded, accept-all ray strikes something.
-    DidHit(self: RayIntersectable2D, ray: Ray2D): Boolean
+    DidHit(self: IRayIntersectable2D, ray: Ray2D): Boolean
         => self.Raycast(ray).Hit;
 
     // True when the query strikes nothing.
-    Missed(self: RayIntersectable2D, query: RayQuery2D): Boolean
+    Missed(self: IRayIntersectable2D, query: RayQuery2D): Boolean
         => self.DidHit(query).Not;
 
     // The distance from the ray origin to the first hit. Precondition: the query hits.
-    HitDistance(self: RayIntersectable2D, query: RayQuery2D): Number
+    HitDistance(self: IRayIntersectable2D, query: RayQuery2D): Number
         => self.Raycast(query).Distance;
 
     // The world position of the first hit. Precondition: the query hits.
-    HitPosition(self: RayIntersectable2D, query: RayQuery2D): Point2D
+    HitPosition(self: IRayIntersectable2D, query: RayQuery2D): Point2D
         => self.Raycast(query).Position;
 
     // The surface normal at the first hit, pointing against the ray. Precondition: hits.
-    HitNormal(self: RayIntersectable2D, query: RayQuery2D): Direction2D
+    HitNormal(self: IRayIntersectable2D, query: RayQuery2D): Direction2D
         => self.Raycast(query).Normal;
 
     // The struck primitive's index in the caller's list (-1 when inapplicable).
     // Precondition: the query hits.
-    HitPrimitiveIndex(self: RayIntersectable2D, query: RayQuery2D): ItemIndex
+    HitPrimitiveIndex(self: IRayIntersectable2D, query: RayQuery2D): ItemIndex
         => self.Raycast(query).PrimitiveIndex;
 
     //==
-    // RayIntersectable3D — anything a 3D ray can be cast against.
+    // IRayIntersectable3D — anything a 3D ray can be cast against.
 
     // An unbounded, accept-all raycast request for a bare ray.
-    UnboundedRayQuery(self: RayIntersectable3D, ray: Ray3D): RayQuery3D
+    UnboundedRayQuery(self: IRayIntersectable3D, ray: Ray3D): RayQuery3D
         => (ray, 0.0, -1);
 
     // Cast a bare ray with no distance bound and no filtering.
-    Raycast(self: RayIntersectable3D, ray: Ray3D): RayHit3D
+    Raycast(self: IRayIntersectable3D, ray: Ray3D): RayHit3D
         => self.Raycast(self.UnboundedRayQuery(ray));
 
     // True when the query strikes something.
-    DidHit(self: RayIntersectable3D, query: RayQuery3D): Boolean
+    DidHit(self: IRayIntersectable3D, query: RayQuery3D): Boolean
         => self.Raycast(query).Hit;
 
     // True when a bare unbounded, accept-all ray strikes something.
-    DidHit(self: RayIntersectable3D, ray: Ray3D): Boolean
+    DidHit(self: IRayIntersectable3D, ray: Ray3D): Boolean
         => self.Raycast(ray).Hit;
 
     // True when the query strikes nothing.
-    Missed(self: RayIntersectable3D, query: RayQuery3D): Boolean
+    Missed(self: IRayIntersectable3D, query: RayQuery3D): Boolean
         => self.DidHit(query).Not;
 
     // The distance from the ray origin to the first hit. Precondition: the query hits.
-    HitDistance(self: RayIntersectable3D, query: RayQuery3D): Number
+    HitDistance(self: IRayIntersectable3D, query: RayQuery3D): Number
         => self.Raycast(query).Distance;
 
     // The world position of the first hit. Precondition: the query hits.
-    HitPosition(self: RayIntersectable3D, query: RayQuery3D): Point3D
+    HitPosition(self: IRayIntersectable3D, query: RayQuery3D): Point3D
         => self.Raycast(query).Position;
 
     // The surface normal at the first hit, pointing against the ray. Precondition: hits.
-    HitNormal(self: RayIntersectable3D, query: RayQuery3D): Direction3D
+    HitNormal(self: IRayIntersectable3D, query: RayQuery3D): Direction3D
         => self.Raycast(query).Normal;
 
     // The struck triangle of the first hit (-1 when the target is not a mesh).
-    HitFace(self: RayIntersectable3D, query: RayQuery3D): FaceIndex
+    HitFace(self: IRayIntersectable3D, query: RayQuery3D): FaceIndex
         => self.Raycast(query).Face;
 
     // The barycentric location of the first hit within its struck triangle.
     // Precondition: the query hits a mesh.
-    HitBarycentric(self: RayIntersectable3D, query: RayQuery3D): BarycentricCoordinate
+    HitBarycentric(self: IRayIntersectable3D, query: RayQuery3D): BarycentricCoordinate
         => self.Raycast(query).Barycentric;
 
     // The interpolated surface UV at the first hit ((0, 0) when the target has no
     // UVs). Precondition: the query hits.
-    HitUv(self: RayIntersectable3D, query: RayQuery3D): UvCoordinate
+    HitUv(self: IRayIntersectable3D, query: RayQuery3D): UvCoordinate
         => self.Raycast(query).Uv;
 
     //==
-    // ClosestPointQueryable2D — reports its closest point to a 2D query point.
+    // IClosestPointQueryable2D — reports its closest point to a 2D query point.
 
     // The distance from `point` to the nearest point on this geometry.
-    DistanceTo(self: ClosestPointQueryable2D, point: Point2D): Number
+    DistanceTo(self: IClosestPointQueryable2D, point: Point2D): Number
         => self.ClosestPoint(point).Distance;
 
     // The position on this geometry nearest to `point`.
-    ClosestPointPosition(self: ClosestPointQueryable2D, point: Point2D): Point2D
+    ClosestPointPosition(self: IClosestPointQueryable2D, point: Point2D): Point2D
         => self.ClosestPoint(point).Position;
 
     // True when `point` lies within `tolerance` of this geometry.
-    IsNear(self: ClosestPointQueryable2D, point: Point2D, tolerance: Number): Boolean
+    IsNear(self: IClosestPointQueryable2D, point: Point2D, tolerance: Number): Boolean
         => self.DistanceTo(point) <= tolerance;
 
     //==
-    // ClosestPointQueryable3D — reports its closest point to a 3D query point.
+    // IClosestPointQueryable3D — reports its closest point to a 3D query point.
 
     // The distance from `point` to the nearest point on this surface.
-    DistanceTo(self: ClosestPointQueryable3D, point: Point3D): Number
+    DistanceTo(self: IClosestPointQueryable3D, point: Point3D): Number
         => self.ClosestPoint(point).Distance;
 
     // The position on this surface nearest to `point`.
-    ClosestPointPosition(self: ClosestPointQueryable3D, point: Point3D): Point3D
+    ClosestPointPosition(self: IClosestPointQueryable3D, point: Point3D): Point3D
         => self.ClosestPoint(point).Position;
 
     // True when `point` lies within `tolerance` of this surface.
-    IsNear(self: ClosestPointQueryable3D, point: Point3D, tolerance: Number): Boolean
+    IsNear(self: IClosestPointQueryable3D, point: Point3D, tolerance: Number): Boolean
         => self.DistanceTo(point) <= tolerance;
 
     //==
-    // NearestNeighborQueryable2D — k-nearest-neighbor search over 2D points. The
+    // INearestNeighborQueryable2D — k-nearest-neighbor search over 2D points. The
     // convenience overloads assemble the KNearestQuery record (unbounded distance).
 
     // A k-nearest request around `center` for `count` neighbors, distance-unbounded.
-    NearestQuery(self: NearestNeighborQueryable2D, center: Point2D, count: Integer): KNearestQuery2D
+    NearestQuery(self: INearestNeighborQueryable2D, center: Point2D, count: Integer): KNearestQuery2D
         => (center, count, 0.0);
 
     // The `count` nearest points to `center`, sorted ascending by distance.
-    FindNearest(self: NearestNeighborQueryable2D, center: Point2D, count: Integer): NearestNeighbors
+    FindNearest(self: INearestNeighborQueryable2D, center: Point2D, count: Integer): NearestNeighbors
         => self.FindNearest(self.NearestQuery(center, count));
 
     // The single nearest point to `center`.
-    FindNearest(self: NearestNeighborQueryable2D, center: Point2D): NearestNeighbors
+    FindNearest(self: INearestNeighborQueryable2D, center: Point2D): NearestNeighbors
         => self.FindNearest(center, 1);
 
     //==
-    // NearestNeighborQueryable3D — k-nearest-neighbor search over 3D points.
+    // INearestNeighborQueryable3D — k-nearest-neighbor search over 3D points.
 
     // A k-nearest request around `center` for `count` neighbors, distance-unbounded.
-    NearestQuery(self: NearestNeighborQueryable3D, center: Point3D, count: Integer): KNearestQuery3D
+    NearestQuery(self: INearestNeighborQueryable3D, center: Point3D, count: Integer): KNearestQuery3D
         => (center, count, 0.0);
 
     // The `count` nearest points to `center`, sorted ascending by distance.
-    FindNearest(self: NearestNeighborQueryable3D, center: Point3D, count: Integer): NearestNeighbors
+    FindNearest(self: INearestNeighborQueryable3D, center: Point3D, count: Integer): NearestNeighbors
         => self.FindNearest(self.NearestQuery(center, count));
 
     // The single nearest point to `center`.
-    FindNearest(self: NearestNeighborQueryable3D, center: Point3D): NearestNeighbors
+    FindNearest(self: INearestNeighborQueryable3D, center: Point3D): NearestNeighbors
         => self.FindNearest(center, 1);
 
     //==
     // # Hierarchy queries — BVHs, quadtrees and octrees
     //
-    // The `SpatialIndex2D` / `SpatialIndex3D` obligations of the hierarchies in
-    // `spatial-structures.types.plato`, and the `RayIntersectable3D` obligation of
+    // The `ISpatialIndex2D` / `ISpatialIndex3D` obligations of the hierarchies in
+    // `spatial-structures.types.plato`, and the `IRayIntersectable3D` obligation of
     // `Bvh3D`.
     //
     // Every traversal is written as a recursion over node indices, because the depth
@@ -634,7 +634,7 @@ library SpatialStructures
     // can answer about a ray is BROAD PHASE: the distance at which the ray first
     // enters a leaf box. The reported hit therefore carries a real Hit flag,
     // Distance and Position, and leaves the surface attributes at their empty
-    // values — Face is -1, the normal points back along the ray, and the two
+    // values — IFace is -1, the normal points back along the ray, and the two
     // parametric coordinates are zero. A caller wanting a surface hit tests the
     // primitives of `CandidatesInBounds` itself; that is the second phase the
     // whole broad-phase/narrow-phase split exists for.
@@ -688,7 +688,7 @@ library SpatialStructures
                       .Min(self.NearestLeafEntry(query, n.RightChild)));
 
     // The broad-phase ray answer: whether the ray reaches any leaf box within the
-    // query's reach, and where. Surface attributes are left empty (see above).
+    // query's reach, and where. ISurface attributes are left empty (see above).
     Raycast(self: Bvh3D, query: RayQuery3D): RayHit3D {
         var distance = self.Nodes.Count == 0
             ? MissDistance()

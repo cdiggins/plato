@@ -11,7 +11,7 @@ library Surfaces
     //==
     // # Surfaces — parametric evaluation of the named surface types
     //
-    // The ParametricSurface obligations (Eval / ClosedU / ClosedV) for the types
+    // The IParametricSurface obligations (Eval / ClosedU / ClosedV) for the types
     // declared in `surfaces.types.plato`, `surfaces.types.plato`, and
     // `surfaces.types.plato`. Same UV convention as `library Solids` in
     // solids.library.plato: UV is the unit square, U is the first (profile / column)
@@ -29,8 +29,8 @@ library Surfaces
     //     way to carry; the fixed-up frame agrees with it wherever the path does not
     //     turn about its own tangent, and twists relative to it where it does.
     //   * OffsetSurface reads its base normal from central differences of
-    //     `Base.Eval`, because `ParametricSurface` exposes no derivative (only
-    //     `DifferentiableSurface` does). Exact for a surface whose base IS
+    //     `Base.Eval`, because `IParametricSurface` exposes no derivative (only
+    //     `IDifferentiableSurface` does). Exact for a surface whose base IS
     //     differentiable; noisy near a seam or a degenerate parameterization.
     //
     // Both are noted at their bodies. The worklist entry is plato-321.
@@ -141,7 +141,7 @@ library Surfaces
 
     // The Coons blend: the two ruled surfaces between opposite boundary pairs,
     // minus the bilinear patch on the four corners that both of them contain.
-    // Point3D is Interpolatable but not Additive, so the subtraction is spelled
+    // Point3D is IInterpolatable but not IAdditive, so the subtraction is spelled
     // through the point difference — `bilinear + (ruledV - bilinear)` — which is
     // exactly what `Between` gives and needs no new concept.
     // https://en.wikipedia.org/wiki/Coons_patch
@@ -205,7 +205,7 @@ library Surfaces
         return (p.X + d.X * k, p.Y + d.Y * k, p.Z + d.Z * k);
     }
     // The profile's own closure is a property of the supplied curve, not of the
-    // extrusion, and Curve3D does not report it; the extrusion direction is open.
+    // extrusion, and ICurve3D does not report it; the extrusion direction is open.
     ClosedU(s: ExtrudedSurface): Boolean => false;
     ClosedV(s: ExtrudedSurface): Boolean => false;
 
@@ -280,7 +280,7 @@ library Surfaces
 
     // The base point displaced along the base normal by Distance. The normal is
     // a central difference of the base's own evaluation, because
-    // `ParametricSurface` exposes no derivative (only `DifferentiableSurface`
+    // `IParametricSurface` exposes no derivative (only `IDifferentiableSurface`
     // does); the sample parameters are clamped, so the boundary gets a one-sided
     // difference rather than an off-surface point.
     Eval(s: OffsetSurface, uv: UvCoordinate): Point3D {
@@ -351,54 +351,54 @@ library Surfaces
     // derivable from the concept members alone.
     //
     // A UV surface's canonical domain is the unit square and a volume's the unit
-    // cube; evaluation goes through the `Eval` member inherited from `Procedural`.
+    // cube; evaluation goes through the `Eval` member inherited from `IProcedural`.
 
     //==
-    // # ParametricSurface
+    // # IParametricSurface
     //
-    // A surface over the unit-square UV domain (Procedural<UvCoordinate,
+    // A surface over the unit-square UV domain (IProcedural<UvCoordinate,
     // Point3D>), with ClosedU / ClosedV seam reports. Corner and centre samples
     // and the closure classification are derivable.
 
     // The position for a UV coordinate; an intent-revealing alias for Eval.
-    PointAt(self: ParametricSurface, uv: UvCoordinate): Point3D
+    PointAt(self: IParametricSurface, uv: UvCoordinate): Point3D
         => self.Eval(uv);
 
     // The surface position at the (u, v) corner (0, 0).
-    CornerPoint00(self: ParametricSurface): Point3D
+    CornerPoint00(self: IParametricSurface): Point3D
         => self.Eval((0.0, 0.0));
 
     // The surface position at the (u, v) corner (1, 0).
-    CornerPoint10(self: ParametricSurface): Point3D
+    CornerPoint10(self: IParametricSurface): Point3D
         => self.Eval((1.0, 0.0));
 
     // The surface position at the (u, v) corner (0, 1).
-    CornerPoint01(self: ParametricSurface): Point3D
+    CornerPoint01(self: IParametricSurface): Point3D
         => self.Eval((0.0, 1.0));
 
     // The surface position at the (u, v) corner (1, 1).
-    CornerPoint11(self: ParametricSurface): Point3D
+    CornerPoint11(self: IParametricSurface): Point3D
         => self.Eval((1.0, 1.0));
 
     // The surface position at the centre of the UV domain, (0.5, 0.5).
-    CenterPoint(self: ParametricSurface): Point3D
+    CenterPoint(self: IParametricSurface): Point3D
         => self.Eval((0.5, 0.5));
 
     // True when the surface seams shut in both parameter directions (a torus).
-    IsFullyClosed(self: ParametricSurface): Boolean
+    IsFullyClosed(self: IParametricSurface): Boolean
         => self.ClosedU && self.ClosedV;
 
     // True when the surface has a free boundary in both directions (an open
     // patch).
-    IsOpenPatch(self: ParametricSurface): Boolean
+    IsOpenPatch(self: IParametricSurface): Boolean
         => self.ClosedU.Not && self.ClosedV.Not;
 
     // True when the surface closes in exactly one direction (a tube or cylinder).
-    IsTube(self: ParametricSurface): Boolean
+    IsTube(self: IParametricSurface): Boolean
         => self.ClosedU != self.ClosedV;
 
     //==
-    // # DifferentiableSurface
+    // # IDifferentiableSurface
     //
     // A parametric surface with partial derivatives: TangentUAt and TangentVAt
     // span the tangent plane; NormalAt is their oriented unit normal. The
@@ -406,91 +406,91 @@ library Surfaces
     // (https://en.wikipedia.org/wiki/First_fundamental_form).
 
     // The unit surface normal at the centre of the UV domain.
-    NormalAtCenter(self: DifferentiableSurface): Direction3D
+    NormalAtCenter(self: IDifferentiableSurface): Direction3D
         => self.NormalAt((0.5, 0.5));
 
     // The U-direction tangent at the centre of the UV domain.
-    TangentUAtCenter(self: DifferentiableSurface): Vector3D
+    TangentUAtCenter(self: IDifferentiableSurface): Vector3D
         => self.TangentUAt((0.5, 0.5));
 
     // The V-direction tangent at the centre of the UV domain.
-    TangentVAtCenter(self: DifferentiableSurface): Vector3D
+    TangentVAtCenter(self: IDifferentiableSurface): Vector3D
         => self.TangentVAt((0.5, 0.5));
 
     // The coefficient E = Tu . Tu of the first fundamental form at uv (the squared
     // stretch along U).
-    FirstFundamentalE(self: DifferentiableSurface, uv: UvCoordinate): Number
+    FirstFundamentalE(self: IDifferentiableSurface, uv: UvCoordinate): Number
         => self.TangentUAt(uv).MagnitudeSquared;
 
     // The coefficient F = Tu . Tv of the first fundamental form at uv (the
     // U/V shear; zero where the parameter lines meet at right angles).
-    FirstFundamentalF(self: DifferentiableSurface, uv: UvCoordinate): Number
+    FirstFundamentalF(self: IDifferentiableSurface, uv: UvCoordinate): Number
         => self.TangentUAt(uv).Dot(self.TangentVAt(uv));
 
     // The coefficient G = Tv . Tv of the first fundamental form at uv (the squared
     // stretch along V).
-    FirstFundamentalG(self: DifferentiableSurface, uv: UvCoordinate): Number
+    FirstFundamentalG(self: IDifferentiableSurface, uv: UvCoordinate): Number
         => self.TangentVAt(uv).MagnitudeSquared;
 
     // True when the parameter lines meet orthogonally at uv, within the given
     // non-negative tolerance on the shear coefficient F.
-    IsOrthogonalAt(self: DifferentiableSurface, uv: UvCoordinate, tolerance: Number): Boolean
+    IsOrthogonalAt(self: IDifferentiableSurface, uv: UvCoordinate, tolerance: Number): Boolean
         => self.FirstFundamentalF(uv).Abs <= tolerance;
 
     //==
-    // # HeightFieldSurface
+    // # IHeightFieldSurface
     //
     // A surface expressed as an elevation over a ground-plane position
-    // (Procedural<Point2D, Number>): the domain is a world-plane point, the
+    // (IProcedural<Point2D, Number>): the domain is a world-plane point, the
     // result the height above it.
 
     // The height above the given ground position; an intent-revealing alias for
     // Eval.
-    HeightAt(self: HeightFieldSurface, position: Point2D): Number
+    HeightAt(self: IHeightFieldSurface, position: Point2D): Number
         => self.Eval(position);
 
     // The height above the origin of the ground plane, (0, 0).
-    HeightAtOrigin(self: HeightFieldSurface): Number
+    HeightAtOrigin(self: IHeightFieldSurface): Number
         => self.Eval((0.0, 0.0));
 
     // The signed elevation change between two ground positions.
-    HeightDifference(self: HeightFieldSurface, from: Point2D, to: Point2D): Number
+    HeightDifference(self: IHeightFieldSurface, from: Point2D, to: Point2D): Number
         => self.Eval(to) - self.Eval(from);
 
     //==
-    // # ParametricVolume
+    // # IParametricVolume
     //
-    // A volume over the unit-cube UVW domain (Procedural<UvwCoordinate,
+    // A volume over the unit-cube UVW domain (IProcedural<UvwCoordinate,
     // Point3D>): trivariate patches and free-form deformation cages.
 
     // The position for a UVW coordinate; an intent-revealing alias for Eval.
-    PointAt(self: ParametricVolume, uvw: UvwCoordinate): Point3D
+    PointAt(self: IParametricVolume, uvw: UvwCoordinate): Point3D
         => self.Eval(uvw);
 
     // The position at the origin corner of the UVW cube, (0, 0, 0).
-    CornerPoint(self: ParametricVolume): Point3D
+    CornerPoint(self: IParametricVolume): Point3D
         => self.Eval((0.0, 0.0, 0.0));
 
     // The position at the far corner of the UVW cube, (1, 1, 1).
-    OppositeCornerPoint(self: ParametricVolume): Point3D
+    OppositeCornerPoint(self: IParametricVolume): Point3D
         => self.Eval((1.0, 1.0, 1.0));
 
     // The position at the centre of the UVW cube, (0.5, 0.5, 0.5).
-    CenterPoint(self: ParametricVolume): Point3D
+    CenterPoint(self: IParametricVolume): Point3D
         => self.Eval((0.5, 0.5, 0.5));
 
     //==
-    // # Surface, ClosedSurface, Solid, ConvexSolid
+    // # ISurface, IClosedSurface, ISolid, IConvexSolid
     //
     // These marker concepts already exist (surfaces-solids.concepts.plato):
-    // Surface and Solid inherit only Geometry3D, ClosedSurface and ConvexSolid only
-    // another marker. They add no members over their bases, and Geometry3D's own
+    // ISurface and ISolid inherit only IGeometry3D, IClosedSurface and IConvexSolid only
+    // another marker. They add no members over their bases, and IGeometry3D's own
     // derived helpers live in the geometry package (P5). No curve/surface-specific
     // function is derivable for them here without new members, so none is offered.
     //==
     // # Deformation bodies for the control-net and sampled surfaces
     //
-    // The Deformable3D obligations of the surfaces in `surfaces.types.plato`
+    // The IDeformable3D obligations of the surfaces in `surfaces.types.plato`
     // that are spanned by stored points: every position is carried through the
     // mapping, and the parameter-domain data — weights, knots, degrees, the
     // subdivision scheme and level — passes through untouched. Exact for an

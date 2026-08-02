@@ -1,5 +1,5 @@
 //==
-// # Camera concept
+// # ICamera concept
 //
 // The marker concept for a placed camera: a rigid pose plus the near and far
 // clip distances that bound the rendered depth range. The implementing types
@@ -9,8 +9,8 @@
 // A placed camera: a rigid pose plus near and far clip distances bounding the
 // rendered depth range. Invariant: 0 < Near < Far.
 // Convention: see CONVENTIONS.md - View space (right-handed; forward is -Z, +Y up).
-concept Camera
-    inherits Value
+interface ICamera
+    inherits IValue
 {
     Pose(x: Self): Pose3D;
     Near(x: Self): Number;

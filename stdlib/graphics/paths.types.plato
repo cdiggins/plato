@@ -1,5 +1,5 @@
 //==
-// # Vector paths
+// # IVector paths
 //
 // Resolution-independent 2D outlines in the SVG/Skia/Canvas tradition: a path
 // is a list of contours, a contour is a connected run of segments, and a
@@ -14,7 +14,7 @@
 // the ellipse axes, and the large-arc and sweep flags.
 // (https://en.wikipedia.org/wiki/SVG)
 type PathSegment2D
-    implements Value
+    implements IValue
     = Move(EndPoint: Point2D)                                            // start a new sub-path
     | Line(EndPoint: Point2D)                                            // straight line to EndPoint
     | Quadratic(Control: Point2D, EndPoint: Point2D)                     // one control point
@@ -26,7 +26,7 @@ type PathSegment2D
 // is implicitly sealed with a line back to its first point, equivalent to a
 // trailing Close segment.
 type Contour2D
-    implements Value
+    implements IValue
 {
     Segments: Array<PathSegment2D>;
     Closed: Boolean;
@@ -41,7 +41,7 @@ type FillRule = NonZero | EvenOdd;
 // decides its interior. The canonical exchange type for 2D outlines.
 // (https://en.wikipedia.org/wiki/Vector_graphics)
 type Path2D
-    implements Value
+    implements IValue
 {
     Contours: Array<Contour2D>;
     FillRule: FillRule;
@@ -50,7 +50,7 @@ type Path2D
 // A zero-based index of a contour within a path's contour array. -1 means
 // "no contour".
 type ContourIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -58,7 +58,7 @@ type ContourIndex
 // A zero-based index of a segment within a contour's segment array. -1 means
 // "no segment".
 type PathSegmentIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -67,7 +67,7 @@ type PathSegmentIndex
 // the normalized parameter within that segment. An index of -1 means "no
 // location".
 type PathLocation
-    implements Value
+    implements IValue
 {
     Contour: ContourIndex;
     Segment: PathSegmentIndex;
@@ -78,7 +78,7 @@ type PathLocation
 // the order top-left, top-right, bottom-right, bottom-left. Each radius is an
 // (x, y) half-extent pair; a zero pair means a sharp corner.
 type CornerRadii2D
-    implements Value
+    implements IValue
 {
     TopLeft: Number2;
     TopRight: Number2;
@@ -87,7 +87,7 @@ type CornerRadii2D
 }
 
 // The boolean (clipping) operation used when combining two paths.
-// Difference is the first path minus the second.
+// IDifference is the first path minus the second.
 // (https://en.wikipedia.org/wiki/Boolean_operations_on_polygons)
 type PathBooleanOperation = Union | Intersection | Difference | ExclusiveOr;
 
@@ -96,7 +96,7 @@ type PathBooleanOperation = Union | Intersection | Difference | ExclusiveOr;
 // is true, points where the tangent is discontinuous are never removed.
 // (https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm)
 type PathSimplifyParameters
-    implements Value
+    implements IValue
 {
     Tolerance: Number;
     PreserveCorners: Boolean;
@@ -106,7 +106,7 @@ type PathSimplifyParameters
 // the maximum allowed deviation from the true curve, in path units.
 // MaxSegmentCount caps the lines produced per curve; -1 means no cap.
 type PathFlattenParameters
-    implements Value
+    implements IValue
 {
     Tolerance: Number;
     MaxSegmentCount: Integer;

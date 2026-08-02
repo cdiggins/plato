@@ -34,13 +34,13 @@ library Splines
     // Precondition: xs is non-empty.
     //
     // Written ONCE, over `$T`. The body needs Lerp on a bare element, and the `where` clause is
-    // what promises it: the element type of the array must be Interpolatable, so the call is
+    // what promises it: the element type of the array must be IInterpolatable, so the call is
     // licensed at the declaration, every call site is checked against the bound (an
     // `Array<String>` is rejected), and the emitted C# carries the matching constraint instead of
     // a throwing stub. Before plato-393 this was five hand-copied bodies — Point2D, Point3D,
     // Vector2D, Vector3D, Number — because a bound could only be inherited from a constructed type
     // in the signature, and the only one here is `Array<T>`, which is unbounded and must stay so.
-    DeCasteljau(xs: Array<$T>, t: Number): $T where $T: Interpolatable
+    DeCasteljau(xs: Array<$T>, t: Number): $T where $T: IInterpolatable
         => xs.Count <= 1
            ? xs[0]
            : (xs.Count - 1).MapRange(i => xs[i].Lerp(xs[i + 1], t)).DeCasteljau(t);
@@ -196,9 +196,9 @@ library Splines
                   * BasisFunction(knots, domainEnd, i + 1, degree - 1, t);
 
     //==
-    // # Curve evaluation
+    // # ICurve evaluation
     //
-    // `Eval` takes the unit parameter every Curve2D / Curve3D takes, so it is
+    // `Eval` takes the unit parameter every ICurve2D / ICurve3D takes, so it is
     // mapped onto the curve's own knot domain first. Values outside [0, 1] clamp
     // to the ends rather than extrapolating: outside the domain the basis is not
     // a partition of unity and the "extrapolated" point is meaningless.
@@ -266,14 +266,14 @@ library Splines
     // built on: turning the canonical [0,1] curve parameter into a segment index
     // plus a local parameter, and reading the right control values out of the
     // parallel arrays. The cubic Hermite basis itself lives in
-    // `library Polynomials` (`polynomials.types.plato`), generic over `Numerical`;
+    // `library Polynomials` (`polynomials.types.plato`), generic over `INumerical`;
     // nothing is reimplemented here.
     //
     // Conventions:
     //   * A chain of n points has n - 1 spans when open and n when Closed (the
     //     last point joins back to the first).
     //   * Control points are converted to displacements with PositionVector before
-    //     entering a `Numerical`-generic basis function and back with ToPoint, the
+    //     entering a `INumerical`-generic basis function and back with ToPoint, the
     //     explicit point/vector converters from `library Transforms`.
 
     //==
@@ -356,7 +356,7 @@ library Splines
     // Evaluation of the curves declared in `splines.types.plato`:
     // Catmull-Rom, Kochanek-Bartels (TCB), piecewise-linear, and the accessors of
     // the natural cubic spline. The cubic bases themselves live in
-    // `library Polynomials` (`polynomials.types.plato`), generic over `Numerical`, and the
+    // `library Polynomials` (`polynomials.types.plato`), generic over `INumerical`, and the
     // piecewise indexing helpers (SpanCount / SpanIndex / SpanFraction / AtWrapped)
     // in the sections above; nothing is reimplemented here.
     //
@@ -364,7 +364,7 @@ library Splines
     //   * A chain of n points has n - 1 spans when open and n when Closed (the
     //     last point joins back to the first).
     //   * Control points are converted to displacements with PositionVector before
-    //     entering a `Numerical`-generic basis function and back with ToPoint, the
+    //     entering a `INumerical`-generic basis function and back with ToPoint, the
     //     explicit point/vector converters from `library Transforms`.
 
     //==
@@ -684,7 +684,7 @@ library Splines
     //==
     // # Deformation bodies for the control-point curves
     //
-    // The Deformable2D / Deformable3D obligations of the curves in
+    // The IDeformable2D / IDeformable3D obligations of the curves in
     // `splines.types.plato`: every stored position is carried through the
     // mapping and everything else — weights, knots, degree, the shape
     // parameters, the closed flag — is untouched, because none of it is

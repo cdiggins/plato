@@ -62,26 +62,26 @@ type DynamicQuantity
 
 // Electric current, stored in amperes
 // (https://en.wikipedia.org/wiki/Electric_current).
-type ElectricCurrent implements Quantity { Amperes: Number; }
+type ElectricCurrent implements IQuantity { Amperes: Number; }
 
 // Electric charge, stored in coulombs
 // (https://en.wikipedia.org/wiki/Electric_charge).
-type ElectricCharge implements Quantity { Coulombs: Number; }
+type ElectricCharge implements IQuantity { Coulombs: Number; }
 
 // Electric potential, stored in volts (https://en.wikipedia.org/wiki/Voltage).
-type Voltage implements Quantity { Volts: Number; }
+type Voltage implements IQuantity { Volts: Number; }
 
 // Electrical resistance, stored in ohms
 // (https://en.wikipedia.org/wiki/Electrical_resistance_and_conductance).
-type Resistance implements Quantity { Ohms: Number; }
+type Resistance implements IQuantity { Ohms: Number; }
 
 // Electrical capacitance, stored in farads
 // (https://en.wikipedia.org/wiki/Capacitance).
-type Capacitance implements Quantity { Farads: Number; }
+type Capacitance implements IQuantity { Farads: Number; }
 
 // Electrical inductance, stored in henries
 // (https://en.wikipedia.org/wiki/Inductance).
-type Inductance implements Quantity { Henries: Number; }
+type Inductance implements IQuantity { Henries: Number; }
 
 //==
 // # Geometric quantities
@@ -92,27 +92,27 @@ type Inductance implements Quantity { Henries: Number; }
 // change of these live in the kinematic section.
 
 // A planar angle, stored in radians (https://en.wikipedia.org/wiki/Angle).
-type Angle implements Quantity { Radians: Number; }
+type Angle implements IQuantity { Radians: Number; }
 
 // A solid angle, stored in steradians (https://en.wikipedia.org/wiki/Solid_angle).
-type SolidAngle implements Quantity { Steradians: Number; }
+type SolidAngle implements IQuantity { Steradians: Number; }
 
 // A spatial distance, stored in meters (https://en.wikipedia.org/wiki/Length).
-type Length implements Quantity { Meters: Number; }
+type Length implements IQuantity { Meters: Number; }
 
 // A surface measure, stored in square meters (https://en.wikipedia.org/wiki/Area).
-type Area implements Quantity { SquareMeters: Number; }
+type Area implements IQuantity { SquareMeters: Number; }
 
 // A spatial volume, stored in cubic meters (https://en.wikipedia.org/wiki/Volume).
-type Volume implements Quantity { CubicMeters: Number; }
+type Volume implements IQuantity { CubicMeters: Number; }
 
 // Spatial frequency (cycles per meter); the reciprocal of wavelength
 // (https://en.wikipedia.org/wiki/Wavenumber).
-type WaveNumber implements Quantity { CyclesPerMeter: Number; }
+type WaveNumber implements IQuantity { CyclesPerMeter: Number; }
 
 // Curvature, stored as reciprocal meters (1/radius)
 // (https://en.wikipedia.org/wiki/Curvature).
-type Curvature implements Quantity { PerMeter: Number; }
+type Curvature implements IQuantity { PerMeter: Number; }
 
 //==
 // # Kinematic quantities
@@ -123,27 +123,27 @@ type Curvature implements Quantity { PerMeter: Number; }
 
 // Rate of change of position, stored in meters per second
 // (https://en.wikipedia.org/wiki/Speed).
-type Speed implements Quantity { MetersPerSecond: Number; }
+type Speed implements IQuantity { MetersPerSecond: Number; }
 
 // Rate of change of speed, stored in meters per second squared
 // (https://en.wikipedia.org/wiki/Acceleration).
-type Acceleration implements Quantity { MetersPerSecondSquared: Number; }
+type Acceleration implements IQuantity { MetersPerSecondSquared: Number; }
 
 // Rate of change of acceleration, stored in meters per second cubed
 // (https://en.wikipedia.org/wiki/Jerk_(physics)).
-type Jerk implements Quantity { MetersPerSecondCubed: Number; }
+type Jerk implements IQuantity { MetersPerSecondCubed: Number; }
 
 // Rate of rotation, stored in radians per second
 // (https://en.wikipedia.org/wiki/Angular_velocity).
-type AngularVelocity implements Quantity { RadiansPerSecond: Number; }
+type AngularVelocity implements IQuantity { RadiansPerSecond: Number; }
 
 // Rate of change of angular velocity, stored in radians per second squared
 // (https://en.wikipedia.org/wiki/Angular_acceleration).
-type AngularAcceleration implements Quantity { RadiansPerSecondSquared: Number; }
+type AngularAcceleration implements IQuantity { RadiansPerSecondSquared: Number; }
 
 // Repetition rate, stored in hertz (cycles per second)
 // (https://en.wikipedia.org/wiki/Frequency).
-type Frequency implements Quantity { Hertz: Number; }
+type Frequency implements IQuantity { Hertz: Number; }
 
 //==
 // # Material-response and flow quantities
@@ -156,34 +156,34 @@ type Frequency implements Quantity { Hertz: Number; }
 
 // Force per area, stored in pascals. Also used for stress
 // (https://en.wikipedia.org/wiki/Pressure).
-type Pressure implements Quantity { Pascals: Number; }
+type Pressure implements IQuantity { Pascals: Number; }
 
 // Elastic stiffness of a spring, stored in newtons per meter
 // (https://en.wikipedia.org/wiki/Stiffness).
-type Stiffness implements Quantity { NewtonsPerMeter: Number; }
+type Stiffness implements IQuantity { NewtonsPerMeter: Number; }
 
 // Viscous damping coefficient, stored in newton-seconds per meter
 // (https://en.wikipedia.org/wiki/Damping).
-type DampingCoefficient implements Quantity { NewtonSecondsPerMeter: Number; }
+type DampingCoefficient implements IQuantity { NewtonSecondsPerMeter: Number; }
 
 // Dynamic viscosity, stored in pascal-seconds
 // (https://en.wikipedia.org/wiki/Viscosity).
-type DynamicViscosity implements Quantity { PascalSeconds: Number; }
+type DynamicViscosity implements IQuantity { PascalSeconds: Number; }
 
 // Kinematic viscosity, stored in square meters per second.
-type KinematicViscosity implements Quantity { SquareMetersPerSecond: Number; }
+type KinematicViscosity implements IQuantity { SquareMetersPerSecond: Number; }
 
 // Mass flow, stored in kilograms per second
 // (https://en.wikipedia.org/wiki/Mass_flow_rate).
-type MassFlowRate implements Quantity { KilogramsPerSecond: Number; }
+type MassFlowRate implements IQuantity { KilogramsPerSecond: Number; }
 
 // Volume flow, stored in cubic meters per second
 // (https://en.wikipedia.org/wiki/Volumetric_flow_rate).
-type VolumetricFlowRate implements Quantity { CubicMetersPerSecond: Number; }
+type VolumetricFlowRate implements IQuantity { CubicMetersPerSecond: Number; }
 
 // Dimensionless deformation ratio (change in length over length)
 // (https://en.wikipedia.org/wiki/Strain_(mechanics)).
-type Strain implements Quantity { Ratio: Number; }
+type Strain implements IQuantity { Ratio: Number; }
 
 //==
 // # Mechanical quantities
@@ -194,48 +194,48 @@ type Strain implements Quantity { Ratio: Number; }
 // (stress, stiffness, viscosity, flow) is the material section.
 
 // Mass, stored in kilograms (https://en.wikipedia.org/wiki/Mass).
-type Mass implements Quantity { Kilograms: Number; }
+type Mass implements IQuantity { Kilograms: Number; }
 
 // Mass per volume, stored in kilograms per cubic meter
 // (https://en.wikipedia.org/wiki/Density).
-type Density implements Quantity { KilogramsPerCubicMeter: Number; }
+type Density implements IQuantity { KilogramsPerCubicMeter: Number; }
 
 // Mass per area, stored in kilograms per square meter
 // (https://en.wikipedia.org/wiki/Area_density).
-type ArealDensity implements Quantity { KilogramsPerSquareMeter: Number; }
+type ArealDensity implements IQuantity { KilogramsPerSquareMeter: Number; }
 
 // Mass per length, stored in kilograms per meter
 // (https://en.wikipedia.org/wiki/Linear_density).
-type LinearDensity implements Quantity { KilogramsPerMeter: Number; }
+type LinearDensity implements IQuantity { KilogramsPerMeter: Number; }
 
 // Force, stored in newtons (https://en.wikipedia.org/wiki/Force).
-type Force implements Quantity { Newtons: Number; }
+type Force implements IQuantity { Newtons: Number; }
 
 // Rotational force, stored in newton-meters (https://en.wikipedia.org/wiki/Torque).
-type Torque implements Quantity { NewtonMeters: Number; }
+type Torque implements IQuantity { NewtonMeters: Number; }
 
 // Impulse (force integrated over time), stored in newton-seconds
 // (https://en.wikipedia.org/wiki/Impulse_(physics)).
-type Impulse implements Quantity { NewtonSeconds: Number; }
+type Impulse implements IQuantity { NewtonSeconds: Number; }
 
 // Linear momentum, stored in kilogram-meters per second
 // (https://en.wikipedia.org/wiki/Momentum).
-type Momentum implements Quantity { KilogramMetersPerSecond: Number; }
+type Momentum implements IQuantity { KilogramMetersPerSecond: Number; }
 
 // Angular momentum, stored in kilogram-square-meters per second
 // (https://en.wikipedia.org/wiki/Angular_momentum).
-type AngularMomentum implements Quantity { KilogramSquareMetersPerSecond: Number; }
+type AngularMomentum implements IQuantity { KilogramSquareMetersPerSecond: Number; }
 
 // Rotational inertia about an axis, stored in kilogram-square-meters
 // (https://en.wikipedia.org/wiki/Moment_of_inertia).
-type MomentOfInertia implements Quantity { KilogramSquareMeters: Number; }
+type MomentOfInertia implements IQuantity { KilogramSquareMeters: Number; }
 
 // Energy or work, stored in joules (https://en.wikipedia.org/wiki/Energy).
-type Energy implements Quantity { Joules: Number; }
+type Energy implements IQuantity { Joules: Number; }
 
 // Rate of energy transfer, stored in watts
 // (https://en.wikipedia.org/wiki/Power_(physics)).
-type Power implements Quantity { Watts: Number; }
+type Power implements IQuantity { Watts: Number; }
 
 //==
 // # Photometric and radiometric quantities
@@ -247,22 +247,22 @@ type Power implements Quantity { Watts: Number; }
 
 // Luminous intensity, stored in candelas
 // (https://en.wikipedia.org/wiki/Luminous_intensity).
-type LuminousIntensity implements Quantity { Candelas: Number; }
+type LuminousIntensity implements IQuantity { Candelas: Number; }
 
 // Luminous flux, stored in lumens
 // (https://en.wikipedia.org/wiki/Luminous_flux).
-type LuminousFlux implements Quantity { Lumens: Number; }
+type LuminousFlux implements IQuantity { Lumens: Number; }
 
 // Illuminance, stored in lux (https://en.wikipedia.org/wiki/Illuminance).
-type Illuminance implements Quantity { Lux: Number; }
+type Illuminance implements IQuantity { Lux: Number; }
 
 // Luminance, stored in candelas per square meter (nits)
 // (https://en.wikipedia.org/wiki/Luminance).
-type Luminance implements Quantity { CandelasPerSquareMeter: Number; }
+type Luminance implements IQuantity { CandelasPerSquareMeter: Number; }
 
 // Radiant flux per area, stored in watts per square meter
 // (https://en.wikipedia.org/wiki/Irradiance).
-type Irradiance implements Quantity { WattsPerSquareMeter: Number; }
+type Irradiance implements IQuantity { WattsPerSquareMeter: Number; }
 
 //==
 // # Thermal and chemical quantities
@@ -275,19 +275,19 @@ type Irradiance implements Quantity { WattsPerSquareMeter: Number; }
 
 // Absolute temperature, stored in kelvin
 // (https://en.wikipedia.org/wiki/Thermodynamic_temperature).
-type Temperature implements Quantity { Kelvin: Number; }
+type Temperature implements IQuantity { Kelvin: Number; }
 
 // Temperature difference, stored in kelvin.
-type TemperatureDelta implements Quantity { Kelvin: Number; }
+type TemperatureDelta implements IQuantity { Kelvin: Number; }
 
 // Heat capacity, stored in joules per kelvin
 // (https://en.wikipedia.org/wiki/Heat_capacity).
-type HeatCapacity implements Quantity { JoulesPerKelvin: Number; }
+type HeatCapacity implements IQuantity { JoulesPerKelvin: Number; }
 
 // Thermal conductivity, stored in watts per meter-kelvin
 // (https://en.wikipedia.org/wiki/Thermal_conductivity_and_resistivity).
-type ThermalConductivity implements Quantity { WattsPerMeterKelvin: Number; }
+type ThermalConductivity implements IQuantity { WattsPerMeterKelvin: Number; }
 
 // Amount of substance, stored in moles
 // (https://en.wikipedia.org/wiki/Amount_of_substance).
-type AmountOfSubstance implements Quantity { Moles: Number; }
+type AmountOfSubstance implements IQuantity { Moles: Number; }

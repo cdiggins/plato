@@ -11,14 +11,14 @@
 //
 // Points are positions in a space (https://en.wikipedia.org/wiki/Point_(geometry));
 // they are not vectors. Subtracting two points yields a vector, and adding a
-// vector to a point yields a point (the Difference concept). This section holds
+// vector to a point yields a point (the IDifference concept). This section holds
 // the Cartesian positions and their homogeneous (projective) form; the
 // curvilinear systems and the parametric weightings follow below.
 
 // A position in the 2D Cartesian plane
 // (https://en.wikipedia.org/wiki/Cartesian_coordinate_system).
 type Point2D
-    implements Coordinate, OriginBased<Vector2D>, Hashable, MetricSpace, Transformable2D
+    implements ICoordinate, IOriginBased<Vector2D>, IHashable, IMetricSpace, ITransformable2D
 {
     X: Number;
     Y: Number;
@@ -26,7 +26,7 @@ type Point2D
 
 // A position in 3D Cartesian space.
 type Point3D
-    implements Coordinate, OriginBased<Vector3D>, Hashable, MetricSpace, Transformable3D
+    implements ICoordinate, IOriginBased<Vector3D>, IHashable, IMetricSpace, ITransformable3D
 {
     X: Number;
     Y: Number;
@@ -35,7 +35,7 @@ type Point3D
 
 // A position in N-dimensional Cartesian space.
 type PointN
-    implements Coordinate, OriginBased<VectorN>, MetricSpace
+    implements ICoordinate, IOriginBased<VectorN>, IMetricSpace
 {
     Components: Array<Number>;
 }
@@ -43,7 +43,7 @@ type PointN
 // A 2D point in homogeneous form; the Cartesian point is (X/W, Y/W)
 // (https://en.wikipedia.org/wiki/Homogeneous_coordinates).
 type HomogeneousPoint2D
-    implements Value
+    implements IValue
 {
     X: Number;
     Y: Number;
@@ -53,7 +53,7 @@ type HomogeneousPoint2D
 // A 3D point in homogeneous form; the Cartesian point is (X/W, Y/W, Z/W)
 // (https://en.wikipedia.org/wiki/Homogeneous_coordinates).
 type HomogeneousPoint3D
-    implements Value
+    implements IValue
 {
     X: Number;
     Y: Number;
@@ -73,7 +73,7 @@ type HomogeneousPoint3D
 // A planar position as distance from origin and angle from the positive X axis
 // (https://en.wikipedia.org/wiki/Polar_coordinate_system).
 type PolarCoordinate
-    implements Value
+    implements IValue
 {
     Radius: Number;
     Angle: Angle;
@@ -82,7 +82,7 @@ type PolarCoordinate
 // A 3D position as planar polar coordinates plus height along Z
 // (https://en.wikipedia.org/wiki/Cylindrical_coordinate_system).
 type CylindricalCoordinate
-    implements Value
+    implements IValue
 {
     Radius: Number;
     Azimuth: Angle;
@@ -92,7 +92,7 @@ type CylindricalCoordinate
 // A 3D position as radius, azimuth (about Z from +X), and inclination from the
 // +Z pole (https://en.wikipedia.org/wiki/Spherical_coordinate_system).
 type SphericalCoordinate
-    implements Value
+    implements IValue
 {
     Radius: Number;
     Azimuth: Angle;
@@ -103,7 +103,7 @@ type SphericalCoordinate
 // above the reference ellipsoid
 // (https://en.wikipedia.org/wiki/Geographic_coordinate_system).
 type GeoCoordinate
-    implements Value
+    implements IValue
 {
     Latitude: Angle;
     Longitude: Angle;
@@ -135,7 +135,7 @@ type GeoCoordinate
 // may place the point anywhere on the plane; the point lies *inside* the
 // triangle (a *convex* combination) exactly when additionally U, V, W >= 0.
 type BarycentricCoordinate
-    implements Value
+    implements IValue
 {
     U: Number;
     V: Number;
@@ -146,7 +146,7 @@ type BarycentricCoordinate
 // (https://en.wikipedia.org/wiki/UV_mapping).
 // Convention: see CONVENTIONS.md - UV origin (origin top-left, U right, V down).
 type UvCoordinate
-    implements Coordinate, OriginBased<Vector2D>
+    implements ICoordinate, IOriginBased<Vector2D>
 {
     U: Number;
     V: Number;
@@ -154,7 +154,7 @@ type UvCoordinate
 
 // A normalized 3D volume parameter: 3D textures, trivariate patches.
 type UvwCoordinate
-    implements Coordinate, OriginBased<Vector3D>
+    implements ICoordinate, IOriginBased<Vector3D>
 {
     U: Number;
     V: Number;

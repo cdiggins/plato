@@ -19,7 +19,7 @@
 // equal length and Parameters ascend. Evaluation between samples
 // interpolates linearly.
 type SampledCurve2D
-    implements Value, Deformable2D
+    implements IValue, IDeformable2D
 {
     Parameters: Array<Number>;
     Points: Array<Point2D>;
@@ -29,7 +29,7 @@ type SampledCurve2D
 // equal length and Parameters ascend. Evaluation between samples
 // interpolates linearly.
 type SampledCurve3D
-    implements Value, Deformable3D
+    implements IValue, IDeformable3D
 {
     Parameters: Array<Number>;
     Points: Array<Point3D>;
@@ -39,7 +39,7 @@ type SampledCurve3D
 // per (column, row) sample of the UV domain, with columns spanning U and
 // rows spanning V uniformly across UvDomain.
 type SampledSurfaceGrid
-    implements Value, Deformable3D
+    implements IValue, IDeformable3D
 {
     UvDomain: Bounds2D;
     Points: Array2D<Point3D>;
@@ -48,7 +48,7 @@ type SampledSurfaceGrid
 //==
 // # Sampled fields on grids
 //
-// Field values stored one per grid node (lattice point), so each Values
+// IField values stored one per grid node (lattice point), so each Values
 // extent equals the grid's cell count plus one along that axis. Evaluation
 // between nodes interpolates; outside the bounds, values clamp to the edge
 // unless a resampling descriptor says otherwise.
@@ -56,7 +56,7 @@ type SampledSurfaceGrid
 // A planar scalar field stored on grid nodes; evaluation interpolates
 // bilinearly. Backs heightmaps, masks, and discretized potentials.
 type SampledScalarGrid2D
-    implements Value, ScalarField2D
+    implements IValue, IScalarField2D
 {
     Grid: RegularGrid2D;
     Values: Array2D<Number>;
@@ -65,7 +65,7 @@ type SampledScalarGrid2D
 // A spatial scalar field stored on grid nodes; evaluation interpolates
 // trilinearly. Backs voxel densities and simulation quantities.
 type SampledScalarGrid3D
-    implements Value, ScalarField3D
+    implements IValue, IScalarField3D
 {
     Grid: RegularGrid3D;
     Values: Array3D<Number>;
@@ -74,7 +74,7 @@ type SampledScalarGrid3D
 // A planar vector field stored on grid nodes; evaluation interpolates each
 // component bilinearly. Backs 2D flow fields and displacement maps.
 type SampledVectorGrid2D
-    implements Value, VectorField2D
+    implements IValue, IVectorField2D
 {
     Grid: RegularGrid2D;
     Values: Array2D<Vector2D>;
@@ -83,7 +83,7 @@ type SampledVectorGrid2D
 // A spatial vector field stored on grid nodes; evaluation interpolates each
 // component trilinearly. Backs velocity volumes and deformation lattices.
 type SampledVectorGrid3D
-    implements Value, VectorField3D
+    implements IValue, IVectorField3D
 {
     Grid: RegularGrid3D;
     Values: Array3D<Vector3D>;
@@ -92,7 +92,7 @@ type SampledVectorGrid3D
 // A planar color field stored on grid nodes; evaluation interpolates each
 // channel bilinearly. An image with explicit world-space placement.
 type SampledColorGrid2D
-    implements Value, ColorField2D
+    implements IValue, IColorField2D
 {
     Grid: RegularGrid2D;
     Values: Array2D<Color>;
@@ -111,7 +111,7 @@ type SampledColorGrid2D
 // per axis. Cell (0, 0) touches the minimum corner of Bounds
 // (https://en.wikipedia.org/wiki/Regular_grid).
 type RegularGrid2D
-    implements Value
+    implements IValue
 {
     Bounds: Bounds2D;
     CellCounts: IntegerVector2;
@@ -122,7 +122,7 @@ type RegularGrid2D
 // per axis. Cell (0, 0, 0) touches the minimum corner of Bounds
 // (https://en.wikipedia.org/wiki/Regular_grid).
 type RegularGrid3D
-    implements Value
+    implements IValue
 {
     Bounds: Bounds3D;
     CellCounts: IntegerVector3;
@@ -131,7 +131,7 @@ type RegularGrid3D
 // One cell of a planar regular grid: its integer coordinates within the grid
 // and its axis-aligned bounds in world space.
 type GridCell2D
-    implements Value
+    implements IValue
 {
     CellIndex: IntegerVector2;
     Bounds: Bounds2D;
@@ -140,7 +140,7 @@ type GridCell2D
 // One cell of a spatial regular grid: its integer coordinates within the grid
 // and its axis-aligned bounds in world space.
 type GridCell3D
-    implements Value
+    implements IValue
 {
     CellIndex: IntegerVector3;
     Bounds: Bounds3D;
@@ -167,7 +167,7 @@ type SamplePattern
 // MinimumDistance. MaxAttempts bounds the candidates tried per point
 // (typically 30). Produces even, organic distributions.
 type PoissonDiskPattern2D
-    implements Value
+    implements IValue
 {
     Region: Bounds2D;
     MinimumDistance: Number;
@@ -179,7 +179,7 @@ type PoissonDiskPattern2D
 // center by JitterAmount in [0, 1] (0 = regular grid, 1 = anywhere in the
 // cell).
 type JitteredGridPattern2D
-    implements Value
+    implements IValue
 {
     Region: Bounds2D;
     CellCounts: IntegerVector2;
@@ -192,7 +192,7 @@ type JitteredGridPattern2D
 // bounding the variance of Monte Carlo estimates
 // (https://en.wikipedia.org/wiki/Stratified_sampling).
 type StratifiedPattern2D
-    implements Value
+    implements IValue
 {
     Region: Bounds2D;
     StrataCounts: IntegerVector2;
@@ -205,7 +205,7 @@ type StratifiedPattern2D
 // and 3). Deterministic and progressive: prefixes are well distributed
 // (https://en.wikipedia.org/wiki/Halton_sequence).
 type HaltonPattern2D
-    implements Value
+    implements IValue
 {
     Region: Bounds2D;
     Count: Integer;
@@ -218,7 +218,7 @@ type HaltonPattern2D
 // to be fixed in advance; even better distributed than Halton
 // (https://en.wikipedia.org/wiki/Low-discrepancy_sequence).
 type HammersleyPattern2D
-    implements Value
+    implements IValue
 {
     Region: Bounds2D;
     Count: Integer;
@@ -229,7 +229,7 @@ type HammersleyPattern2D
 // skipping the first SkipCount elements (commonly to drop the origin)
 // (https://en.wikipedia.org/wiki/Sobol_sequence).
 type SobolPattern2D
-    implements Value
+    implements IValue
 {
     Region: Bounds2D;
     Count: Integer;
@@ -241,7 +241,7 @@ type SobolPattern2D
 // Ideal for stippling, dithering, and sample-position tables
 // (https://en.wikipedia.org/wiki/Colors_of_noise).
 type BlueNoisePattern2D
-    implements Value
+    implements IValue
 {
     Region: Bounds2D;
     Count: Integer;
@@ -274,7 +274,7 @@ type GridBoundary = ClampToEdge | Wrap | Mirror | ZeroOutside;
 // A reconstruction policy for sampled grids: which interpolation scheme to
 // use between nodes and how to treat out-of-bounds coordinates.
 type GridSamplingScheme
-    implements Value
+    implements IValue
 {
     Interpolation: InterpolationScheme;
     Boundary: GridBoundary;
@@ -283,7 +283,7 @@ type GridSamplingScheme
 // A planar resampling operation: values defined on Source are transferred
 // onto the nodes of Target using the given sampling scheme.
 type GridResampling2D
-    implements Value
+    implements IValue
 {
     Source: RegularGrid2D;
     Target: RegularGrid2D;
@@ -293,7 +293,7 @@ type GridResampling2D
 // A spatial resampling operation: values defined on Source are transferred
 // onto the nodes of Target using the given sampling scheme.
 type GridResampling3D
-    implements Value
+    implements IValue
 {
     Source: RegularGrid3D;
     Target: RegularGrid3D;

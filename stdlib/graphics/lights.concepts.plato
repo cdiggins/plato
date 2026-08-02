@@ -8,8 +8,8 @@
 
 // A scene light that can be toggled to cast shadows.
 // (https://en.wikipedia.org/wiki/Computer_graphics_lighting)
-concept LightSource
-    inherits Value
+interface ILightSource
+    inherits IValue
 {
     CastsShadows(x: Self): Boolean;
 }

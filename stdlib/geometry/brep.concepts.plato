@@ -22,6 +22,6 @@
 // vertices, curve-carrying undirected edges, and surface-carrying faces bounded
 // by oriented edge-uses. Implementations stay resolution-independent until
 // explicitly tessellated.
-concept BoundaryRepresentation
-    inherits Solid
+interface IBoundaryRepresentation
+    inherits ISolid
 { }

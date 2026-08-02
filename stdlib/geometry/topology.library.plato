@@ -10,13 +10,13 @@ library Topology
     //==
     // # Concrete bodies for the adjacency tables
     //
-    // The `Jagged` projections for the three CSR adjacency tables declared in
+    // The `IJagged` projections for the three CSR adjacency tables declared in
     // `topology.types.plato`. Each table already stores its boundaries in a
     // field literally named `Offsets`, so only the payload projection is written
     // here; the shared row vocabulary comes from `collections.library.plato`.
 
     //==
-    // # Adjacency tables as Jagged rows
+    // # Adjacency tables as IJagged rows
     //
     // Rows are the source elements (vertices, then faces); a row is that
     // element's neighbourhood run.
@@ -44,16 +44,16 @@ library Topology
     // # The half-edge mesh's own members
     //
     // The concept obligations of HalfEdgeMesh (`topology.types.plato`):
-    // Deformable3D, the MeshElementCounts triple, and the five HalfEdgeNavigable
+    // IDeformable3D, the IMeshElementCounts triple, and the five IHalfEdgeNavigable
     // steps. Every navigation step is one array read — that constant-time
     // neighbourhood walk is the entire reason the structure stores what it stores.
     //
     // Boundary convention (see the type's doc comment): -1 means "none", so a
     // half-edge on a boundary has Twin = -1 and a half-edge running along a hole has
-    // Face = -1. The steps below return that sentinel rather than failing; a caller
+    // IFace = -1. The steps below return that sentinel rather than failing; a caller
     // walking a loop tests for it.
 
-    // The Deformable3D obligation: every vertex position carried through the
+    // The IDeformable3D obligation: every vertex position carried through the
     // mapping, connectivity unchanged.
     Deform(self: HalfEdgeMesh, mapping: Function1<Point3D, Point3D>): HalfEdgeMesh
         => (self.Positions.Map(mapping),
@@ -62,7 +62,7 @@ library Topology
             self.VertexHalfEdges);
 
     //==
-    // # MeshElementCounts
+    // # IMeshElementCounts
 
     // One position per vertex.
     VertexCount(self: HalfEdgeMesh): Integer
@@ -82,7 +82,7 @@ library Topology
         => self.FaceHalfEdges.Count;
 
     //==
-    // # HalfEdgeNavigable
+    // # IHalfEdgeNavigable
     //
     // The five constant-time steps, each a lookup in the half-edge record.
     // Precondition on all five: halfEdge is a valid index into HalfEdges.

@@ -14,28 +14,28 @@
 
 // Has a notion of length or magnitude (https://en.wikipedia.org/wiki/Norm_(mathematics)).
 // MagnitudeSquared avoids the square root when only relative comparisons are needed.
-concept Normed
+interface INormed
 {
     Magnitude(x: Self): Number;
     MagnitudeSquared(x: Self): Number;
 }
 
 // A space with a distance between any two of its values. (https://en.wikipedia.org/wiki/Metric_space)
-concept MetricSpace
+interface IMetricSpace
 {
     Distance(a: Self, b: Self): Number;
 }
 
 // Supports component-wise minimum and maximum: a lattice. (https://en.wikipedia.org/wiki/Lattice_(order))
-concept Lattice
+interface ILattice
 {
     Min(a: Self, b: Self): Self;
     Max(a: Self, b: Self): Self;
 }
 
 // Can be clamped to lie within inclusive bounds. (https://en.wikipedia.org/wiki/Clamping_(graphics))
-concept Clampable
-    inherits Lattice
+interface IClampable
+    inherits ILattice
 {
     Clamp(x: Self, min: Self, max: Self): Self;
 }
@@ -44,17 +44,17 @@ concept Clampable
 // points yields a vector; adding a vector to a point yields a point.
 // See affine space (https://en.wikipedia.org/wiki/Affine_space).
 //
-// TDelta is bound to Additive and Scalable: the deltas are the group acting on
+// TDelta is bound to IAdditive and Scalable: the deltas are the group acting on
 // the positions, so they must at least add, negate, and scale. Every delta in
-// this vocabulary already satisfies both (Vector2D/3D/N via Numerical, Duration
-// via Quantity), and the bound is what lets the rest of the affine surface —
+// this vocabulary already satisfies both (Vector2D/3D/N via INumerical, Duration
+// via IQuantity), and the bound is what lets the rest of the affine surface —
 // Subtract in both spellings, Lerp, and the reversed Add — be derived once in
 // algebra.library.plato instead of hand-written per implementor.
 //
 // Only two members are primitive. Add and Between are exactly the torsor action
 // and its inverse; everything else in the affine API follows from them.
-concept Difference<TDelta>
-    where TDelta: Additive, TDelta: Scalable
+interface IDifference<TDelta>
+    where TDelta: IAdditive, TDelta: IScalable
 {
     Add(x: Self, delta: TDelta): Self;
     // The displacement FROM a TO b, i.e. b - a. Direction convention: Between and
@@ -78,11 +78,11 @@ concept Difference<TDelta>
 // This is deliberately OPTIONAL and deliberately a SUBTYPE. Optional, because a
 // position type whose delta conversion is not a cheap relabeling — a homogeneous
 // point, where recovering the Cartesian delta needs a divide by W — implements
-// `Difference` directly and writes Add/Between itself. A subtype, so that a type
+// `IDifference` directly and writes Add/Between itself. A subtype, so that a type
 // declares one concept rather than two and cannot claim the conversions while
 // forgetting the affine API they serve.
-concept OriginBased<TDelta>
-    inherits Difference<TDelta>
+interface IOriginBased<TDelta>
+    inherits IDifference<TDelta>
 {
     // The displacement of this position from the origin.
     Offset(x: Self): TDelta;
@@ -96,14 +96,14 @@ concept OriginBased<TDelta>
 //
 // The number-like family, from representable limits up through the reals and the
 // whole numbers. Each level adds capability to the level below; Number and
-// Integer are the canonical instances of Real and Whole.
+// Integer are the canonical instances of IReal and IWhole.
 
 // Has a distinguished one element and representable extremes. The additive
 // identity is NOT here: Zero is a property of the additive group and lives on
-// `Additive` (algebra.concepts.plato), which every Numerical also
-// inherits — so a Numerical still reaches Zero, while a Quantity or MatrixLike
+// `IAdditive` (algebra.concepts.plato), which every INumerical also
+// inherits — so a INumerical still reaches Zero, while a IQuantity or IMatrixLike
 // gets it without having to claim representable extremes it has no meaning for.
-concept NumericalLimits
+interface INumericalLimits
 {
     One(x: Self): Self;
     MinValue(x: Self): Self;
@@ -112,14 +112,14 @@ concept NumericalLimits
 
 // The family of number-like value types: additive, scalable, interpolatable,
 // with known limits. Includes reals, complex numbers, vectors, and quantities.
-concept Numerical
-    inherits Value, Additive, Scalable, Interpolatable, NumericalLimits
+interface INumerical
+    inherits IValue, IAdditive, IScalable, IInterpolatable, INumericalLimits
 { }
 
 // A continuous one-dimensional number with full arithmetic and total order.
 // Number is the canonical instance. (https://en.wikipedia.org/wiki/Real_number)
-concept Real
-    inherits Numerical, Comparable, Hashable, Arithmetic, Invertible
+interface IReal
+    inherits INumerical, IComparable, IHashable, IArithmetic, IInvertible
 {
     ToNumber(x: Self): Number;
 
@@ -132,10 +132,10 @@ concept Real
     Ceiling(x: Self): Self;
 }
 
-// Whole-number semantics: exact, ordered, arithmetic without a multiplicative
+// IWhole-number semantics: exact, ordered, arithmetic without a multiplicative
 // inverse (division truncates). (https://en.wikipedia.org/wiki/Integer)
-concept Whole
-    inherits Value, Comparable, Hashable, Arithmetic, Interpolatable, NumericalLimits
+interface IWhole
+    inherits IValue, IComparable, IHashable, IArithmetic, IInterpolatable, INumericalLimits
 {
     ToInteger(x: Self): Integer;
 }
@@ -149,11 +149,11 @@ concept Whole
 
 // An additive group: addition, subtraction, negation, and the identity element
 // (https://en.wikipedia.org/wiki/Additive_group). Zero lives here rather than on
-// NumericalLimits because it is an algebraic property of the group, not a fact
-// about representation: a Quantity or a MatrixLike is an additive group without
-// being a number, and a `where T: Additive` bound must be able to name the
+// INumericalLimits because it is an algebraic property of the group, not a fact
+// about representation: a IQuantity or a IMatrixLike is an additive group without
+// being a number, and a `where T: IAdditive` bound must be able to name the
 // identity for any fold or accumulation seeded from it.
-concept Additive
+interface IAdditive
 {
     Add(a: Self, b: Self): Self;
     Subtract(a: Self, b: Self): Self;
@@ -162,38 +162,38 @@ concept Additive
 }
 
 // A multiplicative operation between two values of the same type. (https://en.wikipedia.org/wiki/Multiplication)
-concept Multiplicative
+interface IMultiplicative
 {
     Multiply(a: Self, b: Self): Self;
 }
 
 // Division between two values of the same type. (https://en.wikipedia.org/wiki/Division_(mathematics))
-concept Divisible
+interface IDivisible
 {
     Divide(a: Self, b: Self): Self;
 }
 
 // Remainder arithmetic between two values of the same type. (https://en.wikipedia.org/wiki/Modulo_operation)
-concept Modular
+interface IModular
 {
     Modulo(a: Self, b: Self): Self;
 }
 
 // Has a multiplicative inverse (reciprocal). (https://en.wikipedia.org/wiki/Multiplicative_inverse)
-concept Invertible
+interface IInvertible
 {
     Inverse(x: Self): Self;
 }
 
 // The four basic operations plus remainder: a field with modulo. (https://en.wikipedia.org/wiki/Field_(mathematics))
-concept Arithmetic
-    inherits Additive, Multiplicative, Divisible, Modular
+interface IArithmetic
+    inherits IAdditive, IMultiplicative, IDivisible, IModular
 { }
 
 // Can be multiplied and divided by a unitless scalar (https://en.wikipedia.org/wiki/Scalar_multiplication).
 // Vectors, quantities, and colors are scalable even when they cannot multiply
 // among themselves.
-concept Scalable
+interface IScalable
 {
     Multiply(x: Self, scalar: Number): Self;
     Divide(x: Self, scalar: Number): Self;
@@ -203,7 +203,7 @@ concept Scalable
 // Supports linear interpolation (https://en.wikipedia.org/wiki/Linear_interpolation).
 // The parameter t is unclamped: 0 yields a, 1 yields b, values outside [0,1]
 // extrapolate.
-concept Interpolatable
+interface IInterpolatable
 {
     Lerp(a: Self, b: Self, t: Number): Self;
 }

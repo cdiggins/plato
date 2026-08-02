@@ -22,7 +22,7 @@
 // [0, 1] is A + (B - A) * t (t = 0 is A, t = 1 is B) -- the same parametric
 // contract the ray and line types state. Degenerate when A equals B.
 type Line2D
-    implements Geometry2D, OpenShape, Connected, Bounded2D, LengthMeasurable, PointSet2D, Centroid2D, NearestPoint2D, Deformable2D
+    implements IGeometry2D, IOpenShape, IConnected, IBounded2D, ILengthMeasurable, IPointSet2D, ICentroid2D, INearestPoint2D, IDeformable2D
 {
     A: Point2D;
     B: Point2D;
@@ -31,7 +31,7 @@ type Line2D
 // A straight bounded span in space, directed from A to B. The point at parameter
 // t in [0, 1] is A + (B - A) * t. Degenerate when A equals B.
 type Line3D
-    implements Geometry3D, OpenShape, Connected, Bounded3D, LengthMeasurable, PointSet3D, Centroid3D, NearestPoint3D, Deformable3D
+    implements IGeometry3D, IOpenShape, IConnected, IBounded3D, ILengthMeasurable, IPointSet3D, ICentroid3D, INearestPoint3D, IDeformable3D
 {
     A: Point3D;
     B: Point3D;
@@ -43,7 +43,7 @@ type Line3D
 // An infinite straight line in the plane: all points Origin + Direction * t for
 // any real t. Origin is any point on the line.
 type InfiniteLine2D
-    implements Geometry2D, Connected, NearestPoint2D
+    implements IGeometry2D, IConnected, INearestPoint2D
 {
     Origin: Point2D;
     Direction: Direction2D;
@@ -52,7 +52,7 @@ type InfiniteLine2D
 // An infinite straight line in space: all points Origin + Direction * t for any
 // real t.
 type InfiniteLine3D
-    implements Geometry3D, Connected, NearestPoint3D
+    implements IGeometry3D, IConnected, INearestPoint3D
 {
     Origin: Point3D;
     Direction: Direction3D;
@@ -61,7 +61,7 @@ type InfiniteLine3D
 // A half-line in the plane: starts at Origin and extends along Direction only.
 // The point at parameter t >= 0 is Origin + Direction * t.
 type Ray2D
-    implements Geometry2D, Connected, NearestPoint2D
+    implements IGeometry2D, IConnected, INearestPoint2D
 {
     Origin: Point2D;
     Direction: Direction2D;
@@ -70,7 +70,7 @@ type Ray2D
 // A half-line in space: starts at Origin and extends along Direction only.
 // The point at parameter t >= 0 is Origin + Direction * t.
 type Ray3D
-    implements Geometry3D, Connected, NearestPoint3D
+    implements IGeometry3D, IConnected, INearestPoint3D
 {
     Origin: Point3D;
     Direction: Direction3D;
@@ -80,7 +80,7 @@ type Ray3D
 // A*x + B*y + C = 0. Coefficients need not be normalized; (A, B) is a normal
 // of the line. (https://en.wikipedia.org/wiki/Linear_equation)
 type LineEquation2D
-    implements Value
+    implements IValue
 {
     A: Number;
     B: Number;
@@ -102,7 +102,7 @@ type LineEquation2D
 // equal to Distance. Distance is the signed distance from the world origin to
 // the plane along Normal. (https://en.wikipedia.org/wiki/Hesse_normal_form)
 type Plane
-    implements Geometry3D, Connected, Manifold, Orientable, NearestPoint3D
+    implements IGeometry3D, IConnected, IManifold, IOrientable, INearestPoint3D
 {
     // The plane's UNIT normal (unit by Direction3D's own invariant); it points into
     // the plane's front / positive half-space.
@@ -120,7 +120,7 @@ type Plane
 // Dot(Normal, p) <= Distance (https://en.wikipedia.org/wiki/Half-space_(geometry)).
 // The boundary's normal points out of the half-space.
 type HalfSpace
-    implements Geometry3D, ConvexShape, Connected, ContainsPoint3D, NearestPoint3D
+    implements IGeometry3D, IConvexShape, IConnected, IContainsPoint3D, INearestPoint3D
 {
     Boundary: Plane;
 }
@@ -129,7 +129,7 @@ type HalfSpace
 // points p with Dot(Normal, p) <= Distance
 // (https://en.wikipedia.org/wiki/Half-plane). Normal points out of the half-plane.
 type HalfPlane2D
-    implements Geometry2D, ConvexShape, Connected, ContainsPoint2D, NearestPoint2D
+    implements IGeometry2D, IConvexShape, IConnected, IContainsPoint2D, INearestPoint2D
 {
     Normal: Direction2D;
     Distance: Number;
@@ -142,7 +142,7 @@ type HalfPlane2D
 // distance Dot(Normal, p) lies within Interval. Interval runs from the lower to
 // the upper signed distance.
 type Slab2D
-    implements Geometry2D, ConvexShape, Connected, ContainsPoint2D
+    implements IGeometry2D, IConvexShape, IConnected, IContainsPoint2D
 {
     Normal: Direction2D;
     Interval: NumberInterval;
@@ -152,7 +152,7 @@ type Slab2D
 // distance Dot(Normal, p) lies within Interval. The workhorse of separating-axis
 // and ray-box tests.
 type Slab3D
-    implements Geometry3D, ConvexShape, Connected, ContainsPoint3D
+    implements IGeometry3D, IConvexShape, IConnected, IContainsPoint3D
 {
     Normal: Direction3D;
     Interval: NumberInterval;
@@ -169,7 +169,7 @@ type Slab3D
 // coincident case, or crosses outside a ray's or segment's extent) Point and
 // Parameter are the queried primitive's own origin and 0 and carry no meaning.
 type PlaneHit3D
-    implements Value
+    implements IValue
 {
     Hit: Boolean;
     Point: Point3D;

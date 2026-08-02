@@ -17,7 +17,7 @@
 // Constant acceleration applied to every particle, in meters per second
 // squared (e.g. (0, -9.81, 0)).
 type ParticleGravity
-    implements Value
+    implements IValue
 {
     Acceleration: Vector3D;
 }
@@ -28,7 +28,7 @@ type ParticleGravity
 // units of one per meter.
 // (https://en.wikipedia.org/wiki/Drag_(physics))
 type ParticleDrag
-    implements Value
+    implements IValue
 {
     LinearCoefficient: Number;
     QuadraticCoefficient: Number;
@@ -40,7 +40,7 @@ type ParticleDrag
 // distance.
 // (https://en.wikipedia.org/wiki/Vortex)
 type ParticleVortex
-    implements Value
+    implements IValue
 {
     Center: Point3D;
     Axis: Direction3D;
@@ -51,7 +51,7 @@ type ParticleVortex
 // Center. Strength is the peak acceleration in meters per second squared at
 // the center, fading to zero at FalloffRadius; negative values repel.
 type ParticleAttractor
-    implements Value
+    implements IValue
 {
     Center: Point3D;
     Strength: Number;
@@ -62,7 +62,7 @@ type ParticleAttractor
 // frequency in cycles per meter; Strength is the peak acceleration in meters
 // per second squared; Seed selects the noise realization.
 type ParticleTurbulence
-    implements Value
+    implements IValue
 {
     SpatialFrequency: Number;
     Strength: Number;
@@ -73,7 +73,7 @@ type ParticleTurbulence
 // Turbulence is the dimensionless gust strength as a proportion of Speed in
 // [0, 1]; GustFrequency is how often gust cycles occur.
 type WindModel
-    implements Value
+    implements IValue
 {
     Direction: Direction3D;
     Speed: Speed;
@@ -95,7 +95,7 @@ type WindModel
 // diameter in meters; Rotation is the sprite spin angle and AngularVelocity
 // its rate; a particle dies when Age reaches Lifetime.
 type Particle2D
-    implements Value
+    implements IValue
 {
     Position: Point2D;
     Velocity: Vector2D;
@@ -113,7 +113,7 @@ type Particle2D
 // axis and AngularVelocity its rate; a particle dies when Age reaches
 // Lifetime.
 type Particle3D
-    implements Value
+    implements IValue
 {
     Position: Point3D;
     Velocity: Vector3D;
@@ -145,7 +145,7 @@ type EmitterShape
 // uniformly); ColorOverLife maps normalized age to tint; Arc bounds the
 // emission directions; Seed drives deterministic randomness.
 type ParticleEmitter2D
-    implements Value
+    implements IValue
 {
     Shape: EmitterShape;
     Pose: Pose2D;
@@ -165,7 +165,7 @@ type ParticleEmitter2D
 // uniformly); ColorOverLife maps normalized age to tint; Seed drives
 // deterministic randomness.
 type ParticleEmitter3D
-    implements Value
+    implements IValue
 {
     Shape: EmitterShape;
     Pose: Pose3D;
@@ -185,7 +185,7 @@ type ParticleEmitter3D
 // the force fields acting on them (interpreted in the XY plane). Time is the
 // simulation clock.
 type ParticleSystem2D
-    implements Value
+    implements IValue
 {
     Particles: Array<Particle2D>;
     Emitters: Array<ParticleEmitter2D>;
@@ -202,7 +202,7 @@ type ParticleSystem2D
 // the force fields acting on them. Time is the simulation clock.
 // (https://en.wikipedia.org/wiki/Particle_system)
 type ParticleSystem3D
-    implements Value
+    implements IValue
 {
     Particles: Array<Particle3D>;
     Emitters: Array<ParticleEmitter3D>;
@@ -232,7 +232,7 @@ type ParticleSystem3D
 // regardless of mass.
 // (https://en.wikipedia.org/wiki/Verlet_integration)
 type ClothVertex
-    implements Value
+    implements IValue
 {
     Position: Point3D;
     PreviousPosition: Point3D;
@@ -244,7 +244,7 @@ type ClothVertex
 // RestLength. Compliance is the inverse stiffness in meters per newton;
 // 0 makes the constraint rigid.
 type ClothDistanceConstraint
-    implements Value
+    implements IValue
 {
     VertexA: VertexIndex;
     VertexB: VertexIndex;
@@ -257,7 +257,7 @@ type ClothDistanceConstraint
 // angle between them toward RestAngle. Compliance is the inverse stiffness in
 // radians per newton-meter; 0 makes the fold rigid.
 type ClothBendConstraint
-    implements Value
+    implements IValue
 {
     VertexA: VertexIndex;
     VertexB: VertexIndex;
@@ -272,7 +272,7 @@ type ClothBendConstraint
 // shell radius.
 // (https://en.wikipedia.org/wiki/Cloth_modeling)
 type Cloth3D
-    implements Value
+    implements IValue
 {
     Vertices: Array<ClothVertex>;
     DistanceConstraints: Array<ClothDistanceConstraint>;
@@ -284,7 +284,7 @@ type Cloth3D
 // A position-based rope: vertices ordered from one end to the other, chained
 // by distance constraints. Thickness is the collision radius.
 type Rope3D
-    implements Value
+    implements IValue
 {
     Vertices: Array<ClothVertex>;
     DistanceConstraints: Array<ClothDistanceConstraint>;
@@ -297,7 +297,7 @@ type Rope3D
 // per second; SolverIterations is the constraint iteration count per step.
 // (https://en.wikipedia.org/wiki/Soft-body_dynamics)
 type SoftBodySettings
-    implements Value
+    implements IValue
 {
     VolumeCompliance: Number;
     DeformationCompliance: Number;
@@ -313,7 +313,7 @@ type SoftBodySettings
 // SurfaceTension is in newtons per meter.
 // (https://en.wikipedia.org/wiki/Smoothed-particle_hydrodynamics)
 type SphParameters
-    implements Value
+    implements IValue
 {
     RestDensity: Density;
     KernelRadius: Length;
@@ -325,7 +325,7 @@ type SphParameters
 // One fluid particle in a smoothed-particle-hydrodynamics simulation, with
 // its current interpolated density and pressure.
 type FluidParticle3D
-    implements Value
+    implements IValue
 {
     Position: Point3D;
     Velocity: Vector3D;

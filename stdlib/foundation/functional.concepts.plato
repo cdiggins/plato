@@ -6,14 +6,14 @@
 //
 // The domain/range pair alone identifies the kind of object, which is why one
 // concept covers so much ground. Named forward concepts, by instantiation:
-//   Number -> Number ......... Curve1D, Easing        Number -> Point2D/3D ... Curve2D/3D
-//   UvCoordinate -> Point3D .. ParametricSurface      UvwCoordinate -> Point3D ParametricVolume
-//   Point2D -> Number ........ ScalarField2D          Point3D -> Number ...... ScalarField3D
-//     (zero level = a boundary: SignedDistanceField2D/3D)
-//   Point2D -> Point2D ....... Deformation2D          Point3D -> Point3D ..... Deformation3D
-//     (read as displacement instead: VectorField2D/3D)
-//   Point2D -> Boolean ....... ImplicitRegion2D       Point3D -> Boolean ..... ImplicitVolume3D
-//   Point2D/3D -> Color ...... ColorField2D/3D        Point2D -> Matrix2x2 ... TensorField2D
+//   Number -> Number ......... ICurve1D, Easing        Number -> Point2D/3D ... ICurve2D/3D
+//   UvCoordinate -> Point3D .. IParametricSurface      UvwCoordinate -> Point3D IParametricVolume
+//   Point2D -> Number ........ IScalarField2D          Point3D -> Number ...... IScalarField3D
+//     (zero level = a boundary: ISignedDistanceField2D/3D)
+//   Point2D -> Point2D ....... IDeformation2D          Point3D -> Point3D ..... IDeformation3D
+//     (read as displacement instead: IVectorField2D/3D)
+//   Point2D -> Boolean ....... IImplicitRegion2D       Point3D -> Boolean ..... IImplicitVolume3D
+//   Point2D/3D -> Color ...... IColorField2D/3D        Point2D -> Matrix2x2 ... ITensorField2D
 // An integer domain makes the mapping a lattice read rather than a continuous
 // one: that is a sampled image, texture, or voxel grid, not a field.
 
@@ -21,15 +21,15 @@
 // curves (Number to point), surfaces (UV to point), fields (point to value),
 // easings (Number to Number), and beyond.
 // (https://en.wikipedia.org/wiki/Function_(mathematics))
-concept Procedural<TDomain, TRange>
+interface IProcedural<TDomain, TRange>
 {
     Eval(x: Self, input: TDomain): TRange;
 }
 
 // A procedural mapping that can be evaluated in reverse.
 // (https://en.wikipedia.org/wiki/Bijection)
-concept Bijective<TDomain, TRange>
-    inherits Procedural<TDomain, TRange>
+interface IBijective<TDomain, TRange>
+    inherits IProcedural<TDomain, TRange>
 {
     EvalInverse(x: Self, output: TRange): TDomain;
 }
@@ -37,18 +37,18 @@ concept Bijective<TDomain, TRange>
 // Repeats with a fixed period in its domain: Eval(t) equals Eval(t + Period).
 // (https://en.wikipedia.org/wiki/Periodic_function)
 // TPeriod is bounded so that phase arithmetic on the period is derivable:
-// Modular supplies the remainder and Additive the correction that makes it
+// IModular supplies the remainder and IAdditive the correction that makes it
 // land in [0, Period) for negative inputs (see WrapPhase in
 // functional-procedural.library.plato).
-concept Periodic<TPeriod>
-    where TPeriod: Additive, TPeriod: Modular
+interface IPeriodic<TPeriod>
+    where TPeriod: IAdditive, TPeriod: IModular
 {
     Period(x: Self): TPeriod;
 }
 
 // Has a preferred parameter domain over which evaluation is meaningful.
 // (https://en.wikipedia.org/wiki/Domain_of_a_function)
-concept ParameterDomain
+interface IParameterDomain
 {
     Domain(x: Self): NumberInterval;
 }

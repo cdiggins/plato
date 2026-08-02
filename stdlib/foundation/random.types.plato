@@ -26,7 +26,7 @@
 // yields the same next value, so generation is pure: each draw returns a new
 // RandomState.
 type RandomState
-    implements Value, Hashable
+    implements IValue, IHashable
 {
     State: Integer;
     Stream: Integer;
@@ -45,7 +45,7 @@ type RandomState
 
 // Uniform density on [Min, Max].
 type UniformDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     Min: Number;
     Max: Number;
@@ -53,7 +53,7 @@ type UniformDistribution
 
 // The Gaussian distribution with the given mean and standard deviation.
 type NormalDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     Mean: Number;
     StandardDeviation: Number;
@@ -62,7 +62,7 @@ type NormalDistribution
 // A positive variable whose logarithm is normally distributed; LogMean and
 // LogStandardDeviation parameterize that underlying normal.
 type LogNormalDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     LogMean: Number;
     LogStandardDeviation: Number;
@@ -70,7 +70,7 @@ type LogNormalDistribution
 
 // Waiting time between Poisson events. Rate is per unit; the mean is 1 / Rate.
 type ExponentialDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     Rate: Number;
 }
@@ -78,7 +78,7 @@ type ExponentialDistribution
 // A heavy-tailed distribution with undefined moments: Mean and Variance
 // conventionally report Location and positive infinity.
 type CauchyDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     Location: Number;
     Scale: Number;
@@ -86,7 +86,7 @@ type CauchyDistribution
 
 // A double-sided exponential peaked at Location with diversity Scale.
 type LaplaceDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     Location: Number;
     Scale: Number;
@@ -95,7 +95,7 @@ type LaplaceDistribution
 // A lifetime distribution: Shape below 1 models infant mortality, 1 is
 // exponential, above 1 models wear-out failures.
 type WeibullDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     Shape: Number;
     Scale: Number;
@@ -104,7 +104,7 @@ type WeibullDistribution
 // A power-law tail on values at or above MinimumValue, decaying with the
 // given Shape exponent.
 type ParetoDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     MinimumValue: Number;
     Shape: Number;
@@ -112,7 +112,7 @@ type ParetoDistribution
 
 // A triangular density rising from Min to a peak at Mode and falling to Max.
 type TriangularDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     Min: Number;
     Mode: Number;
@@ -124,7 +124,7 @@ type TriangularDistribution
 // the circle. Pdf and Cdf take the angle in radians, and Mean reports the
 // mean direction in radians.
 type VonMisesDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     MeanDirection: Angle;
     Concentration: Number;
@@ -142,7 +142,7 @@ type VonMisesDistribution
 
 // The gamma distribution in shape/scale form; its mean is Shape * Scale.
 type GammaDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     Shape: Number;
     Scale: Number;
@@ -151,7 +151,7 @@ type GammaDistribution
 // A distribution on [0, 1] with shape parameters Alpha and Beta; the conjugate
 // prior of a Bernoulli success probability.
 type BetaDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     Alpha: Number;
     Beta: Number;
@@ -159,7 +159,7 @@ type BetaDistribution
 
 // The sum of DegreesOfFreedom squared standard normals.
 type ChiSquaredDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     DegreesOfFreedom: Number;
 }
@@ -167,7 +167,7 @@ type ChiSquaredDistribution
 // Student's t distribution; approaches the standard normal as
 // DegreesOfFreedom grows.
 type StudentTDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     DegreesOfFreedom: Number;
 }
@@ -183,14 +183,14 @@ type StudentTDistribution
 // A single trial that succeeds with the given probability: mass at 1 for
 // success, 0 for failure.
 type BernoulliDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     SuccessProbability: Probability;
 }
 
 // The number of successes in TrialCount independent Bernoulli trials.
 type BinomialDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     TrialCount: Integer;
     SuccessProbability: Probability;
@@ -199,7 +199,7 @@ type BinomialDistribution
 // The number of failures before the first success in repeated Bernoulli
 // trials.
 type GeometricDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     SuccessProbability: Probability;
 }
@@ -207,7 +207,7 @@ type GeometricDistribution
 // The count of events in a fixed window when events arrive independently at
 // the given mean Rate.
 type PoissonDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     Rate: Number;
 }
@@ -216,7 +216,7 @@ type PoissonDistribution
 // probability Weights[i] divided by the sum of Weights. Weights are
 // non-negative and need not be normalized.
 type DiscreteDistribution
-    implements ProbabilityDistribution
+    implements IProbabilityDistribution
 {
     Weights: Array<Number>;
 }
@@ -226,11 +226,11 @@ type DiscreteDistribution
 //
 // Jointly normal distributions over the plane and space
 // (https://en.wikipedia.org/wiki/Multivariate_normal_distribution). These are
-// not univariate, so they do not implement ProbabilityDistribution.
+// not univariate, so they do not implement IProbabilityDistribution.
 
 // A bivariate normal distribution with the given mean point and covariance.
 type NormalDistribution2D
-    implements Value
+    implements IValue
 {
     Mean: Vector2D;
     Covariance: Covariance2D;
@@ -238,7 +238,7 @@ type NormalDistribution2D
 
 // A trivariate normal distribution with the given mean point and covariance.
 type NormalDistribution3D
-    implements Value
+    implements IValue
 {
     Mean: Vector3D;
     Covariance: Covariance3D;

@@ -20,7 +20,7 @@
 // axes, oriented by Orientation about Center. Axis-aligned when Orientation is
 // identity (prefer Bounds3D for that case). (https://en.wikipedia.org/wiki/Cuboid)
 type Box3D
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, NearestPoint3D, SupportMappable3D, ParametricSurface
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D, INearestPoint3D, ISupportMappable3D, IParametricSurface
 {
     Center: Point3D;
     Size: Size3D;
@@ -31,7 +31,7 @@ type Box3D
 // shrunken box and a ball. CornerRadius is clamped to half the smallest extent.
 // (https://en.wikipedia.org/wiki/Minkowski_addition)
 type RoundedBox3D
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D, ISupportMappable3D
 {
     Box: Box3D;
     CornerRadius: Number;
@@ -50,7 +50,7 @@ type RoundedBox3D
 // axis segment; the cylinder extends Height/2 each way along Axis.
 // (https://en.wikipedia.org/wiki/Cylinder)
 type Cylinder
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D, ParametricSurface
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D, ISupportMappable3D, IParametricSurface
 {
     Center: Point3D;
     Axis: Direction3D;
@@ -63,7 +63,7 @@ type Cylinder
 // shell extends Height/2 each way along Axis.
 // Invariant: 0 <= InnerRadius <= OuterRadius.
 type CylindricalShell
-    implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, ParametricSurface
+    implements IGeometry3D, IClosedShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D, IParametricSurface
 {
     Center: Point3D;
     Axis: Direction3D;
@@ -76,7 +76,7 @@ type CylindricalShell
 // is the disk of Radius at Apex + Axis * Height, and closes the solid.
 // (https://en.wikipedia.org/wiki/Cone)
 type Cone
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D, ParametricSurface
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D, ISupportMappable3D, IParametricSurface
 {
     Apex: Point3D;
     Axis: Direction3D;
@@ -89,7 +89,7 @@ type Cone
 // axis segment; the bottom disk (BottomRadius) sits at -Height/2 along Axis,
 // the top disk (TopRadius) at +Height/2. (https://en.wikipedia.org/wiki/Frustum)
 type ConicalFrustum
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, ParametricSurface
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D, IParametricSurface
 {
     Center: Point3D;
     Axis: Direction3D;
@@ -102,7 +102,7 @@ type ConicalFrustum
 // hemispherical ends. The smooth, convex sweep of a ball along a segment.
 // (https://en.wikipedia.org/wiki/Capsule_(geometry))
 type Capsule3D
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, NearestPoint3D, SupportMappable3D, ParametricSurface
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D, INearestPoint3D, ISupportMappable3D, IParametricSurface
 {
     A: Point3D;
     B: Point3D;
@@ -122,7 +122,7 @@ type Capsule3D
 // Normal that lie within Radius of Center.
 // (https://en.wikipedia.org/wiki/Disk_(mathematics))
 type Disk3D
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, Manifold, Orientable, PlanarMeasurable, Bounded3D, Centroid3D, NearestPoint3D
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, IManifold, IOrientable, IPlanarMeasurable, IBounded3D, ICentroid3D, INearestPoint3D
 {
     Center: Point3D;
     Normal: Direction3D;
@@ -133,7 +133,7 @@ type Disk3D
 // The normal follows the right-hand rule around A, B, C.
 // (https://en.wikipedia.org/wiki/Triangle)
 type Triangle3D
-    implements Geometry3D, ConvexShape, Connected, Manifold, Orientable, PlanarMeasurable, Bounded3D, PointSet3D, Centroid3D, NearestPoint3D, Deformable3D
+    implements IGeometry3D, IConvexShape, IConnected, IManifold, IOrientable, IPlanarMeasurable, IBounded3D, IPointSet3D, ICentroid3D, INearestPoint3D, IDeformable3D
 {
     A: Point3D;
     B: Point3D;
@@ -144,7 +144,7 @@ type Triangle3D
 // otherwise interpreted as the bilinear patch over its corners.
 // (https://en.wikipedia.org/wiki/Bilinear_interpolation)
 type Quad3D
-    implements Geometry3D, Connected, Orientable, PlanarMeasurable, Bounded3D, PointSet3D, Centroid3D, Deformable3D
+    implements IGeometry3D, IConnected, IOrientable, IPlanarMeasurable, IBounded3D, IPointSet3D, ICentroid3D, IDeformable3D
 {
     A: Point3D;
     B: Point3D;
@@ -163,7 +163,7 @@ type Quad3D
 // D lies on the positive side of triangle A, B, C.
 // (https://en.wikipedia.org/wiki/Tetrahedron)
 type Tetrahedron
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, PointSet3D, Centroid3D, ContainsPoint3D, Deformable3D
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, ISpatialMeasurable, IBounded3D, IPointSet3D, ICentroid3D, IContainsPoint3D, IDeformable3D
 {
     A: Point3D;
     B: Point3D;
@@ -177,7 +177,7 @@ type Tetrahedron
 // mapping (see Prism3D in `polygons.types.plato`).
 // (https://en.wikipedia.org/wiki/Wedge_(geometry))
 type Wedge
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D
 {
     Base: Triangle3D;
     Offset: Vector3D;
@@ -190,7 +190,7 @@ type Wedge
 // image of a plane under an arbitrary mapping is not a plane.
 // (https://en.wikipedia.org/wiki/Convex_polytope)
 type ConvexVolume
-    implements Geometry3D, ConvexShape, Connected, ContainsPoint3D
+    implements IGeometry3D, IConvexShape, IConnected, IContainsPoint3D
 {
     Planes: Array<Plane>;
 }
@@ -206,7 +206,7 @@ type ConvexVolume
 // The ball of all points within Radius of Center; its boundary is the sphere
 // proper. Radius is non-negative. (https://en.wikipedia.org/wiki/Sphere)
 type Sphere
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, NearestPoint3D, SupportMappable3D, ParametricSurface
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D, INearestPoint3D, ISupportMappable3D, IParametricSurface
 {
     Center: Point3D;
     Radius: Number;
@@ -216,7 +216,7 @@ type Sphere
 // Invariant: 0 <= InnerRadius <= OuterRadius.
 // (https://en.wikipedia.org/wiki/Spherical_shell)
 type SphericalShell
-    implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
+    implements IGeometry3D, IClosedShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D
 {
     Center: Point3D;
     InnerRadius: Number;
@@ -228,7 +228,7 @@ type SphericalShell
 // PolarAngle is in (0, pi]; pi gives the whole ball.
 // (https://en.wikipedia.org/wiki/Spherical_cap)
 type SphericalCap
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D
 {
     Sphere: Sphere;
     Axis: Direction3D;
@@ -239,7 +239,7 @@ type SphericalCap
 // oriented by Orientation about Center. A sphere when all semi-axes are equal.
 // (https://en.wikipedia.org/wiki/Ellipsoid)
 type Ellipsoid
-    implements Geometry3D, ClosedShape, ConvexShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, SupportMappable3D, ParametricSurface
+    implements IGeometry3D, IClosedShape, IConvexShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D, ISupportMappable3D, IParametricSurface
 {
     Center: Point3D;
     SemiAxes: Number3;
@@ -256,7 +256,7 @@ type Ellipsoid
 // about Center in the plane perpendicular to Axis. Self-intersecting when
 // MinorRadius exceeds MajorRadius. (https://en.wikipedia.org/wiki/Torus)
 type Torus
-    implements Geometry3D, ClosedShape, Connected, SpatialMeasurable, Bounded3D, Centroid3D, ContainsPoint3D, ParametricSurface
+    implements IGeometry3D, IClosedShape, IConnected, ISpatialMeasurable, IBounded3D, ICentroid3D, IContainsPoint3D, IParametricSurface
 {
     Center: Point3D;
     Axis: Direction3D;

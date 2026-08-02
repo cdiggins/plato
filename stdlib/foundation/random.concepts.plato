@@ -11,8 +11,8 @@
 // (https://en.wikipedia.org/wiki/Probability_distribution). Pdf is the
 // probability density (or mass, for discrete distributions) at a value;
 // Cdf is the cumulative probability of drawing at most that value.
-concept ProbabilityDistribution
-    inherits Value
+interface IProbabilityDistribution
+    inherits IValue
 {
     Mean(x: Self): Number;
     Variance(x: Self): Number;

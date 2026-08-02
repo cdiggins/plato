@@ -1,7 +1,7 @@
 //==
-// # Texturing — derived functions for ProceduralTexture
+// # Texturing — derived functions for IProceduralTexture
 //
-// Bodies for the `ProceduralTexture` concept declared in
+// Bodies for the `IProceduralTexture` concept declared in
 // `texturing.concepts.plato`: a
 // pattern evaluated directly at a UV coordinate via `ColorAt`. The helpers read
 // the sampled color's alpha channel for the opacity tests. Pure expressions
@@ -11,7 +11,7 @@
 library Texturing
 {
     //==
-    // # ProceduralTexture
+    // # IProceduralTexture
     //
     // A pattern evaluated directly at a UV coordinate via ColorAt. The color's
     // alpha channel drives the opacity helpers.
@@ -19,15 +19,15 @@ library Texturing
     // The alpha (opacity) sampled at the UV coordinate, on Color's nominal
     // [0, 1] per-channel scale (color.types.plato). Wide-gamut and HDR samples may
     // exceed 1.
-    OpacityAt(self: ProceduralTexture, uv: UvCoordinate): Number
+    OpacityAt(self: IProceduralTexture, uv: UvCoordinate): Number
         => self.ColorAt(uv).A;
 
     // True where the sampled texel is fully opaque (alpha at or above 1).
-    IsOpaqueAt(self: ProceduralTexture, uv: UvCoordinate): Boolean
+    IsOpaqueAt(self: IProceduralTexture, uv: UvCoordinate): Boolean
         => self.ColorAt(uv).A >= 1.0;
 
     // True where the sampled texel is fully transparent (alpha at or below 0).
-    IsTransparentAt(self: ProceduralTexture, uv: UvCoordinate): Boolean
+    IsTransparentAt(self: IProceduralTexture, uv: UvCoordinate): Boolean
         => self.ColorAt(uv).A <= 0.0;
 
     //==

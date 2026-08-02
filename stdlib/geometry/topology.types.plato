@@ -13,8 +13,8 @@
 // The derived connectivity tables of a mesh: undirected edges named by their
 // endpoint vertices, and the vertex/face neighbourhood tables built over them.
 //
-// The adjacency tables are Jagged (CSR) row collections — packing invariant on
-// the `Jagged` concept in `collections.concepts.plato`; the payload
+// The adjacency tables are IJagged (CSR) row collections — packing invariant on
+// the `IJagged` concept in `collections.concepts.plato`; the payload
 // projections are in `topology.library.plato`.
 
 //==
@@ -24,7 +24,7 @@
 // orders the pair so that A.Value <= B.Value; producers emit canonical pairs
 // unless documented otherwise (LineSet segments preserve authored direction).
 type VertexPair
-    implements Value, Hashable
+    implements IValue, IHashable
 {
     A: VertexIndex;
     B: VertexIndex;
@@ -34,7 +34,7 @@ type VertexPair
 // each pair ordered A.Value <= B.Value, pairs sorted lexicographically.
 // An edge's position in this array is its UndirectedEdgeIndex.
 type UndirectedEdgeList
-    implements Value
+    implements IValue
 {
     UndirectedEdges: Array<VertexPair>;
 }
@@ -44,7 +44,7 @@ type UndirectedEdgeList
 // counter-clockwise along the face loop; RightFaces[i] is the opposite side. A
 // boundary edge stores -1 in RightFaces; a wire edge stores -1 in both.
 type UndirectedEdgeAdjacency
-    implements Value
+    implements IValue
 {
     UndirectedEdges: Array<VertexPair>;
     LeftFaces: Array<FaceIndex>;
@@ -57,16 +57,16 @@ type UndirectedEdgeAdjacency
 // Vertex-to-vertex adjacency: one row per vertex, so Offsets has
 // (vertex count + 1) entries. Each vertex's neighbour run is sorted ascending.
 type VertexAdjacency
-    implements Value, Jagged<VertexIndex>
+    implements IValue, IJagged<VertexIndex>
 {
     Offsets: Array<Integer>;
     Neighbors: Array<VertexIndex>;
 }
 
-// Face-to-face adjacency across shared edges: one row per face, so Offsets has
+// IFace-to-face adjacency across shared edges: one row per face, so Offsets has
 // (face count + 1) entries. Row f holds the faces sharing an edge with face f.
 type FaceAdjacency
-    implements Value, Jagged<FaceIndex>
+    implements IValue, IJagged<FaceIndex>
 {
     Offsets: Array<Integer>;
     Neighbors: Array<FaceIndex>;
@@ -75,7 +75,7 @@ type FaceAdjacency
 // The faces incident to each vertex: one row per vertex, so Offsets has
 // (vertex count + 1) entries. Row v holds the faces touching vertex v.
 type VertexFaceAdjacency
-    implements Value, Jagged<FaceIndex>
+    implements IValue, IJagged<FaceIndex>
 {
     Offsets: Array<Integer>;
     Faces: Array<FaceIndex>;
@@ -96,7 +96,7 @@ type VertexFaceAdjacency
 type WindingOrder = CounterClockwise | Clockwise;
 
 // How close a surface is to being a 2-manifold
-// (https://en.wikipedia.org/wiki/Manifold): Manifold means every undirected
+// (https://en.wikipedia.org/wiki/IManifold): IManifold means every undirected
 // edge borders exactly two faces and vertex stars are disks;
 // ManifoldWithBoundary allows undirected edges bordering one or two faces.
 type Manifoldness = Unknown | Manifold | ManifoldWithBoundary | NonManifold;
@@ -108,7 +108,7 @@ type Manifoldness = Unknown | Manifold | ManifoldWithBoundary | NonManifold;
 // DEDUPLICATED undirected edges — half the half-edge count on a closed
 // manifold — or the characteristic is wrong.
 type TopologySummary
-    implements Value
+    implements IValue
 {
     VertexCount: Integer;
     UndirectedEdgeCount: Integer;
@@ -134,10 +134,10 @@ type TopologySummary
 // (https://en.wikipedia.org/wiki/Doubly_connected_edge_list). Origin is the
 // vertex this half-edge leaves. Next and Previous walk the loop of the
 // bordered face in counter-clockwise order. Twin is the oppositely directed
-// half-edge, -1 when the edge is on a boundary. Face is the bordered face, -1
+// half-edge, -1 when the edge is on a boundary. IFace is the bordered face, -1
 // when this half-edge runs along a hole.
 type HalfEdge
-    implements Value
+    implements IValue
 {
     Origin: VertexIndex;
     Twin: HalfEdgeIndex;
@@ -151,7 +151,7 @@ type HalfEdge
 // VertexHalfEdges[v] is one half-edge leaving vertex v, -1 for an isolated
 // vertex. Requires a manifold (possibly bounded) surface.
 type HalfEdgeMesh
-    implements Value, MeshElementCounts, HalfEdgeNavigable, Deformable3D
+    implements IValue, IMeshElementCounts, IHalfEdgeNavigable, IDeformable3D
 {
     Positions: Array<Point3D>;
     HalfEdges: Array<HalfEdge>;
@@ -159,10 +159,10 @@ type HalfEdgeMesh
     VertexHalfEdges: Array<HalfEdgeIndex>;
 }
 
-// One closed loop of boundary half-edges (half-edges whose Face is -1),
+// One closed loop of boundary half-edges (half-edges whose IFace is -1),
 // listed in walk order around the hole.
 type BoundaryLoop
-    implements Value
+    implements IValue
 {
     HalfEdges: Array<HalfEdgeIndex>;
 }
@@ -175,7 +175,7 @@ type BoundaryLoop
 // the vertex sitting at corner c. Opposites[c] is the corner facing the same
 // edge from the adjacent triangle, or -1 when that edge is on the boundary.
 type CornerTable
-    implements Value
+    implements IValue
 {
     Corners: Array<VertexIndex>;
     Opposites: Array<CornerIndex>;
@@ -191,12 +191,12 @@ type CornerTable
 // No index type is named a bare `Edge`: an edge index is either
 // UndirectedEdgeIndex or HalfEdgeIndex, and the two are not interchangeable
 // (the undirected count is half the directed count on a closed manifold).
-// Convention: see CONVENTIONS.md - Typed indices (Value is zero-based, and -1
+// Convention: see CONVENTIONS.md - Typed indices (IValue is zero-based, and -1
 // means "none" / "not present").
 
 // A zero-based index of a vertex within a mesh or point set. -1 means "none".
 type VertexIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -204,14 +204,14 @@ type VertexIndex
 // A zero-based index of an undirected edge within an UndirectedEdgeList.
 // -1 means "none". The directed counterpart is HalfEdgeIndex.
 type UndirectedEdgeIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
 
 // A zero-based index of a face within a mesh. -1 means "none".
 type FaceIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -220,7 +220,7 @@ type FaceIndex
 // triangle meshes, corner c belongs to triangle c / 3 and slot c mod 3.
 // -1 means "none".
 type CornerIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -228,7 +228,7 @@ type CornerIndex
 // A zero-based index of a half-edge (one directed side of an undirected
 // edge). -1 means "none".
 type HalfEdgeIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -236,7 +236,7 @@ type HalfEdgeIndex
 // A zero-based index of a volumetric cell (tetrahedron, hexahedron, voxel
 // region) within a cell complex. -1 means "none".
 type CellIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }

@@ -11,7 +11,7 @@ library Solids
     //==
     // # Solids — parametric surfaces for the solids
     //
-    // The parametric boundary surface of each solid, as the ParametricSurface
+    // The parametric boundary surface of each solid, as the IParametricSurface
     // obligations. Solids are centered at the origin with Z as the up axis in their
     // local frame; UV is in [0,1]x[0,1]: U wraps around the Z axis (ClosedU is true
     // for every solid), V runs up the shape (or around it, for the torus). Polygonal
@@ -452,7 +452,7 @@ library Solids
     }
 
     //==
-    // Meshable3D obligations: every typed solid triangulates through its
+    // IMeshable3D obligations: every typed solid triangulates through its
     // polygon mesh (fan triangulation, `meshes-polygon.library.plato`).
 
     ToTriangleMesh(s: PlatonicSolid): TriangleMesh3D
@@ -478,7 +478,7 @@ library Solids
     //==
     // # Deformation bodies for the profile-generated solids
     //
-    // The Deformable3D obligation of the one solid in `solids.types.plato` that
+    // The IDeformable3D obligation of the one solid in `solids.types.plato` that
     // is spanned by stored points. Extrude, revolve and sweep are absent: each
     // carries a placement frame, an axis or a path curve, and a point mapping
     // supplies no image for those.

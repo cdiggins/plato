@@ -24,7 +24,7 @@
 
 // A displacement or direction in 2D space.
 type Vector2D
-    implements Vector
+    implements IVector
 {
     X: Number;
     Y: Number;
@@ -32,7 +32,7 @@ type Vector2D
 
 // A displacement or direction in 3D space.
 type Vector3D
-    implements Vector
+    implements IVector
 {
     X: Number;
     Y: Number;
@@ -40,7 +40,7 @@ type Vector3D
 }
 
 // An N-dimensional vector with runtime-determined arity.
-// VectorN is the one Vector implementor whose components are not its fields, so
+// VectorN is the one IVector implementor whose components are not its fields, so
 // the writer's At/Count synthesis has to delegate to the field rather than count
 // fields. It does: verified by emitting and running the code, a 5-component
 // VectorN reports Count == 5 and At(2) == 3. The generic bodies in
@@ -48,15 +48,15 @@ type Vector3D
 // correct here.
 //
 // This works because the field is spelled Array<Number>: the writer delegates
-// Count/At to any Indexable-providing field type, not only to fields named
-// "Array". Keep the field's type Indexable-providing if this declaration is
+// Count/At to any IIndexable-providing field type, not only to fields named
+// "Array". Keep the field's type IIndexable-providing if this declaration is
 // ever reshaped.
 //
 // VectorN's intrinsic vector operators (Add, Subtract, Magnitude, Zero, ...) are
 // not yet filled; the concept-generic bodies below therefore compute only at the
 // Number instantiation today.
 type VectorN
-    implements Vector
+    implements IVector
 {
     Components: Array<Number>;
 }
@@ -71,7 +71,7 @@ type VectorN
 // is undefined. Check unit length with `IsUnit` (algebra.library.plato) for
 // diagnostics.
 type Direction2D
-    implements Value
+    implements IValue
 {
     Vector: Vector2D;
 }
@@ -86,7 +86,7 @@ type Direction2D
 // input is undefined. Check unit length with `IsUnit`
 // (algebra.library.plato) for diagnostics.
 type Direction3D
-    implements Value
+    implements IValue
 {
     Vector: Vector3D;
 }
@@ -95,14 +95,14 @@ type Direction3D
 // # Integer vectors
 //
 // Fixed-arity tuples of whole-number components: pixel offsets, grid steps, and
-// voxel offsets. They implement Value and Hashable rather than the Vector
+// voxel offsets. They implement IValue and IHashable rather than the IVector
 // concept, so no norm, normalization, or component-wise division surface is
 // implied — lift them into a Number tuple when real
 // arithmetic is wanted.
 
 // A pair of whole-number components: pixel offsets, grid steps.
 type IntegerVector2
-    implements Value, Hashable
+    implements IValue, IHashable
 {
     X: Integer;
     Y: Integer;
@@ -110,7 +110,7 @@ type IntegerVector2
 
 // A triple of whole-number components: voxel offsets, 3D grid steps.
 type IntegerVector3
-    implements Value, Hashable
+    implements IValue, IHashable
 {
     X: Integer;
     Y: Integer;
@@ -119,7 +119,7 @@ type IntegerVector3
 
 // A quadruple of whole-number components.
 type IntegerVector4
-    implements Value, Hashable
+    implements IValue, IHashable
 {
     X: Integer;
     Y: Integer;
@@ -130,7 +130,7 @@ type IntegerVector4
 //==
 // # Numeric tuples
 //
-// The low-level intrinsic tier of the Vector family: fixed-arity tuples of
+// The low-level intrinsic tier of the IVector family: fixed-arity tuples of
 // Numbers with component-wise arithmetic, mapped directly onto each backend's
 // native vector type (System.Numerics, vecN, floatN). Naming rule: a bare number
 // counts components (Number3, Tuple3, IntegerVector3); a D suffix means the type
@@ -143,7 +143,7 @@ type IntegerVector4
 
 // A pair of Numbers: the low-level intrinsic 2-tuple.
 type Number2
-    implements Vector
+    implements IVector
 {
     X: Number;
     Y: Number;
@@ -151,7 +151,7 @@ type Number2
 
 // A triple of Numbers: the low-level intrinsic 3-tuple.
 type Number3
-    implements Vector
+    implements IVector
 {
     X: Number;
     Y: Number;
@@ -162,7 +162,7 @@ type Number3
 // homogeneous coordinates (https://en.wikipedia.org/wiki/Homogeneous_coordinates)
 // and RGBA math.
 type Number4
-    implements Vector
+    implements IVector
 {
     X: Number;
     Y: Number;
@@ -172,7 +172,7 @@ type Number4
 
 // An octuple of Numbers: the low-level intrinsic 8-tuple (SIMD-width lane math).
 type Number8
-    implements Vector
+    implements IVector
 {
     X0: Number;
     X1: Number;

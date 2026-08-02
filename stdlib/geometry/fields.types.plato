@@ -4,7 +4,7 @@
 // Sections, in order:
 //  - Constant fields
 //  - Function-valued fields
-//  - Field expression graphs
+//  - IField expression graphs
 
 //==
 // # Constant fields
@@ -15,28 +15,28 @@
 
 // A planar scalar field with the same value at every point.
 type ConstantScalarField2D
-    implements Value, ScalarField2D
+    implements IValue, IScalarField2D
 {
     Value: Number;
 }
 
 // A spatial scalar field with the same value at every point.
 type ConstantScalarField3D
-    implements Value, ScalarField3D
+    implements IValue, IScalarField3D
 {
     Value: Number;
 }
 
 // A planar vector field with the same vector at every point.
 type ConstantVectorField2D
-    implements Value, VectorField2D
+    implements IValue, IVectorField2D
 {
     Value: Vector2D;
 }
 
 // A spatial vector field with the same vector at every point.
 type ConstantVectorField3D
-    implements Value, VectorField3D
+    implements IValue, IVectorField3D
 {
     Value: Vector3D;
 }
@@ -49,7 +49,7 @@ type ConstantVectorField3D
 // graphs of the next section: a function-valued field is built from a
 // lambda, evaluated by invoking the stored function, and combined with another
 // field into a new field holding the composed lambda. The combinators (Combine,
-// MapValue, MapDomain, Union, Intersection, Difference, Offset) live in
+// MapValue, MapDomain, Union, Intersection, IDifference, Offset) live in
 // `fields-implicits.library.plato`; `ToFunctionField` lifts any field
 // concept implementor into this form so the combinators apply to all of them.
 //
@@ -57,7 +57,7 @@ type ConstantVectorField3D
 // than one generic function-carrying type: the monomorphic shape is what
 // monomorphizes cleanly to every backend.
 //
-// **Domain and range dimensions.** A Procedural is classified by what it maps
+// **Domain and range dimensions.** A IProcedural is classified by what it maps
 // from and to; the dimension of the domain is the dimension of the form's
 // parameter space, the dimension of the range is the space it lives in. The
 // field concepts of `fields.concepts.plato` are the point-domain rows of that
@@ -72,10 +72,10 @@ type ConstantVectorField3D
 //   Point3D -> Number    a spatial scalar field (a 3D signed distance field)
 //   Point3D -> Vector3D  a spatial vector field
 //
-// A Procedural whose range is Boolean is a **predicate**: a threshold over a
+// A IProcedural whose range is Boolean is a **predicate**: a threshold over a
 // Number domain, a region over Point2D, a volume over Point3D — membership
 // with no distance information (see `implicit-sdf.concepts.plato`). A
-// Procedural over an integer domain is a discrete field: an unbounded array, a
+// IProcedural over an integer domain is a discrete field: an unbounded array, a
 // texture sampler, or a voxel grid. Continuous forms are analytic and
 // resolution independent; discrete forms (meshes, polylines, point clouds,
 // sampled grids) instead enumerate a countable set of primitives.
@@ -84,7 +84,7 @@ type ConstantVectorField3D
 // number. The canonical function-valued field: heightmaps, masks, potentials,
 // and planar signed distances all take this form.
 type ScalarFunctionField2D
-    implements ScalarField2D
+    implements IScalarField2D
 {
     Function: Function1<Point2D, Number>;
 }
@@ -92,7 +92,7 @@ type ScalarFunctionField2D
 // A spatial scalar field defined by a stored function from a space position to
 // a number: densities, potentials, and implicit surfaces.
 type ScalarFunctionField3D
-    implements ScalarField3D
+    implements IScalarField3D
 {
     Function: Function1<Point3D, Number>;
 }
@@ -100,7 +100,7 @@ type ScalarFunctionField3D
 // A planar vector field defined by a stored function from a plane position to a
 // 2D vector: gradients, flows, and displacement maps.
 type VectorFunctionField2D
-    implements VectorField2D
+    implements IVectorField2D
 {
     Function: Function1<Point2D, Vector2D>;
 }
@@ -108,13 +108,13 @@ type VectorFunctionField2D
 // A spatial vector field defined by a stored function from a space position to
 // a 3D vector: velocity fields, force fields, and displacement fields.
 type VectorFunctionField3D
-    implements VectorField3D
+    implements IVectorField3D
 {
     Function: Function1<Point3D, Vector3D>;
 }
 
 //==
-// # Field expression graphs
+// # IField expression graphs
 //
 // Flat, index-based combinator graphs over scalar fields. Each node is one
 // operation carrying exactly the operands it consumes: operand nodes referenced
@@ -126,7 +126,7 @@ type VectorFunctionField3D
 // A zero-based index of a node within a field expression graph's node array.
 // Operands always reference lower-indexed nodes; -1 means "none".
 type FieldNodeIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -138,7 +138,7 @@ type FieldNodeIndex
 // bounds are themselves nodes; Remap linearly maps Input from [FromLow, FromHigh]
 // onto the unit range [0, 1].
 type ScalarFieldNode2D
-    implements Value
+    implements IValue
     = Source(FieldIndex: ItemIndex)                              // read an external planar scalar field
     | Constant(Value: Number)                                    // a literal constant
     | Add(Left: FieldNodeIndex, Right: FieldNodeIndex)                         // Left + Right
@@ -158,7 +158,7 @@ type ScalarFieldNode2D
 // reference lower-indexed nodes, making the array a valid topological order;
 // Root is the index of the node producing the result.
 type ScalarFieldGraph2D
-    implements Value
+    implements IValue
 {
     Nodes: Array<ScalarFieldNode2D>;
     Root: FieldNodeIndex;
@@ -170,7 +170,7 @@ type ScalarFieldGraph2D
 // FieldIndex is an index into an external list of spatial scalar fields;
 // Constant carries a literal.
 type ScalarFieldNode3D
-    implements Value
+    implements IValue
     = Source(FieldIndex: ItemIndex)                              // read an external spatial scalar field
     | Constant(Value: Number)                                    // a literal constant
     | Add(Left: FieldNodeIndex, Right: FieldNodeIndex)                         // Left + Right
@@ -190,7 +190,7 @@ type ScalarFieldNode3D
 // reference lower-indexed nodes, making the array a valid topological order;
 // Root is the index of the node producing the result.
 type ScalarFieldGraph3D
-    implements Value
+    implements IValue
 {
     Nodes: Array<ScalarFieldNode3D>;
     Root: FieldNodeIndex;

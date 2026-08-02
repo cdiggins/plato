@@ -8,8 +8,8 @@
 // The family of graph-shaped types: a vertex count, an edge count, and a
 // directedness flag. Vertices are the integers 0 through VertexCount - 1.
 // (https://en.wikipedia.org/wiki/Graph_(discrete_mathematics))
-concept GraphLike
-    inherits Value
+interface IGraphLike
+    inherits IValue
 {
     VertexCount(x: Self): Integer;
     EdgeCount(x: Self): Integer;

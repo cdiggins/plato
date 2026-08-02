@@ -1,8 +1,8 @@
 //==
 // # Deformations
 //
-// Core catalog of analytic space warps. Each type implements Deformation2D or
-// Deformation3D and is evaluated by `Eval` in `deformations.library.plato`.
+// Core catalog of analytic space warps. Each type implements IDeformation2D or
+// IDeformation3D and is evaluated by `Eval` in `deformations.library.plato`.
 // Parameters are world-space (origin + axis/rate); bounds-normalized variants
 // can wrap these later. Zero rate / zero strength is the identity. Related SDF
 // domain ops live in `implicit-sdf.types.plato` (often the inverse map).
@@ -13,7 +13,7 @@
 // Twists space about Axis through Origin: each slice perpendicular to the axis
 // rotates by AnglePerUnit times signed distance along the axis.
 type Twist3D
-    implements Value, Deformation3D
+    implements IValue, IDeformation3D
 {
     Origin: Point3D;
     Axis: Direction3D;
@@ -25,7 +25,7 @@ type Twist3D
 // through Origin by Curvature times signed distance along Direction.
 // Precondition: Axis and Direction are unit and not parallel.
 type Bend3D
-    implements Value, Deformation3D
+    implements IValue, IDeformation3D
 {
     Origin: Point3D;
     Axis: Direction3D;
@@ -38,7 +38,7 @@ type Bend3D
 // axis is scaled by (1 + Rate * t), where t is signed distance along the axis.
 // Rate of 0 is the identity; negative Rate pinches.
 type Taper3D
-    implements Value, Deformation3D
+    implements IValue, IDeformation3D
 {
     Origin: Point3D;
     Axis: Direction3D;
@@ -49,7 +49,7 @@ type Taper3D
 // Shears space: translates each point by Rate * t, where t is signed distance
 // from Origin along Axis. Rate of zero is the identity.
 type Shear3D
-    implements Value, Deformation3D
+    implements IValue, IDeformation3D
 {
     Origin: Point3D;
     Axis: Direction3D;
@@ -61,7 +61,7 @@ type Shear3D
 // [0, 1]: 0 leaves the point unchanged, 1 places it on (or toward) the sphere
 // along the radial ray from Center.
 type Spherify3D
-    implements Value, Deformation3D
+    implements IValue, IDeformation3D
 {
     Center: Point3D;
     Radius: Number;
@@ -72,7 +72,7 @@ type Spherify3D
 // Planar shear: translates each point by Rate * t, where t is signed distance
 // from Origin along Axis.
 type Shear2D
-    implements Value, Deformation2D
+    implements IValue, IDeformation2D
 {
     Origin: Point2D;
     Axis: Direction2D;
@@ -83,7 +83,7 @@ type Shear2D
 // Linear planar taper about Axis through Origin: the perpendicular component is
 // scaled by (1 + Rate * t).
 type Taper2D
-    implements Value, Deformation2D
+    implements IValue, IDeformation2D
 {
     Origin: Point2D;
     Axis: Direction2D;
@@ -94,7 +94,7 @@ type Taper2D
 // Swirl about Origin: rotates each point by AnglePerUnit times its distance
 // from Origin (polar twist).
 type Twist2D
-    implements Value, Deformation2D
+    implements IValue, IDeformation2D
 {
     Origin: Point2D;
     AnglePerUnit: Angle;
@@ -104,7 +104,7 @@ type Twist2D
 // A planar deformation defined by an arbitrary point map. Carrier for Compose /
 // Multiply results (and any other combinator that builds a Function1).
 type MappingDeformation2D
-    implements Value, Deformation2D
+    implements IValue, IDeformation2D
 {
     Mapping: Function1<Point2D, Point2D>;
 }
@@ -113,7 +113,7 @@ type MappingDeformation2D
 // A spatial deformation defined by an arbitrary point map. Carrier for Compose /
 // Multiply results (and any other combinator that builds a Function1).
 type MappingDeformation3D
-    implements Value, Deformation3D
+    implements IValue, IDeformation3D
 {
     Mapping: Function1<Point3D, Point3D>;
 }

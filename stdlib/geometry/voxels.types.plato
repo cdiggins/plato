@@ -25,7 +25,7 @@ type VoxelGrid3D<T>
 // (https://en.wikipedia.org/wiki/Occupancy_grid_mapping): floor plans,
 // walkability masks, 2D rasterized regions. True means the cell is occupied.
 type OccupancyGrid2D
-    implements Value
+    implements IValue
 {
     Origin: Point2D;
     CellSize: Number;
@@ -35,7 +35,7 @@ type OccupancyGrid2D
 // A dense binary occupancy raster in space: voxelized solids, collision
 // masks, volume selections. True means the cell is occupied.
 type OccupancyGrid3D
-    implements Value
+    implements IValue
 {
     Origin: Point3D;
     CellSize: Number;
@@ -45,7 +45,7 @@ type OccupancyGrid3D
 // A dense scalar raster in the plane: heightfields sampled as density,
 // coverage maps, accumulation buffers.
 type DensityGrid2D
-    implements Value
+    implements IValue
 {
     Origin: Point2D;
     CellSize: Number;
@@ -56,7 +56,7 @@ type DensityGrid2D
 // occupancy probabilities. Values are unitless; interpretation is the
 // producer's contract.
 type DensityGrid3D
-    implements Value
+    implements IValue
 {
     Origin: Point3D;
     CellSize: Number;
@@ -66,7 +66,7 @@ type DensityGrid3D
 // A dense color raster in space: baked volumetric lighting, color-mapped
 // scans, voxel art.
 type VoxelColorGrid3D
-    implements Value
+    implements IValue
 {
     Origin: Point3D;
     CellSize: Number;
@@ -78,7 +78,7 @@ type VoxelColorGrid3D
 // positive outside, in world units. Cells farther from the surface than
 // NarrowBandWidth hold BackgroundDistance with the correct sign.
 type LevelSetGrid3D
-    implements Value
+    implements IValue
 {
     Origin: Point3D;
     CellSize: Number;
@@ -101,12 +101,12 @@ type SparseVoxelGrid3D<T>
     Values: Array<T>;
 }
 
-// One dense block of a two-level sparse volume. Coordinate is the brick's
-// position in brick units (world position = Origin + Coordinate scaled by
+// One dense block of a two-level sparse volume. ICoordinate is the brick's
+// position in brick units (world position = Origin + ICoordinate scaled by
 // brick size times cell size); Values is the brick's dense payload, cubic
 // with the owning map's BrickSize on each side.
 type VoxelBrick3D
-    implements Value
+    implements IValue
 {
     Coordinate: IntegerVector3;
     Values: Array3D<Number>;
@@ -114,9 +114,9 @@ type VoxelBrick3D
 
 // A two-level sparse volume: a sparse set of dense cubic bricks, each
 // BrickSize cells on a side. Regions with no brick are empty. Bricks are
-// unique and sorted by Coordinate (lexicographically Z, then Y, then X).
+// unique and sorted by ICoordinate (lexicographically Z, then Y, then X).
 type BrickMap3D
-    implements Value
+    implements IValue
 {
     Origin: Point3D;
     CellSize: Number;

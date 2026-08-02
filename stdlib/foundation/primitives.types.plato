@@ -24,7 +24,7 @@
 // `primitives.library.plato`.
 //
 // The extent fields are named for the concept obligations they discharge
-// (`ColumnCount` / `RowCount` / `LayerCount` on Indexable2D / Indexable3D), so a
+// (`ColumnCount` / `RowCount` / `LayerCount` on IIndexable2D / IIndexable3D), so a
 // field satisfies each one directly rather than needing a library function keyed
 // on the type's own parameter — the shape plato-376 says can never bind.
 //
@@ -33,7 +33,7 @@
 
 // An immutable collection addressed by column and row.
 type Array2D<T>
-    implements Indexable2D<T>
+    implements IIndexable2D<T>
 {
     Elements: Array<T>;
     ColumnCount: Integer;
@@ -42,7 +42,7 @@ type Array2D<T>
 
 // An immutable collection addressed by column, row, and layer.
 type Array3D<T>
-    implements Indexable3D<T>
+    implements IIndexable3D<T>
 {
     Elements: Array<T>;
     ColumnCount: Integer;

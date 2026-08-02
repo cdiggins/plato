@@ -44,7 +44,7 @@ namespace Ara3D.Geometry.AST
                     Write("type");
                     break;
                 case TypeKind.Interface:
-                    Write("concept");
+                    Write("interface");
                     break;
                 default:
                     Write(kind.ToString());

@@ -205,13 +205,13 @@ library SolidsCsg
     //==
     // # Deformation body for the polygon-soup solid
     //
-    // The Deformable3D obligation of PolygonSoup3D (`solids.types.plato`):
+    // The IDeformable3D obligation of PolygonSoup3D (`solids.types.plato`):
     // every face polygon deformed vertex-wise. The soup's convex-planar invariant
     // survives affine mappings only; after a nonlinear mapping the clipping bodies
     // see each ring through its best-fit plane (the same control-point decay as
     // `brep.library.plato`), so re-tessellate first when exactness matters.
 
-    // The Deformable3D obligation: every polygon deformed vertex-wise.
+    // The IDeformable3D obligation: every polygon deformed vertex-wise.
     Deform(self: PolygonSoup3D, mapping: Function1<Point3D, Point3D>): PolygonSoup3D
         => PolygonSoup3D(self.Polygons.Map(p => p.Deform(mapping)));
 }

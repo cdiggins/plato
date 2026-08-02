@@ -1,7 +1,7 @@
 //==
 // # Color spaces — concrete bodies
 //
-// Hashable obligations for the color-science types declared in
+// IHashable obligations for the color-science types declared in
 // `color-spaces.types.plato`. Conversion functions live in a later pass.
 
 library ColorSpaces
@@ -14,7 +14,7 @@ library ColorSpaces
         => self.X.Hash * 31 + self.Y.Hash;
 
     //==
-    // # ColorXYZ — the Numerical obligations, component-wise over X/Y/Z
+    // # ColorXYZ — the INumerical obligations, component-wise over X/Y/Z
     //
     // Tristimulus values are a linear space by construction: CIE XYZ is defined
     // as an integral against the colour matching functions, so summing two
@@ -22,7 +22,7 @@ library ColorSpaces
     // scaling the radiance. That makes the component-wise arithmetic below
     // physically meaningful, unlike the same operations on a gamma-encoded or
     // perceptual space — which is exactly why ColorLab and friends next door are
-    // plain `Value` and get no arithmetic.
+    // plain `IValue` and get no arithmetic.
 
     // Component-wise sum: the tristimulus of the combined spectra.
     Add(a: ColorXYZ, b: ColorXYZ): ColorXYZ

@@ -19,13 +19,13 @@
 // arity; At(i) is the i-th corner's vertex index, i in [0, Count) — corners do
 // not wrap, use the wrapping helpers in `meshes.library.plato` to walk
 // the loop. Convention: see CONVENTIONS.md - Winding, handedness, and normals.
-concept Face
-    inherits Value, Hashable, Indexable<VertexIndex>
+interface IFace
+    inherits IValue, IHashable, IIndexable<VertexIndex>
 { }
 
 // Anything that can produce an explicit indexed triangle mesh approximation
 // of itself: solids, parametric surfaces, implicit surfaces, other meshes.
-concept Meshable3D
+interface IMeshable3D
 {
     ToTriangleMesh(x: Self): TriangleMesh3D;
 }
@@ -33,15 +33,15 @@ concept Meshable3D
 // Anything in the plane that can produce a triangulation of itself
 // (https://en.wikipedia.org/wiki/Polygon_triangulation): polygons, planar
 // regions, 2D meshes.
-concept Meshable2D
+interface IMeshable2D
 {
     Triangulate(x: Self): TriangleMesh2D;
 }
 
-// Geometry that already exposes an indexed triangle set: random access to
+// IGeometry that already exposes an indexed triangle set: random access to
 // faces and vertex positions by typed index.
-concept TriangulatedGeometry3D
-    inherits Meshable3D
+interface ITriangulatedGeometry3D
+    inherits IMeshable3D
 {
     TriangleCount(x: Self): Integer;
     FaceAt(x: Self, face: FaceIndex): TriangleFace;
@@ -69,14 +69,14 @@ concept TriangulatedGeometry3D
 // tower instantiated twice: a UV domain is the planar instantiation sharing its
 // index table with the spatial mesh it parameterizes. The named bindings are
 // where dimension arrives, and therefore where the dimensional capabilities
-// attach — PointSet, Bounded and Deformable. Transformable3D is NOT listed
-// because Deformable3D already inherits it (`transforms.concepts.plato`), and
+// attach — PointSet, Bounded and Deformable. ITransformable3D is NOT listed
+// because IDeformable3D already inherits it (`transforms.concepts.plato`), and
 // the Transform bodies for all thirteen representations are derived from Deform
 // in `intervals.library.plato`.
 //
 // Manifoldness, closedness and orientability are deliberately absent: they are
 // structural markers in `geometry.concepts.plato`, bolted on per type the way
-// `ClosedCurve2D` marks a curve. Element counts and incidence live in
+// `IClosedCurve2D` marks a curve. Element counts and incidence live in
 // `topology.concepts.plato`; they are not attached to the layer-2 names because
 // a line set has no faces to count.
 // Convention: see CONVENTIONS.md - Winding, handedness, and normals.
@@ -86,8 +86,8 @@ concept TriangulatedGeometry3D
 
 // Exposes the points a shape is built from, in a fixed order, generic over the
 // embedding. The dimension-agnostic root of the tower.
-concept PointGeometry<TPoint>
-    inherits Geometry
+interface IPointGeometry<TPoint>
+    inherits IGeometry
 {
     Points(x: Self): Array<TPoint>;
 }
@@ -96,8 +96,8 @@ concept PointGeometry<TPoint>
 // — alongside the points inside them. The view layer: an algorithm that only
 // folds over primitives constrains on this and works for unwelded soups,
 // indexed meshes and tessellated surfaces alike.
-concept PrimitiveGeometry<TPoint, TPrim>
-    inherits PointGeometry<TPoint>
+interface IPrimitiveGeometry<TPoint, TPrim>
+    inherits IPointGeometry<TPoint>
 {
     Primitives(x: Self): Array<TPrim>;
 }
@@ -108,8 +108,8 @@ concept PrimitiveGeometry<TPoint, TPrim>
 // tuple that fixes the primitive's arity — VertexPair, TriangleFace, QuadFace.
 // `Primitives` is derivable here (gather Vertices by FaceIndices), so an
 // implementor supplies the pool and the index table and inherits the view.
-concept IndexedGeometry<TPoint, TPrim, TIndex>
-    inherits PrimitiveGeometry<TPoint, TPrim>
+interface IIndexedGeometry<TPoint, TPrim, TIndex>
+    inherits IPrimitiveGeometry<TPoint, TPrim>
 {
     Vertices(x: Self): Array<TPoint>;
     FaceIndices(x: Self): Array<TIndex>;
@@ -118,8 +118,8 @@ concept IndexedGeometry<TPoint, TPrim, TIndex>
 // A finite ordered group of whole geometric elements treated as one shape:
 // scene parts, connected components, a batch of meshes drawn together. The
 // elements keep their own type; the collection adds no geometry of its own.
-concept GeometryCollection<TGeom>
-    inherits Geometry
+interface IGeometryCollection<TGeom>
+    inherits IGeometry
 {
     Elements(x: Self): Array<TGeom>;
 }
@@ -139,38 +139,38 @@ concept GeometryCollection<TGeom>
 
 // Bounded segments in space over their own endpoints: wireframes, edge
 // overlays, sampled space curves.
-concept SegmentGeometry3D
-    inherits Geometry3D, PrimitiveGeometry<Point3D, Line3D>, PointSet3D, Bounded3D, Deformable3D
+interface ISegmentGeometry3D
+    inherits IGeometry3D, IPrimitiveGeometry<Point3D, Line3D>, IPointSet3D, IBounded3D, IDeformable3D
 { }
 
 // Triangles in space, wound counter-clockwise seen from the front: the
 // universal surface primitive.
-concept TriangleGeometry3D
-    inherits Geometry3D, PrimitiveGeometry<Point3D, Triangle3D>, PointSet3D, Bounded3D, Deformable3D, Meshable3D
+interface ITriangleGeometry3D
+    inherits IGeometry3D, IPrimitiveGeometry<Point3D, Triangle3D>, IPointSet3D, IBounded3D, IDeformable3D, IMeshable3D
 { }
 
 // Quadrilaterals in space, wound counter-clockwise seen from the front.
 // Coplanarity is not guaranteed.
-concept QuadGeometry3D
-    inherits Geometry3D, PrimitiveGeometry<Point3D, Quad3D>, PointSet3D, Bounded3D, Deformable3D, Meshable3D
+interface IQuadGeometry3D
+    inherits IGeometry3D, IPrimitiveGeometry<Point3D, Quad3D>, IPointSet3D, IBounded3D, IDeformable3D, IMeshable3D
 { }
 
 // Bounded segments in the plane: sketch overlays, hatch patterns, planar
 // graphs drawn as geometry.
-concept SegmentGeometry2D
-    inherits Geometry2D, PrimitiveGeometry<Point2D, Line2D>, PointSet2D, Bounded2D, Deformable2D
+interface ISegmentGeometry2D
+    inherits IGeometry2D, IPrimitiveGeometry<Point2D, Line2D>, IPointSet2D, IBounded2D, IDeformable2D
 { }
 
 // Triangles in the plane, wound counter-clockwise: triangulations, Delaunay
 // output, finite-element cells, UV domains.
-concept TriangleGeometry2D
-    inherits Geometry2D, PrimitiveGeometry<Point2D, Triangle2D>, PointSet2D, Bounded2D, Deformable2D, Meshable2D
+interface ITriangleGeometry2D
+    inherits IGeometry2D, IPrimitiveGeometry<Point2D, Triangle2D>, IPointSet2D, IBounded2D, IDeformable2D, IMeshable2D
 { }
 
 // Quadrilaterals in the plane, wound counter-clockwise: structured grid cells
 // and quad-dominant planar layouts.
-concept QuadGeometry2D
-    inherits Geometry2D, PrimitiveGeometry<Point2D, Quad2D>, PointSet2D, Bounded2D, Deformable2D
+interface IQuadGeometry2D
+    inherits IGeometry2D, IPrimitiveGeometry<Point2D, Quad2D>, IPointSet2D, IBounded2D, IDeformable2D
 { }
 
 //==
@@ -183,37 +183,37 @@ concept QuadGeometry2D
 
 // Segments in space over a shared vertex pool, each spelled as a vertex pair:
 // the storage form of a wireframe. `LineSet3D` is the concrete type.
-concept IndexedSegmentGeometry3D
-    inherits IndexedGeometry<Point3D, Line3D, VertexPair>, SegmentGeometry3D
+interface IIndexedSegmentGeometry3D
+    inherits IIndexedGeometry<Point3D, Line3D, VertexPair>, ISegmentGeometry3D
 { }
 
 // Triangles in space over a shared vertex pool, each spelled as a TriangleFace:
 // the workhorse interchange form, concretely `TriangleMesh3D`.
-concept IndexedTriangleGeometry3D
-    inherits IndexedGeometry<Point3D, Triangle3D, TriangleFace>, TriangleGeometry3D
+interface IIndexedTriangleGeometry3D
+    inherits IIndexedGeometry<Point3D, Triangle3D, TriangleFace>, ITriangleGeometry3D
 { }
 
 // Quadrilaterals in space over a shared vertex pool, each spelled as a
 // QuadFace: subdivision cages, quad-dominant retopology, structured patches.
-concept IndexedQuadGeometry3D
-    inherits IndexedGeometry<Point3D, Quad3D, QuadFace>, QuadGeometry3D
+interface IIndexedQuadGeometry3D
+    inherits IIndexedGeometry<Point3D, Quad3D, QuadFace>, IQuadGeometry3D
 { }
 
 // Segments in the plane over a shared vertex pool. `LineSet2D` is the concrete
 // type.
-concept IndexedSegmentGeometry2D
-    inherits IndexedGeometry<Point2D, Line2D, VertexPair>, SegmentGeometry2D
+interface IIndexedSegmentGeometry2D
+    inherits IIndexedGeometry<Point2D, Line2D, VertexPair>, ISegmentGeometry2D
 { }
 
 // Triangles in the plane over a shared vertex pool: concretely
 // `TriangleMesh2D`, and the form a UV domain takes when it shares its index
 // table with the spatial mesh it parameterizes.
-concept IndexedTriangleGeometry2D
-    inherits IndexedGeometry<Point2D, Triangle2D, TriangleFace>, TriangleGeometry2D
+interface IIndexedTriangleGeometry2D
+    inherits IIndexedGeometry<Point2D, Triangle2D, TriangleFace>, ITriangleGeometry2D
 { }
 
 // Quadrilaterals in the plane over a shared vertex pool: structured planar
 // grids and quad meshing output.
-concept IndexedQuadGeometry2D
-    inherits IndexedGeometry<Point2D, Quad2D, QuadFace>, QuadGeometry2D
+interface IIndexedQuadGeometry2D
+    inherits IIndexedGeometry<Point2D, Quad2D, QuadFace>, IQuadGeometry2D
 { }

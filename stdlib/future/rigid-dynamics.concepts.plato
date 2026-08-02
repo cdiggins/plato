@@ -7,7 +7,7 @@
 // A model of an environmental force acting on planar bodies. ForceOn
 // evaluates the world-space force, in newtons, exerted on the given body in
 // its current state.
-concept ForceModel2D
+interface IForceModel2D
 {
     ForceOn(x: Self, body: RigidBody2D): Vector2D;
 }
@@ -15,7 +15,7 @@ concept ForceModel2D
 // A model of an environmental force acting on spatial bodies. ForceOn
 // evaluates the world-space force, in newtons, exerted on the given body in
 // its current state.
-concept ForceModel3D
+interface IForceModel3D
 {
     ForceOn(x: Self, body: RigidBody3D): Vector3D;
 }

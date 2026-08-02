@@ -1,9 +1,9 @@
 //==
-// # Easing — derived functions for EasingFunction
+// # Easing — derived functions for IEasingFunction
 //
-// Bodies for the `EasingFunction` concept declared in `easing.concepts.plato`
+// Bodies for the `IEasingFunction` concept declared in `easing.concepts.plato`
 // (the concrete easing types live in `easing.types.plato`). An easing
-// function inherits `Procedural<Number, Number>`, so its sole operation is
+// function inherits `IProcedural<Number, Number>`, so its sole operation is
 // `Eval`; the helpers below rename and recombine that single evaluation
 // (progress, remaining, mirrored and reversed playback, overshoot and
 // anticipation tests). Pure expressions only; all inputs are immutable and
@@ -13,49 +13,49 @@
 library Easing
 {
     //==
-    // # EasingFunction
+    // # IEasingFunction
     //
     // A pure map from normalized time to normalized progress, inheriting
-    // Procedural<Number, Number> (its sole operation is Eval). Eval(0) is 0 and
+    // IProcedural<Number, Number> (its sole operation is Eval). Eval(0) is 0 and
     // Eval(1) is 1; intermediate values may leave [0, 1] (overshoot,
     // anticipation). Helpers rename and recombine that single evaluation
     // (https://en.wikipedia.org/wiki/Inbetweening).
 
     // The eased progress at normalized time t; a readable spelling of Eval.
-    Progress(self: EasingFunction, t: Number): Number
+    Progress(self: IEasingFunction, t: Number): Number
         => self.Eval(t);
 
     // The progress remaining to completion at time t: 1 - progress.
-    Remaining(self: EasingFunction, t: Number): Number
+    Remaining(self: IEasingFunction, t: Number): Number
         => 1.0 - self.Eval(t);
 
     // The eased progress at the temporal midpoint (t = 0.5): a one-number shape
     // summary distinguishing ease-in (< 0.5) from ease-out (> 0.5).
-    ProgressAtMidpoint(self: EasingFunction): Number
+    ProgressAtMidpoint(self: IEasingFunction): Number
         => self.Eval(0.5);
 
     // The playback-reversed curve sampled at t: f(1 - t), which runs from 1 down
     // to 0 as t goes 0 to 1 (the source curve played backwards).
-    EvaluateMirrored(self: EasingFunction, t: Number): Number
+    EvaluateMirrored(self: IEasingFunction, t: Number): Number
         => self.Eval(1.0 - t);
 
     // The reversed easing sampled at t: 1 - f(1 - t). This is the standard
     // ease-in to ease-out transform, preserving the pinned endpoints.
-    EvaluateReversed(self: EasingFunction, t: Number): Number
+    EvaluateReversed(self: IEasingFunction, t: Number): Number
         => 1.0 - self.Eval(1.0 - t);
 
     // True when the curve overshoots past full progress at time t (Back and
     // Elastic families exceed 1 before settling).
-    OvershootsAt(self: EasingFunction, t: Number): Boolean
+    OvershootsAt(self: IEasingFunction, t: Number): Boolean
         => self.Eval(t) > 1.0;
 
     // True when the curve anticipates below zero at time t (pulls back before
     // advancing, as the Back family does near the start).
-    AnticipatesAt(self: EasingFunction, t: Number): Boolean
+    AnticipatesAt(self: IEasingFunction, t: Number): Boolean
         => self.Eval(t) < 0.0;
 
     //==
-    // # Parameterized easing curves — Procedural<Number, Number> Eval bodies
+    // # Parameterized easing curves — IProcedural<Number, Number> Eval bodies
 
     // The Y coordinate of the cubic Bezier with endpoints (0, 0) and (1, 1) and
     // control points (P1.X, P1.Y), (P2.X, P2.Y), evaluated at parameter t.

@@ -12,7 +12,7 @@ library Curves
     //==
     // # Curves — derived functions for the curve concepts
     //
-    // Bodies for Curve1D / Curve2D / Curve3D and the two closed-curve markers
+    // Bodies for ICurve1D / ICurve2D / ICurve3D and the two closed-curve markers
     // declared in `curves.concepts.plato`. Every function's first parameter is
     // concept-typed, so each helper becomes available on every implementing type.
     // Endpoints, chords, secants, and finite-difference estimates are all derivable
@@ -20,157 +20,157 @@ library Curves
     // declare.
     //
     // The canonical parameter domain of a curve is the unit interval [0,1], and
-    // evaluation goes through the `Eval` member inherited from `Procedural`.
+    // evaluation goes through the `Eval` member inherited from `IProcedural`.
 
     //==
-    // # Curve1D
+    // # ICurve1D
     //
-    // A real function of one real parameter (Procedural<Number, Number>).
+    // A real function of one real parameter (IProcedural<Number, Number>).
     // Evaluated over the canonical [0,1] domain; endpoints and central-difference
     // estimates of the slope are the derivable conveniences.
 
     // The value for a parameter; an intent-revealing alias for Eval.
-    ValueAt(self: Curve1D, t: Number): Number
+    ValueAt(self: ICurve1D, t: Number): Number
         => self.Eval(t);
 
     // The value at the start of the canonical domain, Eval(0).
-    StartValue(self: Curve1D): Number
+    StartValue(self: ICurve1D): Number
         => self.Eval(0.0);
 
     // The value at the midpoint of the canonical domain, Eval(0.5).
-    MidValue(self: Curve1D): Number
+    MidValue(self: ICurve1D): Number
         => self.Eval(0.5);
 
     // The value at the end of the canonical domain, Eval(1).
-    EndValue(self: Curve1D): Number
+    EndValue(self: ICurve1D): Number
         => self.Eval(1.0);
 
     // The signed change in value across the whole domain, Eval(1) - Eval(0).
-    TotalRise(self: Curve1D): Number
+    TotalRise(self: ICurve1D): Number
         => self.Eval(1.0) - self.Eval(0.0);
 
     // The mean of the two endpoint values.
-    AverageEndpointValue(self: Curve1D): Number
+    AverageEndpointValue(self: ICurve1D): Number
         => self.Eval(0.0).MidPoint(self.Eval(1.0));
 
     // A central-difference estimate of the first derivative at t using step h.
     // Precondition: h > 0 and t +/- h stay in the domain of interest.
-    SlopeAt(self: Curve1D, t: Number, h: Number): Number
+    SlopeAt(self: ICurve1D, t: Number, h: Number): Number
         => (self.Eval(t + h) - self.Eval(t - h)) / (2.0 * h);
 
     // A central-difference estimate of the second derivative at t using step h
     // (divides by h squared). Precondition: h > 0 and h chosen so t +/- h stays
     // within the domain of interest.
-    SecondDerivativeAt(self: Curve1D, t: Number, h: Number): Number
+    SecondDerivativeAt(self: ICurve1D, t: Number, h: Number): Number
         => (self.Eval(t + h) - 2.0 * self.Eval(t) + self.Eval(t - h)) / (h * h);
 
     //==
-    // # Curve2D
+    // # ICurve2D
     //
     // A continuous map from a parameter to a plane position
-    // (Procedural<Number, Point2D>). Endpoints, the chord, and secant sampling
+    // (IProcedural<Number, Point2D>). Endpoints, the chord, and secant sampling
     // are derivable from Eval alone.
 
     // The position for a parameter; an intent-revealing alias for Eval.
-    PointAt(self: Curve2D, t: Number): Point2D
+    PointAt(self: ICurve2D, t: Number): Point2D
         => self.Eval(t);
 
     // The curve's starting position, Eval(0).
-    StartPoint(self: Curve2D): Point2D
+    StartPoint(self: ICurve2D): Point2D
         => self.Eval(0.0);
 
     // The position at the middle of the domain, Eval(0.5).
-    MidPoint(self: Curve2D): Point2D
+    MidPoint(self: ICurve2D): Point2D
         => self.Eval(0.5);
 
     // The curve's ending position, Eval(1).
-    EndPoint(self: Curve2D): Point2D
+    EndPoint(self: ICurve2D): Point2D
         => self.Eval(1.0);
 
     // The straight-line vector from the start to the end of the curve.
-    Chord(self: Curve2D): Vector2D
+    Chord(self: ICurve2D): Vector2D
         => self.Eval(0.0).Between(self.Eval(1.0));
 
     // The straight-line distance from the start to the end of the curve.
-    ChordLength(self: Curve2D): Number
+    ChordLength(self: ICurve2D): Number
         => self.Eval(0.0).Between(self.Eval(1.0)).Magnitude;
 
     // The secant vector between the positions at parameters t0 and t1.
-    SecantBetween(self: Curve2D, t0: Number, t1: Number): Vector2D
+    SecantBetween(self: ICurve2D, t0: Number, t1: Number): Vector2D
         => self.Eval(t0).Between(self.Eval(t1));
 
     // A finite-difference velocity estimate at t using step h: the secant over
     // [t - h, t + h] divided by its width. Precondition: h > 0 and h chosen so
     // t +/- h stays within the domain of interest.
-    VelocityAt(self: Curve2D, t: Number, h: Number): Vector2D
+    VelocityAt(self: ICurve2D, t: Number, h: Number): Vector2D
         => self.Eval(t - h).Between(self.Eval(t + h)) / (2.0 * h);
 
     //==
-    // # Curve3D
+    // # ICurve3D
     //
     // A continuous map from a parameter to a space position
-    // (Procedural<Number, Point3D>).
+    // (IProcedural<Number, Point3D>).
 
     // The position for a parameter; an intent-revealing alias for Eval.
-    PointAt(self: Curve3D, t: Number): Point3D
+    PointAt(self: ICurve3D, t: Number): Point3D
         => self.Eval(t);
 
     // The curve's starting position, Eval(0).
-    StartPoint(self: Curve3D): Point3D
+    StartPoint(self: ICurve3D): Point3D
         => self.Eval(0.0);
 
     // The position at the middle of the domain, Eval(0.5).
-    MidPoint(self: Curve3D): Point3D
+    MidPoint(self: ICurve3D): Point3D
         => self.Eval(0.5);
 
     // The curve's ending position, Eval(1).
-    EndPoint(self: Curve3D): Point3D
+    EndPoint(self: ICurve3D): Point3D
         => self.Eval(1.0);
 
     // The straight-line vector from the start to the end of the curve.
-    Chord(self: Curve3D): Vector3D
+    Chord(self: ICurve3D): Vector3D
         => self.Eval(0.0).Between(self.Eval(1.0));
 
     // The straight-line distance from the start to the end of the curve.
-    ChordLength(self: Curve3D): Number
+    ChordLength(self: ICurve3D): Number
         => self.Eval(0.0).Between(self.Eval(1.0)).Magnitude;
 
     // The secant vector between the positions at parameters t0 and t1.
-    SecantBetween(self: Curve3D, t0: Number, t1: Number): Vector3D
+    SecantBetween(self: ICurve3D, t0: Number, t1: Number): Vector3D
         => self.Eval(t0).Between(self.Eval(t1));
 
     // A finite-difference velocity estimate at t using step h. Precondition:
     // h > 0 and h chosen so t +/- h stays within the domain of interest.
-    VelocityAt(self: Curve3D, t: Number, h: Number): Vector3D
+    VelocityAt(self: ICurve3D, t: Number, h: Number): Vector3D
         => self.Eval(t - h).Between(self.Eval(t + h)) / (2.0 * h);
 
     //==
-    // # ClosedCurve2D
+    // # IClosedCurve2D
     //
     // A 2D curve satisfying Eval(0) = Eval(1). The residual gap between the two
     // endpoints witnesses how well an implementation honours that guarantee.
 
     // The distance between the first and last evaluated points; zero for an
     // exactly closed curve.
-    ClosureGap(self: ClosedCurve2D): Number
+    ClosureGap(self: IClosedCurve2D): Number
         => self.ChordLength;
 
     // True when the endpoints coincide within the given (non-negative) tolerance.
-    IsProperlyClosed(self: ClosedCurve2D, tolerance: Number): Boolean
+    IsProperlyClosed(self: IClosedCurve2D, tolerance: Number): Boolean
         => self.ClosureGap <= tolerance;
 
     //==
-    // # ClosedCurve3D
+    // # IClosedCurve3D
     //
     // A 3D curve satisfying Eval(0) = Eval(1).
 
     // The distance between the first and last evaluated points; zero for an
     // exactly closed curve.
-    ClosureGap(self: ClosedCurve3D): Number
+    ClosureGap(self: IClosedCurve3D): Number
         => self.ChordLength;
 
     // True when the endpoints coincide within the given (non-negative) tolerance.
-    IsProperlyClosed(self: ClosedCurve3D, tolerance: Number): Boolean
+    IsProperlyClosed(self: IClosedCurve3D, tolerance: Number): Boolean
         => self.ClosureGap <= tolerance;
 
     //==
@@ -185,12 +185,12 @@ library Curves
 
     // The position at the canonical parameter t: the angular evaluation taken
     // at t full turns.
-    Eval(curve: AngularCurve2D, t: Number): Point2D
+    Eval(curve: IAngularCurve2D, t: Number): Point2D
         => curve.Eval(t.Turns);
 
     // The position at the canonical parameter t: the angular evaluation taken
     // at t full turns.
-    Eval(curve: AngularCurve3D, t: Number): Point3D
+    Eval(curve: IAngularCurve3D, t: Number): Point3D
         => curve.Eval(t.Turns);
 
     //==
@@ -208,182 +208,182 @@ library Curves
     // derived directly). Analytic differential helpers are left to the concrete types.
 
     //==
-    // # PeriodicCurve
+    // # IPeriodicCurve
     //
     // A curve whose parameterization repeats with an explicit Period (Number).
-    // PeriodicCurve<TRange> inherits Curve<TRange> as well as Periodic<Number>,
+    // IPeriodicCurve<TRange> inherits ICurve<TRange> as well as IPeriodic<Number>,
     // so both parameter arithmetic on the period AND wrapped evaluation are
     // derivable. TRange is the evaluated value type.
 
     // Folds a parameter into the half-open interval [0, Period). The extra
     // "+ Period then modulo" corrects the truncated remainder, which is negative
     // for negative t. Precondition: Period > 0.
-    WrapParameter(self: PeriodicCurve<$TRange>, t: Number): Number
+    WrapParameter(self: IPeriodicCurve<$TRange>, t: Number): Number
         => ((t % self.Period) + self.Period) % self.Period;
 
     // The value at parameter t evaluated on the primary period: Eval(t mod Period).
     // Any t (negative or beyond one period) maps to the equivalent value in
     // [0, Period). Precondition: Period > 0.
-    EvalWrapped(self: PeriodicCurve<$TRange>, t: Number): $TRange
+    EvalWrapped(self: IPeriodicCurve<$TRange>, t: Number): $TRange
         => self.Eval(self.WrapParameter(t));
 
     // The fraction of one period that t represents, in [0, 1). Precondition:
     // Period > 0.
-    NormalizedPhase(self: PeriodicCurve<$TRange>, t: Number): Number
+    NormalizedPhase(self: IPeriodicCurve<$TRange>, t: Number): Number
         => self.WrapParameter(t) / self.Period;
 
     // Half of one period.
-    HalfPeriod(self: PeriodicCurve<$TRange>): Number
+    HalfPeriod(self: IPeriodicCurve<$TRange>): Number
         => self.Period.Half;
 
     // Floor(t / Period): the index of the period containing t (-1 for t just
     // below zero, not truncation). Precondition: Period > 0.
-    PeriodCount(self: PeriodicCurve<$TRange>, t: Number): Integer
+    PeriodCount(self: IPeriodicCurve<$TRange>, t: Number): Integer
         => (t / self.Period).Floor.ToInteger;
 
     // The number of repetitions per unit parameter (the reciprocal of the
     // period). Precondition: Period > 0.
-    Frequency(self: PeriodicCurve<$TRange>): Number
+    Frequency(self: IPeriodicCurve<$TRange>): Number
         => self.Period.Inverse;
 
     //==
-    // # DifferentiableCurve2D
+    // # IDifferentiableCurve2D
     //
     // A 2D curve with a first derivative: TangentAt is the (unnormalized)
     // velocity, CurvatureAt is the signed plane curvature (positive turning
     // left). Unit tangents, plane normals, and the radius of curvature follow.
 
     // The unit-length tangent at t. Precondition: the tangent is non-zero.
-    UnitTangentAt(self: DifferentiableCurve2D, t: Number): Vector2D
+    UnitTangentAt(self: IDifferentiableCurve2D, t: Number): Vector2D
         => self.TangentAt(t).Normalize;
 
     // The instantaneous speed (tangent magnitude) at t.
-    SpeedAt(self: DifferentiableCurve2D, t: Number): Number
+    SpeedAt(self: IDifferentiableCurve2D, t: Number): Number
         => self.TangentAt(t).Magnitude;
 
     // The left-hand normal at t: the tangent rotated a quarter turn
     // counter-clockwise, (-y, x). Not normalized.
-    LeftNormalAt(self: DifferentiableCurve2D, t: Number): Vector2D
+    LeftNormalAt(self: IDifferentiableCurve2D, t: Number): Vector2D
         => (-self.TangentAt(t).Y, self.TangentAt(t).X);
 
     // The unit left-hand normal at t. Precondition: the tangent is non-zero.
-    UnitNormalAt(self: DifferentiableCurve2D, t: Number): Vector2D
+    UnitNormalAt(self: IDifferentiableCurve2D, t: Number): Vector2D
         => self.LeftNormalAt(t).Normalize;
 
     // The curvature vector at t: the signed plane curvature scaled by the unit
     // left normal, pointing toward the centre of curvature. Precondition: the
     // tangent is non-zero.
-    CurvatureVectorAt(self: DifferentiableCurve2D, t: Number): Vector2D
+    CurvatureVectorAt(self: IDifferentiableCurve2D, t: Number): Vector2D
         => self.UnitNormalAt(t) * self.CurvatureAt(t);
 
     // The radius of curvature at t: the reciprocal of the unsigned curvature.
     // Precondition: the curvature is non-zero (a straight point has infinite
     // radius). See https://en.wikipedia.org/wiki/Radius_of_curvature.
-    RadiusOfCurvatureAt(self: DifferentiableCurve2D, t: Number): Number
+    RadiusOfCurvatureAt(self: IDifferentiableCurve2D, t: Number): Number
         => 1.0 / self.CurvatureAt(t).Abs;
 
     // True when the curve turns to the left at t (positive signed curvature).
-    TurnsLeftAt(self: DifferentiableCurve2D, t: Number): Boolean
+    TurnsLeftAt(self: IDifferentiableCurve2D, t: Number): Boolean
         => self.CurvatureAt(t) > 0.0;
 
     // True when the curve is (near) straight at t: unsigned curvature within the
     // given non-negative tolerance of zero.
-    IsStraightAt(self: DifferentiableCurve2D, t: Number, tolerance: Number): Boolean
+    IsStraightAt(self: IDifferentiableCurve2D, t: Number, tolerance: Number): Boolean
         => self.CurvatureAt(t).Abs <= tolerance;
 
     //==
-    // # DifferentiableCurve3D
+    // # IDifferentiableCurve3D
     //
     // A 3D curve with a first derivative: TangentAt (velocity), CurvatureAt
     // (unsigned space curvature), TorsionAt (departure from the osculating
     // plane).
 
     // The unit-length tangent at t. Precondition: the tangent is non-zero.
-    UnitTangentAt(self: DifferentiableCurve3D, t: Number): Vector3D
+    UnitTangentAt(self: IDifferentiableCurve3D, t: Number): Vector3D
         => self.TangentAt(t).Normalize;
 
     // The instantaneous speed (tangent magnitude) at t.
-    SpeedAt(self: DifferentiableCurve3D, t: Number): Number
+    SpeedAt(self: IDifferentiableCurve3D, t: Number): Number
         => self.TangentAt(t).Magnitude;
 
     // The radius of curvature at t: the reciprocal of the (unsigned space)
     // curvature. Precondition: the curvature is non-zero.
-    RadiusOfCurvatureAt(self: DifferentiableCurve3D, t: Number): Number
+    RadiusOfCurvatureAt(self: IDifferentiableCurve3D, t: Number): Number
         => 1.0 / self.CurvatureAt(t);
 
     // True when the curve is (near) straight at t: the unsigned space curvature
     // is within the given non-negative tolerance of zero.
-    IsStraightAt(self: DifferentiableCurve3D, t: Number, tolerance: Number): Boolean
+    IsStraightAt(self: IDifferentiableCurve3D, t: Number, tolerance: Number): Boolean
         => self.CurvatureAt(t) <= tolerance;
 
     // True when the curve is (near) planar at t: torsion within the given
     // non-negative tolerance of zero.
-    IsPlanarAt(self: DifferentiableCurve3D, t: Number, tolerance: Number): Boolean
+    IsPlanarAt(self: IDifferentiableCurve3D, t: Number, tolerance: Number): Boolean
         => self.TorsionAt(t).Abs <= tolerance;
 
     //==
-    // # FramedCurve3D
+    // # IFramedCurve3D
     //
     // A 3D curve carrying a continuous moving frame whose origin lies on the
     // curve and whose Z axis is tangent. The frame's axes give ready-made
     // tangent, normal, and binormal directions for sweeps and camera paths.
 
     // The frame origin at t, which lies on the curve.
-    FrameOriginAt(self: FramedCurve3D, t: Number): Point3D
+    FrameOriginAt(self: IFramedCurve3D, t: Number): Point3D
         => self.FrameAt(t).Origin;
 
     // The unit tangent direction at t (the frame's Z axis).
-    TangentDirectionAt(self: FramedCurve3D, t: Number): Direction3D
+    TangentDirectionAt(self: IFramedCurve3D, t: Number): Direction3D
         => self.FrameAt(t).ZAxis;
 
     // The unit normal direction at t (the frame's X axis).
-    NormalDirectionAt(self: FramedCurve3D, t: Number): Direction3D
+    NormalDirectionAt(self: IFramedCurve3D, t: Number): Direction3D
         => self.FrameAt(t).XAxis;
 
     // The unit binormal direction at t (the frame's Y axis).
-    BinormalDirectionAt(self: FramedCurve3D, t: Number): Direction3D
+    BinormalDirectionAt(self: IFramedCurve3D, t: Number): Direction3D
         => self.FrameAt(t).YAxis;
 
     //==
-    // # PlanarCurve3D
+    // # IPlanarCurve3D
     //
     // A 3D curve lying entirely within a single plane, reported by CurvePlane.
 
     // The unit normal of the plane the curve lies in.
-    PlaneNormal(self: PlanarCurve3D): Direction3D
+    PlaneNormal(self: IPlanarCurve3D): Direction3D
         => self.CurvePlane.Normal;
 
     // The signed offset of the curve's plane from the origin along its normal.
-    PlaneOffset(self: PlanarCurve3D): Number
+    PlaneOffset(self: IPlanarCurve3D): Number
         => self.CurvePlane.Distance;
 
     //==
-    // # PolarCurve2D
+    // # IPolarCurve2D
     //
     // A plane curve in polar form: RadiusAt(theta) gives the distance from the
     // origin at angle theta.
 
     // The polar coordinate (radius, angle) of the curve at the given angle.
-    PolarPositionAt(self: PolarCurve2D, angle: Angle): PolarCoordinate
+    PolarPositionAt(self: IPolarCurve2D, angle: Angle): PolarCoordinate
         => (self.RadiusAt(angle), angle);
 
     // The Cartesian position of the curve at the given angle:
     // (RadiusAt(angle)*cos angle, RadiusAt(angle)*sin angle). Note: evaluates
     // RadiusAt twice; concrete types with expensive radii should override.
-    CartesianPositionAt(self: PolarCurve2D, angle: Angle): Point2D
+    CartesianPositionAt(self: IPolarCurve2D, angle: Angle): Point2D
         => (self.RadiusAt(angle) * angle.Cos, self.RadiusAt(angle) * angle.Sin);
 
     // The diameter across the origin implied by the radius at the given angle.
-    DiameterAt(self: PolarCurve2D, angle: Angle): Number
+    DiameterAt(self: IPolarCurve2D, angle: Angle): Number
         => self.RadiusAt(angle).Double;
 
     // True when the curve passes through the pole at the given angle: radius
     // within the given non-negative tolerance of zero.
-    IsAtPole(self: PolarCurve2D, angle: Angle, tolerance: Number): Boolean
+    IsAtPole(self: IPolarCurve2D, angle: Angle, tolerance: Number): Boolean
         => self.RadiusAt(angle).Abs <= tolerance;
 
     //==
-    // # ArcLengthParameterized<TPoint>
+    // # IArcLengthParameterized<TPoint>
     //
     // A curve measurable by arc length: ArcLength is the total length,
     // PointAtLength walks a distance from the start, ParameterAtLength converts a
@@ -391,34 +391,34 @@ library Curves
     // (https://en.wikipedia.org/wiki/Arc_length).
 
     // The point at the start of the curve (zero distance travelled).
-    ArcStartPoint(self: ArcLengthParameterized<$T>): $T
+    ArcStartPoint(self: IArcLengthParameterized<$T>): $T
         => self.PointAtLength(0.0);
 
     // The point at the far end of the curve (the full arc length travelled).
-    ArcEndPoint(self: ArcLengthParameterized<$T>): $T
+    ArcEndPoint(self: IArcLengthParameterized<$T>): $T
         => self.PointAtLength(self.ArcLength);
 
     // The point halfway along the curve by arc length.
-    ArcMidPoint(self: ArcLengthParameterized<$T>): $T
+    ArcMidPoint(self: IArcLengthParameterized<$T>): $T
         => self.PointAtLength(self.ArcLength.Half);
 
     // The point a given fraction of the total length along the curve. Fraction 0
     // is the start, 1 the end. Precondition: fraction in [0, 1].
-    PointAtLengthFraction(self: ArcLengthParameterized<$T>, fraction: Number): $T
+    PointAtLengthFraction(self: IArcLengthParameterized<$T>, fraction: Number): $T
         => self.PointAtLength(self.ArcLength * fraction);
 
     // The canonical parameter a given fraction of the total length along the
     // curve. Precondition: fraction in [0, 1].
-    ParameterAtLengthFraction(self: ArcLengthParameterized<$T>, fraction: Number): Number
+    ParameterAtLengthFraction(self: IArcLengthParameterized<$T>, fraction: Number): Number
         => self.ParameterAtLength(self.ArcLength * fraction);
 
     // The fraction of the total length that the given distance represents, in
     // [0, 1] for distances within the curve. Precondition: ArcLength > 0.
-    LengthFraction(self: ArcLengthParameterized<$T>, length: Number): Number
+    LengthFraction(self: IArcLengthParameterized<$T>, length: Number): Number
         => length / self.ArcLength;
 
     // True when a distance lies within the curve, i.e. in [0, ArcLength].
-    IsValidLength(self: ArcLengthParameterized<$T>, length: Number): Boolean
+    IsValidLength(self: IArcLengthParameterized<$T>, length: Number): Boolean
         => length >= 0.0 && length <= self.ArcLength;
 
     //==
@@ -446,49 +446,49 @@ library Curves
     // re-joins the ends itself.
 
     // `count` values evenly spaced over the canonical domain, endpoints
-    // included. One body for every embedding, via the generic `Curve<TRange>`
+    // included. One body for every embedding, via the generic `ICurve<TRange>`
     // root: sampling needs `Eval` and nothing else. Precondition: count >= 2.
-    Sample(self: Curve<$TRange>, count: Integer): Array<$TRange>
+    Sample(self: ICurve<$TRange>, count: Integer): Array<$TRange>
         => count.Fractions.Map(t => self.Eval(t));
 
     // `count` values evenly spaced over one period, the duplicate seam value at
     // parameter 1 omitted. Precondition: count >= 1.
-    SamplePeriodic(self: Curve<$TRange>, count: Integer): Array<$TRange>
+    SamplePeriodic(self: ICurve<$TRange>, count: Integer): Array<$TRange>
         => count.FractionsExclusive.Map(t => self.Eval(t));
 
     // The open polyline through `count` evenly spaced samples of the curve.
     // Precondition: count >= 2.
-    ToPolyline2D(self: Curve2D, count: Integer): Polyline2D
+    ToPolyline2D(self: ICurve2D, count: Integer): Polyline2D
         => Polyline2D(self.Sample(count), false);
 
     // The open polyline through `count` evenly spaced samples of the curve.
     // Precondition: count >= 2.
-    ToPolyline3D(self: Curve3D, count: Integer): Polyline3D
+    ToPolyline3D(self: ICurve3D, count: Integer): Polyline3D
         => Polyline3D(self.Sample(count), false);
 
     // The closed polyline through `count` evenly spaced samples of a closed
     // curve; the seam is left to the polyline's own Closed flag rather than
     // repeated as a point. Precondition: count >= 3.
-    ToClosedPolyline2D(self: ClosedCurve2D, count: Integer): Polyline2D
+    ToClosedPolyline2D(self: IClosedCurve2D, count: Integer): Polyline2D
         => Polyline2D(self.SamplePeriodic(count), true);
 
     // The closed polyline through `count` evenly spaced samples of a closed
     // curve. Precondition: count >= 3.
-    ToClosedPolyline3D(self: ClosedCurve3D, count: Integer): Polyline3D
+    ToClosedPolyline3D(self: IClosedCurve3D, count: Integer): Polyline3D
         => Polyline3D(self.SamplePeriodic(count), true);
 
     // `count` polar coordinates of a polar curve, evenly spaced over one full
     // turn with the duplicate seam omitted. Precondition: count >= 1.
-    SamplePolar(self: PolarCurve2D, count: Integer): Array<PolarCoordinate>
+    SamplePolar(self: IPolarCurve2D, count: Integer): Array<PolarCoordinate>
         => count.FractionsExclusive.Map(t => self.PolarPositionAt(t.Turns));
 
     // `count` positions on a parametric surface along one row of constant v,
     // u running over [0, 1] inclusive. Precondition: count >= 2.
-    SampleRow(self: ParametricSurface, v: Number, count: Integer): Array<Point3D>
+    SampleRow(self: IParametricSurface, v: Number, count: Integer): Array<Point3D>
         => count.Fractions.Map(u => self.Eval(UvCoordinate(u, v)));
 
     // `count` positions on a parametric surface along one column of constant u,
     // v running over [0, 1] inclusive. Precondition: count >= 2.
-    SampleColumn(self: ParametricSurface, u: Number, count: Integer): Array<Point3D>
+    SampleColumn(self: IParametricSurface, u: Number, count: Integer): Array<Point3D>
         => count.Fractions.Map(v => self.Eval(UvCoordinate(u, v)));
 }

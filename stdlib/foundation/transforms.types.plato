@@ -3,7 +3,7 @@
 //
 // Sections, in order:
 //  - Affine and projective transforms
-//  - Coordinate frames and bases
+//  - ICoordinate frames and bases
 //  - Motors
 //  - Rigid poses
 //  - TRS transforms
@@ -22,14 +22,14 @@
 //
 // The projective types carry the UNQUALIFIED names `Transform2D` / `Transform3D`
 // because they are the widest map of their dimension: every other representation
-// converts into one, so they are what `Transformable2D` / `Transformable3D`
+// converts into one, so they are what `ITransformable2D` / `ITransformable3D`
 // (`transforms.concepts.plato`) accept. The narrower families are named for what
 // narrows them — `AffineTransform*D`, `TrsTransform*D`, `Pose*D`.
 
 // A general 2D affine map: any composition of linear maps and translations
 // (https://en.wikipedia.org/wiki/Affine_transformation).
 type AffineTransform2D
-    implements Value, Affine2D
+    implements IValue, IAffine2D
 {
     Matrix: Matrix3x2;
 }
@@ -37,31 +37,31 @@ type AffineTransform2D
 // A general 3D affine map: any composition of linear maps and translations
 // (https://en.wikipedia.org/wiki/Affine_transformation).
 type AffineTransform3D
-    implements Value, Affine3D
+    implements IValue, IAffine3D
 {
     Matrix: Matrix4x3;
 }
 
 // A full 2D projective map (homography), operating on homogeneous coordinates:
-// the widest transform of the plane, and the one `Transformable2D` carries
+// the widest transform of the plane, and the one `ITransformable2D` carries
 // (https://en.wikipedia.org/wiki/Homography).
 type Transform2D
-    implements Value
+    implements IValue
 {
     Matrix: Matrix3x3;
 }
 
 // A full 3D projective map, operating on homogeneous coordinates; includes
 // perspective projections. The widest transform of space, and the one
-// `Transformable3D` carries (https://en.wikipedia.org/wiki/Homography).
+// `ITransformable3D` carries (https://en.wikipedia.org/wiki/Homography).
 type Transform3D
-    implements Value
+    implements IValue
 {
     Matrix: Matrix4x4;
 }
 
 //==
-// # Coordinate frames and bases
+// # ICoordinate frames and bases
 //
 // An origin with a set of axes: the matrix-friendly clothing of a rigid pose,
 // where the axes are the rotation and the origin is the translation. Frames carry
@@ -71,7 +71,7 @@ type Transform3D
 // An orthonormal coordinate frame in the plane: an origin and two perpendicular
 // unit axes.
 type Frame2D
-    implements Value, Rigid2D
+    implements IValue, IRigid2D
 {
     Origin: Point2D;
     XAxis: Direction2D;
@@ -81,7 +81,7 @@ type Frame2D
 // An orthonormal coordinate frame in space: an origin and three mutually
 // perpendicular unit axes.
 type Frame3D
-    implements Value, Rigid3D
+    implements IValue, IRigid3D
 {
     Origin: Point3D;
     XAxis: Direction3D;
@@ -92,7 +92,7 @@ type Frame3D
 // Three basis vectors in 3D; not necessarily orthonormal
 // (https://en.wikipedia.org/wiki/Basis_(linear_algebra)).
 type Basis3D
-    implements Value, Affine3D
+    implements IValue, IAffine3D
 {
     X: Vector3D;
     Y: Vector3D;
@@ -108,12 +108,12 @@ type Basis3D
 // operations live in `transforms.library.plato`.
 
 // A rigid motion (rotation plus translation) as a geometric-algebra motor,
-// stored in dual-quaternion form: Real is the rotation, Dual encodes the
-// translation as Dual = 0.5 * t * Real, where t is the translation as a pure
+// stored in dual-quaternion form: IReal is the rotation, Dual encodes the
+// translation as Dual = 0.5 * t * IReal, where t is the translation as a pure
 // quaternion. Unit dual quaternions are isomorphic to the motors of 3D PGA.
 // https://en.wikipedia.org/wiki/Dual_quaternion
 type Motor3D
-    implements Value, Multiplicative, Rigid3D
+    implements IValue, IMultiplicative, IRigid3D
 {
     Real: Quaternion;
     Dual: Quaternion;
@@ -130,7 +130,7 @@ type Motor3D
 // A rigid placement in the plane: position plus rotation. Also known as a 2D
 // rigid transform (https://en.wikipedia.org/wiki/Rigid_transformation).
 type Pose2D
-    implements Value, Interpolatable, Rigid2D
+    implements IValue, IInterpolatable, IRigid2D
 {
     Position: Point2D;
     Rotation: Rotation2D;
@@ -140,7 +140,7 @@ type Pose2D
 // rigid transform (https://en.wikipedia.org/wiki/Rigid_transformation);
 // composition preserves distances and angles.
 type Pose3D
-    implements Value, Interpolatable, Rigid3D
+    implements IValue, IInterpolatable, IRigid3D
 {
     Position: Point3D;
     Orientation: Quaternion;
@@ -159,7 +159,7 @@ type Pose3D
 // A translate-rotate-scale transform in 2D, applied scale first, then rotation,
 // then translation.
 type TrsTransform2D
-    implements Value, Affine2D
+    implements IValue, IAffine2D
 {
     Translation: Vector2D;
     Rotation: Rotation2D;
@@ -169,7 +169,7 @@ type TrsTransform2D
 // A translate-rotate-scale transform in 3D, applied scale first, then rotation,
 // then translation.
 type TrsTransform3D
-    implements Value, Affine3D
+    implements IValue, IAffine3D
 {
     Translation: Vector3D;
     Rotation: Quaternion;
@@ -191,7 +191,7 @@ type TrsTransform3D
 // A translation in the plane: every point is displaced by the same vector
 // (https://en.wikipedia.org/wiki/Translation_(geometry)).
 type Translation2D
-    implements Value, Rigid2D
+    implements IValue, IRigid2D
 {
     Vector: Vector2D;
 }
@@ -199,7 +199,7 @@ type Translation2D
 // A translation in space: every point is displaced by the same vector
 // (https://en.wikipedia.org/wiki/Translation_(geometry)).
 type Translation3D
-    implements Value, Rigid3D
+    implements IValue, IRigid3D
 {
     Vector: Vector3D;
 }
@@ -207,7 +207,7 @@ type Translation3D
 // An axis-aligned scaling about the origin in the plane, with an independent
 // factor per axis (https://en.wikipedia.org/wiki/Scaling_(geometry)).
 type Scaling2D
-    implements Value, Affine2D
+    implements IValue, IAffine2D
 {
     Amount: Number2;
 }
@@ -215,7 +215,7 @@ type Scaling2D
 // An axis-aligned scaling about the origin in space, with an independent factor
 // per axis (https://en.wikipedia.org/wiki/Scaling_(geometry)).
 type Scaling3D
-    implements Value, Affine3D
+    implements IValue, IAffine3D
 {
     Amount: Number3;
 }
@@ -223,7 +223,7 @@ type Scaling3D
 // A uniform scaling about the origin in the plane: the same factor on every axis,
 // so angles are preserved (https://en.wikipedia.org/wiki/Homothety).
 type UniformScaling2D
-    implements Value, Affine2D
+    implements IValue, IAffine2D
 {
     Amount: Number;
 }
@@ -231,7 +231,7 @@ type UniformScaling2D
 // A uniform scaling about the origin in space: the same factor on every axis, so
 // angles are preserved (https://en.wikipedia.org/wiki/Homothety).
 type UniformScaling3D
-    implements Value, Affine3D
+    implements IValue, IAffine3D
 {
     Amount: Number;
 }
@@ -239,7 +239,7 @@ type UniformScaling3D
 // A mirror across a line in the plane, given as a point on the line and the
 // direction along it (https://en.wikipedia.org/wiki/Reflection_(mathematics)).
 type Reflection2D
-    implements Value, Affine2D
+    implements IValue, IAffine2D
 {
     Origin: Point2D;
     Direction: Direction2D;
@@ -248,7 +248,7 @@ type Reflection2D
 // A mirror across a plane in space, given as a point on the plane and its unit
 // normal (https://en.wikipedia.org/wiki/Reflection_(mathematics)).
 type Reflection3D
-    implements Value, Affine3D
+    implements IValue, IAffine3D
 {
     Origin: Point3D;
     Normal: Direction3D;
@@ -257,7 +257,7 @@ type Reflection3D
 // A rotation in the plane about an arbitrary center rather than the origin
 // (https://en.wikipedia.org/wiki/Rotation_(mathematics)).
 type RotationAbout2D
-    implements Value, Rigid2D
+    implements IValue, IRigid2D
 {
     Rotation: Rotation2D;
     Center: Point2D;
@@ -267,7 +267,7 @@ type RotationAbout2D
 // rotation axis passes through Center
 // (https://en.wikipedia.org/wiki/Rotation_(mathematics)).
 type RotationAbout3D
-    implements Value, Rigid3D
+    implements IValue, IRigid3D
 {
     Rotation: Quaternion;
     Center: Point3D;
@@ -277,7 +277,7 @@ type RotationAbout3D
 // origin; Center is the one fixed point
 // (https://en.wikipedia.org/wiki/Scaling_(geometry)).
 type ScalingAbout2D
-    implements Value, Affine2D
+    implements IValue, IAffine2D
 {
     Amount: Number2;
     Center: Point2D;
@@ -287,7 +287,7 @@ type ScalingAbout2D
 // origin; Center is the one fixed point
 // (https://en.wikipedia.org/wiki/Scaling_(geometry)).
 type ScalingAbout3D
-    implements Value, Affine3D
+    implements IValue, IAffine3D
 {
     Amount: Number3;
     Center: Point3D;

@@ -23,7 +23,7 @@
 // parent, an unmatched pairing).
 // (https://en.wikipedia.org/wiki/Vertex_(graph_theory))
 type GraphVertexIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -31,7 +31,7 @@ type GraphVertexIndex
 // A connection between two vertices, by zero-based index. In an undirected
 // graph the Source/Target order carries no meaning.
 type GraphEdge
-    implements Value, Hashable
+    implements IValue, IHashable
 {
     Source: GraphVertexIndex;
     Target: GraphVertexIndex;
@@ -41,7 +41,7 @@ type GraphEdge
 // pair. Vertices without edges exist implicitly via VertexCount.
 // (https://en.wikipedia.org/wiki/Graph_(abstract_data_type))
 type Graph
-    implements GraphLike
+    implements IGraphLike
 {
     VertexCount: Integer;
     Edges: Array<GraphEdge>;
@@ -51,7 +51,7 @@ type Graph
 // An edge carrying a numeric weight: distance, cost, capacity, or similarity,
 // as the application defines (unit-agnostic).
 type WeightedEdge
-    implements Value
+    implements IValue
 {
     Source: GraphVertexIndex;
     Target: GraphVertexIndex;
@@ -61,7 +61,7 @@ type WeightedEdge
 // A graph in weighted edge-list form. When Directed is false each edge is an
 // unordered pair with a single shared weight.
 type WeightedGraph
-    implements GraphLike
+    implements IGraphLike
 {
     VertexCount: Integer;
     Edges: Array<WeightedEdge>;
@@ -77,7 +77,7 @@ type WeightedGraph
 // for unweighted graphs).
 // (https://en.wikipedia.org/wiki/Adjacency_matrix)
 type AdjacencyMatrix
-    implements Value
+    implements IValue
 {
     VertexCount: Integer;
     Weights: Array<Number>;
@@ -89,7 +89,7 @@ type AdjacencyMatrix
 // NeighborIndices[NeighborOffsets[v + 1]].
 // (https://en.wikipedia.org/wiki/Adjacency_list)
 type AdjacencyStructure
-    implements Value
+    implements IValue
 {
     VertexCount: Integer;
     NeighborOffsets: Array<Integer>;
@@ -102,7 +102,7 @@ type AdjacencyStructure
 // HyperedgeVertices[HyperedgeOffsets[h + 1]].
 // (https://en.wikipedia.org/wiki/Hypergraph)
 type Hypergraph
-    implements Value
+    implements IValue
 {
     VertexCount: Integer;
     HyperedgeOffsets: Array<Integer>;
@@ -126,7 +126,7 @@ type Hypergraph
 // (unit-agnostic; equals hop count when unweighted).
 // (https://en.wikipedia.org/wiki/Path_(graph_theory))
 type GraphPath
-    implements Value
+    implements IValue
 {
     VertexIndices: Array<GraphVertexIndex>;
     TotalWeight: Number;
@@ -138,7 +138,7 @@ type GraphPath
 // the source (meaningful only when v is the source or has a parent).
 // (https://en.wikipedia.org/wiki/Shortest-path_tree)
 type ShortestPathTree
-    implements Value
+    implements IValue
 {
     SourceIndex: GraphVertexIndex;
     ParentIndices: Array<GraphVertexIndex>;
@@ -150,7 +150,7 @@ type ShortestPathTree
 // graphs) also carry -1.
 // (https://en.wikipedia.org/wiki/Spanning_tree)
 type SpanningTree
-    implements Value
+    implements IValue
 {
     ParentIndices: Array<GraphVertexIndex>;
     RootIndex: GraphVertexIndex;
@@ -160,7 +160,7 @@ type SpanningTree
 // zero-based component of vertex v, in [0, ComponentCount).
 // (https://en.wikipedia.org/wiki/Component_(graph_theory))
 type ConnectedComponents
-    implements Value
+    implements IValue
 {
     ComponentLabels: Array<Integer>;
     ComponentCount: Integer;
@@ -170,7 +170,7 @@ type ConnectedComponents
 // contains a cycle, in which case OrderedVertexIndices is partial or empty.
 // (https://en.wikipedia.org/wiki/Topological_sorting)
 type TopologicalOrder
-    implements Value
+    implements IValue
 {
     OrderedVertexIndices: Array<GraphVertexIndex>;
     IsValid: Boolean;
@@ -183,7 +183,7 @@ type TopologicalOrder
 // Colors are zero-based integers in [0, ColorCount).
 // (https://en.wikipedia.org/wiki/Graph_coloring)
 type GraphColoring
-    implements Value
+    implements IValue
 {
     VertexColors: Array<Integer>;
     ColorCount: Integer;
@@ -194,7 +194,7 @@ type GraphColoring
 // CutEdgeCount is the number of edges whose endpoints lie in different parts.
 // (https://en.wikipedia.org/wiki/Graph_partition)
 type GraphPartition
-    implements Value
+    implements IValue
 {
     PartLabels: Array<Integer>;
     PartCount: Integer;
@@ -205,7 +205,7 @@ type GraphPartition
 // (unit-agnostic), with distinguished source and sink vertices.
 // (https://en.wikipedia.org/wiki/Flow_network)
 type FlowNetwork
-    implements Value
+    implements IValue
 {
     VertexCount: Integer;
     Edges: Array<WeightedEdge>;
@@ -218,7 +218,7 @@ type FlowNetwork
 // is true when v lies on the source side of a minimum cut.
 // (https://en.wikipedia.org/wiki/Maximum_flow_problem)
 type MaxFlowResult
-    implements Value
+    implements IValue
 {
     TotalFlow: Number;
     EdgeFlows: Array<Number>;
@@ -230,7 +230,7 @@ type MaxFlowResult
 // matched to left vertex l, or -1 when unmatched.
 // (https://en.wikipedia.org/wiki/Matching_(graph_theory))
 type BipartiteMatching
-    implements Value
+    implements IValue
 {
     LeftVertexCount: Integer;
     RightVertexCount: Integer;

@@ -1,12 +1,12 @@
 //==
-// # Geometry
+// # IGeometry
 //
 // Sections, in order:
-//  - Fitted primitives
+//  - IFitted primitives
 //  - Convex hulls
 
 //==
-// # Fitted primitives
+// # IFitted primitives
 //
 // The results of fitting a primitive shape to a set of sample points: the
 // recovered shape paired with a record of how well it matches. Fitting is a
@@ -24,7 +24,7 @@
 // RootMeanSquareError.
 // (https://en.wikipedia.org/wiki/Root-mean-square_deviation)
 type FitQuality
-    implements Value
+    implements IValue
 {
     RootMeanSquareError: Number;
     MaximumError: Number;
@@ -34,7 +34,7 @@ type FitQuality
 // A line fitted to points in the plane, with its residual statistics.
 // (https://en.wikipedia.org/wiki/Total_least_squares)
 type LineFit2D
-    implements Value, Fitted
+    implements IValue, IFitted
 {
     Line: InfiniteLine2D;
     Quality: FitQuality;
@@ -43,7 +43,7 @@ type LineFit2D
 // A line fitted to points in space, with its residual statistics. The
 // principal-axis fit of a point set.
 type LineFit3D
-    implements Value, Fitted
+    implements IValue, IFitted
 {
     Line: InfiniteLine3D;
     Quality: FitQuality;
@@ -53,7 +53,7 @@ type LineFit3D
 // least-squares plane of a point set; its normal is the direction of least
 // variance. (https://en.wikipedia.org/wiki/Principal_component_analysis)
 type PlaneFit3D
-    implements Value, Fitted
+    implements IValue, IFitted
 {
     Plane: Plane;
     Quality: FitQuality;
@@ -63,7 +63,7 @@ type PlaneFit3D
 // Residuals are radial: the distance from each sample to the circle itself,
 // not to its centre. (https://en.wikipedia.org/wiki/Circle_fitting)
 type CircleFit2D
-    implements Value, Fitted
+    implements IValue, IFitted
 {
     Circle: Circle;
     Quality: FitQuality;
@@ -72,7 +72,7 @@ type CircleFit2D
 // A sphere fitted to points in space, with its residual statistics. Residuals
 // are radial, as for CircleFit2D.
 type SphereFit3D
-    implements Value, Fitted
+    implements IValue, IFitted
 {
     Sphere: Sphere;
     Quality: FitQuality;
@@ -95,7 +95,7 @@ type SphereFit3D
 // from. SourceIndices is index-aligned with the polygon's own Points.
 // (https://en.wikipedia.org/wiki/Convex_hull_algorithms)
 type ConvexHull2D
-    implements Value
+    implements IValue
 {
     Hull: Polygon2D;
     SourceIndices: Array<ItemIndex>;
@@ -106,7 +106,7 @@ type ConvexHull2D
 // SourceIndices is index-aligned with the mesh's own Positions.
 // (https://en.wikipedia.org/wiki/Quickhull)
 type ConvexHull3D
-    implements Value
+    implements IValue
 {
     Hull: TriangleMesh3D;
     SourceIndices: Array<ItemIndex>;

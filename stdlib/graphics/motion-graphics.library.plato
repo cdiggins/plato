@@ -3,16 +3,16 @@
 //
 // Sections, in order:
 //  - MotionGraphics — sampling a tween
-//  - Procedural motion evaluation
+//  - IProcedural motion evaluation
 
 library MotionGraphics
 {
     //==
     // # MotionGraphics — sampling a tween
     //
-    // The `TimeVarying<T>` obligation of `Tween<T>`
+    // The `ITimeVarying<T>` obligation of `Tween<T>`
     // (`motion-graphics.types.plato`): the eased blend from From to To across
-    // Duration, after Delay. `Tween<T>` declares `where T: Interpolatable`, which
+    // Duration, after Delay. `Tween<T>` declares `where T: IInterpolatable`, which
     // is what licenses the Lerp on a bare T here.
     //
     // The other composition types in that file are data read by a renderer and
@@ -32,9 +32,9 @@ library MotionGraphics
     }
 
     //==
-    // # Procedural motion evaluation
+    // # IProcedural motion evaluation
     //
-    // The `TimeVarying<Number>` obligation of `Oscillator`
+    // The `ITimeVarying<Number>` obligation of `Oscillator`
     // (`motion-graphics.types.plato`): the signal
     // `Bias + Amplitude * wave(Frequency * time + Phase)` the type's doc comment
     // states, one waveform per case.

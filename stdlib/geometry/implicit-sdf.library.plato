@@ -39,11 +39,11 @@ library ImplicitSdf
         => BoundedSdf3D(self, bounds);
 
     // Any planar SDF as a bounded function SDF with the given domain hint.
-    WithBounds(self: SignedDistanceField2D, bounds: Bounds2D): BoundedSdf2D
+    WithBounds(self: ISignedDistanceField2D, bounds: Bounds2D): BoundedSdf2D
         => self.ToFunctionSdf.WithBounds(bounds);
 
     // Any spatial SDF as a bounded function SDF with the given domain hint.
-    WithBounds(self: SignedDistanceField3D, bounds: Bounds3D): BoundedSdf3D
+    WithBounds(self: ISignedDistanceField3D, bounds: Bounds3D): BoundedSdf3D
         => self.ToFunctionSdf.WithBounds(bounds);
 
     // Drop the bounds, keeping only the stored planar distance function.
@@ -60,40 +60,40 @@ library ImplicitSdf
     // True when the two conservative domains overlap (touching counts). A
     // false result means the solids cannot intersect if each Bounds encloses
     // its non-positive region.
-    MayIntersect(a: BoundedSignedDistanceField2D, b: BoundedSignedDistanceField2D): Boolean
+    MayIntersect(a: IBoundedSignedDistanceField2D, b: IBoundedSignedDistanceField2D): Boolean
         => a.Bounds.Overlaps(b.Bounds);
 
     // True when the two conservative domains overlap (touching counts).
-    MayIntersect(a: BoundedSignedDistanceField3D, b: BoundedSignedDistanceField3D): Boolean
+    MayIntersect(a: IBoundedSignedDistanceField3D, b: IBoundedSignedDistanceField3D): Boolean
         => a.Bounds.Overlaps(b.Bounds);
 
     // True when this field's domain overlaps the query rectangle — the query
     // is not entirely outside, so evaluation may still matter.
-    MayIntersect(self: BoundedSignedDistanceField2D, query: Bounds2D): Boolean
+    MayIntersect(self: IBoundedSignedDistanceField2D, query: Bounds2D): Boolean
         => self.Bounds.Overlaps(query);
 
     // True when this field's domain overlaps the query box.
-    MayIntersect(self: BoundedSignedDistanceField3D, query: Bounds3D): Boolean
+    MayIntersect(self: IBoundedSignedDistanceField3D, query: Bounds3D): Boolean
         => self.Bounds.Overlaps(query);
 
     // True when the query rectangle lies entirely outside this field's
     // conservative domain: safe to skip for solid queries under the enclosure
     // invariant.
-    IsCulledBy(self: BoundedSignedDistanceField2D, query: Bounds2D): Boolean
+    IsCulledBy(self: IBoundedSignedDistanceField2D, query: Bounds2D): Boolean
         => self.MayIntersect(query).Not;
 
     // True when the query box lies entirely outside this field's domain.
-    IsCulledBy(self: BoundedSignedDistanceField3D, query: Bounds3D): Boolean
+    IsCulledBy(self: IBoundedSignedDistanceField3D, query: Bounds3D): Boolean
         => self.MayIntersect(query).Not;
 
     // True when the point lies inside the conservative domain. False means the
     // point cannot be inside the solid if Bounds enclose every non-positive
     // distance; true is inconclusive.
-    MayContainPoint(self: BoundedSignedDistanceField2D, point: Point2D): Boolean
+    MayContainPoint(self: IBoundedSignedDistanceField2D, point: Point2D): Boolean
         => self.Bounds.Contains(point);
 
     // True when the point lies inside the conservative domain.
-    MayContainPoint(self: BoundedSignedDistanceField3D, point: Point3D): Boolean
+    MayContainPoint(self: IBoundedSignedDistanceField3D, point: Point3D): Boolean
         => self.Bounds.Contains(point);
 
     //==
@@ -147,7 +147,7 @@ library ImplicitSdf
     // # SDF modifier application
     //
     // The parameter records declared in `implicit-sdf.types.plato`, applied to
-    // a source field. Value modifiers reshape an already-sampled distance; domain
+    // a source field. IValue modifiers reshape an already-sampled distance; domain
     // modifiers reshape the position BEFORE the source is sampled, so they compose
     // with `MapDomain`. Domain modifiers other than repetition preserve exact
     // distances; repetition, twist, bend, and displacement return bounds.
@@ -447,7 +447,7 @@ library ImplicitSdf
         match (combine) {
             Union => UnionDistance(a, b);
             Intersection => IntersectionDistance(a, b);
-            Difference => SubtractDistance(a, b);
+            IDifference => SubtractDistance(a, b);
             ExclusiveOr => ExclusiveOrDistance(a, b);
             SmoothUnion(radius) => SmoothUnionDistance(a, b, radius);
             SmoothIntersection(radius) => SmoothIntersectionDistance(a, b, radius);

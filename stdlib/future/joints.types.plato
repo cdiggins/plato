@@ -18,7 +18,7 @@
 // the out-of-plane axis through the coinciding anchors.
 // (https://en.wikipedia.org/wiki/Revolute_joint)
 type RevoluteJoint2D
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -32,7 +32,7 @@ type RevoluteJoint2D
 // AxisA (in body A's frame) with relative rotation locked.
 // (https://en.wikipedia.org/wiki/Prismatic_joint)
 type PrismaticJoint2D
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -46,7 +46,7 @@ type PrismaticJoint2D
 // A planar joint that keeps the distance between two anchor points within
 // [MinLength, MaxLength].
 type DistanceJoint2D
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -72,7 +72,7 @@ type DistanceJoint2D
 // anchors; AxisA and AxisB are the hinge axis in each body's local frame.
 // (https://en.wikipedia.org/wiki/Revolute_joint)
 type HingeJoint
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -90,7 +90,7 @@ type HingeJoint
 // TwistLimit bounds rotation about it.
 // (https://en.wikipedia.org/wiki/Ball_joint)
 type BallSocketJoint
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -105,7 +105,7 @@ type BallSocketJoint
 // along AxisA with relative rotation locked.
 // (https://en.wikipedia.org/wiki/Prismatic_joint)
 type SliderJoint
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -119,7 +119,7 @@ type SliderJoint
 // A joint that locks all six degrees of freedom, welding two bodies into one
 // rigid assembly. RelativePose is body B's pose expressed in body A's frame.
 type FixedJoint
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -130,7 +130,7 @@ type FixedJoint
 // [MinLength, MaxLength] (a rope when MinLength is zero, a rod when the
 // bounds are equal).
 type DistanceJoint
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -145,7 +145,7 @@ type DistanceJoint
 // between the anchors.
 // (https://en.wikipedia.org/wiki/Hooke%27s_law)
 type SpringJoint
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -161,7 +161,7 @@ type SpringJoint
 // and lengthB from GroundAnchorB to AnchorB. Ratio is dimensionless.
 // (https://en.wikipedia.org/wiki/Pulley)
 type PulleyJoint
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -178,7 +178,7 @@ type PulleyJoint
 // frame.
 // (https://en.wikipedia.org/wiki/Degrees_of_freedom_(mechanics))
 type GenericJoint
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -197,7 +197,7 @@ type GenericJoint
 // the dimensionless gear ratio; the axes are in each body's local frame.
 // (https://en.wikipedia.org/wiki/Gear_train)
 type GearConstraint
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -215,7 +215,7 @@ type GearConstraint
 // declaration order (hinges first, then ball-sockets, then fixed).
 // (https://en.wikipedia.org/wiki/Ragdoll_physics)
 type RagdollProfile
-    implements Value
+    implements IValue
 {
     HingeJoints: Array<HingeJoint>;
     BallSocketJoints: Array<BallSocketJoint>;
@@ -234,7 +234,7 @@ type RagdollProfile
 // An inclusive allowed range of relative rotation. When Enabled is false the
 // rotation is unbounded.
 type AngularLimit
-    implements Value
+    implements IValue
 {
     Min: Angle;
     Max: Angle;
@@ -244,7 +244,7 @@ type AngularLimit
 // An inclusive allowed range of relative translation along a joint's axis,
 // in meters. When Enabled is false the translation is unbounded.
 type LinearLimit
-    implements Value
+    implements IValue
 {
     Min: Number;
     Max: Number;
@@ -256,7 +256,7 @@ type LinearLimit
 // second for angular axes; MaxForce and MaxTorque cap what the drive may
 // exert.
 type JointMotor
-    implements Value
+    implements IValue
 {
     TargetVelocity: Number;
     MaxForce: Force;
@@ -268,7 +268,7 @@ type JointMotor
 // breaks when the constraint force exceeds MaxForce or the constraint torque
 // exceeds MaxTorque.
 type JointBreakThreshold
-    implements Value
+    implements IValue
 {
     MaxForce: Force;
     MaxTorque: Torque;

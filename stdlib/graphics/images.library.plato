@@ -1,7 +1,7 @@
 //==
-// # Images — derived functions for Image
+// # Images — derived functions for IImage
 //
-// Bodies for the `Image` concept declared in `images.concepts.plato`: a raster with
+// Bodies for the `IImage` concept declared in `images.concepts.plato`: a raster with
 // known whole-pixel dimensions. The helpers derive the pixel count, the aspect
 // and orientation tests, coordinate validity, and the row-major flat index that
 // matches the tree's top-left-first storage convention. Pure expressions only;
@@ -11,67 +11,67 @@
 library Images
 {
     //==
-    // # Image
+    // # IImage
     //
     // A raster with known dimensions (Size, Width, Height in whole pixels).
 
     // The total number of pixels: Width times Height.
-    PixelCount(self: Image): Integer
+    PixelCount(self: IImage): Integer
         => self.Width * self.Height;
 
     // The width-to-height ratio of the image. Width and Height are widened to
     // Number via Integer.ToNumber. Precondition: Height is non-zero
     // (https://en.wikipedia.org/wiki/Aspect_ratio_%28image%29).
-    AspectRatio(self: Image): Number
+    AspectRatio(self: IImage): Number
         => self.Width.ToNumber / self.Height.ToNumber;
 
     // True when the image has zero area (no pixels).
-    IsEmpty(self: Image): Boolean
+    IsEmpty(self: IImage): Boolean
         => self.Width * self.Height == 0;
 
     // True when the image is exactly as wide as it is tall.
-    IsSquare(self: Image): Boolean
+    IsSquare(self: IImage): Boolean
         => self.Width == self.Height;
 
     // True when the image is wider than it is tall.
-    IsLandscape(self: Image): Boolean
+    IsLandscape(self: IImage): Boolean
         => self.Width > self.Height;
 
     // True when the image is taller than it is wide.
-    IsPortrait(self: Image): Boolean
+    IsPortrait(self: IImage): Boolean
         => self.Width < self.Height;
 
     // The index of the rightmost column (Width - 1); negative when empty.
-    LastColumn(self: Image): Integer
+    LastColumn(self: IImage): Integer
         => self.Width - 1;
 
     // The index of the bottom row (Height - 1); negative when empty.
-    LastRow(self: Image): Integer
+    LastRow(self: IImage): Integer
         => self.Height - 1;
 
     // True when column x lies within [0, Width).
-    IsValidColumn(self: Image, x: Integer): Boolean
+    IsValidColumn(self: IImage, x: Integer): Boolean
         => x >= 0 && x < self.Width;
 
     // True when row y lies within [0, Height).
-    IsValidRow(self: Image, y: Integer): Boolean
+    IsValidRow(self: IImage, y: Integer): Boolean
         => y >= 0 && y < self.Height;
 
     // True when pixel coordinate (x, y) lies inside the image.
-    ContainsPixel(self: Image, x: Integer, y: Integer): Boolean
+    ContainsPixel(self: IImage, x: Integer, y: Integer): Boolean
         => x >= 0 && x < self.Width && y >= 0 && y < self.Height;
 
     // The row-major flat index of pixel (x, y): y * Width + x. Matches the
     // row-major, top-left-first storage convention of the concrete image types
     // (https://en.wikipedia.org/wiki/Row-_and_column-major_order).
-    PixelIndex(self: Image, x: Integer, y: Integer): Integer
+    PixelIndex(self: IImage, x: Integer, y: Integer): Integer
         => y * self.Width + x;
 
     //==
-    // # Concrete image types — Image dimension accessors
+    // # Concrete image types — IImage dimension accessors
     //
     // Each raster stores its dimensions in Size; Width and Height project the
-    // IntegerSize2D components for the Image concept surface.
+    // IntegerSize2D components for the IImage concept surface.
 
     Width(self: Bitmap): Integer
         => self.Size.Width;

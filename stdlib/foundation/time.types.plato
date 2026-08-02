@@ -6,7 +6,7 @@
 
 // A span of time, stored in seconds. The delta type of Instant.
 type Duration
-    implements Quantity
+    implements IQuantity
 {
     Seconds: Number;
 }
@@ -15,7 +15,7 @@ type Duration
 // epoch (https://en.wikipedia.org/wiki/Epoch_(computing)).
 // Subtracting two instants yields a Duration.
 type Instant
-    implements Value, Comparable, OriginBased<Duration>
+    implements IValue, IComparable, IOriginBased<Duration>
 {
     SecondsSinceEpoch: Number;
 }
@@ -23,7 +23,7 @@ type Instant
 // A half-open span of time: contains Start, excludes End
 // (https://en.wikipedia.org/wiki/Interval_(mathematics)).
 type TimeInterval
-    implements Value
+    implements IValue
 {
     Start: Instant;
     End: Instant;
@@ -38,7 +38,7 @@ type FrameRate
 
 // A discrete frame position under a given frame rate.
 type FrameTime
-    implements Value, Comparable
+    implements IValue, IComparable
 {
     Frame: Integer;
     Rate: FrameRate;
@@ -65,7 +65,7 @@ type Tempo
 // (https://en.wikipedia.org/wiki/Beat_(music)); combine with Tempo to reach
 // seconds.
 type BeatTime
-    implements Value, Comparable
+    implements IValue, IComparable
 {
     Beats: Number;
 }

@@ -27,7 +27,7 @@ type AlphaMode
 // Transparency controls. Opacity multiplies the base color's alpha
 // component; Mode selects how the result is interpreted.
 type AlphaSettings
-    implements Value
+    implements IValue
 {
     Mode: AlphaMode;
     Opacity: Proportion;
@@ -45,7 +45,7 @@ type Brdf = Lambert | OrenNayar | GgxMetallicRoughness | Disney | Phong | BlinnP
 // map; OcclusionStrength scales a bound occlusion map (both bind via
 // MaterialTextureSet). (https://en.wikipedia.org/wiki/Physically_based_rendering)
 type Material
-    implements Value
+    implements IValue
 {
     BaseColor: Color;
     Metallic: Proportion;
@@ -64,7 +64,7 @@ type Material
 // slot is unused and the scalar factors stand alone.
 // (https://en.wikipedia.org/wiki/Texture_mapping)
 type MaterialTextureSet
-    implements Value
+    implements IValue
 {
     BaseColor: TextureBinding;
     MetallicRoughness: TextureBinding;
@@ -75,7 +75,7 @@ type MaterialTextureSet
 
 // A metallic-roughness material paired with its texture set.
 type TexturedMaterial
-    implements Value
+    implements IValue
 {
     Base: Material;
     Textures: MaterialTextureSet;
@@ -87,7 +87,7 @@ type TexturedMaterial
 // The legacy specular-glossiness PBR workflow, kept for importing older
 // assets. Prefer Material (metallic-roughness) for new content.
 type SpecularGlossinessMaterial
-    implements Value
+    implements IValue
 {
     Diffuse: Color;
     Specular: Color;
@@ -99,7 +99,7 @@ type SpecularGlossinessMaterial
 // A shadeless material: Color is output exactly as authored, ignoring all
 // lights.
 type UnlitMaterial
-    implements Value
+    implements IValue
 {
     Color: Color;
     Alpha: AlphaSettings;
@@ -111,7 +111,7 @@ type UnlitMaterial
 // at grazing angles with a RimPower falloff exponent; OutlineWidth is in
 // pixels (0 = no outline). (https://en.wikipedia.org/wiki/Cel_shading)
 type ToonMaterial
-    implements Value
+    implements IValue
 {
     BaseColor: Color;
     ShadeColor: Color;
@@ -126,7 +126,7 @@ type ToonMaterial
 // view-space normal, baking lighting and reflectance into one texture. Tint
 // multiplies the capture (white = unchanged).
 type MatcapMaterial
-    implements Value
+    implements IValue
 {
     Capture: TextureBinding;
     Tint: Color;
@@ -136,7 +136,7 @@ type MatcapMaterial
 // faces filled with FaceColor; use a fully transparent FaceColor for edges
 // only. (https://en.wikipedia.org/wiki/Wire-frame_model)
 type WireframeMaterial
-    implements Value
+    implements IValue
 {
     WireColor: Color;
     FaceColor: Color;
@@ -155,7 +155,7 @@ type WireframeMaterial
 // A thin lacquer layer over the base surface (car paint, varnish). Intensity 0
 // disables the layer. IndexOfRefraction is 1.5 in the glTF extension.
 type ClearCoatLayer
-    implements Value
+    implements IValue
 {
     Intensity: Proportion;
     Roughness: Proportion;
@@ -166,7 +166,7 @@ type ClearCoatLayer
 // Micro-fiber retroreflection for cloth (velvet, satin). A black Color
 // disables the layer. (https://en.wikipedia.org/wiki/Retroreflector)
 type SheenLayer
-    implements Value
+    implements IValue
 {
     Color: Color;
     Roughness: Proportion;
@@ -177,7 +177,7 @@ type SheenLayer
 // a white Color is the physical default.
 // (https://en.wikipedia.org/wiki/Specular_reflection)
 type SpecularLayer
-    implements Value
+    implements IValue
 {
     Strength: Proportion;
     Color: Color;
@@ -189,7 +189,7 @@ type SpecularLayer
 // through the medium is tinted to AttenuationColor.
 // (https://en.wikipedia.org/wiki/Refractive_index)
 type TransmissionLayer
-    implements Value
+    implements IValue
 {
     Transmission: Proportion;
     IndexOfRefraction: Number;
@@ -203,7 +203,7 @@ type TransmissionLayer
 // ThicknessMaximum, measured in nanometers per the glTF extension.
 // (https://en.wikipedia.org/wiki/Thin-film_interference)
 type IridescenceLayer
-    implements Value
+    implements IValue
 {
     Intensity: Proportion;
     IndexOfRefraction: Number;
@@ -215,7 +215,7 @@ type IridescenceLayer
 // disables the layer; Rotation turns the tangent-space anisotropy direction.
 // (https://en.wikipedia.org/wiki/Anisotropy)
 type AnisotropyLayer
-    implements Value
+    implements IValue
 {
     Strength: Proportion;
     Rotation: Angle;
@@ -226,7 +226,7 @@ type AnisotropyLayer
 // Anisotropy is the Henyey-Greenstein g in [-1, 1].
 // (https://en.wikipedia.org/wiki/Subsurface_scattering)
 type SubsurfaceParameters
-    implements Value
+    implements IValue
 {
     Color: Color;
     Radius: Number3;
@@ -238,7 +238,7 @@ type SubsurfaceParameters
 // optional layer. Each layer's zero/black convention (see the layer docs)
 // marks it disabled, so a plain surface is representable without waste.
 type LayeredMaterial
-    implements Value
+    implements IValue
 {
     Base: TexturedMaterial;
     ClearCoat: ClearCoatLayer;

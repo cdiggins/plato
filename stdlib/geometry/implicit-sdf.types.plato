@@ -25,7 +25,7 @@
 // Bounds the solid may be treated as empty for culling; the stored distance
 // function is still evaluated on request.
 type BoundedSdf2D
-    implements Value, BoundedSignedDistanceField2D
+    implements IValue, IBoundedSignedDistanceField2D
 {
     Sdf: FunctionSdf2D;
     Bounds: Bounds2D;
@@ -35,7 +35,7 @@ type BoundedSdf2D
 // the solid may be treated as empty for culling; the stored distance
 // function is still evaluated on request.
 type BoundedSdf3D
-    implements Value, BoundedSignedDistanceField3D
+    implements IValue, IBoundedSignedDistanceField3D
 {
     Sdf: FunctionSdf3D;
     Bounds: Bounds3D;
@@ -50,7 +50,7 @@ type BoundedSdf3D
 // what the closed-form distance primitives and the CSG combinators in
 // `implicit-sdf.library.plato` and
 // `fields-implicits.library.plato` produce and consume, and they are the
-// only implementors of ImplicitRegion2D and ImplicitVolume3D — a predicate has
+// only implementors of IImplicitRegion2D and IImplicitVolume3D — a predicate has
 // nothing to store but its predicate.
 //
 // A distance field carries strictly more information than a region: every SDF
@@ -60,7 +60,7 @@ type BoundedSdf3D
 // A planar signed distance field defined by a stored distance function:
 // negative inside the boundary curve, zero on it, positive outside.
 type FunctionSdf2D
-    implements SignedDistanceField2D
+    implements ISignedDistanceField2D
 {
     Function: Function1<Point2D, Number>;
 }
@@ -68,7 +68,7 @@ type FunctionSdf2D
 // A spatial signed distance field defined by a stored distance function:
 // negative inside the surface, zero on it, positive outside.
 type FunctionSdf3D
-    implements SignedDistanceField3D
+    implements ISignedDistanceField3D
 {
     Function: Function1<Point3D, Number>;
 }
@@ -76,7 +76,7 @@ type FunctionSdf3D
 // A planar region defined by a stored membership predicate: true inside.
 // Carries no distance information.
 type FunctionRegion2D
-    implements ImplicitRegion2D
+    implements IImplicitRegion2D
 {
     Function: Function1<Point2D, Boolean>;
 }
@@ -84,7 +84,7 @@ type FunctionRegion2D
 // A spatial volume defined by a stored membership predicate: true inside.
 // Carries no distance information.
 type FunctionVolume3D
-    implements ImplicitVolume3D
+    implements IImplicitVolume3D
 {
     Function: Function1<Point3D, Boolean>;
 }
@@ -101,7 +101,7 @@ type FunctionVolume3D
 // A planar metaball: a radial falloff kernel centered at a point. Influence
 // is Strength at the center and falls to zero at Radius.
 type MetaBall2D
-    implements Value
+    implements IValue
 {
     Center: Point2D;
     Radius: Number;
@@ -112,7 +112,7 @@ type MetaBall2D
 // is Strength at the center and falls to zero at Radius. Negative strengths
 // carve away from the surface.
 type MetaBall3D
-    implements Value
+    implements IValue
 {
     Center: Point3D;
     Radius: Number;
@@ -122,7 +122,7 @@ type MetaBall3D
 // A planar blob system: the field value at a point is the summed influence
 // of all balls minus Threshold, so the zero level set is the blob outline.
 type MetaBallSystem2D
-    implements Value, ScalarField2D
+    implements IValue, IScalarField2D
 {
     Balls: Array<MetaBall2D>;
     Threshold: Number;
@@ -131,7 +131,7 @@ type MetaBallSystem2D
 // A spatial blob system: the field value at a point is the summed influence
 // of all balls minus Threshold, so the zero level set is the blob surface.
 type MetaBallSystem3D
-    implements Value, ScalarField3D
+    implements IValue, IScalarField3D
 {
     Balls: Array<MetaBall3D>;
     Threshold: Number;
@@ -148,7 +148,7 @@ type MetaBallSystem3D
 // Rounds sharp edges and corners by subtracting Radius from the distance,
 // inflating the shape and smoothing its features.
 type SdfRoundingModifier
-    implements Value
+    implements IValue
 {
     Radius: Number;
 }
@@ -156,7 +156,7 @@ type SdfRoundingModifier
 // Replaces a solid with its shell: the region within half of Thickness on
 // either side of the original surface.
 type SdfShellModifier
-    implements Value
+    implements IValue
 {
     Thickness: Number;
 }
@@ -164,7 +164,7 @@ type SdfShellModifier
 // Replaces a solid with Count concentric shells spaced by Thickness, like
 // the layers of an onion. Count of 1 is equivalent to a single shell.
 type SdfOnionModifier
-    implements Value
+    implements IValue
 {
     Thickness: Number;
     Count: Integer;
@@ -173,7 +173,7 @@ type SdfOnionModifier
 // Stretches a planar shape by splitting it at the origin and inserting a
 // straight section of the given extent along each axis.
 type SdfElongationModifier2D
-    implements Value
+    implements IValue
 {
     Amount: Vector2D;
 }
@@ -181,7 +181,7 @@ type SdfElongationModifier2D
 // Stretches a spatial shape by splitting it at the origin and inserting a
 // straight section of the given extent along each axis.
 type SdfElongationModifier3D
-    implements Value
+    implements IValue
 {
     Amount: Vector3D;
 }
@@ -190,7 +190,7 @@ type SdfElongationModifier3D
 // bounds the repetitions per axis; a non-positive count means unbounded
 // repetition along that axis.
 type SdfRepetitionModifier2D
-    implements Value
+    implements IValue
 {
     Period: Vector2D;
     Counts: IntegerVector2;
@@ -200,7 +200,7 @@ type SdfRepetitionModifier2D
 // bounds the repetitions per axis; a non-positive count means unbounded
 // repetition along that axis.
 type SdfRepetitionModifier3D
-    implements Value
+    implements IValue
 {
     Period: Vector3D;
     Counts: IntegerVector3;
@@ -209,7 +209,7 @@ type SdfRepetitionModifier3D
 // Twists a spatial shape about the Z axis: each horizontal slice rotates by
 // AnglePerUnit times its height.
 type SdfTwistModifier3D
-    implements Value
+    implements IValue
 {
     AnglePerUnit: Angle;
 }
@@ -217,7 +217,7 @@ type SdfTwistModifier3D
 // Bends a spatial shape about the Y axis with the given curvature (turning
 // angle per unit of length along X); 0 leaves the shape unchanged.
 type SdfBendModifier3D
-    implements Value
+    implements IValue
 {
     Curvature: Number;
 }
@@ -226,7 +226,7 @@ type SdfBendModifier3D
 // list of spatial scalar fields whose value, scaled by Amplitude, offsets
 // the distance. The result is a bound, not an exact distance.
 type SdfDisplacementModifier3D
-    implements Value
+    implements IValue
 {
     Source: ItemIndex;
     Amplitude: Number;
@@ -246,7 +246,7 @@ type SdfDisplacementModifier3D
 // SDF concept: Bounds are the lattice domain (finite support), not merely
 // a culling hint.
 type SampledSdf2D
-    implements Value, BoundedSignedDistanceField2D
+    implements IValue, IBoundedSignedDistanceField2D
 {
     Values: Array2D<Number>;
     Bounds: Bounds2D;
@@ -257,7 +257,7 @@ type SampledSdf2D
 // between nodes interpolates trilinearly. Implements the bounded SDF concept:
 // Bounds are the lattice domain (finite support).
 type SampledSdf3D
-    implements Value, BoundedSignedDistanceField3D
+    implements IValue, IBoundedSignedDistanceField3D
 {
     Values: Array3D<Number>;
     Bounds: Bounds3D;
@@ -273,7 +273,7 @@ type SampledSdf3D
 // `implicit-sdf.library.plato`.
 
 // The Boolean or blending operation an SDF combination node applies.
-// Union is the distance minimum, Intersection the maximum, Difference the
+// Union is the distance minimum, Intersection the maximum, IDifference the
 // left child minus the right. Smooth variants blend over their own Radius;
 // Blend linearly interpolates the two child distances by Weight.
 type SdfCombine
@@ -289,7 +289,7 @@ type SdfCombine
 // A zero-based index of a node within an SDF combination tree's node array.
 // Nodes only reference lower-indexed nodes; -1 means "unused".
 type SdfNodeIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -298,7 +298,7 @@ type SdfNodeIndex
 // into an external primitive list; interior nodes combine two lower-indexed
 // nodes. Child references are node indices, never embedded nodes.
 type SdfNode2D
-    implements Value
+    implements IValue
     = Leaf(Primitive: ItemIndex)
     | Interior(Combine: SdfCombine, Left: SdfNodeIndex, Right: SdfNodeIndex);
 
@@ -306,7 +306,7 @@ type SdfNode2D
 // nodes; Root is the index of the node producing the final distance. Leaf
 // primitive indices resolve against a caller-supplied list of planar SDFs.
 type SdfTree2D
-    implements Value
+    implements IValue
 {
     Nodes: Array<SdfNode2D>;
     Root: SdfNodeIndex;
@@ -316,7 +316,7 @@ type SdfTree2D
 // into an external primitive list; interior nodes combine two lower-indexed
 // nodes. Child references are node indices, never embedded nodes.
 type SdfNode3D
-    implements Value
+    implements IValue
     = Leaf(Primitive: ItemIndex)
     | Interior(Combine: SdfCombine, Left: SdfNodeIndex, Right: SdfNodeIndex);
 
@@ -324,7 +324,7 @@ type SdfNode3D
 // nodes; Root is the index of the node producing the final distance. Leaf
 // primitive indices resolve against a caller-supplied list of spatial SDFs.
 type SdfTree3D
-    implements Value
+    implements IValue
 {
     Nodes: Array<SdfNode3D>;
     Root: SdfNodeIndex;

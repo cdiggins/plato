@@ -313,7 +313,7 @@ library Polygons
 
     // The summed length of the chain in N dimensions. Written out rather than
     // delegated because ChainLength is spelled for Point2D/Point3D only; PointN's
-    // delta type is VectorN, whose Magnitude comes from Normed.
+    // delta type is VectorN, whose Magnitude comes from INormed.
     Length(p: PolylineN): Number
         => SumOf((p.Closed ? p.Points.Count : p.Points.Count - 1)
             .MapRange(i => p.Points[i].Between(p.Points.AtModulo(i + 1)).Magnitude));
@@ -362,7 +362,7 @@ library Polygons
     Normal(p: Polygon3D): Direction3D
         => Direction3D(p.Points.VectorArea.Normalize);
 
-    // The Deformable3D obligation: every boundary vertex carried through the
+    // The IDeformable3D obligation: every boundary vertex carried through the
     // mapping. The declaration's planarity invariant survives affine mappings
     // only; a nonlinear mapping leaves a ring the planar bodies above treat as
     // its best-fit-plane projection (the same control-point decay as
@@ -454,7 +454,7 @@ library Polygons
     Bounds(y: Pyramid3D): Bounds3D
         => UnionOfBounds(y.Base.Bounds, Bounds3D(y.Apex, y.Apex));
 
-    // The Deformable3D obligation: the base ring and the Apex carried through
+    // The IDeformable3D obligation: the base ring and the Apex carried through
     // the same mapping — the cone over the deformed base from the deformed apex.
     Deform(y: Pyramid3D, mapping: Function1<Point3D, Point3D>): Pyramid3D
         => (y.Base.Deform(mapping), mapping(y.Apex));

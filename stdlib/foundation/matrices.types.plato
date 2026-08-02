@@ -11,7 +11,7 @@
 // Dense numeric matrices (https://en.wikipedia.org/wiki/Matrix_(mathematics))
 // stored as row vectors: RowN holds row N, so element (r, c) is component c of
 // row r. Fixed sizes cover graphics and geometry; MatrixN and Tensor cover
-// scientific computing. The MatrixLike concept they implement is declared in
+// scientific computing. The IMatrixLike concept they implement is declared in
 // `matrices.concepts.plato`.
 // Convention: see CONVENTIONS.md - Matrices (System.Numerics-compatible row-vector
 // multiplication, v' = v M).
@@ -23,7 +23,7 @@
 
 // A 2x2 matrix: 2D linear maps (rotation, scale, shear).
 type Matrix2x2
-    implements MatrixLike, Multiplicative
+    implements IMatrixLike, IMultiplicative
 {
     Row1: Number2;
     Row2: Number2;
@@ -31,7 +31,7 @@ type Matrix2x2
 
 // A 3x3 matrix: 3D linear maps, 2D homogeneous transforms, orientation bases.
 type Matrix3x3
-    implements MatrixLike, Multiplicative
+    implements IMatrixLike, IMultiplicative
 {
     Row1: Number3;
     Row2: Number3;
@@ -41,7 +41,7 @@ type Matrix3x3
 // A 4x4 matrix: 3D homogeneous transforms and projections
 // (https://en.wikipedia.org/wiki/Transformation_matrix).
 type Matrix4x4
-    implements MatrixLike, Multiplicative
+    implements IMatrixLike, IMultiplicative
 {
     Row1: Number4;
     Row2: Number4;
@@ -52,7 +52,7 @@ type Matrix4x4
 // A 3-row, 2-column matrix: a 2D affine map (2x2 linear part plus a translation
 // row).
 type Matrix3x2
-    implements MatrixLike
+    implements IMatrixLike
 {
     Row1: Number2;
     Row2: Number2;
@@ -62,7 +62,7 @@ type Matrix3x2
 // A 4-row, 3-column matrix: a 3D affine map (3x3 linear part plus a translation
 // row).
 type Matrix4x3
-    implements MatrixLike
+    implements IMatrixLike
 {
     Row1: Number3;
     Row2: Number3;
@@ -74,7 +74,7 @@ type Matrix4x3
 // (https://en.wikipedia.org/wiki/Symmetric_matrix): inertia tensors,
 // covariance, stress and strain states.
 type SymmetricMatrix3x3
-    implements Value
+    implements IValue
 {
     M11: Number; M12: Number; M13: Number;
     M22: Number; M23: Number;
@@ -83,7 +83,7 @@ type SymmetricMatrix3x3
 
 // A dense matrix with runtime-determined shape, row-major storage.
 type MatrixN
-    implements MatrixLike
+    implements IMatrixLike
 {
     NumRows: Integer;
     NumColumns: Integer;
@@ -94,7 +94,7 @@ type MatrixN
 // (https://en.wikipedia.org/wiki/Tensor). Extents lists the size of each
 // dimension; storage is row-major.
 type Tensor
-    implements Value
+    implements IValue
 {
     Extents: Array<Integer>;
     Components: Array<Number>;
@@ -106,8 +106,8 @@ type Tensor
 // Matrices whose storage is proportional to their non-zero content rather than
 // to their shape: coordinate-list sparse storage and the banded form of a
 // matrix whose non-zeros hug the diagonal. The dense counterparts (and the
-// MatrixLike concept) are the section above; these types deliberately
-// do not claim MatrixLike, because element access is a search rather than an
+// IMatrixLike concept) are the section above; these types deliberately
+// do not claim IMatrixLike, because element access is a search rather than an
 // offset.
 // Convention: see CONVENTIONS.md - Matrices (row-vector multiplication,
 // v' = v M); rows and columns here mean the same thing they do there.
@@ -118,7 +118,7 @@ type Tensor
 // correct sum.
 // (https://en.wikipedia.org/wiki/Sparse_matrix#Coordinate_list_(COO))
 type SparseMatrixEntry
-    implements Value
+    implements IValue
 {
     Row: Integer;
     Column: Integer;
@@ -131,7 +131,7 @@ type SparseMatrixEntry
 // that arise in finite-element and graph problems.
 // (https://en.wikipedia.org/wiki/Sparse_matrix)
 type SparseMatrix
-    implements Value
+    implements IValue
 {
     NumRows: Integer;
     NumColumns: Integer;
@@ -147,7 +147,7 @@ type SparseMatrix
 // diagonal matrix, one and one is tridiagonal.
 // (https://en.wikipedia.org/wiki/Band_matrix)
 type BandedMatrix
-    implements Value
+    implements IValue
 {
     NumRows: Integer;
     NumColumns: Integer;

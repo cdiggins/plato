@@ -1,7 +1,7 @@
 //==
-// # IntervalsTransformsDeformable — derived functionality for Deformable2D/3D
+// # IntervalsTransformsDeformable — derived functionality for IDeformable2D/3D
 //
-// Bodies for the `Deformable2D` / `Deformable3D` concepts declared in
+// Bodies for the `IDeformable2D` / `IDeformable3D` concepts declared in
 // `transforms.concepts.plato`: translation, scaling, and rotation — about the
 // origin or about an arbitrary pivot — all expressed through each type's single
 // Deform primitive. The mapping types are concrete, so these build real
@@ -10,61 +10,61 @@
 library IntervalsTransformsDeformable
 {
     //==
-    // Deformable2D — a value reshaped by an arbitrary Point2D -> Point2D mapping.
+    // IDeformable2D — a value reshaped by an arbitrary Point2D -> Point2D mapping.
     // The mapping type is concrete (Function1<Point2D, Point2D>), so these build
     // real Point2D/Vector2D lambdas.
 
     // Translate every point by `offset`.
-    Translate(self: Deformable2D, offset: Vector2D): Self
+    Translate(self: IDeformable2D, offset: Vector2D): Self
         => self.Deform(p => p + offset);
 
     // Uniformly scale about `center` by `factor` (1 leaves the shape unchanged).
-    ScaleAbout(self: Deformable2D, center: Point2D, factor: Number): Self
+    ScaleAbout(self: IDeformable2D, center: Point2D, factor: Number): Self
         => self.Deform(p => center + center.Between(p) * factor);
 
     // Non-uniformly scale about `center` by a per-axis `factors` vector.
-    ScaleAbout(self: Deformable2D, center: Point2D, factors: Number2): Self
+    ScaleAbout(self: IDeformable2D, center: Point2D, factors: Number2): Self
         => self.Deform(p => center + center.Between(p) * factors);
 
     // Rotate every point about `center` by `rotation`.
-    RotateAbout(self: Deformable2D, center: Point2D, rotation: Rotation2D): Self
+    RotateAbout(self: IDeformable2D, center: Point2D, rotation: Rotation2D): Self
         => self.Deform(p => center + center.Between(p).Transform(rotation));
 
     // Rotate every point about `center` by `angle` (counter-clockwise).
-    RotateAbout(self: Deformable2D, center: Point2D, angle: Angle): Self
+    RotateAbout(self: IDeformable2D, center: Point2D, angle: Angle): Self
         => self.RotateAbout(center, Rotation2D(angle));
 
     // Rotate every point about the origin by `angle` (counter-clockwise).
-    Rotate(self: Deformable2D, angle: Angle): Self
+    Rotate(self: IDeformable2D, angle: Angle): Self
         => self.RotateAbout(Point2D(0.0, 0.0), angle);
 
     // Uniformly scale about the origin by `factor`.
-    Scale(self: Deformable2D, factor: Number): Self
+    Scale(self: IDeformable2D, factor: Number): Self
         => self.ScaleAbout(Point2D(0.0, 0.0), factor);
 
     // Non-uniformly scale about the origin by a per-axis `factors` vector.
-    Scale(self: Deformable2D, factors: Number2): Self
+    Scale(self: IDeformable2D, factors: Number2): Self
         => self.ScaleAbout(Point2D(0.0, 0.0), factors);
 
     // Scale about the origin along X only.
-    ScaleX(self: Deformable2D, factor: Number): Self
+    ScaleX(self: IDeformable2D, factor: Number): Self
         => self.Scale(Number2(factor, 1.0));
 
     // Scale about the origin along Y only.
-    ScaleY(self: Deformable2D, factor: Number): Self
+    ScaleY(self: IDeformable2D, factor: Number): Self
         => self.Scale(Number2(1.0, factor));
 
     // Translate along +X by `distance`.
-    TranslateX(self: Deformable2D, distance: Number): Self
+    TranslateX(self: IDeformable2D, distance: Number): Self
         => self.Translate(Vector2D.UnitX * distance);
 
     // Translate along +Y by `distance`.
-    TranslateY(self: Deformable2D, distance: Number): Self
+    TranslateY(self: IDeformable2D, distance: Number): Self
         => self.Translate(Vector2D.UnitY * distance);
 
-    // The ScaleAbout/RotateAbout helpers use Difference.Between(a, b) = b - a,
+    // The ScaleAbout/RotateAbout helpers use IDifference.Between(a, b) = b - a,
     // the displacement from a to b. That direction is now the documented contract
-    // on the Difference concept (algebra.concepts.plato), so it is relied on here
+    // on the IDifference concept (algebra.concepts.plato), so it is relied on here
     // rather than merely assumed.
 
     // RESOLVED (was TODO(concept-gap): RotateAbout is omitted): rotating a Point2D
@@ -75,73 +75,73 @@ library IntervalsTransformsDeformable
     // implemented above.
 
     //==
-    // Deformable3D — a value reshaped by an arbitrary Point3D -> Point3D mapping.
+    // IDeformable3D — a value reshaped by an arbitrary Point3D -> Point3D mapping.
 
     // Translate every point by `offset`.
-    Translate(self: Deformable3D, offset: Vector3D): Self
+    Translate(self: IDeformable3D, offset: Vector3D): Self
         => self.Deform(p => p + offset);
 
     // Uniformly scale about `center` by `factor`.
-    ScaleAbout(self: Deformable3D, center: Point3D, factor: Number): Self
+    ScaleAbout(self: IDeformable3D, center: Point3D, factor: Number): Self
         => self.Deform(p => center + center.Between(p) * factor);
 
     // Non-uniformly scale about `center` by a per-axis `factors` vector.
-    ScaleAbout(self: Deformable3D, center: Point3D, factors: Number3): Self
+    ScaleAbout(self: IDeformable3D, center: Point3D, factors: Number3): Self
         => self.Deform(p => center + center.Between(p) * factors);
 
     // Rotate every point about `center` by `rotation`.
-    RotateAbout(self: Deformable3D, center: Point3D, rotation: Quaternion): Self
+    RotateAbout(self: IDeformable3D, center: Point3D, rotation: Quaternion): Self
         => self.Deform(p => center + center.Between(p).Transform(rotation));
 
     // Rotate every point about the origin by `rotation`.
-    Rotate(self: Deformable3D, rotation: Quaternion): Self
+    Rotate(self: IDeformable3D, rotation: Quaternion): Self
         => self.RotateAbout(Point3D(0.0, 0.0, 0.0), rotation);
 
     // Rotate about the world X axis through the origin.
-    RotateX(self: Deformable3D, angle: Angle): Self
+    RotateX(self: IDeformable3D, angle: Angle): Self
         => self.Rotate(Quaternion.CreateRotationX(angle));
 
     // Rotate about the world Y axis through the origin.
-    RotateY(self: Deformable3D, angle: Angle): Self
+    RotateY(self: IDeformable3D, angle: Angle): Self
         => self.Rotate(Quaternion.CreateRotationY(angle));
 
     // Rotate about the world Z axis through the origin.
-    RotateZ(self: Deformable3D, angle: Angle): Self
+    RotateZ(self: IDeformable3D, angle: Angle): Self
         => self.Rotate(Quaternion.CreateRotationZ(angle));
 
     // Uniformly scale about the origin by `factor`.
-    Scale(self: Deformable3D, factor: Number): Self
+    Scale(self: IDeformable3D, factor: Number): Self
         => self.ScaleAbout(Point3D(0.0, 0.0, 0.0), factor);
 
     // Non-uniformly scale about the origin by a per-axis `factors` vector.
-    Scale(self: Deformable3D, factors: Number3): Self
+    Scale(self: IDeformable3D, factors: Number3): Self
         => self.ScaleAbout(Point3D(0.0, 0.0, 0.0), factors);
 
     // Scale about the origin along X only.
-    ScaleX(self: Deformable3D, factor: Number): Self
+    ScaleX(self: IDeformable3D, factor: Number): Self
         => self.Scale(Number3(factor, 1.0, 1.0));
 
     // Scale about the origin along Y only.
-    ScaleY(self: Deformable3D, factor: Number): Self
+    ScaleY(self: IDeformable3D, factor: Number): Self
         => self.Scale(Number3(1.0, factor, 1.0));
 
     // Scale about the origin along Z only.
-    ScaleZ(self: Deformable3D, factor: Number): Self
+    ScaleZ(self: IDeformable3D, factor: Number): Self
         => self.Scale(Number3(1.0, 1.0, factor));
 
     // Translate along +X by `distance`.
-    TranslateX(self: Deformable3D, distance: Number): Self
+    TranslateX(self: IDeformable3D, distance: Number): Self
         => self.Translate(Vector3D.UnitX * distance);
 
     // Translate along +Y by `distance`.
-    TranslateY(self: Deformable3D, distance: Number): Self
+    TranslateY(self: IDeformable3D, distance: Number): Self
         => self.Translate(Vector3D.UnitY * distance);
 
     // Translate along +Z by `distance`.
-    TranslateZ(self: Deformable3D, distance: Number): Self
+    TranslateZ(self: IDeformable3D, distance: Number): Self
         => self.Translate(Vector3D.UnitZ * distance);
 
     // RESOLVED (was TODO(concept-gap): RotateAbout is omitted for the same reason as
-    // Deformable2D): the Transform(Vector3D, Quaternion) intrinsic rotates the pivot
+    // IDeformable2D): the Transform(Vector3D, Quaternion) intrinsic rotates the pivot
     // displacement directly, so RotateAbout/Rotate/RotateX/Y/Z are implemented above.
 }

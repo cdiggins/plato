@@ -12,7 +12,7 @@ library Brep
     // # BREP shell operations
     //
     // Evaluation, topology queries, validation, and deformation for the edge-use
-    // shell declared in `brep.types.plato`. Geometry dispatch is an exhaustive `match`
+    // shell declared in `brep.types.plato`. IGeometry dispatch is an exhaustive `match`
     // over the `BrepCurve` / `BrepSurface` sums, so adding a curved case is a new
     // arm in each function here, not a new field anywhere.
     //
@@ -24,7 +24,7 @@ library Brep
     // that these sums intentionally do not carry.
 
     //==
-    // Geometry evaluation
+    // IGeometry evaluation
 
     // The point at parameter t (0 at Start, 1 at End) along an edge curve.
     Eval(c: BrepCurve, t: Number): Point3D =>
@@ -173,7 +173,7 @@ library Brep
     Deform(f: BrepFace, mapping: Function1<Point3D, Point3D>): BrepFace
         => BrepFace(f.Surface.Deform(mapping), f.Loops);
 
-    // The Deformable3D obligation: the whole shell with vertices, edge curves,
+    // The IDeformable3D obligation: the whole shell with vertices, edge curves,
     // and face surfaces moved through the same mapping — topology unchanged.
     Deform(b: Brep3D, mapping: Function1<Point3D, Point3D>): Brep3D
         => Brep3D(

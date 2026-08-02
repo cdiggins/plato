@@ -8,7 +8,7 @@
 //
 // Ensemble statistics are weighted: the mean is the weight-normalized average
 // of the draws, so an unweighted ensemble (every Weight 1) reduces to the
-// plain arithmetic mean. The draws themselves are `Numerical`, which supplies
+// plain arithmetic mean. The draws themselves are `INumerical`, which supplies
 // the additive and scaling surface a weighted mean needs and nothing more.
 
 library UncertaintyMeasurement
@@ -103,7 +103,7 @@ library UncertaintyMeasurement
 
     // The weighted mean of the draws: the sampled estimate of the uncertain
     // value's nominal reading. Precondition: the total weight is non-zero.
-    WeightedMean(self: Ensemble<Numerical>): Numerical
+    WeightedMean(self: Ensemble<INumerical>): INumerical
         => self.Samples
             .Reduce(self.Samples[0].Value.Zero, (total, s) => total + s.Contribution)
             / self.WeightSum;
@@ -115,7 +115,7 @@ library UncertaintyMeasurement
 
     // What one draw contributes to the ensemble's weighted sum: its value
     // scaled by its weight.
-    Contribution(self: MonteCarloSample<Numerical>): Numerical
+    Contribution(self: MonteCarloSample<INumerical>): INumerical
         => self.Value * self.Weight;
 
     // True when the draw carries no weight and so does not affect any

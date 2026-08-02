@@ -16,12 +16,12 @@ library Numbers
     // # Extended-number arithmetic
     //
     // Operator and concept obligations for the types of `numbers.types.plato`: Complex
-    // (full Numerical plus ComplexÃ—Complex product/quotient), Rational (Comparable
+    // (full INumerical plus ComplexÃ—Complex product/quotient), Rational (IComparable
     // plus field arithmetic), and the unitless constrained scalars Proportion /
-    // Percent / Probability (Numerical + Comparable on their carrier).
+    // Percent / Probability (INumerical + IComparable on their carrier).
 
     //==
-    // Complex â€” Numerical obligations and complex field arithmetic.
+    // Complex â€” INumerical obligations and complex field arithmetic.
     // https://en.wikipedia.org/wiki/Complex_number
 
     // Component-wise sum.
@@ -32,7 +32,7 @@ library Numbers
     Subtract(a: Complex, b: Complex): Complex
         => (a.Real - b.Real, a.Imaginary - b.Imaginary);
 
-    // Additive inverse.
+    // IAdditive inverse.
     Negative(z: Complex): Complex
         => (-z.Real, -z.Imaginary);
 
@@ -99,7 +99,7 @@ library Numbers
             a.Numerator * b.Denominator - b.Numerator * a.Denominator,
             a.Denominator * b.Denominator);
 
-    // Additive inverse: -a/b.
+    // IAdditive inverse: -a/b.
     Negative(r: Rational): Rational
         => new Rational(-r.Numerator, r.Denominator);
 
@@ -123,7 +123,7 @@ library Numbers
     }
 
     //==
-    // Proportion â€” unitless scalar in [0, 1]; Numerical + Comparable on Value.
+    // Proportion â€” unitless scalar in [0, 1]; INumerical + IComparable on IValue.
 
     Add(a: Proportion, b: Proportion): Proportion
         => new Proportion(a.Value + b.Value);
@@ -162,7 +162,7 @@ library Numbers
         => a.Value <= b.Value;
 
     //==
-    // Percent â€” proportion expressed per hundred; Numerical + Comparable.
+    // Percent â€” proportion expressed per hundred; INumerical + IComparable.
 
     Add(a: Percent, b: Percent): Percent
         => new Percent(a.Value + b.Value);
@@ -201,7 +201,7 @@ library Numbers
         => a.Value <= b.Value;
 
     //==
-    // Probability â€” probability in [0, 1]; Numerical + Comparable.
+    // Probability â€” probability in [0, 1]; INumerical + IComparable.
 
     Add(a: Probability, b: Probability): Probability
         => new Probability(a.Value + b.Value);
@@ -240,7 +240,7 @@ library Numbers
         => a.Value <= b.Value;
 
     //==
-    // Cardinal - a non-negative count; Comparable on its carrier.
+    // Cardinal - a non-negative count; IComparable on its carrier.
 
     // Counts order exactly as their carrier integers do.
     LessThanOrEquals(a: Cardinal, b: Cardinal): Boolean
@@ -249,9 +249,9 @@ library Numbers
     //==
     // # Dual-number arithmetic (forward-mode automatic differentiation)
     //
-    // The Numerical obligations of `DualNumber` plus the elementary functions,
+    // The INumerical obligations of `DualNumber` plus the elementary functions,
     // each carrying its own differentiation rule. Every body is the textbook rule
-    // applied to the pair: the Value component is the ordinary computation, the
+    // applied to the pair: the IValue component is the ordinary computation, the
     // Derivative component is that rule times the incoming derivative (the chain
     // rule). https://en.wikipedia.org/wiki/Automatic_differentiation
     //
@@ -260,8 +260,8 @@ library Numbers
     // result's Derivative is the exact partial derivative with respect to the seed.
     //
     // Preconditions match the underlying real functions (no division by a zero
-    // Value, no Sqrt or NaturalLog of a non-positive Value); a derivative rule
-    // that divides by the Value inherits that restriction and is noted where the
+    // IValue, no Sqrt or NaturalLog of a non-positive IValue); a derivative rule
+    // that divides by the IValue inherits that restriction and is noted where the
     // rule is more restrictive than the function itself.
 
     //==
@@ -277,7 +277,7 @@ library Numbers
         => (self, 1.0);
 
     //==
-    // # Additive obligations
+    // # IAdditive obligations
     //
     // Differentiation is linear, so sums and differences are component-wise.
 
@@ -298,7 +298,7 @@ library Numbers
         => (0.0, 0.0);
 
     //==
-    // # Multiplicative obligations
+    // # IMultiplicative obligations
     //
     // https://en.wikipedia.org/wiki/Product_rule
     // https://en.wikipedia.org/wiki/Quotient_rule
@@ -357,11 +357,11 @@ library Numbers
     Square(x: DualNumber): DualNumber
         => (x.Value.Square, 2.0 * x.Value * x.Derivative);
 
-    // (1/x)' = -x' / x^2. Precondition: Value is non-zero.
+    // (1/x)' = -x' / x^2. Precondition: IValue is non-zero.
     Reciprocal(x: DualNumber): DualNumber
         => (x.Value.Reciprocal, -x.Derivative / x.Value.Square);
 
-    // (sqrt x)' = x' / (2 * sqrt x). Precondition: Value is strictly positive
+    // (sqrt x)' = x' / (2 * sqrt x). Precondition: IValue is strictly positive
     // (the rule divides by the root, so zero is excluded even though the
     // square root itself is defined there).
     Sqrt(x: DualNumber): DualNumber
@@ -380,7 +380,7 @@ library Numbers
     Exp(x: DualNumber): DualNumber
         => (x.Value.Exp, x.Value.Exp * x.Derivative);
 
-    // (ln x)' = x' / x. Precondition: Value is strictly positive.
+    // (ln x)' = x' / x. Precondition: IValue is strictly positive.
     NaturalLog(x: DualNumber): DualNumber
         => (x.Value.NaturalLog, x.Derivative / x.Value);
 
@@ -397,7 +397,7 @@ library Numbers
     Cos(x: DualNumber): DualNumber
         => (x.Value.Cos, -x.Value.Sin * x.Derivative);
 
-    // (tan x)' = x' / cos^2 x. Precondition: Value is not an odd multiple of
+    // (tan x)' = x' / cos^2 x. Precondition: IValue is not an odd multiple of
     // a quarter turn, where the tangent and this rule both diverge.
     Tan(x: DualNumber): DualNumber
         => (x.Value.Tan, x.Derivative / x.Value.Cos.Square);
@@ -405,7 +405,7 @@ library Numbers
     //==
     // # Magnitude
 
-    // (|x|)' = sign(x) * x'. Precondition: Value is non-zero, where the
+    // (|x|)' = sign(x) * x'. Precondition: IValue is non-zero, where the
     // absolute value has no derivative.
     Abs(x: DualNumber): DualNumber
         => (x.Value.Abs, x.Value.Sign.ToNumber * x.Derivative);
@@ -477,12 +477,12 @@ library Numbers
     // # Beta and regularized incomplete beta
     //
     // The (complete) beta function in direct and log form, and the regularized
-    // incomplete beta function I_x(a, b) via the classic Numerical Recipes
+    // incomplete beta function I_x(a, b) via the classic INumerical Recipes
     // `betacf` continued fraction with the symmetry transform
     // I_x(a, b) = 1 - I_{1-x}(b, a) applied when x is past the convergence split
     // (a + 1) / (a + b + 2). The continued fraction is evaluated bottom-up to a
     // fixed depth of 100 odd/even coefficient PAIRS (200 coefficients), double
-    // Numerical Recipes' ITMAX budget. Expected accuracy: ~1e-13 relative for
+    // INumerical Recipes' ITMAX budget. Expected accuracy: ~1e-13 relative for
     // moderate a and b (both <= ~100).
     //
     // I_x(a, b) is the incomplete-beta function cited by the TODO(content)
@@ -503,7 +503,7 @@ library Numbers
     Beta(a: Number, b: Number): Number
         => LogBeta(a, b).Exp;
 
-    // The Numerical Recipes `betacf` continued fraction, evaluated bottom-up
+    // The INumerical Recipes `betacf` continued fraction, evaluated bottom-up
     // one odd/even coefficient pair per level: this returns
     // F(m) = 1 + d(2m+1) / (1 + d(2m+2) / F(m+1)) with the standard
     //   d(2m+1) = -(a+m)(a+b+m) x / ((a+2m)(a+2m+1))
@@ -646,13 +646,13 @@ library Numbers
     //==
     // # Regularized incomplete gamma functions
     //
-    // P(a, x) and Q(a, x) = 1 - P(a, x), following the classic Numerical Recipes
+    // P(a, x) and Q(a, x) = 1 - P(a, x), following the classic INumerical Recipes
     // `gammp`/`gammq` structure: the power series for the lower function when
     // x < a + 1 (where it converges fastest) and the continued fraction for the
     // upper function when x >= a + 1, each complemented to give the other half.
     // Both evaluations are run to a FIXED depth instead of an epsilon exit —
     // 200 series terms and a 120-level continued fraction — which comfortably
-    // exceeds the worst-case term counts Numerical Recipes budgets (ITMAX = 100)
+    // exceeds the worst-case term counts INumerical Recipes budgets (ITMAX = 100)
     // for either region. Expected accuracy: ~1e-13 relative for moderate a
     // (a <= ~100); for very large a the split point x = a + 1 costs a few more
     // digits, as in every implementation of this structure.
@@ -706,7 +706,7 @@ library Numbers
     // the survival function of the unit-scale gamma distribution. Continued
     // fraction above the split x = a + 1 (so the far tail keeps RELATIVE
     // accuracy), complement of the series below it (so near-zero tails are
-    // accurate only absolutely, as in Numerical Recipes). Precondition:
+    // accurate only absolutely, as in INumerical Recipes). Precondition:
     // a > 0, x >= 0.
     RegularizedGammaQ(a: Number, x: Number): Number
     {

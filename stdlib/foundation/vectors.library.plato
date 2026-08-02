@@ -249,7 +249,7 @@ library Vectors
     //==
     // # Integer vectors — concrete bodies
     //
-    // Hashable obligations for the fixed-arity integer tuples declared in
+    // IHashable obligations for the fixed-arity integer tuples declared in
     // `vectors.types.plato`.
 
     Hash(self: IntegerVector2): Integer
@@ -351,7 +351,7 @@ library Vectors
     Min(self: Number2, value2: Number2): Number2
         => Number2(self.X.Min(value2.X), self.Y.Min(value2.Y));
 
-    // The Hashable obligation: every component folded into one digest.
+    // The IHashable obligation: every component folded into one digest.
     Hash(self: Number2): Integer
         => self.X.Hash.CombineHash(self.Y.Hash);
 
@@ -425,7 +425,7 @@ library Vectors
     Min(self: Number3, value2: Number3): Number3
         => Number3(self.X.Min(value2.X), self.Y.Min(value2.Y), self.Z.Min(value2.Z));
 
-    // The Hashable obligation: every component folded into one digest.
+    // The IHashable obligation: every component folded into one digest.
     Hash(self: Number3): Integer
         => self.X.Hash.CombineHash(self.Y.Hash).CombineHash(self.Z.Hash);
 
@@ -502,7 +502,7 @@ library Vectors
         => Number4(self.X.Min(value2.X), self.Y.Min(value2.Y),
                    self.Z.Min(value2.Z), self.W.Min(value2.W));
 
-    // The Hashable obligation: every component folded into one digest.
+    // The IHashable obligation: every component folded into one digest.
     Hash(self: Number4): Integer
         => self.X.Hash.CombineHash(self.Y.Hash).CombineHash(self.Z.Hash).CombineHash(self.W.Hash);
 
@@ -633,7 +633,7 @@ library Vectors
                    self.X4.Min(value2.X4), self.X5.Min(value2.X5),
                    self.X6.Min(value2.X6), self.X7.Min(value2.X7));
 
-    // The Hashable obligation: every lane folded into one digest.
+    // The IHashable obligation: every lane folded into one digest.
     Hash(self: Number8): Integer
         => self.X0.Hash.CombineHash(self.X1.Hash).CombineHash(self.X2.Hash)
                .CombineHash(self.X3.Hash).CombineHash(self.X4.Hash)

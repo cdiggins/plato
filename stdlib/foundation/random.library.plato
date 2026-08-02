@@ -7,7 +7,7 @@
 //  - Gamma- and beta-family bodies
 //  - Heavy-tailed, lifetime, and shaped distribution bodies
 //  - Discrete distribution bodies
-//  - Derived functions for ProbabilityDistribution
+//  - Derived functions for IProbabilityDistribution
 
 library Random
 {
@@ -17,7 +17,7 @@ library Random
     // The numerical building blocks every distribution body is written against —
     // factorial, the binomial coefficient, the standard normal density and its
     // rational CDF approximation — plus the `RandomState` hash. The
-    // `ProbabilityDistribution` obligations themselves are split by family across
+    // `IProbabilityDistribution` obligations themselves are split by family across
     // the sections below, as is the derived surface built *on top* of the concept
     // (StandardDeviation, SurvivalAt, ProbabilityBetween, ...).
     //
@@ -45,12 +45,12 @@ library Random
     // change.
 
     //==
-    // # Numerical helpers
+    // # INumerical helpers
     //
     // Small building blocks used by the discrete masses and the normal family.
     // TODO(cross-package): summing an `Array<Number>` is spelled inline as
     // `Reduce(0.0, (total, x) => total + x)` throughout this block; a generic
-    // `Sum(Indexable<Number>)` belongs to the P2 collections package, not here.
+    // `Sum(IIndexable<Number>)` belongs to the P2 collections package, not here.
 
     // n factorial (n! = 1*2*...*n) as a Number, with 0! = 1! = 1. Exact for
     // n <= 22 in IEEE double; larger n loses precision and eventually overflows.
@@ -114,7 +114,7 @@ library Random
     //==
     // # Uniform, normal, and exponential bodies
     //
-    // The `ProbabilityDistribution` obligations for the four elementary continuous
+    // The `IProbabilityDistribution` obligations for the four elementary continuous
     // families of `random.types.plato`: UniformDistribution,
     // NormalDistribution, LogNormalDistribution and ExponentialDistribution. Every
     // Pdf and Mean here is exact; the Cdf of the two normal forms inherits the
@@ -233,7 +233,7 @@ library Random
     //==
     // # Gamma- and beta-family bodies
     //
-    // The `ProbabilityDistribution` obligations for GammaDistribution,
+    // The `IProbabilityDistribution` obligations for GammaDistribution,
     // BetaDistribution, ChiSquaredDistribution and StudentTDistribution. These four
     // share one shape: their Mean and Variance are elementary closed forms, while
     // every Pdf and Cdf goes through the special-function vocabulary of the
@@ -381,7 +381,7 @@ library Random
     //==
     // # Heavy-tailed, lifetime, and shaped distribution bodies
     //
-    // The `ProbabilityDistribution` obligations for the remaining continuous
+    // The `IProbabilityDistribution` obligations for the remaining continuous
     // families of `random.types.plato`: the heavy-tailed CauchyDistribution
     // and the peaked LaplaceDistribution, the lifetime and power-law
     // WeibullDistribution and ParetoDistribution, the bounded
@@ -409,9 +409,9 @@ library Random
     // The variance is undefined. By the convention stated on the type, this
     // reports positive infinity, spelled as 1.0/0.0 — which is exactly the IEEE
     // +Infinity on every float backend, so it needs no constant. Deliberately
-    // NOT adding a `PositiveInfinity` to `NumericalLimits`: that concept is
+    // NOT adding a `PositiveInfinity` to `INumericalLimits`: that concept is
     // declared in the core/algebra concept files (owned elsewhere) and a new
-    // member imposes a fresh obligation on every Numerical implementor
+    // member imposes a fresh obligation on every INumerical implementor
     // tree-wide, which is out of proportion to this one call.
     Variance(self: CauchyDistribution): Number
         => 1.0 / 0.0;
@@ -585,7 +585,7 @@ library Random
         => 1.0 - BesselI1(self.Concentration) / BesselI0(self.Concentration);
 
     // The von Mises density: exp(kappa * cos(v - mu)) / (2*pi * I0(kappa)),
-    // with v the angle in radians. Periodic with period 2*pi, so no support
+    // with v the angle in radians. IPeriodic with period 2*pi, so no support
     // guard is needed; at kappa = 0 it is the circular uniform 1/(2*pi).
     Pdf(self: VonMisesDistribution, value: Number): Number
         => (self.Concentration
@@ -634,7 +634,7 @@ library Random
     //==
     // # Discrete distribution bodies
     //
-    // The `ProbabilityDistribution` obligations for the types of
+    // The `IProbabilityDistribution` obligations for the types of
     // `random.types.plato`. Pdf reads the probability mass at the value rounded
     // down to a whole number, per that file's convention. The Binomial and Poisson
     // CDFs sum the masses directly — exact in form and O(k) — because their closed
@@ -847,9 +847,9 @@ library Random
     }
 
     //==
-    // # Derived functions for ProbabilityDistribution
+    // # Derived functions for IProbabilityDistribution
     //
-    // Bodies for the `ProbabilityDistribution` concept declared in
+    // Bodies for the `IProbabilityDistribution` concept declared in
     // `random.concepts.plato`,
     // which exposes Mean, Variance, Pdf and Cdf. The derived surface is the tail
     // and interval probabilities that read from Cdf, plus the spread and density
@@ -860,7 +860,7 @@ library Random
     // free.
 
     //==
-    // # ProbabilityDistribution
+    // # IProbabilityDistribution
     //
     // A univariate distribution exposing Mean, Variance, Pdf, and Cdf. The
     // derived surface is the tail and interval probabilities that read from Cdf,
@@ -870,33 +870,33 @@ library Random
     // The standard deviation: the square root of the variance, in the same units
     // as the values. Precondition: the variance is non-negative
     // (https://en.wikipedia.org/wiki/Standard_deviation).
-    StandardDeviation(self: ProbabilityDistribution): Number
+    StandardDeviation(self: IProbabilityDistribution): Number
         => self.Variance.Sqrt;
 
     // The cumulative probability of drawing at most value; a readable spelling
     // of Cdf (https://en.wikipedia.org/wiki/Cumulative_distribution_function).
-    ProbabilityAtMost(self: ProbabilityDistribution, value: Number): Number
+    ProbabilityAtMost(self: IProbabilityDistribution, value: Number): Number
         => self.Cdf(value);
 
     // The survival function at value: the probability of drawing more than
     // value, 1 - Cdf(value)
     // (https://en.wikipedia.org/wiki/Survival_function).
-    SurvivalAt(self: ProbabilityDistribution, value: Number): Number
+    SurvivalAt(self: IProbabilityDistribution, value: Number): Number
         => 1.0 - self.Cdf(value);
 
     // The probability mass in the half-open interval (low, high]: Cdf(high) -
     // Cdf(low). Precondition: low <= high.
-    ProbabilityBetween(self: ProbabilityDistribution, low: Number, high: Number): Number
+    ProbabilityBetween(self: IProbabilityDistribution, low: Number, high: Number): Number
         => self.Cdf(high) - self.Cdf(low);
 
     // The precision: the reciprocal of the variance. Precondition: the variance
     // is positive (undefined for the degenerate and heavy-tailed cases)
     // (https://en.wikipedia.org/wiki/Precision_%28statistics%29).
-    Precision(self: ProbabilityDistribution): Number
+    Precision(self: IProbabilityDistribution): Number
         => 1.0 / self.Variance;
 
     // True when value a is at least as likely (dense) as value b under this
     // distribution.
-    IsAtLeastAsLikelyAs(self: ProbabilityDistribution, a: Number, b: Number): Boolean
+    IsAtLeastAsLikelyAs(self: IProbabilityDistribution, a: Number, b: Number): Boolean
         => self.Pdf(a) >= self.Pdf(b);
 }

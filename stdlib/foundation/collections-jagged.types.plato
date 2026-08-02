@@ -1,17 +1,17 @@
 //==
-// # Jagged arrays
+// # IJagged arrays
 //
 // The standalone noun for ragged row data, for callers that have no domain type
-// of their own to project onto the Jagged concept.
+// of their own to project onto the IJagged concept.
 
 // A standalone list of variable-length rows in CSR form: the concrete carrier
-// of the Jagged packing (invariant stated once on the `Jagged` concept in
+// of the IJagged packing (invariant stated once on the `IJagged` concept in
 // `collections.concepts.plato`). Builders such as FromRows return this
 // type, and a domain type that HAS ragged rows holds one as a field
 // (PolygonMesh3D.Faces); only a type whose own storage already names the rows
-// differently (the adjacency tables) implements Jagged directly instead.
+// differently (the adjacency tables) implements IJagged directly instead.
 type JaggedArray<T>
-    implements Value, Jagged<T>
+    implements IValue, IJagged<T>
 {
     Offsets: Array<Integer>;
     Values: Array<T>;

@@ -27,7 +27,7 @@
 // ItemIndices[BucketOffsets[i] .. BucketOffsets[i+1]) (half-open CSR;
 // BucketOffsets has one more entry than CellCoordinates).
 type SpatialHashGrid2D
-    implements Value, SpatialIndex2D
+    implements IValue, ISpatialIndex2D
 {
     CellSize: Number;
     CellCoordinates: Array<IntegerVector2>;
@@ -38,7 +38,7 @@ type SpatialHashGrid2D
 // A sparse uniform grid over space, keyed by integer cell coordinate. Same
 // CSR encoding as SpatialHashGrid2D with 3D cell coordinates.
 type SpatialHashGrid3D
-    implements Value, SpatialIndex3D
+    implements IValue, ISpatialIndex3D
 {
     CellSize: Number;
     CellCoordinates: Array<IntegerVector3>;
@@ -51,7 +51,7 @@ type SpatialHashGrid3D
 // bucket j * CellCounts.Width + i. Bucket b's items are
 // ItemIndices[BucketOffsets[b] .. BucketOffsets[b+1]) (half-open CSR).
 type BinningGrid2D
-    implements Value, SpatialIndex2D
+    implements IValue, ISpatialIndex2D
 {
     Bounds: Bounds2D;
     CellCounts: IntegerSize2D;
@@ -64,7 +64,7 @@ type BinningGrid2D
 // (k * CellCounts.Height + j) * CellCounts.Width + i. Same CSR encoding as
 // BinningGrid2D.
 type BinningGrid3D
-    implements Value, SpatialIndex3D
+    implements IValue, ISpatialIndex3D
 {
     Bounds: Bounds3D;
     CellCounts: IntegerSize3D;
@@ -80,7 +80,7 @@ type BinningGrid3D
 // positions). Sorting by code groups spatially nearby cells: the basis of
 // linear BVH builds and cache-friendly sweeps.
 type MortonCode2D
-    implements Value, Hashable, Comparable
+    implements IValue, IHashable, IComparable
 {
     Value: Integer;
 }
@@ -88,7 +88,7 @@ type MortonCode2D
 // A 3D Morton (Z-order) code: X, Y, and Z coordinate bits interleaved
 // (X in bit positions 0, 3, 6, ...).
 type MortonCode3D
-    implements Value, Hashable, Comparable
+    implements IValue, IHashable, IComparable
 {
     Value: Integer;
 }
@@ -106,7 +106,7 @@ type MortonCode3D
 // vertex plane lie at radius r with r * r = 4 * FocalLength * h. The reflector
 // shape: rays parallel to Axis converge at the focus.
 type Paraboloid
-    implements Geometry3D, Connected, Manifold, Orientable
+    implements IGeometry3D, IConnected, IManifold, IOrientable
 {
     Vertex: Point3D;
     Axis: Direction3D;
@@ -118,7 +118,7 @@ type Paraboloid
 // Coefficients is symmetric. Spheres, ellipsoids, cones, cylinders,
 // paraboloids, and hyperboloids are all special cases.
 type Quadric
-    implements Geometry3D
+    implements IGeometry3D
 {
     Coefficients: Matrix4x4;
 }
@@ -135,7 +135,7 @@ type Quadric
 // and RightChild (above), both node indices. Leaves have children of -1 and
 // a non-empty half-open Items range into the owning tree's PointIndices.
 type KdTreeNode2D
-    implements Value
+    implements IValue
 {
     SplitAxis: Integer;
     SplitValue: Number;
@@ -148,7 +148,7 @@ type KdTreeNode2D
 // point set: nearest-neighbor and range queries. Node 0 is the root;
 // PointIndices is the leaf-order permutation of Points.
 type KdTree2D
-    implements Value, SpatialIndex2D, NearestNeighborQueryable2D
+    implements IValue, ISpatialIndex2D, INearestNeighborQueryable2D
 {
     Points: Array<Point2D>;
     Nodes: Array<KdTreeNode2D>;
@@ -158,7 +158,7 @@ type KdTree2D
 // One node of a 3D kd-tree. SplitAxis is 0 for X, 1 for Y, 2 for Z;
 // otherwise encoded exactly like KdTreeNode2D.
 type KdTreeNode3D
-    implements Value
+    implements IValue
 {
     SplitAxis: Integer;
     SplitValue: Number;
@@ -171,7 +171,7 @@ type KdTreeNode3D
 // queries. Node 0 is the root; PointIndices is the leaf-order permutation
 // of Points.
 type KdTree3D
-    implements Value, SpatialIndex3D, NearestNeighborQueryable3D
+    implements IValue, ISpatialIndex3D, INearestNeighborQueryable3D
 {
     Points: Array<Point3D>;
     Nodes: Array<KdTreeNode3D>;
@@ -193,7 +193,7 @@ type Containment = Disjoint | Intersects | Contains | Within;
 
 // A filtered request for everything overlapping a 2D axis-aligned region.
 type OverlapQuery2D
-    implements Value
+    implements IValue
 {
     Bounds: Bounds2D;
     FilterMask: Integer;
@@ -201,7 +201,7 @@ type OverlapQuery2D
 
 // A filtered request for everything overlapping a 3D axis-aligned region.
 type OverlapQuery3D
-    implements Value
+    implements IValue
 {
     Bounds: Bounds3D;
     FilterMask: Integer;
@@ -212,7 +212,7 @@ type OverlapQuery3D
 // discrete intersection points (empty when Intersects is false, or when the
 // overlap is a region rather than isolated points).
 type IntersectionResult2D
-    implements Value
+    implements IValue
 {
     Intersects: Boolean;
     Points: Array<Point2D>;
@@ -222,7 +222,7 @@ type IntersectionResult2D
 // intersection points (empty when Intersects is false, or when the overlap
 // is a curve or region rather than isolated points).
 type IntersectionResult3D
-    implements Value
+    implements IValue
 {
     Intersects: Boolean;
     Points: Array<Point3D>;
@@ -233,7 +233,7 @@ type IntersectionResult3D
 // fully inside, indices straddling the boundary, and the count of items
 // rejected outright.
 type FrustumCullResult
-    implements Value
+    implements IValue
 {
     FullyVisible: Array<ItemIndex>;
     PartiallyVisible: Array<ItemIndex>;
@@ -252,7 +252,7 @@ type FrustumCullResult
 // (https://en.wikipedia.org/wiki/Nearest_neighbor_search). NeighborCount is
 // the maximum number of results; MaxDistance of zero or less means unbounded.
 type KNearestQuery2D
-    implements Value
+    implements IValue
 {
     Center: Point2D;
     NeighborCount: Integer;
@@ -262,7 +262,7 @@ type KNearestQuery2D
 // A k-nearest-neighbors request around a 3D point. NeighborCount is the
 // maximum number of results; MaxDistance of zero or less means unbounded.
 type KNearestQuery3D
-    implements Value
+    implements IValue
 {
     Center: Point3D;
     NeighborCount: Integer;
@@ -273,7 +273,7 @@ type KNearestQuery3D
 // (https://en.wikipedia.org/wiki/Fixed-radius_near_neighbors). MaxCount of
 // zero or less means unlimited.
 type RadiusQuery2D
-    implements Value
+    implements IValue
 {
     Center: Point2D;
     Radius: Number;
@@ -283,7 +283,7 @@ type RadiusQuery2D
 // An all-points-within-radius request around a 3D point. MaxCount of zero
 // or less means unlimited.
 type RadiusQuery3D
-    implements Value
+    implements IValue
 {
     Center: Point3D;
     Radius: Number;
@@ -294,7 +294,7 @@ type RadiusQuery3D
 // (into the caller's item list) and their distances from the query point,
 // sorted ascending by distance. Empty arrays mean nothing was in range.
 type NearestNeighbors
-    implements Value
+    implements IValue
 {
     Indices: Array<ItemIndex>;
     Distances: Array<Number>;
@@ -305,7 +305,7 @@ type NearestNeighbors
 // single object); Parameter is the normalized position along the primitive
 // when it is curve-like, 0 otherwise.
 type ClosestPointResult2D
-    implements Value
+    implements IValue
 {
     Position: Point2D;
     Distance: Number;
@@ -313,11 +313,11 @@ type ClosestPointResult2D
     Parameter: Number;
 }
 
-// The closest point on a 3D surface to a query point. Face is the triangle
+// The closest point on a 3D surface to a query point. IFace is the triangle
 // holding the closest point (-1 when the target is not a mesh); Barycentric
 // locates it within that triangle.
 type ClosestPointResult3D
-    implements Value
+    implements IValue
 {
     Position: Point3D;
     Distance: Number;
@@ -330,7 +330,7 @@ type ClosestPointResult3D
 // the first set, IndexB into the second, and the separating distance (0 when
 // touching or overlapping).
 type ClosestPairResult
-    implements Value
+    implements IValue
 {
     IndexA: ItemIndex;
     IndexB: ItemIndex;
@@ -349,7 +349,7 @@ type ClosestPairResult
 // A bounded, filtered 2D raycast request
 // (https://en.wikipedia.org/wiki/Ray_casting).
 type RayQuery2D
-    implements Value
+    implements IValue
 {
     Ray: Ray2D;
     MaxDistance: Number;
@@ -358,7 +358,7 @@ type RayQuery2D
 
 // A bounded, filtered 3D raycast request.
 type RayQuery3D
-    implements Value
+    implements IValue
 {
     Ray: Ray3D;
     MaxDistance: Number;
@@ -368,7 +368,7 @@ type RayQuery3D
 // A sphere-sweep (thick ray) request: a sphere of the given radius travels
 // along the ray until it first touches something.
 type SweepQuery3D
-    implements Value
+    implements IValue
 {
     Ray: Ray3D;
     Radius: Number;
@@ -382,7 +382,7 @@ type SweepQuery3D
 // PrimitiveIndex identifies the struck primitive in the caller's list,
 // -1 when inapplicable.
 type RayHit2D
-    implements Value
+    implements IValue
 {
     Hit: Boolean;
     Distance: Number;
@@ -392,13 +392,13 @@ type RayHit2D
 }
 
 // The result of a 3D raycast against triangulated geometry. When Hit is false
-// the remaining fields are meaningless. Face is the struck triangle (-1 when
+// the remaining fields are meaningless. IFace is the struck triangle (-1 when
 // the target is not a mesh); Barycentric locates the hit within that triangle
 // (https://en.wikipedia.org/wiki/Barycentric_coordinate_system); Uv is the
 // interpolated surface parameter at the hit, (0, 0) when the target carries no
 // UVs.
 type RayHit3D
-    implements Value
+    implements IValue
 {
     Hit: Boolean;
     Distance: Number;
@@ -426,7 +426,7 @@ type RayHit3D
 // A zero-based index of a node within a spatial structure's flat node array.
 // -1 means "no child" / "leaf".
 type SpatialNodeIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -439,7 +439,7 @@ type SpatialNodeIndex
 // RightChild of -1 and a non-empty half-open range into the owning
 // hierarchy's PrimitiveIndices.
 type BvhNode2D
-    implements Value
+    implements IValue
 {
     Bounds: Bounds2D;
     LeftChild: SpatialNodeIndex;
@@ -452,7 +452,7 @@ type BvhNode2D
 // primitives. Node 0 is the root; PrimitiveIndices is the leaf-order
 // permutation of the caller's primitive list.
 type Bvh2D
-    implements Value, SpatialIndex2D
+    implements IValue, ISpatialIndex2D
 {
     Nodes: Array<BvhNode2D>;
     PrimitiveIndices: Array<ItemIndex>;
@@ -461,7 +461,7 @@ type Bvh2D
 // One node of a 3D bounding volume hierarchy. Same encoding as BvhNode2D
 // with 3D bounds.
 type BvhNode3D
-    implements Value
+    implements IValue
 {
     Bounds: Bounds3D;
     LeftChild: SpatialNodeIndex;
@@ -473,7 +473,7 @@ type BvhNode3D
 // ray-tracing and broad-phase accelerator. Node 0 is the root;
 // PrimitiveIndices is the leaf-order permutation of the caller's primitives.
 type Bvh3D
-    implements Value, SpatialIndex3D, RayIntersectable3D
+    implements IValue, ISpatialIndex3D, IRayIntersectable3D
 {
     Nodes: Array<BvhNode3D>;
     PrimitiveIndices: Array<ItemIndex>;
@@ -486,7 +486,7 @@ type Bvh3D
 // consecutive children (ordered -X-Y, +X-Y, -X+Y, +X+Y), or -1 for a leaf.
 // Items is a half-open range into the owning tree's ItemIndices.
 type QuadtreeNode
-    implements Value
+    implements IValue
 {
     Bounds: Bounds2D;
     FirstChild: SpatialNodeIndex;
@@ -497,7 +497,7 @@ type QuadtreeNode
 // Node 0 is the root and covers Bounds; each level splits its square into four
 // equal quadrants, to at most MaxDepth levels below the root.
 type Quadtree2D
-    implements Value, SpatialIndex2D
+    implements IValue, ISpatialIndex2D
 {
     Bounds: Bounds2D;
     Nodes: Array<QuadtreeNode>;
@@ -509,7 +509,7 @@ type Quadtree2D
 // consecutive children (ordered by octant: X varies fastest, then Y, then
 // Z), or -1 for a leaf. Items is a half-open range into ItemIndices.
 type OctreeNode
-    implements Value
+    implements IValue
 {
     Bounds: Bounds3D;
     FirstChild: SpatialNodeIndex;
@@ -520,7 +520,7 @@ type OctreeNode
 // Node 0 is the root and covers Bounds; each level splits its cube into eight
 // equal octants, to at most MaxDepth levels below the root.
 type Octree3D
-    implements Value, SpatialIndex3D
+    implements IValue, ISpatialIndex3D
 {
     Bounds: Bounds3D;
     Nodes: Array<OctreeNode>;
@@ -532,7 +532,7 @@ type Octree3D
 // exact; 2 is common), letting each item live wholly inside one node:
 // cheap incremental updates for moving objects.
 type LooseOctree3D
-    implements Value, SpatialIndex3D
+    implements IValue, ISpatialIndex3D
 {
     Octree: Octree3D;
     Looseness: Number;

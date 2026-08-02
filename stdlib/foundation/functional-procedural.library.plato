@@ -10,7 +10,7 @@
 library FunctionalProcedural
 {
     //==
-    // # Procedural
+    // # IProcedural
     //
     // Evaluation over a batch of inputs. The result collection is constructed by
     // the Array.Map intrinsic, so this no longer needs a concept that can build
@@ -18,77 +18,77 @@ library FunctionalProcedural
 
     // Evaluate the mapping at every input, preserving order. Result element i is
     // Eval(inputs[i]).
-    EvalAll(self: Procedural<$TDomain, $TRange>, inputs: Array<$TDomain>): Array<$TRange>
+    EvalAll(self: IProcedural<$TDomain, $TRange>, inputs: Array<$TDomain>): Array<$TRange>
         => inputs.Map(input => self.Eval(input));
 
     //==
-    // # Bijective
+    // # IBijective
     //
     // Round-trip identities for an invertible mapping
     // (https://en.wikipedia.org/wiki/Bijection).
 
     // Map forward then back; equals the original input for a true bijection.
-    RoundTripDomain(self: Bijective<$TDomain, $TRange>, input: $TDomain): $TDomain
+    RoundTripDomain(self: IBijective<$TDomain, $TRange>, input: $TDomain): $TDomain
         => self.EvalInverse(self.Eval(input));
 
     // Map back then forward; equals the original output for a true bijection.
-    RoundTripRange(self: Bijective<$TDomain, $TRange>, output: $TRange): $TRange
+    RoundTripRange(self: IBijective<$TDomain, $TRange>, output: $TRange): $TRange
         => self.Eval(self.EvalInverse(output));
 
     //==
-    // # Periodic
+    // # IPeriodic
     //
     // RESOLVED (was TODO(concept-gap): a wrapping helper needs Modulo on the
     // period type, and Plato was said to have no type-parameter constraint
     // syntax). The premise was false — concept `where` clauses are live and used
-    // (IntervalLike / BoundsLike in intervals-bounds.concepts.plato, MetricSpace
-    // in algebra.concepts.plato). Periodic<TPeriod> now carries
-    // `where TPeriod: Additive, TPeriod: Modular`, and WrapPhase below is derived
+    // (IIntervalLike / IBoundsLike in intervals-bounds.concepts.plato, IMetricSpace
+    // in algebra.concepts.plato). IPeriodic<TPeriod> now carries
+    // `where TPeriod: IAdditive, TPeriod: IModular`, and WrapPhase below is derived
     // from that bound. The one implementor path
-    // (PeriodicCurve<TRange> inherits Periodic<Number>) satisfies it: Number
-    // implements Real, which inherits Arithmetic, which inherits both.
+    // (IPeriodicCurve<TRange> inherits IPeriodic<Number>) satisfies it: Number
+    // implements IReal, which inherits IArithmetic, which inherits both.
     //
     // The old note also claimed the missing Eval was a second blocker. It is not
     // one for WrapPhase, which takes the domain value as a parameter rather than
     // reading it off the surface. It IS what keeps wrapped *evaluation* from being
-    // derived here: a generic EvalWrapped needs a receiver that is both Periodic
-    // and Procedural, and a library function cannot state a two-concept bound —
+    // derived here: a generic EvalWrapped needs a receiver that is both IPeriodic
+    // and IProcedural, and a library function cannot state a two-concept bound —
     // MethodDeclaration takes no type parameters at all, so a constraint can only
-    // sit on a concept declaration. PeriodicCurve is the concept that has both, and
+    // sit on a concept declaration. IPeriodicCurve is the concept that has both, and
     // EvalWrapped lives there (curves.library.plato).
     //
     // NormalizedPhase is likewise not derivable generically: dividing a TPeriod by
-    // a TPeriod to get a Number needs a division Modular does not supply.
+    // a TPeriod to get a Number needs a division IModular does not supply.
 
     // Folds a domain value into the half-open interval [0, Period). The extra
     // "+ Period then modulo" corrects the truncated remainder, which is negative
     // for negative t. Precondition: Period > 0.
-    WrapPhase(self: Periodic<$TPeriod>, t: $TPeriod): $TPeriod
+    WrapPhase(self: IPeriodic<$TPeriod>, t: $TPeriod): $TPeriod
         => ((t % self.Period) + self.Period) % self.Period;
 
     //==
-    // # ParameterDomain
+    // # IParameterDomain
     //
     // Convenience accessors over the preferred evaluation interval. The Domain is
     // a NumberInterval with Start and End fields.
 
     // The lower bound of the preferred parameter range.
-    DomainStart(self: ParameterDomain): Number
+    DomainStart(self: IParameterDomain): Number
         => self.Domain.Start;
 
     // The upper bound of the preferred parameter range.
-    DomainEnd(self: ParameterDomain): Number
+    DomainEnd(self: IParameterDomain): Number
         => self.Domain.End;
 
     // The width of the preferred parameter range (End - Start).
-    DomainWidth(self: ParameterDomain): Number
+    DomainWidth(self: IParameterDomain): Number
         => self.Domain.End - self.Domain.Start;
 
     // The midpoint of the preferred parameter range.
-    DomainCenter(self: ParameterDomain): Number
+    DomainCenter(self: IParameterDomain): Number
         => (self.Domain.Start + self.Domain.End) / 2.0;
 
     // True when t lies within the preferred parameter range (inclusive).
-    DomainContains(self: ParameterDomain, t: Number): Boolean
+    DomainContains(self: IParameterDomain, t: Number): Boolean
         => t >= self.Domain.Start && t <= self.Domain.End;
 }

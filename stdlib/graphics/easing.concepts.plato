@@ -8,6 +8,6 @@
 // A pure easing curve: maps normalized time to normalized progress. Eval(0)
 // yields 0 and Eval(1) yields 1; intermediate values may leave [0, 1]
 // (overshoot and anticipation).
-concept EasingFunction
-    inherits Procedural<Number, Number>
+interface IEasingFunction
+    inherits IProcedural<Number, Number>
 { }

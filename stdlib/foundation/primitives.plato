@@ -22,27 +22,27 @@
 // A 64-bit floating-point approximation of a real number.
 // (https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
 primitive Number
-    implements Real
+    implements IReal
 { }
 
 // A signed whole number. (https://en.wikipedia.org/wiki/Integer_(computer_science))
 primitive Integer
-    implements Whole, Bitwise
+    implements IWhole, IBitwise
 { }
 
 // A truth value: true or false. (https://en.wikipedia.org/wiki/Boolean_data_type)
 primitive Boolean
-    implements Value, Orderable, Logical
+    implements IValue, IOrderable, ILogical
 { }
 
 // A single character of text. (https://en.wikipedia.org/wiki/Character_(computing))
 primitive Character
-    implements Value, Orderable
+    implements IValue, IOrderable
 { }
 
 // Immutable text. (https://en.wikipedia.org/wiki/String_(computer_science))
 primitive String
-    implements Value, Orderable, Countable
+    implements IValue, IOrderable, ICountable
 { }
 
 // ## Type tokens
@@ -57,7 +57,7 @@ primitive Type
 // An immutable one-dimensional ordered collection.
 // (https://en.wikipedia.org/wiki/Array_(data_structure))
 primitive Array<T>
-    implements Indexable<T>
+    implements IIndexable<T>
 { }
 
 // ### Affine builders

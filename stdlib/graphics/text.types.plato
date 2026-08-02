@@ -18,7 +18,7 @@
 // 500=Medium, 700=Bold, 900=Black. Intermediate values are valid for
 // variable fonts. (https://en.wikipedia.org/wiki/Font)
 type FontWeight
-    implements Value, Comparable
+    implements IValue, IComparable
 {
     Value: Integer;
 }
@@ -44,7 +44,7 @@ type FontStretch
 // width axes used to select (or synthesize) a face.
 // (https://en.wikipedia.org/wiki/Typeface)
 type FontFace
-    implements Value
+    implements IValue
 {
     Family: String;
     Weight: FontWeight;
@@ -56,7 +56,7 @@ type FontFace
 // the em size in use). Descent and UnderlinePosition are positive downward
 // from the baseline.
 type FontMetrics
-    implements Value
+    implements IValue
 {
     Ascent: Number;
     Descent: Number;
@@ -69,10 +69,10 @@ type FontMetrics
 
 // One OpenType feature setting, such as ("liga", 1) to enable ligatures or
 // ("ss01", 1) to select a stylistic set. Tag is the four-character feature
-// tag; Value is 0=off, 1=on, or an alternate index for selector features.
+// tag; IValue is 0=off, 1=on, or an alternate index for selector features.
 // (https://en.wikipedia.org/wiki/OpenType)
 type OpenTypeFeature
-    implements Value
+    implements IValue
 {
     Tag: String;
     Value: Integer;
@@ -91,7 +91,7 @@ type OpenTypeFeature
 // advance to the next glyph (x and y, supporting vertical scripts).
 // (https://en.wikipedia.org/wiki/Glyph)
 type GlyphPlacement
-    implements Value
+    implements IValue
 {
     GlyphId: Integer;
     Position: Point2D;
@@ -102,7 +102,7 @@ type GlyphPlacement
 // positioned glyphs ready for rasterization or outlining.
 // (https://en.wikipedia.org/wiki/Text_shaping)
 type GlyphRun
-    implements Value
+    implements IValue
 {
     Font: FontFace;
     Size: Number;
@@ -112,7 +112,7 @@ type GlyphRun
 // A glyph converted to vector geometry: its outline as a path (already
 // scaled to the em size in use) and its advance.
 type GlyphOutline
-    implements Value
+    implements IValue
 {
     GlyphId: Integer;
     Path: Path2D;
@@ -123,7 +123,7 @@ type GlyphOutline
 // tangent. StartOffset is the arc length from the path start to the first
 // glyph; Spacing is added between glyphs, in the same units.
 type TextOnPath
-    implements Value
+    implements IValue
 {
     Run: TextRun;
     Path: Path2D;
@@ -146,7 +146,7 @@ type TextDecoration = None | Underline | Overline | StrikeThrough;
 // units. LetterSpacing and WordSpacing are additive adjustments in the same
 // units. LineHeight is a multiple of Size (1.0 is tight).
 type TextStyle
-    implements Value
+    implements IValue
 {
     Font: FontFace;
     Size: Number;
@@ -178,7 +178,7 @@ type TextOverflow = Clip | Ellipsis | Fade | Visible;
 // run's own line height (1.0 is neutral). FirstLineIndent and
 // ParagraphSpacing are in document units.
 type ParagraphStyle
-    implements Value
+    implements IValue
 {
     Align: TextAlign;
     Direction: TextDirection;
@@ -190,7 +190,7 @@ type ParagraphStyle
 // A maximal stretch of text sharing one style; rich text is a sequence of
 // runs.
 type TextRun
-    implements Value
+    implements IValue
 {
     Text: String;
     Style: TextStyle;
@@ -201,7 +201,7 @@ type TextRun
 // unconstrained. MaxLineCount of -1 means unlimited. Overflow applies when
 // either constraint is exceeded. (https://en.wikipedia.org/wiki/Wrapping_(text))
 type TextLayout
-    implements Value
+    implements IValue
 {
     Runs: Array<TextRun>;
     Paragraph: ParagraphStyle;

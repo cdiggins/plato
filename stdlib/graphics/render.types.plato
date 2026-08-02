@@ -23,7 +23,7 @@ type Tonemap = None | Reinhard | Aces | Filmic | Agx;
 // level mapped to display white (its exact meaning is curve-dependent).
 // (https://en.wikipedia.org/wiki/Exposure_value)
 type ToneMappingSettings
-    implements Value
+    implements IValue
 {
     Curve: Tonemap;
     ExposureCompensation: Number;
@@ -45,7 +45,7 @@ type AntiAliasing
 // samples to avoid self-occlusion; SampleCount trades quality for speed.
 // (https://en.wikipedia.org/wiki/Ambient_occlusion)
 type AmbientOcclusionSettings
-    implements Value
+    implements IValue
 {
     Enabled: Boolean;
     Radius: Number;
@@ -59,7 +59,7 @@ type AmbientOcclusionSettings
 // blur spread as a fraction of screen height.
 // See https://en.wikipedia.org/wiki/Bloom_(shader_effect).
 type BloomSettings
-    implements Value
+    implements IValue
 {
     Enabled: Boolean;
     Threshold: Number;
@@ -80,7 +80,7 @@ type FogModel
 
 // Fog controls: the model plus the fog color.
 type FogSettings
-    implements Value
+    implements IValue
 {
     Model: FogModel;
     Color: Color;
@@ -99,7 +99,7 @@ type FogSettings
 // multisampling); HasDepth requests a depth attachment.
 // (https://en.wikipedia.org/wiki/Framebuffer)
 type RenderTargetDescriptor
-    implements Value
+    implements IValue
 {
     Size: IntegerSize2D;
     ColorFormat: PixelFormat;
@@ -119,7 +119,7 @@ type Denoiser = None | Fast | HighQuality;
 // fireflies (0 = unclamped); Seed makes runs reproducible.
 // (https://en.wikipedia.org/wiki/Path_tracing)
 type PathTracingSettings
-    implements Value
+    implements IValue
 {
     SamplesPerPixel: Integer;
     MaxBounces: Integer;
@@ -149,7 +149,7 @@ type DisplayColorSpace
 // gathering the individual settings records into one value.
 // (https://en.wikipedia.org/wiki/Graphics_pipeline)
 type RenderPipelineSettings
-    implements Value
+    implements IValue
 {
     Quality: QualityPreset;
     Target: RenderTargetDescriptor;
@@ -163,7 +163,7 @@ type RenderPipelineSettings
 
 // Timing and workload measurements for one rendered frame.
 type FrameStatistics
-    implements Value
+    implements IValue
 {
     FrameIndex: Integer;
     CpuTime: Duration;
@@ -189,7 +189,7 @@ type VertexAttributeRole
 // (3 for a position, 2 for a UV), whether integer data is normalized to
 // [0, 1] when read, and its byte offset from the start of the vertex.
 type VertexAttributeDescriptor
-    implements Value
+    implements IValue
 {
     Role: VertexAttributeRole;
     ComponentCount: Integer;
@@ -200,7 +200,7 @@ type VertexAttributeDescriptor
 // The complete interleaved layout of one vertex: its attributes plus the
 // stride in bytes between consecutive vertices.
 type VertexLayout
-    implements Value
+    implements IValue
 {
     Attributes: Array<VertexAttributeDescriptor>;
     ByteStride: Integer;

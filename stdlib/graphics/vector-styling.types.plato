@@ -1,5 +1,5 @@
 //==
-// # Vector styling
+// # IVector styling
 //
 // Sections, in order:
 //  - Paint and fill styling
@@ -22,7 +22,7 @@ type GradientSpread = Pad | Reflect | Repeat;
 // perpendicular to the segment joining them.
 // (https://en.wikipedia.org/wiki/Color_gradient)
 type LinearGradient2D
-    implements Value
+    implements IValue
 {
     Start: Point2D;
     End: Point2D;
@@ -35,7 +35,7 @@ type LinearGradient2D
 // Focus equal to Center with FocusRadius zero gives the common single-circle
 // case.
 type RadialGradient2D
-    implements Value
+    implements IValue
 {
     Center: Point2D;
     Radius: Number;
@@ -48,7 +48,7 @@ type RadialGradient2D
 // A gradient that varies with angle around Center, starting at StartAngle and
 // sweeping one full turn counter-clockwise.
 type SweepGradient2D
-    implements Value
+    implements IValue
 {
     Center: Point2D;
     StartAngle: Angle;
@@ -60,7 +60,7 @@ type SweepGradient2D
 // from texture space into the space of the geometry being filled.
 // (https://en.wikipedia.org/wiki/Texture_mapping)
 type TexturePaint2D
-    implements Value
+    implements IValue
 {
     Texture: Texture2D;
     Transform: AffineTransform2D;
@@ -69,7 +69,7 @@ type TexturePaint2D
 // The paint source a region is filled with: a single flat color, one of three
 // gradient kinds, or a texture. Exactly one source applies per paint.
 type Paint
-    implements Value
+    implements IValue
     = Solid(Color: Color)                  // a single flat color
     | Linear(Gradient: LinearGradient2D)   // linear (axial) gradient
     | Radial(Gradient: RadialGradient2D)   // radial (two-circle) gradient
@@ -80,7 +80,7 @@ type Paint
 // an Opacity that multiplies the chosen paint's alpha.
 // (https://en.wikipedia.org/wiki/Alpha_compositing)
 type FillStyle
-    implements Value
+    implements IValue
 {
     Paint: Paint;
     Opacity: Proportion;
@@ -90,7 +90,7 @@ type FillStyle
 // blur radius, spread (outset applied before blurring; negative insets), and
 // color including alpha. (https://en.wikipedia.org/wiki/Drop_shadow)
 type ShadowStyle2D
-    implements Value
+    implements IValue
 {
     Offset: Vector2D;
     BlurRadius: Number;
@@ -101,7 +101,7 @@ type ShadowStyle2D
 // A path paired with its appearance: fill first, then stroke on top. The
 // canonical drawable unit of 2D vector graphics (see Scene2D in `scene2d.types.plato`).
 type StyledPath2D
-    implements Value
+    implements IValue
 {
     Path: Path2D;
     Fill: FillStyle;
@@ -135,7 +135,7 @@ type StrokeAlign = Center | Inside | Outside;
 // repeat; an empty array means a solid stroke. Phase shifts the pattern's
 // starting point along the contour, in the same units.
 type DashPattern
-    implements Value
+    implements IValue
 {
     Intervals: Array<Number>;
     Phase: Number;
@@ -145,7 +145,7 @@ type DashPattern
 // total stroke width. MiterLimit caps a miter join's reach as a multiple of
 // half the stroke width, as in SVG; joins beyond it fall back to bevel.
 type StrokeStyle
-    implements Value
+    implements IValue
 {
     Width: Number;
     Cap: LineCap;
@@ -160,7 +160,7 @@ type StrokeStyle
 // point in the marker's space that lands on the host path. When OrientToPath
 // is true the marker rotates to follow the host path's tangent.
 type PathMarker
-    implements Value
+    implements IValue
 {
     Path: Path2D;
     Size: Size2D;
@@ -174,7 +174,7 @@ type PathMarker
 // MiterLimit shape the corners of the offset result; Cap shapes the ends of
 // open contours. (https://en.wikipedia.org/wiki/Parallel_curve)
 type PathOffsetParameters
-    implements Value
+    implements IValue
 {
     Distance: Number;
     Join: LineJoin;
@@ -187,7 +187,7 @@ type PathOffsetParameters
 // Cap describes how the resulting pieces are intended to be terminated when
 // stroked.
 type PathDashParameters
-    implements Value
+    implements IValue
 {
     Pattern: DashPattern;
     Cap: LineCap;

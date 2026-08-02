@@ -19,7 +19,7 @@
 // in the same implicit unit as the value.
 // (https://en.wikipedia.org/wiki/Measurement_uncertainty)
 type UncertainNumber
-    implements Value
+    implements IValue
 {
     Value: Number;
     StandardUncertainty: Number;
@@ -28,7 +28,7 @@ type UncertainNumber
 // A runtime-united measurement: an amount, its standard uncertainty in the
 // same unit, and the unit itself.
 type UncertainQuantity
-    implements Value
+    implements IValue
 {
     Amount: Number;
     StandardUncertainty: Number;
@@ -39,7 +39,7 @@ type UncertainQuantity
 // CoverageFactor times StandardUncertainty (k = 2 gives roughly 95%
 // coverage for a normal error model).
 type ExpandedUncertainty
-    implements Value
+    implements IValue
 {
     StandardUncertainty: Number;
     CoverageFactor: Number;
@@ -49,7 +49,7 @@ type ExpandedUncertainty
 // Level (e.g. 0.95). Lower does not exceed Upper.
 // (https://en.wikipedia.org/wiki/Confidence_interval)
 type ConfidenceInterval
-    implements Value
+    implements IValue
 {
     Lower: Number;
     Upper: Number;
@@ -60,7 +60,7 @@ type ConfidenceInterval
 // true null hypothesis (e.g. 0.05).
 // (https://en.wikipedia.org/wiki/Statistical_significance)
 type SignificanceLevel
-    implements Value
+    implements IValue
 {
     Alpha: Probability;
 }
@@ -72,7 +72,7 @@ type SignificanceLevel
 // Convention: see CONVENTIONS.md - Floating-point comparison (this is an
 // acceptance allowance, explicitly NOT the ComparisonTolerance epsilon record).
 type Tolerance
-    implements Value
+    implements IValue
 {
     Nominal: Number;
     Plus: Number;
@@ -83,7 +83,7 @@ type Tolerance
 // the endpoint itself is included.
 // (https://en.wikipedia.org/wiki/Interval_(mathematics))
 type IntervalBound
-    implements Value
+    implements IValue
 {
     Value: Number;
     Inclusive: Boolean;
@@ -99,7 +99,7 @@ type IntervalBound
 // the peak B, where A <= B <= C.
 // (https://en.wikipedia.org/wiki/Fuzzy_number)
 type TriangularFuzzyNumber
-    implements Value
+    implements IValue
 {
     A: Number;
     B: Number;
@@ -110,7 +110,7 @@ type TriangularFuzzyNumber
 // core [B, C], where A <= B <= C <= D.
 // (https://en.wikipedia.org/wiki/Membership_function_(mathematics))
 type TrapezoidalFuzzyNumber
-    implements Value
+    implements IValue
 {
     A: Number;
     B: Number;
@@ -131,7 +131,7 @@ type TrapezoidalFuzzyNumber
 
 // A 2D vector with a 2x2 covariance of its components.
 type UncertainVector2D
-    implements Value
+    implements IValue
 {
     Value: Vector2D;
     Covariance: Covariance2D;
@@ -139,7 +139,7 @@ type UncertainVector2D
 
 // A 3D vector with a 3x3 covariance of its components.
 type UncertainVector3D
-    implements Value
+    implements IValue
 {
     Value: Vector3D;
     Covariance: Covariance3D;
@@ -147,7 +147,7 @@ type UncertainVector3D
 
 // A 2D position with a 2x2 covariance of its coordinates.
 type UncertainPoint2D
-    implements Value
+    implements IValue
 {
     Value: Point2D;
     Covariance: Covariance2D;
@@ -155,7 +155,7 @@ type UncertainPoint2D
 
 // A 3D position with a 3x3 covariance of its coordinates.
 type UncertainPoint3D
-    implements Value
+    implements IValue
 {
     Value: Point3D;
     Covariance: Covariance3D;
@@ -168,7 +168,7 @@ type UncertainPoint3D
 // order matches the state length.
 // (https://en.wikipedia.org/wiki/Kalman_filter)
 type KalmanState
-    implements Value
+    implements IValue
 {
     State: Array<Number>;
     Covariance: MatrixN;
@@ -178,7 +178,7 @@ type KalmanState
 // Observation (H), ProcessNoise covariance (Q), and ObservationNoise
 // covariance (R).
 type KalmanFilterParameters
-    implements Value
+    implements IValue
 {
     Transition: MatrixN;
     Observation: MatrixN;
@@ -239,7 +239,7 @@ type MeasurementSeries<T>
 // One fitted coefficient of a calibration model: its name, its value with the
 // uncertainty the fit assigned it, and the unit that value is expressed in.
 type CalibrationParameter
-    implements Value
+    implements IValue
 {
     Name: String;
     Value: UncertainNumber;
@@ -251,7 +251,7 @@ type CalibrationParameter
 // performed, which is what dates a measurement's traceability.
 // (https://en.wikipedia.org/wiki/Calibration)
 type CalibrationModel
-    implements Value
+    implements IValue
 {
     Name: String;
     Parameters: Array<CalibrationParameter>;
@@ -292,7 +292,7 @@ type Ensemble<T>
 // downstream registration needs in order to weight it.
 // (https://en.wikipedia.org/wiki/Pose_(computer_vision))
 type UncertainPose3D
-    implements Value
+    implements IValue
 {
     Value: Pose3D;
     Covariance: MatrixN;

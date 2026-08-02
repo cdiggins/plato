@@ -24,7 +24,7 @@ type BeamRestraint = Fixed | Pinned | Roller | Free;
 // A support placed along a beam. Position is measured from the beam's start
 // along its axis.
 type BeamSupport
-    implements Value
+    implements IValue
 {
     Restraint: BeamRestraint;
     Position: Length;
@@ -37,7 +37,7 @@ type BeamSupport
 // convention.
 // (https://en.wikipedia.org/wiki/Structural_load)
 type BeamLoad
-    implements Value
+    implements IValue
     = PointForce(Position: Length, Magnitude: Number)
     | DistributedForce(StartPosition: Length, EndPosition: Length, Magnitude: Number)
     | Moment(Position: Length, Magnitude: Number);
@@ -75,7 +75,7 @@ type FitClass = Clearance | Transition | Interference;
 // with a toleranced deviation for each member.
 // (https://en.wikipedia.org/wiki/Engineering_tolerance)
 type ShaftHoleFit
-    implements Value
+    implements IValue
 {
     NominalDiameter: Length;
     HoleTolerance: Tolerance;
@@ -91,7 +91,7 @@ type ShaftHoleFit
 // modification (x-factor).
 // (https://en.wikipedia.org/wiki/Involute_gear)
 type GearParameters
-    implements Value
+    implements IValue
 {
     ToothCount: Integer;
     Module: Length;
@@ -104,7 +104,7 @@ type GearParameters
 // installation preload and the torque that produces it.
 // (https://en.wikipedia.org/wiki/Bolted_joint)
 type BoltedJointParameters
-    implements Value
+    implements IValue
 {
     BoltDiameter: Length;
     ThreadPitch: Length;
@@ -117,7 +117,7 @@ type BoltedJointParameters
 // modulus of rigidity.
 // (https://en.wikipedia.org/wiki/Coil_spring)
 type HelicalSpringParameters
-    implements Value
+    implements IValue
 {
     WireDiameter: Length;
     MeanCoilDiameter: Length;
@@ -130,7 +130,7 @@ type HelicalSpringParameters
 // stress of the weld metal.
 // (https://en.wikipedia.org/wiki/Fillet_weld)
 type WeldParameters
-    implements Value
+    implements IValue
 {
     LegSize: Length;
     ThroatThickness: Length;
@@ -142,7 +142,7 @@ type WeldParameters
 // internal pressure.
 // (https://en.wikipedia.org/wiki/Pressure_vessel)
 type PressureVesselParameters
-    implements Value
+    implements IValue
 {
     InnerDiameter: Length;
     WallThickness: Length;
@@ -153,7 +153,7 @@ type PressureVesselParameters
 // plus the dynamic and static load ratings.
 // (https://en.wikipedia.org/wiki/Rolling-element_bearing)
 type BearingParameters
-    implements Value
+    implements IValue
 {
     BoreDiameter: Length;
     OuterDiameter: Length;
@@ -193,7 +193,7 @@ type EngineeringMaterial
 // demand. Values above 1 indicate a passing design.
 // (https://en.wikipedia.org/wiki/Factor_of_safety)
 type SafetyFactor
-    implements Value, Comparable
+    implements IValue, IComparable
 {
     Value: Number;
 }
@@ -205,7 +205,7 @@ type SafetyFactor
 // in-plane shear component.
 // (https://en.wikipedia.org/wiki/Plane_stress)
 type StressState2D
-    implements Value
+    implements IValue
 {
     NormalX: Pressure;
     NormalY: Pressure;
@@ -216,7 +216,7 @@ type StressState2D
 // in pascals; off-diagonal entries are the shear stresses.
 // (https://en.wikipedia.org/wiki/Cauchy_stress_tensor)
 type StressState3D
-    implements Value
+    implements IValue
 {
     Matrix: SymmetricMatrix3x3;
 }
@@ -225,7 +225,7 @@ type StressState3D
 // ShearXY is the engineering shear strain (gamma), not the tensor component.
 // (https://en.wikipedia.org/wiki/Strain_(mechanics))
 type StrainState2D
-    implements Value
+    implements IValue
 {
     NormalX: Number;
     NormalY: Number;
@@ -237,7 +237,7 @@ type StrainState2D
 // shear strains).
 // (https://en.wikipedia.org/wiki/Infinitesimal_strain_theory)
 type StrainState3D
-    implements Value
+    implements IValue
 {
     Matrix: SymmetricMatrix3x3;
 }
@@ -252,7 +252,7 @@ type StrainState3D
 
 // A solid rectangular cross-section.
 type RectangularSection
-    implements Value
+    implements IValue
 {
     Width: Length;
     Height: Length;
@@ -260,14 +260,14 @@ type RectangularSection
 
 // A solid circular cross-section (round bar).
 type CircularSection
-    implements Value
+    implements IValue
 {
     Diameter: Length;
 }
 
 // A circular tube: outer diameter and wall thickness.
 type HollowCircularSection
-    implements Value
+    implements IValue
 {
     OuterDiameter: Length;
     WallThickness: Length;
@@ -276,7 +276,7 @@ type HollowCircularSection
 // A rectangular tube (box section) of uniform wall thickness.
 // (https://en.wikipedia.org/wiki/Hollow_structural_section)
 type RectangularTubeSection
-    implements Value
+    implements IValue
 {
     Width: Length;
     Height: Length;
@@ -287,7 +287,7 @@ type RectangularTubeSection
 // between flange outer faces.
 // (https://en.wikipedia.org/wiki/I-beam)
 type IBeamSection
-    implements Value
+    implements IValue
 {
     Depth: Length;
     FlangeWidth: Length;
@@ -299,7 +299,7 @@ type IBeamSection
 // one side of the web.
 // (https://en.wikipedia.org/wiki/Structural_channel)
 type ChannelSection
-    implements Value
+    implements IValue
 {
     Depth: Length;
     FlangeWidth: Length;
@@ -311,7 +311,7 @@ type ChannelSection
 // height including the flange.
 // (https://en.wikipedia.org/wiki/T-beam)
 type TSection
-    implements Value
+    implements IValue
 {
     Depth: Length;
     FlangeWidth: Length;
@@ -322,7 +322,7 @@ type TSection
 // An L-shaped (angle) section with two legs of uniform thickness.
 // (https://en.wikipedia.org/wiki/Structural_steel)
 type AngleSection
-    implements Value
+    implements IValue
 {
     LegA: Length;
     LegB: Length;
@@ -335,7 +335,7 @@ type AngleSection
 // meters. Y and Z are the section's principal in-plane axes.
 // (https://en.wikipedia.org/wiki/Second_moment_of_area)
 type SectionProperties
-    implements Value
+    implements IValue
 {
     Area: Area;
     Centroid: Point2D;

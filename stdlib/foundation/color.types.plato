@@ -12,7 +12,7 @@
 // Convention: see CONVENTIONS.md - Color (linear-light, straight alpha; A is
 // straight; do not lerp/construct from sRGB bytes without decoding).
 type Color
-    implements Numerical
+    implements INumerical
 {
     R: Number;
     G: Number;
@@ -23,7 +23,7 @@ type Color
 // An 8-bit-per-channel RGBA color with components in [0, 255]; storage and
 // interop form, typically sRGB-encoded (https://en.wikipedia.org/wiki/SRGB).
 type Color8
-    implements Value, Hashable
+    implements IValue, IHashable
 {
     R: Integer;
     G: Integer;
@@ -34,7 +34,7 @@ type Color8
 // A color in hue-saturation-value form; Hue is an angle around the color wheel.
 // (https://en.wikipedia.org/wiki/HSL_and_HSV)
 type ColorHSV
-    implements Value
+    implements IValue
 {
     Hue: Angle;
     Saturation: Number;
@@ -44,7 +44,7 @@ type ColorHSV
 // A color in hue-saturation-lightness form; Hue is an angle around the color wheel.
 // Same model family as HSV: https://en.wikipedia.org/wiki/HSL_and_HSV
 type ColorHSL
-    implements Value
+    implements IValue
 {
     Hue: Angle;
     Saturation: Number;
@@ -53,7 +53,7 @@ type ColorHSL
 
 // A color at a normalized position within a gradient; Position is in [0, 1].
 type ColorStop
-    implements Value
+    implements IValue
 {
     Position: Number;
     Color: Color;
@@ -63,7 +63,7 @@ type ColorStop
 // (https://en.wikipedia.org/wiki/Color_gradient). Stops are ordered by
 // ascending Position.
 type ColorGradient
-    implements Value
+    implements IValue
 {
     Stops: Array<ColorStop>;
 }

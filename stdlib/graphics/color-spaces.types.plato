@@ -25,7 +25,7 @@
 // the chromaticity diagram, independent of luminance.
 // (https://en.wikipedia.org/wiki/Chromaticity)
 type Chromaticity
-    implements Value, Hashable
+    implements IValue, IHashable
 {
     X: Number;
     Y: Number;
@@ -35,7 +35,7 @@ type Chromaticity
 // with its luminance in candelas per square meter (0 when unspecified).
 // (https://en.wikipedia.org/wiki/White_point)
 type WhitePoint
-    implements Value
+    implements IValue
 {
     Chromaticity: Chromaticity;
     Luminance: Number;
@@ -61,7 +61,7 @@ type TransferFunction
 // point; together they fix the space's gamut and its matrix to CIE XYZ.
 // (https://en.wikipedia.org/wiki/Primary_color)
 type RgbPrimaries
-    implements Value
+    implements IValue
 {
     Red: Chromaticity;
     Green: Chromaticity;
@@ -73,7 +73,7 @@ type RgbPrimaries
 // characteristic. Sufficient to convert between the space and CIE XYZ.
 // (https://en.wikipedia.org/wiki/RGB_color_spaces)
 type RgbColorSpace
-    implements Value
+    implements IValue
 {
     Name: String;
     Primaries: RgbPrimaries;
@@ -105,7 +105,7 @@ type ChromaticAdaptation = XyzScaling | Bradford | VonKries | CAT02 | CAT16;
 // A conversion recipe between two named color spaces, including the chromatic
 // adaptation to use when their white points differ.
 type ColorSpaceConversion
-    implements Value
+    implements IValue
 {
     Source: NamedColorSpace;
     Target: NamedColorSpace;
@@ -129,7 +129,7 @@ type ColorSpaceConversion
 // through which color space conversions pass. Y is luminance.
 // (https://en.wikipedia.org/wiki/CIE_1931_color_space)
 type ColorXYZ
-    implements Numerical
+    implements INumerical
 {
     X: Number;
     Y: Number;
@@ -139,7 +139,7 @@ type ColorXYZ
 // A color as an xy chromaticity plus luminance Y (the CIE xyY form);
 // separates "which color" from "how bright".
 type ColorXyY
-    implements Value
+    implements IValue
 {
     Chromaticity: Chromaticity;
     Luminance: Number;
@@ -149,7 +149,7 @@ type ColorXyY
 // A (green-red) and B (blue-yellow), relative to a reference white.
 // (https://en.wikipedia.org/wiki/CIELAB_color_space)
 type ColorLab
-    implements Value
+    implements IValue
 {
     L: Number;
     A: Number;
@@ -159,7 +159,7 @@ type ColorLab
 // CIELAB in cylindrical form: lightness, chroma (colorfulness), and hue angle.
 // (https://en.wikipedia.org/wiki/HCL_color_space)
 type ColorLCh
-    implements Value
+    implements IValue
 {
     L: Number;
     Chroma: Number;
@@ -169,7 +169,7 @@ type ColorLCh
 // A color in CIELUV: an alternative perceptual space favored for additive
 // (emissive) displays. (https://en.wikipedia.org/wiki/CIELUV)
 type ColorLuv
-    implements Value
+    implements IValue
 {
     L: Number;
     U: Number;
@@ -180,7 +180,7 @@ type ColorLuv
 // CIELAB; the preferred space for perceptual blending and gradients.
 // (https://en.wikipedia.org/wiki/Oklab_color_space)
 type ColorOkLab
-    implements Value
+    implements IValue
 {
     L: Number;
     A: Number;
@@ -189,7 +189,7 @@ type ColorOkLab
 
 // OkLab in cylindrical form: lightness, chroma, and hue angle.
 type ColorOkLCh
-    implements Value
+    implements IValue
 {
     L: Number;
     Chroma: Number;
@@ -211,7 +211,7 @@ type ColorOkLCh
 // color table, or a categorical scale.
 // (https://en.wikipedia.org/wiki/Palette_(computing))
 type Palette
-    implements Value
+    implements IValue
 {
     Colors: Array<Color>;
 }
@@ -247,7 +247,7 @@ type ColorDifference = CIE76 | CIE94 | CIEDE2000 | CMC | EuclideanOkLab;
 // interchange form of most 2D content. Decode to linear `Color` before
 // arithmetic. (https://en.wikipedia.org/wiki/SRGB)
 type ColorSRGB
-    implements Value
+    implements IValue
 {
     R: Number;
     G: Number;
@@ -258,7 +258,7 @@ type ColorSRGB
 // A color as luma Y plus U/V chroma differences (analog video convention).
 // (https://en.wikipedia.org/wiki/Y%E2%80%B2UV)
 type ColorYUV
-    implements Value
+    implements IValue
 {
     Y: Number;
     U: Number;
@@ -268,7 +268,7 @@ type ColorYUV
 // A color as luma Y plus Cb/Cr chroma offsets (digital video and JPEG
 // convention). (https://en.wikipedia.org/wiki/YCbCr)
 type ColorYCbCr
-    implements Value
+    implements IValue
 {
     Y: Number;
     Cb: Number;
@@ -278,7 +278,7 @@ type ColorYCbCr
 // A subtractive process color: cyan, magenta, yellow, and key (black) ink
 // coverages, each in [0, 1]. (https://en.wikipedia.org/wiki/CMYK_color_model)
 type ColorCMYK
-    implements Value
+    implements IValue
 {
     Cyan: Number;
     Magenta: Number;
@@ -290,7 +290,7 @@ type ColorCMYK
 // model); an intuitive tint/shade parameterization.
 // (https://en.wikipedia.org/wiki/HWB_color_model)
 type ColorHWB
-    implements Value
+    implements IValue
 {
     Hue: Angle;
     Whiteness: Number;
@@ -301,7 +301,7 @@ type ColorHWB
 // pair one-to-one with Amplitudes (relative power per sample).
 // (https://en.wikipedia.org/wiki/Spectral_power_distribution)
 type SpectralColor
-    implements Value
+    implements IValue
 {
     Wavelengths: Array<Length>;
     Amplitudes: Array<Number>;

@@ -14,7 +14,7 @@
 // A complex number with real and imaginary parts
 // (https://en.wikipedia.org/wiki/Complex_number).
 type Complex
-    implements Numerical
+    implements INumerical
 {
     Real: Number;
     Imaginary: Number;
@@ -23,7 +23,7 @@ type Complex
 // An exact ratio of two integers
 // (https://en.wikipedia.org/wiki/Rational_number). Denominator is never zero.
 type Rational
-    implements Value, Comparable
+    implements IValue, IComparable
 {
     Numerator: Integer;
     Denominator: Integer;
@@ -32,7 +32,7 @@ type Rational
 // A unitless scalar expected to lie in [0, 1]: blend weights, normalized
 // parameters, opacity.
 type Proportion
-    implements Numerical, Comparable
+    implements INumerical, IComparable
 {
     Value: Number;
 }
@@ -40,14 +40,14 @@ type Proportion
 // A proportion expressed per hundred: 45.0 means 45%.
 // (https://en.wikipedia.org/wiki/Percentage)
 type Percent
-    implements Numerical, Comparable
+    implements INumerical, IComparable
 {
     Value: Number;
 }
 
 // A probability in [0, 1]. (https://en.wikipedia.org/wiki/Probability)
 type Probability
-    implements Numerical, Comparable
+    implements INumerical, IComparable
 {
     Value: Number;
 }
@@ -58,14 +58,14 @@ type Probability
 // domains with richer element vocabularies declare their own (VertexIndex,
 // BoneIndex, ...).
 type ItemIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
 
 // A count of items; never negative. (https://en.wikipedia.org/wiki/Cardinal_number)
 type Cardinal
-    implements Value, Comparable
+    implements IValue, IComparable
 {
     Value: Integer;
 }
@@ -78,7 +78,7 @@ type Cardinal
 // overloads in algebra.library.plato accept it. Engineering Tolerance
 // (uncertainty.types.plato) is a manufacturing acceptance allowance, NOT this type.
 type ComparisonTolerance
-    implements Value
+    implements IValue
 {
     Absolute: Number;
     Relative: Number;
@@ -99,7 +99,7 @@ type ComparisonTolerance
 // Derivative 0 (`c.DualConstant`); the derivative of the whole expression falls
 // out of the arithmetic. (https://en.wikipedia.org/wiki/Dual_number)
 type DualNumber
-    implements Numerical
+    implements INumerical
 {
     Value: Number;
     Derivative: Number;

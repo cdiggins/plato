@@ -2,13 +2,13 @@
 // # Noise
 //
 // Sections, in order:
-//  - Procedural noise
+//  - IProcedural noise
 //  - Basis noises
 //  - Fractal noises
 //  - Warped and derived noises
 
 //==
-// # Procedural noise
+// # IProcedural noise
 //
 // Pseudo-random fields for texturing, terrain, motion, and scattering. Every
 // noise value type is a deterministic function of its parameters and Seed:
@@ -45,7 +45,7 @@ type WorleyFeature = F1 | F2 | F2MinusF1 | F1PlusF2;
 // point, with no spatial coherence. Ranges over [0, 1]
 // (https://en.wikipedia.org/wiki/White_noise).
 type WhiteNoise2D
-    implements Value, ScalarField2D
+    implements IValue, IScalarField2D
 {
     Seed: Integer;
 }
@@ -54,7 +54,7 @@ type WhiteNoise2D
 // point, with no spatial coherence. Ranges over [0, 1]
 // (https://en.wikipedia.org/wiki/White_noise).
 type WhiteNoise3D
-    implements Value, ScalarField3D
+    implements IValue, IScalarField3D
 {
     Seed: Integer;
 }
@@ -63,7 +63,7 @@ type WhiteNoise3D
 // interpolated between lattice points. Cheap, but shows lattice artifacts
 // (https://en.wikipedia.org/wiki/Value_noise).
 type ValueNoise2D
-    implements Value, ScalarField2D
+    implements IValue, IScalarField2D
 {
     Seed: Integer;
     Frequency: Number;
@@ -73,7 +73,7 @@ type ValueNoise2D
 // interpolated between lattice points. Cheap, but shows lattice artifacts
 // (https://en.wikipedia.org/wiki/Value_noise).
 type ValueNoise3D
-    implements Value, ScalarField3D
+    implements IValue, IScalarField3D
 {
     Seed: Integer;
     Frequency: Number;
@@ -83,7 +83,7 @@ type ValueNoise3D
 // smooth interpolation. Zero at lattice points; band-limited and visually
 // smooth (https://en.wikipedia.org/wiki/Perlin_noise).
 type PerlinNoise2D
-    implements Value, ScalarField2D
+    implements IValue, IScalarField2D
 {
     Seed: Integer;
     Frequency: Number;
@@ -93,7 +93,7 @@ type PerlinNoise2D
 // smooth interpolation. Zero at lattice points; band-limited and visually
 // smooth (https://en.wikipedia.org/wiki/Perlin_noise).
 type PerlinNoise3D
-    implements Value, ScalarField3D
+    implements IValue, IScalarField3D
 {
     Seed: Integer;
     Frequency: Number;
@@ -103,7 +103,7 @@ type PerlinNoise3D
 // directional artifacts and cheaper in higher dimensions than Perlin noise
 // (https://en.wikipedia.org/wiki/Simplex_noise).
 type SimplexNoise2D
-    implements Value, ScalarField2D
+    implements IValue, IScalarField2D
 {
     Seed: Integer;
     Frequency: Number;
@@ -113,7 +113,7 @@ type SimplexNoise2D
 // directional artifacts and cheaper in higher dimensions than Perlin noise
 // (https://en.wikipedia.org/wiki/Simplex_noise).
 type SimplexNoise3D
-    implements Value, ScalarField3D
+    implements IValue, IScalarField3D
 {
     Seed: Integer;
     Frequency: Number;
@@ -125,7 +125,7 @@ type SimplexNoise3D
 // crystalline, and cracked patterns; output is non-negative
 // (https://en.wikipedia.org/wiki/Worley_noise).
 type WorleyNoise2D
-    implements Value, ScalarField2D
+    implements IValue, IScalarField2D
 {
     Seed: Integer;
     Frequency: Number;
@@ -140,7 +140,7 @@ type WorleyNoise2D
 // crystalline, and cracked patterns; output is non-negative
 // (https://en.wikipedia.org/wiki/Worley_noise).
 type WorleyNoise3D
-    implements Value, ScalarField3D
+    implements IValue, IScalarField3D
 {
     Seed: Integer;
     Frequency: Number;
@@ -155,7 +155,7 @@ type WorleyNoise3D
 // (0) to fully oriented (1)
 // (https://en.wikipedia.org/wiki/Gabor_filter).
 type GaborNoise2D
-    implements Value, ScalarField2D
+    implements IValue, IScalarField2D
 {
     Seed: Integer;
     Frequency: Number;
@@ -170,7 +170,7 @@ type GaborNoise2D
 // (0) to fully oriented (1)
 // (https://en.wikipedia.org/wiki/Gabor_filter).
 type GaborNoise3D
-    implements Value, ScalarField3D
+    implements IValue, IScalarField3D
 {
     Seed: Integer;
     Frequency: Number;
@@ -191,7 +191,7 @@ type GaborNoise3D
 // terrain, clouds, and natural textures
 // (https://en.wikipedia.org/wiki/Fractional_Brownian_motion).
 type FbmNoise2D
-    implements Value, ScalarField2D
+    implements IValue, IScalarField2D
 {
     Basis: NoiseBasis;
     Seed: Integer;
@@ -206,7 +206,7 @@ type FbmNoise2D
 // terrain, clouds, and natural textures
 // (https://en.wikipedia.org/wiki/Fractional_Brownian_motion).
 type FbmNoise3D
-    implements Value, ScalarField3D
+    implements IValue, IScalarField3D
 {
     Basis: NoiseBasis;
     Seed: Integer;
@@ -220,7 +220,7 @@ type FbmNoise3D
 // octave. Non-negative, with a billowy, cloud-like character and creases at
 // the basis zero crossings.
 type TurbulenceNoise2D
-    implements Value, ScalarField2D
+    implements IValue, IScalarField2D
 {
     Basis: NoiseBasis;
     Seed: Integer;
@@ -234,7 +234,7 @@ type TurbulenceNoise2D
 // octave. Non-negative, with a billowy, cloud-like character and creases at
 // the basis zero crossings.
 type TurbulenceNoise3D
-    implements Value, ScalarField3D
+    implements IValue, IScalarField3D
 {
     Basis: NoiseBasis;
     Seed: Integer;
@@ -249,7 +249,7 @@ type TurbulenceNoise3D
 // mountainous terrain and lightning-like filaments
 // (https://en.wikipedia.org/wiki/Multifractal_system).
 type RidgedNoise2D
-    implements Value, ScalarField2D
+    implements IValue, IScalarField2D
 {
     Basis: NoiseBasis;
     Seed: Integer;
@@ -265,7 +265,7 @@ type RidgedNoise2D
 // mountainous terrain and vein-like structures
 // (https://en.wikipedia.org/wiki/Multifractal_system).
 type RidgedNoise3D
-    implements Value, ScalarField3D
+    implements IValue, IScalarField3D
 {
     Basis: NoiseBasis;
     Seed: Integer;
@@ -288,7 +288,7 @@ type RidgedNoise3D
 // of WarpFrequency scaled by WarpStrength, applied Iterations times, before
 // evaluating the Basis noise. Produces marbled, fluid-like patterns.
 type DomainWarpNoise2D
-    implements Value, ScalarField2D
+    implements IValue, IScalarField2D
 {
     Basis: NoiseBasis;
     Seed: Integer;
@@ -302,7 +302,7 @@ type DomainWarpNoise2D
 // of WarpFrequency scaled by WarpStrength, applied Iterations times, before
 // evaluating the Basis noise. Produces marbled, fluid-like patterns.
 type DomainWarpNoise3D
-    implements Value, ScalarField3D
+    implements IValue, IScalarField3D
 {
     Basis: NoiseBasis;
     Seed: Integer;
@@ -317,7 +317,7 @@ type DomainWarpNoise3D
 // advecting particles without sources or sinks
 // (https://en.wikipedia.org/wiki/Curl_(mathematics)).
 type CurlNoise2D
-    implements Value, VectorField2D
+    implements IValue, IVectorField2D
 {
     Seed: Integer;
     Frequency: Number;
@@ -328,7 +328,7 @@ type CurlNoise2D
 // of particles, smoke, and hair
 // (https://en.wikipedia.org/wiki/Curl_(mathematics)).
 type CurlNoise3D
-    implements Value, VectorField3D
+    implements IValue, IVectorField3D
 {
     Seed: Integer;
     Frequency: Number;

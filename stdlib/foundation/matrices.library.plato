@@ -2,25 +2,25 @@
 // # Matrices
 //
 // Sections, in order:
-//  - Dense matrix members — the MatrixLike, Additive and Scalable surface
+//  - Dense matrix members — the IMatrixLike, IAdditive and IScalable surface
 //  - Sparse and banded matrix readings
 
 library Matrices
 {
     //==
-    // # Dense matrix members — the MatrixLike, Additive and Scalable surface
+    // # Dense matrix members — the IMatrixLike, IAdditive and IScalable surface
     //
     // The per-type bodies that make the concrete matrices of `matrices.types.plato`
-    // genuine `MatrixLike` implementations: the shape pair (RowCount, ColumnCount),
-    // zero-based element access, and the element-wise Additive / Scalable
+    // genuine `IMatrixLike` implementations: the shape pair (RowCount, ColumnCount),
+    // zero-based element access, and the element-wise IAdditive / IScalable
     // arithmetic. Without these the generated members throw, so the whole derived
     // surface in `numeric-structures.library.plato` (Trace, FrobeniusNorm,
     // Lerp, ...) is unreachable.
     //
     // Convention: see CONVENTIONS.md - Matrices. Rows are stored as vectors, so
     // element (r, c) is component c of row r, and `Row1` is row index 0. The rows
-    // are themselves `Vector`s, so element-wise arithmetic is just the same
-    // operation applied per row, and `ElementAt` bottoms out in `Vector.At`.
+    // are themselves `IVector`s, so element-wise arithmetic is just the same
+    // operation applied per row, and `ElementAt` bottoms out in `IVector.At`.
     //
     // `Add`, `Subtract`, `Multiply(scalar)` and `Divide(scalar)` for `Matrix3x2` and
     // `Matrix4x4` are NOT restated here — those two types carry their full

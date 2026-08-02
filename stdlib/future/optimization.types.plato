@@ -24,7 +24,7 @@ type OptimizationGoal = Minimize | Maximize;
 // times the current magnitude, or when an iteration or evaluation budget is
 // exhausted. A budget of -1 means no limit.
 type ConvergenceCriteria
-    implements Value
+    implements IValue
 {
     MaxIterations: Integer;
     AbsoluteTolerance: Number;
@@ -38,7 +38,7 @@ type TerminationReason = Converged | MaxIterations | Stalled | Failed | Numerica
 // The outcome of an optimization run: the best parameter vector found, its
 // objective value, the iterations spent, and how the run ended.
 type OptimizationResult
-    implements Value
+    implements IValue
 {
     Parameters: Array<Number>;
     ObjectiveValue: Number;
@@ -54,7 +54,7 @@ type OptimizationResult
 // Lower and Upper.
 // (https://en.wikipedia.org/wiki/Bisection_method)
 type RootBracket
-    implements Value
+    implements IValue
 {
     Lower: Number;
     Upper: Number;
@@ -64,7 +64,7 @@ type RootBracket
 // value at Middle below the value at both ends.
 // (https://en.wikipedia.org/wiki/Golden-section_search)
 type BracketedMinimum
-    implements Value
+    implements IValue
 {
     Lower: Number;
     Middle: Number;
@@ -75,7 +75,7 @@ type BracketedMinimum
 // reported Root.
 // (https://en.wikipedia.org/wiki/Root-finding_algorithm)
 type RootFindResult
-    implements Value
+    implements IValue
 {
     Root: Number;
     Iterations: Integer;
@@ -87,7 +87,7 @@ type RootFindResult
 // Euclidean norm of the residual vector at the solution.
 // (https://en.wikipedia.org/wiki/Least_squares)
 type LeastSquaresResult
-    implements Value
+    implements IValue
 {
     Coefficients: Array<Number>;
     ResidualNorm: Number;
@@ -118,7 +118,7 @@ type ConstraintRelation = Equality | LessOrEqual | GreaterOrEqual;
 // run per variable.
 // (https://en.wikipedia.org/wiki/Linear_programming)
 type LinearProgram
-    implements Value
+    implements IValue
 {
     ObjectiveCoefficients: Array<Number>;
     ConstraintMatrix: MatrixN;
@@ -133,7 +133,7 @@ type LinearProgram
 // LinearProgram. Quadratic is symmetric.
 // (https://en.wikipedia.org/wiki/Quadratic_programming)
 type QuadraticProgram
-    implements Value
+    implements IValue
 {
     Quadratic: MatrixN;
     Linear: Array<Number>;
@@ -160,7 +160,7 @@ type QuadraticProgram
 // after every iteration (1 keeps it constant).
 // (https://en.wikipedia.org/wiki/Gradient_descent)
 type GradientDescentParameters
-    implements Value
+    implements IValue
 {
     LearningRate: Number;
     Momentum: Number;
@@ -171,7 +171,7 @@ type GradientDescentParameters
 // number of past step/gradient pairs retained.
 // (https://en.wikipedia.org/wiki/Limited-memory_BFGS)
 type LbfgsParameters
-    implements Value
+    implements IValue
 {
     MemorySize: Integer;
     LineSearch: LineSearch;
@@ -184,7 +184,7 @@ type LbfgsParameters
 // Nelder-Mead simplex method (standard values 1, 2, 0.5, 0.5).
 // (https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method)
 type NelderMeadParameters
-    implements Value
+    implements IValue
 {
     Reflection: Number;
     Expansion: Number;
@@ -197,7 +197,7 @@ type NelderMeadParameters
 // the random sequence.
 // (https://en.wikipedia.org/wiki/Simulated_annealing)
 type SimulatedAnnealingParameters
-    implements Value
+    implements IValue
 {
     InitialTemperature: Number;
     CoolingRate: Number;
@@ -209,7 +209,7 @@ type SimulatedAnnealingParameters
 // unchanged each generation, and the random seed.
 // (https://en.wikipedia.org/wiki/Genetic_algorithm)
 type GeneticAlgorithmParameters
-    implements Value
+    implements IValue
 {
     PopulationSize: Integer;
     MutationProbability: Probability;
@@ -223,7 +223,7 @@ type GeneticAlgorithmParameters
 // random seed.
 // (https://en.wikipedia.org/wiki/Differential_evolution)
 type DifferentialEvolutionParameters
-    implements Value
+    implements IValue
 {
     PopulationSize: Integer;
     DifferentialWeight: Number;
@@ -236,7 +236,7 @@ type DifferentialEvolutionParameters
 // (cognitive) and the swarm's best (social), and the random seed.
 // (https://en.wikipedia.org/wiki/Particle_swarm_optimization)
 type ParticleSwarmParameters
-    implements Value
+    implements IValue
 {
     SwarmSize: Integer;
     Inertia: Number;

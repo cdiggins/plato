@@ -36,7 +36,7 @@ type Attenuation = None | Linear | Quadratic | InverseSquare | Smooth;
 // penumbras; the sun subtends about 0.53 degrees.
 // (https://en.wikipedia.org/wiki/Illuminance)
 type DirectionalLight
-    implements LightSource
+    implements ILightSource
 {
     Direction: Direction3D;
     Color: Color;
@@ -49,7 +49,7 @@ type DirectionalLight
 // intensity follows as Flux over 4 pi steradians. Range of zero means
 // unlimited. (https://en.wikipedia.org/wiki/Luminous_flux)
 type PointLight
-    implements LightSource
+    implements ILightSource
 {
     Position: Point3D;
     Color: Color;
@@ -64,7 +64,7 @@ type PointLight
 // zero at OuterAngle. Invariant: InnerAngle <= OuterAngle. Flux is the total
 // power emitted within the cone.
 type SpotLight
-    implements LightSource
+    implements ILightSource
 {
     Position: Point3D;
     Direction: Direction3D;
@@ -81,7 +81,7 @@ type SpotLight
 // rectangle's local axes (it emits along its local forward axis) and Size its
 // extent. TwoSided emitters radiate from both faces.
 type AreaLight
-    implements LightSource
+    implements ILightSource
 {
     Center: Point3D;
     Orientation: Quaternion;
@@ -94,7 +94,7 @@ type AreaLight
 
 // A flat circular emitter of the given Radius, facing along Normal.
 type DiskLight
-    implements LightSource
+    implements ILightSource
 {
     Center: Point3D;
     Normal: Direction3D;
@@ -109,7 +109,7 @@ type DiskLight
 // sized alternative to PointLight that yields soft shadows and visible
 // highlights.
 type SphereLight
-    implements LightSource
+    implements ILightSource
 {
     Center: Point3D;
     Radius: Number;
@@ -121,7 +121,7 @@ type SphereLight
 // A capsule-shaped emitter along the segment from Start to End with the given
 // Radius; models fluorescent tubes and light strips.
 type TubeLight
-    implements LightSource
+    implements ILightSource
 {
     Start: Point3D;
     End: Point3D;
@@ -134,12 +134,12 @@ type TubeLight
 //==
 // # Environment and ambient lighting
 
-// Image-based lighting from a cube map (`texturing.types.plato`). Rotation spins the
+// IImage-based lighting from a cube map (`texturing.types.plato`). Rotation spins the
 // environment about the world up axis. Intensity is a dimensionless scale on
 // stored texel radiance; Tint multiplies it per channel (white = unchanged).
-// (https://en.wikipedia.org/wiki/Image-based_lighting)
+// (https://en.wikipedia.org/wiki/IImage-based_lighting)
 type EnvironmentLight
-    implements Value
+    implements IValue
 {
     Cube: TextureCube;
     Rotation: Angle;
@@ -152,7 +152,7 @@ type EnvironmentLight
 // [1, 10]; GroundAlbedo is the average ground reflectance feeding bounce
 // light; Intensity is a dimensionless multiplier on the computed radiance.
 type ProceduralSky
-    implements Value
+    implements IValue
 {
     SunDirection: Direction3D;
     Turbidity: Number;
@@ -163,7 +163,7 @@ type ProceduralSky
 // A uniform, directionless fill light applied everywhere; the crudest ambient
 // term.
 type AmbientLight
-    implements Value
+    implements IValue
 {
     Color: Color;
     Illuminance: Illuminance;
@@ -173,7 +173,7 @@ type AmbientLight
 // InfluenceRadius bounds the affected region in scene units; Intensity scales
 // the captured radiance.
 type LightProbe
-    implements Value
+    implements IValue
 {
     Position: Point3D;
     InfluenceRadius: Number;
@@ -195,7 +195,7 @@ type LightProbe
 // depth ranges (1 = no cascades). MaxDistance is the farthest shadowed
 // distance in scene units. (https://en.wikipedia.org/wiki/Shadow_mapping)
 type ShadowSettings
-    implements Value
+    implements IValue
 {
     Resolution: Integer;
     Bias: Number;
@@ -206,7 +206,7 @@ type ShadowSettings
 }
 
 // A bitmask selecting which render layers a light illuminates: bit i set means
-// the light affects the RenderLayer with Index i (`scene3d.types.plato`). All bits set means
+// the light affects the RenderLayer with IIndex i (`scene3d.types.plato`). All bits set means
 // all layers.
 type LightLayerMask
 {
@@ -218,7 +218,7 @@ type LightLayerMask
 // intensities (1 = as measured).
 // See https://en.wikipedia.org/wiki/Photometry_(optics).
 type IesProfileReference
-    implements Value
+    implements IValue
 {
     Name: String;
     Multiplier: Number;
@@ -229,7 +229,7 @@ type IesProfileReference
 // scatters forward. MaxDistance bounds the ray march in scene units.
 // (https://en.wikipedia.org/wiki/Volumetric_lighting)
 type VolumetricLightSettings
-    implements Value
+    implements IValue
 {
     Enabled: Boolean;
     Intensity: Number;

@@ -1,7 +1,7 @@
 //==
-// # Cameras — derived functions for Camera
+// # Cameras — derived functions for ICamera
 //
-// Bodies for the `Camera` concept declared in `cameras.concepts.plato`: eye position,
+// Bodies for the `ICamera` concept declared in `cameras.concepts.plato`: eye position,
 // clip-range arithmetic and the orientation tests, plus the `AspectRatio`
 // obligation fills for the camera types that derive their aspect ratio from
 // their optics rather than storing it as a field. Pure expressions only; all
@@ -11,36 +11,36 @@
 library Cameras
 {
     //==
-    // # Camera
+    // # ICamera
     //
     // A placed camera exposing a pose, near/far clip distances, and an image
     // aspect ratio (width over height). Invariant: 0 < Near < Far, so DepthSpan is
-    // positive. AspectRatio is now a Camera concept member: PerspectiveCamera and
+    // positive. AspectRatio is now a ICamera concept member: PerspectiveCamera and
     // OrthographicCamera satisfy it with their field; the bodies below discharge
     // the obligation for the camera types that derive it from their optics.
 
     // The camera's eye position in world space: the pose's translation.
-    EyePosition(self: Camera): Point3D
+    EyePosition(self: ICamera): Point3D
         => self.Pose.Position;
 
     // The depth of the rendered range: Far - Near. Precondition: Near < Far, so
     // the span is positive.
-    DepthSpan(self: Camera): Number
+    DepthSpan(self: ICamera): Number
         => self.Far - self.Near;
 
     // The scene distance halfway between the near and far clip planes.
     // Precondition: Near < Far.
-    DepthMidpoint(self: Camera): Number
+    DepthMidpoint(self: ICamera): Number
         => self.Near.MidPoint(self.Far);
 
     // The far-to-near clip ratio; large values indicate a depth range prone to
     // z-fighting under a perspective depth buffer. Precondition: Near is positive
     // (https://en.wikipedia.org/wiki/Z-fighting).
-    ClipRatio(self: Camera): Number
+    ClipRatio(self: ICamera): Number
         => self.Far / self.Near;
 
     // True when a scene depth lies within the rendered [Near, Far] range.
-    ContainsDepth(self: Camera, depth: Number): Boolean
+    ContainsDepth(self: ICamera, depth: Number): Boolean
         => depth >= self.Near && depth <= self.Far;
 
     // The image aspect ratio (width over height) of a physical camera, taken from
@@ -66,10 +66,10 @@ library Cameras
         => self.HorizontalSweep.Radians / self.VerticalFov.Radians;
 
     // True when the image is wider than it is tall (aspect ratio above 1).
-    IsLandscape(self: Camera): Boolean
+    IsLandscape(self: ICamera): Boolean
         => self.AspectRatio > 1.0;
 
     // True when the image is taller than it is wide (aspect ratio below 1).
-    IsPortrait(self: Camera): Boolean
+    IsPortrait(self: ICamera): Boolean
         => self.AspectRatio < 1.0;
 }

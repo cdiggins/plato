@@ -14,7 +14,7 @@
 // spaces that mix clips by a continuous parameter.
 
 // One clip's contribution in a blend stack. Weight scales the clip's influence;
-// when Additive is true the clip's values are added on top of the layers below
+// when IAdditive is true the clip's values are added on top of the layers below
 // instead of interpolated with them.
 type AnimationLayer
 {
@@ -101,7 +101,7 @@ type AnimationPlayhead
 // A zero-based index of a state within an animation state machine's States
 // array. -1 means "any state" where a transition allows it.
 type AnimationStateIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -191,7 +191,7 @@ type TangentKeyframe<T>
 // A sequence of keys over one value, with extrapolation policies before the
 // first key and after the last. Keys are ordered by ascending Time.
 type AnimationTrack<T>
-    implements TimeVarying<T>
+    implements ITimeVarying<T>
 {
     Keys: Array<Keyframe<T>>;
     Before: Extrapolation;
@@ -201,7 +201,7 @@ type AnimationTrack<T>
 // A track of tangent keyframes, for curves authored with explicit handles.
 // Keys are ordered by ascending Time.
 type TangentTrack<T>
-    implements TimeVarying<T>
+    implements ITimeVarying<T>
 {
     Keys: Array<TangentKeyframe<T>>;
     Before: Extrapolation;

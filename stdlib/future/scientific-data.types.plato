@@ -45,11 +45,11 @@ type DataTable
 //==
 // # Measurements and metadata
 
-// A single timestamped measurement. Value and Uncertainty are both expressed
+// A single timestamped measurement. IValue and Uncertainty are both expressed
 // in Unit; Uncertainty is one standard deviation.
 // (https://en.wikipedia.org/wiki/Measurement_uncertainty)
 type MeasurementRecord
-    implements Value
+    implements IValue
 {
     Time: Instant;
     Value: Number;
@@ -60,7 +60,7 @@ type MeasurementRecord
 // One key-value pair of dataset metadata (instrument id, operator, campaign).
 // (https://en.wikipedia.org/wiki/Metadata)
 type MetadataEntry
-    implements Value
+    implements IValue
 {
     Key: String;
     Value: String;
@@ -120,7 +120,7 @@ type DataSeries
 // A uniformly sampled time series: sample i occurs at Start plus i times
 // SamplePeriod. Values are in Unit.
 type TimeSeries
-    implements TimeSampled
+    implements ITimeSampled
 {
     Start: Instant;
     SamplePeriod: Duration;
@@ -132,7 +132,7 @@ type TimeSeries
 // Values are parallel arrays; values are in Unit.
 // (https://en.wikipedia.org/wiki/Unevenly_spaced_time_series)
 type IrregularTimeSeries
-    implements TimeSampled
+    implements ITimeSampled
 {
     Times: Array<Instant>;
     Values: Array<Number>;
@@ -143,7 +143,7 @@ type IrregularTimeSeries
 // samples): sample i occurs at Start plus i times SamplePeriod. Components are
 // in Unit.
 type Vector3DTimeSeries
-    implements TimeSampled
+    implements ITimeSampled
 {
     Start: Instant;
     SamplePeriod: Duration;
@@ -154,7 +154,7 @@ type Vector3DTimeSeries
 // A log of discrete labeled occurrences. Times is nondecreasing and parallel
 // to Labels.
 type EventLog
-    implements TimeSampled
+    implements ITimeSampled
 {
     Times: Array<Instant>;
     Labels: Array<String>;

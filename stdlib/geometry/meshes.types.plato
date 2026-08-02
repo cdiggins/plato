@@ -2,7 +2,7 @@
 // # Meshes
 //
 // Sections, in order:
-//  - Surface meshes
+//  - ISurface meshes
 //  - Mesh attributes
 //  - Unwelded face arrays
 //  - Line sets and bare point clouds
@@ -10,24 +10,24 @@
 //  - Volumetric meshes
 
 //==
-// # Surface meshes
+// # ISurface meshes
 //
 // Indexed surface geometry: shared vertex position arrays referenced by typed
 // face records. All faces wind counter-clockwise when viewed from the front
-// (outside), matching WindingOrder.CounterClockwise. Face records index into the
+// (outside), matching WindingOrder.CounterClockwise. IFace records index into the
 // owning mesh's Positions array; every index must be valid (no -1 inside faces).
 // Convention: see CONVENTIONS.md - Winding, handedness, and normals (the outward
 // face normal follows the right-hand rule over the CCW vertex order).
 
 //==
-// ## Face records
+// ## IFace records
 
 // The three vertex indices of one triangle, wound counter-clockwise when
-// viewed from the front side. Face supplies Value, Hashable, and the
-// Indexable<VertexIndex> corner surface (Count/At bodies in
+// viewed from the front side. IFace supplies IValue, IHashable, and the
+// IIndexable<VertexIndex> corner surface (Count/At bodies in
 // `meshes.library.plato`).
 type TriangleFace
-    implements Face
+    implements IFace
 {
     A: VertexIndex;
     B: VertexIndex;
@@ -39,7 +39,7 @@ type TriangleFace
 // planar approximation is needed, split along the A-C diagonal — FanTriangles
 // in `meshes.library.plato` is that split.
 type QuadFace
-    implements Face
+    implements IFace
 {
     A: VertexIndex;
     B: VertexIndex;
@@ -48,13 +48,13 @@ type QuadFace
 }
 
 //==
-// ## Surface meshes
+// ## ISurface meshes
 
 // An indexed triangle mesh in 3D
 // (https://en.wikipedia.org/wiki/Triangle_mesh): the workhorse interchange
 // representation for surface geometry. Faces index into Positions.
 type TriangleMesh3D
-    implements Value, TriangulatedGeometry3D, IndexedTriangleGeometry3D, MeshElementCounts, Deformable3D
+    implements IValue, ITriangulatedGeometry3D, IIndexedTriangleGeometry3D, IMeshElementCounts, IDeformable3D
 {
     Positions: Array<Point3D>;
     Faces: Array<TriangleFace>;
@@ -63,7 +63,7 @@ type TriangleMesh3D
 // An indexed triangle mesh in the plane: triangulations of polygons, Delaunay
 // triangulations, finite-element meshes. Faces wind counter-clockwise.
 type TriangleMesh2D
-    implements Value, Meshable2D, IndexedTriangleGeometry2D, MeshElementCounts, Deformable2D
+    implements IValue, IMeshable2D, IIndexedTriangleGeometry2D, IMeshElementCounts, IDeformable2D
 {
     Positions: Array<Point2D>;
     Faces: Array<TriangleFace>;
@@ -72,7 +72,7 @@ type TriangleMesh2D
 // An indexed quadrilateral mesh in 3D: subdivision cages, quad-dominant
 // retopology, structured patches.
 type QuadMesh3D
-    implements Value, Meshable3D, IndexedQuadGeometry3D, MeshElementCounts, Deformable3D
+    implements IValue, IMeshable3D, IIndexedQuadGeometry3D, IMeshElementCounts, IDeformable3D
 {
     Positions: Array<Point3D>;
     Faces: Array<QuadFace>;
@@ -87,13 +87,13 @@ type QuadMesh3D
 // `PolygonMesh3D` / `ConwayOperators`.
 //
 // The mesh HAS a jagged face table rather than IS one: `JaggedArray<VertexIndex>`
-// (`collections-jagged.types.plato`) already implements `Jagged<T>` and carries the CSR
+// (`collections-jagged.types.plato`) already implements `IJagged<T>` and carries the CSR
 // packing invariant, so every row query is reused through `m.Faces` — without the
 // generic names `Offsets` / `Values` landing on the mesh itself. Further jagged
 // members (vertex-to-face adjacency, for one) are then additional fields rather
 // than a second concept the type cannot implement twice.
 type PolygonMesh3D
-    implements Value, Meshable3D, MeshElementCounts, MeshIncidence, Deformable3D
+    implements IValue, IMeshable3D, IMeshElementCounts, IMeshIncidence, IDeformable3D
 {
     Positions: Array<Point3D>;
     Faces: JaggedArray<VertexIndex>;
@@ -127,7 +127,7 @@ type MeshAttribute<T>
 // Handedness is +1 or -1: the sign relating Bitangent to the cross product of
 // Normal and Tangent (mirrored UV islands flip it).
 type TangentBasis
-    implements Value
+    implements IValue
 {
     Tangent: Direction3D;
     Bitangent: Direction3D;
@@ -140,7 +140,7 @@ type TangentBasis
 // "normal" (PerVertex or PerCorner Vector3D), "uv0" (PerCorner UvCoordinate),
 // and "color" (PerVertex Color).
 type RichMesh3D
-    implements Value, Meshable3D, Deformable3D
+    implements IValue, IMeshable3D, IDeformable3D
 {
     Mesh: TriangleMesh3D;
     NumberChannels: Array<MeshAttribute<Number>>;
@@ -157,7 +157,7 @@ type RichMesh3D
 // The undirected mesh edges across which UV coordinates are discontinuous:
 // texture seams. Pairs are canonical (A.Value <= B.Value).
 type UvSeam
-    implements Value
+    implements IValue
 {
     UndirectedEdges: Array<VertexPair>;
 }
@@ -167,7 +167,7 @@ type UvSeam
 // expressed in UV space via Bounds2D (X = U, Y = V).
 // Convention: see CONVENTIONS.md - UV origin (origin top-left, U right, V down).
 type UvChart
-    implements Value
+    implements IValue
 {
     Faces: Array<FaceIndex>;
     UvBounds: Bounds2D;
@@ -178,7 +178,7 @@ type UvChart
 // the unwrap introduced, and the padding (in texels) kept between charts to
 // avoid bleeding.
 type UvAtlas
-    implements Value
+    implements IValue
 {
     Charts: Array<UvChart>;
     Seams: UvSeam;
@@ -196,7 +196,7 @@ type UvAtlas
 // regions, pinning masks. Vertices and Weights are parallel arrays; weights
 // lie in [0, 1]; vertices not listed have weight 0.
 type VertexGroup
-    implements Value
+    implements IValue
 {
     Name: String;
     Vertices: Array<VertexIndex>;
@@ -214,16 +214,16 @@ type VertexGroup
 // sharing.
 //
 // `Array` in the name is the invariant: immutable direct storage of whole faces.
-// These types deliberately do NOT implement `MeshElementCounts` — an unwelded
+// These types deliberately do NOT implement `IMeshElementCounts` — an unwelded
 // array cannot dedupe undirected edges without building incidence, and
 // `topology.concepts.plato` forbids guessing that count without building incidence.
 // Convention: see CONVENTIONS.md - Winding, handedness, and normals.
 
 // Independent triangles in space, each carrying its own three corner positions.
-// Face order is authored order; `ToTriangleMesh` welds nothing, it only supplies
+// IFace order is authored order; `ToTriangleMesh` welds nothing, it only supplies
 // the identity index table.
 type TriangleArray3D
-    implements Value, TriangleGeometry3D
+    implements IValue, ITriangleGeometry3D
 {
     Triangles: Array<Triangle3D>;
 }
@@ -232,7 +232,7 @@ type TriangleArray3D
 // positions. As with `Quad3D`, coplanarity is not guaranteed; triangulation
 // splits on the A-C diagonal.
 type QuadArray3D
-    implements Value, QuadGeometry3D
+    implements IValue, IQuadGeometry3D
 {
     Quads: Array<Quad3D>;
 }
@@ -240,7 +240,7 @@ type QuadArray3D
 //==
 // # Line sets and bare point clouds
 //
-// Geometry with no faces: straight segments over a shared vertex array
+// IGeometry with no faces: straight segments over a shared vertex array
 // (wireframes, edge overlays, sketch and hatch patterns), and unstructured
 // position sets carrying no connectivity at all. Enriched clouds that add
 // normals, colors, or sensor channels live in `pointclouds.types.plato`.
@@ -249,7 +249,7 @@ type QuadArray3D
 // (https://en.wikipedia.org/wiki/Wire-frame_model), edge overlays, debug
 // lines. Each VertexPair is one independent segment, in authored direction.
 type LineSet3D
-    implements Value, IndexedSegmentGeometry3D, Deformable3D
+    implements IValue, IIndexedSegmentGeometry3D, IDeformable3D
 {
     Positions: Array<Point3D>;
     Lines: Array<VertexPair>;
@@ -258,7 +258,7 @@ type LineSet3D
 // Straight segments over shared vertices in the plane: sketch overlays,
 // planar graphs, hatch patterns.
 type LineSet2D
-    implements Value, IndexedSegmentGeometry2D, Deformable2D
+    implements IValue, IIndexedSegmentGeometry2D, IDeformable2D
 {
     Positions: Array<Point2D>;
     Lines: Array<VertexPair>;
@@ -268,14 +268,14 @@ type LineSet2D
 // (https://en.wikipedia.org/wiki/Point_cloud): scan data, particle snapshots,
 // sampling results. Enriched variants live in `pointclouds.types.plato`.
 type PointCloud3D
-    implements Value, Deformable3D
+    implements IValue, IDeformable3D
 {
     Positions: Array<Point3D>;
 }
 
 // An unstructured set of 2D positions with no connectivity.
 type PointCloud2D
-    implements Value, Deformable2D
+    implements IValue, IDeformable2D
 {
     Positions: Array<Point2D>;
 }
@@ -289,7 +289,7 @@ type PointCloud2D
 // A zero-based index into an externally owned slot table: material
 // assignment, draw batching, sub-object identity. -1 means "no slot".
 type SlotIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -298,7 +298,7 @@ type SlotIndex
 // draw batching, sub-object identity. FaceRange is half-open (contains
 // Start, excludes End) and indexes faces of the owning mesh.
 type MeshSection
-    implements Value
+    implements IValue
 {
     FaceRange: IntegerInterval;
     Slot: SlotIndex;
@@ -307,7 +307,7 @@ type MeshSection
 // A triangle mesh partitioned into sections. Sections are non-overlapping,
 // sorted ascending by FaceRange.Start, and together cover every face.
 type SegmentedMesh3D
-    implements Value, Meshable3D, Deformable3D
+    implements IValue, IMeshable3D, IDeformable3D
 {
     Mesh: TriangleMesh3D;
     Sections: Array<MeshSection>;
@@ -324,7 +324,7 @@ type SegmentedMesh3D
 // (https://en.wikipedia.org/wiki/Tetrahedron), ordered so the signed volume is
 // positive (D on the counter-clockwise side of triangle A-B-C).
 type TetrahedronCell
-    implements Value, Hashable
+    implements IValue, IHashable
 {
     A: VertexIndex;
     B: VertexIndex;
@@ -335,7 +335,7 @@ type TetrahedronCell
 // An indexed tetrahedral mesh: finite-element volumes, volumetric
 // simulations. ToTriangleMesh yields the boundary surface.
 type TetrahedralMesh3D
-    implements Value, Meshable3D, Deformable3D
+    implements IValue, IMeshable3D, IDeformable3D
 {
     Positions: Array<Point3D>;
     Cells: Array<TetrahedronCell>;
@@ -346,7 +346,7 @@ type TetrahedralMesh3D
 // wound counter-clockwise when viewed from outside (below); E, F, G, H are the
 // corresponding vertices of the top quad (E above A, and so on).
 type HexahedronCell
-    implements Value, Hashable
+    implements IValue, IHashable
 {
     A: VertexIndex;
     B: VertexIndex;
@@ -361,7 +361,7 @@ type HexahedronCell
 // An indexed hexahedral mesh: structured simulation volumes, voxel-like
 // finite elements with shared vertices.
 type HexahedralMesh3D
-    implements Value, Deformable3D
+    implements IValue, IDeformable3D
 {
     Positions: Array<Point3D>;
     Cells: Array<HexahedronCell>;

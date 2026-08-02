@@ -26,7 +26,7 @@ library Planar
     //     that: a point exactly on an edge falls whichever way the floating point
     //     comparison goes.
     //   * `ClosestPoint` on a filled REGION returns the query point itself when the
-    //     query is contained, which `NearestPoint2D` explicitly permits.
+    //     query is contained, which `INearestPoint2D` explicitly permits.
     //   * ANGLES are `Angle` throughout; `Number` fractions of a turn are converted with
     //     `.Turns` (`angles.library.plato`) rather than by multiplying by pi.
     //
@@ -150,7 +150,7 @@ library Planar
 
     // The SideCount vertices on the circumscribed circle, counter-clockwise from
     // Rotation. Named distinctly from `Points` because RegularPolygon does not
-    // implement PointSet2D — its vertices are computed, not stored.
+    // implement IPointSet2D — its vertices are computed, not stored.
     RegularPolygonVertices(g: RegularPolygon): Array<Point2D>
         => g.SideCount.MapRange(i =>
         {
@@ -207,7 +207,7 @@ library Planar
     //     or a coordinate (concept doc: "for closed shapes the boundary counts as
     //     inside").
     //   * `ClosestPoint` on a filled REGION returns the query point itself when the
-    //     query is contained, which `NearestPoint2D` explicitly permits ("for a region
+    //     query is contained, which `INearestPoint2D` explicitly permits ("for a region
     //     it may be an interior point").
     //   * ANGLES are `Angle` throughout; `Number` fractions of a turn are converted with
     //     `.Turns` (`angles.library.plato`) rather than by multiplying by pi.

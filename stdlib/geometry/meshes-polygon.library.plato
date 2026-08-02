@@ -5,7 +5,7 @@
 //  - MeshesPolygon — face and corner access for PolygonMesh3D
 //  - Constructing and exporting PolygonMesh3D
 //  - Half-edge navigation over PolygonMesh3D corners
-//  - The MeshIncidence rung for PolygonMesh3D
+//  - The IMeshIncidence rung for PolygonMesh3D
 
 library MeshesPolygon
 {
@@ -25,7 +25,7 @@ library MeshesPolygon
     // side table at all. The navigation built on it follows in the sections below.
 
     //==
-    // MeshElementCounts obligations. VertexCount and FaceCount are direct reads;
+    // IMeshElementCounts obligations. VertexCount and FaceCount are direct reads;
     // UndirectedEdgeCount dedupes through the canonical-corner rule, so it holds
     // for open meshes as well as closed ones.
 
@@ -72,7 +72,7 @@ library MeshesPolygon
         => self.Positions[self.CornerVertex(corner)];
 
     //==
-    // Whole-face views. The vertex loop itself is `Faces.Row(face)`.
+    // IWhole-face views. The vertex loop itself is `Faces.Row(face)`.
 
     // The positions of one face in counter-clockwise order.
     // Precondition: 0 <= face < FaceCount.
@@ -89,7 +89,7 @@ library MeshesPolygon
     FaceCentroids(self: PolygonMesh3D): Array<Point3D>
         => self.FaceCount.MapRange(f => self.FaceCentroid(f));
 
-    // The Deformable3D obligation: every vertex position carried through the
+    // The IDeformable3D obligation: every vertex position carried through the
     // mapping, the face table unchanged.
     Deform(self: PolygonMesh3D, mapping: Function1<Point3D, Point3D>): PolygonMesh3D
         => (self.Positions.Map(mapping), self.Faces);
@@ -119,7 +119,7 @@ library MeshesPolygon
         => PolygonMeshOfFaces(positions, faces.Map(face => face.Map(v => VertexIndex(v))));
 
     //==
-    // Whole-mesh position maps. Connectivity is untouched, so these are the
+    // IWhole-mesh position maps. Connectivity is untouched, so these are the
     // cheap way to place a mesh: the packing is shared, only positions differ.
 
     // Every vertex pushed out onto the unit sphere. For a polyhedron built from
@@ -147,7 +147,7 @@ library MeshesPolygon
                          self.CornerVertex(self.FaceCorner(face, i + 1)),
                          self.CornerVertex(self.FaceCorner(face, i + 2))));
 
-    // The Meshable3D obligation: fan every face, sharing the position array
+    // The IMeshable3D obligation: fan every face, sharing the position array
     // unchanged so vertex numbering survives the conversion.
     ToTriangleMesh(self: PolygonMesh3D): TriangleMesh3D
         => (self.Positions,
@@ -298,9 +298,9 @@ library MeshesPolygon
     }
 
     //==
-    // # The MeshIncidence rung for PolygonMesh3D
+    // # The IMeshIncidence rung for PolygonMesh3D
     //
-    // The six incidence queries of `MeshIncidence` (`topology.concepts.plato`),
+    // The six incidence queries of `IMeshIncidence` (`topology.concepts.plato`),
     // answered from the packed corner table with no stored adjacency structure. This
     // is the middle rung of the topology ladder: enough to walk the mesh, split it
     // into components, and classify manifoldness, without committing to a built
@@ -340,7 +340,7 @@ library MeshesPolygon
             .Or(self.CornerDestination(corner).Equals(vertex));
 
     //==
-    // MeshIncidence obligations — face side.
+    // IMeshIncidence obligations — face side.
 
     // The corner loop of a face, counter-clockwise: the face's own row of the
     // packed table.
@@ -353,7 +353,7 @@ library MeshesPolygon
             .MapRange(slot => self.CornerUndirectedEdge(self.FaceCorner(face.Value, slot)));
 
     //==
-    // MeshIncidence obligations — vertex side.
+    // IMeshIncidence obligations — vertex side.
 
     // Every face using a vertex, in ascending corner order. An empty result means
     // an isolated vertex. Ascending corner order rather than rotation order, so
@@ -377,7 +377,7 @@ library MeshesPolygon
                     : acc);
 
     //==
-    // MeshIncidence obligations — edge side.
+    // IMeshIncidence obligations — edge side.
 
     // The two endpoints of an undirected edge, ordered A.Value <= B.Value to
     // match the canonical ordering of `UndirectedEdgeList`

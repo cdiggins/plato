@@ -150,7 +150,7 @@ library Angles
         => Angle(a.Radians + (b - a).Normalize.Radians * t);
 
     // True when a and b denote the same direction modulo a full turn, i.e. their
-    // canonical (normalized) forms coincide. Periodic equality that is stable
+    // canonical (normalized) forms coincide. IPeriodic equality that is stable
     // across the 0 / 2*pi seam, unlike a raw radians comparison.
     EquivalentAngle(a: Angle, b: Angle): Boolean
         => a.Normalize.Radians == b.Normalize.Radians;
@@ -172,7 +172,7 @@ library Angles
     //   * `SinCos` returns the pair in (Sin, Cos) order, matching `MathF.SinCos`
     //     and the host `AngleIntrinsics.SinCos`.
     //   * The arithmetic and ordering members restate, at `Angle`, what the generic
-    //     `Quantity` bodies give every quantity type; they exist because these exact
+    //     `IQuantity` bodies give every quantity type; they exist because these exact
     //     signatures were host intrinsics.
     //
     // https://en.wikipedia.org/wiki/Trigonometric_functions
@@ -225,7 +225,7 @@ library Angles
         => self.Radians.Tanh;
 
     //==
-    // # Arithmetic and ordering
+    // # IArithmetic and ordering
     //
     // Radians in, radians out. Angle times angle and angle over angle are
     // deliberately absent: neither product is a well-defined angle.

@@ -7,14 +7,14 @@
 
 // Anything that can shed its structure and yield its points as a bare
 // position cloud: meshes, enriched clouds, scan slices.
-concept PointCloudable3D
+interface IPointCloudable3D
 {
     ToPointCloud(x: Self): PointCloud3D;
 }
 
 // Anything that can be conservatively rasterized into a binary voxel grid
 // (https://en.wikipedia.org/wiki/Voxel) at a caller-chosen cell size.
-concept Voxelizable3D
+interface IVoxelizable3D
 {
     ToOccupancyGrid(x: Self, cellSize: Number): OccupancyGrid3D;
 }

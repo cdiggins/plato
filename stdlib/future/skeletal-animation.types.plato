@@ -3,7 +3,7 @@
 //
 // Sections, in order:
 //  - Skeletal animation
-//  - Procedural rig control
+//  - IProcedural rig control
 
 //==
 // # Skeletal animation
@@ -17,7 +17,7 @@
 // A zero-based index of a bone within the owning skeleton's bone array.
 // -1 means "no bone".
 type BoneIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -26,7 +26,7 @@ type BoneIndex
 // bone array; -1 marks a root. BindPose is the bone's rest pose relative to its
 // parent (relative to the model for roots).
 type Bone
-    implements Value
+    implements IValue
 {
     Name: String;
     Parent: BoneIndex;
@@ -38,7 +38,7 @@ type Bone
 // pass composes local poses into model space.
 // (https://en.wikipedia.org/wiki/Skeletal_animation)
 type Skeleton
-    implements Value
+    implements IValue
 {
     Bones: Array<Bone>;
 }
@@ -47,7 +47,7 @@ type Skeleton
 // owning skeleton's bone array. Composing along parent chains yields
 // model-space poses (https://en.wikipedia.org/wiki/Forward_kinematics).
 type SkeletonPose
-    implements Value
+    implements IValue
 {
     LocalPoses: Array<Pose3D>;
 }
@@ -55,7 +55,7 @@ type SkeletonPose
 // One bone's influence on a vertex: the bone's index in the skeleton and the
 // blend weight of its transform.
 type SkinWeight
-    implements Value
+    implements IValue
 {
     Bone: BoneIndex;
     Weight: Proportion;
@@ -64,7 +64,7 @@ type SkinWeight
 // All bone influences on a single vertex. Weights sum to 1; renderers commonly
 // keep the four largest.
 type VertexSkinWeights
-    implements Value
+    implements IValue
 {
     Weights: Array<SkinWeight>;
 }
@@ -73,7 +73,7 @@ type VertexSkinWeights
 // is parallel to the skeleton's bones and carries each bone's inverse
 // model-space bind transform; VertexWeights is parallel to the mesh's vertices.
 type SkinBinding
-    implements Value
+    implements IValue
 {
     Skeleton: Skeleton;
     InverseBindTransforms: Array<AffineTransform3D>;
@@ -85,7 +85,7 @@ type SkinBinding
 // mesh's vertices; an empty NormalDeltas array means "positions only".
 // (https://en.wikipedia.org/wiki/Morph_target_animation)
 type MorphTarget
-    implements Value
+    implements IValue
 {
     Name: String;
     PositionDeltas: Array<Vector3D>;
@@ -96,7 +96,7 @@ type MorphTarget
 // array. Weights are nominally in [0, 1]; values outside exaggerate or invert
 // a target.
 type MorphWeights
-    implements Value
+    implements IValue
 {
     Values: Array<Proportion>;
 }
@@ -104,7 +104,7 @@ type MorphWeights
 // A named socket on a bone for attaching props and accessories. Offset places
 // the socket relative to the bone.
 type BoneSocket
-    implements Value
+    implements IValue
 {
     Name: String;
     Bone: BoneIndex;
@@ -115,7 +115,7 @@ type BoneSocket
 // target skeleton's bone array, plus trigger events. Track values are local
 // (parent-relative) transforms.
 type SkeletalClip
-    implements Value
+    implements IValue
 {
     Name: String;
     Duration: Duration;
@@ -124,7 +124,7 @@ type SkeletalClip
 }
 
 //==
-// # Procedural rig control
+// # IProcedural rig control
 //
 // The structures that adjust a skeleton's pose rather than store it:
 // inverse-kinematics chains and their goals, aim and twist constraints,
@@ -141,7 +141,7 @@ type IkSolver = TwoBone | Ccd | Fabrik;
 // should be and how it should be oriented. The two weights blend the solved
 // result over the input pose per goal component.
 type IkTarget
-    implements Value
+    implements IValue
 {
     Position: Point3D;
     Orientation: Quaternion;
@@ -155,7 +155,7 @@ type IkTarget
 // solver loop and Tolerance is the end-effector distance below which it stops
 // early. (https://en.wikipedia.org/wiki/Inverse_kinematics)
 type IkChain
-    implements Value
+    implements IValue
 {
     BoneIndices: Array<BoneIndex>;
     Target: IkTarget;
@@ -169,7 +169,7 @@ type IkChain
 // the target; Up is the bone-local axis kept aligned to the world up to control
 // roll. Weight blends the constrained result over the input pose.
 type LookAtConstraint
-    implements Value
+    implements IValue
 {
     Bone: BoneIndex;
     Target: Point3D;
@@ -182,7 +182,7 @@ type LookAtConstraint
 // bone; used for forearm and neck twist distribution. Axis is expressed in the
 // source bone's local space.
 type TwistConstraint
-    implements Value
+    implements IValue
 {
     Bone: BoneIndex;
     SourceBone: BoneIndex;
@@ -194,7 +194,7 @@ type TwistConstraint
 // an animation layer's influence bone by bone (upper-body-only layers, fade-out
 // at chain roots).
 type BoneMask
-    implements Value
+    implements IValue
 {
     Weights: Array<Proportion>;
 }
@@ -203,7 +203,7 @@ type BoneMask
 // retargeting. TargetBoneIndices is parallel to the source skeleton's bones;
 // each entry is the corresponding target bone's index, or -1 when unmapped.
 type RetargetMap
-    implements Value
+    implements IValue
 {
     TargetBoneIndices: Array<BoneIndex>;
 }

@@ -13,7 +13,7 @@ public class ContextExportTests
     public void FiltersLibrariesFromOutput()
     {
         var output = ExportTestSupport.ExportFolder(ExportTestSupport.InputFolder(), PlatoFormatOptions.CompactDefault);
-        Assert.That(output, Does.Contain("concept Comparable"));
+        Assert.That(output, Does.Contain("interface Comparable"));
         Assert.That(output, Does.Contain("type Point2D"));
         Assert.That(output, Does.Not.Contain("library MathLib"));
         Assert.That(output, Does.Not.Contain("Add(x:Integer"));
@@ -28,7 +28,7 @@ public class ContextExportTests
         Assert.That(output, Does.Not.Contain(": "));
         Assert.That(output, Does.Not.Contain(", "));
         Assert.That(output, Does.Not.Contain("{ "));
-        Assert.That(output, Does.Contain("concept Comparable{Compare(x:Self,y:Self):Integer;}"));
+        Assert.That(output, Does.Contain("interface Comparable{Compare(x:Self,y:Self):Integer;}"));
     }
 
     [Test]
@@ -37,9 +37,9 @@ public class ContextExportTests
         var output = ExportTestSupport.ExportFolder(
             ExportTestSupport.InputFolder(),
             new PlatoFormatOptions(Pretty: true, Compressed: false, TightDelimiters: false));
-        Assert.That(output, Does.Contain("concept Comparable"));
+        Assert.That(output, Does.Contain("interface Comparable"));
         Assert.That(output, Does.Contain("Compare(x: Self, y: Self): Integer;"));
-        Assert.That(output, Does.Not.Contain("conceptComparable"));
+        Assert.That(output, Does.Not.Contain("interfaceComparable"));
     }
 
     [Test]

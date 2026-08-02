@@ -6,8 +6,8 @@
 
 // A region on the planet's surface that can test whether it contains a
 // geodetic coordinate (altitude is ignored).
-concept GeoRegion
-    inherits Value
+interface IGeoRegion
+    inherits IValue
 {
     ContainsCoordinate(x: Self, coordinate: GeoCoordinate): Boolean;
 }

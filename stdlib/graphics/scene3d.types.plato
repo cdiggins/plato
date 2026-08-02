@@ -11,7 +11,7 @@
 //
 // A retained scene description: a node hierarchy plus flat resource pools.
 // All cross-references are zero-based Integer indices with -1 meaning "none".
-// Index spaces: SceneNode3D.Mesh indexes SceneResources.Meshes;
+// IIndex spaces: SceneNode3D.Mesh indexes SceneResources.Meshes;
 // SceneNode3D.Material indexes SceneResources.Materials; SceneNode3D.Light
 // indexes SceneResources.LightBindings; SceneNode3D.Camera indexes
 // SceneResources.CameraBindings. A binding then selects into the typed arrays
@@ -19,12 +19,12 @@
 
 // A node in the scene hierarchy. Parent is the index of the parent node in
 // Scene3D.Nodes (-1 = a root); Transform is relative to the parent. Mesh,
-// Material, Light, and Camera attach resources by index (-1 = none); a node's
+// Material, Light, and ICamera attach resources by index (-1 = none); a node's
 // Material overrides the attached mesh's default. LayerMask is a bitmask over
 // RenderLayer indices: bit i set means the node belongs to the layer with
-// Index i.
+// IIndex i.
 type SceneNode3D
-    implements Value
+    implements IValue
 {
     Name: String;
     Parent: SceneNodeIndex3D;
@@ -45,7 +45,7 @@ type Visibility = Inherited | Visible | Hidden;
 // All lights of a scene grouped into typed arrays; SceneLightBinding entries
 // address into these. Each array is an independent zero-based index space.
 type SceneLightSet
-    implements Value
+    implements IValue
 {
     DirectionalLights: Array<DirectionalLight>;
     PointLights: Array<PointLight>;
@@ -60,9 +60,9 @@ type SceneLightSet
 }
 
 // A tagged reference to one light: the case picks the typed array of
-// SceneLightSet and Index is the position within that array.
+// SceneLightSet and IIndex is the position within that array.
 type SceneLightBinding
-    implements Value
+    implements IValue
     = Directional(Index: ItemIndex)
     | Point(Index: ItemIndex)
     | Spot(Index: ItemIndex)
@@ -78,7 +78,7 @@ type SceneLightBinding
 // entries address into these. Each array is an independent zero-based index
 // space.
 type SceneCameraSet
-    implements Value
+    implements IValue
 {
     PerspectiveCameras: Array<PerspectiveCamera>;
     OrthographicCameras: Array<OrthographicCamera>;
@@ -89,11 +89,11 @@ type SceneCameraSet
 }
 
 // A tagged reference to one camera: the case picks the typed array of
-// SceneCameraSet and Index is the position within that array. Distinct from
+// SceneCameraSet and IIndex is the position within that array. Distinct from
 // CameraProjection (`cameras.types.plato`): a Physical camera projects perspectively but
 // is stored in its own array.
 type SceneCameraBinding
-    implements Value
+    implements IValue
     = Perspective(Index: ItemIndex)
     | Orthographic(Index: ItemIndex)
     | Physical(Index: ItemIndex)
@@ -104,7 +104,7 @@ type SceneCameraBinding
 // The shared resource pools of a scene; node and instance indices resolve
 // here. Meshes come from `meshes.types.plato`, materials from `materials.types.plato`.
 type SceneResources
-    implements Value
+    implements IValue
 {
     Meshes: Array<TriangleMesh3D>;
     Materials: Array<Material>;
@@ -114,10 +114,10 @@ type SceneResources
     CameraBindings: Array<SceneCameraBinding>;
 }
 
-// A named rendering layer. Index is the bit position used by SceneNode3D
+// A named rendering layer. IIndex is the bit position used by SceneNode3D
 // LayerMask and LightLayerMask values; valid indices are 0 through 31.
 type RenderLayer
-    implements Value
+    implements IValue
 {
     Name: String;
     Index: Integer;
@@ -129,7 +129,7 @@ type RenderLayer
 // A complete scene: hierarchy, resource pools, layers, instancing, and levels
 // of detail. (https://en.wikipedia.org/wiki/Scene_graph)
 type Scene3D
-    implements Value
+    implements IValue
 {
     Name: String;
     Nodes: Array<SceneNode3D>;
@@ -142,7 +142,7 @@ type Scene3D
 // Aggregate counts summarizing a scene's contents and rendering cost.
 // LightCount and CameraCount total the binding tables across all typed arrays.
 type SceneStatistics
-    implements Value
+    implements IValue
 {
     NodeCount: Integer;
     MeshCount: Integer;
@@ -160,20 +160,20 @@ type SceneStatistics
 // The zero-based typed indices that address into a Scene3D and its resource
 // pools. A typed index can never be silently confused with another kind, and
 // they all share one absence encoding.
-// Convention: see CONVENTIONS.md - Typed indices (Value is zero-based, and -1
+// Convention: see CONVENTIONS.md - Typed indices (IValue is zero-based, and -1
 // means "none" / "not present").
 
 // A zero-based index of a node within Scene3D.Nodes. -1 means "none"
 // (a root's parent).
 type SceneNodeIndex3D
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
 
 // A zero-based index of a mesh within SceneResources.Meshes. -1 means "none".
 type MeshIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -181,7 +181,7 @@ type MeshIndex
 // A zero-based index of a material within SceneResources.Materials.
 // -1 means "none" / "use the mesh's default".
 type MaterialIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -189,7 +189,7 @@ type MaterialIndex
 // A zero-based index of a light binding within SceneResources.LightBindings.
 // -1 means "none".
 type LightBindingIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -197,7 +197,7 @@ type LightBindingIndex
 // A zero-based index of a camera binding within
 // SceneResources.CameraBindings. -1 means "none".
 type CameraBindingIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -213,7 +213,7 @@ type CameraBindingIndex
 // One placed copy of a mesh: Mesh and Material index into SceneResources;
 // Transform is in world space.
 type MeshInstance
-    implements Value
+    implements IValue
 {
     Mesh: MeshIndex;
     Material: MaterialIndex;
@@ -225,7 +225,7 @@ type MeshInstance
 // Transforms and tints each instance; an empty Colors array means no
 // per-instance color. (https://en.wikipedia.org/wiki/Geometry_instancing)
 type InstanceSet
-    implements Value
+    implements IValue
 {
     Mesh: MeshIndex;
     Material: MaterialIndex;
@@ -239,7 +239,7 @@ type InstanceSet
 // is below SwitchDistances[i]; beyond the last distance the object is culled.
 // See https://en.wikipedia.org/wiki/Level_of_detail_(computer_graphics).
 type LodGroup
-    implements Value
+    implements IValue
 {
     Center: Point3D;
     Meshes: Array<MeshIndex>;

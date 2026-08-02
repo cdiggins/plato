@@ -22,7 +22,7 @@
 // collides, 0 defers to the bits.
 // (https://en.wikipedia.org/wiki/Collision_detection)
 type CollisionFilter
-    implements Value
+    implements IValue
 {
     CategoryBits: Integer;
     MaskBits: Integer;
@@ -33,7 +33,7 @@ type CollisionFilter
 // LayerCount * LayerCount entries; entry (row * LayerCount + column) says
 // whether layers row and column may collide.
 type CollisionLayerMatrix
-    implements Value
+    implements IValue
 {
     LayerCount: Integer;
     Enabled: Array<Boolean>;
@@ -45,7 +45,7 @@ type CollisionLayerMatrix
 // A spherical collider: a sphere placed by a pose in the owning body's local
 // frame.
 type SphereCollider
-    implements Value
+    implements IValue
 {
     Shape: Sphere;
     LocalPose: Pose3D;
@@ -53,7 +53,7 @@ type SphereCollider
 
 // A box collider: a box placed by a pose in the owning body's local frame.
 type BoxCollider
-    implements Value
+    implements IValue
 {
     Shape: Box3D;
     LocalPose: Pose3D;
@@ -62,7 +62,7 @@ type BoxCollider
 // A capsule collider: a capsule placed by a pose in the owning body's local
 // frame.
 type CapsuleCollider
-    implements Value
+    implements IValue
 {
     Shape: Capsule3D;
     LocalPose: Pose3D;
@@ -73,7 +73,7 @@ type CapsuleCollider
 // hull, allowing dynamic-versus-dynamic collision.
 // (https://en.wikipedia.org/wiki/Convex_hull)
 type MeshCollider
-    implements Value
+    implements IValue
 {
     Mesh: TriangleMesh3D;
     Convex: Boolean;
@@ -83,7 +83,7 @@ type MeshCollider
 // A rigid group of 3D colliders sharing one owning body, stored per shape
 // kind. Any of the arrays may be empty.
 type CompoundCollider3D
-    implements Value
+    implements IValue
 {
     Spheres: Array<SphereCollider>;
     Boxes: Array<BoxCollider>;
@@ -97,7 +97,7 @@ type CompoundCollider3D
 // A circular collider: a circle placed by a pose in the owning body's local
 // frame.
 type CircleCollider2D
-    implements Value
+    implements IValue
 {
     Shape: Circle;
     LocalPose: Pose2D;
@@ -106,7 +106,7 @@ type CircleCollider2D
 // A rectangular collider: an oriented box placed by a pose in the owning
 // body's local frame.
 type BoxCollider2D
-    implements Value
+    implements IValue
 {
     Shape: OrientedBox2D;
     LocalPose: Pose2D;
@@ -115,7 +115,7 @@ type BoxCollider2D
 // A planar capsule collider: a 2D capsule placed by a pose in the owning
 // body's local frame.
 type CapsuleCollider2D
-    implements Value
+    implements IValue
 {
     Shape: Capsule2D;
     LocalPose: Pose2D;
@@ -124,7 +124,7 @@ type CapsuleCollider2D
 // A rigid group of 2D colliders sharing one owning body, stored per shape
 // kind. Any of the arrays may be empty.
 type CompoundCollider2D
-    implements Value
+    implements IValue
 {
     Circles: Array<CircleCollider2D>;
     Boxes: Array<BoxCollider2D>;
@@ -134,7 +134,7 @@ type CompoundCollider2D
 // A non-solid 3D volume that reports overlap events instead of producing
 // contact forces. Pose places the collider group in world space.
 type TriggerVolume3D
-    implements Value
+    implements IValue
 {
     Colliders: CompoundCollider3D;
     Pose: Pose3D;
@@ -155,7 +155,7 @@ type TriggerVolume3D
 // An unordered pair of colliding bodies, stored as zero-based indices into
 // the simulation's body array (-1 = none).
 type CollisionPair
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -166,7 +166,7 @@ type CollisionPair
 // NormalImpulse and TangentImpulse are the solver impulses in newton-seconds
 // along the normal and tangent (0 before solving).
 type ContactPoint2D
-    implements Value
+    implements IValue
 {
     Position: Point2D;
     Normal: Direction2D;
@@ -182,7 +182,7 @@ type ContactPoint2D
 // solving).
 // (https://en.wikipedia.org/wiki/Contact_mechanics)
 type ContactPoint3D
-    implements Value
+    implements IValue
 {
     Position: Point3D;
     Normal: Direction3D;
@@ -196,7 +196,7 @@ type ContactPoint3D
 // normal from A toward B; Friction is the combined dimensionless friction
 // coefficient; Restitution is the combined bounciness in [0, 1].
 type ContactManifold2D
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -212,7 +212,7 @@ type ContactManifold2D
 // coefficient; Restitution is the combined bounciness in [0, 1].
 // (https://en.wikipedia.org/wiki/Coefficient_of_restitution)
 type ContactManifold3D
-    implements Value
+    implements IValue
 {
     BodyA: BodyIndex;
     BodyB: BodyIndex;
@@ -232,7 +232,7 @@ type CollisionPhase = Begin | Stay | End;
 // A collision notification: which pair, which phase, and the simulation time
 // at which it was raised.
 type CollisionEvent
-    implements Value
+    implements IValue
 {
     Phase: CollisionPhase;
     Pair: CollisionPair;
@@ -247,7 +247,7 @@ type CollisionEvent
 // contact; Position and Normal describe the world hit point in meters and the
 // surface normal there; BodyIndex is the struck body (-1 = none).
 type ShapeCastResult2D
-    implements Value
+    implements IValue
 {
     Hit: Boolean;
     Fraction: Proportion;
@@ -261,7 +261,7 @@ type ShapeCastResult2D
 // contact; Position and Normal describe the world hit point in meters and the
 // surface normal there; BodyIndex is the struck body (-1 = none).
 type ShapeCastResult3D
-    implements Value
+    implements IValue
 {
     Hit: Boolean;
     Fraction: Proportion;
@@ -273,7 +273,7 @@ type ShapeCastResult3D
 // The result of an overlap query: the zero-based indices of every body whose
 // colliders intersect the query shape.
 type OverlapResult
-    implements Value
+    implements IValue
 {
     BodyIndices: Array<BodyIndex>;
 }

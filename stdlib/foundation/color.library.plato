@@ -10,13 +10,13 @@ library Colors
     //==
     // # Colors - color arithmetic
     //
-    // Implementation bodies for `Color` (`color.types.plato`): the `Numerical`
-    // obligations (Additive, Scalable, Interpolatable, NumericalLimits), computed
+    // Implementation bodies for `Color` (`color.types.plato`): the `INumerical`
+    // obligations (IAdditive, IScalable, IInterpolatable, INumericalLimits), computed
     // component-wise over R/G/B/A including alpha. The 141 CSS/X11 named colors
     // follow in the next section.
 
     //==
-    // Color - the Numerical obligations, component-wise over R/G/B/A.
+    // Color - the INumerical obligations, component-wise over R/G/B/A.
     //
     // Alpha participates in the arithmetic like any other component. That is the
     // right behaviour for a linear-light value type (it makes Lerp a straight

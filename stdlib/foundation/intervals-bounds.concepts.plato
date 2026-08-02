@@ -10,9 +10,9 @@
 
 // A one-dimensional directed span from Start to End. Start may exceed End,
 // which encodes a reversed interval.
-concept IntervalLike<T>
-    where T: Additive, T: Interpolatable, T: Comparable
-    inherits Value
+interface IIntervalLike<T>
+    where T: IAdditive, T: IInterpolatable, T: IComparable
+    inherits IValue
 {
     Start(x: Self): T;
     End(x: Self): T;
@@ -22,10 +22,10 @@ concept IntervalLike<T>
 // (https://en.wikipedia.org/wiki/Minimum_bounding_box).
 // TDelta is the displacement type between two corner points (the vector type of
 // TPoint), so Extent/Diagonal can name the Max - Min delta. TPoint is also
-// Interpolatable, which is what lets Center and Lerp blend the two corners.
-concept BoundsLike<TPoint, TDelta>
-    where TPoint: Difference<TDelta>, TPoint: Interpolatable
-    inherits Value
+// IInterpolatable, which is what lets Center and Lerp blend the two corners.
+interface IBoundsLike<TPoint, TDelta>
+    where TPoint: IDifference<TDelta>, TPoint: IInterpolatable
+    inherits IValue
 {
     Min(x: Self): TPoint;
     Max(x: Self): TPoint;

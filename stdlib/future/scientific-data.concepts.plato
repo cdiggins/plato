@@ -7,8 +7,8 @@
 // The family of time-indexed collections: a sample count and a time for each
 // zero-based sample index.
 // (https://en.wikipedia.org/wiki/Time_series)
-concept TimeSampled
-    inherits Value
+interface ITimeSampled
+    inherits IValue
 {
     SampleCount(x: Self): Integer;
     TimeAt(x: Self, index: Integer): Instant;

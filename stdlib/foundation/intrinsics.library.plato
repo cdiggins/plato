@@ -41,7 +41,7 @@ library Intrinsics
     // `primitives.library.plato`: Abs, Sign, Square, Reciprocal, Min,
     // Max, Ceiling, Truncate, Cbrt, Log/Log2/Log10, the Tan/Cosh/Sinh/Tanh
     // family, the whole inverse-trig family (over Atan2Radians and NaturalLog),
-    // Zero/One/Tau/E, IsFinite, and the five relational operators the Orderable
+    // Zero/One/Tau/E, IsFinite, and the five relational operators the IOrderable
     // generics already cover.
 
     Add(a: Number, b: Number): Number;
@@ -52,7 +52,7 @@ library Intrinsics
     Negative(n: Number): Number;
 
     // The total order and structural equality. LessThanOrEquals is the single
-    // Orderable primitive; LessThan / GreaterThan / GreaterThanOrEquals /
+    // IOrderable primitive; LessThan / GreaterThan / GreaterThanOrEquals /
     // Compare / Clamp / Lesser / Greater all derive from it in
     // `core.library.plato`, and NotEquals from Equals.
     LessThanOrEquals(a: Number, b: Number): Boolean;
@@ -141,7 +141,7 @@ library Intrinsics
     //==
     // Character and String
     //
-    // Both primitives declare `Orderable` (primitives.plato), which the host must
+    // Both primitives declare `IOrderable` (primitives.plato), which the host must
     // discharge: text ordering is the platform's collation, not something Plato
     // can define. Operator-named, so the C# writer synthesizes the wrapper from
     // the runtime's comparison operators.

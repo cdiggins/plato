@@ -2,7 +2,7 @@
 // # Material and margin members
 //
 // The concept obligations of `engineering.types.plato`. Only
-// `SafetyFactor` owes one: it is `Comparable` on its dimensionless ratio, and a
+// `SafetyFactor` owes one: it is `IComparable` on its dimensionless ratio, and a
 // larger ratio is a larger margin, so the order on the carrier IS the order on
 // the design margin — no inversion, unlike the utilisation ratios (demand over
 // capacity) some codes use instead.

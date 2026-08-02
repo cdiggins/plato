@@ -19,21 +19,21 @@ library Primitives
     // growing the porting checklist:
     //
     //   * the two identity conversions (`Number.ToNumber`, `Integer.ToInteger`),
-    //     which exist so a body generic over `Real` or `Whole` can name the carrier;
+    //     which exist so a body generic over `IReal` or `IWhole` can name the carrier;
     //   * `Number.Inverse` and the two `Lerp`s, one-line formulas over arithmetic
     //     the host already provides;
     //   * `Boolean.LessThanOrEquals`, read off the `Compare` intrinsic (false orders
     //     before true).
     //
     // Without these the generated members throw, so every derived body that reaches
-    // them — and `Real`/`Whole`-generic code reaches ToNumber/ToInteger constantly —
+    // them — and `IReal`/`IWhole`-generic code reaches ToNumber/ToInteger constantly —
     // throws with it.
 
     //==
     // # Number
 
-    // The number itself: `Real.ToNumber` on the carrier type is the identity.
-    // It exists so a body generic over Real can drop to a plain Number.
+    // The number itself: `IReal.ToNumber` on the carrier type is the identity.
+    // It exists so a body generic over IReal can drop to a plain Number.
     ToNumber(self: Number): Number
         => self;
 
@@ -50,7 +50,7 @@ library Primitives
     //==
     // # Integer
 
-    // The integer itself: `Whole.ToInteger` on the carrier type is the identity.
+    // The integer itself: `IWhole.ToInteger` on the carrier type is the identity.
     ToInteger(self: Integer): Integer
         => self;
 
@@ -64,7 +64,7 @@ library Primitives
     //
     // And / Or / Not are the whole host contract (plato-378); everything else
     // on Boolean is a formula over them. Compare is NOT redeclared here — the
-    // Orderable generic in `core.library.plato` covers it, and
+    // IOrderable generic in `core.library.plato` covers it, and
     // reading the order off Compare (as this file used to) would now recurse.
 
     // The truth ordering: false orders before true. a <= b holds unless a is
@@ -156,7 +156,7 @@ library Primitives
     // from the front and the back, Skip and DropLast REMOVE n from the front and
     // the back. This was `Drop` until plato-378, which both duplicated `Skip`
     // and left the remove-from-the-back cell empty. The name now agrees with
-    // `Collections.DropLast(Sliceable)`, which is defined identically
+    // `Collections.DropLast(ISliceable)`, which is defined identically
     // as `Slice(0, Count - count)`, and with the C# runtime's
     // `Ara3D.Collections.LinqArray.DropLast`.
     DropLast(xs: Array<$T>, n: Integer): Array<$T>
@@ -173,7 +173,7 @@ library Primitives
         => MapRange(count, i => xs[from + i]);
 
     // The half-open window [from, exclusiveTo), holding exclusiveTo - from
-    // elements. Matches `Sliceable.Slice` exactly, so `Slice` means the same
+    // elements. Matches `ISliceable.Slice` exactly, so `Slice` means the same
     // thing on every receiver in the tree (plato-378).
     // Precondition: 0 <= from <= exclusiveTo <= Count.
     Slice(xs: Array<$T>, from: Integer, exclusiveTo: Integer): Array<$T>
@@ -231,7 +231,7 @@ library Primitives
     //==
     // # Array2D
     //
-    // The Indexable2D obligations the two extent FIELDS do not already cover,
+    // The IIndexable2D obligations the two extent FIELDS do not already cover,
     // plus construction. Row-major, matching Collections.FlattenIndex.
 
     // The total cell count: every element of the backing store.
@@ -316,7 +316,7 @@ library Primitives
     // relations (`<=`, `==`), and the relational family (LessThan, GreaterThan,
     // GreaterThanOrEquals, Compare, Clamp, Lesser, Greater) is absent because
     // `core.library.plato` already provides it generically over
-    // Orderable.
+    // IOrderable.
 
     //==
     // # Sign and magnitude
@@ -371,7 +371,7 @@ library Primitives
     //
     // Bodies are written against the INTRINSIC relations only (`<=`, `==`), never
     // against the derived `<` or `>`, so nothing here can recurse back through the
-    // Orderable generics in `core.library.plato`.
+    // IOrderable generics in `core.library.plato`.
     //
     // Accuracy note: a native `Log10`, `Cbrt` or `Acos` is usually a few ulp better
     // than the identity below. That is the whole point of the plato-368 override
@@ -380,7 +380,7 @@ library Primitives
     //
     // The relational family (LessThan, GreaterThan, GreaterThanOrEquals, Compare,
     // Clamp, Lesser, Greater, Min3, Max3) is deliberately absent: those are already
-    // generic over Orderable in `core.library.plato`, and LIBRARIES.md
+    // generic over IOrderable in `core.library.plato`, and LIBRARIES.md
     // ground rule 11 forbids a per-type copy.
 
     //==

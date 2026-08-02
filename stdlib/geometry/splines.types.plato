@@ -22,7 +22,7 @@
 // count - 1 (https://en.wikipedia.org/wiki/B%C3%A9zier_curve). Interpolates
 // the first and last control points.
 type BezierCurve2D
-    implements Curve2D, Deformable2D
+    implements ICurve2D, IDeformable2D
 {
     ControlPoints: Array<Point2D>;
 }
@@ -31,7 +31,7 @@ type BezierCurve2D
 // count - 1. Interpolates the first and last control points
 // (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type BezierCurve3D
-    implements Curve3D, Deformable3D
+    implements ICurve3D, IDeformable3D
 {
     ControlPoints: Array<Point3D>;
 }
@@ -40,7 +40,7 @@ type BezierCurve3D
 // ControlPoints) pull the curve toward heavier points. Represents conic
 // sections exactly (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type RationalBezierCurve2D
-    implements Curve2D, Deformable2D
+    implements ICurve2D, IDeformable2D
 {
     ControlPoints: Array<Point2D>;
     Weights: Array<Number>;
@@ -50,7 +50,7 @@ type RationalBezierCurve2D
 // ControlPoints) pull the curve toward heavier points
 // (https://en.wikipedia.org/wiki/B%C3%A9zier_curve).
 type RationalBezierCurve3D
-    implements Curve3D, Deformable3D
+    implements ICurve3D, IDeformable3D
 {
     ControlPoints: Array<Point3D>;
     Weights: Array<Number>;
@@ -64,7 +64,7 @@ type RationalBezierCurve3D
 // paths in curve form
 // (https://en.wikipedia.org/wiki/Composite_B%C3%A9zier_curve).
 type CompositeBezier2D
-    implements Curve2D, Deformable2D
+    implements ICurve2D, IDeformable2D
 {
     Segments: Array<CubicBezier2D>;
 }
@@ -73,7 +73,7 @@ type CompositeBezier2D
 // endpoints (P3 of one equals P0 of the next)
 // (https://en.wikipedia.org/wiki/Composite_B%C3%A9zier_curve).
 type CompositeBezier3D
-    implements Curve3D, Deformable3D
+    implements ICurve3D, IDeformable3D
 {
     Segments: Array<CubicBezier3D>;
 }
@@ -94,7 +94,7 @@ type CompositeBezier3D
 // NURBS domain (https://en.wikipedia.org/wiki/B-spline#Definition). For a
 // curve with N control points of degree D the knot count must be N + D + 1.
 type KnotVector
-    implements Value
+    implements IValue
 {
     Knots: Array<Number>;
 }
@@ -106,7 +106,7 @@ type KnotVector
 // (https://en.wikipedia.org/wiki/B-spline). Knots must hold ControlPoints
 // count + Degree + 1 values.
 type BSplineCurve2D
-    implements Curve2D, Deformable2D
+    implements ICurve2D, IDeformable2D
 {
     ControlPoints: Array<Point2D>;
     Degree: Integer;
@@ -117,7 +117,7 @@ type BSplineCurve2D
 // ControlPoints count + Degree + 1 values
 // (https://en.wikipedia.org/wiki/B-spline).
 type BSplineCurve3D
-    implements Curve3D, Deformable3D
+    implements ICurve3D, IDeformable3D
 {
     ControlPoints: Array<Point3D>;
     Degree: Integer;
@@ -129,7 +129,7 @@ type BSplineCurve3D
 // (https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline). The CAD
 // interchange standard; represents conics exactly.
 type NurbsCurve2D
-    implements Curve2D, Deformable2D
+    implements ICurve2D, IDeformable2D
 {
     ControlPoints: Array<Point2D>;
     Weights: Array<Number>;
@@ -141,7 +141,7 @@ type NurbsCurve2D
 // weights (same count as ControlPoints)
 // (https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline).
 type NurbsCurve3D
-    implements Curve3D, Deformable3D
+    implements ICurve3D, IDeformable3D
 {
     ControlPoints: Array<Point3D>;
     Weights: Array<Number>;
@@ -158,7 +158,7 @@ type NurbsCurve3D
 // tangents) must have equal counts; that invariant is documented rather than
 // encoded. Evaluation lives in `splines.library.plato`.
 //
-// NOT Deformable2D/3D, unlike every other curve in this file: a tangent is a
+// NOT IDeformable2D/3D, unlike every other curve in this file: a tangent is a
 // derivative, not a position, and an arbitrary point mapping supplies no image
 // for it. Carrying one needs the mapping's linear part, which only an affine
 // mapping has — so these types stay outside the Deform surface rather than
@@ -171,7 +171,7 @@ type NurbsCurve3D
 // the given outgoing and incoming tangents
 // (https://en.wikipedia.org/wiki/Cubic_Hermite_spline).
 type HermiteCurve2D
-    implements Curve2D
+    implements ICurve2D
 {
     Start: Point2D;
     StartTangent: Vector2D;
@@ -183,7 +183,7 @@ type HermiteCurve2D
 // given outgoing and incoming tangents
 // (https://en.wikipedia.org/wiki/Cubic_Hermite_spline).
 type HermiteCurve3D
-    implements Curve3D
+    implements ICurve3D
 {
     Start: Point3D;
     StartTangent: Vector3D;
@@ -196,7 +196,7 @@ type HermiteCurve3D
 // point back to the first
 // (https://en.wikipedia.org/wiki/Cubic_Hermite_spline).
 type HermiteSpline2D
-    implements Curve2D
+    implements ICurve2D
 {
     Points: Array<Point2D>;
     Tangents: Array<Vector2D>;
@@ -207,7 +207,7 @@ type HermiteSpline2D
 // explicit tangent per point (same count as Points)
 // (https://en.wikipedia.org/wiki/Cubic_Hermite_spline).
 type HermiteSpline3D
-    implements Curve3D
+    implements ICurve3D
 {
     Points: Array<Point3D>;
     Tangents: Array<Vector3D>;
@@ -232,7 +232,7 @@ type HermiteSpline3D
 // 0.5 = centripetal (cusp-free), 1 = chordal
 // (https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline).
 type CatmullRomCurve2D
-    implements Curve2D, Deformable2D
+    implements ICurve2D, IDeformable2D
 {
     Points: Array<Point2D>;
     Alpha: Number;
@@ -244,7 +244,7 @@ type CatmullRomCurve2D
 // 0.5 = centripetal (cusp-free), 1 = chordal
 // (https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline).
 type CatmullRomCurve3D
-    implements Curve3D, Deformable3D
+    implements ICurve3D, IDeformable3D
 {
     Points: Array<Point3D>;
     Alpha: Number;
@@ -256,7 +256,7 @@ type CatmullRomCurve3D
 // The classic keyframe-animation spline
 // (https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels_spline).
 type TcbSpline2D
-    implements Curve2D, Deformable2D
+    implements ICurve2D, IDeformable2D
 {
     Points: Array<Point2D>;
     Tensions: Array<Number>;
@@ -269,7 +269,7 @@ type TcbSpline2D
 // and Bias arrays (same count as Points) shape the tangents at each knot
 // (https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels_spline).
 type TcbSpline3D
-    implements Curve3D, Deformable3D
+    implements ICurve3D, IDeformable3D
 {
     Points: Array<Point3D>;
     Tensions: Array<Number>;
@@ -283,7 +283,7 @@ type TcbSpline3D
 // `polygons.types.plato`). Closed joins the last point back to the first
 // (https://en.wikipedia.org/wiki/Polygonal_chain).
 type LinearSpline2D
-    implements Curve2D, Deformable2D
+    implements ICurve2D, IDeformable2D
 {
     Points: Array<Point2D>;
     Closed: Boolean;
@@ -294,7 +294,7 @@ type LinearSpline2D
 // `polygons.types.plato`)
 // (https://en.wikipedia.org/wiki/Polygonal_chain).
 type LinearSpline3D
-    implements Curve3D, Deformable3D
+    implements ICurve3D, IDeformable3D
 {
     Points: Array<Point3D>;
     Closed: Boolean;
@@ -303,9 +303,9 @@ type LinearSpline3D
 // A natural cubic spline through scalar samples: interpolates Values at the
 // strictly increasing Parameters (same counts), with zero second derivative
 // at the ends (https://en.wikipedia.org/wiki/Spline_interpolation). A smooth
-// Curve1D for profiles and channels.
+// ICurve1D for profiles and channels.
 type NaturalCubicSpline1D
-    implements Curve1D
+    implements ICurve1D
 {
     Parameters: Array<Number>;
     Values: Array<Number>;

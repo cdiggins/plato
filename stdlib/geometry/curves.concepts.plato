@@ -2,19 +2,19 @@
 // # Curves
 //
 // Sections, in order:
-//  - Curve concepts
-//  - Curve capability concepts
+//  - ICurve concepts
+//  - ICurve capability concepts
 
 //==
-// # Curve concepts
+// # ICurve concepts
 //
 // Continuous curves as pure functions: a curve maps one parameter to a position
-// (the Procedural concept from `functional.concepts.plato`). Unless a type
+// (the IProcedural concept from `functional.concepts.plato`). Unless a type
 // documents otherwise, the canonical parameter domain of a curve is the unit
 // interval [0,1], and closed curves satisfy Eval(0) = Eval(1). The optional
 // capabilities a curve may add on top — derivatives, moving frames, polar form,
 // periodicity, arc-length measurement — are declared in the next section.
-// See https://en.wikipedia.org/wiki/Curve.
+// See https://en.wikipedia.org/wiki/ICurve.
 
 //==
 // # Curves
@@ -23,38 +23,38 @@
 // root of every curve. Dimension-agnostic curve helpers constrain on this, so
 // an Eval-only derivation is written once instead of once per embedding
 // (see `Sample` in curves.library.plato). Mirrors the
-// `Field<TDomain, TValue>` root of `fields.concepts.plato`.
-concept Curve<TRange>
-    inherits Procedural<Number, TRange>
+// `IField<TDomain, TValue>` root of `fields.concepts.plato`.
+interface ICurve<TRange>
+    inherits IProcedural<Number, TRange>
 { }
 
 // A real-valued function of one real parameter, viewed as a curve: profiles,
 // envelopes, cross-section laws, and interpolated channels.
-concept Curve1D
-    inherits Curve<Number>
+interface ICurve1D
+    inherits ICurve<Number>
 { }
 
 // A continuous map from a parameter to a position in the plane
 // (https://en.wikipedia.org/wiki/Parametric_equation).
-concept Curve2D
-    inherits Geometry2D, Curve<Point2D>
+interface ICurve2D
+    inherits IGeometry2D, ICurve<Point2D>
 { }
 
 // A continuous map from a parameter to a position in space
 // (https://en.wikipedia.org/wiki/Differential_geometry_of_curves).
-concept Curve3D
-    inherits Geometry3D, Curve<Point3D>
+interface ICurve3D
+    inherits IGeometry3D, ICurve<Point3D>
 { }
 
 // A 2D curve that returns to its start: Eval(0) = Eval(1) with continuous closure.
 // Marker concept; closure is a structural guarantee of the implementing type.
-concept ClosedCurve2D
-    inherits Curve2D
+interface IClosedCurve2D
+    inherits ICurve2D
 { }
 
 // A 3D curve that returns to its start: Eval(0) = Eval(1) with continuous closure.
-concept ClosedCurve3D
-    inherits Curve3D
+interface IClosedCurve3D
+    inherits ICurve3D
 { }
 
 //==
@@ -65,8 +65,8 @@ concept ClosedCurve3D
 // figure curves). Implementors supply the angular evaluation; the bridge in
 // `curves.library.plato` derives the canonical evaluation, mapping
 // t in [0,1] to one full turn.
-concept AngularCurve2D
-    inherits Curve2D
+interface IAngularCurve2D
+    inherits ICurve2D
 {
     Eval(x: Self, angle: Angle): Point2D;
 }
@@ -75,16 +75,16 @@ concept AngularCurve2D
 // and the other named space curves that wind about an axis. Implementors
 // supply the angular evaluation; the bridge in `curves.library.plato`
 // derives the canonical evaluation, mapping t in [0,1] to one full turn.
-concept AngularCurve3D
-    inherits Curve3D
+interface IAngularCurve3D
+    inherits ICurve3D
 {
     Eval(x: Self, angle: Angle): Point3D;
 }
 
 //==
-// # Curve capability concepts
+// # ICurve capability concepts
 //
-// The optional capabilities a curve may satisfy on top of the `Curve<TRange>`
+// The optional capabilities a curve may satisfy on top of the `ICurve<TRange>`
 // root declared above: an explicit period, first and second
 // derivatives, a moving frame, planarity, polar form, and arc-length
 // parameterization. Split from the roots because a file holds at most twelve
@@ -94,19 +94,19 @@ concept AngularCurve3D
 // A curve whose parameterization repeats: evaluating at t and t + Period yields
 // the same position. All closed curves may be traversed periodically; a periodic
 // curve makes the period explicit. TRange is the evaluated value type (Number,
-// Point2D, or Point3D); inheriting Curve makes the wrapped evaluation
+// Point2D, or Point3D); inheriting ICurve makes the wrapped evaluation
 // Eval(t mod Period) derivable (see EvalWrapped in curves.library.plato)
 // (https://en.wikipedia.org/wiki/Periodic_function).
-concept PeriodicCurve<TRange>
-    inherits Periodic<Number>, Curve<TRange>
+interface IPeriodicCurve<TRange>
+    inherits IPeriodic<Number>, ICurve<TRange>
 { }
 
 // A 2D curve with a defined first derivative. TangentAt is the (not necessarily
 // unit-length) velocity; CurvatureAt is the signed plane curvature (positive
 // turning left, negative turning right)
 // (https://en.wikipedia.org/wiki/Curvature).
-concept DifferentiableCurve2D
-    inherits Curve2D
+interface IDifferentiableCurve2D
+    inherits ICurve2D
 {
     TangentAt(x: Self, t: Number): Vector2D;
     CurvatureAt(x: Self, t: Number): Number;
@@ -116,8 +116,8 @@ concept DifferentiableCurve2D
 // CurvatureAt is the unsigned space curvature, and TorsionAt measures how
 // sharply the curve leaves its osculating plane
 // (https://en.wikipedia.org/wiki/Torsion_of_a_curve).
-concept DifferentiableCurve3D
-    inherits Curve3D
+interface IDifferentiableCurve3D
+    inherits ICurve3D
 {
     TangentAt(x: Self, t: Number): Vector3D;
     CurvatureAt(x: Self, t: Number): Number;
@@ -128,16 +128,16 @@ concept DifferentiableCurve3D
 // the frame origin lies on the curve and its Z axis is tangent. The basis for
 // sweeps, lofts, and camera paths
 // (https://en.wikipedia.org/wiki/Frenet%E2%80%93Serret_formulas).
-concept FramedCurve3D
-    inherits DifferentiableCurve3D
+interface IFramedCurve3D
+    inherits IDifferentiableCurve3D
 {
     FrameAt(x: Self, t: Number): Frame3D;
 }
 
 // A 3D curve that lies entirely within a single plane
 // (https://en.wikipedia.org/wiki/Plane_curve).
-concept PlanarCurve3D
-    inherits Curve3D
+interface IPlanarCurve3D
+    inherits ICurve3D
 {
     CurvePlane(x: Self): Plane;
 }
@@ -146,8 +146,8 @@ concept PlanarCurve3D
 // theta is (RadiusAt(theta) * cos(theta), RadiusAt(theta) * sin(theta)).
 // The canonical [0,1] parameter maps to one full turn unless documented otherwise
 // (https://en.wikipedia.org/wiki/Polar_coordinate_system).
-concept PolarCurve2D
-    inherits Curve2D
+interface IPolarCurve2D
+    inherits ICurve2D
 {
     RadiusAt(x: Self, angle: Angle): Number;
 }
@@ -157,7 +157,7 @@ concept PolarCurve2D
 // start; ParameterAtLength converts a distance to the canonical parameter.
 // TPoint is the concrete point type of the curve (Point2D, Point3D, or Number)
 // (https://en.wikipedia.org/wiki/Arc_length).
-concept ArcLengthParameterized<TPoint>
+interface IArcLengthParameterized<TPoint>
 {
     ArcLength(x: Self): Number;
     PointAtLength(x: Self, length: Number): TPoint;

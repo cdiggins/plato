@@ -18,7 +18,7 @@
 // A uniformly sampled scalar signal. Sample i occurs at time i / SampleRate.
 // (https://en.wikipedia.org/wiki/Sampling_(signal_processing))
 type SampledSignal
-    implements Value
+    implements IValue
 {
     SampleRate: Frequency;
     Samples: Array<Number>;
@@ -28,7 +28,7 @@ type SampledSignal
 // frame-interleaved (all channels of frame 0, then frame 1, ...); the sample
 // count is a multiple of ChannelCount.
 type MultichannelSignal
-    implements Value
+    implements IValue
 {
     SampleRate: Frequency;
     ChannelCount: Integer;
@@ -40,7 +40,7 @@ type MultichannelSignal
 // Magnitudes[k] and phase Phases[k].
 // (https://en.wikipedia.org/wiki/Frequency_domain)
 type Spectrum
-    implements Value
+    implements IValue
 {
     BinWidth: Frequency;
     Magnitudes: Array<Number>;
@@ -51,7 +51,7 @@ type Spectrum
 // and phase of the component at k * BinWidth as one complex number.
 // (https://en.wikipedia.org/wiki/Discrete_Fourier_transform)
 type ComplexSpectrum
-    implements Value
+    implements IValue
 {
     BinWidth: Frequency;
     Bins: Array<Complex>;
@@ -62,7 +62,7 @@ type ComplexSpectrum
 // and the row index selects the frequency bin (bin k at k * BinWidth).
 // (https://en.wikipedia.org/wiki/Spectrogram)
 type Spectrogram
-    implements Value
+    implements IValue
 {
     TimeStep: Duration;
     BinWidth: Frequency;
@@ -77,7 +77,7 @@ type Spectrogram
 // free kinds carry none.
 // (https://en.wikipedia.org/wiki/Window_function)
 type WindowFunction
-    implements Value
+    implements IValue
     = Rectangular
     | Hann
     | Hamming
@@ -91,7 +91,7 @@ type WindowFunction
 // HopSize is the advance between consecutive windows.
 // (https://en.wikipedia.org/wiki/Short-time_Fourier_transform)
 type AnalysisWindow
-    implements Value
+    implements IValue
 {
     Function: WindowFunction;
     Size: Integer;
@@ -106,7 +106,7 @@ type AnalysisWindow
 // phase follow.
 // (https://en.wikipedia.org/wiki/Analytic_signal)
 type AnalyticSignal
-    implements Value
+    implements IValue
 {
     SampleRate: Frequency;
     InPhase: Array<Number>;
@@ -117,7 +117,7 @@ type AnalyticSignal
 // octave analysis, band-limited processing.
 // (https://en.wikipedia.org/wiki/Frequency_band)
 type FrequencyBand
-    implements Value
+    implements IValue
 {
     Low: Frequency;
     High: Frequency;
@@ -150,7 +150,7 @@ type BiquadResponse
 // corner or center Frequency, and the quality factor Q (bandwidth).
 // (https://en.wikipedia.org/wiki/Digital_biquad_filter)
 type BiquadFilter
-    implements Value
+    implements IValue
 {
     Response: BiquadResponse;
     Frequency: Frequency;
@@ -161,7 +161,7 @@ type BiquadFilter
 // input with Taps, where Taps[0] weights the current sample.
 // (https://en.wikipedia.org/wiki/Finite_impulse_response)
 type FirFilter
-    implements Value
+    implements IValue
 {
     Taps: Array<Number>;
 }
@@ -171,7 +171,7 @@ type FirFilter
 // weight past outputs, with FeedbackCoefficients[0] normalized to 1.
 // (https://en.wikipedia.org/wiki/Infinite_impulse_response)
 type IirFilter
-    implements Value
+    implements IValue
 {
     FeedforwardCoefficients: Array<Number>;
     FeedbackCoefficients: Array<Number>;
@@ -187,7 +187,7 @@ type SignalResampling = ZeroOrderHold | Linear | CubicHermite | WindowedSinc;
 // interpolation used between them.
 // (https://en.wikipedia.org/wiki/Sample-rate_conversion)
 type SampleRateConversion
-    implements Value
+    implements IValue
 {
     SourceRate: Frequency;
     TargetRate: Frequency;
@@ -202,7 +202,7 @@ type CrossfadeLaw = Linear | EqualPower | SCurve;
 // A crossfade description: the gain law and the time taken to move fully
 // from one signal to the other.
 type CrossfadeParameters
-    implements Value
+    implements IValue
 {
     Law: CrossfadeLaw;
     Duration: Duration;
@@ -220,7 +220,7 @@ type CrossfadeParameters
 // held after decay as a proportion of peak; the other stages are durations.
 // (https://en.wikipedia.org/wiki/Envelope_(music))
 type AdsrEnvelope
-    implements Value
+    implements IValue
 {
     Attack: Duration;
     Decay: Duration;
@@ -236,7 +236,7 @@ type NoiseColor = White | Pink | Brown | Blue;
 // A pure description of a noise generator: spectral color, peak amplitude,
 // and the seed of its deterministic random sequence.
 type NoiseSignal
-    implements Value
+    implements IValue
 {
     Color: NoiseColor;
     Amplitude: Number;
@@ -257,7 +257,7 @@ type Waveform
 // start of the cycle.
 // (https://en.wikipedia.org/wiki/Signal_generator)
 type WaveformGenerator
-    implements Value
+    implements IValue
 {
     Waveform: Waveform;
     Frequency: Frequency;

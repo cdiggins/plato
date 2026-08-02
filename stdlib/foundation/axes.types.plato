@@ -2,7 +2,7 @@
 // # Cardinal axes
 //
 // Enum-like sum types naming the cardinal axes of 2D and 3D space. Their total
-// conversions out to the geometric vocabulary (Vector, Direction, Number tuple,
+// conversions out to the geometric vocabulary (IVector, Direction, Number tuple,
 // Point) and the little axis algebra around them (Ordinal, Component, the
 // tangent/perpendicular cycles, Sign, Opposite) live in `axes.library.plato`,
 // `axes.library.plato`, and `axes.library.plato`. They are the typed
@@ -20,7 +20,7 @@
 // always names a unit basis vector. The reverse (a Vector3D back to the nearest
 // axis) is partial and is deliberately absent here — it would be a snap
 // (`NearestAxis`), never a cast, per CONVENTIONS.md - Partial operations (A1).
-// These types are plain values: they do NOT implement `Vector`, so `Axis3D.X +
+// These types are plain values: they do NOT implement `IVector`, so `Axis3D.X +
 // Axis3D.Y` does not typecheck — axis arithmetic goes through the vector
 // conversions on purpose.
 // Convention: see CONVENTIONS.md - Typed indices (axis selectors are these types,

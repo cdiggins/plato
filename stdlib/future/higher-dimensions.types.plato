@@ -18,7 +18,7 @@
 // N-dimensional space, where N is the arity of Center.
 // (https://en.wikipedia.org/wiki/N-sphere)
 type NSphere
-    implements Value
+    implements IValue
 {
     Center: PointN;
     Radius: Number;
@@ -29,7 +29,7 @@ type NSphere
 // (world units) is the signed distance from the origin.
 // (https://en.wikipedia.org/wiki/Hyperplane)
 type HyperplaneN
-    implements Value
+    implements IValue
 {
     Normal: VectorN;
     Distance: Number;
@@ -65,7 +65,7 @@ type SubspaceN
 // exceeds EscapeRadius (complex-plane units, at least 2).
 // (https://en.wikipedia.org/wiki/Julia_set)
 type JuliaSetParameters
-    implements Value
+    implements IValue
 {
     C: Complex;
     MaxIterations: Integer;
@@ -77,7 +77,7 @@ type JuliaSetParameters
 // show proportionally smaller regions), and the iteration cap.
 // (https://en.wikipedia.org/wiki/Mandelbrot_set)
 type MandelbrotView
-    implements Value
+    implements IValue
 {
     Center: Complex;
     Zoom: Number;
@@ -88,7 +88,7 @@ type MandelbrotView
 // 3D slice): q maps to q^2 + C. Iteration stops at MaxIterations or when the
 // magnitude of q exceeds EscapeRadius (quaternion-space units).
 type QuaternionJuliaParameters
-    implements Value
+    implements IValue
 {
     C: Quaternion;
     MaxIterations: Integer;

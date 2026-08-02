@@ -18,68 +18,68 @@ library Algebra
     // `core.library.plato`.
 
     //==
-    // Normed
+    // INormed
 
     // True when x has unit length, within the given tolerance on the squared
     // magnitude (avoids the square root).
-    IsUnit(x: Normed, tolerance: Number): Boolean
+    IsUnit(x: INormed, tolerance: Number): Boolean
         => x.MagnitudeSquared.AlmostEqual(1.0, tolerance);
 
     // True when x has (near) zero length, within the given squared-magnitude tolerance.
-    IsZeroLength(x: Normed, tolerance: Number): Boolean
+    IsZeroLength(x: INormed, tolerance: Number): Boolean
         => x.MagnitudeSquared <= tolerance;
 
     //==
-    // MetricSpace
+    // IMetricSpace
 
     // True when a and b are within the given tolerance of each other.
-    IsNear(a: MetricSpace, b: MetricSpace, tolerance: Number): Boolean
+    IsNear(a: IMetricSpace, b: IMetricSpace, tolerance: Number): Boolean
         => a.Distance(b) <= tolerance;
 
     // True when candidate is strictly nearer to reference than other is.
     // Example: origin.IsNearerThan(p, q) tests whether p is closer to origin than q.
-    IsNearerThan(reference: MetricSpace, candidate: MetricSpace, other: MetricSpace): Boolean
+    IsNearerThan(reference: IMetricSpace, candidate: IMetricSpace, other: IMetricSpace): Boolean
         => reference.Distance(candidate).LessThan(reference.Distance(other));
 
     // Whichever of a and b is nearer to reference (ties resolve to a).
-    Nearest(reference: MetricSpace, a: MetricSpace, b: MetricSpace): MetricSpace
+    Nearest(reference: IMetricSpace, a: IMetricSpace, b: IMetricSpace): IMetricSpace
         => reference.Distance(a) <= reference.Distance(b) ? a : b;
 
     //==
-    // Lattice
+    // ILattice
 
     // Component-wise clamp of x into the inclusive box [min, max], derived from the
     // lattice Min/Max. Assumes min <= max component-wise. (Provides the default body
-    // for the Clampable.Clamp member, since Clampable inherits Lattice.)
-    Clamp(x: Lattice, min: Lattice, max: Lattice): Lattice
+    // for the IClampable.Clamp member, since IClampable inherits ILattice.)
+    Clamp(x: ILattice, min: ILattice, max: ILattice): ILattice
         => x.Max(min).Min(max);
 
     //==
-    // Difference<TDelta> — the affine surface, derived
+    // IDifference<TDelta> — the affine surface, derived
     //
-    // `Difference` declares only Add(Self, TDelta) and Between(Self, Self): the
+    // `IDifference` declares only Add(Self, TDelta) and Between(Self, Self): the
     // torsor action and its inverse. Everything below follows from those two plus
-    // the concept's `where TDelta: Additive, TDelta: Scalable` bound, so an
+    // the concept's `where TDelta: IAdditive, TDelta: IScalable` bound, so an
     // implementing type owes two members rather than the six it used to spell out
     // by hand. Point2D/Point3D and Instant previously wrote all of this per type
     // (transforms.library.plato, time.library.plato); PointN, UvCoordinate
-    // and UvwCoordinate declared `implements Difference<...>` and wrote none of
+    // and UvwCoordinate declared `implements IDifference<...>` and wrote none of
     // it, so they carried throwing stubs until these bodies existed.
     //
     // The earlier note here said Plato had no type-parameter constraint syntax and
     // that MidPoint was therefore unreachable. That was already out of date:
-    // `where` clauses on concepts are live (IntervalLike / BoundsLike in
+    // `where` clauses on concepts are live (IIntervalLike / IBoundsLike in
     // intervals-bounds.concepts.plato), and MidPoint now falls out of the Lerp
-    // below via Interpolatable.
+    // below via IInterpolatable.
 
     // The position displaced by the negation of delta. The `-` spelling of
     // Add(x, -delta).
-    Subtract(x: Difference<$D>, delta: $D): Difference<$D>
+    Subtract(x: IDifference<$D>, delta: $D): IDifference<$D>
         => x.Add(delta.Negative);
 
     // The displacement from b to a (a - b). Same delta as Between(b, a); the `-`
     // operator spelling of position difference. Orientation follows Between.
-    Subtract(a: Difference<$D>, b: Difference<$D>): $D
+    Subtract(a: IDifference<$D>, b: IDifference<$D>): $D
         => b.Between(a);
 
     // NOT derivable here: the commuted `Add(delta, position)`. A library function
@@ -93,40 +93,40 @@ library Algebra
 
     // The position a fraction `t` of the way from a to b, walked along the
     // displacement between them. t is unclamped, so it extrapolates. This is the
-    // Interpolatable obligation for every Coordinate that is also a Difference,
+    // IInterpolatable obligation for every ICoordinate that is also a IDifference,
     // and it is what makes MidPoint / LerpClamped / SmoothLerp (P1, over
-    // Interpolatable) reach the position types.
-    Lerp(a: Difference<$D>, b: Difference<$D>, t: Number): Difference<$D>
+    // IInterpolatable) reach the position types.
+    Lerp(a: IDifference<$D>, b: IDifference<$D>, t: Number): IDifference<$D>
         => a.Add(a.Between(b) * t);
 
     //==
-    // OriginBased<TDelta> — the last two primitives, derived
+    // IOriginBased<TDelta> — the last two primitives, derived
     //
     // With an origin fixed, the position space and the delta space are the same
     // space under two names, so the torsor action and its inverse are just delta
-    // arithmetic with a round trip through the conversions. An OriginBased type
+    // arithmetic with a round trip through the conversions. An IOriginBased type
     // therefore owes Offset and FromOffset and nothing else: Add and Between come
-    // from here, and Subtract / Lerp from the Difference section above.
+    // from here, and Subtract / Lerp from the IDifference section above.
     //
-    // This is the same shape as Quantity's Amount/FromAmount seam
+    // This is the same shape as IQuantity's Amount/FromAmount seam
     // (quantities.library.plato), one level up: there the carrier is a Number and
     // the full additive structure is transported onto Self; here the carrier is
     // the delta group and only the affine action is transported, because a
     // position deliberately does NOT gain Self + Self or a scalar multiple.
 
     // The position displaced by delta.
-    Add(x: OriginBased<$D>, delta: $D): OriginBased<$D>
+    Add(x: IOriginBased<$D>, delta: $D): IOriginBased<$D>
         => x.FromOffset(x.Offset + delta);
 
-    // The displacement from a to b (b - a), matching the Difference orientation.
-    Between(a: OriginBased<$D>, b: OriginBased<$D>): $D
+    // The displacement from a to b (b - a), matching the IDifference orientation.
+    Between(a: IOriginBased<$D>, b: IOriginBased<$D>): $D
         => b.Offset - a.Offset;
 
     // The origin itself: the position at zero displacement. The receiver only
     // selects the type, and for runtime-arity positions supplies the arity.
-    // Reaches TDelta's Zero through the concept's `where TDelta: Additive` bound
-    // (Zero lives on Additive, not NumericalLimits, so Duration resolves too).
-    Origin(x: OriginBased<$D>): OriginBased<$D>
+    // Reaches TDelta's Zero through the concept's `where TDelta: IAdditive` bound
+    // (Zero lives on IAdditive, not INumericalLimits, so Duration resolves too).
+    Origin(x: IOriginBased<$D>): IOriginBased<$D>
         => x.FromOffset(x.Offset.Zero);
 
     //==
@@ -139,52 +139,52 @@ library Algebra
     // `core.library.plato`.
 
     //==
-    // Numerical
+    // INumerical
 
     // True when x equals the additive identity (zero).
-    IsZero(x: Numerical): Boolean
+    IsZero(x: INumerical): Boolean
         => x == x.Zero;
 
     // True when x equals the multiplicative identity (one).
-    IsOne(x: Numerical): Boolean
+    IsOne(x: INumerical): Boolean
         => x == x.One;
 
     // The weighted sum a*s + b*t of two values with scalar weights.
     // (https://en.wikipedia.org/wiki/Linear_combination)
-    LinearCombination(a: Numerical, b: Numerical, s: Number, t: Number): Numerical
+    LinearCombination(a: INumerical, b: INumerical, s: Number, t: Number): INumerical
         => a * s + b * t;
 
     // Barycentric blend of three values: at (u,v)=(0,0) yields a, (1,0) yields b,
     // (0,1) yields c. (https://en.wikipedia.org/wiki/Barycentric_coordinate_system)
-    Barycentric(a: Numerical, b: Numerical, c: Numerical, u: Number, v: Number): Numerical
+    Barycentric(a: INumerical, b: INumerical, c: INumerical, u: Number, v: Number): INumerical
         => a + (b - a) * u + (c - a) * v;
 
     //==
-    // Real
+    // IReal
 
     // The absolute value of x (its magnitude on the number line).
-    Abs(x: Real): Real
+    Abs(x: IReal): IReal
         => x.LessThan(x.Zero) ? x.Negative : x;
 
     // The sign of x as an integer: -1, 0, or +1.
-    Sign(x: Real): Integer
+    Sign(x: IReal): Integer
         => x.Compare(x.Zero);
 
     // The complement of x within the unit interval: one minus x. Handy for weights
     // and easing (e.g. the (1 - t) factor in a Bezier blend).
-    OneMinus(x: Real): Real
+    OneMinus(x: IReal): IReal
         => x.One - x;
 
     // True when x is strictly greater than zero.
-    IsPositive(x: Real): Boolean
+    IsPositive(x: IReal): Boolean
         => x.Zero.LessThan(x);
 
     // True when x is strictly less than zero.
-    IsNegative(x: Real): Boolean
+    IsNegative(x: IReal): Boolean
         => x.LessThan(x.Zero);
 
     // True when x and y differ by no more than the given (non-negative) tolerance.
-    AlmostEqual(x: Real, y: Real, tolerance: Real): Boolean
+    AlmostEqual(x: IReal, y: IReal, tolerance: IReal): Boolean
         => (x - y).Abs <= tolerance;
 
     // True when x and y are close under the combined absolute+relative policy:
@@ -196,40 +196,40 @@ library Algebra
         => (x - y).Abs <= tol.Absolute + tol.Relative * x.Abs.Greater(y.Abs);
 
     // True when x is within the given (non-negative) tolerance of zero.
-    AlmostZero(x: Real, tolerance: Real): Boolean
+    AlmostZero(x: IReal, tolerance: IReal): Boolean
         => x.Abs <= tolerance;
 
     // True when x sits at either end of the unit interval, within the given
     // (non-negative) tolerance. Useful for detecting degenerate curve parameters.
-    AlmostZeroOrOne(x: Real, tolerance: Real): Boolean
+    AlmostZeroOrOne(x: IReal, tolerance: IReal): Boolean
         => x.AlmostZero(tolerance) || x.AlmostEqual(x.One, tolerance);
 
     // Clamps x to the inclusive range [0, 1].
-    Saturate(x: Real): Real
+    Saturate(x: IReal): IReal
         => x.Clamp(x.Zero, x.One);
 
     // The parameter t in [0,1] for which Lerp(a, b, t) equals value. Assumes a != b.
-    InverseLerp(a: Real, b: Real, value: Real): Number
+    InverseLerp(a: IReal, b: IReal, value: IReal): Number
         => ((value - a) / (b - a)).ToNumber;
 
     // Remaps value from the input range [inputMin, inputMax] onto the output range
     // [outputMin, outputMax]. Assumes inputMin != inputMax.
-    Remap(value: Real, inputMin: Real, inputMax: Real, outputMin: Real, outputMax: Real): Real
+    Remap(value: IReal, inputMin: IReal, inputMax: IReal, outputMin: IReal, outputMax: IReal): IReal
         => outputMin.Lerp(outputMax, inputMin.InverseLerp(inputMax, value));
 
     // Divides x by divisor, returning fallback instead when divisor is zero.
-    SafeDivide(x: Real, divisor: Real, fallback: Real): Real
+    SafeDivide(x: IReal, divisor: IReal, fallback: IReal): IReal
         => divisor.IsZero ? fallback : x / divisor;
 
     // The fractional part of x: x minus its floor, always in [0, 1). For negative
     // x this is the periodic fraction (e.g. FractionalPart(-0.25) = 0.75), matching Floor.
-    FractionalPart(x: Real): Real
+    FractionalPart(x: IReal): IReal
         => x - x.Floor;
 
     // x rounded to the nearest whole value, halves rounding up (toward +infinity),
     // via Floor(x + 1/2). Note: deliberately half-up, unlike the host intrinsic
     // Round (typically banker's rounding) — do not "simplify" to Round.
-    RoundedToNearest(x: Real): Real
+    RoundedToNearest(x: IReal): IReal
         => (x + x.One.Half).Floor;
 
     //==
@@ -237,9 +237,9 @@ library Algebra
     //
     // A small set of shaping helpers that are deliberately Number-concrete rather
     // than generic over Real: they read the `Pow` intrinsic (declared only on
-    // Number), and on a type that is simultaneously Multiplicative and Scalable a
-    // generic `x * 2.0` has two equally good readings. Vector/quantity versions
-    // belong with the component-wise lifting on `Vector` (P3), not here.
+    // Number), and on a type that is simultaneously IMultiplicative and IScalable a
+    // generic `x * 2.0` has two equally good readings. IVector/quantity versions
+    // belong with the component-wise lifting on `IVector` (P3), not here.
 
     // x raised to the reciprocal power: the y-th root of x. InversePow(x, 2) is
     // the square root, InversePow(x, 3) the cube root. Precondition: y is not zero.
@@ -276,38 +276,38 @@ library Algebra
         => (x * steps.ToNumber).RoundedToNearest / steps.ToNumber;
 
     //==
-    // Whole
+    // IWhole
 
     // True when x equals zero.
-    IsZero(x: Whole): Boolean
+    IsZero(x: IWhole): Boolean
         => x == x.Zero;
 
     // True when x equals one.
-    IsOne(x: Whole): Boolean
+    IsOne(x: IWhole): Boolean
         => x == x.One;
 
     // The absolute value of x.
-    Abs(x: Whole): Whole
+    Abs(x: IWhole): IWhole
         => x.LessThan(x.Zero) ? x.Negative : x;
 
     // The sign of x as an integer: -1, 0, or +1.
-    Sign(x: Whole): Integer
+    Sign(x: IWhole): Integer
         => x.Compare(x.Zero);
 
     // True when x is evenly divisible by two.
-    IsEven(x: Whole): Boolean
+    IsEven(x: IWhole): Boolean
         => x.Modulo(x.One + x.One) == x.Zero;
 
     // True when x is not evenly divisible by two.
-    IsOdd(x: Whole): Boolean
+    IsOdd(x: IWhole): Boolean
         => x.IsEven.Not;
 
     // True when x is strictly greater than zero.
-    IsPositive(x: Whole): Boolean
+    IsPositive(x: IWhole): Boolean
         => x.Zero.LessThan(x);
 
     // True when x is strictly less than zero.
-    IsNegative(x: Whole): Boolean
+    IsNegative(x: IWhole): Boolean
         => x.LessThan(x.Zero);
 
     //==
@@ -320,114 +320,114 @@ library Algebra
     // `core.library.plato`.
 
     //==
-    // Additive
+    // IAdditive
 
     // The value added to itself: x + x. (Name overlaps C#'s Double type; unambiguous
     // here as a method and worth keeping for the additive-doubling idiom.)
-    Double(x: Additive): Additive
+    Double(x: IAdditive): IAdditive
         => x + x;
 
     //==
-    // Multiplicative
+    // IMultiplicative
 
     // The value multiplied by itself: x * x.
-    Square(x: Multiplicative): Multiplicative
+    Square(x: IMultiplicative): IMultiplicative
         => x * x;
 
     // The value raised to the third power: x * x * x.
-    Cube(x: Multiplicative): Multiplicative
+    Cube(x: IMultiplicative): IMultiplicative
         => x * x * x;
 
     // The value raised to the fourth power.
-    Pow4(x: Multiplicative): Multiplicative
+    Pow4(x: IMultiplicative): IMultiplicative
         => x.Square.Square;
 
     // The value raised to the fifth power.
-    Pow5(x: Multiplicative): Multiplicative
+    Pow5(x: IMultiplicative): IMultiplicative
         => x.Square.Square * x;
 
     //==
-    // Invertible
+    // IInvertible
     //
     // No derivations: Inverse is the sole member and every useful combination
-    // (e.g. a/b as a * b.Inverse) requires Multiplicative, which Invertible does
-    // not inherit. Types that are both (Real via Arithmetic) get division directly.
+    // (e.g. a/b as a * b.Inverse) requires IMultiplicative, which IInvertible does
+    // not inherit. Types that are both (IReal via IArithmetic) get division directly.
 
     //==
-    // Scalable
+    // IScalable
 
     // Half of x (divides by two).
-    Half(x: Scalable): Scalable
+    Half(x: IScalable): IScalable
         => x / 2.0;
 
     // One third of x (divides by three).
-    Third(x: Scalable): Scalable
+    Third(x: IScalable): IScalable
         => x / 3.0;
 
     // One quarter of x (divides by four).
-    Quarter(x: Scalable): Scalable
+    Quarter(x: IScalable): IScalable
         => x / 4.0;
 
     // One eighth of x.
-    Eighth(x: Scalable): Scalable
+    Eighth(x: IScalable): IScalable
         => x / 8.0;
 
     // One sixteenth of x.
-    Sixteenth(x: Scalable): Scalable
+    Sixteenth(x: IScalable): IScalable
         => x / 16.0;
 
     // One tenth of x.
-    Tenth(x: Scalable): Scalable
+    Tenth(x: IScalable): IScalable
         => x / 10.0;
 
     // One hundredth of x.
-    Hundredth(x: Scalable): Scalable
+    Hundredth(x: IScalable): IScalable
         => x / 100.0;
 
     // One thousandth of x.
-    Thousandth(x: Scalable): Scalable
+    Thousandth(x: IScalable): IScalable
         => x / 1000.0;
 
     // One millionth of x.
-    Millionth(x: Scalable): Scalable
+    Millionth(x: IScalable): IScalable
         => x / 1000000.0;
 
     // One billionth of x (short-scale billion, 1e9).
-    Billionth(x: Scalable): Scalable
+    Billionth(x: IScalable): IScalable
         => x / 1000000000.0;
 
     // A million times x.
-    Million(x: Scalable): Scalable
+    Million(x: IScalable): IScalable
         => x * 1000000.0;
 
     // A billion times x (short-scale billion, 1e9).
-    Billion(x: Scalable): Scalable
+    Billion(x: IScalable): IScalable
         => x * 1000000000.0;
 
     // Scales x by the given percentage (100 yields x unchanged).
-    Percent(x: Scalable, percent: Number): Scalable
+    Percent(x: IScalable, percent: Number): IScalable
         => x * (percent / 100.0);
 
     // Scalar-on-the-left multiplication, so `2.0 * v` reads as well as `v * 2.0`.
-    // Delegates to the Scalable member; adds no new semantics.
-    Multiply(scalar: Number, x: Scalable): Scalable
+    // Delegates to the IScalable member; adds no new semantics.
+    Multiply(scalar: Number, x: IScalable): IScalable
         => x * scalar;
 
     //==
-    // Interpolatable
+    // IInterpolatable
 
     // The midpoint between a and b (linear interpolation at t = 0.5).
-    MidPoint(a: Interpolatable, b: Interpolatable): Interpolatable
+    MidPoint(a: IInterpolatable, b: IInterpolatable): IInterpolatable
         => a.Lerp(b, 0.5);
 
     // Linear interpolation with the parameter t clamped to [0, 1], so the result
     // never extrapolates beyond the a..b segment.
-    LerpClamped(a: Interpolatable, b: Interpolatable, t: Number): Interpolatable
+    LerpClamped(a: IInterpolatable, b: IInterpolatable, t: Number): IInterpolatable
         => a.Lerp(b, t.Saturate);
 
     // Interpolates from a to b with smoothstep easing: the parameter t is reshaped
     // by the weight t*t*(3 - 2*t), giving zero slope at both ends for a gentle
-    // start and stop. Requested cross-package by P3 (Coordinate). Assumes t in [0,1].
-    SmoothLerp(a: Interpolatable, b: Interpolatable, t: Number): Interpolatable
+    // start and stop. Requested cross-package by P3 (ICoordinate). Assumes t in [0,1].
+    SmoothLerp(a: IInterpolatable, b: IInterpolatable, t: Number): IInterpolatable
         => a.Lerp(b, t * t * (3.0 - 2.0 * t));
 }

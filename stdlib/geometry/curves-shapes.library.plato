@@ -17,12 +17,12 @@ library CurvesShapes
     // polar, and roulette formula in the curves-2d family is written against.
     //
     // Conventions:
-    //   * The canonical curve parameter is `t` in [0, 1] (the `Procedural` domain
-    //     inherited through `Curve2D`).
+    //   * The canonical curve parameter is `t` in [0, 1] (the `IProcedural` domain
+    //     inherited through `ICurve2D`).
     //   * Types carrying an `Angles: AngleInterval` sweep map t through
     //     `Angles.Lerp(t)`; types without one map t to `t.Turns`, one full
     //     revolution, as `curves.concepts.plato` documents for
-    //     `PolarCurve2D`.
+    //     `IPolarCurve2D`.
 
     //==
     // # Shared helpers
@@ -80,7 +80,7 @@ library CurvesShapes
     //
     // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
     // The Bernstein forms live in `library Polynomials` (polynomials.types.plato),
-    // generic over `Numerical`; control points are converted to displacements
+    // generic over `INumerical`; control points are converted to displacements
     // with PositionVector and the result back with ToPoint.
 
     // The quadratic Bezier point at t.
@@ -96,14 +96,14 @@ library CurvesShapes
                             self.P3.PositionVector, t)
                .ToPoint;
 
-    // The Deformable2D obligation: every control point carried through the
+    // The IDeformable2D obligation: every control point carried through the
     // mapping. Exact for an affine mapping, which commutes with the Bernstein
     // basis; under a nonlinear one the result is the Bezier over the moved
     // control points, not the image of the curve.
     Deform(self: QuadraticBezier2D, mapping: Function1<Point2D, Point2D>): QuadraticBezier2D
         => (mapping(self.P0), mapping(self.P1), mapping(self.P2));
 
-    // The Deformable2D obligation: every control point carried through the mapping.
+    // The IDeformable2D obligation: every control point carried through the mapping.
     Deform(self: CubicBezier2D, mapping: Function1<Point2D, Point2D>): CubicBezier2D
         => (mapping(self.P0), mapping(self.P1), mapping(self.P2), mapping(self.P3));
 
@@ -111,19 +111,19 @@ library CurvesShapes
     // # Evaluating the polar and figure curves
     //
     // Closed-form evaluation of the types declared in `curves-shapes.types.plato`, plus
-    // the generic `PolarCurve2D` bridge that turns a `RadiusAt` into a position for
+    // the generic `IPolarCurve2D` bridge that turns a `RadiusAt` into a position for
     // every polar implementor in the tree. The shared `CirclePoint` helper is in
     // the arcs section above.
     //
     // Conventions:
-    //   * The canonical curve parameter is `t` in [0, 1] (the `Procedural` domain
-    //     inherited through `Curve2D`).
-    //   * `PolarCurve2D` implementors only need `RadiusAt`. The generic
-    //     `Eval(PolarCurve2D, Number)` below turns that into a position, so the
+    //   * The canonical curve parameter is `t` in [0, 1] (the `IProcedural` domain
+    //     inherited through `ICurve2D`).
+    //   * `IPolarCurve2D` implementors only need `RadiusAt`. The generic
+    //     `Eval(IPolarCurve2D, Number)` below turns that into a position, so the
     //     polar zoo costs one line per curve.
 
     //==
-    // # PolarCurve2D — the generic bridge
+    // # IPolarCurve2D — the generic bridge
     //
     // A polar curve is fully determined by RadiusAt, so its Eval is derivable
     // once for every implementor. Curves that carry an explicit `Angles` sweep
@@ -131,7 +131,7 @@ library CurvesShapes
 
     // The position at the canonical parameter t: the polar radius taken at
     // t full turns, converted to Cartesian.
-    Eval(self: PolarCurve2D, t: Number): Point2D
+    Eval(self: IPolarCurve2D, t: Number): Point2D
         => self.CartesianPositionAt(t.Turns);
 
     //==
@@ -218,7 +218,7 @@ library CurvesShapes
     // # Evaluating the plane spirals and roulettes
     //
     // Closed-form evaluation of the types declared in `curves-shapes.types.plato`.
-    // The spirals are `PolarCurve2D` implementors that carry an explicit `Angles`
+    // The spirals are `IPolarCurve2D` implementors that carry an explicit `Angles`
     // sweep, so each supplies a `RadiusAt` plus an `Eval` overriding the generic
     // full-turn mapping of the polar section above; the roulettes are written
     // directly in Cartesian form. The shared `CirclePoint` helper is in the arcs
@@ -228,7 +228,7 @@ library CurvesShapes
     // natural parameter is an `Angle`, with a single bridge
     // `Eval(curve, t: Number) => curve.Eval(t.Turns)`. This is NOT a fold gap and
     // the P2 `Reduce`/`MapRange` primitives do not touch it: the block is purely a
-    // missing concept surface. The clean fix is `concept AngularCurve2D` (with the
+    // missing concept surface. The clean fix is `concept IAngularCurve2D` (with the
     // obligation `Eval(self, theta: Angle): Point2D`) plus one bridge, whose
     // natural home is `curves.concepts.plato` alongside the other curve
     // concepts — a file owned by the curves package, not editable from this
@@ -405,7 +405,7 @@ library CurvesShapes
     // bridged by one `Eval(curve, t: Number) => curve.Eval(t.Turns)`, has no
     // counterpart concept here. This is NOT a fold gap; the P2
     // `Reduce`/`MapRange` primitives do not touch it. The clean fix is a
-    // `concept AngularCurve3D` (obligation `Eval(self, theta: Angle): Point3D`)
+    // `concept IAngularCurve3D` (obligation `Eval(self, theta: Angle): Point3D`)
     // plus one bridge, whose natural home is `curves.concepts.plato`,
     // owned by the curves package and not editable from this library-body pass.
     // Until it lands the `t.Turns` conversion is repeated in each `Eval` below.
@@ -469,12 +469,12 @@ library CurvesShapes
                             self.P3.PositionVector, t)
                .ToPoint;
 
-    // The Deformable3D obligation: every control point carried through the
+    // The IDeformable3D obligation: every control point carried through the
     // mapping, with the same affine-exactness caveat as the plane arcs above.
     Deform(self: QuadraticBezier3D, mapping: Function1<Point3D, Point3D>): QuadraticBezier3D
         => (mapping(self.P0), mapping(self.P1), mapping(self.P2));
 
-    // The Deformable3D obligation: every control point carried through the mapping.
+    // The IDeformable3D obligation: every control point carried through the mapping.
     Deform(self: CubicBezier3D, mapping: Function1<Point3D, Point3D>): CubicBezier3D
         => (mapping(self.P0), mapping(self.P1), mapping(self.P2), mapping(self.P3));
 

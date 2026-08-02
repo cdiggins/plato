@@ -22,7 +22,7 @@
 // positive when the curve bends toward the normal).
 // (https://en.wikipedia.org/wiki/Curvature)
 type FrenetFrame2D
-    implements Value
+    implements IValue
 {
     Position: Point2D;
     Tangent: Direction2D;
@@ -36,7 +36,7 @@ type FrenetFrame2D
 // curvature vanishes.
 // (https://en.wikipedia.org/wiki/Frenet%E2%80%93Serret_formulas)
 type FrenetFrame3D
-    implements Value
+    implements IValue
 {
     Position: Point3D;
     Tangent: Direction3D;
@@ -51,7 +51,7 @@ type FrenetFrame3D
 // Parameter is the curve parameter at which the frame was sampled (unit-agnostic).
 // (https://en.wikipedia.org/wiki/Parallel_transport)
 type RotationMinimizingFrame3D
-    implements Value
+    implements IValue
 {
     Position: Point3D;
     Tangent: Direction3D;
@@ -65,7 +65,7 @@ type RotationMinimizingFrame3D
 // curvatures are in reciprocal world units; geodesic torsion likewise.
 // (https://en.wikipedia.org/wiki/Darboux_frame)
 type DarbouxFrame3D
-    implements Value
+    implements IValue
 {
     Position: Point3D;
     Tangent: Direction3D;
@@ -87,7 +87,7 @@ type DarbouxFrame3D
 // parametric derivatives at Parameter.
 // (https://en.wikipedia.org/wiki/Jet_(mathematics))
 type CurveJet2D
-    implements Value
+    implements IValue
 {
     Parameter: Number;
     Position: Point2D;
@@ -99,7 +99,7 @@ type CurveJet2D
 // parametric derivatives at Parameter. Third order is enough for torsion.
 // (https://en.wikipedia.org/wiki/Torsion_of_a_curve)
 type CurveJet3D
-    implements Value
+    implements IValue
 {
     Parameter: Number;
     Position: Point3D;
@@ -112,7 +112,7 @@ type CurveJet3D
 // partial derivatives, and the three second partials.
 // (https://en.wikipedia.org/wiki/Parametric_surface)
 type SurfaceJet3D
-    implements Value
+    implements IValue
 {
     Uv: UvCoordinate;
     Position: Point3D;
@@ -144,7 +144,7 @@ type GeodesicPath3D
 // curvature at ContactPoint.
 // (https://en.wikipedia.org/wiki/Osculating_circle)
 type OsculatingCircle2D
-    implements Value
+    implements IValue
 {
     Center: Point2D;
     Radius: Number;
@@ -171,13 +171,13 @@ type CurvatureComb2D
 // are per squared parameter unit.
 
 //==
-// # Surface point data
+// # ISurface point data
 
 // An evaluated point of a parametric surface: position, unit normal, and the
 // (generally non-unit) tangent partial derivatives at parameter Uv.
 // (https://en.wikipedia.org/wiki/Normal_(geometry))
 type SurfacePoint3D
-    implements Value
+    implements IValue
 {
     Position: Point3D;
     Normal: Direction3D;
@@ -191,7 +191,7 @@ type SurfacePoint3D
 // the unit normal.
 // (https://en.wikipedia.org/wiki/Tangent_space)
 type TangentSpace3D
-    implements Value
+    implements IValue
 {
     Origin: Point3D;
     TangentU: Vector3D;
@@ -206,7 +206,7 @@ type TangentSpace3D
 // Minimum <= Maximum) and their orthogonal unit directions in the tangent plane.
 // (https://en.wikipedia.org/wiki/Principal_curvature)
 type PrincipalCurvatures
-    implements Value
+    implements IValue
 {
     Minimum: Number;
     Maximum: Number;
@@ -219,7 +219,7 @@ type PrincipalCurvatures
 // (reciprocal world units).
 // (https://en.wikipedia.org/wiki/Gaussian_curvature)
 type SurfaceCurvature
-    implements Value
+    implements IValue
 {
     Gaussian: Number;
     Mean: Number;
@@ -241,7 +241,7 @@ type SurfacePointShape = Elliptic | Parabolic | Hyperbolic | Planar | Umbilic;
 // per squared parameter unit.
 // (https://en.wikipedia.org/wiki/First_fundamental_form)
 type FirstFundamentalForm
-    implements Value
+    implements IValue
 {
     E: Number;
     F: Number;
@@ -253,7 +253,7 @@ type FirstFundamentalForm
 // Units: world units per squared parameter unit.
 // (https://en.wikipedia.org/wiki/Second_fundamental_form)
 type SecondFundamentalForm
-    implements Value
+    implements IValue
 {
     L: Number;
     M: Number;
@@ -265,7 +265,7 @@ type SecondFundamentalForm
 // curvatures; generally not symmetric in a non-orthonormal basis.
 // (https://en.wikipedia.org/wiki/Weingarten_equations)
 type ShapeOperator2D
-    implements Value
+    implements IValue
 {
     Matrix: Matrix2x2;
 }
@@ -275,7 +275,7 @@ type ShapeOperator2D
 // Units: squared world units per squared parameter unit.
 // (https://en.wikipedia.org/wiki/Metric_tensor)
 type RiemannianMetric2D
-    implements Value
+    implements IValue
 {
     G11: Number;
     G12: Number;
@@ -288,7 +288,7 @@ type RiemannianMetric2D
 // parameter units.
 // (https://en.wikipedia.org/wiki/Christoffel_symbols)
 type ChristoffelSymbols2D
-    implements Value
+    implements IValue
 {
     Gamma111: Number;
     Gamma112: Number;

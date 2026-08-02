@@ -16,7 +16,7 @@
 // A unit quaternion encoding a 3D rotation
 // (https://en.wikipedia.org/wiki/Quaternion). Invariant: X*X + Y*Y + Z*Z + W*W = 1.
 type Quaternion
-    implements Value, Multiplicative, Interpolatable, Rigid3D
+    implements IValue, IMultiplicative, IInterpolatable, IRigid3D
 {
     X: Number;
     Y: Number;
@@ -27,7 +27,7 @@ type Quaternion
 // A rotation of Angle about a unit Axis, following the right-hand rule
 // (https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation).
 type AxisAngle
-    implements Value, Rotational3D
+    implements IValue, IRotational3D
 {
     Axis: Direction3D;
     Angle: Angle;
@@ -39,7 +39,7 @@ type RotationOrder = XYZ | XZY | YXZ | YZX | ZXY | ZYX;
 // Three chained elemental rotations under an explicit composition order
 // (https://en.wikipedia.org/wiki/Euler_angles).
 type EulerAngles
-    implements Value, Rotational3D
+    implements IValue, IRotational3D
 {
     Yaw: Angle;
     Pitch: Angle;
@@ -49,7 +49,7 @@ type EulerAngles
 
 // A rotation in the plane, stored as a single angle.
 type Rotation2D
-    implements Value, Multiplicative, Interpolatable, Rigid2D
+    implements IValue, IMultiplicative, IInterpolatable, IRigid2D
 {
     Angle: Angle;
 }
@@ -57,7 +57,7 @@ type Rotation2D
 // An oriented plane element in 2D (the single XY component); the generator of
 // 2D rotations in geometric algebra (https://en.wikipedia.org/wiki/Bivector).
 type Bivector2D
-    implements Value
+    implements IValue
 {
     XY: Number;
 }
@@ -66,7 +66,7 @@ type Bivector2D
 // the generator of 3D rotations in geometric algebra
 // (https://en.wikipedia.org/wiki/Geometric_algebra).
 type Bivector3D
-    implements Value
+    implements IValue
 {
     YZ: Number;
     ZX: Number;
@@ -76,7 +76,7 @@ type Bivector3D
 // A 2D geometric-algebra rotor: scalar plus bivector part. Equivalent to a unit
 // complex number (https://en.wikipedia.org/wiki/Rotor_(mathematics)).
 type Rotor2D
-    implements Value, Multiplicative
+    implements IValue, IMultiplicative
 {
     Scalar: Number;
     XY: Number;
@@ -86,7 +86,7 @@ type Rotor2D
 // quaternion, expressed in plane-based components
 // (https://en.wikipedia.org/wiki/Geometric_algebra).
 type Rotor3D
-    implements Value, Multiplicative, Rotational3D
+    implements IValue, IMultiplicative, IRotational3D
 {
     Scalar: Number;
     Bivector: Bivector3D;

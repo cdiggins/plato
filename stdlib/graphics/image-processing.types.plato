@@ -1,14 +1,14 @@
 //==
-// # Image processing
+// # IImage processing
 //
 // Sections, in order:
-//  - Image processing - tonal and color adjustments
-//  - Image processing - compositing
-//  - Image processing - filters and morphology
-//  - Image processing - resampling, quantization, and lens effects
+//  - IImage processing - tonal and color adjustments
+//  - IImage processing - compositing
+//  - IImage processing - filters and morphology
+//  - IImage processing - resampling, quantization, and lens effects
 
 //==
-// # Image processing - tonal and color adjustments
+// # IImage processing - tonal and color adjustments
 //
 // Per-pixel remappings of tone and color: the channel selector and histogram
 // used to analyze an image, then the curves, levels, matrices, white balance,
@@ -28,7 +28,7 @@ type ColorChannel
 // pixels per bin; the bins uniformly partition Range in order.
 // (https://en.wikipedia.org/wiki/Image_histogram)
 type ImageHistogram
-    implements Value
+    implements IValue
 {
     Channel: ColorChannel;
     Counts: Array<Integer>;
@@ -42,7 +42,7 @@ type ImageHistogram
 // smoothly interpolated: X is input level, Y is output level. Points ascend
 // in X. (https://en.wikipedia.org/wiki/Curve_(tonality))
 type ToneCurve
-    implements Value
+    implements IValue
 {
     Points: Array<Point2D>;
 }
@@ -50,7 +50,7 @@ type ToneCurve
 // A levels adjustment: input black/white points are remapped through a gamma
 // (midtone) exponent onto output black/white points.
 type LevelsAdjustment
-    implements Value
+    implements IValue
 {
     InputBlack: Number;
     InputWhite: Number;
@@ -62,7 +62,7 @@ type LevelsAdjustment
 // A curves adjustment: a master tone curve applied to all channels plus an
 // independent curve per color channel.
 type CurvesAdjustment
-    implements Value
+    implements IValue
 {
     Master: ToneCurve;
     Red: ToneCurve;
@@ -73,7 +73,7 @@ type CurvesAdjustment
 // A linear color transform: each output RGBA is the matrix times the input
 // RGBA plus Offset. Encodes saturation, channel mixing, sepia, and friends.
 type ColorMatrixAdjustment
-    implements Value
+    implements IValue
 {
     Matrix: Matrix4x4;
     Offset: Number4;
@@ -83,7 +83,7 @@ type ColorMatrixAdjustment
 // SaturationScale of 1 and LightnessOffset of 0 leave those axes unchanged.
 // (https://en.wikipedia.org/wiki/HSL_and_HSV)
 type HueSaturationAdjustment
-    implements Value
+    implements IValue
 {
     HueShift: Angle;
     SaturationScale: Number;
@@ -94,7 +94,7 @@ type HueSaturationAdjustment
 // blue-orange, Tint slides green-magenta (0 is neutral).
 // (https://en.wikipedia.org/wiki/Color_balance)
 type WhiteBalanceAdjustment
-    implements Value
+    implements IValue
 {
     Temperature: Temperature;
     Tint: Number;
@@ -103,7 +103,7 @@ type WhiteBalanceAdjustment
 // A brightness (additive) and contrast (scaling about mid-gray) adjustment;
 // 0 brightness and 0 contrast is the identity.
 type BrightnessContrastAdjustment
-    implements Value
+    implements IValue
 {
     Brightness: Number;
     Contrast: Number;
@@ -113,7 +113,7 @@ type BrightnessContrastAdjustment
 // by two to that power; Offset lifts blacks; GammaCorrection bends midtones.
 // (https://en.wikipedia.org/wiki/Exposure_(photography))
 type ExposureAdjustment
-    implements Value
+    implements IValue
 {
     Stops: Number;
     Offset: Number;
@@ -123,7 +123,7 @@ type ExposureAdjustment
 // A posterize adjustment: quantizes each channel to Levels evenly spaced
 // values (Levels of 2 or more). (https://en.wikipedia.org/wiki/Posterization)
 type PosterizeParameters
-    implements Value
+    implements IValue
 {
     Levels: Integer;
 }
@@ -133,14 +133,14 @@ type PosterizeParameters
 // blue; intermediate inputs interpolate trilinearly.
 // (https://en.wikipedia.org/wiki/3D_lookup_table)
 type ColorLookupTable
-    implements Value
+    implements IValue
 {
     Size: Integer;
     Colors: Array<Color>;
 }
 
 //==
-// # Image processing - compositing
+// # IImage processing - compositing
 //
 // How two layers combine: the color-mixing blend modes familiar from image
 // editors and CSS, and the Porter-Duff operators that decide how source and
@@ -191,7 +191,7 @@ type PorterDuff
     | Plus;
 
 //==
-// # Image processing - filters and morphology
+// # IImage processing - filters and morphology
 //
 // Neighborhood operations: convolution kernels and the blurs and sharpeners
 // built from them, edge detectors, mathematical morphology, and thresholding.
@@ -206,7 +206,7 @@ type PorterDuff
 // is the weighted sum times Scale plus Bias.
 // (https://en.wikipedia.org/wiki/Kernel_(image_processing))
 type ConvolutionKernel
-    implements Value
+    implements IValue
 {
     Width: Integer;
     Height: Integer;
@@ -219,7 +219,7 @@ type ConvolutionKernel
 // to convolving with the outer product of the two tap arrays but far cheaper.
 // (https://en.wikipedia.org/wiki/Separable_filter)
 type SeparableKernel
-    implements Value
+    implements IValue
 {
     HorizontalTaps: Array<Number>;
     VerticalTaps: Array<Number>;
@@ -229,7 +229,7 @@ type SeparableKernel
 // of 0 or less derives the standard deviation from Radius.
 // (https://en.wikipedia.org/wiki/Gaussian_blur)
 type GaussianBlurParameters
-    implements Value
+    implements IValue
 {
     Radius: Integer;
     Sigma: Number;
@@ -239,7 +239,7 @@ type GaussianBlurParameters
 // Passes times (three passes closely approximate a Gaussian).
 // (https://en.wikipedia.org/wiki/Box_blur)
 type BoxBlurParameters
-    implements Value
+    implements IValue
 {
     Radius: Integer;
     Passes: Integer;
@@ -248,7 +248,7 @@ type BoxBlurParameters
 // Linear motion blur: smearing along a direction over a distance in pixels.
 // (https://en.wikipedia.org/wiki/Motion_blur_(media))
 type MotionBlurParameters
-    implements Value
+    implements IValue
 {
     Angle: Angle;
     Distance: Number;
@@ -259,7 +259,7 @@ type MotionBlurParameters
 // local difference is below it (noise protection).
 // (https://en.wikipedia.org/wiki/Unsharp_masking)
 type UnsharpMaskParameters
-    implements Value
+    implements IValue
 {
     Radius: Number;
     Amount: Number;
@@ -292,7 +292,7 @@ type StructuringElement = Box | Disk | Cross | Diamond;
 // A complete morphological operation: what to do, with which element shape,
 // how large, and how many times.
 type MorphologyParameters
-    implements Value
+    implements IValue
 {
     Operation: MorphologyOperation;
     Element: StructuringElement;
@@ -315,7 +315,7 @@ type Threshold
     | AdaptiveGaussian(BlockSize: Integer, Offset: Number);
 
 //==
-// # Image processing - resampling, quantization, and lens effects
+// # IImage processing - resampling, quantization, and lens effects
 //
 // Operations that change an image's sampling grid, its color precision, or its
 // apparent optics: reconstruction filters and resize settings, lossless
@@ -335,7 +335,7 @@ type ResampleFilter
 // Resize settings. When PreserveAspect is true the image is fit within
 // TargetSize keeping its aspect ratio; otherwise it stretches to fill.
 type ResizeParameters
-    implements Value
+    implements IValue
 {
     TargetSize: IntegerSize2D;
     Filter: ResampleFilter;
@@ -363,7 +363,7 @@ type Dither
 // entries, hiding banding with the chosen dither.
 // (https://en.wikipedia.org/wiki/Color_quantization)
 type QuantizeParameters
-    implements Value
+    implements IValue
 {
     ColorCount: Integer;
     Dither: Dither;
@@ -373,7 +373,7 @@ type QuantizeParameters
 // removed within Radius, while PreserveDetail protects fine structure.
 // (https://en.wikipedia.org/wiki/Noise_reduction)
 type DenoiseParameters
-    implements Value
+    implements IValue
 {
     Strength: Proportion;
     Radius: Integer;
@@ -384,7 +384,7 @@ type DenoiseParameters
 // begins (0 center, 1 corners); Softness widens the transition; Center is in
 // normalized UV coordinates. (https://en.wikipedia.org/wiki/Vignetting)
 type VignetteParameters
-    implements Value
+    implements IValue
 {
     Strength: Proportion;
     Radius: Proportion;
@@ -396,7 +396,7 @@ type VignetteParameters
 // Center (normalized UV), Strength in pixels at the frame corner.
 // (https://en.wikipedia.org/wiki/Chromatic_aberration)
 type ChromaticAberrationParameters
-    implements Value
+    implements IValue
 {
     Strength: Number;
     Center: UvCoordinate;

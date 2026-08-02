@@ -3,12 +3,12 @@
 //
 // Sections, in order:
 //  - Images
-//  - Image containers
+//  - IImage containers
 
 //==
 // # Images
 //
-// Raster data: rectangular grids of pixels. The `Image` concept
+// Raster data: rectangular grids of pixels. The `IImage` concept
 // (`images.concepts.plato`) exposes only dimensions; pixel access lives on the
 // concrete types below because pixel representations differ (bytes, floats,
 // indices, bits). Unless a type says otherwise, pixel storage is row-major
@@ -39,7 +39,7 @@ type PixelFormat
 // An 8-bit-per-channel RGBA image, sRGB-encoded: the workhorse storage and
 // interop form for display-referred content.
 type Bitmap
-    implements Image
+    implements IImage
 {
     Size: IntegerSize2D;
     Pixels: Array<Color8>;
@@ -49,7 +49,7 @@ type Bitmap
 // compositing, filtering, and rendering output.
 // (https://en.wikipedia.org/wiki/High_dynamic_range)
 type FloatImage
-    implements Image
+    implements IImage
 {
     Size: IntegerSize2D;
     Pixels: Array<Color>;
@@ -58,7 +58,7 @@ type FloatImage
 // A single-channel image of unbounded scalars: luminance, heights, weights,
 // or soft (fractional) masks. (https://en.wikipedia.org/wiki/Grayscale)
 type GrayscaleImage
-    implements Image
+    implements IImage
 {
     Size: IntegerSize2D;
     Values: Array<Number>;
@@ -68,7 +68,7 @@ type GrayscaleImage
 // True marks a set (selected) pixel.
 // (https://en.wikipedia.org/wiki/Binary_image)
 type BinaryImage
-    implements Image
+    implements IImage
 {
     Size: IntegerSize2D;
     Values: Array<Boolean>;
@@ -77,7 +77,7 @@ type BinaryImage
 // A zero-based index of an entry within a palette's color array. -1 marks
 // a transparent (unmapped) pixel.
 type PaletteIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -86,7 +86,7 @@ type PaletteIndex
 // An index of -1 marks a transparent (unmapped) pixel.
 // (https://en.wikipedia.org/wiki/Indexed_color)
 type IndexedImage
-    implements Image
+    implements IImage
 {
     Size: IntegerSize2D;
     Indices: Array<PaletteIndex>;
@@ -97,7 +97,7 @@ type IndexedImage
 // Near and Far distances that produced them.
 // (https://en.wikipedia.org/wiki/Depth_map)
 type DepthImage
-    implements Image
+    implements IImage
 {
     Size: IntegerSize2D;
     Depths: Array<Number>;
@@ -109,14 +109,14 @@ type DepthImage
 // map), stored unencoded: components in [-1, 1], not remapped to color range.
 // (https://en.wikipedia.org/wiki/Normal_mapping)
 type NormalImage
-    implements Image
+    implements IImage
 {
     Size: IntegerSize2D;
     Normals: Array<Vector3D>;
 }
 
 //==
-// # Image containers
+// # IImage containers
 //
 // Images that hold something other than one plain 2D pixel grid: compressed
 // file payloads, mip pyramids, tile grids, frame sequences, regions of
@@ -134,7 +134,7 @@ type ImageCodec
 // An image in compressed (file) form: an opaque byte payload plus the codec
 // that produced it. Each element of Bytes is one octet in [0, 255].
 type EncodedImage
-    implements Value
+    implements IValue
 {
     Codec: ImageCodec;
     Bytes: Array<Integer>;
@@ -144,7 +144,7 @@ type EncodedImage
 // halves both dimensions (rounding down, minimum 1) until 1x1.
 // (https://en.wikipedia.org/wiki/Mipmap)
 type MipChain
-    implements Value
+    implements IValue
 {
     Levels: Array<FloatImage>;
 }
@@ -153,7 +153,7 @@ type MipChain
 // caching. Interior tiles are exactly TileSize; right/bottom edge tiles may
 // be smaller.
 type TiledImage
-    implements Value
+    implements IValue
 {
     Size: IntegerSize2D;
     TileSize: IntegerSize2D;
@@ -163,7 +163,7 @@ type TiledImage
 // A frame-sequence image (animated GIF/WebP style). FrameDurations pairs
 // one-to-one with Frames; LoopCount is the replay count, 0 meaning forever.
 type AnimatedImage
-    implements Value
+    implements IValue
 {
     Frames: Array<Bitmap>;
     FrameDurations: Array<Duration>;
@@ -174,7 +174,7 @@ type AnimatedImage
 // Contains Min, excludes Max (half-open, like IntegerBounds2D).
 // (https://en.wikipedia.org/wiki/Region_of_interest)
 type ImageRegion
-    implements Value
+    implements IValue
 {
     Bounds: IntegerBounds2D;
 }
@@ -187,7 +187,7 @@ type ImageRegion
 // then column; Count equals Width times Height times Depth.
 // (https://en.wikipedia.org/wiki/Voxel)
 type VolumeImage
-    implements Value
+    implements IValue
 {
     Size: IntegerSize3D;
     Values: Array<Number>;
@@ -197,7 +197,7 @@ type VolumeImage
 // +X, -X, +Y, -Y, +Z, -Z. All faces share the same square size.
 // (https://en.wikipedia.org/wiki/Cube_mapping)
 type CubemapImage
-    implements Value
+    implements IValue
 {
     Faces: Array<FloatImage>;
 }

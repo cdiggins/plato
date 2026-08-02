@@ -3,7 +3,7 @@
 //
 // Sections, in order:
 //  - Generated surfaces
-//  - Surface patches and control nets
+//  - ISurface patches and control nets
 //  - Trimmed, sampled, topological, and subdivision surfaces
 
 //==
@@ -11,7 +11,7 @@
 //
 // Surfaces defined by carrying a generator curve through space: revolve,
 // extrude, rule, loft, sweep, tube, and offset. Generator curves referenced as
-// concepts (Curve2D, Curve3D) are supplied by any concrete curve type, so these
+// concepts (ICurve2D, ICurve3D) are supplied by any concrete curve type, so these
 // types compose with everything in the curve files. Evaluation lives in
 // `surfaces.library.plato`.
 
@@ -23,9 +23,9 @@
 // coordinate is the radial distance from the axis and its Y coordinate runs
 // along the axis; Angles is the sweep (a full turn closes the surface in U).
 type SurfaceOfRevolution
-    implements ParametricSurface
+    implements IParametricSurface
 {
-    Profile: Curve2D;
+    Profile: ICurve2D;
     Axis: InfiniteLine3D;
     Angles: AngleInterval;
 }
@@ -33,9 +33,9 @@ type SurfaceOfRevolution
 // The surface swept by translating a profile curve along a straight direction
 // for a distance: U follows the profile, V the extrusion.
 type ExtrudedSurface
-    implements ParametricSurface
+    implements IParametricSurface
 {
-    Profile: Curve3D;
+    Profile: ICurve3D;
     Direction: Direction3D;
     Distance: Number;
 }
@@ -44,10 +44,10 @@ type ExtrudedSurface
 // End at equal parameter values (https://en.wikipedia.org/wiki/Ruled_surface).
 // U along the curves, V across the rulings.
 type RuledSurface
-    implements ParametricSurface
+    implements IParametricSurface
 {
-    Start: Curve3D;
-    End: Curve3D;
+    Start: ICurve3D;
+    End: ICurve3D;
 }
 
 // The surface interpolating an ordered stack of cross-section polylines:
@@ -55,7 +55,7 @@ type RuledSurface
 // counts; Closed wraps the last section back to the first
 // (https://en.wikipedia.org/wiki/Loft_(3D)).
 type LoftedSurface
-    implements ParametricSurface, Deformable3D
+    implements IParametricSurface, IDeformable3D
 {
     Sections: Array<Polyline3D>;
     Closed: Boolean;
@@ -64,19 +64,19 @@ type LoftedSurface
 // The surface swept by a 2D profile carried along a 3D path in the path's
 // rotation-minimizing frame: U follows the profile, V the path.
 type SweptSurface
-    implements ParametricSurface
+    implements IParametricSurface
 {
-    Profile: Curve2D;
-    Path: Curve3D;
+    Profile: ICurve2D;
+    Path: ICurve3D;
 }
 
 // A circular-section pipe around a path: the sweep of a circle of radius
 // Radius held normal to the path (U around the circle, V along the path)
 // (https://en.wikipedia.org/wiki/Channel_surface).
 type TubeSurface
-    implements ParametricSurface
+    implements IParametricSurface
 {
-    Path: Curve3D;
+    Path: ICurve3D;
     Radius: Number;
 }
 
@@ -84,14 +84,14 @@ type TubeSurface
 // normal (positive Distance follows the base orientation)
 // (https://en.wikipedia.org/wiki/Parallel_curve).
 type OffsetSurface
-    implements ParametricSurface
+    implements IParametricSurface
 {
-    Base: ParametricSurface;
+    Base: IParametricSurface;
     Distance: Number;
 }
 
 //==
-// # Surface patches and control nets
+// # ISurface patches and control nets
 //
 // The rectangular surface pieces: corner-interpolated and control-net patches
 // (Bezier, B-spline, NURBS), the flat and spherical windows, and the Coons blend
@@ -106,7 +106,7 @@ type OffsetSurface
 // curved quadrilateral surface
 // (https://en.wikipedia.org/wiki/Bilinear_interpolation).
 type BilinearPatch
-    implements ParametricSurface, Deformable3D
+    implements IParametricSurface, IDeformable3D
 {
     P00: Point3D;
     P10: Point3D;
@@ -118,7 +118,7 @@ type BilinearPatch
 // row count - 1 (https://en.wikipedia.org/wiki/B%C3%A9zier_surface).
 // Interpolates the four corner control points.
 type BezierPatch
-    implements ParametricSurface, Deformable3D
+    implements IParametricSurface, IDeformable3D
 {
     ControlPoints: Array2D<Point3D>;
 }
@@ -127,7 +127,7 @@ type BezierPatch
 // + 1 values, and VKnots row count + VDegree + 1 values
 // (https://en.wikipedia.org/wiki/B-spline).
 type BSplineSurface
-    implements ParametricSurface, Deformable3D
+    implements IParametricSurface, IDeformable3D
 {
     ControlPoints: Array2D<Point3D>;
     UDegree: Integer;
@@ -141,7 +141,7 @@ type BSplineSurface
 // (https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline). The CAD
 // interchange standard; represents quadrics exactly.
 type NurbsSurface
-    implements ParametricSurface, Deformable3D
+    implements IParametricSurface, IDeformable3D
 {
     ControlPoints: Array2D<Point3D>;
     Weights: Array2D<Number>;
@@ -154,7 +154,7 @@ type NurbsSurface
 // A rectangular piece of a plane: (u, v) in Domain maps to the frame origin
 // plus u along the frame's X axis and v along its Y axis.
 type PlanarPatch
-    implements ParametricSurface
+    implements IParametricSurface
 {
     Frame: Frame3D;
     Domain: Bounds2D;
@@ -164,18 +164,18 @@ type PlanarPatch
 // (https://en.wikipedia.org/wiki/Coons_patch). The curves must meet at the
 // patch corners (Bottom/Top run in U, Left/Right run in V).
 type CoonsPatch
-    implements ParametricSurface
+    implements IParametricSurface
 {
-    Bottom: Curve3D;
-    Right: Curve3D;
-    Top: Curve3D;
-    Left: Curve3D;
+    Bottom: ICurve3D;
+    Right: ICurve3D;
+    Top: ICurve3D;
+    Left: ICurve3D;
 }
 
 // A rectangular region of a sphere bounded by azimuth and inclination
 // intervals (a latitude/longitude window).
 type SphericalPatch
-    implements ParametricSurface
+    implements IParametricSurface
 {
     Sphere: Sphere;
     Azimuths: AngleInterval;
@@ -196,11 +196,11 @@ type SphericalPatch
 
 // A parametric surface restricted to a region of its UV domain: OuterLoop is
 // a closed counter-clockwise polyline in UV space, and Holes are closed
-// clockwise loops removed from it. Not a rectangular patch, so only Surface.
+// clockwise loops removed from it. Not a rectangular patch, so only ISurface.
 type TrimmedSurface
-    implements Surface
+    implements ISurface
 {
-    Base: ParametricSurface;
+    Base: IParametricSurface;
     OuterLoop: Polyline2D;
     Holes: Array<Polyline2D>;
 }
@@ -210,7 +210,7 @@ type TrimmedSurface
 // bilinear interpolation between samples
 // (https://en.wikipedia.org/wiki/Heightmap). Terrain and displacement data.
 type HeightField
-    implements HeightFieldSurface
+    implements IHeightFieldSurface
 {
     Heights: Array2D<Number>;
     Domain: Bounds2D;
@@ -224,7 +224,7 @@ type HeightField
 // over one lap (https://en.wikipedia.org/wiki/M%C3%B6bius_strip). An odd count
 // yields the one-sided surface.
 type MobiusStrip
-    implements ParametricSurface
+    implements IParametricSurface
 {
     Frame: Frame3D;
     Radius: Number;
@@ -240,7 +240,7 @@ type SubdivisionScheme = CatmullClark | Loop | DooSabin;
 // (or approximated) at the given refinement level
 // (https://en.wikipedia.org/wiki/Subdivision_surface).
 type SubdivisionSurface
-    implements Surface, Deformable3D
+    implements ISurface, IDeformable3D
 {
     ControlMesh: PolygonMesh3D;
     Scheme: SubdivisionScheme;

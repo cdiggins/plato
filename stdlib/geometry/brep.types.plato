@@ -18,7 +18,7 @@ type EdgeOrientation = Forward | Reversed;
 // One oriented citation of an undirected edge inside a face boundary loop.
 // A watertight shell cites every edge exactly twice, once in each orientation.
 type BrepEdgeUse
-    implements Value
+    implements IValue
 {
     Edge: UndirectedEdgeIndex;
     Orientation: EdgeOrientation;
@@ -34,7 +34,7 @@ type BrepCurve
 // it owns. The curve runs from Start (parameter 0) to End (parameter 1);
 // `Validate` checks that agreement.
 type BrepEdge
-    implements Value
+    implements IValue
 {
     Start: VertexIndex;
     End: VertexIndex;
@@ -45,7 +45,7 @@ type BrepEdge
 // around the loop (the end vertex of each use is the start vertex of the
 // next, wrapping around). Not the half-edge BoundaryLoop.
 type BrepLoop
-    implements Value
+    implements IValue
 {
     Uses: Array<BrepEdgeUse>;
 }
@@ -62,7 +62,7 @@ type BrepSurface
 // Loops wind counter-clockwise seen from outside; the surface du x dv normal
 // points out of the solid.
 type BrepFace
-    implements Value
+    implements IValue
 {
     Surface: BrepSurface;
     Loops: Array<BrepLoop>;
@@ -74,7 +74,7 @@ type BrepFace
 // checked property (`IsWatertight` / `Validate` in brep.library.plato), and a
 // proof-carrying closed subtype is future work.
 type Brep3D
-    implements BoundaryRepresentation, Deformable3D
+    implements IBoundaryRepresentation, IDeformable3D
 {
     Vertices: Array<Point3D>;
     Edges: Array<BrepEdge>;
@@ -85,7 +85,7 @@ type Brep3D
 // `Validate` (brep.library.plato). The connectivity and watertight answers are
 // only meaningful when both range flags are true.
 type BrepValidation
-    implements Value
+    implements IValue
 {
     EdgesInRange: Boolean;
     LoopUsesInRange: Boolean;

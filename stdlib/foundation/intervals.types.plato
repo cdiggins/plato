@@ -11,7 +11,7 @@
 //
 // One-dimensional directed spans
 // (https://en.wikipedia.org/wiki/Interval_(mathematics)), one concrete type per
-// element type. Every one implements `IntervalLike<T>`
+// element type. Every one implements `IIntervalLike<T>`
 // (`intervals-bounds.concepts.plato`) and so inherits the generic
 // Lerp/Clamp/Union/Extent surface.
 // Convention: see CONVENTIONS.md - Bounds (inclusive endpoints; an inverted
@@ -19,7 +19,7 @@
 
 // A directed interval of unitless numbers.
 type NumberInterval
-    implements IntervalLike<Number>
+    implements IIntervalLike<Number>
 {
     Start: Number;
     End: Number;
@@ -30,10 +30,10 @@ type NumberInterval
 // which may CROSS the +/-pi seam: an arc from 170 deg to -170 deg is the short
 // 20 deg sweep across the seam, not the long way round. Arc consumers
 // (CircularArc2D, CircularSector) read it this way. Wrap-aware Span/Contains live
-// in intervals.library.plato; the generic linear IntervalLike helpers
+// in intervals.library.plato; the generic linear IIntervalLike helpers
 // are correct only for non-wrapping ranges. Convention: see CONVENTIONS.md - Angles.
 type AngleInterval
-    implements IntervalLike<Angle>
+    implements IIntervalLike<Angle>
 {
     Start: Angle;
     End: Angle;
@@ -41,7 +41,7 @@ type AngleInterval
 
 // A directed interval of lengths.
 type LengthInterval
-    implements IntervalLike<Length>
+    implements IIntervalLike<Length>
 {
     Start: Length;
     End: Length;
@@ -49,7 +49,7 @@ type LengthInterval
 
 // A directed interval of whole numbers: index ranges. Contains Start, excludes End.
 type IntegerInterval
-    implements IntervalLike<Integer>
+    implements IIntervalLike<Integer>
 {
     Start: Integer;
     End: Integer;
@@ -73,7 +73,7 @@ type IntegerInterval
 // can start from Empty(). Prefer Bounds2D for culling/containment; prefer Rect2D
 // (center+size) for layout. Convention: see CONVENTIONS.md - Bounds.
 type Bounds2D
-    implements BoundsLike<Point2D, Vector2D>
+    implements IBoundsLike<Point2D, Vector2D>
 {
     Min: Point2D;
     Max: Point2D;
@@ -85,7 +85,7 @@ type Bounds2D
 // it contains no point and is the identity for Union, so accumulation can start
 // from Empty(). Convention: see CONVENTIONS.md - Bounds.
 type Bounds3D
-    implements BoundsLike<Point3D, Vector3D>
+    implements IBoundsLike<Point3D, Vector3D>
 {
     Min: Point3D;
     Max: Point3D;
@@ -93,7 +93,7 @@ type Bounds3D
 
 // A whole-number 2D bounding region: pixel rectangles. Contains Min, excludes Max.
 type IntegerBounds2D
-    implements Value
+    implements IValue
 {
     Min: IntegerVector2;
     Max: IntegerVector2;
@@ -101,7 +101,7 @@ type IntegerBounds2D
 
 // A whole-number 3D bounding region: voxel boxes. Contains Min, excludes Max.
 type IntegerBounds3D
-    implements Value
+    implements IValue
 {
     Min: IntegerVector3;
     Max: IntegerVector3;
@@ -109,7 +109,7 @@ type IntegerBounds3D
 
 // A rectangle given by its center and size; axis-aligned.
 type Rect2D
-    implements Value
+    implements IValue
 {
     Center: Point2D;
     Size: Size2D;
@@ -125,7 +125,7 @@ type Rect2D
 
 // A continuous 2D extent: width and height.
 type Size2D
-    implements Value
+    implements IValue
 {
     Width: Number;
     Height: Number;
@@ -133,7 +133,7 @@ type Size2D
 
 // A continuous 3D extent: width, height, and depth.
 type Size3D
-    implements Value
+    implements IValue
 {
     Width: Number;
     Height: Number;
@@ -142,7 +142,7 @@ type Size3D
 
 // A discrete 2D extent: image and grid dimensions.
 type IntegerSize2D
-    implements Value, Hashable
+    implements IValue, IHashable
 {
     Width: Integer;
     Height: Integer;
@@ -150,7 +150,7 @@ type IntegerSize2D
 
 // A discrete 3D extent: voxel-grid dimensions.
 type IntegerSize3D
-    implements Value, Hashable
+    implements IValue, IHashable
 {
     Width: Integer;
     Height: Integer;

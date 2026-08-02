@@ -1,5 +1,5 @@
 //==
-// # Field expression graph evaluation
+// # IField expression graph evaluation
 //
 // Recursive evaluation of the flat expression graphs declared in
 // `fields.types.plato`. Lives in its own `library` block, rather than in the

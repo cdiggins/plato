@@ -21,7 +21,7 @@
 // # Constructive solid geometry
 
 // The Boolean operation applied at an interior CSG node
-// (https://en.wikipedia.org/wiki/Constructive_solid_geometry). Difference
+// (https://en.wikipedia.org/wiki/Constructive_solid_geometry). IDifference
 // subtracts the right child from the left; smooth variants blend over their
 // own Radius (in model units).
 type CsgOperation
@@ -35,7 +35,7 @@ type CsgOperation
 // A zero-based index of a node within a CSG tree's flat node array.
 // -1 means "none" (a leaf's missing children).
 type CsgNodeIndex
-    implements Value, Hashable, Comparable, Index
+    implements IValue, IHashable, IComparable, IIndex
 {
     Value: Integer;
 }
@@ -52,7 +52,7 @@ type CsgNode3D
 // indices (no pointers); Root is the index of the root node in Nodes
 // (https://en.wikipedia.org/wiki/Constructive_solid_geometry).
 type CsgTree3D
-    implements Solid
+    implements ISolid
 {
     Nodes: Array<CsgNode3D>;
     Root: CsgNodeIndex;
@@ -65,7 +65,7 @@ type CsgTree3D
 // (https://en.wikipedia.org/wiki/Convex_polytope). The intersection is assumed
 // bounded; redundant half-spaces are permitted.
 type ConvexPolytope3D
-    implements ConvexSolid
+    implements IConvexSolid
 {
     Boundaries: Array<HalfSpace>;
 }
@@ -98,7 +98,7 @@ type PlaneRelation3D
 // the Sutherland-Hodgman clipping bodies rely on.
 // (https://en.wikipedia.org/wiki/Boundary_representation)
 type PolygonSoup3D
-    implements Solid, Deformable3D
+    implements ISolid, IDeformable3D
 {
     Polygons: Array<Polygon3D>;
 }
@@ -119,7 +119,7 @@ type PolygonSoup3D
 // (https://en.wikipedia.org/wiki/Extrusion). The profile lies in the frame's
 // XY plane.
 type ExtrudedSolid
-    implements Solid
+    implements ISolid
 {
     Profile: PolygonWithHoles2D;
     Placement: Frame3D;
@@ -131,7 +131,7 @@ type ExtrudedSolid
 // coordinate is the radial distance from the axis and its Y coordinate runs
 // along the axis; a partial sweep over Angles is capped by two flat faces.
 type RevolvedSolid
-    implements Solid
+    implements ISolid
 {
     Profile: PolygonWithHoles2D;
     Axis: InfiniteLine3D;
@@ -143,7 +143,7 @@ type RevolvedSolid
 // Sections must share point counts; Closed joins the last section back to the
 // first into a ring instead.
 type LoftedSolid
-    implements Solid, Deformable3D
+    implements ISolid, IDeformable3D
 {
     Sections: Array<Polygon3D>;
     Closed: Boolean;
@@ -152,10 +152,10 @@ type LoftedSolid
 // The solid swept by carrying a planar profile (with optional holes) along a
 // path in the path's rotation-minimizing frame, capped at both path ends.
 type SweptSolid
-    implements Solid
+    implements ISolid
 {
     Profile: PolygonWithHoles2D;
-    Path: Curve3D;
+    Path: ICurve3D;
 }
 
 //==
@@ -176,7 +176,7 @@ type SweptSolid
 // Height and joined by rectangles (https://en.wikipedia.org/wiki/Prism_(geometry)).
 // (The general polygon-swept prism is Prism3D, `polygons.types.plato`.)
 type RegularPrism
-    implements ConvexSolid, ParametricSurface, Meshable3D
+    implements IConvexSolid, IParametricSurface, IMeshable3D
 {
     Frame: Frame3D;
     SideCount: Integer;
@@ -190,7 +190,7 @@ type RegularPrism
 // (https://en.wikipedia.org/wiki/Pyramid_(geometry)). (The general polygon-based
 // pyramid is Pyramid3D, polygons.plato.)
 type RegularPyramid
-    implements ConvexSolid, ParametricSurface, Meshable3D
+    implements IConvexSolid, IParametricSurface, IMeshable3D
 {
     Frame: Frame3D;
     SideCount: Integer;
@@ -204,7 +204,7 @@ type RegularPyramid
 // is axis-aligned rather than inscribed in the unit circle
 // (https://en.wikipedia.org/wiki/Square_pyramid).
 type SquarePyramid
-    implements ConvexSolid, ParametricSurface, Meshable3D
+    implements IConvexSolid, IParametricSurface, IMeshable3D
 {
     Frame: Frame3D;
     BaseLength: Number;
@@ -215,7 +215,7 @@ type SquarePyramid
 // against each other and joined by a band of 2 * SideCount triangles
 // (https://en.wikipedia.org/wiki/Antiprism).
 type Antiprism
-    implements ConvexSolid, Meshable3D
+    implements IConvexSolid, IMeshable3D
 {
     Frame: Frame3D;
     SideCount: Integer;
@@ -231,7 +231,7 @@ type PlatonicSolidKind
 // frame's orientation, with vertices at circumscribed radius Radius
 // (https://en.wikipedia.org/wiki/Platonic_solid).
 type PlatonicSolid
-    implements ConvexSolid, Meshable3D
+    implements IConvexSolid, IMeshable3D
 {
     Kind: PlatonicSolidKind;
     Frame: Frame3D;
@@ -259,7 +259,7 @@ type ArchimedeanSolidKind
 // in the frame's orientation, with vertices at circumscribed radius Radius
 // (https://en.wikipedia.org/wiki/Archimedean_solid).
 type ArchimedeanSolid
-    implements ConvexSolid, Meshable3D
+    implements IConvexSolid, IMeshable3D
 {
     Kind: ArchimedeanSolidKind;
     Frame: Frame3D;
@@ -289,7 +289,7 @@ type CatalanSolidKind
 // A Catalan solid of the given kind, centered at the frame origin in the
 // frame's orientation, with vertices at circumscribed radius Radius.
 type CatalanSolid
-    implements ConvexSolid, Meshable3D
+    implements IConvexSolid, IMeshable3D
 {
     Kind: CatalanSolidKind;
     Frame: Frame3D;

@@ -8,7 +8,7 @@
 // A planar motion that can be sampled at any time. PositionAt returns the
 // position in meters at the given time since the motion's start; VelocityAt
 // returns the velocity in meters per second.
-concept Kinematic2D
+interface IKinematic2D
 {
     PositionAt(x: Self, time: Duration): Point2D;
     VelocityAt(x: Self, time: Duration): Vector2D;
@@ -18,7 +18,7 @@ concept Kinematic2D
 // position in meters at the given time since the motion's start; VelocityAt
 // returns the velocity in meters per second.
 // (https://en.wikipedia.org/wiki/Kinematics)
-concept Kinematic3D
+interface IKinematic3D
 {
     PositionAt(x: Self, time: Duration): Point3D;
     VelocityAt(x: Self, time: Duration): Vector3D;

@@ -14,37 +14,37 @@
 // records — lives in `spatial-structures.library.plato`.
 
 // Anything a 2D ray can be cast against.
-concept RayIntersectable2D
+interface IRayIntersectable2D
 {
     Raycast(x: Self, query: RayQuery2D): RayHit2D;
 }
 
 // Anything a 3D ray can be cast against.
-concept RayIntersectable3D
+interface IRayIntersectable3D
 {
     Raycast(x: Self, query: RayQuery3D): RayHit3D;
 }
 
 // Anything that can report its closest point to a 2D query point.
-concept ClosestPointQueryable2D
+interface IClosestPointQueryable2D
 {
     ClosestPoint(x: Self, point: Point2D): ClosestPointResult2D;
 }
 
 // Anything that can report its closest point to a 3D query point.
-concept ClosestPointQueryable3D
+interface IClosestPointQueryable3D
 {
     ClosestPoint(x: Self, point: Point3D): ClosestPointResult3D;
 }
 
 // Anything that can answer k-nearest-neighbor searches over 2D points.
-concept NearestNeighborQueryable2D
+interface INearestNeighborQueryable2D
 {
     FindNearest(x: Self, query: KNearestQuery2D): NearestNeighbors;
 }
 
 // Anything that can answer k-nearest-neighbor searches over 3D points.
-concept NearestNeighborQueryable3D
+interface INearestNeighborQueryable3D
 {
     FindNearest(x: Self, query: KNearestQuery3D): NearestNeighbors;
 }
@@ -61,7 +61,7 @@ concept NearestNeighborQueryable3D
 // (https://en.wikipedia.org/wiki/Spatial_database). Candidate results are
 // indices into the caller's primitive list and may include false positives
 // (exact tests are the caller's second phase).
-concept SpatialIndex2D
+interface ISpatialIndex2D
 {
     ItemCount(x: Self): Integer;
     CandidatesInBounds(x: Self, bounds: Bounds2D): Array<ItemIndex>;
@@ -70,7 +70,7 @@ concept SpatialIndex2D
 // A queryable acceleration structure over indexed 3D primitives. Candidate
 // results are indices into the caller's primitive list and may include
 // false positives (exact tests are the caller's second phase).
-concept SpatialIndex3D
+interface ISpatialIndex3D
 {
     ItemCount(x: Self): Integer;
     CandidatesInBounds(x: Self, bounds: Bounds3D): Array<ItemIndex>;

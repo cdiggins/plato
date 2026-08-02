@@ -13,7 +13,7 @@ library Core
     // Derived functionality for the comparison concepts
     // (`core.concepts.plato`): the strict/relaxed relational operators,
     // extrema, range tests, and three-way comparison, all built on the single
-    // `LessThanOrEquals` primitive of `Orderable`
+    // `LessThanOrEquals` primitive of `IOrderable`
     // (https://en.wikipedia.org/wiki/Total_order).
     //
     // This file also carries the shared provenance note for the whole
@@ -25,14 +25,14 @@ library Core
     // concepts, or other functions in this library.
 
     //==
-    // Orderable
+    // IOrderable
     //
     // LessThanOrEquals itself cannot be derived here: it IS the primitive of
-    // Orderable, so there is nothing on the concept surface to build it from.
+    // IOrderable, so there is nothing on the concept surface to build it from.
     // The only mechanical lever for the outstanding LessThanOrEquals obligations
     // is a *narrower* concept whose implementors share a carrier with a known
-    // order — that is `Index` (single `Value: Integer`), and its generic body
-    // lives in `collections.library.plato` because P2 owns `Index`
+    // order — that is `IIndex` (single `Value: Integer`), and its generic body
+    // lives in `collections.library.plato` because P2 owns `IIndex`
     // (LIBRARIES.md rule 10). It discharges every typed-index implementor.
     //
     // The remaining implementors have no shared derivable order and each needs a
@@ -40,7 +40,7 @@ library Core
     //   - Rational (numbers) — ordering is a/b <= c/d via cross-multiplication,
     //     and its sign handling depends on the denominator's sign. Not mechanical.
     //   - Proportion / Percent / Probability / Cardinal / SafetyFactor — trivially
-    //     order on their single numeric field, but they are not Index implementors
+    //     order on their single numeric field, but they are not IIndex implementors
     //     and their bodies belong to numbers.types.plato / engineering-*.plato territory.
     //   - Instant / BeatTime (time) — single-field, order on SecondsSinceEpoch
     //     and Beats respectively; concrete bodies for the time domain.
@@ -52,58 +52,58 @@ library Core
     // TODO(cross-package): fill the above in their owning packages.
 
     //==
-    // Equatable
+    // IEquatable
     //
-    // Inequality is the negation of equality, once, for every Equatable. Written
+    // Inequality is the negation of equality, once, for every IEquatable. Written
     // against `Equals` explicitly rather than the `!=` operator, which desugars
     // to this very function. Added by plato-378 so that Number, Integer and
     // Boolean no longer each need a NotEquals intrinsic.
 
     // True when the two values are not equal.
-    NotEquals(a: Equatable, b: Equatable): Boolean
+    NotEquals(a: IEquatable, b: IEquatable): Boolean
         => !a.Equals(b);
 
     // True when a is strictly less than b.
-    LessThan(a: Orderable, b: Orderable): Boolean
+    LessThan(a: IOrderable, b: IOrderable): Boolean
         => a <= b && a != b;
 
     // True when a is strictly greater than b.
-    GreaterThan(a: Orderable, b: Orderable): Boolean
+    GreaterThan(a: IOrderable, b: IOrderable): Boolean
         => b.LessThan(a);
 
     // True when a is greater than or equal to b.
-    GreaterThanOrEquals(a: Orderable, b: Orderable): Boolean
+    GreaterThanOrEquals(a: IOrderable, b: IOrderable): Boolean
         => b <= a;
 
     // The lesser of the two values, using the total order.
-    Lesser(a: Orderable, b: Orderable): Orderable
+    Lesser(a: IOrderable, b: IOrderable): IOrderable
         => a <= b ? a : b;
 
     // The greater of the two values, using the total order.
-    Greater(a: Orderable, b: Orderable): Orderable
+    Greater(a: IOrderable, b: IOrderable): IOrderable
         => a <= b ? b : a;
 
     // True when x lies within the inclusive range [lower, upper].
-    Between(x: Orderable, lower: Orderable, upper: Orderable): Boolean
+    Between(x: IOrderable, lower: IOrderable, upper: IOrderable): Boolean
         => lower <= x && x <= upper;
 
     // Restricts x to the inclusive range [lower, upper] using the total order.
     // Assumes lower <= upper.
-    Clamp(x: Orderable, lower: Orderable, upper: Orderable): Orderable
+    Clamp(x: IOrderable, lower: IOrderable, upper: IOrderable): IOrderable
         => x.Greater(lower).Lesser(upper);
 
     // The least of three values, using the total order.
-    Min3(a: Orderable, b: Orderable, c: Orderable): Orderable
+    Min3(a: IOrderable, b: IOrderable, c: IOrderable): IOrderable
         => a.Lesser(b).Lesser(c);
 
     // The greatest of three values, using the total order.
-    Max3(a: Orderable, b: Orderable, c: Orderable): Orderable
+    Max3(a: IOrderable, b: IOrderable, c: IOrderable): IOrderable
         => a.Greater(b).Greater(c);
 
     // Three-way comparison derived from the total order: negative when a < b,
-    // zero when equal, positive when a > b. Declared as a member on Comparable,
-    // but derivable from Orderable alone, so it lives here on the base concept.
-    Compare(a: Orderable, b: Orderable): Integer
+    // zero when equal, positive when a > b. Declared as a member on IComparable,
+    // but derivable from IOrderable alone, so it lives here on the base concept.
+    Compare(a: IOrderable, b: IOrderable): Integer
         => a == b ? 0 : (a <= b ? -1 : 1);
 
     //==
@@ -114,37 +114,37 @@ library Core
     // (https://en.wikipedia.org/wiki/Logical_connective).
 
     //==
-    // Logical
+    // ILogical
 
     // Negated conjunction: not (a and b). (https://en.wikipedia.org/wiki/NAND_gate)
-    Nand(a: Logical, b: Logical): Logical
+    Nand(a: ILogical, b: ILogical): ILogical
         => a.And(b).Not;
 
     // Negated disjunction: not (a or b). (https://en.wikipedia.org/wiki/NOR_gate)
-    Nor(a: Logical, b: Logical): Logical
+    Nor(a: ILogical, b: ILogical): ILogical
         => a.Or(b).Not;
 
     // Material implication: a implies b, i.e. (not a) or b.
     // (https://en.wikipedia.org/wiki/Material_conditional)
-    Implies(a: Logical, b: Logical): Logical
+    Implies(a: ILogical, b: ILogical): ILogical
         => a.Not.Or(b);
 
     //==
-    // BooleanAlgebra
+    // IBooleanAlgebra
 
-    // Logical equivalence (XNOR): true when a and b have the same truth value.
+    // ILogical equivalence (XNOR): true when a and b have the same truth value.
     // (https://en.wikipedia.org/wiki/XNOR_gate)
-    Equivalent(a: BooleanAlgebra, b: BooleanAlgebra): BooleanAlgebra
+    Equivalent(a: IBooleanAlgebra, b: IBooleanAlgebra): IBooleanAlgebra
         => a.ExclusiveOr(b).Not;
 
     //==
-    // Bitwise
+    // IBitwise
 
-    // Bitwise negated-and of the corresponding bits of a and b.
-    BitwiseNand(a: Bitwise, b: Bitwise): Bitwise
+    // IBitwise negated-and of the corresponding bits of a and b.
+    BitwiseNand(a: IBitwise, b: IBitwise): IBitwise
         => a.BitwiseAnd(b).BitwiseNot;
 
-    // Bitwise negated-or of the corresponding bits of a and b.
-    BitwiseNor(a: Bitwise, b: Bitwise): Bitwise
+    // IBitwise negated-or of the corresponding bits of a and b.
+    BitwiseNor(a: IBitwise, b: IBitwise): IBitwise
         => a.BitwiseOr(b).BitwiseNot;
 }
