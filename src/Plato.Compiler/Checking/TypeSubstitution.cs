@@ -12,8 +12,8 @@ namespace Ara3D.Geometry.Compiler.Checking
     /// unification variable <c>"$V0"</c>, or a whole first-parameter interface <c>"IArray&lt;T&gt;"</c>)
     /// to a concrete <see cref="TypeExpression"/>, grounding the abstract types in a
     /// <see cref="TirFunction"/> (see <see cref="Monomorphizer"/>). Keying by structural form (rather
-    /// than bare name) matches the reifier exactly: <see cref="ReifiedType"/>'s concept map replaces
-    /// <c>Self</c> and each concept type-parameter by name (no type-args, so name == structural form),
+    /// than bare name) matches the reifier exactly: <see cref="ReifiedType"/>'s interface map replaces
+    /// <c>Self</c> and each interface type-parameter by name (no type-args, so name == structural form),
     /// while the library-over-interface map replaces the whole first parameter by <em>equality</em>
     /// (<c>te.Equals(pt)</c>) — so <c>IArray&lt;T&gt;</c> maps, but a different <c>IArray&lt;Number&gt;</c>
     /// in the body does not. It is applied with the <em>same</em> structural helper the reifier uses

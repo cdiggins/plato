@@ -1,11 +1,11 @@
 //==
-// # Implicit shape concepts
+// # Implicit shape interfaces
 //
 // Shapes described by functions rather than boundaries. A signed distance
 // field (SDF; https://en.wikipedia.org/wiki/Signed_distance_function) reports
 // how far a point is from a surface, negative inside; an implicit region
 // reports only membership (see also https://en.wikipedia.org/wiki/Implicit_surface).
-// The concrete types implementing these concepts are declared in
+// The concrete types implementing these interfaces are declared in
 // `implicit-sdf.types.plato`.
 //
 // Unbounded vs bounded: `ISignedDistanceField2D/3D` are pure distance oracles
@@ -15,7 +15,7 @@
 // not a change to distance semantics. Analytic wrappers live in
 // `implicit-sdf.types.plato`; sampled lattices (`SampledSdf*`) already
 // carry a `Bounds` spanning their finite support and implement the bounded
-// concepts.
+// interfaces.
 
 // A planar scalar field whose value is the signed distance to a boundary
 // curve: negative inside, zero on the boundary, positive outside. Values are

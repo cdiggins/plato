@@ -244,4 +244,4 @@ with a row-major mental model flips degree and knot associations.
 
 - **wrong-shape** — `23-splines.plato`: `Degree` is a free `Integer` on the curve while
   knot/control invariants are comment-only. A factory type or constrained constructor
-  concept would make illegal $(n,d,knots)$ triples harder to represent.
+  interface would make illegal $(n,d,knots)$ triples harder to represent.

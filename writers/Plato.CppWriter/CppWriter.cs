@@ -23,7 +23,7 @@ namespace Ara3D.Geometry.CppWriter
     }
 
     /// <summary>
-    /// Proof-of-concept C++ / CUDA backend. TIR-only: every body renders from the
+    /// Proof-of-interface C++ / CUDA backend. TIR-only: every body renders from the
     /// monomorphized Typed IR, there is no legacy symbol-graph fallback.
     ///
     /// Output model:
@@ -208,7 +208,7 @@ namespace Ara3D.Geometry.CppWriter
         {
             "alignas", "alignof", "and", "and_eq", "asm", "auto", "bitand", "bitor", "bool",
             "break", "case", "catch", "char", "char8_t", "char16_t", "char32_t", "class",
-            "compl", "concept", "const", "consteval", "constexpr", "constinit", "const_cast",
+            "compl", "interface", "const", "consteval", "constexpr", "constinit", "const_cast",
             "continue", "co_await", "co_return", "co_yield", "decltype", "default", "delete",
             "do", "double", "dynamic_cast", "else", "enum", "explicit", "export", "extern",
             "false", "float", "for", "friend", "goto", "if", "inline", "int", "long",

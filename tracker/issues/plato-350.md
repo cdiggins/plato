@@ -14,7 +14,7 @@ links: [plato-276, plato-304]
 ---
 
 ## Idea
-Some types are "obviously" indexable (fixed fields A,B,C,D or a single Array field) but authors still write Count/At machinery by hand. How to reduce that boilerplate without surprising semantics or breaking concept checking?
+Some types are "obviously" indexable (fixed fields A,B,C,D or a single Array field) but authors still write Count/At machinery by hand. How to reduce that boilerplate without surprising semantics or breaking interface checking?
 
 ## Assumptions
 - `Face` already inherits `Indexable<VertexIndex>`; TriangleFace/QuadFace gained synthesis via plato-324 work.
@@ -28,13 +28,13 @@ Some types are "obviously" indexable (fixed fields A,B,C,D or a single Array fie
 
 ## Related
 - [plato-276](plato-276.md) — At/Count synthesis ignores some single-collection-field types (writers).
-- DONE plato-324 — Face concept + indexed mesh obligations.
+- DONE plato-324 — Face interface + indexed mesh obligations.
 - [plato-304](plato-304.md) — IArray capabilities port.
 - `stdlib/meshes.concepts.plato` — Face inherits Indexable.
 
 ## Approaches
 Short term: document current synthesis rules; extend C# writer to cover known gaps (plato-276).
-Long term: `derives Indexable` or concept-default for homogeneous field tuples.
+Long term: `derives Indexable` or interface-default for homogeneous field tuples.
 Adjacent: same for Hashable/Equatable fieldwise defaults.
 
 ## Bedrock

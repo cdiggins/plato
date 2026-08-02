@@ -36,7 +36,7 @@ closed; splitting output would create cyclic imports). It contains, in order:
 1. A hand-written intrinsics prelude (`Intrinsics` namespace: `Install`,
    `MakeArray`, `Range`, structural equality, throw helpers) plus minimal
    `IArray2D`/`IArray3D` interfaces.
-2. One `export interface` per Plato concept.
+2. One `export interface` per Plato interface.
 3. The `IArray<T>` interface and the `Arr<T>` class. Library functions whose
    first parameter is an IArray and that are generic over the element type
    become methods of both; functions over a concrete element type become
@@ -89,8 +89,8 @@ functions. Bodiless intrinsics get native implementations from
 - Generic constraints are not emitted.
 - No member overloading: colliding names are skipped with a `// Skipped:`
   comment.
-- The array concept (`Array` or `IArray` depending on dialect) maps to the
-  generated `IArray<T>`; the parser accepts both `concept` and `interface`
+- The array interface (`Array` or `IArray` depending on dialect) maps to the
+  generated `IArray<T>`; the parser accepts both `interface` and `interface`
   keywords.
 
 ## Known limitations

@@ -13,7 +13,7 @@ construct means, resolution/coercion rules, and the explicit non-features. The 5
 
 - **`type`** — immutable data: fields only, or a sum type (`type X = A(f: T) | B;`) consumed by exhaustive `match`.
 - **`primitive`** — a type the compiler assumes **by name**, with no declarable shape; the whole set is `stdlib/foundation/primitives.plato`. Only these may appear in an intrinsic signature.
-- **`concept`** (alias `interface`) — type classes with a `Self` type; constrained generics, not OO dispatch; monomorphized.
+- **`interface`** (alias `concept`) — type classes with a `Self` type; constrained generics, not OO dispatch; monomorphized. Names are `I*`.
 - **`library`** — pure free functions; first argument is the receiver (`v.Length`, `a.Lerp(b, t)`); nullary calls need no parens. A bodiless signature here is an **intrinsic**: the host runtime supplies it ([`plato-intrinsics-surface.md`](plato-intrinsics-surface.md)).
 - Conveniences: tuples construct types (`(x, y)` → `Point2D`), type-named functions are implicit conversions, operators come from well-known names (`Add` → `+`), `_: Type` first params are statics.
 - Restrictions are intentional: no mutation, no `this`, no I/O, no exceptions, no null.
@@ -39,22 +39,22 @@ Paths below are relative to this submodule (`submodules/Plato/`).
 shipping generation (drives `Plato.Generated` / Studio).
 
 In `stdlib/`, one file holds exactly one **kind** of declaration, with no cap on how many:
-`<stem>.plato` = types, `<stem>.concepts.plato` = concepts, `<stem>.library.plato` =
-exactly one `library` block. Files sit directly in the tier folders (`foundation`, `geometry`,
-`graphics`, `future`) described by [`stdlib/README.md`](../stdlib/README.md).
+`<stem>.plato` = types, `<stem>.concepts.plato` = interface declarations (filename stem kept),
+`<stem>.library.plato` = exactly one `library` block. Files sit directly in the tier folders
+(`foundation`, `geometry`, `graphics`, `future`) described by [`stdlib/README.md`](../stdlib/README.md).
 
 | Path | Purpose |
 |------|---------|
-| `stdlib/` | Forward stdlib vocabulary — types, concepts, **and** library bodies. New *vocabulary* goes here. Read its [`README`](../stdlib/README.md), [`CONVENTIONS`](../stdlib/CONVENTIONS.md), [`STYLE_GUIDE`](../stdlib/STYLE_GUIDE.md), and [`LIBRARIES`](../stdlib/LIBRARIES.md) before editing. |
+| `stdlib/` | Forward stdlib vocabulary — types, interfaces, **and** library bodies. New *vocabulary* goes here. Read its [`README`](../stdlib/README.md), [`CONVENTIONS`](../stdlib/CONVENTIONS.md), [`STYLE_GUIDE`](../stdlib/STYLE_GUIDE.md), and [`LIBRARIES`](../stdlib/LIBRARIES.md) before editing. |
 | `tests/stdlib-tests/` | Forward law packet (`Law_*`) for `stdlib/` — **never merge into `stdlib`**. |
 | `legacy/stdlib-legacy/*.plato` | Shipping standard library (~3,500 lines → 11,000+ lines of C#). |
 | `stdlib-legacy-tests/` | Law/witness tests only — **never merge into `stdlib-legacy`**. |
 | `legacy/stdlib-snapshot-2026-07-09/` | Frozen pre-refactor snapshot — reference only. |
 | `demos/plato-src/geometry.plato` | Curated demo subset for TS/Rust browsers (not the full stdlib). |
 | `src/Plato.CLI/` | Compiler entry point. |
-| `Plato.ContextExport/` | Compact export of types + concepts for agent context (`tools/export-types-context.bat`). |
-| `stdlib/types-and-concepts.txt` | Generated index of every type + concept in the shipping `stdlib/` tiers (`future` excluded), one compressed declaration per line, every concept first and then every type, each group sorted by name. Regeneration is mandatory when `stdlib/` changes — see [`stdlib/AGENTS.md`](../stdlib/AGENTS.md). |
-| `docs/types-and-concepts-context.txt` | Generated stdlib-legacy context (types + concepts only); same regen script. |
+| `Plato.ContextExport/` | Compact export of types + interfaces for agent context (`tools/export-types-context.bat`). |
+| `stdlib/types-and-concepts.txt` | Generated index of every type + interface in the shipping `stdlib/` tiers (`future` excluded), one compressed declaration per line, every interface first and then every type, each group sorted by name. Regeneration is mandatory when `stdlib/` changes — see [`stdlib/AGENTS.md`](../stdlib/AGENTS.md). |
+| `docs/types-and-concepts-context.txt` | Generated stdlib-legacy context (types + interfaces only); same regen script. |
 | `writers/Plato.TypeScriptWriter/` | TypeScript backend (POC). |
 | `writers/Plato.RustWriter/` | Rust backend (POC). |
 | `writers/Plato.GlslWriter/` | GLSL ES 3.00 / WebGL2 backend (POC). |

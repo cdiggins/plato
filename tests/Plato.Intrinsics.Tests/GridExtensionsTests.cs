@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Plato.IntrinsicsTests;
 
 /// <summary>
-/// <see cref="GridExtensions"/> binds the Indexable2D/3D concept spellings
+/// <see cref="GridExtensions"/> binds the Indexable2D/3D interface spellings
 /// (<c>ColumnCount</c>/<c>RowCount</c>/<c>LayerCount</c>) to the collection interfaces'
 /// <c>NumColumns</c>/<c>NumRows</c>/<c>NumLayers</c>. The whole contract is that the two
 /// spellings agree.

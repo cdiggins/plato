@@ -92,11 +92,11 @@ type Cardioid2D
 parameter in $[0,1]$ to `Point2D`, with `Eval(0) = Eval(1)`.
 
 ```plato
-concept Curve2D
+interface Curve2D
     inherits Geometry2D, Procedural<Number, Point2D>
 { }
 
-concept ClosedCurve2D
+interface ClosedCurve2D
     inherits Curve2D
 { }
 ```
@@ -143,7 +143,7 @@ type Lemniscate2D
 `PolarCurve2D` adds an explicit polar evaluator:
 
 ```plato
-concept PolarCurve2D
+interface PolarCurve2D
     inherits Curve2D
 {
     RadiusAt(x: Self, angle: Angle): Number;
@@ -195,7 +195,7 @@ prefer curvature-aware or arc-length sampling for rendering.
 cardioid, but it is a different Plato type. Prefer `Cardioid2D` when that is what
 you mean — the single-field form cannot accidentally open an inner loop.
 
-**Closed vs polar concepts.** Implementing `ClosedCurve2D` does not automatically
+**Closed vs polar interfaces.** Implementing `ClosedCurve2D` does not automatically
 expose `RadiusAt`. If you need polar queries on a cardioid, either convert angle
 yourself or ask the library to add `PolarCurve2D` (see recommendations).
 
@@ -233,7 +233,7 @@ the intent is a single radius and callers cannot drift Offset independently.
 
 ## Library recommendations
 
-- **missing-concept** — `21-curves-2d.plato`: `Cardioid2D` implements `ClosedCurve2D`
+- **missing-interface** — `21-curves-2d.plato`: `Cardioid2D` implements `ClosedCurve2D`
   but not `PolarCurve2D`, despite a polar defining equation and a polar sibling section.
   Adding `PolarCurve2D` (or documenting why it is omitted) would let callers use
   `RadiusAt` uniformly with `RoseCurve2D` and spirals.

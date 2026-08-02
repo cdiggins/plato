@@ -21,7 +21,7 @@ links: [submodules/Plato/plato-src, submodules/Plato/plato-src-v3, plato-230, pl
 
 ## Idea
 
-`plato-src` and `plato-src-v3` are two generations of the Plato standard library that share one language. The folder names obscure that: "plato-src" reads as *the* Plato source tree, and "v3" reads as a version bump of the same library rather than a parallel vocabulary (concept-based, declaration-heavy) that is the forward direction. Rename so the role (stdlib) and status (current vs legacy) are obvious at a glance — e.g. `stdlib` / `stdlib-legacy`, or a clearer pair if brainstorming finds one.
+`plato-src` and `plato-src-v3` are two generations of the Plato standard library that share one language. The folder names obscure that: "plato-src" reads as *the* Plato source tree, and "v3" reads as a version bump of the same library rather than a parallel vocabulary (interface-based, declaration-heavy) that is the forward direction. Rename so the role (stdlib) and status (current vs legacy) are obvious at a glance — e.g. `stdlib` / `stdlib-legacy`, or a clearer pair if brainstorming finds one.
 
 ## Assumptions
 

@@ -19,7 +19,7 @@ The 141 CSS/X11 named colors currently live inside `library Colors` in `stdlib/c
 ## Assumptions
 - The named-color surface is large enough (~141 entries) that discoverability and edit-churn matter.
 - `Color8.AliceBlue`-style dispatch (`_: Color8` receivers) stays the idiom (see `constants.library.plato`).
-- Any real subfolder requires tooling changes: `Plato.CLI` lint enumerates `*.plato` with `TopDirectoryOnly` (stdlib README); the old `concept-library/` subfolder was flattened for that reason.
+- Any real subfolder requires tooling changes: `Plato.CLI` lint enumerates `*.plato` with `TopDirectoryOnly` (stdlib README); the old `interface-library/` subfolder was flattened for that reason.
 
 ## Design decisions
 - **Folder vs file** — a `stdlib/colors/` (or `named-colors/`) subfolder vs a flat sibling `color.constants.library.plato`. Folder needs recursive lint; flat file does not.
@@ -35,7 +35,7 @@ The 141 CSS/X11 named colors currently live inside `library Colors` in `stdlib/c
 ## Approaches
 Short term: extract the named-color block into `color.constants.library.plato` (flat sibling); leave arithmetic in `color.library.plato`.
 Long term: if CLI gains recursive folder lint, group color domain files under `stdlib/color/` (types, spaces, constants, imaging adjacency).
-Adjacent: plato-284 (constant result type); plato-285 (broader types/libraries/concepts layout).
+Adjacent: plato-284 (constant result type); plato-285 (broader types/libraries/interfaces layout).
 
 ## Bedrock
 Strengthens the **stdlib file-ownership seam** for a large pure-data surface (named colors) separate from derived arithmetic. **Verdict: simplest-along-the-grain** — must NOT invent a subfolder until lint/codegen recurse; a flat `*.constants.library.plato` sibling keeps the stronger folder layout reachable.

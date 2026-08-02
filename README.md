@@ -2,7 +2,7 @@
 
 **Write geometry once. Run it everywhere.**
 
-**Plato** is a small, pure, statically-typed language for writing geometric and numeric libraries once, and compiling them into fast, idiomatic code for other platforms. The C# backend is in daily production use — it generates the geometry library consumed by the [Ara 3D SDK](https://github.com/ara3d/ara3d-sdk) — and the **TypeScript, Rust, GLSL, and C++/CUDA backends are working proofs of concept** (TS/Rust have browser demos; GLSL has WebGL2 demos; C++/CUDA is compile-verified).
+**Plato** is a small, pure, statically-typed language for writing geometric and numeric libraries once, and compiling them into fast, idiomatic code for other platforms. The C# backend is in daily production use — it generates the geometry library consumed by the [Ara 3D SDK](https://github.com/ara3d/ara3d-sdk) — and the **TypeScript, Rust, GLSL, and C++/CUDA backends are working proofs of interface** (TS/Rust have browser demos; GLSL has WebGL2 demos; C++/CUDA is compile-verified).
 
 ### ▶ [Try the live demos](https://cdiggins.github.io/plato/)
 
@@ -90,7 +90,7 @@ types and `match`, and what is deliberately *not* in the language — see
 The C# backend emits value types built for performance and interop:
 
 ```csharp
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
+[StructLayout(LayoutKind.Sequential)]
 public partial struct Vector3 : IVector<Vector3>
 {
     [MethodImpl(AggressiveInlining)]
@@ -158,8 +158,8 @@ source → AST → Symbol graph → Normalize → Constrain → Solve → ⟨ela
 
 The last three passes are new and currently run in **shadow mode** — they compute a fully-typed,
 diagnosed view of every function but do not yet feed code generation, so the production emitter's
-byte-for-byte output is unchanged. The solver already does exact/generic unification, concept
-(interface) satisfaction with Self-style return refinement, implicit casts, and generic-concept
+byte-for-byte output is unchanged. The solver already does exact/generic unification, interface
+(interface) satisfaction with Self-style return refinement, implicit casts, and generic-interface
 element inference; the elaboration that lets the backends consume a fully-typed IR is the next
 increment.
 
@@ -191,7 +191,7 @@ commit to use.
 
 The language design is stabilizing after a few years of iteration. The Plato-to-C# compiler is in daily production use: it generates the geometry library consumed by the [Ara 3D SDK](https://github.com/ara3d/ara3d-sdk) (`ara3d-sdk/src/Plato.Generated` when built inside the [Ara 3D studio](https://github.com/ara3d/studio) monorepo). Honest caveats:
 
-- The C# backend is production; the TypeScript and Rust backends are working proofs of concept — they compile a curated demo library and pass a shared conformance suite (see the [live demos](https://cdiggins.github.io/plato/)), but haven't consumed the full standard library yet.
+- The C# backend is production; the TypeScript and Rust backends are working proofs of interface — they compile a curated demo library and pass a shared conformance suite (see the [live demos](https://cdiggins.github.io/plato/)), but haven't consumed the full standard library yet.
 - The compiler builds standalone in this repository; the studio monorepo consumes it via `submodules/Plato`.
 - Type errors still ultimately surface through the C# compiler against generated code, but a native type-checker front-end (normalize → constrain → solve, with located diagnostics) now runs in shadow mode over the standard library; wiring it into the pipeline is in progress. See [`docs/compiler-pipeline.md`](docs/compiler-pipeline.md).
 - A visual data-flow syntax (**PlatoFlow**) is under development.

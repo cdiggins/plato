@@ -8,7 +8,7 @@ namespace Ara3D.Geometry.Compiler.Checking
 {
     /// <summary>
     /// Well-formedness checker for DECLARED TYPE-PARAMETER BOUNDS (plato-382) —
-    /// `type Tween&lt;T&gt; where T: Interpolatable`, and the same clause on `concept`.
+    /// `type Tween&lt;T&gt; where T: Interpolatable`, and the same clause on `interface`.
     ///
     /// It answers the question the bounds exist to answer: is every place that CONSTRUCTS a bounded
     /// type supplying an argument that satisfies the bound? Without it a bound is a comment with
@@ -21,7 +21,7 @@ namespace Ara3D.Geometry.Compiler.Checking
     ///
     /// Diagnostics (CHK3xx):
     ///   CHK309 a type argument does not satisfy the bound declared on that parameter
-    ///   CHK310 a declared bound does not name a concept — on a type/concept parameter, or on a
+    ///   CHK310 a declared bound does not name an interface — on a type/interface parameter, or on a
     ///          function's own signature variable (plato-393)
     ///
     /// UNIFORM OVER SUM TYPES BY CONSTRUCTION: the walk is over <see cref="TypeDef"/>, and a sum
@@ -51,7 +51,7 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         // --- the bounds themselves ------------------------------------------------
 
-        /// <summary>CHK310: a bound must name a concept. `where T: Number` promises something the
+        /// <summary>CHK310: a bound must name an interface. `where T: Number` promises something the
         /// language cannot check and C# cannot express as a constraint. One reading for both places
         /// a bound may be written — a declaration's parameter, and a function's own signature
         /// variable (plato-393); <paramref name="target"/> names which, for the message.</summary>
@@ -59,8 +59,8 @@ namespace Ara3D.Geometry.Compiler.Checking
         {
             if (bound?.Def != null && !bound.Def.IsInterface())
                 Error("CHK310",
-                    $"the bound '{bound}' declared on {target} is not a concept — a `where` bound "
-                    + "must name a concept", origin);
+                    $"the bound '{bound}' declared on {target} is not an interface — a `where` bound "
+                    + "must name an interface", origin);
         }
 
         private void CheckBoundsAreConcepts(TypeDef t)
@@ -138,7 +138,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         }
 
         /// <summary>Why the argument failed, in the terms the author has to act on: it does not
-        /// implement the concept at all, it implements it at different type arguments, or — for a
+        /// implement the interface at all, it implements it at different type arguments, or — for a
         /// bare parameter — nothing it is known to carry supplies it.</summary>
         private static string Reason(TypeExpression arg, TypeExpression bound,
             IReadOnlyList<TypeExpression> extra)

@@ -18,7 +18,7 @@ that is your answer.
 
 **65 intrinsics in one file** (stdlib as of 2026-07-31): `foundation/intrinsics.library.plato`
 is the only file in the library that contains bodiless declarations, and it stays that way.
-Every other bodiless signature in the stdlib sits inside a `concept`, where it is an obligation
+Every other bodiless signature in the stdlib sits inside a `interface`, where it is an obligation
 on the implementer rather than a host contract.
 
 There is no longer an exception to rule 1. `Array2D` / `Array3D` were the last one — opaque,
@@ -61,7 +61,7 @@ definition with `CollectionsContainers.DropLast(Sliceable)`.
 
 The endpoint convention won because every call site in the tree already used it
 (`Slice(offsets[i], offsets[i+1])`, `Slice(n.Items.Start, n.Items.End)`); the
-concept was the outlier and had no implementer.
+interface was the outlier and had no implementer.
 | `Equals`, `ExclusiveOr`, `Compare`, `Hash` on Boolean | `foundation/primitives.library.plato` |
 | `NotEquals` on every primitive | `foundation/core.library.plato`, once, over `Equatable` |
 | `LessThan`, `GreaterThan`, `GreaterThanOrEquals`, `Compare`, `Clamp` on Number and Integer | already generic over `Orderable` in `foundation/core.library.plato` — deleted outright, not re-derived |

@@ -15,9 +15,9 @@ links: [submodules/Plato/stdlib/algebra-operations.concepts.plato, submodules/Pl
 
 ## Issue
 
-`concept Additive` is documented as "An additive group" but declares only
+`interface Additive` is documented as "An additive group" but declares only
 `Add` / `Subtract` / `Negative` — no identity element. A group without its
-identity is not a group; the doc comment states a contract the concept does not
+identity is not a group; the doc comment states a contract the interface does not
 carry.
 
 The identity `Zero(x: Self): Self` lives instead on `NumericalLimits`, bundled
@@ -50,7 +50,7 @@ gets written concretely per type, or silently skipped with a TODO, the way
 ## Affected code
 
 - [algebra-operations.concepts.plato:8](../../submodules/Plato/stdlib/algebra-operations.concepts.plato:8) — the "An additive group" comment.
-- [algebra-operations.concepts.plato:9](../../submodules/Plato/stdlib/algebra-operations.concepts.plato:9) — `concept Additive`, missing `Zero`.
+- [algebra-operations.concepts.plato:9](../../submodules/Plato/stdlib/algebra-operations.concepts.plato:9) — `interface Additive`, missing `Zero`.
 - [algebra-numeric.concepts.plato:11](../../submodules/Plato/stdlib/algebra-numeric.concepts.plato:11) — `Zero(x: Self): Self` on `NumericalLimits`, where it does not belong.
 - [quantities.concepts.plato:15](../../submodules/Plato/stdlib/quantities.concepts.plato:15) — `Quantity` inherits `Additive` without `NumericalLimits`: 50 types with no zero.
 - [matrices.concepts.plato:12](../../submodules/Plato/stdlib/matrices.concepts.plato:12) — `MatrixLike` likewise.
@@ -87,15 +87,15 @@ trying to delete.
 
 1. **Move `Zero` from `NumericalLimits` to `Additive`** (recommended). One generic fill covers all 50 quantity types via `FromAmount`. `Numerical` still reaches `Zero` transitively (it inherits both), so no existing implementor loses anything and no concrete `Zero` body changes.
 2. **Add `Zero` to `Additive` and leave the `NumericalLimits` copy.** Avoids touching the numeric tower, but a type inheriting both then owes the same member twice; duplicate-obligation behaviour in the checker is unverified and the redundancy invites drift.
-3. **Derive it in a library: `Zero(x: Additive) => x.Subtract(x)`.** No concept change at all, but it overlaps the existing `NumericalLimits.Zero` obligation and six concrete `Zero` bodies — overload ambiguity for a line that would be deleted by approach 1 anyway. Also silently wrong for NaN carriers.
+3. **Derive it in a library: `Zero(x: Additive) => x.Subtract(x)`.** No interface change at all, but it overlaps the existing `NumericalLimits.Zero` obligation and six concrete `Zero` bodies — overload ambiguity for a line that would be deleted by approach 1 anyway. Also silently wrong for NaN carriers.
 
 ## Bedrock
 
-Fixes the invariant that the *concept comment is the contract*: `Additive` says
+Fixes the invariant that the *interface comment is the contract*: `Additive` says
 "additive group" and will then carry the group's four pieces. It also draws the
 seam `NumericalLimits` was blurring — algebraic identity (`Zero`) on the
-algebra concept, representational limits (`One`, `MinValue`, `MaxValue`) on the
-number-tower concept. That split is what makes `Quantity` and `MatrixLike` able
+algebra interface, representational limits (`One`, `MinValue`, `MaxValue`) on the
+number-tower interface. That split is what makes `Quantity` and `MatrixLike` able
 to be additive groups without pretending to be numbers.
 
 Downstream it makes every identity-seeded generic derivation reachable from a
@@ -103,14 +103,14 @@ plain `where T: Additive` bound: fold-with-identity, empty-sum, accumulator
 seeds, and the `Origin` of plato-306.
 
 **Verdict: simplest-along-the-grain.** The simple fix must NOT take approach 3
-(a library-derived `x.Subtract(x)`): it leaves the concept still lying about
+(a library-derived `x.Subtract(x)`): it leaves the interface still lying about
 being a group, keeps `Zero` on `NumericalLimits`, and adds an overload that
 collides with the six concrete bodies — closing the symptom while making the
 real move harder.
 
 ## Done means
 
-- [x] `Zero(x: Self): Self` declared on `concept Additive`; removed from `NumericalLimits`; both doc comments updated to match what each now carries.
+- [x] `Zero(x: Self): Self` declared on `interface Additive`; removed from `NumericalLimits`; both doc comments updated to match what each now carries.
 - [x] `Zero(x: Quantity) => x.FromAmount(0.0)` added to `quantities.library.plato`, discharging the new obligation for all 50 quantity types.
 - [x] No existing `Zero` body changed or duplicated (`Vector`, `Color`, `Complex`, `Proportion`, `Percent`, `Probability`).
 - [x] `lint submodules/Plato/stdlib` reports 0 parse / 0 resolution findings, no worse than the pre-change run.
@@ -143,5 +143,5 @@ file separately if the fill is not cheap.
 
 ## Prevention
 
-- The `Additive` case is a doc-vs-declaration mismatch that no gate checks. A linter rule of the form "concept comment cites a named algebraic structure ⇒ the declared members cover that structure's operations" is not realistically automatable, but a **review checklist line in `LIBRARIES.md`** — *if the comment names a structure, list its laws and check each has a member* — is. Offer to file.
+- The `Additive` case is a doc-vs-declaration mismatch that no gate checks. A linter rule of the form "interface comment cites a named algebraic structure ⇒ the declared members cover that structure's operations" is not realistically automatable, but a **review checklist line in `LIBRARIES.md`** — *if the comment names a structure, list its laws and check each has a member* — is. Offer to file.
 - Law coverage: `stdlib-legacy-tests` has no `Law_AdditiveIdentity` (`x.Add(x.Zero) == x`, `x.Zero.Add(x) == x`). Adding it would have surfaced the gap on the first type that could not express it. Worth its own issue at the class level.

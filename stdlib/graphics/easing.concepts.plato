@@ -1,5 +1,5 @@
 //==
-// # Easing concepts
+// # Easing interfaces
 //
 // The single abstraction the easing catalog is built on: a pure map from
 // normalized time to normalized progress. The classic selectors and the

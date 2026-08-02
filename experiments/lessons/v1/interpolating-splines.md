@@ -256,7 +256,7 @@ on top of the interpolating spline.
   one-sided differences would remove a major implementation ambiguity for readers.
 
 - **missing-type** — `23-splines.plato`: there is no shared
-  `InterpolatingSpline3D` concept marking "passes through every point." `Curve3D` alone
+  `InterpolatingSpline3D` interface marking "passes through every point." `Curve3D` alone
   does not distinguish interpolating from approximating families in the type system.
 
 - **naming** — `23-splines.plato`: `CatmullRomCurve3D` is a multi-span spline, while

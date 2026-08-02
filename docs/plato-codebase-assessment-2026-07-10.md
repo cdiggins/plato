@@ -44,7 +44,7 @@ exist but are out of scope. Everything is .NET 8.
    executed reflectively against every implementing type. The `KnownFailures.json` manifest is
    **empty** — the 36-entry bug wave is fully burned down, and a fixed-but-still-listed entry
    fails the build, so the manifest can't rot.
-5. **The stdlib itself.** Concept-based (interfaces with default implementations), genuinely
+5. **The stdlib itself.** Interface-based (interfaces with default implementations), genuinely
    generic (one `MapComponents` serves every vector-like type), and readable. The `stdlib as
    oracle` strategy — maturing the checker against the real library instead of synthetic tests —
    paid off repeatedly.

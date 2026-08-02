@@ -1,6 +1,6 @@
 ---
 id: plato-324
-title: Face concept: unify TriangleFace/QuadFace corner access + fill indexed-mesh concept obligations
+title: Face interface: unify TriangleFace/QuadFace corner access + fill indexed-mesh interface obligations
 type: debt
 status: done
 priority: p2

@@ -1,11 +1,11 @@
 //==
-// # Distribution concept
+// # Distribution interface
 //
-// The single concept the univariate distributions of `random.types.plato`
+// The single interface the univariate distributions of `random.types.plato`
 // implement. Its four obligations are discharged per type across
 // `random.library.plato`; the derived surface built on top of it
 // (StandardDeviation, SurvivalAt, ProbabilityBetween, ...) lives with the other
-// concept traits in `random.library.plato`.
+// interface traits in `random.library.plato`.
 
 // A univariate probability distribution over the real line
 // (https://en.wikipedia.org/wiki/Probability_distribution). Pdf is the

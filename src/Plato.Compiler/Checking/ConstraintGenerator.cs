@@ -246,8 +246,8 @@ namespace Ara3D.Geometry.Compiler.Checking
                     break;
 
                 // A type used as a value (`Self.CreateFromComponents(...)`, `Number.MinValue`) is a
-                // static-access receiver: its "type" is the referenced type itself, so a concept
-                // parameter can bind through it (Self satisfies any concept — the reifier decides
+                // static-access receiver: its "type" is the referenced type itself, so an interface
+                // parameter can bind through it (Self satisfies any interface — the reifier decides
                 // what Self is) and the member resolves against it.
                 case TypeRefSymbol tr:
                     r = tr.Def?.ToTypeExpression() ?? Vars.Fresh("Type");

@@ -5,9 +5,9 @@ using Ara3D.Geometry.Compiler.Types;
 namespace Ara3D.Geometry.Compiler.Symbols
 {
     /// <summary>
-    /// Shared "is this concept reference grounded, or existential?" test (plato-311). A
-    /// self-constrained concept <c>C</c> can appear in a type expression two ways:
-    ///   - GROUNDED: the enclosing type IS the concept itself (self-reference, e.g. a return type
+    /// Shared "is this interface reference grounded, or existential?" test (plato-311). A
+    /// self-constrained interface <c>C</c> can appear in a type expression two ways:
+    ///   - GROUNDED: the enclosing type IS the interface itself (self-reference, e.g. a return type
     ///     of <c>Self</c> inside <c>C</c>'s own declaration), or the enclosing type genuinely
     ///     IMPLEMENTS/INHERITS <c>C</c> (an `implements`/`inherits` clause, where Self legitimately
     ///     grounds to the enclosing concrete/interface type). This is "some C" resolved at a known
@@ -18,7 +18,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
     ///     — an existential that only the non-generic object-safe view interface can express.
     ///
     /// Both <c>Plato.CSharpWriter</c> (to pick the F-bounded vs. non-generic view spelling) and the
-    /// checker (to diagnose an existential reference to a concept with an empty object-safe
+    /// checker (to diagnose an existential reference to an interface with an empty object-safe
     /// surface) need this exact same test, so it lives once here rather than being re-derived.
     /// </summary>
     public static class ConceptGrounding
@@ -36,7 +36,7 @@ namespace Ara3D.Geometry.Compiler.Symbols
         }
 
         /// <summary>True when <paramref name="te"/> is a bare (implicit-Self) reference to a
-        /// self-constrained concept, used from <paramref name="owner"/>'s point of view, that is
+        /// self-constrained interface, used from <paramref name="owner"/>'s point of view, that is
         /// NOT grounded — i.e. an existential ("any C") type-position use.</summary>
         public static bool IsExistentialConceptReference(TypeDef owner, TypeExpression te)
             => te?.Def != null

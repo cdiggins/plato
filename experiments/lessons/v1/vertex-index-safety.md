@@ -115,7 +115,7 @@ type TriangleMesh3D
 Random access on triangulated geometry is also typed:
 
 ```plato
-concept TriangulatedGeometry3D
+interface TriangulatedGeometry3D
     inherits Meshable3D
 {
     TriangleCount(x: Self): Integer;
@@ -158,7 +158,7 @@ Half-edge navigation refuses to take the sentinel as input — callers must
 not pass $-1$; results may still return $-1$ for boundary twins:
 
 ```plato
-concept HalfEdgeNavigable
+interface HalfEdgeNavigable
 {
     OriginOf(x: Self, halfEdge: HalfEdgeIndex): VertexIndex;
     TwinOf(x: Self, halfEdge: HalfEdgeIndex): HalfEdgeIndex;
@@ -222,8 +222,8 @@ Equality is within one index space.
   returning an optional or sentinel. Teaching safety currently stops at
   "caller must validate."
 
-- **doc-comment** — `03-concepts-collections.plato` / `30-topology.plato`:
-  the `Index` concept should restate the global $-1$ means none rule in one
+- **doc-comment** — `03-interfaces-collections.plato` / `30-topology.plato`:
+  the `Index` interface should restate the global $-1$ means none rule in one
   place, since every typed index repeats it in a one-liner that readers may
   skim past.
 

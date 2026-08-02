@@ -10,7 +10,7 @@ library Core
     //==
     // # Core comparison
     //
-    // Derived functionality for the comparison concepts
+    // Derived functionality for the comparison interfaces
     // (`core.concepts.plato`): the strict/relaxed relational operators,
     // extrema, range tests, and three-way comparison, all built on the single
     // `LessThanOrEquals` primitive of `IOrderable`
@@ -18,19 +18,19 @@ library Core
     //
     // This file also carries the shared provenance note for the whole
     // Derived functionality for the `core.concepts.plato` and
-    // `algebra.concepts.plato` concepts.
-    // Every function's first parameter is concept-typed, so the function becomes
-    // available on every type implementing that concept. Bodies are pure
-    // expressions built only from members declared on the concept, its inherited
-    // concepts, or other functions in this library.
+    // `algebra.concepts.plato` interfaces.
+    // Every function's first parameter is interface-typed, so the function becomes
+    // available on every type implementing that interface. Bodies are pure
+    // expressions built only from members declared on the interface, its inherited
+    // interfaces, or other functions in this library.
 
     //==
     // IOrderable
     //
     // LessThanOrEquals itself cannot be derived here: it IS the primitive of
-    // IOrderable, so there is nothing on the concept surface to build it from.
+    // IOrderable, so there is nothing on the interface surface to build it from.
     // The only mechanical lever for the outstanding LessThanOrEquals obligations
-    // is a *narrower* concept whose implementors share a carrier with a known
+    // is a *narrower* interface whose implementors share a carrier with a known
     // order — that is `IIndex` (single `Value: Integer`), and its generic body
     // lives in `collections.library.plato` because P2 owns `IIndex`
     // (LIBRARIES.md rule 10). It discharges every typed-index implementor.
@@ -48,7 +48,7 @@ library Core
     //     WRONG whenever two FrameTimes carry different rates; a correct body
     //     must convert both to seconds. Explicitly not mechanical.
     //   - Boolean / String / Character (primitives) — host-intrinsic orders
-    //     (false < true, lexicographic, code-point). Not expressible on a concept.
+    //     (false < true, lexicographic, code-point). Not expressible on an interface.
     // TODO(cross-package): fill the above in their owning packages.
 
     //==
@@ -102,14 +102,14 @@ library Core
 
     // Three-way comparison derived from the total order: negative when a < b,
     // zero when equal, positive when a > b. Declared as a member on IComparable,
-    // but derivable from IOrderable alone, so it lives here on the base concept.
+    // but derivable from IOrderable alone, so it lives here on the base interface.
     Compare(a: IOrderable, b: IOrderable): Integer
         => a == b ? 0 : (a <= b ? -1 : 1);
 
     //==
     // # Core logic
     //
-    // Derived functionality for the logic concepts (`core.concepts.plato`):
+    // Derived functionality for the logic interfaces (`core.concepts.plato`):
     // the composite truth-functional connectives and their bit-level counterparts
     // (https://en.wikipedia.org/wiki/Logical_connective).
 

@@ -57,7 +57,7 @@ Explicitly OUT of scope for now: linters, gates, ratchets, and C# code generatio
       `primitive` keyword; the superseded declarations are removed (no duplicate decls).
 - [x] Whole stdlib parses cleanly (plato_check MCP or compiler parse stage — parse errors
       zero; downstream lint/ratchet noise expressly ignored this increment).
-- [x] Decision recorded (in this file) for Object, Array2D/3D, and what concepts (if any)
+- [x] Decision recorded (in this file) for Object, Array2D/3D, and what interfaces (if any)
       the newly-declared Buffer/List/FunctionN/Type implement.
 
 ## Outcome (2026-07-30)
@@ -91,13 +91,13 @@ Nothing reads the new flag yet; it is the hook for plato-365.
   authority.
 - **Array2D/Array3D stay `type`** (in `primitives-arrays.types.plato`). Same reason: only
   rank-1 `Array<T>` is a compiler-assumed name.
-- **Concept surfaces are carried over verbatim, not invented.** `Number: Real`;
+- **Interface surfaces are carried over verbatim, not invented.** `Number: Real`;
   `Integer: Whole, Bitwise`; `Boolean: Value, Orderable, Logical`;
   `Character: Value, Orderable`; `String: Value, Orderable, Countable`;
   `Array<T>: Indexable<T>`. **`Dynamic`, `Type`, `List<T>`, `Buffer<T>` and
-  `Function0–9` implement nothing** — `Dynamic`/`Type` are escape hatches with no concept
+  `Function0–9` implement nothing** — `Dynamic`/`Type` are escape hatches with no interface
   surface, the builders are affine and reachable only through `intrinsics.library.plato`,
-  and the function types are structural. Adding concepts to any of them is a separate,
+  and the function types are structural. Adding interfaces to any of them is a separate,
   deliberate design call, not a side effect of this rename.
 - **`unique` is retained on List/Buffer** (`unique primitive List<T>`): `UniqueTypes` and
   LINT006/007 key off `IsUnique`, and dropping it would change behaviour.
@@ -106,7 +106,7 @@ Nothing reads the new flag yet; it is the hook for plato-365.
   `primitives-functions.types.plato`.
 
 ### Known, accepted deviations
-- `primitives.plato` has **no `.types`/`.concepts`/`.library` suffix** — per the task spec
+- `primitives.plato` has **no `.types`/`.interfaces`/`.library` suffix** — per the task spec
   the primitive set is its own kind of declaration and gets its own name. Any file-suffix
   lint rule that objects is accepted noise.
 - It holds **20 top-level declarations**, over the stdlib's "at most twelve per file"

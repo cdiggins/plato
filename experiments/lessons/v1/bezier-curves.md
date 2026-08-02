@@ -167,8 +167,8 @@ controls are coplanar. For planar arcs with an explicit supporting plane, Plato 
 
 The canonical parameter $t$ is **not** arc-length fraction. `Eval(0.5)` is halfway in parameter
 space, not necessarily halfway along the ink. Animation that must travel at constant speed needs
-arc-length reparameterization (`ArcLengthParameterized` exists as a concept for curves that
-provide it; the Bézier types do not currently claim that concept).
+arc-length reparameterization (`ArcLengthParameterized` exists as an interface for curves that
+provide it; the Bézier types do not currently claim that interface).
 
 ### Building a path
 
@@ -233,10 +233,10 @@ cubic is actually the linear segment in disguise (degree elevation of a line).
 
 ## Library recommendations
 
-- **missing-concept** — `21-curves-2d.plato` / `22-curves-3d.plato`: `QuadraticBezier2D` and
+- **missing-interface** — `21-curves-2d.plato` / `22-curves-3d.plato`: `QuadraticBezier2D` and
   `CubicBezier2D` (and 3D twins) implement only `Curve2D` / `Curve3D`, not
   `DifferentiableCurve2D` / `DifferentiableCurve3D`. Béziers have closed-form tangents; claiming
-  the differentiable concepts would unlock `TangentAt` without host-side special cases.
+  the differentiable interfaces would unlock `TangentAt` without host-side special cases.
 
 - **missing-function** — Bézier types: no declared `Subdivide(t)`, `Split`, `Derivative`, or
   `BoundingBounds` helpers. De Casteljau subdivision and AABB-from-controls are the two operations

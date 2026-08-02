@@ -1,6 +1,6 @@
 ---
 id: plato-312
-title: Emit _-receiver concept members as C# static abstract
+title: Emit _-receiver interface members as C# static abstract
 type: debt
 status: done
 priority: p2
@@ -10,16 +10,16 @@ area: plato
 sprint: 
 created: 2026-07-29
 closed: 2026-07-29
-links: [tracker/decisions/2026-07-29-static-concept-members.md, submodules/Plato/Plato.CSharpWriter/CSharpFunctionInfo.cs, submodules/Plato/stdlib/algebra-operations.concepts.plato, tracker/issues/plato-308.md]
+links: [tracker/decisions/2026-07-29-static-interface-members.md, submodules/Plato/Plato.CSharpWriter/CSharpFunctionInfo.cs, submodules/Plato/stdlib/algebra-operations.concepts.plato, tracker/issues/plato-308.md]
 ---
 
 ## Issue
 
-Implements [ADR 2026-07-29 static concept members](../decisions/2026-07-29-static-concept-members.md).
+Implements [ADR 2026-07-29 static interface members](../decisions/2026-07-29-static-interface-members.md).
 
 Plato spells a type-level function as one with an ignored receiver — `Zero(_: Color): Color`.
 `CSharpFunctionInfo.IsStatic` reads that syntactically and emits a C# `static` method. But the
-concept declares `Zero(x: Self): Self` with a *named* receiver, so the generated interface
+interface declares `Zero(x: Self): Self` with a *named* receiver, so the generated interface
 member is an ordinary instance method, and a static method cannot implement it: 40 × CS0736.
 
 Plato `b055944` unblocked this by renaming the receiver in twenty implementation bodies so they
@@ -61,12 +61,12 @@ drifted apart silently.
 
 - Blocked by: nothing.
 - Related: [plato-308](plato-308.md) — the forward suite cannot build yet, so the CS0736 class cannot be re-verified end to end there until it does. The change is independently verifiable through `regen-generated.ps1` and the legacy conformance suite.
-- Touches: `Plato.CSharpWriter` (emitter behaviour ⇒ golden refresh, hard rule 2) and the `algebra-*`/`quantities` concept files.
+- Touches: `Plato.CSharpWriter` (emitter behaviour ⇒ golden refresh, hard rule 2) and the `algebra-*`/`quantities` interface files.
 
 ## Fix approaches
 
-1. **Full ADR route** (recommended): emit `static abstract` for `_`-receiver concept members, emit the paired UFCS extension method, flip the concept declarations to `_`, revert the twenty renames, add the checker rule.
-2. **Emitter only, leave declarations alone.** Rejected by the ADR — it leaves the concept still declaring an instance member, so the mismatch remains, just relocated.
+1. **Full ADR route** (recommended): emit `static abstract` for `_`-receiver interface members, emit the paired UFCS extension method, flip the interface declarations to `_`, revert the twenty renames, add the checker rule.
+2. **Emitter only, leave declarations alone.** Rejected by the ADR — it leaves the interface still declaring an instance member, so the mismatch remains, just relocated.
 3. **Keep `b055944` as the permanent answer.** The zero-work option. Costs the backwards API shape and blocks `T.Zero()` for generic consumers.
 
 ## Bedrock
@@ -82,12 +82,12 @@ downstream.
 
 ## Done means
 
-Revised against [the corrected ADR](../decisions/2026-07-29-static-concept-members-corrected.md) —
+Revised against [the corrected ADR](../decisions/2026-07-29-static-interface-members-corrected.md) —
 the original boxes 2 and 3 were written from an assumption that measurement disproved.
 
-- [x] `_`-receiver concept members emit as `static abstract` interface members; implementors emit plain `static`. — behind opt-in `--static-abstract`; emits exactly `Quantity.FromAmount`, `Vector.FromComponents`, `OriginBased.FromOffset`.
+- [x] `_`-receiver interface members emit as `static abstract` interface members; implementors emit plain `static`. — behind opt-in `--static-abstract`; emits exactly `Quantity.FromAmount`, `Vector.FromComponents`, `OriginBased.FromOffset`.
 - [x] ~~A paired UFCS extension method~~ — **not needed**. Generated code monomorphizes before emission, so no call site requires it. The mechanism was verified to work on net8.0 (nullary, n-arg, static-via-type, generic `T.Zero()`) and stays available if a C# consumer scenario ever needs it.
-- [x] ~~Concept declarations use `_`; the twenty `b055944` renames are reverted.~~ — **withdrawn.** `Zero`/`One`/`MinValue`/`MaxValue` stay instance obligations: `VectorN.Zero` and `MatrixN.Zero` need the receiver for arity, and `Self.` does not exist in the forward stdlib. `b055944` was right. Instead the genuine drift was fixed in the other direction: `Vector.Broadcast` is now an instance obligation, with its six fixed-arity implementations renamed to match.
+- [x] ~~Interface declarations use `_`; the twenty `b055944` renames are reverted.~~ — **withdrawn.** `Zero`/`One`/`MinValue`/`MaxValue` stay instance obligations: `VectorN.Zero` and `MatrixN.Zero` need the receiver for arity, and `Self.` does not exist in the forward stdlib. `b055944` was right. Instead the genuine drift was fixed in the other direction: `Vector.Broadcast` is now an instance obligation, with its six fixed-arity implementations renamed to match.
 - [x] Checker rule: an implementation's receiver-usage marker must match the obligation's; existing disagreements burned down or listed. — **LINT012**, Plato `8d488a8`.
 - [x] `regen-generated.ps1` goldens byte-identical (368 files, 0 differing) — no refresh needed, the flag is opt-in and default-false.
 
@@ -116,7 +116,7 @@ This is a **genuine design conflict, not a typo**, which is why it is listed rat
 The C# build masks it: `Number` is scalar-erased to `float`, so no interface implementation is
 emitted and no CS0736 appears. LINT012 is the only thing that sees it.
 
-Resolving it needs a real decision — most likely allowing a concept to declare a member as
+Resolving it needs a real decision — most likely allowing an interface to declare a member as
 type-level *and* letting an implementor that needs the receiver opt out, which is a language
 question, not a rename. Worth its own issue if it starts to matter; harmless as two warnings today.
 
@@ -136,7 +136,7 @@ distribution — the rise from the earlier 324 is unrelated stdlib churn from a 
 ## Simplest fix
 
 Emit `static abstract` in the interface writer keyed off the existing `IsStatic`, emit the
-extension alongside, flip the concept declarations, revert the renames.
+extension alongside, flip the interface declarations, revert the renames.
 
 Pros: the generated API says what it means; generic C# consumers gain `T.Zero()`; no new Plato
 grammar; no new C# language version.

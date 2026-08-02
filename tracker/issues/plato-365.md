@@ -129,7 +129,7 @@ this issue exists to delete.
       `CSharpWriter.PrimitiveTypes`, held in sync by
       `PlatoTests/LinterPrimitiveShadowingTests.WriterPrimitiveTableMatchesTheCompilerCopy`
       (set equality, both directions). Fieldless declarations are exempt: that is how
-      `primitives.types.plato` states an intrinsic's concept surface, and nothing is discarded.
+      `primitives.types.plato` states an intrinsic's interface surface, and nothing is discarded.
       Severity is Error except for `WriterPrimitiveNames.KnownShadowedByStdlib`
       (`Angle`, `Plane`, `Matrix3x2`, `Matrix4x4`, `Quaternion`) which report as Warnings so the
       gate stays green while increments (a) and (c) land. **Delete a name from that list when it

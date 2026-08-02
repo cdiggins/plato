@@ -55,10 +55,10 @@ gamma bug inside every blur.
 
 ## In Plato
 
-### The `Image` concept (`45-images.plato`)
+### The `Image` interface (`45-images.plato`)
 
 ```
-concept Image
+interface Image
 {
     Size(x: Self): IntegerSize2D;
     Width(x: Self): Integer;
@@ -66,7 +66,7 @@ concept Image
 }
 ```
 
-Deliberately **no** pixel accessor on the concept — concrete types disagree on element
+Deliberately **no** pixel accessor on the interface — concrete types disagree on element
 type (`Color8`, `Color`, `Boolean`, palette indices, …). Dimensions are the shared face.
 
 ### Concrete rasters
@@ -139,7 +139,7 @@ Tonal tools (`LevelsAdjustment`, `CurvesAdjustment`, `HueSaturationAdjustment`,
 ## Pitfalls / fine print
 
 **No `Eval` on `Image` yet.** The pedagogical slogan "image as function" is not reflected
-as `Procedural<UvCoordinate, Color>` on the concept. Sampling at continuous UVs is a
+as `Procedural<UvCoordinate, Color>` on the interface. Sampling at continuous UVs is a
 library gap — resize filters imply it, but nothing is declared.
 
 **Bitmap vs FloatImage.** Blurring a `Bitmap` in gamma space darkens halos. Convert to
@@ -192,8 +192,8 @@ You need "draw source only where destination already has coverage." Is that prim
   overloads). The function view is unteachable as an API until sampling exists; resize
   parameters hint at it but do not provide it.
 
-- **missing-concept** — `45-images.plato`: consider
-  `concept SampledImage inherits Image, Procedural<UvCoordinate, Color>` for linear
+- **missing-interface** — `45-images.plato`: consider
+  `interface SampledImage inherits Image, Procedural<UvCoordinate, Color>` for linear
   working images, so `Eval`/`Sample` is discoverable the same way easings expose `Eval`.
 
 - **doc-comment** — `45-images.plato`: `Bitmap` says "sRGB-encoded" and `FloatImage`

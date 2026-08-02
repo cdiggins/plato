@@ -1,12 +1,12 @@
 //==
-// # IVector concept
+// # IVector interface
 //
-// The concept shared by every numeric vector in this vocabulary
+// The interface shared by every numeric vector in this vocabulary
 // (https://en.wikipedia.org/wiki/Euclidean_vector): component-wise arithmetic,
 // norms, a dot product, and a read-and-construct component surface. The
 // implementing types are declared in `vectors.types.plato` (the intrinsic
 // Number2/3/4/8 tier) and `vectors.types.plato` (Vector2D/3D, VectorN,
-// Direction2D/3D); the concept-generic bodies derived from this concept live in
+// Direction2D/3D); the interface-generic bodies derived from this interface live in
 // `numeric-structures.library.plato`.
 
 // The family of fixed-arity numeric vectors: component-wise arithmetic, norms,

@@ -16,7 +16,7 @@ links: [submodules/Plato/stdlib/intervals.plato, submodules/Plato/stdlib/interva
 ## Issue
 `IntegerInterval` documents itself as half-open — "Contains Start, excludes End"
 (`stdlib/intervals.plato:42`) — but it `implements IntervalLike<Integer>`, and every
-derived body on that concept is written for a **closed** interval. `Contains` is
+derived body on that interface is written for a **closed** interval. `Contains` is
 `self.Start <= value && value <= self.End`
 (`stdlib/intervals-transforms-interval.library.plato:63-64`), so
 `IntegerInterval(0, 4).Contains(4)` returns `true` while the type's own doc comment
@@ -33,7 +33,7 @@ leaves "reference half-open IntegerInterval ranges", and four node types
 inherited `Contains`/`Overlaps` reads one primitive past the leaf. Also affects
 `meshes-sections.plato:21` (`FaceRange`). No symptom reported yet — this is a
 latent trap that will surface the first time someone writes generic traversal code
-against the concept instead of hand-rolling the loop bounds.
+against the interface instead of hand-rolling the loop bounds.
 
 ## Affected code
 - `submodules/Plato/stdlib/intervals.plato:42-48` — `IntegerInterval` declares
@@ -52,15 +52,15 @@ against the concept instead of hand-rolling the loop bounds.
 ## Cause / analysis
 The convention's own escape clause is the root cause. "Inclusive unless a doc
 comment says otherwise" makes endpoint semantics a *per-type prose fact* while the
-bodies that implement those semantics are shared *per-concept code*. A doc comment
+bodies that implement those semantics are shared *per-interface code*. A doc comment
 cannot override an inherited expression, so the moment one type used the escape
-hatch the concept and the type diverged with nothing to catch it. `AngleInterval`
+hatch the interface and the type diverged with nothing to catch it. `AngleInterval`
 hit the same seam and was handled correctly — it overrides `Contains` and `Span`
 explicitly (`intervals-transforms-interval.library.plato:195-203`) with a comment
 saying the generic linear versions are wrong for it. `IntegerInterval` took the
 escape hatch without the matching overrides. Speculation: the half-open comment was
 added later, to describe how callers were already using it, without checking what
-the concept supplied.
+the interface supplied.
 
 ## Priority
 Recommend **P2**. Severity is high where it lands (a wrong `Contains` in a spatial
@@ -70,7 +70,7 @@ verified by grep (2026-07-30) — no stdlib call site invokes `Contains`, `Overl
 fields, so the wrong bodies are currently unreachable through the consumers. Cost of deferral grows
 though — this is a foot-gun armed for whoever next writes generic code over
 `IntervalLike`, and it gets more expensive to change as more types adopt the
-concept. Not urgent; should not sit indefinitely.
+interface. Not urgent; should not sit indefinitely.
 
 ## Dependencies
 - Blocked by: nothing.
@@ -98,7 +98,7 @@ concept. Not urgent; should not sit indefinitely.
    spelled (`Extent` = count only when half-open).
 
 ## Bedrock
-The invariant that broke is: *a concept's derived bodies define the semantics of
+The invariant that broke is: *an interface's derived bodies define the semantics of
 every type that implements it; a doc comment cannot opt out.* The seam is
 `intervals-bounds.concepts.plato` / `intervals-transforms-interval.library.plato` —
 the boundary between what `IntervalLike` promises and what each type means. Option 2
@@ -138,7 +138,7 @@ fixed. That is what the CONVENTIONS.md note in Bedrock (b) is for.
   caught this at the moment the half-open comment was written. The
   `IntegerInterval` case is the regression test and belongs in the fix; the
   all-implementers table is broader and worth its own issue.
-- **Check**: a CHK-style rule — a type whose doc comment contradicts its concept's
+- **Check**: a CHK-style rule — a type whose doc comment contradicts its interface's
   documented default must override the affected bodies — is enforceable only if the
   convention is machine-readable, which argues for option 1's data field.
 - Related: same class as the existing CHK-rule work in the stdlib conformance suite;

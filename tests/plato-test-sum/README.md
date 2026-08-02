@@ -28,9 +28,9 @@ plato-test-sum/
 
 - **Self-contained.** Each file declares the minimal primitives it needs (`type
   Number { }`, `type Point2D { X: Number; Y: Number; }`, …), mirroring how
-  `stdlib/00-primitives.plato` self-declares. `implements`/`concept`
+  `stdlib/00-primitives.plato` self-declares. `implements`/`interface`
   clauses are intentionally omitted — they are orthogonal to sum types and would
-  drag in the concept lattice. The design doc shows the faithful `implements Value`
+  drag in the interface lattice. The design doc shows the faithful `implements Value`
   form; the fixtures stay minimal.
 - **EXPECT convention (negatives only).** The first line of every negative fixture
   is a comment of the form:

@@ -39,7 +39,7 @@ Introduce a first-class `Byte` type in Plato (interpretation of truncated ask �
 ## Approaches
 Short term: declare `type Byte implements Whole, Bitwise { }` (or equivalent) in `primitives.plato`; add explicit `ToInteger` / `FromInteger` (clamp or checked); optionally retarget `Color8` channels to `Byte`.
 Long term: codegen maps to host `byte`; packed image/buffer APIs; possible siblings (`UInt16`, …) only if width vocabulary proves necessary.
-Adjacent ideas worth their own issue: signed `SByte`; multi-width unsigned integers; clamp-vs-wrap policy as a reusable numeric concept.
+Adjacent ideas worth their own issue: signed `SByte`; multi-width unsigned integers; clamp-vs-wrap policy as a reusable numeric interface.
 
 ## Bedrock
 Strengthens the **primitive-scalar seam** in `stdlib/primitives.plato`: bounded octet values become a named intrinsic instead of an unenforced `Integer` convention, so `Color8` and future image/interop types can state channel width in the type. **Verdict: simplest-along-the-grain** — must NOT invent a full fixed-width integer lattice or change `Integer`/`Number` semantics; only add `Byte` + conversions (+ optional `Color8` field retarget).

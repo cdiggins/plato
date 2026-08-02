@@ -1,6 +1,6 @@
 ---
 id: plato-311
-title: Concept in type position (existential) has no defined C# lowering
+title: Interface in type position (existential) has no defined C# lowering
 type: problem
 status: done
 priority: p2
@@ -15,8 +15,8 @@ links: [tracker/issues/plato-308.md, tracker/issues/plato-310.md, submodules/Pla
 
 ## Issue
 
-Split out of [plato-308](plato-308.md) Root 1 after analysis on 2026-07-29. A Plato concept used
-as a **constraint** lowers cleanly (monomorphization grounds `Self`). A concept used **in type
+Split out of [plato-308](plato-308.md) Root 1 after analysis on 2026-07-29. A Plato interface used
+as a **constraint** lowers cleanly (monomorphization grounds `Self`). An interface used **in type
 position** — field type, return type, parameter type of a library function — is an *existential*
 ("some type implementing C"), and the F-bounded lowering
 `interface C<Self> where Self : C<Self>` cannot express it. The checker accepts these programs;
@@ -25,9 +25,9 @@ the C# emitter has no defined semantics and improvises:
 - `Path: Curve3D;` (`stdlib/surfaces-generated.plato:62`) emits as
   `Curve3D<SweptSurface> Path` (`_SweptSurface.g.cs:17`) — the **enclosing type** plugged into
   `Self`, an unsatisfiable type ("a curve whose Self is a swept surface"). All 166 CS0315 in
-  plato-308 are this, across 12 concept-typed fields in `surfaces-generated.plato`,
+  plato-308 are this, across 12 interface-typed fields in `surfaces-generated.plato`,
   `surfaces-patches.plato` (CoonsPatch), `solids-generated.plato` (SweptSolid).
-- Library methods over bare-concept receivers monomorphize onto mapped intrinsics with the same
+- Library methods over bare-interface receivers monomorphize onto mapped intrinsics with the same
   hole (see [plato-310](plato-310.md) for the mechanical arity bugs entangled in the same files).
 
 This is a language/codegen design gap, not a stdlib defect: storing "some curve" in a surface type
@@ -38,34 +38,34 @@ rejected (options C/D below).
 
 Gates the forward conformance build ([plato-308](plato-308.md)), and with it every forward-stdlib
 law run, including plato-306's 11 affine laws. Beyond the immediate build: until this has defined
-semantics, any forward-stdlib author can write a concept-typed field that lints and type-checks
+semantics, any forward-stdlib author can write an interface-typed field that lints and type-checks
 clean and produces garbage C#, discovered only 1232 files later.
 
 ## Affected code
 
-- `submodules/Plato/Plato.CSharpWriter` — concept-to-interface lowering (single F-bounded form today).
+- `submodules/Plato/Plato.CSharpWriter` — interface-to-interface lowering (single F-bounded form today).
 - `submodules/Plato/stdlib/surfaces-generated.plato:20,30,41-42,61-62,71`, `stdlib/surfaces-patches.plato:77-80`, `stdlib/solids-generated.plato:53` — the 12 existential fields.
-- `submodules/Plato/PlatoTests/ForwardStdLibCheckerTests.cs:24-39` — documents the sibling cluster (tuple-literal returns of bare concepts) and the `Self`-unification permissiveness this design must not break.
-- `submodules/Plato/stdlib/curves.concepts.plato:28` — `Curve3D`: `Geometry3D + Procedural<Number, Point3D>`, the canonical existential-stored concept.
+- `submodules/Plato/PlatoTests/ForwardStdLibCheckerTests.cs:24-39` — documents the sibling cluster (tuple-literal returns of bare interfaces) and the `Self`-unification permissiveness this design must not break.
+- `submodules/Plato/stdlib/curves.concepts.plato:28` — `Curve3D`: `Geometry3D + Procedural<Number, Point3D>`, the canonical existential-stored interface.
 
 ## Cause / analysis
 
 Rust and Swift hit the identical fork and both split the two uses: constraint-use (`impl Trait` /
 `some P`, monomorphized) vs type-use (`dyn Trait` / `any P`, dispatched), with an object-safety
-rule deciding which members survive into the dynamic view. Plato's concepts as constraints are the
+rule deciding which members survive into the dynamic view. Plato's interfaces as constraints are the
 `some` side and already work; the `any` side simply has no lowering.
 
 ## Decision (2026-07-29)
 
 **Option A — dual-interface lowering** (approved by Christopher in conversation):
 
-- For each concept `C`, emit non-generic `interface C` carrying the **object-safe subset**
+- For each interface `C`, emit non-generic `interface C` carrying the **object-safe subset**
   (members where `Self` appears only as the receiver; `Self`-returning members either return the
   non-generic view or are excluded — decide during implementation) alongside
   `interface C<Self> : C where Self : C<Self>`.
-- Concept in constraint position lowers to `C<Self>` as today; concept in type position lowers to
+- Interface in constraint position lowers to `C<Self>` as today; interface in type position lowers to
   non-generic `C`.
-- A concept with an empty object-safe surface gets no non-generic view; using it in type position
+- An interface with an empty object-safe surface gets no non-generic view; using it in type position
   becomes a compile-time diagnostic instead of downstream C# garbage.
 - Accepted costs: struct implementers box when stored in a `C`-typed field (modeling-time types,
   not hot loops — hot paths stay monomorphized); binary methods (`Compare(Self)`) invisible
@@ -74,7 +74,7 @@ rule deciding which members survive into the dynamic view. Plato's concepts as c
 Rejected alternatives, recorded for the ADR: (B) erasure to generated `AnyC` delegate-holding
 structs — loses stored-curve identity/inspectability, weak delegate equality; (C) making storage
 types generic (`SweptSurface<TPath>`) — arity infects every consumer signature, vocabulary bends
-to the encoding; (D) banning concept fields in favor of `Function1`-typed fields — same identity
+to the encoding; (D) banning interface fields in favor of `Function1`-typed fields — same identity
 loss as B paid in the vocabulary itself.
 
 ## Priority
@@ -93,16 +93,16 @@ byte-identity of `Generated/` goldens is the tripwire.
 ## Fix approaches
 
 Decision made (Option A above). Implementation order:
-1. Object-safety computation over concept members in the writer (or checker, if the diagnostic lands there).
+1. Object-safety computation over interface members in the writer (or checker, if the diagnostic lands there).
 2. Dual emission: non-generic view + F-bounded interface inheriting it.
 3. Type-position rendering switches to the non-generic view.
-4. Diagnostic for type-position use of a view-less concept.
+4. Diagnostic for type-position use of a view-less interface.
 5. Golden refresh + conformance gates.
 
 ## Bedrock
 
 Gives the language a defined `some`/`any` split at the one seam where Plato meets a nominal target
-language — the concept-lowering boundary in `Plato.CSharpWriter`. Every future backend (GLSL/C++/
+language — the interface-lowering boundary in `Plato.CSharpWriter`. Every future backend (GLSL/C++/
 CUDA writers) inherits a precise question ("what is your `any C` representation?") instead of an
 undefined behavior. Closing this issue should produce an ADR in `tracker/decisions/`.
 **Verdict: right** — this is the invariant fix; plato-310 covers the mechanical remainder.
@@ -151,14 +151,14 @@ then refresh goldens and re-run all four gates.
 
 ## Done means
 
-- [x] ADR in `tracker/decisions/` recording the dual-interface design and the object-safety rule — `tracker/decisions/2026-07-29-existential-concepts-dual-interface.md`.
+- [x] ADR in `tracker/decisions/` recording the dual-interface design and the object-safety rule — `tracker/decisions/2026-07-29-existential-interfaces-dual-interface.md`.
 - [ ] The 166 CS0315 errors are gone: `_SweptSurface.g.cs` stores `Curve3D Path` (non-generic view), all 12 existential fields likewise.
-- [ ] Type-position use of a concept with no object-safe surface produces a diagnostic, with a test.
+- [ ] Type-position use of an interface with no object-safe surface produces a diagnostic, with a test.
 - [ ] `tools\regen-generated.ps1` clean or goldens refreshed deliberately in the same change; `Ara3D.SDK.ConformanceTests` 0 fail.
 - [ ] Remaining `Plato.ForwardConformanceTests` build errors attributable only to [plato-310](plato-310.md) / plato-308 Root 2.
 
 ## Prevention
 
-- The view-less-concept diagnostic (Done box 3) prevents silent garbage for future concepts.
+- The view-less-interface diagnostic (Done box 3) prevents silent garbage for future interfaces.
 - `ForwardStdLibCheckerTests` ratchet already covers the checker side; wiring the conformance build
   into `check-all.ps1` (plato-308 Prevention) covers the emitter side.

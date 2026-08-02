@@ -1,6 +1,6 @@
 ---
 id: plato-334
-title: "Query/solve result types share no concept: success flag spelled four ways"
+title: "Query/solve result types share no interface: success flag spelled four ways"
 type: debt
 status: idea
 priority: p3
@@ -17,7 +17,7 @@ links: [submodules/Plato/stdlib/spatial-queries-proximity.plato, submodules/Plat
 The stdlib has thirteen "outcome of an algorithm" record types across five files
 (three each in spatial-queries-proximity, spatial-queries-overlap, optimization,
 and collision-contacts, plus `MaxFlowResult`), and a record-less fourteenth shape
-in statistics-correlation. Every one of them `implements Value` and nothing else — there is no concept
+in statistics-correlation. Every one of them `implements Value` and nothing else — there is no interface
 covering the shape they share. As a result the same four facts are spelled
 differently in each: **did it succeed** is `Intersects`, `Hit`, `Converged`, or an
 out-of-band `-1` index sentinel; **how well** is `Distance`, `Residual`,
@@ -58,7 +58,7 @@ These types were authored file-by-file as each domain landed, and each one is
 locally reasonable — `Hit` really is the natural word for a shape cast, `Intersects`
 for an intersection. The debt is that no one owned the cross-domain vocabulary, and
 Plato has no forcing function here: `implements Value` is satisfied by any record,
-so nothing prompts an author to ask whether a concept already describes what they
+so nothing prompts an author to ask whether an interface already describes what they
 are writing. `TerminationReason` shows the repo already knows the better pattern —
 it just was not lifted out of `optimization.plato`. Not speculation: the sum type
 exists at `optimization.plato:29` and is used by exactly one of the three types in
@@ -81,10 +81,10 @@ being added in bulk right now.
   parallel stdlib content wave. Best done alone, or first in a wave.
 
 ## Fix approaches
-1. **Concept-only, no type changes** — declare `QueryResult` (a success predicate),
+1. **Interface-only, no type changes** — declare `QueryResult` (a success predicate),
    `PointResult<TPoint>`, `DistanceResult`, `ParameterizedResult`, and have the
    existing types implement them, keeping their current field names and adding the
-   concept members as one-line derived bodies. Non-breaking, incremental,
+   interface members as one-line derived bodies. Non-breaking, incremental,
    per-file. Leaves the inconsistent field names in place.
 2. **Unify field names as well** — additionally rename to one spelling of success
    and one of quality. Cleanest end state; breaks every call site; the least
@@ -97,44 +97,44 @@ being added in bulk right now.
 ## Bedrock
 The seam is the boundary between *algorithms* and *their callers* — currently there
 is no vocabulary there at all, so every crossing is bespoke. The invariant worth
-establishing: *an algorithm reports its outcome through a concept, not through a
+establishing: *an algorithm reports its outcome through an interface, not through a
 record whose field names the caller must memorize.* Strengthening it makes three
 future things cheap that are currently impossible: generic failure handling, uniform
 diagnostics (every solver able to say *why*, not just *whether* — the
 `TerminationReason` generalization), and result types that compose (a query feeding
 a solver without an adapter). This is the idea worth taking from `plato-src-v2`,
-which had exactly these concepts sketched (`IQueryResult`, `IPointResult`,
+which had exactly these interfaces sketched (`IQueryResult`, `IPointResult`,
 `IDistanceResult`, `IFitResult`, `FitQuality`) and nothing else the stdlib lacks.
 
-Verdict: **right** — the value here *is* the shared concept; a narrower fix
-(option 3) delivers a record with no concept behind it and re-creates the same debt
+Verdict: **right** — the value here *is* the shared interface; a narrower fix
+(option 3) delivers a record with no interface behind it and re-creates the same debt
 one level down. If capacity forces option 3 first, it must NOT introduce `FitQuality`
-as a bare struct — it should land as the payload of a `FitResult` concept, so the
-concept layer stays reachable.
+as a bare struct — it should land as the payload of a `FitResult` interface, so the
+interface layer stays reachable.
 
 ## Done means
-- [ ] result concepts declared in one place with doc comments explaining the split
-- [ ] all thirteen existing result types implement the applicable concepts
+- [ ] result interfaces declared in one place with doc comments explaining the split
+- [ ] all thirteen existing result types implement the applicable interfaces
 - [ ] `RootFindResult` and `LeastSquaresResult` carry `TerminationReason`, not a
       bare `Converged` flag
-- [ ] at least one generic helper written against the concept, proving it is usable
+- [ ] at least one generic helper written against the interface, proving it is usable
 - [ ] ForwardStdLib test green
 
 ## Simplest fix
-Option 1 restricted to the two clearest concepts: a success predicate and a
+Option 1 restricted to the two clearest interfaces: a success predicate and a
 distance/quality accessor, implemented as derived bodies over the existing fields.
 Gain: unblocks generic helpers immediately, no renames, no call-site churn, can land
 file-by-file so it interleaves with other stdlib work. Give up: the field-name
 inconsistency survives, so readers still see `Hit` next to `Intersects` next to
-`Converged` — the concept hides it from generic code but not from humans.
+`Converged` — the interface hides it from generic code but not from humans.
 
 ## Prevention
 - **Convention**: CONVENTIONS.md has no entry for result/outcome types. One naming
-  the required concept and the standard spelling of success + reason would stop the
+  the required interface and the standard spelling of success + reason would stop the
   next variant. Cheapest single preventive step; worth doing even if the
   refactor is deferred.
 - **Check**: a CHK rule — a type whose name ends in `Result` must implement a result
-  concept — is mechanically checkable and fits the existing stdlib conformance
+  interface — is mechanically checkable and fits the existing stdlib conformance
   suite.
 - **Related**: `-1`-as-missing-index appears in at least four of these types
   (`PrimitiveIndex`, `Face`, `Body`, `MatchedRightIndices`). That is a separate

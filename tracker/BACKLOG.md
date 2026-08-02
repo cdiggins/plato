@@ -8,25 +8,25 @@ Issue frontmatter is the source of truth; this file is a generated view
 
 | id | title | type | pri | effort | risk | area | status | sprint |
 |----|-------|------|-----|--------|------|------|--------|--------|
-| [plato-229](issues/plato-229.md) | Complete the Plato v2 concept lattice | feature | p1 | L | high | plato | in-progress |  |
+| [plato-229](issues/plato-229.md) | Complete the Plato v2 interface lattice | feature | p1 | L | high | plato | in-progress |  |
 | [plato-308](issues/plato-308.md) | Generated forward-stdlib C# does not compile (85 errors as of 2026-07-30) | bug | p1 | L | med | plato | in-progress |  |
 | [plato-378](issues/plato-378.md) | Shrink the host intrinsic contract to an irreducible kernel | debt | p1 | L | med | plato | in-progress |  |
 | [plato-240](issues/plato-240.md) | vscode-plato: compiler-backed Go to Definition + Find All References | feature | p2 | M | low | plato | in-progress |  |
-| [plato-306](issues/plato-306.md) | Generic Difference defaults via optional delta conversion concept | idea | p2 | M | low | plato | in-progress |  |
+| [plato-306](issues/plato-306.md) | Generic Difference defaults via optional delta conversion interface | idea | p2 | M | low | plato | in-progress |  |
 | [plato-320](issues/plato-320.md) | PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes | bug | p2 | S | low | plato | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
 | [plato-369](issues/plato-369.md) | Burn down stdlib type-checker diagnostics to zero | debt | p1 | M | med | plato | ready |  |
 | [plato-388](issues/plato-388.md) | Single verification policy manifest: one data file the gates, tests and plato_check all read | debt | p1 | M | med | plato | ready |  |
-| [plato-277](issues/plato-277.md) | stdlib concept-gap burn-down: the 17 markers that need a language or concept decision | debt | p2 | M | low | plato | ready |  |
+| [plato-277](issues/plato-277.md) | stdlib interface-gap burn-down: the 17 markers that need a language or interface decision | debt | p2 | M | low | plato | ready |  |
 | [plato-323](issues/plato-323.md) | Forward stdlib body-level C# errors (~7.5k) unmasked once declarations compile | bug | p2 | L | med | plato | ready |  |
 | [plato-326](issues/plato-326.md) | Forward stdlib Grid2D/3D declares RowCount/ColumnCount; runtime provides NumRows/NumColumns | bug | p2 | S | low | plato | ready |  |
 | [plato-372](issues/plato-372.md) | Studio gate scripts are stale: check-stdlib-fast lints stdlib top-only and finds no files | bug | p2 | S | low | plato | ready |  |
 | [plato-373](issues/plato-373.md) | Ellipse.Perimeter (Ramanujan II) is 4e-4 off for flattened ellipses | bug | p2 | S | low | plato | ready |  |
-| [plato-374](issues/plato-374.md) | Concept-generic law bodies mix the concept default with the type's override | bug | p2 | M | low | plato | ready |  |
+| [plato-374](issues/plato-374.md) | Interface-generic law bodies mix the interface default with the type's override | bug | p2 | M | low | plato | ready |  |
 | [plato-389](issues/plato-389.md) | plato_check has no tier awareness: future and stdlib-tests count toward its verdict | bug | p2 | S | low | plato | ready |  |
-| [plato-328](issues/plato-328.md) | Inferred concept constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
+| [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
@@ -41,7 +41,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-390](issues/plato-390.md) | Extract Plato.Verify: one policy engine behind the gates, the tests and plato_check | feature | p2 | L | med | plato | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
 | [plato-235](issues/plato-235.md) | GLSL overload erasure picks the winner by emission order, not by intent | problem | p3 | M | med | plato | idea |  |
-| [plato-334](issues/plato-334.md) | Query/solve result types share no concept: success flag spelled four ways | debt | p3 | M | low | plato | idea |  |
+| [plato-334](issues/plato-334.md) | Query/solve result types share no interface: success flag spelled four ways | debt | p3 | M | low | plato | idea |  |
 | [plato-335](issues/plato-335.md) | No CRS identity token: geospatial types cannot say which reference system they are in | problem | p3 | S | low | plato | idea |  |
 | [plato-336](issues/plato-336.md) | Triangulate and hull results lose provenance back to input points | debt | p3 | M | med | plato | idea |  |
 | [plato-384](issues/plato-384.md) | Wrapper structs declare no Equals/GetHashCode/IEquatable: boxing and composition-dependent equality | debt | p3 | M | med | plato | idea |  |
@@ -83,7 +83,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-265](issues/plato-265.md) | HTML Plato library browser via Fable spike | idea | ? | ? | ? | plato | idea |  |
 | [plato-266](issues/plato-266.md) | Inline external links in Plato stdlib docs | idea | ? | ? | ? | plato | idea |  |
 | [plato-267](issues/plato-267.md) | Generate images for Plato types | idea | ? | ? | ? | plato | idea |  |
-| [plato-268](issues/plato-268.md) | Pick canonical type-class keyword: interface vs concept vs trait | idea | ? | ? | ? | plato | idea |  |
+| [plato-268](issues/plato-268.md) | Pick canonical type-class keyword: interface vs interface vs trait | idea | ? | ? | ? | plato | idea |  |
 | [plato-269](issues/plato-269.md) | Differential: plato-src-v3 vs plato-src | idea | ? | ? | ? | plato | idea |  |
 | [plato-270](issues/plato-270.md) | Differential: Ara3D.Geometry vs Plato stdlib | idea | ? | ? | ? | plato | idea |  |
 | [plato-271](issues/plato-271.md) | Decide Plato numeric precision and fixed-size types | idea | ? | ? | ? | plato | idea |  |
@@ -92,26 +92,26 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-275](issues/plato-275.md) | SVG parser for Plato (string to typed model) | idea | ? | ? | ? | plato | idea |  |
 | [plato-283](issues/plato-283.md) | Put color constants in their own folder | idea | ? | ? | ? | plato | idea |  |
 | [plato-284](issues/plato-284.md) | Add OpaqueColor8 / ColorWithAlpha8 alongside Color8 | idea | ? | ? | ? | plato | idea |  |
-| [plato-285](issues/plato-285.md) | Split stdlib files by types / libraries / concepts | idea | ? | ? | ? | plato | idea |  |
+| [plato-285](issues/plato-285.md) | Split stdlib files by types / libraries / interfaces | idea | ? | ? | ? | plato | idea |  |
 | [plato-286](issues/plato-286.md) | Define a smaller Plato stdlib core for fast testing | idea | ? | ? | ? | plato | idea |  |
-| [plato-298](issues/plato-298.md) | Represent polygon meshes with and without holes; refine manifold concepts | idea | ? | ? | ? | plato | idea |  |
+| [plato-298](issues/plato-298.md) | Represent polygon meshes with and without holes; refine manifold interfaces | idea | ? | ? | ? | plato | idea |  |
 | [plato-304](issues/plato-304.md) | Port Ara3D.Collections IArray capabilities into Plato (rename and improve) | idea | ? | ? | ? | plato | idea |  |
 | [plato-316](issues/plato-316.md) | Implement MeshIncidence on PolygonMesh3D and TriangleMesh3D | feature | ? | ? | ? | plato | idea |  |
 | [plato-317](issues/plato-317.md) | docs/stdlib-ai-summary.txt is stale - regenerate or retire | debt | ? | ? | ? | plato | idea |  |
 | [plato-318](issues/plato-318.md) | Plato mesh builders (TriangleMesh3DBuilder / QuadMesh3DBuilder) | idea | ? | ? | ? | plato | idea |  |
-| [plato-325](issues/plato-325.md) | Triage the 35 LINT013 findings: concepts with unreachable derived surface | debt | ? | ? | ? | plato | idea |  |
+| [plato-325](issues/plato-325.md) | Triage the 35 LINT013 findings: interfaces with unreachable derived surface | debt | ? | ? | ? | plato | idea |  |
 | [plato-337](issues/plato-337.md) | Rename MapRange to Map | idea | ? | ? | ? | plato | idea |  |
 | [plato-338](issues/plato-338.md) | Index slice sugar xs[a..b] | idea | ? | ? | ? | plato | idea |  |
 | [plato-339](issues/plato-339.md) | From-end index sugar xs[^n] | idea | ? | ? | ? | plato | idea |  |
-| [plato-340](issues/plato-340.md) | Re-parent color types under a shared Color concept | idea | ? | ? | ? | plato | idea |  |
+| [plato-340](issues/plato-340.md) | Re-parent color types under a shared Color interface | idea | ? | ? | ? | plato | idea |  |
 | [plato-341](issues/plato-341.md) | Add first-class Byte type | idea | ? | ? | ? | plato | idea |  |
 | [plato-342](issues/plato-342.md) | Make implements Value optional or implied for record types | idea | ? | ? | ? | plato | idea |  |
 | [plato-343](issues/plato-343.md) | Add PCA (principal component analysis) to stdlib | idea | ? | ? | ? | plato | idea |  |
 | [plato-344](issues/plato-344.md) | Add OrientedBox3D to Plato stdlib | idea | ? | ? | ? | plato | idea |  |
-| [plato-345](issues/plato-345.md) | Add Convertible<T> conversion concept | idea | ? | ? | ? | plato | idea |  |
+| [plato-345](issues/plato-345.md) | Add Convertible<T> conversion interface | idea | ? | ? | ? | plato | idea |  |
 | [plato-346](issues/plato-346.md) | Adopt implicit converters more widely in stdlib | idea | ? | ? | ? | plato | idea |  |
 | [plato-347](issues/plato-347.md) | Adopt Constants library at more call sites | idea | ? | ? | ? | plato | idea |  |
-| [plato-348](issues/plato-348.md) | Make Transform3D/Pose3D implement transform concepts; add RigidTransform | idea | ? | ? | ? | plato | idea |  |
+| [plato-348](issues/plato-348.md) | Make Transform3D/Pose3D implement transform interfaces; add RigidTransform | idea | ? | ? | ? | plato | idea |  |
 | [plato-349](issues/plato-349.md) | Rename IntegerVectorN to IntegerN for naming consistency | idea | ? | ? | ? | plato | idea |  |
 | [plato-350](issues/plato-350.md) | Reduce Indexable boilerplate for implicitly indexable types | idea | ? | ? | ? | plato | idea |  |
 | [plato-351](issues/plato-351.md) | Evaluate GeoJSON-shaped type set for Plato | idea | ? | ? | ? | plato | idea |  |

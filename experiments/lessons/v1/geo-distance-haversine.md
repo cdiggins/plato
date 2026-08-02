@@ -225,7 +225,7 @@ a different problem.
 2. It shrinks by about $\cos 60^\circ = 1/2$, so roughly $55.6\,\mathrm{km}$.
    That is exactly why raw $\Delta\lambda$ in degrees is not a metre distance.
 3. Containment is “geodesic distance from Center ≤ Radius”. Without a declared
-   distance (or an equivalent predicate), the concept `GeoRegion.ContainsCoordinate`
+   distance (or an equivalent predicate), the interface `GeoRegion.ContainsCoordinate`
    has nothing to compute with for `GeoCircle`.
 
 </details>

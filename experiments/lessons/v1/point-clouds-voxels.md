@@ -14,7 +14,7 @@ scan emits a regular lattice of densities. A destruction sim may track occupancy
 Meshes shine when you need an explicit surface; **point clouds** shine when you measured
 samples; **voxels** shine when the interior matters as much as the boundary. Plato's v3
 vocabulary gives each representation its own types — enriched clouds, dense and sparse
-grids, level sets — plus concepts for converting *to* a cloud or an occupancy raster.
+grids, level sets — plus interfaces for converting *to* a cloud or an occupancy raster.
 
 ## The idea
 
@@ -166,15 +166,15 @@ type BrickMap3D
 }
 ```
 
-Conversion concepts:
+Conversion interfaces:
 
 ```plato
-concept PointCloudable3D
+interface PointCloudable3D
 {
     ToPointCloud(x: Self): PointCloud3D;
 }
 
-concept Voxelizable3D
+interface Voxelizable3D
 {
     ToOccupancyGrid(x: Self, cellSize: Number): OccupancyGrid3D;
 }
@@ -254,7 +254,7 @@ estimators that produce unnormalized vectors must normalize (or reject) before p
   no `WorldToCell`, `CellBounds`, or `SampleTrilinear` helpers. Every lesson example has
   to restate the half-open mapping; those operations belong on the types.
 
-- **missing-concept** — `33-pointclouds-voxels.plato`: `LevelSetGrid3D` does not implement
+- **missing-interface** — `33-pointclouds-voxels.plato`: `LevelSetGrid3D` does not implement
   `SignedDistanceField3D` / `ScalarField3D`, so it cannot `Eval` like `SampledSdf3D`
   (file 27). Bridging level-set grids into the field vocabulary would unify sampling.
 

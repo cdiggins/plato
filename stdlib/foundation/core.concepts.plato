@@ -2,14 +2,14 @@
 // # Core
 //
 // Sections, in order:
-//  - Core comparison concepts
-//  - Core logic concepts
+//  - Core comparison interfaces
+//  - Core logic interfaces
 
 //==
-// # Core comparison concepts
+// # Core comparison interfaces
 //
 // Equality, hashing, and total order: the smallest, most widely shared
-// capabilities. Nearly every other concept in the library inherits from
+// capabilities. Nearly every other interface in the library inherits from
 // something here.
 
 // Supports equality comparison. Equality is structural: two values are equal when
@@ -52,7 +52,7 @@ interface IComparable
 }
 
 //==
-// # Core logic concepts
+// # Core logic interfaces
 //
 // Truth-valued and bit-level algebra: the Boolean operations shared by truth
 // values, set-like types, and whole-number representations.

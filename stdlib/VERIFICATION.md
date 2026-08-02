@@ -34,8 +34,8 @@ Scope: this folder (`stdlib/`, the current "forward" standard library) and its t
   should always hold (e.g. that an operation is commutative). Running the laws is the only check
   that actually *executes* library code. `Witness_*` functions are helpers that construct example
   values for laws.
-- **Concept / obligation** — a *concept* is Plato's interface-like construct; an *obligation* is a
-  member a concept requires its implementers to provide.
+- **Interface / obligation** — a *interface* is Plato's interface-like construct; an *obligation* is a
+  member an interface requires its implementers to provide.
 - **Intrinsic** — a function declared in Plato without a body, with the implementation supplied by
   handwritten C# in `src/Plato.Intrinsics`. The stdlib ultimately "bottoms out" in these.
 - **Wrong green** — a gate that passes while proving nothing, e.g. because it found zero files to
@@ -156,13 +156,13 @@ somewhere. It proves nothing about types and nothing about values.
 class comment at the top of that file is the authoritative list. The rules that catch real
 defects, rather than untidiness:
 
-- **LINT001** — a type implements a concept but one obligation has no implementation. The
+- **LINT001** — a type implements an interface but one obligation has no implementation. The
   generated C# member throws `NotImplementedException`: a *runtime hole behind a green compile*,
   which is exactly why this rule is ratcheted.
 - **LINT012** — an obligation and its implementation disagree on the `_` receiver marker (which
   distinguishes static from instance members). Written as a lint rule after that mismatch produced
   40 CS0736 errors a thousand generated files downstream.
-- **LINT013** — a concept with no concrete implementing type that library bodies nonetheless call
+- **LINT013** — an interface with no concrete implementing type that library bodies nonetheless call
   through: derived API surface nothing can ever reach. The bulk of the lint ratchet count is this
   one rule.
 - **LINT002 / 004 / 005** — errors: bad `where` clauses, duplicate signatures, type variables the
@@ -191,7 +191,7 @@ effectively free.
   (`TupleN`) stops at 10, so an 11-field type has no working generated form.
 - **STY003** (Error) — the token `implicit`; implicit conversion operators are a C#-side decision.
 - **STY005** (Error) — more than one kind of declaration in a file, or a kind contradicting the
-  file's `.concepts.` / `.types.` / `.library.` name suffix.
+  file's `.interfaces.` / `.types.` / `.library.` name suffix.
 
 STY004 (doc-comment length) and STY006 (declarations per file) were retired: both measured a
 proxy rather than the thing they cared about. A comment is too long when it stops stating what a
@@ -216,7 +216,7 @@ form. There is no advisory tier left.
   how many sum types were seen alongside the diagnostics, because "0 diagnostics" only means
   something if sum types were actually checked.
 - `ForwardStdLibHasNoViewlessExistentialReferences` — **a hard zero, not a ratchet**. An
-  *existential* is a concept used in type position (`any C`, "some value implementing C"); each
+  *existential* is an interface used in type position (`any C`, "some value implementing C"); each
   one must have an object-safe view (a surface expressible as a C# interface) or the writer has no
   defined way to lower it to C#. A new CHK308 diagnostic means the writer cannot emit that code.
 
@@ -300,7 +300,7 @@ the generated assembly and runs each as a test case. Consequences to respect:
 Writing a law: every member a law references must be verified against the forward library source
 first (LIBRARIES.md rule 3) — use `plato_search_symbols` then `plato_definition`; never guess a
 name. Note the open defect [plato-374](../tracker/issues/plato-374.md): a law written generically
-over a concept can mix a concept's default implementation with a type's override, so prefer laws
+over an interface can mix an interface's default implementation with a type's override, so prefer laws
 written against concrete types until that is fixed.
 
 ---

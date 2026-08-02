@@ -26,7 +26,7 @@ namespace Ara3D.Geometry.RustWriter
     /// - The generated Plato API keeps PascalCase for parity with C# and
     ///   TypeScript, enabled by #![allow(non_snake_case)].
     /// - A single self-contained module (plato.rs) is produced.
-    /// - The IArray concept maps to a Vec-backed Arr struct defined in the
+    /// - The IArray interface maps to a Vec-backed Arr struct defined in the
     ///   hand-written prelude.
     /// </summary>
     public class RustWriter : CodeBuilder<RustWriter>
@@ -241,13 +241,13 @@ namespace Ara3D.Geometry.RustWriter
             return Write(@"
 // ==== Intrinsics prelude (hand-written support code) ====
 
-/// The Plato array concept: index and count.
+/// The Plato array interface: index and count.
 pub trait IArray<T> {
     fn At(&self, n: i64) -> T;
     fn Count(&self) -> i64;
 }
 
-/// Vec-backed implementation of the Plato array concept.
+/// Vec-backed implementation of the Plato array interface.
 #[derive(Clone, Debug, Default)]
 pub struct Arr<T> {
     pub items: Vec<T>,

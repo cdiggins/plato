@@ -1,6 +1,6 @@
 ---
 id: plato-328
-title: Inferred concept constraints are lost on generic library-function type variables
+title: Inferred interface constraints are lost on generic library-function type variables
 type: bug
 status: ready
 priority: p3
@@ -16,7 +16,7 @@ links: [tracker/issues/plato-323.md, submodules/Plato/Plato.CSharpWriter/CSharpF
 ## Issue
 
 A library function generic in its element type emits as a C# generic method with NO `where`
-clause, even when its body calls a concept member on that type variable. The one live instance,
+clause, even when its body calls an interface member on that type variable. The one live instance,
 surfaced by plato-323's Array-receiver emission path:
 
 `stdlib/splines-bezier.library.plato:26`
@@ -49,7 +49,7 @@ Emitting the function is still a large net win — it fixes 8 CS1061 call sites 
 ## Impact
 
 1 of the errors remaining in the forward conformance build; blocks nothing else. Latent
-correctness risk beyond that: any future `Array<$T>` library function whose body uses concept
+correctness risk beyond that: any future `Array<$T>` library function whose body uses interface
 members hits the same wall, and the failure mode is a compile error in generated code rather than
 a checker diagnostic.
 
@@ -68,8 +68,8 @@ a checker diagnostic.
 1. Writer-side: check whether the solved constraint is already on
    `FunctionInstance.ConstrainedTypeVariables` and simply not rendered for this emission kind — if
    so this is a one-line fix.
-2. Checker-side: infer the concept obligation from the member calls in the body and record it, the
-   same way a concept's own type parameters get their bounds.
+2. Checker-side: infer the interface obligation from the member calls in the body and record it, the
+   same way an interface's own type parameters get their bounds.
 3. Author-side workaround (does NOT fix the general case): declare the bound explicitly in
    `stdlib/splines-bezier.library.plato`. Cheap, and worth doing if 1 and 2 are both deep.
 

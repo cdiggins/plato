@@ -56,22 +56,22 @@ lower-index operands — same discipline as SDF trees.
 
 ## In Plato
 
-Root concepts in `26-fields.plato`:
+Root interfaces in `26-fields.plato`:
 
 ```plato
-concept Field<TDomain, TValue>
+interface Field<TDomain, TValue>
     inherits Procedural<TDomain, TValue>
 { }
 
-concept ScalarField3D
+interface ScalarField3D
     inherits Field<Point3D, Number>
 { }
 
-concept VectorField3D
+interface VectorField3D
     inherits Field<Point3D, Vector3D>
 { }
 
-concept DirectionField3D
+interface DirectionField3D
     inherits Field<Point3D, Direction3D>
 { }
 ```
@@ -80,13 +80,13 @@ Evaluation is `Eval` from `Procedural` — side-effect free and deterministic fo
 field value. Differentiable refinements add derivatives:
 
 ```plato
-concept DifferentiableScalarField3D
+interface DifferentiableScalarField3D
     inherits ScalarField3D
 {
     GradientAt(x: Self, point: Point3D): Vector3D;
 }
 
-concept DifferentiableVectorField3D
+interface DifferentiableVectorField3D
     inherits VectorField3D
 {
     JacobianAt(x: Self, point: Point3D): Matrix3x3;
@@ -98,7 +98,7 @@ concept DifferentiableVectorField3D
 In 2D, curl is a scalar:
 
 ```plato
-concept DifferentiableVectorField2D
+interface DifferentiableVectorField2D
     inherits VectorField2D
 {
     JacobianAt(x: Self, point: Point2D): Matrix2x2;
@@ -110,7 +110,7 @@ concept DifferentiableVectorField2D
 Time-varying fields take an `Instant` (not a raw `Number`):
 
 ```plato
-concept TimeVaryingVectorField3D
+interface TimeVaryingVectorField3D
 {
     EvalAtTime(x: Self, point: Point3D, time: Instant): Vector3D;
 }
@@ -179,7 +179,7 @@ $+\nabla f$ when the field increases toward the exterior — matching v3's doc c
 `DifferentiableScalarField3D`.
 
 **Not every field is differentiable.** `ScalarField3D` alone has no `GradientAt`. Numeric
-finite differences are an implementation choice, not part of the concept. Prefer types
+finite differences are an implementation choice, not part of the interface. Prefer types
 that implement `DifferentiableScalarField3D` when you need normals from an analytic field.
 
 **Direction fields drop magnitude.** `DirectionField3D` stores unit directions. Wind *speed*
@@ -226,14 +226,14 @@ enforce the distinction: `Number` in 2D, `Vector3D` in 3D.
 
 ## Library recommendations
 
-- **missing-concept** — `26-fields.plato`: scalar expression graphs exist
+- **missing-interface** — `26-fields.plato`: scalar expression graphs exist
   (`ScalarFieldGraph2D/3D`) but there is no parallel `VectorFieldGraph3D` / node sum for
   composing vector fields (add flows, scale, project). Teaching advection pipelines hits
   this gap immediately after curl and divergence.
 
 - **missing-function** — `26-fields.plato`: `ScalarFieldGraph3D` has no `Eval` /
   `implements ScalarField3D`. The graph is inert data until some undeclared interpreter
-  exists. Declaring `ScalarFieldGraph3D implements ScalarField3D` (or a concept
+  exists. Declaring `ScalarFieldGraph3D implements ScalarField3D` (or an interface
   `FieldGraph`) would make graphs first-class fields like `ConstantScalarField3D`.
 
 - **missing-function** — `26-fields.plato`: no `GradientField` wrapper that turns a
@@ -241,7 +241,7 @@ enforce the distinction: `Number` in 2D, `Vector3D` in 3D.
   "the gradient *is* a vector field"; v3 only offers pointwise `GradientAt`, not a
   reified field value.
 
-- **missing-function** — `08-vectors.plato` / `02-concepts-algebra.plato`: `Normed`
+- **missing-function** — `08-vectors.plato` / `02-interfaces-algebra.plato`: `Normed`
   declares `Magnitude` / `MagnitudeSquared` but there is no `Normalize` (or
   `Direction3D` factory from `Vector3D`). Gradient-as-normal teaching needs an explicit
   unitize step on the vocabulary surface.

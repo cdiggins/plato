@@ -69,7 +69,7 @@ $$
 - $u$ walks around the major circle (the hole).
 - $v$ walks around the tube cross-section.
 
-On the unit square used by Plato's `ParametricSurface` concept, map
+On the unit square used by Plato's `ParametricSurface` interface, map
 $u = 2\pi\,U$, $v = 2\pi\,V$ with `UvCoordinate` components in $[0,1]$.
 
 ```
@@ -135,10 +135,10 @@ var hole   = Contains(donut, Point3D(0.0, 0.0, 0.0));  // through the hole → f
 
 ### Relating to `ParametricSurface`
 
-The surface concept in the curves/surfaces layer:
+The surface interface in the curves/surfaces layer:
 
 ```plato
-concept ParametricSurface
+interface ParametricSurface
     inherits Surface, Procedural<UvCoordinate, Point3D>
 {
     ClosedU(x: Self): Boolean;
@@ -154,7 +154,7 @@ report `ClosedU`/`ClosedV` as true.
 `DifferentiableSurface` would add tube/ring tangents and an outward normal:
 
 ```plato
-concept DifferentiableSurface
+interface DifferentiableSurface
     inherits ParametricSurface
 {
     TangentUAt(x: Self, uv: UvCoordinate): Vector3D;
@@ -171,7 +171,7 @@ If you already have a `Pose3D`, apply it to generated surface points, or transfo
 center and axis consistently.
 
 Neighbor primitives in the same file (`Sphere`, `Cylinder`, `Capsule3D`, `Ellipsoid`)
-follow the same pattern: minimal defining data, measures via concepts, no baked mesh.
+follow the same pattern: minimal defining data, measures via interfaces, no baked mesh.
 
 ## Pitfalls and fine print
 
@@ -192,7 +192,7 @@ parameterization has periodic seams. Do not confuse seam wrapping with a geometr
 (the cardioid has a cusp; the standard torus surface does not).
 
 **Centroid.** For a uniform solid torus with $r \le R$, the centroid is `Center`.
-Self-intersecting cases need care; rely on the concept implementation's documented
+Self-intersecting cases need care; rely on the interface implementation's documented
 convention.
 
 ## Try it
@@ -227,7 +227,7 @@ direction.
 
 ## Library recommendations
 
-- **missing-concept** — `18-spatial-primitives.plato`: `Torus` is a solid only. There is
+- **missing-interface** — `18-spatial-primitives.plato`: `Torus` is a solid only. There is
   no declared `ParametricSurface` (or boundary-surface) view, so UV evaluation and
   `ClosedU`/`ClosedV` live only as folklore. A `TorusSurface` type or
   `implements ParametricSurface` on a boundary companion would make the UV map first-class.

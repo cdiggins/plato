@@ -14,7 +14,7 @@ namespace PlatoTests
     /// Front-end tests for declared bounds on a CONCRETE type's parameters (plato-382):
     /// "type Tween&lt;T&gt; where T: Interpolatable implements TimeVarying&lt;T&gt; { ... }".
     /// The `where` clause sits between the type parameters and `implements`, matching the position
-    /// it already occupies on `concept`.
+    /// it already occupies on `interface`.
     ///
     /// Scope is the front end only: these assert that the clause PARSES, reaches
     /// <see cref="AstTypeDeclaration.Constraints"/>, and is copied into
@@ -67,12 +67,12 @@ type Boolean { }
 type Object { }
 type Duration { }
 
-concept Interpolatable
+interface Interpolatable
 {
     Lerp(a: Self, b: Self, t: Number): Self;
 }
 
-concept TimeVarying<TValue>
+interface TimeVarying<TValue>
 {
     Sample(x: Self, time: Duration): TValue;
 }
@@ -87,15 +87,15 @@ type Tween<T>
 ";
 
         // Two parameters, and one parameter carrying two bounds — the comma-separated form the
-        // ConstraintList rule already accepts for concepts.
+        // ConstraintList rule already accepts for interfaces.
         private const string MultiConstraintSource = @"
 type Number { }
 type Boolean { }
 type Object { }
 
-concept Interpolatable { Lerp(a: Self, b: Self, t: Number): Self; }
-concept Measurable { Magnitude(x: Self): Number; }
-concept Orderable { Compare(a: Self, b: Self): Number; }
+interface Interpolatable { Lerp(a: Self, b: Self, t: Number): Self; }
+interface Measurable { Magnitude(x: Self): Number; }
+interface Orderable { Compare(a: Self, b: Self): Number; }
 
 type Pair<A, B>
     where A: Interpolatable, A: Measurable, B: Orderable

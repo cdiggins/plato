@@ -224,7 +224,7 @@ namespace Ara3D.Geometry.CSharpWriter
         public string OperatorImpl => $"{Annotation} public static {ReturnType} operator {OperatorName}{StaticParametersString} => {FirstParameterName}.{Name}{MethodArgsString};";
 
         // C# requires the comparison operators in pairs (<= with >=, < with >). When the library
-        // declares only one side (e.g. a concept with just LessThanOrEquals), the missing partner
+        // declares only one side (e.g. an interface with just LessThanOrEquals), the missing partner
         // is synthesized by swapping the operands: a >= b  ==  b <= a.
         public static readonly Dictionary<string, string> ComparisonPartners = new Dictionary<string, string>
         {
@@ -244,7 +244,7 @@ namespace Ara3D.Geometry.CSharpWriter
 
         public string MethodInterface => $"{ReturnType} {Name}{MethodParametersString}" + (NumParameters > 1 || EmitAsMethod ? ";" : " { get; }");
 
-        // --static-abstract: the interface declaration for a `_`-receiver (type-level) concept
+        // --static-abstract: the interface declaration for a `_`-receiver (type-level) interface
         // member. The ignored receiver disappears exactly as `this` does for an instance member,
         // so the parameters are the tail. Always METHOD form, never a property: implementors emit
         // `public static T Name(...)`, and a `static abstract` property would demand `{ get; }`

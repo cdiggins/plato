@@ -44,6 +44,7 @@ let client;
 let output;
 let launch;
 let activeRoots = [];
+let extensionPath = "";
 /** Well-known Plato corpora — used only when walking up from an open file. */
 const CORPUS_DIR_NAMES = new Set([
     "stdlib",
@@ -52,16 +53,18 @@ const CORPUS_DIR_NAMES = new Set([
     "stdlib-legacy-tests",
 ]);
 async function activate(context) {
+    extensionPath = context.extensionPath;
     output = vscode.window.createOutputChannel("Plato Navigation");
     context.subscriptions.push(output);
+    // Syntax highlighting comes from package.json contributes (always on).
+    // Resolve the navigation CLI lazily on first F12/hover — never fail activate.
     try {
-        launch = resolveLaunch(context);
+        launch = resolveLaunch(extensionPath);
     }
     catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
-        output.appendLine(`Failed to locate navigation CLI: ${msg}`);
-        void vscode.window.showWarningMessage(`Plato navigation unavailable: ${msg}`);
-        return;
+        output.appendLine(`Navigation CLI not ready yet: ${msg}`);
+        output.appendLine("Syntax highlighting is still active. Set plato.navigation.cliProject if Go to Definition is needed.");
     }
     const selector = { language: "plato", scheme: "file" };
     context.subscriptions.push(vscode.languages.registerDefinitionProvider(selector, {
@@ -95,7 +98,9 @@ async function activate(context) {
             output.appendLine(`update after save failed: ${e}`);
         }
     }), { dispose: () => client?.dispose() });
-    output.appendLine("Plato navigation providers registered (index starts on first use).");
+    output.appendLine(launch
+        ? "Plato navigation providers registered."
+        : "Plato language active (highlighting). Navigation CLI not found yet.");
 }
 function deactivate() {
     client?.dispose();
@@ -186,8 +191,15 @@ function toVscodeLocation(loc) {
 }
 /** Start or restart serve so it indexes only the root(s) for this document. */
 async function ensureClient(doc, forceReload = false) {
-    if (!launch)
-        throw new Error("navigation CLI was not resolved");
+    if (!launch) {
+        try {
+            launch = resolveLaunch(extensionPath);
+        }
+        catch (e) {
+            const msg = e instanceof Error ? e.message : String(e);
+            throw new Error(`navigation CLI was not resolved: ${msg}`);
+        }
+    }
     const roots = resolveRootsFor(doc);
     if (roots.length === 0)
         throw new Error("No Plato source root for this file. Open a folder workspace or set plato.navigation.roots.");
@@ -248,19 +260,19 @@ function isUnder(filePath, folder) {
 function pathsEqual(a, b) {
     return path.normalize(a).toLowerCase() === path.normalize(b).toLowerCase();
 }
-function resolveLaunch(context) {
+function resolveLaunch(extPath) {
     const config = vscode.workspace.getConfiguration("plato.navigation");
     const dotnet = config.get("dotnetPath") || "dotnet";
     const searchRoots = [
         ...(vscode.workspace.workspaceFolders?.map((f) => f.uri.fsPath) ?? []),
         // Installed-from-location: vscode-plato/ sits next to src/ in the Plato repo.
-        context.extensionPath,
+        extPath,
     ];
     const configured = config.get("cliProject");
     const cliProject = (configured
         ? path.isAbsolute(configured)
             ? configured
-            : path.resolve(searchRoots[0] ?? context.extensionPath, configured)
+            : path.resolve(searchRoots[0] ?? extPath, configured)
         : undefined) || findCliProject(searchRoots);
     if (!cliProject)
         throw new Error("Could not find Plato.Navigation.CLI.csproj. Set plato.navigation.cliProject.");
@@ -271,7 +283,7 @@ function resolveLaunch(context) {
     if (!fs.existsSync(dll) && !fs.existsSync(exe)) {
         output.appendLine(`Building ${cliProject} (dll missing)`);
         const built = (0, child_process_1.spawnSync)(dotnet, ["build", cliProject, "-c", "Release", "-v", "q"], {
-            cwd: context.extensionPath,
+            cwd: extPath,
             encoding: "utf8",
             windowsHide: true,
         });

@@ -172,10 +172,10 @@ type ProjectedCoordinate
 ```
 
 `GeoBounds` documents the antimeridian rule explicitly: West greater than East means the
-band crosses the wrap. `GeoRegion` is the containment concept:
+band crosses the wrap. `GeoRegion` is the containment interface:
 
 ```plato
-concept GeoRegion
+interface GeoRegion
 {
     ContainsCoordinate(x: Self, coordinate: GeoCoordinate): Boolean;
 }

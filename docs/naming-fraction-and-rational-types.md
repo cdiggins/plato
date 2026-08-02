@@ -16,7 +16,7 @@ numerator and denominator (backed by `BigInteger`).
 
 ## Recommended names
 
-| Concept | Recommended name | Notes |
+| Interface | Recommended name | Notes |
 |---------|------------------|-------|
 | Unit-interval / lerp parameter | **`Fraction`** | Usually [0, 1]; not strictly bounded |
 | Exact p/q rational number | **`Rational`** | Or **`BigRational`** if arbitrary precision is a first-class selling point |
@@ -52,7 +52,7 @@ too generic for a semantic type.
 Current signature:
 
 ```plato
-concept IInterpolatable { Lerp(a:Self, b:Self, t:Number):Self; }
+interface IInterpolatable { Lerp(a:Self, b:Self, t:Number):Self; }
 ```
 
 If `Fraction` is introduced as a semantic type (likely implementing `IMeasure`
@@ -112,7 +112,7 @@ chokepoint — a separate `NonZeroInteger` may add friction without adding safet
 Also, if `NonZeroInteger` implemented `IWholeNumber`, it would inherit `Add`
 and `Subtract`, under which non-zero is not closed (`3 + (-3) = 0`). It is
 closed under multiplication only, so it fits awkwardly in the arithmetic
-concept hierarchy unless constrained to a narrow API surface.
+interface hierarchy unless constrained to a narrow API surface.
 
 **Recommendation:** introduce `NonZeroInteger` only when Plato has (or plans) a
 general mechanism for refined types with validated construction. Otherwise,

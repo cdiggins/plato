@@ -47,7 +47,7 @@ Two secondary defects sit in the same family:
 
 ## Impact
 
-Wrong topology answers with no error signal, on the load-bearing member of the concept. Every
+Wrong topology answers with no error signal, on the load-bearing member of the interface. Every
 `MeshElementCounts` consumer inherits the fault for any `PolygonMesh3D` with a boundary:
 `EulerCharacteristic` (`meshes-topology.library.plato:30-31`), `GenusIfClosed` (:37-38, already
 precondition-guarded on closedness but reads the corrupt count), and `HasUndirectedEdges`
@@ -57,7 +57,7 @@ this is a correctness bug, not a missing feature.
 Blast radius is bounded today by the fact that codegen still ships from `stdlib-legacy`, and by
 `polyhedra-conway.library.plato` (:82, :87, :93) consuming `IsCanonicalCorner` /
 `CornerUndirectedEdge` on Conway operands that are closed polyhedra in practice. Neither the
-concept nor the corner library states that closedness precondition, so the guard is accidental.
+interface nor the corner library states that closedness precondition, so the guard is accidental.
 
 ## Affected code
 
@@ -77,7 +77,7 @@ concept nor the corner library states that closedness precondition, so the guard
 
 `PolygonMesh3D` stores faces as a jagged corner table with no side table
 (`meshes-polygon.library.plato:14-15`), so it genuinely cannot dedupe edges by a direct read. The
-concept anticipated that case and prescribed the answer — implement the `MeshIncidence` rung and
+interface anticipated that case and prescribed the answer — implement the `MeshIncidence` rung and
 derive U from it — but the implementation took the cheap closed-manifold shortcut instead and
 recorded the shortcut as a precondition comment rather than a defect.
 
@@ -95,7 +95,7 @@ the dense numbering, since every boundary edge then gets its own canonical corne
 `TwinCorner`, consistent with the scan-based style of the whole file; correctness first,
 performance is a separate concern (no benchmark exists for these bodies).
 
-**Related dead-concept finding (belongs to plato-315, recorded here because it is this bug's
+**Related dead-interface finding (belongs to plato-315, recorded here because it is this bug's
 prescribed fix path):** `MeshIncidence` has **zero implementors** tree-wide, while
 `meshes-topology.library.plato:66-118` ships **eleven** derived bodies on it — a larger
 unreachable API surface than the `Dimensioned` case plato-315 already flags. The middle rung of
@@ -107,20 +107,20 @@ makes that rung real.
 1. **Widen the canonical-corner rule (preferred; effort S).** Treat a twin-less corner as
    canonical in `IsCanonicalCorner`, then implement `UndirectedEdgeCount` as the count of
    canonical corners rather than `CornerCount / 2`. Fixes the count, χ, and the
-   `CornerUndirectedEdge` dense numbering in one change, adds no new concept obligations, and
+   `CornerUndirectedEdge` dense numbering in one change, adds no new interface obligations, and
    leaves Conway behaviour on closed input bit-identical. Correct the backwards comment.
 2. **DONE SEPARATELY (0aa7331), though not as this bug's fix.** `PolygonMesh3D` now implements
    `MeshIncidence` via `meshes-polygon-incidence.library.plato`, landed under plato-315's
-   dead-concept decision. `UndirectedEdgeCount` still uses the option-1 canonical-corner count
+   dead-interface decision. `UndirectedEdgeCount` still uses the option-1 canonical-corner count
    rather than being re-derived from incidence: the canonical rule is already correct and
    cheaper, so re-routing it through incidence would add cost without adding correctness. The
    value of this option was always the eleven unreachable derived bodies, and those are now
    reachable. Original text: **Make `PolygonMesh3D` implement `MeshIncidence` and derive U from it (effort M).** The
-   concept's own prescription, and it lights up eleven unreachable derived bodies. Strictly more
+   interface's own prescription, and it lights up eleven unreachable derived bodies. Strictly more
    work than option 1 for the same correctness result, and it obliges the full six-query
    incidence surface. Best done as its own change once option 1 has stopped the bleeding.
-3. **Document-only: state the closed-manifold precondition on the concept.** Rejected — it would
-   make the concept's central member conditionally meaningless and contradicts
+3. **Document-only: state the closed-manifold precondition on the interface.** Rejected — it would
+   make the interface's central member conditionally meaningless and contradicts
    `topology.concepts.plato:23-27`, which already ruled the guess out.
 
 ## Priority
@@ -173,9 +173,9 @@ Option 1, two edits: widen `IsCanonicalCorner` to accept a twin-less corner, and
 
 ## Prevention
 
-- The plato-315 prevention idea — lint flagging concepts with zero implementors but derived
+- The plato-315 prevention idea — lint flagging interfaces with zero implementors but derived
   library bodies — would have surfaced the dead `MeshIncidence` rung, which is what let the
   shortcut look acceptable.
 - Sharper rule this bug suggests: a derived body whose comment states a precondition its own
-  concept forbids guessing at is a defect, not documentation. Worth a `/track-idea` for a
-  convention: preconditions belong on the concept, not on an implementor working around it.
+  interface forbids guessing at is a defect, not documentation. Worth a `/track-idea` for a
+  convention: preconditions belong on the interface, not on an implementor working around it.

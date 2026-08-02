@@ -61,7 +61,7 @@ compounds as the forward stdlib grows.
 ## Fix approaches
 
 1. **Library repairs first** for the CHK201 no-match list — smallest, local.
-2. **Redesign tuple→interface returns** (concrete return types or helper concepts) for the
+2. **Redesign tuple→interface returns** (concrete return types or helper interfaces) for the
    CHK101 cluster — more durable than teaching the checker to invent implementers.
 3. **Checker rules only where the type is soundly inferable** (e.g. bare receiver-member refs)
    — avoid papering over ungroundable interface returns.

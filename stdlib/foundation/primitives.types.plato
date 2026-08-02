@@ -23,7 +23,7 @@
 // `Map`, `Slices` and `CartesianProduct` are ordinary Plato bodies in
 // `primitives.library.plato`.
 //
-// The extent fields are named for the concept obligations they discharge
+// The extent fields are named for the interface obligations they discharge
 // (`ColumnCount` / `RowCount` / `LayerCount` on IIndexable2D / IIndexable3D), so a
 // field satisfies each one directly rather than needing a library function keyed
 // on the type's own parameter — the shape plato-376 says can never bind.

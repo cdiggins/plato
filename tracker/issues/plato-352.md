@@ -14,22 +14,22 @@ links: [plato-308, plato-277, plato-336, stdlib/surfaces-generated.plato]
 ---
 
 ## Idea
-User wants provenance-preserving surface types: RevolvedSurface, LoftedSurface, ExtrudedSurface, SweptSurface, and similar — types that remember how they were built. **Evaluation:** these types already exist in `stdlib/surfaces-generated.plato` (`SurfaceOfRevolution`, `ExtrudedSurface`, `LoftedSurface`, `SweptSurface`, …) and implement `ParametricSurface`. The live question is quality/completeness of that design (concept obligations, evaluation, mesh, forward-C# compile), not greenfield invention.
+User wants provenance-preserving surface types: RevolvedSurface, LoftedSurface, ExtrudedSurface, SweptSurface, and similar — types that remember how they were built. **Evaluation:** these types already exist in `stdlib/surfaces-generated.plato` (`SurfaceOfRevolution`, `ExtrudedSurface`, `LoftedSurface`, `SweptSurface`, …) and implement `ParametricSurface`. The live question is quality/completeness of that design (interface obligations, evaluation, mesh, forward-C# compile), not greenfield invention.
 
 ## Assumptions
 - Provenance types beat baking everything to grids/meshes early (edit distance, parameter tweaks).
 - plato-308 shows forward stdlib struggles with these types (CS0315 Self/Curve3D constraints).
-- plato-277 lists them among concept-gap / algorithm backlog items.
+- plato-277 lists them among interface-gap / algorithm backlog items.
 
 ## Design decisions
 - **Keep distinct types vs one GenerativeSurface sum** — distinct preserves provenance; sum eases dispatch.
-- **Curve fields** — concrete Curve3D vs concept-constrained Self (root of CS0315).
+- **Curve fields** — concrete Curve3D vs interface-constrained Self (root of CS0315).
 - **Obligations** — ParametricSurface enough vs Meshable3D/DifferentialSurface required at birth.
 
 ## Related
 - `stdlib/surfaces-generated.plato` — types already present.
 - [plato-308](plato-308.md) — forward compile errors on these types.
-- [plato-277](plato-277.md) — concept-gap burn-down mentions these surfaces.
+- [plato-277](plato-277.md) — interface-gap burn-down mentions these surfaces.
 - [plato-336](plato-336.md) — provenance loss on triangulate/hull (parallel theme).
 
 ## Approaches
@@ -41,7 +41,7 @@ Adjacent: Solid siblings (ExtrudedSolid, etc.).
 Strengthens the **generative vs tessellated** seam (same as BREP exact-vs-discrete). Verdict: **right** to keep provenance types; quality work is obligation/eval completeness, not adding empty shells.
 
 ## Done means
-- [ ] Written quality scorecard per type (fields OK? Eval? Mesh? concepts?)
+- [ ] Written quality scorecard per type (fields OK? Eval? Mesh? interfaces?)
 - [ ] Top breakage (e.g. CS0315 pattern) has a filed fix path linked
 - [ ] Documented when provenance must decay (Deform policy)
 

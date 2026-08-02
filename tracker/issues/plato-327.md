@@ -53,7 +53,7 @@ An identifier `N` collides when:
 coincidence. Two shapes are **design, not defect**, and are excluded:
 
 - **field forwarding** — a field `N` on `T` is exactly how `T` discharges an obligation `N`
-  declared by a concept `T` implements, and a library function `N` over that concept is the derived
+  declared by an interface `T` implements, and a library function `N` over that interface is the derived
   surface reading it. Property syntax is correct on both sides.
 - **`_` receiver** — Plato's type-level idiom, which the writer emits as a C# **static**
   (`CSharpFunctionInfo.IsStatic`, cf. LINT012). A static is never rendered with instance property
@@ -117,7 +117,7 @@ Reading the numbers:
 - `submodules/Plato/PlatoCompiler/Analysis/Linter.cs` — `CheckFieldVersusNoArgFunctionNames`,
   `IsNoArgMemberForm`.
 - `submodules/Plato/PlatoTests/LinterFieldFunctionCollisionTests.cs` — 5 tests: positive
-  (unrelated receiver reported, names both sides + library), three negatives (concept field
+  (unrelated receiver reported, names both sides + library), three negatives (interface field
   forwarding, receiver-is-owner, `_` receiver), and the Info-severity pin.
 - Read-only, per the `Linter` class contract: no codegen or golden impact.
 

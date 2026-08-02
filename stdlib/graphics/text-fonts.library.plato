@@ -1,7 +1,7 @@
 //==
 // # Font description members
 //
-// The concept obligations of the font-description types in
+// The interface obligations of the font-description types in
 // `text.types.plato`. Only `FontWeight` owes one today: it is `IComparable`
 // on the CSS 100-900 scale, and "bolder" is exactly "numerically greater" on
 // that scale — the whole reason the scale is numeric rather than an enumeration

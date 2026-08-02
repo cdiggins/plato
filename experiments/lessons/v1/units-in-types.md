@@ -55,11 +55,11 @@ catch mismatches at the boundary.
 
 ## In Plato
 
-The `Quantity` concept in `06-quantities.plato` is the abstract shape:
+The `Quantity` interface in `06-quantities.plato` is the abstract shape:
 
 ```plato
 // A one-dimensional measured amount with an implicit unit.
-concept Quantity
+interface Quantity
     inherits Value, Comparable, Hashable, Additive, Scalable, Interpolatable
 {
     Amount(x: Self): Number;
@@ -172,7 +172,7 @@ implements `Quantity`. Unitless does not mean "just use `Number`" when the
 value has a physical meaning and a conventional range.
 
 **No typed multiply yet.** v3 does not declare `Multiply(Length, Length): Area`
-or `Divide(Length, /* time */): Speed`. The concept comment promises that
+or `Divide(Length, /* time */): Speed`. The interface comment promises that
 multiplying yields a different type, but the cross-type operators are not on
 the surface — algorithms that need them must document the gap or drop to
 `Amount` and rebuild by hand.

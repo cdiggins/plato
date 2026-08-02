@@ -246,12 +246,12 @@ The deterministic core of the "examples / stay-on-vocabulary" seed idea, and the
 anti-hallucination lever: agents invent APIs when discovering the real surface costs six
 calls; make it cost one.
 
-What it does: given a type/concept name, returns a single card:
+What it does: given a type/interface name, returns a single card:
 
 ```
 plato_vocabulary
   name: string          // "Vector3", "IntervalLike", "Curves"
-  include?: string[]    // subset of ["fields","concepts","implementers","functions-taking",
+  include?: string[]    // subset of ["fields","interfaces","implementers","functions-taking",
                         //  "functions-returning","operators"]; default all
   limit?: int           // per section, default 30
 → (compact format by default)
@@ -272,7 +272,7 @@ each of which costs a full P1 iteration.
 
 Implementation sketch (all data already in `NavigationIndex`):
 
-- Fields, concepts: the type's `DefRecord` children via `Owner` + the `Signature` strings;
+- Fields, interfaces: the type's `DefRecord` children via `Owner` + the `Signature` strings;
   implements-clause refs are `RefKind.Type` refs inside the type's `DeclSpan`.
 - Functions taking/returning: for every `RefRecord` with `Kind == Type` and
   `Targets ∋ typeDefId`, find the enclosing `Method`/`Function` def by `DeclSpan`
@@ -281,7 +281,7 @@ Implementation sketch (all data already in `NavigationIndex`):
   against the function's signature text — or simpler and nearly as good: substring-check
   the already-stored `Signature` (`": Vector3"` at end = returns; else takes). Ship the
   simple version, note the imprecision.
-- Implementers of a concept: `RefKind.Type` refs to the concept whose enclosing def is a
+- Implementers of an interface: `RefKind.Type` refs to the interface whose enclosing def is a
   `Type` and whose span sits in the implements clause — the binder already resolves these.
 - New `VocabularyMcpTools.cs`; ranking = library functions first, then by reference count
   (popularity), so truncation keeps the idiomatic core.
@@ -349,7 +349,7 @@ wrong mapping is visible, not silent.
   then verifies with P1. Server contribution is P4+P5; no new server feature.
 - **Examples** — delivered deterministically by P4 + P5; residual judgment ("which example
   is pedagogically best") stays with the agent for free.
-- **Test/law generation** — a prompt skill layered on P4 (concept obligations are in the
+- **Test/law generation** — a prompt skill layered on P4 (interface obligations are in the
   card: unimplemented obligations come from LINT001 via P1) + P5's `test: true` refs as
   style precedent, verified by P1. Revisit a deterministic `plato_laws` only if the skill
   demonstrably flounders.

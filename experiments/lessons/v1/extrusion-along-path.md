@@ -2,7 +2,7 @@
 lesson: extrusion-along-path
 title: Extrusion Along a Path
 domain: Curves & surfaces
-v3-files: [24-surfaces.plato, 40-paths.plato, 20-concepts-curves-surfaces.plato]
+v3-files: [24-surfaces.plato, 40-paths.plato, 20-interfaces-curves-surfaces.plato]
 audience: Comfortable with parametric curves (a function of t) and 2D outlines; no CAD background assumed
 status: draft-v1
 ---
@@ -130,7 +130,7 @@ type PathFlattenParameters
     MaxSegmentCount: Integer;
 }
 
-concept PathLike
+interface PathLike
 {
     ToPath(x: Self): Path2D;
 }
@@ -189,7 +189,7 @@ if not, you get a more general ruled patch.
 
 - **Open vs closed profile.** A closed profile sweep can bound a solid; an open
   profile is only a ribbon. `Path2D` contours may set `Closed: true` or end with
-  `Close` — geometry curves use `ClosedCurve2D` as a marker concept instead.
+  `Close` — geometry curves use `ClosedCurve2D` as a marker interface instead.
 - **Self-intersection.** Tight path curvature with a large profile (or tube
   radius) folds the surface through itself. Tube radius must stay under the
   path’s local radius of curvature for a simple pipe.
@@ -244,8 +244,8 @@ if not, you get a more general ruled patch.
 - **missing-type** — `24-surfaces.plato`: no sweep with a radius/scale law along
   $V$ (tapered pipes, draft). `TubeSurface` is constant `Radius` only;
   terrain-style lessons invent ad-hoc workarounds.
-- **missing-concept** — `20-concepts-curves-surfaces.plato` / `24-surfaces.plato`:
+- **missing-interface** — `20-interfaces-curves-surfaces.plato` / `24-surfaces.plato`:
   `FramedCurve3D.FrameAt` is the right primitive under sweeps, but
   `SweptSurface` does not require `Path` to implement `FramedCurve3D` in the
   type declaration — only in the doc comment’s RMF promise. Encoding that as
-  a concept constraint would make the lesson’s frame discussion type-checkable.
+  an interface constraint would make the lesson’s frame discussion type-checkable.

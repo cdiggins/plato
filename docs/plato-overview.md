@@ -35,7 +35,7 @@ Plato design principles:
 - minimal boilerplate
 - consistent syntax and code layout
 - functional programming with minimal performance penalty
-- declarating concept functions have zero overhead 
+- declarating interface functions have zero overhead 
 
 Additional use cases:
 
@@ -44,9 +44,9 @@ Additional use cases:
 Plato is a pure, statically-typed functional language for defining algebraic data types and the operations over them, which a compiler amplifies into a large, [monomorphized](https://en.wikipedia.org/wiki/Monomorphization), zero-dispatch library into various target languages.
 
 - all functions are declared outside of types extension methods
-- functions declared on concepts are available to all implementing types
+- functions declared on interfaces are available to all implementing types
 - The resulting code can be converted in 
-- concepts are similar to Haskell Type Classes and Rust Traits 
+- interfaces are similar to Haskell Type Classes and Rust Traits 
 - types only declare fields
 - function with single arguments can be called like properties
 - three kinds:
@@ -86,7 +86,7 @@ The closest *spiritual* relatives, though, aren't general-purpose languages at a
 
 **The boilerplate-to-semantics ratio is exceptional.** The whole standard library — the algebraic hierarchy, vectors, matrices, quaternions, intervals, bounds, transforms, meshes, colors, coordinate systems, and a genuinely delightful museum of classical curves with Wikipedia citations inline ([curves.plato](../legacy/stdlib-legacy/curves.plato) has cardioids, limaçons, trisectrices, torus knots) — is ~3,500 lines. The math reads like the math: `Cardoid(t: Angle): Number => 1.0 + t.Cos;` is one line from the textbook formula. Very few languages let a geometry library be this close to its own specification.
 
-**Zero-cost abstraction on a platform that historically didn't have it.** The compiler monomorphizes interface-generic functions into direct struct members with `AggressiveInlining` — no interface dispatch, no boxing, `StructLayout(Sequential, Pack=1)` for deterministic memory layout and interop. This is Rust's compilation model grafted onto .NET, obtained by construction rather than by JIT heroics. The generated structs are `partial`, leaving a clean escape hatch for handwritten members, and the generated extension classes even provide `System.Numerics.Vector3` interop overloads so the library composes with the ecosystem rather than fighting it.
+**Zero-cost abstraction on a platform that historically didn't have it.** The compiler monomorphizes interface-generic functions into direct struct members with `AggressiveInlining` — no interface dispatch, no boxing, `StructLayout(Sequential)` for deterministic memory layout and interop. This is Rust's compilation model grafted onto .NET, obtained by construction rather than by JIT heroics. The generated structs are `partial`, leaving a clean escape hatch for handwritten members, and the generated extension classes even provide `System.Numerics.Vector3` interop overloads so the library composes with the ecosystem rather than fighting it.
 
 **Semantic typing that catches the bugs geometry code actually has.** `Angle` is not `Number` — trig functions exist only on `Angle`, inverse trig *returns* `Angle`, and constructors like `Degrees`/`Turns`/`Gradians` make the unit explicit at the point of use. `Point3D − Point3D = Vector3` via `IDifference<T>`. Degree/radian confusion and point/vector confusion are two of the most common real-world 3D bug classes, and the type system eliminates both at essentially no syntactic cost.
 

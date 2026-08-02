@@ -6,37 +6,37 @@
 // Every member referenced was verified against stdlib/graphics/easing.library.plato
 // (LIBRARIES.md rule 3).
 //
-// The receiver is the EasingFunction concept, so each law is monomorphized onto every
+// The receiver is the IEasingFunction interface, so each law is monomorphized onto every
 // concrete easing that implements it (CubicBezierEasing, StepEasing, SmoothstepEasing).
 // The laws below hold for ALL easing curves: they are the relations the derived helpers
 // promise on top of the single Eval operation. Endpoint pinning (Eval(0) = 0) is
 // deliberately NOT asserted — StepEasing's JumpStart position rises immediately and is
-// correct in doing so, so that property belongs to individual curves, not the concept.
+// correct in doing so, so that property belongs to individual curves, not the interface.
 library EasingLaws
 {
     //==
     // The renaming helpers agree with the evaluation they rename.
 
     // Progress is Eval under a readable name.
-    Law_ProgressIsEval(f: EasingFunction, t: Number): Boolean
+    Law_ProgressIsEval(f: IEasingFunction, t: Number): Boolean
         => f.Progress(t).LawEq(f.Eval(t));
 
     // Progress at the temporal midpoint is the evaluation at t = 0.5.
-    Law_ProgressAtMidpointIsEvalAtHalf(f: EasingFunction): Boolean
+    Law_ProgressAtMidpointIsEvalAtHalf(f: IEasingFunction): Boolean
         => f.ProgressAtMidpoint.LawEq(f.Eval(0.5));
 
     //==
     // The recombining helpers are complements and reflections of that evaluation.
 
     // Progress and remaining partition full completion at every time.
-    Law_ProgressAndRemainingSumToOne(f: EasingFunction, t: Number): Boolean
+    Law_ProgressAndRemainingSumToOne(f: IEasingFunction, t: Number): Boolean
         => (f.Progress(t) + f.Remaining(t)).LawEq(1.0);
 
     // Mirrored playback samples the same curve at the complementary time.
-    Law_MirroredIsEvalOfComplementaryTime(f: EasingFunction, t: Number): Boolean
+    Law_MirroredIsEvalOfComplementaryTime(f: IEasingFunction, t: Number): Boolean
         => f.EvaluateMirrored(t).LawEq(f.Eval(1.0 - t));
 
     // The ease-in to ease-out transform is the complement of mirrored playback.
-    Law_ReversedIsComplementOfMirrored(f: EasingFunction, t: Number): Boolean
+    Law_ReversedIsComplementOfMirrored(f: IEasingFunction, t: Number): Boolean
         => f.EvaluateReversed(t).LawEq(1.0 - f.EvaluateMirrored(t));
 }

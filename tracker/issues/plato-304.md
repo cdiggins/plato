@@ -15,19 +15,19 @@ links: [ara3d-sdk/src/Ara3D.Collections/LinqArray.cs, ara3d-sdk/src/Ara3D.Collec
 
 ## Idea
 
-Port the useful surface of Ara3D’s historical **IArray** toolkit — today primarily `LinqArray` extensions over `IReadOnlyList<T>` plus `ReadOnlyList` / `IntegerRange` (comments still say “IArray”) — into the **forward Plato stdlib**, renamed and improved for Plato: concept-first (`Indexable` / `Array`), small pure functions, Plato naming (`Map` not `Select`, `FlatMap` not `SelectMany`, `Concatenate` not `Concat`), and no LINQ/`IEnumerable` leakage. Much of the core map/reduce/slice family already exists as **intrinsics** (`intrinsics-arrays.library.plato`) and thin concept libraries (`collections-indexable.library.plato`); this issue is the deliberate gap analysis + fill of the *rest* of the C# library that geometry/polyhedra/CSR work still wants (pairs/triplets, scans/prefix sums, indices-where, strides, zip-with-next, counts↔offsets, etc.).
+Port the useful surface of Ara3D’s historical **IArray** toolkit — today primarily `LinqArray` extensions over `IReadOnlyList<T>` plus `ReadOnlyList` / `IntegerRange` (comments still say “IArray”) — into the **forward Plato stdlib**, renamed and improved for Plato: interface-first (`Indexable` / `Array`), small pure functions, Plato naming (`Map` not `Select`, `FlatMap` not `SelectMany`, `Concatenate` not `Concat`), and no LINQ/`IEnumerable` leakage. Much of the core map/reduce/slice family already exists as **intrinsics** (`intrinsics-arrays.library.plato`) and thin interface libraries (`collections-indexable.library.plato`); this issue is the deliberate gap analysis + fill of the *rest* of the C# library that geometry/polyhedra/CSR work still wants (pairs/triplets, scans/prefix sums, indices-where, strides, zip-with-next, counts↔offsets, etc.).
 
 ## Assumptions
 
-- Plato’s noun is `Array` / concept `Indexable<$T>`, not a revived `IArray` type name — rename on port unless an ADR says otherwise.
+- Plato’s noun is `Array` / interface `Indexable<$T>`, not a revived `IArray` type name — rename on port unless an ADR says otherwise.
 - Host intrinsics stay the implementation home for anything that needs allocation/backends; derived libraries add Plato-expressible bodies on top (STYLE_GUIDE / LIBRARIES.md).
 - Lazy `ReadOnlyList(count, f)` functional arrays in C# may map to `MapRange` or stay intrinsic; Plato need not preserve C# laziness semantics.
 - Impure or host-only APIs (`ToArrayInParallel`, `AsSpan`, `AddTo` mutating collections, `BinarySearch` on unsorted assumptions) are drop or park — not automatic ports.
-- [plato-303](plato-303.md) owns CSR as a type/concept; this issue may supply `CountsToOffsets` / pack helpers that CSR consumes, without duplicating CSR itself.
+- [plato-303](plato-303.md) owns CSR as a type/interface; this issue may supply `CountsToOffsets` / pack helpers that CSR consumes, without duplicating CSR itself.
 
 ## Design decisions
 
-- **Inventory first** — spreadsheet/gap table: LinqArray member → Plato intrinsic / concept library / drop / rename. Do not bulk-port the ~100 public methods.
+- **Inventory first** — spreadsheet/gap table: LinqArray member → Plato intrinsic / interface library / drop / rename. Do not bulk-port the ~100 public methods.
 - **Where bodies live** — extend `collections-indexable.library.plato` / new `collections-arrays.library.plato` vs grow `IntrinsicsArrays`. Prefer derived libraries when expressible; intrinsics only when every backend must supply it.
 - **Naming map** — document Select→Map, SelectMany→FlatMap, Where→Filter (or KeepIf), Aggregate→Reduce, Concat→Concatenate, ElementAt→At, InRange→IsValidIndex (already), etc. Prefer existing Plato names when present.
 - **Eager vs lazy** — Plato arrays are values; C# `Select` often returns lazy `ReadOnlyList`. Port as eager `Map`/`MapRange` unless an explicit lazy view type is justified.
@@ -56,13 +56,13 @@ Adjacent: Filter/KeepIf consistency; lazy array view type (probably park); full 
 
 - **Most of it is already there.** Intrinsics + Indexable cover the daily path; a “port IArray” project invites dumping the whole LinqArray kitchen sink into stdlib.
 - **Backend cost.** Every new intrinsic multiplies C#/C++/TS/CUDA shims; derived-only ports are safer but slower.
-- **Name churn.** Reviving `IArray` as a concept alias splits vocabulary again (legacy already used `IArray`).
+- **Name churn.** Reviving `IArray` as an interface alias splits vocabulary again (legacy already used `IArray`).
 
 **Verdict: pursue** as a **curated gap fill + rename guide**, not a wholesale LinqArray dump. Park parallel/span/mutation APIs. Prefer Plato names (`Indexable`/`Array`) over resurrecting `IArray`.
 
 ## Bedrock
 
-Strengthens the **indexable-array programming model** shared by geometry, CSR, and polyhedra: one documented map of capabilities from the battle-tested C# library into Plato intrinsics/concept libraries, with small composable functions instead of LINQ-shaped megamethods. **Verdict: simplest-along-the-grain** — inventory + port the missing high-value pure ops into existing library files; must NOT add `IArray` as a second name for `Indexable`, must NOT port impure/parallel APIs, must NOT block [plato-303](plato-303.md)/[plato-301](plato-301.md) on full parity.
+Strengthens the **indexable-array programming model** shared by geometry, CSR, and polyhedra: one documented map of capabilities from the battle-tested C# library into Plato intrinsics/interface libraries, with small composable functions instead of LINQ-shaped megamethods. **Verdict: simplest-along-the-grain** — inventory + port the missing high-value pure ops into existing library files; must NOT add `IArray` as a second name for `Indexable`, must NOT port impure/parallel APIs, must NOT block [plato-303](plato-303.md)/[plato-301](plato-301.md) on full parity.
 
 ## Done means
 

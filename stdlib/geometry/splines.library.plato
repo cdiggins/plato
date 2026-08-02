@@ -561,7 +561,7 @@ library Splines
     //==
     // # Natural cubic spline
     //
-    // TODO(concept-gap): a natural cubic spline's second derivatives come from
+    // TODO(interface-gap): a natural cubic spline's second derivatives come from
     // a tridiagonal solve over all knots (the Thomas algorithm). `Reduce` now
     // exists, but Thomas is a two-pass sweep: a forward elimination that builds
     // modified super-diagonal and right-hand-side ARRAYS (each entry reading the

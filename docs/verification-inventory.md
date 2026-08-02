@@ -71,7 +71,7 @@ submodule working tree**, which is not this checkout. See "Structural observatio
 ### `tools/export-types-context.ps1` (with `export-types-context.bat`)
 
 - **Where** `plato`, PowerShell over `src/Plato.ContextExport`.
-- **Runs** two exports: a sorted concept-then-type index of the shipping tiers, and a flat
+- **Runs** two exports: a sorted interface-then-type index of the shipping tiers, and a flat
   declaration dump of `legacy/stdlib-legacy`.
 - **Corpus** shipping tiers for the index, its own literal list; `future` is deliberately absent
   because it is declared, not shipped.
@@ -162,7 +162,7 @@ authority for its own ceiling; none is restated here.
   with at least one internal error to act on. The compiler may not fail silently.
 - `ForwardStdLibDiagnosticCountDoesNotRegress` — **the type-checker ratchet**. Ceiling is the
   constant in this file.
-- `ForwardStdLibHasNoViewlessExistentialReferences` — a hard zero, not a ratchet: a concept stored
+- `ForwardStdLibHasNoViewlessExistentialReferences` — a hard zero, not a ratchet: an interface stored
   in type position must have an object-safe view or the writer cannot lower it.
 - `SummarizeForwardStdLibDiagnostics`, `SummarizeForwardStdLibSumTypeDiagnostics` — reports, not
   assertions. The sum-type one reports the sum population alongside the diagnostics, because zero

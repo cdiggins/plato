@@ -2,7 +2,7 @@
 lesson: norms-and-distance
 title: Norms, Distance, and Normalization
 domain: Foundations & vectors
-v3-files: [02-concepts-algebra.plato, 08-vectors.plato]
+v3-files: [02-interfaces-algebra.plato, 08-vectors.plato]
 audience: High-school algebra and basic programming; no prior 3D graphics required
 status: draft-v1
 ---
@@ -85,7 +85,7 @@ you *can* subtract them and get a displacement. The distance between point $A$ a
 is the length of the displacement from $A$ to $B$.
 
 This "subtract, then measure length" pattern is the concrete meaning behind the abstract
-**MetricSpace** concept: a type knows how to report `Distance(a, b)` as a non-negative scalar,
+**MetricSpace** interface: a type knows how to report `Distance(a, b)` as a non-negative scalar,
 with distance from a value to itself equal to zero.
 
 ## Normalization: keeping direction, fixing length
@@ -149,15 +149,15 @@ Use **actual distance** when:
 
 ## In Plato
 
-Plato separates the *declaration* of capabilities (concepts) from concrete vector types.
-Two concepts from the algebra layer capture the ideas above.
+Plato separates the *declaration* of capabilities (interfaces) from concrete vector types.
+Two interfaces from the algebra layer capture the ideas above.
 
 ### Normed — "this value has a length"
 
 ```plato
 // Has a notion of length or magnitude. MagnitudeSquared avoids the square root
 // when only relative comparisons are needed.
-concept Normed
+interface Normed
 {
     Magnitude(x: Self): Number;
     MagnitudeSquared(x: Self): Number;
@@ -167,10 +167,10 @@ concept Normed
 `Magnitude` is the length. `MagnitudeSquared` is the cheaper sibling — same ordering for
 comparisons, no square root.
 
-The **Vector** concept inherits **Normed** (among other structures):
+The **Vector** interface inherits **Normed** (among other structures):
 
 ```plato
-concept Vector
+interface Vector
     inherits Numerical, Arithmetic, Indexable<Number>, Normed, Lattice, Hashable
 {
     Dot(a: Self, b: Self): Number;
@@ -192,14 +192,14 @@ means the type lives in that-dimensional *space* (`Vector3D` = displacement in 3
 
 ```plato
 // A space with a distance between any two of its values.
-concept MetricSpace
+interface MetricSpace
 {
     Distance(a: Self, b: Self): Number;
 }
 ```
 
 **Normed** answers "how long is *this one* value?" **MetricSpace** answers "how far apart
-are *these two*?" For vectors the standard Euclidean distance is $\|b - a\|$; the concept
+are *these two*?" For vectors the standard Euclidean distance is $\|b - a\|$; the interface
 does not prescribe the formula, only that `Distance` behaves like a metric.
 
 ### Usage-shaped examples
@@ -212,7 +212,7 @@ var len = v.Magnitude;           // 5.0
 var lenSq = v.MagnitudeSquared;  // 25.0
 ```
 
-**Distance between two displacements** (concept-library derives this from subtraction and
+**Distance between two displacements** (interface-library derives this from subtraction and
 `Magnitude`):
 
 ```plato
@@ -231,7 +231,7 @@ var q = Vector2D(5.0, 1.0);
 origin.IsNearerThan(p, q)         // true — p is closer to origin than q is
 ```
 
-**Normalization** (intrinsic on concrete geometric vectors; concept-library also defines
+**Normalization** (intrinsic on concrete geometric vectors; interface-library also defines
 `Normalize` for any `Vector`):
 
 ```plato
@@ -351,15 +351,15 @@ Work these by hand or with a calculator. Answers are in the block below.
 
 ## Library recommendations
 
-- **missing-function** — `02-concepts-algebra.plato`: **Normed** declares `Magnitude` and
+- **missing-function** — `02-interfaces-algebra.plato`: **Normed** declares `Magnitude` and
   `MagnitudeSquared` but not `Normalize`. Normalization is the third leg of the lesson triad
   (length, distance, normalize); it currently lives only on concrete types via intrinsics
-  (`70-intrinsics.plato`) and as a derived helper on `Vector` in concept-library. Adding
+  (`70-intrinsics.plato`) and as a derived helper on `Vector` in interface-library. Adding
   `Normalize(x: Self): Self` to **Normed** (with a documented zero-length precondition)
-  would make the concept self-contained and let `Direction2D`/`Direction3D` factories read
+  would make the interface self-contained and let `Direction2D`/`Direction3D` factories read
   as `Normed`-preserving operations.
 
-- **missing-concept** — `08-vectors.plato`: `Vector2D`/`Vector3D` implement **Normed** but
+- **missing-interface** — `08-vectors.plato`: `Vector2D`/`Vector3D` implement **Normed** but
   not **MetricSpace**, even though Euclidean vector distance is standard. **`Point2D`/`Point3D`**
   (file 11) likewise lack **MetricSpace** despite being the primary "how far apart are two
   positions?" types. Implementing **MetricSpace** on geometric points and vectors — with
@@ -367,23 +367,23 @@ Work these by hand or with a calculator. Answers are in the block below.
   would let `IsNear`, `IsNearerThan`, and `Nearest` from CoreAlgebra apply directly without
   the manual `Between(...).Magnitude` chain.
 
-- **missing-function** — `02-concepts-algebra.plato`: **MetricSpace** exposes only `Distance`,
+- **missing-function** — `02-interfaces-algebra.plato`: **MetricSpace** exposes only `Distance`,
   not `DistanceSquared`. The **Normed** doc comment already motivates squared magnitude for
-  comparisons; the metric counterpart (`DistanceSquared(a, b)`) appears in concept-library on
-  **Vector** but not on the concept. Declaring it on **MetricSpace** (defaulting to
+  comparisons; the metric counterpart (`DistanceSquared(a, b)`) appears in interface-library on
+  **Vector** but not on the interface. Declaring it on **MetricSpace** (defaulting to
   `Distance(a, b).Square` or, for Euclidean types, `Between`/`Subtract` then `MagnitudeSquared`)
-  would make radius and nearest-neighbor tests discoverable at the concept level.
+  would make radius and nearest-neighbor tests discoverable at the interface level.
 
 - **doc-comment** — `08-vectors.plato`: **Direction2D** and **Direction3D** doc comments
   state the unit-length invariant but do not show how to construct one from a `Vector2D`/`Vector3D`
   safely. A one-line note ("construct via normalization of a non-zero displacement; zero input
   is undefined") would close the loop between normalization pitfalls and the direction types.
 
-- **naming** — `08-vectors.plato` vs `02-concepts-algebra.plato`: **Difference**.`Between(a, b)`
+- **naming** — `08-vectors.plato` vs `02-interfaces-algebra.plato`: **Difference**.`Between(a, b)`
   (displacement from `a` to `b`) shares the name `Between` with **Orderable** interval membership
   (`Between(x, lower, upper)`). Teaching distance between points forces both names into one
   lesson. Consider renaming one operation (e.g. `DisplacementTo` on **Difference**, or
   `InRange` on **Orderable**) to reduce overload confusion in pedagogical material and in
   API search.
 
-> Resolved 2026-07-28: `Normalize` already exists generically on `Vector` (numeric-structures.library.plato) + as Vector2D/3D intrinsics; added concrete `Distance`/`DistanceSquared` for Point2D/3D/N (vectors already had them). Concept-level `Normalize` on Normed / `DistanceSquared` on MetricSpace were NOT added: algebra.concepts.plato is out of this packet's file scope, MetricSpace has no implementors, and Normalize needs Scalable which Normed lacks (items 256/257/258/259, stdlib commit pending).
+> Resolved 2026-07-28: `Normalize` already exists generically on `Vector` (numeric-structures.library.plato) + as Vector2D/3D intrinsics; added concrete `Distance`/`DistanceSquared` for Point2D/3D/N (vectors already had them). Interface-level `Normalize` on Normed / `DistanceSquared` on MetricSpace were NOT added: algebra.concepts.plato is out of this packet's file scope, MetricSpace has no implementors, and Normalize needs Scalable which Normed lacks (items 256/257/258/259, stdlib commit pending).

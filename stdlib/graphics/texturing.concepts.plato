@@ -1,5 +1,5 @@
 //==
-// # Texturing concepts
+// # Texturing interfaces
 //
 // The abstraction behind procedural texturing: a pattern that answers with a
 // color at any UV coordinate, instead of storing texels. The concrete

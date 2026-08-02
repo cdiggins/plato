@@ -15,7 +15,7 @@ links: [labs-legacy/Ara3D.SVG.Creator, studio-168, plato-267, submodules/Plato/s
 
 ## Idea
 
-Build a Plato library that is a **typed model of the SVG specification** (elements, attributes, path data, transforms, paint/stroke) — not a thin string emitter. Illegal SVG structures should be hard or obvious to express; path commands, lengths, and presentation attributes become Plato types/concepts. Goal: author, transform, and serialize SVG from portable pure code (and eventually feed Studio’s SVG/vector flowable path).
+Build a Plato library that is a **typed model of the SVG specification** (elements, attributes, path data, transforms, paint/stroke) — not a thin string emitter. Illegal SVG structures should be hard or obvious to express; path commands, lengths, and presentation attributes become Plato types/interfaces. Goal: author, transform, and serialize SVG from portable pure code (and eventually feed Studio’s SVG/vector flowable path).
 
 ## Assumptions
 

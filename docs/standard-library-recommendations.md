@@ -104,7 +104,7 @@ type Amount implements IValue,IOrderable {
   Value:Number;
 }
 
-concept IInterpolatable {
+interface IInterpolatable {
   Lerp(a:Self, b:Self, t:Amount):Self;
 }
 ```
@@ -196,11 +196,11 @@ type Tolerance implements IValue {
   Relative:Number;
 }
 
-concept IApproximate {
+interface IApproximate {
   ApproxEquals(a:Self, b:Self, tolerance:Tolerance):Boolean;
 }
 
-concept IFinite {
+interface IFinite {
   IsFinite(x:Self):Boolean;
   IsNaN(x:Self):Boolean;
 }
@@ -320,29 +320,29 @@ type Result<T,E> implements IValue {
 Use `Option<T>` for absent results such as no intersection. Use `Result<T,E>`
 when failure has information.
 
-### 10. Add universal geometry query concepts
+### 10. Add universal geometry query interfaces
 
 The biggest usability win is to make all geometry types answer the same practical
 questions.
 
 ```plato
-concept IBounded<TBounds> {
+interface IBounded<TBounds> {
   Bounds(x:Self):TBounds;
 }
 
-concept IContains<TPoint> {
+interface IContains<TPoint> {
   Contains(x:Self, p:TPoint):Boolean;
 }
 
-concept IDistanceTo<TPoint> {
+interface IDistanceTo<TPoint> {
   Distance(x:Self, p:TPoint):Number;
 }
 
-concept IClosestPoint<TPoint> {
+interface IClosestPoint<TPoint> {
   ClosestPoint(x:Self, p:TPoint):TPoint;
 }
 
-concept IIntersectable<TOther,THit> {
+interface IIntersectable<TOther,THit> {
   Intersections(a:Self, b:TOther):IArray<THit>;
 }
 ```
@@ -379,18 +379,18 @@ type Projection3D implements IValue {
 }
 ```
 
-### 11. Add curve, surface, and volume analysis concepts
+### 11. Add curve, surface, and volume analysis interfaces
 
 Named curves are useful, but analysis contracts make every curve useful.
 
 ```plato
-concept ICurveAnalysis<TPoint,TVector> {
+interface ICurveAnalysis<TPoint,TVector> {
   PointAt(c:Self, t:Amount):TPoint;
   TangentAt(c:Self, t:Amount):TVector;
   Length(c:Self):Number;
 }
 
-concept ISurfaceAnalysis {
+interface ISurfaceAnalysis {
   PointAt(s:Self, uv:UVCoordinate):Point3D;
   NormalAt(s:Self, uv:UVCoordinate):Normal3D;
   Area(s:Self):Number;
@@ -560,14 +560,14 @@ Genetics and bioinformatics:
 
 ## Recommended Implementation Order
 
-1. Fix existing generic typos and concept implementation mismatches.
+1. Fix existing generic typos and interface implementation mismatches.
 2. Keep `Vector2`, `Vector3`, `Vector4` canonical; document the naming rule.
 3. Separate point and vector semantics.
 4. Add `Amount`, `UnitAmount`, `Percent`, `Probability`, and `UnitInterval`.
 5. Add `Byte`, `BigInteger`, `Rational`, `Float16`, and `FixedDecimal`.
 6. Add `Tolerance`, `IApproximate`, `Option<T>`, and `Result<T,E>`.
 7. Add `UnitVector3`, `Direction3D`, `Normal3D`, `UVCoordinate`, and `NormalizedUV`.
-8. Add geometry query concepts: bounds, contains, distance, closest point, and intersections.
+8. Add geometry query interfaces: bounds, contains, distance, closest point, and intersections.
 9. Add curve, surface, mesh, and volume analysis contracts.
 10. Add domain modules for graphics, DSP, electronics, physics, ML/statistics, fuzzy math, and genetics.
 

@@ -256,4 +256,4 @@ invariant. Winding still matters, but fill rules are a 2D path concern.
 
 - **missing-function** — `19-polygons.plato`: no `ToPath(Polygon2D|PolygonWithHoles2D) →
   Path2D` implementing `PathLike`. Bridging filled polygons to `StyledPath2D` is the
-  natural authoring path and is currently only implied by the path concept elsewhere.
+  natural authoring path and is currently only implied by the path interface elsewhere.

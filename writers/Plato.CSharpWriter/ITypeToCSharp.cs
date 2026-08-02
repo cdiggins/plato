@@ -12,9 +12,9 @@ public interface ITypeToCSharp
     string ToCSharpTypeName(TypeInstance ti);
 
     // plato-311: the TypeDef whose point of view "Self" is being grounded from — the concrete
-    // type currently being written, or the concept interface itself while writing its own body
+    // type currently being written, or the interface interface itself while writing its own body
     // (where SelfType is the literal "Self"). Null means no grounding context is known, so any
-    // bare self-constrained concept reference reached through this writer is treated as
+    // bare self-constrained interface reference reached through this writer is treated as
     // existential (see ConceptGrounding.GroundsSelf).
     TypeDef GroundingOwner { get; }
 }
@@ -55,12 +55,12 @@ public static class TypeToCSharpExtensions
 
     public static string ToCSharpType(this ITypeToCSharp typeToCSharp, TypeInstance ti)
     {
-        // plato-311: a bare (implicit-Self) reference to a self-constrained concept that this
+        // plato-311: a bare (implicit-Self) reference to a self-constrained interface that this
         // writer's grounding owner does not implement/inherit is existential ("any C") type-position
         // use — render the non-generic object-safe view instead of substituting Self with whatever
         // enclosing concrete type this writer happens to be writing (the old bug: rendering a
         // `Path: Curve3D` field as `Curve3D<SweptSurface>`). A grounded reference (the writer's own
-        // self-reference inside the concept's own body, or an `implements`/`inherits` clause) is
+        // self-reference inside the interface's own body, or an `implements`/`inherits` clause) is
         // unaffected and keeps the F-bounded `C<Self>` spelling.
         if (ti.IsSelfConstrained && !ConceptGrounding.GroundsSelf(typeToCSharp.GroundingOwner, ti.Def))
         {
@@ -97,8 +97,8 @@ public static class TypeToCSharpExtensions
     public static string ToCSharpType(this ITypeToCSharp typeToCSharp, InterfaceImplementation ii)
         => typeToCSharp.ToCSharpType(ii.TypeExpression);
 
-    // plato-311: the non-generic existential-view spelling of a self-constrained concept
-    // reference — the concept's own name plus its explicit (non-Self) type arguments. This is both
+    // plato-311: the non-generic existential-view spelling of a self-constrained interface
+    // reference — the interface's own name plus its explicit (non-Self) type arguments. This is both
     // what a type-position ("any C") reference renders as, and the interface name a concrete type
     // uses when explicitly implementing a view member (`float Quantity.Amount() => ...`).
     public static string ToCSharpViewType(this ITypeToCSharp typeToCSharp, TypeInstance ti)

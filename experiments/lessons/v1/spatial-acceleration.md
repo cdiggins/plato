@@ -113,10 +113,10 @@ type SpatialHashGrid3D
 }
 ```
 
-Index concept (candidate generation):
+Index interface (candidate generation):
 
 ```plato
-concept SpatialIndex3D
+interface SpatialIndex3D
 {
     ItemCount(x: Self): Integer;
     CandidatesInBounds(x: Self, bounds: Bounds3D): Array<ItemIndex>;
@@ -166,12 +166,12 @@ type NearestNeighbors
     Distances: Array<Number>;   // ascending
 }
 
-concept RayIntersectable3D
+interface RayIntersectable3D
 {
     Raycast(x: Self, query: RayQuery3D): RayHit3D;
 }
 
-concept NearestNeighborQueryable3D
+interface NearestNeighborQueryable3D
 {
     FindNearest(x: Self, query: KNearestQuery3D): NearestNeighbors;
 }
@@ -262,7 +262,7 @@ trace cost.
   the cost model and invalidation rules underspecified.
 
 - **missing-function** — `35-spatial-queries.plato`: `RadiusQuery3D` exists as a request
-  type, but no concept method `FindInRadius` parallels `FindNearest` on
+  type, but no interface method `FindInRadius` parallels `FindNearest` on
   `NearestNeighborQueryable3D`. The query record is stranded without a capability.
 
 - **wrong-shape** — `35-spatial-queries.plato`: `RayHit3D` always carries `Face`,

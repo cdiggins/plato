@@ -16,7 +16,7 @@ links: [tracker/issues/plato-308.md, submodules/Plato/stdlib/fields-implicits-sh
 ## Issue
 
 Split out of [plato-308](plato-308.md) Root 1 after analysis on 2026-07-29: a large slice of that
-issue's 134 CS0305 errors is **not** the concept-lowering design gap — it is plain emitter bugs on
+issue's 134 CS0305 errors is **not** the interface-lowering design gap — it is plain emitter bugs on
 `Function1`-typed values, where the Plato source is already correct.
 
 Two observed manglings, forward-stdlib codegen (`.\tools\regen-forward-conformance.ps1 -Codegen`):
@@ -41,7 +41,7 @@ emits neither the right return type nor a constructor call.
 Accounts for much of the CS0305 cluster in plato-308 (files: `FieldsImplicits*`,
 `ImplicitSdfTrees`, `FunctionalProcedural`, `_FunctionVolume3D`, `_FunctionRegion2D`,
 `_FunctionSdf2D/3D`). Until fixed, the forward conformance suite cannot build even after the
-concept-lowering design question ([plato-311](plato-311.md)) is settled — the two failure classes
+interface-lowering design question ([plato-311](plato-311.md)) is settled — the two failure classes
 overlap in the same files but are independent.
 
 ## Affected code
@@ -54,7 +54,7 @@ overlap in the same files but are independent.
 
 ## Cause / analysis
 
-Speculation, to confirm in the writer: the concept-to-intrinsic map (`Function1` maps to
+Speculation, to confirm in the writer: the interface-to-intrinsic map (`Function1` maps to
 `System.Func`) is applied by name in some type-writing paths without carrying the instantiated
 type arguments; field emission goes through a different (correct) path. The constructor mangling
 looks like the TIR expresses single-field-type construction as a conversion/method application and
@@ -118,7 +118,7 @@ condition — the errors blocking it now are plato-311 and plato-308 Root 2, not
 - [x] `_FunctionVolume3D.g.cs` regenerates with `FunctionVolume3D Complement()` returning a
       constructor call, and no bare `System.Func` appears anywhere in `Generated/` — verified 2026-07-29.
 - [x] CS0305 count in `dotnet build Plato.ForwardConformanceTests` drops to only errors attributable
-      to [plato-311](plato-311.md) (concept-in-type-position), each verified as such — CS0305 is 0; remainder classified above.
+      to [plato-311](plato-311.md) (interface-in-type-position), each verified as such — CS0305 is 0; remainder classified above.
 - [x] `tools\regen-generated.ps1` clean (legacy goldens unchanged, or refreshed deliberately with rationale) —
       **no drift attributable to this issue.** The gate reports exactly one differing file per variant,
       `Interfaces.g.cs`, and its whole diff is [plato-311](plato-311.md)'s interface emission (added

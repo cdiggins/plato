@@ -168,11 +168,11 @@ Related shapes in the same file round out the toolkit: `Ellipsoid` (oriented sem
 `Tetrahedron`, and `ConvexVolume` (intersection of half-spaces). Flat patches —
 `Disk3D`, `Triangle3D`, `Quad3D` — live alongside them but are surfaces, not solids.
 
-File `25-solids.plato` lifts the story one level: the `Solid` concept marks any closed
+File `25-solids.plato` lifts the story one level: the `Solid` interface marks any closed
 bounded volume, and constructive / profile-generated solids reuse primitives as leaves.
 
 ```plato
-concept Solid
+interface Solid
     inherits Geometry3D
 { }
 
@@ -271,6 +271,6 @@ is `SphericalShell`. Naming in English drifts ("sphere" vs "ball"); Plato's type
   `CylindricalShell` would match `SphericalShell`'s role for pipes and ducts.
 
 - **naming** — `25-solids.plato`: `CsgOperation.Difference` is set-difference (A minus B),
-  which is correct, but easy to confuse with the algebraic `Difference` concept on
+  which is correct, but easy to confuse with the algebraic `Difference` interface on
   points. A doc-comment cross-warning — or renaming to `Subtract` — would reduce
   collisions when both appear in one module.

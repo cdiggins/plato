@@ -99,10 +99,10 @@ type HalfEdgeMesh
 }
 ```
 
-Navigation is a concept (callers must not pass $-1$; boundaries appear as $-1$ *results*):
+Navigation is an interface (callers must not pass $-1$; boundaries appear as $-1$ *results*):
 
 ```plato
-concept HalfEdgeNavigable
+interface HalfEdgeNavigable
 {
     OriginOf(x: Self, halfEdge: HalfEdgeIndex): VertexIndex;
     TwinOf(x: Self, halfEdge: HalfEdgeIndex): HalfEdgeIndex;

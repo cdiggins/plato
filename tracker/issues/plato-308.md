@@ -92,7 +92,7 @@ at its latest note. It does not need a second pair of hands; it needs to be left
 
 Measured 2026-07-29, after the CS0736 class was fixed (that fix is landed, not pending):
 
-- 166 × **CS0315** — `_CoonsPatch`, `_SweptSurface`, `_RuledSurface`, `_SweptSolid`, `_ExtrudedSurface`, `_TrimmedSurface`, `_SurfaceOfRevolution`, `_TubeSurface`: a concrete type passed where the concept's F-bounded `Self` is required (`Curve3D<Self>`); no boxing conversion.
+- 166 × **CS0315** — `_CoonsPatch`, `_SweptSurface`, `_RuledSurface`, `_SweptSolid`, `_ExtrudedSurface`, `_TrimmedSurface`, `_SurfaceOfRevolution`, `_TubeSurface`: a concrete type passed where the interface's F-bounded `Self` is required (`Curve3D<Self>`); no boxing conversion.
 - 134 × **CS0305** — `FieldsImplicitsShapes` / `FieldsImplicitsDistance` / `FieldsImplicitsCore` / `FieldsImplicitsFunction`, `ImplicitSdfTrees`, `FunctionalProcedural`, `_FunctionVolume3D`, `_FunctionRegion2D`: wrong generic arity.
 - 14 × **CS0535** — `_Angle` (`Comparable.Compare`, `Hashable.Hash`), `_Matrix3x2` / `_Matrix4x4` (`MatrixLike.ColumnCount`, `ElementAt`), `_Quaternion` (`Interpolatable.Lerp`): the generated partial declares the interface, the handwritten `Plato.Intrinsics.V2` type lacks the member.
 - 6 × **CS0557** — `Plato.Intrinsics.V2/Angle.cs:34,37,40`: generated conversions duplicate handwritten ones.
@@ -101,10 +101,10 @@ Measured 2026-07-29, after the CS0736 class was fixed (that fix is landed, not p
 
 **Update 2026-07-29: Root 1 was analyzed and split.** The CS0305 cluster is largely mechanical
 emitter bugs (`Function1`-to-`System.Func` arity loss + constructor-call mangling), now
-[plato-310](plato-310.md). The CS0315 cluster is a real design gap — concept in type position
+[plato-310](plato-310.md). The CS0315 cluster is a real design gap — interface in type position
 (existential) has no defined C# lowering — now [plato-311](plato-311.md), with a decision recorded
 there (dual-interface lowering, Option A). The "speculation, worth confirming" below is confirmed:
-the emitter substitutes the *enclosing type* into `Self` for concept-typed fields
+the emitter substitutes the *enclosing type* into `Self` for interface-typed fields
 (`Curve3D<SweptSurface> Path`). This issue keeps Root 2 plus final wiring, and is blocked by the
 two splits.
 
@@ -125,10 +125,10 @@ surfaced (proven pre-existing: two opposite CS0557 fixes unmask the identical se
 
 Two independent roots, very different sizes.
 
-**Root 1 (300 errors, deep): concept-as-generic-interface lowering.** CS0315 and CS0305 are one
-cluster. A Plato concept becomes `interface C<Self> where Self : C<Self>`, and the forward stdlib
-uses concepts in positions the legacy stdlib never did — concrete types flowing into `Self`
-positions, and generic libraries over parameterized concepts. `ForwardStdLibCheckerTests` already
+**Root 1 (300 errors, deep): interface-as-generic-interface lowering.** CS0315 and CS0305 are one
+cluster. A Plato interface becomes `interface C<Self> where Self : C<Self>`, and the forward stdlib
+uses interfaces in positions the legacy stdlib never did — concrete types flowing into `Self`
+positions, and generic libraries over parameterized interfaces. `ForwardStdLibCheckerTests` already
 names this cluster (tuple → generic-interface returns) and says the right fix is a library
 redesign returning a concrete type / `Self` rather than a checker patch. Speculation, worth
 confirming: the surface/solid types fail because `Curve3D<Self>` is required where an
@@ -160,7 +160,7 @@ conformance suite is green. Root 2 alone is a cheap, independently useful increm
 ## Fix approaches
 
 1. **Root 2 first, standalone.** Add `Angle.Compare`/`Hash`, `Matrix3x2`/`Matrix4x4` `ColumnCount`/`ElementAt`, `Quaternion.Lerp`; reconcile the duplicate `Angle` conversions. Clears 20 errors, ~4 types, no emitter change. Does not make the suite build on its own, but it is the cheap half and is useful regardless.
-2. **Root 1 by library redesign** (the direction `ForwardStdLibCheckerTests` already recommends): change the offending signatures to return concrete types / `Self` instead of a bare concept. Touches real vocabulary, needs design review, but keeps the emitter simple.
+2. **Root 1 by library redesign** (the direction `ForwardStdLibCheckerTests` already recommends): change the offending signatures to return concrete types / `Self` instead of a bare interface. Touches real vocabulary, needs design review, but keeps the emitter simple.
 3. **Root 1 by emitter change**: teach the writer to bridge concrete types into F-bounded `Self` positions. Avoids touching vocabulary but is emitter surgery with golden/byte-identity implications for the legacy suite.
 
 ## Bedrock
@@ -201,8 +201,8 @@ Measured at HEAD in this repo (not the stale studio submodule checkout, whose ga
 point at pre-restructure paths and lint `stdlib` top-only, so `check-stdlib-fast.ps1` there fails
 with "No .plato files found").
 
-The 324-error CS0315/CS0305 concept-as-generic-interface cluster this issue was filed against is
-GONE — the intervening concept/lowering work retired it. What remained was 16 duplicate-member
+The 324-error CS0315/CS0305 interface-as-generic-interface cluster this issue was filed against is
+GONE — the intervening interface/lowering work retired it. What remained was 16 duplicate-member
 errors between the generated partials and `src/Plato.Intrinsics`, and behind them (masked, because
 Roslyn skips body binding when declaration binding fails) ~108 body-level errors.
 
@@ -226,7 +226,7 @@ Fixes, by layer:
 - **stdlib** — explicit construction where a single Array-typed field cannot carry an implicit
   conversion (`PointN`/`VectorN` offsets, `TriangleArray3D`/`QuadArray3D` Deform); `DeCasteljau`
   spelled per control-value type, since an implicit `Interpolatable` bound on a library type
-  variable does not survive concept-interface erasure.
+  variable does not survive interface-interface erasure.
 - **Law packet** — `Law_SubtractIsReversedBetween2D` compared two displacements with `Distance`,
   which is declared between points.
 
@@ -253,7 +253,7 @@ Root causes, one per law:
   but inherited the generic LINEAR `Center` (`Lerp(0.5)`), so the two disagreed for every interval
   whose stored `End - Start` exceeds a turn. Added the seam-aware `Center` (`Start + Span/2`) beside
   `Contains`. That alone did not turn the law green: the monomorphized generic law inlines the
-  CONCEPT's `Center` while its `Contains` call is re-bound by C# to the type's override — a codegen
+  interface's `Center` while its `Contains` call is re-bound by C# to the type's override — a codegen
   inconsistency now filed as [plato-374](plato-374.md); the law packet states the property on the
   concrete `AngleInterval` surface instead.
 - `SuperEllipse.Law_SuperEllipseExponentTwoPerimeterIsEllipse` — nothing wrong with either body.

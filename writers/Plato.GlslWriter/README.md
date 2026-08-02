@@ -1,6 +1,6 @@
 # Plato.GlslWriter
 
-Proof-of-concept GLSL backend (target: GLSL ES 3.00, `#version 300 es` — the WebGL2
+Proof-of-interface GLSL backend (target: GLSL ES 3.00, `#version 300 es` — the WebGL2
 dialect, a strict subset of desktop GLSL 3.30+). Mirrors the architecture of the
 TypeScript/Rust POC writers but is TIR-only: every body renders from the
 monomorphized Typed IR, there is no legacy symbol-graph fallback.

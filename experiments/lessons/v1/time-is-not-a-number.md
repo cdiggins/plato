@@ -41,7 +41,7 @@ geometry:
 ```
 
 In space, `Point3D` minus `Point3D` yields `Vector3D`. In time, `Instant`
-minus `Instant` yields `Duration`. The pattern is the `Difference` concept:
+minus `Instant` yields `Duration`. The pattern is the `Difference` interface:
 a position-like type whose delta is a separate type.
 
 Wall-clock APIs muddy this by storing both as "seconds since epoch" floats.

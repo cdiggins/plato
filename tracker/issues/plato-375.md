@@ -15,7 +15,7 @@ links: []
 
 ## Issue
 
-`c25e0bc` (plato-321, "matrix + primitive concept obligations, 229 -> 171 lint") added
+`c25e0bc` (plato-321, "matrix + primitive interface obligations, 229 -> 171 lint") added
 `stdlib/foundation/matrices-dense.library.plato` with 240 lines of obligation fills. The lint
 burn-down is real — the ratchet went 229 -> 159 — but a clean regeneration of the forward stdlib
 no longer **compiles**, in two shapes:
@@ -71,8 +71,8 @@ first two stopped stopping the build:
    pre-existing `Quaternion.Slerp`, whose `flip ? -d : d` is now `d.Abs` — the
    same value, one branch.
 5. **CS1955 / CS1929** — a `MatrixN` result left as a bare tuple renders a
-   following field read as a call; and a library helper with a CONCEPT-typed
-   first parameter cannot be called on a concept-typed value, because the writer
+   following field read as a call; and a library helper with an interface-typed
+   first parameter cannot be called on an interface-typed value, because the writer
    monomorphizes it per concrete type. `MatrixN` bodies now construct
    explicitly, and the two surface helpers are inlined at their call sites.
 

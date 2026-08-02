@@ -24,7 +24,7 @@ MagnitudeSquared(v: IVectorLike): Number => v.SumSqrComponents / v.NumComponents
 This is generated into **every** IVectorLike type (verified in `_Vector3.g.cs:125`, `_Point3D.g.cs:86`,
 `_Vector2/4/8`, `_Angle`, `_Time`). Consequences:
 - `Vector3.Magnitude` = √(x²+y²+z² / 3) while `Vector3.Length` (intrinsic) is correct. **Same struct, two
-  different answers for the same concept.**
+  different answers for the same interface.**
 - Generic `Normalize`, `Distance`, `DistanceSquared`, `Angle`, `IsParallel` in `vectors.plato` are all
   wrong by factors of √n wherever the intrinsic doesn't shadow them (Point2D/3D, and all generic paths).
 - The C# comment in `GeometryUtil.cs:941` — "the old Angle function does not work" — is this bug being

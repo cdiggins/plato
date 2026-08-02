@@ -7,7 +7,7 @@ using Ara3D.Geometry.Compiler.Types;
 namespace Ara3D.Geometry.Compiler.Analysis
 {
     /// <summary>
-    /// Represents a specific concept implementation in a type. 
+    /// Represents a specific interface implementation in a type. 
     /// </summary>
     public class InterfaceImplementation : ITree<InterfaceImplementation>
     {

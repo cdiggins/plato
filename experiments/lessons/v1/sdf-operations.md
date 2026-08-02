@@ -56,11 +56,11 @@ result looks organic and "blobby" without an explicit CSG tree.
 
 ## In Plato
 
-v3 encodes SDFs as concepts that refine scalar fields, then stores CSG as flat trees of
+v3 encodes SDFs as interfaces that refine scalar fields, then stores CSG as flat trees of
 combination nodes. From `27-implicit-sdf.plato`:
 
 ```plato
-concept SignedDistanceField3D
+interface SignedDistanceField3D
     inherits ScalarField3D
 { }
 
@@ -196,14 +196,14 @@ a planar leaf into a spatial tree is a type error by construction — keep domai
 ## Library recommendations
 
 - **missing-function** — `27-implicit-sdf.plato`: `SdfTree2D` / `SdfTree3D` declare the
-  tree shape but there is no concept function such as `EvalTree(tree, primitives, point)`
+  tree shape but there is no interface function such as `EvalTree(tree, primitives, point)`
   on the tree types. Teaching CSG evaluation has to invent the walk; a declared evaluator
   (even without a body) would pin the contract for leaf resolution and combine semantics.
 
 - **missing-function** — `27-implicit-sdf.plato`: modifiers (`SdfRoundingModifier`,
-  `SdfShellModifier`, …) are parameter records with no concept tying them to
+  `SdfShellModifier`, …) are parameter records with no interface tying them to
   `SignedDistanceField3D`. A `ModifiedSdf3D { Source: ItemIndex; Modifier: ... }` sum
-  type — or concept methods `Round`, `Shell`, `Onion` — would make the apply-step teachable
+  type — or interface methods `Round`, `Shell`, `Onion` — would make the apply-step teachable
   instead of "evaluation context supplies the source."
 
 - **doc-comment** — `27-implicit-sdf.plato`: `SdfCombine.Blend` should state explicitly

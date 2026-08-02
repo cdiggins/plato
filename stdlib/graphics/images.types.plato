@@ -8,7 +8,7 @@
 //==
 // # Images
 //
-// Raster data: rectangular grids of pixels. The `IImage` concept
+// Raster data: rectangular grids of pixels. The `IImage` interface
 // (`images.concepts.plato`) exposes only dimensions; pixel access lives on the
 // concrete types below because pixel representations differ (bytes, floats,
 // indices, bits). Unless a type says otherwise, pixel storage is row-major

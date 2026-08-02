@@ -283,7 +283,7 @@ namespace Ara3D.Geometry.Compiler
                     }
                     else
                     {
-                        throw new Exception($"First parameter type in function {f} not a concrete type or concept");
+                        throw new Exception($"First parameter type in function {f} not a concrete type or interface");
                     }
                 }
             }
@@ -337,7 +337,7 @@ namespace Ara3D.Geometry.Compiler
                     if (t2 == null)
                         SemanticErrors.Add($"One of the implemented types of {t} was not resolved");
                     else if (t2.Def?.Kind != TypeKind.Interface)
-                        SemanticErrors.Add($"Only concepts can be implemented. Instead {t} implements {t2}");
+                        SemanticErrors.Add($"Only interfaces can be implemented. Instead {t} implements {t2}");
                 }
 
                 foreach (var t2 in t.Inherits)
@@ -345,15 +345,15 @@ namespace Ara3D.Geometry.Compiler
                     if (t2 == null)
                         SemanticErrors.Add($"One of the inherited types of {t} was not resolved");
                     else if (t2.Def?.Kind != TypeKind.Interface)
-                        InternalErrors.Add($"Only concepts can be inherited. Instead {t} inherits {t2}");
+                        InternalErrors.Add($"Only interfaces can be inherited. Instead {t} inherits {t2}");
                 }
                     
                 if (t.Kind == TypeKind.Interface)
                 {
                     if (t.Implements.Count > 0)
-                        InternalErrors.Add("Concepts should not have implements clauses");
+                        InternalErrors.Add("Interfaces should not have implements clauses");
                     if (t.Fields.Count > 0)
-                        InternalErrors.Add("Concepts should not have fields");
+                        InternalErrors.Add("Interfaces should not have fields");
                 }
                 else if (t.Kind == TypeKind.Library)
                 {

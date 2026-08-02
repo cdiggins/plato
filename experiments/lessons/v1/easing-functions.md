@@ -77,11 +77,11 @@ physical plausibility for emphasis — a bounce says "I arrived" louder than a s
 
 ## In Plato
 
-v3 puts the catalog in `36-easing.plato`. The abstract shape is the concept
+v3 puts the catalog in `36-easing.plato`. The abstract shape is the interface
 `EasingFunction`, which inherits `Procedural<Number, Number>`:
 
 ```
-concept EasingFunction
+interface EasingFunction
     inherits Procedural<Number, Number>
 { }
 ```
@@ -216,7 +216,7 @@ derivatives at both ends are zero, which is why it feels soft.
 
 - **missing-function** — `36-easing.plato`: `ClassicEasing` does not implement
   `EasingFunction`, so there is no declared `Eval(ClassicEasing, Number)`. The catalog
-  sum is useless for sampling until a library function (or concept implementation) maps
+  sum is useless for sampling until a library function (or interface implementation) maps
   each `Eased(family, phase)` case to a curve. Teaching forces this gap into the open.
 
 - **wrong-shape** — `36-easing.plato`: `ElasticParameters`, `BackParameters`, and
@@ -225,7 +225,7 @@ derivatives at both ends are zero, which is why it feels soft.
   parameterized sum cases (`ElasticEased(Phase, ElasticParameters)`, …) or document that
   those records are only for a future `EvalClassic(…, params)` overload.
 
-- **missing-concept** — `36-easing.plato`: `SpringParameters` sits in the easing file but
+- **missing-interface** — `36-easing.plato`: `SpringParameters` sits in the easing file but
   implements neither `EasingFunction` nor `TimeVarying`. A spring is not an $e(t)$ map;
   it needs state (position, velocity). Either move it beside motion-integration types or
   declare a `SpringMotion` / `TimeVarying` wrapper so the file's role is clear.

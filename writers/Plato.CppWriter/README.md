@@ -1,6 +1,6 @@
 # Plato.CppWriter
 
-Proof-of-concept C++ / CUDA backend. Like `Plato.GlslWriter` it is TIR-only: every body
+Proof-of-interface C++ / CUDA backend. Like `Plato.GlslWriter` it is TIR-only: every body
 renders from the monomorphized Typed IR, there is no legacy symbol-graph fallback.
 
 ## Usage

@@ -11,7 +11,7 @@
 //
 // Surfaces defined by carrying a generator curve through space: revolve,
 // extrude, rule, loft, sweep, tube, and offset. Generator curves referenced as
-// concepts (ICurve2D, ICurve3D) are supplied by any concrete curve type, so these
+// interfaces (ICurve2D, ICurve3D) are supplied by any concrete curve type, so these
 // types compose with everything in the curve files. Evaluation lives in
 // `surfaces.library.plato`.
 

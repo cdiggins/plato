@@ -19,12 +19,12 @@ Shipped to Plato main (branch `plato-stdlib-improvements`, commit `4356c81`, mer
 
 ## Idea
 
-Add a first-class parametric BREP to Plato `stdlib`: an immutable shell of vertices + undirected edges + faces, where faces bound themselves with oriented **edge-uses** (not half-edges), and edge/face *geometry* lives in **sum types** (`BrepCurve` / `BrepSurface`) rather than concept-typed fields. Lift the Studio demo (`BrepSolid` / `BrepEdge` / `BrepFace`) into Plato vocabulary; keep `HalfEdgeMesh` as the discrete tessellation target. Generative solids (`ExtrudedSolid`, …) stay separate and convert *to* BREP; `Deform` decays symbolic structure.
+Add a first-class parametric BREP to Plato `stdlib`: an immutable shell of vertices + undirected edges + faces, where faces bound themselves with oriented **edge-uses** (not half-edges), and edge/face *geometry* lives in **sum types** (`BrepCurve` / `BrepSurface`) rather than interface-typed fields. Lift the Studio demo (`BrepSolid` / `BrepEdge` / `BrepFace`) into Plato vocabulary; keep `HalfEdgeMesh` as the discrete tessellation target. Generative solids (`ExtrudedSolid`, …) stay separate and convert *to* BREP; `Deform` decays symbolic structure.
 
 ## Assumptions
 
 - Plato remains the home for portable geometry vocabulary; C# demo is a sketch, not the product API ([plato-273](plato-273.md)).
-- Concepts are constraints, not storage — you cannot put “any `Curve3D`” in a homogeneous array field; sum types are the representable path.
+- Interfaces are constraints, not storage — you cannot put “any `Curve3D`” in a homogeneous array field; sum types are the representable path.
 - Typed indices (`VertexIndex` / `EdgeIndex` / `FaceIndex` in `topology-indices.plato`) are the index convention ([ara3d-032](ara3d-032.md)).
 - Markers (`ClosedShell`, `BrepSolid`) must be proofs, not hopes — lesson from the stale `IsBilinear` flag that motivated [ara3d-056](ara3d-056.md).
 - Full CAD kernel (NURBS, pcurves, trims, BREP booleans) is out of scope; [studio-168](studio-168.md) already parks “real BREP” as XL.
@@ -33,7 +33,7 @@ Add a first-class parametric BREP to Plato `stdlib`: an immutable shell of verti
 ## Design decisions
 
 - **Topology encoding — edge-use loops vs half-edges for BREP.** Edge-use: one undirected edge owns one curve; two faces cite it with opposite orientation. Half-edge: duplicates the undirected edge; awkward when geometry lives once. **Prefer edge-uses for BREP; keep `HalfEdgeMesh` for meshes.**
-- **Geometry payload — sum types vs concept fields vs only-faceted.** Sums (`Line | Arc | Polyline`, `Planar | Bilinear | QuadGrid`) fit Plato and stay extensible by adding cases. Concept fields are not storable. Faceted-only is a valid v1 *subset* of the same sums.
+- **Geometry payload — sum types vs interface fields vs only-faceted.** Sums (`Line | Arc | Polyline`, `Planar | Bilinear | QuadGrid`) fit Plato and stay extensible by adding cases. Interface fields are not storable. Faceted-only is a valid v1 *subset* of the same sums.
 - **Closedness — marker on `Brep3D` vs validated subtype.** Do not stamp `ClosedShell` on every `Brep3D`. Prefer `AsClosedShell` / `ClosedBrep3D` produced only after `IsWatertight` (or a builder that proves it).
 - **Generative solids vs BREP.** `ExtrudedSolid.ToBrep` is exact/cheap/lossless (implicit-conversion candidate later). `Deform` on extrusion decays to generic BREP — tessellation hints go with the type change ([ara3d-056](ara3d-056.md)).
 - **Trimming.** v1: topological holes via `Holes: Array<BrepLoop>` on faces; no UV-domain restriction / pcurves until needed.
@@ -48,7 +48,7 @@ Add a first-class parametric BREP to Plato `stdlib`: an immutable shell of verti
 - [plato-298](plato-298.md) — polygon faces with holes; BREP face loops should map cleanly onto that mesh story.
 - [Brep.cs](../../ara3d-sdk/examples/Ara3D.Studio.Examples/Demos/Brep.cs) / [BrepSolids.cs](../../ara3d-sdk/examples/Ara3D.Studio.Examples/Demos/BrepSolids.cs) — source sketch to lift.
 - [topology-half-edges.plato](../../submodules/Plato/stdlib/topology-half-edges.plato) — adjacent, not the BREP encoding.
-- [surfaces-solids.concepts.plato](../../submodules/Plato/stdlib/surfaces-solids.concepts.plato) — `Solid` / `ParametricSurface` markers BREP concepts refine.
+- [surfaces-solids.concepts.plato](../../submodules/Plato/stdlib/surfaces-solids.concepts.plato) — `Solid` / `ParametricSurface` markers BREP interfaces refine.
 
 ## Approaches
 
@@ -61,7 +61,7 @@ Adjacent ideas worth their own issue: BREP builder (`unique` List freeze vs pure
 ## Case against
 
 - **Locks a half-baked topology.** Promoting the demo model into stdlib may ossify edge-uses before IFC/STEP interop teaches what we actually need (pcurves, non-manifold, shells with multiple voids).
-- **Sum-type tax.** Every new curve/surface kind is a cross-cutting `match` in Eval/Deform/Tessellate; concept-dispatch would scale better if Plato ever got existentials / type-erased procedurals.
+- **Sum-type tax.** Every new curve/surface kind is a cross-cutting `match` in Eval/Deform/Tessellate; interface-dispatch would scale better if Plato ever got existentials / type-erased procedurals.
 - **Overlap with `HalfEdgeMesh`.** Two topology stories confuse agents; a thinner “attributes on half-edges” design might be enough for faceted solids.
 - **No Studio consumer yet.** [studio-168](studio-168.md) parks flowable brep; without a sink, stdlib BREP is vocabulary without demand.
 - **Scope creep into OCCT.** Once “BREP” exists, pressure to add trims/booleans/NURBS will fight the faceted-first plan.

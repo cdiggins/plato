@@ -1,7 +1,7 @@
 //==
 // # Kinematics — derived functions for IKinematic2D and IKinematic3D
 //
-// Bodies for the `IKinematic2D` and `IKinematic3D` concepts declared in
+// Bodies for the `IKinematic2D` and `IKinematic3D` interfaces declared in
 // `kinematics.concepts.plato`. A motion is sampled by `PositionAt` (meters) and
 // `VelocityAt` (meters per second) at a `Duration` since the motion's start;
 // the helpers derive speed, displacement, chord distance, the averages over a

@@ -51,7 +51,7 @@ type ConstantVectorField3D
 // field into a new field holding the composed lambda. The combinators (Combine,
 // MapValue, MapDomain, Union, Intersection, IDifference, Offset) live in
 // `fields-implicits.library.plato`; `ToFunctionField` lifts any field
-// concept implementor into this form so the combinators apply to all of them.
+// interface implementor into this form so the combinators apply to all of them.
 //
 // These are deliberately monomorphic (one type per domain/range pair) rather
 // than one generic function-carrying type: the monomorphic shape is what
@@ -60,7 +60,7 @@ type ConstantVectorField3D
 // **Domain and range dimensions.** A IProcedural is classified by what it maps
 // from and to; the dimension of the domain is the dimension of the form's
 // parameter space, the dimension of the range is the space it lives in. The
-// field concepts of `fields.concepts.plato` are the point-domain rows of that
+// field interfaces of `fields.concepts.plato` are the point-domain rows of that
 // table:
 //
 //   Number  -> Number    a scalar function of one variable (an easing curve)

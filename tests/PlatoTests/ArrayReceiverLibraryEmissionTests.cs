@@ -10,11 +10,11 @@ namespace PlatoTests
     ///
     /// The forward stdlib spells a list receiver with the concrete <c>Array&lt;T&gt;</c> type
     /// (<c>BoundsOfPoints(points: Array&lt;Point2D&gt;): Bounds2D</c>); stdlib-legacy spells the
-    /// same shape with the <c>IArray&lt;T&gt;</c> CONCEPT. Both render as
+    /// same shape with the <c>IArray&lt;T&gt;</c> interface. Both render as
     /// <c>IReadOnlyList&lt;T&gt;</c>, so both belong on the one classic-extension-method path in
     /// <c>Extensions.g.cs</c> (<see cref="CSharpWriter.WriteInterfaceLibraryMethods"/>).
     ///
-    /// Before the fix only the concept spelling was emitted. <c>Array</c> is in
+    /// Before the fix only the interface spelling was emitted. <c>Array</c> is in
     /// <see cref="CSharpWriter.IgnoredTypes"/>, so array types get no <c>ExtensionStylePlan</c>, and
     /// moved members are only ever discovered while writing a CONCRETE type's own file — so an
     /// array-receiver library function was visited by NO writer and every call site of it was a

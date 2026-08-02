@@ -2,10 +2,10 @@
 // # IJagged arrays
 //
 // The standalone noun for ragged row data, for callers that have no domain type
-// of their own to project onto the IJagged concept.
+// of their own to project onto the IJagged interface.
 
 // A standalone list of variable-length rows in CSR form: the concrete carrier
-// of the IJagged packing (invariant stated once on the `IJagged` concept in
+// of the IJagged packing (invariant stated once on the `IJagged` interface in
 // `collections.concepts.plato`). Builders such as FromRows return this
 // type, and a domain type that HAS ragged rows holds one as a field
 // (PolygonMesh3D.Faces); only a type whose own storage already names the rows

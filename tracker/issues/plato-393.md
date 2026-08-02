@@ -15,7 +15,7 @@ links: [stdlib/geometry/splines-bezier.library.plato, parakeet/Parakeet.Grammars
 
 ## Issue
 
-plato-382 gave `type` and `concept` declarations a `where` clause, verified it, and
+plato-382 gave `type` and `interface` declarations a `where` clause, verified it, and
 emits it as a C# constraint. A **library function** declaration still has none. A
 function's type variables can only INHERIT a bound, from a constructed type that
 appears in its own signature (`Sample(x: Tween<$T>, ...)` learns `$T: Interpolatable`
@@ -44,7 +44,7 @@ identical modulo the type name.
 ## Affected code
 
 - `parakeet/Parakeet.Grammars/PlatoGrammar.cs` — `MethodDeclaration` has no
-  `ConstraintList`; `Type` and `Concept` both do.
+  `ConstraintList`; `Type` and `Interface` both do.
 - `src/Plato.Compiler/Checking/TypeConstraints.cs` — `InheritedBounds` is the only
   source of a function variable's bounds; a DECLARED source would join it there.
 - `writers/Plato.CSharpWriter/CSharpFunctionInfo.cs` — already emits the per-function
@@ -64,7 +64,7 @@ one disagree. The C# side is settled — a function-level clause is exactly what
 
 1. **`where` on a method declaration**, checked exactly like a type's, unioned with the
    inherited bounds. Smallest surface, matches C#.
-2. **Bound the element position instead** — a constrained collection concept
+2. **Bound the element position instead** — a constrained collection interface
    (`Interpolatable`-bounded array view) that the signature mentions, so the existing
    inheritance path carries it. No language change; new vocabulary, and it changes
    every call site.
@@ -83,7 +83,7 @@ DeCasteljau(xs: Array<$T>, t: Number): $T where $T: Interpolatable => ...;
 ```
 
 It is the last thing in the signature, which is the same slot the clause occupies on `type` and
-`concept` (`<params> where <bounds> <base-list> { ... }`); everything after a function's return type
+`interface` (`<params> where <bounds> <base-list> { ... }`); everything after a function's return type
 IS its body, so no other position keeps the reading "signature, then bounds on that signature, then
 body". The one `Constraint` grammar rule now accepts either spelling of the target (bare `T` for a
 declaration parameter, `$T` for a function's signature variable), so all three declaration kinds
@@ -100,7 +100,7 @@ bound: a type is written (checked at its construction site, CHK309), a function 
 satisfaction is enforced in the solver as a candidate-viability rule — whatever the arguments bind
 the variable to must satisfy the bound, or the overload does not match. Reported `CHK206` rather
 than the misleading `CHK201` "no overload matches", because the signature DID match and only the
-bound failed. `CHK310` (a bound that is not a concept) and `LINT002` (a bound naming a variable the
+bound failed. `CHK310` (a bound that is not an interface) and `LINT002` (a bound naming a variable the
 signature never mentions) were extended to cover function bounds too.
 
 Follow-up filed: `plato-394` — a function bound on a variable that the writer folds into the

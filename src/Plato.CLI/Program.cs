@@ -50,7 +50,7 @@ namespace Ara3D.Geometry.CLI
             // former --methods / --no-properties flags were retired 2026-08-01 — see
             // tracker/decisions/2026-08-01-property-free-emission-is-unconditional.md.)
 
-            // Emit `_`-receiver concept members (Plato's constructor-shaped idiom for a type-level
+            // Emit `_`-receiver interface members (Plato's constructor-shaped idiom for a type-level
             // operation) as C# `static abstract` interface members rather than omitting them.
             // Opt-in: stdlib-legacy's IArrayLike declares three such members, so enabling this by
             // default would move the diff-gated goldens. See plato-312.

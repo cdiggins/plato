@@ -1,18 +1,18 @@
 //==
-// # Transform concepts
+// # Transform interfaces
 //
-// The concepts that mark a value as carryable through a transform:
+// The interfaces that mark a value as carryable through a transform:
 // ITransformable2D/3D for the general transform of a dimension, IDeformable2D/3D
 // for an arbitrary point mapping. Deformable inherits Transformable — an
 // arbitrary point mapping subsumes any named transform — so implementing Deform
 // is the only obligation a shape has, and Transform arrives derived.
-// Also the concepts that mark a transform representation by the canonical form
+// Also the interfaces that mark a transform representation by the canonical form
 // it converts into: IAffine2D/IAffine3D for the general affine transform of a
 // dimension, IRotational3D for the unit quaternion.
 // A transform maps points to points. The representations themselves are declared
 // in the `transforms-*.plato` files (pose, TRS, affine/projective, frames,
 // motor) and their operations in the matching `transforms-*.library.plato`
-// files; the derived bodies for the concepts below live in
+// files; the derived bodies for the interfaces below live in
 // `intervals.library.plato` and
 // `intervals-transforms-deformable.library.plato`. The shared conventions of
 // the whole transform surface are stated once here.
@@ -72,9 +72,9 @@ interface IDeformable3D
 }
 
 //==
-// # Common-ground concepts
+// # Common-ground interfaces
 //
-// The concepts that mark a transform representation by the canonical form it
+// The interfaces that mark a transform representation by the canonical form it
 // converts into. Every named 2D or 3D transform reaches the general affine
 // transform of its dimension (`AffineTransform2D` / `AffineTransform3D` in
 // `transforms.types.plato`), so composition between representations of
@@ -82,7 +82,7 @@ interface IDeformable3D
 // every 3D rotation representation reaches the unit `Quaternion`, the canonical
 // rotation form. As stated above, a member named after a type is a conversion.
 //
-// The concepts narrow as they inherit: IRotational3D is a IRigid3D is an IAffine3D.
+// The interfaces narrow as they inherit: IRotational3D is a IRigid3D is an IAffine3D.
 // State the narrowest one a type satisfies — a rigid transform composes and
 // inverts exactly, where the affine form only promises a matrix.
 

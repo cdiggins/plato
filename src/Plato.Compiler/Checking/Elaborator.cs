@@ -350,7 +350,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             // keys property-vs-method purely on the member-access shape (HasArgList), so a no-arg
             // intrinsic/operator member (`v.Sqrt`, `v.Negative` from `-v`) is emitted with property
             // syntax, not a `()` call. Deciding Operator/Intrinsic first loses that distinction and
-            // makes the TIR writer emit `v.Sqrt()`. Also catches computed no-arg library/concept
+            // makes the TIR writer emit `v.Sqrt()`. Also catches computed no-arg library/interface
             // members (`v.Magnitude`) that are not Field getters.
             if (call != null && f.NumParameters == 1 && !call.HasArgList)
                 return EmissionKind.Property;

@@ -41,7 +41,7 @@ Affine types (marked as `unique`) allow imperative style code without breaking p
 
 Every file holds exactly one **kind** of declaration.
 
-- `<stem>.concepts.plato` holds concepts
+- `<stem>.concepts.plato` holds interface declarations (the `.concepts.plato` filename stem is unchanged)
 - `<stem>.types.plato` holds types
 - `<stem>.library.plato` holds exactly one `library` block 
 
@@ -52,7 +52,7 @@ The library is separated into the following folders:
 3. `stdlib/graphics`
 4. `stdlib/future`
 
-[`types-and-concepts.txt`](types-and-concepts.txt) is a generated index of every type and concept
+[`types-and-concepts.txt`](types-and-concepts.txt) is a generated index of every type and interface
 in the three shipping tiers — read it to see what exists. It must be regenerated when this folder
 changes; [`AGENTS.md`](AGENTS.md) states the rule and the command.
 
@@ -77,7 +77,7 @@ It is held to a lower bar than the other three tiers, on purpose:
 | converted to C# | yes | only with an explicit flag |
 
 So a `future` declaration must always resolve and type-check, but it is not expected to carry
-bodies, discharge every concept obligation, or survive codegen. The flags that opt it back in:
+bodies, discharge every interface obligation, or survive codegen. The flags that opt it back in:
 
 - `.\tools\check-stdlib-fast.ps1 -IncludeFuture`
 - `.\tools\stage-stdlib.ps1 -IncludeFuture`
@@ -87,9 +87,9 @@ bodies, discharge every concept obligation, or survive codegen. The flags that o
 Parsing and type-checking are NOT behind a flag: `ForwardStdLibParsesAndCompiles` and
 `ForwardStdLibDiagnosticCountDoesNotRegress` always read all four tiers.
 
-A corollary for authors: a concept that a shipping tier implements must itself live in a
+A corollary for authors: an interface that a shipping tier implements must itself live in a
 shipping tier, even when most of its implementers are aspirational. That is why
-`TimeVarying<TValue>` sits in `graphics/time-varying.concepts.plato` while the keyframe and
+`ITimeVarying<TValue>` sits in `graphics/time-varying.concepts.plato` while the keyframe and
 track types that implement it live in `future/`.
 
 ## Conventions and style

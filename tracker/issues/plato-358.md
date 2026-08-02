@@ -14,15 +14,15 @@ links: [plato-350, stdlib/meshes-volumetric.plato, stdlib/meshes.concepts.plato]
 ---
 
 ## Idea
-`TetrahedronCell` (and similar volumetric cell types) are named/treated like cells but structurally match faces: fixed vertex-index corners, Hashable, natural Indexable — i.e. they are Face-like elements of a volumetric mesh, not a separate taxonomic kingdom. `TetrahedronCell` today: `implements Value, Hashable` with A,B,C,D: VertexIndex (`meshes-volumetric.plato`); `Face` concept inherits `Value, Hashable, Indexable<VertexIndex>`.
+`TetrahedronCell` (and similar volumetric cell types) are named/treated like cells but structurally match faces: fixed vertex-index corners, Hashable, natural Indexable — i.e. they are Face-like elements of a volumetric mesh, not a separate taxonomic kingdom. `TetrahedronCell` today: `implements Value, Hashable` with A,B,C,D: VertexIndex (`meshes-volumetric.plato`); `Face` interface inherits `Value, Hashable, Indexable<VertexIndex>`.
 
 ## Assumptions
 - Volumetric meshes need cell types parallel to TriangleFace/QuadFace.
-- Calling them "Cell" is fine if they implement Face (or a Cell concept inheriting Face).
+- Calling them "Cell" is fine if they implement Face (or a Cell interface inheriting Face).
 - plato-324 unified surface faces; volumetric side was left behind.
 
 ## Design decisions
-- **Face vs Cell concept** — Cell inherits Face vs separate Cell with same obligations vs rename to TetrahedronFace (misleading in 3D FEM).
+- **Face vs Cell interface** — Cell inherits Face vs separate Cell with same obligations vs rename to TetrahedronFace (misleading in 3D FEM).
 - **Orientation / volume sign** — cell-specific ops beyond Face.
 - **Coverage** — HexahedronCell, WedgeCell, PyramidCell same treatment.
 
@@ -34,7 +34,7 @@ links: [plato-350, stdlib/meshes-volumetric.plato, stdlib/meshes.concepts.plato]
 
 ## Approaches
 Short term: `TetrahedronCell implements Face` (+ Indexable synthesis or manual At/Count); library helpers Edges/Faces-of-cell.
-Long term: Cell concept for volume; shared mesh incidence for tet meshes.
+Long term: Cell interface for volume; shared mesh incidence for tet meshes.
 Adjacent: rename discussion only if Face implement is confusing.
 
 ## Bedrock
@@ -51,6 +51,6 @@ Add implements Face + At/Count like QuadFace; keep name TetrahedronCell.
 - Cons: Face-of-volume naming awkward in prose.
 
 ## Case against
-- Face implies 2D facet; cells are 3D — concept abuse.
+- Face implies 2D facet; cells are 3D — interface abuse.
 - Volumetric incidence differs; forcing Face helpers may be wrong.
-- Verdict: **pursue** shared Indexable/Hashable obligations; **park** literal `implements Face` if naming confuses — prefer `concept Cell inherits Face` or parallel concept.
+- Verdict: **pursue** shared Indexable/Hashable obligations; **park** literal `implements Face` if naming confuses — prefer `interface Cell inherits Face` or parallel interface.

@@ -1,7 +1,7 @@
 //==
 // # RigidDynamics — derived functions for IForceModel2D and IForceModel3D
 //
-// Bodies for the `IForceModel2D` and `IForceModel3D` concepts declared in
+// Bodies for the `IForceModel2D` and `IForceModel3D` interfaces declared in
 // `rigid-dynamics.concepts.plato`. An environmental force model yields the newton force
 // on a body in its current state via `ForceOn`; the helpers derive that force's
 // magnitude, the acceleration it imparts (F = m a), and a negligibility test.

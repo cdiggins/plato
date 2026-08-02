@@ -2,21 +2,21 @@
 // # Curves
 //
 // Sections, in order:
-//  - Curves — derived functions for the curve concepts
+//  - Curves — derived functions for the curve interfaces
 //  - The angular-curve bridges
-//  - Derived functions for the curve capability concepts
+//  - Derived functions for the curve capability interfaces
 //  - Discretizing curves and surfaces
 
 library Curves
 {
     //==
-    // # Curves — derived functions for the curve concepts
+    // # Curves — derived functions for the curve interfaces
     //
     // Bodies for ICurve1D / ICurve2D / ICurve3D and the two closed-curve markers
     // declared in `curves.concepts.plato`. Every function's first parameter is
-    // concept-typed, so each helper becomes available on every implementing type.
+    // interface-typed, so each helper becomes available on every implementing type.
     // Endpoints, chords, secants, and finite-difference estimates are all derivable
-    // from `Eval` alone; nothing here needs a member the concept does not already
+    // from `Eval` alone; nothing here needs a member the interface does not already
     // declare.
     //
     // The canonical parameter domain of a curve is the unit interval [0,1], and
@@ -176,7 +176,7 @@ library Curves
     //==
     // # The angular-curve bridges
     //
-    // Bodies for the angular curve concepts declared in `curves.concepts.plato`:
+    // Bodies for the angular curve interfaces declared in `curves.concepts.plato`:
     // the canonical-parameter evaluation of an angular curve is derivable once for
     // every implementor, so each angular curve costs only its Eval(Angle). Curves
     // whose sweep is not a single full turn override Eval(Number) directly,
@@ -194,16 +194,16 @@ library Curves
         => curve.Eval(t.Turns);
 
     //==
-    // # Derived functions for the curve capability concepts
+    // # Derived functions for the curve capability interfaces
     //
-    // Bodies for the concepts that a curve may additionally satisfy, declared in
+    // Bodies for the interfaces that a curve may additionally satisfy, declared in
     // `curves.concepts.plato`: periodicity, first
     // derivatives in the plane and in space, a moving frame, planarity, polar form,
     // and arc-length parameterization.
     //
-    // TODO(concept-gap): a true tangent or curvature by analytic differentiation is
+    // TODO(interface-gap): a true tangent or curvature by analytic differentiation is
     // still not derivable — it needs the parameter derivative of the evaluation, which
-    // none of these concepts expose (trigonometry and the square root are now available
+    // none of these interfaces expose (trigonometry and the square root are now available
     // via Angle.Cos/Sin and Number.Sqrt, so the polar-to-Cartesian conversion below is
     // derived directly). Analytic differential helpers are left to the concrete types.
 
@@ -426,7 +426,7 @@ library Curves
     //
     // Evaluating a curve, a polar curve, or a parametric surface at evenly spaced
     // parameters, and turning the samples into polylines. Split out of the curve
-    // concept bodies because discretization is a single concern with a single
+    // interface bodies because discretization is a single concern with a single
     // convention (open curves include both endpoints, closed ones omit the duplicate
     // seam) and because it is the one part of the curve package that reaches into
     // the P2 collection primitives.

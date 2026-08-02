@@ -33,5 +33,5 @@ Supported: VS 2022 and VS 2026 (Community / Pro / Enterprise).
 
 ## Keywords
 
-Kept in sync with `vscode-plato/syntaxes/plato.tmLanguage.json` (`unique`, `type`, `concept`,
+Kept in sync with `vscode-plato/syntaxes/plato.tmLanguage.json` (`unique`, `type`, `interface`,
 `library`, `primitive`, `implements`, `inherits`, …).

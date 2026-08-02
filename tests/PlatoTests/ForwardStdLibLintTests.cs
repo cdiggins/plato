@@ -32,14 +32,14 @@ namespace PlatoTests
         // plato-382 phase D; 39 for all four tiers at 33; 38/44 before plato-378, 229 at 52b3f8c
         // on 2026-07-31, 159 mid-day, then plato-321 closed the obligation burn-down.)
         //
-        //   LINT001 - a type implements a concept but an obligation has no implementation; the
+        //   LINT001 - a type implements an interface but an obligation has no implementation; the
         //             generated member throws NotImplementedException. Now ZERO across the
         //             shipping tiers. The last one was `Tween<T>`'s Sample, discharged by
         //             plato-382: `type Tween<T> where T: Interpolatable` makes the Lerp of From
         //             and To well-typed, so `library MotionGraphics` can carry a real body. (The
         //             two remaining LINT001 findings in the ALL-TIERS view are the `future`
         //             AnimationTrack/TangentTrack, which are out of this ratchet's scope.)
-        //   LINT013 - a concept with no concrete implementer that library bodies nonetheless
+        //   LINT013 - an interface with no concrete implementer that library bodies nonetheless
         //             dispatch on, so that derived surface is unreachable (Sliceable,
         //             Concatenable, ...). All 32 of the 32. Burn-down: plato-277 / plato-325.
         //
@@ -93,7 +93,7 @@ namespace PlatoTests
                 TestContext.WriteLine(line);
 
             TestContext.WriteLine("");
-            TestContext.WriteLine("Ratchet findings by owning type/concept (most first):");
+            TestContext.WriteLine("Ratchet findings by owning type/interface (most first):");
             var owners = linter.Findings
                 .Where(f => f.Severity != LintSeverity.Info)
                 .GroupBy(f => f.File)

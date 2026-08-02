@@ -10,7 +10,7 @@ library Quantities
     //==
     // # Quantities — obligation fills for the concrete quantity types
     //
-    // `concept IQuantity` (`quantities.concepts.plato`) inherits `IComparable`, `IHashable`,
+    // `interface IQuantity` (`quantities.concepts.plato`) inherits `IComparable`, `IHashable`,
     // `IAdditive`, `IScalable`, and `IInterpolatable`. None of those has a generic
     // implementation that a concrete quantity type can inherit for free, so every
     // one of the ~49 physical quantity types owes ten members. Left unfilled, the
@@ -41,11 +41,11 @@ library Quantities
     // `constants.library.plato`); zero-argument functions are not idiomatic here.
     //
     // This lives in its own file rather than in `numeric-structures.library.plato`
-    // (the P3 package that owns the `IQuantity` *concept*) on purpose. P3 holds
-    // derived helpers that are generic over concepts; what follows is 98 bodies
+    // (the P3 package that owns the `IQuantity` *interface*) on purpose. P3 holds
+    // derived helpers that are generic over interfaces; what follows is 98 bodies
     // naming 49 concrete types one at a time, which would swamp that file and has a
     // different reason to change — it grows whenever a `quantities-*.plato` file adds
-    // a type, not when a concept gains a member. `LIBRARIES.md` ground rule 1 names
+    // a type, not when an interface gains a member. `LIBRARIES.md` ground rule 1 names
     // files `<domain>.library.plato` after the domain they serve;
     // `quantities.library.plato` serving the quantities domain follows that rule
     // directly.
@@ -53,7 +53,7 @@ library Quantities
     //==
     // # Generic obligations
     //
-    // Ten members, written once against the concept, discharging the
+    // Ten members, written once against the interface, discharging the
     // IAdditive / IHashable / IOrderable / IInterpolatable / IScalable obligations
     // for every implementing type. Each routes through Amount/FromAmount, so a
     // new quantity type needs only the two projections in the sections below.
@@ -109,7 +109,7 @@ library Quantities
     // two lines per concrete quantity type, naming its canonical-unit field and
     // rebuilding a value from a raw amount in that same unit. Split out of that
     // file because it has a different reason to change - it grows whenever a
-    // `quantities-*.plato` file adds a type, not when a concept gains a member.
+    // `quantities-*.plato` file adds a type, not when an interface gains a member.
 
     //==
     // # Per-type projections

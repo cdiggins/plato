@@ -30,8 +30,8 @@ public class PlatoAnalyzer
         if (f.Implementation.OwnerType.Name == "Intrinsics")
             return -200;
 
-        // We assume that if there is no concept, then the function implementation originated as a concrete type.
-        // Concrete types provide a better score than any concept.
+        // We assume that if there is no interface, then the function implementation originated as a concrete type.
+        // Concrete types provide a better score than any interface.
         if (b == null)
             return -100;
 

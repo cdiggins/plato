@@ -24,12 +24,12 @@ FromAmount(_: Length, x: Number): Length => new Length(x);
 ```
 
 Both halves are derivable from the type's shape. Introduce a first-class
-single-field-wrapper (newtype) concept and have the binder satisfy its two obligations
+single-field-wrapper (newtype) interface and have the binder satisfy its two obligations
 automatically for any type with exactly one field:
 
 ```plato
-concept Wrapper<T> { Unwrap(x: Self): T; Wrap(_: Self, x: T): Self; }
-concept Quantity inherits Value, Comparable, Hashable, Additive, Scalable, Interpolatable, Wrapper<Number> { }
+interface Wrapper<T> { Unwrap(x: Self): T; Wrap(_: Self, x: T): Self; }
+interface Quantity inherits Value, Comparable, Hashable, Additive, Scalable, Interpolatable, Wrapper<Number> { }
 ```
 
 `Amount`/`FromAmount` then either retire in favour of `Unwrap`/`Wrap`, or stay as two
@@ -45,7 +45,7 @@ Measured shape of the problem (2026-07-30, `stdlib/`):
 - The reading half is already free when names match: `x.Radians` resolves because `Radians`
   is a field. The obligation is only unmet because the field is named per-unit, not `Amount`.
 - The constructing half is unmet because Plato has no generic `new Self(x)` inside a
-  concept-generic body (`PlatoCompiler/Symbols/Definitions.cs` `SelfType`; no construction
+  interface-generic body (`PlatoCompiler/Symbols/Definitions.cs` `SelfType`; no construction
   path over `SelfType` exists).
 - The per-type auto-constructor (`new Length(x)`) already exists in the emitters, so
   synthesis has a target to bind to — this is a binder/obligation-satisfaction change,
@@ -73,10 +73,10 @@ Measured shape of the problem (2026-07-30, `stdlib/`):
 - [plato-350](plato-350.md) — same question for `Indexable`: derive `At`/`Count` from a
   single collection field. Sibling, not duplicate: that one is about collection shape, this
   one about scalar newtypes. If a `derives` keyword lands, both should use it.
-- [plato-277](plato-277.md) — stdlib concept-gap burn-down; this is one concrete gap with a
+- [plato-277](plato-277.md) — stdlib interface-gap burn-down; this is one concrete gap with a
   measured line count.
 - [plato-306](plato-306.md) — generic `Difference` defaults via an optional conversion
-  concept; same technique (add a concept so obligations become generic one-liners), already
+  interface; same technique (add an interface so obligations become generic one-liners), already
   in-progress, so its outcome is evidence for or against this approach.
 - `stdlib/foundation/quantities.library.plato` — the 10 generic obligations already written
   once against `Amount`/`FromAmount`; the prior art proving the pair is the right primitive.
@@ -102,7 +102,7 @@ Strengthens the **obligation-satisfaction seam** in the binder
 (`PlatoCompiler/Symbols/` + `ConceptGrounding.cs`): today an obligation is met only by an
 explicitly written function or a name-matching field, so every structurally-derivable
 member costs one hand-written line per type. Adding a derivation rule makes "the shape of
-the type satisfies the concept" expressible, which is what both this and
+the type satisfies the interface" expressible, which is what both this and
 [plato-350](plato-350.md) need. Cheaper afterwards: every future newtype (`Ratio`,
 `Probability`, `Strain`) joins `Quantity` for free instead of adding two lines to a growing
 mechanical file.
@@ -123,17 +123,17 @@ to `Wrapper<T>` later is a validation change, not a rewrite.
       `stdlib/CONVENTIONS.md`
 
 ## Simplest possible implementation
-Binder rule: when a type has exactly one field and implements a concept declaring
+Binder rule: when a type has exactly one field and implements an interface declaring
 `Unwrap(x: Self): T` / `Wrap(_: Self, x: T): Self` where `T` equals the sole field's type,
 synthesize both fills — `Unwrap` as the field read, `Wrap` as a call to the existing
-auto-constructor. Add `Wrapper<Number>` to `concept Quantity`'s inherits list, keep
+auto-constructor. Add `Wrapper<Number>` to `interface Quantity`'s inherits list, keep
 `Amount`/`FromAmount` as two generic one-liners in `quantities.library.plato`, delete the
 projection file.
 
 - Pros: −236 lines and −50 of 97 constructor-shaped fills; every future quantity type is one
   line total; no downstream call site changes; no writer changes.
 - Cons/risks: a type gains members not visible in its declaration (the readability objection
-  raised on plato-350); an accidentally single-field type could silently satisfy a concept it
+  raised on plato-350); an accidentally single-field type could silently satisfy an interface it
   did not mean to; the 47 remaining constructor-shaped fills are untouched, so the idiom
   survives and the tree now has two ways to meet the same kind of obligation.
 

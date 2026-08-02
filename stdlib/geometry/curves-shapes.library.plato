@@ -224,15 +224,15 @@ library CurvesShapes
     // directly in Cartesian form. The shared `CirclePoint` helper is in the arcs
     // section.
     //
-    // TODO(concept-gap): an angular curve concept — a curve whose
+    // TODO(interface-gap): an angular curve interface — a curve whose
     // natural parameter is an `Angle`, with a single bridge
     // `Eval(curve, t: Number) => curve.Eval(t.Turns)`. This is NOT a fold gap and
     // the P2 `Reduce`/`MapRange` primitives do not touch it: the block is purely a
-    // missing concept surface. The clean fix is `concept IAngularCurve2D` (with the
+    // missing interface surface. The clean fix is `interface IAngularCurve2D` (with the
     // obligation `Eval(self, theta: Angle): Point2D`) plus one bridge, whose
     // natural home is `curves.concepts.plato` alongside the other curve
-    // concepts — a file owned by the curves package, not editable from this
-    // library-body pass. Until that concept lands, the roulettes and figure curves
+    // interfaces — a file owned by the curves package, not editable from this
+    // library-body pass. Until that interface lands, the roulettes and figure curves
     // below each spell out the `t.Turns` conversion in their own `Eval`.
 
     //==
@@ -401,11 +401,11 @@ library CurvesShapes
     //     `FramePoint` below, so the declaration comment "winds about the frame's
     //     Z axis" is what the body actually does.
     //
-    // TODO(concept-gap): an angular curve whose natural parameter is an `Angle`,
+    // TODO(interface-gap): an angular curve whose natural parameter is an `Angle`,
     // bridged by one `Eval(curve, t: Number) => curve.Eval(t.Turns)`, has no
-    // counterpart concept here. This is NOT a fold gap; the P2
+    // counterpart interface here. This is NOT a fold gap; the P2
     // `Reduce`/`MapRange` primitives do not touch it. The clean fix is a
-    // `concept IAngularCurve3D` (obligation `Eval(self, theta: Angle): Point3D`)
+    // `interface IAngularCurve3D` (obligation `Eval(self, theta: Angle): Point3D`)
     // plus one bridge, whose natural home is `curves.concepts.plato`,
     // owned by the curves package and not editable from this library-body pass.
     // Until it lands the `t.Turns` conversion is repeated in each `Eval` below.

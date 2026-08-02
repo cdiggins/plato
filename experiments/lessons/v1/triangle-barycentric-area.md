@@ -108,10 +108,10 @@ type Triangle2D
 }
 ```
 
-`PlanarMeasurable` (declared in `15-concepts-geometry.plato`) requires:
+`PlanarMeasurable` (declared in `15-interfaces-geometry.plato`) requires:
 
 ```plato
-concept PlanarMeasurable
+interface PlanarMeasurable
 {
     Area(x: Self): Number;
     Perimeter(x: Self): Number;
@@ -126,7 +126,7 @@ barycentrics or winding checks.
 `A`, `B`, `C`, i.e. barycentric $(1/3,1/3,1/3)$.
 
 `ContainsPoint2D` is the membership test; barycentrics are the standard implementation
-strategy (all weights non-negative), though the concept does not prescribe the method.
+strategy (all weights non-negative), though the interface does not prescribe the method.
 
 ### Barycentric as a type
 
@@ -247,7 +247,7 @@ in a way that reconstructs $P$.
   `Point(triangle, bary)`. The type exists; the maps that give it meaning do not.
 
 - **missing-function** — `17-planar-shapes.plato`: `PlanarMeasurable.Area` does not specify
-  signed vs absolute in the concept (`15-concepts-geometry.plato`). Triangles need
+  signed vs absolute in the interface (`15-interfaces-geometry.plato`). Triangles need
   `SignedArea` explicitly for barycentrics and winding; document or split the API.
 
 - **doc-comment** — `11-points.plato`: `BarycentricCoordinate` should state the vertex

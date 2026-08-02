@@ -26,7 +26,7 @@ Fold proven geometry libraries into the forward Plato stdlib (`submodules/Plato/
 ## Assumptions
 
 - Forward stdlib (`stdlib`) is the home for portable geometry algorithms; sidecar folders (`earcut/`, `csg/`) were spikes, not the long-term layout.
-- Earcut/CSG ports are mature enough to absorb after vocabulary/naming adaptation (concept-era types).
+- Earcut/CSG ports are mature enough to absorb after vocabulary/naming adaptation (interface-era types).
 - BREP in Plato need not mirror OpenCascade — start from the demo BREP + tessellation path.
 - Noise declarations in `noise.plato` are the contract; Ashima/labs implementations are the body source (and GLSL-friendly).
 - Models may deserve a redesign (instancing + materials + bounds) rather than a 1:1 C# port — `scene3d.plato` vs `IModel3D` is an open seam.
@@ -35,7 +35,7 @@ Fold proven geometry libraries into the forward Plato stdlib (`submodules/Plato/
 
 - **In-tree vs package** — fold Earcut/CSG into `stdlib/*.plato` vs keep as optional packages under `stdlib/` subfolders that lint still sees. Flat stdlib matches current lint (`TopDirectoryOnly`); subpackages need tooling changes.
 - **BREP fidelity** — faceted/demo BREP (faces + edge uses + tessellate) vs full NURBS/topology BREP. Prefer faceted + parametric faces first.
-- **Noise source of truth** — implement `noise.plato` concepts from Ashima vs keep labs C# and only declare in Plato. Prefer Plato bodies so all backends share one definition.
+- **Noise source of truth** — implement `noise.plato` interfaces from Ashima vs keep labs C# and only declare in Plato. Prefer Plato bodies so all backends share one definition.
 - **Models shape** — port `IModel3D`/`InstanceStruct`/`RenderModelData` vs invent Plato `Model3D` as mesh pool + instance list (lighter than full `Scene3D`). Decide whether Models is a stdlib type or a Studio/render concern that consumes stdlib meshes.
 - **Migration order** — Earcut → CSG → Noise bodies → BREP → Models (increasing design ambiguity).
 
@@ -50,7 +50,7 @@ Fold proven geometry libraries into the forward Plato stdlib (`submodules/Plato/
 - [scene3d.plato](../../submodules/Plato/stdlib/scene3d.plato) — retained scene; overlaps Models.
 - [docs/plato-library-roadmap-ideas.md](../../docs/plato-library-roadmap-ideas.md) — noise/CSG-via-SDF roadmap notes.
 - [plato-028](plato-028.md) — Earcut-exposed language/runtime gaps.
-- [ara3d-056](ara3d-056.md) — geometry capability lattice including BREP/models → Plato concepts.
+- [ara3d-056](ara3d-056.md) — geometry capability lattice including BREP/models → Plato interfaces.
 - [studio-168](studio-168.md) — flowable types (brep among them).
 
 ## Approaches
@@ -79,13 +79,13 @@ Strengthens the **stdlib as the single portable geometry algorithm home**: spike
 
 - [ ] Earcut lives under `stdlib` (or documented stdlib package), lint green, existing earcut tests still pass via regenerated path
 - [x] CSG likewise migrated — first stdlib increment shipped 2026-07-30 (`solids-csg-*.plato`, polygon-soup Union/Intersection/Difference via plane clipping; BSP variant + executable tests deferred); old `csg/csg.plato` was inspiration only, retirement still open
-- [ ] Noise: at least Perlin + Worley (2D/3D) have Plato bodies satisfying `noise.plato` concepts; labs noted as superseded or kept as reference
+- [ ] Noise: at least Perlin + Worley (2D/3D) have Plato bodies satisfying `noise.plato` interfaces; labs noted as superseded or kept as reference
 - [x] Written decision: BREP scope — resolved by [plato-302](plato-302.md), shipped 2026-07-30: faceted demo lift (edge-use shell, `BrepCurve = Line` / `BrepSurface = Planar | Bilinear` sums, `brep*.plato` in stdlib); trims/booleans/NURBS explicitly out. Models vs Scene3D still open
 - [ ] Sidecar folders / labs retirement plan recorded (delete, archive, or leave as conformance hosts)
 
 ## Simplest possible implementation
 
-`git mv` / re-home `earcut.plato` and `csg.plato` into `stdlib/` with minimal renames to compile under v3 concepts; wire regen scripts to stdlib; leave BREP/Noise/Models as follow-up issues once those two are green.
+`git mv` / re-home `earcut.plato` and `csg.plato` into `stdlib/` with minimal renames to compile under v3 interfaces; wire regen scripts to stdlib; leave BREP/Noise/Models as follow-up issues once those two are green.
 
 Pros: reuses proven ports; immediate consolidation signal; small design risk.
 Cons: may need vocabulary patches; BREP/Models remain unresolved; lint/tooling may need path updates.

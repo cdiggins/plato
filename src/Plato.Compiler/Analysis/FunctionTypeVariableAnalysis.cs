@@ -87,7 +87,7 @@ namespace Ara3D.Geometry.Compiler.Analysis
 
             // NOTE: this is a special case for the array interfaces. 
             // What I've observed is that there are two use cases for interfaces. 
-            // As traits or concepts, and as actual interfaces. 
+            // As traits or interfaces, and as actual interfaces. 
             // This is a bit of a hack or wokaround. I might not want to do this for interfaces at all. 
             if (ti.Def.Name == "IArray" || ti.Def.Name == "IArray2D" || ti.Def.Name == "IArray3D")
                 return new TypeInstance(ti.Expr, args);

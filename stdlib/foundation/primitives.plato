@@ -8,8 +8,8 @@
 // declaration.
 //
 // Fields are intentionally absent throughout: a primitive has no declarable shape.
-// What each declaration DOES carry is its concept surface - the `implements` list
-// states which foundational concepts the intrinsic satisfies, and that is the only
+// What each declaration DOES carry is its interface surface - the `implements` list
+// states which foundational interfaces the intrinsic satisfies, and that is the only
 // authority the checker has over these names.
 //
 // The set below is the whole set. Adding a declaration here is a claim that the

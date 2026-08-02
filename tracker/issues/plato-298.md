@@ -1,6 +1,6 @@
 ---
 id: plato-298
-title: Represent polygon meshes with and without holes; refine manifold concepts
+title: Represent polygon meshes with and without holes; refine manifold interfaces
 type: idea
 status: idea
 priority: "?"
@@ -15,21 +15,21 @@ links: [submodules/Plato/stdlib/meshes.plato, submodules/Plato/stdlib/topology-c
 
 ## Idea
 
-Make sure Plato can **properly represent polygon meshes**, including the split between faces **without holes** and faces **with holes**, and decide which **topology concepts** (especially manifoldness) belong as type markers vs computed classification. Forward stdlib already has CSR `PolygonMesh3D` (simple face rings, no hole rings), `TriangleMesh3D` / `QuadMesh3D`, marker concept `Manifold`, and enum `Manifoldness` on `TopologySummary`. 2D already has `PolygonWithHoles` in Earcut. Gap: 3D polygon meshes cannot express a face with inner rings; there is no clear story for when a mesh *is* a manifold vs when manifoldness is only a runtime audit; hole-aware half-edge (`BordersHole`) assumes hole representation that the mesh type does not yet carry.
+Make sure Plato can **properly represent polygon meshes**, including the split between faces **without holes** and faces **with holes**, and decide which **topology interfaces** (especially manifoldness) belong as type markers vs computed classification. Forward stdlib already has CSR `PolygonMesh3D` (simple face rings, no hole rings), `TriangleMesh3D` / `QuadMesh3D`, marker interface `Manifold`, and enum `Manifoldness` on `TopologySummary`. 2D already has `PolygonWithHoles` in Earcut. Gap: 3D polygon meshes cannot express a face with inner rings; there is no clear story for when a mesh *is* a manifold vs when manifoldness is only a runtime audit; hole-aware half-edge (`BordersHole`) assumes hole representation that the mesh type does not yet carry.
 
 ## Assumptions
 
 - Arbitrary-arity faces matter for polyhedra ([plato-297](plato-297.md)), CAD/BREP tessellation, and quad-dominant cages — triangle-only is not enough.
 - Holes appear in at least two places: (a) **planar face holes** (outer + inner rings on one face), (b) **surface boundary loops** (mesh holes). These must not be conflated in the type system.
 - Earcut's `PolygonWithHoles` is the 2D precedent for (a); half-edge `BordersHole` / boundary loops cover (b).
-- Marker concepts (`Manifold`, `ClosedShape`, `Orientable`) are promises; `Manifoldness` on `TopologySummary` is a measurement — both can coexist if the rules are explicit.
+- Marker interfaces (`Manifold`, `ClosedShape`, `Orientable`) are promises; `Manifoldness` on `TopologySummary` is a measurement — both can coexist if the rules are explicit.
 
 ## Design decisions
 
-- **One type vs two** — keep a single `PolygonMesh3D` that optionally carries hole rings vs split `SimplePolygonMesh3D` (no holes) and `PolygonMeshWithHoles3D` (or face-local `FaceWithHoles`). Two types make illegal states unrepresentable for Conway/dual; one type is simpler for importers. Leaning two categories (user request) with a shared concept `PolygonalMesh3D`.
+- **One type vs two** — keep a single `PolygonMesh3D` that optionally carries hole rings vs split `SimplePolygonMesh3D` (no holes) and `PolygonMeshWithHoles3D` (or face-local `FaceWithHoles`). Two types make illegal states unrepresentable for Conway/dual; one type is simpler for importers. Leaning two categories (user request) with a shared interface `PolygonalMesh3D`.
 - **Hole encoding** — CSR with ring breaks (offsets + `RingKind` outer/hole) vs array-of-faces where each face is `PolygonWithHoles3D` (3D-embedded rings). Face-as-value matches Earcut and triangulation per face; flat CSR matches GPU upload. Prefer face records for library clarity; CSR as a derived packing view.
-- **Manifold as concept vs enum** — strengthen `Manifold` / add `ManifoldWithBoundary` markers for APIs that require them (Conway, dual, volume) vs only populate `TopologySummary.Manifoldness` after analysis. Prefer markers for *static* seeds (Platonic meshes) and computed enum for imported soups.
-- **New concepts worth adding** — candidates: `ManifoldWithBoundary`, `Watertight` / `ClosedSurface` (stronger than `ClosedShape`), `OrientableSurface`, `PolygonalFace` / `FaceWithHoles`, maybe `PureSimplicial` for triangle meshes. Avoid a god-concept; compose markers.
+- **Manifold as interface vs enum** — strengthen `Manifold` / add `ManifoldWithBoundary` markers for APIs that require them (Conway, dual, volume) vs only populate `TopologySummary.Manifoldness` after analysis. Prefer markers for *static* seeds (Platonic meshes) and computed enum for imported soups.
+- **New interfaces worth adding** — candidates: `ManifoldWithBoundary`, `Watertight` / `ClosedSurface` (stronger than `ClosedShape`), `OrientableSurface`, `PolygonalFace` / `FaceWithHoles`, maybe `PureSimplicial` for triangle meshes. Avoid a god-interface; compose markers.
 - **Non-manifold policy** — represent non-manifold meshes as first-class (importers) with analysis reporting `NonManifold`, vs refuse construction. Must allow soup → repair pipelines (see modifiers backlog).
 
 ## Related
@@ -50,7 +50,7 @@ Short term: (1) document the two hole meanings; (2) add face-with-holes type (or
 
 Long term: half-edge build from both simple and holed polygon meshes; watertight/orientable markers; repair ops that upgrade `NonManifold` → manifold; BREP face loops map cleanly onto face-with-holes.
 
-Adjacent ideas: typed boundary-loop / edge-span results (G3 port doc); mesh-repair concept family; CSR packing view as separate type.
+Adjacent ideas: typed boundary-loop / edge-span results (G3 port doc); mesh-repair interface family; CSR packing view as separate type.
 
 ## Case against
 
@@ -70,12 +70,12 @@ Strengthens the **mesh representation seam** in `meshes.plato` + topology marker
 - [ ] Written decision: one vs two polygon-mesh types; how face holes vs boundary loops differ
 - [ ] Representation exists for a polygon face with outer + inner rings in 3D, triangulable (Earcut or equivalent)
 - [ ] Simple (no-hole) polygon meshes remain the easy path for Platonic/Conway seeds
-- [ ] Concept story documented: which of `Manifold`, `ManifoldWithBoundary`, `Orientable`, `ClosedShape`/`Watertight` are markers vs computed; `TopologySummary.Manifoldness` stays the audit enum
+- [ ] Interface story documented: which of `Manifold`, `ManifoldWithBoundary`, `Orientable`, `ClosedShape`/`Watertight` are markers vs computed; `TopologySummary.Manifoldness` stays the audit enum
 - [ ] At least one law or test: known manifold seed reports `Manifold` / `ManifoldWithBoundary` consistently with markers
 
 ## Simplest possible implementation
 
-Add `PolygonFace3D { Outer: Array<VertexIndex>; Holes: Array<Array<VertexIndex>> }` (or reuse a 3D `PolygonWithHoles` of indices), keep today's CSR `PolygonMesh3D` as the simple no-hole form (or build it from faces with empty holes), wire per-face triangulation through Earcut; add `ManifoldWithBoundary` marker concept; document when markers may be claimed.
+Add `PolygonFace3D { Outer: Array<VertexIndex>; Holes: Array<Array<VertexIndex>> }` (or reuse a 3D `PolygonWithHoles` of indices), keep today's CSR `PolygonMesh3D` as the simple no-hole form (or build it from faces with empty holes), wire per-face triangulation through Earcut; add `ManifoldWithBoundary` marker interface; document when markers may be claimed.
 
 Pros: matches user split; reuses Earcut; unblocks polyhedra operators on the simple path.
 Cons: two face encodings until CSR packing is unified; marker discipline must be enforced by convention/laws, not the type checker alone.

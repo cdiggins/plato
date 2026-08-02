@@ -44,7 +44,7 @@ Consequences:
   `--optimize-arrays` (that needs the Map-into-struct-field pattern from `meshes.library`;
   use a Full variant for it).
 - A *genuinely* tiny fixture would need either a synthetic (non-subset) `.plato` that avoids
-  the geometry concept lattice, or a re-layering of plato-src. Not done here.
+  the geometry interface lattice, or a re-layering of plato-src. Not done here.
 
 ## `--dump-tir=<dir>`
 

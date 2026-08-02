@@ -11,7 +11,7 @@
 //
 // Points are positions in a space (https://en.wikipedia.org/wiki/Point_(geometry));
 // they are not vectors. Subtracting two points yields a vector, and adding a
-// vector to a point yields a point (the IDifference concept). This section holds
+// vector to a point yields a point (the IDifference interface). This section holds
 // the Cartesian positions and their homogeneous (projective) form; the
 // curvilinear systems and the parametric weightings follow below.
 

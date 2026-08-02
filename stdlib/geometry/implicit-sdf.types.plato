@@ -243,7 +243,7 @@ type SdfDisplacementModifier3D
 // A planar SDF discretized on a regular lattice spanning Bounds. Values holds
 // one signed distance per lattice node, in row-major column/row order;
 // evaluation between nodes interpolates bilinearly. Implements the bounded
-// SDF concept: Bounds are the lattice domain (finite support), not merely
+// SDF interface: Bounds are the lattice domain (finite support), not merely
 // a culling hint.
 type SampledSdf2D
     implements IValue, IBoundedSignedDistanceField2D
@@ -254,7 +254,7 @@ type SampledSdf2D
 
 // A spatial SDF discretized on a regular lattice spanning Bounds. Values holds
 // one signed distance per lattice node, in column/row/layer order; evaluation
-// between nodes interpolates trilinearly. Implements the bounded SDF concept:
+// between nodes interpolates trilinearly. Implements the bounded SDF interface:
 // Bounds are the lattice domain (finite support).
 type SampledSdf3D
     implements IValue, IBoundedSignedDistanceField3D

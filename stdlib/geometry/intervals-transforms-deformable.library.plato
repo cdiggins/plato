@@ -1,7 +1,7 @@
 //==
 // # IntervalsTransformsDeformable — derived functionality for IDeformable2D/3D
 //
-// Bodies for the `IDeformable2D` / `IDeformable3D` concepts declared in
+// Bodies for the `IDeformable2D` / `IDeformable3D` interfaces declared in
 // `transforms.concepts.plato`: translation, scaling, and rotation — about the
 // origin or about an arbitrary pivot — all expressed through each type's single
 // Deform primitive. The mapping types are concrete, so these build real
@@ -64,10 +64,10 @@ library IntervalsTransformsDeformable
 
     // The ScaleAbout/RotateAbout helpers use IDifference.Between(a, b) = b - a,
     // the displacement from a to b. That direction is now the documented contract
-    // on the IDifference concept (algebra.concepts.plato), so it is relied on here
+    // on the IDifference interface (algebra.concepts.plato), so it is relied on here
     // rather than merely assumed.
 
-    // RESOLVED (was TODO(concept-gap): RotateAbout is omitted): rotating a Point2D
+    // RESOLVED (was TODO(interface-gap): RotateAbout is omitted): rotating a Point2D
     // needed a point-rotation operation, which is now reachable - `library
     // Transforms` in transforms.library.plato supplies
     // Transform(Vector2D, Rotation2D), and
@@ -141,7 +141,7 @@ library IntervalsTransformsDeformable
     TranslateZ(self: IDeformable3D, distance: Number): Self
         => self.Translate(Vector3D.UnitZ * distance);
 
-    // RESOLVED (was TODO(concept-gap): RotateAbout is omitted for the same reason as
+    // RESOLVED (was TODO(interface-gap): RotateAbout is omitted for the same reason as
     // IDeformable2D): the Transform(Vector3D, Quaternion) intrinsic rotates the pivot
     // displacement directly, so RotateAbout/Rotate/RotateX/Y/Z are implemented above.
 }

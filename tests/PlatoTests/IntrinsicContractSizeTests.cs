@@ -64,7 +64,7 @@ namespace PlatoTests
         }
 
         /// <summary>The contract is one file, and stays that way: every other bodiless signature
-        /// in the stdlib sits inside a `concept`, where it is an obligation on the implementer
+        /// in the stdlib sits inside a `interface`, where it is an obligation on the implementer
         /// rather than a promise the host runtime must keep.</summary>
         [Test]
         public static void OnlyIntrinsicsFileDeclaresHostIntrinsics()

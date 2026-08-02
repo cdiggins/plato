@@ -16,12 +16,12 @@ links: [tracker/issues/plato-323.md, submodules/Plato/stdlib/collections-indexab
 ## Issue
 
 Found while burning down [plato-323](plato-323.md) (forward body-level C# errors). The forward
-stdlib's grid concepts declare the 2D/3D extent members as `ColumnCount` / `RowCount`:
+stdlib's grid interfaces declare the 2D/3D extent members as `ColumnCount` / `RowCount`:
 
 - `submodules/Plato/stdlib/collections-indexable.concepts.plato:35-45`
 - used throughout `stdlib/collections-grids.library.plato`
 
-The handwritten runtime those concepts are meant to bind to spells them `NumColumns` / `NumRows`
+The handwritten runtime those interfaces are meant to bind to spells them `NumColumns` / `NumRows`
 (`ara3d-sdk/src/Ara3D.Collections/FunctionalReadOnlyList2D.cs:9-10`, and
 `CSharpWriter.StructSurfacePropertyNames` seeds exactly `Count` / `NumColumns` / `NumRows` as the
 BCL-parity property names for that reason). The generated C# therefore emits `RowCount` reads on
@@ -73,7 +73,7 @@ name, and the writer already treats `NumRows`/`NumColumns` as the parity names.
 
 ## Fix approaches
 
-1. **Rename in the forward stdlib** to `NumRows` / `NumColumns` (concepts + every use in
+1. **Rename in the forward stdlib** to `NumRows` / `NumColumns` (interfaces + every use in
    `collections-grids.library.plato` and friends). Matches the runtime, matches the writer's
    existing parity set, no compiler change. Note `Jagged.RowCount` in
    `stdlib/collections-jagged.library.plato:24` is a *different* member (rows of a jagged

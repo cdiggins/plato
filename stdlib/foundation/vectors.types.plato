@@ -18,7 +18,7 @@
 // Vector3D — Normalize, Dot, Cross, Length/LengthSquared,
 // Add/Subtract/Multiply/Divide, Reflect, Transform — are declared on the
 // intrinsic hub in `intrinsics.library.plato`, not restated here. The
-// concept-generic helpers (Distance, DistanceSquared, projection/rejection,
+// interface-generic helpers (Distance, DistanceSquared, projection/rejection,
 // AngleBetween, and the safe `NormalizeOr` / Direction factories) live in
 // `numeric-structures.library.plato`.
 
@@ -53,7 +53,7 @@ type Vector3D
 // ever reshaped.
 //
 // VectorN's intrinsic vector operators (Add, Subtract, Magnitude, Zero, ...) are
-// not yet filled; the concept-generic bodies below therefore compute only at the
+// not yet filled; the interface-generic bodies below therefore compute only at the
 // Number instantiation today.
 type VectorN
     implements IVector
@@ -96,7 +96,7 @@ type Direction3D
 //
 // Fixed-arity tuples of whole-number components: pixel offsets, grid steps, and
 // voxel offsets. They implement IValue and IHashable rather than the IVector
-// concept, so no norm, normalization, or component-wise division surface is
+// interface, so no norm, normalization, or component-wise division surface is
 // implied — lift them into a Number tuple when real
 // arithmetic is wanted.
 

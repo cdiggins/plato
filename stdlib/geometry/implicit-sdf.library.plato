@@ -55,7 +55,7 @@ library ImplicitSdf
         => self.Sdf;
 
     //==
-    // # Culling (concept surface — SampledSdf and BoundedSdf)
+    // # Culling (interface surface — SampledSdf and BoundedSdf)
 
     // True when the two conservative domains overlap (touching counts). A
     // false result means the solids cannot intersect if each Bounds encloses

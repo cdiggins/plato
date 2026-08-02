@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace PlatoTests
 {
     /// <summary>
-    /// LINT016 + ConceptHierarchy: redundant concept-to-concept inherits, and the ASCII
+    /// LINT016 + ConceptHierarchy: redundant interface-to-interface inherits, and the ASCII
     /// spanning forest used by <c>Plato.ContextExport --hierarchy</c> (plato-371).
     /// </summary>
     [TestFixture]
@@ -15,17 +15,17 @@ namespace PlatoTests
     {
         // C inherits A redundantly: B already reaches A.
         private const string RedundantLattice = @"
-concept A { }
-concept B inherits A { }
-concept C inherits A, B { }
+interface A { }
+interface B inherits A { }
+interface C inherits A, B { }
 ";
 
         private const string CleanLattice = @"
-concept A { }
-concept B inherits A { }
-concept C inherits B { }
-concept D { }
-concept Diamond inherits B, D { }
+interface A { }
+interface B inherits A { }
+interface C inherits B { }
+interface D { }
+interface Diamond inherits B, D { }
 ";
 
         private static LintFinding[] Lint(string source)
@@ -85,7 +85,7 @@ concept Diamond inherits B, D { }
         public static void AsciiForestShowsTreeAndRedundantSection()
         {
             var text = Hierarchy(RedundantLattice);
-            Assert.That(text, Does.Contain("concept hierarchy"));
+            Assert.That(text, Does.Contain("interface hierarchy"));
             Assert.That(text, Does.Contain("A"));
             Assert.That(text, Does.Contain("`-- B").Or.Contain("+-- B"));
             Assert.That(text, Does.Contain("## Redundant inherits (1)"));
@@ -97,7 +97,7 @@ concept Diamond inherits B, D { }
         public static void AsciiForestNotesMultiParent()
         {
             var text = Hierarchy(CleanLattice);
-            Assert.That(text, Does.Contain("## Multi-parent concepts"));
+            Assert.That(text, Does.Contain("## Multi-parent interfaces"));
             Assert.That(text, Does.Contain("Diamond inherits"));
             Assert.That(text, Does.Contain("## Redundant inherits (0)"));
         }

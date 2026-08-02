@@ -345,7 +345,7 @@ public class RustTypeWriter : CodeBuilder<RustTypeWriter>, ITypeToRust
     }
 
     /// <summary>
-    /// The array concept appears as "Array" or "IArray" depending on the source dialect.
+    /// The array interface appears as "Array" or "IArray" depending on the source dialect.
     /// Both map to the Arr struct from the prelude.
     /// </summary>
     public static HashSet<string> ArrayInterfaceNames = new HashSet<string>()
@@ -400,7 +400,7 @@ public class RustTypeWriter : CodeBuilder<RustTypeWriter>, ITypeToRust
         if (RustWriter.TypeNameReplacements.TryGetValue(name, out var replaced))
             return replaced;
 
-        // The array concept maps to the Vec-backed Arr struct in the prelude.
+        // The array interface maps to the Vec-backed Arr struct in the prelude.
         if (ArrayInterfaceNames.Contains(name))
             return "Arr";
 

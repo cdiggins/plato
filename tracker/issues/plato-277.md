@@ -1,6 +1,6 @@
 ---
 id: plato-277
-title: "stdlib concept-gap burn-down: the 17 markers that need a language or concept decision"
+title: "stdlib interface-gap burn-down: the 17 markers that need a language or interface decision"
 type: debt
 status: ready
 priority: p2
@@ -13,7 +13,7 @@ created: 2026-07-28
 closed:
 ---
 
-Burn-down queue for the `TODO(concept-gap)` / `TODO(cross-package)` / `TODO(follow-up)`
+Burn-down queue for the `TODO(interface-gap)` / `TODO(cross-package)` / `TODO(follow-up)`
 markers in `submodules/Plato/stdlib`. Per `stdlib/LIBRARIES.md` rule 6 these markers are a
 queue, not a permanent ban.
 
@@ -21,24 +21,24 @@ queue, not a permanent ban.
 categories. The two highest-leverage items in it are now done (see History), and the
 `TODO(content)` category has grown into unrelated work of its own — pure stdlib authoring
 (special functions, surface `Eval` bodies, statistics estimators, bounds tightening), which
-needs no language or concept decision. That pile is **out of scope here**; see
+needs no language or interface decision. That pile is **out of scope here**; see
 "Out of scope: TODO(content)" below.
 
 Current counts (grep, 2026-07-29, after the plato-293 re-partition):
 
 | category | markers |
 |---|---|
-| `TODO(concept-gap)` | 11 |
+| `TODO(interface-gap)` | 11 |
 | `TODO(cross-package)` | 4 |
 | `TODO(follow-up)` | 1 |
 | **in scope** | **16** |
 | `TODO(content)` — out of scope | 36 |
 
 Re-run before acting; the tree moves. The `grep -v` matters — resolved markers are retired in
-place as `RESOLVED (was TODO(concept-gap): ...)`, so a bare grep over-counts by three:
+place as `RESOLVED (was TODO(interface-gap): ...)`, so a bare grep over-counts by three:
 
 ```bash
-cd submodules/Plato/stdlib && grep -rn "TODO(concept-gap)\|TODO(cross-package)\|TODO(follow-up)" --include=*.plato . | grep -v RESOLVED
+cd submodules/Plato/stdlib && grep -rn "TODO(interface-gap)\|TODO(cross-package)\|TODO(follow-up)" --include=*.plato . | grep -v RESOLVED
 ```
 
 Every marker carries its own full diagnosis in place — the reason it is blocked, what was
@@ -48,12 +48,12 @@ exist only to show which markers share a single root cause.
 ## Type-parameter bounds: what exists, and what actually doesn't
 
 An earlier revision of this issue claimed Plato has no type-parameter constraint syntax and
-built a headline section on it. **That was false.** Concept `where` clauses are a first-class,
+built a headline section on it. **That was false.** Interface `where` clauses are a first-class,
 fully wired feature:
 
 - Grammar: `Constraint` / `ConstraintList` at
   [PlatoGrammar.cs:172-173](../../submodules/Plato/parakeet/Parakeet.Grammars/PlatoGrammar.cs:172),
-  wired into the `Concept` rule at
+  wired into the `Interface` rule at
   [:191](../../submodules/Plato/parakeet/Parakeet.Grammars/PlatoGrammar.cs:191).
 - AST: `AstConstraint` [Ast.cs:337](../../submodules/Plato/Plato.AST/Ast.cs:337),
   `AstTypeDeclaration.Constraints` [:374](../../submodules/Plato/Plato.AST/Ast.cs:374),
@@ -75,7 +75,7 @@ fully wired feature:
 The "IntervalLike<T> bounded" entry in History below *was* a `where` clause, which is what
 made the old claim self-contradicting.
 
-**The real limit:** bounds sit only on `concept` / `interface` declarations. The `Type` rule
+**The real limit:** bounds sit only on `interface` / `interface` declarations. The `Type` rule
 ([:187](../../submodules/Plato/parakeet/Parakeet.Grammars/PlatoGrammar.cs:187)) carries no
 `ConstraintList`, and `MethodDeclaration`
 ([:205](../../submodules/Plato/parakeet/Parakeet.Grammars/PlatoGrammar.cs:205)) takes no type
@@ -101,13 +101,13 @@ The three items the old section grouped here were each misdiagnosed; their real 
   `ParameterOf` already fills the gap, so this is effectively resolved by specialization.
   [intervals-transforms-interval.library.plato:140](../../submodules/Plato/stdlib/intervals-transforms-interval.library.plato:140)
 
-## Missing concept surfaces (cheap, but owned by `.concepts` files)
+## Missing interface surfaces (cheap, but owned by `.interfaces` files)
 
-- ~~`AngularCurve2D` / `AngularCurve3D`~~ — **DONE 2026-07-30** (commit `de223d6`, merged to main in `1f55a6c`): both concepts + full-turn bridges landed in `curves.concepts.plato`. Bridges live in `curves-angular.library.plato` as `library CurvesAngular` (relocated out of the concepts file in `558a945`, restoring LIBRARIES.md rule 1; concept bodies are declarations only, so bridges must be library functions). Two LINT013 warnings until the spirals/3D-curves passes adopt the concepts.
+- ~~`AngularCurve2D` / `AngularCurve3D`~~ — **DONE 2026-07-30** (commit `de223d6`, merged to main in `1f55a6c`): both interfaces + full-turn bridges landed in `curves.concepts.plato`. Bridges live in `curves-angular.library.plato` as `library CurvesAngular` (relocated out of the interfaces file in `558a945`, restoring LIBRARIES.md rule 1; interface bodies are declarations only, so bridges must be library functions). Two LINT013 warnings until the spirals/3D-curves passes adopt the interfaces.
   [curves-2d-spirals.library.plato:12](../../submodules/Plato/stdlib/curves-2d-spirals.library.plato:12),
   [curves-3d.library.plato:17](../../submodules/Plato/stdlib/curves-3d.library.plato:17)
 - No analytic differentiation, so no true tangent or curvature: the parameter derivative of
-  an evaluation is exposed by no concept. Trigonometry and `Sqrt` are available now, so this
+  an evaluation is exposed by no interface. Trigonometry and `Sqrt` are available now, so this
   is the sole remaining blocker.
   [curves-capabilities.library.plato:9](../../submodules/Plato/stdlib/curves-capabilities.library.plato:9)
 - No sanctioned `Point2D` offset in scope, blocking a finite-difference gradient
@@ -120,8 +120,8 @@ The three items the old section grouped here were each misdiagnosed; their real 
   concrete matrix type supplies its own instead.
   [numeric-structures-matrix.library.plato:18](../../submodules/Plato/stdlib/numeric-structures-matrix.library.plato:18)
 - Generic wrapped *evaluation* (`EvalWrapped` over any `Periodic` + `Procedural` receiver) is
-  blocked by the real limit above: a library function cannot state a two-concept bound.
-  `PeriodicCurve` is the concept that has both, and `EvalWrapped` lives there
+  blocked by the real limit above: a library function cannot state a two-interface bound.
+  `PeriodicCurve` is the interface that has both, and `EvalWrapped` lives there
   (`curves-capabilities.library.plato`). Generic `NormalizedPhase` is separately blocked —
   dividing a `TPeriod` by a `TPeriod` to get a `Number` is not something `Modular` supplies.
   Recorded at the retired marker,
@@ -171,7 +171,7 @@ by the packages that declare those types.
 
 ## Out of scope: TODO(content) — 36 markers
 
-Pure authoring work, no language or concept decision needed. Kept out of this issue so the
+Pure authoring work, no language or interface decision needed. Kept out of this issue so the
 blocked-on-a-decision queue stays readable. Distribution:
 
 - `surfaces.library.plato` (10) — missing `Eval` bodies: BezierPatch (de Casteljau),
@@ -182,7 +182,7 @@ blocked-on-a-decision queue stays readable. Distribution:
   — all 15 wait on one decision: whether the tree gets a special-function vocabulary
   (Gamma/LogGamma, regularized incomplete gamma and beta, erf, modified Bessel). Deliberately
   left unimplemented rather than approximated. **This is the leverage point in the content
-  pile** — same shape `Reduce` had for concept-gap.
+  pile** — same shape `Reduce` had for interface-gap.
 - Bounds tightening (8) — `planar-ellipses` (3, superellipse support/Area/Perimeter),
   `planar-circles` (2), `spatial-spheres` (1), `spatial-patches` (1), `polygons` (1, binary
   search over the convex vertex ring). These are NEW since the original inventory, landed
@@ -230,8 +230,8 @@ L -> M.
 **2026-07-29 (later) — false "no constraint syntax" claim retracted.** The rescope above
 promoted a claim from
 [functional-procedural.library.plato](../../submodules/Plato/stdlib/functional-procedural.library.plato)
-("no `where` clause and no `<T : Concept>` form anywhere in the tree — verified by grep") to
-this issue's headline. It is false: concept `where` clauses are wired through grammar, AST,
+("no `where` clause and no `<T : Interface>` form anywhere in the tree — verified by grep") to
+this issue's headline. It is false: interface `where` clauses are wired through grammar, AST,
 symbol resolution, and their own lint rule, and are used in three places in current stdlib.
 Verified against source; section rewritten and the three markers it grouped re-diagnosed
 individually. The stale marker in the tree was corrected in place. Two other markers had

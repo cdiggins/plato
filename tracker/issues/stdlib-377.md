@@ -40,7 +40,7 @@ property that keeps the aspirational vocabulary honest.
 ## Done means
 
 - [x] Animation-track and skeletal-animation declaration files live under `stdlib/future`
-- [x] `TimeVarying` concept + bodies remain in `graphics` and no shipping-tier file references a
+- [x] `TimeVarying` interface + bodies remain in `graphics` and no shipping-tier file references a
       `future` declaration
 - [x] `lint` and C# codegen skip `future` by default and include it behind an explicit flag
 - [x] `future` still parses and type-checks (all four tiers, 0 diagnostics)
@@ -66,7 +66,7 @@ CS0102 in `src/Plato.Intrinsics/Integer.cs` and `Number.cs`, where `Zero`/`One` 
 both by hand and by generated constants. That belongs to plato-378's primitives split.
 
 `TimeRemap.Track: AnimationTrack<Number>` became `TimeRemap.Curve: TimeVarying<Number>`: it was
-the one shipping-tier reference into the moved vocabulary, and the concept is what it always
+the one shipping-tier reference into the moved vocabulary, and the interface is what it always
 meant. The existential is object-safe, so `ForwardStdLibHasNoViewlessExistentialReferences`
 (CHK308) stays green.
 

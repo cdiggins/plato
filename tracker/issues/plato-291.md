@@ -48,7 +48,7 @@ moved-member, and the TirCSharpBodyWriter ctor scalar-lower guard).
 Measured population (full merged forward stdlib + laws, full V2 recipe): **44 degraded bodies**,
 grouped by cause --
 - 9  TimeVarying implementers (AnimationTrack/TangentTrack/Tween x {ValueAt,Change,SampleAtMidpoint}):
-     bodies call `self.Sample(..)`, a concept obligation NO forward type implements. Genuine library gap.
+     bodies call `self.Sample(..)`, an interface obligation NO forward type implements. Genuine library gap.
 - 19 Array4D.* (At/Map/Reduce/First/...): Array4D is an empty type implementing Indexable4D<T>
      with NO backing storage, so the inherited Indexable At/Count obligations have no implementer. Genuine gap.
 - 14 CollectionsIndexable Map/Reduce over fixed vectors (Number2/3/4/8, Vector2D/3D, VectorN):

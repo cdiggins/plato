@@ -1,6 +1,6 @@
 ---
 id: plato-374
-title: Concept-generic law bodies mix the concept default with the type's override
+title: Interface-generic law bodies mix the interface default with the type's override
 type: bug
 status: ready
 priority: p2
@@ -15,8 +15,8 @@ links: []
 
 ## Issue
 
-When a generic function over a concept is monomorphized onto a concrete type that
-*specializes* one of the concept's derived members, the emitted C# is **inconsistent about
+When a generic function over an interface is monomorphized onto a concrete type that
+*specializes* one of the interface's derived members, the emitted C# is **inconsistent about
 which body it uses**, and which one wins depends on whether `--inline` fired.
 
 Reproduced 2026-07-31 with the forward conformance recipe
@@ -37,21 +37,21 @@ public bool Law_ContainsCenter() => ... this.Contains(this.Start.Lerp(this.End, 
 
 Three calls to the same name in the same file, two different callees. The mechanism: Plato
 resolves `self.Contains` against the constraint (`IntervalLike`), where the specialization is
-invisible, so the concept default is correct-by-construction; but when the inliner declines to
+invisible, so the interface default is correct-by-construction; but when the inliner declines to
 inline, the emitted `this.Contains(x)` is re-resolved by **C# extension-method overload
 resolution**, which does see `Contains(this AngleInterval, Angle)` and prefers it. So the
 generated program's meaning depends on an optimizer heuristic.
 
 Consequence that surfaced this: `AngleInterval.Law_ContainsCenter` failed 5/25 trials with a
-chimera -- the concept's linear `Center` (inlined) checked against the type's arc `Contains`
+chimera -- the interface's linear `Center` (inlined) checked against the type's arc `Contains`
 (re-bound). Neither reading fails on its own. Worked around in that commit by adding an
 `AngleInterval`-receiver `Law_ContainsCenter` to the law packet, which resolves entirely on
 the concrete surface; the generic law remains a latent trap for the next specialization.
 
 ## Fix approaches
 
-1. Decide the rule and enforce it in one place. Either **the concept default always wins**
-   inside a generic body (then the writer must emit a direct call to the concept's own static,
+1. Decide the rule and enforce it in one place. Either **the interface default always wins**
+   inside a generic body (then the writer must emit a direct call to the interface's own static,
    not a C#-resolvable extension call), or **the concrete override always wins** (then
    monomorphization must re-resolve every member access against the substituted type before
    the inliner runs). The first is the smaller change and matches the current type-checker

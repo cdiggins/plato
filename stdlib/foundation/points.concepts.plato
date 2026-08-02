@@ -1,14 +1,14 @@
 //==
-// # ICoordinate concept
+// # ICoordinate interface
 //
-// The marker concept for every point-like type: a position in some space, as
+// The marker interface for every point-like type: a position in some space, as
 // opposed to the displacements of `vectors.types.plato`. The implementing
 // types are declared in `points.types.plato`, `points.types.plato`, and
 // `points.types.plato`; the derived bodies live in
 // `numeric-structures.library.plato`.
 
 // A position in some coordinate space
-// (https://en.wikipedia.org/wiki/Coordinate_system). Marker concept for all
+// (https://en.wikipedia.org/wiki/Coordinate_system). Marker interface for all
 // point-like types.
 interface ICoordinate
     inherits IValue, IEquatable, IInterpolatable

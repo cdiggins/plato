@@ -30,7 +30,7 @@ A function is **pure** when:
 
 Example of a *side effect* include: writing to a file, printing to the screen, updating a global variable, mutating a list someone else is holding, sending a network request, reading the current time. 
 
-These two concepts are called:
+These two interfaces are called:
 
 1. Referential Transparency
 2. Immutability

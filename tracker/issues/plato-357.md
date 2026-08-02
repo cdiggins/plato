@@ -22,20 +22,20 @@ Colors and times should be treated as coordinates — points in a coordinate spa
 - Overloading spatial Coordinate for color/time may confuse CRS/geo (plato-335).
 
 ## Design decisions
-- **One Coordinate vs families** — generic affine-space concept vs ColorCoordinate / TemporalCoordinate / SpatialCoordinate.
+- **One Coordinate vs families** — generic affine-space interface vs ColorCoordinate / TemporalCoordinate / SpatialCoordinate.
 - **Obligations** — require OriginBased + metric Distance, or marker only.
 - **Color delta** — what is the offset type for Color? (plato-340 ColorModel interaction).
 
 ## Related
-- [plato-340](plato-340.md) — shared Color concept (narrower).
+- [plato-340](plato-340.md) — shared Color interface (narrower).
 - [plato-335](plato-335.md) — CRS identity for spatial coordinates.
 - [plato-306](plato-306.md) — Difference / delta conversion.
-- `OriginBased` / metric concepts in algebra-metric.
+- `OriginBased` / metric interfaces in algebra-metric.
 - [plato-356](plato-356.md) — TimeInterval/Instant interval story.
 
 ## Approaches
 Short term: write ADR distinguishing spatial Coordinate from affine-space pattern; extend Instant/Color docs to name origin+delta+metric.
-Long term: shared concept `AffineSpace` (name TBD) with associated Delta; Spatial Coordinate inherits it.
+Long term: shared interface `AffineSpace` (name TBD) with associated Delta; Spatial Coordinate inherits it.
 Adjacent: perceptual color metrics vs Euclidean RGB (dangerous defaults).
 
 ## Bedrock

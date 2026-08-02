@@ -129,7 +129,7 @@ face = FaceAt(mesh, FaceIndex(i))
 pA = PositionAt(mesh, face.A)
 pB = PositionAt(mesh, face.B)
 pC = PositionAt(mesh, face.C)
-// geometric face normal ~ (pB - pA) × (pC - pA)  — Cross not yet on Vector concept
+// geometric face normal ~ (pB - pA) × (pC - pA)  — Cross not yet on Vector interface
 
 rich.VectorChannels[0] = MeshAttribute(
     "normal",
@@ -201,7 +201,7 @@ vanishes). Skip or repair before averaging into vertex normals.
 ## Library recommendations
 
 - **missing-function** — `31-meshes.plato` / `08-vectors.plato`: computing a face normal
-  needs a cross product, but `Vector3D` / the `Vector` concept do not declare `Cross`.
+  needs a cross product, but `Vector3D` / the `Vector` interface do not declare `Cross`.
   The mesh-normals lesson cannot show an idiomatic one-liner without noting the gap.
 
 - **missing-function** — `31-meshes.plato` or `32-mesh-attributes.plato`: no

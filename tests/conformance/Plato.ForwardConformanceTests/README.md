@@ -21,12 +21,12 @@ four clusters.
 
 | Errors | Code | Where | Cause |
 |---|---|---|---|
-| 166 | CS0315 | 8 concrete surface/solid types (`CoonsPatch`, `SweptSurface`, `RuledSurface`, `SweptSolid`, `ExtrudedSurface`, `TrimmedSurface`, `SurfaceOfRevolution`, `TubeSurface`) | a concrete type passed where the concept's F-bounded `Self` is required (`Curve3D<Self>`) |
-| 134 | CS0305 | implicit-field / SDF libraries (`FieldsImplicits*`, `ImplicitSdfTrees`, `FunctionalProcedural`) and `FunctionVolume3D` / `FunctionRegion2D` | wrong generic arity, same concept-as-generic-interface root |
+| 166 | CS0315 | 8 concrete surface/solid types (`CoonsPatch`, `SweptSurface`, `RuledSurface`, `SweptSolid`, `ExtrudedSurface`, `TrimmedSurface`, `SurfaceOfRevolution`, `TubeSurface`) | a concrete type passed where the interface's F-bounded `Self` is required (`Curve3D<Self>`) |
+| 134 | CS0305 | implicit-field / SDF libraries (`FieldsImplicits*`, `ImplicitSdfTrees`, `FunctionalProcedural`) and `FunctionVolume3D` / `FunctionRegion2D` | wrong generic arity, same interface-as-generic-interface root |
 | 14 | CS0535 | `Angle`, `Matrix3x2`, `Matrix4x4`, `Quaternion` | generated partial declares the interface; the handwritten `Plato.Intrinsics` type lacks the member (`Angle.Compare`/`Hash`, `MatrixLike.ColumnCount`/`ElementAt`, `Quaternion.Lerp`) |
 | 6 | CS0557 | `Plato.Intrinsics/Angle.cs:34,37,40` | generated conversions duplicate handwritten ones |
 
-CS0315 + CS0305 are one cluster with one root — the concept-as-generic-interface lowering that
+CS0315 + CS0305 are one cluster with one root — the interface-as-generic-interface lowering that
 `ForwardStdLibCheckerTests` already names as needing a library redesign. CS0535 + CS0557 are
 runtime gaps in `Plato.Intrinsics`, independent and much smaller.
 

@@ -9,7 +9,7 @@
 Why move anything at all, and why this shape:
 
 1. **The suffix grammar is two-thirds finished.** Today `<stem>.concepts.plato` holds
-   concepts and `<stem>.library.plato` holds one library block — but type files are
+   interfaces and `<stem>.library.plato` holds one library block — but type files are
    *bare* `<stem>.plato`. Bare is the one suffix you cannot grep for (`*.plato` matches
    everything) and the one you must *know* means "types". Renaming every bare file to
    `<stem>.types.plato` completes the grammar: **every file's suffix names its
@@ -80,7 +80,7 @@ Suffix grammar after the move — **exact, no bare files**:
 | Suffix | Contents |
 |---|---|
 | `<stem>.types.plato` | only `type` declarations |
-| `<stem>.concepts.plato` | only `concept` blocks |
+| `<stem>.concepts.plato` | only `interface` blocks |
 | `<stem>.library.plato` | exactly one `library` block named after the stem |
 
 Compile subsets (cumulative):
@@ -104,7 +104,7 @@ Mechanical mapping; exceptions called out explicitly.
 | README layer | Folder | Exceptions / notes |
 |---|---|---|
 | 1–7 (primitives … intrinsics) | `foundation` | none |
-| 8 (geometry concepts & shapes) | `geometry` | none |
+| 8 (geometry interfaces & shapes) | `geometry` | none |
 | 9 (curves, splines, surfaces, solids) | `geometry` | none |
 | 10 (fields, SDF, noise, sampling) | `geometry` | none |
 | 11 (topology, meshes, spatial) | `geometry` | none |

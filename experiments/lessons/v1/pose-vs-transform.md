@@ -237,9 +237,9 @@ types.
   the lossy step louder at call sites the pose-vs-transform lesson keeps
   emphasizing.
 
-- **missing-concept** — `13-transforms.plato`: `Pose3D` implements
-  `Interpolatable` but `Transform3D` does not, with no concept such as
-  `RigidMotion` marking distance-preserving maps. A small marker concept would
+- **missing-interface** — `13-transforms.plato`: `Pose3D` implements
+  `Interpolatable` but `Transform3D` does not, with no interface such as
+  `RigidMotion` marking distance-preserving maps. A small marker interface would
   let generic code (constraints, IK, skinning) require rigidity without listing
   `Pose3D | Motor3D` by hand.
 

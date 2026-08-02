@@ -15,7 +15,7 @@ links: [submodules/Plato/stdlib, .temp/plato-unimplemented-obligations.md]
 
 ## Issue
 
-Forward stdlib (`submodules/Plato/stdlib/`) has **228** LINT001 warnings: concrete types claim concept members with no library body, so generated C# would throw `NotImplementedException`. Baseline before this session was **260**; **32** were fixed 2026-07-29 (images Width/Height, graphs, easing Eval, Hash batches). Full remaining inventory: `.temp/plato-unimplemented-obligations.md`.
+Forward stdlib (`submodules/Plato/stdlib/`) has **228** LINT001 warnings: concrete types claim interface members with no library body, so generated C# would throw `NotImplementedException`. Baseline before this session was **260**; **32** were fixed 2026-07-29 (images Width/Height, graphs, easing Eval, Hash batches). Full remaining inventory: `.temp/plato-unimplemented-obligations.md`.
 
 ## Impact
 
@@ -23,7 +23,7 @@ Largest clusters: `Procedural.Eval` (46), `Additive` (20), `MatrixLike` (18), `S
 
 ## Affected code
 
-- `submodules/Plato/stdlib/**/*.library.plato` — missing per-type concept bodies
+- `submodules/Plato/stdlib/**/*.library.plato` — missing per-type interface bodies
 - `PlatoCompiler/Analysis/Linter.cs` — LINT001 definition
 - Inventory: `.temp/plato-unimplemented-obligations.md`
 
@@ -46,7 +46,7 @@ types / style) green and committed separately:
 | time series, kinematics, geo regions, oscillators | 22 | `8ddc9ab` |
 | meshes, point clouds, clothoid, natural spline | 12 | `249f9bc` |
 
-Several fills retired a standing `TODO(concept-gap)` rather than working around
+Several fills retired a standing `TODO(interface-gap)` rather than working around
 it: Cox-de Boor evaluation (`splines-bspline.library.plato`) and the Coons
 blend, revolution, loft, sweep, tube and offset surfaces
 (`surfaces.library.plato`) were all recorded as blocked and were not.
@@ -60,7 +60,7 @@ differences, and the tetrahedral boundary extraction is quadratic for want of a
 keyed container.
 
 **The 8 that remain are one compiler defect, not content** — filed as
-`plato-376`: a concept obligation on a generic type cannot be matched by a
+`plato-376`: an interface obligation on a generic type cannot be matched by a
 library function over a type variable. Five are Array2D/Array3D extents whose
 runtime members already exist; three are the animation tracks, which carry a
 second blocker on top.

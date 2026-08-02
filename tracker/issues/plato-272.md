@@ -35,7 +35,7 @@ Ship a `library Constants` (and color constants as needed) in the forward stdlib
 - [transforms.plato](../../submodules/Plato/stdlib/transforms.plato) — already has `Identity` statics; Constants must not duplicate those.
 
 ## Approaches
-Short term: add `library Constants` with the shipping math set (Zero/One/Epsilon/Pi/Sqrt*/Ln*/axes/UnitInterval), lint green, replace literal Pi/Epsilon in `transforms.plato` and the concept libraries where obvious.
+Short term: add `library Constants` with the shipping math set (Zero/One/Epsilon/Pi/Sqrt*/Ln*/axes/UnitInterval), lint green, replace literal Pi/Epsilon in `transforms.plato` and the interface libraries where obvious.
 Long term: `colors.constants`, measure conversion factors, named frames/gizmo axes as Constants or domain libraries.
 Adjacent: file numbering / type-vs-library split for transforms (separate design questions).
 
@@ -45,7 +45,7 @@ Strengthens the **stdlib discoverability seam**: one place for named numeric/geo
 ## Done means
 - [ ] `library Constants` exists under `stdlib` with at least: Zero, One, Epsilon, Pi, TwoPi/HalfPi (or Angle equivalents), SqrtTwo, GoldenRatio, 2D/3D unit axes, UnitInterval
 - [ ] `lint stdlib` still 0 parse / 0 symbol errors
-- [ ] At least one existing library body (`transforms` or a concept library) uses Constants instead of raw literals for Pi or Epsilon (or documents why none apply yet)
+- [ ] At least one existing library body (`transforms` or an interface library) uses Constants instead of raw literals for Pi or Epsilon (or documents why none apply yet)
 - [ ] README / file-map notes the Constants file
 
 ## Simplest possible implementation

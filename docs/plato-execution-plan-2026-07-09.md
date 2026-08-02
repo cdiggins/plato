@@ -81,7 +81,7 @@ This plan is authoritative over the older handoff sequence where they conflict.*
   TRS/Pose composition order; remove implicit `Number→Angle` (+ add `Radians(Number)`);
   Magnitude/Length unification.
 
-### Track B — foundational concepts (enable generic content)
+### Track B — foundational interfaces (enable generic content)
 - [ ] **B.1 `Fraction`** semantic type; thread through `IInterpolatable.Lerp`
   (`t: Number` → `t: Fraction`) and document `[0,1]`-ish / extrapolation semantics.
 - [ ] **B.2 `Option<T>` / `Result<T,E>`** (pure value types + functions) — honest
@@ -89,7 +89,7 @@ This plan is authoritative over the older handoff sequence where they conflict.*
   sentinels and success-flag tuples over the portable surface.
 - [ ] **B.3 `Tolerance` + `IApproximate` / `IFinite`** — promote the harness's
   mixed abs+rel comparison into the library; unify the scattered epsilons.
-- [ ] **B.4 `IInnerProduct` / norm concept** (`Dot`, derived `Length`/`Normalize`)
+- [ ] **B.4 `IInnerProduct` / norm interface** (`Dot`, derived `Length`/`Normalize`)
   — packaged with A.1; unblocks generic projection / Gram–Schmidt / closest-point.
 - [ ] **B.5 Function-valued fields** (compiler) — unblock `procedurals.plato`:
   either function-typed fields (`Function1<TIn,TOut>` as a field type) or the

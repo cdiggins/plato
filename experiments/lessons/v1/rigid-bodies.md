@@ -193,10 +193,10 @@ type RadialImpulse3D
 }
 ```
 
-Environmental force models implement concepts:
+Environmental force models implement interfaces:
 
 ```plato
-concept ForceModel3D
+interface ForceModel3D
 {
     ForceOn(x: Self, body: RigidBody3D): Vector3D;
 }
@@ -335,7 +335,7 @@ variable steps appear.
 ## Library recommendations
 
 - **missing-function** — `54-rigid-dynamics.plato`: `ForceModel3D.ForceOn` is declared on
-  the concept, but `UniformGravity3D`, `PointGravity`, `DragModel`, and `BuoyancyModel`
+  the interface, but `UniformGravity3D`, `PointGravity`, `DragModel`, and `BuoyancyModel`
   do not yet list `implements ForceModel3D`. The lesson wants to say "gravity is a force
   model"; the implements clauses would make that teachable without a wink.
 

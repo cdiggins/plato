@@ -1,5 +1,5 @@
 //==
-// # Time-varying concepts
+// # Time-varying interfaces
 //
 // The single abstraction shared by every animated value in this layer: something
 // that can be sampled at a moment in time. Tweens and oscillators implement it

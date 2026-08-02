@@ -111,8 +111,8 @@ remaining-by-root list that follows is measured AFTER it.
 
 The forward stdlib spells a list receiver with the CONCRETE `Array<T>` type
 (`BoundsOfPoints(points: Array<Point2D>): Bounds2D`); stdlib-legacy spells the same shape with the
-`IArray<T>` CONCEPT, and `WriteInterfaceLibraryMethods` already emitted the concept spelling as a
-classic extension method in `Extensions.g.cs`. Only the concept arm existed, so the concrete arm
+`IArray<T>` interface, and `WriteInterfaceLibraryMethods` already emitted the interface spelling as a
+classic extension method in `Extensions.g.cs`. Only the interface arm existed, so the concrete arm
 was emitted NOWHERE — `Array` is in `CSharpWriter.IgnoredTypes` (no `ExtensionStylePlan`) and moved
 members are only discovered while writing a concrete type's own file. The fix is that one predicate
 (`CSharpWriter.IsListExtensionReceiver`): `ToCSharpTypeName` already maps `Array<T>` →
@@ -141,7 +141,7 @@ struct surface rather than the global name union. Three coupled parts, because t
 nothing:
 
 1. **Resolve against the receiver's plan** (`GetExtensionPlanByTypeName(owner).KeptNoArgPropertyNames`).
-   A receiver no plan describes — a concept interface, a generic type variable, an `IgnoredTypes`
+   A receiver no plan describes — an interface, a generic type variable, an `IgnoredTypes`
    collection — has no struct surface at all, so it now falls through to the GLOBALS only
    (`Count`/`NumRows`/`NumColumns` and the sum-type flattened fields, which no plan owns). The old
    union fallback is what pinned property syntax onto `mesh.VertexCount()` /
@@ -203,7 +203,7 @@ updated to say that instead of "pre-measures a withheld fix" ([plato-327](plato-
    GONE. **`Vector` + `Distance` (42, i.e. 70 % of what is left in this code) look like one shape and
    are the obvious next cluster.**
 3. **53 CS1929**, led by `ColumnCount` 8 + `RowCount` 8 ([plato-326](plato-326.md)), then `Hash` 7,
-   `Compare` 3, and a long tail of one- and two-hit concept members (`One`/`Zero`/`Concatenate`/
+   `Compare` 3, and a long tail of one- and two-hit interface members (`One`/`Zero`/`Concatenate`/
    `Lerp`/`ToInteger`/`ToNumber`/`Inverse`/`Max`...). Mostly the same wrapper-receiver /
    implicit-conversion gap as root 1: C# will not apply a user-defined conversion to an extension
    method's receiver (the cluster-3 lesson).
@@ -269,7 +269,7 @@ namespace Ara3D.Geometry
   fix 6**: it is now a declaration-stage error and therefore gates all forward measurement.
 - [plato-331](plato-331.md) — `Plato.Intrinsics.V2` still exposes ten members as properties in a
   method-form runtime; the writer hard-codes four of them in `PrimitiveSurfaceOverrides`.
-- [plato-328](plato-328.md) — a generic library function's inferred concept constraint never
+- [plato-328](plato-328.md) — a generic library function's inferred interface constraint never
   reaches the emitted `where` clause (`DeCasteljau<_T0>` calls `.Lerp` on an unbounded `_T0`).
 
 ## Impact

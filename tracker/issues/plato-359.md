@@ -19,17 +19,17 @@ links: [plato-277, plato-360]
 ## Assumptions
 - Many reductions are monoidal (Sum, And, Or) with an obvious identity.
 - Inferring the wrong seed is a silent correctness bug (non-monoid ops).
-- Numerical / generic Zero concepts may already exist for some types.
+- Numerical / generic Zero interfaces may already exist for some types.
 
 ## Design decisions
-- **Inference rule** — require Zero/Identity concept vs special-case Number/Boolean vs overload Reduce without seed.
+- **Inference rule** — require Zero/Identity interface vs special-case Number/Boolean vs overload Reduce without seed.
 - **Partiality** — empty collection: return identity vs error.
 - **Overlap with Sum** — plato-360 lint toward Sum when seed is Zero and op is +.
 
 ## Related
 - [plato-277](plato-277.md) — Reduce on Indexable; Sum spelled as Reduce(0.0, …).
 - [plato-360](plato-360.md) — Reduce that should be Sum.
-- Algebra concepts for Zero/Additive.
+- Algebra interfaces for Zero/Additive.
 
 ## Approaches
 Short term: `Reduce(xs, f)` overload that requires `T: HasZero` (name TBD) or uses Zero(T).
@@ -40,7 +40,7 @@ Adjacent: Scan with same seed rules.
 Ties Reduce to the **identity element** seam in the numeric/algebra lattice. Verdict: **simplest-along-the-grain**. Simple version must NOT infer seeds for arbitrary lambdas without a Zero constraint.
 
 ## Done means
-- [ ] Seedless Reduce overload with explicit concept constraint
+- [ ] Seedless Reduce overload with explicit interface constraint
 - [ ] Empty-collection behavior documented
 - [ ] Existing seeded Reduce remains for non-monoid cases
 
@@ -51,5 +51,5 @@ Add Reduce(xs, f) where element type has Zero; desugar to Reduce(Zero, f).
 
 ## Case against
 - Hidden seeds hurt readability for non-associative ops.
-- Zero concept may not fit all useful reductions (concatenation seed "").
+- Zero interface may not fit all useful reductions (concatenation seed "").
 - Verdict: **pursue** behind a clear HasZero/Identity constraint; keep seeded form.

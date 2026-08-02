@@ -9,7 +9,7 @@
 Almost every feature requested here — deformations with falloff, cloner effectors, soft selection,
 vertex-color-from-analysis, SDF blending — is the same idea: **a scalar field `IProcedural<Point3D, Number>`
 modulating an operation.** The MoGraph/Houdini insight. If the library treats "weight field" as a
-first-class concept, then:
+first-class interface, then:
 - every deformation gets falloff for free: `Deform(mesh, warp, weightField)` = lerp(p, warp(p), w(p));
 - every cloner gets effectors for free (scale/rotate/color clones by field value);
 - selection becomes a field (`SphereFalloff`, `BoxFalloff`, `NoiseField`, `DistanceToMeshField`);
@@ -211,7 +211,7 @@ side in Plato — pure `Integer → Pose3D` / arrays of poses:
 - **Projections**: PlaneProjection3D exists; add oblique/cabinet, spherical/cylindrical (environment
   mapping, panoramas), and `ProjectOntoSphere`.
 - **TransformPath**: `IProcedural<Number, Pose3D>` — a *transform-valued curve* (what GetTransforms
-  approximates). Unifies sweeps, cloners along curves, and camera paths in one concept.
+  approximates). Unifies sweeps, cloners along curves, and camera paths in one interface.
 
 ---
 

@@ -37,9 +37,9 @@ Everything from **Normalize** onward lives in `Plato.Compiler/Checking/` (the ch
 |---|---|---|
 | **Normalize** | done | invariant-enforcement + eta-expansion; behavior-preserving, idempotent |
 | **Constrain** | done | bidirectional; unannotated lambda params/locals ("Any") become inference holes; type-as-value; nullary-constant groups typed; RETURN positions emit coercion (not equality) constraints |
-| **Solve** | done | total; tiered matching exact<generic<concept<conversion; concept-method `Self` instantiated as concept-constrained var (Self-return refinement); concept satisfaction walks the transitive Implements/Inherits closure with per-level type-arg substitution and binds element holes; `Self` unifies permissively (grounded at monomorphize); HOF scheduling (function-shaped args don't block resolution; forced resolutions re-enter the fixpoint); return coercions (cast relation / tuple→same-shape struct / value→implemented interface). **745/823** stdlib functions resolve with zero errors |
+| **Solve** | done | total; tiered matching exact<generic<interface<conversion; interface-method `Self` instantiated as interface-constrained var (Self-return refinement); interface satisfaction walks the transitive Implements/Inherits closure with per-level type-arg substitution and binds element holes; `Self` unifies permissively (grounded at monomorphize); HOF scheduling (function-shaped args don't block resolution; forced resolutions re-enter the fixpoint); return coercions (cast relation / tuple→same-shape struct / value→implemented interface). **745/823** stdlib functions resolve with zero errors |
 | **Elaborate** | done | **823/823 elaborate fully** (no unresolved nodes): local `var` decls (`TirLet`), type-as-value (`TirTypeRef`, namespace-qualified for raw `TypeExpression`s), bare constant groups (zero-arg `TirCall` → `Constants.X`), bare multi-overload names (`TirName`), and SYNTACTIC calls (null-callee `TirCall`: name + shape, for targets the compiler cannot see, e.g. handwritten intrinsic statics). Recorded call signatures re-zonked live |
-| **Monomorphize** | done | **3247** instantiations (3245 reified 1:1 + 2 non-reified concrete-first-param library functions); **1998/2014** bodied instantiations fully ground. Grounding = declared-signature pairing + solver-ZONKED-signature pairing (terminal-form vars) + element-instance walk (`IArrayLike<$T>` ↔ `Vector3` binds `$T→Number`) + post-specialization residual grounding (return positions vs the reified/Self-refined return incl. pre-coercion call types; leftover interface instances vs Self's concept instances). Re-dispatch preserves the call-site `EmissionKind` (shape) |
+| **Monomorphize** | done | **3247** instantiations (3245 reified 1:1 + 2 non-reified concrete-first-param library functions); **1998/2014** bodied instantiations fully ground. Grounding = declared-signature pairing + solver-ZONKED-signature pairing (terminal-form vars) + element-instance walk (`IArrayLike<$T>` ↔ `Vector3` binds `$T→Number`) + post-specialization residual grounding (return positions vs the reified/Self-refined return incl. pre-coercion call types; leftover interface instances vs Self's interface instances). Re-dispatch preserves the call-site `EmissionKind` (shape) |
 | **Emit** | **DEFAULT** | `UseTir` **on by default** (CLI `--no-tir` = legacy path). **The default C# style is single-engine**: member bodies emit from the fully-ground monomorphized TIR and STATIC bodies (`Constants.g.cs`, `Extensions.g.cs`) from the generic elaborated TIR — 2111 bodies total, **fallback = 0** (asserted by `EmitFlagOnTests` + `FallbackDiagnosticsTests`); the legacy writer's only default-style job is the fixed throw-stub for body-less functions. Flag-on vs flag-off **164/164 files**, compared EXACTLY (the `_var{N}` counter now resets per `WriteAll`); `regen-plato.ps1` green on the TIR path. Lambda-capture hoist mirrored on TIR (`TirLambdaCaptureRewriter`) |
 
 ## Hard rules (from `CLAUDE.md`)
@@ -68,14 +68,14 @@ Everything from **Normalize** onward lives in `Plato.Compiler/Checking/` (the ch
 The 1368-body fallback was **not** mostly the two deferred monomorphize classes. Measured
 classification (`FallbackDiagnosticsTests`) showed 1247/1304 were **solver-level unresolved
 overloads** in generic library bodies — five root causes, all fixed in the checker: unannotated
-lambda params bound to the placeholder type `Any`; concept-method candidates with rigid `Self`
-params never matching interface receivers; concept satisfaction failing on type-arg-count mismatch
+lambda params bound to the placeholder type `Any`; interface-method candidates with rigid `Self`
+params never matching interface receivers; interface satisfaction failing on type-arg-count mismatch
 before walking the closure (`IVectorLike` vs `IArrayLike<$G>`); return-position implicit
 conversions failing hard unification (tuple→struct, `Vector3`→`Point3D`); and bare
 constant/multi-overload group references left untyped. The residual `$`-element-type class was
 real but downstream of a *snapshot* problem: `CommitCandidate` records signatures zonked at commit
 time, so later unifications didn't land — fixed by live re-zonking at elaboration plus zonked-
-signature pairing at monomorphize. The "field-wise-generated concept impl" class turned out not to
+signature pairing at monomorphize. The "field-wise-generated interface impl" class turned out not to
 block emission at all (emission is name+shape; re-dispatch is only an identity refinement).
 
 ## Next increments (in order of leverage)
@@ -96,7 +96,7 @@ block emission at all (emission is name+shape; re-dispatch is only an identity r
    2026-07-10 declared the handwritten intrinsics in `stdlib-legacy/intrinsics.plato` — Number
    MinValue/MaxValue/RSRE/Linear/Quadratic/Cubic, IOrderable equality, the Number→Angle cast —
    CHK201 22 → 13). `CheckerDiagnosticsSummaryTests` prints the remaining worklist: mostly
-   concept-dispatch ambiguities (CHK203) and arg/return coercion gaps (CHK101), i.e. solver work,
+   interface-dispatch ambiguities (CHK203) and arg/return coercion gaps (CHK101), i.e. solver work,
    not missing declarations.
 4. ~~Process-global name counters~~ **DONE 2026-07-10**: `SymbolRewriter.NextId` resets per
    `WriteAll` in all three writers; the Symbol-id leak into output (`Geometry_15` in the retired
@@ -106,8 +106,8 @@ block emission at all (emission is name+shape; re-dispatch is only an identity r
 
 ```
 7ffa342  type-checker front-end: normalize, constrain, solve (shadow mode)
-adb113a  Solver: concept satisfaction, Self return refinement, implicit casts
-59355ac  Solver: generic-concept element inference (post-commit refinement)
+adb113a  Solver: interface satisfaction, Self return refinement, implicit casts
+59355ac  Solver: generic-interface element inference (post-commit refinement)
 a83e40a  Elaborate pass: Typed IR (TIR) in shadow mode
 c116195  Monomorphize pass: TIR specialization + driver (shadow mode)
 6c95998  Emit probe: TIR→C# body writer + differential; standardize on .NET 8

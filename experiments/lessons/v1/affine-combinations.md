@@ -2,7 +2,7 @@
 lesson: affine-combinations
 title: Affine Combinations of Points
 domain: Foundations & vectors
-v3-files: [02-concepts-algebra.plato, 11-points.plato, 08-vectors.plato, 13-transforms.plato]
+v3-files: [02-interfaces-algebra.plato, 11-points.plato, 08-vectors.plato, 13-transforms.plato]
 audience: High-school math and general programming background
 status: draft-v1
 ---
@@ -75,10 +75,10 @@ Plato separates positions (`Point2D` / `Point3D`) from displacements
 (`Vector2D` / `Vector3D`). Points implement `Difference<TDelta>`, which is the
 algebraic home of "point ± vector" and "point − point → vector."
 
-From `02-concepts-algebra.plato`:
+From `02-interfaces-algebra.plato`:
 
 ```plato
-concept Difference<TDelta>
+interface Difference<TDelta>
 {
     Add(x: Self, delta: TDelta): Self;
     Subtract(x: Self, delta: TDelta): Self;
@@ -110,7 +110,7 @@ type BarycentricCoordinate
 `Coordinate` inherits `Interpolatable`, so two-point blends are already named:
 
 ```plato
-concept Interpolatable
+interface Interpolatable
 {
     Lerp(a: Self, b: Self, t: Number): Self;
 }
@@ -209,8 +209,8 @@ vector ($w=0$) changes the story. Prefer the typed `Point3D` /
   that applies them. Triangle shading and ray-hit reconstruction both need
   this one-liner.
 
-- **doc-comment** — `02-concepts-algebra.plato`: `Difference.Between` should
-  state the minuend/subtrahend convention in the concept comment itself
+- **doc-comment** — `02-interfaces-algebra.plato`: `Difference.Between` should
+  state the minuend/subtrahend convention in the interface comment itself
   (`Between(a,b) = b - a`), matching the `Transforms` library body, so affine
   rewrite examples do not depend on reading implementation files.
 

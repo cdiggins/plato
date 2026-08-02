@@ -19,7 +19,7 @@ links: [plato-283, tracker/DONE.md]
 ## Assumptions
 - Constants file is the sanctioned home for shared numeric/geometric literals.
 - Some "missing constants" may actually be missing *entries*, not just unused ones — separate follow-ups.
-- Zero/One/Pi left as intrinsics/concept members by design (plato-272 outcome).
+- Zero/One/Pi left as intrinsics/interface members by design (plato-272 outcome).
 
 ## Design decisions
 - **Scope** — only replace duplicates of existing Constants vs also add new named constants when patterns repeat.

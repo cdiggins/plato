@@ -134,7 +134,7 @@ type SparseVoxelGrid3D<T>
     Values: Array<T>;
 }
 
-concept Voxelizable3D
+interface Voxelizable3D
 {
     ToOccupancyGrid(x: Self, cellSize: Number): OccupancyGrid3D;
 }

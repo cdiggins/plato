@@ -32,7 +32,7 @@ Do a structured differential between **`Ara3D.Geometry`** (handwritten + Plato-g
 
 ## Related
 
-- [ara3d-056](ara3d-056.md) — capability interfaces in C# aimed at future Plato concepts.
+- [ara3d-056](ara3d-056.md) — capability interfaces in C# aimed at future Plato interfaces.
 - [docs/plato-library-review.md](../../docs/plato-library-review.md) — qualitative review.
 - [plato-269](plato-269.md) — internal Plato differential; do that first or in parallel with clear columns.
 - [ara3d-022](ara3d-022.md) — surfacing geometry as Studio tools (consumer pressure).

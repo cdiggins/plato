@@ -1,5 +1,5 @@
 //==
-// # Kinematics concepts
+// # Kinematics interfaces
 //
 // The sampling interface shared by closed-form and recorded motions: a motion
 // that can be asked for its position and velocity at any time since its

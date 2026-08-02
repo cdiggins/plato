@@ -2,7 +2,7 @@
 // Adapted (namespace only) from conformance/Ara3D.SDK.ConformanceTests/LawTests.cs.
 //
 // stdlib-tests/foundation.laws.plato defines generic Boolean Law_* functions over the
-// forward concepts/types; the compiler monomorphizes each onto every concrete implementor.
+// forward interfaces/types; the compiler monomorphizes each onto every concrete implementor.
 // This runner discovers every (type, Law_*) pair in the generated code, constructs N seeded
 // pseudorandom instances per parameter, invokes the law, and asserts it holds -- modulo
 // KnownFailures.json.

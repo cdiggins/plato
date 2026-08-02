@@ -2,7 +2,7 @@
 lesson: surface-normal-consistency
 title: Surface Normal Consistency
 domain: Meshes & spatial structures
-v3-files: [32-mesh-attributes.plato, 24-surfaces.plato, 20-concepts-curves-surfaces.plato]
+v3-files: [32-mesh-attributes.plato, 24-surfaces.plato, 20-interfaces-curves-surfaces.plato]
 audience: Comfortable with triangle meshes and the cross product as a way to get a perpendicular; no rendering experience required
 status: draft-v1
 ---
@@ -77,10 +77,10 @@ when UV mirrors flip the frame.
 Parametric surfaces declare analytic normals on `DifferentiableSurface`.
 Meshes store normals as attribute channels with an explicit domain.
 
-From `20-concepts-curves-surfaces.plato` (surface concepts used by file 24):
+From `20-interfaces-curves-surfaces.plato` (surface interfaces used by file 24):
 
 ```plato
-concept DifferentiableSurface
+interface DifferentiableSurface
     inherits ParametricSurface
 {
     TangentUAt(x: Self, uv: UvCoordinate): Vector3D;
@@ -252,7 +252,7 @@ orientation is already coherent.
   are documented as `Vector3D`, but normals are unit directions. Prefer
   `MeshAttribute<Direction3D>` (new channel group) or document a hard
   invariant that normal channels must be unit length.
-- **missing-concept** — `24-surfaces.plato`: `OffsetSurface` should implement
+- **missing-interface** — `24-surfaces.plato`: `OffsetSurface` should implement
   or require `DifferentiableSurface` on `Base`, and declare how
   `NormalAt` transforms (same as base for pure normal offset). As written it
   is only `ParametricSurface`, so the consistency story for offsets is

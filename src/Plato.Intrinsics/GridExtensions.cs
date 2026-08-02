@@ -5,10 +5,10 @@ using Ara3D.Collections;
 namespace Ara3D.Geometry
 {
     /// <summary>
-    /// The forward stdlib's <c>Indexable2D</c> / <c>Indexable3D</c> concepts spell the grid
+    /// The forward stdlib's <c>Indexable2D</c> / <c>Indexable3D</c> interfaces spell the grid
     /// extents <c>ColumnCount</c> / <c>RowCount</c> / <c>LayerCount</c>; the handwritten
     /// collection surface spells them <c>NumColumns</c> / <c>NumRows</c> / <c>NumLayers</c>.
-    /// These adapters bind the concept names to the collection interfaces without adding a
+    /// These adapters bind the interface names to the collection interfaces without adding a
     /// second spelling to the shared SDK.
     /// </summary>
     public static class GridExtensions

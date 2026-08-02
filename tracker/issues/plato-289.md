@@ -60,7 +60,7 @@ Frequency: every Debug-mode `Compilation` over `stdlib`, i.e. every run of the n
 - `submodules/Plato/PlatoTests/ForwardStdLibCheckerTests.cs` — `ForwardStdLibParsesAndCompiles` holds the honest current state; flips green when this is fixed.
 
 ## Cause / analysis
-CONFIRMED 2026-07-28 (the earlier hypothesis about concepts with no concrete implementer /
+CONFIRMED 2026-07-28 (the earlier hypothesis about interfaces with no concrete implementer /
 LINT008 was WRONG — that is unrelated).
 
 **The assert:** `PlatoCompiler/Analysis/FunctionInstance.cs:143`, in the `FunctionInstance`
@@ -80,8 +80,8 @@ then discarded.
 
 **Why legacy never hit it.** Both libraries declare `type Array<T>` as a concrete generic. The
 difference is the intrinsic signatures. `stdlib-legacy/intrinsics.plato:450+` declares the array
-intrinsics against the *concept* `IArray<$T>`, which takes the `IsInterface()` branch and never
-reaches line 143. The forward vocabulary dropped the `I`-prefixed concept and declares the same
+intrinsics against the *interface* `IArray<$T>`, which takes the `IsInterface()` branch and never
+reaches line 143. The forward vocabulary dropped the `I`-prefixed interface and declares the same
 functions directly on the concrete generic `Array<$T>`
 (`stdlib/intrinsics.plato:397+`) — a deliberate vocabulary simplification, not a mistake.
 

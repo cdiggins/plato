@@ -84,7 +84,7 @@ Check three test points for a unit circle at the origin ($c = (0,0)$, $r = 1$):
 | $(3, 0)$ | $3$ | $+2$ | outside |
 
 The same formula lifts to 3D unchanged. A `Sphere` with `Center: Point3D` and `Radius: Number`
-has SDF $f(p) = \|p - c\| - r$. Plato stores the geometric `Sphere` and the field concept
+has SDF $f(p) = \|p - c\| - r$. Plato stores the geometric `Sphere` and the field interface
 `SignedDistanceField3D` separately; the mathematics is identical, only the representation differs.
 
 ### ASCII picture
@@ -121,7 +121,7 @@ when $p$ is outside, and still the radial direction when $p$ is inside.
 At $p = c$ the gradient is undefined — every boundary point is equidistant from the center.
 Renderers and simulators special-case such points or nudge $p$ by a tiny epsilon.
 
-Plato's `DifferentiableScalarField2D` and `DifferentiableScalarField3D` concepts declare
+Plato's `DifferentiableScalarField2D` and `DifferentiableScalarField3D` interfaces declare
 `GradientAt(x: Self, point: Point2D): Vector2D` (respectively `Point3D` → `Vector3D`). The doc
 comment on the 3D variant states that the gradient of a signed distance field is the outward
 surface normal direction.
@@ -148,55 +148,55 @@ Plato separates **fields** (functions over space) from **implicit shapes** (memb
 distance). File `26-fields.plato` declares the field hierarchy; file `27-implicit-sdf.plato`
 specializes scalars into signed distances and CSG trees.
 
-### Field concepts
+### Field interfaces
 
 Every field is a pure mapping: side-effect free and deterministic for a fixed field value. The
 root capability is `Field<TDomain, TValue>`, which inherits `Procedural<TDomain, TValue>`:
 
 ```plato
-concept Procedural<TDomain, TRange>
+interface Procedural<TDomain, TRange>
 {
     Eval(x: Self, input: TDomain): TRange;
 }
 
-concept Field<TDomain, TValue>
+interface Field<TDomain, TValue>
     inherits Procedural<TDomain, TValue>
 { }
 
-concept ScalarField2D
+interface ScalarField2D
     inherits Field<Point2D, Number>
 { }
 
-concept ScalarField3D
+interface ScalarField3D
     inherits Field<Point3D, Number>
 { }
 ```
 
 Evaluating a planar scalar field at a point is `Eval(field, point)`.
 
-### Signed distance concepts
+### Signed distance interfaces
 
 ```plato
-concept SignedDistanceField2D
+interface SignedDistanceField2D
     inherits ScalarField2D
 { }
 
-concept SignedDistanceField3D
+interface SignedDistanceField3D
     inherits ScalarField3D
 { }
 ```
 
-The concepts add no new methods in v3; the contract lives in doc comments: signed distance,
+The interfaces add no new methods in v3; the contract lives in doc comments: signed distance,
 negative inside, zero on the boundary, positive outside, exact or a conservative lower bound.
 
 For contrast, membership without distance:
 
 ```plato
-concept ImplicitRegion2D
+interface ImplicitRegion2D
     inherits Procedural<Point2D, Boolean>
 { }
 
-concept ImplicitVolume3D
+interface ImplicitVolume3D
     inherits Procedural<Point3D, Boolean>
 { }
 ```
@@ -204,13 +204,13 @@ concept ImplicitVolume3D
 ### Differentiable fields
 
 ```plato
-concept DifferentiableScalarField2D
+interface DifferentiableScalarField2D
     inherits ScalarField2D
 {
     GradientAt(x: Self, point: Point2D): Vector2D;
 }
 
-concept DifferentiableScalarField3D
+interface DifferentiableScalarField3D
     inherits ScalarField3D
 {
     GradientAt(x: Self, point: Point3D): Vector3D;
@@ -333,13 +333,13 @@ from the center through $p$.
 ## Library recommendations
 
 - **missing-type** — `27-implicit-sdf.plato` declares `SignedDistanceField2D` /
-  `SignedDistanceField3D` concepts and CSG trees, but no closed-form primitive types (e.g. a
+  `SignedDistanceField3D` interfaces and CSG trees, but no closed-form primitive types (e.g. a
   `Circle`-backed planar SDF or `Sphere`-backed spatial SDF) with the standard $\|p - c\| - r$
   implementation. The hand-derived circle formula has no named home in v3.
 
 - **missing-function** — `SignedDistanceField2D` / `SignedDistanceField3D` carry the sign
   convention only in doc comments. Pedagogically central queries — `IsInside`, `ClearanceAt`
-  (unsigned distance outside), `IsOnBoundary` with tolerance — are not declared on the concepts.
+  (unsigned distance outside), `IsOnBoundary` with tolerance — are not declared on the interfaces.
   Every snippet re-implements `Eval(sdf, p) < 0` by hand.
 
 - **missing-function** — `DifferentiableScalarField2D.GradientAt` returns `Vector2D`, but shading

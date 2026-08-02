@@ -1,5 +1,5 @@
 //==
-// # Boundary representation (BREP) concepts
+// # Boundary representation (BREP) interfaces
 //
 // The exact, resolution-independent solid encoding: a shell of vertices,
 // undirected edges, and faces, where each face bounds itself with loops of

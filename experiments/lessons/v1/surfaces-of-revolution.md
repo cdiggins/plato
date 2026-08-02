@@ -159,10 +159,10 @@ ribbon := SweptSurface(Profile: crossSection, Path: rail)
 the profile, V along the path. That choice avoids Frenet-frame twisting on near-straight
 rails.
 
-### Shared parametric surface concept
+### Shared parametric surface interface
 
 ```plato
-concept ParametricSurface
+interface ParametricSurface
     inherits Surface, Procedural<UvCoordinate, Point3D>
 {
     ClosedU(x: Self): Boolean;

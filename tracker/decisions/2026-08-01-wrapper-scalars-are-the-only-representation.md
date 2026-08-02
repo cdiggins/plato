@@ -47,7 +47,7 @@ Erasure trades away the property that makes generated C# worth checking at all.
   invariant check, no restricted operator set can be attached to `float`. The wrapper struct is
   the only place those can hang. This is the load-bearing reason: erasure does not merely lose
   checking, it removes the surface that checking would attach to.
-- **Concept conformance needs a nominal type.** `float` cannot implement `INumerical<Self>`. Under
+- **Interface conformance needs a nominal type.** `float` cannot implement `INumerical<Self>`. Under
   erasure, conformance stops being expressible in C# and the C# compiler takes Plato's word for it.
 - **Two independent checkers beat one.** Wrappers let the C# compiler re-derive, from the emitted
   code alone, the type discipline Plato claims to enforce. That is a genuine check on the emitter,
@@ -93,5 +93,5 @@ the same bytes without an emitter mode.
 - **`Plato.Generated.Foundation.Unoptimized` is unaffected** — it never asked for erasure.
 - **Performance work moves to the boundary.** Any future SIMD or interop path reinterprets spans
   rather than asking the emitter for primitives.
-- **Boxing becomes the cost to watch.** With wrappers, a concept-typed value used outside a
+- **Boxing becomes the cost to watch.** With wrappers, an interface-typed value used outside a
   constrained generic can box. That is the wrapper penalty worth measuring, not scalar arithmetic.

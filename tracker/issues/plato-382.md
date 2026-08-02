@@ -16,8 +16,8 @@ links: [stdlib/graphics/motion-graphics.types.plato, stdlib/graphics/time-varyin
 ## Issue
 
 Plato has no way to say *"this concrete type's parameter must support these
-operations"*. `concept` declarations take a `where` clause; `type` declarations
-do not. The consequence is that a generic concrete type can declare a concept it
+operations"*. `interface` declarations take a `where` clause; `type` declarations
+do not. The consequence is that a generic concrete type can declare an interface it
 cannot possibly implement, and the failure surfaces only at C# emission time, as
 a throwing stub.
 
@@ -43,7 +43,7 @@ Narrow today, structural tomorrow.
   genericity-related degraded body left (see plato-376's Resolution). Its
   siblings `AnimationTrack<T>` / `TangentTrack<T>` were moved to `stdlib/future`
   under stdlib-377 precisely because of this blocker; `Tween` stayed behind
-  because `TimeVarying` is a shipping concept.
+  because `TimeVarying` is a shipping interface.
 - `Tween<T>` has **zero references** anywhere in the corpus — no library body, no
   test, no other type mentions it. Nothing is broken for a user today.
 - The real cost is that the ceiling is invisible: the next author who writes a
@@ -66,9 +66,9 @@ Narrow today, structural tomorrow.
   `$TValue` — is the named example in that method's own doc comment.
 - `parakeet/Parakeet.Grammars/PlatoGrammar.cs:194` — the `Type` rule:
   `Identifier + TypeParameterList + ImplementsList + ...`, with no
-  `ConstraintList`. The `Concept` rule at line 198 has it.
+  `ConstraintList`. The `Interface` rule at line 198 has it.
 - `src/Plato.AST/AstNodeFactory.cs:472` — hardcodes `Array.Empty<AstConstraint>()`
-  for concrete types; line 501 reads the real list for concepts.
+  for concrete types; line 501 reads the real list for interfaces.
 - `src/Plato.Compiler/Symbols/SymbolFactory.cs:513` — already populates
   `TypeParameterDef.Constraints` from `astTypeDeclaration.Constraints`
   uniformly, so the symbol layer needs no change at all: it is faithfully reading
@@ -143,7 +143,7 @@ why the interim options below are recorded rather than taken silently.
    only one that makes the constraint mean anything.
 2. **Front end only, bounds decorative.** Cheap, and actively harmful: it lets
    authors write a constraint the compiler ignores, which is exactly the trap
-   LINT002 exists to catch for concepts.
+   LINT002 exists to catch for interfaces.
 3. **Interim, no language change — move `Tween` to `stdlib/future`.** Follows its
    two siblings under stdlib-377; `future` is neither linted nor emitted, so
    LINT001 goes to 0 and the genericity-related degraded body count to 0. Costs
@@ -181,9 +181,9 @@ the design work loses its motivating example.
 - [x] An ADR in `tracker/decisions/` answers: do `type` declarations take `where`
       bounds, are those bounds checked, and how do they reach C#. —
       `tracker/decisions/2026-08-01-declared-type-parameter-bounds-are-verified-and-emitted.md`.
-      Yes to all three: verified (CHK309 construction site, CHK206 call site, CHK310 non-concept,
+      Yes to all three: verified (CHK309 construction site, CHK206 call site, CHK310 non-interface,
       CHK205 unlicensed member call) and emitted (F-bounded `where` clauses on structs and
-      methods; concept interfaces excluded by the `TypeConstraints.EmittedToCSharp` policy, with
+      methods; interface interfaces excluded by the `TypeConstraints.EmittedToCSharp` policy, with
       the widening path recorded).
 - [x] Follow-up issues filed for whichever of grammar/AST, checking, and writer
       emission the ADR calls for. — all three parts LANDED here rather than being deferred

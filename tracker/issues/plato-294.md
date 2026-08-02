@@ -42,15 +42,15 @@ diagnostic (exit-code report, NOT -Test gating) until the generated C# compiles.
 
 ## Affected code
 - Plato.CSharpWriter -- the F-bounded `Curve3D<Self>` emission shape (166 errors, one cause).
-- stdlib/ -- concept/type declarations whose generic arities disagree with what the writer
+- stdlib/ -- interface/type declarations whose generic arities disagree with what the writer
   emits (134 CS0305), unimplemented obligations (14 CS0535), duplicate members.
 - tools/regen-forward-conformance.ps1 Stage 2 -- flips to -Test when this closes.
 
 ## Cause / analysis
 Not yet root-caused per shape. The CS0315 wall (50% of all errors) has ONE probable cause in
-the writer's F-bounded-generics emission for self-referential concepts -- fix that first and
-remeasure; the rest may shrink substantially. CS0305 suggests concept type-parameter counts
-diverging between declaration and use sites (the forward vocabulary's bare-name concepts carry
+the writer's F-bounded-generics emission for self-referential interfaces -- fix that first and
+remeasure; the rest may shrink substantially. CS0305 suggests interface type-parameter counts
+diverging between declaration and use sites (the forward vocabulary's bare-name interfaces carry
 different arities than legacy's I-prefixed ones). Speculation until measured per-shape.
 
 ## Priority

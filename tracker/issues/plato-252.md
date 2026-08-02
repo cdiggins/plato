@@ -26,7 +26,7 @@ shape optimization, physics constraint solving ([[plato-249]]), and training in 
 ## Two routes
 
 **Route A — dual numbers in the library.** Add `type Dual { Value: Number; Derivative: Number }`
-implementing the `Real` concept, and code written generically over `Real` differentiates for free.
+implementing the `Real` interface, and code written generically over `Real` differentiates for free.
 Blocker: the stdlib is not scalar-polymorphic — `plato-src-v3/08-vectors.plato` declares
 `Vector2 { X: Number; Y: Number }`, hardcoding the scalar. Getting Route A to reach geometry means
 generalizing the type family to something like `Vector3<$T: Real>`, which is a large, invasive

@@ -91,7 +91,7 @@ type Bounds3D
     Max: Point3D;
 }
 
-concept BoundsLike<TPoint>
+interface BoundsLike<TPoint>
     inherits Value
 {
     Min(x: Self): TPoint;
@@ -103,10 +103,10 @@ concept BoundsLike<TPoint>
 with `Center`, `Size`, and `Orientation` — prefer `Bounds3D` when alignment to world axes
 is the point.
 
-The concept library notes a gap: `Union`, `Expand`, `Contains`, and `Diagonal` helpers
+The interface library notes a gap: `Union`, `Expand`, `Contains`, and `Diagonal` helpers
 cannot yet be written generically against `BoundsLike` as declared (missing delta type /
 lattice on points). Callers still think in those operations; they are just not declared
-on the concept surface.
+on the interface surface.
 
 ### Sphere as a bounding volume
 
@@ -232,7 +232,7 @@ declared — show the construction from fields, and record the gap as a recommen
 
 - **missing-function** — `12-intervals-bounds.plato`: `BoundsLike` still lacks
   `Diagonal` / `Extent` / `Union` / `Expand` (called out as a TODO in
-  `concept-library/12-intervals-transforms.library.plato`). Fitting lessons keep
+  `interface-library/12-intervals-transforms.library.plato`). Fitting lessons keep
   re-deriving `Between(Min, Max)`.
 
 - **wrong-shape** — `BoundsLike<TPoint>` carries no `TDelta` parameter, so the natural

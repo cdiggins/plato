@@ -1,5 +1,5 @@
 //==
-// # Scientific data concepts
+// # Scientific data interfaces
 //
 // The shared interface of time-indexed collections: how many samples they hold
 // and when each zero-based sample was taken.

@@ -8,6 +8,7 @@ let client: NavigationClient | undefined;
 let output: vscode.OutputChannel;
 let launch: { command: string; baseArgs: string[] } | undefined;
 let activeRoots: string[] = [];
+let extensionPath = "";
 
 /** Well-known Plato corpora — used only when walking up from an open file. */
 const CORPUS_DIR_NAMES = new Set([
@@ -18,16 +19,18 @@ const CORPUS_DIR_NAMES = new Set([
 ]);
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
+  extensionPath = context.extensionPath;
   output = vscode.window.createOutputChannel("Plato Navigation");
   context.subscriptions.push(output);
 
+  // Syntax highlighting comes from package.json contributes (always on).
+  // Resolve the navigation CLI lazily on first F12/hover — never fail activate.
   try {
-    launch = resolveLaunch(context);
+    launch = resolveLaunch(extensionPath);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    output.appendLine(`Failed to locate navigation CLI: ${msg}`);
-    void vscode.window.showWarningMessage(`Plato navigation unavailable: ${msg}`);
-    return;
+    output.appendLine(`Navigation CLI not ready yet: ${msg}`);
+    output.appendLine("Syntax highlighting is still active. Set plato.navigation.cliProject if Go to Definition is needed.");
   }
 
   const selector: vscode.DocumentSelector = { language: "plato", scheme: "file" };
@@ -69,7 +72,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     { dispose: () => client?.dispose() }
   );
 
-  output.appendLine("Plato navigation providers registered (index starts on first use).");
+  output.appendLine(
+    launch
+      ? "Plato navigation providers registered."
+      : "Plato language active (highlighting). Navigation CLI not found yet."
+  );
 }
 
 export function deactivate(): void {
@@ -186,7 +193,14 @@ function toVscodeLocation(loc: NavLocation): vscode.Location {
 
 /** Start or restart serve so it indexes only the root(s) for this document. */
 async function ensureClient(doc: vscode.TextDocument | undefined, forceReload = false): Promise<void> {
-  if (!launch) throw new Error("navigation CLI was not resolved");
+  if (!launch) {
+    try {
+      launch = resolveLaunch(extensionPath);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      throw new Error(`navigation CLI was not resolved: ${msg}`);
+    }
+  }
 
   const roots = resolveRootsFor(doc);
   if (roots.length === 0)
@@ -263,21 +277,21 @@ function pathsEqual(a: string, b: string): boolean {
   return path.normalize(a).toLowerCase() === path.normalize(b).toLowerCase();
 }
 
-function resolveLaunch(context: vscode.ExtensionContext): { command: string; baseArgs: string[] } {
+function resolveLaunch(extPath: string): { command: string; baseArgs: string[] } {
   const config = vscode.workspace.getConfiguration("plato.navigation");
   const dotnet = config.get<string>("dotnetPath") || "dotnet";
 
   const searchRoots = [
     ...(vscode.workspace.workspaceFolders?.map((f) => f.uri.fsPath) ?? []),
     // Installed-from-location: vscode-plato/ sits next to src/ in the Plato repo.
-    context.extensionPath,
+    extPath,
   ];
   const configured = config.get<string>("cliProject");
   const cliProject =
     (configured
       ? path.isAbsolute(configured)
         ? configured
-        : path.resolve(searchRoots[0] ?? context.extensionPath, configured)
+        : path.resolve(searchRoots[0] ?? extPath, configured)
       : undefined) || findCliProject(searchRoots);
   if (!cliProject)
     throw new Error("Could not find Plato.Navigation.CLI.csproj. Set plato.navigation.cliProject.");
@@ -291,7 +305,7 @@ function resolveLaunch(context: vscode.ExtensionContext): { command: string; bas
   if (!fs.existsSync(dll) && !fs.existsSync(exe)) {
     output.appendLine(`Building ${cliProject} (dll missing)`);
     const built = spawnSync(dotnet, ["build", cliProject, "-c", "Release", "-v", "q"], {
-      cwd: context.extensionPath,
+      cwd: extPath,
       encoding: "utf8",
       windowsHide: true,
     });

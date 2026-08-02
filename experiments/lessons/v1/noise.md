@@ -16,7 +16,7 @@ randomness: deterministic functions of position (and a seed) that are coherent e
 shade, sculpt, and animate with, yet irregular enough to break repetition. Plato's v3
 noise vocabulary is a catalog of those engineered fields — value, gradient, cellular,
 spectral, fractal, and divergence-free — all implementing ordinary scalar or vector field
-concepts so they plug into the same evaluation pipeline as any other field.
+interfaces so they plug into the same evaluation pipeline as any other field.
 
 ## The idea
 
@@ -164,7 +164,7 @@ type GaborNoise2D
 
 **Seed is part of the value.** Same parameters and seed ⇒ same field forever. Changing
 seed is a different texture, not "more random over time." Animate with domain offset or
-a time-varying field concept, not by reseeding every frame.
+a time-varying field interface, not by reseeding every frame.
 
 **Frequency vs world size.** Frequency scales the input domain. Doubling frequency halves
 feature size. Mixing a noise designed in unit space with a 1000-unit scene without

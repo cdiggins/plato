@@ -15,7 +15,7 @@
 // probability distributions (https://en.wikipedia.org/wiki/Random_number_generation;
 // https://en.wikipedia.org/wiki/Probability_distribution). Distributions are
 // pure parameter records; drawing samples pairs a distribution with a
-// RandomState in a later pass. The distribution concept lives in
+// RandomState in a later pass. The distribution interface lives in
 // `random.concepts.plato`, the distributions themselves in the sections below,
 // and every body in `random.library.plato`.
 

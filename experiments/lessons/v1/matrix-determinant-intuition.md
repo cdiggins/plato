@@ -77,7 +77,7 @@ Matrices live in `09-matrices.plato`. Fixed sizes cover the usual graphics
 cases; element access goes through `MatrixLike`.
 
 ```plato
-concept MatrixLike
+interface MatrixLike
     inherits Value, Additive, Scalable
 {
     RowCount(x: Self): Integer;
@@ -206,9 +206,9 @@ not a substitute for the determinant.
   geometric "area/volume of basis images" story is easiest to teach; they
   should be first-class.
 
-- **missing-concept** — `09-matrices.plato`: `MatrixLike` exposes
+- **missing-interface** — `09-matrices.plato`: `MatrixLike` exposes
   `ElementAt` but not `Determinant`. Putting `Determinant(x: Self): Number`
-  on the concept (with size-specific bodies) would unify invertibility
+  on the interface (with size-specific bodies) would unify invertibility
   teaching across fixed and `MatrixN` shapes.
 
 - **doc-comment** — `09-matrices.plato`: the file banner should state

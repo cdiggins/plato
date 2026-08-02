@@ -8,6 +8,7 @@ public static class Program
     private const string Usage = """
         Usage: Plato.Navigation.CLI <verb> [args] --root <dir> [--root <dir> ...]
 
+          serve                          long-lived NDJSON stdio host for IDE clients
           stats                          index the roots and print counts and timings
           bench                          v1 rebuild vs v2 incremental update, best of two runs
           search <name> [--kind K]       find definitions by name (K = exact|prefix|all)
@@ -35,6 +36,8 @@ public static class Program
 
         var positional = Positional(args);
         var verb = args[0];
+        if (verb == "serve")
+            return Serve.Run(roots);
         if (verb == "stats")
             return Stats(roots);
         if (verb == "bench")

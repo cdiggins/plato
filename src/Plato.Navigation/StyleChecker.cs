@@ -19,7 +19,7 @@ namespace Ara3D.Geometry.Navigation;
 ///                      C#-side decision (ara3d-056: reserved for a few argument-position API
 ///                      edges); the vocabulary must not declare them.
 ///   STY005 (Error)   - more than one declaration kind in a file, or a kind that contradicts the
-///                      file's `.concepts.` / `.types.` / `.library.` suffix. One kind per file
+///                      file's `.interfaces.` / `.types.` / `.library.` suffix. One kind per file
 ///                      is the re-partition invariant that makes a file's name tell its contents.
 ///
 /// Deliberately absent: caps on doc-comment length and on declarations per file. Both were
@@ -119,7 +119,7 @@ public static class StyleChecker
     private static string? FileKindOf(AstTypeDeclaration decl)
         => decl.Kind switch
         {
-            TypeKind.Interface => "concepts",
+            TypeKind.Interface => "interfaces",
             TypeKind.Library => "library",
             TypeKind.ConcreteType or TypeKind.Primitive => "types",
             _ => null
@@ -129,7 +129,7 @@ public static class StyleChecker
     {
         var name = path.Replace('\\', '/');
         name = name[(name.LastIndexOf('/') + 1)..].ToLowerInvariant();
-        if (name.EndsWith(".concepts.plato")) return "concepts";
+        if (name.EndsWith(".concepts.plato")) return "interfaces";
         if (name.EndsWith(".types.plato")) return "types";
         if (name.EndsWith(".library.plato")) return "library";
         return null;

@@ -14,7 +14,7 @@ namespace Ara3D.Geometry.CSharpWriter
     /// caller must discharge and the clause a callee declares are spelled identically.
     ///
     /// The shape is the F-bounded one the writer already produces for function type variables
-    /// (<see cref="CSharpFunctionInfo.ConstraintString"/>): a concept emits as
+    /// (<see cref="CSharpFunctionInfo.ConstraintString"/>): an interface emits as
     /// `interface C&lt;Self, ...&gt; where Self : C&lt;Self, ...&gt;`, so a bound `T: C&lt;A&gt;`
     /// reads `where T : C&lt;T, A&gt;` — the bounded parameter itself occupies Self.
     /// </summary>
@@ -32,7 +32,7 @@ namespace Ara3D.Geometry.CSharpWriter
                     .JoinStrings("");
 
         /// <summary>The `where` clause for one parameter given the bounds it carries, or "" when it
-        /// carries none that render (a bound that does not name a concept is CHK310's error to
+        /// carries none that render (a bound that does not name an interface is CHK310's error to
         /// report, not something to emit as invalid C#).</summary>
         public static string WhereClause(string parameterName, IReadOnlyList<TypeExpression> bounds,
             ITypeToCSharp typeToCSharp)
@@ -50,7 +50,7 @@ namespace Ara3D.Geometry.CSharpWriter
         }
 
         /// <summary>The C# interface a bound denotes, with the bounded parameter substituted into
-        /// the concept's implicit Self slot. Null when the bound does not name a concept.</summary>
+        /// the interface's implicit Self slot. Null when the bound does not name an interface.</summary>
         private static string BoundTypeName(string parameterName, TypeExpression bound,
             ITypeToCSharp typeToCSharp)
         {

@@ -5,7 +5,7 @@ Each row is one recommendation with a link to the originating lesson. Total: **4
 
 Use this list to triage and plan Plato library work.
 
-> _File/folder references updated 2026-07-28 to the post-plato-263 layout: the standard-library source lives in `stdlib/` (flat `*.plato`, `*.concepts.plato`, and `*.library.plato` files — no `concept-library/` subfolder), and the README is `stdlib/README.md`._
+> _File/folder references updated 2026-07-28 to the post-plato-263 layout: the standard-library source lives in `stdlib/` (flat `*.plato`, `*.concepts.plato`, and `*.library.plato` files — no `interface-library/` subfolder), and the README is `stdlib/README.md`._
 
 > **Read the [Reviewer pass](#reviewer-pass--2026-07-28) below before assigning items to agents.**
 > It resolves cross-item conflicts, dedupes the list into work packets, drops a handful of
@@ -155,13 +155,13 @@ re-derives this list.
 
 469. **missing-function** — `collections.concepts.plato` / `topology.plato`: item 455
 asks for `IsNone` per index type; generalize once instead — put `IsNone` / `IsValid` on the
-`Index` concept (memory: the typed-index sweep landed 19 index types on one concept) so all of
+`Index` interface (memory: the typed-index sweep landed 19 index types on one interface) so all of
 them inherit the sentinel predicates. One edit, nineteen types, and item 457's doc ask lands on
-the concept too.
+the interface too.
 
 470. **missing-function** — `quantities.plato`: the quantity types implement `Quantity` but
-there are no `Min` / `Max` / `Clamp` / `Abs` helpers on the concept despite `Compare` existing.
-Engineering and animation code clamps lengths and angles constantly; without concept-level
+there are no `Min` / `Max` / `Clamp` / `Abs` helpers on the interface despite `Compare` existing.
+Engineering and animation code clamps lengths and angles constantly; without interface-level
 helpers each generated library re-derives them from `Compare` or leaks to `Number`.
 
 471. **wrong-shape** — `optimization.plato` comment says "Optional limits use -1 for 'no
@@ -215,7 +215,7 @@ early just creates rebase noise against the packet work.
 
 6. [affine-combinations](../experiments/lessons/v1/affine-combinations.md) — **missing-function** — `points.plato`: `BarycentricCoordinate` stores weights but v3 declares no `Evaluate(bary, p0, p1, p2): Point3D` (or 2D) that applies them. Triangle shading and ray-hit reconstruction both need this one-liner.
 
-7. [affine-combinations](../experiments/lessons/v1/affine-combinations.md) — **doc-comment** — `algebra.concepts.plato`: `Difference.Between` should state the minuend/subtrahend convention in the concept comment itself (`Between(a,b) = b - a`), matching the `Transforms` library body, so affine rewrite examples do not depend on reading implementation files.
+7. [affine-combinations](../experiments/lessons/v1/affine-combinations.md) — **doc-comment** — `algebra.concepts.plato`: `Difference.Between` should state the minuend/subtrahend convention in the interface comment itself (`Between(a,b) = b - a`), matching the `Transforms` library body, so affine rewrite examples do not depend on reading implementation files.
 
 8. [affine-combinations](../experiments/lessons/v1/affine-combinations.md) — **pedagogy** — `points.plato`: a short note on `BarycentricCoordinate` distinguishing affine ($u+v+w=1$) from convex ($u,v,w \ge 0$) would prevent the most common misuse when teaching combinations.
 
@@ -227,7 +227,7 @@ early just creates rebase noise against the packet work.
 
 12. [angles-as-types](../experiments/lessons/v1/angles-as-types.md) — **missing-function** — `quantities.plato`: `Angle` implements `Interpolatable` through `Quantity`, but no `LerpShortest(a, b, t: Number): Angle` (or doc comment on `Lerp` stating it uses the long path). Heading interpolation is a daily operation; the default lerp semantics are actively wrong for many inputs.
 
-13. [angles-as-types](../experiments/lessons/v1/angles-as-types.md) — **missing-concept** — no periodic equality (e.g. `EquivalentModPeriod(a, b, period)`). `Compare` on raw radians cannot express "same heading" near the $0/2\pi$ seam.
+13. [angles-as-types](../experiments/lessons/v1/angles-as-types.md) — **missing-interface** — no periodic equality (e.g. `EquivalentModPeriod(a, b, period)`). `Compare` on raw radians cannot express "same heading" near the $0/2\pi$ seam.
 
 14. [angles-as-types](../experiments/lessons/v1/angles-as-types.md) — **doc-comment** — `intervals-bounds.plato`: `AngleInterval` should document inclusive endpoints and wrap-crossing behavior for arc consumers (`CircularArc2D`, `CircularSector`).
 
@@ -247,7 +247,7 @@ early just creates rebase noise against the packet work.
 
 22. [barycentric-coordinates](../experiments/lessons/v1/barycentric-coordinates.md) — **wrong-shape** — `points.plato`: storing three floats with a sum-to-one invariant invites drift. A two-component form `(V, W)` with `U = 1 - V - W` (plus an optional recovered triple view) would make the invariant unrepresentable-as-false — matching Plato's "illegal states unrepresentable" taste.
 
-23. [bezier-curves](../experiments/lessons/v1/bezier-curves.md) — **missing-concept** — `curves-2d.plato` / `curves-3d.plato`: `QuadraticBezier2D` and `CubicBezier2D` (and 3D twins) implement only `Curve2D` / `Curve3D`, not `DifferentiableCurve2D` / `DifferentiableCurve3D`. Béziers have closed-form tangents; claiming the differentiable concepts would unlock `TangentAt` without host-side special cases.
+23. [bezier-curves](../experiments/lessons/v1/bezier-curves.md) — **missing-interface** — `curves-2d.plato` / `curves-3d.plato`: `QuadraticBezier2D` and `CubicBezier2D` (and 3D twins) implement only `Curve2D` / `Curve3D`, not `DifferentiableCurve2D` / `DifferentiableCurve3D`. Béziers have closed-form tangents; claiming the differentiable interfaces would unlock `TangentAt` without host-side special cases.
 
 24. [bezier-curves](../experiments/lessons/v1/bezier-curves.md) — **missing-function** — Bézier types: no declared `Subdivide(t)`, `Split`, `Derivative`, or `BoundingBounds` helpers. De Casteljau subdivision and AABB-from-controls are the two operations every renderer needs; teaching them immediately surfaces the gap on the type surface.
 
@@ -271,15 +271,15 @@ early just creates rebase noise against the packet work.
 
 34. [bsplines-and-nurbs](../experiments/lessons/v1/bsplines-and-nurbs.md) — **doc-comment** — `surfaces.plato`: `NurbsSurface` says it represents quadrics exactly, but does not warn that weights and net must be specialized. A pointer to the standard unit-circle / sphere constructions would prevent false confidence.
 
-35. [bsplines-and-nurbs](../experiments/lessons/v1/bsplines-and-nurbs.md) — **wrong-shape** — `splines.plato`: `Degree` is a free `Integer` on the curve while knot/control invariants are comment-only. A factory type or constrained constructor concept would make illegal $(n,d,knots)$ triples harder to represent.
+35. [bsplines-and-nurbs](../experiments/lessons/v1/bsplines-and-nurbs.md) — **wrong-shape** — `splines.plato`: `Degree` is a free `Integer` on the curve while knot/control invariants are comment-only. A factory type or constrained constructor interface would make illegal $(n,d,knots)$ triples harder to represent.
 
 36. [cameras-and-projection](../experiments/lessons/v1/cameras-and-projection.md) — **missing-function** — `cameras.plato`: no declared `ViewMatrix(camera)`, `ProjectionMatrix(camera)`, `Project(camera, point) → …`, or `WorldRay(camera, uv)`. The lesson’s pipeline is universal; without these operations the types are inert records.
 
-37. [cameras-and-projection](../experiments/lessons/v1/cameras-and-projection.md) — **wrong-shape** — `cameras.plato`: `LookAtCamera` and `OffAxisCamera` do not implement `Camera` despite carrying near/far and producing a view. Either implement the concept (Pose derived from look-at / eye+screen) or document them as *builders* with a `ToPerspectiveCamera` / `ToCamera` conversion in the type comment.
+37. [cameras-and-projection](../experiments/lessons/v1/cameras-and-projection.md) — **wrong-shape** — `cameras.plato`: `LookAtCamera` and `OffAxisCamera` do not implement `Camera` despite carrying near/far and producing a view. Either implement the interface (Pose derived from look-at / eye+screen) or document them as *builders* with a `ToPerspectiveCamera` / `ToCamera` conversion in the type comment.
 
 38. [cameras-and-projection](../experiments/lessons/v1/cameras-and-projection.md) — **missing-function** — `cameras.plato`: `PhysicalCamera` docs say FOV follows from focal length and sensor size, but no `VerticalFov(PhysicalCamera): Angle` is declared. Teachers and renderers both need that bridge to compare with `PerspectiveCamera`.
 
-39. [cameras-and-projection](../experiments/lessons/v1/cameras-and-projection.md) — **doc-comment** — `cameras.plato`: state the assumed view-space convention (handedness, which axis is forward, whether Y is up in view space) on the `Camera` concept. Projection matrices are meaningless without it, and v3 currently leaves the convention implicit in "the pose's forward axis."
+39. [cameras-and-projection](../experiments/lessons/v1/cameras-and-projection.md) — **doc-comment** — `cameras.plato`: state the assumed view-space convention (handedness, which axis is forward, whether Y is up in view space) on the `Camera` interface. Projection matrices are meaningless without it, and v3 currently leaves the convention implicit in "the pose's forward axis."
 
 40. [capsule-collision-primitive](../experiments/lessons/v1/capsule-collision-primitive.md) — **missing-function** — `spatial-primitives.plato`: no `Distance(Capsule3D, Point3D)` / signed-distance helper despite `ContainsPoint3D` and `NearestPoint3D`. Capsule pedagogy and collision debug draws want the scalar $d - r$ explicitly.
 
@@ -289,7 +289,7 @@ early just creates rebase noise against the packet work.
 
 43. [capsule-collision-primitive](../experiments/lessons/v1/capsule-collision-primitive.md) — **doc-comment** — `planar-shapes.plato` / `spatial-primitives.plato`: state the $A=B$ sphere/disk degeneracy and $r=0$ segment degeneracy as supported invariants so collision code can branch without guessing.
 
-44. [cardioid-parametric-curve](../experiments/lessons/v1/cardioid-parametric-curve.md) — **missing-concept** — `curves-2d.plato`: `Cardioid2D` implements `ClosedCurve2D` but not `PolarCurve2D`, despite a polar defining equation and a polar sibling section. Adding `PolarCurve2D` (or documenting why it is omitted) would let callers use `RadiusAt` uniformly with `RoseCurve2D` and spirals.
+44. [cardioid-parametric-curve](../experiments/lessons/v1/cardioid-parametric-curve.md) — **missing-interface** — `curves-2d.plato`: `Cardioid2D` implements `ClosedCurve2D` but not `PolarCurve2D`, despite a polar defining equation and a polar sibling section. Adding `PolarCurve2D` (or documenting why it is omitted) would let callers use `RadiusAt` uniformly with `RoseCurve2D` and spirals.
 
 45. [cardioid-parametric-curve](../experiments/lessons/v1/cardioid-parametric-curve.md) — **missing-function** — no declared `Eval` body yet (v3 is declarations-only), and no helper `PointAtAngle(cardioid, angle)` on the type. A named angle-based sampler would match how textbooks write the cardioid and avoid every consumer re-deriving $\theta = 2\pi t$.
 
@@ -307,7 +307,7 @@ early just creates rebase noise against the packet work.
 
 52. [catmull-rom-tension](../experiments/lessons/v1/catmull-rom-tension.md) — **missing-function** — `splines.plato`: no `ToHermite(cr: CatmullRomCurve3D): HermiteSpline3D` conversion. Teaching “CR is Hermite with derived tangents” wants that bridge as a named operation.
 
-53. [circles-ellipses](../experiments/lessons/v1/circles-ellipses.md) — **missing-concept** — `planar-shapes.plato`: `Ellipse` implements `ConvexShape` and `ContainsPoint2D` but not `SupportMappable2D` or `NearestPoint2D`, while `Circle` has both. Collision and closest-point lessons want feature parity on the ellipse.
+53. [circles-ellipses](../experiments/lessons/v1/circles-ellipses.md) — **missing-interface** — `planar-shapes.plato`: `Ellipse` implements `ConvexShape` and `ContainsPoint2D` but not `SupportMappable2D` or `NearestPoint2D`, while `Circle` has both. Collision and closest-point lessons want feature parity on the ellipse.
 
 54. [circles-ellipses](../experiments/lessons/v1/circles-ellipses.md) — **missing-function** — `planar-shapes.plato`: no `PointAt(circle|ellipse, Angle)` or `Tangent` evaluators. Parameterization is the first thing teachers write on the board; it should be a named function once libraries land.
 
@@ -343,7 +343,7 @@ early just creates rebase noise against the packet work.
 
 70. [complex-numbers-rotate](../experiments/lessons/v1/complex-numbers-rotate.md) — **missing-function** — `numbers.plato` / `rotations.plato`: no conversions `Rotor2D(c: Complex)` / `Complex(r: Rotor2D)` even though the `Rotor2D` doc comment says the types are equivalent. A total conversion on the unit circle (and a documented precondition for non-unit `Complex`) would close the teaching bridge.
 
-71. [complex-numbers-rotate](../experiments/lessons/v1/complex-numbers-rotate.md) — **missing-concept** — `numbers.plato`: `Complex` does not implement `Normed` or expose `Argument: Angle`. Magnitude and argument are the two polar coordinates of a complex number; without them, the "magnitudes multiply, angles add" slogan cannot be typed against `Complex`.
+71. [complex-numbers-rotate](../experiments/lessons/v1/complex-numbers-rotate.md) — **missing-interface** — `numbers.plato`: `Complex` does not implement `Normed` or expose `Argument: Angle`. Magnitude and argument are the two polar coordinates of a complex number; without them, the "magnitudes multiply, angles add" slogan cannot be typed against `Complex`.
 
 72. [complex-numbers-rotate](../experiments/lessons/v1/complex-numbers-rotate.md) — **pedagogy** — `rotations.plato`: `Rotor2D` fields are `Scalar` and `XY`, while `Complex` uses `Real` and `Imaginary`. Parallel field names (or a doc comment table mapping Real↔Scalar, Imaginary↔XY) would make the isomorphism obvious without a prose lecture.
 
@@ -373,7 +373,7 @@ early just creates rebase noise against the packet work.
 
 85. [coordinate-frames](../experiments/lessons/v1/coordinate-frames.md) — **doc-comment** — `Frame3D`: state right-handed orthonormal invariant and "matrix maps local coordinates to the parent/world space of the axes" on the type itself so `Matrix4x4(f)`'s meaning is unambiguous.
 
-86. [cross-product](../experiments/lessons/v1/cross-product.md) — **missing-function** — `vectors.plato`: `Cross` lives on the intrinsic hub for `Vector3D` but is not mentioned on the `Vector` concept or in the `Vector3D` type doc. Surface `Cross(Self, Self): Self` in a 3D-only concept (e.g. `CrossProduct3D`) or at least document it on the type so readers of `vectors.plato` alone discover it.
+86. [cross-product](../experiments/lessons/v1/cross-product.md) — **missing-function** — `vectors.plato`: `Cross` lives on the intrinsic hub for `Vector3D` but is not mentioned on the `Vector` interface or in the `Vector3D` type doc. Surface `Cross(Self, Self): Self` in a 3D-only interface (e.g. `CrossProduct3D`) or at least document it on the type so readers of `vectors.plato` alone discover it.
 
 87. [cross-product](../experiments/lessons/v1/cross-product.md) — **missing-function** — no `Wedge(Vector3D, Vector3D): Bivector3D` dual to `Cross`. The lesson's GA nod has nowhere to land; `rotations.plato` declares `Bivector3D` without constructors from vector pairs.
 
@@ -385,11 +385,11 @@ early just creates rebase noise against the packet work.
 
 91. [curvature-and-frames](../experiments/lessons/v1/curvature-and-frames.md) — **doc-comment** / **pedagogy** — `curves-surfaces.concepts.plato`: `FramedCurve3D.FrameAt` does not specify Frenet vs rotation-minimizing. Split into `FrenetFrameAt` / `RmfFrameAt`, or document the choice — sweeps depend on it.
 
-92. [curvature-and-frames](../experiments/lessons/v1/curvature-and-frames.md) — **missing-function** — `differential-geometry.plato`: rich frame *types* exist, but no concept functions like `FrenetAt(curve, t): FrenetFrame3D` or `RmfAt(curve, t0, t1, ...)` are declared on curve concepts. The records are orphaned from `DifferentiableCurve3D` until libraries invent the glue.
+92. [curvature-and-frames](../experiments/lessons/v1/curvature-and-frames.md) — **missing-function** — `differential-geometry.plato`: rich frame *types* exist, but no interface functions like `FrenetAt(curve, t): FrenetFrame3D` or `RmfAt(curve, t0, t1, ...)` are declared on curve interfaces. The records are orphaned from `DifferentiableCurve3D` until libraries invent the glue.
 
 93. [curvature-and-frames](../experiments/lessons/v1/curvature-and-frames.md) — **missing-function** — `differential-geometry.plato`: `FrenetFrame3D` has no `Parameter` field (unlike RMF). Adding it would make batched frame arrays align for debugging and visualization.
 
-94. [curvature-and-frames](../experiments/lessons/v1/curvature-and-frames.md) — **naming** — `curves-surfaces.concepts.plato`: `CurvatureAt` means signed in 2D and unsigned in 3D under the same function name. `SignedCurvatureAt` / `CurvatureAt` split (or a doc banner on each concept) would prevent formula mix-ups.
+94. [curvature-and-frames](../experiments/lessons/v1/curvature-and-frames.md) — **naming** — `curves-surfaces.concepts.plato`: `CurvatureAt` means signed in 2D and unsigned in 3D under the same function name. `SignedCurvatureAt` / `CurvatureAt` split (or a doc banner on each interface) would prevent formula mix-ups.
 
 95. [dot-product](../experiments/lessons/v1/dot-product.md) — **missing-function** — `vectors.plato` / `Vector3D`: no `Project(Self, onto: Self)` or `Reject(Self, onto: Self)`. The projection story is half of every dot-product lesson; without both, every caller rewrites `(a.Dot(u))*u` and hopes `u` was normalized.
 
@@ -397,15 +397,15 @@ early just creates rebase noise against the packet work.
 
 97. [dot-product](../experiments/lessons/v1/dot-product.md) — **naming** — `Normed.Magnitude` / `MagnitudeSquared` vs intrinsic `Length` / `LengthSquared` on `Vector3D`. The dual vocabulary is confusing in examples; pick one as canonical in docs and make the other an alias.
 
-98. [dot-product](../experiments/lessons/v1/dot-product.md) — **doc-comment** — `Vector.Dot`: state the geometric formula and that inputs need not be unit; mention $\mathbf{a}\cdot\mathbf{a} = \|\mathbf{a}\|^2$. The concept currently names the function with no semantic gloss.
+98. [dot-product](../experiments/lessons/v1/dot-product.md) — **doc-comment** — `Vector.Dot`: state the geometric formula and that inputs need not be unit; mention $\mathbf{a}\cdot\mathbf{a} = \|\mathbf{a}\|^2$. The interface currently names the function with no semantic gloss.
 
 99. [dot-product](../experiments/lessons/v1/dot-product.md) — **missing-function** — `Direction3D`: no `Dot(Direction3D, Direction3D)` that bypasses `.Vector` noise. Facing checks are the primary use of directions; a first-class dot would encode unit-unit intent.
 
-100. [easing-functions](../experiments/lessons/v1/easing-functions.md) — **missing-function** — `easing.plato`: `ClassicEasing` does not implement `EasingFunction`, so there is no declared `Eval(ClassicEasing, Number)`. The catalog sum is useless for sampling until a library function (or concept implementation) maps each `Eased(family, phase)` case to a curve. Teaching forces this gap into the open.
+100. [easing-functions](../experiments/lessons/v1/easing-functions.md) — **missing-function** — `easing.plato`: `ClassicEasing` does not implement `EasingFunction`, so there is no declared `Eval(ClassicEasing, Number)`. The catalog sum is useless for sampling until a library function (or interface implementation) maps each `Eased(family, phase)` case to a curve. Teaching forces this gap into the open.
 
 101. [easing-functions](../experiments/lessons/v1/easing-functions.md) — **wrong-shape** — `easing.plato`: `ElasticParameters`, `BackParameters`, and `BounceParameters` are orphaned records — `ClassicEasing.Eased` carries only family and phase, with no slot for the classic amplitude/period/overshoot knobs. Either add parameterized sum cases (`ElasticEased(Phase, ElasticParameters)`, …) or document that those records are only for a future `EvalClassic(…, params)` overload.
 
-102. [easing-functions](../experiments/lessons/v1/easing-functions.md) — **missing-concept** — `easing.plato`: `SpringParameters` sits in the easing file but implements neither `EasingFunction` nor `TimeVarying`. A spring is not an $e(t)$ map; it needs state (position, velocity). Either move it beside motion-integration types or declare a `SpringMotion` / `TimeVarying` wrapper so the file's role is clear.
+102. [easing-functions](../experiments/lessons/v1/easing-functions.md) — **missing-interface** — `easing.plato`: `SpringParameters` sits in the easing file but implements neither `EasingFunction` nor `TimeVarying`. A spring is not an $e(t)$ map; it needs state (position, velocity). Either move it beside motion-integration types or declare a `SpringMotion` / `TimeVarying` wrapper so the file's role is clear.
 
 103. [easing-functions](../experiments/lessons/v1/easing-functions.md) — **doc-comment** — `easing.plato`: `SmoothstepEasing.Order` should state the closed form for orders 0–2 explicitly (`t`, `3t²−2t³`, `6t⁵−15t⁴+10t³`) so implementers and teachers share one reference without hunting external sources.
 
@@ -437,9 +437,9 @@ early just creates rebase noise against the packet work.
 
 117. [extrusion-along-path](../experiments/lessons/v1/extrusion-along-path.md) — **missing-type** — `surfaces.plato`: no sweep with a radius/scale law along $V$ (tapered pipes, draft). `TubeSurface` is constant `Radius` only; terrain-style lessons invent ad-hoc workarounds.
 
-118. [extrusion-along-path](../experiments/lessons/v1/extrusion-along-path.md) — **missing-concept** — `curves-surfaces.concepts.plato` / `surfaces.plato`: `FramedCurve3D.FrameAt` is the right primitive under sweeps, but `SweptSurface` does not require `Path` to implement `FramedCurve3D` in the type declaration — only in the doc comment’s RMF promise. Encoding that as a concept constraint would make the lesson’s frame discussion type-checkable.
+118. [extrusion-along-path](../experiments/lessons/v1/extrusion-along-path.md) — **missing-interface** — `curves-surfaces.concepts.plato` / `surfaces.plato`: `FramedCurve3D.FrameAt` is the right primitive under sweeps, but `SweptSurface` does not require `Path` to implement `FramedCurve3D` in the type declaration — only in the doc comment’s RMF promise. Encoding that as an interface constraint would make the lesson’s frame discussion type-checkable.
 
-119. [fbm-terrain-intuition](../experiments/lessons/v1/fbm-terrain-intuition.md) — **missing-concept** — `noise.plato`: `FbmNoise2D/3D` (and ridged / turbulence) should implement `DifferentiableScalarField2D/3D` or document that gradients are finite-difference only. Terrain lessons always need slope; `GradientAt` is the natural API already declared in `fields.plato`.
+119. [fbm-terrain-intuition](../experiments/lessons/v1/fbm-terrain-intuition.md) — **missing-interface** — `noise.plato`: `FbmNoise2D/3D` (and ridged / turbulence) should implement `DifferentiableScalarField2D/3D` or document that gradients are finite-difference only. Terrain lessons always need slope; `GradientAt` is the natural API already declared in `fields.plato`.
 
 120. [fbm-terrain-intuition](../experiments/lessons/v1/fbm-terrain-intuition.md) — **doc-comment** — `noise.plato`: `FbmNoise2D` should recommend default starting knobs (`Lacunarity: 2`, `Gain: 0.5`, `Octaves: 4..8`) and warn that `Basis: White` is legal but unsuitable. Teaching time is wasted rediscovering defaults.
 
@@ -461,7 +461,7 @@ early just creates rebase noise against the packet work.
 
 129. [gaussian-distribution](../experiments/lessons/v1/gaussian-distribution.md) — **missing-function** — `random.plato`: `ProbabilityDistribution` has `Pdf`/`Cdf`/ `Mean`/`Variance` but no declared `Sample(dist, rng: RandomState) -> (Number, RandomState)` (or equivalent). The file's own header says sampling pairs distribution with `RandomState` later; teaching the Gaussian immediately needs that pairing signature.
 
-130. [gaussian-distribution](../experiments/lessons/v1/gaussian-distribution.md) — **naming** — `random.plato`: `NormalDistribution.Mean` (field) collides conceptually with `ProbabilityDistribution.Mean(Self)`. Prefer renaming the field to `Location` or documenting that concept `Mean` must equal the field for this type, to reduce binder and pedagogy confusion.
+130. [gaussian-distribution](../experiments/lessons/v1/gaussian-distribution.md) — **naming** — `random.plato`: `NormalDistribution.Mean` (field) collides conceptually with `ProbabilityDistribution.Mean(Self)`. Prefer renaming the field to `Location` or documenting that interface `Mean` must equal the field for this type, to reduce binder and pedagogy confusion.
 
 131. [gaussian-distribution](../experiments/lessons/v1/gaussian-distribution.md) — **missing-function** — `random.plato`: no `Standardize(x, dist) -> Number` or `FromStandard(z, dist) -> Number` helpers for the $z = (x-\mu)/\sigma$ transform that every Gaussian lesson (and every Box–Muller / inverse-CDF sampler) uses.
 
@@ -507,7 +507,7 @@ early just creates rebase noise against the packet work.
 
 152. [halfedge-topology](../experiments/lessons/v1/halfedge-topology.md) — **pedagogy** — `topology.plato`: `CornerTable`, `EdgeAdjacency`, and `HalfEdgeMesh` coexist without a doc guide for when to choose which. A short file-level comparison (memory vs query set vs manifold requirement) would prevent treating them as interchangeable.
 
-153. [helix](../experiments/lessons/v1/helix.md) — **missing-concept** — `curves-3d.plato`: `Helix` implements only `Curve3D`, not `DifferentiableCurve3D` or `FramedCurve3D`, despite being the canonical constant curvature/torsion / easy framing example. Declaring those implementations (once libraries exist) would match the math story.
+153. [helix](../experiments/lessons/v1/helix.md) — **missing-interface** — `curves-3d.plato`: `Helix` implements only `Curve3D`, not `DifferentiableCurve3D` or `FramedCurve3D`, despite being the canonical constant curvature/torsion / easy framing example. Declaring those implementations (once libraries exist) would match the math story.
 
 154. [helix](../experiments/lessons/v1/helix.md) — **missing-function** — `curves-3d.plato`: no `TurnCount(Helix): Number`, `ArcLength(Helix)`, or `PitchAngle(Helix)` helpers. Teaching pitch vs slope needs either doc formulas or named projections from `Radius`/`Pitch`.
 
@@ -541,7 +541,7 @@ early just creates rebase noise against the packet work.
 
 169. [images-as-functions](../experiments/lessons/v1/images-as-functions.md) — **missing-function** — `images.plato`: no `Sample(image, uv: UvCoordinate, filter: ResampleFilter): Color` (or per-concrete-type overloads). The function view is unteachable as an API until sampling exists; resize parameters hint at it but do not provide it.
 
-170. [images-as-functions](../experiments/lessons/v1/images-as-functions.md) — **missing-concept** — `images.plato`: consider `concept SampledImage inherits Image, Procedural<UvCoordinate, Color>` for linear working images, so `Eval`/`Sample` is discoverable the same way easings expose `Eval`.
+170. [images-as-functions](../experiments/lessons/v1/images-as-functions.md) — **missing-interface** — `images.plato`: consider `interface SampledImage inherits Image, Procedural<UvCoordinate, Color>` for linear working images, so `Eval`/`Sample` is discoverable the same way easings expose `Eval`.
 
 171. [images-as-functions](../experiments/lessons/v1/images-as-functions.md) — **doc-comment** — `images.plato`: `Bitmap` says "sRGB-encoded" and `FloatImage` says "linear-light"; add an explicit warning that convolution on `Bitmap` is almost always wrong. Processing docs in `46` assume linear inputs without saying so on each record.
 
@@ -553,7 +553,7 @@ early just creates rebase noise against the packet work.
 
 175. [indexed-meshes](../experiments/lessons/v1/indexed-meshes.md) — **doc-comment** — `topology.plato`: `CornerIndex` doc ties corners to triangle index arithmetic (`c / 3`, `c mod 3`) while `TriangleFace` uses three explicit `VertexIndex` fields. A one-line cross-note on `TriangleFace` ("corners are not `CornerIndex`; use `CornerTable` when corner-table navigation is required") would reduce confusion at the boundary between explicit face records and corner-table topology.
 
-176. [indexed-meshes](../experiments/lessons/v1/indexed-meshes.md) — **missing-concept** — `meshes.plato`: no shared **`IndexedSurfaceMesh<P, F>`** (or similar) abstraction factoring `Positions` + face indexing shared by `TriangleMesh3D`, `QuadMesh3D`, and `PolygonMesh3D`. Teaching the vertex-buffer / index-buffer pattern once is natural; three parallel struct shapes suggest a parametric concept with `PositionAt(vertex: VertexIndex): P` and face-count operations would unify importers and validators.
+176. [indexed-meshes](../experiments/lessons/v1/indexed-meshes.md) — **missing-interface** — `meshes.plato`: no shared **`IndexedSurfaceMesh<P, F>`** (or similar) abstraction factoring `Positions` + face indexing shared by `TriangleMesh3D`, `QuadMesh3D`, and `PolygonMesh3D`. Teaching the vertex-buffer / index-buffer pattern once is natural; three parallel struct shapes suggest a parametric interface with `PositionAt(vertex: VertexIndex): P` and face-count operations would unify importers and validators.
 
 177. [inertia-tensor-diagonal](../experiments/lessons/v1/inertia-tensor-diagonal.md) — **missing-function** — `matrices.plato`: `SymmetricMatrix3x3` has no `Eigenvalues` / `Diagonalize` / `Inverse` / `Multiply(SymmetricMatrix3x3, Vector3D)`. Rigid-body lessons cannot even *state* principal-axis extraction in declared ops.
 
@@ -567,11 +567,11 @@ early just creates rebase noise against the packet work.
 
 182. [interpolating-splines](../experiments/lessons/v1/interpolating-splines.md) — **doc-comment** — `splines.plato`: `CatmullRomCurve3D` documents alpha values but not the open-curve endpoint tangent policy. One sentence on phantom points vs one-sided differences would remove a major implementation ambiguity for readers.
 
-183. [interpolating-splines](../experiments/lessons/v1/interpolating-splines.md) — **missing-type** — `splines.plato`: there is no shared `InterpolatingSpline3D` concept marking "passes through every point." `Curve3D` alone does not distinguish interpolating from approximating families in the type system.
+183. [interpolating-splines](../experiments/lessons/v1/interpolating-splines.md) — **missing-type** — `splines.plato`: there is no shared `InterpolatingSpline3D` interface marking "passes through every point." `Curve3D` alone does not distinguish interpolating from approximating families in the type system.
 
 184. [interpolating-splines](../experiments/lessons/v1/interpolating-splines.md) — **naming** — `splines.plato`: `CatmullRomCurve3D` is a multi-span spline, while `HermiteCurve3D` is a single segment and `HermiteSpline3D` is multi-span. The Curve-vs-Spline naming is inconsistent across families (Catmull-Rom has no `Spline` sibling name).
 
-185. [intervals-and-bounds](../experiments/lessons/v1/intervals-and-bounds.md) — **missing-function** — `intervals-bounds.plato` / `BoundsLike`: the concept library documents that `Contains`, `Union`, `Intersection`, `Expand`, and corner enumeration cannot be derived against `BoundsLike<TPoint>` as declared (no delta type, points are not a `Lattice`). Teaching AABBs without `Union`/`Contains` forces hand-waving — declare `BoundsLike<TPoint, TDelta>` or add Lattice on points, then mirror the `IntervalLike` surface.
+185. [intervals-and-bounds](../experiments/lessons/v1/intervals-and-bounds.md) — **missing-function** — `intervals-bounds.plato` / `BoundsLike`: the interface library documents that `Contains`, `Union`, `Intersection`, `Expand`, and corner enumeration cannot be derived against `BoundsLike<TPoint>` as declared (no delta type, points are not a `Lattice`). Teaching AABBs without `Union`/`Contains` forces hand-waving — declare `BoundsLike<TPoint, TDelta>` or add Lattice on points, then mirror the `IntervalLike` surface.
 
 186. [intervals-and-bounds](../experiments/lessons/v1/intervals-and-bounds.md) — **missing-type** — `intervals-bounds.plato`: no explicit empty-bounds sentinel or `Optional`-style wrapper. Inverted Min/Max is an implicit encoding; a documented `Empty` factory (or sum type) would make the grow-from-empty story teachable and less error-prone.
 
@@ -609,7 +609,7 @@ early just creates rebase noise against the packet work.
 
 203. [lights-and-materials](../experiments/lessons/v1/lights-and-materials.md) — **doc-comment** — `lights.plato`: `PointLight.Range` of zero means unlimited, while many engines use zero as "disabled." Bold that sentinel in the field comment; it is an easy interoperability footgun.
 
-204. [lights-and-materials](../experiments/lessons/v1/lights-and-materials.md) — **missing-type** — `lights.plato`: a sum `type Light = Directional(DirectionalLight) | Point(PointLight) | …` (or a scene list concept) would let examples and scene graphs refer to "a light" without inventing host-side unions. Right now only the `LightSource` concept (shadows only) unifies them.
+204. [lights-and-materials](../experiments/lessons/v1/lights-and-materials.md) — **missing-type** — `lights.plato`: a sum `type Light = Directional(DirectionalLight) | Point(PointLight) | …` (or a scene list interface) would let examples and scene graphs refer to "a light" without inventing host-side unions. Right now only the `LightSource` interface (shadows only) unifies them.
 
 205. [line-plane-intersection](../experiments/lessons/v1/line-plane-intersection.md) — **missing-function** — `lines.plato`: no `Intersect(Line3D, Plane)`, `Intersect(Ray3D, Plane)`, or `Intersect(LineSegment3D, Plane)` despite these being the most common queries on the file's own types. A sum-typed result (`Miss | Point(Point3D) | Line(Line3D)` for the infinite case) would match v3's sum-type conventions.
 
@@ -619,13 +619,13 @@ early just creates rebase noise against the packet work.
 
 208. [line-plane-intersection](../experiments/lessons/v1/line-plane-intersection.md) — **doc-comment** — `lines.plato`: `Plane.Distance` should state the unit-normal precondition in the field comment (it is implied by `Direction3D` but readers still confuse $d$ with Euclidean distance to an arbitrary point).
 
-209. [linear-interpolation](../experiments/lessons/v1/linear-interpolation.md) — **missing-function** — `algebra.concepts.plato`: add `InverseLerp(a: Self, b: Self, value: Self): Number` on `Interpolatable` (or a small companion concept). Given endpoints and a value on the line, return the `t` that produced it. Every "map this sensor reading into `[0,1]`" and "where on the segment is this point?" workflow needs inverse lerp; authors should not re-derive `(value - a) / (b - a)` ad hoc with divide-by-zero guards scattered through call sites.
+209. [linear-interpolation](../experiments/lessons/v1/linear-interpolation.md) — **missing-function** — `algebra.concepts.plato`: add `InverseLerp(a: Self, b: Self, value: Self): Number` on `Interpolatable` (or a small companion interface). Given endpoints and a value on the line, return the `t` that produced it. Every "map this sensor reading into `[0,1]`" and "where on the segment is this point?" workflow needs inverse lerp; authors should not re-derive `(value - a) / (b - a)` ad hoc with divide-by-zero guards scattered through call sites.
 
 210. [linear-interpolation](../experiments/lessons/v1/linear-interpolation.md) — **missing-function** — `algebra.concepts.plato`: add `Remap(value: Self, fromMin: Self, fromMax: Self, toMin: Self, toMax: Self): Self` (or a `Number`-valued overload when remapping scalars). Remap is two inverse lerps composed — from domain to unitless `t`, then into the target range — and appears in every shader, UI layout, and animation rigging lesson that touches normalized coordinates.
 
 211. [linear-interpolation](../experiments/lessons/v1/linear-interpolation.md) — **doc-comment** — `color.plato` `Color`: the doc says interpolation is component-wise (good) but should state explicitly that `Lerp` assumes **unpremultiplied linear** RGBA and that lerping `Color8` or sRGB-encoded bytes without conversion is incorrect. This lesson's main color pitfall is invisible from the type declaration alone.
 
-212. [linear-interpolation](../experiments/lessons/v1/linear-interpolation.md) — **missing-concept** — `color.plato`: `ColorHSV` and `ColorHSL` implement `Value` but not `Interpolatable`. Hue is an `Angle`; naive RGB lerp and hue-aware lerp diverge. Either document "convert to `Color` before `Lerp`" prominently or declare a separate `HueInterpolatable` (or `LerpHue` on `ColorHSV`) so hue-wheel blending has typed, reviewable semantics.
+212. [linear-interpolation](../experiments/lessons/v1/linear-interpolation.md) — **missing-interface** — `color.plato`: `ColorHSV` and `ColorHSL` implement `Value` but not `Interpolatable`. Hue is an `Angle`; naive RGB lerp and hue-aware lerp diverge. Either document "convert to `Color` before `Lerp`" prominently or declare a separate `HueInterpolatable` (or `LerpHue` on `ColorHSV`) so hue-wheel blending has typed, reviewable semantics.
 
 213. [linear-interpolation](../experiments/lessons/v1/linear-interpolation.md) — **doc-comment** — `vectors.plato` `Direction2D` / `Direction3D`: note that `Vector`/`Numerical` inheritance does **not** apply to `Direction2D`/`Direction3D` (they only implement `Value`), but authors coming from other engines assume direction lerp exists. A one-line comment — "normalize after blending the underlying `Vector`, or use angular interpolation" — would prevent a class of rendering bugs.
 
@@ -657,23 +657,23 @@ early just creates rebase noise against the packet work.
 
 227. [look-at-camera-basis](../experiments/lessons/v1/look-at-camera-basis.md) — **pedagogy** — `transforms.plato`: `Basis3D` docs say "not necessarily orthonormal" while `Frame3D` requires orthonormal `Direction3D` axes. A one-line "use Frame3D for rigid cameras; Basis3D for general linear frames" would steer API choice during look-at construction.
 
-228. [matrices-as-machines](../experiments/lessons/v1/matrices-as-machines.md) — **missing-function** — `matrices.plato`: `MatrixLike` exposes `ElementAt` but not `Row(i)` / `Column(i)` returning `Number2/3/4`. Teaching "columns/rows are basis images" wants a first-class column/row accessor on the concept, especially under row-storage where columns are gathered.
+228. [matrices-as-machines](../experiments/lessons/v1/matrices-as-machines.md) — **missing-function** — `matrices.plato`: `MatrixLike` exposes `ElementAt` but not `Row(i)` / `Column(i)` returning `Number2/3/4`. Teaching "columns/rows are basis images" wants a first-class column/row accessor on the interface, especially under row-storage where columns are gathered.
 
-229. [matrices-as-machines](../experiments/lessons/v1/matrices-as-machines.md) — **missing-function** — `matrices.plato`: no `Determinant`, `Trace`, or `IsOrthogonal` on the matrix types/concept. Those are the natural vocabulary for "is this a rotation?" and "does this machine squash volume?"
+229. [matrices-as-machines](../experiments/lessons/v1/matrices-as-machines.md) — **missing-function** — `matrices.plato`: no `Determinant`, `Trace`, or `IsOrthogonal` on the matrix types/interface. Those are the natural vocabulary for "is this a rotation?" and "does this machine squash volume?"
 
-230. [matrices-as-machines](../experiments/lessons/v1/matrices-as-machines.md) — **missing-concept** — `matrices.plato`: there is no `LinearMap` / `SquareMatrix` concept that requires `Multiplicative` + matching row/column counts. `MatrixLike` alone cannot express invertibility or composition.
+230. [matrices-as-machines](../experiments/lessons/v1/matrices-as-machines.md) — **missing-interface** — `matrices.plato`: there is no `LinearMap` / `SquareMatrix` interface that requires `Multiplicative` + matching row/column counts. `MatrixLike` alone cannot express invertibility or composition.
 
 231. [matrices-as-machines](../experiments/lessons/v1/matrices-as-machines.md) — **doc-comment** — `Matrix3x3` / `Matrix4x4`: state in one line that Plato uses row-vector multiplication ($\mathbf{v} M$) so readers do not assume textbook column convention when interpreting `Row1` as a basis image.
 
 232. [matrix-determinant-intuition](../experiments/lessons/v1/matrix-determinant-intuition.md) — **missing-function** — `matrices.plato` / `intrinsics.plato`: `Determinant` exists for `Matrix3x2` and `Matrix4x4` but not for `Matrix2x2` or `Matrix3x3`. The 2×2/3×3 cases are exactly where the geometric "area/volume of basis images" story is easiest to teach; they should be first-class.
 
-233. [matrix-determinant-intuition](../experiments/lessons/v1/matrix-determinant-intuition.md) — **missing-concept** — `matrices.plato`: `MatrixLike` exposes `ElementAt` but not `Determinant`. Putting `Determinant(x: Self): Number` on the concept (with size-specific bodies) would unify invertibility teaching across fixed and `MatrixN` shapes.
+233. [matrix-determinant-intuition](../experiments/lessons/v1/matrix-determinant-intuition.md) — **missing-interface** — `matrices.plato`: `MatrixLike` exposes `ElementAt` but not `Determinant`. Putting `Determinant(x: Self): Number` on the interface (with size-specific bodies) would unify invertibility teaching across fixed and `MatrixN` shapes.
 
 234. [matrix-determinant-intuition](../experiments/lessons/v1/matrix-determinant-intuition.md) — **doc-comment** — `matrices.plato`: the file banner should state explicitly whether geometric "column images of basis vectors" refers to columns of the stored row-major layout, so determinant sign discussions stay consistent with `transforms.plato`'s row-vector convention note.
 
 235. [matrix-determinant-intuition](../experiments/lessons/v1/matrix-determinant-intuition.md) — **missing-function** — `matrices.plato`: a `LinearPart(m: Matrix4x4): Matrix3x3` (upper-left block) would make the "volume scale of an affine 4×4" story a one-call extraction instead of manual `ElementAt` scraping.
 
-236. [mesh-normals](../experiments/lessons/v1/mesh-normals.md) — **missing-function** — `meshes.plato` / `vectors.plato`: computing a face normal needs a cross product, but `Vector3D` / the `Vector` concept do not declare `Cross`. The mesh-normals lesson cannot show an idiomatic one-liner without noting the gap.
+236. [mesh-normals](../experiments/lessons/v1/mesh-normals.md) — **missing-function** — `meshes.plato` / `vectors.plato`: computing a face normal needs a cross product, but `Vector3D` / the `Vector` interface do not declare `Cross`. The mesh-normals lesson cannot show an idiomatic one-liner without noting the gap.
 
 237. [mesh-normals](../experiments/lessons/v1/mesh-normals.md) — **missing-function** — `meshes.plato` or `mesh-attributes.plato`: no `FaceNormals(mesh)`, `VertexNormals(mesh, weighting)`, or weighting enum (uniform / area / angle). Every engine reimplements this; the attribute file documents where to *store* normals but not how to *author* them from topology.
 
@@ -705,7 +705,7 @@ early just creates rebase noise against the packet work.
 
 251. [noise](../experiments/lessons/v1/noise.md) — **missing-type** — `noise.plato`: `CurlNoise3D` has only `Seed` and `Frequency` — no octave/lacunarity controls and no choice of potential basis. Multi-scale curl (common for smoke) has to be layered by the caller with no vocabulary support.
 
-252. [normalization-pitfalls](../experiments/lessons/v1/normalization-pitfalls.md) — **missing-function** — `vectors.plato` / `Vector`: add `TryNormalize(self: Vector, fallback: Vector): Vector` or `NormalizeOr(self: Vector, fallback: Vector): Vector` beside the existing preconditioned `Normalize`. Teaching this lesson makes clear that every call site repeats the same `IsZeroLength` guard; the concept library already has `SafeDivide` on `Real` for the analogous scalar case.
+252. [normalization-pitfalls](../experiments/lessons/v1/normalization-pitfalls.md) — **missing-function** — `vectors.plato` / `Vector`: add `TryNormalize(self: Vector, fallback: Vector): Vector` or `NormalizeOr(self: Vector, fallback: Vector): Vector` beside the existing preconditioned `Normalize`. Teaching this lesson makes clear that every call site repeats the same `IsZeroLength` guard; the interface library already has `SafeDivide` on `Real` for the analogous scalar case.
 
 253. [normalization-pitfalls](../experiments/lessons/v1/normalization-pitfalls.md) — **missing-function** — `vectors.plato` / `Direction2D`, `Direction3D`: declare validated factories, e.g. `FromVector(v: Vector2D): Direction2D` (precondition: non-zero) and `TryFromVector(v: Vector2D, fallback: Direction2D): Direction2D`, plus `FromVectorUnchecked` explicitly documented as unsafe. Today tuple construction `Direction3D(v)` appears in `transforms.plato` but nothing in `vectors.plato` states when wrapping is legal or enforces `IsUnit`.
 
@@ -713,11 +713,11 @@ early just creates rebase noise against the packet work.
 
 255. [normalization-pitfalls](../experiments/lessons/v1/normalization-pitfalls.md) — **pedagogy** — `numeric-structures.library.plato` / `Normalize`: pair `IsZeroLength` guidance with `Normalize` in doc comments, or add a guarded helper, so callers do not rediscover near-zero policy independently.
 
-256. [norms-and-distance](../experiments/lessons/v1/norms-and-distance.md) — **missing-function** — `algebra.concepts.plato`: **Normed** declares `Magnitude` and `MagnitudeSquared` but not `Normalize`. Normalization is the third leg of the lesson triad (length, distance, normalize); it currently lives only on concrete types via intrinsics (`intrinsics.plato`) and as a derived helper on `Vector` in concept-library. Adding `Normalize(x: Self): Self` to **Normed** (with a documented zero-length precondition) would make the concept self-contained and let `Direction2D`/`Direction3D` factories read as `Normed`-preserving operations.
+256. [norms-and-distance](../experiments/lessons/v1/norms-and-distance.md) — **missing-function** — `algebra.concepts.plato`: **Normed** declares `Magnitude` and `MagnitudeSquared` but not `Normalize`. Normalization is the third leg of the lesson triad (length, distance, normalize); it currently lives only on concrete types via intrinsics (`intrinsics.plato`) and as a derived helper on `Vector` in interface-library. Adding `Normalize(x: Self): Self` to **Normed** (with a documented zero-length precondition) would make the interface self-contained and let `Direction2D`/`Direction3D` factories read as `Normed`-preserving operations.
 
-257. [norms-and-distance](../experiments/lessons/v1/norms-and-distance.md) — **missing-concept** — `vectors.plato`: `Vector2D`/`Vector3D` implement **Normed** but not **MetricSpace**, even though Euclidean vector distance is standard. **`Point2D`/`Point3D`** (file 11) likewise lack **MetricSpace** despite being the primary "how far apart are two positions?" types. Implementing **MetricSpace** on geometric points and vectors — with `Distance(a, b) => a.Between(b).Magnitude` for points and `(a - b).Magnitude` for vectors — would let `IsNear`, `IsNearerThan`, and `Nearest` from CoreAlgebra apply directly without the manual `Between(...).Magnitude` chain.
+257. [norms-and-distance](../experiments/lessons/v1/norms-and-distance.md) — **missing-interface** — `vectors.plato`: `Vector2D`/`Vector3D` implement **Normed** but not **MetricSpace**, even though Euclidean vector distance is standard. **`Point2D`/`Point3D`** (file 11) likewise lack **MetricSpace** despite being the primary "how far apart are two positions?" types. Implementing **MetricSpace** on geometric points and vectors — with `Distance(a, b) => a.Between(b).Magnitude` for points and `(a - b).Magnitude` for vectors — would let `IsNear`, `IsNearerThan`, and `Nearest` from CoreAlgebra apply directly without the manual `Between(...).Magnitude` chain.
 
-258. [norms-and-distance](../experiments/lessons/v1/norms-and-distance.md) — **missing-function** — `algebra.concepts.plato`: **MetricSpace** exposes only `Distance`, not `DistanceSquared`. The **Normed** doc comment already motivates squared magnitude for comparisons; the metric counterpart (`DistanceSquared(a, b)`) appears in concept-library on **Vector** but not on the concept. Declaring it on **MetricSpace** (defaulting to `Distance(a, b).Square` or, for Euclidean types, `Between`/`Subtract` then `MagnitudeSquared`) would make radius and nearest-neighbor tests discoverable at the concept level.
+258. [norms-and-distance](../experiments/lessons/v1/norms-and-distance.md) — **missing-function** — `algebra.concepts.plato`: **MetricSpace** exposes only `Distance`, not `DistanceSquared`. The **Normed** doc comment already motivates squared magnitude for comparisons; the metric counterpart (`DistanceSquared(a, b)`) appears in interface-library on **Vector** but not on the interface. Declaring it on **MetricSpace** (defaulting to `Distance(a, b).Square` or, for Euclidean types, `Between`/`Subtract` then `MagnitudeSquared`) would make radius and nearest-neighbor tests discoverable at the interface level.
 
 259. [norms-and-distance](../experiments/lessons/v1/norms-and-distance.md) — **doc-comment** — `vectors.plato`: **Direction2D** and **Direction3D** doc comments state the unit-length invariant but do not show how to construct one from a `Vector2D`/`Vector3D` safely. A one-line note ("construct via normalization of a non-zero displacement; zero input is undefined") would close the loop between normalization pitfalls and the direction types.
 
@@ -725,7 +725,7 @@ early just creates rebase noise against the packet work.
 
 261. [numerical-integration](../experiments/lessons/v1/numerical-integration.md) — **missing-type** — `kinematics.plato` / `particles-simulation.plato`: there is no `Integrator` / `IntegrationScheme` sum (`ExplicitEuler | SemiImplicitEuler | Verlet | ...`). The lesson teaches named methods that have no vocabulary hook; cloth implies Verlet via `PreviousPosition` only by documentation.
 
-262. [numerical-integration](../experiments/lessons/v1/numerical-integration.md) — **wrong-shape** — `kinematics.plato`: `Trajectory3D` stores parallel arrays but declares no invariant that `Times`, `Positions`, and `Velocities` lengths match (except the empty- velocities escape hatch). A doc-comment invariant or a dedicated sampled-motion concept would harden the teaching examples.
+262. [numerical-integration](../experiments/lessons/v1/numerical-integration.md) — **wrong-shape** — `kinematics.plato`: `Trajectory3D` stores parallel arrays but declares no invariant that `Times`, `Positions`, and `Velocities` lengths match (except the empty- velocities escape hatch). A doc-comment invariant or a dedicated sampled-motion interface would harden the teaching examples.
 
 263. [numerical-integration](../experiments/lessons/v1/numerical-integration.md) — **missing-function** — `kinematics.plato`: `BallisticTrajectory` and `SimpleHarmonicMotion` look like `Kinematic3D` implementors, but the file never says `implements Kinematic3D`. Wiring that would let `PositionAt` be the single verb for both closed-form and (later) numerically sampled motion.
 
@@ -741,19 +741,19 @@ early just creates rebase noise against the packet work.
 
 269. [optimization-basics](../experiments/lessons/v1/optimization-basics.md) — **missing-function** — `optimization.plato`: abundant parameter and result types, but no `Minimize`, `FindRoot`, or `Solve(LinearProgram)` declarations. The lesson can teach gradient descent only as prose around `GradientDescentParameters`.
 
-270. [optimization-basics](../experiments/lessons/v1/optimization-basics.md) — **missing-type** — `optimization.plato`: no `Objective` / `DifferentiableObjective` concept with `Value(Self, Array<Number>)` and optional `Gradient`. Without that, solver parameters float free of any function they could optimize.
+270. [optimization-basics](../experiments/lessons/v1/optimization-basics.md) — **missing-type** — `optimization.plato`: no `Objective` / `DifferentiableObjective` interface with `Value(Self, Array<Number>)` and optional `Gradient`. Without that, solver parameters float free of any function they could optimize.
 
 271. [optimization-basics](../experiments/lessons/v1/optimization-basics.md) — **missing-type** — `optimization.plato`: no `BoxConstraints` separate from full LP — many geometry problems only need per-variable bounds. Teaching projected gradient needs a lighter type than `LinearProgram`.
 
 272. [optimization-basics](../experiments/lessons/v1/optimization-basics.md) — **doc-comment** — `optimization.plato`: `OptimizationResult` has both `Converged: Boolean` and `Reason: TerminationReason`. State the invariant (`Converged` iff `Reason == Converged`) so implementors and callers do not disagree.
 
-273. [parametric-curves](../experiments/lessons/v1/parametric-curves.md) — **missing-concept** — `curves-surfaces.concepts.plato`: there is no `UnitSpeedCurve` / marker for "parameter equals arc length," and `DifferentiableCurve3D.TangentAt` returns a raw velocity with no `UnitTangentAt`. Teaching constant-speed motion has to narrate a normalize step that the concept surface does not name.
+273. [parametric-curves](../experiments/lessons/v1/parametric-curves.md) — **missing-interface** — `curves-surfaces.concepts.plato`: there is no `UnitSpeedCurve` / marker for "parameter equals arc length," and `DifferentiableCurve3D.TangentAt` returns a raw velocity with no `UnitTangentAt`. Teaching constant-speed motion has to narrate a normalize step that the interface surface does not name.
 
 274. [parametric-curves](../experiments/lessons/v1/parametric-curves.md) — **missing-function** — `curves-surfaces.concepts.plato`: `ArcLengthParameterized` has total length and conversions, but no `LengthBetween(x, t0, t1)` for partial spans. Dash patterns and subpath measuring need it constantly.
 
-275. [parametric-curves](../experiments/lessons/v1/parametric-curves.md) — **doc-comment** — `curves-surfaces.concepts.plato`: the banner states the canonical domain is $[0,1]$, but `PolarCurve2D` and angle-swept concrete curves (elsewhere) use angle domains. A sentence on when concrete types override the canonical domain would prevent concept/type mismatch in readers' heads.
+275. [parametric-curves](../experiments/lessons/v1/parametric-curves.md) — **doc-comment** — `curves-surfaces.concepts.plato`: the banner states the canonical domain is $[0,1]$, but `PolarCurve2D` and angle-swept concrete curves (elsewhere) use angle domains. A sentence on when concrete types override the canonical domain would prevent interface/type mismatch in readers' heads.
 
-276. [parametric-curves](../experiments/lessons/v1/parametric-curves.md) — **pedagogy** — `FramedCurve3D.FrameAt` returns `Frame3D` with "Z axis is tangent," but the concept does not say whether the frame is Frenet or rotation-minimizing. Sweeps care deeply which; the ambiguity should be documented or split into distinct concept functions.
+276. [parametric-curves](../experiments/lessons/v1/parametric-curves.md) — **pedagogy** — `FramedCurve3D.FrameAt` returns `Frame3D` with "Z axis is tangent," but the interface does not say whether the frame is Frenet or rotation-minimizing. Sweeps care deeply which; the ambiguity should be documented or split into distinct interface functions.
 
 277. [pbr-roughness-metallic](../experiments/lessons/v1/pbr-roughness-metallic.md) — **doc-comment** — `Material`: spell out BaseColor's dielectric-vs-metal dual role on the type itself. The file banner mentions glTF MR; the field docs should repeat the dual meaning where authors look first.
 
@@ -785,17 +785,17 @@ early just creates rebase noise against the packet work.
 
 291. [point-clouds-voxels](../experiments/lessons/v1/point-clouds-voxels.md) — **missing-function** — `pointclouds-voxels.plato`: grids declare Origin/CellSize but no `WorldToCell`, `CellBounds`, or `SampleTrilinear` helpers. Every lesson example has to restate the half-open mapping; those operations belong on the types.
 
-292. [point-clouds-voxels](../experiments/lessons/v1/point-clouds-voxels.md) — **missing-concept** — `pointclouds-voxels.plato`: `LevelSetGrid3D` does not implement `SignedDistanceField3D` / `ScalarField3D`, so it cannot `Eval` like `SampledSdf3D` (file 27). Bridging level-set grids into the field vocabulary would unify sampling.
+292. [point-clouds-voxels](../experiments/lessons/v1/point-clouds-voxels.md) — **missing-interface** — `pointclouds-voxels.plato`: `LevelSetGrid3D` does not implement `SignedDistanceField3D` / `ScalarField3D`, so it cannot `Eval` like `SampledSdf3D` (file 27). Bridging level-set grids into the field vocabulary would unify sampling.
 
 293. [point-clouds-voxels](../experiments/lessons/v1/point-clouds-voxels.md) — **wrong-shape** — `pointclouds-voxels.plato` vs `sampling-grids.plato`: dense volumes use Origin+CellSize here but Bounds+CellCounts in sampled scalar grids. Two parameterizations for "regular 3D lattice" force converters and confuse teaching. Pick one canonical grid header or declare explicit conversions.
 
 294. [point-clouds-voxels](../experiments/lessons/v1/point-clouds-voxels.md) — **doc-comment** — `pointclouds-voxels.plato`: `AttributedPointCloud3D` says empty channel arrays mean absent, but does not say whether partially filled (length mismatch) is illegal. State the invariant: each non-empty channel length equals `Positions` length.
 
-295. [points-vs-vectors](../experiments/lessons/v1/points-vs-vectors.md) — **missing-concept** — `Point3D` (and `Point2D`, `PointN`) do not implement `MetricSpace` in `points.plato`, even though distance between positions is one of the first questions students ask. Either add `MetricSpace` to point types with `Distance(a, b) => Magnitude(Between(a, b))`, or add a short doc comment on `Coordinate` pointing callers at that idiom.
+295. [points-vs-vectors](../experiments/lessons/v1/points-vs-vectors.md) — **missing-interface** — `Point3D` (and `Point2D`, `PointN`) do not implement `MetricSpace` in `points.plato`, even though distance between positions is one of the first questions students ask. Either add `MetricSpace` to point types with `Distance(a, b) => Magnitude(Between(a, b))`, or add a short doc comment on `Coordinate` pointing callers at that idiom.
 
-296. [points-vs-vectors](../experiments/lessons/v1/points-vs-vectors.md) — **missing-function** — `vectors.plato`: `Vector3D` implements `Normed` but there is no declared `Normalize(x: Vector3D): Vector3D` (nor a concept method on `Normed`). The lesson needs unit directions for almost every geometry example; today only `Direction3D` encodes normalization as a type invariant, with no declared bridge from an arbitrary `Vector3D`.
+296. [points-vs-vectors](../experiments/lessons/v1/points-vs-vectors.md) — **missing-function** — `vectors.plato`: `Vector3D` implements `Normed` but there is no declared `Normalize(x: Vector3D): Vector3D` (nor an interface method on `Normed`). The lesson needs unit directions for almost every geometry example; today only `Direction3D` encodes normalization as a type invariant, with no declared bridge from an arbitrary `Vector3D`.
 
-297. [points-vs-vectors](../experiments/lessons/v1/points-vs-vectors.md) — **pedagogy** — `algebra.concepts.plato`: `Difference` names the delta type parameter `TDelta` but the doc comment never states the standard `Between` convention explicitly (displacement from first argument toward second, i.e. $b - a$). One line in the concept comment would prevent sign flips in every downstream transform and animation snippet.
+297. [points-vs-vectors](../experiments/lessons/v1/points-vs-vectors.md) — **pedagogy** — `algebra.concepts.plato`: `Difference` names the delta type parameter `TDelta` but the doc comment never states the standard `Between` convention explicitly (displacement from first argument toward second, i.e. $b - a$). One line in the interface comment would prevent sign flips in every downstream transform and animation snippet.
 
 298. [points-vs-vectors](../experiments/lessons/v1/points-vs-vectors.md) — **missing-function** — `points.plato`: no declared `ToPoint` / `PositionVector` pair on the point types themselves (only implied by transform libraries elsewhere). For teaching origin-relative vectors, explicit declared converters on `Point3D` ↔ `Vector3D` would keep the lesson inside the foundation files without referring to transform libraries.
 
@@ -813,7 +813,7 @@ early just creates rebase noise against the packet work.
 
 305. [polygons-and-winding](../experiments/lessons/v1/polygons-and-winding.md) — **doc-comment** — `vector-styling.plato`: `PathOffsetParameters` already states left- of-travel / CCW expansion — excellent. Cross-reference the polygon winding banner in `polygons.plato` so style and geometry docs tell one story.
 
-306. [polygons-and-winding](../experiments/lessons/v1/polygons-and-winding.md) — **missing-function** — `polygons.plato`: no `ToPath(Polygon2D|PolygonWithHoles2D) → Path2D` implementing `PathLike`. Bridging filled polygons to `StyledPath2D` is the natural authoring path and is currently only implied by the path concept elsewhere.
+306. [polygons-and-winding](../experiments/lessons/v1/polygons-and-winding.md) — **missing-function** — `polygons.plato`: no `ToPath(Polygon2D|PolygonWithHoles2D) → Path2D` implementing `PathLike`. Bridging filled polygons to `StyledPath2D` is the natural authoring path and is currently only implied by the path interface elsewhere.
 
 307. [polynomial-horner-evaluation](../experiments/lessons/v1/polynomial-horner-evaluation.md) — **missing-function** — `polynomials.plato`: `Polynomial` has no `Evaluate(Self, Number)` (Horner) and no `EvaluateDerivative` pair. The entire file is evaluation-shaped vocabulary without an evaluation entry point; this lesson cannot show a legal call.
 
@@ -835,7 +835,7 @@ early just creates rebase noise against the packet work.
 
 316. [pose-vs-transform](../experiments/lessons/v1/pose-vs-transform.md) — **naming** — `transforms.plato`: `Pose(t: Transform3D): Pose3D` is easy to misread as a constructor. A name like `RigidPart` or `DiscardScale` would make the lossy step louder at call sites the pose-vs-transform lesson keeps emphasizing.
 
-317. [pose-vs-transform](../experiments/lessons/v1/pose-vs-transform.md) — **missing-concept** — `transforms.plato`: `Pose3D` implements `Interpolatable` but `Transform3D` does not, with no concept such as `RigidMotion` marking distance-preserving maps. A small marker concept would let generic code (constraints, IK, skinning) require rigidity without listing `Pose3D | Motor3D` by hand.
+317. [pose-vs-transform](../experiments/lessons/v1/pose-vs-transform.md) — **missing-interface** — `transforms.plato`: `Pose3D` implements `Interpolatable` but `Transform3D` does not, with no interface such as `RigidMotion` marking distance-preserving maps. A small marker interface would let generic code (constraints, IK, skinning) require rigidity without listing `Pose3D | Motor3D` by hand.
 
 318. [pose-vs-transform](../experiments/lessons/v1/pose-vs-transform.md) — **doc-comment** — `transforms.plato`: `Transform3D` fields are ordered Translation, Rotation, Scale while application is S-R-T. A field-level note ("storage order ≠ application order") would prevent the confusion this lesson has to spell out in prose.
 
@@ -857,11 +857,11 @@ early just creates rebase noise against the packet work.
 
 327. [random-and-distributions](../experiments/lessons/v1/random-and-distributions.md) — **missing-function** — `random.plato`: `RandomState` documents draws that return a new state, but no `NextUnitInterval`, `NextInteger`, or `Sample(distribution, rng)` pair is declared. The entire teaching punchline ("pure draw") has no verb on the surface.
 
-328. [random-and-distributions](../experiments/lessons/v1/random-and-distributions.md) — **missing-concept** — `random.plato`: `NormalDistribution2D` / `3D` cannot implement `ProbabilityDistribution` (univariate Pdf). A `MultivariateDistribution` concept with `Pdf(Self, VectorND)` would give the Gaussians a home and clarify why they are split out.
+328. [random-and-distributions](../experiments/lessons/v1/random-and-distributions.md) — **missing-interface** — `random.plato`: `NormalDistribution2D` / `3D` cannot implement `ProbabilityDistribution` (univariate Pdf). A `MultivariateDistribution` interface with `Pdf(Self, VectorND)` would give the Gaussians a home and clarify why they are split out.
 
-329. [random-and-distributions](../experiments/lessons/v1/random-and-distributions.md) — **naming** — `random.plato`: `NormalDistribution` has a field also named `Mean`, while the concept function is `Mean(x: Self)`. Teaching "the mean parameter vs the Mean operation" is fine but easy to confuse in prose and in generated APIs.
+329. [random-and-distributions](../experiments/lessons/v1/random-and-distributions.md) — **naming** — `random.plato`: `NormalDistribution` has a field also named `Mean`, while the interface function is `Mean(x: Self)`. Teaching "the mean parameter vs the Mean operation" is fine but easy to confuse in prose and in generated APIs.
 
-330. [random-and-distributions](../experiments/lessons/v1/random-and-distributions.md) — **doc-comment** — `random.plato`: `VonMisesDistribution` says Pdf/Cdf take radians and `Mean` reports radians, yet `MeanDirection` is `Angle`. Spell the conversion expectation next to the concept mismatch so implementors and lessons agree.
+330. [random-and-distributions](../experiments/lessons/v1/random-and-distributions.md) — **doc-comment** — `random.plato`: `VonMisesDistribution` says Pdf/Cdf take radians and `Mean` reports radians, yet `MeanDirection` is `Angle`. Spell the conversion expectation next to the interface mismatch so implementors and lessons agree.
 
 331. [ray-intersection](../experiments/lessons/v1/ray-intersection.md) — **wrong-shape** — `spatial-queries.plato`: `RayHit3D` always carries mesh fields (`Face`, `Barycentric`, `Uv`) even for analytic targets. A sum type (`AnalyticHit | MeshHit(...)`) or optional sentinels documented per target would make the "meaningless on sphere" case explicit instead of relying on `-1` and `(0,0)`.
 
@@ -879,7 +879,7 @@ early just creates rebase noise against the packet work.
 
 338. [reflection-transforms](../experiments/lessons/v1/reflection-transforms.md) — **missing-function** — `lines.plato`: no `SignedDistance(plane: Plane, point: Point3D)` helper. Reflection lessons (and almost every plane query) need $\mathbf{n}\cdot p - d$; today callers re-derive it from fields ad hoc.
 
-339. [rigid-bodies](../experiments/lessons/v1/rigid-bodies.md) — **missing-function** — `rigid-dynamics.plato`: `ForceModel3D.ForceOn` is declared on the concept, but `UniformGravity3D`, `PointGravity`, `DragModel`, and `BuoyancyModel` do not yet list `implements ForceModel3D`. The lesson wants to say "gravity is a force model"; the implements clauses would make that teachable without a wink.
+339. [rigid-bodies](../experiments/lessons/v1/rigid-bodies.md) — **missing-function** — `rigid-dynamics.plato`: `ForceModel3D.ForceOn` is declared on the interface, but `UniformGravity3D`, `PointGravity`, `DragModel`, and `BuoyancyModel` do not yet list `implements ForceModel3D`. The lesson wants to say "gravity is a force model"; the implements clauses would make that teachable without a wink.
 
 340. [rigid-bodies](../experiments/lessons/v1/rigid-bodies.md) — **naming** — `rigid-dynamics.plato`: `RigidBody3D.AngularVelocity` is a `Vector3D` while `RigidBody2D.AngularVelocity` is the quantity type `AngularVelocity`. The asymmetry is documented, but a `Twist3D`-shaped field (or an explicit world-vs-body doc banner) would reduce confusion when teaching spatial angular rates.
 
@@ -901,19 +901,19 @@ early just creates rebase noise against the packet work.
 
 349. [rotors-and-bivectors](../experiments/lessons/v1/rotors-and-bivectors.md) — **doc-comment** — `rotations.plato`: `Rotor3D` says it is "structurally a quaternion" but does not spell the component order `(Scalar, YZ, ZX, XY) ↔ (W, X, Y, Z)` on the type. That map currently lives in the transforms library conversion — it belongs on the type banner for GA readers.
 
-350. [rotors-and-bivectors](../experiments/lessons/v1/rotors-and-bivectors.md) — **missing-concept** — `rotations.plato`: no shared `Rotor` concept tying `Rotor2D`/`Rotor3D` (sandwich `Transform`, `Inverse` as reverse, `Normalize`). Generic GA code and this lesson's "same idea in 2D and 3D" claim would use it.
+350. [rotors-and-bivectors](../experiments/lessons/v1/rotors-and-bivectors.md) — **missing-interface** — `rotations.plato`: no shared `Rotor` interface tying `Rotor2D`/`Rotor3D` (sandwich `Transform`, `Inverse` as reverse, `Normalize`). Generic GA code and this lesson's "same idea in 2D and 3D" claim would use it.
 
 351. [sampling-and-grids](../experiments/lessons/v1/sampling-and-grids.md) — **missing-function** — `sampling-grids.plato`: `RegularGrid2D` / `RegularGrid3D` declare layout but no helpers such as `NodeCounts`, `CellSize`, `WorldToGrid`, or `CellAt(point)`. Every consumer re-derives the off-by-one node rule; teaching it in prose is a sign the API should own those operations.
 
 352. [sampling-and-grids](../experiments/lessons/v1/sampling-and-grids.md) — **missing-type** — `sampling-grids.plato`: there is `SampledColorGrid2D` but no `SampledColorGrid3D`, and no sampled `DirectionField` grid. Volume color and sampled orientation fields are common; file 33's `VoxelColorGrid3D` is a different parameterization (Origin/CellSize vs Bounds/CellCounts), which fractures the mental model.
 
-353. [sampling-and-grids](../experiments/lessons/v1/sampling-and-grids.md) — **naming** — `sampling-grids.plato` vs `images.plato`: `SampledColorGrid2D` and `FloatImage` / `GrayscaleImage` both store dense 2D samples with different metadata (`RegularGrid2D` vs `IntegerSize2D`). A doc-comment bridge ("image = grid in pixel index space") or a conversion concept would reduce the dual vocabulary the lesson must explain.
+353. [sampling-and-grids](../experiments/lessons/v1/sampling-and-grids.md) — **naming** — `sampling-grids.plato` vs `images.plato`: `SampledColorGrid2D` and `FloatImage` / `GrayscaleImage` both store dense 2D samples with different metadata (`RegularGrid2D` vs `IntegerSize2D`). A doc-comment bridge ("image = grid in pixel index space") or a conversion interface would reduce the dual vocabulary the lesson must explain.
 
 354. [sampling-and-grids](../experiments/lessons/v1/sampling-and-grids.md) — **doc-comment** — `images.plato`: `Image` deliberately omits pixel accessors, which is fine, but nothing states how `GrayscaleImage` relates to `ScalarField2D`. Declaring an adapter or noting that images are not `Procedural` over `Point2D` would clarify why `Eval` works on grids but not on `Bitmap`.
 
-355. [scalar-vector-fields](../experiments/lessons/v1/scalar-vector-fields.md) — **missing-concept** — `fields.plato`: scalar expression graphs exist (`ScalarFieldGraph2D/3D`) but there is no parallel `VectorFieldGraph3D` / node sum for composing vector fields (add flows, scale, project). Teaching advection pipelines hits this gap immediately after curl and divergence.
+355. [scalar-vector-fields](../experiments/lessons/v1/scalar-vector-fields.md) — **missing-interface** — `fields.plato`: scalar expression graphs exist (`ScalarFieldGraph2D/3D`) but there is no parallel `VectorFieldGraph3D` / node sum for composing vector fields (add flows, scale, project). Teaching advection pipelines hits this gap immediately after curl and divergence.
 
-356. [scalar-vector-fields](../experiments/lessons/v1/scalar-vector-fields.md) — **missing-function** — `fields.plato`: `ScalarFieldGraph3D` has no `Eval` / `implements ScalarField3D`. The graph is inert data until some undeclared interpreter exists. Declaring `ScalarFieldGraph3D implements ScalarField3D` (or a concept `FieldGraph`) would make graphs first-class fields like `ConstantScalarField3D`.
+356. [scalar-vector-fields](../experiments/lessons/v1/scalar-vector-fields.md) — **missing-function** — `fields.plato`: `ScalarFieldGraph3D` has no `Eval` / `implements ScalarField3D`. The graph is inert data until some undeclared interpreter exists. Declaring `ScalarFieldGraph3D implements ScalarField3D` (or an interface `FieldGraph`) would make graphs first-class fields like `ConstantScalarField3D`.
 
 357. [scalar-vector-fields](../experiments/lessons/v1/scalar-vector-fields.md) — **missing-function** — `fields.plato`: no `GradientField` wrapper that turns a `DifferentiableScalarField3D` into a `VectorField3D`. The lesson wants to say "the gradient *is* a vector field"; v3 only offers pointwise `GradientAt`, not a reified field value.
 
@@ -929,9 +929,9 @@ early just creates rebase noise against the packet work.
 
 363. [scene-graph-hierarchy](../experiments/lessons/v1/scene-graph-hierarchy.md) — **pedagogy** — 2D and 3D share the parent-index pattern but diverge on content (`NodeContent2D` sum vs parallel resource slots). A banner cross-note in both files ("same hierarchy mechanics") would help authors port mental models without implying type compatibility.
 
-364. [sdf-operations](../experiments/lessons/v1/sdf-operations.md) — **missing-function** — `implicit-sdf.plato`: `SdfTree2D` / `SdfTree3D` declare the tree shape but there is no concept function such as `EvalTree(tree, primitives, point)` on the tree types. Teaching CSG evaluation has to invent the walk; a declared evaluator (even without a body) would pin the contract for leaf resolution and combine semantics.
+364. [sdf-operations](../experiments/lessons/v1/sdf-operations.md) — **missing-function** — `implicit-sdf.plato`: `SdfTree2D` / `SdfTree3D` declare the tree shape but there is no interface function such as `EvalTree(tree, primitives, point)` on the tree types. Teaching CSG evaluation has to invent the walk; a declared evaluator (even without a body) would pin the contract for leaf resolution and combine semantics.
 
-365. [sdf-operations](../experiments/lessons/v1/sdf-operations.md) — **missing-function** — `implicit-sdf.plato`: modifiers (`SdfRoundingModifier`, `SdfShellModifier`, …) are parameter records with no concept tying them to `SignedDistanceField3D`. A `ModifiedSdf3D { Source: ItemIndex; Modifier: ... }` sum type — or concept methods `Round`, `Shell`, `Onion` — would make the apply-step teachable instead of "evaluation context supplies the source."
+365. [sdf-operations](../experiments/lessons/v1/sdf-operations.md) — **missing-function** — `implicit-sdf.plato`: modifiers (`SdfRoundingModifier`, `SdfShellModifier`, …) are parameter records with no interface tying them to `SignedDistanceField3D`. A `ModifiedSdf3D { Source: ItemIndex; Modifier: ... }` sum type — or interface methods `Round`, `Shell`, `Onion` — would make the apply-step teachable instead of "evaluation context supplies the source."
 
 366. [sdf-operations](../experiments/lessons/v1/sdf-operations.md) — **doc-comment** — `implicit-sdf.plato`: `SdfCombine.Blend` should state explicitly that it is linear interpolation of distances, not a smooth Boolean, and that the zero set of a blend is not the blend of the zero sets. The pedagogy gap between Blend and SmoothUnion is the #1 confusion when reading the sum type.
 
@@ -953,9 +953,9 @@ early just creates rebase noise against the packet work.
 
 375. [signals-and-sampling](../experiments/lessons/v1/signals-and-sampling.md) — **doc-comment** — `signals.plato`: `SampledSignal` states sample $i$ at $i/f_s$ but does not state whether the first sample is at $t=0$ inclusive for duration `Count/SampleRate` vs `(Count-1)/SampleRate`. Fencepost ambiguity shows up immediately when teaching duration.
 
-376. [signed-distance-fields](../experiments/lessons/v1/signed-distance-fields.md) — **missing-type** — `implicit-sdf.plato` declares `SignedDistanceField2D` / `SignedDistanceField3D` concepts and CSG trees, but no closed-form primitive types (e.g. a `Circle`-backed planar SDF or `Sphere`-backed spatial SDF) with the standard $\|p - c\| - r$ implementation. The hand-derived circle formula has no named home in v3.
+376. [signed-distance-fields](../experiments/lessons/v1/signed-distance-fields.md) — **missing-type** — `implicit-sdf.plato` declares `SignedDistanceField2D` / `SignedDistanceField3D` interfaces and CSG trees, but no closed-form primitive types (e.g. a `Circle`-backed planar SDF or `Sphere`-backed spatial SDF) with the standard $\|p - c\| - r$ implementation. The hand-derived circle formula has no named home in v3.
 
-377. [signed-distance-fields](../experiments/lessons/v1/signed-distance-fields.md) — **missing-function** — `SignedDistanceField2D` / `SignedDistanceField3D` carry the sign convention only in doc comments. Pedagogically central queries — `IsInside`, `ClearanceAt` (unsigned distance outside), `IsOnBoundary` with tolerance — are not declared on the concepts. Every snippet re-implements `Eval(sdf, p) < 0` by hand.
+377. [signed-distance-fields](../experiments/lessons/v1/signed-distance-fields.md) — **missing-function** — `SignedDistanceField2D` / `SignedDistanceField3D` carry the sign convention only in doc comments. Pedagogically central queries — `IsInside`, `ClearanceAt` (unsigned distance outside), `IsOnBoundary` with tolerance — are not declared on the interfaces. Every snippet re-implements `Eval(sdf, p) < 0` by hand.
 
 378. [signed-distance-fields](../experiments/lessons/v1/signed-distance-fields.md) — **missing-function** — `DifferentiableScalarField2D.GradientAt` returns `Vector2D`, but shading and solvers want a unit `Direction2D` on the zero level set. A `NormalAt` returning `Direction2D` / `Direction3D` would match `vectors.plato` and avoid normalize guards at every call site.
 
@@ -971,7 +971,7 @@ early just creates rebase noise against the packet work.
 
 384. [skeletal-animation](../experiments/lessons/v1/skeletal-animation.md) — **doc-comment** — `skeletal-animation.plato`: `Bone.BindPose` should state explicitly that it is *local* (parent-relative), matching `SkeletonPose`, and that model-space bind lives only as the inverse cache on `SkinBinding`. New readers routinely assume `BindPose` is already model-space.
 
-385. [slerp](../experiments/lessons/v1/slerp.md) — **missing-concept** — `algebra.concepts.plato`: `Interpolatable` only has `Lerp`. A sibling concept such as `SphericallyInterpolatable` with `Slerp(a, b, t)` (implemented by `Quaternion`, maybe `Rotor3D`) would make the pose/animation choice discoverable from concepts instead of tribal knowledge that "quaternions use Slerp."
+385. [slerp](../experiments/lessons/v1/slerp.md) — **missing-interface** — `algebra.concepts.plato`: `Interpolatable` only has `Lerp`. A sibling interface such as `SphericallyInterpolatable` with `Slerp(a, b, t)` (implemented by `Quaternion`, maybe `Rotor3D`) would make the pose/animation choice discoverable from interfaces instead of tribal knowledge that "quaternions use Slerp."
 
 386. [slerp](../experiments/lessons/v1/slerp.md) — **doc-comment** — `intrinsics.plato`: `Slerp` should state whether it performs the shortest-path sign flip and what it does for near-parallel inputs. This lesson cannot teach the contract from the declaration alone.
 
@@ -985,11 +985,11 @@ early just creates rebase noise against the packet work.
 
 391. [solid-primitives](../experiments/lessons/v1/solid-primitives.md) — **missing-type** — `spatial-primitives.plato` / `solids.plato`: there is no thin-shell or surface-only counterpart to `Cylinder`/`Cone` (lateral surface without caps). Profile-generated `RevolvedSolid` can approximate them, but a named `CylindricalShell` would match `SphericalShell`'s role for pipes and ducts.
 
-392. [solid-primitives](../experiments/lessons/v1/solid-primitives.md) — **naming** — `solids.plato`: `CsgOperation.Difference` is set-difference (A minus B), which is correct, but easy to confuse with the algebraic `Difference` concept on points. A doc-comment cross-warning — or renaming to `Subtract` — would reduce collisions when both appear in one module.
+392. [solid-primitives](../experiments/lessons/v1/solid-primitives.md) — **naming** — `solids.plato`: `CsgOperation.Difference` is set-difference (A minus B), which is correct, but easy to confuse with the algebraic `Difference` interface on points. A doc-comment cross-warning — or renaming to `Subtract` — would reduce collisions when both appear in one module.
 
 393. [spatial-acceleration](../experiments/lessons/v1/spatial-acceleration.md) — **missing-function** — `spatial-structures.plato`: structures implement `SpatialIndex3D` / `RayIntersectable3D` but there are no declared builders (`BuildBvh`, `BuildKdTree`, …). Teaching acceleration without a build contract leaves the cost model and invalidation rules underspecified.
 
-394. [spatial-acceleration](../experiments/lessons/v1/spatial-acceleration.md) — **missing-function** — `spatial-queries.plato`: `RadiusQuery3D` exists as a request type, but no concept method `FindInRadius` parallels `FindNearest` on `NearestNeighborQueryable3D`. The query record is stranded without a capability.
+394. [spatial-acceleration](../experiments/lessons/v1/spatial-acceleration.md) — **missing-function** — `spatial-queries.plato`: `RadiusQuery3D` exists as a request type, but no interface method `FindInRadius` parallels `FindNearest` on `NearestNeighborQueryable3D`. The query record is stranded without a capability.
 
 395. [spatial-acceleration](../experiments/lessons/v1/spatial-acceleration.md) — **wrong-shape** — `spatial-queries.plato`: `RayHit3D` always carries `Face`, `Barycentric`, and `Uv`, with sentinels when inapplicable. For BVH hits against non-mesh primitives those fields are noise. A sum type (`Miss | MeshHit(...) | PrimHit(...)`) would match the tagged-variant preference in the stdlib README.
 
@@ -1031,7 +1031,7 @@ early just creates rebase noise against the packet work.
 
 414. [surface-normal-consistency](../experiments/lessons/v1/surface-normal-consistency.md) — **wrong-shape** — `mesh-attributes.plato`: well-known `"normal"` channels are documented as `Vector3D`, but normals are unit directions. Prefer `MeshAttribute<Direction3D>` (new channel group) or document a hard invariant that normal channels must be unit length.
 
-415. [surface-normal-consistency](../experiments/lessons/v1/surface-normal-consistency.md) — **missing-concept** — `surfaces.plato`: `OffsetSurface` should implement or require `DifferentiableSurface` on `Base`, and declare how `NormalAt` transforms (same as base for pure normal offset). As written it is only `ParametricSurface`, so the consistency story for offsets is doc-comment folklore.
+415. [surface-normal-consistency](../experiments/lessons/v1/surface-normal-consistency.md) — **missing-interface** — `surfaces.plato`: `OffsetSurface` should implement or require `DifferentiableSurface` on `Base`, and declare how `NormalAt` transforms (same as base for pure normal offset). As written it is only `ParametricSurface`, so the consistency story for offsets is doc-comment folklore.
 
 416. [surface-normal-consistency](../experiments/lessons/v1/surface-normal-consistency.md) — **doc-comment** — `mesh-attributes.plato`: `AttributeDomain` should spell out length rules for `"normal"` (`PerFace` → face count, `PerCorner` → $3\times$ triangle count for triangle meshes). Authors guess wrong and desynchronize channels from `Mesh`.
 
@@ -1061,7 +1061,7 @@ early just creates rebase noise against the packet work.
 
 429. [time-is-not-a-number](../experiments/lessons/v1/time-is-not-a-number.md) — **doc-comment** — `Instant`: state the affine analogy in one line ("time-line point; delta type is Duration, cf. Point/Vector") so the parallel to `points.plato` is discoverable from the declaration alone.
 
-430. [torus-parametric-surface](../experiments/lessons/v1/torus-parametric-surface.md) — **missing-concept** — `spatial-primitives.plato`: `Torus` is a solid only. There is no declared `ParametricSurface` (or boundary-surface) view, so UV evaluation and `ClosedU`/`ClosedV` live only as folklore. A `TorusSurface` type or `implements ParametricSurface` on a boundary companion would make the UV map first-class.
+430. [torus-parametric-surface](../experiments/lessons/v1/torus-parametric-surface.md) — **missing-interface** — `spatial-primitives.plato`: `Torus` is a solid only. There is no declared `ParametricSurface` (or boundary-surface) view, so UV evaluation and `ClosedU`/`ClosedV` live only as folklore. A `TorusSurface` type or `implements ParametricSurface` on a boundary companion would make the UV map first-class.
 
 431. [torus-parametric-surface](../experiments/lessons/v1/torus-parametric-surface.md) — **missing-function** — no declared `Eval(Torus, UvCoordinate): Point3D`, `CenterlinePoint`, or `DistanceToCenterline`. Every mesher reinvents the standard formulas; naming them on the solid would lock conventions (angle zero, normal sense).
 
@@ -1071,13 +1071,13 @@ early just creates rebase noise against the packet work.
 
 434. [triangle-barycentric-area](../experiments/lessons/v1/triangle-barycentric-area.md) — **missing-function** — `points.plato` / `planar-shapes.plato`: no `Barycentric(triangle: Triangle2D, point: Point2D): BarycentricCoordinate` or the inverse `Point(triangle, bary)`. The type exists; the maps that give it meaning do not.
 
-435. [triangle-barycentric-area](../experiments/lessons/v1/triangle-barycentric-area.md) — **missing-function** — `planar-shapes.plato`: `PlanarMeasurable.Area` does not specify signed vs absolute in the concept (`geometry.concepts.plato`). Triangles need `SignedArea` explicitly for barycentrics and winding; document or split the API.
+435. [triangle-barycentric-area](../experiments/lessons/v1/triangle-barycentric-area.md) — **missing-function** — `planar-shapes.plato`: `PlanarMeasurable.Area` does not specify signed vs absolute in the interface (`geometry.concepts.plato`). Triangles need `SignedArea` explicitly for barycentrics and winding; document or split the API.
 
 436. [triangle-barycentric-area](../experiments/lessons/v1/triangle-barycentric-area.md) — **doc-comment** — `points.plato`: `BarycentricCoordinate` should state the vertex binding ($U\to$ first vertex of the triangle, etc.) and clarify behavior when $U+V+W\neq 1$ (off-plane / degenerate input).
 
 437. [triangle-barycentric-area](../experiments/lessons/v1/triangle-barycentric-area.md) — **missing-function** — `planar-shapes.plato`: no `IsInside` spelled in terms of barycentrics alongside `Contains`. Teaching materials re-derive the weight test every time; a single documented implementation would lock the epsilon policy.
 
-438. [triangle-geometry](../experiments/lessons/v1/triangle-geometry.md) — **missing-function** — `planar-shapes.plato` / `spatial-primitives.plato`: no declared `Normal(Triangle3D)`, `SignedArea(Triangle2D)`, `Circumcenter`, `Incenter`, or `Barycentric(triangle, point)`. The lesson’s toolkit is classical; only `Area` / `Centroid` / `Contains` appear via concepts. Name the rest on the geometry library surface.
+438. [triangle-geometry](../experiments/lessons/v1/triangle-geometry.md) — **missing-function** — `planar-shapes.plato` / `spatial-primitives.plato`: no declared `Normal(Triangle3D)`, `SignedArea(Triangle2D)`, `Circumcenter`, `Incenter`, or `Barycentric(triangle, point)`. The lesson’s toolkit is classical; only `Area` / `Centroid` / `Contains` appear via interfaces. Name the rest on the geometry library surface.
 
 439. [triangle-geometry](../experiments/lessons/v1/triangle-geometry.md) — **missing-function** — `spatial-primitives.plato`: `Triangle3D` has `NearestPoint3D` but no `Plane` extraction (`FromTriangle → Plane`). Clipping and BSP authors need that one-liner as a declared conversion.
 
@@ -1101,7 +1101,7 @@ early just creates rebase noise against the packet work.
 
 449. [tuples-vs-vectors](../experiments/lessons/v1/tuples-vs-vectors.md) — **wrong-shape** — `Direction3D` wraps `Vector3D` but `Number3` has no unit-channel counterpart. That asymmetry is fine; a doc note under `Direction3D` ("normalize geometric vectors, not arbitrary Number3 channel triples") would stop RGB-normalization antipatterns.
 
-450. [tuples-vs-vectors](../experiments/lessons/v1/tuples-vs-vectors.md) — **pedagogy** — `Vector` concept name collides with everyday "vector" meaning `Vector3D`. A remark on the concept — "algebraic vector family; prefer concrete Vector3D/Number3 at APIs" — would reduce over-abstract call sites that accept any `Vector` and accidentally take `Number8`.
+450. [tuples-vs-vectors](../experiments/lessons/v1/tuples-vs-vectors.md) — **pedagogy** — `Vector` interface name collides with everyday "vector" meaning `Vector3D`. A remark on the interface — "algebraic vector family; prefer concrete Vector3D/Number3 at APIs" — would reduce over-abstract call sites that accept any `Vector` and accidentally take `Number8`.
 
 451. [units-in-types](../experiments/lessons/v1/units-in-types.md) — **missing-function** — `quantities.plato`: no cross-quantity operators such as `Multiply(a: Length, b: Length): Area`, `Divide(a: Length, b: Length): /* ratio */`, or `Divide(distance: Length, time: /* Duration */): Speed`. The file's own banner says multiplication yields a different type, but nothing declares those maps — the lesson cannot show typed dimensional arithmetic end-to-end.
 
@@ -1115,7 +1115,7 @@ early just creates rebase noise against the packet work.
 
 456. [vertex-index-safety](../experiments/lessons/v1/vertex-index-safety.md) — **missing-function** — `meshes.plato`: `TriangulatedGeometry3D` gives `PositionAt` / `FaceAt` but no `TryPositionAt` / bounds-checked variant returning an optional or sentinel. Teaching safety currently stops at "caller must validate."
 
-457. [vertex-index-safety](../experiments/lessons/v1/vertex-index-safety.md) — **doc-comment** — `collections.concepts.plato` / `topology.plato`: the `Index` concept should restate the global $-1$ means none rule in one place, since every typed index repeats it in a one-liner that readers may skim past.
+457. [vertex-index-safety](../experiments/lessons/v1/vertex-index-safety.md) — **doc-comment** — `collections.concepts.plato` / `topology.plato`: the `Index` interface should restate the global $-1$ means none rule in one place, since every typed index repeats it in a one-liner that readers may skim past.
 
 458. [vertex-index-safety](../experiments/lessons/v1/vertex-index-safety.md) — **naming** — `meshes.plato`: `SlotIndex` is another typed index for materials/batches. A short cross-reference in the topology file's index section would show that the pattern extends beyond mesh elements, reducing "why not just int?" pushback.
 

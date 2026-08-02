@@ -369,7 +369,7 @@ library Intrinsics
 
     // Generated equality scaffolding: every concrete type defines Equals/NotEquals in C#
     // (the writers list them in IgnoredFunctions and never emit members for them), but the
-    // checker could not previously see them for concept-typed receivers.
+    // checker could not previously see them for interface-typed receivers.
     Equals(a: IOrderable, b: IOrderable): Boolean;
     NotEquals(a: IOrderable, b: IOrderable): Boolean;
 

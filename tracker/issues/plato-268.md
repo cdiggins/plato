@@ -13,6 +13,8 @@ closed:
 links: [plato-261, plato-230, plato-263]
 ---
 
+> **Outcome (terminology pass, 2026-08):** the canonical user-facing keyword is now interface with I* names; concept remains a parse alias. The debate body below is historical (it compares the two spellings as they stood when this idea was filed).
+
 ## Idea
 
 Decide the **canonical user-facing name** for Plato's type-class construct among `interface`, `concept`, and `trait`. Explicitly reject `type-class` / `typeclass` as the primary term — accurate but too jargon-heavy and confusing for the intended audience. Today `interface` and `concept` are aliases ([plato-261](plato-261.md)); the dual vocabulary already splits stdlibs and docs.

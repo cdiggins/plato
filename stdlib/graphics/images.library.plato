@@ -1,7 +1,7 @@
 //==
 // # Images — derived functions for IImage
 //
-// Bodies for the `IImage` concept declared in `images.concepts.plato`: a raster with
+// Bodies for the `IImage` interface declared in `images.concepts.plato`: a raster with
 // known whole-pixel dimensions. The helpers derive the pixel count, the aspect
 // and orientation tests, coordinate validity, and the row-major flat index that
 // matches the tree's top-left-first storage convention. Pure expressions only;
@@ -71,7 +71,7 @@ library Images
     // # Concrete image types — IImage dimension accessors
     //
     // Each raster stores its dimensions in Size; Width and Height project the
-    // IntegerSize2D components for the IImage concept surface.
+    // IntegerSize2D components for the IImage interface surface.
 
     Width(self: Bitmap): Integer
         => self.Size.Width;

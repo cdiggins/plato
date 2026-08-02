@@ -1,7 +1,7 @@
 //==
 // # GeoSpatial — derived functions for IGeoRegion
 //
-// Bodies for the `IGeoRegion` concept declared in `geo-spatial.concepts.plato`:
+// Bodies for the `IGeoRegion` interface declared in `geo-spatial.concepts.plato`:
 // a surface region that tests whether it contains a geodetic coordinate
 // (altitude ignored). Pure expressions only; all inputs are immutable and
 // evaluation is side-effect free. See `README.md` for naming and unit
@@ -28,7 +28,7 @@ library GeoSpatial
     //==
     // # The IGeoRegion containment tests
     //
-    // Altitude is ignored throughout, as the concept says. The bounds and circle
+    // Altitude is ignored throughout, as the interface says. The bounds and circle
     // tests are exact; the polygon test treats the rings as straight in
     // longitude/latitude, which is the usual convention for a GeoJSON-style
     // polygon and diverges from the geodesic edges the type's doc comment names

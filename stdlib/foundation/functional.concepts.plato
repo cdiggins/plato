@@ -1,11 +1,11 @@
 //==
-// # Functional concepts
+// # Functional interfaces
 //
 // Capabilities of function-like values: things that map a domain to a range.
 // Curves, surfaces, fields, easings, and distributions are all procedural.
 //
 // The domain/range pair alone identifies the kind of object, which is why one
-// concept covers so much ground. Named forward concepts, by instantiation:
+// interface covers so much ground. Named forward interfaces, by instantiation:
 //   Number -> Number ......... ICurve1D, Easing        Number -> Point2D/3D ... ICurve2D/3D
 //   UvCoordinate -> Point3D .. IParametricSurface      UvwCoordinate -> Point3D IParametricVolume
 //   Point2D -> Number ........ IScalarField2D          Point3D -> Number ...... IScalarField3D
@@ -17,7 +17,7 @@
 // An integer domain makes the mapping a lattice read rather than a continuous
 // one: that is a sampled image, texture, or voxel grid, not a field.
 
-// A pure mapping from a domain value to a range value. The unifying concept for
+// A pure mapping from a domain value to a range value. The unifying interface for
 // curves (Number to point), surfaces (UV to point), fields (point to value),
 // easings (Number to Number), and beyond.
 // (https://en.wikipedia.org/wiki/Function_(mathematics))

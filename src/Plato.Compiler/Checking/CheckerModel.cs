@@ -29,7 +29,7 @@ namespace Ara3D.Geometry.Compiler.Checking
     /// <summary>How one argument matched its parameter during overload resolution, in order of
     /// preference. Recorded per argument on a <see cref="ResolvedCall"/> so the elaborator can
     /// make the implicit-conversion class an explicit IR node (see <c>TirCoerce</c>).</summary>
-    public enum ArgMatchKind { Exact, Generic, Concept, Conversion }
+    public enum ArgMatchKind { Exact, Generic, Interface, Conversion }
 
     /// <summary>
     /// The decision the solver committed for one resolved <see cref="FunctionCall"/>: which
@@ -43,7 +43,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         public FunctionCall Call { get; }
         public FunctionDef Callee { get; }
         /// <summary>The instantiated (zonked) parameter types — the declared signature with generic
-        /// holes filled and interface (concept) parameters kept as the interface.</summary>
+        /// holes filled and interface parameters kept as the interface.</summary>
         public IReadOnlyList<TypeExpression> ParameterTypes { get; }
         public TypeExpression ReturnType { get; }
         public IReadOnlyList<ArgMatchKind> ArgKinds { get; }

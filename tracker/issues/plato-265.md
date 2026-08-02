@@ -15,7 +15,7 @@ links: [plato-230, submodules/Plato/plato-src-v3, docs/plato-v3-vocabulary-repor
 
 ## Idea
 
-Ship a browsable HTML catalog of the Plato standard library (types, concepts, docs, cross-links). Approach: use a Fable agent to author a **small spike** (a couple of representative pages), verify the look/IA feels right, then extend generation across the whole library — do not boil the ocean first.
+Ship a browsable HTML catalog of the Plato standard library (types, interfaces, docs, cross-links). Approach: use a Fable agent to author a **small spike** (a couple of representative pages), verify the look/IA feels right, then extend generation across the whole library — do not boil the ocean first.
 
 ## Assumptions
 
@@ -27,7 +27,7 @@ Ship a browsable HTML catalog of the Plato standard library (types, concepts, do
 
 - **Spike corpus** — hand-pick 2–3 domains (e.g. vectors + transforms) vs auto-generate two random files.
 - **Generator host** — one-off Fable pages checked in vs scripted emitter from Plato sources once style is approved.
-- **IA** — flat type list vs concept lattice vs domain chapters matching numbered `plato-src-v3` files.
+- **IA** — flat type list vs interface lattice vs domain chapters matching numbered `plato-src-v3` files.
 - **Hosting** — local `file://` / docs folder vs GitHub Pages.
 
 ## Related
@@ -40,7 +40,7 @@ Ship a browsable HTML catalog of the Plato standard library (types, concepts, do
 ## Approaches
 
 Short term: Fable produces 2–3 polished pages for one domain; human reviews; then a generator clones the template over all types.
-Long term: full site with search, concept graph, images, Wikipedia/MathWorld links, lesson deep-links.
+Long term: full site with search, interface graph, images, Wikipedia/MathWorld links, lesson deep-links.
 Adjacent: emit the same pages from CI on stdlib change.
 
 ## Case against
@@ -63,7 +63,7 @@ Strengthens the **stdlib-as-readable-API** boundary: one generated consumer of d
 
 ## Simplest possible implementation
 
-Hand-generate (via Fable) pages for `Vector3` / `Matrix4x4` / one concept file; check into `docs/` or `submodules/Plato/docs/api/`; decide go/no-go before automation.
+Hand-generate (via Fable) pages for `Vector3` / `Matrix4x4` / one interface file; check into `docs/` or `submodules/Plato/docs/api/`; decide go/no-go before automation.
 
 Pros: validates IA cheaply; no toolchain risk  
 Cons: throwaway if rejected; manual pages drift immediately

@@ -25,11 +25,11 @@ looks like a one-liner; in production it is a policy decision.
 
 A **vector** is a displacement: it has a direction and a length (magnitude), but no
 fixed location in space. In Plato, geometric displacements in 2D and 3D are
-`Vector2D` and `Vector3D`. Both implement the `Vector` concept, which in turn
+`Vector2D` and `Vector3D`. Both implement the `Vector` interface, which in turn
 implements `Normed`:
 
 ```
-concept Normed
+interface Normed
 {
     Magnitude(x: Self): Number;
     MagnitudeSquared(x: Self): Number;
@@ -46,7 +46,7 @@ $$\hat{v} = \frac{v}{\|v\|}$$
 
 with $\|\hat{v}\| = 1$ and the same direction as $v$ (except when $v = 0$).
 
-The `Vector` concept library defines normalization as scaling by the reciprocal of
+The `Vector` interface library defines normalization as scaling by the reciprocal of
 magnitude:
 
 ```
@@ -76,7 +76,7 @@ force onto a distance, converting speed to velocity.
 ## The zero vector
 
 The **zero vector** is the additive identity: every component is zero. For any
-`Vector2D` or `Vector3D` that implements `Numerical`, the concept library defines
+`Vector2D` or `Vector3D` that implements `Numerical`, the interface library defines
 
 ```
 IsZero(x: Numerical): Boolean
@@ -269,7 +269,7 @@ on rotation types (`Quaternion`, `Rotation2D`), not on raw vector lerp.
 Relevant surface from `08-vectors.plato`:
 
 ```
-concept Vector
+interface Vector
     inherits Numerical, Arithmetic, Indexable<Number>, Normed, Lattice, Hashable
 {
     Dot(a: Self, b: Self): Number;
@@ -282,7 +282,7 @@ type Direction2D implements Value { Vector: Vector2D; }
 type Direction3D implements Value { Vector: Vector3D; }
 ```
 
-Derived behavior (concept libraries under `stdlib/concept-library/`) that
+Derived behavior (interface libraries under `stdlib/interface-library/`) that
 every lesson about normalization eventually touches:
 
 | Operation | Where | Precondition / note |
@@ -339,7 +339,7 @@ resolve "same line, opposite ray" — ray and line types encode which end matter
 
 **6. Integer grids are a different story.** `IntegerVector2` and `IntegerVector3`
 are grid steps and pixel offsets; they do not implement `Vector` or carry a
-normalization story. Do not call `Normalize` on them — the concept does not apply.
+normalization story. Do not call `Normalize` on them — the interface does not apply.
 
 **7. Documented degeneracy elsewhere.** `LineSegment3D` notes it is degenerate when
 `A` equals `B`. Any code that turns a segment into a direction via `B.Between(A)`
@@ -386,12 +386,12 @@ Speed and heading decouple precisely so this case is representable.
 
 ## Library recommendations
 
-- **missing-function** — `08-vectors.plato` / `Vector`: add `TryNormalize(self: Vector, fallback: Vector): Vector` or `NormalizeOr(self: Vector, fallback: Vector): Vector` beside the existing preconditioned `Normalize`. Teaching this lesson makes clear that every call site repeats the same `IsZeroLength` guard; the concept library already has `SafeDivide` on `Real` for the analogous scalar case.
+- **missing-function** — `08-vectors.plato` / `Vector`: add `TryNormalize(self: Vector, fallback: Vector): Vector` or `NormalizeOr(self: Vector, fallback: Vector): Vector` beside the existing preconditioned `Normalize`. Teaching this lesson makes clear that every call site repeats the same `IsZeroLength` guard; the interface library already has `SafeDivide` on `Real` for the analogous scalar case.
 
 - **missing-function** — `08-vectors.plato` / `Direction2D`, `Direction3D`: declare validated factories, e.g. `FromVector(v: Vector2D): Direction2D` (precondition: non-zero) and `TryFromVector(v: Vector2D, fallback: Direction2D): Direction2D`, plus `FromVectorUnchecked` explicitly documented as unsafe. Today tuple construction `Direction3D(v)` appears in `13-transforms.plato` but nothing in `08-vectors.plato` states when wrapping is legal or enforces `IsUnit`.
 
 - **doc-comment** — `08-vectors.plato` / `Direction2D`, `Direction3D`: the invariant comment should warn that arbitrary `Vector` values may violate unit length after non-rigid transforms or manual construction, and point callers at `IsUnit` for diagnostics. The type promises intent, not runtime proof.
 
-- **pedagogy** — `concept-library/06-numeric-structures.library.plato` / `Normalize`: pair `IsZeroLength` guidance with `Normalize` in doc comments, or add a guarded helper, so callers do not rediscover near-zero policy independently.
+- **pedagogy** — `interface-library/06-numeric-structures.library.plato` / `Normalize`: pair `IsZeroLength` guidance with `Normalize` in doc comments, or add a guarded helper, so callers do not rediscover near-zero policy independently.
 
 > Resolved 2026-07-28: added `NormalizeOr(v, fallback)` (fallback style, CONVENTIONS A1) plus `Direction2D/3D` validated factories `FromVector`/`TryFromVector`/`FromVectorUnchecked` in numeric-structures.library.plato; Direction2D/3D doc comments now state the intent-not-proof invariant and safe construction path (items 252/253/254, stdlib commit pending).

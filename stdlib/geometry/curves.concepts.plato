@@ -2,14 +2,14 @@
 // # Curves
 //
 // Sections, in order:
-//  - ICurve concepts
-//  - ICurve capability concepts
+//  - ICurve interfaces
+//  - ICurve capability interfaces
 
 //==
-// # ICurve concepts
+// # ICurve interfaces
 //
 // Continuous curves as pure functions: a curve maps one parameter to a position
-// (the IProcedural concept from `functional.concepts.plato`). Unless a type
+// (the IProcedural interface from `functional.concepts.plato`). Unless a type
 // documents otherwise, the canonical parameter domain of a curve is the unit
 // interval [0,1], and closed curves satisfy Eval(0) = Eval(1). The optional
 // capabilities a curve may add on top — derivatives, moving frames, polar form,
@@ -47,7 +47,7 @@ interface ICurve3D
 { }
 
 // A 2D curve that returns to its start: Eval(0) = Eval(1) with continuous closure.
-// Marker concept; closure is a structural guarantee of the implementing type.
+// Marker interface; closure is a structural guarantee of the implementing type.
 interface IClosedCurve2D
     inherits ICurve2D
 { }
@@ -82,7 +82,7 @@ interface IAngularCurve3D
 }
 
 //==
-// # ICurve capability concepts
+// # ICurve capability interfaces
 //
 // The optional capabilities a curve may satisfy on top of the `ICurve<TRange>`
 // root declared above: an explicit period, first and second

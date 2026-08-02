@@ -26,9 +26,9 @@ namespace PlatoTests
         // Measured 2026-07-29: 0 / 2106. The forward vocabulary now type-checks CLEAN.
         //
         // The last cluster was 9 IntervalsTransformsInterval functions that build an interval from a
-        // TUPLE LITERAL but declared the CONCEPT as their return type (`Union(...): IntervalLike<$T>
+        // TUPLE LITERAL but declared the interface as their return type (`Union(...): IntervalLike<$T>
         // => (a, b)`), each yielding CHK101 'Tuple2<$T,$T>' vs 'IntervalLike<$T>'. The checker was
-        // right to reject it: a concept does not say WHICH implementer the tuple becomes, so there is
+        // right to reject it: an interface does not say WHICH implementer the tuple becomes, so there is
         // no sound choice to make. The author's intent was `Self` — these transforms are
         // shape-preserving — so the fix was a LIBRARY fix, not a compiler fix: the 9 declarations (plus
         // the delegating FirstHalf/SecondHalf and the Tuple2<Self,Self> of SplitAt/Split) now return
@@ -186,10 +186,10 @@ namespace PlatoTests
                 TestContext.WriteLine($"  {d.Code} [{d.Severity}] {d.Message}");
         }
 
-        // plato-311: every concept the forward stdlib stores in type position (an existential
+        // plato-311: every interface the forward stdlib stores in type position (an existential
         // "any C" — e.g. `Path: Curve3D` on SweptSurface) must have an object-safe surface, or it
         // has no non-generic view and no defined C# lowering. Zero is a hard gate, not a ratchet:
-        // a new CHK308 means a new concept was stored existentially without any object-safe
+        // a new CHK308 means a new interface was stored existentially without any object-safe
         // member, which the writer cannot emit (see ExistentialConceptChecker / the plato-311 ADR).
         [Test]
         public static void ForwardStdLibHasNoViewlessExistentialReferences()
@@ -200,11 +200,11 @@ namespace PlatoTests
             foreach (var d in errors)
                 TestContext.WriteLine($"  {d.Code} {d.Message}");
             Assert.IsEmpty(errors,
-                "Forward stdlib has existential references to view-less concepts (CHK308).");
+                "Forward stdlib has existential references to view-less interfaces (CHK308).");
         }
 
         // plato-382: every construction of a bounded generic type in the forward vocabulary must
-        // supply an argument that satisfies the bound, and every bound must name a concept. Zero is
+        // supply an argument that satisfies the bound, and every bound must name an interface. Zero is
         // a hard gate, not a ratchet — a CHK309 means a declaration promises something its argument
         // cannot do, which is precisely the class of error bounds were added to catch.
         [Test]

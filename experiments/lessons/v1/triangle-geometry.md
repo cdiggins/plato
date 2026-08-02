@@ -214,7 +214,7 @@ of it as a patch. `Area` uses the 3D cross-product magnitude.
 - **missing-function** — `17-planar-shapes.plato` / `18-spatial-primitives.plato`: no
   declared `Normal(Triangle3D)`, `SignedArea(Triangle2D)`, `Circumcenter`, `Incenter`,
   or `Barycentric(triangle, point)`. The lesson’s toolkit is classical; only `Area` /
-  `Centroid` / `Contains` appear via concepts. Name the rest on the geometry library
+  `Centroid` / `Contains` appear via interfaces. Name the rest on the geometry library
   surface.
 
 - **missing-function** — `18-spatial-primitives.plato`: `Triangle3D` has `NearestPoint3D`

@@ -78,13 +78,13 @@ File `12-intervals-bounds.plato` separates **directed intervals**, **axis-aligne
 bounds**, **sizes**, and a **center-size rectangle**.
 
 ```plato
-concept IntervalLike<T>
+interface IntervalLike<T>
 {
     Start(x: Self): T;
     End(x: Self): T;
 }
 
-concept BoundsLike<TPoint>
+interface BoundsLike<TPoint>
 {
     Min(x: Self): TPoint;
     Max(x: Self): TPoint;
@@ -133,7 +133,7 @@ Inclusive/exclusive policy is stated in doc comments:
 | `Bounds2D` / `Bounds3D` | inclusive Min and Max |
 | `IntegerBounds2D` / `IntegerBounds3D` | contains Min, excludes Max (pixel/voxel boxes) |
 
-Usage-shaped sketches (illustrative — library helpers live on the concept surface):
+Usage-shaped sketches (illustrative — library helpers live on the interface surface):
 
 ```plato
 let span = NumberInterval { Start: 0, End: 10 };
@@ -166,10 +166,10 @@ let card = Rect2D {
 endpoints — arc sweeps and physical ranges stay out of raw `Number` when units matter.
 `IntegerSize2D` / `IntegerSize3D` are discrete extents for images and voxel grids.
 
-The concept library already derives a rich `IntervalLike` toolkit: `Extent`, `IsForward`,
+The interface library already derives a rich `IntervalLike` toolkit: `Extent`, `IsForward`,
 `Contains`, `Overlaps`, `Clamp`, `Union`, `Intersection`, `Grow`, `Prefix` / `Suffix`.
 `BoundsLike` currently exposes little beyond `Center` and diagonal `Lerp` — containment
-and union for boxes are the pedagogical workhorses that are still blocked at the concept
+and union for boxes are the pedagogical workhorses that are still blocked at the interface
 shape (see recommendations).
 
 ## Pitfalls / fine print
@@ -224,7 +224,7 @@ need an explicit convention (geospatial code hits the same issue in longitude).
 
 ## Library recommendations
 
-- **missing-function** — `12-intervals-bounds.plato` / `BoundsLike`: the concept library
+- **missing-function** — `12-intervals-bounds.plato` / `BoundsLike`: the interface library
   documents that `Contains`, `Union`, `Intersection`, `Expand`, and corner enumeration
   cannot be derived against `BoundsLike<TPoint>` as declared (no delta type, points are
   not a `Lattice`). Teaching AABBs without `Union`/`Contains` forces hand-waving —

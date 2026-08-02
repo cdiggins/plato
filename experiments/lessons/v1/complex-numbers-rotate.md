@@ -225,7 +225,7 @@ magnitude.
   the unit circle (and a documented precondition for non-unit `Complex`) would
   close the teaching bridge.
 
-- **missing-concept** — `05-numbers.plato`: `Complex` does not implement
+- **missing-interface** — `05-numbers.plato`: `Complex` does not implement
   `Normed` or expose `Argument: Angle`. Magnitude and argument are the two
   polar coordinates of a complex number; without them, the
   "magnitudes multiply, angles add" slogan cannot be typed against `Complex`.

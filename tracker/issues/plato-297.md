@@ -21,7 +21,7 @@ Grow Plato's polyhedron story beyond named Platonic/Archimedean kinds into a **c
 
 - `Meshable3D` / `PolygonMesh3D` / topology helpers are the right sinks; polyhedra are solids that *become* meshes, not a parallel mesh format.
 - A usable dual and Conway truncate/ambo need half-edge or equivalent adjacency (stdlib already sketches `HalfEdgeNavigable`, `Manifoldness`).
-- Exotic non-convex / star polyhedra (Kepler–Poinsot, stellations) are in scope as catalog entries but may not satisfy `ConvexSolid` / `Manifold` markers — concepts must allow that (ties to [plato-298](plato-298.md)).
+- Exotic non-convex / star polyhedra (Kepler–Poinsot, stellations) are in scope as catalog entries but may not satisfy `ConvexSolid` / `Manifold` markers — interfaces must allow that (ties to [plato-298](plato-298.md)).
 - Studio generators (`PlatonicSolid` script) should eventually consume Plato/stdlib meshes rather than a permanent C#-only table.
 
 ## Design decisions
@@ -40,7 +40,7 @@ Grow Plato's polyhedron story beyond named Platonic/Archimedean kinds into a **c
 - [MeshGenerators.cs](../../ara3d-sdk/examples/Ara3D.Studio.Examples/Generators/MeshGenerators.cs) — Studio `PlatonicSolid` generator consuming C# tables today.
 - [plato-298](plato-298.md) — polygon meshes with/without holes + manifold markers (dual/Conway preconditions).
 - [plato-273](plato-273.md) — geometry libraries into stdlib (mesh/BREP adjacency context).
-- [ara3d-056](ara3d-056.md) — capability lattice / solid tessellation concepts.
+- [ara3d-056](ara3d-056.md) — capability lattice / solid tessellation interfaces.
 
 ## Approaches
 

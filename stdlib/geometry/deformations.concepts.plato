@@ -1,5 +1,5 @@
 //==
-// # Deformation concepts
+// # Deformation interfaces
 //
 // Named space warps as first-class values: a deformation is a pure point-to-point
 // map. Thin aliases of IProcedural over Point2D/Point3D so catalogs (Twist, Bend,

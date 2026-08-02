@@ -18,7 +18,7 @@ library Random
     // factorial, the binomial coefficient, the standard normal density and its
     // rational CDF approximation — plus the `RandomState` hash. The
     // `IProbabilityDistribution` obligations themselves are split by family across
-    // the sections below, as is the derived surface built *on top* of the concept
+    // the sections below, as is the derived surface built *on top* of the interface
     // (StandardDeviation, SurvivalAt, ProbabilityBetween, ...).
     //
     // ## Special functions
@@ -409,8 +409,8 @@ library Random
     // The variance is undefined. By the convention stated on the type, this
     // reports positive infinity, spelled as 1.0/0.0 — which is exactly the IEEE
     // +Infinity on every float backend, so it needs no constant. Deliberately
-    // NOT adding a `PositiveInfinity` to `INumericalLimits`: that concept is
-    // declared in the core/algebra concept files (owned elsewhere) and a new
+    // NOT adding a `PositiveInfinity` to `INumericalLimits`: that interface is
+    // declared in the core/algebra interface files (owned elsewhere) and a new
     // member imposes a fresh obligation on every INumerical implementor
     // tree-wide, which is out of proportion to this one call.
     Variance(self: CauchyDistribution): Number
@@ -849,13 +849,13 @@ library Random
     //==
     // # Derived functions for IProbabilityDistribution
     //
-    // Bodies for the `IProbabilityDistribution` concept declared in
+    // Bodies for the `IProbabilityDistribution` interface declared in
     // `random.concepts.plato`,
     // which exposes Mean, Variance, Pdf and Cdf. The derived surface is the tail
     // and interval probabilities that read from Cdf, plus the spread and density
     // comparisons. The concrete per-distribution obligation fills (and the named
     // numerical approximations they need) stay in the `random*.library.plato`
-    // family; only the concept-generic helpers live here. Pure
+    // family; only the interface-generic helpers live here. Pure
     // expressions only; all inputs are immutable and evaluation is side-effect
     // free.
 

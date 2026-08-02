@@ -16,9 +16,9 @@
 > - **Item 4 (`unique` builders) is NOT deliverable** — compiler-blocked, not content-blocked.
 >   `Freeze`/`Count`/`EmptyList` cannot be declared at all; a builder can be constructed and
 >   mutated but never consumed. See the item for the source line.
-> - **Items 3 and 6 were ~10× cheaper than estimated.** A library function with a concept-typed
+> - **Items 3 and 6 were ~10× cheaper than estimated.** A library function with an interface-typed
 >   first parameter discharges the obligation for *every* implementor, so item 6 went from ~490
->   hand-written bodies to one concept member plus 100 projections. That lever was the single
+>   hand-written bodies to one interface member plus 100 projections. That lever was the single
 >   most valuable discovery of the port and is not mentioned anywhere in the original text.
 > - **LINT003 is not a valid progress metric.** `CheckUnusedFields` (`Linter.cs:184-198`) does not
 >   see field reads inside statement blocks or `var` initializers. Three agents hit this
@@ -30,11 +30,11 @@
 > Follow-ups the port opened rather than closed are listed at the end.
 
 Survey date 2026-07-28 (revised same day: claims re-verified against both trees; item 1
-redesigned around the `Vector` concept; constants promoted to Tier 0).
+redesigned around the `Vector` interface; constants promoted to Tier 0).
 Method: full read of `stdlib-legacy/*.plato` (4,465 lines, 28 files), name-by-name presence
 check against `stdlib/*.plato` (80 files, ~13K lines) plus the Plato navigation index.
 
-**Framing.** `stdlib` is much broader in *vocabulary* (150 concepts, 1111 types) but far thinner in
+**Framing.** `stdlib` is much broader in *vocabulary* (150 interfaces, 1111 types) but far thinner in
 *executable content*. `stdlib-legacy` is narrow but carries closed-form math, working combinators,
 and several load-bearing language idioms that the new tree simply does not have. Everything below
 is "legacy has a body / an idea, stdlib has at most a declaration".
@@ -73,7 +73,7 @@ angle-to-point evaluator under `NGonPoint`, `CirclePoints`, and every polar curv
 
 ## Tier 1 — structural ideas (change what stdlib can express)
 
-### 3. Component-wise lifting on the `Vector` concept
+### 3. Component-wise lifting on the `Vector` interface
 The legacy engine is `IArrayLike<T>` (`stdlib-legacy/core.interfaces.plato:38`:
 `NumComponents`/`Components`/`CreateFromComponents`/`CreateFromComponent`) plus the combinators
 (`array.plato:42-61`: `MapComponents`, `ZipComponents` 2- and 3-ary, `AllComponents`,
@@ -82,11 +82,11 @@ every `Number` intrinsic and helper (`Abs`, `Cbrt`, `Exp`, `Floor`, `Pow`, `Clam
 `Fract`, `AlmostEqual`, …) is lifted to every vector type by a one-line call. ~50 functions
 written once.
 
-**Do not port `IArrayLike<T>` verbatim.** The right vehicle already exists: `concept Vector`
+**Do not port `IArrayLike<T>` verbatim.** The right vehicle already exists: `interface Vector`
 (`stdlib/vectors.plato:15`), which inherits `Indexable<Number>` and so already carries the whole
 read side (`Count` = legacy `NumComponents`, `At` = component access). What it lacks is exactly
 what `numeric-structures.library.plato:64-67` and `:139-144` already record as
-`TODO(concept-gap)`: no construction, so no map/zip/fold is derivable, and `SumComponents`,
+`TODO(interface-gap)`: no construction, so no map/zip/fold is derivable, and `SumComponents`,
 `MinComponent`, per-component `Abs`/`Floor`, and even generic `Zero`/`One` bodies are stuck
 per-type. The port is therefore two members on `Vector`:
 
@@ -100,7 +100,7 @@ functions landing in `numeric-structures.library.plato`, discharging its own TOD
 Why this beats the verbatim port: the generic `T` in `IArrayLike<T>` is only ever instantiated
 at `Number` (`IVectorLike inherits IArrayLike<Number>`); the read half is already inherited;
 it adds zero new taxonomy (this survey already rejects the `IVectorLike`/`INumerical` stack
-below); and it matches the new tree's idiom (bare concept names, `Self` first, fields like
+below); and it matches the new tree's idiom (bare interface names, `Self` first, fields like
 `VectorN.Components` already named accordingly). All seven `Vector` implementors
 (`Number2/3/4/8`, `Vector2D/3D`, `VectorN`) light up at once. The same recipe later extends
 `MatrixLike` (its construction gap is the other half of `:139-144`), but that is a follow-on,
@@ -122,7 +122,7 @@ currently live in `stdlib-legacy-tests` (`library UniqueIntrinsics`), per the he
 `Eval`/`Combine`/`MapValue`/`Union`/`Intersection`/`Difference`/`Offset`, lines 9-42) and the
 design essay in `procedurals.plato:1-76`.
 
-`stdlib` has `concept Procedural<TDomain, TRange>` and a large `implicit-sdf.plato` node/tree
+`stdlib` has `interface Procedural<TDomain, TRange>` and a large `implicit-sdf.plato` node/tree
 vocabulary, but **no type stores a function value** (every `Function1` in the tree is a
 parameter) and no combinators — `MapValue` is absent, the only `Combine` is a sum-type tag.
 Legacy proved this shape works end-to-end and monomorphizes. Port `ScalarField3D`-style
@@ -135,12 +135,12 @@ vs continuous forms) is the best written rationale in either tree and belongs in
 generic version blocked on in-function constraints; port the *monomorphic* form that works.
 
 ### 6. Obligation-filling library pattern for concrete quantity types
-`stdlib-legacy/measures.plato` — 15 lines, and the header comment is the point: concepts that
+`stdlib-legacy/measures.plato` — 15 lines, and the header comment is the point: interfaces that
 inherit `Scalable`/`Comparable` have no generic component-wise implementation, so each concrete
 measure must supply `Multiply`/`Divide`/`Modulo`/`LessThanOrEquals` explicitly or the compiler
 emits throwing stubs.
 
-`stdlib/quantities.plato` declares ~35 physical quantity types against `concept Quantity`.
+`stdlib/quantities.plato` declares ~35 physical quantity types against `interface Quantity`.
 Unless that pattern is followed, all ~35 will emit throwing stubs. Port the pattern and the
 warning.
 
@@ -168,7 +168,7 @@ already declare `Spiral`, `Rose`, `Limacon`, `Cardioid`, `Lissajous`, `Epicycloi
 `Hypotrochoid`, `Lemniscate`, `TorusKnot`, `Trefoil`, `FigureEightKnot` — legacy has the
 **formula for each**, with the Wikipedia citation attached.
 
-The polar half of the structural story is **already adopted**: `concept PolarCurve2D` with
+The polar half of the structural story is **already adopted**: `interface PolarCurve2D` with
 `RadiusAt(x: Self, angle: Angle)` exists (`stdlib/curves-surfaces.concepts.plato:90`), and
 `PolarPositionAt`/`CartesianPositionAt` are implemented generically
 (`curves-surfaces.library.plato:332-345`). So the polar port is just the one-line `RadiusAt`
@@ -176,7 +176,7 @@ bodies — fourteen named curves in legacy (`curves.plato:299-381`).
 
 Still worth importing as an idea: **`IAngularCurve2D`/`IAngularCurve3D`**
 (`curves.plato:150`): curves whose natural parameter is an `Angle`, with a single bridge
-`Eval(curve, t: Number) => curve.Eval(t.Turns)`. `stdlib` has no angular-curve concept; it
+`Eval(curve, t: Number) => curve.Eval(t.Turns)`. `stdlib` has no angular-curve interface; it
 matches the `Angle`-not-`Number` rule and costs one function per family. Depends on item 2.
 
 Not yet in stdlib at all: `ButterflyCurve`, `CycloidOfCeva`, `TschirnhausenCubic`,
@@ -256,7 +256,7 @@ drop, not a gap: folded into `AlmostEqual(x, y, tolerance)` —
 
 ## Explicitly not worth porting
 
-- `stdlib-legacy/core.interfaces.plato` as a *taxonomy* — stdlib's concept split (`Additive`,
+- `stdlib-legacy/core.interfaces.plato` as a *taxonomy* — stdlib's interface split (`Additive`,
   `Multiplicative`, `Scalable`, `Lattice`, `Clampable`, `Normed`, `MetricSpace`,
   `Difference<T>`) is strictly better factored than legacy's `IVectorLike`/`INumerical`/
   `IRealNumber` stack. Take the construction idea (item 3) and leave the rest.
@@ -307,7 +307,7 @@ Ordered by how much they block.
    `stdlib-legacy-tests` (`library UniqueIntrinsics`) declares the same signatures and *does*
    compile, so the two trees reach different paths — that is the thread to pull. Until it is
    fixed no affine algorithm is writable in stdlib.
-2. **The emitted vector types are throwing stubs — the concept-generic bodies compute only at
+2. **The emitted vector types are throwing stubs — the interface-generic bodies compute only at
    `Number`.** A 115-file minimal slice emits **713 `NotImplementedException` throws**:
    `_Vector3D.g.cs` stubs `Add`, `Subtract`, `Multiply(float)`, `Magnitude`, `Zero`. So
    "one definition serves Number, Vector2D, Vector3D and every quantity type" — the claim
@@ -324,7 +324,7 @@ Ordered by how much they block.
    `Count == 5`. But `IArray<T>`, the spelling `stdlib-legacy` uses throughout, missed the case
    and emitted `Count => 1` with an `At` returning the list where a `Number` was declared; and
    `Array2D`/`Array3D` matched when they should not, having no linear `Count`. The fix keys off
-   the field type's concept instead. Latent, not live — no type in the shipping generation
+   the field type's interface instead. Latent, not live — no type in the shipping generation
    reaches the synthesis. Lesson: the inference identified a real defect but the wrong type, and
    the execution check tested the one spelling that worked and over-generalised from it. Neither
    alone was sufficient.)*
@@ -332,10 +332,10 @@ Ordered by how much they block.
    initializer or a statement block are reported unread. Real in-tree false positives today:
    `Frame3D.Origin/XAxis/YAxis/ZAxis`, `AffineTransform3D.Matrix`, `CylindricalShell.*`,
    `RegularPyramid.SideCount/Radius`. Fixing it would make LINT003 usable as a metric again.
-4. **`concept AngularCurve2D/3D` was declined, not rejected.** Item 8's agent fell back to
-   per-type `t.Turns` bodies because `LIBRARIES.md` rule 6 then forbade new concepts. Rule 6 has
-   since been rewritten to permit deliberate concept extension, so the collapse is now available;
-   `TODO(concept-gap)` notes in `curves-2d.plato` / `curves-3d.plato` say exactly what it buys.
+4. **`interface AngularCurve2D/3D` was declined, not rejected.** Item 8's agent fell back to
+   per-type `t.Turns` bodies because `LIBRARIES.md` rule 6 then forbade new interfaces. Rule 6 has
+   since been rewritten to permit deliberate interface extension, so the collapse is now available;
+   `TODO(interface-gap)` notes in `curves-2d.plato` / `curves-3d.plato` say exactly what it buys.
 5. **A generic `Hash(self: Index) => self.Value.Hash`** would likely discharge the LINT001 `Hash`
    obligation for the dozens of typed index types at once. Belongs in P2
    (`collections-functional.library.plato`). Not attempted during the port to avoid a cross-agent

@@ -8,7 +8,7 @@ namespace PlatoTests
 {
     /// <summary>
     /// Pins how the C# writer synthesizes the <c>At</c>/<c>Count</c> obligations of an
-    /// <c>IArray</c>-shaped concept, which it does from the type's FIELDS
+    /// <c>IArray</c>-shaped interface, which it does from the type's FIELDS
     /// (<see cref="CSharpTypeWriter.GenerateFunc"/>) because those members are exempted from
     /// LINT001 (<c>Linter.MembersImplementedByWriter</c>) and so nothing else reports them.
     ///
@@ -18,7 +18,7 @@ namespace PlatoTests
     ///     so At/Count must delegate to it. Enumerating fields there yields Count == 1 and
     ///     At(0) == the whole collection, which is wrong at runtime while linting perfectly clean.
     ///
-    /// The delegation must key off the field type's *concept* (does it implement IArray?), not off
+    /// The delegation must key off the field type's *interface* (does it implement IArray?), not off
     /// the spelling of its type name: the library declares such fields both as <c>Array&lt;T&gt;</c>
     /// (stdlib) and as <c>IArray&lt;T&gt;</c> (stdlib-legacy), and both are the same shape.
     ///
@@ -65,7 +65,7 @@ type ArrayVectorN implements IArray<Number>
     Components: Array<Number>;
 }
 
-// Runtime arity, field spelled with the IArray concept (stdlib-legacy style).
+// Runtime arity, field spelled with the IArray interface (stdlib-legacy style).
 type InterfaceVectorN implements IArray<Number>
 {
     Components: IArray<Number>;

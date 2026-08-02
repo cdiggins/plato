@@ -372,7 +372,7 @@ public class TypeScriptTypeWriter : CodeBuilder<TypeScriptTypeWriter>, ITypeToTy
     }
 
     /// <summary>
-    /// The array concept appears as "Array" or "IArray" depending on the source dialect.
+    /// The array interface appears as "Array" or "IArray" depending on the source dialect.
     /// Both map to the special IArray implementation.
     /// </summary>
     public static HashSet<string> ArrayInterfaceNames = new HashSet<string>()
@@ -428,7 +428,7 @@ public class TypeScriptTypeWriter : CodeBuilder<TypeScriptTypeWriter>, ITypeToTy
         if (TypeScriptWriter.TypeNameReplacements.TryGetValue(name, out var replaced))
             return replaced;
 
-        // The array concept maps to the special IArray implementation
+        // The array interface maps to the special IArray implementation
         // (and avoids shadowing the JavaScript global Array).
         if (ArrayInterfaceNames.Contains(name))
             return name.StartsWith("I") ? name : "I" + name;

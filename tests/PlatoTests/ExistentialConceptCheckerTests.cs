@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace PlatoTests
 {
     /// <summary>
-    /// CHK308 (plato-311, Option A): an existential (type-position) reference to a concept with an
+    /// CHK308 (plato-311, Option A): an existential (type-position) reference to an interface with an
     /// empty object-safe surface has no non-generic view and therefore no defined C# lowering — the
     /// checker must reject it instead of letting Plato.CSharpWriter improvise. Drives the
     /// plato-test-existential corpus with the same fixture conventions as SumTypeCheckingTests:
@@ -48,7 +48,7 @@ namespace PlatoTests
             return m.Value;
         }
 
-        [TestCase("stored-concept-ok.plato")]
+        [TestCase("stored-interface-ok.plato")]
         public static void Positive_CompilesWithoutDiagnostics(string file)
         {
             var (comp, diags) = CheckFixture(file);
@@ -57,7 +57,7 @@ namespace PlatoTests
             Assert.IsEmpty(diags, $"{file} produced diagnostics:\n{string.Join("\n", diags.Select(d => d.ToString()))}");
         }
 
-        [TestCase("negatives/viewless-concept-field.plato")]
+        [TestCase("negatives/viewless-interface-field.plato")]
         public static void Negative_RaisesExpectedDiagnostic(string file)
         {
             var expected = ExpectedCode(file);

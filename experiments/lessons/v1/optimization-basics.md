@@ -344,7 +344,7 @@ until a solver exists to check them.
   gradient descent only as prose around `GradientDescentParameters`.
 
 - **missing-type** — `62-optimization.plato`: no `Objective` / `DifferentiableObjective`
-  concept with `Value(Self, Array<Number>)` and optional `Gradient`. Without that, solver
+  interface with `Value(Self, Array<Number>)` and optional `Gradient`. Without that, solver
   parameters float free of any function they could optimize.
 
 - **missing-type** — `62-optimization.plato`: no `BoxConstraints` separate from full LP —

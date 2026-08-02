@@ -49,7 +49,7 @@ forward type that becomes a fieldless `IArrayLike` would hit it.
 ## Fix approaches
 
 1. **Default the component type the same way the primitive branch does** — when `FieldTypes` is
-   empty, fall back to the type's declared `IArrayLike` element type from the concept
+   empty, fall back to the type's declared `IArrayLike` element type from the interface
    instantiation rather than to `null`. Correct, needs the interface argument to be read.
 2. **Fail loudly** — throw when an `IArrayLike` type resolves a null component type, the way the
    neighbouring code already throws for mismatched field types. Turns a CS1001 in generated C#

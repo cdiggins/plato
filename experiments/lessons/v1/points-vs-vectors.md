@@ -2,7 +2,7 @@
 lesson: points-vs-vectors
 title: Points vs Vectors
 domain: Foundations & vectors
-v3-files: [02-concepts-algebra.plato, 08-vectors.plato, 11-points.plato]
+v3-files: [02-interfaces-algebra.plato, 08-vectors.plato, 11-points.plato]
 audience: High-school math and general programming background
 status: draft-v1
 ---
@@ -80,20 +80,20 @@ the displacement between them:
 
 $$\text{distance}(a, b) = \| \text{Between}(a, b) \|$$
 
-In Plato, length is `Magnitude` on types that implement the `Normed` concept; geometric
+In Plato, length is `Magnitude` on types that implement the `Normed` interface; geometric
 vectors like `Vector3D` do.
 
 ## In Plato
 
 Plato's v3 vocabulary encodes affine geometry through two parallel type families and one
-generic concept.
+generic interface.
 
-### The `Difference` concept — affine algebra as a capability
+### The `Difference` interface — affine algebra as a capability
 
 ```plato
 // A position-like type whose difference is a separate delta type: subtracting two
 // points yields a vector; adding a vector to a point yields a point.
-concept Difference<TDelta>
+interface Difference<TDelta>
 {
     Add(x: Self, delta: TDelta): Self;
     Subtract(x: Self, delta: TDelta): Self;
@@ -101,7 +101,7 @@ concept Difference<TDelta>
 }
 ```
 
-Read `TDelta` as "the vector type that pairs with this point type." The concept does three
+Read `TDelta` as "the vector type that pairs with this point type." The interface does three
 jobs:
 
 1. **`Add`** — translate a point by a vector.
@@ -114,8 +114,8 @@ on `Difference` types.
 ### Points are positions, not vectors
 
 ```plato
-// A position in some coordinate space. Marker concept for all point-like types.
-concept Coordinate
+// A position in some coordinate space. Marker interface for all point-like types.
+interface Coordinate
     inherits Value, Equatable, Interpolatable
 { }
 
@@ -178,10 +178,10 @@ type Vector3D
 The file header states the design intent plainly: *"Points (file 11) are positions;
 geometric vectors are the differences between them."*
 
-`Vector3D` implements the `Vector` concept, which bundles numeric vector-space operations:
+`Vector3D` implements the `Vector` interface, which bundles numeric vector-space operations:
 
 ```plato
-concept Vector
+interface Vector
     inherits Numerical, Arithmetic, Indexable<Number>, Normed, Lattice, Hashable
 {
     Dot(a: Self, b: Self): Number;
@@ -289,7 +289,7 @@ the start and end consistent.
 you from conceptual confusion if you pick the wrong type for the job — choose based on
 meaning: geometric displacement → `Vector3D`; raw numeric triple → `Number3`.
 
-**Distance is not on `Point3D` directly.** The `MetricSpace` concept declares `Distance`, but
+**Distance is not on `Point3D` directly.** The `MetricSpace` interface declares `Distance`, but
 `Point3D` does not implement it in v3. The geometric distance is
 `Magnitude(Between(a, b))`. That is correct mathematically; it is just more verbose than a
 point-type `Distance` would be.
@@ -336,20 +336,20 @@ Work these with pencil and paper; expand the answers when you are ready.
 
 ## Library recommendations
 
-- **missing-concept** — `Point3D` (and `Point2D`, `PointN`) do not implement `MetricSpace`
+- **missing-interface** — `Point3D` (and `Point2D`, `PointN`) do not implement `MetricSpace`
   in `11-points.plato`, even though distance between positions is one of the first questions
   students ask. Either add `MetricSpace` to point types with
   `Distance(a, b) => Magnitude(Between(a, b))`, or add a short doc comment on `Coordinate`
   pointing callers at that idiom.
 
 - **missing-function** — `08-vectors.plato`: `Vector3D` implements `Normed` but there is no
-  declared `Normalize(x: Vector3D): Vector3D` (nor a concept method on `Normed`). The lesson
+  declared `Normalize(x: Vector3D): Vector3D` (nor an interface method on `Normed`). The lesson
   needs unit directions for almost every geometry example; today only `Direction3D` encodes
   normalization as a type invariant, with no declared bridge from an arbitrary `Vector3D`.
 
-- **pedagogy** — `02-concepts-algebra.plato`: `Difference` names the delta type parameter
+- **pedagogy** — `02-interfaces-algebra.plato`: `Difference` names the delta type parameter
   `TDelta` but the doc comment never states the standard `Between` convention explicitly
-  (displacement from first argument toward second, i.e. $b - a$). One line in the concept
+  (displacement from first argument toward second, i.e. $b - a$). One line in the interface
   comment would prevent sign flips in every downstream transform and animation snippet.
 
 - **missing-function** — `11-points.plato`: no declared `ToPoint` / `PositionVector` pair on

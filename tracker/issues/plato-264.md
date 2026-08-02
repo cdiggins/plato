@@ -19,7 +19,7 @@ In VS Code/Cursor, hovering a Plato name should show documentation for that defi
 
 ## Assumptions
 
-- Plato source already carries (or will carry) useful doc comments on types/concepts/functions worth surfacing.
+- Plato source already carries (or will carry) useful doc comments on types/interfaces/functions worth surfacing.
 - `Plato.Navigation` can expose declaration text / doc-comment text at a symbol (or can be extended cheaply).
 - vscode-plato is becoming a real language client (not TextMate-only) via plato-240.
 
@@ -27,7 +27,7 @@ In VS Code/Cursor, hovering a Plato name should show documentation for that defi
 
 - **Doc source** — declaration doc comments only vs synthesized signature + comment vs pull from external HTML browser ([plato-265](plato-265.md)).
 - **Transport** — extend Navigation `serve` with a `hover`/`documentation` query vs full LSP `textDocument/hover`.
-- **Scope of hover target** — type/concept names only vs also values, members, and UFCS call sites.
+- **Scope of hover target** — type/interface names only vs also values, members, and UFCS call sites.
 
 ## Related
 
@@ -38,7 +38,7 @@ In VS Code/Cursor, hovering a Plato name should show documentation for that defi
 ## Approaches
 
 Short term: Navigation query returns declaration range + leading doc comment; vscode `HoverProvider` renders markdown.
-Long term: rich hover with concept parents, external links, lesson links, type diagrams.
+Long term: rich hover with interface parents, external links, lesson links, type diagrams.
 Adjacent: signature help / parameter hints (separate issue if pursued).
 
 ## Case against
@@ -55,7 +55,7 @@ Strengthens the **editor ↔ Navigation query seam** (`vscode-plato` + `Plato.Na
 
 ## Done means
 
-- [ ] Hover on a documented type/concept in `.plato` shows doc comment + signature
+- [ ] Hover on a documented type/interface in `.plato` shows doc comment + signature
 - [ ] Undocumented symbols degrade gracefully (signature or nothing, no error toast)
 - [ ] Works against configured `plato.navigation.roots`
 

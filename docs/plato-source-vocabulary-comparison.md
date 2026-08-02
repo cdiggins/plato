@@ -40,7 +40,7 @@ declarations in the two source folders.
 | `.plato` files | 28 | 41 | +13 |
 | Physical source lines | 4,478 | 1,432 | −3,046 |
 | Concrete types | 168 | 606 | +438 |
-| Interfaces/concepts | 81 | 66 | −15 |
+| Interfaces/interfaces | 81 | 66 | −15 |
 | Libraries | 25 | 0 | −25 |
 | Type + interface declarations | 249 | 672 | +423 |
 
@@ -77,7 +77,7 @@ signature or semantic compatibility.
 | Behavior | 25 libraries with function bodies | No libraries or function bodies |
 | Organization | Some large mixed files, notably curves and transforms | One focused topic per numbered file |
 | Dimensionality | Primarily 2D/3D; selected `Vector4`/`Vector8` support | Explicit 1D/2D/3D/4D plus dimension-generic `N` types |
-| Concepts | Deep, geometry-specific capability hierarchy | Smaller generic capabilities composed across domains |
+| Interfaces | Deep, geometry-specific capability hierarchy | Smaller generic capabilities composed across domains |
 | Units | `Angle`, `Time`, and general `IMeasure` | Explicit quantities, SI dimensions, units, instants, and durations |
 | Geometry naming | Several dimension-implicit names | Dimension-explicit names such as `Circle2D`, `Plane3D`, and `Sphere3D` |
 | Partial results | Mostly direct values and booleans | Named result and diagnostic records |
@@ -92,7 +92,7 @@ scalar arithmetic and interpolation through a broad numerical hierarchy. They al
 implement `IDifference<Vector2>` or `IDifference<Vector3>`, correctly acknowledging
 that point minus point produces a vector.
 
-The new points implement geometry and metric concepts instead:
+The new points implement geometry and metric interfaces instead:
 
 - `Point2D implements IGeometry2D, IMetric<Number>`
 - `Point3D implements IGeometry3D, IMetric<Number>`
@@ -100,7 +100,7 @@ The new points implement geometry and metric concepts instead:
 
 This removes the most questionable implication—component-wise point arithmetic—but
 also drops the useful typed difference contract. A stable v2 kernel should restore
-point/vector affine-space operations with a narrower concept rather than making points
+point/vector affine-space operations with a narrower interface rather than making points
 full vectors again.
 
 ### Bounded and unbounded linear geometry is explicit
@@ -145,9 +145,9 @@ meaningful: `Point4D`, `PointN`, `Bounds4D`, `BoundsN`, `VectorN`, `Matrix`,
 The benefit is discoverability and safer cross-dimensional code. The cost is more
 verbose names for the dominant 2D/3D cases.
 
-### Generic concepts replace parallel dimensional interfaces
+### Generic interfaces replace parallel dimensional interfaces
 
-The old set often duplicates concepts by dimension:
+The old set often duplicates interfaces by dimension:
 
 - `IDistanceField2D` / `IDistanceField3D`
 - `ITransformable2D` / `ITransformable3D`
@@ -190,7 +190,7 @@ timestamp where an animation duration is required.
 
 ### Quantities and units become first-class
 
-The old library has `Angle` and `Time` as measures and an `IMeasure` concept. The new
+The old library has `Angle` and `Time` as measures and an `IMeasure` interface. The new
 set adds:
 
 - a seven-base-dimension `Dimension` record;
@@ -230,7 +230,7 @@ several convenient old representations such as `LookAt3D`, `YawPitchRoll`, and
 | Linear algebra | Fixed vectors and selected matrices | Adds dynamic/sparse/banded matrices, tensors, bivectors, `VectorN` |
 | Geometry | Strong 2D/3D primitives and operations | Broader representations across 1D–4D–N, but declarations only |
 | Curves | Large analytic curve catalog with evaluation libraries | Bezier/B-spline/NURBS/Catmull–Rom, jets, samples, and arc-length records |
-| Surfaces | Procedural/explicit surface concepts | Analytic surfaces, patches, B-spline/NURBS, trimmed and subdivision surfaces |
+| Surfaces | Procedural/explicit surface interfaces | Analytic surfaces, patches, B-spline/NURBS, trimmed and subdivision surfaces |
 | Solids | Parametric primitive types and libraries | Dimension-explicit solids plus sweep/revolve/extrude and boundary representation |
 | Meshes | Line/triangle/quad grids and mesh operations | Adds polygon/tetrahedral meshes, attributes, topology, BVH, octree, k-d tree |
 | Fields | Scalar fields, SDF3D, procedurals | Generic scalar/vector/tensor fields, time-varying fields, sampled grids |
@@ -256,14 +256,14 @@ The following old foundations have recognizable successors:
 - scalar fields;
 - translations, rotations, scales, and reflections;
 - core arithmetic, ordering, interpolation, invertibility, arrays, curves, and
-  geometry concepts.
+  geometry interfaces.
 
 Most are no longer contract-equivalent. Examples include:
 
 - `Bounds2D.Min/Max` becoming `Minimum/Maximum`;
 - old points losing `IVectorLike` and `IDifference<T>`;
 - old triangles participating in polygon/array/deformation interfaces while new
-  triangles expose only geometry and bounds concepts;
+  triangles expose only geometry and bounds interfaces;
 - old transforms returning matrices through libraries while new transform records
   have no behavior;
 - old color types having conversion libraries while new color records are inert.
@@ -293,7 +293,7 @@ representation model is broader.
 
 ### Convenience transform types
 
-The following old concepts have no direct new declaration:
+The following old interfaces have no direct new declaration:
 
 - `LookAt3D` and `LookDirection3D`
 - `YawPitch` and `YawPitchRoll`
@@ -308,7 +308,7 @@ Some are representable by new types, but the intent is no longer directly named.
 
 Old geometry interfaces expose queries such as points, primitives, face indices,
 closedness, deformation, bounds, and evaluation. Many new interfaces are markers, and
-many new concrete types implement no concept at all. As a result, the new catalog is
+many new concrete types implement no interface at all. As a result, the new catalog is
 less useful for generic algorithms until its capability assignments are audited.
 
 ## Validation status
@@ -325,7 +325,7 @@ Non-strict lint reports 1,513 expected findings:
 
 | Finding | Count | Meaning in this prototype |
 |---|---:|---|
-| `LINT001` | 121 | Declared concepts lack concrete implementations |
+| `LINT001` | 121 | Declared interfaces lack concrete implementations |
 | `LINT003` | 1,392 | Fields are not consumed because there are no libraries |
 
 These findings are expected for a declaration-only pass, but they are also a useful
@@ -349,7 +349,7 @@ library.
    across C#, TypeScript, and Rust needs explicit validation.
 6. **Some containers are underspecified.** `IndexLoop` is reused for polygon faces,
    cells, facets, and finite elements without enforcing arity or orientation.
-7. **Concept coverage is uneven.** Core points and meshes implement concepts, while
+7. **Interface coverage is uneven.** Core points and meshes implement interfaces, while
    many surfaces, solids, physics records, and engineering records are only data.
 8. **No laws or witnesses exist.** Algebraic, geometric, interpolation, transform, and
    unit invariants are not yet tested.
@@ -365,7 +365,7 @@ Start with the smallest set needed to express the rest:
 - compiler primitives and collections;
 - scalars, vectors, matrices, points, and bounds;
 - time, quantities, and ranges;
-- generic field, transform, parametric, bounded, and indexed-geometry concepts.
+- generic field, transform, parametric, bounded, and indexed-geometry interfaces.
 
 Resolve naming, laws, and interface implementation rules here before expanding behavior.
 
@@ -393,7 +393,7 @@ Avoid implementing all 606 types shallowly. Complete small useful slices, for ex
 5. triangle meshes, attributes, and bounds;
 6. fields, uniform grids, and sampled fields.
 
-Each slice should include types, concepts, libraries, laws, generated-code validation,
+Each slice should include types, interfaces, libraries, laws, generated-code validation,
 and at least one real consumer.
 
 ### 4. Preserve valuable old catalogs
@@ -425,5 +425,5 @@ tested code-generation paths, and a deep catalog of immediately useful geometry.
 
 The strongest path forward is a synthesis: use the new vocabulary and organization as
 the design space, retain the old library as the behavioral reference, and migrate in
-small vertical slices until each new concept is supported by real functions, laws, and
+small vertical slices until each new interface is supported by real functions, laws, and
 consumers.

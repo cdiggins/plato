@@ -238,7 +238,7 @@ today.
 
 ## Library recommendations
 
-- **missing-concept** — `22-curves-3d.plato`: `Helix` implements only `Curve3D`, not
+- **missing-interface** — `22-curves-3d.plato`: `Helix` implements only `Curve3D`, not
   `DifferentiableCurve3D` or `FramedCurve3D`, despite being the canonical constant
   curvature/torsion / easy framing example. Declaring those implementations (once
   libraries exist) would match the math story.

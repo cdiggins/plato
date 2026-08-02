@@ -92,7 +92,7 @@ and `regen-plato.ps1` green with the TIR path as the default. `UseTir` now defau
   `_var` numbering matches the golden exactly in a fresh-process generation.
 - Syntactic calls (null-callee `TirCall`), bare names (`TirName`), namespace-qualified type refs,
   `TirLet` — name+shape-faithful emission for constructs the checker cannot (or need not) resolve.
-- Concept re-dispatch preserves the call-site-shape `EmissionKind` (`this.Matrix`, not
+- Interface re-dispatch preserves the call-site-shape `EmissionKind` (`this.Matrix`, not
   `this.Matrix()`).
 
 Gates: `EmitDifferentialTests` (aligned ⇒ byte-identical), `EmitFlagOnTests` (whole library,

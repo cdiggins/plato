@@ -14,10 +14,10 @@ links: [submodules/Plato/stdlib/README.md, submodules/Plato/CLAUDE.md, plato-285
 ---
 
 ## Idea
-Full forward `stdlib` is large (~84 files, 150 concepts, 1100+ types). Lint and compile of the whole tree are heavier than needed for tight compiler/type-checker/codegen loops. Define a smaller **core** subset — foundation vocabulary only — structured so agents and CI can run fast tests against it without pulling geometry, imaging, physics, etc.
+Full forward `stdlib` is large (~84 files, 150 interfaces, 1100+ types). Lint and compile of the whole tree are heavier than needed for tight compiler/type-checker/codegen loops. Define a smaller **core** subset — foundation vocabulary only — structured so agents and CI can run fast tests against it without pulling geometry, imaging, physics, etc.
 
 ## Assumptions
-- Most compiler regressions can be caught with primitives, core/algebra/collections/functional concepts, numbers, vectors/matrices, and a thin sample of libraries (e.g. `core-algebra`).
+- Most compiler regressions can be caught with primitives, core/algebra/collections/functional interfaces, numbers, vectors/matrices, and a thin sample of libraries (e.g. `core-algebra`).
 - A core that drifts from full stdlib (forked copies) is worse than a slow full lint — core must be a **slice**, not a fork.
 - Shipping `plato-src` / conformance remain separate concerns; this is about forward `stdlib` (and possibly a parallel slice of law tests).
 

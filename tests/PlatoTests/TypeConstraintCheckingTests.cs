@@ -15,7 +15,7 @@ namespace PlatoTests
     ///   * <see cref="TypeConstraintChecker"/> — the instantiation-site gate. Writing
     ///     <c>Tween&lt;String&gt;</c> anywhere is CHK309, because String is not Interpolatable.
     ///   * <see cref="Solver"/>'s bound-licensed member lookup — a call on a bare <c>T</c> resolves
-    ///     through a concept exactly when a declared bound supplies it. An unlicensed call still
+    ///     through an interface exactly when a declared bound supplies it. An unlicensed call still
     ///     resolves (pre-bounds behavior) but is reported CHK205, an error (plato-382 phase D
     ///     promoted it from warning once the forward stdlib had no unlicensed call left).
     ///
@@ -61,7 +61,7 @@ namespace PlatoTests
 
         // --- source fixtures -----------------------------------------------------
 
-        // Small closed world: two unrelated concepts, one type that satisfies each, and generic
+        // Small closed world: two unrelated interfaces, one type that satisfies each, and generic
         // containers that are bounded by one, bounded by the other, or unbounded.
         private const string Prelude = @"
 type Number { }
@@ -69,19 +69,19 @@ type Boolean { }
 type Object { }
 type String { }
 
-concept Interpolatable
+interface Interpolatable
 {
     Lerp(a: Self, b: Self, t: Number): Self;
 }
 
-concept Measurable
+interface Measurable
 {
     Magnitude(x: Self): Number;
 }
 
 // Inherits Interpolatable rather than declaring Lerp, so bound satisfaction has to walk the
-// concept closure rather than match a name at depth zero.
-concept Coordinate
+// interface closure rather than match a name at depth zero.
+interface Coordinate
     inherits Interpolatable
 {
     Origin(x: Self): Self;
@@ -180,7 +180,7 @@ type Weighed<T>
             // `where TPoint: Difference<TDelta>` is checked at the ACTUAL delta, so a construction
             // whose point type differs on the delta is caught rather than passing on the name alone.
             var c = Compile(Prelude + @"
-concept Difference<TDelta>
+interface Difference<TDelta>
 {
     Between(a: Self, b: Self): TDelta;
 }
@@ -355,7 +355,7 @@ library Ops
         public static void InheritedBounds_SubstituteASiblingParameterThroughToTheActualArgument()
         {
             var c = Compile(Prelude + @"
-concept Difference<TDelta>
+interface Difference<TDelta>
 {
     Between(a: Self, b: Self): TDelta;
 }

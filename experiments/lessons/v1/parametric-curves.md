@@ -2,7 +2,7 @@
 lesson: parametric-curves
 title: Parametric Curves
 domain: Curves & surfaces
-v3-files: [20-concepts-curves-surfaces.plato]
+v3-files: [20-interfaces-curves-surfaces.plato]
 audience: High-school math and general programming background
 status: draft-v1
 ---
@@ -67,30 +67,30 @@ curvature distinguishes left vs right bends; in space, curvature is unsigned and
 
 ## In Plato
 
-File `20-concepts-curves-surfaces.plato` encodes curves as concepts over
+File `20-interfaces-curves-surfaces.plato` encodes curves as interfaces over
 `Procedural<Number, Point>` — evaluation is the core operation.
 
 ```plato
-concept Curve1D
+interface Curve1D
     inherits Procedural<Number, Number>
 { }
 
-concept Curve2D
+interface Curve2D
     inherits Geometry2D, Procedural<Number, Point2D>
 { }
 
-concept Curve3D
+interface Curve3D
     inherits Geometry3D, Procedural<Number, Point3D>
 { }
 
-concept ClosedCurve2D inherits Curve2D { }
-concept ClosedCurve3D inherits Curve3D { }
+interface ClosedCurve2D inherits Curve2D { }
+interface ClosedCurve3D inherits Curve3D { }
 ```
 
 `Procedural` (file 04) is simply:
 
 ```plato
-concept Procedural<TDomain, TRange>
+interface Procedural<TDomain, TRange>
 {
     Eval(x: Self, input: TDomain): TRange;
 }
@@ -105,14 +105,14 @@ p := Eval(curve, 0.25)   // Point2D or Point3D at parameter 1/4
 ### Differentiability and framing
 
 ```plato
-concept DifferentiableCurve2D
+interface DifferentiableCurve2D
     inherits Curve2D
 {
     TangentAt(x: Self, t: Number): Vector2D;
     CurvatureAt(x: Self, t: Number): Number;
 }
 
-concept DifferentiableCurve3D
+interface DifferentiableCurve3D
     inherits Curve3D
 {
     TangentAt(x: Self, t: Number): Vector3D;
@@ -120,7 +120,7 @@ concept DifferentiableCurve3D
     TorsionAt(x: Self, t: Number): Number;
 }
 
-concept FramedCurve3D
+interface FramedCurve3D
     inherits DifferentiableCurve3D
 {
     FrameAt(x: Self, t: Number): Frame3D;
@@ -135,7 +135,7 @@ sweeps and camera paths.
 ### Arc length
 
 ```plato
-concept ArcLengthParameterized<TPoint>
+interface ArcLengthParameterized<TPoint>
 {
     ArcLength(x: Self): Number;
     PointAtLength(x: Self, length: Number): TPoint;
@@ -150,17 +150,17 @@ $t$ — the expensive inverse that dashed strokes and constant-speed motion need
 ### Other curve capabilities
 
 ```plato
-concept PeriodicCurve
+interface PeriodicCurve
     inherits Periodic<Number>
 { }
 
-concept PlanarCurve3D
+interface PlanarCurve3D
     inherits Curve3D
 {
     CurvePlane(x: Self): Plane;
 }
 
-concept PolarCurve2D
+interface PolarCurve2D
     inherits Curve2D
 {
     RadiusAt(x: Self, angle: Angle): Number;
@@ -177,7 +177,7 @@ documented otherwise.
 The same procedural idea lifts to two parameters:
 
 ```plato
-concept ParametricSurface
+interface ParametricSurface
     inherits Surface, Procedural<UvCoordinate, Point3D>
 {
     ClosedU(x: Self): Boolean;
@@ -200,7 +200,7 @@ closed as data but may not implement `ClosedCurve2D` if corner continuity fails 
 type's contract.
 
 **Domain outside $[0,1]$.** Concrete types may document other domains (angle intervals,
-knot spans). Concept-level teaching assumes $[0,1]$; always read the concrete type.
+knot spans). Interface-level teaching assumes $[0,1]$; always read the concrete type.
 
 **Zero speed.** Where $\gamma'(t) = 0$, unit tangents and curvature formulas blow up.
 Cusps and stopped parameterizations are legal curves but not nice `DifferentiableCurve`
@@ -236,23 +236,23 @@ channels. It is a curve in the 1D line, not a geometric stroke in the plane.
 
 ## Library recommendations
 
-- **missing-concept** — `20-concepts-curves-surfaces.plato`: there is no
+- **missing-interface** — `20-interfaces-curves-surfaces.plato`: there is no
   `UnitSpeedCurve` / marker for "parameter equals arc length," and
   `DifferentiableCurve3D.TangentAt` returns a raw velocity with no
   `UnitTangentAt`. Teaching constant-speed motion has to narrate a normalize step that
-  the concept surface does not name.
+  the interface surface does not name.
 
-- **missing-function** — `20-concepts-curves-surfaces.plato`:
+- **missing-function** — `20-interfaces-curves-surfaces.plato`:
   `ArcLengthParameterized` has total length and conversions, but no
   `LengthBetween(x, t0, t1)` for partial spans. Dash patterns and subpath measuring need
   it constantly.
 
-- **doc-comment** — `20-concepts-curves-surfaces.plato`: the banner states the canonical
+- **doc-comment** — `20-interfaces-curves-surfaces.plato`: the banner states the canonical
   domain is $[0,1]$, but `PolarCurve2D` and angle-swept concrete curves (elsewhere) use
   angle domains. A sentence on when concrete types override the canonical domain would
-  prevent concept/type mismatch in readers' heads.
+  prevent interface/type mismatch in readers' heads.
 
 - **pedagogy** — `FramedCurve3D.FrameAt` returns `Frame3D` with "Z axis is tangent," but
-  the concept does not say whether the frame is Frenet or rotation-minimizing. Sweeps
-  care deeply which; the ambiguity should be documented or split into distinct concept
+  the interface does not say whether the frame is Frenet or rotation-minimizing. Sweeps
+  care deeply which; the ambiguity should be documented or split into distinct interface
   functions.

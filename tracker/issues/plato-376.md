@@ -1,6 +1,6 @@
 ---
 id: plato-376
-title: Concept obligations on a GENERIC type can never be discharged
+title: Interface obligations on a GENERIC type can never be discharged
 type: bug
 status: done
 priority: p2
@@ -15,7 +15,7 @@ links: [src/Plato.Compiler/Analysis/Linter.cs, stdlib/foundation/primitives-arra
 
 ## Issue
 
-A concrete type that takes a type parameter cannot have its concept obligations
+A concrete type that takes a type parameter cannot have its interface obligations
 filled by any library function. The obligation's signature is keyed by the
 TYPE's own parameter — `ColumnCount(Array2D<T>):Integer` — while a library
 function can only be written over a type VARIABLE —
@@ -90,7 +90,7 @@ if this issue is picked up for the Array2D half alone.
 
 ## Done means
 
-- [x] A generic type's concept obligation is discharged by a library function
+- [x] A generic type's interface obligation is discharged by a library function
       over a type variable, with a `LinterTests` case pinning both the match and
       a non-match
 - [x] Array2D/Array3D `ColumnCount`/`RowCount`/`LayerCount` no longer report
@@ -160,7 +160,7 @@ why the split was made; every forward-looking claim in them is now false:
   `type Tween<T> where T: Interpolatable`, and its `Sample` is a real body in the
   new `stdlib/graphics/motion-graphics.library.plato` — not a throwing stub.
 - "A library type variable carries no constraint that survives the shipping C#
-  recipe" is no longer true. Declared bounds on `type`, `concept` and (via
+  recipe" is no longer true. Declared bounds on `type`, `interface` and (via
   `plato-393`) library-function declarations are verified by the checker and
   emitted as F-bounded C# `where` clauses. The decision is
   `tracker/decisions/2026-08-01-declared-type-parameter-bounds-are-verified-and-emitted.md`;

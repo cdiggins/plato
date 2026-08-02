@@ -25,7 +25,7 @@ code or asking anyone.
   flexible") and unfalsifiable claims. State measurable facts; let the reader judge.
 - Active voice, present tense. Say who does what: "the script rebuilds the index", not "the
   index is rebuilt".
-- Consistent terminology: pick one name per concept and never alternate synonyms.
+- Consistent terminology: pick one name per interface and never alternate synonyms.
 
 ## Required content
 

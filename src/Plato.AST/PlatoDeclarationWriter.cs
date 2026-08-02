@@ -66,7 +66,7 @@ namespace Ara3D.Geometry.AST
             if (types.Count == 0)
                 return this;
 
-            // A concept only ever inherits and a type only ever implements, so one arrow is
+            // An interface only ever inherits and a type only ever implements, so one arrow is
             // unambiguous for both.
             if (Options.Arrows)
                 return WriteLine()

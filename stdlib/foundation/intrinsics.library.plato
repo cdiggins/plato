@@ -25,8 +25,8 @@
 // priority-1..4 target can supply it natively or with a trivial shim; anything
 // C#-specific stays out (see the notes at the bottom of this file).
 //
-// Bodiless declarations inside a `concept` are NOT intrinsics — those are
-// obligations on whoever implements the concept, and the stdlib satisfies them in
+// Bodiless declarations inside a `interface` are NOT intrinsics — those are
+// obligations on whoever implements the interface, and the stdlib satisfies them in
 // Plato. Only `library` blocks declare host intrinsics.
 //
 // This is the ONLY file in the library with bodiless declarations, and it stays

@@ -23,7 +23,7 @@ Need a `QuadGrid3D` — a regular quad lattice in 3D (control net / subdivided s
 
 ## Design decisions
 - **Storage** — Grid2D<Point3D> wrapper vs explicit RowCount/ColumnCount + Array.
-- **Concepts** — ParametricSurface sample? Meshable3D via quad faces?
+- **Interfaces** — ParametricSurface sample? Meshable3D via quad faces?
 - **Naming** — QuadGrid3D vs ControlGrid3D vs PointGrid3D.
 
 ## Related

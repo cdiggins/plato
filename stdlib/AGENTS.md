@@ -14,12 +14,12 @@ Folder-scoped rules for editing the forward standard library. The repo-wide guid
 ## Regenerate `types-and-concepts.txt` with every change
 
 [`types-and-concepts.txt`](types-and-concepts.txt) is **generated** — one compressed declaration
-per line for every type and concept in the three shipping tiers, every concept first and then
+per line for every type and interface in the three shipping tiers, every interface first and then
 every type, each group sorted by name. It exists so an agent can see what the library actually
 contains without opening every file, and so a name it does not find there is known not to exist.
 That guarantee holds only while the file matches the source.
 
-**If your change adds, removes, or renames a type or a concept, or changes a member signature,
+**If your change adds, removes, or renames a type or an interface, or changes a member signature,
 regenerate the file in the same commit:**
 
 ```bat

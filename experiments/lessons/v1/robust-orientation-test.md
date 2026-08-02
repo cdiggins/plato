@@ -100,7 +100,7 @@ meaningless when points are in millimeters vs kilometers.
 
 ## In Plato — shapes and winding
 
-`17-planar-shapes.plato` encodes orientation in type docs and concepts, not as a free
+`17-planar-shapes.plato` encodes orientation in type docs and interfaces, not as a free
 function named `Orient2D` (that function is exactly what a library should add — see
 recommendations).
 
@@ -122,11 +122,11 @@ determinant as orientation of `Origin`, `Origin+SideA`, `Origin+SideB`.
 vertex order for measures still obeys the file-wide CCW-positive rule.
 
 ```plato
-concept Orientable
+interface Orientable
 { }
 ```
 
-`Orientable` in the geometry concepts file marks shapes that admit a consistent global
+`Orientable` in the geometry interfaces file marks shapes that admit a consistent global
 orientation (two-sided surfaces). In 2D closed shapes, that pairs with the winding
 convention rather than replacing the orientation predicate.
 

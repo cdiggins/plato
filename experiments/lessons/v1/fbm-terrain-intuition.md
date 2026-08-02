@@ -144,11 +144,11 @@ type DomainWarpNoise2D
 From `26-fields.plato`:
 
 ```plato
-concept ScalarField2D
+interface ScalarField2D
     inherits Field<Point2D, Number>
 { }
 
-concept DifferentiableScalarField2D
+interface DifferentiableScalarField2D
     inherits ScalarField2D
 {
     GradientAt(x: Self, point: Point2D): Vector2D;
@@ -259,7 +259,7 @@ octaves → sparkly mess). The sum type still allows it.
 
 ## Library recommendations
 
-- **missing-concept** — `28-noise.plato`: `FbmNoise2D/3D` (and ridged /
+- **missing-interface** — `28-noise.plato`: `FbmNoise2D/3D` (and ridged /
   turbulence) should implement `DifferentiableScalarField2D/3D` or document
   that gradients are finite-difference only. Terrain lessons always need
   slope; `GradientAt` is the natural API already declared in `26-fields.plato`.

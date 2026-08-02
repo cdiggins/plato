@@ -8,7 +8,7 @@ using Ara3D.Geometry.Compiler.Types;
 namespace Ara3D.Geometry.Compiler.Checking
 {
     /// <summary>
-    /// THE reading of declared type-parameter bounds (`concept C&lt;T&gt; where T: Additive`,
+    /// THE reading of declared type-parameter bounds (`interface C&lt;T&gt; where T: Additive`,
     /// `type Tween&lt;T&gt; where T: Interpolatable`) for the checker. One place answers three
     /// questions, so the instantiation-site gate and the member-lookup licence can never disagree:
     ///
@@ -19,15 +19,15 @@ namespace Ara3D.Geometry.Compiler.Checking
     ///   * which bounds does a library function's signature variable inherit from the constructed
     ///     types it mentions (<c>Sample(x: Tween&lt;$T&gt;, ...)</c> gives <c>$T: Interpolatable</c>).
     ///
-    /// Satisfaction is concept membership as <see cref="ConceptClosure"/> defines it — the same
-    /// transitive, per-level-substituted walk the solver already uses for concept parameters — so a
+    /// Satisfaction is interface membership as <see cref="ConceptClosure"/> defines it — the same
+    /// transitive, per-level-substituted walk the solver already uses for interface parameters — so a
     /// bound is satisfied by exactly the types the solver would accept where the bound is written
     /// out as a parameter type. Nothing here is record- or sum-specific: a bound on a sum type's
     /// parameter resolves through this identical path.
     ///
     /// VOCABULARY. The clause is a CONSTRAINT (which is what the syntax layer calls it —
     /// <see cref="AstConstraint"/>, <see cref="Symbols.TypeParameterDef.Constraints"/>, LINT002);
-    /// the concept it names is a BOUND, which is what this file and the checker call it. One clause
+    /// the interface it names is a BOUND, which is what this file and the checker call it. One clause
     /// may state several bounds, so the two words are not synonyms and neither name is redundant.
     /// </summary>
     public static class TypeConstraints
@@ -37,7 +37,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// <summary>
         /// Which declarations' bounds are carried into generated code (plato-382 phase C): the ones
         /// declared on a CONCRETE type — `type Tween&lt;T&gt; where T: Interpolatable`, the construct
-        /// this issue added. A concept's own `where` clause is deliberately NOT emitted yet: those
+        /// this issue added. An interface's own `where` clause is deliberately NOT emitted yet: those
         /// predate bound checking, the shipping vocabulary carries several, and putting them on the
         /// generated interfaces would propagate a constraint to every mention of the interface at
         /// once. Emitting them is a separate, library-wide change.
@@ -72,12 +72,12 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         /// <summary>Whether <paramref name="arg"/> satisfies <paramref name="bound"/>.
         ///
-        /// A concrete type satisfies a bound when its concept closure carries the bound's concept.
+        /// A concrete type satisfies a bound when its interface closure carries the bound's interface.
         /// A type PARAMETER or unification variable satisfies it when one of the bounds IT carries
         /// implies the required one — and, when it carries no bounds at all, permissively: Plato
         /// does not require bounds, so an unbounded parameter is "not yet known to fail", exactly as
         /// the solver has always treated it. <c>Self</c> satisfies anything (the reifier decides
-        /// what Self is), and a non-concept bound is not this function's error to report (CHK310).
+        /// what Self is), and a non-interface bound is not this function's error to report (CHK310).
         /// </summary>
         public static bool Satisfies(TypeExpression arg, TypeExpression bound,
             IReadOnlyList<TypeExpression> extraArgBounds = null)
@@ -150,7 +150,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         }
 
         /// <summary>Whether holding <paramref name="held"/> is enough to satisfy
-        /// <paramref name="required"/> — i.e. the required concept is in the held bound's own
+        /// <paramref name="required"/> — i.e. the required interface is in the held bound's own
         /// closure (`Difference&lt;TDelta&gt;` implies `Value` when Difference inherits it).</summary>
         public static bool Implies(TypeExpression held, TypeExpression required)
         {

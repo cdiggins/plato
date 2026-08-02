@@ -36,7 +36,7 @@ toolchain on this machine: cargo/rustc 1.96.0.
 | `ara3d-sdk/toolchain/Plato/Plato.TypeScriptWriter/README.md` | Output-model documentation and known limitations. |
 | `ara3d-sdk/toolchain/Plato/Plato.CLI/Program.cs` | CLI: `[inputFolder] [outputFolder] --typescript`. Add `--rust` the same way. |
 | `ara3d-sdk/src/Ara3D.Utils/CodeBuilder.cs` | Indented string-builder base class used by all writers. |
-| `web/geometry-samples/stdlib-legacy/geometry.plato` | The curated Plato geometry library (concepts, Angle/Vector2D/Vector3D, Intrinsics, Numbers/Vectors2/Vectors3). |
+| `web/geometry-samples/stdlib-legacy/geometry.plato` | The curated Plato geometry library (interfaces, Angle/Vector2D/Vector3D, Intrinsics, Numbers/Vectors2/Vectors3). |
 | `web/geometry-samples/src/plato/plato.g.ts` | The generated TypeScript — the reference for what each Plato construct becomes. |
 | `web/geometry-samples/src/samples/*.ts` | The 12 demo drivers to port to Rust. |
 | `web/geometry-samples/tests/*.test.ts` | The invariants to port (19 tests: sample invariants + Plato conformance + adapter round-trip). |
@@ -159,13 +159,13 @@ impl Vector3D {
   forwarding to the Plato methods when the type has them, so hand-written Rust
   can use `a + b`. Gate behind a bool on the writer; not needed for the POC tests.
 
-### 4.3 Concepts → traits (declaration only)
+### 4.3 Interfaces → traits (declaration only)
 
-`concept Comparable { Compare(a: Self, b: Self): Integer; }` →
+`interface Comparable { Compare(a: Self, b: Self): Integer; }` →
 `pub trait Comparable: Copy { fn Compare(self, b: Self) -> i64; }`
 (`inherits` → supertraits). Do **not** generate `impl Trait for Type` blocks in
 the POC — inherent methods carry the demos; trait impls are a later milestone.
-Skip Array/Array2D/Array3D concepts (special-cased, as in TS).
+Skip Array/Array2D/Array3D interfaces (special-cased, as in TS).
 
 ### 4.4 IArray → trait + Vec-backed Arr
 
@@ -308,7 +308,7 @@ add `--rust` to the CLI. Get it compiling before changing emission logic.
 
 **Phase 2 — Output model (gate: `plato.rs` compiles under rustc).**
 Implement §4–§6 top-down: prelude (Intrinsics mod, Arr, IArray trait) → traits
-for concepts → extension traits for primitives → structs/impls → Constants mod
+for interfaces → extension traits for primitives → structs/impls → Constants mod
 → body writer. Iterate:
 `dotnet run --project ...Plato.CLI -- web/geometry-samples/stdlib-legacy rust/geometry-samples/src --rust`
 then `cargo build` in the crate (create `rust/geometry-samples` with lib.rs and
@@ -355,8 +355,8 @@ or `PlatoStandardLibrary`.
    `IgnoredFunctions` set, self-casts (`f.Name == SimpleName`), and
    Array-interface functions *except* `At`/`Count` (types need them; C#'s
    IReadOnlyList shortcut doesn't exist here either).
-8. **The array concept is named `Array`** in the current dialect (grammar
-   accepts both `concept` and `interface` since the Parakeet change) — the
+8. **The array interface is named `Array`** in the current dialect (grammar
+   accepts both `interface` and `interface` since the Parakeet change) — the
    writer must treat `Array`/`IArray` names equivalently (`ArrayInterfaceNames`).
 9. **Sub-writer indentation**: `CodeBuilder.Write(multiline)` doesn't reset
    line-start state; use the `WriteTrimmed` pattern (trim trailing newline, then
@@ -369,7 +369,7 @@ or `PlatoStandardLibrary`.
     `Sum(): T` on the generic interface).
 11. **Compiler scaffolding**: any .plato input set must declare TupleN (needed
     for every multi-field type), Function0..N, Character/Dynamic/Type/Error,
-    and the Array concept, or `Compilation` throws `Value cannot be null (def)`
+    and the Array interface, or `Compilation` throws `Value cannot be null (def)`
     from `SymbolFactory.CreateTuple`/`TypeResolver.CreateType`. geometry.plato
     already has all of this.
 12. **Rust naming warnings**: `#![allow(non_snake_case, dead_code)]` at the top
@@ -391,7 +391,7 @@ or `PlatoStandardLibrary`.
    `allow(non_snake_case)` — parity with C#/TS wins over Rust idiom. A future
    writer flag could emit snake_case.
 2. **Integer → i64** (indexes cast internally with `as usize`).
-3. **Traits for concepts are declaration-only** in the POC (no impl generation).
+3. **Traits for interfaces are declaration-only** in the POC (no impl generation).
 4. **`std::ops` operator impls**: optional milestone, off by default.
 5. **Arr is Vec-backed** (not lazy/closure-based). Revisit if laziness matters.
 6. **String support minimal** (geometry demos don't use it).

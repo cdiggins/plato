@@ -1,5 +1,5 @@
 //==
-// # Rigid-body dynamics concepts
+// # Rigid-body dynamics interfaces
 //
 // The interface an environmental force model implements: given a body in its
 // current state, evaluate the world-space force in newtons acting on it.

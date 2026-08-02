@@ -1,5 +1,5 @@
 //==
-// # Geospatial concepts
+// # Geospatial interfaces
 //
 // The shared interface of regions on a planet's surface: the containment test
 // every geospatial region shape answers.

@@ -125,7 +125,7 @@ Area(g: Parallelogram2D): Number
 (Declaration-level rules also appear in [`README.md`](README.md); repeated here
 only as authoring checks.)
 
-- Prefer existing concepts/types over new ones with overlapping meaning.
+- Prefer existing interfaces/types over new ones with overlapping meaning.
 - Collection fields: `Array<T>` (or `Array2D` / `Array3D`).
 - Cross-array references: typed `Index` wrappers, not raw `Integer`
   ([CONVENTIONS — typed indices](CONVENTIONS.md#typed-indices--1-means-none)).

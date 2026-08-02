@@ -61,11 +61,11 @@ then another. Order matters; $AB \neq BA$ in general.
 
 ## In Plato
 
-From `09-matrices.plato`, the family concept:
+From `09-matrices.plato`, the family interface:
 
 ```plato
 // The family of matrix types: element access by zero-based row and column.
-concept MatrixLike
+interface MatrixLike
     inherits Value, Additive, Scalable
 {
     RowCount(x: Self): Integer;
@@ -188,7 +188,7 @@ picture of the axes.
 `Invert` fails. Scales with a zero factor, projections, and degenerates all
 hit this.
 
-**`MatrixLike` is not `Multiplicative`.** The concept only promises shape and
+**`MatrixLike` is not `Multiplicative`.** The interface only promises shape and
 element access plus add/scale. Square fixed matrices opt into
 `Multiplicative` separately. `Matrix3x2` / `Matrix4x3` do not implement
 `Multiplicative` on the type declaration — composition often goes through
@@ -221,14 +221,14 @@ like a full `Matrix3x3` without expansion loses the invariant or wastes space.
 - **missing-function** — `09-matrices.plato`: `MatrixLike` exposes
   `ElementAt` but not `Row(i)` / `Column(i)` returning `Number2/3/4`. Teaching
   "columns/rows are basis images" wants a first-class column/row accessor on
-  the concept, especially under row-storage where columns are gathered.
+  the interface, especially under row-storage where columns are gathered.
 
 - **missing-function** — `09-matrices.plato`: no `Determinant`, `Trace`, or
-  `IsOrthogonal` on the matrix types/concept. Those are the natural
+  `IsOrthogonal` on the matrix types/interface. Those are the natural
   vocabulary for "is this a rotation?" and "does this machine squash volume?"
 
-- **missing-concept** — `09-matrices.plato`: there is no `LinearMap` /
-  `SquareMatrix` concept that requires `Multiplicative` + matching row/column
+- **missing-interface** — `09-matrices.plato`: there is no `LinearMap` /
+  `SquareMatrix` interface that requires `Multiplicative` + matching row/column
   counts. `MatrixLike` alone cannot express invertibility or composition.
 
 - **doc-comment** — `Matrix3x3` / `Matrix4x4`: state in one line that Plato

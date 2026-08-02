@@ -21,7 +21,7 @@ Related:
 | 3 | [plato-256](../tracker/issues/plato-256.md) | Navigation find-refs cross-root same-name pollution | Dual-root bug; worse until rename settles, then fix |
 | 4 | [plato-272](../tracker/issues/plato-272.md) | Add Constants library to stdlib and use it | Ready p1 — cheap foundation win on the forward stdlib |
 | 5 | [plato-023](../tracker/issues/plato-023.md) | TIR scalar lowering + type-checker completion | Compiler endgame — keep going **in parallel** with library work |
-| 6 | [plato-229](../tracker/issues/plato-229.md) | Complete the Plato v2 concept lattice | Retarget or close: v2 largely superseded by [plato-230](../tracker/issues/plato-230.md) (done); don’t keep two concept missions |
+| 6 | [plato-229](../tracker/issues/plato-229.md) | Complete the Plato v2 interface lattice | Retarget or close: v2 largely superseded by [plato-230](../tracker/issues/plato-230.md) (done); don’t keep two interface missions |
 
 ---
 
@@ -29,7 +29,7 @@ Related:
 
 | # | Id | Title | Why now |
 |---|---|---|---|
-| 7 | [plato-268](../tracker/issues/plato-268.md) | Pick canonical type-class keyword: interface vs concept vs trait | One keyword for docs/errors |
+| 7 | [plato-268](../tracker/issues/plato-268.md) | Pick canonical type-class keyword: interface vs interface vs trait | One keyword for docs/errors |
 | 8 | [plato-271](../tracker/issues/plato-271.md) | Decide Plato numeric precision and fixed-size types | Policy before BigInt / Decimal / Float8 / double ports |
 | 9 | [plato-260](../tracker/issues/plato-260.md) | Settle Rotor3D vs Quaternion (one canonical rotation algebra) | Before Motor/Pose work |
 | 10 | [plato-269](../tracker/issues/plato-269.md) | Differential: stdlib vs stdlib-legacy | After [plato-263](../tracker/issues/plato-263.md) — drives port order |

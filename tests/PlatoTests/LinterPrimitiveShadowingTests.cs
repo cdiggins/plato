@@ -16,7 +16,7 @@ namespace PlatoTests
     ///
     /// These tests pin three things: the rule fires on a shadowing declaration at ERROR severity
     /// (so `lint --strict` fails on it), it does NOT fire on the fieldless declarations the stdlib
-    /// uses to state an intrinsic's concept surface, and the compiler's copy of the primitive-name
+    /// uses to state an intrinsic's interface surface, and the compiler's copy of the primitive-name
     /// list still agrees exactly with the C# writer's table.
     /// </summary>
     [TestFixture]
@@ -105,7 +105,7 @@ type Integer
             => Assert.That(
                 string.Join(" | ", Shadowings().Select(f => f.Message)),
                 Does.Not.Contain("'Number'").And.Not.Contain("'Boolean'").And.Not.Contain("'Function0'"),
-                "declaring an intrinsic's concept surface with no fields discards nothing and is " +
+                "declaring an intrinsic's interface surface with no fields discards nothing and is " +
                 "how stdlib/foundation/primitives.types.plato is written");
 
         [Test]

@@ -156,7 +156,7 @@ let centroidWeights = BarycentricCoordinate {
 };
 ```
 
-Point-in-triangle via the shape concept:
+Point-in-triangle via the shape interface:
 
 ```plato
 // Triangle2D implements ContainsPoint2D
@@ -178,8 +178,8 @@ $$
 hand you the weights directly. The planar story still bottoms out on
 `Triangle2D` + `BarycentricCoordinate`.
 
-**Algebra concept note:** a generic `Barycentric(a,b,c,u,v)` helper appears in
-concept-library numerical code as a blend of three `Numerical` values with
+**Algebra interface note:** a generic `Barycentric(a,b,c,u,v)` helper appears in
+interface-library numerical code as a blend of three `Numerical` values with
 parameters $(u,v)$ and implied $w=1-u-v$. That is the attribute-interpolation
 pattern; the geometric coordinate type is still `BarycentricCoordinate`.
 

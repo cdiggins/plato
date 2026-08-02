@@ -35,8 +35,8 @@ A single self-contained module `plato.rs` is produced. It contains, in order:
 1. A hand-written intrinsics prelude: the `IArray<T>` trait, the Vec-backed
    `Arr<T>` struct (with `At`, `Count`, `Map`, `Reduce`), and an `Intrinsics`
    module (`MakeArray`, `Range`).
-2. One `pub trait` per Plato concept (declaration only; `inherits` becomes
-   supertraits, and every concept trait requires `Copy`). No `impl Trait for
+2. One `pub trait` per Plato interface (declaration only; `inherits` becomes
+   supertraits, and every interface trait requires `Copy`). No `impl Trait for
    Type` blocks are generated — inherent methods carry all behavior.
 3. Generated IArray library functions, when present: element-generic functions
    become methods in an extra `impl<T: Copy> Arr<T>` block; concrete-element
@@ -116,12 +116,12 @@ comparisons, trig on `Angle`); anything unknown becomes `unimplemented!()`.
 - Statics (Plato first parameter `_`) become associated functions
   (`Type::Name(...)`); they are skipped on primitives.
 - No overloading: colliding names are skipped with a `// Skipped:` comment.
-- The array concept (`Array` or `IArray` depending on dialect) maps to the
+- The array interface (`Array` or `IArray` depending on dialect) maps to the
   generated `Arr<T>`.
 
 ## Known limitations
 
-- Concept traits are declaration-only; no `impl Trait for Type` generation.
+- Interface traits are declaration-only; no `impl Trait for Type` generation.
 - `std::ops` operator impls (`a + b` on vectors) are not generated.
 - String/Character support is minimal (the geometry library does not use them).
 - `Arr` is eager (Vec-backed), unlike the lazy TypeScript `Arr`.

@@ -1,7 +1,7 @@
 //==
-// # ICamera concept
+// # ICamera interface
 //
-// The marker concept for a placed camera: a rigid pose plus the near and far
+// The marker interface for a placed camera: a rigid pose plus the near and far
 // clip distances that bound the rendered depth range. The implementing types
 // are declared in `cameras.types.plato`; the derived bodies (including the
 // AspectRatio obligation fills) live in `cameras.library.plato`.

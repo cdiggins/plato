@@ -1,5 +1,5 @@
 //==
-// # Quantities - the measured-amount concept
+// # Quantities - the measured-amount interface
 //
 // A quantity is a number with an intrinsic unit of measure implied by its type
 // (https://en.wikipedia.org/wiki/Physical_quantity). Quantities add, subtract,

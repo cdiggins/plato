@@ -19,9 +19,9 @@ has teeth: it keeps intrinsic SIMD tuples apart from geometric displacements.
 
 ## The idea
 
-### Two families, one concept
+### Two families, one interface
 
-Both families implement the `Vector` concept (component-wise arithmetic, norms, dot product). They
+Both families implement the `Vector` interface (component-wise arithmetic, norms, dot product). They
 are not interchangeable semantically:
 
 | Family | Examples | Meaning |
@@ -89,10 +89,10 @@ File banner from `08-vectors.plato` (normative naming rule):
 > Naming rule: a bare number counts components (`Number3`, `Tuple3`, `IntegerVector3`); a `D`
 > suffix means the type lives in that-dimensional space (`Vector3D`, `Point3D`, `Ray3D`).
 
-### The `Vector` concept
+### The `Vector` interface
 
 ```plato
-concept Vector
+interface Vector
     inherits Numerical, Arithmetic, Indexable<Number>, Normed, Lattice, Hashable
 {
     Dot(a: Self, b: Self): Number;
@@ -221,6 +221,6 @@ signature communicates intent?
   That asymmetry is fine; a doc note under `Direction3D` ("normalize geometric vectors, not
   arbitrary Number3 channel triples") would stop RGB-normalization antipatterns.
 
-- **pedagogy** — `Vector` concept name collides with everyday "vector" meaning `Vector3D`. A remark
-  on the concept — "algebraic vector family; prefer concrete Vector3D/Number3 at APIs" — would
+- **pedagogy** — `Vector` interface name collides with everyday "vector" meaning `Vector3D`. A remark
+  on the interface — "algebraic vector family; prefer concrete Vector3D/Number3 at APIs" — would
   reduce over-abstract call sites that accept any `Vector` and accidentally take `Number8`.

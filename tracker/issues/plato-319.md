@@ -56,7 +56,7 @@ exists as a *different* well-known sugar: `x[i]` ≡ `At(x, i)`
 
 ## Related
 
-- `submodules/Plato/stdlib/functional.concepts.plato` — `Procedural.Eval` is the concept this
+- `submodules/Plato/stdlib/functional.concepts.plato` — `Procedural.Eval` is the interface this
   sugar would privilege.
 - `submodules/Plato/stdlib/curves.concepts.plato` — curves as `Procedural<Number, Point*>`.
 - `submodules/Plato/docs/plato-language-semantics.md` §6 — operators-as-names; `x[i]` ≡ `At(x, i)`.

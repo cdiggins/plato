@@ -1,8 +1,8 @@
 //==
 // # Lights — derived functions for ILightSource
 //
-// Bodies for the `ILightSource` concept declared in `lights.concepts.plato`, whose sole
-// concept member is the shadow-casting flag; the helpers are its two readable
+// Bodies for the `ILightSource` interface declared in `lights.concepts.plato`, whose sole
+// interface member is the shadow-casting flag; the helpers are its two readable
 // spellings. Pure expressions only; all inputs are immutable and evaluation is
 // side-effect free. See `README.md` for naming and unit conventions.
 
@@ -11,7 +11,7 @@ library Lights
     //==
     // # ILightSource
     //
-    // A scene light whose sole concept member is the shadow-casting flag.
+    // A scene light whose sole interface member is the shadow-casting flag.
 
     // True when the light contributes shadows; a readable spelling of CastsShadows.
     IsShadowCaster(self: ILightSource): Boolean

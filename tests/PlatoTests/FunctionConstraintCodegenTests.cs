@@ -30,7 +30,7 @@ namespace PlatoTests
 type Number { }
 type Boolean { }
 
-concept Interpolatable
+interface Interpolatable
 {
     Lerp(a: Self, b: Self, t: Number): Self;
 }

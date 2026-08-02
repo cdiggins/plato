@@ -141,7 +141,7 @@ type SuperEllipse
 `PlanarMeasurable` gives `Area` and `Perimeter`. For `Circle`, both are classical. For
 `Ellipse`, `Perimeter` is the hard integral (implementations must approximate). `Circle`
 implements `SupportMappable2D` and `NearestPoint2D`; `Ellipse` currently lists containment
-and measures but not support or nearest-point concepts — a surface gap for collision
+and measures but not support or nearest-point interfaces — a surface gap for collision
 parity.
 
 Angles in sectors use `AngleInterval` measured from $+X$, counter-clockwise (file
@@ -214,7 +214,7 @@ a segment. Support and contains still have limits; normals do not.
 
 1. Area $25\pi$, circumference $10\pi$.
 2. A circle of radius 5; perimeter $10\pi$.
-3. Likely an incomplete concept surface — ellipses are convex and have a known support
+3. Likely an incomplete interface surface — ellipses are convex and have a known support
    map. The gap is a library/declaration omission, not a mathematical one. (Calling that
    out is exactly what recommendations are for.)
 
@@ -222,7 +222,7 @@ a segment. Support and contains still have limits; normals do not.
 
 ## Library recommendations
 
-- **missing-concept** — `17-planar-shapes.plato`: `Ellipse` implements `ConvexShape` and
+- **missing-interface** — `17-planar-shapes.plato`: `Ellipse` implements `ConvexShape` and
   `ContainsPoint2D` but not `SupportMappable2D` or `NearestPoint2D`, while `Circle` has
   both. Collision and closest-point lessons want feature parity on the ellipse.
 

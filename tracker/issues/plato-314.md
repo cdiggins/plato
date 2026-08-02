@@ -15,11 +15,11 @@ links: []
 
 ## Problem
 
-`concept MeshTopology` (`stdlib/topology.concepts.plato`) declares only
+`interface MeshTopology` (`stdlib/topology.concepts.plato`) declares only
 `VertexCount` / `EdgeCount` / `FaceCount`. Those three counts are enough for the
 Euler characteristic and the genus of a closed manifold, so the content is real —
 but the *name* promises connectedness and delivers a census. Nothing in the
-concept says which elements touch which.
+interface says which elements touch which.
 
 Two consequences:
 
@@ -46,7 +46,7 @@ says which kind of edge it means.
 
 - [x] `MeshTopology` renamed `MeshElementCounts`; `EdgeCount` renamed
       `UndirectedEdgeCount`; all implementers and library bodies follow.
-- [x] New `concept MeshIncidence inherits MeshElementCounts` covering the six
+- [x] New `interface MeshIncidence inherits MeshElementCounts` covering the six
       incidence queries (V-F, F-V, V-E, E-V, E-F, F-E), with derived members
       (valence, vertex neighbours, boundary/wire/manifold edge tests) in
       `meshes-topology.library.plato`.
@@ -62,7 +62,7 @@ says which kind of edge it means.
 `HalfEdgeNavigable` deliberately does NOT inherit `MeshIncidence`: walking a face
 loop or a vertex fan to answer an incidence query is a build step, not a
 constant-time read, so forcing the obligation on every half-edge type would push
-allocation into the concept. A half-edge type may implement both.
+allocation into the interface. A half-edge type may implement both.
 
 `GenusIfClosed` kept its name: the `IfClosed` suffix already states the
 precondition the counts tier cannot check.

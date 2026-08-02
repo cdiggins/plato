@@ -1,7 +1,7 @@
 // ============================================================================
 // additions.plato  —  PROPOSAL FOR REVIEW (not yet compiled or gated)
 //
-// Proposed new/modified types, concepts, and functions for the Plato standard
+// Proposed new/modified types, interfaces, and functions for the Plato standard
 // library, oriented to geometry + graphics and to moving existing C# code
 // (Ara3D.Geometry, incl. the Topology half-edge class) into Plato.
 //
@@ -94,13 +94,13 @@ library ArrayReducers
 
 
 // ============================================================================
-// 3. Linear-algebra concepts & missing types
+// 3. Linear-algebra interfaces & missing types
 // ============================================================================
 
-// [NEW] Inner-product space: the single highest-leverage concept addition.
+// [NEW] Inner-product space: the single highest-leverage interface addition.
 // Makes projection / Gram-Schmidt / closest-point / least-squares generic
 // instead of per-vector. (vectors.plato already provides these on IVector;
-// promoting them to a concept generalizes and de-duplicates.)
+// promoting them to an interface generalizes and de-duplicates.)
 // https://en.wikipedia.org/wiki/Inner_product_space
 concept IInnerProduct
     inherits IVector
@@ -202,7 +202,7 @@ library Measures2
 
 
 // ============================================================================
-// 6. Universal geometry-query concepts + hit records
+// 6. Universal geometry-query interfaces + hit records
 //    Make every shape answer the same practical questions.
 // ============================================================================
 

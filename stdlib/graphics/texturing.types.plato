@@ -12,7 +12,7 @@
 // format, and mip count, and the procedural texture types that describe
 // patterns evaluated at UV coordinates rather than stored texels. The pixel
 // data itself lives in image types (Bitmap, FloatImage, MipChain,
-// VolumeImage, CubemapImage); the concept the procedural types implement
+// VolumeImage, CubemapImage); the interface the procedural types implement
 // lives in `texturing.concepts.plato`; the sampling state and bindings used
 // to read a texture follow in the next section.
 // Convention: see CONVENTIONS.md - UV origin (origin top-left, U right, V down).

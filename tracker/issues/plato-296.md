@@ -14,7 +14,7 @@ links: [docs/plato-library-roadmap-ideas.md, submodules/Plato/stdlib/transforms.
 ---
 
 ## Idea
-Ship a Plato stdlib catalog of common **space warps** — pure `Point → Point` maps as first-class values — so any `Deformable2D`/`Deformable3D` type gets Bend/Twist/Taper/etc. for free via the existing `Deform` primitive. Today the formulas live as C# Studio modifiers (`Deformers.cs`); Plato has the concept seam but no named warp library. Interpretation: this is the **analytic warp catalog** (Barr-style, noise displace, FFD-lite), not mesh-edit deformers (Laplacian, cage-solve) which belong elsewhere.
+Ship a Plato stdlib catalog of common **space warps** — pure `Point → Point` maps as first-class values — so any `Deformable2D`/`Deformable3D` type gets Bend/Twist/Taper/etc. for free via the existing `Deform` primitive. Today the formulas live as C# Studio modifiers (`Deformers.cs`); Plato has the interface seam but no named warp library. Interpretation: this is the **analytic warp catalog** (Barr-style, noise displace, FFD-lite), not mesh-edit deformers (Laplacian, cage-solve) which belong elsewhere.
 
 ## Assumptions
 - `Deformable3D.Deform(Self, Function1<Point3D, Point3D>)` remains the application seam (`stdlib/transforms.concepts.plato`).
@@ -24,20 +24,20 @@ Ship a Plato stdlib catalog of common **space warps** — pure `Point → Point`
 - Studio modifiers can thin to wrappers over Plato-generated warps once bodies ship (legacy or forward stdlib).
 
 ## Design decisions
-- **Expression shape — decided 2026-07-29.** Parametric structs implementing a thin concept, not free-function-only catalogs.
+- **Expression shape — decided 2026-07-29.** Parametric structs implementing a thin interface, not free-function-only catalogs.
   ```plato
-  concept Deformation3D inherits Procedural<Point3D, Point3D> { }
-  concept Deformation2D inherits Procedural<Point2D, Point2D> { }
+  interface Deformation3D inherits Procedural<Point3D, Point3D> { }
+  interface Deformation2D inherits Procedural<Point2D, Point2D> { }
 
   type Twist3D implements Deformation3D { Axis: Vector3; Amount: Angle; }
   // Eval inherited from Procedural — no Map, no second verb
   ```
   Rationale: pairs with `Deformable*`; reuses `Eval` (house verb for function-like values); discoverable; constrains `Compose` / weighted apply later. Name is `Deformation3D`/`Deformation2D`, not bare `Deformation` or `Warp`/`Modifier`.
-- **Eval argument order — decided 2026-07-29.** Self (deformation) first, point second: `d.Eval(p)`, matching every other `Procedural`. Do **not** require both orders on the concept. Optional library sugar only: `Deform(p: Point3D, d: Deformation3D) => d.Eval(p)` so `p.Deform(twist)` parallels `p.Transform(m)`.
-- **Apply lift.** One library overload bridges concept → existing seam:
+- **Eval argument order — decided 2026-07-29.** Self (deformation) first, point second: `d.Eval(p)`, matching every other `Procedural`. Do **not** require both orders on the interface. Optional library sugar only: `Deform(p: Point3D, d: Deformation3D) => d.Eval(p)` so `p.Deform(twist)` parallels `p.Transform(m)`.
+- **Apply lift.** One library overload bridges interface → existing seam:
   `Deform(geom: Deformable3D, d: Deformation3D): Self => geom.Deform(p => d.Eval(p))`.
 - **Weights / falloff — decided 2026-07-29.** Do not put weight on `Deformation3D`. Modulate via `ScalarField3D` (already `Field<Point3D, Number>` → `Procedural`): one combinator produces a new deformation or is an apply overload — see § Weights. Must not bake falloff into each warp's fields.
-- **Multiply / Compose — decided 2026-07-29.** `Compose(first, second)` applies first then second (same as transforms). `Multiply(a, b)` aliases Compose (enables `a * b`). `Multiply(d, t: Number)` / `Multiply(t, d)` scale strength via `p.Lerp(d.Eval(p), t)`. Results are `MappingDeformation2D/3D` carriers holding a `Function1` (concept fields are not available).
+- **Multiply / Compose — decided 2026-07-29.** `Compose(first, second)` applies first then second (same as transforms). `Multiply(a, b)` aliases Compose (enables `a * b`). `Multiply(d, t: Number)` / `Multiply(t, d)` scale strength via `p.Lerp(d.Eval(p), t)`. Results are `MappingDeformation2D/3D` carriers holding a `Function1` (interface fields are not available).
 - **Normalized domain** — still open: world units vs unit-box `[0,1]³` via `InverseLerp(bounds)` (Studio Twist/Skew pattern). Unit-box reusable across meshes; world-axis clearer for SDF domain warps.
 - **Normals / Jacobian** — still open: document "recompute normals after Deform" vs `DeformWithJacobian` for analytic warps with closed-form derivatives.
 - **Where it lives** — new `deformations*.plato` in forward `stdlib/` vs bodies first in `stdlib-legacy`. Prefer forward vocabulary + legacy bodies only if codegen consumers need them now.
@@ -77,7 +77,7 @@ Falloff catalog is separate content under `ScalarField3D` (e.g. `SphereFalloff`,
 - [ara3d-056](ara3d-056.md) — capability lattice / `IDeformable3D` notes.
 
 ## Approaches
-Short term: `Deformation3D`/`2D` concepts + Barr trio + Shear as param structs with `Eval`; identity-at-zero laws; `Deform(geom, d)` lift.
+Short term: `Deformation3D`/`2D` interfaces + Barr trio + Shear as param structs with `Eval`; identity-at-zero laws; `Deform(geom, d)` lift.
 Long term: `WeightedDeformation3D` (or apply overload) + falloff field catalog; FFD lattice; path/surface deform; analytic Jacobians; Studio modifiers become one-liners; SDF domain warps share the same `Eval`.
 Adjacent ideas worth their own issue:
 - Scalar falloff / effector field catalog under `ScalarField3D` (roadmap §0.1) — shared by deform, clone, colorize.
@@ -94,14 +94,14 @@ Adjacent ideas worth their own issue:
 Strengthens the **`Deformable*.Deform` + `Procedural.Eval` seams**: every warp is `Deformation3D` (= `Procedural<Point3D,Point3D>`), applied only through `Deform`; weights are `ScalarField3D` composed outside the warp. Same grain as `Transform` lifting through `Deform` in `intervals-transforms-transformable.library.plato`. **Verdict: simplest-along-the-grain** — must NOT invent a second apply path; must NOT bake falloff/bounds into each warp's fields; must NOT add `Map` beside `Eval`.
 
 ## Done means
-- [x] `Deformation2D`/`Deformation3D` concepts exist (thin `Procedural<Point*,Point*>` aliases) in forward stdlib.
+- [x] `Deformation2D`/`Deformation3D` interfaces exist (thin `Procedural<Point*,Point*>` aliases) in forward stdlib.
 - [x] Twist, Bend, Taper, Shear are param structs implementing `Deformation3D` (plus Shear2D/Taper2D/Twist2D/Spherify3D); zero rate/strength is identity by construction.
 - [x] `Deform(Deformable3D, Deformation3D)` lift works without type-specific geometry code (also 2D + weighted ScalarField overloads + point sugar).
 - [x] Documented contract for normals (recompute after deform; no Jacobian yet) in `deformations.library.plato`.
 - [ ] Studio `Deformers.cs` Twist/Skew either call into the Plato surface or are explicitly deferred with a follow-up issue.
 
 ## Simplest possible implementation
-`Deformation3D`/`2D` concept stubs + four param structs (`Twist3D`, …) with `Eval` bodies in `deformations*.plato`; conformance identity laws; no falloff, no FFD, no Studio wiring.
+`Deformation3D`/`2D` interface stubs + four param structs (`Twist3D`, …) with `Eval` bodies in `deformations*.plato`; conformance identity laws; no falloff, no FFD, no Studio wiring.
 
 Pros:
 - Immediate reusable math; dogfoods `Deformable3D` and `Procedural`.

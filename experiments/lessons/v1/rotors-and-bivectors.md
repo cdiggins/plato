@@ -235,6 +235,6 @@ at the boundary.
   (W, X, Y, Z)` on the type. That map currently lives in the transforms
   library conversion — it belongs on the type banner for GA readers.
 
-- **missing-concept** — `10-rotations.plato`: no shared `Rotor` concept tying
+- **missing-interface** — `10-rotations.plato`: no shared `Rotor` interface tying
   `Rotor2D`/`Rotor3D` (sandwich `Transform`, `Inverse` as reverse, `Normalize`).
   Generic GA code and this lesson's "same idea in 2D and 3D" claim would use it.

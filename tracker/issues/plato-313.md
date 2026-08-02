@@ -1,6 +1,6 @@
 ---
 id: plato-313
-title: Represent known polyhedron Dual as a concept
+title: Represent known polyhedron Dual as an interface
 type: problem
 status: done
 priority: p3
@@ -15,7 +15,7 @@ links: [plato-301, submodules/Plato/stdlib/polyhedra-catalog.library.plato, subm
 
 ## Issue
 
-Named dual pairs in the polyhedra catalog (e.g. cuboctahedron ↔ rhombic dodecahedron) are only comments plus Conway `Dual` on `PolygonMesh3D`. There is no type-level concept that says “this form’s known dual is that form.” Closing this problem means deciding whether (and how) to encode that pairing in Plato concepts, then filing follow-up work / an ADR.
+Named dual pairs in the polyhedra catalog (e.g. cuboctahedron ↔ rhombic dodecahedron) are only comments plus Conway `Dual` on `PolygonMesh3D`. There is no type-level interface that says “this form’s known dual is that form.” Closing this problem means deciding whether (and how) to encode that pairing in Plato interfaces, then filing follow-up work / an ADR.
 
 ## Impact
 
@@ -28,11 +28,11 @@ Without a typed dual relationship, catalog aliases stay stringly documented mesh
 - `submodules/Plato/stdlib/polyhedra-seeds.library.plato` — Platonic solids as static mesh factories, not types.
 - `submodules/Plato/stdlib/solids-polyhedra.plato` — `ArchimedeanSolid` / `CatalanSolid` + kind sums; no Dual map between kinds.
 - `submodules/Plato/stdlib/algebra-metric.concepts.plato` (`Difference<TDelta>`, `OriginBased<TDelta>`) and `Point2D implements OriginBased<Vector2D>` — existing “Self paired with another type” pattern.
-- `submodules/Plato/docs/plato-language-semantics.md` §4 — concepts with type parameters; satisfaction via members + `implements`.
+- `submodules/Plato/docs/plato-language-semantics.md` §4 — interfaces with type parameters; satisfaction via members + `implements`.
 
 ## Cause / analysis
 
-[plato-301](plato-301.md) deliberately shipped solids as `PolygonMesh3D` factories + Conway operators. That makes Dual an *operation* on meshes, not a *relationship* between named forms. A concept like `HasDual<TDual>` fits the language (same shape as `Difference<TDelta>`), but today there is no `Self` for Cuboctahedron / RhombicDodecahedron — they are library methods, not types. Kind wrappers (`ArchimedeanSolid` / `CatalanSolid`) could host a Dual map without new types, at coarser granularity.
+[plato-301](plato-301.md) deliberately shipped solids as `PolygonMesh3D` factories + Conway operators. That makes Dual an *operation* on meshes, not a *relationship* between named forms. An interface like `HasDual<TDual>` fits the language (same shape as `Difference<TDelta>`), but today there is no `Self` for Cuboctahedron / RhombicDodecahedron — they are library methods, not types. Kind wrappers (`ArchimedeanSolid` / `CatalanSolid`) could host a Dual map without new types, at coarser granularity.
 
 ## Priority
 
@@ -48,7 +48,7 @@ Without a typed dual relationship, catalog aliases stay stringly documented mesh
 
 1. **`HasDual<TDual>` on per-solid types** — e.g. `type Cuboctahedron implements HasDual<RhombicDodecahedron>`. Strongest typing; largest vocabulary change (each named solid becomes a type).
 2. **Kind-level Dual map** — `Dual(ArchimedeanSolidKind): CatalanSolidKind` (and reverse / Platonic pairs). Cheap; no per-solid types; Dual stays coarse (kind, not mesh identity).
-3. **Keep mesh Dual only** — document named pairs in catalog comments / laws; no concept. Zero design cost; typed pairing remains unavailable.
+3. **Keep mesh Dual only** — document named pairs in catalog comments / laws; no interface. Zero design cost; typed pairing remains unavailable.
 
 Closing should pick one (or a staged mix: 3→2→1) and record an ADR plus follow-up issues.
 
@@ -58,9 +58,9 @@ The seam is **named polyhedral form ↔ partner form** as a compile-time capabil
 
 ## Done means
 
-- [x] ADR in `tracker/decisions/` records the chosen Dual model (concept + types, kind map, or mesh-only) and rejected alternatives — `2026-07-29-polyhedra-dual-kind-map.md` (kind-level Dual map + Conway mesh Dual unchanged)
+- [x] ADR in `tracker/decisions/` records the chosen Dual model (interface + types, kind map, or mesh-only) and rejected alternatives — `2026-07-29-polyhedra-dual-kind-map.md` (kind-level Dual map + Conway mesh Dual unchanged)
 - [x] Follow-up issue(s) filed for any implementation work the ADR commits to (or explicit “no follow-up — mesh Dual only”) — no follow-up: maps + involution laws shipped with the ADR (`stdlib/polyhedra-duals.library.plato`, `stdlib-tests/polyhedra.laws.plato`)
-- [x] If a concept is chosen: sketch signature (`HasDual<TDual>` or equivalent) and where `implements` would live — N/A: concept deliberately rejected (no per-solid types); see ADR
+- [x] If an interface is chosen: sketch signature (`HasDual<TDual>` or equivalent) and where `implements` would live — N/A: interface deliberately rejected (no per-solid types); see ADR
 
 ## Simplest fix
 

@@ -141,7 +141,7 @@ type RayHit3D
     Uv: UvCoordinate;
 }
 
-concept RayIntersectable3D
+interface RayIntersectable3D
 {
     Raycast(x: Self, query: RayQuery3D): RayHit3D;
 }

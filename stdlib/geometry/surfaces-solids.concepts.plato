@@ -1,8 +1,8 @@
 //==
-// # ISurface, solid, and volume concepts
+// # ISurface, solid, and volume interfaces
 //
 // Continuous two- and three-dimensional geometry as pure functions: a surface
-// maps two parameters to a position, a volume maps three (the IProcedural concept
+// maps two parameters to a position, a volume maps three (the IProcedural interface
 // from `functional.concepts.plato`). Unless a type documents otherwise, a UV
 // surface's canonical domain is the unit square and a volume's the unit cube.
 // See https://en.wikipedia.org/wiki/Surface_(mathematics).
@@ -11,14 +11,14 @@
 // # Surfaces
 
 // A two-dimensional manifold embedded in 3D space, with or without boundary.
-// Marker concept for all surface representations
+// Marker interface for all surface representations
 // (https://en.wikipedia.org/wiki/Surface_(mathematics)).
 interface ISurface
     inherits IGeometry3D
 { }
 
 // A surface that is watertight: compact, without boundary curves (sphere, torus).
-// Marker concept; a closed surface separates space into inside and outside
+// Marker interface; a closed surface separates space into inside and outside
 // (https://en.wikipedia.org/wiki/Closed_manifold).
 interface IClosedSurface
     inherits ISurface
@@ -59,7 +59,7 @@ interface IHeightFieldSurface
 // # Solids and volumes
 
 // A closed, bounded region of 3D space: a volume together with its watertight
-// boundary surface. Marker concept for all solid representations
+// boundary surface. Marker interface for all solid representations
 // (https://en.wikipedia.org/wiki/Solid_geometry).
 interface ISolid
     inherits IGeometry3D

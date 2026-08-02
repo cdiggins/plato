@@ -2,18 +2,18 @@
 // # Fields
 //
 // Sections, in order:
-//  - IField concepts
-//  - Differentiable field concepts
-//  - Time-varying field concepts
+//  - IField interfaces
+//  - Differentiable field interfaces
+//  - Time-varying field interfaces
 
 //==
-// # IField concepts
+// # IField interfaces
 //
-// The root IField capability and the point-domain field concepts built on it:
+// The root IField capability and the point-domain field interfaces built on it:
 // scalar, vector, direction, color, complex, and tensor fields over the plane
 // and over space. Every field is IProcedural over a point domain, so curves,
 // easings, and fields share one evaluation vocabulary. Concrete field types
-// (noise, SDFs, sampled grids) implement the concepts declared here; the
+// (noise, SDFs, sampled grids) implement the interfaces declared here; the
 // derived bodies live in `fields-implicits.library.plato`.
 // See https://en.wikipedia.org/wiki/Scalar_field and
 // https://en.wikipedia.org/wiki/Vector_field.
@@ -98,7 +98,7 @@ interface ITensorField3D
 { }
 
 //==
-// # Differentiable field concepts
+// # Differentiable field interfaces
 //
 // Scalar and vector fields that carry a first derivative alongside their
 // value: the gradient of a scalar field, and the Jacobian, divergence, and
@@ -148,7 +148,7 @@ interface IDifferentiableVectorField3D
 }
 
 //==
-// # Time-varying field concepts
+// # Time-varying field interfaces
 //
 // Fields whose values evolve over a timeline. The time argument is an Instant
 // on the animation or simulation timeline.

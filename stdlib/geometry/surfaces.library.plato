@@ -3,7 +3,7 @@
 //
 // Sections, in order:
 //  - Surfaces — parametric evaluation of the named surface types
-//  - Derived functions for the surface, solid, and volume concepts
+//  - Derived functions for the surface, solid, and volume interfaces
 //  - Deformation bodies for the control-net and sampled surfaces
 
 library Surfaces
@@ -52,13 +52,13 @@ library Surfaces
     // evaluation, in unit parameter.
     ParameterStep(): Number => 0.001;
 
-    // A helper taking a CONCEPT-typed first parameter cannot be called on a
-    // concept-typed value from inside another body: the writer monomorphizes it
+    // A helper taking an interface-typed first parameter cannot be called on a
+    // interface-typed value from inside another body: the writer monomorphizes it
     // per concrete type and no overload accepts the interface (the same shape
     // LINT013 reports as an unreachable derived surface). So the path tangent and
     // the base-surface normal below are written out at each of their three call
     // sites rather than factored out. Only obligations — `Eval` here — dispatch
-    // through a concept.
+    // through an interface.
 
     // The number of columns of a control net (the U direction).
     NetColumns(net: Array2D<Point3D>): Integer
@@ -143,7 +143,7 @@ library Surfaces
     // minus the bilinear patch on the four corners that both of them contain.
     // Point3D is IInterpolatable but not IAdditive, so the subtraction is spelled
     // through the point difference — `bilinear + (ruledV - bilinear)` — which is
-    // exactly what `Between` gives and needs no new concept.
+    // exactly what `Between` gives and needs no new interface.
     // https://en.wikipedia.org/wiki/Coons_patch
     Eval(s: CoonsPatch, uv: UvCoordinate): Point3D {
         var ruledV = s.Bottom.Eval(uv.U).Lerp(s.Top.Eval(uv.U), uv.V);
@@ -342,13 +342,13 @@ library Surfaces
     ClosedV(s: MobiusStrip): Boolean => false;
 
     //==
-    // # Derived functions for the surface, solid, and volume concepts
+    // # Derived functions for the surface, solid, and volume interfaces
     //
-    // Bodies for the concepts declared in `surfaces-solids.concepts.plato`. Every
-    // function's first parameter is concept-typed, so each helper becomes available
+    // Bodies for the interfaces declared in `surfaces-solids.concepts.plato`. Every
+    // function's first parameter is interface-typed, so each helper becomes available
     // on every implementing type. Corner and centre samples, the closure
     // classification, and the coefficients of the first fundamental form are all
-    // derivable from the concept members alone.
+    // derivable from the interface members alone.
     //
     // A UV surface's canonical domain is the unit square and a volume's the unit
     // cube; evaluation goes through the `Eval` member inherited from `IProcedural`.
@@ -482,7 +482,7 @@ library Surfaces
     //==
     // # ISurface, IClosedSurface, ISolid, IConvexSolid
     //
-    // These marker concepts already exist (surfaces-solids.concepts.plato):
+    // These marker interfaces already exist (surfaces-solids.concepts.plato):
     // ISurface and ISolid inherit only IGeometry3D, IClosedSurface and IConvexSolid only
     // another marker. They add no members over their bases, and IGeometry3D's own
     // derived helpers live in the geometry package (P5). No curve/surface-specific

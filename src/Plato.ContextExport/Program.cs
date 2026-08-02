@@ -76,7 +76,7 @@ public static class Program
             declarations.AddRange(ast.Types.Where(IsExportable));
         }
 
-        // Concepts first, then types, each alphabetical: a reader can find a name without knowing
+        // Interfaces first, then types, each alphabetical: a reader can find a name without knowing
         // which file declares it, and the vocabulary of abstractions reads before its instances.
         var ordered = declarations
             .OrderBy(d => d.Kind == TypeKind.Interface ? 0 : 1)

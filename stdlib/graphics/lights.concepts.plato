@@ -1,7 +1,7 @@
 //==
-// # Light source concept
+// # Light source interface
 //
-// The marker concept for every scene light. The implementing types are
+// The marker interface for every scene light. The implementing types are
 // declared in `lights.types.plato` and its derived bodies in `lights.library.plato`;
 // the shadow-map, masking, and volumetric controls that accompany a light live
 // in `lights.types.plato`.

@@ -68,7 +68,7 @@ whether an operation is legal.
 
 Prior art worth weighing: the old `plato-src-v2` sketch had
 `CoordinateReferenceSystem { Name, Authority, Code }` plus an
-`IReferencedPosition<TPoint, TReferenceSystem>` concept pairing a point with its
+`IReferencedPosition<TPoint, TReferenceSystem>` interface pairing a point with its
 system — the tagging approach. PROJ and GDAL take the same line. The counter-example
 is that most geometry kernels deliberately stay CRS-free and push it to the
 application layer.
@@ -140,5 +140,5 @@ concern.
   already tracked as plato-079.
 - Note for the record: this issue was originally filed on the false premise that
   stdlib had no CRS support at all. It has extensive support; the gap is only
-  identity. Anyone auditing stdlib coverage should search by concept, not by the
+  identity. Anyone auditing stdlib coverage should search by interface, not by the
   names another library happens to use.

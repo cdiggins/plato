@@ -67,7 +67,7 @@ when you change exposure.
 ### Analytic lights (`49-lights.plato`)
 
 ```
-concept LightSource
+interface LightSource
 {
     CastsShadows(x: Self): Boolean;
 }
@@ -268,6 +268,6 @@ In `ClearCoatLayer`, which field disables the layer?
   easy interoperability footgun.
 
 - **missing-type** — `49-lights.plato`: a sum `type Light = Directional(DirectionalLight) |
-  Point(PointLight) | …` (or a scene list concept) would let examples and scene graphs
+  Point(PointLight) | …` (or a scene list interface) would let examples and scene graphs
   refer to "a light" without inventing host-side unions. Right now only the
-  `LightSource` concept (shadows only) unifies them.
+  `LightSource` interface (shadows only) unifies them.

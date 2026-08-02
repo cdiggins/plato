@@ -30,7 +30,7 @@ Landed increments (all gated: PlatoTests 99/99, `check-all` ALL GATES PASS — g
 - **M1.4 (ratchet) DONE.** `PlatoTests/CheckerCompletenessTests.cs` gates functions-with-diagnostics
   ≤ 49 (ceiling to lower).
 
-- **M1.1 (F1) SAFE SLICE + optimizer bug fix — DONE, verifier now GREEN.** The concept-method
+- **M1.1 (F1) SAFE SLICE + optimizer bug fix — DONE, verifier now GREEN.** The interface-method
   `$C2 | $C3` ties (e.g. `Average → a.Lerp(b, 0.5)` on `IInterpolatable`, whose two Lerp candidates —
   the `IInterpolatable.Lerp` obligation and its `IVectorLike`-inherited surfacing — both return a
   fresh unbound Self-var) are **not a real disagreement**: each grounds to the same concrete arg type
@@ -148,11 +148,11 @@ Landed increments (all gated: PlatoTests 99/99, `check-all` ALL GATES PASS — g
   actually did; `RunOptimizerPasses(…, lowerScalars)` keeps static-emit bodies on the legacy path.
   With the flag on, these cut Optimized from 82 → **46** errors. The residue (Unopt 58 / Opt 46) is
   entirely in **generic library bodies** (`Algebra.CatmullRom`, `IBounds`/`IInterval` helpers,
-  `Meshes`) whose monomorphized TIR still types a `Point2D`/`Vector2` receiver as its concept bound
+  `Meshes`) whose monomorphized TIR still types a `Point2D`/`Vector2` receiver as its interface bound
   `Number` — the SAME looseness as the remaining 32 checker diagnostics. **So Mission 2's last mile
-  is gated on Mission 1 finishing: until concept-method calls in library bodies carry their concrete
+  is gated on Mission 1 finishing: until interface-method calls in library bodies carry their concrete
   types, those bodies cannot be type-directed and must stay on the legacy path.** Options to finish:
-  (a) tighten the checker so monomorphized library-body calls record concrete (not concept-bound)
+  (a) tighten the checker so monomorphized library-body calls record concrete (not interface-bound)
   argument/parameter types; or (b) permanently route the ~4 offending library classes through the
   legacy `ScalarEraseAnalysis` path and enable the flip for everything else (a smaller, shippable
   win that keeps `ScalarEraseAnalysis` alive for the residue rather than deleting it in S3). The
@@ -165,11 +165,11 @@ Landed increments (all gated: PlatoTests 99/99, `check-all` ALL GATES PASS — g
   1. **Checker — rigid signature variables (`Solver`/`TypeChecker`).** A function's own signature
      type variables (`$T`, `$D`) are now RIGID during overload trial/best-effort matching
      (`record == false`): they can no longer absorb a concrete parameter type, so
-     `value.Between(x.Min, x.Max)` on `value: $T` binds the `IVectorLike` concept overload instead of
+     `value.Between(x.Min, x.Max)` on `value: $T` binds the `IVectorLike` interface overload instead of
      poisoning `$T := Number` and casting a `Point2D` to `(float)`. Fixes the IBounds/IInterval
      family cleanly (now lowered correctly). Diagnostic count unchanged (32), all checker tests green.
-  2. **Monomorphizer — concept-parameter grounding (`GroundConceptParameters` + Self-refined return
-     grounding).** A concept method records every Self position as its owning interface (`Add`'s
+  2. **Monomorphizer — interface-parameter grounding (`GroundConceptParameters` + Self-refined return
+     grounding).** An interface method records every Self position as its owning interface (`Add`'s
      params as `IArithmetic`, `INumerical`); once the arguments are concrete, that interface IS the
      Self type, so each self-constrained-interface parameter/return is grounded to the concrete
      argument (receiver type for a scalar broadcast). This drove the `Algebra`/`Meshes` INumerical
@@ -296,7 +296,7 @@ Not yet started: **M1.3** (F2d/F3 library repairs — note `Vectors.Column1-4` "
 the source explicit `m.M11` makes the *checker* type it but the emitter then adds redundant
 `((float)…)` casts, an interim output regression Mission 2 is meant to remove; better fixed by
 teaching the checker bare receiver-member refs, or deferred into M2). The concrete-return CHK203 ties
-(`Subtract`/`Add`/`Lerp` `Vector2 | Vector3 | …` on concept-constrained receivers, ~14) are the
+(`Subtract`/`Add`/`Lerp` `Vector2 | Vector3 | …` on interface-constrained receivers, ~14) are the
 harder, still-open part of F1 — they emit by name+shape and do **not** corrupt emitted TIR types, so
 they don't gate Mission 2. **M2/S0–S4** not started; the verifier gate it waits on is now green.
 
@@ -406,16 +406,16 @@ Measured 2026-07-12 (`CheckerDiagnosticsSummaryTests.SummarizeUnresolvedStdLibDi
 CHK201 (no match) 13. Top names: `Tuple2/3/4` 25 · `Lerp` 7 · `Average` 5 · `Subtract` 4 ·
 `Scale` 4 · `Add` 3. The per-function detail clusters into four families:
 
-### F1 — concept-dispatch ties on concept-constrained receivers (kills most CHK203, ~25)
+### F1 — interface-dispatch ties on interface-constrained receivers (kills most CHK203, ~25)
 
 `IBounds.Size: Ambiguous call to 'Subtract': 12 equally-specific overloads…`,
 `IInterval.MoveTo: 'Add': 12 overloads…`, `Geometry.Normal: 'Normalize': 5 overloads…`, and the
 `$C`-variable ties (`Core.Average: 'Lerp': $C2 | $C3`). Pattern: a call on a receiver whose type is
-a concept-constrained type variable (or interface) matches *every* concrete implementor equally.
+an interface-constrained type variable (or interface) matches *every* concrete implementor equally.
 The solver should not enumerate concrete overloads into a tie here: when the receiver is
-concept-constrained and the name resolves within the concept (or all candidates are instances of
-one concept method), **bind the concept method and defer concrete dispatch to monomorphization** —
-the same `Self`-refinement machinery that already exists for concept methods. The `$C | $C` ties
+interface-constrained and the name resolves within the interface (or all candidates are instances of
+one interface method), **bind the interface method and defer concrete dispatch to monomorphization** —
+the same `Self`-refinement machinery that already exists for interface methods. The `$C | $C` ties
 are the same root: two candidate rows differing only in unresolved constraint vars should unify,
 not tie.
 
@@ -457,7 +457,7 @@ mixed Point/Vector args).
 
 | Inc | Content | Gate |
 |---|---|---|
-| M1.1 | F1 solver change (concept dispatch defers to mono) + minimal `.plato` regression tests | summary count drops ~25; conformance + goldens unchanged-or-reviewed; PlatoTests green |
+| M1.1 | F1 solver change (interface dispatch defers to mono) + minimal `.plato` regression tests | summary count drops ~25; conformance + goldens unchanged-or-reviewed; PlatoTests green |
 | M1.2 | F2a-c coercion relation (recursive, interface-aware, both positions) | count drops ~35 incl. most `Scale`/`Tuple` CHK201s |
 | M1.3 | F2d + F3 library repairs, one commit per cluster, each with a conformance witness | count → 0 |
 | M1.4 | **Ratchet**: `CheckerCompletenessTests` asserts `functions-with-diagnostics == 0` (start as `<= current` and tighten per increment); promote into `check-all.ps1` | permanent |

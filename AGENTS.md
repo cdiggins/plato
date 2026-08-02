@@ -43,7 +43,7 @@ the writer code).
 
 - `stdlib/` — **Forward stdlib vocabulary** (ex-`plato-src-v3`). New *vocabulary* goes here.
   Since the plato-293 re-partition it carries **both** declarations and implementation bodies:
-  `<stem>.plato` = types, `<stem>.concepts.plato` = concepts, `<stem>.library.plato` = exactly one
+  `<stem>.plato` = types, `<stem>.concepts.plato` = interface declarations, `<stem>.library.plato` = exactly one
   `library` block. One kind of declaration per file; there is no cap on how many declarations a
   file may hold, so group by subject. The folder is partitioned into four subfolders — `foundation/`, `geometry/`, `graphics/`
   and `future/` (aspirational vocabulary) — each of which is itself flat.
@@ -54,7 +54,7 @@ the writer code).
   tiers unconditionally. Nothing in a shipping tier may reference a `future` declaration.
   **Folder rules:** [`stdlib/AGENTS.md`](stdlib/AGENTS.md) — including the standing obligation to
   regenerate `stdlib/types-and-concepts.txt` (the generated index of every shipping type and
-  concept) in the same commit as any declaration change.
+  interface) in the same commit as any declaration change.
   **Read before editing:** [`stdlib/README.md`](stdlib/README.md) (what the folder is, counts,
   partition rules), [`stdlib/CONVENTIONS.md`](stdlib/CONVENTIONS.md) (domain semantics — frames,
   winding, units, the no-generic-`Optional<T>` rule; when two files disagree, this one wins),

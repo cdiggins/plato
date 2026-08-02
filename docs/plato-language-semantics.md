@@ -16,16 +16,17 @@ construct is not in this document, do not rely on it.
 
 ## 1. The model
 
-A Plato program is a set of top-level declarations of three kinds — `type`, `concept`
-(`interface` is an accepted alias; the older `stdlib-legacy` uses it), and `library` — compiled
+A Plato program is a set of top-level declarations of three kinds — `type`, `interface`
+(`concept` remains an accepted alias for the same keyword), and `library` — compiled
 together from a folder of `.plato` files. There are no modules, imports, or namespaces: every
 declaration in the compilation shares one global scope, and declaration order never matters.
-Library names are organizational only; they do not scope names.
+Library names are organizational only; they do not scope names. Interface names use an `I`
+prefix (`IEquatable`, `IOrderable`, …).
 
 Everything is an immutable value and every function is pure: no mutation, no I/O, no exceptions,
 no null, no reflection, no observable evaluation order. A function's meaning is exactly the value
 it returns for its arguments. Typing is static and **nominal** — types match by name, not
-structure (with one deliberate exception: tuple construction, §6). Generic and concept-generic
+structure (with one deliberate exception: tuple construction, §6). Generic and interface-generic
 code is **monomorphized**: the compiler stamps a concrete copy per implementing type, so there is
 no runtime dispatch, no boxing, and no abstraction penalty.
 
@@ -41,7 +42,7 @@ A `type` is pure data. The braced body declares fields, and nothing else — no 
 visibility, no inheritance:
 
 ```plato
-type Circle implements ClosedShape2D
+type Circle implements IClosedShape
 {
     Center: Point2D;
     Radius: Number;
@@ -54,8 +55,8 @@ hashing, and immutable per-field setters (`c.WithRadius(2.0)` returns a new `Cir
 be generic (`type Tuple2<T0, T1> { X0: T0; X1: T1; }`), and a generic type's parameters may carry
 `where` bounds (§5).
 
-The `implements` list names concepts the type satisfies (§4), and is what makes every
-concept-generic function available on the type. Note the obligation is enforced *softly*: a
+The `implements` list names interfaces the type satisfies (§4), and is what makes every
+interface-generic function available on the type. Note the obligation is enforced *softly*: a
 missing member is a linter finding (LINT001) and the generated member throws at runtime — it is
 not a compile error. Treat LINT001 as an error when authoring.
 
@@ -114,47 +115,47 @@ callers cannot tell a computed value from a stored field, and fields are accesse
 only its type; it is called on the type name: `Number.Pi`, `Matrix4x4.CreateTranslation(v)`.
 A type name in expression position (including `Self`) denotes the type for exactly this purpose.
 
-**Overloading** is by signature; functions from all libraries and concepts with the same name form
+**Overloading** is by signature; functions from all libraries and interfaces with the same name form
 one global overload group, resolved per call site (§6).
 
-## 4. `concept` — type classes and `Self`
+## 4. `interface` — type classes and `Self`
 
-A `concept` declares a capability: a set of function signatures over an implicit type variable
-`Self`, which stands for whichever concrete type implements the concept:
+An `interface` declares a capability: a set of function signatures over an implicit type variable
+`Self`, which stands for whichever concrete type implements the interface:
 
 ```plato
-concept Orderable inherits Equatable
+interface IOrderable inherits IEquatable
 {
     LessThanOrEquals(a: Self, b: Self): Boolean;
 }
 ```
 
 These are type classes (Haskell classes, Rust traits, Swift protocols) — **not** OO interfaces.
-There is no vtable, no boxing, and no heterogeneous collection of "Orderables"; a concept is a
-compile-time constraint, not a runtime value type. `inherits` composes concepts (implementing the
-child obligates the parents' members too); concepts may be generic (`concept
-Procedural<TDomain, TRange>`).
+There is no vtable, no boxing, and no heterogeneous collection of "IOrderables"; an interface is a
+compile-time constraint, not a runtime value type. `inherits` composes interfaces (implementing the
+child obligates the parents' members too); interfaces may be generic (`interface
+IProcedural<TDomain, TRange>`).
 
-A type satisfies a concept when every member is available for it — from an intrinsic, a library
-function, or another concept's stamped functions. Satisfaction is checked over the transitive
+A type satisfies an interface when every member is available for it — from an intrinsic, a library
+function, or another interface's stamped functions. Satisfaction is checked over the transitive
 `implements`/`inherits` closure with type-argument substitution (so a type implementing
-`VectorLike`, which inherits an array-like concept over `Number`, satisfies `ArrayLike<T>` with
+`IVector`, which inherits an indexable interface over `Number`, satisfies `IIndexable<T>` with
 `T = Number`).
 
-`Self` refines: a concept function that takes or returns `Self` takes and returns *the receiver's
+`Self` refines: an interface function that takes or returns `Self` takes and returns *the receiver's
 concrete type* at every use site. `Divide(self: Self, other: Number): Self` called on a
 `Vector3D` returns `Vector3D`, not an interface. This is the whole trick — generic code, concrete
 types, resolved at compile time.
 
-**Using concepts as parameter types.** In a library function signature, a concept in parameter
+**Using interfaces as parameter types.** In a library function signature, an interface in parameter
 position means "any implementing type", and introduces an implicit generic constraint:
 
 ```plato
-Lerp(a: VectorLike, b: VectorLike, t: Number): VectorLike
-    => a.ZipComponents(b, (x, y) => x.Lerp(y, t));
+Lerp(a: IInterpolatable, b: IInterpolatable, t: Number): IInterpolatable
+    => a /* … */;
 ```
 
-All `VectorLike` occurrences in one signature denote the *same* concrete type, and the return
+All `IInterpolatable` occurrences in one signature denote the *same* concrete type, and the return
 refines to it. The function is monomorphized into every implementing type. When parameters must
 be allowed to differ in type, use explicit type variables (§5).
 
@@ -166,44 +167,44 @@ Explicit type variables are spelled `$T` in library signatures:
 Zip(xs: Array<$T1>, ys: Array<$T2>, f: Function2<$T1, $T2, $T3>): Array<$T3>;
 ```
 
-`$`-variables are inferred per call site; declared type parameters on `type`/`concept`
+`$`-variables are inferred per call site; declared type parameters on `type`/`interface`
 declarations (`<T0, T1>` — no `$`) are rigid within that declaration. Function values are typed
 `Function0<TR>` … `FunctionN<T0, …, TR>`; lambdas `(a, b) => expr` and `x => expr` are the only
 way to produce them, appear only as arguments to higher-order functions, and their parameter
 types are inferred from the target signature (annotations are not written). Passing a named
 function where a function value is expected eta-expands it to a lambda automatically.
 
-**Declared bounds (`where`).** Both `concept` and `type` declarations may bound their parameters,
+**Declared bounds (`where`).** Both `interface` and `type` declarations may bound their parameters,
 between the parameter list and the `implements`/`inherits` list:
 
 ```plato
 type Tween<T>
-    where T: Interpolatable
-    implements TimeVarying<T>
+    where T: IInterpolatable
+    implements ITimeVarying<T>
 {
     From: T;
     To: T;
 }
 ```
 
-A bound must name a concept (else CHK310). It means two things, both checked:
+A bound must name an interface (else CHK310). It means two things, both checked:
 
 - **Every construction must satisfy it.** `Tween<String>` is rejected wherever it is written —
   field type, signature, or nested inside another type argument — with CHK309, because `String`
-  does not implement `Interpolatable`. Satisfaction is the same transitive closure walk concept
+  does not implement `IInterpolatable`. Satisfaction is the same transitive closure walk interface
   satisfaction uses.
 - **It licenses operations on the bare parameter.** `Lerp` on a value of type `T` is well-typed
-  inside a declaration bounded by `Interpolatable`, and a library signature's `$`-variables inherit
+  inside a declaration bounded by `IInterpolatable`, and a library signature's `$`-variables inherit
   the bounds of the types they appear in — `Sample(x: Tween<$T>, t: Duration): $T` sees
-  `$T: Interpolatable`. A call on a bounded parameter that no bound supplies is an error (CHK205),
+  `$T: IInterpolatable`. A call on a bounded parameter that no bound supplies is an error (CHK205),
   though it still resolves; an *unbounded* parameter is unrestricted, since bounds are optional.
 
 **A function may bound its own signature variables.** The clause sits after the return type and
 before the body — the last thing in the signature, the same slot it occupies on `type` and
-`concept` — and names the variable exactly as the signature spells it, with the `$`:
+`interface` — and names the variable exactly as the signature spells it, with the `$`:
 
 ```plato
-DeCasteljau(xs: Array<$T>, t: Number): $T where $T: Interpolatable
+DeCasteljau(xs: Array<$T>, t: Number): $T where $T: IInterpolatable
     => xs.Count <= 1 ? xs[0] : ...;
 ```
 
@@ -216,7 +217,7 @@ bind the variable to must satisfy the bound, or the call does not resolve (CHK20
 function is a precondition on inference, checked where inference happens. A bound naming a variable
 the signature never mentions constrains nothing and is reported by the linter (LINT002).
 
-After type checking, **monomorphization** grounds everything: each concept-generic or
+After type checking, **monomorphization** grounds everything: each interface-generic or
 `$`-generic function is instantiated per concrete type combination actually used, `Self` is
 replaced by the receiver type, and the emitted code contains only direct calls on concrete types.
 A program's meaning never depends on monomorphization — it is an implementation of the semantics
@@ -267,7 +268,7 @@ of preference:
 
 1. **exact** — the types unify;
 2. **generic** — a `$`-variable binds;
-3. **concept** — the argument's type implements the concept named by the parameter (with
+3. **interface** — the argument's type implements the interface named by the parameter (with
    `Self`-refinement of the return);
 4. **conversion** — an implicit conversion exists.
 
@@ -319,7 +320,7 @@ Explicitly absent, so nobody infers them from the C#-flavored syntax:
 - **Affine/unique types** — the `unique` modifier parses and is reserved; it has no semantics
   yet.
 - **OO** — no inheritance between types, no virtual dispatch, no visibility modifiers, no
-  heterogeneous collections through concepts, no runtime type tests (`is`/`as` are not language).
+  heterogeneous collections through interfaces, no runtime type tests (`is`/`as` are not language).
 - **Double precision** — `Number` is 32-bit in every current backend; there is no `Double`.
 - **I/O, strings-as-workhorse, modules, reflection** — out of scope by design; the host language
   owns them.

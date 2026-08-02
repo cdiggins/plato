@@ -30,7 +30,7 @@ in spirit, but must pick Plato’s half-open vs closed convention explicitly.
 - Half-open vs closed is decided up front (see plato-333); silent mismatch with
   `IntegerInterval` would be worse than no sugar.
 - Sugar stays a desugar to an existing verb (`Slice` or `SubArray`), not a new
-  runtime concept.
+  runtime interface.
 
 ## Design decisions
 
@@ -42,7 +42,7 @@ in spirit, but must pick Plato’s half-open vs closed convention explicitly.
 - **Slice vs SubArray** — `Slice(from, to)` vs `SubArray(from, count)`. Sugar should
   pick one desugar target; the other stays a library call.
 - **Types** — only `Array` / `Sliceable`, or any `At`+`Count` indexable? Broader is
-  nicer; needs a concept obligation.
+  nicer; needs an interface obligation.
 - **Relation to `IntegerInterval`** — does `a..b` alone (outside brackets) become an
   interval literal later? Out of scope unless cheap; don’t invent free-standing
   `..` in this idea.

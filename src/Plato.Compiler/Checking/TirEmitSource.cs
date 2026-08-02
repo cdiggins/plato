@@ -76,7 +76,7 @@ namespace Ara3D.Geometry.Compiler.Checking
         /// on a bare receiver is emittable if a bound the receiver is KNOWN to carry — declared on
         /// the parameter itself (<c>type Tween&lt;T&gt; where T: Interpolatable</c>) or inherited by
         /// the signature variable through a constructed type it appears in
-        /// (<see cref="TypeConstraints.InheritedBounds"/>) — carries the concept that declares the
+        /// (<see cref="TypeConstraints.InheritedBounds"/>) — carries the interface that declares the
         /// callee. That is the same licence <see cref="Solver.BoundsPermit"/> used to resolve the
         /// call, and the emitted signature carries the matching C# <c>where</c> clause, so the body
         /// is valid C#. Without a licensing bound the refusal stands.
@@ -119,8 +119,8 @@ namespace Ara3D.Geometry.Compiler.Checking
 
         /// <summary>Whether one of the bounds <paramref name="recv"/> is known to carry supplies the
         /// member <paramref name="c"/> calls — the emit-time reading of the same licence the solver
-        /// applied. Prefers the callee's declaring concept (an exact structural match through the
-        /// bound's concept closure) and falls back to the member NAME, for a callee whose owner the
+        /// applied. Prefers the callee's declaring interface (an exact structural match through the
+        /// bound's interface closure) and falls back to the member NAME, for a callee whose owner the
         /// monomorphizer has already replaced with an implementing type.</summary>
         private static bool BoundLicenses(TypeExpression recv, TirCall c,
             IReadOnlyDictionary<string, IReadOnlyList<TypeExpression>> inherited)
@@ -140,7 +140,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             return name != null && bounds.Any(b => ConceptSupplies(b, name));
         }
 
-        /// <summary>Whether a bound's concept closure declares a member of this name.</summary>
+        /// <summary>Whether a bound's interface closure declares a member of this name.</summary>
         private static bool ConceptSupplies(TypeExpression bound, string name)
             => ConceptClosure.InstancesOf(bound)
                 .Append(bound)

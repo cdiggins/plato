@@ -18,7 +18,7 @@ namespace PlatoTests
     ///
     /// These tests pin the predicate's two halves: the collision IS reported, and the two shapes
     /// that are design rather than defect (a field on the receiver itself, and a field discharging
-    /// an obligation of the receiver CONCEPT) are NOT.
+    /// an obligation of the receiver interface) are NOT.
     /// </summary>
     [TestFixture]
     public static class LinterFieldFunctionCollisionTests
@@ -48,7 +48,7 @@ type Histogram
 }
 
 // NOT a collision: 'Width' is a field here AND the library function's receiver is the
-// concept this type implements - the field IS the implementation (field forwarding).
+// interface this type implements - the field IS the implementation (field forwarding).
 type Box implements HasWidth
 {
     Width: Number;
@@ -66,7 +66,7 @@ library Surface
     // Unrelated receiver: Integer has no 'Range' field.
     Range(n: Integer): Number;
 
-    // Receiver concept that the field owner implements.
+    // Receiver interface that the field owner implements.
     Width(x: HasWidth): Number;
 
     // Receiver IS the field owner.
@@ -113,7 +113,7 @@ library Surface
         [Test]
         public static void FieldForwardingToAnImplementedConceptIsNotReported()
             => Assert.That(string.Join(" | ", Collisions()), Does.Not.Contain("Width"),
-                "a field discharging an obligation of the receiver concept is the intended design, " +
+                "a field discharging an obligation of the receiver interface is the intended design, " +
                 "not a collision");
 
         [Test]

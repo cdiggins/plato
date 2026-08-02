@@ -1,5 +1,5 @@
 //==
-// # IImage concepts
+// # IImage interfaces
 //
 // The single abstraction shared by every raster type: a rectangular grid with
 // known dimensions. Pixel access is deliberately absent, because pixel
@@ -9,7 +9,7 @@
 // array's Count equals Width times Height.
 
 // A raster image: a rectangular pixel grid with known dimensions. Pixel access
-// is deliberately not part of the concept; each concrete image type exposes its
+// is deliberately not part of the interface; each concrete image type exposes its
 // own pixel representation. (https://en.wikipedia.org/wiki/Raster_graphics)
 interface IImage
     inherits IValue

@@ -58,10 +58,10 @@ net change (LoopWithOffset — the classic "keep walking" pattern).
 
 ## In Plato
 
-`37-keyframes-tracks.plato` centers on the concept `TimeVarying<TValue>`:
+`37-keyframes-tracks.plato` centers on the interface `TimeVarying<TValue>`:
 
 ```
-concept TimeVarying<TValue>
+interface TimeVarying<TValue>
 {
     Sample(x: Self, time: Duration): TValue;
 }

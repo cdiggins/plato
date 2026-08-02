@@ -159,23 +159,23 @@ namespace PlatoTests
             Assert.AreEqual("Boolean", s2.Zonk(r2).ToString());
         }
 
-        // --- concept satisfaction & ranking --------------------------------------
+        // --- interface satisfaction & ranking --------------------------------------
 
-        private static TypeExpression Concept(string name)
+        private static TypeExpression Interface(string name)
             => new TypeExpression(new TypeDef(null, TypeKind.Interface, name));
 
-        /// <summary>A concrete type declared to implement the given concepts.</summary>
-        private static TypeExpression Implementing(string name, params TypeExpression[] concepts)
+        /// <summary>A concrete type declared to implement the given interfaces.</summary>
+        private static TypeExpression Implementing(string name, params TypeExpression[] interfaces)
         {
             var td = new TypeDef(null, TypeKind.ConcreteType, name);
-            td.Implements.AddRange(concepts);
+            td.Implements.AddRange(interfaces);
             return td.ToTypeExpression();
         }
 
         [Test]
         public static void ConcreteArgumentSatisfiesInterfaceParameter()
         {
-            var inum = Concept("INumerical");
+            var inum = Interface("INumerical");
             var negate = Func("Negate", inum, inum);           // Negate(x: INumerical): INumerical
             var number = Implementing("Number", inum);
 
@@ -188,7 +188,7 @@ namespace PlatoTests
         [Test]
         public static void NonImplementingArgumentDoesNotMatchInterface()
         {
-            var inum = Concept("INumerical");
+            var inum = Interface("INumerical");
             var negate = Func("Negate", inum, inum);
             var boolean = T("Boolean"); // implements nothing
 
@@ -200,7 +200,7 @@ namespace PlatoTests
         [Test]
         public static void ExactOverloadBeatsConceptOverload()
         {
-            var inum = Concept("INumerical");
+            var inum = Interface("INumerical");
             var number = Implementing("Number", inum);
             var exact = Func("F", T("Number"), T("Number"));   // F(Number): Number   (cost 0)
             var viaConcept = Func("F", T("Boolean"), inum);    // F(INumerical): Boolean (cost 3)
@@ -224,7 +224,7 @@ namespace PlatoTests
         [Test]
         public static void GenericConceptBindsElementType()
         {
-            // IArray<T> concept; List<T> implements IArray<T>; candidate First(xs: IArray<$E>): $E.
+            // IArray<T> interface; List<T> implements IArray<T>; candidate First(xs: IArray<$E>): $E.
             var iarrayDef = new TypeDef(null, TypeKind.Interface, "IArray");
             iarrayDef.TypeParameters.Add(new TypeParameterDef(null, "T"));
 

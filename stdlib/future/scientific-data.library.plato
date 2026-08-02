@@ -1,7 +1,7 @@
 //==
 // # ScientificData — derived functions for ITimeSampled
 //
-// Bodies for the `ITimeSampled` concept declared in
+// Bodies for the `ITimeSampled` interface declared in
 // `scientific-data.concepts.plato`: a time-indexed collection of SampleCount
 // samples, each with a TimeAt(index). The helpers are the emptiness,
 // index-validity and endpoint-time summaries; sample times are Instants, so a
@@ -51,7 +51,7 @@ library ScientificData
     //
     // Two shapes: a uniform series computes its sample times from Start and
     // SamplePeriod, and an irregular one stores them. The derived surface above
-    // does not care which, which is the whole point of the concept.
+    // does not care which, which is the whole point of the interface.
 
     // One time per stored value.
     SampleCount(self: TimeSeries): Integer

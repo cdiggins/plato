@@ -16,14 +16,14 @@ mechanical (they are script-derived) and the judgements as arguable.
 |---|---|---|---|
 | Files | 28 | 67 | 70 |
 | Lines | 4,465 | 2,893 | 13,406 |
-| Capability declarations | 81 `interface` | 332 `interface` | **154 `concept`** |
+| Capability declarations | 81 `interface` | 332 `interface` | **154 `interface`** |
 | Data declarations | 168 `type` | 606 `type` | **1,125 `type`** |
 | Total declarations | 249 | 938 | **1,279** |
 | `library` blocks | 22 | 0 | 0 |
 | Library functions | ~1,150 | 0 | 0 |
 | Executable? | yes | no | no |
 
-**The answer to "how many concepts and types": 154 concepts and 1,125 types, 1,279 declarations total.**
+**The answer to "how many interfaces and types": 154 interfaces and 1,125 types, 1,279 declarations total.**
 
 Name-set comparison (case-sensitive, `I`-prefix normalized away so `IGeometry` ≡ `Geometry`):
 
@@ -41,11 +41,11 @@ discarded the rest, and added ~950 new ones.
 
 ## 2. Structural profile of v3
 
-| Block | Concepts | Types | Lines |
+| Block | Interfaces | Types | Lines |
 |---|---|---|---|
 | Foundation (primitives…color) | 49 | 162 | 1,448 |
-| Geometry primitives (geometry.concepts…polygons) | 29 | 56 | 862 |
-| Curves / surfaces / solids (curves-surfaces.concepts…solids) | 21 | 90 | 1,202 |
+| Geometry primitives (geometry.interfaces…polygons) | 29 | 56 | 862 |
+| Curves / surfaces / solids (curves-surfaces.interfaces…solids) | 21 | 90 | 1,202 |
 | Fields / SDF / noise / sampling (fields…sampling-grids) | 25 | 80 | 1,114 |
 | Topology / meshes / spatial (topology…spatial-queries) | 15 | 95 | 1,254 |
 | Animation / motion (easing…motion-graphics) | 2 | 68 | 749 |
@@ -58,12 +58,12 @@ discarded the rest, and added ~950 new ones.
 
 Other measured properties:
 
-- 46 of 154 concepts are **markers** (no functions); 108 declare at least one function.
-- Total concept functions: **181**. That is roughly one function per seven declarations.
+- 46 of 154 interfaces are **markers** (no functions); 108 declare at least one function.
+- Total interface functions: **181**. That is roughly one function per seven declarations.
 - 115 types are `*Kind` enumerations, all following the documented `Value: Integer` pattern.
 - 274 types have exactly one field; average field count is 2.9; the widest is 10 (the cap).
 - 179 types declare no `implements` clause at all.
-- 47 of 154 concepts are never implemented or inherited anywhere in the library.
+- 47 of 154 interfaces are never implemented or inherited anywhere in the library.
 
 ---
 
@@ -85,7 +85,7 @@ rendering, physics, statistics, and optimization. v3 adds, at genuine catalog de
   parameter records, tone curves, levels/curves/color-matrix adjustments, the full
   Porter-Duff and blend-mode enumerations, resampling and dither kinds.
 - **Noise** (noise.plato) — Perlin, simplex, value, Worley, Gabor, fBm, turbulence, ridged, domain
-  warp, and curl in 2D and 3D, each wired to the field concepts.
+  warp, and curl in 2D and 3D, each wired to the field interfaces.
 - **Engineering** (engineering.plato) — material properties, section profiles and their properties, beam
   supports and loads, fits and tolerances, gears, bolted joints, springs, pressure vessels.
 - **Geo-spatial** (geo-spatial.plato) — geodetic datums, reference ellipsoids, map projections, ECEF/ENU
@@ -117,7 +117,7 @@ concurrently with only three name collisions, all caught and removed before comm
 ## 4. What has changed
 
 **Keyword and naming.** v1 and v2 both used `interface` with `I`-prefixed names. v3 uses
-`concept` with bare names. Both spellings are accepted by the parser; `concept` is the term
+`interface` with bare names. Both spellings are accepted by the parser; `interface` is the term
 the standard-library sources and the language documentation actually use for type classes.
 
 **Documentation density.** v3 is 13,406 lines for 1,279 declarations (10.5 lines each);
@@ -135,9 +135,9 @@ for 1.4× the declarations.
 **Matrices are row-vector records.** v1's `Matrix4x4` was a wrapper over intrinsics; v2's
 was elementwise. v3 stores `Row1..Row4: Vector4`. This was forced by a compiler constraint
 (see §6) but is arguably the better shape: row extraction is free and the type composes
-with the vector concepts.
+with the vector interfaces.
 
-**Points versus vectors is now enforced by the `Difference<T>` concept**, as in v2, rather
+**Points versus vectors is now enforced by the `Difference<T>` interface**, as in v2, rather
 than by convention as in v1. `Point3D implements Difference<Vector3>`; subtracting two
 points yields a vector, and adding a vector to a point yields a point.
 
@@ -236,13 +236,13 @@ essentially argument bundles for functions that do not exist yet. Until the func
 written, we cannot know whether those groupings are right. They are speculative in the
 precise sense that plato-228's "case against" warned about.
 
-**The physics block (97 types, 4 concepts).** Nine 3D joint types, three 2D joint types,
+**The physics block (97 types, 4 interfaces).** Nine 3D joint types, three 2D joint types,
 `RagdollProfile`, `SphParameters`, `SoftBodySettings`, `Rope3D` — this is engine-shaped
 API surface for an engine Plato does not have and, being pure and immutable, may never
 have in this form. A rigid-body solver needs mutable state and a broadphase; the vocabulary
 implies a runtime that the language does not support.
 
-**The rendering block (86 types, 2 concepts).** `RenderPipelineSettings`,
+**The rendering block (86 types, 2 interfaces).** `RenderPipelineSettings`,
 `FrameStatistics`, `RenderTargetDescriptor`, `VertexLayout`, `DisplayColorSpaceKind` are
 GPU-pipeline description, not geometry. They belong to a renderer's configuration schema.
 Their presence in a pure geometry-and-math vocabulary is defensible only if Plato is meant
@@ -252,7 +252,7 @@ to emit render-graph descriptions as data.
 functions. One `CubicBezier2D` with a real `Eval` is worth more today than 23 curves
 without one.
 
-**Near-duplicate concepts across blocks.** `MorphTarget` (skeletal-animation.plato) and `MorphTarget3D` (mesh-attributes.plato),
+**Near-duplicate interfaces across blocks.** `MorphTarget` (skeletal-animation.plato) and `MorphTarget3D` (mesh-attributes.plato),
 `Pyramid` (solids.plato) and `Pyramid3D` (polygons.plato), `Prism` (solids.plato) and `Prism3D` (polygons.plato),
 `SampledSdf3D` (implicit-sdf.plato) versus `LevelSetGrid3D` (pointclouds-voxels.plato), `SdfNode3D`/`SdfTree3D` (implicit-sdf.plato) versus
 `CsgNode3D`/`CsgTree3D` (solids.plato). All are distinct names so nothing collides, but each pair is
@@ -265,27 +265,27 @@ a decision deferred rather than made.
 **The construction side of the component protocol is missing, and this is the important
 one.** v1's `IArrayLike<T>` supplies `Components`, `CreateFromComponents`, and
 `CreateFromComponent`; `ArrayLibrary` then defines `MapComponents`, `ZipComponents`, and
-`Reverse` generically for *every* vector-like type in one place. v3's `Vector` concept
+`Reverse` generically for *every* vector-like type in one place. v3's `Vector` interface
 inherits `Indexable<Number>` — read-only — so no generic component-wise function can be
 written against it. Any library pass on v3 will have to add construction back before it can
 write a single generic numeric algorithm. **This should be fixed in the vocabulary, not
 worked around later.**
 
-**Concept density collapses outside geometry.** Foundation plus the four geometry blocks
-hold 124 of 154 concepts (81%) against 483 types. The seven applied blocks — animation,
+**Interface density collapses outside geometry.** Foundation plus the four geometry blocks
+hold 124 of 154 interfaces (81%) against 483 types. The seven applied blocks — animation,
 vector graphics, color/imaging, rendering, physics, math/statistics, advanced — hold **15
-concepts against 642 types**. Those blocks are record catalogs with almost no capability
+interfaces against 642 types**. Those blocks are record catalogs with almost no capability
 abstraction. Concretely: nothing in the animation block abstracts "a thing that can be
 sampled at a time" beyond one `TimeVarying<T>`; nothing in imaging abstracts "a thing with
 pixels I can read" beyond a three-function `Image`; nothing in statistics abstracts
 "a thing I can accumulate samples into". These are the reusable capabilities the library
 was supposed to provide.
 
-**47 concepts are declared but never used** — `Transformable<T>` (zero implementers,
-despite being the concept the whole geometry library exists to satisfy), `MetricSpace`,
+**47 interfaces are declared but never used** — `Transformable<T>` (zero implementers,
+despite being the interface the whole geometry library exists to satisfy), `MetricSpace`,
 `Clampable`, `SetLike`, `MapLike`, `StackLike`, `QueueLike`, `Sliceable`, `Concatenable`,
-`Bijective`, `ParameterDomain`, all seven differentiable-field concepts, all four
-time-varying-field concepts, both `Kinematic2D/3D`, both `ForceModel2D/3D`. Either the
+`Bijective`, `ParameterDomain`, all seven differentiable-field interfaces, all four
+time-varying-field interfaces, both `Kinematic2D/3D`, both `ForceModel2D/3D`. Either the
 concrete types should implement them or they should go.
 
 **Conversions are entirely absent, and they are where the value is.** The library declares
@@ -293,7 +293,7 @@ concrete types should implement them or they should go.
 `ChromaticAdaptationKind` — everything needed to *describe* a color conversion and nothing
 that performs one. The same holds for `PolarCoordinate` ↔ `Point2D`, `Quaternion` ↔
 `EulerAngles` ↔ `Matrix3x3`, `GeoCoordinate` ↔ `EcefCoordinate`, quantity unit changes,
-and mesh representation changes (`HalfEdgeMesh` ↔ `TriangleMesh3D`). A conversion concept
+and mesh representation changes (`HalfEdgeMesh` ↔ `TriangleMesh3D`). A conversion interface
 (`ConvertibleTo<T>`) or a documented naming convention would at least mark the intent.
 
 **No constants.** v1 shipped `constants.plato` (35 functions) and `colors.constants.plato`
@@ -303,14 +303,14 @@ absence should be tracked, because every consumer will need them immediately.
 
 **Numeric-tower gaps.** No fixed-point, arbitrary-precision, decimal, or dual numbers
 (v2 had all four; dual numbers in particular are how you get automatic differentiation,
-which the differentiable-field concepts silently assume someone will provide).
+which the differentiable-field interfaces silently assume someone will provide).
 
 **Sparse and structured linear algebra.** `MatrixN` is dense; `Tensor` is dense. v2 had
 `SparseMatrix`, `BandedMatrix`, `SymmetricTensor`, `EigenSystem`, `LinearSystem`. Anything
 FEA-shaped, and the `KalmanFilterParameters` already declared in uncertainty.plato, needs these.
 
 **No laws or witnesses.** `stdlib-legacy-tests` holds `Law_*`/`Witness_*` functions that state
-what an interface's implementations must satisfy. v3 declares 181 concept functions with
+what an interface's implementations must satisfy. v3 declares 181 interface functions with
 zero laws. `Additive` does not say addition is associative; `Orderable` does not say the
 order is total. The doc comments assert these properties in prose where the existing test
 machinery could check them.
@@ -327,18 +327,18 @@ partiality vocabulary would remove that duplication.
 Ranked by value against effort, highest first.
 
 1. **Restore component construction.** Add `CreateFromComponents`/`CreateFromComponent` to
-   the `Vector` concept (or a new `ComponentConstructible<T>`). Roughly ten lines; unblocks
+   the `Vector` interface (or a new `ComponentConstructible<T>`). Roughly ten lines; unblocks
    every generic numeric library function. Do this before any library work starts.
 2. **Prove the vocabulary with one vertical slice.** Pick a narrow path — `Point3D`,
    `Vector3`, `Transform3D`, `TriangleMesh3D`, `Transformable` — and write the libraries
    for it end to end, compiling to C#. That will surface shape errors that no amount of
    review will. Expect it to change the foundation.
-3. **Delete or implement the 47 unused concepts.** Start with `Transformable<T>`: either
+3. **Delete or implement the 47 unused interfaces.** Start with `Transformable<T>`: either
    every geometry type implements it or it is not the abstraction we think it is.
-4. **Add the missing capability concepts in the applied blocks.** Even five per block
+4. **Add the missing capability interfaces in the applied blocks.** Even five per block
    (samplable, accumulable, blendable, resamplable, convertible) would move those 642 types
    from a catalog toward a library.
-5. **Add laws for the foundation concepts** using the existing `stdlib-legacy-tests` machinery.
+5. **Add laws for the foundation interfaces** using the existing `stdlib-legacy-tests` machinery.
    The algebra tower is small enough to make this cheap and it is exactly where correctness
    claims matter.
 6. **Reconcile the near-duplicates** listed in §7 into single declarations.
@@ -375,9 +375,9 @@ Ranked by value against effort, highest first.
    engineering types?
 5. Is the flat index-based encoding (parent indices, CSR offsets, `-1` sentinels) the right
    general answer for graph-shaped data in a value language, or should the language grow a
-   reference or handle concept?
-6. Should `concept` functions carry default implementations? Much of the duplication across
-   blocks exists because a concept can only declare, never provide.
+   reference or handle interface?
+6. Should `interface` functions carry default implementations? Much of the duplication across
+   blocks exists because an interface can only declare, never provide.
 7. Do we want an `enum` construct, given that 115 types are simulating one?
 8. Should quantities be a generic `Quantity<TDimension>` rather than ~45 hand-written
    types? The current design is explicit and readable but cannot express derived units

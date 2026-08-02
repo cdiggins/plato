@@ -12,7 +12,7 @@ where each sub-pass ended up — this doc is the original scope).
       │  elaborate     Checking/Elaborator      → TIR                (increment 1 — DONE, shadow)
       ▼
  TIR (typed, resolved, coercions explicit)
-      │  monomorphize  (planned) instantiate generics/concepts per concrete use
+      │  monomorphize  (planned) instantiate generics/interfaces per concrete use
       ▼
  monomorphized TIR
       │  emit          (planned) retarget CSharp/TS/Rust writers onto TIR
@@ -64,7 +64,7 @@ its originating `Symbol` (for diagnostics). Small model:
 `Solver.CommitCandidate` is the single choke point where an overload is bound. It now also
 records a `ResolvedCall` per `FunctionCall` (exposed as `Solver.ResolvedCalls`, surfaced on
 `TypeCheckResult.ResolvedCalls`): the chosen callee, the instantiated parameter/return
-types, the per-argument **match kind** (Exact / Generic / Concept / Conversion), and the
+types, the per-argument **match kind** (Exact / Generic / Interface / Conversion), and the
 per-argument cast `IFunction` where the kind is Conversion. `MatchArg` was extended to return
 its match kind alongside the existing `(ok, cost)` — ok/cost are byte-for-byte unchanged, so
 solver ranking is untouched. Recording is purely additive (a dictionary write); the CHK202
@@ -87,7 +87,7 @@ param → InstanceMethod.
 ## Next increments (not in this run)
 
 1. **Monomorphize**: specialize each `TirCall` per concrete instantiation; resolve generic
-   and concept parameters to ground types; make `TirCoerce` targets concrete. This is where
+   and interface parameters to ground types; make `TirCoerce` targets concrete. This is where
    the "Self" refinements and generic element inference get committed structurally.
 2. **Emit / retarget**: have `CSharpFunctionBodyWriter` (then TS/Rust) consume the TIR and
    delete the emit-time heuristics (`HasArgList`/`MovedNoArgNames`/property guessing/scalar

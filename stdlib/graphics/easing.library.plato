@@ -1,7 +1,7 @@
 //==
 // # Easing — derived functions for IEasingFunction
 //
-// Bodies for the `IEasingFunction` concept declared in `easing.concepts.plato`
+// Bodies for the `IEasingFunction` interface declared in `easing.concepts.plato`
 // (the concrete easing types live in `easing.types.plato`). An easing
 // function inherits `IProcedural<Number, Number>`, so its sole operation is
 // `Eval`; the helpers below rename and recombine that single evaluation

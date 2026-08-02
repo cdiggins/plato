@@ -122,7 +122,7 @@ Details that matter (added in increment 3):
   generator mints a fresh inference hole per unannotated lambda parameter / `var` local and uses it
   for every reference, so the enclosing HOF signature (or the initializer) determines them.
 - **A type used as a value** (`Self.CreateFromComponents(…)`, `Number.MinValue`'s receiver) is
-  typed as the referenced type itself, so concept parameters can bind through it.
+  typed as the referenced type itself, so interface parameters can bind through it.
 - **A bare reference to a unique nullary function** (a constant) is typed as its return type — the
   writer's `Constants.<Name>` rule, mirrored.
 - **RETURN positions emit a `CoercionConstraint`** (soft), not an equality: Plato's generated C#
@@ -140,7 +140,7 @@ Consumes the constraint system and produces a substitution plus located diagnost
 - **Nominal unification** — only `$`-type-variables are flexible; declared type parameters (rigid)
   and named types match by name; type arguments unify structurally.
 - **Tiered argument matching** — an argument matches a parameter, in order of preference:
-  1. **exact** (unify), 2. **generic** (bind a `$`-variable), 3. **concept** (the argument's type
+  1. **exact** (unify), 2. **generic** (bind a `$`-variable), 3. **interface** (the argument's type
   implements an interface parameter, via `TypeExpression.IsImplementing`; the return type is refined
   to the concrete argument where it names the same interface — Plato's "Self" behavior), 4.
   **conversion** (an implicit cast relation exists, via `Compilation.TypeRelations`). Each tier has a
@@ -172,11 +172,11 @@ Consumes the constraint system and produces a substitution plus located diagnost
 | `CHK205` | a call on a bare type parameter that its declared bounds do not supply |
 | `CHK206` | a call whose arguments do not satisfy a bound the callee declares on its own signature |
 | `CHK309` | a type argument does not satisfy the bound declared on that parameter |
-| `CHK310` | a declared `where` bound does not name a concept |
+| `CHK310` | a declared `where` bound does not name an interface |
 
 ### Declared type-parameter bounds
 
-Both `concept` and `type` declarations may bound their parameters
+Both `interface` and `type` declarations may bound their parameters
 (`type Tween<T> where T: Interpolatable`), and a library FUNCTION may bound its own signature
 variables (`DeCasteljau(xs: Array<$T>, t: Number): $T where $T: Interpolatable` — plato-393). The
 declaration-level bounds land on `TypeParameterDef.Constraints` and the function-level ones on
@@ -186,9 +186,9 @@ consumer downstream reads one thing. They are read in three places, all in `Chec
 - **`TypeConstraintChecker`** — a declaration-level pass, run like `SumTypeChecker` and
   `ExistentialConceptChecker`. Every construction the declaration writes (implements/inherits
   clauses, field types, sum-case field types, method signatures) must supply arguments that satisfy
-  the bounds, or `CHK309`; a bound that is not a concept is `CHK310`.
-- **The solver's bound-licensed member lookup** — a bare type parameter stands in for a concept
-  parameter only when one of its bounds carries that concept. A library signature's variables
+  the bounds, or `CHK309`; a bound that is not an interface is `CHK310`.
+- **The solver's bound-licensed member lookup** — a bare type parameter stands in for an interface
+  parameter only when one of its bounds carries that interface. A library signature's variables
   inherit the bounds of the constructed types they appear in (`x: Tween<$T>` gives
   `$T: Interpolatable`), which is what makes an operation on a bare `$T` well-typed.
 - **The solver's candidate viability rule** — this is where ARGUMENT SATISFACTION for a function
@@ -209,26 +209,26 @@ so the construction-site gate and the two solver licences cannot disagree. The E
 the same file: `TirEmitSource.IsOpenGenericEmittable` licenses a body whose call dispatches on a
 bare receiver exactly when a bound supplies the member, and the C# writer renders the matching
 `where` clause (`writers/Plato.CSharpWriter/CSharpBoundWriter.cs`). Which declarations' bounds
-reach C# is the one predicate `TypeConstraints.EmittedToCSharp` — concrete types today, concept
+reach C# is the one predicate `TypeConstraints.EmittedToCSharp` — concrete types today, interface
 interfaces excluded — read by the emission licence and the writer alike, so a body is never
 licensed by a bound the emitted signature does not carry. Decision:
 [`tracker/decisions/2026-08-01-declared-type-parameter-bounds-are-verified-and-emitted.md`](../tracker/decisions/2026-08-01-declared-type-parameter-bounds-are-verified-and-emitted.md).
 
 ### Scope
 
-The solver handles exact/generic unification, concept (interface) satisfaction with Self-style
-return refinement, implicit casts, and generic-concept element inference. Increment 3 extended it
+The solver handles exact/generic unification, interface satisfaction with Self-style
+return refinement, implicit casts, and generic-interface element inference. Increment 3 extended it
 substantially; the mechanisms now in place:
 
-- **Concept-method `Self` instantiation** — a candidate that is a concept method (`Divide(self:
+- **Interface-method `Self` instantiation** — a candidate that is an interface method (`Divide(self:
   Self, other: Number): Self` on `IScalarArithmetic`) instantiates `Self` (anywhere in its
-  signature) as a fresh concept variable constrained to the owning interface, with the interface's
+  signature) as a fresh interface variable constrained to the owning interface, with the interface's
   type parameters as fresh holes. Matching binds the variable to the concrete argument, so a `Self`
   return refines to the receiver's type — the "Self" behavior.
-- **Closure-walking concept satisfaction** (solver-local; `TypeExtensions.IsImplementing` is left
+- **Closure-walking interface satisfaction** (solver-local; `TypeExtensions.IsImplementing` is left
   untouched for the production writer) — satisfaction walks the argument's transitive
   Implements/Inherits closure with per-level type-argument substitution and, on a name match,
-  unifies the found instance's arguments with the concept's, binding element holes
+  unifies the found instance's arguments with the interface's, binding element holes
   (`IVectorLike : IArrayLike<Number>` binds `$T = Number`). Works when the argument is itself an
   interface. The older post-commit element refinement remains as a backstop.
 - **Permissive `Self`** — `Self` unifies with anything, binding nothing: it is a placeholder the

@@ -23,7 +23,7 @@ Plato has `OrientedBox2D` (`planar-boxes.plato`) but no `OrientedBox3D`. Ara3D.G
 
 ## Design decisions
 - **Representation** — Frame+Size vs center+rotation+extents vs 8 corners.
-- **Concept obligations** — Bounds-like? Solid? Meshable3D?
+- **Interface obligations** — Bounds-like? Solid? Meshable3D?
 - **Naming** — OrientedBox3D (match C#) vs OBB3D vs OrientedBounds3D.
 
 ## Related
@@ -35,7 +35,7 @@ Plato has `OrientedBox2D` (`planar-boxes.plato`) but no `OrientedBox3D`. Ara3D.G
 ## Approaches
 Short term: declare OrientedBox3D + Corners/Contains/ToBounds/ToMesh helpers mirroring 2D and C#.
 Long term: intersection (SAT), union approximations, PCA-from-points factory.
-Adjacent: OrientedBox as concept parameterized by dimension.
+Adjacent: OrientedBox as interface parameterized by dimension.
 
 ## Bedrock
 Completes the **2D/3D oriented box symmetry** already started in planar-boxes. Verdict: **simplest**. Must NOT wait on PCA to ship the type.

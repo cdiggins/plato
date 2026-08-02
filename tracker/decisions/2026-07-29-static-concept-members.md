@@ -2,7 +2,7 @@
 date: 2026-07-29
 title: Keep the `_` receiver convention; emit it as C# static abstract
 status: superseded
-superseded-by: 2026-07-29-static-concept-members-corrected.md
+superseded-by: 2026-07-29-static-interface-members-corrected.md
 links: [tracker/issues/plato-306.md, tracker/issues/plato-307.md, tracker/issues/plato-308.md, submodules/Plato/Plato.CSharpWriter/CSharpFunctionInfo.cs, submodules/Plato/stdlib/algebra-operations.concepts.plato]
 ---
 
@@ -25,7 +25,7 @@ declaration/implementation disagreement, because it is carried in a *parameter n
 parameter names are semantically inert everywhere else in the language. It surfaced only as a
 C# compile error 1232 generated files downstream.
 
-Second, this raised whether concepts should lower to C# interfaces at all, since (pre-C# 11)
+Second, this raised whether interfaces should lower to C# interfaces at all, since (pre-C# 11)
 interfaces could not carry static members.
 
 ## Decision
@@ -33,11 +33,11 @@ interfaces could not carry static members.
 1. **Keep the `_` convention. Do not add a `static` keyword to Plato.**
 2. **Promote `_` from a naming convention to a checked signature element**: an implementation's
    receiver-usage marker must match the obligation it discharges, enforced by the checker.
-3. **Emit `_`-receiver concept members as C# `static abstract` interface members**, with the
+3. **Emit `_`-receiver interface members as C# `static abstract` interface members**, with the
    implementing type supplying a plain `static` method — the `System.Numerics.INumber<T>` shape.
 4. **Additionally emit a UFCS extension method** (`static Color Zero(this Color _) => Color.Zero();`)
    so Plato's `x.Zero` call syntax survives into C#.
-5. Consequently the concept declarations change to `Zero(_: Self): Self` and the twenty
+5. Consequently the interface declarations change to `Zero(_: Self): Self` and the twenty
    instance-ified bodies from Plato `b055944` are reverted.
 
 ## Rationale
@@ -72,14 +72,14 @@ array).
 
 - **Add a `static` keyword to Plato.** Rejected: buys only what decision 2 buys, at the cost of
   a second dispatch rule, new grammar, and a separate account of how `Self` binds in a static
-  concept member.
+  interface member.
 - **Keep the instance-ified fix from `b055944`.** Rejected as the permanent answer. It works and
   it unblocked 40 errors, but it was chosen because it required no emitter work, not because it
   is right: it makes `Color.Zero` need a `Color` in hand to ask what the zero `Color` is, and it
   forced signatures like `Zero(x: Color) => (0,0,0,0)` where `x` is named but never used — the
   convention has no way to say "ignores its receiver but must be an instance member", so the
   workaround lies in the opposite direction.
-- **Stop emitting C# interfaces for concepts entirely; emit concrete types only.** Rejected, but
+- **Stop emitting C# interfaces for interfaces entirely; emit concrete types only.** Rejected, but
   not by much, and the reasoning is worth preserving. Plato monomorphizes before emission, so
   the interfaces carry no weight in the generated code — they exist only so C# consumers can
   write generic code and see the contracts. Dropping them would delete the ~300 CS0315/CS0305
@@ -93,10 +93,10 @@ array).
   truth for which members take it.
 - Every `_`-receiver member now emits **two** C# surfaces (static + extension). Slightly larger
   generated output; call-site ergonomics preserved in both directions.
-- Concept declarations must be audited for the `x` vs `_` split — the stdlib is currently
+- Interface declarations must be audited for the `x` vs `_` split — the stdlib is currently
   inconsistent, which is what produced the bug.
 - The checker rule in decision 2 will surface further existing disagreements; expect a burn-down
   rather than a clean first run.
 - This does NOT address plato-308's CS0315/CS0305 cluster, which is the separate question of
-  concepts used in *value* position (a field typed `Curve3D`) versus *constraint* position.
+  interfaces used in *value* position (a field typed `Curve3D`) versus *constraint* position.
   Interfaces handle the latter and cannot express the former under an F-bounded encoding.

@@ -64,7 +64,7 @@ Invariant: $0 < n < f$.
 ### Shared camera face
 
 ```
-concept Camera
+interface Camera
 {
     Pose(x: Self): Pose3D;
     Near(x: Self): Number;
@@ -206,7 +206,7 @@ sensible world up and handle zenith singularities.
 later.
 
 **OffAxisCamera / LookAtCamera vs Camera.** Not every camera-shaped record implements the
-`Camera` concept. Code that only accepts `Camera` must convert first.
+`Camera` interface. Code that only accepts `Camera` must convert first.
 
 **Viewport depth range.** Default $[0,1]$ vs $[-1,1]$ is API-specific; `DepthRange` makes
 the choice explicit.
@@ -248,7 +248,7 @@ axis?
 
 - **wrong-shape** — `48-cameras.plato`: `LookAtCamera` and `OffAxisCamera` do not
   implement `Camera` despite carrying near/far and producing a view. Either implement the
-  concept (Pose derived from look-at / eye+screen) or document them as *builders* with a
+  interface (Pose derived from look-at / eye+screen) or document them as *builders* with a
   `ToPerspectiveCamera` / `ToCamera` conversion in the type comment.
 
 - **missing-function** — `48-cameras.plato`: `PhysicalCamera` docs say FOV follows from
@@ -258,5 +258,5 @@ axis?
 
 - **doc-comment** — `48-cameras.plato`: state the assumed view-space convention
   (handedness, which axis is forward, whether Y is up in view space) on the `Camera`
-  concept. Projection matrices are meaningless without it, and v3 currently leaves the
+  interface. Projection matrices are meaningless without it, and v3 currently leaves the
   convention implicit in "the pose's forward axis."

@@ -1,0 +1,171 @@
+// Law library for the FORWARD stdlib (stdlib/) conformance harness.
+//
+// This is the v3 sibling of stdlib-legacy-tests/laws.plato. It is NOT part of the
+// production vocabulary: it lives in stdlib-tests/ and is merged with stdlib/ only by
+// tools/regen-forward-conformance.ps1.
+//
+// Convention (identical to the legacy harness): every function prefixed with Law_
+// returns Boolean and is a property that must hold for ALL values of its parameter
+// types. The compiler monomorphizes each law onto every concrete type implementing the
+// receiver interface; the C# reflection runner (Plato.ForwardConformanceTests) invokes
+// each (type, law) pair with seeded pseudorandom instances. Helper functions (no Law_
+// prefix) are ignored by the runner.
+//
+// Every member referenced below was verified against stdlib/intervals-transforms.library.plato
+// and stdlib/core-algebra.library.plato (LIBRARIES.md rule 3). This packet targets the
+// interval remap kit (At/ParameterOf/Remap), the generic IInterval surface, and the
+// concrete Bounds2D/Bounds3D AABB operations.
+library FoundationLaws
+{
+    //==
+    // Tolerance helper.
+    // The forward stdlib's AlmostEqual(IReal, IReal, IReal) is a strict absolute compare.
+    // Laws compose several float operations, so (as in the legacy harness) we use a
+    // mixed absolute + relative tolerance keyed on the larger magnitude.
+    LawEq(a: Number, b: Number): Boolean
+        => (a - b).Abs <= (a.Abs.Greater(b.Abs) * 1e-4 + 1e-4);
+
+    //==
+    // NumberInterval remap kit (intervals-transforms.library.plato: At/ParameterOf/Remap).
+
+    // At(0) recovers Start, At(1) recovers End (forward lerp endpoints).
+    Law_AtStartIsStart(i: NumberInterval): Boolean
+        => i[0.0].LawEq(i.Start);
+
+    Law_AtEndIsEnd(i: NumberInterval): Boolean
+        => i[1.0].LawEq(i.End);
+
+    // At(0.5) is the interval center.
+    Law_AtHalfIsCenter(i: NumberInterval): Boolean
+        => i[0.5].LawEq(i.Center);
+
+    // ParameterOf is the inverse of At: At(ParameterOf(x)) == x for a non-degenerate
+    // interval. Degenerate (Start == End) intervals have no inverse and are skipped.
+    Law_ParameterOfInvertsAt(i: NumberInterval, x: Number): Boolean
+        => i.Start.LawEq(i.End) || i[i.ParameterOf(x)].LawEq(x);
+
+    // Remapping an interval onto itself is the identity on any value in range.
+    Law_RemapToSelfIsIdentity(i: NumberInterval, x: Number): Boolean
+        => i.Start.LawEq(i.End) || x.Remap(i, i).LawEq(x);
+
+    //==
+    // Generic IInterval<T> surface (Contains / Center, guarded to forward orientation).
+
+    // A forward interval contains its own Start endpoint (closed interval, inclusive).
+    Law_ContainsStart(self: IInterval<$T>): Boolean
+        => self.IsReversed || self.Contains(self.Start);
+
+    // A forward interval contains its own End endpoint.
+    Law_ContainsEnd(self: IInterval<$T>): Boolean
+        => self.IsReversed || self.Contains(self.End);
+
+    // A forward interval contains its own center.
+    Law_ContainsCenter(self: IInterval<$T>): Boolean
+        => self.IsReversed || self.Contains(self.Center);
+
+    // Same property, stated over AngleInterval's OWN surface.
+    //
+    // DOMAIN: AngleInterval reinterprets both Contains and Center as ARC operations
+    // (intervals.library.plato), so the generic law above does
+    // not describe this type. Worse, monomorphizing it produces a CHIMERA: the
+    // interface's linear Center is inlined into the law body (resolution happens
+    // against IInterval, where the specialization is invisible), while the
+    // Contains call survives as a call and is re-bound by C# extension-method
+    // overload resolution to the type's wrap-aware one (tracked as plato-374). Arc
+    // Contains of a linear midpoint holds for neither reading, and it fails for
+    // every interval whose stored End - Start exceeds a turn. Restated here on the
+    // arc surface, where
+    // the midpoint is Start + Span/2 and containment always holds.
+    Law_ContainsCenter(self: AngleInterval): Boolean
+        => self.Contains(self.Center);
+
+    //==
+    // Bounds2D AABB operations (intervals-transforms.library.plato: Contains/Union/Expand).
+
+    // A non-empty box contains its own center point.
+    Law_Bounds2DContainsCenter(b: Bounds2D): Boolean
+        => b.IsEmpty || b.Contains(b.Center);
+
+    // Expanding outward by a non-negative amount still contains the original box.
+    Law_Bounds2DExpandContainsSelf(b: Bounds2D): Boolean
+        => b.IsEmpty || b.Expand(1.0).Contains(b);
+
+    // A box is contained in its union with any other box.
+    Law_Bounds2DUnionContainsSelf(b: Bounds2D, o: Bounds2D): Boolean
+        => b.IsEmpty || b.Union(o).Contains(b);
+
+    // The other operand is contained in the union too.
+    Law_Bounds2DUnionContainsOther(b: Bounds2D, o: Bounds2D): Boolean
+        => o.IsEmpty || b.Union(o).Contains(o);
+
+    //==
+    // Bounds3D AABB operations.
+
+    Law_Bounds3DContainsCenter(b: Bounds3D): Boolean
+        => b.IsEmpty || b.Contains(b.Center);
+
+    Law_Bounds3DExpandContainsSelf(b: Bounds3D): Boolean
+        => b.IsEmpty || b.Expand(1.0).Contains(b);
+
+    Law_Bounds3DUnionContainsSelf(b: Bounds3D, o: Bounds3D): Boolean
+        => b.IsEmpty || b.Union(o).Contains(b);
+
+    //==
+    // Affine positions: the IDifference / IOriginBased contract (plato-306).
+    //
+    // These pin the ONE thing the plato-306 refactor could silently break. Add and
+    // Between used to be hand-written per type; they are now derived once over the
+    // interfaces (algebra.library.plato), so a single orientation slip would flip
+    // the sign for Point2D, Point3D, PointN, UvCoordinate, UvwCoordinate AND Instant at
+    // once. Written concretely rather than over `IDifference<$D>` so the residual can be
+    // measured with a tolerance: an exact float compare on a round-tripped position is
+    // not a meaningful assertion.
+
+    // The orientation contract, stated exactly as the interface documents it:
+    // a.Add(a.Between(b)) == b. Between and Add are inverse.
+    Law_AddBetweenAreInverse2D(a: Point2D, b: Point2D): Boolean
+        => a.Add(a.Between(b)).Distance(b) <= 1e-4;
+
+    Law_AddBetweenAreInverse3D(a: Point3D, b: Point3D): Boolean
+        => a.Add(a.Between(b)).Distance(b) <= 1e-4;
+
+    // The same law on the time line, where the delta is a Duration rather than a vector.
+    Law_AddBetweenAreInverseInstant(a: Instant, b: Instant): Boolean
+        => a.Add(a.Between(b)).SecondsSinceEpoch.LawEq(b.SecondsSinceEpoch);
+
+    // The `-` spelling agrees with Between: a - b is the displacement from b to a.
+    // This is the derivation that replaced the per-type `Subtract(a, b) => Between(b, a)`.
+    // Compared as deltas: `a - b` and `Between` both yield a Vector2D, and Distance is declared
+    // between Points, not between displacements.
+    Law_SubtractIsReversedBetween2D(a: Point2D, b: Point2D): Boolean
+        => ((a - b) - b.Between(a)).Magnitude <= 1e-4;
+
+    // Displacing by a delta and back is the identity: (p + d) - d == p. Exercises the
+    // derived Subtract(position, delta), which routes through Negative on the delta.
+    Law_AddThenSubtractDeltaIsIdentity2D(p: Point2D, d: Vector2D): Boolean
+        => p.Add(d).Subtract(d).Distance(p) <= 1e-4;
+
+    Law_AddThenSubtractDeltaIsIdentity3D(p: Point3D, d: Vector3D): Boolean
+        => p.Add(d).Subtract(d).Distance(p) <= 1e-4;
+
+    // A position is its origin displaced by its own offset. This is the IOriginBased
+    // round trip, and it is what makes Offset/FromOffset a genuine isomorphism rather
+    // than two unrelated conversions.
+    Law_OriginPlusOffsetRecoversPosition2D(p: Point2D): Boolean
+        => p.Origin.Add(p.Offset).Distance(p) <= 1e-4;
+
+    Law_OriginPlusOffsetRecoversPosition3D(p: Point3D): Boolean
+        => p.Origin.Add(p.Offset).Distance(p) <= 1e-4;
+
+    // The epoch is the origin: an Instant's offset from the origin is its own
+    // seconds-since-epoch. Ties the derived Origin back to the field it came from.
+    Law_OriginIsEpoch(t: Instant): Boolean
+        => t.Origin.Add(t.Offset).SecondsSinceEpoch.LawEq(t.SecondsSinceEpoch);
+
+    // Lerp endpoints, now derived from Add + Between rather than written per type.
+    Law_LerpAtZeroIsStart2D(a: Point2D, b: Point2D): Boolean
+        => a.Lerp(b, 0.0).Distance(a) <= 1e-4;
+
+    Law_LerpAtOneIsEnd2D(a: Point2D, b: Point2D): Boolean
+        => a.Lerp(b, 1.0).Distance(b) <= 1e-4;
+}

@@ -31,7 +31,7 @@ is name-convention-based per concrete type).
   on type-level numbers (`N+1`, `N*M`) — that is where const-generic systems (Rust took
   years) get expensive. Concat/flatten signatures would need it; defer.
 - The stdlib's current pattern — `Vector2/Vector3/Vector4`, `Matrix2x2…4x4` as separately
-  written concrete types (plato-src-v3: 154 concepts, 1125 types) — is acceptable today,
+  written concrete types (plato-src-v3: 154 interfaces, 1125 types) — is acceptable today,
   so this is leverage/perf work, not unblocking work.
 
 ## Design decisions

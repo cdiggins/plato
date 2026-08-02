@@ -27,7 +27,7 @@ There seem to be many places where an existing implicit converter could be used 
 - **Tooling** — lint "could use implicit" vs manual sweep.
 
 ## Related
-- [plato-345](plato-345.md) — Convertible<T> concept (may underpin implicits).
+- [plato-345](plato-345.md) — Convertible<T> interface (may underpin implicits).
 - [plato-323](plato-323.md) — body-level C# errors; conversion friction mentioned.
 - Writer/intrinsics implicit conversion tables (host side).
 

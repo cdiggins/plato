@@ -147,7 +147,7 @@ type HaltonPattern2D
 Images (`45-images.plato`) — rasters with explicit size, separate from world grids:
 
 ```plato
-concept Image
+interface Image
 {
     Size(x: Self): IntegerSize2D;
     Width(x: Self): Integer;
@@ -206,7 +206,7 @@ world $y$-up flips textures.
 
 **Bilinear on non-scalars.** `SampledVectorGrid2D` interpolates **per component**. That is
 usually right for velocities; for directions you may need renormalization after lerp
-(directions live in `DirectionField` concepts elsewhere — a sampled direction grid is not
+(directions live in `DirectionField` interfaces elsewhere — a sampled direction grid is not
 declared in file 29).
 
 **Boundary default.** Doc comments say evaluation outside bounds clamps to the edge
@@ -260,7 +260,7 @@ progressively refinable by simply taking a longer prefix with a new $N$.
 - **naming** — `29-sampling-grids.plato` vs `45-images.plato`: `SampledColorGrid2D` and
   `FloatImage` / `GrayscaleImage` both store dense 2D samples with different metadata
   (`RegularGrid2D` vs `IntegerSize2D`). A doc-comment bridge ("image = grid in pixel
-  index space") or a conversion concept would reduce the dual vocabulary the lesson must
+  index space") or a conversion interface would reduce the dual vocabulary the lesson must
   explain.
 
 - **doc-comment** — `45-images.plato`: `Image` deliberately omits pixel accessors, which

@@ -28,7 +28,7 @@ Generate illustrative images (and/or diagrams) for Plato types — e.g. a pictur
 - **Source of truth** — hand-authored SVGs vs rendered from Plato/TS demos vs AI-generated rasters vs mixed.
 - **Association** — filename convention beside the `.plato` file vs frontmatter/`@image` in doc comments vs separate manifest.
 - **Fidelity bar** — schematic diagram vs photoreal vs exact plot from the type's formula.
-- **Which types** — only concrete geometric shapes vs also abstract concepts (needs diagrams, not "photos").
+- **Which types** — only concrete geometric shapes vs also abstract interfaces (needs diagrams, not "photos").
 
 ## Related
 

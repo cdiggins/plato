@@ -28,8 +28,8 @@ Exhaustive `match` bodies (sum types, plato-232). The geometric Conway `Dual` on
 laws (`kind.Dual.Dual == kind`, all three sums) live in
 `stdlib-tests/polyhedra.laws.plato`.
 
-No new concept is introduced: this is deliberately *not* the `HasDual<TDual>`
-concept the issue title suggested.
+No new interface is introduced: this is deliberately *not* the `HasDual<TDual>`
+interface the issue title suggested.
 
 ## Rationale
 
@@ -45,8 +45,8 @@ concept the issue title suggested.
 
 ## Alternatives rejected
 
-- **`HasDual<TDual>` concept on per-solid types** — there are no per-solid types
-  (solids are kind-tagged records + mesh factories, per plato-301), a concept
+- **`HasDual<TDual>` interface on per-solid types** — there are no per-solid types
+  (solids are kind-tagged records + mesh factories, per plato-301), an interface
   needs members and a `Self` to attach to, and no consumer needs per-instance
   dual typing today. Revisit only if typed per-solid forms ever land; the kind
   maps would then be their obvious implementation substrate.

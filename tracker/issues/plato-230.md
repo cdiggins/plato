@@ -1,8 +1,8 @@
 ---
 
 Create `submodules/Plato/plato-src-v3`: a comprehensive, declaration-only vocabulary
-library succeeding the plato-src-v2 prototype (plato-228). Types and concepts only —
-`concept` keyword with bare names (no I-prefix), domain-grouped numbered files, generous
+library succeeding the plato-src-v2 prototype (plato-228). Types and interfaces only —
+`interface` keyword with bare names (no I-prefix), domain-grouped numbered files, generous
 coverage across geometry, 2D/3D/4D/N-D computation, animation, numerical/scientific
 computing, graphics, physics, motion graphics, image processing, and engineering.
 
@@ -22,20 +22,20 @@ computing, graphics, physics, motion graphics, image processing, and engineering
 
 ## Outcome
 
-- 154 concepts + 1125 types (~13.4K lines) across 70 files.
+- 154 interfaces + 1125 types (~13.4K lines) across 70 files.
 - Full-folder `Plato.CLI lint`: 0 parse errors, 0 symbol-resolution errors, 0 duplicate
   declaration names (3 spec-overlap duplicates removed in the integration pass).
 - Plato repo commits 7cec1e3 (foundation) + 72912d8 (domain blocks).
 
 ## Done means
 
-- [x] plato-src-v3 contains only type and concept declarations, grouped into
+- [x] plato-src-v3 contains only type and interface declarations, grouped into
       dependency-layered domain files with a conventions + registry README.
 - [x] Coverage spans all requested application domains, substantially exceeding v2.
 - [x] The Plato CLI parses and resolves the complete folder without errors and no
       duplicate declaration names exist.
 id: plato-230
-title: Comprehensive Plato v3 type and concept vocabulary (plato-src-v3)
+title: Comprehensive Plato v3 type and interface vocabulary (plato-src-v3)
 type: feature
 status: done
 priority: p1

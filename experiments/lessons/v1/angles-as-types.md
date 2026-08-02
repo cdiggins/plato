@@ -87,7 +87,7 @@ and geometric angles get their own type.
 
 ```plato
 // A one-dimensional measured amount with an implicit unit.
-concept Quantity
+interface Quantity
     inherits Value, Comparable, Hashable, Additive, Scalable, Interpolatable
 {
     Amount(x: Self): Number;
@@ -232,7 +232,7 @@ two endpoints. That is `AngleInterval` in `12-intervals-bounds.plato`:
 ```plato
 // A one-dimensional directed span from Start to End. Start may exceed End,
 // which encodes a reversed interval.
-concept IntervalLike<T>
+interface IntervalLike<T>
     inherits Value
 {
     Start(x: Self): T;
@@ -384,7 +384,7 @@ agree on conventions.
   stating it uses the long path). Heading interpolation is a daily operation; the default lerp
   semantics are actively wrong for many inputs.
 
-- **missing-concept** — no periodic equality (e.g. `EquivalentModPeriod(a, b, period)`).
+- **missing-interface** — no periodic equality (e.g. `EquivalentModPeriod(a, b, period)`).
   `Compare` on raw radians cannot express "same heading" near the $0/2\pi$ seam.
 
 - **doc-comment** — `12-intervals-bounds.plato`: `AngleInterval` should document inclusive

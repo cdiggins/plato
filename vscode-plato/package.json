@@ -1,8 +1,8 @@
 {
   "name": "plato",
   "displayName": "Plato",
-  "description": "Syntax highlighting and compiler-backed navigation for the Plato programming language (.plato)",
-  "version": "0.2.4",
+  "description": "Syntax highlighting and Go to Definition / Find References for the Plato programming language (.plato)",
+  "version": "0.2.7",
   "publisher": "ara3d",
   "license": "MIT",
   "engines": {
@@ -62,6 +62,25 @@
         "title": "Plato: Reload Navigation Index"
       }
     ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "editor.action.revealDefinition",
+          "when": "resourceLangId == plato",
+          "group": "navigation@1"
+        },
+        {
+          "command": "editor.action.goToReferences",
+          "when": "resourceLangId == plato",
+          "group": "navigation@2"
+        },
+        {
+          "command": "plato.navigation.reload",
+          "when": "resourceLangId == plato",
+          "group": "navigation@3"
+        }
+      ]
+    },
     "configuration": {
       "title": "Plato",
       "properties": {

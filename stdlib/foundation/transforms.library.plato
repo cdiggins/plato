@@ -1043,7 +1043,7 @@ library Transforms
     // the identity rotation, a rotation is a pose at the origin, a
     // rotation-about-a-centre is the conjugation of the two. Composition and
     // inversion of any two rigid transforms stay inside the family, which is
-    // what the concept buys over IAffine2D/IAffine3D.
+    // what the interface buys over IAffine2D/IAffine3D.
 
     // A translation is the pose at that offset with no rotation.
     Pose2D(t: Translation2D): Pose2D

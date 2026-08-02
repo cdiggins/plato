@@ -29,13 +29,13 @@ need care given the collision.
   intersection, and collision culling all currently rely on tuned epsilons and Lipschitz guesses.
   Interval (or affine) arithmetic replaces those with a certificate: if the interval evaluation of
   f over a box excludes zero, there is no root in that box, full stop.
-- **It composes with existing work.** Reuses the numeric concept lattice; pairs with robust
+- **It composes with existing work.** Reuses the numeric interface lattice; pairs with robust
   predicates ([[plato-255]]) and exact rationals ([[plato-244]]); an interval is also the natural
   container for a tolerance policy.
 
 ## Design notes
 
-- `type Interval { Lo: Number; Hi: Number }` implementing the arithmetic concepts, with correct
+- `type Interval { Lo: Number; Hi: Number }` implementing the arithmetic interfaces, with correct
   handling of division by an interval containing zero (empty / split / infinite — pick a policy).
 - **Rounding is the hard part.** A true enclosure needs directed rounding (round-down for `Lo`,
   round-up for `Hi`). .NET has no portable rounding-mode control, so the practical approach is to

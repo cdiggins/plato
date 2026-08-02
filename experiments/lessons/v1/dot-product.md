@@ -21,7 +21,7 @@ behind the surface. The same algebraic gadget measures "how much of this motion 
 projects shadows of vectors onto axes, and tests whether two headphones are aimed the same way.
 
 The **dot product** is the workhorse scalar of Euclidean geometry. Plato puts it on the shared
-`Vector` concept so every numeric tuple and geometric displacement speaks it.
+`Vector` interface so every numeric tuple and geometric displacement speaks it.
 
 ## The idea
 
@@ -96,12 +96,12 @@ sphere tests.
 
 ## In Plato
 
-### On the concept
+### On the interface
 
 From `08-vectors.plato`:
 
 ```plato
-concept Vector
+interface Vector
     inherits Numerical, Arithmetic, Indexable<Number>, Normed, Lattice, Hashable
 {
     Dot(a: Self, b: Self): Number;
@@ -111,7 +111,7 @@ concept Vector
 `Normed` supplies magnitude:
 
 ```plato
-concept Normed
+interface Normed
 {
     Magnitude(x: Self): Number;
     MagnitudeSquared(x: Self): Number;
@@ -250,7 +250,7 @@ $\mathbf{d} = \mathbf{p} - \mathbf{c}$.
   the other an alias.
 
 - **doc-comment** — `Vector.Dot`: state the geometric formula and that inputs need not be unit;
-  mention $\mathbf{a}\cdot\mathbf{a} = \|\mathbf{a}\|^2$. The concept currently names the function
+  mention $\mathbf{a}\cdot\mathbf{a} = \|\mathbf{a}\|^2$. The interface currently names the function
   with no semantic gloss.
 
 - **missing-function** — `Direction3D`: no `Dot(Direction3D, Direction3D)` that bypasses `.Vector`

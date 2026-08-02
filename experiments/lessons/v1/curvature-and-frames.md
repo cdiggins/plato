@@ -2,7 +2,7 @@
 lesson: curvature-and-frames
 title: Curvature and Frames
 domain: Curves & surfaces
-v3-files: [20-concepts-curves-surfaces.plato, 22-curves-3d.plato, 64-differential-geometry.plato]
+v3-files: [20-interfaces-curves-surfaces.plato, 22-curves-3d.plato, 64-differential-geometry.plato]
 audience: High-school math and general programming background
 status: draft-v1
 ---
@@ -75,10 +75,10 @@ rails, and camera paths almost always want RMF, not Frenet.
 
 ## In Plato
 
-### Curve capabilities (`20-concepts-curves-surfaces.plato`)
+### Curve capabilities (`20-interfaces-curves-surfaces.plato`)
 
 ```plato
-concept DifferentiableCurve3D
+interface DifferentiableCurve3D
     inherits Curve3D
 {
     TangentAt(x: Self, t: Number): Vector3D;
@@ -86,7 +86,7 @@ concept DifferentiableCurve3D
     TorsionAt(x: Self, t: Number): Number;
 }
 
-concept FramedCurve3D
+interface FramedCurve3D
     inherits DifferentiableCurve3D
 {
     FrameAt(x: Self, t: Number): Frame3D;
@@ -95,7 +95,7 @@ concept FramedCurve3D
 
 `CurvatureAt` on a 3D curve is unsigned space curvature; on
 `DifferentiableCurve2D` it is signed plane curvature. `FrameAt` returns a `Frame3D`
-whose origin lies on the curve and whose Z axis is tangent — but the concept does not
+whose origin lies on the curve and whose Z axis is tangent — but the interface does not
 name Frenet vs RMF (see recommendations).
 
 ### A concrete curve (`22-curves-3d.plato`)
@@ -273,19 +273,19 @@ enormous.
 
 ## Library recommendations
 
-- **doc-comment** / **pedagogy** — `20-concepts-curves-surfaces.plato`:
+- **doc-comment** / **pedagogy** — `20-interfaces-curves-surfaces.plato`:
   `FramedCurve3D.FrameAt` does not specify Frenet vs rotation-minimizing. Split into
   `FrenetFrameAt` / `RmfFrameAt`, or document the choice — sweeps depend on it.
 
 - **missing-function** — `64-differential-geometry.plato`: rich frame *types* exist, but
-  no concept functions like `FrenetAt(curve, t): FrenetFrame3D` or
-  `RmfAt(curve, t0, t1, ...)` are declared on curve concepts. The records are orphaned
+  no interface functions like `FrenetAt(curve, t): FrenetFrame3D` or
+  `RmfAt(curve, t0, t1, ...)` are declared on curve interfaces. The records are orphaned
   from `DifferentiableCurve3D` until libraries invent the glue.
 
 - **missing-function** — `64-differential-geometry.plato`: `FrenetFrame3D` has no
   `Parameter` field (unlike RMF). Adding it would make batched frame arrays align for
   debugging and visualization.
 
-- **naming** — `20-concepts-curves-surfaces.plato`: `CurvatureAt` means signed in 2D and
+- **naming** — `20-interfaces-curves-surfaces.plato`: `CurvatureAt` means signed in 2D and
   unsigned in 3D under the same function name. `SignedCurvatureAt` / `CurvatureAt` split
-  (or a doc banner on each concept) would prevent formula mix-ups.
+  (or a doc banner on each interface) would prevent formula mix-ups.

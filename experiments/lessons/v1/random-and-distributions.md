@@ -92,10 +92,10 @@ Doc contract: PCG-style; same `(State, Stream)` always yields the same next valu
 draw returns a new `RandomState`. Sampling operations are deferred to a later pass — the
 vocabulary today is the state record plus distributions.
 
-### Univariate concept
+### Univariate interface
 
 ```plato
-concept ProbabilityDistribution
+interface ProbabilityDistribution
     inherits Value
 {
     Mean(x: Self): Number;
@@ -225,7 +225,7 @@ is nonsense. Same story for many scale parameters.
 Cauchy the docs say they conventionally report location and $+\infty$. Callers that assume
 finite variance (e.g. standardization) break.
 
-**Von Mises Pdf/Cdf take radians.** `MeanDirection` is `Angle`, but the concept's `Pdf`
+**Von Mises Pdf/Cdf take radians.** `MeanDirection` is `Angle`, but the interface's `Pdf`
 value parameter is `Number`. Teaching circular stats must track that unit bridge carefully.
 
 **Discrete Pdf.** Mass is at `floor(value)`. Passing a continuous sample index without
@@ -260,14 +260,14 @@ by itself produce numbers; you need the future pairing with `RandomState`.
   state, but no `NextUnitInterval`, `NextInteger`, or `Sample(distribution, rng)` pair is
   declared. The entire teaching punchline ("pure draw") has no verb on the surface.
 
-- **missing-concept** — `59-random.plato`: `NormalDistribution2D` / `3D` cannot implement
-  `ProbabilityDistribution` (univariate Pdf). A `MultivariateDistribution` concept with
+- **missing-interface** — `59-random.plato`: `NormalDistribution2D` / `3D` cannot implement
+  `ProbabilityDistribution` (univariate Pdf). A `MultivariateDistribution` interface with
   `Pdf(Self, VectorND)` would give the Gaussians a home and clarify why they are split out.
 
 - **naming** — `59-random.plato`: `NormalDistribution` has a field also named `Mean`, while
-  the concept function is `Mean(x: Self)`. Teaching "the mean parameter vs the Mean
+  the interface function is `Mean(x: Self)`. Teaching "the mean parameter vs the Mean
   operation" is fine but easy to confuse in prose and in generated APIs.
 
 - **doc-comment** — `59-random.plato`: `VonMisesDistribution` says Pdf/Cdf take radians and
   `Mean` reports radians, yet `MeanDirection` is `Angle`. Spell the conversion expectation
-  next to the concept mismatch so implementors and lessons agree.
+  next to the interface mismatch so implementors and lessons agree.

@@ -169,11 +169,11 @@ let pb = mesh.Positions.At(face.B.Value);
 let pc = mesh.Positions.At(face.C.Value);
 ```
 
-The **`TriangulatedGeometry3D`** concept names the intended access pattern at the mesh
+The **`TriangulatedGeometry3D`** interface names the intended access pattern at the mesh
 boundary:
 
 ```plato
-concept TriangulatedGeometry3D
+interface TriangulatedGeometry3D
     inherits Meshable3D
 {
     TriangleCount(x: Self): Integer;
@@ -212,11 +212,11 @@ Related index types from the same file keep roles separate:
 | `CornerIndex` | One corner of one triangle in a corner table |
 | `HalfEdgeIndex` | A directed half-edge in `HalfEdgeMesh` |
 
-Each implements the **`Index`** concept — a typed wrapper whose `Value` is the underlying
+Each implements the **`Index`** interface — a typed wrapper whose `Value` is the underlying
 zero-based integer:
 
 ```plato
-concept Index
+interface Index
 {
     Value(x: Self): Integer;
 }
@@ -384,9 +384,9 @@ vertices. Face 1 spans `[4,7)` → **3** vertices.
   `CornerTable` when corner-table navigation is required") would reduce confusion at the
   boundary between explicit face records and corner-table topology.
 
-- **missing-concept** — `31-meshes.plato`: no shared **`IndexedSurfaceMesh<P, F>`** (or
+- **missing-interface** — `31-meshes.plato`: no shared **`IndexedSurfaceMesh<P, F>`** (or
   similar) abstraction factoring `Positions` + face indexing shared by `TriangleMesh3D`,
   `QuadMesh3D`, and `PolygonMesh3D`. Teaching the vertex-buffer / index-buffer pattern once
-  is natural; three parallel struct shapes suggest a parametric concept with
+  is natural; three parallel struct shapes suggest a parametric interface with
   `PositionAt(vertex: VertexIndex): P` and face-count operations would unify importers and
   validators.

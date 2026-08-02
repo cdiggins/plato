@@ -117,21 +117,21 @@ Measured with `plato_check` against `stdlib` + `stdlib-tests`:
 
 - [x] **Naming split — RESOLVED.** `CollectionsContainers.Drop(Sliceable)` was
       the same remove-from-the-front operation that `Array` spells `Skip`, so it
-      is now `Skip` on the concept too. Across both vocabularies `Skip` removes
+      is now `Skip` on the interface too. Across both vocabularies `Skip` removes
       from the front and `DropLast` from the back; `Drop` no longer appears as an
       identifier anywhere in `stdlib/`. Sliceable has no concrete implementer
       (LINT013), so nothing called the old name.
 
 - [x] **Sub-range naming — RESOLVED.** `Slice` meant two different things: on
       `Array` it was half-open by ENDPOINT, on `Sliceable` it took a COUNT. The
-      concept is now `Slice(x: Self, from: Integer, exclusiveTo: Integer)`, so
+      interface is now `Slice(x: Self, from: Integer, exclusiveTo: Integer)`, so
       **everything named `Slice` takes endpoints** and `Array.SubArray(from,
       count)` is the single count-based form.
 
       The endpoint convention won because every actual call site in the tree
       already used it — `Slice(offsets[i], offsets[i+1])` in
       `spatial-grids.library.plato`, `Slice(n.Items.Start, n.Items.End)` in
-      `spatial-kdtrees` / `spatial-trees`. The concept was the outlier, and it
+      `spatial-kdtrees` / `spatial-trees`. The interface was the outlier, and it
       had no implementer, so nothing had to change to follow it.
 
       `Sliceable.SubRange(start, end)` was deleted: it existed only to offer the

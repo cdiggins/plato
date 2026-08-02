@@ -6,19 +6,19 @@ using Ara3D.Geometry.Compiler.Types;
 namespace Ara3D.Geometry.Compiler.Checking
 {
     /// <summary>
-    /// THE concept-closure walk for the checker: every concept instance a type implements or
+    /// THE interface-closure walk for the checker: every interface instance a type implements or
     /// inherits, transitively, with each level's type arguments substituted through
     /// (<c>List&lt;Number&gt;</c> yields <c>IArray&lt;Number&gt;</c>, not <c>IArray&lt;T&gt;</c>;
     /// <c>Vector3 : IVectorLike : IArrayLike&lt;Number&gt;</c> resolves through both levels).
-    /// Shared by the solver's concept satisfaction and monomorphization's element grounding so
-    /// there is exactly one answer to "which instance of concept C does type T carry".
+    /// Shared by the solver's interface satisfaction and monomorphization's element grounding so
+    /// there is exactly one answer to "which instance of interface C does type T carry".
     ///
     /// (Deliberately separate from <see cref="TypeExtensions.IsImplementing"/>, which the legacy
     /// writers depend on and which has different — coarser — matching rules.)
     /// </summary>
     public static class ConceptClosure
     {
-        /// <summary>Every concept instance of <paramref name="t"/>, per-level substituted,
+        /// <summary>Every interface instance of <paramref name="t"/>, per-level substituted,
         /// pre-order, cycle-capped by depth.</summary>
         public static IEnumerable<TypeExpression> InstancesOf(TypeExpression t, int depth = 0)
         {
@@ -39,7 +39,7 @@ namespace Ara3D.Geometry.Compiler.Checking
             }
         }
 
-        /// <summary>The instance of the named concept that <paramref name="t"/> is or carries
+        /// <summary>The instance of the named interface that <paramref name="t"/> is or carries
         /// (itself, or via the closure), or null.</summary>
         public static TypeExpression FindInstance(TypeExpression t, string conceptName)
         {

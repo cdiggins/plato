@@ -22,7 +22,7 @@ namespace PlatoTests
     /// container had to be written once per element type.
     ///
     /// The clause sits after the return type and before the body — the last thing in the signature,
-    /// the same slot the clause occupies on `type` and `concept` — and names the variable exactly as
+    /// the same slot the clause occupies on `type` and `interface` — and names the variable exactly as
     /// the signature spells it, with the `$`.
     ///
     /// Four levels are under test here: parse, symbol, checking (both the licence it grants inside
@@ -72,7 +72,7 @@ namespace PlatoTests
         // --- source fixture ------------------------------------------------------
 
         // A miniature of the de Casteljau world: an UNBOUNDED generic container (Bag stands in for
-        // Array, which is a primitive and must stay unbounded), a concept its element type has to
+        // Array, which is a primitive and must stay unbounded), an interface its element type has to
         // supply, one type that supplies it and one that does not.
         private const string Prelude = @"
 type Number { }
@@ -80,12 +80,12 @@ type Boolean { }
 type Object { }
 type String { }
 
-concept Interpolatable
+interface Interpolatable
 {
     Lerp(a: Self, b: Self, t: Number): Self;
 }
 
-concept Measurable
+interface Measurable
 {
     Magnitude(x: Self): Number;
 }

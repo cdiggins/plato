@@ -56,7 +56,7 @@ public static class TirInliner
         // comes back on the NEXT pass is the signature of a body that calls itself: inlining it
         // reproduces the same call one level deeper, and MaxPasses is the only thing that stops
         // it (measured on `ClosedU(s: OffsetSurface) => s.Base.ClosedU`, which delegates through a
-        // concept-typed field whose Self monomorphizes back to OffsetSurface — the emitted
+        // interface-typed field whose Self monomorphizes back to OffsetSurface — the emitted
         // receiver came out as `self.Base.Base.Base...`, naming a member the interface lacks).
         var inlinedPairs = new HashSet<(object Callee, string ReceiverType)>();
         for (var pass = 0; pass < MaxPasses; pass++)

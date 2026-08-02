@@ -39,7 +39,7 @@ Neither is reported by anything: `At`/`Count` are exempt from LINT001 via
 
 Mirror `CSharpTypeWriter.SingleIndexableFieldName`: delegate when the type has exactly one
 field whose OWN type provides both a linear `At` and `Count` (via `GetSelfAndAllInheritedTypes`
-+ `GetAllImplementedConcepts`). Key off the concept, not the type NAME — the library spells
++ `GetAllImplementedConcepts`). Key off the interface, not the type NAME — the library spells
 these fields both `Array<T>` (stdlib, implements `Indexable<T>`) and `IArray<T>` (stdlib-legacy).
 A name-based check is what was wrong in the C# writer before `9bacd3f`. Requiring both members
 also correctly excludes `Array2D`/`Array3D` (they implement `Indexable2D`/`3D`, no linear Count).

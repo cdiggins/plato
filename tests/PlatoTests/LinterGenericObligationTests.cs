@@ -20,7 +20,7 @@ namespace PlatoTests
     [TestFixture]
     public static class LinterGenericObligationTests
     {
-        // The primitives the compiler assumes, plus a concept whose obligations are keyed by the
+        // The primitives the compiler assumes, plus an interface whose obligations are keyed by the
         // implementing type's own parameter: one over the parameter as a type ARGUMENT, one that
         // REPEATS the parameter across a parameter and the return type.
         private const string Preamble = @"
@@ -29,7 +29,7 @@ type Integer { }
 type Boolean { }
 type Object { }
 
-concept Extentful<T>
+interface Extentful<T>
 {
     ColumnCount(x: Self): Integer;
     Combine(x: Self, y: T): T;

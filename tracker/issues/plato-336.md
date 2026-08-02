@@ -14,7 +14,7 @@ links: [submodules/Plato/stdlib/meshes.concepts.plato, submodules/Plato/stdlib/m
 ---
 
 ## Issue
-The mesh-producing concepts return bare meshes with no mapping back to the input
+The mesh-producing interfaces return bare meshes with no mapping back to the input
 they were computed from. `Meshable2D.Triangulate(x: Self): TriangleMesh2D`
 (`meshes.concepts.plato:31`) and `Meshable3D.ToTriangleMesh(x: Self): TriangleMesh3D`
 (`meshes.concepts.plato:22`) hand back vertices and indices; nothing says which input
@@ -51,10 +51,10 @@ needs provenance yet. It rises the moment polygon or point-cloud triangulation l
   `TriangleMesh2D` might hold.
 
 ## Cause / analysis
-The concepts were defined at their narrowest useful signature — "anything that can
+The interfaces were defined at their narrowest useful signature — "anything that can
 produce a triangle mesh of itself" — which is the right shape for rendering and
 measurement, the first consumers. Provenance was not needed then and adding it to
-the concept would have complicated every implementer. The debt is that the narrow
+the interface would have complicated every implementer. The debt is that the narrow
 signature is now the only signature, so a consumer who needs correspondence has no
 supported path and will reach for position matching.
 
@@ -67,7 +67,7 @@ mistake.
 ## Priority
 Recommend **p3**. Nothing is broken and nothing is blocked today. But this is the
 cheapest it will ever be to fix: one implementation exists, so changing or extending
-the concept costs almost nothing now and costs proportionally more per implementer
+the interface costs almost nothing now and costs proportionally more per implementer
 later. Deferring past the next mesh content wave is the expensive choice. Safe to
 defer in the short term; should be decided before polygon triangulation lands.
 
@@ -77,22 +77,22 @@ defer in the short term; should be decided before polygon triangulation lands.
   hull content work.
 - Related: plato-334 — a hull or triangulation *result* type is exactly the
   "algorithm outcome" shape that issue proposes to unify, and should be designed
-  against those concepts rather than as another one-off record. If plato-334 lands
+  against those interfaces rather than as another one-off record. If plato-334 lands
   first, this becomes a straightforward application of it.
-- Touches: `meshes.concepts.plato` is depended on broadly; changing a concept
+- Touches: `meshes.concepts.plato` is depended on broadly; changing an interface
   signature ripples to every implementer. Additive approaches avoid this.
 
 ## Fix approaches
-1. **Additive sibling concept** — leave `Meshable2D`/`Meshable3D` alone, add a
+1. **Additive sibling interface** — leave `Meshable2D`/`Meshable3D` alone, add a
    `TraceableMeshable2D` (or similar) whose operation returns mesh plus
    `SourceIndices: Array<VertexIndex>`. Non-breaking; implementers opt in. Costs a
-   second concept and the question of which one callers should target.
-2. **Widen the existing concepts** — have `Triangulate` return a record carrying both
+   second interface and the question of which one callers should target.
+2. **Widen the existing interfaces** — have `Triangulate` return a record carrying both
    mesh and correspondence. One clear path, no duplication; breaks the one existing
    implementation and every future one, and taxes implementers that genuinely have
    no meaningful correspondence (an implicit surface, for instance).
 3. **Provenance as a mesh attribute** — reuse `MeshAttribute<T>` with a
-   `PerVertex` domain to carry source indices, no concept change at all. Zero new
+   `PerVertex` domain to carry source indices, no interface change at all. Zero new
    vocabulary and it composes with the attribute machinery already in
    `mesh-attributes.plato`; but it makes provenance optional-and-unchecked, findable
    only by knowing the attribute's name — a stringly-typed contract.
@@ -108,7 +108,7 @@ it costs nothing, but it encodes the contract in an attribute name rather than a
 type, which is precisely the pattern CONVENTIONS.md and the sum-type work elsewhere
 in Plato move away from.
 
-Verdict: **simplest-along-the-grain** — take option 1, and the additive concept must
+Verdict: **simplest-along-the-grain** — take option 1, and the additive interface must
 NOT be introduced without deciding what the plain `Meshable2D` means once it has a
 traceable sibling. If both survive indefinitely with no guidance on which to
 implement, this becomes two vocabularies for one idea, and option 2's single path
@@ -120,14 +120,14 @@ stops being reachable.
       see plato-079)
 - [ ] the correspondence is expressed in the type system, not an attribute-name
       convention
-- [ ] guidance recorded on which concept new implementers should target
+- [ ] guidance recorded on which interface new implementers should target
 - [ ] convex hull, if landed, uses the same correspondence vocabulary from the start
 - [ ] ForwardStdLib test green
 
 ## Simplest fix
-Option 1 for triangulation only, hull deferred: one additional concept and one
+Option 1 for triangulation only, hull deferred: one additional interface and one
 result record. Gain: unblocks attribute transfer and picking, breaks nothing, can
-land in isolation. Give up: two mesh-producing concepts coexist, so authors must be
+land in isolation. Give up: two mesh-producing interfaces coexist, so authors must be
 told which to implement — that guidance is part of the work, not an optional extra.
 
 ## Prevention
@@ -138,6 +138,6 @@ told which to implement — that guidance is part of the work, not an optional e
 - **Design review**: the hull half of this issue exists because a hull has not been
   written yet. The preventive step is that it should not be written without this
   question answered — worth noting in whatever content wave picks it up.
-- Related existing items: plato-334 (shared result concepts) is the natural home for
+- Related existing items: plato-334 (shared result interfaces) is the natural home for
   the result-type half; plato-079 (sentinels/Option) governs how "no source vertex"
   should be spelled.

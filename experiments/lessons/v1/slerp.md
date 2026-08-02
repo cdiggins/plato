@@ -2,7 +2,7 @@
 lesson: slerp
 title: Spherical Linear Interpolation
 domain: Rotations
-v3-files: [02-concepts-algebra.plato, 10-rotations.plato]
+v3-files: [02-interfaces-algebra.plato, 10-rotations.plato]
 audience: Knows what a quaternion orientation is at a high level (four numbers on a sphere); comfortable with ordinary lerp of scalars and vectors.
 status: draft-v1
 ---
@@ -23,7 +23,7 @@ arc at constant angle rate. That is the blend you usually want for rotations.
 
 ### Ordinary lerp
 
-The `Interpolatable` concept captures the straight-line blend:
+The `Interpolatable` interface captures the straight-line blend:
 
 $$
 \mathrm{lerp}(a,b,t) = a + (b - a)\,t
@@ -103,12 +103,12 @@ type has a spherical metric.
 
 ## In Plato
 
-From `02-concepts-algebra.plato`:
+From `02-interfaces-algebra.plato`:
 
 ```plato
 // Supports linear interpolation. The parameter t is unclamped: 0 yields a,
 // 1 yields b, values outside [0,1] extrapolate.
-concept Interpolatable
+interface Interpolatable
 {
     Lerp(a: Self, b: Self, t: Number): Self;
 }
@@ -217,10 +217,10 @@ sphere (or equivalently on rotors). Convert Euler angles to `Quaternion` first.
 
 ## Library recommendations
 
-- **missing-concept** — `02-concepts-algebra.plato`: `Interpolatable` only has
-  `Lerp`. A sibling concept such as `SphericallyInterpolatable` with
+- **missing-interface** — `02-interfaces-algebra.plato`: `Interpolatable` only has
+  `Lerp`. A sibling interface such as `SphericallyInterpolatable` with
   `Slerp(a, b, t)` (implemented by `Quaternion`, maybe `Rotor3D`) would make the
-  pose/animation choice discoverable from concepts instead of tribal knowledge
+  pose/animation choice discoverable from interfaces instead of tribal knowledge
   that "quaternions use Slerp."
 
 - **doc-comment** — `70-intrinsics.plato`: `Slerp` should state whether it

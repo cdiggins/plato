@@ -9,7 +9,7 @@ using Ara3D.Geometry.Compiler.Types;
 namespace Ara3D.Geometry.Compiler.Analysis
 {
     /// <summary>
-    /// Holds a list of all the functions associated with the type, and the implemented concepts.
+    /// Holds a list of all the functions associated with the type, and the implemented interfaces.
     /// </summary>
     public class ConcreteType
     {

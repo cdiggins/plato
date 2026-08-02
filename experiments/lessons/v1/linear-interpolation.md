@@ -2,7 +2,7 @@
 lesson: linear-interpolation
 title: Linear Interpolation — Lerp Everywhere
 domain: Foundations & vectors
-v3-files: [02-concepts-algebra.plato, 08-vectors.plato, 14-color.plato]
+v3-files: [02-interfaces-algebra.plato, 08-vectors.plato, 14-color.plato]
 audience: High-school algebra and basic programming; no graphics API experience required
 status: draft-v1
 ---
@@ -111,7 +111,7 @@ prediction, and "continue at the same rate" all rely on `t` being **unclamped**.
 need to stay inside the segment, clamp `t` to `[0, 1]` **before** calling lerp — that is
 a separate policy decision.
 
-Plato's `Interpolatable` concept documents this explicitly: `t` is unclamped; 0 yields
+Plato's `Interpolatable` interface documents this explicitly: `t` is unclamped; 0 yields
 `a`, 1 yields `b`, and values outside `[0, 1]` extrapolate.
 
 ## Component-wise lerp
@@ -142,21 +142,21 @@ origin. Lerping two **directions** (`Direction2D`, `Direction3D`) component-wise
 **not** guarantee a unit-length result at intermediate `t`; normalization is a separate
 step.
 
-## In Plato: the `Interpolatable` concept
+## In Plato: the `Interpolatable` interface
 
-Plato centralizes linear interpolation in one algebraic concept:
+Plato centralizes linear interpolation in one algebraic interface:
 
 ```plato
 // Supports linear interpolation. The parameter t is unclamped: 0 yields a,
 // 1 yields b, values outside [0,1] extrapolate.
-concept Interpolatable
+interface Interpolatable
 {
     Lerp(a: Self, b: Self, t: Number): Self;
 }
 ```
 
 Every type that implements `Interpolatable` gets a uniform `Lerp` operation with the
-semantics above. Call shape (concept functions take `Self` first):
+semantics above. Call shape (interface functions take `Self` first):
 
 ```plato
 start.Lerp(end, t)
@@ -178,7 +178,7 @@ instead when you care about smooth motion.
 
 ### Vectors and numeric tuples
 
-The `Vector` concept inherits `Numerical`, so every vector-like numeric tuple is
+The `Vector` interface inherits `Numerical`, so every vector-like numeric tuple is
 interpolatable with component-wise `Lerp`:
 
 ```plato
@@ -253,7 +253,7 @@ you might want to "mix."
 | `Color8` (8-bit storage) | Not `Numerical`; channels are integers, often sRGB-encoded | Convert to linear `Color`, lerp, convert back |
 | Long paths in curved space | Straight chord != geodesic | Use curve evaluation (`Curve3D` at parameter `t`), not endpoint lerp |
 
-None of this contradicts `Interpolatable`. It marks **where the concept stops** and
+None of this contradicts `Interpolatable`. It marks **where the interface stops** and
 domain-specific interpolation begins.
 
 ## Pitfalls and fine print
@@ -319,14 +319,14 @@ vectors is generally shorter unless they are parallel.
 
 ## Library recommendations
 
-- **missing-function** — `02-concepts-algebra.plato`: add `InverseLerp(a: Self, b: Self,
-  value: Self): Number` on `Interpolatable` (or a small companion concept). Given
+- **missing-function** — `02-interfaces-algebra.plato`: add `InverseLerp(a: Self, b: Self,
+  value: Self): Number` on `Interpolatable` (or a small companion interface). Given
   endpoints and a value on the line, return the `t` that produced it. Every
   "map this sensor reading into `[0,1]`" and "where on the segment is this point?"
   workflow needs inverse lerp; authors should not re-derive `(value - a) / (b - a)` ad
   hoc with divide-by-zero guards scattered through call sites.
 
-- **missing-function** — `02-concepts-algebra.plato`: add `Remap(value: Self, fromMin:
+- **missing-function** — `02-interfaces-algebra.plato`: add `Remap(value: Self, fromMin:
   Self, fromMax: Self, toMin: Self, toMax: Self): Self` (or a `Number`-valued overload
   when remapping scalars). Remap is two inverse lerps composed — from domain to unitless
   `t`, then into the target range — and appears in every shader, UI layout, and
@@ -338,7 +338,7 @@ vectors is generally shorter unless they are parallel.
   incorrect. This lesson's main color pitfall is invisible from the type declaration
   alone.
 
-- **missing-concept** — `14-color.plato`: `ColorHSV` and `ColorHSL` implement `Value`
+- **missing-interface** — `14-color.plato`: `ColorHSV` and `ColorHSL` implement `Value`
   but not `Interpolatable`. Hue is an `Angle`; naive RGB lerp and hue-aware lerp diverge.
   Either document "convert to `Color` before `Lerp`" prominently or declare a separate
   `HueInterpolatable` (or `LerpHue` on `ColorHSV`) so hue-wheel blending has typed,
@@ -350,7 +350,7 @@ vectors is generally shorter unless they are parallel.
   lerp exists. A one-line comment — "normalize after blending the underlying `Vector`,
   or use angular interpolation" — would prevent a class of rendering bugs.
 
-- **pedagogy** — `02-concepts-algebra.plato` `Interpolatable`: consider a doc-comment
+- **pedagogy** — `02-interfaces-algebra.plato` `Interpolatable`: consider a doc-comment
   example block showing `t` unclamped with one extrapolation case. The comment already
   states the rule; a single numeric example (`Lerp(0, 10, 1.5) => 15`) would match how
   often extrapolation surprises newcomers who expect silent clamping.

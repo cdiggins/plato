@@ -166,7 +166,7 @@ type SimpleHarmonicMotion
     Phase: Angle;
 }
 
-concept Kinematic3D
+interface Kinematic3D
 {
     PositionAt(x: Self, time: Duration): Point3D;
     VelocityAt(x: Self, time: Duration): Vector3D;
@@ -324,7 +324,7 @@ singularities.
 
 - **wrong-shape** — `53-kinematics.plato`: `Trajectory3D` stores parallel arrays but declares
   no invariant that `Times`, `Positions`, and `Velocities` lengths match (except the empty-
-  velocities escape hatch). A doc-comment invariant or a dedicated sampled-motion concept
+  velocities escape hatch). A doc-comment invariant or a dedicated sampled-motion interface
   would harden the teaching examples.
 
 - **missing-function** — `53-kinematics.plato`: `BallisticTrajectory` and

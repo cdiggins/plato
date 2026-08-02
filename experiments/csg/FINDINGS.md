@@ -126,7 +126,7 @@ Filed because csg.plato is a fresh consumer alongside earcut.
    `ClipAll` dummy-fold wart.
 2. **Generic library functions may not take a naked `$T` receiver.** `Single(x:
    $T): IArray<$T>` compiled fine until reification: *"First parameter type …
-   not a concrete type or concept."* The first parameter must be a concrete
+   not a concrete type or interface."* The first parameter must be a concrete
    type or an interface (earcut's `$T` helpers all had `IArray<$T>` receivers).
    Worked around with concrete `Single`/`KeepIf` overloads for `Facet` and
    `Point3D`; a generic `Single`/`Pure`/`KeepIf` in the stdlib (receiver

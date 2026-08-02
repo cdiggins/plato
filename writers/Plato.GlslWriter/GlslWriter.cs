@@ -22,7 +22,7 @@ namespace Ara3D.Geometry.GlslWriter
     }
 
     /// <summary>
-    /// Proof-of-concept GLSL backend (target: GLSL ES 3.00 / #version 300 es).
+    /// Proof-of-interface GLSL backend (target: GLSL ES 3.00 / #version 300 es).
     ///
     /// Output model — GLSL is a C-like language with no methods, no generics, no
     /// closures and no heap, which maps to Plato as follows:

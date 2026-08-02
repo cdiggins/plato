@@ -92,7 +92,7 @@ type RandomState
     Stream: Integer;
 }
 
-concept ProbabilityDistribution
+interface ProbabilityDistribution
     inherits Value
 {
     Mean(x: Self): Number;
@@ -161,11 +161,11 @@ $[0,1]$.
 That is legal: density, not mass. Only integrals (or CDFs) are probabilities.
 
 **Standard deviation vs variance.** `NormalDistribution` stores `StandardDeviation`.
-The concept reports `Variance` as $\sigma^2$. Confusing the two when seeding from a
+The interface reports `Variance` as $\sigma^2$. Confusing the two when seeding from a
 variance estimate is a classic off-by-square bug.
 
-**Field name `Mean` vs concept function `Mean`.** The type has a field `Mean` and the
-concept declares `Mean(x: Self)`. For a normal they coincide, but the dual naming is
+**Field name `Mean` vs interface function `Mean`.** The type has a field `Mean` and the
+interface declares `Mean(x: Self)`. For a normal they coincide, but the dual naming is
 easy to trip over when writing libraries or bindings.
 
 **Zero or negative σ.** The Gaussian is only defined for $\sigma > 0$. v3 does not yet
@@ -181,7 +181,7 @@ exists — parameterize the distribution and keep the RNG state separate.
 
 **Multivariate normals are different.** `NormalDistribution2D`/`3D` use covariance
 types from statistics; they intentionally skip `ProbabilityDistribution` because that
-concept is univariate (`Pdf` takes a single `Number`).
+interface is univariate (`Pdf` takes a single `Number`).
 
 ## Try it
 
@@ -208,7 +208,7 @@ concept is univariate (`Pdf` takes a single `Number`).
 
 - **naming** — `59-random.plato`: `NormalDistribution.Mean` (field) collides conceptually
   with `ProbabilityDistribution.Mean(Self)`. Prefer renaming the field to `Location` or
-  documenting that concept `Mean` must equal the field for this type, to reduce binder
+  documenting that interface `Mean` must equal the field for this type, to reduce binder
   and pedagogy confusion.
 
 - **missing-function** — `59-random.plato`: no `Standardize(x, dist) -> Number` or

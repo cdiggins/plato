@@ -1,7 +1,7 @@
 //==
 // # Texturing — derived functions for IProceduralTexture
 //
-// Bodies for the `IProceduralTexture` concept declared in
+// Bodies for the `IProceduralTexture` interface declared in
 // `texturing.concepts.plato`: a
 // pattern evaluated directly at a UV coordinate via `ColorAt`. The helpers read
 // the sampled color's alpha channel for the opacity tests. Pure expressions

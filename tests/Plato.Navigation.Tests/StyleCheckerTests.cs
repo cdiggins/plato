@@ -48,7 +48,7 @@ public static class StyleCheckerTests
     [Test]
     public static void OneKindPerFile()
     {
-        Assert.That(Codes("concept IFoo\n{\n    Size(x: Self): Number;\n}\ntype Foo { A: Number; }"),
+        Assert.That(Codes("interface IFoo\n{\n    Size(x: Self): Number;\n}\ntype Foo { A: Number; }"),
             Has.Member("STY005"), "mixed kinds");
         Assert.That(Codes("type Foo { A: Number; }", "foo.library.plato"),
             Has.Member("STY005"), "suffix disagrees with contents");

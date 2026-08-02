@@ -76,7 +76,7 @@ on the type says which.
 ## Cause / analysis
 
 The handwritten/generated split was drawn around *Plato-visible* members: the
-writer emits everything a concept obligation names, the handwritten file supplies
+writer emits everything an interface obligation names, the handwritten file supplies
 what Plato cannot express. `Equals(object)` and `GetHashCode` are C#
 object-protocol members with no Plato obligation behind them, so they ended up on
 the generated side by default rather than by decision — and `IEquatable<T>`,
@@ -164,4 +164,4 @@ removed in the same commit.
   `Zero`/`One` CS0102 cluster through.
 - Worth its own idea: a documented ownership table for the handwritten/generated
   split — which members each half may declare. The writer already has a skip-list
-  concept (`Linter.MembersImplementedByWriter`); the inverse list does not exist.
+  interface (`Linter.MembersImplementedByWriter`); the inverse list does not exist.

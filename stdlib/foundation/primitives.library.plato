@@ -2,7 +2,7 @@
 // # Primitives
 //
 // Sections, in order:
-//  - Primitive concept obligations
+//  - Primitive interface obligations
 //  - The derived array surface
 //  - The derived Integer surface
 //  - The derived Number surface
@@ -10,10 +10,10 @@
 library Primitives
 {
     //==
-    // # Primitive concept obligations
+    // # Primitive interface obligations
     //
     // The handful of members the `primitive` declarations in `primitives.plato` owe
-    // their concept lists but that the host contract does NOT supply. Everything a
+    // their interface lists but that the host contract does NOT supply. Everything a
     // backend must implement natively is in `intrinsics.library.plato`; what is left
     // is derivable in Plato from those intrinsics, so it belongs here rather than
     // growing the porting checklist:

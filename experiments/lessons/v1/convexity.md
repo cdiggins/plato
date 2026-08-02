@@ -66,12 +66,12 @@ miss.
 
 ## In Plato
 
-`ConvexShape` is a marker concept in `15-concepts-geometry.plato`:
+`ConvexShape` is a marker interface in `15-interfaces-geometry.plato`:
 
 ```plato
 // Marks a shape that contains the entire straight segment between any two of
 // its points.
-concept ConvexShape
+interface ConvexShape
 { }
 ```
 
@@ -102,12 +102,12 @@ unlocking constant-cost support and logarithmic containment.
 Support maps:
 
 ```plato
-concept SupportMappable2D
+interface SupportMappable2D
 {
     Support(x: Self, direction: Direction2D): Point2D;
 }
 
-concept SupportMappable3D
+interface SupportMappable3D
 {
     Support(x: Self, direction: Direction3D): Point3D;
 }
@@ -244,7 +244,7 @@ holey regions fail the segment test immediately.
   `ConvexHull(PointSet) → ConvexPolygon2D`. Teaching “promote to convex” needs a path
   from `Polygon2D` to `ConvexPolygon2D` beyond manual authoring.
 
-- **missing-function** — `15-concepts-geometry.plato` / geometry library: `ConvexShape` is
+- **missing-function** — `15-interfaces-geometry.plato` / geometry library: `ConvexShape` is
   a pure marker with no members. A documented `SegmentInside` predicate is redundant with
   the definition, but an `IsConvex` free function on polygons is still required (markers
   cannot be queried at runtime without reflection).

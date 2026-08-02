@@ -204,7 +204,7 @@ library Planar
     //     body assumes the origin.
     //   * `Area` is non-negative for EVERY type here.
     //   * CONTAINMENT is boundary-INCLUSIVE: every test is an inequality on a distance
-    //     or a coordinate (concept doc: "for closed shapes the boundary counts as
+    //     or a coordinate (interface doc: "for closed shapes the boundary counts as
     //     inside").
     //   * `ClosestPoint` on a filled REGION returns the query point itself when the
     //     query is contained, which `INearestPoint2D` explicitly permits ("for a region

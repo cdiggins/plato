@@ -232,8 +232,8 @@ area $=\tfrac12 \times 4 = 2$.
 ## Library recommendations
 
 - **missing-function** — `08-vectors.plato`: `Cross` lives on the intrinsic hub for `Vector3D` but
-  is not mentioned on the `Vector` concept or in the `Vector3D` type doc. Surface
-  `Cross(Self, Self): Self` in a 3D-only concept (e.g. `CrossProduct3D`) or at least document it on
+  is not mentioned on the `Vector` interface or in the `Vector3D` type doc. Surface
+  `Cross(Self, Self): Self` in a 3D-only interface (e.g. `CrossProduct3D`) or at least document it on
   the type so readers of `08-vectors.plato` alone discover it.
 
 - **missing-function** — no `Wedge(Vector3D, Vector3D): Bivector3D` dual to `Cross`. The lesson's

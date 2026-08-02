@@ -60,7 +60,7 @@ simple construction like edge lists.
 `65-graphs.plato` declares the family and the three storage forms.
 
 ```plato
-concept GraphLike
+interface GraphLike
     inherits Value
 {
     VertexCount(x: Self): Integer;

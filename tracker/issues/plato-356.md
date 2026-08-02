@@ -14,7 +14,7 @@ links: [plato-333, plato-357, stdlib/time.plato, stdlib/intervals-bounds.concept
 ---
 
 ## Idea
-`TimeInterval` (`stdlib/time.plato`) implements only `Value` with `Start`/`End: Instant`, while `NumberInterval` implements `IntervalLike<Number>`. TimeInterval should participate in the Interval concept family. Comment on TimeInterval already describes a half-open span.
+`TimeInterval` (`stdlib/time.plato`) implements only `Value` with `Start`/`End: Instant`, while `NumberInterval` implements `IntervalLike<Number>`. TimeInterval should participate in the Interval interface family. Comment on TimeInterval already describes a half-open span.
 
 ## Assumptions
 - `IntervalLike<T>` requires `T: Additive, Interpolatable, Comparable` (`intervals-bounds.concepts.plato`).
@@ -22,7 +22,7 @@ links: [plato-333, plato-357, stdlib/time.plato, stdlib/intervals-bounds.concept
 - Duration is the natural delta (OriginBased already says so).
 
 ## Design decisions
-- **Fix Instant first** — add Additive/Interpolatable via Duration, vs loosen IntervalLike constraints, vs TimeInterval-specific concept.
+- **Fix Instant first** — add Additive/Interpolatable via Duration, vs loosen IntervalLike constraints, vs TimeInterval-specific interface.
 - **Openness** — half-open (comment) vs closed IntervalLike helpers (see plato-333 IntegerInterval tension).
 - **Naming** — IntervalLike vs a TimeIntervalLike.
 
@@ -38,7 +38,7 @@ Long term: share Span/Contains/Clamp helpers; document half-open semantics.
 Adjacent: LabeledTimeInterval alignment.
 
 ## Bedrock
-Closes the **interval concept gap for time** and forces Instant into the additive story OriginBased already implies. Verdict: **right**. Simple version must NOT pretend Instant+Instant is meaningful — only Instant+Duration.
+Closes the **interval interface gap for time** and forces Instant into the additive story OriginBased already implies. Verdict: **right**. Simple version must NOT pretend Instant+Instant is meaningful — only Instant+Duration.
 
 ## Done means
 - [ ] TimeInterval implements IntervalLike (or documented specialized sibling)
@@ -47,7 +47,7 @@ Closes the **interval concept gap for time** and forces Instant into the additiv
 
 ## Simplest possible implementation
 Add Instant interpolatable/additive-via-Duration members; implements line on TimeInterval; reuse IntervalLike library helpers carefully for openness.
-- Pros: one concept family.
+- Pros: one interface family.
 - Cons: may need helper overrides for half-open (plato-333 lesson).
 
 ## Case against

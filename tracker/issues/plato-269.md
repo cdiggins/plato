@@ -15,7 +15,7 @@ links: [plato-230, plato-263, docs/plato-source-vocabulary-comparison.md, docs/p
 
 ## Idea
 
-Produce an up-to-date **differential** between the new Plato library (`plato-src-v3`) and the old/shipping one (`plato-src`): what types/concepts exist only on one side, naming/recipe changes (`interface`+`I` vs `concept`), missing bodies, and migration priorities. Prior art compared `plato-src`↔`plato-src-v2` ([docs/plato-source-vocabulary-comparison.md](../../docs/plato-source-vocabulary-comparison.md)) and summarized v3 alone ([docs/plato-v3-vocabulary-report.md](../../docs/plato-v3-vocabulary-report.md)); this idea is the **v3 ↔ shipping** gap analysis agents and humans need for porting.
+Produce an up-to-date **differential** between the new Plato library (`plato-src-v3`) and the old/shipping one (`plato-src`): what types/interfaces exist only on one side, naming/recipe changes (`interface`+`I` vs `concept`), missing bodies, and migration priorities. Prior art compared `plato-src`↔`plato-src-v2` ([docs/plato-source-vocabulary-comparison.md](../../docs/plato-source-vocabulary-comparison.md)) and summarized v3 alone ([docs/plato-v3-vocabulary-report.md](../../docs/plato-v3-vocabulary-report.md)); this idea is the **v3 ↔ shipping** gap analysis agents and humans need for porting.
 
 ## Assumptions
 
@@ -27,7 +27,7 @@ Produce an up-to-date **differential** between the new Plato library (`plato-src
 
 - **Match key** — exact name vs normalized (`IVector3`↔`Vector3`) vs manual synonym table.
 - **Artifact shape** — one markdown report vs spreadsheet/JSON + summary narrative.
-- **Depth** — name inventory only vs also concept lattices, libraries/bodies, and "port next" ranking.
+- **Depth** — name inventory only vs also interface lattices, libraries/bodies, and "port next" ranking.
 - **Refresh** — one-shot report vs script regenerable on demand.
 
 ## Related
@@ -63,7 +63,7 @@ Strengthens the **dual-stdlib migration map** — an explicit join between shipp
 
 ## Simplest possible implementation
 
-Parse both trees for `type`/`interface`/`concept` names; normalize `I` prefix; emit markdown tables + a one-page executive summary into `docs/`.
+Parse both trees for `type`/`concept`/`interface` names; normalize `I` prefix; emit markdown tables + a one-page executive summary into `docs/`.
 
 Pros: cheap; immediately useful for agents  
 Cons: no semantic depth; synonym misses need hand fixes

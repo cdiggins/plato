@@ -108,7 +108,7 @@ public static class IntegerTests
     }
 
     // ---------------------------------------------------------------------------------------
-    // The Bitwise concept: a property for the no-arg member, methods for the rest, operators
+    // The Bitwise interface: a property for the no-arg member, methods for the rest, operators
     // for the two the generated struct renders from operator overloads.
     // ---------------------------------------------------------------------------------------
 

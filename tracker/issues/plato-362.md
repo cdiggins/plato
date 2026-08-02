@@ -14,13 +14,13 @@ links: [plato-312, plato-308]
 
 Executed the "D" design for type-level constants (`Zero`, `One`, `MinValue`, `MaxValue`, ...):
 a member should be reachable BOTH as `Type.Member` and off a value (`x.Member`), and a
-`_`-receiver (type-token) fill must be able to discharge an instance concept obligation.
+`_`-receiver (type-token) fill must be able to discharge an instance interface obligation.
 
 ## Design decisions
 
-- Concepts KEEP instance-form declarations (`Zero(x: Self)`). Static-abstract lowering is
+- Interfaces KEEP instance-form declarations (`Zero(x: Self)`). Static-abstract lowering is
   impossible for dynamic-arity types (VectorN/MatrixN read their arity from the receiver), so
-  the concept obligation stays value-dispatched and each fill chooses its form per type.
+  the interface obligation stays value-dispatched and each fill chooses its form per type.
 - A `_` fill on a fixed-arity concrete type emits as the PAIR
   `public static T Zero()` + explicit interface impl `T Additive<T>.Zero() => Zero();`
   (CSharpConcreteTypeWriter, new case in the explicit-impl loop). Kills the CS0736 class

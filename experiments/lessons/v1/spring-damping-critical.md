@@ -107,7 +107,7 @@ var heavy    = SpringParameters(100.0, 50.0, 1.0);
 integrated in time against a moving target (or solved in closed form for fixed targets).
 
 ```plato
-concept EasingFunction
+interface EasingFunction
     inherits Procedural<Number, Number>
 { }
 

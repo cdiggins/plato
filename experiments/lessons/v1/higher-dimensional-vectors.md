@@ -42,7 +42,7 @@ and in space are `Vector2D` and `Vector3D`. Raw numeric tuples are `Number2/3/4/
 ## In Plato — vector families
 
 ```plato
-concept Vector
+interface Vector
     inherits Numerical, Arithmetic, Indexable<Number>, Normed, Lattice, Hashable
 {
     Dot(a: Self, b: Self): Number;

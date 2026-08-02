@@ -3,7 +3,7 @@
 //
 // Recursive evaluation of the flat expression graphs declared in
 // `fields.types.plato`. Lives in its own `library` block, rather than in the
-// concept-package libraries, because a graph walk needs a recursive dispatch
+// interface-package libraries, because a graph walk needs a recursive dispatch
 // over the node sum that an expression-only package file cannot host cleanly.
 //
 // Operands always reference lower-indexed nodes, so the recursion is well

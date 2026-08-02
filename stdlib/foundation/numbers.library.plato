@@ -15,7 +15,7 @@ library Numbers
     //==
     // # Extended-number arithmetic
     //
-    // Operator and concept obligations for the types of `numbers.types.plato`: Complex
+    // Operator and interface obligations for the types of `numbers.types.plato`: Complex
     // (full INumerical plus ComplexÃ—Complex product/quotient), Rational (IComparable
     // plus field arithmetic), and the unitless constrained scalars Proportion /
     // Percent / Probability (INumerical + IComparable on their carrier).
@@ -357,11 +357,11 @@ library Numbers
     Square(x: DualNumber): DualNumber
         => (x.Value.Square, 2.0 * x.Value * x.Derivative);
 
-    // (1/x)' = -x' / x^2. Precondition: IValue is non-zero.
+    // (1/x)' = -x' / x^2. Precondition: Value is non-zero.
     Reciprocal(x: DualNumber): DualNumber
         => (x.Value.Reciprocal, -x.Derivative / x.Value.Square);
 
-    // (sqrt x)' = x' / (2 * sqrt x). Precondition: IValue is strictly positive
+    // (sqrt x)' = x' / (2 * sqrt x). Precondition: Value is strictly positive
     // (the rule divides by the root, so zero is excluded even though the
     // square root itself is defined there).
     Sqrt(x: DualNumber): DualNumber

@@ -15,13 +15,13 @@ links: []
 
 ## Motivation
 
-plato-314 added `concept MeshIncidence` (`stdlib/topology.concepts.plato`) — the
+plato-314 added `interface MeshIncidence` (`stdlib/topology.concepts.plato`) — the
 middle rung between `MeshElementCounts` and `HalfEdgeNavigable` — plus its
 derived library members (valence, vertex neighbours, boundary/wire/non-manifold
 edge tests). No concrete type implements it yet, so `lint` reports:
 
 ```
-topology.concepts.plato(45): LINT008: concept 'MeshIncidence' has no concrete
+topology.concepts.plato(45): LINT008: interface 'MeshIncidence' has no concrete
 implementer; it is either dead vocabulary or a missing 'implements' clause
 ```
 
@@ -49,14 +49,14 @@ Two things to settle while writing it:
    is plato-298.
 2. **Signature collisions.** `FaceArity(PolygonMesh3D, Integer)` and
    `VertexDegree(PolygonMesh3D, VertexIndex)` already exist and overlap in
-   meaning with the concept's derived `FaceVertexCount` / `VertexValence`. Decide
-   whether the concrete pair is retired in favour of the concept-level names
+   meaning with the interface's derived `FaceVertexCount` / `VertexValence`. Decide
+   whether the concrete pair is retired in favour of the interface-level names
    before adding the `implements` clause, or the ambiguity lands at the call
    site.
 
 `TriangleMesh3D` is the second implementer and needs an actual edge list — it has
 only `Positions` + `Faces`, so an `UndirectedEdgeList` must be built or stored.
-That is the case that motivated the concept in the first place.
+That is the case that motivated the interface in the first place.
 
 ## Done means
 

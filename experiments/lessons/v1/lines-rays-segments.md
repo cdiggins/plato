@@ -204,7 +204,7 @@ they are not closed loops. That is unrelated to open/closed intervals on $t$.
 1. $(4,0)$ (past B, clamp to B); $(0,0)$ (before A); $(2,0)$ (orthogonal foot on the
    segment).
 2. $(5,0)$ — the ray continues past $B$'s distance; no upper clamp.
-3. An infinite line has no finite axis-aligned bound; a segment does. The concept
+3. An infinite line has no finite axis-aligned bound; a segment does. The interface
    `Bounded3D` would be a lie on `Line3D`.
 
 </details>
