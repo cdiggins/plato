@@ -1,0 +1,342 @@
+// Law library for the named parametric surfaces (stdlib/geometry/surfaces-shapes.library.plato).
+//
+// Same harness and conventions as foundation.laws.plato: Law_-prefixed Boolean
+// functions that must hold for ALL values of their parameter types, merged with
+// stdlib/ only by tools/regen-forward-conformance.ps1. Every member referenced was
+// verified against stdlib/geometry/surfaces-shapes.library.plato and its declaration
+// file (LIBRARIES.md rule 3).
+//
+// Three kinds of law are stated here:
+//
+//   * SEAM laws pin ClosedU / ClosedV against the geometry. A `true` there tells a
+//     mesher to weld the first and last row together, so a wrong flag is a real
+//     defect, and the flags are hand-set per type — exactly the thing worth testing.
+//     Only the types whose closure holds for EVERY field value are covered; where
+//     closure depends on the numbers supplied (the two frequency-driven surfaces)
+//     the library reports `false` and there is nothing to assert.
+//   * IMPLICIT-EQUATION laws check the evaluation against the surface's own defining
+//     algebraic relation, which is an independent statement of the same geometry
+//     rather than a restatement of the body.
+//   * DOMAIN laws check that the unit square is mapped onto the type's own Domain or
+//     interval, the part every body spells out by hand.
+//
+// A law is a statement about all instances, and the runner supplies pseudorandom
+// ones — including instances that violate the preconditions the types state (a zero
+// radius, an exponent of zero, a domain outside the branch where a logarithm is
+// real). Those evaluate to a NaN or an infinity, and every law here is guarded to
+// say nothing about them rather than to fail on them.
+library SurfacesShapesLaws
+{
+    //==
+    // Tolerance and guard helpers.
+
+    // Near-equality with a tolerance that grows with the magnitude of the terms
+    // compared. The implicit-equation laws below subtract quantities that are large
+    // far out along a hyperboloid, and an absolute epsilon would be failed by the
+    // cancellation rather than by a wrong formula.
+    SurfaceEqNear(a: Number, b: Number, magnitude: Number): Boolean
+        => (a - b).Abs <= 1e-4 * (1.0 + magnitude.Abs);
+
+    // Near-equality keyed on the larger of the two operands.
+    SurfaceEq(a: Number, b: Number): Boolean
+        => SurfaceEqNear(a, b, a.Abs.Greater(b.Abs));
+
+    // Component-wise near-equality of two samples.
+    SurfaceNear(a: Point3D, b: Point3D): Boolean
+        => SurfaceEq(a.X, b.X) && SurfaceEq(a.Y, b.Y) && SurfaceEq(a.Z, b.Z);
+
+    // True when the sample is an actual point: a degenerate instance evaluates to a
+    // NaN or an infinity, and no law claims anything about one.
+    SurfaceFinite(p: Point3D): Boolean
+        => p.X.IsFinite && p.Y.IsFinite && p.Z.IsFinite;
+
+    // Two edge samples agree, or at least one of them is degenerate. The meaning of
+    // a `true` closure flag, written as a test.
+    SurfaceSeam(a: Point3D, b: Point3D): Boolean
+        => a.SurfaceFinite.Not || b.SurfaceFinite.Not || a.SurfaceNear(b);
+
+    // A unit parameter: the runner hands out arbitrary Numbers, and the UV domain is
+    // the unit square.
+    SurfaceParameter(t: Number): Number
+        => t.IsFinite ? t.Clamp(0.0, 1.0) : 0.0;
+
+    //==
+    // Seam laws — the surfaces that seam shut in U for every field value.
+    //
+    // Each evaluates the two U edges at the same V and requires them to agree. The
+    // U parameter of these types is a full lap of an angle, so the closure is exact
+    // rather than approximate.
+
+    Law_HyperboloidOfOneSheetSeamsInU(s: HyperboloidOfOneSheet, v: Number): Boolean
+        => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+
+    Law_HyperboloidOfTwoSheetsSeamsInU(s: HyperboloidOfTwoSheets, v: Number): Boolean
+        => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+
+    Law_CatenoidSeamsInU(s: Catenoid, v: Number): Boolean
+        => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+
+    Law_PseudosphereSeamsInU(s: Pseudosphere, v: Number): Boolean
+        => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+
+    Law_DupinCyclideSeamsInU(s: DupinCyclide, v: Number): Boolean
+        => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+
+    Law_SeashellSurfaceSeamsInU(s: SeashellSurface, v: Number): Boolean
+        => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+
+    Law_RomanSurfaceSeamsInU(s: RomanSurface, v: Number): Boolean
+        => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+
+    Law_CrossCapSeamsInU(s: CrossCap, v: Number): Boolean
+        => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+
+    Law_BohemianDomeSeamsInU(s: BohemianDome, v: Number): Boolean
+        => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+
+    // A whole number of folds over the lap, which the Integer field guarantees.
+    Law_PluckerConoidSeamsInU(s: PluckerConoid, v: Number): Boolean
+        => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+
+    // The two superquadrics close exactly in arithmetic, but their bodies raise a
+    // sinusoid to a supplied exponent: at the seam that sinusoid is a rounding
+    // residue rather than a true zero, and an exponent below 1 magnifies the residue
+    // instead of shrinking it. The law is stated where the exponent contracts.
+    Law_SuperellipsoidSeamsInU(s: Superellipsoid, v: Number): Boolean
+        => s.LongitudeExponent < 1.0
+        || s.LatitudeExponent < 1.0
+        || SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+
+    Law_SupertoroidSeamsInU(s: Supertoroid, v: Number): Boolean
+        => s.RingExponent < 1.0
+        || s.SectionExponent < 1.0
+        || SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)), s.Eval((1.0, v.SurfaceParameter)));
+
+    //==
+    // Seam laws — the surfaces that seam shut in V.
+
+    Law_DupinCyclideSeamsInV(s: DupinCyclide, u: Number): Boolean
+        => SurfaceSeam(s.Eval((u.SurfaceParameter, 0.0)), s.Eval((u.SurfaceParameter, 1.0)));
+
+    Law_BohemianDomeSeamsInV(s: BohemianDome, u: Number): Boolean
+        => SurfaceSeam(s.Eval((u.SurfaceParameter, 0.0)), s.Eval((u.SurfaceParameter, 1.0)));
+
+    Law_KleinBottleSeamsInV(s: KleinBottle, u: Number): Boolean
+        => SurfaceSeam(s.Eval((u.SurfaceParameter, 0.0)), s.Eval((u.SurfaceParameter, 1.0)));
+
+    Law_BoySurfaceSeamsInV(s: BoySurface, u: Number): Boolean
+        => SurfaceSeam(s.Eval((u.SurfaceParameter, 0.0)), s.Eval((u.SurfaceParameter, 1.0)));
+
+    Law_SupertoroidSeamsInV(s: Supertoroid, u: Number): Boolean
+        => s.RingExponent < 1.0
+        || s.SectionExponent < 1.0
+        || SurfaceSeam(s.Eval((u.SurfaceParameter, 0.0)), s.Eval((u.SurfaceParameter, 1.0)));
+
+    //==
+    // The Klein bottle's reversed seam.
+
+    // The lap DOES close, but with the section reversed, which is why ClosedU is
+    // reported true while the pointwise U seam law above is absent: the U = 1 edge
+    // carries the same circle as the U = 0 edge traversed backwards. This states the
+    // identification the surface actually has.
+    Law_KleinBottleLapClosesReversed(s: KleinBottle, v: Number): Boolean
+        => SurfaceSeam(s.Eval((0.0, v.SurfaceParameter)),
+                       s.Eval((1.0, 1.0 - v.SurfaceParameter)));
+
+    //==
+    // Implicit-equation laws.
+    //
+    // Each states the algebraic relation the surface is defined by, evaluated at an
+    // arbitrary UV sample. These are the laws that would catch a transposed term or
+    // a wrong sinh/cosh in a body, which a seam law cannot see.
+
+    // x^2/a^2 + y^2/b^2 - z^2/c^2 = 1, the one-sheet hyperboloid's own equation.
+    Law_HyperboloidOfOneSheetSatisfiesItsEquation(s: HyperboloidOfOneSheet, uv: UvCoordinate): Boolean {
+        var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+        var x = p.X / s.SemiAxes.X;
+        var y = p.Y / s.SemiAxes.Y;
+        var z = p.Z / s.SemiAxes.Z;
+        return p.SurfaceFinite.Not
+            || SurfaceEqNear(x * x + y * y - z * z, 1.0, x * x + y * y + z * z);
+    }
+
+    // The same equation with -1 on the right: the two-sheet hyperboloid.
+    Law_HyperboloidOfTwoSheetsSatisfiesItsEquation(s: HyperboloidOfTwoSheets, uv: UvCoordinate): Boolean {
+        var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+        var x = p.X / s.SemiAxes.X;
+        var y = p.Y / s.SemiAxes.Y;
+        var z = p.Z / s.SemiAxes.Z;
+        return p.SurfaceFinite.Not
+            || SurfaceEqNear(x * x + y * y - z * z, -1.0, x * x + y * y + z * z);
+    }
+
+    // z = (x/a)^2 - (y/b)^2.
+    Law_HyperbolicParaboloidSatisfiesItsEquation(s: HyperbolicParaboloid, uv: UvCoordinate): Boolean {
+        var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+        var x = p.X / s.SemiAxes.X;
+        var y = p.Y / s.SemiAxes.Y;
+        return p.SurfaceFinite.Not || SurfaceEqNear(p.Z, x * x - y * y, x * x + y * y);
+    }
+
+    // z = Scale (x^3 - 3 x y^2).
+    Law_MonkeySaddleSatisfiesItsEquation(s: MonkeySaddle, uv: UvCoordinate): Boolean {
+        var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+        var height = s.Scale * (p.X * p.X * p.X - 3.0 * p.X * p.Y * p.Y);
+        return p.SurfaceFinite.Not || SurfaceEq(p.Z, height);
+    }
+
+    // x^2 = y^2 z: Whitney's umbrella is the zero set of that cubic, and the pinch
+    // point is where all three vanish together.
+    Law_WhitneyUmbrellaSatisfiesItsEquation(s: WhitneyUmbrella, uv: UvCoordinate): Boolean {
+        var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+        return p.SurfaceFinite.Not
+            || SurfaceEqNear(p.X * p.X, p.Y * p.Y * p.Z, p.X * p.X + p.Y * p.Y * p.Z);
+    }
+
+    // x^2 y^2 + y^2 z^2 + z^2 x^2 = Scale x y z, the Steiner quartic. Follows from
+    // the parameterization only because the source point is on the UNIT sphere, so
+    // this is a real check on the spherical helper as well as on the map.
+    Law_RomanSurfaceSatisfiesItsEquation(s: RomanSurface, uv: UvCoordinate): Boolean {
+        var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+        var quartic = p.X * p.X * p.Y * p.Y + p.Y * p.Y * p.Z * p.Z + p.Z * p.Z * p.X * p.X;
+        return p.SurfaceFinite.Not
+            || SurfaceEqNear(quartic, s.Scale * p.X * p.Y * p.Z, quartic);
+    }
+
+    // x^2 + y^2 = (WaistRadius cosh(z / WaistRadius))^2: the catenary profile,
+    // recovered from the sample's own height.
+    Law_CatenoidSatisfiesItsProfile(s: Catenoid, uv: UvCoordinate): Boolean {
+        var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+        var r = s.WaistRadius * (p.Z / s.WaistRadius).Angle.Cosh;
+        return p.SurfaceFinite.Not
+            || r.IsFinite.Not
+            || SurfaceEqNear(p.X * p.X + p.Y * p.Y, r * r, r * r);
+    }
+
+    //==
+    // Bound laws.
+    //
+    // Where the defining relation is not worth stating in full, the surface still
+    // has a bound its parameters name, and a body that lost a factor breaks it.
+
+    // The pseudosphere's radius is Radius / cosh t, so it never exceeds Radius.
+    Law_PseudosphereFitsItsRadius(s: Pseudosphere, uv: UvCoordinate): Boolean {
+        var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+        return p.SurfaceFinite.Not
+            || (p.X * p.X + p.Y * p.Y).Sqrt <= s.Radius.Abs + 1e-4;
+    }
+
+    // The conoid's rays stop at Radius and its rise stops at Height.
+    Law_PluckerConoidFitsItsBounds(s: PluckerConoid, uv: UvCoordinate): Boolean {
+        var p = s.Eval((uv.U.SurfaceParameter, uv.V.SurfaceParameter));
+        return p.SurfaceFinite.Not
+            || ((p.X * p.X + p.Y * p.Y).Sqrt <= s.Radius.Abs + 1e-4
+                && p.Z.Abs <= s.Height.Abs + 1e-4);
+    }
+
+    //==
+    // Axis and pole laws.
+    //
+    // The spherical products degenerate to a point on the Z axis at each pole. A body
+    // that mixed up which factor carries the latitude would move those rows off the
+    // axis, and no seam law would notice.
+
+    Law_SuperellipsoidPolesAreOnTheAxis(s: Superellipsoid, u: Number): Boolean {
+        var p = s.Eval((u.SurfaceParameter, 0.0));
+        return p.SurfaceFinite.Not
+            || (SurfaceEqNear(p.X, 0.0, s.SemiAxes.X) && SurfaceEqNear(p.Y, 0.0, s.SemiAxes.Y));
+    }
+
+    Law_Superformula3DPolesAreOnTheAxis(s: Superformula3D, u: Number): Boolean {
+        var p = s.Eval((u.SurfaceParameter, 0.0));
+        return p.SurfaceFinite.Not
+            || (SurfaceEqNear(p.X, 0.0, p.Z) && SurfaceEqNear(p.Y, 0.0, p.Z));
+    }
+
+    Law_SphericalHarmonicSurfacePolesAreOnTheAxis(s: SphericalHarmonicSurface, u: Number): Boolean {
+        var p = s.Eval((u.SurfaceParameter, 0.0));
+        return p.SurfaceFinite.Not
+            || (SurfaceEqNear(p.X, 0.0, p.Z) && SurfaceEqNear(p.Y, 0.0, p.Z));
+    }
+
+    //==
+    // Rise laws.
+    //
+    // The two helicoidal surfaces separate their sweep from their profile: the height
+    // gained over the whole sweep depends only on the sweep, never on where you are
+    // across the profile. That is the property their Pitch and Twist fields name.
+
+    // A full sweep of the helicoid rises Pitch per turn, at every radius.
+    Law_HelicoidRisesByItsPitch(s: Helicoid, v: Number): Boolean {
+        var bottom = s.Eval((0.0, v.SurfaceParameter));
+        var top = s.Eval((1.0, v.SurfaceParameter));
+        return bottom.SurfaceFinite.Not
+            || top.SurfaceFinite.Not
+            || SurfaceEq(top.Z - bottom.Z, s.Pitch * s.TurnCount);
+    }
+
+    // Dini's surface rises Twist per turn, at every point of the tractrix profile.
+    Law_DiniSurfaceRisesByItsTwist(s: DiniSurface, v: Number): Boolean {
+        var bottom = s.Eval((0.0, v.SurfaceParameter));
+        var top = s.Eval((1.0, v.SurfaceParameter));
+        return bottom.SurfaceFinite.Not
+            || top.SurfaceFinite.Not
+            || SurfaceEq(top.Z - bottom.Z, s.Twist * s.TurnCount);
+    }
+
+    //==
+    // Domain laws.
+    //
+    // The graph-form surfaces return their two parameters as X and Y, so the corners
+    // of the unit square must land on the corners of Domain. Every body spells this
+    // mapping out by hand, and a swapped Min / Max or a transposed U / V is invisible
+    // to every other law here.
+
+    Law_HyperbolicParaboloidCoversItsDomain(s: HyperbolicParaboloid): Boolean {
+        var low = s.Eval((0.0, 0.0));
+        var high = s.Eval((1.0, 1.0));
+        return SurfaceEq(low.X, s.Domain.Min.X)
+            && SurfaceEq(low.Y, s.Domain.Min.Y)
+            && SurfaceEq(high.X, s.Domain.Max.X)
+            && SurfaceEq(high.Y, s.Domain.Max.Y);
+    }
+
+    Law_MonkeySaddleCoversItsDomain(s: MonkeySaddle): Boolean {
+        var low = s.Eval((0.0, 0.0));
+        var high = s.Eval((1.0, 1.0));
+        return SurfaceEq(low.X, s.Domain.Min.X)
+            && SurfaceEq(low.Y, s.Domain.Min.Y)
+            && SurfaceEq(high.X, s.Domain.Max.X)
+            && SurfaceEq(high.Y, s.Domain.Max.Y);
+    }
+
+    Law_ScherkSurfaceCoversItsDomain(s: ScherkSurface): Boolean {
+        var low = s.Eval((0.0, 0.0));
+        var high = s.Eval((1.0, 1.0));
+        return SurfaceEq(low.X, s.Domain.Min.X)
+            && SurfaceEq(low.Y, s.Domain.Min.Y)
+            && SurfaceEq(high.X, s.Domain.Max.X)
+            && SurfaceEq(high.Y, s.Domain.Max.Y);
+    }
+
+    // Whitney's umbrella returns its first parameter as Y rather than as X, so its
+    // domain law reads off the other component — the transposition the graph-form
+    // laws above would have hidden.
+    Law_WhitneyUmbrellaCoversItsDomain(s: WhitneyUmbrella): Boolean {
+        var low = s.Eval((0.0, 0.0));
+        var high = s.Eval((1.0, 1.0));
+        return SurfaceEq(low.Y, s.Domain.Min.X)
+            && SurfaceEq(high.Y, s.Domain.Max.X);
+    }
+
+    // The helicoid's radial parameter sweeps Radii: the V edges sit at the two ends
+    // of that interval, measured from the axis.
+    Law_HelicoidCoversItsRadii(s: Helicoid): Boolean {
+        var inner = s.Eval((0.0, 0.0));
+        var outer = s.Eval((0.0, 1.0));
+        return inner.SurfaceFinite.Not
+            || outer.SurfaceFinite.Not
+            || (SurfaceEq((inner.X * inner.X + inner.Y * inner.Y).Sqrt, s.Radii.Start.Abs)
+                && SurfaceEq((outer.X * outer.X + outer.Y * outer.Y).Sqrt, s.Radii.End.Abs));
+    }
+}

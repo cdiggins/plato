@@ -175,7 +175,12 @@ library SurfacesShapes
                 sweep * longitude.Sin * ring * latitude.Cos,
                 ring * latitude.Sin);
     }
-    ClosedU(s: Superformula3D): Boolean => true;
+    // A lap returns to its starting radius only for particular symmetries — an
+    // even whole one, for the usual case — and that is a property of the supplied
+    // curve rather than of the product, so the surface does not promise the seam.
+    // Same answer, and for the same reason, as ExtrudedSurface in
+    // `surfaces.library.plato`.
+    ClosedU(s: Superformula3D): Boolean => false;
     ClosedV(s: Superformula3D): Boolean => false;
 
     //==
@@ -229,7 +234,10 @@ library SurfacesShapes
               + SignedPower((theta * s.Frequencies.W).Cos, s.Exponents.W);
         return (SpherePoint(theta, phi) * r).ToPoint;
     }
-    ClosedU(s: SphericalHarmonicSurface): Boolean => true;
+    // The radius returns to its starting value after a lap only when the two
+    // longitudinal frequencies are whole, which the type does not require, so the
+    // seam is not promised.
+    ClosedU(s: SphericalHarmonicSurface): Boolean => false;
     ClosedV(s: SphericalHarmonicSurface): Boolean => false;
 
     //==
@@ -295,9 +303,11 @@ library SurfacesShapes
                 s.Scale * (root2 * (u * 2.0).Sin * v.Cos * v.Cos - u.Sin * (v * 2.0).Sin) / denominator,
                 s.Scale * 3.0 * v.Cos * v.Cos / denominator);
     }
-    // Both parameters wrap over their half turn, which is what makes the image a
-    // closed surface with no boundary.
-    ClosedU(s: BoySurface): Boolean => true;
+    // The image is a closed surface, but only V seams shut pointwise: at u and
+    // u + a half turn Apery's map differs in the sign of its odd terms, so the two
+    // U edges carry the same curve traversed differently and welding them would
+    // join mismatched samples.
+    ClosedU(s: BoySurface): Boolean => false;
     ClosedV(s: BoySurface): Boolean => true;
 
     //==
