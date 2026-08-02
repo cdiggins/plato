@@ -563,9 +563,9 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
         var recvTypeName = TirRewrite.StripCoerce(args[0])?.Type?.Name
                            ?? (call.ParameterTypes.Count > 0 ? call.ParameterTypes[0]?.Name : null);
-        // Under --scalar=float the receiver's type may already read as the primitive; the STATIC
-        // lives on the wrapper struct (Ara3D.Geometry.Number.Pi), which is where the handwritten
-        // Plato.Intrinsics surface declares it.
+        // A receiver typed as the raw primitive (float, at the handwritten-intrinsics boundary)
+        // still finds its STATIC on the wrapper struct (Ara3D.Geometry.Number.Pi), which is where
+        // the Plato.Intrinsics surface declares it.
         if (recvTypeName != null && CSharpWriter.ScalarPrimitives.ContainsValue(recvTypeName))
             recvTypeName = WrapperOfPrim(recvTypeName);
         if (recvTypeName == null || !_tw.Writer.IsConcreteTypeName(recvTypeName))

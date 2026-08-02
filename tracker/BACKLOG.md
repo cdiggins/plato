@@ -36,7 +36,8 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-292](issues/plato-292.md) | Decide assert-vs-validation policy: Debug and Release disagree about what compiles | problem | p2 | M | low | plato | idea |  |
 | [plato-333](issues/plato-333.md) | IntegerInterval is half-open but inherits closed IntervalLike bodies | bug | p2 | S | med | plato | idea |  |
 | [plato-365](issues/plato-365.md) | Retire non-scalar primitives: PrimitiveTypes = scalars only, System.Numerics behind intrinsic bridge | debt | p2 | M | med | plato | idea |  |
-| [plato-370](issues/plato-370.md) | Implement --scalar=double via TirScalarLowerer map + double intrinsics | feature | p2 | M | med | plato | idea |  |
+| [plato-370](issues/plato-370.md) | Double-precision scalars (approach must be re-designed — TirScalarLowerer is gone) | feature | p2 | L | med | plato | idea |  |
+| [compiler-397](issues/compiler-397.md) | IArrayLike types with no generated fields emit an empty component type | bug | p2 | S | low | compiler | ready |  |
 | [plato-390](issues/plato-390.md) | Extract Plato.Verify: one policy engine behind the gates, the tests and plato_check | feature | p2 | L | med | plato | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
 | [plato-235](issues/plato-235.md) | GLSL overload erasure picks the winner by emission order, not by intent | problem | p3 | M | med | plato | idea |  |

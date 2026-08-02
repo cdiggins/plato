@@ -264,7 +264,7 @@ filename collision), then runs two stages:
   `stdlib/future`, into `tests/conformance/Plato.ForwardConformanceTests/Generated/`, then build,
   then run.
 
-The code-generation options are the shipping ones: `--csharp-style=extensions --scalar=float
+The code-generation options are the shipping ones: `--csharp-style=extensions
 --optimize --optimize-arrays --inline --loops --static-abstract`.
 
 Code generation **succeeds**: it emits over a thousand `.g.cs` files, plus some **degraded

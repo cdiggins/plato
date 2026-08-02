@@ -123,7 +123,7 @@ library Quantities
 
         [Test]
         public static void GenuineFieldIsStillEmittedAsAField()
-            => Assert.That(File_(Emit(), "_Filter.g.cs"), Does.Match(@"public readonly float Amount;"),
+            => Assert.That(File_(Emit(), "_Filter.g.cs"), Does.Match(@"public readonly Number Amount;"),
                 "the field itself is unaffected by the rendering rule");
     }
 }

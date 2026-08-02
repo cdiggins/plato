@@ -61,10 +61,8 @@ namespace Ara3D.Geometry.CSharpWriter
         public string FieldName { get; }
         public string CastTo { get; }
 
-        // Scalar erasure (--scalar=float) only: the primitive this component erases to when it
-        // is a scalar-wrapper Plato type (either an erased struct field, or a wrapper-typed
-        // pseudo-field explicitly cast down via CastTo="float"); null otherwise. Feeds
-        // CSharpFunctionBodyWriter.ScalarPrimOf for method-call syntax decisions.
+        // Always null since scalar erasure was retired 2026-08-01. Kept so the ComponentInfo shape
+        // and its consumers stay unchanged; drop it when this marker record is next revised.
         public string ScalarComponentPrim { get; }
 
         public ComponentAccessExpression(Expression receiver, string fieldName, string castTo, string scalarComponentPrim = null)

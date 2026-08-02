@@ -58,20 +58,6 @@ namespace Ara3D.Geometry.CSharpWriter
             return _plansByName.TryGetValue(typeName, out var p) ? p : null;
         }
 
-        // Number members that handwritten Plato.Intrinsics code accesses on a Number receiver
-        // (Number.Cubic/Linear/Quadratic use a.Pow2/a.Pow3; AnyPerpendicular reads v.AlmostZero).
-        // Under --scalar=float the Number struct is not generated, so these bodied members are
-        // emitted into the minimal `partial struct Number` SHIM (see WriteScalarErasedType) so the
-        // handwritten call sites still bind. NOT a property-syntax pin (the V2 runtime exposes them
-        // as methods and the shim emits them as such) — purely the shim-membership selector.
-        public static HashSet<string> HandwrittenPropertySyntaxNames = new HashSet<string>
-        {
-            "AlmostZero",
-            "Pow2",
-            "Pow3",
-            "ReciprocalSquareRootEstimate",
-        };
-
         // Computes the extension-style plans and the global no-arg name partition. Must run
         // before ANY file is written: Constants.g.cs / Extensions.g.cs / struct-kept bodies all
         // contain call sites of moved members that need the "()" injection.
@@ -339,13 +325,8 @@ namespace Ara3D.Geometry.CSharpWriter
         // The RECEIVER-AWARE rendering rule (plato-323): does `name` render with property/field
         // syntax when read off a receiver of type `ownerTypeName`?
         //
-        // The global name set alone is wrong in two ways, both measured:
-        //   - an ERASED scalar receiver (--scalar=float replaces Number/Integer/... with
-        //     float/int/...) has NO generated struct, so every no-arg member of it — generated or
-        //     handwritten in Plato.Intrinsics — is a classic extension method on the primitive and
-        //     always takes "()". `Histogram.Range` (a genuine field on an unrelated struct)
-        //     otherwise stole the parens from `ArrayExtensions.Range(this int)`: 915 x CS0119.
-        //   - a NON-scalar receiver whose own struct surface does not carry `name` reads a MOVED
+        // The global name set alone is wrong: a receiver whose own struct surface does not carry
+        // `name` reads a MOVED
         //     library function, i.e. an extension METHOD. `Amount` (a field on an image filter, a
         //     dynamic quantity and an uncertainty value) otherwise forced property syntax onto
         //     `Angle.Radians()` / `Amount(x: Angle)` at every call site: 110 x CS0030.

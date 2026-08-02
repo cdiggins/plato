@@ -1,25 +1,32 @@
 ---
 id: plato-370
-title: Implement --scalar=double via TirScalarLowerer map + double intrinsics
+title: Double-precision scalars (approach must be re-designed — TirScalarLowerer is gone)
 type: feature
 status: idea
 priority: p2
-effort: M
+effort: L
 risk: med
 area: plato
 sprint: 
 created: 2026-07-31
 closed:
-links: [plato-023, docs/plato-tir-scalar-lowering-plan-2026-07-12.md, writers/Plato.CSharpWriter/TirScalarLowerer.cs, docs/plato-execution-plan-2026-07-09.md]
+links: [plato-023, decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md, docs/plato-execution-plan-2026-07-09.md]
 ---
 
-Split from [plato-023](plato-023.md): plan step **S4** only. Float scalar lowering already ships.
+Split from [plato-023](plato-023.md): plan step **S4** only.
+
+> **Stale as written (2026-08-01).** This issue assumed `--scalar=double` would ride
+> `TirScalarLowerer` as a second `scalarMap`. Scalar erasure and that pass were retired
+> ([decision](../decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md)),
+> so there is no lowerer to parameterize and no `--scalar` flag to extend. The GOAL — double
+> precision for BIM / large-coordinate / robust-predicate work — is still wanted; the approach
+> has to be redesigned around wrapper scalars (e.g. `Number` backed by `double`, or a
+> precision-parameterized wrapper). Effort raised from M to L accordingly. Do not start from
+> the plan below without re-deriving it.
 
 ## Issue
 
-`--scalar=float` erasure runs as `TirScalarLowerer` with `FloatMap`. The plan’s S4 goal —
-`--scalar=double` as a second map plus double intrinsics and cross-precision conformance —
-was never landed. The lowerer is already parameterized by `scalarMap`; only float is wired.
+Double precision is not available. The former route to it (an erasure map) no longer exists.
 
 ## Impact
 

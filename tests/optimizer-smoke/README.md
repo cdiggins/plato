@@ -5,8 +5,10 @@ actually **compiles** the generated C#. Used while developing the optimizer TIR 
 
 ## The 2×2 matrix
 
-Two axes; the adoption **shape** (`--csharp-style=extensions --scalar=float` —
-native primitives, extension functions) is constant across all four:
+Two axes; the adoption **shape** (`--csharp-style=extensions` — wrapper scalars, extension
+functions) is constant across all four. It was `--scalar=float` until erasure was retired
+2026-08-01; the suite currently fails to build on one emitter defect, tracked as
+[`compiler-397`](../../tracker/issues/compiler-397.md):
 
 | project | subset | optimizer passes |
 |---|---|---|

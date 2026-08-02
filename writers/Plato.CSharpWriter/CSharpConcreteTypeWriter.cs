@@ -408,7 +408,6 @@ namespace Ara3D.Geometry.CSharpWriter
         //   - a bool Is<Case> predicate per case (the match lowering's branch condition);
         //   - structural Equals / NotEquals / GetHashCode / ToString over Kind + all flattened fields.
         // The ternary-chain ToString avoids the switch-expression CS8509 the design doc calls out.
-        // Case-field types erase under --scalar exactly as ordinary struct fields do.
         // ============================================================================
         public void WriteSumType(IReadOnlyList<Ara3D.Geometry.Compiler.Symbols.SumCaseField> flat)
         {

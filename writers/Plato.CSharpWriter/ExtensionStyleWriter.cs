@@ -88,9 +88,7 @@ public class ExtensionStylePlan
     // on any generated type.
     public HashSet<string> KeptNoArgPropertyNames { get; } = new HashSet<string>();
 
-    // Scalar erasure only (--scalar=float): every NO-ARG member-function name of this type.
-    // For the five scalar types these all become classic extension methods on the primitive,
-    // so call sites with provably scalar receivers must use "()" (CSharpWriter.ScalarMemberNames).
+    // Every NO-ARG member-function name of this type.
     public HashSet<string> NoArgMemberFunctionNames { get; } = new HashSet<string>();
 
     // Scalar erasure only: declared Plato signatures (parameter type names incl. receiver,

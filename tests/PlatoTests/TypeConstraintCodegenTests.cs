@@ -214,6 +214,40 @@ namespace Ara3D.Geometry
     }
 }";
 
+        /// <summary>Builds a generated struct from plain BCL values, wrapping each argument in the
+        /// scalar WRAPPER its constructor actually declares (Number/Integer/...). Since scalar
+        /// erasure was retired 2026-08-01 these constructors take Number, not float, and
+        /// Activator.CreateInstance does not apply the implicit conversion.</summary>
+        private static object New(System.Type t, params object[] args)
+        {
+            var ctor = t.GetConstructors().First(c => c.GetParameters().Length == args.Length);
+            var ps = ctor.GetParameters();
+            var converted = args
+                .Select((a, i) => ps[i].ParameterType.IsInstanceOfType(a)
+                    ? a
+                    : Activator.CreateInstance(ps[i].ParameterType, a))
+                .ToArray();
+            return ctor.Invoke(converted);
+        }
+        /// <summary>Invokes a generated method, wrapping plain BCL arguments in the scalar WRAPPER
+        /// the parameter declares, and unwrapping a wrapper result back to its payload.</summary>
+        private static object Call(System.Reflection.MethodInfo m, object receiver, params object[] args)
+        {
+            var ps = m.GetParameters();
+            var converted = args
+                .Select((a, i) => ps[i].ParameterType.IsInstanceOfType(a)
+                    ? a
+                    : Activator.CreateInstance(ps[i].ParameterType, a))
+                .ToArray();
+            return Unwrap(m.Invoke(receiver, converted));
+        }
+
+        /// <summary>Reads the payload out of a generated scalar wrapper returned via reflection.</summary>
+        private static object Unwrap(object v)
+        {
+            var f = v?.GetType().GetField("Value");
+            return f == null ? v : f.GetValue(v);
+        }
         private static Assembly CompileAndLoad(params string[] sources)
         {
             var trees = sources.Select(s => CSharpSyntaxTree.ParseText(s)).ToArray();
@@ -265,15 +299,15 @@ namespace Ara3D.Geometry
                 t.GetGenericParameterConstraints().Select(x => x.Name).ToArray());
             var tween = tweenOpen.MakeGenericType(point);
 
-            var from = Activator.CreateInstance(point, 1f, 2f);
-            var to = Activator.CreateInstance(point, 3f, 4f);
-            var value = Activator.CreateInstance(tween, from, to);
+            var from = New(point, 1f, 2f);
+            var to = New(point, 3f, 4f);
+            var value = New(tween, from, to);
 
             // Sample's body really runs (the fixture's Lerp returns b), which it could not do while
             // the body was a throwing stub.
-            var sampled = tween.GetMethod("Sample").Invoke(value, new object[] { 0.5f });
-            Assert.AreEqual(3f, point.GetField("X").GetValue(sampled));
-            Assert.AreEqual(4f, point.GetField("Y").GetValue(sampled));
+            var sampled = Call(tween.GetMethod("Sample"), value, 0.5f);
+            Assert.AreEqual(3f, Unwrap(point.GetField("X").GetValue(sampled)));
+            Assert.AreEqual(4f, Unwrap(point.GetField("Y").GetValue(sampled)));
         }
     }
 }

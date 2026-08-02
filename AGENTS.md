@@ -76,7 +76,7 @@ the writer code).
 - `src/Plato.CLI/` — entry point. `Program.cs` args: `[input] [output] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--scalar=...] [--loops]` and `lint <folder> [--strict]`. Exits 1 on parse/compile failure (fixed 2026-07-10). The legacy default C# style and `--no-tir` were retired at C4 (the TIR is the sole body writer); `--methods` / `--no-properties` were retired at `compiler-387` (property-free emission is unconditional). `--inline` is wired for the C# writer today; GLSL/C++/CUDA skip lambdas until that lowering is shared.
 - `src/Plato.Compiler/` — compilation + `Analysis/Linter.cs` (LINT001–005) + `Checking/` (the type checker + Typed IR: Normalize → Constrain → Solve → Elaborate → Monomorphize; handoff doc `docs/type-checker-handoff.md`).
 - `src/Plato.AST/` — the old associativity bug was FIXED in `392dfa8` (2026-07-09); [`docs/archive/plato-assoc-bug-diagnosis.md`](docs/archive/plato-assoc-bug-diagnosis.md) is historical.
-- `writers/Plato.CSharpWriter/` — `CSharpWriter.cs` (flags: `ExtensionStyle`, `Optimize`, `ScalarErase`, `NoProperties`), `TirCSharpBodyWriter.cs` (the SOLE C# body writer — every function body renders from the monomorphized Typed IR; the legacy `CSharpFunctionBodyWriter` was deleted at C4), `ExtensionStyleWriter.cs` (classic extension methods, one static class per Plato library; moved no-arg fns are METHODS `v.Magnitude()`), `TirScalarLowerer.cs` (`--scalar=float` erasure as a TIR lowering pass — it replaced the emit-time `ScalarEraseAnalysis`, deleted at S3), `ComponentUnroller.cs` (`--optimize` field-wise unrolling table).
+- `writers/Plato.CSharpWriter/` — `CSharpWriter.cs` (flags: `ExtensionStyle`, `Optimize`, `OptimizeArrays`, `InlineCalls`, `LowerLoops`, `StaticAbstract`), `TirCSharpBodyWriter.cs` (the SOLE C# body writer — every function body renders from the monomorphized Typed IR; the legacy `CSharpFunctionBodyWriter` was deleted at C4), `ExtensionStyleWriter.cs` (classic extension methods, one static class per Plato library; moved no-arg fns are METHODS `v.Magnitude()`), `ComponentUnroller.cs` (`--optimize` field-wise unrolling table). Scalar erasure (`--scalar=float`, `ScalarErase`, `TirScalarLowerer`) was retired 2026-08-01 — wrapper scalars are the only representation.
 - `writers/Plato.GlslWriter/` / `writers/Plato.CppWriter/` — TIR-only POC backends (GLSL ES 3.00; C++17 / CUDA with shared bodies + dialect preamble). Compile-gated by their `*.Tests` projects; not in `Ara3D.Studio.sln`. See each project's `README.md`.
 - `src/Plato.Intrinsics/` — **the** handwritten C# runtime (System.Numerics-backed, method-form), shared-project form, imported by `generated/` and the smoke/experiment projects. The old V1 runtime (`Plato.Intrinsics.Legacy`) and its freeze were deleted 2026-07-31; the copies still living in `ara3d-sdk` belong to that repo and are not this repo's concern.
 - ~~`tests/conformance/Ara3D.SDK.ConformanceTests/`~~ — **RETIRED 2026-07-30** together with the golden
@@ -173,8 +173,13 @@ The ones agents most often rediscover the hard way:
   and `--no-properties` flags were retired at `compiler-387` (2026-08-01) along with the
   `CSharpWriter.NoProperties` field — passing either is now an unrecognised argument. Decision:
   [`tracker/decisions/2026-08-01-property-free-emission-is-unconditional.md`](tracker/decisions/2026-08-01-property-free-emission-is-unconditional.md).
-  Property-vs-method spelling is now independent of `--scalar=float`, which had been its
-  precondition. Recipe per artifact: `docs/plato-library-map.md`.
+  Property-vs-method spelling was independent of scalar representation before erasure itself
+  went. Recipe per artifact: `docs/plato-library-map.md`.
+- **Scalars are always WRAPPER structs** (2026-08-01). `Number` / `Integer` / `Boolean` /
+  `Character` / `String` stay distinct types; `--scalar=<anything>` is now a hard CLI error.
+  Erasure to native primitives, and the `TirScalarLowerer` pass that implemented it, are gone.
+  Decision + rationale:
+  [`tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md`](tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md).
 - **Intrinsics may mention only `primitive` types** (2026-07-30). A bodiless signature is legal
   only inside `stdlib/foundation/intrinsics.library.plato` and only over the set declared with
   the `primitive` keyword in `stdlib/foundation/primitives.plato`. Operations on `Angle`,

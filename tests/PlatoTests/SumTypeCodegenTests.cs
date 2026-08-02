@@ -70,6 +70,15 @@ namespace Ara3D.Geometry
     public struct Angle { }
 }";
 
+        /// <summary>Reads the payload out of a generated scalar WRAPPER (Boolean/Integer/Number/...)
+        /// returned through reflection, so assertions compare against plain BCL values. Needed since
+        /// scalar erasure was retired 2026-08-01: these members used to return bool/int directly.</summary>
+        private static object Unwrap(object v)
+        {
+            var f = v?.GetType().GetField("Value");
+            return f == null ? v : f.GetValue(v);
+        }
+
         private static Assembly CompileAndLoad(params string[] sources)
         {
             var trees = sources.Select(s => CSharpSyntaxTree.ParseText(s)).ToArray();
@@ -117,7 +126,7 @@ namespace Ara3D.Geometry
             Assert.That(src, Does.Contain("private FillRule(int kind)"));
             // The match function lowered to a predicate ternary (no default/throw fall-through).
             var lib = Emit("fillrule.plato").Files["FillRules.g.cs"].ToString();
-            Assert.That(lib, Does.Contain("IsEvenOdd(this FillRule r) => r.IsNonZero() ? false : true"));
+            Assert.That(lib, Does.Contain("IsEvenOdd(this FillRule r) => r.IsNonZero() ? ((Boolean)false) : ((Boolean)true)"));
         }
 
         [Test]
@@ -132,7 +141,7 @@ namespace Ara3D.Geometry
             // Flattened per-case fields, disambiguated by the Case_ prefix.
             Assert.That(src, Does.Contain("public readonly Point2D Quadratic_Control"));
             Assert.That(src, Does.Contain("public readonly Point2D Quadratic_EndPoint"));
-            Assert.That(src, Does.Contain("public readonly bool Arc_LargeArc"));
+            Assert.That(src, Does.Contain("public readonly Boolean Arc_LargeArc"));
             // Per-case factory that defaults the inactive fields.
             Assert.That(src, Does.Contain("public static PathSegment2D Move(Point2D endPoint) => new PathSegment2D(Kind_Move, endPoint, default"));
             Assert.That(src, Does.Contain("public static PathSegment2D Close() => new PathSegment2D(Kind_Close, default"));
@@ -162,12 +171,12 @@ namespace Ara3D.Geometry
             var isEvenOdd = lib.GetMethod("IsEvenOdd");
 
             // The match: NonZero => false, EvenOdd => true.
-            Assert.AreEqual(false, isEvenOdd.Invoke(null, new[] { nonZero }));
-            Assert.AreEqual(true, isEvenOdd.Invoke(null, new[] { evenOdd }));
+            Assert.AreEqual(false, Unwrap(isEvenOdd.Invoke(null, new[] { nonZero })));
+            Assert.AreEqual(true, Unwrap(isEvenOdd.Invoke(null, new[] { evenOdd })));
 
             // Tag + predicate + ToString.
             Assert.AreEqual(0, fillRule.GetField("Kind").GetValue(nonZero));
-            Assert.AreEqual(true, fillRule.GetMethod("IsNonZero").Invoke(nonZero, null));
+            Assert.AreEqual(true, Unwrap(fillRule.GetMethod("IsNonZero").Invoke(nonZero, null)));
             Assert.AreEqual("NonZero", nonZero.ToString());
             Assert.AreEqual("EvenOdd", evenOdd.ToString());
         }
@@ -207,10 +216,10 @@ namespace Ara3D.Geometry
 
             // A second match over the same sum (integer arms).
             var cpc = lib.GetMethod("ControlPointCount");
-            Assert.AreEqual(0, cpc.Invoke(null, new[] { move }));
-            Assert.AreEqual(1, cpc.Invoke(null, new[] { quad }));
-            Assert.AreEqual(2, cpc.Invoke(null, new[] { cubic }));
-            Assert.AreEqual(0, cpc.Invoke(null, new[] { close }));
+            Assert.AreEqual(0, Unwrap(cpc.Invoke(null, new[] { move })));
+            Assert.AreEqual(1, Unwrap(cpc.Invoke(null, new[] { quad })));
+            Assert.AreEqual(2, Unwrap(cpc.Invoke(null, new[] { cubic })));
+            Assert.AreEqual(0, Unwrap(cpc.Invoke(null, new[] { close })));
 
             // The qualified case constructor (Pen) builds a Move segment.
             var pen = lib.GetMethod("Pen").Invoke(null, new[] { Point(1, 1) });

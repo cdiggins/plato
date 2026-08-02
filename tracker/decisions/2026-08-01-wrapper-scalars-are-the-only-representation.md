@@ -74,12 +74,19 @@ the same bytes without an emitter mode.
 
 ## Consequences
 
-- **Scalar lowering and component unrolling are gated on erasure today.** `TirScalarLowerer`,
-  `ComponentUnroller`, and `TirComponentUnroller` all branch on `ScalarErase`, and
-  `CSharpWriter`'s lowering predicate requires it. Removing erasure therefore removes those
-  optimizer passes as they are currently written. Either they are re-expressed over wrapper
-  scalars, or the optimized recipe loses them. **This is not a mechanical deletion and must not be
-  treated as one.**
+- **Scalar lowering is gone; component unrolling survived.** This was the open risk when the
+  decision was taken, and it resolved better than feared. `TirScalarLowerer` existed only to
+  rewrite wrapper types into primitives, so it went with erasure and `RunOptimizerPasses` now
+  runs four unconditional passes instead of five. `ComponentUnroller` / `TirComponentUnroller`
+  turned out to branch on `ScalarErase` only to choose a CAST direction, not to decide whether to
+  unroll — dropping that branch left field-wise unrolling fully intact, and its tests pass
+  unchanged. The optimizer therefore keeps `--optimize`, `--optimize-arrays`, `--inline` and
+  `--loops`; only the erasure-specific lowering, which had no consumer left once the erased
+  generated projects were retired, is lost.
+- **The change is behaviour-preserving for the live target.** `stdlib/foundation` regenerates
+  byte-identically (301 files, ignoring the timestamp header) against the output committed before
+  the deletion, and the full unit suite passes. Every erasure branch really was dead code on the
+  shipping recipe.
 - **The erased generated projects go with it.** `Plato.Generated.Unoptimized` and
   `Plato.Generated.Optimized` name `scalar=float` in their recipes. Retiring the flag retires
   those projects; they were already emptied against the retired V1 runtime.
