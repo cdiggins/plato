@@ -42,7 +42,23 @@ Cheaper interim guard: have `apply` run the type gate afterwards and report
 (or revert) the edits that introduced diagnostics, so the tool cannot leave the
 corpus red.
 
+## Resolution
+
+`Simplifier.Results` replaced `Simplifier.Tails`: the result expressions are now
+the whole body of an expression-bodied function and the operand of a tail
+`return`, and nothing else. `AstMatch` and `AstConditional` yield nothing, so a
+constructor call in a branch is never proposed.
+
+The interim guard was NOT implemented, and is now unnecessary. `Simplifier.Apply`
+is a pure text function with no compilation in reach, and the navigation layer
+runs the binder, not the type checker — a post-apply resolve would not have seen
+CHK101 at all, since the six errors were unification failures, not unresolved
+names. The corpus regression test
+(`SimplifierCorpusTests.ConstructorNamesAreOnlyDroppedInResultPosition`) checks
+the property directly instead: no SIM001 edit anywhere in the shipping tiers may
+land inside a match arm or a conditional branch.
+
 ## Done means
 
-- [ ] SIM001 does not fire outside result position
-- [ ] The three sites above stay simplified-or-untouched with `plato_check gates: "types"` clean
+- [x] SIM001 does not fire outside result position
+- [x] The three sites above stay simplified-or-untouched with `plato_check gates: "types"` clean

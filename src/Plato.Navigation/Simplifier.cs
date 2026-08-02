@@ -8,11 +8,15 @@ namespace Ara3D.Geometry.Navigation;
 /// apply them. Runs on <see cref="ParsedFile"/> (AST for the shape, text for the slice), so like
 /// <see cref="StyleChecker"/> it needs no <c>Compilation</c>.
 ///
-///   SIM001 - a constructor call naming the type it is already known to produce. In a return
-///            position of a function declared to return `T`, `T(a, b)` and `(a, b)` denote the same
-///            value; the name is carried by the signature. Only fires when the argument count
-///            equals the field count of a concrete `T` in the corpus, so a same-named conversion
-///            overload is never mistaken for the field-wise constructor.
+///   SIM001 - a constructor call naming the type it is already known to produce. Fires ONLY in
+///            RESULT position — the whole body of an expression-bodied function, or the operand of
+///            a tail `return` — because that is the only place the declared return type is what the
+///            expression is checked against, so `T(a, b)` and `(a, b)` denote the same value. In a
+///            match arm, a conditional branch, an argument or a `var` initializer the tuple is
+///            unified with its siblings instead, and a bare `TupleN` does not unify with the named
+///            type they carry (plato-404). Also requires the argument count to equal the field count
+///            of a concrete `T` in the corpus, so a same-named conversion overload is never mistaken
+///            for the field-wise constructor.
 ///   SIM002 - an expression that re-spells a constant the vocabulary already names. Any occurrence
 ///            of a literal constructor call that is the whole body of a `Name(_: T): T` constant
 ///            (`Vector2D.UnitX`) becomes that constant. The constants' own bodies are excluded, so
@@ -88,9 +92,9 @@ public static class Simplifier
             if (returns == null || !arity.TryGetValue(returns, out var fields) || fields < 2)
                 continue;
 
-            foreach (var tail in Tails(method.Body))
+            foreach (var result in Results(method.Body))
             {
-                var call = CallAt(text, tail);
+                var call = CallAt(text, result);
                 if (call == null || call.Value.Name != returns || call.Value.ArgCount != fields)
                     continue;
                 if (IsFrozen(frozen, call.Value) || !claimed.Add((call.Value.Begin, call.Value.End)))
@@ -116,30 +120,30 @@ public static class Simplifier
         => new(path, LineOf(text, call.Begin), ColumnOf(text, call.Begin), code, message,
             call.Begin, call.End, call.Text, after);
 
-    /// <summary>The expressions a function's value can come out of: the body, and recursively the
-    /// arms of a match and the branches of a conditional. Each is judged against the declared
-    /// return type, which is what makes dropping a constructor name safe there and nowhere else.</summary>
-    private static IEnumerable<AstNode> Tails(AstNode? node)
+    /// <summary>The expressions that ARE a function's result, and nothing else: the whole body of an
+    /// expression-bodied function and the operand of a tail `return`. Only there is the expression
+    /// checked against the declared return type, which is what makes dropping a constructor name
+    /// safe (plato-404); a match arm or a conditional branch is unified with its siblings, so a bare
+    /// tuple there stops unifying with the named type the other branches carry.</summary>
+    private static IEnumerable<AstNode> Results(AstNode? node)
     {
         switch (node)
         {
             case null:
                 yield break;
             case AstParenthesized p:
-                foreach (var n in Tails(p.Inner)) yield return n;
-                break;
-            case AstMatch m:
-                foreach (var n in m.Arms.SelectMany(a => Tails(a.Body))) yield return n;
-                break;
-            case AstConditional c:
-                foreach (var n in Tails(c.IfTrue).Concat(Tails(c.IfFalse))) yield return n;
+                foreach (var n in Results(p.Inner)) yield return n;
                 break;
             case AstBlock b when b.Statements.Count > 0:
-                foreach (var n in Tails(b.Statements[^1])) yield return n;
+                foreach (var n in Results(b.Statements[^1])) yield return n;
                 break;
             case AstReturn r:
-                foreach (var n in Tails(r.Value)) yield return n;
+                foreach (var n in Results(r.Value)) yield return n;
                 break;
+            case AstBlock:
+            case AstMatch:
+            case AstConditional:
+                yield break;
             default:
                 yield return node;
                 break;

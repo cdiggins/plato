@@ -6,7 +6,8 @@ namespace Plato.Navigation.Tests;
 
 /// <summary>Each SIM rule proven on a minimal in-memory corpus, plus the negative cases that make
 /// the rules safe: a conversion overload with the wrong arity, a constant's own body, a scalar
-/// constant that must not be matched everywhere.</summary>
+/// constant that must not be matched everywhere, and — the plato-404 regression — a constructor call
+/// that is a branch rather than the result.</summary>
 [TestFixture]
 public static class SimplifierTests
 {
@@ -43,7 +44,42 @@ public static class SimplifierTests
         => Simplifier.Apply(text, CheckWithLibrary(text));
 
     [Test]
-    public static void ConstructorNameDropsInReturnPosition()
+    public static void ConstructorNameDropsInResultPosition()
+    {
+        var text = """
+            library Axes2D
+            {
+                Point2D(self: Axis2D): Point2D
+                    => Point2D(0.0, 0.0);
+            }
+            """;
+        var edits = CheckWithLibrary(text);
+        Assert.That(edits.Select(e => e.Code), Is.EqualTo(new[] { "SIM001" }));
+        Assert.That(Simplify(text), Does.Contain("=> (0.0, 0.0);"));
+    }
+
+    [Test]
+    public static void ConstructorNameDropsInReturnStatement()
+    {
+        var text = """
+            library Axes2D
+            {
+                Shifted(p: Point2D): Point2D
+                {
+                    var dx = 1.0;
+                    return Point2D(p.X + dx, p.Y);
+                }
+            }
+            """;
+        var edits = CheckWithLibrary(text);
+        Assert.That(edits.Select(e => e.Code), Is.EqualTo(new[] { "SIM001" }));
+        Assert.That(Simplify(text), Does.Contain("return (p.X + dx, p.Y);"));
+    }
+
+    /// <summary>plato-404: a match arm is unified with its sibling arms, not with the declared
+    /// return type, so a bare tuple there stops unifying with the named type the others carry.</summary>
+    [Test]
+    public static void ConstructorNameStaysInMatchArms()
     {
         var text = """
             library Axes2D
@@ -55,9 +91,35 @@ public static class SimplifierTests
                     };
             }
             """;
-        var edits = CheckWithLibrary(text);
-        Assert.That(edits.Select(e => e.Code), Is.EqualTo(new[] { "SIM001", "SIM001" }));
-        Assert.That(Simplify(text), Does.Contain("X => (1.0, 0.0);").And.Contain("Y => (0.0, 1.0);"));
+        Assert.That(CheckWithLibrary(text), Is.Empty, "a match arm has no declared type to fall back on");
+    }
+
+    /// <summary>plato-404, the `ColorAtParameter` / `CanonicalAxis` shape: the branches of a
+    /// conditional unify with each other first.</summary>
+    [Test]
+    public static void ConstructorNameStaysInConditionalBranches()
+    {
+        var text = """
+            library Axes2D
+            {
+                Fallback(p: Point2D, empty: Boolean): Point2D
+                    => empty ? Point2D(0.0, 0.0) : p;
+            }
+            """;
+        Assert.That(CheckWithLibrary(text), Is.Empty, "a conditional branch has no declared type to fall back on");
+    }
+
+    [Test]
+    public static void ConstructorNameStaysInArgumentPosition()
+    {
+        var text = """
+            library Axes2D
+            {
+                Shifted(p: Point2D): Point2D
+                    => p.Translate(Point2D(2.0, 3.0));
+            }
+            """;
+        Assert.That(CheckWithLibrary(text), Is.Empty, "an argument is checked against the parameter, not the result");
     }
 
     [Test]
