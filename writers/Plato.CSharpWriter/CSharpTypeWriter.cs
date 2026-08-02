@@ -453,16 +453,16 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         {
             if (f.OwnerType.Name == f.Name)
                 Debug.WriteLine("Skipping implicit cast to self");
+            // The OWNER type already emits this exact conversion as its single-field unwrap
+            // (`implicit operator Number(Angle)` in _Angle.g.cs, from Angle's lone `Radians:
+            // Number`); a second copy here would make every Angle -> Number conversion
+            // ambiguous (CS0457).
             else if (f.OwnerType.Fields.Count == 1 && f.OwnerType.Fields[0].Type.Def.Name == f.Name)
                 Debug.WriteLine("Skipping implicit cast to single field (already included)");
-            // The TARGET type already emits this exact conversion from its single field
-            // (`implicit operator Angle(Number)` in _Angle.g.cs, from Angle's lone `Radians:
-            // Number`). Emitting the mirror image here as well makes every Number -> Angle
-            // conversion ambiguous (CS0457).
-            else if (f.Function.ReturnType?.Def is { } target
-                     && target.Fields.Count == 1
-                     && target.Fields[0].Type?.Def?.Name == f.OwnerType.Name)
-                Debug.WriteLine("Skipping implicit cast already emitted by the target type");
+            // compiler-399: the WRAP direction used to be skipped here too, because the target
+            // type minted it from its own shape. It no longer does, so a conversion DECLARED in
+            // Plato (`Angle(x: Number): Angle` in angles.library.plato) is the only thing that can
+            // produce `implicit operator Angle(Number)`, and it has to be emitted.
             else
                 WriteLine(f.ImplicitImpl);
         }

@@ -84,10 +84,21 @@ stdlib defines is listed there, so a conversion nobody meant to create fails the
 test instead of shipping. Update the golden deliberately, in the commit that
 earns the new casts.
 
-That pin covers conversions **declared in Plato**. The C# writer additionally
-mints an implicit operator in both directions between any single-field type and
-its field's type, which no Plato declaration mentions and the pin does not see —
-tracked as `compiler-399`.
+**A wrapper is built, never coerced into.** The C# writer mints one conversion
+from a type's shape rather than from any declaration: a single-field type
+UNWRAPS implicitly to its field's type. It does not wrap. Nothing coerces a
+`Number` into a `Length`, an `Integer` into a `VertexIndex`, or a `Vector2D`
+into a `Direction2D` — those constructions assert an invariant the source value
+was never checked against, so they stay visible as `new T(f)` or as a named
+function (`FromVector` normalizes, `FromVectorUnchecked` asserts). The language
+agrees: a one-field type's wrap is a constructor, not a cast relation. Decision:
+[`tracker/decisions/2026-08-02-single-field-mirror-unwraps-only.md`](../tracker/decisions/2026-08-02-single-field-mirror-unwraps-only.md).
+
+The cast-inventory pin above covers conversions **declared in Plato**. What the
+writer actually emits — the declared ones plus that shape-derived unwrap — has
+its own pin, `tests/PlatoTests/EmittedConversionInventoryTests.cs` (golden
+`tests/PlatoTests/emitted-conversion-inventory.txt`). A wrap re-appearing fails
+it.
 
 **Families already decided.** Implicit, because each is a re-encoding: the
 transform representations onto their common ground, and every field / SDF onto

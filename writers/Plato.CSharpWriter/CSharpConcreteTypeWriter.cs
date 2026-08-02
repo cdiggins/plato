@@ -148,35 +148,45 @@ namespace Ara3D.Geometry.CSharpWriter
             }
             else if (FieldNames.Count == 1)
             {
-                TypeWriter.WriteLine("// Implicit converters to/from single field");
+                TypeWriter.WriteLine("// Implicit converter to the single field (unwrap only)");
                 var fieldName = FieldNames[0];
                 var fieldType = FieldTypes[0];
 
-                // Only implicit operators if the field type does not render as a C# interface
-                // (user-defined conversions to/from an interface are illegal, CS0552). The
-                // IsInterface check covers interface-typed fields; the IReadOnlyList check covers
-                // the concrete Array/Array2D/Array3D types, which render as list interfaces.
+                // compiler-399: the mirror runs ONE WAY. Reading the payload out of a wrapper
+                // loses nothing — the value really is that payload — so unwrapping stays implicit.
+                // WRAPPING is not emitted at all. It would assert an invariant the source value
+                // was never checked against: a bare Number becoming a Length erases the unit, an
+                // Integer becoming a VertexIndex erases the typed-index discipline
+                // (stdlib/CONVENTIONS.md, "Typed indices"), and a Vector2D becoming a Direction2D
+                // erases normalization — which the library deliberately spells FromVector /
+                // FromVectorUnchecked so the reader sees which door was taken.
                 //
-                // plato-308: a PRIMITIVE-backed type (a handwritten Plato.Intrinsics struct, e.g.
-                // Angle) declares its own field-type and Number conversions, so generating those
-                // here duplicates them (CS0557). Skip exactly that pair for primitives â€” the
-                // Integer/int bridges below are NOT handwritten and stay generated. Legacy stdlib
-                // declares its primitives with zero fields, so this branch never runs there.
+                // Nothing in the LANGUAGE has this conversion either: SymbolFactory synthesizes
+                // only the unwrap cast for a one-field type, and the wrap is a constructor call.
+                // Emitting it here made the C# coerce where Plato does not. A wrapper is now built
+                // by `new T(f)`, or by a conversion DECLARED in Plato (a one-parameter function
+                // named after its return type) — those still emit an implicit operator, and are
+                // pinned by tests/PlatoTests/ImplicitCastInventoryTests.cs.
+                //
+                // Emission is still skipped when the field type renders as a C# interface
+                // (user-defined conversions to/from an interface are illegal, CS0552): the
+                // IsInterface check covers interface-typed fields, the IReadOnlyList check covers
+                // the concrete Array/Array2D/Array3D types, which render as list interfaces.
+                // plato-308: a PRIMITIVE-backed type (a handwritten Plato.Intrinsics struct)
+                // declares its own field-type conversion, so generating it here duplicates it
+                // (CS0557). Legacy stdlib declares its primitives with zero fields, so that arm
+                // never runs there.
                 if (!IsPrimitive
                     && !ConcreteType.TypeDef.Fields[0].Type.Def.IsInterface()
                     && !fieldType.StartsWith("IReadOnlyList"))
                 {
                     TypeWriter.WriteLine($"{Attr} public static implicit operator {fieldType}({Name} self) => self.{fieldName};");
-                    TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}({fieldType} value) => new {Name}(value);");
                 }
 
-                // Any time that we are implicitly casting to/from Number (floating point)
-                // We can also cast from Plato.Integers and built-in integers, as well to/from built-in floating types
+                // A Number payload also unwraps straight to the built-in floating type, saving
+                // callers a second hop. Same one-way rule: no inbound bridge from float/int.
                 if (fieldType == "Number")
                 {
-                    TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}(Integer value) => new {Name}(value);");
-                    TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}(int value) => new Integer(value);");
-                    TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}({floatType} value) => new Number(value);");
                     TypeWriter.WriteLine($"{Attr} public static implicit operator {floatType}({Name} value) => value.{fieldName};");
                 }
                 TypeWriter.WriteLine();

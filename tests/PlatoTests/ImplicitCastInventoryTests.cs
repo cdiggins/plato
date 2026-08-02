@@ -27,10 +27,18 @@ namespace PlatoTests
     /// that is linted and converted to C#. <c>stdlib/future</c> is deliberately out: it is
     /// aspirational, it emits nothing, and its churn would make this golden noise.
     ///
-    /// NOT covered: the C# writer's single-field mirror, which emits an implicit operator both
-    /// ways between a one-field type and its field's type. Those come from the type's shape, not
-    /// from any Plato declaration, so they are in no cast relation and in no line below
-    /// (tracked as compiler-399).
+    /// NOT covered: conversions the C# WRITER mints from a type's shape rather than from a
+    /// declaration — today that is exactly the single-field unwrap (<c>implicit operator
+    /// Number(Length)</c>) and the value-tuple converters. They are in no cast relation and so in
+    /// no line below. Their pin is the sibling fixture
+    /// <see cref="EmittedConversionInventoryTests"/>, which reads the emitted text instead of the
+    /// relation set; between the two, every conversion in the shipped C# is accounted for.
+    ///
+    /// The matching WRAP direction is not emitted at all, and that is deliberate: a wrapper is
+    /// constructed, not coerced into (compiler-399, decision
+    /// <c>tracker/decisions/2026-08-02-single-field-mirror-unwraps-only.md</c>). A conversion INTO
+    /// a one-field type therefore has to be declared in Plato like any other, which means it lands
+    /// in this golden where it can be reviewed.
     ///
     /// The rule these conversions must satisfy is in <c>stdlib/CONVENTIONS.md</c>, section
     /// "Conversions": a type-named conversion must be faithful — same mathematical object, no
