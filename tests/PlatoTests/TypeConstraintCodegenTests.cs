@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,7 +11,7 @@ using PlatoCompilation = Ara3D.Geometry.Compiler.Compilation;
 namespace PlatoTests
 {
     /// <summary>
-    /// Codegen gate for DECLARED TYPE-PARAMETER BOUNDS (plato-382, phase C) — the phase that carries
+    /// Codegen gate for DECLARED TYPE-PARAMETER BOUNDS (plato-382, phase C) â€” the phase that carries
     /// `type Tween&lt;T&gt; where T: Interpolatable` into the generated C#. Three things are under
     /// test, all from one in-test fixture rather than the stdlib (no shipping declaration carries a
     /// bound yet):
@@ -30,7 +30,7 @@ namespace PlatoTests
     {
         // A bounded generic type whose member operates ON its parameter (Sample -> Lerp on a bare
         // T), plus a library function over a NON-generic receiver that mentions Tween<$T> in a
-        // later parameter — that one keeps `$T` as its OWN C# type parameter, so it is where the
+        // later parameter â€” that one keeps `$T` as its OWN C# type parameter, so it is where the
         // function-level `where` clause has to appear.
         private const string Source = @"
 type Number { }
@@ -60,7 +60,7 @@ type Timeline
     Name: Boolean;
 }
 
-// Generic but UNBOUNDED: the control case — nothing about its emission may change.
+// Generic but UNBOUNDED: the control case â€” nothing about its emission may change.
 type Crate<T>
 {
     Item: T;
@@ -90,7 +90,7 @@ library Tweens
         private const string SumSource = Source + @"
 // A bounded generic sum. CHK306 rejects generic sums today (plato-079 is the lift), but the sum
 // writer takes its `where` clauses from the same TypeParameterDef.Constraints the product writer
-// does, and nothing about bounds is record-specific — this pins that, so lifting CHK306 does not
+// does, and nothing about bounds is record-specific â€” this pins that, so lifting CHK306 does not
 // have to rediscover whether bounds survive the sum path.
 type Blend<T>
     where T: Interpolatable
@@ -110,7 +110,6 @@ type Blend<T>
                 var w = new CSharpWriter(comp, "unused-bounds-codegen")
                 {
                     ExtensionStyle = true,
-                    ScalarErase = true,
                 };
                 w.WriteAll("float");
                 return w;
@@ -151,7 +150,7 @@ type Blend<T>
         [Test]
         public static void ABoundedGenericSum_EmitsTheWhereClauseThroughTheSumPath()
         {
-            // Groundwork for plato-079 only — this does NOT lift CHK306, which still rejects a
+            // Groundwork for plato-079 only â€” this does NOT lift CHK306, which still rejects a
             // generic sum in the checker. What it proves is that when CHK306 is lifted the emitter
             // is already correct: the sum struct carries the declared bound, so a case payload of
             // type T can be operated on exactly as a product field can.
@@ -166,7 +165,7 @@ type Blend<T>
         public static void ALibraryFunctionInheritingABound_EmitsTheWhereClauseOnTheMethod()
         {
             // SampleAt's receiver (Timeline) is not generic, so extension style moves it into the
-            // library's static class and `$T` stays the FUNCTION's own type parameter — the case
+            // library's static class and `$T` stays the FUNCTION's own type parameter â€” the case
             // where the clause has to be on the method rather than on a struct.
             var src = File_(Emit(), "Tweens.g.cs");
             var line = src.Split('\n').FirstOrDefault(l => l.Contains("SampleAt"));
@@ -221,6 +220,13 @@ namespace Ara3D.Geometry
             var refs = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"))
                 .Split(Path.PathSeparator)
                 .Where(p => !string.IsNullOrEmpty(p) && System.IO.File.Exists(p))
+                // The stale Ara3D.Geometry PACKAGE also declares Ara3D.Geometry.Number/Boolean/...,
+                // and so does this test assembly (it compiles src/Plato.Intrinsics in as a shared
+                // project). Referencing both is CS0433 for every wrapper scalar the emitted code
+                // names. Drop the package: the current runtime is the one the generated projects
+                // actually compile against. (Invisible before 2026-08-01, when erasure meant the
+                // emitted code said float/bool and never named a wrapper.)
+                .Where(p => !string.Equals(System.IO.Path.GetFileName(p), "Ara3D.Geometry.dll", System.StringComparison.OrdinalIgnoreCase))
                 .Select(p => (MetadataReference)MetadataReference.CreateFromFile(p))
                 .ToList();
             var comp = CSharpCompilation.Create(

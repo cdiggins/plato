@@ -80,7 +80,6 @@ library Quantities
                 var w = new CSharpWriter(CheckerTestSupport.CompileFolder(dir), "unused-recv-render")
                 {
                     ExtensionStyle = true,
-                    ScalarErase = true,
                 };
                 w.WriteAll("float");
                 foreach (var kv in w.Files)

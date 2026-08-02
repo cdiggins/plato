@@ -24,7 +24,6 @@ namespace PlatoTests
             var w = new CSharpWriter(CheckerTestSupport.CompileStdLib(), "unused-component-unroller")
             {
                 ExtensionStyle = true,
-                ScalarErase = true,
                 Optimize = optimize,
                 OptimizeArrays = true,
                 InlineCalls = true,
@@ -43,19 +42,19 @@ namespace PlatoTests
             return matches[0].Trim();
         }
 
-        [TestCase("Integer2 ZipComponents(this Integer2 a, Integer2 b, System.Func<int, int, int> f)",
+        [TestCase("Integer2 ZipComponents(this Integer2 a, Integer2 b, System.Func<Integer, Integer, Integer> f)",
             "new Ara3D.Geometry.Integer2(f.Invoke(a.A, b.A), f.Invoke(a.B, b.B))")]
-        [TestCase("Integer2 ZipComponents(this Integer2 a, Integer2 b, Integer2 c, System.Func<int, int, int, int> f)",
+        [TestCase("Integer2 ZipComponents(this Integer2 a, Integer2 b, Integer2 c, System.Func<Integer, Integer, Integer, Integer> f)",
             "new Ara3D.Geometry.Integer2(f.Invoke(a.A, b.A, c.A), f.Invoke(a.B, b.B, c.B))")]
-        [TestCase("Integer2 MapComponents(this Integer2 x, System.Func<int, int> f)",
+        [TestCase("Integer2 MapComponents(this Integer2 x, System.Func<Integer, Integer> f)",
             "new Ara3D.Geometry.Integer2(f.Invoke(x.A), f.Invoke(x.B))")]
-        [TestCase("bool AllZipComponents(this Integer2 a, Integer2 b, System.Func<int, int, bool> f)",
+        [TestCase("Boolean AllZipComponents(this Integer2 a, Integer2 b, System.Func<Integer, Integer, Boolean> f)",
             "f.Invoke(a.A, b.A) && f.Invoke(a.B, b.B)")]
-        [TestCase("bool AnyZipComponents(this Integer2 a, Integer2 b, System.Func<int, int, bool> f)",
+        [TestCase("Boolean AnyZipComponents(this Integer2 a, Integer2 b, System.Func<Integer, Integer, Boolean> f)",
             "f.Invoke(a.A, b.A) || f.Invoke(a.B, b.B)")]
-        [TestCase("bool AllComponents(this Integer2 x, System.Func<int, bool> predicate)",
+        [TestCase("Boolean AllComponents(this Integer2 x, System.Func<Integer, Boolean> predicate)",
             "predicate.Invoke(x.A) && predicate.Invoke(x.B)")]
-        [TestCase("bool AnyComponent(this Integer2 x, System.Func<int, bool> predicate)",
+        [TestCase("Boolean AnyComponent(this Integer2 x, System.Func<Integer, Boolean> predicate)",
             "predicate.Invoke(x.A) || predicate.Invoke(x.B)")]
         [TestCase("Integer2 Reverse(this Integer2 xs)",
             "new Ara3D.Geometry.Integer2(xs.B, xs.A)")]
@@ -70,7 +69,7 @@ namespace PlatoTests
         public static void ThreeComponentBodiesFanOutAllFields()
         {
             var line = ExtractLine(Optimized, "ArrayLibrary.g.cs",
-                "Integer3 ZipComponents(this Integer3 a, Integer3 b, System.Func<int, int, int> f)");
+                "Integer3 ZipComponents(this Integer3 a, Integer3 b, System.Func<Integer, Integer, Integer> f)");
             StringAssert.Contains("new Ara3D.Geometry.Integer3(f.Invoke(a.A, b.A), f.Invoke(a.B, b.B), f.Invoke(a.C, b.C))", line);
         }
 
@@ -89,7 +88,7 @@ namespace PlatoTests
         {
             var off = Build(optimize: false);
             var text = off.Files["ArrayLibrary.g.cs"].ToString();
-            StringAssert.Contains("Integer2 ZipComponents(this Integer2 a, Integer2 b, System.Func<int, int, int> f)", text);
+            StringAssert.Contains("Integer2 ZipComponents(this Integer2 a, Integer2 b, System.Func<Integer, Integer, Integer> f)", text);
             StringAssert.Contains("Integer2.CreateFromComponents(", text);
             StringAssert.DoesNotContain("new Ara3D.Geometry.Integer2(f.Invoke", text);
         }

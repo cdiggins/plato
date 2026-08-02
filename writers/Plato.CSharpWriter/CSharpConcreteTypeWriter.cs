@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -36,7 +36,7 @@ namespace Ara3D.Geometry.CSharpWriter
             => CSharpBoundWriter.WhereClauses(ConcreteType.TypeDef.TypeParameters, TypeWriter);
         public bool IsPrimitive => CSharpWriter.PrimitiveTypes.ContainsKey(Name);
 
-        /// <summary>The handwritten runtime supplies this type's bodiless members and operators —
+        /// <summary>The handwritten runtime supplies this type's bodiless members and operators â€”
         /// true for primitives and for the shape-generated-but-behaviour-handwritten types
         /// (<see cref="CSharpWriter.IntrinsicBackedTypes"/>, plato-365).</summary>
         public bool IsIntrinsicBacked => CSharpWriter.IsIntrinsicBacked(Name);
@@ -56,21 +56,8 @@ namespace Ara3D.Geometry.CSharpWriter
             TypeWriter = typeWriter;
             var floatType = Writer.FloatType;
 
-            // Scalar erasure (--scalar=float): the five scalar wrapper types are not emitted as
-            // partial structs at all; their per-type file becomes an extension-method class over
-            // the native primitive (plus a minimal partial-struct shim for the members that
-            // handwritten Plato.Intrinsics code requires with property syntax).
-            if (Writer.ScalarErase && CSharpWriter.ScalarPrimitives.ContainsKey(Name))
-            {
-                FieldTypes = new List<string>();
-                FieldNames = new List<string>();
-                ExtensionPlan = Writer.GetExtensionPlan(t.TypeDef);
-                WriteScalarErasedType();
-                return;
-            }
-
-            // Sum type (wave-2, plato-232): a tagged struct — one `int Kind` discriminant plus the
-            // flattened per-case fields — emitted by a dedicated path (design doc §5). The flattened
+            // Sum type (wave-2, plato-232): a tagged struct â€” one `int Kind` discriminant plus the
+            // flattened per-case fields â€” emitted by a dedicated path (design doc Â§5). The flattened
             // field names serve as this writer's FieldNames so the shared library-function tail skips
             // any collision and the plan treats them as struct-surface.
             if (t.TypeDef.IsSum)
@@ -84,16 +71,9 @@ namespace Ara3D.Geometry.CSharpWriter
                 return;
             }
 
-            // The concept interfaces erase exactly when the recipe erases (see
-            // CSharpTypeWriter.WriteConceptInterface), so the implements-list follows them.
-            // unerasedFieldTypes stays truly unerased (it feeds analyses, not emission).
-            var saveErase = TypeWriter.EraseScalars;
             var implements = ConcreteType.Interfaces.Count > 0
                 ? $": " + ConcreteType.Interfaces.Select(TypeWriter.ToCSharpType).JoinStringsWithComma()
                 : "";
-            TypeWriter.EraseScalars = false;
-            var unerasedFieldTypes = ConcreteType.TypeDef.Fields.Select(f => TypeWriter.ToCSharpType(f.Type)).ToList();
-            TypeWriter.EraseScalars = saveErase;
 
             FieldTypes = ConcreteType.TypeDef.Fields.Select(f => TypeWriter.ToCSharpType(f.Type)).ToList();
             FieldNames = ConcreteType.TypeDef.Fields.Select(f => f.Name).ToList();
@@ -182,7 +162,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 //
                 // plato-308: a PRIMITIVE-backed type (a handwritten Plato.Intrinsics struct, e.g.
                 // Angle) declares its own field-type and Number conversions, so generating those
-                // here duplicates them (CS0557). Skip exactly that pair for primitives — the
+                // here duplicates them (CS0557). Skip exactly that pair for primitives â€” the
                 // Integer/int bridges below are NOT handwritten and stay generated. Legacy stdlib
                 // declares its primitives with zero fields, so this branch never runs there.
                 if (!IsPrimitive
@@ -202,28 +182,12 @@ namespace Ara3D.Geometry.CSharpWriter
                     TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}({floatType} value) => new Number(value);");
                     TypeWriter.WriteLine($"{Attr} public static implicit operator {floatType}({Name} value) => value.{fieldName};");
                 }
-                // Scalar erasure: the field erased to "float", so the primary pair above already
-                // covers float<->{Name}; add the wrapper/int bridges the V1 block provided (the
-                // handwritten intrinsics and mixed bodies still traffic in Number/Integer).
-                // plato-308: for a primitive-backed type the Number bridge is handwritten
-                // (Angle declares implicit Angle(Number)); only the Integer/int bridges are ours.
-                else if (Writer.ScalarErase && unerasedFieldTypes[0] == "Number")
-                {
-                    TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}(Integer value) => new {Name}(value);");
-                    TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}(int value) => new {Name}(value);");
-                    if (!IsPrimitive)
-                        TypeWriter.WriteLine($"{Attr} public static implicit operator {Name}(Number value) => new {Name}(value);");
-                }
                 TypeWriter.WriteLine();
             }
 
-            WriteIntrinsicVectorBridge();
-
             TypeWriter.WriteLine("// Object virtual function overrides: Equals, GetHashCode, ToString");
-            // Under erasure the Boolean-returning scaffolding erases to bool (and Equals(other) is
-            // then already a bool, so no .Value unwrap).
-            var boolT = Writer.ScalarErase ? "bool" : "Boolean";
-            var boolVal = Writer.ScalarErase ? "" : ".Value";
+            const string boolT = "Boolean";
+            const string boolVal = ".Value";
             if (!IsPrimitive)
             {
                 if (FieldNames.Count > 0)
@@ -252,7 +216,7 @@ namespace Ara3D.Geometry.CSharpWriter
             // map straight onto System.Type / System.Func and no Plato.Intrinsics partial declares
             // a Value, so the same scaffolding would name a member that does not exist (measured:
             // `Value` binding to the concept of that name instead, CS0305 + CS1061). They get the
-            // field-less shape — every value of such a type is interchangeable here.
+            // field-less shape â€” every value of such a type is interchangeable here.
             else if (!CSharpWriter.ScalarPrimitives.ContainsKey(SimpleName))
             {
                 TypeWriter.WriteLine($"{Attr} public override bool Equals(object obj) => obj is {Name};");
@@ -286,7 +250,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 var its = TypeWriter.ToCSharpType(i);
                 // plato-311: a property-form (or pinned-name) member satisfies the generic
                 // interface only through its explicit implementation, so the concept's non-generic
-                // existential view — reached transitively via `C<Self> : C` — needs its own
+                // existential view â€” reached transitively via `C<Self> : C` â€” needs its own
                 // explicit implementation for the same member; the view spelling of the interface
                 // name is the only difference. Members satisfied by ordinary public methods
                 // satisfy both interfaces implicitly and never reach this loop.
@@ -318,7 +282,7 @@ namespace Ara3D.Geometry.CSharpWriter
                     {
                         var retType = TypeWriter.ToCSharpType(f.ReturnType);
                         // Pinned-name struct members are uniformly PROPERTIES (handwritten on
-                        // primitive types, generated elsewhere) — plain member access.
+                        // primitive types, generated elsewhere) â€” plain member access.
                         if (emittedExplicitImpls.Add($"{its}.{f.Name}"))
                             TypeWriter.WriteLine($"{Attr} {retType} {its}.{f.Name}() => {f.Name};");
                         if (viewTarget != null && emittedExplicitImpls.Add($"{viewTarget}.{f.Name}"))
@@ -391,10 +355,6 @@ namespace Ara3D.Geometry.CSharpWriter
                     throw new Exception("IArrayLike types are assumed to have all of the fields of the same type");
 
                 var fieldType = FieldTypes.Count > 0 ? FieldTypes[0] : null;
-                // Scalar erasure: the PUBLIC Components/CreateFromComponents use the erased
-                // element type ("float-land" arrays); the unerased IArrayLike<Self, T>
-                // interface obligation is satisfied by an explicit implementation below.
-                var obligationFieldType = unerasedFieldTypes.Count > 0 ? unerasedFieldTypes[0] : null;
 
                 var localFieldNames = FieldNames;
 
@@ -402,23 +362,17 @@ namespace Ara3D.Geometry.CSharpWriter
                 {
                     // TEMP: this is a bit of a hack. In the future, we may want IArrayLike primitives that are not Number.
                     fieldType = "Number";
-                    obligationFieldType = "Number";
                     if (!PrimitiveFieldNames.ContainsKey(Name))
                         throw new Exception($"Unrecognized primitive IArrayLike type {Name}");
                     localFieldNames = PrimitiveFieldNames[Name].ToList();
                 }
 
-                if (Writer.ScalarErase && CSharpWriter.ScalarPrimitives.TryGetValue(obligationFieldType ?? "", out var erasedComp))
-                    fieldType = erasedComp;
-
                 var nComps = localFieldNames.Count;
 
                 TypeWriter.WriteLine($"// IArrayLike predefined functions");
-                // The IArrayLike obligation erases with the recipe, so these satisfy it directly —
-                // no explicit unerased twin. NumComponents returns the concept's Integer, which is
-                // the native int only when the recipe erases.
-                var countT = Writer.ScalarErase ? "int" : "Integer";
-                TypeWriter.WriteLine($"{Attr} public {countT} NumComponents() => {nComps};");
+                // These satisfy the IArrayLike<Self, T> obligation directly. NumComponents returns
+                // the concept's Integer wrapper.
+                TypeWriter.WriteLine($"{Attr} public Integer NumComponents() => {nComps};");
                 TypeWriter.WriteLine($"{Attr} public IReadOnlyList<{fieldType}> Components() => Intrinsics.MakeArray<{fieldType}>({localFieldNames.JoinStringsWithComma()});");
                 {
                     var tmp = Enumerable.Range(0, localFieldNames.Count).Select(i => $"numbers[{i}]").JoinStringsWithComma();
@@ -446,298 +400,6 @@ namespace Ara3D.Geometry.CSharpWriter
         }
 
         // ============================================================================
-        // Scalar erasure (--scalar=float): emission of the five scalar types' files.
-        //
-        // No partial struct is generated. The file contains:
-        //   1. public static class {Name}Extensions - every library/interface function that
-        //      applies to the scalar, as a classic extension method on the PRIMITIVE:
-        //        - functions with Plato bodies      -> full extension methods (erased types);
-        //        - intrinsics (Body == null)        -> forwarders into the handwritten
-        //                                              wrapper members: ((Number)x).Sqrt;
-        //        - operator-named intrinsics        -> native primitive operators: a + b;
-        //      (members the extension plan MOVED to per-library classes are skipped here -
-        //      they are emitted there, with erased signatures.)
-        //   2. DROPPED with a report comment: implicit-conversion operators, indexers and
-        //      C# interface implementations - primitives already have their operators, and
-        //      Plato interface obligations are meaningless without a generated struct.
-        //   3. public partial struct {Name} shim (only when needed): the pinned
-        //      HandwrittenPropertySyntaxNames members as wrapper-typed PROPERTIES (handwritten
-        //      Plato.Intrinsics code accesses them with property syntax on wrapper receivers,
-        //      e.g. Number.Cubic uses a.Pow3), plus any static functions (nothing else can
-        //      host a static under erasure).
-        // ============================================================================
-        /// <summary>Whether <paramref name="target"/>'s own single-field converter block already
-        /// emits "implicit operator {target}({SimpleName})" — the Number bridge written for a
-        /// non-primitive struct whose one field is a Number. Mirrors the condition in the
-        /// constructor; a second copy from the scalar re-home is CS0557 (plato-365: Angle stopped
-        /// being a primitive, so its bridge started being generated).</summary>
-        private bool SingleFieldConverterCovers(TypeDef target)
-            => SimpleName == "Number"
-               && target != null
-               && !CSharpWriter.PrimitiveTypes.ContainsKey(target.Name)
-               && target.Fields.Count == 1
-               && target.Fields[0].Type?.Def?.Name == "Number";
-
-        public void WriteScalarErasedType()
-        {
-            var prim = CSharpWriter.ScalarPrimitives[SimpleName];
-            var tw = TypeWriter;
-            var plan = ExtensionPlan;
-
-            // Candidate members, in the same order the struct writer would have visited them.
-            var functions = new List<FunctionInstance>();
-            foreach (var g in ConcreteType.InterfaceFunctionGroups)
-                functions.Add(Analyzer.ChooseBestFunction(g, out _));
-            functions.AddRange(ConcreteType.UnimplementedFunctions);
-
-            var shimMembers = new List<FunctionInstance>();
-            var dropped = new List<string>();
-            var emittedSignatures = new HashSet<string>();
-            // Wrapper-receiver bridges: generated call sites whose receiver the writer could
-            // not prove scalar keep wrapper-typed intermediates (kept members of non-scalar
-            // types return Number/Boolean/... unerased); every scalar extension method gets a
-            // "this {Wrapper}" twin forwarding to the primitive one. Extension receivers do
-            // not apply user-defined conversions, so the twins never conflict.
-            var bridges = new List<string>();
-            // Implicit conversions FROM the primitive (e.g. float -> Vector2 broadcast): the
-            // wrapper's generated implicit operators are dropped with the struct, so the
-            // TARGET types gain "implicit operator {T}({prim})" partials instead.
-            var implicitOps = new List<(string RetType, string MethodName, TypeDef Target)>();
-
-            string WrapperBridge(CSharpFunctionInfo bfi)
-            {
-                var parameterTypes = bfi.ParameterTypes.Skip(1).ToList().Prepend(SimpleName);
-                var parameters = bfi.ParameterNames.Zip(parameterTypes, (n, t) => $"{t} {n}").JoinStringsWithComma();
-                var sig = $"{CSharpFunctionInfo.Annotation}public static {bfi.ReturnType} {bfi.Name}{bfi.ExtensionGenericsString}(this {parameters}){bfi.Constraints}";
-                var args = bfi.ParameterNames.Count <= 1 ? "()" : "(" + bfi.ParameterNames.Skip(1).JoinStringsWithComma() + ")";
-                return $"{sig} => (({prim}){bfi.FirstParameterName}).{bfi.Name}{args};";
-            }
-
-            void AddBridge(CSharpFunctionInfo bfi)
-            {
-                var key = $"{bfi.Name}{bfi.ExtensionGenericsString}({SimpleName},{bfi.ParameterTypes.Skip(1).JoinStringsWithComma()})";
-                if (emittedSignatures.Add(key))
-                    bridges.Add(WrapperBridge(bfi));
-            }
-
-            tw.WriteLine($"// Scalar-erased emission (--scalar=float): {SimpleName} => {prim}");
-            tw.WriteLine($"public static class {SimpleName}Extensions");
-            tw.WriteStartBlock();
-
-            // Bare names inside these bodies bound to the struct scope in wrapper mode; in a
-            // static class they must be re-qualified, exactly like moved library members.
-            tw.ExtensionStaticQualifier = $"{Writer.Namespace}.{SimpleName}";
-            tw.ExtensionInstanceNames = plan.InstanceNames;
-            tw.ExtensionStaticNames = plan.StaticNames;
-            tw.ExtensionReceiverIsScalar = true;
-
-            foreach (var f in functions)
-            {
-                if (SkipFunction(f, false))
-                    continue;
-
-                // The pinned handwritten-property-syntax names get a wrapper-typed property on
-                // the partial-struct shim whether they moved or not (handwritten intrinsics
-                // like Number.Cubic access them with property syntax on wrapper receivers).
-                if (SimpleName == "Number"
-                    && CSharpWriter.HandwrittenPropertySyntaxNames.Contains(f.Name)
-                    && f.Implementation.Body != null)
-                    shimMembers.Add(f);
-
-                if (plan.ShouldMove(f))
-                {
-                    // Emitted (erased) in its per-library extension class. The scalar path
-                    // replaces WriteImplementedInterfaceFunctions, so it must do the same
-                    // moved-member routing. It still gets a wrapper-receiver bridge here.
-                    Writer.MovedMembers.Add(new MovedExtensionMember(f, ConcreteType, f.Implementation.OwnerType.Name, plan));
-                    AddBridge(tw.ToFunctionInfo(f, ConcreteType.TypeDef));
-                    continue;
-                }
-
-                var fi = tw.ToFunctionInfo(f, ConcreteType.TypeDef);
-
-                if (fi.IsStatic)
-                {
-                    // A partial struct is the only host for statics — but only BODIED ones: a
-                    // bodiless static declaration (Number.MinValue in intrinsics.plato) names a
-                    // handwritten member the wrapper already defines.
-                    if (f.Implementation.Body != null)
-                        shimMembers.Add(f);
-                    continue;
-                }
-
-                // HACK preserved from the wrapper-mode forwarders: generic scalar Multiply.
-                if (fi.Name == "Multiply" && fi.ParameterTypes.Count > 1 && fi.ParameterTypes[1] == "_T0" && f.Implementation.Body == null)
-                    continue;
-
-                if (fi.IsIndexer)
-                {
-                    dropped.Add($"indexer {fi.Name} (handwritten on the intrinsic struct)");
-                    continue;
-                }
-
-                var sigKey = $"{fi.Name}{fi.ExtensionGenericsString}({fi.ParameterTypes.JoinStringsWithComma()})";
-                if (!emittedSignatures.Add(sigKey))
-                    continue;
-
-                tw.ExtensionReceiverName = f.ParameterNames[0];
-
-                if (f.Implementation.Body != null)
-                {
-                    // Full extension method with the Plato body, all types erased.
-                    if (fi.IsImplicit)
-                    {
-                        // The generated implicit conversion operator moves to the TARGET
-                        // type's partial struct (float -> Vector2 broadcast etc.).
-                        implicitOps.Add((fi.ReturnType, fi.Name, f.ReturnType?.Def));
-                        dropped.Add($"implicit operator {fi.ReturnType}({prim}) => re-homed as a partial-struct operator on {fi.ReturnType} + method {fi.Name}()");
-                    }
-                    tw.Write(fi.ExtensionSignature);
-                    // Scalar extension-method bodies over the primitives emit from the ground
-                    // monomorphized TIR — the sole body writer since C4.
-                    var tir = Writer.TryGetGroundTir(f.Implementation, ConcreteType.TypeDef);
-                    if (tir == null)
-                    {
-                        // Degrade gracefully (see CSharpTypeWriter.WriteBody): a scalar-erased
-                        // extension body with no ground TIR emits a throwing stub + burn-down
-                        // count rather than aborting all output. Empty under stdlib-legacy.
-                        var member = $"{SimpleName}.{fi.Name}";
-                        Writer.DegradedBodies.Add(member);
-                        tw.WriteWithLineStateSync(
-                            $" => throw new System.NotImplementedException(" +
-                            $"\"plato: no ground TIR for scalar-erased {member} (not monomorphized)\");" +
-                            System.Environment.NewLine);
-                        AddBridge(fi);
-                        continue;
-                    }
-                    Writer.TirBodiesEmitted++;
-                    tir = Writer.RunOptimizerPasses(tir, fi, true, out var lowered);
-                    tw.WriteWithLineStateSync(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi, lowered: lowered).ToString());
-                    AddBridge(fi);
-                }
-                else if (fi.IsOperator)
-                {
-                    // Operator-named intrinsic: forward through the WRAPPER's handwritten
-                    // operator (bool/string lack native <, <= etc.; for float/int the wrapper
-                    // operators compile down to the primitive ones anyway).
-                    dropped.Add($"operator {fi.OperatorName} (via the {SimpleName} wrapper operator); kept as method {fi.Name}()");
-                    var ps = fi.ParameterNames;
-                    // Only SCALAR-typed operands are cast back to their wrapper; mixed
-                    // operands (Multiply(Number, Matrix4x4)) pass through unchanged.
-                    string Operand(int i)
-                    {
-                        var platoType = f.ParameterTypes[i]?.Name;
-                        return platoType != null && CSharpWriter.ScalarPrimitives.ContainsKey(platoType)
-                            ? $"(({platoType}){ps[i]})"
-                            : ps[i];
-                    }
-                    bool IsScalar(int i)
-                    {
-                        var platoType = f.ParameterTypes[i]?.Name;
-                        return platoType != null && CSharpWriter.ScalarPrimitives.ContainsKey(platoType);
-                    }
-
-                    // plato-308: scalar-on-the-LEFT times a compound (Multiply(Number, Number4)).
-                    // The compound declares only `operator *(T, {prim})`, so the wrapper-cast form
-                    // `((Number)scalar) * right` has no candidate operator at all. Scalar
-                    // multiplication commutes for every type in this vocabulary, so emit the
-                    // operand order the compound actually declares.
-                    var commuteScalar = ps.Count == 2 && fi.OperatorName == "*" && IsScalar(0) && !IsScalar(1);
-
-                    var impl = ps.Count == 1
-                        ? $"{fi.OperatorName}{Operand(0)}"
-                        : commuteScalar
-                            ? $"{ps[1]} {fi.OperatorName} {ps[0]}"
-                            : $"{Operand(0)} {fi.OperatorName} {Operand(1)}";
-                    tw.WriteLine($"{fi.ExtensionSignature} => {impl};");
-                    AddBridge(fi);
-                }
-                else
-                {
-                    // Intrinsic: forward into the handwritten wrapper member. Whether that member
-                    // is spelled as a property is decided per member by IsStructSurfaceProperty
-                    // inside the forwarder builder. No wrapper-receiver bridge: the wrapper
-                    // already has the real member, and a same-name extension would be shadowed
-                    // by it anyway.
-                    tw.WriteLine(GetPrimitiveForwardingExtensionMethod(fi, SimpleName, prim));
-                }
-
-                tw.ExtensionReceiverName = null;
-            }
-
-            // Equality helper the struct scaffolding used to provide (call sites use it).
-            tw.WriteLine($"{CSharpTypeWriter.Annotation} public static bool NotEquals(this {prim} a, {prim} b) => !a.Equals(b);");
-            tw.WriteLine($"{CSharpTypeWriter.Annotation} public static bool NotEquals(this {SimpleName} a, {prim} b) => !(({prim})a).Equals(b);");
-
-            // (The old hardwired Cubic/Linear/Quadratic/ReciprocalSquareRootEstimate float
-            // forwarders are gone: those members are now DECLARED in stdlib-legacy/intrinsics.plato,
-            // so the regular intrinsic-forwarder path generates them.)
-
-            if (SimpleName == "Integer")
-            {
-                // Handwritten intrinsic taking a WRAPPER receiver the compiler cannot see
-                // (Intrinsics.MakeArray2D(this Integer, ...)); erased call sites are int-typed.
-                tw.WriteLine($"{CSharpTypeWriter.Annotation} public static Ara3D.Collections.ReadOnlyList2D<T> MakeArray2D<T>(this int columns, int rows, System.Func<Integer, Integer, T> f) => ((Integer)columns).MakeArray2D(rows, f);");
-            }
-
-            if (bridges.Count > 0)
-            {
-                tw.WriteLine($"// Wrapper-receiver bridges: call sites the writer could not prove scalar keep");
-                tw.WriteLine($"// {SimpleName}-typed intermediates (unerased kept members, handwritten intrinsics).");
-                foreach (var b in bridges)
-                    tw.WriteLine(b);
-            }
-
-            tw.WriteEndBlock();
-
-            foreach (var op in implicitOps.Distinct())
-            {
-                // Skip the re-home when the TARGET type's own writer already emits this exact
-                // conversion: a single-{prim}-field non-primitive struct gets
-                // "implicit operator T({SimpleName})" from its single-field converter block, and a
-                // second copy here is CS0557 (measured on Angle, whose one field is a Number).
-                if (SingleFieldConverterCovers(op.Target))
-                    continue;
-
-                // Deliberately WRAPPER-sourced (not float-sourced): a float-sourced operator
-                // would make member calls like v.Multiply(floatExpr) ambiguous between
-                // Multiply(Number) and Multiply(Vector2) (two one-step user conversions from
-                // float). This reproduces the V1 conversion graph; the body writer restores
-                // wrapper-ness of scalar arguments at non-scalar member call sites.
-                tw.WriteLine($"// Scalar erasure: re-homed implicit conversion (was 'implicit operator {op.RetType}({SimpleName})' on the dropped {SimpleName} struct).");
-                tw.WriteLine($"public partial struct {op.RetType}");
-                tw.WriteStartBlock();
-                tw.WriteLine($"{CSharpTypeWriter.Annotation} public static implicit operator {op.RetType}({SimpleName} value) => (({prim})value).{op.MethodName}();");
-                tw.WriteEndBlock();
-            }
-
-            foreach (var d in dropped.Distinct())
-                tw.WriteLine($"// scalar-erasure drop ({SimpleName}): {d}");
-
-            if (shimMembers.Count > 0)
-            {
-                tw.ExtensionStaticQualifier = null;
-                tw.ExtensionInstanceNames = null;
-                tw.ExtensionStaticNames = null;
-                tw.ExtensionReceiverIsScalar = false;
-
-                tw.WriteLine($"// Minimal shim: members handwritten Plato.Intrinsics code accesses with property");
-                tw.WriteLine($"// syntax on the wrapper (plus statics, which need a type to live on).");
-                tw.WriteLine($"public partial struct {SimpleName}");
-                tw.WriteStartBlock();
-                tw.EraseScalars = false; // wrapper-typed member signatures
-                foreach (var f in shimMembers)
-                {
-                    var fi = tw.ToFunctionInfo(f, ConcreteType.TypeDef);
-                    tw.Write(fi.MethodSignature);
-                    tw.WriteBody(fi, fi.IsStatic);
-                }
-                tw.EraseScalars = true;
-                tw.WriteEndBlock();
-            }
-        }
-
-        // ============================================================================
         // Sum-type (tagged-union) emission (wave-2, plato-232). One readonly partial struct:
         //   - int Kind discriminant (0-based, declaration order) + per-case Kind_<Case> tag consts;
         //   - the flattened per-case fields (Case_Field), [DataMember] public readonly;
@@ -752,7 +414,7 @@ namespace Ara3D.Geometry.CSharpWriter
         {
             var tw = TypeWriter;
             var cases = ConcreteType.TypeDef.Cases;
-            var boolT = Writer.ScalarErase ? "bool" : "Boolean";
+            const string boolT = "Boolean";
 
             var implements = ConcreteType.Interfaces.Count > 0
                 ? ": " + ConcreteType.Interfaces.Select(TypeWriter.ToCSharpType).JoinStringsWithComma()
@@ -763,7 +425,7 @@ namespace Ara3D.Geometry.CSharpWriter
 
             tw.WriteLine("[DataContract, StructLayout(LayoutKind.Sequential, Pack=1)]");
             // A generic sum is CHK306 today, so WhereClauses is empty here; it is written the same
-            // way as the product path deliberately — nothing about bounds is record-specific, so
+            // way as the product path deliberately â€” nothing about bounds is record-specific, so
             // lifting CHK306 (plato-079) needs no change on this line.
             tw.Write($"public partial struct {Name}");
             tw.WriteLine(implements + WhereClauses);
@@ -820,7 +482,7 @@ namespace Ara3D.Geometry.CSharpWriter
             tw.WriteLine($"public static readonly {Name} Default = default;");
             tw.WriteLine();
 
-            // Case predicates — the match lowering's branch conditions.
+            // Case predicates â€” the match lowering's branch conditions.
             tw.WriteLine("// Case predicates (match lowering's branch conditions)");
             foreach (var c in cases)
                 tw.WriteLine($"{Attr} public {boolT} {c.PredicateName}() => Kind == {c.TagConstName};");
@@ -925,7 +587,7 @@ namespace Ara3D.Geometry.CSharpWriter
                 // to be flagged with an "// AMBIGUOUS FUNCTIONS" debug comment in the SHIPPED
                 // output (which also leaked process-global Symbol ids like "Geometry_15").
                 // Ambiguity now surfaces through the checker's CHK202/CHK203 diagnostics and the
-                // linter — generated code is not the reporting channel.
+                // linter â€” generated code is not the reporting channel.
 
                 var fi = TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef);
                 // Type-variable NAMES are per-declaration (_T0 vs _T1), so normalize them
@@ -1004,7 +666,7 @@ namespace Ara3D.Geometry.CSharpWriter
             var args = fi.ParameterNames.Count <= 1 ? "" : "(" + fi.ParameterNames.Skip(1).JoinStringsWithComma() +")";
             // Extension style: forwarded no-arg members that moved out of the struct are classic
             // extension METHODS, and so is every other no-arg member whose name is not pinned to
-            // property syntax on this receiver — both need parentheses at the forwarding site.
+            // property syntax on this receiver â€” both need parentheses at the forwarding site.
             if (args == "" && Writer.ExtensionStyle
                 && (Writer.MovedNoArgNames.Contains(fi.Name)
                     || !Writer.IsStructSurfaceProperty(platoType, fi.Name)))
@@ -1028,13 +690,14 @@ namespace Ara3D.Geometry.CSharpWriter
                 // of the five scalars (Angle, Vector*, Matrix*, Quaternion, Plane) the runtime
                 // supplies its intrinsics as handwritten EXTENSION methods (TIntrinsics.Foo(this
                 // T)); emitting the forwarder too would be a CS0121-ambiguous second Foo(this T)
-                // extension (and self-recurse). Skip it — the handwritten extension (or, until a
+                // extension (and self-recurse). Skip it â€” the handwritten extension (or, until a
                 // type is ported, its instance method) provides x.Foo(). (M5 / consolidation plan
-                // C3. The scalars keep the forwarder: under erasure it lands on the primitive
-                // receiver float/int/bool, distinct from the wrapper, so there is no collision.)
-                var nonErasedPrimitive = CSharpWriter.IsIntrinsicBacked(Name)
+                // C3. The five scalar wrappers keep the forwarder: their handwritten members are
+                // instance methods on the wrapper struct, which wins overload resolution over an
+                // extension, so there is no CS0121.)
+                var intrinsicBackedNonScalar = CSharpWriter.IsIntrinsicBacked(Name)
                     && !CSharpWriter.ScalarPrimitives.ContainsKey(Name);
-                if (!nonErasedPrimitive)
+                if (!intrinsicBackedNonScalar)
                     tw.WriteLine(GetExtensionMethod(fi));
             }
 
@@ -1081,7 +744,7 @@ namespace Ara3D.Geometry.CSharpWriter
 
         /// <summary>
         /// Receiver-style twins of the per-case factories on a sum type: `Line(seg)` in Plato
-        /// lowers the same way every other one-argument call does — as `seg.Line()` — but the
+        /// lowers the same way every other one-argument call does â€” as `seg.Line()` â€” but the
         /// factory is a STATIC on the sum struct, so that call site has nothing to bind to
         /// (measured: `BrepCurve.Line`, `BrepSurface.Bilinear`). Emitting the twin here keeps the
         /// lowering uniform instead of teaching the body writer about case constructors.
@@ -1131,50 +794,15 @@ namespace Ara3D.Geometry.CSharpWriter
         };
 
         /// <summary>
-        /// Emits the implicit conversion pair between this type and its intrinsic twin (see
-        /// <see cref="IntrinsicVectorBridges"/>). Component-wise when the fields are the erased
-        /// scalars themselves; forwarded through the single field when the type merely wraps an
-        /// already-bridged type (Direction3D wraps Vector3D).
-        /// </summary>
-        public void WriteIntrinsicVectorBridge()
-        {
-            if (IsPrimitive || !Writer.ScalarErase)
-                return;
-            if (!IntrinsicVectorBridges.TryGetValue(SimpleName, out var intrinsic))
-                return;
-            if (!PrimitiveFieldNames.TryGetValue(intrinsic, out var comps))
-                return;
-
-            var tw = TypeWriter;
-            var floatType = Writer.FloatType;
-            tw.WriteLine($"// Intrinsic bridge: {SimpleName} and {intrinsic} are the same components under different names.");
-
-            if (FieldTypes.Count == comps.Length && FieldTypes.All(t => t == floatType))
-            {
-                var toIntrinsic = FieldNames.Select(f => $"self.{f}").JoinStringsWithComma();
-                var fromIntrinsic = comps.Select(c => $"value.{c}").JoinStringsWithComma();
-                tw.WriteLine($"{Attr} public static implicit operator {intrinsic}({Name} self) => new {intrinsic}({toIntrinsic});");
-                tw.WriteLine($"{Attr} public static implicit operator {Name}({intrinsic} value) => new {Name}({fromIntrinsic});");
-            }
-            else if (FieldTypes.Count == 1 && IntrinsicVectorBridges.TryGetValue(FieldTypes[0], out var inner) && inner == intrinsic)
-            {
-                tw.WriteLine($"{Attr} public static implicit operator {intrinsic}({Name} self) => ({intrinsic})self.{FieldNames[0]};");
-                tw.WriteLine($"{Attr} public static implicit operator {Name}({intrinsic} value) => new {Name}(({FieldTypes[0]})value);");
-            }
-
-            tw.WriteLine();
-        }
-
-        /// <summary>
         /// The component names of a HANDWRITTEN struct the writer never generates: the far side of
         /// <see cref="IntrinsicVectorBridges"/> (plus Number's payload). Read by the bridge writer
         /// and, for the remaining primitives, as pseudo-fields in the extension-style plan.
         ///
-        /// The matrix entries used to live here too — sixteen M11..M44 names, the writer's private
+        /// The matrix entries used to live here too â€” sixteen M11..M44 names, the writer's private
         /// picture of System.Numerics' element naming. plato-365 deleted them: a matrix now
         /// generates from `stdlib/foundation/matrices.types.plato` (Row1..Row4 of Number4) and the
         /// M-names exist only inside Plato.Intrinsics, where the System.Numerics round-trip is
-        /// written out row by row. Do not re-add them — that is the invisible-primitiveness
+        /// written out row by row. Do not re-add them â€” that is the invisible-primitiveness
         /// mechanism the issue exists to delete.
         /// </summary>
         public static Dictionary<string, string[]> PrimitiveFieldNames = new Dictionary<string, string[]>

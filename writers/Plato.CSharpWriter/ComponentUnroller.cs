@@ -297,21 +297,7 @@ namespace Ara3D.Geometry.CSharpWriter
             // Plato component type (see ComponentAccessExpression).
             var isPrimitive = CSharpWriter.PrimitiveTypes.TryGetValue(typeName, out var prim);
             var castTo = isPrimitive && prim == "float" ? "Number" : null;
-            string scalarComponentPrim = null;
-            if (writer.ScalarErase)
-            {
-                // Scalar erasure (--scalar=float): unrolled bodies live in "float-land".
-                //  - Number/Angle expose a raw float Value field: use it uncast.
-                //  - The other primitives' handwritten pseudo-fields (Vector3.X, Matrix4x4.M11,
-                //    ...) return the WRAPPER Number, so cast them down to float.
-                //  - Non-primitive IArrayLike structs have erased fields already; no cast.
-                // Angle is not a scalar wrapper, but its Plato component type is Number, so its
-                // components are scalar-valued in the erased output like everyone else's.
-                castTo = isPrimitive && prim != "float" ? "float" : null;
-                var compType = writer.GetComponentPlatoType(typeName);
-                if (compType != null && CSharpWriter.ScalarPrimitives.TryGetValue(compType, out var compPrim))
-                    scalarComponentPrim = compPrim;
-            }
+            const string scalarComponentPrim = null;
 
             switch (name)
             {

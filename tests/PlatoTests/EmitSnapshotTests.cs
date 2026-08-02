@@ -34,42 +34,42 @@ namespace PlatoTests
         private static readonly (string File, string Marker)[] Pins =
         {
             // Scalar-erased Number: intrinsic wrapper-forwarders, float-land body, broadcasts, generic.
-            ("_Number.g.cs", "float Abs(this float self)"),
-            ("_Number.g.cs", "float Sqrt(this float self)"),
-            ("_Number.g.cs", "float Clamp(this float self, float min, float max)"),
-            ("_Number.g.cs", "float Lerp(this float a, float b, float t)"),
-            ("_Number.g.cs", "int Sign(this float self)"),
-            ("_Number.g.cs", "Angle Atan2(this float self, float x)"),
-            ("_Number.g.cs", "_T0 Multiply<_T0>(this float scalar"),
-            ("_Number.g.cs", "Vector3 Multiply(this float scalar, Vector3 right)"),
-            ("_Number.g.cs", "Vector8 Divide(this float scalar, Vector8 right)"),
-            ("_Number.g.cs", "bool NotEquals(this Number a, float b)"),
-            ("_Number.g.cs", "implicit operator Vector2(Number value)"),
+            ("_Number.g.cs", "Number Abs(this Number self)"),
+            ("_Number.g.cs", "Number Sqrt(this Number self)"),
+            ("_Number.g.cs", "Number Clamp(this Number self, Number min, Number max)"),
+            ("_Number.g.cs", "public Number Lerp(Number b, Number t)"),
+            ("_Number.g.cs", "Integer Sign(this Number self)"),
+            ("_Number.g.cs", "Angle Atan2(this Number self, Number x)"),
+            ("_Number.g.cs", "public _T0 Multiply<_T0>(_T0 x)"),
+            ("_Number.g.cs", "Vector3 Multiply(this Number scalar, Vector3 right)"),
+            ("_Number.g.cs", "Vector8 Divide(this Number scalar, Vector8 right)"),
+            ("_Number.g.cs", "public Boolean NotEquals(Number other)"),
+            ("_Number.g.cs", "implicit operator Vector2(Number s)"),
             // Scalar-erased Boolean: native-operator forwarders.
-            ("_Boolean.g.cs", "bool Not(this bool b)"),
-            ("_Boolean.g.cs", "bool And(this bool a, bool b)"),
+            ("_Boolean.g.cs", "public Boolean Not()"),
+            ("_Boolean.g.cs", "Boolean And(this Boolean a, Boolean b)"),
             // Vector3 forwarders. These used to read `this System.Numerics.Vector3 self`: Vector3
             // was a CSharpWriter.PrimitiveTypes entry, so the writer emitted no struct for it and
             // hung the extensions off the mapped BCL type. plato-365 removed that entry (the
             // forward stdlib never declared Vector2/3/4/8 at all), so in this legacy corpus the
             // name now generates an ordinary struct and the forwarders take the generated receiver.
-            ("_Vector3.g.cs", "float X(this Vector3 self)"),
+            ("_Vector3.g.cs", "Number X(this Vector3 self)"),
             ("_Vector3.g.cs", "Vector3 Normalize(this Vector3 self)"),
-            ("_Vector3.g.cs", "float Length(this Vector3 self)"),
-            ("_Vector3.g.cs", "float Dot(this Vector3 self, Vector3 right)"),
+            ("_Vector3.g.cs", "Number Length(this Vector3 self)"),
+            ("_Vector3.g.cs", "Number Dot(this Vector3 self, Vector3 right)"),
             // Constants emitted as methods, referencing each other.
-            ("Constants.g.cs", "float Pi()"),
-            ("Constants.g.cs", "float TwoPi()"),
-            ("Constants.g.cs", "float HalfPi()"),
+            ("Constants.g.cs", "Number Pi()"),
+            ("Constants.g.cs", "Number TwoPi()"),
+            ("Constants.g.cs", "Number HalfPi()"),
             // Moved library members: tuples, pseudo-fields, method-form calls, () injection.
             ("Vectors.g.cs", "Vector2 Perpendicular(this Vector2 v)"),
             ("Vectors.g.cs", "Vector2 Rotate(this Vector2 v, Angle a)"),
             ("Vectors.g.cs", "Angle Angle(this Vector2 a, Vector2 b)"),
-            ("Vectors.g.cs", "bool IsParallel(this Vector2 a, Vector2 b)"),
+            ("Vectors.g.cs", "Boolean IsParallel(this Vector2 a, Vector2 b)"),
             // Angle library: scalar and Angle receivers of the same moved name.
-            ("Angles.g.cs", "float Turns(this Angle x)"),
-            ("Angles.g.cs", "Angle Turns(this float x)"),
-            ("Angles.g.cs", "Angle Turns(this int x)"),
+            ("Angles.g.cs", "Number Turns(this Angle x)"),
+            ("Angles.g.cs", "Angle Turns(this Number x)"),
+            ("Angles.g.cs", "Angle Turns(this Integer x)"),
             ("Transforms.g.cs", "Vector3 TransformNormal(this Transform3D x, Vector3 v)"),
             // Body-less interface stubs (C4 step 1: emitted off the legacy writer). Method form
             // since the receiver-aware rendering rule (plato-323 item 2): neither IdentityTransform3D
@@ -85,7 +85,6 @@ namespace PlatoTests
             var w = new CSharpWriter(CheckerTestSupport.CompileStdLib(), "unused-emit-snapshot")
             {
                 ExtensionStyle = true,
-                ScalarErase = true,
             };
             w.WriteAll("float");
             return w;

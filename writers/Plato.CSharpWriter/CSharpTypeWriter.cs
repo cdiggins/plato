@@ -32,14 +32,6 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     public HashSet<string> ExtensionInstanceNames;
     public HashSet<string> ExtensionStaticNames;
 
-    // Scalar erasure (--scalar=float) only. EraseScalars: whether this writer maps the five
-    // scalar wrapper type names to their primitives (defaults to Writer.ScalarErase; switched
-    // OFF while writing concept interfaces and struct-kept members of non-scalar types, which
-    // keep wrapper types to match the handwritten Plato.Intrinsics boundary).
-    // ExtensionReceiverIsScalar: this writer is emitting the body of an extension method whose
-    // receiver is an erased scalar primitive, so re-qualified bare instance names need "()".
-    public bool EraseScalars;
-    public bool ExtensionReceiverIsScalar;
     public PlatoAnalyzer Analyzer => Writer.Analyzer;
 
     // plato-311: this writer's grounding owner for Self — the concrete/interface type it is
@@ -53,7 +45,6 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         IndentLevel = writer.IndentLevel;
         Writer = writer;
         TypeDef = type;
-        EraseScalars = writer.ScalarErase;
 
         if (type == null)
         {
@@ -136,11 +127,6 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
     {
         // When writing interfaces, the "Self" type is literally "Self".
         SelfType = "Self";
-
-        // Scalar erasure: every concept obligation is GENERATED (no handwritten Plato.Intrinsics
-        // member satisfies a concept interface), so an erased recipe erases the interfaces too.
-        // Without erasure the interfaces are wrapper-typed like everything else.
-        EraseScalars = Writer.ScalarErase;
 
         var type = TypeDef;
         Debug.Assert(type.IsInterface());
@@ -351,11 +337,8 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
                 Environment.NewLine);
         }
         Writer.TirBodiesEmitted++;
-        // Attempt scalar lowering on STATIC bodies too (constants, IArray library functions), not
-        // just members: IsGroundBody inside RunOptimizerPasses still gates it, so a generic/loose
-        // static body stays on the legacy path while a ground one (most constants) is lowered.
-        tir = Writer.RunOptimizerPasses(tir, f, lowerScalars: true, out var lowered);
-        return WriteBodyText(new TirCSharpBodyWriter(this, tir, isStatic: !isMember, f, lowered: lowered).ToString());
+        tir = Writer.RunOptimizerPasses(tir, f);
+        return WriteBodyText(new TirCSharpBodyWriter(this, tir, isStatic: !isMember, f).ToString());
     }
 
     // Extension style fixes the V1 indentation quirk (see WriteWithLineStateSync);
@@ -539,12 +522,6 @@ public class CSharpTypeWriter : CodeBuilder<CSharpTypeWriter>, ITypeToCSharp
         if (type.Name.Length > "Function".Length && type.Name.StartsWith("Function")
             && char.IsDigit(type.Name["Function".Length]))
             return "System.Func";
-
-        // Scalar erasure (--scalar=float): the five wrapper types become native primitives in
-        // generated type positions (generic arguments recurse through here, so
-        // IArray<Number> -> IReadOnlyList<float> falls out automatically).
-        if (EraseScalars && CSharpWriter.ScalarPrimitives.TryGetValue(type.Name, out var prim))
-            return prim;
 
 
         var name = type.Name;

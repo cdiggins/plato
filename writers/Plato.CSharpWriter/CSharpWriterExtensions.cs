@@ -61,19 +61,17 @@ namespace Ara3D.Geometry.CSharpWriter
         // extensionStyle = false: original writer, byte-identical output (production default).
         // extensionStyle = true : classic-extension-method output (--csharp-style=extensions, roadmap P2.2).
         // optimize = true: component-op unrolling (--optimize, roadmap P3.1; see ComponentUnroller).
-        // scalarErase = true: erase the scalar wrappers to native primitives (--scalar=float,
-        //                     roadmap "Phase 2 revision" item 3; requires extensionStyle).
+        // Scalars are always WRAPPER structs: Number / Integer / Boolean / Character / String stay
+        // distinct types. Erasure to native primitives was retired 2026-08-01 (see that day's ADR).
         // Function bodies emit from the monomorphized TIR (Elaborate → Monomorphize → Emit) — the
         // sole C# body writer since the legacy CSharpFunctionBodyWriter was retired (C4).
         // optimizeArrays = true: loop-into-buffer lowering of multi-consumed Map/MapRange results
         //                (--optimize-arrays, optimizer stage 2 increment 1; see TirArrayMaterializer).
         // The emitted C# is always property-free: a no-arg member emits as a METHOD unless the
         // handwritten runtime spells it as a struct field/property (see the 2026-08-01 ADR).
-        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool scalarErase = false, bool optimizeArrays = false, bool inlineCalls = false, bool lowerLoops = false, string tirDumpDir = null, bool inlineReport = false, bool staticAbstract = false)
+        public static CSharpWriter ToCSharp(this Compiler.Compilation compilation, DirectoryPath outputFolder, bool extensionStyle = false, bool optimize = false, bool optimizeArrays = false, bool inlineCalls = false, bool lowerLoops = false, string tirDumpDir = null, bool inlineReport = false, bool staticAbstract = false)
         {
-            if (scalarErase && !extensionStyle)
-                throw new NotSupportedException("--scalar=float requires --csharp-style=extensions (the default wrapper-struct layout keeps scalar members inside partial structs, which do not exist under erasure)");
-            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, ScalarErase = scalarErase, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, LowerLoops = lowerLoops, StaticAbstract = staticAbstract, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
+            var writer = new CSharpWriter(compilation, outputFolder) { ExtensionStyle = extensionStyle, Optimize = optimize, OptimizeArrays = optimizeArrays, InlineCalls = inlineCalls, LowerLoops = lowerLoops, StaticAbstract = staticAbstract, TirDumpDir = string.IsNullOrEmpty(tirDumpDir) ? null : tirDumpDir };
             if (inlineReport)
                 writer.InlineReport = new InlineReport();
             writer.WriteAll("float");

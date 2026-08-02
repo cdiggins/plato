@@ -142,34 +142,13 @@ namespace Ara3D.Geometry.CSharpWriter
             MovedNoArgNames = movedNoArg;
         }
 
-        // When true (--scalar=float, roadmap "Phase 2 revision" item 3), the five scalar wrapper
-        // types (Number/Integer/Boolean/Character/String) are ERASED from the generated output in
-        // favor of the native C# primitives (float/int/bool/char/string):
-        //   - every generated signature, field, property, local and generic argument uses the
-        //     primitive (IArray<Number> -> IReadOnlyList<float>);
-        //   - the per-type files (_Number.g.cs, ...) no longer emit partial structs; they emit
-        //     extension-method classes over the primitives (see CSharpConcreteTypeWriter);
-        //   - generated bodies are normalized to "float-land": scalar-typed parameter references
-        //     are written as ((float)x), calls to scalar-returning function groups are wrapped in
-        //     ((float)...) casts, and no-arg member accesses on scalar receivers get "()" (all
-        //     scalar members are classic extension methods on the primitives);
-        //   - literals lose their wrapper casts: ((Number)0.5) becomes 0.5f.
-        // Deliberate NON-erasure (the handwritten Plato.Intrinsics boundary, which cannot fork):
-        //   - generated concept interfaces (Interfaces.g.cs) keep wrapper types, because
-        //     handwritten intrinsic members (e.g. Vector3.Magnitude returning Number) satisfy
-        //     interface obligations and their signatures cannot change;
-        //   - struct-kept members of NON-scalar types (interface obligations, operators,
-        //     scaffolding) keep wrapper signatures for the same reason; their bodies still
-        //     compile because the wrappers convert implicitly both ways;
-        //   - a tiny "public partial struct Number" shim keeps the pinned
-        //     HandwrittenPropertySyntaxNames members as wrapper properties (handwritten
-        //     intrinsics access them with property syntax on Number receivers).
-        // Requires ExtensionStyle. Default (false) output is byte-identical to the original.
-        public bool ScalarErase;
-
-        // The scalar wrapper types --scalar=float erases, and their native primitives. This is
-        // deliberately NOT CSharpWriter.PrimitiveTypes: Angle (and every other struct) remains a
-        // real type - only the five scalar wrappers erase.
+        // The five scalar wrapper types and the native C# primitive each one WRAPS. Scalars are
+        // never erased to those primitives — that recipe (--scalar=float) was retired 2026-08-01,
+        // see tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md. The map
+        // survives because TIR nodes still carry primitive types at the handwritten-intrinsics
+        // boundary, and name-recognition (IsScalarTypeName, IsConcreteTypeName) must accept both
+        // spellings. Deliberately NOT CSharpWriter.PrimitiveTypes: Angle (and every other struct)
+        // is a real type — these five are the only wrappers over a BCL primitive.
         public static readonly Dictionary<string, string> ScalarPrimitives = new Dictionary<string, string>
         {
             { "Number", "float" },
@@ -209,30 +188,14 @@ namespace Ara3D.Geometry.CSharpWriter
         /// array-materialize → loop-lower) and returns the transformed function. Shared by every
         /// body-emit site so the pass pipeline is defined once. With <see cref="TirDumpDir"/> set,
         /// records each phase that changed the tree (see the field comment).</summary>
-        public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi, bool lowerScalars = true)
-            => RunOptimizerPasses(tir, fi, lowerScalars, out _);
-
-        /// <summary>As <see cref="RunOptimizerPasses(TirFunction, CSharpFunctionInfo, bool)"/>, also
-        /// reporting via <paramref name="lowered"/> whether <see cref="TirScalarLowerer"/> actually RAN
-        /// on this body. That real per-body signal is what tells <see cref="TirCSharpBodyWriter"/> to
-        /// render type-directed — including a SCALAR-FREE body, which lowers to an (unchanged) tree with
-        /// no erased primitive yet still renders type-directed (there being no legacy fallback).</summary>
-        public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi, bool lowerScalars, out bool lowered)
+        public TirFunction RunOptimizerPasses(TirFunction tir, CSharpFunctionInfo fi)
         {
-            // Scalar lowering runs on every scalar-erased body IsGroundBody accepts — with static-body
-            // lowering (lowerScalars is true at all emit sites now) that is every emitted body. The
-            // `lowered` flag it reports is the printer's type-directed signal (no legacy fallback).
-            bool ShouldLower(TirFunction t)
-                => ScalarErase && lowerScalars && TirScalarLowerer.IsGroundBody(t);
-
-            lowered = false;
             if (TirDumpDir == null)
             {
                 tir = TirInliner.Inline(tir, this, fi?.OwnerType?.Name, out _);
                 tir = TirComponentUnroller.UnrollFunction(tir, fi, this);
                 tir = TirArrayMaterializer.Rewrite(tir, this);
                 tir = TirLoopLowerer.Rewrite(tir, this);
-                if (ShouldLower(tir)) { tir = TirScalarLowerer.LowerWithCoercions(tir); lowered = true; }
                 return tir;
             }
 
@@ -253,7 +216,6 @@ namespace Ara3D.Geometry.CSharpWriter
             tir = TirComponentUnroller.UnrollFunction(tir, fi, this);  Phase("optimize / component-unroll (layer 8)", tir);
             tir = TirArrayMaterializer.Rewrite(tir, this);            Phase("optimize-arrays / materialize (layer 9)", tir);
             tir = TirLoopLowerer.Rewrite(tir, this);                  Phase("loops / lower (layer 10)", tir);
-            if (ShouldLower(tir)) { tir = TirScalarLowerer.LowerWithCoercions(tir); lowered = true; Phase("scalar-lower (layer 10.5)", tir); }
             sb.AppendLine();
             return tir;
         }
@@ -407,11 +369,6 @@ namespace Ara3D.Geometry.CSharpWriter
             var ov = PrimitiveSurfaceOverride(ownerTypeName, name);
             if (ov.HasValue)
                 return ov.Value;
-            // An ERASED scalar receiver has no generated struct at all, so every no-arg member of
-            // it is a classic extension method on the primitive and always takes "()". Without
-            // erasure the wrapper struct is real and its own plan decides, like any other type.
-            if (ScalarErase && IsScalarTypeName(ownerTypeName))
-                return false;
             if (GlobalStructSurfacePropertyNames?.Contains(name) ?? false)
                 return true;
             var plan = GetExtensionPlanByTypeName(ownerTypeName);
@@ -427,8 +384,8 @@ namespace Ara3D.Geometry.CSharpWriter
             return false;
         }
 
-        // A Plato scalar WRAPPER name (Number/Integer/...) or the primitive it erases to
-        // (float/int/...): under --scalar=float a TIR node's type may already carry either.
+        // A Plato scalar WRAPPER name (Number/Integer/...) or the primitive it wraps
+        // (float/int/...): a TIR node's type may carry either at the intrinsics boundary.
         public static bool IsScalarTypeName(string name)
             => name != null
                && (ScalarPrimitives.ContainsKey(name) || ScalarPrimitives.ContainsValue(name));

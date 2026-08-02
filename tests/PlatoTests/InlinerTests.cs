@@ -53,7 +53,7 @@ namespace PlatoTests
         {
             var w = new CSharpWriter(CheckerTestSupport.CompileStdLib(), "unused-inliner")
             {
-                ExtensionStyle = true, ScalarErase = true, Optimize = true, OptimizeArrays = true,
+                ExtensionStyle = true, Optimize = true, OptimizeArrays = true,
                 InlineCalls = true, LowerLoops = true,
             };
             // Builds the extension plans + moved-member tables the inliner's emittability checks read.

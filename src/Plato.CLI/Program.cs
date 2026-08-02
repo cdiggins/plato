@@ -13,7 +13,7 @@ namespace Ara3D.Geometry.CLI
 {
     public static class Program
     {
-        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline] [--scalar=wrapper|float]
+        // Usage: Plato.CLI [inputFolder] [outputFolder] [--typescript|--rust|--glsl|--cpp|--cuda] [--csharp-style=extensions] [--optimize] [--optimize-arrays] [--inline]
         //        Plato.CLI <inputFolder>... --out=<outputFolder> [same flags]
         //        Plato.CLI lint <inputFolder>... [--strict]
         // With no arguments, the folders come from Config and C# is generated (original behavior).
@@ -81,16 +81,14 @@ namespace Ara3D.Geometry.CLI
                 return 1;
             }
 
-            // Scalar erasure (roadmap "Phase 2 revision" item 3). "wrapper" = the Number/Integer/
-            // Boolean/Character/String wrapper structs (byte-identical default); "float" = erase
-            // the wrappers to native primitives in all generated code. Only supported together
-            // with --csharp-style=extensions: the default style keeps scalar members as
-            // instance members of the wrapper partial structs, which do not exist under erasure.
-            var scalar = args.Where(a => a.StartsWith("--scalar="))
-                .Select(a => a.Substring("--scalar=".Length)).LastOrDefault() ?? "wrapper";
-            if (scalar != "wrapper" && scalar != "float")
+            // Scalars are always WRAPPER structs — Number / Integer / Boolean / Character / String
+            // stay distinct types. The erasure recipe (--scalar=float) was retired 2026-08-01; see
+            // tracker/decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md. The flag
+            // is still recognised so old scripts fail loudly instead of silently emitting wrappers.
+            var scalarFlag = args.FirstOrDefault(a => a.StartsWith("--scalar="));
+            if (scalarFlag != null)
             {
-                Console.Error.WriteLine($"Unknown --scalar value '{scalar}' (expected 'wrapper' or 'float')");
+                Console.Error.WriteLine($"'{scalarFlag}' is no longer supported: scalar erasure was retired 2026-08-01 and wrapper scalars are the only representation. Drop the flag.");
                 return 1;
             }
 
@@ -190,7 +188,7 @@ namespace Ara3D.Geometry.CLI
             else
             {
                 logger.Log("Writing C# Files");
-                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, scalar == "float", optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract);
+                var output = compilation.ToCSharp(outputFolder, csharpStyle == "extensions", optimize, optimizeArrays, inline, loops, tirDumpDir, inlineReport, staticAbstract);
                 logger.Log($"TIR bodies emitted: {output.TirBodiesEmitted}");
                 if (output.DegradedBodies.Count > 0)
                 {

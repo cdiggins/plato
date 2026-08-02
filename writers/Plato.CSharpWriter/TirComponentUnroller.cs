@@ -282,22 +282,14 @@ public static class TirComponentUnroller
 
         // The float-backed one-component primitives (Number, Angle) expose a raw
         // "float Value" field; accessing it directly needs an explicit cast back to the
-        // Plato component type. Under scalar erasure the polarity flips (the legacy rule):
-        // Number/Angle raw float fields are already "float-land", while the other primitives'
-        // handwritten pseudo-fields (Vector3.X) return the WRAPPER Number and cast DOWN.
+        // Plato component type.
         var isPrimitive = CSharpWriter.PrimitiveTypes.TryGetValue(typeName, out var prim);
-        var castTo = writer.ScalarErase
-            ? (isPrimitive && prim != "float" ? "float" : null)
-            : (isPrimitive && prim == "float" ? "Number" : null);
+        var castTo = isPrimitive && prim == "float" ? "Number" : null;
+        const string scalarComponentPrim = null;
         var compPlatoType = writer.GetComponentPlatoType(typeName);
-        string scalarComponentPrim = null;
-        if (writer.ScalarErase && compPlatoType != null
-            && CSharpWriter.ScalarPrimitives.TryGetValue(compPlatoType, out var compPrim))
-            scalarComponentPrim = compPrim;
 
-        // The semantic (pre-erasure) types the emission markers carry, so the type-directed writer
-        // and TirScalarLowerer see them like any other node. Best-effort: a null keeps the legacy
-        // string channels authoritative.
+        // The semantic types the emission markers carry, so the type-directed writer sees them
+        // like any other node. Best-effort: a null keeps the string channels authoritative.
         return new ComponentInfo
         {
             TypeName = typeName,

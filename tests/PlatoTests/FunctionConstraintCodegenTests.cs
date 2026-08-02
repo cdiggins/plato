@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,13 +11,13 @@ namespace PlatoTests
 {
     /// <summary>
     /// Codegen gate for WHERE-CLAUSE BOUNDS ON A LIBRARY FUNCTION (plato-393). The checking half is
-    /// <see cref="FunctionConstraintTests"/>; this is the other end of the same claim — that a
+    /// <see cref="FunctionConstraintTests"/>; this is the other end of the same claim â€” that a
     /// declared function bound reaches the generated C# as a real constraint on a real body.
     ///
     /// The fixture is the shape the issue exists for and the one the stdlib's de Casteljau now uses:
     /// an operation on a BARE element of an UNBOUNDED container, where nothing in the signature
     /// could ever have supplied the bound by inheritance. Without the clause,
-    /// <c>TirEmitSource.IsOpenGenericEmittable</c> refuses such a body and emits a throwing stub —
+    /// <c>TirEmitSource.IsOpenGenericEmittable</c> refuses such a body and emits a throwing stub â€”
     /// correctly, since an unconstrained C# type parameter cannot reach <c>Lerp</c>.
     ///
     /// The strong gate is the last test: the emitted C# is compiled in-proc with Roslyn and run, the
@@ -69,7 +69,7 @@ library Mixers
         => xs.Item.Lerp(xs.Item, t);
 
     // The control case: same body, no clause. Nothing about its emission may change, and it stays
-    // a stub — an unbounded C# type parameter genuinely cannot reach Lerp.
+    // a stub â€” an unbounded C# type parameter genuinely cannot reach Lerp.
     MixLoosely(line: Timeline, xs: Bag<$T>, t: Number): $T
         => xs.Item.Lerp(xs.Item, t);
 }
@@ -88,7 +88,6 @@ library Mixers
                 var w = new CSharpWriter(comp, "unused-function-bounds-codegen")
                 {
                     ExtensionStyle = true,
-                    ScalarErase = true,
                 };
                 w.WriteAll("float");
                 return w;
@@ -174,6 +173,13 @@ namespace Ara3D.Geometry
             var refs = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"))
                 .Split(Path.PathSeparator)
                 .Where(p => !string.IsNullOrEmpty(p) && System.IO.File.Exists(p))
+                // The stale Ara3D.Geometry PACKAGE also declares Ara3D.Geometry.Number/Boolean/...,
+                // and so does this test assembly (it compiles src/Plato.Intrinsics in as a shared
+                // project). Referencing both is CS0433 for every wrapper scalar the emitted code
+                // names. Drop the package: the current runtime is the one the generated projects
+                // actually compile against. (Invisible before 2026-08-01, when erasure meant the
+                // emitted code said float/bool and never named a wrapper.)
+                .Where(p => !string.Equals(System.IO.Path.GetFileName(p), "Ara3D.Geometry.dll", System.StringComparison.OrdinalIgnoreCase))
                 .Select(p => (MetadataReference)MetadataReference.CreateFromFile(p))
                 .ToList();
             var comp = CSharpCompilation.Create(

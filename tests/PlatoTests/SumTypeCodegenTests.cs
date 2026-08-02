@@ -37,7 +37,6 @@ namespace PlatoTests
             var w = new CSharpWriter(comp, "unused-sum-codegen")
             {
                 ExtensionStyle = true,
-                ScalarErase = true,
             };
             w.WriteAll("float");
             return w;
@@ -76,7 +75,14 @@ namespace Ara3D.Geometry
             var trees = sources.Select(s => CSharpSyntaxTree.ParseText(s)).ToArray();
             var tpa = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"))
                 .Split(Path.PathSeparator)
-                .Where(p => !string.IsNullOrEmpty(p) && File.Exists(p))
+                .Where(p => !string.IsNullOrEmpty(p) && System.IO.File.Exists(p))
+                // The stale Ara3D.Geometry PACKAGE also declares Ara3D.Geometry.Number/Boolean/...,
+                // and so does this test assembly (it compiles src/Plato.Intrinsics in as a shared
+                // project). Referencing both is CS0433 for every wrapper scalar the emitted code
+                // names. Drop the package: the current runtime is the one the generated projects
+                // actually compile against. (Invisible before 2026-08-01, when erasure meant the
+                // emitted code said float/bool and never named a wrapper.)
+                .Where(p => !string.Equals(System.IO.Path.GetFileName(p), "Ara3D.Geometry.dll", System.StringComparison.OrdinalIgnoreCase))
                 .Select(p => (MetadataReference)MetadataReference.CreateFromFile(p))
                 .ToList();
             var comp = CSharpCompilation.Create(

@@ -110,16 +110,6 @@ public class ExtensionStylePlan
         list.Add((ps, rt));
     }
 
-    // Scalar erasure only (empty otherwise): every candidate member FunctionInstance of this
-    // type, for the body writer's receiver-type-aware analysis (a call on a receiver of this
-    // type whose overloads all MOVED has a fully erased result type).
-    public List<FunctionInstance> CandidateFunctions { get; } = new List<FunctionInstance>();
-
-    // True when this plan's type is one of the five scalar wrappers being erased
-    // (--scalar=float): the type contributes NO kept no-arg property names (there is no
-    // struct to keep them in - everything becomes an extension method on the primitive).
-    public bool IsErasedScalar { get; }
-
     // No-arg STATIC members of this type with generated bodies — emitted as static METHODS, so
     // bare-name call sites need "()". Consulted per-receiver-type by the body writer
     // (TirCSharpBodyWriter.IsGeneratedStaticMethodName / WriteCallCore).
@@ -137,7 +127,6 @@ public class ExtensionStylePlan
             : "";
         var name = ct.Name + typeParamsStr;
         var isPrimitive = CSharpWriter.PrimitiveTypes.ContainsKey(name);
-        IsErasedScalar = writer.ScalarErase && CSharpWriter.ScalarPrimitives.ContainsKey(name);
 
         // Generic concrete types keep all their members (mirrors the V1 decision to not
         // generate per-type extension classes for generic types).
@@ -169,33 +158,20 @@ public class ExtensionStylePlan
         foreach (var f in ct.UnimplementedFunctions)
             keepNames.Add(f.Name);
 
-        // No-arg property/field names that remain member-syntax in the struct. An erased scalar
-        // type has no struct, so it contributes none. Only the genuine struct-surface names
-        // (fields + pseudo-fields) qualify — every generated no-arg member, stubs included,
-        // becomes a method.
-        if (!IsErasedScalar)
-        {
-            // A PRIMITIVE type's struct is HANDWRITTEN — the writer emits no fields for it at all
-            // (CSharpConcreteTypeWriter's "// Fields" block is `!IsPrimitive`) — so a Plato-declared
-            // field of such a type is on the C# struct surface only if the runtime actually spells it
-            // that way. It almost always does; CSharpWriter.PrimitiveSurfaceOverrides records where
-            // the handwritten runtime does not.
-            foreach (var fn in fieldNames)
-                if (!(isPrimitive && CSharpWriter.PrimitiveSurfaceOverride(ct.Name, fn) == false))
-                    KeptNoArgPropertyNames.Add(fn);
-            if (pseudoFields != null)
-                KeptNoArgPropertyNames.UnionWith(pseudoFields);
-        }
-
-        if (IsErasedScalar)
-        {
-            foreach (var f in ct.UnimplementedFunctions)
-            {
-                if (f.ParameterNames.Count == 1)
-                    NoArgMemberFunctionNames.Add(f.Name);
-                RecordSignature(f);
-            }
-        }
+        // No-arg property/field names that remain member-syntax in the struct. Only the genuine
+        // struct-surface names (fields + pseudo-fields) qualify — every generated no-arg member,
+        // stubs included, becomes a method.
+        //
+        // A PRIMITIVE type's struct is HANDWRITTEN — the writer emits no fields for it at all
+        // (CSharpConcreteTypeWriter's "// Fields" block is `!IsPrimitive`) — so a Plato-declared
+        // field of such a type is on the C# struct surface only if the runtime actually spells it
+        // that way. It almost always does; CSharpWriter.PrimitiveSurfaceOverrides records where
+        // the handwritten runtime does not.
+        foreach (var fn in fieldNames)
+            if (!(isPrimitive && CSharpWriter.PrimitiveSurfaceOverride(ct.Name, fn) == false))
+                KeptNoArgPropertyNames.Add(fn);
+        if (pseudoFields != null)
+            KeptNoArgPropertyNames.UnionWith(pseudoFields);
 
         // Record the V1 member-name universe for bare-name re-qualification in moved bodies.
         InstanceNames.UnionWith(keepNames);
@@ -203,18 +179,8 @@ public class ExtensionStylePlan
             (fi.IsStatic ? StaticNames : InstanceNames).Add(f.Name);
 
         var movable = new List<FunctionInstance>();
-        if (writer.ScalarErase)
-            foreach (var (f, _) in candidates)
-                CandidateFunctions.Add(f);
         foreach (var (f, fi) in candidates)
         {
-            if (IsErasedScalar && !fi.IsStatic)
-            {
-                if (f.ParameterNames.Count == 1)
-                    NoArgMemberFunctionNames.Add(f.Name);
-                RecordSignature(f);
-            }
-
             var keep =
                 isGeneric                                           // generic types keep everything
                 || declaredSigs.Contains(f.SignatureId)             // C# interface obligation
@@ -243,7 +209,7 @@ public class ExtensionStylePlan
         {
             if (!keepNames.Contains(f.Name))
                 _moved.Add(f);
-            else if (!IsErasedScalar && f.ParameterNames.Count == 1
+            else if (f.ParameterNames.Count == 1
                 && (KeptNoArgPropertyNames.Contains(f.Name)
                     || fieldNames.Contains(f.Name)
                     || (pseudoFields != null && System.Linq.Enumerable.Contains(pseudoFields, f.Name))))
@@ -348,8 +314,8 @@ public static class ExtensionStyleWriter
                 continue;
             }
             writer.TirBodiesEmitted++;
-            tir = writer.RunOptimizerPasses(tir, fi, true, out var lowered);
-            tw.Write(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi, lowered: lowered).ToString());
+            tir = writer.RunOptimizerPasses(tir, fi);
+            tw.Write(new TirCSharpBodyWriter(tw, tir, isStatic: true, fi).ToString());
             writer.WriteWithLineStateSync(tw.ToString());
         }
 
@@ -365,8 +331,5 @@ public static class ExtensionStyleWriter
             ExtensionStaticQualifier = $"{writer.Namespace}.{m.ConcreteType.TypeDef.Name}",
             ExtensionInstanceNames = m.Plan.InstanceNames,
             ExtensionStaticNames = m.Plan.StaticNames,
-            // Scalar erasure: the receiver of a scalar type's moved member is a primitive, so
-            // re-qualified no-arg instance names are extension-method calls (need "()").
-            ExtensionReceiverIsScalar = m.Plan.IsErasedScalar
         };
 }

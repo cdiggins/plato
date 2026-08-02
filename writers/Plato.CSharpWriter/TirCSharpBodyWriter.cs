@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Ara3D.Geometry.Compiler.Analysis;
 using Ara3D.Geometry.Compiler.Checking;
@@ -13,14 +13,7 @@ namespace Ara3D.Geometry.CSharpWriter;
 /// <see cref="TirFunction"/> (the Typed IR produced by <see cref="Elaborator"/> +
 /// <see cref="Monomorphizer"/>, then the writer-side optimizer passes): it maps the recorded
 /// <see cref="EmissionKind"/> of every <see cref="TirCall"/> directly to syntax and renders every
-/// conversion from an explicit <see cref="TirCoerce"/> node — no emit-time semantic re-derivation.
-///
-/// Under scalar erasure (<c>--scalar</c>) the body arrives already LOWERED by
-/// <see cref="TirScalarLowerer"/> (wrapper types substituted to primitives, disambiguating casts
-/// inserted as <see cref="TirCoerce"/> nodes); this writer is then purely type-directed — it prints
-/// the coercions and makes no float-land decisions (the old emit-time scalar-analysis path was
-/// deleted at S3). In non-scalar (default) mode <c>_lowered</c> is false and literals/coercions
-/// render in their wrapper form.
+/// conversion from an explicit <see cref="TirCoerce"/> node â€” no emit-time semantic re-derivation.
 ///
 /// Type/self/namespace rendering is delegated to the same <see cref="CSharpTypeWriter"/> that emits
 /// signatures; the property-getter wrapper / <c>=&gt;</c> / <c>;</c> / trailing-newline framing is
@@ -42,17 +35,8 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // (the reference lambda body writer runs in "static" mode, isStatic:true).
     private int _lambdaDepth;
 
-    // Scalar erasure (--scalar): true when the body is a LOWERED TirFunction (its wrapper types are
-    // already substituted to the erased primitives and every scalar cast is an explicit TirCoerce
-    // node the TirScalarLowerer inserted). The printer is then type-directed: it renders those
-    // coercions as casts and makes NO float-land decisions of its own. Threaded from
-    // RunOptimizerPasses (whether the lowering pass actually RAN), so it can never disagree with
-    // what the pass did. False in non-scalar (default) mode, where the reference-writer rendering
-    // (wrapper literal casts, implicit conversions) applies.
-    private readonly bool _lowered;
-
     public TirCSharpBodyWriter(CSharpTypeWriter tw, TirFunction tir, bool isStatic = false,
-        CSharpFunctionInfo fi = null, bool lowered = false)
+        CSharpFunctionInfo fi = null)
     {
         IndentLevel = tw.IndentLevel;
         _tw = tw;
@@ -60,26 +44,6 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         _selfType = tw.SelfType;
         _isStatic = isStatic;
         _fi = fi;
-        _lowered = lowered;
-        // Under scalar erasure every emitted body must be lowered (the type-directed printer has no
-        // legacy fallback — the emit-time scalar analysis was deleted at S3, and the shipping
-        // recipes lower every member AND static body). A non-lowered scalar body would render
-        // mis-typed, so fail loudly. (A future stdlib addition that cannot lower shows up here.)
-        // Under the shipping (stdlib-legacy) recipes every emitted body lowers (fallback = 0),
-        // so this branch is dead there and byte-identity is preserved. The forward stdlib has
-        // young bodies whose TIR grounds but is not scalar-lowerable (e.g. a compound-statement
-        // lambda whose inner nodes the elaborator left untyped, which IsGroundBody rejects). A
-        // non-lowered scalar body would render mis-typed, so degrade gracefully: emit a throwing
-        // stub, count it as a burn-down number, and keep writing every other body rather than
-        // aborting all output (consolidation plan C4 removed the legacy emit-time scalar path).
-        if (tw.Writer.ScalarErase && !_lowered && tir?.Body != null)
-        {
-            var member = $"{tw.TypeDef?.Name}.{fi?.Name}";
-            tw.Writer.DegradedBodies.Add($"{member} [scalar-lower rejected]");
-            WriteLine($" => throw new System.NotImplementedException("
-                + $"\"plato: scalar-erased body {member} not lowerable (grounds but untyped nodes)\");");
-            return;
-        }
         WriteFunctionBody();
     }
 
@@ -93,7 +57,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         => _tw.Writer.IsStructSurfaceProperty(recvTypeName, name);
 
     // Extension style, MOVED bodies only (ExtensionReceiverName != null): a bare name that bound
-    // implicitly inside the partial struct must be re-qualified inside the static library class —
+    // implicitly inside the partial struct must be re-qualified inside the static library class â€”
     // receiver parameter for instance members (plus "()" for moved no-arg methods), the
     // namespace-qualified type name for statics, the namespace for bare type names. Mirrors the
     // FunctionGroupRefSymbol extension branch of the legacy writer exactly. In default mode (and
@@ -142,13 +106,6 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             return;
         }
         // Unknown to the compiler: a handwritten member of the receiver type (Number.Zero).
-        // Under scalar erasure such statics are wrapper-typed; normalize to the primitive.
-        if (_tw.ExtensionReceiverIsScalar
-            && CSharpWriter.ScalarPrimitives.TryGetValue(_tw.TypeDef?.Name ?? "", out var sqPrim))
-        {
-            Write($"(({sqPrim}){_tw.ExtensionStaticQualifier}.{name})");
-            return;
-        }
         Write($"{_tw.ExtensionStaticQualifier}.{name}");
     }
 
@@ -159,7 +116,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     // resolved call forwarding those parameters, in order, as the call's arguments (arity >= 1).
     // The reference writer consumes the ORIGINAL (un-normalized) graph, so it emits the bare member
     // name `M`; we recover it here. The `_eta`-name guard keeps a USER-authored forwarding lambda
-    // (`(x) => x.M()`) — which the reference writer keeps as a lambda — from being collapsed.
+    // (`(x) => x.M()`) â€” which the reference writer keeps as a lambda â€” from being collapsed.
     private static bool TryGetEtaForwardedName(TirLambda lam, out string name)
     {
         name = null;
@@ -189,10 +146,10 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         }
 
         // A receiver-only member (1 parameter) or a nullary static is emitted as a property
-        // getter — the same rule the reference writer applies per isStatic.
+        // getter â€” the same rule the reference writer applies per isStatic.
         var numParams = _tir.Original?.NumParameters ?? _tir.Parameters.Count;
         var isProp = _isStatic ? numParams == 0 : numParams == 1;
-        // The signature declared a METHOD unless the name is pinned to property syntax — frame
+        // The signature declared a METHOD unless the name is pinned to property syntax â€” frame
         // the body to match.
         if (_fi != null && _fi.EmitAsMethod)
             isProp = false;
@@ -316,14 +273,6 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 return;
 
             case TirLiteral lit:
-                // Scalar erasure (lowered): literals lose their wrapper casts and become native C#
-                // literals. Non-scalar (default) mode keeps the wrapper cast.
-                if (_lowered)
-                {
-                    var v = lit.Value.ToLiteralString();
-                    Write(lit.LiteralType == Ara3D.Geometry.AST.LiteralTypesEnum.Number ? v + "f" : v);
-                    return;
-                }
                 Write($"(({lit.LiteralType}){lit.Value.ToLiteralString()})");
                 return;
 
@@ -343,7 +292,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
             case TirTypeRef t:
                 // A raw-TypeExpression reference is namespace-qualified (`Ara3D.Geometry.Number`),
-                // a bound type reference is bare (`Self` -> the concrete type name) — the two
+                // a bound type reference is bare (`Self` -> the concrete type name) â€” the two
                 // paths of the reference writer.
                 if (t.NamespaceQualified && t.TypeDef?.Name != "Self")
                     Write($"{_tw.Writer.Namespace}.{t.TypeDef?.Name ?? "?"}");
@@ -374,62 +323,10 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 return;
 
             case TirCoerce c:
-                // Type-directed (lowered) rendering: a coercion whose target is a scalar PRIMITIVE
-                // is an explicit disambiguating cast — render it. A coercion to a non-scalar type
-                // (e.g. a float -> Vector3 broadcast) is left to C#'s implicit conversion, so the
-                // inner value is written bare. This is the whole of the erased cast logic; the
-                // TirScalarLowerer decided WHERE casts go, the printer just prints them.
-                if (_lowered)
-                {
-                    // A same-type coercion (coerce<float->float>) whose inner is PROVABLY already
-                    // that C# primitive is the spurious `((float)x)` noise the scalar lowerer emits
-                    // on every erased operand — drop it. Restricted to inners whose emitted type is
-                    // unambiguously the primitive (a native scalar literal, an erased param/var, or
-                    // a real erased field via the component unroller); a wrapper-returning
-                    // pseudo-field (`Vector2.X` → Number) is a TirCall and is NOT dropped, because
-                    // its cast disambiguates a broadcast overload (Multiply(float) vs Multiply(Vector2)).
-                    if (c.ToType?.Name != null && c.FromType?.Name == c.ToType.Name
-                        && RendersAsPrimitive(TirRewrite.StripCoerce(c.Inner), c.ToType.Name))
-                    {
-                        WriteNode(c.Inner);
-                        return;
-                    }
-                    // A cast to a scalar PRIMITIVE (float) disambiguates an erased overload; a cast
-                    // to a scalar WRAPPER (Number) restores wrapper-ness at a broadcast/intrinsic
-                    // boundary (float -> Number -> Vector2, which C# will not chain implicitly).
-                    // Both render as explicit casts; any other coercion is a C# implicit conversion.
-                    var to = c.ToType?.Name;
-                    var innerPrim = c.Inner?.Type?.Def?.Name;
-                    // A C# cast binds tighter than `?:` / assignment, so a low-precedence inner
-                    // (a conditional) must be re-parenthesized: ((int)(cond ? a : b)), never
-                    // ((int)cond ? a : b) — the latter casts the CONDITION.
-                    var innerParens = c.Inner is TirConditional || c.Inner is TirAssign;
-                    if (to != null && (CSharpWriter.ScalarPrimitives.ContainsValue(to) || CSharpWriter.ScalarPrimitives.ContainsKey(to))
-                        && !IsSameScalarCast(c.Inner, to))
-                    {
-                        WriteScalarCast(to, c.Inner, innerParens);
-                    }
-                    else if (c.ToType?.Def?.Kind == Ara3D.Geometry.AST.TypeKind.ConcreteType
-                        && innerPrim != null && CSharpWriter.ScalarPrimitives.ContainsValue(innerPrim))
-                    {
-                        // A BROADCAST coercion: a scalar value (float) to a CONCRETE struct target
-                        // (Number -> Vector3). C# will not chain float -> Number -> Vector3, so
-                        // restore the WRAPPER cast; the runtime's Number-sourced broadcast operator
-                        // then applies (`((Number)(0f))` at CreateWorld's Vector3 position). Only a
-                        // concrete target is pinned here — a scalar at an ungrounded INTERFACE target
-                        // is routed to the legacy path by TirScalarLowerer.IsGroundBody.
-                        WriteScalarCast(WrapperOfPrim(innerPrim), c.Inner, innerParens);
-                    }
-                    else
-                    {
-                        WriteNode(c.Inner);
-                    }
-                    return;
-                }
                 // Non-scalar (default) mode: a TirCoerce is a solver-inserted IMPLICIT-widening
                 // conversion (the Elaborator only wraps ArgMatchKind.Conversion arguments):
                 // Integer->Number, Self->interface, Number->Vector3 broadcast, etc. The reference
-                // writer never renders these — it writes the inner value and lets C#'s implicit
+                // writer never renders these â€” it writes the inner value and lets C#'s implicit
                 // conversion operators widen at the call boundary. Genuine SOURCE-level conversions
                 // the programmer wrote arrive as a TirCall with EmissionKind.Conversion (WriteCall).
                 WriteNode(c.Inner);
@@ -451,17 +348,6 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 return;
 
             case TirNew nw:
-                // Scalar erasure (lowered): "new Number(x)" would erase to the invalid "new float(x)";
-                // a scalar constructor call is just a cast of its single argument (the constructed
-                // type IS the primitive already after lowering).
-                if (_lowered && nw.Args.Count == 1 && nw.NewType?.Name != null
-                    && CSharpWriter.ScalarPrimitives.ContainsValue(nw.NewType.Name))
-                {
-                    Write($"(({nw.NewType.Name})");
-                    WriteNode(nw.Args[0]);
-                    Write(")");
-                    return;
-                }
                 Write($"new {_tw.ToCSharpType(nw.NewType)}(");
                 WriteArgs(nw.Args);
                 Write(")");
@@ -472,7 +358,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 // Pin the element type with an explicit MakeArray<T> when the array's element type
                 // is a concrete renderable type. Without it, C# infers T from the arguments, which
                 // loses a per-element implicit conversion (e.g. a Vector3-valued element in a
-                // Point3D array — the case the fixed-array unroller exposes when it replaces the
+                // Point3D array â€” the case the fixed-array unroller exposes when it replaces the
                 // loop lowerer's `new Point3D[n]`, which pinned the type). Fall back to inference
                 // for a type-variable / non-renderable element.
                 var elem = arr.Type != null && arr.Type.TypeArgs.Count == 1 ? arr.Type.TypeArgs[0] : null;
@@ -494,7 +380,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
             case TirLambda lam:
                 // The normalizer eta-expands a bare member-group reference used in value position
                 // into a forwarding lambda `(_p0..._pN) => M(_p0, ..., _pN)` (Normalizer R3). The
-                // reference writer never saw that rewrite — it consumes the original graph and
+                // reference writer never saw that rewrite â€” it consumes the original graph and
                 // emits the bare member name `M`. Recover the bare reference so we match it.
                 if (TryGetEtaForwardedName(lam, out var etaName))
                 {
@@ -513,7 +399,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
                 {
                     // A C# lambda with a statement body still needs the arrow AND a brace-delimited
                     // block. The inliner / capture hoist can leave EITHER shape inside a lambda: a
-                    // TirBlock (which WriteStatement brace-wraps itself) or a bare statement — most
+                    // TirBlock (which WriteStatement brace-wraps itself) or a bare statement â€” most
                     // often a lone TirReturn, produced when the hoist lifts the lambda's captured
                     // reference into an ENCLOSING block and leaves the tail behind. That bare form
                     // used to render as `(i) return e;`, which does not parse (plato-323: the first
@@ -599,16 +485,16 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
     /// <summary>Whether <paramref name="inner"/> emits as C# code whose type is unambiguously the
     /// scalar primitive <paramref name="to"/> (either the primitive name like "float" or its
-    /// wrapper "Number"), so a same-type cast around it is pure redundant noise. Conservative — only
+    /// wrapper "Number"), so a same-type cast around it is pure redundant noise. Conservative â€” only
     /// cases whose EMITTED type is provably the primitive regardless of surrounding overloads:
     ///   * a native scalar literal;
     ///   * a real erased component field the unroller produced (`TirComponentAccess` with no wrapper
     ///     cast, carrying its <see cref="TirComponentAccess.ScalarComponentPrim"/>);
     ///   * an erased parameter that is NOT the `this` receiver of a scalar WRAPPER-struct instance
-    ///     member — there `this` is the wrapper (`Number`), and its cast pins a broadcast overload
+    ///     member â€” there `this` is the wrapper (`Number`), and its cast pins a broadcast overload
     ///     (`Number.Multiply(Vector2)` vs `(float)`); loop-temp lambda params (rendered under a
     ///     lambda) and ordinary erased params are fine.
-    /// Excluded: pseudo-field method calls (`Vector2.X` → wrapper), `TirVariable` lets, and any
+    /// Excluded: pseudo-field method calls (`Vector2.X` â†’ wrapper), `TirVariable` lets, and any
     /// other node whose emitted type is context-dependent.</summary>
     private bool RendersAsPrimitive(TirNode inner, string to)
     {
@@ -639,7 +525,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
     }
 
     // Render `(({cast})inner)`, parenthesizing a low-precedence inner (a conditional would
-    // otherwise bind the cast to its condition — see the TirCoerce case).
+    // otherwise bind the cast to its condition â€” see the TirCoerce case).
     private void WriteScalarCast(string cast, TirNode inner, bool innerParens)
     {
         Write($"(({cast})");
@@ -649,7 +535,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         Write(")");
     }
 
-    // The scalar WRAPPER for an erased primitive (float -> Number) — used to restore wrapper-ness at
+    // The scalar WRAPPER for an erased primitive (float -> Number) â€” used to restore wrapper-ness at
     // a broadcast boundary where C# will not chain float -> Number -> {struct} implicitly.
     private static string WrapperOfPrim(string prim)
         => CSharpWriter.ScalarPrimitives.FirstOrDefault(kv => kv.Value == prim).Key;
@@ -666,7 +552,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         if (callee.GetParameterName(0) != "_")
             return false;
         // The IArrayLike scaffolding (NumComponents / CreateFromComponents / CreateFromComponent /
-        // Components) declares a `_` receiver but the emitter generates NO static for it — the
+        // Components) declares a `_` receiver but the emitter generates NO static for it â€” the
         // handwritten runtime provides it in receiver form (`v.NumComponents()`). Same for every
         // other name on the "implemented elsewhere" list.
         if (CSharpWriter.IgnoredFunctions.Contains(call.Name))
@@ -734,7 +620,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // Constructor call (`FunctionVolume3D(p => self.Eval(p).Not)`): every argument is a
         // constructor parameter, not a receiver + rest. A TirCall reaches here (rather than the
         // TirConstructorCall node above) whenever it was never rewritten by the inliner/component
-        // unroller — e.g. it is already the top-level body of the function being written. Without
+        // unroller â€” e.g. it is already the top-level body of the function being written. Without
         // this check it falls into the generic receiver-style call below, which reads args[0] as
         // THE RECEIVER and mangles the call postfix onto it (plato-310:
         // `((p) => ...).FunctionVolume3D()` instead of `new FunctionVolume3D(p => ...)`). Mirrors
@@ -752,7 +638,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
 
         // A `_` receiver is Plato's TYPE-LEVEL idiom (`FromOffset(_: Point2D, v: Vector2D): Point2D`,
         // `Pi(_: Number): Number`): the member emits as a C# STATIC (CSharpFunctionInfo.IsStatic),
-        // so a VALUE receiver at the call site must be replaced by the receiver's type name — C#
+        // so a VALUE receiver at the call site must be replaced by the receiver's type name â€” C#
         // rejects `p.FromOffset(v)` for a static with CS0176 (472 in the forward stdlib). The
         // ignored receiver argument is dropped. A type-ref receiver already reads as the type and
         // falls through to the generic member form below.
@@ -772,8 +658,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         // types, so any no-arg Plato member chained off the count (`xs.Count.Range`,
         // `xs.Count.ToNumber`) renders as PROPERTY syntax against an `int` receiver - and C#
         // has no extension properties, so nothing can satisfy it. Re-wrap at the source.
-        // Under --scalar=float the two are the same type and the cast would be noise.
-        if (name == "Count" && args.Count == 1 && !_tw.Writer.ScalarErase
+        if (name == "Count" && args.Count == 1
             && TirRewrite.StripCoerce(args[0])?.Type?.Name == "Array")
         {
             Write("((Integer)");
@@ -832,7 +717,7 @@ public class TirCSharpBodyWriter : CodeBuilder<TirCSharpBodyWriter>
         {
             // Extension style: no-arg library functions that moved out of their structs are
             // classic extension METHODS (v.Length()), so their call sites need "()". Applies in
-            // ALL extension-style bodies (kept and moved) — the moved/kept name partition is
+            // ALL extension-style bodies (kept and moved) â€” the moved/kept name partition is
             // global, so this is decidable by name.
             if (_tw.Writer.ExtensionStyle && _tw.Writer.MovedNoArgNames.Contains(name))
             {
