@@ -1,0 +1,378 @@
+//==
+// # Surfaces shapes
+//
+// Sections, in order:
+//  - Quadric and revolution surfaces
+//  - Superquadric and shell surfaces
+//  - Non-orientable and self-intersecting surfaces
+//  - Minimal and pseudospherical surfaces
+
+//==
+// # Quadric and revolution surfaces
+//
+// The named surfaces with a closed-form parameterization, in the same spirit as
+// the named curves of `curves-shapes.types.plato`: each type stores the minimal
+// defining parameters and nothing else. Every type here is in **canonical
+// position** — centred on the origin with its axis along +Z — and is placed
+// elsewhere with a transform, so no type carries a frame. The canonical UV
+// domain is the unit square, U is the sweep or first parameter and V the profile
+// or second parameter, matching `surfaces.library.plato`. Evaluation lives in
+// `surfaces-shapes.library.plato`.
+//
+// This first group is the quadrics and surfaces of revolution the general
+// `SurfaceOfRevolution` can express but that are worth naming: the saddle, the
+// two hyperboloids, and the three classical revolution surfaces of differential
+// geometry.
+
+//==
+// # Quadrics
+
+// The hyperbolic paraboloid z = (x / a)^2 - (y / b)^2, with SemiAxes = (a, b)
+// and (x, y) sweeping Domain. The doubly ruled saddle of shell roofs
+// (https://en.wikipedia.org/wiki/Paraboloid).
+type HyperbolicParaboloid
+    implements IParametricSurface
+{
+    SemiAxes: Number2;
+    Domain: Bounds2D;
+}
+
+// The one-sheet hyperboloid (a cosh t cos u, b cosh t sin u, c sinh t), with
+// SemiAxes = (a, b, c) and t sweeping ParameterRange. Doubly ruled, connected,
+// and the shape of a cooling tower (https://en.wikipedia.org/wiki/Hyperboloid).
+type HyperboloidOfOneSheet
+    implements IParametricSurface
+{
+    SemiAxes: Number3;
+    ParameterRange: NumberInterval;
+}
+
+// The +Z sheet of the two-sheet hyperboloid, (a sinh t cos u, b sinh t sin u,
+// c cosh t), with t sweeping ParameterRange. The opposite sheet is this one
+// mirrored through the origin; one type carries one sheet so that the surface
+// it denotes is connected (https://en.wikipedia.org/wiki/Hyperboloid).
+type HyperboloidOfTwoSheets
+    implements IParametricSurface
+{
+    SemiAxes: Number3;
+    ParameterRange: NumberInterval;
+}
+
+//==
+// # Classical surfaces of revolution
+
+// The catenoid: a catenary revolved about the axis it hangs from, so the radius
+// at height z is WaistRadius * cosh(z / WaistRadius), with z sweeping
+// ParameterRange. The first minimal surface found after the plane
+// (https://en.wikipedia.org/wiki/Catenoid).
+type Catenoid
+    implements IParametricSurface
+{
+    WaistRadius: Number;
+    ParameterRange: NumberInterval;
+}
+
+// The helicoid: the ruled minimal surface swept by a horizontal ray through the
+// Z axis that rises Pitch per turn. U sweeps TurnCount turns and V the radial
+// interval Radii, which may start away from zero to leave an axial hole. Locally
+// isometric to the catenoid (https://en.wikipedia.org/wiki/Helicoid).
+type Helicoid
+    implements IParametricSurface
+{
+    Radii: NumberInterval;
+    TurnCount: Number;
+    Pitch: Number;
+}
+
+// The pseudosphere (tractricoid): a tractrix revolved about its asymptote, so
+// the radius is Radius / cosh t and the height Radius * (t - tanh t), with t
+// sweeping ParameterRange. Constant Gaussian curvature -1 / Radius^2, and the
+// classical local model of the hyperbolic plane
+// (https://en.wikipedia.org/wiki/Pseudosphere).
+type Pseudosphere
+    implements IParametricSurface
+{
+    Radius: Number;
+    ParameterRange: NumberInterval;
+}
+
+//==
+// # Superquadric and shell surfaces
+//
+// The parametric families used for modelling rather than for their differential
+// geometry: the two superquadrics, the 3D supershape, the CAD blend cyclide, the
+// spiral shell, and the radial harmonic blob. Each is a whole shape family
+// reached by moving a handful of exponents or frequencies, which is what makes
+// them worth naming as types.
+
+//==
+// # Superquadrics
+
+// Barr's superellipsoid: the spherical product of two superellipses, scaled by
+// SemiAxes. LatitudeExponent (Barr's e1) shapes the pole-to-pole profile and
+// LongitudeExponent (e2) the horizontal section; both equal to 1 gives the
+// ellipsoid, smaller exponents square it off and larger ones pinch it
+// (https://en.wikipedia.org/wiki/Superellipsoid).
+type Superellipsoid
+    implements IParametricSurface
+{
+    SemiAxes: Number3;
+    LatitudeExponent: Number;
+    LongitudeExponent: Number;
+}
+
+// The supertoroid: a superellipse of section radius MinorRadius carried around
+// a superelliptical ring of radius MajorRadius. SectionExponent shapes the
+// section and RingExponent the ring; both equal to 1 gives the ordinary torus
+// (https://en.wikipedia.org/wiki/Superquadrics).
+type Supertoroid
+    implements IParametricSurface
+{
+    MajorRadius: Number;
+    MinorRadius: Number;
+    SectionExponent: Number;
+    RingExponent: Number;
+}
+
+// The 3D Gielis supershape: the spherical product of two superformula curves,
+// Longitudinal swept once around and Latitudinal from pole to pole. Reuses the
+// plane curve's six parameters per factor rather than restating them
+// (https://en.wikipedia.org/wiki/Superformula).
+type Superformula3D
+    implements IParametricSurface
+{
+    Longitudinal: Superformula2D;
+    Latitudinal: Superformula2D;
+}
+
+//==
+// # Blend and growth surfaces
+
+// A ring Dupin cyclide: the image of a torus under an inversion, and the
+// classical CAD blend surface — every parameter line is a circle. Requires
+// MajorRadius > MinorRadius > 0; Offset is the cyclide's d parameter, and equal
+// radii collapse the construction back to an ordinary torus
+// (https://en.wikipedia.org/wiki/Dupin_cyclide).
+type DupinCyclide
+    implements IParametricSurface
+{
+    MajorRadius: Number;
+    MinorRadius: Number;
+    Offset: Number;
+}
+
+// A logarithmic-spiral shell: a circular section of radius TubeRadius carried
+// around TurnCount turns of a spiral that tapers to a point while rising by
+// Height, wrapping a columella of radius InnerRadius
+// (https://mathworld.wolfram.com/SeashellSurface.html).
+type SeashellSurface
+    implements IParametricSurface
+{
+    TurnCount: Number;
+    Height: Number;
+    TubeRadius: Number;
+    InnerRadius: Number;
+}
+
+// A radial harmonic surface: the radius is a sum of four powered sinusoids in
+// the two spherical angles, Frequencies holding the four frequencies and
+// Exponents the four matching exponents. The eight-number family behind the
+// familiar lobed blobs (https://paulbourke.net/geometry/sphericalh/).
+type SphericalHarmonicSurface
+    implements IParametricSurface
+{
+    Frequencies: Number4;
+    Exponents: Number4;
+}
+
+//==
+// # Non-orientable and self-intersecting surfaces
+//
+// The classical immersions: surfaces that cannot be embedded in 3D without
+// crossing themselves, so every type here denotes an immersed image rather than
+// an embedded shape. Self-intersections are part of the definition, not an
+// artefact of the parameterization, and none of these surfaces has a
+// well-defined inside.
+
+//==
+// # One-sided surfaces
+
+// The figure-eight immersion of the Klein bottle: a section of radius TubeRadius
+// makes a half turn as it travels once around a ring of radius Radius, so the
+// surface closes onto itself reversed. Closed and one-sided, with no boundary
+// (https://en.wikipedia.org/wiki/Klein_bottle).
+type KleinBottle
+    implements IParametricSurface
+{
+    Radius: Number;
+    TubeRadius: Number;
+}
+
+// The Roman surface of Steiner: the image of the sphere of radius 1 under
+// (x, y, z) -> Scale * (y z, z x, x y). A model of the real projective plane
+// with three segments of self-intersection meeting at a triple point
+// (https://en.wikipedia.org/wiki/Roman_surface).
+type RomanSurface
+    implements IParametricSurface
+{
+    Scale: Number;
+}
+
+// The cross-cap: the projective plane immersed with a single segment of
+// self-intersection ending in two pinch points, scaled by Radius
+// (https://en.wikipedia.org/wiki/Cross-cap).
+type CrossCap
+    implements IParametricSurface
+{
+    Radius: Number;
+}
+
+// Boy's surface in Apery's parameterization: an immersion of the real projective
+// plane with no pinch points, so unlike the Roman surface and the cross-cap it
+// is smooth everywhere (https://en.wikipedia.org/wiki/Boy%27s_surface).
+type BoySurface
+    implements IParametricSurface
+{
+    Scale: Number;
+}
+
+//==
+// # Self-intersecting patches
+
+// Whitney's umbrella (u v, u, v^2), with (u, v) sweeping Domain. The normal form
+// of a stable map singularity: a self-intersecting sheet ending in one pinch
+// point at the origin (https://en.wikipedia.org/wiki/Whitney_umbrella).
+type WhitneyUmbrella
+    implements IParametricSurface
+{
+    Domain: Bounds2D;
+}
+
+// The Bohemian dome: a circle of radius CircleRadius carried around an ellipse
+// with semi-axes EllipseRadii, both traversed once. A quartic surface that meets
+// itself in two ellipses (https://en.wikipedia.org/wiki/Bohemian_dome).
+type BohemianDome
+    implements IParametricSurface
+{
+    EllipseRadii: Number2;
+    CircleRadius: Number;
+}
+
+// Plucker's conoid (the cylindroid): the right conoid whose horizontal rays
+// through the Z axis rise as Height * sin(FoldCount * theta), out to Radius. A
+// FoldCount of 2 is the classical two-fold conoid
+// (https://en.wikipedia.org/wiki/Pl%C3%BCcker%27s_conoid).
+type PluckerConoid
+    implements IParametricSurface
+{
+    Radius: Number;
+    Height: Number;
+    FoldCount: Integer;
+}
+
+//==
+// # Minimal and pseudospherical surfaces
+//
+// The two families that differential geometry names after their curvature: the
+// minimal surfaces, whose mean curvature vanishes everywhere, and the
+// pseudospherical surfaces, whose Gaussian curvature is a negative constant.
+// Most are patches over a rectangle of parameters rather than closed shapes, so
+// each carries the `Domain` or interval it is cut from; several have
+// preconditions on that domain, stated at the type.
+
+//==
+// # Minimal surfaces
+
+// Enneper's minimal surface (u - u^3/3 + u v^2, v - v^3/3 + v u^2, u^2 - v^2)
+// over Domain, scaled by Scale. Minimal everywhere, and self-intersecting once
+// the parameter disc grows past radius sqrt 3
+// (https://en.wikipedia.org/wiki/Enneper_surface).
+type EnneperSurface
+    implements IParametricSurface
+{
+    Scale: Number;
+    Domain: Bounds2D;
+}
+
+// Scherk's first surface, z = Scale * ln(cos(y / Scale) / cos(x / Scale)) over
+// Domain: the doubly periodic minimal surface. Precondition: Domain stays
+// strictly inside the square on which both cosines are positive
+// (https://en.wikipedia.org/wiki/Scherk_surface).
+type ScherkSurface
+    implements IParametricSurface
+{
+    Scale: Number;
+    Domain: Bounds2D;
+}
+
+// Henneberg's surface over Domain, scaled by Scale: the first minimal surface
+// found that is also non-orientable
+// (https://en.wikipedia.org/wiki/Henneberg_surface).
+type HennebergSurface
+    implements IParametricSurface
+{
+    Scale: Number;
+    Domain: Bounds2D;
+}
+
+// Catalan's minimal surface over Domain, scaled by Scale: the minimal surface
+// that contains a cycloid as a geodesic
+// (https://en.wikipedia.org/wiki/Catalan%27s_minimal_surface).
+type CatalanSurface
+    implements IParametricSurface
+{
+    Scale: Number;
+    Domain: Bounds2D;
+}
+
+// The monkey saddle z = Scale * (x^3 - 3 x y^2) over Domain: a saddle with three
+// descending directions rather than two. Not minimal — it is the standard
+// example of a degenerate critical point, and sits here beside the saddles it is
+// compared with (https://en.wikipedia.org/wiki/Monkey_saddle).
+type MonkeySaddle
+    implements IParametricSurface
+{
+    Scale: Number;
+    Domain: Bounds2D;
+}
+
+//==
+// # Pseudospherical surfaces
+
+// Dini's surface: a pseudosphere sheared into a helicoid, keeping constant
+// negative Gaussian curvature while it twists. Radius scales the tractrix
+// profile, Twist is the axial rise per turn, TurnCount how far the sweep goes,
+// and Inclinations the profile interval. Precondition: Inclinations stays
+// strictly inside (0, half a turn) (https://en.wikipedia.org/wiki/Dini%27s_surface).
+type DiniSurface
+    implements IParametricSurface
+{
+    Radius: Number;
+    Twist: Number;
+    TurnCount: Number;
+    Inclinations: AngleInterval;
+}
+
+// Kuen's surface, scaled by Scale: a surface of constant negative curvature
+// obtained from the pseudosphere by a Backlund transform. ParameterRange sweeps
+// the first parameter and Inclinations the second. Precondition: Inclinations
+// stays strictly inside (0, half a turn)
+// (https://en.wikipedia.org/wiki/Kuen_surface).
+type KuenSurface
+    implements IParametricSurface
+{
+    Scale: Number;
+    ParameterRange: NumberInterval;
+    Inclinations: AngleInterval;
+}
+
+// The breather surface over Domain: the pseudospherical surface built from a
+// breather solution of the sine-Gordon equation. Precondition: Wavenumber, the
+// breather parameter, lies strictly between 0 and 1
+// (https://mathworld.wolfram.com/BreatherSurface.html).
+type BreatherSurface
+    implements IParametricSurface
+{
+    Wavenumber: Number;
+    Domain: Bounds2D;
+}

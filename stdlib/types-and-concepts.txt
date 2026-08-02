@@ -238,6 +238,7 @@ type Bivector3D implements IValue{YZ:Number;ZX:Number;XY:Number;}
 type BlendMode{}
 type BloomSettings implements IValue{Enabled:Boolean;Threshold:Number;Intensity:Number;Radius:Number;}
 type BlueNoisePattern2D implements IValue{Region:Bounds2D;Count:Integer;Seed:Integer;}
+type BohemianDome implements IParametricSurface{EllipseRadii:Number2;CircleRadius:Number;}
 type Boolean implements IValue,IOrderable,ILogical{}
 type BounceParameters implements IValue{Bounces:Integer;Restitution:Proportion;}
 type BoundaryLoop implements IValue{HalfEdges:Array<HalfEdgeIndex>;}
@@ -248,7 +249,9 @@ type Bounds3D implements IBounds<Point3D,Vector3D>{Min:Point3D;Max:Point3D;}
 type Box3D implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentered3D,IContainsPoint3D,INearestPoint3D,ISupport3D,IParametricSurface{Center:Point3D;Size:Size3D;Orientation:Quaternion;}
 type BoxBlurParameters implements IValue{Radius:Integer;Passes:Integer;}
 type BoxPlotStatistics implements IValue{Summary:FiveNumberSummary;LowerWhisker:Number;UpperWhisker:Number;Outliers:Array<Number>;}
+type BoySurface implements IParametricSurface{Scale:Number;}
 type Brdf{}
+type BreatherSurface implements IParametricSurface{Wavenumber:Number;Domain:Bounds2D;}
 type Brep3D implements IBoundaryRepresentation,IDeformable3D{Vertices:Array<Point3D>;Edges:Array<BrepEdge>;Faces:Array<BrepFace>;}
 type BrepCurve{}
 type BrepEdge implements IValue{Start:VertexIndex;End:VertexIndex;Curve:BrepCurve;}
@@ -277,7 +280,9 @@ type Capsule3D implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolu
 type Cardinal implements IValue,IComparable{Value:Integer;}
 type Cardioid2D implements IClosedCurve2D{Radius:Number;}
 type CatalanSolid{}
+type CatalanSurface implements IParametricSurface{Scale:Number;Domain:Bounds2D;}
 type Catenary2D implements ICurve2D{Scale:Number;Domain:NumberInterval;}
+type Catenoid implements IParametricSurface{WaistRadius:Number;ParameterRange:NumberInterval;}
 type CatmullRomCurve2D implements ICurve2D,IDeformable2D{Points:Array<Point2D>;Alpha:Number;Closed:Boolean;}
 type CatmullRomCurve3D implements ICurve3D,IDeformable3D{Points:Array<Point3D>;Alpha:Number;Closed:Boolean;}
 type CauchyDistribution implements IProbabilityDistribution{Location:Number;Scale:Number;}
@@ -359,6 +364,7 @@ type CorrelationCoefficient implements IValue{Statistic:CorrelationStatistic;Val
 type CorrelationStatistic{}
 type Covariance2D implements IValue{Xx:Number;Xy:Number;Yy:Number;}
 type Covariance3D implements IValue{Matrix:SymmetricMatrix3x3;}
+type CrossCap implements IParametricSurface{Radius:Number;}
 type CsgNode3D{}
 type CsgNodeIndex implements IValue,IHashable,IComparable,IIndex{Value:Integer;}
 type CsgOperation{}
@@ -392,6 +398,7 @@ type DensityGrid3D implements IValue{Origin:Point3D;CellSize:Number;Values:Array
 type DepthImage implements IImage{Size:IntegerSize2D;Depths:Array<Number>;Near:Number;Far:Number;}
 type DepthOfFieldSettings implements IValue{Enabled:Boolean;FocusDistance:Length;FStop:Number;BladeCount:Integer;BladeRotation:Angle;}
 type Dimension{LengthPower:Integer;MassPower:Integer;TimePower:Integer;CurrentPower:Integer;TemperaturePower:Integer;AmountPower:Integer;LuminosityPower:Integer;}
+type DiniSurface implements IParametricSurface{Radius:Number;Twist:Number;TurnCount:Number;Inclinations:AngleInterval;}
 type Direction2D implements IValue{Vector:Vector2D;}
 type Direction3D implements IValue{Vector:Vector3D;}
 type DirectionalLight implements ILightSource{Direction:Direction3D;Color:Color;Illuminance:Illuminance;AngularDiameter:Angle;CastsShadows:Boolean;}
@@ -403,6 +410,7 @@ type Dither{}
 type DomainWarpNoise2D implements IValue,IScalarField2D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;WarpStrength:Number;WarpFrequency:Number;Iterations:Integer;}
 type DomainWarpNoise3D implements IValue,IScalarField3D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;WarpStrength:Number;WarpFrequency:Number;Iterations:Integer;}
 type DualNumber implements INumerical{Value:Number;Derivative:Number;}
+type DupinCyclide implements IParametricSurface{MajorRadius:Number;MinorRadius:Number;Offset:Number;}
 type Duration implements IQuantity{Seconds:Number;}
 type DynamicQuantity{Amount:Number;Unit:UnitOfMeasure;}
 type DynamicViscosity implements IQuantity{PascalSeconds:Number;}
@@ -419,6 +427,7 @@ type EllipticalArc2D implements ICurve2D{Center:Point2D;Radii:Number2;Rotation:A
 type EllipticalArc3D implements IPlanarCurve3D{Frame:Frame3D;Radii:Number2;Angles:AngleInterval;}
 type EncodedImage implements IValue{Codec:ImageCodec;Bytes:Array<Integer>;}
 type Energy implements IQuantity{Joules:Number;}
+type EnneperSurface implements IParametricSurface{Scale:Number;Domain:Bounds2D;}
 type EnvironmentLight implements IValue{Cube:TextureCube;Rotation:Angle;Intensity:Number;Tint:Color;}
 type Epicycloid2D implements ICurve2D{FixedRadius:Number;RollingRadius:Number;}
 type Epitrochoid2D implements ICurve2D{FixedRadius:Number;RollingRadius:Number;PoleDistance:Number;}
@@ -515,7 +524,9 @@ type HaltonPattern2D implements IValue{Region:Bounds2D;Count:Integer;BaseX:Integ
 type HammersleyPattern2D implements IValue{Region:Bounds2D;Count:Integer;Base:Integer;}
 type HeatCapacity implements IQuantity{JoulesPerKelvin:Number;}
 type HeightField implements IHeightFieldSurface{Heights:Array2D<Number>;Domain:Bounds2D;}
+type Helicoid implements IParametricSurface{Radii:NumberInterval;TurnCount:Number;Pitch:Number;}
 type Helix implements ICurve3D{Frame:Frame3D;Radius:Number;Pitch:Number;Angles:AngleInterval;}
+type HennebergSurface implements IParametricSurface{Scale:Number;Domain:Bounds2D;}
 type HermiteCurve2D implements ICurve2D{Start:Point2D;StartTangent:Vector2D;End:Point2D;EndTangent:Vector2D;}
 type HermiteCurve3D implements ICurve3D{Start:Point3D;StartTangent:Vector3D;End:Point3D;EndTangent:Vector3D;}
 type HermiteSeries implements IValue{Coefficients:Array<Number>;}
@@ -528,6 +539,9 @@ type Histogram2D implements IValue{RangeX:NumberInterval;RangeY:NumberInterval;C
 type HomogeneousPoint2D implements IValue{X:Number;Y:Number;W:Number;}
 type HomogeneousPoint3D implements IValue{X:Number;Y:Number;Z:Number;W:Number;}
 type HueSaturationAdjustment implements IValue{HueShift:Angle;SaturationScale:Number;LightnessOffset:Number;}
+type HyperbolicParaboloid implements IParametricSurface{SemiAxes:Number2;Domain:Bounds2D;}
+type HyperboloidOfOneSheet implements IParametricSurface{SemiAxes:Number3;ParameterRange:NumberInterval;}
+type HyperboloidOfTwoSheets implements IParametricSurface{SemiAxes:Number3;ParameterRange:NumberInterval;}
 type Hypergraph implements IValue{VertexCount:Integer;HyperedgeOffsets:Array<Integer>;HyperedgeVertices:Array<GraphVertexIndex>;}
 type Hypocycloid2D implements ICurve2D{FixedRadius:Number;RollingRadius:Number;}
 type Hypotrochoid2D implements ICurve2D{FixedRadius:Number;RollingRadius:Number;PoleDistance:Number;}
@@ -568,9 +582,11 @@ type KdTree3D implements IValue,ISpatialIndex3D,INearestNeighbor3D{Points:Array<
 type KdTreeNode2D implements IValue{SplitAxis:Integer;SplitValue:Number;LeftChild:SpatialNodeIndex;RightChild:SpatialNodeIndex;Items:IntegerInterval;}
 type KdTreeNode3D implements IValue{SplitAxis:Integer;SplitValue:Number;LeftChild:SpatialNodeIndex;RightChild:SpatialNodeIndex;Items:IntegerInterval;}
 type KinematicViscosity implements IQuantity{SquareMetersPerSecond:Number;}
+type KleinBottle implements IParametricSurface{Radius:Number;TubeRadius:Number;}
 type KNearestQuery2D implements IValue{Center:Point2D;NeighborCount:Integer;MaxDistance:Number;}
 type KNearestQuery3D implements IValue{Center:Point3D;NeighborCount:Integer;MaxDistance:Number;}
 type KnotVector implements IValue{Knots:Array<Number>;}
+type KuenSurface implements IParametricSurface{Scale:Number;ParameterRange:NumberInterval;Inclinations:AngleInterval;}
 type LaplaceDistribution implements IProbabilityDistribution{Location:Number;Scale:Number;}
 type LayeredMaterial implements IValue{Base:TexturedMaterial;ClearCoat:ClearCoatLayer;Sheen:SheenLayer;Specular:SpecularLayer;Transmission:TransmissionLayer;Iridescence:IridescenceLayer;Anisotropy:AnisotropyLayer;Subsurface:SubsurfaceParameters;}
 type LayerTransform2D implements IValue{Anchor:Point2D;Position:Point2D;Rotation:Angle;Scale:Number2;Opacity:Proportion;}
@@ -642,6 +658,7 @@ type MipChain implements IValue{Levels:Array<FloatImage>;}
 type MobiusStrip implements IParametricSurface{Frame:Frame3D;Radius:Number;Width:Number;HalfTwistCount:Integer;}
 type MomentOfInertia implements IQuantity{KilogramSquareMeters:Number;}
 type Momentum implements IQuantity{KilogramMetersPerSecond:Number;}
+type MonkeySaddle implements IParametricSurface{Scale:Number;Domain:Bounds2D;}
 type Monomial implements IValue{Coefficient:Number;Power:Integer;}
 type MorphologyOperation{}
 type MorphologyParameters implements IValue{Operation:MorphologyOperation;Element:StructuringElement;Radius:Integer;Iterations:Integer;}
@@ -725,6 +742,7 @@ type PlaneHit3D implements IValue{Hit:Boolean;Point:Point3D;Parameter:Number;}
 type PlaneRelation3D{}
 type PlatonicSolid{}
 type PlaybackCycle{}
+type PluckerConoid implements IParametricSurface{Radius:Number;Height:Number;FoldCount:Integer;}
 type Point2D implements ICoordinate,IOriginBased<Vector2D>,IHashable,IMetricSpace,ITransformable2D{X:Number;Y:Number;}
 type Point3D implements ICoordinate,IOriginBased<Vector3D>,IHashable,IMetricSpace,ITransformable3D{X:Number;Y:Number;Z:Number;}
 type PointCloud2D implements IValue,IDeformable2D{Positions:Array<Point2D>;}
@@ -759,6 +777,7 @@ type Probability implements INumerical,IComparable{Value:Number;}
 type ProceduralSky implements IValue{SunDirection:Direction3D;Turbidity:Number;GroundAlbedo:Color;Intensity:Number;}
 type ProjectionPlane implements IValue{LowerLeft:Point3D;LowerRight:Point3D;UpperLeft:Point3D;}
 type Proportion implements INumerical,IComparable{Value:Number;}
+type Pseudosphere implements IParametricSurface{Radius:Number;ParameterRange:NumberInterval;}
 type Pyramid3D implements IGeometry3D,IClosedShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,IDeformable3D{Base:Polygon3D;Apex:Point3D;}
 type Quad2D implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,IDeformable2D{A:Point2D;B:Point2D;C:Point2D;D:Point2D;}
 type Quad3D implements IGeometry3D,IConnected,IOrientable,IArea,IBounded3D,IPointSet3D,ICentroid3D,IDeformable3D{A:Point3D;B:Point3D;C:Point3D;D:Point3D;}
@@ -813,6 +832,7 @@ type RichMesh3D implements IValue,IMesh3D,IDeformable3D{Mesh:TriangleMesh3D;Numb
 type RidgedNoise2D implements IValue,IScalarField2D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;Offset:Number;}
 type RidgedNoise3D implements IValue,IScalarField3D{Basis:NoiseBasis;Seed:Integer;Frequency:Number;Octaves:Integer;Lacunarity:Number;Gain:Number;Offset:Number;}
 type RiemannianMetric2D implements IValue{G11:Number;G12:Number;G22:Number;}
+type RomanSurface implements IParametricSurface{Scale:Number;}
 type RoseCurve2D implements IPolarCurve2D{Radius:Number;PetalFrequency:Number;}
 type Rotation2D implements IValue,IMultiplicative,IInterpolatable,IRigid2D{Angle:Angle;}
 type RotationAbout2D implements IValue,IRigid2D{Rotation:Rotation2D;Center:Point2D;}
@@ -859,6 +879,7 @@ type SceneNodeIndex2D implements IValue,IHashable,IComparable,IIndex{Value:Integ
 type SceneNodeIndex3D implements IValue,IHashable,IComparable,IIndex{Value:Integer;}
 type SceneResources implements IValue{Meshes:Array<TriangleMesh3D>;Materials:Array<Material>;Lights:SceneLightSet;LightBindings:Array<SceneLightBinding>;Cameras:SceneCameraSet;CameraBindings:Array<SceneCameraBinding>;}
 type SceneStatistics implements IValue{NodeCount:Integer;MeshCount:Integer;MaterialCount:Integer;LightCount:Integer;CameraCount:Integer;InstanceCount:Integer;TriangleCount:Integer;VertexCount:Integer;}
+type ScherkSurface implements IParametricSurface{Scale:Number;Domain:Bounds2D;}
 type SdfBendModifier3D implements IValue{Curvature:Number;}
 type SdfCombine{}
 type SdfDisplacementModifier3D implements IValue{Source:ItemIndex;Amplitude:Number;}
@@ -875,6 +896,7 @@ type SdfShellModifier implements IValue{Thickness:Number;}
 type SdfTree2D implements IValue{Nodes:Array<SdfNode2D>;Root:SdfNodeIndex;}
 type SdfTree3D implements IValue{Nodes:Array<SdfNode3D>;Root:SdfNodeIndex;}
 type SdfTwistModifier3D implements IValue{AnglePerUnit:Angle;}
+type SeashellSurface implements IParametricSurface{TurnCount:Number;Height:Number;TubeRadius:Number;InnerRadius:Number;}
 type SecondFundamentalForm implements IValue{L:Number;M:Number;N:Number;}
 type SegmentedMesh3D implements IValue,IMesh3D,IDeformable3D{Mesh:TriangleMesh3D;Sections:Array<MeshSection>;}
 type SeparableKernel implements IValue{HorizontalTaps:Array<Number>;VerticalTaps:Array<Number>;}
@@ -916,6 +938,7 @@ type SphereFit3D implements IValue,IFitted{Sphere:Sphere;Quality:FitQuality;}
 type SphereLight implements ILightSource{Center:Point3D;Radius:Number;Color:Color;Luminance:Luminance;CastsShadows:Boolean;}
 type SphericalCap implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D{Sphere:Sphere;Axis:Direction3D;PolarAngle:Angle;}
 type SphericalCoordinate implements IValue{Radius:Number;Azimuth:Angle;Inclination:Angle;}
+type SphericalHarmonicSurface implements IParametricSurface{Frequencies:Number4;Exponents:Number4;}
 type SphericalPatch implements IParametricSurface{Sphere:Sphere;Azimuths:AngleInterval;Inclinations:AngleInterval;}
 type SphericalShell implements IGeometry3D,IClosedShape,IConnected,IVolume,IBounded3D,ICentered3D,IContainsPoint3D{Center:Point3D;InnerRadius:Number;OuterRadius:Number;}
 type SphericalSpiral3D implements ICurve3D{Frame:Frame3D;Radius:Number;TurnCount:Number;}
@@ -944,7 +967,10 @@ type SubdivisionSurface implements ISurface,IDeformable3D{ControlMesh:PolygonMes
 type SubsurfaceParameters implements IValue{Color:Color;Radius:Number3;Scale:Number;Anisotropy:Number;}
 type SummaryStatistics implements IValue{Count:Integer;Sum:Number;Mean:Number;Variance:Number;StandardDeviation:Number;Minimum:Number;Maximum:Number;Skewness:Number;Kurtosis:Number;}
 type SuperEllipse implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,ICentered2D,IContainsPoint2D{Center:Point2D;SemiAxes:Number2;Rotation:Angle;Exponent:Number;}
+type Superellipsoid implements IParametricSurface{SemiAxes:Number3;LatitudeExponent:Number;LongitudeExponent:Number;}
 type Superformula2D implements IPolarCurve2D{Symmetry:Number;Exponent1:Number;Exponent2:Number;Exponent3:Number;XRadius:Number;YRadius:Number;}
+type Superformula3D implements IParametricSurface{Longitudinal:Superformula2D;Latitudinal:Superformula2D;}
+type Supertoroid implements IParametricSurface{MajorRadius:Number;MinorRadius:Number;SectionExponent:Number;RingExponent:Number;}
 type SurfaceCurvature implements IValue{Gaussian:Number;Mean:Number;Principal:PrincipalCurvatures;}
 type SurfaceJet3D implements IValue{Uv:UvCoordinate;Position:Point3D;DerivativeU:Vector3D;DerivativeV:Vector3D;DerivativeUU:Vector3D;DerivativeUV:Vector3D;DerivativeVV:Vector3D;}
 type SurfaceOfRevolution implements IParametricSurface{Profile:ICurve2D;Axis:InfiniteLine3D;Angles:AngleInterval;}
@@ -1095,6 +1121,7 @@ type WhiteBalanceAdjustment implements IValue{Temperature:Temperature;Tint:Numbe
 type WhiteNoise2D implements IValue,IScalarField2D{Seed:Integer;}
 type WhiteNoise3D implements IValue,IScalarField3D{Seed:Integer;}
 type WhitePoint implements IValue{Chromaticity:Chromaticity;Luminance:Number;}
+type WhitneyUmbrella implements IParametricSurface{Domain:Bounds2D;}
 type WiggleMotion implements IValue{Frequency:Frequency;Octaves:Integer;Amplitude:Number;Persistence:Number;Seed:Integer;}
 type WindingOrder{}
 type WireframeMaterial implements IValue{WireColor:Color;FaceColor:Color;WireThickness:Number;}

@@ -1,0 +1,472 @@
+//==
+// # Surfaces shapes
+//
+// Sections, in order:
+//  - Evaluating the quadric and revolution surfaces
+//  - Evaluating the superquadric and shell surfaces
+//  - Evaluating the non-orientable and self-intersecting surfaces
+//  - Evaluating the minimal and pseudospherical surfaces
+
+library SurfacesShapes
+{
+    //==
+    // # Evaluating the quadric and revolution surfaces
+    //
+    // The `IParametricSurface` obligations (Eval / ClosedU / ClosedV) for the types
+    // declared in `surfaces-shapes.types.plato`, plus the two helpers every formula
+    // below is written against.
+    //
+    // Conventions:
+    //   * The canonical UV domain is the unit square, U the sweep or first parameter
+    //     and V the profile or second parameter — the same convention as
+    //     `library Surfaces` in `surfaces.library.plato`, so ClosedU / ClosedV feed
+    //     `AllQuadFaceIndices(nCols, nRows, ClosedU, ClosedV)` unchanged.
+    //   * A unit parameter becomes an angle through the `Angle` constructors
+    //     (`uv.U.Turns` for a full lap, `(uv.V * 0.5).Turns` for a half one), never a
+    //     raw radian literal.
+    //   * A type carrying a `Domain: Bounds2D` maps U across the domain's X extent and
+    //     V across its Y extent, exactly as `PlanarPatch` does.
+    //   * `Sinh` / `Cosh` / `Tanh` are declared on `Angle`, so a hyperbolic function of
+    //     a plain parameter is spelled `t.Angle.Cosh` — the same radians cast the
+    //     catenary body in `curves-shapes.library.plato` uses.
+    //   * Every surface here is in canonical position, so no body reads a frame.
+
+    //==
+    // # Shared helpers
+
+    // sign(x) * |x|^exponent: the signed power the superquadric and harmonic
+    // exponents are written against, so a negative base returns a real value
+    // where a bare Pow would not.
+    SignedPower(x: Number, exponent: Number): Number
+        => x.Abs.Pow(exponent).CopySign(x);
+
+    // The point on the unit sphere at the given azimuth and inclination, with
+    // inclination measured from the +Z pole. The radial direction under the
+    // spherical-product formulas below.
+    SpherePoint(azimuth: Angle, inclination: Angle): Vector3D
+        => (inclination.Sin * azimuth.Cos, inclination.Sin * azimuth.Sin, inclination.Cos);
+
+    //==
+    // # Quadrics
+
+    // z = (x / a)^2 - (y / b)^2, with (x, y) sweeping Domain.
+    // https://en.wikipedia.org/wiki/Paraboloid
+    Eval(s: HyperbolicParaboloid, uv: UvCoordinate): Point3D {
+        var x = s.Domain.Min.X.Lerp(s.Domain.Max.X, uv.U);
+        var y = s.Domain.Min.Y.Lerp(s.Domain.Max.Y, uv.V);
+        return (x, y, (x / s.SemiAxes.X).Square - (y / s.SemiAxes.Y).Square);
+    }
+    ClosedU(s: HyperbolicParaboloid): Boolean => false;
+    ClosedV(s: HyperbolicParaboloid): Boolean => false;
+
+    // (a cosh t cos u, b cosh t sin u, c sinh t): U one full lap, V over
+    // ParameterRange. https://en.wikipedia.org/wiki/Hyperboloid
+    Eval(s: HyperboloidOfOneSheet, uv: UvCoordinate): Point3D {
+        var around = uv.U.Turns;
+        var t = s.ParameterRange.Lerp(uv.V);
+        return (s.SemiAxes.X * t.Angle.Cosh * around.Cos,
+                s.SemiAxes.Y * t.Angle.Cosh * around.Sin,
+                s.SemiAxes.Z * t.Angle.Sinh);
+    }
+    // The lap seams shut; the surface runs off to infinity along the parameter.
+    ClosedU(s: HyperboloidOfOneSheet): Boolean => true;
+    ClosedV(s: HyperboloidOfOneSheet): Boolean => false;
+
+    // (a sinh t cos u, b sinh t sin u, c cosh t): the +Z sheet only, so a
+    // ParameterRange starting at 0 starts at the sheet's apex.
+    // https://en.wikipedia.org/wiki/Hyperboloid
+    Eval(s: HyperboloidOfTwoSheets, uv: UvCoordinate): Point3D {
+        var around = uv.U.Turns;
+        var t = s.ParameterRange.Lerp(uv.V);
+        return (s.SemiAxes.X * t.Angle.Sinh * around.Cos,
+                s.SemiAxes.Y * t.Angle.Sinh * around.Sin,
+                s.SemiAxes.Z * t.Angle.Cosh);
+    }
+    ClosedU(s: HyperboloidOfTwoSheets): Boolean => true;
+    ClosedV(s: HyperboloidOfTwoSheets): Boolean => false;
+
+    //==
+    // # Classical surfaces of revolution
+
+    // r = WaistRadius cosh(z / WaistRadius), with z over ParameterRange.
+    // https://en.wikipedia.org/wiki/Catenoid
+    Eval(s: Catenoid, uv: UvCoordinate): Point3D {
+        var around = uv.U.Turns;
+        var z = s.ParameterRange.Lerp(uv.V);
+        var r = s.WaistRadius * (z / s.WaistRadius).Angle.Cosh;
+        return (r * around.Cos, r * around.Sin, z);
+    }
+    ClosedU(s: Catenoid): Boolean => true;
+    ClosedV(s: Catenoid): Boolean => false;
+
+    // A ray through the axis swept TurnCount turns while rising Pitch per turn:
+    // U the sweep, V the distance out along the ray.
+    // https://en.wikipedia.org/wiki/Helicoid
+    Eval(s: Helicoid, uv: UvCoordinate): Point3D {
+        var turns = uv.U * s.TurnCount;
+        var around = turns.Turns;
+        var r = s.Radii.Lerp(uv.V);
+        return (r * around.Cos, r * around.Sin, s.Pitch * turns);
+    }
+    // A whole lap does not seam shut here: the sweep has risen by Pitch.
+    ClosedU(s: Helicoid): Boolean => false;
+    ClosedV(s: Helicoid): Boolean => false;
+
+    // The tractrix revolved: r = Radius / cosh t, z = Radius (t - tanh t), with
+    // t over ParameterRange. https://en.wikipedia.org/wiki/Pseudosphere
+    Eval(s: Pseudosphere, uv: UvCoordinate): Point3D {
+        var around = uv.U.Turns;
+        var t = s.ParameterRange.Lerp(uv.V);
+        var r = s.Radius / t.Angle.Cosh;
+        return (r * around.Cos, r * around.Sin, s.Radius * (t - t.Angle.Tanh));
+    }
+    ClosedU(s: Pseudosphere): Boolean => true;
+    ClosedV(s: Pseudosphere): Boolean => false;
+
+    //==
+    // # Evaluating the superquadric and shell surfaces
+    //
+    // The spherical products and the two placed families. The superquadric
+    // formulas differ from the ellipsoid and torus only by raising each sinusoid
+    // to an exponent, which is why every one of them goes through SignedPower:
+    // the sinusoid is negative over half its range and a fractional exponent of a
+    // negative base is not real.
+
+    //==
+    // # Superquadrics
+
+    // Barr's spherical product: U the longitude over a full lap, V the latitude
+    // from the south pole to the north.
+    // https://en.wikipedia.org/wiki/Superellipsoid
+    Eval(s: Superellipsoid, uv: UvCoordinate): Point3D {
+        var longitude = uv.U.Turns;
+        var latitude = ((uv.V - 0.5) * 0.5).Turns;
+        var ring = SignedPower(latitude.Cos, s.LatitudeExponent);
+        return (s.SemiAxes.X * ring * SignedPower(longitude.Cos, s.LongitudeExponent),
+                s.SemiAxes.Y * ring * SignedPower(longitude.Sin, s.LongitudeExponent),
+                s.SemiAxes.Z * SignedPower(latitude.Sin, s.LatitudeExponent));
+    }
+    // A pole is a degenerate row, not a seam, so only the longitude closes.
+    ClosedU(s: Superellipsoid): Boolean => true;
+    ClosedV(s: Superellipsoid): Boolean => false;
+
+    // The superelliptical section carried around the superelliptical ring:
+    // U around the ring, V around the section.
+    // https://en.wikipedia.org/wiki/Superquadrics
+    Eval(s: Supertoroid, uv: UvCoordinate): Point3D {
+        var around = uv.U.Turns;
+        var section = uv.V.Turns;
+        var ring = s.MajorRadius + s.MinorRadius * SignedPower(section.Cos, s.SectionExponent);
+        return (ring * SignedPower(around.Cos, s.RingExponent),
+                ring * SignedPower(around.Sin, s.RingExponent),
+                s.MinorRadius * SignedPower(section.Sin, s.SectionExponent));
+    }
+    ClosedU(s: Supertoroid): Boolean => true;
+    ClosedV(s: Supertoroid): Boolean => true;
+
+    // The spherical product of the two superformula radii, each read through the
+    // plane curve's own RadiusAt. https://en.wikipedia.org/wiki/Superformula
+    Eval(s: Superformula3D, uv: UvCoordinate): Point3D {
+        var longitude = uv.U.Turns;
+        var latitude = ((uv.V - 0.5) * 0.5).Turns;
+        var ring = s.Latitudinal.RadiusAt(latitude);
+        var sweep = s.Longitudinal.RadiusAt(longitude);
+        return (sweep * longitude.Cos * ring * latitude.Cos,
+                sweep * longitude.Sin * ring * latitude.Cos,
+                ring * latitude.Sin);
+    }
+    ClosedU(s: Superformula3D): Boolean => true;
+    ClosedV(s: Superformula3D): Boolean => false;
+
+    //==
+    // # Blend and growth surfaces
+
+    // The ring cyclide with a = MajorRadius, b = MinorRadius, d = Offset and
+    // c = sqrt(a^2 - b^2), every parameter line a circle. The shared denominator
+    // a - c cos u cos v is non-zero exactly when a > c, which the type's
+    // a > b > 0 precondition guarantees.
+    // https://en.wikipedia.org/wiki/Dupin_cyclide
+    Eval(s: DupinCyclide, uv: UvCoordinate): Point3D {
+        var u = uv.U.Turns;
+        var v = uv.V.Turns;
+        var a = s.MajorRadius;
+        var b = s.MinorRadius;
+        var d = s.Offset;
+        var c = (a * a - b * b).Sqrt;
+        var denominator = a - c * u.Cos * v.Cos;
+        return ((d * denominator + b * b * u.Cos) / denominator,
+                b * u.Sin * (a - d * v.Cos) / denominator,
+                b * v.Sin * (c * u.Cos - d) / denominator);
+    }
+    ClosedU(s: DupinCyclide): Boolean => true;
+    ClosedV(s: DupinCyclide): Boolean => true;
+
+    // A circular section carried around a tapering spiral: U around the section,
+    // V along the whorls, with the section shrinking to nothing at V = 1.
+    // https://mathworld.wolfram.com/SeashellSurface.html
+    Eval(s: SeashellSurface, uv: UvCoordinate): Point3D {
+        var section = uv.U.Turns;
+        var spiral = (uv.V * s.TurnCount).Turns;
+        var taper = 1.0 - uv.V;
+        var r = s.InnerRadius + s.TubeRadius * taper * (1.0 + section.Cos);
+        return (r * spiral.Cos,
+                r * spiral.Sin,
+                s.Height * uv.V + s.TubeRadius * taper * section.Sin);
+    }
+    ClosedU(s: SeashellSurface): Boolean => true;
+    ClosedV(s: SeashellSurface): Boolean => false;
+
+    // r = sin(f0 phi)^e0 + cos(f1 phi)^e1 + sin(f2 theta)^e2 + cos(f3 theta)^e3,
+    // with theta the longitude over a full lap and phi the inclination from pole
+    // to pole; the radius scales the unit sphere direction.
+    // https://paulbourke.net/geometry/sphericalh/
+    Eval(s: SphericalHarmonicSurface, uv: UvCoordinate): Point3D {
+        var theta = uv.U.Turns;
+        var phi = (uv.V * 0.5).Turns;
+        var r = SignedPower((phi * s.Frequencies.X).Sin, s.Exponents.X)
+              + SignedPower((phi * s.Frequencies.Y).Cos, s.Exponents.Y)
+              + SignedPower((theta * s.Frequencies.Z).Sin, s.Exponents.Z)
+              + SignedPower((theta * s.Frequencies.W).Cos, s.Exponents.W);
+        return (SpherePoint(theta, phi) * r).ToPoint;
+    }
+    ClosedU(s: SphericalHarmonicSurface): Boolean => true;
+    ClosedV(s: SphericalHarmonicSurface): Boolean => false;
+
+    //==
+    // # Evaluating the non-orientable and self-intersecting surfaces
+    //
+    // Each body is the standard immersion of its surface. The self-intersections
+    // are in the image, not in the parameterization: every one of these maps is
+    // continuous and, except at the pinch points that the cross-cap and Whitney's
+    // umbrella are defined by, an immersion.
+
+    //==
+    // # One-sided surfaces
+
+    // The figure-eight immersion: the section turns a half turn over the lap, so
+    // the ring closes onto itself reversed.
+    // https://en.wikipedia.org/wiki/Klein_bottle
+    Eval(s: KleinBottle, uv: UvCoordinate): Point3D {
+        var lap = uv.U.Turns;
+        var half = (uv.U * 0.5).Turns;
+        var section = uv.V.Turns;
+        var figureEight = half.Cos * section.Sin - half.Sin * (section * 2.0).Sin;
+        var ring = s.Radius + s.TubeRadius * figureEight;
+        return (ring * lap.Cos,
+                ring * lap.Sin,
+                s.TubeRadius * (half.Sin * section.Sin + half.Cos * (section * 2.0).Sin));
+    }
+    // Closed in both directions: the lap seams shut (with the section reversed)
+    // and the figure-eight section is itself a closed loop.
+    ClosedU(s: KleinBottle): Boolean => true;
+    ClosedV(s: KleinBottle): Boolean => true;
+
+    // The sphere of radius 1 pushed through (x, y, z) -> Scale (y z, z x, x y).
+    // https://en.wikipedia.org/wiki/Roman_surface
+    Eval(s: RomanSurface, uv: UvCoordinate): Point3D {
+        var p = SpherePoint(uv.U.Turns, (uv.V * 0.5).Turns);
+        return (s.Scale * p.Y * p.Z, s.Scale * p.Z * p.X, s.Scale * p.X * p.Y);
+    }
+    ClosedU(s: RomanSurface): Boolean => true;
+    ClosedV(s: RomanSurface): Boolean => false;
+
+    // (cos u sin 2v, sin u sin 2v, cos^2 v - cos^2 u sin^2 v) scaled by Radius:
+    // U one full lap, V a quarter turn from the rim to the pinch line.
+    // https://en.wikipedia.org/wiki/Cross-cap
+    Eval(s: CrossCap, uv: UvCoordinate): Point3D {
+        var u = uv.U.Turns;
+        var v = (uv.V * 0.25).Turns;
+        return (s.Radius * u.Cos * (v * 2.0).Sin,
+                s.Radius * u.Sin * (v * 2.0).Sin,
+                s.Radius * (v.Cos * v.Cos - u.Cos * u.Cos * v.Sin * v.Sin));
+    }
+    ClosedU(s: CrossCap): Boolean => true;
+    ClosedV(s: CrossCap): Boolean => false;
+
+    // Apery's parameterization, with both parameters over a half turn and the
+    // shared denominator 2 - sqrt 2 sin 3u sin 2v, which never vanishes.
+    // https://en.wikipedia.org/wiki/Boy%27s_surface
+    Eval(s: BoySurface, uv: UvCoordinate): Point3D {
+        var u = (uv.U * 0.5).Turns;
+        var v = (uv.V * 0.5).Turns;
+        var root2 = 2.0.Sqrt;
+        var denominator = 2.0 - root2 * (u * 3.0).Sin * (v * 2.0).Sin;
+        return (s.Scale * (root2 * (u * 2.0).Cos * v.Cos * v.Cos + u.Cos * (v * 2.0).Sin) / denominator,
+                s.Scale * (root2 * (u * 2.0).Sin * v.Cos * v.Cos - u.Sin * (v * 2.0).Sin) / denominator,
+                s.Scale * 3.0 * v.Cos * v.Cos / denominator);
+    }
+    // Both parameters wrap over their half turn, which is what makes the image a
+    // closed surface with no boundary.
+    ClosedU(s: BoySurface): Boolean => true;
+    ClosedV(s: BoySurface): Boolean => true;
+
+    //==
+    // # Self-intersecting patches
+
+    // (u v, u, v^2) with (u, v) sweeping Domain. A Domain straddling u = 0 is
+    // what makes the self-intersection and the pinch point visible.
+    // https://en.wikipedia.org/wiki/Whitney_umbrella
+    Eval(s: WhitneyUmbrella, uv: UvCoordinate): Point3D {
+        var u = s.Domain.Min.X.Lerp(s.Domain.Max.X, uv.U);
+        var v = s.Domain.Min.Y.Lerp(s.Domain.Max.Y, uv.V);
+        return (u * v, u, v * v);
+    }
+    ClosedU(s: WhitneyUmbrella): Boolean => false;
+    ClosedV(s: WhitneyUmbrella): Boolean => false;
+
+    // (A cos u, B sin u + C cos v, C sin v): the circle of radius C carried
+    // around the ellipse with semi-axes (A, B).
+    // https://en.wikipedia.org/wiki/Bohemian_dome
+    Eval(s: BohemianDome, uv: UvCoordinate): Point3D {
+        var u = uv.U.Turns;
+        var v = uv.V.Turns;
+        return (s.EllipseRadii.X * u.Cos,
+                s.EllipseRadii.Y * u.Sin + s.CircleRadius * v.Cos,
+                s.CircleRadius * v.Sin);
+    }
+    ClosedU(s: BohemianDome): Boolean => true;
+    ClosedV(s: BohemianDome): Boolean => true;
+
+    // A horizontal ray whose height is Height sin(FoldCount theta): U the sweep,
+    // V the distance out along the ray from the axis.
+    // https://en.wikipedia.org/wiki/Pl%C3%BCcker%27s_conoid
+    Eval(s: PluckerConoid, uv: UvCoordinate): Point3D {
+        var theta = uv.U.Turns;
+        var r = s.Radius * uv.V;
+        return (r * theta.Cos,
+                r * theta.Sin,
+                s.Height * (theta * s.FoldCount.ToNumber).Sin);
+    }
+    // A whole number of folds over the lap, so the sweep seams shut; the rays run
+    // from the axis to the rim.
+    ClosedU(s: PluckerConoid): Boolean => true;
+    ClosedV(s: PluckerConoid): Boolean => false;
+
+    //==
+    // # Evaluating the minimal and pseudospherical surfaces
+    //
+    // These are patches cut from unbounded parameterizations, so each body maps
+    // the unit square onto the type's own `Domain` or interval and evaluates the
+    // textbook formula there. The three surfaces whose formula contains
+    // `ln tan(v / 2)` or `ln cos` state the matching precondition on their type;
+    // no body clamps, because clamping would silently move the patch rather than
+    // report the mistake.
+
+    //==
+    // # Minimal surfaces
+
+    // (u - u^3/3 + u v^2, v - v^3/3 + v u^2, u^2 - v^2) over Domain.
+    // https://en.wikipedia.org/wiki/Enneper_surface
+    Eval(s: EnneperSurface, uv: UvCoordinate): Point3D {
+        var u = s.Domain.Min.X.Lerp(s.Domain.Max.X, uv.U);
+        var v = s.Domain.Min.Y.Lerp(s.Domain.Max.Y, uv.V);
+        return (s.Scale * (u - u * u * u / 3.0 + u * v * v),
+                s.Scale * (v - v * v * v / 3.0 + v * u * u),
+                s.Scale * (u * u - v * v));
+    }
+    ClosedU(s: EnneperSurface): Boolean => false;
+    ClosedV(s: EnneperSurface): Boolean => false;
+
+    // z = Scale ln(cos(y / Scale) / cos(x / Scale)), written as the difference of
+    // the two logarithms. https://en.wikipedia.org/wiki/Scherk_surface
+    Eval(s: ScherkSurface, uv: UvCoordinate): Point3D {
+        var x = s.Domain.Min.X.Lerp(s.Domain.Max.X, uv.U);
+        var y = s.Domain.Min.Y.Lerp(s.Domain.Max.Y, uv.V);
+        return (x, y, s.Scale * ((y / s.Scale).Angle.Cos.NaturalLog
+                                 - (x / s.Scale).Angle.Cos.NaturalLog));
+    }
+    ClosedU(s: ScherkSurface): Boolean => false;
+    ClosedV(s: ScherkSurface): Boolean => false;
+
+    // (2 sinh u cos v - 2/3 sinh 3u cos 3v, 2 sinh u sin v + 2/3 sinh 3u sin 3v,
+    //  2 cosh 2u cos 2v) over Domain.
+    // https://en.wikipedia.org/wiki/Henneberg_surface
+    Eval(s: HennebergSurface, uv: UvCoordinate): Point3D {
+        var u = s.Domain.Min.X.Lerp(s.Domain.Max.X, uv.U);
+        var v = s.Domain.Min.Y.Lerp(s.Domain.Max.Y, uv.V).Angle;
+        return (s.Scale * (2.0 * u.Angle.Sinh * v.Cos
+                           - 2.0 / 3.0 * (u * 3.0).Angle.Sinh * (v * 3.0).Cos),
+                s.Scale * (2.0 * u.Angle.Sinh * v.Sin
+                           + 2.0 / 3.0 * (u * 3.0).Angle.Sinh * (v * 3.0).Sin),
+                s.Scale * 2.0 * (u * 2.0).Angle.Cosh * (v * 2.0).Cos);
+    }
+    ClosedU(s: HennebergSurface): Boolean => false;
+    ClosedV(s: HennebergSurface): Boolean => false;
+
+    // (u - sin u cosh v, 1 - cos u cosh v, 4 sin(u/2) sinh(v/2)) over Domain: the
+    // cycloid it contains is the V = 0 parameter line.
+    // https://en.wikipedia.org/wiki/Catalan%27s_minimal_surface
+    Eval(s: CatalanSurface, uv: UvCoordinate): Point3D {
+        var u = s.Domain.Min.X.Lerp(s.Domain.Max.X, uv.U);
+        var v = s.Domain.Min.Y.Lerp(s.Domain.Max.Y, uv.V);
+        return (s.Scale * (u - u.Angle.Sin * v.Angle.Cosh),
+                s.Scale * (1.0 - u.Angle.Cos * v.Angle.Cosh),
+                s.Scale * 4.0 * (u / 2.0).Angle.Sin * (v / 2.0).Angle.Sinh);
+    }
+    ClosedU(s: CatalanSurface): Boolean => false;
+    ClosedV(s: CatalanSurface): Boolean => false;
+
+    // z = Scale (x^3 - 3 x y^2) over Domain — the real part of the cube of
+    // x + i y, which is why the saddle has three descending directions.
+    // https://en.wikipedia.org/wiki/Monkey_saddle
+    Eval(s: MonkeySaddle, uv: UvCoordinate): Point3D {
+        var x = s.Domain.Min.X.Lerp(s.Domain.Max.X, uv.U);
+        var y = s.Domain.Min.Y.Lerp(s.Domain.Max.Y, uv.V);
+        return (x, y, s.Scale * (x * x * x - 3.0 * x * y * y));
+    }
+    ClosedU(s: MonkeySaddle): Boolean => false;
+    ClosedV(s: MonkeySaddle): Boolean => false;
+
+    //==
+    // # Pseudospherical surfaces
+
+    // The tractrix profile revolved while rising Twist per turn: U sweeps
+    // TurnCount turns, V the profile interval Inclinations.
+    // https://en.wikipedia.org/wiki/Dini%27s_surface
+    Eval(s: DiniSurface, uv: UvCoordinate): Point3D {
+        var turns = uv.U * s.TurnCount;
+        var u = turns.Turns;
+        var v = s.Inclinations.Lerp(uv.V);
+        return (s.Radius * u.Cos * v.Sin,
+                s.Radius * u.Sin * v.Sin,
+                s.Radius * (v.Cos + (v / 2.0).Tan.NaturalLog) + s.Twist * turns);
+    }
+    // The sweep rises as it turns, so a whole lap does not seam shut, and the
+    // profile is an open arc.
+    ClosedU(s: DiniSurface): Boolean => false;
+    ClosedV(s: DiniSurface): Boolean => false;
+
+    // With d = 1 + u^2 sin^2 v: (2 (cos u + u sin u) sin v / d,
+    // 2 (sin u - u cos u) sin v / d, ln tan(v/2) + 2 cos v / d).
+    // https://en.wikipedia.org/wiki/Kuen_surface
+    Eval(s: KuenSurface, uv: UvCoordinate): Point3D {
+        var u = s.ParameterRange.Lerp(uv.U);
+        var v = s.Inclinations.Lerp(uv.V);
+        var d = 1.0 + u * u * v.Sin * v.Sin;
+        return (s.Scale * 2.0 * (u.Angle.Cos + u * u.Angle.Sin) * v.Sin / d,
+                s.Scale * 2.0 * (u.Angle.Sin - u * u.Angle.Cos) * v.Sin / d,
+                s.Scale * ((v / 2.0).Tan.NaturalLog + 2.0 * v.Cos / d));
+    }
+    ClosedU(s: KuenSurface): Boolean => false;
+    ClosedV(s: KuenSurface): Boolean => false;
+
+    // The sine-Gordon breather with b = Wavenumber and w = sqrt(1 - b^2), over
+    // Domain. The denominator b ((w cosh b u)^2 + (b sin w v)^2) vanishes only
+    // where cosh and sin are both zero, which cannot happen.
+    // https://mathworld.wolfram.com/BreatherSurface.html
+    Eval(s: BreatherSurface, uv: UvCoordinate): Point3D {
+        var u = s.Domain.Min.X.Lerp(s.Domain.Max.X, uv.U);
+        var v = s.Domain.Min.Y.Lerp(s.Domain.Max.Y, uv.V);
+        var b = s.Wavenumber;
+        var w = (1.0 - b * b).Sqrt;
+        var bu = (b * u).Angle;
+        var wv = (w * v).Angle;
+        var vAngle = v.Angle;
+        var denominator = b * (w * bu.Cosh * (w * bu.Cosh) + b * wv.Sin * (b * wv.Sin));
+        return (-u + 2.0 * w * w * bu.Cosh * bu.Sinh / denominator,
+                2.0 * w * bu.Cosh * (-w * vAngle.Cos * wv.Cos - vAngle.Sin * wv.Sin) / denominator,
+                2.0 * w * bu.Cosh * (-w * vAngle.Sin * wv.Cos + vAngle.Cos * wv.Sin) / denominator);
+    }
+    ClosedU(s: BreatherSurface): Boolean => false;
+    ClosedV(s: BreatherSurface): Boolean => false;
+}

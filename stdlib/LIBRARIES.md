@@ -166,8 +166,8 @@ naming; `grep "^library " */*.library.plato` is the live list.
 **Concrete geometry bodies:** `lines`, `planar`, `polygons`, `polyhedra`, `spatial-primitives`,
 `brep`, `pointclouds`, `topology` (all `.library.plato`).
 
-**Concrete curve / surface / solid bodies:** `curves-shapes`, `splines`, `surfaces`, `solids`,
-`solids-csg` (all `.library.plato`).
+**Concrete curve / surface / solid bodies:** `curves-shapes`, `splines`, `surfaces`,
+`surfaces-shapes`, `solids`, `solids-csg` (all `.library.plato`).
 
 **Concrete field / implicit bodies:** `fields-graphs`, `implicit-sdf`, `noise`, `sampling`
 (all `.library.plato`).
