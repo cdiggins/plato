@@ -1,34 +1,40 @@
 //==
 // # Mesh geometry layers
 //
-// The layered vocabulary every mesh-like shape sits on: the vertex data as a
-// view, the primitives as a view, and the indexed storage those primitives are
-// gathered from. Layer 1 is the layer most algorithms should target — bounds,
-// area, raycast, transform need to see primitives and nothing more, and soups,
-// indexed meshes and tessellated procedural surfaces all satisfy it. Layer 2 is
-// the storage layer, needed only by welding, adjacency and subdivision-class
-// algorithms that must know which primitives share a vertex.
+// The whole layered vocabulary of mesh-like geometry: the three generic layers,
+// the collection, and the named bindings that pin them to concrete primitives.
+// Kept in one file deliberately, above the STY006 declaration cap — the layers
+// and their bindings are one design, and splitting them hid the correspondence
+// between a layer and the names that instantiate it.
 //
-// Every layer is generic over the point type and the primitive, so the plane
-// and space are the same tower instantiated twice: a triangulation is
-// `IndexedGeometry<Point2D, Triangle2D, TriangleFace>` and an interchange mesh
-// is `IndexedGeometry<Point3D, Triangle3D, TriangleFace>`. A UV domain is the
-// planar instantiation sharing its index table with the spatial one. The named
-// bindings — `TriangleGeometry3D`, `IndexedTriangleGeometry2D` and the rest —
-// live in `meshes-layers-named.concepts.plato`, and are what declarations and
-// signatures should name; these generic layers exist to be instantiated, not
-// usually to be written directly.
+// Layer 0 is the vertex data as a view, layer 1 the primitives as a view, and
+// layer 2 the indexed storage those primitives are gathered from. Layer 1 is the
+// layer most algorithms should target — bounds, area, raycast, transform need to
+// see primitives and nothing more, and soups, indexed meshes and tessellated
+// procedural surfaces all satisfy it. Layer 2 is the storage layer, needed only
+// by welding, adjacency and subdivision-class algorithms that must know which
+// primitives share a vertex.
+//
+// The generic layers are dimension-agnostic, so the plane and space are the same
+// tower instantiated twice: a UV domain is the planar instantiation sharing its
+// index table with the spatial mesh it parameterizes. The named bindings are
+// where dimension arrives, and therefore where the dimensional capabilities
+// attach — PointSet, Bounded and Deformable. Transformable is NOT listed: a
+// Deformable type already gets Transform for all thirteen transform
+// representations from `intervals-transforms-transformable.library.plato`.
 //
 // Manifoldness, closedness and orientability are deliberately absent: they are
 // structural markers in `geometry.concepts.plato`, bolted on per type the way
-// `ClosedCurve2D` marks a curve, not members of this tower. Element counts and
-// incidence live in `topology.concepts.plato`.
+// `ClosedCurve2D` marks a curve. Element counts and incidence live in
+// `topology.concepts.plato`; they are not attached to the layer-2 names because
+// a line set has no faces to count.
 // Convention: see CONVENTIONS.md - Winding, handedness, and normals.
 
+//==
+// # The generic layers
+
 // Exposes the points a shape is built from, in a fixed order, generic over the
-// embedding. The dimension-agnostic root of the tower: `PointSet2D` /
-// `PointSet3D` (`geometry-measures.concepts.plato`) are the non-generic
-// siblings that carry the Geometry2D / Geometry3D marker with them.
+// embedding. The dimension-agnostic root of the tower.
 concept PointGeometry<TPoint>
     inherits Geometry
 {
@@ -48,8 +54,7 @@ concept PrimitiveGeometry<TPoint, TPrim>
 // Primitives stored as index tuples into a shared vertex pool: the storage
 // layer under an indexed mesh (https://en.wikipedia.org/wiki/Polygon_mesh).
 // Every index must be valid — no -1 inside a face. TIndex is the typed index
-// tuple that fixes the primitive's arity — VertexPair, TriangleFace, QuadFace —
-// so the pairing of primitive to arity needs no separate name to hold it.
+// tuple that fixes the primitive's arity — VertexPair, TriangleFace, QuadFace.
 // `Primitives` is derivable here (gather Vertices by FaceIndices), so an
 // implementor supplies the pool and the index table and inherits the view.
 concept IndexedGeometry<TPoint, TPrim, TIndex>
@@ -67,3 +72,97 @@ concept GeometryCollection<TGeom>
 {
     Elements(x: Self): Array<TGeom>;
 }
+
+//==
+// # Named layer 1 — the primitive view
+//
+// Each binding fixes the point type and the primitive, and carries the
+// dimensional capabilities every such shape can honor: PointSet for the free
+// Bounds and VertexCentroid, Bounded for the box itself, Deformable for the
+// point mapping that Transform is then derived from. The triangle and quad
+// bindings add Meshable, which the segment bindings cannot: a set of segments
+// has no interior to triangulate.
+//
+// The line primitive is LineSegment2D / LineSegment3D, not Line2D / Line3D: a
+// line set stores bounded segments, while Line*D is an infinite line.
+
+// Bounded segments in space over their own endpoints: wireframes, edge
+// overlays, sampled space curves.
+concept SegmentGeometry3D
+    inherits Geometry3D, PrimitiveGeometry<Point3D, LineSegment3D>, PointSet3D, Bounded3D, Deformable3D
+{ }
+
+// Triangles in space, wound counter-clockwise seen from the front: the
+// universal surface primitive.
+concept TriangleGeometry3D
+    inherits Geometry3D, PrimitiveGeometry<Point3D, Triangle3D>, PointSet3D, Bounded3D, Deformable3D, Meshable3D
+{ }
+
+// Quadrilaterals in space, wound counter-clockwise seen from the front.
+// Coplanarity is not guaranteed.
+concept QuadGeometry3D
+    inherits Geometry3D, PrimitiveGeometry<Point3D, Quad3D>, PointSet3D, Bounded3D, Deformable3D, Meshable3D
+{ }
+
+// Bounded segments in the plane: sketch overlays, hatch patterns, planar
+// graphs drawn as geometry.
+concept SegmentGeometry2D
+    inherits Geometry2D, PrimitiveGeometry<Point2D, LineSegment2D>, PointSet2D, Bounded2D, Deformable2D
+{ }
+
+// Triangles in the plane, wound counter-clockwise: triangulations, Delaunay
+// output, finite-element cells, UV domains.
+concept TriangleGeometry2D
+    inherits Geometry2D, PrimitiveGeometry<Point2D, Triangle2D>, PointSet2D, Bounded2D, Deformable2D, Meshable2D
+{ }
+
+// Quadrilaterals in the plane, wound counter-clockwise: structured grid cells
+// and quad-dominant planar layouts.
+concept QuadGeometry2D
+    inherits Geometry2D, PrimitiveGeometry<Point2D, Quad2D>, PointSet2D, Bounded2D, Deformable2D
+{ }
+
+//==
+// # Named layer 2 — the indexed storage
+//
+// The same six primitives over a shared vertex pool. The concept names carry
+// the Indexed prefix because the bare nouns are taken by the concrete storage
+// types — `TriangleMesh3D`, `QuadMesh3D`, `LineSet3D`, `LineSet2D` — and the
+// prefix is in any case what distinguishes this layer from the view above.
+
+// Segments in space over a shared vertex pool, each spelled as a vertex pair:
+// the storage form of a wireframe. `LineSet3D` is the concrete type.
+concept IndexedSegmentGeometry3D
+    inherits IndexedGeometry<Point3D, LineSegment3D, VertexPair>, SegmentGeometry3D
+{ }
+
+// Triangles in space over a shared vertex pool, each spelled as a TriangleFace:
+// the workhorse interchange form, concretely `TriangleMesh3D`.
+concept IndexedTriangleGeometry3D
+    inherits IndexedGeometry<Point3D, Triangle3D, TriangleFace>, TriangleGeometry3D
+{ }
+
+// Quadrilaterals in space over a shared vertex pool, each spelled as a
+// QuadFace: subdivision cages, quad-dominant retopology, structured patches.
+concept IndexedQuadGeometry3D
+    inherits IndexedGeometry<Point3D, Quad3D, QuadFace>, QuadGeometry3D
+{ }
+
+// Segments in the plane over a shared vertex pool. `LineSet2D` is the concrete
+// type.
+concept IndexedSegmentGeometry2D
+    inherits IndexedGeometry<Point2D, LineSegment2D, VertexPair>, SegmentGeometry2D
+{ }
+
+// Triangles in the plane over a shared vertex pool: concretely
+// `TriangleMesh2D`, and the form a UV domain takes when it shares its index
+// table with the spatial mesh it parameterizes.
+concept IndexedTriangleGeometry2D
+    inherits IndexedGeometry<Point2D, Triangle2D, TriangleFace>, TriangleGeometry2D
+{ }
+
+// Quadrilaterals in the plane over a shared vertex pool: structured planar
+// grids and quad meshing output.
+concept IndexedQuadGeometry2D
+    inherits IndexedGeometry<Point2D, Quad2D, QuadFace>, QuadGeometry2D
+{ }

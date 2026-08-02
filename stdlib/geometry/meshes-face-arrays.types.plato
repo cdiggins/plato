@@ -18,7 +18,7 @@
 // Face order is authored order; `ToTriangleMesh` welds nothing, it only supplies
 // the identity index table.
 type TriangleArray3D
-    implements Value, Geometry3D, Meshable3D, Bounded3D, PointSet3D, TriangleGeometry3D, Deformable3D
+    implements Value, TriangleGeometry3D
 {
     Triangles: Array<Triangle3D>;
 }
@@ -27,7 +27,7 @@ type TriangleArray3D
 // positions. As with `Quad3D`, coplanarity is not guaranteed; triangulation
 // splits on the A-C diagonal.
 type QuadArray3D
-    implements Value, Geometry3D, Meshable3D, Bounded3D, PointSet3D, QuadGeometry3D, Deformable3D
+    implements Value, QuadGeometry3D
 {
     Quads: Array<Quad3D>;
 }
