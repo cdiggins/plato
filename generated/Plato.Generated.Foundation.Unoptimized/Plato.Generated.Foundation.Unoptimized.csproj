@@ -23,7 +23,7 @@
     see tracker\decisions\2026-08-01-property-free-emission-is-unconditional.md.
 
     This is ordinary cached output, not a golden: regenerate it any time with the command
-    above. docs.html / interfaces.txt are generator side-products.
+    above. docs.html is a generator side-product.
   -->
 
   <PropertyGroup>

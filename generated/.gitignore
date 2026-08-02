@@ -1,6 +1,5 @@
 # Generator side-products (not part of the golden)
 **/docs.html
-**/interfaces.txt
 
 # Build output
 **/bin/

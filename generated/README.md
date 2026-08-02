@@ -57,7 +57,7 @@ dotnet run --project src\Plato.CLI -c Release -- ^
 ```
 
 The `.csproj` is hand-maintained — a regeneration only writes `.g.cs`.
-`docs.html` / `interfaces.txt` are generator side-products and are gitignored.
+`docs.html` is a generator side-product and is gitignored.
 
 ## Intrinsics link
 
