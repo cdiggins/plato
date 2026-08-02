@@ -30,7 +30,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-389](issues/plato-389.md) | plato_check has no tier awareness: future and stdlib-tests count toward its verdict | bug | p2 | S | low | plato | ready |  |
 | [plato-404](issues/plato-404.md) | plato_simplify SIM001 rewrites tuples outside return position, breaking the type check | bug | p2 | S | low | plato | ready |  |
 | [plato-406](issues/plato-406.md) | plato_check style gate reports zero warnings when the index is served from the parse cache | bug | p2 | S | low | plato | ready |  |
-| [compiler-403](issues/compiler-403.md) | ExistentialConceptCheckerTests point at pre-rename fixture filenames | bug | p3 | S | low | compiler | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [plato-405](issues/plato-405.md) | plato_simplify has no compact result mode: a full-corpus run exceeds the MCP result budget | debt | p3 | S | low | plato | ready |  |

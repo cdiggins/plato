@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-08-02 — [compiler-403](issues/compiler-403.md) — ExistentialConceptCheckerTests point at pre-rename fixture filenames — done (051f538) - fixtures renamed to the post-sweep interface names; PlatoTests 247/247
 - 2026-08-02 — [compiler-399](issues/compiler-399.md) — Single-field mirror emits unsound implicit operators in generated C# — single-field mirror emits the unwrap only; wrap suppressed (1105851)
 - 2026-08-02 — [stdlib-400](issues/stdlib-400.md) — Corpus-floor assertion stale after the stdlib file consolidation — done (c42dea5) - floor is now MinCorpusFiles, a collapse guard
 - 2026-08-02 — [stdlib-398](issues/stdlib-398.md) — Law packet moved into stdlib/ breaks the checker ratchet — done (c42dea5) - forward corpus is tier-scoped; packet stays at stdlib/tests

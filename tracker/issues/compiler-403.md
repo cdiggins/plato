@@ -2,14 +2,14 @@
 id: compiler-403
 title: ExistentialConceptCheckerTests point at pre-rename fixture filenames
 type: bug
-status: ready
+status: done
 priority: p3
 effort: S
 risk: low
 area: compiler
 sprint: 
 created: 2026-08-02
-closed:
+closed: 2026-08-02
 links: []
 ---
 
@@ -35,6 +35,17 @@ executing coverage at all.
 
 Rename the two strings in the `[TestCase]` attributes to match the files on disk. No production
 code involved.
+
+## Resolution (2026-08-02)
+
+Fixed the opposite way from "Simplest fix": the terminology sweep (e85f761) is the intended
+direction, so the two fixture files were renamed to the interface names the `[TestCase]`
+attributes already use (`stored-interface-ok.plato`, `negatives/viewless-interface-field.plato`).
+Landed in 051f538 (the renames were staged in a shared working tree and picked up by a
+concurrent session's commit). Full `dotnet test tests/PlatoTests`: 247/247 green.
+
+Note: the causality in "What happens" was backwards — the sweep renamed the strings in the
+test file, not the fixtures; the files on disk still had the pre-sweep concept names.
 
 ## Found by
 
