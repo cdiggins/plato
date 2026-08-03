@@ -177,7 +177,7 @@ twice-subdivided octahedron:
 - [x] The out-of-band check is durable rather than ephemeral —
       `tools/out-of-band-checks/remeshing.py`, with a README saying what it does
       and does not prove
-- [ ] `stdlib/types-and-concepts.txt` regenerated — three new types make it stale
+- [x] `stdlib/types-and-concepts.txt` regenerated — three new types make it stale
 - [ ] A browser demo drives it: `demos/webgl/remeshing.html` +
       `src/demos/remeshing.ts`, green under `npm run typecheck` and `npm run scenes`
 - [ ] The bodies are executed by something — blocked on `plato-308`, exactly as `plato-413`

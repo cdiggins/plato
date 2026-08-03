@@ -166,7 +166,7 @@ tables and index arithmetic the Plato source uses:
 - [x] Derived readings: relative density, strut count, total strut length, node valence
 - [x] `.\tools\check-stdlib-fast.ps1 -SkipIndex` green (lint strict + checker ratchet)
 - [x] Design decisions recorded above
-- [ ] `stdlib/types-and-concepts.txt` regenerated — nine new types make it stale,
+- [x] `stdlib/types-and-concepts.txt` regenerated — nine new types make it stale,
       and index freshness is the third gate in `check-stdlib-fast.ps1`
 - [ ] A browser demo drives it: `demos/webgl/lattices.html` + `src/demos/lattices.ts`,
       green under `npm run typecheck` and `npm run scenes`

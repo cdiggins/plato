@@ -2,14 +2,14 @@
 id: plato-422
 title: Blue noise and low-discrepancy sampling: implement the declared point-pattern types
 type: feature
-status: in-progress
+status: done
 priority: p2
 effort: M
 risk: low
 area: plato
 sprint: 
 created: 2026-08-03
-closed:
+closed: 2026-08-03
 links: []
 ---
 
@@ -130,9 +130,9 @@ seed must give the same points on every target.
       `sampling.library.plato` contribute zero diagnostics across parse, resolve,
       types, sums, style and lint.
 - [x] Design decisions recorded above
-- [ ] `stdlib/types-and-concepts.txt` regenerated — five new types and one sum case
+- [x] `stdlib/types-and-concepts.txt` regenerated — five new types and one sum case
       make it stale, and index freshness is the third gate in `check-stdlib-fast.ps1`
-- [ ] A browser demo drives it: `demos/webgl/sampling.html` + `src/demos/sampling.ts`,
+- [x] A browser demo drives it: `demos/webgl/sampling.html` + `src/demos/sampling.ts`,
       green under `npm run typecheck` and `npm run scenes`
 
 ## Not done
