@@ -46,14 +46,19 @@ export class Field2DViewer {
     resize();
 
     const tick = () => {
-      if (this.dirty) {
-        this.rasterize();
-        this.dirty = false;
-      }
-      this.renderer.render(this.scene, this.camera);
+      this.renderFrame();
       this.raf = requestAnimationFrame(tick);
     };
     this.raf = requestAnimationFrame(tick);
+  }
+
+  /** One synchronous frame — lets automation render while rAF is paused. */
+  renderFrame(): void {
+    if (this.dirty) {
+      this.rasterize();
+      this.dirty = false;
+    }
+    this.renderer.render(this.scene, this.camera);
   }
 
   setSdf(sdf: FunctionSdf2D): void {

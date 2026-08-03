@@ -27,12 +27,20 @@ dotnet run --project ../../../src/Plato.CLI -c Release -- ^
 2. Scene modules build `FunctionSdf2D` / `FunctionSdf3D` values with
    `FunctionSdf*.Create` and call the generated members
    (`DistanceToSphere`, `SmoothUnionDistance`, `SdfTwistModifier3D.ApplyToDomain`, …).
-3. Viewers sample those fields on the CPU:
-   - **2D** — `FunctionSdf2D.Eval` into a canvas heatmap (white = zero level set).
-   - **3D** — iterative sphere tracing with `FunctionSdf3D.Eval` + `GradientAt`,
-     drawn progressively into a `CanvasTexture` shown by Three.js.
+3. Every distance value is produced by the generated library, on the CPU:
+   - **2D** — `FunctionSdf2D.Eval` per texel into a canvas heatmap
+     (white = zero level set), re-rasterized only when a parameter changes.
+   - **3D** — worker threads evaluate `FunctionSdf3D.Eval` over a dense grid
+     (32³ → 64³ → 96³, coarse first so the first image lands immediately);
+     each bake is uploaded as a `Data3DTexture`.
 
-There is no parallel GLSL reimplementation of the SDF catalog in this demo.
+4. The 3D viewer's fragment shader sphere-traces that baked texture with
+   trilinear interpolation, and takes normals from central differences of the
+   same samples. It is a display device, not a math library: it contains no SDF
+   formulas, and reading a distance is always a texture fetch.
+
+There is no parallel GLSL reimplementation of the SDF catalog in this demo — the
+one-way flow is generated `Eval` → `Float32Array` → texture → pixels.
 
 ## Layout
 
@@ -42,7 +50,8 @@ src/
   scenes.ts            Scene catalog: build() → FunctionSdf2D|3D
   render/
     field2d.ts         2D field rasterizer
-    raymarch3d.ts      CPU sphere tracer + OrbitControls
+    bake.worker.ts     Samples FunctionSdf3D.Eval over a grid slab
+    volume3d.ts        GPU raymarch of the baked field + OrbitControls
   main.ts              Sidebar + param UI
 ```
 

@@ -1,7 +1,7 @@
 import { scenes, scenesByDim, type Dim, type Scene } from './scenes.js';
 import { Field2DViewer } from './render/field2d.js';
-import { Raymarch3DViewer } from './render/raymarch3d.js';
-import { FunctionSdf2D, FunctionSdf3D } from './plato/plato.g.js';
+import { Volume3DViewer } from './render/volume3d.js';
+import { FunctionSdf2D } from './plato/plato.g.js';
 
 const viewerEl = document.getElementById('viewer')!;
 const listEl = document.getElementById('scene-list')!;
@@ -13,15 +13,19 @@ let dim: Dim = '2d';
 let current: Scene = scenesByDim('2d')[0];
 let paramValues: number[] = [];
 let field2d: Field2DViewer | null = null;
-let ray3d: Raymarch3DViewer | null = null;
+let vol3d: Volume3DViewer | null = null;
 
 function ensureViewer(): void {
   if (dim === '2d') {
-    if (ray3d) {
-      ray3d.dispose();
-      ray3d = null;
+    if (vol3d) {
+      vol3d.dispose();
+      vol3d = null;
     }
-    if (!field2d) field2d = new Field2DViewer(viewerEl);
+    if (!field2d) {
+      field2d = new Field2DViewer(viewerEl);
+      // Debug/automation handle (harness screenshots need a forced render).
+      (window as unknown as { __field2d?: Field2DViewer }).__field2d = field2d;
+    }
     hintEl.textContent =
       'CPU field from generated FunctionSdf2D.Eval · white = zero level set';
   } else {
@@ -29,9 +33,16 @@ function ensureViewer(): void {
       field2d.dispose();
       field2d = null;
     }
-    if (!ray3d) ray3d = new Raymarch3DViewer(viewerEl);
-    hintEl.textContent =
-      'CPU sphere tracing via FunctionSdf3D.Eval · drag to orbit · progressive tiles';
+    if (!vol3d) {
+      vol3d = new Volume3DViewer(viewerEl);
+      // Debug/automation handle (harness screenshots need a forced render).
+      (window as unknown as { __vol3d?: Volume3DViewer }).__vol3d = vol3d;
+      vol3d.onResolution = (res) => {
+        hintEl.textContent =
+          `GPU raymarch over a ${res}³ field baked by FunctionSdf3D.Eval in workers · drag to orbit`;
+      };
+    }
+    hintEl.textContent = 'Baking field via FunctionSdf3D.Eval in workers…';
   }
 }
 
@@ -40,13 +51,13 @@ function defaultParams(scene: Scene): number[] {
 }
 
 function applySdf(): void {
-  const sdf = current.build(paramValues);
   if (dim === '2d') {
+    const sdf = current.build(paramValues);
     if (!(sdf instanceof FunctionSdf2D)) throw new Error('expected FunctionSdf2D');
     field2d!.setSdf(sdf);
   } else {
-    if (!(sdf instanceof FunctionSdf3D)) throw new Error('expected FunctionSdf3D');
-    ray3d!.setSdf(sdf);
+    // The bake workers build the FunctionSdf3D themselves from the scene id.
+    vol3d!.setScene(current.id, paramValues);
   }
 }
 
@@ -133,7 +144,7 @@ function renderControls(): void {
     hueIn.addEventListener('input', () => {
       const h = Number(hueIn.value);
       hue.querySelector('#hue-val')!.textContent = h.toFixed(2);
-      ray3d?.setHue(h);
+      vol3d?.setHue(h);
     });
     hue.appendChild(hueIn);
     controlsEl.appendChild(hue);
@@ -149,7 +160,7 @@ function renderControls(): void {
     ambIn.addEventListener('input', () => {
       const a = Number(ambIn.value);
       amb.querySelector('#amb-val')!.textContent = a.toFixed(2);
-      ray3d?.setAmbient(a);
+      vol3d?.setAmbient(a);
     });
     amb.appendChild(ambIn);
     controlsEl.appendChild(amb);
