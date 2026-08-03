@@ -488,6 +488,20 @@ install('IsSimpleRing', function (this: Any): boolean {
   return this.Count() >= 3 && this.RingSelfIntersectionCount() === 0;
 });
 
+install('RingsAreDisjoint', function (this: Any, other: Any): boolean {
+  for (let i = 0; i < this.Count(); i++) {
+    for (let j = 0; j < other.Count(); j++) {
+      const hit = this.At(i).SegmentsIntersect(
+        this.AtModulo(i + 1),
+        other.At(j),
+        other.AtModulo(j + 1),
+      );
+      if (hit) return false;
+    }
+  }
+  return true;
+});
+
 install('ReversedRing', function (this: Any) {
   const n = this.Count();
   return arr(n, i => this.At(n - 1 - i));

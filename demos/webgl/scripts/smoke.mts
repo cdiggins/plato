@@ -16,6 +16,7 @@ import {
   Vector3D,
   Direction3D,
   Polygon2D,
+  PolygonWithHoles2D,
   Polygon3D,
   PolygonSoup3D,
   PolygonMesh3D,
@@ -94,6 +95,21 @@ const messy = new Polygon2D(
 );
 check('RemoveDuplicateVertices drops the repeat', messy.RemoveDuplicateVertices().Points.Count(), 5);
 check('RemoveCollinearVertices reaches the 4 corners', messy.RemoveCollinearVertices().Points.Count(), 4);
+
+// PolygonWithHoles2D.IsSimple goes through RingsAreDisjoint.
+const ring = (points: [number, number][]) =>
+  new Polygon2D(Intrinsics.MakeArray(...points.map(([x, y]) => new Point2D(x, y))));
+const outer = ring([[-2, -2], [2, -2], [2, 2], [-2, 2]]);
+check(
+  'region with a contained hole is simple',
+  new PolygonWithHoles2D(outer, Intrinsics.MakeArray(ring([[-1, -1], [1, -1], [1, 1], [-1, 1]]))).IsSimple(),
+  true,
+);
+check(
+  'region whose hole crosses the boundary is not',
+  new PolygonWithHoles2D(outer, Intrinsics.MakeArray(ring([[-3, -1], [3, -1], [3, 1], [-3, 1]]))).IsSimple(),
+  false,
+);
 
 // --- CSG (solids-csg.library.plato) -----------------------------------------
 
