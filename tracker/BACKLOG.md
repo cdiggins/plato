@@ -15,6 +15,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-306](issues/plato-306.md) | Generic Difference defaults via optional delta conversion interface | idea | p2 | M | low | plato | in-progress |  |
 | [plato-320](issues/plato-320.md) | PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes | bug | p2 | S | low | plato | in-progress |  |
 | [plato-409](issues/plato-409.md) | FieldJet2D/3D: value+gradient jets, differentiable SDFs, transforms, ray marching, and the missing distance primitives | idea | p2 | L | low | plato | in-progress |  |
+| [plato-412](issues/plato-412.md) | ToSdf: concrete geometry shapes as signed distance fields | feature | p2 | M | low | plato | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |

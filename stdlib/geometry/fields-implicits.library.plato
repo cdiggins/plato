@@ -903,6 +903,126 @@ library FieldsImplicits
         => FunctionVolume3D(p => self.Eval(p).Not);
 
     //==
+    // # Concrete shapes as signed distance fields
+    //
+    // The bridge from the boundary-representation geometry types to the implicit
+    // ones: a shape becomes the field reporting the distance to it, after which the
+    // whole implicit surface — CSG, smoothing, offsetting, ray marching, sampling
+    // onto a lattice — applies to it. Explicit `ToSdf` and never an implicit
+    // conversion, because the field cannot recover the shape it came from
+    // (Convention: see CONVENTIONS.md - Conversions).
+    //
+    // These bodies hold the lambda that the primitive bodies in
+    // `implicit-sdf.library.plato` deliberately do not: each `ToSdf` closes over its
+    // shape and defers to the matching closed-form primitive, which is what keeps
+    // the primitives portable and the placement in one place.
+    //
+    // Read the doc comment for what the sign means, because it differs by shape:
+    //
+    //  - A SOLID (sphere, disk, capsule, triangle in the plane) gives a true signed
+    //    field: negative inside, zero on the boundary, positive outside.
+    //  - An unbounded HALF-REGION (a plane, a half-space, a half-plane) gives the
+    //    signed field of the region behind its boundary.
+    //  - A ZERO-THICKNESS shape (a segment; a triangle or quad patch in space) has
+    //    no interior for a sign to describe, so its field is non-negative everywhere
+    //    and zero only on the shape itself. It is still a usable distance field —
+    //    ray marching and offsetting work — but `IsInside` is false everywhere, and
+    //    a Boolean subtraction against it removes nothing. Use the overload taking a
+    //    radius or a thickness to get the solid form instead, which is the shape's
+    //    Minkowski sum with a ball and has an exact signed distance.
+
+    // The distance to the sphere's surface: negative inside the ball.
+    ToSdf(s: Sphere): FunctionSdf3D
+        => FunctionSdf3D(p => s.Center.Between(p).Magnitude - s.Radius);
+
+    // The distance to the circle: negative inside the disk.
+    ToSdf(c: Circle): FunctionSdf2D
+        => FunctionSdf2D(p => c.Center.Between(p).Magnitude - c.Radius);
+
+    // The distance to the capsule's surface: negative inside the swept solid.
+    ToSdf(c: Capsule3D): FunctionSdf3D
+        => FunctionSdf3D(p => DistanceToCapsule(p, c.A, c.B, c.Radius));
+
+    // The planar form: negative inside the stadium.
+    ToSdf(c: Capsule2D): FunctionSdf2D
+        => FunctionSdf2D(p => DistanceToCapsule(p, c.A, c.B, c.Radius));
+
+    // The distance to the annulus: negative between the two circles, positive both
+    // inside the hole and outside the outer rim.
+    ToSdf(a: Annulus): FunctionSdf2D
+        => FunctionSdf2D(p =>
+            (a.Center.Between(p).Magnitude - (a.InnerRadius + a.OuterRadius) * 0.5).Abs
+            - (a.OuterRadius - a.InnerRadius) * 0.5);
+
+    // The plane as the field of the half-space BEHIND it: negative on the back side,
+    // positive on the side Normal points to. A plane has no thickness, so this is
+    // the only reading of it that carries a sign; take `.Abs` of the result for the
+    // unsigned distance to the plane itself.
+    ToSdf(pl: Plane): FunctionSdf3D
+        => FunctionSdf3D(p => pl.SignedDistance(p));
+
+    // The half-space's own field: negative inside it, which is the same field as its
+    // boundary plane's, stated on the type that actually denotes the solid region.
+    ToSdf(h: HalfSpace): FunctionSdf3D
+        => FunctionSdf3D(p => h.Boundary.SignedDistance(p));
+
+    // The planar counterpart: negative inside the half-plane.
+    ToSdf(h: HalfPlane2D): FunctionSdf2D
+        => FunctionSdf2D(p => h.SignedDistance(p));
+
+    // The distance to the segment. Zero-thickness: non-negative everywhere, zero
+    // only on the segment.
+    ToSdf(l: Line2D): FunctionSdf2D
+        => FunctionSdf2D(p => DistanceToSegment(l.A, l.B, p));
+
+    // The segment thickened by radius — a stadium, and a true signed field.
+    // Equivalent to `Capsule2D(l.A, l.B, radius).ToSdf`.
+    ToSdf(l: Line2D, radius: Number): FunctionSdf2D
+        => FunctionSdf2D(p => DistanceToCapsule(p, l.A, l.B, radius));
+
+    // The distance to the segment in space. Zero-thickness, as in the plane.
+    ToSdf(l: Line3D): FunctionSdf3D
+        => FunctionSdf3D(p => DistanceToSegment(l.A, l.B, p));
+
+    // The segment thickened by radius — a capsule, and a true signed field.
+    ToSdf(l: Line3D, radius: Number): FunctionSdf3D
+        => FunctionSdf3D(p => DistanceToCapsule(p, l.A, l.B, radius));
+
+    // The triangle in the plane is a SOLID region, so this is a true signed field:
+    // negative inside. Winding-agnostic, following DistanceToTriangle.
+    ToSdf(t: Triangle2D): FunctionSdf2D
+        => FunctionSdf2D(p => DistanceToTriangle(p, t.A, t.B, t.C));
+
+    // The quadrilateral in the plane, likewise solid and signed. Concave rings are
+    // handled; the ring must be simple. Precondition: as DistanceToQuad.
+    ToSdf(q: Quad2D): FunctionSdf2D
+        => FunctionSdf2D(p => DistanceToQuad(p, q.A, q.B, q.C, q.D));
+
+    // The triangle in SPACE is a patch, not a solid: zero-thickness, so the field is
+    // non-negative and zero only on the patch. This is the per-face building block a
+    // mesh-to-field conversion would take the minimum over — with the caveat that
+    // the minimum of unsigned face fields is itself unsigned, and recovering a sign
+    // for a closed mesh needs a separate inside test.
+    ToSdf(t: Triangle3D): FunctionSdf3D
+        => FunctionSdf3D(p => UnsignedDistanceToTriangle(p, t.A, t.B, t.C));
+
+    // The triangle patch given a thickness: the plate of all points within half of
+    // thickness of it, with rounded edges and rim. A true signed field.
+    ToSdf(t: Triangle3D, thickness: Number): FunctionSdf3D
+        => FunctionSdf3D(p =>
+            UnsignedDistanceToTriangle(p, t.A, t.B, t.C) - thickness * 0.5);
+
+    // The quad patch in space: zero-thickness, as the triangle. Exact for a planar
+    // quad; see UnsignedDistanceToQuad for the non-planar caveat.
+    ToSdf(q: Quad3D): FunctionSdf3D
+        => FunctionSdf3D(p => UnsignedDistanceToQuad(p, q.A, q.B, q.C, q.D));
+
+    // The quad patch thickened into a rounded plate. A true signed field.
+    ToSdf(q: Quad3D, thickness: Number): FunctionSdf3D
+        => FunctionSdf3D(p =>
+            UnsignedDistanceToQuad(p, q.A, q.B, q.C, q.D) - thickness * 0.5);
+
+    //==
     // # Time-varying field bodies
     //
     // Bodies for the time-varying field interfaces declared in

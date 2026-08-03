@@ -294,4 +294,62 @@ library ImplicitSdfLaws
     // An onion of one layer reaches exactly one thickness inward.
     Law_SingleOnionDepthIsThickness(thickness: Number): Boolean
         => SdfOnionModifier(thickness, 1).TotalDepth.LawEq(thickness);
+
+    //==
+    // Triangles and quads: the vertex-list primitives.
+    //
+    // These four bodies are the ones with a sign rule of their own rather than a
+    // formula — an orientation test in the plane, an even-odd crossing count for the
+    // quad, and edge half-plane votes in space — so the laws pin each against a
+    // primitive whose sign comes from somewhere else entirely.
+
+    // The planar triangle and the spatial triangle patch describe the same shape
+    // once the query is coplanar with it: outside they are both the distance to the
+    // nearest edge, and inside the patch reports zero where the solid reports a
+    // negative depth. Two independently written bodies with two different inside
+    // tests, forced to agree.
+    Law_PlanarTriangleAgreesWithSpatialPatch(p: Point2D, a: Point2D, b: Point2D, c: Point2D): Boolean
+        => UnsignedDistanceToTriangle(
+                Point3D(p.X, p.Y, 0.0),
+                Point3D(a.X, a.Y, 0.0),
+                Point3D(b.X, b.Y, 0.0),
+                Point3D(c.X, c.Y, 0.0))
+            .LawEq(DistanceToTriangle(p, a, b, c).Max(0.0));
+
+    // A collinear triangle has no interior, so its field must be the unsigned
+    // distance to the segment it collapsed onto — never negative. The law that
+    // catches the sign test calling a degenerate triangle inside.
+    Law_CollinearTriangleIsSegmentDistance(p: Point2D, a: Point2D, b: Point2D): Boolean
+        => DistanceToTriangle(p, a, a, b).LawEq(DistanceToCapsule(p, a, b, 0.0));
+
+    // Repeating a vertex turns the quad into the triangle on its other three, so the
+    // even-odd sign rule and the orientation sign rule must land on the same field.
+    Law_DegenerateQuadIsTriangle(p: Point2D, a: Point2D, b: Point2D, c: Point2D): Boolean
+        => DistanceToQuad(p, a, b, c, c).LawEq(DistanceToTriangle(p, a, b, c));
+
+    // The quad on the four corners of an axis-aligned rectangle is that rectangle,
+    // whose distance the box primitive computes from half-extents alone. Guarded to
+    // a non-degenerate rectangle. (Counter-clockwise, as Quad2D expects.)
+    Law_AxisAlignedQuadIsBox(p: Point2D, halfExtents: Vector2D): Boolean
+        => halfExtents.X <= 0.0 || halfExtents.Y <= 0.0
+        || DistanceToQuad(
+                p,
+                Point2D(halfExtents.X.Negative, halfExtents.Y.Negative),
+                Point2D(halfExtents.X, halfExtents.Y.Negative),
+                Point2D(halfExtents.X, halfExtents.Y),
+                Point2D(halfExtents.X.Negative, halfExtents.Y))
+            .LawEq(DistanceToBox(p, halfExtents));
+
+    // The same rectangle as a patch in space is a box of zero depth, whose signed
+    // distance is already the unsigned distance to the patch. Cross-checks the quad
+    // patch's edge-vote branch against a formula with no votes in it.
+    Law_FlatQuadPatchIsFlatBox(p: Point3D, halfExtents: Vector2D): Boolean
+        => halfExtents.X <= 0.0 || halfExtents.Y <= 0.0
+        || UnsignedDistanceToQuad(
+                p,
+                Point3D(halfExtents.X.Negative, halfExtents.Y.Negative, 0.0),
+                Point3D(halfExtents.X, halfExtents.Y.Negative, 0.0),
+                Point3D(halfExtents.X, halfExtents.Y, 0.0),
+                Point3D(halfExtents.X.Negative, halfExtents.Y, 0.0))
+            .LawEq(DistanceToBox(p, Vector3D(halfExtents.X, halfExtents.Y, 0.0)));
 }

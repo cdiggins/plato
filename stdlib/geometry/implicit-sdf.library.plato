@@ -21,7 +21,11 @@ library ImplicitSdf
     // Bodies for `BoundedSdf2D/3D` (`implicit-sdf.types.plato`) and culling
     // helpers over every `BoundedSignedDistanceField*`. Bounds are conservative
     // hints: Eval always delegates to the inner field; MayIntersect /
-    // IsCulledBy / MayContainPoint use Bounds only.
+    // IsCulledBy / MayContainPoint use Bounds only. Distance fidelity — exact,
+    // a lower bound, or not a bound (`implicit-sdf.concepts.plato`) — is
+    // therefore the inner field's, and each CSG wrapper below inherits the
+    // fidelity of the matching `FunctionSdf*` operator in
+    // `fields-implicits.library.plato`; only Bounds are propagated here.
 
     //==
     // # Evaluation and packaging
@@ -239,7 +243,8 @@ library ImplicitSdf
     // Bodies for `PlacedSdf2D/3D` (`implicit-sdf.types.plato`): a source field
     // moved by a rigid pose and a uniform scale. Evaluation pulls the query point
     // back into the source's own frame and pushes the resulting distance forward
-    // by the scale, which is what keeps the result an exact signed distance.
+    // by the scale, which is a similarity and so preserves fidelity outright: the
+    // result is exact, a lower bound, or not a bound exactly as its source is.
 
     // The query position in the source field's own frame: the pose undone, then
     // the uniform scale undone. Precondition: Scale is positive.
@@ -256,11 +261,12 @@ library ImplicitSdf
     }
 
     // The placed planar distance: the source distance at the pulled-back position,
-    // scaled back into world units.
+    // scaled back into world units. Exact when the source is.
     Eval(self: PlacedSdf2D, point: Point2D): Number
         => self.Source.Eval(self.SourcePoint(point)) * self.Scale;
 
-    // The placed spatial distance, scaled back into world units.
+    // The placed spatial distance, scaled back into world units. Exact when the
+    // source is.
     Eval(self: PlacedSdf3D, point: Point3D): Number
         => self.Source.Eval(self.SourcePoint(point)) * self.Scale;
 
@@ -392,10 +398,12 @@ library ImplicitSdf
     // Sphere tracing (https://en.wikipedia.org/wiki/Ray_marching): advance along
     // the ray by the current distance to the surface, which is the largest step
     // guaranteed to skip no geometry, and stop when that distance falls within
-    // tolerance. Convergence therefore depends on the field being an exact
-    // distance or a lower bound of one — `EikonalResidualAt` above measures how
-    // badly a field violates that, and a field that OVER-estimates distance will
-    // tunnel through surfaces rather than converge slowly.
+    // tolerance. Convergence therefore depends on the field being EXACT or a
+    // LOWER BOUND (`implicit-sdf.concepts.plato`): a field that is NOT A BOUND
+    // over-estimates, and a step taken on that value lands past the surface and
+    // tunnels through it. `EikonalResidualAt` above measures the departure from
+    // exact where the label is not trusted; a field that is k-Lipschitz for a
+    // known k is safe to march once divided by k.
     //
     // A step budget bounds the work: a ray running nearly parallel to a surface
     // converges arbitrarily slowly, so exhausting the budget is a miss rather than
@@ -404,7 +412,8 @@ library ImplicitSdf
     // The ray parameter where sphere tracing converges, or `MissDistance` when the
     // budget runs out or the march passes `reach`. Recurses one step per advance.
     // Precondition: the ray direction is unit length; tolerance and reach are
-    // positive.
+    // positive; the field is exact or a lower bound — one that is not a bound
+    // tunnels.
     MarchFrom(self: ISignedDistanceField3D, ray: Ray3D, t: Number, budget: Integer, tolerance: Number, reach: Number): Number {
         var distance = self.Eval(ray.PointAt(t));
         var next = t + distance;
@@ -420,9 +429,11 @@ library ImplicitSdf
     // rather than being differenced again. Face, Barycentric and Uv are the
     // not-a-mesh values (`spatial-structures.types.plato`): an implicit surface has
     // no triangle to name. On a miss the normal faces back down the ray, matching
-    // the broad-phase raycast convention.
+    // the broad-phase raycast convention. The reported normal is the true surface
+    // normal only where the field is exact.
     // Precondition: the ray direction is unit length; tolerance and reach are
-    // positive.
+    // positive; the field is exact or a lower bound — one that is not a bound
+    // tunnels.
     RayMarch(self: IDifferentiableSignedDistanceField3D, ray: Ray3D, budget: Integer, tolerance: Number, reach: Number): RayHit3D {
         var t = self.MarchFrom(ray, 0.0, budget, tolerance, reach);
         var hit = t < MissDistance();
@@ -440,7 +451,8 @@ library ImplicitSdf
 
     // The point on the surface nearest the query, by one Newton step along the
     // gradient: the point moved against its own normal by its own signed distance.
-    // Exact for an exact distance field; iterate for a field that only bounds it.
+    // Lands on the surface in one step for an exact field; iterate for a lower
+    // bound, and expect it to overshoot for a field that is not a bound.
     ProjectToSurface(self: IDifferentiableSignedDistanceField2D, point: Point2D): Point2D
         => point - self.GradientAt(point).Normalize * self.Eval(point);
 
@@ -455,21 +467,29 @@ library ImplicitSdf
     // The parameter records declared in `implicit-sdf.types.plato`, applied to
     // a source field. Value modifiers reshape an already-sampled distance; domain
     // modifiers reshape the position BEFORE the source is sampled, so they compose
-    // with `MapDomain`. Domain modifiers other than repetition preserve exact
-    // distances; repetition, twist, bend, and displacement return bounds.
+    // with `MapDomain`.
+    //
+    // A domain modifier keeps the source's fidelity only while the map it applies
+    // does not STRETCH: rounding, shells, onions and elongation preserve exact
+    // distances, but repetition, twist, bend and displacement can all report MORE
+    // than the true distance, which is not a bound at all
+    // (`implicit-sdf.concepts.plato`) and tunnels a sphere tracer. Each says below
+    // what makes it safe again.
 
     // The rounded distance: subtracting the radius inflates the shape and rounds
-    // its edges. (IQ: opRound.)
+    // its edges. Exact when the source distance is. (IQ: opRound.)
     ApplyToDistance(self: SdfRoundingModifier, distance: Number): Number
         => distance - self.Radius;
 
     // The shell distance: the region within half of Thickness on either side of
-    // the source surface. (IQ: opOnion, single layer.)
+    // the source surface. Exact when the source distance is.
+    // (IQ: opOnion, single layer.)
     ApplyToDistance(self: SdfShellModifier, distance: Number): Number
         => distance.Abs - self.Thickness * 0.5;
 
     // The distance to the outermost of the concentric shells. Repeat this with the
     // distance it returns to peel the next layer; Count layers reach TotalDepth.
+    // Exact when the source distance is.
     ApplyToDistance(self: SdfOnionModifier, distance: Number): Number
         => distance.Abs - self.Thickness;
 
@@ -479,8 +499,11 @@ library ImplicitSdf
         => self.Thickness * self.Count.ToNumber;
 
     // The displaced distance: the source distance offset by the sampled scalar
-    // field value scaled by Amplitude. The result is a bound, not exact.
-    // (IQ: opDisplace.)
+    // field value scaled by Amplitude. NOT a bound: the displacement adds to the
+    // distance as readily as it subtracts, so the result can EXCEED the true
+    // distance to the displaced surface and a sphere tracer stepping by it tunnels.
+    // Dividing by one plus Amplitude times the displacement field's Lipschitz
+    // constant recovers a lower bound. (IQ: opDisplace.)
     ApplyToDistance(self: SdfDisplacementModifier3D, distance: Number, sourceValue: Number): Number
         => distance + self.Amplitude * sourceValue;
 
@@ -491,13 +514,15 @@ library ImplicitSdf
 
     // The folded position for an elongated planar shape: the source is sampled at
     // the position pulled back toward the origin by up to Amount on each axis,
-    // which inserts a straight section of that extent. (IQ: opElongate.)
+    // which inserts a straight section of that extent. The pull-back is a
+    // translation, so this is exact when the source is. (IQ: opElongate.)
     ApplyToDomain(self: SdfElongationModifier2D, point: Point2D): Point2D
         => (
             point.X - point.X.Clamp(self.Amount.X.Negative, self.Amount.X),
             point.Y - point.Y.Clamp(self.Amount.Y.Negative, self.Amount.Y));
 
-    // The folded position for an elongated spatial shape. (IQ: opElongate.)
+    // The folded position for an elongated spatial shape. Exact when the source
+    // is. (IQ: opElongate.)
     ApplyToDomain(self: SdfElongationModifier3D, point: Point3D): Point3D
         => (
             point.X - point.X.Clamp(self.Amount.X.Negative, self.Amount.X),
@@ -517,12 +542,18 @@ library ImplicitSdf
 
     // The position within its lattice cell for a planar tiling: the source is
     // sampled once per cell of the given period, bounded by Counts per axis.
+    // Exact when the source is AND it fits inside one cell, so that a point's
+    // nearest copy is always the one in its own cell; otherwise NOT a bound —
+    // the value is the distance to the own-cell copy, which can exceed the
+    // distance to a neighbour's.
     ApplyToDomain(self: SdfRepetitionModifier2D, point: Point2D): Point2D
         => (
             RepeatedCoordinate(point.X, self.Period.X, self.Counts.X),
             RepeatedCoordinate(point.Y, self.Period.Y, self.Counts.Y));
 
     // The position within its lattice cell for a spatial tiling, bounded by Counts.
+    // Same fidelity as the planar form: exact while the source fits in one cell,
+    // not a bound once it does not.
     ApplyToDomain(self: SdfRepetitionModifier3D, point: Point3D): Point3D
         => (
             RepeatedCoordinate(point.X, self.Period.X, self.Counts.X),
@@ -554,13 +585,18 @@ library ImplicitSdf
 
     // The untwisted position for a shape twisted about the Z axis: each slice is
     // rotated back by AnglePerUnit times its height before the source is sampled.
-    // The result is a bound, not an exact distance. (IQ: opTwist.)
+    // NOT a bound: the untwisting map stretches by sqrt(1 + (AnglePerUnit *
+    // radius)^2), so the sampled distance can EXCEED the true distance to the
+    // twisted shape and a sphere tracer stepping by it tunnels. Dividing by that
+    // factor over the radius reached recovers a lower bound. (IQ: opTwist.)
     ApplyToDomain(self: SdfTwistModifier3D, point: Point3D): Point3D
         => RotatedAboutZ(point, self.AnglePerUnit * point.Z);
 
     // The unbent position for a shape bent about the Y axis: the turn accumulates
-    // with distance along X at the given curvature. The result is a bound, not an
-    // exact distance. (IQ: opCheapBend.)
+    // with distance along X at the given curvature. NOT a bound, for the same
+    // reason as the twist: the unbending map stretches by sqrt(1 + (Curvature *
+    // radius)^2), so the result can EXCEED the true distance and tunnels a sphere
+    // tracer until divided by that factor. (IQ: opCheapBend.)
     ApplyToDomain(self: SdfBendModifier3D, point: Point3D): Point3D
         => RotatedAboutZ(point, (self.Curvature * point.X).Angle);
 
@@ -571,26 +607,36 @@ library ImplicitSdf
     // combinators in `fields-implicits.library.plato` are written in terms
     // of, usable directly inside a hand-written distance function without
     // allocating a field.
+    //
+    // Each fidelity claim below (`implicit-sdf.concepts.plato`) is stated for
+    // exact operands; feed it a lower bound and the result is a lower bound, feed
+    // it something that is not a bound and neither is the result.
 
-    // The union of two sampled distances: the minimum.
+    // The union of two sampled distances: the minimum. Exact.
     UnionDistance(a: Number, b: Number): Number
         => a.Min(b);
 
-    // The intersection of two sampled distances: the maximum.
+    // The intersection of two sampled distances: the maximum. A lower bound:
+    // outside a corner the larger of the two distances under-estimates the
+    // distance to the corner itself.
     IntersectionDistance(a: Number, b: Number): Number
         => a.Max(b);
 
     // The first distance with the second subtracted from it: a against negated b.
+    // A lower bound, being the intersection above.
     SubtractDistance(a: Number, b: Number): Number
         => a.Max(b.Negative);
 
     // The symmetric difference of two sampled distances: inside exactly one of
-    // the two shapes. (IQ: opXor.)
+    // the two shapes. A lower bound — it is built from intersections.
+    // (IQ: opXor.)
     ExclusiveOrDistance(a: Number, b: Number): Number
         => a.Min(b).Max(a.Max(b).Negative);
 
     // The polynomial smooth minimum of two distances, blended over blendRadius.
-    // Reduces to the plain minimum as blendRadius approaches zero.
+    // Reduces to the plain minimum as blendRadius approaches zero. A lower bound:
+    // it mixes its operands with weights that sum to one and then subtracts, so
+    // it never exceeds the plain minimum.
     // Precondition: blendRadius is positive. (IQ: opSmoothUnion.)
     SmoothUnionDistance(a: Number, b: Number, blendRadius: Number): Number {
         var h = (0.5 + 0.5 * (b - a) / blendRadius).Clamp(0.0, 1.0);
@@ -598,27 +644,31 @@ library ImplicitSdf
     }
 
     // The smooth intersection: the smooth union of the negated distances,
-    // negated. Precondition: blendRadius is positive. (IQ: opSmoothIntersection.)
+    // negated. A lower bound, by the same weights-sum-to-one argument as the
+    // smooth union. Precondition: blendRadius is positive.
+    // (IQ: opSmoothIntersection.)
     SmoothIntersectionDistance(a: Number, b: Number, blendRadius: Number): Number
         => SmoothUnionDistance(a.Negative, b.Negative, blendRadius).Negative;
 
     // The smooth difference: a smoothly intersected with the complement of b.
-    // Precondition: blendRadius is positive. (IQ: opSmoothSubtraction.)
+    // A lower bound. Precondition: blendRadius is positive.
+    // (IQ: opSmoothSubtraction.)
     SmoothDifferenceDistance(a: Number, b: Number, blendRadius: Number): Number
         => SmoothIntersectionDistance(a, b.Negative, blendRadius);
 
     // The complement of a shape: inside becomes outside, and the magnitude is
-    // unchanged, so exactness survives. This is the one CSG operator with no
-    // meaningful BOUNDED form — the complement of a bounded solid is unbounded, so
-    // no conservative box can enclose its non-positive region, which is why there is
-    // no Complement beside the Union / Intersection / Difference wrappers above.
+    // unchanged, so an exact operand stays exact. This is the one CSG operator
+    // with no meaningful BOUNDED form — the complement of a bounded solid is
+    // unbounded, so no conservative box can enclose its non-positive region,
+    // which is why there is no Complement beside the Union / Intersection /
+    // Difference wrappers above.
     ComplementDistance(a: Number): Number
         => a.Negative;
 
-    // A linear morph from the first shape (t = 0) to the second (t = 1). The result
-    // is an exact distance only where the two operands agree; in between it is a
-    // bound, since interpolating two distance functions does not interpolate their
-    // surfaces at unit gradient.
+    // A linear morph from the first shape (t = 0) to the second (t = 1). Exact
+    // only where the two operands agree; in between it is a lower bound, since
+    // interpolating two distance functions does not interpolate their surfaces at
+    // unit gradient.
     MorphDistance(a: Number, b: Number, t: Number): Number
         => a.Lerp(b, t);
 
@@ -629,6 +679,12 @@ library ImplicitSdf
     // between two shapes is a specified DIMENSION rather than an aesthetic choice:
     // a 45-degree bevel, and a true circular arc. `SmoothUnionDistance` is cheaper
     // than either but its blend is a polynomial approximation of an arc, not an arc.
+    //
+    // Fidelity: every operator here measures against a bevel plane or an arc placed
+    // at the seam, which is the true distance only where the two surfaces cross at
+    // a right angle. A lower bound there and near it; as the two surfaces approach
+    // PARALLEL the seam term inflates by up to sqrt(2) and stops being a bound at
+    // all, so divide by that factor before marching a near-tangential join.
 
     // The union of two distances with a 45-degree chamfer of the given width across
     // the seam. The third term is the distance to the bevel plane, which cuts the
@@ -648,15 +704,15 @@ library ImplicitSdf
     ChamferDifferenceDistance(a: Number, b: Number, width: Number): Number
         => ChamferIntersectionDistance(a, b.Negative, width);
 
-    // The union of two distances joined by an exact quarter-circle fillet of the
-    // given radius — a true arc, unlike the polynomial SmoothUnionDistance.
+    // The union of two distances joined by a quarter-circle fillet of the given
+    // radius — a true arc, unlike the polynomial SmoothUnionDistance.
     // Precondition: radius is positive. (hg_sdf: fOpUnionRound.)
     CircularUnionDistance(a: Number, b: Number, radius: Number): Number {
         var corner = Vector2D((radius - a).Max(0.0), (radius - b).Max(0.0));
         return radius.Max(a.Min(b)) - corner.Magnitude;
     }
 
-    // The intersection of two distances joined by an exact quarter-circle fillet.
+    // The intersection of two distances joined by a quarter-circle fillet.
     // Precondition: radius is positive. (hg_sdf: fOpIntersectionRound.)
     CircularIntersectionDistance(a: Number, b: Number, radius: Number): Number {
         var corner = Vector2D((radius + a).Max(0.0), (radius + b).Max(0.0));
@@ -894,6 +950,79 @@ library ImplicitSdf
     }
 
     //==
+    // # Unsigned distance primitives for flat patches in space
+    //
+    // A triangle or a quadrilateral in space is a ZERO-THICKNESS patch: it has a
+    // boundary but no interior, so there is no inside for a sign to report. These
+    // bodies return the unsigned distance to the patch — non-negative everywhere and
+    // zero exactly on it — and the name says so. Subtract a half-thickness to get a
+    // genuine solid: the result is the patch's Minkowski sum with a ball, a rounded
+    // plate whose distance is exact.
+    //
+    // Both work the same way: the three (or four) edge half-plane tests decide
+    // whether the query projects INSIDE the patch. When it does, the answer is the
+    // perpendicular distance to the patch's plane; when it does not, it is the
+    // distance to the nearest edge segment. Under the same portability rules as the
+    // rest of the primitive family.
+
+    // The unsigned distance from a point to the triangle patch with the given
+    // vertices. Zero on the patch, positive everywhere else; a degenerate
+    // (collinear) triangle has a zero normal, which fails the inside test and leaves
+    // the edge branch — the right answer for a shape that is a segment.
+    // (IQ: udTriangle.)
+    UnsignedDistanceToTriangle(p: Point3D, a: Point3D, b: Point3D, c: Point3D): Number {
+        var ba = a.Between(b);
+        var cb = b.Between(c);
+        var ac = c.Between(a);
+        var pa = a.Between(p);
+        var pb = b.Between(p);
+        var pc = c.Between(p);
+        var normal = ba.Cross(ac);
+        var insideVotes = ba.Cross(normal).Dot(pa).Sign
+                        + cb.Cross(normal).Dot(pb).Sign
+                        + ac.Cross(normal).Dot(pc).Sign;
+        var toEdges = EdgeOffset(ba, pa).LengthSquared
+            .Min(EdgeOffset(cb, pb).LengthSquared)
+            .Min(EdgeOffset(ac, pc).LengthSquared);
+        var toPlane = normal.Dot(pa) * normal.Dot(pa) / normal.LengthSquared;
+        return (insideVotes < 2 ? toEdges : toPlane).Sqrt;
+    }
+
+    // The unsigned distance from a point to the quadrilateral patch with the given
+    // vertices in ring order. Exact for a planar quad; for a non-planar one the
+    // plane branch measures against the plane through A, B and D, so prefer the two
+    // triangles of the patch's triangulation when the corners are not coplanar.
+    // (IQ: udQuad.)
+    UnsignedDistanceToQuad(p: Point3D, a: Point3D, b: Point3D, c: Point3D, d: Point3D): Number {
+        var ba = a.Between(b);
+        var cb = b.Between(c);
+        var dc = c.Between(d);
+        var ad = d.Between(a);
+        var pa = a.Between(p);
+        var pb = b.Between(p);
+        var pc = c.Between(p);
+        var pd = d.Between(p);
+        var normal = ba.Cross(ad);
+        var insideVotes = ba.Cross(normal).Dot(pa).Sign
+                        + cb.Cross(normal).Dot(pb).Sign
+                        + dc.Cross(normal).Dot(pc).Sign
+                        + ad.Cross(normal).Dot(pd).Sign;
+        var toEdges = EdgeOffset(ba, pa).LengthSquared
+            .Min(EdgeOffset(cb, pb).LengthSquared)
+            .Min(EdgeOffset(dc, pc).LengthSquared)
+            .Min(EdgeOffset(ad, pd).LengthSquared);
+        var toPlane = normal.Dot(pa) * normal.Dot(pa) / normal.LengthSquared;
+        return (insideVotes < 3 ? toEdges : toPlane).Sqrt;
+    }
+
+    // The offset from a query to its nearest point on one edge, given the edge
+    // vector and the vector from that edge's start to the query: the projection
+    // parameter clamped to the segment. The shared step of the two patch bodies
+    // above, kept apart so neither repeats it three or four times.
+    EdgeOffset(edge: Vector3D, toQuery: Vector3D): Vector3D
+        => edge * (edge.Dot(toQuery) / edge.LengthSquared).Clamp(0.0, 1.0) - toQuery;
+
+    //==
     // # Planar signed distance primitives
     //
     // The planar half of the primitive family, under the same portability rules as
@@ -944,6 +1073,45 @@ library ImplicitSdf
     // and the boundary of a half-plane. Precondition: normal has unit length.
     DistanceToLine(p: Point2D, normal: Vector2D, offset: Number): Number
         => p.PositionVector.Dot(normal) + offset;
+
+    // The signed distance from a point to the triangle with the given vertices:
+    // negative inside. Unlike the primitives above this one is NOT centred at the
+    // origin — a triangle has no canonical centred form worth the loss of generality.
+    // Winding-agnostic: each edge orientation test is compared against the
+    // triangle's OWN orientation, so either winding gives the same field. A
+    // degenerate (collinear) triangle has zero orientation and therefore no
+    // interior, which is why the sign test excludes it rather than calling every
+    // point inside — the difference from `Contains(Triangle2D, Point2D)`, which is
+    // a closed-set membership test and reports the degenerate case as containment.
+    // (IQ: sdTriangle.)
+    DistanceToTriangle(p: Point2D, a: Point2D, b: Point2D, c: Point2D): Number {
+        var orientation = TwiceSignedArea(a, b, c);
+        var inside = orientation != 0.0
+            && orientation * TwiceSignedArea(a, b, p) >= 0.0
+            && orientation * TwiceSignedArea(b, c, p) >= 0.0
+            && orientation * TwiceSignedArea(c, a, p) >= 0.0;
+        var unsigned = DistanceToSegment(a, b, p)
+            .Min(DistanceToSegment(b, c, p))
+            .Min(DistanceToSegment(c, a, p));
+        return inside ? unsigned.Negative : unsigned;
+    }
+
+    // The signed distance from a point to the quadrilateral with the given vertices
+    // in ring order: negative inside. The sign is the even-odd crossing rule rather
+    // than an orientation test, so a CONCAVE quad is handled correctly; a
+    // self-intersecting one gets the even-odd region, as everywhere else in the
+    // library. Precondition: the ring is simple.
+    DistanceToQuad(p: Point2D, a: Point2D, b: Point2D, c: Point2D, d: Point2D): Number {
+        var inside = EdgeCrossesRay(a, b, p)
+            .ExclusiveOr(EdgeCrossesRay(b, c, p))
+            .ExclusiveOr(EdgeCrossesRay(c, d, p))
+            .ExclusiveOr(EdgeCrossesRay(d, a, p));
+        var unsigned = DistanceToSegment(a, b, p)
+            .Min(DistanceToSegment(b, c, p))
+            .Min(DistanceToSegment(c, d, p))
+            .Min(DistanceToSegment(d, a, p));
+        return inside ? unsigned.Negative : unsigned;
+    }
 
     //==
     // # Sampled signed distance field evaluation
