@@ -17,14 +17,17 @@ links: [writers/Plato.TypeScriptWriter/TypeScriptWriter.cs, demos/webgl/src/plat
 `Plato.CLI --typescript` over `stdlib/foundation stdlib/geometry stdlib/graphics`
 produces a file that compiles but throws on almost every mesh, polygon or CSG
 member. The scalar and `Point*` paths run (that is all the SDF demo exercises,
-which is why this was not visible before). Twelve distinct writer defects,
+which is why this was not visible before). Thirteen distinct writer defects,
 umbrella issue — split when someone starts work.
 
 Defects 1-7 were found by the first `demos/webgl` sweep (meshes, polygons, CSG,
 deformers). Defects 8-12 were found by the second, which built seven more pages
 over curves, surfaces, noise, colour, transforms, marching cubes and voxels —
 the same file, a wider slice of the library. That sweep also produced new
-instances of 3, 4, 5 and 6, recorded under each.
+instances of 3, 4, 5 and 6, recorded under each. Defect 13 came from a different
+direction — writing new `stdlib/geometry` vocabulary (plato-422) rather than
+consuming existing vocabulary — and is the first one that constrains what an
+author may write rather than what a reader may call.
 
 1. **`Array<T>` library functions are never emitted.** `IArray<T>` in the output
    declares only `At`/`Count`/`Map`/`Reduce`, but generated bodies call
@@ -132,6 +135,19 @@ instances of 3, 4, 5 and 6, recorded under each.
     appears in `Rotation2D.Identity()`, which builds `(0).Angle` uncalled and
     leaves a function in the `Angle` slot — which is why `Pose2D.Identity()` and
     `Pose2D.Lerp` fail.
+13. **The affine builders `List<T>` and `Buffer<T>` have no TypeScript runtime at
+    all.** They are two of the three sanctioned builder forms in the language and
+    neither reaches this target, so any body that accumulates through one is
+    unreachable rather than merely wrong. `demos/webgl/src/plato/array-ext.ts`
+    already carries a hand-written `NodeBuffer` for the ear-clipping kernel,
+    which is what a workaround for this costs. Unlike defects 1–12 this one
+    changes what can be *written*, not just what survives emission: the
+    `stdlib/geometry` sampling work (plato-422) rejected Bridson's Poisson-disk
+    algorithm and discretized Lloyd relaxation outright because both need a table
+    written once and read randomly, and designed around it with an immutable
+    append chain at a known constant-factor cost. Found 2026-08-03 while
+    implementing plato-422; recorded here because it is the same writer surface,
+    but it is arguably its own issue.
 
 Defect 1 is worse than "some helpers": it takes down the **entire ear-clipping
 triangulation kernel**. `TriangulateRings`, `RingCount`, `RingStart`, `RingEnd`,
