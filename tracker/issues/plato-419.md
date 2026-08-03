@@ -17,8 +17,14 @@ links: [writers/Plato.TypeScriptWriter/TypeScriptWriter.cs, demos/webgl/src/plat
 `Plato.CLI --typescript` over `stdlib/foundation stdlib/geometry stdlib/graphics`
 produces a file that compiles but throws on almost every mesh, polygon or CSG
 member. The scalar and `Point*` paths run (that is all the SDF demo exercises,
-which is why this was not visible before). Seven distinct writer defects,
-umbrella issue — split when someone starts work:
+which is why this was not visible before). Twelve distinct writer defects,
+umbrella issue — split when someone starts work.
+
+Defects 1-7 were found by the first `demos/webgl` sweep (meshes, polygons, CSG,
+deformers). Defects 8-12 were found by the second, which built seven more pages
+over curves, surfaces, noise, colour, transforms, marching cubes and voxels —
+the same file, a wider slice of the library. That sweep also produced new
+instances of 3, 4, 5 and 6, recorded under each.
 
 1. **`Array<T>` library functions are never emitted.** `IArray<T>` in the output
    declares only `At`/`Count`/`Map`/`Reduce`, but generated bodies call
@@ -46,22 +52,86 @@ umbrella issue — split when someone starts work:
    (polyhedra.library.plato) indexes `FaceCorner(face, k / 2)`; in TypeScript
    `k / 2` is `1.5`, which indexes between slots and yields `undefined`. Any
    Plato body that divides an `Integer` is affected.
+   Further fatal instances: `MarchingCubesCornerOffsetY/Z` (corner 1 lands at
+   y = 0.5, so the whole isosurface kernel is wrong), `MarchingCubesLattice`'s
+   cell enumeration, `MakeArray3D`, `WorleyNeighbour2D/3D`, and
+   `BinningGrid2D/3D.BucketBounds` (`b / columns % rows` — bucket 0 is right and
+   every bucket past the first row is a geometrically wrong box, which
+   `CandidatesInBounds` inherits because it gates on `BucketBounds().Overlaps`).
+   `GridTriangleFace` and the matrix `ElementAt` chains are the same shape and
+   untested. This defect is the most pervasive of the twelve and the quietest:
+   it produces plausible geometry, not exceptions.
 5. **Sum types cannot be emitted (CHK320) but their consumers still are.** The
    output carries `// CHK320: sum type 'PlaneRelation3D' cannot be emitted to
    the TypeScript target; sum types are C#-only in v1`, and 40 lines earlier
    `Polygon3D.RelationTo` returns `PlaneRelation3D.Spanning()`. The identifier is
    free, so it resolves to `globalThis` and throws at runtime. A body whose type
    cannot be emitted should not be emitted either — or CHK320 should be an error.
+   The blast radius is wider than the unconstructible types: **every library
+   function that dispatches on a skipped sum type vanishes with it.**
+   `NoiseBasis` takes `BasisValue2D/3D`, `FbmOctave`, `TurbulenceOctave`,
+   `RidgedOctave` and `WarpPoint` down with it, so eight noise types were
+   unreachable rather than merely unconstructible. Other skipped sum types with
+   live consumers: `WorleyDistance` / `WorleyFeature` (Worley noise),
+   `RotationOrder` (`Quaternion.EulerAngles`, and every `EulerAngles`
+   conversion), `TransferFunction` / `NamedColorSpace` (`RgbColorSpace.Default`
+   and `ColorSpaceConversion.Default` throw on construction), `SdfNode3D` /
+   `SdfCombine` (`SdfTree3D` exists and evaluates, but its `Nodes` array can
+   never be populated, so the whole SDF-tree path is unreachable), and
+   `Axis3D` / `SignedAxis3D`.
 6. **Record returns written as tuple literals lose their field names.**
    `Intersect(r: Ray3D, pl: Plane): PlaneHit3D` (lines.library.plato:307) returns
    `(false, r.Origin, 0.0)`; the writer emits a bare `Tuple3`, so `RayHits`'
    `hit.Hit` and `hit.Point` are `undefined`. `PlaneHit3D` is emitted as a class
    right there in the same file — it is just never constructed.
+   The same substitution happens in **argument** position, which is worse because
+   the receiver then reads named fields off a `TupleN` that has `X0`/`X1`:
+   `LatticeGradient2D(…).Dot((dx, dy))` emits `new Tuple2(dx, dy)` where
+   `Vector2D` is declared; `Matrix4x3.Zero()`'s rows are `Tuple3` where `Number3`
+   is declared; and the derived samples in `surfaces.library.plato`
+   (`CenterPoint`, `CornerPoint00/10/01/11` on **every** `IParametricSurface`)
+   emit `this.Eval(new Tuple2(0.5, 0.5))` where `UvCoordinate` is declared, so
+   `uv.U` is `undefined`. Trig surfaces throw; the polynomial ones return NaN in
+   silence.
 7. **`IArithmetic` obligations missing on the native number mapping.**
    `Number.prototype.Zero`/`One`/`Half` are called by `IsOdd`, `Saturate`,
    `OneMinus`, `RoundedToNearest`; and `Number.Pi`/`Epsilon`/`MinValue`/`MaxValue`
    are emitted as `ThrowNotImplemented`. `Pi` is additionally called in *instance*
    position by `IsoperimetricQuotient`, so a static-only fix is not enough.
+8. **The scalar overload on `NumberN` is dropped.** `Number2/3/4/8` keep the
+   componentwise `Multiply`/`Divide`/`Modulo` and skip the `IScalable` scalar
+   one. `Point3D.Transform` does `m.Row1.Multiply(this.X)` with `Row1: Number3`,
+   lands in `Multiply(right: Number3)`, and reads `right.X` off a number — so
+   **every affine transform returned NaN, including the identity**, with no
+   error. A special case of defect 3, listed separately because it is the one
+   that makes the transform tier unusable rather than merely incomplete.
+9. **The commuted overload `Multiply(Number, IScalable)` is dropped**
+   (algebra.library.plato, angles.library.plato). Only `Multiply(Number, Number)`
+   survives, so `scalar * Angle` is NaN. Kills `Epicycloid2D.Eval`,
+   `Hypocycloid2D.Eval`, `Epitrochoid2D.Eval`, `Hypotrochoid2D.Eval` — two by
+   NaN and two by a throw one call further on.
+10. **Extra arguments are dropped silently at emitted call sites.** Only the
+    two-index `LatticeHash(seed, ix, iy)` is installed, but `LatticeGradient3D`,
+    `FeatureOffset3D`, `WhiteNoise3D.Eval` and `ValueNoise3D.Eval` call it with
+    three. JavaScript discards the extra argument without complaint, so **every
+    spatial lattice noise was constant along z** — a plausible-looking field
+    that is silently two-dimensional.
+11. **`Array3D<T>` has no runtime.** `MakeArray3D` ends
+    `return new IArray3D<_T0>(elements, this, rows, layers)`, but `IArray3D` is
+    declared only as an `interface` — `new` on a type-only declaration is a
+    `ReferenceError`. This is the only way to build the `Values` of
+    `DensityGrid3D` / `SampledSdf3D` / `LevelSetGrid3D`, so the entire voxel tier
+    was unconstructible. The interface also declares `ColumnCount()` /
+    `RowCount()` / `LayerCount()` as methods while every consumer reads them as
+    fields. `Buffer<T>` and `List<T>` have no runtime either.
+12. **A property is emitted without its call parentheses.** The Plato bodies for
+    `BezierPatch.Eval` and `BSplineSurface.Eval` (shared by `NurbsSurface.Eval`)
+    read `ControlPoints.RowCount` / `.ColumnCount`; the writer emits them
+    uncalled, so the body gets a function object where it wants a count
+    (`this.ControlPoints.RowCount.MapRange is not a function`). The same trap
+    appears in `Rotation2D.Identity()`, which builds `(0).Angle` uncalled and
+    leaves a function in the `Angle` slot — which is why `Pose2D.Identity()` and
+    `Pose2D.Lerp` fail.
 
 Defect 1 is worse than "some helpers": it takes down the **entire ear-clipping
 triangulation kernel**. `TriangulateRings`, `RingCount`, `RingStart`, `RingEnd`,
@@ -69,9 +139,14 @@ triangulation kernel**. `TriangulateRings`, `RingCount`, `RingStart`, `RingEnd`,
 `Array<…>`-first and none are emitted, while the `Integer`-first half of the same
 kernel (`LinkRing`, `FirstLiveSlot`) is. Every `Triangulate` obligation on
 `Polygon2D` / `PolygonWithHoles2D` / `PolygonSet2D`, and `Polygon3D.ToTriangleMesh`,
-is therefore dead. A prelude cannot reasonably cover this one — it would mean
-hand-porting the kernel, which is reimplementing the stdlib rather than patching
-the writer, so `demos/webgl` leaves those scenes visibly blocked instead.
+is therefore dead in unmodified output.
+
+This paragraph previously said a prelude could not reasonably cover the
+triangulation kernel. It has since been covered: `demos/webgl/src/plato/array-ext.ts`
+hand-ports it, and the blocked scenes light up. That is a measure of how far the
+prelude has had to go, not a reason to close this defect — the port is a second
+copy of stdlib logic that has to be maintained in step with the first, which is
+exactly the liability the issue is about.
 
 `WindingOrder` is a second instance of defect 5, hit by `Polygon2D.Winding`.
 
@@ -86,6 +161,30 @@ Defect 3 (dropped overloads) is the widest of the seven. Beyond
   scale on a mesh.
 - `Multiply(deformation, Number)` — the `Multiply` slot goes to the `Compose`
   alias, so constant-strength scaling of a deformation is unreachable.
+- `Quaternion.Multiply(Quaternion)` and `Concatenate` — **NaN**, the scalar body
+  ran. Quaternion composition, the reason the type exists, is unavailable.
+  `Matrix3x3.Multiply(Matrix3x3)` is NaN the same way, taking `Transform2D.Compose`
+  with it.
+- `Matrix4x4.CreateScale(Number3)` and `Matrix3x2.CreateScale(Number2)` store the
+  vector object in a matrix cell, so there is no non-uniform scale on either side.
+- `Matrix3x2.CreateRotation(angle, centre)` — the one-argument body runs and **the
+  centre is silently ignored**, so `RotationAbout2D.AffineTransform2D` returns a
+  zero translation row instead of the pivot correction.
+- `Point2D.Transform(AffineTransform2D)` — the dropped overload is one level down
+  (`Vector2D.Transform(Matrix3x2)`), and it cascades through
+  `AffineTransform2D.Multiply`, `Transform2D.Multiply`, `Pose2D.Compose`,
+  `RotationAbout2D.Multiply` and `Polygon2D.Deform` over an affine.
+- `Rotate(Angle)` and `RotateAbout(centre, Angle)` on every 2D deformable — only
+  the `Rotation2D` overload survives, so the generated `Rotate(angle)` body puts
+  an `Angle` in the `Rotation2D` slot.
+- `ToSdf(Triangle3D, thickness)` / `ToSdf(Quad3D, thickness)` — this one is the
+  sharpest illustration of why dropped overloads are worse than missing members:
+  `triangle.ToSdf(0.3)` **typechecks**, the argument is discarded, the
+  zero-thickness body runs, and marching cubes returns an **empty surface**. No
+  exception, no NaN, just nothing.
+- `MarchingCubes(bounds, nodeCounts, isoLevel)` is dropped on every SDF type
+  (`FunctionSdf3D`, `BoundedSdf3D`, `PlacedSdf3D`, `SampledSdf3D`); only the
+  scalar-field types keep the iso-level form.
 
 Also unemitted, and not overload-related: the `Deform` **apply lifts** over
 `IDeformable3D` (plain and weighted) — only `Deform(mapping)` survives, so the
@@ -104,10 +203,19 @@ be used for.
 ## Impact
 Everything the stdlib says about meshes, polyhedra, polygons, triangulation and
 CSG is unreachable from TypeScript — roughly the whole `stdlib/geometry` surface
-above `Point3D`. The "write once, compile to idiomatic libraries" claim only
-holds for the scalar/vector tier on this target. Defects 3 and 4 are the
-dangerous ones: they produce wrong answers rather than exceptions, so a
-downstream user would ship them.
+above `Point3D`. The second sweep extended that to curves, surfaces, noise,
+transforms, isosurfaces and voxels: the transform tier returned NaN for every
+affine including the identity, spatial noise was silently flat in z, and the
+voxel grids could not be constructed at all. The "write once, compile to
+idiomatic libraries" claim only holds for the scalar/vector tier on this target.
+
+Defects 3, 4, 6, 8, 9 and 10 are the dangerous ones, and they now outnumber the
+loud ones: they produce wrong answers rather than exceptions, so a downstream
+user would ship them. Three failure shapes recur, in ascending order of how long
+they take to notice — a missing member throws immediately; a dropped overload
+runs the wrong body and returns NaN; a dropped **argument** runs the wrong body
+and returns something that looks right. `ToSdf(triangle, thickness)` marching to
+an empty surface is the whole family in one call.
 
 ## Affected code
 - writers/Plato.TypeScriptWriter/TypeScriptWriter.cs — `IgnoredTypes` /
@@ -118,9 +226,16 @@ downstream user would ship them.
   around all seven, one section per defect, each body mirroring its `.plato`
   source. Delete it as the writer catches up; it is the shortest spec of what is
   missing.
-- demos/webgl/scripts/smoke.mts — 30 value checks over the affected members
-  (Conway face counts, square area, `Taper3D` scaling). Run it after any writer
-  change to see which side moved.
+- demos/webgl/scripts/smoke.mts — value checks over the affected members, each
+  pinned to a number the Plato source determines (Conway face counts, the area of
+  a unit square, a de Casteljau evaluation at its endpoints, a marched sphere's
+  radius). Run it after any writer change to see which side moved.
+- demos/webgl/scripts/probe.mts — the triage tool: calls each candidate member and
+  reports `ok`, `FAIL <message>` or `NaN`. The NaN column is the one that matters
+  here, because most of the defects above fail silently.
+- demos/webgl/scripts/scenes.mts — builds every scene of every demo page off the
+  page, so a member that throws only under real inputs is caught by a gate rather
+  than by a blank stage.
 
 ## Cause / analysis
 The writer's model is type-centric: it emits classes for concrete types and

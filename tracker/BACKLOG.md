@@ -47,6 +47,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-370](issues/plato-370.md) | Double-precision scalars (approach must be re-designed — TirScalarLowerer is gone) | feature | p2 | L | med | plato | idea |  |
 | [plato-390](issues/plato-390.md) | Extract Plato.Verify: one policy engine behind the gates, the tests and plato_check | feature | p2 | L | med | plato | idea |  |
 | [plato-418](issues/plato-418.md) | TypeScript writer: MakeArray2D/Array2D never emitted, generated mesh code crashes | bug | p2 | M | low | plato | idea |  |
+| [plato-420](issues/plato-420.md) | Declared-but-unimplemented stdlib tiers: colour conversion, differential geometry, sampling patterns, voxelization | problem | p2 | L | low | plato | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
 | [plato-235](issues/plato-235.md) | GLSL overload erasure picks the winner by emission order, not by intent | problem | p3 | M | med | plato | idea |  |
 | [plato-334](issues/plato-334.md) | Query/solve result types share no interface: success flag spelled four ways | debt | p3 | M | low | plato | idea |  |
