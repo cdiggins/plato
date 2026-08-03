@@ -54,8 +54,26 @@ import {
   TriangleArray3D,
   TriangleFace,
   EarClipNode,
+  IntegerVector2,
   IntegerVector3,
   Direction3D,
+  Line3D,
+  Plane,
+  Sphere,
+  SparseMatrixEntry,
+  StrutLattice3D,
+  StrutSdf3D,
+  GradedStrutSdf3D,
+  BodyIndex,
+  SolverBody3D,
+  ClothGrid3D,
+  Beam,
+  DofIndex,
+  DofLoad,
+  Length,
+  CornerIndex,
+  UndirectedEdgeIndex,
+  VertexRemap,
   WhiteNoise2D,
   WhiteNoise3D,
   ValueNoise2D,
@@ -84,6 +102,18 @@ function install(name: string, fn: unknown): void {
 
 function arr<T>(count: number, f: (i: number) => T): IArray<T> {
   return new Arr<T>(count, f) as unknown as IArray<T>;
+}
+
+// The eager form, for the rebuild-one-element-per-step FOLDS the simulation
+// tracks are written as (`ReplacedAt` in the rigid-body solver, `WithTwoVertices`
+// in the cloth sweep). Each step reads two elements of the previous array, so a
+// lazy chain n steps deep costs 2^n to read one element — a hang, not a slow
+// path. Materializing each step makes the fold linear in the array's length,
+// which is the cost the Plato sources state.
+function eager<T>(count: number, f: (i: number) => T): IArray<T> {
+  const values: T[] = new Array(count);
+  for (let i = 0; i < count; i++) values[i] = f(i);
+  return arr(count, i => values[i]);
 }
 
 // ---- collections.library.plato — indexable basics -------------------------
@@ -1620,6 +1650,1254 @@ installOn(IntegerVector3.prototype, 'MarchingCubesLattice', function (
       table.MarchingCubesCell(cell, valueAt, pointAt, isoLevel),
     ),
   );
+});
+
+// ===========================================================================
+// The 2026-08-03 tracks — lattices, sampling, remeshing, finite elements,
+// rigid bodies and cloth
+// ===========================================================================
+//
+// `plato.g.ts` now covers four tiers rather than three (`stdlib/future` joined
+// the recipe), and six new libraries landed the same day. They hit the same
+// writer defects the sections above cover, plus two the earlier sweeps never
+// reached: `Buffer<T>` has no runtime (defect 13), and the `Number` CONSTANTS
+// other than Pi are called and nowhere defined (defect 7).
+//
+// Sources mirrored below:
+//   stdlib/foundation/constants.library.plato
+//   stdlib/foundation/matrices-ops.library.plato
+//   stdlib/foundation/polynomials.library.plato
+//   stdlib/geometry/meshes.library.plato
+//   stdlib/geometry/lattices.library.plato
+//   stdlib/geometry/sampling.library.plato
+//   stdlib/future/finite-elements.library.plato
+//   stdlib/future/rigid-dynamics.library.plato
+//   stdlib/future/collision.library.plato
+
+// ---- constants.library.plato — the rest of the Number statics -------------
+//
+// Defect 7, widened. `Number.Pi` / `Epsilon` / `MinValue` / `MaxValue` were
+// filled above; the four-tier output calls fourteen more that are emitted
+// nowhere — `Number.Tau()` alone is called seventeen times, and it is what
+// `Angle.Turns`, `TpmsFrequency` and every periodic sampler go through. Each
+// value is the body of constants.library.plato (or of the library named).
+// Installed on the constructor AND the prototype, because the writer emits
+// these constants in both static and instance position.
+
+const numberConstants: Array<[string, number]> = [
+  ['Tau', 2 * Math.PI],
+  ['TwoPi', 2 * Math.PI],
+  ['HalfPi', Math.PI / 2],
+  ['E', Math.E],
+  ['GoldenRatio', (1 + Math.sqrt(5)) / 2],
+  ['Phi', (1 + Math.sqrt(5)) / 2],
+  ['RPhi', 2 / (1 + Math.sqrt(5))],
+  ['SqrtTwo', 1.4142135623730951],
+  ['SqrtThree', 1.7320508075688772],
+  ['SqrtFive', 2.23606797749979],
+  ['Ln10', 2.302585092994046],
+  ['Ln2', 0.6931471805599453],
+  ['Log10E', 0.4342944819032518],
+  ['RadiansPerDegree', Math.PI / 180],
+  ['DegreesPerRadian', 180 / Math.PI],
+  // Not from constants.library.plato, but the same shape and the same gap.
+  ['TukeyFenceMultiplier', 1.5], // statistics.library.plato
+  ['SdfGradientStep', 0.0001], // implicit-sdf.library.plato
+  ['CsgPlaneTolerance', 0.00000001], // solids-csg.library.plato
+];
+
+for (const [name, value] of numberConstants) {
+  Object.defineProperty(Number, name, { value: () => value, writable: true, configurable: true });
+  installOn(globalThis.Number.prototype, name, function (): number {
+    return value;
+  });
+}
+
+// ---- Buffer<T> and List<T> have no runtime (defect 13) ---------------------
+//
+// `FilledNumbers` is emitted as `let slots = new Buffer(this)` and `Freeze()`
+// is called on the result, but `plato.g.ts` never declares `Buffer`. The
+// identifier is free, so under Node it resolves to the host's byte buffer —
+// `new Buffer(n)` allocates bytes and `.Set` is not a function — and in the
+// browser it is undefined. The class below is intrinsics.library.plato's
+// affine buffer: `Set` returns the same object because a `Buffer` is used
+// exactly once, and `Freeze` hands out the immutable array.
+//
+// Node's own `Buffer` statics are copied across so `Buffer.from` / `alloc` /
+// `isBuffer` keep working for everything else in the process; only the
+// single-argument `new Buffer(n)` form changes meaning, and that form has been
+// deprecated in Node since v4.
+
+class PlatoBuffer {
+  private readonly slots: Any[];
+  constructor(capacity: number) {
+    this.slots = new Array(Math.max(0, Math.trunc(capacity)));
+  }
+  Count(): number {
+    return this.slots.length;
+  }
+  // Truncating, for the same reason `Arr.At` below does: a buffer slot reached
+  // through an Integer division emitted as float division is otherwise written
+  // between slots and read back as undefined.
+  At(i: number): Any {
+    return this.slots[Math.trunc(i)];
+  }
+  Set(i: number, value: Any): PlatoBuffer {
+    this.slots[Math.trunc(i)] = value;
+    return this;
+  }
+  Freeze(): Any {
+    const values = this.slots;
+    return arr(values.length, i => values[i]);
+  }
+  toString(): string {
+    return `Buffer(${this.slots.length})`;
+  }
+}
+
+// `List<T>` is the growing sibling: Add appends, Set overwrites, Freeze seals.
+class PlatoList {
+  private readonly values: Any[] = [];
+  Count(): number {
+    return this.values.length;
+  }
+  At(i: number): Any {
+    return this.values[i];
+  }
+  Add(x: Any): PlatoList {
+    this.values.push(x);
+    return this;
+  }
+  Set(i: number, x: Any): PlatoList {
+    this.values[i] = x;
+    return this;
+  }
+  Freeze(): Any {
+    const values = this.values.slice();
+    return arr(values.length, i => values[i]);
+  }
+  toString(): string {
+    return `List(${this.values.length})`;
+  }
+}
+
+{
+  const hostBuffer = (globalThis as Any).Buffer;
+  if (hostBuffer !== undefined) {
+    for (const key of Object.getOwnPropertyNames(hostBuffer)) {
+      if (key === 'prototype' || key === 'name' || key === 'length') continue;
+      try {
+        (PlatoBuffer as Any)[key] = hostBuffer[key];
+      } catch {
+        /* a non-writable static; nothing downstream reads it off the shim */
+      }
+    }
+    Object.defineProperty(PlatoBuffer, Symbol.hasInstance, {
+      value: (x: Any) => x instanceof PlatoBuffer || hostBuffer[Symbol.hasInstance](x),
+      configurable: true,
+    });
+  }
+  (globalThis as Any).Buffer = PlatoBuffer;
+  (globalThis as Any).List = PlatoList;
+}
+
+// ---- the array surface, continued (defect 1 / plato-429) ------------------
+
+// rigid-dynamics.library.plato: `ReplacedAt(xs, index, value)`. The one
+// primitive the sequential-impulse fold is written on — `RigidWorld3D`'s three
+// impulse passes each rebuild `Bodies` and `Constraints` through it, so nothing
+// in the rigid-body track runs without this one line.
+install('ReplacedAt', function (this: Any, index: number, value: Any) {
+  return eager(this.Count(), i => (i === index ? value : this.At(i)));
+});
+
+// matrices-ops.library.plato — the two fixed-width replacements behind the
+// matrix decompositions.
+install('ReplaceAxis', function (this: Any, index: number, axis: Any) {
+  const basis = this;
+  return arr(3, i => (i === index ? axis : basis.At(i)));
+});
+install('ReplaceElement', function (this: Any, index: number, value: number) {
+  const values = this;
+  return arr(3, i => (i === index ? value : values.At(i)));
+});
+
+// polynomials.library.plato — Horner from the highest power down.
+install('HornerEval', function (this: Any, x: number): number {
+  let acc = 0;
+  for (let i = this.Count() - 1; i >= 0; i--) acc = acc * x + this.At(i);
+  return acc;
+});
+
+// meshes.library.plato — the edge census the remeshing track reads topology
+// through.
+install('DirectedEdges', function (this: Any) {
+  return this.FlatMap((f: Any) => f.Edges());
+});
+install('IsFirstUndirectedOccurrence', function (this: Any, index: number): boolean {
+  const e = this.At(index);
+  for (let d = 0; d < index; d++) if (this.At(d).SameUndirectedEdge(e)) return false;
+  return true;
+});
+install('UndirectedEdgeCount', function (this: Any): number {
+  let total = 0;
+  for (let i = 0; i < this.Count(); i++) if (this.IsFirstUndirectedOccurrence(i)) total++;
+  return total;
+});
+
+// ---- finite-elements.library.plato — system vectors ------------------------
+//
+// A system vector is a plain `Array<Number>`, one entry per degree of freedom,
+// and these five are everything the conjugate gradient in `SparseMatrix.Solve`
+// asks of one. All five have an `Array<Number>` first parameter, so none is
+// emitted and the solver cannot take a single step without them.
+
+install('SystemDot', function (this: Any, b: Any): number {
+  let total = 0;
+  for (let i = 0; i < this.Count(); i++) total += this.At(i) * b.At(i);
+  return total;
+});
+install('SystemSubtract', function (this: Any, b: Any) {
+  return this.Zip(b, (x: number, y: number) => x - y);
+});
+install('SystemAddScaled', function (this: Any, b: Any, t: number) {
+  return this.Zip(b, (x: number, y: number) => x + y * t);
+});
+install('SystemProduct', function (this: Any, b: Any) {
+  return this.Zip(b, (x: number, y: number) => x * y);
+});
+install('SystemNorm', function (this: Any): number {
+  return Math.sqrt(this.SystemDot(this));
+});
+
+// ScatterLoads(contributions, dofCount): a list of degree-of-freedom
+// contributions summed into a dense load vector. Contributions may repeat a
+// degree of freedom; they add.
+install('ScatterLoads', function (this: Any, dofCount: number) {
+  const loads = new Array(Math.max(0, Math.trunc(dofCount))).fill(0);
+  for (let k = 0; k < this.Count(); k++) {
+    const c = this.At(k);
+    loads[c.Dof.Value] += c.Amount;
+  }
+  return arr(loads.length, i => loads[i]);
+});
+
+// ConstantGradientStiffnessEntries(nodes, gradients, components, moduli,
+// measure): every stiffness entry of one constant-gradient element, in global
+// degree-of-freedom numbering. `rs / components` is an Integer division in the
+// source (defect 4) — emitted as float division it would index the row and
+// column components between slots — so the truncation is spelled out.
+install('ConstantGradientStiffnessEntries', function (
+  this: Any,
+  gradients: Any,
+  components: number,
+  moduli: Any,
+  measure: number,
+) {
+  const nodes = this;
+  const n = nodes.Count();
+  const entries: Any[] = [];
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      for (let rs = 0; rs < components * components; rs++) {
+        const r = Math.trunc(rs / components);
+        const s = rs % components;
+        entries.push(
+          new SparseMatrixEntry(
+            nodes.At(i).Value * components + r,
+            nodes.At(j).Value * components + s,
+            gradients.At(i).ElasticStiffnessTerm(gradients.At(j), r, s, moduli, measure),
+          ),
+        );
+      }
+    }
+  }
+  return arr(entries.length, k => entries[k]);
+});
+
+// DisplacementGradient(nodal, gradients, r, c): the (r, c) entry of the
+// displacement gradient inside a constant-gradient element.
+install('DisplacementGradient', function (this: Any, gradients: Any, r: number, c: number): number {
+  let total = 0;
+  for (let i = 0; i < this.Count(); i++) total += this.At(i).At(r) * gradients.At(i).At(c);
+  return total;
+});
+
+// ---- sum types, the rest of them (defect 5) --------------------------------
+//
+// CHK320 drops every sum type in the language from this target while their
+// consumers are emitted anyway, so each one is a free identifier resolved
+// against globalThis. The four already installed above are the ones the noise
+// and polygon tiers need — this fills in the remaining declarations of
+// stdlib/{foundation,geometry,graphics,future}, so a demo can name a case
+// without discovering the gap itself. `sumType` gives each case `Is<Case>()`
+// and a `Default`, which is all the emitted consumers ask.
+
+const declaredSumTypes: Array<[string, string[]]> = [
+  // foundation
+  ['Axis3D', ['X', 'Y', 'Z']],
+  ['Axis2D', ['X', 'Y']],
+  ['SignedAxis3D', ['PosX', 'NegX', 'PosY', 'NegY', 'PosZ', 'NegZ']],
+  ['GraphLayout', ['ForceDirected', 'Circular', 'Layered', 'Grid', 'Radial', 'Spectral']],
+  ['RotationOrder', ['XYZ', 'XZY', 'YXZ', 'YZX', 'ZXY', 'ZYX']],
+  ['CorrelationStatistic', ['Pearson', 'Spearman', 'Kendall']],
+  // geometry
+  ['EdgeOrientation', ['Forward', 'Reversed']],
+  ['SurfacePointShape', ['Elliptic', 'Parabolic', 'Hyperbolic', 'Planar', 'Umbilic']],
+  ['TpmsFamily', ['Gyroid', 'SchwarzPrimitive', 'SchwarzDiamond', 'Neovius', 'IwpSurface']],
+  ['AttributeDomain', ['PerVertex', 'PerFace', 'PerCorner', 'PerUndirectedEdge', 'Uniform']],
+  ['LaplacianWeighting', ['UniformWeights', 'CotangentWeights']],
+  ['GridBoundary', ['ClampToEdge', 'Wrap', 'Mirror', 'ZeroOutside']],
+  ['Containment', ['Disjoint', 'Intersects', 'Contains', 'Within']],
+  ['SubdivisionScheme', ['CatmullClark', 'Loop', 'DooSabin']],
+  ['Manifoldness', ['Unknown', 'Manifold', 'ManifoldWithBoundary', 'NonManifold']],
+  // future
+  ['CollisionPhase', ['Begin', 'Stay', 'End']],
+  ['BeamRestraint', ['Fixed', 'Pinned', 'Roller', 'Free']],
+  ['PlaneCondition', ['PlaneStress', 'PlaneStrain']],
+  ['BodyMotion', ['Static', 'Kinematic', 'Dynamic']],
+  ['MaterialCombine', ['Average', 'Min', 'Max', 'Multiply']],
+];
+
+for (const [name, cases] of declaredSumTypes) {
+  if ((globalThis as Any)[name] === undefined) sumType(name, cases);
+}
+
+// The library functions that DISPATCH on one of those, which vanish with it.
+// Each is `match (x) { … }` in its source and is reached only through the case
+// value, so the body lives on the case object.
+
+function sumCaseMethod(typeName: string, method: string, fn: (tag: string, ...rest: Any[]) => Any): void {
+  const factory = (globalThis as Any)[typeName];
+  const sample = factory.Default;
+  installOn(Object.getPrototypeOf(sample), method, function (this: Any, ...rest: Any[]) {
+    return fn(this.Tag, ...rest);
+  });
+}
+
+// lattices.library.plato — the three TPMS dispatchers. `TpmsField3D.Eval`,
+// `TpmsNetwork3D.Eval` and `TpmsSheet3D.Eval` are all emitted and all call
+// through these, so the whole TPMS half of the lattice track hangs off them.
+sumCaseMethod('TpmsFamily', 'TpmsNodalValue', (tag, period: number, p: Any): number => {
+  const k = 2 * Math.PI / period;
+  const x = p.X * k;
+  const y = p.Y * k;
+  const z = p.Z * k;
+  switch (tag) {
+    case 'Gyroid':
+      return Math.sin(x) * Math.cos(y) + Math.sin(y) * Math.cos(z) + Math.sin(z) * Math.cos(x);
+    case 'SchwarzPrimitive':
+      return Math.cos(x) + Math.cos(y) + Math.cos(z);
+    case 'SchwarzDiamond':
+      return (
+        Math.sin(x) * Math.sin(y) * Math.sin(z) +
+        Math.sin(x) * Math.cos(y) * Math.cos(z) +
+        Math.cos(x) * Math.sin(y) * Math.cos(z) +
+        Math.cos(x) * Math.cos(y) * Math.sin(z)
+      );
+    case 'Neovius':
+      return 3 * (Math.cos(x) + Math.cos(y) + Math.cos(z)) + 4 * Math.cos(x) * Math.cos(y) * Math.cos(z);
+    default:
+      return (
+        2 * (Math.cos(x) * Math.cos(y) + Math.cos(y) * Math.cos(z) + Math.cos(z) * Math.cos(x)) -
+        (Math.cos(2 * x) + Math.cos(2 * y) + Math.cos(2 * z))
+      );
+  }
+});
+sumCaseMethod('TpmsFamily', 'TpmsPartialBound', (tag): number => {
+  switch (tag) {
+    case 'Gyroid':
+      return 2;
+    case 'SchwarzPrimitive':
+      return 1;
+    case 'SchwarzDiamond':
+      return 4;
+    case 'Neovius':
+      return 7;
+    default:
+      return 6;
+  }
+});
+sumCaseMethod('TpmsFamily', 'TpmsGradientBound', (tag, period: number): number => {
+  const family = (globalThis as Any).TpmsFamily[tag]();
+  return family.TpmsPartialBound() * Math.sqrt(3) * (2 * Math.PI / period);
+});
+sumCaseMethod('TpmsFamily', 'TpmsNormalizedValue', (tag, period: number, level: number, p: Any): number => {
+  const family = (globalThis as Any).TpmsFamily[tag]();
+  return (family.TpmsNodalValue(period, p) - level) / family.TpmsGradientBound(period);
+});
+
+// collision.library.plato — `Combine(kind, a, b)`, how two materials' friction
+// and restitution merge.
+sumCaseMethod('MaterialCombine', 'Combine', (tag, a: number, b: number): number => {
+  switch (tag) {
+    case 'Average':
+      return (a + b) / 2;
+    case 'Min':
+      return Math.min(a, b);
+    case 'Max':
+      return Math.max(a, b);
+    default:
+      return a * b;
+  }
+});
+
+// rigid-dynamics.library.plato — `MobilityScale(motion)`: 1 for a dynamic body
+// and 0 for anything an impulse must not move.
+sumCaseMethod('BodyMotion', 'MobilityScale', (tag): number => (tag === 'Dynamic' ? 1 : 0));
+
+// finite-elements.library.plato — `RestrainedDofCount(r)`, the beam restraints.
+sumCaseMethod('BeamRestraint', 'RestrainedDofCount', (tag): number => {
+  switch (tag) {
+    case 'Fixed':
+      return 2;
+    case 'Pinned':
+      return 1;
+    case 'Roller':
+      return 1;
+    default:
+      return 0;
+  }
+});
+
+// engineering.types.plato — `BeamLoad` is the one sum type in these tracks that
+// CARRIES FIELDS, so the tag-only factory above will not do: each case is a
+// record and `LoadContributions` reads its members. Without it `Beam.SolveBeam`
+// — the whole Euler-Bernoulli path — has no way to be given a load.
+{
+  class BeamLoadCase {
+    constructor(
+      readonly Tag: string,
+      readonly Position: Any,
+      readonly EndPosition: Any,
+      readonly Magnitude: number,
+    ) {}
+    get StartPosition(): Any {
+      return this.Position;
+    }
+    IsPointForce(): boolean {
+      return this.Tag === 'PointForce';
+    }
+    IsDistributedForce(): boolean {
+      return this.Tag === 'DistributedForce';
+    }
+    IsMoment(): boolean {
+      return this.Tag === 'Moment';
+    }
+    // LoadContributions(load, b, elementCount): a point force onto the
+    // deflection of the nearest node, a moment onto that node's rotation, and a
+    // distributed force onto the four degrees of freedom of every element it
+    // covers.
+    LoadContributions(b: Any, elementCount: number): Any {
+      if (this.Tag === 'DistributedForce') {
+        return b.BeamDistributedContributions(
+          elementCount,
+          this.Position,
+          this.EndPosition,
+          this.Magnitude,
+        );
+      }
+      const node = b.BeamNearestNode(elementCount, this.Position);
+      const slot = this.Tag === 'Moment' ? node * 2 + 1 : node * 2;
+      return arr(1, () => new DofLoad(new DofIndex(slot), this.Magnitude));
+    }
+    toString(): string {
+      return this.Tag;
+    }
+  }
+  (globalThis as Any).BeamLoad = {
+    PointForce: (position: Any, magnitude: number) =>
+      new BeamLoadCase('PointForce', position, position, magnitude),
+    DistributedForce: (start: Any, end: Any, magnitude: number) =>
+      new BeamLoadCase('DistributedForce', start, end, magnitude),
+    Moment: (position: Any, magnitude: number) =>
+      new BeamLoadCase('Moment', position, position, magnitude),
+    get Default() {
+      return new BeamLoadCase('PointForce', new Length(0), new Length(0), 0);
+    },
+  };
+}
+
+// `BeamStiffnessEntries` numbers its rows `e * 2 + k / 4` over Integers, and
+// the row is not a subscript — it is stored in the entry and later compared for
+// `IsDiagonal` — so the truncation in `Arr.At` does not reach it and a quarter
+// of every element matrix landed on a fractional row. This is the source body
+// with the truncation restored.
+installOn(Beam.prototype, 'BeamStiffnessEntries', function (this: Any, elementCount: number) {
+  const elementLength = this.Length.Meters / elementCount;
+  const element = (this.BendingStiffness() as Any).BeamElementStiffness(elementLength);
+  const entries: Any[] = [];
+  for (let e = 0; e < elementCount; e++) {
+    for (let k = 0; k < 16; k++) {
+      entries.push(
+        new SparseMatrixEntry(e * 2 + Math.trunc(k / 4), e * 2 + (k % 4), element.At(k)),
+      );
+    }
+  }
+  return arr(entries.length, i => entries[i]);
+});
+
+// ---- lattices.library.plato — the strut-list operators ---------------------
+//
+// Every operator over a welded strut list has `Array<Line3D>` first, so the
+// whole "operators over a strut list" section of the source is unemitted, and
+// `StrutLattice3D.TotalStrutLength` / `RelativeDensity` / `ToSdf` — which ARE
+// emitted — call into it.
+
+install('TotalLength', function (this: Any): number {
+  let total = 0;
+  for (let i = 0; i < this.Count(); i++) total += this.At(i).Length();
+  return total;
+});
+
+// Both RelativeDensity overloads, told apart by whether the second argument is
+// a number (one radius for every strut) or an array (one radius per strut).
+install('RelativeDensity', function (this: Any, radius: Any, envelope: Any): number {
+  const volume =
+    (envelope.Max.X - envelope.Min.X) *
+    (envelope.Max.Y - envelope.Min.Y) *
+    (envelope.Max.Z - envelope.Min.Z);
+  if (typeof radius === 'number') {
+    return (Math.PI * radius * radius * this.TotalLength()) / volume;
+  }
+  let solid = 0;
+  for (let i = 0; i < this.Count(); i++) {
+    const r = radius.At(i);
+    solid += r * r * this.At(i).Length();
+  }
+  return (Math.PI * solid) / volume;
+});
+
+// The three StrutRadii overloads: a constant, a field read at the midpoint, and
+// a grading field interpolated over a range.
+install('StrutRadii', function (this: Any, radius: Any, range?: Any) {
+  const struts = this;
+  if (typeof radius === 'number') return struts.Map(() => radius);
+  if (range === undefined) return struts.Map((s: Any) => radius.Eval(s.Centroid()));
+  return struts.Map((s: Any) =>
+    range.Start.Lerp(range.End, Math.min(1, Math.max(0, radius.Eval(s.Centroid())))),
+  );
+});
+
+// The three Trimmed overloads are one body: every region kind answers
+// `Contains(point)`, and a strut is kept or dropped whole by its midpoint.
+install('Trimmed', function (this: Any, region: Any) {
+  return this.FlatMap((s: Any) => (region.Contains(s.Centroid()) as Any).KeepSegment(s));
+});
+
+install('Deformed', function (this: Any, mapping: (p: Any) => Any) {
+  return this.Map((s: Any) => s.Deform(mapping));
+});
+
+// ToSdf(struts, radius) and ToSdf(struts, radii) — the uniform and graded
+// solids a strut list is swept into.
+install('ToSdf', function (this: Any, radius: Any) {
+  return typeof radius === 'number'
+    ? new StrutSdf3D(this as IArray<Line3D>, radius)
+    : new GradedStrutSdf3D(this as IArray<Line3D>, radius);
+});
+
+// `StrutLattice3D.Cells()` enumerates the cell grid with `n / columns % rows`
+// and `n / plane` — Integer divisions, emitted as float division, so every cell
+// past the first row landed at a fractional index and the tiling came out as
+// noise. This is the source body with the truncation restored.
+Object.defineProperty(StrutLattice3D.prototype, 'Cells', {
+  value: function (this: Any) {
+    const columns = Math.max(this.Counts.X, 0);
+    const rows = Math.max(this.Counts.Y, 0);
+    const layers = Math.max(this.Counts.Z, 0);
+    const plane = columns * rows;
+    return arr(
+      plane * layers,
+      n => new IntegerVector3(n % columns, Math.trunc(n / columns) % rows, Math.trunc(n / plane)),
+    );
+  },
+  writable: true,
+  configurable: true,
+});
+
+// ---- sampling.library.plato — Integer division (defect 4) ------------------
+//
+// `RadicalInverse(index, base)` is the one that must not be missed: every
+// Halton, Hammersley and Sobol point is built from it, and its recursion is on
+// `index / base` — an Integer division. Emitted as float division the recursion
+// never terminates on an integer and the sequence is silently wrong rather
+// than throwing. This is the source body with the truncation restored.
+installOn(globalThis.Number.prototype, 'RadicalInverse', function (this: Any, base: number): number {
+  const index = this.valueOf();
+  if (index <= 0 || base < 2) return 0;
+  return ((index % base) + Math.trunc(index / base).RadicalInverse(base)) / base;
+});
+
+// `JitteredCellPoint2D/3D` receive their cell indices as `n / cellCounts.X` and
+// `n / (cellCounts.X * cellCounts.Y)` from `JitteredGridPoints2D/3D`, so
+// truncating at the callee repairs the grid without restating the caller. The
+// `.Modulo` chains truncate the same way, because trunc(a % b) == trunc(a) % b
+// for a non-negative `a` and an integer `b`.
+for (const [proto, name, arity] of [
+  [Bounds2D.prototype, 'JitteredCellPoint2D', 2],
+  [Bounds3D.prototype, 'JitteredCellPoint3D', 3],
+] as Array<[Any, string, number]>) {
+  const original = proto[name];
+  if (original === undefined) continue;
+  installOn(proto, name, function (this: Any, ...args: Any[]) {
+    const fixed = args.slice();
+    for (let k = args.length - arity; k < args.length; k++) fixed[k] = Math.trunc(fixed[k]);
+    return original.apply(this, fixed);
+  });
+}
+
+// `StratumPoint2D/3D` divide twice over: the caller hands them `n /
+// samplesPerStratum` as the stratum number, and the body then splits that
+// number across the strata grid with `s / strataCounts.X`. Both are Integer
+// divisions, so the whole body is restated.
+installOn(Bounds2D.prototype, 'StratumPoint2D', function (
+  this: Any,
+  strataCounts: Any,
+  seed: number,
+  s: number,
+  k: number,
+) {
+  const stratum = Math.trunc(s);
+  const sample = Math.trunc(k);
+  const i = stratum % strataCounts.X;
+  const j = Math.trunc(stratum / strataCounts.X);
+  const u = (seed as Any).SampleUnit(stratum, sample * 2);
+  const v = (seed as Any).SampleUnit(stratum, sample * 2 + 1);
+  return new Point2D(
+    this.Min.X + ((i + u) * (this.Max.X - this.Min.X)) / strataCounts.X,
+    this.Min.Y + ((j + v) * (this.Max.Y - this.Min.Y)) / strataCounts.Y,
+  );
+});
+
+installOn(Bounds3D.prototype, 'StratumPoint3D', function (
+  this: Any,
+  strataCounts: Any,
+  seed: number,
+  s: number,
+  k: number,
+) {
+  const stratum = Math.trunc(s);
+  const sample = Math.trunc(k);
+  const i = (stratum % strataCounts.X) + (seed as Any).SampleUnit(stratum, sample * 3);
+  const j =
+    (Math.trunc(stratum / strataCounts.X) % strataCounts.Y) +
+    (seed as Any).SampleUnit(stratum, sample * 3 + 1);
+  const l =
+    Math.trunc(stratum / (strataCounts.X * strataCounts.Y)) +
+    (seed as Any).SampleUnit(stratum, sample * 3 + 2);
+  return new Point3D(
+    this.Min.X + (i * (this.Max.X - this.Min.X)) / strataCounts.X,
+    this.Min.Y + (j * (this.Max.Y - this.Min.Y)) / strataCounts.Y,
+    this.Min.Z + (l * (this.Max.Z - this.Min.Z)) / strataCounts.Z,
+  );
+});
+
+// `PatternGrid(region, count)`'s row count is `(count + columns - 1) / columns`
+// — the ceiling idiom over Integers, which float division turns into a
+// fractional row count and then a fractional cell index.
+const patternGrid = Bounds2D.prototype.PatternGrid;
+installOn(Bounds2D.prototype, 'PatternGrid', function (this: Any, count: number) {
+  const grid = patternGrid.call(this, count);
+  return new IntegerVector2(grid.X, Math.trunc(grid.Y));
+});
+
+// `ThinnedPoints2D(count, points)` keeps a point when the two integer ratios
+// `(i * count) / points.Count` and `((i + 1) * count) / points.Count` differ —
+// which under float division they always do, so nothing was ever thinned and
+// blue noise came back at the Poisson-disk count instead of the asked-for one.
+installOn(globalThis.Number.prototype, 'ThinnedPoints2D', function (this: Any, points: Any) {
+  const count = this.valueOf();
+  const n = points.Count();
+  const kept: Any[] = [];
+  for (let i = 0; i < n; i++) {
+    if (n <= count || Math.trunc((i * count) / n) !== Math.trunc(((i + 1) * count) / n)) {
+      kept.push(points.At(i));
+    }
+  }
+  return arr(kept.length, i => kept[i]);
+});
+
+// ---- Integer division that lands in a subscript (defect 4) -----------------
+//
+// The sections above restate one body each. This is the same defect met from
+// the other side, and it is the common case: an emitted body computes an index
+// with `n.Divide(k)` and immediately subscripts with it —
+// `nodes.At(k.Divide(3))` in `FaceTraction3D.LoadContributions`,
+// `TetrahedronCell.GravityContributions` and `TriangleCell.GravityContributions`
+// — so the read lands between slots and returns `undefined`. A fractional array
+// subscript is never meaningful, and Plato's Integer division truncates toward
+// zero, so truncating in `At` restores exactly the arithmetic the source means,
+// everywhere at once. `Arr` is the only `IArray` implementation in the emitted
+// module, so this is the single choke point.
+const arrayAt = Arr.prototype.At;
+Object.defineProperty(Arr.prototype, 'At', {
+  value: function (this: Any, n: number) {
+    return arrayAt.call(this, Math.trunc(n));
+  },
+  writable: true,
+  configurable: true,
+});
+
+// The same defect where the fractional index is passed on rather than
+// subscripted with. `ClothGrid3D` lays its whole sheet out by splitting a flat
+// number across the grid — `n.Divide(columns)`, `n.Divide(2).Divide(columns)` —
+// and hands the halves to the builders below, so the sheet came out with
+// duplicated springs, fractional vertex numbers and faces indexing nothing.
+// Truncating the integer parameters at each builder repairs the layout without
+// restating six bodies: `trunc((n / a) % b) == trunc(n / a) % b` and
+// `trunc(trunc(n / a) / b) == trunc(n / (a * b))` for a non-negative `n` and
+// integer divisors, which is every case here.
+function truncateLeading(proto: object, name: string, count: number): void {
+  const original = (proto as Any)[name];
+  if (original === undefined) return;
+  installOn(proto, name, function (this: Any, ...args: Any[]) {
+    for (let k = 0; k < count && k < args.length; k++) args[k] = Math.trunc(args[k]);
+    return original.apply(this, args);
+  });
+}
+
+truncateLeading(ClothGrid3D.prototype, 'GridVertexIndex', 2);
+truncateLeading(ClothGrid3D.prototype, 'GridPosition', 2);
+truncateLeading(ClothGrid3D.prototype, 'GridSpring', 4);
+truncateLeading(ClothGrid3D.prototype, 'GridShearSpring', 3);
+truncateLeading(ClothGrid3D.prototype, 'GridQuad', 2);
+truncateLeading(ClothGrid3D.prototype, 'GridTriangle', 3);
+truncateLeading(ClothGrid3D.prototype, 'GridVertex', 1);
+
+// ---- more dropped overloads (defect 3) -------------------------------------
+
+// `Point3D.Subtract` keeps the `Vector3D` body (translate by a displacement)
+// and skips `Subtract(Point3D)` (the displacement between two points), so
+// `self.Position - self.PreviousPosition` in `ClothVertex.Velocity` reaches
+// `delta.Negative()` on a Point and throws. `p - q` is `q.Between(p)`.
+for (const pointType of [Point2D, Point3D]) {
+  const subtract = (pointType.prototype as Any).Subtract;
+  installOn(pointType.prototype, 'Subtract', function (this: Any, right: Any) {
+    if (right instanceof pointType) return right.Between(this);
+    return subtract.call(this, right);
+  });
+}
+
+// `SolverBody3D.SeparationSpeed` and `DirectionalMass` each keep the five-
+// parameter body (two separate anchors) and skip the four-parameter one (both
+// bodies anchored at the same world point), which is the one the contact
+// pipeline calls: `ConstraintRows` passes (bodies[B], point, normal) and the
+// emitted body reads the normal as the second anchor and `direction` as
+// undefined. Dispatch on arity; the source defines the short form as the long
+// one with the point repeated.
+for (const name of ['SeparationSpeed', 'DirectionalMass']) {
+  const longForm = (SolverBody3D.prototype as Any)[name];
+  if (longForm === undefined) continue;
+  installOn(SolverBody3D.prototype, name, function (this: Any, b: Any, ...rest: Any[]) {
+    if (rest.length === 2) return longForm.call(this, b, rest[0], rest[0], rest[1]);
+    return longForm.apply(this, [b, ...rest]);
+  });
+}
+
+// ---- collision.library.plato — the whole-world narrow phase ----------------
+//
+// Four array-receiver functions, and `RigidWorld3D` reaches all of them through
+// `BallSceneConstraints`, which IS emitted.
+
+// Flatten(manifolds, bodies, threshold): the rows of a set of manifolds, in
+// manifold order.
+install('Flatten', function (this: Any, bodies: Any, threshold: Any) {
+  return this.FlatMap((m: Any) => m.ConstraintRows(bodies, threshold));
+});
+
+// WarmStartFrom(fresh, previous, tolerance): last step's accumulated impulses
+// carried onto this step's matching rows; an unmatched row keeps its zeros.
+install('WarmStartFrom', function (this: Any, previous: Any, tolerance: Any) {
+  return this.Map((row: Any) =>
+    previous.Reduce(row, (acc: Any, old: Any) =>
+      acc.SameContact(old, tolerance) ? acc.WithImpulsesOf(old) : acc,
+    ),
+  );
+});
+
+// BallOf(bodies, radii, index): body `index` read as a ball. A SolverBody3D
+// carries no shape, so a scene keeps its radii in a parallel array.
+install('BallOf', function (this: Any, radii: Any, index: number) {
+  const i = Math.trunc(index);
+  return new Sphere(this.At(i).Center, radii.At(i));
+});
+
+// BallSceneManifolds(bodies, radii, ground, groundBody, friction, restitution).
+// The ordered-pair enumeration divides the flat pair number by the body count
+// twice (`k / n < k % n`), both Integer divisions, so the truncation is spelled
+// out. `Collide(Sphere, Plane)` is the second overload of its group and was
+// dropped (defect 3); it is re-dispatched below.
+install('BallSceneManifolds', function (
+  this: Any,
+  radii: Any,
+  ground: Any,
+  groundBody: Any,
+  friction: number,
+  restitution: Any,
+) {
+  const bodies = this;
+  const n = bodies.Count();
+  const manifolds: Any[] = [];
+  for (let k = 0; k < n * n; k++) {
+    const a = Math.trunc(k / n);
+    const b = k % n;
+    if (a >= b || a === groundBody.Value || b === groundBody.Value) continue;
+    manifolds.push(
+      (new BodyIndex(a) as Any).Manifold(
+        new BodyIndex(b),
+        bodies.BallOf(radii, a).Collide(bodies.BallOf(radii, b)),
+        friction,
+        restitution,
+      ),
+    );
+  }
+  for (let k = 0; k < n; k++) {
+    if (k === groundBody.Value) continue;
+    manifolds.push(
+      (new BodyIndex(k) as Any).Manifold(
+        groundBody,
+        bodies.BallOf(radii, k).Collide(ground),
+        friction,
+        restitution,
+      ),
+    );
+  }
+  return arr(manifolds.length, i => manifolds[i]);
+});
+
+// `Quaternion.Multiply` keeps the SCALAR body and skips the Hamilton product,
+// so `q2.Multiply(q1)` runs the scalar body with a quaternion on the right,
+// and the commuted-scalar shim above turns each component into a Quaternion
+// rather than a number. That is what stops `IntegrateOrientation`, and with it
+// every rigid-body step. The body is `Multiply(a, b)` of
+// rotations-ops.library.plato.
+const quaternionMultiply = (Quaternion.prototype as Any).Multiply;
+installOn(Quaternion.prototype, 'Multiply', function (this: Any, b: Any) {
+  if (!(b instanceof Quaternion)) return quaternionMultiply.call(this, b);
+  const a = this;
+  const cx = a.Y * b.Z - a.Z * b.Y;
+  const cy = a.Z * b.X - a.X * b.Z;
+  const cz = a.X * b.Y - a.Y * b.X;
+  const dot = a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+  return new Quaternion(
+    a.X * b.W + b.X * a.W + cx,
+    a.Y * b.W + b.Y * a.W + cy,
+    a.Z * b.W + b.Z * a.W + cz,
+    a.W * b.W - dot,
+  );
+});
+
+// `Sphere.Collide` keeps the ball-versus-ball body and skips the other three
+// (defect 3), so a plane, a box or a capsule argument runs the sphere body and
+// reads `.Radius` off something that has none. Re-dispatch on the runtime
+// argument; the emitted ball-versus-ball body stays the fallback.
+const sphereCollide = (Sphere.prototype as Any).Collide;
+installOn(Sphere.prototype, 'Collide', function (this: Any, b: Any) {
+  if (b instanceof Plane) {
+    // Collide(a: Sphere, b: Plane): the normal is the plane's, reversed, so it
+    // runs from A toward B; the position is the foot of the centre.
+    const penetration = this.Radius - b.SignedDistance(this.Center);
+    return ((penetration > 0) as Any).MaybeContact(
+      (b.ClosestPoint(this.Center) as Any).FreshContact(
+        b.Normal.Vector.Negative().FromVectorUnchecked(),
+        penetration,
+      ),
+    );
+  }
+  return sphereCollide.call(this, b);
+});
+
+// ---- remeshing.library.plato — the array-first half of every pass ----------
+//
+// Every derived-connectivity and merge helper in that library takes an
+// `Array<…>` first, so `TopologyOf` — which every remeshing pass starts with —
+// is the first thing to fail, and Loop, Butterfly, Laplacian smoothing, weld,
+// split, collapse, flip, Catmull-Clark and Doo-Sabin all fail behind it. The
+// bodies below are that file's, in its order.
+
+// Corner twins and undirected-edge numbering.
+install('NamesItsEdge', function (this: Any, c: number): boolean {
+  const twin = this.At(c);
+  return twin.IsNone() || c < twin.Value;
+});
+
+// Merging: the shared tail of welding, edge collapse and decimation.
+install('CompactMerge', function (this: Any, placement: (i: number) => Any) {
+  const representatives = this;
+  const n = representatives.Count();
+  const survives: boolean[] = [];
+  for (let i = 0; i < n; i++) survives.push(representatives.At(i).Value === i);
+  const rank: number[] = [];
+  let seen = 0;
+  for (let i = 0; i < n; i++) {
+    rank.push(seen);
+    if (survives[i]) seen++;
+  }
+  const targets = arr(n, i => new VertexIndex(rank[representatives.At(i).Value]));
+  const kept: Any[] = [];
+  for (let i = 0; i < n; i++) if (survives[i]) kept.push(placement(i));
+  return new VertexRemap(targets, arr(kept.length, i => kept[i]));
+});
+// Eager, and it has to be: each pass reads the previous array TWICE per
+// element (`representatives[representatives[i].Value]`), so thirty-two lazy
+// passes cost 2^32 reads for one element.
+install('JumpedRepresentatives', function (this: Any) {
+  const representatives = this;
+  return eager(representatives.Count(), i => representatives.At(representatives.At(i).Value));
+});
+install('ResolvedRepresentatives', function (this: Any) {
+  let reps: Any = this;
+  for (let pass = 0; pass < 32; pass++) reps = reps.JumpedRepresentatives();
+  return reps;
+});
+
+// Welding.
+install('WeldRepresentative', function (this: Any, i: number, tolerance: number) {
+  const positions = this;
+  let found = i;
+  for (let j = i; j >= 0; j--) {
+    if (positions.At(j).Distance(positions.At(i)) <= tolerance) found = j;
+  }
+  return new VertexIndex(found);
+});
+install('WeldRemap', function (this: Any, tolerance: number) {
+  const positions = this;
+  const raw = arr(positions.Count(), i => positions.WeldRepresentative(i, tolerance));
+  return (raw as Any).ResolvedRepresentatives().CompactMerge((i: number) => positions.At(i));
+});
+
+// Edge split.
+install('SplitVertexNumbers', function (this: Any, baseVertexCount: number) {
+  const mask = this;
+  const numbers: number[] = [];
+  let rank = 0;
+  for (let e = 0; e < mask.Count(); e++) {
+    numbers.push(mask.At(e) ? baseVertexCount + rank : -1);
+    if (mask.At(e)) rank++;
+  }
+  return arr(numbers.length, e => new VertexIndex(numbers[e]));
+});
+
+// Edge collapse.
+install('RowContains', function (this: Any, vertex: Any): boolean {
+  for (let i = 0; i < this.Count(); i++) if (this.At(i).Value === vertex.Value) return true;
+  return false;
+});
+install('SharedNeighborCount', function (this: Any, pair: Any): number {
+  const neighbors = this;
+  const rowA = neighbors.At(pair.A.Value);
+  const rowB = neighbors.At(pair.B.Value);
+  let total = 0;
+  for (let i = 0; i < rowA.Count(); i++) if (rowB.RowContains(rowA.At(i))) total++;
+  return total;
+});
+install('HasFreeNeighborhood', function (this: Any, neighbors: Any, vertex: number): boolean {
+  const state = this;
+  if (state.At(vertex) !== -1) return false;
+  const row = neighbors.At(vertex);
+  for (let i = 0; i < row.Count(); i++) if (state.At(row.At(i).Value) !== -1) return false;
+  return true;
+});
+install('ClaimedByCollapse', function (this: Any, neighbors: Any, edge: Any) {
+  const state = this;
+  const rowA = neighbors.At(edge.A.Value);
+  const rowB = neighbors.At(edge.B.Value);
+  return eager(state.Count(), v => {
+    if (v === edge.A.Value || v === edge.B.Value) return edge.A.Value;
+    const index = new VertexIndex(v);
+    return rowA.RowContains(index) || rowB.RowContains(index) ? -2 : state.At(v);
+  });
+});
+install('CollapseClaims', function (this: Any, neighbors: Any, collapseMask: Any, vertexCount: number) {
+  const edges = this;
+  let state: Any = eager(vertexCount, () => -1);
+  for (let e = 0; e < edges.Count(); e++) {
+    const edge = edges.At(e);
+    if (
+      collapseMask.At(e) &&
+      state.HasFreeNeighborhood(neighbors, edge.A.Value) &&
+      state.HasFreeNeighborhood(neighbors, edge.B.Value)
+    ) {
+      state = state.ClaimedByCollapse(neighbors, edge);
+    }
+  }
+  return state;
+});
+install('IsAcceptedCollapse', function (this: Any, state: Any, e: number): boolean {
+  const edge = this.At(e);
+  return (
+    edge.A.Value !== edge.B.Value &&
+    state.At(edge.A.Value) === edge.A.Value &&
+    state.At(edge.B.Value) === edge.A.Value
+  );
+});
+install('CollapsedPositions', function (this: Any, edges: Any, state: Any, placement: (e: number) => Any) {
+  let moved: Any = this;
+  for (let e = 0; e < edges.Count(); e++) {
+    if (!edges.IsAcceptedCollapse(state, e)) continue;
+    const target = edges.At(e).A.Value;
+    const previous = moved;
+    const point = placement(e);
+    moved = eager(previous.Count(), v => (v === target ? point : previous.At(v)));
+  }
+  return moved;
+});
+install('CollapseRepresentatives', function (this: Any) {
+  const state = this;
+  return arr(state.Count(), v => new VertexIndex(state.At(v) < 0 ? v : state.At(v)));
+});
+install('CrossesBoundary', function (this: Any, pair: Any): boolean {
+  return this.At(pair.A.Value) !== this.At(pair.B.Value);
+});
+
+// Edge flip.
+install('AreAdjacent', function (this: Any, a: Any, b: Any): boolean {
+  for (let i = 0; i < this.Count(); i++) {
+    const pair = this.At(i);
+    if (
+      (pair.A.Value === a.Value && pair.B.Value === b.Value) ||
+      (pair.A.Value === b.Value && pair.B.Value === a.Value)
+    ) {
+      return true;
+    }
+  }
+  return false;
+});
+install('ClaimAt', function (this: Any, vertex: Any): number {
+  return vertex.IsNone() ? -1 : this.At(vertex.Value);
+});
+install('ValenceOrRegular', function (this: Any, vertex: Any): number {
+  return vertex.IsNone() ? 6 : this.At(vertex.Value);
+});
+
+// Polygon-mesh connectivity, for Catmull-Clark and Doo-Sabin.
+install('PolygonCornerTwins', function (this: Any, destinations: Any) {
+  const vertices = this;
+  const n = vertices.Count();
+  return arr(n, c => {
+    let found = -1;
+    for (let d = 0; d < n; d++) {
+      if (
+        vertices.At(d).Value === destinations.At(c).Value &&
+        destinations.At(d).Value === vertices.At(c).Value
+      ) {
+        found = d;
+      }
+    }
+    return new CornerIndex(found);
+  });
+});
+install('PolygonCornerEdges', function (this: Any) {
+  const twins = this;
+  const n = twins.Count();
+  const naming: boolean[] = [];
+  const rank: number[] = [];
+  let seen = 0;
+  for (let c = 0; c < n; c++) {
+    naming.push(twins.NamesItsEdge(c));
+    rank.push(seen);
+    if (naming[c]) seen++;
+  }
+  return arr(n, c => new UndirectedEdgeIndex(naming[c] ? rank[c] : rank[twins.At(c).Value]));
+});
+install('PolygonEdgeCount', function (this: Any): number {
+  let total = 0;
+  for (let c = 0; c < this.Count(); c++) if (this.NamesItsEdge(c)) total++;
+  return total;
+});
+install('DooSabinEdgeFace', function (this: Any, twins: Any, corner: number) {
+  const nextCorners = this;
+  const twin = twins.At(corner).Value;
+  return arr(4, i =>
+    new VertexIndex(
+      i === 0 ? nextCorners.At(twin).Value : i === 1 ? twin : i === 2 ? nextCorners.At(corner).Value : corner,
+    ),
+  );
+});
+
+// Smoothing and decimation.
+install('UniformLaplacian', function (this: Any, neighbors: Any, v: number): Vector3D {
+  const positions = this;
+  const row = neighbors.At(v);
+  if (row.Count() === 0) return new Vector3D(0, 0, 0);
+  return positions.At(v).Between(row.Map((n: Any) => positions.At(n.Value)).AverageOfPoints());
+});
+install('CostRank', function (this: Any, i: number): number {
+  const costs = this;
+  let rank = 0;
+  for (let j = 0; j < costs.Count(); j++) {
+    if (costs.At(j) < costs.At(i) || (costs.At(j) === costs.At(i) && j < i)) rank++;
+  }
+  return rank;
+});
+
+// ---- cloth.library.plato — the solver is array-first throughout ------------
+//
+// `Cloth3D.Step` and `StepMassSpring` are emitted, and everything they call
+// takes `Array<ClothVertex>` first, so both stop at the first sweep. The
+// Gauss-Seidel sequencing the source is careful about — constraint k sees the
+// corrections constraints 0..k-1 made — is the left fold below, kept as a fold
+// rather than turned into an in-place loop so the semantics stay the source's.
+
+install('WithVertex', function (this: Any, index: Any, vertex: Any) {
+  const self = this;
+  return eager(self.Count(), i => (i === index.Value ? vertex : self.At(i)));
+});
+install('WithTwoVertices', function (this: Any, c: Any, a: Any, b: Any) {
+  const self = this;
+  return eager(self.Count(), i =>
+    i === c.VertexA.Value ? a : i === c.VertexB.Value ? b : self.At(i),
+  );
+});
+install('WithFourVertices', function (this: Any, c: Any, a: Any, b: Any, wingC: Any, wingD: Any) {
+  const self = this;
+  return eager(self.Count(), i =>
+    i === c.VertexA.Value
+      ? a
+      : i === c.VertexB.Value
+        ? b
+        : i === c.VertexC.Value
+          ? wingC
+          : i === c.VertexD.Value
+            ? wingD
+            : self.At(i),
+  );
+});
+
+install('DistanceCorrection', function (this: Any, c: Any, stiffness: number, dt: Any): Vector3D {
+  const a = this.At(c.VertexA.Value);
+  const b = this.At(c.VertexB.Value);
+  const offset = a.Position.Subtract(b.Position);
+  const error = offset.Magnitude() - c.RestLength.Meters;
+  const alpha = (c.Compliance as Any).SafeDivide(dt.Seconds * dt.Seconds, 0);
+  const share = a.SolverInverseMass() + b.SolverInverseMass() + alpha;
+  return offset
+    .NormalizeOr((Vector3D as Any).Zero())
+    .Multiply(-((error * stiffness) as Any).SafeDivide(share, 0));
+});
+install('ProjectDistance', function (this: Any, c: Any, stiffness: number, dt: Any) {
+  const vertices = this;
+  const a = vertices.At(c.VertexA.Value);
+  const b = vertices.At(c.VertexB.Value);
+  const correction = vertices.DistanceCorrection(c, stiffness, dt);
+  return vertices.WithTwoVertices(
+    c,
+    a.Displaced(correction.Multiply(a.SolverInverseMass())),
+    b.Displaced(correction.Multiply(-b.SolverInverseMass())),
+  );
+});
+install('SweepDistance', function (this: Any, constraints: Any, stiffness: number, dt: Any) {
+  let current: Any = this;
+  for (let k = 0; k < constraints.Count(); k++) {
+    current = current.ProjectDistance(constraints.At(k), stiffness, dt);
+  }
+  return current;
+});
+install('SolveDistance', function (
+  this: Any,
+  constraints: Any,
+  iterations: number,
+  stiffness: number,
+  dt: Any,
+) {
+  let current: Any = this;
+  for (let i = 0; i < iterations; i++) current = current.SweepDistance(constraints, stiffness, dt);
+  return current;
+});
+
+install('ProjectBend', function (this: Any, c: Any, stiffness: number) {
+  const vertices = this;
+  const v1 = vertices.At(c.VertexA.Value);
+  const v2 = vertices.At(c.VertexB.Value);
+  const v3 = vertices.At(c.VertexC.Value);
+  const v4 = vertices.At(c.VertexD.Value);
+  const edge = v2.Position.Subtract(v1.Position);
+  const wingC = v3.Position.Subtract(v1.Position);
+  const wingD = v4.Position.Subtract(v1.Position);
+  const n1 = edge.BendNormal(wingC);
+  const n2 = edge.BendNormal(wingD);
+  const cosine = Math.min(1, Math.max(-1, n1.Dot(n2)));
+  const q3 = edge.BendWingGradient(wingC, n1, n2, cosine);
+  const q4 = edge.BendWingGradient(wingD, n2, n1, cosine);
+  const q2 = edge
+    .BendEdgeGradientTerm(wingC, n1, n2, cosine)
+    .Add(edge.BendEdgeGradientTerm(wingD, n2, n1, cosine))
+    .Negative();
+  const q1 = q2.Add(q3).Add(q4).Negative();
+  const share =
+    v1.SolverInverseMass() * q1.Dot(q1) +
+    v2.SolverInverseMass() * q2.Dot(q2) +
+    v3.SolverInverseMass() * q3.Dot(q3) +
+    v4.SolverInverseMass() * q4.Dot(q4);
+  const error = Math.acos(cosine) - c.RestAngle.Radians;
+  const scale = -(
+    (4 * Math.sqrt(Math.max(0, 1 - cosine * cosine)) * error * stiffness) as Any
+  ).SafeDivide(share, 0);
+  return vertices.WithFourVertices(
+    c,
+    v1.Displaced(q1.Multiply(scale * v1.SolverInverseMass())),
+    v2.Displaced(q2.Multiply(scale * v2.SolverInverseMass())),
+    v3.Displaced(q3.Multiply(scale * v3.SolverInverseMass())),
+    v4.Displaced(q4.Multiply(scale * v4.SolverInverseMass())),
+  );
+});
+install('SweepBend', function (this: Any, constraints: Any, stiffness: number) {
+  let current: Any = this;
+  for (let k = 0; k < constraints.Count(); k++) {
+    current = current.ProjectBend(constraints.At(k), stiffness);
+  }
+  return current;
+});
+install('SolveBend', function (this: Any, constraints: Any, iterations: number, stiffness: number) {
+  let current: Any = this;
+  for (let i = 0; i < iterations; i++) current = current.SweepBend(constraints, stiffness);
+  return current;
+});
+
+// particles.library.plato — the one array-receiver member of that library, and
+// what `ParticleSystem3D.Step` is. Eager, unlike the source's `Map`: a lazily
+// mapped step chains one view per frame, so a simulation left running builds an
+// unbounded stack of them and reads slow down without ever failing.
+install('StepParticles', function (this: Any, forces: Any, time: number, dt: Any) {
+  const particles = this;
+  return eager(particles.Count(), i => {
+    const p = particles.At(i);
+    return p.Step(forces.AccelerationAt(p.Position, p.Velocity, time), dt);
+  });
+});
+
+install('SpringForceOn', function (this: Any, c: Any, index: number, settings: Any, dt: Any): Vector3D {
+  const vertices = this;
+  const isEnd = c.VertexA.Value === index || c.VertexB.Value === index;
+  if (!isEnd) return (Vector3D as Any).Zero();
+  const near = c.VertexA.Value === index ? c.VertexA : c.VertexB;
+  const far = c.VertexA.Value === index ? c.VertexB : c.VertexA;
+  const offset = vertices.At(near.Value).Position.Subtract(vertices.At(far.Value).Position);
+  const axis = offset.NormalizeOr((Vector3D as Any).Zero());
+  const stretch = offset.Magnitude() - c.RestLength.Meters;
+  const closing = vertices
+    .At(near.Value)
+    .Velocity(dt)
+    .Subtract(vertices.At(far.Value).Velocity(dt))
+    .Dot(axis);
+  const magnitude =
+    settings.Stiffness.NewtonsPerMeter * stretch + settings.Damping.NewtonSecondsPerMeter * closing;
+  return axis.Multiply(-magnitude);
+});
+install('SpringAccelerationOn', function (
+  this: Any,
+  constraints: Any,
+  index: number,
+  settings: Any,
+  dt: Any,
+): Vector3D {
+  const vertices = this;
+  let total = (Vector3D as Any).Zero();
+  for (let k = 0; k < constraints.Count(); k++) {
+    total = total.Add(vertices.SpringForceOn(constraints.At(k), index, settings, dt));
+  }
+  return total.Multiply(vertices.At(index).SolverInverseMass());
 });
 
 export {};

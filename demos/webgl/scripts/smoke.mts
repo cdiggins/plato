@@ -12,6 +12,47 @@ import '../src/plato/array-ext.ts';
 import {
   Intrinsics,
   Angle,
+  Area,
+  Beam,
+  BeamSupport,
+  BlueNoisePattern2D,
+  Bounds2D,
+  ElasticModel2D,
+  NodalForce2D,
+  SectionProperties,
+  TriangleMesh2D,
+  Vector2D,
+  ClothGrid3D,
+  ClothSolverSettings,
+  ContactSolverSettings,
+  Density,
+  DofIndex,
+  Duration,
+  ElasticModel3D,
+  EngineeringMaterial,
+  FaceTraction3D,
+  IntegerVector2,
+  JitteredGridPattern2D,
+  LatticeUnitCell,
+  Length,
+  LinearSolveSettings,
+  Mass,
+  ParticleForces3D,
+  ParticleGravity,
+  PrescribedDisplacement,
+  Pressure,
+  Quaternion,
+  RigidWorld3D,
+  SolverBody3D,
+  SpatialVelocity3D,
+  Speed,
+  TetrahedralMesh3D,
+  TetrahedronCell,
+  ThermalConductivity,
+  TimeStepSettings,
+  TpmsField3D,
+  TriangleFace,
+  VertexIndex,
   Bounds3D,
   Point2D,
   Point3D,
@@ -52,6 +93,10 @@ import {
 const NoiseBasis = (globalThis as any).NoiseBasis;
 const WorleyDistance = (globalThis as any).WorleyDistance;
 const WorleyFeature = (globalThis as any).WorleyFeature;
+const TpmsFamily = (globalThis as any).TpmsFamily;
+const PlaneCondition = (globalThis as any).PlaneCondition;
+const BeamRestraint = (globalThis as any).BeamRestraint;
+const BeamLoad = (globalThis as any).BeamLoad;
 
 let failures = 0;
 
@@ -404,6 +449,334 @@ check('MakeArray3D rows', volume.RowCount, 3);
 check('MakeArray3D layers', volume.LayerCount, 2);
 check('MakeArray3D indexes row-major', volume.At(2, 1, 1), 2 + 10 + 100);
 check('MakeArray3D cell count', volume.Count(), 24);
+
+// --- Lattices (lattices.library.plato) ---------------------------------------
+//
+// A unit cell's node valences are fixed by crystallography, not by this code:
+// simple cubic is 6-connected, body-centred 8, face-centred 12 at a cube corner
+// and 4 at a face node, the octet truss 12 everywhere, diamond 4 and the Kelvin
+// cell (truncated octahedron) 4. Welding is what makes those numbers come out —
+// `NodeValence` counts a strut only when this cell owns it — so a break here
+// says the ownership rule moved.
+
+function valences(cell: any): number[] {
+  const list = cell.NodeValences();
+  const out: number[] = [];
+  for (let i = 0; i < list.Count(); i++) out.push(list.At(i));
+  return out;
+}
+const distinct = (xs: number[]): string => [...new Set(xs)].sort((a, b) => a - b).join(',');
+
+check('simple cubic is 6-connected', distinct(valences(LatticeUnitCell.SimpleCubic())), '6');
+check('body-centred cubic is 8-connected', distinct(valences(LatticeUnitCell.BodyCenteredCubic())), '8');
+check('octet truss is 12-connected', distinct(valences(LatticeUnitCell.OctetTruss())), '12');
+check('diamond cubic is 4-connected', distinct(valences(LatticeUnitCell.DiamondCubic())), '4');
+check('Kelvin cell is 4-connected', distinct(valences(LatticeUnitCell.TruncatedOctahedron())), '4');
+// Face-centred cubic is the one with two node kinds: the eight cube corners are
+// 12-connected and the six face centres 4-connected.
+const fcc = valences(LatticeUnitCell.FaceCenteredCubic());
+check('face-centred cubic corner valence', fcc[0], 12);
+check('face-centred cubic face-node valence', fcc[8], 4);
+
+// `StrutLattice3D.Cells` enumerates the cell grid by Integer division, so a
+// 3x3x3 lattice must produce 27 distinct cells rather than a fractional sweep.
+const octet = LatticeUnitCell.OctetTruss().UniformLattice(
+  new Bounds3D(new Point3D(-1, -1, -1), new Point3D(1, 1, 1)),
+  3,
+  0.08,
+);
+check('a 3x3x3 lattice has 27 cells', octet.Cells().Count(), 27);
+check('every cell contributes struts', octet.StrutCount() > 0, true);
+
+// The TPMS nodal implicits at the origin are the sums of their constant terms:
+// the gyroid's three sine-cosine products all vanish, and Schwarz P is 1+1+1.
+close('gyroid is zero at the origin', new TpmsField3D(TpmsFamily.Gyroid(), 1, 0).Eval((Point3D as any).Origin()), 0);
+close(
+  'Schwarz P is 3 at the origin',
+  new TpmsField3D(TpmsFamily.SchwarzPrimitive(), 1, 0).Eval((Point3D as any).Origin()),
+  3,
+);
+
+// --- Sampling (sampling.library.plato) ---------------------------------------
+//
+// `RadicalInverse` recurses on an Integer division, so float division there
+// silently corrupts every Halton, Hammersley and Sobol point without throwing.
+// The base-2 radical inverse of 11 (1011 in binary) is 0.1101 in binary.
+close('RadicalInverse(11, 2) reverses the bits', (11 as any).RadicalInverse(2), 0.8125);
+close('RadicalInverse(1, 2)', (1 as any).RadicalInverse(2), 0.5);
+close('RadicalInverse(2, 2)', (2 as any).RadicalInverse(2), 0.25);
+close('RadicalInverse(3, 2)', (3 as any).RadicalInverse(2), 0.75);
+
+// The relative radius of a point set is the smallest distance between any two
+// points over the spacing a hexagonal packing of that many points would have,
+// so a hexagonal lattice reads 1 by definition and a square grid about 0.93.
+const unitSquare = new Bounds2D(new Point2D(0, 0), new Point2D(1, 1));
+const squareGrid = new JitteredGridPattern2D(unitSquare, new IntegerVector2(6, 6), 0, 1).Points();
+check('an unjittered grid is one point per cell', squareGrid.Count(), 36);
+close('a square grid reads about 0.93', unitSquare.RelativeRadius(squareGrid), Math.sqrt(Math.sqrt(3) / 2), 1e-12);
+
+// A hexagonal lattice of 36 points: rows a unit apart along X, alternate rows
+// offset by half a unit and sqrt(3)/2 apart along Y, over the box those exactly
+// fill. Every neighbour is one unit away, in row and across rows alike.
+const hexPoints: Point2D[] = [];
+for (let row = 0; row < 6; row++) {
+  for (let column = 0; column < 6; column++) {
+    hexPoints.push(new Point2D(column + (row % 2) * 0.5, (row * Math.sqrt(3)) / 2));
+  }
+}
+const hexRegion = new Bounds2D(new Point2D(0, 0), new Point2D(6, (6 * Math.sqrt(3)) / 2));
+close(
+  'a hexagonal lattice reads 1',
+  hexRegion.RelativeRadius(Intrinsics.MakeArray(...hexPoints)),
+  1,
+  1e-12,
+);
+
+// Blue noise is thinned to exactly the count asked for, which is an Integer
+// division per candidate.
+check(
+  'BlueNoisePattern2D returns the count it was asked for',
+  new BlueNoisePattern2D(unitSquare, 48, 7).Points().Count(),
+  48,
+);
+
+// --- Remeshing (remeshing.library.plato) -------------------------------------
+//
+// Loop subdivision splits every triangle into four. Butterfly is INTERPOLATING:
+// it introduces the same four-fold split but leaves every original vertex where
+// it was, which is the property that distinguishes it from Loop and the one a
+// wrong topology pass would break.
+
+const tetra: any = PolygonMesh3D.Tetrahedron().ToTriangleMesh();
+check('a tetrahedron has 6 undirected edges', tetra.TopologyOf().UndirectedEdges.Count(), 6);
+check('Loop subdivision multiplies faces by 4', tetra.LoopSubdivided().Faces.Count(), 16);
+check('Butterfly subdivision multiplies faces by 4', tetra.ButterflySubdivided().Faces.Count(), 16);
+
+const butterflied: any = tetra.ButterflySubdivided();
+let worstDrift = 0;
+for (let i = 0; i < tetra.Positions.Count(); i++) {
+  const before = tetra.Positions.At(i);
+  const after = butterflied.Positions.At(i);
+  worstDrift = Math.max(worstDrift, Math.hypot(after.X - before.X, after.Y - before.Y, after.Z - before.Z));
+}
+check('Butterfly interpolates: every input vertex is unmoved', worstDrift, 0);
+
+// Loop is approximating, so it must NOT leave them where they were.
+const looped: any = tetra.LoopSubdivided();
+check(
+  'Loop approximates: the input vertices move',
+  looped.Positions.At(0).Distance(tetra.Positions.At(0)) > 1e-6,
+  true,
+);
+
+// --- Finite elements (finite-elements.library.plato) -------------------------
+//
+// A unit cube of six tetrahedra, steel (E = 200 GPa, nu = 0.3), pulled along +X
+// by 1 MPa with a symmetry plane on each face through the origin. Every number
+// below is a closed form, not a recorded output: the axial displacement is
+// sigma L / E, the transverse contraction is -nu sigma / E, the von Mises
+// stress is the applied stress in every cell, and the gravity load is rho V g.
+// This is the check that says the conjugate gradient, the sparse assembly, the
+// Buffer runtime and the whole `Array<Number>` system-vector surface all work.
+
+const cubeNodes = Intrinsics.MakeArray(
+  new Point3D(0, 0, 0), new Point3D(1, 0, 0), new Point3D(0, 1, 0), new Point3D(1, 1, 0),
+  new Point3D(0, 0, 1), new Point3D(1, 0, 1), new Point3D(0, 1, 1), new Point3D(1, 1, 1),
+);
+const tet = (a: number, b: number, c: number, d: number) =>
+  new TetrahedronCell(new VertexIndex(a), new VertexIndex(b), new VertexIndex(c), new VertexIndex(d));
+const cubeMesh = new TetrahedralMesh3D(
+  cubeNodes,
+  Intrinsics.MakeArray(
+    tet(0, 1, 3, 7), tet(0, 1, 5, 7), tet(0, 2, 3, 7),
+    tet(0, 2, 6, 7), tet(0, 4, 5, 7), tet(0, 4, 6, 7),
+  ),
+);
+const steel = new EngineeringMaterial(
+  'Steel', new Density(7850), new Pressure(200e9), 0.3,
+  new Pressure(250e6), new Pressure(400e6), 1.2e-5, new ThermalConductivity(50), 490,
+);
+const symmetry: PrescribedDisplacement[] = [];
+for (let i = 0; i < 8; i++) {
+  const node = cubeNodes.At(i);
+  if (node.X === 0) symmetry.push(new PrescribedDisplacement(new DofIndex(i * 3), 0));
+  if (node.Y === 0) symmetry.push(new PrescribedDisplacement(new DofIndex(i * 3 + 1), 0));
+  if (node.Z === 0) symmetry.push(new PrescribedDisplacement(new DofIndex(i * 3 + 2), 0));
+}
+const triangleFace = (a: number, b: number, c: number) =>
+  new TriangleFace(new VertexIndex(a), new VertexIndex(b), new VertexIndex(c));
+const pulledCube = new ElasticModel3D(
+  cubeMesh,
+  steel,
+  Intrinsics.MakeArray(...symmetry),
+  Intrinsics.MakeArray(),
+  Intrinsics.MakeArray(
+    new FaceTraction3D(triangleFace(1, 3, 7), new Vector3D(1e6, 0, 0)),
+    new FaceTraction3D(triangleFace(1, 7, 5), new Vector3D(1e6, 0, 0)),
+  ),
+  new Vector3D(0, 0, 0),
+);
+check('the cube has 24 degrees of freedom', pulledCube.DofCount(), 24);
+
+const elastic = pulledCube.SolveElastic(new LinearSolveSettings(500, 1e-12));
+check('the conjugate gradient converges', elastic.Converged, true);
+close('axial displacement is sigma L / E', elastic.Displacements.At(7).X, 5e-6, 1e-12);
+close('transverse contraction is -nu sigma / E', elastic.Displacements.At(7).Y, -1.5e-6, 1e-12);
+close('the held face does not move', elastic.Displacements.At(0).X, 0, 1e-18);
+
+const vonMises = pulledCube.VonMisesStresses(elastic);
+let worstStress = 0;
+for (let i = 0; i < vonMises.Count(); i++) {
+  worstStress = Math.max(worstStress, Math.abs(vonMises.At(i).Pascals - 1e6));
+}
+check('all six cells are at the applied stress', vonMises.Count(), 6);
+close('von Mises is 1 MPa in every cell', worstStress, 0, 1e-6);
+
+// Gravity is shared equally among each tetrahedron's four nodes, so the load
+// vector sums to rho V g over the whole cube however it was cut up.
+const heavyCube = pulledCube
+  .WithTractions(Intrinsics.MakeArray())
+  .WithGravity(new Vector3D(0, -9.81, 0));
+const gravityLoads = heavyCube.LoadVector();
+let gravityTotal = 0;
+for (let i = 0; i < gravityLoads.Count(); i++) gravityTotal += gravityLoads.At(i);
+close('gravity load totals rho V g', gravityTotal, -7850 * 1 * 9.81, 1e-6);
+
+// The plane path is the same variational form with the third gradient
+// component zero, so the same unit test in 2D must give the same numbers. It
+// goes through `PlaneCondition`, which is a sum type and therefore
+// prelude-supplied.
+const squareCorners = Intrinsics.MakeArray(
+  new Point2D(0, 0), new Point2D(1, 0), new Point2D(0, 1), new Point2D(1, 1),
+);
+const planeHeld: PrescribedDisplacement[] = [];
+for (let i = 0; i < 4; i++) {
+  if (squareCorners.At(i).X === 0) planeHeld.push(new PrescribedDisplacement(new DofIndex(i * 2), 0));
+  if (squareCorners.At(i).Y === 0) planeHeld.push(new PrescribedDisplacement(new DofIndex(i * 2 + 1), 0));
+}
+const planeSolution = new ElasticModel2D(
+  new TriangleMesh2D(
+    squareCorners,
+    Intrinsics.MakeArray(
+      new TriangleFace(new VertexIndex(0), new VertexIndex(1), new VertexIndex(3)),
+      new TriangleFace(new VertexIndex(0), new VertexIndex(3), new VertexIndex(2)),
+    ),
+  ),
+  steel,
+  new Length(1),
+  PlaneCondition.PlaneStress(),
+  Intrinsics.MakeArray(...planeHeld),
+  Intrinsics.MakeArray(
+    new NodalForce2D(new VertexIndex(1), new Vector2D(5e5, 0)),
+    new NodalForce2D(new VertexIndex(3), new Vector2D(5e5, 0)),
+  ),
+  new Vector2D(0, 0),
+).SolveElastic(new LinearSolveSettings(500, 1e-12));
+close('plane stress gives the same sigma L / E', planeSolution.Displacements.At(3).X, 5e-6, 1e-12);
+close(
+  'plane stress gives the same -nu sigma / E',
+  planeSolution.Displacements.At(3).Y,
+  -1.5e-6,
+  1e-12,
+);
+
+// The Euler-Bernoulli beam against the textbook cantilever: a tip load deflects
+// the free end by P L^3 / (3 E I). `BeamRestraint` and `BeamLoad` are both sum
+// types (the second one carries fields), so both come from the prelude.
+const cantilever = new Beam(
+  new Length(2),
+  new SectionProperties(new Area(1e-4), new Point2D(0, 0), 1e-8, 1e-8, 0, 0, 0, 0),
+  steel,
+  Intrinsics.MakeArray(new BeamSupport(BeamRestraint.Fixed(), new Length(0))),
+  Intrinsics.MakeArray(BeamLoad.PointForce(new Length(2), 1000)),
+);
+const beamSolution = (cantilever as any).SolveBeam(8, new LinearSolveSettings(2000, 1e-14));
+check('the beam solve converges', beamSolution.Converged, true);
+close(
+  'cantilever tip deflection is P L^3 / 3EI',
+  beamSolution.Deflections.At(beamSolution.Deflections.Count() - 1),
+  (1000 * 8) / (3 * 200e9 * 1e-8),
+  1e-9,
+);
+
+// --- Rigid bodies (rigid-dynamics.library.plato) ------------------------------
+//
+// One free ball, no contacts, one step of a 60 Hz semi-implicit Euler: the
+// velocity takes the whole gravity increment and the position takes the new
+// velocity, so the drop is g dt^2 exactly. `RigidWorld3D.Step` folds
+// `ReplacedAt` over its bodies and integrates the orientation through the
+// quaternion product, so this one number covers both.
+
+const freeBall = new SolverBody3D(
+  new Point3D(0, 2, 0),
+  Quaternion.Identity(),
+  new SpatialVelocity3D(new Vector3D(0, 0, 0), new Vector3D(0, 0, 0)),
+  1,
+  new Vector3D(1, 1, 1),
+  0,
+  0,
+  1,
+);
+const freeWorld = new RigidWorld3D(
+  Intrinsics.MakeArray(freeBall),
+  Intrinsics.MakeArray(),
+  new Vector3D(0, -9.81, 0),
+  new TimeStepSettings(new Duration(1 / 60), 1, 8, 2, 4),
+  new ContactSolverSettings(new Length(0.005), 0.2, new Speed(2), new Speed(1)),
+);
+close(
+  'one step of free fall drops g dt^2',
+  (freeWorld as any).Step().Bodies.At(0).Center.Y,
+  2 - 9.81 / 3600,
+  1e-12,
+);
+// ReplacedAt is the primitive that fold is built on.
+check(
+  'ReplacedAt changes one element and no other',
+  String(
+    (Intrinsics.MakeArray(1, 2, 3) as any)
+      .ReplacedAt(1, 9)
+      .Reduce('', (acc: string, x: number) => `${acc}${x}`),
+  ),
+  '193',
+);
+
+// --- Cloth (cloth.library.plato) ---------------------------------------------
+//
+// One unconstrained Verlet step of a free sheet is the same free fall: with
+// equal previous and current positions the step is a dt^2 g displacement. The
+// grid layout underneath it splits a flat vertex number across the sheet by
+// Integer division, so a wrong division shows up as a vertex off its row.
+
+const sheetGrid: any = new ClothGrid3D(
+  new Point3D(-0.5, 1, -0.5),
+  new Vector3D(0.125, 0, 0),
+  new Vector3D(0, 0, 0.125),
+  9,
+  9,
+);
+const sheet = sheetGrid.ClothFromGrid(new Mass(0.01), 0, new Length(0.01));
+check('a 9x9 sheet has 81 vertices', sheet.Cloth.Vertices.Count(), 81);
+// Vertex 40 is row 4, column 4 — the centre of the sheet, which the grid places
+// at the origin in x and z.
+close('the grid lays vertex 40 at the sheet centre (X)', sheet.Cloth.Vertices.At(40).Position.X, 0);
+close('the grid lays vertex 40 at the sheet centre (Z)', sheet.Cloth.Vertices.At(40).Position.Z, 0);
+const clothGravity = new ParticleForces3D(
+  Intrinsics.MakeArray(new ParticleGravity(new Vector3D(0, -9.81, 0))),
+  Intrinsics.MakeArray(),
+  Intrinsics.MakeArray(),
+  Intrinsics.MakeArray(),
+  Intrinsics.MakeArray(),
+  Intrinsics.MakeArray(),
+);
+close(
+  'one Verlet step of a free sheet drops g dt^2',
+  sheet
+    .Step(clothGravity, new ClothSolverSettings(new Duration(1 / 60), 1, 8, 1, 0), 0)
+    .Cloth.Vertices.At(40).Position.Y,
+  1 - 9.81 / 3600,
+  1e-9,
+);
 
 if (failures > 0) {
   console.error(`${failures} smoke check(s) failed`);
