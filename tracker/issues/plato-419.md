@@ -60,7 +60,20 @@ umbrella issue — split when someone starts work:
 7. **`IArithmetic` obligations missing on the native number mapping.**
    `Number.prototype.Zero`/`One`/`Half` are called by `IsOdd`, `Saturate`,
    `OneMinus`, `RoundedToNearest`; and `Number.Pi`/`Epsilon`/`MinValue`/`MaxValue`
-   are emitted as `ThrowNotImplemented`.
+   are emitted as `ThrowNotImplemented`. `Pi` is additionally called in *instance*
+   position by `IsoperimetricQuotient`, so a static-only fix is not enough.
+
+Defect 1 is worse than "some helpers": it takes down the **entire ear-clipping
+triangulation kernel**. `TriangulateRings`, `RingCount`, `RingStart`, `RingEnd`,
+`RangeSignedArea`, `FilterRing`, `BridgeHoles`, `ClipEars` are all
+`Array<…>`-first and none are emitted, while the `Integer`-first half of the same
+kernel (`LinkRing`, `FirstLiveSlot`) is. Every `Triangulate` obligation on
+`Polygon2D` / `PolygonWithHoles2D` / `PolygonSet2D`, and `Polygon3D.ToTriangleMesh`,
+is therefore dead. A prelude cannot reasonably cover this one — it would mean
+hand-porting the kernel, which is reimplementing the stdlib rather than patching
+the writer, so `demos/webgl` leaves those scenes visibly blocked instead.
+
+`WindingOrder` is a second instance of defect 5, hit by `Polygon2D.Winding`.
 
 ## Impact
 Everything the stdlib says about meshes, polyhedra, polygons, triangulation and
@@ -140,6 +153,9 @@ then 2.
       type or function it did not emit.
 - [ ] `demos/webgl/src/plato/array-ext.ts` is deleted and its README section
       removed.
+- [ ] `Polygon2D.Triangulate` returns a face per ear from unmodified generated
+      output, and the blocked scenes in `demos/webgl/src/demos/polygons.ts`
+      light up.
 
 ## Simplest fix
 Keep the prelude, and make it generated: teach the writer to emit exactly the
