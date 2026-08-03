@@ -4,6 +4,16 @@
 // Sections, in order:
 //  - Deformation bodies for sampled curves and surfaces
 //  - Sampled grid field evaluation
+//  - Determinism: what a Seed promises
+//  - Low-discrepancy sequences
+//  - Carrying a unit coordinate onto a region
+//  - Closed-form pattern generators
+//  - Poisson-disk sampling over a background grid
+//  - Blue noise
+//  - Repulsion relaxation
+//  - Pattern generators in space
+//  - Choosing a pattern by name
+//  - Quality readings
 
 library Sampling
 {
@@ -243,5 +253,828 @@ library Sampling
         var v = y - y.Floor;
         return self.NodeValue(i, j).Lerp(self.NodeValue(i + 1, j), u)
             .Lerp(self.NodeValue(i, j + 1).Lerp(self.NodeValue(i + 1, j + 1), u), v);
+    }
+
+    //==
+    // # Determinism: what a Seed promises
+    //
+    // Every seeded generator below draws its randomness from the integer hashing
+    // in `noise.library.plato` — `LatticeHash` and `HashToUnit` — and never from a
+    // stateful generator. There is no stream to advance and no state to carry, so
+    // a Seed names a FUNCTION rather than a position: the dart thrown at cell
+    // (i, j) on attempt a depends only on (Seed, i, j, a), and the k-th sample of
+    // stratum s only on (Seed, s, k).
+    //
+    // Three consequences worth stating, because they are what a caller relies on:
+    //
+    //   * SAME SEED, SAME POINTS. One pattern record always yields the same points,
+    //     in the same order, on every backend. The mixing is whole-number
+    //     arithmetic that wraps rather than floating point, which is what makes
+    //     C#, TypeScript, GLSL and CUDA agree bit for bit.
+    //   * ORDER DOES NOT MATTER. Nothing has to be generated in sequence for the
+    //     k-th point to be right, so a backend may evaluate the closed-form
+    //     patterns in parallel, or evaluate one point of them, and get the same
+    //     answer. (The Poisson-disk scan is the one exception, and it is sequential
+    //     by construction rather than by its random source: a cell's dart is still
+    //     a pure function of the seed, but whether the dart is KEPT depends on the
+    //     cells before it.)
+    //   * THE CONSTANTS ARE NOT THE CONTRACT. The mixing constants live in
+    //     `noise.library.plato` and may change between library versions. A Seed
+    //     reproduces a point set within one version of this library, not across
+    //     versions; nothing here is a file format.
+    //
+    // The unseeded families — Halton, Hammersley, Sobol, plastic — carry no Seed at
+    // all. The sequence IS the pattern, and the only freedom a caller has is where
+    // in it to start.
+
+    // A uniform number in [0, 1) drawn from three whole numbers: the seed, an
+    // index identifying WHAT is being drawn for, and a stream index separating
+    // several draws for the same thing. All three arguments are the state.
+    SampleUnit(seed: Integer, index: Integer, stream: Integer): Number
+        => HashToUnit(LatticeHash(seed, index, stream));
+
+    //==
+    // # Low-discrepancy sequences
+    //
+    // Deterministic sequences that fill the unit square more evenly than
+    // independent random points do: the discrepancy of the first n terms falls
+    // like log(n)^2 / n instead of like 1 / sqrt(n), which is what makes them the
+    // default for Monte Carlo integration.
+    // https://en.wikipedia.org/wiki/Low-discrepancy_sequence
+    //
+    // They are not blue noise and should not be mistaken for it. Their power
+    // spectrum is not isotropic — Halton and Sobol carry strong structure along
+    // the axes — so they integrate better than blue noise and LOOK worse. The
+    // radial spectrum reading at the end of this file separates the two claims.
+
+    // The fractional part of x, in [0, 1). The wrap every additive recurrence
+    // below ends on.
+    UnitFraction(x: Number): Number
+        => x - x.Floor;
+
+    // The radical inverse of `index` in the given base: the base's digits of the
+    // index, mirrored about the point. The van der Corput sequence, and the
+    // one-dimensional building block of both Halton and Hammersley. Zero for a
+    // non-positive index or a base below two.
+    // https://en.wikipedia.org/wiki/Van_der_Corput_sequence
+    RadicalInverse(index: Integer, base: Integer): Number
+        => index <= 0 || base < 2
+            ? 0.0
+            : ((index % base).ToNumber + RadicalInverse(index / base, base)) / base.ToNumber;
+
+    // The Halton point of the given index: radical inverses in two bases, which
+    // must be coprime or the two coordinates correlate.
+    // https://en.wikipedia.org/wiki/Halton_sequence
+    HaltonPoint2D(index: Integer, baseX: Integer, baseY: Integer): Point2D
+        => Point2D(RadicalInverse(index, baseX), RadicalInverse(index, baseY));
+
+    // The Halton point of the given index in three bases, pairwise coprime.
+    HaltonPoint3D(index: Integer, baseX: Integer, baseY: Integer, baseZ: Integer): Point3D
+        => Point3D(RadicalInverse(index, baseX), RadicalInverse(index, baseY),
+            RadicalInverse(index, baseZ));
+
+    // The Hammersley point of index i out of count: the index's own fraction
+    // along X and its radical inverse along Y. Better distributed than Halton,
+    // at the price of needing the count in advance.
+    HammersleyPoint2D(index: Integer, count: Integer, base: Integer): Point2D
+        => Point2D(count <= 0 ? 0.0 : index.ToNumber / count.ToNumber,
+            RadicalInverse(index, base));
+
+    // The Gray-code accumulator behind the second Sobol dimension: bit k of the
+    // index, when set, exclusive-ors in the k-th direction number, and the
+    // direction numbers of the primitive polynomial x + 1 are generated from the
+    // leading one by v -> v xor (v >> 1).
+    SobolGrayCode(index: Integer, direction: Integer, accumulated: Integer): Integer
+        => index <= 0
+            ? accumulated
+            : SobolGrayCode(index.ShiftRight(1), direction.BitwiseXor(direction.ShiftRight(1)),
+                (index % 2) == 1 ? accumulated.BitwiseXor(direction) : accumulated);
+
+    // The 2D Sobol point of the given index: the base-2 radical inverse along X
+    // and the Gray-code direction sum along Y. The accumulator is 24 bits wide —
+    // the mantissa a single-precision backend carries exactly, so no two distinct
+    // terms round together, and 2^23 is where its leading one starts.
+    // https://en.wikipedia.org/wiki/Sobol_sequence
+    SobolPoint2D(index: Integer): Point2D
+        => Point2D(RadicalInverse(index, 2),
+            SobolGrayCode(index, 8388608, 0).ToNumber / 16777216.0);
+
+    // One Newton step toward the positive root of x^(dimensions + 1) = x + 1,
+    // repeated `steps` times from `x`. Convergence is quadratic from anywhere
+    // near one, so a couple of dozen steps is far past what the mantissa holds.
+    GoldenRatioRefine(dimensions: Integer, steps: Integer, x: Number): Number
+        => steps <= 0
+            ? x
+            : GoldenRatioRefine(dimensions, steps - 1,
+                x - (x.Pow((dimensions + 1).ToNumber) - x - 1.0)
+                    / ((dimensions + 1).ToNumber * x.Pow(dimensions.ToNumber) - 1.0));
+
+    // The generalized golden ratio of the given dimension: the positive root of
+    // x^(d + 1) = x + 1. One gives the golden ratio, two the plastic number
+    // 1.3247..., three the R3 constant 1.2207... Computed rather than tabulated,
+    // so the identity that defines it is what a reader sees.
+    // Precondition: dimensions is at least one — the derivative Newton divides by
+    // vanishes below that.
+    // https://en.wikipedia.org/wiki/Plastic_ratio
+    GeneralizedGoldenRatio(dimensions: Integer): Number
+        => GoldenRatioRefine(dimensions, 24, 1.5);
+
+    // The R2 point of the given index: an additive recurrence whose increments
+    // are the reciprocal powers of the plastic number, wrapped into the unit
+    // square. No bases and no tables, and a lower discrepancy in the plane than
+    // Halton. `offset` shifts the whole sequence; 0.5 is the usual choice,
+    // because index zero would otherwise sit on the corner.
+    // https://en.wikipedia.org/wiki/Plastic_ratio
+    PlasticPoint2D(index: Integer, offset: Number): Point2D {
+        var p = GeneralizedGoldenRatio(2);
+        var n = index.ToNumber;
+        return Point2D(UnitFraction(offset + n / p), UnitFraction(offset + n / (p * p)));
+    }
+
+    // The R3 point of the given index: the same recurrence one dimension up, its
+    // increments the reciprocal powers of the root of x^4 = x + 1.
+    PlasticPoint3D(index: Integer, offset: Number): Point3D {
+        var p = GeneralizedGoldenRatio(3);
+        var n = index.ToNumber;
+        return Point3D(UnitFraction(offset + n / p),
+                       UnitFraction(offset + n / (p * p)),
+                       UnitFraction(offset + n / (p * p * p)));
+    }
+
+    //==
+    // # Carrying a unit coordinate onto a region
+    //
+    // Every sequence above lands in the unit square or cube; every pattern below
+    // reports points in world space. These two are the only bridge, so the
+    // mapping is stated once.
+
+    // The unit-square coordinate carried onto the region: (0, 0) lands on Min and
+    // (1, 1) on Max.
+    FromUnitSquare(region: Bounds2D, u: Point2D): Point2D
+        => Point2D(region.Min.X.Lerp(region.Max.X, u.X), region.Min.Y.Lerp(region.Max.Y, u.Y));
+
+    // The unit-cube coordinate carried onto the region.
+    FromUnitCube(region: Bounds3D, u: Point3D): Point3D
+        => Point3D(region.Min.X.Lerp(region.Max.X, u.X),
+                   region.Min.Y.Lerp(region.Max.Y, u.Y),
+                   region.Min.Z.Lerp(region.Max.Z, u.Z));
+
+    // The area of a planar region, or zero when it is empty (inverted).
+    RegionArea(region: Bounds2D): Number
+        => (region.Max.X - region.Min.X).Max(0.0) * (region.Max.Y - region.Min.Y).Max(0.0);
+
+    //==
+    // # Closed-form pattern generators
+    //
+    // The families whose k-th point is a function of k alone: no point depends on
+    // any other, so each of these is one `MapRange` and costs the same whether a
+    // caller wants one point or all of them.
+
+    // Count Halton points over the region. The sequence is taken from index one,
+    // so no point lands on the region's minimum corner.
+    HaltonPoints2D(region: Bounds2D, count: Integer, baseX: Integer, baseY: Integer): Array<Point2D>
+        => count.MapRange(i => region.FromUnitSquare(HaltonPoint2D(i + 1, baseX, baseY)));
+
+    // The pattern's points.
+    Points(self: HaltonPattern2D): Array<Point2D>
+        => HaltonPoints2D(self.Region, self.Count, self.BaseX, self.BaseY);
+
+    // Count Hammersley points over the region.
+    HammersleyPoints2D(region: Bounds2D, count: Integer, base: Integer): Array<Point2D>
+        => count.MapRange(i => region.FromUnitSquare(HammersleyPoint2D(i, count, base)));
+
+    // The pattern's points.
+    Points(self: HammersleyPattern2D): Array<Point2D>
+        => HammersleyPoints2D(self.Region, self.Count, self.Base);
+
+    // Count Sobol points over the region, starting `skipCount` terms in — the
+    // usual reason being to step past index zero, which is the origin.
+    SobolPoints2D(region: Bounds2D, count: Integer, skipCount: Integer): Array<Point2D>
+        => count.MapRange(i => region.FromUnitSquare(SobolPoint2D(skipCount + i)));
+
+    // The pattern's points.
+    Points(self: SobolPattern2D): Array<Point2D>
+        => SobolPoints2D(self.Region, self.Count, self.SkipCount);
+
+    // Count plastic (R2) points over the region.
+    PlasticPoints2D(region: Bounds2D, count: Integer, offset: Number): Array<Point2D>
+        => count.MapRange(i => region.FromUnitSquare(PlasticPoint2D(i, offset)));
+
+    // The pattern's points.
+    Points(self: PlasticPattern2D): Array<Point2D>
+        => PlasticPoints2D(self.Region, self.Count, self.Offset);
+
+    // The point of grid cell (i, j): the cell center displaced by `jitter` of a
+    // half-cell along each axis, the displacement drawn from the cell's own hash.
+    // Jitter zero is a regular grid and jitter one is one uniform point per cell.
+    // The offset comes from `noise.library.plato`, so a jittered grid and a
+    // Worley noise seeded alike put their features in the same places.
+    JitteredCellPoint2D(region: Bounds2D, cellCounts: IntegerVector2, jitter: Number,
+        seed: Integer, i: Integer, j: Integer): Point2D
+    {
+        var o = FeatureOffset2D(seed, i, j, jitter);
+        return Point2D(
+            region.Min.X + (i.ToNumber + o.X) * (region.Max.X - region.Min.X) / cellCounts.X.ToNumber,
+            region.Min.Y + (j.ToNumber + o.Y) * (region.Max.Y - region.Min.Y) / cellCounts.Y.ToNumber);
+    }
+
+    // One point per grid cell, in row-major cell order.
+    // Precondition: both cell counts are positive.
+    JitteredGridPoints2D(region: Bounds2D, cellCounts: IntegerVector2, jitter: Number,
+        seed: Integer): Array<Point2D>
+        => (cellCounts.X * cellCounts.Y).MapRange(n =>
+            JitteredCellPoint2D(region, cellCounts, jitter, seed, n % cellCounts.X, n / cellCounts.X));
+
+    // The pattern's points.
+    Points(self: JitteredGridPattern2D): Array<Point2D>
+        => JitteredGridPoints2D(self.Region, self.CellCounts, self.JitterAmount, self.Seed);
+
+    // The k-th sample of stratum `s`, counted row-major: uniform within the
+    // stratum, its two coordinates from two independent streams of that
+    // stratum's hash. Stratifying bounds the variance of a Monte Carlo estimate
+    // without correlating the samples, which is why the draw stays uniform inside
+    // the cell rather than being pulled toward its center.
+    StratumPoint2D(region: Bounds2D, strataCounts: IntegerVector2, seed: Integer,
+        s: Integer, k: Integer): Point2D
+    {
+        var i = s % strataCounts.X;
+        var j = s / strataCounts.X;
+        var u = SampleUnit(seed, s, k * 2);
+        var v = SampleUnit(seed, s, k * 2 + 1);
+        return Point2D(
+            region.Min.X + (i.ToNumber + u) * (region.Max.X - region.Min.X) / strataCounts.X.ToNumber,
+            region.Min.Y + (j.ToNumber + v) * (region.Max.Y - region.Min.Y) / strataCounts.Y.ToNumber);
+    }
+
+    // `samplesPerStratum` points in each stratum, strata in row-major order.
+    // Precondition: both strata counts are positive.
+    StratifiedPoints2D(region: Bounds2D, strataCounts: IntegerVector2,
+        samplesPerStratum: Integer, seed: Integer): Array<Point2D>
+        => (strataCounts.X * strataCounts.Y * samplesPerStratum).MapRange(n =>
+            StratumPoint2D(region, strataCounts, seed, n / samplesPerStratum, n % samplesPerStratum));
+
+    // The pattern's points.
+    Points(self: StratifiedPattern2D): Array<Point2D>
+        => StratifiedPoints2D(self.Region, self.StrataCounts, self.SamplesPerStratum, self.Seed);
+
+    //==
+    // # Poisson-disk sampling over a background grid
+    //
+    // No two points closer than `radius`, and no room left anywhere for another
+    // point that a dart found — a MAXIMAL Poisson-disk set, which is the
+    // canonical blue-noise point pattern.
+    // https://en.wikipedia.org/wiki/Supersampling#Poisson_disc
+    //
+    // The background grid is the whole point. Cells are radius / sqrt(2) across,
+    // which is the largest cell that can hold at most one sample, so a cell's
+    // accepted point IS its occupancy record and a candidate only has to be
+    // compared against the 5x5 block of cells around it: two cells further away
+    // in any direction is already more than `radius`. That is what turns naive
+    // dart throwing — which measures every dart against every point accepted so
+    // far — from quadratic into linear in the cell count.
+    //
+    // The cells are visited in scan order and each is given up to `attempts`
+    // uniform darts, the first one clearing its neighbourhood winning. Only the
+    // EARLIER half of a cell's neighbourhood is ever consulted: the later cells
+    // are still empty, and they test against this cell when their own turn comes,
+    // so every pair is checked exactly once.
+    //
+    // Two honest caveats. Visiting cells in scan order is not Bridson's
+    // active-list front, which grows outward from a starting point; Bridson needs
+    // a grid that is WRITTEN to as it fills and an active list with random
+    // removal, and this vocabulary's arrays are immutable values, so the front
+    // cannot be carried without an affine builder that several backends do not
+    // have. And a scan-order sweep leaves a faint directional bias — a point is
+    // pushed away from the cells above and to its left but not from those below
+    // and to its right. The radial spectrum reading at the end of this file is
+    // where that shows up, and it is small next to the difference between this
+    // and uniform random points.
+    //
+    // Cost is the cell count times `attempts`, so `radius` must be a real
+    // fraction of the region: halving it quadruples the work.
+
+    // The background grid's cell size: radius / sqrt(2), the largest cell whose
+    // diagonal is still shorter than the radius, so a cell holds one point at most.
+    PoissonCellSize(radius: Number): Number
+        => radius / Number.SqrtTwo;
+
+    // The number of background-grid columns covering the region, or zero when the
+    // radius is not positive — which is the empty answer rather than an error.
+    PoissonColumns(region: Bounds2D, radius: Number): Integer
+        => radius <= 0.0
+            ? 0
+            : ((region.Max.X - region.Min.X) / PoissonCellSize(radius)).Ceiling.ToInteger.Max(0);
+
+    // The number of background-grid rows covering the region.
+    PoissonRows(region: Bounds2D, radius: Number): Integer
+        => radius <= 0.0
+            ? 0
+            : ((region.Max.Y - region.Min.Y) / PoissonCellSize(radius)).Ceiling.ToInteger.Max(0);
+
+    // The point standing for an EMPTY cell: four radii outside the region's
+    // minimum corner, so it is further than `radius` from every point of the
+    // region and can never block a candidate. A sentinel and not a validity
+    // record because the grid rows below are plain point arrays and nothing
+    // outside this section ever sees one.
+    EmptyCellPoint(region: Bounds2D, radius: Number): Point2D
+        => Point2D(region.Min.X - 4.0 * radius, region.Min.Y - 4.0 * radius);
+
+    // True when a grid slot holds the empty sentinel rather than an accepted point.
+    IsEmptyCell(p: Point2D, region: Bounds2D, radius: Number): Boolean
+        => p.X < region.Min.X - 2.0 * radius;
+
+    // Attempt `a`'s dart for cell (i, j): a uniform point of that cell, both
+    // coordinates drawn from one hash of the seed, the cell and the attempt.
+    PoissonCandidate(region: Bounds2D, radius: Number, seed: Integer,
+        i: Integer, j: Integer, a: Integer): Point2D
+    {
+        var cell = PoissonCellSize(radius);
+        var h = LatticeHash(seed, i, j, a);
+        return Point2D(region.Min.X + (i.ToNumber + HashToUnit(h)) * cell,
+                       region.Min.Y + (j.ToNumber + HashToUnit(NoiseMix(h))) * cell);
+    }
+
+    // True when `p` clears slot `c` of a grid row: an empty slot never blocks, and
+    // an occupied one blocks only inside the radius.
+    PoissonSlotFree(p: Point2D, region: Bounds2D, radius: Number,
+        slots: Array<Point2D>, c: Integer): Boolean
+        => IsEmptyCell(slots[c], region, radius) || slots[c].Distance(p) >= radius;
+
+    // True when `p` clears every point already accepted in the earlier half of its
+    // 5x5 cell block: the two rows above in full, and the cells left of column `i`
+    // in the row being built. `above1` is full width, so it also fixes the column
+    // count; `row` holds only the columns decided so far.
+    PoissonIsFree(p: Point2D, region: Bounds2D, radius: Number, above2: Array<Point2D>,
+        above1: Array<Point2D>, row: Array<Point2D>, i: Integer): Boolean
+    {
+        var free = true;
+        var d = -2;
+        while (d <= 2)
+        {
+            var c = i + d;
+            if (c >= 0 && c < above1.Count)
+            {
+                free = free && PoissonSlotFree(p, region, radius, above2, c)
+                            && PoissonSlotFree(p, region, radius, above1, c);
+                if (d < 0)
+                {
+                    free = free && PoissonSlotFree(p, region, radius, row, c);
+                }
+            }
+            d = d + 1;
+        }
+        return free;
+    }
+
+    // The accepted point of cell (i, j), or the empty sentinel when `attempts`
+    // darts all landed outside the region or inside somebody's radius.
+    PoissonCellPoint(region: Bounds2D, radius: Number, attempts: Integer, seed: Integer,
+        i: Integer, j: Integer, above2: Array<Point2D>, above1: Array<Point2D>,
+        row: Array<Point2D>): Point2D
+    {
+        var accepted = EmptyCellPoint(region, radius);
+        var a = 0;
+        while (a < attempts)
+        {
+            if (IsEmptyCell(accepted, region, radius))
+            {
+                var candidate = PoissonCandidate(region, radius, seed, i, j, a);
+                if (region.Contains(candidate))
+                {
+                    if (PoissonIsFree(candidate, region, radius, above2, above1, row, i))
+                    {
+                        accepted = candidate;
+                    }
+                }
+            }
+            a = a + 1;
+        }
+        return accepted;
+    }
+
+    // One full-width row of the background grid, left to right, empty cells
+    // included. The row is kept whole because the two rows below it index into it
+    // by column.
+    PoissonRow(region: Bounds2D, radius: Number, attempts: Integer, seed: Integer,
+        j: Integer, above2: Array<Point2D>, above1: Array<Point2D>): Array<Point2D>
+    {
+        var row = Point2D.NoPoints;
+        var i = 0;
+        while (i < above1.Count)
+        {
+            row = row.Append(PoissonCellPoint(region, radius, attempts, seed, i, j,
+                above2, above1, row));
+            i = i + 1;
+        }
+        return row;
+    }
+
+    // The occupied cells of one row, in column order. Rows are compacted as they
+    // are finished rather than the whole grid at the end, which keeps every
+    // intermediate array short.
+    PoissonRowPoints(region: Bounds2D, radius: Number, row: Array<Point2D>): Array<Point2D>
+    {
+        var kept = Point2D.NoPoints;
+        var c = 0;
+        while (c < row.Count)
+        {
+            if (IsEmptyCell(row[c], region, radius).Not)
+            {
+                kept = kept.Append(row[c]);
+            }
+            c = c + 1;
+        }
+        return kept;
+    }
+
+    // Poisson-disk points over the region: no two closer than `radius`, in
+    // row-major cell order. A non-positive radius yields no points.
+    // Precondition: `attempts` is positive — thirty is the usual choice and the
+    // one `PoissonDiskPattern2D` documents.
+    PoissonDiskPoints2D(region: Bounds2D, radius: Number, attempts: Integer,
+        seed: Integer): Array<Point2D>
+    {
+        var columns = PoissonColumns(region, radius);
+        var rows = PoissonRows(region, radius);
+        var blank = columns.MapRange(c => EmptyCellPoint(region, radius));
+        var above2 = blank;
+        var above1 = blank;
+        var points = Point2D.NoPoints;
+        var j = 0;
+        while (j < rows)
+        {
+            var row = PoissonRow(region, radius, attempts, seed, j, above2, above1);
+            points = points.Concatenate(PoissonRowPoints(region, radius, row));
+            above2 = above1;
+            above1 = row;
+            j = j + 1;
+        }
+        return points;
+    }
+
+    // The pattern's points.
+    Points(self: PoissonDiskPattern2D): Array<Point2D>
+        => PoissonDiskPoints2D(self.Region, self.MinimumDistance, self.MaxAttempts, self.Seed);
+
+    //==
+    // # Blue noise
+    //
+    // `BlueNoisePattern2D` asks for a COUNT, and Poisson-disk sampling takes a
+    // RADIUS and reports whatever count saturates. The two are joined by the
+    // saturation density: random sequential adsorption of disks jams at a coverage
+    // of about 0.547, which puts about 0.7 * area / radius^2 points on the plane.
+    // Generation therefore picks the radius that saturates at somewhat more than
+    // the count asked for and thins the result back down.
+    // https://en.wikipedia.org/wiki/Random_sequential_adsorption
+
+    // The Poisson-disk radius whose saturated set holds about a fifth more than
+    // `count` points over the region. The surplus is what the thinning below
+    // spends, and it also absorbs the shortfall of a sweep that gives each cell
+    // only a bounded number of darts.
+    BlueNoiseRadius(region: Bounds2D, count: Integer): Number
+        => count <= 0 ? 0.0 : (0.7 * RegionArea(region) / (count.ToNumber * 1.2)).Sqrt;
+
+    // The points thinned evenly down to `count`: point i survives when it is the
+    // last one mapping to its slot of the target count, which drops a uniform
+    // fraction spread through the whole scan instead of a block of it. Exactly
+    // `count` points come back when there are at least that many; a shorter input
+    // comes back unchanged. Thinning cannot make a set less blue in the way a
+    // prefix would — every surviving pair is still at least a radius apart — but
+    // it does leave the set no longer maximal, which the low-frequency end of the
+    // spectrum registers.
+    ThinnedPoints2D(count: Integer, points: Array<Point2D>): Array<Point2D>
+    {
+        var kept = Point2D.NoPoints;
+        var i = 0;
+        while (i < points.Count)
+        {
+            if (points.Count <= count || (i * count) / points.Count != ((i + 1) * count) / points.Count)
+            {
+                kept = kept.Append(points[i]);
+            }
+            i = i + 1;
+        }
+        return kept;
+    }
+
+    // About `count` blue-noise points over the region: a saturated Poisson-disk
+    // set at the radius the count implies, thinned to exactly the count when the
+    // region held enough. Thirty darts per cell is the figure
+    // `PoissonDiskPattern2D` names.
+    BlueNoisePoints2D(region: Bounds2D, count: Integer, seed: Integer): Array<Point2D>
+        => ThinnedPoints2D(count,
+            PoissonDiskPoints2D(region, BlueNoiseRadius(region, count), 30, seed));
+
+    // The pattern's points.
+    Points(self: BlueNoisePattern2D): Array<Point2D>
+        => BlueNoisePoints2D(self.Region, self.Count, self.Seed);
+
+    //==
+    // # Repulsion relaxation
+    //
+    // Any point set becomes more even if every point is pushed away from its
+    // close neighbours and the push is repeated. That is the cheap half of what
+    // Lloyd's algorithm does, and it is what turns white noise into something
+    // blue without any radius bookkeeping.
+    //
+    // LLOYD'S ALGORITHM ITSELF IS NOT HERE, and the reason is worth writing down.
+    // Lloyd moves each point to the centroid of its Voronoi cell; discretized, it
+    // dices the region into stones, assigns each stone to its nearest point, and
+    // averages. The assignment has to be STORED — computed once per stone and then
+    // read once per point — or the pass degrades from stones times points to
+    // stones times points squared. This vocabulary's arrays are immutable lazy
+    // values with no in-place write, so storing it needs an affine builder, and
+    // the builders have no runtime on several of the backends these bodies are
+    // meant to reach. Repulsion needs no such table: each point reads the others
+    // directly. https://en.wikipedia.org/wiki/Lloyd%27s_algorithm
+
+    // Where point `index` goes after one repulsion pass: the sum of the pushes
+    // away from every neighbour inside `radius`, each falling linearly to zero at
+    // that radius, scaled by `strength` and clamped back into the region.
+    // Coincident points do not push each other, having no direction to push along.
+    RepelledPoint2D(region: Bounds2D, points: Array<Point2D>, radius: Number,
+        strength: Number, index: Integer): Point2D
+    {
+        var p = points[index];
+        var push = Vector2D(0.0, 0.0);
+        var j = 0;
+        while (j < points.Count)
+        {
+            var d = p.Distance(points[j]);
+            if (j != index && d > 0.0 && d < radius)
+            {
+                push = push + points[j].Between(p) * ((radius - d) / d);
+            }
+            j = j + 1;
+        }
+        return Point2D((p.X + strength * push.X).Clamp(region.Min.X, region.Max.X),
+                       (p.Y + strength * push.Y).Clamp(region.Min.Y, region.Max.Y));
+    }
+
+    // The point set after one repulsion pass. Every point moves from the same
+    // starting configuration — the pass is a simultaneous step, not a sweep — so
+    // the result does not depend on the order the points are stored in.
+    RepelledPoints2D(region: Bounds2D, points: Array<Point2D>, radius: Number,
+        strength: Number): Array<Point2D>
+    {
+        var moved = Point2D.NoPoints;
+        var i = 0;
+        while (i < points.Count)
+        {
+            moved = moved.Append(RepelledPoint2D(region, points, radius, strength, i));
+            i = i + 1;
+        }
+        return moved;
+    }
+
+    // The point set after `passes` repulsion passes. A `strength` of about 0.2
+    // and a `radius` of about the mean spacing converge in a handful of passes;
+    // a larger strength oscillates. Each pass measures every point against every
+    // other, so this is for hundreds of points, not for millions.
+    RelaxedPoints2D(region: Bounds2D, points: Array<Point2D>, radius: Number,
+        strength: Number, passes: Integer): Array<Point2D>
+        => passes <= 0
+            ? points
+            : RelaxedPoints2D(region, RepelledPoints2D(region, points, radius, strength),
+                radius, strength, passes - 1);
+
+    //==
+    // # Pattern generators in space
+    //
+    // The closed-form families one dimension up. Poisson-disk and blue noise stop
+    // at two dimensions: their background grid is written to as it fills, and in
+    // three dimensions the sliding window the planar sweep gets away with becomes
+    // a whole plane of occupancy that would have to be carried and indexed. The
+    // plastic (R3) sequence is the even spatial scatter to reach for meanwhile.
+
+    // Count Halton points through the volume, taken from index one.
+    HaltonPoints3D(region: Bounds3D, count: Integer, baseX: Integer, baseY: Integer,
+        baseZ: Integer): Array<Point3D>
+        => count.MapRange(i => region.FromUnitCube(HaltonPoint3D(i + 1, baseX, baseY, baseZ)));
+
+    // The pattern's points.
+    Points(self: HaltonPattern3D): Array<Point3D>
+        => HaltonPoints3D(self.Region, self.Count, self.BaseX, self.BaseY, self.BaseZ);
+
+    // Count plastic (R3) points through the volume.
+    PlasticPoints3D(region: Bounds3D, count: Integer, offset: Number): Array<Point3D>
+        => count.MapRange(i => region.FromUnitCube(PlasticPoint3D(i, offset)));
+
+    // The pattern's points.
+    Points(self: PlasticPattern3D): Array<Point3D>
+        => PlasticPoints3D(self.Region, self.Count, self.Offset);
+
+    // The point of grid cell (i, j, k), jittered from the cell center.
+    JitteredCellPoint3D(region: Bounds3D, cellCounts: IntegerVector3, jitter: Number,
+        seed: Integer, i: Integer, j: Integer, k: Integer): Point3D
+    {
+        var o = FeatureOffset3D(seed, i, j, k, jitter);
+        return Point3D(
+            region.Min.X + (i.ToNumber + o.X) * (region.Max.X - region.Min.X) / cellCounts.X.ToNumber,
+            region.Min.Y + (j.ToNumber + o.Y) * (region.Max.Y - region.Min.Y) / cellCounts.Y.ToNumber,
+            region.Min.Z + (k.ToNumber + o.Z) * (region.Max.Z - region.Min.Z) / cellCounts.Z.ToNumber);
+    }
+
+    // One point per grid cell, X fastest then Y then Z.
+    // Precondition: every cell count is positive.
+    JitteredGridPoints3D(region: Bounds3D, cellCounts: IntegerVector3, jitter: Number,
+        seed: Integer): Array<Point3D>
+        => (cellCounts.X * cellCounts.Y * cellCounts.Z).MapRange(n =>
+            JitteredCellPoint3D(region, cellCounts, jitter, seed,
+                n % cellCounts.X, n / cellCounts.X % cellCounts.Y, n / (cellCounts.X * cellCounts.Y)));
+
+    // The pattern's points.
+    Points(self: JitteredGridPattern3D): Array<Point3D>
+        => JitteredGridPoints3D(self.Region, self.CellCounts, self.JitterAmount, self.Seed);
+
+    // The k-th sample of stratum `s`, counted X fastest then Y then Z: uniform
+    // within the stratum, its three coordinates from three independent streams.
+    StratumPoint3D(region: Bounds3D, strataCounts: IntegerVector3, seed: Integer,
+        s: Integer, k: Integer): Point3D
+    {
+        var i = (s % strataCounts.X).ToNumber + SampleUnit(seed, s, k * 3);
+        var j = (s / strataCounts.X % strataCounts.Y).ToNumber + SampleUnit(seed, s, k * 3 + 1);
+        var l = (s / (strataCounts.X * strataCounts.Y)).ToNumber + SampleUnit(seed, s, k * 3 + 2);
+        return Point3D(
+            region.Min.X + i * (region.Max.X - region.Min.X) / strataCounts.X.ToNumber,
+            region.Min.Y + j * (region.Max.Y - region.Min.Y) / strataCounts.Y.ToNumber,
+            region.Min.Z + l * (region.Max.Z - region.Min.Z) / strataCounts.Z.ToNumber);
+    }
+
+    // `samplesPerStratum` points in each stratum.
+    // Precondition: every strata count is positive.
+    StratifiedPoints3D(region: Bounds3D, strataCounts: IntegerVector3,
+        samplesPerStratum: Integer, seed: Integer): Array<Point3D>
+        => (strataCounts.X * strataCounts.Y * strataCounts.Z * samplesPerStratum).MapRange(n =>
+            StratumPoint3D(region, strataCounts, seed, n / samplesPerStratum, n % samplesPerStratum));
+
+    // The pattern's points.
+    Points(self: StratifiedPattern3D): Array<Point3D>
+        => StratifiedPoints3D(self.Region, self.StrataCounts, self.SamplesPerStratum, self.Seed);
+
+    //==
+    // # Choosing a pattern by name
+    //
+    // One entry point behind the `SamplePattern` enumeration, for the caller who
+    // wants to compare strategies rather than configure one. Each case is given
+    // the conventional parameters of its family, so the only knobs are the region,
+    // a count and a seed; a caller who wants a base, a jitter or a radius builds
+    // the pattern record instead.
+
+    // The grid closest to `count` cells over the region, with cells as square as
+    // the region's shape allows. Its cell count is at least `count` and may
+    // exceed it, because the rows have to divide the columns evenly.
+    PatternGrid(region: Bounds2D, count: Integer): IntegerVector2
+    {
+        var width = (region.Max.X - region.Min.X).Max(0.0);
+        var height = (region.Max.Y - region.Min.Y).Max(0.0);
+        var columns = count <= 0 || width <= 0.0 || height <= 0.0
+            ? 1
+            : (count.ToNumber * width / height).Sqrt.Ceiling.ToInteger.Max(1);
+        return IntegerVector2(columns, (count.Max(0) + columns - 1) / columns);
+    }
+
+    // About `count` points of the named strategy over the region. The families
+    // whose count is an input honour it exactly; the grid families report the
+    // cells of the nearest grid, and Poisson-disk reports whatever its radius
+    // saturated at. The strategies that carry no randomness ignore the seed.
+    PatternPoints2D(pattern: SamplePattern, region: Bounds2D, count: Integer,
+        seed: Integer): Array<Point2D>
+        => match (pattern) {
+            RegularGrid => JitteredGridPoints2D(region, PatternGrid(region, count), 0.0, seed);
+            JitteredGrid => JitteredGridPoints2D(region, PatternGrid(region, count), 1.0, seed);
+            Stratified => StratifiedPoints2D(region, PatternGrid(region, count), 1, seed);
+            PoissonDisk => PoissonDiskPoints2D(region, BlueNoiseRadius(region, count), 30, seed);
+            Halton => HaltonPoints2D(region, count, 2, 3);
+            Hammersley => HammersleyPoints2D(region, count, 2);
+            Sobol => SobolPoints2D(region, count, 1);
+            Plastic => PlasticPoints2D(region, count, 0.5);
+            BlueNoise => BlueNoisePoints2D(region, count, seed);
+        };
+
+    //==
+    // # Quality readings
+    //
+    // Measurements that let a caller ARGUE that a pattern is blue rather than
+    // assert it. Three independent readings, because each one is fooled by
+    // something the others catch: spacing says nothing about anisotropy,
+    // discrepancy rewards the lattice-like patterns that look worst, and the
+    // spectrum is the only one that separates "even" from "regular".
+
+    // The distance from point `index` to the nearest other point, or the largest
+    // representable number when there is no other point. The per-point reading a
+    // caller histograms: uniform random points give an exponential-looking
+    // histogram with mass at zero, and a blue-noise set gives a narrow bump with
+    // nothing below its radius.
+    NearestNeighborDistance(index: Integer, points: Array<Point2D>): Number
+        => points.Count.Range.Reduce(Number.MaxValue, (best, j) =>
+            j == index ? best : best.Min(points[index].Distance(points[j])));
+
+    // The spacing a perfect hexagonal packing of `count` points would have over
+    // the region: the yardstick the two readings below divide by, so that they
+    // compare across counts and across regions.
+    // https://en.wikipedia.org/wiki/Circle_packing
+    ReferenceSpacing(region: Bounds2D, count: Integer): Number
+        => count <= 0 ? 0.0 : (2.0 * RegionArea(region) / (count.ToNumber * Number.SqrtThree)).Sqrt;
+
+    // The relative radius: the smallest distance between any two points, as a
+    // fraction of `ReferenceSpacing`. The single number that says how blue a
+    // pattern is. A hexagonal lattice reads 1 by definition and a square grid
+    // reads about 0.93. A maximal Poisson-disk set lands somewhat below that,
+    // near its own radius over the reference spacing. Uniform random points and a
+    // fully jittered grid both read near zero, for the same reason: two
+    // independent draws can land arbitrarily close, and one pair doing so is
+    // enough. Fewer than two points read zero.
+    RelativeRadius(region: Bounds2D, points: Array<Point2D>): Number
+    {
+        var reference = ReferenceSpacing(region, points.Count);
+        var smallest = points.Count.Range.Reduce(Number.MaxValue, (best, i) =>
+            best.Min(NearestNeighborDistance(i, points)));
+        return points.Count < 2 || reference <= 0.0 ? 0.0 : smallest / reference;
+    }
+
+    // The mean nearest-neighbour distance as a fraction of `ReferenceSpacing`.
+    // A Poisson process expects a mean nearest-neighbour distance of half the
+    // reciprocal square root of the density, which puts this reading a little
+    // under one half; it climbs toward 1 as a pattern approaches the hexagonal
+    // packing. Reported beside the relative radius because the two disagree in
+    // the interesting case: one close pair drags the radius to zero and leaves
+    // the mean untouched, so a pattern that is evenly spaced APART FROM one
+    // accident reads high here and low there.
+    RelativeMeanSpacing(region: Bounds2D, points: Array<Point2D>): Number
+    {
+        var reference = ReferenceSpacing(region, points.Count);
+        var total = SumOf(points.Count.MapRange(i => NearestNeighborDistance(i, points)));
+        return points.Count < 2 || reference <= 0.0 ? 0.0
+            : total / points.Count.ToNumber / reference;
+    }
+
+    // The local discrepancy of the box anchored at the region's minimum corner and
+    // reaching to `corner`: how far the fraction of points inside it is from the
+    // fraction of the area it covers.
+    BoxDiscrepancy(corner: Point2D, region: Bounds2D, points: Array<Point2D>): Number
+    {
+        var area = RegionArea(region);
+        var box = (corner.X - region.Min.X).Max(0.0) * (corner.Y - region.Min.Y).Max(0.0);
+        var inside = points.Reduce(0.0, (n, p) =>
+            n + (p.X <= corner.X && p.Y <= corner.Y ? 1.0 : 0.0));
+        return points.Count <= 0 || area <= 0.0
+            ? 0.0
+            : (inside / points.Count.ToNumber - box / area).Abs;
+    }
+
+    // An estimate of the star discrepancy: the largest local discrepancy over the
+    // boxes whose far corner is one of the sample points. Lower is better, and
+    // the low-discrepancy families are the ones that win it — which is exactly why
+    // it is reported next to the spacing readings rather than instead of them.
+    //
+    // It is a LOWER bound on the true supremum, which is attained at a corner
+    // built from one point's X and another's Y. Those n^2 corners cost n^3 to
+    // test where these n corners cost n^2, and the ranking of one pattern against
+    // another survives the approximation.
+    // https://en.wikipedia.org/wiki/Low-discrepancy_sequence
+    StarDiscrepancyEstimate(region: Bounds2D, points: Array<Point2D>): Number
+        => points.Reduce(0.0, (worst, p) => worst.Max(BoxDiscrepancy(p, region, points)));
+
+    // The periodogram power of one plane wave over the point set: the squared
+    // magnitude of the sum of exp(2 pi i f . x), divided by the point count. A
+    // Poisson process averages to one at every non-zero frequency, so a reading
+    // below one means the pattern SUPPRESSES that frequency and a reading above
+    // one means it carries it. Frequencies are in cycles per unit length.
+    // https://en.wikipedia.org/wiki/Periodogram
+    WavePower(frequencyX: Number, frequencyY: Number, points: Array<Point2D>): Number
+    {
+        var cosine = SumOf(points.Map(p => (p.X * frequencyX + p.Y * frequencyY).Turns.Cos));
+        var sine = SumOf(points.Map(p => (p.X * frequencyX + p.Y * frequencyY).Turns.Sin));
+        return points.Count <= 0 ? 0.0 : (cosine * cosine + sine * sine) / points.Count.ToNumber;
+    }
+
+    // The mean power at one frequency magnitude, averaged over `directions`
+    // evenly spaced directions across a half turn — power is symmetric, so a
+    // whole turn would measure each direction twice. Averaging over direction is
+    // what makes the reading a statement about ISOTROPY as well as about
+    // frequency content: an axis-aligned pattern that spikes along one direction
+    // shows up here as a bump the spacing readings never see.
+    RadialPower(frequency: Number, directions: Integer, points: Array<Point2D>): Number
+        => directions <= 0 ? 0.0
+            : SumOf(directions.MapRange(k =>
+                WavePower(frequency * (0.5 * k.ToNumber / directions.ToNumber).Turns.Cos,
+                          frequency * (0.5 * k.ToNumber / directions.ToNumber).Turns.Sin,
+                          points))) / directions.ToNumber;
+
+    // The radially averaged power spectrum: `bandCount` readings, band b at
+    // b + 1 cycles across the region's longer side. This is the reading the word
+    // "blue" names. Uniform random points are flat at one from the first band.
+    // Blue noise is near zero for the first few bands, rises through one around
+    // the mean spacing, and settles at one — no low-frequency clumping, and no
+    // preferred direction. A regular grid spikes at its own period and is near
+    // zero between the spikes.
+    // https://en.wikipedia.org/wiki/Colors_of_noise
+    RadialPowerSpectrum(region: Bounds2D, points: Array<Point2D>, bandCount: Integer,
+        directions: Integer): Array<Number>
+    {
+        var extent = (region.Max.X - region.Min.X).Max(region.Max.Y - region.Min.Y);
+        return bandCount.MapRange(b => extent <= 0.0 ? 0.0
+            : RadialPower((b + 1).ToNumber / extent, directions, points));
     }
 }

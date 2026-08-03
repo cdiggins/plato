@@ -6,6 +6,7 @@
 //  - Sampled fields on grids
 //  - Regular grids
 //  - Sample patterns
+//  - Sample patterns in space
 //  - Interpolation and resampling
 
 //==
@@ -161,6 +162,7 @@ type SamplePattern
     | Halton
     | Hammersley
     | Sobol
+    | Plastic
     | BlueNoise;
 
 // Poisson-disk scattering: random points where no two are closer than
@@ -236,16 +238,92 @@ type SobolPattern2D
     SkipCount: Integer;
 }
 
-// Blue-noise scattering: Count points iteratively relaxed toward an even,
-// isotropic distribution with energy concentrated in high frequencies.
-// Ideal for stippling, dithering, and sample-position tables
+// Blue-noise scattering: an even, isotropic distribution with its energy
+// concentrated in high frequencies and almost none near zero. Ideal for
+// stippling, dithering, and sample-position tables
 // (https://en.wikipedia.org/wiki/Colors_of_noise).
+//
+// Count is exact when the region can hold that many: generation picks the
+// Poisson-disk radius that saturates at slightly more than Count points and
+// then thins the result evenly back to Count. A region too small for Count
+// points yields as many as fit.
 type BlueNoisePattern2D
     implements IValue
 {
     Region: Bounds2D;
     Count: Integer;
     Seed: Integer;
+}
+
+// Plastic (R2) low-discrepancy scattering: Count terms of the additive
+// recurrence whose two increments are the reciprocal first and second powers
+// of the plastic number, offset by Offset in [0, 1) (0.5 is the usual choice
+// and avoids the corner). No bases, no tables, and a lower discrepancy than
+// Halton in two dimensions
+// (https://en.wikipedia.org/wiki/Plastic_ratio).
+type PlasticPattern2D
+    implements IValue
+{
+    Region: Bounds2D;
+    Count: Integer;
+    Offset: Number;
+}
+
+//==
+// # Sample patterns in space
+//
+// The spatial counterparts, for scattering through a volume rather than over
+// a region: the same parameters with a third axis. The closed-form families
+// generalize directly; Poisson-disk and blue noise stop at 2D, because their
+// background grid has to be written to as it is filled and this vocabulary's
+// arrays are immutable (see `sampling.library.plato`).
+
+// Jittered-grid scattering through a volume: one point per grid cell,
+// displaced from the cell center by JitterAmount in [0, 1].
+type JitteredGridPattern3D
+    implements IValue
+{
+    Region: Bounds3D;
+    CellCounts: IntegerVector3;
+    JitterAmount: Number;
+    Seed: Integer;
+}
+
+// Stratified scattering through a volume: SamplesPerStratum points placed
+// uniformly at random within each of StrataCounts strata
+// (https://en.wikipedia.org/wiki/Stratified_sampling).
+type StratifiedPattern3D
+    implements IValue
+{
+    Region: Bounds3D;
+    StrataCounts: IntegerVector3;
+    SamplesPerStratum: Integer;
+    Seed: Integer;
+}
+
+// Halton low-discrepancy scattering through a volume: Count quasi-random
+// points from radical inverses in bases BaseX, BaseY and BaseZ, which must be
+// pairwise coprime (typically 2, 3 and 5)
+// (https://en.wikipedia.org/wiki/Halton_sequence).
+type HaltonPattern3D
+    implements IValue
+{
+    Region: Bounds3D;
+    Count: Integer;
+    BaseX: Integer;
+    BaseY: Integer;
+    BaseZ: Integer;
+}
+
+// Plastic (R3) low-discrepancy scattering through a volume: Count terms of the
+// additive recurrence whose three increments are the reciprocal powers of the
+// positive root of x^4 = x + 1, offset by Offset in [0, 1).
+type PlasticPattern3D
+    implements IValue
+{
+    Region: Bounds3D;
+    Count: Integer;
+    Offset: Number;
 }
 
 //==
