@@ -81,6 +81,27 @@ type WindModel
     GustFrequency: Frequency;
 }
 
+// The whole force set acting on a simulation, with no particles attached.
+// `ParticleSystem3D` below carries these same six arrays inline; this type is
+// the bundle on its own, so anything that is stepped but is not a particle
+// system — a cloth, a rope, a soft body — takes the identical force vocabulary
+// instead of declaring a second one. `Forces` (`particles.library.plato`)
+// projects a system onto it, and `AccelerationAt` there sums it.
+//
+// Winds are not summed with the rest: a wind is a VELOCITY field, and it enters
+// through the drag term as a relative velocity. See the force-set section of
+// `particles.library.plato`.
+type ParticleForces3D
+    implements IValue
+{
+    Gravities: Array<ParticleGravity>;
+    Drags: Array<ParticleDrag>;
+    Vortices: Array<ParticleVortex>;
+    Attractors: Array<ParticleAttractor>;
+    Turbulences: Array<ParticleTurbulence>;
+    Winds: Array<WindModel>;
+}
+
 //==
 // # Particle systems
 //

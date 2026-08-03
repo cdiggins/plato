@@ -1,0 +1,262 @@
+//==
+// # Particles
+//
+// Bodies for the particle vocabulary of `particles.types.plato`: what each
+// declared force field contributes, how a force set is summed, and the step
+// that advances a particle.
+//
+// Sections, in order:
+//  - Force fields — one acceleration each
+//  - Wind — a velocity field, not a force
+//  - The force set
+//  - The particle step
+//  - Stepping a system
+
+library Particles
+{
+    //==
+    // # Force fields — one acceleration each
+    //
+    // Every force answers the same question: what acceleration does it
+    // contribute, given where the particle is and how fast it is going. That
+    // uniform shape is what makes the total a plain sum and lets the force set
+    // grow without touching the step.
+    //
+    // Accelerations are in meters per second squared throughout, and none of
+    // these reads a particle's mass: the declared types describe FIELDS, which
+    // accelerate every particle alike, not forces that a mass would divide.
+    // Convention: see CONVENTIONS.md - World space (Z-up, right-handed).
+
+    // The constant acceleration of a uniform gravity field.
+    AccelerationAt(self: ParticleGravity): Vector3D
+        => self.Acceleration;
+
+    // Velocity-opposing drag, quoted on the velocity RELATIVE to the medium —
+    // pass `velocity - windVelocity`, not the particle's world velocity, or a
+    // particle at rest in a gale feels nothing.
+    // (https://en.wikipedia.org/wiki/Drag_(physics))
+    AccelerationAt(self: ParticleDrag, relativeVelocity: Vector3D): Vector3D
+        => (relativeVelocity * self.LinearCoefficient
+            + relativeVelocity * (self.QuadraticCoefficient * relativeVelocity.Magnitude)).Negative;
+
+    // Tangential acceleration around the vortex line: the direction is the
+    // axis crossed into the radial offset, and the magnitude is Strength at one
+    // meter from the axis, falling off as one over the distance. Exactly on the
+    // axis there is no radial direction, so the contribution is zero.
+    // (https://en.wikipedia.org/wiki/Vortex)
+    AccelerationAt(self: ParticleVortex, position: Point3D): Vector3D
+    {
+        var axis = self.Axis.Vector;
+        var offset = position - self.Center;
+        var radial = offset - axis * offset.Dot(axis);
+        var tangent = axis.Cross(radial).NormalizeOr(Vector3D.Zero);
+        return tangent * SafeDivide(self.Strength, radial.Magnitude, 0.0);
+    }
+
+    // Acceleration toward (or, for a negative Strength, away from) the
+    // attractor: Strength at the center, falling linearly to zero at
+    // FalloffRadius and staying zero beyond it.
+    AccelerationAt(self: ParticleAttractor, position: Point3D): Vector3D
+    {
+        var offset = self.Center - position;
+        var reach = SafeDivide(offset.Magnitude, self.FalloffRadius.Meters, 1.0);
+        return offset.NormalizeOr(Vector3D.Zero) * (self.Strength * (1.0 - reach).Saturate);
+    }
+
+    // Curl-noise turbulence: the curl of a smooth vector potential, so the
+    // field is divergence free and particles swirl without piling up.
+    // (https://en.wikipedia.org/wiki/Curl_(mathematics))
+    AccelerationAt(self: ParticleTurbulence, position: Point3D): Vector3D
+        => CurlNoise3D(self.Seed, self.SpatialFrequency).Eval(position) * self.Strength;
+
+    //==
+    // # Wind — a velocity field, not a force
+    //
+    // `WindModel` names a speed and a direction, and nothing else in it says
+    // how hard the air pushes. That is not an omission: air pushes through
+    // DRAG, whose coefficients are the particle's own. So a wind contributes a
+    // velocity, the drag term is evaluated on the velocity relative to it, and
+    // no coupling constant has to be invented. A scene with wind and no drag
+    // moves nothing, which is correct.
+
+    // The wind's velocity at a point and time. Gusts are a travelling
+    // sinusoid: the phase advances with time at GustFrequency and lags with
+    // distance downwind, so a gust front crosses the scene at the mean speed
+    // instead of the whole scene pulsing at once. Turbulence is the gust
+    // amplitude as a proportion of Speed, so 0 is a steady wind.
+    VelocityAt(self: WindModel, position: Point3D, time: Number): Vector3D
+    {
+        var direction = self.Direction.Vector;
+        var speed = self.Speed.MetersPerSecond;
+        var downwind = direction.Dot(position.PositionVector);
+        var phase = self.GustFrequency.Hertz * (time - SafeDivide(downwind, speed, 0.0));
+        return direction * (speed * (1.0 + self.Turbulence * phase.Turns.Sin));
+    }
+
+    // The combined velocity of every wind in the set.
+    WindVelocityAt(self: ParticleForces3D, position: Point3D, time: Number): Vector3D
+        => self.Winds.Reduce(Vector3D.Zero, (total, wind) => total + wind.VelocityAt(position, time));
+
+    //==
+    // # The force set
+    //
+    // The sum over a whole `ParticleForces3D`. Winds are resolved first,
+    // because the drag term needs the relative velocity; everything else is
+    // added independently.
+
+    // The total acceleration the force set applies to a particle at `position`
+    // moving at `velocity` at time `time` (seconds on the simulation clock).
+    AccelerationAt(self: ParticleForces3D, position: Point3D, velocity: Vector3D, time: Number): Vector3D
+    {
+        var relative = velocity - self.WindVelocityAt(position, time);
+        return self.Gravities.Reduce(Vector3D.Zero, (total, g) => total + g.AccelerationAt)
+             + self.Drags.Reduce(Vector3D.Zero, (total, d) => total + d.AccelerationAt(relative))
+             + self.Vortices.Reduce(Vector3D.Zero, (total, v) => total + v.AccelerationAt(position))
+             + self.Attractors.Reduce(Vector3D.Zero, (total, a) => total + a.AccelerationAt(position))
+             + self.Turbulences.Reduce(Vector3D.Zero, (total, t) => total + t.AccelerationAt(position));
+    }
+
+    // The same force set read in the XY plane, which is what
+    // `particles.types.plato` promises a planar system does: the point and
+    // velocity are lifted with Z = 0 and the Z component of the answer is
+    // dropped.
+    AccelerationAt(self: ParticleForces3D, position: Point2D, velocity: Vector2D, time: Number): Vector2D
+    {
+        var spatial = self.AccelerationAt(
+            Point3D(position.X, position.Y, 0.0),
+            Vector3D(velocity.X, velocity.Y, 0.0),
+            time);
+        return Vector2D(spatial.X, spatial.Y);
+    }
+
+    // The force fields of a spatial system, bundled. The system stores the six
+    // arrays inline; this is the projection onto the shared force vocabulary,
+    // so a cloth and a particle system are driven by the same value.
+    Forces(self: ParticleSystem3D): ParticleForces3D
+        => (self.Gravities, self.Drags, self.Vortices, self.Attractors, self.Turbulences, self.Winds);
+
+    // The force fields of a planar system, bundled. The declared force types
+    // are spatial; a planar system reads them in the XY plane.
+    Forces(self: ParticleSystem2D): ParticleForces3D
+        => (self.Gravities, self.Drags, self.Vortices, self.Attractors, self.Turbulences, self.Winds);
+
+    //==
+    // # The particle step
+    //
+    // Integrator: SEMI-IMPLICIT (symplectic) EULER — advance the velocity with
+    // the acceleration first, then advance the position with the NEW velocity
+    // (https://en.wikipedia.org/wiki/Semi-implicit_Euler_method). It costs
+    // exactly what explicit Euler costs and reads almost the same, but it
+    // conserves energy over a closed orbit instead of spiralling outwards,
+    // which is the difference between an attractor that holds particles and one
+    // that slowly loses them. It is chosen here rather than Verlet because
+    // `Particle3D` stores a velocity: Verlet wants a previous position, which
+    // is the state `ClothVertex` carries instead (`cloth.library.plato`).
+
+    // One step of a spatial particle under a given acceleration. Age advances
+    // by the step; nothing here tests Lifetime, so a step never removes a
+    // particle — `LiveParticles` does that.
+    Step(self: Particle3D, acceleration: Vector3D, dt: Duration): Particle3D
+    {
+        var velocity = self.Velocity + acceleration * dt.Seconds;
+        return Particle3D(
+            self.Position + velocity * dt.Seconds,
+            velocity,
+            self.Age + dt,
+            self.Lifetime,
+            self.Size,
+            self.Color,
+            self.Rotation + new Angle(self.AngularVelocity.RadiansPerSecond * dt.Seconds),
+            self.AngularVelocity,
+            self.Mass);
+    }
+
+    // One step of a planar particle under a given acceleration.
+    Step(self: Particle2D, acceleration: Vector2D, dt: Duration): Particle2D
+    {
+        var velocity = self.Velocity + acceleration * dt.Seconds;
+        return Particle2D(
+            self.Position + velocity * dt.Seconds,
+            velocity,
+            self.Age + dt,
+            self.Lifetime,
+            self.Size,
+            self.Color,
+            self.Rotation + new Angle(self.AngularVelocity.RadiansPerSecond * dt.Seconds),
+            self.AngularVelocity,
+            self.Mass);
+    }
+
+    // How far through its life a particle is, in [0, 1]: the parameter
+    // `ParticleEmitter*.ColorOverLife` is sampled at. An immortal particle
+    // (zero Lifetime) reads as fully aged.
+    NormalizedAge(self: Particle3D): Number
+        => SafeDivide(self.Age.Seconds, self.Lifetime.Seconds, 1.0).Saturate;
+
+    // True while the particle has not reached its Lifetime.
+    IsAlive(self: Particle3D): Boolean
+        => self.Age.Seconds < self.Lifetime.Seconds;
+
+    // True while the particle has not reached its Lifetime.
+    IsAlive(self: Particle2D): Boolean
+        => self.Age.Seconds < self.Lifetime.Seconds;
+
+    //==
+    // # Stepping a system
+    //
+    // Emission is deliberately absent. Spawning from a `ParticleEmitter*`
+    // means drawing from the Speed / Lifetime / Size ranges it declares, which
+    // needs a random stream threaded through the step and returned from it —
+    // a different piece of work with its own state design. Everything below
+    // steps the particles that already exist, which is what a simulation of a
+    // fixed population (and every cloth) needs.
+
+    // Every particle of a set advanced one step under a force set, with the
+    // clock read in seconds.
+    StepParticles(particles: Array<Particle3D>, forces: ParticleForces3D, time: Number, dt: Duration): Array<Particle3D>
+        => particles.Map(p => p.Step(forces.AccelerationAt(p.Position, p.Velocity, time), dt));
+
+    // One step of a whole spatial system: every particle advanced under the
+    // system's own force fields, and the clock advanced with them.
+    Step(self: ParticleSystem3D, dt: Duration): ParticleSystem3D
+        => ParticleSystem3D(
+            StepParticles(self.Particles, self.Forces, self.Time.SecondsSinceEpoch, dt),
+            self.Emitters,
+            self.Gravities,
+            self.Drags,
+            self.Vortices,
+            self.Attractors,
+            self.Turbulences,
+            self.Winds,
+            self.Time + dt);
+
+    // One step of a whole planar system, with the spatial force fields read in
+    // the XY plane.
+    Step(self: ParticleSystem2D, dt: Duration): ParticleSystem2D
+    {
+        var forces = self.Forces;
+        var time = self.Time.SecondsSinceEpoch;
+        return ParticleSystem2D(
+            self.Particles.Map(p => p.Step(forces.AccelerationAt(p.Position, p.Velocity, time), dt)),
+            self.Emitters,
+            self.Gravities,
+            self.Drags,
+            self.Vortices,
+            self.Attractors,
+            self.Turbulences,
+            self.Winds,
+            self.Time + dt);
+    }
+
+    // The system's particles that have not reached their Lifetime, in order.
+    // Kept separate from `Step` so a caller that wants a fixed population — a
+    // cloth, a debug scene — never loses one.
+    LiveParticles(self: ParticleSystem3D): Array<Particle3D>
+        => self.Particles.Reduce(self.Particles.Take(0),
+            (kept, p) => p.IsAlive ? kept.Append(p) : kept);
+
+    // The planar system's particles that have not reached their Lifetime.
+    LiveParticles(self: ParticleSystem2D): Array<Particle2D>
+        => self.Particles.Reduce(self.Particles.Take(0),
+            (kept, p) => p.IsAlive ? kept.Append(p) : kept);
+}

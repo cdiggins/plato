@@ -1,0 +1,830 @@
+//==
+// # Cloth
+//
+// Bodies for the cloth vocabulary: the deformable types of
+// `particles.types.plato` (`ClothVertex`, `ClothDistanceConstraint`,
+// `ClothBendConstraint`, `Cloth3D`) and the builders and settings of
+// `cloth.types.plato`.
+//
+// Cloth is the smallest simulation that shows the whole pipeline: a mesh
+// becomes a constraint graph, the graph is solved, the solution becomes a mesh
+// again. Both solvers here run over the SAME graph and the SAME integrator; the
+// only thing that differs is where the constraint response enters — as a
+// Hookean force before integration (mass-spring) or as a position correction
+// after it (position-based dynamics).
+//
+// Sections, in order:
+//  - Cloth vertices — state and the integrator
+//  - Rewriting the vertex array — the seam purity is paid at
+//  - Distance constraints — projection and the Gauss-Seidel sweep
+//  - Bend constraints — the dihedral projection
+//  - Collision — sphere, plane, and any signed distance field
+//  - Building a cloth — from a grid
+//  - Building a cloth — from a polygon mesh
+//  - The position-based solver
+//  - The mass-spring solver
+//  - Reading the result back
+
+library Cloth
+{
+    //==
+    // # Cloth vertices — state and the integrator
+    //
+    // Integrator: POSITION VERLET (https://en.wikipedia.org/wiki/Verlet_integration),
+    // over the state `ClothVertex` already declares — a position and the
+    // position at the previous step. Velocity is never stored; it is the
+    // difference between the two, divided by the step.
+    //
+    // That choice is not arbitrary, and it is what lets one integrator serve
+    // both solvers:
+    //
+    //  - Position-based dynamics needs exactly this pair anyway. Its velocity
+    //    update after a solve is (corrected position - position before the
+    //    step) / dt, which IS the Verlet difference quotient. Storing a
+    //    velocity as well would mean keeping two answers to the same question.
+    //  - Every response in this file is expressed by MOVING A POSITION —
+    //    pinning, constraint projection, contact. With Verlet each of those
+    //    produces the right velocity for free, because the previous position
+    //    stays where it was. With a stored velocity each would need a second,
+    //    separate edit, and forgetting one is the classic source of cloth that
+    //    sticks to a collider or gains energy at a pin.
+    //
+    // `Particle3D` stores a velocity instead and is integrated with
+    // semi-implicit Euler (`particles.library.plato`); the two states exist
+    // because the two vocabularies genuinely want different things.
+
+    // The vertex's implicit velocity over a step of `dt`: the difference
+    // quotient of the two stored positions, in meters per second.
+    Velocity(self: ClothVertex, dt: Duration): Vector3D
+        => (self.Position - self.PreviousPosition) / dt.Seconds;
+
+    // True when the vertex must not move: explicitly pinned, or of infinite
+    // mass (a non-positive inverse mass).
+    IsFixed(self: ClothVertex): Boolean
+        => self.Pinned.Or(self.InverseMass <= 0.0);
+
+    // The inverse mass the solvers actually divide corrections by: zero for a
+    // fixed vertex. Every projection below reads this instead of testing the
+    // pin flag, so pinning is a mass of infinity and nothing more.
+    SolverInverseMass(self: ClothVertex): Number
+        => self.IsFixed ? 0.0 : self.InverseMass;
+
+    // The same vertex placed at a new position, with the previous position,
+    // mass and pin flag untouched. Moving the position alone is how a
+    // correction becomes a velocity change: the difference quotient picks it up
+    // on the next step, which is the response position-based dynamics wants
+    // from both a constraint and a contact.
+    MovedTo(self: ClothVertex, position: Point3D): ClothVertex
+        => ClothVertex(position, self.PreviousPosition, self.InverseMass, self.Pinned);
+
+    // The same vertex displaced by `delta`, or unchanged when it is fixed.
+    Displaced(self: ClothVertex, delta: Vector3D): ClothVertex
+        => self.IsFixed ? self : self.MovedTo(self.Position + delta);
+
+    // The same vertex pinned or released. A vertex pinned mid-simulation keeps
+    // whatever velocity it had until the next `Integrate` collapses it.
+    WithPinned(self: ClothVertex, pinned: Boolean): ClothVertex
+        => ClothVertex(self.Position, self.PreviousPosition, self.InverseMass, pinned);
+
+    // One position-Verlet update: the next position is the current one, plus
+    // the implicit velocity decayed by `damping`, plus the acceleration term
+    // a * dt^2. The current position becomes the previous one.
+    //
+    // A fixed vertex is collapsed onto itself — both positions set to the
+    // current one — so a vertex pinned part-way through a simulation stops dead
+    // rather than continuing to carry the velocity it had.
+    Integrate(self: ClothVertex, acceleration: Vector3D, dt: Duration, damping: Number): ClothVertex
+        => self.IsFixed
+            ? ClothVertex(self.Position, self.Position, self.InverseMass, self.Pinned)
+            : ClothVertex(
+                self.Position
+                    + (self.Position - self.PreviousPosition) * (1.0 - damping)
+                    + acceleration * (dt.Seconds * dt.Seconds),
+                self.Position,
+                self.InverseMass,
+                self.Pinned);
+
+    //==
+    // # Rewriting the vertex array — the seam purity is paid at
+    //
+    // Constraint projection is naturally in-place: a solver writes two vertices
+    // and moves on. Plato has no in-place write to an `Array`, so each
+    // projection below returns a NEW vertex array with the touched entries
+    // replaced, built by a single `MapRange` over the old one.
+    //
+    // That is the whole cost of doing this purely, and it is worth stating
+    // plainly: one projection is O(vertex count) rather than O(1), so one
+    // Gauss-Seidel sweep is O(vertices * constraints) where the in-place
+    // version is O(constraints). Nothing else about the algorithm changes —
+    // the arithmetic, the convergence and the results are identical.
+    //
+    // The affine builder `Buffer<ClothVertex>` (`primitives.plato`) would give
+    // the in-place cost back and stay pure by uniqueness, but it cannot drive
+    // this loop: a builder may not be captured in a lambda or used as a generic
+    // argument (LINT006 / LINT007), and Plato has no loop form, so there is no
+    // way to sweep a constraint array over one. See the sweep section below for
+    // the alternative that IS available.
+
+    // The vertex array with one vertex replaced.
+    WithVertex(self: Array<ClothVertex>, index: VertexIndex, vertex: ClothVertex): Array<ClothVertex>
+        => self.Count.MapRange(i => i == index.Value ? vertex : self[i]);
+
+    // The vertex array with a distance constraint's two ends replaced, in one
+    // rebuild rather than two.
+    WithTwoVertices(self: Array<ClothVertex>, c: ClothDistanceConstraint, a: ClothVertex, b: ClothVertex): Array<ClothVertex>
+        => self.Count.MapRange(i =>
+            i == c.VertexA.Value ? a
+            : (i == c.VertexB.Value ? b : self[i]));
+
+    // The vertex array with a bend constraint's four vertices replaced, in one
+    // rebuild rather than four.
+    WithFourVertices(self: Array<ClothVertex>, c: ClothBendConstraint, a: ClothVertex, b: ClothVertex, wingC: ClothVertex, wingD: ClothVertex)
+        : Array<ClothVertex>
+        => self.Count.MapRange(i =>
+            i == c.VertexA.Value ? a
+            : (i == c.VertexB.Value ? b
+            : (i == c.VertexC.Value ? wingC
+            : (i == c.VertexD.Value ? wingD : self[i]))));
+
+    // The cloth with a new vertex array; constraints, faces and thickness are
+    // shared unchanged, which is what makes a step cheap in everything but the
+    // positions.
+    WithVertices(self: Cloth3D, vertices: Array<ClothVertex>): Cloth3D
+        => Cloth3D(vertices, self.DistanceConstraints, self.BendConstraints, self.Faces, self.Thickness);
+
+    //==
+    // # Distance constraints — projection and the Gauss-Seidel sweep
+    //
+    // The stretch constraint: keep two vertices `RestLength` apart. This is
+    // the whole of a mass-spring cloth's structure, restated as a position
+    // constraint instead of a force
+    // (https://en.wikipedia.org/wiki/Position-based_dynamics).
+
+    // The unweighted correction one distance constraint asks for: the
+    // displacement that would remove the whole error if one end were free and
+    // the other infinitely heavy. Each end then takes its own inverse-mass
+    // share of it, with opposite signs.
+    //
+    // `Compliance` is an inverse stiffness in meters per newton and enters as
+    // alpha = Compliance / dt^2, the XPBD softening term: zero is a rigid
+    // constraint, larger values stretch. `stiffness` is the per-sweep
+    // proportion of the error to remove — pass `IterationStiffness` so the
+    // felt stiffness does not depend on the iteration count.
+    //
+    // Two fixed ends, or two coincident positions, ask for nothing.
+    DistanceCorrection(vertices: Array<ClothVertex>, c: ClothDistanceConstraint, stiffness: Number, dt: Duration): Vector3D
+    {
+        var a = vertices[c.VertexA.Value];
+        var b = vertices[c.VertexB.Value];
+        var offset = a.Position - b.Position;
+        var error = offset.Magnitude - c.RestLength.Meters;
+        var alpha = SafeDivide(c.Compliance, dt.Seconds * dt.Seconds, 0.0);
+        var share = a.SolverInverseMass + b.SolverInverseMass + alpha;
+        return offset.NormalizeOr(Vector3D.Zero) * SafeDivide(error * stiffness, share, 0.0).Negative;
+    }
+
+    // One distance constraint projected: both ends displaced along the line
+    // between them, each by its inverse-mass share of the correction, in a
+    // single rebuild of the vertex array.
+    ProjectDistance(vertices: Array<ClothVertex>, c: ClothDistanceConstraint, stiffness: Number, dt: Duration): Array<ClothVertex>
+    {
+        var a = vertices[c.VertexA.Value];
+        var b = vertices[c.VertexB.Value];
+        var correction = DistanceCorrection(vertices, c, stiffness, dt);
+        return vertices.WithTwoVertices(c,
+            a.Displaced(correction * a.SolverInverseMass),
+            b.Displaced(correction * b.SolverInverseMass.Negative));
+    }
+
+    // One GAUSS-SEIDEL sweep over every distance constraint.
+    //
+    // This is the interesting line in the file. Gauss-Seidel projection is
+    // defined by its sequencing: constraint k must see the corrections that
+    // constraints 0 .. k-1 already made, which is why textbook implementations
+    // write into one array in place. A LEFT FOLD has exactly that sequencing —
+    // `Reduce` threads the whole vertex array through the constraint list, so
+    // each projection reads the output of the previous one — and it is pure,
+    // because each step returns a new array instead of writing a shared one.
+    // The iteration order is the constraint array's own order, as it is in the
+    // in-place version.
+    //
+    // Cost: one array rebuild per constraint (see the rewriting section above),
+    // so O(vertices * constraints) per sweep against the in-place O(constraints).
+    // The cheaper pure alternative is a JACOBI sweep — every constraint
+    // evaluated against the same input and the per-vertex corrections averaged
+    // — which needs only one rebuild for the whole sweep. It is not written
+    // here because doing it in O(constraints) rather than
+    // O(vertices * constraints) needs a per-vertex constraint adjacency table
+    // this vocabulary does not build yet, and because Jacobi converges more
+    // slowly per sweep and needs under-relaxation to stay stable, so it is a
+    // different solver rather than a faster spelling of this one.
+    SweepDistance(vertices: Array<ClothVertex>, constraints: Array<ClothDistanceConstraint>, stiffness: Number, dt: Duration)
+        : Array<ClothVertex>
+        => constraints.Reduce(vertices, (current, c) => ProjectDistance(current, c, stiffness, dt));
+
+    // `iterations` Gauss-Seidel sweeps. Repetition is itself a fold: the range
+    // supplies the count and the vertex array is threaded through it.
+    SolveDistance(vertices: Array<ClothVertex>, constraints: Array<ClothDistanceConstraint>, iterations: Integer, stiffness: Number, dt: Duration)
+        : Array<ClothVertex>
+        => iterations.MapRange(i => i)
+            .Reduce(vertices, (current, i) => SweepDistance(current, constraints, stiffness, dt));
+
+    // The per-sweep stiffness that makes `iterations` sweeps feel like one
+    // application of `stiffness`: k' = 1 - (1 - k)^(1/n), so the residual after
+    // n sweeps is (1 - k') ^ n = 1 - k regardless of n. Without it, raising the
+    // iteration count silently stiffens the cloth, and a demo that exposes an
+    // iteration slider changes two things at once.
+    // (Müller et al., Position Based Dynamics, 2007.)
+    IterationStiffness(stiffness: Number, iterations: Integer): Number
+        => iterations <= 0
+            ? 0.0
+            : 1.0 - (1.0 - stiffness.Saturate).Pow(SafeDivide(1.0, iterations.ToNumber, 1.0));
+
+    //==
+    // # Bend constraints — the dihedral projection
+    //
+    // A distance constraint two vertices apart resists folding only along one
+    // axis and stiffens stretching as a side effect. The dihedral constraint
+    // instead names the angle between the two triangles sharing an edge and
+    // drives it toward `RestAngle`, which leaves stretching alone.
+    //
+    // Numbering follows `ClothBendConstraint`: VertexA and VertexB are the
+    // shared edge, VertexC and VertexD the two wings. The normals are taken as
+    // edge x wing from VertexA, so a FLAT pair — wings on opposite sides of the
+    // edge — has the two normals opposed and a dihedral angle of pi. Rest
+    // angles built from geometry (`ClothFromMesh`, below) carry that
+    // automatically.
+    // (Müller et al., Position Based Dynamics, 2007, §4.)
+
+    // The unit normal of the triangle spanned by the shared edge and one wing,
+    // both expressed as displacements from VertexA. Zero for a degenerate
+    // triangle, which then contributes nothing.
+    BendNormal(edge: Vector3D, wing: Vector3D): Vector3D
+        => edge.Cross(wing).NormalizeOr(Vector3D.Zero);
+
+    // The dihedral angle across the edge (p1, p2) between the triangles
+    // (p1, p2, p3) and (p1, p2, p4), in [0, pi]. pi is flat.
+    DihedralAngle(p1: Point3D, p2: Point3D, p3: Point3D, p4: Point3D): Angle
+    {
+        var edge = p2 - p1;
+        var n1 = BendNormal(edge, p3 - p1);
+        var n2 = BendNormal(edge, p4 - p1);
+        return n1.Dot(n2).Clamp(-1.0, 1.0).Acos;
+    }
+
+    // The constraint gradient at one WING vertex: how the dihedral angle
+    // changes as that wing moves. `ownNormal` is the normal of the triangle
+    // this wing belongs to and `otherNormal` the other one.
+    BendWingGradient(edge: Vector3D, wing: Vector3D, ownNormal: Vector3D, otherNormal: Vector3D, cosine: Number): Vector3D
+        => (edge.Cross(otherNormal) + ownNormal.Cross(edge) * cosine)
+            * SafeDivide(1.0, edge.Cross(wing).Magnitude, 0.0);
+
+    // One triangle's contribution to the gradient at the SECOND shared-edge
+    // vertex. The full gradient there is the negated sum of both triangles'
+    // contributions; the first shared vertex's gradient is fixed by the
+    // requirement that the four gradients sum to zero (a rigid translation
+    // cannot change an angle).
+    BendEdgeGradientTerm(edge: Vector3D, wing: Vector3D, ownNormal: Vector3D, otherNormal: Vector3D, cosine: Number): Vector3D
+        => (wing.Cross(otherNormal) + ownNormal.Cross(wing) * cosine)
+            * SafeDivide(1.0, edge.Cross(wing).Magnitude, 0.0);
+
+    // One bend constraint projected: all four vertices displaced along their
+    // own gradients, each by its inverse-mass share, in a single rebuild.
+    // The leading 4 is the coefficient of the cited derivation; callers who
+    // tune bending by feel fold it into `stiffness`.
+    //
+    // A configuration exactly folded flat (cosine = -1 or +1) has a vanishing
+    // gradient and asks for nothing, which is correct: the constraint has no
+    // preferred direction to unfold in.
+    ProjectBend(vertices: Array<ClothVertex>, c: ClothBendConstraint, stiffness: Number): Array<ClothVertex>
+    {
+        var v1 = vertices[c.VertexA.Value];
+        var v2 = vertices[c.VertexB.Value];
+        var v3 = vertices[c.VertexC.Value];
+        var v4 = vertices[c.VertexD.Value];
+        var edge = v2.Position - v1.Position;
+        var wingC = v3.Position - v1.Position;
+        var wingD = v4.Position - v1.Position;
+        var n1 = BendNormal(edge, wingC);
+        var n2 = BendNormal(edge, wingD);
+        var cosine = n1.Dot(n2).Clamp(-1.0, 1.0);
+        var q3 = BendWingGradient(edge, wingC, n1, n2, cosine);
+        var q4 = BendWingGradient(edge, wingD, n2, n1, cosine);
+        var q2 = (BendEdgeGradientTerm(edge, wingC, n1, n2, cosine)
+                + BendEdgeGradientTerm(edge, wingD, n2, n1, cosine)).Negative;
+        var q1 = (q2 + q3 + q4).Negative;
+        var share = v1.SolverInverseMass * q1.Dot(q1)
+                  + v2.SolverInverseMass * q2.Dot(q2)
+                  + v3.SolverInverseMass * q3.Dot(q3)
+                  + v4.SolverInverseMass * q4.Dot(q4);
+        var error = (cosine.Acos - c.RestAngle).Radians;
+        var scale = SafeDivide(
+            4.0 * (1.0 - cosine * cosine).Greater(0.0).Sqrt * error * stiffness,
+            share, 0.0).Negative;
+        return vertices.WithFourVertices(c,
+            v1.Displaced(q1 * (scale * v1.SolverInverseMass)),
+            v2.Displaced(q2 * (scale * v2.SolverInverseMass)),
+            v3.Displaced(q3 * (scale * v3.SolverInverseMass)),
+            v4.Displaced(q4 * (scale * v4.SolverInverseMass)));
+    }
+
+    // One Gauss-Seidel sweep over every bend constraint, folded exactly as the
+    // distance sweep is.
+    SweepBend(vertices: Array<ClothVertex>, constraints: Array<ClothBendConstraint>, stiffness: Number): Array<ClothVertex>
+        => constraints.Reduce(vertices, (current, c) => ProjectBend(current, c, stiffness));
+
+    // `iterations` bend sweeps.
+    SolveBend(vertices: Array<ClothVertex>, constraints: Array<ClothBendConstraint>, iterations: Integer, stiffness: Number)
+        : Array<ClothVertex>
+        => iterations.MapRange(i => i)
+            .Reduce(vertices, (current, i) => SweepBend(current, constraints, stiffness));
+
+    // An empty bend-constraint array. The tree's constant idiom dispatches on
+    // an ignored receiver of the result type; the result type here is a generic
+    // `Array`, so its element type stands in, and it reads as
+    // `ClothBendConstraint.NoBendConstraints`.
+    NoBendConstraints(_: ClothBendConstraint): Array<ClothBendConstraint>
+        => Repeat(0, ClothBendConstraint(
+            VertexIndex(-1), VertexIndex(-1), VertexIndex(-1), VertexIndex(-1), new Angle(0.0), 0.0));
+
+    //==
+    // # Collision — sphere, plane, and any signed distance field
+    //
+    // Contact is one more position correction: push the vertex to the outside
+    // of the collider and leave the previous position alone, so the Verlet
+    // difference quotient turns the push into the velocity change a contact
+    // should produce (the normal component is removed; the tangential
+    // component survives, which is sliding).
+    //
+    // `offset` is how far outside the surface the vertex is left — pass the
+    // cloth's `Thickness`, which is exactly what that field is for.
+    //
+    // These are three overloads rather than a collider interface. An interface
+    // would earn its place if colliders had to be stored heterogeneously in one
+    // array, but the three shapes share no state and no derived surface: each
+    // body is two lines of its own geometry, and a caller composes contacts by
+    // chaining `CollideWith`.
+
+    // A point pushed out of a solid sphere onto the shell at Radius + offset.
+    // A point exactly at the center has no direction to leave along and is
+    // pushed along +Z.
+    ProjectOutOf(self: Sphere, point: Point3D, offset: Number): Point3D
+    {
+        var away = point - self.Center;
+        var reach = self.Radius + offset;
+        return away.Magnitude >= reach
+            ? point
+            : self.Center + away.NormalizeOr(Vector3D.UnitZ) * reach;
+    }
+
+    // A point pushed to the front (positive-normal) side of a plane, `offset`
+    // clear of it. The plane's signed distance is Dot(Normal, p) - Distance, as
+    // `Plane` states.
+    ProjectOutOf(self: Plane, point: Point3D, offset: Number): Point3D
+    {
+        var signed = self.Normal.Vector.Dot(point.PositionVector) - self.Distance;
+        return signed >= offset ? point : point + self.Normal.Vector * (offset - signed);
+    }
+
+    // The central-difference gradient of a signed distance field, sampled at
+    // +/- epsilon on each axis: six evaluations. For an EXACT distance field
+    // the normalized result is the outward surface normal; for a field that is
+    // only a lower bound it is a direction that leaves the surface, which is
+    // all the projection below needs. A field that reports its own gradient
+    // (`IDifferentiableSignedDistanceField3D`) should be asked for it instead.
+    NumericalGradientAt(self: ISignedDistanceField3D, point: Point3D, epsilon: Number): Vector3D
+        => Vector3D(
+            self.Eval(point + Vector3D(epsilon, 0.0, 0.0)) - self.Eval(point - Vector3D(epsilon, 0.0, 0.0)),
+            self.Eval(point + Vector3D(0.0, epsilon, 0.0)) - self.Eval(point - Vector3D(0.0, epsilon, 0.0)),
+            self.Eval(point + Vector3D(0.0, 0.0, epsilon)) - self.Eval(point - Vector3D(0.0, 0.0, epsilon)))
+            * SafeDivide(0.5, epsilon, 0.0);
+
+    // A point pushed to where the field reads `offset`, one Newton step along
+    // the numerical gradient. Exact for an exact distance field; for anything
+    // else it is one iteration, and a deeply penetrating vertex needs the step
+    // repeated.
+    ProjectOutOf(self: ISignedDistanceField3D, point: Point3D, offset: Number, epsilon: Number): Point3D
+    {
+        var distance = self.Eval(point);
+        return distance >= offset
+            ? point
+            : point + self.NumericalGradientAt(point, epsilon).NormalizeOr(Vector3D.Zero) * (offset - distance);
+    }
+
+    // Every cloth vertex pushed out of a sphere, by the cloth's own thickness.
+    CollideWith(self: Cloth3D, sphere: Sphere): Cloth3D
+        => self.WithVertices(self.Vertices.Map(v =>
+            v.MovedTo(sphere.ProjectOutOf(v.Position, self.Thickness.Meters))));
+
+    // Every cloth vertex pushed to the front side of a plane, by the cloth's
+    // own thickness. A ground plane is Normal = +Z with Distance the height.
+    CollideWith(self: Cloth3D, plane: Plane): Cloth3D
+        => self.WithVertices(self.Vertices.Map(v =>
+            v.MovedTo(plane.ProjectOutOf(v.Position, self.Thickness.Meters))));
+
+    // Every cloth vertex pushed out of a signed distance field.
+    CollideWith(self: Cloth3D, field: ISignedDistanceField3D, epsilon: Number): Cloth3D
+        => self.WithVertices(self.Vertices.Map(v =>
+            v.MovedTo(field.ProjectOutOf(v.Position, self.Thickness.Meters, epsilon))));
+
+    // The mesh-bound forms: the face table is untouched by a contact.
+    CollideWith(self: ClothMesh3D, sphere: Sphere): ClothMesh3D
+        => ClothMesh3D(self.Cloth.CollideWith(sphere), self.Faces);
+
+    // The mesh-bound plane contact.
+    CollideWith(self: ClothMesh3D, plane: Plane): ClothMesh3D
+        => ClothMesh3D(self.Cloth.CollideWith(plane), self.Faces);
+
+    // The mesh-bound signed-distance-field contact.
+    CollideWith(self: ClothMesh3D, field: ISignedDistanceField3D, epsilon: Number): ClothMesh3D
+        => ClothMesh3D(self.Cloth.CollideWith(field, epsilon), self.Faces);
+
+    //==
+    // # Building a cloth — from a grid
+    //
+    // The constraint graph of a flat patch, derived from `ClothGrid3D` with no
+    // mesh in between. Three families of spring, all with rest lengths read off
+    // the grid's own initial geometry:
+    //
+    //  - STRUCTURAL, between neighbours along each axis: resists stretching.
+    //  - SHEAR, along both diagonals of each cell: resists the grid collapsing
+    //    into a parallelogram, which structural springs alone allow.
+    //  - BEND, between vertices two apart along each axis: resists folding.
+    //    On a grid this is the two-away spring rather than a dihedral
+    //    constraint, because the pattern is regular enough for it and it costs
+    //    one distance projection instead of four gradients. `ClothFromMesh`
+    //    below produces the dihedral form.
+
+    // The index of grid vertex (column, row) in the row-major vertex array.
+    GridVertexIndex(self: ClothGrid3D, column: Integer, row: Integer): VertexIndex
+        => VertexIndex(row * self.ColumnCount + column);
+
+    // The world position of grid vertex (column, row).
+    GridPosition(self: ClothGrid3D, column: Integer, row: Integer): Point3D
+        => self.Origin + self.ColumnStep * column.ToNumber + self.RowStep * row.ToNumber;
+
+    // The number of vertices the grid has.
+    GridVertexCount(self: ClothGrid3D): Integer
+        => self.ColumnCount * self.RowCount;
+
+    // Grid vertex n, at rest (previous position equal to position) and free.
+    // A non-positive mass gives an inverse mass of zero, i.e. a pinned sheet.
+    GridVertex(self: ClothGrid3D, n: Integer, vertexMass: Mass): ClothVertex
+    {
+        var position = self.GridPosition(n % self.ColumnCount, n / self.ColumnCount);
+        return ClothVertex(position, position, SafeDivide(1.0, vertexMass.Kilograms, 0.0), false);
+    }
+
+    // Every grid vertex, in row-major order.
+    GridVertices(self: ClothGrid3D, vertexMass: Mass): Array<ClothVertex>
+        => self.GridVertexCount.MapRange(n => self.GridVertex(n, vertexMass));
+
+    // A distance constraint between two grid vertices, its rest length read off
+    // the grid's initial geometry so the patch starts unstretched.
+    GridSpring(self: ClothGrid3D, columnA: Integer, rowA: Integer, columnB: Integer, rowB: Integer, compliance: Number)
+        : ClothDistanceConstraint
+        => ClothDistanceConstraint(
+            self.GridVertexIndex(columnA, rowA),
+            self.GridVertexIndex(columnB, rowB),
+            new Length(self.GridPosition(columnA, rowA).Distance(self.GridPosition(columnB, rowB))),
+            compliance);
+
+    // Every spring joining a vertex to the one `step` columns to its right:
+    // step 1 is structural, step 2 is bend.
+    GridRowSprings(self: ClothGrid3D, step: Integer, compliance: Number): Array<ClothDistanceConstraint>
+    {
+        var span = (self.ColumnCount - step).Max(0);
+        return (span * self.RowCount).MapRange(n =>
+            self.GridSpring(n % span, n / span, n % span + step, n / span, compliance));
+    }
+
+    // Every spring joining a vertex to the one `step` rows below it: step 1 is
+    // structural, step 2 is bend.
+    GridColumnSprings(self: ClothGrid3D, step: Integer, compliance: Number): Array<ClothDistanceConstraint>
+    {
+        var span = (self.RowCount - step).Max(0);
+        return (self.ColumnCount * span).MapRange(n =>
+            self.GridSpring(n % self.ColumnCount, n / self.ColumnCount,
+                            n % self.ColumnCount, n / self.ColumnCount + step, compliance));
+    }
+
+    // One of a cell's two diagonals: `diagonal` 0 runs from (column, row) to
+    // (column + 1, row + 1), and 1 runs the other way.
+    GridShearSpring(self: ClothGrid3D, column: Integer, row: Integer, diagonal: Integer, compliance: Number): ClothDistanceConstraint
+        => diagonal == 0
+            ? self.GridSpring(column, row, column + 1, row + 1, compliance)
+            : self.GridSpring(column + 1, row, column, row + 1, compliance);
+
+    // Both diagonals of every cell.
+    GridShearSprings(self: ClothGrid3D, compliance: Number): Array<ClothDistanceConstraint>
+    {
+        var columns = (self.ColumnCount - 1).Max(0);
+        var rows = (self.RowCount - 1).Max(0);
+        return (columns * rows * 2).MapRange(n =>
+            self.GridShearSpring(n / 2 % columns, n / 2 / columns, n % 2, compliance));
+    }
+
+    // The whole spring set: structural, then shear, then bend.
+    GridSprings(self: ClothGrid3D, compliance: Number): Array<ClothDistanceConstraint>
+        => self.GridRowSprings(1, compliance)
+            .Concatenate(self.GridColumnSprings(1, compliance))
+            .Concatenate(self.GridShearSprings(compliance))
+            .Concatenate(self.GridRowSprings(2, compliance))
+            .Concatenate(self.GridColumnSprings(2, compliance));
+
+    // One cell's quadrilateral corner loop, wound counter-clockwise seen from
+    // the side the cross product of ColumnStep and RowStep points at.
+    // Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+    GridQuad(self: ClothGrid3D, column: Integer, row: Integer): Array<VertexIndex>
+        => [self.GridVertexIndex(column, row),
+            self.GridVertexIndex(column + 1, row),
+            self.GridVertexIndex(column + 1, row + 1),
+            self.GridVertexIndex(column, row + 1)];
+
+    // The quadrilateral face table of the whole grid, one row per cell.
+    GridFaceLoops(self: ClothGrid3D): Array<Array<VertexIndex>>
+    {
+        var columns = (self.ColumnCount - 1).Max(0);
+        var rows = (self.RowCount - 1).Max(0);
+        return (columns * rows).MapRange(n => self.GridQuad(n % columns, n / columns));
+    }
+
+    // One half of a cell, split along the (column, row) to (column + 1, row + 1)
+    // diagonal and wound to match `GridQuad`.
+    GridTriangle(self: ClothGrid3D, column: Integer, row: Integer, half: Integer): TriangleFace
+        => half == 0
+            ? TriangleFace(self.GridVertexIndex(column, row),
+                           self.GridVertexIndex(column + 1, row),
+                           self.GridVertexIndex(column + 1, row + 1))
+            : TriangleFace(self.GridVertexIndex(column, row),
+                           self.GridVertexIndex(column + 1, row + 1),
+                           self.GridVertexIndex(column, row + 1));
+
+    // Every cell split into two triangles: the collision and rendering faces
+    // `Cloth3D` stores.
+    GridTriangles(self: ClothGrid3D): Array<TriangleFace>
+    {
+        var columns = (self.ColumnCount - 1).Max(0);
+        var rows = (self.RowCount - 1).Max(0);
+        return (columns * rows * 2).MapRange(n =>
+            self.GridTriangle(n / 2 % columns, n / 2 / columns, n % 2));
+    }
+
+    // A cloth patch over a rectangular grid, with the quad face table kept so
+    // the simulated positions read back out as the same mesh. Every vertex has
+    // the same mass and every spring the same compliance; pin the ones that
+    // should hang with `WithPinnedGridRow`.
+    ClothFromGrid(self: ClothGrid3D, vertexMass: Mass, compliance: Number, thickness: Length): ClothMesh3D
+        => ClothMesh3D(
+            Cloth3D(
+                self.GridVertices(vertexMass),
+                self.GridSprings(compliance),
+                ClothBendConstraint.NoBendConstraints,
+                self.GridTriangles,
+                thickness),
+            FromRows(self.GridFaceLoops));
+
+    //==
+    // # Building a cloth — from a polygon mesh
+    //
+    // The same graph derived from an arbitrary `PolygonMesh3D`: one vertex per
+    // position, one structural spring per undirected edge, and one dihedral
+    // bend constraint per interior edge. Rest lengths and rest angles come from
+    // the mesh's own geometry, so the cloth starts exactly at rest whatever
+    // shape it was authored in.
+    //
+    // Cost: `PolygonMesh3D` answers incidence queries by scanning its packed
+    // corner table rather than from a stored adjacency structure
+    // (`meshes-polygon.library.plato` states the complexity), so this build is
+    // cubic in corner count. It is a build step, run once, not part of a step.
+
+    // One cloth vertex per mesh position, at rest and free.
+    MeshClothVertices(self: PolygonMesh3D, vertexMass: Mass): Array<ClothVertex>
+        => self.Positions.Map(p => ClothVertex(p, p, SafeDivide(1.0, vertexMass.Kilograms, 0.0), false));
+
+    // The structural spring for one undirected edge, at its current length.
+    MeshSpring(self: PolygonMesh3D, edge: UndirectedEdgeIndex, compliance: Number): ClothDistanceConstraint
+    {
+        var ends = self.VerticesOfUndirectedEdge(edge);
+        return ClothDistanceConstraint(ends.A, ends.B,
+            new Length(self.Positions[ends.A.Value].Distance(self.Positions[ends.B.Value])),
+            compliance);
+    }
+
+    // One structural spring per undirected edge of the mesh.
+    MeshSprings(self: PolygonMesh3D, compliance: Number): Array<ClothDistanceConstraint>
+        => self.UndirectedEdgeCount.MapRange(e => self.MeshSpring(UndirectedEdgeIndex(e), compliance));
+
+    // The first vertex of a face that is neither end of an edge: the wing a
+    // dihedral bend constraint folds about. Returns the "none" index when the
+    // face has no such vertex.
+    // Convention: see CONVENTIONS.md - Typed indices - -1 means none.
+    WingVertex(self: PolygonMesh3D, face: FaceIndex, ends: VertexPair): VertexIndex
+        => self.VerticesOfFace(face).Reduce(VertexIndex(-1), (found, v) =>
+            found.IsNone.And(v.Equals(ends.A).Not).And(v.Equals(ends.B).Not) ? v : found);
+
+    // True when an undirected edge is shared by two faces, which is what a
+    // dihedral bend constraint needs. A boundary edge has one.
+    IsInteriorEdge(self: PolygonMesh3D, edge: UndirectedEdgeIndex): Boolean
+        => self.FacesOfUndirectedEdge(edge).Count >= 2;
+
+    // The bend constraint across one interior edge, its rest angle the angle
+    // the mesh already has there. Precondition: the edge is interior and both
+    // its faces have a vertex off the edge.
+    MeshBendConstraint(self: PolygonMesh3D, edge: UndirectedEdgeIndex, compliance: Number): ClothBendConstraint
+    {
+        var ends = self.VerticesOfUndirectedEdge(edge);
+        var faces = self.FacesOfUndirectedEdge(edge);
+        var wingC = self.WingVertex(faces[0], ends);
+        var wingD = self.WingVertex(faces[1], ends);
+        return ClothBendConstraint(ends.A, ends.B, wingC, wingD,
+            DihedralAngle(self.Positions[ends.A.Value], self.Positions[ends.B.Value],
+                          self.Positions[wingC.Value], self.Positions[wingD.Value]),
+            compliance);
+    }
+
+    // One bend constraint per interior edge. Boundary edges are folded out
+    // rather than emitted with a "none" wing, so every constraint the solver
+    // sees names four real vertices.
+    MeshBendConstraints(self: PolygonMesh3D, compliance: Number): Array<ClothBendConstraint>
+        => self.UndirectedEdgeCount.MapRange(e => UndirectedEdgeIndex(e))
+            .Reduce(ClothBendConstraint.NoBendConstraints, (kept, e) =>
+                self.IsInteriorEdge(e) ? kept.Append(self.MeshBendConstraint(e, compliance)) : kept);
+
+    // A cloth over any polygon mesh, with the mesh's own face table kept so the
+    // result reads back out as the same mesh. Vertex numbering is the mesh's:
+    // cloth vertex i is mesh position i.
+    ClothFromMesh(self: PolygonMesh3D, vertexMass: Mass, compliance: Number, thickness: Length): ClothMesh3D
+        => ClothMesh3D(
+            Cloth3D(
+                self.MeshClothVertices(vertexMass),
+                self.MeshSprings(compliance),
+                self.MeshBendConstraints(compliance),
+                self.ToTriangleMesh.Faces,
+                thickness),
+            self.Faces);
+
+    //==
+    // # The position-based solver
+    //
+    // Predict, then project. Each substep integrates every vertex forward under
+    // the external forces alone, then sweeps the constraints until the
+    // predicted positions satisfy them; the velocity for the next substep falls
+    // out of the corrected positions with no separate update, because that is
+    // what Verlet state means.
+    //
+    // This is the solver that is stable at any stiffness, which is why it is
+    // the one people ship: the projection can only ever move a vertex TOWARD
+    // satisfying a constraint, so no amount of stiffness can add energy.
+    //
+    // Contacts are not applied here. Compose them after a step —
+    // `cloth.Step(...).CollideWith(sphere).CollideWith(ground)` — which is the
+    // right order: the solve settles the cloth, then the contact has the last
+    // word on where a vertex is allowed to be.
+
+    // One substep of position-based dynamics over a cloth.
+    SubStep(self: Cloth3D, forces: ParticleForces3D, settings: ClothSolverSettings, time: Number, dt: Duration): Cloth3D
+    {
+        var stiffness = IterationStiffness(settings.Stiffness, settings.IterationCount);
+        var predicted = self.Vertices.Map(v =>
+            v.Integrate(forces.AccelerationAt(v.Position, v.Velocity(dt), time), dt, settings.VelocityDamping));
+        var stretched = SolveDistance(predicted, self.DistanceConstraints, settings.IterationCount, stiffness, dt);
+        return self.WithVertices(
+            SolveBend(stretched, self.BendConstraints, settings.IterationCount, stiffness));
+    }
+
+    // One whole step: `SubStepCount` substeps of `TimeStep / SubStepCount`
+    // each. Substepping is the cheapest accuracy there is here — n substeps of
+    // one iteration converge better than one substep of n iterations, because
+    // each substep also re-reads the forces.
+    Step(self: Cloth3D, forces: ParticleForces3D, settings: ClothSolverSettings, time: Number): Cloth3D
+    {
+        var seconds = SafeDivide(settings.TimeStep.Seconds, settings.SubStepCount.ToNumber, settings.TimeStep.Seconds);
+        return settings.SubStepCount.MapRange(i => i)
+            .Reduce(self, (current, i) =>
+                current.SubStep(forces, settings, time + i.ToNumber * seconds, new Duration(seconds)));
+    }
+
+    // One whole step of a mesh-bound cloth; the face table is carried through
+    // untouched.
+    Step(self: ClothMesh3D, forces: ParticleForces3D, settings: ClothSolverSettings, time: Number): ClothMesh3D
+        => ClothMesh3D(self.Cloth.Step(forces, settings, time), self.Faces);
+
+    //==
+    // # The mass-spring solver
+    //
+    // The same graph read as forces instead of constraints: every distance
+    // constraint becomes a damped Hookean spring, the forces are summed per
+    // vertex, and the result is integrated with the same Verlet step
+    // (https://en.wikipedia.org/wiki/Soft-body_dynamics).
+    //
+    // It is here because it fails instructively. Explicit integration of a
+    // spring is stable only while the step is shorter than the spring's own
+    // period, so raising `Stiffness` past what `TimeStep / SubStepCount`
+    // supports makes the cloth oscillate and then diverge — visibly, in one or
+    // two seconds. The position-based solver above never does that at any
+    // stiffness, and putting the two side by side over the same graph is the
+    // clearest statement of why position-based dynamics exists.
+    //
+    // The force sum is a GATHER: for each vertex, fold over every spring and
+    // take the ones that touch it. That is O(vertices * springs) per substep,
+    // the same as the Gauss-Seidel sweep, but with one array rebuilt per
+    // substep instead of one per constraint. A scatter would be cheaper and is
+    // exactly what purity does not offer without a per-vertex adjacency table.
+
+    // The force one spring exerts on the vertex numbered `index`: Hooke's law
+    // along the spring axis plus a damper on the closing speed. Zero when the
+    // vertex is not an end of this spring, which is what lets the whole set be
+    // summed by a fold with no adjacency structure.
+    SpringForceOn(vertices: Array<ClothVertex>, c: ClothDistanceConstraint, index: Integer, settings: MassSpringSettings, dt: Duration)
+        : Vector3D
+    {
+        var isEnd = c.VertexA.Value == index || c.VertexB.Value == index;
+        var near = c.VertexA.Value == index ? c.VertexA : c.VertexB;
+        var far = c.VertexA.Value == index ? c.VertexB : c.VertexA;
+        var offset = vertices[near.Value].Position - vertices[far.Value].Position;
+        var axis = offset.NormalizeOr(Vector3D.Zero);
+        var stretch = offset.Magnitude - c.RestLength.Meters;
+        var closing = (vertices[near.Value].Velocity(dt) - vertices[far.Value].Velocity(dt)).Dot(axis);
+        var magnitude = settings.Stiffness.NewtonsPerMeter * stretch
+                      + settings.Damping.NewtonSecondsPerMeter * closing;
+        return isEnd ? axis * magnitude.Negative : Vector3D.Zero;
+    }
+
+    // The acceleration every spring together imparts to one vertex: the summed
+    // force divided by the vertex's mass, i.e. multiplied by its inverse mass,
+    // so a fixed vertex feels nothing.
+    SpringAccelerationOn(vertices: Array<ClothVertex>, constraints: Array<ClothDistanceConstraint>, index: Integer, settings: MassSpringSettings, dt: Duration)
+        : Vector3D
+        => constraints.Reduce(Vector3D.Zero, (total, c) => total + SpringForceOn(vertices, c, index, settings, dt))
+            * vertices[index].SolverInverseMass;
+
+    // One explicit substep: external accelerations plus spring accelerations,
+    // integrated with the same Verlet step the position-based solver uses.
+    // Bend constraints are ignored — this solver has no force form for them.
+    SubStepMassSpring(self: Cloth3D, forces: ParticleForces3D, settings: MassSpringSettings, time: Number, dt: Duration): Cloth3D
+        => self.WithVertices(self.Vertices.Count.MapRange(i =>
+            self.Vertices[i].Integrate(
+                forces.AccelerationAt(self.Vertices[i].Position, self.Vertices[i].Velocity(dt), time)
+                    + SpringAccelerationOn(self.Vertices, self.DistanceConstraints, i, settings, dt),
+                dt,
+                settings.VelocityDamping)));
+
+    // One whole explicit step, divided into `SubStepCount` substeps. Substeps
+    // are the only lever this solver has against divergence, short of lowering
+    // the stiffness.
+    StepMassSpring(self: Cloth3D, forces: ParticleForces3D, settings: MassSpringSettings, time: Number): Cloth3D
+    {
+        var seconds = SafeDivide(settings.TimeStep.Seconds, settings.SubStepCount.ToNumber, settings.TimeStep.Seconds);
+        return settings.SubStepCount.MapRange(i => i)
+            .Reduce(self, (current, i) =>
+                current.SubStepMassSpring(forces, settings, time + i.ToNumber * seconds, new Duration(seconds)));
+    }
+
+    // One whole explicit step of a mesh-bound cloth.
+    StepMassSpring(self: ClothMesh3D, forces: ParticleForces3D, settings: MassSpringSettings, time: Number): ClothMesh3D
+        => ClothMesh3D(self.Cloth.StepMassSpring(forces, settings, time), self.Faces);
+
+    //==
+    // # Reading the result back
+    //
+    // The simulated positions rebuilt into the geometry the rest of the library
+    // already renders. The face tables never moved, so this is a position
+    // substitution and nothing more: normals, bounds, triangulation and every
+    // other mesh path work on the result with no new plumbing.
+
+    // Every vertex position, in vertex order.
+    Positions(self: Cloth3D): Array<Point3D>
+        => self.Vertices.Map(v => v.Position);
+
+    // The cloth's triangles as an indexed mesh, sharing the cloth's vertex
+    // numbering.
+    ToTriangleMesh(self: Cloth3D): TriangleMesh3D
+        => (self.Positions, self.Faces);
+
+    // The source polygon mesh with the simulated positions substituted in: the
+    // original topology, quads and all, at its current shape.
+    ToPolygonMesh(self: ClothMesh3D): PolygonMesh3D
+        => (self.Cloth.Positions, self.Faces);
+
+    // The cloth's triangles as an indexed mesh.
+    ToTriangleMesh(self: ClothMesh3D): TriangleMesh3D
+        => self.Cloth.ToTriangleMesh;
+
+    //==
+    // Pinning, which is the other thing a caller needs between build and step.
+
+    // The cloth with one vertex pinned or released.
+    WithPinnedVertex(self: Cloth3D, index: VertexIndex, pinned: Boolean): Cloth3D
+        => self.WithVertices(self.Vertices.WithVertex(index, self.Vertices[index.Value].WithPinned(pinned)));
+
+    // The mesh-bound cloth with one vertex pinned or released.
+    WithPinnedVertex(self: ClothMesh3D, index: VertexIndex, pinned: Boolean): ClothMesh3D
+        => ClothMesh3D(self.Cloth.WithPinnedVertex(index, pinned), self.Faces);
+
+    // Every vertex of one grid row pinned: the rail a hanging curtain hangs
+    // from. Precondition: the cloth was built from this grid.
+    WithPinnedGridRow(self: ClothMesh3D, grid: ClothGrid3D, row: Integer): ClothMesh3D
+        => grid.ColumnCount.MapRange(column => grid.GridVertexIndex(column, row))
+            .Reduce(self, (current, v) => current.WithPinnedVertex(v, true));
+}

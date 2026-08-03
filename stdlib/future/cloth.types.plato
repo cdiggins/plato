@@ -1,0 +1,110 @@
+//==
+// # Cloth
+//
+// The vocabulary cloth simulation needs on top of the deformables already
+// declared in `particles.types.plato` (`ClothVertex`, `ClothDistanceConstraint`,
+// `ClothBendConstraint`, `Cloth3D`, `Rope3D`). Nothing here re-declares those:
+// `Cloth3D` IS the constraint graph, and these types describe where a graph
+// comes from, how it is solved, and what it is read back as.
+//
+// Sections, in order:
+//  - Building a cloth patch
+//  - Solver settings
+//  - Cloth bound to a mesh
+
+//==
+// # Building a cloth patch
+//
+// The rectangular lattice a flat cloth patch is built on. Two edge vectors
+// rather than a plane and a spacing, so the patch carries its own orientation
+// and its own (possibly non-square) cell shape without inventing a convention:
+// a vertical curtain is ColumnStep along +X and RowStep along -Z, a tablecloth
+// is ColumnStep along +X and RowStep along +Y.
+// Convention: see CONVENTIONS.md - World space (Z-up, right-handed).
+
+// A grid of ColumnCount by RowCount vertices, vertex (column, row) sitting at
+// Origin + column * ColumnStep + row * RowStep. Vertices are numbered in row
+// major order, so vertex (column, row) is index row * ColumnCount + column.
+// The steps are world displacements in meters; they need not be perpendicular.
+type ClothGrid3D
+    implements IValue
+{
+    Origin: Point3D;
+    ColumnStep: Vector3D;
+    RowStep: Vector3D;
+    ColumnCount: Integer;
+    RowCount: Integer;
+}
+
+//==
+// # Solver settings
+//
+// Two solvers, two settings records, because they parameterize genuinely
+// different things: position-based dynamics is stiffness-as-a-proportion with
+// an iteration count, and mass-spring is a Hookean force law with real units.
+// Both share a step size and a substep count, because both are integrated the
+// same way (position Verlet over `ClothVertex.PreviousPosition`).
+
+// Settings for the position-based-dynamics solver
+// (https://en.wikipedia.org/wiki/Position-based_dynamics). TimeStep is one
+// whole step, divided into SubStepCount equal substeps; IterationCount is how
+// many constraint sweeps each substep runs.
+//
+// Stiffness is a PROPORTION in [0, 1]: the fraction of a constraint's error a
+// single sweep removes. It is corrected for the iteration count before use
+// (`IterationStiffness` in `cloth.library.plato`), so raising IterationCount
+// makes the cloth converge better without also making it stiffer.
+//
+// VelocityDamping is the fraction of the implicit Verlet velocity removed each
+// substep, in [0, 1); 0 is a lossless cloth and about 0.02 is a calm one.
+type ClothSolverSettings
+    implements IValue
+{
+    TimeStep: Duration;
+    SubStepCount: Integer;
+    IterationCount: Integer;
+    Stiffness: Number;
+    VelocityDamping: Number;
+}
+
+// Settings for the explicit mass-spring solver
+// (https://en.wikipedia.org/wiki/Soft-body_dynamics). Every distance
+// constraint becomes a damped Hookean spring with these coefficients, and the
+// result is integrated explicitly.
+//
+// This solver is deliberately the unstable one: the stable step size falls as
+// the square root of Stiffness over the vertex mass, so a stiff cloth needs a
+// tiny TimeStep or a large SubStepCount and blows up without one. That failure
+// is the reason both solvers exist.
+type MassSpringSettings
+    implements IValue
+{
+    TimeStep: Duration;
+    SubStepCount: Integer;
+    Stiffness: Stiffness;
+    Damping: DampingCoefficient;
+    VelocityDamping: Number;
+}
+
+//==
+// # Cloth bound to a mesh
+//
+// `Cloth3D` stores triangles, because collision and rendering want triangles.
+// A cloth built from a `PolygonMesh3D` came from a face table that may hold
+// quads or larger faces, and that table is what a caller wants back. Pairing
+// the two keeps the original topology alive across the simulation without
+// changing `Cloth3D`.
+
+// A cloth together with the polygon face table it was built from. The table is
+// never touched by the solver — only positions move — so
+// `ToPolygonMesh` (`cloth.library.plato`) rebuilds the source mesh exactly,
+// with the simulated positions substituted in.
+//
+// Faces indexes into the same vertex numbering as `Cloth.Vertices`: vertex i of
+// the cloth is position i of the mesh.
+type ClothMesh3D
+    implements IValue
+{
+    Cloth: Cloth3D;
+    Faces: JaggedArray<VertexIndex>;
+}
