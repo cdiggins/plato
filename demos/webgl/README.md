@@ -123,11 +123,12 @@ source named above it:
 Each entry is a writer gap, not a design choice — the prelude shrinks as the
 writer grows, and `tracker/issues/plato-419.md` is where they are catalogued.
 
-**Write folds eagerly.** The simulation folds rebuild an array per step and read
-two elements of the previous array per step, so a lazily-evaluated *n*-step fold
-costs 2ⁿ to read one element — a hang, not a slow path. The prelude's own folds
-are eager for that reason; a fold written inside a demo's `tick` must materialize
-each step too.
+**Folds are safe to leave lazy.** The emitted `Arr` memoizes (plato-436): each
+element of each view is computed at most once, and a fully-read view releases
+its indexing closure so earlier layers can be collected. A simulation fold that
+rebuilds an array per step is therefore linear in the step count, and the
+`eager` helper and per-page materialization wrappers this app once carried are
+gone.
 `npm run smoke` is what tells you which side changed: it checks values the Plato
 source fixes (a truncated icosahedron has 32 faces, a unit square has area 4, a
 de Casteljau evaluation at t = 0 is the first control point, a marched unit

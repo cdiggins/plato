@@ -13,21 +13,12 @@
 // Four things about the emitted library shape this file, and each is named at
 // the reading that would have used it:
 //
-//   * Every emitted step returns a LAZILY mapped vertex array.
-//     `Cloth3D.SubStepMassSpring` is `Vertices.Count().MapRange(...)`,
-//     `Cloth3D.CollideWith` is `Vertices.Map(...)`, and `MapRange` is
-//     `Intrinsics.Range(n).Map(f)` — a view, not an array. Chaining one step
-//     onto the last across frames therefore stacks views, and each spring in the
-//     mass-spring gather reads two elements of the layer below, so reading one
-//     vertex of layer n costs O(springs^n). `settled` below materializes the
-//     vertex array once per frame, which is the "write folds eagerly" rule of
-//     the studio README applied at the one seam a demo owns. Left lazy, a
-//     10 x 10 mass-spring cloth costs about 1.1 s per frame at two substeps and
-//     grows from there; materialized it costs about 9 ms.
-//   * `Cloth3D.SubStepMassSpring` is the one step whose output is read many
-//     times before it is materialized, so `SubStepCount` above 1 is quadratic in
-//     the spring count even with `settled` on the outside. The mass-spring scene
-//     runs at one substep and says so.
+//   * Every emitted step returns a lazily mapped vertex array, and since
+//     plato-436 the emitted `Arr` MEMOIZES: each vertex of each layer is
+//     computed at most once, so chaining steps across frames is linear in the
+//     vertex count and no materialization step is needed. (Before the fix a
+//     10 x 10 mass-spring cloth cost about 1.1 s per frame at two substeps —
+//     this page used to collapse the view tower by hand each frame.)
 //   * `Cloth3D.CollideWith` and `ClothMesh3D.CollideWith` keep only the sphere
 //     overload; the plane and signed-distance-field forms carry
 //     "Skipped: overload or duplicate member". The surviving body dispatches
@@ -133,23 +124,6 @@ const n3 = (x: number): string => (Number.isFinite(x) ? x.toFixed(3) : 'non-fini
 
 const EMPTY = <T,>(): IArray<T> => fromArray<T>([]);
 
-/**
- * The cloth with its vertex array materialized.
- *
- * Every emitted step hands back a lazy view over the previous step's vertices
- * (`MapRange` and `Map` are both `Intrinsics.Range(n).Map(f)`), so the frame
- * loop would otherwise build a tower of views whose depth is the frame count.
- * One `MakeArray` per frame — O(vertices), against the O(vertices x constraints)
- * the step itself costs — collapses it. This is repacking, the demo's own job;
- * the arithmetic is entirely the library's.
- */
-function settled(cloth: ClothMesh3D): ClothMesh3D {
-  return new ClothMesh3D(
-    cloth.Cloth.WithVertices(fromArray(toArray(cloth.Cloth.Vertices))),
-    cloth.Faces,
-  );
-}
-
 /** What a scene tells the solver about the world it is in. */
 interface ForceSpec {
   drag?: number;
@@ -194,9 +168,8 @@ function pbdSettings(iterations: number, substeps: number, stiffness: number, da
 }
 
 function massSpringSettings(stiffness: number, damper: number, damping: number): MassSpringSettings {
-  // One substep: `SubStepMassSpring` returns a lazy array that the next substep
-  // reads once per spring per vertex, so two substeps is quadratic in the spring
-  // count no matter what the caller materializes afterwards.
+  // One substep, matching the PBD comparison; the memoized `Arr` (plato-436)
+  // makes further substeps linear, and raising the count is plato-437's scope.
   return new MassSpringSettings(
     new Duration(STEP_SECONDS),
     1,
@@ -593,10 +566,9 @@ const drape = simulation({
   start(params: Params): Sim {
     const count = integer(params.grid, 6, 13);
     const grid = sheetGrid(count, 1.8, 0.6);
-    let cloth = settled(
-      grid.ClothFromGrid(new Mass(0.05), params.compliance, new Length(0.01))
-        .WithPinnedGridRow(grid, 0),
-    );
+    let cloth = grid
+      .ClothFromGrid(new Mass(0.05), params.compliance, new Length(0.01))
+      .WithPinnedGridRow(grid, 0);
     const view = clothView(cloth, { wire: params.wire !== 0 });
     const cost = new Cost();
     let clock = 0;
@@ -628,7 +600,7 @@ const drape = simulation({
           current.damping,
         );
         const started = performance.now();
-        cloth = settled(cloth.Step(forcesOf({ drag: 0.1 }), settings, clock));
+        cloth = (cloth.Step(forcesOf({ drag: 0.1 }), settings, clock));
         cost.observe(performance.now() - started);
         clock += settings.TimeStep.Seconds;
         frames++;
@@ -677,7 +649,7 @@ const solvers = simulation({
     const count = integer(params.grid, 5, 9);
     const grid = sheetGrid(count, 1.2, 0.5);
     const build = (): ClothMesh3D =>
-      settled(grid.ClothFromGrid(new Mass(0.05), 0, new Length(0.01)).WithPinnedGridRow(grid, 0));
+      (grid.ClothFromGrid(new Mass(0.05), 0, new Length(0.01)).WithPinnedGridRow(grid, 0));
 
     let pbd = build();
     let spring = build();
@@ -715,20 +687,16 @@ const solvers = simulation({
       step(current: Params): Reading[] {
         const force = forcesOf({ drag: 0.1 });
         const started = performance.now();
-        pbd = settled(
-          pbd.Step(
-            force,
-            pbdSettings(integer(current.iterations, 1, 6), 1, 1, current.damping),
-            clock,
-          ),
+        pbd = pbd.Step(
+          force,
+          pbdSettings(integer(current.iterations, 1, 6), 1, 1, current.damping),
+          clock,
         );
         if (divergedAt < 0) {
-          const next = settled(
-            spring.StepMassSpring(
-              force,
-              massSpringSettings(current.stiffness, current.damper, current.damping),
-              clock,
-            ),
+          const next = spring.StepMassSpring(
+            force,
+            massSpringSettings(current.stiffness, current.damper, current.damping),
+            clock,
           );
           // A diverged explicit solver throws nothing and draws nothing. Keeping
           // the last drawable state is a presentation choice, not a repair: the
@@ -785,7 +753,7 @@ const draping = simulation({
     const count = integer(params.grid, 8, 14);
     const thickness = params.thickness;
     const grid = sheetGrid(count, 1.7, params.drop);
-    let cloth = settled(grid.ClothFromGrid(new Mass(0.05), 0, new Length(thickness)));
+    let cloth = (grid.ClothFromGrid(new Mass(0.05), 0, new Length(thickness)));
     const sphere = new Sphere(new Point3D(0, 0, -0.35), params.radius);
     const groundHeight = -1.6;
     const ground = new Plane(new Direction3D(new Vector3D(0, 0, 1)), groundHeight);
@@ -840,7 +808,7 @@ const draping = simulation({
         );
         next = next.CollideWith(sphere);
         if (useGround) next = collideWithPlane(next, ground);
-        cloth = settled(next);
+        cloth = (next);
         cost.observe(performance.now() - started);
         clock += STEP_SECONDS;
         frames++;
@@ -886,9 +854,7 @@ const wind = simulation({
   start(params: Params): Sim {
     const count = integer(params.grid, 6, 12);
     const grid = curtainGrid(count, count, 1.5, 1.5);
-    let cloth = settled(
-      grid.ClothFromGrid(new Mass(0.03), 0, new Length(0.01)).WithPinnedGridRow(grid, 0),
-    );
+    let cloth = grid.ClothFromGrid(new Mass(0.03), 0, new Length(0.01)).WithPinnedGridRow(grid, 0);
     const view = clothView(cloth);
     const cost = new Cost();
     let clock = 0;
@@ -927,12 +893,10 @@ const wind = simulation({
       initial: readings,
       step(current: Params): Reading[] {
         const started = performance.now();
-        cloth = settled(
-          cloth.Step(
-            forcesOf({ drag: current.drag, wind: model(current) }),
-            pbdSettings(integer(current.iterations, 1, 5), 1, 1, 0.02),
-            clock,
-          ),
+        cloth = cloth.Step(
+          forcesOf({ drag: current.drag, wind: model(current) }),
+          pbdSettings(integer(current.iterations, 1, 5), 1, 1, 0.02),
+          clock,
         );
         cost.observe(performance.now() - started);
         clock += STEP_SECONDS;
@@ -985,7 +949,7 @@ const iterations = simulation({
     const count = integer(params.grid, 5, 9);
     const grid = sheetGrid(count, 1.15, 0.5);
     const cloths = ITERATION_COUNTS.map(() =>
-      settled(grid.ClothFromGrid(new Mass(0.05), 0, new Length(0.01)).WithPinnedGridRow(grid, 0)),
+      (grid.ClothFromGrid(new Mass(0.05), 0, new Length(0.01)).WithPinnedGridRow(grid, 0)),
     );
     const views = cloths.map((cloth, k) => {
       const view = clothView(cloth, {
@@ -1021,12 +985,10 @@ const iterations = simulation({
         const force = forcesOf({ drag: 0.1 });
         for (let k = 0; k < ITERATION_COUNTS.length; k++) {
           const started = performance.now();
-          cloths[k] = settled(
-            cloths[k].Step(
-              force,
-              pbdSettings(ITERATION_COUNTS[k], 1, current.stiffness, current.damping),
-              clock,
-            ),
+          cloths[k] = cloths[k].Step(
+            force,
+            pbdSettings(ITERATION_COUNTS[k], 1, current.stiffness, current.damping),
+            clock,
           );
           costs[k].observe(performance.now() - started);
           views[k].write(cloths[k]);
@@ -1088,7 +1050,7 @@ const pinning = simulation({
       pins = [corner(0, 0), corner(count - 1, 0)];
     }
     for (const p of pins) cloth = cloth.WithPinnedVertex(p, true);
-    cloth = settled(cloth);
+    cloth = (cloth);
     const released = pins[pins.length - 1];
 
     // A pinned cloth's pins never move, so the view's pin markers are built from
@@ -1124,12 +1086,10 @@ const pinning = simulation({
       initial: readings,
       step(current: Params): Reading[] {
         const started = performance.now();
-        cloth = settled(
-          cloth.Step(
-            forcesOf({ drag: 0.08 }),
-            pbdSettings(integer(current.iterations, 1, 5), 1, 1, current.damping),
-            clock,
-          ),
+        cloth = cloth.Step(
+          forcesOf({ drag: 0.08 }),
+          pbdSettings(integer(current.iterations, 1, 5), 1, 1, current.damping),
+          clock,
         );
         if (!done && clock >= current.release) {
           cloth = cloth.WithPinnedVertex(released, false);
@@ -1219,9 +1179,7 @@ const topology = simulation({
   start(params: Params): Sim {
     const count = integer(params.grid, 5, 11);
     const grid = sheetGrid(count, 1.6, 0.5);
-    let cloth = settled(
-      grid.ClothFromGrid(new Mass(0.05), 0, new Length(0.01)).WithPinnedGridRow(grid, 0),
-    );
+    let cloth = grid.ClothFromGrid(new Mass(0.05), 0, new Length(0.01)).WithPinnedGridRow(grid, 0);
     const view = clothView(cloth);
     const cost = new Cost();
     let clock = 0;
@@ -1273,12 +1231,10 @@ const topology = simulation({
       initial: readings,
       step(current: Params): Reading[] {
         const started = performance.now();
-        cloth = settled(
-          cloth.Step(
-            forcesOf({ drag: 0.1 }),
-            pbdSettings(integer(current.iterations, 1, 5), 1, 1, 0.03),
-            clock,
-          ),
+        cloth = cloth.Step(
+          forcesOf({ drag: 0.1 }),
+          pbdSettings(integer(current.iterations, 1, 5), 1, 1, 0.03),
+          clock,
         );
         cost.observe(performance.now() - started);
         clock += STEP_SECONDS;

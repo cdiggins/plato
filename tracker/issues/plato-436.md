@@ -73,7 +73,7 @@ fixing it once.
 
 ## Done means
 
-- [ ] An `Arr` element is computed at most once per view
-- [ ] The five cases above run in time proportional to their arithmetic
-- [ ] The demo prelude's `eager` workarounds and the pages' materialization
+- [x] An `Arr` element is computed at most once per view
+- [x] The five cases above run in time proportional to their arithmetic
+- [x] The demo prelude's `eager` workarounds and the pages' materialization
       helpers can be deleted, and are

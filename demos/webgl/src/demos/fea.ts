@@ -19,21 +19,12 @@
 // one value per cell and the shading is flat per facet. That is the element, not
 // a bug in the drawing; nodal smoothing is deferred to `plato-427`.
 //
-// **The solve cost is superlinear in the ITERATION COUNT, not in the model.**
-// The conjugate gradient in `finite-elements.library.plato` is written over
-// `Array<Number>` system vectors, and the prelude's `SystemAddScaled`,
-// `SystemSubtract` and `SystemProduct` are `Zip`, which is LAZY. Each iteration
-// therefore wraps the previous iterate in another view instead of materializing
-// it, so reading one component of the k-th search direction walks O(k^2) of
-// accumulated views and a k-iteration solve costs about O(entries * k^3). A
-// 24-degree-of-freedom cube converging in 7 iterations is 14 ms; the same model
-// refined to 192 degrees of freedom and 44 iterations is 21 SECONDS. That is why
-// the meshes on this page are deliberately tiny, why every scene prints its own
-// iteration count and solve time, and why the tightest tolerance is spent where
-// the answer is checkable. It is a prelude gap (`src/plato/array-ext.ts` has an
-// `eager` helper the System* installs do not use), not a defect of the Plato
-// source — the same solve in the C# target has no such chain — and this page
-// reports it in the status line rather than routing around it.
+// **The solve cost is linear in the ITERATION COUNT** since plato-436: the
+// emitted `Arr` memoizes, so each conjugate-gradient iterate is computed once
+// however many views the next iteration stacks on it. (Before the fix a lazy
+// view chain made a k-iteration solve about O(entries * k^3) — a 192-DOF model
+// at 44 iterations cost 21 seconds — which is why the meshes on this page are
+// modest and every scene prints its own iteration count and solve time.)
 //
 // **Real deflections are microns.** Steel under a megapascal moves five parts in
 // a million, so every deformed picture is drawn at an exaggeration the status

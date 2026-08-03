@@ -105,17 +105,9 @@ function arr<T>(count: number, f: (i: number) => T): IArray<T> {
   return new Arr<T>(count, f) as unknown as IArray<T>;
 }
 
-// The eager form, for the rebuild-one-element-per-step FOLDS the simulation
-// tracks are written as (`ReplacedAt` in the rigid-body solver, `WithTwoVertices`
-// in the cloth sweep). Each step reads two elements of the previous array, so a
-// lazy chain n steps deep costs 2^n to read one element — a hang, not a slow
-// path. Materializing each step makes the fold linear in the array's length,
-// which is the cost the Plato sources state.
-function eager<T>(count: number, f: (i: number) => T): IArray<T> {
-  const values: T[] = new Array(count);
-  for (let i = 0; i < count; i++) values[i] = f(i);
-  return arr(count, i => values[i]);
-}
+// The `eager` helper that used to live here is gone: `Arr` memoizes as of
+// plato-436, so every view computes each element at most once and a
+// rebuild-one-element-per-step fold is linear, not exponential.
 
 // ---- collections.library.plato — indexable basics -------------------------
 
@@ -1903,7 +1895,7 @@ class PlatoList {
 // impulse passes each rebuild `Bodies` and `Constraints` through it, so nothing
 // in the rigid-body track runs without this one line.
 install('ReplacedAt', function (this: Any, index: number, value: Any) {
-  return eager(this.Count(), i => (i === index ? value : this.At(i)));
+  return arr(this.Count(), i => (i === index ? value : this.At(i)));
 });
 
 // matrices-ops.library.plato — the two fixed-width replacements behind the
@@ -1962,13 +1954,13 @@ install('SystemDot', function (this: Any, b: Any): number {
   return total;
 });
 install('SystemSubtract', function (this: Any, b: Any) {
-  return eager(this.Count(), (i: number) => this.At(i) - b.At(i));
+  return arr(this.Count(), (i: number) => this.At(i) - b.At(i));
 });
 install('SystemAddScaled', function (this: Any, b: Any, t: number) {
-  return eager(this.Count(), (i: number) => this.At(i) + b.At(i) * t);
+  return arr(this.Count(), (i: number) => this.At(i) + b.At(i) * t);
 });
 install('SystemProduct', function (this: Any, b: Any) {
-  return eager(this.Count(), (i: number) => this.At(i) * b.At(i));
+  return arr(this.Count(), (i: number) => this.At(i) * b.At(i));
 });
 install('SystemNorm', function (this: Any): number {
   return Math.sqrt(this.SystemDot(this));
@@ -2648,7 +2640,7 @@ install('CompactMerge', function (this: Any, placement: (i: number) => Any) {
 // passes cost 2^32 reads for one element.
 install('JumpedRepresentatives', function (this: Any) {
   const representatives = this;
-  return eager(representatives.Count(), i => representatives.At(representatives.At(i).Value));
+  return arr(representatives.Count(), i => representatives.At(representatives.At(i).Value));
 });
 install('ResolvedRepresentatives', function (this: Any) {
   let reps: Any = this;
@@ -2707,7 +2699,7 @@ install('ClaimedByCollapse', function (this: Any, neighbors: Any, edge: Any) {
   const state = this;
   const rowA = neighbors.At(edge.A.Value);
   const rowB = neighbors.At(edge.B.Value);
-  return eager(state.Count(), v => {
+  return arr(state.Count(), v => {
     if (v === edge.A.Value || v === edge.B.Value) return edge.A.Value;
     const index = new VertexIndex(v);
     return rowA.RowContains(index) || rowB.RowContains(index) ? -2 : state.At(v);
@@ -2715,7 +2707,7 @@ install('ClaimedByCollapse', function (this: Any, neighbors: Any, edge: Any) {
 });
 install('CollapseClaims', function (this: Any, neighbors: Any, collapseMask: Any, vertexCount: number) {
   const edges = this;
-  let state: Any = eager(vertexCount, () => -1);
+  let state: Any = arr(vertexCount, () => -1);
   for (let e = 0; e < edges.Count(); e++) {
     const edge = edges.At(e);
     if (
@@ -2743,7 +2735,7 @@ install('CollapsedPositions', function (this: Any, edges: Any, state: Any, place
     const target = edges.At(e).A.Value;
     const previous = moved;
     const point = placement(e);
-    moved = eager(previous.Count(), v => (v === target ? point : previous.At(v)));
+    moved = arr(previous.Count(), v => (v === target ? point : previous.At(v)));
   }
   return moved;
 });
@@ -2846,17 +2838,17 @@ install('CostRank', function (this: Any, i: number): number {
 
 install('WithVertex', function (this: Any, index: Any, vertex: Any) {
   const self = this;
-  return eager(self.Count(), i => (i === index.Value ? vertex : self.At(i)));
+  return arr(self.Count(), i => (i === index.Value ? vertex : self.At(i)));
 });
 install('WithTwoVertices', function (this: Any, c: Any, a: Any, b: Any) {
   const self = this;
-  return eager(self.Count(), i =>
+  return arr(self.Count(), i =>
     i === c.VertexA.Value ? a : i === c.VertexB.Value ? b : self.At(i),
   );
 });
 install('WithFourVertices', function (this: Any, c: Any, a: Any, b: Any, wingC: Any, wingD: Any) {
   const self = this;
-  return eager(self.Count(), i =>
+  return arr(self.Count(), i =>
     i === c.VertexA.Value
       ? a
       : i === c.VertexB.Value
@@ -2965,7 +2957,7 @@ install('SolveBend', function (this: Any, constraints: Any, iterations: number, 
 // unbounded stack of them and reads slow down without ever failing.
 install('StepParticles', function (this: Any, forces: Any, time: number, dt: Any) {
   const particles = this;
-  return eager(particles.Count(), i => {
+  return arr(particles.Count(), i => {
     const p = particles.At(i);
     return p.Step(forces.AccelerationAt(p.Position, p.Velocity, time), dt);
   });

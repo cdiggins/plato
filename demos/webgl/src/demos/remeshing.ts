@@ -16,41 +16,16 @@
 // COST, which is the thing that decided every size on this page
 //
 // The library says `TopologyOf` is quadratic in the corner count and dominates
-// every pass. In this runtime it is worse than that, for a reason that is not in
-// the Plato source: `Arr` is a lazy view with no memoization, so
-// `TopologyOf`'s `rank` array — a prefix count over `naming`, which reads
-// `twins`, which recomputes `TwinCorner`'s linear scan on every read — is
-// evaluated afresh at every subscript. Materializing `CornerEdges` alone is
-// therefore CUBIC in the corner count; measured on this machine it is about 30
-// ms at 32 triangles and about 2.3 s at 128.
-//
-// Three consequences run through the file:
-//
-//  - `flat()` reads a mesh's positions and faces into flat arrays after every
-//    pass. Without it a chain of passes is a chain of lazy views and each read
-//    walks all of them — the same trick `src/demos/deformers.ts` uses on its
-//    truncated subjects, but load-bearing here rather than an optimization.
-//  - `readable()` materializes the three topology arrays the READERS need
-//    (`CornerTwins`, `EdgeCorners`, `UndirectedEdges`) and leaves `CornerEdges`
-//    lazy, because that one is the cubic member and only `SplitEdges` needs it.
-//    With it, `VertexValences`, `BoundaryVertexFlags`, `EdgeLength` and
-//    `IsBoundaryEdge` over a whole mesh cost about a millisecond.
-//  - Iteration counts are stepped ONE at a time with the result materialized in
-//    between. `LaplacianSmoothed(w, s, n)` folds `LaplacianStep` lazily, and a
-//    step reads about seven elements of the previous step's position array per
-//    element, so the fold costs 7^n to read one vertex: measured on 32
-//    triangles, n = 4 takes 1.2 s, n = 5 takes 11 s and n = 6 takes 50 s, while
-//    n stepped calls of one iteration cost n times 7 ms. This is the hazard
-//    `demos/webgl/README.md` calls "write folds eagerly", reached from the
-//    library side rather than from a demo's own `tick`.
-//
-// `IsotropicRemeshPass` is the same hazard one level up: it is a chain of four
-// passes with no materialization between them, and it costs 21 s on 18
-// triangles and 279 s on 32. The isotropic scene therefore calls the library's
-// own four members — `SplitLongEdges`, `CollapseShortEdges`,
-// `FlipTowardValenceSix`, `TangentiallyRelaxed` — at the library's own 4/3 and
-// 4/5 factors, materializing between them, which is the same computation at
-// about 190 ms per pass on 32 triangles.
+// every pass, and since plato-436 the runtime agrees with the source: the
+// emitted `Arr` memoizes, so a derived array (`rank` over `naming` over
+// `twins`) computes each element once however deeply the readers stack views.
+// Sizes on this page were chosen when the runtime was worse — a lazy,
+// unmemoized `Arr` made materializing `CornerEdges` cubic and made
+// `LaplacianSmoothed(w, s, n)` cost about 7^n — and this file used to carry
+// `flat()` / `readable()` materialization helpers and step every iteration
+// count one call at a time to route around that. Those workarounds are gone;
+// the caches that remain (`smoothCache`, the subject caches) are UI caches
+// across slider moves, not laziness repairs.
 //
 // ---------------------------------------------------------------------------
 // WHAT DOES NOT WORK
@@ -81,7 +56,6 @@ import {
   Direction3D,
   FaceIndex,
   IntegerVector3,
-  JaggedArray,
   Plane,
   Point3D,
   PolygonMesh3D,
@@ -196,34 +170,6 @@ function sceneOf(spec: {
 // ---------------------------------------------------------------------------
 // Materialization — see the cost note in the header
 // ---------------------------------------------------------------------------
-
-/** A mesh's positions and faces read out into flat arrays. */
-function flat(mesh: TriangleMesh3D): TriangleMesh3D {
-  return new TriangleMesh3D(fromArray(toArray(mesh.Positions)), fromArray(toArray(mesh.Faces)));
-}
-
-/** The same for a polygon mesh, whose face table is a jagged array. */
-function flatPolygon(mesh: PolygonMesh3D): PolygonMesh3D {
-  return new PolygonMesh3D(
-    fromArray(toArray(mesh.Positions)),
-    new JaggedArray(fromArray(toArray(mesh.Faces.Offsets)), fromArray(toArray(mesh.Faces.Values))),
-  );
-}
-
-/**
- * `TopologyOf` with the three arrays the READERS subscript materialized.
- * `CornerEdges` is left lazy on purpose: it is the member whose prefix-rank
- * makes materialization cubic, and only `SplitEdges` reads it.
- */
-function readable(mesh: TriangleMesh3D): TriangleMeshTopology {
-  const t = mesh.TopologyOf();
-  return new TriangleMeshTopology(
-    t.CornerEdges,
-    fromArray(toArray(t.CornerTwins)),
-    fromArray(toArray(t.UndirectedEdges)),
-    fromArray(toArray(t.EdgeCorners)),
-  );
-}
 
 // ---------------------------------------------------------------------------
 // Measurements taken from generated members
@@ -383,7 +329,7 @@ function triangularTube(): TriangleMesh3D {
  * than a second per iteration.
  */
 function lumpyBall(): TriangleMesh3D {
-  const base = flat(polyhedron('Octahedron').LoopSubdivided());
+  const base = (polyhedron('Octahedron').LoopSubdivided());
   const moved = toArray(base.Positions).map(p => {
     const radius = Math.hypot(p.X, p.Y, p.Z) || 1;
     const lat = Math.asin(clamp(p.Y / radius, -1, 1));
@@ -408,7 +354,7 @@ const polyhedronCache = new Map<string, TriangleMesh3D>();
 function polyhedron(name: string): TriangleMesh3D {
   let hit = polyhedronCache.get(name);
   if (!hit) {
-    hit = flat(polyhedra[name]().ToTriangleMesh());
+    hit = (polyhedra[name]().ToTriangleMesh());
     polyhedronCache.set(name, hit);
   }
   return hit;
@@ -425,10 +371,10 @@ const SUBJECTS: Subject[] = [
   { label: 'Tube, open (6)', closed: false, build: triangularTube },
   { label: 'Octahedron (8)', closed: true, build: () => polyhedron('Octahedron') },
   { label: 'Cube ▸ tris (12)', closed: true, build: () => polyhedron('Cube') },
-  { label: 'Sheet, open (18)', closed: false, build: () => flat(sheet(3, ridge)) },
+  { label: 'Sheet, open (18)', closed: false, build: () => (sheet(3, ridge)) },
   { label: 'Icosahedron (20)', closed: true, build: () => polyhedron('Icosahedron') },
   { label: 'Lumpy ball (32)', closed: true, build: lumpyBall },
-  { label: 'Rough sheet, open (32)', closed: false, build: () => flat(sheet(4, rough)) },
+  { label: 'Rough sheet, open (32)', closed: false, build: () => (sheet(4, rough)) },
 ];
 
 const SUBJECT_LABELS = SUBJECTS.map(s => s.label);
@@ -589,7 +535,7 @@ function subdivided(seed: number, butterfly: boolean, level: number): TriangleMe
   if (hit) return hit;
   const previous = level <= 0 ? polyhedron(SUBDIV_SEED_NAMES[seed]) : subdivided(seed, butterfly, level - 1);
   const built =
-    level <= 0 ? previous : flat(butterfly ? previous.ButterflySubdivided() : previous.LoopSubdivided());
+    level <= 0 ? previous : (butterfly ? previous.ButterflySubdivided() : previous.LoopSubdivided());
   subdivCache.set(key, built);
   return built;
 }
@@ -712,7 +658,7 @@ function refined(cage: number, scheme: number, level: number): PolygonMesh3D {
   if (hit) return hit;
   const control = polyhedra[CAGE_LABELS[cage]]();
   const surface = new SubdivisionSurface(control, schemeCase(scheme) as never, level);
-  const built = flatPolygon(surface.RefinedControlMesh());
+  const built = (surface.RefinedControlMesh());
   cageCache.set(key, built);
   return built;
 }
@@ -796,9 +742,9 @@ const schemes = sceneOf({
 // tangential relaxation moves vertices ALONG the surface and so leaves the
 // volume where it was.
 //
-// Every iteration is a separate call with the result materialized in between —
-// see the header. Passing the iteration count straight to `LaplacianSmoothed`
-// is exponential in this runtime.
+// Every iteration is a separate call so `smoothCache` can reuse the first n-1
+// iterations when a slider moves by one; the memoized `Arr` (plato-436) makes
+// passing the count straight to `LaplacianSmoothed` equally sound.
 // ---------------------------------------------------------------------------
 
 type SmoothKind = 'laplacian' | 'taubin' | 'tangential';
@@ -824,10 +770,10 @@ function smoothed(
   const w = weightingCase(weighting) as never;
   const built =
     kind === 'laplacian'
-      ? flat(previous.LaplacianSmoothed(w, strength, 1))
+      ? (previous.LaplacianSmoothed(w, strength, 1))
       : kind === 'taubin'
-        ? flat(previous.TaubinSmoothed(w, strength, -(strength + 0.03), 1))
-        : flat(previous.TangentiallyRelaxed(strength, 1));
+        ? (previous.TaubinSmoothed(w, strength, -(strength + 0.03), 1))
+        : (previous.TangentiallyRelaxed(strength, 1));
   smoothCache.set(key, built);
   return built;
 }
@@ -836,7 +782,7 @@ function smoothed(
 const TAUBIN_DEFAULTS_FAILURE = ((): string => {
   try {
     const mesh = polyhedron('Octahedron') as unknown as { TaubinSmoothed(iterations: number): TriangleMesh3D };
-    flat(mesh.TaubinSmoothed(1));
+    (mesh.TaubinSmoothed(1));
     return '';
   } catch (error) {
     return (error as Error).message;
@@ -895,7 +841,7 @@ const smoothing = sceneOf({
     const closed = SUBJECTS[index].closed;
     const v0 = signedVolume(base);
     const ratio = (m: TriangleMesh3D): string => (closed ? `×${n4(signedVolume(m) / v0)}` : 'open — no volume');
-    const topology = readable(base);
+    const topology = base.TopologyOf();
     const boundary = toArray(base.BoundaryVertexFlags(topology));
     const boundaryDrift = (m: TriangleMesh3D): number => {
       const a = toArray(base.Positions);
@@ -944,22 +890,18 @@ const smoothing = sceneOf({
 // ---------------------------------------------------------------------------
 // Scene 4 — isotropic remeshing, one Botsch-Kobbelt pass at a time
 //
-// The four steps are the library's, in the library's order, at the library's own
-// 4/3 and 4/5 factors — the result is materialized between them, which is the
-// only difference from calling `IsotropicRemeshPass` itself. See the header for
-// why that difference is the whole scene.
+// Each pass is the library's own `IsotropicRemeshPass` — split long, collapse
+// short, flip toward valence six, tangentially relax, at the 4/3 and 4/5
+// factors — called as one member. (Before plato-436 the four inner passes
+// chained lazily and cost minutes, so this scene used to spell them out with a
+// materialization between each; the memoized `Arr` retired that.)
 //
 // Face counts move fast: at k = 0.5 a pass roughly quadruples them, so the walk
 // stops once the mesh passes the affordability cap and the status line says so.
 // ---------------------------------------------------------------------------
 
-/** The pass, spelled out: split long, collapse short, flip toward six, relax. */
-function isotropicPass(mesh: TriangleMesh3D, target: number): TriangleMesh3D {
-  const split = flat(mesh.SplitLongEdges((target * 4) / 3));
-  const collapsed = flat(split.CollapseShortEdges((target * 4) / 5));
-  const flipped = flat(collapsed.FlipTowardValenceSix());
-  return flat(flipped.TangentiallyRelaxed(0.5, 1));
-}
+const isotropicPass = (mesh: TriangleMesh3D, target: number): TriangleMesh3D =>
+  mesh.IsotropicRemeshPass(target);
 
 /** Past this a pass costs seconds; the walk stops and the status line says so. */
 const ISOTROPIC_FACE_CAP = 180;
@@ -1018,10 +960,10 @@ const isotropicScene = sceneOf({
     const target = base.AverageEdgeLength() * factor;
     const mesh = isotropic(index, factor, passes);
 
-    const topology = readable(mesh);
+    const topology = mesh.TopologyOf();
     const valence = valenceStats(mesh, topology);
     const stats = edgeStats(mesh, topology);
-    const baseStats = edgeStats(base, readable(base));
+    const baseStats = edgeStats(base, base.TopologyOf());
 
     const group = new THREE.Group();
     const colorOf =
@@ -1054,10 +996,7 @@ const isotropicScene = sceneOf({
           `${stats.boundaryEdges} (input had ${baseStats.boundaryEdges})` +
           (stats.boundaryEdges === baseStats.boundaryEdges ? ' — preserved' : ''),
         ),
-        note(
-          'IsotropicRemeshPass',
-          'is exactly the four steps above; called as one member it chains four lazy passes and costs seconds on this mesh, so each step is materialized instead',
-        ),
+        note('IsotropicRemeshPass', 'called as one member — the four steps above are its body'),
       ],
     };
   },
@@ -1095,10 +1034,10 @@ function batched(subjectIndex: number, operation: number, factor: number, passes
     previous.Faces.Count() > ISOTROPIC_FACE_CAP
       ? previous
       : operation === 0
-        ? flat(previous.SplitLongEdges(threshold))
+        ? (previous.SplitLongEdges(threshold))
         : operation === 1
-          ? flat(previous.CollapseShortEdges(threshold))
-          : flat(previous.FlipTowardValenceSix());
+          ? (previous.CollapseShortEdges(threshold))
+          : (previous.FlipTowardValenceSix());
   batchCache.set(key, built);
   return built;
 }
@@ -1120,7 +1059,7 @@ const QUADRIC_READINGS: Reading[] = ((): Reading[] => {
     reading('Quadric.QuadricError', () => n4(plane.PlaneQuadric().QuadricError(new Point3D(0, 2, 0)))),
     reading('Triangle3D.TriangleQuadric', () => String(ball.Triangle(new FaceIndex(0)).TriangleQuadric())),
     reading('TriangleMesh3D.VertexQuadrics', () => String(ball.VertexQuadrics().At(0))),
-    reading('TriangleMesh3D.Decimated', () => `${flat(ball.Decimated(4, 3)).Faces.Count()} f`),
+    reading('TriangleMesh3D.Decimated', () => `${(ball.Decimated(4, 3)).Faces.Count()} f`),
   ];
 })();
 
@@ -1167,7 +1106,7 @@ const coarsening = sceneOf({
     }
     const mesh = batched(index, operation, factor, passes);
 
-    const topology = readable(mesh);
+    const topology = mesh.TopologyOf();
     const valence = valenceStats(mesh, topology);
     const stats = edgeStats(mesh, topology);
 
@@ -1222,9 +1161,11 @@ const OPERATOR_LABELS = ['SplitEdge', 'CollapseEdge', 'FlipEdge'];
 
 function applyOperator(mesh: TriangleMesh3D, operator: number, edge: number): TriangleMesh3D {
   const index = new UndirectedEdgeIndex(edge);
-  return flat(
-    operator === 0 ? mesh.SplitEdge(index) : operator === 1 ? mesh.CollapseEdge(index) : mesh.FlipEdge(index),
-  );
+  return operator === 0
+    ? mesh.SplitEdge(index)
+    : operator === 1
+      ? mesh.CollapseEdge(index)
+      : mesh.FlipEdge(index);
 }
 
 /** Unchanged means refused: a split always lands, the other two may not. */
@@ -1256,7 +1197,7 @@ function census(subjectIndex: number, operator: number): string {
   let hit = censusCache.get(key);
   if (hit === undefined) {
     const mesh = subject(subjectIndex);
-    const edges = readable(mesh).EdgeCount();
+    const edges = mesh.TopologyOf().EdgeCount();
     let accepted = 0;
     for (let e = 0; e < edges; e++) if (!refused(mesh, operatorResult(subjectIndex, operator, e))) accepted++;
     hit = `${accepted} of ${edges} edges accept ${OPERATOR_LABELS[operator]}`;
@@ -1297,7 +1238,7 @@ const operators = sceneOf({
     const index = OPERATOR_SUBJECTS.pick(params);
     const operator = clampIndex(params.operator, OPERATOR_LABELS.length);
     const base = subject(index);
-    const topology = readable(base);
+    const topology = base.TopologyOf();
     const edgeCount = topology.EdgeCount();
     const edge = clamp(Math.round(params.edge ?? 0), 0, Math.max(0, edgeCount - 1));
     const edgeIndex = new UndirectedEdgeIndex(edge);
@@ -1388,7 +1329,7 @@ function welded(nodes: number, tolerance: number): TriangleMesh3D {
   const key = `${nodes}:${tolerance}`;
   let hit = weldCache.get(key);
   if (!hit) {
-    hit = flat(marchedSphere(nodes).Welded(tolerance));
+    hit = (marchedSphere(nodes).Welded(tolerance));
     weldCache.set(key, hit);
   }
   return hit;
@@ -1439,7 +1380,7 @@ const weldScene = sceneOf({
       ),
       reading('AverageEdgeLength', () => n4(mesh.AverageEdgeLength())),
       reading('TriangleMesh3D.Welded (again, same tolerance)', () => {
-        const twice = flat(mesh.Welded(tolerance));
+        const twice = (mesh.Welded(tolerance));
         return `${twice.Positions.Count()} v / ${twice.Faces.Count()} f` +
           (twice.Positions.Count() === mesh.Positions.Count() ? ' — idempotent' : ' — merged further');
       }),
@@ -1447,7 +1388,7 @@ const weldScene = sceneOf({
     if ((params.euler ?? 0) !== 0) {
       readings.push(
         reading('V − E + F', () => {
-          const topology = readable(mesh);
+          const topology = mesh.TopologyOf();
           const edges = topology.EdgeCount();
           const v = mesh.Positions.Count();
           const f = mesh.Faces.Count();

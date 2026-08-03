@@ -469,21 +469,6 @@ const PLANAR_CONTROLS: Control[] = [
   { key: 'ghost', label: 'Ghost the original', kind: 'toggle', def: 0 },
 ];
 
-/**
- * Read a set into flat point arrays. Every generated member returns a lazily
- * mapped `Points`, so a deformed set re-runs `Eval` once per ring per reader —
- * and each subject is read three times per tick (area, perimeter, the line
- * loops). Materializing once costs one evaluation per point and makes the rest
- * free.
- */
-function materialize(s: PolygonSet2D): PolygonSet2D {
-  const flat = (p: Polygon2D): Polygon2D => new Polygon2D(fromArray(toArray(p.Points)));
-  const parts = toArray(s.Polygons).map(
-    c => new PolygonWithHoles2D(flat(c.Boundary), fromArray(toArray(c.Holes).map(flat))),
-  );
-  return new PolygonSet2D(fromArray(parts));
-}
-
 /** Built once per subject: none of them depends on a slider. */
 const planarCache = new Map<number, PolygonSet2D>();
 
@@ -491,7 +476,7 @@ function planarSubject(params: Params): PolygonSet2D {
   const index = clampIndex(params.subject, PLANAR_SUBJECTS.length);
   let subject = planarCache.get(index);
   if (!subject) {
-    subject = materialize(PLANAR_SUBJECTS[index].build());
+    subject = (PLANAR_SUBJECTS[index].build());
     planarCache.set(index, subject);
   }
   return subject;
@@ -548,7 +533,7 @@ function planar(params: Params, evaluate: (p: Point2D) => Point2D): THREE.Object
   // The subject doubles as a measurement: area and perimeter from the generated
   // members, on the warped set against the same members on the original.
   const base = planarSubject(params);
-  const warpedSet = materialize(base.Deform(evaluate));
+  const warpedSet = (base.Deform(evaluate));
   const loops = rings(warpedSet);
   const index = clampIndex(params.subject, PLANAR_SUBJECTS.length);
   const area = warpedSet.Area();
@@ -696,7 +681,7 @@ function affinePlanar(params: Params, op: AffineOp, amount: number): THREE.Objec
   group.add(new THREE.LineSegments(grid, edgeMaterial(palette.line)));
 
   const base = planarSubject(params);
-  const moved = materialize(op.set(base, amount));
+  const moved = (op.set(base, amount));
   const loops = rings(moved);
   const area = moved.Area();
   const wasArea = base.Area();

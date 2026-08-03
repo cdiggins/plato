@@ -37,10 +37,13 @@ closed; splitting output would create cyclic imports). It contains, in order:
    `MakeArray`, `Range`, structural equality, throw helpers) plus minimal
    `IArray2D`/`IArray3D` interfaces.
 2. One `export interface` per Plato interface.
-3. The `IArray<T>` interface and the `Arr<T>` class. Library functions whose
-   first parameter is an IArray and that are generic over the element type
-   become methods of both; functions over a concrete element type become
-   module-level functions.
+3. The `IArray<T>` interface and the `Arr<T>` class — a memoizing functional
+   view (count plus indexing function): each element is computed at most once,
+   and a fully-read view drops its indexing closure so chained views release
+   the layers beneath them (plato-436). Library functions whose first
+   parameter is an IArray and that are generic over the element type become
+   methods of both; functions over a concrete element type become module-level
+   functions.
 4. An `export class Constants` with one static getter per library constant.
 5. **Native prototype extensions** for the Plato primitives.
 6. One `export class` per remaining concrete type.

@@ -39,40 +39,33 @@ const TOLERANCE = Number.CsgPlaneTolerance();
 
 // ---------------------------------------------------------------- operands ---
 
-/** A soup whose points are plain arrays: the generated arrays are lazy, and a
- *  boolean touches each point many times. Repacking, not recomputing. */
-function materialize(soup: PolygonSoup3D): PolygonSoup3D {
-  const polygons = toArray(soup.Polygons).map(p => new Polygon3D(fromArray(toArray(p.Points))));
-  return new PolygonSoup3D(fromArray(polygons));
-}
-
 const Z_UP = new Direction3D(Vector3D.UnitZ());
 const originFrame = () => new Point3D(0, 0, 0).AxisFrame(Z_UP);
 
 /** Solid A, shared by every scene: the unit-circumradius cube, six quad faces. */
-const A = materialize(meshToSoup(PolygonMesh3D.Cube()));
+const A = (meshToSoup(PolygonMesh3D.Cube()));
 
 /** Solid B, the operand the select control chooses. All small on purpose. */
 const CUTTERS: ReadonlyArray<{ label: string; soup: PolygonSoup3D }> = [
   {
     label: 'Cube — 6 faces',
-    soup: materialize(meshToSoup(PolygonMesh3D.Cube().ScaledAboutOrigin(0.95))),
+    soup: (meshToSoup(PolygonMesh3D.Cube().ScaledAboutOrigin(0.95))),
   },
   {
     label: 'Octagonal prism — 10 faces',
-    soup: materialize(meshToSoup(new RegularPrism(originFrame(), 8, 0.62, 1.5).ToPolygonMesh())),
+    soup: (meshToSoup(new RegularPrism(originFrame(), 8, 0.62, 1.5).ToPolygonMesh())),
   },
   {
     label: 'Hexagonal antiprism — 14 faces',
-    soup: materialize(meshToSoup(new Antiprism(originFrame(), 6, 0.7, 1.3).ToPolygonMesh())),
+    soup: (meshToSoup(new Antiprism(originFrame(), 6, 0.7, 1.3).ToPolygonMesh())),
   },
   {
     label: 'Tetrahedron — 4 faces',
-    soup: materialize(meshToSoup(PolygonMesh3D.Tetrahedron())),
+    soup: (meshToSoup(PolygonMesh3D.Tetrahedron())),
   },
   {
     label: 'Octahedron — 8 faces',
-    soup: materialize(meshToSoup(PolygonMesh3D.Octahedron().ScaledAboutOrigin(1.05))),
+    soup: (meshToSoup(PolygonMesh3D.Octahedron().ScaledAboutOrigin(1.05))),
   },
 ];
 

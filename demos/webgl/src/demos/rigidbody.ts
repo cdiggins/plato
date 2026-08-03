@@ -2,10 +2,9 @@
 // and `collision.{types,library}.plato`.
 //
 // This is a SIMULATION page: six of its seven scenes declare `tick`, and every
-// one of them is the same three lines per frame —
+// one of them is the same two lines per frame —
 //
 //     world = world.StepBallScene(radii, ground, groundBody, mu, e, tolerance);
-//     world = materialized(world);            // see "the lazy fold" below
 //     writeMatrices(object, world.Bodies);    // repack, the demo's only job
 //
 // `StepBallScene` is the whole per-frame loop of a ball-and-plane scene: it
@@ -36,16 +35,11 @@
 //                    basis, and a live census of which pair tests survived the
 //                    TypeScript writer.
 //
-// THE LAZY FOLD, which is the one thing that will bite anyone extending this
-// file. `Step` ends in `IntegratePoses`, which is `Indices.Map(i => Bodies[i]
-// .IntegratePoseWith(corrections[i].Velocity, dt))` — and `Map` on the emitted
-// `Arr` is LAZY. `corrections` is itself a `Map` over `Bodies`, so reading one
-// body of frame n reads TWO bodies of frame n-1: the cost of one `Center` is
-// 2^n. Measured on a free-falling ball with no contact rows, one `Center` read
-// costs 0.9 ms at frame 0, 64 ms at frame 15, and 75 SECONDS at frame 25. Every
-// scene here therefore calls `materialized` on `Bodies` and `Constraints` after
-// each step, which is what the prelude's "write folds eagerly" note asks for and
-// makes a frame linear in the body count again.
+// THE LAZY FOLD is history: the emitted `Arr` memoizes as of plato-436, so
+// reading a body of frame n computes each body of frame n-1 at most once and a
+// frame is linear in the body count with no materialization step. (Before the
+// fix, one `Center` read cost 2^n — 75 seconds by frame 25 — which is why this
+// page used to re-pack `Bodies` and `Constraints` into plain arrays each step.)
 //
 // COST. `BallSceneManifolds` is O(n^2) with no broad phase (deferred to
 // plato-428) and a solver pass is rows times bodies, so the body counts here are
@@ -143,8 +137,7 @@ const clampIndex = (raw: number, count: number): number =>
 // Arrays
 //
 // `Intrinsics.MakeArray` is variadic; the range mapper is used instead so a body
-// count is never a spread argument list. `materialized` is the eager form and is
-// the reason this page runs at all — see the header.
+// count is never a spread argument list.
 
 const arrayOf = <T,>(xs: readonly T[]): IArray<T> => Intrinsics.Range(xs.length).Map(i => xs[i]);
 
@@ -153,9 +146,6 @@ function toList<T>(xs: IArray<T>): T[] {
   for (let i = 0; i < xs.Count(); i++) out.push(xs.At(i));
   return out;
 }
-
-/** The same array with every element evaluated once, collapsing the lazy chain. */
-const materialized = <T,>(xs: IArray<T>): IArray<T> => arrayOf(toList(xs));
 
 const EMPTY_ROWS: IArray<ContactConstraint3D> = arrayOf<ContactConstraint3D>([]);
 
@@ -312,23 +302,16 @@ function makeRig(options: RigOptions): Rig {
   };
 }
 
-/** One fixed step of one rig, materialized. */
+/** One fixed step of one rig. */
 function stepRig(rig: Rig): void {
   const base = rig.warm ? rig.world : rig.world.WithConstraints(EMPTY_ROWS);
-  const next = base.StepBallScene(
+  rig.world = base.StepBallScene(
     rig.radii,
     rig.ground,
     GROUND_BODY,
     rig.friction,
     rig.restitution,
     rig.tolerance,
-  );
-  rig.world = new RigidWorld3D(
-    materialized(next.Bodies),
-    materialized(next.Constraints),
-    next.Gravity,
-    next.TimeStep,
-    next.Solver,
   );
 }
 
@@ -1316,9 +1299,7 @@ const friction = simScene({
         // the one thing a demo needs it for: putting one body back.
         rig.world = rig.world
           .WithBodies(
-            materialized(
-              bodyArray(rig.world.Bodies).ReplacedAt(1, ballBody({ center: start(i), radius, mass: 1 })),
-            ),
+            bodyArray(rig.world.Bodies).ReplacedAt(1, ballBody({ center: start(i), radius, mass: 1 })),
           )
           .WithConstraints(EMPTY_ROWS);
         respawns[i]++;
@@ -1494,7 +1475,7 @@ const impulse = simScene({
         updated = bodyArray(updated).ReplacedAt(i, body.ApplyImpulse(push, body.Center.Add(lever)));
         applied += push.Magnitude();
       }
-      rig.world = rig.world.WithBodies(materialized(updated));
+      rig.world = rig.world.WithBodies(updated);
       lastTotal = applied;
       blasts++;
     }
@@ -1618,12 +1599,10 @@ const narrowphase = stillScene({
     // resolve: with both bodies at rest every row asks for zero.
     const moving = toList(rig.world.Bodies)[2];
     rig.world = rig.world.WithBodies(
-      materialized(
-        bodyArray(rig.world.Bodies).ReplacedAt(
-          2,
-          moving.WithVelocity(
-            new SpatialVelocity3D(new Vector3D(0, 0, params.approach), new Vector3D(0, 0, 0)),
-          ),
+      bodyArray(rig.world.Bodies).ReplacedAt(
+        2,
+        moving.WithVelocity(
+          new SpatialVelocity3D(new Vector3D(0, 0, params.approach), new Vector3D(0, 0, 0)),
         ),
       ),
     );

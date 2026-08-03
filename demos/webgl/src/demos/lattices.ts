@@ -32,8 +32,8 @@
 //    because the cost IS the lesson.
 //  - `Struts()` and `Trimmed` are eager (the prelude's `FlatMap` materializes),
 //    so one call per build is held in a local rather than re-asked. `StrutRadii`
-//    and `Deformed` are `Map` and stay lazy, so a radius array read more than
-//    once is materialized first.
+//    and `Deformed` are `Map` views; the memoized `Arr` (plato-436) computes
+//    each element once however often they are re-read.
 //  - Struts are drawn as ONE `THREE.InstancedMesh` of cylinders, never one mesh
 //    per strut: a lattice here runs to several thousand segments.
 
@@ -198,9 +198,6 @@ const prelude = globalThis as unknown as {
 
 /** An `IArray<T>` over a plain array, for handing values back to the library. */
 const arrayOf = <T,>(xs: readonly T[]): IArray<T> => Intrinsics.Range(xs.length).Map(i => xs[i]);
-
-/** A lazily mapped array read once into a flat one — `StrutRadii` is a `Map`. */
-const materialize = <T,>(xs: IArray<T>): IArray<T> => arrayOf(toArray(xs));
 
 const struts = (xs: IArray<Line3D>): StrutArray => xs as StrutArray;
 
@@ -665,7 +662,7 @@ const tiling = sceneOf({
 
     const tiled = struts(lattice.Struts());
     const warp = warpOf(params.warp, params.strength);
-    const shown = warp === null ? tiled : struts(materialize(tiled.Deformed(warp)));
+    const shown = warp === null ? tiled : struts((tiled.Deformed(warp)));
     const segments = toArray(shown);
 
     const object = new THREE.Group();
@@ -826,7 +823,7 @@ const grading = sceneOf({
 
     const grade = gradingOf(params.field, params.scale);
     const range = new NumberInterval(params.thin, params.thick);
-    const radii = materialize(tiled.StrutRadii(grade.field, range));
+    const radii = (tiled.StrutRadii(grade.field, range));
     const values = toArray(radii);
     const observed = spanOf(values);
     const mean = values.reduce((acc, r) => acc + r, 0) / Math.max(1, values.length);
@@ -1133,11 +1130,9 @@ const surface = sceneOf({
     // The graded solid is the other ToSdf overload: one radius per strut, from a
     // radial grading, so the lattice thins towards the outside of the trim ball.
     const reach = new NumberInterval(params.trim, 0);
-    const radii = materialize(
-      kept.StrutRadii(
-        new ScalarFunctionField3D(p => reach.ParameterOf(p.Distance(ORIGIN))),
-        new NumberInterval(params.radius * 0.45, params.radius),
-      ),
+    const radii = kept.StrutRadii(
+      new ScalarFunctionField3D(p => reach.ParameterOf(p.Distance(ORIGIN))),
+      new NumberInterval(params.radius * 0.45, params.radius),
     );
     const gradedRadii = toArray(radii);
     const isGraded = params.graded >= 0.5;

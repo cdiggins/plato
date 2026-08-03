@@ -25,13 +25,12 @@
 // non-spinning camera; the scatter through a volume overrides it with the orbit
 // camera.
 //
-// COST. The readings are O(n^2), and Poisson-disk and blue-noise output arrives
-// as an `Append` chain whose element reads are O(depth), so every point set is
-// materialised through `fromArray(toArray(...))` before a reading touches it —
-// repacking, not recomputing — and the counts stay in the low hundreds. The
+// COST. The readings are O(n^2), so the counts stay in the low hundreds. The
 // closed-form families are O(1) per point and would be happy at thousands; they
 // are held to the same count so the comparisons are of the patterns and not of
-// their sizes.
+// their sizes. (Poisson-disk and blue-noise output arrives as an `Append`
+// chain; since plato-436 the emitted `Arr` memoizes, so the chain is walked
+// once and no materialisation pass is needed before the readings.)
 
 import * as THREE from 'three';
 import { mountDemo } from '../shared/ui.js';
@@ -162,13 +161,6 @@ function clampIndex(value: number, count: number): number {
 
 const UNIT = new Bounds2D(new Point2D(0, 0), new Point2D(1, 1));
 
-/** An `IArray` materialised into a plain-array one: repacking, not recomputing.
- *  The Poisson and blue-noise generators build with `Append`, whose chain costs
- *  O(depth) per element read, and every quality reading is O(n^2) reads. */
-function solid(points: IArray<Point2D>): IArray<Point2D> {
-  return fromArray(toArray(points));
-}
-
 // ---------------------------------------------------------------------------
 // The families
 //
@@ -276,7 +268,7 @@ const FAMILY_LABELS = FAMILIES.map(f => f.name);
 function familyPoints(index: number, count: number, seed: number): { family: Family; points: IArray<Point2D>; ms: number } {
   const family = FAMILIES[clampIndex(index, FAMILIES.length)];
   const started = performance.now();
-  const points = solid(family.points(count, seed));
+  const points = (family.points(count, seed));
   return { family, points, ms: performance.now() - started };
 }
 
@@ -1094,9 +1086,8 @@ const relaxation = sceneOf({
     'falling linearly to zero there, and every point moves from the SAME starting configuration, so a ' +
     'pass is a simultaneous step rather than a sweep and the answer does not depend on the storage ' +
     'order. Watch RelativeRadius climb: the library says Lloyd relaxation is not here and why, and this ' +
-    'is the cheap half of it that needs no assignment table. Each pass is O(n^2) through an Append ' +
-    'chain, so the demo materialises between passes — the passes are eager here for the same reason a ' +
-    'simulation fold has to be.',
+    'is the cheap half of it that needs no assignment table. Each pass is O(n^2), and the memoized ' +
+    'Arr (plato-436) keeps a chain of passes linear in the pass count.',
   plato: [
     'Bounds2D.RepelledPoints2D',
     'Bounds2D.RepelledPoint2D',
@@ -1124,17 +1115,16 @@ const relaxation = sceneOf({
     const reference = UNIT.ReferenceSpacing(count);
     const radius = reference * params.radius;
 
-    const start = solid(UNIT.JitteredGridPoints2D(new IntegerVector2(side, side), 1, seed));
+    const start = (UNIT.JitteredGridPoints2D(new IntegerVector2(side, side), 1, seed));
 
-    // One `RepelledPoints2D` per pass, each materialised. `RelaxedPoints2D` is
-    // the member that folds them, and the reading below checks that this loop is
-    // exactly it — but its intermediate arrays stay lazy Append chains, so the
-    // fold costs O(n^3) where the eager loop costs O(n^2) per pass.
+    // One `RepelledPoints2D` per pass, so the trails can show before and after.
+    // `RelaxedPoints2D` is the member that folds them, and the reading below
+    // checks that this loop is exactly it.
     const started = performance.now();
     let current = start;
     let threw: string | null = null;
     try {
-      for (let k = 0; k < passes; k++) current = solid(UNIT.RepelledPoints2D(current, radius, strength));
+      for (let k = 0; k < passes; k++) current = (UNIT.RepelledPoints2D(current, radius, strength));
     } catch (error) {
       threw = (error as Error).message;
     }
@@ -1179,32 +1169,23 @@ const relaxation = sceneOf({
         reading('RelativeMeanSpacing at pass 0', () => n3(UNIT.RelativeMeanSpacing(start))),
         reading(`RelativeMeanSpacing at pass ${passes}`, () => n3(UNIT.RelativeMeanSpacing(current))),
       );
-      // Proof that the eager loop is the library's own fold. Capped, because
-      // RelaxedPoints2D reads its own Append chains.
-      if (count <= 150 && passes <= 6) {
-        readings.push(
-          reading('RelaxedPoints2D agrees', () => {
-            const folded = solid(UNIT.RelaxedPoints2D(start, radius, strength, passes));
-            let worst = 0;
-            for (let i = 0; i < folded.Count(); i++) {
-              worst = Math.max(
-                worst,
-                Math.abs(folded.At(i).X - current.At(i).X),
-                Math.abs(folded.At(i).Y - current.At(i).Y),
-              );
-            }
-            return `largest coordinate difference ${worst.toExponential(1)}`;
-          }),
-        );
-      } else {
-        readings.push(
-          note(
-            'RelaxedPoints2D',
-            `not folded at this size — the member reads its own Append chains, which is O(n^3); ` +
-              `drop to 150 points and 6 passes to see the check`,
-          ),
-        );
-      }
+      // Proof that the per-pass loop is the library's own fold. The memoized
+      // Arr (plato-436) makes the fold linear in the pass count, so the check
+      // runs at every slider size.
+      readings.push(
+        reading('RelaxedPoints2D agrees', () => {
+          const folded = UNIT.RelaxedPoints2D(start, radius, strength, passes);
+          let worst = 0;
+          for (let i = 0; i < folded.Count(); i++) {
+            worst = Math.max(
+              worst,
+              Math.abs(folded.At(i).X - current.At(i).X),
+              Math.abs(folded.At(i).Y - current.At(i).Y),
+            );
+          }
+          return `largest coordinate difference ${worst.toExponential(1)}`;
+        }),
+      );
     }
     return { object, readings };
   },
@@ -1254,7 +1235,7 @@ const poissonGrid = sceneOf({
     const rows = UNIT.PoissonRows(radius);
 
     const started = performance.now();
-    const points = solid(UNIT.PoissonDiskPoints2D(radius, attempts, seed));
+    const points = (UNIT.PoissonDiskPoints2D(radius, attempts, seed));
     const ms = performance.now() - started;
 
     const tile = 1.7;

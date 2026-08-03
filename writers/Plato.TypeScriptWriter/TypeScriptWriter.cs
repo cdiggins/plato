@@ -383,8 +383,22 @@ export interface IArray3D<T> {
 
             WriteLine("export class Arr<T>");
             WriteStartBlock();
-            WriteLine("constructor(readonly _count: number, readonly _func: (i: number) => T) {}");
-            WriteLine("At(n: number): T { return this._func(n); }");
+            WriteLine("// Memoized view: each element is computed at most once (plato-436).");
+            WriteLine("// Plato values are never undefined, so undefined marks an empty slot.");
+            WriteLine("// Once every slot is filled the indexing function is released, so a");
+            WriteLine("// fully-read layer no longer pins the arrays its closure captured.");
+            WriteLine("private _cache?: T[];");
+            WriteLine("private _missing: number;");
+            WriteLine("constructor(readonly _count: number, private _func?: (i: number) => T) { this._missing = _count; }");
+            WriteLine("At(n: number): T {");
+            WriteLine("    const c = this._cache ?? (this._cache = new Array<T>(this._count));");
+            WriteLine("    let v = c[n];");
+            WriteLine("    if (v === undefined && this._func !== undefined) {");
+            WriteLine("        c[n] = v = this._func(n);");
+            WriteLine("        if (n >= 0 && n < this._count && --this._missing === 0) this._func = undefined;");
+            WriteLine("    }");
+            WriteLine("    return v as T;");
+            WriteLine("}");
             WriteLine("Count(): number { return this._count; }");
             WriteLine("Map<TR>(f: (x: T) => TR): IArray<TR> { return new Arr<TR>(this._count, i => f(this.At(i))); }");
             WriteLine("Reduce<TAcc>(init: TAcc, f: (acc: TAcc, x: T) => TAcc): TAcc {");
