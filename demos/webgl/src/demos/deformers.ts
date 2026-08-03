@@ -2,7 +2,7 @@
 //
 // Every warp here is a value of one of the catalog types in
 // `deformations.types.plato` (Twist3D, Bend3D, Taper3D, Shear3D, Spherify3D,
-// Shear2D, Taper2D, MappingDeformation2D/3D) and every point that moves is moved
+// Twist2D, Shear2D, Taper2D, MappingDeformation2D/3D) and every point that moves is moved
 // by the generated `Eval` body from `deformations.library.plato`. This file
 // builds the parameters, hands `Eval` to `PolygonMesh3D.Deform(mapping)` /
 // `Polygon2D.Deform(mapping)`, and repacks the result — it never writes a warp
@@ -13,16 +13,23 @@
 // `computeVertexNormals`, so the flat-shaded result is correct for free; there is
 // no analytic-Jacobian path in the library and none is faked here.
 //
-// Cost: `build` runs on every slider tick, so the subject mesh is memoized per
-// (seed, truncate rounds) and only the deform + repack is redone on a tick. The
-// detail slider is capped at three rounds of `Truncate`, which puts the largest
-// subject (the prism column) at 648 verts / 326 faces / 1292 triangles and every
-// other seed below that. `Truncate` is the subdivider rather than `Ambo` because
-// `Ambo` costs seconds past three rounds on the same seeds.
+// Cost. `build` runs on every slider tick, so the subject mesh is memoized per
+// (seed, truncate rounds) and a tick redoes only the deform and the repack.
+//
+// Two things set the cap. `Truncate` is the subdivider rather than `Ambo`
+// because `Ambo` is far more expensive on the same seeds — but `Truncate` is
+// itself quadratic in vertex count, and it runs about fifteen times slower in
+// the browser than under tsx, so the round that takes a second in a script is a
+// multi-second freeze on the page. Every seed therefore gets its own round cap,
+// chosen to land the subject near 216 vertices / ~430 triangles; the status line
+// reports the rounds actually used. Separately, every generated member returns a
+// lazily mapped `Positions`, so the memoized subject is read out into a flat
+// array once (see `subject`) — without that a tick at the cap costs seconds
+// rather than milliseconds, because `build` walks the chain three times.
 
 import * as THREE from 'three';
 import { mountDemo } from '../shared/ui.js';
-import { polygonMeshEdges, polygonMeshGeometry, point2D, toArray } from '../shared/mesh.js';
+import { fromArray, polygonMeshEdges, polygonMeshGeometry, point2D, toArray } from '../shared/mesh.js';
 import { edgeMaterial, palette, surfaceMaterial } from '../shared/viewer.js';
 import {
   Angle,
@@ -44,11 +51,13 @@ import {
   Spherify3D,
   Taper2D,
   Taper3D,
+  Twist2D,
   Twist3D,
   Vector2D,
   Vector3D,
 } from '../plato/plato.g.js';
 import type { Control, Demo, Params, Scene } from '../shared/demo.js';
+import type { ViewerOptions } from '../shared/viewer.js';
 
 // ---------------------------------------------------------------------------
 // Subject meshes
@@ -56,10 +65,27 @@ import type { Control, Demo, Params, Scene } from '../shared/demo.js';
 
 const SUBJECT_LABELS = [
   'Column (12-gon prism ▸ truncate)',
-  'Ball (cube ▸ truncate ▸ unit sphere)',
-  'Ball (icosahedron ▸ truncate ▸ unit sphere)',
-  'Faceted (cube ▸ truncate)',
+  'Capsule (cube ▸ truncate ▸ sphere ▸ ScaleY)',
+  'Capsule (icosahedron ▸ truncate ▸ sphere ▸ ScaleY)',
+  'Faceted (cube ▸ truncate ▸ ScaleY)',
 ];
+
+/**
+ * Each subject is stretched to roughly the same envelope — about a unit across,
+ * about three tall — so the camera framing and the slider ranges mean the same
+ * thing whichever one is picked. The prism is already that tall; the rest get
+ * there through the non-uniform `ScaleY`, whose factor differs because a
+ * truncated cube's extreme vertex sits at 1/sqrt(3) where a sphere's sits at 1.
+ */
+const SUBJECT_STRETCH = [1, 1.5, 1.5, 2.6];
+
+/**
+ * How many rounds of `Truncate` each seed can afford. `Truncate` is quadratic in
+ * vertex count, so the cap is per seed rather than global: the prism starts with
+ * 24 vertices and the cube with 8, and one more round on the prism costs an
+ * order of magnitude more than one more round on the cube for the same result.
+ */
+const SUBJECT_MAX_ROUNDS = [2, 3, 2, 3];
 
 /**
  * A column standing along world Y: the prism's own axis is its frame's Z, so the
@@ -101,15 +127,31 @@ const subjectCache = new Map<string, PolygonMesh3D>();
 /** The undeformed subject: a densely tessellated column or ball. */
 function subject(params: Params): PolygonMesh3D {
   const kind = clampIndex(params.subject, SUBJECT_LABELS.length);
-  const rounds = Math.max(1, Math.min(3, Math.round(params.detail ?? 2)));
+  const rounds = subjectRounds(params);
   const key = `${kind}:${rounds}`;
   let base = subjectCache.get(key);
   if (!base) {
     const t = truncated(kind, rounds);
-    base = kind === 1 || kind === 2 ? t.ProjectedToUnitSphere() : t;
+    const rounded = kind === 1 || kind === 2 ? t.ProjectedToUnitSphere() : t;
+    const stretch = SUBJECT_STRETCH[kind];
+    const built = stretch === 1 ? rounded : rounded.ScaleY(stretch);
+    // Every generated member above returns a lazily mapped `Positions`, so by the
+    // third `Truncate` a single `Positions.At(i)` walks a deep chain of Map and
+    // Concatenate views — and `build` walks all of them three times per tick
+    // (surface, edges, ghost). Reading the chain once into a flat array here,
+    // behind the memo, is what keeps a slider tick cheap; the faces need no such
+    // treatment, they are already flat enough to be free.
+    base = new PolygonMesh3D(fromArray(toArray(built.Positions)), built.Faces);
     subjectCache.set(key, base);
   }
   return base;
+}
+
+/** The rounds this subject will actually run, after its own affordability cap. */
+function subjectRounds(params: Params): number {
+  const kind = clampIndex(params.subject, SUBJECT_LABELS.length);
+  const asked = Math.max(1, Math.min(3, Math.round(params.detail ?? 2)));
+  return Math.min(asked, SUBJECT_MAX_ROUNDS[kind]);
 }
 
 /** A cheap ball, used as the wireframe indicator for the falloff sphere. */
@@ -146,14 +188,23 @@ const SUBJECT_MEMBERS = [
   'RegularPrism.ToPolygonMesh',
   'PolygonMesh3D.Truncate',
   'PolygonMesh3D.ProjectedToUnitSphere',
+  'PolygonMesh3D.ScaleY',
 ];
 
 const SUBJECT_CONTROLS: Control[] = [
   { key: 'subject', label: 'Subject', kind: 'select', options: SUBJECT_LABELS, def: 0 },
-  { key: 'detail', label: 'Truncate rounds', kind: 'slider', min: 1, max: 3, step: 1, def: 2 },
+  { key: 'detail', label: 'Truncate rounds (capped per subject)', kind: 'slider', min: 1, max: 3, step: 1, def: 3 },
   { key: 'edges', label: 'Show edges', kind: 'toggle', def: 1 },
   { key: 'ghost', label: 'Ghost the undeformed mesh', kind: 'toggle', def: 1 },
 ];
+
+/**
+ * What the last `build` measured, reported under the description. Set by the two
+ * build helpers and read back by each scene's `status`, which the shell calls
+ * straight after `build` on the same parameters.
+ */
+let lastStatus = '';
+const status = (): string => lastStatus;
 
 /**
  * Apply a point map with the generated `PolygonMesh3D.Deform` and repack it.
@@ -163,6 +214,20 @@ const SUBJECT_CONTROLS: Control[] = [
 function warped(params: Params, mapping: (p: Point3D) => Point3D): THREE.Object3D {
   const base = subject(params);
   const deformed = base.Deform(mapping);
+
+  let triangles = 0;
+  for (let f = 0; f < deformed.FaceCount(); f++) triangles += deformed.FaceArity(f) - 2;
+  let farthest = 0;
+  for (let i = 0; i < deformed.Positions.Count(); i++) {
+    farthest = Math.max(farthest, deformed.Positions.At(i).Distance(base.Positions.At(i)));
+  }
+  const asked = Math.max(1, Math.min(3, Math.round(params.detail ?? 2)));
+  const rounds = subjectRounds(params);
+  lastStatus =
+    `${deformed.VertexCount()} verts · ${deformed.FaceCount()} faces · ${triangles} tris` +
+    ` · truncate x${rounds}${rounds < asked ? ` (capped from ${asked})` : ''}` +
+    ` · farthest vertex moved ${farthest.toFixed(3)}`;
+
   const group = new THREE.Group();
   group.add(new THREE.Mesh(polygonMeshGeometry(deformed), surfaceMaterial()));
   if (params.edges) group.add(new THREE.LineSegments(polygonMeshEdges(deformed), edgeMaterial()));
@@ -173,14 +238,17 @@ function warped(params: Params, mapping: (p: Point3D) => Point3D): THREE.Object3
 // ---------------------------------------------------------------------------
 // Planar scenes: a lattice and a ring, both warped by an IDeformation2D
 //
-// The planar catalog also has Twist2D (the polar swirl), but it has no scene:
-// its generated `Eval` calls `Vector2D.Transform(Rotation2D)`, and the writer
-// kept only the `Transform(AffineTransform2D)` overload, so the Rotation2D it is
-// handed has no `Matrix` and the body throws on `matrix.Row1`. That is the same
-// dropped-overload gap `src/plato/array-ext.ts` patches for
-// `Transform(Quaternion)` on Vector3D / Point3D, one dimension down. Once the
-// prelude or the writer covers it, a Twist2D scene drops straight in here.
+// `Twist2D.Eval` reaches `Vector2D.Transform(Rotation2D)`, an overload the
+// writer drops; `src/plato/array-ext.ts` dispatches it, the same patch it
+// already carried for `Transform(Quaternion)` one dimension up.
 // ---------------------------------------------------------------------------
+
+/**
+ * The planar scenes get their own stage: an orthographic camera looking straight
+ * down -Z, which is what `Scene.viewer` exists for. The spatial scenes keep the
+ * page's perspective camera and its auto-spin.
+ */
+const PLANAR_VIEWER: ViewerOptions = { orthographic: true, grid: false, spin: false, distance: 7 };
 
 const PLANAR_CONTROLS: Control[] = [
   { key: 'lines', label: 'Lattice lines', kind: 'slider', min: 3, max: 15, step: 2, def: 9 },
@@ -189,6 +257,7 @@ const PLANAR_CONTROLS: Control[] = [
 
 const PLANAR_EXTENT = 1.6;
 const PLANAR_SAMPLES = 41;
+const RING_SIDES = 96;
 
 /** Grid lines + a regular ring, every sample pushed through the deformation's `Eval`. */
 function planar(params: Params, evaluate: (p: Point2D) => Point2D): THREE.Object3D {
@@ -220,10 +289,17 @@ function planar(params: Params, evaluate: (p: Point2D) => Point2D): THREE.Object
   grid.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   group.add(new THREE.LineSegments(grid, edgeMaterial(palette.line)));
 
+  // The unit ring doubles as a measurement: `Polygon2D.Area` on the warped ring
+  // against the same member on the original says what the map did to area.
+  const ring = new Polygon2D(new RegularPolygon(point2D(0, 0), 1, RING_SIDES, new Angle(0)).RegularPolygonVertices());
+  const warpedRing = ring.Deform(evaluate);
+  lastStatus =
+    `${2 * count} lattice lines · ${2 * count * PLANAR_SAMPLES} warped samples` +
+    ` · ring area ${warpedRing.Area().toFixed(3)} (was ${ring.Area().toFixed(3)})`;
+
   if (params.ring) {
-    const ring = new Polygon2D(new RegularPolygon(point2D(0, 0), 1, 96, new Angle(0)).RegularPolygonVertices());
     const loop: number[] = [];
-    for (const p of toArray(ring.Deform(evaluate).Points)) loop.push(p.X, p.Y, 0.001);
+    for (const p of toArray(warpedRing.Points)) loop.push(p.X, p.Y, 0.001);
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(loop, 3));
     group.add(new THREE.LineLoop(geometry, edgeMaterial(palette.accent)));
@@ -253,6 +329,7 @@ const scenes: Scene[] = [
       const twist = new Twist3D(originOn(a, params.origin), a, params.turns.Turns());
       return warped(params, p => twist.Eval(p));
     },
+    status,
   },
   {
     id: 'bend-3d',
@@ -276,6 +353,7 @@ const scenes: Scene[] = [
       const bend = new Bend3D(originOn(d, params.origin), a, d, params.curvature);
       return warped(params, p => bend.Eval(p));
     },
+    status,
   },
   {
     id: 'taper-3d',
@@ -294,6 +372,7 @@ const scenes: Scene[] = [
       const taper = new Taper3D(originOn(a, params.origin), a, params.rate);
       return warped(params, p => taper.Eval(p));
     },
+    status,
   },
   {
     id: 'shear-3d',
@@ -313,6 +392,7 @@ const scenes: Scene[] = [
       const shear = new Shear3D(originOn(a, params.origin), a, new Vector3D(params.rateX, 0, params.rateZ));
       return warped(params, p => shear.Eval(p));
     },
+    status,
   },
   {
     id: 'spherify-3d',
@@ -330,6 +410,7 @@ const scenes: Scene[] = [
       const spherify = new Spherify3D(new Point3D(0, params.centerY, 0), params.radius, params.strength);
       return warped(params, p => spherify.Eval(p));
     },
+    status,
   },
   {
     id: 'compose-3d',
@@ -366,6 +447,7 @@ const scenes: Scene[] = [
       const combined = params.alias === 0 ? first.Compose(second) : first.Multiply(second);
       return warped(params, p => combined.Eval(p));
     },
+    status,
   },
   {
     id: 'weighted-3d',
@@ -408,6 +490,26 @@ const scenes: Scene[] = [
       }
       return group;
     },
+    status,
+  },
+  {
+    id: 'twist-2d',
+    title: 'Twist2D (swirl)',
+    description:
+      'The polar twist: Twist2D rotates each point about Origin by AnglePerUnit times its distance from Origin, so the centre is pinned and the outside spins hardest. A rotation is rigid, so the ring keeps its area however hard you swirl it.',
+    plato: ['Twist2D.Eval', 'Polygon2D.Deform', 'Polygon2D.Area', 'RegularPolygon.RegularPolygonVertices', 'Number.Turns'],
+    controls: [
+      { key: 'turns', label: 'Angle per unit (turns)', kind: 'slider', min: -0.5, max: 0.5, step: 0.005, def: 0.2 },
+      { key: 'originX', label: 'Origin X', kind: 'slider', min: -1.5, max: 1.5, step: 0.05, def: 0 },
+      { key: 'originY', label: 'Origin Y', kind: 'slider', min: -1.5, max: 1.5, step: 0.05, def: 0 },
+      ...PLANAR_CONTROLS,
+    ],
+    viewer: PLANAR_VIEWER,
+    build: params => {
+      const swirl = new Twist2D(point2D(params.originX, params.originY), params.turns.Turns());
+      return planar(params, p => swirl.Eval(p));
+    },
+    status,
   },
   {
     id: 'shear-2d',
@@ -422,17 +524,19 @@ const scenes: Scene[] = [
       { key: 'origin', label: 'Origin along axis', kind: 'slider', min: -1.5, max: 1.5, step: 0.05, def: 0 },
       ...PLANAR_CONTROLS,
     ],
+    viewer: PLANAR_VIEWER,
     build: params => {
       const a = planarAxis(params.axis);
       const shear = new Shear2D(planarOrigin(a, params.origin), a, new Vector2D(params.rateX, params.rateY));
       return planar(params, p => shear.Eval(p));
     },
+    status,
   },
   {
     id: 'taper-2d',
     title: 'Taper2D',
     description:
-      'Taper2D scales the component perpendicular to Axis by (1 + Rate * t). On a lattice it reads as a wedge; the ring becomes a teardrop.',
+      'Taper2D scales the component perpendicular to Axis by (1 + Rate * t). On a lattice it reads as a wedge; the ring becomes a teardrop. The local area factor is that same (1 + Rate * t), so a ring centred on Origin keeps its area exactly — the gains on one side cancel the losses on the other. Drag Origin off centre and the status line shows the area move.',
     plato: ['Taper2D.Eval', 'Polygon2D.Deform', 'RegularPolygon.RegularPolygonVertices'],
     controls: [
       { key: 'rate', label: 'Rate', kind: 'slider', min: -0.9, max: 1.5, step: 0.01, def: 0.6 },
@@ -440,11 +544,13 @@ const scenes: Scene[] = [
       { key: 'origin', label: 'Origin along axis', kind: 'slider', min: -1.5, max: 1.5, step: 0.05, def: 0 },
       ...PLANAR_CONTROLS,
     ],
+    viewer: PLANAR_VIEWER,
     build: params => {
       const a = planarAxis(params.axis);
       const taper = new Taper2D(planarOrigin(a, params.origin), a, params.rate);
       return planar(params, p => taper.Eval(p));
     },
+    status,
   },
   {
     id: 'compose-2d',
@@ -466,6 +572,7 @@ const scenes: Scene[] = [
       { key: 'alias', label: 'Combine with', kind: 'select', options: ['Compose', 'Multiply (the * alias)'], def: 0 },
       ...PLANAR_CONTROLS,
     ],
+    viewer: PLANAR_VIEWER,
     build: params => {
       const xAxis = planarAxis(0);
       const shear = new Shear2D(point2D(0, 0), xAxis, new Vector2D(0, params.shearY));
@@ -477,6 +584,7 @@ const scenes: Scene[] = [
       const combined = params.alias === 0 ? first.Compose(second) : first.Multiply(second);
       return planar(params, p => combined.Eval(p));
     },
+    status,
   },
 ];
 
@@ -496,7 +604,6 @@ const demo: Demo = {
   scenes,
 };
 
-// Spin is off because the page mixes spatial and planar scenes: the shared
-// viewer auto-rotates about Y, which would swing the z = 0 planar scenes edge-on
-// and make them vanish. The orbit camera still works; drag to face the plane.
-mountDemo(demo, { distance: 8, grid: false, spin: false });
+// The page default is the spatial stage — perspective, auto-spinning until the
+// user drags. The planar scenes override it with `Scene.viewer`.
+mountDemo(demo, { distance: 8, grid: false });
