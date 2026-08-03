@@ -112,13 +112,22 @@ source named above it:
 | `Array3D<T>` has no runtime at all (`new` on a type-only interface) | The 3D array the voxel and sampled-field grids are built from |
 | Overloads are dropped ("Skipped: overload or duplicate member") | Runtime dispatch for `Transform(Quaternion)`, `Transform(Rotation2D)`, the scalar `NumberN.Multiply`, and the commuted `Multiply(Number, IScalable)` |
 | Extra arguments are dropped silently at the call site | The three-index `LatticeHash`, without which spatial noise is flat in z |
-| `Integer` division emitted as float division | Truncating `FaceCorner`, the marching-cubes corner offsets, `MakeArray3D`, `WorleyNeighbour` |
-| Sum types are C#-only in v1 (CHK320) | Tagged `PlaneRelation3D`, `NoiseBasis`, `WorleyDistance`, `WorleyFeature`, and the library functions that dispatch on them |
+| `Integer` division emitted as float division | `Arr.At` truncates its subscript, which repairs the whole divide-then-index family at one choke point; `RadicalInverse` and the other places where the quotient is passed on rather than subscripted are restated individually |
+| Sum types are C#-only in v1 (CHK320) | Tagged `PlaneRelation3D`, `NoiseBasis`, `WorleyDistance`, `WorleyFeature`, `TpmsFamily`, `PlaneCondition`, `LaplacianWeighting`, `SubdivisionScheme`, `MaterialCombine`, `BodyMotion`, `BeamRestraint`, and the library functions that dispatch on them. `BeamLoad` needs its own shim: it is the one sum here whose cases carry fields |
 | Record returns written as tuple literals | Slot names `Hit` / `Point` / `Parameter` on `Tuple3`, for `PlaneHit3D` |
-| `IArithmetic` obligations on the native number mapping | `Zero`, `One`, `Half`, and the `Number.Pi` / `Epsilon` / `MinValue` / `MaxValue` constants |
+| `IArithmetic` obligations on the native number mapping | `Zero`, `One`, `Half`, and the `Number` constants — **every one except `Pi` was called and defined nowhere**. `Tau` alone has seventeen call sites and is what `Angle.Turns`, `TpmsFrequency` and every periodic sampler go through |
+| `Buffer<T>` and `List<T>` have no runtime at all | Both, on `globalThis`. Node's own `Buffer` statics are copied onto the shim so `Buffer.from` / `alloc` / `isBuffer` keep working; only the deprecated `new Buffer(n)` form changes meaning |
+| The array-receiver surfaces of the six 2026-08-03 tracks are wholly unemitted | `ReplacedAt` (without which no rigid-body step runs), the finite-element `System*` and load-scatter helpers, the lattice trimming/grading/SDF surface, the collision manifold and warm-start helpers, and the remeshing and cloth kernels |
+| Dropped overloads that are fatal rather than inconvenient | `Quaternion.Multiply(Quaternion)` — the Hamilton product, without which orientation integration puts a quaternion in each component; `Point2D/3D.Subtract(Point)`, which blocks the mass-spring cloth solver; `Sphere.Collide(Plane)`, where only ball-vs-ball survived so a plane or box argument silently ran the wrong body |
 
 Each entry is a writer gap, not a design choice — the prelude shrinks as the
 writer grows, and `tracker/issues/plato-419.md` is where they are catalogued.
+
+**Write folds eagerly.** The simulation folds rebuild an array per step and read
+two elements of the previous array per step, so a lazily-evaluated *n*-step fold
+costs 2ⁿ to read one element — a hang, not a slow path. The prelude's own folds
+are eager for that reason; a fold written inside a demo's `tick` must materialize
+each step too.
 `npm run smoke` is what tells you which side changed: it checks values the Plato
 source fixes (a truncated icosahedron has 32 faces, a unit square has area 4, a
 de Casteljau evaluation at t = 0 is the first control point, a marched unit
