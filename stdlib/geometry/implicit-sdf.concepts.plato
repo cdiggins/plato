@@ -8,6 +8,31 @@
 // The concrete types implementing these interfaces are declared in
 // `implicit-sdf.types.plato`.
 //
+// Distance fidelity — what a returned value MEANS. There are three cases, and
+// which one a field returns decides whether a sphere tracer is correct:
+//
+//  - EXACT: the value is the true signed distance, so the gradient has unit
+//    length almost everywhere (the eikonal property). Marching takes maximal
+//    steps, `Offset` gives the true offset surface, and the unit gradient is
+//    the true surface normal.
+//  - LOWER BOUND: the value never exceeds the true distance. Marching still
+//    converges, in shorter steps; offsets and normals are wrong, but no
+//    surface is stepped over.
+//  - NOT A BOUND: the value may EXCEED the true distance, so a sphere tracer
+//    stepping by it steps past the surface and tunnels through it. That is a
+//    correctness failure, not a quality one. A field that is k-Lipschitz for a
+//    known k greater than one is a lower bound again once divided by k.
+//
+// Fidelity is a property of a VALUE's construction history, not of a type — one
+// `FunctionSdf3D` holds an exact sphere and another holds a twisted
+// approximation of one — so no interface here records it. Every primitive and
+// operator in `implicit-sdf.library.plato` and `fields-implicits.library.plato`
+// says which of the three it returns, in those words, and `EikonalResidualAt`
+// measures the departure from exact where the claim is not trusted. Those claims
+// describe the EXTERIOR, where marching runs; inside a Min or Max combination
+// the value is the depth below the nearest operand surface, which is shallower
+// than the depth below the combined one.
+//
 // Unbounded vs bounded: `ISignedDistanceField2D/3D` are pure distance oracles
 // with no finite domain. `IBoundedSignedDistanceField2D/3D` add a conservative
 // AABB (`IBounded2D/3D`) for culling and acceleration; `DistanceAt` /
@@ -22,20 +47,20 @@
 // `IDifferentiableScalarField2D/3D` (`fields.concepts.plato`), so every helper
 // derived from a gradient there — `SurfaceNormalAt`, `BoundaryNormalAt`,
 // `SlopeAt` — resolves against an SDF that reports one. Reporting a gradient is
-// a separate claim from reporting a distance: a field whose values are only
-// conservative lower bounds still has a gradient, but it is not the surface
-// normal.
+// a separate claim from reporting a distance: a field whose values are only a
+// lower bound still has a gradient, but it is not the surface normal.
 
 // A planar scalar field whose value is the signed distance to a boundary
-// curve: negative inside, zero on the boundary, positive outside. Values are
-// exact distances or conservative lower bounds of them.
+// curve: negative inside, zero on the boundary, positive outside. The value may
+// be exact, a lower bound, or not a bound at all; which one is stated per
+// operation and never carried by the type (fidelity, above).
 interface ISignedDistanceField2D
     inherits IScalarField2D
 { }
 
 // A spatial scalar field whose value is the signed distance to a surface:
-// negative inside, zero on the surface, positive outside. Values are exact
-// distances or conservative lower bounds of them.
+// negative inside, zero on the surface, positive outside. The value may be
+// exact, a lower bound, or not a bound at all (fidelity, above).
 interface ISignedDistanceField3D
     inherits IScalarField3D
 { }

@@ -176,7 +176,7 @@ library FieldsImplicits
         => self.GradientAt(point).Normalize.Negative;
 
     // The unit outward normal to the level curve through the point: the unit
-    // gradient. For a signed distance field this is the boundary normal.
+    // gradient. For an EXACT signed distance field this is the boundary normal.
     // Precondition: the gradient is non-zero at the point.
     BoundaryNormalAt(self: IDifferentiableScalarField2D, point: Point2D): Vector2D
         => self.SteepestAscentDirectionAt(point);
@@ -205,8 +205,10 @@ library FieldsImplicits
     SteepestDescentDirectionAt(self: IDifferentiableScalarField3D, point: Point3D): Vector3D
         => self.GradientAt(point).Normalize.Negative;
 
-    // The outward surface normal at the point: the unit gradient. Exact for a
-    // signed distance field. Precondition: the gradient is non-zero at the point.
+    // The outward surface normal at the point: the unit gradient. The true normal
+    // only for an EXACT signed distance field; a field that merely bounds the
+    // distance reports a direction that is not it.
+    // Precondition: the gradient is non-zero at the point.
     SurfaceNormalAt(self: IDifferentiableScalarField3D, point: Point3D): Vector3D
         => self.SteepestAscentDirectionAt(point);
 
@@ -532,53 +534,63 @@ library FieldsImplicits
     // # Constructive solid geometry on distance fields
     //
     // SDF convention: union is the pointwise minimum, intersection the maximum,
-    // difference the left field against the negated right. Results are exact for
-    // union and bounds elsewhere, which is the standard SDF caveat
-    // (https://en.wikipedia.org/wiki/Constructive_solid_geometry).
+    // difference the left field against the negated right
+    // (https://en.wikipedia.org/wiki/Constructive_solid_geometry). Fidelity
+    // (`implicit-sdf.concepts.plato`), for exact operands: union is exact,
+    // everything else here is a lower bound. Nothing in this section can turn a
+    // bound into a non-bound.
 
-    // The union of two planar distance fields: the pointwise minimum.
+    // The union of two planar distance fields: the pointwise minimum. Exact.
     Union(a: ScalarFunctionField2D, b: ScalarFunctionField2D): ScalarFunctionField2D
         => a.Combine(b, (x, y) => x.Min(y));
 
-    // The union of two spatial distance fields: the pointwise minimum.
+    // The union of two spatial distance fields: the pointwise minimum. Exact.
     Union(a: ScalarFunctionField3D, b: ScalarFunctionField3D): ScalarFunctionField3D
         => a.Combine(b, (x, y) => x.Min(y));
 
-    // The intersection of two planar distance fields: the pointwise maximum.
+    // The intersection of two planar distance fields: the pointwise maximum. A
+    // lower bound.
     Intersection(a: ScalarFunctionField2D, b: ScalarFunctionField2D): ScalarFunctionField2D
         => a.Combine(b, (x, y) => x.Max(y));
 
-    // The intersection of two spatial distance fields: the pointwise maximum.
+    // The intersection of two spatial distance fields: the pointwise maximum. A
+    // lower bound.
     Intersection(a: ScalarFunctionField3D, b: ScalarFunctionField3D): ScalarFunctionField3D
         => a.Combine(b, (x, y) => x.Max(y));
 
     // The first field with the second carved out of it: a against the negated b.
+    // A lower bound.
     Difference(a: ScalarFunctionField2D, b: ScalarFunctionField2D): ScalarFunctionField2D
         => a.Combine(b, (x, y) => x.Max(y.Negative));
 
     // The first field with the second carved out of it: a against the negated b.
+    // A lower bound.
     Difference(a: ScalarFunctionField3D, b: ScalarFunctionField3D): ScalarFunctionField3D
         => a.Combine(b, (x, y) => x.Max(y.Negative));
 
     // The union of two spatial distance fields blended over blendRadius: the
-    // polynomial smooth minimum. Precondition: blendRadius is positive.
+    // polynomial smooth minimum. A lower bound.
+    // Precondition: blendRadius is positive.
     SmoothUnion(a: ScalarFunctionField3D, b: ScalarFunctionField3D, blendRadius: Number): ScalarFunctionField3D
         => a.Combine(b, (x, y) => SmoothUnionDistance(x, y, blendRadius));
 
     // The field grown (positive amount) or shrunk (negative amount) by a constant
-    // distance: the offset surface of a distance field.
+    // distance: the offset surface of a distance field. Exact; at worst a lower
+    // bound where a negative amount erodes a feature away entirely.
     Offset(self: ScalarFunctionField2D, amount: Number): ScalarFunctionField2D
         => self.MapValue(x => x - amount);
 
     // The field grown (positive amount) or shrunk (negative amount) by a constant.
+    // Exact, with the same erosion caveat as the planar form.
     Offset(self: ScalarFunctionField3D, amount: Number): ScalarFunctionField3D
         => self.MapValue(x => x - amount);
 
-    // The complement of a distance field: inside and outside swapped.
+    // The complement of a distance field: inside and outside swapped. Exact — only
+    // the sign changes.
     Complement(self: ScalarFunctionField2D): ScalarFunctionField2D
         => self.MapValue(x => x.Negative);
 
-    // The complement of a distance field: inside and outside swapped.
+    // The complement of a distance field: inside and outside swapped. Exact.
     Complement(self: ScalarFunctionField3D): ScalarFunctionField3D
         => self.MapValue(x => x.Negative);
 
@@ -695,6 +707,11 @@ library FieldsImplicits
     // implementor, and the CSG algebra closed over each form — SDF booleans are
     // min/max on the stored distance, region booleans are the Boolean connectives
     // on the stored predicate.
+    //
+    // Every SDF operator here defers to the matching `*Distance` kernel in
+    // `implicit-sdf.library.plato` and inherits the fidelity claim stated there —
+    // exact, a lower bound, or not a bound (`implicit-sdf.concepts.plato`). A
+    // region or volume operator carries no distance and so no such claim.
 
     // The stored distance function applied to the position.
     Eval(self: FunctionSdf2D, point: Point2D): Number
@@ -732,46 +749,49 @@ library FieldsImplicits
     ToVolume(self: ISignedDistanceField3D): FunctionVolume3D
         => FunctionVolume3D(p => self.Eval(p) < 0.0);
 
-    // The union of two planar SDFs: the pointwise minimum distance.
+    // The union of two planar SDFs: the pointwise minimum distance. Exact.
     Union(a: FunctionSdf2D, b: FunctionSdf2D): FunctionSdf2D
         => FunctionSdf2D(p => a.Eval(p).Min(b.Eval(p)));
 
-    // The union of two spatial SDFs: the pointwise minimum distance.
+    // The union of two spatial SDFs: the pointwise minimum distance. Exact.
     Union(a: FunctionSdf3D, b: FunctionSdf3D): FunctionSdf3D
         => FunctionSdf3D(p => a.Eval(p).Min(b.Eval(p)));
 
     // The intersection of two planar SDFs: the pointwise maximum distance. Exact
-    // only near the surviving surface; elsewhere a conservative bound.
+    // only near the surviving surface; elsewhere a lower bound.
     Intersection(a: FunctionSdf2D, b: FunctionSdf2D): FunctionSdf2D
         => FunctionSdf2D(p => a.Eval(p).Max(b.Eval(p)));
 
-    // The intersection of two spatial SDFs: the pointwise maximum distance.
+    // The intersection of two spatial SDFs: the pointwise maximum distance. A
+    // lower bound, exact only near the surviving surface.
     Intersection(a: FunctionSdf3D, b: FunctionSdf3D): FunctionSdf3D
         => FunctionSdf3D(p => a.Eval(p).Max(b.Eval(p)));
 
-    // The first shape with the second carved out of it.
+    // The first shape with the second carved out of it. A lower bound.
     Difference(a: FunctionSdf2D, b: FunctionSdf2D): FunctionSdf2D
         => FunctionSdf2D(p => a.Eval(p).Max(b.Eval(p).Negative));
 
-    // The first shape with the second carved out of it.
+    // The first shape with the second carved out of it. A lower bound.
     Difference(a: FunctionSdf3D, b: FunctionSdf3D): FunctionSdf3D
         => FunctionSdf3D(p => a.Eval(p).Max(b.Eval(p).Negative));
 
-    // Everything the planar shape is not: inside and outside exchanged. Carries no
-    // bounded form — the complement of a bounded region is unbounded.
+    // Everything the planar shape is not: inside and outside exchanged. Exact.
+    // Carries no bounded form — the complement of a bounded region is unbounded.
     Complement(self: FunctionSdf2D): FunctionSdf2D
         => FunctionSdf2D(p => ComplementDistance(self.Eval(p)));
 
-    // Everything the spatial shape is not: inside and outside exchanged.
+    // Everything the spatial shape is not: inside and outside exchanged. Exact.
     Complement(self: FunctionSdf3D): FunctionSdf3D
         => FunctionSdf3D(p => ComplementDistance(self.Eval(p)));
 
-    // A linear morph from the first planar shape to the second.
+    // A linear morph from the first planar shape to the second. A lower
+    // bound, exact only where the two operands agree.
     // Precondition: t lies in [0, 1].
     Morph(a: FunctionSdf2D, b: FunctionSdf2D, t: Number): FunctionSdf2D
         => FunctionSdf2D(p => MorphDistance(a.Eval(p), b.Eval(p), t));
 
-    // A linear morph from the first spatial shape to the second.
+    // A linear morph from the first spatial shape to the second. A lower
+    // bound, exact only where the two operands agree.
     // Precondition: t lies in [0, 1].
     Morph(a: FunctionSdf3D, b: FunctionSdf3D, t: Number): FunctionSdf3D
         => FunctionSdf3D(p => MorphDistance(a.Eval(p), b.Eval(p), t));
@@ -846,27 +866,32 @@ library FieldsImplicits
         => FunctionSdf3D(p => SmoothDifferenceDistance(a.Eval(p), b.Eval(p), blendRadius));
 
     // The shape grown (positive amount) or shrunk (negative amount) by a constant
-    // distance: the offset surface. Rounds convex edges by amount.
+    // distance: the offset surface. Rounds convex edges by amount. Exact; at worst
+    // a lower bound where a negative amount erodes a feature away entirely.
     Offset(self: FunctionSdf2D, amount: Number): FunctionSdf2D
         => FunctionSdf2D(p => self.Eval(p) - amount);
 
-    // The shape grown or shrunk by a constant distance: the offset surface.
+    // The shape grown or shrunk by a constant distance: the offset surface. Exact,
+    // with the same erosion caveat as the planar form.
     Offset(self: FunctionSdf3D, amount: Number): FunctionSdf3D
         => FunctionSdf3D(p => self.Eval(p) - amount);
 
     // The outline of a planar shape: the band within half of thickness on either
-    // side of its boundary curve. Precondition: thickness is positive.
+    // side of its boundary curve. Exact. Precondition: thickness is positive.
     Shell(self: FunctionSdf2D, thickness: Number): FunctionSdf2D
         => FunctionSdf2D(p => self.Eval(p).Abs - thickness * 0.5);
 
     // The shell of a shape: the region within half of thickness on either side of
-    // its surface. Precondition: thickness is positive.
+    // its surface. Exact. Precondition: thickness is positive.
     Shell(self: FunctionSdf3D, thickness: Number): FunctionSdf3D
         => FunctionSdf3D(p => self.Eval(p).Abs - thickness * 0.5);
 
     // The shape sampled at a warped position: bending, twisting, tiling, and
-    // instancing are all domain warps. Distances are bounds unless f is a rigid
-    // motion, in which case they stay exact.
+    // instancing are all domain warps. Exact when f is a rigid motion, and a lower
+    // bound when f is a contraction. Any f that STRETCHES — a twist, a bend, a
+    // non-uniform scale — makes the result exceed the true distance, which is not
+    // a bound at all and tunnels a sphere tracer; divide by f's Lipschitz constant
+    // to recover a lower bound.
     MapDomain(self: FunctionSdf3D, f: Function1<Point3D, Point3D>): FunctionSdf3D
         => FunctionSdf3D(p => self.Eval(f(p)));
 
@@ -915,7 +940,10 @@ library FieldsImplicits
     // These bodies hold the lambda that the primitive bodies in
     // `implicit-sdf.library.plato` deliberately do not: each `ToSdf` closes over its
     // shape and defers to the matching closed-form primitive, which is what keeps
-    // the primitives portable and the placement in one place.
+    // the primitives portable and the placement in one place. Fidelity follows from
+    // that: every field here is EXACT (`implicit-sdf.concepts.plato`), except the
+    // quad patch in space, which is exact only while its four corners are coplanar
+    // and not a bound at all once they are not.
     //
     // Read the doc comment for what the sign means, because it differs by shape:
     //

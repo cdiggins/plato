@@ -381,9 +381,11 @@ library ImplicitSdf
 
     // How far the field departs from being an exact distance at this point. An
     // exact signed distance field satisfies the eikonal equation, so its gradient
-    // has unit length; a field that only lower-bounds the distance does not. Zero
-    // means exact here, and larger values mean a raymarcher will take shorter
-    // steps than the geometry requires.
+    // has unit length; a field that is only a lower bound, or not a bound at all,
+    // does not. Zero means exact here. The residual is unsigned, so it reports the
+    // departure without saying which side: a gradient shorter than unit makes a
+    // raymarcher take shorter steps than the geometry requires, a longer one is
+    // the field over-estimating distance and about to tunnel.
     // (https://en.wikipedia.org/wiki/Eikonal_equation)
     EikonalResidualAt(self: IDifferentiableScalarField2D, point: Point2D): Number
         => (self.GradientAt(point).Magnitude - 1.0).Abs;
@@ -719,7 +721,7 @@ library ImplicitSdf
         return radius.Negative.Min(a.Max(b)) + corner.Magnitude;
     }
 
-    // The first shape with the second subtracted, the cut filleted by an exact arc.
+    // The first shape with the second subtracted, the cut filleted by a true arc.
     // Precondition: radius is positive.
     CircularDifferenceDistance(a: Number, b: Number, radius: Number): Number
         => CircularIntersectionDistance(a, b.Negative, radius);
@@ -728,7 +730,8 @@ library ImplicitSdf
     // SmoothUnionDistance this operator is ASSOCIATIVE: blending three or more shapes
     // gives the same result in any order, where the polynomial form's answer depends
     // on how the operands were parenthesized. That is what it buys for the price of
-    // two exponentials and a logarithm. Precondition: blendRadius is positive.
+    // two exponentials and a logarithm. A lower bound, like the polynomial form:
+    // its operand weights sum to one. Precondition: blendRadius is positive.
     // (https://iquilezles.org/articles/smin/)
     ExponentialSmoothUnionDistance(a: Number, b: Number, blendRadius: Number): Number
         => ((a.Negative / blendRadius).Exp + (b.Negative / blendRadius).Exp).NaturalLog
@@ -739,7 +742,9 @@ library ImplicitSdf
     //
     // Operators whose result is a feature running ALONG the curve where two shapes
     // meet, rather than a modified version of either. All four take the second shape
-    // as a cutting or guiding surface, not as a solid to be merged.
+    // as a cutting or guiding surface, not as a solid to be merged. Fidelity is the
+    // chamfer family's above: a lower bound where the two surfaces cross at a right
+    // angle or near it, and not a bound as they approach parallel.
 
     // A rounded pipe of the given radius running along the curve where the two
     // surfaces meet. (hg_sdf: fOpPipe.)
@@ -775,8 +780,8 @@ library ImplicitSdf
     // The extruded distance: a planar shape swept along Z from -halfHeight to
     // +halfHeight. planarDistance is the source's distance at (p.X, p.Y) and z is
     // p.Z. Exact wherever the planar distance is, except in the wedge outside a rim
-    // where the wall and cap meet, which under-estimates slightly — the two
-    // constraints are combined, not measured jointly. (IQ: opExtrusion.)
+    // where the wall and cap meet, which is a lower bound — the two constraints are
+    // combined, not measured jointly. (IQ: opExtrusion.)
     ExtrudedDistance(planarDistance: Number, z: Number, halfHeight: Number): Number {
         var w = Vector2D(planarDistance, z.Abs - halfHeight);
         return w.X.Max(w.Y).Min(0.0)
@@ -786,13 +791,16 @@ library ImplicitSdf
     // The planar position at which to sample a source being revolved about the Y
     // axis: the distance from the axis, pulled in by offset, becomes the source's X
     // and the height becomes its Y. An offset of zero revolves the shape about its
-    // own edge; a positive offset sweeps it around a ring of that radius. Exact.
+    // own edge; a positive offset sweeps it around a ring of that radius. Exact
+    // when the source is: the map is a rotation of the sampling plane.
     // (IQ: opRevolution.)
     RevolvedPoint(p: Point3D, offset: Number): Point2D
         => Point2D(Vector2D(p.X, p.Z).Magnitude - offset, p.Y);
 
     // The position folded onto the +X half-space. A source sampled there is mirrored
-    // about the YZ plane, and only its +X half is ever seen. Exact. (IQ: opSymX.)
+    // about the YZ plane, and only its +X half is ever seen. Exact when the source
+    // is — a reflection preserves distance, and the folded copy is always the
+    // nearer one. Shared by every Mirrored* fold. (IQ: opSymX.)
     MirroredX(p: Point3D): Point3D
         => Point3D(p.X.Abs, p.Y, p.Z);
 
@@ -832,14 +840,14 @@ library ImplicitSdf
     // `fields-implicits.library.plato`, never inside these bodies.
 
     // The signed distance from a point to a sphere of the given radius centred at
-    // the origin. (IQ: sdSphere.)
+    // the origin. Exact. (IQ: sdSphere.)
     DistanceToSphere(p: Point3D, radius: Number): Number
         => p.PositionVector.Magnitude - radius;
 
     // The signed distance from a point to an axis-aligned box with the given
     // half-extents, centred at the origin. The exterior part is the length of the
     // positive per-axis surface offsets, the interior part the largest (least
-    // negative) offset. (IQ: sdBox.)
+    // negative) offset. Exact. (IQ: sdBox.)
     DistanceToBox(p: Point3D, halfExtents: Vector3D): Number {
         var q = Vector3D(
             p.X.Abs - halfExtents.X,
@@ -851,7 +859,7 @@ library ImplicitSdf
 
     // The signed distance from a point to an axis-aligned box with the given
     // half-extents whose edges are rounded by radius. The rounding grows the box,
-    // so halfExtents describes the box before rounding. (IQ: sdRoundBox.)
+    // so halfExtents describes the box before rounding. Exact. (IQ: sdRoundBox.)
     DistanceToRoundedBox(p: Point3D, halfExtents: Vector3D, radius: Number): Number {
         var q = Vector3D(
             p.X.Abs - halfExtents.X + radius,
@@ -864,21 +872,21 @@ library ImplicitSdf
 
     // The signed distance from a point to a torus lying in the XZ plane, centred
     // at the origin: majorRadius is the ring radius, tubeRadius the tube radius.
-    // (IQ: sdTorus.)
+    // Exact. (IQ: sdTorus.)
     DistanceToTorus(p: Point3D, majorRadius: Number, tubeRadius: Number): Number {
         var q = Vector2D(Vector2D(p.X, p.Z).Magnitude - majorRadius, p.Y);
         return q.Magnitude - tubeRadius;
     }
 
     // The signed distance from a point to a capsule running from the origin to
-    // (0, height, 0) with the given radius. (IQ: sdVerticalCapsule.)
+    // (0, height, 0) with the given radius. Exact. (IQ: sdVerticalCapsule.)
     DistanceToVerticalCapsule(p: Point3D, height: Number, radius: Number): Number {
         var y = p.Y - p.Y.Clamp(0.0, height);
         return Vector3D(p.X, y, p.Z).Magnitude - radius;
     }
 
     // The signed distance from a point to a cylinder centred at the origin with
-    // its axis along Y, capped flat at plus or minus halfHeight.
+    // its axis along Y, capped flat at plus or minus halfHeight. Exact.
     // (IQ: sdCappedCylinder.)
     DistanceToCappedCylinder(p: Point3D, halfHeight: Number, radius: Number): Number {
         var d = Vector2D(
@@ -889,7 +897,7 @@ library ImplicitSdf
     }
 
     // The signed distance from a point to the plane with the given unit normal at
-    // signed offset from the origin. Precondition: normal has unit length.
+    // signed offset from the origin. Exact. Precondition: normal has unit length.
     // (IQ: sdPlane.)
     DistanceToPlane(p: Point3D, normal: Vector3D, offset: Number): Number
         => p.PositionVector.Dot(normal) + offset;
@@ -935,11 +943,11 @@ library ImplicitSdf
         return toCap.LengthSquared.Min(toSide.LengthSquared).Sqrt * (inside ? -1.0 : 1.0);
     }
 
-    // A bound on the signed distance from a point to an axis-aligned ellipsoid with
-    // the given semi-axis radii, centred at the origin. NOT exact: an ellipsoid has
-    // no closed-form signed distance, and this under-estimates, which keeps it safe
-    // for sphere tracing at the cost of shorter steps. Precondition: every radius is
-    // positive, and p is not the centre. (IQ: sdEllipsoid.)
+    // The signed distance from a point to an axis-aligned ellipsoid with the given
+    // semi-axis radii, centred at the origin. A LOWER BOUND, not exact: an
+    // ellipsoid has no closed-form signed distance, and this under-estimates, which
+    // keeps it safe for sphere tracing at the cost of shorter steps. Precondition:
+    // every radius is positive, and p is not the centre. (IQ: sdEllipsoid.)
     DistanceToEllipsoid(p: Point3D, radii: Vector3D): Number {
         var scaled = Vector3D(p.X / radii.X, p.Y / radii.Y, p.Z / radii.Z).Magnitude;
         var gradient = Vector3D(
@@ -968,7 +976,7 @@ library ImplicitSdf
     // The unsigned distance from a point to the triangle patch with the given
     // vertices. Zero on the patch, positive everywhere else; a degenerate
     // (collinear) triangle has a zero normal, which fails the inside test and leaves
-    // the edge branch — the right answer for a shape that is a segment.
+    // the edge branch — the right answer for a shape that is a segment. Exact.
     // (IQ: udTriangle.)
     UnsignedDistanceToTriangle(p: Point3D, a: Point3D, b: Point3D, c: Point3D): Number {
         var ba = a.Between(b);
@@ -989,10 +997,10 @@ library ImplicitSdf
     }
 
     // The unsigned distance from a point to the quadrilateral patch with the given
-    // vertices in ring order. Exact for a planar quad; for a non-planar one the
-    // plane branch measures against the plane through A, B and D, so prefer the two
-    // triangles of the patch's triangulation when the corners are not coplanar.
-    // (IQ: udQuad.)
+    // vertices in ring order. Exact for a planar quad. For a non-planar one the
+    // plane branch measures against the plane through A, B and D, which the fourth
+    // corner has left — that is NOT a bound, so prefer the two triangles of the
+    // patch's triangulation when the corners are not coplanar. (IQ: udQuad.)
     UnsignedDistanceToQuad(p: Point3D, a: Point3D, b: Point3D, c: Point3D, d: Point3D): Number {
         var ba = a.Between(b);
         var cb = b.Between(c);
@@ -1032,13 +1040,13 @@ library ImplicitSdf
     // is why there is no separate planar capped-cylinder form.
 
     // The signed distance from a point to a circle of the given radius centred at
-    // the origin. (IQ: sdCircle.)
+    // the origin. Exact. (IQ: sdCircle.)
     DistanceToCircle(p: Point2D, radius: Number): Number
         => p.PositionVector.Magnitude - radius;
 
     // The signed distance from a point to an axis-aligned rectangle with the given
     // half-extents, centred at the origin. Exterior is the length of the positive
-    // per-axis offsets, interior the least negative one. (IQ: sdBox.)
+    // per-axis offsets, interior the least negative one. Exact. (IQ: sdBox.)
     DistanceToBox(p: Point2D, halfExtents: Vector2D): Number {
         var q = Vector2D(p.X.Abs - halfExtents.X, p.Y.Abs - halfExtents.Y);
         return Vector2D(q.X.Max(0.0), q.Y.Max(0.0)).Magnitude
@@ -1047,7 +1055,7 @@ library ImplicitSdf
 
     // The signed distance from a point to an axis-aligned rectangle whose corners
     // are rounded by radius. As in the spatial form, halfExtents describes the
-    // rectangle before rounding. (IQ: sdRoundedBox.)
+    // rectangle before rounding. Exact. (IQ: sdRoundedBox.)
     DistanceToRoundedBox(p: Point2D, halfExtents: Vector2D, radius: Number): Number {
         var q = Vector2D(
             p.X.Abs - halfExtents.X + radius,
@@ -1059,18 +1067,19 @@ library ImplicitSdf
 
     // The signed distance from a point to a ring centred at the origin: the circle
     // of the given radius thickened by half of thickness on each side. The planar
-    // counterpart of the torus. (IQ: sdAnnulus.)
+    // counterpart of the torus. Exact. (IQ: sdAnnulus.)
     DistanceToRing(p: Point2D, radius: Number, thickness: Number): Number
         => (p.PositionVector.Magnitude - radius).Abs - thickness * 0.5;
 
     // The signed distance from a point to a planar capsule: the segment from a to b
-    // thickened by radius. (IQ: sdSegment.)
+    // thickened by radius. Exact. (IQ: sdSegment.)
     DistanceToCapsule(p: Point2D, a: Point2D, b: Point2D, radius: Number): Number
         => DistanceToSegment(a, b, p) - radius;
 
     // The signed distance from a point to the line with the given unit normal at
     // signed offset from the origin — the planar counterpart of DistanceToPlane,
-    // and the boundary of a half-plane. Precondition: normal has unit length.
+    // and the boundary of a half-plane. Exact. Precondition: normal has unit
+    // length.
     DistanceToLine(p: Point2D, normal: Vector2D, offset: Number): Number
         => p.PositionVector.Dot(normal) + offset;
 
@@ -1083,7 +1092,7 @@ library ImplicitSdf
     // interior, which is why the sign test excludes it rather than calling every
     // point inside — the difference from `Contains(Triangle2D, Point2D)`, which is
     // a closed-set membership test and reports the degenerate case as containment.
-    // (IQ: sdTriangle.)
+    // Exact. (IQ: sdTriangle.)
     DistanceToTriangle(p: Point2D, a: Point2D, b: Point2D, c: Point2D): Number {
         var orientation = TwiceSignedArea(a, b, c);
         var inside = orientation != 0.0
@@ -1100,7 +1109,7 @@ library ImplicitSdf
     // in ring order: negative inside. The sign is the even-odd crossing rule rather
     // than an orientation test, so a CONCAVE quad is handled correctly; a
     // self-intersecting one gets the even-odd region, as everywhere else in the
-    // library. Precondition: the ring is simple.
+    // library. Exact. Precondition: the ring is simple.
     DistanceToQuad(p: Point2D, a: Point2D, b: Point2D, c: Point2D, d: Point2D): Number {
         var inside = EdgeCrossesRay(a, b, p)
             .ExclusiveOr(EdgeCrossesRay(b, c, p))
@@ -1121,6 +1130,11 @@ library ImplicitSdf
     // of n along an axis divides it into n - 1 cells. Positions outside Bounds
     // clamp to the edge cell and the interpolation extrapolates linearly from it.
     // Precondition: at least two nodes along every axis.
+    //
+    // Fidelity: NOT a bound, whatever the samples hold. Between nodes the
+    // interpolant departs from the true distance in BOTH directions, by up to the
+    // interpolation error over one cell, so a sphere tracer must shorten its steps
+    // by that much rather than trust the value.
 
     // The continuous lattice coordinate of a position along one axis: 0 at the low
     // bound, count - 1 at the high bound.
@@ -1133,7 +1147,7 @@ library ImplicitSdf
         => latticeCoordinate.Floor.ToInteger.Clamp(0, count - 2);
 
     // The signed distance at a point, bilinearly interpolated between the four
-    // surrounding lattice nodes.
+    // surrounding lattice nodes. Not a bound between nodes (see above).
     Eval(self: SampledSdf2D, point: Point2D): Number {
         var u = LatticeCoordinate(point.X, self.Bounds.Min.X, self.Bounds.Max.X, self.Values.ColumnCount);
         var v = LatticeCoordinate(point.Y, self.Bounds.Min.Y, self.Bounds.Max.Y, self.Values.RowCount);
@@ -1155,7 +1169,7 @@ library ImplicitSdf
     }
 
     // The signed distance at a point, trilinearly interpolated between the eight
-    // surrounding lattice nodes.
+    // surrounding lattice nodes. Not a bound between nodes (see above).
     Eval(self: SampledSdf3D, point: Point3D): Number {
         var u = LatticeCoordinate(point.X, self.Bounds.Min.X, self.Bounds.Max.X, self.Values.ColumnCount);
         var v = LatticeCoordinate(point.Y, self.Bounds.Min.Y, self.Bounds.Max.Y, self.Values.RowCount);
@@ -1177,6 +1191,11 @@ library ImplicitSdf
     // resolve against a caller-supplied primitive list; interior nodes combine two
     // lower-indexed nodes, so the recursion is well founded and terminates on any
     // tree obeying the "nodes only reference lower-indexed nodes" invariant.
+    //
+    // Fidelity is the leaves' and the combinators': exact leaves under Union stay
+    // exact, every other combinator lands on a lower bound, and one leaf that is
+    // not a bound makes the whole tree unsafe to march. The per-operator claims
+    // are in the distance-operator section above.
 
     // The combination operator applied to two child distances.
     Apply(combine: SdfCombine, a: Number, b: Number): Number =>

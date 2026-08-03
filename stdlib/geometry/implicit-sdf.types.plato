@@ -53,14 +53,16 @@ type BoundedSdf3D
 // Pose and uniform scale, and nothing wider, because these are the only maps that
 // carry a signed distance field to another signed distance field: a rigid motion
 // preserves distance outright, and a uniform scale multiplies every distance by
-// the same factor. Non-uniform scale and shear turn an exact distance into a mere
-// bound, so they are deliberately not expressible here — compose an
-// `AffineTransform*D` with the field by hand if a bound is acceptable.
+// the same factor. Non-uniform scale and shear stretch the pulled-back distance
+// by up to their largest factor, so the result can EXCEED the true distance and
+// is not a bound at all until divided by that factor; they are deliberately not
+// expressible here. Compose an `AffineTransform*D` with the field by hand if
+// that is acceptable.
 // Operations live in `implicit-sdf.library.plato`.
 
-// A planar SDF placed by a rigid pose and a uniform scale. Distances stay exact:
-// they are the source field's distances multiplied by Scale.
-// Precondition: Scale is positive.
+// A planar SDF placed by a rigid pose and a uniform scale. Distances are the
+// source field's multiplied by Scale, so the source's fidelity survives: an
+// exact source stays exact. Precondition: Scale is positive.
 type PlacedSdf2D
     implements IValue, IDifferentiableSignedDistanceField2D
 {
@@ -69,8 +71,8 @@ type PlacedSdf2D
     Scale: Number;
 }
 
-// A spatial SDF placed by a rigid pose and a uniform scale. Distances stay exact.
-// Precondition: Scale is positive.
+// A spatial SDF placed by a rigid pose and a uniform scale. The source's
+// fidelity survives, as in the planar form. Precondition: Scale is positive.
 type PlacedSdf3D
     implements IValue, IDifferentiableSignedDistanceField3D
 {
@@ -262,7 +264,9 @@ type SdfBendModifier3D
 
 // Displaces a surface by a scalar field: Source indexes a caller-supplied
 // list of spatial scalar fields whose value, scaled by Amplitude, offsets
-// the distance. The result is a bound, not an exact distance.
+// the distance. The result is NOT a bound — adding the displacement inflates
+// distances as readily as it shrinks them; `ApplyToDistance` in
+// `implicit-sdf.library.plato` carries the factor that recovers a lower bound.
 type SdfDisplacementModifier3D
     implements IValue
 {

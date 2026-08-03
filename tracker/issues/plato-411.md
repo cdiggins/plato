@@ -118,11 +118,11 @@ cannot be moved back out to data without breaking every implementor.
 
 ## Done means
 
-- [ ] `implicit-sdf.concepts.plato` defines exact / lower bound / not-a-bound in one place
-- [ ] Every distance primitive and every operator in `implicit-sdf.library.plato` states
+- [x] `implicit-sdf.concepts.plato` defines exact / lower bound / not-a-bound in one place
+- [x] Every distance primitive and every operator in `implicit-sdf.library.plato` states
       which of the three it returns, using those words
-- [ ] The twist, bend and displacement comments no longer claim to return a bound
-- [ ] `plato_check` clean
+- [x] The twist, bend and displacement comments no longer claim to return a bound
+- [x] `plato_check` clean
 
 ## Simplest possible implementation
 
