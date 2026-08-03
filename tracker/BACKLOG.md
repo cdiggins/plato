@@ -38,10 +38,13 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-389](issues/plato-389.md) | plato_check has no tier awareness: future and stdlib-tests count toward its verdict | bug | p2 | S | low | plato | ready |  |
 | [plato-429](issues/plato-429.md) | TypeScript writer emits calls to array-receiver library functions it never defines | bug | p2 | M | low | plato | ready |  |
 | [plato-430](issues/plato-430.md) | Sampling library: measured behaviour contradicts three doc claims, and RelaxedPoints2D is 13x slower than its own loop | bug | p2 | S | low | plato | ready |  |
+| [plato-431](issues/plato-431.md) | ToInteger truncates where CONVENTIONS.md says it rounds, and it changes derived counts | bug | p2 | S | med | plato | ready |  |
+| [plato-432](issues/plato-432.md) | Marching cubes evaluates the field eight times per cell: every cell re-reads its own corners | debt | p2 | M | low | plato | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [plato-427](issues/plato-427.md) | Finite elements: nodal stress smoothing, hexahedral and higher-order elements | feature | p3 | M | low | plato | ready |  |
 | [plato-428](issues/plato-428.md) | Rigid dynamics: GJK/EPA, orientation joints, and a broad phase | feature | p3 | M | low | plato | ready |  |
+| [plato-433](issues/plato-433.md) | TpmsSheet3D thickness is not portable between families and silently yields an empty solid | bug | p3 | S | low | plato | ready |  |
 | [repo-401](issues/repo-401.md) | record-gates.py --full passes the retired --scalar=float flag | bug | p3 | S | low | repo | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
 | [plato-419](issues/plato-419.md) | TypeScript writer: generated stdlib mesh/polygon/CSG paths do not run | bug | p1 | L | med | plato | idea |  |
