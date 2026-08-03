@@ -1,6 +1,6 @@
 # WebGL demo studio — agent coordination
 
-Eleven demos share one Vite app. The shell, the generated library, the prelude
+Every demo shares one Vite app. The shell, the generated library, the prelude
 and the Gratify control panel are done; each demo is one file.
 
 ## File ownership
@@ -18,6 +18,12 @@ and the Gratify control panel are done; each demo is one file.
 | transforms | `src/demos/transforms.ts` | anything else |
 | marching | `src/demos/marching.ts` | anything else |
 | voxels | `src/demos/voxels.ts` | anything else |
+| lattices | `src/demos/lattices.ts` | anything else |
+| sampling | `src/demos/sampling.ts` | anything else |
+| remeshing | `src/demos/remeshing.ts` | anything else |
+| fea | `src/demos/fea.ts` | anything else |
+| rigidbody | `src/demos/rigidbody.ts` | anything else |
+| cloth | `src/demos/cloth.ts` | anything else |
 | prelude | `src/plato/array-ext.ts`, `scripts/smoke.mts`, `scripts/probe.mts` | the demo files |
 
 `src/shared/**`, `src/plato/plato.g.ts`, the HTML pages, `vite.config.ts`,
@@ -53,6 +59,42 @@ mountDemo(demo);
 `build` is called on selection and on every parameter change and must be pure —
 the viewer disposes the previous object. `status` runs right after it.
 
+## Simulation scenes
+
+A scene that also declares `tick` is a simulation. The shell drives it once per
+animation frame with the elapsed seconds (clamped to 1/20 s, so a backgrounded
+tab does not resume with one enormous step), the current parameters, and the
+object `build` returned:
+
+```ts
+{
+  id: 'drape',
+  viewer: { spin: false },        // the idle rotation reads as motion otherwise
+  build: params => makeClothScene(params),   // also the RESET
+  tick: (seconds, params, object) => {
+    state = step(state, seconds);            // Plato does the stepping
+    writePositions(object, state);           // demo work: repack into buffers
+    return `frame ${n}  max stretch ${...}`; // replaces the status line
+  },
+}
+```
+
+Rules that are easy to get wrong:
+
+- **`build` is the reset.** A parameter change rebuilds, so the simulation
+  restarts from its initial state. Keep the mutable state in a closure that the
+  `build` call creates — module-scope state is shared between scenes and
+  survives the reset that was supposed to clear it.
+- **`tick` mutates in place**; only `build` may allocate a new object. Update
+  the `position` attribute and set `needsUpdate`, do not rebuild geometry per
+  frame.
+- **A throw in `tick` stops the driver** and leaves the message on the status
+  line — it does not repeat sixty times a second.
+- `npm run scenes` steps every ticking scene 30 frames at 1/60 s, prints the
+  per-frame cost, marks anything over 16 ms `OVER BUDGET`, and **fails the gate
+  if any position went non-finite** — a diverged solver throws nothing and draws
+  nothing, so that check is the only thing standing between it and a green gate.
+
 ## Controls
 
 The sidebar is a [Gratify](https://github.com/ara3d/gratify) app on a canvas
@@ -71,6 +113,12 @@ events; the shell coalesces them, so `build` runs at most once per frame.
 
 ## Rules
 
+- `src/plato/plato.g.ts` is generated from **four** tiers — `stdlib/foundation`,
+  `stdlib/geometry`, `stdlib/graphics` and `stdlib/future`. `future` joined the
+  recipe so the finite-element, rigid-body and cloth pages have a library to
+  drive; it is the tier that is not linted and not converted to C#, so a member
+  from it is more likely to be rough than one from `geometry`. That makes the
+  `UNAVAILABLE (…)` discipline below more important on those pages, not less.
 - Geometry, colour and field values come from the **generated members** in
   `src/plato/plato.g.ts`. Building inputs and repacking outputs is demo work;
   recomputing a formula that the stdlib already defines is not. **If a member
@@ -108,7 +156,7 @@ All three must pass before you report done:
 |---|---|
 | `npm run typecheck` | the app compiles |
 | `npm run smoke` | the generated members the demos rely on still return the values the Plato source pins down |
-| `npm run scenes` | **every scene on every page builds**, off the page: it imports each demo module, calls each scene's `build` at its default parameters, and fails on a throw or an empty result. It prints each scene's vertex count, build time and status line, and marks anything over 400 ms `SLOW` |
+| `npm run scenes` | **every scene on every page builds**, off the page: it imports each demo module, calls each scene's `build` at its default parameters, and fails on a throw or an empty result. It prints each scene's vertex count, build time and status line, and marks anything over 400 ms `SLOW`. A scene with a `tick` is also stepped — see "Simulation scenes" above |
 
 `npm run probe` is not a gate — it is the quick way to find out whether a member
 evaluates at all, before you build a scene around it.

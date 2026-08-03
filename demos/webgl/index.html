@@ -10,10 +10,11 @@
   <div class="landing">
     <h1>Plato stdlib, running in the browser</h1>
     <p class="lede">
-      Eleven demos over the same generated TypeScript. Every polyhedron, ring,
-      boolean, warp, curve, surface, colour and isosurface below is computed by
-      members that <code>Plato.TypeScriptWriter</code> emitted from the
-      <code>stdlib/</code> Plato sources — nothing here re-derives the maths.
+      Every demo below runs on the same generated TypeScript. Each polyhedron,
+      ring, boolean, warp, curve, surface, colour, isosurface, lattice, point
+      set, remesh, stress field and simulation step is computed by members that
+      <code>Plato.TypeScriptWriter</code> emitted from the <code>stdlib/</code>
+      Plato sources — nothing here re-derives the maths.
       The controls are a <a href="https://github.com/ara3d/gratify">Gratify</a>
       panel.
     </p>
@@ -82,6 +83,42 @@
         <a class="card" href="./voxels.html">
           <strong>Voxels</strong>
           <span>Dense and sparse voxel grids: filling them from a solid, and reading a surface back out.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./lattices.html">
+          <strong>Lattices</strong>
+          <span>Periodic strut lattices — the named unit cells, graded and trimmed instances — and the triply-periodic minimal surfaces beside them.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./sampling.html">
+          <strong>Blue noise</strong>
+          <span>Poisson-disk, best-candidate, stratified and low-discrepancy point sets, and the readings that say which one is actually blue.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./remeshing.html">
+          <strong>Remeshing</strong>
+          <span>Split, collapse and flip; Loop and Catmull-Clark subdivision; quadric decimation, isotropic remeshing and the smoothing operators.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./fea.html">
+          <strong>Finite elements</strong>
+          <span>A linear-elastic solve over a tetrahedral mesh: supports, loads, displacement, and the stress the result is coloured by.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./rigidbody.html">
+          <strong>Rigid bodies</strong>
+          <span>Integration, inertia tensors, contacts and constraints — a running simulation whose every step is a Plato function.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./cloth.html">
+          <strong>Cloth</strong>
+          <span>A mesh becomes a constraint graph, the graph is solved, and the solution becomes a mesh again — mass-spring beside position-based dynamics.</span>
         </a>
       </li>
     </ul>

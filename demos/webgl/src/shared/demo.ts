@@ -56,6 +56,20 @@ export interface Scene {
    * whatever this build just computed. Called after `build`, on every rebuild.
    */
   status?(params: Params): string;
+  /**
+   * A simulation scene only: advance one frame. `object` is whatever `build`
+   * returned, `seconds` is the wall time since the last frame (clamped, so a
+   * backgrounded tab does not resume with one enormous step), and the return
+   * value replaces the status line when it is a string.
+   *
+   * `build` is the reset: a parameter change rebuilds, which restarts the
+   * simulation from its initial state. Keep the mutable state in a closure the
+   * `build` call creates, not at module scope, or two scenes will share it.
+   *
+   * A ticking scene should set `viewer: { spin: false }`, since the stage's
+   * idle rotation is otherwise mistaken for the simulation moving.
+   */
+  tick?(seconds: number, params: Params, object: THREE.Object3D): string | void;
 }
 
 /** The catalog a demo page hands to `mountDemo`. */

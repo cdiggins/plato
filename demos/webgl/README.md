@@ -1,12 +1,21 @@
 # Plato WebGL demos (TypeScript / Three.js)
 
-Eleven browser demos over one generated library: **polyhedra**, **polygons**,
-**CSG**, **deformers**, **parametric curves**, **parametric surfaces**,
-**noise**, **colour spaces**, **transforms**, **marching cubes** and **voxels**.
-Every solid, ring, boolean, warp, curve, surface, field, colour and isosurface is
-computed by members that `Plato.TypeScriptWriter` emitted from the Plato sources
-in [`stdlib/`](../../stdlib) — the demo code builds inputs, reads results, and
-repacks them into Three.js buffers. It does not re-derive any geometry.
+Browser demos over one generated library: **polyhedra**, **polygons**, **CSG**,
+**deformers**, **parametric curves**, **parametric surfaces**, **noise**,
+**colour spaces**, **transforms**, **marching cubes**, **voxels**,
+**lattices**, **blue-noise sampling**, **remeshing**, **finite elements**,
+**rigid bodies** and **cloth**. Every solid, ring, boolean, warp, curve,
+surface, field, colour, isosurface, unit cell, point set, remesh, stress value
+and simulation step is computed by members that `Plato.TypeScriptWriter` emitted
+from the Plato sources in [`stdlib/`](../../stdlib) — the demo code builds
+inputs, reads results, and repacks them into Three.js buffers. It does not
+re-derive any geometry.
+
+The last six pages are also the demonstration that the library reaches past
+static geometry: `lattices`, `sampling` and `remeshing` extend `stdlib/geometry`,
+while `fea`, `rigidbody` and `cloth` drive `stdlib/future` — the tier that is
+neither linted nor converted to C#, and which joined this app's codegen recipe
+so those pages would have something to run.
 
 Where a generated member is missing, broken or absent from the library, the page
 says so in its status line by name — `UNAVAILABLE (…)` — rather than substituting
@@ -29,10 +38,11 @@ npm run build
 ## Layout
 
 ```
-index.html            Landing page linking the eleven demos
+index.html            Landing page linking every demo
 polyhedra.html        One page per demo, one entry each
-polygons.html         (csg, deformers, curves, surfaces, noise,
-                       colors, transforms, marching, voxels)
+polygons.html         (csg, deformers, curves, surfaces, noise, colors,
+                       transforms, marching, voxels, lattices, sampling,
+                       remeshing, fea, rigidbody, cloth)
 src/
   plato/
     plato.g.ts        GENERATED — do not edit; npm run gen:plato
@@ -76,7 +86,7 @@ runs at most once per animation frame.
 |---|---|
 | `npm run typecheck` | the app compiles |
 | `npm run smoke` | the generated members still return the values the Plato source pins down |
-| `npm run scenes` | every scene on every page builds, off the page — it imports each demo module, calls each scene's `build` at its defaults, and fails on a throw or an empty result. Prints vertices, milliseconds and the status line per scene |
+| `npm run scenes` | every scene on every page builds, off the page — it imports each demo module, calls each scene's `build` at its defaults, and fails on a throw or an empty result. Prints vertices, milliseconds and the status line per scene. A simulation scene (one declaring `tick`) is also stepped for a short run, and fails if any position went non-finite — a solver that diverges throws nothing and draws nothing, so nothing else would catch it |
 | `npm run probe` | not a gate: the triage tool. Calls each candidate member and reports `ok`, `FAIL <message>` or `NaN` |
 
 `scenes` is the one that catches what typecheck cannot — a member that throws
@@ -121,9 +131,15 @@ the prelude rather than at the demo.
 npm run gen:plato
 ```
 
-Runs `Plato.CLI --typescript` over `stdlib/foundation`, `stdlib/geometry` and
-`stdlib/graphics`, then stamps `@ts-nocheck` on the output. Re-run `npm run
-smoke` and `npm run scenes` afterwards.
+Runs `Plato.CLI --typescript` over `stdlib/foundation`, `stdlib/geometry`,
+`stdlib/graphics` and `stdlib/future`, then stamps `@ts-nocheck` on the output.
+Re-run `npm run smoke` and `npm run scenes` afterwards.
+
+`future` is in the recipe because the simulation and analysis pages have nowhere
+else to get a library from. It is the tier the repo does not lint and does not
+convert to C# (see [`AGENTS.md`](../../AGENTS.md)), so it is held only to parsing
+and type-checking — treat a member out of it as less proven than one out of
+`geometry`, and keep the `UNAVAILABLE (…)` reporting honest on those pages.
 
 ## See also
 

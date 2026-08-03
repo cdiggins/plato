@@ -7,6 +7,7 @@
 // numbers, and a change schedules exactly one rebuild per animation frame,
 // however fast the pointer moves.
 
+import type * as THREE from 'three';
 import { mount, type Element, type Intent, type Runtime } from '../../vendor/gratify/index.js';
 import { Viewer, type ViewerOptions } from './viewer.js';
 import { colorKeys, type Control, type Demo, type Params, type Scene } from './demo.js';
@@ -70,6 +71,12 @@ export function mountDemo(demo: Demo, viewerOptions: ViewerOptions = {}): void {
   let params: Params = {};
   let panel: Runtime<Params> | null = null;
   let pending = 0;
+  // The simulation seam. `live` is what the last successful build returned, and
+  // the driver below only runs while the selected scene has a `tick`, so the
+  // eleven static pages cost nothing and see no behaviour change.
+  let live: THREE.Object3D | null = null;
+  let ticking = 0;
+  let lastFrame = 0;
 
   /** A scene's viewer settings win over the page's; a change rebuilds the stage. */
   function useViewerFor(scene: Scene): void {
@@ -84,14 +91,45 @@ export function mountDemo(demo: Demo, viewerOptions: ViewerOptions = {}): void {
 
   function rebuild(): void {
     try {
-      viewer.show(current.build(params));
+      const built = current.build(params);
+      viewer.show(built);
+      live = built;
       stage.classList.remove('errored');
       status.textContent = current.status?.(params) ?? '';
     } catch (error) {
+      live = null;
       stage.classList.add('errored');
       console.error(error);
       status.textContent = `Build failed: ${(error as Error).message}`;
     }
+  }
+
+  /**
+   * One frame of a simulation scene. A throw here would otherwise repeat sixty
+   * times a second, so the first one stops the driver and leaves the message on
+   * the status line — the same bargain `rebuild` makes.
+   */
+  const advance = (now: number): void => {
+    ticking = requestAnimationFrame(advance);
+    const seconds = lastFrame ? Math.min((now - lastFrame) / 1000, 1 / 20) : 0;
+    lastFrame = now;
+    if (!live || seconds === 0) return;
+    try {
+      const line = current.tick?.(seconds, params, live);
+      if (typeof line === 'string') status.textContent = line;
+    } catch (error) {
+      stopTicking();
+      stage.classList.add('errored');
+      console.error(error);
+      status.textContent = `Step failed: ${(error as Error).message}`;
+    }
+  };
+
+  function stopTicking(): void {
+    if (!ticking) return;
+    cancelAnimationFrame(ticking);
+    ticking = 0;
+    lastFrame = 0;
   }
 
   /**
@@ -108,6 +146,7 @@ export function mountDemo(demo: Demo, viewerOptions: ViewerOptions = {}): void {
   }
 
   function selectScene(scene: Scene): void {
+    stopTicking();
     current = scene;
     useViewerFor(scene);
     params = defaultParams(scene.controls ?? []);
@@ -118,6 +157,9 @@ export function mountDemo(demo: Demo, viewerOptions: ViewerOptions = {}): void {
       button.classList.toggle('active', button.dataset.id === scene.id);
     }
     rebuild();
+    // A rebuild re-seeds `live`, so a parameter change during a simulation
+    // restarts it rather than needing the driver restarted with it.
+    if (scene.tick) advance(performance.now());
   }
 
   /**
