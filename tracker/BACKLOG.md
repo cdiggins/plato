@@ -57,6 +57,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-395](issues/plato-395.md) | TimeVarying<TValue> carries no bound, so Change stays a throwing stub | debt | p3 | M | low | plato | idea |  |
 | [plato-410](issues/plato-410.md) | FieldJet2D/3D: a value+gradient jet type for differentiable scalar fields | idea | p3 | M | low | plato | idea |  |
 | [plato-414](issues/plato-414.md) | SdfBendModifier3D doc says it bends about the Y axis; the code rotates about Z | bug | p3 | S | low | plato | idea |  |
+| [plato-417](issues/plato-417.md) | Ear-clipping pass is O(n^2); a sound ear cache must invalidate on the reflex/convex flip | debt | p3 | M | med | plato | idea |  |
 | [plato-076](issues/plato-076.md) | Port Gratify to Plato (feasibility: kernel vs framework) | idea | ? | ? | ? | plato | idea |  |
 | [plato-077](issues/plato-077.md) | Sum types + pattern matching in Plato (RFC first) | idea | ? | ? | ? | plato | idea |  |
 | [plato-078](issues/plato-078.md) | Revive and productionize the Plato TypeScript writer | feature | ? | ? | ? | plato | idea |  |

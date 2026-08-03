@@ -51,6 +51,30 @@ submodule working tree**, which is not this checkout. See "Structural observatio
 - **Depends on** `src/Plato.CLI`, `tests/PlatoTests`, `tools/export-types-context.ps1`,
   `tools/gate-timing.ps1`, the dotnet SDK, PowerShell.
 
+### `tools/regen-triangulation.ps1`
+
+- **Where** `plato`, PowerShell.
+- **Runs** four steps: stage a subset of `stdlib/` into `.temp/triangulation-src`; close that
+  subset under resolution by repeatedly linting it and copying in the file declaring whatever type
+  the resolver still cannot find; generate C# from it into `.temp/triangulation-gen`; then
+  `dotnet test tests/Plato.Triangulation.Tests`, which compiles that output and asserts the
+  triangulator's results tile their input.
+- **Corpus** `stdlib/foundation` plus the declaration closure of
+  `stdlib/geometry/triangulation.library.plato`. The seed list is a literal in the script, but it
+  is a seed only — the closure step derives the rest, so a stale list costs seconds rather than a
+  red gate. Deliberately NOT the whole geometry tier: that tier's generated C# does not compile
+  (plato-308), which is the whole reason this script exists.
+- **Input** `-SkipTest` (stop after generation). **Output** PASS/FAIL table with per-gate seconds,
+  exit 0 or 1, rows appended to the shared timing log. Everything it writes is under `.temp/` and
+  untracked.
+- **Answers** "does the triangulator actually compute a triangulation?" — the only rung-6
+  (execute) evidence in the geometry tier.
+- **Depends on** `src/Plato.CLI`, `src/Plato.Intrinsics`, `tests/Plato.Triangulation.Tests`,
+  `tools/gate-timing.ps1`, the dotnet SDK, PowerShell.
+- **Note** the test project is not in `Plato.sln` and must not be built directly: its `Compile`
+  glob points at `.temp/triangulation-gen`, which only exists after step 3. Expected to be deleted
+  when plato-308 clears and its cases move to the law packet.
+
 ### `tools/stage-stdlib.ps1`
 
 - **Where** `plato`, PowerShell.

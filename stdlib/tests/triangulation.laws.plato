@@ -1,0 +1,83 @@
+// Law library for the ear-clipping triangulator (stdlib/geometry/triangulation.library.plato).
+//
+// Same harness and conventions as foundation.laws.plato: Law_-prefixed Boolean functions,
+// invoked by the reflection runner with seeded pseudorandom instances, merged with stdlib/
+// only by tools/regen-forward-conformance.ps1. Every member referenced was verified against
+// stdlib/geometry/triangulation.library.plato (LIBRARIES.md rule 3).
+//
+// WHAT IS NOT HERE, AND WHY. The property that actually matters — the emitted faces TILE the
+// polygon, their areas summing to its area with every face counter-clockwise — is not stated
+// below, because it is false for the inputs this runner supplies. The runner builds pseudorandom
+// instances, and a pseudorandom Array<Point2D> is a self-intersecting ring; `Polygon2D` declares
+// simplicity as an invariant that nothing in the tree can yet check (plato-415 item 5), so the
+// runner cannot honour it. A law that fails on garbage is worse than no law.
+//
+// The tiling property is therefore enforced where the inputs can be chosen: the executable
+// harness in tests/Plato.Triangulation.Tests, run by tools/regen-triangulation.ps1. That covers
+// both windings, concave rings, holes, degenerate corners and randomized star-shaped polygons.
+// What follows is the subset that holds for ANY input, well-formed or not.
+library TriangulationLaws
+{
+    //==
+    // Structural laws. These constrain the SHAPE of a triangulation rather than its geometry,
+    // so they hold for a self-intersecting or degenerate ring too — the clipper's
+    // degenerate-input path still may not invent vertices or emit more faces than clips.
+
+    // Every face indexes a point that exists. The clipper carries VertexIndex values from the
+    // pool it was handed, so a face can only ever name one of them; an out-of-range index would
+    // mean a slot was read whose node had never been linked.
+    Law_TriangulationFacesIndexInputPoints(p: Polygon2D): Boolean
+        => p.Triangulate.Faces.All(f => p.Points.FaceIsInRange(f));
+
+    // A ring of n vertices admits at most n - 2 faces: the clipping pass runs exactly n - 2
+    // steps and emits at most one face per step. Fewer is legitimate — a flat corner is clipped
+    // without emitting — which is why this is a bound and not an equality.
+    Law_TriangulationFaceCountIsBounded(p: Polygon2D): Boolean
+        => p.Triangulate.Faces.Count <= p.Points.Count.Greater(2) - 2;
+
+    // The mesh triangulation is over the polygon's own vertices: the positions come back
+    // unchanged and in order, which is what makes the face indices meaningful to the caller.
+    Law_TriangulationPreservesPositions(p: Polygon2D): Boolean
+        => p.Triangulate.Positions.Count == p.Points.Count;
+
+    // A face never repeats a vertex: the three corners of a clipped ear are three distinct
+    // slots of the ring. (Two of them may still coincide in POSITION, where a bridge duplicated
+    // a vertex, so this is an index property, not a geometric one.)
+    Law_TriangulationFacesHaveDistinctCorners(p: Polygon2D): Boolean
+        => p.Triangulate.Faces.All(f => f.HasDistinctCorners);
+
+    //==
+    // The same four over a region with holes, whose pool is the boundary's vertices followed by
+    // every hole's. The pool is built by the library rather than supplied, so these also check
+    // that the bridging pass leaves the pool alone.
+
+    Law_HoledTriangulationFacesIndexInputPoints(r: PolygonWithHoles2D): Boolean
+        => r.Triangulate.Faces.All(f => r.PointPool.FaceIsInRange(f));
+
+    Law_HoledTriangulationPreservesPositions(r: PolygonWithHoles2D): Boolean
+        => r.Triangulate.Positions.Count == r.PointPool.Count;
+
+    Law_HoledTriangulationFacesHaveDistinctCorners(r: PolygonWithHoles2D): Boolean
+        => r.Triangulate.Faces.All(f => f.HasDistinctCorners);
+
+    //==
+    // The convex case is the one input shape the runner CAN be trusted on for geometry: the fan
+    // body reads no ring structure beyond the vertex count, so its face count is exact whatever
+    // the points happen to be.
+
+    Law_ConvexTriangulationIsAFullFan(p: ConvexPolygon2D): Boolean
+        => p.Triangulate.Faces.Count == p.Points.Count.Greater(2) - 2;
+
+    //==
+    // Helpers. No Law_ prefix, so the runner ignores them.
+
+    // True when every corner of the face names a point of `points`.
+    FaceIsInRange(points: Array<Point2D>, f: TriangleFace): Boolean
+        => f.A.Value >= 0 && f.A.Value < points.Count
+        && f.B.Value >= 0 && f.B.Value < points.Count
+        && f.C.Value >= 0 && f.C.Value < points.Count;
+
+    // True when the face's three corners are three different vertices.
+    HasDistinctCorners(f: TriangleFace): Boolean
+        => f.A.Value != f.B.Value && f.B.Value != f.C.Value && f.A.Value != f.C.Value;
+}

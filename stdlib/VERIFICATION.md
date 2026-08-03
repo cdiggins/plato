@@ -73,6 +73,23 @@ runs a function body, and it is still being brought up
 correct, that a sign is right — is backed by human inspection, not by a test.** That is the single
 most important thing this document has to say.
 
+**One library escapes that, and how it does is worth copying.** `tools\regen-triangulation.ps1`
+reaches rung 6 for `geometry/triangulation.library.plato` without waiting for plato-308: it
+generates a SUBSET that does compile — foundation plus the triangulator's declaration closure —
+and runs `tests\Plato.Triangulation.Tests` over it, asserting that the emitted triangles tile the
+input polygon. The subset is derived, not hand-listed: the script asks the resolver what is still
+missing and adds the file declaring it, so the seed list self-heals when the library moves. That
+is available to any other geometry library whose closure compiles, and it is how the one behaviour
+in this tree that is backed by a test got backed by one. It is a workaround with an expiry date —
+when plato-308 clears, the cases belong in the law packet and the script should go.
+
+The reason those cases are not laws already is stated in
+[`tests/triangulation.laws.plato`](tests/triangulation.laws.plato): the law runner supplies
+pseudorandom instances, and a pseudorandom `Array<Point2D>` is a self-intersecting ring, which
+`Polygon2D` declares away but nothing can yet check. Laws that hold for *any* input live there;
+the ones needing a well-formed polygon live in the harness. That split is the general rule, not a
+detail of this library.
+
 ---
 
 ## The inner loop: which command, when

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Executes the EMITTED polygon triangulator (stdlib/geometry/triangulation.library.plato).
+
+    Unlike the other generated-surface suites, this one does NOT reference a tracked project
+    under generated/: the C# it runs is emitted into .temp\triangulation-gen by
+    tools\regen-triangulation.ps1, which stages foundation plus the triangulator's declaration
+    closure. The whole geometry tier cannot be generated and compiled yet (plato-308), so a
+    tracked project for it would be a hand-picked subset that rots; the script derives the
+    subset instead. Run the script, not this project directly — without it there is no
+    generated code and the build has nothing to compile.
+
+    Because the generated sources are compiled INTO this assembly, the handwritten
+    Plato.Intrinsics shared project is imported here too, exactly as the generated projects
+    do it.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>AnyCPU;x64</Platforms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>Ara3D.Geometry</RootNamespace>
+    <NoWarn>$(NoWarn);CS0108;CS0114;CS0660;CS0661;CS1591</NoWarn>
+    <DefineConstants>$(DefineConstants);PLATO_FORWARD_CONCEPTS</DefineConstants>
+    <TriangulationGenDir Condition="'$(TriangulationGenDir)' == ''">$(MSBuildThisFileDirectory)..\..\.temp\triangulation-gen</TriangulationGenDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(TriangulationGenDir)\*.g.cs" />
+  </ItemGroup>
+
+  <Import Project="..\..\src\Plato.Intrinsics\Plato.Intrinsics.projitems" Label="Shared" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
+    <PackageReference Include="Ara3D.SDK.Core" Version="$(Ara3DVersion)" />
+    <!-- The package of this name is the old V1 library; compiling against it would make every
+         extension method ambiguous with the generated namespace. -->
+    <PackageReference Include="Ara3D.Geometry" Version="$(Ara3DVersion)" ExcludeAssets="compile" />
+  </ItemGroup>
+
+</Project>
