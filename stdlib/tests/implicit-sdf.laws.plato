@@ -195,6 +195,89 @@ library ImplicitSdfLaws
             .LawEq(SmoothUnionDistance(a.Negative, b.Negative, blendRadius).Negative);
 
     //==
+    // Chamfered, circular and exponential joins against the sharp operators.
+
+    // A chamfer only ever removes material from the sharp corner, never adds: the
+    // bevel plane term can lower the minimum but the leading Min keeps it from
+    // rising. Guarded to the body's precondition.
+    Law_ChamferUnionIsNoGreaterThanUnion(a: Number, b: Number, width: Number): Boolean
+        => width <= 0.0
+        || ChamferUnionDistance(a, b, width) <= UnionDistance(a, b) + 1e-4;
+
+    // Chamfered union is symmetric.
+    Law_ChamferUnionIsCommutative(a: Number, b: Number, width: Number): Boolean
+        => width <= 0.0
+        || ChamferUnionDistance(a, b, width).LawEq(ChamferUnionDistance(b, a, width));
+
+    // Chamfered difference is chamfered intersection against the complement — the
+    // relation that keeps its sign convention consistent with the sharp operators.
+    Law_ChamferDifferenceIsIntersectWithComplement(a: Number, b: Number, width: Number): Boolean
+        => width <= 0.0
+        || ChamferDifferenceDistance(a, b, width)
+            .LawEq(ChamferIntersectionDistance(a, b.Negative, width));
+
+    // The exact circular fillet, like every union variant, is symmetric.
+    Law_CircularUnionIsCommutative(a: Number, b: Number, radius: Number): Boolean
+        => radius <= 0.0
+        || CircularUnionDistance(a, b, radius).LawEq(CircularUnionDistance(b, a, radius));
+
+    // Far from the seam — where both operands exceed the fillet radius — the exact
+    // circular union has nothing to round and must agree with the sharp minimum.
+    Law_CircularUnionAwayFromSeamIsUnion(a: Number, b: Number, radius: Number): Boolean
+        => radius <= 0.0 || a < radius || b < radius
+        || CircularUnionDistance(a, b, radius).LawEq(UnionDistance(a, b));
+
+    // The exponential smooth minimum is ASSOCIATIVE, which is the property that
+    // distinguishes it from the polynomial form: combining three distances gives the
+    // same answer whichever pair is blended first. The polynomial SmoothUnionDistance
+    // does NOT satisfy this, which is why no matching law exists for it.
+    Law_ExponentialSmoothUnionIsAssociative(a: Number, b: Number, c: Number, blendRadius: Number): Boolean
+        => blendRadius <= 0.0
+        || ExponentialSmoothUnionDistance(ExponentialSmoothUnionDistance(a, b, blendRadius), c, blendRadius)
+            .LawEq(ExponentialSmoothUnionDistance(a, ExponentialSmoothUnionDistance(b, c, blendRadius), blendRadius));
+
+    // Exponential smoothing, like the polynomial form, never exceeds the sharp
+    // minimum it approximates.
+    Law_ExponentialSmoothUnionIsNoGreaterThanUnion(a: Number, b: Number, blendRadius: Number): Boolean
+        => blendRadius <= 0.0
+        || ExponentialSmoothUnionDistance(a, b, blendRadius) <= UnionDistance(a, b) + 1e-4;
+
+    //==
+    // Complement and morph.
+
+    // Complementing twice is the identity.
+    Law_ComplementIsInvolution(a: Number): Boolean
+        => ComplementDistance(ComplementDistance(a)).LawEq(a);
+
+    // Difference is intersection against a complement, stated through the operator
+    // rather than through raw negation.
+    Law_SubtractIsIntersectWithComplementOperator(a: Number, b: Number): Boolean
+        => SubtractDistance(a, b).LawEq(IntersectionDistance(a, ComplementDistance(b)));
+
+    // A morph at its endpoints recovers each operand exactly.
+    Law_MorphAtZeroIsFirst(a: Number, b: Number): Boolean
+        => MorphDistance(a, b, 0.0).LawEq(a);
+
+    Law_MorphAtOneIsSecond(a: Number, b: Number): Boolean
+        => MorphDistance(a, b, 1.0).LawEq(b);
+
+    //==
+    // Joints. A groove and a tongue of the same dimensions are complementary cuts,
+    // which is what lets them mate.
+
+    // A groove of zero depth removes nothing.
+    Law_ZeroDepthGrooveIsUnchanged(a: Number, b: Number, halfWidth: Number): Boolean
+        => GrooveDistance(a, b, 0.0, halfWidth).LawEq(a.Max(a.Min(halfWidth - b.Abs)));
+
+    // A tongue of zero height adds nothing.
+    Law_ZeroHeightTongueIsUnchanged(a: Number, b: Number, halfWidth: Number): Boolean
+        => TongueDistance(a, b, 0.0, halfWidth).LawEq(a.Min(a.Max(b.Abs - halfWidth)));
+
+    // A pipe is radially symmetric in its two guiding surfaces.
+    Law_PipeIsCommutative(a: Number, b: Number, radius: Number): Boolean
+        => PipeDistance(a, b, radius).LawEq(PipeDistance(b, a, radius));
+
+    //==
     // Modifier arithmetic.
 
     // Rounding inflates: a positive radius moves every distance inward by exactly

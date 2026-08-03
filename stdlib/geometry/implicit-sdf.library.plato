@@ -195,6 +195,44 @@ library ImplicitSdf
     SmoothDifference(a: BoundedSdf3D, b: BoundedSdf3D, blendRadius: Number): BoundedSdf3D
         => (a.Sdf.SmoothDifference(b.Sdf, blendRadius), GrowBounds(a.Bounds, blendRadius));
 
+    // Chamfered union; bounds are the union of the operands grown by width, since
+    // the bevel cuts outward from the seam. Precondition: width is positive.
+    ChamferUnion(a: BoundedSdf2D, b: BoundedSdf2D, width: Number): BoundedSdf2D
+        => (
+            a.Sdf.ChamferUnion(b.Sdf, width),
+            GrowBounds(UnionOfBounds(a.Bounds, b.Bounds), width));
+
+    // Chamfered union; bounds are the union of the operands grown by width.
+    // Precondition: width is positive.
+    ChamferUnion(a: BoundedSdf3D, b: BoundedSdf3D, width: Number): BoundedSdf3D
+        => (
+            a.Sdf.ChamferUnion(b.Sdf, width),
+            GrowBounds(UnionOfBounds(a.Bounds, b.Bounds), width));
+
+    // Chamfered intersection; bounds are the intersection of the operands grown by
+    // width. Precondition: width is positive.
+    ChamferIntersection(a: BoundedSdf2D, b: BoundedSdf2D, width: Number): BoundedSdf2D
+        => (
+            a.Sdf.ChamferIntersection(b.Sdf, width),
+            GrowBounds(IntersectionOfBounds(a.Bounds, b.Bounds), width));
+
+    // Chamfered intersection; bounds are the intersection of the operands grown by
+    // width. Precondition: width is positive.
+    ChamferIntersection(a: BoundedSdf3D, b: BoundedSdf3D, width: Number): BoundedSdf3D
+        => (
+            a.Sdf.ChamferIntersection(b.Sdf, width),
+            GrowBounds(IntersectionOfBounds(a.Bounds, b.Bounds), width));
+
+    // Chamfered difference; bounds stay those of `a` grown by width.
+    // Precondition: width is positive.
+    ChamferDifference(a: BoundedSdf2D, b: BoundedSdf2D, width: Number): BoundedSdf2D
+        => (a.Sdf.ChamferDifference(b.Sdf, width), GrowBounds(a.Bounds, width));
+
+    // Chamfered difference; bounds stay those of `a` grown by width.
+    // Precondition: width is positive.
+    ChamferDifference(a: BoundedSdf3D, b: BoundedSdf3D, width: Number): BoundedSdf3D
+        => (a.Sdf.ChamferDifference(b.Sdf, width), GrowBounds(a.Bounds, width));
+
     //==
     // # Placed SDF evaluation
     //
@@ -569,6 +607,104 @@ library ImplicitSdf
     SmoothDifferenceDistance(a: Number, b: Number, blendRadius: Number): Number
         => SmoothIntersectionDistance(a, b.Negative, blendRadius);
 
+    // The complement of a shape: inside becomes outside, and the magnitude is
+    // unchanged, so exactness survives. This is the one CSG operator with no
+    // meaningful BOUNDED form — the complement of a bounded solid is unbounded, so
+    // no conservative box can enclose its non-positive region, which is why there is
+    // no Complement beside the Union / Intersection / Difference wrappers above.
+    ComplementDistance(a: Number): Number
+        => a.Negative;
+
+    // A linear morph from the first shape (t = 0) to the second (t = 1). The result
+    // is an exact distance only where the two operands agree; in between it is a
+    // bound, since interpolating two distance functions does not interpolate their
+    // surfaces at unit gradient.
+    MorphDistance(a: Number, b: Number, t: Number): Number
+        => a.Lerp(b, t);
+
+    //==
+    // Chamfered and exactly-filleted CSG.
+    //
+    // Two alternatives to the polynomial smooth operators above, for when the join
+    // between two shapes is a specified DIMENSION rather than an aesthetic choice:
+    // a 45-degree bevel, and a true circular arc. `SmoothUnionDistance` is cheaper
+    // than either but its blend is a polynomial approximation of an arc, not an arc.
+
+    // The union of two distances with a 45-degree chamfer of the given width across
+    // the seam. The third term is the distance to the bevel plane, which cuts the
+    // corner the plain minimum would leave. Precondition: width is positive.
+    // (hg_sdf: fOpUnionChamfer.)
+    ChamferUnionDistance(a: Number, b: Number, width: Number): Number
+        => a.Min(b).Min((a + b - width) / Number.SqrtTwo);
+
+    // The intersection of two distances with a 45-degree chamfer of the given width.
+    // Precondition: width is positive. (hg_sdf: fOpIntersectionChamfer.)
+    ChamferIntersectionDistance(a: Number, b: Number, width: Number): Number
+        => a.Max(b).Max((a + b + width) / Number.SqrtTwo);
+
+    // The first shape with the second chamfer-subtracted: chamfered intersection
+    // against the complement. Precondition: width is positive.
+    // (hg_sdf: fOpDifferenceChamfer.)
+    ChamferDifferenceDistance(a: Number, b: Number, width: Number): Number
+        => ChamferIntersectionDistance(a, b.Negative, width);
+
+    // The union of two distances joined by an exact quarter-circle fillet of the
+    // given radius — a true arc, unlike the polynomial SmoothUnionDistance.
+    // Precondition: radius is positive. (hg_sdf: fOpUnionRound.)
+    CircularUnionDistance(a: Number, b: Number, radius: Number): Number {
+        var corner = Vector2D((radius - a).Max(0.0), (radius - b).Max(0.0));
+        return radius.Max(a.Min(b)) - corner.Magnitude;
+    }
+
+    // The intersection of two distances joined by an exact quarter-circle fillet.
+    // Precondition: radius is positive. (hg_sdf: fOpIntersectionRound.)
+    CircularIntersectionDistance(a: Number, b: Number, radius: Number): Number {
+        var corner = Vector2D((radius + a).Max(0.0), (radius + b).Max(0.0));
+        return radius.Negative.Min(a.Max(b)) + corner.Magnitude;
+    }
+
+    // The first shape with the second subtracted, the cut filleted by an exact arc.
+    // Precondition: radius is positive.
+    CircularDifferenceDistance(a: Number, b: Number, radius: Number): Number
+        => CircularIntersectionDistance(a, b.Negative, radius);
+
+    // The exponential smooth minimum of two distances. Unlike the polynomial
+    // SmoothUnionDistance this operator is ASSOCIATIVE: blending three or more shapes
+    // gives the same result in any order, where the polynomial form's answer depends
+    // on how the operands were parenthesized. That is what it buys for the price of
+    // two exponentials and a logarithm. Precondition: blendRadius is positive.
+    // (https://iquilezles.org/articles/smin/)
+    ExponentialSmoothUnionDistance(a: Number, b: Number, blendRadius: Number): Number
+        => ((a.Negative / blendRadius).Exp + (b.Negative / blendRadius).Exp).NaturalLog
+           * blendRadius.Negative;
+
+    //==
+    // Joints between two surfaces.
+    //
+    // Operators whose result is a feature running ALONG the curve where two shapes
+    // meet, rather than a modified version of either. All four take the second shape
+    // as a cutting or guiding surface, not as a solid to be merged.
+
+    // A rounded pipe of the given radius running along the curve where the two
+    // surfaces meet. (hg_sdf: fOpPipe.)
+    PipeDistance(a: Number, b: Number, radius: Number): Number
+        => Vector2D(a, b).Magnitude - radius;
+
+    // The first shape carrying a V-shaped engraving of the given depth where the
+    // second shape's surface crosses it. (hg_sdf: fOpEngrave.)
+    EngraveDistance(a: Number, b: Number, depth: Number): Number
+        => a.Max((a + depth - b.Abs) / Number.SqrtTwo);
+
+    // The first shape carrying a rectangular groove where the second crosses it:
+    // depth into the surface, halfWidth to either side. (hg_sdf: fOpGroove.)
+    GrooveDistance(a: Number, b: Number, depth: Number, halfWidth: Number): Number
+        => a.Max((a + depth).Min(halfWidth - b.Abs));
+
+    // The first shape carrying a raised rectangular tongue where the second crosses
+    // it — the mating half of a groove. (hg_sdf: fOpTongue.)
+    TongueDistance(a: Number, b: Number, height: Number, halfWidth: Number): Number
+        => a.Min((a - height).Max(b.Abs - halfWidth));
+
     //==
     // # Dimensional lifts and symmetry
     //
@@ -884,6 +1020,9 @@ library ImplicitSdf
             SmoothUnion(radius) => SmoothUnionDistance(a, b, radius);
             SmoothIntersection(radius) => SmoothIntersectionDistance(a, b, radius);
             SmoothDifference(radius) => SmoothDifferenceDistance(a, b, radius);
+            ChamferUnion(width) => ChamferUnionDistance(a, b, width);
+            ChamferIntersection(width) => ChamferIntersectionDistance(a, b, width);
+            ChamferDifference(width) => ChamferDifferenceDistance(a, b, width);
             Blend(weight) => a.Lerp(b, weight.Value);
         };
 

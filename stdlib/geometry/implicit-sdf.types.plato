@@ -312,8 +312,11 @@ type SampledSdf3D
 
 // The Boolean or blending operation an SDF combination node applies.
 // Union is the distance minimum, Intersection the maximum, IDifference the
-// left child minus the right. Smooth variants blend over their own Radius;
-// Blend linearly interpolates the two child distances by Weight.
+// left child minus the right. Smooth variants blend over their own Radius with
+// a polynomial approximation of an arc; Chamfer variants cut a 45-degree bevel
+// of their own Width instead; Blend linearly interpolates the two child
+// distances by Weight. The cases mirror the distance operators in
+// `implicit-sdf.library.plato`, so a tree can express whatever they can.
 type SdfCombine
     = Union
     | Intersection
@@ -322,6 +325,9 @@ type SdfCombine
     | SmoothUnion(Radius: Number)
     | SmoothIntersection(Radius: Number)
     | SmoothDifference(Radius: Number)
+    | ChamferUnion(Width: Number)
+    | ChamferIntersection(Width: Number)
+    | ChamferDifference(Width: Number)
     | Blend(Weight: Proportion);
 
 // A zero-based index of a node within an SDF combination tree's node array.

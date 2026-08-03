@@ -757,6 +757,55 @@ library FieldsImplicits
     Difference(a: FunctionSdf3D, b: FunctionSdf3D): FunctionSdf3D
         => FunctionSdf3D(p => a.Eval(p).Max(b.Eval(p).Negative));
 
+    // Everything the planar shape is not: inside and outside exchanged. Carries no
+    // bounded form — the complement of a bounded region is unbounded.
+    Complement(self: FunctionSdf2D): FunctionSdf2D
+        => FunctionSdf2D(p => ComplementDistance(self.Eval(p)));
+
+    // Everything the spatial shape is not: inside and outside exchanged.
+    Complement(self: FunctionSdf3D): FunctionSdf3D
+        => FunctionSdf3D(p => ComplementDistance(self.Eval(p)));
+
+    // A linear morph from the first planar shape to the second.
+    // Precondition: t lies in [0, 1].
+    Morph(a: FunctionSdf2D, b: FunctionSdf2D, t: Number): FunctionSdf2D
+        => FunctionSdf2D(p => MorphDistance(a.Eval(p), b.Eval(p), t));
+
+    // A linear morph from the first spatial shape to the second.
+    // Precondition: t lies in [0, 1].
+    Morph(a: FunctionSdf3D, b: FunctionSdf3D, t: Number): FunctionSdf3D
+        => FunctionSdf3D(p => MorphDistance(a.Eval(p), b.Eval(p), t));
+
+    // The union of two planar SDFs with a 45-degree chamfer of the given width
+    // across the seam. Precondition: width is positive.
+    ChamferUnion(a: FunctionSdf2D, b: FunctionSdf2D, width: Number): FunctionSdf2D
+        => FunctionSdf2D(p => ChamferUnionDistance(a.Eval(p), b.Eval(p), width));
+
+    // The union of two spatial SDFs with a 45-degree chamfer across the seam.
+    // Precondition: width is positive.
+    ChamferUnion(a: FunctionSdf3D, b: FunctionSdf3D, width: Number): FunctionSdf3D
+        => FunctionSdf3D(p => ChamferUnionDistance(a.Eval(p), b.Eval(p), width));
+
+    // The chamfered intersection of two planar SDFs.
+    // Precondition: width is positive.
+    ChamferIntersection(a: FunctionSdf2D, b: FunctionSdf2D, width: Number): FunctionSdf2D
+        => FunctionSdf2D(p => ChamferIntersectionDistance(a.Eval(p), b.Eval(p), width));
+
+    // The chamfered intersection of two spatial SDFs.
+    // Precondition: width is positive.
+    ChamferIntersection(a: FunctionSdf3D, b: FunctionSdf3D, width: Number): FunctionSdf3D
+        => FunctionSdf3D(p => ChamferIntersectionDistance(a.Eval(p), b.Eval(p), width));
+
+    // The first planar shape with the second chamfer-subtracted.
+    // Precondition: width is positive.
+    ChamferDifference(a: FunctionSdf2D, b: FunctionSdf2D, width: Number): FunctionSdf2D
+        => FunctionSdf2D(p => ChamferDifferenceDistance(a.Eval(p), b.Eval(p), width));
+
+    // The first spatial shape with the second chamfer-subtracted.
+    // Precondition: width is positive.
+    ChamferDifference(a: FunctionSdf3D, b: FunctionSdf3D, width: Number): FunctionSdf3D
+        => FunctionSdf3D(p => ChamferDifferenceDistance(a.Eval(p), b.Eval(p), width));
+
     // The part of the plane inside exactly one of the two shapes.
     ExclusiveOr(a: FunctionSdf2D, b: FunctionSdf2D): FunctionSdf2D
         => FunctionSdf2D(p => ExclusiveOrDistance(a.Eval(p), b.Eval(p)));
