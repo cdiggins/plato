@@ -502,6 +502,7 @@ type GeometricDistribution implements IProbabilityDistribution{SuccessProbabilit
 type GlyphOutline implements IValue{GlyphId:Integer;Path:Path2D;Advance:Vector2D;}
 type GlyphPlacement implements IValue{GlyphId:Integer;Position:Point2D;Advance:Vector2D;}
 type GlyphRun implements IValue{Font:FontFace;Size:Number;Placements:Array<GlyphPlacement>;}
+type GradedStrutSdf3D implements IValue,ISignedDistanceField3D{Struts:Array<Line3D>;Radii:Array<Number>;}
 type GradientSpread{}
 type GradientTexture implements IProceduralTexture{Gradient:ColorGradient;Angle:Angle;}
 type Graph implements IGraph{VertexCount:Integer;Edges:Array<GraphEdge>;Directed:Boolean;}
@@ -524,6 +525,7 @@ type HalfEdgeMesh implements IValue,IMeshElementCounts,IHalfEdge,IDeformable3D{P
 type HalfPlane2D implements IGeometry2D,IConvexShape,IConnected,IContainsPoint2D,INearestPoint2D{Normal:Direction2D;Distance:Number;}
 type HalfSpace implements IGeometry3D,IConvexShape,IConnected,IContainsPoint3D,INearestPoint3D{Boundary:Plane;}
 type HaltonPattern2D implements IValue{Region:Bounds2D;Count:Integer;BaseX:Integer;BaseY:Integer;}
+type HaltonPattern3D implements IValue{Region:Bounds3D;Count:Integer;BaseX:Integer;BaseY:Integer;BaseZ:Integer;}
 type HammersleyPattern2D implements IValue{Region:Bounds2D;Count:Integer;Base:Integer;}
 type HeatCapacity implements IQuantity{JoulesPerKelvin:Number;}
 type HeightField implements IHeightFieldSurface{Heights:Array2D<Number>;Domain:Bounds2D;}
@@ -580,6 +582,7 @@ type ItemIndex implements IValue,IHashable,IComparable,IIndex{Value:Integer;}
 type JaggedArray<T>implements IValue,IJagged<T>{Offsets:Array<Integer>;Values:Array<T>;}
 type Jerk implements IQuantity{MetersPerSecondCubed:Number;}
 type JitteredGridPattern2D implements IValue{Region:Bounds2D;CellCounts:IntegerVector2;JitterAmount:Number;Seed:Integer;}
+type JitteredGridPattern3D implements IValue{Region:Bounds3D;CellCounts:IntegerVector3;JitterAmount:Number;Seed:Integer;}
 type KdTree2D implements IValue,ISpatialIndex2D,INearestNeighbor2D{Points:Array<Point2D>;Nodes:Array<KdTreeNode2D>;PointIndices:Array<ItemIndex>;}
 type KdTree3D implements IValue,ISpatialIndex3D,INearestNeighbor3D{Points:Array<Point3D>;Nodes:Array<KdTreeNode3D>;PointIndices:Array<ItemIndex>;}
 type KdTreeNode2D implements IValue{SplitAxis:Integer;SplitValue:Number;LeftChild:SpatialNodeIndex;RightChild:SpatialNodeIndex;Items:IntegerInterval;}
@@ -591,6 +594,9 @@ type KNearestQuery3D implements IValue{Center:Point3D;NeighborCount:Integer;MaxD
 type KnotVector implements IValue{Knots:Array<Number>;}
 type KuenSurface implements IParametricSurface{Scale:Number;ParameterRange:NumberInterval;Inclinations:AngleInterval;}
 type LaplaceDistribution implements IProbabilityDistribution{Location:Number;Scale:Number;}
+type LaplacianWeighting{}
+type LatticeStrut implements IValue,IHashable{A:ItemIndex;B:ItemIndex;}
+type LatticeUnitCell implements IValue{Nodes:Array<Point3D>;Struts:Array<LatticeStrut>;}
 type LayeredMaterial implements IValue{Base:TexturedMaterial;ClearCoat:ClearCoatLayer;Sheen:SheenLayer;Specular:SpecularLayer;Transmission:TransmissionLayer;Iridescence:IridescenceLayer;Anisotropy:AnisotropyLayer;Subsurface:SubsurfaceParameters;}
 type LayerTransform2D implements IValue{Anchor:Point2D;Position:Point2D;Rotation:Angle;Scale:Number2;Opacity:Proportion;}
 type LayoutedGraph{Graph:Graph;Positions:Array<Point2D>;}
@@ -745,6 +751,8 @@ type Plane implements IGeometry3D,IConnected,IManifold,IOrientable,INearestPoint
 type PlaneFit3D implements IValue,IFitted{Plane:Plane;Quality:FitQuality;}
 type PlaneHit3D implements IValue{Hit:Boolean;Point:Point3D;Parameter:Number;}
 type PlaneRelation3D{}
+type PlasticPattern2D implements IValue{Region:Bounds2D;Count:Integer;Offset:Number;}
+type PlasticPattern3D implements IValue{Region:Bounds3D;Count:Integer;Offset:Number;}
 type PlatonicSolid{}
 type PlaybackCycle{}
 type PluckerConoid implements IParametricSurface{Radius:Number;Height:Number;FoldCount:Integer;}
@@ -960,10 +968,13 @@ type StereoCameraRig implements IValue{Template:PerspectiveCamera;EyeSeparation:
 type Stiffness implements IQuantity{NewtonsPerMeter:Number;}
 type Strain implements IQuantity{Ratio:Number;}
 type StratifiedPattern2D implements IValue{Region:Bounds2D;StrataCounts:IntegerVector2;SamplesPerStratum:Integer;Seed:Integer;}
+type StratifiedPattern3D implements IValue{Region:Bounds3D;StrataCounts:IntegerVector3;SamplesPerStratum:Integer;Seed:Integer;}
 type String implements IValue,IOrderable,ICountable{}
 type StrokeAlign{}
 type StrokeStyle implements IValue{Width:Number;Cap:LineCap;Join:LineJoin;MiterLimit:Number;Dash:DashPattern;Align:StrokeAlign;}
 type StructuringElement{}
+type StrutLattice3D implements IValue,IBounded3D{Cell:LatticeUnitCell;Bounds:Bounds3D;Counts:IntegerVector3;Radius:Number;}
+type StrutSdf3D implements IValue,ISignedDistanceField3D{Struts:Array<Line3D>;Radius:Number;}
 type StudentTDistribution implements IProbabilityDistribution{DegreesOfFreedom:Number;}
 type SturmChain implements IValue{Polynomials:Array<Polynomial>;}
 type StyledPath2D implements IValue{Path:Path2D;Fill:FillStyle;Stroke:StrokeStyle;}
@@ -1035,6 +1046,10 @@ type TopologySummary implements IValue{VertexCount:Integer;UndirectedEdgeCount:I
 type Torque implements IQuantity{NewtonMeters:Number;}
 type Torus implements IGeometry3D,IClosedShape,IConnected,IVolume,IBounded3D,ICentroid3D,IContainsPoint3D,IParametricSurface{Center:Point3D;Axis:Direction3D;MajorRadius:Number;MinorRadius:Number;}
 type TorusKnot implements IClosedCurve3D{Frame:Frame3D;AxisWindings:Integer;TubeWindings:Integer;MajorRadius:Number;MinorRadius:Number;}
+type TpmsFamily{}
+type TpmsField3D implements IValue,IScalarField3D{Family:TpmsFamily;Period:Number;Level:Number;}
+type TpmsNetwork3D implements IValue,ISignedDistanceField3D{Family:TpmsFamily;Period:Number;Level:Number;}
+type TpmsSheet3D implements IValue,ISignedDistanceField3D{Family:TpmsFamily;Period:Number;Level:Number;Thickness:Number;}
 type TransferFunction{}
 type Transform2D implements IValue{Matrix:Matrix3x3;}
 type Transform3D implements IValue{Matrix:Matrix4x4;}
@@ -1048,6 +1063,7 @@ type TriangleArray3D implements IValue,ITriangleGeometry3D{Triangles:Array<Trian
 type TriangleFace implements IFace{A:VertexIndex;B:VertexIndex;C:VertexIndex;}
 type TriangleMesh2D implements IValue,IMesh2D,IIndexedTriangleGeometry2D,IMeshElementCounts,IDeformable2D{Positions:Array<Point2D>;Faces:Array<TriangleFace>;}
 type TriangleMesh3D implements IValue,ITriangulatedGeometry3D,IIndexedTriangleGeometry3D,IMeshElementCounts,IDeformable3D{Positions:Array<Point3D>;Faces:Array<TriangleFace>;}
+type TriangleMeshTopology implements IValue{CornerEdges:Array<UndirectedEdgeIndex>;CornerTwins:Array<CornerIndex>;UndirectedEdges:Array<VertexPair>;EdgeCorners:Array<CornerIndex>;}
 type TriangularDistribution implements IProbabilityDistribution{Min:Number;Mode:Number;Max:Number;}
 type TrimmedSurface implements ISurface{Base:IParametricSurface;OuterLoop:Polyline2D;Holes:Array<Polyline2D>;}
 type TriplanarProjection implements IValue{BlendSharpness:Number;Tiling:Number2;}
@@ -1102,6 +1118,7 @@ type VertexGroup implements IValue{Name:String;Vertices:Array<VertexIndex>;Weigh
 type VertexIndex implements IValue,IHashable,IComparable,IIndex{Value:Integer;}
 type VertexLayout implements IValue{Attributes:Array<VertexAttributeDescriptor>;ByteStride:Integer;}
 type VertexPair implements IValue,IHashable{A:VertexIndex;B:VertexIndex;}
+type VertexRemap implements IValue{Targets:Array<VertexIndex>;RemappedPositions:Array<Point3D>;}
 type Viewport implements IValue{PixelBounds:IntegerBounds2D;DepthRange:NumberInterval;}
 type Viewport2D implements IValue{View:Bounds2D;PixelSize:IntegerSize2D;}
 type VignetteParameters implements IValue{Strength:Proportion;Radius:Proportion;Softness:Proportion;Center:UvCoordinate;}
