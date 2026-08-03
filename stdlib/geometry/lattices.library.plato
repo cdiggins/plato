@@ -1,0 +1,687 @@
+//==
+// # Lattices
+//
+// Bodies for the periodic cellular structures of `lattices.types.plato`: the
+// named unit cells, the tiling that turns a cell into welded world-space struts,
+// the operators over a tiled lattice, and the triply periodic minimal surfaces.
+//
+// Sections, in order:
+//  - Unit-cell construction
+//  - The standard unit cells
+//  - Periodic identification within a cell
+//  - Readings on a unit cell
+//  - Tiling a cell into world space
+//  - Welding: which cell emits a shared strut
+//  - Readings on a tiled lattice
+//  - Operators over a strut list
+//  - Triply periodic minimal surfaces
+
+library Lattices
+{
+    //==
+    // # Unit-cell construction
+    //
+    // A unit cell is a node list in normalized cell coordinates plus an index
+    // pair per strut. The cells below are written as literal data, because a
+    // cell IS data: its node coordinates and its connectivity are the
+    // definition of the structure and nothing derives them.
+
+    // A strut between two nodes of a cell, by their positions in the node array.
+    // The spelling the cell tables below are written in.
+    Strut(a: Integer, b: Integer): LatticeStrut
+        => LatticeStrut(ItemIndex(a), ItemIndex(b));
+
+    // Both endpoints participate in the digest.
+    Hash(self: LatticeStrut): Integer
+        => self.A.Hash * 31 + self.B.Hash;
+
+    // The segment as a 0- or 1-element list: kept when `condition` holds. The
+    // keep-or-drop building block inside a FlatMap, and the reason no operator
+    // below needs a filter (Convention: see CONVENTIONS.md - Partial operations).
+    // The point-valued twin is `KeepPoint` in `solids-csg.library.plato`.
+    KeepSegment(condition: Boolean, s: Line3D): Array<Line3D>
+        => (condition ? 1 : 0).MapRange(i => s);
+
+    // The eight corners of the unit cube, in the order used by every cell table
+    // below: indices 0-3 are the loop (0,0), (1,0), (1,1), (0,1) in (x, y) on
+    // the z = 0 face, and 4-7 the same loop on z = 1.
+    CubeCorners(_: LatticeUnitCell): Array<Point3D>
+        => [
+            Point3D(0.0, 0.0, 0.0), Point3D(1.0, 0.0, 0.0),
+            Point3D(1.0, 1.0, 0.0), Point3D(0.0, 1.0, 0.0),
+            Point3D(0.0, 0.0, 1.0), Point3D(1.0, 0.0, 1.0),
+            Point3D(1.0, 1.0, 1.0), Point3D(0.0, 1.0, 1.0)
+        ];
+
+    // The twelve edges of the unit cube over `CubeCorners`: the two z-face loops
+    // and the four uprights joining corner c to corner c + 4.
+    CubeEdges(_: LatticeUnitCell): Array<LatticeStrut>
+        => [
+            Strut(0, 1), Strut(1, 2), Strut(2, 3), Strut(3, 0),
+            Strut(4, 5), Strut(5, 6), Strut(6, 7), Strut(7, 4),
+            Strut(0, 4), Strut(1, 5), Strut(2, 6), Strut(3, 7)
+        ];
+
+    // The six face centers of the unit cube, in the order used by the
+    // face-centered tables: z = 0, z = 1, y = 0, y = 1, x = 0, x = 1. They take
+    // indices 8-13 when appended to `CubeCorners`.
+    CubeFaceCenters(_: LatticeUnitCell): Array<Point3D>
+        => [
+            Point3D(0.5, 0.5, 0.0), Point3D(0.5, 0.5, 1.0),
+            Point3D(0.5, 0.0, 0.5), Point3D(0.5, 1.0, 0.5),
+            Point3D(0.0, 0.5, 0.5), Point3D(1.0, 0.5, 0.5)
+        ];
+
+    //==
+    // # The standard unit cells
+    //
+    // The cells a lattice tool is expected to name, each dispatched on
+    // `LatticeUnitCell` following the tree's constant idiom and read as
+    // `LatticeUnitCell.OctetTruss`. Every one satisfies the periodicity
+    // precondition in `lattices.types.plato`, so the tiling welds them without
+    // a search.
+    //
+    // The number in each comment is the node's coordination number ONCE TILED —
+    // how many struts meet at it in the infinite lattice, which is not the
+    // number of struts touching it inside one cell. `NodeValences` recomputes it
+    // from any cell.
+
+    // The simple cubic cell: the eight cube corners joined by the twelve cube
+    // edges. Coordination 6, and bending-dominated — the softest of the cells
+    // here, because nothing triangulates its square faces.
+    // (https://en.wikipedia.org/wiki/Cubic_crystal_system)
+    SimpleCubic(_: LatticeUnitCell): LatticeUnitCell
+        => LatticeUnitCell(LatticeUnitCell.CubeCorners, LatticeUnitCell.CubeEdges);
+
+    // The body-centered cubic cell: a node at the cell center joined to all
+    // eight corners, with no cube edges. Coordination 8 at both the center and
+    // the corner. (https://en.wikipedia.org/wiki/Cubic_crystal_system)
+    BodyCenteredCubic(_: LatticeUnitCell): LatticeUnitCell
+        => LatticeUnitCell(
+            LatticeUnitCell.CubeCorners.Append(Point3D(0.5, 0.5, 0.5)),
+            [
+                Strut(8, 0), Strut(8, 1), Strut(8, 2), Strut(8, 3),
+                Strut(8, 4), Strut(8, 5), Strut(8, 6), Strut(8, 7)
+            ]);
+
+    // The face-centered cubic cell: each face center joined to the four corners
+    // of its own face. Coordination 12 at a corner and 4 at a face center. This
+    // is the additive-manufacturing FCC cell, which is the octet truss below
+    // with the octahedron left out.
+    FaceCenteredCubic(_: LatticeUnitCell): LatticeUnitCell
+        => LatticeUnitCell(
+            LatticeUnitCell.CubeCorners.Concatenate(LatticeUnitCell.CubeFaceCenters),
+            LatticeUnitCell.FaceDiagonalStruts);
+
+    // The twenty-four struts joining each face center (indices 8-13) to the four
+    // corners of its own face. Shared by the face-centered cubic and octet cells.
+    FaceDiagonalStruts(_: LatticeUnitCell): Array<LatticeStrut>
+        => [
+            Strut(8, 0), Strut(8, 1), Strut(8, 2), Strut(8, 3),
+            Strut(9, 4), Strut(9, 5), Strut(9, 6), Strut(9, 7),
+            Strut(10, 0), Strut(10, 1), Strut(10, 5), Strut(10, 4),
+            Strut(11, 3), Strut(11, 2), Strut(11, 6), Strut(11, 7),
+            Strut(12, 0), Strut(12, 3), Strut(12, 7), Strut(12, 4),
+            Strut(13, 1), Strut(13, 2), Strut(13, 6), Strut(13, 5)
+        ];
+
+    // The octet truss: the face-centered cell plus the twelve edges of the
+    // octahedron its six face centers form. Every strut has the same length and
+    // every node has coordination 12; it is fully triangulated and therefore
+    // stretch-dominated, which is why it is the default choice for stiffness at
+    // low density. (https://en.wikipedia.org/wiki/Octet_truss)
+    OctetTruss(_: LatticeUnitCell): LatticeUnitCell
+        => LatticeUnitCell(
+            LatticeUnitCell.CubeCorners.Concatenate(LatticeUnitCell.CubeFaceCenters),
+            LatticeUnitCell.FaceDiagonalStruts.Concatenate([
+                Strut(8, 10), Strut(8, 11), Strut(8, 12), Strut(8, 13),
+                Strut(9, 10), Strut(9, 11), Strut(9, 12), Strut(9, 13),
+                Strut(10, 12), Strut(10, 13), Strut(11, 12), Strut(11, 13)
+            ]));
+
+    // The diamond cubic cell: four interior nodes at the quarter points, each
+    // bonded tetrahedrally to one corner and three face centers. Coordination 4
+    // everywhere. Four of the eight corners carry no strut inside this cell;
+    // they are listed because the tiling needs a node on every cube corner, and
+    // once tiled all eight are the same welded node.
+    // (https://en.wikipedia.org/wiki/Diamond_cubic)
+    DiamondCubic(_: LatticeUnitCell): LatticeUnitCell
+        => LatticeUnitCell(
+            LatticeUnitCell.CubeCorners
+                .Concatenate(LatticeUnitCell.CubeFaceCenters)
+                .Concatenate([
+                    Point3D(0.25, 0.25, 0.25), Point3D(0.75, 0.75, 0.25),
+                    Point3D(0.75, 0.25, 0.75), Point3D(0.25, 0.75, 0.75)
+                ]),
+            [
+                Strut(14, 0), Strut(14, 8), Strut(14, 10), Strut(14, 12),
+                Strut(15, 2), Strut(15, 8), Strut(15, 11), Strut(15, 13),
+                Strut(16, 5), Strut(16, 9), Strut(16, 10), Strut(16, 13),
+                Strut(17, 7), Strut(17, 9), Strut(17, 11), Strut(17, 12)
+            ]);
+
+    // The Kelvin cell: the wireframe of a truncated octahedron (a
+    // tetrakaidecahedron), whose six square faces sit exactly on the cube faces
+    // and are therefore shared with the neighbouring cells. Coordination 4 once
+    // tiled, though the polyhedron itself is 3-valent: the fourth strut comes
+    // from the neighbour across the square face. This is Kelvin's answer to the
+    // minimal-surface foam problem.
+    // (https://en.wikipedia.org/wiki/Truncated_octahedron)
+    TruncatedOctahedron(_: LatticeUnitCell): LatticeUnitCell
+        => LatticeUnitCell(
+            [
+                Point3D(0.0, 0.25, 0.5), Point3D(0.0, 0.5, 0.25),
+                Point3D(0.0, 0.5, 0.75), Point3D(0.0, 0.75, 0.5),
+                Point3D(0.25, 0.0, 0.5), Point3D(0.25, 0.5, 0.0),
+                Point3D(0.25, 0.5, 1.0), Point3D(0.25, 1.0, 0.5),
+                Point3D(0.5, 0.0, 0.25), Point3D(0.5, 0.0, 0.75),
+                Point3D(0.5, 0.25, 0.0), Point3D(0.5, 0.25, 1.0),
+                Point3D(0.5, 0.75, 0.0), Point3D(0.5, 0.75, 1.0),
+                Point3D(0.5, 1.0, 0.25), Point3D(0.5, 1.0, 0.75),
+                Point3D(0.75, 0.0, 0.5), Point3D(0.75, 0.5, 0.0),
+                Point3D(0.75, 0.5, 1.0), Point3D(0.75, 1.0, 0.5),
+                Point3D(1.0, 0.25, 0.5), Point3D(1.0, 0.5, 0.25),
+                Point3D(1.0, 0.5, 0.75), Point3D(1.0, 0.75, 0.5)
+            ],
+            [
+                Strut(0, 1), Strut(0, 2), Strut(0, 4), Strut(1, 3),
+                Strut(1, 5), Strut(2, 3), Strut(2, 6), Strut(3, 7),
+                Strut(4, 8), Strut(4, 9), Strut(5, 10), Strut(5, 12),
+                Strut(6, 11), Strut(6, 13), Strut(7, 14), Strut(7, 15),
+                Strut(8, 10), Strut(8, 16), Strut(9, 11), Strut(9, 16),
+                Strut(10, 17), Strut(11, 18), Strut(12, 14), Strut(12, 17),
+                Strut(13, 15), Strut(13, 18), Strut(14, 19), Strut(15, 19),
+                Strut(16, 20), Strut(17, 21), Strut(18, 22), Strut(19, 23),
+                Strut(20, 21), Strut(20, 22), Strut(21, 23), Strut(22, 23)
+            ]);
+
+    // The three-dimensional re-entrant honeycomb, the standard auxetic cell: the
+    // twelve cube edges each replaced by a two-segment rib that folds INWARD by
+    // `reentrancy` at its midpoint. Stretching the cell along an axis unfolds
+    // those ribs and pushes the other axes outward, which is the negative
+    // Poisson ratio (https://en.wikipedia.org/wiki/Auxetics). The corner nodes
+    // reach coordination 24; the twelve rib nodes are 2-valent hinges, which is
+    // the mechanism and not a defect. `reentrancy` of 0 collapses the cell back
+    // to `SimpleCubic` with each edge split in two; useful values are well below
+    // 0.5, where opposite ribs would meet.
+    ReentrantHoneycomb(reentrancy: Number): LatticeUnitCell
+    {
+        var r = reentrancy;
+        var s = 1.0 - reentrancy;
+        return LatticeUnitCell(
+            LatticeUnitCell.CubeCorners.Concatenate([
+                Point3D(0.5, r, r), Point3D(s, 0.5, r),
+                Point3D(0.5, s, r), Point3D(r, 0.5, r),
+                Point3D(0.5, r, s), Point3D(s, 0.5, s),
+                Point3D(0.5, s, s), Point3D(r, 0.5, s),
+                Point3D(r, r, 0.5), Point3D(s, r, 0.5),
+                Point3D(s, s, 0.5), Point3D(r, s, 0.5)
+            ]),
+            [
+                Strut(0, 8), Strut(1, 8), Strut(1, 9), Strut(2, 9),
+                Strut(2, 10), Strut(3, 10), Strut(3, 11), Strut(0, 11),
+                Strut(4, 12), Strut(5, 12), Strut(5, 13), Strut(6, 13),
+                Strut(6, 14), Strut(7, 14), Strut(7, 15), Strut(4, 15),
+                Strut(0, 16), Strut(4, 16), Strut(1, 17), Strut(5, 17),
+                Strut(2, 18), Strut(6, 18), Strut(3, 19), Strut(7, 19)
+            ]);
+    }
+
+    // The re-entrant honeycomb at a quarter-cell fold, the constant-shaped
+    // spelling of `ReentrantHoneycomb` for callers that want a named cell.
+    ReentrantAuxetic(_: LatticeUnitCell): LatticeUnitCell
+        => ReentrantHoneycomb(0.25);
+
+    //==
+    // # Periodic identification within a cell
+    //
+    // Two things a tiling has to decide about a normalized coordinate: whether
+    // it lies on the FAR face of its axis (coordinate 1, the face shared with
+    // the next cell along), and whether two nodes become the SAME node once the
+    // cell repeats. Both are answered inside the unit cube, before any world
+    // placement, which is what keeps the tiling itself free of searching.
+
+    // The tolerance within which two normalized cell coordinates count as the
+    // same node. Cell tables are written with exact 0, 1 and quarter-point
+    // literals, so this only has to absorb the arithmetic of a derived cell.
+    NodeTolerance(_: LatticeUnitCell): Number
+        => 0.000001;
+
+    // True when a normalized coordinate lies on the far face of its axis: the
+    // face this cell shares with the next cell along that axis.
+    OnFarFace(u: Number): Boolean
+        => u >= 1.0 - LatticeUnitCell.NodeTolerance;
+
+    // A normalized coordinate folded into [0, 1): the far face maps onto the
+    // near face, which is what makes a face node and its opposite twin one node.
+    WrapCellCoordinate(u: Number): Number
+        => OnFarFace(u) ? u - 1.0 : u;
+
+    // True when two normalized cell coordinates denote the same node of the
+    // tiled lattice, comparing them folded onto the near faces.
+    SameLatticeNode(a: Point3D, b: Point3D): Boolean
+        => (WrapCellCoordinate(a.X) - WrapCellCoordinate(b.X)).Abs <= LatticeUnitCell.NodeTolerance
+        && (WrapCellCoordinate(a.Y) - WrapCellCoordinate(b.Y)).Abs <= LatticeUnitCell.NodeTolerance
+        && (WrapCellCoordinate(a.Z) - WrapCellCoordinate(b.Z)).Abs <= LatticeUnitCell.NodeTolerance;
+
+    // True when a strut between these two normalized coordinates belongs to its
+    // own cell rather than to the neighbour it shares a face with. A strut with
+    // BOTH endpoints on the far face of an axis lies in that shared face, so the
+    // next cell along describes the very same segment with both endpoints on its
+    // near face; the near-face copy is the one kept. This one rule is the whole
+    // of the welding, and it is a decision about one strut in isolation — no
+    // search, no vertex table, no tolerance on world positions.
+    CellOwnsStrut(a: Point3D, b: Point3D): Boolean
+        => (OnFarFace(a.X) && OnFarFace(b.X)).Not
+        && (OnFarFace(a.Y) && OnFarFace(b.Y)).Not
+        && (OnFarFace(a.Z) && OnFarFace(b.Z)).Not;
+
+    //==
+    // # Readings on a unit cell
+    //
+    // What can be known about a lattice from its cell alone, independent of how
+    // many times it is repeated: the coordination number of each node in the
+    // infinite tiling, and the cell's strut lengths.
+
+    // The two normalized endpoints of a strut of this cell.
+    StrutEndpointA(self: LatticeUnitCell, s: LatticeStrut): Point3D
+        => self.Nodes[s.A.Value];
+
+    // The second normalized endpoint of a strut of this cell.
+    StrutEndpointB(self: LatticeUnitCell, s: LatticeStrut): Point3D
+        => self.Nodes[s.B.Value];
+
+    // How many endpoints of the strut land on `node` once the cell is tiled:
+    // zero when a neighbouring cell owns the strut, otherwise 0, 1 or 2. Both
+    // endpoints count when a strut runs from a node to its own periodic image,
+    // which is exactly what a cube edge of the simple cubic cell does.
+    StrutIncidence(self: LatticeUnitCell, s: LatticeStrut, node: Point3D): Integer
+    {
+        var a = self.StrutEndpointA(s);
+        var b = self.StrutEndpointB(s);
+        return CellOwnsStrut(a, b).Not
+            ? 0
+            : (SameLatticeNode(a, node) ? 1 : 0) + (SameLatticeNode(b, node) ? 1 : 0);
+    }
+
+    // The coordination number of a node in the INFINITE tiling of this cell:
+    // how many struts meet there once the cell repeats, which is generally more
+    // than the number of struts touching that node inside one cell.
+    // (https://en.wikipedia.org/wiki/Coordination_number)
+    NodeValence(self: LatticeUnitCell, node: ItemIndex): Integer
+    {
+        var p = self.Nodes[node.Value];
+        return self.Struts.Reduce(0, (acc, s) => acc + self.StrutIncidence(s, p));
+    }
+
+    // The coordination number of every node of the cell, parallel to Nodes.
+    // Nodes that are periodic images of one another report the same number.
+    NodeValences(self: LatticeUnitCell): Array<Integer>
+        => self.Nodes.Count.MapRange(i => self.NodeValence(ItemIndex(i)));
+
+    // The length of a strut in normalized cell coordinates: multiply by the cell
+    // size to get a world length in a cell that is a cube.
+    NormalizedStrutLength(self: LatticeUnitCell, s: LatticeStrut): Number
+        => self.StrutEndpointA(s).Distance(self.StrutEndpointB(s));
+
+    // How many struts one interior cell contributes to the tiling: the cell's
+    // struts less the ones its neighbours own.
+    OwnedStrutCount(self: LatticeUnitCell): Integer
+        => self.Struts.Reduce(0, (acc, s) =>
+            acc + (CellOwnsStrut(self.StrutEndpointA(s), self.StrutEndpointB(s)) ? 1 : 0));
+
+    //==
+    // # Tiling a cell into world space
+    //
+    // The counts and the bounds fix the cell size; nothing stores it. Every node
+    // position is `Min + (cellIndex + normalizedCoordinate) * cellSize` on each
+    // axis, and that single spelling is what welds the lattice: the far-face
+    // node of cell i and the near-face node of cell i + 1 both evaluate
+    // (i + 1) * cellSize, so they land on the same world position exactly rather
+    // than within a tolerance.
+
+    // The world-space size of one cell on each axis: the bounds extent divided
+    // by the repetition count. Cells are cubic only when the bounds are
+    // proportional to the counts.
+    CellSize(self: StrutLattice3D): Vector3D
+        => Vector3D(
+            (self.Bounds.Max.X - self.Bounds.Min.X) / self.Counts.X.ToNumber,
+            (self.Bounds.Max.Y - self.Bounds.Min.Y) / self.Counts.Y.ToNumber,
+            (self.Bounds.Max.Z - self.Bounds.Min.Z) / self.Counts.Z.ToNumber);
+
+    // How many cells the lattice repeats in total.
+    CellCount(self: StrutLattice3D): Integer
+        => self.Counts.X.Max(0) * self.Counts.Y.Max(0) * self.Counts.Z.Max(0);
+
+    // The integer coordinates of every cell, x fastest then y then z. A
+    // non-positive count on any axis makes the lattice empty.
+    Cells(self: StrutLattice3D): Array<IntegerVector3>
+    {
+        var columns = self.Counts.X.Max(0);
+        var rows = self.Counts.Y.Max(0);
+        var layers = self.Counts.Z.Max(0);
+        var plane = columns * rows;
+        return (plane * layers).MapRange(n =>
+            IntegerVector3(n % columns, (n / columns) % rows, n / plane));
+    }
+
+    // The world position of a normalized cell coordinate inside a given cell.
+    // The one place cell indices and normalized coordinates meet.
+    NodePosition(self: StrutLattice3D, cell: IntegerVector3, node: Point3D): Point3D
+    {
+        var size = self.CellSize;
+        return Point3D(
+            self.Bounds.Min.X + (cell.X.ToNumber + node.X) * size.X,
+            self.Bounds.Min.Y + (cell.Y.ToNumber + node.Y) * size.Y,
+            self.Bounds.Min.Z + (cell.Z.ToNumber + node.Z) * size.Z);
+    }
+
+    // The world-space segment a strut of the cell occupies in a given cell.
+    StrutSegment(self: StrutLattice3D, cell: IntegerVector3, s: LatticeStrut): Line3D
+        => Line3D(
+            self.NodePosition(cell, self.Cell.StrutEndpointA(s)),
+            self.NodePosition(cell, self.Cell.StrutEndpointB(s)));
+
+    //==
+    // # Welding: which cell emits a shared strut
+    //
+    // `CellOwnsStrut` above states the rule for the infinite tiling. A finite
+    // lattice keeps what the infinite one would drop whenever there is no next
+    // cell to own it, so the far face of the last cell on an axis is closed
+    // rather than left open.
+
+    // True when this cell, and not the neighbour that shares a face with it,
+    // emits the strut. The near-face copy wins wherever the neighbour exists.
+    OwnsStrut(self: StrutLattice3D, cell: IntegerVector3, s: LatticeStrut): Boolean
+    {
+        var a = self.Cell.StrutEndpointA(s);
+        var b = self.Cell.StrutEndpointB(s);
+        return (OnFarFace(a.X) && OnFarFace(b.X) && cell.X + 1 < self.Counts.X).Not
+            && (OnFarFace(a.Y) && OnFarFace(b.Y) && cell.Y + 1 < self.Counts.Y).Not
+            && (OnFarFace(a.Z) && OnFarFace(b.Z) && cell.Z + 1 < self.Counts.Z).Not;
+    }
+
+    // True when this cell emits the node. A node on the far face of an axis
+    // belongs to the next cell along, which describes it on its near face.
+    OwnsNode(self: StrutLattice3D, cell: IntegerVector3, node: Point3D): Boolean
+        => (OnFarFace(node.X) && cell.X + 1 < self.Counts.X).Not
+        && (OnFarFace(node.Y) && cell.Y + 1 < self.Counts.Y).Not
+        && (OnFarFace(node.Z) && cell.Z + 1 < self.Counts.Z).Not;
+
+    // The struts one cell contributes, in the cell's own strut order.
+    CellStruts(self: StrutLattice3D, cell: IntegerVector3): Array<Line3D>
+        => self.Cell.Struts.FlatMap(s =>
+            KeepSegment(self.OwnsStrut(cell, s), self.StrutSegment(cell, s)));
+
+    // The nodes one cell contributes, in the cell's own node order.
+    CellNodes(self: StrutLattice3D, cell: IntegerVector3): Array<Point3D>
+        => self.Cell.Nodes.FlatMap(n =>
+            KeepPoint(self.OwnsNode(cell, n), self.NodePosition(cell, n)));
+
+    // Every strut of the lattice as a world-space segment, each shared strut
+    // emitted exactly once and every shared node landing on one world position.
+    // This is the single tiling path: the graded, trimmed and deformed variants
+    // below all operate on the array this returns.
+    Struts(self: StrutLattice3D): Array<Line3D>
+        => self.Cells.FlatMap(c => self.CellStruts(c));
+
+    // Every node of the lattice as a world-space position, each emitted exactly
+    // once.
+    Nodes(self: StrutLattice3D): Array<Point3D>
+        => self.Cells.FlatMap(c => self.CellNodes(c));
+
+    //==
+    // # Readings on a tiled lattice
+    //
+    // The numbers an engineer asks of a lattice. Each walks the welded strut
+    // list, so each counts a shared strut once.
+
+    // How many struts the lattice has once welded.
+    StrutCount(self: StrutLattice3D): Integer
+        => self.Struts.Count;
+
+    // How many nodes the lattice has once welded.
+    NodeCount(self: StrutLattice3D): Integer
+        => self.Nodes.Count;
+
+    // The summed length of every strut: the length of wire the lattice is, and
+    // the quantity relative density is proportional to.
+    TotalLength(struts: Array<Line3D>): Number
+        => struts.Reduce(0.0, (acc, s) => acc + s.Length);
+
+    // The summed length of every welded strut of the lattice.
+    TotalStrutLength(self: StrutLattice3D): Number
+        => TotalLength(self.Struts);
+
+    // The volume of an axis-aligned box; the denominator of relative density.
+    // Zero or negative for an empty (inverted) box.
+    // Convention: see CONVENTIONS.md - Bounds.
+    EnvelopeVolume(b: Bounds3D): Number
+        => (b.Max.X - b.Min.X) * (b.Max.Y - b.Min.Y) * (b.Max.Z - b.Min.Z);
+
+    // The fraction of the envelope the struts fill, treating each strut as a
+    // cylinder of the given radius: sum of pi * r^2 * length over the envelope
+    // volume (https://en.wikipedia.org/wiki/Relative_density).
+    //
+    // This is the FIRST-ORDER estimate and an OVERESTIMATE: material where
+    // struts meet at a node is counted once per strut, and the spherical joints
+    // that close those meetings are not counted at all. It converges on the true
+    // fraction as radius over strut length goes to zero, which is the slender
+    // regime lattices are used in; at radii approaching a third of the strut
+    // length it is no longer usable.
+    RelativeDensity(struts: Array<Line3D>, radius: Number, envelope: Bounds3D): Number
+        => Number.Pi * radius.Square * TotalLength(struts) / EnvelopeVolume(envelope);
+
+    // The same first-order estimate for a graded lattice, with one radius per
+    // strut. Radii is parallel to struts.
+    RelativeDensity(struts: Array<Line3D>, radii: Array<Number>, envelope: Bounds3D): Number
+    {
+        var solid = struts.Count.MapRange(i => radii[i].Square * struts[i].Length)
+            .Reduce(0.0, (acc, v) => acc + v);
+        return Number.Pi * solid / EnvelopeVolume(envelope);
+    }
+
+    // The lattice's relative density at its own uniform strut radius.
+    RelativeDensity(self: StrutLattice3D): Number
+        => RelativeDensity(self.Struts, self.Radius, self.Bounds);
+
+    //==
+    // # Operators over a strut list
+    //
+    // Grading, trimming and warping all consume the welded strut list rather
+    // than re-tiling, so they compose in any order and none of them is a second
+    // tiling path. Read left to right: `lattice.Struts.Trimmed(solid)` is the
+    // trimmed lattice, and `.StrutRadii(field)` grades whatever it is handed.
+
+    // One radius per strut, all the same. The uniform case in the shape the
+    // graded operators produce, so the two feed the same consumers.
+    StrutRadii(struts: Array<Line3D>, radius: Number): Array<Number>
+        => struts.Map(s => radius);
+
+    // One radius per strut, read from a scalar field at the strut's midpoint.
+    // The field's value IS the radius, in world units; nothing rescales it.
+    StrutRadii(struts: Array<Line3D>, radius: IScalarField3D): Array<Number>
+        => struts.Map(s => radius.Eval(s.Centroid));
+
+    // One radius per strut, from a grading field whose value is a fraction: the
+    // field is sampled at the strut midpoint, clamped to [0, 1], and used to
+    // interpolate between the ends of `range`. The usual spelling for "thicker
+    // where this field is high".
+    StrutRadii(struts: Array<Line3D>, grading: IScalarField3D, range: NumberInterval): Array<Number>
+        => struts.Map(s =>
+            range.Start.Lerp(range.End, grading.Eval(s.Centroid).Max(0.0).Min(1.0)));
+
+    // The struts whose midpoint lies inside a box. Whole struts are kept or
+    // dropped — nothing is clipped, so the trimmed lattice keeps its welding and
+    // a strut straddling the boundary survives or vanishes entire.
+    Trimmed(struts: Array<Line3D>, region: Bounds3D): Array<Line3D>
+        => struts.FlatMap(s => KeepSegment(region.Contains(s.Centroid), s));
+
+    // The struts whose midpoint lies inside a solid described by a signed
+    // distance field. Whole struts, as above.
+    Trimmed(struts: Array<Line3D>, solid: ISignedDistanceField3D): Array<Line3D>
+        => struts.FlatMap(s => KeepSegment(solid.Contains(s.Centroid), s));
+
+    // The struts whose midpoint lies inside a solid described by a membership
+    // predicate. Whole struts, as above.
+    Trimmed(struts: Array<Line3D>, volume: IImplicitVolume3D): Array<Line3D>
+        => struts.FlatMap(s => KeepSegment(volume.Contains(s.Centroid), s));
+
+    // The struts with both endpoints carried through a point map. This is how a
+    // lattice is conformed to something other than its box, and how a graded
+    // CELL SIZE is expressed: warp the tiled struts rather than tile unevenly.
+    // A map that is not injective folds the lattice onto itself.
+    Deformed(struts: Array<Line3D>, mapping: Function1<Point3D, Point3D>): Array<Line3D>
+        => struts.Map(s => s.Deform(mapping));
+
+    // The lattice conformed to a different box: the same cell and counts, filling
+    // the new bounds. Cell size follows the new extent, so this stretches rather
+    // than re-tiles.
+    ConformedTo(self: StrutLattice3D, bounds: Bounds3D): StrutLattice3D
+        => StrutLattice3D(self.Cell, bounds, self.Counts, self.Radius);
+
+    // The lattice at a different uniform strut radius.
+    WithRadius(self: StrutLattice3D, radius: Number): StrutLattice3D
+        => StrutLattice3D(self.Cell, self.Bounds, self.Counts, radius);
+
+    // The lattice at a different repetition count.
+    WithCounts(self: StrutLattice3D, counts: IntegerVector3): StrutLattice3D
+        => StrutLattice3D(self.Cell, self.Bounds, counts, self.Radius);
+
+    // The lattice built from a different unit cell, keeping its placement.
+    WithCell(self: StrutLattice3D, cell: LatticeUnitCell): StrutLattice3D
+        => StrutLattice3D(cell, self.Bounds, self.Counts, self.Radius);
+
+    // How many cells of the given target size fit along an extent; at least one.
+    CellDivisions(extent: Number, size: Number): Integer
+        => (extent / size).ToInteger.Max(1);
+
+    // A lattice whose cells are as near cubic as whole counts allow: the longest
+    // axis of the bounds is divided `divisions` times and the other two follow
+    // that cell size. The ergonomic way to place a cell in a box without working
+    // out the counts by hand.
+    UniformLattice(cell: LatticeUnitCell, bounds: Bounds3D, divisions: Integer, radius: Number): StrutLattice3D
+    {
+        var ex = bounds.Max.X - bounds.Min.X;
+        var ey = bounds.Max.Y - bounds.Min.Y;
+        var ez = bounds.Max.Z - bounds.Min.Z;
+        var size = ex.Max(ey).Max(ez) / divisions.Max(1).ToNumber;
+        return StrutLattice3D(cell, bounds,
+            IntegerVector3(
+                CellDivisions(ex, size), CellDivisions(ey, size), CellDivisions(ez, size)),
+            radius);
+    }
+
+    // The struts as a solid: the union of capsules of one radius. Explicit
+    // rather than implicit, because it settles the radius and discards the cell
+    // and the counts (Convention: see CONVENTIONS.md - Conversions).
+    ToSdf(struts: Array<Line3D>, radius: Number): StrutSdf3D
+        => StrutSdf3D(struts, radius);
+
+    // The struts as a graded solid: the union of capsules, one radius per strut.
+    ToSdf(struts: Array<Line3D>, radii: Array<Number>): GradedStrutSdf3D
+        => GradedStrutSdf3D(struts, radii);
+
+    // The whole lattice as a solid at its own uniform strut radius. Tiles once,
+    // then evaluates against the resulting strut list.
+    ToSdf(self: StrutLattice3D): StrutSdf3D
+        => StrutSdf3D(self.Struts, self.Radius);
+
+    // The distance to a lattice solid: the nearest capsule's distance. Exact —
+    // a capsule distance is exact and the minimum of exact fields is the exact
+    // distance to their union outside the solid.
+    Eval(self: StrutSdf3D, point: Point3D): Number
+        => self.Struts.Reduce(Number.MaxValue, (acc, s) =>
+            acc.Min(DistanceToCapsule(point, s.A, s.B, self.Radius)));
+
+    // The distance to a graded lattice solid: the nearest capsule's distance,
+    // each strut taking its own radius. Exact, as above.
+    Eval(self: GradedStrutSdf3D, point: Point3D): Number
+        => self.Struts.Count.MapRange(i =>
+                DistanceToCapsule(point, self.Struts[i].A, self.Struts[i].B, self.Radii[i]))
+            .Reduce(Number.MaxValue, (acc, d) => acc.Min(d));
+
+    //==
+    // # Triply periodic minimal surfaces
+    //
+    // The nodal implicits, each a short trigonometric sum whose zero level set
+    // approximates a minimal surface repeating in all three axes
+    // (https://en.wikipedia.org/wiki/Triply_periodic_minimal_surface). They are
+    // ordinary spatial scalar fields, so the marching cubes and sphere-tracing
+    // paths already in the tree consume them unchanged.
+    //
+    // Turning one into a DISTANCE takes a Lipschitz bound: dividing an implicit
+    // by an upper bound on its gradient magnitude gives a value that never
+    // exceeds the true distance to its zero set, which is the LOWER BOUND
+    // fidelity `implicit-sdf.concepts.plato` describes. Each bound below is the
+    // summed coefficient of one partial derivative, lifted to all three by a
+    // factor of the square root of three and scaled by the angular frequency.
+    // They are honest bounds, not tight ones — the gyroid's is twice its true
+    // maximum — so a sphere tracer takes short steps and never steps through.
+
+    // The angular frequency of a period: one full cycle of the trigonometric
+    // argument per Period of world distance. Precondition: period is positive.
+    TpmsFrequency(period: Number): Number
+        => Number.Tau / period;
+
+    // The raw nodal implicit of a family at a point, in the family's own
+    // unitless scale. Zero on the surface, and of opposite sign in the two
+    // labyrinths it separates.
+    TpmsNodalValue(family: TpmsFamily, period: Number, p: Point3D): Number
+    {
+        var k = TpmsFrequency(period);
+        var x = p.X * k;
+        var y = p.Y * k;
+        var z = p.Z * k;
+        return match (family) {
+            Gyroid => x.Sin * y.Cos + y.Sin * z.Cos + z.Sin * x.Cos;
+            SchwarzPrimitive => x.Cos + y.Cos + z.Cos;
+            SchwarzDiamond => x.Sin * y.Sin * z.Sin + x.Sin * y.Cos * z.Cos
+                            + x.Cos * y.Sin * z.Cos + x.Cos * y.Cos * z.Sin;
+            Neovius => 3.0 * (x.Cos + y.Cos + z.Cos) + 4.0 * x.Cos * y.Cos * z.Cos;
+            IwpSurface => 2.0 * (x.Cos * y.Cos + y.Cos * z.Cos + z.Cos * x.Cos)
+                        - ((2.0 * x).Cos + (2.0 * y).Cos + (2.0 * z).Cos);
+        };
+    }
+
+    // The largest magnitude the partial derivative of a family's nodal implicit
+    // can reach with respect to ONE scaled coordinate: the sum of its terms'
+    // coefficients, since every factor is a sine or cosine bounded by one.
+    TpmsPartialBound(family: TpmsFamily): Number
+        => match (family) {
+            Gyroid => 2.0;
+            SchwarzPrimitive => 1.0;
+            SchwarzDiamond => 4.0;
+            Neovius => 7.0;
+            IwpSurface => 6.0;
+        };
+
+    // A Lipschitz constant for a family at a period: the three partials bounded
+    // together, times the angular frequency. Dividing the nodal value by this
+    // turns it into a lower bound on the distance to the surface.
+    TpmsGradientBound(family: TpmsFamily, period: Number): Number
+        => TpmsPartialBound(family) * 3.0.Sqrt * TpmsFrequency(period);
+
+    // The distance-like value of a family's implicit relative to a level: the
+    // nodal value less the level, divided by the family's Lipschitz bound.
+    // Negative inside the at-or-below labyrinth. A LOWER BOUND on distance.
+    TpmsNormalizedValue(family: TpmsFamily, period: Number, level: Number, p: Point3D): Number
+        => (TpmsNodalValue(family, period, p) - level) / TpmsGradientBound(family, period);
+
+    // The nodal implicit shifted so that its zero level set is the field's Level
+    // isosurface. Not a distance — the solid types below carry the division that
+    // makes one.
+    Eval(self: TpmsField3D, point: Point3D): Number
+        => TpmsNodalValue(self.Family, self.Period, point) - self.Level;
+
+    // The signed distance to the network solid: negative in the labyrinth where
+    // the implicit is at or below Level. A LOWER BOUND, not exact.
+    Eval(self: TpmsNetwork3D, point: Point3D): Number
+        => TpmsNormalizedValue(self.Family, self.Period, self.Level, point);
+
+    // The signed distance to the sheet solid: negative within half of Thickness
+    // of the Level isosurface, on either side of it. A LOWER BOUND, not exact.
+    Eval(self: TpmsSheet3D, point: Point3D): Number
+        => TpmsNormalizedValue(self.Family, self.Period, self.Level, point).Abs
+         - self.Thickness * 0.5;
+}

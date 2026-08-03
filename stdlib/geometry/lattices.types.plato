@@ -1,0 +1,165 @@
+//==
+// # Lattices
+//
+// Periodic cellular structures: the strut-and-node scaffolds used for additive
+// manufacturing infill, metamaterials and lightweighting, and the triply
+// periodic minimal surfaces that are their implicit counterpart
+// (https://en.wikipedia.org/wiki/Lattice_material).
+//
+// Sections, in order:
+//  - Unit cells
+//  - Lattice instances
+//  - Strut distance fields
+//  - Triply periodic minimal surfaces
+
+//==
+// # Unit cells
+//
+// A unit cell is a graph in NORMALIZED CELL COORDINATES: node positions live in
+// the unit cube [0, 1]^3, so one cell description serves every cell size. The
+// named standard cells and the tiling that places them in world space are in
+// `lattices.library.plato`.
+//
+// Periodicity is a precondition, not a check. A cell is well formed for tiling
+// when its node set and its strut set survive translation by one cell: a node
+// with a coordinate of 1 has a twin with that coordinate 0 and the others
+// unchanged, and likewise for struts lying in a face. Every cell in
+// `lattices.library.plato` satisfies it. A cell that does not will tile with
+// gaps or with doubled struts on the shared faces.
+//
+// Face coordinates are written as exact 0 and 1 literals, which is what lets the
+// tiling recognize a face by comparison rather than by tolerance.
+
+// One strut of a unit cell: an undirected pair of positions in the cell's Nodes
+// array. A and B index that array; order carries no meaning, and a strut with
+// A equal to B is degenerate.
+// Convention: see CONVENTIONS.md - Typed indices.
+type LatticeStrut
+    implements IValue, IHashable
+{
+    A: ItemIndex;
+    B: ItemIndex;
+}
+
+// The repeating unit of a strut lattice: nodes in normalized cell coordinates
+// (the unit cube) plus the struts joining them. The same cell tiles at any size,
+// so nothing here carries a world dimension.
+type LatticeUnitCell
+    implements IValue
+{
+    Nodes: Array<Point3D>;
+    Struts: Array<LatticeStrut>;
+}
+
+//==
+// # Lattice instances
+//
+// A cell placed in the world: repeated Counts times per axis so that the
+// repetitions exactly fill Bounds. Cell size is therefore derived, never stored
+// — `CellSize` in `lattices.library.plato` divides the bounds extent by the
+// counts, which is what keeps a node shared by two neighbouring cells at one
+// world position and makes the struts weld without a search.
+// Convention: see CONVENTIONS.md - Bounds.
+
+// A strut lattice: one unit cell tiled Counts times per axis across Bounds,
+// with struts of the given world-space radius. Radius is nominal — the graded
+// operators in `lattices.library.plato` produce a per-strut radius array from a
+// field instead, and leave this value alone.
+type StrutLattice3D
+    implements IValue, IBounded3D
+{
+    Cell: LatticeUnitCell;
+    Bounds: Bounds3D;
+    Counts: IntegerVector3;
+    Radius: Number;
+}
+
+//==
+// # Strut distance fields
+//
+// The bridge from a strut list to a surface: a lattice as a union of capsules,
+// which is an EXACT signed distance field (each capsule distance is exact and
+// the union of exact fields is exact outside the solid). Marching cubes and the
+// sphere-tracing paths therefore consume a lattice with no new plumbing.
+//
+// Evaluation is linear in the strut count, with no acceleration structure. That
+// is the honest cost of the simplest correct form; a caller extracting a large
+// lattice should trim the struts to the region of interest first.
+
+// A lattice solid: the union of capsules of one radius around each strut.
+// Struts are world-space segments, typically the output of `Struts` in
+// `lattices.library.plato`. An empty strut list is the empty solid.
+type StrutSdf3D
+    implements IValue, ISignedDistanceField3D
+{
+    Struts: Array<Line3D>;
+    Radius: Number;
+}
+
+// A graded lattice solid: the union of capsules whose radius varies per strut.
+// Precondition: Radii is parallel to Struts, one radius per strut — the graded
+// operators in `lattices.library.plato` produce exactly that shape.
+type GradedStrutSdf3D
+    implements IValue, ISignedDistanceField3D
+{
+    Struts: Array<Line3D>;
+    Radii: Array<Number>;
+}
+
+//==
+// # Triply periodic minimal surfaces
+//
+// The implicit counterpart of a strut lattice: a smooth surface that repeats in
+// all three axes and divides space into two interpenetrating labyrinths
+// (https://en.wikipedia.org/wiki/Triply_periodic_minimal_surface). These are the
+// standard nodal (short trigonometric) approximations, not the exact minimal
+// surfaces — the exact ones have no closed form, and the nodal approximations
+// are what every additive-manufacturing tool means by "gyroid".
+//
+// Two solids come from one surface, and they are different shapes: the NETWORK
+// solid is one of the two labyrinths (the implicit at or below its level), and
+// the SHEET solid is a wall of finite thickness straddling the surface itself.
+
+// Which nodal approximation a triply periodic surface uses. Each is the
+// classical short form: Gyroid is Schoen's gyroid, SchwarzPrimitive and
+// SchwarzDiamond are Schwarz's P and D surfaces, Neovius is the Neovius
+// surface, and IwpSurface is Schoen's I-WP.
+type TpmsFamily = Gyroid | SchwarzPrimitive | SchwarzDiamond | Neovius | IwpSurface;
+
+// A triply periodic scalar field: the nodal implicit of the named family,
+// repeating every Period along each axis, shifted so that its zero level set is
+// the Level isosurface of the raw implicit. Level 0 is the minimal surface
+// itself; moving it off zero trades one labyrinth's volume for the other's.
+// Values are unitless and are NOT a distance — the solid types below carry the
+// Lipschitz division that turns them into one.
+type TpmsField3D
+    implements IValue, IScalarField3D
+{
+    Family: TpmsFamily;
+    Period: Number;
+    Level: Number;
+}
+
+// The network (skeletal) solid of a triply periodic surface: the labyrinth
+// where the implicit is at or below Level. Distances are a LOWER BOUND, not
+// exact: the nodal implicit is divided by a bound on its gradient, so a sphere
+// tracer converges in short steps and never steps through the surface.
+type TpmsNetwork3D
+    implements IValue, ISignedDistanceField3D
+{
+    Family: TpmsFamily;
+    Period: Number;
+    Level: Number;
+}
+
+// The sheet solid of a triply periodic surface: a wall of Thickness straddling
+// the Level isosurface, half on each side. This is the shape a "gyroid infill"
+// usually means. Distances are a LOWER BOUND, as for the network solid.
+type TpmsSheet3D
+    implements IValue, ISignedDistanceField3D
+{
+    Family: TpmsFamily;
+    Period: Number;
+    Level: Number;
+    Thickness: Number;
+}
