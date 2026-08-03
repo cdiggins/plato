@@ -113,6 +113,11 @@ All three must pass before you report done:
 `npm run probe` is not a gate — it is the quick way to find out whether a member
 evaluates at all, before you build a scene around it.
 
+**Several agents share this working tree.** `npm run typecheck` and
+`npm run scenes` both see every page, so a failure in a file you do not own is
+another agent mid-edit: re-run, and if it persists, say so in your report and
+judge yourself on your own page's scenes. Never "fix" someone else's file.
+
 Do not commit; report what you changed and let the coordinating session commit.
 Do not start a dev server — the gates above are the verification, and the port
 is shared.
