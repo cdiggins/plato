@@ -354,7 +354,7 @@ type Contour2D implements IValue{Segments:Array<PathSegment2D>;Closed:Boolean;}
 type ContourIndex implements IValue,IHashable,IComparable,IIndex{Value:Integer;}
 type ConvexHull2D implements IValue{Hull:Polygon2D;SourceIndices:Array<ItemIndex>;}
 type ConvexHull3D implements IValue{Hull:TriangleMesh3D;SourceIndices:Array<ItemIndex>;}
-type ConvexPolygon2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IArea,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,ISupport2D,IDeformable2D{Points:Array<Point2D>;}
+type ConvexPolygon2D implements IGeometry2D,IClosedShape,IConvexShape,IConnected,IArea,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,ISupport2D,IDeformable2D,IMesh2D{Points:Array<Point2D>;}
 type ConvexPolytope3D implements IConvexSolid{Boundaries:Array<HalfSpace>;}
 type ConvexVolume implements IGeometry3D,IConvexShape,IConnected,IContainsPoint3D{Planes:Array<Plane>;}
 type ConvolutionKernel implements IValue{Width:Integer;Height:Integer;Weights:Array<Number>;Scale:Number;Bias:Number;}
@@ -416,6 +416,7 @@ type DupinCyclide implements IParametricSurface{MajorRadius:Number;MinorRadius:N
 type Duration implements IQuantity{Seconds:Number;}
 type DynamicQuantity{Amount:Number;Unit:UnitOfMeasure;}
 type DynamicViscosity implements IQuantity{PascalSeconds:Number;}
+type EarClipNode{Vertex:VertexIndex;Prev:Integer;Next:Integer;Active:Boolean;}
 type EasingFamily{}
 type EasingPhase{}
 type EdgeDetection{}
@@ -756,12 +757,12 @@ type PointN implements ICoordinate,IOriginBased<VectorN>,IMetricSpace{Components
 type PoissonDiskPattern2D implements IValue{Region:Bounds2D;MinimumDistance:Number;MaxAttempts:Integer;Seed:Integer;}
 type PoissonDistribution implements IProbabilityDistribution{Rate:Number;}
 type PolarCoordinate implements IValue{Radius:Number;Angle:Angle;}
-type Polygon2D implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,IDeformable2D{Points:Array<Point2D>;}
+type Polygon2D implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,IDeformable2D,IMesh2D{Points:Array<Point2D>;}
 type Polygon3D implements IGeometry3D,IClosedShape,IConnected,IManifold,IOrientable,IArea,IBounded3D,IPointSet3D,ICentroid3D,INearestPoint3D,IDeformable3D{Points:Array<Point3D>;}
 type PolygonMesh3D implements IValue,IMesh3D,IMeshElementCounts,IMeshIncidence,IDeformable3D{Positions:Array<Point3D>;Faces:JaggedArray<VertexIndex>;}
 type PolygonSet2D implements IGeometry2D,IClosedShape,IArea,IBounded2D,IContainsPoint2D,IDeformable2D{Polygons:Array<PolygonWithHoles2D>;}
 type PolygonSoup3D implements ISolid,IDeformable3D{Polygons:Array<Polygon3D>;}
-type PolygonWithHoles2D implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D,IDeformable2D{Boundary:Polygon2D;Holes:Array<Polygon2D>;}
+type PolygonWithHoles2D implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D,IDeformable2D,IMesh2D{Boundary:Polygon2D;Holes:Array<Polygon2D>;}
 type Polyline2D implements IGeometry2D,IConnected,IBounded2D,ILength,IPointSet2D,IDeformable2D{Points:Array<Point2D>;Closed:Boolean;}
 type Polyline3D implements IGeometry3D,IConnected,IBounded3D,ILength,IPointSet3D,IDeformable3D{Points:Array<Point3D>;Closed:Boolean;}
 type PolylineN implements IGeometryND,IConnected,ILength{Points:Array<PointN>;Closed:Boolean;}

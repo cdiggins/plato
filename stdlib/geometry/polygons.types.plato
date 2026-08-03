@@ -20,7 +20,7 @@
 // crossings; counter-clockwise winding encloses positive area.
 // (https://en.wikipedia.org/wiki/Simple_polygon)
 type Polygon2D
-    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, IPointSet2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, IDeformable2D
+    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, IPointSet2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, IDeformable2D, IMesh2D
 {
     Points: Array<Point2D>;
 }
@@ -29,7 +29,7 @@ type Polygon2D
 // The stronger invariant unlocks constant-cost support mapping and logarithmic
 // containment tests. (https://en.wikipedia.org/wiki/Convex_polygon)
 type ConvexPolygon2D
-    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, IPointSet2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, ISupport2D, IDeformable2D
+    implements IGeometry2D, IClosedShape, IConvexShape, IConnected, IArea, IBounded2D, IPointSet2D, ICentroid2D, IContainsPoint2D, INearestPoint2D, ISupport2D, IDeformable2D, IMesh2D
 {
     Points: Array<Point2D>;
 }
@@ -39,7 +39,7 @@ type ConvexPolygon2D
 // disjoint, and wind opposite to it.
 // (https://en.wikipedia.org/wiki/Polygon_with_holes)
 type PolygonWithHoles2D
-    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D, IDeformable2D
+    implements IGeometry2D, IClosedShape, IConnected, IArea, IBounded2D, ICentroid2D, IContainsPoint2D, IDeformable2D, IMesh2D
 {
     Boundary: Polygon2D;
     Holes: Array<Polygon2D>;

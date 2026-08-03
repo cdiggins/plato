@@ -282,6 +282,23 @@ the table lives in `Plato.AST/Operators.cs`). Since operators are ordinary overl
 mixed-type arithmetic (`vector * scalar`) is just an `Add`/`Multiply` overload, not special
 machinery.
 
+**`&&` and `||` DO NOT SHORT-CIRCUIT.** They are exactly `And` and `Or`: ordinary two-argument
+calls whose arguments are both evaluated before the call, and the backends emit them that way.
+Nothing about the C-family spelling carries over. A guard written
+`i >= 0 && xs[i] > 0` evaluates `xs[i]` even when `i` is negative — the same trap `All`/`Any`
+carry as folds (`plato-intrinsics-surface.md`).
+
+Where the second operand is only defined under the first, use the conditional expression or an
+`if` statement, both of which take a real branch:
+
+```plato
+// Guarded:
+i >= 0 ? xs[i] > 0 : false
+
+// NOT guarded — indexes xs even when i is negative:
+i >= 0 && xs[i] > 0
+```
+
 **Overload and name resolution.** A call resolves against the global overload group for its name.
 Each argument is matched against the candidate's parameter at the best applicable tier, in order
 of preference:

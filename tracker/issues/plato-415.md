@@ -31,9 +31,10 @@ polygon. Every downstream consumer that needs triangles today has to leave the t
 
 ### The catalogue
 
-1. **Triangulation** — `Triangulate(Polygon2D): Array<Triangle2D>` / index triples;
-   hole-aware over `PolygonWithHoles2D`; fan and strip for `ConvexPolygon2D`. The
-   port of the earcut experiment is the first slice and is being taken separately.
+1. **Triangulation** — LANDED for `Polygon2D`, `ConvexPolygon2D` and `PolygonWithHoles2D`
+   as the `IMesh2D` obligation, in `stdlib/geometry/triangulation.library.plato`. Still open:
+   `PolygonSet2D`, `Polygon3D` via the existing projection basis, triangle strips, and a
+   quality-driven mesher (Delaunay refinement) rather than ear clipping.
 2. **2D Booleans** — `Union` / `Intersection` / `Difference` / `Xor` returning
    `PolygonSet2D`. The declared result type already commits to the shape.
 3. **Offset / buffer** — `Offset(Polygon2D, distance, joinStyle)` with miter/round/bevel
@@ -76,11 +77,13 @@ polygon. Every downstream consumer that needs triangles today has to leave the t
   `LIBRARIES.md` ground rule 6.
 - Constructive polygon operations belong in the forward stdlib rather than a sidecar,
   per plato-273.
-- The forward stdlib's language subset (no `while`, no `for`, `var` + `return` only —
-  `docs/SEMANTICS.md` §8) is the binding constraint on every item here.
-  Anything whose textbook formulation is a mutable sweep-line or linked-list mutation must
-  be re-expressed as folds over arrays, at a real asymptotic cost. Items 2, 3 and 13 are
-  the ones where that hurts most.
+- The language is not the constraint it was assumed to be: `while`, `if` statements and
+  assignment to a `var` local are all in the checked language, and the affine builders
+  (`List<T>` / `Buffer<T>`) make genuinely imperative scratch storage available — see
+  `docs/SEMANTICS.md` §3. A sweep-line or a mutated linked list can be written directly, so
+  items 2, 3 and 13 are not forced into folds at an asymptotic penalty. Two real constraints
+  replace the imagined one: a builder cannot be a function's FIRST parameter (compiler-416),
+  and `&&` / `||` do not short-circuit (`docs/SEMANTICS.md` §6).
 - `STYLE_GUIDE.md`'s ordering holds: the canonical body is correct/composable/functional
   first; a faster variant is separate later work, never a compromise of the canonical one.
 
@@ -115,8 +118,7 @@ polygon. Every downstream consumer that needs triangles today has to leave the t
   and query vocabulary. Informs the priority order here.
 - `experiments/earcut/earcut.plato` and `earcut-fast.plato` — the two existing ear-clipping
   formulations (functional folds; affine buffer with a linked list). Source material for
-  item 1. Note the fast one is written in the legacy dialect, using `while` and `Buffer`
-  mutation, neither of which is in the forward checked language.
+  item 1, now superseded by `stdlib/geometry/triangulation.library.plato`.
 - `stdlib/geometry/solids-csg.library.plato` — the 3D Boolean already in the tree
   (plane-fragment based). Precedent for both file layout and tolerance handling in item 2.
 

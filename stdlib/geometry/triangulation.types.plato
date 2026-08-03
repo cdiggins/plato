@@ -1,0 +1,28 @@
+//==
+// # Triangulation
+//
+// The working record of the ear-clipping triangulator in
+// `triangulation.library.plato`. Nothing else declares it and nothing else
+// should read it: it is the node of a linked list held inside an affine
+// `Buffer<EarClipNode>`, not part of the geometry vocabulary.
+
+// One vertex of a ring being clipped. Prev and Next are BUFFER SLOTS, not pool
+// indices — the two agree for an input vertex and differ for the duplicated
+// vertices a hole bridge introduces, which is the whole reason the type carries
+// Vertex separately. Active goes false when the vertex is clipped away or
+// filtered out; its links are left intact so a walk standing on it can still
+// step off.
+//
+// The node deliberately caches NO part of the ear test. Caching convexity and a
+// blocker count per node is the obvious speed-up and it is unsound as usually
+// written: clipping an ear can flip a neighbour from reflex to convex, which
+// silently changes the blocker count of every OTHER candidate that vertex was
+// blocking, not just of the two nodes the clip is local to. See the ear-clipping
+// section of `triangulation.library.plato`.
+type EarClipNode
+{
+    Vertex: VertexIndex;
+    Prev: Integer;
+    Next: Integer;
+    Active: Boolean;
+}

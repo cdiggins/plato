@@ -1,0 +1,605 @@
+//==
+// # Triangulation
+//
+// Sections, in order:
+//  - Rings over a point pool
+//  - Nodes and the node buffer
+//  - Ring construction and cleanup
+//  - Hole bridging
+//  - Ear clipping
+//  - The IMesh2D obligations
+
+library Triangulation
+{
+    //==
+    // # Rings over a point pool
+    //
+    // Every triangulation here works over one POOL of points and a set of RINGS
+    // naming slices of it: ring 0 is the outer boundary and ring r > 0 is the hole
+    // starting at `holeStarts[r - 1]`, each running to the next start (the last to
+    // the end of the pool). Faces come back as `TriangleFace` over pool indices, so
+    // a result always points back at the vertices it was built from.
+    //
+    // Conventions fixed here:
+    //
+    //   * WINDING: the outer ring is made counter-clockwise and every hole
+    //     clockwise, whatever winding the caller stored. Ear clipping below assumes
+    //     it. Convention: see CONVENTIONS.md - Winding.
+    //   * Coincidence is tested EXACTLY, never with a tolerance: a bridged ring
+    //     contains deliberately duplicated vertices, and a tolerance would also
+    //     merge distinct nearby vertices of a finely sampled ring.
+    //   * A ring reduced below three vertices by cleanup encloses nothing and is
+    //     dropped rather than triangulated.
+
+    // The number of rings: the boundary plus one per hole.
+    RingCount(holeStarts: Array<Integer>): Integer
+        => holeStarts.Count + 1;
+
+    // Where ring `r` starts in the pool.
+    RingStart(holeStarts: Array<Integer>, r: Integer): Integer
+        => r == 0 ? 0 : holeStarts[r - 1];
+
+    // Where ring `r` ends in the pool, exclusive.
+    RingEnd(holeStarts: Array<Integer>, r: Integer, poolCount: Integer): Integer
+        => r == holeStarts.Count ? poolCount : holeStarts[r];
+
+    // The signed area of the pool points in [start, end) taken in stored order:
+    // positive when they wind counter-clockwise.
+    RangeSignedArea(points: Array<Point2D>, start: Integer, end: Integer): Number
+        => points.Slice(start, end).ShoelaceArea;
+
+    // True when `a` precedes `b` in the left-to-right, then bottom-to-top order the
+    // bridge search scans in. A strict total order on distinct points.
+    IsFurtherLeft(a: Point2D, b: Point2D): Boolean
+        => a.X < b.X || (a.X == b.X && a.Y < b.Y);
+
+    // True when the two points are exactly coincident.
+    IsSamePoint(a: Point2D, b: Point2D): Boolean
+        => a.X == b.X && a.Y == b.Y;
+
+    // The leftmost of the pool points in [start, end). Precondition: non-empty.
+    LeftmostOfRange(points: Array<Point2D>, start: Integer, end: Integer): Point2D
+        => points.Slice(start, end)
+            .Reduce(points[start], (best, p) => p.IsFurtherLeft(best) ? p : best);
+
+    // True when hole `g` is bridged before hole `h`, given `h`'s leftmost vertex.
+    PrecedesHole(holeStarts: Array<Integer>, points: Array<Point2D>, g: Integer,
+        h: Integer, leftmostOfH: Point2D): Boolean
+    {
+        var theirs = points.LeftmostOfRange(holeStarts.RingStart(g + 1),
+            holeStarts.RingEnd(g + 1, points.Count));
+        return theirs.IsFurtherLeft(leftmostOfH)
+            || (theirs.IsSamePoint(leftmostOfH) && g < h);
+    }
+
+    // The number of holes that must be bridged before hole `h`: those whose
+    // leftmost vertex lies further left, with the stored order breaking ties.
+    HolesBefore(points: Array<Point2D>, holeStarts: Array<Integer>, h: Integer): Integer
+    {
+        var mine = points.LeftmostOfRange(holeStarts.RingStart(h + 1),
+            holeStarts.RingEnd(h + 1, points.Count));
+        return holeStarts.Count.Range.Reduce(0, (count, g) => count
+            + (holeStarts.PrecedesHole(points, g, h, mine) ? 1 : 0));
+    }
+
+    // The holes in the order they must be bridged: left to right, so that a bridge
+    // never has to cross a hole that is still separate. Sorted by rank rather than
+    // by comparison, which needs no scratch storage.
+    // https://en.wikipedia.org/wiki/Polygon_triangulation#Ear_clipping_method
+    HolesLeftToRight(points: Array<Point2D>, holeStarts: Array<Integer>): Array<Integer>
+        => holeStarts.Count.MapRange(rank => holeStarts.Count.Range
+            .Reduce(0, (found, h) => points.HolesBefore(holeStarts, h) == rank ? h : found));
+
+    //==
+    // # Nodes and the node buffer
+    //
+    // The rings live in one affine `Buffer<EarClipNode>` as an indexed circular
+    // doubly-linked list: unlinking a clipped ear is O(1) and needs no array
+    // rebuilding. The buffer is the affine object; the nodes in it are ordinary
+    // values, so the updates below return copies and the caller writes them back.
+    // Slots [0, poolCount) mirror the pool one for one; the two slots each hole
+    // bridge needs sit above them.
+    //
+    // PARAMETER ORDER: the buffer is never the FIRST parameter of a function
+    // declared here. The C# writer plans an extension surface per concrete type and
+    // skips `unique` types (`Plato.CSharpWriter/CSharpWriter.cs:68`), so a function
+    // dispatching on `Buffer<T>` is silently dropped from the emitted code while its
+    // call sites survive — the generated C# then does not compile. Every function
+    // below therefore leads with the point pool or with the slot it works on, and
+    // takes the buffer second. Tracked as plato-416.
+
+    // The node with a new predecessor.
+    WithPrev(n: EarClipNode, prev: Integer): EarClipNode
+        => EarClipNode(n.Vertex, prev, n.Next, n.Active);
+
+    // The node with a new successor.
+    WithNext(n: EarClipNode, next: Integer): EarClipNode
+        => EarClipNode(n.Vertex, n.Prev, next, n.Active);
+
+    // The node marked dead. Its links are kept so a walk already standing on it can
+    // still step off.
+    Removed(n: EarClipNode): EarClipNode
+        => EarClipNode(n.Vertex, n.Prev, n.Next, false);
+
+    // The pool point the node at `slot` names.
+    NodePoint(points: Array<Point2D>, nodes: Buffer<EarClipNode>, slot: Integer): Point2D
+        => points[nodes.At(slot).Vertex.Value];
+
+    // Twice the signed area of the corner at `slot`: positive when it turns
+    // counter-clockwise, which in a counter-clockwise ring means convex; zero when
+    // its two edges are collinear.
+    CornerTurn(points: Array<Point2D>, nodes: Buffer<EarClipNode>, slot: Integer): Number
+        => TwiceSignedArea(
+            points.NodePoint(nodes, nodes.At(slot).Prev),
+            points.NodePoint(nodes, slot),
+            points.NodePoint(nodes, nodes.At(slot).Next));
+
+    // True when the vertex at `slot` lies in the triangle (a, b, c) without being
+    // one of its corners — the test that disqualifies an ear.
+    BlocksEar(points: Array<Point2D>, nodes: Buffer<EarClipNode>, slot: Integer,
+        a: Integer, b: Integer, c: Integer): Boolean
+    {
+        var q = points.NodePoint(nodes, slot);
+        var pa = points.NodePoint(nodes, a);
+        var pb = points.NodePoint(nodes, b);
+        var pc = points.NodePoint(nodes, c);
+        return q.IsSamePoint(pa).Not && q.IsSamePoint(pb).Not && q.IsSamePoint(pc).Not
+            && Triangle2D(pa, pb, pc).Contains(q);
+    }
+
+    // True when the segment from `a` towards the vertex at `b` leaves `a` into the
+    // ring's interior. Reads only the sector at `a`, so `b` may belong to another
+    // ring — which is what the bridge search needs.
+    LocallyInside(points: Array<Point2D>, nodes: Buffer<EarClipNode>,
+        a: Integer, b: Integer): Boolean
+    {
+        var prev = points.NodePoint(nodes, nodes.At(a).Prev);
+        var here = points.NodePoint(nodes, a);
+        var next = points.NodePoint(nodes, nodes.At(a).Next);
+        var there = points.NodePoint(nodes, b);
+        return TwiceSignedArea(prev, here, next) > 0.0
+            ? TwiceSignedArea(here, there, next) <= 0.0
+                && TwiceSignedArea(here, prev, there) <= 0.0
+            : TwiceSignedArea(here, there, prev) > 0.0
+                || TwiceSignedArea(here, next, there) > 0.0;
+    }
+
+    // The lowest live slot in [start, end), or -1 when every node there is dead.
+    // Recomputing the head this way is what lets each pass below take and return
+    // the buffer alone.
+    FirstLiveSlot(start: Integer, nodes: Buffer<EarClipNode>, end: Integer): Integer
+    {
+        var slot = start;
+        var found = -1;
+        while (slot < end && found < 0)
+        {
+            if (nodes.At(slot).Active) { found = slot; }
+            slot = slot + 1;
+        }
+        return found;
+    }
+
+    // The number of nodes in the ring through `head`. Precondition: head is live.
+    RingLength(head: Integer, nodes: Buffer<EarClipNode>): Integer
+    {
+        var slot = nodes.At(head).Next;
+        var length = 1;
+        while (slot != head)
+        {
+            length = length + 1;
+            slot = nodes.At(slot).Next;
+        }
+        return length;
+    }
+
+    // The live slot of the ring through `head` whose point is leftmost.
+    LeftmostSlot(points: Array<Point2D>, nodes: Buffer<EarClipNode>, head: Integer): Integer
+    {
+        var best = head;
+        var slot = nodes.At(head).Next;
+        while (slot != head)
+        {
+            if (points.NodePoint(nodes, slot).IsFurtherLeft(points.NodePoint(nodes, best)))
+            {
+                best = slot;
+            }
+            slot = nodes.At(slot).Next;
+        }
+        return best;
+    }
+
+    //==
+    // # Ring construction and cleanup
+
+    // The buffer slot at ring position `i` of the pool range starting at `start`:
+    // the pool order when `forward`, the reverse when not. Reversing is how a ring
+    // stored the wrong way round is rewound. Precondition: 0 <= i < count.
+    RingSlot(start: Integer, count: Integer, forward: Boolean, i: Integer): Integer
+        => forward ? start + i : start + count - 1 - i;
+
+    // Links the pool range [start, start + count) into one circular ring, in pool
+    // order or reversed.
+    LinkRing(start: Integer, nodes: Buffer<EarClipNode>, count: Integer,
+        forward: Boolean): Buffer<EarClipNode>
+    {
+        var result = nodes;
+        var i = 0;
+        while (i < count)
+        {
+            var slot = RingSlot(start, count, forward, i);
+            var prev = RingSlot(start, count, forward, (i + count - 1) % count);
+            var next = RingSlot(start, count, forward, (i + 1) % count);
+            result = result.Set(slot, EarClipNode(VertexIndex(slot), prev, next, true));
+            i = i + 1;
+        }
+        return result;
+    }
+
+    // Unlinks the node at `slot` from its ring and marks it dead.
+    Unlink(slot: Integer, nodes: Buffer<EarClipNode>): Buffer<EarClipNode>
+    {
+        var node = nodes.At(slot);
+        var prev = nodes.At(node.Prev).WithNext(node.Next);
+        var next = nodes.At(node.Next).WithPrev(node.Prev);
+        return nodes.Set(node.Prev, prev).Set(node.Next, next).Set(slot, node.Removed);
+    }
+
+    // True when the corner at `slot` encloses no area — a repeated vertex, a
+    // collinear midpoint, or the tip of a zero-width spike — and so would only ever
+    // emit a degenerate triangle.
+    IsFlatCorner(points: Array<Point2D>, nodes: Buffer<EarClipNode>, slot: Integer): Boolean
+        => points.NodePoint(nodes, slot)
+                .IsSamePoint(points.NodePoint(nodes, nodes.At(slot).Next))
+        || points.CornerTurn(nodes, slot) == 0.0;
+
+    // Drops every flat corner from the ring living in [start, end), and empties a
+    // ring that falls below three vertices. Repeats until a full pass changes
+    // nothing, because removing one corner can flatten its neighbour. Also the heal
+    // pass after bridging, whose slits leave duplicated vertices behind.
+    // (earcut's `filterPoints`.)
+    FilterRing(points: Array<Point2D>, nodes: Buffer<EarClipNode>,
+        start: Integer, end: Integer): Buffer<EarClipNode>
+    {
+        var result = nodes;
+        var changed = true;
+        while (changed)
+        {
+            changed = false;
+            var head = start.FirstLiveSlot(result, end);
+            var length = head < 0 ? 0 : head.RingLength(result);
+            var slot = head;
+            var visited = 0;
+            while (visited < length)
+            {
+                var next = result.At(slot).Next;
+                if (length < 3 || points.IsFlatCorner(result, slot))
+                {
+                    result = slot.Unlink(result);
+                    length = length - 1;
+                    changed = true;
+                }
+                slot = next;
+                visited = visited + 1;
+            }
+        }
+        return result;
+    }
+
+    //==
+    // # Hole bridging
+    //
+    // A hole is joined to the ring around it by a BRIDGE: a pair of coincident
+    // edges between the hole's leftmost vertex and a ring vertex that can see it,
+    // traversed once in each direction. Splicing along a bridge turns a ring plus a
+    // hole into a single ring ear clipping can consume, which is why holes never
+    // reach the clipping pass as holes.
+    //
+    // The bridge is found by Eberly's method: cast a ray towards -X from the hole's
+    // leftmost vertex, take the ring edge it meets first, then check whether any
+    // reflex ring vertex hides that edge's corner from the hole.
+    // https://www.geometrictools.com/Documentation/TriangulationByEarClipping.pdf
+
+    // Where the ray towards -X from `p` meets the ring edge leaving `slot`, or
+    // Number.MinValue when that edge does not cross it at or to the left of `p`.
+    // Only downward edges count, so a ray through a shared vertex is not counted
+    // twice.
+    LeftwardHit(points: Array<Point2D>, nodes: Buffer<EarClipNode>,
+        slot: Integer, p: Point2D): Number
+    {
+        var a = points.NodePoint(nodes, slot);
+        var b = points.NodePoint(nodes, nodes.At(slot).Next);
+        var crosses = a.Y >= p.Y && p.Y >= b.Y && a.Y != b.Y;
+        var x = crosses ? a.X + (p.Y - a.Y) * (b.X - a.X) / (b.Y - a.Y) : p.X + 1.0;
+        return crosses && x <= p.X ? x : Number.MinValue;
+    }
+
+    // Eberly's refinement. The corner the ray reached is visible unless a reflex
+    // vertex of the ring lies in the wedge between the ray and that corner; among
+    // those that do, the bridge goes to the one whose direction from the hole makes
+    // the smallest angle with the ray, ties going to the rightmost.
+    VisibleSlot(points: Array<Point2D>, nodes: Buffer<EarClipNode>, head: Integer,
+        seed: Integer, holeSlot: Integer, rayX: Number): Integer
+    {
+        var hole = points.NodePoint(nodes, holeSlot);
+        var corner = points.NodePoint(nodes, seed);
+        var wedgeNear = Point2D(hole.Y < corner.Y ? hole.X : rayX, hole.Y);
+        var wedgeFar = Point2D(hole.Y < corner.Y ? rayX : hole.X, hole.Y);
+        var wedge = Triangle2D(wedgeNear, corner, wedgeFar);
+        var best = seed;
+        var bestTangent = Number.MaxValue;
+        var slot = head;
+        var stepped = false;
+        while (stepped.Not || slot != head)
+        {
+            stepped = true;
+            var c = points.NodePoint(nodes, slot);
+            if (hole.X >= c.X && c.X >= corner.X && hole.X != c.X && wedge.Contains(c))
+            {
+                var tangent = (hole.Y - c.Y).Abs / (hole.X - c.X);
+                if (points.LocallyInside(nodes, slot, holeSlot)
+                    && (tangent < bestTangent
+                        || (tangent == bestTangent
+                            && c.X > points.NodePoint(nodes, best).X)))
+                {
+                    best = slot;
+                    bestTangent = tangent;
+                }
+            }
+            slot = nodes.At(slot).Next;
+        }
+        return best;
+    }
+
+    // The slot of the ring through `head` that the vertex at `holeSlot` bridges to,
+    // or -1 when the ray escapes the ring — only possible when the declared
+    // containment invariant is broken.
+    BridgeSlot(points: Array<Point2D>, nodes: Buffer<EarClipNode>,
+        head: Integer, holeSlot: Integer): Integer
+    {
+        var hole = points.NodePoint(nodes, holeSlot);
+        var seed = -1;
+        var rayX = Number.MinValue;
+        var slot = head;
+        var stepped = false;
+        while (stepped.Not || slot != head)
+        {
+            stepped = true;
+            var next = nodes.At(slot).Next;
+            var x = points.LeftwardHit(nodes, slot, hole);
+            if (x > rayX)
+            {
+                rayX = x;
+                seed = points.NodePoint(nodes, slot).X < points.NodePoint(nodes, next).X
+                    ? slot : next;
+            }
+            slot = next;
+        }
+        return seed < 0 ? -1 : points.VisibleSlot(nodes, head, seed, holeSlot, rayX);
+    }
+
+    // Splices the hole ring through `holeSlot` into the ring through `bridgeSlot`,
+    // spending the two free slots at `free` and `free + 1` on the duplicated bridge
+    // vertices. Both rings must already be wound as the conventions require, which
+    // is what makes the spliced ring simple.
+    Bridge(bridgeSlot: Integer, nodes: Buffer<EarClipNode>, holeSlot: Integer,
+        free: Integer): Buffer<EarClipNode>
+    {
+        var bridge = nodes.At(bridgeSlot);
+        var hole = nodes.At(holeSlot);
+        var afterBridge = nodes.At(bridge.Next).WithPrev(free);
+        var beforeHole = nodes.At(hole.Prev).WithNext(free + 1);
+        var result = nodes.Set(free,
+            EarClipNode(bridge.Vertex, free + 1, bridge.Next, true));
+        result = result.Set(free + 1,
+            EarClipNode(hole.Vertex, hole.Prev, free, true));
+        result = result.Set(bridge.Next, afterBridge).Set(hole.Prev, beforeHole);
+        return result.Set(bridgeSlot, bridge.WithNext(holeSlot))
+            .Set(holeSlot, hole.WithPrev(bridgeSlot));
+    }
+
+    // Bridges every hole into the outer ring, left to right. A hole emptied by
+    // cleanup, or one whose bridge search escapes, is left out: the first encloses
+    // nothing, the second cannot be reached from the boundary.
+    BridgeHoles(points: Array<Point2D>, nodes: Buffer<EarClipNode>,
+        holeStarts: Array<Integer>): Buffer<EarClipNode>
+    {
+        var result = nodes;
+        var order = points.HolesLeftToRight(holeStarts);
+        var free = points.Count;
+        var k = 0;
+        while (k < order.Count)
+        {
+            var hole = order[k];
+            var holeHead = holeStarts.RingStart(hole + 1)
+                .FirstLiveSlot(result, holeStarts.RingEnd(hole + 1, points.Count));
+            if (holeHead >= 0)
+            {
+                var outerHead = 0.FirstLiveSlot(result, holeStarts.RingEnd(0, points.Count));
+                var holeSlot = points.LeftmostSlot(result, holeHead);
+                var bridgeSlot = points.BridgeSlot(result, outerHead, holeSlot);
+                if (bridgeSlot >= 0)
+                {
+                    result = bridgeSlot.Bridge(result, holeSlot, free);
+                    free = free + 2;
+                }
+            }
+            k = k + 1;
+        }
+        return result;
+    }
+
+    //==
+    // # Ear clipping
+    //
+    // A convex corner whose triangle holds no other vertex is an EAR: clipping it
+    // emits one face and leaves a simple ring one vertex shorter, so a ring of n
+    // vertices yields n - 2 faces.
+    // https://en.wikipedia.org/wiki/Polygon_triangulation#Ear_clipping_method
+    //
+    // The cost of the pass is the ear test, and it is paid per candidate: the test
+    // below walks the ring, so the pass is O(n^2). The obvious speed-up — caching
+    // convexity and a blocker count on each node, refreshing only the clipped ear's
+    // two neighbours — is UNSOUND, and quietly so. Clipping can flip a neighbour
+    // from reflex to convex, and a vertex that stops being reflex stops blocking
+    // every candidate whose triangle it sat in, not only the two nodes the clip is
+    // local to. Those counts go stale, real ears stop being recognised, and the
+    // pass falls through to its degenerate-input path and emits OVERLAPPING
+    // triangles. A cache has to invalidate on the reflex/convex flip, not on
+    // adjacency; until one does, this stays a plain scan.
+    // Style: see STYLE_GUIDE.md - API-first and geometry priority (correct first;
+    // a faster variant is separate, later work).
+
+    // True when no vertex of the ring lies inside the corner at `slot`. Only reflex
+    // vertices are tested: a convex vertex of a simple ring lies outside every
+    // other corner's triangle. The corner's own neighbours are skipped — they are
+    // its triangle's endpoints.
+    HasNoBlocker(points: Array<Point2D>, nodes: Buffer<EarClipNode>, slot: Integer): Boolean
+    {
+        var a = nodes.At(slot).Prev;
+        var c = nodes.At(slot).Next;
+        var q = nodes.At(c).Next;
+        var blocked = false;
+        while (q != a && blocked.Not)
+        {
+            blocked = points.CornerTurn(nodes, q) <= 0.0
+                && points.BlocksEar(nodes, q, a, slot, c);
+            q = nodes.At(q).Next;
+        }
+        return blocked.Not;
+    }
+
+    // Corner `slot` is an EAR when it turns counter-clockwise and no other ring
+    // vertex lies inside its triangle.
+    IsEar(points: Array<Point2D>, nodes: Buffer<EarClipNode>, slot: Integer): Boolean
+        => points.CornerTurn(nodes, slot) > 0.0 && points.HasNoBlocker(nodes, slot);
+
+    // The next corner to clip, searching from `cursor`: the first ear, or — when
+    // the input violates its declared invariants and no ear exists — the first
+    // convex corner, which keeps the pass terminating. -1 when neither exists.
+    FindEar(points: Array<Point2D>, nodes: Buffer<EarClipNode>,
+        cursor: Integer, remaining: Integer): Integer
+    {
+        var ear = -1;
+        var slot = cursor;
+        var visited = 0;
+        while (visited < remaining && ear < 0)
+        {
+            if (points.IsEar(nodes, slot)) { ear = slot; }
+            slot = nodes.At(slot).Next;
+            visited = visited + 1;
+        }
+        if (ear < 0)
+        {
+            slot = cursor;
+            visited = 0;
+            while (visited < remaining && ear < 0)
+            {
+                if (points.CornerTurn(nodes, slot) > 0.0) { ear = slot; }
+                slot = nodes.At(slot).Next;
+                visited = visited + 1;
+            }
+        }
+        return ear;
+    }
+
+    // The face at the corner `slot`, over pool indices.
+    CornerFace(slot: Integer, nodes: Buffer<EarClipNode>): TriangleFace
+        => TriangleFace(nodes.At(nodes.At(slot).Prev).Vertex, nodes.At(slot).Vertex,
+            nodes.At(nodes.At(slot).Next).Vertex);
+
+    // Clips the ring through `head` down to its last triangle and returns the faces
+    // in clipping order. Consumes the buffer. A head of -1, or a ring shorter than
+    // a triangle, yields no faces.
+    ClipEars(points: Array<Point2D>, nodes: Buffer<EarClipNode>,
+        head: Integer): Array<TriangleFace>
+    {
+        var faces = new List<TriangleFace>();
+        var live = nodes;
+        var remaining = head < 0 ? 0 : head.RingLength(live);
+        var cursor = head;
+        while (remaining > 3)
+        {
+            var ear = points.FindEar(live, cursor, remaining);
+            if (ear < 0)
+            {
+                remaining = 0;
+            }
+            else
+            {
+                var next = live.At(ear).Next;
+                faces = faces.Add(ear.CornerFace(live));
+                live = ear.Unlink(live);
+                remaining = remaining - 1;
+                cursor = next;
+            }
+        }
+        // The nesting is load-bearing: `&&` is `And`, an ordinary function of two
+        // already-evaluated arguments, so it does NOT short-circuit. Written as one
+        // condition, the walk below would run even for an empty ring, where
+        // `cursor` is -1.
+        if (remaining == 3)
+        {
+            var last = live.At(cursor).Next;
+            if (points.CornerTurn(live, last) > 0.0)
+            {
+                faces = faces.Add(last.CornerFace(live));
+            }
+        }
+        return faces.Freeze();
+    }
+
+    // The faces of one pool of points carrying an outer ring and zero or more
+    // holes: every ring linked and cleaned, every hole bridged in, then one
+    // clipping pass. The kernel every entry point below is written against.
+    TriangulateRings(points: Array<Point2D>, holeStarts: Array<Integer>): Array<TriangleFace>
+    {
+        var capacity = points.Count + holeStarts.Count * 2;
+        var nodes = new Buffer<EarClipNode>(capacity);
+        var r = 0;
+        while (r < holeStarts.RingCount)
+        {
+            var start = holeStarts.RingStart(r);
+            var end = holeStarts.RingEnd(r, points.Count);
+            var area = points.RangeSignedArea(start, end);
+            nodes = start.LinkRing(nodes, end - start, r == 0 ? area > 0.0 : area < 0.0);
+            nodes = points.FilterRing(nodes, start, end);
+            r = r + 1;
+        }
+        nodes = points.BridgeHoles(nodes, holeStarts);
+        nodes = points.FilterRing(nodes, 0, capacity);
+        var head = 0.FirstLiveSlot(nodes, capacity);
+        return points.ClipEars(nodes, head);
+    }
+
+    //==
+    // # The IMesh2D obligations
+    //
+    // Faces index the same points the caller passed in, so a triangulation can be
+    // traced back to the ring it came from.
+
+    // The polygon triangulated over its own vertices, by ear clipping.
+    Triangulate(p: Polygon2D): TriangleMesh2D
+        => (p.Points, p.Points.TriangulateRings(0.Range));
+
+    // The convex polygon triangulated over its own vertices. Convexity makes every
+    // corner an ear, so the fan from the first vertex is already a triangulation
+    // and no clipping pass is needed.
+    Triangulate(p: ConvexPolygon2D): TriangleMesh2D
+        => (p.Points, (p.Points.Count - 2).MapRange(i
+            => TriangleFace(VertexIndex(0), VertexIndex(i + 1), VertexIndex(i + 2))));
+
+    // The pool a region with holes is triangulated over: the boundary vertices,
+    // then each hole's vertices in order.
+    PointPool(r: PolygonWithHoles2D): Array<Point2D>
+        => r.Holes.Reduce(r.Boundary.Points, (pool, h) => pool.Concatenate(h.Points));
+
+    // Where each hole starts in that pool.
+    HoleStarts(r: PolygonWithHoles2D): Array<Integer>
+        => r.Holes.Count.MapRange(h => r.Boundary.Points.Count
+            + h.Range.Reduce(0, (start, i) => start + r.Holes[i].Points.Count));
+
+    // The region triangulated over the pool of its boundary and hole vertices, by
+    // ear clipping after every hole has been bridged into the boundary.
+    Triangulate(r: PolygonWithHoles2D): TriangleMesh2D
+        => (r.PointPool, r.PointPool.TriangulateRings(r.HoleStarts));
+}
