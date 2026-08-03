@@ -1,0 +1,428 @@
+//==
+// # Collision
+//
+// Narrow-phase bodies for `collision.types.plato`: the primitive pair tests that
+// produce contact points, the manifold that groups them for a body pair, and the
+// flattening into the constraint rows `rigid-dynamics.library.plato` solves.
+//
+// Sections, in order:
+//  - Material combination
+//  - Contact frames
+//  - Primitive pair tests
+//  - Manifolds
+//  - Constraint rows
+//  - Warm starting
+//
+// CONVENTIONS THAT GOVERN EVERY PAIR TEST HERE, stated once:
+//
+//   * THE NORMAL POINTS FROM A TOWARD B, where A is the FIRST parameter — the
+//     invariant `collision.types.plato` already states for `ContactPoint3D`. The
+//     solver reads it as "an impulse of +P along the normal is applied to B and
+//     -P to A", so a ball resting on a ground plane, tested as
+//     `Collide(ball, ground)`, gets a normal pointing DOWN and is pushed UP.
+//     Swapping the arguments of a pair test therefore changes the sign of the
+//     result and is not the same call.
+//   * PENETRATION IS POSITIVE WHEN THE SHAPES OVERLAP, and is the depth along the
+//     normal. Zero is exact touching.
+//   * AN EMPTY POINT ARRAY MEANS "NOT TOUCHING". No hit flag and no sentinel: an
+//     empty array is this vocabulary's own encoding of "none"
+//     (CONVENTIONS.md - Typed indices), and it is also the honest shape for a
+//     test like box-versus-plane whose answer is naturally several points.
+//   * THE CONTACT POSITION SITS ON THE B-SIDE SURFACE where the two disagree,
+//     because that is the surface a penetration is measured back from. The
+//     difference is at most the penetration depth and is invisible for shallow
+//     contacts, which is the regime a solver is meant to stay in.
+
+library Collision
+{
+    //==
+    // # Material combination
+    //
+    // Two touching bodies each carry their own friction and restitution; a
+    // contact needs one number for each. `PhysicsMaterial` says which rule to
+    // apply, per coefficient, and the two materials' rules may disagree — so the
+    // pair needs a rule as well as two values. The rule taken is A's: a contact is
+    // asked for by one of the two, and letting the FIRST material decide is the
+    // only choice that does not need a tie-break rule of its own.
+
+    // The two coefficients merged under one combine rule.
+    Combine(kind: MaterialCombine, a: Number, b: Number): Number
+        => match (kind) {
+            Average => (a + b) * 0.5;
+            Min => a.Min(b);
+            Max => a.Max(b);
+            Multiply => a * b;
+        };
+
+    // The dimensionless Coulomb coefficient of a contact between two materials,
+    // merged under A's FrictionCombine rule. The DYNAMIC coefficient is the one an
+    // impulse solver can use: static friction is a threshold on a force, and an
+    // impulse solver has no forces to threshold.
+    CombinedFriction(a: PhysicsMaterial, b: PhysicsMaterial): Number
+        => Combine(a.FrictionCombine, a.DynamicFriction, b.DynamicFriction);
+
+    // The bounciness of a contact between two materials, merged under A's
+    // RestitutionCombine rule.
+    CombinedRestitution(a: PhysicsMaterial, b: PhysicsMaterial): Proportion
+        => new Proportion(Combine(a.RestitutionCombine, a.Restitution.Value, b.Restitution.Value));
+
+    //==
+    // # Contact frames
+    //
+    // Friction acts in the plane of the contact, so every constraint row needs two
+    // unit vectors spanning that plane. Any two will do geometrically; what
+    // matters is that the SAME two are used for the life of the row, because the
+    // accumulated friction impulse is stored in their coordinates.
+    //
+    // The tangent is built by crossing the normal with whichever cardinal axis it
+    // leans on least, which is never degenerate: a unit vector cannot have a
+    // component of magnitude one on two different axes.
+
+    // A unit vector perpendicular to `normal`, chosen by crossing with the
+    // cardinal axis the normal leans on least.
+    Tangent(normal: Direction3D): Direction3D
+    {
+        var n = normal.Vector;
+        var away = n.X.Abs <= n.Y.Abs && n.X.Abs <= n.Z.Abs
+            ? Vector3D(1.0, 0.0, 0.0)
+            : (n.Y.Abs <= n.Z.Abs ? Vector3D(0.0, 1.0, 0.0) : Vector3D(0.0, 0.0, 1.0));
+        return n.Cross(away).Normalize.FromVectorUnchecked;
+    }
+
+    // The second friction direction, completing a right-handed frame with the
+    // normal and the tangent. Precondition: the two are unit and perpendicular,
+    // which `Tangent` guarantees.
+    Bitangent(normal: Direction3D, tangent: Direction3D): Direction3D
+        => normal.Vector.Cross(tangent.Vector).FromVectorUnchecked;
+
+    //==
+    // # Primitive pair tests
+    //
+    // Analytic tests over the shapes `stdlib/geometry` already declares. Each
+    // returns the contact points of the pair under the conventions in this file's
+    // header, and an empty array when the shapes are apart.
+    //
+    // General convex-versus-convex — GJK for separation, EPA for the penetration
+    // depth once the shapes overlap — is NOT here. Both are iterative simplex
+    // refinements whose termination is a tolerance choice rather than a formula,
+    // which is a piece of work of its own; the primitive pairs below cover the
+    // shapes a rigid-body demo actually drops, rolls and stacks.
+
+    // A one-element array when `present` and an empty one otherwise: the array
+    // spelling of a maybe. Written as a range of length 0 or 1 rather than as a
+    // literal because an EMPTY array literal carries no element type for the
+    // checker to read.
+    //
+    // The value is evaluated either way — Plato is strict, and this is a function,
+    // not a conditional — so every caller below must be able to compute a harmless
+    // value in the absent case. That is why each pair test guards its divisions
+    // rather than relying on the flag to skip them.
+    MaybeOne(present: Boolean, value: $T): Array<$T>
+        => MapRange(present ? 1 : 0, i => value);
+
+    // A one-element contact array when `present`, empty otherwise.
+    MaybeContact(present: Boolean, point: ContactPoint3D): Array<ContactPoint3D>
+        => MaybeOne(present, point);
+
+    // A fresh contact point: the solver's accumulated impulses start at zero, and
+    // `WarmStartFrom` is what puts a previous frame's values back.
+    FreshContact(position: Point3D, normal: Direction3D, penetration: Number): ContactPoint3D
+        => ContactPoint3D(position, normal, Length.FromAmount(penetration),
+            Impulse.FromAmount(0.0), Vector3D.Zero);
+
+    // The contact between two balls: one point when they overlap, none otherwise.
+    // The point sits half a penetration depth inside each surface, the symmetric
+    // choice that only the two-sphere case permits. Concentric balls have no
+    // separating direction, so the normal falls back to +Z.
+    // (https://en.wikipedia.org/wiki/Sphere)
+    Collide(a: Sphere, b: Sphere): Array<ContactPoint3D>
+    {
+        var d = a.Center.Between(b.Center);
+        var distance = d.Magnitude;
+        var penetration = a.Radius + b.Radius - distance;
+        var normal = (distance > 0.0 ? d / distance : Vector3D(0.0, 0.0, 1.0)).FromVectorUnchecked;
+        return MaybeContact(penetration > 0.0, FreshContact(
+            a.Center + normal.Vector * (a.Radius - penetration * 0.5), normal, penetration));
+    }
+
+    // The contact between a ball and an infinite plane, with the ball expected on
+    // the plane's POSITIVE side (the side its normal points to). The contact normal
+    // is the plane normal REVERSED, because it must run from A (the ball) toward B
+    // (the plane); the position is the foot of the ball's centre on the plane.
+    Collide(a: Sphere, b: Plane): Array<ContactPoint3D>
+    {
+        var penetration = a.Radius - b.SignedDistance(a.Center);
+        return MaybeContact(penetration > 0.0, FreshContact(
+            b.ClosestPoint(a.Center), b.Normal.Vector.Negative.FromVectorUnchecked, penetration));
+    }
+
+    // The contact between a ball and an oriented box, found from the box point
+    // nearest the ball's centre. When the centre is INSIDE the box that nearest
+    // point IS the centre and carries no direction, so the fallback pushes the ball
+    // out along the line of centres — not the true minimum-translation direction,
+    // which would be through the nearest face. A solver fed centre-inside-box
+    // contacts has already lost; the fallback exists so that one bad frame recovers
+    // instead of producing a zero normal.
+    Collide(a: Sphere, b: Box3D): Array<ContactPoint3D>
+    {
+        var nearest = b.ClosestPoint(a.Center);
+        var d = a.Center.Between(nearest);
+        var distance = d.Magnitude;
+        var outward = b.Center.Between(a.Center);
+        var fallback = outward.MagnitudeSquared > 0.0
+            ? outward.Normalize.Negative
+            : Vector3D(0.0, 0.0, 1.0);
+        var normal = (distance > 0.0 ? d / distance : fallback).FromVectorUnchecked;
+        var penetration = distance > 0.0 ? a.Radius - distance : a.Radius;
+        return MaybeContact(penetration > 0.0, FreshContact(nearest, normal, penetration));
+    }
+
+    // The contact between a ball and a capsule, which is the ball-versus-ball test
+    // run against the capsule's surface: a capsule is the set of points within its
+    // radius of a segment, so the nearest capsule surface point already carries the
+    // whole shape. A ball centre inside the capsule has no separating direction and
+    // reports no contact rather than an arbitrary one.
+    Collide(a: Sphere, b: Capsule3D): Array<ContactPoint3D>
+    {
+        var nearest = b.ClosestPoint(a.Center);
+        var d = a.Center.Between(nearest);
+        var distance = d.Magnitude;
+        var penetration = a.Radius - distance;
+        var normal = (distance > 0.0 ? d / distance : Vector3D(0.0, 0.0, 1.0)).FromVectorUnchecked;
+        return MaybeContact(distance > 0.0 && penetration > 0.0,
+            FreshContact(nearest, normal, penetration));
+    }
+
+    // Corner `index` (0 to 7) of an oriented box: bit 0 selects the +X half, bit 1
+    // the +Y half and bit 2 the +Z half, each along the box's own axes.
+    BoxCorner(b: Box3D, index: Integer): Point3D
+    {
+        var f = b.Orientation.Basis3D;
+        return b.Center
+            + f.X * (b.Size.Width * (index % 2 == 1 ? 0.5 : -0.5))
+            + f.Y * (b.Size.Height * ((index / 2) % 2 == 1 ? 0.5 : -0.5))
+            + f.Z * (b.Size.Depth * (index / 4 == 1 ? 0.5 : -0.5));
+    }
+
+    // The contacts between an oriented box and an infinite plane: one point per box
+    // CORNER that has crossed to the plane's negative side, so the manifold is four
+    // points when the box lies flat, two when it rests on an edge, and one when it
+    // balances on a corner. That is the whole reason a manifold is a SET of points
+    // — a face contact solved through a single point cannot resist toppling, and
+    // the box would rock forever.
+    //
+    // No clipping and no reduction: up to eight points, kept as found. Production
+    // solvers reduce a manifold to four points to bound solver cost; which four are
+    // kept changes which contacts are solved, so that reduction is a separate
+    // decision and not a detail of this test.
+    Collide(a: Box3D, b: Plane): Array<ContactPoint3D>
+    {
+        var normal = b.Normal.Vector.Negative.FromVectorUnchecked;
+        return MapRange(8, i => BoxCorner(a, i)).FlatMap(corner =>
+            MaybeContact(b.SignedDistance(corner) < 0.0,
+                FreshContact(corner, normal, -b.SignedDistance(corner))));
+    }
+
+    //==
+    // # Manifolds
+    //
+    // A manifold is a pair test's answer plus the two facts a pair test cannot
+    // know: which bodies the shapes belong to, and what their materials combine to.
+    // Keeping those out of the pair tests is what lets one
+    // `Collide(Sphere, Plane)` serve a body pair, a trigger query and a law test.
+
+    // The manifold for a body pair from points a pair test already produced, with
+    // the pair's coefficients given directly. Normal is taken from the first point,
+    // which every test in this file fills with the shared pair normal; an empty
+    // manifold reports +Z, a value nothing reads because a manifold with no points
+    // contributes no constraint rows.
+    Manifold(bodyA: BodyIndex, bodyB: BodyIndex, points: Array<ContactPoint3D>,
+        friction: Number, restitution: Proportion): ContactManifold3D
+        => ContactManifold3D(
+            bodyA,
+            bodyB,
+            points,
+            points.Count > 0 ? points[0].Normal : Vector3D(0.0, 0.0, 1.0).FromVectorUnchecked,
+            friction,
+            restitution);
+
+    // The manifold for a body pair whose two materials are merged into the pair's
+    // coefficients. The overload above, taking the merged numbers, exists beside
+    // this one because merging reads `MaterialCombine` — a sum type, and therefore
+    // C#-only until the other backends emit sums (SEMANTICS.md, section 7). A
+    // caller on a backend without sums combines its coefficients itself and uses
+    // the other overload; nothing else in the contact pipeline touches a sum.
+    Manifold(bodyA: BodyIndex, bodyB: BodyIndex, points: Array<ContactPoint3D>,
+        materialA: PhysicsMaterial, materialB: PhysicsMaterial): ContactManifold3D
+        => Manifold(bodyA, bodyB, points,
+            CombinedFriction(materialA, materialB),
+            CombinedRestitution(materialA, materialB));
+
+    //==
+    // # Constraint rows
+    //
+    // Flattening a manifold into rows is where the solver's per-iteration cost is
+    // decided, so everything that is constant across iterations is computed exactly
+    // once, here: the friction basis, and the separation speed restitution asks for.
+
+    // The separation speed the solver should aim for along the normal, in meters
+    // per second. `approachSpeed` is the CURRENT relative normal speed, negative
+    // when the bodies are closing. A contact closing slower than the threshold is
+    // treated as resting and asks for zero — without that cut-off a body sitting on
+    // the floor buzzes forever, because gravity re-supplies exactly the approach
+    // speed that restitution then hands back.
+    // (https://en.wikipedia.org/wiki/Coefficient_of_restitution)
+    RestitutionTarget(approachSpeed: Number, restitution: Proportion, threshold: Speed): Number
+        => approachSpeed < -threshold.Amount
+            ? -restitution.Value * approachSpeed
+            : 0.0;
+
+    // One manifold point as a solver row, with the friction basis and the
+    // restitution target resolved. `approachSpeed` is the relative normal speed the
+    // caller measured at the point before any solving.
+    ConstraintRow(m: ContactManifold3D, p: ContactPoint3D, approachSpeed: Number,
+        threshold: Speed): ContactConstraint3D
+    {
+        var tangent = Tangent(p.Normal);
+        return ContactConstraint3D(
+            m.BodyA,
+            m.BodyB,
+            p.Position,
+            p.Normal,
+            tangent,
+            Bitangent(p.Normal, tangent),
+            p.Penetration,
+            m.Friction,
+            m.Restitution,
+            RestitutionTarget(approachSpeed, m.Restitution, threshold),
+            p.NormalImpulse,
+            Impulse.FromAmount(0.0),
+            Impulse.FromAmount(0.0));
+    }
+
+    //==
+    // # Warm starting
+    //
+    // Collision detection runs afresh every frame and hands the solver rows whose
+    // accumulated impulses are zero. Starting from zero every frame is what makes a
+    // stack of boxes sink into itself: the solver spends its whole iteration budget
+    // rediscovering the support impulses it already found last frame, and never
+    // gets past that.
+    //
+    // Warm starting copies the previous frame's accumulated impulses onto the rows
+    // describing the same contact — same ordered body pair, contact point within a
+    // tolerance — so the solver starts from last frame's answer and spends its
+    // budget on the difference. It is the single highest-value step in a contact
+    // solver, and here it is only field copying.
+    //
+    // The match is a linear scan per fresh row, so the cost is the product of the
+    // two contact counts. A production engine keeps a persistent manifold keyed by
+    // shape-feature ids and pays nothing; that bookkeeping needs a contact to have
+    // an identity, which this vocabulary deliberately does not give it.
+
+    // True when two rows describe the same contact: the same ordered body pair, and
+    // contact points within `tolerance` of each other.
+    SameContact(a: ContactConstraint3D, b: ContactConstraint3D, tolerance: Length): Boolean
+        => a.BodyA.Value == b.BodyA.Value
+        && a.BodyB.Value == b.BodyB.Value
+        && a.Point.DistanceSquared(b.Point) <= tolerance.Amount * tolerance.Amount;
+
+    // The row with new values for its three accumulated impulses and everything
+    // else left alone. Rebuilt field by field: `With<Field>` accessors are
+    // synthesized by the code writers, not by the language, so a Plato body that
+    // wants one names the constructor.
+    WithImpulses(row: ContactConstraint3D, normal: Impulse, tangent: Impulse,
+        bitangent: Impulse): ContactConstraint3D
+        => ContactConstraint3D(
+            row.BodyA, row.BodyB, row.Point, row.Normal, row.Tangent, row.Bitangent,
+            row.Penetration, row.Friction, row.Restitution, row.TargetSeparationSpeed,
+            normal, tangent, bitangent);
+
+    // The row with the three accumulated impulses of `old` copied onto it.
+    WithImpulsesOf(row: ContactConstraint3D, old: ContactConstraint3D): ContactConstraint3D
+        => WithImpulses(row, old.NormalImpulse, old.TangentImpulse, old.BitangentImpulse);
+
+    // `fresh` with the accumulated impulses of the matching row in `previous`
+    // copied across; a row with no match keeps its zeros. The last match wins,
+    // which is immaterial because a manifold does not hold two points in one place.
+    WarmStartFrom(fresh: Array<ContactConstraint3D>, previous: Array<ContactConstraint3D>,
+        tolerance: Length): Array<ContactConstraint3D>
+        => fresh.Map(row => previous.Reduce(row, (acc, old) =>
+            SameContact(acc, old, tolerance) ? WithImpulsesOf(acc, old) : acc));
+
+    //==
+    // # Narrow phase over a whole world
+    //
+    // Turning a set of manifolds into the constraint rows one step solves, and one
+    // worked scene — balls and a ground plane — driven end to end.
+    //
+    // There is NO BROAD PHASE here. The scene driver below tests every ordered pair
+    // of bodies, so its cost is the square of the body count. A broad phase (a
+    // sweep-and-prune over bounds, or a BVH) reduces that to the pairs whose bounds
+    // actually overlap; `stdlib/geometry` already declares the spatial-index
+    // vocabulary such a phase would be written against, and putting one here would
+    // be a second piece of work rather than a detail of this one.
+
+    // The rows of one manifold, with each point's approach speed measured against
+    // the bodies as they currently stand — which is the moment the measurement is
+    // meaningful, because the velocity solve is about to change it.
+    ConstraintRows(m: ContactManifold3D, bodies: Array<SolverBody3D>, threshold: Speed)
+        : Array<ContactConstraint3D>
+        => m.Points.Map(p => ConstraintRow(m, p,
+            SeparationSpeed(bodies[m.BodyA.Value], bodies[m.BodyB.Value], p.Position, p.Normal.Vector),
+            threshold));
+
+    // The rows of a whole set of manifolds, in manifold order. Manifolds with no
+    // points contribute nothing, so a pair test that found nothing needs no
+    // filtering out.
+    Flatten(manifolds: Array<ContactManifold3D>, bodies: Array<SolverBody3D>, threshold: Speed)
+        : Array<ContactConstraint3D>
+        => manifolds.FlatMap(m => ConstraintRows(m, bodies, threshold));
+
+    // Body `index` read as a ball: the solver body's centre, and the radius the
+    // caller keeps alongside. A `SolverBody3D` carries no shape — that is what lets
+    // one solver serve every shape — so a scene keeps its radii in a parallel
+    // array, in body order.
+    BallOf(bodies: Array<SolverBody3D>, radii: Array<Number>, index: Integer): Sphere
+        => Sphere(bodies[index].Center, radii[index]);
+
+    // Every ball-versus-ball manifold of a scene, plus every ball against one
+    // ground plane. Body `groundBody` is the plane's body — an immovable
+    // `SolverBody3D` — and is excluded from the ball tests.
+    //
+    // Ordered pairs with A's index below B's are tested, which visits each unordered
+    // pair once and fixes the normal's direction: from the lower-numbered body
+    // toward the higher one. The full square is enumerated and half of it discarded,
+    // because an index into the upper triangle is arithmetic nobody should have to
+    // read.
+    BallSceneManifolds(bodies: Array<SolverBody3D>, radii: Array<Number>, ground: Plane,
+        groundBody: BodyIndex, friction: Number, restitution: Proportion): Array<ContactManifold3D>
+    {
+        var n = bodies.Count;
+        var pairs = MapRange(n * n, k => k).FlatMap(k => MaybeOne(
+            k / n < k % n && k / n != groundBody.Value && k % n != groundBody.Value,
+            Manifold(new BodyIndex(k / n), new BodyIndex(k % n),
+                Collide(BallOf(bodies, radii, k / n), BallOf(bodies, radii, k % n)),
+                friction, restitution)));
+        var floors = MapRange(n, k => k).FlatMap(k => MaybeOne(
+            k != groundBody.Value,
+            Manifold(new BodyIndex(k), groundBody,
+                Collide(BallOf(bodies, radii, k), ground), friction, restitution)));
+        return pairs.Concatenate(floors);
+    }
+
+    // The constraint rows for the next step of a ball scene: detect, flatten, and
+    // carry last step's accumulated impulses across. This is the whole per-frame
+    // narrow phase of such a scene, and the result is what a caller puts in
+    // `RigidWorld3D.Constraints` before stepping.
+    BallSceneConstraints(world: RigidWorld3D, radii: Array<Number>, ground: Plane,
+        groundBody: BodyIndex, friction: Number, restitution: Proportion,
+        matchTolerance: Length): Array<ContactConstraint3D>
+        => WarmStartFrom(
+            Flatten(
+                BallSceneManifolds(world.Bodies, radii, ground, groundBody, friction, restitution),
+                world.Bodies,
+                world.Solver.RestitutionThreshold),
+            world.Constraints,
+            matchTolerance);
+}

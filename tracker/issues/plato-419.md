@@ -29,7 +29,9 @@ direction — writing new `stdlib/geometry` vocabulary (plato-422) rather than
 consuming existing vocabulary — and is the first one that constrains what an
 author may write rather than what a reader may call.
 
-1. **`Array<T>` library functions are never emitted.** `IArray<T>` in the output
+1. **`Array<T>` library functions are never emitted.** **Split out as
+   [`plato-429`](plato-429.md) on 2026-08-03** — fix it there, tick it here.
+   `IArray<T>` in the output
    declares only `At`/`Count`/`Map`/`Reduce`, but generated bodies call
    `Concatenate`, `SubArray`, `FlatMap`, `Append`, `AtModulo`, `First`, `Last`,
    `IsEmpty`, `Where`, `Any`, `All`, `PrefixSums`, `FromRows` — the

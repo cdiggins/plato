@@ -1,20 +1,79 @@
 //==
-// # RigidDynamics — derived functions for IForceModel2D and IForceModel3D
+// # Rigid dynamics
 //
-// Bodies for the `IForceModel2D` and `IForceModel3D` interfaces declared in
-// `rigid-dynamics.concepts.plato`. An environmental force model yields the newton force
-// on a body in its current state via `ForceOn`; the helpers derive that force's
-// magnitude, the acceleration it imparts (F = m a), and a negligibility test.
-// Pure expressions only; all inputs are immutable and evaluation is side-effect
-// free. See `README.md` for naming and unit conventions.
+// The bodies for `rigid-dynamics.types.plato` and `rigid-dynamics.concepts.plato`:
+// mass properties, the integrator, forces, and the sequential-impulse contact
+// solver.
+//
+// Sections, in order:
+//  - IForceModel2D and IForceModel3D — derived helpers
+//  - Environmental force models — the ForceOn bodies
+//  - Mass properties and inertia tensors
+//  - Solver bodies — impulse response
+//  - Forces, torques and impulses
+//  - Integration
+//  - The contact solver — one row
+//  - The contact solver — passes and iteration
+//  - The contact solver — position correction
+//  - The step
+//  - Array replacement
+//  - Planar bodies
+//
+//== HOW THE SOLVER IS SHAPED, AND WHY
+//
+// Sequential impulses is an inherently sequential algorithm: it visits contacts
+// one at a time and each visit reads velocities the previous visit wrote. That is
+// Gauss-Seidel, and the sequencing is not incidental — it is the reason the method
+// converges on a stack where a parallel (Jacobi) sweep of the same contacts
+// oscillates. So the shape here is a FOLD:
+//
+//     one pass  = Reduce over the row indices, threading the whole world
+//     the solve = Reduce over the iteration counter, threading the whole world
+//
+// The accumulator is the entire `RigidWorld3D`, not a velocity array, because a
+// row visit writes THREE things: two body velocities and the row's own
+// accumulated impulses. Threading the world makes the pass a total function of
+// state with no aliasing question to answer, and makes `SolveRow` independently
+// meaningful — it is "the world after solving this one contact once", which is
+// exactly the unit a law test wants.
+//
+// WHAT THIS COSTS. Replacing one element of an immutable array rebuilds it, so a
+// row visit is linear in the body count and a pass is rows times bodies. A
+// mutable solver is rows times a constant. That is the price of the formulation
+// and it is stated rather than hidden; it is also not the interesting term for
+// the scene sizes this vocabulary is aimed at, where the row count dominates.
+//
+// WHAT WAS REJECTED.
+//   * A JACOBI PASS — compute every row's impulse from one frozen velocity state,
+//     then sum the contributions per body. It is a `Map` and a scatter, it
+//     parallelizes, and its cost is the same product. It was rejected because it
+//     does not converge on the case that matters: in a stack, each contact
+//     computes the impulse needed to support the load ALONE, they all apply at
+//     once, the stack is over-corrected, and the next iteration over-corrects
+//     back. Under-relaxing fixes the oscillation and destroys the convergence
+//     rate. Gauss-Seidel gets stacks right because contact n sees contact n-1's
+//     work.
+//   * A VELOCITY-ARRAY ACCUMULATOR with the impulses returned alongside. It saves
+//     copying the settings through the fold and costs a second array to keep in
+//     step with the first; the fold then has two things that must stay the same
+//     length and one function that can violate it.
+//   * BAUMGARTE BIAS INSIDE THE VELOCITY SOLVE — the usual textbook shortcut, in
+//     which the penetration term is added to the target separation speed of the
+//     ordinary velocity solve. It is one line and it is wrong in a way that shows:
+//     the correction lands in the body's REAL velocity, so a body that starts
+//     deeply overlapped is launched, and a resting stack visibly breathes as the
+//     bias pumps energy in and damping takes it out. The correction here is a
+//     separate pseudo-velocity pass (see "position correction") whose result moves
+//     positions and is then thrown away, so no energy enters the simulation.
 
 library RigidDynamics
 {
     //==
-    // # IForceModel2D
+    // # IForceModel2D and IForceModel3D — derived helpers
     //
-    // A planar environmental force model: ForceOn yields the newton force on a
-    // body in its current state.
+    // An environmental force model yields the newton force on a body in its
+    // current state via `ForceOn`; these derive that force's magnitude, the
+    // acceleration it imparts (F = m a), and a negligibility test.
 
     // The magnitude of the force exerted on the body, in newtons.
     ForceMagnitudeOn(self: IForceModel2D, body: RigidBody2D): Number
@@ -31,11 +90,6 @@ library RigidDynamics
     IsNegligibleOn(self: IForceModel2D, body: RigidBody2D, tolerance: Number): Boolean
         => self.ForceOn(body).Magnitude <= tolerance;
 
-    //==
-    // # IForceModel3D
-    //
-    // A spatial environmental force model; mirrors the planar helpers.
-
     // The magnitude of the force exerted on the body, in newtons.
     ForceMagnitudeOn(self: IForceModel3D, body: RigidBody3D): Number
         => self.ForceOn(body).Magnitude;
@@ -49,4 +103,933 @@ library RigidDynamics
     // non-negative tolerance in newtons.
     IsNegligibleOn(self: IForceModel3D, body: RigidBody3D, tolerance: Number): Boolean
         => self.ForceOn(body).Magnitude <= tolerance;
+
+    //==
+    // # Environmental force models — the ForceOn bodies
+    //
+    // What each declared model actually exerts. Every one is a force in newtons on
+    // the body as it currently stands, so a caller sums them and hands the total
+    // to the integrator; none of them mutates or schedules anything.
+    //
+    // `BuoyancyModel` has no `ForceOn` here and does not claim `IForceModel3D`.
+    // Buoyancy is minus the weight of the DISPLACED FLUID, and the displaced
+    // volume is a shape query against the fluid half-space — a `RigidBody3D`
+    // carries no shape, so the interface cannot supply the one number the force
+    // depends on. `BuoyantForce` below takes that volume as an argument instead of
+    // pretending to derive it.
+
+    // Weight: the same acceleration on every body, scaled by its mass and its own
+    // gravity multiplier. Static and kinematic bodies are not exempted here —
+    // `SolverBody3D` exempts them by having no inverse mass, and a caller working
+    // in `RigidBody3D` reads the motion kind through `MobilityScale`.
+    // (https://en.wikipedia.org/wiki/Gravity_of_Earth)
+    ForceOn(self: UniformGravity2D, body: RigidBody2D): Vector2D
+        => self.Acceleration * (body.MassProperties.Mass.Amount * body.GravityScale);
+
+    // Weight under uniform gravity.
+    ForceOn(self: UniformGravity3D, body: RigidBody3D): Vector3D
+        => self.Acceleration * (body.MassProperties.Mass.Amount * body.GravityScale);
+
+    // Newtonian attraction toward a point mass: magnitude mu * m / r^2, directed
+    // from the body toward the centre. A body AT the centre has no direction to
+    // fall in and feels nothing, which keeps the singularity out of the caller.
+    // (https://en.wikipedia.org/wiki/Newton%27s_law_of_universal_gravitation)
+    ForceOn(self: PointGravity, body: RigidBody3D): Vector3D
+    {
+        var toCentre = body.Pose.Position.Between(self.Center);
+        var distanceSquared = toCentre.MagnitudeSquared;
+        var magnitude = self.GravitationalParameter * body.MassProperties.Mass.Amount
+            * body.GravityScale / distanceSquared;
+        return distanceSquared <= 0.0 ? Vector3D.Zero : toCentre.Normalize * magnitude;
+    }
+
+    // Drag opposing motion: -(linear * v + quadratic * |v| * v). The linear term
+    // dominates at low speed (Stokes) and the quadratic one at high speed
+    // (form drag); carrying both lets one model cover the whole range.
+    // (https://en.wikipedia.org/wiki/Drag_(physics))
+    ForceOn(self: DragModel, body: RigidBody3D): Vector3D
+    {
+        var v = body.LinearVelocity;
+        return v.Negative * (self.LinearCoefficient + self.QuadraticCoefficient * v.Magnitude);
+    }
+
+    // The buoyant force on a body displacing `submerged` of fluid, given the local
+    // gravitational acceleration: minus the weight of the displaced fluid, by
+    // Archimedes' principle. The caller computes the submerged volume, because
+    // that is a query against the body's shape and the fluid half-space.
+    // (https://en.wikipedia.org/wiki/Archimedes%27_principle)
+    BuoyantForce(self: BuoyancyModel, submerged: Volume, gravity: Vector3D): Vector3D
+        => gravity.Negative * (self.FluidDensity.Amount * submerged.Amount);
+
+    //==
+    // # Mass properties and inertia tensors
+    //
+    // The inertia of the primitive solids, about the CENTRE OF MASS and in the
+    // shape's own PRINCIPAL frame, where the tensor is diagonal and three numbers
+    // say everything. `PrincipalMoments` returns those three; `InertiaTensor`
+    // packs them into the `SymmetricMatrix3x3` that `MassProperties3D` declares.
+    //
+    // Every formula is for a solid of UNIFORM DENSITY, and every one takes the
+    // mass rather than a density, because mass is the quantity a caller usually
+    // knows and `MassOf` derives it from a density when it does not.
+    // (https://en.wikipedia.org/wiki/List_of_moments_of_inertia)
+
+    // A diagonal inertia tensor from the three principal moments, in
+    // kilogram-square-meters.
+    DiagonalInertia(moments: Vector3D): SymmetricMatrix3x3
+        => SymmetricMatrix3x3(moments.X, 0.0, 0.0, moments.Y, 0.0, moments.Z);
+
+    // The principal moments a diagonal tensor was built from. Reading only the
+    // diagonal is exact when the tensor IS diagonal — which is the case for every
+    // shape in this section — and is the principal-frame approximation otherwise.
+    PrincipalMoments(tensor: SymmetricMatrix3x3): Vector3D
+        => Vector3D(tensor.M11, tensor.M22, tensor.M33);
+
+    // The inertia tensor of the same body about an axis system displaced by
+    // `offset` from the centre of mass: the parallel-axis (Huygens-Steiner)
+    // theorem, I' = I + m (|d|^2 E - d d^T). Note that the shifted tensor has
+    // off-diagonal terms even when the original does not — a displaced body is not
+    // principal about the displaced axes, which is exactly why a compound body
+    // needs the full tensor and a primitive does not.
+    // (https://en.wikipedia.org/wiki/Parallel_axis_theorem)
+    ShiftedInertia(tensor: SymmetricMatrix3x3, mass: Mass, offset: Vector3D): SymmetricMatrix3x3
+    {
+        var m = mass.Amount;
+        var d2 = offset.MagnitudeSquared;
+        return SymmetricMatrix3x3(
+            tensor.M11 + m * (d2 - offset.X * offset.X),
+            tensor.M12 - m * offset.X * offset.Y,
+            tensor.M13 - m * offset.X * offset.Z,
+            tensor.M22 + m * (d2 - offset.Y * offset.Y),
+            tensor.M23 - m * offset.Y * offset.Z,
+            tensor.M33 + m * (d2 - offset.Z * offset.Z));
+    }
+
+    // The sum of two inertia tensors, which is how a compound body's tensor is
+    // built: shift each part to the common centre of mass, then add.
+    CombinedInertia(a: SymmetricMatrix3x3, b: SymmetricMatrix3x3): SymmetricMatrix3x3
+        => SymmetricMatrix3x3(
+            a.M11 + b.M11, a.M12 + b.M12, a.M13 + b.M13,
+            a.M22 + b.M22, a.M23 + b.M23, a.M33 + b.M33);
+
+    // The moment of inertia about a unit axis through the centre of mass:
+    // axis^T I axis. Precondition: `axis` is unit, which `Direction3D` promises.
+    InertiaAbout(tensor: SymmetricMatrix3x3, axis: Direction3D): MomentOfInertia
+    {
+        var d = axis.Vector;
+        return MomentOfInertia.FromAmount(
+            tensor.M11 * d.X * d.X + tensor.M22 * d.Y * d.Y + tensor.M33 * d.Z * d.Z
+            + 2.0 * (tensor.M12 * d.X * d.Y + tensor.M13 * d.X * d.Z + tensor.M23 * d.Y * d.Z));
+    }
+
+    // The mass of a solid of the given volume at the given uniform density.
+    MassOf(volume: Volume, density: Density): Mass
+        => Mass.FromAmount(volume.Amount * density.Amount);
+
+    // The principal moments of a solid ball: 2/5 m r^2 about every axis through
+    // the centre — a ball has no distinguished axis, so its tensor is a multiple
+    // of the identity and stays diagonal under any rotation.
+    PrincipalMoments(s: Sphere, mass: Mass): Vector3D
+    {
+        var i = 0.4 * mass.Amount * s.Radius.Square;
+        return Vector3D(i, i, i);
+    }
+
+    // The principal moments of a solid box about its own axes: m (b^2 + c^2) / 12
+    // per axis, over the two FULL extents perpendicular to it.
+    PrincipalMoments(b: Box3D, mass: Mass): Vector3D
+    {
+        var k = mass.Amount / 12.0;
+        var w = b.Size.Width.Square;
+        var h = b.Size.Height.Square;
+        var d = b.Size.Depth.Square;
+        return Vector3D(k * (h + d), k * (w + d), k * (w + h));
+    }
+
+    // The principal moments of a solid right circular cylinder, in a frame whose
+    // LOCAL Z runs along the cylinder's axis: m r^2 / 2 about the axis and
+    // m (3 r^2 + h^2) / 12 across it, over the FULL height.
+    PrincipalMoments(c: Cylinder, mass: Mass): Vector3D
+    {
+        var m = mass.Amount;
+        var across = m * (3.0 * c.Radius.Square + c.Height.Square) / 12.0;
+        return Vector3D(across, across, 0.5 * m * c.Radius.Square);
+    }
+
+    // The principal moments of a solid capsule, in a frame whose LOCAL Z runs from
+    // A to B: a cylinder of the spine's length capped by two hemispheres, each
+    // contributing its own inertia plus a parallel-axis shift to the capsule's
+    // centre. The two masses are split by volume, so the result depends on the
+    // radius and the spine length only through the ratio of the two parts.
+    PrincipalMoments(c: Capsule3D, mass: Mass): Vector3D
+    {
+        var r = c.Radius;
+        var h = c.A.Distance(c.B);
+        var cylinderVolume = Number.Pi * r.Square * h;
+        var capVolume = 2.0 / 3.0 * Number.Pi * r.Square * r;
+        var total = cylinderVolume + 2.0 * capVolume;
+        var mc = total > 0.0 ? mass.Amount * cylinderVolume / total : 0.0;
+        var mh = total > 0.0 ? mass.Amount * capVolume / total : 0.0;
+        var along = 0.5 * mc * r.Square + 2.0 * mh * 0.4 * r.Square;
+        var across = mc * (h.Square / 12.0 + r.Square * 0.25)
+            + 2.0 * mh * (0.4 * r.Square + h.Square * 0.25 + 0.375 * h * r);
+        return Vector3D(across, across, along);
+    }
+
+    // The mass properties of a solid ball of uniform density, in a body frame
+    // centred on the ball: the centre of mass is the origin of that frame.
+    MassPropertiesOf(s: Sphere, density: Density): MassProperties3D
+    {
+        var mass = MassOf(Volume.FromAmount(s.Volume), density);
+        return MassProperties3D(mass, Point3D(0.0, 0.0, 0.0), DiagonalInertia(PrincipalMoments(s, mass)));
+    }
+
+    // The mass properties of a solid box of uniform density, in the box's own
+    // frame.
+    MassPropertiesOf(b: Box3D, density: Density): MassProperties3D
+    {
+        var mass = MassOf(Volume.FromAmount(b.Volume), density);
+        return MassProperties3D(mass, Point3D(0.0, 0.0, 0.0), DiagonalInertia(PrincipalMoments(b, mass)));
+    }
+
+    // The mass properties of a solid cylinder of uniform density, in a frame whose
+    // local Z runs along the cylinder's axis.
+    MassPropertiesOf(c: Cylinder, density: Density): MassProperties3D
+    {
+        var mass = MassOf(Volume.FromAmount(c.Volume), density);
+        return MassProperties3D(mass, Point3D(0.0, 0.0, 0.0), DiagonalInertia(PrincipalMoments(c, mass)));
+    }
+
+    // The mass properties of a solid capsule of uniform density, in a frame whose
+    // local Z runs from A to B.
+    MassPropertiesOf(c: Capsule3D, density: Density): MassProperties3D
+    {
+        var mass = MassOf(Volume.FromAmount(c.Volume), density);
+        return MassProperties3D(mass, Point3D(0.0, 0.0, 0.0), DiagonalInertia(PrincipalMoments(c, mass)));
+    }
+
+    // The shortest rotation carrying `from` onto `to`, built from the half-way
+    // vector so that no trigonometry appears. Exactly opposed inputs have no
+    // shortest rotation — every half-turn about a perpendicular axis serves — and
+    // one such axis is chosen rather than leaving the result undefined.
+    // (https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation)
+    RotationTo(from: Direction3D, to: Direction3D): Quaternion
+    {
+        var a = from.Vector;
+        var b = to.Vector;
+        var axis = a.Cross(b);
+        var w = 1.0 + a.Dot(b);
+        var perpendicular = a.X.Abs < 0.9 ? Vector3D(1.0, 0.0, 0.0).Cross(a) : Vector3D(0.0, 1.0, 0.0).Cross(a);
+        return w <= 0.000001
+            ? Quaternion(perpendicular.Normalize.X, perpendicular.Normalize.Y, perpendicular.Normalize.Z, 0.0)
+            : Quaternion(axis.X, axis.Y, axis.Z, w).Normalize;
+    }
+
+    // The orientation whose local Z runs along `axis` — the principal frame of
+    // every axially symmetric primitive here, and the orientation to give a
+    // `SolverBody3D` built from a cylinder or a capsule.
+    AxialOrientation(axis: Direction3D): Quaternion
+        => RotationTo(Vector3D(0.0, 0.0, 1.0).FromVectorUnchecked, axis);
+
+    //==
+    // # Solver bodies — impulse response
+    //
+    // Everything the solver needs to know about one body, and the reason
+    // `SolverBody3D` stores an inverse inertia DIAGONAL rather than a tensor:
+    // applying I^-1 is then a rotation into the principal frame, three multiplies,
+    // and a rotation back, with no matrix to assemble and nothing to invert.
+
+    // The dimensionless mobility of a motion kind: 1 for a body that responds to
+    // impulses, 0 for one that does not. The single place in this library that
+    // reads `BodyMotion`, so that the solver itself has no case analysis and no
+    // branch a static body can take by accident.
+    MobilityScale(motion: BodyMotion): Number
+        => match (motion) {
+            Static => 0.0;
+            Kinematic => 0.0;
+            Dynamic => 1.0;
+        };
+
+    // The component-wise product of two vectors: the diagonal matrix product that
+    // applying a principal inertia amounts to.
+    ComponentProduct(a: Vector3D, b: Vector3D): Vector3D
+        => Vector3D(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+
+    // The reciprocal of each principal moment, with a zero moment mapping to zero
+    // rather than to infinity: a body with no inertia about an axis is one that
+    // cannot be spun about it, which is what an immovable body means.
+    InverseMoments(moments: Vector3D): Vector3D
+        => Vector3D(
+            moments.X > 0.0 ? 1.0 / moments.X : 0.0,
+            moments.Y > 0.0 ? 1.0 / moments.Y : 0.0,
+            moments.Z > 0.0 ? 1.0 / moments.Z : 0.0);
+
+    // The angular velocity change an angular impulse (newton-meter-seconds, world
+    // frame) produces: I^-1 L, taken through the body's principal frame.
+    AngularResponse(self: SolverBody3D, angularImpulse: Vector3D): Vector3D
+        => ComponentProduct(
+                angularImpulse.Transform(self.Orientation.Inverse),
+                self.InverseInertia)
+            .Transform(self.Orientation);
+
+    // The world velocity of the material point of the body currently at `point`:
+    // the centre's velocity plus the rotation carried out to the lever arm.
+    VelocityAt(self: SolverBody3D, point: Point3D): Vector3D
+        => self.Velocity.Linear + self.Velocity.Angular.Cross(self.Center.Between(point));
+
+    // The body after an impulse of `impulse` newton-seconds applied at world point
+    // `point`. Position and orientation are untouched: an impulse changes velocity
+    // only, and an immovable body changes not at all.
+    // (https://en.wikipedia.org/wiki/Impulse_(physics))
+    ApplyImpulse(self: SolverBody3D, impulse: Vector3D, point: Point3D): SolverBody3D
+        => SolverBody3D(
+            self.Center,
+            self.Orientation,
+            SpatialVelocity3D(
+                self.Velocity.Linear + impulse * self.InverseMass,
+                self.Velocity.Angular
+                    + AngularResponse(self, self.Center.Between(point).Cross(impulse))),
+            self.InverseMass,
+            self.InverseInertia,
+            self.LinearDamping,
+            self.AngularDamping,
+            self.GravityScale);
+
+    // The body with a different twist and everything else left alone.
+    WithVelocity(self: SolverBody3D, velocity: SpatialVelocity3D): SolverBody3D
+        => SolverBody3D(self.Center, self.Orientation, velocity, self.InverseMass,
+            self.InverseInertia, self.LinearDamping, self.AngularDamping, self.GravityScale);
+
+    // The body at rest: the starting state of the position pass, where the twist
+    // is a pseudo-velocity rather than a motion.
+    AtRest(self: SolverBody3D): SolverBody3D
+        => WithVelocity(self, SpatialVelocity3D(Vector3D.Zero, Vector3D.Zero));
+
+    // The effective mass along `direction` for an impulse applied at `anchorA` on A
+    // and at `anchorB` on B: the scalar that turns an impulse magnitude into the
+    // relative speed change it buys, so the impulse needed for a wanted speed
+    // change is that change divided by this. Made of the two inverse masses plus
+    // what each body's rotation contributes through its own lever arm.
+    // Precondition: `direction` is unit.
+    //
+    // The two anchors are separate because a JOINT holds two points that are
+    // supposed to coincide and generally do not; a CONTACT is the special case
+    // where both are the contact point.
+    DirectionalMass(a: SolverBody3D, b: SolverBody3D, anchorA: Point3D, anchorB: Point3D,
+        direction: Vector3D): Number
+    {
+        var ra = a.Center.Between(anchorA);
+        var rb = b.Center.Between(anchorB);
+        var angularA = AngularResponse(a, ra.Cross(direction)).Cross(ra);
+        var angularB = AngularResponse(b, rb.Cross(direction)).Cross(rb);
+        return a.InverseMass + b.InverseMass + direction.Dot(angularA + angularB);
+    }
+
+    // The effective mass of a contact, where both bodies are anchored at the same
+    // world point.
+    DirectionalMass(a: SolverBody3D, b: SolverBody3D, point: Point3D, direction: Vector3D): Number
+        => DirectionalMass(a, b, point, point, direction);
+
+    // The speed at which the two anchor points separate along `direction`: B's
+    // material velocity at its anchor minus A's at its own.
+    SeparationSpeed(a: SolverBody3D, b: SolverBody3D, anchorA: Point3D, anchorB: Point3D,
+        direction: Vector3D): Number
+        => (VelocityAt(b, anchorB) - VelocityAt(a, anchorA)).Dot(direction);
+
+    // The speed at which the two bodies' material points at `point` separate along
+    // `direction`. Negative along a contact normal means the pair is closing,
+    // because the normal runs from A toward B.
+    SeparationSpeed(a: SolverBody3D, b: SolverBody3D, point: Point3D, direction: Vector3D): Number
+        => SeparationSpeed(a, b, point, point, direction);
+
+    // The solver's view of an authored body, with its shape's principal moments
+    // supplied by the caller (from `PrincipalMoments`) and its principal
+    // orientation folded into the pose. A static or kinematic body loses both
+    // inverses, which is the whole of how the solver knows not to move it.
+    SolverBody(body: RigidBody3D, principalMoments: Vector3D): SolverBody3D
+    {
+        var mobility = MobilityScale(body.Motion);
+        var mass = body.MassProperties.Mass.Amount;
+        return SolverBody3D(
+            body.Pose.Position + body.MassProperties.CenterOfMass.Offset.Transform(body.Pose.Orientation),
+            body.Pose.Orientation,
+            SpatialVelocity3D(body.LinearVelocity, body.AngularVelocity),
+            mass > 0.0 ? mobility / mass : 0.0,
+            InverseMoments(principalMoments) * mobility,
+            body.LinearDamping,
+            body.AngularDamping,
+            body.GravityScale);
+    }
+
+    // A dynamic solver body at a pose, with the given mass and principal moments.
+    // The direct constructor for a caller that never authored a `RigidBody3D` — a
+    // demo scene, or a test.
+    DynamicBody(pose: Pose3D, mass: Mass, principalMoments: Vector3D): SolverBody3D
+        => SolverBody3D(
+            pose.Position,
+            pose.Orientation,
+            SpatialVelocity3D(Vector3D.Zero, Vector3D.Zero),
+            mass.Amount > 0.0 ? 1.0 / mass.Amount : 0.0,
+            InverseMoments(principalMoments),
+            0.0, 0.0, 1.0);
+
+    // An immovable solver body at a pose: no inverse mass, no inverse inertia, and
+    // therefore no response to any impulse. The ground, and every wall.
+    StaticBody(pose: Pose3D): SolverBody3D
+        => SolverBody3D(
+            pose.Position,
+            pose.Orientation,
+            SpatialVelocity3D(Vector3D.Zero, Vector3D.Zero),
+            0.0,
+            Vector3D.Zero,
+            0.0, 0.0, 0.0);
+
+    //==
+    // # Forces, torques and impulses
+    //
+    // A force applied away from the centre of mass both accelerates and spins a
+    // body; the pair of the two is a wrench (`SpatialForce3D`, declared in
+    // `kinematics.types.plato`), and reducing an applied force to one is the whole
+    // of what "applied at a point" means.
+
+    // The wrench a force applied at a world point exerts about `centre`: the force
+    // itself, and the torque r x F it makes about the lever arm.
+    // (https://en.wikipedia.org/wiki/Torque)
+    WrenchAbout(applied: AppliedForce3D, centre: Point3D): SpatialForce3D
+        => SpatialForce3D(
+            applied.Force,
+            centre.Between(applied.ApplicationPoint).Cross(applied.Force));
+
+    // The body after an authored impulse at its authored point.
+    ApplyImpulse(self: SolverBody3D, applied: AppliedImpulse3D): SolverBody3D
+        => ApplyImpulse(self, applied.Impulse, applied.ApplicationPoint);
+
+    // The body after an explosion: an impulse directed away from the blast centre,
+    // at full magnitude at the centre and falling linearly to nothing at the
+    // radius, applied at the body's own centre so that it pushes without spinning.
+    // A body outside the radius, or exactly at the centre, is untouched.
+    ApplyImpulse(self: SolverBody3D, blast: RadialImpulse3D): SolverBody3D
+    {
+        var away = blast.Center.Between(self.Center);
+        var distance = away.Magnitude;
+        var falloff = (1.0 - distance / blast.Radius.Amount).Clamp(0.0, 1.0);
+        return distance <= 0.0
+            ? self
+            : ApplyImpulse(self, away / distance * (blast.Magnitude.Amount * falloff), self.Center);
+    }
+
+    // The velocity decay factor of an exponential damping rate over a step:
+    // exp(-rate * dt), which is the exact solution of dv/dt = -rate v and is
+    // therefore stable at any step size, unlike the (1 - rate * dt) that a
+    // first-order reading of the same rate would give and that goes negative once
+    // the step is long enough.
+    DampingFactor(rate: Number, seconds: Number): Number
+        => (-rate * seconds).Exp;
+
+    //==
+    // # Integration
+    //
+    // SEMI-IMPLICIT (SYMPLECTIC) EULER, and the choice matters more than its two
+    // lines suggest: velocity is advanced by the acceleration FIRST, and position
+    // is then advanced by the NEW velocity.
+    //
+    //     v' = v + a dt          then          x' = x + v' dt
+    //
+    // Explicit Euler uses the OLD velocity for the position update. On the orbit
+    // and the spring — the two motions a rigid-body engine spends its life
+    // integrating — explicit Euler gains energy every step and the motion spirals
+    // outward without bound, at any step size. Semi-implicit Euler is symplectic:
+    // its energy error is bounded and oscillates rather than accumulating, so a
+    // pendulum swings forever at very nearly the right amplitude instead of
+    // winding up. It costs exactly the same arithmetic. There is no case for
+    // explicit Euler in this library.
+    //
+    // Higher order was also rejected, for a different reason: velocity-Verlet and
+    // RK4 both want to evaluate forces more than once per step, and a step that
+    // contains a CONTACT SOLVE has no smooth force field to re-evaluate. The
+    // accuracy those methods buy is spent on the smooth part of a simulation whose
+    // error is dominated by the non-smooth part.
+    //
+    // Orientation is advanced by the quaternion rate q' = q + (omega (x) q) dt / 2
+    // and renormalized. That is first order in the same sense, and the
+    // renormalization is what keeps repeated products on the unit sphere.
+    // (https://en.wikipedia.org/wiki/Semi-implicit_Euler_method)
+
+    // The orientation after spinning at `angular` radians per second for
+    // `seconds`, renormalized. The quaternion rate is half the angular velocity,
+    // as a pure quaternion, multiplied onto the current orientation from the left.
+    IntegrateOrientation(orientation: Quaternion, angular: Vector3D, seconds: Number): Quaternion
+        => (orientation
+            + Quaternion(angular.X, angular.Y, angular.Z, 0.0) * orientation * (0.5 * seconds))
+            .Normalize;
+
+    // The body with its velocity advanced by a wrench and gravity, then damped —
+    // the FIRST half of a semi-implicit step. Gravity is an acceleration, so it is
+    // added directly rather than through the inverse mass, and it is scaled by the
+    // body's own multiplier; an immovable body has no inverse mass and so feels
+    // neither the wrench nor, through the same zero, its own weight.
+    //
+    // The GYROSCOPIC term is omitted. Euler's equation has an extra
+    // -I^-1 (omega x I omega) on the angular update, and it is what makes a
+    // tumbling body with three different moments flip end over end. Integrated
+    // EXPLICITLY, as it would have to be here, that term adds energy at every step
+    // and a fast-spinning body diverges — which is why engines that want it solve
+    // it implicitly, as its own small non-linear system. Omitting it is exact for
+    // any body with two equal moments (every ball, cylinder and capsule here) and
+    // costs a box its tumbling instability.
+    IntegrateVelocity(self: SolverBody3D, wrench: SpatialForce3D, gravity: Vector3D,
+        seconds: Number): SolverBody3D
+    {
+        var accelerating = self.InverseMass > 0.0;
+        var linear = self.Velocity.Linear
+            + (wrench.Force * self.InverseMass
+                + (accelerating ? gravity * self.GravityScale : Vector3D.Zero)) * seconds;
+        var angular = self.Velocity.Angular + AngularResponse(self, wrench.Torque * seconds);
+        return WithVelocity(self, SpatialVelocity3D(
+            linear * DampingFactor(self.LinearDamping, seconds),
+            angular * DampingFactor(self.AngularDamping, seconds)));
+    }
+
+    // The body with its pose advanced by its current velocity — the SECOND half of
+    // a semi-implicit step, which must run after the velocity is final.
+    IntegratePose(self: SolverBody3D, seconds: Number): SolverBody3D
+        => SolverBody3D(
+            self.Center + self.Velocity.Linear * seconds,
+            IntegrateOrientation(self.Orientation, self.Velocity.Angular, seconds),
+            self.Velocity,
+            self.InverseMass,
+            self.InverseInertia,
+            self.LinearDamping,
+            self.AngularDamping,
+            self.GravityScale);
+
+    // The body with its pose advanced by its velocity PLUS a pseudo-velocity that
+    // is not part of its motion: how the position pass's correction reaches the
+    // pose without ever entering the body's real velocity.
+    IntegratePoseWith(self: SolverBody3D, correction: SpatialVelocity3D, seconds: Number): SolverBody3D
+        => SolverBody3D(
+            self.Center + (self.Velocity.Linear + correction.Linear) * seconds,
+            IntegrateOrientation(self.Orientation,
+                self.Velocity.Angular + correction.Angular, seconds),
+            self.Velocity,
+            self.InverseMass,
+            self.InverseInertia,
+            self.LinearDamping,
+            self.AngularDamping,
+            self.GravityScale);
+
+    //==
+    // # The contact solver — one row
+    //
+    // One visit to one contact point. The normal is solved first and the friction
+    // cone is then bounded by the normal impulse the same visit just accumulated,
+    // which is the ordering that makes friction track the load instead of lagging
+    // it by an iteration.
+    //
+    // The clamp is on the ACCUMULATED impulse, never on the increment. Clamping
+    // increments would forbid a row from undoing an over-correction an earlier row
+    // made in the same pass, and over-correction is normal: each row solves its own
+    // contact exactly, in ignorance of the others.
+
+    // The impulse increment that changes the relative speed along a direction from
+    // `current` to `target`, given the pair's effective mass there. A pair with no
+    // mobility along that direction has an infinite effective compliance and takes
+    // no impulse.
+    ImpulseFor(target: Number, current: Number, effectiveMass: Number): Number
+        => effectiveMass > 0.0 ? (target - current) / effectiveMass : 0.0;
+
+    // The world after solving row `index` once for velocity: restitution along the
+    // normal, then Coulomb friction in the contact plane. Precondition: the row
+    // names two DIFFERENT bodies, both in range.
+    SolveRow(world: RigidWorld3D, index: Integer): RigidWorld3D
+    {
+        var row = world.Constraints[index];
+        var a0 = world.Bodies[row.BodyA.Value];
+        var b0 = world.Bodies[row.BodyB.Value];
+
+        var n = row.Normal.Vector;
+        var normalIncrement = ImpulseFor(
+            row.TargetSeparationSpeed,
+            SeparationSpeed(a0, b0, row.Point, n),
+            DirectionalMass(a0, b0, row.Point, n));
+        var normalTotal = (row.NormalImpulse.Amount + normalIncrement).Max(0.0);
+        var normalApplied = normalTotal - row.NormalImpulse.Amount;
+        var a1 = ApplyImpulse(a0, n * -normalApplied, row.Point);
+        var b1 = ApplyImpulse(b0, n * normalApplied, row.Point);
+
+        // Both friction axes are measured against the SAME post-normal state and
+        // clamped together, so the cone bound applies to the friction impulse as a
+        // vector rather than to each axis alone. Solving them one after the other
+        // would make friction depend on which axis `Tangent` happened to pick.
+        var t = row.Tangent.Vector;
+        var u = row.Bitangent.Vector;
+        var tangentRaw = row.TangentImpulse.Amount + ImpulseFor(
+            0.0, SeparationSpeed(a1, b1, row.Point, t), DirectionalMass(a1, b1, row.Point, t));
+        var bitangentRaw = row.BitangentImpulse.Amount + ImpulseFor(
+            0.0, SeparationSpeed(a1, b1, row.Point, u), DirectionalMass(a1, b1, row.Point, u));
+        var frictionMagnitude = (tangentRaw.Square + bitangentRaw.Square).Sqrt;
+        var frictionLimit = row.Friction * normalTotal;
+        var scale = frictionMagnitude > frictionLimit && frictionMagnitude > 0.0
+            ? frictionLimit / frictionMagnitude
+            : 1.0;
+        var tangentTotal = tangentRaw * scale;
+        var bitangentTotal = bitangentRaw * scale;
+        var frictionApplied = t * (tangentTotal - row.TangentImpulse.Amount)
+            + u * (bitangentTotal - row.BitangentImpulse.Amount);
+
+        return RigidWorld3D(
+            ReplacedAt(
+                ReplacedAt(world.Bodies, row.BodyA.Value,
+                    ApplyImpulse(a1, frictionApplied.Negative, row.Point)),
+                row.BodyB.Value,
+                ApplyImpulse(b1, frictionApplied, row.Point)),
+            ReplacedAt(world.Constraints, index, WithImpulses(row,
+                Impulse.FromAmount(normalTotal),
+                Impulse.FromAmount(tangentTotal),
+                Impulse.FromAmount(bitangentTotal))),
+            world.Gravity,
+            world.TimeStep,
+            world.Solver);
+    }
+
+    // The world after re-applying row `index`'s already-accumulated impulses to its
+    // two bodies. Run once before the iteration begins, this is what makes warm
+    // starting mean anything: the row remembers last frame's impulse, and the
+    // bodies must be moving as if it had been applied before the solver measures
+    // anything.
+    WarmStartRow(world: RigidWorld3D, index: Integer): RigidWorld3D
+    {
+        var row = world.Constraints[index];
+        var stored = row.Normal.Vector * row.NormalImpulse.Amount
+            + row.Tangent.Vector * row.TangentImpulse.Amount
+            + row.Bitangent.Vector * row.BitangentImpulse.Amount;
+        return RigidWorld3D(
+            ReplacedAt(
+                ReplacedAt(world.Bodies, row.BodyA.Value,
+                    ApplyImpulse(world.Bodies[row.BodyA.Value], stored.Negative, row.Point)),
+                row.BodyB.Value,
+                ApplyImpulse(world.Bodies[row.BodyB.Value], stored, row.Point)),
+            world.Constraints,
+            world.Gravity,
+            world.TimeStep,
+            world.Solver);
+    }
+
+    //==
+    // # The contact solver — passes and iteration
+    //
+    // A pass is a fold over the row indices; the solve is a fold over the iteration
+    // counter. Both thread the whole world, so both are ordinary pure functions of
+    // it and either can be called on its own.
+
+    // The indices 0 .. count - 1, the sequence both folds run over.
+    Indices(count: Integer): Array<Integer>
+        => MapRange(count, i => i);
+
+    // The world with every row's stored impulse re-applied.
+    WarmStart(world: RigidWorld3D): RigidWorld3D
+        => Indices(world.Constraints.Count).Reduce(world, (acc, i) => WarmStartRow(acc, i));
+
+    // One Gauss-Seidel sweep: every row solved once, in order, each seeing the
+    // velocities the rows before it wrote.
+    SolveVelocityPass(world: RigidWorld3D): RigidWorld3D
+        => Indices(world.Constraints.Count).Reduce(world, (acc, i) => SolveRow(acc, i));
+
+    // The velocity solve: warm start, then `VelocityIterations` sweeps. More
+    // sweeps means a stiffer, less springy stack; the cost is exactly linear in the
+    // count, which is why the number lives in `TimeStepSettings` where a caller can
+    // trade it.
+    SolveVelocities(world: RigidWorld3D): RigidWorld3D
+        => Indices(world.TimeStep.VelocityIterations)
+            .Reduce(WarmStart(world), (acc, i) => SolveVelocityPass(acc));
+
+    //==
+    // # The contact solver — position correction
+    //
+    // Overlap that the velocity solve cannot remove — because removing it is a
+    // POSITION error, not a velocity one — is taken out by a second, separate solve
+    // whose velocities are fictitious. The pseudo-velocities start at zero, are
+    // driven by a target speed proportional to the excess penetration, and are used
+    // only to displace poses; they are then discarded and never touch a body's
+    // motion. This is the "split impulse" arrangement.
+    //
+    // Two details make it settle rather than hunt:
+    //
+    //   * THE SLOP. Correction is applied only to the penetration BEYOND
+    //     `PenetrationSlop`. A resting contact is allowed to keep a small overlap,
+    //     which is what gives collision detection something to find next frame; a
+    //     solver that drives penetration to exactly zero loses the contact, regains
+    //     it after the body falls back, and buzzes at the frame rate.
+    //   * THE CAP. `MaxCorrectionSpeed` bounds how fast the correction may push, so
+    //     a body that starts deeply inside another crawls out over several frames
+    //     instead of being ejected.
+
+    // The correction speed a penetration asks for: the excess beyond the slop,
+    // scaled by the Baumgarte factor and spread over one step, capped. Zero when
+    // the overlap is within the slop.
+    CorrectionSpeed(penetration: Length, settings: ContactSolverSettings, seconds: Number): Number
+        => ((penetration.Amount - settings.PenetrationSlop.Amount).Max(0.0)
+            * settings.BaumgarteFactor / seconds)
+            .Min(settings.MaxCorrectionSpeed.Amount);
+
+    // The world after solving row `index` once for POSITION: the normal axis only,
+    // aiming at the correction speed, with no restitution and no friction. Friction
+    // is deliberately absent — a fictitious tangential velocity would shear a stack
+    // sideways as it settles.
+    //
+    // The row's NormalImpulse field is reused as the accumulator for the pseudo
+    // impulse, so the clamp is on the accumulated value exactly as in the velocity
+    // solve and a later row can undo an earlier row's over-push. That reuse is safe
+    // because `SolvePositions` runs on a copy whose constraints it discards; only
+    // the body twists survive.
+    SolvePositionRow(world: RigidWorld3D, index: Integer): RigidWorld3D
+    {
+        var row = world.Constraints[index];
+        var a = world.Bodies[row.BodyA.Value];
+        var b = world.Bodies[row.BodyB.Value];
+        var n = row.Normal.Vector;
+        var increment = ImpulseFor(
+            CorrectionSpeed(row.Penetration, world.Solver, world.TimeStep.FixedDeltaTime.Seconds),
+            SeparationSpeed(a, b, row.Point, n),
+            DirectionalMass(a, b, row.Point, n));
+        var total = (row.NormalImpulse.Amount + increment).Max(0.0);
+        var applied = total - row.NormalImpulse.Amount;
+        return RigidWorld3D(
+            ReplacedAt(
+                ReplacedAt(world.Bodies, row.BodyA.Value, ApplyImpulse(a, n * -applied, row.Point)),
+                row.BodyB.Value,
+                ApplyImpulse(b, n * applied, row.Point)),
+            ReplacedAt(world.Constraints, index, WithImpulses(row,
+                Impulse.FromAmount(total), row.TangentImpulse, row.BitangentImpulse)),
+            world.Gravity,
+            world.TimeStep,
+            world.Solver);
+    }
+
+    // One position sweep over every row.
+    SolvePositionPass(world: RigidWorld3D): RigidWorld3D
+        => Indices(world.Constraints.Count).Reduce(world, (acc, i) => SolvePositionRow(acc, i));
+
+    // The PSEUDO-VELOCITIES that remove the remaining overlap: the same world with
+    // every body's twist reset to zero and every row's accumulator reset to zero,
+    // and `PositionIterations` position sweeps run on it. The result is not a state
+    // the simulation is ever in — only its `Bodies` twists are meaningful, and only
+    // as a displacement rate for one step.
+    SolvePositions(world: RigidWorld3D): Array<SolverBody3D>
+    {
+        var zero = Impulse.FromAmount(0.0);
+        var atRest = RigidWorld3D(
+            world.Bodies.Map(body => AtRest(body)),
+            world.Constraints.Map(row => WithImpulses(row, zero, zero, zero)),
+            world.Gravity,
+            world.TimeStep,
+            world.Solver);
+        return Indices(world.TimeStep.PositionIterations)
+            .Reduce(atRest, (acc, i) => SolvePositionPass(acc))
+            .Bodies;
+    }
+
+    //==
+    // # The step
+    //
+    // One fixed step, as a pure function of the world. The order is forced:
+    // velocities must be final before positions move (semi-implicit Euler), and
+    // contacts must be solved before that, or the step would move bodies through
+    // each other and solve the interpenetration next frame.
+
+    // The world with gravity and damping applied to every body's velocity, and no
+    // other wrench. A caller with per-body forces calls `IntegrateVelocity` itself
+    // with the wrench it assembled; this is the free-fall case, which is the one a
+    // scene without actuators is in.
+    ApplyGravityAndDamping(world: RigidWorld3D): RigidWorld3D
+    {
+        var seconds = world.TimeStep.FixedDeltaTime.Seconds;
+        var free = SpatialForce3D(Vector3D.Zero, Vector3D.Zero);
+        return RigidWorld3D(
+            world.Bodies.Map(body => IntegrateVelocity(body, free, world.Gravity, seconds)),
+            world.Constraints,
+            world.Gravity,
+            world.TimeStep,
+            world.Solver);
+    }
+
+    // The world with every body's pose advanced by its velocity plus the matching
+    // pseudo-velocity. `corrections` is `SolvePositions`' output and must be the
+    // same length as `Bodies`.
+    IntegratePoses(world: RigidWorld3D, corrections: Array<SolverBody3D>): RigidWorld3D
+    {
+        var seconds = world.TimeStep.FixedDeltaTime.Seconds;
+        return RigidWorld3D(
+            Indices(world.Bodies.Count).Map(i =>
+                IntegratePoseWith(world.Bodies[i], corrections[i].Velocity, seconds)),
+            world.Constraints,
+            world.Gravity,
+            world.TimeStep,
+            world.Solver);
+    }
+
+    // ONE FIXED STEP: apply gravity and damping, solve contact velocities, work out
+    // the positional correction, then move. The returned world carries the solved
+    // impulses in its constraint rows, which is what the next frame's
+    // `WarmStartFrom` reads.
+    //
+    // Contacts are NOT regenerated here. Detection needs shapes and this record
+    // holds none, so the caller refreshes `Constraints` between steps — which is
+    // also what lets the same step drive a scene of spheres, a scene of boxes, or a
+    // scene whose contacts came from somewhere else entirely.
+    Step(world: RigidWorld3D): RigidWorld3D
+    {
+        var solved = SolveVelocities(ApplyGravityAndDamping(world));
+        return IntegratePoses(solved, SolvePositions(solved));
+    }
+
+    // `count` fixed steps. Substepping is the cheapest accuracy there is: halving
+    // the step halves the integrator's error and doubles the effective stiffness of
+    // every contact, at the same cost per unit of simulated time as one long step
+    // with twice the iterations — and unlike more iterations it also fixes fast
+    // bodies passing through thin ones.
+    StepMany(world: RigidWorld3D, count: Integer): RigidWorld3D
+        => Indices(count).Reduce(world, (acc, i) => Step(acc));
+
+    // ONE FRAME of a scene made of balls and one ground plane: refresh the contacts
+    // against the bodies' current poses, carrying last frame's accumulated impulses
+    // across, and then step. The whole simulation loop of such a scene is repeated
+    // application of this function to its own result.
+    StepBallScene(world: RigidWorld3D, radii: Array<Number>, ground: Plane,
+        groundBody: BodyIndex, friction: Number, restitution: Proportion,
+        matchTolerance: Length): RigidWorld3D
+        => Step(RigidWorld3D(
+            world.Bodies,
+            BallSceneConstraints(world, radii, ground, groundBody, friction, restitution,
+                matchTolerance),
+            world.Gravity,
+            world.TimeStep,
+            world.Solver));
+
+    //==
+    // # Settings and materials worth starting from
+    //
+    // Named values, not defaults: nothing here is applied unless a caller asks for
+    // it. They exist so that a first scene is a few lines rather than a search for
+    // plausible numbers, and so that the numbers a reader sees in a demo have a
+    // name saying what they are.
+
+    // Uniform gravity at the Earth's surface, pointing down the world -Z axis.
+    // Convention: see CONVENTIONS.md - World space
+    Earth(_: UniformGravity3D): UniformGravity3D
+        => UniformGravity3D(Vector3D(0.0, 0.0, -9.80665));
+
+    // A sixty-hertz fixed step with the iteration counts a real-time simulation
+    // usually settles on: velocity iterations dominate contact stiffness and
+    // position iterations only remove leftover overlap, so the first number is the
+    // larger. MaxStepsPerFrame bounds catch-up after a long frame, which is what
+    // stops a stalled tab from simulating a minute of physics on resume.
+    SixtyHertz(_: TimeStepSettings): TimeStepSettings
+        => TimeStepSettings(Duration(1.0 / 60.0), 1, 8, 3, 4);
+
+    // Contact-solver settings that let a stack settle: five millimetres of slop, a
+    // fifth of the excess overlap removed per step, correction capped at three
+    // meters per second, and no bounce below one meter per second of approach.
+    Settled(_: ContactSolverSettings): ContactSolverSettings
+        => ContactSolverSettings(Length.FromAmount(0.005), 0.2, Speed.FromAmount(3.0),
+            Speed.FromAmount(1.0));
+
+    // A bouncy, grippy material: a rubber ball.
+    Rubber(_: PhysicsMaterial): PhysicsMaterial
+        => PhysicsMaterial(0.9, 0.8, new Proportion(0.7), MaterialCombine.Average,
+            MaterialCombine.Max);
+
+    // A material that grips and barely bounces: wood, stone, most scenery.
+    Wood(_: PhysicsMaterial): PhysicsMaterial
+        => PhysicsMaterial(0.5, 0.4, new Proportion(0.1), MaterialCombine.Average,
+            MaterialCombine.Max);
+
+    // A slippery, dead material: ice.
+    Ice(_: PhysicsMaterial): PhysicsMaterial
+        => PhysicsMaterial(0.1, 0.05, new Proportion(0.05), MaterialCombine.Multiply,
+            MaterialCombine.Min);
+
+    //==
+    // # Array replacement
+    //
+    // The one primitive the fold needs that the array surface does not offer: an
+    // array with one element changed. It belongs beside `Append` and `Concatenate`
+    // in the foundation tier rather than here, and is written here because this
+    // tier may not reach into that one.
+
+    // `xs` with the element at `index` replaced by `value`; `xs` unchanged when the
+    // index is out of range. Rebuilds the array, so a fold that replaces one
+    // element per step is quadratic in the array's length.
+    ReplacedAt(xs: Array<$T>, index: Integer, value: $T): Array<$T>
+        => MapRange(xs.Count, i => i == index ? value : xs[i]);
+
+    //==
+    // # Planar bodies
+    //
+    // The 2D integrator and 2D inertia. Planar CONTACTS are not solved here: the
+    // solver above is written against `SolverBody3D`, and a faithful planar
+    // version wants its own body record (a scalar angular velocity and a scalar
+    // moment, not a vector and a diagonal) rather than a degenerate use of the
+    // spatial one. The rotation-about-a-point algebra is identical, so that is a
+    // transcription rather than a design.
+
+    // The moment of inertia of a solid disk about its centre: m r^2 / 2.
+    MomentOfInertiaOf(c: Circle, mass: Mass): MomentOfInertia
+        => MomentOfInertia.FromAmount(0.5 * mass.Amount * c.Radius.Square);
+
+    // The moment of inertia of a solid rectangle about its centre:
+    // m (w^2 + h^2) / 12, over the FULL extents.
+    MomentOfInertiaOf(b: OrientedBox2D, mass: Mass): MomentOfInertia
+        => MomentOfInertia.FromAmount(
+            mass.Amount * (b.Size.Width.Square + b.Size.Height.Square) / 12.0);
+
+    // The moment of inertia of a solid 2D capsule (a stadium) about its centre: a
+    // rectangle of the spine's length capped by two half-disks, each shifted to the
+    // centre by the parallel-axis theorem, with the masses split by area.
+    MomentOfInertiaOf(c: Capsule2D, mass: Mass): MomentOfInertia
+    {
+        var r = c.Radius;
+        var h = c.A.Distance(c.B);
+        var rectangleArea = 2.0 * r * h;
+        var capArea = 0.5 * Number.Pi * r.Square;
+        var total = rectangleArea + 2.0 * capArea;
+        var mr = total > 0.0 ? mass.Amount * rectangleArea / total : 0.0;
+        var mc = total > 0.0 ? mass.Amount * capArea / total : 0.0;
+        return MomentOfInertia.FromAmount(
+            mr * (h.Square + 4.0 * r.Square) / 12.0
+            + 2.0 * mc * (0.5 * r.Square + h.Square * 0.25 + 4.0 * h * r / (3.0 * Number.Pi)));
+    }
+
+    // A planar body advanced one step by semi-implicit Euler under a wrench and
+    // gravity: velocity first, then pose from the new velocity. A body that is not
+    // dynamic keeps its state exactly, including its velocity — a kinematic planar
+    // body is driven by whoever set that velocity, not by this function.
+    Step(body: RigidBody2D, wrench: SpatialForce2D, gravity: UniformGravity2D,
+        step: Duration): RigidBody2D
+    {
+        var seconds = step.Seconds;
+        var mobility = MobilityScale(body.Motion);
+        var mass = body.MassProperties.Mass.Amount;
+        var moment = body.MassProperties.MomentOfInertia.Amount;
+        var inverseMass = mass > 0.0 ? mobility / mass : 0.0;
+        var inverseMoment = moment > 0.0 ? mobility / moment : 0.0;
+        var linear = (body.LinearVelocity
+                + (wrench.Force * inverseMass
+                    + gravity.Acceleration * (body.GravityScale * mobility)) * seconds)
+            * DampingFactor(body.LinearDamping, seconds);
+        var angular = (body.AngularVelocity.Amount
+                + wrench.Torque.Amount * inverseMoment * seconds)
+            * DampingFactor(body.AngularDamping, seconds);
+        return RigidBody2D(
+            Pose2D(
+                body.Pose.Position + linear * seconds,
+                Rotation2D(Angle.FromAmount(body.Pose.Rotation.Angle.Amount + angular * seconds))),
+            linear,
+            AngularVelocity.FromAmount(angular),
+            body.MassProperties,
+            body.Motion,
+            body.LinearDamping,
+            body.AngularDamping,
+            body.GravityScale);
+    }
 }

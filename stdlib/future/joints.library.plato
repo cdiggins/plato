@@ -1,0 +1,236 @@
+//==
+// # Joints
+//
+// Impulse bodies for the constraint types in `joints.types.plato`. A joint is
+// solved exactly like a contact — an effective mass along a direction, a target
+// relative speed, an impulse that is the difference divided by the mass — and the
+// two share the kernels in `rigid-dynamics.library.plato` (`DirectionalMass`,
+// `SeparationSpeed`, `ApplyImpulse`) rather than restating them.
+//
+// Sections, in order:
+//  - Anchors
+//  - Distance and rope constraints
+//  - Ball-and-socket constraints
+//  - Springs
+//  - Solving a set of joints
+//
+// WHAT IS HERE AND WHAT IS NOT. The two joints this file solves are the two whose
+// constraint is purely POSITIONAL: a distance joint holds one scalar and a
+// ball-and-socket holds three. The hinge, the slider, the fixed joint and the
+// six-degree-of-freedom joint all additionally constrain ORIENTATION, which needs
+// an angular error measured as a quaternion difference and an angular effective
+// mass that is the inverse-inertia sum rather than a scalar. That is a coherent
+// second piece of work and is deliberately not begun here; `RevoluteJoint2D`,
+// `HingeJoint`, `SliderJoint`, `FixedJoint`, `GenericJoint`, `PulleyJoint`,
+// `GearConstraint` and the whole limit-and-motor apparatus (`AngularLimit`,
+// `LinearLimit`, `JointMotor`, `JointBreakThreshold`) are declared and unsolved.
+//
+// TWO CONVENTIONS GOVERN EVERY BODY HERE:
+//
+//   * AN ANCHOR IS IN ITS OWN BODY'S LOCAL FRAME, as `joints.types.plato` states,
+//     and is taken relative to that body's CENTRE OF MASS. The two coincide for
+//     every primitive `MassPropertiesOf` produces, which puts the centre of mass
+//     at the local origin; a body whose centre of mass is offset from its origin
+//     must have its anchors given in centre-of-mass coordinates.
+//   * BODY INDICES MUST BE VALID AND DISTINCT. The static world is an ordinary
+//     body with zero inverse mass, not the index -1 — the same rule the contact
+//     solver follows, and for the same reason: it removes every case analysis
+//     from the solve.
+//
+// Joints here are solved WITHOUT accumulation across iterations: each visit
+// computes the impulse the current velocities call for and applies it. Contacts
+// accumulate because their impulse is one-sided and must be clamped against a
+// running total; an equality constraint has no clamp, so its increments simply
+// sum and the accumulator would be bookkeeping with no consequence. The two
+// one-sided cases below — a rope at its limit, a distance joint at its minimum —
+// clamp their increment's SIGN, which is the correct one-sided treatment for a
+// constraint that is either active or absent rather than saturating.
+
+library Joints
+{
+    //==
+    // # Anchors
+
+    // The world position of an anchor given in a body's local frame, relative to
+    // its centre of mass.
+    WorldAnchor(body: SolverBody3D, local: Point3D): Point3D
+        => body.Center + local.Offset.Transform(body.Orientation);
+
+    // The correction speed a positional error asks for: the error spread over one
+    // step and scaled down, so the joint pulls itself together over several frames
+    // instead of snapping. Zero stiffness leaves the joint purely a velocity
+    // constraint, which drifts.
+    JointBias(error: Number, stiffness: Number, seconds: Number): Number
+        => -error * stiffness / seconds;
+
+    //==
+    // # Distance and rope constraints
+    //
+    // A distance joint holds the separation of its two anchors inside
+    // [MinLength, MaxLength]. Equal bounds make a rigid rod, a zero minimum makes a
+    // rope, and anything between is a rod with slack. Inside the range the joint
+    // does nothing at all — that is what makes it a rope rather than a spring, and
+    // it is why the constraint is solved only when it is violated.
+
+    // How far the current separation lies outside the joint's allowed range:
+    // positive when the anchors are too far apart, negative when they are too
+    // close, and zero inside the range.
+    DistanceError(joint: DistanceJoint, separation: Number): Number
+        => separation > joint.MaxLength.Amount
+            ? separation - joint.MaxLength.Amount
+            : (separation < joint.MinLength.Amount ? separation - joint.MinLength.Amount : 0.0);
+
+    // The two bodies after one visit to a distance joint. `stiffness` is the
+    // fraction of the length error removed per step, in [0, 1].
+    //
+    // The impulse's sign is clamped to match the violation: a joint that is too
+    // long may only pull and a joint that is too short may only push. Without that
+    // clamp a rope would hold its ends apart as well as together, which is a rod.
+    SolveJoint(bodies: Array<SolverBody3D>, joint: DistanceJoint, stiffness: Number,
+        seconds: Number): Array<SolverBody3D>
+    {
+        var a = bodies[joint.BodyA.Value];
+        var b = bodies[joint.BodyB.Value];
+        var anchorA = WorldAnchor(a, joint.AnchorA);
+        var anchorB = WorldAnchor(b, joint.AnchorB);
+        var span = anchorA.Between(anchorB);
+        var separation = span.Magnitude;
+        var axis = separation > 0.0 ? span / separation : Vector3D(0.0, 0.0, 1.0);
+        var error = DistanceError(joint, separation);
+        var raw = ImpulseFor(
+            JointBias(error, stiffness, seconds),
+            SeparationSpeed(a, b, anchorA, anchorB, axis),
+            DirectionalMass(a, b, anchorA, anchorB, axis));
+        // Too long: pull, so the impulse on B must run back along -axis, i.e. be
+        // negative. Too short: push, so it must be positive.
+        var impulse = separation <= 0.0 || error == 0.0
+            ? 0.0
+            : (error > 0.0 ? raw.Min(0.0) : raw.Max(0.0));
+        return ReplacedAt(
+            ReplacedAt(bodies, joint.BodyA.Value, ApplyImpulse(a, axis * -impulse, anchorA)),
+            joint.BodyB.Value,
+            ApplyImpulse(b, axis * impulse, anchorB));
+    }
+
+    //==
+    // # Ball-and-socket constraints
+    //
+    // A ball-and-socket holds its two anchors together and leaves orientation free:
+    // three scalar equality constraints, one per world axis.
+    //
+    // They are solved ONE AXIS AT A TIME rather than as a coupled 3x3 block. The
+    // block solve needs the inverse of the constraint's 3x3 effective-mass matrix
+    // and converges in a single visit; the axis-at-a-time solve is Gauss-Seidel
+    // over the three rows, needs no matrix inverse at all, and converges over the
+    // iterations the solver is already running. The trade was taken because a 3x3
+    // symmetric inverse is a piece of foundation vocabulary that does not yet
+    // exist, and adding one to serve a single call site is the wrong shape of
+    // dependency. It costs iterations, not correctness: the fixed point of the
+    // three rows is the same point the block solve jumps to.
+    // (https://en.wikipedia.org/wiki/Gauss%E2%80%93Seidel_method)
+
+    // The two bodies after one visit to one axis of a ball-and-socket: drive the
+    // relative anchor velocity along `axis` to the speed that closes the anchor
+    // gap's component on that axis.
+    SolveBallSocketAxis(bodies: Array<SolverBody3D>, joint: BallSocketJoint, axis: Vector3D,
+        stiffness: Number, seconds: Number): Array<SolverBody3D>
+    {
+        var a = bodies[joint.BodyA.Value];
+        var b = bodies[joint.BodyB.Value];
+        var anchorA = WorldAnchor(a, joint.AnchorA);
+        var anchorB = WorldAnchor(b, joint.AnchorB);
+        var impulse = ImpulseFor(
+            JointBias(anchorA.Between(anchorB).Dot(axis), stiffness, seconds),
+            SeparationSpeed(a, b, anchorA, anchorB, axis),
+            DirectionalMass(a, b, anchorA, anchorB, axis));
+        return ReplacedAt(
+            ReplacedAt(bodies, joint.BodyA.Value, ApplyImpulse(a, axis * -impulse, anchorA)),
+            joint.BodyB.Value,
+            ApplyImpulse(b, axis * impulse, anchorB));
+    }
+
+    // The two bodies after one visit to a ball-and-socket: its three axes solved in
+    // turn, each seeing what the previous one wrote. The swing and twist limits the
+    // type declares are NOT enforced — they are orientation constraints, and this
+    // file solves only positional ones.
+    SolveJoint(bodies: Array<SolverBody3D>, joint: BallSocketJoint, stiffness: Number,
+        seconds: Number): Array<SolverBody3D>
+    {
+        var afterX = SolveBallSocketAxis(bodies, joint, Vector3D(1.0, 0.0, 0.0), stiffness, seconds);
+        var afterY = SolveBallSocketAxis(afterX, joint, Vector3D(0.0, 1.0, 0.0), stiffness, seconds);
+        return SolveBallSocketAxis(afterY, joint, Vector3D(0.0, 0.0, 1.0), stiffness, seconds);
+    }
+
+    //==
+    // # Springs
+    //
+    // A spring joint is not a constraint: it exerts a FORCE and lets the integrator
+    // decide what happens. That is why it takes a time step and produces an impulse
+    // rather than being iterated — iterating a spring would multiply its stiffness
+    // by the iteration count.
+    //
+    // A spring stiff enough to look rigid is stiff enough to be unstable at the
+    // step sizes a real-time simulation uses; a joint that must be rigid should be
+    // a `DistanceJoint` with equal bounds instead.
+
+    // The force the spring exerts along the line between its anchors, in newtons,
+    // signed so that a positive value pushes the anchors apart: Hooke's restoring
+    // term plus a damping term proportional to the rate of change of the length.
+    // (https://en.wikipedia.org/wiki/Hooke%27s_law)
+    SpringForce(joint: SpringJoint, extension: Number, lengthRate: Number): Number
+        => -joint.Stiffness.Amount * extension - joint.Damping.Amount * lengthRate;
+
+    // The two bodies after a spring has acted for one step: the spring force turned
+    // into an impulse by multiplying by the step, and applied at the two anchors.
+    // Coincident anchors have no line of action and the spring does nothing.
+    ApplySpring(bodies: Array<SolverBody3D>, joint: SpringJoint, seconds: Number): Array<SolverBody3D>
+    {
+        var a = bodies[joint.BodyA.Value];
+        var b = bodies[joint.BodyB.Value];
+        var anchorA = WorldAnchor(a, joint.AnchorA);
+        var anchorB = WorldAnchor(b, joint.AnchorB);
+        var span = anchorA.Between(anchorB);
+        var separation = span.Magnitude;
+        var axis = separation > 0.0 ? span / separation : Vector3D(0.0, 0.0, 1.0);
+        var impulse = separation <= 0.0
+            ? 0.0
+            : SpringForce(joint, separation - joint.RestLength.Amount,
+                SeparationSpeed(a, b, anchorA, anchorB, axis)) * seconds;
+        return ReplacedAt(
+            ReplacedAt(bodies, joint.BodyA.Value, ApplyImpulse(a, axis * -impulse, anchorA)),
+            joint.BodyB.Value,
+            ApplyImpulse(b, axis * impulse, anchorB));
+    }
+
+    //==
+    // # Solving a set of joints
+    //
+    // The same fold the contact solver uses, over an array of joints instead of an
+    // array of contact rows: one pass visits every joint once in order, and the
+    // solve runs a fixed number of passes. Joints and contacts converge together
+    // when their passes are interleaved; running all the joint passes and then all
+    // the contact passes lets the contacts undo the joints, which reads as a
+    // ragdoll whose limbs stretch on the frames it lands.
+
+    // One pass over every distance joint.
+    SolveDistanceJointPass(bodies: Array<SolverBody3D>, joints: Array<DistanceJoint>,
+        stiffness: Number, seconds: Number): Array<SolverBody3D>
+        => joints.Reduce(bodies, (acc, joint) => SolveJoint(acc, joint, stiffness, seconds));
+
+    // One pass over every ball-and-socket joint.
+    SolveBallSocketJointPass(bodies: Array<SolverBody3D>, joints: Array<BallSocketJoint>,
+        stiffness: Number, seconds: Number): Array<SolverBody3D>
+        => joints.Reduce(bodies, (acc, joint) => SolveJoint(acc, joint, stiffness, seconds));
+
+    // `iterations` passes over both joint kinds, distance joints first. The
+    // ordering is arbitrary and it matters: Gauss-Seidel converges to the same
+    // answer either way, but reaches it along a different path, so a simulation is
+    // reproducible only against a fixed order.
+    SolveJoints(bodies: Array<SolverBody3D>, distanceJoints: Array<DistanceJoint>,
+        ballSocketJoints: Array<BallSocketJoint>, iterations: Integer, stiffness: Number,
+        seconds: Number): Array<SolverBody3D>
+        => Indices(iterations).Reduce(bodies, (acc, i) =>
+            SolveBallSocketJointPass(
+                SolveDistanceJointPass(acc, distanceJoints, stiffness, seconds),
+                ballSocketJoints, stiffness, seconds));
+}

@@ -4,6 +4,8 @@
 // Sections, in order:
 //  - Rigid-body dynamics
 //  - Forces, impulses, and gravitation
+//  - The solver view of a body
+//  - Simulation worlds
 
 //==
 // # Rigid-body dynamics
@@ -205,16 +207,18 @@ type RadialImpulse3D
 // Uniform planar gravity: the same acceleration, in meters per second
 // squared, applied to every dynamic body regardless of position.
 type UniformGravity2D
-    implements IValue
+    implements IValue, IForceModel2D
 {
     Acceleration: Vector2D;
 }
 
 // Uniform spatial gravity: the same acceleration, in meters per second
-// squared, applied to every dynamic body regardless of position (e.g.
-// (0, -9.81, 0)).
+// squared, applied to every dynamic body regardless of position. World space is
+// Z-up here, so downward gravity is negative on Z — `UniformGravity3D.Earth` in
+// `rigid-dynamics.library.plato` is the value to reach for.
+// Convention: see CONVENTIONS.md - World space
 type UniformGravity3D
-    implements IValue
+    implements IValue, IForceModel3D
 {
     Acceleration: Vector3D;
 }
@@ -224,7 +228,7 @@ type UniformGravity3D
 // per second squared.
 // (https://en.wikipedia.org/wiki/Newton%27s_law_of_universal_gravitation)
 type PointGravity
-    implements IValue
+    implements IValue, IForceModel3D
 {
     Center: Point3D;
     GravitationalParameter: Number;
@@ -235,7 +239,7 @@ type PointGravity
 // meter; QuadraticCoefficient is in newton-seconds-squared per square meter.
 // (https://en.wikipedia.org/wiki/Drag_(physics))
 type DragModel
-    implements IValue
+    implements IValue, IForceModel3D
 {
     LinearCoefficient: Number;
     QuadraticCoefficient: Number;
@@ -270,4 +274,108 @@ type OrbitalElements
     LongitudeOfAscendingNode: Angle;
     ArgumentOfPeriapsis: Angle;
     TrueAnomaly: Angle;
+}
+
+//==
+// # The solver view of a body
+//
+// `RigidBody3D` is the AUTHORING record: it names a material-facing mass, an
+// inertia tensor about the centre of mass, a motion kind, and damping rates. The
+// integrator and the contact solver want none of that spelling. They want, per
+// body, the quantities that appear in an impulse: where the centre of mass is,
+// how it is oriented, how fast it is going, and how much velocity one
+// newton-second of impulse buys. `SolverBody3D` is that reading of a
+// `RigidBody3D` — derived from it by `SolverBody`, never a second authoring
+// vocabulary.
+//
+// Two things collapse in the translation, and both are deliberate:
+//
+//   * MOTION KIND BECOMES ZERO. A `Static` or `Kinematic` body is a body with
+//     `InverseMass` and `InverseInertia` of zero: an impulse changes nothing.
+//     The solver then has no case analysis at all, and no branch that a static
+//     body could take by accident.
+//   * THE INERTIA TENSOR BECOMES ITS PRINCIPAL DIAGONAL. Every primitive whose
+//     inertia this library computes is diagonal in its own frame, so the world
+//     inverse inertia never has to be assembled or inverted as a full matrix:
+//     `I^-1 t` is a rotation into the body frame, three multiplies, and a
+//     rotation back (`AngularResponse` in `rigid-dynamics.library.plato`). A body
+//     whose tensor is genuinely non-diagonal must be given in its principal frame
+//     first (`PrincipalInertia`), which is where that approximation is stated.
+
+// One body as the integrator and the contact solver read it: field for field a
+// `RigidBody3D` with the two things a solver cannot use — the motion kind and the
+// inertia tensor — replaced by the two it can: a zeroable inverse mass, and the
+// reciprocals of the three principal moments.
+//
+// Center is the world position of the centre of mass, in meters; Orientation maps
+// the body's PRINCIPAL axes onto world axes; Velocity is the world-frame twist
+// ABOUT THE CENTRE OF MASS (linear in meters per second, angular in radians per
+// second); InverseMass is in reciprocal kilograms and InverseInertia holds the
+// reciprocals of the three principal moments, in reciprocal
+// kilogram-square-meters, with zero in either meaning "immovable in that
+// respect"; LinearDamping and AngularDamping are the exponential velocity decay
+// rates of the authoring record, in units of one per second; GravityScale is its
+// dimensionless gravity multiplier.
+type SolverBody3D
+    implements IValue
+{
+    Center: Point3D;
+    Orientation: Quaternion;
+    Velocity: SpatialVelocity3D;
+    InverseMass: Number;
+    InverseInertia: Vector3D;
+    LinearDamping: Number;
+    AngularDamping: Number;
+    GravityScale: Number;
+}
+
+// The knobs of the contact solver, separate from `TimeStepSettings` because they
+// govern the QUALITY of a contact rather than the cadence of the step.
+// PenetrationSlop is the overlap deliberately left uncorrected, so a resting
+// stack settles instead of hunting about exact touching; BaumgarteFactor is the
+// fraction of the remaining overlap the position pass removes per step, in
+// [0, 1], where 0 disables positional correction entirely; MaxCorrectionSpeed
+// caps the correction so a deep initial overlap cannot fling a body across the
+// scene; RestitutionThreshold is the approach speed below which a collision does
+// not bounce at all, which is what stops a settling body from buzzing on the
+// floor.
+//
+// The correction these describe is applied as a SEPARATE pseudo-velocity pass
+// (`SolvePositions` in `rigid-dynamics.library.plato`), not as a bias inside the
+// velocity solve. Why that matters is argued there.
+// (https://en.wikipedia.org/wiki/Constraint_(computational_chemistry))
+type ContactSolverSettings
+    implements IValue
+{
+    PenetrationSlop: Length;
+    BaumgarteFactor: Number;
+    MaxCorrectionSpeed: Speed;
+    RestitutionThreshold: Speed;
+}
+
+//==
+// # Simulation worlds
+//
+// The whole state one fixed step reads and rewrites. A step is a pure function
+// `RigidWorld3D -> RigidWorld3D`; nothing else is threaded, and nothing outside
+// the record changes.
+
+// A simulation island: the bodies, the contact rows standing between them,
+// uniform gravity in meters per second squared, and the two settings blocks.
+// Constraints index into Bodies by their BodyA / BodyB fields; a row naming an
+// index outside the array is ill-formed rather than "attached to the world" —
+// the static world is an ordinary body with zero inverse mass.
+//
+// The constraint array is part of the state because sequential impulses ACCUMULATE
+// into it: the impulse a row carries out of one step is the warm start of the
+// next (`WarmStartFrom`), and discarding it between frames is exactly what makes
+// a stack of boxes sink and jitter.
+type RigidWorld3D
+    implements IValue
+{
+    Bodies: Array<SolverBody3D>;
+    Constraints: Array<ContactConstraint3D>;
+    Gravity: Vector3D;
+    TimeStep: TimeStepSettings;
+    Solver: ContactSolverSettings;
 }

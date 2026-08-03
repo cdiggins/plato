@@ -4,6 +4,7 @@
 // Sections, in order:
 //  - Colliders
 //  - Contacts, collision events, and queries
+//  - Contact constraint rows
 
 //==
 // # Colliders
@@ -220,6 +221,68 @@ type ContactManifold3D
     Normal: Direction3D;
     Friction: Number;
     Restitution: Proportion;
+}
+
+//==
+// # Contact constraint rows
+//
+// A `ContactManifold3D` is what collision detection REPORTS: a body pair, a
+// shared normal, the combined material, and however many points the pair test
+// found. A `ContactConstraint3D` is what the solver ITERATES: one point, already
+// paired with its bodies, already carrying the friction basis and the restitution
+// target that were computed once at build time.
+//
+// The flattening is the point. Sequential impulses visit points, not manifolds,
+// and every quantity that is constant across a solver iteration is hoisted into
+// the row so that an iteration is arithmetic and nothing else:
+//
+//   * THE FRICTION BASIS IS STORED. Recomputing a tangent frame from the normal
+//     each iteration is cheap but not stable: the two tangents an
+//     orthonormalization picks can flip between iterations, and the accumulated
+//     friction impulse is expressed in that basis, so a flip silently discards
+//     it. Fixing the basis at build time is what lets friction accumulate.
+//   * THE RESTITUTION TARGET IS STORED. Bounce is a function of the approach
+//     speed BEFORE the solver runs. Reading it inside the loop would sample a
+//     velocity the loop has already changed, and the bounce would decay with the
+//     iteration count instead of being a property of the collision.
+//   * THE ACCUMULATED IMPULSES ARE STORED, and they are the row's output as much
+//     as the velocities are. Clamping the ACCUMULATED normal impulse to be
+//     non-negative — rather than clamping each increment — is what lets a row
+//     undo an over-correction made by a row solved earlier in the same pass, and
+//     it is what makes the friction cone bound (mu times the accumulated normal
+//     impulse) meaningful.
+//
+// `Flatten` builds these rows from manifolds and `WarmStartFrom` carries the
+// accumulated impulses across a frame boundary; both are in
+// `collision.library.plato`.
+
+// One point of one contact, in the form the velocity solver iterates. BodyA and
+// BodyB are indices into the solver's body array; Point is the world contact
+// position in meters; Normal points from A toward B; Tangent and Bitangent
+// complete a right-handed orthonormal frame with Normal and fix the friction
+// basis for the life of the row; Penetration is the positive overlap depth;
+// Friction is the combined dimensionless Coulomb coefficient and Restitution the
+// combined bounciness in [0, 1]; TargetSeparationSpeed is the separation speed
+// along Normal the solver aims for, in meters per second, already including
+// restitution and already zero for a resting contact; and the three impulses are
+// the accumulated solver output in newton-seconds along the three basis
+// directions (all zero in a fresh row).
+type ContactConstraint3D
+    implements IValue
+{
+    BodyA: BodyIndex;
+    BodyB: BodyIndex;
+    Point: Point3D;
+    Normal: Direction3D;
+    Tangent: Direction3D;
+    Bitangent: Direction3D;
+    Penetration: Length;
+    Friction: Number;
+    Restitution: Proportion;
+    TargetSeparationSpeed: Number;
+    NormalImpulse: Impulse;
+    TangentImpulse: Impulse;
+    BitangentImpulse: Impulse;
 }
 
 //==
