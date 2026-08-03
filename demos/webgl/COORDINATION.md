@@ -97,9 +97,25 @@ events; the shell coalesces them, so `build` runs at most once per frame.
   boolean; marching cubes is O(n³) in the node count.
 - A page whose scenes mix planar and spatial work sets `Scene.viewer` per scene
   rather than settling for one camera.
-- `npm run typecheck` and `npm run smoke` must both pass before you report done.
-  `npx tsx scripts/probe.mts` is the quick way to find out whether a member
-  evaluates at all before you build a scene around it.
+- End the file with `export { demo };` — that is what lets `npm run scenes`
+  reach your catalog.
+
+## Gates
+
+All three must pass before you report done:
+
+| Command | What it proves |
+|---|---|
+| `npm run typecheck` | the app compiles |
+| `npm run smoke` | the generated members the demos rely on still return the values the Plato source pins down |
+| `npm run scenes` | **every scene on every page builds**, off the page: it imports each demo module, calls each scene's `build` at its default parameters, and fails on a throw or an empty result. It prints each scene's vertex count, build time and status line, and marks anything over 400 ms `SLOW` |
+
+`npm run probe` is not a gate — it is the quick way to find out whether a member
+evaluates at all, before you build a scene around it.
+
+Do not commit; report what you changed and let the coordinating session commit.
+Do not start a dev server — the gates above are the verification, and the port
+is shared.
 
 ## Ports
 

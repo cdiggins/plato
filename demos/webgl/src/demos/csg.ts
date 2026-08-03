@@ -555,3 +555,7 @@ const demo: Demo = {
 };
 
 mountDemo(demo, { distance: 4.6 });
+
+// The page never imports this; it exists so `npm run scenes` can call every
+// scene's `build` without a WebGL context.
+export { demo };

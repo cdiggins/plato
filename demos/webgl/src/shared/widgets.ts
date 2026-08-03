@@ -26,7 +26,7 @@ import {
   type Intent,
   type Paint,
   type Vec,
-} from 'gratify';
+} from '../../vendor/gratify/index.js';
 
 /**
  * The one intent the panel emits. It carries a whole assignment rather than a

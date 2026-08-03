@@ -7,8 +7,7 @@
 // numbers, and a change schedules exactly one rebuild per animation frame,
 // however fast the pointer moves.
 
-import './style.css';
-import { mount, type Element, type Intent, type Runtime } from 'gratify';
+import { mount, type Element, type Intent, type Runtime } from '../../vendor/gratify/index.js';
 import { Viewer, type ViewerOptions } from './viewer.js';
 import { colorKeys, type Control, type Demo, type Params, type Scene } from './demo.js';
 import {
@@ -28,6 +27,12 @@ import {
 } from './widgets.js';
 
 export function mountDemo(demo: Demo, viewerOptions: ViewerOptions = {}): void {
+  // Every demo module calls this at import time, which is also how
+  // `scripts/scenes.mts` gets at the catalog: off a page there is nothing to
+  // mount, and the script drives `build` itself. The script's headless stub has
+  // no `body`, which is the difference between "no page" and "a real one" —
+  // a module script is deferred, so a real document always has one by now.
+  if (typeof document === 'undefined' || !document.body) return;
   document.title = `${demo.title} — Plato`;
 
   const app = document.createElement('div');

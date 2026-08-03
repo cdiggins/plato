@@ -4,17 +4,11 @@ import { defineConfig } from 'vite';
 // One Vite app, one page per demo: the demos share src/plato and src/shared but
 // each has its own entry so a link goes straight to it.
 //
-// `gratify` is the vendored UI framework under vendor/ (plain ESM, no package),
-// aliased here and in tsconfig's `paths` so both Vite and tsc resolve the bare
-// specifier the same way.
+// The Gratify panel is imported straight out of vendor/ by relative path, so
+// Vite, tsc and tsx all resolve the same file with no alias to keep in sync.
 const page = (name: string): string => resolve(__dirname, `${name}.html`);
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      gratify: resolve(__dirname, 'vendor/gratify/index.js'),
-    },
-  },
   server: {
     port: 5175,
     strictPort: true,

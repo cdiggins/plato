@@ -607,3 +607,7 @@ const demo: Demo = {
 // The page default is the spatial stage — perspective, auto-spinning until the
 // user drags. The planar scenes override it with `Scene.viewer`.
 mountDemo(demo, { distance: 8, grid: false });
+
+// The page never imports this; it exists so `npm run scenes` can call every
+// scene's `build` without a WebGL context.
+export { demo };
