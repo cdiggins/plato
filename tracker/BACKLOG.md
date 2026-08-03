@@ -35,6 +35,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [repo-401](issues/repo-401.md) | record-gates.py --full passes the retired --scalar=float flag | bug | p3 | S | low | repo | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
+| [plato-419](issues/plato-419.md) | TypeScript writer: generated stdlib mesh/polygon/CSG paths do not run | bug | p1 | L | med | plato | idea |  |
 | [compiler-416](issues/compiler-416.md) | Library functions taking Buffer<T> as first parameter are silently dropped from emitted C# | problem | p2 | M | med | compiler | idea |  |
 | [plato-015](issues/plato-015.md) | Better-performing geometry algorithms from Plato | feature | p2 | L | med | plato | idea |  |
 | [plato-028](issues/plato-028.md) | Consumer-driven refactoring direction (Earcut gaps, query vocabulary, topology) | feature | p2 | L | med | plato | idea |  |
@@ -140,4 +141,3 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-380](issues/plato-380.md) | Integer2/Integer3 key types: re-express Indexable2D/3D as key instances | idea | ? | ? | ? | plato | idea |  |
 | [plato-381](issues/plato-381.md) | Concrete Dictionary type: decide whether keyed-lookup vocabulary earns its keep | idea | ? | ? | ? | plato | idea |  |
 | [plato-415](issues/plato-415.md) | Expand the polygon library: triangulation, booleans, offset, predicates, queries | idea | ? | ? | ? | plato | idea |  |
-| [plato-419](issues/plato-419.md) | TypeScript writer: generated stdlib mesh/polygon/CSG paths do not run | bug | ? | ? | ? | plato | idea |  |

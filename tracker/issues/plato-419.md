@@ -5,7 +5,7 @@ type: bug
 status: idea
 priority: p1
 effort: L
-risk: medium
+risk: med
 area: plato
 sprint: 
 created: 2026-08-03
