@@ -26,6 +26,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-369](issues/plato-369.md) | Burn down stdlib type-checker diagnostics to zero | debt | p1 | M | med | plato | ready |  |
 | [plato-388](issues/plato-388.md) | Single verification policy manifest: one data file the gates, tests and plato_check all read | debt | p1 | M | med | plato | ready |  |
 | [plato-434](issues/plato-434.md) | Collision pair tests are unusable in TypeScript: sphere-box silently reports no contact, sphere-capsule throws, box corners duplicate | bug | p1 | M | med | plato | ready |  |
+| [plato-436](issues/plato-436.md) | TypeScript writer: Arr is a lazy view with no memoization, so library members are super-linear in their own iteration counts | bug | p1 | M | med | plato | ready |  |
 | [compiler-397](issues/compiler-397.md) | IArrayLike types with no generated fields emit an empty component type | bug | p2 | S | low | compiler | ready |  |
 | [compiler-408](issues/compiler-408.md) | Transform operator aliases cannot be derived: an interface-typed parameter does not re-resolve per implementor | problem | p2 | M | med | compiler | ready |  |
 | [plato-277](issues/plato-277.md) | stdlib interface-gap burn-down: the 17 markers that need a language or interface decision | debt | p2 | M | low | plato | ready |  |
@@ -39,6 +40,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-430](issues/plato-430.md) | Sampling library: measured behaviour contradicts three doc claims, and RelaxedPoints2D is 13x slower than its own loop | bug | p2 | S | low | plato | ready |  |
 | [plato-431](issues/plato-431.md) | ToInteger truncates where CONVENTIONS.md says it rounds, and it changes derived counts | bug | p2 | S | med | plato | ready |  |
 | [plato-432](issues/plato-432.md) | Marching cubes evaluates the field eight times per cell: every cell re-reads its own corners | debt | p2 | M | low | plato | ready |  |
+| [plato-437](issues/plato-437.md) | Cloth: mass-spring substeps are quadratic, and CollideWith keeps only one of three overloads | bug | p2 | S | low | plato | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
 | [plato-427](issues/plato-427.md) | Finite elements: nodal stress smoothing, hexahedral and higher-order elements | feature | p3 | M | low | plato | ready |  |
