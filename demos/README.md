@@ -5,18 +5,21 @@ to fast, idiomatic libraries on several targets.
 
 **Live on GitHub Pages: <https://cdiggins.github.io/plato/>**
 ([TypeScript](https://cdiggins.github.io/plato/typescript/) ·
+[SDF](https://cdiggins.github.io/plato/sdf/) ·
 [Rust + WASM](https://cdiggins.github.io/plato/rust/))
 
 ## Layout
 
 ```
 demos/
-  stdlib-legacy/
+  plato-src/
     geometry.plato              Shared Plato source (TypeScript + Rust demos)
   typescript/
-    geometry-samples/           Vite + Three.js browser demo; Node tests
+    geometry-samples/           Vite + Three.js sample browser; Node tests
+    sdf/                        Forward-stdlib SDF catalog (2D fields + 3D raymarch)
   rust/
     geometry-samples/           Cargo crate; WASM browser demo; conformance tests
+  glsl/                         Plato → GLSL PoC studio
   site/
     index.html                  Landing page for the GitHub Pages site
 ```
@@ -27,11 +30,19 @@ codegen for `Ara3D.Geometry`).
 
 ## Quick start
 
-**TypeScript browser demo** (from `demos/typescript/geometry-samples/`):
+**TypeScript geometry sample browser** (from `demos/typescript/geometry-samples/`):
 
 ```bat
 npm install
 npm run dev        # http://localhost:5173
+```
+
+**TypeScript SDF demo** (from `demos/typescript/sdf/`):
+
+```bat
+npm install
+npm run gen:plato  # TypeScript from stdlib/ via Plato.CLI --typescript
+npm run dev        # http://localhost:5174
 ```
 
 **Rust browser demo** (from `demos/rust/geometry-samples/`; the WASM module is
@@ -76,6 +87,7 @@ these demos live at `submodules/Plato/demos/`. `Plato.CLI` still references
 ## See also
 
 - [TypeScript demo README](typescript/geometry-samples/README.md)
+- [TypeScript SDF demo README](typescript/sdf/README.md)
 - [Rust demo README](rust/geometry-samples/README.md)
 - [Plato.TypeScriptWriter](../writers/Plato.TypeScriptWriter/README.md)
 - [Plato.RustWriter](../writers/Plato.RustWriter/README.md)

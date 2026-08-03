@@ -71,6 +71,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Intrinsics.Tests", "t
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Generated.Foundation.Tests", "tests\Plato.Generated.Foundation.Tests\Plato.Generated.Foundation.Tests.csproj", "{E458D597-5703-4A59-AE8F-0B7A0683A3FE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plato.Generated.Unoptimized", "generated\Plato.Generated.Unoptimized\Plato.Generated.Unoptimized.csproj", "{265FA5F7-1281-E70A-7565-CEB7091FD607}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -393,6 +395,18 @@ Global
 		{E458D597-5703-4A59-AE8F-0B7A0683A3FE}.Release|x64.Build.0 = Release|x64
 		{E458D597-5703-4A59-AE8F-0B7A0683A3FE}.Release|x86.ActiveCfg = Release|Any CPU
 		{E458D597-5703-4A59-AE8F-0B7A0683A3FE}.Release|x86.Build.0 = Release|Any CPU
+		{265FA5F7-1281-E70A-7565-CEB7091FD607}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{265FA5F7-1281-E70A-7565-CEB7091FD607}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{265FA5F7-1281-E70A-7565-CEB7091FD607}.Debug|x64.ActiveCfg = Debug|x64
+		{265FA5F7-1281-E70A-7565-CEB7091FD607}.Debug|x64.Build.0 = Debug|x64
+		{265FA5F7-1281-E70A-7565-CEB7091FD607}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{265FA5F7-1281-E70A-7565-CEB7091FD607}.Debug|x86.Build.0 = Debug|Any CPU
+		{265FA5F7-1281-E70A-7565-CEB7091FD607}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{265FA5F7-1281-E70A-7565-CEB7091FD607}.Release|Any CPU.Build.0 = Release|Any CPU
+		{265FA5F7-1281-E70A-7565-CEB7091FD607}.Release|x64.ActiveCfg = Release|x64
+		{265FA5F7-1281-E70A-7565-CEB7091FD607}.Release|x64.Build.0 = Release|x64
+		{265FA5F7-1281-E70A-7565-CEB7091FD607}.Release|x86.ActiveCfg = Release|Any CPU
+		{265FA5F7-1281-E70A-7565-CEB7091FD607}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -425,6 +439,7 @@ Global
 		{F344DAD2-4F1E-4AAF-8035-76D5914CF237} = {10872A52-0024-0064-E5E9-275657532B83}
 		{12EB5A4A-CAD8-48C5-8F34-E30052A6EE32} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{E458D597-5703-4A59-AE8F-0B7A0683A3FE} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{265FA5F7-1281-E70A-7565-CEB7091FD607} = {10872A52-0024-0064-E5E9-275657532B83}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DA1ED7DC-2723-49C9-A05C-9D845C8AE27C}
@@ -432,6 +447,7 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Plato.Intrinsics\Plato.Intrinsics.projitems*{12eb5a4a-cad8-48c5-8f34-e30052a6ee32}*SharedItemsImports = 5
 		src\Plato.Intrinsics\Plato.Intrinsics.projitems*{1f9bcaa8-63e7-4782-ae6d-aeb2d7c89912}*SharedItemsImports = 13
+		src\Plato.Intrinsics\Plato.Intrinsics.projitems*{265fa5f7-1281-e70a-7565-ceb7091fd607}*SharedItemsImports = 5
 		src\Plato.Intrinsics\Plato.Intrinsics.projitems*{66b5b658-383c-4238-8be0-7bc3dda9eb60}*SharedItemsImports = 5
 		src\Plato.Intrinsics\Plato.Intrinsics.projitems*{f344dad2-4f1e-4aaf-8035-76d5914cf237}*SharedItemsImports = 5
 	EndGlobalSection

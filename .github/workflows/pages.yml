@@ -2,6 +2,7 @@
 #
 #   /            demos/site/index.html         (landing page)
 #   /typescript/ demos/typescript/geometry-samples  (Vite build)
+#   /sdf/        demos/typescript/sdf               (Vite build)
 #   /rust/       demos/rust/geometry-samples/web + src  (static; wasm is checked in)
 #
 # Enable in repo settings: Settings -> Pages -> Source: "GitHub Actions".
@@ -32,20 +33,30 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: demos/typescript/geometry-samples/package-lock.json
+          cache-dependency-path: |
+            demos/typescript/geometry-samples/package-lock.json
+            demos/typescript/sdf/package-lock.json
 
-      - name: Build TypeScript demo
+      - name: Build TypeScript geometry samples
         working-directory: demos/typescript/geometry-samples
         run: |
           npm ci
           npm test
           npm run build -- --base=/${{ github.event.repository.name }}/typescript/
 
+      - name: Build TypeScript SDF demo
+        working-directory: demos/typescript/sdf
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build -- --base=/${{ github.event.repository.name }}/sdf/
+
       - name: Assemble site
         run: |
           mkdir -p _site/rust/src
           cp demos/site/index.html _site/
           cp -r demos/typescript/geometry-samples/dist/. _site/typescript/
+          cp -r demos/typescript/sdf/dist/. _site/sdf/
           cp demos/rust/geometry-samples/web/index.html \
              demos/rust/geometry-samples/web/main.js \
              demos/rust/geometry-samples/web/geometry_samples.wasm \

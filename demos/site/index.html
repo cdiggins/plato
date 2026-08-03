@@ -83,8 +83,8 @@
         section { padding: 48px 0; }
         h2 { font-size: 24px; font-weight: 650; margin: 0 0 6px; }
         .section-sub { color: var(--dim); margin: 0 0 24px; }
-        .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 720px) { .cards { grid-template-columns: 1fr; } }
+        .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        @media (max-width: 900px) { .cards { grid-template-columns: 1fr; } }
         .card {
             display: block;
             text-decoration: none;
@@ -167,6 +167,12 @@
                    plain numbers, immutable value types, and code that reads like the
                    C# original.</p>
                 <span class="go">Open the TypeScript demo &rarr;</span>
+            </a>
+            <a class="card" href="./sdf/" style="--card-accent: #7bd88f">
+                <h3>Signed distance fields</h3>
+                <p>Forward-stdlib 2D and 3D SDF primitives and CSG operators — distance
+                   heatmaps and sphere-traced surfaces in Three.js / WebGL.</p>
+                <span class="go">Open the SDF demo &rarr;</span>
             </a>
             <a class="card" href="./rust/" style="--card-accent: var(--rust)">
                 <h3>Rust + WebAssembly sample browser</h3>
