@@ -17,8 +17,8 @@ links: [writers/Plato.TypeScriptWriter/TypeScriptWriter.cs, demos/webgl/src/plat
 `Plato.CLI --typescript` over `stdlib/foundation stdlib/geometry stdlib/graphics`
 produces a file that compiles but throws on almost every mesh, polygon or CSG
 member. The scalar and `Point*` paths run (that is all the SDF demo exercises,
-which is why this was not visible before). Six distinct writer defects, umbrella
-issue — split when someone starts work:
+which is why this was not visible before). Seven distinct writer defects,
+umbrella issue — split when someone starts work:
 
 1. **`Array<T>` library functions are never emitted.** `IArray<T>` in the output
    declares only `At`/`Count`/`Map`/`Reduce`, but generated bodies call
