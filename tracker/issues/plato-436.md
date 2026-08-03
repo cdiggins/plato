@@ -2,14 +2,14 @@
 id: plato-436
 title: TypeScript writer: Arr is a lazy view with no memoization, so library members are super-linear in their own iteration counts
 type: bug
-status: ready
+status: done
 priority: p1
 effort: M
 risk: med
 area: plato
 sprint: 
 created: 2026-08-03
-closed:
+closed: 2026-08-03
 links: []
 ---
 
