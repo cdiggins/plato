@@ -25,6 +25,7 @@ public class TypeScriptFunctionBodyWriter : CodeBuilder<TypeScriptFunctionBodyWr
     public TypeScriptTypeWriter TypeWriter { get; }
     public TypeScriptWriter Writer => TypeWriter.Writer;
     public bool IsStaticOrLambda { get; }
+    public bool IsLambda { get; }
     public TypeScriptFunctionInfo Function { get; }
     public string SelfType => TypeWriter.SelfType;
 
@@ -33,6 +34,7 @@ public class TypeScriptFunctionBodyWriter : CodeBuilder<TypeScriptFunctionBodyWr
         IndentLevel = typeWriter.IndentLevel;
         TypeWriter = typeWriter;
         IsStaticOrLambda = isStatic || isLambda;
+        IsLambda = isLambda;
 
         Function = fi;
 
@@ -131,7 +133,9 @@ public class TypeScriptFunctionBodyWriter : CodeBuilder<TypeScriptFunctionBodyWr
             case ReturnStatement returnSymbol:
                 Write("return ");
                 if (returnSymbol.Expression != null)
-                    Write(returnSymbol.Expression);
+                    // The declared return type renames a returned TupleN constructor
+                    // (a lambda's return belongs to the lambda, not the outer function).
+                    Write(returnSymbol.Expression, IsLambda ? null : Function?.ReturnType);
                 WriteLine(";");
                 return this;
 
@@ -185,7 +189,79 @@ public class TypeScriptFunctionBodyWriter : CodeBuilder<TypeScriptFunctionBodyWr
         return this;
     }
 
-    public TypeScriptFunctionBodyWriter WriteFunctionCall(FunctionCall functionCall)
+    /// <summary>
+    /// Best-effort receiver type: parameters and variables carry their declared type,
+    /// and chains of no-argument field reads (this.Min.X) are followed field-by-field.
+    /// Anything else (real method calls, operators) resolves to null and the caller
+    /// falls back to the current concrete type — mirroring HasFieldNamed on the TIR path.
+    /// </summary>
+    private TypeDef ResolveReceiverTypeDef(Expression e)
+    {
+        switch (e)
+        {
+            case ParameterRefSymbol p when p.Def?.Index == 0 && !IsStaticOrLambda:
+            {
+                // "this": the declared self type may be a concept; the ground type is
+                // the concrete type currently being written.
+                var declared = p.Def.Type?.Def;
+                return declared != null && declared.Fields.Count > 0 ? declared : TypeWriter.TypeDef;
+            }
+            case VariableRefSymbol v:
+            {
+                // A let-binding's declared type is rarely useful (usually Any);
+                // resolve through the initializer when it carries no fields.
+                var declared = v.Def?.Type?.Def;
+                if (declared != null && declared.Fields.Count > 0)
+                    return declared;
+                return ResolveReceiverTypeDef(v.Def?.Value);
+            }
+            case RefSymbol r:
+                return r.Type?.Def;
+            case Parenthesized paren:
+                return ResolveReceiverTypeDef(paren.Expression);
+            case FunctionCall fc:
+            {
+                var recv = fc.Args.Count >= 1 ? ResolveReceiverTypeDef(fc.Args[0]) : null;
+                if (fc.Args.Count == 1 && !fc.HasArgList)
+                {
+                    var fieldName = (fc.Function as RefSymbol)?.Name;
+                    var fd = recv?.Fields?.FirstOrDefault(x => x.Name == fieldName)?.Type?.Def;
+                    if (fd != null)
+                        return fd;
+                }
+                // Overload resolution lite: same arity, preferring overloads whose
+                // first parameter matches the receiver; a unique concrete return
+                // type among the survivors resolves the call.
+                var group = (fc.Function as FunctionGroupRefSymbol)?.Def;
+                if (group != null)
+                {
+                    var candidates = group.Functions
+                        .Where(fn => fn.Parameters.Count == fc.Args.Count).ToList();
+                    if (recv != null)
+                    {
+                        var byReceiver = candidates
+                            .Where(fn => fn.Parameters.Count > 0 && fn.Parameters[0].Type?.Def == recv).ToList();
+                        if (byReceiver.Count > 0)
+                            candidates = byReceiver;
+                    }
+                    var returnDefs = candidates.Select(fn => fn.ReturnType?.Def).Distinct().ToList();
+                    if (returnDefs.Count == 1 && returnDefs[0] != null)
+                        return returnDefs[0];
+                }
+                // The arithmetic operators preserve the type of their first operand.
+                var opName = (fc.Function as RefSymbol)?.Name;
+                if (fc.Args.Count >= 1
+                    && (opName == "Multiply" || opName == "Divide" || opName == "Add"
+                        || opName == "Subtract" || opName == "Negative" || opName == "Modulo"))
+                    return recv;
+                return null;
+            }
+            default:
+                return null;
+        }
+    }
+
+    public TypeScriptFunctionBodyWriter WriteFunctionCall(FunctionCall functionCall, string type = null)
     {
         // If there are no arguments, it is a constant.
         if (functionCall.Args.Count == 0)
@@ -212,7 +288,12 @@ public class TypeScriptFunctionBodyWriter : CodeBuilder<TypeScriptFunctionBodyWr
 
         var f = functionCall.Function;
         if (f.Name.StartsWith("Tuple"))
-            return Write($"new {f.Name}(").WriteCommaList(functionCall.Args).Write(")");
+        {
+            var ctorName = !string.IsNullOrEmpty(type) && type != f.Name
+                ? type
+                : f.Name;
+            return Write($"new {ctorName}(").WriteCommaList(functionCall.Args).Write(")");
+        }
 
         var arg = functionCall.Args[0];
 
@@ -225,10 +306,11 @@ public class TypeScriptFunctionBodyWriter : CodeBuilder<TypeScriptFunctionBodyWr
             Write(arg);
         Write(".").Write(functionCall.Function);
 
-        // Field access stays a property read (fields are the only properties);
-        // every actual function call is parenthesized, including zero-argument ones.
+        // Field access stays a property read only when the receiver type, or the
+        // current concrete type as a fallback, actually declares that field.
         if (functionCall.Args.Count == 1 && !functionCall.HasArgList
-            && Writer.AllFieldNames.Contains(f.Name))
+            && (TypeWriter.HasFieldNamed(ResolveReceiverTypeDef(functionCall.Args[0]), f.Name)
+                || TypeWriter.HasFieldNamed(f.Name)))
             return this;
 
         return Write("(").WriteCommaList(functionCall.Args.Skip(1)).Write(")");
@@ -249,6 +331,8 @@ public class TypeScriptFunctionBodyWriter : CodeBuilder<TypeScriptFunctionBodyWr
             case NewExpression newExpression:
             {
                 var typeName = Function.ToTypeScriptType(newExpression.Type);
+                if (typeName.StartsWith("Tuple") && !string.IsNullOrEmpty(type) && type != typeName)
+                    typeName = type;
                 // "new Number(x)" on a native type is just the value itself.
                 if (TypeScriptWriter.NativeDefaults.ContainsKey(typeName))
                     return Write("(").WriteCommaList(newExpression.Args).Write(")");
@@ -282,7 +366,7 @@ public class TypeScriptFunctionBodyWriter : CodeBuilder<TypeScriptFunctionBodyWr
                     .Write(" : ").Write(conditional.IfFalse);
 
             case FunctionCall functionCall:
-                return WriteFunctionCall(functionCall);
+                return WriteFunctionCall(functionCall, type);
 
             case Literal literal:
                 return WriteLiteral(literal);

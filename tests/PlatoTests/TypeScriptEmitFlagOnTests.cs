@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using Ara3D.Geometry.Compiler.Checking;
+using Ara3D.Geometry.Compiler.Symbols;
 using Ara3D.Geometry.TypeScriptWriter;
 using NUnit.Framework;
 
@@ -63,6 +65,40 @@ namespace PlatoTests
 
             Assert.AreEqual(0, flagOn.TirFallbackBodies, "a TypeScript body fell back to the legacy writer");
             Assert.IsEmpty(differing, "UseTir=true changed TypeScript output vs UseTir=false");
+        }
+
+        [Test]
+        public static void TirLambdaBodiesWrapStatementShapes()
+        {
+            var compilation = CheckerTestSupport.CompileStdLib();
+            var writer = new TypeScriptWriter(compilation, "unused-lambda-test") { UseTir = true };
+            var typeWriter = new TypeScriptTypeWriter(writer, null);
+
+            var valueParam = new ParameterDef(null, "values", null, 0);
+            var lambdaParam = new ParameterDef(null, "x", null, 0);
+            var lambdaBody = new TirReturn(new TirName("x", null, null), null);
+            var lambda = new TirLambda(new List<ParameterDef> { lambdaParam }, lambdaBody, null, null);
+            var call = new TirCall(null, EmissionKind.StaticMethod, null, null,
+                new List<TirNode> { new TirName("values", null, null), lambda }, null, null, "All");
+            var tir = new TirFunction(null, new List<ParameterDef> { valueParam }, null, call);
+
+            var body = new TirTypeScriptBodyWriter(typeWriter, tir, false).ToString();
+
+            Assert.That(body, Does.Contain("=> {"));
+            Assert.That(body, Does.Not.Contain("=> return"));
+        }
+
+        [Test]
+        public static void TirMemberBodiesKeepLocalFieldAccessAndMethodCallsSeparate()
+        {
+            // PositionVector/Offset live in the forward stdlib's geometry tier.
+            var writer = new TypeScriptWriter(CheckerTestSupport.CompileForwardStdLibShippingTiers(), "unused-field-test") { UseTir = true };
+            writer.WriteAll();
+
+            var ts = writer.Files["plato.g.ts"].ToString();
+
+            Assert.That(ts, Does.Contain("PositionVector(): Vector3D { return this.Offset(); }"));
+            Assert.That(ts, Does.Not.Contain("PositionVector(): Vector3D { return this.Offset; }"));
         }
     }
 }

@@ -41,10 +41,6 @@ namespace Ara3D.Geometry.TypeScriptWriter
         {
             Analyzer = new PlatoAnalyzer(compilation);
             OutputFolder = outputFolder;
-
-            foreach (var ct in compilation.ConcreteTypes)
-                foreach (var f in ct.TypeDef.Fields)
-                    AllFieldNames.Add(f.Name);
         }
 
         public Compiler.Compilation Compilation => Analyzer.Compilation;
@@ -52,13 +48,6 @@ namespace Ara3D.Geometry.TypeScriptWriter
         public Dictionary<string, StringBuilder> Files { get; } = new Dictionary<string, StringBuilder>();
 
         public DirectoryPath OutputFolder { get; }
-
-        /// <summary>
-        /// The names of every declared field across the compilation. The body
-        /// writer uses this to distinguish field access (a property: "v.X") from
-        /// function calls (always parenthesized: "v.Length()").
-        /// </summary>
-        public HashSet<string> AllFieldNames { get; } = new HashSet<string>();
 
         /// <summary>Emit function bodies from the Typed IR (TirTypeScriptBodyWriter) when one is
         /// available, the legacy symbol-graph writer as the fallback. Mirrors CSharpWriter.UseTir.</summary>
@@ -267,6 +256,37 @@ export namespace Intrinsics {
         throw new globalThis.Error(`Not implemented: ${name}`);
     }
 }
+
+// Helpers referenced by generated bodies whose Plato originals are in
+// IgnoredFunctions, so the prototype methods must be installed here by hand.
+declare global {
+    interface Number {
+        Range(): IArray<number>;
+        MapRange<T>(f: (i: number) => T): IArray<T>;
+        Equals(b: number): boolean;
+        NotEquals(b: number): boolean;
+    }
+    interface Boolean {
+        Equals(b: boolean): boolean;
+        NotEquals(b: boolean): boolean;
+    }
+    interface String {
+        Equals(b: string): boolean;
+        NotEquals(b: string): boolean;
+    }
+}
+Intrinsics.Install(Number.prototype, 'Equals', function(this: number, b: number): boolean { return this.valueOf() === b; });
+Intrinsics.Install(Number.prototype, 'NotEquals', function(this: number, b: number): boolean { return this.valueOf() !== b; });
+Intrinsics.Install(Boolean.prototype, 'Equals', function(this: boolean, b: boolean): boolean { return this.valueOf() === b; });
+Intrinsics.Install(Boolean.prototype, 'NotEquals', function(this: boolean, b: boolean): boolean { return this.valueOf() !== b; });
+Intrinsics.Install(String.prototype, 'Equals', function(this: string, b: string): boolean { return this.valueOf() === b; });
+Intrinsics.Install(String.prototype, 'NotEquals', function(this: string, b: string): boolean { return this.valueOf() !== b; });
+Intrinsics.Install(Number.prototype, 'Range', function(this: number): IArray<number> {
+    return Intrinsics.Range(this.valueOf());
+});
+Intrinsics.Install(Number.prototype, 'MapRange', function<T>(this: number, f: (i: number) => T): IArray<T> {
+    return Intrinsics.Range(this.valueOf()).Map(f);
+});
 
 export interface IArray2D<T> {
     At(column: number, row: number): T;

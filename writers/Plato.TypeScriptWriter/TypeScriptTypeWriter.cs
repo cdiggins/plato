@@ -62,6 +62,18 @@ public class TypeScriptTypeWriter : CodeBuilder<TypeScriptTypeWriter>, ITypeToTy
 
     public bool IsNativePrimitive => TypeDef != null && TypeScriptWriter.NativePrimitives.ContainsKey(TypeDef.Name);
 
+    public bool HasFieldNamed(string name)
+        => HasFieldNamed(TypeDef, name);
+
+    public bool HasFieldNamed(TypeDef type, string name)
+        => type?.Fields.Any(f => f.Name == name) == true;
+
+    public bool HasFieldNamed(TypeExpression type, string name)
+        // The receiver's declared type may be a concept (no fields) even though the
+        // ground receiver is the current concrete type, so check both.
+        => type?.Def?.Fields.Any(f => f.Name == name) == true
+           || TypeDef?.Fields.Any(f => f.Name == name) == true;
+
     public TypeScriptTypeWriter WriteConcreteType(ConcreteType ct)
     {
         Debug.Assert(ct.TypeDef == TypeDef);
@@ -144,7 +156,7 @@ public class TypeScriptTypeWriter : CodeBuilder<TypeScriptTypeWriter>, ITypeToTy
             if (tir != null)
             {
                 Writer.TirBodiesEmitted++;
-                return new TirTypeScriptBodyWriter(this, tir, isStatic).ToString();
+                return new TirTypeScriptBodyWriter(this, tir, isStatic, f.ReturnType).ToString();
             }
             Writer.TirFallbackBodies++;
         }
@@ -224,12 +236,30 @@ public class TypeScriptTypeWriter : CodeBuilder<TypeScriptTypeWriter>, ITypeToTy
         if (f.Body == null)
         {
             if (TryGetIntrinsicBody(f, out var body))
-                return WriteLine($"{f.MethodSignature()} {{ {body} }}");
-            return WriteLine($"{f.MethodSignature()} {{ return Intrinsics.ThrowNotImplemented('{TypeDef?.Name}.{f.Name}'); }}");
+                WriteLine($"{f.MethodSignature()} {{ {body} }}");
+            else
+                WriteLine($"{f.MethodSignature()} {{ return Intrinsics.ThrowNotImplemented('{TypeDef?.Name}.{f.Name}'); }}");
         }
+        else
+        {
+            Write(f.MethodSignature());
+            WriteBody(f, f.IsStatic);
+        }
+        return WriteStaticInstanceForwarder(f);
+    }
 
-        Write(f.MethodSignature());
-        return WriteBody(f, f.IsStatic);
+    /// <summary>
+    /// A Plato function whose receiver is the discarded "_" becomes a TS static, but
+    /// call sites still invoke it through an instance (p.FromOffset(v)); the instance
+    /// slot forwards to the static (the two namespaces are distinct in TS).
+    /// </summary>
+    public TypeScriptTypeWriter WriteStaticInstanceForwarder(TypeScriptFunctionInfo f)
+    {
+        if (!f.IsStatic || f.NumParameters == 0 || TypeDef == null)
+            return this;
+        var cls = TypeDef.Name;
+        var args = f.MethodParameterNames.Select(EscapeName).JoinStringsWithComma();
+        return WriteLine($"{f.Name}{f.GenericsString()}({f.MethodParameters.JoinStringsWithComma()}): {f.ReturnType} {{ return {cls}.{f.Name}({args}); }}");
     }
 
     /// <summary>
@@ -326,6 +356,45 @@ public class TypeScriptTypeWriter : CodeBuilder<TypeScriptTypeWriter>, ITypeToTy
                 return true;
             case "Number.Exp":
                 body = "return Math.exp(this);";
+                return true;
+            case "Number.Sin":
+                body = "return Math.sin(this);";
+                return true;
+            case "Number.Cos":
+                body = "return Math.cos(this);";
+                return true;
+            case "Number.NaturalLog":
+                body = "return Math.log(this);";
+                return true;
+            case "Number.Atan2Radians":
+                body = $"return Math.atan2(this, {arg});";
+                return true;
+            case "Number.FusedMultiplyAdd":
+                body = $"return this * {arg} + {EscapeName(f.ParameterNames.Count > 2 ? f.ParameterNames[2] : "z")};";
+                return true;
+            case "Number.Hash":
+                body = "return (this * 2654435761) | 0;";
+                return true;
+            case "Number.IsNaN":
+                body = "return this !== this;";
+                return true;
+            case "Number.IsInfinite":
+                body = "return this === Infinity || this === -Infinity;";
+                return true;
+            case "Number.ToInteger":
+                body = "return Math.trunc(this);";
+                return true;
+            case "Integer.BitwiseNot":
+                body = "return ~this;";
+                return true;
+            case "Integer.BitwiseXor":
+                body = $"return this ^ {arg};";
+                return true;
+            case "Integer.ShiftLeft":
+                body = $"return this << {arg};";
+                return true;
+            case "Integer.ShiftRight":
+                body = $"return this >> {arg};";
                 return true;
             case "Angle.Cos":
                 body = "return Math.cos(this.Radians);";

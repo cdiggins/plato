@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plato SDF — TypeScript / Three.js</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #161a21;
+      --panel2: #12151b;
+      --border: #262c38;
+      --text: #d6dbe4;
+      --dim: #8b93a3;
+      --accent: #4da3ff;
+      --inside: #3d8fd1;
+      --outside: #e07a3a;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.5 "Segoe UI", system-ui, sans-serif;
+    }
+    #app { display: flex; height: 100vh; }
+
+    #sidebar {
+      width: 300px;
+      flex: none;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    #sidebar header { padding: 14px 16px 8px; flex: none; }
+    #sidebar h1 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 2px;
+    }
+    #sidebar h1 a { color: var(--accent); text-decoration: none; }
+    #sidebar h1 a:hover { text-decoration: underline; }
+    #sidebar .subtitle { font-size: 12px; color: var(--dim); margin: 0; }
+    #sidebar .subtitle a { color: var(--dim); }
+
+    #dim-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 0 12px 10px;
+      flex: none;
+    }
+    #dim-tabs button {
+      flex: 1;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      color: var(--dim);
+      font: inherit;
+      font-weight: 600;
+      padding: 7px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #dim-tabs button:hover { color: var(--text); }
+    #dim-tabs button.active {
+      background: #1c2433;
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    #scene-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 12px;
+      border-top: 1px solid var(--border);
+    }
+    #scene-list button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      border-left: 3px solid transparent;
+      color: var(--text);
+      font: inherit;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    #scene-list button:hover { background: #1c2129; }
+    #scene-list button.active {
+      background: #1c2433;
+      border-left-color: var(--accent);
+      color: #fff;
+    }
+    #scene-list .desc {
+      display: block;
+      font-size: 11.5px;
+      color: var(--dim);
+      margin-top: 1px;
+    }
+
+    #main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    #viewer {
+      flex: 1 1 62%;
+      min-height: 0;
+      position: relative;
+      background: #0a0c10;
+    }
+    #viewer canvas { display: block; width: 100%; height: 100%; }
+    #hint {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      z-index: 2;
+      font-size: 11px;
+      color: var(--dim);
+      background: rgba(0,0,0,.45);
+      padding: 4px 8px;
+      border-radius: 6px;
+      pointer-events: none;
+    }
+
+    #controls {
+      flex: none;
+      border-top: 1px solid var(--border);
+      background: var(--panel2);
+      padding: 12px 16px 14px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px 18px;
+    }
+    #controls label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--dim);
+    }
+    #controls label span.row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text);
+    }
+    #controls input[type=range] { width: 100%; accent-color: var(--accent); }
+    #controls .plato-ref {
+      grid-column: 1 / -1;
+      font: 12.5px/1.45 Consolas, "Cascadia Code", monospace;
+      color: var(--accent);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin: 0;
+    }
+    #controls .meta {
+      grid-column: 1 / -1;
+      font-size: 12.5px;
+      color: var(--dim);
+      margin: 0;
+    }
+    .legend {
+      display: inline-flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 11.5px;
+      color: var(--dim);
+    }
+    .swatch {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      margin-right: 4px;
+      vertical-align: -1px;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <aside id="sidebar">
+    <header>
+      <h1><a href="https://github.com/cdiggins/plato">Plato</a> · SDF</h1>
+      <p class="subtitle">
+        Forward stdlib compiled to TypeScript, sampled with
+        <a href="https://threejs.org">Three.js</a> / WebGL.
+      </p>
+    </header>
+    <div id="dim-tabs">
+      <button type="button" data-dim="2d" class="active">2D fields</button>
+      <button type="button" data-dim="3d">3D raymarch</button>
+    </div>
+    <nav id="scene-list"></nav>
+  </aside>
+  <main id="main">
+    <div id="viewer"><div id="hint"></div></div>
+    <div id="controls"></div>
+  </main>
+</div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

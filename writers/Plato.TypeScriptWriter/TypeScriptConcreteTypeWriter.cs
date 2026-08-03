@@ -86,6 +86,11 @@ namespace Ara3D.Geometry.TypeScriptWriter
             if (IsArrayLike)
                 WriteArrayLikeFunctions();
 
+            // Field-generated At/Count must claim their names before the implemented
+            // pass, or the library's Index-typed At overload steals the member slot and
+            // component indexing breaks at runtime (v.At(0) -> index.Value() crash).
+            WriteFieldGeneratedArrayMembers();
+
             WriteImplementedInterfaceFunctions();
 
             WriteUnimplementedInterfaceFunctions();
@@ -120,11 +125,18 @@ namespace Ara3D.Geometry.TypeScriptWriter
         {
             var iface = TypeScriptWriter.NativeInterfaces[native];
             var functions = new List<TypeScriptFunctionInfo>();
-            foreach (var f in CollectMemberFunctions())
+            // Statics (discarded "_" receiver, e.g. Number.Tau) go on the constructor
+            // object instead (WriteNativeConstructorStatics below).
+            var candidates = CollectMemberFunctions()
+                .Select(f => TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef))
+                .Where(fi => !fi.IsStatic)
+                .ToList();
+            // Intrinsic-bodied members claim their names first: a generic library
+            // overload (e.g. Multiply<_T0>(x) => x.Multiply(this)) claiming 'Multiply'
+            // ahead of the numeric intrinsic recurses forever at runtime.
+            foreach (var fi in candidates
+                .OrderByDescending(fi => fi.Body == null && TypeWriter.TryGetIntrinsicBody(fi, out _)))
             {
-                var fi = TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef);
-                if (fi.IsStatic)
-                    continue; // no statics on native prototypes
                 if (!MemberNames.Add(fi.Name))
                     continue; // shared prototype (e.g. Number + Integer): first wins
                 functions.Add(fi);
@@ -158,7 +170,54 @@ namespace Ara3D.Geometry.TypeScriptWriter
                 }
                 TypeWriter.WriteLine(");");
             }
+
+            WriteNativeConstructorStatics(iface);
             TypeWriter.WriteLine();
+        }
+
+        /// <summary>
+        /// Installs the static members of a native primitive (Number.Tau, ...) on the
+        /// native constructor object, declared through its global XxxConstructor interface.
+        /// </summary>
+        public void WriteNativeConstructorStatics(string iface)
+        {
+            var claimed = Writer.GetNativeClaimedNames($"{iface}Constructor");
+            var statics = new List<TypeScriptFunctionInfo>();
+            foreach (var fi in CollectMemberFunctions()
+                .Select(f => TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef))
+                .Where(fi => fi.IsStatic && fi.NumParameters > 0))
+            {
+                if (!claimed.Add(fi.Name))
+                    continue;
+                statics.Add(fi);
+            }
+            if (statics.Count == 0)
+                return;
+
+            TypeWriter.WriteLine("declare global");
+            TypeWriter.WriteStartBlock();
+            TypeWriter.WriteLine($"interface {iface}Constructor");
+            TypeWriter.WriteStartBlock();
+            foreach (var fi in statics)
+                TypeWriter.WriteLine(fi.MethodInterface());
+            TypeWriter.WriteEndBlock();
+            TypeWriter.WriteEndBlock();
+
+            foreach (var fi in statics)
+            {
+                TypeWriter.Write($"Intrinsics.Install({iface}, '{fi.Name}', function{fi.GenericsString()}({fi.MethodParameters.JoinStringsWithComma()}): {fi.ReturnType}");
+                if (fi.Body == null)
+                {
+                    TypeWriter.Write(TypeWriter.TryGetIntrinsicBody(fi, out var body)
+                        ? $" {{ {body} }}"
+                        : $" {{ return Intrinsics.ThrowNotImplemented('{SimpleName}.{fi.Name}'); }}");
+                }
+                else
+                {
+                    TypeWriter.Write(TypeWriter.BodyText(fi, true));
+                }
+                TypeWriter.WriteLine(");");
+            }
         }
 
         // ---- Classes ----------------------------------------------------------------
@@ -258,6 +317,18 @@ namespace Ara3D.Geometry.TypeScriptWriter
             var nComps = FieldNames.Count;
 
             TypeWriter.WriteLine("// IArrayLike predefined functions");
+            // At and Count are claimed here, generated from the fields, so that the
+            // Index-typed interface overload of At cannot steal the member name.
+            MemberNames.Add("At");
+            MemberNames.Add("Count");
+            {
+                var s = "";
+                for (var i = 0; i < nComps; i++)
+                    s += $"n === {i} ? this.{FieldNames[i]} : ";
+                s += $"Intrinsics.ThrowOutOfRange<{fieldType}>()";
+                TypeWriter.WriteLine($"At(n: number): {fieldType} {{ return {s}; }}");
+            }
+            TypeWriter.WriteLine($"Count(): number {{ return {nComps}; }}");
             TypeWriter.WriteLine($"NumComponents(): number {{ return {nComps}; }}");
             var components = FieldNames.Select(f => $"this.{f}").JoinStringsWithComma();
             TypeWriter.WriteLine($"Components(): IArray<{fieldType}> {{ return Intrinsics.MakeArray({components}); }}");
@@ -325,6 +396,24 @@ namespace Ara3D.Geometry.TypeScriptWriter
                 TypeWriter.WriteMemberFunction(fi);
             }
             TypeWriter.WriteLine();
+        }
+
+        /// <summary>
+        /// Emits At and Count generated from the fields for types whose interface
+        /// obligations include them but have no ground implementation. Runs before the
+        /// implemented pass so the field versions win the member-name claim.
+        /// </summary>
+        public void WriteFieldGeneratedArrayMembers()
+        {
+            foreach (var f in ConcreteType.UnimplementedFunctions)
+            {
+                if (f.Name != "At" && f.Name != "Count")
+                    continue;
+                if (SkipFunction(f) || !TryClaimMember(f.Name))
+                    continue;
+                var fi = TypeWriter.ToFunctionInfo(f, ConcreteType.TypeDef);
+                TypeWriter.GenerateFunc(fi, ConcreteType);
+            }
         }
 
         public void WriteUnimplementedInterfaceFunctions()

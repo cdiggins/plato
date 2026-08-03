@@ -21,6 +21,7 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
     private readonly TypeScriptTypeWriter _tw;
     private readonly TirFunction _tir;
     private readonly string _selfType;
+    private readonly string _declaredReturnTypeName;
 
     // Static mode: parameter #0 is emitted by name instead of `this`.
     private readonly bool _isStatic;
@@ -28,12 +29,17 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
     // >0 while rendering a lambda body: parameter #0 is emitted by name, not `this`.
     private int _lambdaDepth;
 
-    public TirTypeScriptBodyWriter(TypeScriptTypeWriter tw, TirFunction tir, bool isStatic)
+    // True only while writing the top-level node of a return expression: the one
+    // position where a TupleN constructor is renamed to the declared return type.
+    private bool _atReturnPosition;
+
+    public TirTypeScriptBodyWriter(TypeScriptTypeWriter tw, TirFunction tir, bool isStatic, string declaredReturnTypeName = null)
     {
         IndentLevel = tw.IndentLevel;
         _tw = tw;
         _tir = tir;
         _selfType = tw.SelfType;
+        _declaredReturnTypeName = declaredReturnTypeName;
         _isStatic = isStatic;
         WriteFunctionBody();
     }
@@ -80,6 +86,7 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
         else
         {
             Write(" { return ");
+            _atReturnPosition = true;
             WriteNode(body);
             WriteLine("; }");
         }
@@ -114,6 +121,9 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
 
             case TirReturn r:
                 Write("return ");
+                // Inside a lambda the declared return type belongs to the outer
+                // function, so the tuple-constructor rename does not apply.
+                _atReturnPosition = _lambdaDepth == 0;
                 WriteNode(r.Value);
                 WriteLine(";");
                 return;
@@ -181,6 +191,11 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
 
     private void WriteNode(TirNode n)
     {
+        // Consumed by the TirNew / tuple-constructor branches; cleared here so
+        // nested nodes (arguments, operands) never see it.
+        var atReturn = _atReturnPosition;
+        _atReturnPosition = false;
+
         switch (n)
         {
             case null:
@@ -204,16 +219,22 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
                 return;
 
             case TirTypeRef t:
+            {
                 // Raw TypeExpression references map through the TS type-name table
                 // (native primitives, IArray renames); bound references emit the (escaped)
                 // name, with Self resolved to the enclosing type — the legacy writer's two paths.
-                if (t.NamespaceQualified && t.TypeDef?.Name != "Self" && t.Type != null)
-                    Write(TypeName(t.Type));
-                else
-                    Write(t.TypeDef?.Name == "Self"
+                var refName = t.NamespaceQualified && t.TypeDef?.Name != "Self" && t.Type != null
+                    ? TypeName(t.Type)
+                    : t.TypeDef?.Name == "Self"
                         ? _selfType
-                        : TypeScriptTypeWriter.EscapeName(t.TypeDef?.Name ?? "?"));
+                        : TypeScriptTypeWriter.EscapeName(t.TypeDef?.Name ?? "?");
+                // A native primitive used as a value is its constructor object
+                // (Number.Tau()), never the lowercase type name.
+                if (TypeScriptWriter.NativeInterfaces.TryGetValue(refName, out var ctor))
+                    refName = ctor;
+                Write(refName);
                 return;
+            }
 
             case TirLet let:
                 Write($"let {TypeScriptTypeWriter.EscapeName(let.Def?.Name ?? "?")} = ");
@@ -229,11 +250,12 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
                 return;
 
             case TirCall call:
-                WriteCall(call);
+                WriteCall(call, atReturn);
                 return;
 
             case TirCoerce c:
                 // Implicit solver-inserted widenings are invisible in the legacy TS output too.
+                _atReturnPosition = atReturn;
                 WriteNode(c.Inner);
                 return;
 
@@ -255,6 +277,9 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
             case TirNew nw:
             {
                 var typeName = TypeName(nw.NewType);
+                if (atReturn && typeName.StartsWith("Tuple")
+                    && !string.IsNullOrEmpty(_declaredReturnTypeName) && _declaredReturnTypeName != typeName)
+                    typeName = _declaredReturnTypeName;
                 // "new Number(x)" on a native type is just the value itself.
                 if (TypeScriptWriter.NativeDefaults.ContainsKey(typeName))
                 {
@@ -293,7 +318,18 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
                 _lambdaDepth++;
                 var lamBody = TirLambdaCaptureRewriter.Rewrite(lam.Body);
                 if (IsStatementNode(lamBody))
-                    WriteStatement(lamBody);
+                {
+                    if (lamBody is TirBlock)
+                    {
+                        WriteStatement(lamBody);
+                    }
+                    else
+                    {
+                        WriteStartBlock();
+                        WriteStatement(lamBody);
+                        WriteEndBlock();
+                    }
+                }
                 else
                     WriteNode(lamBody);
                 _lambdaDepth--;
@@ -313,7 +349,7 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
         // Numbers, integers, booleans, and strings are all native TS literals.
         => Write(lit.Value.ToLiteralString());
 
-    private void WriteCall(TirCall call)
+    private void WriteCall(TirCall call, bool atReturn = false)
     {
         var name = call.Name;
         var args = call.Args;
@@ -326,8 +362,30 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
         }
 
         // Tuple constructor: TupleN(a, b, ...) -> new TupleN(a, b, ...).
+        // At the return position it is renamed to the declared return type, so a
+        // tuple literal returned as a named type constructs the right class.
         if (name != null && name.StartsWith("Tuple"))
         {
+            var ctorName = atReturn && !string.IsNullOrEmpty(_declaredReturnTypeName) && _declaredReturnTypeName != name
+                ? _declaredReturnTypeName
+                : name;
+            Write($"new {ctorName}(");
+            WriteArgs(args);
+            Write(")");
+            return;
+        }
+
+        // Constructor call: Vector3D(x, y, z) -> new Vector3D(x, y, z).
+        // A "constructor" of a native primitive is just its (only) argument.
+        if (call.EmissionKind == EmissionKind.Constructor)
+        {
+            if (TypeScriptWriter.NativePrimitives.ContainsKey(name))
+            {
+                Write("(");
+                WriteArgs(args);
+                Write(")");
+                return;
+            }
             Write($"new {name}(");
             WriteArgs(args);
             Write(")");
@@ -350,13 +408,11 @@ public class TirTypeScriptBodyWriter : CodeBuilder<TirTypeScriptBodyWriter>
         Write(".");
         Write(name);
 
-        // Field access stays a property read (fields are the only properties);
-        // every actual function call is parenthesized, including zero-argument ones.
-        // A type-named field read classifies as a Conversion (rotation.Quaternion), so both
-        // kinds count — the field-name guard is what decides, exactly as the legacy writer.
+        // Field access stays a property read only when the receiver type, or the
+        // current concrete type as a fallback, actually declares that field.
         if (args.Count == 1
             && (call.EmissionKind == EmissionKind.Property || call.EmissionKind == EmissionKind.Conversion)
-            && _tw.Writer.AllFieldNames.Contains(name))
+            && _tw.HasFieldNamed(receiver.Type, name))
             return;
 
         Write("(");
