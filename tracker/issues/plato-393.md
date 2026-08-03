@@ -111,7 +111,7 @@ reachable from any shipping tier today (the stdlib's only function bound is over
 ## Done means
 
 - [x] A decision recorded on whether library functions take `where` bounds. — yes, verified, with
-      the syntax and semantics above; written up in `docs/plato-language-semantics.md` (§5) and
+      the syntax and semantics above; written up in `docs/SEMANTICS.md` (§5) and
       `docs/compiler-pipeline.md` (diagnostic table + the declared-bounds section).
 - [x] If yes: grammar + AST + checker reading + one codegen test. — `PlatoGrammar.MethodDeclaration`
       + `Constraint`, `AstMethodDeclaration.Constraints`, `FunctionDef.DeclaredBounds`,

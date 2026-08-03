@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-21
 closed:
-links: [docs/plato-kernel-libraries-sketch-2026-07-21.md, tracker/issues/plato-076.md, tracker/issues/plato-077.md, tracker/issues/plato-078.md, tracker/issues/studio-074.md, submodules/Plato/plato-src/curves.plato, submodules/Plato/plato-src/colors.plato, submodules/Plato/plato-src/core.interfaces.plato, submodules/Plato/plato-src/interval.plato, submodules/Plato/plato-src/bounds.plato, submodules/gratify/src/gratify/core]
+links: [docs/design/plato-kernel-libraries-sketch-2026-07-21.md, tracker/issues/plato-076.md, tracker/issues/plato-077.md, tracker/issues/plato-078.md, tracker/issues/studio-074.md, submodules/Plato/plato-src/curves.plato, submodules/Plato/plato-src/colors.plato, submodules/Plato/plato-src/core.interfaces.plato, submodules/Plato/plato-src/interval.plato, submodules/Plato/plato-src/bounds.plato, submodules/gratify/src/gratify/core]
 ---
 
 ## Idea
@@ -23,7 +23,7 @@ TypeScript and C#; Gratify (TS today, C# via studio-074) becomes one consumer
 among several (Studio heat-maps, camera moves, gizmo/L2 animation). This is the
 concrete content plan for the plato-076 "kernel" — carved to be useful and
 reusable WITHOUT being Gratify-specific. Full type/interface sketches in
-[docs/plato-kernel-libraries-sketch-2026-07-21.md].
+[docs/design/plato-kernel-libraries-sketch-2026-07-21.md].
 
 Boundary rule: Plato takes anything expressible as "values in, values out, no
 names as strings." Channels-by-name, parts/facets, Element trees, event routing

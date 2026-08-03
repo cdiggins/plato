@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-29
 closed: 2026-07-29
-links: [plato-301, submodules/Plato/stdlib/polyhedra-catalog.library.plato, submodules/Plato/stdlib/polyhedra-conway.library.plato, submodules/Plato/stdlib/solids-polyhedra.plato, submodules/Plato/stdlib/algebra-metric.concepts.plato, submodules/Plato/docs/plato-language-semantics.md]
+links: [plato-301, submodules/Plato/stdlib/polyhedra-catalog.library.plato, submodules/Plato/stdlib/polyhedra-conway.library.plato, submodules/Plato/stdlib/solids-polyhedra.plato, submodules/Plato/stdlib/algebra-metric.concepts.plato, submodules/Plato/docs/SEMANTICS.md]
 ---
 
 ## Issue
@@ -28,7 +28,7 @@ Without a typed dual relationship, catalog aliases stay stringly documented mesh
 - `submodules/Plato/stdlib/polyhedra-seeds.library.plato` — Platonic solids as static mesh factories, not types.
 - `submodules/Plato/stdlib/solids-polyhedra.plato` — `ArchimedeanSolid` / `CatalanSolid` + kind sums; no Dual map between kinds.
 - `submodules/Plato/stdlib/algebra-metric.concepts.plato` (`Difference<TDelta>`, `OriginBased<TDelta>`) and `Point2D implements OriginBased<Vector2D>` — existing “Self paired with another type” pattern.
-- `submodules/Plato/docs/plato-language-semantics.md` §4 — interfaces with type parameters; satisfaction via members + `implements`.
+- `submodules/Plato/docs/SEMANTICS.md` §4 — interfaces with type parameters; satisfaction via members + `implements`.
 
 ## Cause / analysis
 

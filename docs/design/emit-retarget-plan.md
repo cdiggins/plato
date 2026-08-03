@@ -81,7 +81,7 @@ the gap.
 ## Increment 3 result (2026-07-10): the default flipped
 
 Increment 2 closed the taxonomy (differential 100% on 611). Increment 3 closed the FALLBACK:
-solver/elaborator/monomorphizer upgrades (see `compiler-pipeline.md` and `monomorphize-plan.md`)
+solver/elaborator/monomorphizer upgrades (see `compiler-pipeline.md` and `design/monomorphize-plan.md`)
 grew coverage from 611 to **all 1914 default-style member-instance bodies with Plato source** —
 fallback **0**, differential **1914/1914 byte-identical**, flag-on vs flag-off **164/164 files**,
 and `regen-plato.ps1` green with the TIR path as the default. `UseTir` now defaults to **true**

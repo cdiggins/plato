@@ -3,10 +3,13 @@
 **How to write a durable document in this repo, and — the part that keeps getting violated — what
 must never go in one.**
 
-Applies to durable prose under `docs/`, `stdlib/*.md`, `tracker/readme.md`, and every `README.md`.
-Does not apply to dated snapshots (`*-YYYY-MM-DD.md`), `docs/archive/**`, or generated files
-(`docs/gate-log.md`, `docs/status-report*.{html,json}`) — those exist *to* record measurements at a
-moment, and the date in the name is the honest label.
+Applies to durable prose under `docs/`, `stdlib/*.md`, `tracker/readme.md`, and every `README.md` —
+that is, the normative and reference tiers described in [`README.md`](README.md).
+Does not apply to dated snapshots (`*-YYYY-MM-DD.md`), `docs/reports/**`, `docs/essays/**`,
+`docs/discussions/**`, `docs/archive/**`, or generated files (`docs/gate-log.md`,
+`docs/status-report*.{html,json}`, `docs/types-and-concepts-*.txt`) — those exist *to* record a
+moment, and the date in the name is the honest label. `docs/design/**` is durable prose and is in
+scope: a proposal states what it intends to do, not what the tree currently measures.
 
 For README voice and structure specifically, the `write-readme` skill is the reference; this file
 governs the facts a document is allowed to state, whatever its shape.

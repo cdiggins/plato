@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-30
 closed:
-links: [plato-333, plato-319, plato-303, plato-339, submodules/Plato/stdlib/intrinsics-arrays.library.plato, submodules/Plato/docs/plato-language-semantics.md]
+links: [plato-333, plato-319, plato-303, plato-339, submodules/Plato/stdlib/intrinsics-arrays.library.plato, submodules/Plato/docs/SEMANTICS.md]
 ---
 
 ## Idea
@@ -59,7 +59,7 @@ in spirit, but must pick Plato’s half-open vs closed convention explicitly.
 - [plato-339](plato-339.md) — from-end index sugar; may compose as `xs[0..^1]`.
 - [intrinsics-arrays.library.plato](../../submodules/Plato/stdlib/intrinsics-arrays.library.plato) —
   `Slice` / `SubArray` / `Take` / `Drop` already exist.
-- [plato-language-semantics.md](../../submodules/Plato/docs/plato-language-semantics.md) —
+- [../../docs/SEMANTICS.md](../../docs/SEMANTICS.md) —
   §6: `x[i]` ≡ `At(x, i)` only today.
 
 ## Approaches

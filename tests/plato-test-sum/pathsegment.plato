@@ -3,7 +3,7 @@
 // uses (fields only, no concepts/implements clauses) mirroring 00-primitives.plato.
 //
 // This is the "after" of stdlib/40-paths.plato's PathSegmentKind+PathSegment2D
-// hand-encoding (see docs/plato-sum-types-v3-survey.md).
+// hand-encoding (see docs/reports/plato-sum-types-v3-survey.md).
 
 type Number { }
 type Integer { }

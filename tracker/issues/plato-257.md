@@ -28,15 +28,15 @@ A later phase (still gated on [plato-078](plato-078.md)) rewrites survivors into
 
 ## Design decisions
 
-- **V1 output** — one file per lesson at `submodules/Plato/lessons/v1/<slug>.md`; no index, no README, no shared assets. Catalog lives in [plato-257-lessons-v1-plan.md](../../submodules/Plato/docs/plato-257-lessons-v1-plan.md).
+- **V1 output** — one file per lesson at `submodules/Plato/lessons/v1/<slug>.md`; no index, no README, no shared assets. Catalog lives in [../../docs/archive/plato-257-lessons-v1-plan.md](../../submodules/Plato/docs/plato-257-lessons-v1-plan.md).
 - **V1 format** — YAML front matter + hook / idea / In Plato / pitfalls / optional Try it + required `## Library recommendations`. See plan for normative rules.
 - **v3 names only** — every Plato identifier must exist in `plato-src-v3`; gaps go in recommendations, not invented silently.
-- **Orchestration** — waves of 5–8 parallel author agents; after each wave, skim for rule violations, harvest recommendations into `docs/plato-257-lessons-v1-recommendations.md`, commit the wave.
+- **Orchestration** — waves of 5–8 parallel author agents; after each wave, skim for rule violations, harvest recommendations into `docs/reports/plato-257-lessons-v1-recommendations.md`, commit the wave.
 - **Do not edit v3** — recommendations are recorded and triaged separately.
 
 ## Related
 
-- [plato-257-lessons-v1-plan.md](../../submodules/Plato/docs/plato-257-lessons-v1-plan.md) — V1 catalog, format, waves, acceptance.
+- [../../docs/archive/plato-257-lessons-v1-plan.md](../../submodules/Plato/docs/plato-257-lessons-v1-plan.md) — V1 catalog, format, waves, acceptance.
 - [plato-src-v3](../../submodules/Plato/plato-src-v3/) — normative vocabulary for lesson notation.
 - [plato-078](plato-078.md) — gates V2 interactive TypeScript textbook, not V1 markdown.
 - [docs/discussions/plato-geometry-july-7-2026-12h44.md](../../docs/discussions/plato-geometry-july-7-2026-12h44.md) — browser geometry demo; relevant to V2 packaging.
@@ -60,7 +60,7 @@ V1 dogfoods `plato-src-v3` as curriculum source *before* bodies exist — the ch
 ## Done means
 
 - [x] **≥100** standalone markdown lesson files under `submodules/Plato/lessons/v1/*.md` (plan catalog first, then additional slugs on undeclared-but-teachable v3 angles)
-- [x] `submodules/Plato/lessons/v1/` exists with one standalone markdown file per catalog slug in [plato-257-lessons-v1-plan.md](../../submodules/Plato/docs/plato-257-lessons-v1-plan.md) (~60 slugs across all domain groups)
+- [x] `submodules/Plato/lessons/v1/` exists with one standalone markdown file per catalog slug in [../../docs/archive/plato-257-lessons-v1-plan.md](../../submodules/Plato/docs/plato-257-lessons-v1-plan.md) (~60 slugs across all domain groups)
 - [x] Every lesson file follows the V1 format: complete YAML front matter (`lesson`, `title`, `domain`, `v3-files`, `audience`, `status: draft-v1`); body with hook, idea, "In Plato", pitfalls; required `## Library recommendations` with ≥1 specific file-and-declaration item (or explicit "vocabulary fully covered this lesson")
 - [x] Hard rules satisfied per lesson: no cross-lesson/chapter/index references; Plato identifiers spot-checked against `plato-src-v3`; no edits to v3 or other repo files during authoring
 - [x] Wave 1 catalog slugs landed and committed: `points-vs-vectors`, `quaternions-without-tears`, `signed-distance-fields`, `bezier-curves`, `indexed-meshes`, `linear-vs-gamma`, `floating-point-tolerance`

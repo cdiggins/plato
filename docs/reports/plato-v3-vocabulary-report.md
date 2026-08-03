@@ -3,7 +3,7 @@
 **Date:** 2026-07-27
 **Subject:** [`submodules/Plato/stdlib/`](../submodules/Plato/stdlib/) (commits `7cec1e3`, `72912d8`)
 **Compared against:** [`stdlib-legacy/`](../submodules/Plato/stdlib-legacy/) (production, "v1") and [`plato-src-v2/`](../submodules/Plato/plato-src-v2/) (prototype, plato-228)
-**Companion doc:** [plato-source-vocabulary-comparison.md](plato-source-vocabulary-comparison.md) (v1 vs v2)
+**Companion doc:** [reports/plato-source-vocabulary-comparison.md](plato-source-vocabulary-comparison.md) (v1 vs v2)
 
 This report was produced by an AI agent that also authored v3. Treat the counts as
 mechanical (they are script-derived) and the judgements as arguable.
@@ -348,7 +348,7 @@ Ranked by value against effort, highest first.
 8. **Improve the two compiler diagnostics** in §6 — the field-count error message and a
    declarations-only lint mode.
 9. **Decide the fate of v2.** Two prototype vocabularies now sit beside the production
-   library; [plato-229](../tracker/issues/plato-229.md) is still open against v2. Keeping
+   library; [plato-229](../../tracker/issues/plato-229.md) is still open against v2. Keeping
    both is confusing and the name "v2" already collides with the V2 codegen recipe.
 10. **Scope the outer blocks explicitly.** If rendering and physics are not going to be
     implemented in Plato, mark them as a description schema, move them to a separate

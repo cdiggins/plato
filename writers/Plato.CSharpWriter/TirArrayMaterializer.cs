@@ -6,7 +6,7 @@ using Ara3D.Geometry.Compiler.Symbols;
 namespace Ara3D.Geometry.CSharpWriter;
 
 /// <summary>
-/// Optimizer stage 2, increment 1 (--optimize-arrays; docs/optimizer-stage2-plan.md):
+/// Optimizer stage 2, increment 1 (--optimize-arrays; docs/design/optimizer-stage2-plan.md):
 /// loop-into-buffer lowering for MULTI-consumed array pipelines. <c>Map</c>/<c>MapRange</c> return
 /// lazy functional views (<c>ReadOnlyList&lt;T&gt;</c> wraps a <c>Func&lt;int,T&gt;</c>), so every
 /// element access re-evaluates the upstream pipeline; a result that is consumed more than once

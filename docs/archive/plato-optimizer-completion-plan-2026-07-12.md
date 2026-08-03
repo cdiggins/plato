@@ -1,7 +1,7 @@
 # Optimizer completion plan — delegate inlining and beyond (2026-07-12)
 
-> Handoff plan for the next agent. Prior art: `docs/plato-inlining-beta-reduction-plan-2026-07-12.md`
-> (the landed increment and its history), `docs/optimizer-stage2-plan.md` (array materializer),
+> Handoff plan for the next agent. Prior art: `docs/archive/plato-inlining-beta-reduction-plan-2026-07-12.md`
+> (the landed increment and its history), `docs/design/optimizer-stage2-plan.md` (array materializer),
 > `docs/plato-emitter-phases.md` (pipeline layers). Read those before starting; this doc is the
 > forward plan only.
 

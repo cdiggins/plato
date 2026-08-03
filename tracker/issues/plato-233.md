@@ -18,7 +18,7 @@ links: [plato-232, submodules/Plato/docs/plato-sum-types-v3-survey.md, submodule
 Sum types + exhaustive `match` shipped in [plato-232](plato-232.md), and wave 3 migrated the
 five flagship kind-pattern carriers (`PathSegment2D`, `Paint`, `MaskSource2D`,
 `ScalarFieldNode2D/3D`, `WindowFunction`). The survey
-([plato-sum-types-v3-survey.md](../../submodules/Plato/docs/plato-sum-types-v3-survey.md))
+([../../docs/reports/plato-sum-types-v3-survey.md](../../submodules/Plato/docs/plato-sum-types-v3-survey.md))
 counted **115** `XxxKind` types; ~11–15 were true sums and the rest (~100) are **pure-enum**
 selectors still in the legacy `type XxxKind { Value: Integer; }` kind pattern. Sweep them to
 payload-free sum enums (`type LineCap = Butt | Round | Square;`) — a mechanical, behavior-

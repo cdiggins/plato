@@ -10,5 +10,5 @@ area: plato
 sprint: 
 created: 2026-07-27
 closed: 2026-07-27
-links: [docs/plato-navigation-index-plan.md, submodules/Plato/Plato.Navigation, labs/PlatoNavigationMcp, plato-236]
+links: [docs/archive/plato-navigation-index-plan.md, submodules/Plato/Plato.Navigation, labs/PlatoNavigationMcp, plato-236]
 ---

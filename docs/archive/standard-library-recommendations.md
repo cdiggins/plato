@@ -5,15 +5,15 @@
 > idea bank, not authoritative direction. Some of its suggestions are useful,
 > some are speculative, and at least one directly contradicts another Plato
 > design doc (it recommends `Amount` for the lerp parameter, whereas
-> [`naming-fraction-and-rational-types.md`](naming-fraction-and-rational-types.md)
+> [`design/naming-fraction-and-rational-types.md`](../design/naming-fraction-and-rational-types.md)
 > argues against `Amount` — the name is already taken by scale factors — and
 > recommends `Fraction`). Treat every recommendation here as a proposal to be
 > weighed, not a decision that has been made.
 >
 > **The actual sources of truth are:** the guiding vision in
-> [`plato-overview.md`](plato-overview.md) (author-written), the execution
-> status and decisions in [`../../../docs/plato-roadmap.md`](archive/plato-roadmap.md),
-> the *verified* bug catalog in [`../../../docs/plato-library-review.md`](plato-library-review.md),
+> [`plato-overview.md`](../plato-overview.md) (author-written), the execution
+> status and decisions in [`../../../docs/plato-roadmap.md`](plato-roadmap.md),
+> the *verified* bug catalog in [`../../../docs/plato-library-review.md`](../reports/plato-library-review.md),
 > and the Plato source itself (`stdlib-legacy/`). When this doc conflicts with any
 > of those, they win.
 

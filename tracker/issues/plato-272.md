@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-28
 closed: 2026-07-28
-links: [plato-230, docs/plato-v3-vocabulary-report.md, submodules/Plato/stdlib-legacy/constants.plato, docs/plato-execution-plan-2026-07-09.md, submodules/Plato/stdlib]
+links: [plato-230, docs/reports/plato-v3-vocabulary-report.md, submodules/Plato/stdlib-legacy/constants.plato, docs/archive/plato-execution-plan-2026-07-09.md, submodules/Plato/stdlib]
 ---
 
 ## Idea
@@ -29,9 +29,9 @@ Ship a `library Constants` (and color constants as needed) in the forward stdlib
 
 ## Related
 - [plato-230](plato-230.md) — created declaration-only v3; constants deferred.
-- [docs/plato-v3-vocabulary-report.md](../../docs/plato-v3-vocabulary-report.md) — explicitly flags "No constants."
+- [docs/reports/plato-v3-vocabulary-report.md](../../docs/reports/plato-v3-vocabulary-report.md) — explicitly flags "No constants."
 - [stdlib-legacy/constants.plato](../../submodules/Plato/stdlib-legacy/constants.plato) — port source (Pi, Epsilon, axes, UnitInterval, …).
-- [docs/plato-execution-plan-2026-07-09.md](../../docs/plato-execution-plan-2026-07-09.md) A.2 — shipping-library constant *bugs*; do not conflate.
+- [docs/archive/plato-execution-plan-2026-07-09.md](../../docs/archive/plato-execution-plan-2026-07-09.md) A.2 — shipping-library constant *bugs*; do not conflate.
 - [transforms.plato](../../submodules/Plato/stdlib/transforms.plato) — already has `Identity` statics; Constants must not duplicate those.
 
 ## Approaches

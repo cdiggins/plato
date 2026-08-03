@@ -1,6 +1,6 @@
 # Consolidation plan — one codebase, one runtime, a rigorous emitter (2026-07-12)
 
-> Plan 1 of 2 (companion: `plato-optimizer-exploration-plan-2026-07-12.md`). Author directive:
+> Plan 1 of 2 (companion: `design/plato-optimizer-exploration-plan-2026-07-12.md`). Author directive:
 > eliminate the V1/V2 split and work on ONE codebase inside the Plato repo, without touching the
 > Geometry library that Ara3D.Studio consumes today; complete the runtime port (M5) without losing
 > the C#-consumer-facing surface (operators, helper statics, field properties); make the C# emitter

@@ -20,7 +20,9 @@ Also checked out as `submodules/Plato` inside the studio monorepo.
 `net8.0-windows` and pulls WPF, IFC and `Studio.API` into the compiler.
 
 **Work tracking** lives here under [`tracker/`](tracker/) (`python tools/track.py list --open`).
-**Durable docs** live under [`docs/`](docs/), and are written to
+**Durable docs** live under [`docs/`](docs/) — [`docs/README.md`](docs/README.md) is the index and
+says which tier each document belongs to (`ALL-CAPS.md` = normative; `design/`, `reports/`,
+`essays/`, `discussions/`, `archive/` are not authority). They are written to
 [`docs/documentation-conventions.md`](docs/documentation-conventions.md) — chiefly: **a durable doc
 states design, not measurements.** No file counts, finding counts, ratchet ceilings or test tallies
 in prose; name the constant, command or log that holds the number. The repo-local `write-docs` skill
@@ -28,8 +30,8 @@ loads those rules. The stdlib gate scripts are repo-local, in this checkout's `t
 `check-all.ps1` and `regen-forward-conformance.ps1` still live in the studio repo
 (`C:\Users\cdigg\git\studio\tools\`).
 
-Plan + status: [`docs/plato-execution-plan-2026-07-09.md`](docs/plato-execution-plan-2026-07-09.md).
-Bug catalog: [`docs/plato-library-review.md`](docs/plato-library-review.md).
+Plan + status: [`docs/archive/plato-execution-plan-2026-07-09.md`](docs/archive/plato-execution-plan-2026-07-09.md).
+Bug catalog: [`docs/reports/plato-library-review.md`](docs/reports/plato-library-review.md).
 (`docs/plato-roadmap.md` was superseded and archived 2026-07-16 — it is now
 [`docs/archive/plato-roadmap.md`](docs/archive/plato-roadmap.md), historical only.)
 
@@ -74,7 +76,7 @@ the writer code).
   `tools\regen-forward-conformance.ps1`; a consumer that wants the laws names `stdlib/tests`.
 - `legacy/stdlib-legacy/` — **Shipping stdlib** (ex-`plato-src`). **WRITABLE as of 2026-07-09** (content-leads
   refactor; the old Phase-4 freeze is retired). Edit freely for runtime/body fixes; gate =
-  `lint --strict` + `check-all.ps1` green (the golden-refresh step retired 2026-07-30). Plan: [`docs/plato-execution-plan-2026-07-09.md`](docs/plato-execution-plan-2026-07-09.md).
+  `lint --strict` + `check-all.ps1` green (the golden-refresh step retired 2026-07-30). Plan: [`docs/archive/plato-execution-plan-2026-07-09.md`](docs/archive/plato-execution-plan-2026-07-09.md).
   (`legacy/stdlib-snapshot-2026-07-09/` and `legacy/stdlib-legacy-tests/` were **deleted** in
   `0fea49a`; `legacy/` now holds `stdlib-legacy` alone. Recover either from git history if a diff
   against the pre-refactor library is ever needed.)
@@ -173,14 +175,14 @@ after every build — do not bare-`dotnet build` Plato projects when you care ab
 
 ## Language facts that are easy to get wrong
 
-The normative reference is [`docs/plato-language-semantics.md`](docs/plato-language-semantics.md).
+The normative reference is [`docs/SEMANTICS.md`](docs/SEMANTICS.md).
 The ones agents most often rediscover the hard way:
 
 - **`TupleN` exists up to 10 fields.** Tuple expressions resolve as a `TupleN` call, so a
   compilation without `primitives-tuples.plato` rejects them outright
-  (`docs/plato-language-semantics.md`, "Tuples construct types structurally").
+  (`docs/SEMANTICS.md`, "Tuples construct types structurally").
 - **Sum types are non-generic.** A generic sum is rejected with `CHK306`; `match` lowers to
-  conditionals with no new TIR node. Design doc: `docs/plato-sum-types-design-2026-07-27.md`.
+  conditionals with no new TIR node. Design doc: `docs/design/plato-sum-types-design-2026-07-27.md`.
   Consequence for the stdlib: no generic `Optional<T>` / `Maybe<T>` — see `stdlib/CONVENTIONS.md`
   for the three sanctioned partial-operation styles.
 - **Generated C# is property-free, unconditionally.** Every no-arg member emits as a method and

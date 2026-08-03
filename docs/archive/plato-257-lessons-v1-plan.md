@@ -1,11 +1,11 @@
-> **EXECUTED 2026-07-28** — see tracker issue [plato-257](../../../tracker/issues/plato-257.md). Historical record; do not execute.
+> **EXECUTED 2026-07-28** — see tracker issue [plato-257](../../tracker/issues/plato-257.md). Historical record; do not execute.
 
 # plato-257 — Lessons V1: multi-agent authoring plan
 
-**Status:** EXECUTED (2026-07-28). Tracker: [plato-257](../../../tracker/issues/plato-257.md) — closed.
-**Key input:** [`plato-src-v3/`](../plato-src-v3/) — 80 files, 150 concepts, 1111 types of
+**Status:** EXECUTED (2026-07-28). Tracker: [plato-257](../../tracker/issues/plato-257.md) — closed.
+**Key input:** [`stdlib/`](../../stdlib/) — 80 files, 150 interfaces, 1111 types of
 declared vocabulary (no bodies yet). Lessons teach the *mathematics and geometry the
-vocabulary encodes*, using v3 type/concept names as the notation.
+vocabulary encodes*, using v3 type/interface names as the notation.
 
 ## V1 goal
 
@@ -15,7 +15,7 @@ Produce a **large collection of small, self-contained lessons**. Each lesson:
   no "as we saw in…"**;
 - is interesting and useful on its own (a reader with general programming background
   and high-school math learns one real thing);
-- uses `plato-src-v3` vocabulary as its notation for definitions and examples;
+- uses `stdlib` vocabulary as its notation for definitions and examples;
 - ends with the author-agent's **recommendations for the Plato library** — things the
   act of teaching revealed as missing, awkward, or wrong in v3.
 
@@ -90,18 +90,18 @@ Target length: **150–400 lines of markdown**. Small and dense beats long and t
 1. **Self-contained.** Do not mention, link, or assume any other lesson, an index, a
    chapter number, or "the textbook". Define every term you use or drop it.
 2. **v3 names only.** Every Plato identifier in the lesson must exist in
-   `plato-src-v3`. Verify with the Plato navigation MCP (`plato_search_symbols`,
+   `stdlib`. Verify with the Plato navigation MCP (`plato_search_symbols`,
    `plato_definition` — see the `plato-mcp` skill) or by reading the source file.
    If the lesson *needs* an operation v3 lacks, do NOT invent it silently in the
    prose — show the gap explicitly ("v3 does not yet declare X") and put it in
    Library recommendations.
 3. **Respect v3 semantics.** The doc comments and conventions in
-   [`plato-src-v3/README.md`](../plato-src-v3/README.md) are normative: bare-number
+   [`stdlib/README.md`](../../stdlib/README.md) are normative: bare-number
    suffix = component count, `D` suffix = dimension of space, `Angle` never raw
-   `Number`, sum types for variants, `Self` first parameter on concept functions.
-   [`docs/plato-language-semantics.md`] (plato-261 reference) governs any language
+   `Number`, sum types for variants, `Self` first parameter on interface functions.
+   [`docs/SEMANTICS.md`] (plato-261 reference) governs any language
    claims.
-4. **Do not edit `plato-src-v3` or anything else.** One new file in `lessons/v1/`,
+4. **Do not edit `stdlib` or anything else.** One new file in `lessons/v1/`,
    period. Recommendations are written down, not applied.
 5. **No fabricated citations.** Wikipedia/textbook links welcome when the agent is
    confident of the URL; otherwise name the theorem/source without a link.
@@ -109,14 +109,14 @@ Target length: **150–400 lines of markdown**. Small and dense beats long and t
    "`08-vectors.plato`: `Vector3D` has no `Reject(Self, Self)` companion to
    `Project` — the projection lesson needs both to explain decomposition" is the bar.
    Categories to use: `missing-function`, `missing-type`, `naming`, `doc-comment`,
-   `wrong-shape`, `missing-concept`, `pedagogy` (something inexpressible/unteachable
+   `wrong-shape`, `missing-interface`, `pedagogy` (something inexpressible/unteachable
    as declared).
 
 ## Recommendations aggregation
 
 After a batch lands, the orchestrator (not the author agents) harvests every
 `## Library recommendations` section into one review doc
-(`docs/plato-257-lessons-v1-recommendations.md`), de-duplicates, and files tracker
+(`docs/reports/plato-257-lessons-v1-recommendations.md`), de-duplicates, and files tracker
 issues for the ones worth acting on. Author agents never see or reconcile each
 other's recommendations — duplication between lessons is expected and is itself
 signal (three agents independently wanting `Clamp` on `Interval` is a strong vote).
@@ -129,7 +129,7 @@ is deliberately high-level; the agent owns angle, depth, and examples.
 ### Foundations & vectors
 | Slug | Guidance | v3 files |
 |---|---|---|
-| `points-vs-vectors` | Why points and vectors are different types; `Point3D − Point3D = Vector3D`; the `Difference` concept as affine geometry made typeful. | 02, 08, 11 |
+| `points-vs-vectors` | Why points and vectors are different types; `Point3D − Point3D = Vector3D`; the `Difference` interface as affine geometry made typeful. | 02, 08, 11 |
 | `tuples-vs-vectors` | `Number3` vs `Vector3D`: when three numbers are just three numbers; why "no `Vector3`" is a naming rule with teeth. | 08 |
 | `dot-product` | The dot product as projection and as cosine; using it for "is it in front of me", facing checks, work. | 08 |
 | `cross-product` | Cross product: area, normal, handedness; why it only exists in 3D (nod to `Bivector3D`). | 08, 10 |
@@ -184,7 +184,7 @@ is deliberately high-level; the agent owns angle, depth, and examples.
 ### Curves & surfaces
 | Slug | Guidance | v3 files |
 |---|---|---|
-| `parametric-curves` | Curves as functions of t; `Curve2D/3D` concepts; parameter vs arc length; closed vs open. | 20 |
+| `parametric-curves` | Curves as functions of t; `Curve2D/3D` interfaces; parameter vs arc length; closed vs open. | 20 |
 | `bezier-curves` | Bezier from de Casteljau up: control points, convex hull property, why fonts and UIs run on cubics. | 21, 22 |
 | `interpolating-splines` | Catmull-Rom and Hermite: splines that pass *through* points; tangent choice; the animation connection. | 23 |
 | `bsplines-and-nurbs` | From Bezier to B-spline to NURBS: local control, knots, weights, why CAD standardized on NURBS. | 23, 24 |
@@ -223,7 +223,7 @@ is deliberately high-level; the agent owns angle, depth, and examples.
 |---|---|---|
 | `linear-vs-gamma` | The single most common color bug: linear vs sRGB; why `Color` is linear and 8-bit is storage. | 14, 44 |
 | `color-spaces` | HSV/HSL and friends: what "hue" is, why RGB is bad for picking and lerping colors. | 14, 44 |
-| `images-as-functions` | `Image` concept: image as a function of position; sampling, filtering, `BlendMode` basics. | 45, 46 |
+| `images-as-functions` | `Image` interface: image as a function of position; sampling, filtering, `BlendMode` basics. | 45, 46 |
 
 ### Rendering
 | Slug | Guidance | v3 files |
@@ -257,10 +257,10 @@ Write one self-contained lesson for the Plato project.
 
 Lesson slug: <slug>
 Title guidance: <guidance line from the catalog>
-Primary v3 vocabulary files: <files>, under submodules/Plato/plato-src-v3/
+Primary v3 vocabulary files: <files>, under submodules/Plato/stdlib/
 
 Read first:
-- submodules/Plato/plato-src-v3/README.md  (conventions — normative)
+- submodules/Plato/stdlib/README.md  (conventions — normative)
 - the listed v3 files (the declarations + doc comments you will teach against)
 - submodules/Plato/docs/plato-257-lessons-v1-plan.md, sections "Lesson file
   format" and "Hard rules for author agents" (normative for your output)
@@ -271,7 +271,7 @@ Touch nothing else. Do not commit.
 
 Constraints (repeated because they matter):
 - Fully standalone: no references to other lessons, chapters, or an index.
-- Every Plato identifier you use must exist in plato-src-v3; verify via the
+- Every Plato identifier you use must exist in stdlib; verify via the
   plato-navigation MCP or by reading the source. Gaps go in the
   "Library recommendations" section, not silently into prose.
 - 150-400 lines of markdown. End with "## Library recommendations" containing
@@ -294,7 +294,7 @@ recommendations.
   lessons (independence is the point; convergent recommendations are signal).
 - **After each wave** the orchestrator: (1) skims each lesson for rule violations
   (cross-references, invented identifiers — spot-check names against v3),
-  (2) harvests recommendations into `docs/plato-257-lessons-v1-recommendations.md`,
+  (2) harvests recommendations into `docs/reports/plato-257-lessons-v1-recommendations.md`,
   (3) commits the wave (`feat(plato-257): lessons v1 wave N — <slugs>`),
   (4) adjusts the brief if a systematic problem appeared.
 - **Catalog is not sacred.** An agent may narrow its lesson's scope (better one
@@ -305,7 +305,7 @@ recommendations.
 
 - [ ] Single new file at `lessons/v1/<slug>.md`, frontmatter complete.
 - [ ] No mention of other lessons, chapters, ordering, or an index.
-- [ ] Spot-checked Plato identifiers all resolve in `plato-src-v3`.
+- [ ] Spot-checked Plato identifiers all resolve in `stdlib`.
 - [ ] Teaches a real idea (a reviewer can state "what I learned" in one sentence).
 - [ ] `## Library recommendations` present with ≥1 specific, file-level item
       (or an explicit "the vocabulary fully covered this lesson's needs").
@@ -316,6 +316,6 @@ recommendations.
 - Index, table of contents, ordering, cross-links, prerequisites graph.
 - TypeScript emission, runnable snippets, interactive figures, any website
   (blocked on plato-078; comes with the V2 rewrite).
-- Editing `plato-src-v3` — recommendations are recorded, triaged separately.
+- Editing `stdlib` — recommendations are recorded, triaged separately.
 - Diagram tooling beyond ASCII art and math notation.
 - Pedagogical sequencing/consistency between lessons (V2 rewrite's job).

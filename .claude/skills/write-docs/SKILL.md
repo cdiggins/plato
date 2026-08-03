@@ -62,11 +62,13 @@ rots silently while the enforced copy moves.
 
 ## Scope
 
-Applies to `docs/*.md`, `stdlib/*.md`, `tracker/readme.md`, `AGENTS.md`, and every `README.md`.
+Applies to `docs/*.md`, `docs/design/**`, `stdlib/*.md`, `tracker/readme.md`, `AGENTS.md`, and every
+`README.md`. [`docs/README.md`](../../../docs/README.md) says which tier a document is in.
 
-Does **not** apply to dated snapshots (`*-YYYY-MM-DD.md`), `docs/archive/**`, or generated files
-(`docs/gate-log.md`, `docs/status-report*`) — recording measurements at a moment is their whole
-purpose, and the date in the name is the honest label.
+Does **not** apply to dated snapshots (`*-YYYY-MM-DD.md`), `docs/reports/**`, `docs/essays/**`,
+`docs/discussions/**`, `docs/archive/**`, or generated files (`docs/gate-log.md`,
+`docs/status-report*`, `docs/types-and-concepts-*.txt`) — recording a moment is their whole purpose,
+and the date in the name is the honest label.
 
 For README voice and structure, use the `write-readme` skill; this skill governs which facts any
 document may state.

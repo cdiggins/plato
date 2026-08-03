@@ -9,7 +9,7 @@ namespace Ara3D.Geometry.Compiler.Checking
     /// Runs at the SYMBOL level — before the elaborator lowers a match into a tag-conditional
     /// chain — so every diagnostic carries a source location (via <see cref="Compilation.GetAstNode"/>
     /// on the offending symbol) and names the sum type plus the offending/missing cases, per the
-    /// design doc catalog (docs/plato-sum-types-design-2026-07-27.md §6).
+    /// design doc catalog (docs/design/plato-sum-types-design-2026-07-27.md §6).
     ///
     /// Diagnostics (CHK3xx):
     ///   CHK300 non-exhaustive match (missing case[s])

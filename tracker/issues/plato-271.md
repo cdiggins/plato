@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-28
 closed:
-links: [ara3d-014, docs/plato-execution-plan-2026-07-09.md, plato-239, plato-261]
+links: [ara3d-014, docs/archive/plato-execution-plan-2026-07-09.md, plato-239, plato-261]
 ---
 
 ## Idea
@@ -30,7 +30,7 @@ Make an explicit product/language decision on **numeric precision** for the Plat
 - **Default for stdlib** — what `Number` means in docs and in default emit.
 - **Fixed-size vectors** — only as codegen lowering of `Vector2`… vs source-level `Float32x4` / SIMD-facing types.
 - **Fixed-size arrays** — library types (`Array2`…`ArrayN`) vs only backend representation.
-- **Cross-precision** — whether differential conformance (float vs double) is required ([docs/plato-execution-plan-2026-07-09.md](../../docs/plato-execution-plan-2026-07-09.md) already sketched this).
+- **Cross-precision** — whether differential conformance (float vs double) is required ([docs/archive/plato-execution-plan-2026-07-09.md](../../docs/archive/plato-execution-plan-2026-07-09.md) already sketched this).
 
 ## Related
 

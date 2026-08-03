@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-29
 closed:
-links: [docs/plato-library-roadmap-ideas.md, submodules/Plato/stdlib/transforms.concepts.plato, submodules/Plato/stdlib/functional.concepts.plato, submodules/Plato/stdlib/fields.concepts.plato, ara3d-sdk/examples/Ara3D.Studio.Examples/Modifiers/Deformers.cs, tracker/issues/studio-197.md, tracker/issues/studio-103.md, tracker/issues/plato-273.md, tracker/issues/ara3d-056.md]
+links: [docs/reports/plato-library-roadmap-ideas.md, submodules/Plato/stdlib/transforms.concepts.plato, submodules/Plato/stdlib/functional.concepts.plato, submodules/Plato/stdlib/fields.concepts.plato, ara3d-sdk/examples/Ara3D.Studio.Examples/Modifiers/Deformers.cs, tracker/issues/studio-197.md, tracker/issues/studio-103.md, tracker/issues/plato-273.md, tracker/issues/ara3d-056.md]
 ---
 
 ## Idea
@@ -66,7 +66,7 @@ Prefer the **combinator type** when graphs need to store "twist with sphere fall
 Falloff catalog is separate content under `ScalarField3D` (e.g. `SphereFalloff`, `BoxFalloff`, `SmoothStepRamp`), reusable by cloners, colorize, soft-select — not deformer-specific. Clamp / remap weight to `[0,1]` once in the combinator or as field adapters (`Clamp01`, `Invert`, `Multiply` fields).
 
 ## Related
-- [docs/plato-library-roadmap-ideas.md](../../docs/plato-library-roadmap-ideas.md) §0.1, §3.1 — prior brainstorm (effectors + warp catalog).
+- [docs/reports/plato-library-roadmap-ideas.md](../../docs/reports/plato-library-roadmap-ideas.md) §0.1, §3.1 — prior brainstorm (effectors + warp catalog).
 - [transforms.concepts.plato](../../submodules/Plato/stdlib/transforms.concepts.plato) — `Deformable2D`/`Deformable3D`.
 - [functional.concepts.plato](../../submodules/Plato/stdlib/functional.concepts.plato) — `Procedural.Eval` (inherited by deformations).
 - [fields.concepts.plato](../../submodules/Plato/stdlib/fields.concepts.plato) — `ScalarField3D` (weight / falloff side).

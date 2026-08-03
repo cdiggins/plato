@@ -83,7 +83,7 @@ A handful of conveniences carry a lot of weight:
 
 For the precise meaning of every construct — name resolution, overload tiers, coercions, sum
 types and `match`, and what is deliberately *not* in the language — see
-[`docs/plato-language-semantics.md`](docs/plato-language-semantics.md).
+[`docs/SEMANTICS.md`](docs/SEMANTICS.md).
 
 ## What the compiler produces
 

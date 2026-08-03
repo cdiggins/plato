@@ -1,6 +1,6 @@
 # Plato Library — Brainstorm of New Additions
 
-*Companion to `plato-library-review.md`. Grounded in `stdlib-legacy`, `Ara3D.Geometry`, and
+*Companion to `reports/plato-library-review.md`. Grounded in `stdlib-legacy`, `Ara3D.Geometry`, and
 `ara3d-sdk/examples/Ara3D.Studio.Examples` (Deformers, Clone, SweepDemo, VoxelDemo, SurfaceGenerators…).*
 
 ## 0. Two cross-cutting design ideas that multiply everything below
@@ -337,5 +337,5 @@ mathematical line), and nothing distinguishes them from bounded geometry. Propos
 | 9 | Taubin smoothing + Catmull-Clark (§3.2) | The two most-asked-for mesh ops |
 | 10 | Bounded/unbounded type cleanup (§12) | Best done before the SDF catalog freezes names |
 
-Everything above assumes the correctness work from `plato-library-review.md` lands first — a bigger
+Everything above assumes the correctness work from `reports/plato-library-review.md` lands first — a bigger
 library on an untested base just multiplies the surface for the next Rose/Lissajous.

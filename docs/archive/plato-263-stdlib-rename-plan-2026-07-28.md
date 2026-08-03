@@ -169,9 +169,9 @@ Grep and fix live docs only:
 rg -l "0[0-9]-|[1-6][0-9]-|70-intrinsics" submodules/Plato/docs submodules/Plato/lessons --glob "*.md"
 ```
 
-Update: `docs/plato-language-semantics.md`, `lessons/v1/*.md` where they cite numbered v3
+Update: `docs/SEMANTICS.md`, `lessons/v1/*.md` where they cite numbered v3
 files, `docs/plato-257-lessons-v1-*.md` if still live. Leave `docs/archive/**` untouched.
-Studio-side: `docs/plato-v3-vocabulary-report.md` cites numbered files — update; leave
+Studio-side: `docs/reports/plato-v3-vocabulary-report.md` cites numbered files — update; leave
 closed tracker issues and `tracker/DONE.md` untouched (historical record; policy below).
 
 ### Gate for Part 1

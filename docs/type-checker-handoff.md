@@ -23,9 +23,9 @@ Everything from **Normalize** onward lives in `Plato.Compiler/Checking/` (the ch
 ## Read these first (the durable context)
 
 - `docs/compiler-pipeline.md` — normalize / constrain / solve, the IRs, invariants, diagnostic codes.
-- `docs/elaborate-emit-plan.md` — the elaborate → monomorphize → emit phase scope + the TIR node shape.
-- `docs/monomorphize-plan.md` — monomorphization off the `ReifiedFunction` oracle + residual grounding.
-- `docs/emit-retarget-plan.md` — the TIR→C# emit, the differential method, the flip.
+- `docs/design/elaborate-emit-plan.md` — the elaborate → monomorphize → emit phase scope + the TIR node shape.
+- `docs/design/monomorphize-plan.md` — monomorphization off the `ReifiedFunction` oracle + residual grounding.
+- `docs/design/emit-retarget-plan.md` — the TIR→C# emit, the differential method, the flip.
 - Code: `Plato.Compiler/Checking/{Normalizer, NormalizationInvariants, CheckerModel, ConstraintGenerator,
   Solver, TypeChecker, Tir, Elaborator, TypeSubstitution, Monomorphizer}.cs`;
   `Plato.CSharpWriter/{TirCSharpBodyWriter, TirLambdaCaptureRewriter}.cs`; the `UseTir` flag in
@@ -49,7 +49,7 @@ Everything from **Normalize** onward lives in `Plato.Compiler/Checking/` (the ch
    which is now the TIR path. Never let default output drift.
 2. **.NET 8 everywhere.** Do not reintroduce net9.
 3. **No commits unless asked.** Never touch/stage: `parakeet/`, `.temp/`, `COMMIT_MSG.txt`,
-   `*.csproj.user`, `docs/additions.plato`.
+   `*.csproj.user`, `docs/archive/additions.plato`.
 4. Generated code compiles on net8.0, default LangVersion.
 
 ## Build / test / gate (from `C:\Users\cdigg\git\studio\submodules\Plato`; use absolute paths)

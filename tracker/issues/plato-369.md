@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-31
 closed:
-links: [plato-023, docs/plato-tir-scalar-lowering-plan-2026-07-12.md, tests/PlatoTests/CheckerCompletenessTests.cs, tests/PlatoTests/CheckerDiagnosticsSummaryTests.cs]
+links: [plato-023, docs/archive/plato-tir-scalar-lowering-plan-2026-07-12.md, tests/PlatoTests/CheckerCompletenessTests.cs, tests/PlatoTests/CheckerDiagnosticsSummaryTests.cs]
 ---
 
 Split from [plato-023](plato-023.md): Mission 1 only. Scalar lowering (Mission 2) already shipped.
@@ -32,7 +32,7 @@ longer blocks scalar lowering (that path shipped), but it is still the compiler 
 - `tests/PlatoTests/CheckerCompletenessTests.cs` — ratchet ceiling `MaxFunctionsWithDiagnostics = 25`.
 - `tests/PlatoTests/CheckerDiagnosticsSummaryTests.cs` — full per-function worklist printer.
 - `Plato.Compiler/Checking/` — Solver / TypeChecker / Elaborator / Monomorphizer.
-- Plan inventory: `docs/plato-tir-scalar-lowering-plan-2026-07-12.md` (Mission 1 / M1.3).
+- Plan inventory: `docs/archive/plato-tir-scalar-lowering-plan-2026-07-12.md` (Mission 1 / M1.3).
 
 ## Cause / analysis
 

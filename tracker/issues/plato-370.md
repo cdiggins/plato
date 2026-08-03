@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-31
 closed:
-links: [plato-023, decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md, docs/plato-execution-plan-2026-07-09.md]
+links: [plato-023, decisions/2026-08-01-wrapper-scalars-are-the-only-representation.md, docs/archive/plato-execution-plan-2026-07-09.md]
 ---
 
 Split from [plato-023](plato-023.md): plan step **S4** only.
@@ -38,7 +38,7 @@ Until this exists, double is a parallel handwritten stack or out of reach.
 - `writers/Plato.CSharpWriter/TirScalarLowerer.cs` — `FloatMap` only; docs mention double map.
 - `writers/Plato.CSharpWriter/CSharpWriter.cs` — `--scalar=` flag plumbing.
 - Intrinsics: need a double counterpart to the float V2 surface (see execution plan D.2).
-- Plan: `docs/plato-tir-scalar-lowering-plan-2026-07-12.md` S4; `docs/plato-execution-plan-2026-07-09.md` D.2.
+- Plan: `docs/archive/plato-tir-scalar-lowering-plan-2026-07-12.md` S4; `docs/archive/plato-execution-plan-2026-07-09.md` D.2.
 
 ## Assumptions / open questions
 

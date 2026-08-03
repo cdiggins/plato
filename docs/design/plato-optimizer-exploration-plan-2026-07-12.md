@@ -1,10 +1,10 @@
 # Optimizer exploration plan — hypotheses, benchmarks, decisions (2026-07-12)
 
-> Plan 2 of 2 (companion: `plato-consolidation-plan-2026-07-12.md`). This is a MEASUREMENT-driven
+> Plan 2 of 2 (companion: `archive/plato-consolidation-plan-2026-07-12.md`). This is a MEASUREMENT-driven
 > plan: every exploration is a falsifiable hypothesis with an experiment and a decision rule.
 > Nothing gets built into the emitter until its hand-written prototype earns its keep on the
 > benchmark suite. Prior data: `optimizer-smoke/Bench` (M2) and the `--optimize-arrays` probe
-> (`docs/optimizer-stage2-plan.md`, 1.37×).
+> (`docs/design/optimizer-stage2-plan.md`, 1.37×).
 
 ## 0. What we have already measured (facts, not assumptions)
 

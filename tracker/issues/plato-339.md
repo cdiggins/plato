@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-30
 closed:
-links: [plato-319, plato-338, submodules/Plato/docs/plato-language-semantics.md, submodules/Plato/stdlib/intrinsics-arrays.library.plato]
+links: [plato-319, plato-338, submodules/Plato/docs/SEMANTICS.md, submodules/Plato/stdlib/intrinsics-arrays.library.plato]
 ---
 
 ## Idea
@@ -53,7 +53,7 @@ walks, grids’ `ColumnCount - 1`, spline knot ends, etc.
   (`xs[..^1]`) if both exist.
 - [plato-319](plato-319.md) — dropped Eval-via-`[]`; keeps `[]` as At/indexing
   surface — from-end is an index expression, not Eval.
-- [plato-language-semantics.md](../../submodules/Plato/docs/plato-language-semantics.md) —
+- [../../docs/SEMANTICS.md](../../docs/SEMANTICS.md) —
   §6 indexing = `At(x, i)` only.
 - Forward stdlib already repeats `Count - 1` (e.g. reverse rings in
   `meshes-polygon-corners.library.plato`, `solids-csg-boolean.library.plato`,

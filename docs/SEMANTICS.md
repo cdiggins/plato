@@ -75,7 +75,7 @@ type PathSegment2D
     | Close;
 ```
 
-Rules (v1, per [`plato-sum-types-design-2026-07-27.md`](plato-sum-types-design-2026-07-27.md)):
+Rules (v1, per [`design/plato-sum-types-design-2026-07-27.md`](design/plato-sum-types-design-2026-07-27.md)):
 case names must be unique within the sum (CHK305); sums are **monomorphic** — a generic sum type
 is rejected (CHK306). A payload-free case omits the parentheses; an all-payload-free sum is the
 enum idiom (`type WindingOrder = CounterClockwise | Clockwise;`). Values are built with the

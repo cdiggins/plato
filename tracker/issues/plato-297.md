@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-29
 closed:
-links: [docs/plato-library-roadmap-ideas.md, submodules/Plato/stdlib/solids-polyhedra.plato, submodules/Plato/stdlib/meshes.plato, submodules/Plato/stdlib/meshes.concepts.plato, ara3d-sdk/src/Ara3D.Geometry/Primitives/PolygonMesh3D.cs, ara3d-sdk/src/Ara3D.Geometry/Primitives/ConwayOperators.cs, ara3d-sdk/src/Ara3D.Geometry/Primitives/Polyhedra.cs, ara3d-sdk/tests/Ara3D.SDK.GeometryTests/PolyhedraTests.cs, ara3d-sdk/examples/Ara3D.Studio.Examples/Generators/MeshGenerators.cs, plato-298, plato-273, ara3d-056, plato-301]
+links: [docs/reports/plato-library-roadmap-ideas.md, submodules/Plato/stdlib/solids-polyhedra.plato, submodules/Plato/stdlib/meshes.plato, submodules/Plato/stdlib/meshes.concepts.plato, ara3d-sdk/src/Ara3D.Geometry/Primitives/PolygonMesh3D.cs, ara3d-sdk/src/Ara3D.Geometry/Primitives/ConwayOperators.cs, ara3d-sdk/src/Ara3D.Geometry/Primitives/Polyhedra.cs, ara3d-sdk/tests/Ara3D.SDK.GeometryTests/PolyhedraTests.cs, ara3d-sdk/examples/Ara3D.Studio.Examples/Generators/MeshGenerators.cs, plato-298, plato-273, ara3d-056, plato-301]
 ---
 
 ## Idea
@@ -34,7 +34,7 @@ Grow Plato's polyhedron story beyond named Platonic/Archimedean kinds into a **c
 
 ## Related
 
-- [docs/plato-library-roadmap-ideas.md](../../docs/plato-library-roadmap-ideas.md) §4 — already sketches Archimedean/Catalan/Johnson/Kepler–Poinsot + Conway operators; this issue owns that work item.
+- [docs/reports/plato-library-roadmap-ideas.md](../../docs/reports/plato-library-roadmap-ideas.md) §4 — already sketches Archimedean/Catalan/Johnson/Kepler–Poinsot + Conway operators; this issue owns that work item.
 - [solids-polyhedra.plato](../../submodules/Plato/stdlib/solids-polyhedra.plato) — existing Platonic + Archimedean kind vocabulary (declarations).
 - [meshes.plato](../../submodules/Plato/stdlib/meshes.plato) / [meshes.concepts.plato](../../submodules/Plato/stdlib/meshes.concepts.plato) — `PolygonMesh3D`, `TriangleMesh3D`, `Meshable3D`.
 - [MeshGenerators.cs](../../ara3d-sdk/examples/Ara3D.Studio.Examples/Generators/MeshGenerators.cs) — Studio `PlatonicSolid` generator consuming C# tables today.

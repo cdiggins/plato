@@ -1,6 +1,6 @@
 # Generating C# types from Plato type definitions — design notes
 
-Design guidance for the C# writer ([`writers/Plato.CSharpWriter/`](../writers/Plato.CSharpWriter/))
+Design guidance for the C# writer ([`writers/Plato.CSharpWriter/`](../../writers/Plato.CSharpWriter/))
 when it emits a concrete struct for a Plato type definition. It covers three questions: how to keep
 the Plato surface from colliding with the BCL contract, what else a generated type should carry, and
 what a type needs to be safe for binary and span-based interop.
@@ -8,7 +8,7 @@ what a type needs to be safe for binary and span-based interop.
 This document records no measurements — no type sizes, member counts, or benchmark figures. The
 authority for what the writer emits today is the writer source and its snapshot tests; the authority
 for what stays on a struct rather than moving to an extension class is
-[`plato-struct-surface.md`](plato-struct-surface.md).
+[`plato-struct-surface.md`](../plato-struct-surface.md).
 
 ## 1. The reserved-member problem
 

@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-29
 closed:
-links: [submodules/Plato/stdlib/meshes.plato, submodules/Plato/stdlib/topology-classification.plato, submodules/Plato/stdlib/geometry.concepts.plato, submodules/Plato/stdlib/topology-half-edges.plato, submodules/Plato/earcut/earcut.plato, docs/geometry3sharp-port-candidates.md, docs/ara3d-modifiers-generators-backlog-2026-07-16.md, plato-297, ara3d-056, plato-273]
+links: [submodules/Plato/stdlib/meshes.plato, submodules/Plato/stdlib/topology-classification.plato, submodules/Plato/stdlib/geometry.concepts.plato, submodules/Plato/stdlib/topology-half-edges.plato, submodules/Plato/earcut/earcut.plato, docs/reports/geometry3sharp-port-candidates.md, docs/ara3d-modifiers-generators-backlog-2026-07-16.md, plato-297, ara3d-056, plato-273]
 ---
 
 ## Idea
@@ -39,7 +39,7 @@ Make sure Plato can **properly represent polygon meshes**, including the split b
 - [geometry.concepts.plato](../../submodules/Plato/stdlib/geometry.concepts.plato) — marker `Manifold`.
 - [topology-half-edges.plato](../../submodules/Plato/stdlib/topology-half-edges.plato) / meshes-topology — hole-bordering half-edges already named.
 - [earcut.plato](../../submodules/Plato/earcut/earcut.plato) — 2D `PolygonWithHoles` + triangulation.
-- [docs/geometry3sharp-port-candidates.md](../../docs/geometry3sharp-port-candidates.md) — immutable topology; state manifold preconditions in types.
+- [docs/reports/geometry3sharp-port-candidates.md](../../docs/reports/geometry3sharp-port-candidates.md) — immutable topology; state manifold preconditions in types.
 - [docs/ara3d-modifiers-generators-backlog-2026-07-16.md](../../docs/ara3d-modifiers-generators-backlog-2026-07-16.md) — manifoldness diagnostics as mesh-analysis foundation.
 - [plato-297](plato-297.md) — polyhedra need hole-free manifold polygon meshes as operator domain.
 - [ara3d-056](ara3d-056.md) / [plato-273](plato-273.md) — solid/BREP/mesh capability and stdlib migration context.

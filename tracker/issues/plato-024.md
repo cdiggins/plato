@@ -9,7 +9,7 @@ risk: med
 area: plato
 created: 2026-07-16
 closed:
-links: [docs/plato-rust-writer-plan.md]
+links: [docs/design/plato-rust-writer-plan.md]
 ---
 
 Repeat the TypeScript proof of concept for Rust: compile geometry.plato, port 12 demo drivers, cargo test passes. Plan doc is self-contained.

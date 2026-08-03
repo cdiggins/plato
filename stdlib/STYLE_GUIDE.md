@@ -83,7 +83,7 @@ when the meaning is obvious in context.
 ## Arithmetic spelling — prefer operators
 
 `+` / `*` / `-` / `/` are sugar for `Add` / `Multiply` / `Subtract` / `Divide`
-(see `docs/plato-language-semantics.md` §6). In library bodies, prefer operators
+(see `docs/SEMANTICS.md` §6). In library bodies, prefer operators
 so formulas read as math. Keep the named form at **definition sites**
 (`Add(a, b) => …`) and when UFCS chaining clarifies.
 

@@ -29,7 +29,7 @@ Add a single, normative **language semantics** document for Plato: succinct and 
 
 ## Design decisions
 
-- **Home path** — new `submodules/Plato/docs/plato-language-semantics.md` vs. expanding `plato-for-agents.md`. Separate file keeps agent ops/codegen guidance distinct from normative meaning; agents doc then links to it.
+- **Home path** — new `submodules/Plato/docs/SEMANTICS.md` vs. expanding `plato-for-agents.md`. Separate file keeps agent ops/codegen guidance distinct from normative meaning; agents doc then links to it.
 - **Normative vs descriptive** — "this is what the language means" (normative for authors) vs. "this is what the compiler currently does" (tied to TIR passes). Prefer normative wording checked against the checker; note known gaps where behavior is underspecified.
 - **Depth of type system** — surface rules (implements, `Self`, library UFCS, tuple construction, conversions, operators) vs. full constraint-solver tiers from `compiler-pipeline.md`. Surface rules first; deep solver detail stays in the handoff docs with a one-paragraph pointer.
 - **Examples** — minimal invented snippets vs. citations from `plato-src`. Prefer tiny self-contained examples plus one real stdlib cite when accuracy needs it.
@@ -63,7 +63,7 @@ Strengthens the Plato authoring seam: one normative file agents and humans treat
 
 ## Done means
 
-- [x] `submodules/Plato/docs/plato-language-semantics.md` exists and covers: the three constructs, sum types + `match` (v1 rules: monomorphic, exhaustive, positional binders, no default arm), purity/restrictions, UFCS & name/overload resolution (the exact<generic<concept<conversion tiers, author view), interfaces/`Self`/monomorphization, construction/conversion/operator rules (incl. the operator-name table and `_: Type` statics), grammar-vs-checked-language distinction, explicit non-features (affine `unique` reserved; no generic sums; no doubles; no modules)
+- [x] `submodules/Plato/docs/SEMANTICS.md` exists and covers: the three constructs, sum types + `match` (v1 rules: monomorphic, exhaustive, positional binders, no default arm), purity/restrictions, UFCS & name/overload resolution (the exact<generic<concept<conversion tiers, author view), interfaces/`Self`/monomorphization, construction/conversion/operator rules (incl. the operator-name table and `_: Type` statics), grammar-vs-checked-language distinction, explicit non-features (affine `unique` reserved; no generic sums; no doubles; no modules)
 - [x] Claims are accurate against current compiler acceptance (spot-checked with `Plato.CLI lint` on a scratch fixture exercising the claimed conveniences, plus the existing `plato-test-sum/` fixtures; no aspirational features presented as shipping). The spot check caught and the doc now records two nuances: tuple expressions resolve via the stdlib `TupleN` types, and unmet `implements` obligations are LINT001 + a throw stub, not compile errors.
 - [x] Works for both stdlib generations: `concept`/`interface` alias noted; examples valid in `plato-src-v3` style
 - [x] `plato-for-agents.md` (and README) link to it as the semantics entry

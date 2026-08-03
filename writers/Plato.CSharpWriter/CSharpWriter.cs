@@ -389,7 +389,7 @@ namespace Ara3D.Geometry.CSharpWriter
         // MATERIALIZATION positions (constructor / tuple arguments — results stored into structs —
         // and multi-referenced local bindings) are rewritten to the eager MapEager/MapRangeEager
         // intrinsics, so multi-consumed pipelines evaluate each element once instead of per access
-        // (see TirArrayMaterializer + docs/optimizer-stage2-plan.md). TIR-path only; sound for the
+        // (see TirArrayMaterializer + docs/design/optimizer-stage2-plan.md). TIR-path only; sound for the
         // pure language, gated on profitability shape. Default (false) output is unchanged.
         public bool OptimizeArrays;
 

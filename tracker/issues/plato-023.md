@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-16
 closed: 2026-07-31
-links: [docs/plato-tir-scalar-lowering-plan-2026-07-12.md, plato-369, plato-370]
+links: [docs/archive/plato-tir-scalar-lowering-plan-2026-07-12.md, plato-369, plato-370]
 ---
 
 Post-C4 endgame (original): finish type checker, turn `--scalar` erasure into a TIR lowering

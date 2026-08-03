@@ -17,8 +17,8 @@ decision. Where it recommends, it recommends; the decisions are yours.*
 
 **Source-of-truth note.** The authoritative docs are `plato-overview.md`
 (your vision), `docs/plato-roadmap.md` (execution log + decisions),
-`docs/plato-library-review.md` (verified bug catalog), and the Plato source
-itself. `docs/recommendation2.md` and `docs/standard-library-recommendations.md`
+`docs/reports/plato-library-review.md` (verified bug catalog), and the Plato source
+itself. `docs/archive/recommendation2.md` and `docs/archive/standard-library-recommendations.md`
 are **AI-generated idea banks** — now banner-marked as such — and are cited here
 only as proposals, never as settled direction.
 
@@ -55,7 +55,7 @@ Triangle2D signed-area sign).
   any `+`/`−` chain emit wrong.
 - **No library content has been added** beyond `unique.plato`. The stdlib is
   still the same ~3,500 lines / 25 files. None of the SDF / surfaces / deformers
-  / PRNG / curve-machinery content from `plato-library-roadmap-ideas.md` exists.
+  / PRNG / curve-machinery content from `../reports/plato-library-roadmap-ideas.md` exists.
 - **Phase 5 (double precision)** deferred. **Phase 7 (GLSL PoC)** planned, not
   started. **Full type checker** deferred.
 
@@ -77,7 +77,7 @@ Per the handoff doc (which explicitly supersedes older docs), the approved order
    unification).
 4. **Backlog (unordered, ask first)**: harvest KitchenSink; PRNG + noise; static
    affine pass; double precision; the new-from-scratch C# library; and the
-   library-content expansion from `plato-library-roadmap-ideas.md`.
+   library-content expansion from `../reports/plato-library-roadmap-ideas.md`.
 
 The decisive observation: **the thing your goal #1 most wants — library content —
 is scheduled dead last**, in the "ask first" backlog, behind a portability PoC
@@ -89,7 +89,7 @@ and a bug wave.
 
 1. **`Amount` vs `Fraction` for the lerp parameter — direct contradiction.**
    `standard-library-recommendations.md` §3 recommends `Amount`. But
-   `naming-fraction-and-rational-types.md` argues *against* `Amount` (it is
+   `../design/naming-fraction-and-rational-types.md` argues *against* `Amount` (it is
    already the field name on `UniformScale2D`, `Scale2D`, `Scaling3D`) and
    recommends `Fraction`. Two AI conversations reached opposite conclusions, and
    `Amount` is genuinely already taken. **Needs your ruling.** (Both agree on

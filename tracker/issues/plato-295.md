@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-29
 closed: 2026-07-29
-links: [submodules/Plato/stdlib/planar-triangles.library.plato, submodules/Plato/stdlib/lines.library.plato, submodules/Plato/stdlib/spatial-patches.library.plato, submodules/Plato/stdlib/spatial-simplices.library.plato, submodules/Plato/stdlib/lines-planes.library.plato, submodules/Plato/stdlib-legacy/meshes.library.plato, submodules/Plato/docs/plato-language-semantics.md, tracker/issues/plato-231.md]
+links: [submodules/Plato/stdlib/planar-triangles.library.plato, submodules/Plato/stdlib/lines.library.plato, submodules/Plato/stdlib/spatial-patches.library.plato, submodules/Plato/stdlib/spatial-simplices.library.plato, submodules/Plato/stdlib/lines-planes.library.plato, submodules/Plato/stdlib-legacy/meshes.library.plato, submodules/Plato/docs/SEMANTICS.md, tracker/issues/plato-231.md]
 ---
 
 ## Issue
@@ -47,7 +47,7 @@ Idiom already in shipping library:
 - `submodules/Plato/stdlib-legacy/meshes.library.plato:16–21` — `Points` as `[x.A, x.B, …]`
 - `submodules/Plato/stdlib-legacy/geometry.library.plato:155–175` — `Corners(Bounds2D/3D)` as literals
 
-Semantics: `submodules/Plato/docs/plato-language-semantics.md:184` — `[a, b, c]` → `Array<T>`.
+Semantics: `submodules/Plato/docs/SEMANTICS.md:184` — `[a, b, c]` → `Array<T>`.
 
 Out of scope: `MapRange` over a **runtime** count (`points.Count.MapRange`, polygon
 kernels, etc.) — those need the HOF.

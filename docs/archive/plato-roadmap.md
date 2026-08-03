@@ -12,8 +12,8 @@
 > (`Sdf3D`). The Phase 4 section below is therefore DONE; Phases 5/7 and the
 > optimizer stages remain as written but re-ordered behind content.
 
-*Execution plan for the workstreams discussed in `plato-library-review.md`,
-`plato-library-roadmap-ideas.md`, and `docs/discussions/plato-uniqueness-types-july-7-2026-14h42.md`.
+*Execution plan for the workstreams discussed in `../reports/plato-library-review.md`,
+`../reports/plato-library-roadmap-ideas.md`, and `docs/discussions/plato-uniqueness-types-july-7-2026-14h42.md`.
 Scope: Plato compiler (`submodules/Plato`) and the C# targets in `ara3d-sdk`.
 Out of scope for now: TypeScript and Rust writers, and any change to the current library's behavior.*
 
@@ -117,7 +117,7 @@ The Plato test library, built so it later becomes the cross-target conformance s
       *parameters*. This is a prerequisite for P5 (double) reusing the same suite.
 - [ ] **1.5 Known-failures manifest.** The laws *will* fail on the known bugs (`MagnitudeSquared`,
       `Barycentric`, `SmootherStep`, curve formulas, `Bounds2D.Corners`, …). Since the library is frozen,
-      record each as `[KnownFailure("plato-library-review.md §1.x")]` — the suite stays green, and the
+      record each as `[KnownFailure("../reports/plato-library-review.md §1.x")]` — the suite stays green, and the
       manifest is the work queue for Phase 4.
 - [ ] **1.6 Linter (compiler side, `Plato.CLI lint`).** Five checks over the existing AST/symbol tables:
       unfulfilled interface obligations; `where` clauses naming undeclared type variables; declared-but-
@@ -379,7 +379,7 @@ per transform); benchmark delta committed to the doc.
 Only after P1 exists, so every fix flips a `KnownFailure` to a passing law/witness test.
 
 - [ ] **4.1** For each manifest entry: un-quarantine the test (now failing), apply the one-line fix from
-      `plato-library-review.md §1`, regenerate, test passes. One commit per fix, review-doc reference in
+      `../reports/plato-library-review.md §1`, regenerate, test passes. One commit per fix, review-doc reference in
       the message.
 - [ ] **4.2** The behavioral fixes that need a decision first (flagged in the review): TRS/Pose
       composition order; `Angle` implicit-conversion removal (breaking); `Magnitude` vs `Length`
@@ -490,7 +490,7 @@ Thin vertical slice; explicitly a PoC, not a backend.
   `CheckerDiagnosticsSummaryTests` prints the burn-down worklist). Tightening the permissive solver
   rules (Self-unifies-anything, syntactic emission) remains deferred until the count is lower.
   Handoff: `submodules/Plato/docs/type-checker-handoff.md`.
-- Library content expansion (`plato-library-roadmap-ideas.md`) — resumes after P4, on a tested base.
+- Library content expansion (`../reports/plato-library-roadmap-ideas.md`) — resumes after P4, on a tested base.
   **First slice DONE 2026-07-10:** `library Solids` implements the `IProceduralSurface` obligations
   (Eval/ClosedX/ClosedY) for all 11 `ISolid` types; the `_NPrism`-class NotImplementedException
   stubs are gone (numerically probe-verified).
@@ -520,5 +520,5 @@ Thin vertical slice; explicitly a PoC, not a backend.
   flagship `plato-src-v3` kind-pattern types to real sums (`PathSegment2D`, `Paint`,
   `MaskSource2D`, `ScalarFieldNode2D/3D`, `WindowFunction`); the ~100 pure-enum `XxxKind` types
   remain as a follow-up sweep. Design: `submodules/Plato/docs/plato-sum-types-design-2026-07-27.md`;
-  survey: `plato-sum-types-v3-survey.md`. Deferred: GLSL/TS/Rust emission, nested patterns, guards,
+  survey: `../reports/plato-sum-types-v3-survey.md`. Deferred: GLSL/TS/Rust emission, nested patterns, guards,
   default arm, recursive sums, bare constructors, generic sums.

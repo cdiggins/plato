@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-28
 closed:
-links: [ara3d-056, docs/plato-library-review.md, ara3d-sdk/src/Ara3D.Geometry, submodules/Plato/plato-src]
+links: [ara3d-056, docs/reports/plato-library-review.md, ara3d-sdk/src/Ara3D.Geometry, submodules/Plato/plato-src]
 ---
 
 ## Idea
@@ -21,7 +21,7 @@ Do a structured differential between **`Ara3D.Geometry`** (handwritten + Plato-g
 
 - Studio/runtime still lean on `Ara3D.Geometry`; Plato is not a full replacement yet.
 - Some `Ara3D.Geometry` types are already Plato-generated (`Plato.Generated`); the diff must separate generated vs handwritten.
-- [docs/plato-library-review.md](../../docs/plato-library-review.md) is prior honest assessment, not a live inventory.
+- [docs/reports/plato-library-review.md](../../docs/reports/plato-library-review.md) is prior honest assessment, not a live inventory.
 
 ## Design decisions
 
@@ -33,7 +33,7 @@ Do a structured differential between **`Ara3D.Geometry`** (handwritten + Plato-g
 ## Related
 
 - [ara3d-056](ara3d-056.md) — capability interfaces in C# aimed at future Plato interfaces.
-- [docs/plato-library-review.md](../../docs/plato-library-review.md) — qualitative review.
+- [docs/reports/plato-library-review.md](../../docs/reports/plato-library-review.md) — qualitative review.
 - [plato-269](plato-269.md) — internal Plato differential; do that first or in parallel with clear columns.
 - [ara3d-022](ara3d-022.md) — surfacing geometry as Studio tools (consumer pressure).
 

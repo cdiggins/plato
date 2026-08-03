@@ -5,7 +5,7 @@ per-file outline, and name search. It reuses the compiler's parser and binder â€
 resolver here, and there is no MCP server, IDE integration, or file watcher either. Those are
 separate consumers that sit on top of this.
 
-Plan and decisions: `docs/plato-navigation-index-plan.md` in the studio repo. Tracker: `plato-236`.
+Plan and decisions: `docs/archive/plato-navigation-index-plan.md` in the studio repo. Tracker: `plato-236`.
 
 ## Using it
 

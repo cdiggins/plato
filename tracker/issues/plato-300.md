@@ -10,13 +10,13 @@ area: plato
 sprint: 
 created: 2026-07-29
 closed: 2026-07-29
-links: [submodules/Plato/stdlib/STYLE_GUIDE.md, submodules/Plato/stdlib/CONVENTIONS.md, submodules/Plato/docs/plato-for-agents.md, submodules/Plato/docs/plato-language-semantics.md, submodules/Plato/stdlib/deformations.library.plato, tracker/issues/plato-299.md]
+links: [submodules/Plato/stdlib/STYLE_GUIDE.md, submodules/Plato/stdlib/CONVENTIONS.md, submodules/Plato/docs/plato-for-agents.md, submodules/Plato/docs/SEMANTICS.md, submodules/Plato/stdlib/deformations.library.plato, tracker/issues/plato-299.md]
 ---
 
 ## Idea
 
 In Plato, `+` / `*` / `-` / `/` are sugar for the well-known names `Add` / `Multiply` /
-`Subtract` / `Divide` (see `plato-language-semantics.md` §6). Forward stdlib bodies often
+`Subtract` / `Divide` (see `../../docs/SEMANTICS.md` §6). Forward stdlib bodies often
 spell arithmetic as method chains (`origin.Add(v.Multiply(t))`) even when the same file
 already uses operators for scalars (`1.0 + self.Rate * t`). Prefer the operator spelling for
 ordinary arithmetic so formulas read as math; keep the method spelling only when it is the
@@ -44,7 +44,7 @@ definition site (`Add(a, b) => …`) or when chaining/UFCS genuinely clarifies.
 - [plato-299](plato-299.md) — owns CONVENTIONS authoring/API section; this rule should land
   there as a concrete Plato idiom.
 - [plato-295](plato-295.md) — sibling style preference (array literals); same landing zone.
-- `plato-language-semantics.md` §6 — operators are names; table is normative.
+- `../../docs/SEMANTICS.md` §6 — operators are names; table is normative.
 - `stdlib/deformations.library.plato` — mixed style that triggered the observation.
 
 ## Approaches

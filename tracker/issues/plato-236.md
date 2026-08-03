@@ -10,5 +10,5 @@ area: plato
 sprint: 
 created: 2026-07-27
 closed: 2026-07-27
-links: [docs/plato-navigation-index-plan.md, submodules/Plato/PlatoCompiler/Symbols/SymbolFactory.cs, submodules/Plato/plato-src, submodules/Plato/plato-test-src]
+links: [docs/archive/plato-navigation-index-plan.md, submodules/Plato/PlatoCompiler/Symbols/SymbolFactory.cs, submodules/Plato/plato-src, submodules/Plato/plato-test-src]
 ---

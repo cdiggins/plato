@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-29
 closed: 2026-07-29
-links: [tracker/issues/plato-297.md, ara3d-sdk/src/Ara3D.Geometry/Primitives/ConwayOperators.cs, ara3d-sdk/src/Ara3D.Geometry/Primitives/Polyhedra.cs, ara3d-sdk/src/Ara3D.Geometry/Primitives/PolygonMesh3D.cs, submodules/Plato/stdlib/solids-polyhedra.plato, submodules/Plato/stdlib/meshes.plato, submodules/Plato/stdlib/LIBRARIES.md, docs/plato-library-roadmap-ideas.md, plato-298]
+links: [tracker/issues/plato-297.md, ara3d-sdk/src/Ara3D.Geometry/Primitives/ConwayOperators.cs, ara3d-sdk/src/Ara3D.Geometry/Primitives/Polyhedra.cs, ara3d-sdk/src/Ara3D.Geometry/Primitives/PolygonMesh3D.cs, submodules/Plato/stdlib/solids-polyhedra.plato, submodules/Plato/stdlib/meshes.plato, submodules/Plato/stdlib/LIBRARIES.md, docs/reports/plato-library-roadmap-ideas.md, plato-298]
 ---
 
 ## Idea
@@ -39,7 +39,7 @@ Implement the hybrid polyhedra catalog **in Plato** (`stdlib/`): Platonic seed `
 - [solids-polyhedra.plato](../../submodules/Plato/stdlib/solids-polyhedra.plato) / [meshes.plato](../../submodules/Plato/stdlib/meshes.plato) — vocabulary.
 - [LIBRARIES.md](../../submodules/Plato/stdlib/LIBRARIES.md) — library file rules, small functions, no lambda-captured builders.
 - [plato-298](plato-298.md) — manifold / holes; operators assume hole-free manifold seeds for v1.
-- [docs/plato-library-roadmap-ideas.md](../../docs/plato-library-roadmap-ideas.md) §4 — Conway catalog sketch.
+- [docs/reports/plato-library-roadmap-ideas.md](../../docs/reports/plato-library-roadmap-ideas.md) §4 — Conway catalog sketch.
 
 ## Approaches
 

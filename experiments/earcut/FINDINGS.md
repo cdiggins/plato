@@ -131,7 +131,7 @@ Filed here because earcut.plato is the first consumer of several paths.
    receiver parameter sufficed.
 6. **Stdlib gaps this algorithm wanted:** a first-index-where / find operation
    (every search here is a fold carrying a −1 sentinel — an `Option` type per
-   `docs/additions.plato` §1 would name this); array `Sum`; and the planar
+   `docs/archive/additions.plato` §1 would name this); array `Sum`; and the planar
    predicates (`Turn`/orient2d, point-in-triangle, proper segment crossing,
    on-segment, ray parity) which belong in a stdlib `Planar` library — they are
    the foundation of *every* 2D computational-geometry algorithm.

@@ -4,7 +4,7 @@ The checker front-end (normalize → constrain → solve) computes a *solved* vi
 function. This phase turns that view into a fully-typed, fully-resolved IR (the **TIR**)
 that backends consume, so the writers stop re-deriving semantics at emit time. All three
 sub-passes are built; since increment 3 the TIR is the production emit path for
-default-style member bodies (see `emit-retarget-plan.md` and `monomorphize-plan.md` for
+default-style member bodies (see `design/emit-retarget-plan.md` and `design/monomorphize-plan.md` for
 where each sub-pass ended up — this doc is the original scope).
 
 ```

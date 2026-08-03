@@ -558,7 +558,7 @@ namespace Ara3D.Geometry.CSharpWriter
             // packing that agrees with the other side of an interop boundary. `Pack=1` bought no
             // determinism we did not already have and cost alignment: no aligned SIMD loads,
             // `Vector128`/`Vector256` unusable over the fields, and faulting unaligned access on
-            // some ARM64 paths. See docs/csharp-type-generation-design.md.
+            // some ARM64 paths. See docs/design/csharp-type-generation-design.md.
             TypeWriter.WriteLine(IsPrimitive
                 ? "[StructLayout(LayoutKind.Sequential)]"
                 : "[DataContract, StructLayout(LayoutKind.Sequential)]");

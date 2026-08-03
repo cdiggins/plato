@@ -77,7 +77,7 @@ polygon. Every downstream consumer that needs triangles today has to leave the t
 - Constructive polygon operations belong in the forward stdlib rather than a sidecar,
   per plato-273.
 - The forward stdlib's language subset (no `while`, no `for`, `var` + `return` only —
-  `docs/plato-language-semantics.md` §8) is the binding constraint on every item here.
+  `docs/SEMANTICS.md` §8) is the binding constraint on every item here.
   Anything whose textbook formulation is a mutable sweep-line or linked-list mutation must
   be re-expressed as folds over arrays, at a real asymptotic cost. Items 2, 3 and 13 are
   the ones where that hurts most.

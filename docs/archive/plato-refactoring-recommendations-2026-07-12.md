@@ -1,7 +1,7 @@
 # Plato refactoring recommendations: what to do next
 
 **Date:** 2026-07-12  
-**Purpose:** consolidate the current Plato status, [`additions.plato`](../submodules/Plato/docs/additions.plato), the [Geometry3Sharp port assessment](geometry3sharp-port-candidates-for-plato.md), and the previous review, roadmap, reassessment, compiler, optimizer, and Earcut findings into one actionable refactoring direction.
+**Purpose:** consolidate the current Plato status, [`archive/additions.plato`](../submodules/Plato/docs/additions.plato), the [Geometry3Sharp port assessment](geometry3sharp-port-candidates-for-plato.md), and the previous review, roadmap, reassessment, compiler, optimizer, and Earcut findings into one actionable refactoring direction.
 
 ## Executive recommendation
 
@@ -26,12 +26,12 @@ This report treats newer code and status documents as authoritative over older p
 | Source | What it contributes | How it is used here |
 |---|---|---|
 | [`PROGRESS.md`](../submodules/Plato/PROGRESS.md) | Current optimizer mission and pending closeout | Defines the immediate first task |
-| [`additions.plato`](../submodules/Plato/docs/additions.plato) | Proposed semantic types, queries, half-edge navigation, builders, and mesh operations | Reviewed item-by-item; promoted only where a current consumer justifies it |
+| [`archive/additions.plato`](../submodules/Plato/docs/additions.plato) | Proposed semantic types, queries, half-edge navigation, builders, and mesh operations | Reviewed item-by-item; promoted only where a current consumer justifies it |
 | [Geometry3Sharp port assessment](geometry3sharp-port-candidates-for-plato.md) | Ranked geometry/data-structure candidates and dependency sequence | Supplies the query → topology → BVH → mesh-operation ladder |
 | [`earcut/FINDINGS.md`](../submodules/Plato/earcut/FINDINGS.md) | Evidence from a real nontrivial Plato algorithm | Elevates concrete compiler/runtime gaps and validates functional geometry |
 | [`plato-roadmap.md`](plato-roadmap.md) and [execution plan](plato-execution-plan-2026-07-09.md) | Decisions, completed work, and approved direction | Prevents re-planning completed phases |
-| [Codebase assessment](plato-codebase-assessment-2026-07-10.md) and [type-checker handoff](../submodules/Plato/docs/type-checker-handoff.md) | Compiler duplication, checker completeness, and TIR status | Drives compiler simplification recommendations |
-| [Library review](plato-library-review.md) and [library ideas](plato-library-roadmap-ideas.md) | Correctness policy, content priorities, naming/discoverability | Supplies content scope and guardrails |
+| [Codebase assessment](../reports/plato-codebase-assessment-2026-07-10.md) and [type-checker handoff](../submodules/Plato/docs/type-checker-handoff.md) | Compiler duplication, checker completeness, and TIR status | Drives compiler simplification recommendations |
+| [Library review](../reports/plato-library-review.md) and [library ideas](../reports/plato-library-roadmap-ideas.md) | Correctness policy, content priorities, naming/discoverability | Supplies content scope and guardrails |
 | [Optimizer stage-2 plan](../submodules/Plato/docs/optimizer-stage2-plan.md) and [emitter phases](../submodules/Plato/docs/plato-emitter-phases.md) | Current TIR pass architecture | Defines what to finish, stabilize, or defer |
 
 When these disagree, the order of authority is: current source and gates → current `PROGRESS.md` → dated status/DONE notes → approved execution-plan decisions → older recommendation documents.
@@ -151,7 +151,7 @@ Once the new content is stable, delete legacy emission/resolution machinery, gen
 
 After item 10, the next coherent vertical slice is immutable mesh twins/adjacency → components/boundaries/normals/mass properties → flat AABB tree.
 
-## Specific decisions on `additions.plato`
+## Specific decisions on `archive/additions.plato`
 
 | Proposal | Decision | Refinement |
 |---|---|---|
@@ -199,4 +199,4 @@ The next cycle is successful when:
 
 The infrastructure investment has paid off: Plato now has a typed IR, multi-target writers, conformance laws, affine builders, function-valued fields, and serious optimizer machinery. The next refactoring should make those capabilities disappear into a simpler authoring experience rather than continuing to enlarge the machinery itself.
 
-The best proof is a ladder of increasingly capable geometry written clearly in Plato: **Earcut without workarounds → robust queries → immutable mesh topology → BVH → one real mesh operation**. That ladder combines the strongest recommendations from `additions.plato`, the Geometry3Sharp assessment, and the earlier roadmaps while giving every compiler change a real consumer and every new library abstraction a measurable reason to exist.
+The best proof is a ladder of increasingly capable geometry written clearly in Plato: **Earcut without workarounds → robust queries → immutable mesh topology → BVH → one real mesh operation**. That ladder combines the strongest recommendations from `archive/additions.plato`, the Geometry3Sharp assessment, and the earlier roadmaps while giving every compiler change a real consumer and every new library abstraction a measurable reason to exist.

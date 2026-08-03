@@ -10,12 +10,12 @@ area: plato
 sprint: 
 created: 2026-07-28
 closed:
-links: [plato-230, plato-263, docs/plato-source-vocabulary-comparison.md, docs/plato-v3-vocabulary-report.md]
+links: [plato-230, plato-263, docs/reports/plato-source-vocabulary-comparison.md, docs/reports/plato-v3-vocabulary-report.md]
 ---
 
 ## Idea
 
-Produce an up-to-date **differential** between the new Plato library (`plato-src-v3`) and the old/shipping one (`plato-src`): what types/interfaces exist only on one side, naming/recipe changes (`interface`+`I` vs `concept`), missing bodies, and migration priorities. Prior art compared `plato-src`↔`plato-src-v2` ([docs/plato-source-vocabulary-comparison.md](../../docs/plato-source-vocabulary-comparison.md)) and summarized v3 alone ([docs/plato-v3-vocabulary-report.md](../../docs/plato-v3-vocabulary-report.md)); this idea is the **v3 ↔ shipping** gap analysis agents and humans need for porting.
+Produce an up-to-date **differential** between the new Plato library (`plato-src-v3`) and the old/shipping one (`plato-src`): what types/interfaces exist only on one side, naming/recipe changes (`interface`+`I` vs `concept`), missing bodies, and migration priorities. Prior art compared `plato-src`↔`plato-src-v2` ([docs/reports/plato-source-vocabulary-comparison.md](../../docs/reports/plato-source-vocabulary-comparison.md)) and summarized v3 alone ([docs/reports/plato-v3-vocabulary-report.md](../../docs/reports/plato-v3-vocabulary-report.md)); this idea is the **v3 ↔ shipping** gap analysis agents and humans need for porting.
 
 ## Assumptions
 
@@ -32,8 +32,8 @@ Produce an up-to-date **differential** between the new Plato library (`plato-src
 
 ## Related
 
-- [docs/plato-source-vocabulary-comparison.md](../../docs/plato-source-vocabulary-comparison.md) — v1↔v2; pattern to reuse, not duplicate as-is.
-- [docs/plato-v3-vocabulary-report.md](../../docs/plato-v3-vocabulary-report.md) — v3 inventory; open migration questions.
+- [docs/reports/plato-source-vocabulary-comparison.md](../../docs/reports/plato-source-vocabulary-comparison.md) — v1↔v2; pattern to reuse, not duplicate as-is.
+- [docs/reports/plato-v3-vocabulary-report.md](../../docs/reports/plato-v3-vocabulary-report.md) — v3 inventory; open migration questions.
 - [plato-230](plato-230.md) / [plato-263](plato-263.md) — v3 creation; possible rename.
 - [plato-270](plato-270.md) — sibling differential vs `Ara3D.Geometry`.
 

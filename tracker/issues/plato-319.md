@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-29
 closed: 2026-07-29
-links: [submodules/Plato/stdlib/functional.concepts.plato, submodules/Plato/stdlib/curves.concepts.plato, submodules/Plato/docs/plato-language-semantics.md, submodules/Plato/docs/plato-for-agents.md]
+links: [submodules/Plato/stdlib/functional.concepts.plato, submodules/Plato/stdlib/curves.concepts.plato, submodules/Plato/docs/SEMANTICS.md, submodules/Plato/docs/plato-for-agents.md]
 ---
 
 ## Idea
@@ -24,7 +24,7 @@ writes as a postfix argument list instead of an explicit `.Eval(..)`. Two candid
 Today `Eval` is already the unifying verb on `Procedural<TDomain, TRange>`
 (`stdlib/functional.concepts.plato`); curves/surfaces/fields inherit it. Indexing already
 exists as a *different* well-known sugar: `x[i]` ≡ `At(x, i)`
-(`docs/plato-language-semantics.md` §6). Operators are the precedent for privileged names
+(`docs/SEMANTICS.md` §6). Operators are the precedent for privileged names
 (`Add` → `+`).
 
 ## Assumptions
@@ -59,7 +59,7 @@ exists as a *different* well-known sugar: `x[i]` ≡ `At(x, i)`
 - `submodules/Plato/stdlib/functional.concepts.plato` — `Procedural.Eval` is the interface this
   sugar would privilege.
 - `submodules/Plato/stdlib/curves.concepts.plato` — curves as `Procedural<Number, Point*>`.
-- `submodules/Plato/docs/plato-language-semantics.md` §6 — operators-as-names; `x[i]` ≡ `At(x, i)`.
+- `submodules/Plato/docs/SEMANTICS.md` §6 — operators-as-names; `x[i]` ≡ `At(x, i)`.
 - `submodules/Plato/docs/plato-for-agents.md` — uniform call syntax `a.b(c)` ≡ `b(a, c)`.
 
 ## Approaches
@@ -96,7 +96,7 @@ checking are boring. When revived, default proposal is `(args)` → `Eval`, not 
 ## Bedrock
 
 Strengthens the **well-known-name → surface-syntax** seam already used by operators and
-`At`/`[]` (`plato-language-semantics.md` §6 + `Plato.AST/Operators.cs`): one more privileged
+`At`/`[]` (`../../docs/SEMANTICS.md` §6 + `Plato.AST/Operators.cs`): one more privileged
 name (`Eval`) with a documented desugar, not a new evaluation model. **Verdict:
 simplest-along-the-grain** — pure desugar to `Eval`; must NOT add `Apply`/`Invoke`, must NOT
 overload `[]` for both `At` and `Eval`, must NOT change `Procedural`’s obligation set.

@@ -395,7 +395,7 @@ and every latency claim above should be restated against it in the PR descriptio
 
 1. Warm check latency (above) — the one number that can reorder this plan.
 2. Does the planned stdlib reorg (`.types.plato` rename + foundation/geometry/graphics/
-   future folders, `docs/plato-stdlib-reorg-plan-2026-07-30.md`) change enumeration?
+   future folders, `docs/design/plato-stdlib-reorg-plan-2026-07-30.md`) change enumeration?
    `SourceSnapshot.FromDirectories` and this server must follow whatever
    recursive/per-folder policy the reorg lands (Plato.CLI is TopDirectoryOnly today);
    P1 should take its file enumeration from one shared helper so the two cannot drift.

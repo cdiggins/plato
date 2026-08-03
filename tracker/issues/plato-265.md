@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-28
 closed:
-links: [plato-230, submodules/Plato/plato-src-v3, docs/plato-v3-vocabulary-report.md]
+links: [plato-230, submodules/Plato/plato-src-v3, docs/reports/plato-v3-vocabulary-report.md]
 ---
 
 ## Idea
@@ -32,7 +32,7 @@ Ship a browsable HTML catalog of the Plato standard library (types, interfaces, 
 
 ## Related
 
-- [plato-230](plato-230.md) / [docs/plato-v3-vocabulary-report.md](../../docs/plato-v3-vocabulary-report.md) — vocabulary inventory to browse.
+- [plato-230](plato-230.md) / [docs/reports/plato-v3-vocabulary-report.md](../../docs/reports/plato-v3-vocabulary-report.md) — vocabulary inventory to browse.
 - [plato-257](plato-257.md) — lessons corpus; browser could link out to lessons later.
 - [plato-264](plato-264.md) / [plato-266](plato-266.md) / [plato-267](plato-267.md) — hover, external links, and images all feed or consume this site.
 - [studio-128](studio-128.md) — Studio HTML guide (different product; reuse static-site habits only).

@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-28
 closed:
-links: [submodules/Plato/earcut, submodules/Plato/csg, labs/Ara3D.Noise, ara3d-sdk/src/Ara3D.Models, ara3d-sdk/examples/Ara3D.Studio.Examples/Demos/Brep.cs, submodules/Plato/stdlib/noise.plato, submodules/Plato/stdlib/scene3d.plato, docs/plato-library-roadmap-ideas.md, plato-028, ara3d-056, studio-168]
+links: [submodules/Plato/earcut, submodules/Plato/csg, labs/Ara3D.Noise, ara3d-sdk/src/Ara3D.Models, ara3d-sdk/examples/Ara3D.Studio.Examples/Demos/Brep.cs, submodules/Plato/stdlib/noise.plato, submodules/Plato/stdlib/scene3d.plato, docs/reports/plato-library-roadmap-ideas.md, plato-028, ara3d-056, studio-168]
 ---
 
 ## Idea
@@ -48,7 +48,7 @@ Fold proven geometry libraries into the forward Plato stdlib (`submodules/Plato/
 - [Brep.cs](../../ara3d-sdk/examples/Ara3D.Studio.Examples/Demos/Brep.cs) — demo BREP types to lift.
 - [noise.plato](../../submodules/Plato/stdlib/noise.plato) — stdlib noise declarations (bodies thin/missing).
 - [scene3d.plato](../../submodules/Plato/stdlib/scene3d.plato) — retained scene; overlaps Models.
-- [docs/plato-library-roadmap-ideas.md](../../docs/plato-library-roadmap-ideas.md) — noise/CSG-via-SDF roadmap notes.
+- [docs/reports/plato-library-roadmap-ideas.md](../../docs/reports/plato-library-roadmap-ideas.md) — noise/CSG-via-SDF roadmap notes.
 - [plato-028](plato-028.md) — Earcut-exposed language/runtime gaps.
 - [ara3d-056](ara3d-056.md) — geometry capability lattice including BREP/models → Plato interfaces.
 - [studio-168](studio-168.md) — flowable types (brep among them).

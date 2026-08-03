@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace Plato.Navigation.Tests;
 
-/// <summary>The measurement the plato_check plan (docs/plato-mcp-improvements-plan-2026-07-30.md,
+/// <summary>The measurement the plato_check plan (docs/design/plato-mcp-improvements-plan-2026-07-30.md,
 /// P1 "first task") demands before any tool code: how long does a WARM check iteration cost on the
 /// full forward stdlib — Compilation from cached ASTs, Linter, TypeChecker.CheckAll, plus the two
 /// auxiliary checkers. Explicit because it is a benchmark, not a gate: it prints numbers and

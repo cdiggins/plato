@@ -7,7 +7,7 @@ This plan is authoritative over the older handoff sequence where they conflict.*
 ## The author's decisions (2026-07-09) — now locked
 
 1. **Lerp parameter type = `Fraction`** (not `Amount` — `Amount` is already the
-   field name on the Scale types). See `naming-fraction-and-rational-types.md`.
+   field name on the Scale types). See `design/naming-fraction-and-rational-types.md`.
 2. **"New library"** = snapshot the current library as **`stdlib-snapshot-2026-07-09`**
    (frozen reference), then **keep refactoring `stdlib-legacy` directly** (the freeze
    is lifted). Generate a **new `Plato.Geometry` C# library, created inside the
@@ -98,7 +98,7 @@ This plan is authoritative over the older handoff sequence where they conflict.*
   witnesses. **This is the keystone for the SDF/effector/deformer layer.**
 - [ ] **B.6 `NAMING.md` + C#/Plato split policy**, linter-enforced where cheap.
 
-### Track C — content (the heart of goal 1; `plato-library-roadmap-ideas.md` = spec)
+### Track C — content (the heart of goal 1; `reports/plato-library-roadmap-ideas.md` = spec)
 - [ ] **C.1 Port stranded pure C#** (review §4.4): angle utils (`Normalize`,
   `AngularDistance`, `AngularLerp`), axis machinery, point/line queries
   (`Distance(Point,Line)`, `ProjectOntoLine`, `Reject`), bounds ops

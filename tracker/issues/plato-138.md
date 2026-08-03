@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-21
 closed:
-links: [tracker/issues/plato-134.md, docs/plato-kernel-libraries-sketch-2026-07-21.md, submodules/Plato/plato-src/procedurals.plato]
+links: [tracker/issues/plato-134.md, docs/design/plato-kernel-libraries-sketch-2026-07-21.md, submodules/Plato/plato-src/procedurals.plato]
 ---
 
 ## Idea

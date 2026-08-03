@@ -34,9 +34,9 @@ shape only. Double-precision emitting is DEFERRED — do not start it.
 | Plato compiler + stdlib + intrinsics + conformance (own git repo, branch `main`) | `submodules\Plato` — **read its `CLAUDE.md` before working there** |
 | SDK consuming Plato output (own git repo, branch `main`) | `ara3d-sdk` — read its `CLAUDE.md` |
 | Execution plan + status (the log of everything done) | `docs\plato-roadmap.md` |
-| Bug catalog (what Phase 4 fixes) | `docs\plato-library-review.md` §1 + §8 |
+| Bug catalog (what Phase 4 fixes) | `docs\reports\plato-library-review.md` §1 + §8 |
 | Compiler associativity bug diagnosis (the Phase 4 opener) | `docs\plato-assoc-bug-diagnosis.md` |
-| Future library content ideas (NOT current work) | `docs\plato-library-roadmap-ideas.md` |
+| Future library content ideas (NOT current work) | `docs\reports\plato-library-roadmap-ideas.md` |
 | Gate battery (run after every mission) | `.\tools\check-all.ps1` from the studio root |
 | Regeneration + drift gate | `.\tools\regen-plato.ps1` (`-Apply` to sync) |
 | Conformance regen scripts | `.\tools\regen-conformance{,-v2,-opt,-scalar}.ps1 -Test` |
@@ -152,7 +152,7 @@ Procedure:
 For EACH remaining entry in `KnownFailures.json` (31 after 7a), strictly in this loop:
 1. Remove the manifest entry → run the relevant conformance suite → confirm the test now FAILS
    (if it passes already, the entry was stale — note it and move on).
-2. Apply the source fix. The fix for every entry is specified in `docs\plato-library-review.md`
+2. Apply the source fix. The fix for every entry is specified in `docs\reports\plato-library-review.md`
    (§1.1–1.9 and §8) — file, line, and corrected expression are all written out. Fix in
    `submodules\Plato\plato-src\*.plato` ONLY (never the generated C#).
 3. `regen-plato.ps1 -Apply` → `check-all.ps1` → all green → commit all repos with the review-doc
@@ -179,7 +179,7 @@ leave as-is and note remaining counts.
 ## 8. Backlog after the above (ask the user before starting any)
 
 - Harvest KitchenSink (easings, InverseLerp/Remap, correct cycloids) into plato-src, then delete it —
-  see `docs\plato-library-review.md` §3/§4.
+  see `docs\reports\plato-library-review.md` §3/§4.
 - The bloat-removal list (review §3) and 2D/3D parity additions (review/ideas docs).
 - Deterministic PRNG + noise library (prerequisite for scatter/jitter content).
 - The static affine occurrence-counting pass (rides the future type-checker).

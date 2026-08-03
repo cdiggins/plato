@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-07-27
 closed:
-links: [submodules/Plato/vscode-plato, submodules/Plato/Plato.Navigation, docs/plato-navigation-index-plan.md, plato-236, plato-237, plato-238]
+links: [submodules/Plato/vscode-plato, submodules/Plato/Plato.Navigation, docs/archive/plato-navigation-index-plan.md, plato-236, plato-237, plato-238]
 ---
 
 ## Issue

@@ -55,8 +55,8 @@ Plato work smoothly lives only in machine-local Claude Code state.
 - Drop `.claude/` from Plato's `.gitignore`; move `csharp-style` + `plato-mcp` in; delete the
   duplicate global `write-readme`.
 - Land item 8's facts in their owning docs: `Plato.Navigation.CLI/README.md`,
-  `stdlib/CONVENTIONS.md` or `docs/plato-language-semantics.md`,
-  `docs/plato-sum-types-design-2026-07-27.md`, `docs/plato-library-map.md`.
+  `stdlib/CONVENTIONS.md` or `docs/SEMANTICS.md`,
+  `docs/design/plato-sum-types-design-2026-07-27.md`, `docs/plato-library-map.md`.
 
 ## Simplest thing that could work
 
@@ -74,7 +74,7 @@ are lower value and can wait.
 ## Outcome (2026-07-29, `4a818b3` in Plato)
 
 Items 1–7 landed. The audit's premise for item 8 turned out to be wrong in a useful way: those
-facts were **already documented** (`TupleN` cap in `plato-language-semantics.md`, `CHK306` in the
+facts were **already documented** (`TupleN` cap in `../../docs/SEMANTICS.md`, `CHK306` in the
 sum-types design doc, `--no-properties` in `plato-library-map.md`, the nav-MCP launch recipe in
 `labs/PlatoNavigationMcp/README.md`). The problem was that no guide *linked* them, so agents
 rediscovered them each session. Fixed by adding a "Language facts that are easy to get wrong"

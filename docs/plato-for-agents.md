@@ -11,7 +11,7 @@ targets, so global consistency is a single edit, not a multi-file refactor.
 
 ## Language
 
-**Normative reference: [`plato-language-semantics.md`](plato-language-semantics.md)** — what every
+**Normative reference: [`SEMANTICS.md`](SEMANTICS.md)** — what every
 construct means, resolution/coercion rules, and the explicit non-features. The 5-line version:
 
 - **`type`** — immutable data: fields only, or a sum type (`type X = A(f: T) | B;`) consumed by exhaustive `match`.
@@ -213,7 +213,7 @@ logged as `DEGRADED bodies` on the console. Read that line — a green exit is n
    from here at all.
 3. **Known bugs are being fixed**, tracked in
    `tests/conformance/Plato.ForwardConformanceTests/KnownFailures.json` — fixing a bug means
-   removing its entry in the same change; see [`docs/plato-library-review.md`](plato-library-review.md).
+   removing its entry in the same change; see [`docs/reports/plato-library-review.md`](reports/plato-library-review.md).
 4. **Do not touch** `parakeet/` (nested submodule).
 5. Prefer `+`/`*`/`-`/`/` for ordinary arithmetic in library bodies; keep named
    `Add`/`Multiply`/… at definition sites — see [`stdlib/STYLE_GUIDE.md`](../stdlib/STYLE_GUIDE.md)
@@ -225,11 +225,11 @@ logged as `DEGRADED bodies` on the console. Read that line — a green exit is n
 
 | Doc | Contents |
 |-----|----------|
-| [`plato-language-semantics.md`](plato-language-semantics.md) | **Normative language semantics** — construct meaning, resolution, coercions, non-features |
+| [`SEMANTICS.md`](SEMANTICS.md) | **Normative language semantics** — construct meaning, resolution, coercions, non-features |
 | [`../README.md`](../README.md) | Full language pitch, examples, demos |
 | [`../CLAUDE.md`](../CLAUDE.md) | Repo layout, hard rules, mission protocol |
 | [`archive/plato-roadmap.md`](archive/plato-roadmap.md) | Compiler and library roadmap (historical) |
-| [`plato-library-review.md`](plato-library-review.md) | Verified stdlib bug catalog |
+| [`reports/plato-library-review.md`](reports/plato-library-review.md) | Verified stdlib bug catalog |
 | [`../tracker/BACKLOG.md`](../tracker/BACKLOG.md) | Open Plato work items |
 | [`../writers/Plato.TypeScriptWriter/README.md`](../writers/Plato.TypeScriptWriter/README.md) | TS output model |
 | [`../writers/Plato.RustWriter/README.md`](../writers/Plato.RustWriter/README.md) | Rust output model |
