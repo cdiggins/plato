@@ -2,14 +2,14 @@
 id: plato-421
 title: 3D lattice structures: unit cells, tilings, and lattice operators
 type: feature
-status: in-progress
+status: done
 priority: p2
 effort: M
 risk: low
 area: plato
 sprint: 
 created: 2026-08-03
-closed:
+closed: 2026-08-03
 links: []
 ---
 
@@ -168,5 +168,5 @@ tables and index arithmetic the Plato source uses:
 - [x] Design decisions recorded above
 - [x] `stdlib/types-and-concepts.txt` regenerated — nine new types make it stale,
       and index freshness is the third gate in `check-stdlib-fast.ps1`
-- [ ] A browser demo drives it: `demos/webgl/lattices.html` + `src/demos/lattices.ts`,
+- [x] A browser demo drives it: `demos/webgl/lattices.html` + `src/demos/lattices.ts`,
       green under `npm run typecheck` and `npm run scenes`
