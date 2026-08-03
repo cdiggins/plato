@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-08-03 — [plato-424](issues/plato-424.md) — Finite element analysis vocabulary: elements, assembly, and a linear-elastic solve — done (library 4a7c936f, demo e4c8a703); all closed forms reproduced in the browser; prelude eager fix in the demo commit
 - 2026-08-03 — [plato-425](issues/plato-425.md) — Rigid body dynamics: fill in the future-tier integrator, contacts and constraints — done (library b5cd0faa, demo 2834a0d6); solver verified stable; defects filed as plato-434
 - 2026-08-03 — [plato-421](issues/plato-421.md) — 3D lattice structures: unit cells, tilings, and lattice operators — done (library ea7795f4, demo 25ce082b); findings filed as plato-431/432/433
 - 2026-08-03 — [plato-422](issues/plato-422.md) — Blue noise and low-discrepancy sampling: implement the declared point-pattern types — done (library e1ac6627, demo e76b1bb4); findings filed as plato-430

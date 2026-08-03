@@ -2,14 +2,14 @@
 id: plato-424
 title: Finite element analysis vocabulary: elements, assembly, and a linear-elastic solve
 type: feature
-status: in-progress
+status: done
 priority: p2
 effort: L
 risk: med
 area: plato
 sprint: 
 created: 2026-08-03
-closed:
+closed: 2026-08-03
 links: []
 ---
 
@@ -164,7 +164,7 @@ The 3D solid path uses no sum type and is otherwise complete.
 - [x] A beam path whose answers can be checked against closed-form deflection
 - [x] All four tiers parse and type-check; no shipping-tier file references `future`
 - [x] Design decisions recorded above
-- [ ] A browser demo drives it: `demos/webgl/fea.html` + `src/demos/fea.ts`, green
+- [x] A browser demo drives it: `demos/webgl/fea.html` + `src/demos/fea.ts`, green
       under `npm run typecheck` and `npm run scenes`. The 3D solid path uses no sum
       type and is the one to build on; the plane and beam paths need a
       `PlaneCondition` / `BeamRestraint` shim first (plato-419 defect 5)
