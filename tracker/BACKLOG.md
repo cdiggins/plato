@@ -140,3 +140,4 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-380](issues/plato-380.md) | Integer2/Integer3 key types: re-express Indexable2D/3D as key instances | idea | ? | ? | ? | plato | idea |  |
 | [plato-381](issues/plato-381.md) | Concrete Dictionary type: decide whether keyed-lookup vocabulary earns its keep | idea | ? | ? | ? | plato | idea |  |
 | [plato-415](issues/plato-415.md) | Expand the polygon library: triangulation, booleans, offset, predicates, queries | idea | ? | ? | ? | plato | idea |  |
+| [plato-419](issues/plato-419.md) | TypeScript writer: generated stdlib mesh/polygon/CSG paths do not run | bug | ? | ? | ? | plato | idea |  |
