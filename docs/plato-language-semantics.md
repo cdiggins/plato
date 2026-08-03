@@ -2,17 +2,21 @@
 
 **The normative reference for what Plato constructs mean.** Audience: library authors and
 agents writing `.plato` code. It describes the language the compiler and type checker accept
-*today* (2026-07-28) — nothing aspirational. For operations and codegen see
+*today* (2026-08-03) — nothing aspirational. For operations and codegen see
 [`plato-for-agents.md`](plato-for-agents.md); for checker internals see
 [`compiler-pipeline.md`](compiler-pipeline.md) and [`type-checker-handoff.md`](type-checker-handoff.md);
 for design rationale see [`plato-overview.md`](plato-overview.md).
 
 One caution up front: the grammar is deliberately more permissive than the language. The parser
-(`parakeet/Parakeet.Grammars/PlatoGrammar.cs`) accepts C#-style forms — `while`, `for`, `throw`,
-`try`, `switch`, `is`/`as`, string interpolation — for error recovery and familiarity. Those forms
-are **not part of the language** this document defines: the checked, portable language is the
-subset below, which is what the standard library uses and what every backend can emit. If a
-construct is not in this document, do not rely on it.
+(`parakeet/Parakeet.Grammars/PlatoGrammar.cs`) accepts C#-style forms — `throw`, `try`, `switch`,
+`yield`, `break`/`continue`, `is`/`as`, string interpolation — for error recovery and familiarity.
+Those forms are **not part of the language** this document defines: the checked, portable language
+is the subset below, which is what every backend can emit. If a construct is not in this document,
+do not rely on it.
+
+The line falls at the elaborator (`Plato.Compiler/Checking/Elaborator.cs`): a statement form is in
+the language exactly when `ElaborateStatement` has a case for it. Block, `return`, expression
+statement, `if`, loop and comment do; everything else stops at the parser.
 
 ## 1. The model
 
@@ -90,8 +94,8 @@ library Circles
 ```
 
 A function is `Name(p0: T0, …): R` followed by a body. The primary body form is a single
-expression (`=> expr;`). A block body is also legal and is limited to `var` locals (typed by
-their initializers) followed by a single `return`:
+expression (`=> expr;`). A block body is also legal: `var` locals (typed by their initializers)
+followed by a `return`:
 
 ```plato
 Lerp(a: Number, b: Number, t: Number): Number {
@@ -99,6 +103,22 @@ Lerp(a: Number, b: Number, t: Number): Number {
     return a + d * t;
 }
 ```
+
+A block body may also use `if` statements, `while` loops, and assignment to a local already
+introduced by `var`. These elaborate to `TirIf`, `TirLoop` and `TirAssign`, and every backend
+writer emits them — C#, C++, Rust, TypeScript and GLSL each carry a `TirLoop` case. `do`, `for`
+and `foreach` desugar to the same loop node in `AstNodeFactory`.
+
+They exist for the affine builders `List<T>` and `Buffer<T>`, whose contract — the effect
+classification, the construction and rebinding conventions, and the lint rules that police them —
+is stated once in `stdlib/foundation/primitives.plato`. Filling a `Buffer<T>` slot by slot is an
+imperative algorithm, and rebinding the builder (`xs = xs.Set(i, v)`) is assignment. Purity is
+preserved by
+uniqueness, not by the absence of assignment — a builder has exactly one reference, so an update
+to it is linear rather than observable mutation of shared state.
+
+Reach for them only when that is what you are doing. The expression form, `match`, and the array
+combinators are the default; `stdlib/STYLE_GUIDE.md` states the preference and its ordering.
 
 A declaration with **no body** (`Cos(x: Angle): Number;`) is an intrinsic obligation: the
 signature binds an implementation supplied by the target runtime (the handwritten intrinsics
@@ -308,17 +328,20 @@ CHK320 comment instead of emitting garbage.
 
 Explicitly absent, so nobody infers them from the C#-flavored syntax:
 
-- **Mutation and assignment** — no `=` outside `var` initialization, no compound assignment, no
-  `++`/`--`. "Setters" (`WithRadius`) return new values.
-- **Statements beyond `var` + `return`** — `while`/`do`/`for`/`foreach`, `if`-statements,
-  `switch`, `yield`, `break`/`continue` parse but are not in the checked language; use the
-  conditional expression, `match`, and the array/functional combinators.
+- **Mutation of values** — a `type` is immutable; "setters" (`WithRadius`) return new values, and
+  there is no compound assignment and no `++`/`--`. Assignment to a `var` local *is* in the
+  language (§3), and the affine builders are the reason it is there.
+- **`switch`, `yield`, `break`/`continue`** — they parse, but `ElaborateStatement` has no case for
+  them, so they never reach TIR. Use the conditional expression, `match`, and the array
+  combinators. (`if`, `while` and their desugarings are in the language — see §3.)
 - **Exceptions and null** — no `throw`/`try`/`catch`, no null values, no `?.`. Partiality is
   handled by convention today (`CanInvert: Boolean` alongside `Invert`); `Option`-style sums are
   now expressible but blocked on generic sums.
 - **Generic sum types** — rejected in v1 (CHK306); monomorphic sums only.
-- **Affine/unique types** — the `unique` modifier parses and is reserved; it has no semantics
-  yet.
+- **`unique` on your own types** — the modifier is hard-rejected on any type other than the two
+  intrinsic builders `List<T>` and `Buffer<T>` (`Plato.Compiler/Symbols/UniqueTypes.cs`). Those
+  two do have semantics; the affine discipline over them is runtime-checked and lint-checked
+  today, not statically enforced. `stdlib/foundation/primitives.plato` is the authority.
 - **OO** — no inheritance between types, no virtual dispatch, no visibility modifiers, no
   heterogeneous collections through interfaces, no runtime type tests (`is`/`as` are not language).
 - **Double precision** — `Number` is 32-bit in every current backend; there is no `Double`.
