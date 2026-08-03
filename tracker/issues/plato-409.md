@@ -2,7 +2,7 @@
 id: plato-409
 title: FieldJet2D/3D: value+gradient jets, differentiable SDFs, transforms, ray marching, and the missing distance primitives
 type: idea
-status: idea
+status: in-progress
 priority: p2
 effort: L
 risk: low
@@ -159,12 +159,25 @@ Ray marching must consume `GradientAt` through the interface from day one, even 
 
 - [ ] An SDF primitive can be placed away from the origin by a transform, and the placed
       field's distances agree with the primitive's under the inverse transform
-- [ ] `ISignedDistanceField2D/3D` implementors can be asked for a gradient, and the existing
+- [x] `ISignedDistanceField2D/3D` implementors can be asked for a gradient, and the existing
       `SurfaceNormalAt` / `BoundaryNormalAt` / `SlopeAt` helpers resolve against an SDF
 - [ ] A ray can be marched against a 3D SDF, returning a populated `RayHit3D` whose normal
       comes from the interface gradient, not a private helper
-- [ ] The 2D primitive family matches the 3D one in coverage
-- [ ] `plato_check` clean across the touched files (no new lint, type, or style diagnostics)
+- [x] The 2D primitive family matches the 3D one in coverage
+- [x] `plato_check` clean across the touched files (no new lint, type, or style diagnostics)
+
+Boxes 1 and 3 are landed and type-check but are **not executable-verified**: the law runner
+(Stage 2 of `tools/regen-forward-conformance.ps1`) does not run yet, blocked on plato-308, and
+the field types the two claims are about — `PlacedSdf*`, `FunctionSdf*` — each store a lambda
+the law harness cannot instantiate even once it does. `stdlib/tests/implicit-sdf.laws.plato`
+covers what the harness CAN construct: the closed-form primitives and the scalar distance
+operators. Closing this item needs either plato-308 plus a way to construct a field instance in
+a law, or a hand-written test outside the packet.
+
+Box 2 is verified structurally rather than behaviourally: `RayMarch` calls `SurfaceNormalAt`
+on an `IDifferentiableSignedDistanceField3D` receiver and the corpus type-checks with zero
+failing functions, which is what proves the interface inheritance actually reaches the
+gradient-derived helpers in `fields-implicits.library.plato`.
 
 ## Simplest possible implementation
 

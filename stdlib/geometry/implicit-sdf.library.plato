@@ -3,6 +3,9 @@
 //
 // Sections, in order:
 //  - Bounded SDF evaluation, packaging, culling, and CSG
+//  - Placed SDF evaluation
+//  - Gradients and surface normals
+//  - Ray marching
 //  - SDF modifier application
 //  - Distance operators
 //  - Signed distance primitives
@@ -147,6 +150,222 @@ library ImplicitSdf
         => (
             a.Sdf.SmoothUnion(b.Sdf, blendRadius),
             GrowBounds(UnionOfBounds(a.Bounds, b.Bounds), blendRadius));
+
+    //==
+    // # Placed SDF evaluation
+    //
+    // Bodies for `PlacedSdf2D/3D` (`implicit-sdf.types.plato`): a source field
+    // moved by a rigid pose and a uniform scale. Evaluation pulls the query point
+    // back into the source's own frame and pushes the resulting distance forward
+    // by the scale, which is what keeps the result an exact signed distance.
+
+    // The query position in the source field's own frame: the pose undone, then
+    // the uniform scale undone. Precondition: Scale is positive.
+    SourcePoint(self: PlacedSdf2D, point: Point2D): Point2D {
+        var local = point.Transform(self.Pose.Inverse);
+        return Point2D(local.X / self.Scale, local.Y / self.Scale);
+    }
+
+    // The query position in the source field's own frame. Precondition: Scale is
+    // positive.
+    SourcePoint(self: PlacedSdf3D, point: Point3D): Point3D {
+        var local = point.Transform(self.Pose.Inverse);
+        return Point3D(local.X / self.Scale, local.Y / self.Scale, local.Z / self.Scale);
+    }
+
+    // The placed planar distance: the source distance at the pulled-back position,
+    // scaled back into world units.
+    Eval(self: PlacedSdf2D, point: Point2D): Number
+        => self.Source.Eval(self.SourcePoint(point)) * self.Scale;
+
+    // The placed spatial distance, scaled back into world units.
+    Eval(self: PlacedSdf3D, point: Point3D): Number
+        => self.Source.Eval(self.SourcePoint(point)) * self.Scale;
+
+    // Place a planar function SDF by a rigid pose and a uniform scale.
+    // Precondition: scale is positive.
+    Placed(self: FunctionSdf2D, pose: Pose2D, scale: Number): PlacedSdf2D
+        => (self, pose, scale);
+
+    // Place a spatial function SDF by a rigid pose and a uniform scale.
+    // Precondition: scale is positive.
+    Placed(self: FunctionSdf3D, pose: Pose3D, scale: Number): PlacedSdf3D
+        => (self, pose, scale);
+
+    // Place a planar function SDF by a rigid pose, at its original size.
+    Placed(self: FunctionSdf2D, pose: Pose2D): PlacedSdf2D
+        => self.Placed(pose, 1.0);
+
+    // Place a spatial function SDF by a rigid pose, at its original size.
+    Placed(self: FunctionSdf3D, pose: Pose3D): PlacedSdf3D
+        => self.Placed(pose, 1.0);
+
+    // Any planar SDF placed by a rigid pose and a uniform scale. The field is
+    // lifted into stored-function form first. Precondition: scale is positive.
+    Placed(self: ISignedDistanceField2D, pose: Pose2D, scale: Number): PlacedSdf2D
+        => self.FunctionSdf2D.Placed(pose, scale);
+
+    // Any spatial SDF placed by a rigid pose and a uniform scale.
+    // Precondition: scale is positive.
+    Placed(self: ISignedDistanceField3D, pose: Pose3D, scale: Number): PlacedSdf3D
+        => self.FunctionSdf3D.Placed(pose, scale);
+
+    //==
+    // # Gradients and surface normals
+    //
+    // Bodies for the differentiable SDF interfaces
+    // (`implicit-sdf.concepts.plato`). The gradient of an exact distance field is
+    // its outward normal direction, so reporting one makes every gradient-derived
+    // helper in `fields-implicits.library.plato` — `SurfaceNormalAt`,
+    // `BoundaryNormalAt`, `SlopeAt`, `IsStationaryAt` — resolve against an SDF.
+    //
+    // None of the stored forms can be differentiated symbolically: `FunctionSdf*`
+    // holds an opaque lambda and `SampledSdf*` holds a lattice, so both difference
+    // the field numerically. `PlacedSdf*` is the exception — a rigid placement
+    // rotates the source gradient rather than re-differencing it, which is the
+    // whole reason the gradient travels through the interface instead of being
+    // recomputed by each caller.
+
+    // The finite-difference step used to estimate an SDF gradient. Far above
+    // `Number.Epsilon`, where a difference quotient would be rounding noise rather
+    // than signal, and well below the feature size the distance primitives are
+    // written for.
+    SdfGradientStep(_: Number): Number
+        => 0.0001;
+
+    // The gradient of a planar SDF by central differences: one forward and one
+    // backward evaluation per axis, which cancels the first-order error term.
+    // Precondition: step is positive.
+    // (https://en.wikipedia.org/wiki/Finite_difference)
+    NumericGradientAt(self: ISignedDistanceField2D, point: Point2D, step: Number): Vector2D
+        => Vector2D(
+            self.Eval(Point2D(point.X + step, point.Y)) - self.Eval(Point2D(point.X - step, point.Y)),
+            self.Eval(Point2D(point.X, point.Y + step)) - self.Eval(Point2D(point.X, point.Y - step)))
+           / (2.0 * step);
+
+    // The gradient of a spatial SDF by central differences.
+    // Precondition: step is positive.
+    NumericGradientAt(self: ISignedDistanceField3D, point: Point3D, step: Number): Vector3D
+        => Vector3D(
+            self.Eval(Point3D(point.X + step, point.Y, point.Z)) - self.Eval(Point3D(point.X - step, point.Y, point.Z)),
+            self.Eval(Point3D(point.X, point.Y + step, point.Z)) - self.Eval(Point3D(point.X, point.Y - step, point.Z)),
+            self.Eval(Point3D(point.X, point.Y, point.Z + step)) - self.Eval(Point3D(point.X, point.Y, point.Z - step)))
+           / (2.0 * step);
+
+    // The gradient of a stored planar distance function, differenced numerically:
+    // a lambda cannot be differentiated symbolically.
+    GradientAt(self: FunctionSdf2D, point: Point2D): Vector2D
+        => self.NumericGradientAt(point, Number.SdfGradientStep);
+
+    // The gradient of a stored spatial distance function, differenced numerically.
+    GradientAt(self: FunctionSdf3D, point: Point3D): Vector3D
+        => self.NumericGradientAt(point, Number.SdfGradientStep);
+
+    // The inner field's gradient. Bounds are ignored, exactly as Eval ignores them.
+    GradientAt(self: BoundedSdf2D, point: Point2D): Vector2D
+        => self.Sdf.GradientAt(point);
+
+    // The inner field's gradient. Bounds are ignored.
+    GradientAt(self: BoundedSdf3D, point: Point3D): Vector3D
+        => self.Sdf.GradientAt(point);
+
+    // The gradient of a sampled planar lattice, differenced numerically. Constant
+    // within a cell up to the interpolation, so it is discontinuous at cell
+    // boundaries — a bilinear field has no continuous gradient.
+    GradientAt(self: SampledSdf2D, point: Point2D): Vector2D
+        => self.NumericGradientAt(point, Number.SdfGradientStep);
+
+    // The gradient of a sampled spatial lattice, differenced numerically. Same
+    // per-cell discontinuity as the planar form.
+    GradientAt(self: SampledSdf3D, point: Point3D): Vector3D
+        => self.NumericGradientAt(point, Number.SdfGradientStep);
+
+    // The gradient of a placed planar field: the source gradient turned by the
+    // pose. Uniform scale cancels — it multiplies the distance and divides the
+    // position by the same factor — so no scale term appears here.
+    GradientAt(self: PlacedSdf2D, point: Point2D): Vector2D
+        => self.Source.GradientAt(self.SourcePoint(point)).Transform(self.Pose);
+
+    // The gradient of a placed spatial field: the source gradient turned by the
+    // pose. Uniform scale cancels.
+    GradientAt(self: PlacedSdf3D, point: Point3D): Vector3D
+        => self.Source.GradientAt(self.SourcePoint(point)).Transform(self.Pose);
+
+    // How far the field departs from being an exact distance at this point. An
+    // exact signed distance field satisfies the eikonal equation, so its gradient
+    // has unit length; a field that only lower-bounds the distance does not. Zero
+    // means exact here, and larger values mean a raymarcher will take shorter
+    // steps than the geometry requires.
+    // (https://en.wikipedia.org/wiki/Eikonal_equation)
+    EikonalResidualAt(self: IDifferentiableScalarField2D, point: Point2D): Number
+        => (self.GradientAt(point).Magnitude - 1.0).Abs;
+
+    // How far a spatial field departs from being an exact distance at this point.
+    EikonalResidualAt(self: IDifferentiableScalarField3D, point: Point3D): Number
+        => (self.GradientAt(point).Magnitude - 1.0).Abs;
+
+    //==
+    // # Ray marching
+    //
+    // Sphere tracing (https://en.wikipedia.org/wiki/Ray_marching): advance along
+    // the ray by the current distance to the surface, which is the largest step
+    // guaranteed to skip no geometry, and stop when that distance falls within
+    // tolerance. Convergence therefore depends on the field being an exact
+    // distance or a lower bound of one — `EikonalResidualAt` above measures how
+    // badly a field violates that, and a field that OVER-estimates distance will
+    // tunnel through surfaces rather than converge slowly.
+    //
+    // A step budget bounds the work: a ray running nearly parallel to a surface
+    // converges arbitrarily slowly, so exhausting the budget is a miss rather than
+    // an error.
+
+    // The ray parameter where sphere tracing converges, or `MissDistance` when the
+    // budget runs out or the march passes `reach`. Recurses one step per advance.
+    // Precondition: the ray direction is unit length; tolerance and reach are
+    // positive.
+    MarchFrom(self: ISignedDistanceField3D, ray: Ray3D, t: Number, budget: Integer, tolerance: Number, reach: Number): Number {
+        var distance = self.Eval(ray.PointAt(t));
+        var next = t + distance;
+        return distance.Abs <= tolerance
+            ? t
+            : (budget <= 0 || next > reach
+                ? MissDistance()
+                : self.MarchFrom(ray, next, budget - 1, tolerance, reach));
+    }
+
+    // Sphere-trace a ray against a spatial SDF. The hit normal is the field's own
+    // unit gradient, so a field with an analytic gradient contributes it here
+    // rather than being differenced again. Face, Barycentric and Uv are the
+    // not-a-mesh values (`spatial-structures.types.plato`): an implicit surface has
+    // no triangle to name. On a miss the normal faces back down the ray, matching
+    // the broad-phase raycast convention.
+    // Precondition: the ray direction is unit length; tolerance and reach are
+    // positive.
+    RayMarch(self: IDifferentiableSignedDistanceField3D, ray: Ray3D, budget: Integer, tolerance: Number, reach: Number): RayHit3D {
+        var t = self.MarchFrom(ray, 0.0, budget, tolerance, reach);
+        var hit = t < MissDistance();
+        var position = hit ? ray.PointAt(t) : ray.Origin;
+        return (hit,
+                hit ? t : 0.0,
+                position,
+                hit
+                    ? Direction3D(self.SurfaceNormalAt(position))
+                    : Direction3D(-ray.Direction.Vector),
+                FaceIndex(-1),
+                BarycentricCoordinate(0.0, 0.0, 0.0),
+                UvCoordinate(0.0, 0.0));
+    }
+
+    // The point on the surface nearest the query, by one Newton step along the
+    // gradient: the point moved against its own normal by its own signed distance.
+    // Exact for an exact distance field; iterate for a field that only bounds it.
+    ProjectToSurface(self: IDifferentiableSignedDistanceField2D, point: Point2D): Point2D
+        => point - self.GradientAt(point).Normalize * self.Eval(point);
+
+    // The point on the surface nearest the query, by one Newton step along the
+    // gradient.
+    ProjectToSurface(self: IDifferentiableSignedDistanceField3D, point: Point3D): Point3D
+        => point - self.GradientAt(point).Normalize * self.Eval(point);
 
     //==
     // # SDF modifier application
@@ -380,6 +599,78 @@ library ImplicitSdf
     // signed offset from the origin. Precondition: normal has unit length.
     // (IQ: sdPlane.)
     DistanceToPlane(p: Point3D, normal: Vector3D, offset: Number): Number
+        => p.PositionVector.Dot(normal) + offset;
+
+    // The signed distance from a point to a capsule: the segment from a to b
+    // thickened by radius. Exact, and the general form of DistanceToVerticalCapsule.
+    // (IQ: sdCapsule.)
+    DistanceToCapsule(p: Point3D, a: Point3D, b: Point3D, radius: Number): Number
+        => DistanceToSegment(a, b, p) - radius;
+
+    // A bound on the signed distance from a point to an axis-aligned ellipsoid with
+    // the given semi-axis radii, centred at the origin. NOT exact: an ellipsoid has
+    // no closed-form signed distance, and this under-estimates, which keeps it safe
+    // for sphere tracing at the cost of shorter steps. Precondition: every radius is
+    // positive, and p is not the centre. (IQ: sdEllipsoid.)
+    DistanceToEllipsoid(p: Point3D, radii: Vector3D): Number {
+        var scaled = Vector3D(p.X / radii.X, p.Y / radii.Y, p.Z / radii.Z).Magnitude;
+        var gradient = Vector3D(
+            p.X / (radii.X * radii.X),
+            p.Y / (radii.Y * radii.Y),
+            p.Z / (radii.Z * radii.Z)).Magnitude;
+        return scaled * (scaled - 1.0) / gradient;
+    }
+
+    //==
+    // # Planar signed distance primitives
+    //
+    // The planar half of the primitive family, under the same portability rules as
+    // the spatial one above: scalar and fixed-arity vector arithmetic only. Each is
+    // the 2D counterpart of a spatial primitive — circle to sphere, ring to torus,
+    // line to plane — except that the 2D box already serves as the cylinder, which
+    // is why there is no separate planar capped-cylinder form.
+
+    // The signed distance from a point to a circle of the given radius centred at
+    // the origin. (IQ: sdCircle.)
+    DistanceToCircle(p: Point2D, radius: Number): Number
+        => p.PositionVector.Magnitude - radius;
+
+    // The signed distance from a point to an axis-aligned rectangle with the given
+    // half-extents, centred at the origin. Exterior is the length of the positive
+    // per-axis offsets, interior the least negative one. (IQ: sdBox.)
+    DistanceToBox(p: Point2D, halfExtents: Vector2D): Number {
+        var q = Vector2D(p.X.Abs - halfExtents.X, p.Y.Abs - halfExtents.Y);
+        return Vector2D(q.X.Max(0.0), q.Y.Max(0.0)).Magnitude
+             + q.X.Max(q.Y).Min(0.0);
+    }
+
+    // The signed distance from a point to an axis-aligned rectangle whose corners
+    // are rounded by radius. As in the spatial form, halfExtents describes the
+    // rectangle before rounding. (IQ: sdRoundedBox.)
+    DistanceToRoundedBox(p: Point2D, halfExtents: Vector2D, radius: Number): Number {
+        var q = Vector2D(
+            p.X.Abs - halfExtents.X + radius,
+            p.Y.Abs - halfExtents.Y + radius);
+        return Vector2D(q.X.Max(0.0), q.Y.Max(0.0)).Magnitude
+             + q.X.Max(q.Y).Min(0.0)
+             - radius;
+    }
+
+    // The signed distance from a point to a ring centred at the origin: the circle
+    // of the given radius thickened by half of thickness on each side. The planar
+    // counterpart of the torus. (IQ: sdAnnulus.)
+    DistanceToRing(p: Point2D, radius: Number, thickness: Number): Number
+        => (p.PositionVector.Magnitude - radius).Abs - thickness * 0.5;
+
+    // The signed distance from a point to a planar capsule: the segment from a to b
+    // thickened by radius. (IQ: sdSegment.)
+    DistanceToCapsule(p: Point2D, a: Point2D, b: Point2D, radius: Number): Number
+        => DistanceToSegment(a, b, p) - radius;
+
+    // The signed distance from a point to the line with the given unit normal at
+    // signed offset from the origin — the planar counterpart of DistanceToPlane,
+    // and the boundary of a half-plane. Precondition: normal has unit length.
+    DistanceToLine(p: Point2D, normal: Vector2D, offset: Number): Number
         => p.PositionVector.Dot(normal) + offset;
 
     //==

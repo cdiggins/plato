@@ -16,6 +16,15 @@
 // `implicit-sdf.types.plato`; sampled lattices (`SampledSdf*`) already
 // carry a `Bounds` spanning their finite support and implement the bounded
 // interfaces.
+//
+// Differentiable: `IDifferentiableSignedDistanceField2D/3D` add a gradient, which
+// for a distance field is the outward normal direction. They inherit
+// `IDifferentiableScalarField2D/3D` (`fields.concepts.plato`), so every helper
+// derived from a gradient there — `SurfaceNormalAt`, `BoundaryNormalAt`,
+// `SlopeAt` — resolves against an SDF that reports one. Reporting a gradient is
+// a separate claim from reporting a distance: a field whose values are only
+// conservative lower bounds still has a gradient, but it is not the surface
+// normal.
 
 // A planar scalar field whose value is the signed distance to a boundary
 // curve: negative inside, zero on the boundary, positive outside. Values are
@@ -44,6 +53,23 @@ interface IBoundedSignedDistanceField2D
 // on distance evaluation.
 interface IBoundedSignedDistanceField3D
     inherits ISignedDistanceField3D, IBounded3D
+{ }
+
+// A planar SDF that reports a gradient as well as a distance. For an exact
+// distance field the unit gradient is the outward normal of the boundary curve,
+// and the gradient has unit length wherever the field is differentiable
+// (the eikonal property, https://en.wikipedia.org/wiki/Eikonal_equation).
+// The gradient is undefined on the seam of a Min/Max combination, where the
+// implementor reports one side's gradient rather than failing.
+interface IDifferentiableSignedDistanceField2D
+    inherits ISignedDistanceField2D, IDifferentiableScalarField2D
+{ }
+
+// A spatial SDF that reports a gradient as well as a distance. For an exact
+// distance field the unit gradient is the outward surface normal. Same seam
+// caveat as the planar form.
+interface IDifferentiableSignedDistanceField3D
+    inherits ISignedDistanceField3D, IDifferentiableScalarField3D
 { }
 
 // A planar region described by a membership predicate: true when the point

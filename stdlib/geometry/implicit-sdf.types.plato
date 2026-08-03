@@ -3,6 +3,7 @@
 //
 // Sections, in order:
 //  - Bounded function-valued signed distance fields
+//  - Placed signed distance fields
 //  - Function-valued implicit shapes
 //  - Metaballs
 //  - SDF modifiers
@@ -25,7 +26,7 @@
 // Bounds the solid may be treated as empty for culling; the stored distance
 // function is still evaluated on request.
 type BoundedSdf2D
-    implements IValue, IBoundedSignedDistanceField2D
+    implements IValue, IBoundedSignedDistanceField2D, IDifferentiableSignedDistanceField2D
 {
     Sdf: FunctionSdf2D;
     Bounds: Bounds2D;
@@ -35,10 +36,47 @@ type BoundedSdf2D
 // the solid may be treated as empty for culling; the stored distance
 // function is still evaluated on request.
 type BoundedSdf3D
-    implements IValue, IBoundedSignedDistanceField3D
+    implements IValue, IBoundedSignedDistanceField3D, IDifferentiableSignedDistanceField3D
 {
     Sdf: FunctionSdf3D;
     Bounds: Bounds3D;
+}
+
+//==
+// # Placed signed distance fields
+//
+// A source SDF moved off the origin. The distance primitives in
+// `implicit-sdf.library.plato` are all written centred at the origin and
+// axis-aligned, which is what keeps their bodies short and portable; placement is
+// this wrapper's job rather than a parameter on every primitive.
+//
+// Pose and uniform scale, and nothing wider, because these are the only maps that
+// carry a signed distance field to another signed distance field: a rigid motion
+// preserves distance outright, and a uniform scale multiplies every distance by
+// the same factor. Non-uniform scale and shear turn an exact distance into a mere
+// bound, so they are deliberately not expressible here — compose an
+// `AffineTransform*D` with the field by hand if a bound is acceptable.
+// Operations live in `implicit-sdf.library.plato`.
+
+// A planar SDF placed by a rigid pose and a uniform scale. Distances stay exact:
+// they are the source field's distances multiplied by Scale.
+// Precondition: Scale is positive.
+type PlacedSdf2D
+    implements IValue, IDifferentiableSignedDistanceField2D
+{
+    Source: FunctionSdf2D;
+    Pose: Pose2D;
+    Scale: Number;
+}
+
+// A spatial SDF placed by a rigid pose and a uniform scale. Distances stay exact.
+// Precondition: Scale is positive.
+type PlacedSdf3D
+    implements IValue, IDifferentiableSignedDistanceField3D
+{
+    Source: FunctionSdf3D;
+    Pose: Pose3D;
+    Scale: Number;
 }
 
 //==
@@ -60,7 +98,7 @@ type BoundedSdf3D
 // A planar signed distance field defined by a stored distance function:
 // negative inside the boundary curve, zero on it, positive outside.
 type FunctionSdf2D
-    implements ISignedDistanceField2D
+    implements IDifferentiableSignedDistanceField2D
 {
     Function: Function1<Point2D, Number>;
 }
@@ -68,7 +106,7 @@ type FunctionSdf2D
 // A spatial signed distance field defined by a stored distance function:
 // negative inside the surface, zero on it, positive outside.
 type FunctionSdf3D
-    implements ISignedDistanceField3D
+    implements IDifferentiableSignedDistanceField3D
 {
     Function: Function1<Point3D, Number>;
 }
@@ -246,7 +284,7 @@ type SdfDisplacementModifier3D
 // SDF interface: Bounds are the lattice domain (finite support), not merely
 // a culling hint.
 type SampledSdf2D
-    implements IValue, IBoundedSignedDistanceField2D
+    implements IValue, IBoundedSignedDistanceField2D, IDifferentiableSignedDistanceField2D
 {
     Values: Array2D<Number>;
     Bounds: Bounds2D;
@@ -257,7 +295,7 @@ type SampledSdf2D
 // between nodes interpolates trilinearly. Implements the bounded SDF interface:
 // Bounds are the lattice domain (finite support).
 type SampledSdf3D
-    implements IValue, IBoundedSignedDistanceField3D
+    implements IValue, IBoundedSignedDistanceField3D, IDifferentiableSignedDistanceField3D
 {
     Values: Array3D<Number>;
     Bounds: Bounds3D;

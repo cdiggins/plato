@@ -52,6 +52,8 @@ interface IDifferentiableCurve2D inherits ICurve2D{TangentAt(x:Self,t:Number):Ve
 interface IDifferentiableCurve3D inherits ICurve3D{TangentAt(x:Self,t:Number):Vector3D;CurvatureAt(x:Self,t:Number):Number;TorsionAt(x:Self,t:Number):Number;}
 interface IDifferentiableScalarField2D inherits IScalarField2D{GradientAt(x:Self,point:Point2D):Vector2D;}
 interface IDifferentiableScalarField3D inherits IScalarField3D{GradientAt(x:Self,point:Point3D):Vector3D;}
+interface IDifferentiableSignedDistanceField2D inherits ISignedDistanceField2D,IDifferentiableScalarField2D{}
+interface IDifferentiableSignedDistanceField3D inherits ISignedDistanceField3D,IDifferentiableScalarField3D{}
 interface IDifferentiableSurface inherits IParametricSurface{TangentUAt(x:Self,uv:UvCoordinate):Vector3D;TangentVAt(x:Self,uv:UvCoordinate):Vector3D;NormalAt(x:Self,uv:UvCoordinate):Direction3D;}
 interface IDifferentiableVectorField2D inherits IVectorField2D{JacobianAt(x:Self,point:Point2D):Matrix2x2;DivergenceAt(x:Self,point:Point2D):Number;CurlAt(x:Self,point:Point2D):Number;}
 interface IDifferentiableVectorField3D inherits IVectorField3D{JacobianAt(x:Self,point:Point3D):Matrix3x3;DivergenceAt(x:Self,point:Point3D):Number;CurlAt(x:Self,point:Point3D):Vector3D;}
@@ -242,8 +244,8 @@ type BohemianDome implements IParametricSurface{EllipseRadii:Number2;CircleRadiu
 type Boolean implements IValue,IOrderable,ILogical{}
 type BounceParameters implements IValue{Bounces:Integer;Restitution:Proportion;}
 type BoundaryLoop implements IValue{HalfEdges:Array<HalfEdgeIndex>;}
-type BoundedSdf2D implements IValue,IBoundedSignedDistanceField2D{Sdf:FunctionSdf2D;Bounds:Bounds2D;}
-type BoundedSdf3D implements IValue,IBoundedSignedDistanceField3D{Sdf:FunctionSdf3D;Bounds:Bounds3D;}
+type BoundedSdf2D implements IValue,IBoundedSignedDistanceField2D,IDifferentiableSignedDistanceField2D{Sdf:FunctionSdf2D;Bounds:Bounds2D;}
+type BoundedSdf3D implements IValue,IBoundedSignedDistanceField3D,IDifferentiableSignedDistanceField3D{Sdf:FunctionSdf3D;Bounds:Bounds3D;}
 type Bounds2D implements IBounds<Point2D,Vector2D>{Min:Point2D;Max:Point2D;}
 type Bounds3D implements IBounds<Point3D,Vector3D>{Min:Point3D;Max:Point3D;}
 type Box3D implements IGeometry3D,IClosedShape,IConvexShape,IConnected,IVolume,IBounded3D,ICentered3D,IContainsPoint3D,INearestPoint3D,ISupport3D,IParametricSurface{Center:Point3D;Size:Size3D;Orientation:Quaternion;}
@@ -486,8 +488,8 @@ type Function7<T0,T1,T2,T3,T4,T5,T6,TR>{}
 type Function8<T0,T1,T2,T3,T4,T5,T6,T7,TR>{}
 type Function9<T0,T1,T2,T3,T4,T5,T6,T7,T8,TR>{}
 type FunctionRegion2D implements IImplicitRegion2D{Function:Function1<Point2D,Boolean>;}
-type FunctionSdf2D implements ISignedDistanceField2D{Function:Function1<Point2D,Number>;}
-type FunctionSdf3D implements ISignedDistanceField3D{Function:Function1<Point3D,Number>;}
+type FunctionSdf2D implements IDifferentiableSignedDistanceField2D{Function:Function1<Point2D,Number>;}
+type FunctionSdf3D implements IDifferentiableSignedDistanceField3D{Function:Function1<Point3D,Number>;}
 type FunctionVolume3D implements IImplicitVolume3D{Function:Function1<Point3D,Boolean>;}
 type GaborNoise2D implements IValue,IScalarField2D{Seed:Integer;Frequency:Number;Orientation:Angle;Bandwidth:Number;Anisotropy:Number;}
 type GaborNoise3D implements IValue,IScalarField3D{Seed:Integer;Frequency:Number;Direction:Direction3D;Bandwidth:Number;Anisotropy:Number;}
@@ -735,6 +737,8 @@ type PerspectiveCamera implements ICamera{Pose:Pose3D;VerticalFov:Angle;AspectRa
 type PhysicalCamera implements ICamera{Pose:Pose3D;FocalLength:Length;SensorSize:Size2D;FStop:Number;FocusDistance:Length;Iso:Number;ShutterTime:Duration;Near:Number;Far:Number;}
 type PiecewisePolynomial implements IValue{Breakpoints:Array<Number>;Pieces:Array<Polynomial>;}
 type PixelFormat{}
+type PlacedSdf2D implements IValue,IDifferentiableSignedDistanceField2D{Source:FunctionSdf2D;Pose:Pose2D;Scale:Number;}
+type PlacedSdf3D implements IValue,IDifferentiableSignedDistanceField3D{Source:FunctionSdf3D;Pose:Pose3D;Scale:Number;}
 type PlanarPatch implements IParametricSurface{Frame:Frame3D;Domain:Bounds2D;}
 type Plane implements IGeometry3D,IConnected,IManifold,IOrientable,INearestPoint3D{Normal:Direction3D;Distance:Number;}
 type PlaneFit3D implements IValue,IFitted{Plane:Plane;Quality:FitQuality;}
@@ -850,8 +854,8 @@ type SampledCurve2D implements IValue,IDeformable2D{Parameters:Array<Number>;Poi
 type SampledCurve3D implements IValue,IDeformable3D{Parameters:Array<Number>;Points:Array<Point3D>;}
 type SampledScalarGrid2D implements IValue,IScalarField2D{Grid:RegularGrid2D;Values:Array2D<Number>;}
 type SampledScalarGrid3D implements IValue,IScalarField3D{Grid:RegularGrid3D;Values:Array3D<Number>;}
-type SampledSdf2D implements IValue,IBoundedSignedDistanceField2D{Values:Array2D<Number>;Bounds:Bounds2D;}
-type SampledSdf3D implements IValue,IBoundedSignedDistanceField3D{Values:Array3D<Number>;Bounds:Bounds3D;}
+type SampledSdf2D implements IValue,IBoundedSignedDistanceField2D,IDifferentiableSignedDistanceField2D{Values:Array2D<Number>;Bounds:Bounds2D;}
+type SampledSdf3D implements IValue,IBoundedSignedDistanceField3D,IDifferentiableSignedDistanceField3D{Values:Array3D<Number>;Bounds:Bounds3D;}
 type SampledSurfaceGrid implements IValue,IDeformable3D{UvDomain:Bounds2D;Points:Array2D<Point3D>;}
 type SampledVectorGrid2D implements IValue,IVectorField2D{Grid:RegularGrid2D;Values:Array2D<Vector2D>;}
 type SampledVectorGrid3D implements IValue,IVectorField3D{Grid:RegularGrid3D;Values:Array3D<Vector3D>;}

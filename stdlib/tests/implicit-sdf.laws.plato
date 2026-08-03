@@ -1,0 +1,165 @@
+// Law library for the signed-distance primitives and distance operators
+// (stdlib/geometry/implicit-sdf.library.plato).
+//
+// Same harness and conventions as foundation.laws.plato: Law_-prefixed Boolean
+// functions, merged with stdlib/ only by tools/regen-forward-conformance.ps1.
+// LawEq lives in FoundationLaws and is reused here.
+// Every member referenced was verified against stdlib/geometry/implicit-sdf.library.plato
+// (LIBRARIES.md rule 3).
+//
+// Every law below is over the closed-form primitives and the scalar distance
+// operators, whose arguments are ordinary points, vectors and numbers. The field
+// TYPES (FunctionSdf*, PlacedSdf*) are deliberately absent: each stores a lambda,
+// which the law runner has no way to instantiate. The properties those types owe —
+// that placement preserves distance, and that a placed gradient is the source
+// gradient turned by the pose — are stated in their doc comments and are not
+// covered here (plato-409).
+//
+// The theme is redundancy between independently written bodies: each law pins one
+// primitive against a DIFFERENT primitive that must agree with it in a degenerate
+// case. A law that merely restated a body's own formula would pass for any sign
+// error made consistently in both places.
+library ImplicitSdfLaws
+{
+    //==
+    // Degenerate cases where one primitive must reduce to another.
+
+    // Rounding by zero leaves the box unchanged: the rounded-box body inflates the
+    // half-extents and subtracts the radius back off, so a zero radius must cancel.
+    Law_RoundedBoxAtZeroRadiusIsBox(p: Point3D, halfExtents: Vector3D): Boolean
+        => DistanceToRoundedBox(p, halfExtents, 0.0).LawEq(DistanceToBox(p, halfExtents));
+
+    // The planar form of the same cancellation.
+    Law_RoundedBox2DAtZeroRadiusIsBox(p: Point2D, halfExtents: Vector2D): Boolean
+        => DistanceToRoundedBox(p, halfExtents, 0.0).LawEq(DistanceToBox(p, halfExtents));
+
+    // A capsule whose two endpoints coincide at the origin is a sphere. Cross-checks
+    // the segment-based capsule against the closed-form sphere.
+    Law_DegenerateCapsuleIsSphere(p: Point3D, radius: Number): Boolean
+        => DistanceToCapsule(p, Point3D(0.0, 0.0, 0.0), Point3D(0.0, 0.0, 0.0), radius)
+            .LawEq(DistanceToSphere(p, radius));
+
+    // A planar capsule with coincident endpoints is a circle.
+    Law_DegenerateCapsule2DIsCircle(p: Point2D, radius: Number): Boolean
+        => DistanceToCapsule(p, Point2D(0.0, 0.0), Point2D(0.0, 0.0), radius)
+            .LawEq(DistanceToCircle(p, radius));
+
+    // The vertical capsule is the general capsule running from the origin along Y.
+    // Two independently written bodies that must agree everywhere.
+    Law_VerticalCapsuleIsCapsuleAlongY(p: Point3D, height: Number, radius: Number): Boolean
+        => DistanceToVerticalCapsule(p, height, radius)
+            .LawEq(DistanceToCapsule(p, Point3D(0.0, 0.0, 0.0), Point3D(0.0, height, 0.0), radius));
+
+    // A ring of zero thickness is the unsigned distance to its centre circle: the
+    // ring is inside-out on both sides of the curve, so the sign cancels.
+    Law_ZeroThicknessRingIsUnsignedCircle(p: Point2D, radius: Number): Boolean
+        => DistanceToRing(p, radius, 0.0).LawEq(DistanceToCircle(p, radius).Abs);
+
+    //==
+    // Planar and spatial primitives agree on the plane they share.
+    //
+    // Each planar primitive must equal its spatial counterpart evaluated on the
+    // z = 0 slice through the shape's own centre. This is what "the 2D family
+    // matches the 3D family" means operationally.
+
+    // A circle is the z = 0 slice of the sphere of the same radius.
+    Law_CircleIsSphereSlice(p: Point2D, radius: Number): Boolean
+        => DistanceToCircle(p, radius).LawEq(DistanceToSphere(Point3D(p.X, p.Y, 0.0), radius));
+
+    // A rectangle is the z = 0 slice of the box with the same half-extents in x and
+    // y. The slice's own half-extent in z is irrelevant at z = 0 as long as it is
+    // not the nearest face, so it is taken larger than the others.
+    Law_BoxIsBoxSlice(p: Point2D, halfExtents: Vector2D): Boolean {
+        var depth = halfExtents.X.Max(halfExtents.Y) + 1.0;
+        return DistanceToBox(p, halfExtents)
+            .LawEq(DistanceToBox(
+                Point3D(p.X, p.Y, 0.0),
+                Vector3D(halfExtents.X, halfExtents.Y, depth)));
+    }
+
+    // A line is the z = 0 slice of the plane with the same in-plane normal.
+    Law_LineIsPlaneSlice(p: Point2D, normal: Vector2D, offset: Number): Boolean
+        => DistanceToLine(p, normal, offset)
+            .LawEq(DistanceToPlane(
+                Point3D(p.X, p.Y, 0.0),
+                Vector3D(normal.X, normal.Y, 0.0),
+                offset));
+
+    //==
+    // Distance-operator algebra.
+    //
+    // The scalar CSG kernels are Min/Max underneath, so their laws are the lattice
+    // identities plus the relations between the sharp and smooth forms.
+
+    // Subtraction is intersection against the complement, which is what makes the
+    // sign convention of Difference consistent with Intersection.
+    Law_SubtractIsIntersectWithComplement(a: Number, b: Number): Boolean
+        => SubtractDistance(a, b).LawEq(IntersectionDistance(a, b.Negative));
+
+    // Union and intersection are commutative.
+    Law_UnionIsCommutative(a: Number, b: Number): Boolean
+        => UnionDistance(a, b).LawEq(UnionDistance(b, a));
+
+    Law_IntersectionIsCommutative(a: Number, b: Number): Boolean
+        => IntersectionDistance(a, b).LawEq(IntersectionDistance(b, a));
+
+    // Union with self changes nothing (idempotence), and likewise intersection.
+    Law_UnionIsIdempotent(a: Number): Boolean
+        => UnionDistance(a, a).LawEq(a);
+
+    Law_IntersectionIsIdempotent(a: Number): Boolean
+        => IntersectionDistance(a, a).LawEq(a);
+
+    // The union of two shapes is contained in each, so its distance is no greater
+    // than either operand's — the absorption direction that makes Union a minimum.
+    Law_UnionIsNoGreaterThanOperands(a: Number, b: Number): Boolean
+        => UnionDistance(a, b) <= a && UnionDistance(a, b) <= b;
+
+    // Intersection is the dual: no less than either operand.
+    Law_IntersectionIsNoLessThanOperands(a: Number, b: Number): Boolean
+        => IntersectionDistance(a, b) >= a && IntersectionDistance(a, b) >= b;
+
+    // Exclusive-or is symmetric in its operands.
+    Law_ExclusiveOrIsCommutative(a: Number, b: Number): Boolean
+        => ExclusiveOrDistance(a, b).LawEq(ExclusiveOrDistance(b, a));
+
+    //==
+    // Smooth operators against their sharp counterparts.
+
+    // Smoothing a union only ever rounds material ON: the blended distance is never
+    // greater than the sharp minimum. Precondition mirrors the body's — a positive
+    // blend radius.
+    Law_SmoothUnionIsNoGreaterThanUnion(a: Number, b: Number, blendRadius: Number): Boolean
+        => blendRadius <= 0.0
+        || SmoothUnionDistance(a, b, blendRadius) <= UnionDistance(a, b) + 1e-4;
+
+    // Smooth union is symmetric, like the sharp form it blends.
+    Law_SmoothUnionIsCommutative(a: Number, b: Number, blendRadius: Number): Boolean
+        => blendRadius <= 0.0
+        || SmoothUnionDistance(a, b, blendRadius).LawEq(SmoothUnionDistance(b, a, blendRadius));
+
+    // Smooth intersection is the De Morgan dual of smooth union, which is how the
+    // body is defined; asserting it here pins the negation from being dropped.
+    Law_SmoothIntersectionIsDualOfSmoothUnion(a: Number, b: Number, blendRadius: Number): Boolean
+        => blendRadius <= 0.0
+        || SmoothIntersectionDistance(a, b, blendRadius)
+            .LawEq(SmoothUnionDistance(a.Negative, b.Negative, blendRadius).Negative);
+
+    //==
+    // Modifier arithmetic.
+
+    // Rounding inflates: a positive radius moves every distance inward by exactly
+    // that much, so the surface moves outward.
+    Law_RoundingSubtractsRadius(radius: Number, distance: Number): Boolean
+        => SdfRoundingModifier(radius).ApplyToDistance(distance).LawEq(distance - radius);
+
+    // A shell is symmetric about the source surface: points equidistant inside and
+    // outside land at the same shell distance.
+    Law_ShellIsSymmetricAboutSurface(thickness: Number, distance: Number): Boolean
+        => SdfShellModifier(thickness).ApplyToDistance(distance)
+            .LawEq(SdfShellModifier(thickness).ApplyToDistance(distance.Negative));
+
+    // An onion of one layer reaches exactly one thickness inward.
+    Law_SingleOnionDepthIsThickness(thickness: Number): Boolean
+        => SdfOnionModifier(thickness, 1).TotalDepth.LawEq(thickness);
+}
