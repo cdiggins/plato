@@ -129,18 +129,32 @@ function nonFinitePositions(object: Object3D): string | null {
   let found: string | null = null;
   object.traverse(node => {
     if (found) return;
+    const label = `${node.type}${node.name ? ` "${node.name}"` : ''}`;
+    // An InstancedMesh carries its per-body placement in instanceMatrix and
+    // never writes the geometry's position attribute, so checking only the
+    // latter would pass a page whose every body had gone to NaN — which is
+    // exactly how a simulation page is drawn. Both are checked.
+    const instanced = (node as { instanceMatrix?: { array: ArrayLike<number> } }).instanceMatrix;
+    const slot = scanFinite(instanced?.array);
+    if (slot >= 0) {
+      found = `${label} instanceMatrix[${slot}]`;
+      return;
+    }
     const position = (node as { geometry?: { attributes?: { position?: { array: ArrayLike<number> } } } })
       .geometry?.attributes?.position;
-    if (!position) return;
-    const { array } = position;
-    for (let i = 0; i < array.length; i++) {
-      if (!Number.isFinite(array[i])) {
-        found = `${node.type}${node.name ? ` "${node.name}"` : ''} position[${i}]`;
-        return;
-      }
-    }
+    const index = scanFinite(position?.array);
+    if (index >= 0) found = `${label} position[${index}]`;
   });
   return found;
+}
+
+/** Index of the first non-finite entry, or -1. */
+function scanFinite(array: ArrayLike<number> | undefined): number {
+  if (!array) return -1;
+  for (let i = 0; i < array.length; i++) {
+    if (!Number.isFinite(array[i])) return i;
+  }
+  return -1;
 }
 
 let failures = 0;
