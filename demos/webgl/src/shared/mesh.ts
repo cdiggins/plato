@@ -15,6 +15,8 @@ import {
   Polygon3D,
   PolygonMesh3D,
   PolygonSoup3D,
+  TriangleArray3D,
+  TriangleMesh3D,
   type IArray,
 } from '../plato/plato.g.js';
 
@@ -104,6 +106,89 @@ export function polygon3DLines(polygon: Polygon3D): THREE.BufferGeometry {
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  return geometry;
+}
+
+/**
+ * A soup of independent triangles — what the marching-cubes members return.
+ * Normals come from the triangles themselves, which is what an isosurface built
+ * one cell at a time can honestly claim: neighbouring cells emit their own
+ * copies of a shared vertex, so there is nothing to average across.
+ */
+export function triangleArrayGeometry(triangles: TriangleArray3D): THREE.BufferGeometry {
+  const positions: number[] = [];
+  for (const t of toArray(triangles.Triangles)) {
+    for (const p of [t.A, t.B, t.C]) positions.push(p.X, p.Y, p.Z);
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+/** An indexed triangle mesh, kept indexed so shared vertices average normals. */
+export function triangleMeshGeometry(mesh: TriangleMesh3D): THREE.BufferGeometry {
+  const positions: number[] = [];
+  for (const p of toArray(mesh.Positions)) positions.push(p.X, p.Y, p.Z);
+  const indices: number[] = [];
+  for (const f of toArray(mesh.Faces)) indices.push(f.A.Value, f.B.Value, f.C.Value);
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+/** An open chain of points as one polyline — parametric curves, field lines. */
+export function polylineGeometry(points: readonly Point3D[]): THREE.BufferGeometry {
+  const positions: number[] = [];
+  for (let i = 0; i + 1 < points.length; i++) {
+    const a = points[i];
+    const b = points[i + 1];
+    positions.push(a.X, a.Y, a.Z, b.X, b.Y, b.Z);
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  return geometry;
+}
+
+/**
+ * A parametric surface sampled on a (u, v) lattice as an indexed quad grid.
+ * `evaluate` is the generated `Eval`; nothing here knows which surface it is.
+ * `closedU` / `closedV` wrap the lattice so a torus has no visible seam.
+ */
+export function parametricGeometry(
+  evaluate: (u: number, v: number) => Point3D,
+  uSteps: number,
+  vSteps: number,
+  closedU = false,
+  closedV = false,
+): THREE.BufferGeometry {
+  const uCount = uSteps + 1;
+  const vCount = vSteps + 1;
+  const positions: number[] = [];
+  for (let j = 0; j < vCount; j++) {
+    for (let i = 0; i < uCount; i++) {
+      const p = evaluate(i / uSteps, j / vSteps);
+      positions.push(p.X, p.Y, p.Z);
+    }
+  }
+  const at = (i: number, j: number): number =>
+    (closedV && j === vSteps ? 0 : j) * uCount + (closedU && i === uSteps ? 0 : i);
+  const indices: number[] = [];
+  for (let j = 0; j < vSteps; j++) {
+    for (let i = 0; i < uSteps; i++) {
+      const a = at(i, j);
+      const b = at(i + 1, j);
+      const c = at(i + 1, j + 1);
+      const d = at(i, j + 1);
+      indices.push(a, b, c, a, c, d);
+    }
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
   return geometry;
 }
 

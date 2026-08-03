@@ -1,17 +1,32 @@
 import type * as THREE from 'three';
 import type { ViewerOptions } from './viewer.js';
 
-/** A slider or checkbox in the sidebar. `key` is the name `build` reads back. */
+/**
+ * One control in the sidebar. `key` is the name `build` reads back — except for
+ * `kind: 'color'`, which owns three parameters instead of one (see `colorDef`).
+ */
 export interface Control {
   key: string;
   label: string;
-  kind: 'slider' | 'toggle' | 'select';
+  kind: 'slider' | 'toggle' | 'select' | 'color';
   min?: number;
   max?: number;
   step?: number;
   /** Option labels for `kind: 'select'`; the value is the chosen index. */
   options?: string[];
   def: number;
+  /**
+   * `kind: 'color'` only: the starting hue, saturation and value, each 0..1.
+   * The picker writes them back as `${key}H`, `${key}S` and `${key}V`, so a
+   * control keyed `tint` is read as `params.tintH`, `params.tintS`, `params.tintV`.
+   * `def` is ignored for this kind.
+   */
+  colorDef?: [number, number, number];
+}
+
+/** The parameters a `color` control contributes, for a control's key. */
+export function colorKeys(key: string): [string, string, string] {
+  return [`${key}H`, `${key}S`, `${key}V`];
 }
 
 export type Params = Record<string, number>;

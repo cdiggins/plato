@@ -7,7 +7,11 @@
     "noEmit": true,
     "skipLibCheck": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "gratify": ["./src/shared/gratify.d.ts"]
+    }
   },
   "include": ["src"]
 }

@@ -14,6 +14,13 @@
       "runtimeArgs": ["run", "dev"],
       "cwd": "demos/webgl",
       "port": 5175
+    },
+    {
+      "name": "webgl-demos-alt",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "--port", "5185", "--strictPort"],
+      "cwd": "demos/webgl",
+      "port": 5185
     }
   ]
 }

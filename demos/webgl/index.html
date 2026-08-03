@@ -9,10 +9,12 @@
   <div class="landing">
     <h1>Plato stdlib, running in the browser</h1>
     <p class="lede">
-      Four demos over the same generated TypeScript. Every polyhedron, ring,
-      boolean and warp below is computed by members that
-      <code>Plato.TypeScriptWriter</code> emitted from the <code>stdlib/</code>
-      Plato sources — nothing here re-derives the maths.
+      Eleven demos over the same generated TypeScript. Every polyhedron, ring,
+      boolean, warp, curve, surface, colour and isosurface below is computed by
+      members that <code>Plato.TypeScriptWriter</code> emitted from the
+      <code>stdlib/</code> Plato sources — nothing here re-derives the maths.
+      The controls are a <a href="https://github.com/ara3d/gratify">Gratify</a>
+      panel.
     </p>
     <ul>
       <li>
@@ -37,6 +39,48 @@
         <a class="card" href="./deformers.html">
           <strong>Deformers</strong>
           <span>Twist, bend, taper and the rest of the deformation catalog, applied vertex-wise to a dense mesh.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./curves.html">
+          <strong>Parametric curves</strong>
+          <span>Bezier, Hermite, Catmull-Rom and B-spline curves, the named plane curves, and the frames that ride along them.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./surfaces.html">
+          <strong>Parametric surfaces</strong>
+          <span>The surface catalog sampled on a (u, v) lattice: torus, Möbius strip, Klein bottle, minimal surfaces and patches.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./noise.html">
+          <strong>Noise</strong>
+          <span>Value, Perlin, simplex, Worley, fBm, ridged, turbulence, domain warp, curl and Gabor — the same fields read several ways.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./colors.html">
+          <strong>Colour spaces</strong>
+          <span>sRGB, HSL, HSV, Lab, LCh, OkLab and XYZ, the conversions between them, and a chooser that reads out every one.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./transforms.html">
+          <strong>Transforms</strong>
+          <span>Matrices, quaternions, Euler angles and TRS composition — what each one does to a frame, and where they disagree.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./marching.html">
+          <strong>Marching cubes</strong>
+          <span>Isosurfaces of signed distance fields and noise volumes, from the lattice member in the stdlib itself.</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" href="./voxels.html">
+          <strong>Voxels</strong>
+          <span>Dense and sparse voxel grids: filling them from a solid, and reading a surface back out.</span>
         </a>
       </li>
     </ul>

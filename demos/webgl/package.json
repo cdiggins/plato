@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Interactive Three.js demos of the Plato stdlib: polyhedra, polygons, CSG and deformers, driven by TypeScript generated from stdlib.",
+  "description": "Interactive Three.js demos of the Plato stdlib — polyhedra, polygons, CSG, deformers, curves, surfaces, noise, colour spaces, transforms, marching cubes and voxels — driven by TypeScript generated from stdlib, with a Gratify control panel.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

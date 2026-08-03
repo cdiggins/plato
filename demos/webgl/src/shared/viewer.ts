@@ -118,9 +118,15 @@ function disposeTree(root: THREE.Object3D): void {
     const withGeometry = node as Partial<THREE.Mesh>;
     withGeometry.geometry?.dispose();
     const material = withGeometry.material;
-    if (Array.isArray(material)) material.forEach(m => m.dispose());
-    else material?.dispose();
+    if (Array.isArray(material)) material.forEach(disposeMaterial);
+    else if (material) disposeMaterial(material);
   });
+}
+
+/** A raster scene builds a texture per rebuild, so the map goes with the material. */
+function disposeMaterial(material: THREE.Material): void {
+  (material as Partial<THREE.MeshBasicMaterial>).map?.dispose();
+  material.dispose();
 }
 
 /** The palette the demos share, so the four pages look like one product. */

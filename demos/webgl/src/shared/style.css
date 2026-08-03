@@ -74,21 +74,14 @@ body {
 }
 #controls:empty { display: none; }
 
-.control { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; align-items: center; }
-.control label { font-size: 12px; color: var(--dim); }
-.control .value { font-size: 12px; color: var(--text); font-variant-numeric: tabular-nums; }
-.control input[type="range"] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
-.control select {
-  grid-column: 2;
-  background: var(--panel2);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  font: inherit;
-  font-size: 12px;
-  padding: 2px 4px;
+/* The controls are one Gratify canvas, sized by the panel from its control list.
+   `touch-action: none` is what lets a drag on the canvas move a slider instead
+   of scrolling the sidebar. */
+.control-canvas {
+  display: block;
+  width: 100%;
+  touch-action: none;
 }
-.control input[type="checkbox"] { accent-color: var(--accent); }
 
 #about {
   padding: 12px 16px 20px;
