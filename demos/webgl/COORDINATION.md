@@ -156,12 +156,17 @@ All three must pass before you report done:
 |---|---|
 | `npm run typecheck` | the app compiles |
 | `npm run smoke` | the generated members the demos rely on still return the values the Plato source pins down |
-| `npm run scenes` | **every scene on every page builds**, off the page: it imports each demo module, calls each scene's `build` at its default parameters, and fails on a throw or an empty result. It prints each scene's vertex count, build time and status line, and marks anything over 400 ms `SLOW`. A scene with a `tick` is also stepped — see "Simulation scenes" above |
+| `npm run scenes` (or `npm run scenes -- <page>...` for one page) | **every scene on every page builds**, off the page: it imports each demo module, calls each scene's `build` at its default parameters, and fails on a throw or an empty result. It prints each scene's vertex count, build time and status line, and marks anything over 400 ms `SLOW`. A scene with a `tick` is also stepped — see "Simulation scenes" above |
 
 `npm run probe` is not a gate — it is the quick way to find out whether a member
 evaluates at all, before you build a scene around it.
 
-**Several agents share this working tree.** `npm run typecheck` and
+**Several agents share this working tree.** Gate your own page with
+`npm run scenes -- <yourpage>` while you work, and run the unfiltered
+`npm run scenes` before you report — a page whose module nobody has written yet
+fails to import, so the full run may be red for reasons that are not yours.
+
+`npm run typecheck` and
 `npm run scenes` both see every page, so a failure in a file you do not own is
 another agent mid-edit: re-run, and if it persists, say so in your report and
 judge yourself on your own page's scenes. Never "fix" someone else's file.

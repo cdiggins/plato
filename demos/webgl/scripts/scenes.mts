@@ -66,12 +66,27 @@ const pages = [
   'transforms',
   'marching',
   'voxels',
-  // A page joins this list in the commit that lands `src/demos/<page>.ts`, not
-  // when its HTML entry appears: a name here with no module behind it is an
-  // import failure, which is indistinguishable from a typo and makes the gate
-  // red for a page that nobody has written yet. Pending: lattices, sampling,
-  // remeshing, fea, rigidbody, cloth.
+  'lattices',
+  'sampling',
+  'remeshing',
+  'fea',
+  'rigidbody',
+  'cloth',
 ];
+
+// `npm run scenes -- lattices cloth` runs only those pages. The full run is the
+// gate; the filter exists because several agents build different pages in one
+// shared tree at once, and a page whose module nobody has written yet fails to
+// import — which would otherwise leave everyone unable to gate their own work.
+// A name that matches nothing is an error rather than an empty run, so a typo
+// does not read as success.
+const requested = process.argv.slice(2);
+const unknown = requested.filter(name => !pages.includes(name));
+if (unknown.length > 0) {
+  console.log(`No such page: ${unknown.join(', ')}. Known pages: ${pages.join(', ')}`);
+  process.exit(2);
+}
+const selected = requested.length > 0 ? requested : pages;
 
 /**
  * How many frames a simulation scene is stepped before the gate is satisfied.
@@ -131,7 +146,7 @@ function nonFinitePositions(object: Object3D): string | null {
 let failures = 0;
 let scenes = 0;
 
-for (const page of pages) {
+for (const page of selected) {
   const module = (await import(`../src/demos/${page}.ts`)) as { demo?: Demo };
   const demo = module.demo;
   if (!demo) {
