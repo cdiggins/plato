@@ -1,0 +1,91 @@
+//==
+// # Remeshing
+//
+// The intermediates the remeshing algorithms of `remeshing.library.plato` pass
+// between their passes. Nothing here is a new geometry representation: a mesh
+// stays a `TriangleMesh3D` / `PolygonMesh3D` (`meshes.types.plato`) from one end
+// of a remeshing pipeline to the other, and these types are the two things a pure
+// language needs in order to REBUILD such a mesh instead of mutating one.
+//
+// Sections, in order:
+//  - Derived triangle connectivity
+//  - Vertex rewrites
+//  - Smoothing weights
+//
+// The design decision behind them, stated once here because both types exist to
+// serve it: a remeshing operation is a WHOLE-MESH REBUILD driven by a decision
+// taken against a single, unchanging input mesh. An in-place remesher splits an
+// edge, invalidating every index it has, and then splits the next one; here every
+// edge is judged against the same mesh, the decisions are collected into per-edge
+// arrays, and one pass applies all of them at once. Operations that ADD vertices
+// (split, subdivision) append their new points to the position array in a fixed
+// block order and rewrite the face table by index arithmetic; operations that
+// REMOVE vertices (weld, collapse, decimation) build a `VertexRemap` and apply it.
+// Nothing is ever mutated, and no index is ever invalidated mid-pass.
+
+//==
+// # Derived triangle connectivity
+//
+// A triangle mesh stores positions and faces and nothing else, so every remeshing
+// pass has to recover its edges first. `TriangleMeshTopology` is that recovery,
+// reified: it is derived, read-only, and thrown away when the pass that built it
+// produces its new mesh. It plays the role a half-edge structure plays in a
+// mutable remesher, minus the part that makes a half-edge structure hard — it is
+// never updated, only rebuilt.
+//
+// Corners are numbered as `CornerTable` (`topology.types.plato`) numbers them:
+// corner c belongs to triangle c / 3 at slot c mod 3, and reads as the DIRECTED
+// edge from its own vertex to the next corner's vertex. An undirected edge is a
+// twin pair of corners, named by the lower of the two (a boundary corner names its
+// own edge), and numbered by the rank of that naming corner — the same canonical
+// -corner rule `meshes-polygon.library.plato` uses for `PolygonMesh3D`.
+
+// The edges of a triangle mesh, recovered once and indexed both ways: from a
+// corner to the undirected edge it runs along, and from an undirected edge back
+// to the corner that names it. CornerEdges and CornerTwins have one entry per
+// corner (three times the face count); UndirectedEdges and EdgeCorners have one
+// entry per undirected edge. A corner with no twin is a boundary corner and
+// stores -1.
+// Convention: see CONVENTIONS.md - Typed indices (-1 means "none").
+type TriangleMeshTopology
+    implements IValue
+{
+    CornerEdges: Array<UndirectedEdgeIndex>;
+    CornerTwins: Array<CornerIndex>;
+    UndirectedEdges: Array<VertexPair>;
+    EdgeCorners: Array<CornerIndex>;
+}
+
+//==
+// # Vertex rewrites
+//
+// The one intermediate every vertex-removing operation goes through. Welding,
+// edge collapse and quadric decimation differ only in WHICH vertices they merge
+// and WHERE the survivor lands; all three end by handing a `VertexRemap` to
+// `ApplyRemap`, which rewrites the face table and drops the faces the merge made
+// degenerate.
+
+// Where every vertex of a mesh goes when the mesh is rebuilt: Targets has one
+// entry per OLD vertex holding its index in the new mesh, with -1 for a vertex
+// that is dropped outright, and RemappedPositions is the new position array,
+// already compacted so that Targets indexes it directly. The two travel together
+// because neither is meaningful alone — a target array whose surviving positions
+// were chosen by somebody else describes no particular mesh.
+// Convention: see CONVENTIONS.md - Typed indices (-1 means "none").
+type VertexRemap
+    implements IValue
+{
+    Targets: Array<VertexIndex>;
+    RemappedPositions: Array<Point3D>;
+}
+
+//==
+// # Smoothing weights
+
+// How a Laplacian step weights the neighbours of a vertex
+// (https://en.wikipedia.org/wiki/Laplacian_smoothing). UniformWeights gives every
+// neighbour the same say, which is cheap and drifts vertices along the surface;
+// CotangentWeights uses the cotangent formula, which discretizes the
+// Laplace-Beltrami operator and so depends on the shape rather than on the
+// triangulation (https://en.wikipedia.org/wiki/Discrete_Laplace_operator).
+type LaplacianWeighting = UniformWeights | CotangentWeights;

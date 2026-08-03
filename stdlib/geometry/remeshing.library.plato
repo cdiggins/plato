@@ -1,0 +1,1513 @@
+//==
+// # Remeshing
+//
+// Changing a mesh's TRIANGULATION rather than its shape: refining it, coarsening
+// it, regularizing it, and smoothing it. The types the passes hand each other are
+// declared in `remeshing.types.plato`, whose header states the one design decision
+// everything here follows — every operation is a whole-mesh REBUILD driven by
+// decisions taken against a single unchanging input, never an in-place edit.
+//
+// Sections, in order:
+//  - Triangle corners
+//  - Derived triangle connectivity
+//  - Vertex remaps
+//  - Welding
+//  - Edge split
+//  - Edge collapse
+//  - Edge flip
+//  - Loop and Butterfly subdivision
+//  - Catmull-Clark and Doo-Sabin subdivision
+//  - The subdivision scheme driver
+//  - Smoothing
+//  - Quadric error metrics
+//  - Quadric decimation
+//  - Isotropic remeshing
+//
+// COST. Nothing in this vocabulary has a keyed container (see LINT013 on `IMap`),
+// so an edge table is recovered by scanning corners against corners: building
+// `TriangleMeshTopology` is quadratic in the corner count, and that build is the
+// price of admission for every pass below. Treat a few thousand triangles as the
+// working range and read the per-function notes before sizing an input.
+
+library Remeshing
+{
+    //==
+    // # Triangle corners
+    //
+    // A triangle mesh's corners are numbered exactly as `CornerTable`
+    // (`topology.types.plato`) numbers them: corner c belongs to triangle c / 3 at
+    // slot c mod 3. A corner also READS as the directed edge leaving its own
+    // vertex for the next corner's vertex, which is what lets the connectivity
+    // below be recovered without storing a half-edge record per side.
+
+    // The triangle a corner belongs to: corners come three per face, in face order.
+    CornerFace(corner: CornerIndex): FaceIndex
+        => FaceIndex(corner.Value / 3);
+
+    // The slot a corner occupies within its own triangle: 0, 1 or 2.
+    CornerSlot(corner: CornerIndex): Integer
+        => corner.Value % 3;
+
+    // The next corner counter-clockwise around the same triangle, wrapping from
+    // slot 2 back to slot 0.
+    NextCorner(corner: CornerIndex): CornerIndex
+        => CornerIndex(corner.Value - corner.Value % 3 + (corner.Value + 1) % 3);
+
+    // The previous corner around the same triangle: two steps forward of three.
+    PreviousCorner(corner: CornerIndex): CornerIndex
+        => NextCorner(NextCorner(corner));
+
+    // The total number of face corners: three per triangle.
+    CornerCount(self: TriangleMesh3D): Integer
+        => self.Faces.Count * 3;
+
+    // The vertex sitting at a corner. Precondition: the corner is in
+    // [0, CornerCount).
+    CornerVertex(self: TriangleMesh3D, corner: CornerIndex): VertexIndex
+        => self.Faces[corner.Value / 3][corner.Value % 3];
+
+    // The position at a corner.
+    CornerPosition(self: TriangleMesh3D, corner: CornerIndex): Point3D
+        => self.Positions[self.CornerVertex(corner).Value];
+
+    // The vertex a corner points AT, reading the corner as a directed edge.
+    CornerDestination(self: TriangleMesh3D, corner: CornerIndex): VertexIndex
+        => self.CornerVertex(NextCorner(corner));
+
+    // The corner running the opposite way along the same undirected edge, found by
+    // scanning every corner for the one whose directed edge is this one reversed.
+    // Returns the "none" index on a boundary edge. Linear in the corner count, so
+    // the whole twin table below is quadratic.
+    // Convention: see CONVENTIONS.md - Typed indices (-1 means "none").
+    TwinCorner(self: TriangleMesh3D, corner: CornerIndex): CornerIndex
+    {
+        var from = self.CornerVertex(corner);
+        var to = self.CornerDestination(corner);
+        return CornerIndex(self.CornerCount
+            .MapRange(c => CornerIndex(c))
+            .Reduce(-1, (found, other) =>
+                self.CornerVertex(other).Equals(to).And(self.CornerDestination(other).Equals(from))
+                    ? other.Value
+                    : found));
+    }
+
+    // The two endpoints ordered A.Value <= B.Value, matching the canonical form
+    // `UndirectedEdgeList` (`topology.types.plato`) stores.
+    CanonicalPair(a: VertexIndex, b: VertexIndex): VertexPair
+        => a.Value <= b.Value ? VertexPair(a, b) : VertexPair(b, a);
+
+    // True when either endpoint of an undirected edge is the given vertex number.
+    PairTouches(pair: VertexPair, vertex: Integer): Boolean
+        => (pair.A.Value == vertex).Or(pair.B.Value == vertex);
+
+    // The endpoint of an undirected edge that is not the given vertex number.
+    // Precondition: the vertex is one of the two endpoints.
+    PairOtherEnd(pair: VertexPair, vertex: Integer): VertexIndex
+        => pair.A.Value == vertex ? pair.B : pair.A;
+
+    //==
+    // # Derived triangle connectivity
+    //
+    // Recovering `TriangleMeshTopology` from a bare `TriangleMesh3D`. This is the
+    // step a mutable remesher does once and then maintains incrementally; here it
+    // is done once per pass and thrown away, which is what removes the incremental
+    // bookkeeping from every algorithm below.
+    //
+    // An undirected edge is a twin pair of corners named by the lower of the two
+    // (a boundary corner names its own edge), and its number is the RANK of that
+    // naming corner among all naming corners — the same canonical-corner rule
+    // `meshes-polygon.library.plato` uses for `PolygonMesh3D`.
+    //
+    // Cost: quadratic in the corner count, and it dominates every pass built on it.
+
+    // The twin of every corner, in corner order.
+    CornerTwinTable(self: TriangleMesh3D): Array<CornerIndex>
+        => self.CornerCount.MapRange(c => self.TwinCorner(CornerIndex(c)));
+
+    // True when corner c names its undirected edge: it has no twin, or it is the
+    // lower half of the twin pair.
+    NamesItsEdge(twins: Array<CornerIndex>, c: Integer): Boolean
+        => twins[c].IsNone.Or(c < twins[c].Value);
+
+    // The full derived connectivity of a triangle mesh. Every pass below starts
+    // here, and a caller running several passes should build this once and pass it
+    // down rather than let each pass rebuild it.
+    TopologyOf(self: TriangleMesh3D): TriangleMeshTopology
+    {
+        var twins = self.CornerTwinTable;
+        var n = twins.Count;
+        var naming = n.MapRange(c => NamesItsEdge(twins, c));
+        var rank = n.MapRange(c =>
+            c.MapRange(d => naming[d] ? 1 : 0).Reduce(0, (acc, hit) => acc + hit));
+        var cornerEdges = n.MapRange(c =>
+            UndirectedEdgeIndex(naming[c] ? rank[c] : rank[twins[c].Value]));
+        var edgeCorners = n.MapRange(c => c).Reduce(Repeat(0, CornerIndex(0)),
+            (acc, c) => naming[c] ? acc.Append(CornerIndex(c)) : acc);
+        return (cornerEdges,
+                twins,
+                edgeCorners.Map(c => CanonicalPair(self.CornerVertex(c), self.CornerDestination(c))),
+                edgeCorners);
+    }
+
+    // The number of deduplicated undirected edges the topology found.
+    EdgeCount(self: TriangleMeshTopology): Integer
+        => self.UndirectedEdges.Count;
+
+    // The two endpoints of an undirected edge, canonically ordered.
+    EdgeEndpoints(self: TriangleMeshTopology, edge: UndirectedEdgeIndex): VertexPair
+        => self.UndirectedEdges[edge.Value];
+
+    // True when an undirected edge borders only one triangle: its naming corner
+    // has no twin.
+    IsBoundaryEdge(self: TriangleMeshTopology, edge: UndirectedEdgeIndex): Boolean
+        => self.CornerTwins[self.EdgeCorners[edge.Value].Value].IsNone;
+
+    // The vertex of the triangle at an edge's naming corner that does not lie on
+    // the edge: the apex the edge sees on that side.
+    EdgeApex(self: TriangleMesh3D, topology: TriangleMeshTopology, edge: UndirectedEdgeIndex): VertexIndex
+        => self.CornerVertex(PreviousCorner(topology.EdgeCorners[edge.Value]));
+
+    // The apex on the far side of an edge; the "none" index on a boundary edge.
+    // Convention: see CONVENTIONS.md - Typed indices (-1 means "none").
+    EdgeFarApex(self: TriangleMesh3D, topology: TriangleMeshTopology, edge: UndirectedEdgeIndex): VertexIndex
+    {
+        var twin = topology.CornerTwins[topology.EdgeCorners[edge.Value].Value];
+        return twin.IsNone ? VertexIndex(-1) : self.CornerVertex(PreviousCorner(twin));
+    }
+
+    // The straight-line length of an undirected edge.
+    EdgeLength(self: TriangleMesh3D, topology: TriangleMeshTopology, edge: UndirectedEdgeIndex): Number
+    {
+        var pair = topology.UndirectedEdges[edge.Value];
+        return self.Positions[pair.A.Value].Distance(self.Positions[pair.B.Value]);
+    }
+
+    // The midpoint of an undirected edge.
+    EdgeMidpoint(self: TriangleMesh3D, topology: TriangleMeshTopology, edge: UndirectedEdgeIndex): Point3D
+    {
+        var pair = topology.UndirectedEdges[edge.Value];
+        return self.Positions[pair.A.Value].Lerp(self.Positions[pair.B.Value], 0.5);
+    }
+
+    // A per-edge decision array that selects exactly one edge: the single-operator
+    // form of every batched pass below.
+    SingleEdgeMask(edgeCount: Integer, edge: UndirectedEdgeIndex): Array<Boolean>
+        => edgeCount.MapRange(e => e == edge.Value);
+
+    // True for every vertex that lies on the surface boundary. Boundary vertices
+    // are pinned by the smoothing passes and refused by the collapse passes, which
+    // is what stops a remesh from eroding an open border.
+    BoundaryVertexFlags(self: TriangleMesh3D, topology: TriangleMeshTopology): Array<Boolean>
+        => self.Positions.Count.MapRange(v =>
+            topology.UndirectedEdges.Count.MapRange(e => e).Reduce(false, (found, e) =>
+                found.Or(topology.IsBoundaryEdge(UndirectedEdgeIndex(e))
+                    .And(PairTouches(topology.UndirectedEdges[e], v)))));
+
+    // The valence of every vertex: how many undirected edges meet at it.
+    VertexValences(self: TriangleMesh3D, topology: TriangleMeshTopology): Array<Integer>
+        => self.Positions.Count.MapRange(v => topology.UndirectedEdges.Count
+            .MapRange(e => PairTouches(topology.UndirectedEdges[e], v) ? 1 : 0)
+            .Reduce(0, (acc, hit) => acc + hit));
+
+    // The neighbours of every vertex, one row per vertex, in edge order.
+    VertexNeighborTable(self: TriangleMesh3D, topology: TriangleMeshTopology): Array<Array<VertexIndex>>
+        => self.Positions.Count.MapRange(v => topology.UndirectedEdges.Count
+            .MapRange(e => e)
+            .Reduce(Repeat(0, VertexIndex(0)), (acc, e) =>
+                PairTouches(topology.UndirectedEdges[e], v)
+                    ? acc.Append(PairOtherEnd(topology.UndirectedEdges[e], v))
+                    : acc));
+
+    //==
+    // # Vertex remaps
+    //
+    // The single intermediate every vertex-REMOVING operation goes through.
+    // Welding, edge collapse and quadric decimation each decide which vertices
+    // become one and where the survivor lands; from there they are the same
+    // computation, and it lives here.
+
+    // The remap that keeps every vertex that is its own representative, numbering
+    // the survivors in ascending order, and sends every other vertex to its
+    // representative's new number. `placement` supplies each surviving vertex's
+    // position, taking its OLD number. Precondition: `representatives` is
+    // idempotent — the representative of a representative is itself.
+    CompactMerge(representatives: Array<VertexIndex>, placement: Function1<Integer, Point3D>): VertexRemap
+    {
+        var n = representatives.Count;
+        var survives = n.MapRange(i => representatives[i].Value == i);
+        var rank = n.MapRange(i =>
+            i.MapRange(d => survives[d] ? 1 : 0).Reduce(0, (acc, hit) => acc + hit));
+        var targets = n.MapRange(i => VertexIndex(rank[representatives[i].Value]));
+        var kept = n.MapRange(i => i).Reduce(Repeat(0, Point3D.Origin),
+            (acc, i) => survives[i] ? acc.Append(placement(i)) : acc);
+        return (targets, kept);
+    }
+
+    // One pointer-jumping pass: every vertex takes its representative's
+    // representative (https://en.wikipedia.org/wiki/Pointer_jumping).
+    JumpedRepresentatives(representatives: Array<VertexIndex>): Array<VertexIndex>
+        => representatives.Map(v => representatives[v.Value]);
+
+    // Representative chains resolved to their fixed points, which is what makes an
+    // arbitrary "vertex i merges into vertex j" table usable by `CompactMerge`.
+    // Each pass at least halves the longest remaining chain, so thirty-two passes
+    // settle any chain a four-billion-vertex mesh could hold.
+    ResolvedRepresentatives(representatives: Array<VertexIndex>): Array<VertexIndex>
+        => Repeat(32, 0).Reduce(representatives, (reps, pass) => JumpedRepresentatives(reps));
+
+    // A face's corners carried through a remap. A corner whose vertex was dropped
+    // becomes the "none" index, which `IsDegenerateFace` then rejects.
+    RemappedFace(remap: VertexRemap, face: TriangleFace): TriangleFace
+        => (remap.Targets[face.A.Value],
+            remap.Targets[face.B.Value],
+            remap.Targets[face.C.Value]);
+
+    // True when a face no longer names three distinct present vertices, which is
+    // exactly the face a merge has collapsed to a segment or a point.
+    IsDegenerateFace(face: TriangleFace): Boolean
+        => face.A.IsNone
+            .Or(face.B.IsNone)
+            .Or(face.C.IsNone)
+            .Or(face.A.Value == face.B.Value)
+            .Or(face.B.Value == face.C.Value)
+            .Or(face.C.Value == face.A.Value);
+
+    // The remapped face, or no face at all where the merge degenerated it. The
+    // empty / singleton pair is how a filter is written over `FlatMap`.
+    SurvivingFaces(remap: VertexRemap, face: TriangleFace): Array<TriangleFace>
+    {
+        var moved = RemappedFace(remap, face);
+        return IsDegenerateFace(moved) ? Repeat(0, moved) : [moved];
+    }
+
+    // The mesh rebuilt through a remap: the remap's positions, and the face table
+    // rewritten with every degenerate face dropped.
+    ApplyRemap(self: TriangleMesh3D, remap: VertexRemap): TriangleMesh3D
+        => (remap.RemappedPositions, self.Faces.FlatMap(f => SurvivingFaces(remap, f)));
+
+    //==
+    // # Welding
+    //
+    // Turning triangle soup into a mesh with shared vertices: the pass marching
+    // cubes, CSG and STL import all want and nothing in the tree provided.
+    // Two vertices merge when they are within `tolerance` of each other; the
+    // survivor is the lowest-numbered member of the group and keeps its own
+    // position, so welding never moves geometry.
+    //
+    // Cost: quadratic in the vertex count.
+
+    // The lowest-numbered vertex within `tolerance` of vertex i. Scans downwards
+    // so the last match kept is the smallest, the same trick
+    // `FirstCornerOfVertex` (`meshes-polygon.library.plato`) uses.
+    WeldRepresentative(positions: Array<Point3D>, i: Integer, tolerance: Number): VertexIndex
+        => VertexIndex((i + 1).MapRange(j => i - j)
+            .Reduce(i, (found, j) => positions[j].Distance(positions[i]) <= tolerance ? j : found));
+
+    // The remap that merges every group of vertices within `tolerance`. The raw
+    // representatives can chain (a is within tolerance of b, b of c, but not a of
+    // c), so they are resolved to fixed points before compaction.
+    WeldRemap(positions: Array<Point3D>, tolerance: Number): VertexRemap
+    {
+        var raw = positions.Count.MapRange(i => WeldRepresentative(positions, i, tolerance));
+        return CompactMerge(ResolvedRepresentatives(raw), i => positions[i]);
+    }
+
+    // The mesh with coincident vertices merged and the faces that became
+    // degenerate dropped.
+    Welded(self: TriangleMesh3D, tolerance: Number): TriangleMesh3D
+        => self.ApplyRemap(WeldRemap(self.Positions, tolerance));
+
+    // Unwelded triangle soup turned into an indexed mesh with shared vertices:
+    // `ToTriangleMesh` supplies the identity index table and this merges it down.
+    // This is the pass marching-cubes output (`voxels.library.plato`) needs before
+    // anything topological can be asked of it.
+    Welded(self: TriangleArray3D, tolerance: Number): TriangleMesh3D
+        => self.ToTriangleMesh.Welded(tolerance);
+
+    //==
+    // # Edge split
+    //
+    // Refinement. A per-edge decision array says which edges gain a midpoint; each
+    // triangle then re-triangulates according to how many of its three edges were
+    // chosen — the red-green refinement cases, 1-to-2, 1-to-3 and 1-to-4
+    // (https://en.wikipedia.org/wiki/Local_refinement).
+    //
+    // The new vertices are APPENDED to the position array in edge order, so old
+    // vertex numbers survive the pass unchanged. That is what lets Loop and
+    // Butterfly subdivision below reuse this function for their topology and
+    // simply supply a different position array of the same shape.
+
+    // The vertex number of the midpoint introduced on each undirected edge, or -1
+    // where the edge is not split. New vertices are numbered by the edge's rank
+    // among the split edges, after the existing vertices.
+    SplitVertexNumbers(splitMask: Array<Boolean>, baseVertexCount: Integer): Array<VertexIndex>
+        => splitMask.Count.MapRange(e => VertexIndex(splitMask[e]
+            ? baseVertexCount + e.MapRange(d => splitMask[d] ? 1 : 0).Reduce(0, (acc, hit) => acc + hit)
+            : -1));
+
+    // The midpoints introduced by a split, in edge order: the block appended to
+    // the position array.
+    SplitMidpoints(self: TriangleMesh3D, topology: TriangleMeshTopology, splitMask: Array<Boolean>): Array<Point3D>
+        => splitMask.Count.MapRange(e => e).Reduce(Repeat(0, Point3D.Origin), (acc, e) =>
+            splitMask[e] ? acc.Append(self.EdgeMidpoint(topology, UndirectedEdgeIndex(e))) : acc);
+
+    // How one triangle re-triangulates when some of its edges carry a new midpoint.
+    // v0, v1, v2 are the corners in winding order; m0 sits on v0-v1, m1 on v1-v2
+    // and m2 on v2-v0, each the "none" index when that edge was not split. Every
+    // emitted triangle keeps the original winding.
+    // Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+    SplitFaceTriangles(v0: VertexIndex, v1: VertexIndex, v2: VertexIndex,
+                       m0: VertexIndex, m1: VertexIndex, m2: VertexIndex): Array<TriangleFace>
+    {
+        var s0 = m0.IsPresent;
+        var s1 = m1.IsPresent;
+        var s2 = m2.IsPresent;
+        return s0.And(s1).And(s2)
+            ? [TriangleFace(v0, m0, m2), TriangleFace(m0, v1, m1),
+               TriangleFace(m2, m1, v2), TriangleFace(m0, m1, m2)]
+            : (s0.And(s1)
+            ? [TriangleFace(m0, v1, m1), TriangleFace(v0, m0, m1), TriangleFace(v0, m1, v2)]
+            : (s1.And(s2)
+            ? [TriangleFace(m1, v2, m2), TriangleFace(v0, v1, m1), TriangleFace(v0, m1, m2)]
+            : (s0.And(s2)
+            ? [TriangleFace(v0, m0, m2), TriangleFace(m0, v1, v2), TriangleFace(m0, v2, m2)]
+            : (s0 ? [TriangleFace(v0, m0, v2), TriangleFace(m0, v1, v2)]
+            : (s1 ? [TriangleFace(v0, v1, m1), TriangleFace(v0, m1, v2)]
+            : (s2 ? [TriangleFace(v0, v1, m2), TriangleFace(m2, v1, v2)]
+            : [TriangleFace(v0, v1, v2)]))))));
+    }
+
+    // Every masked edge split at once. Old vertices keep their numbers and the
+    // midpoints follow them in edge order.
+    SplitEdges(self: TriangleMesh3D, topology: TriangleMeshTopology, splitMask: Array<Boolean>): TriangleMesh3D
+    {
+        var midpointOf = SplitVertexNumbers(splitMask, self.Positions.Count);
+        return (self.Positions.Concatenate(self.SplitMidpoints(topology, splitMask)),
+                self.Faces.Count.MapRange(f => f).FlatMap(f =>
+                    SplitFaceTriangles(
+                        self.Faces[f].A, self.Faces[f].B, self.Faces[f].C,
+                        midpointOf[topology.CornerEdges[f * 3].Value],
+                        midpointOf[topology.CornerEdges[f * 3 + 1].Value],
+                        midpointOf[topology.CornerEdges[f * 3 + 2].Value])));
+    }
+
+    // One undirected edge split at its midpoint: each incident triangle becomes
+    // two. The single-operator form of `SplitEdges`.
+    SplitEdge(self: TriangleMesh3D, edge: UndirectedEdgeIndex): TriangleMesh3D
+    {
+        var topology = self.TopologyOf;
+        return self.SplitEdges(topology, SingleEdgeMask(topology.EdgeCount, edge));
+    }
+
+    // Every edge longer than `maxLength` split once. One pass halves a long edge,
+    // so an edge several times the target needs several passes — which is what the
+    // iteration count of `IsotropicRemeshed` below supplies.
+    SplitLongEdges(self: TriangleMesh3D, maxLength: Number): TriangleMesh3D
+    {
+        var topology = self.TopologyOf;
+        return self.SplitEdges(topology, topology.EdgeCount.MapRange(e =>
+            self.EdgeLength(topology, UndirectedEdgeIndex(e)) > maxLength));
+    }
+
+    //==
+    // # Edge collapse
+    //
+    // Coarsening. In a mutable remesher a collapse invalidates the indices of
+    // everything around it, so collapses are done one at a time against a
+    // structure that is repaired after each one. Here every candidate is judged
+    // against the same mesh and the accepted ones are applied together, which
+    // needs a conflict rule instead: no two accepted collapses may have ADJACENT
+    // endpoints, and edges are considered in edge order. A candidate rejected this
+    // pass is simply reconsidered in the next one.
+    //
+    // Merely forbidding a SHARED endpoint is not enough, and this is the subtle
+    // part. Take two collapses whose endpoints are neighbours of one another, and
+    // a triangle holding one endpoint of each plus some third vertex: after both
+    // collapses that triangle, and another one just like it, become the SAME
+    // triangle, and the mesh has a doubled face where it had two distinct ones.
+    // Requiring the whole one-ring of each endpoint to be free rules that out, at
+    // the cost of accepting fewer collapses per pass.
+    //
+    // On top of that, every candidate must satisfy the LINK CONDITION, which is
+    // what stops a collapse from pinching the surface. It is enforced inside
+    // `CollapseEdges` rather than left to callers, because it is a property of
+    // contraction itself and not a policy: an edge that fails it has no correct
+    // collapse. A single-edge `CollapseEdge` on such an edge therefore returns the
+    // mesh unchanged.
+    //
+    // What is still NOT checked is fold-over: a collapse that keeps the mesh a
+    // manifold can still invert a nearby triangle when the surviving position is
+    // far from both endpoints. The quadric minimizer is the usual source, and a
+    // caller that cares can decimate in more, smaller passes.
+
+    // True when a vertex appears in a neighbour row.
+    RowContains(row: Array<VertexIndex>, vertex: VertexIndex): Boolean
+        => row.Any(n => n.Value == vertex.Value);
+
+    // How many vertices neighbour BOTH ends of an edge.
+    SharedNeighborCount(neighbors: Array<Array<VertexIndex>>, pair: VertexPair): Integer
+        => neighbors[pair.A.Value]
+            .Map(n => RowContains(neighbors[pair.B.Value], n) ? 1 : 0)
+            .Reduce(0, (acc, hit) => acc + hit);
+
+    // The link condition (https://en.wikipedia.org/wiki/Edge_contraction): an edge
+    // may be contracted without changing the surface's topology exactly when the
+    // vertices adjacent to BOTH its endpoints are precisely the apexes of the
+    // triangles sharing it — two in the interior, one on a boundary. Two joined
+    // vertices with a third common neighbour elsewhere form a tunnel one edge
+    // wide, and contracting that pinches the surface shut.
+    //
+    // Cheap, despite appearances: with a neighbour table already built, the test
+    // is the product of two valences, so it costs about the same as reading the
+    // edge.
+    SatisfiesLinkCondition(topology: TriangleMeshTopology, neighbors: Array<Array<VertexIndex>>, e: Integer): Boolean
+        => SharedNeighborCount(neighbors, topology.UndirectedEdges[e])
+            == (topology.IsBoundaryEdge(UndirectedEdgeIndex(e)) ? 1 : 2);
+
+    // True when a vertex and every one of its neighbours is still free.
+    HasFreeNeighborhood(state: Array<Integer>, neighbors: Array<Array<VertexIndex>>, vertex: Integer): Boolean
+        => (state[vertex] == -1).And(neighbors[vertex].All(n => state[n.Value] == -1));
+
+    // The merge state after accepting every masked edge whose two endpoints AND
+    // all their neighbours are still free. Entry v is -1 while vertex v is free,
+    // -2 once it is blocked by a nearby collapse, and otherwise the vertex it has
+    // been merged into — which for a collapse target is itself, so one array
+    // records all three conditions.
+    CollapseClaims(edges: Array<VertexPair>, neighbors: Array<Array<VertexIndex>>,
+                   collapseMask: Array<Boolean>, vertexCount: Integer): Array<Integer>
+        => edges.Count.MapRange(e => e).Reduce(Repeat(vertexCount, -1), (state, e) =>
+            collapseMask[e]
+                .And(HasFreeNeighborhood(state, neighbors, edges[e].A.Value))
+                .And(HasFreeNeighborhood(state, neighbors, edges[e].B.Value))
+                    ? ClaimedByCollapse(state, neighbors, edges[e])
+                    : state);
+
+    // The state with both endpoints of an accepted edge pointing at its A end, and
+    // every other vertex of their two rings blocked for the rest of the pass.
+    ClaimedByCollapse(state: Array<Integer>, neighbors: Array<Array<VertexIndex>>, edge: VertexPair): Array<Integer>
+        => state.Count.MapRange(v =>
+            (v == edge.A.Value).Or(v == edge.B.Value)
+                ? edge.A.Value
+                : (RowContains(neighbors[edge.A.Value], VertexIndex(v))
+                    .Or(RowContains(neighbors[edge.B.Value], VertexIndex(v)))
+                        ? -2
+                        : state[v]));
+
+    // True when edge e was accepted by `CollapseClaims`: its B end points at its A
+    // end, and its A end points at itself.
+    IsAcceptedCollapse(edges: Array<VertexPair>, state: Array<Integer>, e: Integer): Boolean
+        => (edges[e].A.Value != edges[e].B.Value)
+            .And(state[edges[e].A.Value] == edges[e].A.Value)
+            .And(state[edges[e].B.Value] == edges[e].A.Value);
+
+    // The positions after every accepted collapse has moved its surviving endpoint
+    // to the point `placement` chooses for that edge.
+    CollapsedPositions(positions: Array<Point3D>, edges: Array<VertexPair>, state: Array<Integer>,
+                       placement: Function1<Integer, Point3D>): Array<Point3D>
+        => edges.Count.MapRange(e => e).Reduce(positions, (moved, e) =>
+            IsAcceptedCollapse(edges, state, e)
+                ? moved.Count.MapRange(v => v == edges[e].A.Value ? placement(e) : moved[v])
+                : moved);
+
+    // The idempotent representative table a collapse state implies: an untouched
+    // vertex represents itself, and everything else its merge target.
+    CollapseRepresentatives(state: Array<Integer>): Array<VertexIndex>
+        => state.Count.MapRange(v => VertexIndex(state[v] < 0 ? v : state[v]));
+
+    // Every masked edge collapsed at once, subject to the link condition and the
+    // adjacent-endpoint rule. `placement` gives the surviving position of each
+    // collapsed edge, taking the edge number — the midpoint for a plain collapse,
+    // the quadric minimizer for decimation.
+    CollapseEdges(self: TriangleMesh3D, topology: TriangleMeshTopology, collapseMask: Array<Boolean>,
+                  placement: Function1<Integer, Point3D>): TriangleMesh3D
+    {
+        var neighbors = self.VertexNeighborTable(topology);
+        var legal = topology.EdgeCount.MapRange(e =>
+            collapseMask[e].And(SatisfiesLinkCondition(topology, neighbors, e)));
+        var state = CollapseClaims(topology.UndirectedEdges, neighbors, legal, self.Positions.Count);
+        var moved = CollapsedPositions(self.Positions, topology.UndirectedEdges, state, placement);
+        return self.ApplyRemap(CompactMerge(CollapseRepresentatives(state), i => moved[i]));
+    }
+
+    // True when collapsing an edge would drag a boundary vertex into the interior
+    // or an interior vertex onto the boundary. Refusing those is what keeps an open
+    // border where the author put it.
+    CrossesBoundary(boundary: Array<Boolean>, pair: VertexPair): Boolean
+        => boundary[pair.A.Value] != boundary[pair.B.Value];
+
+    // One undirected edge collapsed to its midpoint. The single-operator form of
+    // `CollapseEdges`.
+    CollapseEdge(self: TriangleMesh3D, edge: UndirectedEdgeIndex): TriangleMesh3D
+    {
+        var topology = self.TopologyOf;
+        return self.CollapseEdges(topology, SingleEdgeMask(topology.EdgeCount, edge),
+            e => self.EdgeMidpoint(topology, UndirectedEdgeIndex(e)));
+    }
+
+    // Every edge shorter than `minLength` collapsed to its midpoint, except those
+    // that would cross the boundary. Only an independent set of them survives the
+    // conflict rule, so short edges left over are collapsed by a later pass.
+    CollapseShortEdges(self: TriangleMesh3D, minLength: Number): TriangleMesh3D
+    {
+        var topology = self.TopologyOf;
+        var boundary = self.BoundaryVertexFlags(topology);
+        return self.CollapseEdges(topology, topology.EdgeCount.MapRange(e =>
+            (self.EdgeLength(topology, UndirectedEdgeIndex(e)) < minLength)
+                .And(CrossesBoundary(boundary, topology.UndirectedEdges[e]).Not)),
+            e => self.EdgeMidpoint(topology, UndirectedEdgeIndex(e)));
+    }
+
+    //==
+    // # Edge flip
+    //
+    // Regularization. Flipping the shared edge of two triangles swaps which
+    // diagonal of their quadrilateral is drawn, changing valence without moving a
+    // single vertex — so a flip pass rewrites the face table and leaves the
+    // position array alone, and the face COUNT is unchanged.
+    //
+    // A flip is legal only when the edge is interior AND the diagonal it would
+    // draw is not already an edge: flipping onto an existing edge would leave two
+    // faces sharing the same pair of vertices, which is not a manifold.
+    //
+    // The conflict rule claims VERTICES, not faces. Claiming faces is the obvious
+    // rule and it is wrong: on an octahedron every equatorial edge sees the SAME
+    // two poles, so two face-disjoint flips would each draw the pole-to-pole
+    // diagonal and the second would land on the edge the first just made. Four
+    // vertices per flip, claimed together, rules that out — and being stricter
+    // costs nothing, because a rejected flip is simply reconsidered next pass.
+
+    // True when the two vertices are already joined by an undirected edge.
+    AreAdjacent(edges: Array<VertexPair>, a: VertexIndex, b: VertexIndex): Boolean
+        => edges.Any(pair =>
+            (pair.A.Value == a.Value).And(pair.B.Value == b.Value)
+                .Or((pair.A.Value == b.Value).And(pair.B.Value == a.Value)));
+
+    // The claim entry of a vertex, reading the "none" index as unclaimed. `And` is
+    // an ordinary function and does not short-circuit, so a boundary edge's absent
+    // far apex has to be kept off the subscript rather than guarded ahead of it.
+    ClaimAt(claims: Array<Integer>, vertex: VertexIndex): Integer
+        => vertex.IsNone ? -1 : claims[vertex.Value];
+
+    // True when an edge could be flipped at all: interior, and its two apexes are
+    // not already joined.
+    IsFlipCandidate(self: TriangleMesh3D, topology: TriangleMeshTopology, e: Integer): Boolean
+    {
+        var near = self.EdgeApex(topology, UndirectedEdgeIndex(e));
+        var far = self.EdgeFarApex(topology, UndirectedEdgeIndex(e));
+        return far.IsPresent.And(AreAdjacent(topology.UndirectedEdges, near, far).Not);
+    }
+
+    // The claim table after accepting every masked, flippable edge whose four
+    // vertices are all still unclaimed. Entry v is -1 while vertex v is unclaimed,
+    // and otherwise the number of the edge whose flip claimed it.
+    FlipVertexClaims(self: TriangleMesh3D, topology: TriangleMeshTopology, flipMask: Array<Boolean>): Array<Integer>
+        => topology.EdgeCount.MapRange(e => e).Reduce(Repeat(self.Positions.Count, -1), (claims, e) =>
+            flipMask[e]
+                .And(self.IsFlipCandidate(topology, e))
+                .And(ClaimAt(claims, topology.UndirectedEdges[e].A) < 0)
+                .And(ClaimAt(claims, topology.UndirectedEdges[e].B) < 0)
+                .And(ClaimAt(claims, self.EdgeApex(topology, UndirectedEdgeIndex(e))) < 0)
+                .And(ClaimAt(claims, self.EdgeFarApex(topology, UndirectedEdgeIndex(e))) < 0)
+                    ? self.ClaimedByFlip(topology, claims, e)
+                    : claims);
+
+    // The claim table with all four vertices of an accepted flip marked.
+    ClaimedByFlip(self: TriangleMesh3D, topology: TriangleMeshTopology, claims: Array<Integer>, e: Integer): Array<Integer>
+    {
+        var pair = topology.UndirectedEdges[e];
+        var near = self.EdgeApex(topology, UndirectedEdgeIndex(e));
+        var far = self.EdgeFarApex(topology, UndirectedEdgeIndex(e));
+        return claims.Count.MapRange(v =>
+            (v == pair.A.Value).Or(v == pair.B.Value).Or(v == near.Value).Or(v == far.Value)
+                ? e
+                : claims[v]);
+    }
+
+    // True when edge e was accepted: all four of its vertices carry its own number.
+    IsAcceptedFlip(self: TriangleMesh3D, topology: TriangleMeshTopology, claims: Array<Integer>, e: Integer): Boolean
+    {
+        var pair = topology.UndirectedEdges[e];
+        var near = self.EdgeApex(topology, UndirectedEdgeIndex(e));
+        var far = self.EdgeFarApex(topology, UndirectedEdgeIndex(e));
+        return far.IsPresent
+            .And(claims[pair.A.Value] == e)
+            .And(claims[pair.B.Value] == e)
+            .And(claims[near.Value] == e)
+            .And(ClaimAt(claims, far) == e);
+    }
+
+    // True when one of the two triangles of edge e is face f.
+    FlipTouchesFace(topology: TriangleMeshTopology, e: Integer, f: Integer): Boolean
+        => (topology.EdgeCorners[e].Value / 3 == f)
+            .Or(topology.CornerTwins[topology.EdgeCorners[e].Value].Value / 3 == f);
+
+    // The accepted flip that rewrites face f, or -1 when the face is untouched.
+    FlipOfFace(self: TriangleMesh3D, topology: TriangleMeshTopology, claims: Array<Integer>, f: Integer): Integer
+        => topology.EdgeCount.MapRange(e => e).Reduce(-1, (found, e) =>
+            self.IsAcceptedFlip(topology, claims, e).And(FlipTouchesFace(topology, e, f))
+                ? e
+                : found);
+
+    // The replacement for one of the two triangles of an accepted flip. With the
+    // edge running u to v, w the near apex and x the far apex, the quadrilateral
+    // reads v, w, u, x counter-clockwise and the new diagonal is w-x; the near
+    // triangle becomes (w, u, x) and the far one (w, x, v).
+    // Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+    FlippedTriangle(self: TriangleMesh3D, topology: TriangleMeshTopology, e: Integer, face: Integer): TriangleFace
+    {
+        var corner = topology.EdgeCorners[e];
+        var twin = topology.CornerTwins[corner.Value];
+        var u = self.CornerVertex(corner);
+        var v = self.CornerVertex(twin);
+        var w = self.CornerVertex(PreviousCorner(corner));
+        var x = self.CornerVertex(PreviousCorner(twin));
+        return corner.Value / 3 == face ? TriangleFace(w, u, x) : TriangleFace(w, x, v);
+    }
+
+    // The face as it stands after the pass: rewritten if a flip claimed it,
+    // unchanged otherwise.
+    FlippedFaceAt(self: TriangleMesh3D, topology: TriangleMeshTopology, claims: Array<Integer>, face: Integer): TriangleFace
+    {
+        var e = self.FlipOfFace(topology, claims, face);
+        return e < 0 ? self.Faces[face] : self.FlippedTriangle(topology, e, face);
+    }
+
+    // Every masked edge flipped at once, subject to the legality and conflict
+    // rules above. Positions are untouched and the face count is unchanged.
+    FlipEdges(self: TriangleMesh3D, topology: TriangleMeshTopology, flipMask: Array<Boolean>): TriangleMesh3D
+    {
+        var claims = self.FlipVertexClaims(topology, flipMask);
+        return (self.Positions,
+                self.Faces.Count.MapRange(f => self.FlippedFaceAt(topology, claims, f)));
+    }
+
+    // One interior edge flipped. The single-operator form of `FlipEdges`.
+    FlipEdge(self: TriangleMesh3D, edge: UndirectedEdgeIndex): TriangleMesh3D
+    {
+        var topology = self.TopologyOf;
+        return self.FlipEdges(topology, SingleEdgeMask(topology.EdgeCount, edge));
+    }
+
+    // How far a valence is from the six an interior vertex of a regular
+    // triangulation has.
+    ValenceDeviation(valence: Integer): Integer
+        => (valence - 6).Abs;
+
+    // The valence of a vertex, reading the "none" index as the regular six. A
+    // boundary edge has no far apex, and the caller rejects such an edge anyway —
+    // this only keeps the arithmetic below off a -1 subscript, because `And` is an
+    // ordinary function and therefore does not short-circuit.
+    ValenceOrRegular(valences: Array<Integer>, vertex: VertexIndex): Integer
+        => vertex.IsNone ? 6 : valences[vertex.Value];
+
+    // True when flipping this edge lowers the total valence deviation of the four
+    // vertices involved: the two endpoints each lose a neighbour and the two
+    // apexes each gain one. Boundary-touching edges are left alone, because the
+    // target valence of a boundary vertex is four rather than six.
+    ImprovesValence(self: TriangleMesh3D, topology: TriangleMeshTopology, valences: Array<Integer>,
+                    boundary: Array<Boolean>, e: Integer): Boolean
+    {
+        var pair = topology.UndirectedEdges[e];
+        var near = self.EdgeApex(topology, UndirectedEdgeIndex(e));
+        var far = self.EdgeFarApex(topology, UndirectedEdgeIndex(e));
+        var a = valences[pair.A.Value];
+        var b = valences[pair.B.Value];
+        var w = ValenceOrRegular(valences, near);
+        var x = ValenceOrRegular(valences, far);
+        var touchesBoundary = boundary[pair.A.Value].Or(boundary[pair.B.Value])
+            .Or(far.IsNone).Or(boundary[near.Value]);
+        var before = ValenceDeviation(a) + ValenceDeviation(b)
+            + ValenceDeviation(w) + ValenceDeviation(x);
+        var after = ValenceDeviation(a - 1) + ValenceDeviation(b - 1)
+            + ValenceDeviation(w + 1) + ValenceDeviation(x + 1);
+        return touchesBoundary.Not.And(after < before);
+    }
+
+    // Every interior edge whose flip brings the triangulation closer to valence
+    // six, flipped at once. The regularizing step of isotropic remeshing.
+    FlipTowardValenceSix(self: TriangleMesh3D): TriangleMesh3D
+    {
+        var topology = self.TopologyOf;
+        var valences = self.VertexValences(topology);
+        var boundary = self.BoundaryVertexFlags(topology);
+        return self.FlipEdges(topology, topology.EdgeCount.MapRange(e =>
+            self.ImprovesValence(topology, valences, boundary, e)));
+    }
+
+    //==
+    // # Loop and Butterfly subdivision
+    //
+    // Both refine every triangle into four, so both take their TOPOLOGY from
+    // `SplitEdges` with every edge masked and differ only in where the new and old
+    // vertices land. Because that function appends the new vertices in edge order
+    // after the old ones, a scheme's whole geometric content is one position array
+    // laid out the same way: the refined old vertices, then one point per edge.
+    //
+    // Loop (https://en.wikipedia.org/wiki/Loop_subdivision_surface) is
+    // APPROXIMATING — old vertices move, and the limit surface is C2 away from
+    // extraordinary vertices. Butterfly
+    // (https://en.wikipedia.org/wiki/Subdivision_surface) is INTERPOLATING — old
+    // vertices stay exactly where they are, so the control mesh is on the surface.
+
+    // The mask that selects every edge: the uniform refinement decision.
+    AllEdgesMask(topology: TriangleMeshTopology): Array<Boolean>
+        => topology.EdgeCount.MapRange(e => true);
+
+    // Loop's weight for each neighbour of an interior vertex of the given valence
+    // (Loop's own choice, as refined by Warren): beta = (5/8 - (3/8 + cos(2 pi / n)
+    // / 4)^2) / n.
+    LoopBeta(valence: Integer): Number
+    {
+        var t = 0.375 + (1.0 / valence.ToNumber).Turns.Cos * 0.25;
+        return (0.625 - t * t) / valence.ToNumber;
+    }
+
+    // Where an old vertex moves under Loop. An interior vertex of valence n keeps
+    // 1 - n*beta of itself and spreads beta over each neighbour; a boundary vertex
+    // takes the 3/4, 1/8, 1/8 rule over its two boundary neighbours, which keeps
+    // the border a cubic B-spline of itself. A vertex with fewer than three
+    // neighbours has no rule and stays put.
+    LoopVertexPoint(self: TriangleMesh3D, topology: TriangleMeshTopology, neighbors: Array<Array<VertexIndex>>,
+                    boundary: Array<Boolean>, v: Integer): Point3D
+    {
+        var p = self.Positions[v];
+        var ring = neighbors[v];
+        var beta = LoopBeta(ring.Count);
+        var interior = p.PositionVector * (1.0 - ring.Count.ToNumber * beta)
+            + ring.Map(n => self.Positions[n.Value]).AverageOfPoints.PositionVector
+                * (ring.Count.ToNumber * beta);
+        var edge = self.BoundaryNeighborSum(topology, boundary, v);
+        return ring.Count < 3 ? p
+            : (boundary[v] ? (p.PositionVector * 0.75 + edge * 0.125).ToPoint : interior.ToPoint);
+    }
+
+    // The sum of the positions of the boundary neighbours of a boundary vertex, as
+    // a vector. There are exactly two on a well-formed border, so the Loop and
+    // Catmull-Clark crease rules read it directly.
+    BoundaryNeighborSum(self: TriangleMesh3D, topology: TriangleMeshTopology, boundary: Array<Boolean>, v: Integer): Vector3D
+        => topology.EdgeCount.MapRange(e => e).Reduce(Vector3D(0.0, 0.0, 0.0), (acc, e) =>
+            topology.IsBoundaryEdge(UndirectedEdgeIndex(e)).And(PairTouches(topology.UndirectedEdges[e], v))
+                ? acc + self.Positions[PairOtherEnd(topology.UndirectedEdges[e], v).Value].PositionVector
+                : acc);
+
+    // Loop's new point on one edge: 3/8 to each endpoint and 1/8 to each apex, or
+    // the midpoint on a boundary edge, which has only one apex.
+    LoopEdgePoint(self: TriangleMesh3D, topology: TriangleMeshTopology, e: Integer): Point3D
+    {
+        var pair = topology.UndirectedEdges[e];
+        var near = self.EdgeApex(topology, UndirectedEdgeIndex(e));
+        var far = self.EdgeFarApex(topology, UndirectedEdgeIndex(e));
+        var ends = self.Positions[pair.A.Value].PositionVector + self.Positions[pair.B.Value].PositionVector;
+        var apexes = far.IsNone
+            ? Vector3D(0.0, 0.0, 0.0)
+            : self.Positions[near.Value].PositionVector + self.Positions[far.Value].PositionVector;
+        return far.IsNone ? (ends * 0.5).ToPoint : (ends * 0.375 + apexes * 0.125).ToPoint;
+    }
+
+    // One level of Loop subdivision: the 1-to-4 topology of a full edge split,
+    // with the Loop position rules substituted for the midpoints.
+    LoopSubdivided(self: TriangleMesh3D): TriangleMesh3D
+    {
+        var topology = self.TopologyOf;
+        var boundary = self.BoundaryVertexFlags(topology);
+        var neighbors = self.VertexNeighborTable(topology);
+        var refined = self.SplitEdges(topology, AllEdgesMask(topology));
+        var moved = self.Positions.Count
+            .MapRange(v => self.LoopVertexPoint(topology, neighbors, boundary, v));
+        var inserted = topology.EdgeCount.MapRange(e => self.LoopEdgePoint(topology, e));
+        return (moved.Concatenate(inserted), refined.Faces);
+    }
+
+    // The vertex across the triangle on the far side of a corner's edge — one wing
+    // of the Butterfly stencil. The "none" index when that edge is on a boundary.
+    WingAcross(self: TriangleMesh3D, topology: TriangleMeshTopology, corner: CornerIndex): VertexIndex
+    {
+        var twin = topology.CornerTwins[corner.Value];
+        return twin.IsNone ? VertexIndex(-1) : self.CornerVertex(PreviousCorner(twin));
+    }
+
+    // The sum of the four wing positions of the Butterfly stencil around one edge:
+    // the far vertices of the four triangles that touch the edge's two triangles.
+    // Returns the "none" answer as a zero vector, which only the regular path uses.
+    ButterflyWingSum(self: TriangleMesh3D, topology: TriangleMeshTopology, e: Integer): Vector3D
+    {
+        var corner = topology.EdgeCorners[e];
+        var twin = topology.CornerTwins[corner.Value];
+        var wings = [self.WingAcross(topology, NextCorner(corner)),
+                     self.WingAcross(topology, PreviousCorner(corner)),
+                     self.WingAcross(topology, NextCorner(twin)),
+                     self.WingAcross(topology, PreviousCorner(twin))];
+        return wings.Reduce(Vector3D(0.0, 0.0, 0.0), (acc, w) =>
+            w.IsNone ? acc : acc + self.Positions[w.Value].PositionVector);
+    }
+
+    // True when every vertex the Butterfly stencil needs is present: the edge is
+    // interior and so are the four triangles around its two triangles.
+    HasFullButterflyStencil(self: TriangleMesh3D, topology: TriangleMeshTopology, e: Integer): Boolean
+    {
+        var corner = topology.EdgeCorners[e];
+        var twin = topology.CornerTwins[corner.Value];
+        return twin.IsPresent
+            .And(self.WingAcross(topology, NextCorner(corner)).IsPresent)
+            .And(self.WingAcross(topology, PreviousCorner(corner)).IsPresent)
+            .And(self.WingAcross(topology, NextCorner(twin)).IsPresent)
+            .And(self.WingAcross(topology, PreviousCorner(twin)).IsPresent);
+    }
+
+    // Butterfly's new point on one edge: 1/2 to each endpoint, 1/8 to each apex and
+    // -1/16 to each of the four wings. Where the stencil runs off a boundary the
+    // scheme has no rule of its own, so the point falls back to Loop's, which is
+    // defined everywhere.
+    ButterflyEdgePoint(self: TriangleMesh3D, topology: TriangleMeshTopology, e: Integer): Point3D
+    {
+        var pair = topology.UndirectedEdges[e];
+        var near = self.EdgeApex(topology, UndirectedEdgeIndex(e));
+        var far = self.EdgeFarApex(topology, UndirectedEdgeIndex(e));
+        var ends = self.Positions[pair.A.Value].PositionVector + self.Positions[pair.B.Value].PositionVector;
+        var apexes = far.IsNone
+            ? Vector3D(0.0, 0.0, 0.0)
+            : self.Positions[near.Value].PositionVector + self.Positions[far.Value].PositionVector;
+        return self.HasFullButterflyStencil(topology, e)
+            ? (ends * 0.5 + apexes * 0.125 - self.ButterflyWingSum(topology, e) * 0.0625).ToPoint
+            : self.LoopEdgePoint(topology, e);
+    }
+
+    // One level of Butterfly subdivision: the same 1-to-4 topology, the old
+    // vertices left exactly where they are, and the eight-point stencil deciding
+    // each new one. Interpolating, so the input mesh's vertices lie on the result.
+    ButterflySubdivided(self: TriangleMesh3D): TriangleMesh3D
+    {
+        var topology = self.TopologyOf;
+        var refined = self.SplitEdges(topology, AllEdgesMask(topology));
+        var inserted = topology.EdgeCount.MapRange(e => self.ButterflyEdgePoint(topology, e));
+        return (self.Positions.Concatenate(inserted), refined.Faces);
+    }
+
+    //==
+    // # Catmull-Clark and Doo-Sabin subdivision
+    //
+    // The two polygon-mesh schemes, both written over the packed corner table of
+    // `PolygonMesh3D` (`meshes-polygon.library.plato`). Catmull-Clark
+    // (https://en.wikipedia.org/wiki/Catmull%E2%80%93Clark_subdivision_surface)
+    // is primal: it emits one quadrilateral per corner and after one level every
+    // face is a quad. Doo-Sabin
+    // (https://en.wikipedia.org/wiki/Doo%E2%80%93Sabin_subdivision_surface) is
+    // dual: it emits one new vertex per corner and one face per original face,
+    // edge and vertex.
+    //
+    // Both precompute the corner tables below once rather than call the
+    // per-corner walks of `meshes-polygon.library.plato`, which are quadratic
+    // EACH. That drops a level of subdivision from quartic to quadratic in the
+    // corner count. It is still quadratic: subdivision cages are small, and these
+    // are for cages.
+    //
+    // Precondition for the vertex-side rules of both: a closed manifold. The
+    // vertex ring of a boundary vertex does not close, and neither scheme's
+    // crease rules are implemented here.
+
+    // The face every corner belongs to, in corner order.
+    PolygonCornerFaces(self: PolygonMesh3D): Array<FaceIndex>
+        => self.FaceCount.MapRange(f => f).FlatMap(f => Repeat(self.FaceArity(f), FaceIndex(f)));
+
+    // The next corner around the same face, in corner order. A polygon face wraps
+    // at its own arity, so this is NOT the mod-3 step the triangle section uses.
+    PolygonNextCorners(self: PolygonMesh3D): Array<CornerIndex>
+        => self.FaceCount.MapRange(f => f).FlatMap(f =>
+            self.FaceArity(f).MapRange(s => self.FaceCorner(f, s + 1)));
+
+    // The vertex every corner points AT, in corner order: the next corner of the
+    // same face, wrapping at the end of the row.
+    PolygonCornerDestinations(self: PolygonMesh3D): Array<VertexIndex>
+        => self.FaceCount.MapRange(f => f).FlatMap(f =>
+            self.FaceArity(f).MapRange(s =>
+                self.Faces.Values[self.Faces.Offsets[f] + (s + 1) % self.FaceArity(f)]));
+
+    // The twin of every corner, from the two corner tables rather than from the
+    // mesh: the corner whose own vertex is this one's destination and whose
+    // destination is this one's vertex. -1 on a boundary edge.
+    PolygonCornerTwins(vertices: Array<VertexIndex>, destinations: Array<VertexIndex>): Array<CornerIndex>
+        => vertices.Count.MapRange(c => CornerIndex(vertices.Count
+            .MapRange(d => d)
+            .Reduce(-1, (found, d) =>
+                (vertices[d].Value == destinations[c].Value)
+                    .And(destinations[d].Value == vertices[c].Value)
+                        ? d
+                        : found)));
+
+    // The undirected-edge number of every corner: the rank of its naming corner
+    // among all naming corners, so both halves of a twin pair agree.
+    PolygonCornerEdges(twins: Array<CornerIndex>): Array<UndirectedEdgeIndex>
+    {
+        var n = twins.Count;
+        var naming = n.MapRange(c => NamesItsEdge(twins, c));
+        var rank = n.MapRange(c =>
+            c.MapRange(d => naming[d] ? 1 : 0).Reduce(0, (acc, hit) => acc + hit));
+        return n.MapRange(c => UndirectedEdgeIndex(naming[c] ? rank[c] : rank[twins[c].Value]));
+    }
+
+    // The number of undirected edges a corner-twin table implies: one per naming
+    // corner.
+    PolygonEdgeCount(twins: Array<CornerIndex>): Integer
+        => twins.Count.MapRange(c => NamesItsEdge(twins, c) ? 1 : 0).Reduce(0, (acc, hit) => acc + hit);
+
+    // Every corner whose own vertex is the given one. On a closed manifold these
+    // correspond one-to-one with the edges at that vertex and with the faces
+    // around it, which is what lets the vertex rules below read all three from one
+    // scan.
+    OutgoingCornersOfVertex(self: PolygonMesh3D, vertex: Integer): Array<CornerIndex>
+        => self.CornerCount.MapRange(c => c).Reduce(Repeat(0, CornerIndex(0)),
+            (acc, c) => self.Faces.Values[c].Value == vertex ? acc.Append(CornerIndex(c)) : acc);
+
+    // Catmull-Clark's new point on one edge: the average of the two endpoints and
+    // the two adjacent face centroids, or the midpoint on a boundary edge.
+    CatmullClarkEdgePoint(self: PolygonMesh3D, faces: Array<FaceIndex>, destinations: Array<VertexIndex>,
+                          twins: Array<CornerIndex>, corner: Integer): Point3D
+    {
+        var a = self.Positions[self.Faces.Values[corner].Value];
+        var b = self.Positions[destinations[corner].Value];
+        var near = self.FaceCentroid(faces[corner].Value);
+        return twins[corner].IsNone
+            ? a.Lerp(b, 0.5)
+            : ((a.PositionVector + b.PositionVector + near.PositionVector
+                + self.FaceCentroid(faces[twins[corner].Value].Value).PositionVector) * 0.25).ToPoint;
+    }
+
+    // Where an old vertex moves under Catmull-Clark: (F + 2R + (n - 3)P) / n, with
+    // F the average of the adjacent face centroids, R the average of the incident
+    // edge midpoints, and n the valence. A vertex of valence under three has no
+    // rule and stays put.
+    CatmullClarkVertexPoint(self: PolygonMesh3D, faces: Array<FaceIndex>, destinations: Array<VertexIndex>, v: Integer): Point3D
+    {
+        var p = self.Positions[v];
+        var corners = self.OutgoingCornersOfVertex(v);
+        var n = corners.Count;
+        var faceAverage = corners.Map(c => self.FaceCentroid(faces[c.Value].Value)).AverageOfPoints;
+        var edgeAverage = corners.Map(c => p.Lerp(self.Positions[destinations[c.Value].Value], 0.5)).AverageOfPoints;
+        return n < 3
+            ? p
+            : ((faceAverage.PositionVector
+                + edgeAverage.PositionVector * 2.0
+                + p.PositionVector * (n - 3).ToNumber) * (1.0 / n.ToNumber)).ToPoint;
+    }
+
+    // The quadrilateral Catmull-Clark emits at one corner: the corner's own moved
+    // vertex, the point on the edge leaving it, the face's own centroid, and the
+    // point on the edge arriving at it. Keeps the original face's winding.
+    // Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+    CatmullClarkCornerFace(self: PolygonMesh3D, edges: Array<UndirectedEdgeIndex>, vertexCount: Integer,
+                           edgeCount: Integer, face: Integer, slot: Integer): Array<VertexIndex>
+    {
+        var arity = self.FaceArity(face);
+        var here = self.FaceCorner(face, slot);
+        var back = self.FaceCorner(face, slot + arity - 1);
+        return [self.Faces.Values[here.Value],
+                VertexIndex(vertexCount + edges[here.Value].Value),
+                VertexIndex(vertexCount + edgeCount + face),
+                VertexIndex(vertexCount + edges[back.Value].Value)];
+    }
+
+    // One level of Catmull-Clark subdivision. The new position array is the moved
+    // old vertices, then one point per undirected edge, then one centroid per
+    // face; every new face is a quadrilateral.
+    CatmullClarkSubdivided(self: PolygonMesh3D): PolygonMesh3D
+    {
+        var faces = self.PolygonCornerFaces;
+        var destinations = self.PolygonCornerDestinations;
+        var twins = PolygonCornerTwins(self.Faces.Values, destinations);
+        var edges = PolygonCornerEdges(twins);
+        var edgeCount = PolygonEdgeCount(twins);
+        var vertexCount = self.VertexCount;
+        var moved = vertexCount.MapRange(v => self.CatmullClarkVertexPoint(faces, destinations, v));
+        var inserted = self.CornerCount.MapRange(c => c).Reduce(Repeat(0, Point3D.Origin), (acc, c) =>
+            NamesItsEdge(twins, c)
+                ? acc.Append(self.CatmullClarkEdgePoint(faces, destinations, twins, c))
+                : acc);
+        return PolygonMeshOfFaces(
+            moved.Concatenate(inserted).Concatenate(self.FaceCentroids),
+            self.FaceCount.MapRange(f => f).FlatMap(f =>
+                self.FaceArity(f).MapRange(s =>
+                    self.CatmullClarkCornerFace(edges, vertexCount, edgeCount, f, s))));
+    }
+
+    // Doo-Sabin's new vertex at one corner: the average of the corner's own
+    // position, the midpoints of the two face edges meeting there, and the face
+    // centroid. For a quadrilateral this is the classic 9/16, 3/16, 3/16, 1/16
+    // mask.
+    DooSabinCornerPoint(self: PolygonMesh3D, faces: Array<FaceIndex>, destinations: Array<VertexIndex>, corner: Integer): Point3D
+    {
+        var face = faces[corner].Value;
+        var arity = self.FaceArity(face);
+        var slot = corner - self.Faces.Offsets[face];
+        var back = self.FaceCorner(face, slot + arity - 1);
+        var p = self.Positions[self.Faces.Values[corner].Value];
+        var ahead = self.Positions[destinations[corner].Value];
+        var behind = self.Positions[self.Faces.Values[back.Value].Value];
+        return ((p.PositionVector * 2.0 + ahead.PositionVector + behind.PositionVector) * 0.25
+                + self.FaceCentroid(face).PositionVector * 0.25).ToPoint;
+    }
+
+    // The quadrilateral Doo-Sabin emits along one undirected edge, named by its
+    // lower corner. With the corner running u to v in the near face, its twin runs
+    // v to u in the far face, and the ribbon between the two shrunken faces reads
+    // counter-clockwise from OUTSIDE as: far-at-u, far-at-v, near-at-v, near-at-u.
+    // Taking the near face first instead traces the same quadrilateral backwards
+    // and inverts the result's normals.
+    // Convention: see CONVENTIONS.md - Winding, handedness, and normals.
+    DooSabinEdgeFace(nextCorners: Array<CornerIndex>, twins: Array<CornerIndex>, corner: Integer): Array<VertexIndex>
+        => [VertexIndex(nextCorners[twins[corner].Value].Value),
+            VertexIndex(twins[corner].Value),
+            VertexIndex(nextCorners[corner].Value),
+            VertexIndex(corner)];
+
+    // One level of Doo-Sabin subdivision: one new vertex per corner, and three
+    // families of new face — one shrunken copy of each original face, one
+    // quadrilateral along each interior edge, and one face around each vertex.
+    // The vertex faces take the REVERSED corner ring, because a face built around
+    // a vertex winds opposite to the rotation that generated it.
+    // Precondition: a closed manifold.
+    DooSabinSubdivided(self: PolygonMesh3D): PolygonMesh3D
+    {
+        var faces = self.PolygonCornerFaces;
+        var destinations = self.PolygonCornerDestinations;
+        var nextCorners = self.PolygonNextCorners;
+        var twins = PolygonCornerTwins(self.Faces.Values, destinations);
+        var faceFaces = self.FaceCount.MapRange(f =>
+            self.FaceArity(f).MapRange(s => VertexIndex(self.FaceCorner(f, s).Value)));
+        var edgeFaces = self.CornerCount.MapRange(c => c)
+            .Reduce(Repeat(0, Repeat(0, VertexIndex(0))), (acc, c) =>
+                twins[c].IsPresent.And(c < twins[c].Value)
+                    ? acc.Append(DooSabinEdgeFace(nextCorners, twins, c))
+                    : acc);
+        var vertexFaces = self.VertexCount.MapRange(v =>
+            self.ReversedVertexCornerRing(VertexIndex(v)).Map(c => VertexIndex(c.Value)));
+        return PolygonMeshOfFaces(
+            self.CornerCount.MapRange(c => self.DooSabinCornerPoint(faces, destinations, c)),
+            faceFaces.Concatenate(edgeFaces).Concatenate(vertexFaces));
+    }
+
+    //==
+    // # The subdivision scheme driver
+    //
+    // `SubdivisionScheme` and `SubdivisionSurface` (`surfaces.types.plato`) named a
+    // scheme and a refinement level with nothing behind either. These are the
+    // bodies: one level of the named scheme, and the level count driving repeated
+    // application.
+    //
+    // Loop is a TRIANGLE scheme, so on a polygon mesh it triangulates first; the
+    // result is a triangle mesh re-expressed as a polygon mesh, which is what makes
+    // the three schemes composable through one signature.
+
+    // A triangle mesh expressed as a polygon mesh: every face is a three-row.
+    ToPolygonMesh(self: TriangleMesh3D): PolygonMesh3D
+        => PolygonMeshOfFaces(self.Positions, self.Faces.Map(f => f.Vertices));
+
+    // One level of the named scheme.
+    SubdividedOnce(self: PolygonMesh3D, scheme: SubdivisionScheme): PolygonMesh3D
+        => match (scheme) {
+            CatmullClark => self.CatmullClarkSubdivided;
+            Loop => self.ToTriangleMesh.LoopSubdivided.ToPolygonMesh;
+            DooSabin => self.DooSabinSubdivided;
+        };
+
+    // The named scheme applied `levels` times. Each level multiplies the face
+    // count by roughly four, and the cost of a level is quadratic in the corner
+    // count, so the cost of the last level dominates everything before it.
+    Subdivided(self: PolygonMesh3D, scheme: SubdivisionScheme, levels: Integer): PolygonMesh3D
+        => Repeat(levels, 0).Reduce(self, (mesh, level) => mesh.SubdividedOnce(scheme));
+
+    // The refined control mesh of a subdivision surface: its own scheme applied
+    // its own number of times. This is the approximation `SubdivisionSurface`
+    // (`surfaces.types.plato`) describes; the true limit surface is not evaluated.
+    RefinedControlMesh(self: SubdivisionSurface): PolygonMesh3D
+        => self.ControlMesh.Subdivided(self.Scheme, self.Levels);
+
+    //==
+    // # Smoothing
+    //
+    // Moving vertices without changing connectivity. Every step computes one
+    // displacement per vertex against the CURRENT positions and applies them all
+    // at once, which is the Jacobi form — a Gauss-Seidel sweep would make the
+    // result depend on vertex order, and there is no order in an expression.
+    //
+    // Boundary vertices are pinned throughout. A Laplacian step moves a boundary
+    // vertex inward, so smoothing an open mesh without pinning shrinks its border
+    // visibly in a handful of iterations.
+
+    // The uniform Laplacian at a vertex: the offset from it to the average of its
+    // neighbours (https://en.wikipedia.org/wiki/Laplacian_smoothing).
+    UniformLaplacian(positions: Array<Point3D>, neighbors: Array<Array<VertexIndex>>, v: Integer): Vector3D
+        => neighbors[v].Count.IsZero
+            ? Vector3D(0.0, 0.0, 0.0)
+            : positions[v].Between(neighbors[v].Map(n => positions[n.Value]).AverageOfPoints);
+
+    // The cotangent of the angle at `apex` in the triangle apex-a-b, as the ratio
+    // of the dot product to the cross-product magnitude of the two side vectors.
+    // A degenerate triangle contributes nothing rather than an infinity.
+    CotangentAtApex(apex: Point3D, a: Point3D, b: Point3D): Number
+    {
+        var u = apex.Between(a);
+        var w = apex.Between(b);
+        var area = u.Cross(w).Magnitude;
+        return area <= 0.0 ? 0.0 : u.Dot(w) / area;
+    }
+
+    // The cotangent weight of one undirected edge: cot(alpha) + cot(beta) over the
+    // angles facing it in its two triangles, or the single cotangent on a boundary
+    // edge (https://en.wikipedia.org/wiki/Discrete_Laplace_operator).
+    EdgeCotangentWeight(self: TriangleMesh3D, topology: TriangleMeshTopology, e: Integer): Number
+    {
+        var pair = topology.UndirectedEdges[e];
+        var a = self.Positions[pair.A.Value];
+        var b = self.Positions[pair.B.Value];
+        var near = self.EdgeApex(topology, UndirectedEdgeIndex(e));
+        var far = self.EdgeFarApex(topology, UndirectedEdgeIndex(e));
+        return CotangentAtApex(self.Positions[near.Value], a, b)
+            + (far.IsNone ? 0.0 : CotangentAtApex(self.Positions[far.Value], a, b));
+    }
+
+    // The cotangent weight of every undirected edge, in edge order.
+    EdgeCotangentWeights(self: TriangleMesh3D, topology: TriangleMeshTopology): Array<Number>
+        => topology.EdgeCount.MapRange(e => self.EdgeCotangentWeight(topology, e));
+
+    // The cotangent Laplacian at a vertex: the weighted average offset to its
+    // neighbours. Obtuse triangles give negative weights, so the normalizing sum
+    // can vanish; that vertex then does not move.
+    CotangentLaplacian(self: TriangleMesh3D, topology: TriangleMeshTopology, weights: Array<Number>, v: Integer): Vector3D
+    {
+        var edges = topology.UndirectedEdges;
+        var total = topology.EdgeCount
+            .MapRange(e => PairTouches(edges[e], v) ? weights[e] : 0.0)
+            .Reduce(0.0, (acc, w) => acc + w);
+        var sum = topology.EdgeCount.MapRange(e => e).Reduce(Vector3D(0.0, 0.0, 0.0), (acc, e) =>
+            PairTouches(edges[e], v)
+                ? acc + self.Positions[v].Between(self.Positions[PairOtherEnd(edges[e], v).Value]) * weights[e]
+                : acc);
+        return total.Abs <= 0.0 ? Vector3D(0.0, 0.0, 0.0) : sum * (1.0 / total);
+    }
+
+    // The uniform Laplacian of every vertex.
+    UniformLaplacianField(self: TriangleMesh3D, topology: TriangleMeshTopology): Array<Vector3D>
+    {
+        var neighbors = self.VertexNeighborTable(topology);
+        return self.Positions.Count.MapRange(v => UniformLaplacian(self.Positions, neighbors, v));
+    }
+
+    // The cotangent Laplacian of every vertex.
+    CotangentLaplacianField(self: TriangleMesh3D, topology: TriangleMeshTopology): Array<Vector3D>
+    {
+        var weights = self.EdgeCotangentWeights(topology);
+        return self.Positions.Count.MapRange(v => self.CotangentLaplacian(topology, weights, v));
+    }
+
+    // The displacement one smoothing step gives each vertex under the chosen
+    // weighting, before the step size is applied.
+    LaplacianField(self: TriangleMesh3D, topology: TriangleMeshTopology, weighting: LaplacianWeighting): Array<Vector3D>
+        => match (weighting) {
+            UniformWeights => self.UniformLaplacianField(topology);
+            CotangentWeights => self.CotangentLaplacianField(topology);
+        };
+
+    // One Laplacian step: every interior vertex moves `strength` of the way along
+    // its Laplacian. A negative strength is the inflating half of Taubin's pair.
+    LaplacianStep(self: TriangleMesh3D, topology: TriangleMeshTopology, weighting: LaplacianWeighting, strength: Number): TriangleMesh3D
+    {
+        var field = self.LaplacianField(topology, weighting);
+        var boundary = self.BoundaryVertexFlags(topology);
+        return (self.Positions.Count.MapRange(v =>
+                    boundary[v] ? self.Positions[v] : self.Positions[v] + field[v] * strength),
+                self.Faces);
+    }
+
+    // Laplacian smoothing, repeated. Every step shrinks the surface a little; use
+    // `TaubinSmoothed` where that matters.
+    //
+    // The connectivity is built ONCE and reused by every iteration, which is sound
+    // precisely because smoothing moves vertices and never touches the face table.
+    // That is the design decision paying off: because the topology is a derived,
+    // read-only value rather than a structure being edited, an invariant pass can
+    // simply keep it.
+    LaplacianSmoothed(self: TriangleMesh3D, weighting: LaplacianWeighting, strength: Number, iterations: Integer): TriangleMesh3D
+    {
+        var topology = self.TopologyOf;
+        return Repeat(iterations, 0).Reduce(self, (mesh, step) =>
+            mesh.LaplacianStep(topology, weighting, strength));
+    }
+
+    // One Taubin iteration: a shrinking step of `lambda` and an inflating step of
+    // `mu` over the same connectivity.
+    TaubinStep(self: TriangleMesh3D, topology: TriangleMeshTopology, weighting: LaplacianWeighting,
+               lambda: Number, mu: Number): TriangleMesh3D
+        => self.LaplacianStep(topology, weighting, lambda)
+            .LaplacianStep(topology, weighting, mu);
+
+    // Taubin's lambda/mu smoothing (https://doi.org/10.1145/218380.218473): a
+    // shrinking step of `lambda` followed by an inflating step of `mu`. With
+    // mu more negative than lambda is positive, the pass band leaves low
+    // frequencies alone, so the volume survives where plain Laplacian smoothing
+    // eats it.
+    TaubinSmoothed(self: TriangleMesh3D, weighting: LaplacianWeighting, lambda: Number, mu: Number, iterations: Integer): TriangleMesh3D
+    {
+        var topology = self.TopologyOf;
+        return Repeat(iterations, 0).Reduce(self, (mesh, step) =>
+            mesh.TaubinStep(topology, weighting, lambda, mu));
+    }
+
+    // Taubin smoothing at the usual settings: uniform weights, lambda 0.5 and mu
+    // -0.53, the pair Taubin's own examples use.
+    TaubinSmoothed(self: TriangleMesh3D, iterations: Integer): TriangleMesh3D
+        => self.TaubinSmoothed(UniformWeights, 0.5, -0.53, iterations);
+
+    // A vector normalized, or zero where there is nothing to normalize: an
+    // isolated vertex touches no face and therefore has no normal.
+    NormalizedOrZero(v: Vector3D): Vector3D
+        => v.Magnitude <= 0.0 ? Vector3D(0.0, 0.0, 0.0) : v.Normalize;
+
+    // The area-weighted vertex normal of every vertex: the normalized sum of the
+    // vector areas of the incident triangles, which weights each face by its own
+    // area without a separate weight term.
+    VertexNormalVectors(self: TriangleMesh3D): Array<Vector3D>
+        => self.Positions.Count.MapRange(v => NormalizedOrZero(
+            self.Faces.Count.MapRange(f => f).Reduce(Vector3D(0.0, 0.0, 0.0), (acc, f) =>
+                self.Faces[f].HasVertex(VertexIndex(v))
+                    ? acc + self.Triangle(FaceIndex(f)).TwiceVectorArea
+                    : acc)));
+
+    // One tangential relaxation step: every interior vertex moves toward the
+    // centroid of its ring, with the component along its own normal removed, so
+    // the vertices redistribute over the surface without leaving it. This is the
+    // step that makes isotropic remeshing produce even triangles rather than
+    // merely correctly-sized ones.
+    TangentialRelaxationStep(self: TriangleMesh3D, topology: TriangleMeshTopology, strength: Number): TriangleMesh3D
+    {
+        var neighbors = self.VertexNeighborTable(topology);
+        var normals = self.VertexNormalVectors;
+        var boundary = self.BoundaryVertexFlags(topology);
+        return (self.Positions.Count.MapRange(v =>
+                    boundary[v]
+                        ? self.Positions[v]
+                        : self.Positions[v] + TangentialPart(
+                            UniformLaplacian(self.Positions, neighbors, v), normals[v]) * strength),
+                self.Faces);
+    }
+
+    // The part of a displacement that lies in the plane of a normal.
+    TangentialPart(displacement: Vector3D, normal: Vector3D): Vector3D
+        => displacement - normal * displacement.Dot(normal);
+
+    // Tangential relaxation, repeated over one shared connectivity.
+    TangentiallyRelaxed(self: TriangleMesh3D, strength: Number, iterations: Integer): TriangleMesh3D
+    {
+        var topology = self.TopologyOf;
+        return Repeat(iterations, 0).Reduce(self, (mesh, step) =>
+            mesh.TangentialRelaxationStep(topology, strength));
+    }
+
+    //==
+    // # Quadric error metrics
+    //
+    // Garland and Heckbert's error quadric
+    // (https://doi.org/10.1145/258734.258849) is the sum, over the planes of the
+    // faces around a vertex, of the squared distance to each plane — and a sum of
+    // squared plane distances IS a quadratic form in homogeneous coordinates.
+    // That is exactly the `Quadric` of `spatial-structures.types.plato`, whose
+    // `Coefficients` is a symmetric `Matrix4x4`, so no second type is declared
+    // here: the surface reading of a `Quadric` is "the points where the form is
+    // zero", and the decimation reading is "the value of the form at a point".
+    //
+    // The plane quadrics are weighted by triangle area, which is the standard
+    // practical refinement of the paper's unweighted sum: without it a fan of
+    // slivers outvotes the large faces around it.
+
+    // The quadric of one plane: the outer product of its (a, b, c, d) coefficients
+    // with itself, whose form at a point is the SQUARED distance to the plane. The
+    // Hesse form stores Dot(Normal, p) = Distance, so d is the negated Distance.
+    PlaneQuadric(plane: Plane): Quadric
+    {
+        var n = plane.Normal.Vector;
+        var v = Number4(n.X, n.Y, n.Z, 0.0 - plane.Distance);
+        return Quadric((v * v.X, v * v.Y, v * v.Z, v * v.W));
+    }
+
+    // The area-weighted quadric of one triangle: the quadric of the plane it lies
+    // in, scaled by its area. Area weighting is the standard practical refinement
+    // of the paper's unweighted sum — without it a fan of slivers outvotes the
+    // large faces around it.
+    TriangleQuadric(t: Triangle3D): Quadric
+        => Quadric(PlaneQuadric(t.FromTriangle).Coefficients * t.Area);
+
+    // The quadric that is zero everywhere: the identity of quadric summation.
+    ZeroQuadric(_: Quadric): Quadric
+        => Quadric((Number4(0.0, 0.0, 0.0, 0.0), Number4(0.0, 0.0, 0.0, 0.0),
+                    Number4(0.0, 0.0, 0.0, 0.0), Number4(0.0, 0.0, 0.0, 0.0)));
+
+    // Two quadrics summed: the form of the sum is the sum of the forms, which is
+    // what makes an edge's quadric the sum of its endpoints'.
+    Add(a: Quadric, b: Quadric): Quadric
+        => Quadric(a.Coefficients + b.Coefficients);
+
+    // The value of the quadratic form at a point: the accumulated squared distance
+    // to the planes the quadric was built from.
+    QuadricError(self: Quadric, p: Point3D): Number
+    {
+        var v = Number4(p.X, p.Y, p.Z, 1.0);
+        return v.Transform(self.Coefficients).Dot(v);
+    }
+
+    // The point where the quadratic form is smallest, found by solving the 3x3
+    // system that sets its gradient to zero. The system is expressed as the
+    // quadric with its last COLUMN replaced by (0, 0, 0, 1), whose inverse carries
+    // the answer in its translation row. A singular system — a flat or symmetric
+    // neighbourhood — has no unique minimum, and the fallback is returned instead.
+    QuadricMinimizer(self: Quadric, fallback: Point3D): Point3D
+    {
+        var q = self.Coefficients;
+        var solve = Matrix4x4(
+            Number4(q.Row1.X, q.Row1.Y, q.Row1.Z, 0.0),
+            Number4(q.Row2.X, q.Row2.Y, q.Row2.Z, 0.0),
+            Number4(q.Row3.X, q.Row3.Y, q.Row3.Z, 0.0),
+            Number4(q.Row4.X, q.Row4.Y, q.Row4.Z, 1.0));
+        return solve.CanInvert ? solve.Invert.Translation.ToPoint : fallback;
+    }
+
+    // The error quadric of every vertex: the area-weighted sum over the triangles
+    // that use it. Quadratic in vertex count times face count.
+    VertexQuadrics(self: TriangleMesh3D): Array<Quadric>
+        => self.Positions.Count.MapRange(v => self.Faces.Count.MapRange(f => f)
+            .Reduce(Quadric.ZeroQuadric, (q, f) =>
+                self.Faces[f].HasVertex(VertexIndex(v))
+                    ? q.Add(TriangleQuadric(self.Triangle(FaceIndex(f))))
+                    : q));
+
+    //==
+    // # Quadric decimation
+    //
+    // Coarsening driven by the error quadrics above: an edge's cost is the value
+    // of the summed quadric of its two endpoints at the point that minimizes it,
+    // and the cheapest edges collapse first.
+    //
+    // In a mutable decimator the candidate edges live in a priority queue that is
+    // updated after every collapse. Here a pass ranks every edge against the same
+    // mesh, collapses the cheapest non-adjacent set of them, and the next pass
+    // ranks again — which recomputes more than a queue would, and needs no queue,
+    // no lazy invalidation and no re-heapification.
+
+    // Where the collapse of an edge should put its surviving vertex: the minimizer
+    // of the summed quadric, falling back to the midpoint where the system is
+    // singular.
+    EdgeCollapseTarget(self: TriangleMesh3D, topology: TriangleMeshTopology, quadrics: Array<Quadric>, e: Integer): Point3D
+    {
+        var pair = topology.UndirectedEdges[e];
+        var midpoint = self.EdgeMidpoint(topology, UndirectedEdgeIndex(e));
+        return quadrics[pair.A.Value].Add(quadrics[pair.B.Value]).QuadricMinimizer(midpoint);
+    }
+
+    // What collapsing an edge costs: the summed quadric evaluated at the point the
+    // collapse would move to.
+    EdgeCollapseCost(self: TriangleMesh3D, topology: TriangleMeshTopology, quadrics: Array<Quadric>, e: Integer): Number
+    {
+        var pair = topology.UndirectedEdges[e];
+        var summed = quadrics[pair.A.Value].Add(quadrics[pair.B.Value]);
+        return summed.QuadricError(self.EdgeCollapseTarget(topology, quadrics, e));
+    }
+
+    // The rank of one cost among all of them, ties broken by position so that the
+    // ranks are a permutation. This is how "the k cheapest" is selected without a
+    // sort: an edge is among the k cheapest exactly when its rank is below k.
+    // Quadratic in the edge count.
+    CostRank(costs: Array<Number>, i: Integer): Integer
+        => costs.Count.MapRange(j =>
+            (costs[j] < costs[i]).Or((costs[j] == costs[i]).And(j < i)) ? 1 : 0)
+            .Reduce(0, (acc, hit) => acc + hit);
+
+    // One decimation pass: rank every edge by quadric error and collapse the
+    // `budget` cheapest of them that pass the collapse rules and do not cross the
+    // boundary. Materially fewer than `budget` collapses land, because no two may
+    // have adjacent endpoints; that is what makes several passes the normal way to
+    // use this.
+    DecimationPass(self: TriangleMesh3D, budget: Integer): TriangleMesh3D
+    {
+        var topology = self.TopologyOf;
+        var quadrics = self.VertexQuadrics;
+        var boundary = self.BoundaryVertexFlags(topology);
+        var costs = topology.EdgeCount.MapRange(e => self.EdgeCollapseCost(topology, quadrics, e));
+        return self.CollapseEdges(topology,
+            topology.EdgeCount.MapRange(e =>
+                (CostRank(costs, e) < budget)
+                    .And(CrossesBoundary(boundary, topology.UndirectedEdges[e]).Not)),
+            e => self.EdgeCollapseTarget(topology, quadrics, e));
+    }
+
+    // Decimation toward a target face count. Each pass asks for half the remaining
+    // excess in collapses — an accepted collapse removes about two triangles — but
+    // the conflict rule accepts only a fraction of what it is asked for, so
+    // `passes` is a budget rather than a guarantee and the count approaches the
+    // target from ABOVE. Ten to twenty passes reach a target well under half the
+    // input; raising the budget does not substitute for raising the pass count,
+    // because the limit is conflicts and not the ranking.
+    Decimated(self: TriangleMesh3D, targetFaceCount: Integer, passes: Integer): TriangleMesh3D
+        => Repeat(passes, 0).Reduce(self, (mesh, pass) =>
+            mesh.DecimationPass(((mesh.Faces.Count - targetFaceCount) / 2).Max(0)));
+
+    // Decimation under an error bound: every edge whose quadric error is at or
+    // below `maxError` is a candidate, and passes run until the budget is spent.
+    // The bound is in squared distance units, because a quadric accumulates
+    // SQUARED distances.
+    DecimatedToError(self: TriangleMesh3D, maxError: Number, passes: Integer): TriangleMesh3D
+        => Repeat(passes, 0).Reduce(self, (mesh, pass) => mesh.DecimationErrorPass(maxError));
+
+    // One pass of error-bounded decimation.
+    DecimationErrorPass(self: TriangleMesh3D, maxError: Number): TriangleMesh3D
+    {
+        var topology = self.TopologyOf;
+        var quadrics = self.VertexQuadrics;
+        var boundary = self.BoundaryVertexFlags(topology);
+        return self.CollapseEdges(topology,
+            topology.EdgeCount.MapRange(e =>
+                (self.EdgeCollapseCost(topology, quadrics, e) <= maxError)
+                    .And(CrossesBoundary(boundary, topology.UndirectedEdges[e]).Not)),
+            e => self.EdgeCollapseTarget(topology, quadrics, e));
+    }
+
+    //==
+    // # Isotropic remeshing
+    //
+    // The Botsch-Kobbelt loop (https://doi.org/10.1145/1057432.1057457): given one
+    // target edge length, repeatedly split what is too long, collapse what is too
+    // short, flip toward valence six, and relax tangentially. The 4/3 and 4/5
+    // factors are theirs — splitting above 4/3 L and collapsing below 4/5 L is what
+    // keeps the two operations from undoing each other, since a split edge lands at
+    // 2/3 L and a collapse cannot then immediately re-shorten it.
+    //
+    // Every one of the four steps rebuilds the connectivity it needs, so a pass
+    // costs four topology builds. That is the price of writing the loop as a
+    // composition of independently meaningful operations rather than as one
+    // traversal that maintains a structure.
+
+    // One iteration of the Botsch-Kobbelt loop at the given target edge length.
+    IsotropicRemeshPass(self: TriangleMesh3D, targetEdgeLength: Number): TriangleMesh3D
+        => self.SplitLongEdges(targetEdgeLength * 4.0 / 3.0)
+            .CollapseShortEdges(targetEdgeLength * 4.0 / 5.0)
+            .FlipTowardValenceSix
+            .TangentiallyRelaxed(0.5, 1);
+
+    // A mesh remeshed toward uniform edges of the given length. One pass halves an
+    // over-long edge and takes one non-adjacent round of short edges out, so a mesh
+    // far from the target needs several: five iterations to refine, ten or more to
+    // coarsen (collapses conflict where splits do not). The boundary is preserved
+    // throughout.
+    IsotropicRemeshed(self: TriangleMesh3D, targetEdgeLength: Number, iterations: Integer): TriangleMesh3D
+        => Repeat(iterations, 0).Reduce(self, (mesh, pass) => mesh.IsotropicRemeshPass(targetEdgeLength));
+
+    // The average length of the undirected edges of a mesh: the natural starting
+    // point for a target edge length, and what a caller scales up or down to
+    // coarsen or refine.
+    AverageEdgeLength(self: TriangleMesh3D): Number
+    {
+        var topology = self.TopologyOf;
+        return topology.EdgeCount.IsZero
+            ? 0.0
+            : topology.EdgeCount
+                .MapRange(e => self.EdgeLength(topology, UndirectedEdgeIndex(e)))
+                .Reduce(0.0, (acc, len) => acc + len) / topology.EdgeCount.ToNumber;
+    }
+}
