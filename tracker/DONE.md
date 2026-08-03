@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-08-02 — [plato-411](issues/plato-411.md) — Signed distance fields do not say whether their values are exact, a lower bound, or neither — done (82cff5a3)
 - 2026-08-02 — [plato-407](issues/plato-407.md) — Simplify rules for duplicated bodies an interface already covers — done (79cde6b)
 - 2026-08-02 — [plato-404](issues/plato-404.md) — plato_simplify SIM001 rewrites tuples outside return position, breaking the type check — done (88888d7)
 - 2026-08-02 — [plato-406](issues/plato-406.md) — plato_check style gate produced findings for retired rules, then stopped — done (studio 72472f8)

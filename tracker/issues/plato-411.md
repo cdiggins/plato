@@ -2,14 +2,14 @@
 id: plato-411
 title: Signed distance fields do not say whether their values are exact, a lower bound, or neither
 type: problem
-status: idea
+status: done
 priority: p2
 effort: M
 risk: med
 area: plato
 sprint: 
 created: 2026-08-02
-closed:
+closed: 2026-08-02
 links: [stdlib/geometry/implicit-sdf.concepts.plato, stdlib/geometry/implicit-sdf.library.plato, tracker/issues/plato-409.md, tracker/issues/plato-287.md]
 ---
 

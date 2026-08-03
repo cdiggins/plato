@@ -16,6 +16,7 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-320](issues/plato-320.md) | PolygonMesh3D.UndirectedEdgeCount assumes a closed manifold: silently wrong Euler characteristic and genus on open meshes | bug | p2 | S | low | plato | in-progress |  |
 | [plato-409](issues/plato-409.md) | FieldJet2D/3D: value+gradient jets, differentiable SDFs, transforms, ray marching, and the missing distance primitives | idea | p2 | L | low | plato | in-progress |  |
 | [plato-412](issues/plato-412.md) | ToSdf: concrete geometry shapes as signed distance fields | feature | p2 | M | low | plato | in-progress |  |
+| [plato-413](issues/plato-413.md) | Marching cubes: isosurface extraction from dense scalar grids and sampled SDFs | idea | p2 | M | low | plato | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-368](issues/plato-368.md) | Backend intrinsic override + repr table for the migrated reference bodies | feature | p1 | L | medium | plato | ready |  |
@@ -43,7 +44,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-365](issues/plato-365.md) | Retire non-scalar primitives: PrimitiveTypes = scalars only, System.Numerics behind intrinsic bridge | debt | p2 | M | med | plato | idea |  |
 | [plato-370](issues/plato-370.md) | Double-precision scalars (approach must be re-designed — TirScalarLowerer is gone) | feature | p2 | L | med | plato | idea |  |
 | [plato-390](issues/plato-390.md) | Extract Plato.Verify: one policy engine behind the gates, the tests and plato_check | feature | p2 | L | med | plato | idea |  |
-| [plato-411](issues/plato-411.md) | Signed distance fields do not say whether their values are exact, a lower bound, or neither | problem | p2 | M | med | plato | idea |  |
 | [plato-024](issues/plato-024.md) | Plato.RustWriter — generate working Rust | feature | p3 | L | med | plato | idea |  |
 | [plato-235](issues/plato-235.md) | GLSL overload erasure picks the winner by emission order, not by intent | problem | p3 | M | med | plato | idea |  |
 | [plato-334](issues/plato-334.md) | Query/solve result types share no interface: success flag spelled four ways | debt | p3 | M | low | plato | idea |  |
