@@ -47,6 +47,7 @@ import {
   Number3,
   Number4,
   Number8,
+  Matrix4x4,
   Bounds2D,
   Bounds3D,
   Triangle2D,
@@ -700,6 +701,100 @@ for (const [name, slot] of Object.entries(tuple3Aliases)) {
     configurable: true,
   });
 }
+
+// The same defect, two slots wide. `VerticesOfUndirectedEdge` in
+// meshes-polygon.library.plato returns a `VertexPair` but is written
+// `(a.Value <= b.Value) ? (a, b) : (b, a)` and emits a `Tuple2`, so `.A` and
+// `.B` read undefined. That one member takes down every mesh-derived cloth
+// constraint — `MeshSpring`, `MeshSprings`, `MeshBendConstraint`,
+// `MeshBendConstraints` and so `ClothFromMesh` — which is the only path that
+// builds dihedral bend constraints, so without this the entire Muller
+// four-gradient projection is unexercised by anything in the repo.
+
+const tuple2Aliases: Record<string, 'X0' | 'X1'> = { A: 'X0', B: 'X1' };
+
+for (const [name, slot] of Object.entries(tuple2Aliases)) {
+  Object.defineProperty(Tuple2.prototype, name, {
+    get(this: Any) {
+      return this[slot];
+    },
+    configurable: true,
+  });
+}
+
+// And four slots wide, where the record is a MATRIX. `Plane.PlaneQuadric` and
+// `Quadric.ZeroQuadric` emit `new Quadric(new Tuple4(row, row, row, row))`
+// while `Quadric.Coefficients` is declared `Matrix4x4`, so every reader of
+// `.Row1` sees undefined and every `.Add` / `.Multiply` is not a function.
+// That kills the whole Garland-Heckbert family: TriangleQuadric,
+// VertexQuadrics, QuadricError, QuadricMinimizer, Decimated and
+// DecimatedToError — quadric-error decimation being the headline coarsening
+// method of the remeshing tier.
+//
+// Naming the rows is half the fix. The other half is that the two arithmetic
+// members must return a REAL Matrix4x4, so that only the leaf constructors are
+// ever a Tuple4 and everything downstream — including Invert, which
+// QuadricMinimizer needs — is native.
+
+const matrixRows = ['Row1', 'Row2', 'Row3', 'Row4'] as const;
+
+matrixRows.forEach((name, i) => {
+  Object.defineProperty(Tuple4.prototype, name, {
+    get(this: Any) {
+      return this[`X${i}`];
+    },
+    configurable: true,
+  });
+});
+
+const asMatrix4x4 = (m: Any): Any =>
+  m instanceof Matrix4x4 ? m : new Matrix4x4(m.X0, m.X1, m.X2, m.X3);
+
+Object.defineProperty(Tuple4.prototype, 'Add', {
+  value: function (this: Any, other: Any) {
+    return asMatrix4x4(this).Add(asMatrix4x4(other));
+  },
+  writable: true,
+  configurable: true,
+});
+
+Object.defineProperty(Tuple4.prototype, 'Multiply', {
+  value: function (this: Any, right: Any) {
+    return asMatrix4x4(this).Multiply(right);
+  },
+  writable: true,
+  configurable: true,
+});
+
+// `Coefficients.Multiply(this.Area())` in TriangleQuadric is the dropped scalar
+// overload again (the NumberN lift above, one type up): Matrix4x4 keeps only
+// the matrix-by-matrix product. Scale row-wise when the argument is a number.
+
+const matrixMultiply = Matrix4x4.prototype.Multiply;
+Object.defineProperty(Matrix4x4.prototype, 'Multiply', {
+  value: function (this: Any, right: Any) {
+    if (typeof right === 'number') {
+      return new Matrix4x4(
+        this.Row1.Multiply(right),
+        this.Row2.Multiply(right),
+        this.Row3.Multiply(right),
+        this.Row4.Multiply(right),
+      );
+    }
+    return matrixMultiply.call(this, asMatrix4x4(right));
+  },
+  writable: true,
+  configurable: true,
+});
+
+const matrixAdd = Matrix4x4.prototype.Add;
+Object.defineProperty(Matrix4x4.prototype, 'Add', {
+  value: function (this: Any, other: Any) {
+    return matrixAdd.call(this, asMatrix4x4(other));
+  },
+  writable: true,
+  configurable: true,
+});
 
 // The same defect in ARGUMENT position, and it is the more common one. A tuple
 // literal coerced to a vector — `LatticeGradient2D(seed, i, j).Dot((dx, dy))` in
