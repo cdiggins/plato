@@ -75,6 +75,32 @@ the writer, so `demos/webgl` leaves those scenes visibly blocked instead.
 
 `WindingOrder` is a second instance of defect 5, hit by `Polygon2D.Winding`.
 
+Defect 3 (dropped overloads) is the widest of the seven. Beyond
+`Transform(Quaternion)` it takes down, at least:
+
+- `Vector2D.Transform(Rotation2D)` — ten skipped `Transform` overloads on
+  `Vector2D` alone; blocks `Twist2D.Eval`.
+- The componentwise `Scale` / `ScaleAbout`, so `ScaleX/Y/Z` multiply a vector by
+  a `Number3` object and return **NaN with no error** on `PolygonMesh3D`,
+  `RichMesh3D` and `TriangleArray3D` alike. There is no working non-uniform
+  scale on a mesh.
+- `Multiply(deformation, Number)` — the `Multiply` slot goes to the `Compose`
+  alias, so constant-strength scaling of a deformation is unreachable.
+
+Also unemitted, and not overload-related: the `Deform` **apply lifts** over
+`IDeformable3D` (plain and weighted) — only `Deform(mapping)` survives, so the
+library's weighted-apply design has to be spelled out by the caller. And
+`Compose` / `Multiply` are emitted monomorphically per type
+(`Twist3D.Compose(second: Twist3D)`) rather than over `IDeformation3D`.
+
+A performance note for whoever fixes this, found in the same demo: generated
+members return lazily mapped collections, so a `Positions` chain after three
+`Truncate` rounds walks a deep stack of Map/Concatenate views on every element
+read — 8.4 s per rebuild until the caller flattens it once. `Truncate` itself is
+quadratic in vertex count and runs ~15x slower under a browser JIT than under
+tsx. Neither is a correctness bug, but both shape what generated TypeScript can
+be used for.
+
 ## Impact
 Everything the stdlib says about meshes, polyhedra, polygons, triangulation and
 CSG is unreachable from TypeScript — roughly the whole `stdlib/geometry` surface
