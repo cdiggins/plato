@@ -189,6 +189,23 @@ type EngineeringMaterial
     SpecificHeat: Number;
 }
 
+// The two independent elastic constants of a linear isotropic material
+// (https://en.wikipedia.org/wiki/Lam%C3%A9_parameters): the first parameter
+// (lambda) and the shear modulus (mu, also called the second parameter).
+//
+// These two numbers ARE the constitutive matrix. The 6x6 matrix relating stress
+// to engineering strain in an isotropic solid holds only lambda + 2 mu on the
+// three normal diagonal entries, lambda on the six normal off-diagonal entries,
+// and mu on the three shear diagonal entries — so storing the matrix would be
+// storing thirty-six numbers to say two. Derive them from an
+// `EngineeringMaterial` with `ToLameParameters`.
+type LameParameters
+    implements IValue
+{
+    FirstParameter: Pressure;
+    ShearModulus: Pressure;
+}
+
 // A dimensionless margin between capacity and demand: capacity divided by
 // demand. Values above 1 indicate a passing design.
 // (https://en.wikipedia.org/wiki/Factor_of_safety)

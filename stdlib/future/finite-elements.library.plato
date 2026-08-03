@@ -1,0 +1,951 @@
+//==
+// # Finite elements
+//
+// A linear-elastic finite-element analysis, end to end: element stiffness from
+// shape-function gradients, assembly into a global system, essential boundary
+// conditions and loads, an iterative solve, and the strain / stress readings
+// taken back off the answer. Types are in `finite-elements.types.plato`; the
+// material record and the beam the 1D path analyses are in
+// `engineering.types.plato`.
+//
+// Two decisions shape everything below, and they are the same decision seen
+// twice.
+//
+// **The assembled matrix is a coordinate-list `SparseMatrix`.** Its stated
+// invariant (`matrices.types.plato`) is that the value at a position is the SUM
+// of the entries naming it, so concatenating two entry lists is matrix addition.
+// Assembly is therefore a `FlatMap` over the elements and nothing else — no
+// scatter pass, no accumulation, no ordering requirement, and no mutable global
+// matrix. That is the representation a pure language actually wants, and it is
+// why nothing here needs a hash map from (row, column) to slot.
+//
+// **The solve is a conjugate gradient.** It follows from the representation: a
+// coordinate list has no random access — `ElementAt` on it is a scan of every
+// entry — so any method that indexes the matrix, Gaussian elimination and
+// Cholesky included, is quadratic per element read before it does any
+// arithmetic. A Krylov method never indexes the matrix; it only ever multiplies
+// by it, and that product is one sweep of the entries. Elimination would also
+// need pivoting and fill-in, both of which mean rebuilding the storage.
+//
+// Sections, in order:
+//  - System vectors
+//  - Sparse system operations
+//  - Boundary conditions as vectors
+//  - The constrained conjugate gradient
+//  - The isotropic element kernel
+//  - The linear tetrahedron
+//  - The linear triangle
+//  - Solid analysis
+//  - Plane analysis
+//  - Recovering strain and stress
+//  - Reading a solution
+//  - Euler-Bernoulli beams
+
+library FiniteElements
+{
+    //==
+    // # System vectors
+    //
+    // A system vector is a plain `Array<Number>`, one entry per degree of
+    // freedom. The four operations below are everything the conjugate gradient
+    // needs; each is one `Zip` or one fold, so none of them is worth a type.
+
+    // The dot product of two system vectors of the same length.
+    SystemDot(a: Array<Number>, b: Array<Number>): Number
+        => SumOf(a.Zip(b, (x, y) => x * y));
+
+    // The component-wise difference of two system vectors.
+    SystemSubtract(a: Array<Number>, b: Array<Number>): Array<Number>
+        => a.Zip(b, (x, y) => x - y);
+
+    // `a + b * t`, component-wise: the vector update a conjugate-gradient step
+    // makes four times over.
+    SystemAddScaled(a: Array<Number>, b: Array<Number>, t: Number): Array<Number>
+        => a.Zip(b, (x, y) => x + y * t);
+
+    // The component-wise product of two system vectors. This one function is
+    // both the diagonal preconditioner and the projection onto the free degrees
+    // of freedom, because both are diagonal operators.
+    SystemProduct(a: Array<Number>, b: Array<Number>): Array<Number>
+        => a.Zip(b, (x, y) => x * y);
+
+    // The Euclidean norm of a system vector.
+    SystemNorm(a: Array<Number>): Number
+        => SystemDot(a, a).Sqrt;
+
+    //==
+    // # Sparse system operations
+    //
+    // The two things a conjugate gradient asks of the assembled matrix: multiply
+    // by a vector, and report the diagonal. Both are a single sweep of the
+    // coordinate list, and neither reads an element by position.
+    //
+    // These are the only places in this library that use an affine `Buffer`.
+    // Scattering into indexed slots is what a builder is for, and the buffer
+    // never escapes the function that allocates it.
+
+    // A number buffer of `n` slots, every one written to `value`. `new
+    // Buffer<T>(n)` leaves slot contents to the runtime, so every accumulator
+    // below starts here rather than from a bare allocation.
+    FilledNumbers(n: Integer, value: Number): Buffer<Number>
+    {
+        var slots = new Buffer<Number>(n);
+        var i = 0;
+        while (i < n)
+        {
+            slots = slots.Set(i, value);
+            i = i + 1;
+        }
+        return slots;
+    }
+
+    // The buffer with `value` added into one slot. The slot leads and the buffer
+    // follows because a function dispatching on a `unique` type is dropped from
+    // the emitted C# (plato-416).
+    AddAt(slot: Integer, into: Buffer<Number>, value: Number): Buffer<Number>
+        => into.Set(slot, into.At(slot) + value);
+
+    // The product of a coordinate-list matrix with a system vector: one sweep of
+    // the entries, each scattering its contribution into the row it names. The
+    // cost is the entry count, independent of how the entries are ordered and of
+    // how many of them repeat a position.
+    Multiply(m: SparseMatrix, x: Array<Number>): Array<Number>
+    {
+        var accumulated = FilledNumbers(m.NumRows, 0.0);
+        var k = 0;
+        while (k < m.Entries.Count)
+        {
+            var e = m.Entries[k];
+            accumulated = e.Row.AddAt(accumulated, e.Value * x[e.Column]);
+            k = k + 1;
+        }
+        return accumulated.Freeze();
+    }
+
+    // The Jacobi (diagonal) preconditioner: the reciprocal of each diagonal
+    // entry, and 1 wherever the diagonal is zero. A zero diagonal is not a
+    // defect here — it is exactly what a constrained degree of freedom looks
+    // like once the projection below has removed it from the system, and leaving
+    // its multiplier at 1 keeps it harmless.
+    // (https://en.wikipedia.org/wiki/Preconditioner#Jacobi_(or_diagonal)_preconditioner)
+    JacobiInverseDiagonal(m: SparseMatrix): Array<Number>
+    {
+        var diagonal = FilledNumbers(m.NumRows, 0.0);
+        var k = 0;
+        while (k < m.Entries.Count)
+        {
+            var e = m.Entries[k];
+            if (e.IsDiagonal) { diagonal = e.Row.AddAt(diagonal, e.Value); }
+            k = k + 1;
+        }
+        return diagonal.Freeze().Map(x => x == 0.0 ? 1.0 : 1.0 / x);
+    }
+
+    // A list of degree-of-freedom contributions summed into a dense load vector.
+    // Contributions may repeat a degree of freedom; they add, which is what lets
+    // every load type below be resolved independently and simply concatenated.
+    ScatterLoads(contributions: Array<DofLoad>, dofCount: Integer): Array<Number>
+    {
+        var loads = FilledNumbers(dofCount, 0.0);
+        var k = 0;
+        while (k < contributions.Count)
+        {
+            loads = contributions[k].Dof.Value.AddAt(loads, contributions[k].Amount);
+            k = k + 1;
+        }
+        return loads.Freeze();
+    }
+
+    //==
+    // # Boundary conditions as vectors
+    //
+    // Essential boundary conditions are applied by PROJECTION, not by editing the
+    // matrix. A constrained degree of freedom is held at its prescribed value and
+    // removed from the search space; the matrix is never modified, so it stays a
+    // plain concatenation of element entries and can be assembled once and reused
+    // under several sets of restraints.
+    //
+    // Both vectors below are built with a scatter rather than a search, so a
+    // model with many constraints costs no more per constraint than one with few.
+
+    // The projector onto the free degrees of freedom, as a per-degree-of-freedom
+    // multiplier: 0 where the model prescribes a value and 1 everywhere else.
+    // Projection is then `SystemProduct`, and a residual multiplied by it can no
+    // longer move a restrained degree of freedom.
+    FreeDofMultipliers(dofCount: Integer, constraints: Array<PrescribedDisplacement>): Array<Number>
+    {
+        var free = FilledNumbers(dofCount, 1.0);
+        var k = 0;
+        while (k < constraints.Count)
+        {
+            free = free.Set(constraints[k].Dof.Value, 0.0);
+            k = k + 1;
+        }
+        return free.Freeze();
+    }
+
+    // The prescribed value of every degree of freedom: the stated value at a
+    // constrained one and zero elsewhere. This is the starting iterate of the
+    // solve, which is what makes a non-zero prescribed displacement — a
+    // settlement, a stretched fixture — work without any further special case.
+    PrescribedVector(dofCount: Integer, constraints: Array<PrescribedDisplacement>): Array<Number>
+    {
+        var values = FilledNumbers(dofCount, 0.0);
+        var k = 0;
+        while (k < constraints.Count)
+        {
+            values = values.Set(constraints[k].Dof.Value, constraints[k].Displacement);
+            k = k + 1;
+        }
+        return values.Freeze();
+    }
+
+    //==
+    // # The constrained conjugate gradient
+    //
+    // https://en.wikipedia.org/wiki/Conjugate_gradient_method
+    //
+    // Jacobi-preconditioned conjugate gradient on the free subspace: the iterate
+    // starts at the prescribed displacements, the residual is projected once, and
+    // every search direction is projected as it is produced, so no iterate ever
+    // leaves the subspace the constraints define.
+    //
+    // The method needs the free block of the matrix to be symmetric positive
+    // definite. An element stiffness matrix is symmetric by construction and
+    // positive SEMI-definite; the constraints are what make the assembled free
+    // block definite, so a model that does not restrain every rigid-body motion
+    // has no unique answer and this reports it as a non-converged result rather
+    // than as an error.
+
+    // Solve `m u = loads` subject to the prescribed displacements. `m` is the
+    // assembled stiffness matrix in coordinate-list form and is not modified.
+    SolveConstrained(m: SparseMatrix, loads: Array<Number>,
+        constraints: Array<PrescribedDisplacement>, settings: LinearSolveSettings): LinearSolveResult
+    {
+        var free = FreeDofMultipliers(m.NumRows, constraints);
+        var preconditioner = m.JacobiInverseDiagonal;
+        var u = PrescribedVector(m.NumRows, constraints);
+        var residual = SystemProduct(SystemSubtract(loads, m.Multiply(u)), free);
+        var initialNorm = SystemNorm(residual);
+        var applied = SystemProduct(SystemProduct(preconditioner, residual), free);
+        var direction = applied;
+        var projected = SystemDot(residual, applied);
+        var iteration = 0;
+        var norm = initialNorm;
+        var running = initialNorm > 0.0;
+        while (running && iteration < settings.MaxIterations)
+        {
+            var curvature = SystemProduct(m.Multiply(direction), free);
+            var denominator = SystemDot(direction, curvature);
+            if (denominator <= 0.0)
+            {
+                // A non-positive curvature means the free block is not positive
+                // definite: an unrestrained rigid-body motion, or a degenerate
+                // element. Stop rather than divide.
+                running = false;
+            }
+            else
+            {
+                var step = projected / denominator;
+                u = SystemAddScaled(u, direction, step);
+                residual = SystemAddScaled(residual, curvature, -step);
+                norm = SystemNorm(residual);
+                iteration = iteration + 1;
+                if (norm <= settings.Tolerance * initialNorm)
+                {
+                    running = false;
+                }
+                else
+                {
+                    applied = SystemProduct(SystemProduct(preconditioner, residual), free);
+                    var next = SystemDot(residual, applied);
+                    direction = SystemAddScaled(applied, direction, next / projected);
+                    projected = next;
+                }
+            }
+        }
+        return LinearSolveResult(u, iteration,
+            initialNorm > 0.0 ? norm / initialNorm : 0.0,
+            initialNorm == 0.0 || norm <= settings.Tolerance * initialNorm);
+    }
+
+    //==
+    // # The isotropic element kernel
+    //
+    // One entry of an element stiffness matrix, for any element whose shape
+    // functions have CONSTANT gradients — which is what makes the linear
+    // tetrahedron and the linear triangle share this code exactly.
+    //
+    // Nothing here builds a strain-displacement matrix and multiplies three dense
+    // matrices together. For an isotropic material the whole of B-transpose D B
+    // collapses, because D holds only the two Lame constants:
+    //
+    //     K(i r, j s) = measure * (lambda * gi_r * gj_s
+    //                              + mu * (gi_s * gj_r + (r == s ? gi . gj : 0)))
+    //
+    // where gi is node i's shape-function gradient and r, s are displacement
+    // components. It comes straight from the elastic energy: the first term is
+    // the volumetric coupling `lambda tr(eu) tr(ev)` and the second is
+    // `2 mu eu : ev` with the symmetrised gradients expanded.
+
+    // The (node i component r, node j component s) entry of an element stiffness
+    // matrix. `measure` is the element's volume for a solid, or its area times a
+    // thickness for a plane element.
+    // (https://en.wikipedia.org/wiki/Linear_elasticity)
+    ElasticStiffnessTerm(gi: Vector3D, gj: Vector3D, r: Integer, s: Integer,
+        moduli: LameParameters, measure: Number): Number
+        => measure * (moduli.FirstParameter.Pascals * gi.At(r) * gj.At(s)
+            + moduli.ShearModulus.Pascals
+                * (gi.At(s) * gj.At(r) + (r == s ? gi.Dot(gj) : 0.0)));
+
+    // Every stiffness entry of one constant-gradient element, in global
+    // degree-of-freedom numbering: each of its nodes against each of its nodes,
+    // and within a pair, each displacement component against each. `components`
+    // is how many components a node carries — 3 for a solid, 2 for a plane
+    // element — and `gradients` is in the same order as `nodes`.
+    //
+    // The entries are EMITTED, never accumulated. A coordinate list sums the
+    // entries naming a position, so the concatenation of every element's entries
+    // is already the assembled matrix.
+    ConstantGradientStiffnessEntries(nodes: Array<VertexIndex>, gradients: Array<Vector3D>,
+        components: Integer, moduli: LameParameters, measure: Number): Array<SparseMatrixEntry>
+        => nodes.Count.Range.FlatMap(i =>
+            nodes.Count.Range.FlatMap(j =>
+                (components * components).MapRange(rs =>
+                    SparseMatrixEntry(
+                        nodes[i].Value * components + rs / components,
+                        nodes[j].Value * components + rs % components,
+                        ElasticStiffnessTerm(gradients[i], gradients[j],
+                            rs / components, rs % components, moduli, measure)))));
+
+    // The Lame pair of the plane idealization of an isotropic material. Plane
+    // strain keeps the three-dimensional first parameter; plane stress replaces
+    // it with the reduced value E nu / (1 - nu^2). That single substitution is
+    // what makes the plane constitutive matrix identical in FORM to the
+    // three-dimensional one, and therefore what lets one stiffness kernel serve
+    // both. The shear modulus is the same either way.
+    // (https://en.wikipedia.org/wiki/Plane_stress)
+    PlaneLameParameters(m: EngineeringMaterial, condition: PlaneCondition): LameParameters
+        => match (condition)
+        {
+            PlaneStress => LameParameters(
+                Pressure(m.YoungsModulus.Pascals * m.PoissonRatio
+                    / (1.0 - m.PoissonRatio.Square)),
+                m.ShearModulus);
+            PlaneStrain => m.ToLameParameters;
+        };
+
+    //==
+    // # The linear tetrahedron
+    //
+    // The constant-strain tetrahedron (https://en.wikipedia.org/wiki/Tetrahedron):
+    // four nodes, linear shape functions, and therefore one constant strain and
+    // one constant stress per cell. It is the cheapest usable solid element and
+    // the stiffest — a coarse mesh of these under-predicts deflection — but it
+    // needs no numerical integration at all, which is exactly what makes it the
+    // element to state first.
+
+    // The four vertex indices of a cell, in stored order. (`Vertices` already
+    // names this operation for a `TriangleFace` in `meshes.library.plato`; the
+    // cell has no counterpart there yet.)
+    CellVertices(c: TetrahedronCell): Array<VertexIndex>
+        => [c.A, c.B, c.C, c.D];
+
+    // The cell as a standalone solid over a point pool.
+    ToTetrahedron(c: TetrahedronCell, positions: Array<Point3D>): Tetrahedron
+        => Tetrahedron(positions[c.A.Value], positions[c.B.Value],
+            positions[c.C.Value], positions[c.D.Value]);
+
+    // The face as a standalone triangle over a 3D point pool.
+    ToTriangle3D(f: TriangleFace, positions: Array<Point3D>): Triangle3D
+        => Triangle3D(positions[f.A.Value], positions[f.B.Value], positions[f.C.Value]);
+
+    // The face as a standalone triangle over a plane point pool.
+    ToTriangle2D(f: TriangleFace, positions: Array<Point2D>): Triangle2D
+        => Triangle2D(positions[f.A.Value], positions[f.B.Value], positions[f.C.Value]);
+
+    // The gradients of the four barycentric shape functions of a linear
+    // tetrahedron, in the cell's vertex order. Each is CONSTANT over the cell —
+    // that is the entire content of "constant strain": the shape functions are
+    // affine, so their gradients, and hence the strain, do not vary inside the
+    // element.
+    //
+    // Gradient i points from the face opposite node i towards node i, with
+    // magnitude one over the distance between them. It is built as the cross
+    // product spanning that opposite face divided by six times the signed volume,
+    // which supplies both the direction and that magnitude at once. Degenerate
+    // for a flat cell, whose signed volume is zero.
+    ShapeGradients(c: TetrahedronCell, positions: Array<Point3D>): Array<Vector3D>
+    {
+        var t = c.ToTetrahedron(positions);
+        var six = SixTimesSignedVolume(t.A, t.B, t.C, t.D);
+        return [
+            t.B.Between(t.D).Cross(t.B.Between(t.C)) / six,
+            t.A.Between(t.C).Cross(t.A.Between(t.D)) / six,
+            t.B.Between(t.A).Cross(t.B.Between(t.D)) / six,
+            t.B.Between(t.C).Cross(t.B.Between(t.A)) / six];
+    }
+
+    // The 144 stiffness entries of one constant-strain tetrahedron.
+    StiffnessEntries(c: TetrahedronCell, positions: Array<Point3D>,
+        moduli: LameParameters): Array<SparseMatrixEntry>
+        => ConstantGradientStiffnessEntries(c.CellVertices, c.ShapeGradients(positions),
+            3, moduli, c.ToTetrahedron(positions).Volume);
+
+    //==
+    // # The linear triangle
+    //
+    // The plane constant-strain triangle: three nodes, two components each, and
+    // the same constant-gradient story as the tetrahedron one dimension down.
+
+    // The gradients of the three barycentric shape functions of a linear
+    // triangle, in the face's vertex order, as 3D vectors whose Z component is
+    // zero.
+    //
+    // The zero third component is deliberate rather than a lazy lift: it lets the
+    // plane element reuse `ElasticStiffnessTerm` unchanged, because every term
+    // the third component would contribute is multiplied either by a gradient
+    // component that is zero or by a displacement component a plane element does
+    // not carry. Degenerate for a collinear face, whose signed area is zero.
+    ShapeGradients(f: TriangleFace, positions: Array<Point2D>): Array<Vector3D>
+    {
+        var t = f.ToTriangle2D(positions);
+        var twice = TwiceSignedArea(t.A, t.B, t.C);
+        return [
+            Vector3D(t.B.Y - t.C.Y, t.C.X - t.B.X, 0.0) / twice,
+            Vector3D(t.C.Y - t.A.Y, t.A.X - t.C.X, 0.0) / twice,
+            Vector3D(t.A.Y - t.B.Y, t.B.X - t.A.X, 0.0) / twice];
+    }
+
+    // The 36 stiffness entries of one plane constant-strain triangle of the given
+    // uniform thickness.
+    StiffnessEntries(f: TriangleFace, positions: Array<Point2D>, thickness: Length,
+        moduli: LameParameters): Array<SparseMatrixEntry>
+        => ConstantGradientStiffnessEntries(f.Vertices, f.ShapeGradients(positions),
+            2, moduli, f.ToTriangle2D(positions).Area * thickness.Meters);
+
+    //==
+    // # Solid analysis
+    //
+    // Assembling, loading and solving an `ElasticModel3D`. Loads are resolved
+    // into `DofLoad` contributions first and summed once at the end, which keeps
+    // "which degrees of freedom does this load touch" separate from "add it up"
+    // and makes each load kind an independent pure function.
+
+    // Three degrees of freedom per mesh position.
+    DofCount(model: ElasticModel3D): Integer
+        => model.Mesh.Positions.Count * 3;
+
+    // The assembled global stiffness matrix: every cell's entries concatenated,
+    // with no accumulation pass. Independent of the loads and the restraints, so
+    // it may be built once and solved repeatedly.
+    StiffnessMatrix(model: ElasticModel3D): SparseMatrix
+    {
+        var moduli = model.Material.ToLameParameters;
+        var n = model.DofCount;
+        return SparseMatrix(n, n,
+            model.Mesh.Cells.FlatMap(c => c.StiffnessEntries(model.Mesh.Positions, moduli)));
+    }
+
+    // A concentrated nodal force resolved onto the three degrees of freedom of
+    // its node.
+    LoadContributions(f: NodalForce3D): Array<DofLoad>
+        => [
+            DofLoad(DofIndex(f.Node.Value * 3), f.Force.X),
+            DofLoad(DofIndex(f.Node.Value * 3 + 1), f.Force.Y),
+            DofLoad(DofIndex(f.Node.Value * 3 + 2), f.Force.Z)];
+
+    // The weight of one cell shared equally among its four nodes. Equal sharing
+    // is not an approximation: each linear shape function integrates to a quarter
+    // of the cell volume, so this IS the consistent load vector of a uniform body
+    // force.
+    // (https://en.wikipedia.org/wiki/Body_force)
+    GravityContributions(c: TetrahedronCell, positions: Array<Point3D>, density: Density,
+        gravity: Vector3D): Array<DofLoad>
+    {
+        var share = density.KilogramsPerCubicMeter * c.ToTetrahedron(positions).Volume * 0.25;
+        var nodes = c.CellVertices;
+        return 12.MapRange(k =>
+            DofLoad(DofIndex(nodes[k / 3].Value * 3 + k % 3), gravity.At(k % 3) * share));
+    }
+
+    // A uniform traction over one boundary triangle shared equally among its
+    // three nodes — again exact rather than lumped, for the same reason: a linear
+    // triangle's shape functions each integrate to a third of its area.
+    LoadContributions(t: FaceTraction3D, positions: Array<Point3D>): Array<DofLoad>
+    {
+        var share = t.Face.ToTriangle3D(positions).Area / 3.0;
+        var nodes = t.Face.Vertices;
+        return 9.MapRange(k =>
+            DofLoad(DofIndex(nodes[k / 3].Value * 3 + k % 3), t.Traction.At(k % 3) * share));
+    }
+
+    // Every load on the model resolved into degree-of-freedom contributions:
+    // nodal forces, then the body force of gravity, then the boundary tractions.
+    LoadContributions(model: ElasticModel3D): Array<DofLoad>
+        => model.Forces.FlatMap(f => f.LoadContributions)
+            .Concatenate(model.Mesh.Cells.FlatMap(c =>
+                c.GravityContributions(model.Mesh.Positions, model.Material.Density,
+                    model.Gravity)))
+            .Concatenate(model.Tractions.FlatMap(t =>
+                t.LoadContributions(model.Mesh.Positions)));
+
+    // The load vector in global degree-of-freedom order.
+    LoadVector(model: ElasticModel3D): Array<Number>
+        => model.LoadContributions.ScatterLoads(model.DofCount);
+
+    // The linear-elastic solve of a solid model: assemble, load, run the
+    // constrained conjugate gradient, and read each node's displacement out of
+    // the solution vector. The convergence report travels with the answer, so a
+    // caller that ignores it still gets the last iterate rather than nothing.
+    SolveElastic(model: ElasticModel3D, settings: LinearSolveSettings): ElasticSolution3D
+    {
+        var solved = model.StiffnessMatrix.SolveConstrained(model.LoadVector,
+            model.Constraints, settings);
+        var u = solved.Solution;
+        return ElasticSolution3D(
+            model.Mesh.Positions.Count.MapRange(i =>
+                Vector3D(u[i * 3], u[i * 3 + 1], u[i * 3 + 2])),
+            solved.Iterations, solved.Residual, solved.Converged);
+    }
+
+    //==
+    // # Plane analysis
+    //
+    // The same three steps for an `ElasticModel2D`. Only the component count, the
+    // element measure and the choice of Lame pair differ.
+
+    // Two degrees of freedom per mesh position.
+    DofCount(model: ElasticModel2D): Integer
+        => model.Mesh.Positions.Count * 2;
+
+    // The Lame pair the model's plane idealization implies.
+    Moduli(model: ElasticModel2D): LameParameters
+        => model.Material.PlaneLameParameters(model.Condition);
+
+    // The assembled global stiffness matrix of a plane model.
+    StiffnessMatrix(model: ElasticModel2D): SparseMatrix
+    {
+        var moduli = model.Moduli;
+        var n = model.DofCount;
+        return SparseMatrix(n, n, model.Mesh.Faces.FlatMap(f =>
+            f.StiffnessEntries(model.Mesh.Positions, model.Thickness, moduli)));
+    }
+
+    // A concentrated nodal force resolved onto the two degrees of freedom of its
+    // node.
+    LoadContributions(f: NodalForce2D): Array<DofLoad>
+        => [
+            DofLoad(DofIndex(f.Node.Value * 2), f.Force.X),
+            DofLoad(DofIndex(f.Node.Value * 2 + 1), f.Force.Y)];
+
+    // The weight of one plane element shared equally among its three nodes,
+    // through the modelled thickness.
+    GravityContributions(f: TriangleFace, positions: Array<Point2D>, thickness: Length,
+        density: Density, gravity: Vector2D): Array<DofLoad>
+    {
+        var share = density.KilogramsPerCubicMeter * f.ToTriangle2D(positions).Area
+            * thickness.Meters / 3.0;
+        var nodes = f.Vertices;
+        return 6.MapRange(k =>
+            DofLoad(DofIndex(nodes[k / 2].Value * 2 + k % 2), gravity.At(k % 2) * share));
+    }
+
+    // Every load on a plane model resolved into degree-of-freedom contributions.
+    LoadContributions(model: ElasticModel2D): Array<DofLoad>
+        => model.Forces.FlatMap(f => f.LoadContributions)
+            .Concatenate(model.Mesh.Faces.FlatMap(f =>
+                f.GravityContributions(model.Mesh.Positions, model.Thickness,
+                    model.Material.Density, model.Gravity)));
+
+    // The load vector in global degree-of-freedom order.
+    LoadVector(model: ElasticModel2D): Array<Number>
+        => model.LoadContributions.ScatterLoads(model.DofCount);
+
+    // The linear-elastic solve of a plane model.
+    SolveElastic(model: ElasticModel2D, settings: LinearSolveSettings): ElasticSolution2D
+    {
+        var solved = model.StiffnessMatrix.SolveConstrained(model.LoadVector,
+            model.Constraints, settings);
+        var u = solved.Solution;
+        return ElasticSolution2D(
+            model.Mesh.Positions.Count.MapRange(i => Vector2D(u[i * 2], u[i * 2 + 1])),
+            solved.Iterations, solved.Residual, solved.Converged);
+    }
+
+    //==
+    // # Recovering strain and stress
+    //
+    // A displacement field is not what an engineer looks at. Strain is its
+    // symmetrised gradient, stress follows from strain by Hooke's law, and von
+    // Mises stress is the scalar those two get reduced to before anyone colours a
+    // picture with it. Over a constant-gradient element all three are constant,
+    // so each is one value per element.
+
+    // The (r, c) entry of the displacement gradient inside a constant-gradient
+    // element: the sum over its nodes of displacement component r times shape
+    // gradient component c.
+    DisplacementGradient(nodal: Array<Vector3D>, gradients: Array<Vector3D>,
+        r: Integer, c: Integer): Number
+        => nodal.Count.Range.Reduce(0.0, (total, i) =>
+            total + nodal[i].At(r) * gradients[i].At(c));
+
+    // The constant strain inside one tetrahedral cell, as the symmetric tensor of
+    // TENSOR strains — off-diagonal entries are half the engineering shears,
+    // which is what `StrainState3D` documents.
+    // (https://en.wikipedia.org/wiki/Infinitesimal_strain_theory)
+    ElementStrain(c: TetrahedronCell, positions: Array<Point3D>,
+        displacements: Array<Vector3D>): StrainState3D
+    {
+        var gradients = c.ShapeGradients(positions);
+        var nodes = c.CellVertices;
+        var nodal = 4.MapRange(i => displacements[nodes[i].Value]);
+        return StrainState3D(SymmetricMatrix3x3(
+            DisplacementGradient(nodal, gradients, 0, 0),
+            (DisplacementGradient(nodal, gradients, 0, 1)
+                + DisplacementGradient(nodal, gradients, 1, 0)) * 0.5,
+            (DisplacementGradient(nodal, gradients, 0, 2)
+                + DisplacementGradient(nodal, gradients, 2, 0)) * 0.5,
+            DisplacementGradient(nodal, gradients, 1, 1),
+            (DisplacementGradient(nodal, gradients, 1, 2)
+                + DisplacementGradient(nodal, gradients, 2, 1)) * 0.5,
+            DisplacementGradient(nodal, gradients, 2, 2)));
+    }
+
+    // Hooke's law for an isotropic material: twice the shear modulus times the
+    // strain, plus the first Lame parameter times the volumetric strain on the
+    // diagonal.
+    // (https://en.wikipedia.org/wiki/Hooke%27s_law#Isotropic_materials)
+    ToStressState(strain: StrainState3D, moduli: LameParameters): StressState3D
+    {
+        var e = strain.Matrix;
+        var twoMu = 2.0 * moduli.ShearModulus.Pascals;
+        var volumetric = moduli.FirstParameter.Pascals * (e.M11 + e.M22 + e.M33);
+        return StressState3D(SymmetricMatrix3x3(
+            twoMu * e.M11 + volumetric, twoMu * e.M12, twoMu * e.M13,
+            twoMu * e.M22 + volumetric, twoMu * e.M23,
+            twoMu * e.M33 + volumetric));
+    }
+
+    // The von Mises equivalent stress: the single number whose value at yield
+    // equals the uniaxial yield strength, and the reading a result plot is
+    // normally coloured by. It ignores hydrostatic pressure, so a body squeezed
+    // equally from every side reads zero however hard it is squeezed.
+    // (https://en.wikipedia.org/wiki/Von_Mises_yield_criterion)
+    VonMisesStress(stress: StressState3D): Pressure
+    {
+        var s = stress.Matrix;
+        var normal = (s.M11 - s.M22).Square + (s.M22 - s.M33).Square + (s.M33 - s.M11).Square;
+        var shear = s.M12.Square + s.M23.Square + s.M13.Square;
+        return Pressure((0.5 * normal + 3.0 * shear).Sqrt);
+    }
+
+    // The constant in-plane strain inside one plane triangle. ShearXY is the
+    // ENGINEERING shear strain (twice the tensor component), which is what
+    // `StrainState2D` documents.
+    ElementStrain(f: TriangleFace, positions: Array<Point2D>,
+        displacements: Array<Vector2D>): StrainState2D
+    {
+        var gradients = f.ShapeGradients(positions);
+        var nodes = f.Vertices;
+        var nodal = 3.MapRange(i => Vector3D(displacements[nodes[i].Value].X,
+            displacements[nodes[i].Value].Y, 0.0));
+        return StrainState2D(
+            DisplacementGradient(nodal, gradients, 0, 0),
+            DisplacementGradient(nodal, gradients, 1, 1),
+            DisplacementGradient(nodal, gradients, 0, 1)
+                + DisplacementGradient(nodal, gradients, 1, 0));
+    }
+
+    // Hooke's law in the plane, using the Lame pair of the model's idealization.
+    ToStressState(strain: StrainState2D, moduli: LameParameters): StressState2D
+    {
+        var lambda = moduli.FirstParameter.Pascals;
+        var twoMu = 2.0 * moduli.ShearModulus.Pascals;
+        return StressState2D(
+            Pressure((lambda + twoMu) * strain.NormalX + lambda * strain.NormalY),
+            Pressure(lambda * strain.NormalX + (lambda + twoMu) * strain.NormalY),
+            Pressure(twoMu * strain.ShearXY * 0.5));
+    }
+
+    // The out-of-plane normal stress that accompanies a plane state: zero under
+    // plane stress by definition, and Poisson's ratio times the sum of the
+    // in-plane normal stresses under plane strain, where it is the out-of-plane
+    // STRAIN that is zero instead. This is the one reading a plane state cannot
+    // supply on its own, and it is why von Mises stress in the plane needs the
+    // idealization and the material as well as the stress.
+    OutOfPlaneStress(stress: StressState2D, condition: PlaneCondition,
+        poissonRatio: Number): Pressure
+        => match (condition)
+        {
+            PlaneStress => Pressure(0.0);
+            PlaneStrain => Pressure(poissonRatio
+                * (stress.NormalX.Pascals + stress.NormalY.Pascals));
+        };
+
+    // The plane state widened to a full stress tensor by the out-of-plane normal
+    // stress its idealization implies. Explicit, and taking that stress as a
+    // parameter, because a plane state does not carry it.
+    // Convention: see CONVENTIONS.md - Conversions.
+    ToStressState3D(stress: StressState2D, normalZ: Pressure): StressState3D
+        => StressState3D(SymmetricMatrix3x3(
+            stress.NormalX.Pascals, stress.ShearXY.Pascals, 0.0,
+            stress.NormalY.Pascals, 0.0,
+            normalZ.Pascals));
+
+    // The full stress tensor inside one face of a solved plane model.
+    ElementStress(f: TriangleFace, model: ElasticModel2D,
+        displacements: Array<Vector2D>): StressState3D
+    {
+        var plane = f.ElementStrain(model.Mesh.Positions, displacements)
+            .ToStressState(model.Moduli);
+        return plane.ToStressState3D(
+            plane.OutOfPlaneStress(model.Condition, model.Material.PoissonRatio));
+    }
+
+    //==
+    // # Reading a solution
+    //
+    // The per-element and per-node arrays a result view consumes, and the
+    // deformed geometry it draws.
+
+    // The von Mises stress in every cell of a solved solid model, in cell order.
+    VonMisesStresses(model: ElasticModel3D, solution: ElasticSolution3D): Array<Pressure>
+    {
+        var moduli = model.Material.ToLameParameters;
+        return model.Mesh.Cells.Map(c =>
+            c.ElementStrain(model.Mesh.Positions, solution.Displacements)
+                .ToStressState(moduli).VonMisesStress);
+    }
+
+    // The von Mises stress in every face of a solved plane model, in face order.
+    VonMisesStresses(model: ElasticModel2D, solution: ElasticSolution2D): Array<Pressure>
+        => model.Mesh.Faces.Map(f =>
+            f.ElementStress(model, solution.Displacements).VonMisesStress);
+
+    // The magnitude of the displacement at each node of a solid model.
+    DisplacementMagnitudes(solution: ElasticSolution3D): Array<Length>
+        => solution.Displacements.Map(v => Length(v.Magnitude));
+
+    // The magnitude of the displacement at each node of a plane model.
+    DisplacementMagnitudes(solution: ElasticSolution2D): Array<Length>
+        => solution.Displacements.Map(v => Length(v.Magnitude));
+
+    // The mesh with every position moved by its displacement, exaggerated by
+    // `scale`. A scale of 1 is the true deformed shape, which for a working
+    // structure is far too small to see; anything larger is a picture, not a
+    // geometry, and should say so.
+    DeformedMesh(mesh: TetrahedralMesh3D, solution: ElasticSolution3D,
+        scale: Number): TetrahedralMesh3D
+        => TetrahedralMesh3D(
+            mesh.Positions.Zip(solution.Displacements, (p, d) => p + d * scale),
+            mesh.Cells);
+
+    // The plane mesh with every position moved by its displacement, exaggerated
+    // by `scale`.
+    DeformedMesh(mesh: TriangleMesh2D, solution: ElasticSolution2D,
+        scale: Number): TriangleMesh2D
+        => TriangleMesh2D(
+            mesh.Positions.Zip(solution.Displacements, (p, d) => p + d * scale),
+            mesh.Faces);
+
+    //==
+    // # Euler-Bernoulli beams
+    //
+    // https://en.wikipedia.org/wiki/Euler%E2%80%93Bernoulli_beam_theory
+    //
+    // The 1D path over the `Beam` of `engineering.types.plato`, and the cheap
+    // case whose answers can be checked: a cubic Hermite beam element reproduces
+    // the exact deflected shape of a segment carrying no load between its ends,
+    // so the deflections it reports AT THE NODES are exact — not converged-to,
+    // exact — for point loads sitting on nodes, and for distributed loads too,
+    // because the consistent load vector below is integrated rather than lumped.
+    // Cantilever and simply-supported deflections come out equal to their
+    // textbook closed forms to rounding.
+    //
+    // The model carries two degrees of freedom per node, transverse deflection
+    // then rotation, and NO axial degree of freedom. Two consequences worth
+    // stating: it cannot see axial force or buckling, and `Pinned` and `Roller`
+    // restrain exactly the same thing here, since what distinguishes a roller is
+    // the axial freedom this model does not have.
+    //
+    // Nodes are spaced uniformly and supports and point loads SNAP to the nearest
+    // one. Choose an element count that lands a node on every support and every
+    // point load — an even count on a symmetric span — or the analysis is of a
+    // slightly different beam than the one described.
+
+    // The bending stiffness EI, in newton-square-meters, about the section's Z
+    // principal axis: the axis this transverse model bends about. A beam bending
+    // about the other axis is the same beam with SecondMomentY and SecondMomentZ
+    // exchanged in its section.
+    BendingStiffness(b: Beam): Number
+        => b.Material.YoungsModulus.Pascals * b.Section.SecondMomentZ;
+
+    // The node stations of a uniform discretisation into `elementCount` elements:
+    // elementCount + 1 stations from the beam's start to its end.
+    BeamNodePositions(b: Beam, elementCount: Integer): Array<Length>
+        => (elementCount + 1).MapRange(i =>
+            Length(b.Length.Meters * i.ToNumber / elementCount.ToNumber));
+
+    // The node nearest a station along the beam, clamped to the ends.
+    BeamNearestNode(b: Beam, elementCount: Integer, position: Length): Integer
+        => (position.Meters / b.Length.Meters * elementCount.ToNumber)
+            .ToInteger.Clamp(0, elementCount);
+
+    // The 4x4 element stiffness of one beam segment, row-major, over the degrees
+    // of freedom (near deflection, near rotation, far deflection, far rotation).
+    BeamElementStiffness(bendingStiffness: Number, elementLength: Number): Array<Number>
+    {
+        var l = elementLength;
+        var c = bendingStiffness / (l * l * l);
+        return [
+            c * 12.0,      c * 6.0 * l,      -(c * 12.0),   c * 6.0 * l,
+            c * 6.0 * l,   c * 4.0 * l * l,  -(c * 6.0 * l), c * 2.0 * l * l,
+            -(c * 12.0),   -(c * 6.0 * l),   c * 12.0,      -(c * 6.0 * l),
+            c * 6.0 * l,   c * 2.0 * l * l,  -(c * 6.0 * l), c * 4.0 * l * l];
+    }
+
+    // Every stiffness entry of the discretised beam, in global degree-of-freedom
+    // numbering: element e owns degrees of freedom 2e through 2e + 3, so
+    // consecutive elements share a node exactly as the coordinate list requires.
+    BeamStiffnessEntries(b: Beam, elementCount: Integer): Array<SparseMatrixEntry>
+    {
+        var elementLength = b.Length.Meters / elementCount.ToNumber;
+        var element = BeamElementStiffness(b.BendingStiffness, elementLength);
+        return elementCount.Range.FlatMap(e =>
+            16.MapRange(k => SparseMatrixEntry(e * 2 + k / 4, e * 2 + k % 4, element[k])));
+    }
+
+    // The degrees of freedom a support restrains, given that they are numbered
+    // deflection first and rotation second: both for a Fixed end, the deflection
+    // alone for Pinned and for Roller, none for Free. Pinned and Roller coincide
+    // because this model carries no axial degree of freedom for a roller to
+    // release.
+    RestrainedDofCount(r: BeamRestraint): Integer
+        => match (r)
+        {
+            Fixed => 2;
+            Pinned => 1;
+            Roller => 1;
+            Free => 0;
+        };
+
+    // The prescribed displacements one support contributes: the first
+    // `RestrainedDofCount` degrees of freedom of its node, each held at zero.
+    BeamSupportConstraints(b: Beam, elementCount: Integer,
+        support: BeamSupport): Array<PrescribedDisplacement>
+    {
+        var node = b.BeamNearestNode(elementCount, support.Position);
+        return support.Restraint.RestrainedDofCount.MapRange(i =>
+            PrescribedDisplacement(DofIndex(node * 2 + i), 0.0));
+    }
+
+    // Every essential boundary condition of the discretised beam.
+    BeamConstraints(b: Beam, elementCount: Integer): Array<PrescribedDisplacement>
+        => b.Supports.FlatMap(s => b.BeamSupportConstraints(elementCount, s));
+
+    // The integral from 0 to x of the near-node DEFLECTION shape function, in the
+    // element's unit parameter. This and the three below are the antiderivatives
+    // of the cubic Hermite basis; they exist so that a distributed load covering
+    // only PART of an element still produces its exact consistent nodal loads,
+    // rather than a fraction of the full-element ones.
+    HermiteNearDeflectionIntegral(x: Number): Number
+        => x - x * x * x + x * x * x * x * 0.5;
+
+    // The integral from 0 to x of the near-node ROTATION shape function, divided
+    // by the element length.
+    HermiteNearRotationIntegral(x: Number): Number
+        => x * x * 0.5 - x * x * x * 2.0 / 3.0 + x * x * x * x * 0.25;
+
+    // The integral from 0 to x of the far-node DEFLECTION shape function.
+    HermiteFarDeflectionIntegral(x: Number): Number
+        => x * x * x - x * x * x * x * 0.5;
+
+    // The integral from 0 to x of the far-node ROTATION shape function, divided
+    // by the element length.
+    HermiteFarRotationIntegral(x: Number): Number
+        => -(x * x * x / 3.0) + x * x * x * x * 0.25;
+
+    // The consistent nodal loads of a uniform distributed force covering the unit
+    // parameter range [from, to] of one element, in the order (near deflection,
+    // near rotation, far deflection, far rotation). `magnitude` is the force per
+    // unit length. Over a whole element these come out as the textbook
+    // (wL/2, wL^2/12, wL/2, -wL^2/12).
+    BeamDistributedElementLoads(magnitude: Number, elementLength: Number,
+        from: Number, to: Number): Array<Number>
+        => [
+            magnitude * elementLength
+                * (HermiteNearDeflectionIntegral(to) - HermiteNearDeflectionIntegral(from)),
+            magnitude * elementLength * elementLength
+                * (HermiteNearRotationIntegral(to) - HermiteNearRotationIntegral(from)),
+            magnitude * elementLength
+                * (HermiteFarDeflectionIntegral(to) - HermiteFarDeflectionIntegral(from)),
+            magnitude * elementLength * elementLength
+                * (HermiteFarRotationIntegral(to) - HermiteFarRotationIntegral(from))];
+
+    // One element's share of a uniform distributed force spanning [start, end] in
+    // meters along the beam. An element the load does not reach contributes four
+    // zeros, because the clamped parameter range collapses to a point — so this
+    // stays a map with no filtering step.
+    BeamDistributedElementContributions(element: Integer, elementLength: Number,
+        start: Number, end: Number, magnitude: Number): Array<DofLoad>
+    {
+        var origin = element.ToNumber * elementLength;
+        var from = ((start - origin) / elementLength).Clamp(0.0, 1.0);
+        var to = ((end - origin) / elementLength).Clamp(0.0, 1.0);
+        var loads = BeamDistributedElementLoads(magnitude, elementLength, from, to);
+        return 4.MapRange(k => DofLoad(DofIndex(element * 2 + k), loads[k]));
+    }
+
+    // A uniform distributed force resolved onto every element it covers.
+    BeamDistributedContributions(b: Beam, elementCount: Integer, start: Length, end: Length,
+        magnitude: Number): Array<DofLoad>
+    {
+        var elementLength = b.Length.Meters / elementCount.ToNumber;
+        return elementCount.Range.FlatMap(e =>
+            BeamDistributedElementContributions(e, elementLength, start.Meters, end.Meters,
+                magnitude));
+    }
+
+    // One beam load resolved into the degrees of freedom it acts on: a point
+    // force onto the deflection of the nearest node, a moment onto that node's
+    // rotation, and a distributed force onto the four degrees of freedom of every
+    // element it covers.
+    LoadContributions(load: BeamLoad, b: Beam, elementCount: Integer): Array<DofLoad>
+        => match (load)
+        {
+            PointForce(position, magnitude) =>
+                [DofLoad(DofIndex(b.BeamNearestNode(elementCount, position) * 2), magnitude)];
+            DistributedForce(start, end, magnitude) =>
+                b.BeamDistributedContributions(elementCount, start, end, magnitude);
+            Moment(position, magnitude) =>
+                [DofLoad(DofIndex(b.BeamNearestNode(elementCount, position) * 2 + 1), magnitude)];
+        };
+
+    // The load vector of the discretised beam.
+    BeamLoadVector(b: Beam, elementCount: Integer): Array<Number>
+        => b.Loads.FlatMap(load => load.LoadContributions(b, elementCount))
+            .ScatterLoads((elementCount + 1) * 2);
+
+    // The transverse analysis of a beam discretised into `elementCount` uniform
+    // elements: assemble, load, restrain, solve, and split the solution vector
+    // into the deflection and rotation at each node.
+    SolveBeam(b: Beam, elementCount: Integer, settings: LinearSolveSettings): BeamSolution
+    {
+        var dofCount = (elementCount + 1) * 2;
+        var stiffness = SparseMatrix(dofCount, dofCount, b.BeamStiffnessEntries(elementCount));
+        var solved = stiffness.SolveConstrained(b.BeamLoadVector(elementCount),
+            b.BeamConstraints(elementCount), settings);
+        var u = solved.Solution;
+        return BeamSolution(
+            b.BeamNodePositions(elementCount),
+            (elementCount + 1).MapRange(i => u[i * 2]),
+            (elementCount + 1).MapRange(i => u[i * 2 + 1]),
+            solved.Iterations, solved.Residual, solved.Converged);
+    }
+
+    // The largest deflection anywhere along the discretised beam, in meters — the
+    // one number a serviceability check compares against a span-over-N limit.
+    MaximumDeflection(solution: BeamSolution): Number
+        => solution.Deflections.Reduce(0.0, (worst, d) => d.Abs.Max(worst));
+}

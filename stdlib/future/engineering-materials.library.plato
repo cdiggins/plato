@@ -1,15 +1,66 @@
 //==
 // # Material and margin members
 //
-// The interface obligations of `engineering.types.plato`. Only
-// `SafetyFactor` owes one: it is `IComparable` on its dimensionless ratio, and a
+// The interface obligations of `engineering.types.plato`, and the elastic
+// constants derived from an isotropic material. Only `SafetyFactor` owes an
+// obligation: it is `IComparable` on its dimensionless ratio, and a
 // larger ratio is a larger margin, so the order on the carrier IS the order on
 // the design margin — no inversion, unlike the utilisation ratios (demand over
 // capacity) some codes use instead.
+//
+// Sections, in order:
+//  - Margins
+//  - Isotropic elastic constants
 
 library EngineeringMaterials
 {
+    //==
+    // # Margins
+
     // Margins order by their capacity-over-demand ratio: larger is safer.
     LessThanOrEquals(a: SafetyFactor, b: SafetyFactor): Boolean
         => a.Value <= b.Value;
+
+    //==
+    // # Isotropic elastic constants
+    //
+    // An isotropic material has exactly two independent elastic constants, and
+    // `EngineeringMaterial` states them as Young's modulus and Poisson's ratio
+    // because that is the pair a datasheet quotes. Analysis wants a different
+    // pair. These are the standard conversions
+    // (https://en.wikipedia.org/wiki/Elastic_modulus); each is exact, so which
+    // pair a caller holds is a matter of convenience only.
+    //
+    // Every one of them divides by a factor that vanishes at a limiting Poisson
+    // ratio: the shear modulus at -1, the first parameter and the bulk modulus
+    // at 0.5 (an incompressible material, which a displacement formulation
+    // cannot represent). Real metals, plastics and ceramics sit well inside
+    // those limits; a caller supplying 0.5 is asking for a division by zero.
+
+    // The modulus of rigidity, mu: the ratio of shear stress to engineering
+    // shear strain, and Lame's second parameter.
+    // (https://en.wikipedia.org/wiki/Shear_modulus)
+    ShearModulus(m: EngineeringMaterial): Pressure
+        => Pressure(m.YoungsModulus.Pascals / (2.0 * (1.0 + m.PoissonRatio)));
+
+    // Lame's first parameter, lambda: the coupling between one normal strain
+    // and the normal stresses along the other two axes. It has no independent
+    // physical reading of its own; it is the constant that makes the isotropic
+    // stress-strain law a two-term formula.
+    FirstLameParameter(m: EngineeringMaterial): Pressure
+        => Pressure(m.YoungsModulus.Pascals * m.PoissonRatio
+            / ((1.0 + m.PoissonRatio) * (1.0 - 2.0 * m.PoissonRatio)));
+
+    // Resistance to uniform compression: the pressure change per unit relative
+    // volume change. (https://en.wikipedia.org/wiki/Bulk_modulus)
+    BulkModulus(m: EngineeringMaterial): Pressure
+        => Pressure(m.YoungsModulus.Pascals / (3.0 * (1.0 - 2.0 * m.PoissonRatio)));
+
+    // The material's elastic constants re-expressed as the Lame pair. Explicit
+    // rather than implicit: the result keeps only the two elastic constants and
+    // drops the density, the strengths and the thermal properties, so it does
+    // not denote the same object the argument does.
+    // Convention: see CONVENTIONS.md - Conversions.
+    ToLameParameters(m: EngineeringMaterial): LameParameters
+        => LameParameters(m.FirstLameParameter, m.ShearModulus);
 }

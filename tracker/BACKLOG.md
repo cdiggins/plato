@@ -37,8 +37,11 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-373](issues/plato-373.md) | Ellipse.Perimeter (Ramanujan II) is 4e-4 off for flattened ellipses | bug | p2 | S | low | plato | ready |  |
 | [plato-374](issues/plato-374.md) | Interface-generic law bodies mix the interface default with the type's override | bug | p2 | M | low | plato | ready |  |
 | [plato-389](issues/plato-389.md) | plato_check has no tier awareness: future and stdlib-tests count toward its verdict | bug | p2 | S | low | plato | ready |  |
+| [plato-429](issues/plato-429.md) | TypeScript writer emits calls to array-receiver library functions it never defines | bug | p2 | M | low | plato | ready |  |
 | [plato-328](issues/plato-328.md) | Inferred interface constraints are lost on generic library-function type variables | bug | p3 | S | low | plato | ready |  |
 | [plato-329](issues/plato-329.md) | Writer emission-completeness assertion: every reachable library function must be emitted somewhere | debt | p3 | M | low | plato | ready |  |
+| [plato-427](issues/plato-427.md) | Finite elements: nodal stress smoothing, hexahedral and higher-order elements | feature | p3 | M | low | plato | ready |  |
+| [plato-428](issues/plato-428.md) | Rigid dynamics: GJK/EPA, orientation joints, and a broad phase | feature | p3 | M | low | plato | ready |  |
 | [repo-401](issues/repo-401.md) | record-gates.py --full passes the retired --scalar=float flag | bug | p3 | S | low | repo | ready |  |
 | [plato-364](issues/plato-364.md) | Navigation index does not model sum types (match arms, case constructors) | bug | 2 | M | low | plato | ready |  |
 | [plato-419](issues/plato-419.md) | TypeScript writer: generated stdlib mesh/polygon/CSG paths do not run | bug | p1 | L | med | plato | idea |  |

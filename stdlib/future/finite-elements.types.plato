@@ -1,0 +1,227 @@
+//==
+// # Finite elements
+//
+// The vocabulary of a linear-elastic finite-element analysis
+// (https://en.wikipedia.org/wiki/Finite_element_method): what an analysis is
+// posed over, how it is restrained and loaded, what a solve returns, and how the
+// answer is read back. The bodies are in `finite-elements.library.plato`; the
+// material record and the beam the 1D path analyses are in
+// `engineering.types.plato`.
+//
+// Sections, in order:
+//  - Element formulation
+//  - Degrees of freedom, supports and loads
+//  - Continuum models
+//  - The linear system and its solution
+//  - Analysis results
+
+//==
+// # Element formulation
+//
+// Which two-dimensional idealization a plate element stands for. The
+// three-dimensional constitutive constants themselves are `LameParameters`
+// (`engineering.types.plato`), which both idealizations reduce to.
+
+// Which out-of-plane assumption a two-dimensional element makes: a thin sheet
+// free to contract through its thickness so that the out-of-plane stress is
+// zero (PlaneStress), or a slice of a long body held against contracting so
+// that the out-of-plane STRAIN is zero (PlaneStrain).
+// (https://en.wikipedia.org/wiki/Plane_stress)
+type PlaneCondition = PlaneStress | PlaneStrain;
+
+//==
+// # Degrees of freedom, supports and loads
+//
+// A degree of freedom is one scalar unknown of the assembled system. Every model
+// here numbers them the same way: node n's component r is degree of freedom
+// n * D + r, where D is the number of components a node carries — three for a
+// solid, two for a plane element, two (deflection then rotation) for a beam.
+// That one rule is what lets the element kernels, the assembler and the solver
+// below stay independent of each other.
+
+// A zero-based index of one scalar unknown of the assembled system ("degree of
+// freedom"). -1 means "none".
+// Convention: see CONVENTIONS.md - Typed indices.
+type DofIndex
+    implements IValue, IHashable, IComparable, IIndex
+{
+    Value: Integer;
+}
+
+// One degree of freedom held at a known value — the essential (Dirichlet)
+// boundary condition. Displacement is in that degree of freedom's own unit:
+// meters for a translation, radians for a beam rotation. A support that
+// restrains a node without moving it is this record with a zero value; a
+// prescribed settlement or a stretched fixture is the same record with a
+// non-zero one.
+// (https://en.wikipedia.org/wiki/Dirichlet_boundary_condition)
+type PrescribedDisplacement
+    implements IValue
+{
+    Dof: DofIndex;
+    Displacement: Number;
+}
+
+// One contribution to the load vector: a degree of freedom and the amount added
+// to it, in newtons for a translation and newton-meters for a beam rotation.
+//
+// Every load in this vocabulary is resolved into a list of these before anything
+// is summed, which keeps "which degrees of freedom does this load reach, and in
+// what proportion" — the part that differs per load type and per element — apart
+// from the accumulation, which is one shared function. Contributions may repeat
+// a degree of freedom; they add.
+type DofLoad
+    implements IValue
+{
+    Dof: DofIndex;
+    Amount: Number;
+}
+
+// A concentrated force applied at one node of a solid model, in newtons.
+type NodalForce3D
+    implements IValue
+{
+    Node: VertexIndex;
+    Force: Vector3D;
+}
+
+// A concentrated force applied at one node of a plane model, in newtons. The
+// force is the total on the modelled thickness, not a force per unit thickness.
+type NodalForce2D
+    implements IValue
+{
+    Node: VertexIndex;
+    Force: Vector2D;
+}
+
+// A uniform surface traction over one boundary triangle of a solid model, in
+// pascals. The traction vector is the force per unit area, in world axes, so a
+// pressure is the inward face normal scaled by its magnitude.
+// (https://en.wikipedia.org/wiki/Traction_(engineering))
+type FaceTraction3D
+    implements IValue
+{
+    Face: TriangleFace;
+    Traction: Vector3D;
+}
+
+//==
+// # Continuum models
+//
+// An analysis posed over a mesh: the geometry, one isotropic material, and the
+// restraints and loads. Both models carry Gravity as an ACCELERATION rather than
+// as a force, so the body force follows from the material density and the
+// element measure and does not have to be lumped by the caller; a zero vector
+// means no body force.
+
+// A linear-elastic analysis of a solid meshed into constant-strain tetrahedra.
+// Tractions act on triangles whose vertex indices name Mesh.Positions; they are
+// not checked against the mesh boundary, so a face in the interior is a modelling
+// error rather than a detected one.
+// (https://en.wikipedia.org/wiki/Finite_element_method)
+type ElasticModel3D
+{
+    Mesh: TetrahedralMesh3D;
+    Material: EngineeringMaterial;
+    Constraints: Array<PrescribedDisplacement>;
+    Forces: Array<NodalForce3D>;
+    Tractions: Array<FaceTraction3D>;
+    Gravity: Vector3D;
+}
+
+// A linear-elastic analysis of a plate meshed into constant-strain triangles,
+// under one of the two plane idealizations. Thickness is uniform and is the
+// out-of-plane extent the element measure multiplies by.
+// (https://en.wikipedia.org/wiki/Plane_stress)
+type ElasticModel2D
+{
+    Mesh: TriangleMesh2D;
+    Material: EngineeringMaterial;
+    Thickness: Length;
+    Condition: PlaneCondition;
+    Constraints: Array<PrescribedDisplacement>;
+    Forces: Array<NodalForce2D>;
+    Gravity: Vector2D;
+}
+
+//==
+// # The linear system and its solution
+//
+// The assembled system is a `SparseMatrix` (`matrices.types.plato`) in
+// coordinate-list form, and it is solved by a preconditioned conjugate gradient
+// that never indexes it. See the library's "Assembly" section for why those two
+// choices belong together.
+
+// When a conjugate-gradient solve stops: after MaxIterations sweeps, or once the
+// residual norm has fallen to Tolerance times its starting value, whichever
+// comes first. Tolerance is a RELATIVE residual, so it is independent of the
+// units the loads are stated in.
+// (https://en.wikipedia.org/wiki/Conjugate_gradient_method)
+type LinearSolveSettings
+    implements IValue
+{
+    MaxIterations: Integer;
+    Tolerance: Number;
+}
+
+// What a solve of the constrained system returned. Converged reports whether the
+// residual reached the requested tolerance; Solution holds the last iterate
+// either way, so a caller that ignores the flag gets a partially converged
+// answer rather than nothing.
+// Convention: see CONVENTIONS.md - Partial operations (a concrete result record
+// with a validity field).
+type LinearSolveResult
+    implements IValue
+{
+    Solution: Array<Number>;
+    Iterations: Integer;
+    Residual: Number;
+    Converged: Boolean;
+}
+
+//==
+// # Analysis results
+//
+// Per-node displacement, in the same order as the mesh positions, plus the
+// convergence report of the solve that produced it. Element strain, element
+// stress and von Mises stress are DERIVED from a solution rather than stored in
+// it — see the library's "Recovering strain and stress" section.
+
+// The displaced state of a solid model: one displacement vector per mesh
+// position, in meters.
+type ElasticSolution3D
+    implements IValue
+{
+    Displacements: Array<Vector3D>;
+    Iterations: Integer;
+    Residual: Number;
+    Converged: Boolean;
+}
+
+// The displaced state of a plane model: one in-plane displacement vector per
+// mesh position, in meters.
+type ElasticSolution2D
+    implements IValue
+{
+    Displacements: Array<Vector2D>;
+    Iterations: Integer;
+    Residual: Number;
+    Converged: Boolean;
+}
+
+// The displaced state of a beam discretised into uniform elements. Positions
+// holds the node stations measured from the beam's start; Deflections and
+// Rotations hold the two degrees of freedom at each of them, in meters and in
+// radians. Deflection is positive in the direction transverse loads are positive
+// (downward), matching `BeamLoad` in `engineering.types.plato`.
+// (https://en.wikipedia.org/wiki/Euler%E2%80%93Bernoulli_beam_theory)
+type BeamSolution
+    implements IValue
+{
+    Positions: Array<Length>;
+    Deflections: Array<Number>;
+    Rotations: Array<Number>;
+    Iterations: Integer;
+    Residual: Number;
+    Converged: Boolean;
+}
