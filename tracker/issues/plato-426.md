@@ -2,14 +2,14 @@
 id: plato-426
 title: Cloth simulation: mass-spring and PBD cloth over the particle vocabulary
 type: feature
-status: in-progress
+status: done
 priority: p2
 effort: M
 risk: low
 area: plato
 sprint: 
 created: 2026-08-03
-closed:
+closed: 2026-08-03
 links: []
 ---
 
@@ -170,7 +170,7 @@ not by a run.
 - [x] Simulated state rebuilt into a `PolygonMesh3D` with the original topology
 - [x] All four tiers parse and type-check; no shipping-tier file references `future`
 - [x] Design decisions recorded above
-- [ ] A browser demo drives it: `demos/webgl/cloth.html` + `src/demos/cloth.ts`,
+- [x] A browser demo drives it: `demos/webgl/cloth.html` + `src/demos/cloth.ts`,
       green under `npm run typecheck` and `npm run scenes` (the latter steps every
       ticking scene and fails on a non-finite position, which is the check that
       matters for a solver)

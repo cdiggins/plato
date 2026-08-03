@@ -17,8 +17,6 @@ Issue frontmatter is the source of truth; this file is a generated view
 | [plato-409](issues/plato-409.md) | FieldJet2D/3D: value+gradient jets, differentiable SDFs, transforms, ray marching, and the missing distance primitives | idea | p2 | L | low | plato | in-progress |  |
 | [plato-412](issues/plato-412.md) | ToSdf: concrete geometry shapes as signed distance fields | feature | p2 | M | low | plato | in-progress |  |
 | [plato-413](issues/plato-413.md) | Marching cubes: isosurface extraction from dense scalar grids and sampled SDFs | idea | p2 | M | low | plato | in-progress |  |
-| [plato-423](issues/plato-423.md) | Remeshing: subdivision, decimation, isotropic remeshing and smoothing | feature | p2 | L | med | plato | in-progress |  |
-| [plato-426](issues/plato-426.md) | Cloth simulation: mass-spring and PBD cloth over the particle vocabulary | feature | p2 | M | low | plato | in-progress |  |
 | [plato-435](issues/plato-435.md) | Compare Plato stdlib with external numerical and geometry libraries | debt | p2 | M | low | plato | in-progress |  |
 | [plato-296](issues/plato-296.md) | Add a catalog of common space-warp deformations to Plato | idea | ? | ? | ? | plato | in-progress |  |
 | [plato-297](issues/plato-297.md) | Polyhedra catalog with operators, duals, and mesh construction | idea | ? | ? | ? | plato | in-progress |  |

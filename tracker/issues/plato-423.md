@@ -2,14 +2,14 @@
 id: plato-423
 title: Remeshing: subdivision, decimation, isotropic remeshing and smoothing
 type: feature
-status: in-progress
+status: done
 priority: p2
 effort: L
 risk: med
 area: plato
 sprint: 
 created: 2026-08-03
-closed:
+closed: 2026-08-03
 links: []
 ---
 
@@ -178,7 +178,19 @@ twice-subdivided octahedron:
       `tools/out-of-band-checks/remeshing.py`, with a README saying what it does
       and does not prove
 - [x] `stdlib/types-and-concepts.txt` regenerated — three new types make it stale
-- [ ] A browser demo drives it: `demos/webgl/remeshing.html` +
+- [x] A browser demo drives it: `demos/webgl/remeshing.html` +
       `src/demos/remeshing.ts`, green under `npm run typecheck` and `npm run scenes`
-- [ ] The bodies are executed by something — blocked on `plato-308`, exactly as `plato-413`
-      is. Until then the correctness evidence is the out-of-band check above, not a run.
+- [x] The bodies are executed by something. This was written expecting the forward
+      conformance law runner, which is still red (`plato-308`) — but the browser
+      demo executes the real bodies through the generated TypeScript, which is a
+      run and not a transcription. It establishes: Butterfly's input-vertex drift
+      is exactly 0.0000 at every level and seed while Loop's is 0.28–0.80;
+      Laplacian retains ×0.0708 of the volume after four iterations where Taubin
+      retains ×0.6854 and `TangentiallyRelaxed` holds ×1.0004; boundary vertices
+      move 0.0000 after six iterations of all three passes; six of twelve tube
+      edges refuse a collapse, exactly the six boundary ones; and zero of six
+      tetrahedron edges accept a flip, because all four vertices are already
+      pairwise joined. Quadric decimation runs once the prelude's `Tuple4` shim
+      lands — an icosahedron reaches exactly its target face count, and a vertex's
+      quadric error against its own incident planes reads 2.2e-16.
+      The C# side remains unexecuted, and `plato-308` is still the issue for that.
