@@ -49,7 +49,7 @@ type PolygonWithHoles2D
 // shape of Boolean operations over polygons; possibly disconnected, possibly
 // empty. (https://en.wikipedia.org/wiki/Boolean_operations_on_polygons)
 type PolygonSet2D
-    implements IGeometry2D, IClosedShape, IArea, IBounded2D, IContainsPoint2D, IDeformable2D
+    implements IGeometry2D, IClosedShape, IArea, IBounded2D, IContainsPoint2D, IDeformable2D, IMesh2D
 {
     Polygons: Array<PolygonWithHoles2D>;
 }
@@ -117,7 +117,7 @@ type PolylineN
 // order, the last implicitly joined to the first. The normal follows the
 // right-hand rule around the winding.
 type Polygon3D
-    implements IGeometry3D, IClosedShape, IConnected, IManifold, IOrientable, IArea, IBounded3D, IPointSet3D, ICentroid3D, INearestPoint3D, IDeformable3D
+    implements IGeometry3D, IClosedShape, IConnected, IManifold, IOrientable, IArea, IBounded3D, IPointSet3D, ICentroid3D, INearestPoint3D, IDeformable3D, IMesh3D
 {
     Points: Array<Point3D>;
 }

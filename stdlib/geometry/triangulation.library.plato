@@ -602,4 +602,71 @@ library Triangulation
     // ear clipping after every hole has been bridged into the boundary.
     Triangulate(r: PolygonWithHoles2D): TriangleMesh2D
         => (r.PointPool, r.PointPool.TriangulateRings(r.HoleStarts));
+
+    //==
+    // # Multi-component regions
+    //
+    // A PolygonSet2D's components are declared mutually disjoint, so it triangulates
+    // component-wise with no interaction between them. The only work is bookkeeping:
+    // the components share one pool in the result, so each component's faces are
+    // shifted by the vertices the earlier components contributed.
+
+    // An empty face list. `MapRange` over zero never evaluates its body; the
+    // expression exists only to fix the element type, which an empty literal cannot.
+    NoFaces(_: TriangleFace): Array<TriangleFace>
+        => 0.MapRange(i => TriangleFace(VertexIndex(i), VertexIndex(i), VertexIndex(i)));
+
+    // An empty point list, for the same reason.
+    NoPoints(_: Point2D): Array<Point2D>
+        => 0.MapRange(i => Point2D(0.0, 0.0));
+
+    // The pool a set is triangulated over: each component's own pool, in order.
+    PointPool(s: PolygonSet2D): Array<Point2D>
+        => s.Polygons.Reduce(Point2D.NoPoints, (pool, r) => pool.Concatenate(r.PointPool));
+
+    // Where component `k`'s vertices start in that pool.
+    ComponentStart(s: PolygonSet2D, k: Integer): Integer
+        => k.Range.Reduce(0, (start, i) => start + s.Polygons[i].PointPool.Count);
+
+    // The faces carried from a component's own pool into the set's shared one.
+    ShiftedFaces(faces: Array<TriangleFace>, offset: Integer): Array<TriangleFace>
+        => faces.Map(f => TriangleFace(
+            VertexIndex(f.A.Value + offset),
+            VertexIndex(f.B.Value + offset),
+            VertexIndex(f.C.Value + offset)));
+
+    // The set triangulated over the concatenated pools of its components. An empty
+    // set yields an empty mesh, which is the honest answer rather than a
+    // precondition — Boolean operations produce empty results routinely.
+    Triangulate(s: PolygonSet2D): TriangleMesh2D
+        => (s.PointPool, s.Polygons.Count.Range.Reduce(TriangleFace.NoFaces, (faces, k)
+            => faces.Concatenate(s.Polygons[k].Triangulate.Faces.ShiftedFaces(s.ComponentStart(k)))));
+
+    //==
+    // # Planar polygons in space
+    //
+    // A Polygon3D is planar by declaration, so it triangulates by projecting into its
+    // own plane, clipping there, and keeping the faces: the projection is
+    // index-preserving, so the resulting faces index the ORIGINAL space points and no
+    // lifting step is needed.
+
+    // The polygon's vertices in its own plane, in ring order. The basis is the one
+    // `polygons.library.plato` already uses for planar containment, and it is
+    // right-handed about the polygon's normal — u x v = n — so a counter-clockwise
+    // face in the plane is counter-clockwise about that normal in space, which is what
+    // makes the faces below obey the winding convention.
+    // Precondition: non-degenerate area, so the normal exists.
+    PlanarProjection(p: Polygon3D): Array<Point2D>
+    {
+        var normal = p.Points.VectorArea.Normalize;
+        var u = PlaneTangent(normal);
+        var v = normal.Cross(u);
+        var origin = p.Points.First;
+        return p.Points.Map(q => PlaneCoordinates(origin, u, v, q));
+    }
+
+    // The IMesh3D obligation: the planar polygon as a triangle mesh over its own
+    // vertices, wound to agree with its normal.
+    ToTriangleMesh(p: Polygon3D): TriangleMesh3D
+        => (p.Points, p.PlanarProjection.TriangulateRings(0.Range));
 }

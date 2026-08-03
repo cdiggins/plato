@@ -184,6 +184,115 @@ public class TriangulationTests
         AssertTiles(mesh, 16.0 - 6.0 - 0.72, "hole inside a concavity");
     }
 
+    // ---- multi-component sets ---------------------------------------------
+
+    private static PolygonWithHoles2D Region(Polygon2D boundary, params Polygon2D[] holes)
+        => new(boundary, holes);
+
+    [Test]
+    public void PolygonSetTilesEveryComponent()
+    {
+        // Two disjoint squares, the second with a hole. Faces index one shared pool, so this
+        // fails if a component's indices are not shifted past the earlier components'.
+        var left = Poly((0, 0), (1, 0), (1, 1), (0, 1));
+        var right = Poly((3, 0), (5, 0), (5, 2), (3, 2));
+        var rightHole = Poly((3.5, 0.5), (3.5, 1.5), (4.5, 1.5), (4.5, 0.5));
+
+        var set = new PolygonSet2D(new[] { Region(left), Region(right, rightHole) });
+        var mesh = set.Triangulate();
+
+        Assert.That(mesh.Positions.Count, Is.EqualTo(4 + 4 + 4),
+            "the pool is every component's vertices, once each");
+        AssertTiles(mesh, 1.0 + (4.0 - 1.0), "two-component set, one component holed");
+    }
+
+    [Test]
+    public void EmptyPolygonSetYieldsEmptyMesh()
+    {
+        // Boolean operations produce empty results routinely, so this is an answer rather than
+        // a precondition violation.
+        var mesh = new PolygonSet2D(Array.Empty<PolygonWithHoles2D>()).Triangulate();
+        Assert.Multiple(() =>
+        {
+            Assert.That(mesh.Faces.Count, Is.Zero);
+            Assert.That(mesh.Positions.Count, Is.Zero);
+        });
+    }
+
+    // ---- planar polygons in space ------------------------------------------
+
+    [Test]
+    public void PlanarPolygonInSpaceTilesAndFacesTheNormal()
+    {
+        // A unit square on the plane z = x, tilted 45 degrees, wound so its right-hand normal
+        // points up-and-back. Area is sqrt(2); each face must agree with that normal.
+        var polygon = new Polygon3D(new List<Point3D>
+        {
+            new((Number)0f, (Number)0f, (Number)0f),
+            new((Number)1f, (Number)0f, (Number)1f),
+            new((Number)1f, (Number)1f, (Number)1f),
+            new((Number)0f, (Number)1f, (Number)0f),
+        });
+
+        var mesh = polygon.ToTriangleMesh();
+        var normal = polygon.Normal().Vector;      // Direction3D wraps a Vector3D
+
+        Assert.That(mesh.Faces.Count, Is.EqualTo(2));
+        Assert.That(mesh.Positions.Count, Is.EqualTo(4),
+            "the projection is index-preserving, so faces index the original space points");
+
+        double total = 0;
+        for (var i = 0; i < mesh.Faces.Count; i++)
+        {
+            var f = mesh.Faces[i];
+            var a = mesh.Positions[f.A.Value];
+            var b = mesh.Positions[f.B.Value];
+            var c = mesh.Positions[f.C.Value];
+
+            // Twice the face's vector area, by hand, so the assertion does not lean on the
+            // library it is testing.
+            var (ux, uy, uz) = ((float)b.X - (float)a.X, (float)b.Y - (float)a.Y, (float)b.Z - (float)a.Z);
+            var (vx, vy, vz) = ((float)c.X - (float)a.X, (float)c.Y - (float)a.Y, (float)c.Z - (float)a.Z);
+            var (nx, ny, nz) = (uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx);
+
+            var alignment = nx * (float)normal.X + ny * (float)normal.Y + nz * (float)normal.Z;
+            Assert.That(alignment, Is.GreaterThan(0),
+                $"face {i} is wound against the polygon's normal");
+
+            total += 0.5 * Math.Sqrt(nx * nx + ny * ny + nz * nz);
+        }
+
+        Assert.That(total, Is.EqualTo(Math.Sqrt(2)).Within(Tolerance),
+            "the faces cover the polygon's area");
+    }
+
+    [Test]
+    public void ConcavePolygonInSpaceIsNotFanned()
+    {
+        // The L again, lifted onto the plane y = 0 and wound so its normal is +Y. A fan would
+        // cover ground outside the polygon; the area check catches it.
+        (double X, double Z)[] flat = [(0, 0), (2, 0), (2, 1), (1, 1), (1, 2), (0, 2)];
+        var polygon = new Polygon3D(flat
+            .Select(p => new Point3D((Number)(float)p.X, (Number)0f, (Number)(float)p.Z))
+            .ToList());
+
+        var mesh = polygon.ToTriangleMesh();
+        Assert.That(mesh.Faces.Count, Is.EqualTo(4));
+
+        double total = 0;
+        for (var i = 0; i < mesh.Faces.Count; i++)
+        {
+            var f = mesh.Faces[i];
+            var a = mesh.Positions[f.A.Value];
+            var b = mesh.Positions[f.B.Value];
+            var c = mesh.Positions[f.C.Value];
+            total += Math.Abs(0.5 * (((float)b.X - (float)a.X) * ((float)c.Z - (float)a.Z)
+                                   - ((float)b.Z - (float)a.Z) * ((float)c.X - (float)a.X)));
+        }
+
+        Assert.That(total, Is.EqualTo(3.0).Within(Tolerance));
+    }
+
     // ---- randomized ------------------------------------------------------
 
     [Test]

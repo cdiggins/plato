@@ -758,9 +758,9 @@ type PoissonDiskPattern2D implements IValue{Region:Bounds2D;MinimumDistance:Numb
 type PoissonDistribution implements IProbabilityDistribution{Rate:Number;}
 type PolarCoordinate implements IValue{Radius:Number;Angle:Angle;}
 type Polygon2D implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,IPointSet2D,ICentroid2D,IContainsPoint2D,INearestPoint2D,IDeformable2D,IMesh2D{Points:Array<Point2D>;}
-type Polygon3D implements IGeometry3D,IClosedShape,IConnected,IManifold,IOrientable,IArea,IBounded3D,IPointSet3D,ICentroid3D,INearestPoint3D,IDeformable3D{Points:Array<Point3D>;}
+type Polygon3D implements IGeometry3D,IClosedShape,IConnected,IManifold,IOrientable,IArea,IBounded3D,IPointSet3D,ICentroid3D,INearestPoint3D,IDeformable3D,IMesh3D{Points:Array<Point3D>;}
 type PolygonMesh3D implements IValue,IMesh3D,IMeshElementCounts,IMeshIncidence,IDeformable3D{Positions:Array<Point3D>;Faces:JaggedArray<VertexIndex>;}
-type PolygonSet2D implements IGeometry2D,IClosedShape,IArea,IBounded2D,IContainsPoint2D,IDeformable2D{Polygons:Array<PolygonWithHoles2D>;}
+type PolygonSet2D implements IGeometry2D,IClosedShape,IArea,IBounded2D,IContainsPoint2D,IDeformable2D,IMesh2D{Polygons:Array<PolygonWithHoles2D>;}
 type PolygonSoup3D implements ISolid,IDeformable3D{Polygons:Array<Polygon3D>;}
 type PolygonWithHoles2D implements IGeometry2D,IClosedShape,IConnected,IArea,IBounded2D,ICentroid2D,IContainsPoint2D,IDeformable2D,IMesh2D{Boundary:Polygon2D;Holes:Array<Polygon2D>;}
 type Polyline2D implements IGeometry2D,IConnected,IBounded2D,ILength,IPointSet2D,IDeformable2D{Points:Array<Point2D>;Closed:Boolean;}
