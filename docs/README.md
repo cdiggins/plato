@@ -42,6 +42,10 @@ moves to [`archive/`](archive).
 Frozen at the moment they were written. Read them for the analysis, never for current state: a
 report is stale by construction. Never edit one to bring it up to date — write a new one.
 
+- [`Plato standard-library comparative study (2026-08-03)`](reports/plato-stdlib-comparative-study-2026-08-03.md)
+  — comparison with numerical, graphics-math, computational-geometry, mesh-processing, and
+  planar-geometry libraries, with recommendations for Plato's next library work.
+
 ## Casual records — not authority
 
 - [`discussions/`](discussions) — raw conversation transcripts.

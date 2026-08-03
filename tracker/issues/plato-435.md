@@ -10,7 +10,7 @@ area: plato
 sprint: 
 created: 2026-08-03
 closed:
-links: []
+links: [docs/reports/plato-stdlib-comparative-study-2026-08-03.md]
 ---
 
 ## Problem
@@ -31,17 +31,19 @@ symbol-for-symbol port.
 
 ## Done means
 
-- [ ] The report explains its comparison method and the limits of the evidence.
-- [ ] It compares Plato with representative numerical, fixed-size math, computational
+- [x] The report explains its comparison method and the limits of the evidence.
+- [x] It compares Plato with representative numerical, fixed-size math, computational
       geometry, mesh-processing, and planar-geometry libraries using primary sources.
-- [ ] It identifies strengths, material gaps, and design differences with consequences
+- [x] It identifies strengths, material gaps, and design differences with consequences
       for Plato's intended consumers.
-- [ ] It gives a prioritized set of recommendations that respects Plato's portability
+- [x] It gives a prioritized set of recommendations that respects Plato's portability
       and purity constraints.
-- [ ] The dated report is linked from the documentation index.
+- [x] The dated report is linked from the documentation index.
 
 ## Verification
 
-- Check all repository-local links in the report.
-- Check all external citations resolve to official documentation or project sources.
-- Review the report against `docs/documentation-conventions.md`.
+- Repository-local links checked from the report's directory on 2026-08-03.
+- External citations opened from official documentation or project sources on
+  2026-08-03.
+- Report reviewed against `docs/documentation-conventions.md`; its dated filename and
+  `docs/reports/` location identify it as a frozen assessment rather than authority.
