@@ -3,6 +3,7 @@
 Append-only, newest first. Format: `date — id — title — outcome (commit/PR/plan link)`.
 Migrated from studio tracker 2026-07-31.
 
+- 2026-08-03 — [plato-435](issues/plato-435.md) — Compare Plato stdlib with external numerical and geometry libraries — done (73fb760b)
 - 2026-08-03 — [plato-426](issues/plato-426.md) — Cloth simulation: mass-spring and PBD cloth over the particle vocabulary — done (library 819033e1, demo+shims 475cad2b); solver verified stable; findings filed as plato-437
 - 2026-08-03 — [plato-423](issues/plato-423.md) — Remeshing: subdivision, decimation, isotropic remeshing and smoothing — done (library 9b4b732c, demo+shims 475cad2b); bodies executed via the browser demo; findings filed as plato-436
 - 2026-08-03 — [plato-424](issues/plato-424.md) — Finite element analysis vocabulary: elements, assembly, and a linear-elastic solve — done (library 4a7c936f, demo e4c8a703); all closed forms reproduced in the browser; prelude eager fix in the demo commit

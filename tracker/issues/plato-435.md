@@ -2,14 +2,14 @@
 id: plato-435
 title: Compare Plato stdlib with external numerical and geometry libraries
 type: debt
-status: in-progress
+status: done
 priority: p2
 effort: M
 risk: low
 area: plato
 sprint: 
 created: 2026-08-03
-closed:
+closed: 2026-08-03
 links: [docs/reports/plato-stdlib-comparative-study-2026-08-03.md]
 ---
 
