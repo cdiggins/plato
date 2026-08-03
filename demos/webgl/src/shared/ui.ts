@@ -23,6 +23,7 @@ export function mountDemo(demo: Demo, viewerOptions: ViewerOptions = {}): void {
         <h2>Generated members</h2>
         <ul id="plato-members"></ul>
         <p id="scene-description"></p>
+        <p id="scene-status"></p>
       </section>
     </aside>
     <main id="stage"></main>
@@ -34,24 +35,39 @@ export function mountDemo(demo: Demo, viewerOptions: ViewerOptions = {}): void {
   const controlPanel = app.querySelector('#controls') as HTMLElement;
   const members = app.querySelector('#plato-members') as HTMLElement;
   const description = app.querySelector('#scene-description') as HTMLElement;
+  const status = app.querySelector('#scene-status') as HTMLElement;
 
-  const viewer = new Viewer(stage, viewerOptions);
+  let viewer = new Viewer(stage, viewerOptions);
+  let viewerKey = JSON.stringify(viewerOptions);
   let current: Scene = demo.scenes[0];
   let params: Params = {};
+
+  /** A scene's viewer settings win over the page's; a change rebuilds the stage. */
+  function useViewerFor(scene: Scene): void {
+    const merged = { ...viewerOptions, ...(scene.viewer ?? {}) };
+    const key = JSON.stringify(merged);
+    if (key === viewerKey) return;
+    viewer.dispose();
+    stage.replaceChildren();
+    viewer = new Viewer(stage, merged);
+    viewerKey = key;
+  }
 
   function rebuild(): void {
     try {
       viewer.show(current.build(params));
       stage.classList.remove('errored');
+      status.textContent = current.status?.(params) ?? '';
     } catch (error) {
       stage.classList.add('errored');
       console.error(error);
-      description.textContent = `Build failed: ${(error as Error).message}`;
+      status.textContent = `Build failed: ${(error as Error).message}`;
     }
   }
 
   function selectScene(scene: Scene): void {
     current = scene;
+    useViewerFor(scene);
     params = Object.fromEntries((scene.controls ?? []).map(c => [c.key, c.def]));
     description.textContent = scene.description;
     members.innerHTML = scene.plato.map(m => `<li><code>${m}</code></li>`).join('');

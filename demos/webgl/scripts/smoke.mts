@@ -20,6 +20,7 @@ import {
   PolygonSoup3D,
   PolygonMesh3D,
   Twist3D,
+  Twist2D,
   Bend3D,
   Taper3D,
 } from '../src/plato/plato.g.ts';
@@ -68,6 +69,31 @@ close('square Perimeter', square.Perimeter(), 8);
 close('square Centroid.X', square.Centroid().X, 0);
 check('square contains origin', square.Contains(new Point2D(0, 0)), true);
 check('square excludes (5,0)', square.Contains(new Point2D(5, 0)), false);
+check('square Bounds.Max.X', square.Bounds().Max.X, 1);
+check('square Winding', String(square.Winding()), 'CounterClockwise');
+check('square IsSimple', square.IsSimple(), true);
+close('square IsoperimetricQuotient', square.IsoperimetricQuotient(), Math.PI / 4);
+check('square ClosestPoint to (5,0)', square.ClosestPoint(new Point2D(5, 0)).X, 1);
+
+const bowtie = new Polygon2D(
+  Intrinsics.MakeArray(new Point2D(-1, -1), new Point2D(1, 1), new Point2D(1, -1), new Point2D(-1, 1)),
+);
+check('bowtie is not simple', bowtie.IsSimple(), false);
+check('bowtie self-intersections', bowtie.SelfIntersectionCount(), 1);
+
+// A duplicated vertex and a collinear midpoint, removed one at a time.
+const messy = new Polygon2D(
+  Intrinsics.MakeArray(
+    new Point2D(-1, -1),
+    new Point2D(0, -1),
+    new Point2D(1, -1),
+    new Point2D(1, 1),
+    new Point2D(1, 1),
+    new Point2D(-1, 1),
+  ),
+);
+check('RemoveDuplicateVertices drops the repeat', messy.RemoveDuplicateVertices().Points.Count(), 5);
+check('RemoveCollinearVertices reaches the 4 corners', messy.RemoveCollinearVertices().Points.Count(), 4);
 
 // --- CSG (solids-csg.library.plato) -----------------------------------------
 
@@ -102,6 +128,16 @@ check('Bend3D deforms a mesh', cube.Deform(p => bend.Eval(p)).VertexCount(), 8);
 
 const taper = new Taper3D(new Point3D(0, 0, 0), yAxis, 0.5);
 close('Taper3D scales off-axis by 1 + rate * t', taper.Eval(new Point3D(1, 1, 0)).X, 1.5);
+
+// Twist2D goes through Vector2D.Transform(Rotation2D) — the 2D case of the
+// dropped-overload defect.
+const twist2D = new Twist2D(new Point2D(0, 0), 0.5);
+close('Twist2D rotates by anglePerUnit * radius', twist2D.Eval(new Point2D(1, 0)).X, Math.cos(0.5));
+
+// ScaleX goes through the non-uniform Scale overload the writer skipped.
+const stretched = cube.ScaleX(2);
+close('ScaleX doubles X', stretched.Positions.At(0).X, cube.Positions.At(0).X * 2);
+close('ScaleX leaves Y', stretched.Positions.At(0).Y, cube.Positions.At(0).Y);
 
 if (failures > 0) {
   console.error(`${failures} smoke check(s) failed`);

@@ -1,4 +1,5 @@
 import type * as THREE from 'three';
+import type { ViewerOptions } from './viewer.js';
 
 /** A slider or checkbox in the sidebar. `key` is the name `build` reads back. */
 export interface Control {
@@ -25,10 +26,21 @@ export interface Scene {
   plato: string[];
   controls?: Control[];
   /**
+   * Camera and stage settings for this scene, merged over the page's. A page
+   * that mixes planar and spatial scenes sets `orthographic` here rather than
+   * settling for one camera; changing these rebuilds the viewer.
+   */
+  viewer?: ViewerOptions;
+  /**
    * Build the visual. Called on selection and on every parameter change, so it
    * must be pure — the viewer disposes the previous result.
    */
   build(params: Params): THREE.Object3D;
+  /**
+   * A line of live text under the description — counts, measured values,
+   * whatever this build just computed. Called after `build`, on every rebuild.
+   */
+  status?(params: Params): string;
 }
 
 /** The catalog a demo page hands to `mountDemo`. */

@@ -25,7 +25,10 @@ import {
   Vector2D,
   Vector3D,
   Quaternion,
+  Rotation2D,
   Tuple3,
+  Bounds2D,
+  Bounds3D,
   type IArray,
 } from './plato.g.js';
 
@@ -77,8 +80,9 @@ install('IsSingleton', function (this: Any): boolean {
 install('SubArray', function (this: Any, start: number, count: number) {
   return arr(count, i => this.At(start + i));
 });
-install('Slice', function (this: Any, start: number, count: number) {
-  return arr(count, i => this.At(start + i));
+// Slice is the half-open window [from, exclusiveTo); SubArray takes a count.
+install('Slice', function (this: Any, from: number, exclusiveTo: number) {
+  return arr(Math.max(0, exclusiveTo - from), i => this.At(from + i));
 });
 install('Take', function (this: Any, count: number) {
   const n = Math.max(0, Math.min(count, this.Count()));
@@ -293,6 +297,71 @@ Object.defineProperty(Vector3D.prototype, 'Transform', {
   configurable: true,
 });
 
+// Same defect one dimension down: `Vector2D.Transform` keeps only the
+// AffineTransform2D body, so the Rotation2D that `Twist2D.Eval` passes reaches
+// `TransformNormal(Matrix3x2)` and finds no `.Row1`.
+function rotateByAngle(v: Any, rotation: Any): Vector2D {
+  const radians = rotation.Angle.Radians ?? rotation.Angle;
+  const c = Math.cos(radians);
+  const s = Math.sin(radians);
+  return new Vector2D(v.X * c - v.Y * s, v.X * s + v.Y * c);
+}
+
+// `ScaleX/Y/Z` call `Scale(new Number3(...))`, but the non-uniform `Scale` and
+// `ScaleAbout` overloads were skipped, so the componentwise factor reaches the
+// scalar body and multiplies a vector by an object — NaN, with no error. Making
+// the vector's own Multiply componentwise for an N-tuple factor repairs every
+// non-uniform scale at once.
+function componentwise(v: Any, factor: Any, keys: string[]): Any {
+  return keys.map(k => v[k] * factor[k]);
+}
+
+const vector3Multiply = Vector3D.prototype.Multiply;
+Object.defineProperty(Vector3D.prototype, 'Multiply', {
+  value: function (this: Any, factor: Any) {
+    if (typeof factor === 'object' && factor !== null && 'Z' in factor) {
+      const [x, y, z] = componentwise(this, factor, ['X', 'Y', 'Z']);
+      return new Vector3D(x, y, z);
+    }
+    return vector3Multiply.call(this, factor);
+  },
+  writable: true,
+  configurable: true,
+});
+
+const vector2Multiply = Vector2D.prototype.Multiply;
+Object.defineProperty(Vector2D.prototype, 'Multiply', {
+  value: function (this: Any, factor: Any) {
+    if (typeof factor === 'object' && factor !== null && 'Y' in factor) {
+      const [x, y] = componentwise(this, factor, ['X', 'Y']);
+      return new Vector2D(x, y);
+    }
+    return vector2Multiply.call(this, factor);
+  },
+  writable: true,
+  configurable: true,
+});
+
+const vector2Transform = Vector2D.prototype.Transform;
+Object.defineProperty(Vector2D.prototype, 'Transform', {
+  value: function (this: Any, t: Any) {
+    if (t instanceof Rotation2D) return rotateByAngle(this, t);
+    return vector2Transform.call(this, t);
+  },
+  writable: true,
+  configurable: true,
+});
+
+const point2Transform = Point2D.prototype.Transform;
+Object.defineProperty(Point2D.prototype, 'Transform', {
+  value: function (this: Any, t: Any) {
+    if (t instanceof Rotation2D) return rotateByAngle(this.PositionVector(), t).ToPoint();
+    return point2Transform.call(this, t);
+  },
+  writable: true,
+  configurable: true,
+});
+
 const pointTransform = Point3D.prototype.Transform;
 Object.defineProperty(Point3D.prototype, 'Transform', {
   value: function (this: Any, t: Any) {
@@ -360,6 +429,105 @@ install('PolygonContainsPoint', function (this: Any, point: Any): boolean {
     if (edgeCrossesRay(this.At(i), this.AtModulo(i + 1), point)) crossings++;
   }
   return crossings % 2 === 1;
+});
+
+install('BoundsOfPoints', function (this: Any) {
+  const first = this.At(0);
+  const is3D = first.Z !== undefined;
+  let loX = first.X, loY = first.Y, loZ = is3D ? first.Z : 0;
+  let hiX = first.X, hiY = first.Y, hiZ = is3D ? first.Z : 0;
+  for (let i = 1; i < this.Count(); i++) {
+    const p = this.At(i);
+    loX = Math.min(loX, p.X); hiX = Math.max(hiX, p.X);
+    loY = Math.min(loY, p.Y); hiY = Math.max(hiY, p.Y);
+    if (is3D) { loZ = Math.min(loZ, p.Z); hiZ = Math.max(hiZ, p.Z); }
+  }
+  return is3D
+    ? new Bounds3D(new Point3D(loX, loY, loZ), new Point3D(hiX, hiY, hiZ))
+    : new Bounds2D(new Point2D(loX, loY), new Point2D(hiX, hiY));
+});
+
+install('ClosestPointOnChain', function (this: Any, closed: boolean, point: Any) {
+  const n = closed ? this.Count() : this.Count() - 1;
+  let best = this.At(0);
+  let bestDistance = Infinity;
+  for (let i = 0; i < n; i++) {
+    const candidate = this.At(i).ClosestPointOnSegment(this.AtModulo(i + 1), point);
+    const distance = candidate.Between(point).MagnitudeSquared();
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = candidate;
+    }
+  }
+  return best;
+});
+
+// ---- polygons.library.plato — ring predicates and repair ------------------
+
+install('RingEdgesInterfere', function (this: Any, i: number, j: number): boolean {
+  const a = this.At(i);
+  const b = this.AtModulo(i + 1);
+  const c = this.At(j);
+  const d = this.AtModulo(j + 1);
+  if (j === i + 1) return a.IsOnSegment(c, d) || d.IsOnSegment(a, b);
+  if (i === 0 && j === this.Count() - 1) return b.IsOnSegment(c, d) || c.IsOnSegment(a, b);
+  return a.SegmentsIntersect(b, c, d);
+});
+
+install('RingSelfIntersectionCount', function (this: Any): number {
+  let total = 0;
+  for (let i = 0; i < this.Count(); i++) {
+    for (let j = i + 1; j < this.Count(); j++) {
+      if (this.RingEdgesInterfere(i, j)) total++;
+    }
+  }
+  return total;
+});
+
+install('IsSimpleRing', function (this: Any): boolean {
+  return this.Count() >= 3 && this.RingSelfIntersectionCount() === 0;
+});
+
+install('ReversedRing', function (this: Any) {
+  const n = this.Count();
+  return arr(n, i => this.At(n - 1 - i));
+});
+
+install('CounterClockwiseRing', function (this: Any) {
+  return this.ShoelaceArea() < 0 ? this.ReversedRing() : this;
+});
+
+install('RingWithoutDuplicateVertices', function (this: Any) {
+  const kept: Any[] = [];
+  for (let i = 0; i < this.Count(); i++) {
+    if (!this.At(i).IsSamePoint(this.AtModulo(i + 1))) kept.push(this.At(i));
+  }
+  return arr(kept.length, i => kept[i]);
+});
+
+install('RingWithout', function (this: Any, i: number) {
+  return this.Take(i).Concatenate(this.Skip(i + 1));
+});
+
+install('FirstFlatVertex', function (this: Any): number {
+  if (this.Count() < 3) return -1;
+  for (let i = 0; i < this.Count(); i++) {
+    const previous = this.AtModulo(i + this.Count() - 1);
+    if (previous.TwiceSignedArea(this.At(i), this.AtModulo(i + 1)) === 0) return i;
+  }
+  return -1;
+});
+
+// One at a time, re-examining after each removal: a sweep would delete a
+// repeated vertex's corner outright rather than reducing it to one vertex.
+install('RingWithoutCollinearVertices', function (this: Any) {
+  let result: Any = this;
+  let flat = result.FirstFlatVertex();
+  while (flat >= 0) {
+    result = result.RingWithout(flat);
+    flat = result.FirstFlatVertex();
+  }
+  return result;
 });
 
 // ---- polygons.library.plato — 3D polygon helpers --------------------------
@@ -441,6 +609,19 @@ class PlaneRelation {
   Coplanar: () => new PlaneRelation('Coplanar'),
 };
 
+// The same for `WindingOrder`, which `Polygon2D.Winding` returns.
+class Winding {
+  constructor(readonly Tag: 'Clockwise' | 'CounterClockwise') {}
+  IsClockwise(): boolean { return this.Tag === 'Clockwise'; }
+  IsCounterClockwise(): boolean { return this.Tag === 'CounterClockwise'; }
+  toString(): string { return this.Tag; }
+}
+
+(globalThis as Any).WindingOrder = {
+  Clockwise: () => new Winding('Clockwise'),
+  CounterClockwise: () => new Winding('CounterClockwise'),
+};
+
 // ---- solids-csg.library.plato --------------------------------------------
 
 install('CutByPlane', function (this: Any, plane: Any, tolerance: number) {
@@ -489,6 +670,10 @@ installOn(globalThis.Number.prototype, 'One', function (): number {
 });
 installOn(globalThis.Number.prototype, 'Half', function (this: Any): number {
   return this / 2;
+});
+// `IsoperimetricQuotient` reaches for Pi in instance position on a Number.
+installOn(globalThis.Number.prototype, 'Pi', function (): number {
+  return Math.PI;
 });
 
 // ---- numeric constants the writer leaves unimplemented --------------------
