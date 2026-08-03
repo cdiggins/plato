@@ -344,6 +344,205 @@ public class TriangulationTests
         }
     }
 
+    // ---- predicates and repair ---------------------------------------------
+
+    [Test]
+    public void SimpleRingsAreRecognised()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That((bool)Poly((0, 0), (1, 0), (1, 1), (0, 1)).IsSimple(), Is.True,
+                "a square");
+            Assert.That((bool)Poly((0, 1), (1, 1), (1, 0), (0, 0)).IsSimple(), Is.True,
+                "winding does not affect simplicity");
+            Assert.That((bool)Poly((0, 0), (2, 0), (2, 1), (1, 1), (1, 2), (0, 2)).IsSimple(),
+                Is.True, "a concave L is still simple");
+            Assert.That((bool)Poly((0, 0), (1, 0), (0.5, 1)).IsSimple(), Is.True, "a triangle");
+        });
+    }
+
+    [Test]
+    public void NonSimpleRingsAreRejected()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That((bool)Poly((0, 0), (2, 2), (2, 0), (0, 2)).IsSimple(), Is.False,
+                "a bowtie crosses itself");
+            Assert.That((bool)Poly((0, 0), (1, 0)).IsSimple(), Is.False,
+                "two vertices are not a polygon");
+            Assert.That((bool)Poly((0, 0), (1, 1), (2, 2)).IsSimple(), Is.False,
+                "collinear vertices enclose nothing");
+            Assert.That((bool)Poly((0, 0), (1, 0), (1, 0), (1, 1)).IsSimple(), Is.False,
+                "a repeated vertex is a degenerate edge");
+            Assert.That((bool)Poly((0, 0), (2, 0), (1, 0), (1, 1)).IsSimple(), Is.False,
+                "a spike doubles an edge back over itself");
+        });
+    }
+
+    [Test]
+    public void SelfIntersectionCountLocatesEveryBadPair()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That((int)Poly((0, 0), (1, 0), (1, 1), (0, 1)).SelfIntersectionCount(),
+                Is.Zero);
+            Assert.That((int)Poly((0, 0), (2, 2), (2, 0), (0, 2)).SelfIntersectionCount(),
+                Is.EqualTo(1), "the bowtie has exactly one crossing pair");
+        });
+    }
+
+    [Test]
+    public void WindingIsReadAndCorrected()
+    {
+        var ccw = Poly((0, 0), (1, 0), (1, 1), (0, 1));
+        var cw = Poly((0, 1), (1, 1), (1, 0), (0, 0));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That((bool)ccw.Winding().IsCounterClockwise(), Is.True);
+            Assert.That((bool)cw.Winding().IsClockwise(), Is.True);
+            Assert.That((bool)cw.EnsureCounterClockwise().Winding().IsCounterClockwise(), Is.True);
+            Assert.That((float)ccw.EnsureCounterClockwise().SignedArea(),
+                Is.EqualTo((float)ccw.SignedArea()),
+                "a ring already counter-clockwise is left alone");
+        });
+    }
+
+    [Test]
+    public void RepairsDropDegeneraciesAndPreserveArea()
+    {
+        // A square whose edges carry a repeated vertex and two collinear midpoints.
+        var messy = Poly((0, 0), (1, 0), (2, 0), (2, 0), (2, 2), (1, 2), (0, 2));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That((int)messy.RemoveDuplicateVertices().Points.Count, Is.EqualTo(6),
+                "one repeated vertex goes");
+            Assert.That((int)messy.RemoveCollinearVertices().Points.Count, Is.EqualTo(4),
+                "collinear midpoints and the repeat go, the corners stay");
+
+            var canonical = messy.Canonical();
+            Assert.That((int)canonical.Points.Count, Is.EqualTo(4));
+            Assert.That((float)canonical.Area(), Is.EqualTo((float)messy.Area()).Within(1e-5),
+                "repair is area-preserving");
+            Assert.That((bool)canonical.Winding().IsCounterClockwise(), Is.True);
+            Assert.That((bool)canonical.IsSimple(), Is.True,
+                "and it turns a ring the predicate rejected into one it accepts");
+        });
+    }
+
+    [Test]
+    public void CanonicalFormOfADegenerateRingIsNotAPolygon()
+    {
+        // Honest rather than convenient: a zero-width spike encloses nothing, so repair
+        // reduces it below a polygon rather than inventing one. The caller learns this from
+        // IsSimple, not from an exception.
+        var spike = Poly((0, 0), (1, 1), (2, 2), (1, 1)).Canonical();
+        Assert.Multiple(() =>
+        {
+            Assert.That((int)spike.Points.Count, Is.LessThan(3));
+            Assert.That((bool)spike.IsSimple(), Is.False);
+        });
+    }
+
+    [Test]
+    public void CollinearRemovalSurvivesARepeatedCorner()
+    {
+        // The regression test for a one-sweep removal: (2,0) appears twice and has zero turn
+        // at BOTH copies — once from the collinear run it sits in, once from the repeat — so a
+        // sweep deletes the corner outright and the square loses half its area.
+        var repeated = Poly((0, 0), (1, 0), (2, 0), (2, 0), (2, 2), (1, 2), (0, 2));
+        var cleaned = repeated.RemoveCollinearVertices();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That((int)cleaned.Points.Count, Is.EqualTo(4), "the corner survives, once");
+            Assert.That((float)cleaned.Area(), Is.EqualTo(4f).Within(1e-5f),
+                "and the region is unchanged");
+        });
+    }
+
+    [Test]
+    public void RegionInvariantsAreChecked()
+    {
+        var boundary = Poly((0, 0), (4, 0), (4, 4), (0, 4));
+        var inside = Poly((1, 1), (1, 3), (3, 3), (3, 1));
+        var overlapping = Poly((3, 1), (3, 3), (5, 3), (5, 1));   // crosses the boundary
+        var outside = Poly((6, 1), (6, 3), (7, 3), (7, 1));       // simple, but not inside
+
+        Assert.Multiple(() =>
+        {
+            var good = new PolygonWithHoles2D(boundary, new[] { inside });
+            Assert.That((bool)good.IsSimple(), Is.True);
+            Assert.That((bool)good.HolesLieInside(), Is.True);
+
+            var crossing = new PolygonWithHoles2D(boundary, new[] { overlapping });
+            Assert.That((bool)crossing.IsSimple(), Is.False,
+                "a hole crossing the boundary is caught by the ring-disjointness test");
+
+            var escaped = new PolygonWithHoles2D(boundary, new[] { outside });
+            Assert.That((bool)escaped.IsSimple(), Is.True,
+                "nothing crosses, so the structural test passes");
+            Assert.That((bool)escaped.HolesLieInside(), Is.False,
+                "but the containment test catches it");
+
+            var a = Poly((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5));
+            var b = Poly((1.0, 1.0), (1.0, 2.0), (2.0, 2.0), (2.0, 1.0));
+            Assert.That((bool)new PolygonWithHoles2D(boundary, new[] { a, b }).IsSimple(),
+                Is.False, "two holes overlapping each other is caught too");
+        });
+    }
+
+    [Test]
+    public void CanonicalRegionWindsHolesAgainstTheBoundary()
+    {
+        var boundary = Poly((0, 1), (1, 1), (1, 0), (0, 0));            // clockwise
+        var hole = Poly((0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)); // counter-clockwise
+        var canonical = new PolygonWithHoles2D(boundary, new[] { hole }).Canonical();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That((bool)canonical.Boundary.Winding().IsCounterClockwise(), Is.True);
+            Assert.That((bool)canonical.Holes[0].Winding().IsClockwise(), Is.True,
+                "a hole winds opposite to the boundary containing it");
+        });
+    }
+
+    [Test]
+    public void PredicateAgreesWithTheTriangulatorOnRandomInput()
+    {
+        // The predicate's reason to exist is that the triangulator's precondition can be
+        // honoured. This checks the two agree: every ring IsSimple accepts must tile.
+        var random = new System.Random(20260804);
+
+        for (var trial = 0; trial < 200; trial++)
+        {
+            var n = 3 + random.Next(10);
+            var points = new List<(double X, double Y)>();
+            for (var i = 0; i < n; i++)
+                points.Add((Math.Round(random.NextDouble() * 6), Math.Round(random.NextDouble() * 6)));
+
+            var polygon = new Polygon2D(Ring(points.ToArray()));
+            if (!(bool)polygon.IsSimple()) continue;   // the predicate refuses it; nothing to check
+
+            double shoelace = 0;
+            for (var i = 0; i < n; i++)
+            {
+                var (x0, y0) = points[i];
+                var (x1, y1) = points[(i + 1) % n];
+                shoelace += x0 * y1 - x1 * y0;
+            }
+
+            var mesh = polygon.Triangulate();
+            double total = 0;
+            for (var i = 0; i < mesh.Faces.Count; i++) total += SignedArea(mesh, mesh.Faces[i]);
+
+            Assert.That(total, Is.EqualTo(Math.Abs(shoelace) / 2).Within(1e-3),
+                $"trial {trial} (seed 20260804): IsSimple accepted a ring the triangulator "
+                + "does not tile — the predicate and the precondition disagree");
+        }
+    }
+
     // ---- input that breaks the declared invariants -------------------------
 
     [Test]

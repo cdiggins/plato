@@ -470,4 +470,210 @@ library Polygons
             && (t <= 0.0 || y.Base.Points.PlanarPolygonContains(normal,
                 y.Apex + y.Apex.Between(point) * (1.0 / t)));
     }
+
+    //==
+    // # Ring predicates and repair
+    //
+    // `Polygon2D` declares simplicity — at least three vertices, no edge crossings —
+    // as an invariant, and until now nothing in the tree could check it. These are
+    // that check and the repairs that establish what is establishable, so that the
+    // constructive operations above and in `triangulation.library.plato` can state
+    // "precondition: simple" and have callers able to honour it.
+    //
+    // Conventions fixed here:
+    //
+    //   * Coincidence and collinearity are tested EXACTLY, with no tolerance. A
+    //     tolerance would make these predicates disagree with the bodies that consume
+    //     them, which are exact throughout, and would silently merge distinct vertices
+    //     of a finely sampled ring. Callers wanting a tolerant answer should snap their
+    //     input first.
+    //   * The predicates are O(n^2): every pair of edges is tested. A sweep-line is
+    //     the standard improvement and is separate, later work.
+    //   * The repairs are TOTAL — every ring has an answer, including a degenerate one,
+    //     which they reduce rather than reject. `RemoveCollinearVertices` of a
+    //     zero-width spike is empty, and that is the honest result.
+
+    // True when `q` lies on the segment [a, b], endpoints included: collinear with it
+    // and within its bounding box.
+    IsOnSegment(q: Point2D, a: Point2D, b: Point2D): Boolean
+        => TwiceSignedArea(a, b, q) == 0.0
+        && q.X >= a.X.Min(b.X) && q.X <= a.X.Max(b.X)
+        && q.Y >= a.Y.Min(b.Y) && q.Y <= a.Y.Max(b.Y);
+
+    // True when the segments [a, b] and [c, d] share at least one point — a proper
+    // crossing, a touch at an endpoint, or a collinear overlap.
+    // https://en.wikipedia.org/wiki/Line_segment_intersection
+    SegmentsIntersect(a: Point2D, b: Point2D, c: Point2D, d: Point2D): Boolean
+    {
+        var aSide = TwiceSignedArea(c, d, a);
+        var bSide = TwiceSignedArea(c, d, b);
+        var cSide = TwiceSignedArea(a, b, c);
+        var dSide = TwiceSignedArea(a, b, d);
+        var proper = aSide != 0.0 && bSide != 0.0 && cSide != 0.0 && dSide != 0.0
+            && (aSide > 0.0).ExclusiveOr(bSide > 0.0)
+            && (cSide > 0.0).ExclusiveOr(dSide > 0.0);
+        return proper
+            || a.IsOnSegment(c, d) || b.IsOnSegment(c, d)
+            || c.IsOnSegment(a, b) || d.IsOnSegment(a, b);
+    }
+
+    // True when ring edges `i` and `j` share a point they are not entitled to.
+    // Adjacent edges are entitled to the vertex between them and nothing else, so for
+    // them the test is whether either one's far endpoint lies on the other — which is
+    // what a doubled-back spike or a repeated vertex looks like. Non-adjacent edges are
+    // entitled to nothing. Precondition: i < j.
+    RingEdgesInterfere(points: Array<Point2D>, i: Integer, j: Integer): Boolean
+    {
+        var a = points[i];
+        var b = points.AtModulo(i + 1);
+        var c = points[j];
+        var d = points.AtModulo(j + 1);
+        var sharesLast = j == i + 1;
+        var sharesFirst = i == 0 && j == points.Count - 1;
+        return sharesLast ? a.IsOnSegment(c, d) || d.IsOnSegment(a, b)
+            : sharesFirst ? b.IsOnSegment(c, d) || c.IsOnSegment(a, b)
+            : SegmentsIntersect(a, b, c, d);
+    }
+
+    // The number of edge pairs that interfere. Zero for a simple ring; offered
+    // alongside `IsSimpleRing` because "how badly" is the useful question when a repair
+    // is being considered.
+    RingSelfIntersectionCount(points: Array<Point2D>): Integer
+        => points.Count.Range.Reduce(0, (total, i)
+            => total + points.Count.Range.Reduce(0, (row, j)
+                => row + (j > i ? (points.RingEdgesInterfere(i, j) ? 1 : 0) : 0)));
+
+    // True when the ring is a simple polygon: at least three vertices and no two edges
+    // meeting anywhere they should not. https://en.wikipedia.org/wiki/Simple_polygon
+    IsSimpleRing(points: Array<Point2D>): Boolean
+        => points.Count >= 3 && points.RingSelfIntersectionCount == 0;
+
+    // The ring traversed the other way round, which flips its winding.
+    ReversedRing(points: Array<Point2D>): Array<Point2D>
+        => points.Count.MapRange(i => points[points.Count - 1 - i]);
+
+    // The ring wound counter-clockwise, reversed only if it was not. A degenerate ring
+    // (zero signed area) is left alone: there is no orientation to correct.
+    CounterClockwiseRing(points: Array<Point2D>): Array<Point2D>
+        => points.ShoelaceArea < 0.0 ? points.ReversedRing : points;
+
+    // The ring with every vertex that coincides with its successor dropped, the last
+    // vertex being compared with the first.
+    RingWithoutDuplicateVertices(points: Array<Point2D>): Array<Point2D>
+    {
+        var kept = new List<Point2D>();
+        var i = 0;
+        while (i < points.Count)
+        {
+            if (points[i].IsSamePoint(points.AtModulo(i + 1)).Not)
+            {
+                kept = kept.Add(points[i]);
+            }
+            i = i + 1;
+        }
+        return kept.Freeze();
+    }
+
+    // The ring with the vertex at position `i` removed.
+    RingWithout(points: Array<Point2D>, i: Integer): Array<Point2D>
+        => points.Take(i).Concatenate(points.Skip(i + 1));
+
+    // The position of the first vertex whose corner encloses no area — a collinear
+    // midpoint, or the tip of a zero-width spike — or -1 when the ring has none. A ring
+    // below three vertices has no corners to speak of and reports -1.
+    FirstFlatVertex(points: Array<Point2D>): Integer
+        => points.Count < 3 ? -1
+        : points.Count.Range.Reduce(-1, (found, i) => found >= 0 ? found
+            : TwiceSignedArea(points.AtModulo(i + points.Count - 1), points[i],
+                points.AtModulo(i + 1)) == 0.0 ? i : found);
+
+    // The ring with every flat vertex dropped, ONE AT A TIME.
+    //
+    // Removing them in a single sweep is wrong, and wrong in a way that quietly changes
+    // the region: a vertex that appears twice has zero turn at both copies — once from
+    // the collinear run it sits in, once from the repeat — so a sweep deletes the corner
+    // outright rather than reducing it to one vertex. Removing the first flat vertex and
+    // re-examining is O(n^2) and correct, and correct wins here (STYLE_GUIDE.md).
+    // Terminates because every step shortens the ring.
+    RingWithoutCollinearVertices(points: Array<Point2D>): Array<Point2D>
+    {
+        var result = points;
+        var flat = result.FirstFlatVertex;
+        while (flat >= 0)
+        {
+            result = result.RingWithout(flat);
+            flat = result.FirstFlatVertex;
+        }
+        return result;
+    }
+
+    //==
+    // # Polygon2D predicates and repair
+
+    // True when the polygon satisfies the invariant its declaration states.
+    IsSimple(p: Polygon2D): Boolean
+        => p.Points.IsSimpleRing;
+
+    // How many edge pairs violate that invariant.
+    SelfIntersectionCount(p: Polygon2D): Integer
+        => p.Points.RingSelfIntersectionCount;
+
+    // Which way the boundary winds. A degenerate ring reports CounterClockwise: there
+    // is no better answer, and the repair below treats it as already correct.
+    // Convention: see CONVENTIONS.md - Winding.
+    Winding(p: Polygon2D): WindingOrder
+        => p.Points.ShoelaceArea < 0.0 ? WindingOrder.Clockwise : WindingOrder.CounterClockwise;
+
+    // The polygon wound counter-clockwise, so that it encloses positive area.
+    EnsureCounterClockwise(p: Polygon2D): Polygon2D
+        => Polygon2D(p.Points.CounterClockwiseRing);
+
+    // The polygon with repeated vertices dropped. Does NOT make a polygon simple —
+    // crossings are untouched — it removes the degeneracies that are removable without
+    // changing the region.
+    RemoveDuplicateVertices(p: Polygon2D): Polygon2D
+        => Polygon2D(p.Points.RingWithoutDuplicateVertices);
+
+    // The polygon with collinear midpoints and spike tips dropped.
+    RemoveCollinearVertices(p: Polygon2D): Polygon2D
+        => Polygon2D(p.Points.RingWithoutCollinearVertices);
+
+    // The polygon in canonical form: no repeated vertices, no collinear midpoints,
+    // counter-clockwise. Area-preserving, so it is safe to apply to any input; it does
+    // not repair a self-intersecting ring, which cannot be repaired without changing
+    // the region it describes.
+    Canonical(p: Polygon2D): Polygon2D
+        => Polygon2D(p.Points.RingWithoutDuplicateVertices
+            .RingWithoutCollinearVertices.CounterClockwiseRing);
+
+    //==
+    // # PolygonWithHoles2D predicates
+
+    // True when no edge of either ring meets an edge of the other.
+    RingsAreDisjoint(a: Array<Point2D>, b: Array<Point2D>): Boolean
+        => a.Count.Range.Any(i => b.Count.Range.Any(j =>
+            SegmentsIntersect(a[i], a.AtModulo(i + 1), b[j], b.AtModulo(j + 1)))).Not;
+
+    // True when every ring of the region is simple and no two of them meet — the
+    // structural half of the declaration's invariants. The other half, that the holes
+    // lie inside the boundary, is `HolesLieInside`.
+    IsSimple(r: PolygonWithHoles2D): Boolean
+        => r.Boundary.IsSimple
+        && r.Holes.All(h => h.IsSimple)
+        && r.Holes.All(h => RingsAreDisjoint(r.Boundary.Points, h.Points))
+        && r.Holes.Count.Range.All(i => r.Holes.Count.Range.All(j =>
+            j > i ? RingsAreDisjoint(r.Holes[i].Points, r.Holes[j].Points) : true));
+
+    // True when every hole lies inside the boundary. Exact only for a region that is
+    // already `IsSimple`: given that no ring crosses another, a single vertex decides
+    // the whole hole, so the even-odd test on one vertex is enough.
+    HolesLieInside(r: PolygonWithHoles2D): Boolean
+        => r.Holes.All(h => r.Boundary.Contains(h.Points.First));
+
+    // The region in canonical form: every ring cleaned, the boundary counter-clockwise
+    // and every hole clockwise, which is the winding the declaration states and the
+    // triangulator assumes.
+    Canonical(r: PolygonWithHoles2D): PolygonWithHoles2D
+        => (r.Boundary.Canonical,
+            r.Holes.Map(h => Polygon2D(h.Canonical.Points.ReversedRing)));
 }

@@ -31,10 +31,11 @@ polygon. Every downstream consumer that needs triangles today has to leave the t
 
 ### The catalogue
 
-1. **Triangulation** — LANDED for `Polygon2D`, `ConvexPolygon2D` and `PolygonWithHoles2D`
-   as the `IMesh2D` obligation, in `stdlib/geometry/triangulation.library.plato`. Still open:
-   `PolygonSet2D`, `Polygon3D` via the existing projection basis, triangle strips, and a
-   quality-driven mesher (Delaunay refinement) rather than ear clipping.
+1. **Triangulation** — LANDED in `stdlib/geometry/triangulation.library.plato` across every
+   polygon type: `Polygon2D`, `ConvexPolygon2D`, `PolygonWithHoles2D` and `PolygonSet2D` as
+   the `IMesh2D` obligation, `Polygon3D` as `IMesh3D`. Executable gate:
+   `tools/regen-triangulation.ps1`. Still open: triangle strips, and a quality-driven mesher
+   (Delaunay refinement) rather than ear clipping — plus the performance work in plato-417.
 2. **2D Booleans** — `Union` / `Intersection` / `Difference` / `Xor` returning
    `PolygonSet2D`. The declared result type already commits to the shape.
 3. **Offset / buffer** — `Offset(Polygon2D, distance, joinStyle)` with miter/round/bevel
@@ -42,9 +43,12 @@ polygon. Every downstream consumer that needs triangles today has to leave the t
 4. **Convex hull and decomposition** — `HullOf(Polygon2D): ConvexPolygon2D` (the existing
    `ConvexHull2D` type is the natural intermediate), `IsConvex(Polygon2D)`,
    Hertel–Mehlhorn convex partition.
-5. **Predicates and repair** — `IsSimple`, `SelfIntersections`, `Winding`, `EnsureCCW`,
-   `RemoveCollinear`, `RemoveDuplicates`. `Polygon2D` declares "no edge crossings" as an
-   invariant and nothing in the tree can check it.
+5. **Predicates and repair** — LANDED in `polygons.library.plato`: `IsSimple`,
+   `SelfIntersectionCount`, `Winding`, `EnsureCounterClockwise`, `RemoveDuplicateVertices`,
+   `RemoveCollinearVertices`, `Canonical`, plus `IsSimple` / `HolesLieInside` / `Canonical`
+   over `PolygonWithHoles2D`. `Polygon2D`'s "no edge crossings" is now checkable. Still open:
+   the O(n^2) all-pairs test wants a sweep line, and repair cannot fix a crossing (it would
+   change the region), so a self-intersection RESOLVER is separate work.
 6. **Simplify and resample** — Douglas–Peucker, Visvalingam, `ResampleByArcLength`,
    Chaikin smoothing over the polylines.
 7. **Distance and intersection queries** — `SignedDistance(Polygon2D, Point2D)` (negative
@@ -126,10 +130,11 @@ polygon. Every downstream consumer that needs triangles today has to leave the t
 
 **Short term** — the three items that unblock the most:
 
-1. Triangulation over `Polygon2D` / `PolygonWithHoles2D`, ported from the earcut experiment.
-   Items 9 and 13 and everything mesh-shaped depend on it.
-2. Predicates and repair (item 5). Cheap, pure folds, no new types, and it makes every
-   other item's preconditions checkable.
+1. ~~Triangulation, ported from the earcut experiment.~~ Landed across `Polygon2D`,
+   `ConvexPolygon2D`, `PolygonWithHoles2D`, `PolygonSet2D` and `Polygon3D`, with an executable
+   gate (`tools/regen-triangulation.ps1`). Items 9 and 13 are unblocked.
+2. ~~Predicates and repair (item 5).~~ Landed. Every later item can now state
+   "precondition: simple" and have callers able to honour it.
 3. Convex hull + `IsConvex` (item 4). The type exists; a monotone-chain hull is a fold.
 
 **Long term** — a complete constructive polygon kernel: Booleans, offsetting and Delaunay,
